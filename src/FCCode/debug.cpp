@@ -19,6 +19,8 @@
 std::unordered_set<const char *> silenced_threads = {
     "GS READ",
     "DEBUG",
+    "PIKSI",
+    "QUAKE",
 };
 
 void debug_begin() {

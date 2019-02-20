@@ -73,6 +73,11 @@ namespace Hardware {
     //! Protects access to Quake device. May be used by master process to rewrite device defaults.
     extern mutex_t quake_device_lock;
 }
+
+namespace ADCS {
+    //! Hardware availability table of devices attached to ADCS.
+    extern std::map<std::string, Hardware::DeviceState&> adcs_hat;
+}
 }
 
 #endif

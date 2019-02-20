@@ -15,12 +15,10 @@ class Gomspace : public I2CDevice {
     // TODO
     //! Gomspace voltage level designations
     enum VOLTAGES {
-        FC_CRITICAL = 6000,
         GS_CRITICAL = 6000,
+        GC_NORMAL = 6000,
         FC_SAFE = 6000,
         FC_NORMAL = 6000,
-        GC_SAFE = 6000,
-        GC_NORMAL = 6000,
     };
 
     /**< "Housekeeping" data struct; contains Gomspace state information. */

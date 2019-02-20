@@ -1,6 +1,6 @@
 /** @file comms_utils.hpp
  * @author Tanishq Aggarwal
- * @date 6 Feb 2018
+ * @date 6 Feb MAX_NORMALIZED_FLOAT_VECTOR_SIZE18
  * @brief Header file defining utilities for compressing and 
  * decompressing data for downlinking and processing uplinks.
  */
@@ -39,6 +39,18 @@ namespace Comms {
     constexpr unsigned int UPLINK_PACKET_SIZE_BYTES = 34; 
     //! Size of uplink packets, in bits
     constexpr unsigned int UPLINK_PACKET_SIZE_BITS = UPLINK_PACKET_SIZE_BYTES * 8; 
+    //! Number of bits for squeezing GPS time
+    constexpr unsigned int GPSTIME_SIZE = 48;
+    //! Number of bits to squeeze a number in the range +/- sqrt(2) for float vector compression
+    constexpr unsigned int MAX_FLOAT_VECTOR_COMPONENT_SIZE = 9;
+    //! Number of bits for squeezing a quaternion
+    constexpr unsigned int QUATERNION_SIZE = MAX_FLOAT_VECTOR_COMPONENT_SIZE * 3 + 2;
+    //! Number of bits for squeezing a normalized float vector
+    constexpr unsigned int MAX_NORMALIZED_FLOAT_VECTOR_SIZE = MAX_FLOAT_VECTOR_COMPONENT_SIZE * 2 + 2;
+    //! Number of bits to squeeze a number in the range +/- sqrt(2) for double vector compression
+    constexpr unsigned int MAX_DOUBLE_VECTOR_COMPONENT_SIZE = 18;
+    //! Number of bits for squeezing a normalized float vector
+    constexpr unsigned int MAX_NORMALIZED_DOUBLE_VECTOR_SIZE = MAX_DOUBLE_VECTOR_COMPONENT_SIZE * 2 + 2;
 
     /** @brief Create CRC32 checksum at     the end of a packet and copy
      *  it into a destination character buffer.
@@ -70,39 +82,91 @@ namespace Comms {
     template<unsigned int max_size>
     float expand_float(const std::bitset<max_size>& f, float min, float max);
 
+    /** @brief Compress a double into a bitstring.
+     *  @param[in] d Double to compress.
+     *  @param[in] min Minimum possible value of double.
+     *  @param[in] max Maximum possible value of double.
+     *  @param[out] result Destination bitstring for storing the compressed double.
+     * **/
+    template<unsigned int max_size>
+    void trim_double(double d, double min, double max, std::bitset<max_size>* result);
+
+    /** @brief Expand a compressed double into its true value.
+     *  @param[in] d Bitstring containing the compressed double.
+     *  @param[in] min Minimum possible value of double.
+     *  @param[in] max Maximum possible value of double.
+     *  @return Value of double.
+     * **/
+    template<unsigned int max_size>
+    float expand_double(const std::bitset<max_size>& d, double min, double max);
+
     /** @brief Compress a 3-component vector of floats into a bitstring.
      *  @param[in] v Vector to compress.
      *  @param[in] min_magnitude Minimum possible magnitude of vector. May be a negative number.
-     *  @param[in] max_magnitude Maximum possible value of float. May be a negative number.
+     *  @param[in] max_magnitude Maximum possible magnitude of vector. May be a negative number.
      *  @param[out] result Destination bitstring for storing the compressed vector.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > 20)>
+    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
     void trim_vector(const std::array<float, 3>& v, float min_magnitude, float max_magnitude, std::bitset<max_vec_size>* result);
+
+    /** @brief Compress a 3-component vector of doubles into a bitstring.
+     *  @param[in] v Vector to compress.
+     *  @param[in] min_magnitude Minimum possible magnitude of vector. May be a negative number.
+     *  @param[in] max_magnitude Maximum possible magnitude of vector. May be a negative number.
+     *  @param[out] result Destination bitstring for storing the compressed vector.
+     * **/
+    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
+    void trim_vector(const std::array<double, 3>& v, double min_magnitude, double max_magnitude, std::bitset<max_vec_size>* result);
 
     /** @brief Compress a 3-component vector of floats into a bitstring.
      *  @param[in] v Vector to compress.
-     *  @param[in] max_magnitude Maximum possible value of float. May be a negative number. (The minimum is assumed to be zero).
+     *  @param[in] max_magnitude Maximum possible magnitude of vector. May be a negative number. (The minimum is assumed to be zero).
      *  @param[out] result Destination bitstring for storing the compressed vector.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > 20)>
+    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
     void trim_vector(const std::array<float, 3>& v, float max_magnitude, std::bitset<max_vec_size>* result);
 
-    /** @brief Expand a compressed vector into its true value.
+    /** @brief Compress a 3-component vector of doubles into a bitstring.
+     *  @param[in] v Vector to compress.
+     *  @param[in] max_magnitude Maximum possible magnitude of vector. May be a negative number. (The minimum is assumed to be zero).
+     *  @param[out] result Destination bitstring for storing the compressed vector.
+     * **/
+    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
+    void trim_vector(const std::array<double, 3>& v, double max_magnitude, std::bitset<max_vec_size>* result);
+
+    /** @brief Expand a compressed vector of floats into its true value.
      *  @param[in] v Bitstring containing the compressed vector.
      *  @param[in] min_magnitude Minimum possible magnitude of vector.
      *  @param[in] max_magnitude Maximum possible magnitude of vector.
      *  @param[out] result Float array into which the uncompressed vector should be stored.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > 20)>
+    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
     void expand_vector(const std::bitset<max_vec_size>& v, float min_magnitude, float max_magnitude, std::array<float, 3>* result);
+
+    /** @brief Expand a compressed vector of doubles into its true value.
+     *  @param[in] v Bitstring containing the compressed vector.
+     *  @param[in] min_magnitude Minimum possible magnitude of vector.
+     *  @param[in] max_magnitude Maximum possible magnitude of vector.
+     *  @param[out] result Double array into which the uncompressed vector should be stored.
+     * **/
+    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
+    void expand_vector(const std::bitset<max_vec_size>& v, double min_magnitude, double max_magnitude, std::array<double, 3>* result);
     
-    /** @brief Expand a compressed vector into its true value.
+    /** @brief Expand a compressed vector of floats into its true value.
      *  @param[in] v Bitstring containing the compressed vector.
      *  @param[in] max_magnitude Maximum possible magnitude of vector.
      *  @param[out] result Float array into which the uncompressed vector should be stored.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > 20)>
+    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
     void expand_vector(const std::bitset<max_vec_size>& v, float max_magnitude, std::array<float, 3>* result);
+
+    /** @brief Expand a compressed vector of doubles into its true value.
+     *  @param[in] v Bitstring containing the compressed vector.
+     *  @param[in] max_magnitude Maximum possible magnitude of vector.
+     *  @param[out] result Double array into which the uncompressed vector should be stored.
+     * **/
+    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
+    void expand_vector(const std::bitset<max_vec_size>& v, double max_magnitude, std::array<double, 3>* result);
 
     /** @brief Compress an integer into a smaller representation.
      *  @param[in] i Integer to compress.
@@ -138,25 +202,25 @@ namespace Comms {
      *  @param[in] q Quaternion to compress.
      *  @param[out] result Destination bitstring for storing the compressed quaternion.
      * **/
-    void trim_quaternion(const std::array<float, 4>& q, std::bitset<29>* result);
+    void trim_quaternion(const std::array<float, 4>& q, std::bitset<QUATERNION_SIZE>* result);
 
     /** @brief Expand a compressed rotation quaternion into its true value.
      *  @param[in] q Bitstring containing the compressed quaternion.
      *  @param[out] result Float array into which the quaternion vector should be stored.
      * **/
-    void expand_quaternion(const std::bitset<29>& q, std::array<float, 4>* result);
+    void expand_quaternion(const std::bitset<QUATERNION_SIZE>& q, std::array<float, 4>* result);
 
     /** @brief Compress a GPS time into a bitstring.
      *  @param[in] gpstime GPS time struct to compress.
      *  @param[out] result Destination bitstring for storing the compressed GPS time.
      * **/
-    void trim_gps_time(const msg_gps_time_t& gpstime, std::bitset<48>* result);
+    void trim_gps_time(const msg_gps_time_t& gpstime, std::bitset<GPSTIME_SIZE>* result);
 
     /** @brief Expand a compressed GPS time into its true value.
      *  @param[in] gpstime Bitstring containing the compressed GPS time.
      *  @param[out] result GPS time struct containing the uncompressed GPS time.
      * **/
-    void expand_gps_time(const std::bitset<48>& gpstime, msg_gps_time_t* result);
+    void expand_gps_time(const std::bitset<GPSTIME_SIZE>& gpstime, msg_gps_time_t* result);
 }
 /** @} */
 

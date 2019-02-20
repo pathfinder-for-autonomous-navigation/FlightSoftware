@@ -102,9 +102,9 @@ namespace DataCollectionRates {
     /** @namespace Piksi Piksi-specific data collection rate constants. **/
     namespace Piksi {
         //! Interval between GPS position recordings.
-        constexpr unsigned int POSITION_INTERVAL = 30000;
+        constexpr unsigned int POSITION_INTERVAL = 60000;
         //! Interval between GPS velocity recordings.
-        constexpr unsigned int VELOCITY_INTERVAL = 30000;
+        constexpr unsigned int VELOCITY_INTERVAL = 60000;
 
         //! Number of times GPS position data is collected per downlink packet.
         constexpr unsigned int POSITION = FIVE_MINUTES / POSITION_INTERVAL;

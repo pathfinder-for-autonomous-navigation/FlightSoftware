@@ -47,7 +47,7 @@ static void gomspace_check() {
 
     debug_printf("Checking Gomspace battery voltage...");
     unsigned short int vbatt = gomspace_data.vbatt;
-    if (vbatt < Gomspace::VOLTAGES::FC_CRITICAL) {
+    if (vbatt < Gomspace::VOLTAGES::FC_SAFE) {
         debug_println("Battery voltage is critical!");
         // TODO Set some flag for master controller to pick up on
     }

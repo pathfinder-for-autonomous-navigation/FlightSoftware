@@ -32,8 +32,8 @@ namespace StateHistory {
   }
 
   namespace Piksi {
-    circular_buffer<std::array<float, 3>, DataCollectionRates::Piksi::POSITION> position_history;
-    circular_buffer<std::array<float, 3>, DataCollectionRates::Piksi::VELOCITY> velocity_history;
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> position_history;
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> velocity_history;
     rwmutex_t piksi_state_history_lock;
   }
 }

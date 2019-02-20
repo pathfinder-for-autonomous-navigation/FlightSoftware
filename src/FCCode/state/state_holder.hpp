@@ -43,9 +43,7 @@ namespace State {
 
   namespace ADCS {
     //! Finite State Machine state of ADCS system.
-    extern ADCSState adcs_state; 
-    //! Hardware availability table of devices attached to ADCS.
-    extern std::map<std::string, Hardware::DeviceState&> adcs_hat;
+    extern ADCSState adcs_state;
     //! If mode is "pointing", the currently commanded attitude as a quaternion
     extern std::array<float, 4> cmd_attitude;
     //! If mode is "pointing", the currently commanded angular rate as a vector in body frame
@@ -138,9 +136,9 @@ namespace State {
     //! Current time in GPS format.
     extern msg_gps_time_t current_time;
     //! Most recent GPS position.
-    extern std::array<float, 3> gps_position;
+    extern std::array<double, 3> gps_position;
     //! Most recent GPS velocity.
-    extern std::array<float, 3> gps_velocity;
+    extern std::array<double, 3> gps_velocity;
     //! Readers-writers lock that prevents multi-process modification of Piksi state data.
     extern rwmutex_t piksi_state_lock;
   }
@@ -152,8 +150,13 @@ namespace State {
     extern rwmutex_t uplink_lock;
     //! Tracks number of consecutive missed uplinks from ground.
     extern unsigned int missed_uplinks;
+    #ifdef DEBUG
+    //! If the number of missed uplinks exceeds this value, safe hold is triggered.
+    static constexpr unsigned int MAX_MISSED_UPLINKS = 5; // Approximately 2.5 minutes
+    #else
     //! If the number of missed uplinks exceeds this value, safe hold is triggered.
     static constexpr unsigned int MAX_MISSED_UPLINKS = 288; // Approximately 24 hours
+    #endif
     //! Readers-writers lock that prevents multi-process modification of Quake state data.
     extern rwmutex_t quake_state_lock;
   }

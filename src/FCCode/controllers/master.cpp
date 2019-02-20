@@ -46,11 +46,13 @@ static unsigned short int safe_hold_needed() {
 
     // TODO add more software checks
     rwMtxRLock(&State::Quake::quake_state_lock);
-        if (State::Quake::missed_uplinks >= State::Quake::MAX_MISSED_UPLINKS) {
-            debug_println("Detected SAFE HOLD condition due to too many uplink reception failures.");
-            reason = 0; // TODO fix
-        }
+        unsigned int missed_uplinks = State::Quake::missed_uplinks;
     rwMtxRUnlock(&State::Quake::quake_state_lock);
+    debug_printf("missed uplinks: %d\n", missed_uplinks);
+    if (missed_uplinks >= State::Quake::MAX_MISSED_UPLINKS) {
+        debug_println("Detected SAFE HOLD condition due to too many uplink reception failures.");
+        reason = 1; // TODO fix
+    }
 
     return reason;
 }
@@ -139,7 +141,7 @@ static void gnc_calculate(void* args) {
     chSysUnlockFromISR();
 }
 
-static void master_loop() {
+static void master_loop() {    
     rwMtxRLock(&State::Quake::uplink_lock);
         bool is_uplink_processed = State::Quake::most_recent_uplink.is_uplink_processed;
     rwMtxRUnlock(&State::Quake::uplink_lock);
@@ -150,6 +152,7 @@ static void master_loop() {
     rwMtxRLock(&master_state_lock);
         MasterState master_state_copy = master_state;
         PANState pan_state_copy = pan_state;
+        debug_printf("Master State and PAN State: %d %d\n", master_state_copy, pan_state_copy);
     rwMtxRUnlock(&master_state_lock);
     switch(master_state_copy) {
         case MasterState::DETUMBLE: {
@@ -184,6 +187,7 @@ static void master_loop() {
         break;
         case MasterState::NORMAL: {
             unsigned short int safe_hold_reason = safe_hold_needed();
+            debug_printf("Safe hold reason: %d\n", safe_hold_reason);
             if (safe_hold_reason != 0) safe_hold(safe_hold_reason);
             switch(pan_state_copy) {
                 case PANState::FOLLOWER: {

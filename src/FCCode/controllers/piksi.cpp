@@ -15,15 +15,15 @@ namespace RTOSTasks {
 }
 
 static void piksi_read() {
-    // TODO
+    debug_println("Reading Piksi data");
 }
 
 static void piksi_check() {
-    // TODO
+    debug_println("Checking Piksi data");
 }
 
 void piksi_write_defaults() {
-    // TODO
+    debug_println("Writing default values to Piksi.");
 }
 
 void RTOSTasks::piksi_controller(void *arg) {

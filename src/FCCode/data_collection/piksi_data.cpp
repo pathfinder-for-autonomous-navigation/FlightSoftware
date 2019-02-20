@@ -11,13 +11,13 @@
 #include "data_collection_rates.hpp"
 
 static void save_position_history(void* arg) {
-    DataCollection::add_to_buffer<std::array<float,3>, DataCollectionRates::Piksi::POSITION>(
+    DataCollection::add_to_buffer<std::array<double,3>, DataCollectionRates::Piksi::POSITION>(
         StateHistory::Piksi::position_history,
         State::Piksi::gps_position);
 }
 
 static void save_velocity_history(void* arg) {
-    DataCollection::add_to_buffer<std::array<float,3>, DataCollectionRates::Piksi::VELOCITY>(
+    DataCollection::add_to_buffer<std::array<double,3>, DataCollectionRates::Piksi::VELOCITY>(
         StateHistory::Piksi::velocity_history,
         State::Piksi::gps_velocity);
 }

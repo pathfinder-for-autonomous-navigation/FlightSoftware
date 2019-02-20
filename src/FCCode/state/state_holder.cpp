@@ -22,44 +22,6 @@ namespace State {
 
     namespace ADCS {
         ADCS::ADCSState adcs_state = ADCS::ADCSState::ADCS_SAFE_HOLD;
-
-        static Hardware::DeviceState adcs_motorpot_state = {false, false, false};
-        static Hardware::DeviceState adcs_motor_x_state = {false, false, false};
-        static Hardware::DeviceState adcs_motor_y_state = {false, false, false};
-        static Hardware::DeviceState adcs_motor_z_state = {false, false, false};
-        static Hardware::DeviceState adcs_adc_motor_x_state = {false, false, false};
-        static Hardware::DeviceState adcs_adc_motor_y_state = {false, false, false};
-        static Hardware::DeviceState adcs_adc_motor_z_state = {false, false, false};
-        static Hardware::DeviceState adcs_magnetorquer_x_state = {false, false, false};
-        static Hardware::DeviceState adcs_magnetorquer_y_state = {false, false, false};
-        static Hardware::DeviceState adcs_magnetorquer_z_state = {false, false, false};
-        static Hardware::DeviceState adcs_ssa_adc_1_state = {false, false, false};
-        static Hardware::DeviceState adcs_ssa_adc_2_state = {false, false, false};
-        static Hardware::DeviceState adcs_ssa_adc_3_state = {false, false, false};
-        static Hardware::DeviceState adcs_ssa_adc_4_state = {false, false, false};
-        static Hardware::DeviceState adcs_ssa_adc_5_state = {false, false, false};
-        static Hardware::DeviceState adcs_gyro_state = {false, false, false};
-        static Hardware::DeviceState adcs_magnetometer_state = {false, false, false};
-        std::map<std::string, Hardware::DeviceState&> adcs_hat {
-            {"Motor Potentiometer", adcs_motorpot_state},
-            {"Motor X", adcs_motor_x_state},
-            {"Motor Y", adcs_motor_y_state},
-            {"Motor Z", adcs_motor_z_state},
-            {"Motor X ADC", adcs_adc_motor_x_state},
-            {"Motor Y ADC", adcs_adc_motor_y_state},
-            {"Motor Z ADC", adcs_adc_motor_z_state},
-            {"Magnetorquer X", adcs_magnetorquer_x_state},
-            {"Magnetorquer Y", adcs_magnetorquer_y_state},
-            {"Magnetorquer Z", adcs_magnetorquer_z_state},
-            {"Sun Sensor ADC 1", adcs_ssa_adc_1_state},
-            {"Sun Sensor ADC 2", adcs_ssa_adc_2_state},
-            {"Sun Sensor ADC 3", adcs_ssa_adc_3_state},
-            {"Sun Sensor ADC 4", adcs_ssa_adc_4_state},
-            {"Sun Sensor ADC 5", adcs_ssa_adc_5_state},
-            {"Gyroscope", adcs_gyro_state},
-            {"Magnetometer", adcs_magnetometer_state},
-        };
-
         std::array<float, 4> cmd_attitude;
         std::array<float, 3> cmd_ang_rate;
         std::array<float, 4> cur_attitude;
@@ -103,7 +65,7 @@ namespace State {
 
     namespace Piksi {
         msg_gps_time_t current_time;
-        std::array<float, 3> gps_position, gps_velocity;
+        std::array<double, 3> gps_position, gps_velocity;
         rwmutex_t piksi_state_lock;
     }
 

@@ -121,6 +121,8 @@ static THD_FUNCTION(propulsion_actuation_loop, arg) {
         rwMtxRUnlock(&propulsion_state_lock);
 
         if (is_inner_tank_temperature_too_high) {
+            // TODO document
+            // TODO notify ground that overpressure event happened.
             disable_thruster_firing();
             for(int i = 0; i < 10; i++) {
                 chMtxLock(&spike_and_hold_lock);
@@ -130,6 +132,8 @@ static THD_FUNCTION(propulsion_actuation_loop, arg) {
             }  
         }
         else if (is_outer_tank_temperature_too_high || is_outer_tank_pressure_too_high) {
+            // TODO document
+            // TODO notify ground that overpressure event happened.
             disable_thruster_firing();
             chMtxLock(&spike_and_hold_lock);
                 for(int i = 0; i < 10; i++) {

@@ -46,6 +46,8 @@ namespace State {
     struct DeviceState {
       //! Device is being supplied power
       bool powered_on;
+      //! Device is enabled
+      bool enabled;
       //! Field is set by safe hold check
       bool is_functional;
       //! If true, the software ignores that this device is nonfunctional and tries to use it anyway
