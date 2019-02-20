@@ -81,6 +81,7 @@ static void encode_adcs_state(std::bitset<PACKET_SIZE_BITS>& packet, unsigned in
         // Type: Boolean
         // Description: Indicates whether or not propulsion is currently setting the attitude of the satellite.
         full_adcs_state_representation.set(2, State::ADCS::is_propulsion_pointing_active);
+
         // Item: Is sun vector determination is working?
         // Size: 1
         // Type: Boolean
@@ -123,6 +124,7 @@ static void encode_propulsion_state(std::bitset<PACKET_SIZE_BITS>& packet, unsig
         // Type: Boolean
         // Description: Indicates whether or not the GNC algorithm has planned a propulsion manuever in the near future.
         propulsion_state_representation.set(0, State::Propulsion::is_firing_planned);
+       
         // Item: Is a propulsion manuever currently planned?
         // Size: 1
         // Type: Boolean
@@ -146,14 +148,14 @@ static void encode_propulsion_data(std::bitset<PACKET_SIZE_BITS>& packet, unsign
     std::bitset<11> delta_v_representation;
 
     // Item: Thrust vector
-    // Size: 30
-    // TODO fix size of above, since that resolution is 0.00025 m/s
+    // Size: 26
     // Type: Vector
     // Minimum: 0
     // Maximum: 0.005
     // Units: m/s
     // Description: Thrust vector for the upcoming planned propulsion manuever, if any. If there is no propulsion manuever planned, this field's data is meaningless.
-    std::bitset<30> thrust_vector_representation;
+    std::bitset<26> thrust_vector_representation;
+
     // Item: Firing time
     // Size: 48
     // Type: GPS time
@@ -185,7 +187,7 @@ static void encode_propulsion_data(std::bitset<PACKET_SIZE_BITS>& packet, unsign
     // Size: 300
     // Type: Sequence of floats
     // Minimum: 0
-    // Maximum: 100 // TODO
+    // Maximum: 100
     // Units: psi
     // Description: Outer tank pressure history. This is one time-averaged data point every 10 seconds from the last five minutes.
     rwMtxRLock(&StateHistory::Propulsion::propulsion_state_history_lock);
@@ -264,9 +266,18 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
     // Type: Array of booleans
     // Size per element: 1
     // Number of elements: 6
-    // Description: Whether or not outputs 1-6 are on.
-    std::bitset<6> output_data;
-    // TODO add heating control
+    // Description: Whether or not outputs 1-6 are on. Output 7 is whether or not the heater is on.
+    std::bitset<7> output_data;
+
+    // Item: Output currents
+    // Type: Array of integers
+    // Size per element: 7
+    // Number of elements: 6
+    // Minimum: 0
+    // Maximum: 1000
+    // Units: mA
+    // Description: Currents of outputs 1-6.
+    std::bitset<7> output_current_data[6];
 
     // Item: WDT boots
     // Size: 32
@@ -303,6 +314,8 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
             trim_int(State::Gomspace::gomspace_data.curin[i], 0, 1000, &boost_converter_current[i]);
         for(int i = 0; i < 6; i++)
             output_data.set(i, State::Gomspace::gomspace_data.output[i + 2]);
+        // TODO set heater
+
         // TODO add output currents
         std::bitset<32> boots_from_wdt(State::Gomspace::gomspace_data.counter_wdt_i2c);
         wdt_boots = boots_from_wdt;
@@ -350,6 +363,7 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
         for(int i = 0; i < 8; i++)
             config.set(config_ptr++, State::Gomspace::gomspace_config.output_safe_value[i]);
 
+        std::bitset<6> batt_voltage_config[4];
         // Item: Max Battery Voltage
         // Size: 6
         // Type: Integer
@@ -357,15 +371,15 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
         // Maximum: 90
         // Units: 100 mV
         // Description: Battery voltage that is considered "maximum" by Gomspace.
-        //
-        // Item: Normal Battery Voltage
+        trim_int(State::Gomspace::gomspace_config2.batt_maxvoltage / 100, 50, 90, &batt_voltage_config[0]);
+                // Item: Normal Battery Voltage
         // Size: 6
         // Type: Integer
         // Minimum: 50
         // Maximum: 90
         // Units: 100 mV
         // Description: Battery voltage that is considered "normal" by Gomspace.
-        //
+        trim_int(State::Gomspace::gomspace_config2.batt_normalvoltage / 100, 50, 90, &batt_voltage_config[1]);
         // Item: Safe Battery Voltage
         // Size: 6
         // Type: Integer
@@ -373,7 +387,7 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
         // Maximum: 90
         // Units: 100 mV
         // Description: Battery voltage that is considered "safe" by Gomspace.
-        //
+        trim_int(State::Gomspace::gomspace_config2.batt_safevoltage / 100, 50, 90, &batt_voltage_config[2]);
         // Item: Critical Battery Voltage
         // Size: 6
         // Type: Integer
@@ -381,10 +395,6 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
         // Maximum: 90
         // Units: 100 mV
         // Description: Battery voltage that is considered "critical" by Gomspace.
-        std::bitset<6> batt_voltage_config[4];
-        trim_int(State::Gomspace::gomspace_config2.batt_maxvoltage / 100, 50, 90, &batt_voltage_config[0]);
-        trim_int(State::Gomspace::gomspace_config2.batt_normalvoltage / 100, 50, 90, &batt_voltage_config[1]);
-        trim_int(State::Gomspace::gomspace_config2.batt_safevoltage / 100, 50, 90, &batt_voltage_config[2]);
         trim_int(State::Gomspace::gomspace_config2.batt_criticalvoltage / 100, 50, 90, &batt_voltage_config[3]);
         for(int j = 0; j < 4; j++) {
             for(int i = 0; i < batt_voltage_config[0].size(); i++)

@@ -90,13 +90,13 @@ static void encode_ssa_vec_history(std::bitset<PACKET_SIZE_BITS>& packet, unsign
     rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
         // Item: Sun sensor vector history
         // Type: Array of vectors
-        // Size per element: 29
+        // Size per element: 21
         // Number of elements: 10
         // Description: Record of sun sensor vector values. One instantaneous value every 30 seconds from the last 5 minutes
         while(!StateHistory::ADCS::ssa_vector_history.empty()) {
             std::array<float, 3> ssa_vec = StateHistory::ADCS::ssa_vector_history.get();
-            std::bitset<29> ssa_vec_representation;
-            trim_vector(ssa_vec, -10.0f, 10.0f, &ssa_vec_representation); // TODO fix numbers
+            std::bitset<21> ssa_vec_representation;
+            trim_vector(ssa_vec, 1.0f, &ssa_vec_representation); // TODO fix numbers
             for(unsigned int i = 0; i < ssa_vec_representation.size(); i++)
                 packet.set(packet_ptr++, ssa_vec_representation[i]);
         }
