@@ -71,7 +71,7 @@ namespace State {
       //! Vector in inertial frame specifying thrust impulse
       std::array<float, 3> thrust_vector;
       //! GPS time of thrust
-      msg_gps_time_t thrust_time; 
+      gps_time_t thrust_time; 
     };
   }
 }

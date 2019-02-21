@@ -11,6 +11,7 @@
 #include <map>
 #include <rwmutex.hpp>
 #include <Gomspace/Gomspace.hpp>
+#include <Piksi/GPSTime.hpp>
 #include "state_definitions.hpp"
 #include "device_states.hpp"
 #include "../controllers/controllers.hpp"
@@ -25,7 +26,7 @@ namespace State {
     //! Current boot # of satellite
     extern unsigned int boot_number; 
     //! Last time that data was uplinked to satellite
-    extern msg_gps_time_t last_uplink_time; 
+    extern gps_time_t last_uplink_time; 
     //! If last uplink was parseable by satellite
     extern bool was_last_uplink_valid; 
     //! Did the hardware setup succeed?
@@ -134,7 +135,7 @@ namespace State {
 
   namespace Piksi {
     //! Current time in GPS format.
-    extern msg_gps_time_t current_time;
+    extern gps_time_t current_time;
     //! Most recent GPS position.
     extern std::array<double, 3> gps_position;
     //! Most recent GPS velocity.

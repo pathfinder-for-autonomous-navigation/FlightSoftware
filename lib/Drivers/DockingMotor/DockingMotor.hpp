@@ -23,8 +23,6 @@ namespace Devices {
         static constexpr unsigned char DEFAULT_MOTOR_DIRECTION_PIN = 16;
         //! Default pin for docking motor sleep pin.
         static constexpr unsigned char DEFAULT_MOTOR_SLEEP_PIN = 17;
-        //! Default pin for docking motor reset pin.
-        static constexpr unsigned char DEFAULT_MOTOR_RESET_PIN = 17;
         //! Default pin for docking motor step.
         static constexpr unsigned char DEFAULT_MOTOR_STEP_PIN = 39;
 
@@ -41,18 +39,16 @@ namespace Devices {
         DockingMotor(unsigned char i1, 
                      unsigned char i2, 
                      unsigned char dir, 
-                     unsigned char sleep, 
-                     unsigned char reset, 
+                     unsigned char sleep,
                      unsigned char step);
 
         bool setup() override;
         bool is_functional() override;
         void disable() override;
         void reset() override;
-        void single_comp_test() override;
         std::string& name() const override;
 
-        /** @brief Turn the docking motor. **/
+        /** @brief Turn the docking motor in the opposite direction from how it previously moved. **/
         void toggle();
       private:
         //! I1 Pin
@@ -63,11 +59,11 @@ namespace Devices {
         unsigned char direction_pin_;
         //! Pin for putting docking motor controller to sleep.
         unsigned char sleep_pin_;
-        //! Pin for resetting docking motor contorller.
-        unsigned char reset_pin_;
         //! Pin for stepping docking motor.
         unsigned char stepper_pin_;
-        
+
+        //! Direction in which docking motor is currently allowed to turn.
+        unsigned char direction_;
     };
 }
 

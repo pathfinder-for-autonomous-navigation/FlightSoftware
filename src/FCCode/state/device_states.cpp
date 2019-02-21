@@ -28,7 +28,6 @@ namespace Devices {
                                DockingMotor::DEFAULT_MOTOR_I2_PIN,
                                DockingMotor::DEFAULT_MOTOR_DIRECTION_PIN,
                                DockingMotor::DEFAULT_MOTOR_SLEEP_PIN,
-                               DockingMotor::DEFAULT_MOTOR_RESET_PIN,
                                DockingMotor::DEFAULT_MOTOR_STEP_PIN);
 }
 

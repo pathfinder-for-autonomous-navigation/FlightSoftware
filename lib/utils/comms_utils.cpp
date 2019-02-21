@@ -60,22 +60,22 @@ void Comms::expand_quaternion(const std::bitset<Comms::QUATERNION_SIZE>& q, std:
     (*result)[missing_element] = sqrt((*result)[missing_element]);
 }
 
-void Comms::trim_gps_time(const msg_gps_time_t& gpstime, std::bitset<Comms::GPSTIME_SIZE>* result) {
-    std::bitset<16> wn((unsigned short int) gpstime.wn);
-    std::bitset<32> tow(gpstime.tow);
+void Comms::trim_gps_time(const gps_time_t& gpstime, std::bitset<Comms::GPSTIME_SIZE>* result) {
+    std::bitset<16> wn((unsigned short int) gpstime.gpstime.wn);
+    std::bitset<32> tow(gpstime.gpstime.tow);
     for(int i = 0; i < 16; i++)
         result->set(i, wn[i]);
     for(int i = 0; i < 32; i++)
         result->set(i + 16, tow[i]);
 }
 
-void Comms::expand_gps_time(const std::bitset<Comms::GPSTIME_SIZE>& gpstime, msg_gps_time_t* result) {
+void Comms::expand_gps_time(const std::bitset<Comms::GPSTIME_SIZE>& gpstime, gps_time_t* result) {
     std::bitset<16> wn;
     std::bitset<32> tow;
     for(int i = 0; i < 16; i++)
         wn.set(i, gpstime[i]);
     for(int i = 0; i < 32; i++)
         tow.set(i, gpstime[16+i]);
-    result->wn = (unsigned int) wn.to_ulong();
-    result->tow = (unsigned int) tow.to_ulong();
+    result->gpstime.wn = (unsigned int) wn.to_ulong();
+    result->gpstime.tow = (unsigned int) tow.to_ulong();
 }

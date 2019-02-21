@@ -49,11 +49,6 @@ class Device {
    *         cases, this should only be called as the result of a ground
    *         originated command. **/
   virtual void disable();
-  /** @brief Performs the device's single component test. This test writes a csv
-   *         formatted line over Serial. See the actual function implementation
-   *         for more details.
-   *  @returns csv file format String **/
-  virtual void single_comp_test();
   /** @brief Provides the device's name as a debug-friendly string. **/
   virtual std::string& name() const;
 };

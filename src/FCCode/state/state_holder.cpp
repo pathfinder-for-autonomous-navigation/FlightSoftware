@@ -12,7 +12,7 @@ namespace State {
         Master::MasterState master_state = Master::MasterState::STARTUP;
         Master::PANState pan_state = Master::PANState::MASTER_STARTUP;
         unsigned int boot_number = 1;
-        msg_gps_time_t last_uplink_time;
+        gps_time_t last_uplink_time;
         bool was_last_uplink_valid = false;
         bool is_deployed = false;
         bool is_follower = false;
@@ -56,7 +56,7 @@ namespace State {
         bool is_repressurization_active = false;
         bool is_propulsion_active = false;
         float delta_v_available = 11.0f; // m/s
-        Firing firing_data = {{0.0,0.0,0.0},{0,0,0,0}};
+        Firing firing_data;
         float tank_pressure = 0.0f;
         float tank_inner_temperature = 0.0f;
         float tank_outer_temperature = 0.0f;
@@ -64,7 +64,7 @@ namespace State {
     }
 
     namespace Piksi {
-        msg_gps_time_t current_time;
+        gps_time_t current_time;
         std::array<double, 3> gps_position, gps_velocity;
         rwmutex_t piksi_state_lock;
     }

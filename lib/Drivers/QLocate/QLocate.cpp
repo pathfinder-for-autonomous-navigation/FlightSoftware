@@ -64,9 +64,6 @@ void QLocate::reset() {config();}
 void QLocate::disable() {
   // TODO
 }
-void QLocate::single_comp_test() {
-  // TODO
-}
 
 static std::string quake_name = "Quake";
 std::string& QLocate::name() const {
@@ -222,7 +219,7 @@ int QLocate::sbdrb() {
     Serial.println("");
   #endif
   }
-  // Format as a string // TODO : Excecute included AT commands here
+  // Format as a string
   message.mes[size] = '\0';
   return 0;
 }

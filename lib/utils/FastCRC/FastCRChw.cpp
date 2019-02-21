@@ -109,7 +109,6 @@ uint8_t FastCRC7::update(const uint8_t *data, const uint16_t datalen)
     rCRC->CRC8_3 = *src++; //Write 8 Bit
   }
 
-//TODO: Check handling of  CRC_CTRL_TOTR1 for other CRC7s
 /*
   if (rCRC->CTRL & (1<<CRC_CTRL_TOTR1))
     return rCRC->CRC8 >> 1;

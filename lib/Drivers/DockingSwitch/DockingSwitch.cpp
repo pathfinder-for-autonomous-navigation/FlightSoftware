@@ -14,7 +14,6 @@ bool DockingSwitch::is_functional() { return true; }
 
 void DockingSwitch::disable() { }
 void DockingSwitch::reset() { }
-void DockingSwitch::single_comp_test() { }
 
 bool DockingSwitch::pressed() {
     return (digitalRead(switch_pin_) == 1);

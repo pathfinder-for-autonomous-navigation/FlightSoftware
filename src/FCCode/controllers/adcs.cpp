@@ -10,7 +10,10 @@
 #include "../state/state_holder.hpp"
 #include "../deployment_timer.hpp"
 #include "../data_collection/data_collection.hpp"
-#include "adcs_autocode/Pointing_Mode_Control_System.hpp"
+#include <AttitudePDcontrol.hpp>
+#include <AttitudeMath.hpp>
+#include <tensor.hpp>
+#include <MomentumControl.hpp>
 
 namespace RTOSTasks {
     THD_WORKING_AREA(adcs_controller_workingArea, 8192);
@@ -31,6 +34,11 @@ static void read_adcs_data() {
     float gyro_data[3], mag_data[3];
     adcs_system.get_rwa(rwa_speed_cmds, rwa_speeds, rwa_ramps);
     adcs_system.get_imu(gyro_data, mag_data);
+    // Compute spacecraft angular momentum using wheel speeds and inertias
+    std::array<float, 3> wheel_inertias;
+    for(int i = 0; i < 2; i++) wheel_inertias[i] = 1; // TODO replace with inertias of each wheel, and move to a constant
+    std::array<float, 3> spacecraft_L;
+    for(int i = 0; i < 2; i++) spacecraft_L[i] = wheel_inertias[i] * rwa_speeds[i];
     rwMtxWLock(&adcs_state_lock);
     for(int i = 0; i < 3; i++) {
         State::ADCS::rwa_speed_cmds[i] = rwa_speed_cmds[i];
@@ -38,7 +46,7 @@ static void read_adcs_data() {
         State::ADCS::rwa_ramps[i] = rwa_ramps[i];
         State::ADCS::gyro_data[i] = gyro_data[i];
         State::ADCS::mag_data[i] = mag_data[i];
-        // TODO compute spacecraft L
+        State::ADCS::spacecraft_L[i] = spacecraft_L[i];
     }
     rwMtxWUnlock(&adcs_state_lock);
 
@@ -79,34 +87,6 @@ static void read_adcs_data() {
     }
 }
 
-static void load_adcs_data_into_matlab_structs(ExtU* matlab_input_struct) {
-    // Read in values from state into rtU struct.
-    rwMtxRLock(&adcs_state_lock);
-        for(int i = 0; i < 4; i++) matlab_input_struct->q_cmd[i] = State::ADCS::cmd_attitude[i];
-        for(int i = 0; i < 4; i++) matlab_input_struct->quat_body[i] = State::ADCS::cur_attitude[i];
-        for(int i = 0; i < 3; i++) matlab_input_struct->w_cmd[i] = State::ADCS::cmd_ang_rate[i];
-        for(int i = 0; i < 3; i++) matlab_input_struct->w_body[i] = State::ADCS::cur_ang_rate[i];
-    rwMtxRUnlock(&adcs_state_lock);
-}
-
-static void load_matlab_outputs_into_adcs_system(const ExtY& matlab_output_struct) {
-    // Write commands into state
-    rwMtxWLock(&adcs_state_lock);
-        for(int i = 0; i < 3; i++) {
-            State::ADCS::rwa_torque_cmds[i] = matlab_output_struct.hb_rw_cmd[i];
-            State::ADCS::mtr_cmds[i] = matlab_output_struct.m_mt_cmd[i];
-        }
-    rwMtxWUnlock(&adcs_state_lock);
-    // Write commands to the actual ADCS box
-    std::array<float, 3> mtr_cmds, rwa_torque_cmds;
-    rwMtxRLock(&adcs_state_lock);
-        mtr_cmds = State::ADCS::mtr_cmds;
-        rwa_torque_cmds = State::ADCS::rwa_torque_cmds;
-    rwMtxRUnlock(&adcs_state_lock);
-    adcs_system.set_mtr_cmd(mtr_cmds.data());
-    adcs_system.set_rwa_mode(RWAMode::ACCEL_CTRL, rwa_torque_cmds.data());
-}
-
 static THD_WORKING_AREA(adcs_loop_workingArea, 4096);
 static THD_FUNCTION(adcs_loop, arg) {
     chRegSetThreadName("ADCS LOOP");
@@ -125,11 +105,17 @@ static THD_FUNCTION(adcs_loop, arg) {
                 ADCSState adcs_state = State::ADCS::adcs_state;
             rwMtxRUnlock(&adcs_state_lock);
             switch(adcs_state) {
-                case ADCSState::ADCS_DETUMBLE:
-                    load_adcs_data_into_matlab_structs(&rtU);
-                    // TODO insert autocoded block
-                    load_matlab_outputs_into_adcs_system(rtY);
+                case ADCSState::ADCS_DETUMBLE: {
+                    rwMtxRLock(&adcs_state_lock);
+                        for(int i = 0; i < 3; i++) MomentumControl::magfield[i] = State::ADCS::mag_data[i]; // TODO fix; use magnetic moment model
+                        for(int i = 0; i < 3; i++) MomentumControl::momentum[i] = 0; // TODO compute momentum in spacecraft frame
+                    rwMtxRUnlock(&adcs_state_lock);
+                    MomentumControl::update();
+                    rwMtxWLock(&adcs_state_lock);
+                        for(int i = 0; i < 3; i++) State::ADCS::mtr_cmds[i] = MomentumControl::moment[i];
+                    rwMtxWUnlock(&adcs_state_lock);
                     break;
+                }
                 case ADCSState::ZERO_TORQUE: {
                     // Set MTR to zero in state
                     rwMtxWLock(&adcs_state_lock);
@@ -146,9 +132,14 @@ static THD_FUNCTION(adcs_loop, arg) {
                 }
                 break;
                 case ADCSState::POINTING: {
-                    load_adcs_data_into_matlab_structs(&rtU);
-                    Pointing_Mode_Control_System_step();
-                    load_matlab_outputs_into_adcs_system(rtY);
+                    rwMtxRLock(&adcs_state_lock);
+                        quat_rot_diff(State::ADCS::cmd_attitude.data(), State::ADCS::cur_attitude.data(), AttitudePD::deltaquat);
+                        for(int i = 0; i < 3; i++) AttitudePD::angrate[i] = State::ADCS::cur_ang_rate[i];
+                    rwMtxRUnlock(&adcs_state_lock);
+                    AttitudePD::update();
+                    rwMtxWLock(&adcs_state_lock);
+                        for(int i = 0; i < 3; i++) State::ADCS::rwa_torque_cmds[i] = AttitudePD::torque[i];
+                    rwMtxWUnlock(&adcs_state_lock);
                 }
                 break;
                 case ADCSState::ADCS_SAFE_HOLD: {
@@ -201,8 +192,6 @@ void RTOSTasks::adcs_controller(void *arg) {
     chMtxLock(&State::Hardware::adcs_device_lock);
         adcs_system.set_mode(Mode::ACTIVE);
     chMtxLock(&State::Hardware::adcs_device_lock);
-
-    Pointing_Mode_Control_System_initialize();
 
     chThdExit((msg_t)0);
 }

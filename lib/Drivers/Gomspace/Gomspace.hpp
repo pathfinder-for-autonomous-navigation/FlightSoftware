@@ -117,7 +117,6 @@ class Gomspace : public I2CDevice {
     // Device functions
     bool setup() override;
     void reset() override;
-    void single_comp_test() override;
     bool i2c_ping() override;
     std::string& name() const override;
 

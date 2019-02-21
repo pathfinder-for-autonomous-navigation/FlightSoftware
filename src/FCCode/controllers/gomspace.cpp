@@ -48,7 +48,7 @@ static void gomspace_check() {
     debug_printf("Checking Gomspace battery voltage...");
     unsigned short int vbatt = gomspace_data.vbatt;
     if (vbatt < Gomspace::VOLTAGES::FC_SAFE) {
-        debug_println("Battery voltage is critical!");
+        debug_println("Battery voltage is enough for safe hold!");
         // TODO Set some flag for master controller to pick up on
     }
 
@@ -56,10 +56,6 @@ static void gomspace_check() {
     debug_println("Checking Gomspace inputs (currents and voltages).");
     debug_println("Checking Gomspace outputs (currents and voltages).");
     debug_println("Checking Gomspace temperature.");
-}
-
-void gomspace_write_defaults() {
-    // TODO
 }
 
 static THD_WORKING_AREA(gomspace_read_controller_workingArea, 4096);

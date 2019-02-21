@@ -6,6 +6,7 @@
 
 #include <utility>
 #include <EEPROM.h>
+#include <Piksi/GPSTime.hpp>
 #include "controllers.hpp"
 #include <Device.hpp>
 #include "constants.hpp"
@@ -13,6 +14,7 @@
 #include "../state/EEPROMAddresses.hpp"
 #include "../state/state_holder.hpp"
 #include "../comms/apply_uplink.hpp"
+#include <AttitudeMath.hpp>
 
 using State::Master::MasterState;
 using State::Master::master_state;
@@ -57,7 +59,7 @@ static unsigned short int safe_hold_needed() {
     return reason;
 }
 
-static void stop_safe_hold() {
+void stop_safe_hold() {
     chThdTerminate(RTOSTasks::safe_hold_timer_thread);
     RTOSTasks::stop_safehold();
 }
@@ -118,26 +120,26 @@ static virtual_timer_t gnc_calculation_timer;
 
 static void gnc_calculate(void* args) {
     // TODO run the Matlab-autocoded function to do the calculation
-    // Schedule firing
     std::array<float, 3> firing_vector;
-    msg_gps_time_t firing_time;
-    // TODO ensure that scheduled firing time is within systime bounds
+    gps_time_t firing_time;
+    // Ensure that scheduled firing is bounded properly
+    bool is_valid_firing = true;
+    if (vect_mag(firing_vector.data()) >= Constants::Propulsion::MAX_FIRING_DELTA_V) is_valid_firing = false;
+    // Ensure that scheduled firing time is within one orbit
+    rwMtxRLock(&State::Piksi::piksi_state_lock);
+        gps_time_t current_time = State::Piksi::current_time;
 
-    rwMtxRLockI(&State::Propulsion::propulsion_state_lock);
-        bool is_propulsion_enabled = State::Propulsion::is_propulsion_enabled;
-    rwMtxRUnlockI(&State::Propulsion::propulsion_state_lock);
-    if (is_propulsion_enabled) {
-        rwMtxWLockI(&State::Propulsion::propulsion_state_lock);
-            State::Propulsion::is_firing_planned = true;
-            State::Propulsion::firing_data.thrust_vector = firing_vector;
-            State::Propulsion::firing_data.thrust_time.wn = firing_time.wn;
-            State::Propulsion::firing_data.thrust_time.tow = firing_time.tow;
-        rwMtxWUnlockI(&State::Propulsion::propulsion_state_lock);
-    }
-    
+    rwMtxRUnlock(&State::Piksi::piksi_state_lock);
+
     chSysLockFromISR();
+        bool is_propulsion_enabled = State::Propulsion::is_propulsion_enabled;
+        if (is_propulsion_enabled && is_valid_firing) {
+                State::Propulsion::is_firing_planned = true;
+                State::Propulsion::firing_data.thrust_vector = firing_vector;
+                State::Propulsion::firing_data.thrust_time = firing_time;
+        }
         unsigned char gnc_calculation_interval = *((unsigned char*)args);
-        chVTSetI(&gnc_calculation_timer, S2ST(gnc_calculation_interval), gnc_calculate, args);
+        chVTSetI(&gnc_calculation_timer, S2ST(gnc_calculation_interval), gnc_calculate, args);    
     chSysUnlockFromISR();
 }
 

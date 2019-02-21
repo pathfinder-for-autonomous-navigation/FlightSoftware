@@ -10,6 +10,7 @@
 #include "../deployment_timer.hpp"
 #include "../data_collection/data_collection.hpp"
 #include <SpikeAndHold/SpikeAndHold.hpp>
+#include <tensor.hpp>
 
 namespace RTOSTasks {
     THD_WORKING_AREA(propulsion_controller_workingArea, 4096);
@@ -48,9 +49,25 @@ void disable_thruster_firing() {
 }
 
 static void fire_thrusters(void* args) {
-    // TODO compute tank thrusts
-    // TODO update delta v
-    // Make sure spacecraft is not spinning before firing happens
+    if (State::ADCS::angular_rate() >= State::ADCS::MAX_STABLE_ANGULAR_RATE) {
+        // Satellite is too unstable for a firing
+        disable_thruster_firing();
+        return;
+    }
+
+    // TODO compute tank thrusts based on DCM defined by current position
+    rwMtxRLock(&State::Piksi::piksi_state_lock);
+        std::array<double, 3> position = State::Piksi::gps_position;
+    rwMtxRUnlock(&State::Piksi::piksi_state_lock);
+
+    // Add to delta-v
+    pla::Vec3d thrust_vec;
+    rwMtxRLock(&State::Propulsion::propulsion_state_lock);
+        for(int i = 0; i < 2; i++) thrust_vec[i] = State::Propulsion::firing_data.thrust_vector[i];
+    rwMtxRLock(&State::Propulsion::propulsion_state_lock);
+    rwMtxWLock(&State::Propulsion::propulsion_state_lock);
+        State::Propulsion::delta_v_available += thrust_vec.length() / Constants::Master::SPACECRAFT_MASS;
+    rwMtxWUnlock(&State::Propulsion::propulsion_state_lock);
     chSysLockFromISR();
         debug_println("Initiating firing.");
         // TODO actually fire from tanks
@@ -62,25 +79,19 @@ static void fire_thrusters(void* args) {
 
 static void prepare_thruster_firing() {
     rwMtxRLock(&propulsion_state_lock);
-        msg_gps_time_t firing_time = {
-            State::Propulsion::firing_data.thrust_time.wn,
-            State::Propulsion::firing_data.thrust_time.tow,
-            State::Propulsion::firing_data.thrust_time.ns,
-            State::Propulsion::firing_data.thrust_time.flags,
-        };
+        gps_time_t firing_time = State::Propulsion::firing_data.thrust_time;
     rwMtxRUnlock(&propulsion_state_lock);
 
-    unsigned int firing_time_delta = 0; // Time, in seconds, until firing is planned
     rwMtxRLock(&State::Piksi::piksi_state_lock);
-    msg_gps_time_t current_time = State::Piksi::current_time;
+    gps_time_t current_time = State::Piksi::current_time;
     rwMtxRLock(&State::Piksi::piksi_state_lock);
-    if (current_time.wn > firing_time.wn || (current_time.wn == firing_time.wn && current_time.tow > firing_time.tow)) {
+    if (current_time > firing_time) {
         // We cannot execute this firing, since the planned time of the firing is less than the current time!
         disable_thruster_firing();
         return;
     }
         
-    firing_time_delta = (unsigned int) ((firing_time.wn - current_time.wn)*60*60*24*7 + ((int) (firing_time.tow - current_time.tow)) / 1000);
+    unsigned int firing_time_delta = (unsigned int) (firing_time - current_time);
     if (firing_time_delta < Constants::Propulsion::THRUSTER_PREPARATION_TIME) {
         rwMtxWLock(&propulsion_state_lock);
             State::Propulsion::is_repressurization_active = true;
@@ -121,7 +132,7 @@ static THD_FUNCTION(propulsion_actuation_loop, arg) {
         rwMtxRUnlock(&propulsion_state_lock);
 
         if (is_inner_tank_temperature_too_high) {
-            // TODO document
+            debug_println("Inner tank temperature is too high. Venting to reduce vapor pressure.");
             // TODO notify ground that overpressure event happened.
             disable_thruster_firing();
             for(int i = 0; i < 10; i++) {
@@ -132,7 +143,7 @@ static THD_FUNCTION(propulsion_actuation_loop, arg) {
             }  
         }
         else if (is_outer_tank_temperature_too_high || is_outer_tank_pressure_too_high) {
-            // TODO document
+            debug_println("Outer tank temperature or pressure is too high. Venting to reduce pressure.");
             // TODO notify ground that overpressure event happened.
             disable_thruster_firing();
             chMtxLock(&spike_and_hold_lock);

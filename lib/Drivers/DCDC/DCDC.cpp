@@ -30,7 +30,5 @@ void DCDC::reset() {
     enable();
 }
 
-void DCDC::single_comp_test() { }
-
 static std::string dcdc_name = "DCDC";
 std::string& DCDC::name() const { return dcdc_name; }

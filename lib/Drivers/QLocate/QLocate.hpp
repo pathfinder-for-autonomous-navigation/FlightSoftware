@@ -51,7 +51,6 @@ public:
   bool is_functional() override;
   void reset() override;
   void disable() override;
-  void single_comp_test() override;
   std::string& name() const override;
 
   /*! Returns sbdix_running */

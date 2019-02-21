@@ -71,17 +71,16 @@ namespace RTOSTasks {
     //! Loop times for each process running within the satellite.
     class LoopTimes {
       public:
-        // TODO fix all
         //! Number of milliseconds between ADCS state controller iterations
         static constexpr unsigned int ADCS = 100;
         //! Number of milliseconds between ADCS HAT checking iterations
-        static constexpr unsigned int ADCS_HAT_CHECK = 1000;
+        static constexpr unsigned int ADCS_HAT_CHECK = 50;
         //! Number of milliseconds between Gomspace state controller iterations
         static constexpr unsigned int GOMSPACE = 1000;
         //! Number of milliseconds between master state controller iterations
         static constexpr unsigned int MASTER = 1000;
         //! Number of milliseconds between Piksi state controller iterations
-        static constexpr unsigned int PIKSI = 1000;
+        static constexpr unsigned int PIKSI = 100;
         //! Number of milliseconds between propulsion actuations. This is really high
         // so that the pressure reading has time to stabilize.
         static constexpr unsigned int PROPULSION_ACTUATION_LOOP = 30000;

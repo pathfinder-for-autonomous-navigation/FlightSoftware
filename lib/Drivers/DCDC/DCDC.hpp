@@ -25,7 +25,6 @@ namespace Devices {
         bool is_functional() override;
         void disable() override;
         void reset() override;
-        void single_comp_test() override;
         std::string& name() const override;
 
         /** @brief Turn on DCDC by holding the enable pin high. **/

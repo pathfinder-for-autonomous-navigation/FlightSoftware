@@ -12,6 +12,7 @@
 #include <array>
 #include <FastCRC/FastCRC.h>
 #include <cmath>
+#include <Piksi/GPSTime.hpp>
 #include <Piksi/Piksi.hpp>
 #include <QLocate/QLocate.hpp>
 
@@ -214,13 +215,13 @@ namespace Comms {
      *  @param[in] gpstime GPS time struct to compress.
      *  @param[out] result Destination bitstring for storing the compressed GPS time.
      * **/
-    void trim_gps_time(const msg_gps_time_t& gpstime, std::bitset<GPSTIME_SIZE>* result);
+    void trim_gps_time(const gps_time_t& gpstime, std::bitset<GPSTIME_SIZE>* result);
 
     /** @brief Expand a compressed GPS time into its true value.
      *  @param[in] gpstime Bitstring containing the compressed GPS time.
      *  @param[out] result GPS time struct containing the uncompressed GPS time.
      * **/
-    void expand_gps_time(const std::bitset<GPSTIME_SIZE>& gpstime, msg_gps_time_t* result);
+    void expand_gps_time(const std::bitset<GPSTIME_SIZE>& gpstime, gps_time_t* result);
 }
 /** @} */
 

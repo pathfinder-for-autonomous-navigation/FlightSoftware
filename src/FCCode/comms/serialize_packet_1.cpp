@@ -33,11 +33,11 @@ static void encode_last_uplink_data(std::bitset<PACKET_SIZE_BITS>& packet, unsig
         // Size: 48
         // Type: GPS time
         // Description: Last time that a valid uplink was received from the ground.
-        std::bitset<48> last_uplink_time;
-        trim_gps_time(State::Master::last_uplink_time, &last_uplink_time);
+        std::bitset<48> last_uplink_time_representation;
+        trim_gps_time(State::Master::last_uplink_time, &last_uplink_time_representation);
     rwMtxRUnlock(&State::Piksi::piksi_state_lock);
-    for(int i = 0; i < last_uplink_time.size(); i++)
-        packet.set(packet_ptr++, last_uplink_time[i]);
+    for(int i = 0; i < last_uplink_time_representation.size(); i++)
+        packet.set(packet_ptr++, last_uplink_time_representation[i]);
     packet.set(packet_ptr++, State::Master::was_last_uplink_valid);
 }
 
@@ -168,9 +168,8 @@ static void encode_propulsion_data(std::bitset<PACKET_SIZE_BITS>& packet, unsign
         float delta_v_available = State::Propulsion::delta_v_available;
         std::array<float, 3> thrust_vector;
         for(int i = 0; i < 3; i++) thrust_vector[i] = State::Propulsion::firing_data.thrust_vector[i];
-        msg_gps_time_t firing_time;
-        firing_time.wn = State::Propulsion::firing_data.thrust_time.wn;
-        firing_time.tow = State::Propulsion::firing_data.thrust_time.tow;
+        gps_time_t firing_time;
+        firing_time = State::Propulsion::firing_data.thrust_time;
     rwMtxRUnlock(&State::Propulsion::propulsion_state_lock);
     // Write into packet
     trim_float(delta_v_available, 0, 15, &delta_v_representation);
@@ -302,10 +301,9 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
     // Units: C
     // Description: Temperature 2 on Gomspace. // TODO figure out what this means?
     std::bitset<9> temperatures[2];
-    std::bitset<56> config; // TODO double check bit counts below. Something went wrong in specification.
+    std::bitset<56> config;
     int config_ptr = 0;
 
-    // TODO check limits on all of these
     rwMtxRLock(&State::Gomspace::gomspace_state_lock);
         trim_int(State::Gomspace::gomspace_data.vbatt, 6000, 8000, &batt_voltage_representation);
         for(int i = 0; i < 3; i++)
@@ -314,7 +312,7 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
             trim_int(State::Gomspace::gomspace_data.curin[i], 0, 1000, &boost_converter_current[i]);
         for(int i = 0; i < 6; i++)
             output_data.set(i, State::Gomspace::gomspace_data.output[i + 2]);
-        // TODO set heater
+        // TODO heater output
 
         // TODO add output currents
         std::bitset<32> boots_from_wdt(State::Gomspace::gomspace_data.counter_wdt_i2c);
@@ -465,7 +463,7 @@ static void encode_piksi_time(std::bitset<PACKET_SIZE_BITS>& packet, unsigned in
     // Description: Current GPS time according to satellite.
     std::bitset<48> gps_time;
     rwMtxRLock(&State::Piksi::piksi_state_lock);
-        msg_gps_time_t current_time = State::Piksi::current_time;
+        gps_time_t current_time = State::Piksi::current_time;
     rwMtxRUnlock(&State::Piksi::piksi_state_lock);
     trim_gps_time(current_time, &gps_time);
     for(int i = 0; i < gps_time.size(); i++)
@@ -477,24 +475,24 @@ static void encode_current_adcs_data(std::bitset<PACKET_SIZE_BITS>& packet, unsi
     // Size: 29
     // Type: GPS time
     // Description: Current satellite attitude in // TODO frame??
-    std::bitset<29> trimmed_attitude;
+    std::bitset<29> attitude_representation;
 
     // Item: Current angular rate
     // Size: 30
     // Type: GPS time
     // Description: Current satellite angular rate in // TODO frame??
-    std::bitset<30> trimmed_rate;
+    std::bitset<30> rate_representation;
 
     rwMtxRLock(&State::ADCS::adcs_state_lock);
         std::array<float, 4> cur_attitude = State::ADCS::cur_attitude;
         std::array<float, 3> cur_ang_rate = State::ADCS::cur_ang_rate;
     rwMtxRUnlock(&State::ADCS::adcs_state_lock);
-    trim_quaternion(cur_attitude, &trimmed_attitude);
-    trim_vector(cur_ang_rate, 0, 5, &trimmed_rate); // TODO check numbers
-    for(int i = 0; i < trimmed_attitude.size(); i++)
-        packet.set(packet_ptr++, trimmed_attitude[i]);
-    for(int i = 0; i < trimmed_rate.size(); i++)
-        packet.set(packet_ptr++, trimmed_rate[i]);
+    trim_quaternion(cur_attitude, &attitude_representation);
+    trim_vector(cur_ang_rate, 0, 5, &rate_representation); // TODO check numbers
+    for(int i = 0; i < attitude_representation.size(); i++)
+        packet.set(packet_ptr++, attitude_representation[i]);
+    for(int i = 0; i < rate_representation.size(); i++)
+        packet.set(packet_ptr++, rate_representation[i]);
 }
 
 void Comms::serialize_packet_1(std::array<char, PACKET_SIZE_BYTES>& dest) {

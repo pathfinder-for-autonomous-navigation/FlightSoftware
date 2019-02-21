@@ -19,9 +19,8 @@ namespace RTOSTasks {
 
 void RTOSTasks::stop_safehold() {
     rwMtxWLock(&State::Master::master_state_lock);
-        State::Master::master_state = State::Master::MasterState::NORMAL;
-        if (State::Master::is_follower) State::Master::pan_state = State::Master::PANState::FOLLOWER; // TODO is this what we always want to do?
-        else State::Master::pan_state = State::Master::PANState::STANDBY;
+        State::Master::master_state = State::Master::MasterState::DETUMBLE;
+        State::Master::pan_state = State::Master::PANState::MASTER_DETUMBLE;
         State::Master::autoexited_safe_hold = false; // Here we set autoexit to false, since this function
                                                      // could be called by an uplink packet
     rwMtxWUnlock(&State::Master::master_state_lock);
