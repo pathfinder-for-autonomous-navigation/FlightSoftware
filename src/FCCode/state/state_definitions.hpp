@@ -8,6 +8,7 @@
 #define STATE_DEFINITIONS_HPP_
 
 #include <Piksi/Piksi.hpp>
+#include <Piksi/GPSTime.hpp>
 
 // Containers and enums for holding state
 namespace State {
@@ -66,12 +67,19 @@ namespace State {
   }
 
   namespace Propulsion {
+    enum PropulsionState {
+      IDLE,
+      VENTING,
+      AWAITING_PRESSURIZATION,
+      PRESSURIZING,
+      FIRING
+    };
     //! Container for data that represents a propulsion manuever.
     struct Firing {
       //! Vector in inertial frame specifying thrust impulse
-      std::array<float, 3> thrust_vector;
+      std::array<float, 3> impulse_vector;
       //! GPS time of thrust
-      gps_time_t thrust_time; 
+      gps_time_t time; 
     };
   }
 }

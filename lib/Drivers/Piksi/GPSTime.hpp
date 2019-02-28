@@ -42,17 +42,30 @@ struct gps_time_t {
         gps_time_t t(*this);
 
         t.gpstime.wn += t1.gpstime.wn;
-        if (t.gpstime.tow + t1.gpstime.tow > MILLISECONDS_IN_WEEK) t.gpstime.wn += 1;
+        if (t.gpstime.tow + t1.gpstime.tow > MILLISECONDS_IN_WEEK)
+            t.gpstime.wn += (t.gpstime.tow + t1.gpstime.tow) / MILLISECONDS_IN_WEEK;
         t.gpstime.tow = (t.gpstime.tow + t1.gpstime.tow) % MILLISECONDS_IN_WEEK;
 
         return t;
+    }
+
+    /** Add milliseconds **/
+    gps_time_t operator+(const unsigned int t1) const {
+        gps_time_t t(*this);
+        gps_time_t t2;
+        t2.gpstime.wn = 0;
+        t2.gpstime.tow = t1;
+
+        return t + t2;
     }
 
     /** Subtraction operator **/
     gps_time_t operator-(const gps_time_t& t1) const {
         gps_time_t t(*this);
 
-        t.gpstime.wn -= t1.gpstime.wn;
+        if (t.gpstime.wn < t1.gpstime.wn) t.gpstime.wn = 0;
+        else t.gpstime.wn -= t1.gpstime.wn;
+        
         if (t.gpstime.tow - t1.gpstime.tow < 0) {
             t.gpstime.wn -= 1;
             t.gpstime.tow = MILLISECONDS_IN_WEEK - t.gpstime.tow + t1.gpstime.tow;
@@ -61,6 +74,16 @@ struct gps_time_t {
             t.gpstime.tow = t.gpstime.tow - t1.gpstime.tow;
         }
         return t;
+    }
+
+    /** Subtract milliseconds **/
+    gps_time_t operator-(const unsigned int t1) const {
+        gps_time_t t(*this);
+        gps_time_t t2;
+        t2.gpstime.wn = 0;
+        t2.gpstime.tow = t1;
+
+        return t - t2;
     }
 
     /** Cast to integer operator **/

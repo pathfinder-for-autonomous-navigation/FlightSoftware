@@ -11,6 +11,7 @@
 #include "../deployment_timer.hpp"
 #include "../data_collection/data_collection.hpp"
 #include <AttitudePDcontrol.hpp>
+#include <AttitudeEstimator.hpp>
 #include <AttitudeMath.hpp>
 #include <tensor.hpp>
 #include <MomentumControl.hpp>
@@ -24,6 +25,8 @@ using State::ADCS::ADCSState;
 using State::ADCS::adcs_state_lock;
 using Devices::adcs_system;
 
+using namespace ADCSControllers;
+
 static unsigned char ssa_mode = SSAMode::IN_PROGRESS;
 static unsigned int ssa_tries = 0; // Number of consecutive loops that we've tried to
                                    // collect SSA data
@@ -34,20 +37,12 @@ static void read_adcs_data() {
     float gyro_data[3], mag_data[3];
     adcs_system.get_rwa(rwa_speed_cmds, rwa_speeds, rwa_ramps);
     adcs_system.get_imu(gyro_data, mag_data);
-    // Compute spacecraft angular momentum using wheel speeds and inertias
-    std::array<float, 3> wheel_inertias;
-    for(int i = 0; i < 2; i++) wheel_inertias[i] = 1; // TODO replace with inertias of each wheel, and move to a constant
-    std::array<float, 3> spacecraft_L;
-    for(int i = 0; i < 2; i++) spacecraft_L[i] = wheel_inertias[i] * rwa_speeds[i];
     rwMtxWLock(&adcs_state_lock);
-    for(int i = 0; i < 3; i++) {
-        State::ADCS::rwa_speed_cmds[i] = rwa_speed_cmds[i];
-        State::ADCS::rwa_speeds[i] = rwa_speeds[i];
-        State::ADCS::rwa_ramps[i] = rwa_ramps[i];
-        State::ADCS::gyro_data[i] = gyro_data[i];
-        State::ADCS::mag_data[i] = mag_data[i];
-        State::ADCS::spacecraft_L[i] = spacecraft_L[i];
-    }
+        std::copy(std::begin(rwa_speed_cmds), std::end(rwa_speed_cmds), State::ADCS::rwa_speed_cmds.begin());
+        std::copy(std::begin(rwa_speeds), std::end(rwa_speeds), State::ADCS::rwa_speeds.begin());
+        std::copy(std::begin(rwa_ramps), std::end(rwa_ramps), State::ADCS::rwa_ramps.begin());
+        std::copy(std::begin(gyro_data), std::end(gyro_data), State::ADCS::gyro_data.begin());
+        std::copy(std::begin(mag_data), std::end(mag_data), State::ADCS::mag_data.begin());
     rwMtxWUnlock(&adcs_state_lock);
 
     std::array<float, 3> ssa_vec;
@@ -94,9 +89,14 @@ static THD_FUNCTION(adcs_loop, arg) {
     systime_t t0 = chVTGetSystemTimeX();
     while(true) {
         t0 += S2ST(1000);
+
+        // Reading and writing to Kalman filter
+        // Read
         read_adcs_data();
-        // TODO Attitude estimation function goes here
-        // Update state based on estimation
+        // Update prediction TODO
+        //State::ADCS::Estimator::update();
+
+        // State machine
         rwMtxRLock(&State::ADCS::adcs_state_lock);
         bool adcs_control_allowed = (State::ADCS::adcs_state != State::ADCS::ADCS_SAFE_HOLD);
         rwMtxRUnlock(&State::ADCS::adcs_state_lock);
@@ -107,8 +107,8 @@ static THD_FUNCTION(adcs_loop, arg) {
             switch(adcs_state) {
                 case ADCSState::ADCS_DETUMBLE: {
                     rwMtxRLock(&adcs_state_lock);
-                        for(int i = 0; i < 3; i++) MomentumControl::magfield[i] = State::ADCS::mag_data[i]; // TODO fix; use magnetic moment model
-                        for(int i = 0; i < 3; i++) MomentumControl::momentum[i] = 0; // TODO compute momentum in spacecraft frame
+                        for(int i = 0; i < 3; i++) MomentumControl::magfield[i] = ADCSControllers::Estimator::magfield_body[i];
+                        for(int i = 0; i < 3; i++) MomentumControl::momentum[i] = ADCSControllers::Estimator::htotal_body[i];
                     rwMtxRUnlock(&adcs_state_lock);
                     MomentumControl::update();
                     rwMtxWLock(&adcs_state_lock);
@@ -157,13 +157,22 @@ static THD_FUNCTION(adcs_loop, arg) {
     }
 }
 
-static virtual_timer_t check_hat_timer;
-static void check_hat(void* args) {
-    // TODO write to actual state
-    adcs_system.update_hat();
-    chSysLockFromISR();
-        chVTSetI(&check_hat_timer, MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK), check_hat, NULL);
-    chSysUnlockFromISR();
+static THD_WORKING_AREA(check_hat_workingArea, 1024);
+static THD_FUNCTION(check_hat, args) {
+    systime_t t = chVTGetSystemTimeX();
+    while(true) {
+        t += MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK);
+
+        chMtxLock(&State::Hardware::adcs_device_lock);
+        adcs_system.update_hat();
+        chMtxUnlock(&State::Hardware::adcs_device_lock);
+
+        rwMtxWLock(&State::ADCS::adcs_state_lock);
+        // TODO write to actual state
+        rwMtxWUnlock(&State::ADCS::adcs_state_lock);
+
+        chThdSleepUntil(t);
+    }
 }
 
 void RTOSTasks::adcs_controller(void *arg) {
@@ -176,11 +185,10 @@ void RTOSTasks::adcs_controller(void *arg) {
 
     DataCollection::initialize_adcs_history_timers();
 
-    chVTObjectInit(&check_hat_timer);
-    chSysLock();
-        chVTSet(&check_hat_timer, MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK), check_hat, NULL);
-    chSysUnlock();
-    
+    // Create HAT checker thread
+    chThdCreateStatic(check_hat_workingArea, 
+        sizeof(check_hat_workingArea), RTOSTasks::adcs_thread_priority, check_hat, NULL);
+
     debug_println("Waiting for deployment timer to finish.");
     rwMtxRLock(&State::Master::master_state_lock);
         bool is_deployed = State::Master::is_deployed;

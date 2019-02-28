@@ -113,7 +113,7 @@ void RTOSTasks::quake_controller(void *arg) {
 
     systime_t deadline = chVTGetSystemTimeX();
     while(true) {
-        deadline += MS2ST(RTOSTasks::LoopTimes::QUAKE); // TODO move to constant
+        deadline += MS2ST(RTOSTasks::LoopTimes::QUAKE);
         quake_loop(deadline);
         chThdSleepUntil(deadline);
     }

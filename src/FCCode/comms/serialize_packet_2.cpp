@@ -59,7 +59,7 @@ static void encode_rate_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned 
         // Description: Record of angular rate of satellite, one time-averaged value over every 30 seconds from the past five minutes
         while(!StateHistory::ADCS::rate_history.empty()) {
             std::bitset<30> rate_representation;
-            trim_vector(StateHistory::ADCS::rate_history.get(), 0, 5, &rate_representation); // TODO check numbers
+            trim_vector(StateHistory::ADCS::rate_history.get(), Constants::ADCS::MAX_ANGULAR_RATE, &rate_representation);
             for(unsigned int i = 0; i < rate_representation.size(); i++)
                 packet.set(packet_ptr++, rate_representation[i]);
         }
@@ -70,7 +70,7 @@ static void encode_rate_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned 
         // Description: Record of angular rate of satellite, one instantaneous value every second from the past 10 seconds
         while(!StateHistory::ADCS::rate_fast_history.empty()) {
             std::bitset<30> rate_representation;
-            trim_vector(StateHistory::ADCS::rate_fast_history.get(), 0, 5, &rate_representation); // TODO check numbers
+            trim_vector(StateHistory::ADCS::rate_fast_history.get(), Constants::ADCS::MAX_ANGULAR_RATE, &rate_representation);
             for(unsigned int i = 0; i < rate_representation.size(); i++)
                 packet.set(packet_ptr++, rate_representation[i]);
         }
@@ -86,7 +86,8 @@ static void encode_spacecraft_L_history(std::bitset<PACKET_SIZE_BITS>& packet, u
         // Description: Record of angular momentum of satellite as computed via the reaction wheels. One time-averaged value every 30 seconds from the past 5 minutes
         while(!StateHistory::ADCS::spacecraft_L_history.empty()) {
             std::bitset<30> L_representation;
-            trim_vector(StateHistory::ADCS::spacecraft_L_history.get(), 0, 5, &L_representation); // TODO check numbers
+            trim_vector(StateHistory::ADCS::spacecraft_L_history.get(), 
+                Constants::ADCS::MAX_ANGULAR_RATE, &L_representation);
             for(unsigned int i = 0; i < L_representation.size(); i++)
                 packet.set(packet_ptr++, L_representation[i]);
         }
@@ -97,7 +98,8 @@ static void encode_spacecraft_L_history(std::bitset<PACKET_SIZE_BITS>& packet, u
         // Description: Record of angular momentum of satellite as computed via the reaction wheels. One instantaneous value every second from the past 10 seconds
         while(!StateHistory::ADCS::spacecraft_L_fast_history.empty()) {
             std::bitset<30> L_representation;
-            trim_vector(StateHistory::ADCS::spacecraft_L_fast_history.get(), 0, 5, &L_representation); // TODO check numbers
+            trim_vector(StateHistory::ADCS::spacecraft_L_fast_history.get(), 
+                Constants::ADCS::MAX_ANGULAR_RATE, &L_representation);
             for(unsigned int i = 0; i < L_representation.size(); i++)
                 packet.set(packet_ptr++, L_representation[i]);
         }

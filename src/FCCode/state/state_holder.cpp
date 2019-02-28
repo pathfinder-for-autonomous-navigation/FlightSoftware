@@ -9,8 +9,8 @@
 namespace State {
     // Default values for all state-related data
     namespace Master {
-        Master::MasterState master_state = Master::MasterState::STARTUP;
-        Master::PANState pan_state = Master::PANState::MASTER_STARTUP;
+        MasterState master_state = MasterState::STARTUP;
+        PANState pan_state = PANState::MASTER_STARTUP;
         unsigned int boot_number = 1;
         gps_time_t last_uplink_time;
         bool was_last_uplink_valid = false;
@@ -21,19 +21,14 @@ namespace State {
     }
 
     namespace ADCS {
-        ADCS::ADCSState adcs_state = ADCS::ADCSState::ADCS_SAFE_HOLD;
+        ADCSState adcs_state = ADCSState::ADCS_SAFE_HOLD;
         std::array<float, 4> cmd_attitude;
-        std::array<float, 3> cmd_ang_rate;
         std::array<float, 4> cur_attitude;
         std::array<float, 3> cur_ang_rate;
         bool is_propulsion_pointing_active = false;
         bool is_sun_vector_determination_working = false;
         bool is_sun_vector_collection_working = false;
-        float angular_rate() {
-            return sqrt(pow(cur_ang_rate[0],2) + pow(cur_ang_rate[1],2) + pow(cur_ang_rate[2],2));
-        }
         std::array<float, 3> rwa_speed_cmds, rwa_speeds, rwa_ramps;
-        std::array<float, 3> spacecraft_L;
         std::array<float, 3> rwa_torque_cmds;
         std::array<float, 3> mtr_cmds;
         std::array<float, 3> ssa_vec;
@@ -50,10 +45,10 @@ namespace State {
     }
 
     namespace Propulsion {
+        PropulsionState propulsion_state = PropulsionState::IDLE;
         bool is_firing_planned = false;
         bool is_firing_planned_by_uplink = false;
         bool is_propulsion_enabled = false;
-        bool is_repressurization_active = false;
         bool is_propulsion_active = false;
         float delta_v_available = 11.0f; // m/s
         Firing firing_data;
@@ -63,9 +58,19 @@ namespace State {
         rwmutex_t propulsion_state_lock;
     }
 
+    namespace GNC {
+        std::array<double, 3> gps_position, gps_position_other, gps_velocity, gps_velocity_other;
+        bool has_firing_happened_in_nighttime = false;
+        rwmutex_t gnc_state_lock;
+    }
+
     namespace Piksi {
-        gps_time_t current_time;
-        std::array<double, 3> gps_position, gps_velocity;
+        gps_time_t recorded_current_time;
+        systime_t time_collection_timestamp;
+        gps_time_t propagated_current_time;
+        systime_t propagated_time_collection_timestamp;
+        std::array<double, 3> recorded_gps_position, recorded_gps_position_other, 
+            recorded_gps_velocity, recorded_gps_velocity_other;
         rwmutex_t piksi_state_lock;
     }
 

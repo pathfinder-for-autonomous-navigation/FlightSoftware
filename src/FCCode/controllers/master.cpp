@@ -7,6 +7,8 @@
 #include <utility>
 #include <EEPROM.h>
 #include <Piksi/GPSTime.hpp>
+#include <tensor.hpp>
+#include <AttitudeEstimator.hpp>
 #include "controllers.hpp"
 #include <Device.hpp>
 #include "constants.hpp"
@@ -73,6 +75,14 @@ static void safe_hold(unsigned short int reason) {
         State::Master::pan_state = State::Master::PANState::MASTER_SAFEHOLD;
     rwMtxWUnlock(&State::Master::master_state_lock);
 
+    rwMtxWLock(&State::ADCS::adcs_state_lock);
+        State::ADCS::adcs_state = State::ADCS::ZERO_TORQUE;
+    rwMtxWUnlock(&State::ADCS::adcs_state_lock);
+
+    rwMtxWLock(&State::Propulsion::propulsion_state_lock);
+        State::ADCS::adcs_state = State::ADCS::ZERO_TORQUE;
+    rwMtxWUnlock(&State::Propulsion::propulsion_state_lock);
+
     chMtxLock(&eeprom_lock);
         EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_FLAG, true);
     chMtxUnlock(&eeprom_lock);
@@ -116,33 +126,6 @@ void initialization_hold(unsigned short int reason) {
     // master_loop(), which will continuously check Quake uplink for manual control/mode shift commands
 }
 
-static virtual_timer_t gnc_calculation_timer;
-
-static void gnc_calculate(void* args) {
-    // TODO run the Matlab-autocoded function to do the calculation
-    std::array<float, 3> firing_vector;
-    gps_time_t firing_time;
-    // Ensure that scheduled firing is bounded properly
-    bool is_valid_firing = true;
-    if (vect_mag(firing_vector.data()) >= Constants::Propulsion::MAX_FIRING_DELTA_V) is_valid_firing = false;
-    // Ensure that scheduled firing time is within one orbit
-    rwMtxRLock(&State::Piksi::piksi_state_lock);
-        gps_time_t current_time = State::Piksi::current_time;
-
-    rwMtxRUnlock(&State::Piksi::piksi_state_lock);
-
-    chSysLockFromISR();
-        bool is_propulsion_enabled = State::Propulsion::is_propulsion_enabled;
-        if (is_propulsion_enabled && is_valid_firing) {
-                State::Propulsion::is_firing_planned = true;
-                State::Propulsion::firing_data.thrust_vector = firing_vector;
-                State::Propulsion::firing_data.thrust_time = firing_time;
-        }
-        unsigned char gnc_calculation_interval = *((unsigned char*)args);
-        chVTSetI(&gnc_calculation_timer, S2ST(gnc_calculation_interval), gnc_calculate, args);    
-    chSysUnlockFromISR();
-}
-
 static void master_loop() {    
     rwMtxRLock(&State::Quake::uplink_lock);
         bool is_uplink_processed = State::Quake::most_recent_uplink.is_uplink_processed;
@@ -174,8 +157,7 @@ static void master_loop() {
             if (angular_rate < State::ADCS::MAX_STABLE_ANGULAR_RATE) {
                 rwMtxWLock(&State::ADCS::adcs_state_lock);
                     State::ADCS::adcs_state = State::ADCS::ADCSState::POINTING;
-                    for(int i = 0; i < 3; i++) State::ADCS::cmd_attitude[i] = State::ADCS::cur_attitude[i];
-                    for(int i = 0; i < 3; i++) State::ADCS::cmd_ang_rate[i] = State::ADCS::cur_ang_rate[i];
+                    State::ADCS::cmd_attitude = State::ADCS::cur_attitude;
                 rwMtxWUnlock(&State::ADCS::adcs_state_lock);
                 rwMtxWLock(&master_state_lock);
                     master_state = MasterState::NORMAL;
@@ -193,17 +175,12 @@ static void master_loop() {
             if (safe_hold_reason != 0) safe_hold(safe_hold_reason);
             switch(pan_state_copy) {
                 case PANState::FOLLOWER: {
-                    unsigned char gnc_calculation_interval = 60; // seconds
-                    chVTDoSetI(&gnc_calculation_timer, S2ST(gnc_calculation_interval), gnc_calculate, (void*) &gnc_calculation_interval);
+                    RTOSTasks::LoopTimes::GNC = 60000;
                 }
                 break;
                 case PANState::FOLLOWER_CLOSE_APPROACH: {
-                    // TODO If state change happens from follower to follower close approach,
-                    // reset calculation timer
-                    unsigned char gnc_calculation_interval = 10; // seconds
-                    chVTDoSetI(&gnc_calculation_timer, S2ST(gnc_calculation_interval), gnc_calculate, (void*) &gnc_calculation_interval);
-                    // TODO if on night side of Earth, commit no more than 1 GNC manuever
-                    // Should be a part of the MATLAB code, tbh
+                     RTOSTasks::LoopTimes::GNC = 10000;
+                    ADCSControllers::point_for_close_approach();
                 }
                 break;
                 case PANState::PAIRED: {
@@ -212,18 +189,17 @@ static void master_loop() {
                         pan_state = PANState::STANDBY;
                     rwMtxWUnlock(&master_state_lock);
                 }
-                    break;
+                break;
                 case PANState::STANDBY:
-                    // TODO adjust ADCS pointing based on current position
-                    break;
+                    ADCSControllers::point_for_standby();
+                break;
                 case PANState::LEADER_CLOSE_APPROACH:
-                    // TODO adjust ADCS pointing based on current position
-                    break;
+                    ADCSControllers::point_for_close_approach();
+                break;
                 case PANState::SPACEJUNK:
                     // Do ABSOLUTELY nothing.
                     // TODO set ADCS to passive
-                    chVTReset(&gnc_calculation_timer);
-                    break;
+                break;
                 default:
                     safe_hold(0); // TODO fix
             }
@@ -248,8 +224,6 @@ static void master_loop() {
 void master_init() {
     chRegSetThreadName("MASTER");
     debug_println("Master controller process has started.");
-
-    chVTObjectInit(&gnc_calculation_timer);
 
     // Should we be in safe hold?
     chMtxLock(&eeprom_lock);

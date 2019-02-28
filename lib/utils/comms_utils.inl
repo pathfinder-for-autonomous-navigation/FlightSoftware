@@ -6,6 +6,7 @@
  */
 
 #include "comms_utils.hpp"
+#include <AttitudeMath.hpp>
 
 template<unsigned int packet_bit_size>
 unsigned int Comms::add_packet_checksum(std::bitset<packet_bit_size>& packet,
@@ -61,7 +62,7 @@ float Comms::expand_double(const std::bitset<max_size>& d, double min, double ma
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
 void Comms::trim_vector(const std::array<float, 3>& v, float min_magnitude, float max_magnitude, std::bitset<max_vec_size>* result) {
-    float mag = sqrt(pow(v[0],2)+pow(v[1],2)+pow(v[2],2));
+    float mag = vect_mag(v.data());
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_FLOAT_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_representation;
     trim_float(mag, min_magnitude, max_magnitude, &magnitude_representation);

@@ -49,8 +49,6 @@ class Device {
    *         cases, this should only be called as the result of a ground
    *         originated command. **/
   virtual void disable();
-  /** @brief Provides the device's name as a debug-friendly string. **/
-  virtual std::string& name() const;
 };
 }  // namespace Devices
 

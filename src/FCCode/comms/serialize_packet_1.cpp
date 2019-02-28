@@ -76,12 +76,6 @@ static void encode_adcs_state(std::bitset<PACKET_SIZE_BITS>& packet, unsigned in
     for(int i = 0; i < 2; i++)
         full_adcs_state_representation.set(i, adcs_state_representation[2-i]);
     rwMtxRLock(&State::ADCS::adcs_state_lock);
-        // Item: Is propulsion pointing active?
-        // Size: 1
-        // Type: Boolean
-        // Description: Indicates whether or not propulsion is currently setting the attitude of the satellite.
-        full_adcs_state_representation.set(2, State::ADCS::is_propulsion_pointing_active);
-
         // Item: Is sun vector determination is working?
         // Size: 1
         // Type: Boolean
@@ -116,7 +110,7 @@ static void encode_adcs_hat(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int&
 }
 
 static void encode_propulsion_state(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    std::bitset<2> propulsion_state_representation;
+    std::bitset<1> propulsion_state_representation;
 
     rwMtxRLock(&State::Propulsion::propulsion_state_lock);
         // Item: Is a propulsion manuever currently planned?
@@ -124,12 +118,6 @@ static void encode_propulsion_state(std::bitset<PACKET_SIZE_BITS>& packet, unsig
         // Type: Boolean
         // Description: Indicates whether or not the GNC algorithm has planned a propulsion manuever in the near future.
         propulsion_state_representation.set(0, State::Propulsion::is_firing_planned);
-       
-        // Item: Is a propulsion manuever currently planned?
-        // Size: 1
-        // Type: Boolean
-        // Description: Indicates whether or not the propulsion system is currently repressurizing the tank in preparation for a maneuver.
-        propulsion_state_representation.set(1, State::Propulsion::is_repressurization_active);
     rwMtxRUnlock(&State::Propulsion::propulsion_state_lock);
 
     for(int i = 0; i < propulsion_state_representation.size(); i++)
@@ -147,14 +135,14 @@ static void encode_propulsion_data(std::bitset<PACKET_SIZE_BITS>& packet, unsign
     // occurred so far.
     std::bitset<11> delta_v_representation;
 
-    // Item: Thrust vector
+    // Item: Impulse vector
     // Size: 26
     // Type: Vector
     // Minimum: 0
     // Maximum: 0.005
     // Units: m/s
-    // Description: Thrust vector for the upcoming planned propulsion manuever, if any. If there is no propulsion manuever planned, this field's data is meaningless.
-    std::bitset<26> thrust_vector_representation;
+    // Description: Impulse vector for the upcoming planned propulsion manuever, if any. If there is no propulsion manuever planned, this field's data is meaningless.
+    std::bitset<26> impulse_vector_representation;
 
     // Item: Firing time
     // Size: 48
@@ -164,20 +152,18 @@ static void encode_propulsion_data(std::bitset<PACKET_SIZE_BITS>& packet, unsign
 
     // Read propulsion data into state 
     rwMtxRLock(&State::Propulsion::propulsion_state_lock);
-        // TODO integrate delta-v
         float delta_v_available = State::Propulsion::delta_v_available;
-        std::array<float, 3> thrust_vector;
-        for(int i = 0; i < 3; i++) thrust_vector[i] = State::Propulsion::firing_data.thrust_vector[i];
+        std::array<float, 3> impulse_vector = State::Propulsion::firing_data.impulse_vector;
         gps_time_t firing_time;
-        firing_time = State::Propulsion::firing_data.thrust_time;
+        firing_time = State::Propulsion::firing_data.time;
     rwMtxRUnlock(&State::Propulsion::propulsion_state_lock);
     // Write into packet
     trim_float(delta_v_available, 0, 15, &delta_v_representation);
     for(int i = 0; i < delta_v_representation.size(); i++)
         packet.set(packet_ptr++, delta_v_representation[i]);
-    trim_vector(thrust_vector, 0.005, &thrust_vector_representation);
-    for(int i = 0; i < thrust_vector_representation.size(); i++)
-        packet.set(packet_ptr++, thrust_vector_representation[i]);
+    trim_vector(impulse_vector, 0.005, &impulse_vector_representation);
+    for(int i = 0; i < impulse_vector_representation.size(); i++)
+        packet.set(packet_ptr++, impulse_vector_representation[i]);
     trim_gps_time(firing_time, &firing_time_representation);
     for(int i = 0; i < firing_time_representation.size(); i++)
         packet.set(packet_ptr++, firing_time_representation[i]);
@@ -266,7 +252,7 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
     // Size per element: 1
     // Number of elements: 6
     // Description: Whether or not outputs 1-6 are on. Output 7 is whether or not the heater is on.
-    std::bitset<7> output_data;
+    std::bitset<6> output_data;
 
     // Item: Output currents
     // Type: Array of integers
@@ -274,7 +260,7 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
     // Number of elements: 6
     // Minimum: 0
     // Maximum: 1000
-    // Units: mA
+    // Units: 10 mA
     // Description: Currents of outputs 1-6.
     std::bitset<7> output_current_data[6];
 
@@ -312,9 +298,9 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
             trim_int(State::Gomspace::gomspace_data.curin[i], 0, 1000, &boost_converter_current[i]);
         for(int i = 0; i < 6; i++)
             output_data.set(i, State::Gomspace::gomspace_data.output[i + 2]);
-        // TODO heater output
+        for(int i = 0; i < 6; i++)
+            trim_int(State::Gomspace::gomspace_data.curout[i], 0, 1000, &output_current_data[i]);
 
-        // TODO add output currents
         std::bitset<32> boots_from_wdt(State::Gomspace::gomspace_data.counter_wdt_i2c);
         wdt_boots = boots_from_wdt;
         for(int i = 0; i < 2; i++)
@@ -410,6 +396,10 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
     }
     for(int i = 0; i < output_data.size(); i++)
         packet.set(packet_ptr++, output_data[i]);
+    for(int i = 0; i < 6; i++) {
+        for(int j = 0; i < output_current_data[i].size(); j++)
+            packet.set(packet_ptr++, output_current_data[i][j]);
+    }
     for(int i = 0; i < wdt_boots.size(); i++)
         packet.set(packet_ptr++, wdt_boots[i]);
     for(int j = 0; j < 2; j++) {
@@ -421,6 +411,8 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
 }
 
 static void encode_piksi_data_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
+    // TODO add non-recorded (propagated) position and velocity as well
+
     // Item: Position history
     // Type: Array of vectors
     // Size per element: 62
@@ -430,9 +422,9 @@ static void encode_piksi_data_history(std::bitset<PACKET_SIZE_BITS>& packet, uns
     // Units: km
     // Description: Position of satellite as a set of doubles in space.
     rwMtxRLock(&StateHistory::Piksi::piksi_state_history_lock);
-    while(!StateHistory::Piksi::position_history.empty()) {
+    while(!StateHistory::Piksi::recorded_position_history.empty()) {
         std::bitset<62> position_representation;
-        trim_vector(StateHistory::Piksi::position_history.get(), 6400.0, 7000.0, &position_representation);
+        trim_vector(StateHistory::Piksi::recorded_position_history.get(), 6400.0, 7000.0, &position_representation);
         for(int i = 0; i < position_representation.size(); i++)
             packet.set(packet_ptr++, position_representation[i]);
     }
@@ -447,9 +439,9 @@ static void encode_piksi_data_history(std::bitset<PACKET_SIZE_BITS>& packet, uns
     // Units: km/s
     // Description: Position of satellite as a set of doubles in space.
     rwMtxRLock(&StateHistory::Piksi::piksi_state_history_lock);
-    while(!StateHistory::Piksi::position_history.empty()) {
+    while(!StateHistory::Piksi::recorded_velocity_history.empty()) {
         std::bitset<62> velocity_representation;
-        trim_vector(StateHistory::Piksi::velocity_history.get(), 5000.0, 9000.0, &velocity_representation);
+        trim_vector(StateHistory::Piksi::recorded_velocity_history.get(), 5000.0, 9000.0, &velocity_representation);
         for(int i = 0; i < velocity_representation.size(); i++)
             packet.set(packet_ptr++, velocity_representation[i]);
     }
@@ -462,10 +454,7 @@ static void encode_piksi_time(std::bitset<PACKET_SIZE_BITS>& packet, unsigned in
     // Type: GPS time
     // Description: Current GPS time according to satellite.
     std::bitset<48> gps_time;
-    rwMtxRLock(&State::Piksi::piksi_state_lock);
-        gps_time_t current_time = State::Piksi::current_time;
-    rwMtxRUnlock(&State::Piksi::piksi_state_lock);
-    trim_gps_time(current_time, &gps_time);
+    trim_gps_time(State::Piksi::current_time(), &gps_time);
     for(int i = 0; i < gps_time.size(); i++)
         packet.set(packet_ptr++, gps_time[i]);
 }
@@ -474,13 +463,13 @@ static void encode_current_adcs_data(std::bitset<PACKET_SIZE_BITS>& packet, unsi
     // Item: Current atittude
     // Size: 29
     // Type: GPS time
-    // Description: Current satellite attitude in // TODO frame??
+    // Description: Current satellite attitude
     std::bitset<29> attitude_representation;
 
     // Item: Current angular rate
     // Size: 30
     // Type: GPS time
-    // Description: Current satellite angular rate in // TODO frame??
+    // Description: Current satellite angular rate in body frame
     std::bitset<30> rate_representation;
 
     rwMtxRLock(&State::ADCS::adcs_state_lock);
@@ -488,7 +477,7 @@ static void encode_current_adcs_data(std::bitset<PACKET_SIZE_BITS>& packet, unsi
         std::array<float, 3> cur_ang_rate = State::ADCS::cur_ang_rate;
     rwMtxRUnlock(&State::ADCS::adcs_state_lock);
     trim_quaternion(cur_attitude, &attitude_representation);
-    trim_vector(cur_ang_rate, 0, 5, &rate_representation); // TODO check numbers
+    trim_vector(cur_ang_rate, Constants::ADCS::MAX_ANGULAR_RATE, &rate_representation);
     for(int i = 0; i < attitude_representation.size(); i++)
         packet.set(packet_ptr++, attitude_representation[i]);
     for(int i = 0; i < rate_representation.size(); i++)
