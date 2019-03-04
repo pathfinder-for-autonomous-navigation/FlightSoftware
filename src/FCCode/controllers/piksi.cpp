@@ -11,7 +11,7 @@
 #include <Piksi/Piksi.hpp>
 
 namespace RTOSTasks {
-    THD_WORKING_AREA(piksi_controller_workingArea, 4096);
+    THD_WORKING_AREA(piksi_controller_workingArea, 2048);
 }
 
 static void piksi_read() {

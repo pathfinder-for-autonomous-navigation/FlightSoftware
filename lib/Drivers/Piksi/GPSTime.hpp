@@ -22,19 +22,64 @@ struct gps_time_t {
         gpstime.tow = t.gpstime.tow;
     }
 
+    /** Inequality operator **/
+    bool operator!=(const gps_time_t& t1) {
+        return t1.gpstime.wn == gpstime.wn && t1.gpstime.tow != gpstime.tow;
+    }
+
+    /** Inequality operator **/
+    bool operator!=(const unsigned int& t1) {
+        return gpstime.wn * 7*24*60*60*1000 + gpstime.tow != t1;
+    }
+
     /** Equality operator **/
     bool operator==(const gps_time_t& t1) {
         return t1.gpstime.wn == gpstime.wn && t1.gpstime.tow == gpstime.tow;
     }
 
+    /** Equality operator **/
+    bool operator==(const unsigned int& t1) {
+        return gpstime.wn * 7*24*60*60*1000 + gpstime.tow == t1;
+    }
+
     /** Comparison operator **/
     bool operator<(const gps_time_t& t1) {
-        return gpstime.wn < t1.gpstime.wn || (gpstime.wn < t1.gpstime.wn && gpstime.tow < t1.gpstime.tow);
+        return gpstime.wn < t1.gpstime.wn || (gpstime.wn == t1.gpstime.wn && gpstime.tow < t1.gpstime.tow);
+    }
+
+    /** Comparison operator **/
+    bool operator<(const unsigned int& t1) {
+        return gpstime.wn * 7*24*60*60*1000 + gpstime.tow < t1;
     }
 
     /** Comparison operator **/
     bool operator>(const gps_time_t& t1) {
         return !(this->operator<(t1)) && !(this->operator==(t1));
+    }
+
+    /** Comparison operator **/
+    bool operator>(const unsigned int& t1) {
+        return gpstime.wn * 7*24*60*60*1000 + gpstime.tow > t1;
+    }
+
+    /** Comparison operator **/
+    bool operator<=(const gps_time_t& t1) {
+        return !(this->operator>(t1));
+    }
+
+    /** Comparison operator **/
+    bool operator<=(const unsigned int& t1) {
+        return !(this->operator>(t1));
+    }
+
+    /** Comparison operator **/
+    bool operator>=(const gps_time_t& t1) {
+        return !(this->operator<(t1));
+    }
+
+    /** Comparison operator **/
+    bool operator>=(const unsigned int& t1) {
+        return !(this->operator<(t1));
     }
 
     /** Addition operator **/

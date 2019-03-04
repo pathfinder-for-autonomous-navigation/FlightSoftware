@@ -82,6 +82,13 @@ namespace State {
       gps_time_t time; 
     };
   }
+
+  namespace Quake {
+    enum QuakeState {
+      WAITING,
+      SBDIXING
+    };
+  }
 }
 
 #endif

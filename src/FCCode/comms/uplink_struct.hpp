@@ -70,6 +70,8 @@ namespace Comms {
         
         //! Set to true by Master Controller if it has processed an uplink
         bool is_uplink_processed = false;
+        //! GPS time at which the uplink packet was received
+        gps_time_t time_received;
     };
 }
 

@@ -29,21 +29,21 @@ namespace RTOSTasks {
     extern THD_FUNCTION(quake_controller, arg);
 
     //! Working area for ADCS state controller process
-    extern THD_WORKING_AREA(adcs_controller_workingArea, 8192);
+    extern THD_WORKING_AREA(adcs_controller_workingArea, 2048);
     //! Working area for Gomspace state controller process
-    extern THD_WORKING_AREA(gomspace_controller_workingArea, 4096);
+    extern THD_WORKING_AREA(gomspace_controller_workingArea, 2048);
     //! Working area for master state controller process
-    extern THD_WORKING_AREA(master_controller_workingArea, 8192);
+    extern THD_WORKING_AREA(master_controller_workingArea, 2048);
     //! Working area for GNC calculation process
-    extern THD_WORKING_AREA(gnc_controller_workingArea, 4096);
+    extern THD_WORKING_AREA(gnc_controller_workingArea, 2048);
     //! Working area for orbit propagator process
-    extern THD_WORKING_AREA(orbit_propagator_workingArea, 4096);
+    extern THD_WORKING_AREA(orbit_propagator_workingArea, 2048);
     //! Working area for Piksi state controller process
-    extern THD_WORKING_AREA(piksi_controller_workingArea, 4096);
+    extern THD_WORKING_AREA(piksi_controller_workingArea, 2048);
     //! Working area for propulsion state controller process
-    extern THD_WORKING_AREA(propulsion_controller_workingArea, 4096);
+    extern THD_WORKING_AREA(propulsion_controller_workingArea, 2048);
     //! Working area for Quake state controller process
-    extern THD_WORKING_AREA(quake_controller_workingArea, 16384);
+    extern THD_WORKING_AREA(quake_controller_workingArea, 4096);
 
     //! Pointer to the ADCS controller's thread object
     extern thread_t* adcs_thread;
@@ -134,23 +134,6 @@ namespace RTOSTasks {
 
     // Propulsion-specific
     void disable_thruster_firing();
-
-    // Quake specific
-    #ifdef DEBUG
-    //! Milliseconds before the uplink/downlink deadline that the quake process must finish trying to send a downlink
-    static constexpr unsigned int TRY_DOWNLINK_UNTIL = 1000; 
-    //! Milliseconds before the uplink/downlink deadline that the quake process must finish trying to read an uplink
-    static constexpr unsigned int TRY_UPLINK_UNTIL = 500;
-    //! Milliseconds to wait between Quake send/receive retries
-    static constexpr unsigned int WAIT_BETWEEN_RETRIES = 50;
-    #else
-    //! Milliseconds before the uplink/downlink deadline that the quake process must finish trying to send a downlink
-    static constexpr unsigned int TRY_DOWNLINK_UNTIL = 30000; 
-    //! Milliseconds before the uplink/downlink deadline that the quake process must finish trying to read an uplink
-    static constexpr unsigned int TRY_UPLINK_UNTIL = 500;
-    //! Milliseconds to wait between Quake send/receive retries
-    static constexpr unsigned int WAIT_BETWEEN_RETRIES = 500; 
-    #endif
 }
 
 namespace ADCSControllers {

@@ -49,6 +49,8 @@ class Device {
    *         cases, this should only be called as the result of a ground
    *         originated command. **/
   virtual void disable();
+
+  virtual std::string& name() const;
 };
 }  // namespace Devices
 

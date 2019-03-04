@@ -9,7 +9,7 @@
 #include <AttitudeMath.hpp>
 
 template<unsigned int packet_bit_size>
-unsigned int Comms::add_packet_checksum(std::bitset<packet_bit_size>& packet,
+inline unsigned int Comms::add_packet_checksum(std::bitset<packet_bit_size>& packet,
                                 unsigned int& packet_ptr,
                                 std::array<char, (unsigned int) ceilf(packet_bit_size / 8)>* dest) {
     // Copy data over to destination char array
@@ -26,7 +26,7 @@ unsigned int Comms::add_packet_checksum(std::bitset<packet_bit_size>& packet,
 }
 
 template<unsigned int max_size>
-void Comms::trim_float(float f, float min, float max, std::bitset<max_size>* result) {
+inline void Comms::trim_float(float f, float min, float max, std::bitset<max_size>* result) {
     if(f > max) f = max;
     if(f < min) f = min;
     float resolution = (max - min) / pow(2, max_size);
@@ -36,14 +36,14 @@ void Comms::trim_float(float f, float min, float max, std::bitset<max_size>* res
 }
 
 template<unsigned int max_size>
-float Comms::expand_float(const std::bitset<max_size>& f, float min, float max) {
+inline float Comms::expand_float(const std::bitset<max_size>& f, float min, float max) {
     unsigned long f_bits = f.to_ullong();
     float resolution = (max - min) / pow(2, max_size);
     return min + resolution * f_bits;
 }
 
 template<unsigned int max_size>
-void Comms::trim_double(double d, double min, double max, std::bitset<max_size>* result) {
+inline void Comms::trim_double(double d, double min, double max, std::bitset<max_size>* result) {
     if(d > max) d = max;
     if(d < min) d = min;
     double resolution = (max - min) / pow(2, max_size);
@@ -53,7 +53,7 @@ void Comms::trim_double(double d, double min, double max, std::bitset<max_size>*
 }
 
 template<unsigned int max_size>
-float Comms::expand_double(const std::bitset<max_size>& d, double min, double max) {
+inline float Comms::expand_double(const std::bitset<max_size>& d, double min, double max) {
     unsigned long d_bits = d.to_ullong();
     double resolution = (max - min) / pow(2, max_size);
     return min + resolution * d_bits;
@@ -61,7 +61,7 @@ float Comms::expand_double(const std::bitset<max_size>& d, double min, double ma
 
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-void Comms::trim_vector(const std::array<float, 3>& v, float min_magnitude, float max_magnitude, std::bitset<max_vec_size>* result) {
+inline void Comms::trim_vector(const std::array<float, 3>& v, float min_magnitude, float max_magnitude, std::bitset<max_vec_size>* result) {
     float mag = vect_mag(v.data());
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_FLOAT_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_representation;
@@ -103,7 +103,7 @@ void Comms::trim_vector(const std::array<float, 3>& v, float min_magnitude, floa
 }
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-void Comms::trim_vector(const std::array<double, 3>& v, double min_magnitude, double max_magnitude, std::bitset<max_vec_size>* result) {
+inline void Comms::trim_vector(const std::array<double, 3>& v, double min_magnitude, double max_magnitude, std::bitset<max_vec_size>* result) {
     double mag = sqrt(pow(v[0],2)+pow(v[1],2)+pow(v[2],2));
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_DOUBLE_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_representation;
@@ -145,17 +145,17 @@ void Comms::trim_vector(const std::array<double, 3>& v, double min_magnitude, do
 }
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-void Comms::trim_vector(const std::array<float, 3>& v, float max_magnitude, std::bitset<max_vec_size>* result) {
+inline void Comms::trim_vector(const std::array<float, 3>& v, float max_magnitude, std::bitset<max_vec_size>* result) {
     trim_vector(v, 0, max_magnitude, result);
 }
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-void Comms::trim_vector(const std::array<double, 3>& v, double max_magnitude, std::bitset<max_vec_size>* result) {
+inline void Comms::trim_vector(const std::array<double, 3>& v, double max_magnitude, std::bitset<max_vec_size>* result) {
     trim_vector(v, 0, max_magnitude, result);
 }
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-void Comms::expand_vector(const std::bitset<max_vec_size>& v, float min_magnitude, float max_magnitude, std::array<float, 3>* result) {
+inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, float min_magnitude, float max_magnitude, std::array<float, 3>* result) {
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_FLOAT_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_packed;
     for(int i = 0; i < magnitude_bitsize; i++) magnitude_packed.set(i, v[i]);
@@ -180,12 +180,12 @@ void Comms::expand_vector(const std::bitset<max_vec_size>& v, float min_magnitud
 }
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-void Comms::expand_vector(const std::bitset<max_vec_size>& v, float max_magnitude, std::array<float, 3>* result) {
+inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, float max_magnitude, std::array<float, 3>* result) {
     expand_vector(v, 0, max_magnitude, result);
 }
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-void Comms::expand_vector(const std::bitset<max_vec_size>& v, double min_magnitude, double max_magnitude, std::array<float, 3>* result) {
+inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, double min_magnitude, double max_magnitude, std::array<float, 3>* result) {
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_DOUBLE_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_packed;
     for(int i = 0; i < magnitude_bitsize; i++) magnitude_packed.set(i, v[i]);
@@ -210,12 +210,12 @@ void Comms::expand_vector(const std::bitset<max_vec_size>& v, double min_magnitu
 }
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-void Comms::expand_vector(const std::bitset<max_vec_size>& v, double max_magnitude, std::array<double, 3>* result) {
+inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, double max_magnitude, std::array<double, 3>* result) {
     expand_vector(v, 0, max_magnitude, result);
 }
 
 template<unsigned int max_int_size>
-void Comms::trim_int(int i, int min, int max, std::bitset<max_int_size>* result) {
+inline void Comms::trim_int(int i, int min, int max, std::bitset<max_int_size>* result) {
     if (i > max) i = max;
     if (i < min) i = min;
     unsigned int resolution = (max - min) / pow(2, max_int_size);
@@ -225,7 +225,7 @@ void Comms::trim_int(int i, int min, int max, std::bitset<max_int_size>* result)
 }
 
 template<unsigned int max_int_size>
-int Comms::expand_int(const std::bitset<max_int_size>& result, int min, int max) {
+inline int Comms::expand_int(const std::bitset<max_int_size>& result, int min, int max) {
     unsigned int resolution = (max - min) / pow(2, max_int_size);
     return min + result.to_ulong() * resolution;
 }

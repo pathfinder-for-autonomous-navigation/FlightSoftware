@@ -83,12 +83,12 @@ static void save_spacecraft_L_history(void* arg) {
 }
 static void save_spacecraft_L_history_fast(void* arg) {
     std::array<float, 3> spacecraft_L;
-    for(int i = 0; i < 3; i++) spacecraft_L[i] = ADCSControllers::Estimator::hwheel_body[i];
+    for(int i = 0; i < 3; i++) spacecraft_L[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
     DataCollection::add_to_buffer<std::array<float,3>,DataCollectionRates::ADCS::L_FAST>(StateHistory::ADCS::spacecraft_L_fast_history, spacecraft_L);
 }
 static void spacecraft_L_history_avg(void* arg) { 
     std::array<float, 3> spacecraft_L;
-    for(int i = 0; i < 3; i++) spacecraft_L[i] = ADCSControllers::Estimator::hwheel_body[i];
+    for(int i = 0; i < 3; i++) spacecraft_L[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
     DataCollection::add_to_avg(avg_spacecraft_L, spacecraft_L, &num_spacecraft_L_measurements);
 }
 

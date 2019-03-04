@@ -14,7 +14,7 @@
 #include <AttitudeEstimator.hpp>
 
 namespace RTOSTasks {
-    THD_WORKING_AREA(propulsion_controller_workingArea, 4096);
+    THD_WORKING_AREA(propulsion_controller_workingArea, 2048);
 }
 namespace Constants {
 namespace Propulsion {
@@ -64,7 +64,7 @@ static int can_fire_manuever() {
             gps_time_t firing_time = State::Propulsion::firing_data.time;
         rwMtxRUnlock(&propulsion_state_lock);
 
-        gps_time_t current_time = State::Piksi::current_time();
+        gps_time_t current_time = State::GNC::get_current_time();
         if (current_time > firing_time - Constants::Propulsion::THRUSTER_PREPARATION_TIME) {
             // We cannot execute this firing, since the planned time of the 
             // firing (and its preparation) is less than the current time!
@@ -86,9 +86,9 @@ static int can_fire_manuever() {
             // since it'll be a while before we return to nighttime.
             has_firing_happened_in_nighttime = false;
         }
-
         return 1;
     }
+    else return 0; // There's no firing to run at all!
 }
 
 thread_t* venting_thread;
@@ -126,7 +126,7 @@ static THD_FUNCTION(pressurizing_fn, args) {
 static THD_FUNCTION(firing_fn, args) {
     rwMtxRLock(&State::ADCS::adcs_state_lock);
         std::array<float, 4> q_body;
-        for(int i = 0; i < 4; i++) q_body[i] = ADCSControllers::Estimator::q_body[i];
+        for(int i = 0; i < 4; i++) q_body[i] = ADCSControllers::Estimator::q_filter_body[i];
     rwMtxRUnlock(&State::ADCS::adcs_state_lock);
     pla::Vec3f impulse_vector_body;
     rwMtxRLock(&State::Propulsion::propulsion_state_lock);
@@ -209,7 +209,7 @@ static void propulsion_state_controller() {
                 gps_time_t start_pressurization_time = 
                     State::Propulsion::firing_data.time - Constants::Propulsion::THRUSTER_PREPARATION_TIME
                     - 1500; // Buffer time so that the system has time to settle into pressurization
-                if (State::Piksi::current_time() > start_pressurization_time) {
+                if (State::GNC::get_current_time() > start_pressurization_time) {
                     change_propulsion_state(PropulsionState::PRESSURIZING);
                 }
             }
@@ -218,7 +218,7 @@ static void propulsion_state_controller() {
         case PropulsionState::PRESSURIZING: {
             if (can_manuever != 1) {
                 chThdTerminate(pressurizing_thread);
-                pressurizing_thread == NULL;
+                pressurizing_thread = NULL;
                 if (can_manuever == -1)
                     change_propulsion_state(PropulsionState::VENTING);
                 else
@@ -232,7 +232,7 @@ static void propulsion_state_controller() {
         case PropulsionState::FIRING: {
             if (can_manuever != 1) {
                 chThdTerminate(firing_thread);
-                firing_thread == NULL;
+                firing_thread = NULL;
                 if (can_manuever == -1)
                     change_propulsion_state(PropulsionState::VENTING);
                 else

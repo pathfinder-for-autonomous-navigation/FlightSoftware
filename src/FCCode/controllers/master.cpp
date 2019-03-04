@@ -25,7 +25,7 @@ using State::Master::pan_state;
 using State::Master::master_state_lock;
 
 namespace RTOSTasks {
-    THD_WORKING_AREA(master_controller_workingArea, 8192);
+    THD_WORKING_AREA(master_controller_workingArea, 2048);
 }
 
 static unsigned short int safe_hold_needed() {
@@ -49,12 +49,11 @@ static unsigned short int safe_hold_needed() {
     rwMtxRUnlock(&State::Hardware::hat_lock);
 
     // TODO add more software checks
-    rwMtxRLock(&State::Quake::quake_state_lock);
-        unsigned int missed_uplinks = State::Quake::missed_uplinks;
-    rwMtxRUnlock(&State::Quake::quake_state_lock);
-    debug_printf("missed uplinks: %d\n", missed_uplinks);
-    if (missed_uplinks >= State::Quake::MAX_MISSED_UPLINKS) {
-        debug_println("Detected SAFE HOLD condition due to too many uplink reception failures.");
+    rwMtxRLock(&State::Quake::uplink_lock);
+        gps_time_t most_recent_uplink_time = State::Quake::most_recent_uplink.time_received;
+    rwMtxRLock(&State::Quake::uplink_lock);
+    if (State::GNC::get_current_time() - most_recent_uplink_time >= Constants::Quake::UPLINK_TIMEOUT) {
+        debug_println("Detected SAFE HOLD condition due to no uplink being received in the last 24 hours.");
         reason = 1; // TODO fix
     }
 

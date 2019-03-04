@@ -13,6 +13,7 @@
 #include <Gomspace/Gomspace.hpp>
 #include <AttitudeMath.hpp>
 #include <Piksi/GPSTime.hpp>
+#include <circular_stack.hpp>
 #include "state_definitions.hpp"
 #include "device_states.hpp"
 #include "../controllers/controllers.hpp"
@@ -75,11 +76,15 @@ namespace State {
     //! Most recent reaction wheel speeds
     extern std::array<float, 3> rwa_speeds; 
     //! Most recent reaction wheel ramp values
-    extern std::array<float, 3> rwa_ramps; 
-    //! The most recent torque command for reaction wheels
-    extern std::array<float, 3> rwa_torque_cmds; 
+    extern std::array<float, 3> rwa_ramps;
+    //! Most recent reaction wheel speed commands, as read from ADCS
+    extern std::array<float, 3> rwa_speed_cmds_rd; 
+    //! Most recent reaction wheel speeds, as read from ADCS
+    extern std::array<float, 3> rwa_speeds_rd; 
+    //! Most recent reaction wheel ramp values, as read from ADCS
+    extern std::array<float, 3> rwa_ramps_rd;
     //! The most recent magnetorquer command
-    extern std::array<float, 3> mtr_cmds; 
+    extern std::array<float, 3> mtr_cmds;
     //! Vector pointing to sun sensor in body frame
     extern std::array<float, 3> ssa_vec;
     //! IMU raw gyroscope data
@@ -130,21 +135,6 @@ namespace State {
                                           // master processes trying to write to it! Handle this lock contention carefully.
   }
 
-  namespace GNC {
-      //! Most recent GPS position, as last obtained from the orbit propagator.
-      extern std::array<double, 3> gps_position;
-      //! Most recently expected GPS position of other satellite, as last obtained from the orbit propagator.
-      extern std::array<double, 3> gps_position_other;
-      //! Most recent GPS velocity, as last obtained from the orbit propagator.
-      extern std::array<double, 3> gps_velocity;
-      //! Most recent GPS velocity of other satellite, as last obtained from the orbit propagator.
-      extern std::array<double, 3> gps_velocity_other;
-      //! Tracks whether or not a firing has happened during the current nighttime period.
-      extern bool has_firing_happened_in_nighttime;
-      //! Readers-writers lock that prevents multi-process modification of GNC state data.
-      extern rwmutex_t gnc_state_lock;
-  }
-
   namespace Piksi {
     // TODO write GPS time and position to EEPROM every few seconds, so that in the event 
     // of a reboot the satellite can still roughly know where it is.
@@ -152,7 +142,7 @@ namespace State {
     //! Current time in GPS format, as last obtained from Piksi.
     extern gps_time_t recorded_current_time;
     //! Timestamp at which current time was collected from Piksi.
-    extern systime_t time_collection_timestamp;
+    extern systime_t recorded_time_collection_timestamp;
     //! Most recent GPS position, as last obtained from Piksi.
     extern std::array<double, 3> recorded_gps_position;
     //! Most recently expected GPS position of other satellite, as last obtained from Piksi or ground.
@@ -163,41 +153,62 @@ namespace State {
     extern std::array<double, 3> recorded_gps_velocity_other;
     //! Readers-writers lock that prevents multi-process modification of Piksi state data.
     extern rwmutex_t piksi_state_lock;
+  }
 
+  namespace GNC {
+    //! Most recent GPS position, as last obtained from the orbit propagator.
+    extern std::array<double, 3> gps_position;
+    //! Most recently expected GPS position of other satellite, as last obtained from the orbit propagator.
+    extern std::array<double, 3> gps_position_other;
+    //! Most recent GPS velocity, as last obtained from the orbit propagator.
+    extern std::array<double, 3> gps_velocity;
+    //! Most recent GPS velocity of other satellite, as last obtained from the orbit propagator.
+    extern std::array<double, 3> gps_velocity_other;
+    //! Quaternion representing rotation from ECEF to ECI.
+    extern std::array<double, 4> ecef_to_eci;
     //! Current propagated GPS time. Propagation occurs on each call of current_time(). 
     // This field needs to be updated every time GPS time is actually collected.
-    extern gps_time_t propagated_current_time;
+    extern gps_time_t current_time;
     //! Current propagated GPS time collection timestamp. Propagation occurs on each call of current_time().
     // This field needs to be updated every time GPS time is actually collected.
-    extern systime_t propagated_time_collection_timestamp;
+    extern systime_t time_collection_timestamp;
     //! Function to report (propagated) current time.
-    inline gps_time_t current_time() {
+    inline gps_time_t get_current_time() {
       systime_t current_systime = chVTGetSystemTimeX();
-      systime_t systime_delta = current_systime - propagated_time_collection_timestamp;
-      propagated_time_collection_timestamp = current_systime;
-      rwMtxRLock(&piksi_state_lock);
-        propagated_current_time = propagated_current_time + MS2ST(systime_delta);
-      rwMtxRUnlock(&piksi_state_lock);
-      return propagated_current_time;
+      systime_t systime_delta = current_systime - time_collection_timestamp;
+      time_collection_timestamp = current_systime;
+      rwMtxRLock(&State::Piksi::piksi_state_lock);
+        current_time = current_time + MS2ST(systime_delta);
+      rwMtxRUnlock(&State::Piksi::piksi_state_lock);
+      return current_time;
     }
+    //! Tracks whether or not a firing has happened during the current nighttime period.
+    extern bool has_firing_happened_in_nighttime;
+    //! Readers-writers lock that prevents multi-process modification of GNC state data.
+    extern rwmutex_t gnc_state_lock;
   }
 
   namespace Quake {
-    //! Struct containing data of most recent uplink
+    //! Struct containing most recent uplink data received by satellite
     extern Comms::Uplink most_recent_uplink;
-    //! Readers-writers lock that prevents multi-process modification of uplink data.
+    //! Readers-writers lock that prevents multi-process modification of most recent uplink
     extern rwmutex_t uplink_lock;
-    //! Tracks number of consecutive missed uplinks from ground.
-    extern unsigned int missed_uplinks;
-    #ifdef DEBUG
-    //! If the number of missed uplinks exceeds this value, safe hold is triggered.
-    static constexpr unsigned int MAX_MISSED_UPLINKS = 5; // Approximately 2.5 minutes
-    #else
-    //! If the number of missed uplinks exceeds this value, safe hold is triggered.
-    static constexpr unsigned int MAX_MISSED_UPLINKS = 288; // Approximately 24 hours
-    #endif
+    //! State of finite state machine that controls the Quake controller
+    extern QuakeState quake_state;
     //! Readers-writers lock that prevents multi-process modification of Quake state data.
     extern rwmutex_t quake_state_lock;
+
+    typedef std::array<Devices::QLocate::Message, 10> full_data_downlink;
+    
+    //! Maximum number of data packets to store in history. 
+    // TODO store most recent packets in EEPROM as well.
+    constexpr unsigned int MAX_DOWNLINK_HISTORY = 25;
+    //! Packets are automatically added to this stack by the consumer threads if they were 
+    // not forcibly required to produce a partial packet.
+    extern circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack; 
+    // If the producer threads were forcibly interrupted, this is where they will dump their
+    // latest packet.
+    extern full_data_downlink most_recent_downlink;
   }
 }
 

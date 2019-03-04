@@ -73,6 +73,20 @@ namespace Constants {
         // Maps each vector to the logical valve # in the Spike and Hold driver.
         extern std::map<unsigned char, const pla::Vec3f> NOZZLE_VECTORS;
     }
+
+    namespace Quake {
+        #ifdef DEBUG
+        //! Maximum number of seconds before safe hold happens because of an uplink timeout
+        constexpr unsigned int UPLINK_TIMEOUT = 10;
+        //! Period to wait prior to forcibly trying a downlink
+        constexpr unsigned int QUAKE_WAIT_PERIOD = 5;
+        #else
+        //! Maximum number of seconds before safe hold happens because of an uplink timeout
+        constexpr unsigned int UPLINK_TIMEOUT = 24*60*60;
+        //! Period to wait prior to forcibly trying a downlink
+        constexpr unsigned int QUAKE_WAIT_PERIOD = 5*60*50;
+        #endif
+    }
 }
 
 #endif

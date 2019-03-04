@@ -454,7 +454,7 @@ static void encode_piksi_time(std::bitset<PACKET_SIZE_BITS>& packet, unsigned in
     // Type: GPS time
     // Description: Current GPS time according to satellite.
     std::bitset<48> gps_time;
-    trim_gps_time(State::Piksi::current_time(), &gps_time);
+    trim_gps_time(State::GNC::get_current_time(), &gps_time);
     for(int i = 0; i < gps_time.size(); i++)
         packet.set(packet_ptr++, gps_time[i]);
 }

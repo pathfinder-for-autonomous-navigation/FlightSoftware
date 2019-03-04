@@ -13,7 +13,7 @@ using Devices::gomspace;
 using State::Gomspace::gomspace_data;
 
 namespace RTOSTasks {
-    THD_WORKING_AREA(gomspace_controller_workingArea, 4096);
+    THD_WORKING_AREA(gomspace_controller_workingArea, 2048);
 }
 
 static void gomspace_read() {

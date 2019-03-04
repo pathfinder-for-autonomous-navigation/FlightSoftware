@@ -13,7 +13,7 @@ namespace Devices {
                       &State::Gomspace::gomspace_config,
                       &State::Gomspace::gomspace_config2, 
                       Wire, Gomspace::ADDRESS);
-    QLocate quake(&Serial3, 20);
+    QLocate quake(&Serial3, QLocate::DEFAULT_NR_PIN, QLocate::DEFAULT_TIMEOUT);
     Piksi piksi(Serial4);
     DCDC dcdc(DCDC::DEFAULT_ENABLE_PIN);
     SpikeAndHold spike_and_hold(SpikeAndHold::DEFAULT_VALVE_PINS, 

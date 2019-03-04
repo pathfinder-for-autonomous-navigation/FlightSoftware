@@ -20,6 +20,11 @@ namespace Devices {
  */ // -------------------------------------------------------------------------
 class QLocate : public Device {
 public:
+  /** Default pin # for network ready pin. **/
+  static constexpr unsigned char DEFAULT_NR_PIN = 35;
+  /** Default timeout for serial communications on device. **/
+  static constexpr unsigned int DEFAULT_TIMEOUT = 10;
+
   /*! Holds the data for a mobile terminated (MT) message form the QLocate.
    */ // -----------------------------------------------------------------------
   class Message {
@@ -27,6 +32,8 @@ public:
   public:
     /*! Empty constructor sets message length to zero */
     Message();
+    /*! Constructor sets message to desired length */
+    Message(unsigned int len);
     /*! Copy constructor */
     Message(Message const &mes);
     /*! Returns the current lenght of the message */
@@ -45,7 +52,7 @@ public:
   /*! Sets the QLocate serial port and serial timeout value. Do not Initialize
    *  the serial port with begin(), it will be done in the constructor.
    */
-  QLocate(HardwareSerial *const port, int timeout);
+  QLocate(HardwareSerial *const port, unsigned char nr_pin, int timeout);
 
   bool setup() override;
   bool is_functional() override;
@@ -111,6 +118,9 @@ public:
    */
   int sbdrb();
 
+  /*! Returns pin # for Network Ready pin. */
+  unsigned char nr_pin();
+
 private:
 
   /*! sbdix integer response array */
@@ -135,6 +145,7 @@ private:
   /*! Returns a message checksum according to the Iridium requirements */
   short checksum(char const *c, int len);
 
+  unsigned char nr_pin_;
 };
 }
 

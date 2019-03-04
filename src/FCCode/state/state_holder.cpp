@@ -29,7 +29,7 @@ namespace State {
         bool is_sun_vector_determination_working = false;
         bool is_sun_vector_collection_working = false;
         std::array<float, 3> rwa_speed_cmds, rwa_speeds, rwa_ramps;
-        std::array<float, 3> rwa_torque_cmds;
+        std::array<float, 3> rwa_speed_cmds_rd, rwa_speeds_rd, rwa_ramps_rd;
         std::array<float, 3> mtr_cmds;
         std::array<float, 3> ssa_vec;
         std::array<float, 3> gyro_data, mag_data;
@@ -60,15 +60,16 @@ namespace State {
 
     namespace GNC {
         std::array<double, 3> gps_position, gps_position_other, gps_velocity, gps_velocity_other;
+        std::array<double, 4> ecef_to_eci;
+        gps_time_t current_time;
+        systime_t time_collection_timestamp;
         bool has_firing_happened_in_nighttime = false;
         rwmutex_t gnc_state_lock;
     }
 
     namespace Piksi {
         gps_time_t recorded_current_time;
-        systime_t time_collection_timestamp;
-        gps_time_t propagated_current_time;
-        systime_t propagated_time_collection_timestamp;
+        systime_t recorded_time_collection_timestamp;
         std::array<double, 3> recorded_gps_position, recorded_gps_position_other, 
             recorded_gps_velocity, recorded_gps_velocity_other;
         rwmutex_t piksi_state_lock;
@@ -76,8 +77,11 @@ namespace State {
 
     namespace Quake {
         Comms::Uplink most_recent_uplink;
-        unsigned int missed_uplinks = 0;
-        rwmutex_t quake_state_lock;
         rwmutex_t uplink_lock;
+        QuakeState quake_state = QuakeState::WAITING;
+        rwmutex_t quake_state_lock;
+
+        circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack;
+        full_data_downlink most_recent_downlink;
     }
 }
