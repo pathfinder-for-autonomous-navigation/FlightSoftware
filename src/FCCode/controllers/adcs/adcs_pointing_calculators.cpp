@@ -1,4 +1,4 @@
-#include "../state/state_holder.hpp"
+#include "../../state/state_holder.hpp"
 #include <AttitudeMath.hpp>
 #include <AttitudeEstimator.hpp>
 #include <tensor.hpp>
@@ -20,7 +20,7 @@ static void command_optimal_long_edge(const pla::Vec3f& r) {
     std::array<float, 4> long_edge_quats[4];
     for(int i = 0; i < 4; i++)
         quat_from_triad(z.data(), long_edge_vectors[i].data(), r.get_data(),
-            ADCSControllers::Estimator::sun2sat_body, long_edge_quats[i].data());
+            ADCSControllers::Estimator::sun2sat_filter_body, long_edge_quats[i].data());
     // Find minimum-rotation quaternion from the current quaternion
     std::array<float, 4> optimal_edge_quat;
     std::array<float, 4> id_quat = {1,0,0,0}; // Identity quaternion; corresponds to zero rotation.
@@ -35,7 +35,7 @@ static void command_optimal_long_edge(const pla::Vec3f& r) {
 
     // Get final command quaternion and write to state
     rwMtxWLock(&State::ADCS::adcs_state_lock);
-        quat_cross_mult(ADCSControllers::Estimator::q_body, optimal_edge_quat.data(), State::ADCS::cmd_attitude.data());
+        quat_cross_mult(ADCSControllers::Estimator::q_filter_body, optimal_edge_quat.data(), State::ADCS::cmd_attitude.data());
     rwMtxWUnlock(&State::ADCS::adcs_state_lock);
 }
 

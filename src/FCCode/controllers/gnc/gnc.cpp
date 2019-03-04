@@ -1,10 +1,10 @@
-#include "../state/state_holder.hpp"
-#include "controllers.hpp"
+#include "../../state/state_holder.hpp"
+#include "../controllers.hpp"
 #include <array>
-#include "constants.hpp"
+#include "../constants.hpp"
 
 namespace RTOSTasks {
-    THD_WORKING_AREA(gnc_controller_workingArea, 4096);
+    THD_WORKING_AREA(gnc_controller_workingArea, 2048);
     unsigned int LoopTimes::GNC = 60000;
 }
 
@@ -18,7 +18,7 @@ static void gnc_calculation() {
     if (vect_mag(firing_vector.data()) >= Constants::Propulsion::MAX_FIRING_IMPULSE)
         is_valid_firing = false;
     // Ensure that scheduled firing time is within one orbit
-    if ((unsigned int) (firing_time - State::Piksi::current_time()) > Constants::Master::ORBIT_PERIOD_MS)
+    if ((unsigned int) (firing_time - State::GNC::get_current_time()) > Constants::Master::ORBIT_PERIOD_MS)
         is_valid_firing = false;
 
     rwMtxRLock(&State::Propulsion::propulsion_state_lock);
