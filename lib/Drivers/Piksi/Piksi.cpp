@@ -1,15 +1,4 @@
 #include <Arduino.h>
-#include <stdio.h>
-#include <string>
-#include "../Devices/Device.hpp"
-#include "libsbp/sbp.h"
-#include "libsbp/logging.h"
-#include "libsbp/navigation.h"
-#include "libsbp/observation.h"
-#include "libsbp/settings.h"
-#include "libsbp/system.h"
-#include "libsbp/piksi.h"
-#include "libsbp/user.h"
 #include "Piksi.hpp"
 
 using namespace Devices;
@@ -123,8 +112,6 @@ void Piksi::reset() { piksi_reset(); }
 void Piksi::disable() {
     // TODO
 }
-
-void Piksi::single_comp_test() { /** TODO **/ }
 
 static std::string piksi_name = "Piksi";
 std::string& Piksi::name() const {

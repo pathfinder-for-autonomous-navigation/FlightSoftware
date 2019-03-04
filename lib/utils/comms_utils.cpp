@@ -15,7 +15,7 @@ int Comms::expand_temperature(const std::bitset<9>& t) {
     return expand_int(t, -40, 125);
 }
 
-void Comms::trim_quaternion(const std::array<float, 4>& q, std::bitset<29>* result) {
+void Comms::trim_quaternion(const std::array<float, 4>& q, std::bitset<Comms::QUATERNION_SIZE>* result) {
     std::bitset<9> quat_element_representations[3];
     std::array<float, 4> q_mags; // Magnitudes of elements in quaternion
     for(int i = 0; i < 4; i++) q_mags[i] = std::abs(q[i]);
@@ -45,7 +45,7 @@ void Comms::trim_quaternion(const std::array<float, 4>& q, std::bitset<29>* resu
     }
 }
 
-void Comms::expand_quaternion(const std::bitset<29>& q, std::array<float, 4>* result) {
+void Comms::expand_quaternion(const std::bitset<Comms::QUATERNION_SIZE>& q, std::array<float, 4>* result) {
     int missing_element = (q[0] << 1) + q[1];
     (*result)[missing_element] = 1;
     int j = 0; // Currently processed packed quaternion element
@@ -60,22 +60,22 @@ void Comms::expand_quaternion(const std::bitset<29>& q, std::array<float, 4>* re
     (*result)[missing_element] = sqrt((*result)[missing_element]);
 }
 
-void Comms::trim_gps_time(const msg_gps_time_t& gpstime, std::bitset<48>* result) {
-    std::bitset<16> wn((unsigned short int) gpstime.wn);
-    std::bitset<32> tow(gpstime.tow);
+void Comms::trim_gps_time(const gps_time_t& gpstime, std::bitset<Comms::GPSTIME_SIZE>* result) {
+    std::bitset<16> wn((unsigned short int) gpstime.gpstime.wn);
+    std::bitset<32> tow(gpstime.gpstime.tow);
     for(int i = 0; i < 16; i++)
         result->set(i, wn[i]);
     for(int i = 0; i < 32; i++)
         result->set(i + 16, tow[i]);
 }
 
-void Comms::expand_gps_time(const std::bitset<48>& gpstime, msg_gps_time_t* result) {
+void Comms::expand_gps_time(const std::bitset<Comms::GPSTIME_SIZE>& gpstime, gps_time_t* result) {
     std::bitset<16> wn;
     std::bitset<32> tow;
     for(int i = 0; i < 16; i++)
         wn.set(i, gpstime[i]);
     for(int i = 0; i < 32; i++)
         tow.set(i, gpstime[16+i]);
-    result->wn = (unsigned int) wn.to_ulong();
-    result->tow = (unsigned int) tow.to_ulong();
+    result->gpstime.wn = (unsigned int) wn.to_ulong();
+    result->gpstime.tow = (unsigned int) tow.to_ulong();
 }

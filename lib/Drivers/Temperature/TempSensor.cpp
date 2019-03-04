@@ -14,7 +14,6 @@ bool TempSensor::is_functional() {
 
 void TempSensor::disable() {}
 void TempSensor::reset() {}
-void TempSensor::single_comp_test() {}
 
 static std::string temp_sensor_name = "Temperature Sensor";
 std::string& TempSensor::name() const {

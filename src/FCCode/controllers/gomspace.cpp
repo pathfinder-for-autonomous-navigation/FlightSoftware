@@ -13,7 +13,7 @@ using Devices::gomspace;
 using State::Gomspace::gomspace_data;
 
 namespace RTOSTasks {
-    THD_WORKING_AREA(gomspace_controller_workingArea, 4096);
+    THD_WORKING_AREA(gomspace_controller_workingArea, 2048);
 }
 
 static void gomspace_read() {
@@ -47,8 +47,8 @@ static void gomspace_check() {
 
     debug_printf("Checking Gomspace battery voltage...");
     unsigned short int vbatt = gomspace_data.vbatt;
-    if (vbatt < Gomspace::VOLTAGES::FC_CRITICAL) {
-        debug_println("Battery voltage is critical!");
+    if (vbatt < Gomspace::VOLTAGES::FC_SAFE) {
+        debug_println("Battery voltage is enough for safe hold!");
         // TODO Set some flag for master controller to pick up on
     }
 
@@ -58,8 +58,21 @@ static void gomspace_check() {
     debug_println("Checking Gomspace temperature.");
 }
 
-void gomspace_write_defaults() {
-    // TODO
+void set_power_outputs() {
+    rwMtxRLock(&State::Master::master_state_lock);
+        unsigned int boot_number = State::Master::boot_number;
+    rwMtxRUnlock(&State::Master::master_state_lock);
+
+    bool low_power_state = false; // TODO get from Gomspace. If unavailable, _assume_ a low-power state
+                                  // since it may be the case that Gomspace is unable to initialize I2C properly
+    if (boot_number == 1 || low_power_state) {
+        rwMtxWLock(&State::Hardware::hat_lock);
+        // TODO turn on Quake
+        rwMtxWUnlock(&State::Hardware::hat_lock);
+    }
+    else {
+        // Turn everything on
+    }
 }
 
 static THD_WORKING_AREA(gomspace_read_controller_workingArea, 4096);

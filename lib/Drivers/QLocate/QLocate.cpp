@@ -18,14 +18,14 @@ QLocate::Message::Message() {
   this->length = 0;
 }
 
+QLocate::Message::Message(unsigned int len) {
+  this->length = len;
+}
+
 QLocate::Message::Message(QLocate::Message const &mes) {
   this->length = mes.length;
   for(int i = 0; i < this->length; i++)
     this->mes[i] = mes.mes[i];
-}
-
-int QLocate::Message::get_length() const {
-  return this->length;
 }
 
 char &QLocate::Message::operator[](int i) {
@@ -39,7 +39,11 @@ void QLocate::Message::copy_message(char *c) const {
 
 /*! QLocate implementation */ // -----------------------------------------------
 
-QLocate::QLocate(HardwareSerial *const port, int timeout) : port(port), timeout(timeout) {}
+QLocate::QLocate(HardwareSerial *const port, 
+                 unsigned char nr_pin, 
+                 int timeout) : port(port), 
+                                nr_pin_(nr_pin), 
+                                timeout(timeout) {}
 
 bool QLocate::setup() {
   // Initialize class variables
@@ -62,9 +66,6 @@ bool QLocate::is_functional() {
 
 void QLocate::reset() {config();}
 void QLocate::disable() {
-  // TODO
-}
-void QLocate::single_comp_test() {
   // TODO
 }
 
@@ -222,10 +223,12 @@ int QLocate::sbdrb() {
     Serial.println("");
   #endif
   }
-  // Format as a string // TODO : Excecute included AT commands here
+  // Format as a string
   message.mes[size] = '\0';
   return 0;
 }
+
+unsigned char QLocate::nr_pin() { return nr_pin_; }
 
 QLocate::Message& QLocate::get_message() { return message; }
 

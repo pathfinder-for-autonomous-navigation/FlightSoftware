@@ -69,33 +69,4 @@ void rwMtxWLock(rwmutex_t* rwmtx);
  * **/
 void rwMtxWUnlock(rwmutex_t* rwmtx);
 
-/** @brief Locks a reader-writer object for reading from an ISR context.
- *  
- *  If a thread has currently locked the lock for writing, or if
- *  the maximum number of readers is exceeded, the thread requesting
- *  this lock will be locked.
- * 
- *  @param rwmtx Pointer to a reader-writer object.
- * **/
-void rwMtxRLockI(rwmutex_t* rwmtx);
-
-/** @brief Unlocks a reader-writer object for reading from an ISR context.
- *  @param rwmtx Pointer to a reader-writer object.
- * **/
-void rwMtxRUnlockI(rwmutex_t* rwmtx);
-
-/** @brief Locks a reader-writer object for writing from an ISR context.
- * 
- *  If a thread has currently locked the lock for writing or reading,
- *  the thread requesting this lock will be locked.
- * 
- *  @param rwmtx Pointer to a reader-writer object.
- * **/
-void rwMtxWLockI(rwmutex_t* rwmtx);
-
-/** @brief Unlocks a reader-writer object for writing from an ISR context.
- *  @param rwmtx Pointer to a reader-writer object.
- * **/
-void rwMtxWUnlockI(rwmutex_t* rwmtx);
-
 #endif

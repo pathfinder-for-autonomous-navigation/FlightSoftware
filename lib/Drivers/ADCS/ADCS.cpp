@@ -8,7 +8,6 @@
 
 ADCS::ADCS(i2c_t3 &i2c_wire, unsigned char address) : I2CDevice(i2c_wire, address) {}
 
-void ADCS::single_comp_test() {}
 bool ADCS::i2c_ping() { return false; }
 static std::string adcs_name = "ADCS";
 std::string& ADCS::name() const { return adcs_name; }

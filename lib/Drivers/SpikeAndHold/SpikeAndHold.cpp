@@ -42,8 +42,6 @@ void SpikeAndHold::reset() {
     enable();
 }
 
-void SpikeAndHold::single_comp_test() { }
-
 static std::string sph_name = "Spike and Hold";
 std::string& SpikeAndHold::name() const { return sph_name; }
 

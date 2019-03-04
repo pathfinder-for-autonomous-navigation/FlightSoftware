@@ -58,8 +58,6 @@ class I2CDevice : public Device {
   /** @brief Wipes error history variables clean. Must be called from a function
    *         that overrides this. **/
   void reset() override;
-  /** @brief Runs a self-diagnostic. **/
-  void single_comp_test() override;
   
   std::string& name() const override;
   /** @brief Forces error history variables to broken state. Must be called from

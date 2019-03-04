@@ -14,7 +14,6 @@ bool PressureSensor::is_functional() {
 
 void PressureSensor::disable() {}
 void PressureSensor::reset() {}
-void PressureSensor::single_comp_test() {}
 
 static std::string temp_sensor_name = "Pressure Sensor";
 std::string& PressureSensor::name() const {

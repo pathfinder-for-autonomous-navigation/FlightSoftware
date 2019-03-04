@@ -12,97 +12,64 @@
 #include <HardwareSerial.h>
 
 namespace RTOSTasks {
-    THD_WORKING_AREA(quake_controller_workingArea, 16384);
+    THD_WORKING_AREA(quake_controller_workingArea, 4096);
 }
 using Devices::quake;
 using Devices::QLocate;
-using namespace State::Quake;
+using State::Quake::QuakeState;
+using State::Quake::quake_state_lock;
 using namespace Comms;
 
-static std::array<char, PACKET_SIZE_BYTES> downlink_packets[3]; // There are three downlink packets
-static std::array<char, PACKET_SIZE_BYTES> uplink_packet; // The location for the packed uplink packet
-
-unsigned int receive_uplink() {
-    int status = quake.sbdrb();
-    if (status != 0) return status;
-    memcpy(quake.get_message().mes, uplink_packet.data(), PACKET_SIZE_BYTES);
-    return status;
+static virtual_timer_t waiting_timer;
+static void end_waiting(void* args) {
+    chSysLockFromISR();
+        State::Quake::quake_state = QuakeState::SBDIXING;
+    chSysUnlockFromISR();
 }
 
-unsigned int send_packet(int packet_number) {
-    debug_printf("Sending packet %d\n", packet_number);
-
-    int response = -1;
-    quake.sbdwb(downlink_packets[packet_number-1].data(), PACKET_SIZE_BYTES);
-    quake.run_sbdix();
-    for(int i = 0; i < 5; i++) {
-        response = quake.end_sbdix();
-        if (response != -1) break;
-        chThdSleepMilliseconds(RTOSTasks::WAIT_BETWEEN_RETRIES);
-    }
-    if (response == 0) {
-        // OK; packet submission is done; wait for uplink!
-        debug_printf("Succeeded in sending downlink packet %d.\n", packet_number);
-        return 1;
-    }
-    else {
-        // Could not send packet; don't try sending it again.
-        debug_printf("Failed in in sending downlink packet %d.\n", packet_number);
-        return 0;
-    }
+static void go_to_waiting() {
+    rwMtxWLock(&quake_state_lock);
+        State::Quake::quake_state = QuakeState::WAITING;
+    rwMtxWUnlock(&quake_state_lock);
 }
 
-unsigned int send_downlink() {
-    if (send_packet(1) == 0) {
-        int packet2 = send_packet(2);
-        int packet3 = send_packet(3);
-        return 1 + packet2 + packet3;
-    }
-    else return 0;
-}
+static CH_IRQ_HANDLER(network_ready_handler) {
+    CH_IRQ_PROLOGUE();
+    rwMtxRLock(&State::Quake::quake_state_lock);
+        bool is_downlink_stack_empty = State::Quake::downlink_stack.empty();
+    rwMtxRUnlock(&State::Quake::quake_state_lock);
+    if (!is_downlink_stack_empty)
+        // This means that full packets have been waiting on the stack
+        // to be sent down. We include this check so that we don't keep
+        // sending down partial packets.
+        end_waiting(NULL);
+    CH_IRQ_EPILOGUE();
+};
 
-static void quake_loop(systime_t deadline) {
-    debug_println("Serializing downlink");
-    Comms::downlink_serializer(downlink_packets);
-    debug_println("Trying to send downlink");
-    systime_t send_attempt_start = chVTGetSystemTimeX();
-    systime_t send_attempt_end = deadline - MS2ST(RTOSTasks::TRY_DOWNLINK_UNTIL);
-    while(chVTIsSystemTimeWithin(send_attempt_start, send_attempt_end)) {
-        if (send_downlink() > 0) break;
-        chThdSleepMilliseconds(RTOSTasks::WAIT_BETWEEN_RETRIES);
-    }
-
-    chThdSleepUntil(send_attempt_end);
-
-    debug_println("Trying to receive uplink");
-    systime_t receive_attempt_start = chVTGetSystemTimeX();
-    systime_t receive_attempt_end = deadline - MS2ST(RTOSTasks::TRY_UPLINK_UNTIL);
-    unsigned int receive_status = -1;
-    while(chVTIsSystemTimeWithin(receive_attempt_start, receive_attempt_end)) {
-        receive_status = receive_uplink();
-        if (receive_status == 0) break;
-        chThdSleepMilliseconds(RTOSTasks::WAIT_BETWEEN_RETRIES);
-    }
-    if(receive_status == 0) {
-        debug_println("Succeeded in retrieving uplink");
-        rwMtxWLock(&quake_state_lock);
-            State::Quake::missed_uplinks = 0;
-        rwMtxWUnlock(&quake_state_lock);
-        rwMtxWLock(&uplink_lock);
-            Comms::uplink_deserializer(uplink_packet, &most_recent_uplink);
-        rwMtxWUnlock(&uplink_lock);
-    }
-    else {
-        debug_println("Failed to receive uplink");
-        rwMtxWLock(&quake_state_lock);
-            State::Quake::missed_uplinks++;
-        rwMtxWUnlock(&quake_state_lock);
+static void quake_loop() {
+    rwMtxRLock(&quake_state_lock);
+        QuakeState quake_state = State::Quake::quake_state;
+    rwMtxRUnlock(&quake_state_lock);
+    switch(quake_state) {
+        case QuakeState::WAITING:
+            chVTDoSetI(&waiting_timer, Constants::Quake::QUAKE_WAIT_PERIOD, end_waiting, NULL);
+        break;
+        case QuakeState::SBDIXING: {
+            // Try sending down packets until you can't anymore
+            go_to_waiting();
+        };
+        break;
+        default: {
+            go_to_waiting();
+        }
     }
 }
 
 void RTOSTasks::quake_controller(void *arg) {
     chRegSetThreadName("QUAKE");
     debug_println("Quake radio controller process has started.");
+    chVTObjectInit(&waiting_timer);
+    attachInterrupt(Devices::quake.nr_pin(), network_ready_handler, HIGH);
     debug_println("Waiting for deployment timer to finish.");
     rwMtxRLock(&State::Master::master_state_lock);
         bool is_deployed = State::Master::is_deployed;
@@ -113,8 +80,8 @@ void RTOSTasks::quake_controller(void *arg) {
 
     systime_t deadline = chVTGetSystemTimeX();
     while(true) {
-        deadline += MS2ST(RTOSTasks::LoopTimes::QUAKE); // TODO move to constant
-        quake_loop(deadline);
+        deadline += MS2ST(RTOSTasks::LoopTimes::QUAKE);
+        quake_loop();
         chThdSleepUntil(deadline);
     }
 

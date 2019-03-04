@@ -31,9 +31,19 @@ namespace StateHistory {
     rwmutex_t propulsion_state_history_lock;
   }
 
+  namespace GNC {
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> position_history;
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> velocity_history;
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> position_other_history;
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> velocity_other_history;
+    rwmutex_t gnc_state_history_lock;
+  }
+
   namespace Piksi {
-    circular_buffer<std::array<float, 3>, DataCollectionRates::Piksi::POSITION> position_history;
-    circular_buffer<std::array<float, 3>, DataCollectionRates::Piksi::VELOCITY> velocity_history;
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> recorded_position_history;
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> recorded_velocity_history;
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> recorded_position_other_history;
+    circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> recorded_velocity_other_history;
     rwmutex_t piksi_state_history_lock;
   }
 }

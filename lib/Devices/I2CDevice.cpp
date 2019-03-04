@@ -31,10 +31,6 @@ void I2CDevice::disable() {
   this->recent_errors = true;
 }
 
-void I2CDevice::single_comp_test() {
-  // TODO
-}
-
 static std::string i2cdevice_name = "Generic I2C Device";
 std::string& I2CDevice::name() const {
   return i2cdevice_name;

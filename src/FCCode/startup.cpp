@@ -25,6 +25,7 @@ namespace RTOSTasks {
     thread_t* piksi_thread;
     thread_t* quake_thread;
     thread_t* adcs_thread;
+    thread_t* gnc_thread;
     thread_t* propulsion_thread;
 }
 using namespace RTOSTasks;
@@ -52,34 +53,6 @@ void hardware_setup() {
     }
 }
 
-void set_power_outputs() {
-    rwMtxRLock(&State::Master::master_state_lock);
-        unsigned int boot_number = State::Master::boot_number;
-    rwMtxRUnlock(&State::Master::master_state_lock);
-
-    bool low_power_state = false; // TODO get from Gomspace. If unavailable, _assume_ a low-power state
-    if (boot_number == 1 || low_power_state) {
-        rwMtxWLock(&State::Hardware::hat_lock);
-        if (!low_power_state) {
-            // We want to keep the radio on at all costs, so don't turn it off
-            // even in a low-power state!
-            // TODO turn off Quake from Gomspace
-            (State::Hardware::hat).at("Quake").powered_on = true;
-            (State::Hardware::hat).at("Quake").error_ignored = false;
-        }
-            // TODO turn off Piksi from Gomspace
-            (State::Hardware::hat).at("Piksi").powered_on = false;
-            (State::Hardware::hat).at("Piksi").error_ignored = true;
-            // TODO turn off ADCS from Gomspace
-            (State::Hardware::hat).at("ADCS").powered_on = false;
-            (State::Hardware::hat).at("ADCS").error_ignored = true;
-        rwMtxWUnlock(&State::Hardware::hat_lock);
-    }
-    else {
-        // Turn everything on
-    }
-}
-
 static void start_satellite_processes() {
     // Start up satellite processes
     debug_println("Starting ADCS controller process.");
@@ -97,6 +70,10 @@ static void start_satellite_processes() {
     debug_println("Starting Piksi controller process.");
     piksi_thread = chThdCreateStatic(piksi_controller_workingArea, sizeof(piksi_controller_workingArea), 
         piksi_thread_priority, piksi_controller, NULL);
+
+    debug_println("Starting GNC calculation controller process.");
+    gnc_thread = chThdCreateStatic(gnc_controller_workingArea, sizeof(gnc_controller_workingArea),
+        gnc_thread_priority, gnc_controller, NULL);
     
     debug_println("Starting propulsion controller process.");
     propulsion_thread = chThdCreateStatic(propulsion_controller_workingArea, sizeof(propulsion_controller_workingArea), 
@@ -154,7 +131,7 @@ void pan_system_setup() {
     debug_printf("This is boot #%d since the satellite left the deployer. \n", State::Master::boot_number);
 
     debug_println("Initializing hardware setup.");
-    set_power_outputs();
+    // set_power_outputs();
     hardware_setup();
 
     debug_println("Starting satellite processes.");

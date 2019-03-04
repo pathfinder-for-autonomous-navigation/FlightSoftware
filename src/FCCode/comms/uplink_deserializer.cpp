@@ -9,6 +9,8 @@
 
 using namespace Comms;
 
+// TODO add battery heating option to uplink
+
 static void deserialize_master_state(const std::bitset<UPLINK_PACKET_SIZE_BITS>& packet_bits, 
                                     unsigned int& packet_ptr, 
                                     Uplink* uplink) {

@@ -117,7 +117,6 @@ inline uint32_t I2CDevice::i2c_available() const {
   return this->wire.available();
 }
 
-// TODO : Double check that this function is implemented properly
 inline unsigned char I2CDevice::i2c_read() {
   int val = this->wire.read();
   bool err = (val == -1);
@@ -132,7 +131,6 @@ inline void I2CDevice::i2c_read(T *data, std::size_t len) {
   this->recent_errors = (this->recent_errors || err);
 }
 
-// TODO : Double check that this function is implemented properly
 inline unsigned char I2CDevice::i2c_peek() {
   int val = this->wire.peek();
   bool err = (val == -1);

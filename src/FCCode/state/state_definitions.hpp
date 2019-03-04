@@ -8,6 +8,7 @@
 #define STATE_DEFINITIONS_HPP_
 
 #include <Piksi/Piksi.hpp>
+#include <Piksi/GPSTime.hpp>
 
 // Containers and enums for holding state
 namespace State {
@@ -46,6 +47,8 @@ namespace State {
     struct DeviceState {
       //! Device is being supplied power
       bool powered_on;
+      //! Device is enabled
+      bool enabled;
       //! Field is set by safe hold check
       bool is_functional;
       //! If true, the software ignores that this device is nonfunctional and tries to use it anyway
@@ -64,12 +67,26 @@ namespace State {
   }
 
   namespace Propulsion {
+    enum PropulsionState {
+      IDLE,
+      VENTING,
+      AWAITING_PRESSURIZATION,
+      PRESSURIZING,
+      FIRING
+    };
     //! Container for data that represents a propulsion manuever.
     struct Firing {
       //! Vector in inertial frame specifying thrust impulse
-      std::array<float, 3> thrust_vector;
+      std::array<float, 3> impulse_vector;
       //! GPS time of thrust
-      msg_gps_time_t thrust_time; 
+      gps_time_t time; 
+    };
+  }
+
+  namespace Quake {
+    enum QuakeState {
+      WAITING,
+      SBDIXING
     };
   }
 }

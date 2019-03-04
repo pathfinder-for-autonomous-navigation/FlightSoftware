@@ -5,12 +5,15 @@
  * of the flight code.
  */
 
-#ifndef MASTER_STATE_HOLDER_H_
-#define MASTER_STATE_HOLDER_H_
+#ifndef STATE_HOLDER_HPP_
+#define STATE_HOLDER_HPP_
 
 #include <map>
 #include <rwmutex.hpp>
 #include <Gomspace/Gomspace.hpp>
+#include <AttitudeMath.hpp>
+#include <Piksi/GPSTime.hpp>
+#include <circular_stack.hpp>
 #include "state_definitions.hpp"
 #include "device_states.hpp"
 #include "../controllers/controllers.hpp"
@@ -25,7 +28,7 @@ namespace State {
     //! Current boot # of satellite
     extern unsigned int boot_number; 
     //! Last time that data was uplinked to satellite
-    extern msg_gps_time_t last_uplink_time; 
+    extern gps_time_t last_uplink_time; 
     //! If last uplink was parseable by satellite
     extern bool was_last_uplink_valid; 
     //! Did the hardware setup succeed?
@@ -43,19 +46,13 @@ namespace State {
 
   namespace ADCS {
     //! Finite State Machine state of ADCS system.
-    extern ADCSState adcs_state; 
-    //! Hardware availability table of devices attached to ADCS.
-    extern std::map<std::string, Hardware::DeviceState&> adcs_hat;
+    extern ADCSState adcs_state;
     //! If mode is "pointing", the currently commanded attitude as a quaternion
     extern std::array<float, 4> cmd_attitude;
-    //! If mode is "pointing", the currently commanded angular rate as a vector in body frame
-    extern std::array<float, 3> cmd_ang_rate;
     //! Current attitude as a quaternion
     extern std::array<float, 4> cur_attitude;
     //! Current angular rate as a vector in body frame
     extern std::array<float, 3> cur_ang_rate; 
-    //! Has propulsion taken over ADCS for the sake of efficient thrust manuevers?
-    extern bool is_propulsion_pointing_active; 
     //! Is the sun vector determination working?
     extern bool is_sun_vector_determination_working;
     //! Are we able to collect the sun vector? i.e. the ADCS system is not timing out on determining
@@ -69,7 +66,9 @@ namespace State {
      * @brief Computes the magnitude of the angular rate of the spacecraft based on the cur_ang_rate vector.
      * @return float The current angular rate of the spacecraft.
      */
-    float angular_rate();
+    inline float angular_rate() {
+      return vect_mag(cur_ang_rate.data());
+    }
     
     /** Lower-level ADCS data **/
     //! Most recent reaction wheel speed commands
@@ -77,15 +76,17 @@ namespace State {
     //! Most recent reaction wheel speeds
     extern std::array<float, 3> rwa_speeds; 
     //! Most recent reaction wheel ramp values
-    extern std::array<float, 3> rwa_ramps; 
-    //! Spacecraft angular momentum (computed from reaction wheel speeds)
-    extern std::array<float, 3> spacecraft_L; 
-    //! The most recent torque command for reaction wheels
-    extern std::array<float, 3> rwa_torque_cmds; 
+    extern std::array<float, 3> rwa_ramps;
+    //! Most recent reaction wheel speed commands, as read from ADCS
+    extern std::array<float, 3> rwa_speed_cmds_rd; 
+    //! Most recent reaction wheel speeds, as read from ADCS
+    extern std::array<float, 3> rwa_speeds_rd; 
+    //! Most recent reaction wheel ramp values, as read from ADCS
+    extern std::array<float, 3> rwa_ramps_rd;
     //! The most recent magnetorquer command
-    extern std::array<float, 3> mtr_cmds; 
+    extern std::array<float, 3> mtr_cmds;
     //! Vector pointing to sun sensor in body frame
-    extern std::array<float, 3> ssa_vec; 
+    extern std::array<float, 3> ssa_vec;
     //! IMU raw gyroscope data
     extern std::array<float, 3> gyro_data; 
     //! IMU raw magnetometer data
@@ -108,6 +109,8 @@ namespace State {
   }
 
   namespace Propulsion {
+    //! State of propulsion state controller.
+    extern PropulsionState propulsion_state;
     //! Available delta-v, in meters/second. Note that this is obtained by simply integrating
     // the applied thrusts over time, so this number may not be accurate. Propulsion leaks, for example,
     // would contribute to significant inaccuracy. The purpose of this field is to serve as an upper
@@ -119,8 +122,6 @@ namespace State {
     extern bool is_firing_planned;
     //! Is the currently planned firing due to a previous uplink?
     extern bool is_firing_planned_by_uplink;
-    //! Is the propulsion state controller currently repressurizing the tank?
-    extern bool is_repressurization_active;
     //! Firing data for an upcoming planned firing.
     extern Firing firing_data;
     //! Current pressure within tank.
@@ -135,27 +136,79 @@ namespace State {
   }
 
   namespace Piksi {
-    //! Current time in GPS format.
-    extern msg_gps_time_t current_time;
-    //! Most recent GPS position.
-    extern std::array<float, 3> gps_position;
-    //! Most recent GPS velocity.
-    extern std::array<float, 3> gps_velocity;
+    // TODO write GPS time and position to EEPROM every few seconds, so that in the event 
+    // of a reboot the satellite can still roughly know where it is.
+
+    //! Current time in GPS format, as last obtained from Piksi.
+    extern gps_time_t recorded_current_time;
+    //! Timestamp at which current time was collected from Piksi.
+    extern systime_t recorded_time_collection_timestamp;
+    //! Most recent GPS position, as last obtained from Piksi.
+    extern std::array<double, 3> recorded_gps_position;
+    //! Most recently expected GPS position of other satellite, as last obtained from Piksi or ground.
+    extern std::array<double, 3> recorded_gps_position_other;
+    //! Most recent GPS velocity, as last obtained from Piksi.
+    extern std::array<double, 3> recorded_gps_velocity;
+    //! Most recent GPS velocity of other satellite, as last obtained from Piksi or ground.
+    extern std::array<double, 3> recorded_gps_velocity_other;
     //! Readers-writers lock that prevents multi-process modification of Piksi state data.
     extern rwmutex_t piksi_state_lock;
   }
 
+  namespace GNC {
+    //! Most recent GPS position, as last obtained from the orbit propagator.
+    extern std::array<double, 3> gps_position;
+    //! Most recently expected GPS position of other satellite, as last obtained from the orbit propagator.
+    extern std::array<double, 3> gps_position_other;
+    //! Most recent GPS velocity, as last obtained from the orbit propagator.
+    extern std::array<double, 3> gps_velocity;
+    //! Most recent GPS velocity of other satellite, as last obtained from the orbit propagator.
+    extern std::array<double, 3> gps_velocity_other;
+    //! Quaternion representing rotation from ECEF to ECI.
+    extern std::array<double, 4> ecef_to_eci;
+    //! Current propagated GPS time. Propagation occurs on each call of current_time(). 
+    // This field needs to be updated every time GPS time is actually collected.
+    extern gps_time_t current_time;
+    //! Current propagated GPS time collection timestamp. Propagation occurs on each call of current_time().
+    // This field needs to be updated every time GPS time is actually collected.
+    extern systime_t time_collection_timestamp;
+    //! Function to report (propagated) current time.
+    inline gps_time_t get_current_time() {
+      systime_t current_systime = chVTGetSystemTimeX();
+      systime_t systime_delta = current_systime - time_collection_timestamp;
+      time_collection_timestamp = current_systime;
+      rwMtxRLock(&State::Piksi::piksi_state_lock);
+        current_time = current_time + MS2ST(systime_delta);
+      rwMtxRUnlock(&State::Piksi::piksi_state_lock);
+      return current_time;
+    }
+    //! Tracks whether or not a firing has happened during the current nighttime period.
+    extern bool has_firing_happened_in_nighttime;
+    //! Readers-writers lock that prevents multi-process modification of GNC state data.
+    extern rwmutex_t gnc_state_lock;
+  }
+
   namespace Quake {
-    //! Struct containing data of most recent uplink
+    //! Struct containing most recent uplink data received by satellite
     extern Comms::Uplink most_recent_uplink;
-    //! Readers-writers lock that prevents multi-process modification of uplink data.
+    //! Readers-writers lock that prevents multi-process modification of most recent uplink
     extern rwmutex_t uplink_lock;
-    //! Tracks number of consecutive missed uplinks from ground.
-    extern unsigned int missed_uplinks;
-    //! If the number of missed uplinks exceeds this value, safe hold is triggered.
-    static constexpr unsigned int MAX_MISSED_UPLINKS = 288; // Approximately 24 hours
+    //! State of finite state machine that controls the Quake controller
+    extern QuakeState quake_state;
     //! Readers-writers lock that prevents multi-process modification of Quake state data.
     extern rwmutex_t quake_state_lock;
+
+    typedef std::array<Devices::QLocate::Message, 10> full_data_downlink;
+    
+    //! Maximum number of data packets to store in history. 
+    // TODO store most recent packets in EEPROM as well.
+    constexpr unsigned int MAX_DOWNLINK_HISTORY = 25;
+    //! Packets are automatically added to this stack by the consumer threads if they were 
+    // not forcibly required to produce a partial packet.
+    extern circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack; 
+    // If the producer threads were forcibly interrupted, this is where they will dump their
+    // latest packet.
+    extern full_data_downlink most_recent_downlink;
   }
 }
 

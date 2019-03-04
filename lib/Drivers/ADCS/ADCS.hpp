@@ -14,8 +14,6 @@ class ADCS : public Devices::I2CDevice {
  public:
   static constexpr unsigned int ADDRESS = 0x00;
   /** **/
-  virtual void single_comp_test() override;
-  /** **/
   virtual bool i2c_ping() override;
   /** **/
   virtual std::string& name() const override;
@@ -53,7 +51,7 @@ class ADCS : public Devices::I2CDevice {
   /** **/
   void get_imu(float *gyr_rd, float *mag_rd);
   /** **/
-  void update_hat();  // TODO : Encapsulated hardware availability table
+  void update_hat();
 };
 
 #endif

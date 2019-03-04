@@ -11,19 +11,19 @@
 #include <Piksi/Piksi.hpp>
 
 namespace RTOSTasks {
-    THD_WORKING_AREA(piksi_controller_workingArea, 4096);
+    THD_WORKING_AREA(piksi_controller_workingArea, 2048);
 }
 
 static void piksi_read() {
-    // TODO
+    debug_println("Reading Piksi data");
 }
 
 static void piksi_check() {
-    // TODO
+    debug_println("Checking Piksi data");
 }
 
 void piksi_write_defaults() {
-    // TODO
+    debug_println("Writing default values to Piksi.");
 }
 
 void RTOSTasks::piksi_controller(void *arg) {

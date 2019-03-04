@@ -57,7 +57,6 @@ class Piksi : public Device {
     bool is_functional() override;
     void reset() override;
     void disable() override; // Sets Piksi's power consumption to a minimum
-    void single_comp_test() override;
     std::string& name() const override;
 
     /** @brief Runs read over UART buffer to process values sent by Piksi into memory.
@@ -193,8 +192,6 @@ class Piksi : public Device {
     void settings_write(const msg_settings_write_t &settings);
     /** @brief Creates settings object containing default settings for PAN and writes them to RAM. **/
     void write_default_settings();
-
-    // TODO add "read settings" functions
 
     /** @brief Resets Piksi. **/
     void piksi_reset();

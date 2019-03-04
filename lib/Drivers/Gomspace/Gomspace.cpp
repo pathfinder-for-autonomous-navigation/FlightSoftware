@@ -31,11 +31,6 @@ void Gomspace::reset() {
     reboot();
 }
 
-void Gomspace::single_comp_test() {
-    I2CDevice::single_comp_test();
-    // TODO
-}
-
 bool Gomspace::i2c_ping() {
     return ping(0xFF);
 }

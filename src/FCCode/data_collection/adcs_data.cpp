@@ -4,6 +4,7 @@
  * @brief Contains timers that periodically collect ADCS data and store it into a state buffer.
  */
 
+#include <AttitudeEstimator.hpp>
 #include "../state/state_holder.hpp"
 #include "../state/state_history_holder.hpp"
 #include <circular_buffer.hpp>
@@ -11,11 +12,33 @@
 #include "data_collection.hpp"
 #include "data_collection_rates.hpp"
 
+static virtual_timer_t gyroscope_history_timer;
+static virtual_timer_t gyroscope_history_fast_and_avg_timer;
+static virtual_timer_t attitude_command_history_timer;
+static virtual_timer_t attitude_history_timer;
+static virtual_timer_t attitude_history_fast_timer;
+static virtual_timer_t attitude_history_avg_timer;
+static virtual_timer_t rate_history_timer;
+static virtual_timer_t rate_history_fast_timer;
+static virtual_timer_t rate_history_avg_timer;
+static virtual_timer_t spacecraft_L_history_timer;
+static virtual_timer_t spacecraft_L_history_fast_timer;
+static virtual_timer_t spacecraft_L_history_avg_timer;
+static virtual_timer_t magnetometer_history_timer;
+static virtual_timer_t magnetometer_history_avg_timer;
+static virtual_timer_t rwa_ramp_cmd_timer;
+static virtual_timer_t mtr_cmd_timer;
+static virtual_timer_t ssa_vector_timer;
+static virtual_timer_t ssa_array_timer;
+
 static std::array<float, 3> avg_gyro;
 static unsigned int num_gyro_measurements = 0;
 static void save_gyro_history(void* arg) {
     DataCollection::add_to_buffer<std::array<float,3>,DataCollectionRates::ADCS::GYRO>(StateHistory::ADCS::gyro_history, avg_gyro);
     DataCollection::reset_avg<3>(&avg_gyro, &num_gyro_measurements);
+    chSysLockFromISR();
+        chVTSetI(&gyroscope_history_timer, MS2ST(DataCollectionRates::ADCS::GYRO_INTERVAL), save_gyro_history, NULL);
+    chSysUnlockFromISR();
 }
 static void save_gyro_history_fast_and_avg(void* arg) { 
     DataCollection::add_to_buffer<std::array<float,3>,DataCollectionRates::ADCS::GYRO_FAST>(StateHistory::ADCS::gyro_fast_history, State::ADCS::gyro_data);
@@ -59,10 +82,14 @@ static void save_spacecraft_L_history(void* arg) {
     DataCollection::reset_avg<3>(&avg_spacecraft_L, &num_spacecraft_L_measurements);
 }
 static void save_spacecraft_L_history_fast(void* arg) {
-    DataCollection::add_to_buffer<std::array<float,3>,DataCollectionRates::ADCS::L_FAST>(StateHistory::ADCS::spacecraft_L_fast_history, State::ADCS::spacecraft_L);
+    std::array<float, 3> spacecraft_L;
+    for(int i = 0; i < 3; i++) spacecraft_L[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
+    DataCollection::add_to_buffer<std::array<float,3>,DataCollectionRates::ADCS::L_FAST>(StateHistory::ADCS::spacecraft_L_fast_history, spacecraft_L);
 }
 static void spacecraft_L_history_avg(void* arg) { 
-    DataCollection::add_to_avg(avg_spacecraft_L, State::ADCS::spacecraft_L, &num_spacecraft_L_measurements);
+    std::array<float, 3> spacecraft_L;
+    for(int i = 0; i < 3; i++) spacecraft_L[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
+    DataCollection::add_to_avg(avg_spacecraft_L, spacecraft_L, &num_spacecraft_L_measurements);
 }
 
 static std::array<float, 3> avg_magnetic_field;
@@ -87,25 +114,6 @@ static void save_mtr_cmd_history(void* arg) {
 static void save_ssa_vector_history(void* arg) {
     DataCollection::add_to_buffer<std::array<float,3>,DataCollectionRates::ADCS::SSA_VECTOR>(StateHistory::ADCS::ssa_vector_history, State::ADCS::ssa_vec);
 }
-
-static virtual_timer_t gyroscope_history_timer;
-static virtual_timer_t gyroscope_history_fast_and_avg_timer;
-static virtual_timer_t attitude_command_history_timer;
-static virtual_timer_t attitude_history_timer;
-static virtual_timer_t attitude_history_fast_timer;
-static virtual_timer_t attitude_history_avg_timer;
-static virtual_timer_t rate_history_timer;
-static virtual_timer_t rate_history_fast_timer;
-static virtual_timer_t rate_history_avg_timer;
-static virtual_timer_t spacecraft_L_history_timer;
-static virtual_timer_t spacecraft_L_history_fast_timer;
-static virtual_timer_t spacecraft_L_history_avg_timer;
-static virtual_timer_t magnetometer_history_timer;
-static virtual_timer_t magnetometer_history_avg_timer;
-static virtual_timer_t rwa_ramp_cmd_timer;
-static virtual_timer_t mtr_cmd_timer;
-static virtual_timer_t ssa_vector_timer;
-static virtual_timer_t ssa_array_timer;
 
 void DataCollection::initialize_adcs_history_timers() {
     chVTObjectInit(&gyroscope_history_timer);

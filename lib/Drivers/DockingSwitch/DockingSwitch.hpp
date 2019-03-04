@@ -16,7 +16,7 @@ namespace Devices {
         };
 
         //! Default enable pin for DCDC.
-        static constexpr unsigned char DEFAULT_SWITCH_PIN = 25; // TODO fix
+        static constexpr unsigned char DEFAULT_SWITCH_PIN = 25;
 
         /** @brief Default constructor. Loads a set of hardcoded pins into the valve table.**/
         DockingSwitch(unsigned char en);
@@ -25,7 +25,6 @@ namespace Devices {
         bool is_functional() override;
         void disable() override;
         void reset() override;
-        void single_comp_test() override;
         std::string& name() const override;
 
         /** @brief Returns whether or not the docking switch is pressed. **/
