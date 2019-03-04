@@ -4,40 +4,32 @@
  * @brief Contains implementation for the propulsion state controller.
  */
 
-#include "controllers.hpp"
-#include "constants.hpp"
-#include "../state/state_holder.hpp"
-#include "../deployment_timer.hpp"
-#include "../data_collection/data_collection.hpp"
+#include "../controllers.hpp"
+#include "../../state/state_holder.hpp"
+#include "../../deployment_timer.hpp"
+#include "../../data_collection/data_collection.hpp"
+#include "propulsion_tasks.hpp"
 #include <SpikeAndHold/SpikeAndHold.hpp>
-#include <tensor.hpp>
-#include <AttitudeEstimator.hpp>
 
 namespace RTOSTasks {
     THD_WORKING_AREA(propulsion_controller_workingArea, 2048);
 }
-namespace Constants {
-namespace Propulsion {
-    static pla::Vec3f NVECTOR_1; // TODO initializers
-    static pla::Vec3f NVECTOR_2;
-    static pla::Vec3f NVECTOR_3;
-    static pla::Vec3f NVECTOR_4;
-    std::map<unsigned char, const pla::Vec3f> NOZZLE_VECTORS = {
-        {2, NVECTOR_1},
-        {3, NVECTOR_2},
-        {4, NVECTOR_3},
-        {5, NVECTOR_4}
-    };
-}
-}
 using State::Propulsion::PropulsionState;
 using State::Propulsion::propulsion_state_lock;
-using State::Hardware::spike_and_hold_lock;
-using namespace Constants::Propulsion;
-using Devices::spike_and_hold;
 using Devices::pressure_sensor;
 using Devices::temp_sensor_inner;
 using Devices::temp_sensor_outer;
+
+namespace PropulsionTasks {
+    void change_propulsion_state(PropulsionState state) {
+        rwMtxWLock(&propulsion_state_lock);
+            State::Propulsion::propulsion_state = state;
+        rwMtxWUnlock(&propulsion_state_lock);
+    }
+    rwmutex_t propulsion_thread_ptr_lock;
+}
+
+using namespace PropulsionTasks;
 
 static int can_fire_manuever() {
     rwMtxWLock(&propulsion_state_lock);
@@ -91,92 +83,6 @@ static int can_fire_manuever() {
     else return 0; // There's no firing to run at all!
 }
 
-thread_t* venting_thread;
-thread_t* pressurizing_thread;
-thread_t* firing_thread;
-static THD_WORKING_AREA(venting_thread_wa, 1024);
-static THD_WORKING_AREA(pressurizing_thread_wa, 1024);
-static THD_WORKING_AREA(firing_thread_wa, 1024);
-
-static THD_FUNCTION(venting_fn, args) {
-    debug_println("Tank temperature or pressures are too high. Venting to reduce vapor pressure.");
-    // TODO notify ground that overpressure event happened.
-    for(int i = 0; i < 10; i++) {
-        chMtxLock(&spike_and_hold_lock);
-            spike_and_hold.execute_schedule({VALVE_VENT_TIME, VALVE_VENT_TIME, 0, 0, 0, 0});
-        chMtxUnlock(&spike_and_hold_lock);
-        chThdSleepMilliseconds(VALVE_WAIT_TIME);
-    }
-}
-
-static void change_propulsion_state(PropulsionState state) {
-    rwMtxWLock(&propulsion_state_lock);
-        State::Propulsion::propulsion_state = state;
-    rwMtxWUnlock(&propulsion_state_lock);
-}
-
-static THD_FUNCTION(pressurizing_fn, args) {
-    chMtxLock(&spike_and_hold_lock);
-    // Pressurize tank
-    chMtxUnlock(&spike_and_hold_lock);
-    // TODO count pressurizations, check if pressure is starting to match the intended pressure
-    // If not, send satellite to safe hold.
-}
-
-static THD_FUNCTION(firing_fn, args) {
-    rwMtxRLock(&State::ADCS::adcs_state_lock);
-        std::array<float, 4> q_body;
-        for(int i = 0; i < 4; i++) q_body[i] = ADCSControllers::Estimator::q_filter_body[i];
-    rwMtxRUnlock(&State::ADCS::adcs_state_lock);
-    pla::Vec3f impulse_vector_body;
-    rwMtxRLock(&State::Propulsion::propulsion_state_lock);
-        vect_rot(State::Propulsion::firing_data.impulse_vector.data(), q_body.data(), impulse_vector_body.get_data());
-    rwMtxRUnlock(&State::Propulsion::propulsion_state_lock);
-    std::array<unsigned int, 6> valve_timings;
-    valve_timings[0] = 0;
-    valve_timings[1] = 0;
-    
-    // Find three nozzles closest to impulse vector
-    unsigned int farthest_nozzle = 2;
-    float max_angle = 0;
-    for(int i = 2; i < 6; i++) {
-        float dot_product = Constants::Propulsion::NOZZLE_VECTORS.at(0) * impulse_vector_body;
-        float magnitude_product = Constants::Propulsion::NOZZLE_VECTORS.at(i).length() * impulse_vector_body.length();
-        float angle = acos(dot_product / magnitude_product);
-        if (angle > max_angle) farthest_nozzle = i;
-    }
-
-    pla::Mat3x3f nozzle_vector_matrix; // Matrix of vector nozzles
-    int k = 0; // Nozzle counter
-    for(int i = 2; i < 6; i++) {
-        if (i == farthest_nozzle) continue;
-        for (int j = 0; j < 3; j++) nozzle_vector_matrix[k][j] = Constants::Propulsion::NOZZLE_VECTORS.at(i)[j];
-        k++;
-    }
-    pla::Vec3f firing_times = nozzle_vector_matrix.inverse() * impulse_vector_body;
-    k = 0;
-    for(int i = 2; i < 6; i++) {
-        if (i == farthest_nozzle) continue;
-        valve_timings[i] = firing_times[k] * 1000; // Convert from seconds to milliseconds
-        if (valve_timings[i] > 1000) valve_timings[i] = 1000; // Saturate firing
-        k++;
-    }
-
-    // Add to delta-v
-    rwMtxWLock(&State::Propulsion::propulsion_state_lock);
-        State::Propulsion::delta_v_available += 
-            vect_mag(State::Propulsion::firing_data.impulse_vector.data()) / Constants::Master::SPACECRAFT_MASS;
-    rwMtxWUnlock(&State::Propulsion::propulsion_state_lock);
-    chSysLock();
-        debug_println("Initiating firing.");
-        spike_and_hold.execute_schedule(valve_timings);
-        debug_println("Completed firing.");
-    chSysUnlock();
-
-    change_propulsion_state(PropulsionState::IDLE);
-    chThdExit((msg_t) 0);
-}
-
 static void propulsion_state_controller() {
     rwMtxRLock(&propulsion_state_lock);
         PropulsionState propulsion_state = State::Propulsion::propulsion_state;
@@ -194,7 +100,7 @@ static void propulsion_state_controller() {
         }
         break;
         case PropulsionState::VENTING: {
-            if (venting_thread == NULL)
+            if (venting_thread == NULL || chThdTerminatedX(venting_thread))
                 venting_thread = chThdCreateStatic(venting_thread_wa, sizeof(venting_thread_wa), 
                     RTOSTasks::propulsion_thread_priority, venting_fn, NULL);
         }
@@ -218,13 +124,12 @@ static void propulsion_state_controller() {
         case PropulsionState::PRESSURIZING: {
             if (can_manuever != 1) {
                 chThdTerminate(pressurizing_thread);
-                pressurizing_thread = NULL;
                 if (can_manuever == -1)
                     change_propulsion_state(PropulsionState::VENTING);
                 else
                     change_propulsion_state(PropulsionState::IDLE);
             }
-            else if (pressurizing_thread == NULL)
+            else if (pressurizing_thread == NULL || chThdTerminatedX(pressurizing_thread))
                 pressurizing_thread = chThdCreateStatic(pressurizing_thread_wa, sizeof(pressurizing_thread_wa), 
                     RTOSTasks::propulsion_thread_priority, pressurizing_fn, NULL);
         }
@@ -232,7 +137,6 @@ static void propulsion_state_controller() {
         case PropulsionState::FIRING: {
             if (can_manuever != 1) {
                 chThdTerminate(firing_thread);
-                firing_thread = NULL;
                 if (can_manuever == -1)
                     change_propulsion_state(PropulsionState::VENTING);
                 else
@@ -243,7 +147,7 @@ static void propulsion_state_controller() {
                 // TODO set some downlink issue
                 change_propulsion_state(PropulsionState::IDLE);
             }
-            else if (firing_thread == NULL)
+            else if (firing_thread == NULL || chThdTerminatedX(firing_thread))
                 firing_thread = chThdCreateStatic(firing_thread_wa, sizeof(firing_thread_wa), 
                     RTOSTasks::propulsion_thread_priority, firing_fn, NULL);
         }
@@ -272,6 +176,7 @@ void RTOSTasks::propulsion_controller(void *arg) {
     chThdCreateStatic(propulsion_loop_wa, sizeof(propulsion_loop_wa), 
         RTOSTasks::propulsion_thread_priority, propulsion_loop, NULL);
 
+    rwMtxObjectInit(&PropulsionTasks::propulsion_thread_ptr_lock);
     DataCollection::initialize_propulsion_history_timers();
 
     debug_println("Waiting for deployment timer to finish.");

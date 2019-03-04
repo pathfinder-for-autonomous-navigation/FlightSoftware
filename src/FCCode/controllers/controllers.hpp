@@ -19,8 +19,6 @@ namespace RTOSTasks {
     extern THD_FUNCTION(master_controller, arg);
     //! GNC calculation controller process
     extern THD_FUNCTION(gnc_controller, arg);
-    //! Orbit propagator controller process
-    extern THD_FUNCTION(orbit_propagator_controller, arg);
     //! Piksi state controller process
     extern THD_FUNCTION(piksi_controller, arg);
     //! Propulsion state controller process
@@ -36,8 +34,6 @@ namespace RTOSTasks {
     extern THD_WORKING_AREA(master_controller_workingArea, 2048);
     //! Working area for GNC calculation process
     extern THD_WORKING_AREA(gnc_controller_workingArea, 2048);
-    //! Working area for orbit propagator process
-    extern THD_WORKING_AREA(orbit_propagator_workingArea, 2048);
     //! Working area for Piksi state controller process
     extern THD_WORKING_AREA(piksi_controller_workingArea, 2048);
     //! Working area for propulsion state controller process
@@ -53,8 +49,6 @@ namespace RTOSTasks {
     extern thread_t* master_thread;
     //! Pointer to the GNC calculation controller's thread object
     extern thread_t* gnc_thread;
-    //! Pointer to the orbit propagator's thread object
-    extern thread_t* orbit_propagator_thread;
     //! Pointer to the Piksi controller's thread object
     extern thread_t* piksi_thread;
     //! Pointer to the propulsion controller's thread object
@@ -76,8 +70,6 @@ namespace RTOSTasks {
     constexpr tprio_t master_thread_priority = MAX_THREAD_PRIORITY;
     //! Priority of GNC controller's thread
     constexpr tprio_t gnc_thread_priority = MAX_THREAD_PRIORITY;
-    //! Priority of GNC controller's thread
-    constexpr tprio_t orbit_propagator_thread_priority = MAX_THREAD_PRIORITY;
     //! Priority of Piksi controller's thread
     constexpr tprio_t piksi_thread_priority = MAX_THREAD_PRIORITY;
     //! Priority of propulsion controller's thread
@@ -98,8 +90,6 @@ namespace RTOSTasks {
         static constexpr unsigned int MASTER = 1000;
         //! Number of milliseconds between GNC calculation iterations
         static unsigned int GNC;
-        //! Number of milliseconds between orbit propagator iterations
-        static constexpr unsigned int ORBIT_PROPAGATOR = 100;
         //! Number of milliseconds between Piksi state controller iterations
         static constexpr unsigned int PIKSI = 100;
         //! Number of milliseconds between propulsion actuations. This is really high
@@ -134,11 +124,6 @@ namespace RTOSTasks {
 
     // Propulsion-specific
     void disable_thruster_firing();
-}
-
-namespace ADCSControllers {
-    void point_for_standby();
-    void point_for_close_approach();
 }
 
 #endif

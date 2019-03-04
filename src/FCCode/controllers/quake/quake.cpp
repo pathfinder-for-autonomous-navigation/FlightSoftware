@@ -4,18 +4,17 @@
  * @brief Contains implementation for the Quake state controller.
  */
 
-#include "controllers.hpp"
-#include "../state/state_holder.hpp"
-#include "../deployment_timer.hpp"
-#include "../comms/downlink_serializer.hpp"
-#include "../comms/uplink_deserializer.hpp"
+#include "../controllers.hpp"
+#include "../../state/state_holder.hpp"
+#include "../../deployment_timer.hpp"
+#include "../../comms/downlink_serializer.hpp"
+#include "../../comms/uplink_deserializer.hpp"
+#include "downlink_thread.hpp"
 #include <HardwareSerial.h>
 
 namespace RTOSTasks {
     THD_WORKING_AREA(quake_controller_workingArea, 4096);
 }
-using Devices::quake;
-using Devices::QLocate;
 using State::Quake::QuakeState;
 using State::Quake::quake_state_lock;
 using namespace Comms;
@@ -23,26 +22,26 @@ using namespace Comms;
 static virtual_timer_t waiting_timer;
 static void end_waiting(void* args) {
     chSysLockFromISR();
-        State::Quake::quake_state = QuakeState::SBDIXING;
+        // TODO notify the producer threads to stop and dump packet into stack
+        State::Quake::quake_state = QuakeState::TRANSCEIVING;
     chSysUnlockFromISR();
-}
-
-static void go_to_waiting() {
-    rwMtxWLock(&quake_state_lock);
-        State::Quake::quake_state = QuakeState::WAITING;
-    rwMtxWUnlock(&quake_state_lock);
 }
 
 static CH_IRQ_HANDLER(network_ready_handler) {
     CH_IRQ_PROLOGUE();
-    rwMtxRLock(&State::Quake::quake_state_lock);
+    chVTResetI(&waiting_timer);
+    chSysLockFromISR();
         bool is_downlink_stack_empty = State::Quake::downlink_stack.empty();
-    rwMtxRUnlock(&State::Quake::quake_state_lock);
-    if (!is_downlink_stack_empty)
+    if (!is_downlink_stack_empty) {
         // This means that full packets have been waiting on the stack
         // to be sent down. We include this check so that we don't keep
-        // sending down partial packets.
-        end_waiting(NULL);
+        // sending down partial packets in the case of continuous network availability.
+        State::Quake::network_ready_interrupt_happened = true;
+        State::Quake::quake_state = QuakeState::TRANSCEIVING;
+        // TODO notify the producer threads to stop and dump packet into 
+        // "most recent downlink" field
+    }
+    chSysLockFromISR();
     CH_IRQ_EPILOGUE();
 };
 
@@ -51,16 +50,24 @@ static void quake_loop() {
         QuakeState quake_state = State::Quake::quake_state;
     rwMtxRUnlock(&quake_state_lock);
     switch(quake_state) {
-        case QuakeState::WAITING:
+        case QuakeState::WAITING: {
+            rwMtxWLock(&quake_state_lock);
+                State::Quake::network_ready_interrupt_happened = false;
+            rwMtxWUnlock(&quake_state_lock);
             chVTDoSetI(&waiting_timer, Constants::Quake::QUAKE_WAIT_PERIOD, end_waiting, NULL);
+        }
         break;
-        case QuakeState::SBDIXING: {
-            // Try sending down packets until you can't anymore
-            go_to_waiting();
+        case QuakeState::TRANSCEIVING: {
+            if (Quake::downlink_thread == NULL || chThdTerminatedX(Quake::downlink_thread)) {
+                Quake::downlink_thread = chThdCreateStatic(Quake::downlink_thread_workingArea, 
+                                                           sizeof(Quake::downlink_thread_workingArea), 
+                                                           Quake::downlink_thread_priority, 
+                                                           Quake::downlink_fn, NULL);
+            }
         };
         break;
         default: {
-            go_to_waiting();
+            Quake::go_to_waiting();
         }
     }
 }
@@ -69,7 +76,7 @@ void RTOSTasks::quake_controller(void *arg) {
     chRegSetThreadName("QUAKE");
     debug_println("Quake radio controller process has started.");
     chVTObjectInit(&waiting_timer);
-    attachInterrupt(Devices::quake.nr_pin(), network_ready_handler, HIGH);
+    attachInterrupt(Devices::quake.nr_pin(), network_ready_handler, RISING);
     debug_println("Waiting for deployment timer to finish.");
     rwMtxRLock(&State::Master::master_state_lock);
         bool is_deployed = State::Master::is_deployed;

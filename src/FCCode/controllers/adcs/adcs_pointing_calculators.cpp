@@ -1,4 +1,5 @@
 #include "../../state/state_holder.hpp"
+#include "adcs_pointing_calculators.hpp"
 #include <AttitudeMath.hpp>
 #include <AttitudeEstimator.hpp>
 #include <tensor.hpp>

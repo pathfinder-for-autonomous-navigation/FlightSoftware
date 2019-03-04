@@ -2,6 +2,7 @@
 #include "../controllers.hpp"
 #include <array>
 #include "../constants.hpp"
+#include "orbit_propagators.hpp"
 
 namespace RTOSTasks {
     THD_WORKING_AREA(gnc_controller_workingArea, 2048);
@@ -35,6 +36,13 @@ static void gnc_calculation() {
 }
 
 void RTOSTasks::gnc_controller(void* arg) {
+    chRegSetThreadName("GNC");
+
+    GNC::orbit_propagator_thread = chThdCreateStatic(GNC::orbit_propagator_workingArea, 
+                                                    sizeof(GNC::orbit_propagator_workingArea),
+                                                    GNC::orbit_propagator_thread_priority, 
+                                                    GNC::orbit_propagator_controller, NULL);
+
     systime_t time = chVTGetSystemTimeX();
     while (true) {
         time += MS2ST(RTOSTasks::LoopTimes::GNC);

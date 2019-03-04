@@ -86,7 +86,7 @@ namespace State {
   namespace Quake {
     enum QuakeState {
       WAITING,
-      SBDIXING
+      TRANSCEIVING
     };
   }
 }

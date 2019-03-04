@@ -108,6 +108,7 @@ void pan_system_setup() {
     rwMtxObjectInit(&State::ADCS::adcs_state_lock);
     rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
     rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
+    rwMtxObjectInit(&State::GNC::gnc_state_lock);
     rwMtxObjectInit(&State::Piksi::piksi_state_lock);
     rwMtxObjectInit(&State::Quake::quake_state_lock);
     rwMtxObjectInit(&State::Quake::uplink_lock);
