@@ -4,19 +4,12 @@
  * @brief Contains implementation for the master state controller.
  */
 
-#include <utility>
 #include <EEPROM.h>
-#include <Piksi/GPSTime.hpp>
-#include <tensor.hpp>
-#include <AttitudeEstimator.hpp>
-#include "controllers.hpp"
-#include <Device.hpp>
-#include "constants.hpp"
-#include "../deployment_timer.hpp"
-#include "../state/EEPROMAddresses.hpp"
-#include "../state/state_holder.hpp"
-#include "../comms/apply_uplink.hpp"
-#include <AttitudeMath.hpp>
+#include "hold_functions.hpp"
+#include "../adcs/adcs_pointing_calculators.hpp"
+#include "../../state/EEPROMAddresses.hpp"
+#include "../../state/state_holder.hpp"
+#include "../../comms/apply_uplink.hpp"
 
 using State::Master::MasterState;
 using State::Master::master_state;
@@ -26,103 +19,6 @@ using State::Master::master_state_lock;
 
 namespace RTOSTasks {
     THD_WORKING_AREA(master_controller_workingArea, 2048);
-}
-
-static unsigned short int safe_hold_needed() {
-    rwMtxRLock(&master_state_lock);
-        bool autoexited_safe_hold = State::Master::autoexited_safe_hold;
-    rwMtxRUnlock(&master_state_lock);
-    if (autoexited_safe_hold) return 0; // Don't set up safehold in this case.
-
-    unsigned short int reason = 0; // No reason
-
-    rwMtxRLock(&State::Hardware::hat_lock);
-    // Checks all flags in Master State Holder to determine if system should be in safe hold mode.
-    for (auto &device : State::Hardware::devices) {
-        Devices::Device &dptr = device.second;
-        State::Hardware::DeviceState &dstate = State::Hardware::hat.at(device.first);
-        if (!dstate.is_functional && !dstate.error_ignored) {
-            debug_printf("Detected SAFE HOLD condition due to failure of device: %s\n", dptr.name().c_str());
-            reason = 1;
-        }
-    }
-    rwMtxRUnlock(&State::Hardware::hat_lock);
-
-    // TODO add more software checks
-    rwMtxRLock(&State::Quake::uplink_lock);
-        gps_time_t most_recent_uplink_time = State::Quake::most_recent_uplink.time_received;
-    rwMtxRLock(&State::Quake::uplink_lock);
-    if (State::GNC::get_current_time() - most_recent_uplink_time >= Constants::Quake::UPLINK_TIMEOUT) {
-        debug_println("Detected SAFE HOLD condition due to no uplink being received in the last 24 hours.");
-        reason = 1; // TODO fix
-    }
-
-    return reason;
-}
-
-void stop_safe_hold() {
-    chThdTerminate(RTOSTasks::safe_hold_timer_thread);
-    RTOSTasks::stop_safehold();
-}
-
-static void safe_hold(unsigned short int reason) {
-    // TODO write reason to state
-
-    debug_println("Entering safe hold mode...");
-    rwMtxWLock(&State::Master::master_state_lock);
-        State::Master::master_state = State::Master::MasterState::SAFE_HOLD;
-        State::Master::pan_state = State::Master::PANState::MASTER_SAFEHOLD;
-    rwMtxWUnlock(&State::Master::master_state_lock);
-
-    rwMtxWLock(&State::ADCS::adcs_state_lock);
-        State::ADCS::adcs_state = State::ADCS::ZERO_TORQUE;
-    rwMtxWUnlock(&State::ADCS::adcs_state_lock);
-
-    rwMtxWLock(&State::Propulsion::propulsion_state_lock);
-        State::ADCS::adcs_state = State::ADCS::ZERO_TORQUE;
-    rwMtxWUnlock(&State::Propulsion::propulsion_state_lock);
-
-    chMtxLock(&eeprom_lock);
-        EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_FLAG, true);
-    chMtxUnlock(&eeprom_lock);
-
-    // Start safe hold timer
-    RTOSTasks::safe_hold_timer_thread = chThdCreateStatic(&RTOSTasks::safe_hold_timer_workingArea, 
-                                                    sizeof(RTOSTasks::safe_hold_timer_workingArea), 
-                                                    RTOSTasks::master_thread_priority, 
-                                                    RTOSTasks::safe_hold_timer, NULL);
-}
-
-/**
- * @brief Puts the satellite into the initialization hold mode.
- * 
- * @param reason The failure code that's responsible for entering initialization hold mode.
- */
-void initialization_hold(unsigned short int reason) {
-    debug_println("Entering initialization hold mode...");
-    rwMtxWLock(&master_state_lock);
-        // The two state declarations below don't do anything; they're just for cosmetics/maintaining invariants
-        master_state = MasterState::INITIALIZATION_HOLD;
-        pan_state = PANState::MASTER_INITIALIZATIONHOLD;
-    rwMtxWUnlock(&master_state_lock);
-
-    chMtxLock(&eeprom_lock);
-        EEPROM.put(EEPROM_ADDRESSES::INITIALIZATION_HOLD_FLAG, true);
-    chMtxUnlock(&eeprom_lock);
-
-    if (State::ADCS::angular_rate() >= State::ADCS::MAX_SEMISTABLE_ANGULAR_RATE) {
-        rwMtxRLock(&State::Hardware::hat_lock);
-            bool is_adcs_working = State::Hardware::hat.at("ADCS").is_functional;
-        rwMtxRUnlock(&State::Hardware::hat_lock);
-        if (is_adcs_working) {
-            rwMtxWLock(&State::ADCS::adcs_state_lock);
-                State::ADCS::adcs_state = State::ADCS::ADCSState::ADCS_DETUMBLE;
-            rwMtxWUnlock(&State::ADCS::adcs_state_lock);
-            chThdEnqueueTimeoutS(&RTOSTasks::adcs_detumbled, S2ST(Constants::Master::INITIALIZATION_HOLD_DETUMBLE_WAIT)); // Wait for detumble to finish.
-        }
-    }
-    // Quake controller will send SOS packet. Control is now handed over to
-    // master_loop(), which will continuously check Quake uplink for manual control/mode shift commands
 }
 
 static void master_loop() {    
@@ -140,8 +36,8 @@ static void master_loop() {
     rwMtxRUnlock(&master_state_lock);
     switch(master_state_copy) {
         case MasterState::DETUMBLE: {
-            unsigned short int safe_hold_reason = safe_hold_needed();
-            if (safe_hold_reason != 0) safe_hold(safe_hold_reason);
+            unsigned short int safe_hold_reason = HoldFunctions::safe_hold_needed();
+            if (safe_hold_reason != 0) HoldFunctions::safe_hold(safe_hold_reason);
             rwMtxRLock(&State::ADCS::adcs_state_lock);
                 State::ADCS::ADCSState adcs_state = State::ADCS::adcs_state;
             rwMtxRUnlock(&State::ADCS::adcs_state_lock);
@@ -169,9 +65,9 @@ static void master_loop() {
             // The apply_uplink() is continuously checking uplink for manual control commands and mode shift command
         break;
         case MasterState::NORMAL: {
-            unsigned short int safe_hold_reason = safe_hold_needed();
+            unsigned short int safe_hold_reason = HoldFunctions::safe_hold_needed();
             debug_printf("Safe hold reason: %d\n", safe_hold_reason);
-            if (safe_hold_reason != 0) safe_hold(safe_hold_reason);
+            if (safe_hold_reason != 0) HoldFunctions::safe_hold(safe_hold_reason);
             switch(pan_state_copy) {
                 case PANState::FOLLOWER: {
                     RTOSTasks::LoopTimes::GNC = 60000;
@@ -200,7 +96,7 @@ static void master_loop() {
                     // TODO set ADCS to passive
                 break;
                 default:
-                    safe_hold(0); // TODO fix
+                    HoldFunctions::safe_hold(0); // TODO fix
             }
         }
         break;
@@ -209,7 +105,7 @@ static void master_loop() {
             break;
         default: {
             debug_printf("%d\n", master_state);
-            safe_hold(0); // TODO fix
+            HoldFunctions::safe_hold(0); // TODO fix
         }
     }
 }
@@ -231,7 +127,7 @@ void master_init() {
     chMtxUnlock(&eeprom_lock);
     if (previous_boot_safehold) {
         debug_println("Previous boot ended in safehold mode! The system will start in safehold now.");
-        safe_hold(0); // TODO fix
+        HoldFunctions::safe_hold(0); // TODO fix
         return;
     }
 
@@ -241,19 +137,19 @@ void master_init() {
     chMtxUnlock(&eeprom_lock);
     if (prevboot_initialization_hold) {
         debug_println("Previous boot ended in initialization hold mode! The system will start in initialization hold now.");
-        initialization_hold(0); // TODO fix
+        HoldFunctions::initialization_hold(0); // TODO fix
         return;
     }
 
     debug_println("Previous boot did not end in initialization or safe hold mode. Checking to see if a hold is necessary...");
-    if (safe_hold_needed()) {
+    if (HoldFunctions::safe_hold_needed()) {
         rwMtxRLock(&master_state_lock);
             unsigned int boot_number = State::Master::boot_number;
         rwMtxRUnlock(&master_state_lock);
         if (boot_number == 1)
-            initialization_hold(0); // TODO fix
+            HoldFunctions::initialization_hold(0); // TODO fix
         else
-            safe_hold(0); // TODO fix
+            HoldFunctions::safe_hold(0); // TODO fix
     }
     else {
         debug_println("Proceeding to normal boot.");

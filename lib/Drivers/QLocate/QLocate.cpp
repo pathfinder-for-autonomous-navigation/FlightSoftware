@@ -28,6 +28,8 @@ QLocate::Message::Message(QLocate::Message const &mes) {
     this->mes[i] = mes.mes[i];
 }
 
+int QLocate::Message::get_length() const { return this->length; }
+
 char &QLocate::Message::operator[](int i) {
   return this->mes[i];
 }
@@ -41,9 +43,9 @@ void QLocate::Message::copy_message(char *c) const {
 
 QLocate::QLocate(HardwareSerial *const port, 
                  unsigned char nr_pin, 
-                 int timeout) : port(port), 
-                                nr_pin_(nr_pin), 
-                                timeout(timeout) {}
+                 int timeout) : port(port),
+                                timeout(timeout),
+                                nr_pin_(nr_pin) {}
 
 bool QLocate::setup() {
   // Initialize class variables

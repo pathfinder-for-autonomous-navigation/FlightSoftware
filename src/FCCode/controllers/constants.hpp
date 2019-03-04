@@ -75,16 +75,22 @@ namespace Constants {
     }
 
     namespace Quake {
+        //! Number of times to try sending a packet
+        constexpr unsigned int NUM_RETRIES = 5;
         #ifdef DEBUG
         //! Maximum number of seconds before safe hold happens because of an uplink timeout
         constexpr unsigned int UPLINK_TIMEOUT = 10;
-        //! Period to wait prior to forcibly trying a downlink
+        //! Period to wait prior to forcibly trying a downlink (seconds)
         constexpr unsigned int QUAKE_WAIT_PERIOD = 5;
+        //! Interval between successive downlink retries (milliseconds)
+        constexpr unsigned int WAIT_BETWEEN_RETRIES = 500;
         #else
         //! Maximum number of seconds before safe hold happens because of an uplink timeout
         constexpr unsigned int UPLINK_TIMEOUT = 24*60*60;
-        //! Period to wait prior to forcibly trying a downlink
+        //! Period to wait prior to forcibly trying a downlink (seconds)
         constexpr unsigned int QUAKE_WAIT_PERIOD = 5*60*50;
+        //! Interval between successive downlink retries (milliseconds)
+        constexpr unsigned int WAIT_BETWEEN_RETRIES = 2000;
         #endif
     }
 }

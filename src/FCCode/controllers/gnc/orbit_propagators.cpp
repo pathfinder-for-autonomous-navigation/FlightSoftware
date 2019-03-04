@@ -1,10 +1,7 @@
 #include "../../state/state_holder.hpp"
 #include "../controllers.hpp"
 #include <j8_orbit.hpp>
-
-namespace RTOSTasks {
-    THD_WORKING_AREA(obp_controller_workingArea, 2048);
-}
+#include "orbit_propagators.hpp"
 
 using State::GNC::gnc_state_lock;
 J8Buffer scratchpad;
@@ -14,7 +11,7 @@ static void propagate_self_orbit() {
     rwMtxRLock(&gnc_state_lock);
         std::array<double, 3> gps_pos = State::GNC::gps_position;
         std::array<double, 3> gps_vel = State::GNC::gps_velocity;
-        j8_propagate(gps_pos, gps_vel, RTOSTasks::LoopTimes::ORBIT_PROPAGATOR, scratchpad);
+        j8_propagate(gps_pos, gps_vel, 1.0 / GNC::ORBIT_PROPAGATOR_DELTA_T, scratchpad);
     rwMtxRUnlock(&State::GNC::gnc_state_lock);
     rwMtxWLock(&gnc_state_lock);
         State::GNC::gps_position = gps_pos;
@@ -45,7 +42,7 @@ static void propagate_other_orbit() {
     rwMtxRLock(&gnc_state_lock);
         std::array<double, 3> gps_pos = State::GNC::gps_position_other;
         std::array<double, 3> gps_vel = State::GNC::gps_velocity_other;
-        j8_propagate(gps_pos, gps_vel, RTOSTasks::LoopTimes::ORBIT_PROPAGATOR, scratchpad);
+        j8_propagate(gps_pos, gps_vel, 1.0 / GNC::ORBIT_PROPAGATOR_DELTA_T, scratchpad);
     rwMtxRUnlock(&State::GNC::gnc_state_lock);
     rwMtxWLock(&gnc_state_lock);
         State::GNC::gps_position_other = gps_pos;
@@ -53,12 +50,15 @@ static void propagate_other_orbit() {
     rwMtxWUnlock(&State::GNC::gnc_state_lock);
 }
 
-// TODO matt walsh
+// TODO matt walsh big buffer
 
-void orbit_propagator_controller(void* args) {
+thread_t* GNC::orbit_propagator_thread;
+THD_WORKING_AREA(GNC::orbit_propagator_workingArea, 2048);
+
+THD_FUNCTION(GNC::orbit_propagator_controller, args) {
     systime_t time = chVTGetSystemTimeX();
     while (true) {
-        time += MS2ST(RTOSTasks::LoopTimes::ORBIT_PROPAGATOR);
+        time += MS2ST(GNC::ORBIT_PROPAGATOR_DELTA_T);
         propagate_self_orbit();
         update_rotation_quaternion();
         propagate_other_orbit();

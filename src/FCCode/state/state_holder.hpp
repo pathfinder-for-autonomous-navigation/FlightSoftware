@@ -198,17 +198,22 @@ namespace State {
     //! Readers-writers lock that prevents multi-process modification of Quake state data.
     extern rwmutex_t quake_state_lock;
 
-    typedef std::array<Devices::QLocate::Message, 10> full_data_downlink;
-    
+    constexpr unsigned int PACKET_LENGTH = 70;
+    constexpr unsigned int PACKETS_PER_DOWNLINK = 10;
+    typedef std::array<Devices::QLocate::Message, PACKETS_PER_DOWNLINK> full_data_downlink;
     //! Maximum number of data packets to store in history. 
     // TODO store most recent packets in EEPROM as well.
     constexpr unsigned int MAX_DOWNLINK_HISTORY = 25;
+    //! True if a network ready interrupt event just happened. Is set to false after the interrupt is handled.
+    extern bool network_ready_interrupt_happened;
     //! Packets are automatically added to this stack by the consumer threads if they were 
     // not forcibly required to produce a partial packet.
     extern circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack; 
-    // If the producer threads were forcibly interrupted, this is where they will dump their
+    //! If the producer threads were forcibly interrupted, this is where they will dump their
     // latest packet.
     extern full_data_downlink most_recent_downlink;
+    //! This handle is used as a way to record the "freshness" of this downlink packet.
+    extern full_data_downlink* most_recent_downlink_handle;
   }
 }
 

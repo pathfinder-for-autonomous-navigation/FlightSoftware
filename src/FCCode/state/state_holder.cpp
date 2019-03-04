@@ -81,7 +81,9 @@ namespace State {
         QuakeState quake_state = QuakeState::WAITING;
         rwmutex_t quake_state_lock;
 
+        bool network_ready_interrupt_happened = false;
         circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack;
         full_data_downlink most_recent_downlink;
+        full_data_downlink* most_recent_downlink_handle = NULL; // Usually points to most_recent_downlink
     }
 }
