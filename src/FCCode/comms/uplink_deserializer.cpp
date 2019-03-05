@@ -109,7 +109,7 @@ static void deserialize_checksum(const std::bitset<UPLINK_PACKET_SIZE_BITS>& pac
     uplink->is_crc32_valid = (expected_crc32 == crc32_packed.to_ullong());
 }
 
-void Comms::uplink_deserializer(const std::array<char, PACKET_SIZE_BYTES>& packet, Uplink* uplink) {
+void Comms::uplink_deserializer(const Devices::QLocate::Message& packet, Uplink* uplink) {
     std::bitset<UPLINK_PACKET_SIZE_BITS> packet_bits;
     for(unsigned int i = 0; i < PACKET_SIZE_BYTES; i++) {
         std::bitset<8> packet_byte(packet[i]);

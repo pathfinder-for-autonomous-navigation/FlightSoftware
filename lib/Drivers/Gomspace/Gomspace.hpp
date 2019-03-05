@@ -138,12 +138,12 @@ class Gomspace : public I2CDevice {
 
     /** @brief Set output channels on or off.
      *  @param output_byte Output byte that masks channels. */
-    bool set_output(unsigned char output_byte);
+    virtual bool set_output(unsigned char output_byte);
     /** @brief Set a single output on or off, with an optional time delay.
      *  @param channel Channel to set on or off. (See NanoPower documentation to see how channel numbers correspond to outputs.)
      *  @param value Whether to set the channel on or off.
      *  @param time_delay Time delay for change, in seconds. */
-    bool set_single_output(unsigned char channel, unsigned char value, short int time_delay = 0);
+    virtual bool set_single_output(unsigned char channel, unsigned char value, short int time_delay = 0);
 
     /** @brief Set voltage of photovoltaic inputs.
      * @param voltage1 Voltage of input 1, in mV.

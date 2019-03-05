@@ -12,7 +12,7 @@
 #include <rwmutex.hpp>
 #include <Gomspace/Gomspace.hpp>
 #include <AttitudeMath.hpp>
-#include <Piksi/GPSTime.hpp>
+#include <GPSTime.hpp>
 #include <circular_stack.hpp>
 #include "state_definitions.hpp"
 #include "device_states.hpp"
@@ -204,8 +204,6 @@ namespace State {
     //! Maximum number of data packets to store in history. 
     // TODO store most recent packets in EEPROM as well.
     constexpr unsigned int MAX_DOWNLINK_HISTORY = 25;
-    //! True if a network ready interrupt event just happened. Is set to false after the interrupt is handled.
-    extern bool network_ready_interrupt_happened;
     //! Packets are automatically added to this stack by the consumer threads if they were 
     // not forcibly required to produce a partial packet.
     extern circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack; 

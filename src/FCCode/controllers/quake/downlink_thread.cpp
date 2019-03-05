@@ -1,5 +1,6 @@
 #include "../../state/state_holder.hpp"
 #include "downlink_thread.hpp"
+#include "../../comms/uplink_deserializer.hpp"
 
 thread_t* Quake::downlink_thread;
 
@@ -13,20 +14,11 @@ void Quake::go_to_waiting() {
 
 THD_FUNCTION(Quake::downlink_fn, args) {
     Devices::QLocate::Message uplink;
-
-    rwMtxRLock(&State::Quake::quake_state_lock);
-        bool network_ready_interrupt_happened = State::Quake::network_ready_interrupt_happened;
-    rwMtxRUnlock(&State::Quake::quake_state_lock);
-    int response = 0;
-    if (network_ready_interrupt_happened) {
-        response = Quake::send_most_recent_downlink(&uplink);
-        rwMtxWLock(&State::Quake::quake_state_lock);
-            State::Quake::network_ready_interrupt_happened = false;
-        rwMtxWUnlock(&State::Quake::quake_state_lock);
-    }
-    if (response == 0) response = Quake::send_downlink_stack(&uplink);
+    Quake::send_downlink_stack(&uplink);
     if (uplink.get_length() != 0) {
-        // Copy uplink into most recent uplink
+        rwMtxWLock(&State::Quake::uplink_lock);
+            Comms::uplink_deserializer(uplink, &State::Quake::most_recent_uplink);
+        rwMtxWUnlock(&State::Quake::uplink_lock);
     }
     go_to_waiting();
     chThdExit((msg_t) 0);

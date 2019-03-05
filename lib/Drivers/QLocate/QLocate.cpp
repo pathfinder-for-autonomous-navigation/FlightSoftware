@@ -30,7 +30,11 @@ QLocate::Message::Message(QLocate::Message const &mes) {
 
 int QLocate::Message::get_length() const { return this->length; }
 
-char &QLocate::Message::operator[](int i) {
+char& QLocate::Message::operator[](int i) {
+  return this->mes[i];
+}
+
+char QLocate::Message::operator[](int i) const {
   return this->mes[i];
 }
 

@@ -16,7 +16,7 @@ namespace Comms {
      * @param packet The packet that will be deserialized.
      * @param uplink A struct into which the packet's data will be stored.
     */
-    void uplink_deserializer(const std::array<char, PACKET_SIZE_BYTES>& packet, Uplink* uplink);
+    void uplink_deserializer(const Devices::QLocate::Message& packet, Uplink* uplink);
 
     /** @brief Apply commands supplied in an uplink to the actual satellite.
      * @param uplink Struct containing uplink data to be processed.

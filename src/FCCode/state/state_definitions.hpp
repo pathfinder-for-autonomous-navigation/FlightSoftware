@@ -8,7 +8,7 @@
 #define STATE_DEFINITIONS_HPP_
 
 #include <Piksi/Piksi.hpp>
-#include <Piksi/GPSTime.hpp>
+#include <GPSTime.hpp>
 
 // Containers and enums for holding state
 namespace State {

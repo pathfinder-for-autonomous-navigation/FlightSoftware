@@ -30,7 +30,6 @@ namespace RTOSTasks {
 }
 using namespace RTOSTasks;
 
-// TODO ensure that RADIOS are NOT turned on during hardware setup.
 void hardware_setup() {
     rwMtxObjectInit(&State::Hardware::hat_lock);
 

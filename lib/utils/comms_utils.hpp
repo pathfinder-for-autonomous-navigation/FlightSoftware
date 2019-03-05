@@ -12,7 +12,7 @@
 #include <array>
 #include <FastCRC/FastCRC.h>
 #include <cmath>
-#include <Piksi/GPSTime.hpp>
+#include <GPSTime.hpp>
 #include <Piksi/Piksi.hpp>
 #include <QLocate/QLocate.hpp>
 

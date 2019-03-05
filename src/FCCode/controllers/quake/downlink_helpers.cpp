@@ -9,9 +9,11 @@ using State::Quake::quake_state_lock;
 using namespace Comms;
 
 int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
-    quake.sbdwb(packet.mes, State::Quake::PACKET_LENGTH);
-    quake.run_sbdix();
     int response;
+    response = quake.sbdwb(packet.mes, State::Quake::PACKET_LENGTH);
+    if (response != 0) return response;
+    
+    quake.run_sbdix();
     for(int i = 0; i < Constants::Quake::NUM_RETRIES; i++) {
         response = quake.end_sbdix();
         if (response != -1) break;
@@ -40,10 +42,6 @@ int send_downlink(const State::Quake::full_data_downlink& downlink, QLocate::Mes
         }
     }
     return 0;
-}
-
-int Quake::send_most_recent_downlink(QLocate::Message* uplink) {
-    return send_downlink(State::Quake::most_recent_downlink, uplink);
 }
 
 bool is_downlink_stack_empty() {

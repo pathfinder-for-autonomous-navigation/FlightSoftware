@@ -31,16 +31,7 @@ static CH_IRQ_HANDLER(network_ready_handler) {
     CH_IRQ_PROLOGUE();
     chVTResetI(&waiting_timer);
     chSysLockFromISR();
-        bool is_downlink_stack_empty = State::Quake::downlink_stack.empty();
-    if (!is_downlink_stack_empty) {
-        // This means that full packets have been waiting on the stack
-        // to be sent down. We include this check so that we don't keep
-        // sending down partial packets in the case of continuous network availability.
-        State::Quake::network_ready_interrupt_happened = true;
         State::Quake::quake_state = QuakeState::TRANSCEIVING;
-        // TODO notify the producer threads to stop and dump packet into 
-        // "most recent downlink" field
-    }
     chSysLockFromISR();
     CH_IRQ_EPILOGUE();
 };
@@ -51,9 +42,6 @@ static void quake_loop() {
     rwMtxRUnlock(&quake_state_lock);
     switch(quake_state) {
         case QuakeState::WAITING: {
-            rwMtxWLock(&quake_state_lock);
-                State::Quake::network_ready_interrupt_happened = false;
-            rwMtxWUnlock(&quake_state_lock);
             chVTDoSetI(&waiting_timer, Constants::Quake::QUAKE_WAIT_PERIOD, end_waiting, NULL);
         }
         break;

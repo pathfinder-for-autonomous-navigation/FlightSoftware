@@ -1,7 +1,7 @@
 #ifndef GPSTIME_HPP_
 #define GPSTIME_HPP_
 
-#include "libsbp/navigation.h"
+#include <Piksi/libsbp/navigation.h>
 
 static constexpr unsigned int MILLISECONDS_IN_WEEK = 7*24*60*60*1000;
 

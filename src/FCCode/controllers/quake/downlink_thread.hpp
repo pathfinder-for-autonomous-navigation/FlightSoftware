@@ -9,7 +9,6 @@ namespace Quake {
     extern THD_FUNCTION(downlink_fn, args);
     extern thread_t* downlink_thread;
 
-    int send_most_recent_downlink(Devices::QLocate::Message* uplink);
     int send_downlink_stack(Devices::QLocate::Message* uplink);
 
     void go_to_waiting();
