@@ -28,22 +28,14 @@ static void save_position_other_history(void* arg) {
         State::Piksi::recorded_gps_position_other);
 }
 
-static void save_velocity_other_history(void* arg) {
-    DataCollection::add_to_buffer<std::array<double,3>, DataCollectionRates::Piksi::VELOCITY>(
-        StateHistory::Piksi::recorded_velocity_other_history,
-        State::Piksi::recorded_gps_velocity_other);
-}
-
 static virtual_timer_t position_history_timer;
 static virtual_timer_t velocity_history_timer;
 static virtual_timer_t position_other_history_timer;
-static virtual_timer_t velocity_other_history_timer;
 
 void DataCollection::initialize_piksi_history_timers() {
     chVTObjectInit(&position_history_timer);
     chVTObjectInit(&velocity_history_timer);
     chVTObjectInit(&position_other_history_timer);
-    chVTObjectInit(&velocity_other_history_timer);
 
     rwMtxObjectInit(&StateHistory::Piksi::piksi_state_history_lock);
 
@@ -51,6 +43,5 @@ void DataCollection::initialize_piksi_history_timers() {
         chVTSet(&position_history_timer, DataCollectionRates::Piksi::POSITION_INTERVAL, save_position_history, NULL);
         chVTSet(&velocity_history_timer, DataCollectionRates::Piksi::VELOCITY_INTERVAL, save_velocity_history, NULL);
         chVTSet(&position_other_history_timer, DataCollectionRates::Piksi::VELOCITY_INTERVAL, save_position_other_history, NULL);
-        chVTSet(&velocity_other_history_timer, DataCollectionRates::Piksi::VELOCITY_INTERVAL, save_velocity_other_history, NULL);
     chSysUnlock();
 }

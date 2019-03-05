@@ -143,14 +143,22 @@ namespace State {
     extern gps_time_t recorded_current_time;
     //! Timestamp at which current time was collected from Piksi.
     extern systime_t recorded_time_collection_timestamp;
-    //! Most recent GPS position, as last obtained from Piksi.
+    //! Most recent GPS position, as last obtained from Piksi
     extern std::array<double, 3> recorded_gps_position;
+    //! GPS timestamp at which most recent position was collected.
+    extern gps_time_t recorded_gps_position_time;
+    //! Number of satellites used in position determination.
+    extern char recorded_gps_position_nsats;
     //! Most recently expected GPS position of other satellite, as last obtained from Piksi or ground.
     extern std::array<double, 3> recorded_gps_position_other;
+    //! GPS timestamp at which most recent position of other satellite was collected.
+    extern gps_time_t recorded_gps_position_other_time;
     //! Most recent GPS velocity, as last obtained from Piksi.
     extern std::array<double, 3> recorded_gps_velocity;
-    //! Most recent GPS velocity of other satellite, as last obtained from Piksi or ground.
-    extern std::array<double, 3> recorded_gps_velocity_other;
+    //! GPS timestamp at which most recent velocity was collected.
+    extern gps_time_t recorded_gps_velocity_time;
+    //! Number of satellites used in velocity determination.
+    extern char recorded_gps_velocity_nsats;
     //! Readers-writers lock that prevents multi-process modification of Piksi state data.
     extern rwmutex_t piksi_state_lock;
   }

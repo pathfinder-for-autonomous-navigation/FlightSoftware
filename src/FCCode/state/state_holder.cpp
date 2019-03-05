@@ -70,8 +70,9 @@ namespace State {
     namespace Piksi {
         gps_time_t recorded_current_time;
         systime_t recorded_time_collection_timestamp;
-        std::array<double, 3> recorded_gps_position, recorded_gps_position_other, 
-            recorded_gps_velocity, recorded_gps_velocity_other;
+        std::array<double, 3> recorded_gps_position, recorded_gps_position_other, recorded_gps_velocity;
+        gps_time_t recorded_gps_position_time, recorded_gps_position_other_time, recorded_gps_velocity_time;
+        char recorded_gps_position_nsats, recorded_gps_velocity_nsats;
         rwmutex_t piksi_state_lock;
     }
 

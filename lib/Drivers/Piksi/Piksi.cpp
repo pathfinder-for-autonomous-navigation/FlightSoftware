@@ -130,26 +130,29 @@ unsigned short int Piksi::get_dops_time()  { return _dops.tdop; }
 unsigned short int Piksi::get_dops_horizontal()  {  return _dops.hdop; }
 unsigned short int Piksi::get_dops_vertical()  { return _dops.vdop; }
 
-void Piksi::get_pos_ecef(std::array<double, 3>* position) { 
+void Piksi::get_pos_ecef(std::array<double, 3>* position, unsigned int* tow) { 
     (*position)[0] = _pos_ecef.x;
     (*position)[1] = _pos_ecef.y;
     (*position)[2] = _pos_ecef.z;
+    *tow = _pos_ecef.tow;
 }
 unsigned char Piksi::get_pos_ecef_nsats() { return _pos_ecef.n_sats; }
 unsigned char Piksi::get_pos_ecef_flags() { return _pos_ecef.flags; }
 
-void Piksi::get_baseline_ecef(std::array<double, 3>* position) { 
+void Piksi::get_baseline_ecef(std::array<double, 3>* position, unsigned int* tow) { 
     (*position)[0] = _pos_ecef.x;
     (*position)[1] = _pos_ecef.y;
     (*position)[2] = _pos_ecef.z;
+    *tow = _pos_ecef.tow;
 }
 unsigned char Piksi::get_baseline_ecef_nsats() { return _baseline_ecef.n_sats; }
 unsigned char Piksi::get_baseline_ecef_flags() { return _baseline_ecef.flags; }
 
-void Piksi::get_vel_ecef(std::array<double, 3>* velocity) { 
+void Piksi::get_vel_ecef(std::array<double, 3>* velocity, unsigned int* tow) { 
     (*velocity)[0] = _pos_ecef.x;
     (*velocity)[1] = _pos_ecef.y;
     (*velocity)[2] = _pos_ecef.z;
+    *tow = _pos_ecef.tow;
 }
 unsigned char Piksi::get_vel_ecef_nsats() { return _vel_ecef.n_sats; }
 unsigned char Piksi::get_vel_ecef_flags() { return _vel_ecef.flags; }
