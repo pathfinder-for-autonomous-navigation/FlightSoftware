@@ -4,7 +4,9 @@
  * @brief Contains implementation for the propulsion state controller.
  */
 
+#include <EEPROM.h>
 #include "../controllers.hpp"
+#include "../../state/EEPROMAddresses.hpp"
 #include "../../state/state_holder.hpp"
 #include "../../deployment_timer.hpp"
 #include "../../data_collection/data_collection.hpp"
@@ -39,14 +41,11 @@ static int can_fire_manuever() {
     rwMtxWUnlock(&propulsion_state_lock);
 
     rwMtxRLock(&propulsion_state_lock);
-        bool is_propulsion_enabled = State::Propulsion::is_propulsion_enabled;
         bool is_firing_planned = State::Propulsion::is_firing_planned;
         bool is_inner_tank_temperature_too_high = State::Propulsion::tank_pressure >= 100;
         bool is_outer_tank_temperature_too_high = State::Propulsion::tank_inner_temperature >= 48;
         bool is_outer_tank_pressure_too_high = State::Propulsion::tank_outer_temperature >= 48;
     rwMtxRUnlock(&propulsion_state_lock);
-
-    if (!is_propulsion_enabled) return 0;
 
     if (is_inner_tank_temperature_too_high || is_outer_tank_temperature_too_high || is_outer_tank_pressure_too_high) {
         return -1;
@@ -90,6 +89,10 @@ static void propulsion_state_controller() {
 
     int can_manuever = can_fire_manuever();
     switch(propulsion_state) {
+        case PropulsionState::DISABLED:
+            // Actually do nothing except collect data, which is already
+            // being collected by can_fire_manuever()
+        break;
         case PropulsionState::IDLE: {
             if (can_manuever == -1) {
                 change_propulsion_state(PropulsionState::VENTING);
@@ -142,19 +145,28 @@ static void propulsion_state_controller() {
                 else
                     change_propulsion_state(PropulsionState::IDLE);
             }
-            else if (State::ADCS::angular_rate() >= State::ADCS::MAX_STABLE_ANGULAR_RATE) {
+            if (State::ADCS::angular_rate() >= Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
                 // Satellite is too unstable for a firing
                 // TODO set some downlink issue
                 change_propulsion_state(PropulsionState::IDLE);
             }
-            else if (firing_thread == NULL || chThdTerminatedX(firing_thread))
+            float tank_pressure;
+            rwMtxRLock(&propulsion_state_lock);
+                tank_pressure = State::Propulsion::tank_pressure;
+            rwMtxRUnlock(&propulsion_state_lock);
+            if (tank_pressure < Constants::Propulsion::PRE_FIRING_OUTER_TANK_PRESSURE) {
+                // Not enough pressure for a firing
+                change_propulsion_state(PropulsionState::IDLE);
+            }
+
+            if (firing_thread == NULL || chThdTerminatedX(firing_thread))
                 firing_thread = chThdCreateStatic(firing_thread_wa, sizeof(firing_thread_wa), 
                     RTOSTasks::propulsion_thread_priority, firing_fn, NULL);
         }
         break;
         default: {
             // Uh oh, undefined mode; go to idle since that's safest
-            change_propulsion_state(PropulsionState::IDLE);
+            change_propulsion_state(PropulsionState::DISABLED);
         }
         break;
     }
@@ -179,6 +191,13 @@ void RTOSTasks::propulsion_controller(void *arg) {
     rwMtxObjectInit(&PropulsionTasks::propulsion_thread_ptr_lock);
     DataCollection::initialize_propulsion_history_timers();
 
+    chMtxLock(&eeprom_lock);
+        char preferred_valve = EEPROM.read(EEPROM_ADDRESSES::PREFERRED_INTERTANK_VALVE);
+    chMtxUnlock(&eeprom_lock);
+    rwMtxWLock(&propulsion_state_lock);
+        State::Propulsion::intertank_firing_valve = preferred_valve;
+    rwMtxWUnlock(&propulsion_state_lock);
+
     debug_println("Waiting for deployment timer to finish.");
     rwMtxRLock(&State::Master::master_state_lock);
         bool is_deployed = State::Master::is_deployed;
@@ -186,10 +205,6 @@ void RTOSTasks::propulsion_controller(void *arg) {
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
     debug_println("Deployment timer has finished.");
     debug_println("Initializing main operation...");
-
-    rwMtxWLock(&propulsion_state_lock);
-        State::Propulsion::is_propulsion_enabled = true;
-    rwMtxWUnlock(&propulsion_state_lock);
 
     chThdExit((msg_t)0);
 }

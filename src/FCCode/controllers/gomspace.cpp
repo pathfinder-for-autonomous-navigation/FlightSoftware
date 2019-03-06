@@ -179,23 +179,6 @@ static void gomspace_check() {
     rwMtxRUnlock(&State::Gomspace::gomspace_state_lock);
 }
 
-void set_power_outputs() {
-    rwMtxRLock(&State::Master::master_state_lock);
-        unsigned int boot_number = State::Master::boot_number;
-    rwMtxRUnlock(&State::Master::master_state_lock);
-
-    bool low_power_state = false; // TODO get from Gomspace. If unavailable, _assume_ a low-power state
-                                  // since it may be the case that Gomspace is unable to initialize I2C properly
-    if (boot_number == 1 || low_power_state) {
-        rwMtxWLock(&State::Hardware::hat_lock);
-        // TODO turn on Quake
-        rwMtxWUnlock(&State::Hardware::hat_lock);
-    }
-    else {
-        // Turn everything on
-    }
-}
-
 static THD_WORKING_AREA(gomspace_read_controller_workingArea, 4096);
 static void gomspace_read_controller(void *arg) {
     chRegSetThreadName("GS READ");
@@ -228,6 +211,6 @@ void RTOSTasks::gomspace_controller(void *arg) {
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
     debug_println("Deployment timer has finished.");
     debug_println("Initializing main operation...");
-    // TODO start actuation control operations? e.g. power on Quake maybe
+
     chThdExit((msg_t)0);
 }

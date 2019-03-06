@@ -23,10 +23,9 @@ static void gnc_calculation() {
         is_valid_firing = false;
 
     rwMtxRLock(&State::Propulsion::propulsion_state_lock);
-        bool is_propulsion_enabled = State::Propulsion::is_propulsion_enabled;
         bool is_firing_planned_by_uplink = State::Propulsion::is_firing_planned_by_uplink;
     rwMtxRUnlock(&State::Propulsion::propulsion_state_lock);
-    if (is_propulsion_enabled && is_valid_firing && is_firing_planned_by_uplink) {
+    if (is_valid_firing && is_firing_planned_by_uplink) {
         rwMtxWLock(&State::Propulsion::propulsion_state_lock);
             State::Propulsion::is_firing_planned = true;
             State::Propulsion::firing_data.impulse_vector = firing_vector;

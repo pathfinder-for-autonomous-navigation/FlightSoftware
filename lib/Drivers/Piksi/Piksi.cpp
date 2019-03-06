@@ -110,7 +110,7 @@ bool Piksi::is_functional() {
 void Piksi::reset() { piksi_reset(); }
 
 void Piksi::disable() {
-    // TODO
+    // Do nothing; we really don't want to disable Piksi
 }
 
 static std::string piksi_name = "Piksi";

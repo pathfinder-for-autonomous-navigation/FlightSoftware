@@ -72,7 +72,7 @@ bool QLocate::is_functional() {
 
 void QLocate::reset() {config();}
 void QLocate::disable() {
-  // TODO
+  // Do nothing; we really don't want to disable Quake
 }
 
 static std::string quake_name = "Quake";

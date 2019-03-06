@@ -8,11 +8,10 @@
 
 using namespace Devices;
 
-// TODO ascertain timeouts. Currently set to 10 ms.
 Gomspace::Gomspace(volatile Gomspace::eps_hk_t *hk_data, 
                    volatile Gomspace::eps_config_t *config_data, 
                    volatile Gomspace::eps_config2_t *config2_data, 
-                   i2c_t3 &i2c_wire, unsigned char i2c_addr) : I2CDevice(i2c_wire, i2c_addr, 10000), 
+                   i2c_t3 &i2c_wire, unsigned char i2c_addr) : I2CDevice(i2c_wire, i2c_addr, 2000), 
                                                                hk(hk_data),
                                                                gspace_config(config_data),
                                                                gspace_config2(config2_data) {

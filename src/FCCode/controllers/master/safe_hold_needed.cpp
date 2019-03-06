@@ -1,8 +1,8 @@
-#include "hold_functions.hpp"
+#include "master_helpers.hpp"
 
 using State::Master::master_state_lock;
 
-unsigned short int HoldFunctions::safe_hold_needed() {
+unsigned short int Master::safe_hold_needed() {
     rwMtxRLock(&master_state_lock);
         bool autoexited_safe_hold = State::Master::autoexited_safe_hold;
     rwMtxRUnlock(&master_state_lock);

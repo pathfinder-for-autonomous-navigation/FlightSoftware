@@ -45,16 +45,15 @@ namespace State {
     }
 
     namespace Propulsion {
-        PropulsionState propulsion_state = PropulsionState::IDLE;
+        PropulsionState propulsion_state = PropulsionState::DISABLED;
         bool is_firing_planned = false;
         bool is_firing_planned_by_uplink = false;
-        bool is_propulsion_enabled = false;
-        bool is_propulsion_active = false;
         float delta_v_available = 11.0f; // m/s
         Firing firing_data;
         float tank_pressure = 0.0f;
         float tank_inner_temperature = 0.0f;
         float tank_outer_temperature = 0.0f;
+        unsigned char intertank_firing_valve = Devices::SpikeAndHold::INTERTANK_MAIN;
         rwmutex_t propulsion_state_lock;
     }
 

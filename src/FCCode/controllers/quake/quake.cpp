@@ -22,17 +22,16 @@ using namespace Comms;
 static virtual_timer_t waiting_timer;
 static void end_waiting(void* args) {
     chSysLockFromISR();
-        // TODO notify the producer threads to stop and dump packet into stack
         State::Quake::quake_state = QuakeState::TRANSCEIVING;
     chSysUnlockFromISR();
 }
 
 static CH_IRQ_HANDLER(network_ready_handler) {
     CH_IRQ_PROLOGUE();
-    chVTResetI(&waiting_timer);
     chSysLockFromISR();
+        chVTResetI(&waiting_timer);
         State::Quake::quake_state = QuakeState::TRANSCEIVING;
-    chSysLockFromISR();
+    chSysUnlockFromISR();
     CH_IRQ_EPILOGUE();
 };
 
@@ -46,6 +45,7 @@ static void quake_loop() {
         }
         break;
         case QuakeState::TRANSCEIVING: {
+
             if (Quake::downlink_thread == NULL || chThdTerminatedX(Quake::downlink_thread)) {
                 Quake::downlink_thread = chThdCreateStatic(Quake::downlink_thread_workingArea, 
                                                            sizeof(Quake::downlink_thread_workingArea), 

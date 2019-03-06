@@ -11,7 +11,7 @@
 #define QLocate_hpp
 
 #include <HardwareSerial.h>
-#include<Device.hpp>
+#include "../Devices/Device.hpp"
 
 namespace Devices {
 /*! Driver class for the QLocate attached to an arbitrary serial port. Supports

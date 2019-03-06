@@ -9,6 +9,7 @@
 #define FAULT_STATE_HOLDER_H_
 
 #include <rwmutex.hpp>
+#include <GPSTime.hpp>
 #include <bitset>
 
 namespace FaultState {
@@ -56,6 +57,19 @@ namespace FaultState {
   }
 
   namespace Propulsion {
+    //! GPS time of when an overpressure event occurred. If no event occcured, the "flags" of the 
+    // underlying msg_gps_time_t is set to 1.
+    extern gps_time_t overpressure_event;
+    //! Type of condition that triggered overpressure event.
+    enum OVERPRESSURE_EVENT {
+      NONE,
+      INNER_TANK_TEMPERATURE,
+      OUTER_TANK_TEMPERATURE,
+      OUTER_TANK_PRESSURE
+    };
+    extern OVERPRESSURE_EVENT overpressure_event_id;
+    //! If true, we are unable to pressurize the outer tank up to the requisite pressure for a firing.
+    extern bool cannot_pressurize_outer_tank;
     //! Readers-writers lock that prevents multi-process modification of propulsion fault state data.
     extern rwmutex_t propulsion_fault_state_lock;
   }

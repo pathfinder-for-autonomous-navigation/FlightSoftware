@@ -58,13 +58,13 @@ void deployment_timer_function(void *arg) {
     // Determine time remaining in deployment
     chMtxLock(&eeprom_lock);
         unsigned int time_elapsed;
-        EEPROM.get(EEPROM_ADDRESSES::DEPLOYMENT_TIMER_1, time_elapsed);
+        EEPROM.get(EEPROM_ADDRESSES::DEPLOYMENT_TIMER, time_elapsed);
     chMtxUnlock(&eeprom_lock);
 
     // Start deployment timer
     while(time_elapsed < DEPLOYMENT_LENGTH) {
         chMtxLock(&eeprom_lock);
-            EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT_TIMER_1, time_elapsed);
+            EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT_TIMER, time_elapsed);
         chMtxUnlock(&eeprom_lock);
 
         debug_printf("Time remaining until deployment wait completed: %d\n", DEPLOYMENT_LENGTH - time_elapsed);

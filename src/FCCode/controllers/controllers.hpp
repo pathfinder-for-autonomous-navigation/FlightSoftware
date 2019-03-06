@@ -119,8 +119,6 @@ namespace RTOSTasks {
     // ADCS specific
     //! Threads waiting on a finish of ADCS detumbling
     extern threads_queue_t adcs_detumbled;
-    //! Threads waiting on a finish of an ADCS pointing instruction
-    extern threads_queue_t adcs_pointing_accomplished;
 
     // Propulsion-specific
     void disable_thruster_firing();

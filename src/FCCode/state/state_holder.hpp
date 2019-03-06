@@ -58,10 +58,6 @@ namespace State {
     //! Are we able to collect the sun vector? i.e. the ADCS system is not timing out on determining
     // a sun vector, right?
     extern bool is_sun_vector_collection_working;
-    //! Maximum angular rate magnitude that is considered "stable".
-    constexpr float MAX_STABLE_ANGULAR_RATE = 0.0f; // TODO set value
-    //! Maximum angular rate magnitude that is considered "semistable", e.g. not perfectly stable, but OK for emergency communication.
-    constexpr float MAX_SEMISTABLE_ANGULAR_RATE = 0.0f; // TODO set value
     /**
      * @brief Computes the magnitude of the angular rate of the spacecraft based on the cur_ang_rate vector.
      * @return float The current angular rate of the spacecraft.
@@ -116,8 +112,6 @@ namespace State {
     // would contribute to significant inaccuracy. The purpose of this field is to serve as an upper
     // bound.
     extern float delta_v_available;
-    //! Are propulsive manuevers enabled?
-    extern bool is_propulsion_enabled;
     //! Is there a currently planned firing?
     extern bool is_firing_planned;
     //! Is the currently planned firing due to a previous uplink?
@@ -130,9 +124,10 @@ namespace State {
     extern float tank_inner_temperature;
     //! Current temperature within outer tank.
     extern float tank_outer_temperature;
+    //! Preferred valve for venting between tanks. Can be changed by ground.
+    extern unsigned char intertank_firing_valve;
     //! Readers-writers lock that prevents multi-process modification of propulsion state data.
-    extern rwmutex_t propulsion_state_lock; // TODO There may be LOCK CONTENTION on this lock due to both the propulsion and
-                                          // master processes trying to write to it! Handle this lock contention carefully.
+    extern rwmutex_t propulsion_state_lock;
   }
 
   namespace Piksi {

@@ -18,34 +18,40 @@ namespace Constants {
             constexpr unsigned int SAFE_HOLD_TIMEOUT = 3; // In seconds
             //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still being a spinny boi
             constexpr unsigned int INITIALIZATION_HOLD_DETUMBLE_WAIT = 5;
+            //! Seconds before docking mode is automatically exited and standby mode is triggered
+            constexpr unsigned int DOCKING_TIMEOUT = 5;
         #else
             //! Defines how long the master controller safehold callback will wait prior to automatically exiting safe hold.
             constexpr unsigned int SAFE_HOLD_TIMEOUT = 60*60*24; // 1 day, in seconds
             //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still being a spinny boi
             constexpr unsigned int INITIALIZATION_HOLD_DETUMBLE_WAIT = 30; 
+            //! Seconds before docking mode is automatically exited and standby mode is triggered
+            constexpr unsigned int DOCKING_TIMEOUT = 30*60; 
         #endif
         constexpr unsigned int ORBIT_PERIOD_MS = 2*60*60*1000; // Approximate orbital period in milliseconds--assuming 2-hour orbit
         constexpr float SPACECRAFT_MASS = 1.0; // TODO fix
     }
 
     namespace ADCS {
-        //! Maximum angular rate magnitude of spacecraft.
+        //! Maximum angular rate magnitude that is considered "stable".
+        constexpr float MAX_STABLE_ANGULAR_RATE = 0.0f; // TODO set value
+        //! Maximum possible angular rate magnitude of spacecraft.
         constexpr float MAX_ANGULAR_RATE = 2.2;
-        //! Maximum gyroscope reading along one axis.
+        //! Maximum possible gyroscope reading along one axis.
         constexpr float MIN_GYRO_VALUE = -2.2;
-        //! Maximum gyroscope reading along one axis.
+        //! Maximum possible gyroscope reading along one axis.
         constexpr float MAX_GYRO_VALUE = 2.2;
-        //! Maximum magnetic field vector reading magnitude.
+        //! Maximum possible magnetic field vector reading magnitude.
         constexpr float MAX_MAGNETOMETER_READING = -0.005;
-        //! Maximum ramp command magnitude.
+        //! Maximum possible ramp command magnitude.
         constexpr float MAX_RAMP_CMD = 310.2;
-        //! Minimum magnetotorquer command along one axis.
+        //! Minimum possible magnetotorquer command along one axis.
         constexpr float MIN_MTR_CMD = 0; // TODO
-        //! Maximum magnetotorquer command along one axis.
+        //! Maximum possible magnetotorquer command along one axis.
         constexpr float MAX_MTR_CMD = 0; // TODO
-        //! Minimum reading of one sun sensor.
+        //! Minimum possible reading of one sun sensor.
         constexpr float MIN_SUN_SENSOR_VALUE = 0; // TODO
-        //! Maximum reading of one sun sensor.
+        //! Maximum possible reading of one sun sensor.
         constexpr float MAX_SUN_SENSOR_VALUE = 0; // TODO
     }
 
@@ -61,7 +67,7 @@ namespace Constants {
 
     namespace Propulsion {
         //! Milliseconds that a valve is opened in order to pressurize or vent a tank.
-        constexpr unsigned int VALVE_VENT_TIME = 500;
+        constexpr unsigned int VALVE_VENT_TIME = 200;
         //! Milliseconds that we wait between opening the same valve.
         constexpr unsigned int VALVE_WAIT_TIME = 1000;
         //! Seconds before the actual thruster firing that a propellant-maximizing attitude adjustment is made.
@@ -78,6 +84,10 @@ namespace Constants {
         constexpr float MAX_OUTER_TANK_TEMPERATURE = 48;
         //! Maximum allowable pressure of outer tank
         constexpr float MAX_OUTER_TANK_PRESSURE = 100;
+        //! Amount of time, in milliseconds, to wait between intertank ventings
+        constexpr unsigned int WAIT_BETWEEN_PRESSURIZATIONS = 30000; // TODO
+        //! Required outer tank pressure prior to initiating a firing
+        constexpr float PRE_FIRING_OUTER_TANK_PRESSURE = 0; // TODO
         //! Maximum allowable impulse magnitude for a particular firing, in kg m/s
         constexpr float MAX_FIRING_IMPULSE = 1.0; // TODO
         //! Vector directions, relative to body frame, in which the nozzles point.

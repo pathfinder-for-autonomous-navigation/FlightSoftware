@@ -25,12 +25,16 @@ namespace State {
     };
     //! PAN-Specific state of finite-state machine that's part of the master controller
     enum PANState {
-      // Common states. Used when satellite is not
+      // Common states.
+      // Used when satellite is not
       // ready to enter the PAN phase of the mission yet.
       MASTER_STARTUP,
       MASTER_INITIALIZATIONHOLD,
       MASTER_DETUMBLE,
       MASTER_SAFEHOLD,
+      // Actually used by both satellites
+      DOCKING,
+      DOCKED,
       // Leader states
       STANDBY,
       LEADER_CLOSE_APPROACH,
@@ -68,6 +72,7 @@ namespace State {
 
   namespace Propulsion {
     enum PropulsionState {
+      DISABLED,
       IDLE,
       VENTING,
       AWAITING_PRESSURIZATION,

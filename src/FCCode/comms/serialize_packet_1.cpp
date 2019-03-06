@@ -411,8 +411,6 @@ static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned
 }
 
 static void encode_piksi_data_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    // TODO add non-recorded (propagated) position and velocity as well
-
     // Item: Position history
     // Type: Array of vectors
     // Size per element: 62

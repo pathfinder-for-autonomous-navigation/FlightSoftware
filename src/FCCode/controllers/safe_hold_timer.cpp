@@ -17,29 +17,13 @@ namespace RTOSTasks {
     THD_WORKING_AREA(safe_hold_timer_workingArea, 2048);
 }
 
-void RTOSTasks::stop_safehold() {
-    rwMtxWLock(&State::Master::master_state_lock);
-        State::Master::master_state = State::Master::MasterState::DETUMBLE;
-        State::Master::pan_state = State::Master::PANState::MASTER_DETUMBLE;
-        State::Master::autoexited_safe_hold = false; // Here we set autoexit to false, since this function
-                                                     // could be called by an uplink packet
-    rwMtxWUnlock(&State::Master::master_state_lock);
-
-    chMtxLock(&eeprom_lock);
-        EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_FLAG, false);
-        EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_TIMER_1, (unsigned int) 0);
-    chMtxUnlock(&eeprom_lock);
-
-    debug_println("Safe hold completed!");
-}
-
 //! Function that defines the safe hold timer thread.
 void RTOSTasks::safe_hold_timer(void *arg) {
     chRegSetThreadName("SAFEHOLD TIMER");
     // Determine time remaining in safe hold
     chMtxLock(&eeprom_lock);
         unsigned char time_elapsed;
-        EEPROM.get(EEPROM_ADDRESSES::SAFE_HOLD_TIMER_1, time_elapsed);
+        EEPROM.get(EEPROM_ADDRESSES::SAFE_HOLD_TIMER, time_elapsed);
     chMtxUnlock(&eeprom_lock);
 
     // Start safe hold timer
@@ -53,7 +37,7 @@ void RTOSTasks::safe_hold_timer(void *arg) {
         rwMtxRUnlock(&State::Master::master_state_lock);
 
         chMtxLock(&eeprom_lock);
-            EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_TIMER_1, time_elapsed);
+            EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_TIMER, time_elapsed);
         chMtxUnlock(&eeprom_lock);
 
         debug_printf("Time remaining until safe hold wait completed: %d\n", Constants::Master::SAFE_HOLD_TIMEOUT - time_elapsed);
