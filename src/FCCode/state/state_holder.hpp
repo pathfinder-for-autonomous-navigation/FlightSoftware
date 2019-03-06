@@ -136,9 +136,6 @@ namespace State {
   }
 
   namespace Piksi {
-    // TODO write GPS time and position to EEPROM every few seconds, so that in the event 
-    // of a reboot the satellite can still roughly know where it is.
-
     //! Current time in GPS format, as last obtained from Piksi.
     extern gps_time_t recorded_current_time;
     //! Timestamp at which current time was collected from Piksi.
@@ -218,8 +215,6 @@ namespace State {
     //! If the producer threads were forcibly interrupted, this is where they will dump their
     // latest packet.
     extern full_data_downlink most_recent_downlink;
-    //! This handle is used as a way to record the "freshness" of this downlink packet.
-    extern full_data_downlink* most_recent_downlink_handle;
   }
 }
 

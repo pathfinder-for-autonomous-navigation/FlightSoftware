@@ -49,16 +49,26 @@ namespace Devices {
 
 namespace State {
 namespace Hardware {
+    //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
+    extern rwmutex_t hat_lock;
+
     //! Maps device names to logical device objects. This is an ordered map, in order to guarantee
     // that the devices are always listed in the same order.
     extern std::map<std::string, Devices::Device&> devices;
     //! Maps device names to their state. This is an ordered map, in order to guarantee
     // that the devices are always listed in the same order.
     extern std::map<std::string, DeviceState&> hat;
+    inline bool can_get_data(const Devices::Device& device) {
+        rwMtxRLock(&State::Hardware::hat_lock);
+            bool possible = (State::Hardware::hat).at(device.name()).is_functional 
+                || (State::Hardware::hat).at(device.name()).error_ignored;
+        rwMtxRUnlock(&State::Hardware::hat_lock);
+        return possible;
+    }
+    //! Maps devices to the corresponding power output.
+    extern std::map<std::string, unsigned char> power_outputs;
     //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
     extern bool is_hardware_setup;
-    //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
-    extern rwmutex_t hat_lock;
 
     //! Protects access to DCDC enabling/disabling.
     extern mutex_t dcdc_lock;
@@ -77,6 +87,8 @@ namespace Hardware {
 namespace ADCS {
     //! Hardware availability table of devices attached to ADCS.
     extern std::map<std::string, Hardware::DeviceState&> adcs_hat;
+    //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
+    extern rwmutex_t adcs_hat_lock;
 }
 }
 

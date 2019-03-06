@@ -84,6 +84,5 @@ namespace State {
 
         circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack;
         full_data_downlink most_recent_downlink;
-        full_data_downlink* most_recent_downlink_handle = NULL; // Usually points to most_recent_downlink
     }
 }

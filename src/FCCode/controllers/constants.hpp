@@ -7,6 +7,7 @@
 #ifndef CONSTANTS_HPP_
 #define CONSTANTS_HPP_
 
+#include "../state/device_states.hpp"
 #include <tensor.hpp>
 #include <map>
 
@@ -46,6 +47,16 @@ namespace Constants {
         constexpr float MIN_SUN_SENSOR_VALUE = 0; // TODO
         //! Maximum reading of one sun sensor.
         constexpr float MAX_SUN_SENSOR_VALUE = 0; // TODO
+    }
+
+    namespace Gomspace {
+        struct limit_t {
+            short min;
+            short max;
+        };
+        constexpr limit_t boost_voltage_limits = {0,0}; // TODO
+        constexpr limit_t temperature_limits = {}; // TODO
+        constexpr unsigned int SAFE_VOLTAGE = Devices::Gomspace::FC_NORMAL;
     }
 
     namespace Propulsion {

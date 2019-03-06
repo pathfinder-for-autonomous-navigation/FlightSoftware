@@ -19,7 +19,7 @@ void HoldFunctions::initialization_hold(unsigned short int reason) {
 
     if (State::ADCS::angular_rate() >= State::ADCS::MAX_SEMISTABLE_ANGULAR_RATE) {
         rwMtxRLock(&State::Hardware::hat_lock);
-            bool is_adcs_working = State::Hardware::hat.at("ADCS").is_functional;
+            bool is_adcs_working = State::Hardware::hat.at(Devices::adcs_system.name()).is_functional;
         rwMtxRUnlock(&State::Hardware::hat_lock);
         if (is_adcs_working) {
             rwMtxWLock(&State::ADCS::adcs_state_lock);

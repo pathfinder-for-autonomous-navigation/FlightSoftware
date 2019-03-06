@@ -68,8 +68,16 @@ namespace Hardware {
         {Devices::quake.name(), quake_device_state},
         {Devices::spike_and_hold.name(), sph_device_state},
         {Devices::temp_sensor_inner.name(), temp_sensor_inner_device_state},
-        {Devices::temp_sensor_outer.name(), temp_sensor_outer_device_state},
+        {Devices::temp_sensor_outer.name(), temp_sensor_outer_device_state}
     };
+
+    std::map<std::string, unsigned char> power_outputs {
+        {Devices::piksi.name(), 7},
+        {Devices::spike_and_hold.name(), 6},
+        {Devices::quake.name(), 5},
+        {Devices::adcs_system.name(), 4}
+    };
+
     bool is_hardware_setup = false;
     rwmutex_t hat_lock;
 
@@ -116,7 +124,8 @@ namespace ADCS {
         {"Sun Sensor ADC 2", adcs_ssa_adc_2_state},
         {"Sun Sensor ADC 3", adcs_ssa_adc_3_state},
         {"Sun Sensor ADC 4", adcs_ssa_adc_4_state},
-        {"Sun Sensor ADC 5", adcs_ssa_adc_5_state},
+        {"Sun Sensor ADC 5", adcs_ssa_adc_5_state}
     };
+    rwmutex_t adcs_hat_lock;
 }
 }

@@ -94,7 +94,11 @@ void RTOSTasks::piksi_controller(void *arg) {
     systime_t time = chVTGetSystemTimeX();
     while(true) {
         time += MS2ST(RTOSTasks::LoopTimes::PIKSI);
-        piksi_read();
+
+        if (State::Hardware::can_get_data(Devices::piksi)) {
+            piksi_read();
+        }
+
         chThdSleepUntil(time);
     }
 }

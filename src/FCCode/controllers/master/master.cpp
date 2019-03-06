@@ -6,7 +6,7 @@
 
 #include <EEPROM.h>
 #include "hold_functions.hpp"
-#include "../adcs/adcs_pointing_calculators.hpp"
+#include "../adcs/adcs_helpers.hpp"
 #include "../../state/EEPROMAddresses.hpp"
 #include "../../state/state_holder.hpp"
 #include "../../comms/apply_uplink.hpp"
