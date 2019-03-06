@@ -5,6 +5,7 @@
  */
 
 #include "../controllers.hpp"
+#include "../constants.hpp"
 #include <ADCS/global.hpp>
 #include <rwmutex.hpp>
 #include "../../state/state_holder.hpp"
@@ -18,8 +19,7 @@
 
 namespace RTOSTasks {
     THD_WORKING_AREA(adcs_controller_workingArea, 2048);
-    threads_queue_t adcs_detumbled; // TODO implement into the functions below
-    threads_queue_t adcs_pointing_accomplished; // TODO implement into the functions below
+    threads_queue_t adcs_detumbled;
 }
 using State::ADCS::ADCSState;
 using State::ADCS::adcs_state_lock;
@@ -116,6 +116,12 @@ static THD_FUNCTION(adcs_loop, arg) {
             rwMtxRUnlock(&adcs_state_lock);
             switch(adcs_state) {
                 case ADCSState::ADCS_DETUMBLE: {
+                    if (State::ADCS::angular_rate() < Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
+                        chThdDequeueAllI(&RTOSTasks::adcs_detumbled, (msg_t) 0);
+                        rwMtxWLock(&adcs_state_lock);
+                            State::ADCS::adcs_state = ADCSState::ZERO_TORQUE;
+                        rwMtxWUnlock(&adcs_state_lock);
+                    }
                     for(int i = 0; i < 3; i++) MomentumControl::magfield[i] = ADCSControllers::Estimator::magfield_filter_body[i];
                     for(int i = 0; i < 3; i++) MomentumControl::momentum[i] = ADCSControllers::Estimator::htotal_filter_body[i];
                     MomentumControl::update();
@@ -136,7 +142,7 @@ static THD_FUNCTION(adcs_loop, arg) {
                     // Command constant wheel speed and MTR
                     std::array<float, 3> mtr_cmds, rwa_speed_cmds;
                     rwMtxRLock(&adcs_state_lock);
-                        mtr_cmds = State::ADCS::mtr_cmds;
+                        mtr_cmds.fill(0);
                         rwa_speed_cmds = State::ADCS::rwa_speed_cmds;
                     rwMtxRUnlock(&adcs_state_lock);
                     adcs_system.set_mtr_cmd(mtr_cmds.data());
