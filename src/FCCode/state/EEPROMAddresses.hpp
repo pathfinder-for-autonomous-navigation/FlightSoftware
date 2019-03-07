@@ -20,7 +20,6 @@ enum EEPROM_ADDRESSES {
     LAST_DOWNLINK_NUMBER = 0x30, // 4-byte integer; tracks the number of the latest downlink successfully sent
                                  // TODO work into downlink logic
     LAST_UPLINK_NUMBER = 0x34, // 4-byte integer; tracks the number of the latest uplink received
-                               // TODO work into uplink logic
     IS_FOLLOWER = 0x40, // Boolean: whether or not satellite is follower
     FINAL_STATE_FLAG = 0x41, // Has value: 0 if satellite is not in a final state
                              //            1 if satellite is in docking mode
@@ -29,7 +28,6 @@ enum EEPROM_ADDRESSES {
                              //            4 if satellite is in spacejunk mode
     PREFERRED_INTERTANK_VALVE = 0x50, // 0 if main valve is preferred
                                       // 1 if backup valve is preferred
-                                      // TODO implement in uplink
 };
 
 //! Prevents multiple-process access of the EEPROM.

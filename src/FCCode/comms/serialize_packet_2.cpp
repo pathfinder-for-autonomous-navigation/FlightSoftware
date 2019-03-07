@@ -9,7 +9,7 @@
 using namespace Comms;
 
 static void encode_attitude_command_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         // Item: Attitude command history
         // Type: Array of vectors
         // Size per element: 29
@@ -21,11 +21,11 @@ static void encode_attitude_command_history(std::bitset<PACKET_SIZE_BITS>& packe
             for(unsigned int i = 0; i < attitude_cmd_representation.size(); i++)
                 packet.set(packet_ptr++, attitude_cmd_representation[i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 static void encode_attitude_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         std::bitset<29> attitude_representation;
         // Item: Attitude history
         // Type: Array of vectors
@@ -47,11 +47,11 @@ static void encode_attitude_history(std::bitset<PACKET_SIZE_BITS>& packet, unsig
             for(unsigned int i = 0; i < attitude_representation.size(); i++)
                 packet.set(packet_ptr++, attitude_representation[i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 static void encode_rate_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         // Item: Angular rate history
         // Type: Array of vectors
         // Size per element: 30
@@ -74,11 +74,11 @@ static void encode_rate_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned 
             for(unsigned int i = 0; i < rate_representation.size(); i++)
                 packet.set(packet_ptr++, rate_representation[i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 static void encode_spacecraft_L_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         // Item: Spacecraft angular momentum history
         // Type: Array of vectors
         // Size per element: 30
@@ -103,7 +103,7 @@ static void encode_spacecraft_L_history(std::bitset<PACKET_SIZE_BITS>& packet, u
             for(unsigned int i = 0; i < L_representation.size(); i++)
                 packet.set(packet_ptr++, L_representation[i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 void Comms::serialize_packet_2(std::array<char, PACKET_SIZE_BYTES>& dest) {

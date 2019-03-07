@@ -7,9 +7,7 @@ thread_t* Quake::downlink_thread;
 THD_WORKING_AREA(Quake::downlink_thread_workingArea, 2048);
 
 void Quake::go_to_waiting() {
-    rwMtxWLock(&State::Quake::quake_state_lock);
-        State::Quake::quake_state = State::Quake::QuakeState::WAITING;
-    rwMtxWUnlock(&State::Quake::quake_state_lock);
+    State::write_state(State::Quake::quake_state, State::Quake::QuakeState::WAITING, State::Quake::quake_state_lock);
 }
 
 THD_FUNCTION(Quake::downlink_fn, args) {

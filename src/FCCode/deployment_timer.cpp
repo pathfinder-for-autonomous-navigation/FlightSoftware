@@ -17,9 +17,7 @@ THD_WORKING_AREA(deployment_timer_workingArea, 4096);
 threads_queue_t deployment_timer_waiting;
 
 void exit_deployment_timer() {
-    rwMtxWLock(&State::Master::master_state_lock);
-        State::Master::is_deployed = true;
-    rwMtxWUnlock(&State::Master::master_state_lock);
+    State::write_state(State::Master::is_deployed, true, State::Master::master_state_lock);
     chMtxLock(&eeprom_lock);
         EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT, true);
     chMtxUnlock(&eeprom_lock);

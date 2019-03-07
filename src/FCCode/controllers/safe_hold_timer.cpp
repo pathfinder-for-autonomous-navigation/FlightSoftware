@@ -29,12 +29,10 @@ void RTOSTasks::safe_hold_timer(void *arg) {
     // Start safe hold timer
     while(time_elapsed < Constants::Master::SAFE_HOLD_TIMEOUT) {
         // If no longer in safe hold, don't keep running down the timer!
-        rwMtxRLock(&State::Master::master_state_lock);
-            if (State::Master::master_state != State::Master::MasterState::SAFE_HOLD) {
-                rwMtxRUnlock(&State::Master::master_state_lock);
-                break;
-            }
-        rwMtxRUnlock(&State::Master::master_state_lock);
+        if (State::read_state(State::Master::master_state, State::Master::master_state_lock) 
+                != State::Master::MasterState::SAFE_HOLD) {
+            break;
+        }
 
         chMtxLock(&eeprom_lock);
             EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_TIMER, time_elapsed);
@@ -46,9 +44,7 @@ void RTOSTasks::safe_hold_timer(void *arg) {
     }
 
     stop_safehold();
-    rwMtxWLock(&State::Master::master_state_lock);
-        State::Master::autoexited_safe_hold = true; // Here we set autoexit to true, since we can only get
-                                                    // to this point if we have finished the safe hold timer.
-    rwMtxWUnlock(&State::Master::master_state_lock);
+    // Here we set autoexit to true, since we can only get to this point if we have finished the safe hold timer.
+    State::write_state(State::Master::autoexited_safe_hold, true, State::Master::master_state_lock); 
     chThdExit((msg_t)0);
 }

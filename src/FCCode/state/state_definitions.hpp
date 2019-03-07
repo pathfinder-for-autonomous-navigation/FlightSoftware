@@ -22,6 +22,7 @@ namespace State {
       DETUMBLE,
       SAFE_HOLD,
       NORMAL,
+      MAX = NORMAL
     };
     //! PAN-Specific state of finite-state machine that's part of the master controller
     enum PANState {
@@ -66,7 +67,8 @@ namespace State {
       ZERO_TORQUE,
       ADCS_DETUMBLE,
       POINTING,
-      ADCS_SAFE_HOLD
+      ADCS_SAFE_HOLD,
+      MAX = ADCS_SAFE_HOLD
     };
   }
 
@@ -77,7 +79,8 @@ namespace State {
       VENTING,
       AWAITING_PRESSURIZATION,
       PRESSURIZING,
-      FIRING
+      FIRING,
+      MAX = FIRING
     };
     //! Container for data that represents a propulsion manuever.
     struct Firing {
@@ -91,7 +94,8 @@ namespace State {
   namespace Quake {
     enum QuakeState {
       WAITING,
-      TRANSCEIVING
+      TRANSCEIVING,
+      MAX = TRANSCEIVING
     };
   }
 }

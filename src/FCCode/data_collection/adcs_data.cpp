@@ -135,7 +135,7 @@ void DataCollection::initialize_adcs_history_timers() {
     chVTObjectInit(&ssa_vector_timer);
     chVTObjectInit(&ssa_array_timer);
 
-    rwMtxObjectInit(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxObjectInit(&StateHistory::ADCS::adcs_history_state_lock);
 
     chSysLock();
         chVTSet(&gyroscope_history_timer, MS2ST(DataCollectionRates::ADCS::GYRO_INTERVAL), save_gyro_history, NULL);

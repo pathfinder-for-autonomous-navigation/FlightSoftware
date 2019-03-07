@@ -45,9 +45,7 @@ int send_downlink(const State::Quake::full_data_downlink& downlink, QLocate::Mes
 }
 
 bool is_downlink_stack_empty() {
-    rwMtxRLock(&State::Quake::quake_state_lock);
-        bool is_empty = State::Quake::downlink_stack.empty();
-    rwMtxRLock(&State::Quake::quake_state_lock);
+    bool is_empty = State::read_state(State::Quake::downlink_stack.empty(), State::Quake::quake_state_lock);
     return is_empty;
 }
 

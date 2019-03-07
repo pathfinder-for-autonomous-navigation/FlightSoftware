@@ -37,7 +37,7 @@ void DataCollection::initialize_propulsion_history_timers() {
     chVTObjectInit(&outer_tank_temperature_history_timer);
     chVTObjectInit(&pressure_history_timer);
 
-    rwMtxObjectInit(&StateHistory::Propulsion::propulsion_state_history_lock);
+    rwMtxObjectInit(&StateHistory::Propulsion::propulsion_history_state_lock);
 
     chSysLock();
         chVTSet(&inner_tank_temperature_history_timer, DataCollectionRates::Propulsion::TANK_TEMPERATURE_INTERVAL, save_inner_tank_temperature_history, NULL);

@@ -9,7 +9,7 @@
 using namespace Comms;
 
 static void encode_gyroscope_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         // Item: Gyroscope data history
         // Type: Array of vectors
         // Size per element: 32
@@ -34,11 +34,11 @@ static void encode_gyroscope_history(std::bitset<PACKET_SIZE_BITS>& packet, unsi
             for(unsigned int i = 0; i < gyro_z_axis.size(); i++)
                 packet.set(packet_ptr++, gyro_z_axis[i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 static void encode_magnetometer_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         // Item: Magnetometer history
         // Type: Array of vectors
         // Size per element: 29
@@ -53,11 +53,11 @@ static void encode_magnetometer_history(std::bitset<PACKET_SIZE_BITS>& packet, u
             for(unsigned int i = 0; i < magnetometer_representation.size(); i++)
                 packet.set(packet_ptr++, magnetometer_representation[i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 static void encode_rwa_ramp_command_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         // Item: Reaction wheel ramp command history
         // Type: Array of vectors
         // Size per element: 29
@@ -72,11 +72,11 @@ static void encode_rwa_ramp_command_history(std::bitset<PACKET_SIZE_BITS>& packe
             for(unsigned int i = 0; i < ramp_cmd_representation.size(); i++)
                 packet.set(packet_ptr++, ramp_cmd_representation[i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 static void encode_mtr_command_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         // Item: Magnetorquer command history
         // Type: Array of vectors
         // Size per element: 32
@@ -89,11 +89,11 @@ static void encode_mtr_command_history(std::bitset<PACKET_SIZE_BITS>& packet, un
             for(unsigned int i = 0; i < mtr_cmd_representation.size(); i++)
                 packet.set(packet_ptr++, mtr_cmd_representation[i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 static void encode_ssa_vec_history(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         // Item: Sun sensor vector history
         // Type: Array of vectors
         // Size per element: 21
@@ -106,11 +106,11 @@ static void encode_ssa_vec_history(std::bitset<PACKET_SIZE_BITS>& packet, unsign
             for(unsigned int i = 0; i < ssa_vec_representation.size(); i++)
                 packet.set(packet_ptr++, ssa_vec_representation[i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 static void encode_ssa_adc_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
-    rwMtxRLock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
         // Item: Sun sensor array data
         // Type: Array of bytes
         // Size per element: 8
@@ -126,7 +126,7 @@ static void encode_ssa_adc_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned 
             for(unsigned int i = 0; i < ssa_adc_data_representation[j].size(); i++)
                 packet.set(packet_ptr++, ssa_adc_data_representation[j][i]);
         }
-    rwMtxRUnlock(&StateHistory::ADCS::adcs_state_history_lock);
+    rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
 void Comms::serialize_packet_3(std::array<char, PACKET_SIZE_BYTES>& dest) {

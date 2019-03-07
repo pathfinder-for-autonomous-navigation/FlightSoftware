@@ -37,7 +37,7 @@ void DataCollection::initialize_piksi_history_timers() {
     chVTObjectInit(&velocity_history_timer);
     chVTObjectInit(&position_other_history_timer);
 
-    rwMtxObjectInit(&StateHistory::Piksi::piksi_state_history_lock);
+    rwMtxObjectInit(&StateHistory::Piksi::piksi_history_state_lock);
 
     chSysLock();
         chVTSet(&position_history_timer, DataCollectionRates::Piksi::POSITION_INTERVAL, save_position_history, NULL);

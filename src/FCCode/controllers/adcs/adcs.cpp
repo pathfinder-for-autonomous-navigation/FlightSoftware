@@ -42,16 +42,17 @@ static void read_adcs_data() {
     ADCSControllers::Estimator::time = (unsigned int) State::GNC::get_current_time();
     rwMtxRUnlock(&State::GNC::gnc_state_lock);
     
-    float rwa_speed_cmds_rd[3], rwa_ramps_rd[3];
-    adcs_system.get_rwa(rwa_speed_cmds_rd, ADCSControllers::Estimator::hwheel_sensor_body, rwa_ramps_rd);
+    std::array<float, 3> rwa_speed_cmds_rd, rwa_ramps_rd, rwa_speeds_rd, gyro_data, mag_data;
+    adcs_system.get_rwa(rwa_speed_cmds_rd.data(), ADCSControllers::Estimator::hwheel_sensor_body, rwa_ramps_rd.data());
     adcs_system.get_imu(ADCSControllers::Estimator::rate_sensor_body, ADCSControllers::Estimator::magfield_sensor_body);
-    rwMtxWLock(&State::ADCS::adcs_state_lock);
-        for(int i = 0; i < 3; i++) State::ADCS::rwa_ramps_rd[i] = rwa_ramps_rd[i];
-        for(int i = 0; i < 3; i++) State::ADCS::rwa_speed_cmds_rd[i] = rwa_speed_cmds_rd[i];
-        for(int i = 0; i < 3; i++) State::ADCS::rwa_speeds_rd[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
-        for(int i = 0; i < 3; i++) State::ADCS::gyro_data[i] = ADCSControllers::Estimator::rate_sensor_body[i];
-        for(int i = 0; i < 3; i++) State::ADCS::mag_data[i] = ADCSControllers::Estimator::magfield_sensor_body[i];
-    rwMtxWUnlock(&State::ADCS::adcs_state_lock);
+    for(int i = 0; i < 3; i++) rwa_speeds_rd[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
+    for(int i = 0; i < 3; i++) gyro_data[i] = ADCSControllers::Estimator::rate_sensor_body[i];
+    for(int i = 0; i < 3; i++) mag_data[i] = ADCSControllers::Estimator::magfield_sensor_body[i];
+    State::write_state(State::ADCS::rwa_ramps_rd, rwa_ramps_rd, adcs_state_lock);
+    State::write_state(State::ADCS::rwa_speed_cmds_rd, rwa_speed_cmds_rd, adcs_state_lock);
+    State::write_state(State::ADCS::rwa_speeds_rd, rwa_speeds_rd, adcs_state_lock);
+    State::write_state(State::ADCS::gyro_data, gyro_data, adcs_state_lock);
+    State::write_state(State::ADCS::mag_data, mag_data, adcs_state_lock);
 
     std::array<float, 3> ssa_vec;
     if (ssa_mode == SSAMode::IN_PROGRESS) {

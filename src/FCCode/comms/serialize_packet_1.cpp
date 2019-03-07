@@ -49,14 +49,14 @@ static void encode_hat(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& pack
     // Description: Hardware availability table. There are 11 devices; each device has the powered_on, enabled, is_functional, and error_ignored bits. See state/device_states.cpp for the order in which these bits are placed into the bitset.
     std::bitset<44> hat_representation;
     unsigned int hat_ptr = 0;
-    rwMtxRLock(&State::Hardware::hat_lock);
+    rwMtxRLock(&State::Hardware::hardware_state_lock);
         for(auto iter = State::Hardware::hat.begin(); iter != State::Hardware::hat.end(); ++iter) {
             hat_representation.set(hat_ptr++, iter->second.powered_on);
             hat_representation.set(hat_ptr++, iter->second.enabled);
             hat_representation.set(hat_ptr++, iter->second.is_functional);
             hat_representation.set(hat_ptr++, iter->second.error_ignored);
         }
-    rwMtxRUnlock(&State::Hardware::hat_lock);
+    rwMtxRUnlock(&State::Hardware::hardware_state_lock);
 
     for(int i = 0; i < hat_representation.size(); i++)
         packet.set(packet_ptr++, hat_representation[i]);
@@ -96,14 +96,14 @@ static void encode_adcs_hat(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int&
     std::bitset<68> adcs_hat_representation;
 
     unsigned int hat_ptr = 0;
-    rwMtxRLock(&State::Hardware::hat_lock);
+    rwMtxRLock(&State::Hardware::hardware_state_lock);
     for(auto iter = State::ADCS::adcs_hat.begin(); iter != State::ADCS::adcs_hat.end(); ++iter) {
         adcs_hat_representation.set(hat_ptr++, iter->second.powered_on);
         adcs_hat_representation.set(hat_ptr++, iter->second.enabled);
         adcs_hat_representation.set(hat_ptr++, iter->second.is_functional);
         adcs_hat_representation.set(hat_ptr++, iter->second.error_ignored);
     }
-    rwMtxRUnlock(&State::Hardware::hat_lock);
+    rwMtxRUnlock(&State::Hardware::hardware_state_lock);
 
     for(int i = 0; i < adcs_hat_representation.size(); i++)
         packet.set(packet_ptr++, adcs_hat_representation[i]);
@@ -175,14 +175,14 @@ static void encode_propulsion_data(std::bitset<PACKET_SIZE_BITS>& packet, unsign
     // Maximum: 100
     // Units: psi
     // Description: Outer tank pressure history. This is one time-averaged data point every 10 seconds from the last five minutes.
-    rwMtxRLock(&StateHistory::Propulsion::propulsion_state_history_lock);
+    rwMtxRLock(&StateHistory::Propulsion::propulsion_history_state_lock);
     while(!StateHistory::Propulsion::tank_pressure_history.empty()) {
         std::bitset<10> tank_pressure_representation;
         trim_float(StateHistory::Propulsion::tank_pressure_history.get(), 0, 100, &tank_pressure_representation);
         for(int i = 0; i < tank_pressure_representation.size(); i++)
             packet.set(packet_ptr++, tank_pressure_representation[i]);
     }
-    rwMtxRUnlock(&StateHistory::Propulsion::propulsion_state_history_lock);
+    rwMtxRUnlock(&StateHistory::Propulsion::propulsion_history_state_lock);
 
     // Item: Inner Tank Temperature History
     // Size: 300
@@ -191,14 +191,14 @@ static void encode_propulsion_data(std::bitset<PACKET_SIZE_BITS>& packet, unsign
     // Maximum: 125
     // Units: C
     // Description: Inner tank temperature history. This is one time-averaged data point every 10 seconds from the last five minutes.
-    rwMtxRLock(&StateHistory::Propulsion::propulsion_state_history_lock);
+    rwMtxRLock(&StateHistory::Propulsion::propulsion_history_state_lock);
     while(!StateHistory::Propulsion::inner_tank_temperature_history.empty()) {
         std::bitset<9> inner_tank_temperature_representation;
         trim_temperature(StateHistory::Propulsion::inner_tank_temperature_history.get(), &inner_tank_temperature_representation);
         for(int i = 0; i < inner_tank_temperature_representation.size(); i++)
             packet.set(packet_ptr++, inner_tank_temperature_representation[i]);
     }
-    rwMtxRUnlock(&StateHistory::Propulsion::propulsion_state_history_lock);
+    rwMtxRUnlock(&StateHistory::Propulsion::propulsion_history_state_lock);
 
     // Item: Outer Tank Temperature History
     // Size: 300
@@ -207,14 +207,14 @@ static void encode_propulsion_data(std::bitset<PACKET_SIZE_BITS>& packet, unsign
     // Maximum: 125
     // Units: C
     // Description: Outer tank temperature history. This is one time-averaged data point every 10 seconds from the last five minutes.
-    rwMtxRLock(&StateHistory::Propulsion::propulsion_state_history_lock);
+    rwMtxRLock(&StateHistory::Propulsion::propulsion_history_state_lock);
     while(!StateHistory::Propulsion::outer_tank_temperature_history.empty()) {
         std::bitset<9> outer_tank_temperature_representation;
         trim_temperature(StateHistory::Propulsion::outer_tank_temperature_history.get(), &outer_tank_temperature_representation);
         for(int i = 0; i < outer_tank_temperature_representation.size(); i++)
             packet.set(packet_ptr++, outer_tank_temperature_representation[i]);
     }
-    rwMtxRUnlock(&StateHistory::Propulsion::propulsion_state_history_lock);
+    rwMtxRUnlock(&StateHistory::Propulsion::propulsion_history_state_lock);
 }
 
 static void encode_gomspace_data(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {
@@ -419,14 +419,14 @@ static void encode_piksi_data_history(std::bitset<PACKET_SIZE_BITS>& packet, uns
     // Maximum: 7000
     // Units: km
     // Description: Position of satellite as a set of doubles in space.
-    rwMtxRLock(&StateHistory::Piksi::piksi_state_history_lock);
+    rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
     while(!StateHistory::Piksi::recorded_position_history.empty()) {
         std::bitset<62> position_representation;
         trim_vector(StateHistory::Piksi::recorded_position_history.get(), 6400.0, 7000.0, &position_representation);
         for(int i = 0; i < position_representation.size(); i++)
             packet.set(packet_ptr++, position_representation[i]);
     }
-    rwMtxRUnlock(&StateHistory::Piksi::piksi_state_history_lock);
+    rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 
     // Item: Velocity history
     // Type: Array of vectors
@@ -436,14 +436,14 @@ static void encode_piksi_data_history(std::bitset<PACKET_SIZE_BITS>& packet, uns
     // Maximum: 15
     // Units: km/s
     // Description: Position of satellite as a set of doubles in space.
-    rwMtxRLock(&StateHistory::Piksi::piksi_state_history_lock);
+    rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
     while(!StateHistory::Piksi::recorded_velocity_history.empty()) {
         std::bitset<62> velocity_representation;
         trim_vector(StateHistory::Piksi::recorded_velocity_history.get(), 5000.0, 9000.0, &velocity_representation);
         for(int i = 0; i < velocity_representation.size(); i++)
             packet.set(packet_ptr++, velocity_representation[i]);
     }
-    rwMtxRUnlock(&StateHistory::Piksi::piksi_state_history_lock);
+    rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 }
 
 static void encode_piksi_time(std::bitset<PACKET_SIZE_BITS>& packet, unsigned int& packet_ptr) {

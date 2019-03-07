@@ -15,26 +15,22 @@ THD_FUNCTION(PropulsionTasks::pressurizing_fn, args) {
 
     for(int i = 0; i < 20; i++) {
         std::array<unsigned int, 6> firings;
-        rwMtxRLock(&propulsion_state_lock);
-            firings[State::Propulsion::intertank_firing_valve] = VALVE_VENT_TIME;
-        rwMtxRLock(&propulsion_state_lock);
+        unsigned char preferred_valve = State::read_state(State::Propulsion::intertank_firing_valve, propulsion_state_lock);
+        firings[preferred_valve] = VALVE_VENT_TIME;
         chMtxLock(&spike_and_hold_lock);
             spike_and_hold.execute_schedule(firings);
         chMtxUnlock(&spike_and_hold_lock);
 
         chThdSleepMilliseconds(WAIT_BETWEEN_PRESSURIZATIONS);
 
-        rwMtxWLock(&propulsion_state_lock);
-            State::Propulsion::tank_pressure = Devices::pressure_sensor.get();
-            tank_pressure = State::Propulsion::tank_pressure;
-        rwMtxWUnlock(&propulsion_state_lock);
+        State::write_state(State::Propulsion::tank_pressure, Devices::pressure_sensor.get(), propulsion_state_lock);
+        tank_pressure = State::read_state(State::Propulsion::tank_pressure, propulsion_state_lock);
         if (tank_pressure >= PRE_FIRING_OUTER_TANK_PRESSURE) break;
     }
     
     if (tank_pressure < PRE_FIRING_OUTER_TANK_PRESSURE) {
         // Recommend satellite safe hold.
-        rwMtxWLock(&FaultState::Propulsion::propulsion_fault_state_lock);
-            FaultState::Propulsion::cannot_pressurize_outer_tank = true;
-        rwMtxWUnlock(&FaultState::Propulsion::propulsion_fault_state_lock);
+        State::write_state(FaultState::Propulsion::cannot_pressurize_outer_tank, 
+            true, FaultState::Propulsion::propulsion_fault_state_lock);
     }
 }

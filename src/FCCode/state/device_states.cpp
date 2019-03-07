@@ -79,7 +79,7 @@ namespace Hardware {
     };
 
     bool is_hardware_setup = false;
-    rwmutex_t hat_lock;
+    rwmutex_t hardware_state_lock;
 
     mutex_t dcdc_lock;
     mutex_t adcs_device_lock;
@@ -126,6 +126,6 @@ namespace ADCS {
         {"Sun Sensor ADC 4", adcs_ssa_adc_4_state},
         {"Sun Sensor ADC 5", adcs_ssa_adc_5_state}
     };
-    rwmutex_t adcs_hat_lock;
+    rwmutex_t adcs_hardware_state_lock;
 }
 }

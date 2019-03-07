@@ -20,6 +20,24 @@
 #include "../comms/uplink_struct.hpp"
 
 namespace State {
+  //! Helper function to read from state variables in a protected way
+  template<typename T>
+  inline T read_state(const T& val, rwmutex_t& lock) {
+    T val_cpy;
+    rwMtxRLock(&lock);
+      val_cpy = val;
+    rwMtxRUnlock(&lock);
+    return val;
+  }
+
+  //! Helper function to write to state variables in a protected way
+  template<typename T>
+  inline void write_state(const T& val, const T& new_val, rwmutex_t& lock) {
+    rwMtxWLock(&lock);
+      val = new_val;
+    rwMtxWUnlock(&lock);
+  }
+
   namespace Master {
     //! Master controller state
     extern MasterState master_state;
@@ -140,7 +158,7 @@ namespace State {
     //! GPS timestamp at which most recent position was collected.
     extern gps_time_t recorded_gps_position_time;
     //! Number of satellites used in position determination.
-    extern char recorded_gps_position_nsats;
+    extern unsigned char recorded_gps_position_nsats;
     //! Most recently expected GPS position of other satellite, as last obtained from Piksi or ground.
     extern std::array<double, 3> recorded_gps_position_other;
     //! GPS timestamp at which most recent position of other satellite was collected.
@@ -150,7 +168,7 @@ namespace State {
     //! GPS timestamp at which most recent velocity was collected.
     extern gps_time_t recorded_gps_velocity_time;
     //! Number of satellites used in velocity determination.
-    extern char recorded_gps_velocity_nsats;
+    extern unsigned char recorded_gps_velocity_nsats;
     //! Readers-writers lock that prevents multi-process modification of Piksi state data.
     extern rwmutex_t piksi_state_lock;
   }
@@ -201,7 +219,7 @@ namespace State {
     constexpr unsigned int PACKET_LENGTH = 70;
     constexpr unsigned int PACKETS_PER_DOWNLINK = 10;
     typedef std::array<Devices::QLocate::Message, PACKETS_PER_DOWNLINK> full_data_downlink;
-    //! Maximum number of data packets to store in history. 
+    //! Maximum number of data packets to store in history.
     // TODO store most recent packets in EEPROM as well.
     constexpr unsigned int MAX_DOWNLINK_HISTORY = 25;
     //! Packets are automatically added to this stack by the consumer threads if they were 

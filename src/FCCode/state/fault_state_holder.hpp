@@ -57,8 +57,7 @@ namespace FaultState {
   }
 
   namespace Propulsion {
-    //! GPS time of when an overpressure event occurred. If no event occcured, the "flags" of the 
-    // underlying msg_gps_time_t is set to 1.
+    //! GPS time of when an overpressure event occurred.
     extern gps_time_t overpressure_event;
     //! Type of condition that triggered overpressure event.
     enum OVERPRESSURE_EVENT {
@@ -68,6 +67,8 @@ namespace FaultState {
       OUTER_TANK_PRESSURE
     };
     extern OVERPRESSURE_EVENT overpressure_event_id;
+    //! GPS time of a firing that was cancelled due to unstable pointing.
+    extern gps_time_t destabilization_event;
     //! If true, we are unable to pressurize the outer tank up to the requisite pressure for a firing.
     extern bool cannot_pressurize_outer_tank;
     //! Readers-writers lock that prevents multi-process modification of propulsion fault state data.

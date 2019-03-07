@@ -41,7 +41,7 @@ namespace StateHistory {
     //! History of sun sensor vector data
     extern circular_buffer<std::array<float, 3>, DataCollectionRates::ADCS::SSA_VECTOR> ssa_vector_history;
     //! Readers-writers lock that prevents multi-process modification of ADCS state history data.
-    extern rwmutex_t adcs_state_history_lock;
+    extern rwmutex_t adcs_history_state_lock;
   }
 
   namespace Propulsion {
@@ -52,7 +52,7 @@ namespace StateHistory {
     //! History of outer tank temperature
     extern circular_buffer<float, DataCollectionRates::Propulsion::TANK_TEMPERATURE> outer_tank_temperature_history;
     //! Readers-writers lock that prevents multi-process modification of propulsion state history data.
-    extern rwmutex_t propulsion_state_history_lock;
+    extern rwmutex_t propulsion_history_state_lock;
   }
 
   namespace GNC {
@@ -65,7 +65,7 @@ namespace StateHistory {
     //! History of (propagated) other satellite's recorded GPS velocity
     extern circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> velocity_other_history;
     //! Readers-writers lock that prevents multi-process modification of GNC state history data.
-    extern rwmutex_t gnc_state_history_lock;
+    extern rwmutex_t gnc_history_state_lock;
   }
 
   namespace Piksi {
@@ -78,7 +78,7 @@ namespace StateHistory {
     //! History of other satellite's recorded GPS velocity
     extern circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> recorded_velocity_other_history;
     //! Readers-writers lock that prevents multi-process modification of Piksi state history data.
-    extern rwmutex_t piksi_state_history_lock;
+    extern rwmutex_t piksi_history_state_lock;
   }
 }
 

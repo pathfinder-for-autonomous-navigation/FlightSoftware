@@ -8,6 +8,7 @@ namespace FaultState {
     }
     namespace Propulsion {
         gps_time_t overpressure_event;
+        gps_time_t destabilization_event;
         OVERPRESSURE_EVENT overpressure_event_id;
         rwmutex_t propulsion_fault_state_lock;
         bool cannot_pressurize_outer_tank = false;

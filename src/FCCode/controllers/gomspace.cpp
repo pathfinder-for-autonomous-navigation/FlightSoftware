@@ -13,6 +13,7 @@
 using Devices::Gomspace;
 using Devices::gomspace;
 using State::Gomspace::gomspace_data;
+using State::Gomspace::gomspace_state_lock;
 using FaultState::Gomspace::GOMSPACE_FAULTS;
 
 namespace RTOSTasks {
@@ -49,9 +50,8 @@ static void gomspace_read() {
     }
     if (t == 5) {
         debug_println("unable to read Gomspace data.");
-        rwMtxWLock(&State::Hardware::hat_lock);
-            (State::Hardware::hat).at(Devices::gomspace.name()).is_functional = false;
-        rwMtxWUnlock(&State::Hardware::hat_lock);
+        State::write_state((State::Hardware::hat).at(Devices::gomspace.name()).is_functional, 
+                            false, State::Hardware::hardware_state_lock);
     }
     else debug_printf("battery voltage (mV): %d\n", gomspace_data.vbatt);
 }
@@ -81,9 +81,8 @@ static void gomspace_check() {
     debug_println("Checking Gomspace data...");
     
     debug_printf("Checking if Gomspace is functional...");
-    rwMtxRLock(&State::Hardware::hat_lock);
-    bool is_gomspace_functional = (State::Hardware::hat).at(Devices::gomspace.name()).is_functional;
-    rwMtxRUnlock(&State::Hardware::hat_lock);
+    bool is_gomspace_functional = State::read_state((State::Hardware::hat).at(Devices::gomspace.name()).is_functional, 
+                                    State::Hardware::hardware_state_lock);
     if (!is_gomspace_functional) {
         debug_println("Gomspace is not functional!");
         return;
@@ -91,19 +90,16 @@ static void gomspace_check() {
     else debug_println("Device is functional.");
 
     debug_printf("Checking Gomspace battery voltage...");
-    rwMtxRLock(&State::Gomspace::gomspace_state_lock);
-    unsigned short int vbatt = gomspace_data.vbatt;
-    rwMtxRUnlock(&State::Gomspace::gomspace_state_lock);
+    unsigned short int vbatt = State::read_state(gomspace_data.vbatt, gomspace_state_lock);
     if (vbatt < Constants::Gomspace::SAFE_VOLTAGE) {
-        rwMtxWLock(&FaultState::Gomspace::gomspace_fault_state_lock);
-            FaultState::Gomspace::is_safe_hold_voltage = true;
-        rwMtxWUnlock(&FaultState::Gomspace::gomspace_fault_state_lock);
+        State::write_state(FaultState::Gomspace::is_safe_hold_voltage, 
+            true, FaultState::Gomspace::gomspace_fault_state_lock);
     }
 
     debug_println("Checking Gomspace inputs (currents and voltages).");
     unsigned short* vboosts = State::Gomspace::gomspace_data.vboost;
     unsigned short* curins = State::Gomspace::gomspace_data.curin;
-    rwMtxRLock(&State::Gomspace::gomspace_state_lock);
+    rwMtxRLock(&gomspace_state_lock);
         for (int i = 0; i < 3; i++) {
             if (vboosts[i] <= Constants::Gomspace::boost_voltage_limits.min
                 || vboosts[i] >= Constants::Gomspace::boost_voltage_limits.max) {
@@ -130,13 +126,13 @@ static void gomspace_check() {
         else {
             set_error(GOMSPACE_FAULTS::BOOST_CURRENT_TOTAL, false);
         }
-    rwMtxRLock(&State::Gomspace::gomspace_state_lock);
+    rwMtxRLock(&gomspace_state_lock);
 
 
     debug_println("Checking Gomspace outputs (currents and voltages).");
     unsigned char* outputs = State::Gomspace::gomspace_data.output;
     unsigned short* currents = State::Gomspace::gomspace_data.curout;
-    rwMtxRLock(&State::Gomspace::gomspace_state_lock);
+    rwMtxRLock(&gomspace_state_lock);
         for(auto dev : State::Hardware::power_outputs) {
             if(State::Hardware::hat.at(dev.first).powered_on != outputs[dev.second]) {
                 set_hardware_error(dev.first, "TOGGLE", true);
@@ -162,11 +158,11 @@ static void gomspace_check() {
         else {
             set_error(GOMSPACE_FAULTS::BATTERY_CURRENT, false);
         }
-    rwMtxRLock(&State::Gomspace::gomspace_state_lock);
+    rwMtxRLock(&gomspace_state_lock);
 
     debug_println("Checking Gomspace temperature.");
     short* temps = State::Gomspace::gomspace_data.temp;
-    rwMtxRLock(&State::Gomspace::gomspace_state_lock);
+    rwMtxRLock(&gomspace_state_lock);
         for(int i = 0; i < 4; i++) {
             if (temps[i] <= Constants::Gomspace::temperature_limits.min &&
                 temps[i] >= Constants::Gomspace::temperature_limits.max) {
@@ -176,7 +172,7 @@ static void gomspace_check() {
                 set_error((GOMSPACE_FAULTS) (GOMSPACE_FAULTS::TEMPERATURE_1 + i), false);
             }
         }
-    rwMtxRUnlock(&State::Gomspace::gomspace_state_lock);
+    rwMtxRUnlock(&gomspace_state_lock);
 }
 
 static THD_WORKING_AREA(gomspace_read_controller_workingArea, 4096);
@@ -205,9 +201,7 @@ void RTOSTasks::gomspace_controller(void *arg) {
         RTOSTasks::gomspace_thread_priority, gomspace_read_controller, NULL);
     
     debug_println("Waiting for deployment timer to finish.");
-    rwMtxRLock(&State::Master::master_state_lock);
-        bool is_deployed = State::Master::is_deployed;
-    rwMtxRUnlock(&State::Master::master_state_lock);
+    bool is_deployed = State::read_state(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
     debug_println("Deployment timer has finished.");
     debug_println("Initializing main operation...");

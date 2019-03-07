@@ -21,14 +21,14 @@ namespace StateHistory {
     circular_buffer<std::array<float, 3>, DataCollectionRates::ADCS::RWA_RAMP_CMD> rwa_ramp_cmd_history;
     circular_buffer<std::array<float, 3>, DataCollectionRates::ADCS::MTR_CMD> mtr_cmd_history;
     circular_buffer<std::array<float, 3>, DataCollectionRates::ADCS::SSA_VECTOR> ssa_vector_history;
-    rwmutex_t adcs_state_history_lock;
+    rwmutex_t adcs_history_state_lock;
   }
 
   namespace Propulsion {
     circular_buffer<float, DataCollectionRates::Propulsion::TANK_PRESSURE> tank_pressure_history;
     circular_buffer<float, DataCollectionRates::Propulsion::TANK_TEMPERATURE> inner_tank_temperature_history;
     circular_buffer<float, DataCollectionRates::Propulsion::TANK_TEMPERATURE> outer_tank_temperature_history;
-    rwmutex_t propulsion_state_history_lock;
+    rwmutex_t propulsion_history_state_lock;
   }
 
   namespace GNC {
@@ -36,7 +36,7 @@ namespace StateHistory {
     circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> velocity_history;
     circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> position_other_history;
     circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> velocity_other_history;
-    rwmutex_t gnc_state_history_lock;
+    rwmutex_t gnc_history_state_lock;
   }
 
   namespace Piksi {
@@ -44,6 +44,6 @@ namespace StateHistory {
     circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> recorded_velocity_history;
     circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> recorded_position_other_history;
     circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> recorded_velocity_other_history;
-    rwmutex_t piksi_state_history_lock;
+    rwmutex_t piksi_history_state_lock;
   }
 }

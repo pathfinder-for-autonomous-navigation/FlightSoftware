@@ -50,7 +50,7 @@ namespace Devices {
 namespace State {
 namespace Hardware {
     //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
-    extern rwmutex_t hat_lock;
+    extern rwmutex_t hardware_state_lock;
 
     //! Maps device names to logical device objects. This is an ordered map, in order to guarantee
     // that the devices are always listed in the same order.
@@ -59,10 +59,10 @@ namespace Hardware {
     // that the devices are always listed in the same order.
     extern std::map<std::string, DeviceState&> hat;
     inline bool can_get_data(const Devices::Device& device) {
-        rwMtxRLock(&State::Hardware::hat_lock);
+        rwMtxRLock(&State::Hardware::hardware_state_lock);
             bool possible = (State::Hardware::hat).at(device.name()).is_functional 
                 || (State::Hardware::hat).at(device.name()).error_ignored;
-        rwMtxRUnlock(&State::Hardware::hat_lock);
+        rwMtxRUnlock(&State::Hardware::hardware_state_lock);
         return possible;
     }
     //! Maps devices to the corresponding power output.
@@ -88,7 +88,7 @@ namespace ADCS {
     //! Hardware availability table of devices attached to ADCS.
     extern std::map<std::string, Hardware::DeviceState&> adcs_hat;
     //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
-    extern rwmutex_t adcs_hat_lock;
+    extern rwmutex_t adcs_hardware_state_lock;
 }
 }
 
