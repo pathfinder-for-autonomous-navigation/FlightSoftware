@@ -8,18 +8,18 @@ J8Buffer scratchpad;
 
 bool in_nighttime = false;
 static void propagate_self_orbit() {
-    std::array<double, 3> gps_pos = State::read_state(State::GNC::gps_position, gnc_state_lock);
-    std::array<double, 3> gps_vel = State::read_state(State::GNC::gps_velocity, gnc_state_lock);
+    std::array<double, 3> gps_pos = State::read(State::GNC::gps_position, gnc_state_lock);
+    std::array<double, 3> gps_vel = State::read(State::GNC::gps_velocity, gnc_state_lock);
     j8_propagate(gps_pos, gps_vel, 1.0 / GNC::ORBIT_PROPAGATOR_DELTA_T, scratchpad);
-    State::write_state(State::GNC::gps_position, gps_pos, gnc_state_lock);
-    State::write_state(State::GNC::gps_velocity, gps_vel, gnc_state_lock);
+    State::write(State::GNC::gps_position, gps_pos, gnc_state_lock);
+    State::write(State::GNC::gps_velocity, gps_vel, gnc_state_lock);
 
     bool now_in_nighttime = false;
     if (in_nighttime && !now_in_nighttime) {
         in_nighttime = false;
             // Since we're leaving nighttime, we don't have to worry about the fact that
             // we may be manuevering at night
-            State::write_state(State::GNC::has_firing_happened_in_nighttime, false, gnc_state_lock);
+            State::write(State::GNC::has_firing_happened_in_nighttime, false, gnc_state_lock);
     }
     else if (!in_nighttime && now_in_nighttime) {
         in_nighttime = true;
@@ -31,11 +31,11 @@ static void update_rotation_quaternion() {
 }
 
 static void propagate_other_orbit() {
-    std::array<double, 3> gps_pos = State::read_state(State::GNC::gps_position_other, gnc_state_lock);
-    std::array<double, 3> gps_vel = State::read_state(State::GNC::gps_velocity_other, gnc_state_lock);
+    std::array<double, 3> gps_pos = State::read(State::GNC::gps_position_other, gnc_state_lock);
+    std::array<double, 3> gps_vel = State::read(State::GNC::gps_velocity_other, gnc_state_lock);
     j8_propagate(gps_pos, gps_vel, 1.0 / GNC::ORBIT_PROPAGATOR_DELTA_T, scratchpad);
-    State::write_state(State::GNC::gps_position_other, gps_pos, gnc_state_lock);
-    State::write_state(State::GNC::gps_velocity_other, gps_vel, gnc_state_lock);
+    State::write(State::GNC::gps_position_other, gps_pos, gnc_state_lock);
+    State::write(State::GNC::gps_velocity_other, gps_vel, gnc_state_lock);
 }
 
 // TODO matt walsh big buffer

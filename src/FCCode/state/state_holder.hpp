@@ -22,7 +22,7 @@
 namespace State {
   //! Helper function to read from state variables in a protected way
   template<typename T>
-  inline T read_state(const T& val, rwmutex_t& lock) {
+  inline T read(const T& val, rwmutex_t& lock) {
     T val_cpy;
     rwMtxRLock(&lock);
       val_cpy = val;
@@ -32,7 +32,7 @@ namespace State {
 
   //! Helper function to write to state variables in a protected way
   template<typename T>
-  inline void write_state(T& val, const T& new_val, rwmutex_t& lock) {
+  inline void write(T& val, const T& new_val, rwmutex_t& lock) {
     rwMtxWLock(&lock);
       val = new_val;
     rwMtxWUnlock(&lock);

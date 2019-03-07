@@ -48,11 +48,11 @@ static void read_adcs_data() {
     for(int i = 0; i < 3; i++) rwa_speeds_rd[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
     for(int i = 0; i < 3; i++) gyro_data[i] = ADCSControllers::Estimator::rate_sensor_body[i];
     for(int i = 0; i < 3; i++) mag_data[i] = ADCSControllers::Estimator::magfield_sensor_body[i];
-    State::write_state(State::ADCS::rwa_ramps_rd, rwa_ramps_rd, adcs_state_lock);
-    State::write_state(State::ADCS::rwa_speed_cmds_rd, rwa_speed_cmds_rd, adcs_state_lock);
-    State::write_state(State::ADCS::rwa_speeds_rd, rwa_speeds_rd, adcs_state_lock);
-    State::write_state(State::ADCS::gyro_data, gyro_data, adcs_state_lock);
-    State::write_state(State::ADCS::mag_data, mag_data, adcs_state_lock);
+    State::write(State::ADCS::rwa_ramps_rd, rwa_ramps_rd, adcs_state_lock);
+    State::write(State::ADCS::rwa_speed_cmds_rd, rwa_speed_cmds_rd, adcs_state_lock);
+    State::write(State::ADCS::rwa_speeds_rd, rwa_speeds_rd, adcs_state_lock);
+    State::write(State::ADCS::gyro_data, gyro_data, adcs_state_lock);
+    State::write(State::ADCS::mag_data, mag_data, adcs_state_lock);
 
     std::array<float, 3> ssa_vec;
     if (ssa_mode == SSAMode::IN_PROGRESS) {

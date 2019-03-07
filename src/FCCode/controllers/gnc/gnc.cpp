@@ -22,12 +22,12 @@ static void gnc_calculation() {
     if ((unsigned int) (firing_time - State::GNC::get_current_time()) > Constants::Master::ORBIT_PERIOD_MS)
         is_valid_firing = false;
 
-    bool is_firing_planned_by_uplink = State::read_state(State::Propulsion::is_firing_planned_by_uplink, 
+    bool is_firing_planned_by_uplink = State::read(State::Propulsion::is_firing_planned_by_uplink, 
                                                         State::Propulsion::propulsion_state_lock);
     if (is_valid_firing && is_firing_planned_by_uplink) {
-        State::write_state(State::Propulsion::is_firing_planned, true, State::Propulsion::propulsion_state_lock);
-        State::write_state(State::Propulsion::firing_data.impulse_vector, firing_vector, State::Propulsion::propulsion_state_lock);
-        State::write_state(State::Propulsion::firing_data.time, firing_time, State::Propulsion::propulsion_state_lock);
+        State::write(State::Propulsion::is_firing_planned, true, State::Propulsion::propulsion_state_lock);
+        State::write(State::Propulsion::firing_data.impulse_vector, firing_vector, State::Propulsion::propulsion_state_lock);
+        State::write(State::Propulsion::firing_data.time, firing_time, State::Propulsion::propulsion_state_lock);
     }
 }
 

@@ -45,7 +45,7 @@ static void command_optimal_long_edge(const pla::Vec3f& r) {
     // Get final command quaternion and write to state
     std::array<float, 4> cmd_attitude;
     quat_cross_mult(eci_to_body_quat.data(), optimal_edge_quat.data(), cmd_attitude.data());
-    State::write_state(State::ADCS::cmd_attitude, cmd_attitude, State::ADCS::adcs_state_lock);
+    State::write(State::ADCS::cmd_attitude, cmd_attitude, State::ADCS::adcs_state_lock);
 }
 
 void ADCSControllers::point_for_standby() {

@@ -25,7 +25,7 @@ using Devices::temp_sensor_outer;
 
 namespace PropulsionTasks {
     void change_propulsion_state(PropulsionState state) {
-        State::write_state(State::Propulsion::propulsion_state, state, propulsion_state_lock);
+        State::write(State::Propulsion::propulsion_state, state, propulsion_state_lock);
     }
     rwmutex_t propulsion_thread_ptr_lock;
 }
@@ -34,25 +34,25 @@ using namespace PropulsionTasks;
 
 static int can_fire_manuever() {
     if(State::Hardware::can_get_data(Devices::pressure_sensor))
-        State::write_state(State::Propulsion::tank_pressure, pressure_sensor.get(), propulsion_state_lock);
+        State::write(State::Propulsion::tank_pressure, pressure_sensor.get(), propulsion_state_lock);
     if(State::Hardware::can_get_data(Devices::temp_sensor_inner))
-        State::write_state(State::Propulsion::tank_inner_temperature, temp_sensor_inner.get(), propulsion_state_lock);
+        State::write(State::Propulsion::tank_inner_temperature, temp_sensor_inner.get(), propulsion_state_lock);
     if(State::Hardware::can_get_data(Devices::temp_sensor_outer))
-        State::write_state(State::Propulsion::tank_outer_temperature, temp_sensor_outer.get(), propulsion_state_lock);
+        State::write(State::Propulsion::tank_outer_temperature, temp_sensor_outer.get(), propulsion_state_lock);
 
-    bool is_firing_planned = State::read_state(State::Propulsion::is_firing_planned, propulsion_state_lock);
-    bool is_outer_tank_pressure_too_high = State::read_state(State::Propulsion::tank_pressure, propulsion_state_lock) >= 48
+    bool is_firing_planned = State::read(State::Propulsion::is_firing_planned, propulsion_state_lock);
+    bool is_outer_tank_pressure_too_high = State::read(State::Propulsion::tank_pressure, propulsion_state_lock) >= 48
                                             && State::Hardware::can_get_data(Devices::pressure_sensor);
-    bool is_inner_tank_temperature_too_high = State::read_state(State::Propulsion::tank_inner_temperature, propulsion_state_lock) >= 100 
+    bool is_inner_tank_temperature_too_high = State::read(State::Propulsion::tank_inner_temperature, propulsion_state_lock) >= 100 
                                             && State::Hardware::can_get_data(Devices::temp_sensor_inner);
-    bool is_outer_tank_temperature_too_high = State::read_state(State::Propulsion::tank_outer_temperature, propulsion_state_lock) >= 48
+    bool is_outer_tank_temperature_too_high = State::read(State::Propulsion::tank_outer_temperature, propulsion_state_lock) >= 48
                                             && State::Hardware::can_get_data(Devices::temp_sensor_outer);
 
     if (is_inner_tank_temperature_too_high || is_outer_tank_temperature_too_high || is_outer_tank_pressure_too_high) {
         return -1;
     }
     else if (is_firing_planned) {
-        gps_time_t firing_time = State::read_state(State::Propulsion::firing_data.time, propulsion_state_lock);
+        gps_time_t firing_time = State::read(State::Propulsion::firing_data.time, propulsion_state_lock);
 
         gps_time_t current_time = State::GNC::get_current_time();
         if (current_time > firing_time - Constants::Propulsion::THRUSTER_PREPARATION_TIME) {
@@ -61,8 +61,8 @@ static int can_fire_manuever() {
             return 0;
         }
 
-        bool is_nighttime = !State::read_state(State::ADCS::is_sun_vector_determination_working, State::ADCS::adcs_state_lock);
-        bool has_firing_happened_in_nighttime = State::read_state(State::GNC::has_firing_happened_in_nighttime, State::ADCS::adcs_state_lock);
+        bool is_nighttime = !State::read(State::ADCS::is_sun_vector_determination_working, State::ADCS::adcs_state_lock);
+        bool has_firing_happened_in_nighttime = State::read(State::GNC::has_firing_happened_in_nighttime, State::ADCS::adcs_state_lock);
         if (is_nighttime && has_firing_happened_in_nighttime) {
             // We cannot execute the firing since we've already done one at night!
             return 0;
@@ -78,7 +78,7 @@ static int can_fire_manuever() {
 }
 
 static void propulsion_state_controller() {
-    PropulsionState propulsion_state = State::read_state(State::Propulsion::propulsion_state, propulsion_state_lock);
+    PropulsionState propulsion_state = State::read(State::Propulsion::propulsion_state, propulsion_state_lock);
 
     int can_manuever = can_fire_manuever();
     switch(propulsion_state) {
@@ -140,12 +140,12 @@ static void propulsion_state_controller() {
             }
             if (State::ADCS::angular_rate() >= Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
                 // Satellite is too unstable for a firing
-                State::write_state(FaultState::Propulsion::destabilization_event, 
+                State::write(FaultState::Propulsion::destabilization_event, 
                     State::GNC::get_current_time(), 
                     FaultState::Propulsion::propulsion_fault_state_lock);
                 change_propulsion_state(PropulsionState::IDLE);
             }
-            float tank_pressure = State::read_state(State::Propulsion::tank_pressure, propulsion_state_lock);
+            float tank_pressure = State::read(State::Propulsion::tank_pressure, propulsion_state_lock);
             if (tank_pressure < Constants::Propulsion::PRE_FIRING_OUTER_TANK_PRESSURE) {
                 // Not enough pressure for a firing
                 change_propulsion_state(PropulsionState::IDLE);
@@ -186,10 +186,10 @@ void RTOSTasks::propulsion_controller(void *arg) {
     chMtxLock(&eeprom_lock);
         unsigned char preferred_valve = EEPROM.read(EEPROM_ADDRESSES::PREFERRED_INTERTANK_VALVE);
     chMtxUnlock(&eeprom_lock);
-    State::write_state(State::Propulsion::intertank_firing_valve, preferred_valve, propulsion_state_lock);
+    State::write(State::Propulsion::intertank_firing_valve, preferred_valve, propulsion_state_lock);
 
     debug_println("Waiting for deployment timer to finish.");
-    bool is_deployed = State::read_state(State::Master::is_deployed, State::Master::master_state_lock);
+    bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
     debug_println("Deployment timer has finished.");
     debug_println("Initializing main operation...");

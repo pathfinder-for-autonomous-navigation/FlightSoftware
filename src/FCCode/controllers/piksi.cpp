@@ -24,8 +24,8 @@ static void piksi_read() {
     // GPS Time
     gps_time_t current_time;
     piksi.get_gps_time(&current_time);
-    if (current_time != State::read_state(State::Piksi::recorded_current_time, piksi_state_lock))
-        State::write_state(State::Piksi::recorded_current_time, current_time, piksi_state_lock);
+    if (current_time != State::read(State::Piksi::recorded_current_time, piksi_state_lock))
+        State::write(State::Piksi::recorded_current_time, current_time, piksi_state_lock);
 
     // GPS Position
     std::array<double, 3> pos;
@@ -35,9 +35,9 @@ static void piksi_read() {
     pos_time.gpstime.tow = pos_tow;
     unsigned char pos_nsats = piksi.get_pos_ecef_nsats();
     if (pos != State::Piksi::recorded_gps_position) {
-        State::write_state(State::Piksi::recorded_gps_position, pos, piksi_state_lock);
-        State::write_state(State::Piksi::recorded_gps_position_time, pos_time, piksi_state_lock);
-        State::write_state(State::Piksi::recorded_gps_position_nsats, pos_nsats, piksi_state_lock);
+        State::write(State::Piksi::recorded_gps_position, pos, piksi_state_lock);
+        State::write(State::Piksi::recorded_gps_position_time, pos_time, piksi_state_lock);
+        State::write(State::Piksi::recorded_gps_position_nsats, pos_nsats, piksi_state_lock);
     }
     std::bitset<8> pos_ecef_flags(piksi.get_pos_ecef_flags());
 
@@ -50,8 +50,8 @@ static void piksi_read() {
         gps_time_t pos_other_time = current_time;
         pos_other_time.gpstime.tow = pos_tow;
         if (pos != State::Piksi::recorded_gps_position_other) {
-            State::write_state(State::Piksi::recorded_gps_position_other, pos_other, piksi_state_lock);
-            State::write_state(State::Piksi::recorded_gps_position_other_time, pos_other_time, piksi_state_lock);
+            State::write(State::Piksi::recorded_gps_position_other, pos_other, piksi_state_lock);
+            State::write(State::Piksi::recorded_gps_position_other_time, pos_other_time, piksi_state_lock);
         }
     }
 
@@ -63,9 +63,9 @@ static void piksi_read() {
     vel_time.gpstime.tow = vel_tow;
     unsigned char vel_nsats = piksi.get_vel_ecef_nsats();
     if (vel != State::Piksi::recorded_gps_velocity) {
-        State::write_state(State::Piksi::recorded_gps_velocity, vel, piksi_state_lock);
-        State::write_state(State::Piksi::recorded_gps_velocity_time, vel_time, piksi_state_lock);
-        State::write_state(State::Piksi::recorded_gps_velocity_nsats, vel_nsats, piksi_state_lock);
+        State::write(State::Piksi::recorded_gps_velocity, vel, piksi_state_lock);
+        State::write(State::Piksi::recorded_gps_velocity_time, vel_time, piksi_state_lock);
+        State::write(State::Piksi::recorded_gps_velocity_nsats, vel_nsats, piksi_state_lock);
     }
 }
 
@@ -76,7 +76,7 @@ void RTOSTasks::piksi_controller(void *arg) {
     DataCollection::initialize_piksi_history_timers();
     
     debug_println("Waiting for deployment timer to finish.");
-    bool is_deployed = State::read_state(State::Master::is_deployed, State::Master::master_state_lock);
+    bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
     debug_println("Deployment timer has finished.");
     debug_println("Initializing main operation...");

@@ -50,7 +50,7 @@ static void gomspace_read() {
     }
     if (t == 5) {
         debug_println("unable to read Gomspace data.");
-        State::write_state((State::Hardware::hat).at(Devices::gomspace.name()).is_functional, 
+        State::write((State::Hardware::hat).at(Devices::gomspace.name()).is_functional, 
                             false, State::Hardware::hardware_state_lock);
     }
     else debug_printf("battery voltage (mV): %d\n", gomspace_data.vbatt);
@@ -81,7 +81,7 @@ static void gomspace_check() {
     debug_println("Checking Gomspace data...");
     
     debug_printf("Checking if Gomspace is functional...");
-    bool is_gomspace_functional = State::read_state((State::Hardware::hat).at(Devices::gomspace.name()).is_functional, 
+    bool is_gomspace_functional = State::read((State::Hardware::hat).at(Devices::gomspace.name()).is_functional, 
                                     State::Hardware::hardware_state_lock);
     if (!is_gomspace_functional) {
         debug_println("Gomspace is not functional!");
@@ -90,9 +90,9 @@ static void gomspace_check() {
     else debug_println("Device is functional.");
 
     debug_printf("Checking Gomspace battery voltage...");
-    unsigned short int vbatt = State::read_state(gomspace_data.vbatt, gomspace_state_lock);
+    unsigned short int vbatt = State::read(gomspace_data.vbatt, gomspace_state_lock);
     if (vbatt < Constants::Gomspace::SAFE_VOLTAGE) {
-        State::write_state(FaultState::Gomspace::is_safe_hold_voltage, 
+        State::write(FaultState::Gomspace::is_safe_hold_voltage, 
             true, FaultState::Gomspace::gomspace_fault_state_lock);
     }
 
@@ -201,7 +201,7 @@ void RTOSTasks::gomspace_controller(void *arg) {
         RTOSTasks::gomspace_thread_priority, gomspace_read_controller, NULL);
     
     debug_println("Waiting for deployment timer to finish.");
-    bool is_deployed = State::read_state(State::Master::is_deployed, State::Master::master_state_lock);
+    bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
     debug_println("Deployment timer has finished.");
     debug_println("Initializing main operation...");

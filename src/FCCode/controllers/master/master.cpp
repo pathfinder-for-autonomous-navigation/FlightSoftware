@@ -23,14 +23,14 @@ namespace RTOSTasks {
 }
 
 static void master_loop() {    
-    bool is_uplink_processed = State::read_state(State::Quake::most_recent_uplink.is_uplink_processed, 
+    bool is_uplink_processed = State::read(State::Quake::most_recent_uplink.is_uplink_processed, 
                                                 State::Quake::uplink_lock);
     if (!is_uplink_processed) {
         Comms::apply_uplink(State::Quake::most_recent_uplink);
     }
 
-    MasterState master_state_copy = State::read_state(master_state, master_state_lock);
-    PANState pan_state_copy = State::read_state(pan_state, master_state_lock);
+    MasterState master_state_copy = State::read(master_state, master_state_lock);
+    PANState pan_state_copy = State::read(pan_state, master_state_lock);
     debug_printf("Master State and PAN State: %d %d\n", master_state_copy, pan_state_copy);
     switch(master_state_copy) {
         case MasterState::DETUMBLE: {
@@ -40,20 +40,20 @@ static void master_loop() {
             unsigned short int safe_hold_reason = Master::safe_hold_needed();
             if (safe_hold_reason != 0) Master::safe_hold(safe_hold_reason);
             
-            State::ADCS::ADCSState adcs_state = State::read_state(State::ADCS::adcs_state, State::ADCS::adcs_state_lock);
+            State::ADCS::ADCSState adcs_state = State::read(State::ADCS::adcs_state, State::ADCS::adcs_state_lock);
             
             if (State::Master::is_deployed && adcs_state != State::ADCS::ADCSState::ADCS_DETUMBLE) {
-                State::write_state(State::ADCS::adcs_state, 
+                State::write(State::ADCS::adcs_state, 
                     State::ADCS::ADCSState::ADCS_DETUMBLE, State::ADCS::adcs_state_lock);
             }
 
             if (State::ADCS::angular_rate() < Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
-                State::write_state(State::ADCS::adcs_state, 
+                State::write(State::ADCS::adcs_state, 
                     State::ADCS::ADCSState::POINTING, State::ADCS::adcs_state_lock);
-                State::write_state(State::ADCS::cmd_attitude, 
+                State::write(State::ADCS::cmd_attitude, 
                     State::ADCS::cur_attitude, State::ADCS::adcs_state_lock);
-                State::write_state(master_state, MasterState::NORMAL, master_state_lock);
-                State::write_state(pan_state, PANState::STANDBY, master_state_lock);
+                State::write(master_state, MasterState::NORMAL, master_state_lock);
+                State::write(pan_state, PANState::STANDBY, master_state_lock);
             }
         }
         break;
@@ -69,7 +69,7 @@ static void master_loop() {
                     chMtxLock(&eeprom_lock);
                         EEPROM.put(EEPROM_ADDRESSES::IS_FOLLOWER, true);
                     chMtxUnlock(&eeprom_lock);
-                    State::write_state(State::Master::is_follower, true, State::Master::master_state_lock);
+                    State::write(State::Master::is_follower, true, State::Master::master_state_lock);
                     RTOSTasks::LoopTimes::GNC = 60000;
                 }
                 break;
@@ -82,9 +82,9 @@ static void master_loop() {
                     chMtxLock(&eeprom_lock);
                         EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 0);
                     chMtxUnlock(&eeprom_lock);
-                    State::write_state(State::ADCS::adcs_state, 
+                    State::write(State::ADCS::adcs_state, 
                         State::ADCS::ADCSState::POINTING, State::ADCS::adcs_state_lock);
-                    State::write_state(State::Propulsion::propulsion_state, 
+                    State::write(State::Propulsion::propulsion_state, 
                         State::Propulsion::PropulsionState::IDLE, State::Propulsion::propulsion_state_lock);
                     ADCSControllers::point_for_standby();
                 break;
@@ -95,14 +95,14 @@ static void master_loop() {
                     chMtxLock(&eeprom_lock);
                         EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 1);
                     chMtxUnlock(&eeprom_lock);
-                    State::write_state(State::ADCS::adcs_state, 
+                    State::write(State::ADCS::adcs_state, 
                         State::ADCS::ADCSState::ZERO_TORQUE, State::ADCS::adcs_state_lock);
-                    State::write_state(State::Propulsion::propulsion_state, 
+                    State::write(State::Propulsion::propulsion_state, 
                         State::Propulsion::PropulsionState::DISABLED, State::Propulsion::propulsion_state_lock);
 
                     chVTDoSetI(&Master::docking_timer, S2ST(Constants::Master::DOCKING_TIMEOUT), Master::stop_docking_mode, NULL);
                     if (Devices::docking_switch.pressed() && State::Hardware::can_get_data(Devices::docking_switch)) {
-                        State::write_state(State::Master::pan_state, PANState::DOCKED, master_state_lock);
+                        State::write(State::Master::pan_state, PANState::DOCKED, master_state_lock);
                     }
                 }
                 break;
@@ -115,7 +115,7 @@ static void master_loop() {
                 break;
                 case PANState::PAIRED: {
                     // TODO Modify ADCS gains
-                    State::write_state(pan_state, PANState::STANDBY, master_state_lock);
+                    State::write(pan_state, PANState::STANDBY, master_state_lock);
                 }
                 break;
                 case PANState::SPACEJUNK: {
@@ -124,8 +124,8 @@ static void master_loop() {
                     chMtxUnlock(&eeprom_lock);
                     // Point in the same direction in ECI. Momentum is slowly dumped by the
                     // pointing function.
-                    State::write_state(State::ADCS::cmd_attitude, State::ADCS::cur_attitude, State::ADCS::adcs_state_lock);
-                    State::write_state(State::ADCS::adcs_state, State::ADCS::ADCSState::POINTING, State::ADCS::adcs_state_lock);
+                    State::write(State::ADCS::cmd_attitude, State::ADCS::cur_attitude, State::ADCS::adcs_state_lock);
+                    State::write(State::ADCS::adcs_state, State::ADCS::ADCSState::POINTING, State::ADCS::adcs_state_lock);
                 }
                 break;
                 default:
@@ -178,7 +178,7 @@ void master_init() {
 
     debug_println("Previous boot did not end in initialization or safe hold mode. Checking to see if a hold is necessary...");
     if (Master::safe_hold_needed()) {
-        unsigned int boot_number = State::read_state(State::Master::boot_number, master_state_lock);
+        unsigned int boot_number = State::read(State::Master::boot_number, master_state_lock);
         if (boot_number == 1)
             Master::initialization_hold(0); // TODO fix
         else

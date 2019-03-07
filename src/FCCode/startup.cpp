@@ -43,8 +43,8 @@ void hardware_setup() {
         dptr.setup();
         if (dptr.is_functional()) {
             debug_printf_headless("setup was successful!\n");
-            State::write_state((State::Hardware::hat).at(device.first).powered_on, true, State::Hardware::hardware_state_lock);
-            State::write_state((State::Hardware::hat).at(device.first).is_functional, true, State::Hardware::hardware_state_lock);
+            State::write((State::Hardware::hat).at(device.first).powered_on, true, State::Hardware::hardware_state_lock);
+            State::write((State::Hardware::hat).at(device.first).is_functional, true, State::Hardware::hardware_state_lock);
         }
         else debug_printf_headless("setup was unsuccessful.\n");
     }
@@ -119,9 +119,9 @@ void pan_system_setup() {
 
     // Determining boot count
     chMtxLock(&eeprom_lock);
-    unsigned int boot_number = State::read_state(State::Master::boot_number, State::Master::master_state_lock);
+    unsigned int boot_number = State::read(State::Master::boot_number, State::Master::master_state_lock);
     EEPROM.get(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
-    State::write_state(State::Master::boot_number, boot_number++, State::Master::master_state_lock);
+    State::write(State::Master::boot_number, boot_number++, State::Master::master_state_lock);
     EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
     chMtxUnlock(&eeprom_lock);
     debug_printf("This is boot #%d since the satellite left the deployer. \n", State::Master::boot_number);

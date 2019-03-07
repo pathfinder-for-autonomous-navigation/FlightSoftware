@@ -36,7 +36,7 @@ static CH_IRQ_HANDLER(network_ready_handler) {
 };
 
 static void quake_loop() {
-    QuakeState quake_state = State::read_state(State::Quake::quake_state, quake_state_lock);
+    QuakeState quake_state = State::read(State::Quake::quake_state, quake_state_lock);
     switch(quake_state) {
         case QuakeState::WAITING: {
             chVTDoSetI(&waiting_timer, Constants::Quake::QUAKE_WAIT_PERIOD, end_waiting, NULL);
@@ -65,7 +65,7 @@ void RTOSTasks::quake_controller(void *arg) {
     attachInterrupt(Devices::quake.nr_pin(), network_ready_handler, RISING);
     debug_println("Waiting for deployment timer to finish.");
     
-    bool is_deployed = State::read_state(State::Master::is_deployed, State::Master::master_state_lock);
+    bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
     debug_println("Deployment timer has finished.");
     debug_println("Initializing main operation...");

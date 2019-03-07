@@ -8,8 +8,8 @@
 void Master::initialization_hold(unsigned short int reason) {
     debug_println("Entering initialization hold mode...");
     // The two state declarations below don't do anything; they're just for cosmetics/maintaining invariants
-    State::write_state(State::Master::master_state, State::Master::MasterState::INITIALIZATION_HOLD, State::Master::master_state_lock);
-    State::write_state(State::Master::pan_state, State::Master::PANState::MASTER_INITIALIZATIONHOLD, State::Master::master_state_lock);
+    State::write(State::Master::master_state, State::Master::MasterState::INITIALIZATION_HOLD, State::Master::master_state_lock);
+    State::write(State::Master::pan_state, State::Master::PANState::MASTER_INITIALIZATIONHOLD, State::Master::master_state_lock);
 
     chMtxLock(&eeprom_lock);
         EEPROM.put(EEPROM_ADDRESSES::INITIALIZATION_HOLD_FLAG, true);
@@ -17,7 +17,7 @@ void Master::initialization_hold(unsigned short int reason) {
 
     if (State::ADCS::angular_rate() >= Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
         if (State::Hardware::can_get_data(Devices::adcs_system)) {
-            State::write_state(State::ADCS::adcs_state, State::ADCS::ADCSState::ADCS_DETUMBLE, State::ADCS::adcs_state_lock);
+            State::write(State::ADCS::adcs_state, State::ADCS::ADCSState::ADCS_DETUMBLE, State::ADCS::adcs_state_lock);
             chThdEnqueueTimeoutS(&RTOSTasks::adcs_detumbled, S2ST(Constants::Master::INITIALIZATION_HOLD_DETUMBLE_WAIT)); // Wait for detumble to finish.
         }
     }

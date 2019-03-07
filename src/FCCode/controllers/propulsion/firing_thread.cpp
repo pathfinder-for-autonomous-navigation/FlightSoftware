@@ -33,7 +33,7 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
         for(int i = 0; i < 4; i++) q_body[i] = ADCSControllers::Estimator::q_filter_body[i];
     rwMtxRUnlock(&State::ADCS::adcs_state_lock);
     pla::Vec3f impulse_vector_body;
-    std::array<float, 3> impulse_vector_eci = State::read_state(State::Propulsion::firing_data.impulse_vector, 
+    std::array<float, 3> impulse_vector_eci = State::read(State::Propulsion::firing_data.impulse_vector, 
                                                                 State::Propulsion::propulsion_state_lock);
     vect_rot(impulse_vector_eci.data(), q_body.data(), impulse_vector_body.get_data());
     
