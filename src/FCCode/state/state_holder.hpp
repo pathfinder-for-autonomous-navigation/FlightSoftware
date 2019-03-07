@@ -27,12 +27,12 @@ namespace State {
     rwMtxRLock(&lock);
       val_cpy = val;
     rwMtxRUnlock(&lock);
-    return val;
+    return val_cpy;
   }
 
   //! Helper function to write to state variables in a protected way
   template<typename T>
-  inline void write_state(const T& val, const T& new_val, rwmutex_t& lock) {
+  inline void write_state(T& val, const T& new_val, rwmutex_t& lock) {
     rwMtxWLock(&lock);
       val = new_val;
     rwMtxWUnlock(&lock);

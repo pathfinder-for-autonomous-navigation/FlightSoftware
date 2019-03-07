@@ -33,7 +33,7 @@ static void piksi_read() {
     piksi.get_pos_ecef(&pos, &pos_tow);
     gps_time_t pos_time = current_time;
     pos_time.gpstime.tow = pos_tow;
-    unsigned int pos_nsats = piksi.get_pos_ecef_nsats();
+    unsigned char pos_nsats = piksi.get_pos_ecef_nsats();
     if (pos != State::Piksi::recorded_gps_position) {
         State::write_state(State::Piksi::recorded_gps_position, pos, piksi_state_lock);
         State::write_state(State::Piksi::recorded_gps_position_time, pos_time, piksi_state_lock);
