@@ -25,7 +25,6 @@ namespace State {
         std::array<float, 4> cmd_attitude;
         std::array<float, 4> cur_attitude;
         std::array<float, 3> cur_ang_rate;
-        bool is_propulsion_pointing_active = false;
         bool is_sun_vector_determination_working = false;
         bool is_sun_vector_collection_working = false;
         std::array<float, 3> rwa_speed_cmds, rwa_speeds, rwa_ramps;

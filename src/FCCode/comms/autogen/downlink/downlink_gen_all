@@ -1,0 +1,4 @@
+python datarate_codegen.py
+python downlink_field_csv_generator.py
+python downlink_docgen.py
+python downlink_codegen.py

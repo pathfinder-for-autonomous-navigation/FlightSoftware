@@ -5,9 +5,10 @@
  */
 
 #include "../controllers.hpp"
+#include "../constants.hpp"
 #include "../../state/state_holder.hpp"
 #include "../../deployment_timer.hpp"
-#include "../../comms/downlink_serializer.hpp"
+#include "../../comms/downlink_packet_generator.hpp"
 #include "../../comms/uplink_deserializer.hpp"
 #include "downlink_thread.hpp"
 #include <HardwareSerial.h>

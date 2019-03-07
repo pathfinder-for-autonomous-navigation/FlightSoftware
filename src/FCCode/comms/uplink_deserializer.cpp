@@ -92,36 +92,19 @@ static void deserialize_resets(const std::bitset<UPLINK_PACKET_SIZE_BITS>& packe
     uplink->rewrite_quake_settings = packet_bits[packet_ptr++];
 }
 
-static void deserialize_checksum(const std::bitset<UPLINK_PACKET_SIZE_BITS>& packet_bits, 
-                                const std::array<char, PACKET_SIZE_BYTES>& packet, 
-                                unsigned int& packet_ptr, 
-                                Uplink* uplink) {
-    std::bitset<32> crc32_packed;
-    for(int i = 0; i < 32; i++) crc32_packed.set(i, packet_bits[packet_ptr++]);
-    packet_ptr -= 32;
-
-    // Compute actual checksum
-    std::bitset<UPLINK_PACKET_SIZE_BITS> packet_bits_copy = packet_bits;
-    unsigned int packet_ptr_copy = packet_ptr;
-    std::array<char, UPLINK_PACKET_SIZE_BYTES> temp_char_array;
-    unsigned int expected_crc32 = 0; //add_packet_checksum(packet_bits_copy, packet_ptr_copy, &temp_char_array);
-
-    uplink->is_crc32_valid = (expected_crc32 == crc32_packed.to_ullong());
-}
-
 void Comms::uplink_deserializer(const Devices::QLocate::Message& packet, Uplink* uplink) {
-    std::bitset<UPLINK_PACKET_SIZE_BITS> packet_bits;
-    for(unsigned int i = 0; i < PACKET_SIZE_BYTES; i++) {
-        std::bitset<8> packet_byte(packet[i]);
-        for(int j = 0; j < 8; j++)
-            packet_bits.set(i * 8 + j, packet_byte[j]);
-    }
+    // std::bitset<UPLINK_PACKET_SIZE_BITS> packet_bits;
+    // for(unsigned int i = 0; i < PACKET_SIZE_BYTES; i++) {
+    //     std::bitset<8> packet_byte(packet[i]);
+    //     for(int j = 0; j < 8; j++)
+    //         packet_bits.set(i * 8 + j, packet_byte[j]);
+    // }
 
-    unsigned int packet_ptr = 0;
-    deserialize_master_state(packet_bits, packet_ptr, uplink);
-    deserialize_hat(packet_bits, packet_ptr, uplink);
-    deserialize_adcs_info(packet_bits, packet_ptr, uplink);
-    deserialize_prop_info(packet_bits, packet_ptr, uplink);
-    deserialize_resets(packet_bits, packet_ptr, uplink);
-    //deserialize_checksum(packet_bits, packet, packet_ptr, uplink);
+    // unsigned int packet_ptr = 0;
+    // deserialize_master_state(packet_bits, packet_ptr, uplink);
+    // deserialize_hat(packet_bits, packet_ptr, uplink);
+    // deserialize_adcs_info(packet_bits, packet_ptr, uplink);
+    // deserialize_prop_info(packet_bits, packet_ptr, uplink);
+    // deserialize_resets(packet_bits, packet_ptr, uplink);
+    // //deserialize_checksum(packet_bits, packet, packet_ptr, uplink);
 }

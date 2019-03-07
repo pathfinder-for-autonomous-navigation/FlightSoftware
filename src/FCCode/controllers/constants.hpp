@@ -42,7 +42,7 @@ namespace Constants {
         //! Maximum possible gyroscope reading along one axis.
         constexpr float MAX_GYRO_VALUE = 2.2;
         //! Maximum possible magnetic field vector reading magnitude.
-        constexpr float MAX_MAGNETOMETER_READING = -0.005;
+        constexpr float MAX_MAGNETOMETER_READING = 0.005;
         //! Maximum possible ramp command magnitude.
         constexpr float MAX_RAMP_CMD = 310.2;
         //! Minimum possible magnetotorquer command along one axis.

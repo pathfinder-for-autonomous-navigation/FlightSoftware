@@ -32,10 +32,6 @@
  * Contains functions and constants related to communication packet serialization and deserialization.
  * */
 namespace Comms {
-    //! Size of all packets, in bytes
-    constexpr unsigned int PACKET_SIZE_BYTES = 340;
-    //! Size of all packets, in bits
-    constexpr unsigned int PACKET_SIZE_BITS = PACKET_SIZE_BYTES * 8; 
     //! Size of uplink packets, in bytes
     constexpr unsigned int UPLINK_PACKET_SIZE_BYTES = 34; 
     //! Size of uplink packets, in bits
