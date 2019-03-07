@@ -75,8 +75,6 @@ namespace StateHistory {
     extern circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> recorded_velocity_history;
     //! History of other satellite's recorded GPS position
     extern circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> recorded_position_other_history;
-    //! History of other satellite's recorded GPS velocity
-    extern circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> recorded_velocity_other_history;
     //! Readers-writers lock that prevents multi-process modification of Piksi state history data.
     extern rwmutex_t piksi_history_state_lock;
   }
