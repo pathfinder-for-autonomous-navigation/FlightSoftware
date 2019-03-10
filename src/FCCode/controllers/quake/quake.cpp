@@ -8,7 +8,6 @@
 #include "../constants.hpp"
 #include "../../state/state_holder.hpp"
 #include "../../deployment_timer.hpp"
-#include "../../comms/downlink_packet_generator.hpp"
 #include "../../comms/uplink_deserializer.hpp"
 #include "transceiving_thread.hpp"
 #include <HardwareSerial.h>

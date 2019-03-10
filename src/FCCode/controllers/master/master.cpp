@@ -23,11 +23,7 @@ namespace RTOSTasks {
 }
 
 static void master_loop() {    
-    bool is_uplink_processed = State::read(State::Quake::most_recent_uplink.is_uplink_processed, 
-                                                State::Quake::uplink_lock);
-    if (!is_uplink_processed) {
-        Comms::apply_uplink(State::Quake::most_recent_uplink);
-    }
+    Comms::apply_uplink_data(State::Quake::most_recent_uplink);
 
     MasterState master_state_copy = State::read(master_state, master_state_lock);
     PANState pan_state_copy = State::read(pan_state, master_state_lock);
@@ -79,6 +75,7 @@ static void master_loop() {
                 }
                 break;
                 case PANState::STANDBY:
+                    Comms::apply_uplink_commands(State::Quake::most_recent_uplink);
                     chMtxLock(&eeprom_lock);
                         EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 0);
                     chMtxUnlock(&eeprom_lock);

@@ -1,7 +1,10 @@
 import csv
 import math
 
-TYPES = ["bool", "int", "state int", "float", "double", "float vector", "double vector", "quaternion", "gps time", "temperature"]
+TYPES = [
+    "bool", "int", "state int", "float", "double", "float vector",
+    "double vector", "quaternion", "gps time", "temperature"
+]
 GROUPS = {
  "master" : "State::Master",
  "hardware" : "State::Hardware",
@@ -122,7 +125,7 @@ PIKSI_HISTORY_FIELDS = []
 PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "iar_history",                     "type" : "int", "size" : 32, "buf_size" : 10, "min" : 0, "max" : MAX_INT })
 PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "nsats_history",                   "type" : "int", "size" : 5,  "buf_size" : 10,  "min" : 0, "max" : 30 })
 PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_position_history",       "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
-PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_velocity_history",       "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8, "max" : 12 })
+PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_velocity_history",       "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8000, "max" : 12000 })
 PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_position_other_history", "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
 FIELDS.extend(PIKSI_HISTORY_FIELDS)
 
@@ -134,9 +137,9 @@ FIELDS.extend(PROPULSION_HISTORY_FIELDS)
 
 GNC_HISTORY_FIELDS = []
 GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "position_history",       "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
-GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "velocity_history",       "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8, "max" : 12 })
+GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "velocity_history",       "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8000, "max" : 12000 })
 GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "position_other_history", "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
-GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "velocity_other_history", "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8, "max" : 12 })
+GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "velocity_other_history", "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8000, "max" : 12000 })
 FIELDS.extend(GNC_HISTORY_FIELDS)
 
 GOMSPACE_FAULTS_FIELDS = []
@@ -196,7 +199,7 @@ def get_statistics():
         field["total_size"] = field["buf_size"] * field["size"]
         if field["type"] == "bool":
             size += field["buf_size"] * 8
-        if field["type"] == "int":
+        if field["type"] == "int" or field["type"] == "state int":
             size += field["buf_size"] * 32
         if field["type"] == "float":
             size += field["buf_size"] * (8 * 4)

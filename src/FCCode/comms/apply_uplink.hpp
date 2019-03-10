@@ -11,10 +11,14 @@
 #include "uplink_struct.hpp"
 
 namespace Comms {
+    /** @brief Apply data supplied in an uplink to the actual satellite.
+     * @param uplink Struct containing uplink data to be processed.
+    */
+    void apply_uplink_data(const Uplink& uplink);
     /** @brief Apply commands supplied in an uplink to the actual satellite.
      * @param uplink Struct containing uplink data to be processed.
     */
-    void apply_uplink(const Uplink& uplink);
+    void apply_uplink_commands(const Uplink& uplink);
 }
 
 #endif

@@ -7,7 +7,10 @@
 
 #include "apply_uplink.hpp"
 
-void Comms::apply_uplink(const Comms::Uplink& uplink) {
-    if (!uplink.is_crc32_valid) return;
+void Comms::apply_uplink_data(const Comms::Uplink& uplink) {
+    // TODO
+}
+
+void Comms::apply_uplink_commands(const Comms::Uplink& uplink) {
     // TODO
 }

@@ -3,6 +3,7 @@
 #include "transceiving_thread.hpp"
 #include "../../state/device_states.hpp"
 #include "../../comms/uplink_deserializer.hpp"
+#include <bitset>
 
 thread_t* Quake::transceiving_thread;
 
@@ -37,7 +38,8 @@ THD_FUNCTION(Quake::transceiving_fn, args) {
     go_to_waiting();
     if (uplink.get_length() != 0) {
         rwMtxWLock(&State::Quake::uplink_lock);
-            Comms::uplink_deserializer(uplink, &State::Quake::most_recent_uplink);
+            std::bitset<Comms::UPLINK_SIZE_BITS> uplink_bitset(uplink.mes);
+            Comms::deserialize_uplink(uplink_bitset, &State::Quake::most_recent_uplink);
         rwMtxWUnlock(&State::Quake::uplink_lock);
     }
     chThdExit((msg_t) 0);

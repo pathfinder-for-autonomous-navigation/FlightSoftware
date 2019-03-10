@@ -161,7 +161,7 @@ inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, float min_m
     for(int i = 0; i < magnitude_bitsize; i++) magnitude_packed.set(i, v[i]);
     float magnitude = expand_float(magnitude_packed, min_magnitude, max_magnitude);
 
-    unsigned int missing_component = v[max_vec_size-MAX_NORMALIZED_FLOAT_VECTOR_SIZE] << 1 + v[max_vec_size-MAX_NORMALIZED_FLOAT_VECTOR_SIZE+1];
+    unsigned int missing_component = (v[magnitude_bitsize] << 1) + v[magnitude_bitsize+1];
     (*result)[missing_component] = 1;
     int j = 0; // Index of current component being processed
     for(int i = 0; i < 3; i++) {
@@ -179,19 +179,14 @@ inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, float min_m
         (*result)[i] *= magnitude;
 }
 
-template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, float max_magnitude, std::array<float, 3>* result) {
-    expand_vector(v, 0, max_magnitude, result);
-}
-
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, double min_magnitude, double max_magnitude, std::array<float, 3>* result) {
+inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, double min_magnitude, double max_magnitude, std::array<double, 3>* result) {
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_DOUBLE_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_packed;
     for(int i = 0; i < magnitude_bitsize; i++) magnitude_packed.set(i, v[i]);
     double magnitude = expand_double(magnitude_packed, min_magnitude, max_magnitude);
 
-    unsigned int missing_component = v[max_vec_size-MAX_NORMALIZED_DOUBLE_VECTOR_SIZE] << 1 + v[max_vec_size-MAX_NORMALIZED_DOUBLE_VECTOR_SIZE+1];
+    unsigned int missing_component = (v[magnitude_bitsize] << 1) + v[magnitude_bitsize+1];
     (*result)[missing_component] = 1;
     int j = 0; // Index of current component being processed
     for(int i = 0; i < 3; i++) {
@@ -207,6 +202,11 @@ inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, double min_
 
     for(int i = 0; i < 3; i++)
         (*result)[i] *= magnitude;
+}
+
+template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
+inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, float max_magnitude, std::array<float, 3>* result) {
+    expand_vector(v, 0, max_magnitude, result);
 }
 
 template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>

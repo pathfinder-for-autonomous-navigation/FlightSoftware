@@ -1,0 +1,59 @@
+max,size,type,name,min
+4294967295,32,int,uplink_number,0
+,49,gps time,uplink_timestamp,
+7200,45,double vector,other_satellite_position,6400
+,49,gps time,other_satellite_position_timestamp,
+12000,45,double vector,other_satellite_velocity,8000
+,49,gps time,other_satellite_velocity_timestamp,
+100,7,int,constant_0_id,0
+4294967295,32,int,constant_0_val,0
+100,7,int,constant_1_id,0
+4294967295,32,int,constant_1_val,0
+100,7,int,constant_2_id,0
+4294967295,32,int,constant_2_val,0
+4,3,int,master_state,0
+11,4,int,pan_state,0
+,1,bool,is_follower,
+,1,bool,hat_gomspace_error_ignored,
+,1,bool,hat_piksi_error_ignored,
+,1,bool,hat_quake_error_ignored,
+,1,bool,hat_dcdc_error_ignored,
+,1,bool,hat_spike_and_hold_error_ignored,
+,1,bool,hat_adcs_system_error_ignored,
+,1,bool,hat_pressure_sensor_error_ignored,
+,1,bool,hat_temp_sensor_inner_error_ignored,
+,1,bool,hat_temp_sensor_outer_error_ignored,
+,1,bool,hat_docking_motor_error_ignored,
+,1,bool,hat_docking_switch_error_ignored,
+,1,bool,adcs_hat_gyroscope_is_functional,
+,1,bool,adcs_hat_magnetometer_is_functional,
+,1,bool,adcs_hat_magnetorquer_x_is_functional,
+,1,bool,adcs_hat_magnetorquer_y_is_functional,
+,1,bool,adcs_hat_magnetorquer_z_is_functional,
+,1,bool,adcs_hat_motorpot_is_functional,
+,1,bool,adcs_hat_motor_x_is_functional,
+,1,bool,adcs_hat_motor_y_is_functional,
+,1,bool,adcs_hat_motor_z_is_functional,
+,1,bool,adcs_hat_motor_x_adc_is_functional,
+,1,bool,adcs_hat_motor_y_adc_is_functional,
+,1,bool,adcs_hat_motor_z_adc_is_functional,
+,1,bool,adcs_hat_ssa_adc_1_is_functional,
+,1,bool,adcs_hat_ssa_adc_2_is_functional,
+,1,bool,adcs_hat_ssa_adc_3_is_functional,
+,1,bool,adcs_hat_ssa_adc_4_is_functional,
+,1,bool,adcs_hat_ssa_adc_5_is_functional,
+3,2,int,adcs_state,0
+,1,bool,command_adcs,
+3,2,int,adcs_frame,0
+,29,quaternion,adcs_attitude,
+,1,bool,command_propulsion,
+0.005,26,float vector,firing_vector,0
+,49,gps time,firing_time,
+,1,bool,docking_motor_mode,
+,1,bool,reset_piksi,
+,1,bool,reset_quake,
+,1,bool,power_cycle_gomspace,
+,1,bool,power_cycle_piksi,
+,1,bool,power_cycle_quake,
+,1,bool,power_cycle_dcdc,
+,1,bool,power_cycle_adcs_system,

@@ -11,6 +11,7 @@ struct gps_data_t {
 
 bool FakePiksi::setup() {
     _serial_port.begin(BAUD_RATE);
+    return true;
 }
 
 bool FakePiksi::is_functional() {

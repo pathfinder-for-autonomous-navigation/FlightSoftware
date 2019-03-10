@@ -209,6 +209,8 @@ namespace State {
   namespace Quake {
     //! Struct containing most recent uplink data received by satellite
     extern Comms::Uplink most_recent_uplink;
+    //! Time at which an uplink was received by the satellite
+    extern gps_time_t uplink_time_received;
     //! Readers-writers lock that prevents multi-process modification of most recent uplink
     extern rwmutex_t uplink_lock;
     //! State of finite state machine that controls the Quake controller

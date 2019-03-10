@@ -1,5 +1,5 @@
 #include "../../state/state_holder.hpp"
-#include "../../comms/downlink_packet_generator.hpp"
+#include "../../comms/downlink_serializer.hpp"
 #include "../constants.hpp"
 #include "transceiving_thread.hpp"
 

@@ -76,6 +76,7 @@ namespace State {
 
     namespace Quake {
         Comms::Uplink most_recent_uplink;
+        gps_time_t uplink_time_received;
         rwmutex_t uplink_lock;
         QuakeState quake_state = QuakeState::WAITING;
         rwmutex_t quake_state_lock;

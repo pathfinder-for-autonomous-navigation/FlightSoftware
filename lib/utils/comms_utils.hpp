@@ -220,7 +220,6 @@ namespace Comms {
     void expand_gps_time(const std::bitset<GPSTIME_SIZE>& gpstime, gps_time_t* result);
 }
 /** @} */
-
 #include "comms_utils.inl"
 
 #endif
