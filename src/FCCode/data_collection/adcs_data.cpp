@@ -10,7 +10,6 @@
 #include <circular_buffer.hpp>
 #include "helpers.hpp"
 #include "data_collection.hpp"
-#include "data_collection_rates.hpp"
 
 void DataCollection::initialize_adcs_history_timers() {
     // TODO

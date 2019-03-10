@@ -8,7 +8,6 @@
 #include "../state/state_history_holder.hpp"
 #include "helpers.hpp"
 #include "data_collection.hpp"
-#include "data_collection_rates.hpp"
 
 void DataCollection::initialize_piksi_history_timers() {
     // TODO
