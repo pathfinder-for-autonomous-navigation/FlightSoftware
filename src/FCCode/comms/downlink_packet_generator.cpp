@@ -6,7 +6,7 @@
 #include <comms_utils.hpp>
 
 static void generate_packet_0(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -25,7 +25,7 @@ static void generate_packet_0(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
   Comms::trim_int(State::read(State::Master::boot_number,State::Master::master_state_lock), 0, 4294967295, &bitset_2);
   for(int i = 0; i < bitset_2.size(); i++) packet.set(packet_ptr++,bitset_2[i]);
 
-  std::bitset<48> bitset_3;
+  std::bitset<49> bitset_3;
   Comms::trim_gps_time(State::read(State::Master::last_uplink_time,State::Master::master_state_lock), &bitset_3);
   for(int i = 0; i < bitset_3.size(); i++) packet.set(packet_ptr++,bitset_3[i]);
 
@@ -259,7 +259,7 @@ static void generate_packet_0(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_1(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -464,7 +464,7 @@ static void generate_packet_1(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_2(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -499,11 +499,11 @@ static void generate_packet_2(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
   Comms::trim_vector(State::read(State::Propulsion::firing_data.impulse_vector,State::Propulsion::propulsion_state_lock), 0, 0.005, &bitset_116);
   for(int i = 0; i < bitset_116.size(); i++) packet.set(packet_ptr++,bitset_116[i]);
 
-  std::bitset<48> bitset_117;
+  std::bitset<49> bitset_117;
   Comms::trim_gps_time(State::read(State::Propulsion::firing_data.time,State::Propulsion::propulsion_state_lock), &bitset_117);
   for(int i = 0; i < bitset_117.size(); i++) packet.set(packet_ptr++,bitset_117[i]);
 
-  std::bitset<48> bitset_118;
+  std::bitset<49> bitset_118;
   Comms::trim_gps_time(State::read(State::Piksi::recorded_current_time,State::Piksi::piksi_state_lock), &bitset_118);
   for(int i = 0; i < bitset_118.size(); i++) packet.set(packet_ptr++,bitset_118[i]);
 
@@ -511,7 +511,7 @@ static void generate_packet_2(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
   Comms::trim_int(State::read(State::Piksi::recorded_time_collection_timestamp,State::Piksi::piksi_state_lock), 0, 4294967295, &bitset_119);
   for(int i = 0; i < bitset_119.size(); i++) packet.set(packet_ptr++,bitset_119[i]);
 
-  std::bitset<48> bitset_120;
+  std::bitset<49> bitset_120;
   Comms::trim_gps_time(State::read(State::GNC::current_time,State::GNC::gnc_state_lock), &bitset_120);
   for(int i = 0; i < bitset_120.size(); i++) packet.set(packet_ptr++,bitset_120[i]);
 
@@ -525,7 +525,7 @@ static void generate_packet_2(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_3(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -541,7 +541,7 @@ static void generate_packet_3(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_4(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -557,7 +557,7 @@ static void generate_packet_4(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_5(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -573,7 +573,7 @@ static void generate_packet_5(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_6(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -589,7 +589,7 @@ static void generate_packet_6(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_7(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -605,7 +605,7 @@ static void generate_packet_7(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_8(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -621,7 +621,7 @@ static void generate_packet_8(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_9(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -637,7 +637,7 @@ static void generate_packet_9(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsi
 }
 
 static void generate_packet_10(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -653,7 +653,7 @@ static void generate_packet_10(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 }
 
 static void generate_packet_11(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -669,7 +669,7 @@ static void generate_packet_11(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 }
 
 static void generate_packet_12(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -685,7 +685,7 @@ static void generate_packet_12(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 }
 
 static void generate_packet_13(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -701,7 +701,7 @@ static void generate_packet_13(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 }
 
 static void generate_packet_14(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -717,7 +717,7 @@ static void generate_packet_14(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 }
 
 static void generate_packet_15(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -733,7 +733,7 @@ static void generate_packet_15(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 }
 
 static void generate_packet_16(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -741,15 +741,22 @@ static void generate_packet_16(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
   for(int i = 0; i < 8; i++) packet.set(packet_ptr++, packet_num_repr[i]);
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
-  while(!StateHistory::Piksi::recorded_position_history.empty()) {
-    std::bitset<45> bitset_136;
-    Comms::trim_vector(StateHistory::Piksi::recorded_position_history.get(), 6400, 7200, &bitset_136);
+  while(!StateHistory::Piksi::iar_history.empty()) {
+    std::bitset<32> bitset_136;
+    Comms::trim_int(StateHistory::Piksi::iar_history.get(), 0, 4294967295, &bitset_136);
     for(int i = 0; i < bitset_136.size(); i++) packet.set(packet_ptr++,bitset_136[i]);}
+  rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
+
+  rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
+  while(!StateHistory::Piksi::nsats_history.empty()) {
+    std::bitset<5> bitset_137;
+    Comms::trim_int(StateHistory::Piksi::nsats_history.get(), 0, 30, &bitset_137);
+    for(int i = 0; i < bitset_137.size(); i++) packet.set(packet_ptr++,bitset_137[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 }
 
 static void generate_packet_17(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
-  unsigned int packet_ptr;
+  unsigned int packet_ptr = 0;
 
   std::bitset<32> downlink_num_repr(downlink_no);
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
@@ -757,10 +764,26 @@ static void generate_packet_17(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
   for(int i = 0; i < 8; i++) packet.set(packet_ptr++, packet_num_repr[i]);
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
+  while(!StateHistory::Piksi::recorded_position_history.empty()) {
+    std::bitset<45> bitset_138;
+    Comms::trim_vector(StateHistory::Piksi::recorded_position_history.get(), 6400, 7200, &bitset_138);
+    for(int i = 0; i < bitset_138.size(); i++) packet.set(packet_ptr++,bitset_138[i]);}
+  rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
+}
+
+static void generate_packet_18(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
+  unsigned int packet_ptr = 0;
+
+  std::bitset<32> downlink_num_repr(downlink_no);
+  for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
+  std::bitset<8> packet_num_repr(18);
+  for(int i = 0; i < 8; i++) packet.set(packet_ptr++, packet_num_repr[i]);
+
+  rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
   while(!StateHistory::Piksi::recorded_velocity_history.empty()) {
-    std::bitset<51> bitset_137;
-    Comms::trim_vector(StateHistory::Piksi::recorded_velocity_history.get(), 8, 12, &bitset_137);
-    for(int i = 0; i < bitset_137.size(); i++) packet.set(packet_ptr++,bitset_137[i]);}
+    std::bitset<51> bitset_139;
+    Comms::trim_vector(StateHistory::Piksi::recorded_velocity_history.get(), 8, 12, &bitset_139);
+    for(int i = 0; i < bitset_139.size(); i++) packet.set(packet_ptr++,bitset_139[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 }
 
@@ -783,4 +806,5 @@ void Comms::generate_packets(std::bitset<Comms::PACKET_SIZE_BITS> (&packets)[Com
   generate_packet_15(packets[15], downlink_no);
   generate_packet_16(packets[16], downlink_no);
   generate_packet_17(packets[17], downlink_no);
+  generate_packet_18(packets[18], downlink_no);
 }

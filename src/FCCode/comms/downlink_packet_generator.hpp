@@ -8,7 +8,7 @@
 
 namespace Comms {
   constexpr unsigned int PACKET_SIZE_BITS = 560;
-  constexpr unsigned int FRAME_SIZE_BITS = 9679;
+  constexpr unsigned int FRAME_SIZE_BITS = 10173;
   constexpr unsigned int NUM_PACKETS = (FRAME_SIZE_BITS / PACKET_SIZE_BITS) + (FRAME_SIZE_BITS % PACKET_SIZE_BITS != 0) ? 1 : 0;
   void generate_packets(std::bitset<PACKET_SIZE_BITS> (&packets)[NUM_PACKETS], unsigned int downlink_no);
 }

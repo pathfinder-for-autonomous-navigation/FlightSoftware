@@ -40,6 +40,8 @@ namespace StateHistory {
   }
 
   namespace Piksi {
+    circular_buffer<unsigned int, DataCollectionRates::Piksi::POSITION> iar_history;
+    circular_buffer<unsigned int, DataCollectionRates::Piksi::POSITION> nsats_history;
     circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> recorded_position_history;
     circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::VELOCITY> recorded_velocity_history;
     circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> recorded_position_other_history;

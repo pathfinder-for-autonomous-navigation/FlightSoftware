@@ -31,6 +31,6 @@ THD_FUNCTION(PropulsionTasks::pressurizing_fn, args) {
     if (tank_pressure < PRE_FIRING_OUTER_TANK_PRESSURE) {
         // Recommend satellite safe hold.
         State::write(FaultState::Propulsion::cannot_pressurize_outer_tank, 
-            true, FaultState::Propulsion::propulsion_fault_state_lock);
+            true, FaultState::Propulsion::propulsion_faults_state_lock);
     }
 }

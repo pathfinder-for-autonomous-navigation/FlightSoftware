@@ -49,9 +49,9 @@ namespace Constants {
         constexpr float MIN_MTR_CMD = 0; // TODO
         //! Maximum possible magnetotorquer command along one axis.
         constexpr float MAX_MTR_CMD = 0; // TODO
-        //! Minimum possible reading of one sun sensor.
+        //! Minimum possible voltage reading of one sun sensor.
         constexpr float MIN_SUN_SENSOR_VALUE = 0; // TODO
-        //! Maximum possible reading of one sun sensor.
+        //! Maximum possible voltage reading of one sun sensor.
         constexpr float MAX_SUN_SENSOR_VALUE = 0; // TODO
     }
 
@@ -74,10 +74,6 @@ namespace Constants {
         constexpr unsigned int THRUSTER_PREPARATION_TIME = 300; 
         //! Milliseconds before the actual thruster firing that the tank 2 pressure-controlling loop is stopped.
         constexpr unsigned int STOP_PRESSURIZATION_TIME_DELTA = 2000; 
-        //! Maximum delta-v threshold for NOT requiring orientation adjustment for a propulsion manuever.
-        constexpr unsigned short int REORIENTATION_DELTA_V_THRESHOLD = 0; // TODO fix.
-        //! Minimum battery threshold for propulsion manuever orientation adjustment.
-        constexpr unsigned short int REORIENTATION_BATT_THRESHOLD = 0; // TODO fix.
         //! Maximum allowable temperature of inner tank
         constexpr float MAX_INNER_TANK_TEMPERATURE = 48;
         //! Maximum allowable temperature of outer tank

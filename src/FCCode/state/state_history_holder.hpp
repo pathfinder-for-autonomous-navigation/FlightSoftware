@@ -69,6 +69,10 @@ namespace StateHistory {
   }
 
   namespace Piksi {
+    //! History of GPS IAR data
+    extern circular_buffer<unsigned int, DataCollectionRates::Piksi::POSITION> iar_history;
+    //! History of GPS number of satellites
+    extern circular_buffer<unsigned int, DataCollectionRates::Piksi::POSITION> nsats_history;
     //! History of recorded GPS position
     extern circular_buffer<std::array<double, 3>, DataCollectionRates::Piksi::POSITION> recorded_position_history;
     //! History of recorded GPS velocity

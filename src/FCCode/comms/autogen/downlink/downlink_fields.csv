@@ -2,7 +2,7 @@ group,name,min,max,buf_size,type,size
 State::Master,State::Master::master_state,0,4,1,int,3
 State::Master,State::Master::pan_state,0,11,1,int,4
 State::Master,State::Master::boot_number,0,4294967295,1,int,32
-State::Master,State::Master::last_uplink_time,,,1,gps time,48
+State::Master,State::Master::last_uplink_time,,,1,gps time,49
 State::Master,State::Master::was_last_uplink_valid,,,1,bool,1
 State::Master,State::Master::is_follower,,,1,bool,1
 State::Hardware,State::Hardware::hat.at(Devices::gomspace.name()).powered_on,,,1,bool,1
@@ -116,10 +116,10 @@ State::Propulsion,State::Propulsion::delta_v_available,0,15,1,float,11
 State::Propulsion,State::Propulsion::is_firing_planned,,,1,bool,1
 State::Propulsion,State::Propulsion::is_firing_planned_by_uplink,,,1,bool,1
 State::Propulsion,State::Propulsion::firing_data.impulse_vector,0,0.005,1,float vector,26
-State::Propulsion,State::Propulsion::firing_data.time,,,1,gps time,48
-State::Piksi,State::Piksi::recorded_current_time,,,1,gps time,48
+State::Propulsion,State::Propulsion::firing_data.time,,,1,gps time,49
+State::Piksi,State::Piksi::recorded_current_time,,,1,gps time,49
 State::Piksi,State::Piksi::recorded_time_collection_timestamp,0,4294967295,1,int,32
-State::GNC,State::GNC::current_time,,,1,gps time,48
+State::GNC,State::GNC::current_time,,,1,gps time,49
 State::GNC,State::GNC::time_collection_timestamp,0,4294967295,1,int,32
 State::GNC,State::GNC::has_firing_happened_in_nighttime,,,1,bool,1
 StateHistory::ADCS,StateHistory::ADCS::gyro_history,-2.2,2.2,10,float vector,50
@@ -135,6 +135,8 @@ StateHistory::ADCS,StateHistory::ADCS::magnetometer_history,0,0.005,10,float vec
 StateHistory::ADCS,StateHistory::ADCS::rwa_ramp_cmd_history,-310.2,310.2,10,float vector,29
 StateHistory::ADCS,StateHistory::ADCS::mtr_cmd_history,0,0,10,float vector,50
 StateHistory::ADCS,StateHistory::ADCS::ssa_vector_history,0,1,10,float vector,21
+StateHistory::Piksi,StateHistory::Piksi::iar_history,0,4294967295,10,int,32
+StateHistory::Piksi,StateHistory::Piksi::nsats_history,0,30,10,int,5
 StateHistory::Piksi,StateHistory::Piksi::recorded_position_history,6400,7200,10,double vector,45
 StateHistory::Piksi,StateHistory::Piksi::recorded_velocity_history,8,12,10,double vector,51
 StateHistory::Piksi,StateHistory::Piksi::recorded_position_other_history,6400,7200,10,double vector,45
@@ -145,3 +147,26 @@ StateHistory::Piksi,StateHistory::Piksi::position_history,6400,7200,10,double ve
 StateHistory::Piksi,StateHistory::Piksi::velocity_history,8,12,10,double vector,51
 StateHistory::Piksi,StateHistory::Piksi::position_other_history,6400,7200,10,double vector,45
 StateHistory::Piksi,StateHistory::Piksi::velocity_other_history,8,12,10,double vector,51
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
+FaultState::Propulsion,FaultState::Propulsion::overpressure_event,,,1,gps time,49
+FaultState::Propulsion,FaultState::Propulsion::overpressure_event_id,0,3,1,int,2
+FaultState::Propulsion,FaultState::Propulsion::destabilization_event,,,1,gps time,49

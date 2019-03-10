@@ -142,7 +142,7 @@ static void propulsion_state_controller() {
                 // Satellite is too unstable for a firing
                 State::write(FaultState::Propulsion::destabilization_event, 
                     State::GNC::get_current_time(), 
-                    FaultState::Propulsion::propulsion_fault_state_lock);
+                    FaultState::Propulsion::propulsion_faults_state_lock);
                 change_propulsion_state(PropulsionState::IDLE);
             }
             float tank_pressure = State::read(State::Propulsion::tank_pressure, propulsion_state_lock);

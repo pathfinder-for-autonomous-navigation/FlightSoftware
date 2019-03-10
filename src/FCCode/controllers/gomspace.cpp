@@ -57,9 +57,9 @@ static void gomspace_read() {
 }
 
 static void set_error(GOMSPACE_FAULTS fault, bool value) {
-    rwMtxWLock(&FaultState::Gomspace::gomspace_fault_state_lock);
+    rwMtxWLock(&FaultState::Gomspace::gomspace_faults_state_lock);
         FaultState::Gomspace::fault_bits.set(fault, value);
-    rwMtxWUnlock(&FaultState::Gomspace::gomspace_fault_state_lock);
+    rwMtxWUnlock(&FaultState::Gomspace::gomspace_faults_state_lock);
 }
 
 static void set_hardware_error(const std::string& dev_name, const std::string field, bool value) {
@@ -93,7 +93,7 @@ static void gomspace_check() {
     unsigned short int vbatt = State::read(gomspace_data.vbatt, gomspace_state_lock);
     if (vbatt < Constants::Gomspace::SAFE_VOLTAGE) {
         State::write(FaultState::Gomspace::is_safe_hold_voltage, 
-            true, FaultState::Gomspace::gomspace_fault_state_lock);
+            true, FaultState::Gomspace::gomspace_faults_state_lock);
     }
 
     debug_println("Checking Gomspace inputs (currents and voltages).");

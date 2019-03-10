@@ -13,16 +13,6 @@
 #include <bitset>
 
 namespace FaultState {
-  namespace Master {
-    //! Readers-writers lock that prevents multi-process modification of master fault state data.
-    extern rwmutex_t master_fault_state_lock;
-  }
-
-  namespace ADCS {
-    //! Readers-writers lock that prevents multi-process modification of ADCS fault state data.
-    extern rwmutex_t adcs_fault_state_lock;
-  }
-
   namespace Gomspace {
     enum GOMSPACE_FAULTS {
       BATTERY_VOLTAGE,
@@ -53,7 +43,7 @@ namespace FaultState {
     //! Whether or not the current voltage of the battery is less than the "safe hold" threshold
     extern bool is_safe_hold_voltage;
     //! Readers-writers lock that prevents multi-process modification of Gomspace fault state data.
-    extern rwmutex_t gomspace_fault_state_lock;
+    extern rwmutex_t gomspace_faults_state_lock;
   }
 
   namespace Propulsion {
@@ -72,22 +62,7 @@ namespace FaultState {
     //! If true, we are unable to pressurize the outer tank up to the requisite pressure for a firing.
     extern bool cannot_pressurize_outer_tank;
     //! Readers-writers lock that prevents multi-process modification of propulsion fault state data.
-    extern rwmutex_t propulsion_fault_state_lock;
-  }
-
-  namespace GNC {
-      //! Readers-writers lock that prevents multi-process modification of GNC fault state data.
-      extern rwmutex_t gnc_fault_state_lock;
-  }
-
-  namespace Piksi {
-    //! Readers-writers lock that prevents multi-process modification of Piksi fault state data.
-    extern rwmutex_t piksi_fault_state_lock;
-  }
-
-  namespace Quake {
-    //! Readers-writers lock that prevents multi-process modification of Quake fault state data.
-    extern rwmutex_t quake_fault_state_lock;
+    extern rwmutex_t propulsion_faults_state_lock;
   }
 }
 
