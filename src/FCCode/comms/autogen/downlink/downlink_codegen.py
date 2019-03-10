@@ -28,10 +28,9 @@ def header_generator(fields):
     header_str += "#include <bitset>" + "\n\n"
 
     header_str += "namespace Comms {\n"
-    header_str += "  constexpr unsigned int PACKET_SIZE_BITS = {0};\n".format(
-        PACKET_SIZE_BITS)
-    header_str += "  constexpr unsigned int FRAME_SIZE_BITS = {0};\n".format(
-        FRAME_SIZE_BITS)
+    header_str += "  constexpr unsigned int PACKET_SIZE_BITS = {0};\n".format(PACKET_SIZE_BITS)
+    header_str += "  constexpr unsigned int PACKET_SIZE_BYTES = {0};\n".format(PACKET_SIZE_BYTES)
+    header_str += "  constexpr unsigned int FRAME_SIZE_BITS = {0};\n".format(FRAME_SIZE_BITS)
     header_str += "  constexpr unsigned int NUM_PACKETS = (FRAME_SIZE_BITS / PACKET_SIZE_BITS) + (FRAME_SIZE_BITS % PACKET_SIZE_BITS != 0) ? 1 : 0;\n"
     header_str += "  void generate_packets(std::bitset<PACKET_SIZE_BITS> (&packets)[NUM_PACKETS], unsigned int downlink_no);\n"
     header_str += "}\n\n"
@@ -57,42 +56,35 @@ def generate_history_field_code(field, i, packet_no):
     serializer_code = ""
 
     lock_name = field["group"] + "::" + field["group"][14:].lower() + "_history_state_lock"
-    lock_line = "rwMtxRLock(&{0});\n".format(lock_name)
-    serializer_code += lock_line
-    while_line = "while(!{0}.empty()) {{\n".format(field["name"])
-    serializer_code += while_line
+    serializer_code += "rwMtxRLock(&{0});\n".format(lock_name)
+    serializer_code += "while(!{0}.empty()) {{\n".format(field["name"])
 
     bitset_name = "bitset_{0}".format(i)
-    bitset_definition_line = "  std::bitset<{0}> {1};".format(field["size"],bitset_name)
-    serializer_code += bitset_definition_line + "\n"
+    serializer_code += "  std::bitset<{0}> {1};\n".format(field["size"],bitset_name)
 
-    serializer_line = ""
+    # Generate field serializer based on field type
     if field["type"] == "bool":
-        serializer_line = "  {0}.set(0, {1}.get());".format(bitset_name, field["name"])
+        serializer_code += "  {0}.set(0, {1}.get());\n".format(bitset_name, field["name"])
     elif field["type"] == "int":
-        serializer_line = "  Comms::trim_int({0}.get(), {1}, {2}, &{3});".format(field["name"], field['min'], field['max'], bitset_name)
+        serializer_code += "  Comms::trim_int({0}.get(), {1}, {2}, &{3});\n".format(field["name"], field['min'], field['max'], bitset_name)
     elif field["type"] == "temperature":
-        serializer_line = "  Comms::trim_temperature({0}.get(), &{1});".format(field["name"], bitset_name)
+        serializer_code += "  Comms::trim_temperature({0}.get(), &{1});\n".format(field["name"], bitset_name)
     elif field["type"] == "float":
-        serializer_line = "  Comms::trim_float({0}.get(), {1}, {2}, &{3});".format(field["name"], field['min'], field['max'], bitset_name)
+        serializer_code += "  Comms::trim_float({0}.get(), {1}, {2}, &{3});\n".format(field["name"], field['min'], field['max'], bitset_name)
     elif field["type"] == "double":
-        serializer_line = "  Comms::trim_double({0}.get(), {1}, {2}, &{3});".format(field["name"], field['min'], field['max'], bitset_name)
+        serializer_code += "  Comms::trim_double({0}.get(), {1}, {2}, &{3});\n".format(field["name"], field['min'], field['max'], bitset_name)
     elif field["type"] == "float vector" or field["type"] == "double vector":
-        serializer_line = "  Comms::trim_vector({0}.get(), {1}, {2}, &{3});".format(field["name"], field['min'], field['max'], bitset_name)
+        serializer_code += "  Comms::trim_vector({0}.get(), {1}, {2}, &{3});\n".format(field["name"], field['min'], field['max'], bitset_name)
     elif field["type"] == "quaternion":
-        serializer_line = "  Comms::trim_quaternion({0}.get(), &{1});".format(field["name"], bitset_name)
+        serializer_code += "  Comms::trim_quaternion({0}.get(), &{1});\n".format(field["name"], bitset_name)
     elif field["type"] == "gps time":
-        serializer_line = "  Comms::trim_gps_time({0}.get(), &{1});".format(field["name"], bitset_name)
+        serializer_code += "  Comms::trim_gps_time({0}.get(), &{1});\n".format(field["name"], bitset_name)
     else:
         err = "Field {0} does not have a valid type".format(field["name"])
         print(err)
-    serializer_code += serializer_line + "\n"
 
-    add_to_packet_line = "  for(int i = 0; i < {0}.size(); i++) packet.set(packet_ptr++,{0}[i]);".format(bitset_name)
-    serializer_code += add_to_packet_line
-    serializer_code += "}\n"
-    unlock_line = "rwMtxRUnlock(&{0});\n".format(lock_name)
-    serializer_code += unlock_line
+    serializer_code += "  for(int i = 0; i < {0}.size(); i++) packet.set(packet_ptr++,{0}[i]);}}\n".format(bitset_name)
+    serializer_code += "rwMtxRUnlock(&{0});\n".format(lock_name)
     return serializer_code
 
 #####################################
@@ -106,35 +98,32 @@ def generate_history_field_code(field, i, packet_no):
 #####################################
 def generate_field_code(field, i, packet_no):
     bitset_name = "bitset_{0}".format(i)
-    bitset_definition = "std::bitset<{0}> {1};".format(field["size"],bitset_name)
+    serializer_code = "std::bitset<{0}> {1};".format(field["size"], bitset_name)
 
-    serializer_line = ""
+    # Generate field serializer based on field type
     lock_name = field["group"] + "::" + field["group"][7:].lower() + "_state_lock"
     if field["type"] == "bool":
-        serializer_line = "{0}.set(0, State::read({1}, {2}));".format(bitset_name, field["name"], lock_name)
+        serializer_code += "{0}.set(0, State::read({1}, {2}));".format(bitset_name, field["name"], lock_name)
     elif field["type"] == "int":
-        serializer_line = "Comms::trim_int(State::read({0},{1}), {2}, {3}, &{4});".format(field["name"], lock_name, field['min'], field['max'], bitset_name)
+        serializer_code += "Comms::trim_int(State::read({0},{1}), {2}, {3}, &{4});".format(field["name"], lock_name, field['min'], field['max'], bitset_name)
     elif field["type"] == "temperature":
-        serializer_line = "Comms::trim_temperature(State::read({0},{1}), &{2});".format(field["name"], lock_name, bitset_name)
+        serializer_code += "Comms::trim_temperature(State::read({0},{1}), &{2});".format(field["name"], lock_name, bitset_name)
     elif field["type"] == "float":
-        serializer_line = "Comms::trim_float(State::read({0},{1}), {2}, {3}, &{4});".format(field["name"], lock_name, field['min'], field['max'], bitset_name)
+        serializer_code += "Comms::trim_float(State::read({0},{1}), {2}, {3}, &{4});".format(field["name"], lock_name, field['min'], field['max'], bitset_name)
     elif field["type"] == "double":
-        serializer_line = "Comms::trim_double(State::read({0},{1}), {2}, {3}, &{4});".format(field["name"], lock_name, field['min'], field['max'], bitset_name)
+        serializer_code += "Comms::trim_double(State::read({0},{1}), {2}, {3}, &{4});".format(field["name"], lock_name, field['min'], field['max'], bitset_name)
     elif field["type"] == "float vector" or field["type"] == "double vector":
-        serializer_line = "Comms::trim_vector(State::read({0},{1}), {2}, {3}, &{4});".format(field["name"], lock_name, field['min'], field['max'], bitset_name)
+        serializer_code += "Comms::trim_vector(State::read({0},{1}), {2}, {3}, &{4});".format(field["name"], lock_name, field['min'], field['max'], bitset_name)
     elif field["type"] == "quaternion":
-        serializer_line = "Comms::trim_quaternion(State::read({0},{1}), &{2});".format(field["name"], lock_name, bitset_name)
+        serializer_code += "Comms::trim_quaternion(State::read({0},{1}), &{2});".format(field["name"], lock_name, bitset_name)
     elif field["type"] == "gps time":
-        serializer_line = "Comms::trim_gps_time(State::read({0},{1}), &{2});".format(field["name"], lock_name, bitset_name)
+        serializer_code += "Comms::trim_gps_time(State::read({0},{1}), &{2});".format(field["name"], lock_name, bitset_name)
     else:
         err = "Field {0} does not have a valid type".format(field["name"])
         print(err)
 
-    epilogue =   "for(int i = 0; i < {0}.size(); i++) packet.set(packet_ptr++,{0}[i]);".format(bitset_name)
-
-    serializer_code =   bitset_definition + "\n" \
-          + serializer_line + "\n" \
-          + epilogue + "\n"
+    # Adds field serialization to the packet data
+    serializer_code += "for(int i = 0; i < {0}.size(); i++) packet.set(packet_ptr++,{0}[i]);".format(bitset_name)
     return serializer_code
 
 #####################################
@@ -147,16 +136,18 @@ def packet_fn_generator(fields):
     for packet_no in range(0, NUM_PACKETS):
         current_packet_size = 0
 
+        # Generate preamble for packet definition
         packet_str  = "static void generate_packet_{0}(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {{\n".format(packet_no)
         packet_str += "  unsigned int packet_ptr = 0;\n\n"
         packet_str += "  std::bitset<32> downlink_num_repr(downlink_no);\n"
         packet_str += "  for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);\n"
         current_packet_size += 32
-
         packet_str += "  std::bitset<8> packet_num_repr({0});".format(packet_no) + "\n"
         packet_str += "  for(int i = 0; i < 8; i++) packet.set(packet_ptr++, packet_num_repr[i]);\n"
         current_packet_size += 8
 
+        # Generate data for each field that can fit in the packet
+        start_field_ptr = field_ptr
         for x in range(field_ptr, len(fields)):
             field = fields[x]
             if current_packet_size + field["total_size"] > PACKET_SIZE_BITS:
@@ -171,6 +162,16 @@ def packet_fn_generator(fields):
 
             current_packet_size += field["total_size"]
             field_ptr += 1
+        end_field_ptr = field_ptr
+
+        # Generate packet documentation
+        packet_fields = FIELDS[start_field_ptr:end_field_ptr]
+        packet_fields.insert(0, {"name" : "packet_number", "type"   : "int", "size" : 8 ,  "buf_size" : 1, "total_size" : 8 })
+        packet_fields.insert(0, {"name" : "downlink_number", "type" : "int", "size" : 32 , "buf_size" : 1, "total_size" : 32 })
+        with open('packet_documentation/packet{0}.csv'.format(packet_no), 'w+') as output_file:
+            dict_writer = csv.DictWriter(output_file, FIELDS[0].keys())
+            dict_writer.writeheader()
+            dict_writer.writerows(packet_fields)
 
         packet_str += "}\n\n"
         packet_generator_str += packet_str

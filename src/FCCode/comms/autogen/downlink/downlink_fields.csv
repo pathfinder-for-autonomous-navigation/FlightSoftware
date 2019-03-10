@@ -1,172 +1,172 @@
-group,name,min,max,buf_size,type,size
-State::Master,State::Master::master_state,0,4,1,int,3
-State::Master,State::Master::pan_state,0,11,1,int,4
-State::Master,State::Master::boot_number,0,4294967295,1,int,32
-State::Master,State::Master::last_uplink_time,,,1,gps time,49
-State::Master,State::Master::was_last_uplink_valid,,,1,bool,1
-State::Master,State::Master::is_follower,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::gomspace.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::gomspace.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::gomspace.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::gomspace.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::piksi.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::piksi.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::piksi.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::piksi.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::quake.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::quake.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::quake.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::quake.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::dcdc.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::dcdc.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::dcdc.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::dcdc.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::spike_and_hold.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::spike_and_hold.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::spike_and_hold.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::spike_and_hold.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::adcs_system.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::adcs_system.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::adcs_system.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::adcs_system.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::pressure_sensor.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::pressure_sensor.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::pressure_sensor.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::pressure_sensor.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_inner.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_inner.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_inner.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_inner.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_outer.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_outer.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_outer.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_outer.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::docking_motor.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::docking_motor.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::docking_motor.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::docking_motor.name()).error_ignored,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::docking_switch.name()).powered_on,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::docking_switch.name()).enabled,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::docking_switch.name()).is_functional,,,1,bool,1
-State::Hardware,State::Hardware::hat.at(Devices::docking_switch.name()).error_ignored,,,1,bool,1
-State::ADCS,State::ADCS::adcs_state,0,3,1,int,2
-State::ADCS,State::ADCS::cmd_attitude,,,1,quaternion,29
-State::ADCS,State::ADCS::cur_attitude,,,1,quaternion,29
-State::ADCS,State::ADCS::cur_ang_rate,0,2.2,1,float vector,30
-State::ADCS,State::ADCS::is_sun_vector_determination_working,,,1,bool,1
-State::ADCS,State::ADCS::rwa_speeds,0,0,1,float vector,50
-State::ADCS,State::ADCS::rwa_speed_cmds,0,0,1,float vector,50
-State::ADCS,State::ADCS::rwa_ramps,0,310.2,1,float vector,29
-State::ADCS,State::ADCS::rwa_speeds_rd,0,0,1,float vector,50
-State::ADCS,State::ADCS::rwa_speed_cmds_rd,0,0,1,float vector,50
-State::ADCS,State::ADCS::rwa_ramps_rd,0,310.2,1,float vector,29
-State::ADCS,State::ADCS::mtr_cmds,0,0,1,float vector,50
-State::ADCS,State::ADCS::ssa_vec,0,1,1,float vector,21
-State::ADCS,State::ADCS::ssa_adc_data[0],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[1],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[2],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[3],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[4],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[5],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[6],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[7],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[8],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[9],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[10],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[11],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[12],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[13],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[14],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[15],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[16],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[17],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[18],0,0,1,float,8
-State::ADCS,State::ADCS::ssa_adc_data[19],0,0,1,float,8
-State::Gomspace,State::Gomspace::gomspace_data.vboost[0],0,4000,1,int,12
-State::Gomspace,State::Gomspace::gomspace_data.vboost[1],0,4000,1,int,12
-State::Gomspace,State::Gomspace::gomspace_data.vboost[2],0,4000,1,int,12
-State::Gomspace,State::Gomspace::gomspace_data.vbatt,5000,9000,1,int,11
-State::Gomspace,State::Gomspace::gomspace_data.curin[0],0,1000,1,int,10
-State::Gomspace,State::Gomspace::gomspace_data.curin[1],0,1000,1,int,10
-State::Gomspace,State::Gomspace::gomspace_data.curin[2],0,1000,1,int,10
-State::Gomspace,State::Gomspace::gomspace_data.cursun,0,0,1,int,50
-State::Gomspace,State::Gomspace::gomspace_data.cursys,0,0,1,int,50
-State::Gomspace,State::Gomspace::gomspace_data.curout[0],0,1000,1,int,7
-State::Gomspace,State::Gomspace::gomspace_data.curout[1],0,1000,1,int,7
-State::Gomspace,State::Gomspace::gomspace_data.curout[2],0,1000,1,int,7
-State::Gomspace,State::Gomspace::gomspace_data.curout[3],0,1000,1,int,7
-State::Gomspace,State::Gomspace::gomspace_data.curout[4],0,1000,1,int,7
-State::Gomspace,State::Gomspace::gomspace_data.curout[5],0,1000,1,int,7
-State::Gomspace,State::Gomspace::gomspace_data.output[0],,,1,bool,1
-State::Gomspace,State::Gomspace::gomspace_data.output[1],,,1,bool,1
-State::Gomspace,State::Gomspace::gomspace_data.output[2],,,1,bool,1
-State::Gomspace,State::Gomspace::gomspace_data.output[3],,,1,bool,1
-State::Gomspace,State::Gomspace::gomspace_data.output[4],,,1,bool,1
-State::Gomspace,State::Gomspace::gomspace_data.output[5],,,1,bool,1
-State::Gomspace,State::Gomspace::gomspace_data.output[6],,,1,bool,1
-State::Gomspace,State::Gomspace::gomspace_data.output[7],,,1,bool,1
-State::Gomspace,State::Gomspace::gomspace_data.counter_boot,0,4294967295,1,int,32
-State::Gomspace,State::Gomspace::gomspace_data.temp[0],,,1,temperature,9
-State::Gomspace,State::Gomspace::gomspace_data.temp[1],,,1,temperature,9
-State::Gomspace,State::Gomspace::gomspace_data.temp[2],,,1,temperature,9
-State::Gomspace,State::Gomspace::gomspace_data.temp[3],,,1,temperature,9
-State::Gomspace,State::Gomspace::gomspace_data.battmode,0,0,1,int,50
-State::Propulsion,State::Propulsion::propulsion_state,0,5,1,int,3
-State::Propulsion,State::Propulsion::delta_v_available,0,15,1,float,11
-State::Propulsion,State::Propulsion::is_firing_planned,,,1,bool,1
-State::Propulsion,State::Propulsion::is_firing_planned_by_uplink,,,1,bool,1
-State::Propulsion,State::Propulsion::firing_data.impulse_vector,0,0.005,1,float vector,26
-State::Propulsion,State::Propulsion::firing_data.time,,,1,gps time,49
-State::Piksi,State::Piksi::recorded_current_time,,,1,gps time,49
-State::Piksi,State::Piksi::recorded_time_collection_timestamp,0,4294967295,1,int,32
-State::GNC,State::GNC::current_time,,,1,gps time,49
-State::GNC,State::GNC::time_collection_timestamp,0,4294967295,1,int,32
-State::GNC,State::GNC::has_firing_happened_in_nighttime,,,1,bool,1
-StateHistory::ADCS,StateHistory::ADCS::gyro_history,-2.2,2.2,10,float vector,50
-StateHistory::ADCS,StateHistory::ADCS::gyro_fast_history,0,0,10,float vector,50
-StateHistory::ADCS,StateHistory::ADCS::attitude_cmd_history,,,10,quaternion,29
-StateHistory::ADCS,StateHistory::ADCS::attitude_history,,,10,quaternion,29
-StateHistory::ADCS,StateHistory::ADCS::attitude_fast_history,,,10,quaternion,29
-StateHistory::ADCS,StateHistory::ADCS::rate_history,-2.2,2.2,10,float vector,30
-StateHistory::ADCS,StateHistory::ADCS::rate_fast_history,-2.2,2.2,10,float vector,30
-StateHistory::ADCS,StateHistory::ADCS::spacecraft_L_history,0,0,10,float vector,50
-StateHistory::ADCS,StateHistory::ADCS::spacecraft_L_fast_history,0,0,10,float vector,50
-StateHistory::ADCS,StateHistory::ADCS::magnetometer_history,0,0.005,10,float vector,29
-StateHistory::ADCS,StateHistory::ADCS::rwa_ramp_cmd_history,-310.2,310.2,10,float vector,29
-StateHistory::ADCS,StateHistory::ADCS::mtr_cmd_history,0,0,10,float vector,50
-StateHistory::ADCS,StateHistory::ADCS::ssa_vector_history,0,1,10,float vector,21
-StateHistory::Piksi,StateHistory::Piksi::iar_history,0,4294967295,10,int,32
-StateHistory::Piksi,StateHistory::Piksi::nsats_history,0,30,10,int,5
-StateHistory::Piksi,StateHistory::Piksi::recorded_position_history,6400,7200,10,double vector,45
-StateHistory::Piksi,StateHistory::Piksi::recorded_velocity_history,8,12,10,double vector,51
-StateHistory::Piksi,StateHistory::Piksi::recorded_position_other_history,6400,7200,10,double vector,45
-StateHistory::Propulsion,StateHistory::Propulsion::tank_pressure_history,0,100,10,float,10
-StateHistory::Propulsion,StateHistory::Propulsion::inner_tank_temperature_history,,,10,temperature,9
-StateHistory::Propulsion,StateHistory::Propulsion::outer_tank_temperature_history,,,10,temperature,9
-StateHistory::Piksi,StateHistory::Piksi::position_history,6400,7200,10,double vector,45
-StateHistory::Piksi,StateHistory::Piksi::velocity_history,8,12,10,double vector,51
-StateHistory::Piksi,StateHistory::Piksi::position_other_history,6400,7200,10,double vector,45
-StateHistory::Piksi,StateHistory::Piksi::velocity_other_history,8,12,10,double vector,51
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,1,bool,1
-FaultState::Propulsion,FaultState::Propulsion::overpressure_event,,,1,gps time,49
-FaultState::Propulsion,FaultState::Propulsion::overpressure_event_id,0,3,1,int,2
-FaultState::Propulsion,FaultState::Propulsion::destabilization_event,,,1,gps time,49
+group,name,min,max,group_nickname,buf_size,type,size
+State::Master,State::Master::master_state,0,4,master,1,int,3
+State::Master,State::Master::pan_state,0,11,master,1,int,4
+State::Master,State::Master::boot_number,0,4294967295,master,1,int,32
+State::Master,State::Master::last_uplink_time,,,master,1,gps time,49
+State::Master,State::Master::was_last_uplink_valid,,,master,1,bool,1
+State::Master,State::Master::is_follower,,,master,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::gomspace.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::gomspace.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::gomspace.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::gomspace.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::piksi.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::piksi.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::piksi.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::piksi.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::quake.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::quake.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::quake.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::quake.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::dcdc.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::dcdc.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::dcdc.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::dcdc.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::spike_and_hold.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::spike_and_hold.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::spike_and_hold.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::spike_and_hold.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::adcs_system.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::adcs_system.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::adcs_system.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::adcs_system.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::pressure_sensor.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::pressure_sensor.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::pressure_sensor.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::pressure_sensor.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_inner.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_inner.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_inner.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_inner.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_outer.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_outer.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_outer.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::temp_sensor_outer.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::docking_motor.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::docking_motor.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::docking_motor.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::docking_motor.name()).error_ignored,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::docking_switch.name()).powered_on,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::docking_switch.name()).enabled,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::docking_switch.name()).is_functional,,,hardware,1,bool,1
+State::Hardware,State::Hardware::hat.at(Devices::docking_switch.name()).error_ignored,,,hardware,1,bool,1
+State::ADCS,State::ADCS::adcs_state,0,3,adcs,1,int,2
+State::ADCS,State::ADCS::cmd_attitude,,,adcs,1,quaternion,29
+State::ADCS,State::ADCS::cur_attitude,,,adcs,1,quaternion,29
+State::ADCS,State::ADCS::cur_ang_rate,0,2.2,adcs,1,float vector,30
+State::ADCS,State::ADCS::is_sun_vector_determination_working,,,adcs,1,bool,1
+State::ADCS,State::ADCS::rwa_speeds,0,0,adcs,1,float vector,50
+State::ADCS,State::ADCS::rwa_speed_cmds,0,0,adcs,1,float vector,50
+State::ADCS,State::ADCS::rwa_ramps,0,310.2,adcs,1,float vector,29
+State::ADCS,State::ADCS::rwa_speeds_rd,0,0,adcs,1,float vector,50
+State::ADCS,State::ADCS::rwa_speed_cmds_rd,0,0,adcs,1,float vector,50
+State::ADCS,State::ADCS::rwa_ramps_rd,0,310.2,adcs,1,float vector,29
+State::ADCS,State::ADCS::mtr_cmds,0,0,adcs,1,float vector,50
+State::ADCS,State::ADCS::ssa_vec,0,1,adcs,1,float vector,21
+State::ADCS,State::ADCS::ssa_adc_data[0],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[1],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[2],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[3],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[4],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[5],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[6],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[7],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[8],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[9],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[10],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[11],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[12],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[13],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[14],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[15],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[16],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[17],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[18],0,0,adcs,1,float,8
+State::ADCS,State::ADCS::ssa_adc_data[19],0,0,adcs,1,float,8
+State::Gomspace,State::Gomspace::gomspace_data.vboost[0],0,4000,gomspace,1,int,12
+State::Gomspace,State::Gomspace::gomspace_data.vboost[1],0,4000,gomspace,1,int,12
+State::Gomspace,State::Gomspace::gomspace_data.vboost[2],0,4000,gomspace,1,int,12
+State::Gomspace,State::Gomspace::gomspace_data.vbatt,5000,9000,gomspace,1,int,11
+State::Gomspace,State::Gomspace::gomspace_data.curin[0],0,1000,gomspace,1,int,10
+State::Gomspace,State::Gomspace::gomspace_data.curin[1],0,1000,gomspace,1,int,10
+State::Gomspace,State::Gomspace::gomspace_data.curin[2],0,1000,gomspace,1,int,10
+State::Gomspace,State::Gomspace::gomspace_data.cursun,0,0,gomspace,1,int,50
+State::Gomspace,State::Gomspace::gomspace_data.cursys,0,0,gomspace,1,int,50
+State::Gomspace,State::Gomspace::gomspace_data.curout[0],0,1000,gomspace,1,int,7
+State::Gomspace,State::Gomspace::gomspace_data.curout[1],0,1000,gomspace,1,int,7
+State::Gomspace,State::Gomspace::gomspace_data.curout[2],0,1000,gomspace,1,int,7
+State::Gomspace,State::Gomspace::gomspace_data.curout[3],0,1000,gomspace,1,int,7
+State::Gomspace,State::Gomspace::gomspace_data.curout[4],0,1000,gomspace,1,int,7
+State::Gomspace,State::Gomspace::gomspace_data.curout[5],0,1000,gomspace,1,int,7
+State::Gomspace,State::Gomspace::gomspace_data.output[0],,,gomspace,1,bool,1
+State::Gomspace,State::Gomspace::gomspace_data.output[1],,,gomspace,1,bool,1
+State::Gomspace,State::Gomspace::gomspace_data.output[2],,,gomspace,1,bool,1
+State::Gomspace,State::Gomspace::gomspace_data.output[3],,,gomspace,1,bool,1
+State::Gomspace,State::Gomspace::gomspace_data.output[4],,,gomspace,1,bool,1
+State::Gomspace,State::Gomspace::gomspace_data.output[5],,,gomspace,1,bool,1
+State::Gomspace,State::Gomspace::gomspace_data.output[6],,,gomspace,1,bool,1
+State::Gomspace,State::Gomspace::gomspace_data.output[7],,,gomspace,1,bool,1
+State::Gomspace,State::Gomspace::gomspace_data.counter_boot,0,4294967295,gomspace,1,int,32
+State::Gomspace,State::Gomspace::gomspace_data.temp[0],,,gomspace,1,temperature,9
+State::Gomspace,State::Gomspace::gomspace_data.temp[1],,,gomspace,1,temperature,9
+State::Gomspace,State::Gomspace::gomspace_data.temp[2],,,gomspace,1,temperature,9
+State::Gomspace,State::Gomspace::gomspace_data.temp[3],,,gomspace,1,temperature,9
+State::Gomspace,State::Gomspace::gomspace_data.battmode,0,0,gomspace,1,int,50
+State::Propulsion,State::Propulsion::propulsion_state,0,5,propulsion,1,int,3
+State::Propulsion,State::Propulsion::delta_v_available,0,15,propulsion,1,float,11
+State::Propulsion,State::Propulsion::is_firing_planned,,,propulsion,1,bool,1
+State::Propulsion,State::Propulsion::is_firing_planned_by_uplink,,,propulsion,1,bool,1
+State::Propulsion,State::Propulsion::firing_data.impulse_vector,0,0.005,propulsion,1,float vector,26
+State::Propulsion,State::Propulsion::firing_data.time,,,propulsion,1,gps time,49
+State::Piksi,State::Piksi::recorded_current_time,,,piksi,1,gps time,49
+State::Piksi,State::Piksi::recorded_time_collection_timestamp,0,4294967295,piksi,1,int,32
+State::GNC,State::GNC::current_time,,,gnc,1,gps time,49
+State::GNC,State::GNC::time_collection_timestamp,0,4294967295,gnc,1,int,32
+State::GNC,State::GNC::has_firing_happened_in_nighttime,,,gnc,1,bool,1
+StateHistory::ADCS,StateHistory::ADCS::gyro_history,-2.2,2.2,adcs_history,10,float vector,50
+StateHistory::ADCS,StateHistory::ADCS::gyro_fast_history,0,0,adcs_history,10,float vector,50
+StateHistory::ADCS,StateHistory::ADCS::attitude_cmd_history,,,adcs_history,10,quaternion,29
+StateHistory::ADCS,StateHistory::ADCS::attitude_history,,,adcs_history,10,quaternion,29
+StateHistory::ADCS,StateHistory::ADCS::attitude_fast_history,,,adcs_history,10,quaternion,29
+StateHistory::ADCS,StateHistory::ADCS::rate_history,-2.2,2.2,adcs_history,10,float vector,30
+StateHistory::ADCS,StateHistory::ADCS::rate_fast_history,-2.2,2.2,adcs_history,10,float vector,30
+StateHistory::ADCS,StateHistory::ADCS::spacecraft_L_history,0,0,adcs_history,10,float vector,50
+StateHistory::ADCS,StateHistory::ADCS::spacecraft_L_fast_history,0,0,adcs_history,10,float vector,50
+StateHistory::ADCS,StateHistory::ADCS::magnetometer_history,0,0.005,adcs_history,10,float vector,29
+StateHistory::ADCS,StateHistory::ADCS::rwa_ramp_cmd_history,-310.2,310.2,adcs_history,10,float vector,29
+StateHistory::ADCS,StateHistory::ADCS::mtr_cmd_history,0,0,adcs_history,10,float vector,50
+StateHistory::ADCS,StateHistory::ADCS::ssa_vector_history,0,1,adcs_history,10,float vector,21
+StateHistory::Piksi,StateHistory::Piksi::iar_history,0,4294967295,piksi_history,10,int,32
+StateHistory::Piksi,StateHistory::Piksi::nsats_history,0,30,piksi_history,10,int,5
+StateHistory::Piksi,StateHistory::Piksi::recorded_position_history,6400,7200,piksi_history,10,double vector,45
+StateHistory::Piksi,StateHistory::Piksi::recorded_velocity_history,8,12,piksi_history,10,double vector,51
+StateHistory::Piksi,StateHistory::Piksi::recorded_position_other_history,6400,7200,piksi_history,10,double vector,45
+StateHistory::Propulsion,StateHistory::Propulsion::tank_pressure_history,0,100,propulsion_history,10,float,10
+StateHistory::Propulsion,StateHistory::Propulsion::inner_tank_temperature_history,,,propulsion_history,10,temperature,9
+StateHistory::Propulsion,StateHistory::Propulsion::outer_tank_temperature_history,,,propulsion_history,10,temperature,9
+StateHistory::Piksi,StateHistory::Piksi::position_history,6400,7200,piksi_history,10,double vector,45
+StateHistory::Piksi,StateHistory::Piksi::velocity_history,8,12,piksi_history,10,double vector,51
+StateHistory::Piksi,StateHistory::Piksi::position_other_history,6400,7200,piksi_history,10,double vector,45
+StateHistory::Piksi,StateHistory::Piksi::velocity_other_history,8,12,piksi_history,10,double vector,51
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
+FaultState::Propulsion,FaultState::Propulsion::overpressure_event,,,propulsion_faults,1,gps time,49
+FaultState::Propulsion,FaultState::Propulsion::overpressure_event_id,0,3,propulsion_faults,1,int,2
+FaultState::Propulsion,FaultState::Propulsion::destabilization_event,,,propulsion_faults,1,gps time,49

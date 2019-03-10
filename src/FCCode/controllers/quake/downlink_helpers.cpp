@@ -1,4 +1,5 @@
 #include "../../state/state_holder.hpp"
+#include "../../comms/downlink_packet_generator.hpp"
 #include "../constants.hpp"
 #include "transceiving_thread.hpp"
 
@@ -10,7 +11,7 @@ using namespace Comms;
 
 static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
     int response;
-    response = quake.sbdwb(packet.mes, State::Quake::PACKET_LENGTH);
+    response = quake.sbdwb(packet.mes, Comms::PACKET_SIZE_BYTES);
     if (response != 0) return response;
     
     quake.run_sbdix();
@@ -27,23 +28,6 @@ static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink)
     return response;
 }
 
-static int send_downlink(const State::Quake::full_data_downlink& downlink, QLocate::Message* uplink) {
-    for(int i = 0; i < State::Quake::PACKETS_PER_DOWNLINK; i++) {
-        rwMtxRLock(&quake_state_lock);
-            QLocate::Message m(downlink[i]);
-        rwMtxRUnlock(&quake_state_lock);
-        int response = send_packet(m, uplink);
-        if (response != 0) {
-            // Sending packet failed. Throw this packet back on the stack and retry later.
-            rwMtxWLock(&quake_state_lock);
-                State::Quake::downlink_stack.put(downlink);
-            rwMtxWUnlock(&quake_state_lock);
-            return response;
-        }
-    }
-    return 0;
-}
-
 static bool is_downlink_stack_empty() {
     bool is_empty = State::read(State::Quake::downlink_stack.empty(), State::Quake::quake_state_lock);
     return is_empty;
@@ -51,7 +35,7 @@ static bool is_downlink_stack_empty() {
 
 int Quake::send_downlink_stack(QLocate::Message* uplink) {
     while(!is_downlink_stack_empty()) {
-        int response = send_downlink(State::Quake::downlink_stack.get(), uplink);
+        int response = send_packet(State::Quake::downlink_stack.get(), uplink);
         if (response != 0) return response;
     }
     return 0;

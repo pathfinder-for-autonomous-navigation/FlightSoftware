@@ -80,7 +80,6 @@ namespace State {
         QuakeState quake_state = QuakeState::WAITING;
         rwmutex_t quake_state_lock;
 
-        circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack;
-        full_data_downlink most_recent_downlink;
+        circular_stack<Devices::QLocate::Message, MAX_DOWNLINK_HISTORY> downlink_stack;
     }
 }

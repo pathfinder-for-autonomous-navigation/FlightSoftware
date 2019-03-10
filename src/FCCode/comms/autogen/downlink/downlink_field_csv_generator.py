@@ -103,40 +103,40 @@ GNC_FIELDS = [
 FIELDS.extend(GNC_FIELDS)
 
 ADCS_HISTORY_FIELDS = []
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "gyro_history",              "type" : "float vector", "size" : 50, "min" : -2.2, "max" : 2.2 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "gyro_fast_history",         "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "attitude_cmd_history",      "type" : "quaternion" })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "attitude_history",          "type" : "quaternion" })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "attitude_fast_history",     "type" : "quaternion" })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "rate_history",              "type" : "float vector", "size" : 30, "min" : -2.2, "max" : 2.2 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "rate_fast_history",         "type" : "float vector", "size" : 30, "min" : -2.2, "max" : 2.2 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "spacecraft_L_history",      "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "spacecraft_L_fast_history", "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "magnetometer_history",      "type" : "float vector", "size" : 29, "min" : 0, "max" : 0.005 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "rwa_ramp_cmd_history",      "type" : "float vector", "size" : 29, "min" : -310.2, "max" : 310.2 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "mtr_cmd_history",           "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "ssa_vector_history",        "type" : "float vector", "size" : 21, "min" : 0, "max" : 1 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "gyro_history",              "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : -2.2, "max" : 2.2 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "gyro_fast_history",         "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "attitude_cmd_history",      "type" : "quaternion" , "buf_size" : 10 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "attitude_history",          "type" : "quaternion" , "buf_size" : 10 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "attitude_fast_history",     "type" : "quaternion" , "buf_size" : 10 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "rate_history",              "type" : "float vector", "size" : 30, "buf_size" : 10, "min" : -2.2, "max" : 2.2 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "rate_fast_history",         "type" : "float vector", "size" : 30, "buf_size" : 10, "min" : -2.2, "max" : 2.2 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "spacecraft_L_history",      "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "spacecraft_L_fast_history", "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "magnetometer_history",      "type" : "float vector", "size" : 29, "buf_size" : 10, "min" : 0, "max" : 0.005 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "rwa_ramp_cmd_history",      "type" : "float vector", "size" : 29, "buf_size" : 10, "min" : -310.2, "max" : 310.2 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "mtr_cmd_history",           "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "ssa_vector_history",        "type" : "float vector", "size" : 21, "buf_size" : 10, "min" : 0, "max" : 1 })
 FIELDS.extend(ADCS_HISTORY_FIELDS)
 
 PIKSI_HISTORY_FIELDS = []
-PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "iar_history",                     "type" : "int", "size" : 32, "min" : 0, "max" : MAX_INT })
-PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "nsats_history",                   "type" : "int", "size" : 5, "min" : 0, "max" : 30 })
-PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_position_history",       "type" : "double vector", "size" : 45, "min" : 6400, "max" : 7200 })
-PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_velocity_history",       "type" : "double vector", "size" : 51, "min" : 8, "max" : 12 })
-PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_position_other_history", "type" : "double vector", "size" : 45, "min" : 6400, "max" : 7200 })
+PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "iar_history",                     "type" : "int", "size" : 32, "buf_size" : 10, "min" : 0, "max" : MAX_INT })
+PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "nsats_history",                   "type" : "int", "size" : 5,  "buf_size" : 10,  "min" : 0, "max" : 30 })
+PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_position_history",       "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
+PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_velocity_history",       "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8, "max" : 12 })
+PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_position_other_history", "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
 FIELDS.extend(PIKSI_HISTORY_FIELDS)
 
 PROPULSION_HISTORY_FIELDS = []
-PROPULSION_HISTORY_FIELDS.append({ "group" : "propulsion_history", "name" : "tank_pressure_history",          "type" : "float", "size" : 10, "min" : 0, "max" : 100 })
-PROPULSION_HISTORY_FIELDS.append({ "group" : "propulsion_history", "name" : "inner_tank_temperature_history", "type" : "temperature" })
-PROPULSION_HISTORY_FIELDS.append({ "group" : "propulsion_history", "name" : "outer_tank_temperature_history", "type" : "temperature" })
+PROPULSION_HISTORY_FIELDS.append({ "group" : "propulsion_history", "name" : "tank_pressure_history",          "type" : "float", "size" : 10, "buf_size" : 10, "min" : 0, "max" : 100 })
+PROPULSION_HISTORY_FIELDS.append({ "group" : "propulsion_history", "name" : "inner_tank_temperature_history", "type" : "temperature" ,       "buf_size" : 10 })
+PROPULSION_HISTORY_FIELDS.append({ "group" : "propulsion_history", "name" : "outer_tank_temperature_history", "type" : "temperature" ,       "buf_size" : 10 })
 FIELDS.extend(PROPULSION_HISTORY_FIELDS)
 
 GNC_HISTORY_FIELDS = []
-GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "position_history",       "type" : "double vector", "size" : 45, "min" : 6400, "max" : 7200 })
-GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "velocity_history",       "type" : "double vector", "size" : 51, "min" : 8, "max" : 12 })
-GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "position_other_history", "type" : "double vector", "size" : 45, "min" : 6400, "max" : 7200 })
-GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "velocity_other_history", "type" : "double vector", "size" : 51, "min" : 8, "max" : 12 })
+GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "position_history",       "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
+GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "velocity_history",       "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8, "max" : 12 })
+GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "position_other_history", "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
+GNC_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "velocity_other_history", "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8, "max" : 12 })
 FIELDS.extend(GNC_HISTORY_FIELDS)
 
 GOMSPACE_FAULTS_FIELDS = []
@@ -152,6 +152,7 @@ FIELDS.extend(PROPULSION_FAULTS_FIELDS)
 
 # Fully qualify each field's name and group
 for field in FIELDS:
+    field["group_nickname"] = field["group"]
     field["group"] = GROUPS[field["group"]]
     field["name"] = field["group"] + "::" + field["name"]
 
@@ -175,17 +176,14 @@ for field in FIELDS:
     elif field["type"] not in TYPES:
         print "field {0} has undefined size".format(field['name'])
 
-# Update buffer sizes using data collection numbers
+# Update buffer sizes for non-history fields
 for field in FIELDS:
-    if "history" in field["name"]:
-        field["buf_size"] = 10
-    else:
+    if "history" not in field["name"]:
         field["buf_size"] = 1
 
 # Write fields to CSV
-keys = FIELDS[0].keys()
 with open('downlink_fields.csv', 'wb') as output_file:
-    dict_writer = csv.DictWriter(output_file, keys)
+    dict_writer = csv.DictWriter(output_file, FIELDS[0].keys())
     dict_writer.writeheader()
     dict_writer.writerows(FIELDS)
 
