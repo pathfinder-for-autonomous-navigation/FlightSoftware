@@ -10,7 +10,7 @@
 #include "../../deployment_timer.hpp"
 #include "../../comms/downlink_packet_generator.hpp"
 #include "../../comms/uplink_deserializer.hpp"
-#include "downlink_thread.hpp"
+#include "transceiving_thread.hpp"
 #include <HardwareSerial.h>
 
 namespace RTOSTasks {
@@ -44,12 +44,11 @@ static void quake_loop() {
         }
         break;
         case QuakeState::TRANSCEIVING: {
-
-            if (Quake::downlink_thread == NULL || chThdTerminatedX(Quake::downlink_thread)) {
-                Quake::downlink_thread = chThdCreateStatic(Quake::downlink_thread_workingArea, 
-                                                           sizeof(Quake::downlink_thread_workingArea), 
-                                                           Quake::downlink_thread_priority, 
-                                                           Quake::downlink_fn, NULL);
+            if (Quake::transceiving_thread == NULL || chThdTerminatedX(Quake::transceiving_thread)) {
+                Quake::transceiving_thread = chThdCreateStatic(Quake::transceiving_thread_workingArea, 
+                                                               sizeof(Quake::transceiving_thread_workingArea), 
+                                                               Quake::transceiving_thread_priority, 
+                                                               Quake::transceiving_fn, NULL);
             }
         };
         break;

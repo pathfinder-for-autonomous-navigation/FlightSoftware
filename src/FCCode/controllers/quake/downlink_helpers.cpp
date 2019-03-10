@@ -1,6 +1,6 @@
 #include "../../state/state_holder.hpp"
 #include "../constants.hpp"
-#include "downlink_thread.hpp"
+#include "transceiving_thread.hpp"
 
 using Devices::quake;
 using Devices::QLocate;
@@ -8,7 +8,7 @@ using State::Quake::QuakeState;
 using State::Quake::quake_state_lock;
 using namespace Comms;
 
-int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
+static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
     int response;
     response = quake.sbdwb(packet.mes, State::Quake::PACKET_LENGTH);
     if (response != 0) return response;
@@ -27,7 +27,7 @@ int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
     return response;
 }
 
-int send_downlink(const State::Quake::full_data_downlink& downlink, QLocate::Message* uplink) {
+static int send_downlink(const State::Quake::full_data_downlink& downlink, QLocate::Message* uplink) {
     for(int i = 0; i < State::Quake::PACKETS_PER_DOWNLINK; i++) {
         rwMtxRLock(&quake_state_lock);
             QLocate::Message m(downlink[i]);
@@ -44,7 +44,7 @@ int send_downlink(const State::Quake::full_data_downlink& downlink, QLocate::Mes
     return 0;
 }
 
-bool is_downlink_stack_empty() {
+static bool is_downlink_stack_empty() {
     bool is_empty = State::read(State::Quake::downlink_stack.empty(), State::Quake::quake_state_lock);
     return is_empty;
 }

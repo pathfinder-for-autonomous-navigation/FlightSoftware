@@ -28,6 +28,12 @@ QLocate::Message::Message(QLocate::Message const &mes) {
     this->mes[i] = mes.mes[i];
 }
 
+QLocate::Message& QLocate::Message::operator=(QLocate::Message const &mes) {
+  this->length = mes.length;
+  for(int i = 0; i < this->length; i++)
+    this->mes[i] = mes.mes[i];
+}
+
 int QLocate::Message::get_length() const { return this->length; }
 
 char& QLocate::Message::operator[](int i) {

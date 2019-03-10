@@ -38,6 +38,8 @@ namespace Devices {
           Message(Message const &mes);
           /*! Returns the current lenght of the message */
           int get_length() const;
+          /*! Assignment operator */
+          Message& operator=(Message const &mes);
           /*! Allows array style access to the char array */
           char& operator[](int i);
           /*! Allows read-only array style access to the char array */
@@ -71,7 +73,7 @@ namespace Devices {
     static const int MT_STATUS = 2;
     static const int MTMSN     = 3;
     static const int MT_LENGTH = 4;
-    static const int MT_QEUED  = 5;
+    static const int MT_QUEUED = 5;
 
     /*! Returns a pointer to the sbdix response codes */
     int const *get_sbdix_response();
