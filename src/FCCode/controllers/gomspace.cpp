@@ -45,7 +45,12 @@ static void gomspace_read() {
     debug_printf("Reading Gomspace data...");
     unsigned char t = 0; // # of tries at reading housekeeping data
     while (t < 5) {
-        if (gomspace.get_hk()) break;
+        chMtxLock(&State::Hardware::gomspace_device_lock);
+        rwMtxWLock(&State::Gomspace::gomspace_state_lock);
+            bool successful_response = gomspace.get_hk();
+        rwMtxWUnlock(&State::Gomspace::gomspace_state_lock);
+        chMtxUnlock(&State::Hardware::gomspace_device_lock);
+        if (successful_response) break;
         t++;
     }
     if (t == 5) {

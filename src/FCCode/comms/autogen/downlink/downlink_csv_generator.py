@@ -85,7 +85,6 @@ FIELDS.extend(GOMSPACE_FIELDS)
 
 PROPULSION_FIELDS = []
 PROPULSION_FIELDS.append({ "group" : "propulsion", "name" : "propulsion_state",            "type" : "state int",                 "min" : 0, "max" : 5 })
-PROPULSION_FIELDS.append({ "group" : "propulsion", "name" : "delta_v_available",           "type" : "float",        "size" : 11, "min" : 0, "max" : 15 })
 PROPULSION_FIELDS.append({ "group" : "propulsion", "name" : "firing_data.impulse_vector",  "type" : "float vector", "size" : 26, "min" : 0, "max" : 0.005 })
 PROPULSION_FIELDS.append({ "group" : "propulsion", "name" : "firing_data.time",            "type" : "gps time",     "size" : 49 })
 FIELDS.extend(PROPULSION_FIELDS)

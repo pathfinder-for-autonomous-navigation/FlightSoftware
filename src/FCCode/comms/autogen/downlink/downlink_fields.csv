@@ -112,7 +112,6 @@ State::Gomspace,State::Gomspace::gomspace_data.temp[2],,,gomspace,1,temperature,
 State::Gomspace,State::Gomspace::gomspace_data.temp[3],,,gomspace,1,temperature,9
 State::Gomspace,State::Gomspace::gomspace_data.battmode,0,0,gomspace,1,int,50
 State::Propulsion,State::Propulsion::propulsion_state,0,5,propulsion,1,int,3
-State::Propulsion,State::Propulsion::delta_v_available,0,15,propulsion,1,float,11
 State::Propulsion,State::Propulsion::firing_data.impulse_vector,0,0.005,propulsion,1,float vector,26
 State::Propulsion,State::Propulsion::firing_data.time,,,propulsion,1,gps time,49
 State::Piksi,State::Piksi::recorded_current_time,,,piksi,1,gps time,49

@@ -15,19 +15,27 @@ static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink)
         return -1;
 
     int response;
-    response = quake.sbdwb(packet.mes, Comms::PACKET_SIZE_BYTES);
+    chMtxLock(&State::Hardware::quake_device_lock);
+        response = quake.sbdwb(packet.mes, Comms::PACKET_SIZE_BYTES);
+    chMtxUnlock(&State::Hardware::quake_device_lock);
     if (response != 0) return response;
     
-    quake.run_sbdix();
+    chMtxLock(&State::Hardware::quake_device_lock);
+        quake.run_sbdix();
+    chMtxUnlock(&State::Hardware::quake_device_lock);
     for(int i = 0; i < Constants::Quake::NUM_RETRIES; i++) {
-        response = quake.end_sbdix();
+        chMtxLock(&State::Hardware::quake_device_lock);
+            response = quake.end_sbdix();
+        chMtxUnlock(&State::Hardware::quake_device_lock);
         if (response != -1) break;
         chThdSleepMilliseconds(Constants::Quake::WAIT_BETWEEN_RETRIES);
     }
 
     // It's possible we picked up an uplink packet; pick it up.
-    int status = quake.sbdrb();
-    if (status == 0) *uplink = quake.get_message();
+    chMtxLock(&State::Hardware::quake_device_lock);
+        int status = quake.sbdrb();
+        if (status == 0) *uplink = quake.get_message();
+    chMtxUnlock(&State::Hardware::quake_device_lock);
 
     return response;
 }

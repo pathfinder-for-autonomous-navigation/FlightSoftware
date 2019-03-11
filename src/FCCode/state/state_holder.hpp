@@ -128,11 +128,6 @@ namespace State {
   namespace Propulsion {
     //! State of propulsion state controller.
     extern PropulsionState propulsion_state;
-    //! Available delta-v, in meters/second. Note that this is obtained by simply integrating
-    // the applied thrusts over time, so this number may not be accurate. Propulsion leaks, for example,
-    // would contribute to significant inaccuracy. The purpose of this field is to serve as an upper
-    // bound.
-    extern float delta_v_available;
     //! Firing data for an upcoming planned firing.
     extern Firing firing_data;
     //! Current pressure within tank.

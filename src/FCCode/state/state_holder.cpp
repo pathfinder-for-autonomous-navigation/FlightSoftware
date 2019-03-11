@@ -46,7 +46,6 @@ namespace State {
 
     namespace Propulsion {
         PropulsionState propulsion_state = PropulsionState::DISABLED;
-        float delta_v_available = 11.0f; // m/s
         Firing firing_data;
         float tank_pressure = 0.0f;
         float tank_inner_temperature = 0.0f;

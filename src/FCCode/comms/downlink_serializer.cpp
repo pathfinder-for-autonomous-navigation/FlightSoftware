@@ -483,37 +483,33 @@ static void serialize_packet_2(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
   Comms::trim_int(State::read(State::Propulsion::propulsion_state,State::Propulsion::propulsion_state_lock), 0, 5, &bitset_112);
   for(int i = 0; i < bitset_112.size(); i++) packet.set(packet_ptr++,bitset_112[i]);
 
-  std::bitset<11> bitset_113;
-  Comms::trim_float(State::read(State::Propulsion::delta_v_available,State::Propulsion::propulsion_state_lock), 0, 15, &bitset_113);
+  std::bitset<26> bitset_113;
+  Comms::trim_vector(State::read(State::Propulsion::firing_data.impulse_vector,State::Propulsion::propulsion_state_lock), 0, 0.005, &bitset_113);
   for(int i = 0; i < bitset_113.size(); i++) packet.set(packet_ptr++,bitset_113[i]);
 
-  std::bitset<26> bitset_114;
-  Comms::trim_vector(State::read(State::Propulsion::firing_data.impulse_vector,State::Propulsion::propulsion_state_lock), 0, 0.005, &bitset_114);
+  std::bitset<49> bitset_114;
+  Comms::trim_gps_time(State::read(State::Propulsion::firing_data.time,State::Propulsion::propulsion_state_lock), &bitset_114);
   for(int i = 0; i < bitset_114.size(); i++) packet.set(packet_ptr++,bitset_114[i]);
 
   std::bitset<49> bitset_115;
-  Comms::trim_gps_time(State::read(State::Propulsion::firing_data.time,State::Propulsion::propulsion_state_lock), &bitset_115);
+  Comms::trim_gps_time(State::read(State::Piksi::recorded_current_time,State::Piksi::piksi_state_lock), &bitset_115);
   for(int i = 0; i < bitset_115.size(); i++) packet.set(packet_ptr++,bitset_115[i]);
 
-  std::bitset<49> bitset_116;
-  Comms::trim_gps_time(State::read(State::Piksi::recorded_current_time,State::Piksi::piksi_state_lock), &bitset_116);
+  std::bitset<32> bitset_116;
+  Comms::trim_int(State::read(State::Piksi::recorded_time_collection_timestamp,State::Piksi::piksi_state_lock), 0, 4294967295, &bitset_116);
   for(int i = 0; i < bitset_116.size(); i++) packet.set(packet_ptr++,bitset_116[i]);
 
-  std::bitset<32> bitset_117;
-  Comms::trim_int(State::read(State::Piksi::recorded_time_collection_timestamp,State::Piksi::piksi_state_lock), 0, 4294967295, &bitset_117);
+  std::bitset<49> bitset_117;
+  Comms::trim_gps_time(State::read(State::GNC::current_time,State::GNC::gnc_state_lock), &bitset_117);
   for(int i = 0; i < bitset_117.size(); i++) packet.set(packet_ptr++,bitset_117[i]);
 
-  std::bitset<49> bitset_118;
-  Comms::trim_gps_time(State::read(State::GNC::current_time,State::GNC::gnc_state_lock), &bitset_118);
+  std::bitset<32> bitset_118;
+  Comms::trim_int(State::read(State::GNC::time_collection_timestamp,State::GNC::gnc_state_lock), 0, 4294967295, &bitset_118);
   for(int i = 0; i < bitset_118.size(); i++) packet.set(packet_ptr++,bitset_118[i]);
 
-  std::bitset<32> bitset_119;
-  Comms::trim_int(State::read(State::GNC::time_collection_timestamp,State::GNC::gnc_state_lock), 0, 4294967295, &bitset_119);
+  std::bitset<1> bitset_119;
+  bitset_119.set(0, State::read(State::GNC::has_firing_happened_in_nighttime, State::GNC::gnc_state_lock));
   for(int i = 0; i < bitset_119.size(); i++) packet.set(packet_ptr++,bitset_119[i]);
-
-  std::bitset<1> bitset_120;
-  bitset_120.set(0, State::read(State::GNC::has_firing_happened_in_nighttime, State::GNC::gnc_state_lock));
-  for(int i = 0; i < bitset_120.size(); i++) packet.set(packet_ptr++,bitset_120[i]);
 }
 
 static void serialize_packet_3(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
@@ -526,9 +522,9 @@ static void serialize_packet_3(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::gyro_history.empty()) {
-    std::bitset<50> bitset_121;
-    Comms::trim_vector(StateHistory::ADCS::gyro_history.get(), -2.2, 2.2, &bitset_121);
-    for(int i = 0; i < bitset_121.size(); i++) packet.set(packet_ptr++,bitset_121[i]);}
+    std::bitset<50> bitset_120;
+    Comms::trim_vector(StateHistory::ADCS::gyro_history.get(), -2.2, 2.2, &bitset_120);
+    for(int i = 0; i < bitset_120.size(); i++) packet.set(packet_ptr++,bitset_120[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -542,9 +538,9 @@ static void serialize_packet_4(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::gyro_fast_history.empty()) {
-    std::bitset<50> bitset_122;
-    Comms::trim_vector(StateHistory::ADCS::gyro_fast_history.get(), 0, 0, &bitset_122);
-    for(int i = 0; i < bitset_122.size(); i++) packet.set(packet_ptr++,bitset_122[i]);}
+    std::bitset<50> bitset_121;
+    Comms::trim_vector(StateHistory::ADCS::gyro_fast_history.get(), 0, 0, &bitset_121);
+    for(int i = 0; i < bitset_121.size(); i++) packet.set(packet_ptr++,bitset_121[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -558,9 +554,9 @@ static void serialize_packet_5(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::attitude_cmd_history.empty()) {
-    std::bitset<29> bitset_123;
-    Comms::trim_quaternion(StateHistory::ADCS::attitude_cmd_history.get(), &bitset_123);
-    for(int i = 0; i < bitset_123.size(); i++) packet.set(packet_ptr++,bitset_123[i]);}
+    std::bitset<29> bitset_122;
+    Comms::trim_quaternion(StateHistory::ADCS::attitude_cmd_history.get(), &bitset_122);
+    for(int i = 0; i < bitset_122.size(); i++) packet.set(packet_ptr++,bitset_122[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -574,9 +570,9 @@ static void serialize_packet_6(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::attitude_history.empty()) {
-    std::bitset<29> bitset_124;
-    Comms::trim_quaternion(StateHistory::ADCS::attitude_history.get(), &bitset_124);
-    for(int i = 0; i < bitset_124.size(); i++) packet.set(packet_ptr++,bitset_124[i]);}
+    std::bitset<29> bitset_123;
+    Comms::trim_quaternion(StateHistory::ADCS::attitude_history.get(), &bitset_123);
+    for(int i = 0; i < bitset_123.size(); i++) packet.set(packet_ptr++,bitset_123[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -590,9 +586,9 @@ static void serialize_packet_7(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::attitude_fast_history.empty()) {
-    std::bitset<29> bitset_125;
-    Comms::trim_quaternion(StateHistory::ADCS::attitude_fast_history.get(), &bitset_125);
-    for(int i = 0; i < bitset_125.size(); i++) packet.set(packet_ptr++,bitset_125[i]);}
+    std::bitset<29> bitset_124;
+    Comms::trim_quaternion(StateHistory::ADCS::attitude_fast_history.get(), &bitset_124);
+    for(int i = 0; i < bitset_124.size(); i++) packet.set(packet_ptr++,bitset_124[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -606,9 +602,9 @@ static void serialize_packet_8(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::rate_history.empty()) {
-    std::bitset<30> bitset_126;
-    Comms::trim_vector(StateHistory::ADCS::rate_history.get(), -2.2, 2.2, &bitset_126);
-    for(int i = 0; i < bitset_126.size(); i++) packet.set(packet_ptr++,bitset_126[i]);}
+    std::bitset<30> bitset_125;
+    Comms::trim_vector(StateHistory::ADCS::rate_history.get(), -2.2, 2.2, &bitset_125);
+    for(int i = 0; i < bitset_125.size(); i++) packet.set(packet_ptr++,bitset_125[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -622,9 +618,9 @@ static void serialize_packet_9(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::rate_fast_history.empty()) {
-    std::bitset<30> bitset_127;
-    Comms::trim_vector(StateHistory::ADCS::rate_fast_history.get(), -2.2, 2.2, &bitset_127);
-    for(int i = 0; i < bitset_127.size(); i++) packet.set(packet_ptr++,bitset_127[i]);}
+    std::bitset<30> bitset_126;
+    Comms::trim_vector(StateHistory::ADCS::rate_fast_history.get(), -2.2, 2.2, &bitset_126);
+    for(int i = 0; i < bitset_126.size(); i++) packet.set(packet_ptr++,bitset_126[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -638,9 +634,9 @@ static void serialize_packet_10(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::spacecraft_L_history.empty()) {
-    std::bitset<50> bitset_128;
-    Comms::trim_vector(StateHistory::ADCS::spacecraft_L_history.get(), 0, 0, &bitset_128);
-    for(int i = 0; i < bitset_128.size(); i++) packet.set(packet_ptr++,bitset_128[i]);}
+    std::bitset<50> bitset_127;
+    Comms::trim_vector(StateHistory::ADCS::spacecraft_L_history.get(), 0, 0, &bitset_127);
+    for(int i = 0; i < bitset_127.size(); i++) packet.set(packet_ptr++,bitset_127[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -654,9 +650,9 @@ static void serialize_packet_11(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::spacecraft_L_fast_history.empty()) {
-    std::bitset<50> bitset_129;
-    Comms::trim_vector(StateHistory::ADCS::spacecraft_L_fast_history.get(), 0, 0, &bitset_129);
-    for(int i = 0; i < bitset_129.size(); i++) packet.set(packet_ptr++,bitset_129[i]);}
+    std::bitset<50> bitset_128;
+    Comms::trim_vector(StateHistory::ADCS::spacecraft_L_fast_history.get(), 0, 0, &bitset_128);
+    for(int i = 0; i < bitset_128.size(); i++) packet.set(packet_ptr++,bitset_128[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -670,9 +666,9 @@ static void serialize_packet_12(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::magnetometer_history.empty()) {
-    std::bitset<29> bitset_130;
-    Comms::trim_vector(StateHistory::ADCS::magnetometer_history.get(), 0, 0.005, &bitset_130);
-    for(int i = 0; i < bitset_130.size(); i++) packet.set(packet_ptr++,bitset_130[i]);}
+    std::bitset<29> bitset_129;
+    Comms::trim_vector(StateHistory::ADCS::magnetometer_history.get(), 0, 0.005, &bitset_129);
+    for(int i = 0; i < bitset_129.size(); i++) packet.set(packet_ptr++,bitset_129[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -686,9 +682,9 @@ static void serialize_packet_13(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::rwa_ramp_cmd_history.empty()) {
-    std::bitset<29> bitset_131;
-    Comms::trim_vector(StateHistory::ADCS::rwa_ramp_cmd_history.get(), -310.2, 310.2, &bitset_131);
-    for(int i = 0; i < bitset_131.size(); i++) packet.set(packet_ptr++,bitset_131[i]);}
+    std::bitset<29> bitset_130;
+    Comms::trim_vector(StateHistory::ADCS::rwa_ramp_cmd_history.get(), -310.2, 310.2, &bitset_130);
+    for(int i = 0; i < bitset_130.size(); i++) packet.set(packet_ptr++,bitset_130[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -702,9 +698,9 @@ static void serialize_packet_14(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::mtr_cmd_history.empty()) {
-    std::bitset<50> bitset_132;
-    Comms::trim_vector(StateHistory::ADCS::mtr_cmd_history.get(), 0, 0, &bitset_132);
-    for(int i = 0; i < bitset_132.size(); i++) packet.set(packet_ptr++,bitset_132[i]);}
+    std::bitset<50> bitset_131;
+    Comms::trim_vector(StateHistory::ADCS::mtr_cmd_history.get(), 0, 0, &bitset_131);
+    for(int i = 0; i < bitset_131.size(); i++) packet.set(packet_ptr++,bitset_131[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -718,9 +714,9 @@ static void serialize_packet_15(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::ssa_vector_history.empty()) {
-    std::bitset<21> bitset_133;
-    Comms::trim_vector(StateHistory::ADCS::ssa_vector_history.get(), 0, 1, &bitset_133);
-    for(int i = 0; i < bitset_133.size(); i++) packet.set(packet_ptr++,bitset_133[i]);}
+    std::bitset<21> bitset_132;
+    Comms::trim_vector(StateHistory::ADCS::ssa_vector_history.get(), 0, 1, &bitset_132);
+    for(int i = 0; i < bitset_132.size(); i++) packet.set(packet_ptr++,bitset_132[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -734,16 +730,16 @@ static void serialize_packet_16(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
   while(!StateHistory::Piksi::iar_history.empty()) {
-    std::bitset<32> bitset_134;
-    Comms::trim_int(StateHistory::Piksi::iar_history.get(), 0, 4294967295, &bitset_134);
-    for(int i = 0; i < bitset_134.size(); i++) packet.set(packet_ptr++,bitset_134[i]);}
+    std::bitset<32> bitset_133;
+    Comms::trim_int(StateHistory::Piksi::iar_history.get(), 0, 4294967295, &bitset_133);
+    for(int i = 0; i < bitset_133.size(); i++) packet.set(packet_ptr++,bitset_133[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
   while(!StateHistory::Piksi::nsats_history.empty()) {
-    std::bitset<5> bitset_135;
-    Comms::trim_int(StateHistory::Piksi::nsats_history.get(), 0, 30, &bitset_135);
-    for(int i = 0; i < bitset_135.size(); i++) packet.set(packet_ptr++,bitset_135[i]);}
+    std::bitset<5> bitset_134;
+    Comms::trim_int(StateHistory::Piksi::nsats_history.get(), 0, 30, &bitset_134);
+    for(int i = 0; i < bitset_134.size(); i++) packet.set(packet_ptr++,bitset_134[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 }
 
@@ -757,9 +753,9 @@ static void serialize_packet_17(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
   while(!StateHistory::Piksi::recorded_position_history.empty()) {
-    std::bitset<45> bitset_136;
-    Comms::trim_vector(StateHistory::Piksi::recorded_position_history.get(), 6400, 7200, &bitset_136);
-    for(int i = 0; i < bitset_136.size(); i++) packet.set(packet_ptr++,bitset_136[i]);}
+    std::bitset<45> bitset_135;
+    Comms::trim_vector(StateHistory::Piksi::recorded_position_history.get(), 6400, 7200, &bitset_135);
+    for(int i = 0; i < bitset_135.size(); i++) packet.set(packet_ptr++,bitset_135[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 }
 
@@ -773,9 +769,9 @@ static void serialize_packet_18(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
   while(!StateHistory::Piksi::recorded_velocity_history.empty()) {
-    std::bitset<51> bitset_137;
-    Comms::trim_vector(StateHistory::Piksi::recorded_velocity_history.get(), 8000, 12000, &bitset_137);
-    for(int i = 0; i < bitset_137.size(); i++) packet.set(packet_ptr++,bitset_137[i]);}
+    std::bitset<51> bitset_136;
+    Comms::trim_vector(StateHistory::Piksi::recorded_velocity_history.get(), 8000, 12000, &bitset_136);
+    for(int i = 0; i < bitset_136.size(); i++) packet.set(packet_ptr++,bitset_136[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 }
 

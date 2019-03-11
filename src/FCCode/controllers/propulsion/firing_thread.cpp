@@ -66,12 +66,8 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
         if (valve_timings[i] > 1000) valve_timings[i] = 1000; // Saturate firing
         k++;
     }
-
-    // Add to delta-v
-    rwMtxWLock(&State::Propulsion::propulsion_state_lock);
-        State::Propulsion::delta_v_available += 
-            vect_mag(State::Propulsion::firing_data.impulse_vector.data()) / Constants::Master::SPACECRAFT_MASS;
-    rwMtxWUnlock(&State::Propulsion::propulsion_state_lock);
+    
+    // Full-system lock so that the timing of firings is not affected by any interrupts.
     chSysLock();
         debug_println("Initiating firing.");
         if (State::Hardware::can_get_data(Devices::dcdc)) {

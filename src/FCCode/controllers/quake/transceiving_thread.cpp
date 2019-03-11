@@ -17,14 +17,20 @@ static void get_latest_uplink(Devices::QLocate::Message* uplink) {
     while(Devices::quake.get_sbdix_response()[Devices::QLocate::MT_QUEUED] > 0) {
         int response;
         if (!State::Hardware::can_get_data(Devices::quake)) return;
-        Devices::quake.run_sbdix();
+        chMtxLock(&State::Hardware::quake_device_lock);
+            Devices::quake.run_sbdix();
+        chMtxUnlock(&State::Hardware::quake_device_lock);
         for(int i = 0; i < Constants::Quake::NUM_RETRIES; i++) {
-            response = Devices::quake.end_sbdix();
+            chMtxLock(&State::Hardware::quake_device_lock);
+                response = Devices::quake.end_sbdix();
+            chMtxUnlock(&State::Hardware::quake_device_lock);
             if (response != -1) break;
             chThdSleepMilliseconds(Constants::Quake::WAIT_BETWEEN_RETRIES);
         }
         if (response == 0) {
-            int status = Devices::quake.sbdrb();
+            chMtxLock(&State::Hardware::quake_device_lock);
+                int status = Devices::quake.sbdrb();
+            chMtxUnlock(&State::Hardware::quake_device_lock);
             if (status == 0) *uplink = Devices::quake.get_message();
         }
     }
