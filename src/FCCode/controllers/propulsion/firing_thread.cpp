@@ -74,8 +74,13 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
     rwMtxWUnlock(&State::Propulsion::propulsion_state_lock);
     chSysLock();
         debug_println("Initiating firing.");
-        spike_and_hold.execute_schedule(valve_timings);
-        debug_println("Completed firing.");
+        if (State::Hardware::can_get_data(Devices::dcdc)) {
+            spike_and_hold.execute_schedule(valve_timings);
+            debug_println("Completed firing.");
+        }
+        else {
+            debug_println("Could not complete firing because DCDC is off.");
+        }
     chSysUnlock();
 
     change_propulsion_state(State::Propulsion::PropulsionState::IDLE);

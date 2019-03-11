@@ -26,8 +26,10 @@ static void propagate_self_orbit() {
     }
 }
 
-static void update_rotation_quaternion() {
-    // TODO
+static void update_rotation_quaternions() {
+    // TODO update ECI to ECEF
+    
+    // TODO compute ECI to LVLH
 }
 
 static void propagate_other_orbit() {
@@ -48,7 +50,7 @@ THD_FUNCTION(GNC::orbit_propagator_controller, args) {
     while (true) {
         time += MS2ST(GNC::ORBIT_PROPAGATOR_DELTA_T);
         propagate_self_orbit();
-        update_rotation_quaternion();
+        update_rotation_quaternions();
         propagate_other_orbit();
         chThdSleepUntil(time);
     }

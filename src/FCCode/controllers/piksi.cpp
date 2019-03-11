@@ -21,6 +21,9 @@ namespace RTOSTasks {
 static void piksi_read() {
     debug_println("Reading Piksi data");
 
+    // Try to parse Piksi buffer
+    // TODO
+
     // GPS Time
     gps_time_t current_time;
     piksi.get_gps_time(&current_time);

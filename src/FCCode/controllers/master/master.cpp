@@ -10,7 +10,6 @@
 #include "../adcs/adcs_helpers.hpp"
 #include "../../state/EEPROMAddresses.hpp"
 #include "../../state/state_holder.hpp"
-#include "../../comms/apply_uplink.hpp"
 
 using State::Master::MasterState;
 using State::Master::master_state;
@@ -22,8 +21,8 @@ namespace RTOSTasks {
     THD_WORKING_AREA(master_controller_workingArea, 2048);
 }
 
-static void master_loop() {    
-    Comms::apply_uplink_data(State::Quake::most_recent_uplink);
+static void master_loop() {
+    Master::apply_uplink_data();
 
     MasterState master_state_copy = State::read(master_state, master_state_lock);
     PANState pan_state_copy = State::read(pan_state, master_state_lock);
@@ -74,16 +73,23 @@ static void master_loop() {
                     ADCSControllers::point_for_close_approach();
                 }
                 break;
-                case PANState::STANDBY:
-                    Comms::apply_uplink_commands(State::Quake::most_recent_uplink);
+                case PANState::STANDBY: {
+                    Master::apply_uplink_commands();
+                    
                     chMtxLock(&eeprom_lock);
                         EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 0);
                     chMtxUnlock(&eeprom_lock);
-                    State::write(State::ADCS::adcs_state, 
-                        State::ADCS::ADCSState::POINTING, State::ADCS::adcs_state_lock);
+
                     State::write(State::Propulsion::propulsion_state, 
-                        State::Propulsion::PropulsionState::IDLE, State::Propulsion::propulsion_state_lock);
-                    ADCSControllers::point_for_standby();
+                            State::Propulsion::PropulsionState::IDLE, State::Propulsion::propulsion_state_lock);
+                    
+                    bool adcs_is_pointing = State::read(State::ADCS::adcs_state, State::ADCS::adcs_state_lock);
+                    bool uplink_commanding_adcs = State::read(State::Quake::most_recent_uplink.command_adcs, State::Quake::uplink_lock);
+                    if (adcs_is_pointing && !uplink_commanding_adcs) {
+                        ADCSControllers::point_for_standby();
+                    }
+                    // Otherwise, apply_uplink() took care of the pointing.
+                }
                 break;
                 case PANState::LEADER_CLOSE_APPROACH:
                     ADCSControllers::point_for_close_approach();

@@ -11,7 +11,9 @@ THD_FUNCTION(PropulsionTasks::venting_fn, args) {
     // TODO notify ground that overpressure event happened.
     for(int i = 0; i < 10; i++) {
         chMtxLock(&spike_and_hold_lock);
-            spike_and_hold.execute_schedule({VALVE_VENT_TIME, VALVE_VENT_TIME, 0, 0, 0, 0});
+            if (State::Hardware::can_get_data(Devices::dcdc)) {
+                spike_and_hold.execute_schedule({VALVE_VENT_TIME, VALVE_VENT_TIME, 0, 0, 0, 0});
+            }
         chMtxUnlock(&spike_and_hold_lock);
         chThdSleepMilliseconds(VALVE_WAIT_TIME);
     }

@@ -40,7 +40,6 @@ static int can_fire_manuever() {
     if(State::Hardware::can_get_data(Devices::temp_sensor_outer))
         State::write(State::Propulsion::tank_outer_temperature, temp_sensor_outer.get(), propulsion_state_lock);
 
-    bool is_firing_planned = State::read(State::Propulsion::is_firing_planned, propulsion_state_lock);
     bool is_outer_tank_pressure_too_high = State::read(State::Propulsion::tank_pressure, propulsion_state_lock) >= 48
                                             && State::Hardware::can_get_data(Devices::pressure_sensor);
     bool is_inner_tank_temperature_too_high = State::read(State::Propulsion::tank_inner_temperature, propulsion_state_lock) >= 100 
@@ -51,30 +50,30 @@ static int can_fire_manuever() {
     if (is_inner_tank_temperature_too_high || is_outer_tank_temperature_too_high || is_outer_tank_pressure_too_high) {
         return -1;
     }
-    else if (is_firing_planned) {
-        gps_time_t firing_time = State::read(State::Propulsion::firing_data.time, propulsion_state_lock);
 
-        gps_time_t current_time = State::GNC::get_current_time();
-        if (current_time > firing_time - Constants::Propulsion::THRUSTER_PREPARATION_TIME) {
-            // We cannot execute this firing, since the planned time of the 
-            // firing (and its preparation) is less than the current time!
-            return 0;
-        }
+    gps_time_t firing_time = State::read(State::Propulsion::firing_data.time, propulsion_state_lock);
 
-        bool is_nighttime = !State::read(State::ADCS::is_sun_vector_determination_working, State::ADCS::adcs_state_lock);
-        bool has_firing_happened_in_nighttime = State::read(State::GNC::has_firing_happened_in_nighttime, State::ADCS::adcs_state_lock);
-        if (is_nighttime && has_firing_happened_in_nighttime) {
-            // We cannot execute the firing since we've already done one at night!
-            return 0;
-        }
-        else if (!is_nighttime) {
-            // We're now in daylight! So we can set the "has firing happened in nighttime" flag to false
-            // since it'll be a while before we return to nighttime.
-            has_firing_happened_in_nighttime = false;
-        }
-        return 1;
+    gps_time_t current_time = State::GNC::get_current_time();
+    if (current_time > firing_time - Constants::Propulsion::THRUSTER_PREPARATION_TIME) {
+        // We cannot execute this firing, since the planned time of the 
+        // firing (and its preparation) is less than the current time!
+        return 0;
     }
-    else return 0; // There's no firing to run at all!
+
+    bool is_standby = State::read(State::Master::pan_state, State::Master::master_state_lock) == State::Master::PANState::STANDBY;
+    bool is_nighttime = !State::read(State::ADCS::is_sun_vector_determination_working, State::ADCS::adcs_state_lock);
+    bool has_firing_happened_in_nighttime = State::read(State::GNC::has_firing_happened_in_nighttime, State::ADCS::adcs_state_lock);
+    if (is_nighttime && has_firing_happened_in_nighttime && !is_standby) {
+        // We cannot execute the firing since we've already done one at night! Also,
+        // we're not in standby mode, so we can't force a firing.
+        return 0;
+    }
+    else if (!is_nighttime) {
+        // We're now in daylight! So we can set the "has firing happened in nighttime" flag to false
+        // since it'll be a while before we return to nighttime.
+        has_firing_happened_in_nighttime = false;
+    }
+    return 1;
 }
 
 static void propulsion_state_controller() {

@@ -23,6 +23,7 @@ namespace State {
     namespace ADCS {
         ADCSState adcs_state = ADCSState::ADCS_SAFE_HOLD;
         std::array<float, 4> cmd_attitude;
+        PointingFrame cmd_attitude_frame = PointingFrame::ECI;
         std::array<float, 4> cur_attitude;
         std::array<float, 3> cur_ang_rate;
         bool is_sun_vector_determination_working = false;
@@ -45,8 +46,6 @@ namespace State {
 
     namespace Propulsion {
         PropulsionState propulsion_state = PropulsionState::DISABLED;
-        bool is_firing_planned = false;
-        bool is_firing_planned_by_uplink = false;
         float delta_v_available = 11.0f; // m/s
         Firing firing_data;
         float tank_pressure = 0.0f;
@@ -59,6 +58,7 @@ namespace State {
     namespace GNC {
         std::array<double, 3> gps_position, gps_position_other, gps_velocity, gps_velocity_other;
         std::array<double, 4> ecef_to_eci;
+        std::array<double, 4> eci_to_lvlh;
         gps_time_t current_time;
         systime_t time_collection_timestamp;
         bool has_firing_happened_in_nighttime = false;

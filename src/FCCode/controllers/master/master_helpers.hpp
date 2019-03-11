@@ -14,6 +14,9 @@ namespace Master {
     
     extern virtual_timer_t docking_timer;
     void stop_docking_mode(void* args);
+
+    void apply_uplink_data();
+    void apply_uplink_commands();
 }
 
 #endif

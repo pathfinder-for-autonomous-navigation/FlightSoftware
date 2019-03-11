@@ -16,6 +16,7 @@ void Quake::go_to_waiting() {
 static void get_latest_uplink(Devices::QLocate::Message* uplink) {
     while(Devices::quake.get_sbdix_response()[Devices::QLocate::MT_QUEUED] > 0) {
         int response;
+        if (!State::Hardware::can_get_data(Devices::quake)) return;
         Devices::quake.run_sbdix();
         for(int i = 0; i < Constants::Quake::NUM_RETRIES; i++) {
             response = Devices::quake.end_sbdix();

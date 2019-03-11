@@ -6,20 +6,21 @@
 #include <array>
 
 namespace Comms {
-  constexpr unsigned int UPLINK_SIZE_BITS = 540;
+  constexpr unsigned int UPLINK_SIZE_BITS = 530;
   struct Uplink {
     int uplink_number;
     gps_time_t uplink_timestamp;
     std::array<double, 3> other_satellite_position;
-    gps_time_t other_satellite_position_timestamp;
     std::array<double, 3> other_satellite_velocity;
-    gps_time_t other_satellite_velocity_timestamp;
+    gps_time_t other_satellite_timestamp;
     int constant_0_id;
     int constant_0_val;
     int constant_1_id;
     int constant_1_val;
     int constant_2_id;
     int constant_2_val;
+    int constant_3_id;
+    int constant_3_val;
     int master_state;
     int pan_state;
     bool is_follower;

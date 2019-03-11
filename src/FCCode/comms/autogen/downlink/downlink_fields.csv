@@ -113,8 +113,6 @@ State::Gomspace,State::Gomspace::gomspace_data.temp[3],,,gomspace,1,temperature,
 State::Gomspace,State::Gomspace::gomspace_data.battmode,0,0,gomspace,1,int,50
 State::Propulsion,State::Propulsion::propulsion_state,0,5,propulsion,1,int,3
 State::Propulsion,State::Propulsion::delta_v_available,0,15,propulsion,1,float,11
-State::Propulsion,State::Propulsion::is_firing_planned,,,propulsion,1,bool,1
-State::Propulsion,State::Propulsion::is_firing_planned_by_uplink,,,propulsion,1,bool,1
 State::Propulsion,State::Propulsion::firing_data.impulse_vector,0,0.005,propulsion,1,float vector,26
 State::Propulsion,State::Propulsion::firing_data.time,,,propulsion,1,gps time,49
 State::Piksi,State::Piksi::recorded_current_time,,,piksi,1,gps time,49
@@ -138,15 +136,15 @@ StateHistory::ADCS,StateHistory::ADCS::ssa_vector_history,0,1,adcs_history,10,fl
 StateHistory::Piksi,StateHistory::Piksi::iar_history,0,4294967295,piksi_history,10,int,32
 StateHistory::Piksi,StateHistory::Piksi::nsats_history,0,30,piksi_history,10,int,5
 StateHistory::Piksi,StateHistory::Piksi::recorded_position_history,6400,7200,piksi_history,10,double vector,45
-StateHistory::Piksi,StateHistory::Piksi::recorded_velocity_history,8,12,piksi_history,10,double vector,51
+StateHistory::Piksi,StateHistory::Piksi::recorded_velocity_history,8000,12000,piksi_history,10,double vector,51
 StateHistory::Piksi,StateHistory::Piksi::recorded_position_other_history,6400,7200,piksi_history,10,double vector,45
 StateHistory::Propulsion,StateHistory::Propulsion::tank_pressure_history,0,100,propulsion_history,10,float,10
 StateHistory::Propulsion,StateHistory::Propulsion::inner_tank_temperature_history,,,propulsion_history,10,temperature,9
 StateHistory::Propulsion,StateHistory::Propulsion::outer_tank_temperature_history,,,propulsion_history,10,temperature,9
 StateHistory::Piksi,StateHistory::Piksi::position_history,6400,7200,piksi_history,10,double vector,45
-StateHistory::Piksi,StateHistory::Piksi::velocity_history,8,12,piksi_history,10,double vector,51
+StateHistory::Piksi,StateHistory::Piksi::velocity_history,8000,12000,piksi_history,10,double vector,51
 StateHistory::Piksi,StateHistory::Piksi::position_other_history,6400,7200,piksi_history,10,double vector,45
-StateHistory::Piksi,StateHistory::Piksi::velocity_other_history,8,12,piksi_history,10,double vector,51
+StateHistory::Piksi,StateHistory::Piksi::velocity_other_history,8000,12000,piksi_history,10,double vector,51
 FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
 FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1
 FaultState::Gomspace,FaultState::Gomspace::fault_bits[i],,,gomspace_faults,1,bool,1

@@ -5,15 +5,14 @@ TYPES = ["bool", "int", "state int", "float vector", "double vector", "quaternio
 MAX_INT = 4294967295
 
 FIELDS = [
-    {"name" : "uplink_number",                      "type" : "state int", "min" : 0, "max" : MAX_INT},
-    {"name" : "uplink_timestamp",                   "type" : "gps time"},
-    {"name" : "other_satellite_position",           "type" : "double vector", "size" : 45, "min" : 6400, "max" : 7200},
-    {"name" : "other_satellite_position_timestamp", "type" : "gps time" },
-    {"name" : "other_satellite_velocity",           "type" : "double vector", "size" : 45, "min" : 8000, "max" : 12000},
-    {"name" : "other_satellite_velocity_timestamp", "type" : "gps time" },
+    {"name" : "uplink_number",             "type" : "state int", "min" : 0, "max" : MAX_INT},
+    {"name" : "uplink_timestamp",          "type" : "gps time"},
+    {"name" : "other_satellite_position",  "type" : "double vector", "size" : 45, "min" : 6400, "max" : 7200},
+    {"name" : "other_satellite_velocity",  "type" : "double vector", "size" : 45, "min" : 8000, "max" : 12000},
+    {"name" : "other_satellite_timestamp", "type" : "gps time" },
 ]
 
-for x in range(0,3):
+for x in range(0,4):
     FIELDS.append({"name" : "constant_{0}_id".format(x),  "type" : "state int",                 "min" : 0, "max" : 100})
     FIELDS.append({"name" : "constant_{0}_val".format(x), "type" : "int",       "size" : 32,    "min" : 0, "max" : MAX_INT})
 

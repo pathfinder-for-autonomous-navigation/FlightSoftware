@@ -18,6 +18,7 @@
 #include "device_states.hpp"
 #include "../controllers/controllers.hpp"
 #include "../comms/uplink_struct.hpp"
+#include "../comms/downlink_serializer.hpp"
 
 namespace State {
   //! Helper function to read from state variables in a protected way
@@ -67,6 +68,8 @@ namespace State {
     extern ADCSState adcs_state;
     //! If mode is "pointing", the currently commanded attitude as a quaternion
     extern std::array<float, 4> cmd_attitude;
+    //! Frame in which the command attitude is specified (either ECI or LVLH).
+    extern PointingFrame cmd_attitude_frame;
     //! Current attitude as a quaternion
     extern std::array<float, 4> cur_attitude;
     //! Current angular rate as a vector in body frame
@@ -130,10 +133,6 @@ namespace State {
     // would contribute to significant inaccuracy. The purpose of this field is to serve as an upper
     // bound.
     extern float delta_v_available;
-    //! Is there a currently planned firing?
-    extern bool is_firing_planned;
-    //! Is the currently planned firing due to a previous uplink?
-    extern bool is_firing_planned_by_uplink;
     //! Firing data for an upcoming planned firing.
     extern Firing firing_data;
     //! Current pressure within tank.
@@ -184,6 +183,8 @@ namespace State {
     extern std::array<double, 3> gps_velocity_other;
     //! Quaternion representing rotation from ECEF to ECI.
     extern std::array<double, 4> ecef_to_eci;
+    //! Quaternion representing rotation from ECI to LVLH.
+    extern std::array<double, 4> eci_to_lvlh;
     //! Current propagated GPS time. Propagation occurs on each call of current_time(). 
     // This field needs to be updated every time GPS time is actually collected.
     extern gps_time_t current_time;
@@ -220,7 +221,7 @@ namespace State {
 
     //! Maximum number of data packets to store in history.
     // TODO store most recent packets in Piksi as well.
-    constexpr unsigned int MAX_DOWNLINK_HISTORY = 10*19;
+    constexpr unsigned int MAX_DOWNLINK_HISTORY = Comms::NUM_PACKETS * 10;
     //! Packets are automatically added to this stack by the consumer threads if they were 
     // not forcibly required to produce a partial packet.
     extern circular_stack<Devices::QLocate::Message, MAX_DOWNLINK_HISTORY> downlink_stack;

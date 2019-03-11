@@ -152,7 +152,19 @@ static THD_FUNCTION(adcs_loop, arg) {
                 break;
                 case ADCSState::POINTING: {
                     rwMtxRLock(&adcs_state_lock);
-                        quat_rot_diff(State::ADCS::cmd_attitude.data(), State::ADCS::cur_attitude.data(), AttitudePD::deltaquat);
+                        // Adjust attitude to be in ECI frame
+                        std::array<float, 4> cmd_attitude_eci;
+                        State::ADCS::PointingFrame frame = State::read(State::ADCS::cmd_attitude_frame, adcs_state_lock);
+                        if (frame == State::ADCS::PointingFrame::LVLH) {
+                            std::array<float, 4> cmd_attitude_lvlh = State::read(State::ADCS::cmd_attitude, adcs_state_lock);
+                            std::array<float, 4> eci_to_lvlh;
+                            for(int i = 0; i < 4; i++) eci_to_lvlh[i] = State::read(State::GNC::eci_to_lvlh[i], State::GNC::gnc_state_lock);
+                            quat_cross_mult(eci_to_lvlh.data(), cmd_attitude_lvlh.data(), cmd_attitude_eci.data());
+                        }
+                        else
+                            cmd_attitude_eci = State::read(State::ADCS::cmd_attitude, adcs_state_lock);
+                        
+                        quat_rot_diff(cmd_attitude_eci.data(), State::ADCS::cur_attitude.data(), AttitudePD::deltaquat);
                         for(int i = 0; i < 3; i++) AttitudePD::angrate[i] = State::ADCS::cur_ang_rate[i];
                     rwMtxRUnlock(&adcs_state_lock);
                     AttitudePD::update();

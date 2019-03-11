@@ -10,6 +10,10 @@ using State::Quake::quake_state_lock;
 using namespace Comms;
 
 static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
+    if (!State::Hardware::can_get_data(quake))
+        // Quake isn't on
+        return -1;
+
     int response;
     response = quake.sbdwb(packet.mes, Comms::PACKET_SIZE_BYTES);
     if (response != 0) return response;
