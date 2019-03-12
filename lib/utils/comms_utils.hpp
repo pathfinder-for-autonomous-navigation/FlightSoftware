@@ -218,6 +218,16 @@ namespace Comms {
      *  @param[out] result GPS time struct containing the uncompressed GPS time.
      * **/
     void expand_gps_time(const std::bitset<GPSTIME_SIZE>& gpstime, gps_time_t* result);
+
+    /** @brief Expands bitset into a Quake message
+     * */
+    template<unsigned int bitset_size>
+    void expand_message(const std::bitset<bitset_size>& bitset, Devices::QLocate::Message* message);
+
+    /** @brief Converts Quake message into a bitset
+     * */
+    template<unsigned int bitset_size>
+    void trim_bitset(const Devices::QLocate::Message& message, std::bitset<bitset_size>* bitset);
 }
 /** @} */
 #include "comms_utils.inl"

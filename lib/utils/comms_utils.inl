@@ -229,3 +229,25 @@ inline int Comms::expand_int(const std::bitset<max_int_size>& result, int min, i
     unsigned int resolution = (max - min) / pow(2, max_int_size);
     return min + result.to_ulong() * resolution;
 }
+
+template<unsigned int bitset_size>
+void Comms::expand_message(const std::bitset<bitset_size>& bitset, Devices::QLocate::Message* message) {
+    unsigned int byte_length = (unsigned int) ceilf((0.0f + bitset.size()) / 8);
+    message->length = byte_length;
+    char* mes = message->mes;
+    for(int i = 0; i < byte_length; i++) {
+        std::bitset<8> byte_repr;
+        for(int j = 0; i < 8; j++) byte_repr.set(j, bitset[i*8 + j]);
+        unsigned char byte_char = (unsigned char) byte_repr.to_ulong();
+        mes[i] = byte_char;
+    }
+}
+
+template<unsigned int bitset_size>
+void Comms::trim_bitset(const Devices::QLocate::Message& message, std::bitset<bitset_size>* bitset) {
+    unsigned int byte_length = (unsigned int) ceilf((0.0f + bitset.size()) / 8);
+    for(int i = 0; i < byte_length; i++) {
+        std::bitset<8> byte_repr(message.mes[i]);
+        for(int j = 0; i < 8; j++) bitset.set(i*8+j, bitset[j]);
+    }
+}
