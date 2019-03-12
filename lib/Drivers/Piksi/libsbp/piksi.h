@@ -99,14 +99,14 @@ typedef struct __attribute__((packed)) {
  * operating system (RTOS) thread usage statistics for the named
  * thread. The reported percentage values must be normalized.
  */
-#define SBP_MSG_THREAD_STATE    0x0017
+#define SBP_MSG_THread    0x0017
 typedef struct __attribute__((packed)) {
   char name[20];      /**< Thread name (NULL terminated) */
   u16 cpu;           /**< Percentage cpu use for this thread. Values range from 0
 - 1000 and needs to be renormalized to 100
  */
   u32 stack_free;    /**< Free stack space for this thread [bytes] */
-} msg_thread_state_t;
+} msg_thread_t;
 
 
 /** State of the UART channel

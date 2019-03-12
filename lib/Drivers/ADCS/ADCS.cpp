@@ -6,11 +6,11 @@
 
 #include "ADCS.hpp"
 
-ADCS::ADCS(i2c_t3 &i2c_wire, unsigned char address) : I2CDevice(i2c_wire, address) {}
+ADCS::ADCS(const std::string& name, 
+           i2c_t3 &i2c_wire,
+           unsigned char address) : I2CDevice(name, i2c_wire, address) {}
 
 bool ADCS::i2c_ping() { return false; }
-static std::string adcs_name = "ADCS";
-std::string& ADCS::name() const { return adcs_name; }
 void ADCS::set_mode(unsigned char mode) {}
 void ADCS::set_ssa_mode(unsigned char ssa_mode) {}
 void ADCS::set_mtr_cmd(const float* a) {}

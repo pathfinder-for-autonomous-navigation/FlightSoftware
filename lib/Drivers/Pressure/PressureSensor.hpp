@@ -16,14 +16,13 @@ namespace Devices {
          *  @param low_pressure_pin Pin # attached to the low-gain ADC to measure low pressures.
          *  @param high_pressure_pin Pin # attached to the high-gain ADC to measure high pressures.
          */
-        PressureSensor(unsigned char low_pressure_pin, unsigned char high_pressure_pin);
+        PressureSensor(const std::string& name, unsigned char low_pressure_pin, unsigned char high_pressure_pin);
 
         // Device functions
         bool setup() override;
         bool is_functional() override;
         void disable() override;
         void reset() override;
-        std::string& name() const override;
 
         float get();
       private:

@@ -30,7 +30,11 @@ namespace Devices {
  *  flight computer have common functionality. This will be most useful for
  *  communications downlinks and updates on the satellites health. **/
 class Device {
+ protected:
+  const std::string& name_;
  public:
+  Device(const std::string& n);
+  ~Device();
   /** @brief Sets up communication with the device and verifies
    *         the device is responding to communication attempts.
    *
@@ -50,7 +54,7 @@ class Device {
    *         originated command. **/
   virtual void disable();
 
-  virtual std::string& name() const;
+  const std::string& name() const;
 };
 }  // namespace Devices
 

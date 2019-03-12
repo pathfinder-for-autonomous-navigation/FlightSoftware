@@ -5,11 +5,11 @@
  */
 
 #include <EEPROM.h>
-#include "hold_functions.hpp"
-#include "../adcs/adcs_pointing_calculators.hpp"
+#include "master_helpers.hpp"
+#include "../constants.hpp"
+#include "../adcs/adcs_helpers.hpp"
 #include "../../state/EEPROMAddresses.hpp"
 #include "../../state/state_holder.hpp"
-#include "../../comms/apply_uplink.hpp"
 
 using State::Master::MasterState;
 using State::Master::master_state;
@@ -21,43 +21,34 @@ namespace RTOSTasks {
     THD_WORKING_AREA(master_controller_workingArea, 2048);
 }
 
-static void master_loop() {    
-    rwMtxRLock(&State::Quake::uplink_lock);
-        bool is_uplink_processed = State::Quake::most_recent_uplink.is_uplink_processed;
-    rwMtxRUnlock(&State::Quake::uplink_lock);
-    if (!is_uplink_processed) {
-        Comms::apply_uplink(State::Quake::most_recent_uplink);
-    }
+static void master_loop() {
+    Master::apply_uplink_data();
 
-    rwMtxRLock(&master_state_lock);
-        MasterState master_state_copy = master_state;
-        PANState pan_state_copy = pan_state;
-        debug_printf("Master State and PAN State: %d %d\n", master_state_copy, pan_state_copy);
-    rwMtxRUnlock(&master_state_lock);
+    MasterState master_state_copy = State::read(master_state, master_state_lock);
+    PANState pan_state_copy = State::read(pan_state, master_state_lock);
+    debug_printf("Master State and PAN State: %d %d\n", master_state_copy, pan_state_copy);
     switch(master_state_copy) {
         case MasterState::DETUMBLE: {
-            unsigned short int safe_hold_reason = HoldFunctions::safe_hold_needed();
-            if (safe_hold_reason != 0) HoldFunctions::safe_hold(safe_hold_reason);
-            rwMtxRLock(&State::ADCS::adcs_state_lock);
-                State::ADCS::ADCSState adcs_state = State::ADCS::adcs_state;
-            rwMtxRUnlock(&State::ADCS::adcs_state_lock);
+            chMtxLock(&eeprom_lock);
+                EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 0);
+            chMtxUnlock(&eeprom_lock);
+            unsigned short int safe_hold_reason = Master::safe_hold_needed();
+            if (safe_hold_reason != 0) Master::safe_hold(safe_hold_reason);
+            
+            State::ADCS::ADCSState adcs_state = State::read(State::ADCS::adcs_state, State::ADCS::adcs_state_lock);
+            
             if (State::Master::is_deployed && adcs_state != State::ADCS::ADCSState::ADCS_DETUMBLE) {
-                rwMtxWLock(&State::ADCS::adcs_state_lock);
-                    State::ADCS::adcs_state = State::ADCS::ADCSState::ADCS_DETUMBLE;
-                rwMtxWUnlock(&State::ADCS::adcs_state_lock);
+                State::write(State::ADCS::adcs_state, 
+                    State::ADCS::ADCSState::ADCS_DETUMBLE, State::ADCS::adcs_state_lock);
             }
-            rwMtxRLock(&State::ADCS::adcs_state_lock);
-            float angular_rate = State::ADCS::angular_rate();
-            rwMtxRUnlock(&State::ADCS::adcs_state_lock);
-            if (angular_rate < State::ADCS::MAX_STABLE_ANGULAR_RATE) {
-                rwMtxWLock(&State::ADCS::adcs_state_lock);
-                    State::ADCS::adcs_state = State::ADCS::ADCSState::POINTING;
-                    State::ADCS::cmd_attitude = State::ADCS::cur_attitude;
-                rwMtxWUnlock(&State::ADCS::adcs_state_lock);
-                rwMtxWLock(&master_state_lock);
-                    master_state = MasterState::NORMAL;
-                    pan_state = PANState::STANDBY;
-                rwMtxWUnlock(&master_state_lock);
+
+            if (State::ADCS::angular_rate() < Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
+                State::write(State::ADCS::adcs_state, 
+                    State::ADCS::ADCSState::POINTING, State::ADCS::adcs_state_lock);
+                State::write(State::ADCS::cmd_attitude, 
+                    State::ADCS::cur_attitude, State::ADCS::adcs_state_lock);
+                State::write(master_state, MasterState::NORMAL, master_state_lock);
+                State::write(pan_state, PANState::STANDBY, master_state_lock);
             }
         }
         break;
@@ -65,38 +56,86 @@ static void master_loop() {
             // The apply_uplink() is continuously checking uplink for manual control commands and mode shift command
         break;
         case MasterState::NORMAL: {
-            unsigned short int safe_hold_reason = HoldFunctions::safe_hold_needed();
+            unsigned short int safe_hold_reason = Master::safe_hold_needed();
             debug_printf("Safe hold reason: %d\n", safe_hold_reason);
-            if (safe_hold_reason != 0) HoldFunctions::safe_hold(safe_hold_reason);
+            if (safe_hold_reason != 0) Master::safe_hold(safe_hold_reason);
             switch(pan_state_copy) {
                 case PANState::FOLLOWER: {
+                    chMtxLock(&eeprom_lock);
+                        EEPROM.put(EEPROM_ADDRESSES::IS_FOLLOWER, true);
+                    chMtxUnlock(&eeprom_lock);
+                    State::write(State::Master::is_follower, true, State::Master::master_state_lock);
                     RTOSTasks::LoopTimes::GNC = 60000;
                 }
                 break;
                 case PANState::FOLLOWER_CLOSE_APPROACH: {
-                     RTOSTasks::LoopTimes::GNC = 10000;
+                    RTOSTasks::LoopTimes::GNC = 10000;
                     ADCSControllers::point_for_close_approach();
                 }
                 break;
-                case PANState::PAIRED: {
-                    // TODO Modify ADCS gains
-                    rwMtxWLock(&master_state_lock);
-                        pan_state = PANState::STANDBY;
-                    rwMtxWUnlock(&master_state_lock);
+                case PANState::STANDBY: {
+                    if (!State::read(State::Master::uplink_command_applied, master_state_lock)) {
+                        Master::apply_uplink_commands();
+                        State::write(State::Master::uplink_command_applied, true, master_state_lock);
+                    }
+                    
+                    chMtxLock(&eeprom_lock);
+                        EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 0);
+                    chMtxUnlock(&eeprom_lock);
+
+                    State::write(State::Propulsion::propulsion_state, 
+                            State::Propulsion::PropulsionState::IDLE, State::Propulsion::propulsion_state_lock);
+                    
+                    bool adcs_is_pointing = State::read(State::ADCS::adcs_state, State::ADCS::adcs_state_lock);
+                    bool uplink_commanding_adcs = State::read(State::Quake::most_recent_uplink.command_adcs, State::Quake::uplink_lock);
+                    if (adcs_is_pointing && !uplink_commanding_adcs) {
+                        ADCSControllers::point_for_standby();
+                    }
+                    // Otherwise, apply_uplink_commands() took care of the pointing.
                 }
-                break;
-                case PANState::STANDBY:
-                    ADCSControllers::point_for_standby();
                 break;
                 case PANState::LEADER_CLOSE_APPROACH:
                     ADCSControllers::point_for_close_approach();
                 break;
-                case PANState::SPACEJUNK:
-                    // Do ABSOLUTELY nothing.
-                    // TODO set ADCS to passive
+                case PANState::DOCKING: {
+                    chMtxLock(&eeprom_lock);
+                        EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 1);
+                    chMtxUnlock(&eeprom_lock);
+                    State::write(State::ADCS::adcs_state, 
+                        State::ADCS::ADCSState::ZERO_TORQUE, State::ADCS::adcs_state_lock);
+                    State::write(State::Propulsion::propulsion_state, 
+                        State::Propulsion::PropulsionState::DISABLED, State::Propulsion::propulsion_state_lock);
+
+                    chVTDoSetI(&Master::docking_timer, S2ST(Constants::Master::DOCKING_TIMEOUT), Master::stop_docking_mode, NULL);
+                    if (Devices::docking_switch.pressed() && State::Hardware::can_get_data(Devices::docking_switch)) {
+                        State::write(State::Master::pan_state, PANState::DOCKED, master_state_lock);
+                    }
+                }
+                break;
+                case PANState::DOCKED: {
+                    chMtxLock(&eeprom_lock);
+                        EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 2);
+                    chMtxUnlock(&eeprom_lock);
+                    // Do nothing, just wait for ground command
+                }
+                break;
+                case PANState::PAIRED: {
+                    // TODO Modify ADCS gains
+                    State::write(pan_state, PANState::STANDBY, master_state_lock);
+                }
+                break;
+                case PANState::SPACEJUNK: {
+                    chMtxLock(&eeprom_lock);
+                        EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 4);
+                    chMtxUnlock(&eeprom_lock);
+                    // Point in the same direction in ECI. Momentum is slowly dumped by the
+                    // pointing function.
+                    State::write(State::ADCS::cmd_attitude, State::ADCS::cur_attitude, State::ADCS::adcs_state_lock);
+                    State::write(State::ADCS::adcs_state, State::ADCS::ADCSState::POINTING, State::ADCS::adcs_state_lock);
+                }
                 break;
                 default:
-                    HoldFunctions::safe_hold(0); // TODO fix
+                    Master::safe_hold(0); // TODO fix
             }
         }
         break;
@@ -105,7 +144,7 @@ static void master_loop() {
             break;
         default: {
             debug_printf("%d\n", master_state);
-            HoldFunctions::safe_hold(0); // TODO fix
+            Master::safe_hold(0); // TODO fix
         }
     }
 }
@@ -120,6 +159,8 @@ void master_init() {
     chRegSetThreadName("MASTER");
     debug_println("Master controller process has started.");
 
+    chVTObjectInit(&Master::docking_timer);
+
     // Should we be in safe hold?
     chMtxLock(&eeprom_lock);
         bool previous_boot_safehold = false;
@@ -127,7 +168,7 @@ void master_init() {
     chMtxUnlock(&eeprom_lock);
     if (previous_boot_safehold) {
         debug_println("Previous boot ended in safehold mode! The system will start in safehold now.");
-        HoldFunctions::safe_hold(0); // TODO fix
+        Master::safe_hold(0); // TODO fix
         return;
     }
 
@@ -137,25 +178,48 @@ void master_init() {
     chMtxUnlock(&eeprom_lock);
     if (prevboot_initialization_hold) {
         debug_println("Previous boot ended in initialization hold mode! The system will start in initialization hold now.");
-        HoldFunctions::initialization_hold(0); // TODO fix
+        Master::initialization_hold(0); // TODO fix
         return;
     }
 
     debug_println("Previous boot did not end in initialization or safe hold mode. Checking to see if a hold is necessary...");
-    if (HoldFunctions::safe_hold_needed()) {
-        rwMtxRLock(&master_state_lock);
-            unsigned int boot_number = State::Master::boot_number;
-        rwMtxRUnlock(&master_state_lock);
+    if (Master::safe_hold_needed()) {
+        unsigned int boot_number = State::read(State::Master::boot_number, master_state_lock);
         if (boot_number == 1)
-            HoldFunctions::initialization_hold(0); // TODO fix
+            Master::initialization_hold(0); // TODO fix
         else
-            HoldFunctions::safe_hold(0); // TODO fix
+            Master::safe_hold(0); // TODO fix
     }
     else {
         debug_println("Proceeding to normal boot.");
+        chMtxLock(&eeprom_lock);
+            bool is_follower = EEPROM.read(EEPROM_ADDRESSES::IS_FOLLOWER);
+            unsigned char final_state = EEPROM.read(EEPROM_ADDRESSES::FINAL_STATE_FLAG);
+        chMtxUnlock(&eeprom_lock);
         rwMtxWLock(&State::Master::master_state_lock);
-            master_state = MasterState::DETUMBLE;
-            pan_state = PANState::MASTER_DETUMBLE;
+            if (final_state != 0) {
+                State::Master::is_follower = is_follower;
+            }
+            if (final_state == 1) {
+                master_state = MasterState::NORMAL;
+                pan_state = PANState::DOCKING;
+            }
+            else if (final_state == 2) {
+                master_state = MasterState::NORMAL;
+                pan_state = PANState::DOCKED;
+            }
+            else if(final_state == 3) {
+                master_state = MasterState::NORMAL;
+                pan_state = PANState::PAIRED;
+            }
+            else if (final_state == 4) {
+                master_state = MasterState::NORMAL;
+                pan_state = PANState::SPACEJUNK;
+            }
+            else {
+                master_state = MasterState::DETUMBLE;
+                pan_state = PANState::MASTER_DETUMBLE;
+            }
         rwMtxWUnlock(&State::Master::master_state_lock);
     }
 }

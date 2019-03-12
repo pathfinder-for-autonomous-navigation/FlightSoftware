@@ -5,6 +5,7 @@
  */
 
 #include "../controllers.hpp"
+#include "../constants.hpp"
 #include <ADCS/global.hpp>
 #include <rwmutex.hpp>
 #include "../../state/state_holder.hpp"
@@ -18,8 +19,7 @@
 
 namespace RTOSTasks {
     THD_WORKING_AREA(adcs_controller_workingArea, 2048);
-    threads_queue_t adcs_detumbled; // TODO implement into the functions below
-    threads_queue_t adcs_pointing_accomplished; // TODO implement into the functions below
+    threads_queue_t adcs_detumbled;
 }
 using State::ADCS::ADCSState;
 using State::ADCS::adcs_state_lock;
@@ -42,16 +42,17 @@ static void read_adcs_data() {
     ADCSControllers::Estimator::time = (unsigned int) State::GNC::get_current_time();
     rwMtxRUnlock(&State::GNC::gnc_state_lock);
     
-    float rwa_speed_cmds_rd[3], rwa_ramps_rd[3];
-    adcs_system.get_rwa(rwa_speed_cmds_rd, ADCSControllers::Estimator::hwheel_sensor_body, rwa_ramps_rd);
+    std::array<float, 3> rwa_speed_cmds_rd, rwa_ramps_rd, rwa_speeds_rd, gyro_data, mag_data;
+    adcs_system.get_rwa(rwa_speed_cmds_rd.data(), ADCSControllers::Estimator::hwheel_sensor_body, rwa_ramps_rd.data());
     adcs_system.get_imu(ADCSControllers::Estimator::rate_sensor_body, ADCSControllers::Estimator::magfield_sensor_body);
-    rwMtxWLock(&State::ADCS::adcs_state_lock);
-        for(int i = 0; i < 3; i++) State::ADCS::rwa_ramps_rd[i] = rwa_ramps_rd[i];
-        for(int i = 0; i < 3; i++) State::ADCS::rwa_speed_cmds_rd[i] = rwa_speed_cmds_rd[i];
-        for(int i = 0; i < 3; i++) State::ADCS::rwa_speeds_rd[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
-        for(int i = 0; i < 3; i++) State::ADCS::gyro_data[i] = ADCSControllers::Estimator::rate_sensor_body[i];
-        for(int i = 0; i < 3; i++) State::ADCS::mag_data[i] = ADCSControllers::Estimator::magfield_sensor_body[i];
-    rwMtxWUnlock(&State::ADCS::adcs_state_lock);
+    for(int i = 0; i < 3; i++) rwa_speeds_rd[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
+    for(int i = 0; i < 3; i++) gyro_data[i] = ADCSControllers::Estimator::rate_sensor_body[i];
+    for(int i = 0; i < 3; i++) mag_data[i] = ADCSControllers::Estimator::magfield_sensor_body[i];
+    State::write(State::ADCS::rwa_ramps_rd, rwa_ramps_rd, adcs_state_lock);
+    State::write(State::ADCS::rwa_speed_cmds_rd, rwa_speed_cmds_rd, adcs_state_lock);
+    State::write(State::ADCS::rwa_speeds_rd, rwa_speeds_rd, adcs_state_lock);
+    State::write(State::ADCS::gyro_data, gyro_data, adcs_state_lock);
+    State::write(State::ADCS::mag_data, mag_data, adcs_state_lock);
 
     std::array<float, 3> ssa_vec;
     if (ssa_mode == SSAMode::IN_PROGRESS) {
@@ -116,6 +117,12 @@ static THD_FUNCTION(adcs_loop, arg) {
             rwMtxRUnlock(&adcs_state_lock);
             switch(adcs_state) {
                 case ADCSState::ADCS_DETUMBLE: {
+                    if (State::ADCS::angular_rate() < Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
+                        chThdDequeueAllI(&RTOSTasks::adcs_detumbled, (msg_t) 0);
+                        rwMtxWLock(&adcs_state_lock);
+                            State::ADCS::adcs_state = ADCSState::ZERO_TORQUE;
+                        rwMtxWUnlock(&adcs_state_lock);
+                    }
                     for(int i = 0; i < 3; i++) MomentumControl::magfield[i] = ADCSControllers::Estimator::magfield_filter_body[i];
                     for(int i = 0; i < 3; i++) MomentumControl::momentum[i] = ADCSControllers::Estimator::htotal_filter_body[i];
                     MomentumControl::update();
@@ -136,7 +143,7 @@ static THD_FUNCTION(adcs_loop, arg) {
                     // Command constant wheel speed and MTR
                     std::array<float, 3> mtr_cmds, rwa_speed_cmds;
                     rwMtxRLock(&adcs_state_lock);
-                        mtr_cmds = State::ADCS::mtr_cmds;
+                        mtr_cmds.fill(0);
                         rwa_speed_cmds = State::ADCS::rwa_speed_cmds;
                     rwMtxRUnlock(&adcs_state_lock);
                     adcs_system.set_mtr_cmd(mtr_cmds.data());
@@ -145,7 +152,19 @@ static THD_FUNCTION(adcs_loop, arg) {
                 break;
                 case ADCSState::POINTING: {
                     rwMtxRLock(&adcs_state_lock);
-                        quat_rot_diff(State::ADCS::cmd_attitude.data(), State::ADCS::cur_attitude.data(), AttitudePD::deltaquat);
+                        // Adjust attitude to be in ECI frame
+                        std::array<float, 4> cmd_attitude_eci;
+                        State::ADCS::PointingFrame frame = State::read(State::ADCS::cmd_attitude_frame, adcs_state_lock);
+                        if (frame == State::ADCS::PointingFrame::LVLH) {
+                            std::array<float, 4> cmd_attitude_lvlh = State::read(State::ADCS::cmd_attitude, adcs_state_lock);
+                            std::array<float, 4> eci_to_lvlh;
+                            for(int i = 0; i < 4; i++) eci_to_lvlh[i] = State::read(State::GNC::eci_to_lvlh[i], State::GNC::gnc_state_lock);
+                            quat_cross_mult(eci_to_lvlh.data(), cmd_attitude_lvlh.data(), cmd_attitude_eci.data());
+                        }
+                        else
+                            cmd_attitude_eci = State::read(State::ADCS::cmd_attitude, adcs_state_lock);
+                        
+                        quat_rot_diff(cmd_attitude_eci.data(), State::ADCS::cur_attitude.data(), AttitudePD::deltaquat);
                         for(int i = 0; i < 3; i++) AttitudePD::angrate[i] = State::ADCS::cur_ang_rate[i];
                     rwMtxRUnlock(&adcs_state_lock);
                     AttitudePD::update();

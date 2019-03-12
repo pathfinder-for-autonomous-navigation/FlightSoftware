@@ -3,7 +3,7 @@
 
 using namespace Devices;
 
-DockingSwitch::DockingSwitch(unsigned char sw) : switch_pin_(sw) {}
+DockingSwitch::DockingSwitch(const std::string& name, unsigned char sw) : Device(name), switch_pin_(sw) {}
 
 bool DockingSwitch::setup() { 
     pinMode(switch_pin_, INPUT);
@@ -18,6 +18,3 @@ void DockingSwitch::reset() { }
 bool DockingSwitch::pressed() {
     return (digitalRead(switch_pin_) == 1);
 }
-
-static std::string dockingswitch_name = "Docking Switch";
-std::string& DockingSwitch::name() const { return dockingswitch_name; }

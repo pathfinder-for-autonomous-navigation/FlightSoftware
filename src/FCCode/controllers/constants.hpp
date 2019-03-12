@@ -7,66 +7,88 @@
 #ifndef CONSTANTS_HPP_
 #define CONSTANTS_HPP_
 
+#include "../state/device_states.hpp"
 #include <tensor.hpp>
+#include <vector>
 #include <map>
 
+// NOTE: Access to constants is controlled by the corresponding state lock.
 namespace Constants {
+    //! Map pointing to changeable constants
+    extern std::vector<unsigned int*> changeable_constants_map;
+
     namespace Master {
         #ifdef DEBUG
             //! Defines how long the master controller safehold callback will wait prior to automatically exiting safe hold.
-            constexpr unsigned int SAFE_HOLD_TIMEOUT = 3; // In seconds
+            extern unsigned int SAFE_HOLD_TIMEOUT;
             //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still being a spinny boi
             constexpr unsigned int INITIALIZATION_HOLD_DETUMBLE_WAIT = 5;
+            //! Seconds before docking mode is automatically exited and standby mode is triggered
+            extern unsigned int DOCKING_TIMEOUT;
         #else
             //! Defines how long the master controller safehold callback will wait prior to automatically exiting safe hold.
-            constexpr unsigned int SAFE_HOLD_TIMEOUT = 60*60*24; // 1 day, in seconds
+            extern unsigned int SAFE_HOLD_TIMEOUT;
             //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still being a spinny boi
             constexpr unsigned int INITIALIZATION_HOLD_DETUMBLE_WAIT = 30; 
+            //! Seconds before docking mode is automatically exited and standby mode is triggered
+            extern unsigned int DOCKING_TIMEOUT;
         #endif
         constexpr unsigned int ORBIT_PERIOD_MS = 2*60*60*1000; // Approximate orbital period in milliseconds--assuming 2-hour orbit
         constexpr float SPACECRAFT_MASS = 1.0; // TODO fix
     }
 
     namespace ADCS {
-        //! Maximum angular rate magnitude of spacecraft.
+        //! Maximum angular rate magnitude that is considered "stable".
+        constexpr float MAX_STABLE_ANGULAR_RATE = 0.0f; // TODO set value
+        //! Maximum possible angular rate magnitude of spacecraft.
         constexpr float MAX_ANGULAR_RATE = 2.2;
-        //! Maximum gyroscope reading along one axis.
+        //! Maximum possible gyroscope reading along one axis.
         constexpr float MIN_GYRO_VALUE = -2.2;
-        //! Maximum gyroscope reading along one axis.
+        //! Maximum possible gyroscope reading along one axis.
         constexpr float MAX_GYRO_VALUE = 2.2;
-        //! Maximum magnetic field vector reading magnitude.
-        constexpr float MAX_MAGNETOMETER_READING = -0.005;
-        //! Maximum ramp command magnitude.
+        //! Maximum possible magnetic field vector reading magnitude.
+        constexpr float MAX_MAGNETOMETER_READING = 0.005;
+        //! Maximum possible ramp command magnitude.
         constexpr float MAX_RAMP_CMD = 310.2;
-        //! Minimum magnetotorquer command along one axis.
+        //! Minimum possible magnetotorquer command along one axis.
         constexpr float MIN_MTR_CMD = 0; // TODO
-        //! Maximum magnetotorquer command along one axis.
+        //! Maximum possible magnetotorquer command along one axis.
         constexpr float MAX_MTR_CMD = 0; // TODO
-        //! Minimum reading of one sun sensor.
+        //! Minimum possible voltage reading of one sun sensor.
         constexpr float MIN_SUN_SENSOR_VALUE = 0; // TODO
-        //! Maximum reading of one sun sensor.
+        //! Maximum possible voltage reading of one sun sensor.
         constexpr float MAX_SUN_SENSOR_VALUE = 0; // TODO
+    }
+
+    namespace Gomspace {
+        struct limit_t {
+            short min;
+            short max;
+        };
+        constexpr limit_t boost_voltage_limits = {0,0}; // TODO
+        constexpr limit_t temperature_limits = {}; // TODO
+        constexpr unsigned int SAFE_VOLTAGE = Devices::Gomspace::FC_NORMAL;
     }
 
     namespace Propulsion {
         //! Milliseconds that a valve is opened in order to pressurize or vent a tank.
-        constexpr unsigned int VALVE_VENT_TIME = 500;
+        extern unsigned int VALVE_VENT_TIME;
         //! Milliseconds that we wait between opening the same valve.
-        constexpr unsigned int VALVE_WAIT_TIME = 1000;
+        extern unsigned int VALVE_WAIT_TIME;
         //! Seconds before the actual thruster firing that a propellant-maximizing attitude adjustment is made.
-        constexpr unsigned int THRUSTER_PREPARATION_TIME = 300; 
+        extern unsigned int THRUSTER_PREPARATION_TIME; 
         //! Milliseconds before the actual thruster firing that the tank 2 pressure-controlling loop is stopped.
-        constexpr unsigned int STOP_PRESSURIZATION_TIME_DELTA = 2000; 
-        //! Maximum delta-v threshold for NOT requiring orientation adjustment for a propulsion manuever.
-        constexpr unsigned short int REORIENTATION_DELTA_V_THRESHOLD = 0; // TODO fix.
-        //! Minimum battery threshold for propulsion manuever orientation adjustment.
-        constexpr unsigned short int REORIENTATION_BATT_THRESHOLD = 0; // TODO fix.
+        extern unsigned int STOP_PRESSURIZATION_TIME_DELTA; 
         //! Maximum allowable temperature of inner tank
         constexpr float MAX_INNER_TANK_TEMPERATURE = 48;
         //! Maximum allowable temperature of outer tank
         constexpr float MAX_OUTER_TANK_TEMPERATURE = 48;
         //! Maximum allowable pressure of outer tank
         constexpr float MAX_OUTER_TANK_PRESSURE = 100;
+        //! Amount of time, in milliseconds, to wait between intertank ventings
+        extern unsigned int WAIT_BETWEEN_PRESSURIZATIONS;
+        //! Required outer tank pressure prior to initiating a firing
+        constexpr float PRE_FIRING_OUTER_TANK_PRESSURE = 0; // TODO
         //! Maximum allowable impulse magnitude for a particular firing, in kg m/s
         constexpr float MAX_FIRING_IMPULSE = 1.0; // TODO
         //! Vector directions, relative to body frame, in which the nozzles point.
@@ -76,21 +98,21 @@ namespace Constants {
 
     namespace Quake {
         //! Number of times to try sending a packet
-        constexpr unsigned int NUM_RETRIES = 5;
+        extern unsigned int NUM_RETRIES;
         #ifdef DEBUG
         //! Maximum number of seconds before safe hold happens because of an uplink timeout
-        constexpr unsigned int UPLINK_TIMEOUT = 10;
+        extern unsigned int UPLINK_TIMEOUT;
         //! Period to wait prior to forcibly trying a downlink (seconds)
-        constexpr unsigned int QUAKE_WAIT_PERIOD = 5;
+        extern unsigned int QUAKE_WAIT_PERIOD;
         //! Interval between successive downlink retries (milliseconds)
-        constexpr unsigned int WAIT_BETWEEN_RETRIES = 500;
+        extern unsigned int WAIT_BETWEEN_RETRIES;
         #else
         //! Maximum number of seconds before safe hold happens because of an uplink timeout
-        constexpr unsigned int UPLINK_TIMEOUT = 24*60*60;
+        extern unsigned int UPLINK_TIMEOUT;
         //! Period to wait prior to forcibly trying a downlink (seconds)
-        constexpr unsigned int QUAKE_WAIT_PERIOD = 5*60*50;
+        extern unsigned int QUAKE_WAIT_PERIOD;
         //! Interval between successive downlink retries (milliseconds)
-        constexpr unsigned int WAIT_BETWEEN_RETRIES = 2000;
+        extern unsigned int WAIT_BETWEEN_RETRIES;
         #endif
     }
 }

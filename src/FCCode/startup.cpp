@@ -30,9 +30,8 @@ namespace RTOSTasks {
 }
 using namespace RTOSTasks;
 
-// TODO ensure that RADIOS are NOT turned on during hardware setup.
 void hardware_setup() {
-    rwMtxObjectInit(&State::Hardware::hat_lock);
+    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
 
     debug_println("Initializing hardware buses.");
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM); // Gomspace
@@ -44,10 +43,8 @@ void hardware_setup() {
         dptr.setup();
         if (dptr.is_functional()) {
             debug_printf_headless("setup was successful!\n");
-            rwMtxWLock(&State::Hardware::hat_lock);
-                (State::Hardware::hat).at(device.first).powered_on = true;
-                (State::Hardware::hat).at(device.first).is_functional = true;
-            rwMtxWUnlock(&State::Hardware::hat_lock);
+            State::write((State::Hardware::hat).at(device.first).powered_on, true, State::Hardware::hardware_state_lock);
+            State::write((State::Hardware::hat).at(device.first).is_functional, true, State::Hardware::hardware_state_lock);
         }
         else debug_printf_headless("setup was unsuccessful.\n");
     }
@@ -103,7 +100,7 @@ void pan_system_setup() {
     debug_println("Startup process has begun.");
     // Initialize all state locks
     chMtxObjectInit(&eeprom_lock);
-    rwMtxObjectInit(&State::Hardware::hat_lock);
+    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
     rwMtxObjectInit(&State::Master::master_state_lock);
     rwMtxObjectInit(&State::ADCS::adcs_state_lock);
     rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
@@ -114,20 +111,18 @@ void pan_system_setup() {
     rwMtxObjectInit(&State::Quake::uplink_lock);
     // Initialize all device locks
     chMtxObjectInit(&State::Hardware::adcs_device_lock);
-    chMtxObjectInit(&State::Hardware::dcdc_lock);
-    chMtxObjectInit(&State::Hardware::spike_and_hold_lock);
+    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
+    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
     chMtxObjectInit(&State::Hardware::piksi_device_lock);
     chMtxObjectInit(&State::Hardware::gomspace_device_lock);
     chMtxObjectInit(&State::Hardware::quake_device_lock);
 
     // Determining boot count
     chMtxLock(&eeprom_lock);
-    rwMtxWLock(&State::Master::master_state_lock);
-        unsigned int boot_number = State::Master::boot_number;
-        EEPROM.get(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
-        State::Master::boot_number = boot_number++;
-        EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
-    rwMtxWUnlock(&State::Master::master_state_lock);
+    unsigned int boot_number = State::read(State::Master::boot_number, State::Master::master_state_lock);
+    EEPROM.get(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
+    State::write(State::Master::boot_number, boot_number++, State::Master::master_state_lock);
+    EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
     chMtxUnlock(&eeprom_lock);
     debug_printf("This is boot #%d since the satellite left the deployer. \n", State::Master::boot_number);
 

@@ -19,19 +19,18 @@ namespace Devices {
         static constexpr unsigned char DEFAULT_ENABLE_PIN = 24;
 
         /** @brief Default constructor. Loads a set of hardcoded pins into the valve table.**/
-        DCDC(unsigned char en);
+        DCDC(const std::string& name, unsigned char en);
 
         bool setup() override;
         bool is_functional() override;
         void disable() override;
         void reset() override;
-        std::string& name() const override;
 
         /** @brief Turn on DCDC by holding the enable pin high. **/
         void enable();
       private:
         //! Pin that must be high to enable Spike and Hold.
-        unsigned char enable_pin_; 
+        unsigned char enable_pin_;
         //! Whether or not Spike and Hold is on or not.
         bool is_enabled;
     };

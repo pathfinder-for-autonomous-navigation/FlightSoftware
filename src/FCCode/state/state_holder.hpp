@@ -12,14 +12,33 @@
 #include <rwmutex.hpp>
 #include <Gomspace/Gomspace.hpp>
 #include <AttitudeMath.hpp>
-#include <Piksi/GPSTime.hpp>
+#include <GPSTime.hpp>
 #include <circular_stack.hpp>
 #include "state_definitions.hpp"
 #include "device_states.hpp"
 #include "../controllers/controllers.hpp"
 #include "../comms/uplink_struct.hpp"
+#include "../comms/downlink_serializer.hpp"
 
 namespace State {
+  //! Helper function to read from state variables in a protected way
+  template<typename T>
+  inline T read(const T& val, rwmutex_t& lock) {
+    T val_cpy;
+    rwMtxRLock(&lock);
+      val_cpy = val;
+    rwMtxRUnlock(&lock);
+    return val_cpy;
+  }
+
+  //! Helper function to write to state variables in a protected way
+  template<typename T>
+  inline void write(T& val, const T& new_val, rwmutex_t& lock) {
+    rwMtxWLock(&lock);
+      val = new_val;
+    rwMtxWUnlock(&lock);
+  }
+
   namespace Master {
     //! Master controller state
     extern MasterState master_state;
@@ -29,8 +48,8 @@ namespace State {
     extern unsigned int boot_number; 
     //! Last time that data was uplinked to satellite
     extern gps_time_t last_uplink_time; 
-    //! If last uplink was parseable by satellite
-    extern bool was_last_uplink_valid; 
+    //! If commands from previous uplink have been applied
+    extern bool uplink_command_applied;
     //! Did the hardware setup succeed?
     extern bool is_deployed; 
     //! True if this satellite is leader.
@@ -49,6 +68,8 @@ namespace State {
     extern ADCSState adcs_state;
     //! If mode is "pointing", the currently commanded attitude as a quaternion
     extern std::array<float, 4> cmd_attitude;
+    //! Frame in which the command attitude is specified (either ECI or LVLH).
+    extern PointingFrame cmd_attitude_frame;
     //! Current attitude as a quaternion
     extern std::array<float, 4> cur_attitude;
     //! Current angular rate as a vector in body frame
@@ -58,10 +79,6 @@ namespace State {
     //! Are we able to collect the sun vector? i.e. the ADCS system is not timing out on determining
     // a sun vector, right?
     extern bool is_sun_vector_collection_working;
-    //! Maximum angular rate magnitude that is considered "stable".
-    constexpr float MAX_STABLE_ANGULAR_RATE = 0.0f; // TODO set value
-    //! Maximum angular rate magnitude that is considered "semistable", e.g. not perfectly stable, but OK for emergency communication.
-    constexpr float MAX_SEMISTABLE_ANGULAR_RATE = 0.0f; // TODO set value
     /**
      * @brief Computes the magnitude of the angular rate of the spacecraft based on the cur_ang_rate vector.
      * @return float The current angular rate of the spacecraft.
@@ -111,17 +128,6 @@ namespace State {
   namespace Propulsion {
     //! State of propulsion state controller.
     extern PropulsionState propulsion_state;
-    //! Available delta-v, in meters/second. Note that this is obtained by simply integrating
-    // the applied thrusts over time, so this number may not be accurate. Propulsion leaks, for example,
-    // would contribute to significant inaccuracy. The purpose of this field is to serve as an upper
-    // bound.
-    extern float delta_v_available;
-    //! Are propulsive manuevers enabled?
-    extern bool is_propulsion_enabled;
-    //! Is there a currently planned firing?
-    extern bool is_firing_planned;
-    //! Is the currently planned firing due to a previous uplink?
-    extern bool is_firing_planned_by_uplink;
     //! Firing data for an upcoming planned firing.
     extern Firing firing_data;
     //! Current pressure within tank.
@@ -130,27 +136,33 @@ namespace State {
     extern float tank_inner_temperature;
     //! Current temperature within outer tank.
     extern float tank_outer_temperature;
+    //! Preferred valve for venting between tanks. Can be changed by ground.
+    extern unsigned char intertank_firing_valve;
     //! Readers-writers lock that prevents multi-process modification of propulsion state data.
-    extern rwmutex_t propulsion_state_lock; // TODO There may be LOCK CONTENTION on this lock due to both the propulsion and
-                                          // master processes trying to write to it! Handle this lock contention carefully.
+    extern rwmutex_t propulsion_state_lock;
   }
 
   namespace Piksi {
-    // TODO write GPS time and position to EEPROM every few seconds, so that in the event 
-    // of a reboot the satellite can still roughly know where it is.
-
     //! Current time in GPS format, as last obtained from Piksi.
     extern gps_time_t recorded_current_time;
     //! Timestamp at which current time was collected from Piksi.
     extern systime_t recorded_time_collection_timestamp;
-    //! Most recent GPS position, as last obtained from Piksi.
+    //! Most recent GPS position, as last obtained from Piksi
     extern std::array<double, 3> recorded_gps_position;
+    //! GPS timestamp at which most recent position was collected.
+    extern gps_time_t recorded_gps_position_time;
+    //! Number of satellites used in position determination.
+    extern unsigned char recorded_gps_position_nsats;
     //! Most recently expected GPS position of other satellite, as last obtained from Piksi or ground.
     extern std::array<double, 3> recorded_gps_position_other;
+    //! GPS timestamp at which most recent position of other satellite was collected.
+    extern gps_time_t recorded_gps_position_other_time;
     //! Most recent GPS velocity, as last obtained from Piksi.
     extern std::array<double, 3> recorded_gps_velocity;
-    //! Most recent GPS velocity of other satellite, as last obtained from Piksi or ground.
-    extern std::array<double, 3> recorded_gps_velocity_other;
+    //! GPS timestamp at which most recent velocity was collected.
+    extern gps_time_t recorded_gps_velocity_time;
+    //! Number of satellites used in velocity determination.
+    extern unsigned char recorded_gps_velocity_nsats;
     //! Readers-writers lock that prevents multi-process modification of Piksi state data.
     extern rwmutex_t piksi_state_lock;
   }
@@ -166,6 +178,8 @@ namespace State {
     extern std::array<double, 3> gps_velocity_other;
     //! Quaternion representing rotation from ECEF to ECI.
     extern std::array<double, 4> ecef_to_eci;
+    //! Quaternion representing rotation from ECI to LVLH.
+    extern std::array<double, 4> eci_to_lvlh;
     //! Current propagated GPS time. Propagation occurs on each call of current_time(). 
     // This field needs to be updated every time GPS time is actually collected.
     extern gps_time_t current_time;
@@ -191,6 +205,8 @@ namespace State {
   namespace Quake {
     //! Struct containing most recent uplink data received by satellite
     extern Comms::Uplink most_recent_uplink;
+    //! Time at which an uplink was received by the satellite
+    extern gps_time_t uplink_time_received;
     //! Readers-writers lock that prevents multi-process modification of most recent uplink
     extern rwmutex_t uplink_lock;
     //! State of finite state machine that controls the Quake controller
@@ -198,22 +214,12 @@ namespace State {
     //! Readers-writers lock that prevents multi-process modification of Quake state data.
     extern rwmutex_t quake_state_lock;
 
-    constexpr unsigned int PACKET_LENGTH = 70;
-    constexpr unsigned int PACKETS_PER_DOWNLINK = 10;
-    typedef std::array<Devices::QLocate::Message, PACKETS_PER_DOWNLINK> full_data_downlink;
-    //! Maximum number of data packets to store in history. 
-    // TODO store most recent packets in EEPROM as well.
-    constexpr unsigned int MAX_DOWNLINK_HISTORY = 25;
-    //! True if a network ready interrupt event just happened. Is set to false after the interrupt is handled.
-    extern bool network_ready_interrupt_happened;
+    //! Maximum number of data packets to store in history.
+    // TODO store most recent packets in Piksi as well.
+    constexpr unsigned int MAX_DOWNLINK_HISTORY = Comms::NUM_PACKETS * 10;
     //! Packets are automatically added to this stack by the consumer threads if they were 
     // not forcibly required to produce a partial packet.
-    extern circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack; 
-    //! If the producer threads were forcibly interrupted, this is where they will dump their
-    // latest packet.
-    extern full_data_downlink most_recent_downlink;
-    //! This handle is used as a way to record the "freshness" of this downlink packet.
-    extern full_data_downlink* most_recent_downlink_handle;
+    extern circular_stack<Devices::QLocate::Message, MAX_DOWNLINK_HISTORY> downlink_stack;
   }
 }
 

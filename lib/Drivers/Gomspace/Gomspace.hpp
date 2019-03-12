@@ -21,6 +21,13 @@ class Gomspace : public I2CDevice {
         FC_NORMAL = 6000,
     };
 
+    enum DEVICE_PINS {
+        PIKSI = 7,
+        SPIKE_AND_HOLD = 6,
+        QUAKE = 5,
+        ADCS = 4,
+    };
+
     /**< "Housekeeping" data struct; contains Gomspace state information. */
     struct __attribute__((packed)) eps_hk_t {
         unsigned short int vboost[3];            //! Voltage of boost converters [mV] [PV1, PV2, PV3] //! Voltage of battery [mV]
@@ -111,14 +118,13 @@ class Gomspace : public I2CDevice {
     };
 
     /** @brief Constructs Gomspace interface on the specified wire and with the given address. */
-    Gomspace(volatile eps_hk_t* hk_data, volatile eps_config_t* config_data, 
+    Gomspace(const std::string& name, volatile eps_hk_t* hk_data, volatile eps_config_t* config_data, 
         volatile eps_config2_t* config2_data, i2c_t3 &i2c_wire, unsigned char i2c_addr);
 
     // Device functions
     bool setup() override;
     void reset() override;
     bool i2c_ping() override;
-    std::string& name() const override;
 
     /** @brief Get full housekeeping data struct.
      *  @return True if housekeeping data struct was able to be found, false otherwise. */
@@ -138,12 +144,12 @@ class Gomspace : public I2CDevice {
 
     /** @brief Set output channels on or off.
      *  @param output_byte Output byte that masks channels. */
-    bool set_output(unsigned char output_byte);
+    virtual bool set_output(unsigned char output_byte);
     /** @brief Set a single output on or off, with an optional time delay.
      *  @param channel Channel to set on or off. (See NanoPower documentation to see how channel numbers correspond to outputs.)
      *  @param value Whether to set the channel on or off.
      *  @param time_delay Time delay for change, in seconds. */
-    bool set_single_output(unsigned char channel, unsigned char value, short int time_delay = 0);
+    virtual bool set_single_output(unsigned char channel, unsigned char value, short int time_delay = 0);
 
     /** @brief Set voltage of photovoltaic inputs.
      * @param voltage1 Voltage of input 1, in mV.

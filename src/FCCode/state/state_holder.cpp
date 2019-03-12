@@ -13,6 +13,7 @@ namespace State {
         PANState pan_state = PANState::MASTER_STARTUP;
         unsigned int boot_number = 1;
         gps_time_t last_uplink_time;
+        bool uplink_command_applied = false;
         bool was_last_uplink_valid = false;
         bool is_deployed = false;
         bool is_follower = false;
@@ -23,9 +24,9 @@ namespace State {
     namespace ADCS {
         ADCSState adcs_state = ADCSState::ADCS_SAFE_HOLD;
         std::array<float, 4> cmd_attitude;
+        PointingFrame cmd_attitude_frame = PointingFrame::ECI;
         std::array<float, 4> cur_attitude;
         std::array<float, 3> cur_ang_rate;
-        bool is_propulsion_pointing_active = false;
         bool is_sun_vector_determination_working = false;
         bool is_sun_vector_collection_working = false;
         std::array<float, 3> rwa_speed_cmds, rwa_speeds, rwa_ramps;
@@ -45,22 +46,19 @@ namespace State {
     }
 
     namespace Propulsion {
-        PropulsionState propulsion_state = PropulsionState::IDLE;
-        bool is_firing_planned = false;
-        bool is_firing_planned_by_uplink = false;
-        bool is_propulsion_enabled = false;
-        bool is_propulsion_active = false;
-        float delta_v_available = 11.0f; // m/s
+        PropulsionState propulsion_state = PropulsionState::DISABLED;
         Firing firing_data;
         float tank_pressure = 0.0f;
         float tank_inner_temperature = 0.0f;
         float tank_outer_temperature = 0.0f;
+        unsigned char intertank_firing_valve = Devices::SpikeAndHold::INTERTANK_MAIN;
         rwmutex_t propulsion_state_lock;
     }
 
     namespace GNC {
         std::array<double, 3> gps_position, gps_position_other, gps_velocity, gps_velocity_other;
         std::array<double, 4> ecef_to_eci;
+        std::array<double, 4> eci_to_lvlh;
         gps_time_t current_time;
         systime_t time_collection_timestamp;
         bool has_firing_happened_in_nighttime = false;
@@ -70,20 +68,19 @@ namespace State {
     namespace Piksi {
         gps_time_t recorded_current_time;
         systime_t recorded_time_collection_timestamp;
-        std::array<double, 3> recorded_gps_position, recorded_gps_position_other, 
-            recorded_gps_velocity, recorded_gps_velocity_other;
+        std::array<double, 3> recorded_gps_position, recorded_gps_position_other, recorded_gps_velocity;
+        gps_time_t recorded_gps_position_time, recorded_gps_position_other_time, recorded_gps_velocity_time;
+        unsigned char recorded_gps_position_nsats, recorded_gps_velocity_nsats;
         rwmutex_t piksi_state_lock;
     }
 
     namespace Quake {
         Comms::Uplink most_recent_uplink;
+        gps_time_t uplink_time_received;
         rwmutex_t uplink_lock;
         QuakeState quake_state = QuakeState::WAITING;
         rwmutex_t quake_state_lock;
 
-        bool network_ready_interrupt_happened = false;
-        circular_stack<full_data_downlink, MAX_DOWNLINK_HISTORY> downlink_stack;
-        full_data_downlink most_recent_downlink;
-        full_data_downlink* most_recent_downlink_handle = NULL; // Usually points to most_recent_downlink
+        circular_stack<Devices::QLocate::Message, MAX_DOWNLINK_HISTORY> downlink_stack;
     }
 }

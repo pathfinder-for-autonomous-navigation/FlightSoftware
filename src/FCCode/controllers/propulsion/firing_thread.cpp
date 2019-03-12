@@ -5,10 +5,11 @@
 
 namespace Constants {
 namespace Propulsion {
-    static pla::Vec3f NVECTOR_1; // TODO initializers
-    static pla::Vec3f NVECTOR_2;
-    static pla::Vec3f NVECTOR_3;
-    static pla::Vec3f NVECTOR_4;
+    // TODO fix later with actual values
+    static pla::Vec3f NVECTOR_1 = {1.0f/sqrtf(3), 1.0f/sqrtf(3), 1.0f/sqrtf(3)};
+    static pla::Vec3f NVECTOR_2 = {1.0f/sqrtf(3), 1.0f/sqrtf(3), 1.0f/sqrtf(3)};
+    static pla::Vec3f NVECTOR_3 = {1.0f/sqrtf(3), 1.0f/sqrtf(3), 1.0f/sqrtf(3)};
+    static pla::Vec3f NVECTOR_4 = {1.0f/sqrtf(3), 1.0f/sqrtf(3), 1.0f/sqrtf(3)};
     std::map<unsigned char, const pla::Vec3f> NOZZLE_VECTORS = {
         {2, NVECTOR_1},
         {3, NVECTOR_2},
@@ -18,7 +19,7 @@ namespace Propulsion {
 }
 }
 
-using State::Hardware::spike_and_hold_lock;
+using State::Hardware::spike_and_hold_device_lock;
 using namespace Constants::Propulsion;
 using Devices::spike_and_hold;
 
@@ -32,9 +33,10 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
         for(int i = 0; i < 4; i++) q_body[i] = ADCSControllers::Estimator::q_filter_body[i];
     rwMtxRUnlock(&State::ADCS::adcs_state_lock);
     pla::Vec3f impulse_vector_body;
-    rwMtxRLock(&State::Propulsion::propulsion_state_lock);
-        vect_rot(State::Propulsion::firing_data.impulse_vector.data(), q_body.data(), impulse_vector_body.get_data());
-    rwMtxRUnlock(&State::Propulsion::propulsion_state_lock);
+    std::array<float, 3> impulse_vector_eci = State::read(State::Propulsion::firing_data.impulse_vector, 
+                                                          State::Propulsion::propulsion_state_lock);
+    vect_rot(impulse_vector_eci.data(), q_body.data(), impulse_vector_body.get_data());
+    
     std::array<unsigned int, 6> valve_timings;
     valve_timings[0] = 0;
     valve_timings[1] = 0;
@@ -64,16 +66,19 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
         if (valve_timings[i] > 1000) valve_timings[i] = 1000; // Saturate firing
         k++;
     }
-
-    // Add to delta-v
-    rwMtxWLock(&State::Propulsion::propulsion_state_lock);
-        State::Propulsion::delta_v_available += 
-            vect_mag(State::Propulsion::firing_data.impulse_vector.data()) / Constants::Master::SPACECRAFT_MASS;
-    rwMtxWUnlock(&State::Propulsion::propulsion_state_lock);
+    
+    // Full-system lock so that the timing of firings is not affected by any interrupts.
     chSysLock();
         debug_println("Initiating firing.");
-        spike_and_hold.execute_schedule(valve_timings);
-        debug_println("Completed firing.");
+        if (State::Hardware::can_get_data(Devices::spike_and_hold)) {
+            chMtxLock(&spike_and_hold_device_lock);
+                spike_and_hold.execute_schedule(valve_timings);
+            chMtxLock(&spike_and_hold_device_lock);
+            debug_println("Completed firing.");
+        }
+        else {
+            debug_println("Could not complete firing because DCDC is off.");
+        }
     chSysUnlock();
 
     change_propulsion_state(State::Propulsion::PropulsionState::IDLE);

@@ -3,7 +3,7 @@
 
 using namespace Devices;
 
-DCDC::DCDC(unsigned char en) : enable_pin_(en) {}
+DCDC::DCDC(const std::string& name, unsigned char en) : Device(name), enable_pin_(en) {}
 
 bool DCDC::setup() { 
     pinMode(enable_pin_, OUTPUT);
@@ -29,6 +29,3 @@ void DCDC::reset() {
     delay(10);
     enable();
 }
-
-static std::string dcdc_name = "DCDC";
-std::string& DCDC::name() const { return dcdc_name; }

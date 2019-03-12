@@ -12,7 +12,7 @@
 #include <array>
 #include <FastCRC/FastCRC.h>
 #include <cmath>
-#include <Piksi/GPSTime.hpp>
+#include <GPSTime.hpp>
 #include <Piksi/Piksi.hpp>
 #include <QLocate/QLocate.hpp>
 
@@ -32,16 +32,12 @@
  * Contains functions and constants related to communication packet serialization and deserialization.
  * */
 namespace Comms {
-    //! Size of all packets, in bytes
-    constexpr unsigned int PACKET_SIZE_BYTES = 340;
-    //! Size of all packets, in bits
-    constexpr unsigned int PACKET_SIZE_BITS = PACKET_SIZE_BYTES * 8; 
     //! Size of uplink packets, in bytes
     constexpr unsigned int UPLINK_PACKET_SIZE_BYTES = 34; 
     //! Size of uplink packets, in bits
     constexpr unsigned int UPLINK_PACKET_SIZE_BITS = UPLINK_PACKET_SIZE_BYTES * 8; 
     //! Number of bits for squeezing GPS time
-    constexpr unsigned int GPSTIME_SIZE = 48;
+    constexpr unsigned int GPSTIME_SIZE = 49;
     //! Number of bits to squeeze a number in the range +/- sqrt(2) for float vector compression
     constexpr unsigned int MAX_FLOAT_VECTOR_COMPONENT_SIZE = 9;
     //! Number of bits for squeezing a quaternion
@@ -222,9 +218,18 @@ namespace Comms {
      *  @param[out] result GPS time struct containing the uncompressed GPS time.
      * **/
     void expand_gps_time(const std::bitset<GPSTIME_SIZE>& gpstime, gps_time_t* result);
+
+    /** @brief Expands bitset into a Quake message
+     * */
+    template<unsigned int bitset_size>
+    void expand_message(const std::bitset<bitset_size>& bitset, Devices::QLocate::Message* message);
+
+    /** @brief Converts Quake message into a bitset
+     * */
+    template<unsigned int bitset_size>
+    void trim_bitset(const Devices::QLocate::Message& message, std::bitset<bitset_size>* bitset);
 }
 /** @} */
-
 #include "comms_utils.inl"
 
 #endif

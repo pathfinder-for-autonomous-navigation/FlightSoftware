@@ -22,6 +22,15 @@ inline void static_buffer<T,S>::put(T item) {
 }
 
 template<typename T, unsigned int S>
+inline T static_buffer<T,S>::operator[](unsigned int i) {
+    T* ptr = tail_;
+    for(int j = 0; j < i; j++) {
+        advance_ptr_(ptr);
+    }
+    return *ptr;
+}
+
+template<typename T, unsigned int S>
 inline void static_buffer<T,S>::reset() {
     head_ = tail_;
     full_ = false;

@@ -9,6 +9,8 @@ namespace RTOSTasks {
     unsigned int LoopTimes::GNC = 60000;
 }
 
+using State::Propulsion::propulsion_state_lock;
+
 static void gnc_calculation() {
     // TODO run the Matlab-autocoded function to do the calculation
     std::array<float, 3> firing_vector;
@@ -22,16 +24,10 @@ static void gnc_calculation() {
     if ((unsigned int) (firing_time - State::GNC::get_current_time()) > Constants::Master::ORBIT_PERIOD_MS)
         is_valid_firing = false;
 
-    rwMtxRLock(&State::Propulsion::propulsion_state_lock);
-        bool is_propulsion_enabled = State::Propulsion::is_propulsion_enabled;
-        bool is_firing_planned_by_uplink = State::Propulsion::is_firing_planned_by_uplink;
-    rwMtxRUnlock(&State::Propulsion::propulsion_state_lock);
-    if (is_propulsion_enabled && is_valid_firing && is_firing_planned_by_uplink) {
-        rwMtxWLock(&State::Propulsion::propulsion_state_lock);
-            State::Propulsion::is_firing_planned = true;
-            State::Propulsion::firing_data.impulse_vector = firing_vector;
-            State::Propulsion::firing_data.time = firing_time;
-        rwMtxWUnlock(&State::Propulsion::propulsion_state_lock);
+    bool is_not_standby = State::read(State::Master::pan_state, State::Master::master_state_lock) != State::Master::PANState::STANDBY;
+    if (is_valid_firing && is_not_standby) {
+        State::write(State::Propulsion::firing_data.impulse_vector, firing_vector, propulsion_state_lock);
+        State::write(State::Propulsion::firing_data.time, firing_time, propulsion_state_lock);
     }
 }
 

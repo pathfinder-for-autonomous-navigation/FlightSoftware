@@ -8,7 +8,7 @@
 #define STATE_DEFINITIONS_HPP_
 
 #include <Piksi/Piksi.hpp>
-#include <Piksi/GPSTime.hpp>
+#include <GPSTime.hpp>
 
 // Containers and enums for holding state
 namespace State {
@@ -21,16 +21,20 @@ namespace State {
       INITIALIZATION_HOLD, // Startup/deployment mode
       DETUMBLE,
       SAFE_HOLD,
-      NORMAL,
+      NORMAL
     };
     //! PAN-Specific state of finite-state machine that's part of the master controller
     enum PANState {
-      // Common states. Used when satellite is not
+      // Common states.
+      // Used when satellite is not
       // ready to enter the PAN phase of the mission yet.
       MASTER_STARTUP,
       MASTER_INITIALIZATIONHOLD,
       MASTER_DETUMBLE,
       MASTER_SAFEHOLD,
+      // Actually used by both satellites
+      DOCKING,
+      DOCKED,
       // Leader states
       STANDBY,
       LEADER_CLOSE_APPROACH,
@@ -64,10 +68,17 @@ namespace State {
       POINTING,
       ADCS_SAFE_HOLD
     };
+
+    //! Available frames for specifying a command atittude
+    enum PointingFrame {
+      ECI,
+      LVLH
+    };
   }
 
   namespace Propulsion {
     enum PropulsionState {
+      DISABLED,
       IDLE,
       VENTING,
       AWAITING_PRESSURIZATION,

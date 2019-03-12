@@ -17,19 +17,17 @@ THD_WORKING_AREA(deployment_timer_workingArea, 4096);
 threads_queue_t deployment_timer_waiting;
 
 void exit_deployment_timer() {
-    rwMtxWLock(&State::Master::master_state_lock);
-        State::Master::is_deployed = true;
-    rwMtxWUnlock(&State::Master::master_state_lock);
+    State::write(State::Master::is_deployed, true, State::Master::master_state_lock);
     chMtxLock(&eeprom_lock);
         EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT, true);
     chMtxUnlock(&eeprom_lock);
 
-    chMtxLock(&State::Hardware::dcdc_lock);
+    chMtxLock(&State::Hardware::dcdc_device_lock);
         Devices::dcdc.enable();
-    chMtxUnlock(&State::Hardware::dcdc_lock);
-    chMtxLock(&State::Hardware::spike_and_hold_lock);
+    chMtxUnlock(&State::Hardware::dcdc_device_lock);
+    chMtxLock(&State::Hardware::spike_and_hold_device_lock);
         Devices::spike_and_hold.enable();
-    chMtxUnlock(&State::Hardware::spike_and_hold_lock);
+    chMtxUnlock(&State::Hardware::spike_and_hold_device_lock);
 
     debug_println("Notifying all processes waiting on deployment timer that timer has been completed.");
     chSysLock();
@@ -58,13 +56,13 @@ void deployment_timer_function(void *arg) {
     // Determine time remaining in deployment
     chMtxLock(&eeprom_lock);
         unsigned int time_elapsed;
-        EEPROM.get(EEPROM_ADDRESSES::DEPLOYMENT_TIMER_1, time_elapsed);
+        EEPROM.get(EEPROM_ADDRESSES::DEPLOYMENT_TIMER, time_elapsed);
     chMtxUnlock(&eeprom_lock);
 
     // Start deployment timer
     while(time_elapsed < DEPLOYMENT_LENGTH) {
         chMtxLock(&eeprom_lock);
-            EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT_TIMER_1, time_elapsed);
+            EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT_TIMER, time_elapsed);
         chMtxUnlock(&eeprom_lock);
 
         debug_printf("Time remaining until deployment wait completed: %d\n", DEPLOYMENT_LENGTH - time_elapsed);

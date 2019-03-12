@@ -43,13 +43,14 @@ namespace Devices {
         static constexpr unsigned char DEFAULT_ENABLE_PIN = 25;
 
         /** @brief Default constructor. Loads a set of hardcoded pins into the valve table.**/
-        SpikeAndHold(const std::array<unsigned char, NUM_VALVES>& pins, unsigned char en);
+        SpikeAndHold(const std::string& name, 
+                     const std::array<unsigned char, NUM_VALVES>& pins, 
+                     unsigned char en);
 
         bool setup() override;
         bool is_functional() override;
         void disable() override;
         void reset() override;
-        std::string& name() const override;
 
         /** @brief Turn on Spike and Hold by holding the enable pin high. **/
         void enable();

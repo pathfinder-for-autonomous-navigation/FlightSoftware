@@ -18,7 +18,7 @@ sbp_msg_callbacks_node_t Piksi::_heartbeat_callback_node;
 sbp_msg_callbacks_node_t Piksi::_uart_state_callback_node;
 sbp_msg_callbacks_node_t Piksi::_user_data_callback_node;
 
-Piksi::Piksi(HardwareSerial &serial_port) : _serial_port(serial_port) {}
+Piksi::Piksi(const std::string& name, HardwareSerial &serial_port) : Device(name), _serial_port(serial_port) {}
 
 bool Piksi::setup() {
     _serial_port.begin(BAUD_RATE);
@@ -110,20 +110,12 @@ bool Piksi::is_functional() {
 void Piksi::reset() { piksi_reset(); }
 
 void Piksi::disable() {
-    // TODO
+    // Do nothing; we really don't want to disable Piksi
 }
 
-static std::string piksi_name = "Piksi";
-std::string& Piksi::name() const {
-    return piksi_name;
-}
-
-uint64_t Piksi::get_gps_time() { 
-    unsigned int wn = _gps_time.wn;
-    unsigned int tow = _gps_time.tow;
-    unsigned int ns = _gps_time.ns;
-    unsigned int ms_in_wk = 7*24*60*60*1000; // Milliseconds per week
-    return (wn * ms_in_wk + tow) * 1000 + ns;
+void Piksi::get_gps_time(gps_time_t* time) { 
+    time->gpstime.wn = _gps_time.wn;
+    time->gpstime.tow = _gps_time.tow;
 }
 
 unsigned int Piksi::get_dops_tow()  { return _dops.tow; }
@@ -133,32 +125,29 @@ unsigned short int Piksi::get_dops_time()  { return _dops.tdop; }
 unsigned short int Piksi::get_dops_horizontal()  {  return _dops.hdop; }
 unsigned short int Piksi::get_dops_vertical()  { return _dops.vdop; }
 
-void Piksi::get_pos_ecef(Piksi::position_t* position) { 
-    position->tow = _pos_ecef.tow;
-    position->position[0] = _pos_ecef.x;
-    position->position[1] = _pos_ecef.y;
-    position->position[2] = _pos_ecef.z;
-    position->accuracy = _pos_ecef.accuracy;
+void Piksi::get_pos_ecef(std::array<double, 3>* position, unsigned int* tow) { 
+    (*position)[0] = _pos_ecef.x;
+    (*position)[1] = _pos_ecef.y;
+    (*position)[2] = _pos_ecef.z;
+    *tow = _pos_ecef.tow;
 }
 unsigned char Piksi::get_pos_ecef_nsats() { return _pos_ecef.n_sats; }
 unsigned char Piksi::get_pos_ecef_flags() { return _pos_ecef.flags; }
 
-void Piksi::get_baseline_ecef(Piksi::position_t* position) { 
-    position->tow = _pos_ecef.tow;
-    position->position[0] = _pos_ecef.x;
-    position->position[1] = _pos_ecef.y;
-    position->position[2] = _pos_ecef.z;
-    position->accuracy = _pos_ecef.accuracy;
+void Piksi::get_baseline_ecef(std::array<double, 3>* position, unsigned int* tow) { 
+    (*position)[0] = _pos_ecef.x;
+    (*position)[1] = _pos_ecef.y;
+    (*position)[2] = _pos_ecef.z;
+    *tow = _pos_ecef.tow;
 }
 unsigned char Piksi::get_baseline_ecef_nsats() { return _baseline_ecef.n_sats; }
 unsigned char Piksi::get_baseline_ecef_flags() { return _baseline_ecef.flags; }
 
-void Piksi::get_vel_ecef(Piksi::velocity_t* velocity) { 
-    velocity->tow = _pos_ecef.tow;
-    velocity->velocity[0] = _pos_ecef.x;
-    velocity->velocity[1] = _pos_ecef.y;
-    velocity->velocity[2] = _pos_ecef.z;
-    velocity->accuracy = _pos_ecef.accuracy;
+void Piksi::get_vel_ecef(std::array<double, 3>* velocity, unsigned int* tow) { 
+    (*velocity)[0] = _pos_ecef.x;
+    (*velocity)[1] = _pos_ecef.y;
+    (*velocity)[2] = _pos_ecef.z;
+    *tow = _pos_ecef.tow;
 }
 unsigned char Piksi::get_vel_ecef_nsats() { return _vel_ecef.n_sats; }
 unsigned char Piksi::get_vel_ecef_flags() { return _vel_ecef.flags; }

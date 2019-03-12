@@ -19,13 +19,12 @@ namespace Devices {
         static constexpr unsigned char DEFAULT_SWITCH_PIN = 25;
 
         /** @brief Default constructor. Loads a set of hardcoded pins into the valve table.**/
-        DockingSwitch(unsigned char en);
+        DockingSwitch(const std::string& name, unsigned char en);
 
         bool setup() override;
         bool is_functional() override;
         void disable() override;
         void reset() override;
-        std::string& name() const override;
 
         /** @brief Returns whether or not the docking switch is pressed. **/
         bool pressed();

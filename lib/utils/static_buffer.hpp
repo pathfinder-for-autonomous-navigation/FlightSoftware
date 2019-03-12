@@ -42,6 +42,12 @@ class static_buffer {
   	virtual T& get() = 0;
 
     /**
+     * @brief Array-like read access to the stack. Most recent element is the last element in the list.
+     * Wraps around if necessary. Returns a _copy_ of an array element.
+     */
+  	T operator[](unsigned int i);
+
+    /**
      * @brief Flushes the circular buffer.
      */
     void reset();

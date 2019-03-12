@@ -1,6 +1,7 @@
 #include "../../state/state_holder.hpp"
+#include "../../comms/downlink_serializer.hpp"
 #include "../constants.hpp"
-#include "downlink_thread.hpp"
+#include "transceiving_thread.hpp"
 
 using Devices::quake;
 using Devices::QLocate;
@@ -8,54 +9,45 @@ using State::Quake::QuakeState;
 using State::Quake::quake_state_lock;
 using namespace Comms;
 
-int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
-    quake.sbdwb(packet.mes, State::Quake::PACKET_LENGTH);
-    quake.run_sbdix();
+static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
+    if (!State::Hardware::can_get_data(quake))
+        // Quake isn't on
+        return -1;
+
     int response;
+    chMtxLock(&State::Hardware::quake_device_lock);
+        response = quake.sbdwb(packet.mes, Comms::PACKET_SIZE_BYTES);
+    chMtxUnlock(&State::Hardware::quake_device_lock);
+    if (response != 0) return response;
+    
+    chMtxLock(&State::Hardware::quake_device_lock);
+        quake.run_sbdix();
+    chMtxUnlock(&State::Hardware::quake_device_lock);
     for(int i = 0; i < Constants::Quake::NUM_RETRIES; i++) {
-        response = quake.end_sbdix();
+        chMtxLock(&State::Hardware::quake_device_lock);
+            response = quake.end_sbdix();
+        chMtxUnlock(&State::Hardware::quake_device_lock);
         if (response != -1) break;
         chThdSleepMilliseconds(Constants::Quake::WAIT_BETWEEN_RETRIES);
     }
 
     // It's possible we picked up an uplink packet; pick it up.
-    int status = quake.sbdrb();
-    if (status == 0) *uplink = quake.get_message();
+    chMtxLock(&State::Hardware::quake_device_lock);
+        int status = quake.sbdrb();
+        if (status == 0) *uplink = quake.get_message();
+    chMtxUnlock(&State::Hardware::quake_device_lock);
 
     return response;
 }
 
-int send_downlink(const State::Quake::full_data_downlink& downlink, QLocate::Message* uplink) {
-    for(int i = 0; i < State::Quake::PACKETS_PER_DOWNLINK; i++) {
-        rwMtxRLock(&quake_state_lock);
-            QLocate::Message m(downlink[i]);
-        rwMtxRUnlock(&quake_state_lock);
-        int response = send_packet(m, uplink);
-        if (response != 0) {
-            // Sending packet failed. Throw this packet back on the stack and retry later.
-            rwMtxWLock(&quake_state_lock);
-                State::Quake::downlink_stack.put(downlink);
-            rwMtxWUnlock(&quake_state_lock);
-            return response;
-        }
-    }
-    return 0;
-}
-
-int Quake::send_most_recent_downlink(QLocate::Message* uplink) {
-    return send_downlink(State::Quake::most_recent_downlink, uplink);
-}
-
-bool is_downlink_stack_empty() {
-    rwMtxRLock(&State::Quake::quake_state_lock);
-        bool is_empty = State::Quake::downlink_stack.empty();
-    rwMtxRLock(&State::Quake::quake_state_lock);
+static bool is_downlink_stack_empty() {
+    bool is_empty = State::read(State::Quake::downlink_stack.empty(), State::Quake::quake_state_lock);
     return is_empty;
 }
 
 int Quake::send_downlink_stack(QLocate::Message* uplink) {
     while(!is_downlink_stack_empty()) {
-        int response = send_downlink(State::Quake::downlink_stack.get(), uplink);
+        int response = send_packet(State::Quake::downlink_stack.get(), uplink);
         if (response != 0) return response;
     }
     return 0;

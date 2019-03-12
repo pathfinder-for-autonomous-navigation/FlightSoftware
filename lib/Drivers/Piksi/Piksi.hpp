@@ -2,6 +2,7 @@
 #define PIKSI_HPP_
 
 #include <HardwareSerial.h>
+#include <GPSTime.hpp>
 #include <array>
 #include "../Devices/Device.hpp"
 #include "libsbp/sbp.h"
@@ -21,43 +22,21 @@ namespace Devices {
  */
 class Piksi : public Device {
   public:
-
     //! Baud rate of communication with Piksi.
     static constexpr unsigned int BAUD_RATE = 115200;
-
-    //! Output struct containing position data.
-    struct position_t {
-      //! Time of week
-      u32 tow; 
-      //! Position as a vector in ECEF.
-      std::array<double, 3> position;
-      //! Will always be zero. Not implemented in this Piksi version.
-      double accuracy;
-    };
-
-    //! Output struct containing velocity data.
-    struct velocity_t {
-      //! Time of week
-      u32 tow;
-      //! Position as a vector in ECEF.
-      std::array<double, 3> velocity;
-      //! Will always be zero. Not implemented in this Piksi version.
-      double accuracy;
-    };
 
     /**
      * @brief Construct a new Piksi object
      * 
      * @param serial_port The serial port that the Piksi communicates over.
      */
-    Piksi(HardwareSerial &serial_port);
+    Piksi(const std::string& name, HardwareSerial &serial_port);
 
     // Standard device functions
     bool setup() override;
     bool is_functional() override;
     void reset() override;
     void disable() override; // Sets Piksi's power consumption to a minimum
-    std::string& name() const override;
 
     /** @brief Runs read over UART buffer to process values sent by Piksi into memory.
      *  @returns Whether or not any data was processed. **/
@@ -65,7 +44,7 @@ class Piksi : public Device {
 
     /** @brief Gets GPS time. 
      *  @return GPS time, as nanoseconds since the epoch. **/
-    uint64_t get_gps_time();
+    virtual void get_gps_time(gps_time_t* time);
 
     /** @brief Gets Dilution of Precision timestamp. 
      *  @return Time-of-week of dilution precision report, in milliseconds. **/
@@ -88,40 +67,40 @@ class Piksi : public Device {
 
     /** @brief Gets satellite position in ECEF coordinates.
      *  @param position A pointer to the destination struct for the information. **/
-    void get_pos_ecef(position_t* position);
+    virtual void get_pos_ecef(std::array<double, 3>* position, unsigned int* tow);
     /** @brief Get number of satellites used for determining GPS position.
      *  @return Number of satellites used for determining GPS position. **/
-    unsigned char get_pos_ecef_nsats();
+    virtual unsigned char get_pos_ecef_nsats();
     /** @brief Get status flags of GPS position measurement.
      *  @return Status flags of GPS position measurement. **/
     unsigned char get_pos_ecef_flags();
 
     /** @brief Gets satellite position in ECEF coordinates relative to base station.
      *  @param position A pointer to the destination struct for the information. **/
-    void get_baseline_ecef(position_t* position);
+    virtual void get_baseline_ecef(std::array<double, 3>* position, unsigned int* tow);
     /** @brief Get number of satellites used for determining GPS baseline position.
      *  @return Number of satellites used for determining GPS baseline position. **/
-    unsigned char get_baseline_ecef_nsats();
+    virtual unsigned char get_baseline_ecef_nsats();
     /** @brief Get status flags of GPS baseline position measurement.
      *  @return Status flags of GPS baseline position measurement. **/
     unsigned char get_baseline_ecef_flags();
     
     /** @brief Gets satellite velocity in ECEF coordinates.
      *  @param velocity A pointer to the destination struct for the information. **/
-    void get_vel_ecef(velocity_t* velocity);
+    virtual void get_vel_ecef(std::array<double, 3>* velocity, unsigned int* tow);
     /** @brief Get number of satellites used for determining GPS velocity.
      *  @return Number of satellites used for determining GPS velocity. **/
-    unsigned char get_vel_ecef_nsats();
+    virtual unsigned char get_vel_ecef_nsats();
     /** @brief Get status flags of GPS velocity measurement.
      *  @return Status flags of GPS velocity measurement. **/
     unsigned char get_vel_ecef_flags();
 
     /** @brief Gets base station position in ECEF coordinates.
      *  @param position A pointer to an array for storing the x,y,z coordinates of the base station. **/
-    void get_base_pos_ecef(std::array<double, 3>* position);
+    virtual void get_base_pos_ecef(std::array<double, 3>* position);
 
     /** @brief Returns state of integer ambiguity resolution (IAR) process. **/
-    unsigned int get_iar();
+    virtual unsigned int get_iar();
 
     /** @brief Reads current settings in Piksi RAM.
      *  @return Current settings in Piksi RAM, as a libsbp struct. **/
@@ -207,6 +186,9 @@ class Piksi : public Device {
 
     /** @brief Clear out logbook. */
     void clear_log();
+  protected:
+    HardwareSerial& _serial_port; // This is protected instead of private so that FakePiksi
+                                  // can access the port variable
   private:
     // Internal values required by libsbp. See sbp.c
     sbp_state_t _sbp_state;
@@ -241,7 +223,6 @@ class Piksi : public Device {
     static void _user_data_callback(u16 sender_id, u8 len, u8 msg[], void *context);
 
     // Required writing and reading functions by libsbp. See sbp.c
-    HardwareSerial& _serial_port;
     static u32 _uart_write(u8 *buff, u32 n, void *context);
     static u32 _uart_read(u8 *buff, u32 n, void *context);
 

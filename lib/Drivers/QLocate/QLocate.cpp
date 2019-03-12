@@ -28,9 +28,20 @@ QLocate::Message::Message(QLocate::Message const &mes) {
     this->mes[i] = mes.mes[i];
 }
 
+QLocate::Message& QLocate::Message::operator=(QLocate::Message const &mes) {
+  this->length = mes.length;
+  for(int i = 0; i < this->length; i++)
+    this->mes[i] = mes.mes[i];
+  return *(this);
+}
+
 int QLocate::Message::get_length() const { return this->length; }
 
-char &QLocate::Message::operator[](int i) {
+char& QLocate::Message::operator[](int i) {
+  return this->mes[i];
+}
+
+char QLocate::Message::operator[](int i) const {
   return this->mes[i];
 }
 
@@ -41,9 +52,11 @@ void QLocate::Message::copy_message(char *c) const {
 
 /*! QLocate implementation */ // -----------------------------------------------
 
-QLocate::QLocate(HardwareSerial *const port, 
+QLocate::QLocate(const std::string& name,
+                 HardwareSerial *const port, 
                  unsigned char nr_pin, 
-                 int timeout) : port(port),
+                 int timeout) : Device(name),
+                                port(port),
                                 timeout(timeout),
                                 nr_pin_(nr_pin) {}
 
@@ -68,12 +81,7 @@ bool QLocate::is_functional() {
 
 void QLocate::reset() {config();}
 void QLocate::disable() {
-  // TODO
-}
-
-static std::string quake_name = "Quake";
-std::string& QLocate::name() const {
-  return quake_name;
+  // Do nothing; we really don't want to disable Quake
 }
 
 bool QLocate::sbdix_is_running() {

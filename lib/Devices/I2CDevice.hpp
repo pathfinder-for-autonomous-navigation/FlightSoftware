@@ -58,8 +58,6 @@ class I2CDevice : public Device {
   /** @brief Wipes error history variables clean. Must be called from a function
    *         that overrides this. **/
   void reset() override;
-  
-  std::string& name() const override;
   /** @brief Forces error history variables to broken state. Must be called from
    *         a function that overrides this. **/
   void disable() override;
@@ -83,7 +81,7 @@ class I2CDevice : public Device {
   /** @brief Constructs an i2c device on the specified wire, with the given
    *         address, and a default timeout values of 0 - i.e. a timeout never
    *         happens. **/
-  I2CDevice(i2c_t3 &wire, unsigned char addr, unsigned long timeout = 0);
+  I2CDevice(const std::string& name, i2c_t3 &wire, unsigned char addr, unsigned long timeout = 0);
   /** @brief Returns true if an error has occurred since the last call to
    *         pop_errors and false otherwise. The recent error history variable
    *         is reset and the consecutive communication failure variables is
