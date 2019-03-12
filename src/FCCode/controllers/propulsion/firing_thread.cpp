@@ -19,7 +19,7 @@ namespace Propulsion {
 }
 }
 
-using State::Hardware::spike_and_hold_lock;
+using State::Hardware::spike_and_hold_device_lock;
 using namespace Constants::Propulsion;
 using Devices::spike_and_hold;
 
@@ -70,8 +70,10 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
     // Full-system lock so that the timing of firings is not affected by any interrupts.
     chSysLock();
         debug_println("Initiating firing.");
-        if (State::Hardware::can_get_data(Devices::dcdc)) {
-            spike_and_hold.execute_schedule(valve_timings);
+        if (State::Hardware::can_get_data(Devices::spike_and_hold)) {
+            chMtxLock(&spike_and_hold_device_lock);
+                spike_and_hold.execute_schedule(valve_timings);
+            chMtxLock(&spike_and_hold_device_lock);
             debug_println("Completed firing.");
         }
         else {

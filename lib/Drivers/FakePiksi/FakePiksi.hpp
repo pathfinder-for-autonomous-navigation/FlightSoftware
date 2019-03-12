@@ -13,7 +13,6 @@ namespace Devices {
       bool is_functional() override;
       void reset() override;
       void disable() override; // Sets Piksi's power consumption to a minimum
-      std::string& name() const override;
 
       void get_gps_time(gps_time_t* time) override;
 

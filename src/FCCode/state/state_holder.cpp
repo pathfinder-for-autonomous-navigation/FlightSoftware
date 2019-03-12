@@ -13,6 +13,7 @@ namespace State {
         PANState pan_state = PANState::MASTER_STARTUP;
         unsigned int boot_number = 1;
         gps_time_t last_uplink_time;
+        bool uplink_command_applied = false;
         bool was_last_uplink_valid = false;
         bool is_deployed = false;
         bool is_follower = false;

@@ -30,14 +30,13 @@ class Piksi : public Device {
      * 
      * @param serial_port The serial port that the Piksi communicates over.
      */
-    Piksi(HardwareSerial &serial_port);
+    Piksi(const std::string& name, HardwareSerial &serial_port);
 
     // Standard device functions
     bool setup() override;
     bool is_functional() override;
     void reset() override;
     void disable() override; // Sets Piksi's power consumption to a minimum
-    std::string& name() const override;
 
     /** @brief Runs read over UART buffer to process values sent by Piksi into memory.
      *  @returns Whether or not any data was processed. **/

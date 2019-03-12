@@ -9,22 +9,38 @@
 #include "state_holder.hpp"
 
 namespace Devices {
-    Gomspace gomspace(&State::Gomspace::gomspace_data,
+    static std::string gomspace_name = "gomspace";
+    static std::string quake_name = "quake";
+    static std::string piksi_name = "piksi";
+    static std::string dcdc_name = "dcdc";
+    static std::string spike_and_hold_name = "spike_and_hold";
+    static std::string adcs_system_name = "adcs_system";
+    static std::string pressure_sensor_name = "pressure_sensor";
+    static std::string temp_sensor_inner_name = "temp_sensor_inner";
+    static std::string temp_sensor_outer_name = "temp_sensor_outer";
+    static std::string docking_switch_name = "docking_switch";
+    static std::string docking_motor_name = "docking_motor";
+
+    Gomspace gomspace(gomspace_name,
+                      &State::Gomspace::gomspace_data,
                       &State::Gomspace::gomspace_config,
                       &State::Gomspace::gomspace_config2, 
                       Wire, Gomspace::ADDRESS);
-    QLocate quake(&Serial3, QLocate::DEFAULT_NR_PIN, QLocate::DEFAULT_TIMEOUT);
-    Piksi piksi(Serial4);
-    DCDC dcdc(DCDC::DEFAULT_ENABLE_PIN);
-    SpikeAndHold spike_and_hold(SpikeAndHold::DEFAULT_VALVE_PINS, 
+    QLocate quake(quake_name, &Serial3, QLocate::DEFAULT_NR_PIN, QLocate::DEFAULT_TIMEOUT);
+    Piksi piksi(piksi_name, Serial4);
+    DCDC dcdc(dcdc_name, DCDC::DEFAULT_ENABLE_PIN);
+    SpikeAndHold spike_and_hold(spike_and_hold_name, 
+                                SpikeAndHold::DEFAULT_VALVE_PINS, 
                                 SpikeAndHold::DEFAULT_ENABLE_PIN);
-    ADCS adcs_system(Wire, ADCS::ADDRESS);
-    PressureSensor pressure_sensor(PressureSensor::DEFAULT_LOW_PRESSURE_PIN,
+    ADCS adcs_system(adcs_system_name, Wire, ADCS::ADDRESS);
+    PressureSensor pressure_sensor(pressure_sensor_name,
+                                   PressureSensor::DEFAULT_LOW_PRESSURE_PIN,
                                    PressureSensor::DEFAULT_HIGH_PRESSURE_PIN);
-    TempSensor temp_sensor_inner(TempSensor::DEFAULT_PIN_INNER_TANK);
-    TempSensor temp_sensor_outer(TempSensor::DEFAULT_PIN_OUTER_TANK);
-    DockingSwitch docking_switch(DockingSwitch::DEFAULT_SWITCH_PIN);
-    DockingMotor docking_motor(DockingMotor::DEFAULT_MOTOR_I1_PIN,
+    TempSensor temp_sensor_inner(temp_sensor_inner_name, TempSensor::DEFAULT_PIN_INNER_TANK);
+    TempSensor temp_sensor_outer(temp_sensor_outer_name, TempSensor::DEFAULT_PIN_OUTER_TANK);
+    DockingSwitch docking_switch(docking_switch_name, DockingSwitch::DEFAULT_SWITCH_PIN);
+    DockingMotor docking_motor(docking_motor_name, 
+                               DockingMotor::DEFAULT_MOTOR_I1_PIN,
                                DockingMotor::DEFAULT_MOTOR_I2_PIN,
                                DockingMotor::DEFAULT_MOTOR_DIRECTION_PIN,
                                DockingMotor::DEFAULT_MOTOR_SLEEP_PIN,
@@ -81,9 +97,9 @@ namespace Hardware {
     bool is_hardware_setup = false;
     rwmutex_t hardware_state_lock;
 
-    mutex_t dcdc_lock;
+    mutex_t dcdc_device_lock;
     mutex_t adcs_device_lock;
-    mutex_t spike_and_hold_lock;
+    mutex_t spike_and_hold_device_lock;
     mutex_t piksi_device_lock;
     mutex_t quake_device_lock;
     mutex_t gomspace_device_lock;
@@ -108,23 +124,23 @@ namespace ADCS {
     static Hardware::DeviceState adcs_ssa_adc_4_state = {false, false, false, false};
     static Hardware::DeviceState adcs_ssa_adc_5_state = {false, false, false, false};
     std::map<std::string, Hardware::DeviceState&> adcs_hat {
-        {"Gyroscope", adcs_gyro_state},
-        {"Magnetometer", adcs_magnetometer_state},
-        {"Magnetorquer X", adcs_magnetorquer_x_state},
-        {"Magnetorquer Y", adcs_magnetorquer_y_state},
-        {"Magnetorquer Z", adcs_magnetorquer_z_state},
-        {"Motor Potentiometer", adcs_motorpot_state},
-        {"Motor X", adcs_motor_x_state},
-        {"Motor Y", adcs_motor_y_state},
-        {"Motor Z", adcs_motor_z_state},
-        {"Motor X ADC", adcs_adc_motor_x_state},
-        {"Motor Y ADC", adcs_adc_motor_y_state},
-        {"Motor Z ADC", adcs_adc_motor_z_state},
-        {"Sun Sensor ADC 1", adcs_ssa_adc_1_state},
-        {"Sun Sensor ADC 2", adcs_ssa_adc_2_state},
-        {"Sun Sensor ADC 3", adcs_ssa_adc_3_state},
-        {"Sun Sensor ADC 4", adcs_ssa_adc_4_state},
-        {"Sun Sensor ADC 5", adcs_ssa_adc_5_state}
+        {"gyroscope", adcs_gyro_state},
+        {"magnetometer", adcs_magnetometer_state},
+        {"magnetorquer_x", adcs_magnetorquer_x_state},
+        {"magnetorquer_y", adcs_magnetorquer_y_state},
+        {"magnetorquer_z", adcs_magnetorquer_z_state},
+        {"motorpot", adcs_motorpot_state},
+        {"motor_x", adcs_motor_x_state},
+        {"motor_y", adcs_motor_y_state},
+        {"motor_z", adcs_motor_z_state},
+        {"adc_motor_x", adcs_adc_motor_x_state},
+        {"adc_motor_y", adcs_adc_motor_y_state},
+        {"adc_motor_z", adcs_adc_motor_z_state},
+        {"ssa_adc_1", adcs_ssa_adc_1_state},
+        {"ssa_adc_2", adcs_ssa_adc_2_state},
+        {"ssa_adc_3", adcs_ssa_adc_3_state},
+        {"ssa_adc_4", adcs_ssa_adc_4_state},
+        {"ssa_adc_5", adcs_ssa_adc_5_state}
     };
     rwmutex_t adcs_hardware_state_lock;
 }

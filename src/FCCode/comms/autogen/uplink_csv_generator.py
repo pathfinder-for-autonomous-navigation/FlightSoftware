@@ -12,8 +12,8 @@ FIELDS = [
     {"name" : "other_satellite_timestamp", "type" : "gps time" },
 ]
 
-for x in range(0,4):
-    FIELDS.append({"name" : "constant_{0}_id".format(x),  "type" : "state int",                 "min" : 0, "max" : 100})
+for x in range(0,5):
+    FIELDS.append({"name" : "constant_{0}_id".format(x),  "type" : "state int",                 "min" : 0, "max" : 11})
     FIELDS.append({"name" : "constant_{0}_val".format(x), "type" : "int",       "size" : 32,    "min" : 0, "max" : MAX_INT})
 
 FIELDS.append({"name" : "master_state", "type" : "state int", "min" : 0, "max" : 4  })
@@ -26,14 +26,14 @@ hat_devices = [
     "docking_motor", "docking_switch"
 ]
 for device in hat_devices:
-    FIELDS.append({"name" : "hat_{0}_error_ignored".format(device), "type" : "bool" })
+    FIELDS.append({"name" : "fc_hat_{0}".format(device), "type" : "bool" })
 adcs_hat_devices = [
     "gyroscope", "magnetometer", "magnetorquer_x", "magnetorquer_y", "magnetorquer_z",
-    "motorpot", "motor_x", "motor_y", "motor_z", "motor_x_adc", "motor_y_adc", "motor_z_adc", 
+    "motorpot", "motor_x", "motor_y", "motor_z", "motor_x_adc", "motor_y_adc", "motor_z_adc",
     "ssa_adc_1", "ssa_adc_2", "ssa_adc_3", "ssa_adc_4", "ssa_adc_5"
 ]
 for device in adcs_hat_devices:
-    FIELDS.append({"name" : "adcs_hat_{0}_is_functional".format(device), "type" : "bool" })
+    FIELDS.append({"name" : "adcs_hat_{0}".format(device), "type" : "bool" })
 
 FIELDS.append({ "name" : "adcs_state",         "type" : "state int", "min" : 0, "max" : 3 })
 FIELDS.append({ "name" : "command_adcs",       "type" : "bool" })
@@ -46,10 +46,10 @@ FIELDS.append({ "name" : "firing_time",        "type" : "gps time"})
 
 FIELDS.append({ "name" : "docking_motor_mode", "type" : "bool" })
 
-resettables = ["piksi", "quake"]
+resettables = ["piksi", "quake", "dcdc", "spike_and_hold"]
 for resettable in resettables:
     FIELDS.append({ "name" : "reset_{0}".format(resettable),     "type" : "bool" })
-cyclables = ["gomspace", "piksi", "quake", "dcdc", "adcs_system"]
+cyclables = ["gomspace", "piksi", "quake", "adcs_system", "spike_and_hold"]
 for cyclable in cyclables:
     FIELDS.append({ "name" : "power_cycle_{0}".format(cyclable), "type" : "bool" })
 
@@ -98,6 +98,7 @@ def get_statistics():
         if field["type"] == "temperature":
             size += 16
 
+    print "Uplink:"
     print "Number of fields: " + str(len(FIELDS))
     print "Full data size: " + str(int(math.ceil(size / 8))) + " bytes"
     compressed_size = sum([field["size"] for field in FIELDS])
@@ -105,5 +106,7 @@ def get_statistics():
         compressed_size / 8))) + " bytes"
     print "Compression ratio: " + str(100 - 100 *
                                       (compressed_size + 0.0) / size)
+    print "--------------------------------"
+
 
 get_statistics()

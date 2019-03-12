@@ -41,6 +41,6 @@ struct_file += "  };\n"
 struct_file += "}\n"
 struct_file += "#endif"
 
-f = open("../../uplink_struct.hpp", "w")
+f = open("../uplink_struct.hpp", "w")
 f.write(struct_file)
 f.close()

@@ -5,6 +5,7 @@
 #include <EEPROM.h>
 #include "../../state/EEPROMAddresses.hpp"
 #include "../constants.hpp"
+#include "../../comms/uplink_struct.hpp"
 
 namespace Master {
     unsigned short int safe_hold_needed();
@@ -17,6 +18,11 @@ namespace Master {
 
     void apply_uplink_data();
     void apply_uplink_commands();
+    void apply_uplink_resets();
+    // Helpers for uplink application
+    void apply_uplink_constants(const Comms::Uplink& uplink);
+    void apply_uplink_fc_hat(const Comms::Uplink& uplink);
+    void apply_uplink_adcs_hat(const Comms::Uplink& uplink);
 }
 
 #endif

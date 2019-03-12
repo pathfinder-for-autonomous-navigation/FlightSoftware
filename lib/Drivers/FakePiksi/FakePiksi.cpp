@@ -24,11 +24,6 @@ bool FakePiksi::is_functional() {
 void FakePiksi::reset() {}
 void FakePiksi::disable() {}
 
-static std::string fake_piksi_name = "Fake Piksi";
-std::string& FakePiksi::name() const {
-    return fake_piksi_name;
-}
-
 void FakePiksi::get_gps_time(gps_time_t* time) {
     _serial_port.write("TIME");
     delay(2);

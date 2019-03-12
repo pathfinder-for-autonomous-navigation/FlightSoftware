@@ -36,7 +36,8 @@ namespace Devices {
          * @param reset Reset pin.
          * @param step Stepper pin.
          */
-        DockingMotor(unsigned char i1, 
+        DockingMotor(const std::string& name,
+                     unsigned char i1, 
                      unsigned char i2, 
                      unsigned char dir, 
                      unsigned char sleep,
@@ -46,7 +47,6 @@ namespace Devices {
         bool is_functional() override;
         void disable() override;
         void reset() override;
-        std::string& name() const override;
 
         /** @brief Turn the docking motor in the opposite direction from how it previously moved. **/
         void toggle();

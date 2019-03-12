@@ -9,24 +9,29 @@
 
 #include "../state/device_states.hpp"
 #include <tensor.hpp>
+#include <vector>
 #include <map>
 
+// NOTE: Access to constants is controlled by the corresponding state lock.
 namespace Constants {
+    //! Map pointing to changeable constants
+    extern std::vector<unsigned int*> changeable_constants_map;
+
     namespace Master {
         #ifdef DEBUG
             //! Defines how long the master controller safehold callback will wait prior to automatically exiting safe hold.
-            constexpr unsigned int SAFE_HOLD_TIMEOUT = 3; // In seconds
+            extern unsigned int SAFE_HOLD_TIMEOUT;
             //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still being a spinny boi
             constexpr unsigned int INITIALIZATION_HOLD_DETUMBLE_WAIT = 5;
             //! Seconds before docking mode is automatically exited and standby mode is triggered
-            constexpr unsigned int DOCKING_TIMEOUT = 5;
+            extern unsigned int DOCKING_TIMEOUT;
         #else
             //! Defines how long the master controller safehold callback will wait prior to automatically exiting safe hold.
-            constexpr unsigned int SAFE_HOLD_TIMEOUT = 60*60*24; // 1 day, in seconds
+            extern unsigned int SAFE_HOLD_TIMEOUT;
             //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still being a spinny boi
             constexpr unsigned int INITIALIZATION_HOLD_DETUMBLE_WAIT = 30; 
             //! Seconds before docking mode is automatically exited and standby mode is triggered
-            constexpr unsigned int DOCKING_TIMEOUT = 30*60; 
+            extern unsigned int DOCKING_TIMEOUT;
         #endif
         constexpr unsigned int ORBIT_PERIOD_MS = 2*60*60*1000; // Approximate orbital period in milliseconds--assuming 2-hour orbit
         constexpr float SPACECRAFT_MASS = 1.0; // TODO fix
@@ -67,13 +72,13 @@ namespace Constants {
 
     namespace Propulsion {
         //! Milliseconds that a valve is opened in order to pressurize or vent a tank.
-        constexpr unsigned int VALVE_VENT_TIME = 200;
+        extern unsigned int VALVE_VENT_TIME;
         //! Milliseconds that we wait between opening the same valve.
-        constexpr unsigned int VALVE_WAIT_TIME = 1000;
+        extern unsigned int VALVE_WAIT_TIME;
         //! Seconds before the actual thruster firing that a propellant-maximizing attitude adjustment is made.
-        constexpr unsigned int THRUSTER_PREPARATION_TIME = 300; 
+        extern unsigned int THRUSTER_PREPARATION_TIME; 
         //! Milliseconds before the actual thruster firing that the tank 2 pressure-controlling loop is stopped.
-        constexpr unsigned int STOP_PRESSURIZATION_TIME_DELTA = 2000; 
+        extern unsigned int STOP_PRESSURIZATION_TIME_DELTA; 
         //! Maximum allowable temperature of inner tank
         constexpr float MAX_INNER_TANK_TEMPERATURE = 48;
         //! Maximum allowable temperature of outer tank
@@ -81,7 +86,7 @@ namespace Constants {
         //! Maximum allowable pressure of outer tank
         constexpr float MAX_OUTER_TANK_PRESSURE = 100;
         //! Amount of time, in milliseconds, to wait between intertank ventings
-        constexpr unsigned int WAIT_BETWEEN_PRESSURIZATIONS = 30000; // TODO
+        extern unsigned int WAIT_BETWEEN_PRESSURIZATIONS;
         //! Required outer tank pressure prior to initiating a firing
         constexpr float PRE_FIRING_OUTER_TANK_PRESSURE = 0; // TODO
         //! Maximum allowable impulse magnitude for a particular firing, in kg m/s
@@ -93,21 +98,21 @@ namespace Constants {
 
     namespace Quake {
         //! Number of times to try sending a packet
-        constexpr unsigned int NUM_RETRIES = 5;
+        extern unsigned int NUM_RETRIES;
         #ifdef DEBUG
         //! Maximum number of seconds before safe hold happens because of an uplink timeout
-        constexpr unsigned int UPLINK_TIMEOUT = 10;
+        extern unsigned int UPLINK_TIMEOUT;
         //! Period to wait prior to forcibly trying a downlink (seconds)
-        constexpr unsigned int QUAKE_WAIT_PERIOD = 5;
+        extern unsigned int QUAKE_WAIT_PERIOD;
         //! Interval between successive downlink retries (milliseconds)
-        constexpr unsigned int WAIT_BETWEEN_RETRIES = 500;
+        extern unsigned int WAIT_BETWEEN_RETRIES;
         #else
         //! Maximum number of seconds before safe hold happens because of an uplink timeout
-        constexpr unsigned int UPLINK_TIMEOUT = 24*60*60;
+        extern unsigned int UPLINK_TIMEOUT;
         //! Period to wait prior to forcibly trying a downlink (seconds)
-        constexpr unsigned int QUAKE_WAIT_PERIOD = 5*60*50;
+        extern unsigned int QUAKE_WAIT_PERIOD;
         //! Interval between successive downlink retries (milliseconds)
-        constexpr unsigned int WAIT_BETWEEN_RETRIES = 2000;
+        extern unsigned int WAIT_BETWEEN_RETRIES;
         #endif
     }
 }

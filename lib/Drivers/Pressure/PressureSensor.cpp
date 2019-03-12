@@ -2,7 +2,11 @@
 
 using namespace Devices;
 
-PressureSensor::PressureSensor(unsigned char l, unsigned char h) : low_pressure_pin_(l), high_pressure_pin_(h) {}
+PressureSensor::PressureSensor(const std::string& name, 
+                               unsigned char l, 
+                               unsigned char h) : Device(name),
+                                                  low_pressure_pin_(l), 
+                                                  high_pressure_pin_(h) {}
 
 bool PressureSensor::setup() {
     return true;
@@ -14,11 +18,6 @@ bool PressureSensor::is_functional() {
 
 void PressureSensor::disable() {}
 void PressureSensor::reset() {}
-
-static std::string temp_sensor_name = "Pressure Sensor";
-std::string& PressureSensor::name() const {
-    return temp_sensor_name;
-}
 
 float PressureSensor::get() {
     // TODO implement

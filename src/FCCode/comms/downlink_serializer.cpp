@@ -30,232 +30,228 @@ static void serialize_packet_0(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
   for(int i = 0; i < bitset_3.size(); i++) packet.set(packet_ptr++,bitset_3[i]);
 
   std::bitset<1> bitset_4;
-  bitset_4.set(0, State::read(State::Master::was_last_uplink_valid, State::Master::master_state_lock));
+  bitset_4.set(0, State::read(State::Master::is_follower, State::Master::master_state_lock));
   for(int i = 0; i < bitset_4.size(); i++) packet.set(packet_ptr++,bitset_4[i]);
 
   std::bitset<1> bitset_5;
-  bitset_5.set(0, State::read(State::Master::is_follower, State::Master::master_state_lock));
+  bitset_5.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_5.size(); i++) packet.set(packet_ptr++,bitset_5[i]);
 
   std::bitset<1> bitset_6;
-  bitset_6.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_6.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_6.size(); i++) packet.set(packet_ptr++,bitset_6[i]);
 
   std::bitset<1> bitset_7;
-  bitset_7.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_7.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_7.size(); i++) packet.set(packet_ptr++,bitset_7[i]);
 
   std::bitset<1> bitset_8;
-  bitset_8.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_8.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_8.size(); i++) packet.set(packet_ptr++,bitset_8[i]);
 
   std::bitset<1> bitset_9;
-  bitset_9.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_9.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_9.size(); i++) packet.set(packet_ptr++,bitset_9[i]);
 
   std::bitset<1> bitset_10;
-  bitset_10.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_10.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_10.size(); i++) packet.set(packet_ptr++,bitset_10[i]);
 
   std::bitset<1> bitset_11;
-  bitset_11.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_11.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_11.size(); i++) packet.set(packet_ptr++,bitset_11[i]);
 
   std::bitset<1> bitset_12;
-  bitset_12.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_12.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_12.size(); i++) packet.set(packet_ptr++,bitset_12[i]);
 
   std::bitset<1> bitset_13;
-  bitset_13.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_13.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_13.size(); i++) packet.set(packet_ptr++,bitset_13[i]);
 
   std::bitset<1> bitset_14;
-  bitset_14.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_14.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_14.size(); i++) packet.set(packet_ptr++,bitset_14[i]);
 
   std::bitset<1> bitset_15;
-  bitset_15.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_15.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_15.size(); i++) packet.set(packet_ptr++,bitset_15[i]);
 
   std::bitset<1> bitset_16;
-  bitset_16.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_16.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_16.size(); i++) packet.set(packet_ptr++,bitset_16[i]);
 
   std::bitset<1> bitset_17;
-  bitset_17.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_17.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_17.size(); i++) packet.set(packet_ptr++,bitset_17[i]);
 
   std::bitset<1> bitset_18;
-  bitset_18.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_18.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_18.size(); i++) packet.set(packet_ptr++,bitset_18[i]);
 
   std::bitset<1> bitset_19;
-  bitset_19.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_19.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_19.size(); i++) packet.set(packet_ptr++,bitset_19[i]);
 
   std::bitset<1> bitset_20;
-  bitset_20.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_20.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_20.size(); i++) packet.set(packet_ptr++,bitset_20[i]);
 
   std::bitset<1> bitset_21;
-  bitset_21.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_21.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_21.size(); i++) packet.set(packet_ptr++,bitset_21[i]);
 
   std::bitset<1> bitset_22;
-  bitset_22.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_22.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_22.size(); i++) packet.set(packet_ptr++,bitset_22[i]);
 
   std::bitset<1> bitset_23;
-  bitset_23.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_23.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_23.size(); i++) packet.set(packet_ptr++,bitset_23[i]);
 
   std::bitset<1> bitset_24;
-  bitset_24.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_24.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_24.size(); i++) packet.set(packet_ptr++,bitset_24[i]);
 
   std::bitset<1> bitset_25;
-  bitset_25.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_25.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_25.size(); i++) packet.set(packet_ptr++,bitset_25[i]);
 
   std::bitset<1> bitset_26;
-  bitset_26.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_26.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_26.size(); i++) packet.set(packet_ptr++,bitset_26[i]);
 
   std::bitset<1> bitset_27;
-  bitset_27.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_27.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_27.size(); i++) packet.set(packet_ptr++,bitset_27[i]);
 
   std::bitset<1> bitset_28;
-  bitset_28.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_28.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_28.size(); i++) packet.set(packet_ptr++,bitset_28[i]);
 
   std::bitset<1> bitset_29;
-  bitset_29.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_29.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_29.size(); i++) packet.set(packet_ptr++,bitset_29[i]);
 
   std::bitset<1> bitset_30;
-  bitset_30.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_30.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_30.size(); i++) packet.set(packet_ptr++,bitset_30[i]);
 
   std::bitset<1> bitset_31;
-  bitset_31.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_31.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_31.size(); i++) packet.set(packet_ptr++,bitset_31[i]);
 
   std::bitset<1> bitset_32;
-  bitset_32.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_32.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_32.size(); i++) packet.set(packet_ptr++,bitset_32[i]);
 
   std::bitset<1> bitset_33;
-  bitset_33.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_33.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_33.size(); i++) packet.set(packet_ptr++,bitset_33[i]);
 
   std::bitset<1> bitset_34;
-  bitset_34.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_34.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_34.size(); i++) packet.set(packet_ptr++,bitset_34[i]);
 
   std::bitset<1> bitset_35;
-  bitset_35.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_35.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_35.size(); i++) packet.set(packet_ptr++,bitset_35[i]);
 
   std::bitset<1> bitset_36;
-  bitset_36.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_36.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_36.size(); i++) packet.set(packet_ptr++,bitset_36[i]);
 
   std::bitset<1> bitset_37;
-  bitset_37.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_37.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_37.size(); i++) packet.set(packet_ptr++,bitset_37[i]);
 
   std::bitset<1> bitset_38;
-  bitset_38.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_38.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_38.size(); i++) packet.set(packet_ptr++,bitset_38[i]);
 
   std::bitset<1> bitset_39;
-  bitset_39.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_39.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_39.size(); i++) packet.set(packet_ptr++,bitset_39[i]);
 
   std::bitset<1> bitset_40;
-  bitset_40.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_40.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_40.size(); i++) packet.set(packet_ptr++,bitset_40[i]);
 
   std::bitset<1> bitset_41;
-  bitset_41.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_41.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_41.size(); i++) packet.set(packet_ptr++,bitset_41[i]);
 
   std::bitset<1> bitset_42;
-  bitset_42.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_42.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_42.size(); i++) packet.set(packet_ptr++,bitset_42[i]);
 
   std::bitset<1> bitset_43;
-  bitset_43.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_43.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_43.size(); i++) packet.set(packet_ptr++,bitset_43[i]);
 
   std::bitset<1> bitset_44;
-  bitset_44.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_44.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_44.size(); i++) packet.set(packet_ptr++,bitset_44[i]);
 
   std::bitset<1> bitset_45;
-  bitset_45.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_45.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_45.size(); i++) packet.set(packet_ptr++,bitset_45[i]);
 
   std::bitset<1> bitset_46;
-  bitset_46.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_46.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_46.size(); i++) packet.set(packet_ptr++,bitset_46[i]);
 
   std::bitset<1> bitset_47;
-  bitset_47.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_47.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_47.size(); i++) packet.set(packet_ptr++,bitset_47[i]);
 
   std::bitset<1> bitset_48;
-  bitset_48.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_48.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_48.size(); i++) packet.set(packet_ptr++,bitset_48[i]);
 
-  std::bitset<1> bitset_49;
-  bitset_49.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).error_ignored, State::Hardware::hardware_state_lock));
+  std::bitset<2> bitset_49;
+  Comms::trim_int(State::read(State::ADCS::adcs_state,State::ADCS::adcs_state_lock), 0, 3, &bitset_49);
   for(int i = 0; i < bitset_49.size(); i++) packet.set(packet_ptr++,bitset_49[i]);
 
-  std::bitset<2> bitset_50;
-  Comms::trim_int(State::read(State::ADCS::adcs_state,State::ADCS::adcs_state_lock), 0, 3, &bitset_50);
+  std::bitset<29> bitset_50;
+  Comms::trim_quaternion(State::read(State::ADCS::cmd_attitude,State::ADCS::adcs_state_lock), &bitset_50);
   for(int i = 0; i < bitset_50.size(); i++) packet.set(packet_ptr++,bitset_50[i]);
 
   std::bitset<29> bitset_51;
-  Comms::trim_quaternion(State::read(State::ADCS::cmd_attitude,State::ADCS::adcs_state_lock), &bitset_51);
+  Comms::trim_quaternion(State::read(State::ADCS::cur_attitude,State::ADCS::adcs_state_lock), &bitset_51);
   for(int i = 0; i < bitset_51.size(); i++) packet.set(packet_ptr++,bitset_51[i]);
 
-  std::bitset<29> bitset_52;
-  Comms::trim_quaternion(State::read(State::ADCS::cur_attitude,State::ADCS::adcs_state_lock), &bitset_52);
+  std::bitset<30> bitset_52;
+  Comms::trim_vector(State::read(State::ADCS::cur_ang_rate,State::ADCS::adcs_state_lock), 0, 2.2, &bitset_52);
   for(int i = 0; i < bitset_52.size(); i++) packet.set(packet_ptr++,bitset_52[i]);
 
-  std::bitset<30> bitset_53;
-  Comms::trim_vector(State::read(State::ADCS::cur_ang_rate,State::ADCS::adcs_state_lock), 0, 2.2, &bitset_53);
+  std::bitset<1> bitset_53;
+  bitset_53.set(0, State::read(State::ADCS::is_sun_vector_determination_working, State::ADCS::adcs_state_lock));
   for(int i = 0; i < bitset_53.size(); i++) packet.set(packet_ptr++,bitset_53[i]);
 
-  std::bitset<1> bitset_54;
-  bitset_54.set(0, State::read(State::ADCS::is_sun_vector_determination_working, State::ADCS::adcs_state_lock));
+  std::bitset<50> bitset_54;
+  Comms::trim_vector(State::read(State::ADCS::rwa_speeds,State::ADCS::adcs_state_lock), 0, 0, &bitset_54);
   for(int i = 0; i < bitset_54.size(); i++) packet.set(packet_ptr++,bitset_54[i]);
 
   std::bitset<50> bitset_55;
-  Comms::trim_vector(State::read(State::ADCS::rwa_speeds,State::ADCS::adcs_state_lock), 0, 0, &bitset_55);
+  Comms::trim_vector(State::read(State::ADCS::rwa_speed_cmds,State::ADCS::adcs_state_lock), 0, 0, &bitset_55);
   for(int i = 0; i < bitset_55.size(); i++) packet.set(packet_ptr++,bitset_55[i]);
 
-  std::bitset<50> bitset_56;
-  Comms::trim_vector(State::read(State::ADCS::rwa_speed_cmds,State::ADCS::adcs_state_lock), 0, 0, &bitset_56);
+  std::bitset<29> bitset_56;
+  Comms::trim_vector(State::read(State::ADCS::rwa_ramps,State::ADCS::adcs_state_lock), 0, 310.2, &bitset_56);
   for(int i = 0; i < bitset_56.size(); i++) packet.set(packet_ptr++,bitset_56[i]);
 
-  std::bitset<29> bitset_57;
-  Comms::trim_vector(State::read(State::ADCS::rwa_ramps,State::ADCS::adcs_state_lock), 0, 310.2, &bitset_57);
+  std::bitset<50> bitset_57;
+  Comms::trim_vector(State::read(State::ADCS::rwa_speeds_rd,State::ADCS::adcs_state_lock), 0, 0, &bitset_57);
   for(int i = 0; i < bitset_57.size(); i++) packet.set(packet_ptr++,bitset_57[i]);
 
   std::bitset<50> bitset_58;
-  Comms::trim_vector(State::read(State::ADCS::rwa_speeds_rd,State::ADCS::adcs_state_lock), 0, 0, &bitset_58);
+  Comms::trim_vector(State::read(State::ADCS::rwa_speed_cmds_rd,State::ADCS::adcs_state_lock), 0, 0, &bitset_58);
   for(int i = 0; i < bitset_58.size(); i++) packet.set(packet_ptr++,bitset_58[i]);
 
-  std::bitset<50> bitset_59;
-  Comms::trim_vector(State::read(State::ADCS::rwa_speed_cmds_rd,State::ADCS::adcs_state_lock), 0, 0, &bitset_59);
+  std::bitset<29> bitset_59;
+  Comms::trim_vector(State::read(State::ADCS::rwa_ramps_rd,State::ADCS::adcs_state_lock), 0, 310.2, &bitset_59);
   for(int i = 0; i < bitset_59.size(); i++) packet.set(packet_ptr++,bitset_59[i]);
-
-  std::bitset<29> bitset_60;
-  Comms::trim_vector(State::read(State::ADCS::rwa_ramps_rd,State::ADCS::adcs_state_lock), 0, 310.2, &bitset_60);
-  for(int i = 0; i < bitset_60.size(); i++) packet.set(packet_ptr++,bitset_60[i]);
 }
 
 static void serialize_packet_1(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
@@ -266,201 +262,201 @@ static void serialize_packet_1(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
   std::bitset<8> packet_num_repr(1);
   for(int i = 0; i < 8; i++) packet.set(packet_ptr++, packet_num_repr[i]);
 
-  std::bitset<50> bitset_61;
-  Comms::trim_vector(State::read(State::ADCS::mtr_cmds,State::ADCS::adcs_state_lock), 0, 0, &bitset_61);
+  std::bitset<50> bitset_60;
+  Comms::trim_vector(State::read(State::ADCS::mtr_cmds,State::ADCS::adcs_state_lock), 0, 0, &bitset_60);
+  for(int i = 0; i < bitset_60.size(); i++) packet.set(packet_ptr++,bitset_60[i]);
+
+  std::bitset<21> bitset_61;
+  Comms::trim_vector(State::read(State::ADCS::ssa_vec,State::ADCS::adcs_state_lock), 0, 1, &bitset_61);
   for(int i = 0; i < bitset_61.size(); i++) packet.set(packet_ptr++,bitset_61[i]);
 
-  std::bitset<21> bitset_62;
-  Comms::trim_vector(State::read(State::ADCS::ssa_vec,State::ADCS::adcs_state_lock), 0, 1, &bitset_62);
+  std::bitset<8> bitset_62;
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[0],State::ADCS::adcs_state_lock), 0, 0, &bitset_62);
   for(int i = 0; i < bitset_62.size(); i++) packet.set(packet_ptr++,bitset_62[i]);
 
   std::bitset<8> bitset_63;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[0],State::ADCS::adcs_state_lock), 0, 0, &bitset_63);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[1],State::ADCS::adcs_state_lock), 0, 0, &bitset_63);
   for(int i = 0; i < bitset_63.size(); i++) packet.set(packet_ptr++,bitset_63[i]);
 
   std::bitset<8> bitset_64;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[1],State::ADCS::adcs_state_lock), 0, 0, &bitset_64);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[2],State::ADCS::adcs_state_lock), 0, 0, &bitset_64);
   for(int i = 0; i < bitset_64.size(); i++) packet.set(packet_ptr++,bitset_64[i]);
 
   std::bitset<8> bitset_65;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[2],State::ADCS::adcs_state_lock), 0, 0, &bitset_65);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[3],State::ADCS::adcs_state_lock), 0, 0, &bitset_65);
   for(int i = 0; i < bitset_65.size(); i++) packet.set(packet_ptr++,bitset_65[i]);
 
   std::bitset<8> bitset_66;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[3],State::ADCS::adcs_state_lock), 0, 0, &bitset_66);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[4],State::ADCS::adcs_state_lock), 0, 0, &bitset_66);
   for(int i = 0; i < bitset_66.size(); i++) packet.set(packet_ptr++,bitset_66[i]);
 
   std::bitset<8> bitset_67;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[4],State::ADCS::adcs_state_lock), 0, 0, &bitset_67);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[5],State::ADCS::adcs_state_lock), 0, 0, &bitset_67);
   for(int i = 0; i < bitset_67.size(); i++) packet.set(packet_ptr++,bitset_67[i]);
 
   std::bitset<8> bitset_68;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[5],State::ADCS::adcs_state_lock), 0, 0, &bitset_68);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[6],State::ADCS::adcs_state_lock), 0, 0, &bitset_68);
   for(int i = 0; i < bitset_68.size(); i++) packet.set(packet_ptr++,bitset_68[i]);
 
   std::bitset<8> bitset_69;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[6],State::ADCS::adcs_state_lock), 0, 0, &bitset_69);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[7],State::ADCS::adcs_state_lock), 0, 0, &bitset_69);
   for(int i = 0; i < bitset_69.size(); i++) packet.set(packet_ptr++,bitset_69[i]);
 
   std::bitset<8> bitset_70;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[7],State::ADCS::adcs_state_lock), 0, 0, &bitset_70);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[8],State::ADCS::adcs_state_lock), 0, 0, &bitset_70);
   for(int i = 0; i < bitset_70.size(); i++) packet.set(packet_ptr++,bitset_70[i]);
 
   std::bitset<8> bitset_71;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[8],State::ADCS::adcs_state_lock), 0, 0, &bitset_71);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[9],State::ADCS::adcs_state_lock), 0, 0, &bitset_71);
   for(int i = 0; i < bitset_71.size(); i++) packet.set(packet_ptr++,bitset_71[i]);
 
   std::bitset<8> bitset_72;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[9],State::ADCS::adcs_state_lock), 0, 0, &bitset_72);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[10],State::ADCS::adcs_state_lock), 0, 0, &bitset_72);
   for(int i = 0; i < bitset_72.size(); i++) packet.set(packet_ptr++,bitset_72[i]);
 
   std::bitset<8> bitset_73;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[10],State::ADCS::adcs_state_lock), 0, 0, &bitset_73);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[11],State::ADCS::adcs_state_lock), 0, 0, &bitset_73);
   for(int i = 0; i < bitset_73.size(); i++) packet.set(packet_ptr++,bitset_73[i]);
 
   std::bitset<8> bitset_74;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[11],State::ADCS::adcs_state_lock), 0, 0, &bitset_74);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[12],State::ADCS::adcs_state_lock), 0, 0, &bitset_74);
   for(int i = 0; i < bitset_74.size(); i++) packet.set(packet_ptr++,bitset_74[i]);
 
   std::bitset<8> bitset_75;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[12],State::ADCS::adcs_state_lock), 0, 0, &bitset_75);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[13],State::ADCS::adcs_state_lock), 0, 0, &bitset_75);
   for(int i = 0; i < bitset_75.size(); i++) packet.set(packet_ptr++,bitset_75[i]);
 
   std::bitset<8> bitset_76;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[13],State::ADCS::adcs_state_lock), 0, 0, &bitset_76);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[14],State::ADCS::adcs_state_lock), 0, 0, &bitset_76);
   for(int i = 0; i < bitset_76.size(); i++) packet.set(packet_ptr++,bitset_76[i]);
 
   std::bitset<8> bitset_77;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[14],State::ADCS::adcs_state_lock), 0, 0, &bitset_77);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[15],State::ADCS::adcs_state_lock), 0, 0, &bitset_77);
   for(int i = 0; i < bitset_77.size(); i++) packet.set(packet_ptr++,bitset_77[i]);
 
   std::bitset<8> bitset_78;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[15],State::ADCS::adcs_state_lock), 0, 0, &bitset_78);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[16],State::ADCS::adcs_state_lock), 0, 0, &bitset_78);
   for(int i = 0; i < bitset_78.size(); i++) packet.set(packet_ptr++,bitset_78[i]);
 
   std::bitset<8> bitset_79;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[16],State::ADCS::adcs_state_lock), 0, 0, &bitset_79);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[17],State::ADCS::adcs_state_lock), 0, 0, &bitset_79);
   for(int i = 0; i < bitset_79.size(); i++) packet.set(packet_ptr++,bitset_79[i]);
 
   std::bitset<8> bitset_80;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[17],State::ADCS::adcs_state_lock), 0, 0, &bitset_80);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[18],State::ADCS::adcs_state_lock), 0, 0, &bitset_80);
   for(int i = 0; i < bitset_80.size(); i++) packet.set(packet_ptr++,bitset_80[i]);
 
   std::bitset<8> bitset_81;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[18],State::ADCS::adcs_state_lock), 0, 0, &bitset_81);
+  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[19],State::ADCS::adcs_state_lock), 0, 0, &bitset_81);
   for(int i = 0; i < bitset_81.size(); i++) packet.set(packet_ptr++,bitset_81[i]);
 
-  std::bitset<8> bitset_82;
-  Comms::trim_float(State::read(State::ADCS::ssa_adc_data[19],State::ADCS::adcs_state_lock), 0, 0, &bitset_82);
+  std::bitset<12> bitset_82;
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.vboost[0],State::Gomspace::gomspace_state_lock), 0, 4000, &bitset_82);
   for(int i = 0; i < bitset_82.size(); i++) packet.set(packet_ptr++,bitset_82[i]);
 
   std::bitset<12> bitset_83;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.vboost[0],State::Gomspace::gomspace_state_lock), 0, 4000, &bitset_83);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.vboost[1],State::Gomspace::gomspace_state_lock), 0, 4000, &bitset_83);
   for(int i = 0; i < bitset_83.size(); i++) packet.set(packet_ptr++,bitset_83[i]);
 
   std::bitset<12> bitset_84;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.vboost[1],State::Gomspace::gomspace_state_lock), 0, 4000, &bitset_84);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.vboost[2],State::Gomspace::gomspace_state_lock), 0, 4000, &bitset_84);
   for(int i = 0; i < bitset_84.size(); i++) packet.set(packet_ptr++,bitset_84[i]);
 
-  std::bitset<12> bitset_85;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.vboost[2],State::Gomspace::gomspace_state_lock), 0, 4000, &bitset_85);
+  std::bitset<11> bitset_85;
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.vbatt,State::Gomspace::gomspace_state_lock), 5000, 9000, &bitset_85);
   for(int i = 0; i < bitset_85.size(); i++) packet.set(packet_ptr++,bitset_85[i]);
 
-  std::bitset<11> bitset_86;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.vbatt,State::Gomspace::gomspace_state_lock), 5000, 9000, &bitset_86);
+  std::bitset<10> bitset_86;
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curin[0],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_86);
   for(int i = 0; i < bitset_86.size(); i++) packet.set(packet_ptr++,bitset_86[i]);
 
   std::bitset<10> bitset_87;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curin[0],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_87);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curin[1],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_87);
   for(int i = 0; i < bitset_87.size(); i++) packet.set(packet_ptr++,bitset_87[i]);
 
   std::bitset<10> bitset_88;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curin[1],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_88);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curin[2],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_88);
   for(int i = 0; i < bitset_88.size(); i++) packet.set(packet_ptr++,bitset_88[i]);
 
-  std::bitset<10> bitset_89;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curin[2],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_89);
+  std::bitset<50> bitset_89;
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.cursun,State::Gomspace::gomspace_state_lock), 0, 0, &bitset_89);
   for(int i = 0; i < bitset_89.size(); i++) packet.set(packet_ptr++,bitset_89[i]);
 
   std::bitset<50> bitset_90;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.cursun,State::Gomspace::gomspace_state_lock), 0, 0, &bitset_90);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.cursys,State::Gomspace::gomspace_state_lock), 0, 0, &bitset_90);
   for(int i = 0; i < bitset_90.size(); i++) packet.set(packet_ptr++,bitset_90[i]);
 
-  std::bitset<50> bitset_91;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.cursys,State::Gomspace::gomspace_state_lock), 0, 0, &bitset_91);
+  std::bitset<7> bitset_91;
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[0],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_91);
   for(int i = 0; i < bitset_91.size(); i++) packet.set(packet_ptr++,bitset_91[i]);
 
   std::bitset<7> bitset_92;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[0],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_92);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[1],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_92);
   for(int i = 0; i < bitset_92.size(); i++) packet.set(packet_ptr++,bitset_92[i]);
 
   std::bitset<7> bitset_93;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[1],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_93);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[2],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_93);
   for(int i = 0; i < bitset_93.size(); i++) packet.set(packet_ptr++,bitset_93[i]);
 
   std::bitset<7> bitset_94;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[2],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_94);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[3],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_94);
   for(int i = 0; i < bitset_94.size(); i++) packet.set(packet_ptr++,bitset_94[i]);
 
   std::bitset<7> bitset_95;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[3],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_95);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[4],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_95);
   for(int i = 0; i < bitset_95.size(); i++) packet.set(packet_ptr++,bitset_95[i]);
 
   std::bitset<7> bitset_96;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[4],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_96);
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[5],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_96);
   for(int i = 0; i < bitset_96.size(); i++) packet.set(packet_ptr++,bitset_96[i]);
 
-  std::bitset<7> bitset_97;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.curout[5],State::Gomspace::gomspace_state_lock), 0, 1000, &bitset_97);
+  std::bitset<1> bitset_97;
+  bitset_97.set(0, State::read(State::Gomspace::gomspace_data.output[0], State::Gomspace::gomspace_state_lock));
   for(int i = 0; i < bitset_97.size(); i++) packet.set(packet_ptr++,bitset_97[i]);
 
   std::bitset<1> bitset_98;
-  bitset_98.set(0, State::read(State::Gomspace::gomspace_data.output[0], State::Gomspace::gomspace_state_lock));
+  bitset_98.set(0, State::read(State::Gomspace::gomspace_data.output[1], State::Gomspace::gomspace_state_lock));
   for(int i = 0; i < bitset_98.size(); i++) packet.set(packet_ptr++,bitset_98[i]);
 
   std::bitset<1> bitset_99;
-  bitset_99.set(0, State::read(State::Gomspace::gomspace_data.output[1], State::Gomspace::gomspace_state_lock));
+  bitset_99.set(0, State::read(State::Gomspace::gomspace_data.output[2], State::Gomspace::gomspace_state_lock));
   for(int i = 0; i < bitset_99.size(); i++) packet.set(packet_ptr++,bitset_99[i]);
 
   std::bitset<1> bitset_100;
-  bitset_100.set(0, State::read(State::Gomspace::gomspace_data.output[2], State::Gomspace::gomspace_state_lock));
+  bitset_100.set(0, State::read(State::Gomspace::gomspace_data.output[3], State::Gomspace::gomspace_state_lock));
   for(int i = 0; i < bitset_100.size(); i++) packet.set(packet_ptr++,bitset_100[i]);
 
   std::bitset<1> bitset_101;
-  bitset_101.set(0, State::read(State::Gomspace::gomspace_data.output[3], State::Gomspace::gomspace_state_lock));
+  bitset_101.set(0, State::read(State::Gomspace::gomspace_data.output[4], State::Gomspace::gomspace_state_lock));
   for(int i = 0; i < bitset_101.size(); i++) packet.set(packet_ptr++,bitset_101[i]);
 
   std::bitset<1> bitset_102;
-  bitset_102.set(0, State::read(State::Gomspace::gomspace_data.output[4], State::Gomspace::gomspace_state_lock));
+  bitset_102.set(0, State::read(State::Gomspace::gomspace_data.output[5], State::Gomspace::gomspace_state_lock));
   for(int i = 0; i < bitset_102.size(); i++) packet.set(packet_ptr++,bitset_102[i]);
 
   std::bitset<1> bitset_103;
-  bitset_103.set(0, State::read(State::Gomspace::gomspace_data.output[5], State::Gomspace::gomspace_state_lock));
+  bitset_103.set(0, State::read(State::Gomspace::gomspace_data.output[6], State::Gomspace::gomspace_state_lock));
   for(int i = 0; i < bitset_103.size(); i++) packet.set(packet_ptr++,bitset_103[i]);
 
   std::bitset<1> bitset_104;
-  bitset_104.set(0, State::read(State::Gomspace::gomspace_data.output[6], State::Gomspace::gomspace_state_lock));
+  bitset_104.set(0, State::read(State::Gomspace::gomspace_data.output[7], State::Gomspace::gomspace_state_lock));
   for(int i = 0; i < bitset_104.size(); i++) packet.set(packet_ptr++,bitset_104[i]);
 
-  std::bitset<1> bitset_105;
-  bitset_105.set(0, State::read(State::Gomspace::gomspace_data.output[7], State::Gomspace::gomspace_state_lock));
+  std::bitset<32> bitset_105;
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.counter_boot,State::Gomspace::gomspace_state_lock), 0, 4294967295, &bitset_105);
   for(int i = 0; i < bitset_105.size(); i++) packet.set(packet_ptr++,bitset_105[i]);
 
-  std::bitset<32> bitset_106;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.counter_boot,State::Gomspace::gomspace_state_lock), 0, 4294967295, &bitset_106);
+  std::bitset<9> bitset_106;
+  Comms::trim_temperature(State::read(State::Gomspace::gomspace_data.temp[0],State::Gomspace::gomspace_state_lock), &bitset_106);
   for(int i = 0; i < bitset_106.size(); i++) packet.set(packet_ptr++,bitset_106[i]);
 
   std::bitset<9> bitset_107;
-  Comms::trim_temperature(State::read(State::Gomspace::gomspace_data.temp[0],State::Gomspace::gomspace_state_lock), &bitset_107);
+  Comms::trim_temperature(State::read(State::Gomspace::gomspace_data.temp[1],State::Gomspace::gomspace_state_lock), &bitset_107);
   for(int i = 0; i < bitset_107.size(); i++) packet.set(packet_ptr++,bitset_107[i]);
 
   std::bitset<9> bitset_108;
-  Comms::trim_temperature(State::read(State::Gomspace::gomspace_data.temp[1],State::Gomspace::gomspace_state_lock), &bitset_108);
+  Comms::trim_temperature(State::read(State::Gomspace::gomspace_data.temp[2],State::Gomspace::gomspace_state_lock), &bitset_108);
   for(int i = 0; i < bitset_108.size(); i++) packet.set(packet_ptr++,bitset_108[i]);
-
-  std::bitset<9> bitset_109;
-  Comms::trim_temperature(State::read(State::Gomspace::gomspace_data.temp[2],State::Gomspace::gomspace_state_lock), &bitset_109);
-  for(int i = 0; i < bitset_109.size(); i++) packet.set(packet_ptr++,bitset_109[i]);
 }
 
 static void serialize_packet_2(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
@@ -471,45 +467,45 @@ static void serialize_packet_2(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
   std::bitset<8> packet_num_repr(2);
   for(int i = 0; i < 8; i++) packet.set(packet_ptr++, packet_num_repr[i]);
 
-  std::bitset<9> bitset_110;
-  Comms::trim_temperature(State::read(State::Gomspace::gomspace_data.temp[3],State::Gomspace::gomspace_state_lock), &bitset_110);
+  std::bitset<9> bitset_109;
+  Comms::trim_temperature(State::read(State::Gomspace::gomspace_data.temp[3],State::Gomspace::gomspace_state_lock), &bitset_109);
+  for(int i = 0; i < bitset_109.size(); i++) packet.set(packet_ptr++,bitset_109[i]);
+
+  std::bitset<50> bitset_110;
+  Comms::trim_int(State::read(State::Gomspace::gomspace_data.battmode,State::Gomspace::gomspace_state_lock), 0, 0, &bitset_110);
   for(int i = 0; i < bitset_110.size(); i++) packet.set(packet_ptr++,bitset_110[i]);
 
-  std::bitset<50> bitset_111;
-  Comms::trim_int(State::read(State::Gomspace::gomspace_data.battmode,State::Gomspace::gomspace_state_lock), 0, 0, &bitset_111);
+  std::bitset<3> bitset_111;
+  Comms::trim_int(State::read(State::Propulsion::propulsion_state,State::Propulsion::propulsion_state_lock), 0, 5, &bitset_111);
   for(int i = 0; i < bitset_111.size(); i++) packet.set(packet_ptr++,bitset_111[i]);
 
-  std::bitset<3> bitset_112;
-  Comms::trim_int(State::read(State::Propulsion::propulsion_state,State::Propulsion::propulsion_state_lock), 0, 5, &bitset_112);
+  std::bitset<26> bitset_112;
+  Comms::trim_vector(State::read(State::Propulsion::firing_data.impulse_vector,State::Propulsion::propulsion_state_lock), 0, 0.005, &bitset_112);
   for(int i = 0; i < bitset_112.size(); i++) packet.set(packet_ptr++,bitset_112[i]);
 
-  std::bitset<26> bitset_113;
-  Comms::trim_vector(State::read(State::Propulsion::firing_data.impulse_vector,State::Propulsion::propulsion_state_lock), 0, 0.005, &bitset_113);
+  std::bitset<49> bitset_113;
+  Comms::trim_gps_time(State::read(State::Propulsion::firing_data.time,State::Propulsion::propulsion_state_lock), &bitset_113);
   for(int i = 0; i < bitset_113.size(); i++) packet.set(packet_ptr++,bitset_113[i]);
 
   std::bitset<49> bitset_114;
-  Comms::trim_gps_time(State::read(State::Propulsion::firing_data.time,State::Propulsion::propulsion_state_lock), &bitset_114);
+  Comms::trim_gps_time(State::read(State::Piksi::recorded_current_time,State::Piksi::piksi_state_lock), &bitset_114);
   for(int i = 0; i < bitset_114.size(); i++) packet.set(packet_ptr++,bitset_114[i]);
 
-  std::bitset<49> bitset_115;
-  Comms::trim_gps_time(State::read(State::Piksi::recorded_current_time,State::Piksi::piksi_state_lock), &bitset_115);
+  std::bitset<32> bitset_115;
+  Comms::trim_int(State::read(State::Piksi::recorded_time_collection_timestamp,State::Piksi::piksi_state_lock), 0, 4294967295, &bitset_115);
   for(int i = 0; i < bitset_115.size(); i++) packet.set(packet_ptr++,bitset_115[i]);
 
-  std::bitset<32> bitset_116;
-  Comms::trim_int(State::read(State::Piksi::recorded_time_collection_timestamp,State::Piksi::piksi_state_lock), 0, 4294967295, &bitset_116);
+  std::bitset<49> bitset_116;
+  Comms::trim_gps_time(State::read(State::GNC::current_time,State::GNC::gnc_state_lock), &bitset_116);
   for(int i = 0; i < bitset_116.size(); i++) packet.set(packet_ptr++,bitset_116[i]);
 
-  std::bitset<49> bitset_117;
-  Comms::trim_gps_time(State::read(State::GNC::current_time,State::GNC::gnc_state_lock), &bitset_117);
+  std::bitset<32> bitset_117;
+  Comms::trim_int(State::read(State::GNC::time_collection_timestamp,State::GNC::gnc_state_lock), 0, 4294967295, &bitset_117);
   for(int i = 0; i < bitset_117.size(); i++) packet.set(packet_ptr++,bitset_117[i]);
 
-  std::bitset<32> bitset_118;
-  Comms::trim_int(State::read(State::GNC::time_collection_timestamp,State::GNC::gnc_state_lock), 0, 4294967295, &bitset_118);
+  std::bitset<1> bitset_118;
+  bitset_118.set(0, State::read(State::GNC::has_firing_happened_in_nighttime, State::GNC::gnc_state_lock));
   for(int i = 0; i < bitset_118.size(); i++) packet.set(packet_ptr++,bitset_118[i]);
-
-  std::bitset<1> bitset_119;
-  bitset_119.set(0, State::read(State::GNC::has_firing_happened_in_nighttime, State::GNC::gnc_state_lock));
-  for(int i = 0; i < bitset_119.size(); i++) packet.set(packet_ptr++,bitset_119[i]);
 }
 
 static void serialize_packet_3(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
@@ -522,9 +518,9 @@ static void serialize_packet_3(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::gyro_history.empty()) {
-    std::bitset<50> bitset_120;
-    Comms::trim_vector(StateHistory::ADCS::gyro_history.get(), -2.2, 2.2, &bitset_120);
-    for(int i = 0; i < bitset_120.size(); i++) packet.set(packet_ptr++,bitset_120[i]);}
+    std::bitset<50> bitset_119;
+    Comms::trim_vector(StateHistory::ADCS::gyro_history.get(), -2.2, 2.2, &bitset_119);
+    for(int i = 0; i < bitset_119.size(); i++) packet.set(packet_ptr++,bitset_119[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -538,9 +534,9 @@ static void serialize_packet_4(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::gyro_fast_history.empty()) {
-    std::bitset<50> bitset_121;
-    Comms::trim_vector(StateHistory::ADCS::gyro_fast_history.get(), 0, 0, &bitset_121);
-    for(int i = 0; i < bitset_121.size(); i++) packet.set(packet_ptr++,bitset_121[i]);}
+    std::bitset<50> bitset_120;
+    Comms::trim_vector(StateHistory::ADCS::gyro_fast_history.get(), 0, 0, &bitset_120);
+    for(int i = 0; i < bitset_120.size(); i++) packet.set(packet_ptr++,bitset_120[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -554,9 +550,9 @@ static void serialize_packet_5(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::attitude_cmd_history.empty()) {
-    std::bitset<29> bitset_122;
-    Comms::trim_quaternion(StateHistory::ADCS::attitude_cmd_history.get(), &bitset_122);
-    for(int i = 0; i < bitset_122.size(); i++) packet.set(packet_ptr++,bitset_122[i]);}
+    std::bitset<29> bitset_121;
+    Comms::trim_quaternion(StateHistory::ADCS::attitude_cmd_history.get(), &bitset_121);
+    for(int i = 0; i < bitset_121.size(); i++) packet.set(packet_ptr++,bitset_121[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -570,9 +566,9 @@ static void serialize_packet_6(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::attitude_history.empty()) {
-    std::bitset<29> bitset_123;
-    Comms::trim_quaternion(StateHistory::ADCS::attitude_history.get(), &bitset_123);
-    for(int i = 0; i < bitset_123.size(); i++) packet.set(packet_ptr++,bitset_123[i]);}
+    std::bitset<29> bitset_122;
+    Comms::trim_quaternion(StateHistory::ADCS::attitude_history.get(), &bitset_122);
+    for(int i = 0; i < bitset_122.size(); i++) packet.set(packet_ptr++,bitset_122[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -586,9 +582,9 @@ static void serialize_packet_7(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::attitude_fast_history.empty()) {
-    std::bitset<29> bitset_124;
-    Comms::trim_quaternion(StateHistory::ADCS::attitude_fast_history.get(), &bitset_124);
-    for(int i = 0; i < bitset_124.size(); i++) packet.set(packet_ptr++,bitset_124[i]);}
+    std::bitset<29> bitset_123;
+    Comms::trim_quaternion(StateHistory::ADCS::attitude_fast_history.get(), &bitset_123);
+    for(int i = 0; i < bitset_123.size(); i++) packet.set(packet_ptr++,bitset_123[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -602,9 +598,9 @@ static void serialize_packet_8(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::rate_history.empty()) {
-    std::bitset<30> bitset_125;
-    Comms::trim_vector(StateHistory::ADCS::rate_history.get(), -2.2, 2.2, &bitset_125);
-    for(int i = 0; i < bitset_125.size(); i++) packet.set(packet_ptr++,bitset_125[i]);}
+    std::bitset<30> bitset_124;
+    Comms::trim_vector(StateHistory::ADCS::rate_history.get(), -2.2, 2.2, &bitset_124);
+    for(int i = 0; i < bitset_124.size(); i++) packet.set(packet_ptr++,bitset_124[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -618,9 +614,9 @@ static void serialize_packet_9(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::rate_fast_history.empty()) {
-    std::bitset<30> bitset_126;
-    Comms::trim_vector(StateHistory::ADCS::rate_fast_history.get(), -2.2, 2.2, &bitset_126);
-    for(int i = 0; i < bitset_126.size(); i++) packet.set(packet_ptr++,bitset_126[i]);}
+    std::bitset<30> bitset_125;
+    Comms::trim_vector(StateHistory::ADCS::rate_fast_history.get(), -2.2, 2.2, &bitset_125);
+    for(int i = 0; i < bitset_125.size(); i++) packet.set(packet_ptr++,bitset_125[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -634,9 +630,9 @@ static void serialize_packet_10(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::spacecraft_L_history.empty()) {
-    std::bitset<50> bitset_127;
-    Comms::trim_vector(StateHistory::ADCS::spacecraft_L_history.get(), 0, 0, &bitset_127);
-    for(int i = 0; i < bitset_127.size(); i++) packet.set(packet_ptr++,bitset_127[i]);}
+    std::bitset<50> bitset_126;
+    Comms::trim_vector(StateHistory::ADCS::spacecraft_L_history.get(), 0, 0, &bitset_126);
+    for(int i = 0; i < bitset_126.size(); i++) packet.set(packet_ptr++,bitset_126[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -650,9 +646,9 @@ static void serialize_packet_11(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::spacecraft_L_fast_history.empty()) {
-    std::bitset<50> bitset_128;
-    Comms::trim_vector(StateHistory::ADCS::spacecraft_L_fast_history.get(), 0, 0, &bitset_128);
-    for(int i = 0; i < bitset_128.size(); i++) packet.set(packet_ptr++,bitset_128[i]);}
+    std::bitset<50> bitset_127;
+    Comms::trim_vector(StateHistory::ADCS::spacecraft_L_fast_history.get(), 0, 0, &bitset_127);
+    for(int i = 0; i < bitset_127.size(); i++) packet.set(packet_ptr++,bitset_127[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -666,9 +662,9 @@ static void serialize_packet_12(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::magnetometer_history.empty()) {
-    std::bitset<29> bitset_129;
-    Comms::trim_vector(StateHistory::ADCS::magnetometer_history.get(), 0, 0.005, &bitset_129);
-    for(int i = 0; i < bitset_129.size(); i++) packet.set(packet_ptr++,bitset_129[i]);}
+    std::bitset<29> bitset_128;
+    Comms::trim_vector(StateHistory::ADCS::magnetometer_history.get(), 0, 0.005, &bitset_128);
+    for(int i = 0; i < bitset_128.size(); i++) packet.set(packet_ptr++,bitset_128[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -682,9 +678,9 @@ static void serialize_packet_13(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::rwa_ramp_cmd_history.empty()) {
-    std::bitset<29> bitset_130;
-    Comms::trim_vector(StateHistory::ADCS::rwa_ramp_cmd_history.get(), -310.2, 310.2, &bitset_130);
-    for(int i = 0; i < bitset_130.size(); i++) packet.set(packet_ptr++,bitset_130[i]);}
+    std::bitset<29> bitset_129;
+    Comms::trim_vector(StateHistory::ADCS::rwa_ramp_cmd_history.get(), -310.2, 310.2, &bitset_129);
+    for(int i = 0; i < bitset_129.size(); i++) packet.set(packet_ptr++,bitset_129[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -698,9 +694,9 @@ static void serialize_packet_14(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::mtr_cmd_history.empty()) {
-    std::bitset<50> bitset_131;
-    Comms::trim_vector(StateHistory::ADCS::mtr_cmd_history.get(), 0, 0, &bitset_131);
-    for(int i = 0; i < bitset_131.size(); i++) packet.set(packet_ptr++,bitset_131[i]);}
+    std::bitset<50> bitset_130;
+    Comms::trim_vector(StateHistory::ADCS::mtr_cmd_history.get(), 0, 0, &bitset_130);
+    for(int i = 0; i < bitset_130.size(); i++) packet.set(packet_ptr++,bitset_130[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -714,9 +710,9 @@ static void serialize_packet_15(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::ADCS::adcs_history_state_lock);
   while(!StateHistory::ADCS::ssa_vector_history.empty()) {
-    std::bitset<21> bitset_132;
-    Comms::trim_vector(StateHistory::ADCS::ssa_vector_history.get(), 0, 1, &bitset_132);
-    for(int i = 0; i < bitset_132.size(); i++) packet.set(packet_ptr++,bitset_132[i]);}
+    std::bitset<21> bitset_131;
+    Comms::trim_vector(StateHistory::ADCS::ssa_vector_history.get(), 0, 1, &bitset_131);
+    for(int i = 0; i < bitset_131.size(); i++) packet.set(packet_ptr++,bitset_131[i]);}
   rwMtxRUnlock(&StateHistory::ADCS::adcs_history_state_lock);
 }
 
@@ -730,16 +726,16 @@ static void serialize_packet_16(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
   while(!StateHistory::Piksi::iar_history.empty()) {
-    std::bitset<32> bitset_133;
-    Comms::trim_int(StateHistory::Piksi::iar_history.get(), 0, 4294967295, &bitset_133);
-    for(int i = 0; i < bitset_133.size(); i++) packet.set(packet_ptr++,bitset_133[i]);}
+    std::bitset<32> bitset_132;
+    Comms::trim_int(StateHistory::Piksi::iar_history.get(), 0, 4294967295, &bitset_132);
+    for(int i = 0; i < bitset_132.size(); i++) packet.set(packet_ptr++,bitset_132[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
   while(!StateHistory::Piksi::nsats_history.empty()) {
-    std::bitset<5> bitset_134;
-    Comms::trim_int(StateHistory::Piksi::nsats_history.get(), 0, 30, &bitset_134);
-    for(int i = 0; i < bitset_134.size(); i++) packet.set(packet_ptr++,bitset_134[i]);}
+    std::bitset<5> bitset_133;
+    Comms::trim_int(StateHistory::Piksi::nsats_history.get(), 0, 30, &bitset_133);
+    for(int i = 0; i < bitset_133.size(); i++) packet.set(packet_ptr++,bitset_133[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 }
 
@@ -753,9 +749,9 @@ static void serialize_packet_17(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
   while(!StateHistory::Piksi::recorded_position_history.empty()) {
-    std::bitset<45> bitset_135;
-    Comms::trim_vector(StateHistory::Piksi::recorded_position_history.get(), 6400, 7200, &bitset_135);
-    for(int i = 0; i < bitset_135.size(); i++) packet.set(packet_ptr++,bitset_135[i]);}
+    std::bitset<45> bitset_134;
+    Comms::trim_vector(StateHistory::Piksi::recorded_position_history.get(), 6400, 7200, &bitset_134);
+    for(int i = 0; i < bitset_134.size(); i++) packet.set(packet_ptr++,bitset_134[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 }
 
@@ -769,9 +765,9 @@ static void serialize_packet_18(std::bitset<Comms::PACKET_SIZE_BITS> &packet, un
 
   rwMtxRLock(&StateHistory::Piksi::piksi_history_state_lock);
   while(!StateHistory::Piksi::recorded_velocity_history.empty()) {
-    std::bitset<51> bitset_136;
-    Comms::trim_vector(StateHistory::Piksi::recorded_velocity_history.get(), 8000, 12000, &bitset_136);
-    for(int i = 0; i < bitset_136.size(); i++) packet.set(packet_ptr++,bitset_136[i]);}
+    std::bitset<51> bitset_135;
+    Comms::trim_vector(StateHistory::Piksi::recorded_velocity_history.get(), 8000, 12000, &bitset_135);
+    for(int i = 0; i < bitset_135.size(); i++) packet.set(packet_ptr++,bitset_135[i]);}
   rwMtxRUnlock(&StateHistory::Piksi::piksi_history_state_lock);
 }
 

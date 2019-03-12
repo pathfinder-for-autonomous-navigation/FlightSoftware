@@ -9,8 +9,8 @@ using namespace Devices;
 
 std::array<unsigned char, SpikeAndHold::NUM_VALVES> SpikeAndHold::DEFAULT_VALVE_PINS = {3,4,5,6,27,28};
 
-SpikeAndHold::SpikeAndHold(const std::array<unsigned char, 6>& pins, 
-    unsigned char en) : valve_pins(pins), enable_pin_(en) {}
+SpikeAndHold::SpikeAndHold(const std::string& name, const std::array<unsigned char, 6>& pins, 
+    unsigned char en) : Device(name), valve_pins(pins), enable_pin_(en) {}
 
 bool SpikeAndHold::setup() { 
     for (unsigned char i = 0; i < SpikeAndHold::NUM_VALVES; i++) {
@@ -41,9 +41,6 @@ void SpikeAndHold::reset() {
     delay(10);
     enable();
 }
-
-static std::string sph_name = "Spike and Hold";
-std::string& SpikeAndHold::name() const { return sph_name; }
 
 void SpikeAndHold::execute_schedule(const std::array<unsigned int, SpikeAndHold::NUM_VALVES> &sch) {
     // Create 2 ms gap between valve openings, and open the ones that should be opened.

@@ -111,8 +111,8 @@ void pan_system_setup() {
     rwMtxObjectInit(&State::Quake::uplink_lock);
     // Initialize all device locks
     chMtxObjectInit(&State::Hardware::adcs_device_lock);
-    chMtxObjectInit(&State::Hardware::dcdc_lock);
-    chMtxObjectInit(&State::Hardware::spike_and_hold_lock);
+    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
+    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
     chMtxObjectInit(&State::Hardware::piksi_device_lock);
     chMtxObjectInit(&State::Hardware::gomspace_device_lock);
     chMtxObjectInit(&State::Hardware::quake_device_lock);

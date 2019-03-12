@@ -31,13 +31,9 @@ void I2CDevice::disable() {
   this->recent_errors = true;
 }
 
-static std::string i2cdevice_name = "Generic I2C Device";
-std::string& I2CDevice::name() const {
-  return i2cdevice_name;
-}
-
-I2CDevice::I2CDevice(i2c_t3 &wire, unsigned char addr, unsigned long timeout)
-    : wire(wire),
+I2CDevice::I2CDevice(const std::string& name, i2c_t3 &wire, unsigned char addr, unsigned long timeout)
+    : Device(name),
+      wire(wire),
       addr(addr),
       timeout(timeout),
       error_count(0),

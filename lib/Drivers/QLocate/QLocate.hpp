@@ -56,13 +56,12 @@ namespace Devices {
     /*! Sets the QLocate serial port and serial timeout value. Do not Initialize
     *  the serial port with begin(), it will be done in the constructor.
     */
-    QLocate(HardwareSerial *const port, unsigned char nr_pin, int timeout);
+    QLocate(const std::string& name, HardwareSerial *const port, unsigned char nr_pin, int timeout);
 
     bool setup() override;
     bool is_functional() override;
     void reset() override;
     void disable() override;
-    std::string& name() const override;
 
     /*! Returns sbdix_running */
     bool sbdix_is_running();

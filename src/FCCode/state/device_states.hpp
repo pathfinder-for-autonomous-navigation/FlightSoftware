@@ -71,13 +71,13 @@ namespace Hardware {
     extern bool is_hardware_setup;
 
     //! Protects access to DCDC enabling/disabling.
-    extern mutex_t dcdc_lock;
+    extern mutex_t dcdc_device_lock;
     //! Protects access to ADCS device. May be used by master process to rewrite device defaults.
     extern mutex_t adcs_device_lock;
     //! Protects access to Gomspace device. May be used by master process to rewrite device defaults.
     extern mutex_t gomspace_device_lock;
     //! Protects access to propulsion actuation.
-    extern mutex_t spike_and_hold_lock;
+    extern mutex_t spike_and_hold_device_lock;
     //! Protects access to Piksi device. May be used by master process to rewrite device defaults.
     extern mutex_t piksi_device_lock;
     //! Protects access to Quake device. May be used by master process to rewrite device defaults.

@@ -1,7 +1,7 @@
 #include "propulsion_tasks.hpp"
 #include "../../state/fault_state_holder.hpp"
 
-using State::Hardware::spike_and_hold_lock;
+using State::Hardware::spike_and_hold_device_lock;
 using namespace Constants::Propulsion;
 using Devices::spike_and_hold;
 using State::Propulsion::propulsion_state_lock;
@@ -17,9 +17,11 @@ THD_FUNCTION(PropulsionTasks::pressurizing_fn, args) {
         std::array<unsigned int, 6> firings;
         unsigned char preferred_valve = State::read(State::Propulsion::intertank_firing_valve, propulsion_state_lock);
         firings[preferred_valve] = VALVE_VENT_TIME;
-        chMtxLock(&spike_and_hold_lock);
-            spike_and_hold.execute_schedule(firings);
-        chMtxUnlock(&spike_and_hold_lock);
+        chMtxLock(&spike_and_hold_device_lock);
+            if (State::Hardware::can_get_data(Devices::spike_and_hold)) {
+                spike_and_hold.execute_schedule(firings);
+            }
+        chMtxUnlock(&spike_and_hold_device_lock);
 
         chThdSleepMilliseconds(WAIT_BETWEEN_PRESSURIZATIONS);
 

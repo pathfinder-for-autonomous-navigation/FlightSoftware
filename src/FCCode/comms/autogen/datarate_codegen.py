@@ -62,7 +62,7 @@ for group in history_groups:
 rate_file += "}\n"
 rate_file += "}\n\n"
 rate_file += "#endif"
-f = open("../../../state/state_history_rates.hpp", "w")
+f = open("../../state/state_history_rates.hpp", "w")
 f.write(rate_file)
 f.close()
 
@@ -85,7 +85,7 @@ for group in history_groups:
 
 header_file += "}\n\n"
 header_file += "#endif"
-f = open("../../../state/state_history_holder.hpp", "w")
+f = open("../../state/state_history_holder.hpp", "w")
 f.write(header_file)
 f.close()
 
@@ -103,6 +103,6 @@ for group in history_groups:
     impl_file += namespace
 
 impl_file += "}"
-f = open("../../../state/state_history_holder.cpp", "w")
+f = open("../../state/state_history_holder.cpp", "w")
 f.write(impl_file)
 f.close()

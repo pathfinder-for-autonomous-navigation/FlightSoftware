@@ -2,7 +2,7 @@
 
 using namespace Devices;
 
-TempSensor::TempSensor(unsigned char pin) : pin_(pin) {}
+TempSensor::TempSensor(const std::string& name, unsigned char pin) : Device(name), pin_(pin) {}
 
 bool TempSensor::setup() {
     return true;
@@ -14,11 +14,6 @@ bool TempSensor::is_functional() {
 
 void TempSensor::disable() {}
 void TempSensor::reset() {}
-
-static std::string temp_sensor_name = "Temperature Sensor";
-std::string& TempSensor::name() const {
-    return temp_sensor_name;
-}
 
 float TempSensor::get() {
     // TODO implement

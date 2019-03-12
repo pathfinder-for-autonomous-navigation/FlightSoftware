@@ -32,7 +32,6 @@ MASTER_FIELDS = [
 { "group" : "master", "name" : "pan_state",             "type" : "state int",               "min" : 0, "max" : 11 },
 { "group" : "master", "name" : "boot_number",           "type" : "int",        "size" : 32, "min" : 0, "max" : MAX_INT },
 { "group" : "master", "name" : "last_uplink_time",      "type" : "gps time"},
-{ "group" : "master", "name" : "was_last_uplink_valid", "type" : "bool" },
 { "group" : "master", "name" : "is_follower",           "type" : "bool" },
 ]
 FIELDS.extend(MASTER_FIELDS)
@@ -213,6 +212,7 @@ def get_statistics():
         if field["type"] == "temperature":
             size += field["buf_size"] * 16
 
+    print "Downlink:"
     print "Number of fields: " + str(len(FIELDS))
     print "Full data size: " + str(int(math.ceil(size / 8))) + " bytes"
     compressed_size = sum([field["total_size"] for field in FIELDS])
@@ -220,5 +220,6 @@ def get_statistics():
     print "Compression ratio: " + str(100 - 100 * (compressed_size + 0.0) / size)
     print "Required # of packets: " + str(
         int(math.ceil(compressed_size / 8.0 / 70)))
+    print "--------------------------------"
 
 get_statistics()

@@ -6,7 +6,7 @@
 #include <array>
 
 namespace Comms {
-  constexpr unsigned int UPLINK_SIZE_BITS = 530;
+  constexpr unsigned int UPLINK_SIZE_BITS = 556;
   struct Uplink {
     int uplink_number;
     gps_time_t uplink_timestamp;
@@ -21,37 +21,39 @@ namespace Comms {
     int constant_2_val;
     int constant_3_id;
     int constant_3_val;
+    int constant_4_id;
+    int constant_4_val;
     int master_state;
     int pan_state;
     bool is_follower;
-    bool hat_gomspace_error_ignored;
-    bool hat_piksi_error_ignored;
-    bool hat_quake_error_ignored;
-    bool hat_dcdc_error_ignored;
-    bool hat_spike_and_hold_error_ignored;
-    bool hat_adcs_system_error_ignored;
-    bool hat_pressure_sensor_error_ignored;
-    bool hat_temp_sensor_inner_error_ignored;
-    bool hat_temp_sensor_outer_error_ignored;
-    bool hat_docking_motor_error_ignored;
-    bool hat_docking_switch_error_ignored;
-    bool adcs_hat_gyroscope_is_functional;
-    bool adcs_hat_magnetometer_is_functional;
-    bool adcs_hat_magnetorquer_x_is_functional;
-    bool adcs_hat_magnetorquer_y_is_functional;
-    bool adcs_hat_magnetorquer_z_is_functional;
-    bool adcs_hat_motorpot_is_functional;
-    bool adcs_hat_motor_x_is_functional;
-    bool adcs_hat_motor_y_is_functional;
-    bool adcs_hat_motor_z_is_functional;
-    bool adcs_hat_motor_x_adc_is_functional;
-    bool adcs_hat_motor_y_adc_is_functional;
-    bool adcs_hat_motor_z_adc_is_functional;
-    bool adcs_hat_ssa_adc_1_is_functional;
-    bool adcs_hat_ssa_adc_2_is_functional;
-    bool adcs_hat_ssa_adc_3_is_functional;
-    bool adcs_hat_ssa_adc_4_is_functional;
-    bool adcs_hat_ssa_adc_5_is_functional;
+    bool fc_hat_gomspace;
+    bool fc_hat_piksi;
+    bool fc_hat_quake;
+    bool fc_hat_dcdc;
+    bool fc_hat_spike_and_hold;
+    bool fc_hat_adcs_system;
+    bool fc_hat_pressure_sensor;
+    bool fc_hat_temp_sensor_inner;
+    bool fc_hat_temp_sensor_outer;
+    bool fc_hat_docking_motor;
+    bool fc_hat_docking_switch;
+    bool adcs_hat_gyroscope;
+    bool adcs_hat_magnetometer;
+    bool adcs_hat_magnetorquer_x;
+    bool adcs_hat_magnetorquer_y;
+    bool adcs_hat_magnetorquer_z;
+    bool adcs_hat_motorpot;
+    bool adcs_hat_motor_x;
+    bool adcs_hat_motor_y;
+    bool adcs_hat_motor_z;
+    bool adcs_hat_motor_x_adc;
+    bool adcs_hat_motor_y_adc;
+    bool adcs_hat_motor_z_adc;
+    bool adcs_hat_ssa_adc_1;
+    bool adcs_hat_ssa_adc_2;
+    bool adcs_hat_ssa_adc_3;
+    bool adcs_hat_ssa_adc_4;
+    bool adcs_hat_ssa_adc_5;
     int adcs_state;
     bool command_adcs;
     int adcs_frame;
@@ -62,11 +64,13 @@ namespace Comms {
     bool docking_motor_mode;
     bool reset_piksi;
     bool reset_quake;
+    bool reset_dcdc;
+    bool reset_spike_and_hold;
     bool power_cycle_gomspace;
     bool power_cycle_piksi;
     bool power_cycle_quake;
-    bool power_cycle_dcdc;
     bool power_cycle_adcs_system;
+    bool power_cycle_spike_and_hold;
   };
 }
 #endif

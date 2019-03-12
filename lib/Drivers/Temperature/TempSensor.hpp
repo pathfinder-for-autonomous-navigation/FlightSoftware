@@ -15,14 +15,13 @@ namespace Devices {
         /** @brief Construct a new Pressure Sensor object.
          * @param pin Pin # that temperature sensor is attached to.
         */
-        TempSensor(unsigned char pin);
+        TempSensor(const std::string& name, unsigned char pin);
         
         // Device functions
         bool setup() override;
         bool is_functional() override;
         void disable() override;
         void reset() override;
-        std::string& name() const override;
 
         float get();
       private:

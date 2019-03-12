@@ -3,11 +3,13 @@
 
 using namespace Devices;
 
-DockingMotor::DockingMotor(unsigned char i1, 
+DockingMotor::DockingMotor(const std::string& name,
+                           unsigned char i1, 
                            unsigned char i2, 
                            unsigned char dir, 
                            unsigned char sleep, 
-                           unsigned char step) : i1_pin_(i1),
+                           unsigned char step) : Device(name),
+                                                 i1_pin_(i1),
                                                  i2_pin_(i2),
                                                  direction_pin_(dir),
                                                  sleep_pin_(sleep),
@@ -48,6 +50,3 @@ void DockingMotor::toggle() {
     delay(1000);
     digitalWrite(stepper_pin_, LOW);
 }
-
-static std::string dockingmotor_name = "Docking Motor";
-std::string& DockingMotor::name() const { return dockingmotor_name; }

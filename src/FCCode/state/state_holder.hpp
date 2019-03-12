@@ -48,8 +48,8 @@ namespace State {
     extern unsigned int boot_number; 
     //! Last time that data was uplinked to satellite
     extern gps_time_t last_uplink_time; 
-    //! If last uplink was parseable by satellite
-    extern bool was_last_uplink_valid; 
+    //! If commands from previous uplink have been applied
+    extern bool uplink_command_applied;
     //! Did the hardware setup succeed?
     extern bool is_deployed; 
     //! True if this satellite is leader.

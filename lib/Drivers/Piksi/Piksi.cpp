@@ -18,7 +18,7 @@ sbp_msg_callbacks_node_t Piksi::_heartbeat_callback_node;
 sbp_msg_callbacks_node_t Piksi::_uart_state_callback_node;
 sbp_msg_callbacks_node_t Piksi::_user_data_callback_node;
 
-Piksi::Piksi(HardwareSerial &serial_port) : _serial_port(serial_port) {}
+Piksi::Piksi(const std::string& name, HardwareSerial &serial_port) : Device(name), _serial_port(serial_port) {}
 
 bool Piksi::setup() {
     _serial_port.begin(BAUD_RATE);
@@ -111,11 +111,6 @@ void Piksi::reset() { piksi_reset(); }
 
 void Piksi::disable() {
     // Do nothing; we really don't want to disable Piksi
-}
-
-static std::string piksi_name = "Piksi";
-std::string& Piksi::name() const {
-    return piksi_name;
 }
 
 void Piksi::get_gps_time(gps_time_t* time) { 

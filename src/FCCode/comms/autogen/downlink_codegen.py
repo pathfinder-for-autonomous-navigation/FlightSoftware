@@ -166,7 +166,7 @@ for x in range(0, NUM_PACKETS):
     frame_str += "  serialize_packet_{0}(packets[{0}], downlink_no);\n".format(x)
 frame_str += "}\n"
 
-f = open("../../downlink_serializer.cpp", "w")
+f = open("../downlink_serializer.cpp", "w")
 f.write(frame_str)
 f.close()
 
@@ -186,6 +186,6 @@ header_str += "  void serialize_downlink(std::bitset<PACKET_SIZE_BITS> (&packets
 header_str += "}\n\n"
 header_str += "#endif"
 
-f = open("../../downlink_serializer.hpp", "w")
+f = open("../downlink_serializer.hpp", "w")
 f.write(header_str)
 f.close()

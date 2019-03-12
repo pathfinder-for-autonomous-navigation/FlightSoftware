@@ -12,7 +12,6 @@ namespace Devices {
     bool is_functional() override;
     void reset() override;
     void disable() override;
-    std::string& name() const override;
 
     int sbdwb(char const *c, int len) override;
 

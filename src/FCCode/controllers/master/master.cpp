@@ -74,7 +74,10 @@ static void master_loop() {
                 }
                 break;
                 case PANState::STANDBY: {
-                    Master::apply_uplink_commands();
+                    if (!State::read(State::Master::uplink_command_applied, master_state_lock)) {
+                        Master::apply_uplink_commands();
+                        State::write(State::Master::uplink_command_applied, true, master_state_lock);
+                    }
                     
                     chMtxLock(&eeprom_lock);
                         EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 0);
@@ -88,7 +91,7 @@ static void master_loop() {
                     if (adcs_is_pointing && !uplink_commanding_adcs) {
                         ADCSControllers::point_for_standby();
                     }
-                    // Otherwise, apply_uplink() took care of the pointing.
+                    // Otherwise, apply_uplink_commands() took care of the pointing.
                 }
                 break;
                 case PANState::LEADER_CLOSE_APPROACH:
