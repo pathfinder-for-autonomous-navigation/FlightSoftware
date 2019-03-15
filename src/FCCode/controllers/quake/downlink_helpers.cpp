@@ -23,12 +23,13 @@ static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink)
     chMtxLock(&State::Hardware::quake_device_lock);
         quake.run_sbdix();
     chMtxUnlock(&State::Hardware::quake_device_lock);
-    for(int i = 0; i < Constants::Quake::NUM_RETRIES; i++) {
+    for(int i = 0; i < Constants::read(Constants::Quake::NUM_RETRIES); i++) {
         chMtxLock(&State::Hardware::quake_device_lock);
             response = quake.end_sbdix();
         chMtxUnlock(&State::Hardware::quake_device_lock);
         if (response != -1) break;
-        chThdSleepMilliseconds(Constants::Quake::WAIT_BETWEEN_RETRIES);
+        unsigned int wait_between_retries = Constants::read(Constants::Quake::WAIT_BETWEEN_RETRIES);
+        chThdSleepMilliseconds(wait_between_retries);
     }
 
     // It's possible we picked up an uplink packet; pick it up.

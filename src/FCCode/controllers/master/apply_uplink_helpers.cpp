@@ -21,7 +21,9 @@ void Master::apply_uplink_constants(const Comms::Uplink& uplink) {
   for(int i = 0; i < constant_ids.size(); i++) {
     unsigned int const_id = constant_ids[i];
     if (const_id > Constants::changeable_constants_map.size()) continue;
+    rwMtxWLock(&Constants::changeable_constants_lock);
     *(Constants::changeable_constants_map[const_id]) = constant_vals[i];
+    rwMtxWUnlock(&Constants::changeable_constants_lock);
   }
 }
 

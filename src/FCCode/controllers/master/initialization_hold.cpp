@@ -21,6 +21,6 @@ void Master::initialization_hold(unsigned short int reason) {
             chThdEnqueueTimeoutS(&RTOSTasks::adcs_detumbled, S2ST(Constants::Master::INITIALIZATION_HOLD_DETUMBLE_WAIT)); // Wait for detumble to finish.
         }
     }
-    // Quake controller will send SOS packet. Control is now handed over to
+    // Quake controller will send packets automatically once deployment happens. Control is now handed over to
     // master_loop(), which will continuously check Quake uplink for manual control/mode shift commands
 }

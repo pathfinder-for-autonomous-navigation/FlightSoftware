@@ -24,41 +24,41 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
   for(int i = 0; i < 49; i++) bitset_4.set(i, mes[bitset_ptr++]);
   Comms::expand_gps_time(bitset_4, &(uplink->other_satellite_timestamp));
 
-  std::bitset<4> bitset_5;
-  for(int i = 0; i < 4; i++) bitset_5.set(i, mes[bitset_ptr++]);
-  uplink->constant_0_id = Comms::expand_int(bitset_5, 0, 11);
+  std::bitset<5> bitset_5;
+  for(int i = 0; i < 5; i++) bitset_5.set(i, mes[bitset_ptr++]);
+  uplink->constant_0_id = Comms::expand_int(bitset_5, 0, 17);
 
   std::bitset<32> bitset_6;
   for(int i = 0; i < 32; i++) bitset_6.set(i, mes[bitset_ptr++]);
   uplink->constant_0_val = Comms::expand_int(bitset_6, 0, 4294967295);
 
-  std::bitset<4> bitset_7;
-  for(int i = 0; i < 4; i++) bitset_7.set(i, mes[bitset_ptr++]);
-  uplink->constant_1_id = Comms::expand_int(bitset_7, 0, 11);
+  std::bitset<5> bitset_7;
+  for(int i = 0; i < 5; i++) bitset_7.set(i, mes[bitset_ptr++]);
+  uplink->constant_1_id = Comms::expand_int(bitset_7, 0, 17);
 
   std::bitset<32> bitset_8;
   for(int i = 0; i < 32; i++) bitset_8.set(i, mes[bitset_ptr++]);
   uplink->constant_1_val = Comms::expand_int(bitset_8, 0, 4294967295);
 
-  std::bitset<4> bitset_9;
-  for(int i = 0; i < 4; i++) bitset_9.set(i, mes[bitset_ptr++]);
-  uplink->constant_2_id = Comms::expand_int(bitset_9, 0, 11);
+  std::bitset<5> bitset_9;
+  for(int i = 0; i < 5; i++) bitset_9.set(i, mes[bitset_ptr++]);
+  uplink->constant_2_id = Comms::expand_int(bitset_9, 0, 17);
 
   std::bitset<32> bitset_10;
   for(int i = 0; i < 32; i++) bitset_10.set(i, mes[bitset_ptr++]);
   uplink->constant_2_val = Comms::expand_int(bitset_10, 0, 4294967295);
 
-  std::bitset<4> bitset_11;
-  for(int i = 0; i < 4; i++) bitset_11.set(i, mes[bitset_ptr++]);
-  uplink->constant_3_id = Comms::expand_int(bitset_11, 0, 11);
+  std::bitset<5> bitset_11;
+  for(int i = 0; i < 5; i++) bitset_11.set(i, mes[bitset_ptr++]);
+  uplink->constant_3_id = Comms::expand_int(bitset_11, 0, 17);
 
   std::bitset<32> bitset_12;
   for(int i = 0; i < 32; i++) bitset_12.set(i, mes[bitset_ptr++]);
   uplink->constant_3_val = Comms::expand_int(bitset_12, 0, 4294967295);
 
-  std::bitset<4> bitset_13;
-  for(int i = 0; i < 4; i++) bitset_13.set(i, mes[bitset_ptr++]);
-  uplink->constant_4_id = Comms::expand_int(bitset_13, 0, 11);
+  std::bitset<5> bitset_13;
+  for(int i = 0; i < 5; i++) bitset_13.set(i, mes[bitset_ptr++]);
+  uplink->constant_4_id = Comms::expand_int(bitset_13, 0, 17);
 
   std::bitset<32> bitset_14;
   for(int i = 0; i < 32; i++) bitset_14.set(i, mes[bitset_ptr++]);

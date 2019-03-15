@@ -11,12 +11,12 @@
 #include <rt/chvt.h>
 #include <EEPROM.h>
 #include "controllers/controllers.hpp"
+#include "controllers/constants.hpp"
 #include "state/EEPROMAddresses.hpp"
 #include "state/state_holder.hpp"
 #include <rwmutex.hpp>
 #include "debug.hpp"
 #include "deployment_timer.hpp"
-#include "startup.hpp"
 
 thread_t* deployment_timer_thread;
 namespace RTOSTasks {
@@ -30,7 +30,29 @@ namespace RTOSTasks {
 }
 using namespace RTOSTasks;
 
-void hardware_setup() {
+static void initialize_locks() {
+    // Initialize all state locks
+    chMtxObjectInit(&eeprom_lock);
+    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
+    rwMtxObjectInit(&State::Master::master_state_lock);
+    rwMtxObjectInit(&State::ADCS::adcs_state_lock);
+    rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
+    rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
+    rwMtxObjectInit(&State::GNC::gnc_state_lock);
+    rwMtxObjectInit(&State::Piksi::piksi_state_lock);
+    rwMtxObjectInit(&State::Quake::quake_state_lock);
+    rwMtxObjectInit(&State::Quake::uplink_lock);
+    rwMtxObjectInit(&Constants::changeable_constants_lock);
+    // Initialize all device locks
+    chMtxObjectInit(&State::Hardware::adcs_device_lock);
+    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
+    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
+    chMtxObjectInit(&State::Hardware::piksi_device_lock);
+    chMtxObjectInit(&State::Hardware::gomspace_device_lock);
+    chMtxObjectInit(&State::Hardware::quake_device_lock);
+}
+
+static void hardware_setup() {
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
 
     debug_println("Initializing hardware buses.");
@@ -98,24 +120,7 @@ void pan_system_setup() {
     #endif
 
     debug_println("Startup process has begun.");
-    // Initialize all state locks
-    chMtxObjectInit(&eeprom_lock);
-    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
-    rwMtxObjectInit(&State::Master::master_state_lock);
-    rwMtxObjectInit(&State::ADCS::adcs_state_lock);
-    rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
-    rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
-    rwMtxObjectInit(&State::GNC::gnc_state_lock);
-    rwMtxObjectInit(&State::Piksi::piksi_state_lock);
-    rwMtxObjectInit(&State::Quake::quake_state_lock);
-    rwMtxObjectInit(&State::Quake::uplink_lock);
-    // Initialize all device locks
-    chMtxObjectInit(&State::Hardware::adcs_device_lock);
-    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
-    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
-    chMtxObjectInit(&State::Hardware::piksi_device_lock);
-    chMtxObjectInit(&State::Hardware::gomspace_device_lock);
-    chMtxObjectInit(&State::Hardware::quake_device_lock);
+    initialize_locks();
 
     // Determining boot count
     chMtxLock(&eeprom_lock);

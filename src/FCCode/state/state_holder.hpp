@@ -92,8 +92,8 @@ namespace State {
     extern std::array<float, 3> rwa_speed_cmds; 
     //! Most recent reaction wheel speeds
     extern std::array<float, 3> rwa_speeds; 
-    //! Most recent reaction wheel ramp values
-    extern std::array<float, 3> rwa_ramps;
+    //! Most recent reaction wheel torque command values
+    extern std::array<float, 3> rwa_torques;
     //! Most recent reaction wheel speed commands, as read from ADCS
     extern std::array<float, 3> rwa_speed_cmds_rd; 
     //! Most recent reaction wheel speeds, as read from ADCS

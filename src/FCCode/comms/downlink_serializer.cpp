@@ -238,7 +238,7 @@ static void serialize_packet_0(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
   for(int i = 0; i < bitset_55.size(); i++) packet.set(packet_ptr++,bitset_55[i]);
 
   std::bitset<29> bitset_56;
-  Comms::trim_vector(State::read(State::ADCS::rwa_ramps,State::ADCS::adcs_state_lock), 0, 310.2, &bitset_56);
+  Comms::trim_vector(State::read(State::ADCS::rwa_torques,State::ADCS::adcs_state_lock), 0, 310.2, &bitset_56);
   for(int i = 0; i < bitset_56.size(); i++) packet.set(packet_ptr++,bitset_56[i]);
 
   std::bitset<50> bitset_57;

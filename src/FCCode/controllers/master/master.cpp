@@ -106,7 +106,8 @@ static void master_loop() {
                     State::write(State::Propulsion::propulsion_state, 
                         State::Propulsion::PropulsionState::DISABLED, State::Propulsion::propulsion_state_lock);
 
-                    chVTDoSetI(&Master::docking_timer, S2ST(Constants::Master::DOCKING_TIMEOUT), Master::stop_docking_mode, NULL);
+                    unsigned int docking_timeout = Constants::read(Constants::Master::DOCKING_TIMEOUT);
+                    chVTDoSetI(&Master::docking_timer, S2ST(docking_timeout), Master::stop_docking_mode, NULL);
                     if (Devices::docking_switch.pressed() && State::Hardware::can_get_data(Devices::docking_switch)) {
                         State::write(State::Master::pan_state, PANState::DOCKED, master_state_lock);
                     }

@@ -94,6 +94,13 @@ static void read_adcs_data() {
     }
 }
 
+static void update_gain_constants() {
+    ADCSControllers::AttitudePD::kd = (float) Constants::read(Constants::ADCS::ATTITUDE_CONTROLLER_KD);
+    ADCSControllers::AttitudePD::kp = (float) Constants::read(Constants::ADCS::ATTITUDE_CONTROLLER_KP);
+    ADCSControllers::MomentumControl::k = (float) Constants::read(Constants::ADCS::MOMENTUM_CONTROLLER_K);
+    // TODO add gyro heater gains
+}
+
 static THD_WORKING_AREA(adcs_loop_workingArea, 4096);
 static THD_FUNCTION(adcs_loop, arg) {
     chRegSetThreadName("ADCS LOOP");
@@ -105,7 +112,8 @@ static THD_FUNCTION(adcs_loop, arg) {
         // Reading and writing to Kalman filter
         // Read
         read_adcs_data();
-        //State::ADCS::Estimator::update();
+        update_gain_constants();
+        ADCSControllers::Estimator::update();
 
         // State machine
         rwMtxRLock(&State::ADCS::adcs_state_lock);
@@ -169,7 +177,7 @@ static THD_FUNCTION(adcs_loop, arg) {
                     rwMtxRUnlock(&adcs_state_lock);
                     AttitudePD::update();
                     rwMtxWLock(&adcs_state_lock);
-                        for(int i = 0; i < 3; i++) State::ADCS::rwa_ramps[i] = AttitudePD::torque[i];
+                        for(int i = 0; i < 3; i++) State::ADCS::rwa_torques[i] = AttitudePD::torque[i];
                     rwMtxWUnlock(&adcs_state_lock);
                     adcs_system.set_rwa_mode(RWAMode::ACCEL_CTRL, AttitudePD::torque);
                 }

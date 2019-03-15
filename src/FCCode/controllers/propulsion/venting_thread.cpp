@@ -12,10 +12,11 @@ THD_FUNCTION(PropulsionTasks::venting_fn, args) {
     for(int i = 0; i < 10; i++) {
         chMtxLock(&spike_and_hold_device_lock);
             if (State::Hardware::can_get_data(Devices::spike_and_hold)) {
-                spike_and_hold.execute_schedule({VALVE_VENT_TIME, VALVE_VENT_TIME, 0, 0, 0, 0});
+                unsigned int valve_vent_time = Constants::read(VALVE_VENT_TIME);
+                spike_and_hold.execute_schedule({valve_vent_time, valve_vent_time, 0, 0, 0, 0});
             }
         chMtxUnlock(&spike_and_hold_device_lock);
-        chThdSleepMilliseconds(VALVE_WAIT_TIME);
+        chThdSleepMilliseconds(Constants::read(VALVE_WAIT_TIME));
     }
     chThdExit((msg_t) 0);
 }

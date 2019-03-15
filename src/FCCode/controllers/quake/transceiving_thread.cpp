@@ -25,7 +25,8 @@ static void get_latest_uplink(Devices::QLocate::Message* uplink) {
                 response = Devices::quake.end_sbdix();
             chMtxUnlock(&State::Hardware::quake_device_lock);
             if (response != -1) break;
-            chThdSleepMilliseconds(Constants::Quake::WAIT_BETWEEN_RETRIES);
+            unsigned int wait_between_retries = Constants::read(Constants::Quake::WAIT_BETWEEN_RETRIES);
+            chThdSleepMilliseconds(wait_between_retries);
         }
         if (response == 0) {
             chMtxLock(&State::Hardware::quake_device_lock);
@@ -38,16 +39,16 @@ static void get_latest_uplink(Devices::QLocate::Message* uplink) {
 
 THD_FUNCTION(Quake::transceiving_fn, args) {
     Devices::QLocate::Message uplink;
-    // Try sending as many downlink as you can
+    // Try sending as many downlinks as you can
     Quake::send_downlink_stack(&uplink);
     // Get the latest uplink that you can
     get_latest_uplink(&uplink);
-    go_to_waiting();
     if (uplink.get_length() != 0) {
         rwMtxWLock(&State::Quake::uplink_lock);
             std::bitset<Comms::UPLINK_SIZE_BITS> uplink_bitset(uplink.mes);
             Comms::deserialize_uplink(uplink_bitset, &State::Quake::most_recent_uplink);
         rwMtxWUnlock(&State::Quake::uplink_lock);
     }
+    go_to_waiting();
     chThdExit((msg_t) 0);
 }

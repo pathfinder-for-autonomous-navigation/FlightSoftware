@@ -13,7 +13,7 @@ FIELDS = [
 ]
 
 for x in range(0,5):
-    FIELDS.append({"name" : "constant_{0}_id".format(x),  "type" : "state int",                 "min" : 0, "max" : 11})
+    FIELDS.append({"name" : "constant_{0}_id".format(x),  "type" : "state int",                 "min" : 1, "max" : 18})
     FIELDS.append({"name" : "constant_{0}_val".format(x), "type" : "int",       "size" : 32,    "min" : 0, "max" : MAX_INT})
 
 FIELDS.append({"name" : "master_state", "type" : "state int", "min" : 0, "max" : 4  })

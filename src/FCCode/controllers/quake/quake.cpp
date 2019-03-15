@@ -39,7 +39,8 @@ static void quake_loop() {
     QuakeState quake_state = State::read(State::Quake::quake_state, quake_state_lock);
     switch(quake_state) {
         case QuakeState::WAITING: {
-            chVTDoSetI(&waiting_timer, Constants::Quake::QUAKE_WAIT_PERIOD, end_waiting, NULL);
+            unsigned int quake_wait_period = Constants::read(Constants::Quake::QUAKE_WAIT_PERIOD);
+            chVTDoSetI(&waiting_timer, quake_wait_period, end_waiting, NULL);
         }
         break;
         case QuakeState::TRANSCEIVING: {

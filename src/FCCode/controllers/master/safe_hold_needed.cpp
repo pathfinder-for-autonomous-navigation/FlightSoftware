@@ -20,7 +20,7 @@ unsigned short int Master::safe_hold_needed() {
 
     // TODO add more software checks
     gps_time_t most_recent_uplink_time = State::read(State::Quake::uplink_time_received, State::Quake::uplink_lock);
-    if (State::GNC::get_current_time() - most_recent_uplink_time >= Constants::Quake::UPLINK_TIMEOUT) {
+    if (State::GNC::get_current_time() - most_recent_uplink_time >= Constants::read(Constants::Quake::UPLINK_TIMEOUT)) {
         debug_println("Detected SAFE HOLD condition due to no uplink being received in the last 24 hours.");
         reason = 1; // TODO fix
     }

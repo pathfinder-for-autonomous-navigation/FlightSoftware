@@ -8,6 +8,7 @@
 #define CONSTANTS_HPP_
 
 #include "../state/device_states.hpp"
+#include "../state/state_holder.hpp"
 #include <tensor.hpp>
 #include <vector>
 #include <map>
@@ -16,19 +17,24 @@
 namespace Constants {
     //! Map pointing to changeable constants
     extern std::vector<unsigned int*> changeable_constants_map;
+    extern rwmutex_t changeable_constants_lock;
+    //! Helper function to read constant value from the above table
+    inline unsigned int read(unsigned int& val) {
+        return State::read(val, changeable_constants_lock);
+    }
 
     namespace Master {
         #ifdef DEBUG
             //! Defines how long the master controller safehold callback will wait prior to automatically exiting safe hold.
             extern unsigned int SAFE_HOLD_TIMEOUT;
-            //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still being a spinny boi
+            //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still spinning
             constexpr unsigned int INITIALIZATION_HOLD_DETUMBLE_WAIT = 5;
             //! Seconds before docking mode is automatically exited and standby mode is triggered
             extern unsigned int DOCKING_TIMEOUT;
         #else
             //! Defines how long the master controller safehold callback will wait prior to automatically exiting safe hold.
             extern unsigned int SAFE_HOLD_TIMEOUT;
-            //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still being a spinny boi
+            //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still spinning
             constexpr unsigned int INITIALIZATION_HOLD_DETUMBLE_WAIT = 30; 
             //! Seconds before docking mode is automatically exited and standby mode is triggered
             extern unsigned int DOCKING_TIMEOUT;
@@ -58,6 +64,19 @@ namespace Constants {
         constexpr float MIN_SUN_SENSOR_VALUE = 0; // TODO
         //! Maximum possible voltage reading of one sun sensor.
         constexpr float MAX_SUN_SENSOR_VALUE = 0; // TODO
+        
+        //! Attitude controller proportional gain--"raw" integral value updated by uplink
+        extern unsigned int ATTITUDE_CONTROLLER_KP;
+        //! Attitude controller derivative gain--"raw" integral value updated by uplink
+        extern unsigned int ATTITUDE_CONTROLLER_KD;
+        //! Momentum controller gain--"raw" integral value updated by uplink
+        extern unsigned int MOMENTUM_CONTROLLER_K;
+        //! Gyroscope heater proportional gain--"raw" integral value updated by uplink
+        extern unsigned int GYROSCOPE_HEATER_KP;
+        //! Gyroscope heater integral gain--"raw" integral value updated by uplink
+        extern unsigned int GYROSCOPE_HEATER_KI;
+        //! Gyroscope heater derivative gain--"raw" integral value updated by uplink
+        extern unsigned int GYROSCOPE_HEATER_KD;
     }
 
     namespace Gomspace {
@@ -75,8 +94,6 @@ namespace Constants {
         extern unsigned int VALVE_VENT_TIME;
         //! Milliseconds that we wait between opening the same valve.
         extern unsigned int VALVE_WAIT_TIME;
-        //! Seconds before the actual thruster firing that a propellant-maximizing attitude adjustment is made.
-        extern unsigned int THRUSTER_PREPARATION_TIME; 
         //! Milliseconds before the actual thruster firing that the tank 2 pressure-controlling loop is stopped.
         extern unsigned int STOP_PRESSURIZATION_TIME_DELTA; 
         //! Maximum allowable temperature of inner tank
@@ -87,6 +104,16 @@ namespace Constants {
         constexpr float MAX_OUTER_TANK_PRESSURE = 100;
         //! Amount of time, in milliseconds, to wait between intertank ventings
         extern unsigned int WAIT_BETWEEN_PRESSURIZATIONS;
+        //! Number of firings to use to pressurize tank
+        extern unsigned int NUM_PRESSURIZATIONS;
+        //! Maximum amount of time between end of pressurization and actual firing
+        extern unsigned int STOP_PRESSURIZATION_TIME_DELTA;
+        //! Helper function to compute amount of time required to pressurize tank
+        inline unsigned int thruster_preparation_time() {
+            unsigned int num_pressurizations = Constants::read(Constants::Propulsion::NUM_PRESSURIZATIONS);
+            unsigned int wait_between_pressurizations = Constants::read(Constants::Propulsion::WAIT_BETWEEN_PRESSURIZATIONS);
+            return num_pressurizations * wait_between_pressurizations;
+        }
         //! Required outer tank pressure prior to initiating a firing
         constexpr float PRE_FIRING_OUTER_TANK_PRESSURE = 0; // TODO
         //! Maximum allowable impulse magnitude for a particular firing, in kg m/s

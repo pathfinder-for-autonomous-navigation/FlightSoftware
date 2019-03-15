@@ -13,10 +13,16 @@ THD_WORKING_AREA(PropulsionTasks::pressurizing_thread_wa, 1024);
 THD_FUNCTION(PropulsionTasks::pressurizing_fn, args) {
     float tank_pressure;
 
+    systime_t t0 = chVTGetSystemTimeX();
+    gps_time_t firing_time = State::read(State::Propulsion::firing_data.time, propulsion_state_lock); 
+    unsigned int dt = (unsigned int) (firing_time - State::GNC::get_current_time());
+    systime_t tf = t0 + MS2ST(dt);
+
     for(int i = 0; i < 20; i++) {
         std::array<unsigned int, 6> firings;
         unsigned char preferred_valve = State::read(State::Propulsion::intertank_firing_valve, propulsion_state_lock);
-        firings[preferred_valve] = VALVE_VENT_TIME;
+        unsigned int valve_vent_time = Constants::read(VALVE_VENT_TIME);
+        firings[preferred_valve] = valve_vent_time;
         chMtxLock(&spike_and_hold_device_lock);
             if (State::Hardware::can_get_data(Devices::spike_and_hold)) {
                 spike_and_hold.execute_schedule(firings);
@@ -35,4 +41,10 @@ THD_FUNCTION(PropulsionTasks::pressurizing_fn, args) {
         State::write(FaultState::Propulsion::cannot_pressurize_outer_tank, 
             true, FaultState::Propulsion::propulsion_faults_state_lock);
     }
+
+    chThdSleepUntil(tf);
+    State::write(State::Propulsion::propulsion_state, 
+                 State::Propulsion::PropulsionState::FIRING, 
+                 State::Propulsion::propulsion_state_lock);
+    chThdExit((msg_t) 0);
 }

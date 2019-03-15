@@ -29,7 +29,7 @@ namespace State {
         std::array<float, 3> cur_ang_rate;
         bool is_sun_vector_determination_working = false;
         bool is_sun_vector_collection_working = false;
-        std::array<float, 3> rwa_speed_cmds, rwa_speeds, rwa_ramps;
+        std::array<float, 3> rwa_speed_cmds, rwa_speeds, rwa_torques;
         std::array<float, 3> rwa_speed_cmds_rd, rwa_speeds_rd, rwa_ramps_rd;
         std::array<float, 3> mtr_cmds;
         std::array<float, 3> ssa_vec;

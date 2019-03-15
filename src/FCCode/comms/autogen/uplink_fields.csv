@@ -4,15 +4,15 @@ max,size,type,name,min
 7200,45,double vector,other_satellite_position,6400
 12000,45,double vector,other_satellite_velocity,8000
 ,49,gps time,other_satellite_timestamp,
-11,4,int,constant_0_id,0
+17,5,int,constant_0_id,0
 4294967295,32,int,constant_0_val,0
-11,4,int,constant_1_id,0
+17,5,int,constant_1_id,0
 4294967295,32,int,constant_1_val,0
-11,4,int,constant_2_id,0
+17,5,int,constant_2_id,0
 4294967295,32,int,constant_2_val,0
-11,4,int,constant_3_id,0
+17,5,int,constant_3_id,0
 4294967295,32,int,constant_3_val,0
-11,4,int,constant_4_id,0
+17,5,int,constant_4_id,0
 4294967295,32,int,constant_4_val,0
 4,3,int,master_state,0
 11,4,int,pan_state,0

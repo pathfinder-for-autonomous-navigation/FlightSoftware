@@ -62,11 +62,13 @@ static THD_FUNCTION(docking_motor_toggler, args) {
 }
 
 void Master::apply_uplink_data() {
-    Comms::Uplink uplink = State::read(State::Quake::most_recent_uplink, State::Quake::uplink_lock);
+    Comms::Uplink &uplink = State::Quake::most_recent_uplink;
 
+    rwMtxRLock(&State::Quake::uplink_lock);
     std::array<double, 3> p = uplink.other_satellite_position;
     std::array<double, 3> v = uplink.other_satellite_velocity;
     gps_time_t t = uplink.other_satellite_timestamp;
+    rwMtxRUnlock(&State::Quake::uplink_lock);
     
     bool rtk_lock = false; // TODO
     if (!rtk_lock) {

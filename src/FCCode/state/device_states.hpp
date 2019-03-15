@@ -60,10 +60,9 @@ namespace Hardware {
     extern std::map<std::string, DeviceState&> hat;
     inline bool can_get_data(const Devices::Device& device) {
         rwMtxRLock(&State::Hardware::hardware_state_lock);
-            bool possible = (State::Hardware::hat).at(device.name()).is_functional 
-                || (State::Hardware::hat).at(device.name()).error_ignored;
+            bool is_functional = (State::Hardware::hat).at(device.name()).is_functional;
         rwMtxRUnlock(&State::Hardware::hardware_state_lock);
-        return possible;
+        return is_functional;
     }
     //! Maps devices to the corresponding power output.
     extern std::map<std::string, unsigned char> power_outputs;

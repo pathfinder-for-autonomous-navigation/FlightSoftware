@@ -53,7 +53,7 @@ ADCS_FIELDS = [
 { "group" : "adcs", "name" : "is_sun_vector_determination_working", "type" : "bool" },
 { "group" : "adcs", "name" : "rwa_speeds",                          "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }, #TODO
 { "group" : "adcs", "name" : "rwa_speed_cmds",                      "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }, #TODO
-{ "group" : "adcs", "name" : "rwa_ramps",                           "type" : "float vector", "size" : 29, "min" : 0, "max" : 310.2 },
+{ "group" : "adcs", "name" : "rwa_torques",                         "type" : "float vector", "size" : 29, "min" : 0, "max" : 310.2 },
 { "group" : "adcs", "name" : "rwa_speeds_rd",                       "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }, #TODO
 { "group" : "adcs", "name" : "rwa_speed_cmds_rd",                   "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }, #TODO
 { "group" : "adcs", "name" : "rwa_ramps_rd",                        "type" : "float vector", "size" : 29, "min" : 0, "max" : 310.2 },

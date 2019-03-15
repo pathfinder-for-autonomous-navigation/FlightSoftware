@@ -24,9 +24,6 @@ using Devices::temp_sensor_inner;
 using Devices::temp_sensor_outer;
 
 namespace PropulsionTasks {
-    void change_propulsion_state(PropulsionState state) {
-        State::write(State::Propulsion::propulsion_state, state, propulsion_state_lock);
-    }
     rwmutex_t propulsion_thread_ptr_lock;
 }
 
@@ -47,14 +44,16 @@ static int can_fire_manuever() {
     bool is_outer_tank_temperature_too_high = State::read(State::Propulsion::tank_outer_temperature, propulsion_state_lock) >= 48
                                             && State::Hardware::can_get_data(Devices::temp_sensor_outer);
 
-    if (is_inner_tank_temperature_too_high || is_outer_tank_temperature_too_high || is_outer_tank_pressure_too_high) {
+    if (is_inner_tank_temperature_too_high 
+        || is_outer_tank_temperature_too_high
+        || is_outer_tank_pressure_too_high) {
         return -1;
     }
 
     gps_time_t firing_time = State::read(State::Propulsion::firing_data.time, propulsion_state_lock);
 
     gps_time_t current_time = State::GNC::get_current_time();
-    if (current_time > firing_time - Constants::Propulsion::THRUSTER_PREPARATION_TIME) {
+    if (current_time > firing_time - Constants::Propulsion::thruster_preparation_time()) {
         // We cannot execute this firing, since the planned time of the 
         // firing (and its preparation) is less than the current time!
         return 0;
@@ -86,12 +85,10 @@ static void propulsion_state_controller() {
             // being collected by can_fire_manuever()
         break;
         case PropulsionState::IDLE: {
-            if (can_manuever == -1) {
-                change_propulsion_state(PropulsionState::VENTING);
-            }
-            else if (can_manuever == 1) {
-                change_propulsion_state(PropulsionState::AWAITING_PRESSURIZATION);
-            }
+            if (can_manuever == -1)
+                State::write(State::Propulsion::propulsion_state, PropulsionState::VENTING, propulsion_state_lock);
+            else if (can_manuever == 1)
+                State::write(State::Propulsion::propulsion_state, PropulsionState::AWAITING_PRESSURIZATION, propulsion_state_lock);
         }
         break;
         case PropulsionState::VENTING: {
@@ -103,16 +100,14 @@ static void propulsion_state_controller() {
         case PropulsionState::AWAITING_PRESSURIZATION: {
             int can_manuever = can_fire_manuever();
             if (can_manuever == -1)
-                change_propulsion_state(PropulsionState::VENTING);
+                State::write(State::Propulsion::propulsion_state, PropulsionState::VENTING, propulsion_state_lock);
             else if (can_manuever == 0)
-                change_propulsion_state(PropulsionState::IDLE);
+                State::write(State::Propulsion::propulsion_state, PropulsionState::IDLE, propulsion_state_lock);
             else {
-                gps_time_t start_pressurization_time = 
-                    State::Propulsion::firing_data.time - Constants::Propulsion::THRUSTER_PREPARATION_TIME
-                    - 1500; // Buffer time so that the system has time to settle into pressurization
-                if (State::GNC::get_current_time() > start_pressurization_time) {
-                    change_propulsion_state(PropulsionState::PRESSURIZING);
-                }
+                unsigned int stop_pressurization_time_delta = Constants::read(Constants::Propulsion::STOP_PRESSURIZATION_TIME_DELTA);
+                gps_time_t start_pressurization_time = State::Propulsion::firing_data.time - stop_pressurization_time_delta;
+                if (State::GNC::get_current_time() > start_pressurization_time)
+                    State::write(State::Propulsion::propulsion_state, PropulsionState::PRESSURIZING, propulsion_state_lock);
             }
         }
         break;
@@ -120,9 +115,9 @@ static void propulsion_state_controller() {
             if (can_manuever != 1) {
                 chThdTerminate(pressurizing_thread);
                 if (can_manuever == -1)
-                    change_propulsion_state(PropulsionState::VENTING);
+                    State::write(State::Propulsion::propulsion_state, PropulsionState::VENTING, propulsion_state_lock);
                 else
-                    change_propulsion_state(PropulsionState::IDLE);
+                    State::write(State::Propulsion::propulsion_state, PropulsionState::IDLE, propulsion_state_lock);
             }
             else if (pressurizing_thread == NULL || chThdTerminatedX(pressurizing_thread))
                 pressurizing_thread = chThdCreateStatic(pressurizing_thread_wa, sizeof(pressurizing_thread_wa), 
@@ -133,21 +128,21 @@ static void propulsion_state_controller() {
             if (can_manuever != 1) {
                 chThdTerminate(firing_thread);
                 if (can_manuever == -1)
-                    change_propulsion_state(PropulsionState::VENTING);
+                    State::write(State::Propulsion::propulsion_state, PropulsionState::VENTING, propulsion_state_lock);
                 else
-                    change_propulsion_state(PropulsionState::IDLE);
+                    State::write(State::Propulsion::propulsion_state, PropulsionState::IDLE, propulsion_state_lock);
             }
             if (State::ADCS::angular_rate() >= Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
                 // Satellite is too unstable for a firing
                 State::write(FaultState::Propulsion::destabilization_event, 
                     State::GNC::get_current_time(), 
                     FaultState::Propulsion::propulsion_faults_state_lock);
-                change_propulsion_state(PropulsionState::IDLE);
+                State::write(State::Propulsion::propulsion_state, PropulsionState::IDLE, propulsion_state_lock);
             }
             float tank_pressure = State::read(State::Propulsion::tank_pressure, propulsion_state_lock);
             if (tank_pressure < Constants::Propulsion::PRE_FIRING_OUTER_TANK_PRESSURE) {
                 // Not enough pressure for a firing
-                change_propulsion_state(PropulsionState::IDLE);
+                State::write(State::Propulsion::propulsion_state, PropulsionState::IDLE, propulsion_state_lock);
             }
 
             if (firing_thread == NULL || chThdTerminatedX(firing_thread))
@@ -157,7 +152,7 @@ static void propulsion_state_controller() {
         break;
         default: {
             // Uh oh, undefined mode; go to idle since that's safest
-            change_propulsion_state(PropulsionState::DISABLED);
+            State::write(State::Propulsion::propulsion_state, PropulsionState::DISABLED, propulsion_state_lock);
         }
         break;
     }

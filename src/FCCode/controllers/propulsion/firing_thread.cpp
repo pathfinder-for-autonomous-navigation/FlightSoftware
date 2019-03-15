@@ -81,6 +81,8 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
         }
     chSysUnlock();
 
-    change_propulsion_state(State::Propulsion::PropulsionState::IDLE);
+    State::write(State::Propulsion::propulsion_state, 
+                 State::Propulsion::PropulsionState::IDLE, 
+                 State::Propulsion::propulsion_state_lock);
     chThdExit((msg_t) 0);
 }

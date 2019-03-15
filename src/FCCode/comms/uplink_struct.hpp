@@ -6,7 +6,7 @@
 #include <array>
 
 namespace Comms {
-  constexpr unsigned int UPLINK_SIZE_BITS = 556;
+  constexpr unsigned int UPLINK_SIZE_BITS = 561;
   struct Uplink {
     int uplink_number;
     gps_time_t uplink_timestamp;
