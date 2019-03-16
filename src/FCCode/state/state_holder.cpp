@@ -71,6 +71,7 @@ namespace State {
         std::array<double, 3> recorded_gps_position, recorded_gps_position_other, recorded_gps_velocity;
         gps_time_t recorded_gps_position_time, recorded_gps_position_other_time, recorded_gps_velocity_time;
         unsigned char recorded_gps_position_nsats, recorded_gps_velocity_nsats;
+        bool is_float_rtk, is_fixed_rtk;
         rwmutex_t piksi_state_lock;
     }
 

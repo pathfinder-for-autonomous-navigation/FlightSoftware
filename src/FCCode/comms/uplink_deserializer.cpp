@@ -26,7 +26,7 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
 
   std::bitset<5> bitset_5;
   for(int i = 0; i < 5; i++) bitset_5.set(i, mes[bitset_ptr++]);
-  uplink->constant_0_id = Comms::expand_int(bitset_5, 0, 17);
+  uplink->constant_0_id = Comms::expand_int(bitset_5, 1, 19);
 
   std::bitset<32> bitset_6;
   for(int i = 0; i < 32; i++) bitset_6.set(i, mes[bitset_ptr++]);
@@ -34,7 +34,7 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
 
   std::bitset<5> bitset_7;
   for(int i = 0; i < 5; i++) bitset_7.set(i, mes[bitset_ptr++]);
-  uplink->constant_1_id = Comms::expand_int(bitset_7, 0, 17);
+  uplink->constant_1_id = Comms::expand_int(bitset_7, 1, 19);
 
   std::bitset<32> bitset_8;
   for(int i = 0; i < 32; i++) bitset_8.set(i, mes[bitset_ptr++]);
@@ -42,7 +42,7 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
 
   std::bitset<5> bitset_9;
   for(int i = 0; i < 5; i++) bitset_9.set(i, mes[bitset_ptr++]);
-  uplink->constant_2_id = Comms::expand_int(bitset_9, 0, 17);
+  uplink->constant_2_id = Comms::expand_int(bitset_9, 1, 19);
 
   std::bitset<32> bitset_10;
   for(int i = 0; i < 32; i++) bitset_10.set(i, mes[bitset_ptr++]);
@@ -50,7 +50,7 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
 
   std::bitset<5> bitset_11;
   for(int i = 0; i < 5; i++) bitset_11.set(i, mes[bitset_ptr++]);
-  uplink->constant_3_id = Comms::expand_int(bitset_11, 0, 17);
+  uplink->constant_3_id = Comms::expand_int(bitset_11, 1, 19);
 
   std::bitset<32> bitset_12;
   for(int i = 0; i < 32; i++) bitset_12.set(i, mes[bitset_ptr++]);
@@ -58,7 +58,7 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
 
   std::bitset<5> bitset_13;
   for(int i = 0; i < 5; i++) bitset_13.set(i, mes[bitset_ptr++]);
-  uplink->constant_4_id = Comms::expand_int(bitset_13, 0, 17);
+  uplink->constant_4_id = Comms::expand_int(bitset_13, 1, 19);
 
   std::bitset<32> bitset_14;
   for(int i = 0; i < 32; i++) bitset_14.set(i, mes[bitset_ptr++]);

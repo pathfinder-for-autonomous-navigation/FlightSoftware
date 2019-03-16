@@ -89,6 +89,11 @@ namespace Constants {
         constexpr unsigned int SAFE_VOLTAGE = Devices::Gomspace::FC_NORMAL;
     }
 
+    namespace Piksi {
+        //! Minimum range in which we expect a RTK lock, in meters
+        extern unsigned int CDGPS_RANGE;
+    }
+
     namespace Propulsion {
         //! Milliseconds that a valve is opened in order to pressurize or vent a tank.
         extern unsigned int VALVE_VENT_TIME;

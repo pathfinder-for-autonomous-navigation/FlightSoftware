@@ -41,8 +41,6 @@ void Master::safe_hold() {
     chMtxUnlock(&eeprom_lock);
 
     // Start safe hold timer
-    // TODO DON'T start timer if safe hold is due to mechanical ADCS failures. This will only
-    // worsen ADCS problems.
     RTOSTasks::safe_hold_timer_thread = chThdCreateStatic(&RTOSTasks::safe_hold_timer_workingArea, 
                                                     sizeof(RTOSTasks::safe_hold_timer_workingArea), 
                                                     RTOSTasks::master_thread_priority, 

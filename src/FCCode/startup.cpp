@@ -43,6 +43,7 @@ static void initialize_locks() {
     rwMtxObjectInit(&State::Quake::quake_state_lock);
     rwMtxObjectInit(&State::Quake::uplink_lock);
     rwMtxObjectInit(&Constants::changeable_constants_lock);
+    rwMtxObjectInit(&RTOSTasks::LoopTimes::gnc_looptime_lock);
     // Initialize all device locks
     chMtxObjectInit(&State::Hardware::adcs_device_lock);
     chMtxObjectInit(&State::Hardware::dcdc_device_lock);

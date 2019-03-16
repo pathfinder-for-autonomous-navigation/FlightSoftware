@@ -32,8 +32,7 @@ static void master_loop() {
             chMtxLock(&eeprom_lock);
                 EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 0);
             chMtxUnlock(&eeprom_lock);
-            bool safe_hold_needed = Master::safe_hold_needed();
-            if (safe_hold_needed) Master::safe_hold();
+            if (Master::safe_hold_needed()) Master::safe_hold();
             
             State::ADCS::ADCSState adcs_state = State::read(State::ADCS::adcs_state, State::ADCS::adcs_state_lock);
             
@@ -56,15 +55,15 @@ static void master_loop() {
             // The apply_uplink() is continuously checking uplink for manual control commands and mode shift command
         break;
         case MasterState::NORMAL: {
-            bool safe_hold_needed = Master::safe_hold_needed();
-            if (safe_hold_needed) Master::safe_hold();
+            if (Master::safe_hold_needed()) Master::safe_hold();
             switch(pan_state_copy) {
                 case PANState::FOLLOWER: {
+                    if (Master::standby_needed()) State::write(pan_state, PANState::STANDBY, master_state_lock);
                     chMtxLock(&eeprom_lock);
                         EEPROM.put(EEPROM_ADDRESSES::IS_FOLLOWER, true);
                     chMtxUnlock(&eeprom_lock);
                     State::write(State::Master::is_follower, true, State::Master::master_state_lock);
-                    RTOSTasks::LoopTimes::GNC = 60000;
+                    State::write(RTOSTasks::LoopTimes::GNC, (unsigned int) 60000, RTOSTasks::LoopTimes::gnc_looptime_lock);
                     
                     if (State::Quake::msec_since_last_sbdix() >= Constants::read(Constants::Quake::UPLINK_TIMEOUT)) {
                         debug_println("Detected STANDBY condition due to no uplink being received in the last 24 hours.");
@@ -73,8 +72,9 @@ static void master_loop() {
                 }
                 break;
                 case PANState::FOLLOWER_CLOSE_APPROACH: {
-                    RTOSTasks::LoopTimes::GNC = 10000;
-                    ADCSControllers::point_for_close_approach();
+                    State::write(RTOSTasks::LoopTimes::GNC, (unsigned int) 10000, RTOSTasks::LoopTimes::gnc_looptime_lock);
+                    if (Master::standby_needed()) State::write(pan_state, PANState::STANDBY, master_state_lock);
+                    else ADCSControllers::point_for_close_approach();
                 }
                 break;
                 case PANState::STANDBY: {
@@ -99,7 +99,8 @@ static void master_loop() {
                 }
                 break;
                 case PANState::LEADER_CLOSE_APPROACH:
-                    ADCSControllers::point_for_close_approach();
+                    if (Master::standby_needed()) State::write(pan_state, PANState::STANDBY, master_state_lock);
+                    else ADCSControllers::point_for_close_approach();
                 break;
                 case PANState::DOCKING: {
                     chMtxLock(&eeprom_lock);
@@ -140,7 +141,7 @@ static void master_loop() {
                 }
                 break;
                 default:
-                    Master::safe_hold(); // TODO fix
+                    Master::safe_hold();
             }
         }
         break;
@@ -149,7 +150,7 @@ static void master_loop() {
             break;
         default: {
             debug_printf("%d\n", master_state);
-            Master::safe_hold(); // TODO fix
+            Master::safe_hold();
         }
     }
 }
@@ -173,7 +174,7 @@ void master_init() {
     chMtxUnlock(&eeprom_lock);
     if (previous_boot_safehold) {
         debug_println("Previous boot ended in safehold mode! The system will start in safehold now.");
-        Master::safe_hold(); // TODO fix
+        Master::safe_hold();
         return;
     }
 
@@ -183,7 +184,7 @@ void master_init() {
     chMtxUnlock(&eeprom_lock);
     if (prevboot_initialization_hold) {
         debug_println("Previous boot ended in initialization hold mode! The system will start in initialization hold now.");
-        Master::initialization_hold(); // TODO fix
+        Master::initialization_hold();
         return;
     }
 
@@ -191,9 +192,9 @@ void master_init() {
     if (Master::safe_hold_needed()) {
         unsigned int boot_number = State::read(State::Master::boot_number, master_state_lock);
         if (boot_number == 1)
-            Master::initialization_hold(); // TODO fix
+            Master::initialization_hold();
         else
-            Master::safe_hold(); // TODO fix
+            Master::safe_hold();
     }
     else {
         debug_println("Proceeding to normal boot.");

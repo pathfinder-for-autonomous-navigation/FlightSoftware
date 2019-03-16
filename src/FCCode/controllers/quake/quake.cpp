@@ -40,17 +40,21 @@ static CH_IRQ_HANDLER(network_ready_handler) {
 static void quake_loop() {
     // Power cycle Quake if failing. Do this for as many times as it takes for the device
     // to start talking again.
-    if (!State::Hardware::check_is_functional(quake)) {
+    if (!State::Hardware::check_is_functional(quake) && Gomspace::quake_thread == NULL) {
+        // Increment counter for cycling
+        State::Hardware::increment_boot_count(quake);
+        // Specify arguments for thread
         Gomspace::cycler_arg_t cycler_args = {
             &State::Hardware::quake_device_lock,
             Devices::quake,
             Devices::Gomspace::DEVICE_PINS::QUAKE
         };
-        if (Gomspace::quake_thread == NULL)
-            Gomspace::quake_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
-                "POWER CYCLE QUAKE",
-                RTOSTasks::master_thread_priority,
-                Gomspace::cycler_fn, (void*) &cycler_args);
+        // Start cycler thread
+        Gomspace::quake_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+            "POWER CYCLE QUAKE",
+            RTOSTasks::master_thread_priority,
+            Gomspace::cycler_fn, (void*) &cycler_args);
+        return;
     }
 
     chMtxLock(&eeprom_lock);

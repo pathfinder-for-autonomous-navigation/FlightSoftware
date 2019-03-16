@@ -6,6 +6,8 @@
 
 #include <i2c_t3.h>
 #include "device_states.hpp"
+#include <EEPROM.h>
+#include "EEPROMAddresses.hpp"
 #include "state_holder.hpp"
 
 namespace Devices {
@@ -62,17 +64,17 @@ namespace Hardware {
         {Devices::temp_sensor_inner.name(), Devices::temp_sensor_inner},
         {Devices::temp_sensor_outer.name(), Devices::temp_sensor_outer}
     };
-    static Hardware::DeviceState adcs_device_state = {false, false, false, false};
-    static Hardware::DeviceState dcdc_device_state = {false, false, false, false};
-    static Hardware::DeviceState docking_motor_device_state = {false, false, false, false};
-    static Hardware::DeviceState docking_switch_device_state = {false, false, false, false};
-    static Hardware::DeviceState gomspace_device_state = {false, false, false, false};
-    static Hardware::DeviceState piksi_device_state = {false, false, false, false};
-    static Hardware::DeviceState pressure_sensor_device_state = {false, false, false, false};
-    static Hardware::DeviceState quake_device_state = {false, false, false, false};
-    static Hardware::DeviceState sph_device_state = {false, false, false, false};
-    static Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false};
-    static Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false};
+    static Hardware::DeviceState adcs_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState dcdc_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState docking_motor_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState docking_switch_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState gomspace_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState piksi_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState pressure_sensor_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState quake_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState sph_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false, 1};
     std::map<std::string, Hardware::DeviceState&> hat {
         {Devices::adcs_system.name(), adcs_device_state},
         {Devices::dcdc.name(), dcdc_device_state},
@@ -111,26 +113,58 @@ namespace Hardware {
         rwMtxWUnlock(&hardware_state_lock);
         return functional;
     }
+
+    bool is_functional(Devices::Device& d) {
+        rwMtxRLock(&hardware_state_lock);
+            bool functional = hat.at(d.name()).is_functional;
+        rwMtxRUnlock(&hardware_state_lock);
+        return functional;
+    }
+
+    void increment_boot_count(Devices::Device& d) {
+        rwMtxWLock(&hardware_state_lock);
+            hat.at(d.name()).boot_count = hat.at(d.name()).boot_count++;
+        rwMtxWUnlock(&hardware_state_lock);
+        chMtxLock(&eeprom_lock);
+            unsigned int boot_count;
+            if (&d == &Devices::piksi) {
+                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, boot_count);
+                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, boot_count++);
+            }
+            else if (&d == &Devices::quake) {
+                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, boot_count);
+                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, boot_count++);
+            }
+            else if (&d == &Devices::adcs_system) {
+                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, boot_count);
+                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, boot_count++);
+            }
+            else if (&d == &Devices::spike_and_hold) {
+                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, boot_count);
+                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, boot_count++);
+            } 
+        chMtxUnlock(&eeprom_lock);
+    }
 }
 
 namespace ADCS {
-    static Hardware::DeviceState adcs_gyro_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_magnetometer_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_magnetorquer_x_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_magnetorquer_y_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_magnetorquer_z_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_motorpot_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_motor_x_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_motor_y_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_motor_z_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_adc_motor_x_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_adc_motor_y_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_adc_motor_z_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_ssa_adc_1_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_ssa_adc_2_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_ssa_adc_3_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_ssa_adc_4_state = {false, false, false, false};
-    static Hardware::DeviceState adcs_ssa_adc_5_state = {false, false, false, false};
+    static Hardware::DeviceState adcs_gyro_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_magnetometer_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_magnetorquer_x_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_magnetorquer_y_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_magnetorquer_z_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_motorpot_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_motor_x_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_motor_y_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_motor_z_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_adc_motor_x_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_adc_motor_y_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_adc_motor_z_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_ssa_adc_1_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_ssa_adc_2_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_ssa_adc_3_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_ssa_adc_4_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_ssa_adc_5_state = {false, false, false, false, 1};
     std::map<std::string, Hardware::DeviceState&> adcs_hat {
         {"gyroscope", adcs_gyro_state},
         {"magnetometer", adcs_magnetometer_state},

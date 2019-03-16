@@ -11,7 +11,7 @@ thread_t* PropulsionTasks::pressurizing_thread;
 THD_WORKING_AREA(PropulsionTasks::pressurizing_thread_wa, 1024);
 
 THD_FUNCTION(PropulsionTasks::pressurizing_fn, args) {
-    float tank_pressure;
+    float tank_pressure = State::read(State::Propulsion::tank_pressure, propulsion_state_lock);
 
     systime_t t0 = chVTGetSystemTimeX();
     gps_time_t firing_time = State::read(State::Propulsion::firing_data.time, propulsion_state_lock); 

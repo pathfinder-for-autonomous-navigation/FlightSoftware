@@ -97,13 +97,6 @@ static void gomspace_check() {
     }
     else debug_println("Device is functional.");
 
-    debug_printf("Checking Gomspace battery voltage...");
-    unsigned short int vbatt = State::read(gomspace_data.vbatt, gomspace_state_lock);
-    if (vbatt < Constants::Gomspace::SAFE_VOLTAGE) {
-        State::write(FaultState::Gomspace::is_safe_hold_voltage, 
-            true, FaultState::Gomspace::gomspace_faults_state_lock);
-    }
-
     debug_println("Checking Gomspace inputs (currents and voltages).");
     unsigned short* vboosts = State::Gomspace::gomspace_data.vboost;
     unsigned short* curins = State::Gomspace::gomspace_data.curin;

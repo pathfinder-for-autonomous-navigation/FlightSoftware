@@ -8,10 +8,12 @@
 #include "../../comms/uplink_struct.hpp"
 
 namespace Master {
-    unsigned short int safe_hold_needed();
+    bool safe_hold_needed();
     void stop_safe_hold();
     void safe_hold();
     void initialization_hold();
+
+    bool standby_needed();
     
     extern virtual_timer_t docking_timer;
     void stop_docking_mode(void* args);

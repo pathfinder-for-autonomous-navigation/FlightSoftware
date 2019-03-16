@@ -58,7 +58,7 @@ namespace State {
     //! standby mode from sending the system right back into safe hold after
     //! the timer expires. When processing an uplink, this flag should be set 
     //! to false so that we can reenter safe hold when an error occurs.
-    extern bool autoexited_safe_hold; // TODO set to false in uplink processor
+    extern bool autoexited_safe_hold;
     //! Readers-writers lock that prevents multi-process modification of the master state.
     extern rwmutex_t master_state_lock;
   }
@@ -163,6 +163,10 @@ namespace State {
     extern gps_time_t recorded_gps_velocity_time;
     //! Number of satellites used in velocity determination.
     extern unsigned char recorded_gps_velocity_nsats;
+    //! If RTK positioning is being used but is floating.
+    extern bool is_float_rtk;
+    //! If RTK positioning is being used and is fixed.
+    extern bool is_fixed_rtk;
     //! Readers-writers lock that prevents multi-process modification of Piksi state data.
     extern rwmutex_t piksi_state_lock;
   }

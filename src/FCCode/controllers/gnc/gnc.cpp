@@ -7,6 +7,7 @@
 namespace RTOSTasks {
     THD_WORKING_AREA(gnc_controller_workingArea, 2048);
     unsigned int LoopTimes::GNC = 60000;
+    rwmutex_t LoopTimes::gnc_looptime_lock;
 }
 
 using State::Propulsion::propulsion_state_lock;

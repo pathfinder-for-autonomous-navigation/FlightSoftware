@@ -5,6 +5,7 @@
  */
 
 #include <ChRt.h>
+#include <rwmutex.hpp>
 #include "../debug.hpp"
 
 #ifndef TASKS_HPP_
@@ -90,6 +91,7 @@ namespace RTOSTasks {
         static constexpr unsigned int MASTER = 1000;
         //! Number of milliseconds between GNC calculation iterations
         static unsigned int GNC;
+        static rwmutex_t gnc_looptime_lock;
         //! Number of milliseconds between Piksi state controller iterations
         static constexpr unsigned int PIKSI = 100;
         //! Number of milliseconds between propulsion actuations. This is really high

@@ -1,24 +1,24 @@
 #include "master_helpers.hpp"
+#include "../../state/fault_state_holder.hpp"
 
 using State::Master::master_state_lock;
 
-unsigned short int Master::safe_hold_needed() {
+bool Master::safe_hold_needed() {
     bool autoexited_safe_hold = State::read(State::Master::autoexited_safe_hold, master_state_lock);
-    if (autoexited_safe_hold) return 0; // Don't set up safehold in this case.
+    if (autoexited_safe_hold) return false; // Don't set up safehold in this case.
 
-    unsigned short int reason = 0; // No reason
+    // Check battery voltage
+    unsigned short int vbatt = State::read(State::Gomspace::gomspace_data.vbatt, State::Gomspace::gomspace_state_lock);
+    if (vbatt < Constants::Gomspace::SAFE_VOLTAGE)
+        return true;
 
-    // Checks all flags in Master State Holder to determine if system should be in safe hold mode.
-    for (auto &device : State::Hardware::devices) {
-        Devices::Device &dptr = device.second;
-        State::Hardware::DeviceState dstate = State::read(State::Hardware::hat.at(device.first), State::Hardware::hardware_state_lock);
-        if (!dstate.is_functional && !dstate.error_ignored) {
-            debug_printf("Detected SAFE HOLD condition due to failure of device: %s\n", dptr.name().c_str());
-            reason = 1;
-        }
-    }
-
-    // TODO add more software checks
-
-    return reason;
+    // Check whether propulsion tank is leaking
+    bool cannot_pressurize_tank = State::read(FaultState::Propulsion::cannot_pressurize_outer_tank, 
+                                              FaultState::Propulsion::propulsion_faults_state_lock);
+    if (cannot_pressurize_tank)
+        return true;
+    
+    // TODO check ADCS HAT
+    
+    return false;
 }

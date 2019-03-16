@@ -12,6 +12,7 @@ namespace Constants {
         &Constants::Propulsion::NUM_PRESSURIZATIONS,
         &Constants::Propulsion::WAIT_BETWEEN_PRESSURIZATIONS,
         &Constants::Propulsion::STOP_PRESSURIZATION_TIME_DELTA,
+        &Constants::Piksi::CDGPS_RANGE,
         &Constants::Quake::NUM_RETRIES,
         &Constants::Quake::UPLINK_TIMEOUT,
         &Constants::Quake::QUAKE_WAIT_PERIOD,
@@ -49,6 +50,10 @@ namespace Constants {
             unsigned int SAFE_HOLD_TIMEOUT = 60*60*24; // 1 day, in seconds
             unsigned int DOCKING_TIMEOUT = 30*60; // 30 minutes, in seconds
         #endif
+    }
+
+    namespace Piksi {
+        unsigned int CDGPS_RANGE = 100;
     }
 
     namespace Propulsion {

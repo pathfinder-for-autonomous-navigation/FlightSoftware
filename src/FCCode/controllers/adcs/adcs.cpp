@@ -197,8 +197,8 @@ static THD_FUNCTION(adcs_loop, arg) {
     }
 }
 
-static THD_WORKING_AREA(check_hat_workingArea, 1024);
-static THD_FUNCTION(check_hat, args) {
+static THD_WORKING_AREA(update_hat_workingArea, 1024);
+static THD_FUNCTION(update_hat, args) {
     systime_t t = chVTGetSystemTimeX();
     while(true) {
         t += MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK);
@@ -207,10 +207,6 @@ static THD_FUNCTION(check_hat, args) {
             if (State::Hardware::check_is_functional(adcs_system)) 
                 adcs_system.update_hat(); // TODO fix
         chMtxUnlock(&State::Hardware::adcs_device_lock);
-
-        rwMtxWLock(&State::ADCS::adcs_state_lock);
-        // TODO write to actual state
-        rwMtxWUnlock(&State::ADCS::adcs_state_lock);
 
         chThdSleepUntil(t);
     }
@@ -226,9 +222,9 @@ void RTOSTasks::adcs_controller(void *arg) {
 
     DataCollection::initialize_adcs_history_timers();
 
-    // Create HAT checker thread
-    chThdCreateStatic(check_hat_workingArea, 
-        sizeof(check_hat_workingArea), RTOSTasks::adcs_thread_priority, check_hat, NULL);
+    // Create HAT updater thread
+    chThdCreateStatic(update_hat_workingArea,
+        sizeof(update_hat_workingArea), RTOSTasks::adcs_thread_priority, update_hat, NULL);
 
     debug_println("Waiting for deployment timer to finish.");
     rwMtxRLock(&State::Master::master_state_lock);

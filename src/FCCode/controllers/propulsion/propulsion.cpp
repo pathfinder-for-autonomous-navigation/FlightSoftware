@@ -44,9 +44,27 @@ static int can_fire_manuever() {
     bool is_outer_tank_temperature_too_high = State::read(State::Propulsion::tank_outer_temperature, propulsion_state_lock) >= 48
                                             && State::Hardware::check_is_functional(Devices::temp_sensor_outer);
 
-    if (is_inner_tank_temperature_too_high 
-        || is_outer_tank_temperature_too_high
-        || is_outer_tank_pressure_too_high) {
+    if (is_inner_tank_temperature_too_high || is_outer_tank_temperature_too_high || is_outer_tank_pressure_too_high) {
+        State::write(FaultState::Propulsion::overpressure_event, 
+                     State::GNC::get_current_time(), 
+                     FaultState::Propulsion::propulsion_faults_state_lock);
+
+        if (is_inner_tank_temperature_too_high) {
+            State::write(FaultState::Propulsion::overpressure_event_id, 
+                         FaultState::Propulsion::OVERPRESSURE_EVENT::INNER_TANK_TEMPERATURE,
+                         FaultState::Propulsion::propulsion_faults_state_lock);
+        }
+        else if (is_outer_tank_temperature_too_high) {
+            State::write(FaultState::Propulsion::overpressure_event_id, 
+                         FaultState::Propulsion::OVERPRESSURE_EVENT::OUTER_TANK_TEMPERATURE,
+                         FaultState::Propulsion::propulsion_faults_state_lock);
+        }
+        else if (is_outer_tank_pressure_too_high) {
+            State::write(FaultState::Propulsion::overpressure_event_id,
+                         FaultState::Propulsion::OVERPRESSURE_EVENT::OUTER_TANK_PRESSURE,
+                         FaultState::Propulsion::propulsion_faults_state_lock);
+        }
+        
         return -1;
     }
 
