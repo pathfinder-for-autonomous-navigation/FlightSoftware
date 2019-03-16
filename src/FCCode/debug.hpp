@@ -10,10 +10,8 @@
 #ifndef DEBUG_HPP_
 #define DEBUG_HPP_
 
-#ifndef UNIT_TEST
 /** @brief If set to true, console debugging is enabled. */
 #define DEBUG true
-#endif
 
 /**
  * @brief Starts the debug console.
@@ -61,6 +59,8 @@ void debug_println_headless(const char* str);
  * @brief Prints a newline without any process name.
  */
 void debug_println_headless(void);
+
+void debug_blink_led();
 
 /** @brief Prints an ASCII-based PAN logo. */
 void print_pan_logo();

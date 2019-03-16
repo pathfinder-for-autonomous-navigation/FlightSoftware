@@ -34,195 +34,195 @@ static void serialize_packet_0(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
   for(int i = 0; i < bitset_4.size(); i++) packet.set(packet_ptr++,bitset_4[i]);
 
   std::bitset<1> bitset_5;
-  bitset_5.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_5.set(0, State::read(State::Hardware::hat.at(&Devices::gomspace()).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_5.size(); i++) packet.set(packet_ptr++,bitset_5[i]);
 
   std::bitset<1> bitset_6;
-  bitset_6.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_6.set(0, State::read(State::Hardware::hat.at(&(Devices::gomspace())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_6.size(); i++) packet.set(packet_ptr++,bitset_6[i]);
 
   std::bitset<1> bitset_7;
-  bitset_7.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_7.set(0, State::read(State::Hardware::hat.at(&(Devices::gomspace())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_7.size(); i++) packet.set(packet_ptr++,bitset_7[i]);
 
   std::bitset<1> bitset_8;
-  bitset_8.set(0, State::read(State::Hardware::hat.at(Devices::gomspace.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_8.set(0, State::read(State::Hardware::hat.at(&(Devices::gomspace())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_8.size(); i++) packet.set(packet_ptr++,bitset_8[i]);
 
   std::bitset<1> bitset_9;
-  bitset_9.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_9.set(0, State::read(State::Hardware::hat.at(&(Devices::piksi())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_9.size(); i++) packet.set(packet_ptr++,bitset_9[i]);
 
   std::bitset<1> bitset_10;
-  bitset_10.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_10.set(0, State::read(State::Hardware::hat.at(&(Devices::piksi())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_10.size(); i++) packet.set(packet_ptr++,bitset_10[i]);
 
   std::bitset<1> bitset_11;
-  bitset_11.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_11.set(0, State::read(State::Hardware::hat.at(&(Devices::piksi())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_11.size(); i++) packet.set(packet_ptr++,bitset_11[i]);
 
   std::bitset<1> bitset_12;
-  bitset_12.set(0, State::read(State::Hardware::hat.at(Devices::piksi.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_12.set(0, State::read(State::Hardware::hat.at(&(Devices::piksi())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_12.size(); i++) packet.set(packet_ptr++,bitset_12[i]);
 
   std::bitset<1> bitset_13;
-  bitset_13.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_13.set(0, State::read(State::Hardware::hat.at(&(Devices::quake())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_13.size(); i++) packet.set(packet_ptr++,bitset_13[i]);
 
   std::bitset<1> bitset_14;
-  bitset_14.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_14.set(0, State::read(State::Hardware::hat.at(&(Devices::quake())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_14.size(); i++) packet.set(packet_ptr++,bitset_14[i]);
 
   std::bitset<1> bitset_15;
-  bitset_15.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_15.set(0, State::read(State::Hardware::hat.at(&(Devices::quake())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_15.size(); i++) packet.set(packet_ptr++,bitset_15[i]);
 
   std::bitset<1> bitset_16;
-  bitset_16.set(0, State::read(State::Hardware::hat.at(Devices::quake.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_16.set(0, State::read(State::Hardware::hat.at(&(Devices::quake())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_16.size(); i++) packet.set(packet_ptr++,bitset_16[i]);
 
   std::bitset<1> bitset_17;
-  bitset_17.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_17.set(0, State::read(State::Hardware::hat.at(&(Devices::dcdc())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_17.size(); i++) packet.set(packet_ptr++,bitset_17[i]);
 
   std::bitset<1> bitset_18;
-  bitset_18.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_18.set(0, State::read(State::Hardware::hat.at(&(Devices::dcdc())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_18.size(); i++) packet.set(packet_ptr++,bitset_18[i]);
 
   std::bitset<1> bitset_19;
-  bitset_19.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_19.set(0, State::read(State::Hardware::hat.at(&(Devices::dcdc())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_19.size(); i++) packet.set(packet_ptr++,bitset_19[i]);
 
   std::bitset<1> bitset_20;
-  bitset_20.set(0, State::read(State::Hardware::hat.at(Devices::dcdc.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_20.set(0, State::read(State::Hardware::hat.at(&(Devices::dcdc())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_20.size(); i++) packet.set(packet_ptr++,bitset_20[i]);
 
   std::bitset<1> bitset_21;
-  bitset_21.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_21.set(0, State::read(State::Hardware::hat.at(&(Devices::spike_and_hold())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_21.size(); i++) packet.set(packet_ptr++,bitset_21[i]);
 
   std::bitset<1> bitset_22;
-  bitset_22.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_22.set(0, State::read(State::Hardware::hat.at(&(Devices::spike_and_hold())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_22.size(); i++) packet.set(packet_ptr++,bitset_22[i]);
 
   std::bitset<1> bitset_23;
-  bitset_23.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_23.set(0, State::read(State::Hardware::hat.at(&(Devices::spike_and_hold())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_23.size(); i++) packet.set(packet_ptr++,bitset_23[i]);
 
   std::bitset<1> bitset_24;
-  bitset_24.set(0, State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_24.set(0, State::read(State::Hardware::hat.at(&(Devices::spike_and_hold())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_24.size(); i++) packet.set(packet_ptr++,bitset_24[i]);
 
   std::bitset<1> bitset_25;
-  bitset_25.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_25.set(0, State::read(State::Hardware::hat.at(&(Devices::adcs_system())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_25.size(); i++) packet.set(packet_ptr++,bitset_25[i]);
 
   std::bitset<1> bitset_26;
-  bitset_26.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_26.set(0, State::read(State::Hardware::hat.at(&(Devices::adcs_system())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_26.size(); i++) packet.set(packet_ptr++,bitset_26[i]);
 
   std::bitset<1> bitset_27;
-  bitset_27.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_27.set(0, State::read(State::Hardware::hat.at(&(Devices::adcs_system())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_27.size(); i++) packet.set(packet_ptr++,bitset_27[i]);
 
   std::bitset<1> bitset_28;
-  bitset_28.set(0, State::read(State::Hardware::hat.at(Devices::adcs_system.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_28.set(0, State::read(State::Hardware::hat.at(&(Devices::adcs_system())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_28.size(); i++) packet.set(packet_ptr++,bitset_28[i]);
 
   std::bitset<1> bitset_29;
-  bitset_29.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_29.set(0, State::read(State::Hardware::hat.at(&(Devices::pressure_sensor())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_29.size(); i++) packet.set(packet_ptr++,bitset_29[i]);
 
   std::bitset<1> bitset_30;
-  bitset_30.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_30.set(0, State::read(State::Hardware::hat.at(&(Devices::pressure_sensor())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_30.size(); i++) packet.set(packet_ptr++,bitset_30[i]);
 
   std::bitset<1> bitset_31;
-  bitset_31.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_31.set(0, State::read(State::Hardware::hat.at(&(Devices::pressure_sensor())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_31.size(); i++) packet.set(packet_ptr++,bitset_31[i]);
 
   std::bitset<1> bitset_32;
-  bitset_32.set(0, State::read(State::Hardware::hat.at(Devices::pressure_sensor.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_32.set(0, State::read(State::Hardware::hat.at(&(Devices::pressure_sensor())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_32.size(); i++) packet.set(packet_ptr++,bitset_32[i]);
 
   std::bitset<1> bitset_33;
-  bitset_33.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_33.set(0, State::read(State::Hardware::hat.at(&(Devices::temp_sensor_inner())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_33.size(); i++) packet.set(packet_ptr++,bitset_33[i]);
 
   std::bitset<1> bitset_34;
-  bitset_34.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_34.set(0, State::read(State::Hardware::hat.at(&(Devices::temp_sensor_inner())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_34.size(); i++) packet.set(packet_ptr++,bitset_34[i]);
 
   std::bitset<1> bitset_35;
-  bitset_35.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_35.set(0, State::read(State::Hardware::hat.at(&(Devices::temp_sensor_inner())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_35.size(); i++) packet.set(packet_ptr++,bitset_35[i]);
 
   std::bitset<1> bitset_36;
-  bitset_36.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_inner.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_36.set(0, State::read(State::Hardware::hat.at(&(Devices::temp_sensor_inner())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_36.size(); i++) packet.set(packet_ptr++,bitset_36[i]);
 
   std::bitset<1> bitset_37;
-  bitset_37.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_37.set(0, State::read(State::Hardware::hat.at(&(Devices::temp_sensor_outer())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_37.size(); i++) packet.set(packet_ptr++,bitset_37[i]);
 
   std::bitset<1> bitset_38;
-  bitset_38.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_38.set(0, State::read(State::Hardware::hat.at(&(Devices::temp_sensor_outer())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_38.size(); i++) packet.set(packet_ptr++,bitset_38[i]);
 
   std::bitset<1> bitset_39;
-  bitset_39.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_39.set(0, State::read(State::Hardware::hat.at(&(Devices::temp_sensor_outer())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_39.size(); i++) packet.set(packet_ptr++,bitset_39[i]);
 
   std::bitset<1> bitset_40;
-  bitset_40.set(0, State::read(State::Hardware::hat.at(Devices::temp_sensor_outer.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_40.set(0, State::read(State::Hardware::hat.at(&(Devices::temp_sensor_outer())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_40.size(); i++) packet.set(packet_ptr++,bitset_40[i]);
 
   std::bitset<1> bitset_41;
-  bitset_41.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_41.set(0, State::read(State::Hardware::hat.at(&(Devices::docking_motor())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_41.size(); i++) packet.set(packet_ptr++,bitset_41[i]);
 
   std::bitset<1> bitset_42;
-  bitset_42.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_42.set(0, State::read(State::Hardware::hat.at(&(Devices::docking_motor())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_42.size(); i++) packet.set(packet_ptr++,bitset_42[i]);
 
   std::bitset<1> bitset_43;
-  bitset_43.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_43.set(0, State::read(State::Hardware::hat.at(&(Devices::docking_motor())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_43.size(); i++) packet.set(packet_ptr++,bitset_43[i]);
 
   std::bitset<1> bitset_44;
-  bitset_44.set(0, State::read(State::Hardware::hat.at(Devices::docking_motor.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_44.set(0, State::read(State::Hardware::hat.at(&(Devices::docking_motor())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_44.size(); i++) packet.set(packet_ptr++,bitset_44[i]);
 
   std::bitset<1> bitset_45;
-  bitset_45.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_45.set(0, State::read(State::Hardware::hat.at(&(Devices::docking_switch())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_45.size(); i++) packet.set(packet_ptr++,bitset_45[i]);
 
   std::bitset<1> bitset_46;
-  bitset_46.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).enabled, State::Hardware::hardware_state_lock));
+  bitset_46.set(0, State::read(State::Hardware::hat.at(&(Devices::docking_switch())).enabled, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_46.size(); i++) packet.set(packet_ptr++,bitset_46[i]);
 
   std::bitset<1> bitset_47;
-  bitset_47.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).is_functional, State::Hardware::hardware_state_lock));
+  bitset_47.set(0, State::read(State::Hardware::hat.at(&(Devices::docking_switch())).is_functional, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_47.size(); i++) packet.set(packet_ptr++,bitset_47[i]);
 
   std::bitset<1> bitset_48;
-  bitset_48.set(0, State::read(State::Hardware::hat.at(Devices::docking_switch.name()).error_ignored, State::Hardware::hardware_state_lock));
+  bitset_48.set(0, State::read(State::Hardware::hat.at(&(Devices::docking_switch())).error_ignored, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_48.size(); i++) packet.set(packet_ptr++,bitset_48[i]);
 
   std::bitset<16> bitset_49;
-  Comms::trim_int(State::read(State::Hardware::hat.at(Devices::piksi.name()).boot_count,State::Hardware::hardware_state_lock), 1, 65536, &bitset_49);
+  Comms::trim_int(State::read(State::Hardware::hat.at(&(Devices::piksi())).boot_count,State::Hardware::hardware_state_lock), 1, 65536, &bitset_49);
   for(int i = 0; i < bitset_49.size(); i++) packet.set(packet_ptr++,bitset_49[i]);
 
   std::bitset<16> bitset_50;
-  Comms::trim_int(State::read(State::Hardware::hat.at(Devices::quake.name()).boot_count,State::Hardware::hardware_state_lock), 1, 65536, &bitset_50);
+  Comms::trim_int(State::read(State::Hardware::hat.at(&(Devices::quake())).boot_count,State::Hardware::hardware_state_lock), 1, 65536, &bitset_50);
   for(int i = 0; i < bitset_50.size(); i++) packet.set(packet_ptr++,bitset_50[i]);
 
   std::bitset<16> bitset_51;
-  Comms::trim_int(State::read(State::Hardware::hat.at(Devices::adcs_system.name()).boot_count,State::Hardware::hardware_state_lock), 1, 65536, &bitset_51);
+  Comms::trim_int(State::read(State::Hardware::hat.at(&(Devices::adcs_system())).boot_count,State::Hardware::hardware_state_lock), 1, 65536, &bitset_51);
   for(int i = 0; i < bitset_51.size(); i++) packet.set(packet_ptr++,bitset_51[i]);
 
   std::bitset<16> bitset_52;
-  Comms::trim_int(State::read(State::Hardware::hat.at(Devices::spike_and_hold.name()).boot_count,State::Hardware::hardware_state_lock), 1, 65536, &bitset_52);
+  Comms::trim_int(State::read(State::Hardware::hat.at(&(Devices::spike_and_hold())).boot_count,State::Hardware::hardware_state_lock), 1, 65536, &bitset_52);
   for(int i = 0; i < bitset_52.size(); i++) packet.set(packet_ptr++,bitset_52[i]);
 
   std::bitset<2> bitset_53;

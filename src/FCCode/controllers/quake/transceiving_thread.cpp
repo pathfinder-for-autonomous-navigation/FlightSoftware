@@ -20,16 +20,16 @@ void Quake::go_to_waiting() {
 }
 
 static void get_latest_uplink(QLocate::Message* uplink) {
-    while(quake.get_sbdix_response()[QLocate::MT_QUEUED] > 0) {
+    while(quake().get_sbdix_response()[QLocate::MT_QUEUED] > 0) {
         int response = -1;
-        if (!State::Hardware::check_is_functional(quake)) return;
+        if (!State::Hardware::check_is_functional(&quake())) return;
         chMtxLock(&quake_device_lock);
-            quake.run_sbdix();
+            quake().run_sbdix();
         chMtxUnlock(&quake_device_lock);
         for(int i = 0; i < Constants::Quake::NUM_RETRIES; i++) {
-            if (!State::Hardware::check_is_functional(quake)) return;
+            if (!State::Hardware::check_is_functional(&quake())) return;
             chMtxLock(&quake_device_lock);
-                response = quake.end_sbdix();
+                response = quake().end_sbdix();
             chMtxUnlock(&quake_device_lock);
             
             if (response != -1) break;
@@ -41,11 +41,11 @@ static void get_latest_uplink(QLocate::Message* uplink) {
                 State::GNC::get_current_time(), 
                 State::Quake::quake_state_lock);
             
-            if (!State::Hardware::check_is_functional(quake)) return;
+            if (!State::Hardware::check_is_functional(&quake())) return;
             chMtxLock(&quake_device_lock);
-                int status = quake.sbdrb();
+                int status = quake().sbdrb();
             chMtxUnlock(&quake_device_lock);
-            if (status == 0) *uplink = quake.get_message();
+            if (status == 0) *uplink = quake().get_message();
         }
     }
 }

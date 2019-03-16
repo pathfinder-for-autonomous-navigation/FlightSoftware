@@ -113,7 +113,7 @@ static void master_loop() {
 
                     unsigned int docking_timeout = Constants::read(Constants::Master::DOCKING_TIMEOUT);
                     chVTDoSetI(&Master::docking_timer, S2ST(docking_timeout), Master::stop_docking_mode, NULL);
-                    if (Devices::docking_switch.pressed() && State::Hardware::check_is_functional(Devices::docking_switch)) {
+                    if (Devices::docking_switch().pressed() && State::Hardware::check_is_functional(&Devices::docking_switch())) {
                         State::write(State::Master::pan_state, PANState::DOCKED, master_state_lock);
                     }
                 }

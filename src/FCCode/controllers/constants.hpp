@@ -86,6 +86,13 @@ namespace Constants {
         };
         constexpr limit_t boost_voltage_limits = {0,0}; // TODO
         constexpr limit_t temperature_limits = {}; // TODO
+        constexpr limit_t quake_limits = {0,0}; // TODO
+        constexpr limit_t adcs_system_limits = {0,0}; // TODO
+        constexpr limit_t spike_and_hold_limits = {0,0}; // TODO
+        constexpr limit_t piksi_limits = {0,0}; // TODO
+        constexpr limit_t individual_boost_converter_limits = {0,0}; // TODO
+        constexpr limit_t total_boost_converter_limits = {0,0}; // TODO
+        constexpr limit_t battery_current_limits = {0,0}; // TODO
         constexpr unsigned int SAFE_VOLTAGE = Devices::Gomspace::FC_NORMAL;
     }
 

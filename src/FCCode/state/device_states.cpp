@@ -23,47 +23,68 @@ namespace Devices {
     static std::string docking_switch_name = "docking_switch";
     static std::string docking_motor_name = "docking_motor";
 
-    Gomspace gomspace(gomspace_name,
-                      &State::Gomspace::gomspace_data,
-                      &State::Gomspace::gomspace_config,
-                      &State::Gomspace::gomspace_config2, 
-                      Wire, Gomspace::ADDRESS);
-    QLocate quake(quake_name, &Serial3, QLocate::DEFAULT_NR_PIN, QLocate::DEFAULT_TIMEOUT);
-    Piksi piksi(piksi_name, Serial4);
-    DCDC dcdc(dcdc_name, DCDC::DEFAULT_ENABLE_PIN);
-    SpikeAndHold spike_and_hold(spike_and_hold_name, 
-                                SpikeAndHold::DEFAULT_VALVE_PINS, 
-                                SpikeAndHold::DEFAULT_ENABLE_PIN);
-    ADCS adcs_system(adcs_system_name, Wire, ADCS::ADDRESS);
-    PressureSensor pressure_sensor(pressure_sensor_name,
-                                   PressureSensor::DEFAULT_LOW_PRESSURE_PIN,
-                                   PressureSensor::DEFAULT_HIGH_PRESSURE_PIN);
-    TempSensor temp_sensor_inner(temp_sensor_inner_name, TempSensor::DEFAULT_PIN_INNER_TANK);
-    TempSensor temp_sensor_outer(temp_sensor_outer_name, TempSensor::DEFAULT_PIN_OUTER_TANK);
-    DockingSwitch docking_switch(docking_switch_name, DockingSwitch::DEFAULT_SWITCH_PIN);
-    DockingMotor docking_motor(docking_motor_name, 
-                               DockingMotor::DEFAULT_MOTOR_I1_PIN,
-                               DockingMotor::DEFAULT_MOTOR_I2_PIN,
-                               DockingMotor::DEFAULT_MOTOR_DIRECTION_PIN,
-                               DockingMotor::DEFAULT_MOTOR_SLEEP_PIN,
-                               DockingMotor::DEFAULT_MOTOR_STEP_PIN);
+    Gomspace& gomspace() {
+        static Gomspace g(gomspace_name,
+                          &State::Gomspace::gomspace_data,
+                          &State::Gomspace::gomspace_config,
+                          &State::Gomspace::gomspace_config2, 
+                          Wire, Gomspace::ADDRESS);
+        return g;
+    }
+
+    Piksi& piksi() {
+        static Piksi p(piksi_name, Serial4);
+        return p;
+    }
+    SpikeAndHold& spike_and_hold() {
+        static SpikeAndHold s(spike_and_hold_name, 
+                              SpikeAndHold::DEFAULT_VALVE_PINS, 
+                              SpikeAndHold::DEFAULT_ENABLE_PIN);
+        return s;
+    }
+    DCDC& dcdc() {
+        static DCDC d(dcdc_name, DCDC::DEFAULT_ENABLE_PIN);
+        return d;
+    }
+    QLocate& quake() {
+        static QLocate q(quake_name, &Serial3, QLocate::DEFAULT_NR_PIN, QLocate::DEFAULT_TIMEOUT);
+        return q;
+    }
+    ADCS& adcs_system() {
+        static ADCS a(adcs_system_name, Wire, ADCS::ADDRESS);
+        return a;
+    }
+    PressureSensor& pressure_sensor() {
+        static PressureSensor p(pressure_sensor_name,
+                                    PressureSensor::DEFAULT_LOW_PRESSURE_PIN,
+                                    PressureSensor::DEFAULT_HIGH_PRESSURE_PIN);
+        return p;
+    }
+    TempSensor& temp_sensor_inner() {
+        static TempSensor t(temp_sensor_inner_name, TempSensor::DEFAULT_PIN_INNER_TANK);
+        return t;
+    }
+    TempSensor& temp_sensor_outer() {
+        static TempSensor t(temp_sensor_outer_name, TempSensor::DEFAULT_PIN_OUTER_TANK);
+        return t;
+    }
+    DockingMotor& docking_motor() {
+        static DockingMotor d(docking_motor_name, 
+                              DockingMotor::DEFAULT_MOTOR_I1_PIN,
+                              DockingMotor::DEFAULT_MOTOR_I2_PIN,
+                              DockingMotor::DEFAULT_MOTOR_DIRECTION_PIN,
+                              DockingMotor::DEFAULT_MOTOR_SLEEP_PIN,
+                              DockingMotor::DEFAULT_MOTOR_STEP_PIN);
+        return d;
+    }
+    DockingSwitch& docking_switch() {
+        static DockingSwitch d(docking_switch_name, DockingSwitch::DEFAULT_SWITCH_PIN);
+        return d;
+    }
 }
 
 namespace State {
 namespace Hardware {
-    std::map<std::string, Devices::Device&> devices = {
-        {Devices::adcs_system.name(), Devices::adcs_system},
-        {Devices::dcdc.name(), Devices::dcdc},
-        {Devices::docking_motor.name(), Devices::docking_motor},
-        {Devices::docking_switch.name(), Devices::docking_switch},
-        {Devices::gomspace.name(), Devices::gomspace},
-        {Devices::piksi.name(), Devices::piksi},
-        {Devices::pressure_sensor.name(), Devices::pressure_sensor},
-        {Devices::quake.name(), Devices::quake},
-        {Devices::spike_and_hold.name(), Devices::spike_and_hold},
-        {Devices::temp_sensor_inner.name(), Devices::temp_sensor_inner},
-        {Devices::temp_sensor_outer.name(), Devices::temp_sensor_outer}
-    };
     static Hardware::DeviceState adcs_device_state = {false, false, false, false, 1};
     static Hardware::DeviceState dcdc_device_state = {false, false, false, false, 1};
     static Hardware::DeviceState docking_motor_device_state = {false, false, false, false, 1};
@@ -75,25 +96,18 @@ namespace Hardware {
     static Hardware::DeviceState sph_device_state = {false, false, false, false, 1};
     static Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false, 1};
     static Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false, 1};
-    std::map<std::string, Hardware::DeviceState&> hat {
-        {Devices::adcs_system.name(), adcs_device_state},
-        {Devices::dcdc.name(), dcdc_device_state},
-        {Devices::docking_motor.name(), docking_motor_device_state},
-        {Devices::docking_switch.name(), docking_switch_device_state},
-        {Devices::gomspace.name(), gomspace_device_state},
-        {Devices::piksi.name(), piksi_device_state},
-        {Devices::pressure_sensor.name(), pressure_sensor_device_state},
-        {Devices::quake.name(), quake_device_state},
-        {Devices::spike_and_hold.name(), sph_device_state},
-        {Devices::temp_sensor_inner.name(), temp_sensor_inner_device_state},
-        {Devices::temp_sensor_outer.name(), temp_sensor_outer_device_state}
-    };
-
-    std::map<std::string, unsigned char> power_outputs {
-        {Devices::piksi.name(), 7},
-        {Devices::spike_and_hold.name(), 6},
-        {Devices::quake.name(), 5},
-        {Devices::adcs_system.name(), 4}
+    std::map<Devices::Device*, Hardware::DeviceState> hat {
+        {&Devices::adcs_system(), adcs_device_state},
+        {&Devices::dcdc(), dcdc_device_state},
+        {&Devices::docking_motor(), docking_motor_device_state},
+        {&Devices::docking_switch(), docking_switch_device_state},
+        {&Devices::gomspace(), gomspace_device_state},
+        {&Devices::piksi(), piksi_device_state},
+        {&Devices::pressure_sensor(), pressure_sensor_device_state},
+        {&Devices::quake(), quake_device_state},
+        {&Devices::spike_and_hold(), sph_device_state},
+        {&Devices::temp_sensor_inner(), temp_sensor_inner_device_state},
+        {&Devices::temp_sensor_outer(), temp_sensor_outer_device_state}
     };
 
     bool is_hardware_setup = false;
@@ -106,43 +120,43 @@ namespace Hardware {
     mutex_t quake_device_lock;
     mutex_t gomspace_device_lock;
 
-    bool check_is_functional(Devices::Device& d) {
-        bool functional = d.is_functional();
+    bool check_is_functional(Devices::Device* d) {
+        bool functional = d->is_functional();
         rwMtxWLock(&hardware_state_lock);
-            hat.at(d.name()).is_functional = functional;
+            hat.at(d).is_functional = functional;
         rwMtxWUnlock(&hardware_state_lock);
         return functional;
     }
 
-    bool is_functional(Devices::Device& d) {
+    bool is_functional(Devices::Device* d) {
         rwMtxRLock(&hardware_state_lock);
-            bool functional = hat.at(d.name()).is_functional;
+            bool functional = hat.at(d).is_functional;
         rwMtxRUnlock(&hardware_state_lock);
         return functional;
     }
 
-    void increment_boot_count(Devices::Device& d) {
+    void increment_boot_count(Devices::Device* d) {
         rwMtxWLock(&hardware_state_lock);
-            hat.at(d.name()).boot_count = hat.at(d.name()).boot_count++;
+            hat.at(d).boot_count = hat.at(d).boot_count++;
         rwMtxWUnlock(&hardware_state_lock);
         chMtxLock(&eeprom_lock);
             unsigned int boot_count;
-            if (&d == &Devices::piksi) {
+            if (d == &Devices::piksi()) {
                 EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, boot_count);
                 EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, boot_count++);
             }
-            else if (&d == &Devices::quake) {
+            else if (d == &Devices::quake()) {
                 EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, boot_count);
                 EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, boot_count++);
             }
-            else if (&d == &Devices::adcs_system) {
+            else if (d == &Devices::adcs_system()) {
                 EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, boot_count);
                 EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, boot_count++);
             }
-            else if (&d == &Devices::spike_and_hold) {
+            else if (d == &Devices::spike_and_hold()) {
                 EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, boot_count);
                 EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, boot_count++);
-            } 
+            }
         chMtxUnlock(&eeprom_lock);
     }
 }
@@ -165,7 +179,7 @@ namespace ADCS {
     static Hardware::DeviceState adcs_ssa_adc_3_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_ssa_adc_4_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_ssa_adc_5_state = {false, false, false, false, 1};
-    std::map<std::string, Hardware::DeviceState&> adcs_hat {
+    std::map<std::string, Hardware::DeviceState> adcs_hat {
         {"gyroscope", adcs_gyro_state},
         {"magnetometer", adcs_magnetometer_state},
         {"magnetorquer_x", adcs_magnetorquer_x_state},

@@ -40,13 +40,13 @@ static CH_IRQ_HANDLER(network_ready_handler) {
 static void quake_loop() {
     // Power cycle Quake if failing. Do this for as many times as it takes for the device
     // to start talking again.
-    if (!State::Hardware::check_is_functional(quake) && Gomspace::quake_thread == NULL) {
+    if (!State::Hardware::check_is_functional(&quake()) && Gomspace::quake_thread == NULL) {
         // Increment counter for cycling
-        State::Hardware::increment_boot_count(quake);
+        State::Hardware::increment_boot_count(&quake());
         // Specify arguments for thread
         Gomspace::cycler_arg_t cycler_args = {
             &State::Hardware::quake_device_lock,
-            Devices::quake,
+            &quake(),
             Devices::Gomspace::DEVICE_PINS::QUAKE
         };
         // Start cycler thread
@@ -89,7 +89,7 @@ void RTOSTasks::quake_controller(void *arg) {
     chRegSetThreadName("QUAKE");
     debug_println("Quake radio controller process has started.");
     chVTObjectInit(&waiting_timer);
-    attachInterrupt(Devices::quake.nr_pin(), network_ready_handler, RISING);
+    attachInterrupt(Devices::quake().nr_pin(), network_ready_handler, RISING);
     debug_println("Waiting for deployment timer to finish.");
     
     bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);

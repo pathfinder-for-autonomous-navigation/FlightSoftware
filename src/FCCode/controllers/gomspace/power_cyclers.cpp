@@ -15,15 +15,15 @@ THD_FUNCTION(Gomspace::cycler_fn, args) {
     cycler_arg_t* cycler_args = (cycler_arg_t*) args;
     
     chMtxLock(cycler_args->device_lock);
-        Devices::gomspace.set_single_output(cycler_args->pin, 0);
-        State::write(State::Hardware::hat.at(cycler_args->device.name()).is_functional, 
+        Devices::gomspace().set_single_output(cycler_args->pin, 0);
+        State::write(State::Hardware::hat.at(cycler_args->device).is_functional, 
             false, State::Hardware::hardware_state_lock);
 
         chThdSleepSeconds(30);
-        Devices::gomspace.set_single_output(cycler_args->pin, 1);
+        Devices::gomspace().set_single_output(cycler_args->pin, 1);
         
         chThdSleepMilliseconds(10);
-        State::write(State::Hardware::hat.at(cycler_args->device.name()).is_functional, 
-            cycler_args->device.is_functional(), State::Hardware::hardware_state_lock);
+        State::write(State::Hardware::hat.at(cycler_args->device).is_functional, 
+            (cycler_args->device)->is_functional(), State::Hardware::hardware_state_lock);
     chMtxUnlock(cycler_args->device_lock);
 }

@@ -24,48 +24,44 @@
 
 namespace Devices {
     //! Gomspace logical device used by flight controller code
-    extern Gomspace gomspace;
+    extern Gomspace& gomspace();
     //! Piksi logical device used by flight controller code
-    extern Piksi piksi;
+    extern Piksi& piksi();
     //! Spike and Hold logical device used by flight controller code
-    extern SpikeAndHold spike_and_hold;
+    extern SpikeAndHold& spike_and_hold();
     //! DCDC logical device used by flight controller code
-    extern DCDC dcdc;
+    extern DCDC& dcdc();
     //! Quake logical device used by flight controller code
-    extern QLocate quake;
+    extern QLocate& quake();
     //! ADCS logical device used by flight controller code
-    extern ADCS adcs_system;
+    extern ADCS& adcs_system();
     //! Main pressure sensor in outer tank
-    extern PressureSensor pressure_sensor;
+    extern PressureSensor& pressure_sensor();
     //! Temperature sensor in inner tank
-    extern TempSensor temp_sensor_inner;
+    extern TempSensor& temp_sensor_inner();
     //! Temperature sensor in outer tank
-    extern TempSensor temp_sensor_outer;
+    extern TempSensor& temp_sensor_outer();
     //! Docking motor
-    extern DockingMotor docking_motor;
+    extern DockingMotor& docking_motor();
     //! Docking switch
-    extern DockingSwitch docking_switch;
+    extern DockingSwitch& docking_switch();
 }
 
 namespace State {
 namespace Hardware {
     //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
     extern rwmutex_t hardware_state_lock;
-
-    //! Maps device names to logical device objects. This is an ordered map, in order to guarantee
-    // that the devices are always listed in the same order.
-    extern std::map<std::string, Devices::Device&> devices;
     //! Maps device names to their state. This is an ordered map, in order to guarantee
     // that the devices are always listed in the same order.
-    extern std::map<std::string, DeviceState&> hat;
+    extern std::map<Devices::Device*, DeviceState> hat;
     //! Updates state of HAVT table by actually polling the device
-    bool check_is_functional(Devices::Device& d);
+    bool check_is_functional(Devices::Device* d);
     //! Returns state of device stored in HAVT table
-    bool is_functional(Devices::Device& d);
+    bool is_functional(Devices::Device* d);
     //! Increments boot count (stored in HAVT) for specified device.
-    void increment_boot_count(Devices::Device& d);
+    void increment_boot_count(Devices::Device* d);
     //! Maps devices to the corresponding power output.
-    extern std::map<std::string, unsigned char> power_outputs;
+    extern std::map<Devices::Device*, unsigned char> power_outputs;
     //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
     extern bool is_hardware_setup;
 
@@ -85,7 +81,7 @@ namespace Hardware {
 
 namespace ADCS {
     //! Hardware availability table of devices attached to ADCS.
-    extern std::map<std::string, Hardware::DeviceState&> adcs_hat;
+    extern std::map<std::string, Hardware::DeviceState> adcs_hat;
     //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
     extern rwmutex_t adcs_hardware_state_lock;
 }

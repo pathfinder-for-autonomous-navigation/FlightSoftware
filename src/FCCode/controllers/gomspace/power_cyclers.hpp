@@ -7,7 +7,7 @@
 namespace Gomspace {
     struct cycler_arg_t {
         mutex_t* device_lock;
-        Devices::Device& device;
+        Devices::Device* device;
         unsigned char pin;
     };
 

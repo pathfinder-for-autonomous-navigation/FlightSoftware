@@ -32,7 +32,6 @@ using namespace RTOSTasks;
 
 static void initialize_locks() {
     // Initialize all state locks
-    chMtxObjectInit(&eeprom_lock);
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
     rwMtxObjectInit(&State::Master::master_state_lock);
     rwMtxObjectInit(&State::ADCS::adcs_state_lock);
@@ -45,6 +44,7 @@ static void initialize_locks() {
     rwMtxObjectInit(&Constants::changeable_constants_lock);
     rwMtxObjectInit(&RTOSTasks::LoopTimes::gnc_looptime_lock);
     // Initialize all device locks
+    chMtxObjectInit(&eeprom_lock);
     chMtxObjectInit(&State::Hardware::adcs_device_lock);
     chMtxObjectInit(&State::Hardware::dcdc_device_lock);
     chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
@@ -60,11 +60,11 @@ static void hardware_setup() {
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM); // Gomspace
 
     debug_println("Initializing hardware peripherals.");
-    for (auto device : State::Hardware::devices) {
-        Devices::Device& dptr = device.second;
-        debug_printf("Setting up device: %s...", device.first.c_str());
-        dptr.setup();
-        if (dptr.is_functional()) {
+    for (auto device : State::Hardware::hat) {
+        Devices::Device* dptr = device.first;
+        debug_printf("Setting up device: %s...", dptr->name());
+        dptr->setup();
+        if (dptr->is_functional()) {
             debug_printf_headless("setup was successful!\n");
             State::write((State::Hardware::hat).at(device.first).powered_on, true, State::Hardware::hardware_state_lock);
             State::write((State::Hardware::hat).at(device.first).is_functional, true, State::Hardware::hardware_state_lock);
@@ -147,6 +147,15 @@ void pan_system_setup() {
 
     debug_println("System setup is complete.");
     debug_println("Process terminating.");
+    chThdExit((msg_t)0);
+
+    pinMode(13, OUTPUT);
+    while(true) {
+      digitalWrite(13, HIGH);
+      delay(500);
+      digitalWrite(13, LOW);
+      delay(500);
+    }
     chThdExit((msg_t)0);
 }
 
