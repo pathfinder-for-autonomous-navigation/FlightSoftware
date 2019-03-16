@@ -204,7 +204,8 @@ static THD_FUNCTION(check_hat, args) {
         t += MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK);
 
         chMtxLock(&State::Hardware::adcs_device_lock);
-        adcs_system.update_hat();
+            if (State::Hardware::check_is_functional(adcs_system)) 
+                adcs_system.update_hat(); // TODO fix
         chMtxUnlock(&State::Hardware::adcs_device_lock);
 
         rwMtxWLock(&State::ADCS::adcs_state_lock);
@@ -238,8 +239,9 @@ void RTOSTasks::adcs_controller(void *arg) {
     
     debug_println("Initializing main operation...");
     chMtxLock(&State::Hardware::adcs_device_lock);
-        adcs_system.set_mode(Mode::ACTIVE);
-    chMtxLock(&State::Hardware::adcs_device_lock);
+        if (State::Hardware::check_is_functional(adcs_system))
+            adcs_system.set_mode(Mode::ACTIVE);
+    chMtxUnlock(&State::Hardware::adcs_device_lock);
 
     chThdExit((msg_t)0);
 }

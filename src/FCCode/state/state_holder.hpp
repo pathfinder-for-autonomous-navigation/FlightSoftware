@@ -203,16 +203,22 @@ namespace State {
   }
 
   namespace Quake {
+    //! Readers-writers lock that prevents multi-process modification of Quake state data.
+    extern rwmutex_t quake_state_lock;
+
     //! Struct containing most recent uplink data received by satellite
     extern Comms::Uplink most_recent_uplink;
-    //! Time at which an uplink was received by the satellite
-    extern gps_time_t uplink_time_received;
+    //! Last time at which an sbdix was successfully completed by the satellite. Used in order
+    // to determine fault condition.
+    extern gps_time_t sbdix_time_received;
+    inline unsigned int msec_since_last_sbdix() {
+      return (unsigned int) (State::GNC::get_current_time()
+                              - State::read(sbdix_time_received, quake_state_lock));
+    }
     //! Readers-writers lock that prevents multi-process modification of most recent uplink
     extern rwmutex_t uplink_lock;
     //! State of finite state machine that controls the Quake controller
     extern QuakeState quake_state;
-    //! Readers-writers lock that prevents multi-process modification of Quake state data.
-    extern rwmutex_t quake_state_lock;
 
     //! Maximum number of data packets to store in history.
     // TODO store most recent packets in Piksi as well.

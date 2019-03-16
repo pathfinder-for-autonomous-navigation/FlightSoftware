@@ -6,6 +6,7 @@
 
 #include "controllers.hpp"
 #include "../state/state_holder.hpp"
+#include "gomspace/power_cyclers.hpp"
 #include "../deployment_timer.hpp"
 #include "../data_collection/data_collection.hpp"
 #include <Piksi/Piksi.hpp>
@@ -88,7 +89,23 @@ void RTOSTasks::piksi_controller(void *arg) {
     while(true) {
         time += MS2ST(RTOSTasks::LoopTimes::PIKSI);
 
-        if (State::Hardware::can_get_data(Devices::piksi)) {
+        // Power cycle Piksi if failing. Do this for as many times as it takes for the device
+        // to start talking again.
+        // TODO add counter
+        if (!State::Hardware::check_is_functional(piksi)) {
+            Gomspace::cycler_arg_t cycler_args = {
+                &State::Hardware::piksi_device_lock,
+                Devices::piksi,
+                Devices::Gomspace::DEVICE_PINS::PIKSI
+            };
+            if (Gomspace::piksi_thread == NULL)
+                Gomspace::piksi_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                    "POWER CYCLE PIKSI",
+                    RTOSTasks::master_thread_priority,
+                    Gomspace::cycler_fn, (void*) &cycler_args);
+        }
+
+        if (State::Hardware::check_is_functional(Devices::piksi)) {
             piksi_read();
         }
 

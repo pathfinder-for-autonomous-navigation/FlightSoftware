@@ -58,12 +58,8 @@ namespace Hardware {
     //! Maps device names to their state. This is an ordered map, in order to guarantee
     // that the devices are always listed in the same order.
     extern std::map<std::string, DeviceState&> hat;
-    inline bool can_get_data(const Devices::Device& device) {
-        rwMtxRLock(&State::Hardware::hardware_state_lock);
-            bool is_functional = (State::Hardware::hat).at(device.name()).is_functional;
-        rwMtxRUnlock(&State::Hardware::hardware_state_lock);
-        return is_functional;
-    }
+    //! Updates state of HAVT table based on device
+    bool check_is_functional(Devices::Device& d);
     //! Maps devices to the corresponding power output.
     extern std::map<std::string, unsigned char> power_outputs;
     //! Readers-writers lock that prevents multi-process modification of hardware availability table data.

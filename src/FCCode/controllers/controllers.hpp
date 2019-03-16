@@ -97,13 +97,8 @@ namespace RTOSTasks {
         static constexpr unsigned int PROPULSION_ACTUATION_LOOP = 30000;
         //! Number of milliseconds between propulsion repressurization/firing loop iterations
         static constexpr unsigned int PROPULSION_LOOP = 1000;
-        #ifdef DEBUG
         //! Number of milliseconds between quake controller iterations
-        static constexpr unsigned int QUAKE = 5000;
-        #else
-        //! Number of milliseconds between quake controller iterations
-        static constexpr unsigned int QUAKE = 300000;
-        #endif
+        static constexpr unsigned int QUAKE = 500;
     };
     
     // Master-specific

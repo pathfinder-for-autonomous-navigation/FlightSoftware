@@ -20,6 +20,8 @@ enum EEPROM_ADDRESSES {
     LAST_DOWNLINK_NUMBER = 0x30, // 4-byte integer; tracks the number of the latest downlink successfully sent
                                  // TODO work into downlink logic
     LAST_UPLINK_NUMBER = 0x34, // 4-byte integer; tracks the number of the latest uplink received
+    HOURS_SINCE_SBDIX = 0x38,    // 4-byte integer; counts hours since the last communication occurred with the
+                                 // satellite
     IS_FOLLOWER = 0x40, // Boolean: whether or not satellite is follower
     FINAL_STATE_FLAG = 0x41, // Has value: 0 if satellite is not in a final state
                              //            1 if satellite is in docking mode

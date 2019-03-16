@@ -10,19 +10,22 @@ using State::Quake::quake_state_lock;
 using namespace Comms;
 
 static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
-    if (!State::Hardware::can_get_data(quake))
-        // Quake isn't on
-        return -1;
-
     int response;
-    chMtxLock(&State::Hardware::quake_device_lock);
-        response = quake.sbdwb(packet.mes, Comms::PACKET_SIZE_BYTES);
-    chMtxUnlock(&State::Hardware::quake_device_lock);
+    if (State::Hardware::check_is_functional(quake)) {
+        chMtxLock(&State::Hardware::quake_device_lock);
+            response = quake.sbdwb(packet.mes, Comms::PACKET_SIZE_BYTES);
+        chMtxUnlock(&State::Hardware::quake_device_lock);
+    }
+    else return -1;
     if (response != 0) return response;
     
-    chMtxLock(&State::Hardware::quake_device_lock);
-        quake.run_sbdix();
-    chMtxUnlock(&State::Hardware::quake_device_lock);
+    if (State::Hardware::check_is_functional(quake)) {
+        chMtxLock(&State::Hardware::quake_device_lock);
+            quake.run_sbdix();
+        chMtxUnlock(&State::Hardware::quake_device_lock);
+    }
+    else return -1;
+
     for(int i = 0; i < Constants::read(Constants::Quake::NUM_RETRIES); i++) {
         chMtxLock(&State::Hardware::quake_device_lock);
             response = quake.end_sbdix();
@@ -33,11 +36,17 @@ static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink)
     }
 
     // It's possible we picked up an uplink packet; pick it up.
-    chMtxLock(&State::Hardware::quake_device_lock);
-        int status = quake.sbdrb();
-        if (status == 0) *uplink = quake.get_message();
-    chMtxUnlock(&State::Hardware::quake_device_lock);
+    if (State::Hardware::check_is_functional(quake)) {
+        chMtxLock(&State::Hardware::quake_device_lock);
+            int status = quake.sbdrb();
+            if (status == 0) *uplink = quake.get_message();
+        chMtxUnlock(&State::Hardware::quake_device_lock);
+    }
+    else return -1;
 
+    if (response == 0) State::write(State::Quake::sbdix_time_received, 
+                                    State::GNC::get_current_time(), 
+                                    State::Quake::quake_state_lock);
     return response;
 }
 

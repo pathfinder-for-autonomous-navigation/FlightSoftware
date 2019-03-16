@@ -23,11 +23,13 @@ THD_FUNCTION(PropulsionTasks::pressurizing_fn, args) {
         unsigned char preferred_valve = State::read(State::Propulsion::intertank_firing_valve, propulsion_state_lock);
         unsigned int valve_vent_time = Constants::read(VALVE_VENT_TIME);
         firings[preferred_valve] = valve_vent_time;
-        chMtxLock(&spike_and_hold_device_lock);
-            if (State::Hardware::can_get_data(Devices::spike_and_hold)) {
+        
+        if (State::Hardware::check_is_functional(spike_and_hold)) {
+            chMtxLock(&spike_and_hold_device_lock);
                 spike_and_hold.execute_schedule(firings);
-            }
-        chMtxUnlock(&spike_and_hold_device_lock);
+            chMtxUnlock(&spike_and_hold_device_lock);
+        }
+        else break;
 
         chThdSleepMilliseconds(WAIT_BETWEEN_PRESSURIZATIONS);
 

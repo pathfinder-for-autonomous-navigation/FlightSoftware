@@ -4,19 +4,21 @@
  * @brief Contains implementation for the Quake state controller.
  */
 
+#include <EEPROM.h>
 #include "../controllers.hpp"
 #include "../constants.hpp"
+#include "../../state/EEPROMAddresses.hpp"
 #include "../../state/state_holder.hpp"
+#include "../gomspace/power_cyclers.hpp"
 #include "../../deployment_timer.hpp"
-#include "../../comms/uplink_deserializer.hpp"
 #include "transceiving_thread.hpp"
-#include <HardwareSerial.h>
 
 namespace RTOSTasks {
     THD_WORKING_AREA(quake_controller_workingArea, 4096);
 }
 using State::Quake::QuakeState;
 using State::Quake::quake_state_lock;
+using Devices::quake;
 using namespace Comms;
 
 static virtual_timer_t waiting_timer;
@@ -36,6 +38,26 @@ static CH_IRQ_HANDLER(network_ready_handler) {
 };
 
 static void quake_loop() {
+    // Power cycle Quake if failing. Do this for as many times as it takes for the device
+    // to start talking again.
+    if (!State::Hardware::check_is_functional(quake)) {
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::quake_device_lock,
+            Devices::quake,
+            Devices::Gomspace::DEVICE_PINS::QUAKE
+        };
+        if (Gomspace::quake_thread == NULL)
+            Gomspace::quake_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE QUAKE",
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
+    }
+
+    chMtxLock(&eeprom_lock);
+        unsigned int hours_since_sbdix = State::Quake::msec_since_last_sbdix() / 1000 / 60 / 60;
+        EEPROM.put(EEPROM_ADDRESSES::HOURS_SINCE_SBDIX, hours_since_sbdix);
+    chMtxUnlock(&eeprom_lock);
+
     QuakeState quake_state = State::read(State::Quake::quake_state, quake_state_lock);
     switch(quake_state) {
         case QuakeState::WAITING: {
@@ -48,7 +70,8 @@ static void quake_loop() {
                 Quake::transceiving_thread = chThdCreateStatic(Quake::transceiving_thread_workingArea, 
                                                                sizeof(Quake::transceiving_thread_workingArea), 
                                                                Quake::transceiving_thread_priority, 
-                                                               Quake::transceiving_fn, NULL);
+                                                               Quake::transceiving_fn,
+                                                               NULL);
             }
         };
         break;

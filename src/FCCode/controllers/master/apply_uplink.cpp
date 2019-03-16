@@ -1,5 +1,7 @@
 #include "master_helpers.hpp"
 #include "../../state/device_states.hpp"
+#include "../gomspace/power_cyclers.hpp"
+#include <rt/chdynamic.h>
 
 struct power_cycler_args {
     bool adcs_system;
@@ -19,34 +21,73 @@ static THD_FUNCTION(power_cycler, args) {
                                                              // since Gomspace reboots
         chThdExit((msg_t) 0); // Note: this actually never gets called, since Gomspace reboots
     }
+
     if (pcargs->adcs_system) {
-        chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::ADCS,0);
-            chThdSleepSeconds(30);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::ADCS,1);
-        chMtxUnlock(&State::Hardware::gomspace_device_lock);
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::adcs_device_lock,
+            Devices::adcs_system,
+            Devices::Gomspace::DEVICE_PINS::ADCS
+        };
+        if (Gomspace::adcs_system_thread == NULL)
+            Gomspace::adcs_system_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE ADCS", 
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
     }
     if (pcargs->spike_and_hold) {
-        chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::SPIKE_AND_HOLD,0);
-            chThdSleepSeconds(30);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::SPIKE_AND_HOLD,1);
-        chMtxUnlock(&State::Hardware::gomspace_device_lock);
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::spike_and_hold_device_lock,
+            Devices::spike_and_hold,
+            Devices::Gomspace::DEVICE_PINS::SPIKE_AND_HOLD
+        };
+        if (Gomspace::spike_and_hold_thread == NULL)
+            Gomspace::spike_and_hold_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE SPIKE AND HOLD", 
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
     }
     if (pcargs->piksi) {
-        chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::PIKSI,0);
-            chThdSleepSeconds(30);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::PIKSI,1);
-        chMtxUnlock(&State::Hardware::gomspace_device_lock);
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::piksi_device_lock,
+            Devices::piksi,
+            Devices::Gomspace::DEVICE_PINS::PIKSI
+        };
+        if (Gomspace::piksi_thread == NULL)
+            Gomspace::piksi_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE PIKSI", 
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
     }
     if (pcargs->quake) {
-        chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::QUAKE,0);
-            chThdSleepSeconds(30);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::QUAKE,1);
-        chMtxUnlock(&State::Hardware::gomspace_device_lock);
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::quake_device_lock,
+            Devices::quake,
+            Devices::Gomspace::DEVICE_PINS::QUAKE
+        };
+        if (Gomspace::quake_thread == NULL)
+            Gomspace::quake_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE QUAKE",
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
     }
+
+    if (Gomspace::adcs_system_thread != NULL) {
+        chThdWait(Gomspace::adcs_system_thread);
+        Gomspace::adcs_system_thread = NULL;
+    }
+    if (Gomspace::spike_and_hold_thread != NULL) {
+        chThdWait(Gomspace::spike_and_hold_thread);
+        Gomspace::spike_and_hold_thread = NULL;
+    }
+    if (Gomspace::piksi_thread != NULL) {
+        chThdWait(Gomspace::piksi_thread);
+        Gomspace::piksi_thread = NULL;
+    }
+    if (Gomspace::quake_thread != NULL) {
+        chThdWait(Gomspace::quake_thread);
+        Gomspace::quake_thread = NULL;
+    }
+    chThdExit((msg_t) 0);
 }
 
 static THD_WORKING_AREA(docking_motor_toggler_wA, 256);

@@ -103,6 +103,14 @@ namespace Hardware {
     mutex_t piksi_device_lock;
     mutex_t quake_device_lock;
     mutex_t gomspace_device_lock;
+
+    bool check_is_functional(Devices::Device& d) {
+        bool functional = d.is_functional();
+        rwMtxWLock(&hardware_state_lock);
+            hat.at(d.name()).is_functional = functional;
+        rwMtxWUnlock(&hardware_state_lock);
+        return functional;
+    }
 }
 
 namespace ADCS {

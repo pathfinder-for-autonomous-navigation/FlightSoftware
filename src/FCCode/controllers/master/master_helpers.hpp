@@ -10,8 +10,8 @@
 namespace Master {
     unsigned short int safe_hold_needed();
     void stop_safe_hold();
-    void safe_hold(unsigned short int reason);
-    void initialization_hold(unsigned short int reason);
+    void safe_hold();
+    void initialization_hold();
     
     extern virtual_timer_t docking_timer;
     void stop_docking_mode(void* args);
