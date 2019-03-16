@@ -9,6 +9,7 @@
 #include <ADCS/global.hpp>
 #include <rwmutex.hpp>
 #include "../../state/state_holder.hpp"
+#include "../gomspace/power_cyclers.hpp"
 #include "../../deployment_timer.hpp"
 #include "../../data_collection/data_collection.hpp"
 #include <AttitudePDcontrol.hpp>
@@ -109,15 +110,34 @@ static THD_FUNCTION(adcs_loop, arg) {
     while(true) {
         t0 += S2ST(1000);
 
-        // Reading and writing to Kalman filter
-        // Read
+        // Read from ADCS system for data
         read_adcs_data();
+        // If gain constants were modified by uplink, change them in the estimator
         update_gain_constants();
+        // Run the estimator
         ADCSControllers::Estimator::update();
 
-        // State machine
+        // If ADCS isn't working, power-cycle it. Do this for as many times as it takes for the device
+        // to start talking again.
+        if (!State::Hardware::check_is_functional(adcs_system) && Gomspace::adcs_system_thread == NULL) {
+            // Increment counter for cycling
+            State::Hardware::increment_boot_count(adcs_system);
+            // Specify arguments for thread
+            Gomspace::cycler_arg_t cycler_args = {
+                &State::Hardware::adcs_device_lock,
+                Devices::adcs_system,
+                Devices::Gomspace::DEVICE_PINS::ADCS
+            };
+            // Start cycler thread
+            Gomspace::adcs_system_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE ADCS",
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
+        }
+
+        // State machine for ADCS operation
         rwMtxRLock(&State::ADCS::adcs_state_lock);
-        bool adcs_control_allowed = (State::ADCS::adcs_state != State::ADCS::ADCS_SAFE_HOLD);
+            bool adcs_control_allowed = (State::ADCS::adcs_state != State::ADCS::ADCS_SAFE_HOLD);
         rwMtxRUnlock(&State::ADCS::adcs_state_lock);
         if (adcs_control_allowed) {
             rwMtxRLock(&adcs_state_lock);

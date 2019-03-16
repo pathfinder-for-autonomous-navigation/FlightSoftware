@@ -28,7 +28,6 @@ static void propagate_self_orbit() {
 
 static void update_rotation_quaternions() {
     // TODO update ECI to ECEF
-    
     // TODO compute ECI to LVLH
 }
 
