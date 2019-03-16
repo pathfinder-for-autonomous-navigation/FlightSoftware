@@ -4,19 +4,21 @@
  * @brief Contains implementation for the Quake state controller.
  */
 
+#include <EEPROM.h>
 #include "../controllers.hpp"
 #include "../constants.hpp"
+#include "../../state/EEPROMAddresses.hpp"
 #include "../../state/state_holder.hpp"
+#include "../gomspace/power_cyclers.hpp"
 #include "../../deployment_timer.hpp"
-#include "../../comms/uplink_deserializer.hpp"
 #include "transceiving_thread.hpp"
-#include <HardwareSerial.h>
 
 namespace RTOSTasks {
     THD_WORKING_AREA(quake_controller_workingArea, 4096);
 }
 using State::Quake::QuakeState;
 using State::Quake::quake_state_lock;
+using Devices::quake;
 using namespace Comms;
 
 static virtual_timer_t waiting_timer;
@@ -36,10 +38,35 @@ static CH_IRQ_HANDLER(network_ready_handler) {
 };
 
 static void quake_loop() {
+    // Power cycle Quake if failing. Do this for as many times as it takes for the device
+    // to start talking again.
+    if (!State::Hardware::check_is_functional(&quake()) && Gomspace::quake_thread == NULL) {
+        // Increment counter for cycling
+        State::Hardware::increment_boot_count(&quake());
+        // Specify arguments for thread
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::quake_device_lock,
+            &quake(),
+            Devices::Gomspace::DEVICE_PINS::QUAKE
+        };
+        // Start cycler thread
+        Gomspace::quake_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+            "POWER CYCLE QUAKE",
+            RTOSTasks::master_thread_priority,
+            Gomspace::cycler_fn, (void*) &cycler_args);
+        return;
+    }
+
+    chMtxLock(&eeprom_lock);
+        unsigned int hours_since_sbdix = State::Quake::msec_since_last_sbdix() / 1000 / 60 / 60;
+        EEPROM.put(EEPROM_ADDRESSES::HOURS_SINCE_SBDIX, hours_since_sbdix);
+    chMtxUnlock(&eeprom_lock);
+
     QuakeState quake_state = State::read(State::Quake::quake_state, quake_state_lock);
     switch(quake_state) {
         case QuakeState::WAITING: {
-            chVTDoSetI(&waiting_timer, Constants::Quake::QUAKE_WAIT_PERIOD, end_waiting, NULL);
+            unsigned int quake_wait_period = Constants::read(Constants::Quake::QUAKE_WAIT_PERIOD);
+            chVTDoSetI(&waiting_timer, quake_wait_period, end_waiting, NULL);
         }
         break;
         case QuakeState::TRANSCEIVING: {
@@ -47,7 +74,8 @@ static void quake_loop() {
                 Quake::transceiving_thread = chThdCreateStatic(Quake::transceiving_thread_workingArea, 
                                                                sizeof(Quake::transceiving_thread_workingArea), 
                                                                Quake::transceiving_thread_priority, 
-                                                               Quake::transceiving_fn, NULL);
+                                                               Quake::transceiving_fn,
+                                                               NULL);
             }
         };
         break;
@@ -61,7 +89,7 @@ void RTOSTasks::quake_controller(void *arg) {
     chRegSetThreadName("QUAKE");
     debug_println("Quake radio controller process has started.");
     chVTObjectInit(&waiting_timer);
-    attachInterrupt(Devices::quake.nr_pin(), network_ready_handler, RISING);
+    attachInterrupt(Devices::quake().nr_pin(), network_ready_handler, RISING);
     debug_println("Waiting for deployment timer to finish.");
     
     bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);

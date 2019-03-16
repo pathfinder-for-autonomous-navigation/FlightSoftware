@@ -32,10 +32,6 @@
  * Contains functions and constants related to communication packet serialization and deserialization.
  * */
 namespace Comms {
-    //! Size of uplink packets, in bytes
-    constexpr unsigned int UPLINK_PACKET_SIZE_BYTES = 34; 
-    //! Size of uplink packets, in bits
-    constexpr unsigned int UPLINK_PACKET_SIZE_BITS = UPLINK_PACKET_SIZE_BYTES * 8; 
     //! Number of bits for squeezing GPS time
     constexpr unsigned int GPSTIME_SIZE = 49;
     //! Number of bits to squeeze a number in the range +/- sqrt(2) for float vector compression

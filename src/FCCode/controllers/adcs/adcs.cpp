@@ -9,6 +9,7 @@
 #include <ADCS/global.hpp>
 #include <rwmutex.hpp>
 #include "../../state/state_holder.hpp"
+#include "../gomspace/power_cyclers.hpp"
 #include "../../deployment_timer.hpp"
 #include "../../data_collection/data_collection.hpp"
 #include <AttitudePDcontrol.hpp>
@@ -31,7 +32,7 @@ static unsigned char ssa_mode = SSAMode::IN_PROGRESS;
 static unsigned int ssa_tries = 0; // Number of consecutive loops that we've tried to
                                    // collect SSA data
 static void read_adcs_data() {
-    adcs_system.set_ssa_mode(ssa_mode);
+    adcs_system().set_ssa_mode(ssa_mode);
 
     rwMtxRLock(&State::GNC::gnc_state_lock);
 	for(int i = 0; i < 3; i++) ADCSControllers::Estimator::r_gps_ecef[i] = State::GNC::gps_position[i];
@@ -43,8 +44,8 @@ static void read_adcs_data() {
     rwMtxRUnlock(&State::GNC::gnc_state_lock);
     
     std::array<float, 3> rwa_speed_cmds_rd, rwa_ramps_rd, rwa_speeds_rd, gyro_data, mag_data;
-    adcs_system.get_rwa(rwa_speed_cmds_rd.data(), ADCSControllers::Estimator::hwheel_sensor_body, rwa_ramps_rd.data());
-    adcs_system.get_imu(ADCSControllers::Estimator::rate_sensor_body, ADCSControllers::Estimator::magfield_sensor_body);
+    adcs_system().get_rwa(rwa_speed_cmds_rd.data(), ADCSControllers::Estimator::hwheel_sensor_body, rwa_ramps_rd.data());
+    adcs_system().get_imu(ADCSControllers::Estimator::rate_sensor_body, ADCSControllers::Estimator::magfield_sensor_body);
     for(int i = 0; i < 3; i++) rwa_speeds_rd[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
     for(int i = 0; i < 3; i++) gyro_data[i] = ADCSControllers::Estimator::rate_sensor_body[i];
     for(int i = 0; i < 3; i++) mag_data[i] = ADCSControllers::Estimator::magfield_sensor_body[i];
@@ -56,7 +57,7 @@ static void read_adcs_data() {
 
     std::array<float, 3> ssa_vec;
     if (ssa_mode == SSAMode::IN_PROGRESS) {
-        adcs_system.get_ssa(ssa_mode, ADCSControllers::Estimator::sun2sat_sensor_body);
+        adcs_system().get_ssa(ssa_mode, ADCSControllers::Estimator::sun2sat_sensor_body);
         rwMtxWLock(&State::ADCS::adcs_state_lock);
             for(int i = 0; i < 3; i++) State::ADCS::ssa_vec[i] = ADCSControllers::Estimator::sun2sat_sensor_body[i];
         rwMtxWLock(&State::ADCS::adcs_state_lock);
@@ -94,6 +95,13 @@ static void read_adcs_data() {
     }
 }
 
+static void update_gain_constants() {
+    ADCSControllers::AttitudePD::kd = (float) Constants::read(Constants::ADCS::ATTITUDE_CONTROLLER_KD);
+    ADCSControllers::AttitudePD::kp = (float) Constants::read(Constants::ADCS::ATTITUDE_CONTROLLER_KP);
+    ADCSControllers::MomentumControl::k = (float) Constants::read(Constants::ADCS::MOMENTUM_CONTROLLER_K);
+    // TODO add gyro heater gains
+}
+
 static THD_WORKING_AREA(adcs_loop_workingArea, 4096);
 static THD_FUNCTION(adcs_loop, arg) {
     chRegSetThreadName("ADCS LOOP");
@@ -102,14 +110,34 @@ static THD_FUNCTION(adcs_loop, arg) {
     while(true) {
         t0 += S2ST(1000);
 
-        // Reading and writing to Kalman filter
-        // Read
+        // Read from ADCS system for data
         read_adcs_data();
-        //State::ADCS::Estimator::update();
+        // If gain constants were modified by uplink, change them in the estimator
+        update_gain_constants();
+        // Run the estimator
+        ADCSControllers::Estimator::update();
 
-        // State machine
+        // If ADCS isn't working, power-cycle it. Do this for as many times as it takes for the device
+        // to start talking again.
+        if (!State::Hardware::check_is_functional(&adcs_system()) && Gomspace::adcs_system_thread == NULL) {
+            // Increment counter for cycling
+            State::Hardware::increment_boot_count(&adcs_system());
+            // Specify arguments for thread
+            Gomspace::cycler_arg_t cycler_args = {
+                &State::Hardware::adcs_device_lock,
+                &Devices::adcs_system(),
+                Devices::Gomspace::DEVICE_PINS::ADCS
+            };
+            // Start cycler thread
+            Gomspace::adcs_system_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE ADCS",
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
+        }
+
+        // State machine for ADCS operation
         rwMtxRLock(&State::ADCS::adcs_state_lock);
-        bool adcs_control_allowed = (State::ADCS::adcs_state != State::ADCS::ADCS_SAFE_HOLD);
+            bool adcs_control_allowed = (State::ADCS::adcs_state != State::ADCS::ADCS_SAFE_HOLD);
         rwMtxRUnlock(&State::ADCS::adcs_state_lock);
         if (adcs_control_allowed) {
             rwMtxRLock(&adcs_state_lock);
@@ -131,7 +159,7 @@ static THD_FUNCTION(adcs_loop, arg) {
                     rwMtxWUnlock(&adcs_state_lock);
                     rwMtxRLock(&adcs_state_lock);
                         std::array<float, 3> mtr_cmds = State::ADCS::mtr_cmds;
-                        adcs_system.set_mtr_cmd(mtr_cmds.data());
+                        adcs_system().set_mtr_cmd(mtr_cmds.data());
                     rwMtxRUnlock(&adcs_state_lock);
                 }
                 break;
@@ -146,8 +174,8 @@ static THD_FUNCTION(adcs_loop, arg) {
                         mtr_cmds.fill(0);
                         rwa_speed_cmds = State::ADCS::rwa_speed_cmds;
                     rwMtxRUnlock(&adcs_state_lock);
-                    adcs_system.set_mtr_cmd(mtr_cmds.data());
-                    adcs_system.set_rwa_mode(RWAMode::SPEED_CTRL, rwa_speed_cmds.data());
+                    adcs_system().set_mtr_cmd(mtr_cmds.data());
+                    adcs_system().set_rwa_mode(RWAMode::SPEED_CTRL, rwa_speed_cmds.data());
                 }
                 break;
                 case ADCSState::POINTING: {
@@ -169,13 +197,13 @@ static THD_FUNCTION(adcs_loop, arg) {
                     rwMtxRUnlock(&adcs_state_lock);
                     AttitudePD::update();
                     rwMtxWLock(&adcs_state_lock);
-                        for(int i = 0; i < 3; i++) State::ADCS::rwa_ramps[i] = AttitudePD::torque[i];
+                        for(int i = 0; i < 3; i++) State::ADCS::rwa_torques[i] = AttitudePD::torque[i];
                     rwMtxWUnlock(&adcs_state_lock);
-                    adcs_system.set_rwa_mode(RWAMode::ACCEL_CTRL, AttitudePD::torque);
+                    adcs_system().set_rwa_mode(RWAMode::ACCEL_CTRL, AttitudePD::torque);
                 }
                 break;
                 case ADCSState::ADCS_SAFE_HOLD: {
-                    adcs_system.set_mode(Mode::PASSIVE);
+                    adcs_system().set_mode(Mode::PASSIVE);
                 }
                 break;
                 default: {
@@ -189,19 +217,16 @@ static THD_FUNCTION(adcs_loop, arg) {
     }
 }
 
-static THD_WORKING_AREA(check_hat_workingArea, 1024);
-static THD_FUNCTION(check_hat, args) {
+static THD_WORKING_AREA(update_hat_workingArea, 1024);
+static THD_FUNCTION(update_hat, args) {
     systime_t t = chVTGetSystemTimeX();
     while(true) {
         t += MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK);
 
         chMtxLock(&State::Hardware::adcs_device_lock);
-        adcs_system.update_hat();
+            if (State::Hardware::check_is_functional(&adcs_system())) 
+                adcs_system().update_hat(); // TODO fix
         chMtxUnlock(&State::Hardware::adcs_device_lock);
-
-        rwMtxWLock(&State::ADCS::adcs_state_lock);
-        // TODO write to actual state
-        rwMtxWUnlock(&State::ADCS::adcs_state_lock);
 
         chThdSleepUntil(t);
     }
@@ -217,9 +242,9 @@ void RTOSTasks::adcs_controller(void *arg) {
 
     DataCollection::initialize_adcs_history_timers();
 
-    // Create HAT checker thread
-    chThdCreateStatic(check_hat_workingArea, 
-        sizeof(check_hat_workingArea), RTOSTasks::adcs_thread_priority, check_hat, NULL);
+    // Create HAT updater thread
+    chThdCreateStatic(update_hat_workingArea,
+        sizeof(update_hat_workingArea), RTOSTasks::adcs_thread_priority, update_hat, NULL);
 
     debug_println("Waiting for deployment timer to finish.");
     rwMtxRLock(&State::Master::master_state_lock);
@@ -230,8 +255,9 @@ void RTOSTasks::adcs_controller(void *arg) {
     
     debug_println("Initializing main operation...");
     chMtxLock(&State::Hardware::adcs_device_lock);
-        adcs_system.set_mode(Mode::ACTIVE);
-    chMtxLock(&State::Hardware::adcs_device_lock);
+        if (State::Hardware::check_is_functional(&adcs_system()))
+            adcs_system().set_mode(Mode::ACTIVE);
+    chMtxUnlock(&State::Hardware::adcs_device_lock);
 
     chThdExit((msg_t)0);
 }

@@ -17,6 +17,8 @@ namespace Propulsion {
 namespace Piksi {
   extern circular_buffer<int,10> iar_history;
   extern circular_buffer<int,10> nsats_history;
+  extern circular_buffer<bool,10> is_float_rtk_history;
+  extern circular_buffer<bool,10> is_fixed_rtk_history;
   extern circular_buffer<std::array<double, 3>,10> recorded_position_history;
   extern circular_buffer<std::array<double, 3>,10> recorded_velocity_history;
   extern circular_buffer<std::array<double, 3>,10> recorded_position_other_history;

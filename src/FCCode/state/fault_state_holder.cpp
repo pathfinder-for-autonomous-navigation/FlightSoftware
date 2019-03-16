@@ -4,7 +4,6 @@ namespace FaultState {
     namespace Gomspace {
         rwmutex_t gomspace_faults_state_lock;
         std::bitset<GOMSPACE_FAULTS::NUMBER_FAULTS> fault_bits;
-        bool is_safe_hold_voltage = false;
     }
     namespace Propulsion {
         gps_time_t overpressure_event;

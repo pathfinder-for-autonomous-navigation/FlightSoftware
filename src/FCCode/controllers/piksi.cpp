@@ -6,6 +6,7 @@
 
 #include "controllers.hpp"
 #include "../state/state_holder.hpp"
+#include "gomspace/power_cyclers.hpp"
 #include "../deployment_timer.hpp"
 #include "../data_collection/data_collection.hpp"
 #include <Piksi/Piksi.hpp>
@@ -26,45 +27,62 @@ static void piksi_read() {
 
     // GPS Time
     gps_time_t current_time;
-    piksi.get_gps_time(&current_time);
+    piksi().get_gps_time(&current_time);
     if (current_time != State::read(State::Piksi::recorded_current_time, piksi_state_lock))
         State::write(State::Piksi::recorded_current_time, current_time, piksi_state_lock);
 
     // GPS Position
     std::array<double, 3> pos;
     unsigned int pos_tow;
-    piksi.get_pos_ecef(&pos, &pos_tow);
+    piksi().get_pos_ecef(&pos, &pos_tow);
     gps_time_t pos_time = current_time;
     pos_time.gpstime.tow = pos_tow;
-    unsigned char pos_nsats = piksi.get_pos_ecef_nsats();
+    
+    chMtxLock(&State::Hardware::piksi_device_lock);
+        unsigned char pos_nsats = piksi().get_pos_ecef_nsats();
+        unsigned char pos_flags = piksi().get_pos_ecef_flags();
+    chMtxUnlock(&State::Hardware::piksi_device_lock);
     if (pos != State::Piksi::recorded_gps_position) {
         State::write(State::Piksi::recorded_gps_position, pos, piksi_state_lock);
         State::write(State::Piksi::recorded_gps_position_time, pos_time, piksi_state_lock);
         State::write(State::Piksi::recorded_gps_position_nsats, pos_nsats, piksi_state_lock);
     }
-    std::bitset<8> pos_ecef_flags(piksi.get_pos_ecef_flags());
 
     // GPS other position. We only record this if we're actually getting
     // RTK data (which we can know from the above-defined flags); otherwise, we 
     // let data uplinks update this value for us.
-    if (pos_ecef_flags[0] == 0) {
+    if (pos_flags != 0) {
         std::array<double, 3> pos_other;
-        piksi.get_base_pos_ecef(&pos_other);
+        piksi().get_base_pos_ecef(&pos_other);
         gps_time_t pos_other_time = current_time;
         pos_other_time.gpstime.tow = pos_tow;
         if (pos != State::Piksi::recorded_gps_position_other) {
             State::write(State::Piksi::recorded_gps_position_other, pos_other, piksi_state_lock);
             State::write(State::Piksi::recorded_gps_position_other_time, pos_other_time, piksi_state_lock);
         }
+
+        if (pos_flags == 1) {
+            State::write(State::Piksi::is_float_rtk, true, State::Piksi::piksi_state_lock);
+            State::write(State::Piksi::is_fixed_rtk, false, State::Piksi::piksi_state_lock);
+        }
+        else if (pos_flags == 2) {
+            State::write(State::Piksi::is_float_rtk, false, State::Piksi::piksi_state_lock);
+            State::write(State::Piksi::is_fixed_rtk, true, State::Piksi::piksi_state_lock);
+        }
     }
+    else {
+        State::write(State::Piksi::is_float_rtk, false, State::Piksi::piksi_state_lock);
+        State::write(State::Piksi::is_fixed_rtk, false, State::Piksi::piksi_state_lock);
+    }
+    // Write flags to state
 
     // GPS Velocity
     std::array<double, 3> vel;
     unsigned int vel_tow;
-    piksi.get_vel_ecef(&pos, &vel_tow);
+    piksi().get_vel_ecef(&pos, &vel_tow);
     gps_time_t vel_time = current_time;
     vel_time.gpstime.tow = vel_tow;
-    unsigned char vel_nsats = piksi.get_vel_ecef_nsats();
+    unsigned char vel_nsats = piksi().get_vel_ecef_nsats();
     if (vel != State::Piksi::recorded_gps_velocity) {
         State::write(State::Piksi::recorded_gps_velocity, vel, piksi_state_lock);
         State::write(State::Piksi::recorded_gps_velocity_time, vel_time, piksi_state_lock);
@@ -88,7 +106,25 @@ void RTOSTasks::piksi_controller(void *arg) {
     while(true) {
         time += MS2ST(RTOSTasks::LoopTimes::PIKSI);
 
-        if (State::Hardware::can_get_data(Devices::piksi)) {
+        // Power cycle Piksi if failing. Do this for as many times as it takes for the device
+        // to start talking again.
+        if (!State::Hardware::check_is_functional(&piksi()) && Gomspace::piksi_thread == NULL) {
+            // Increment counter for cycling
+            State::Hardware::increment_boot_count(&piksi());
+            // Specify arguments for thread
+            Gomspace::cycler_arg_t cycler_args = {
+                &State::Hardware::piksi_device_lock,
+                &piksi(),
+                Devices::Gomspace::DEVICE_PINS::PIKSI
+            };
+            // Start cycler thread
+            Gomspace::piksi_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE PIKSI",
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
+        }
+
+        if (State::Hardware::check_is_functional(&piksi())) {
             piksi_read();
         }
 

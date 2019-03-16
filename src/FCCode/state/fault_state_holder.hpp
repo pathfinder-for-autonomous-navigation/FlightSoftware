@@ -40,8 +40,6 @@ namespace FaultState {
     };
     //! Stores current faults of Gomspace system
     extern std::bitset<GOMSPACE_FAULTS::NUMBER_FAULTS> fault_bits;
-    //! Whether or not the current voltage of the battery is less than the "safe hold" threshold
-    extern bool is_safe_hold_voltage;
     //! Readers-writers lock that prevents multi-process modification of Gomspace fault state data.
     extern rwmutex_t gomspace_faults_state_lock;
   }

@@ -29,7 +29,7 @@ namespace State {
         std::array<float, 3> cur_ang_rate;
         bool is_sun_vector_determination_working = false;
         bool is_sun_vector_collection_working = false;
-        std::array<float, 3> rwa_speed_cmds, rwa_speeds, rwa_ramps;
+        std::array<float, 3> rwa_speed_cmds, rwa_speeds, rwa_torques;
         std::array<float, 3> rwa_speed_cmds_rd, rwa_speeds_rd, rwa_ramps_rd;
         std::array<float, 3> mtr_cmds;
         std::array<float, 3> ssa_vec;
@@ -57,12 +57,22 @@ namespace State {
 
     namespace GNC {
         std::array<double, 3> gps_position, gps_position_other, gps_velocity, gps_velocity_other;
-        std::array<double, 4> ecef_to_eci;
-        std::array<double, 4> eci_to_lvlh;
+        std::array<float, 4> ecef_to_eci;
+        std::array<float, 4> eci_to_lvlh;
         gps_time_t current_time;
         systime_t time_collection_timestamp;
         bool has_firing_happened_in_nighttime = false;
         rwmutex_t gnc_state_lock;
+
+        gps_time_t get_current_time() {
+            systime_t current_systime = chVTGetSystemTimeX();
+            systime_t systime_delta = current_systime - time_collection_timestamp;
+            time_collection_timestamp = current_systime;
+            rwMtxRLock(&State::Piksi::piksi_state_lock);
+                current_time = current_time + MS2ST(systime_delta);
+            rwMtxRUnlock(&State::Piksi::piksi_state_lock);
+            return current_time;
+        }
     }
 
     namespace Piksi {
@@ -71,12 +81,13 @@ namespace State {
         std::array<double, 3> recorded_gps_position, recorded_gps_position_other, recorded_gps_velocity;
         gps_time_t recorded_gps_position_time, recorded_gps_position_other_time, recorded_gps_velocity_time;
         unsigned char recorded_gps_position_nsats, recorded_gps_velocity_nsats;
+        bool is_float_rtk, is_fixed_rtk;
         rwmutex_t piksi_state_lock;
     }
 
     namespace Quake {
         Comms::Uplink most_recent_uplink;
-        gps_time_t uplink_time_received;
+        gps_time_t sbdix_time_received;
         rwmutex_t uplink_lock;
         QuakeState quake_state = QuakeState::WAITING;
         rwmutex_t quake_state_lock;

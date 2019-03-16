@@ -9,14 +9,38 @@ namespace Constants {
         &Constants::Master::SAFE_HOLD_TIMEOUT,
         &Constants::Propulsion::VALVE_VENT_TIME,
         &Constants::Propulsion::VALVE_WAIT_TIME,
-        &Constants::Propulsion::THRUSTER_PREPARATION_TIME,
-        &Constants::Propulsion::STOP_PRESSURIZATION_TIME_DELTA,
+        &Constants::Propulsion::NUM_PRESSURIZATIONS,
         &Constants::Propulsion::WAIT_BETWEEN_PRESSURIZATIONS,
+        &Constants::Propulsion::STOP_PRESSURIZATION_TIME_DELTA,
+        &Constants::Piksi::CDGPS_RANGE,
         &Constants::Quake::NUM_RETRIES,
         &Constants::Quake::UPLINK_TIMEOUT,
         &Constants::Quake::QUAKE_WAIT_PERIOD,
         &Constants::Quake::WAIT_BETWEEN_RETRIES,
+        &Constants::ADCS::ATTITUDE_CONTROLLER_KP,
+        &Constants::ADCS::ATTITUDE_CONTROLLER_KD,
+        &Constants::ADCS::MOMENTUM_CONTROLLER_K,
+        &Constants::ADCS::GYROSCOPE_HEATER_KP,
+        &Constants::ADCS::GYROSCOPE_HEATER_KI,
+        &Constants::ADCS::GYROSCOPE_HEATER_KD,
     };
+    rwmutex_t changeable_constants_lock;
+
+    namespace ADCS {
+        static float default_attitude_kp = 1; // TODO
+        static float default_attitude_kd = 1; // TODO
+        static float default_momentum_k = 1; // TODO
+        static float default_heater_kp = 1; // TODO
+        static float default_heater_ki = 1; // TODO
+        static float default_heater_kd = 1; // TODO
+        // Set default values by casting float to integer
+        unsigned int ATTITUDE_CONTROLLER_KP = (unsigned int) default_attitude_kp;
+        unsigned int ATTITUDE_CONTROLLER_KD = (unsigned int) default_attitude_kd; 
+        unsigned int MOMENTUM_CONTROLLER_K = (unsigned int) default_momentum_k;
+        unsigned int GYROSCOPE_HEATER_KP = (unsigned int) default_heater_kp;
+        unsigned int GYROSCOPE_HEATER_KI = (unsigned int) default_heater_ki;
+        unsigned int GYROSCOPE_HEATER_KD = (unsigned int) default_heater_kd;
+    }
 
     namespace Master {
         #ifdef DEBUG
@@ -28,12 +52,16 @@ namespace Constants {
         #endif
     }
 
+    namespace Piksi {
+        unsigned int CDGPS_RANGE = 100;
+    }
+
     namespace Propulsion {
         unsigned int VALVE_VENT_TIME = 200;
         unsigned int VALVE_WAIT_TIME = 1000;
-        unsigned int THRUSTER_PREPARATION_TIME = 300;
-        unsigned int STOP_PRESSURIZATION_TIME_DELTA = 2000; 
+        unsigned int NUM_PRESSURIZATIONS = 20;
         unsigned int WAIT_BETWEEN_PRESSURIZATIONS = 30000; // TODO
+        unsigned int STOP_PRESSURIZATION_TIME_DELTA = 2000;
     }
 
     namespace Quake {

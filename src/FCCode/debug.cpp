@@ -31,9 +31,9 @@ void debug_begin() {
 
 void debug_eeprom_initialization() {
     chSysLock();
-        //EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, 1);
-        //EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT, false);
-        //EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT_TIMER_1, (unsigned int) 0);
+        EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, (unsigned int) 1);
+        EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT, false);
+        EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT_TIMER, (unsigned int) 0);
         EEPROM.put(EEPROM_ADDRESSES::INITIALIZATION_HOLD_FLAG, false);
         EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_FLAG, false);
     chSysUnlock();

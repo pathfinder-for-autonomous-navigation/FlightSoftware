@@ -70,10 +70,10 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
     // Full-system lock so that the timing of firings is not affected by any interrupts.
     chSysLock();
         debug_println("Initiating firing.");
-        if (State::Hardware::can_get_data(Devices::spike_and_hold)) {
+        if (State::Hardware::check_is_functional(&spike_and_hold())) {
             chMtxLock(&spike_and_hold_device_lock);
-                spike_and_hold.execute_schedule(valve_timings);
-            chMtxLock(&spike_and_hold_device_lock);
+                spike_and_hold().execute_schedule(valve_timings);
+            chMtxUnlock(&spike_and_hold_device_lock);
             debug_println("Completed firing.");
         }
         else {
@@ -81,6 +81,8 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
         }
     chSysUnlock();
 
-    change_propulsion_state(State::Propulsion::PropulsionState::IDLE);
+    State::write(State::Propulsion::propulsion_state, 
+                 State::Propulsion::PropulsionState::IDLE, 
+                 State::Propulsion::propulsion_state_lock);
     chThdExit((msg_t) 0);
 }

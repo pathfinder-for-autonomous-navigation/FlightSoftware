@@ -22,12 +22,16 @@ void exit_deployment_timer() {
         EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT, true);
     chMtxUnlock(&eeprom_lock);
 
-    chMtxLock(&State::Hardware::dcdc_device_lock);
-        Devices::dcdc.enable();
-    chMtxUnlock(&State::Hardware::dcdc_device_lock);
-    chMtxLock(&State::Hardware::spike_and_hold_device_lock);
-        Devices::spike_and_hold.enable();
-    chMtxUnlock(&State::Hardware::spike_and_hold_device_lock);
+    if (!State::Hardware::check_is_functional(&Devices::dcdc())) {
+        chMtxLock(&State::Hardware::dcdc_device_lock);
+            Devices::dcdc().enable();
+        chMtxUnlock(&State::Hardware::dcdc_device_lock);
+    }
+    if (!State::Hardware::check_is_functional(&Devices::spike_and_hold())) {
+        chMtxLock(&State::Hardware::spike_and_hold_device_lock);
+            Devices::spike_and_hold().enable();
+        chMtxUnlock(&State::Hardware::spike_and_hold_device_lock);
+    }
 
     debug_println("Notifying all processes waiting on deployment timer that timer has been completed.");
     chSysLock();

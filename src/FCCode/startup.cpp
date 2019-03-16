@@ -11,12 +11,12 @@
 #include <rt/chvt.h>
 #include <EEPROM.h>
 #include "controllers/controllers.hpp"
+#include "controllers/constants.hpp"
 #include "state/EEPROMAddresses.hpp"
 #include "state/state_holder.hpp"
 #include <rwmutex.hpp>
 #include "debug.hpp"
 #include "deployment_timer.hpp"
-#include "startup.hpp"
 
 thread_t* deployment_timer_thread;
 namespace RTOSTasks {
@@ -30,18 +30,41 @@ namespace RTOSTasks {
 }
 using namespace RTOSTasks;
 
-void hardware_setup() {
+static void initialize_locks() {
+    // Initialize all state locks
+    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
+    rwMtxObjectInit(&State::Master::master_state_lock);
+    rwMtxObjectInit(&State::ADCS::adcs_state_lock);
+    rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
+    rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
+    rwMtxObjectInit(&State::GNC::gnc_state_lock);
+    rwMtxObjectInit(&State::Piksi::piksi_state_lock);
+    rwMtxObjectInit(&State::Quake::quake_state_lock);
+    rwMtxObjectInit(&State::Quake::uplink_lock);
+    rwMtxObjectInit(&Constants::changeable_constants_lock);
+    rwMtxObjectInit(&RTOSTasks::LoopTimes::gnc_looptime_lock);
+    // Initialize all device locks
+    chMtxObjectInit(&eeprom_lock);
+    chMtxObjectInit(&State::Hardware::adcs_device_lock);
+    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
+    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
+    chMtxObjectInit(&State::Hardware::piksi_device_lock);
+    chMtxObjectInit(&State::Hardware::gomspace_device_lock);
+    chMtxObjectInit(&State::Hardware::quake_device_lock);
+}
+
+static void hardware_setup() {
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
 
     debug_println("Initializing hardware buses.");
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM); // Gomspace
 
     debug_println("Initializing hardware peripherals.");
-    for (auto device : State::Hardware::devices) {
-        Devices::Device& dptr = device.second;
-        debug_printf("Setting up device: %s...", device.first.c_str());
-        dptr.setup();
-        if (dptr.is_functional()) {
+    for (auto device : State::Hardware::hat) {
+        Devices::Device* dptr = device.first;
+        debug_printf("Setting up device: %s...", dptr->name());
+        dptr->setup();
+        if (dptr->is_functional()) {
             debug_printf_headless("setup was successful!\n");
             State::write((State::Hardware::hat).at(device.first).powered_on, true, State::Hardware::hardware_state_lock);
             State::write((State::Hardware::hat).at(device.first).is_functional, true, State::Hardware::hardware_state_lock);
@@ -98,24 +121,7 @@ void pan_system_setup() {
     #endif
 
     debug_println("Startup process has begun.");
-    // Initialize all state locks
-    chMtxObjectInit(&eeprom_lock);
-    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
-    rwMtxObjectInit(&State::Master::master_state_lock);
-    rwMtxObjectInit(&State::ADCS::adcs_state_lock);
-    rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
-    rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
-    rwMtxObjectInit(&State::GNC::gnc_state_lock);
-    rwMtxObjectInit(&State::Piksi::piksi_state_lock);
-    rwMtxObjectInit(&State::Quake::quake_state_lock);
-    rwMtxObjectInit(&State::Quake::uplink_lock);
-    // Initialize all device locks
-    chMtxObjectInit(&State::Hardware::adcs_device_lock);
-    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
-    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
-    chMtxObjectInit(&State::Hardware::piksi_device_lock);
-    chMtxObjectInit(&State::Hardware::gomspace_device_lock);
-    chMtxObjectInit(&State::Hardware::quake_device_lock);
+    initialize_locks();
 
     // Determining boot count
     chMtxLock(&eeprom_lock);
@@ -141,6 +147,15 @@ void pan_system_setup() {
 
     debug_println("System setup is complete.");
     debug_println("Process terminating.");
+    chThdExit((msg_t)0);
+
+    pinMode(13, OUTPUT);
+    while(true) {
+      digitalWrite(13, HIGH);
+      delay(500);
+      digitalWrite(13, LOW);
+      delay(500);
+    }
     chThdExit((msg_t)0);
 }
 

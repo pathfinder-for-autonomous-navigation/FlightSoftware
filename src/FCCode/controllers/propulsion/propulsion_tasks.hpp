@@ -20,8 +20,6 @@ namespace PropulsionTasks {
     
     extern THD_WORKING_AREA(venting_thread_wa, 1024);
     extern THD_FUNCTION(venting_fn, args);
-
-    extern void change_propulsion_state(State::Propulsion::PropulsionState state);
 }
 
 #endif

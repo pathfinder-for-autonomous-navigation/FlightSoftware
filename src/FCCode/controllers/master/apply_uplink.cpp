@@ -1,5 +1,7 @@
 #include "master_helpers.hpp"
 #include "../../state/device_states.hpp"
+#include "../gomspace/power_cyclers.hpp"
+#include <rt/chdynamic.h>
 
 struct power_cycler_args {
     bool adcs_system;
@@ -14,59 +16,106 @@ static THD_FUNCTION(power_cycler, args) {
 
     if (pcargs->gomspace) {
         chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace.reboot();
+            Devices::gomspace().reboot();
         chMtxUnlock(&State::Hardware::gomspace_device_lock); // Note: this actually never gets called, 
                                                              // since Gomspace reboots
         chThdExit((msg_t) 0); // Note: this actually never gets called, since Gomspace reboots
     }
+
     if (pcargs->adcs_system) {
-        chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::ADCS,0);
-            chThdSleepSeconds(30);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::ADCS,1);
-        chMtxUnlock(&State::Hardware::gomspace_device_lock);
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::adcs_device_lock,
+            &Devices::adcs_system(),
+            Devices::Gomspace::DEVICE_PINS::ADCS
+        };
+        State::Hardware::increment_boot_count(&Devices::adcs_system());
+        if (Gomspace::adcs_system_thread == NULL)
+            Gomspace::adcs_system_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE ADCS", 
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
     }
     if (pcargs->spike_and_hold) {
-        chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::SPIKE_AND_HOLD,0);
-            chThdSleepSeconds(30);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::SPIKE_AND_HOLD,1);
-        chMtxUnlock(&State::Hardware::gomspace_device_lock);
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::spike_and_hold_device_lock,
+            &Devices::spike_and_hold(),
+            Devices::Gomspace::DEVICE_PINS::SPIKE_AND_HOLD
+        };
+        State::Hardware::increment_boot_count(&Devices::spike_and_hold());
+        if (Gomspace::spike_and_hold_thread == NULL)
+            Gomspace::spike_and_hold_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE SPIKE AND HOLD", 
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
     }
     if (pcargs->piksi) {
-        chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::PIKSI,0);
-            chThdSleepSeconds(30);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::PIKSI,1);
-        chMtxUnlock(&State::Hardware::gomspace_device_lock);
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::piksi_device_lock,
+            &Devices::piksi(),
+            Devices::Gomspace::DEVICE_PINS::PIKSI
+        };
+        State::Hardware::increment_boot_count(&Devices::piksi());
+        if (Gomspace::piksi_thread == NULL)
+            Gomspace::piksi_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE PIKSI", 
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
     }
     if (pcargs->quake) {
-        chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::QUAKE,0);
-            chThdSleepSeconds(30);
-            Devices::gomspace.set_single_output(Devices::Gomspace::DEVICE_PINS::QUAKE,1);
-        chMtxUnlock(&State::Hardware::gomspace_device_lock);
+        Gomspace::cycler_arg_t cycler_args = {
+            &State::Hardware::quake_device_lock,
+            &Devices::quake(),
+            Devices::Gomspace::DEVICE_PINS::QUAKE
+        };
+        State::Hardware::increment_boot_count(&Devices::quake());
+        if (Gomspace::quake_thread == NULL)
+            Gomspace::quake_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                "POWER CYCLE QUAKE",
+                RTOSTasks::master_thread_priority,
+                Gomspace::cycler_fn, (void*) &cycler_args);
     }
+
+    if (Gomspace::adcs_system_thread != NULL) {
+        chThdWait(Gomspace::adcs_system_thread);
+        Gomspace::adcs_system_thread = NULL;
+    }
+    if (Gomspace::spike_and_hold_thread != NULL) {
+        chThdWait(Gomspace::spike_and_hold_thread);
+        Gomspace::spike_and_hold_thread = NULL;
+    }
+    if (Gomspace::piksi_thread != NULL) {
+        chThdWait(Gomspace::piksi_thread);
+        Gomspace::piksi_thread = NULL;
+    }
+    if (Gomspace::quake_thread != NULL) {
+        chThdWait(Gomspace::quake_thread);
+        Gomspace::quake_thread = NULL;
+    }
+    chThdExit((msg_t) 0);
 }
 
 static THD_WORKING_AREA(docking_motor_toggler_wA, 256);
 static THD_FUNCTION(docking_motor_toggler, args) {
     bool docking_motor_docked = *((bool*) args);
     if (docking_motor_docked) {
-        // TODO
+        if (State::Hardware::check_is_functional(&Devices::docking_motor()))
+            Devices::docking_motor().dock();
     }
     else {
-        // TODO
+        if (State::Hardware::check_is_functional(&Devices::docking_motor()))
+            Devices::docking_motor().undock();
     }
     chThdExit((msg_t) 0);
 }
 
 void Master::apply_uplink_data() {
-    Comms::Uplink uplink = State::read(State::Quake::most_recent_uplink, State::Quake::uplink_lock);
+    Comms::Uplink &uplink = State::Quake::most_recent_uplink;
 
+    rwMtxRLock(&State::Quake::uplink_lock);
     std::array<double, 3> p = uplink.other_satellite_position;
     std::array<double, 3> v = uplink.other_satellite_velocity;
     gps_time_t t = uplink.other_satellite_timestamp;
+    rwMtxRUnlock(&State::Quake::uplink_lock);
     
     bool rtk_lock = false; // TODO
     if (!rtk_lock) {
@@ -86,7 +135,16 @@ void Master::apply_uplink_commands() {
     // Master state handling
     State::Master::MasterState ms = (State::Master::MasterState) uplink.master_state;
     State::Master::PANState ps = (State::Master::PANState) uplink.pan_state;
+    bool was_safehold = State::read(State::Master::master_state, State::Master::master_state_lock) == State::Master::MasterState::SAFE_HOLD;
+    bool is_safehold = ms == State::Master::MasterState::SAFE_HOLD;
     bool is_standby = ps == State::Master::PANState::STANDBY;
+
+    if (was_safehold && !is_safehold) {
+        chThdTerminate(safe_hold_timer_thread);
+        safe_hold_timer_thread = NULL;
+        State::write(State::Master::autoexited_safe_hold, false, State::Master::master_state_lock);
+    }
+
     State::write(State::Master::master_state, ms, State::Master::master_state_lock);
     State::write(State::Master::pan_state, ps, State::Master::master_state_lock);
     
@@ -112,22 +170,22 @@ void Master::apply_uplink_commands() {
     // Resets
     if (uplink.reset_dcdc) {
         chMtxLock(&State::Hardware::dcdc_device_lock);
-            Devices::dcdc.reset();
+            Devices::dcdc().reset();
         chMtxUnlock(&State::Hardware::dcdc_device_lock);
     }
     if (uplink.reset_spike_and_hold) {
         chMtxLock(&State::Hardware::spike_and_hold_device_lock);
-            Devices::spike_and_hold.reset();
+            Devices::spike_and_hold().reset();
         chMtxUnlock(&State::Hardware::spike_and_hold_device_lock);
     }
     if (uplink.reset_piksi) {
         chMtxLock(&State::Hardware::piksi_device_lock);
-            Devices::piksi.reset();
+            Devices::piksi().reset();
         chMtxUnlock(&State::Hardware::piksi_device_lock);
     }
     if (uplink.reset_quake) {
         chMtxLock(&State::Hardware::quake_device_lock);
-            Devices::quake.reset();
+            Devices::quake().reset();
         chMtxUnlock(&State::Hardware::quake_device_lock);
     }
 

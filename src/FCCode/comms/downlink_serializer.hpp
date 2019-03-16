@@ -8,7 +8,7 @@
 namespace Comms {
   constexpr unsigned int PACKET_SIZE_BITS = 560;
   constexpr unsigned int PACKET_SIZE_BYTES = 70;
-  constexpr unsigned int FRAME_SIZE_BITS = 10159;
+  constexpr unsigned int FRAME_SIZE_BITS = 10243;
   constexpr unsigned int NUM_PACKETS = 19;
   void serialize_downlink(std::bitset<PACKET_SIZE_BITS> (&packets)[NUM_PACKETS], unsigned int downlink_no);
 }
