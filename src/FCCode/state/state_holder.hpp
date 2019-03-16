@@ -181,9 +181,9 @@ namespace State {
     //! Most recent GPS velocity of other satellite, as last obtained from the orbit propagator.
     extern std::array<double, 3> gps_velocity_other;
     //! Quaternion representing rotation from ECEF to ECI.
-    extern std::array<double, 4> ecef_to_eci;
+    extern std::array<float, 4> ecef_to_eci;
     //! Quaternion representing rotation from ECI to LVLH.
-    extern std::array<double, 4> eci_to_lvlh;
+    extern std::array<float, 4> eci_to_lvlh;
     //! Current propagated GPS time. Propagation occurs on each call of current_time(). 
     // This field needs to be updated every time GPS time is actually collected.
     extern gps_time_t current_time;

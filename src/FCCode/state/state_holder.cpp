@@ -57,8 +57,8 @@ namespace State {
 
     namespace GNC {
         std::array<double, 3> gps_position, gps_position_other, gps_velocity, gps_velocity_other;
-        std::array<double, 4> ecef_to_eci;
-        std::array<double, 4> eci_to_lvlh;
+        std::array<float, 4> ecef_to_eci;
+        std::array<float, 4> eci_to_lvlh;
         gps_time_t current_time;
         systime_t time_collection_timestamp;
         bool has_firing_happened_in_nighttime = false;
