@@ -63,6 +63,16 @@ namespace State {
         systime_t time_collection_timestamp;
         bool has_firing_happened_in_nighttime = false;
         rwmutex_t gnc_state_lock;
+
+        gps_time_t get_current_time() {
+            systime_t current_systime = chVTGetSystemTimeX();
+            systime_t systime_delta = current_systime - time_collection_timestamp;
+            time_collection_timestamp = current_systime;
+            rwMtxRLock(&State::Piksi::piksi_state_lock);
+                current_time = current_time + MS2ST(systime_delta);
+            rwMtxRUnlock(&State::Piksi::piksi_state_lock);
+            return current_time;
+        }
     }
 
     namespace Piksi {

@@ -102,23 +102,10 @@ namespace RTOSTasks {
         //! Number of milliseconds between quake controller iterations
         static constexpr unsigned int QUAKE = 500;
     };
-    
-    // Master-specific
-    //! Master safe hold wait process working area
-    extern THD_WORKING_AREA(safe_hold_timer_workingArea, 2048);
-    //! Master safe hold wait process
-    extern THD_FUNCTION(safe_hold_timer, arg);
-    //! Master safe hold wait process thread pointer
-    extern thread_t* safe_hold_timer_thread;
-    //! Stops safehold forcibly
-    extern void stop_safehold();
 
     // ADCS specific
     //! Threads waiting on a finish of ADCS detumbling
     extern threads_queue_t adcs_detumbled;
-
-    // Propulsion-specific
-    void disable_thruster_firing();
 }
 
 #endif

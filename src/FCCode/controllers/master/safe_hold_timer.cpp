@@ -6,19 +6,19 @@
  */
 
 #include <EEPROM.h>
-#include "../state/EEPROMAddresses.hpp"
-#include "../state/state_holder.hpp"
-#include "controllers.hpp"
-#include "constants.hpp"
-#include "../debug.hpp"
+#include "../../state/EEPROMAddresses.hpp"
+#include "../../state/state_holder.hpp"
+#include "master_helpers.hpp"
+#include "../constants.hpp"
+#include "../../debug.hpp"
 
-namespace RTOSTasks {
+namespace Master {
     thread_t* safe_hold_timer_thread;
     THD_WORKING_AREA(safe_hold_timer_workingArea, 2048);
 }
 
 //! Function that defines the safe hold timer thread.
-void RTOSTasks::safe_hold_timer(void *arg) {
+void Master::safe_hold_timer(void *arg) {
     chRegSetThreadName("SAFEHOLD TIMER");
     // Determine time remaining in safe hold
     chMtxLock(&eeprom_lock);
@@ -44,8 +44,9 @@ void RTOSTasks::safe_hold_timer(void *arg) {
         time_elapsed++;
     }
 
-    stop_safehold();
     // Here we set autoexit to true, since we can only get to this point if we have finished the safe hold timer.
-    State::write(State::Master::autoexited_safe_hold, true, State::Master::master_state_lock); 
+    State::write(State::Master::autoexited_safe_hold, true, State::Master::master_state_lock);
+
+    stop_safe_hold(); 
     chThdExit((msg_t)0);
 }

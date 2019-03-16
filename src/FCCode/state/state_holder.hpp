@@ -191,15 +191,7 @@ namespace State {
     // This field needs to be updated every time GPS time is actually collected.
     extern systime_t time_collection_timestamp;
     //! Function to report (propagated) current time.
-    inline gps_time_t get_current_time() {
-      systime_t current_systime = chVTGetSystemTimeX();
-      systime_t systime_delta = current_systime - time_collection_timestamp;
-      time_collection_timestamp = current_systime;
-      rwMtxRLock(&State::Piksi::piksi_state_lock);
-        current_time = current_time + MS2ST(systime_delta);
-      rwMtxRUnlock(&State::Piksi::piksi_state_lock);
-      return current_time;
-    }
+    gps_time_t get_current_time();
     //! Tracks whether or not a firing has happened during the current nighttime period.
     extern bool has_firing_happened_in_nighttime;
     //! Readers-writers lock that prevents multi-process modification of GNC state data.

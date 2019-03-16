@@ -139,8 +139,11 @@ void Master::apply_uplink_commands() {
     bool is_safehold = ms == State::Master::MasterState::SAFE_HOLD;
     bool is_standby = ps == State::Master::PANState::STANDBY;
 
-    if (was_safehold && !is_safehold)
+    if (was_safehold && !is_safehold) {
+        chThdTerminate(safe_hold_timer_thread);
+        safe_hold_timer_thread = NULL;
         State::write(State::Master::autoexited_safe_hold, false, State::Master::master_state_lock);
+    }
 
     State::write(State::Master::master_state, ms, State::Master::master_state_lock);
     State::write(State::Master::pan_state, ps, State::Master::master_state_lock);
