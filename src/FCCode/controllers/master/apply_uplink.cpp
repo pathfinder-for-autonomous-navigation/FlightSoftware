@@ -98,10 +98,12 @@ static THD_WORKING_AREA(docking_motor_toggler_wA, 256);
 static THD_FUNCTION(docking_motor_toggler, args) {
     bool docking_motor_docked = *((bool*) args);
     if (docking_motor_docked) {
-        // TODO
+        if (State::Hardware::check_is_functional(Devices::docking_motor))
+            Devices::docking_motor.dock();
     }
     else {
-        // TODO
+        if (State::Hardware::check_is_functional(Devices::docking_motor))
+            Devices::docking_motor.undock();
     }
     chThdExit((msg_t) 0);
 }

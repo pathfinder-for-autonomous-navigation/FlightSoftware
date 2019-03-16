@@ -45,25 +45,25 @@ namespace Constants {
 
     namespace ADCS {
         //! Maximum angular rate magnitude that is considered "stable".
-        constexpr float MAX_STABLE_ANGULAR_RATE = 0.0f; // TODO set value
-        //! Maximum possible angular rate magnitude of spacecraft.
+        constexpr float MAX_STABLE_ANGULAR_RATE = 0.05f; // TODO set value
+        //! Maximum possible angular rate magnitude of spacecraft. (rad/s)
         constexpr float MAX_ANGULAR_RATE = 2.2;
-        //! Maximum possible gyroscope reading along one axis.
+        //! Maximum possible gyroscope reading along one axis. (rad/s)
         constexpr float MIN_GYRO_VALUE = -2.2;
-        //! Maximum possible gyroscope reading along one axis.
+        //! Maximum possible gyroscope reading along one axis. (rad/s)
         constexpr float MAX_GYRO_VALUE = 2.2;
-        //! Maximum possible magnetic field vector reading magnitude.
+        //! Maximum possible magnetic field vector reading magnitude. (T)
         constexpr float MAX_MAGNETOMETER_READING = 0.005;
-        //! Maximum possible ramp command magnitude.
+        //! Maximum possible ramp command magnitude. (rad/s^2)
         constexpr float MAX_RAMP_CMD = 310.2;
-        //! Minimum possible magnetotorquer command along one axis.
-        constexpr float MIN_MTR_CMD = 0; // TODO
-        //! Maximum possible magnetotorquer command along one axis.
-        constexpr float MAX_MTR_CMD = 0; // TODO
-        //! Minimum possible voltage reading of one sun sensor.
+        //! Minimum possible magnetotorquer command along one axis. (A m^2)
+        constexpr float MIN_MTR_CMD = 0.008; // TODO
+        //! Maximum possible magnetotorquer command along one axis. (A m^2)
+        constexpr float MAX_MTR_CMD = 0.008; // TODO
+        //! Minimum possible voltage reading of one sun sensor. (V)
         constexpr float MIN_SUN_SENSOR_VALUE = 0; // TODO
-        //! Maximum possible voltage reading of one sun sensor.
-        constexpr float MAX_SUN_SENSOR_VALUE = 0; // TODO
+        //! Maximum possible voltage reading of one sun sensor. (V)
+        constexpr float MAX_SUN_SENSOR_VALUE = 5; // TODO
         
         //! Attitude controller proportional gain--"raw" integral value updated by uplink
         extern unsigned int ATTITUDE_CONTROLLER_KP;

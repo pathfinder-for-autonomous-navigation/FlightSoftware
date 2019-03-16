@@ -44,9 +44,14 @@ void DockingMotor::reset() {
     digitalWrite(sleep_pin_, HIGH);
 }
 
-void DockingMotor::toggle() {
+void DockingMotor::dock() {
+    if (config_) return;
     // TODO
-    digitalWrite(stepper_pin_, HIGH);
-    delay(1000);
-    digitalWrite(stepper_pin_, LOW);
+    config_ = true;
+}
+
+void DockingMotor::undock() {
+    if (!config_) return;
+    // TODO
+    config_ = false;
 }

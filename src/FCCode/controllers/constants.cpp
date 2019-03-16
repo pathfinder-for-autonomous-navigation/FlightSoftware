@@ -27,12 +27,12 @@ namespace Constants {
     rwmutex_t changeable_constants_lock;
 
     namespace ADCS {
-        static float default_attitude_kp = 0; // TODO
-        static float default_attitude_kd = 0; // TODO
-        static float default_momentum_k = 0; // TODO
-        static float default_heater_kp = 0; // TODO
-        static float default_heater_ki = 0; // TODO
-        static float default_heater_kd = 0; // TODO
+        static float default_attitude_kp = 1; // TODO
+        static float default_attitude_kd = 1; // TODO
+        static float default_momentum_k = 1; // TODO
+        static float default_heater_kp = 1; // TODO
+        static float default_heater_ki = 1; // TODO
+        static float default_heater_kd = 1; // TODO
         // Set default values by casting float to integer
         unsigned int ATTITUDE_CONTROLLER_KP = (unsigned int) default_attitude_kp;
         unsigned int ATTITUDE_CONTROLLER_KD = (unsigned int) default_attitude_kd; 
