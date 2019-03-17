@@ -26,7 +26,6 @@ static void master_loop() {
 
     MasterState master_state_copy = State::read(master_state, master_state_lock);
     PANState pan_state_copy = State::read(pan_state, master_state_lock);
-    debug_printf("Master State and PAN State: %d %d\n", master_state_copy, pan_state_copy);
     switch(master_state_copy) {
         case MasterState::DETUMBLE: {
             chMtxLock(&eeprom_lock);

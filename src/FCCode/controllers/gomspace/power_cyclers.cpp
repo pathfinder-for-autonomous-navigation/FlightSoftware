@@ -16,13 +16,18 @@ THD_FUNCTION(Gomspace::cycler_fn, args) {
     
     chMtxLock(cycler_args->device_lock);
         Devices::gomspace().set_single_output(cycler_args->pin, 0);
+        State::write(State::Hardware::hat.at(cycler_args->device).powered_on, 
+            false, State::Hardware::hardware_state_lock);
         State::write(State::Hardware::hat.at(cycler_args->device).is_functional, 
             false, State::Hardware::hardware_state_lock);
 
+        // Wait for output capacitor to go all the way down to zero.
         chThdSleepSeconds(30);
+
         Devices::gomspace().set_single_output(cycler_args->pin, 1);
-        
         chThdSleepMilliseconds(10);
+        State::write(State::Hardware::hat.at(cycler_args->device).powered_on, 
+            true, State::Hardware::hardware_state_lock);
         State::write(State::Hardware::hat.at(cycler_args->device).is_functional, 
             (cycler_args->device)->is_functional(), State::Hardware::hardware_state_lock);
     chMtxUnlock(cycler_args->device_lock);

@@ -1,5 +1,6 @@
 #include "master_helpers.hpp"
 #include "../../state/device_states.hpp"
+#include "../../state/fault_state_holder.hpp"
 #include "../gomspace/power_cyclers.hpp"
 #include <rt/chdynamic.h>
 
@@ -117,12 +118,14 @@ void Master::apply_uplink_data() {
     gps_time_t t = uplink.other_satellite_timestamp;
     rwMtxRUnlock(&State::Quake::uplink_lock);
     
-    bool rtk_lock = false; // TODO
-    if (!rtk_lock) {
-        State::write(State::Piksi::recorded_gps_position_other, p, State::Piksi::piksi_state_lock);
-        State::write(State::Piksi::recorded_gps_position_other, v, State::Piksi::piksi_state_lock);
-        State::write(State::Piksi::recorded_gps_position_other_time, t, State::Piksi::piksi_state_lock);
-    }
+    rwMtxWLock(&State::Piksi::piksi_state_lock);
+        bool rtk_lock = State::Piksi::is_fixed_rtk || State::Piksi::is_float_rtk;
+        if (!rtk_lock) {
+            State::Piksi::recorded_gps_position_other = p;
+            State::Piksi::recorded_gps_position_other = v;
+            State::Piksi::recorded_gps_position_other_time = t;
+        }
+    rwMtxWUnlock(&State::Piksi::piksi_state_lock);
 
     apply_uplink_adcs_hat(uplink);
     apply_uplink_fc_hat(uplink);
@@ -139,12 +142,22 @@ void Master::apply_uplink_commands() {
     bool is_safehold = ms == State::Master::MasterState::SAFE_HOLD;
     bool is_standby = ps == State::Master::PANState::STANDBY;
 
+    // Disable safe hold timer if being commanded out of sate hold
     if (was_safehold && !is_safehold) {
         chThdTerminate(safe_hold_timer_thread);
         safe_hold_timer_thread = NULL;
         State::write(State::Master::autoexited_safe_hold, false, State::Master::master_state_lock);
     }
 
+    // Write "ignore error" bits
+    State::write(FaultState::Propulsion::cannot_pressurize_outer_tank_ignored, 
+                    uplink.cannot_pressurize_outer_tank_ignored, 
+                    FaultState::Propulsion::propulsion_faults_state_lock);
+    State::write(FaultState::Gomspace::vbatt_ignored, 
+                    uplink.vbatt_ignored, 
+                    FaultState::Gomspace::gomspace_faults_state_lock);
+
+    // Command state
     State::write(State::Master::master_state, ms, State::Master::master_state_lock);
     State::write(State::Master::pan_state, ps, State::Master::master_state_lock);
     

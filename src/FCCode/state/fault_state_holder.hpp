@@ -40,6 +40,8 @@ namespace FaultState {
     };
     //! Stores current faults of Gomspace system
     extern std::bitset<GOMSPACE_FAULTS::NUMBER_FAULTS> fault_bits;
+    //! Whether or not a low-battery error is ignored
+    extern bool vbatt_ignored;
     //! Readers-writers lock that prevents multi-process modification of Gomspace fault state data.
     extern rwmutex_t gomspace_faults_state_lock;
   }
@@ -59,6 +61,8 @@ namespace FaultState {
     extern gps_time_t destabilization_event;
     //! If true, we are unable to pressurize the outer tank up to the requisite pressure for a firing.
     extern bool cannot_pressurize_outer_tank;
+    //! Ignore leaking error.
+    extern bool cannot_pressurize_outer_tank_ignored;
     //! Readers-writers lock that prevents multi-process modification of propulsion fault state data.
     extern rwmutex_t propulsion_faults_state_lock;
   }
