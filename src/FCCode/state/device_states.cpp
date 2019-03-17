@@ -162,8 +162,9 @@ namespace Hardware {
 }
 
 namespace ADCS {
-    static Hardware::DeviceState adcs_gyro_state = {false, false, false, false, 1};
-    static Hardware::DeviceState adcs_magnetometer_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_gyroscope_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_magnetometer_1_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_magnetometer_2_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_magnetorquer_x_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_magnetorquer_y_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_magnetorquer_z_state = {false, false, false, false, 1};
@@ -180,8 +181,9 @@ namespace ADCS {
     static Hardware::DeviceState adcs_ssa_adc_4_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_ssa_adc_5_state = {false, false, false, false, 1};
     std::map<std::string, Hardware::DeviceState> adcs_hat {
-        {"gyroscope", adcs_gyro_state},
-        {"magnetometer", adcs_magnetometer_state},
+        {"gyroscope", adcs_gyroscope_state},
+        {"magnetometer_1", adcs_magnetometer_1_state},
+        {"magnetometer_2", adcs_magnetometer_2_state},
         {"magnetorquer_x", adcs_magnetorquer_x_state},
         {"magnetorquer_y", adcs_magnetorquer_y_state},
         {"magnetorquer_z", adcs_magnetorquer_z_state},

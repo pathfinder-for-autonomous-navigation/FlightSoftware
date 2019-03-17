@@ -2,18 +2,18 @@
 #include "../../state/device_states.hpp"
 void Master::apply_uplink_constants(const Comms::Uplink& uplink) {
   std::array<unsigned int, 5> constant_ids {
-     (unsigned int) uplink.constant_0_id,
-     (unsigned int) uplink.constant_1_id,
-     (unsigned int) uplink.constant_2_id,
-     (unsigned int) uplink.constant_3_id,
-     (unsigned int) uplink.constant_4_id,
+     uplink.constant_0_id,
+     uplink.constant_1_id,
+     uplink.constant_2_id,
+     uplink.constant_3_id,
+     uplink.constant_4_id,
   };
   std::array<unsigned int, 5> constant_vals {
-     (unsigned int) uplink.constant_0_val,
-     (unsigned int) uplink.constant_1_val,
-     (unsigned int) uplink.constant_2_val,
-     (unsigned int) uplink.constant_3_val,
-     (unsigned int) uplink.constant_4_val,
+     uplink.constant_0_val,
+     uplink.constant_1_val,
+     uplink.constant_2_val,
+     uplink.constant_3_val,
+     uplink.constant_4_val,
   };
   for(int i = 0; i < constant_ids.size(); i++) {
     unsigned int const_id = constant_ids[i];
@@ -27,7 +27,8 @@ void Master::apply_uplink_constants(const Comms::Uplink& uplink) {
 void Master::apply_uplink_adcs_hat(const Comms::Uplink& uplink) {
   rwMtxWLock(&State::ADCS::adcs_state_lock);
     State::ADCS::adcs_hat.at("gyroscope").is_functional = uplink.adcs_hat_gyroscope;
-    State::ADCS::adcs_hat.at("magnetometer").is_functional = uplink.adcs_hat_magnetometer;
+    State::ADCS::adcs_hat.at("magnetometer_1").is_functional = uplink.adcs_hat_magnetometer_1;
+    State::ADCS::adcs_hat.at("magnetometer_2").is_functional = uplink.adcs_hat_magnetometer_2;
     State::ADCS::adcs_hat.at("magnetorquer_x").is_functional = uplink.adcs_hat_magnetorquer_x;
     State::ADCS::adcs_hat.at("magnetorquer_y").is_functional = uplink.adcs_hat_magnetorquer_y;
     State::ADCS::adcs_hat.at("magnetorquer_z").is_functional = uplink.adcs_hat_magnetorquer_z;

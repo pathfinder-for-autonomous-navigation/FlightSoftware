@@ -28,7 +28,8 @@ max,size,type,name,min
 ,1,bool,fc_hat_docking_motor,
 ,1,bool,fc_hat_docking_switch,
 ,1,bool,adcs_hat_gyroscope,
-,1,bool,adcs_hat_magnetometer,
+,1,bool,adcs_hat_magnetometer_1,
+,1,bool,adcs_hat_magnetometer_2,
 ,1,bool,adcs_hat_magnetorquer_x,
 ,1,bool,adcs_hat_magnetorquer_y,
 ,1,bool,adcs_hat_magnetorquer_z,
@@ -46,9 +47,16 @@ max,size,type,name,min
 ,1,bool,adcs_hat_ssa_adc_5,
 ,1,bool,vbatt_ignored,
 ,1,bool,cannot_pressurize_outer_tank_ignored,
+,1,bool,all_magnetometers_faulty_ignore,
+,1,bool,all_ssa_faulty_ignore,
+,1,bool,motor_x_faulty_ignore,
+,1,bool,motor_y_faulty_ignore,
+,1,bool,motor_z_faulty_ignore,
+,1,bool,ignore_destabilized,
+,1,bool,ignore_overpressure,
 3,2,int,adcs_state,0
 ,1,bool,command_adcs,
-3,2,int,adcs_frame,0
+1,1,int,adcs_frame,0
 ,29,quaternion,adcs_attitude,
 ,1,bool,command_propulsion,
 0.005,26,float vector,firing_vector,0

@@ -22,7 +22,7 @@ struct_file += "  constexpr unsigned int UPLINK_SIZE_BITS = {0};\n".format(total
 struct_file += "  struct Uplink {\n"
 
 for field in FIELDS:
-    if   field["type"] == "state int":
+    if   field["type"] == "int":
         struct_file += "    unsigned int {0};\n".format(field["name"])
     elif field["type"] == "float vector":
         struct_file += "    std::array<float, 3> {0};\n".format(field["name"])

@@ -20,12 +20,12 @@ apply_constants_str =  "void Master::apply_uplink_constants(const Comms::Uplink&
 apply_constants_str += "  std::array<unsigned int, {0}> constant_ids {{\n".format(num_constants)
 for field in FIELDS:
     if "_id" in field["name"]:
-        apply_constants_str += "     (unsigned int) uplink.{0},\n".format(field["name"])
+        apply_constants_str += "     uplink.{0},\n".format(field["name"])
 apply_constants_str += "  };\n"
 apply_constants_str += "  std::array<unsigned int, {0}> constant_vals {{\n".format(num_constants)
 for field in FIELDS:
     if "_val" in field["name"]:
-        apply_constants_str += "     (unsigned int) uplink.{0},\n".format(field["name"])
+        apply_constants_str += "     uplink.{0},\n".format(field["name"])
 apply_constants_str += "  };"
 apply_constants_str += """
   for(int i = 0; i < constant_ids.size(); i++) {

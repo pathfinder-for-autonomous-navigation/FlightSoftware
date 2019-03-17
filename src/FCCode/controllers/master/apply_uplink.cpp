@@ -150,12 +150,21 @@ void Master::apply_uplink_commands() {
     }
 
     // Write "ignore error" bits
-    State::write(FaultState::Propulsion::cannot_pressurize_outer_tank_ignored, 
-                    uplink.cannot_pressurize_outer_tank_ignored, 
-                    FaultState::Propulsion::propulsion_faults_state_lock);
+    rwMtxWLock(&FaultState::Propulsion::propulsion_faults_state_lock);
+        FaultState::Propulsion::cannot_pressurize_outer_tank_ignored = uplink.cannot_pressurize_outer_tank_ignored;
+        FaultState::Propulsion::destabilization_event.is_not_set = uplink.ignore_destabilized;
+        FaultState::Propulsion::overpressure_event.is_not_set = uplink.ignore_overpressure;
+    rwMtxWUnlock(&FaultState::Propulsion::propulsion_faults_state_lock);
     State::write(FaultState::Gomspace::vbatt_ignored, 
                     uplink.vbatt_ignored, 
                     FaultState::Gomspace::gomspace_faults_state_lock);
+    rwMtxWLock(&FaultState::ADCS::adcs_faults_state_lock);
+        FaultState::ADCS::all_magnetometers_faulty_ignore = uplink.all_magnetometers_faulty_ignore;
+        FaultState::ADCS::all_ssa_faulty_ignore = uplink.all_ssa_faulty_ignore;
+        FaultState::ADCS::motor_x_faulty_ignore = uplink.motor_x_faulty_ignore;
+        FaultState::ADCS::motor_y_faulty_ignore = uplink.motor_y_faulty_ignore;
+        FaultState::ADCS::motor_z_faulty_ignore = uplink.motor_z_faulty_ignore;
+    rwMtxWLock(&FaultState::ADCS::adcs_faults_state_lock);
 
     // Command state
     State::write(State::Master::master_state, ms, State::Master::master_state_lock);
