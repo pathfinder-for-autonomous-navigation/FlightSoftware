@@ -6,10 +6,9 @@
 #include <array>
 
 namespace Comms {
-  constexpr unsigned int UPLINK_SIZE_BITS = 561;
+  constexpr unsigned int UPLINK_SIZE_BITS = 514;
   struct Uplink {
     int uplink_number;
-    gps_time_t uplink_timestamp;
     std::array<double, 3> other_satellite_position;
     std::array<double, 3> other_satellite_velocity;
     gps_time_t other_satellite_timestamp;
@@ -46,14 +45,16 @@ namespace Comms {
     bool adcs_hat_motor_x;
     bool adcs_hat_motor_y;
     bool adcs_hat_motor_z;
-    bool adcs_hat_motor_x_adc;
-    bool adcs_hat_motor_y_adc;
-    bool adcs_hat_motor_z_adc;
+    bool adcs_hat_adc_motor_x;
+    bool adcs_hat_adc_motor_y;
+    bool adcs_hat_adc_motor_z;
     bool adcs_hat_ssa_adc_1;
     bool adcs_hat_ssa_adc_2;
     bool adcs_hat_ssa_adc_3;
     bool adcs_hat_ssa_adc_4;
     bool adcs_hat_ssa_adc_5;
+    bool vbatt_ignored;
+    bool cannot_pressurize_outer_tank_ignored;
     int adcs_state;
     bool command_adcs;
     int adcs_frame;

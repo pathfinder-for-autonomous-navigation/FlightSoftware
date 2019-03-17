@@ -1,6 +1,5 @@
 max,size,type,name,min
 4294967295,32,int,uplink_number,0
-,49,gps time,uplink_timestamp,
 7200,45,double vector,other_satellite_position,6400
 12000,45,double vector,other_satellite_velocity,8000
 ,49,gps time,other_satellite_timestamp,
@@ -37,14 +36,16 @@ max,size,type,name,min
 ,1,bool,adcs_hat_motor_x,
 ,1,bool,adcs_hat_motor_y,
 ,1,bool,adcs_hat_motor_z,
-,1,bool,adcs_hat_motor_x_adc,
-,1,bool,adcs_hat_motor_y_adc,
-,1,bool,adcs_hat_motor_z_adc,
+,1,bool,adcs_hat_adc_motor_x,
+,1,bool,adcs_hat_adc_motor_y,
+,1,bool,adcs_hat_adc_motor_z,
 ,1,bool,adcs_hat_ssa_adc_1,
 ,1,bool,adcs_hat_ssa_adc_2,
 ,1,bool,adcs_hat_ssa_adc_3,
 ,1,bool,adcs_hat_ssa_adc_4,
 ,1,bool,adcs_hat_ssa_adc_5,
+,1,bool,vbatt_ignored,
+,1,bool,cannot_pressurize_outer_tank_ignored,
 3,2,int,adcs_state,0
 ,1,bool,command_adcs,
 3,2,int,adcs_frame,0

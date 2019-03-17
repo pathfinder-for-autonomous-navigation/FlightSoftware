@@ -16,23 +16,23 @@ num_constants = 0
 for field in FIELDS:
     if "_id" in field["name"]:
         num_constants += 1
-apply_constants_str =  "void Master::apply_constants(const Comms::Uplink& uplink) {\n"
+apply_constants_str =  "void Master::apply_uplink_constants(const Comms::Uplink& uplink) {\n"
 apply_constants_str += "  std::array<unsigned int, {0}> constant_ids {{\n".format(num_constants)
 for field in FIELDS:
     if "_id" in field["name"]:
-        apply_constants_str += "     uplink.{0},\n".format(field["name"])
+        apply_constants_str += "     (unsigned int) uplink.{0},\n".format(field["name"])
 apply_constants_str += "  };\n"
 apply_constants_str += "  std::array<unsigned int, {0}> constant_vals {{\n".format(num_constants)
 for field in FIELDS:
     if "_val" in field["name"]:
-        apply_constants_str += "     uplink.{0},\n".format(field["name"])
+        apply_constants_str += "     (unsigned int) uplink.{0},\n".format(field["name"])
 apply_constants_str += "  };"
 apply_constants_str += """
   for(int i = 0; i < constant_ids.size(); i++) {
     unsigned int const_id = constant_ids[i];
     if (const_id > Constants::changeable_constants_map.size()) continue;
     rwMtxWLock(&Constants::changeable_constants_lock);
-    *(Constants::changeable_constants_map[const_id]) = constant_vals[i];
+    *(Constants::changeable_constants_map[const_id]) = (unsigned int) constant_vals[i];
     rwMtxWUnlock(&Constants::changeable_constants_lock);
   }
 }
@@ -41,7 +41,7 @@ helper_str += apply_constants_str + "\n"
 
 tokens = ["adcs", "fc"]
 for token in tokens:
-    apply_hat_str = "void Master::apply_{0}_hat(const Comms::Uplink& uplink) {{\n".format(token)
+    apply_hat_str = "void Master::apply_uplink_{0}_hat(const Comms::Uplink& uplink) {{\n".format(token)
     if token == "fc":
         apply_hat_str += "  rwMtxWLock(&State::Hardware::hardware_state_lock);\n"
     else:
@@ -49,7 +49,7 @@ for token in tokens:
     for field in FIELDS:
         uplink_field = "uplink.{0}".format(field["name"])
         if token == "fc" and "fc_hat_" in field["name"]:
-            error_ignored = "State::Hardware::hat.at(\"{0}\").error_ignored".format(
+            error_ignored = "State::Hardware::hat.at(&Devices::{0}()).error_ignored".format(
                 field["name"][len("fc_hat_"):])
             apply_hat_str += "    {0} = {1};\n".format(error_ignored, uplink_field)
         elif token == "adcs" and "adcs_hat_" in field["name"]:

@@ -62,7 +62,7 @@ static void hardware_setup() {
     debug_println("Initializing hardware peripherals.");
     for (auto device : State::Hardware::hat) {
         Devices::Device* dptr = device.first;
-        debug_printf("Setting up device: %s...", dptr->name());
+        debug_printf("Setting up device: %s...", dptr->name().c_str());
         dptr->setup();
         if (dptr->is_functional()) {
             debug_printf_headless("setup was successful!\n");
@@ -114,7 +114,7 @@ void pan_system_setup() {
     #ifdef DEBUG
         debug_begin();
         print_pan_logo();
-        debug_println_headless(""); debug_println_headless("");
+        debug_println_headless("");
         debug_println_headless("Satellite is booting up...");
         debug_println_headless("");
         debug_eeprom_initialization();

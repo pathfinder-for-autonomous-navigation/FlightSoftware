@@ -1,8 +1,5 @@
 #include "master_helpers.hpp"
-#include "../../state/state_holder.hpp"
 #include "../../state/device_states.hpp"
-#include "../constants.hpp"
-
 void Master::apply_uplink_constants(const Comms::Uplink& uplink) {
   std::array<unsigned int, 5> constant_ids {
      (unsigned int) uplink.constant_0_id,
@@ -22,7 +19,7 @@ void Master::apply_uplink_constants(const Comms::Uplink& uplink) {
     unsigned int const_id = constant_ids[i];
     if (const_id > Constants::changeable_constants_map.size()) continue;
     rwMtxWLock(&Constants::changeable_constants_lock);
-    *(Constants::changeable_constants_map[const_id]) = constant_vals[i];
+    *(Constants::changeable_constants_map[const_id]) = (unsigned int) constant_vals[i];
     rwMtxWUnlock(&Constants::changeable_constants_lock);
   }
 }
@@ -38,9 +35,9 @@ void Master::apply_uplink_adcs_hat(const Comms::Uplink& uplink) {
     State::ADCS::adcs_hat.at("motor_x").is_functional = uplink.adcs_hat_motor_x;
     State::ADCS::adcs_hat.at("motor_y").is_functional = uplink.adcs_hat_motor_y;
     State::ADCS::adcs_hat.at("motor_z").is_functional = uplink.adcs_hat_motor_z;
-    State::ADCS::adcs_hat.at("motor_x_adc").is_functional = uplink.adcs_hat_motor_x_adc;
-    State::ADCS::adcs_hat.at("motor_y_adc").is_functional = uplink.adcs_hat_motor_y_adc;
-    State::ADCS::adcs_hat.at("motor_z_adc").is_functional = uplink.adcs_hat_motor_z_adc;
+    State::ADCS::adcs_hat.at("adc_motor_x").is_functional = uplink.adcs_hat_adc_motor_x;
+    State::ADCS::adcs_hat.at("adc_motor_y").is_functional = uplink.adcs_hat_adc_motor_y;
+    State::ADCS::adcs_hat.at("adc_motor_z").is_functional = uplink.adcs_hat_adc_motor_z;
     State::ADCS::adcs_hat.at("ssa_adc_1").is_functional = uplink.adcs_hat_ssa_adc_1;
     State::ADCS::adcs_hat.at("ssa_adc_2").is_functional = uplink.adcs_hat_ssa_adc_2;
     State::ADCS::adcs_hat.at("ssa_adc_3").is_functional = uplink.adcs_hat_ssa_adc_3;

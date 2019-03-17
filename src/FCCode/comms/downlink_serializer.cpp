@@ -34,7 +34,7 @@ static void serialize_packet_0(std::bitset<Comms::PACKET_SIZE_BITS> &packet, uns
   for(int i = 0; i < bitset_4.size(); i++) packet.set(packet_ptr++,bitset_4[i]);
 
   std::bitset<1> bitset_5;
-  bitset_5.set(0, State::read(State::Hardware::hat.at(&Devices::gomspace()).powered_on, State::Hardware::hardware_state_lock));
+  bitset_5.set(0, State::read(State::Hardware::hat.at(&(Devices::gomspace())).powered_on, State::Hardware::hardware_state_lock));
   for(int i = 0; i < bitset_5.size(); i++) packet.set(packet_ptr++,bitset_5[i]);
 
   std::bitset<1> bitset_6;
