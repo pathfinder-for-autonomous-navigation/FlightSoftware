@@ -14,6 +14,7 @@
 #include "controllers/constants.hpp"
 #include "state/EEPROMAddresses.hpp"
 #include "state/state_holder.hpp"
+#include "state/fault_state_holder.hpp"
 #include <rwmutex.hpp>
 #include "debug.hpp"
 #include "deployment_timer.hpp"
@@ -43,6 +44,9 @@ static void initialize_locks() {
     rwMtxObjectInit(&State::Quake::uplink_lock);
     rwMtxObjectInit(&Constants::changeable_constants_lock);
     rwMtxObjectInit(&RTOSTasks::LoopTimes::gnc_looptime_lock);
+    rwMtxObjectInit(&FaultState::Propulsion::propulsion_faults_state_lock);
+    rwMtxObjectInit(&FaultState::Gomspace::gomspace_faults_state_lock);
+    rwMtxObjectInit(&FaultState::ADCS::adcs_faults_state_lock);
     // Initialize all device locks
     chMtxObjectInit(&eeprom_lock);
     chMtxObjectInit(&State::Hardware::adcs_device_lock);
