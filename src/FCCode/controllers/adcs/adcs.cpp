@@ -120,8 +120,6 @@ static THD_FUNCTION(adcs_loop, arg) {
         // If ADCS isn't working, power-cycle it. Do this for as many times as it takes for the device
         // to start talking again.
         if (!State::Hardware::check_is_functional(&adcs_system()) && Gomspace::adcs_system_thread == NULL) {
-            // Increment counter for cycling
-            State::Hardware::increment_boot_count(&adcs_system());
             // Specify arguments for thread
             Gomspace::cycler_arg_t cycler_args = {
                 &State::Hardware::adcs_device_lock,

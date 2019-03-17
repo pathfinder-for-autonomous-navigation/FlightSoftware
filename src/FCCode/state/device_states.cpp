@@ -134,31 +134,6 @@ namespace Hardware {
         rwMtxRUnlock(&hardware_state_lock);
         return functional;
     }
-
-    void increment_boot_count(Devices::Device* d) {
-        rwMtxWLock(&hardware_state_lock);
-            hat.at(d).boot_count = hat.at(d).boot_count++;
-        rwMtxWUnlock(&hardware_state_lock);
-        chMtxLock(&eeprom_lock);
-            unsigned int boot_count;
-            if (d == &Devices::piksi()) {
-                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, boot_count);
-                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, boot_count++);
-            }
-            else if (d == &Devices::quake()) {
-                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, boot_count);
-                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, boot_count++);
-            }
-            else if (d == &Devices::adcs_system()) {
-                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, boot_count);
-                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, boot_count++);
-            }
-            else if (d == &Devices::spike_and_hold()) {
-                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, boot_count);
-                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, boot_count++);
-            }
-        chMtxUnlock(&eeprom_lock);
-    }
 }
 
 namespace ADCS {

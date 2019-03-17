@@ -82,10 +82,6 @@ static void start_satellite_processes() {
     debug_println("Starting Gomspace controller process.");
     gomspace_thread = chThdCreateStatic(gomspace_controller_workingArea, sizeof(gomspace_controller_workingArea), 
         gomspace_thread_priority, gomspace_controller, NULL);
-
-    debug_println("Starting master controller process.");
-    master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
-        master_thread_priority, master_controller, NULL);
     
     debug_println("Starting Piksi controller process.");
     piksi_thread = chThdCreateStatic(piksi_controller_workingArea, sizeof(piksi_controller_workingArea), 
@@ -102,6 +98,10 @@ static void start_satellite_processes() {
     debug_println("Starting Quake radio controller process.");
     quake_thread = chThdCreateStatic(quake_controller_workingArea, sizeof(quake_controller_workingArea), 
         quake_thread_priority, quake_controller, NULL);
+    
+    debug_println("Starting master controller process.");
+    master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
+        master_thread_priority, master_controller, NULL);
 
     #ifdef DEBUG
     (void)chThdCreateStatic(debug_workingArea, sizeof(debug_workingArea), NORMALPRIO, debug_function, NULL);
