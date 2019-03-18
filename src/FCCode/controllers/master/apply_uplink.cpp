@@ -165,7 +165,7 @@ void Master::apply_uplink_commands() {
     // Command state
     State::write(State::Master::master_state, ms, State::Master::master_state_lock);
     State::write(State::Master::pan_state, ps, State::Master::master_state_lock);
-    
+
     // ADCS
     State::ADCS::ADCSState as = (State::ADCS::ADCSState) uplink.adcs_state;
     if (is_standby) {
@@ -174,6 +174,13 @@ void Master::apply_uplink_commands() {
         State::ADCS::PointingFrame frame = (State::ADCS::PointingFrame) uplink.adcs_frame;                                            
         State::write(State::ADCS::cmd_attitude, cmd_attitude, State::ADCS::adcs_state_lock);
         State::write(State::ADCS::cmd_attitude_frame, frame, State::ADCS::adcs_state_lock);
+    }
+    State::ADCS::ADCSGainState gain_state = (State::ADCS::ADCSGainState) uplink.adcs_gain_state;
+    if (gain_state == State::ADCS::ADCSGainState::NORMAL) {
+        // TODO set gains
+    }
+    else if (gain_state == State::ADCS::ADCSGainState::PAIRED) {
+        // TODO set gains   
     }
 
     // Propulsion

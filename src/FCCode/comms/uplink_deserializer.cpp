@@ -230,66 +230,70 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
 
   std::bitset<1> bitset_56;
   for(int i = 0; i < 1; i++) bitset_56.set(i, mes[bitset_ptr++]);
-  uplink->command_adcs = bitset_56[0];
+  uplink->adcs_gain_state = Comms::expand_int(bitset_56, 0, 1);
 
   std::bitset<1> bitset_57;
   for(int i = 0; i < 1; i++) bitset_57.set(i, mes[bitset_ptr++]);
-  uplink->adcs_frame = Comms::expand_int(bitset_57, 0, 1);
+  uplink->command_adcs = bitset_57[0];
 
-  std::bitset<29> bitset_58;
-  for(int i = 0; i < 29; i++) bitset_58.set(i, mes[bitset_ptr++]);
-  Comms::expand_quaternion(bitset_58, &(uplink->adcs_attitude));
+  std::bitset<1> bitset_58;
+  for(int i = 0; i < 1; i++) bitset_58.set(i, mes[bitset_ptr++]);
+  uplink->adcs_frame = Comms::expand_int(bitset_58, 0, 1);
 
-  std::bitset<1> bitset_59;
-  for(int i = 0; i < 1; i++) bitset_59.set(i, mes[bitset_ptr++]);
-  uplink->command_propulsion = bitset_59[0];
+  std::bitset<29> bitset_59;
+  for(int i = 0; i < 29; i++) bitset_59.set(i, mes[bitset_ptr++]);
+  Comms::expand_quaternion(bitset_59, &(uplink->adcs_attitude));
 
-  std::bitset<26> bitset_60;
-  for(int i = 0; i < 26; i++) bitset_60.set(i, mes[bitset_ptr++]);
-  Comms::expand_vector(bitset_60, 0, 0.005, &(uplink->firing_vector));
+  std::bitset<1> bitset_60;
+  for(int i = 0; i < 1; i++) bitset_60.set(i, mes[bitset_ptr++]);
+  uplink->command_propulsion = bitset_60[0];
 
-  std::bitset<49> bitset_61;
-  for(int i = 0; i < 49; i++) bitset_61.set(i, mes[bitset_ptr++]);
-  Comms::expand_gps_time(bitset_61, &(uplink->firing_time));
+  std::bitset<26> bitset_61;
+  for(int i = 0; i < 26; i++) bitset_61.set(i, mes[bitset_ptr++]);
+  Comms::expand_vector(bitset_61, 0, 0.005, &(uplink->firing_vector));
 
-  std::bitset<1> bitset_62;
-  for(int i = 0; i < 1; i++) bitset_62.set(i, mes[bitset_ptr++]);
-  uplink->docking_motor_mode = bitset_62[0];
+  std::bitset<49> bitset_62;
+  for(int i = 0; i < 49; i++) bitset_62.set(i, mes[bitset_ptr++]);
+  Comms::expand_gps_time(bitset_62, &(uplink->firing_time));
 
   std::bitset<1> bitset_63;
   for(int i = 0; i < 1; i++) bitset_63.set(i, mes[bitset_ptr++]);
-  uplink->reset_piksi = bitset_63[0];
+  uplink->docking_motor_mode = bitset_63[0];
 
   std::bitset<1> bitset_64;
   for(int i = 0; i < 1; i++) bitset_64.set(i, mes[bitset_ptr++]);
-  uplink->reset_quake = bitset_64[0];
+  uplink->reset_piksi = bitset_64[0];
 
   std::bitset<1> bitset_65;
   for(int i = 0; i < 1; i++) bitset_65.set(i, mes[bitset_ptr++]);
-  uplink->reset_dcdc = bitset_65[0];
+  uplink->reset_quake = bitset_65[0];
 
   std::bitset<1> bitset_66;
   for(int i = 0; i < 1; i++) bitset_66.set(i, mes[bitset_ptr++]);
-  uplink->reset_spike_and_hold = bitset_66[0];
+  uplink->reset_dcdc = bitset_66[0];
 
   std::bitset<1> bitset_67;
   for(int i = 0; i < 1; i++) bitset_67.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_gomspace = bitset_67[0];
+  uplink->reset_spike_and_hold = bitset_67[0];
 
   std::bitset<1> bitset_68;
   for(int i = 0; i < 1; i++) bitset_68.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_piksi = bitset_68[0];
+  uplink->power_cycle_gomspace = bitset_68[0];
 
   std::bitset<1> bitset_69;
   for(int i = 0; i < 1; i++) bitset_69.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_quake = bitset_69[0];
+  uplink->power_cycle_piksi = bitset_69[0];
 
   std::bitset<1> bitset_70;
   for(int i = 0; i < 1; i++) bitset_70.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_adcs_system = bitset_70[0];
+  uplink->power_cycle_quake = bitset_70[0];
 
   std::bitset<1> bitset_71;
   for(int i = 0; i < 1; i++) bitset_71.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_spike_and_hold = bitset_71[0];
+  uplink->power_cycle_adcs_system = bitset_71[0];
+
+  std::bitset<1> bitset_72;
+  for(int i = 0; i < 1; i++) bitset_72.set(i, mes[bitset_ptr++]);
+  uplink->power_cycle_spike_and_hold = bitset_72[0];
 
 }

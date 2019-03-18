@@ -4,6 +4,7 @@ State::Master,State::Master::pan_state,0,11,master,1,int,4
 State::Master,State::Master::boot_number,0,4294967295,master,1,int,32
 State::Master,State::Master::last_uplink_time,,,master,1,gps time,49
 State::Master,State::Master::is_follower,,,master,1,bool,1
+State::Master,State::Master::docking_switch_pressed,,,master,1,bool,1
 State::Hardware,State::Hardware::hat.at(&(Devices::gomspace())).powered_on,,,hardware,1,bool,1
 State::Hardware,State::Hardware::hat.at(&(Devices::gomspace())).enabled,,,hardware,1,bool,1
 State::Hardware,State::Hardware::hat.at(&(Devices::gomspace())).is_functional,,,hardware,1,bool,1

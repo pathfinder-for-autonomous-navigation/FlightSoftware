@@ -55,6 +55,7 @@ max,size,type,name,min
 ,1,bool,ignore_destabilized,
 ,1,bool,ignore_overpressure,
 3,2,int,adcs_state,0
+1,1,int,adcs_gain_state,0
 ,1,bool,command_adcs,
 1,1,int,adcs_frame,0
 ,29,quaternion,adcs_attitude,

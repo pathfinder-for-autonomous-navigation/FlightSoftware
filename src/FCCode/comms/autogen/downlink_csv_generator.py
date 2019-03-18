@@ -28,11 +28,12 @@ FIELDS = []
 MAX_INT = 4294967295
 
 MASTER_FIELDS = [
-{ "group" : "master", "name" : "master_state",          "type" : "state int",               "min" : 0, "max" : 4 },
-{ "group" : "master", "name" : "pan_state",             "type" : "state int",               "min" : 0, "max" : 11 },
-{ "group" : "master", "name" : "boot_number",           "type" : "int",        "size" : 32, "min" : 0, "max" : MAX_INT },
-{ "group" : "master", "name" : "last_uplink_time",      "type" : "gps time"},
-{ "group" : "master", "name" : "is_follower",           "type" : "bool" },
+{ "group" : "master", "name" : "master_state",           "type" : "state int",               "min" : 0, "max" : 4 },
+{ "group" : "master", "name" : "pan_state",              "type" : "state int",               "min" : 0, "max" : 11 },
+{ "group" : "master", "name" : "boot_number",            "type" : "int",        "size" : 32, "min" : 0, "max" : MAX_INT },
+{ "group" : "master", "name" : "last_uplink_time",       "type" : "gps time"},
+{ "group" : "master", "name" : "is_follower",            "type" : "bool" },
+{ "group" : "master", "name" : "docking_switch_pressed", "type" : "bool" },
 ]
 FIELDS.extend(MASTER_FIELDS)
 

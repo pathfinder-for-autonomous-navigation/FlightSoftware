@@ -54,6 +54,7 @@ FIELDS.append({"name": "ignore_overpressure", "type": "bool" })
 
 ## Actuate actuators
 FIELDS.append({ "name" : "adcs_state",         "type" : "state int", "min" : 0, "max" : 3 })
+FIELDS.append({ "name" : "adcs_gain_state",    "type" : "state int", "min" : 0, "max" : 1 })
 FIELDS.append({ "name" : "command_adcs",       "type" : "bool" })
 FIELDS.append({ "name" : "adcs_frame",         "type" : "state int", "min" : 0, "max" : 1 })
 FIELDS.append({ "name" : "adcs_attitude",      "type" : "quaternion" })

@@ -6,7 +6,7 @@
 #include <array>
 
 namespace Comms {
-  constexpr unsigned int UPLINK_SIZE_BITS = 521;
+  constexpr unsigned int UPLINK_SIZE_BITS = 522;
   struct Uplink {
     unsigned int uplink_number;
     std::array<double, 3> other_satellite_position;
@@ -64,6 +64,7 @@ namespace Comms {
     bool ignore_destabilized;
     bool ignore_overpressure;
     unsigned int adcs_state;
+    unsigned int adcs_gain_state;
     bool command_adcs;
     unsigned int adcs_frame;
     std::array<float, 4> adcs_attitude;
