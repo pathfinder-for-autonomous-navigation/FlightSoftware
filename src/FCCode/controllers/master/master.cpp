@@ -21,6 +21,14 @@ namespace RTOSTasks {
     THD_WORKING_AREA(master_controller_workingArea, 2048);
 }
 
+static void check_docking_switch() {
+    chMtxLock(&State::Hardware::docking_switch_device_lock);
+        State::write(State::Master::docking_switch_pressed,
+                     Devices::docking_switch().pressed(),
+                     master_state_lock);
+    chMtxUnlock(&State::Hardware::docking_switch_device_lock);
+}
+
 static void master_loop() {
     Master::apply_uplink_data();
 
@@ -72,6 +80,7 @@ static void master_loop() {
                 break;
                 case PANState::FOLLOWER_CLOSE_APPROACH: {
                     State::write(RTOSTasks::LoopTimes::GNC, (unsigned int) 10000, RTOSTasks::LoopTimes::gnc_looptime_lock);
+                    // TODO Check if close enough to switch to "docking" mode
                     if (Master::standby_needed()) State::write(pan_state, PANState::STANDBY, master_state_lock);
                     else ADCSControllers::point_for_close_approach();
                 }
@@ -97,9 +106,11 @@ static void master_loop() {
                     // Otherwise, apply_uplink_commands() took care of the pointing.
                 }
                 break;
-                case PANState::LEADER_CLOSE_APPROACH:
+                case PANState::LEADER_CLOSE_APPROACH: {
+                    // TODO Check if close enough to switch to "docking" mode
                     if (Master::standby_needed()) State::write(pan_state, PANState::STANDBY, master_state_lock);
                     else ADCSControllers::point_for_close_approach();
+                }
                 break;
                 case PANState::DOCKING: {
                     chMtxLock(&eeprom_lock);
@@ -109,10 +120,15 @@ static void master_loop() {
                         State::ADCS::ADCSState::ZERO_TORQUE, State::ADCS::adcs_state_lock);
                     State::write(State::Propulsion::propulsion_state, 
                         State::Propulsion::PropulsionState::DISABLED, State::Propulsion::propulsion_state_lock);
+                    chMtxLock(&State::Hardware::docking_motor_device_lock);
+                        if (State::Hardware::check_is_functional(&Devices::docking_motor()))
+                            Devices::docking_motor().dock();
+                    chMtxUnlock(&State::Hardware::docking_motor_device_lock);
 
                     unsigned int docking_timeout = Constants::read(Constants::Master::DOCKING_TIMEOUT);
                     chVTDoSetI(&Master::docking_timer, S2ST(docking_timeout), Master::stop_docking_mode, NULL);
-                    if (Devices::docking_switch().pressed() && State::Hardware::check_is_functional(&Devices::docking_switch())) {
+                    bool docking_switch_pressed = State::read(State::Master::docking_switch_pressed, master_state_lock);
+                    if (docking_switch_pressed && State::Hardware::check_is_functional(&Devices::docking_switch())) {
                         State::write(State::Master::pan_state, PANState::DOCKED, master_state_lock);
                     }
                 }
@@ -121,11 +137,12 @@ static void master_loop() {
                     chMtxLock(&eeprom_lock);
                         EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 2);
                     chMtxUnlock(&eeprom_lock);
-                    // Do nothing, just wait for ground command
+                    // Do nothing, just wait for ground commands
                 }
                 break;
                 case PANState::PAIRED: {
                     // TODO Modify ADCS gains
+                    // TODO Modify uplink struct and applicator so that they can un-modify the gains
                     State::write(pan_state, PANState::STANDBY, master_state_lock);
                 }
                 break;
@@ -235,6 +252,7 @@ void RTOSTasks::master_controller(void *args) {
     systime_t time = chVTGetSystemTimeX(); // T0
     while (true) {
         time += MS2ST(RTOSTasks::LoopTimes::MASTER);
+        check_docking_switch();
         master_loop();
         chThdSleepUntil(time);
     }

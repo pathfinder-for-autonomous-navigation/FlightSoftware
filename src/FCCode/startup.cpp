@@ -55,6 +55,11 @@ static void initialize_locks() {
     chMtxObjectInit(&State::Hardware::piksi_device_lock);
     chMtxObjectInit(&State::Hardware::gomspace_device_lock);
     chMtxObjectInit(&State::Hardware::quake_device_lock);
+    chMtxObjectInit(&State::Hardware::pressure_sensor_device_lock);
+    chMtxObjectInit(&State::Hardware::temp_sensor_inner_device_lock);
+    chMtxObjectInit(&State::Hardware::temp_sensor_outer_device_lock);
+    chMtxObjectInit(&State::Hardware::docking_motor_device_lock);
+    chMtxObjectInit(&State::Hardware::docking_switch_device_lock);
 }
 
 static void hardware_setup() {

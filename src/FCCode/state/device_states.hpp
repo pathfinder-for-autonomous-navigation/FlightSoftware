@@ -75,6 +75,16 @@ namespace Hardware {
     extern mutex_t piksi_device_lock;
     //! Protects access to Quake device. May be used by master process to rewrite device defaults.
     extern mutex_t quake_device_lock;
+    //! Protects access to device_pressure sensor.
+    extern mutex_t pressure_sensor_device_lock;
+    //! Protects access to inner tank temperature sensor.
+    extern mutex_t temp_sensor_inner_device_lock;
+    //! Protects access to outer tank temperature sensor.
+    extern mutex_t temp_sensor_outer_device_lock;
+    //! Protects access to docking motor.
+    extern mutex_t docking_motor_device_lock;
+    //! Protects access to docking switch.
+    extern mutex_t docking_switch_device_lock;
 }
 
 namespace ADCS {

@@ -54,6 +54,8 @@ namespace State {
     extern bool is_deployed; 
     //! True if this satellite is leader.
     extern bool is_follower;
+    //! True if docking switch is currently pressed down
+    extern bool docking_switch_pressed;
     //! Is set to true when safehold auto-exists. We use this to prevent
     //! standby mode from sending the system right back into safe hold after
     //! the timer expires. When processing an uplink, this flag should be set 

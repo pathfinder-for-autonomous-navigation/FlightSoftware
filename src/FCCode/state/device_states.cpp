@@ -119,6 +119,11 @@ namespace Hardware {
     mutex_t piksi_device_lock;
     mutex_t quake_device_lock;
     mutex_t gomspace_device_lock;
+    mutex_t pressure_sensor_device_lock;
+    mutex_t temp_sensor_inner_device_lock;
+    mutex_t temp_sensor_outer_device_lock;
+    mutex_t docking_motor_device_lock;
+    mutex_t docking_switch_device_lock;
 
     bool check_is_functional(Devices::Device* d) {
         bool functional = d->is_functional();

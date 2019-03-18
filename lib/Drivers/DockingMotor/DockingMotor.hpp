@@ -65,8 +65,8 @@ namespace Devices {
         //! Pin for stepping docking motor.
         unsigned char stepper_pin_;
 
-        //! Config of docking motor. True if in "docked" configuration, false if in "undocked" configuration.
-        bool config_;
+        //! True if motor in "docked" configuration, false if in "undocked" configuration.
+        bool docked_;
     };
 }
 
