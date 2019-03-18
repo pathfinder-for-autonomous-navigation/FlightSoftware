@@ -48,8 +48,11 @@ namespace Devices {
         void disable() override;
         void reset() override;
 
-        /** @brief Turn the docking motor in the opposite direction from how it previously moved. **/
-        void toggle();
+        /** @brief Turn the docking motor into the "docking" configuration. **/
+        void dock();
+
+        /** @brief Turn the docking motor into the "undocking" configuration. **/
+        void undock();
       private:
         //! I1 Pin
         unsigned char i1_pin_;
@@ -62,8 +65,8 @@ namespace Devices {
         //! Pin for stepping docking motor.
         unsigned char stepper_pin_;
 
-        //! Direction in which docking motor is currently allowed to turn.
-        unsigned char direction_;
+        //! True if motor in "docked" configuration, false if in "undocked" configuration.
+        bool docked_;
     };
 }
 

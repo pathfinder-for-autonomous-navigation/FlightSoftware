@@ -2,6 +2,7 @@
 #include "../controllers.hpp"
 #include <j8_orbit.hpp>
 #include "orbit_propagators.hpp"
+#include <tensor.hpp>
 
 using State::GNC::gnc_state_lock;
 J8Buffer scratchpad;
@@ -28,8 +29,32 @@ static void propagate_self_orbit() {
 
 static void update_rotation_quaternions() {
     // TODO update ECI to ECEF
+
+    // Compute ECI to LVLH
+    std::array<double, 3> v_raw = State::read(State::GNC::gps_velocity, State::GNC::gnc_state_lock);
+    std::array<double, 3> r_raw = State::read(State::GNC::gps_position, State::GNC::gnc_state_lock);
+    pla::Vec3f v, r;
+    for(int i = 0; i < 3; i++) v[i] = v_raw[i];
+    for(int i = 0; i < 3; i++) r[i] = r_raw[i];
     
-    // TODO compute ECI to LVLH
+    pla::Vec3f e1 = v.normalize_copy(); // v / |v|
+    pla::Vec3f e2; // (r x v)/|r x v|
+    vect_cross_mult(r.get_data(), v.get_data(), e2.get_data());
+    e2.normalize();
+    pla::Vec3f e3; // e1 x e2
+    vect_cross_mult(e1.get_data(), e2.get_data(), e3.get_data());
+    
+    pla::Mat3x3f eci_to_lvlh_dcm;
+    for(int i = 0; i < 3; i++) {
+        eci_to_lvlh_dcm[0][i] = e1[i];
+        eci_to_lvlh_dcm[2][i] = e2[i];
+        eci_to_lvlh_dcm[3][i] = e3[i];
+    }
+    pla::Vec4f eci_to_lvlh_quat;
+    quat_from_dcm(eci_to_lvlh_dcm.get_data(), eci_to_lvlh_quat.get_data());
+    std::array<float, 4> eci_to_lvlh;
+    for(int i = 0; i < 4; i++) eci_to_lvlh[i] = eci_to_lvlh_quat[i];
+    State::write(State::GNC::eci_to_lvlh, eci_to_lvlh, State::GNC::gnc_state_lock);
 }
 
 static void propagate_other_orbit() {

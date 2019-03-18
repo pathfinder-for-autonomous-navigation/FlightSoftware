@@ -13,6 +13,8 @@ namespace Propulsion {
 namespace Piksi {
   constexpr unsigned int iar_history_rate = COLLECTION_PERIOD / 10;
   constexpr unsigned int nsats_history_rate = COLLECTION_PERIOD / 10;
+  constexpr unsigned int is_float_rtk_history_rate = COLLECTION_PERIOD / 10;
+  constexpr unsigned int is_fixed_rtk_history_rate = COLLECTION_PERIOD / 10;
   constexpr unsigned int recorded_position_history_rate = COLLECTION_PERIOD / 10;
   constexpr unsigned int recorded_velocity_history_rate = COLLECTION_PERIOD / 10;
   constexpr unsigned int recorded_position_other_history_rate = COLLECTION_PERIOD / 10;

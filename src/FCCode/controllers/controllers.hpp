@@ -5,6 +5,7 @@
  */
 
 #include <ChRt.h>
+#include <rwmutex.hpp>
 #include "../debug.hpp"
 
 #ifndef TASKS_HPP_
@@ -90,6 +91,7 @@ namespace RTOSTasks {
         static constexpr unsigned int MASTER = 1000;
         //! Number of milliseconds between GNC calculation iterations
         static unsigned int GNC;
+        static rwmutex_t gnc_looptime_lock;
         //! Number of milliseconds between Piksi state controller iterations
         static constexpr unsigned int PIKSI = 100;
         //! Number of milliseconds between propulsion actuations. This is really high
@@ -97,31 +99,13 @@ namespace RTOSTasks {
         static constexpr unsigned int PROPULSION_ACTUATION_LOOP = 30000;
         //! Number of milliseconds between propulsion repressurization/firing loop iterations
         static constexpr unsigned int PROPULSION_LOOP = 1000;
-        #ifdef DEBUG
         //! Number of milliseconds between quake controller iterations
-        static constexpr unsigned int QUAKE = 5000;
-        #else
-        //! Number of milliseconds between quake controller iterations
-        static constexpr unsigned int QUAKE = 300000;
-        #endif
+        static constexpr unsigned int QUAKE = 500;
     };
-    
-    // Master-specific
-    //! Master safe hold wait process working area
-    extern THD_WORKING_AREA(safe_hold_timer_workingArea, 2048);
-    //! Master safe hold wait process
-    extern THD_FUNCTION(safe_hold_timer, arg);
-    //! Master safe hold wait process thread pointer
-    extern thread_t* safe_hold_timer_thread;
-    //! Stops safehold forcibly
-    extern void stop_safehold();
 
     // ADCS specific
     //! Threads waiting on a finish of ADCS detumbling
     extern threads_queue_t adcs_detumbled;
-
-    // Propulsion-specific
-    void disable_thruster_firing();
 }
 
 #endif

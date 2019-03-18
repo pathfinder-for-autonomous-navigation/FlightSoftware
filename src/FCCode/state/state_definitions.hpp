@@ -56,7 +56,9 @@ namespace State {
       //! Field is set by safe hold check
       bool is_functional;
       //! If true, the software ignores that this device is nonfunctional and tries to use it anyway
-      bool error_ignored; 
+      bool error_ignored;
+      //! Number of times this device has been booted up
+      unsigned int boot_count;
     };
   }
 
@@ -68,7 +70,11 @@ namespace State {
       POINTING,
       ADCS_SAFE_HOLD
     };
-
+    //! Gains can either be set for an individual satellite or a dual-configuration satellite
+    enum ADCSGainState {
+      NORMAL,
+      PAIRED
+    };
     //! Available frames for specifying a command atittude
     enum PointingFrame {
       ECI,

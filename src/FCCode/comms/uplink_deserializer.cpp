@@ -8,125 +8,125 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
   for(int i = 0; i < 32; i++) bitset_0.set(i, mes[bitset_ptr++]);
   uplink->uplink_number = Comms::expand_int(bitset_0, 0, 4294967295);
 
-  std::bitset<49> bitset_1;
-  for(int i = 0; i < 49; i++) bitset_1.set(i, mes[bitset_ptr++]);
-  Comms::expand_gps_time(bitset_1, &(uplink->uplink_timestamp));
+  std::bitset<45> bitset_1;
+  for(int i = 0; i < 45; i++) bitset_1.set(i, mes[bitset_ptr++]);
+  Comms::expand_vector(bitset_1, 6400, 7200, &(uplink->other_satellite_position));
 
   std::bitset<45> bitset_2;
   for(int i = 0; i < 45; i++) bitset_2.set(i, mes[bitset_ptr++]);
-  Comms::expand_vector(bitset_2, 6400, 7200, &(uplink->other_satellite_position));
+  Comms::expand_vector(bitset_2, 8000, 12000, &(uplink->other_satellite_velocity));
 
-  std::bitset<45> bitset_3;
-  for(int i = 0; i < 45; i++) bitset_3.set(i, mes[bitset_ptr++]);
-  Comms::expand_vector(bitset_3, 8000, 12000, &(uplink->other_satellite_velocity));
+  std::bitset<49> bitset_3;
+  for(int i = 0; i < 49; i++) bitset_3.set(i, mes[bitset_ptr++]);
+  Comms::expand_gps_time(bitset_3, &(uplink->other_satellite_timestamp));
 
-  std::bitset<49> bitset_4;
-  for(int i = 0; i < 49; i++) bitset_4.set(i, mes[bitset_ptr++]);
-  Comms::expand_gps_time(bitset_4, &(uplink->other_satellite_timestamp));
+  std::bitset<5> bitset_4;
+  for(int i = 0; i < 5; i++) bitset_4.set(i, mes[bitset_ptr++]);
+  uplink->constant_0_id = Comms::expand_int(bitset_4, 1, 19);
 
-  std::bitset<4> bitset_5;
-  for(int i = 0; i < 4; i++) bitset_5.set(i, mes[bitset_ptr++]);
-  uplink->constant_0_id = Comms::expand_int(bitset_5, 0, 11);
+  std::bitset<32> bitset_5;
+  for(int i = 0; i < 32; i++) bitset_5.set(i, mes[bitset_ptr++]);
+  uplink->constant_0_val = Comms::expand_int(bitset_5, 0, 4294967295);
 
-  std::bitset<32> bitset_6;
-  for(int i = 0; i < 32; i++) bitset_6.set(i, mes[bitset_ptr++]);
-  uplink->constant_0_val = Comms::expand_int(bitset_6, 0, 4294967295);
+  std::bitset<5> bitset_6;
+  for(int i = 0; i < 5; i++) bitset_6.set(i, mes[bitset_ptr++]);
+  uplink->constant_1_id = Comms::expand_int(bitset_6, 1, 19);
 
-  std::bitset<4> bitset_7;
-  for(int i = 0; i < 4; i++) bitset_7.set(i, mes[bitset_ptr++]);
-  uplink->constant_1_id = Comms::expand_int(bitset_7, 0, 11);
+  std::bitset<32> bitset_7;
+  for(int i = 0; i < 32; i++) bitset_7.set(i, mes[bitset_ptr++]);
+  uplink->constant_1_val = Comms::expand_int(bitset_7, 0, 4294967295);
 
-  std::bitset<32> bitset_8;
-  for(int i = 0; i < 32; i++) bitset_8.set(i, mes[bitset_ptr++]);
-  uplink->constant_1_val = Comms::expand_int(bitset_8, 0, 4294967295);
+  std::bitset<5> bitset_8;
+  for(int i = 0; i < 5; i++) bitset_8.set(i, mes[bitset_ptr++]);
+  uplink->constant_2_id = Comms::expand_int(bitset_8, 1, 19);
 
-  std::bitset<4> bitset_9;
-  for(int i = 0; i < 4; i++) bitset_9.set(i, mes[bitset_ptr++]);
-  uplink->constant_2_id = Comms::expand_int(bitset_9, 0, 11);
+  std::bitset<32> bitset_9;
+  for(int i = 0; i < 32; i++) bitset_9.set(i, mes[bitset_ptr++]);
+  uplink->constant_2_val = Comms::expand_int(bitset_9, 0, 4294967295);
 
-  std::bitset<32> bitset_10;
-  for(int i = 0; i < 32; i++) bitset_10.set(i, mes[bitset_ptr++]);
-  uplink->constant_2_val = Comms::expand_int(bitset_10, 0, 4294967295);
+  std::bitset<5> bitset_10;
+  for(int i = 0; i < 5; i++) bitset_10.set(i, mes[bitset_ptr++]);
+  uplink->constant_3_id = Comms::expand_int(bitset_10, 1, 19);
 
-  std::bitset<4> bitset_11;
-  for(int i = 0; i < 4; i++) bitset_11.set(i, mes[bitset_ptr++]);
-  uplink->constant_3_id = Comms::expand_int(bitset_11, 0, 11);
+  std::bitset<32> bitset_11;
+  for(int i = 0; i < 32; i++) bitset_11.set(i, mes[bitset_ptr++]);
+  uplink->constant_3_val = Comms::expand_int(bitset_11, 0, 4294967295);
 
-  std::bitset<32> bitset_12;
-  for(int i = 0; i < 32; i++) bitset_12.set(i, mes[bitset_ptr++]);
-  uplink->constant_3_val = Comms::expand_int(bitset_12, 0, 4294967295);
+  std::bitset<5> bitset_12;
+  for(int i = 0; i < 5; i++) bitset_12.set(i, mes[bitset_ptr++]);
+  uplink->constant_4_id = Comms::expand_int(bitset_12, 1, 19);
 
-  std::bitset<4> bitset_13;
-  for(int i = 0; i < 4; i++) bitset_13.set(i, mes[bitset_ptr++]);
-  uplink->constant_4_id = Comms::expand_int(bitset_13, 0, 11);
+  std::bitset<32> bitset_13;
+  for(int i = 0; i < 32; i++) bitset_13.set(i, mes[bitset_ptr++]);
+  uplink->constant_4_val = Comms::expand_int(bitset_13, 0, 4294967295);
 
-  std::bitset<32> bitset_14;
-  for(int i = 0; i < 32; i++) bitset_14.set(i, mes[bitset_ptr++]);
-  uplink->constant_4_val = Comms::expand_int(bitset_14, 0, 4294967295);
+  std::bitset<3> bitset_14;
+  for(int i = 0; i < 3; i++) bitset_14.set(i, mes[bitset_ptr++]);
+  uplink->master_state = Comms::expand_int(bitset_14, 0, 4);
 
-  std::bitset<3> bitset_15;
-  for(int i = 0; i < 3; i++) bitset_15.set(i, mes[bitset_ptr++]);
-  uplink->master_state = Comms::expand_int(bitset_15, 0, 4);
+  std::bitset<4> bitset_15;
+  for(int i = 0; i < 4; i++) bitset_15.set(i, mes[bitset_ptr++]);
+  uplink->pan_state = Comms::expand_int(bitset_15, 0, 11);
 
-  std::bitset<4> bitset_16;
-  for(int i = 0; i < 4; i++) bitset_16.set(i, mes[bitset_ptr++]);
-  uplink->pan_state = Comms::expand_int(bitset_16, 0, 11);
+  std::bitset<1> bitset_16;
+  for(int i = 0; i < 1; i++) bitset_16.set(i, mes[bitset_ptr++]);
+  uplink->is_follower = bitset_16[0];
 
   std::bitset<1> bitset_17;
   for(int i = 0; i < 1; i++) bitset_17.set(i, mes[bitset_ptr++]);
-  uplink->is_follower = bitset_17[0];
+  uplink->fc_hat_gomspace = bitset_17[0];
 
   std::bitset<1> bitset_18;
   for(int i = 0; i < 1; i++) bitset_18.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_gomspace = bitset_18[0];
+  uplink->fc_hat_piksi = bitset_18[0];
 
   std::bitset<1> bitset_19;
   for(int i = 0; i < 1; i++) bitset_19.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_piksi = bitset_19[0];
+  uplink->fc_hat_quake = bitset_19[0];
 
   std::bitset<1> bitset_20;
   for(int i = 0; i < 1; i++) bitset_20.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_quake = bitset_20[0];
+  uplink->fc_hat_dcdc = bitset_20[0];
 
   std::bitset<1> bitset_21;
   for(int i = 0; i < 1; i++) bitset_21.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_dcdc = bitset_21[0];
+  uplink->fc_hat_spike_and_hold = bitset_21[0];
 
   std::bitset<1> bitset_22;
   for(int i = 0; i < 1; i++) bitset_22.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_spike_and_hold = bitset_22[0];
+  uplink->fc_hat_adcs_system = bitset_22[0];
 
   std::bitset<1> bitset_23;
   for(int i = 0; i < 1; i++) bitset_23.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_adcs_system = bitset_23[0];
+  uplink->fc_hat_pressure_sensor = bitset_23[0];
 
   std::bitset<1> bitset_24;
   for(int i = 0; i < 1; i++) bitset_24.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_pressure_sensor = bitset_24[0];
+  uplink->fc_hat_temp_sensor_inner = bitset_24[0];
 
   std::bitset<1> bitset_25;
   for(int i = 0; i < 1; i++) bitset_25.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_temp_sensor_inner = bitset_25[0];
+  uplink->fc_hat_temp_sensor_outer = bitset_25[0];
 
   std::bitset<1> bitset_26;
   for(int i = 0; i < 1; i++) bitset_26.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_temp_sensor_outer = bitset_26[0];
+  uplink->fc_hat_docking_motor = bitset_26[0];
 
   std::bitset<1> bitset_27;
   for(int i = 0; i < 1; i++) bitset_27.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_docking_motor = bitset_27[0];
+  uplink->fc_hat_docking_switch = bitset_27[0];
 
   std::bitset<1> bitset_28;
   for(int i = 0; i < 1; i++) bitset_28.set(i, mes[bitset_ptr++]);
-  uplink->fc_hat_docking_switch = bitset_28[0];
+  uplink->adcs_hat_gyroscope = bitset_28[0];
 
   std::bitset<1> bitset_29;
   for(int i = 0; i < 1; i++) bitset_29.set(i, mes[bitset_ptr++]);
-  uplink->adcs_hat_gyroscope = bitset_29[0];
+  uplink->adcs_hat_magnetometer_1 = bitset_29[0];
 
   std::bitset<1> bitset_30;
   for(int i = 0; i < 1; i++) bitset_30.set(i, mes[bitset_ptr++]);
-  uplink->adcs_hat_magnetometer = bitset_30[0];
+  uplink->adcs_hat_magnetometer_2 = bitset_30[0];
 
   std::bitset<1> bitset_31;
   for(int i = 0; i < 1; i++) bitset_31.set(i, mes[bitset_ptr++]);
@@ -158,15 +158,15 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
 
   std::bitset<1> bitset_38;
   for(int i = 0; i < 1; i++) bitset_38.set(i, mes[bitset_ptr++]);
-  uplink->adcs_hat_motor_x_adc = bitset_38[0];
+  uplink->adcs_hat_adc_motor_x = bitset_38[0];
 
   std::bitset<1> bitset_39;
   for(int i = 0; i < 1; i++) bitset_39.set(i, mes[bitset_ptr++]);
-  uplink->adcs_hat_motor_y_adc = bitset_39[0];
+  uplink->adcs_hat_adc_motor_y = bitset_39[0];
 
   std::bitset<1> bitset_40;
   for(int i = 0; i < 1; i++) bitset_40.set(i, mes[bitset_ptr++]);
-  uplink->adcs_hat_motor_z_adc = bitset_40[0];
+  uplink->adcs_hat_adc_motor_z = bitset_40[0];
 
   std::bitset<1> bitset_41;
   for(int i = 0; i < 1; i++) bitset_41.set(i, mes[bitset_ptr++]);
@@ -188,72 +188,112 @@ void Comms::deserialize_uplink(const std::bitset<Comms::UPLINK_SIZE_BITS>& mes, 
   for(int i = 0; i < 1; i++) bitset_45.set(i, mes[bitset_ptr++]);
   uplink->adcs_hat_ssa_adc_5 = bitset_45[0];
 
-  std::bitset<2> bitset_46;
-  for(int i = 0; i < 2; i++) bitset_46.set(i, mes[bitset_ptr++]);
-  uplink->adcs_state = Comms::expand_int(bitset_46, 0, 3);
+  std::bitset<1> bitset_46;
+  for(int i = 0; i < 1; i++) bitset_46.set(i, mes[bitset_ptr++]);
+  uplink->vbatt_ignored = bitset_46[0];
 
   std::bitset<1> bitset_47;
   for(int i = 0; i < 1; i++) bitset_47.set(i, mes[bitset_ptr++]);
-  uplink->command_adcs = bitset_47[0];
+  uplink->cannot_pressurize_outer_tank_ignored = bitset_47[0];
 
-  std::bitset<2> bitset_48;
-  for(int i = 0; i < 2; i++) bitset_48.set(i, mes[bitset_ptr++]);
-  uplink->adcs_frame = Comms::expand_int(bitset_48, 0, 3);
+  std::bitset<1> bitset_48;
+  for(int i = 0; i < 1; i++) bitset_48.set(i, mes[bitset_ptr++]);
+  uplink->all_magnetometers_faulty_ignore = bitset_48[0];
 
-  std::bitset<29> bitset_49;
-  for(int i = 0; i < 29; i++) bitset_49.set(i, mes[bitset_ptr++]);
-  Comms::expand_quaternion(bitset_49, &(uplink->adcs_attitude));
+  std::bitset<1> bitset_49;
+  for(int i = 0; i < 1; i++) bitset_49.set(i, mes[bitset_ptr++]);
+  uplink->all_ssa_faulty_ignore = bitset_49[0];
 
   std::bitset<1> bitset_50;
   for(int i = 0; i < 1; i++) bitset_50.set(i, mes[bitset_ptr++]);
-  uplink->command_propulsion = bitset_50[0];
+  uplink->motor_x_faulty_ignore = bitset_50[0];
 
-  std::bitset<26> bitset_51;
-  for(int i = 0; i < 26; i++) bitset_51.set(i, mes[bitset_ptr++]);
-  Comms::expand_vector(bitset_51, 0, 0.005, &(uplink->firing_vector));
+  std::bitset<1> bitset_51;
+  for(int i = 0; i < 1; i++) bitset_51.set(i, mes[bitset_ptr++]);
+  uplink->motor_y_faulty_ignore = bitset_51[0];
 
-  std::bitset<49> bitset_52;
-  for(int i = 0; i < 49; i++) bitset_52.set(i, mes[bitset_ptr++]);
-  Comms::expand_gps_time(bitset_52, &(uplink->firing_time));
+  std::bitset<1> bitset_52;
+  for(int i = 0; i < 1; i++) bitset_52.set(i, mes[bitset_ptr++]);
+  uplink->motor_z_faulty_ignore = bitset_52[0];
 
   std::bitset<1> bitset_53;
   for(int i = 0; i < 1; i++) bitset_53.set(i, mes[bitset_ptr++]);
-  uplink->docking_motor_mode = bitset_53[0];
+  uplink->ignore_destabilized = bitset_53[0];
 
   std::bitset<1> bitset_54;
   for(int i = 0; i < 1; i++) bitset_54.set(i, mes[bitset_ptr++]);
-  uplink->reset_piksi = bitset_54[0];
+  uplink->ignore_overpressure = bitset_54[0];
 
-  std::bitset<1> bitset_55;
-  for(int i = 0; i < 1; i++) bitset_55.set(i, mes[bitset_ptr++]);
-  uplink->reset_quake = bitset_55[0];
+  std::bitset<2> bitset_55;
+  for(int i = 0; i < 2; i++) bitset_55.set(i, mes[bitset_ptr++]);
+  uplink->adcs_state = Comms::expand_int(bitset_55, 0, 3);
 
   std::bitset<1> bitset_56;
   for(int i = 0; i < 1; i++) bitset_56.set(i, mes[bitset_ptr++]);
-  uplink->reset_dcdc = bitset_56[0];
+  uplink->adcs_gain_state = Comms::expand_int(bitset_56, 0, 1);
 
   std::bitset<1> bitset_57;
   for(int i = 0; i < 1; i++) bitset_57.set(i, mes[bitset_ptr++]);
-  uplink->reset_spike_and_hold = bitset_57[0];
+  uplink->command_adcs = bitset_57[0];
 
   std::bitset<1> bitset_58;
   for(int i = 0; i < 1; i++) bitset_58.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_gomspace = bitset_58[0];
+  uplink->adcs_frame = Comms::expand_int(bitset_58, 0, 1);
 
-  std::bitset<1> bitset_59;
-  for(int i = 0; i < 1; i++) bitset_59.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_piksi = bitset_59[0];
+  std::bitset<29> bitset_59;
+  for(int i = 0; i < 29; i++) bitset_59.set(i, mes[bitset_ptr++]);
+  Comms::expand_quaternion(bitset_59, &(uplink->adcs_attitude));
 
   std::bitset<1> bitset_60;
   for(int i = 0; i < 1; i++) bitset_60.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_quake = bitset_60[0];
+  uplink->command_propulsion = bitset_60[0];
 
-  std::bitset<1> bitset_61;
-  for(int i = 0; i < 1; i++) bitset_61.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_adcs_system = bitset_61[0];
+  std::bitset<26> bitset_61;
+  for(int i = 0; i < 26; i++) bitset_61.set(i, mes[bitset_ptr++]);
+  Comms::expand_vector(bitset_61, 0, 0.005, &(uplink->firing_vector));
 
-  std::bitset<1> bitset_62;
-  for(int i = 0; i < 1; i++) bitset_62.set(i, mes[bitset_ptr++]);
-  uplink->power_cycle_spike_and_hold = bitset_62[0];
+  std::bitset<49> bitset_62;
+  for(int i = 0; i < 49; i++) bitset_62.set(i, mes[bitset_ptr++]);
+  Comms::expand_gps_time(bitset_62, &(uplink->firing_time));
+
+  std::bitset<1> bitset_63;
+  for(int i = 0; i < 1; i++) bitset_63.set(i, mes[bitset_ptr++]);
+  uplink->docking_motor_mode = bitset_63[0];
+
+  std::bitset<1> bitset_64;
+  for(int i = 0; i < 1; i++) bitset_64.set(i, mes[bitset_ptr++]);
+  uplink->reset_piksi = bitset_64[0];
+
+  std::bitset<1> bitset_65;
+  for(int i = 0; i < 1; i++) bitset_65.set(i, mes[bitset_ptr++]);
+  uplink->reset_quake = bitset_65[0];
+
+  std::bitset<1> bitset_66;
+  for(int i = 0; i < 1; i++) bitset_66.set(i, mes[bitset_ptr++]);
+  uplink->reset_dcdc = bitset_66[0];
+
+  std::bitset<1> bitset_67;
+  for(int i = 0; i < 1; i++) bitset_67.set(i, mes[bitset_ptr++]);
+  uplink->reset_spike_and_hold = bitset_67[0];
+
+  std::bitset<1> bitset_68;
+  for(int i = 0; i < 1; i++) bitset_68.set(i, mes[bitset_ptr++]);
+  uplink->power_cycle_gomspace = bitset_68[0];
+
+  std::bitset<1> bitset_69;
+  for(int i = 0; i < 1; i++) bitset_69.set(i, mes[bitset_ptr++]);
+  uplink->power_cycle_piksi = bitset_69[0];
+
+  std::bitset<1> bitset_70;
+  for(int i = 0; i < 1; i++) bitset_70.set(i, mes[bitset_ptr++]);
+  uplink->power_cycle_quake = bitset_70[0];
+
+  std::bitset<1> bitset_71;
+  for(int i = 0; i < 1; i++) bitset_71.set(i, mes[bitset_ptr++]);
+  uplink->power_cycle_adcs_system = bitset_71[0];
+
+  std::bitset<1> bitset_72;
+  for(int i = 0; i < 1; i++) bitset_72.set(i, mes[bitset_ptr++]);
+  uplink->power_cycle_spike_and_hold = bitset_72[0];
 
 }

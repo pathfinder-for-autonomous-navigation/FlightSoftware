@@ -28,11 +28,12 @@ FIELDS = []
 MAX_INT = 4294967295
 
 MASTER_FIELDS = [
-{ "group" : "master", "name" : "master_state",          "type" : "state int",               "min" : 0, "max" : 4 },
-{ "group" : "master", "name" : "pan_state",             "type" : "state int",               "min" : 0, "max" : 11 },
-{ "group" : "master", "name" : "boot_number",           "type" : "int",        "size" : 32, "min" : 0, "max" : MAX_INT },
-{ "group" : "master", "name" : "last_uplink_time",      "type" : "gps time"},
-{ "group" : "master", "name" : "is_follower",           "type" : "bool" },
+{ "group" : "master", "name" : "master_state",           "type" : "state int",               "min" : 0, "max" : 4 },
+{ "group" : "master", "name" : "pan_state",              "type" : "state int",               "min" : 0, "max" : 11 },
+{ "group" : "master", "name" : "boot_number",            "type" : "int",        "size" : 32, "min" : 0, "max" : MAX_INT },
+{ "group" : "master", "name" : "last_uplink_time",       "type" : "gps time"},
+{ "group" : "master", "name" : "is_follower",            "type" : "bool" },
+{ "group" : "master", "name" : "docking_switch_pressed", "type" : "bool" },
 ]
 FIELDS.extend(MASTER_FIELDS)
 
@@ -42,8 +43,23 @@ hat_fields = ["powered_on", "enabled", "is_functional", "error_ignored"]
 HAT_FIELDS = []
 for device in hat_devices:
     for field in hat_fields:
-        HAT_FIELDS.append({ "group" : "hardware", "name" : "hat.at(Devices::{0}.name()).{1}".format(device, field), "type" : "bool" })
+        HAT_FIELDS.append({ "group" : "hardware", "name" : "hat.at(&(Devices::{0}())).{1}".format(device, field), "type" : "bool" })
+for device in ["piksi", "quake", "adcs_system", "spike_and_hold"]:
+    HAT_FIELDS.append({"group" : "hardware", "name" : "hat.at(&(Devices::{0}())).boot_count".format(device), "type" : "state int", "min" : 1, "max" : 65536})
 FIELDS.extend(HAT_FIELDS)
+
+adcs_hat_devices = [
+    "gyroscope", "magnetometer_1", "magnetometer_2", "magnetorquer_x",
+    "magnetorquer_y", "magnetorquer_z", "motorpot", "motor_x", "motor_y",
+    "motor_z", "adc_motor_x", "adc_motor_y", "adc_motor_z", "ssa_adc_1",
+    "ssa_adc_2", "ssa_adc_3", "ssa_adc_4", "ssa_adc_5"
+]
+adcs_hat_fields = ["is_functional", "error_ignored"]
+ADCS_HAT_FIELDS = []
+for device in adcs_hat_devices:
+    for field in adcs_hat_fields:
+        ADCS_HAT_FIELDS.append({ "group" : "adcs", "name" : "adcs_hat.at(\"{0}\").{1}".format(device, field), "type" : "bool" })
+FIELDS.extend(ADCS_HAT_FIELDS)
 
 ADCS_FIELDS = [
 { "group" : "adcs", "name" : "adcs_state",                          "type" : "state int",                 "min" : 0, "max" : 3 },
@@ -53,7 +69,7 @@ ADCS_FIELDS = [
 { "group" : "adcs", "name" : "is_sun_vector_determination_working", "type" : "bool" },
 { "group" : "adcs", "name" : "rwa_speeds",                          "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }, #TODO
 { "group" : "adcs", "name" : "rwa_speed_cmds",                      "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }, #TODO
-{ "group" : "adcs", "name" : "rwa_ramps",                           "type" : "float vector", "size" : 29, "min" : 0, "max" : 310.2 },
+{ "group" : "adcs", "name" : "rwa_torques",                         "type" : "float vector", "size" : 29, "min" : 0, "max" : 310.2 },
 { "group" : "adcs", "name" : "rwa_speeds_rd",                       "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }, #TODO
 { "group" : "adcs", "name" : "rwa_speed_cmds_rd",                   "type" : "float vector", "size" : 50, "min" : 0, "max" : 0 }, #TODO
 { "group" : "adcs", "name" : "rwa_ramps_rd",                        "type" : "float vector", "size" : 29, "min" : 0, "max" : 310.2 },
@@ -120,6 +136,8 @@ FIELDS.extend(ADCS_HISTORY_FIELDS)
 PIKSI_HISTORY_FIELDS = []
 PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "iar_history",                     "type" : "int", "size" : 32, "buf_size" : 10, "min" : 0, "max" : MAX_INT })
 PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "nsats_history",                   "type" : "int", "size" : 5,  "buf_size" : 10,  "min" : 0, "max" : 30 })
+PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "is_float_rtk_history",            "type" : "bool", "buf_size" : 10 })
+PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "is_fixed_rtk_history",            "type" : "bool", "buf_size" : 10 })
 PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_position_history",       "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
 PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_velocity_history",       "type" : "double vector", "size" : 51, "buf_size" : 10, "min" : 8000, "max" : 12000 })
 PIKSI_HISTORY_FIELDS.append({ "group" : "piksi_history", "name" : "recorded_position_other_history", "type" : "double vector", "size" : 45, "buf_size" : 10, "min" : 6400, "max" : 7200 })
@@ -217,7 +235,7 @@ def get_statistics():
     print "Full data size: " + str(int(math.ceil(size / 8))) + " bytes"
     compressed_size = sum([field["total_size"] for field in FIELDS])
     print "Compressed data size: " + str(int(math.ceil(compressed_size / 8))) + " bytes"
-    print "Compression ratio: " + str(100 - 100 * (compressed_size + 0.0) / size)
+    print "Raw compression ratio: " + str(100 - 100 * (compressed_size + 0.0) / size)
     print "Required # of packets: " + str(
         int(math.ceil(compressed_size / 8.0 / 70)))
     print "--------------------------------"

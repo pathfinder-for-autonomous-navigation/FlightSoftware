@@ -4,22 +4,25 @@ import math
 TYPES = ["bool", "int", "state int", "float vector", "double vector", "quaternion", "gps time"]
 MAX_INT = 4294967295
 
+## Other satellite data
 FIELDS = [
     {"name" : "uplink_number",             "type" : "state int", "min" : 0, "max" : MAX_INT},
-    {"name" : "uplink_timestamp",          "type" : "gps time"},
     {"name" : "other_satellite_position",  "type" : "double vector", "size" : 45, "min" : 6400, "max" : 7200},
     {"name" : "other_satellite_velocity",  "type" : "double vector", "size" : 45, "min" : 8000, "max" : 12000},
     {"name" : "other_satellite_timestamp", "type" : "gps time" },
 ]
 
+## Constant parameters
 for x in range(0,5):
-    FIELDS.append({"name" : "constant_{0}_id".format(x),  "type" : "state int",                 "min" : 0, "max" : 11})
+    FIELDS.append({"name" : "constant_{0}_id".format(x),  "type" : "state int",                 "min" : 1, "max" : 19})
     FIELDS.append({"name" : "constant_{0}_val".format(x), "type" : "int",       "size" : 32,    "min" : 0, "max" : MAX_INT})
 
+## State parameters
 FIELDS.append({"name" : "master_state", "type" : "state int", "min" : 0, "max" : 4  })
 FIELDS.append({"name" : "pan_state",    "type" : "state int", "min" : 0, "max" : 11 })
 FIELDS.append({"name" : "is_follower",  "type" : "bool" })
 
+## HAT parameters
 hat_devices = [
     "gomspace", "piksi", "quake", "dcdc", "spike_and_hold", "adcs_system",
     "pressure_sensor", "temp_sensor_inner", "temp_sensor_outer",
@@ -28,16 +31,32 @@ hat_devices = [
 for device in hat_devices:
     FIELDS.append({"name" : "fc_hat_{0}".format(device), "type" : "bool" })
 adcs_hat_devices = [
-    "gyroscope", "magnetometer", "magnetorquer_x", "magnetorquer_y", "magnetorquer_z",
-    "motorpot", "motor_x", "motor_y", "motor_z", "motor_x_adc", "motor_y_adc", "motor_z_adc",
+    "gyroscope", "magnetometer_1", "magnetometer_2", "magnetorquer_x", "magnetorquer_y", "magnetorquer_z",
+    "motorpot", "motor_x", "motor_y", "motor_z", "adc_motor_x", "adc_motor_y", "adc_motor_z",
     "ssa_adc_1", "ssa_adc_2", "ssa_adc_3", "ssa_adc_4", "ssa_adc_5"
 ]
 for device in adcs_hat_devices:
     FIELDS.append({"name" : "adcs_hat_{0}".format(device), "type" : "bool" })
 
+## If in safe hold or standby, error ignore parameters
+# Safe hold error ignores
+FIELDS.append({"name": "vbatt_ignored",                        "type": "bool" })
+FIELDS.append({"name": "cannot_pressurize_outer_tank_ignored", "type": "bool" })
+FIELDS.append({"name": "all_magnetometers_faulty_ignore", "type": "bool"})
+FIELDS.append({"name": "all_ssa_faulty_ignore", "type": "bool"})
+FIELDS.append({"name": "motor_x_faulty_ignore", "type": "bool"})
+FIELDS.append({"name": "motor_y_faulty_ignore", "type": "bool"})
+FIELDS.append({"name": "motor_z_faulty_ignore", "type": "bool"})
+# Standby error ignores
+FIELDS.append({"name": "ignore_destabilized", "type": "bool" })
+FIELDS.append({"name": "ignore_overpressure", "type": "bool" })
+
+
+## Actuate actuators
 FIELDS.append({ "name" : "adcs_state",         "type" : "state int", "min" : 0, "max" : 3 })
+FIELDS.append({ "name" : "adcs_gain_state",    "type" : "state int", "min" : 0, "max" : 1 })
 FIELDS.append({ "name" : "command_adcs",       "type" : "bool" })
-FIELDS.append({ "name" : "adcs_frame",         "type" : "state int", "min" : 0, "max" : 3 })
+FIELDS.append({ "name" : "adcs_frame",         "type" : "state int", "min" : 0, "max" : 1 })
 FIELDS.append({ "name" : "adcs_attitude",      "type" : "quaternion" })
 
 FIELDS.append({ "name" : "command_propulsion", "type" : "bool"})
@@ -46,6 +65,7 @@ FIELDS.append({ "name" : "firing_time",        "type" : "gps time"})
 
 FIELDS.append({ "name" : "docking_motor_mode", "type" : "bool" })
 
+## Actuate power cycles and resets
 resettables = ["piksi", "quake", "dcdc", "spike_and_hold"]
 for resettable in resettables:
     FIELDS.append({ "name" : "reset_{0}".format(resettable),     "type" : "bool" })

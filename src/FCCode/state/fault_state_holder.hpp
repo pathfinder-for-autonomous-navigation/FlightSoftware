@@ -40,10 +40,23 @@ namespace FaultState {
     };
     //! Stores current faults of Gomspace system
     extern std::bitset<GOMSPACE_FAULTS::NUMBER_FAULTS> fault_bits;
-    //! Whether or not the current voltage of the battery is less than the "safe hold" threshold
-    extern bool is_safe_hold_voltage;
+    //! Whether or not a low-battery error is ignored
+    extern bool vbatt_ignored;
     //! Readers-writers lock that prevents multi-process modification of Gomspace fault state data.
     extern rwmutex_t gomspace_faults_state_lock;
+  }
+
+  namespace ADCS {
+    //! Ignore error for all magnetometers failing
+    extern bool all_magnetometers_faulty_ignore;
+    //! Ignore error for all sun sensors failing
+    extern bool all_ssa_faulty_ignore;
+    //! Ignore error for motors failing
+    extern bool motor_x_faulty_ignore;
+    extern bool motor_y_faulty_ignore;
+    extern bool motor_z_faulty_ignore;
+    //! Readers-writers lock that prevents multi-process modification of ADCS fault state data.
+    extern rwmutex_t adcs_faults_state_lock;
   }
 
   namespace Propulsion {
@@ -61,6 +74,8 @@ namespace FaultState {
     extern gps_time_t destabilization_event;
     //! If true, we are unable to pressurize the outer tank up to the requisite pressure for a firing.
     extern bool cannot_pressurize_outer_tank;
+    //! Ignore leaking error.
+    extern bool cannot_pressurize_outer_tank_ignored;
     //! Readers-writers lock that prevents multi-process modification of propulsion fault state data.
     extern rwmutex_t propulsion_faults_state_lock;
   }

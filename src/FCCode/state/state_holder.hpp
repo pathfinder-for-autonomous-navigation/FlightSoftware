@@ -54,11 +54,13 @@ namespace State {
     extern bool is_deployed; 
     //! True if this satellite is leader.
     extern bool is_follower;
+    //! True if docking switch is currently pressed down
+    extern bool docking_switch_pressed;
     //! Is set to true when safehold auto-exists. We use this to prevent
     //! standby mode from sending the system right back into safe hold after
     //! the timer expires. When processing an uplink, this flag should be set 
     //! to false so that we can reenter safe hold when an error occurs.
-    extern bool autoexited_safe_hold; // TODO set to false in uplink processor
+    extern bool autoexited_safe_hold;
     //! Readers-writers lock that prevents multi-process modification of the master state.
     extern rwmutex_t master_state_lock;
   }
@@ -92,8 +94,8 @@ namespace State {
     extern std::array<float, 3> rwa_speed_cmds; 
     //! Most recent reaction wheel speeds
     extern std::array<float, 3> rwa_speeds; 
-    //! Most recent reaction wheel ramp values
-    extern std::array<float, 3> rwa_ramps;
+    //! Most recent reaction wheel torque command values
+    extern std::array<float, 3> rwa_torques;
     //! Most recent reaction wheel speed commands, as read from ADCS
     extern std::array<float, 3> rwa_speed_cmds_rd; 
     //! Most recent reaction wheel speeds, as read from ADCS
@@ -163,6 +165,10 @@ namespace State {
     extern gps_time_t recorded_gps_velocity_time;
     //! Number of satellites used in velocity determination.
     extern unsigned char recorded_gps_velocity_nsats;
+    //! If RTK positioning is being used but is floating.
+    extern bool is_float_rtk;
+    //! If RTK positioning is being used and is fixed.
+    extern bool is_fixed_rtk;
     //! Readers-writers lock that prevents multi-process modification of Piksi state data.
     extern rwmutex_t piksi_state_lock;
   }
@@ -177,9 +183,9 @@ namespace State {
     //! Most recent GPS velocity of other satellite, as last obtained from the orbit propagator.
     extern std::array<double, 3> gps_velocity_other;
     //! Quaternion representing rotation from ECEF to ECI.
-    extern std::array<double, 4> ecef_to_eci;
+    extern std::array<float, 4> ecef_to_eci;
     //! Quaternion representing rotation from ECI to LVLH.
-    extern std::array<double, 4> eci_to_lvlh;
+    extern std::array<float, 4> eci_to_lvlh;
     //! Current propagated GPS time. Propagation occurs on each call of current_time(). 
     // This field needs to be updated every time GPS time is actually collected.
     extern gps_time_t current_time;
@@ -187,15 +193,7 @@ namespace State {
     // This field needs to be updated every time GPS time is actually collected.
     extern systime_t time_collection_timestamp;
     //! Function to report (propagated) current time.
-    inline gps_time_t get_current_time() {
-      systime_t current_systime = chVTGetSystemTimeX();
-      systime_t systime_delta = current_systime - time_collection_timestamp;
-      time_collection_timestamp = current_systime;
-      rwMtxRLock(&State::Piksi::piksi_state_lock);
-        current_time = current_time + MS2ST(systime_delta);
-      rwMtxRUnlock(&State::Piksi::piksi_state_lock);
-      return current_time;
-    }
+    gps_time_t get_current_time();
     //! Tracks whether or not a firing has happened during the current nighttime period.
     extern bool has_firing_happened_in_nighttime;
     //! Readers-writers lock that prevents multi-process modification of GNC state data.
@@ -203,16 +201,22 @@ namespace State {
   }
 
   namespace Quake {
+    //! Readers-writers lock that prevents multi-process modification of Quake state data.
+    extern rwmutex_t quake_state_lock;
+
     //! Struct containing most recent uplink data received by satellite
     extern Comms::Uplink most_recent_uplink;
-    //! Time at which an uplink was received by the satellite
-    extern gps_time_t uplink_time_received;
+    //! Last time at which an sbdix was successfully completed by the satellite. Used in order
+    // to determine fault condition.
+    extern gps_time_t sbdix_time_received;
+    inline unsigned int msec_since_last_sbdix() {
+      return (unsigned int) (State::GNC::get_current_time()
+                              - State::read(sbdix_time_received, quake_state_lock));
+    }
     //! Readers-writers lock that prevents multi-process modification of most recent uplink
     extern rwmutex_t uplink_lock;
     //! State of finite state machine that controls the Quake controller
     extern QuakeState quake_state;
-    //! Readers-writers lock that prevents multi-process modification of Quake state data.
-    extern rwmutex_t quake_state_lock;
 
     //! Maximum number of data packets to store in history.
     // TODO store most recent packets in Piksi as well.

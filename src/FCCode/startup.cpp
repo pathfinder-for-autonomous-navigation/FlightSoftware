@@ -11,12 +11,13 @@
 #include <rt/chvt.h>
 #include <EEPROM.h>
 #include "controllers/controllers.hpp"
+#include "controllers/constants.hpp"
 #include "state/EEPROMAddresses.hpp"
 #include "state/state_holder.hpp"
+#include "state/fault_state_holder.hpp"
 #include <rwmutex.hpp>
 #include "debug.hpp"
 #include "deployment_timer.hpp"
-#include "startup.hpp"
 
 thread_t* deployment_timer_thread;
 namespace RTOSTasks {
@@ -30,18 +31,49 @@ namespace RTOSTasks {
 }
 using namespace RTOSTasks;
 
-void hardware_setup() {
+static void initialize_locks() {
+    // Initialize all state locks
+    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
+    rwMtxObjectInit(&State::Master::master_state_lock);
+    rwMtxObjectInit(&State::ADCS::adcs_state_lock);
+    rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
+    rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
+    rwMtxObjectInit(&State::GNC::gnc_state_lock);
+    rwMtxObjectInit(&State::Piksi::piksi_state_lock);
+    rwMtxObjectInit(&State::Quake::quake_state_lock);
+    rwMtxObjectInit(&State::Quake::uplink_lock);
+    rwMtxObjectInit(&Constants::changeable_constants_lock);
+    rwMtxObjectInit(&RTOSTasks::LoopTimes::gnc_looptime_lock);
+    rwMtxObjectInit(&FaultState::Propulsion::propulsion_faults_state_lock);
+    rwMtxObjectInit(&FaultState::Gomspace::gomspace_faults_state_lock);
+    rwMtxObjectInit(&FaultState::ADCS::adcs_faults_state_lock);
+    // Initialize all device locks
+    chMtxObjectInit(&eeprom_lock);
+    chMtxObjectInit(&State::Hardware::adcs_device_lock);
+    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
+    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
+    chMtxObjectInit(&State::Hardware::piksi_device_lock);
+    chMtxObjectInit(&State::Hardware::gomspace_device_lock);
+    chMtxObjectInit(&State::Hardware::quake_device_lock);
+    chMtxObjectInit(&State::Hardware::pressure_sensor_device_lock);
+    chMtxObjectInit(&State::Hardware::temp_sensor_inner_device_lock);
+    chMtxObjectInit(&State::Hardware::temp_sensor_outer_device_lock);
+    chMtxObjectInit(&State::Hardware::docking_motor_device_lock);
+    chMtxObjectInit(&State::Hardware::docking_switch_device_lock);
+}
+
+static void hardware_setup() {
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
 
     debug_println("Initializing hardware buses.");
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM); // Gomspace
 
     debug_println("Initializing hardware peripherals.");
-    for (auto device : State::Hardware::devices) {
-        Devices::Device& dptr = device.second;
-        debug_printf("Setting up device: %s...", device.first.c_str());
-        dptr.setup();
-        if (dptr.is_functional()) {
+    for (auto device : State::Hardware::hat) {
+        Devices::Device* dptr = device.first;
+        debug_printf("Setting up device: %s...", dptr->name().c_str());
+        dptr->setup();
+        if (dptr->is_functional()) {
             debug_printf_headless("setup was successful!\n");
             State::write((State::Hardware::hat).at(device.first).powered_on, true, State::Hardware::hardware_state_lock);
             State::write((State::Hardware::hat).at(device.first).is_functional, true, State::Hardware::hardware_state_lock);
@@ -59,10 +91,6 @@ static void start_satellite_processes() {
     debug_println("Starting Gomspace controller process.");
     gomspace_thread = chThdCreateStatic(gomspace_controller_workingArea, sizeof(gomspace_controller_workingArea), 
         gomspace_thread_priority, gomspace_controller, NULL);
-
-    debug_println("Starting master controller process.");
-    master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
-        master_thread_priority, master_controller, NULL);
     
     debug_println("Starting Piksi controller process.");
     piksi_thread = chThdCreateStatic(piksi_controller_workingArea, sizeof(piksi_controller_workingArea), 
@@ -79,6 +107,10 @@ static void start_satellite_processes() {
     debug_println("Starting Quake radio controller process.");
     quake_thread = chThdCreateStatic(quake_controller_workingArea, sizeof(quake_controller_workingArea), 
         quake_thread_priority, quake_controller, NULL);
+    
+    debug_println("Starting master controller process.");
+    master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
+        master_thread_priority, master_controller, NULL);
 
     #ifdef DEBUG
     (void)chThdCreateStatic(debug_workingArea, sizeof(debug_workingArea), NORMALPRIO, debug_function, NULL);
@@ -91,31 +123,14 @@ void pan_system_setup() {
     #ifdef DEBUG
         debug_begin();
         print_pan_logo();
-        debug_println_headless(""); debug_println_headless("");
+        debug_println_headless("");
         debug_println_headless("Satellite is booting up...");
         debug_println_headless("");
         debug_eeprom_initialization();
     #endif
 
     debug_println("Startup process has begun.");
-    // Initialize all state locks
-    chMtxObjectInit(&eeprom_lock);
-    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
-    rwMtxObjectInit(&State::Master::master_state_lock);
-    rwMtxObjectInit(&State::ADCS::adcs_state_lock);
-    rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
-    rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
-    rwMtxObjectInit(&State::GNC::gnc_state_lock);
-    rwMtxObjectInit(&State::Piksi::piksi_state_lock);
-    rwMtxObjectInit(&State::Quake::quake_state_lock);
-    rwMtxObjectInit(&State::Quake::uplink_lock);
-    // Initialize all device locks
-    chMtxObjectInit(&State::Hardware::adcs_device_lock);
-    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
-    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
-    chMtxObjectInit(&State::Hardware::piksi_device_lock);
-    chMtxObjectInit(&State::Hardware::gomspace_device_lock);
-    chMtxObjectInit(&State::Hardware::quake_device_lock);
+    initialize_locks();
 
     // Determining boot count
     chMtxLock(&eeprom_lock);
@@ -141,6 +156,15 @@ void pan_system_setup() {
 
     debug_println("System setup is complete.");
     debug_println("Process terminating.");
+    chThdExit((msg_t)0);
+
+    pinMode(13, OUTPUT);
+    while(true) {
+      digitalWrite(13, HIGH);
+      delay(500);
+      digitalWrite(13, LOW);
+      delay(500);
+    }
     chThdExit((msg_t)0);
 }
 

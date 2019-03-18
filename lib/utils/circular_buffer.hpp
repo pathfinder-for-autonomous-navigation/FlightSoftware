@@ -3,8 +3,6 @@
 
 #include <static_buffer.hpp>
 
-// TODO test
-
 /** @brief An statically-allocated circular buffer data structure. 
  * Useful for downlink data storage since it prevents heap fragmentation whilst providing queue functionality. 
 **/

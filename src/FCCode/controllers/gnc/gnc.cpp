@@ -7,6 +7,7 @@
 namespace RTOSTasks {
     THD_WORKING_AREA(gnc_controller_workingArea, 2048);
     unsigned int LoopTimes::GNC = 60000;
+    rwmutex_t LoopTimes::gnc_looptime_lock;
 }
 
 using State::Propulsion::propulsion_state_lock;
@@ -24,7 +25,8 @@ static void gnc_calculation() {
     if ((unsigned int) (firing_time - State::GNC::get_current_time()) > Constants::Master::ORBIT_PERIOD_MS)
         is_valid_firing = false;
 
-    bool is_not_standby = State::read(State::Master::pan_state, State::Master::master_state_lock) != State::Master::PANState::STANDBY;
+    State::Master::PANState pan_state = State::read(State::Master::pan_state, State::Master::master_state_lock);
+    bool is_not_standby = pan_state != State::Master::PANState::STANDBY;
     if (is_valid_firing && is_not_standby) {
         State::write(State::Propulsion::firing_data.impulse_vector, firing_vector, propulsion_state_lock);
         State::write(State::Propulsion::firing_data.time, firing_time, propulsion_state_lock);
