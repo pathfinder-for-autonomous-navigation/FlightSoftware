@@ -41,8 +41,6 @@ static void quake_loop() {
     // Power cycle Quake if failing. Do this for as many times as it takes for the device
     // to start talking again.
     if (!State::Hardware::check_is_functional(&quake()) && Gomspace::quake_thread == NULL) {
-        // Increment counter for cycling
-        State::Hardware::increment_boot_count(&quake());
         // Specify arguments for thread
         Gomspace::cycler_arg_t cycler_args = {
             &State::Hardware::quake_device_lock,

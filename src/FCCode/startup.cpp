@@ -14,6 +14,7 @@
 #include "controllers/constants.hpp"
 #include "state/EEPROMAddresses.hpp"
 #include "state/state_holder.hpp"
+#include "state/fault_state_holder.hpp"
 #include <rwmutex.hpp>
 #include "debug.hpp"
 #include "deployment_timer.hpp"
@@ -43,6 +44,9 @@ static void initialize_locks() {
     rwMtxObjectInit(&State::Quake::uplink_lock);
     rwMtxObjectInit(&Constants::changeable_constants_lock);
     rwMtxObjectInit(&RTOSTasks::LoopTimes::gnc_looptime_lock);
+    rwMtxObjectInit(&FaultState::Propulsion::propulsion_faults_state_lock);
+    rwMtxObjectInit(&FaultState::Gomspace::gomspace_faults_state_lock);
+    rwMtxObjectInit(&FaultState::ADCS::adcs_faults_state_lock);
     // Initialize all device locks
     chMtxObjectInit(&eeprom_lock);
     chMtxObjectInit(&State::Hardware::adcs_device_lock);
@@ -51,6 +55,11 @@ static void initialize_locks() {
     chMtxObjectInit(&State::Hardware::piksi_device_lock);
     chMtxObjectInit(&State::Hardware::gomspace_device_lock);
     chMtxObjectInit(&State::Hardware::quake_device_lock);
+    chMtxObjectInit(&State::Hardware::pressure_sensor_device_lock);
+    chMtxObjectInit(&State::Hardware::temp_sensor_inner_device_lock);
+    chMtxObjectInit(&State::Hardware::temp_sensor_outer_device_lock);
+    chMtxObjectInit(&State::Hardware::docking_motor_device_lock);
+    chMtxObjectInit(&State::Hardware::docking_switch_device_lock);
 }
 
 static void hardware_setup() {
@@ -82,10 +91,6 @@ static void start_satellite_processes() {
     debug_println("Starting Gomspace controller process.");
     gomspace_thread = chThdCreateStatic(gomspace_controller_workingArea, sizeof(gomspace_controller_workingArea), 
         gomspace_thread_priority, gomspace_controller, NULL);
-
-    debug_println("Starting master controller process.");
-    master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
-        master_thread_priority, master_controller, NULL);
     
     debug_println("Starting Piksi controller process.");
     piksi_thread = chThdCreateStatic(piksi_controller_workingArea, sizeof(piksi_controller_workingArea), 
@@ -102,6 +107,10 @@ static void start_satellite_processes() {
     debug_println("Starting Quake radio controller process.");
     quake_thread = chThdCreateStatic(quake_controller_workingArea, sizeof(quake_controller_workingArea), 
         quake_thread_priority, quake_controller, NULL);
+    
+    debug_println("Starting master controller process.");
+    master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
+        master_thread_priority, master_controller, NULL);
 
     #ifdef DEBUG
     (void)chThdCreateStatic(debug_workingArea, sizeof(debug_workingArea), NORMALPRIO, debug_function, NULL);

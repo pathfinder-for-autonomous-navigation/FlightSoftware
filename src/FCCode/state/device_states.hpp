@@ -58,8 +58,6 @@ namespace Hardware {
     bool check_is_functional(Devices::Device* d);
     //! Returns state of device stored in HAVT table
     bool is_functional(Devices::Device* d);
-    //! Increments boot count (stored in HAVT) for specified device.
-    void increment_boot_count(Devices::Device* d);
     //! Maps devices to the corresponding power output.
     extern std::map<Devices::Device*, unsigned char> power_outputs;
     //! Readers-writers lock that prevents multi-process modification of hardware availability table data.
@@ -77,6 +75,16 @@ namespace Hardware {
     extern mutex_t piksi_device_lock;
     //! Protects access to Quake device. May be used by master process to rewrite device defaults.
     extern mutex_t quake_device_lock;
+    //! Protects access to device_pressure sensor.
+    extern mutex_t pressure_sensor_device_lock;
+    //! Protects access to inner tank temperature sensor.
+    extern mutex_t temp_sensor_inner_device_lock;
+    //! Protects access to outer tank temperature sensor.
+    extern mutex_t temp_sensor_outer_device_lock;
+    //! Protects access to docking motor.
+    extern mutex_t docking_motor_device_lock;
+    //! Protects access to docking switch.
+    extern mutex_t docking_switch_device_lock;
 }
 
 namespace ADCS {

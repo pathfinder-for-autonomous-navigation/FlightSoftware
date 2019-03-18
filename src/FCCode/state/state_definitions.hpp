@@ -70,7 +70,11 @@ namespace State {
       POINTING,
       ADCS_SAFE_HOLD
     };
-
+    //! Gains can either be set for an individual satellite or a dual-configuration satellite
+    enum ADCSGainState {
+      NORMAL,
+      PAIRED
+    };
     //! Available frames for specifying a command atittude
     enum PointingFrame {
       ECI,

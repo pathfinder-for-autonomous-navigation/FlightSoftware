@@ -17,6 +17,7 @@ namespace State {
         bool was_last_uplink_valid = false;
         bool is_deployed = false;
         bool is_follower = false;
+        bool docking_switch_pressed = false;
         bool autoexited_safe_hold = false;
         rwmutex_t master_state_lock;
     }

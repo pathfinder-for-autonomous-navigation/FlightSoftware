@@ -119,6 +119,11 @@ namespace Hardware {
     mutex_t piksi_device_lock;
     mutex_t quake_device_lock;
     mutex_t gomspace_device_lock;
+    mutex_t pressure_sensor_device_lock;
+    mutex_t temp_sensor_inner_device_lock;
+    mutex_t temp_sensor_outer_device_lock;
+    mutex_t docking_motor_device_lock;
+    mutex_t docking_switch_device_lock;
 
     bool check_is_functional(Devices::Device* d) {
         bool functional = d->is_functional();
@@ -134,36 +139,12 @@ namespace Hardware {
         rwMtxRUnlock(&hardware_state_lock);
         return functional;
     }
-
-    void increment_boot_count(Devices::Device* d) {
-        rwMtxWLock(&hardware_state_lock);
-            hat.at(d).boot_count = hat.at(d).boot_count++;
-        rwMtxWUnlock(&hardware_state_lock);
-        chMtxLock(&eeprom_lock);
-            unsigned int boot_count;
-            if (d == &Devices::piksi()) {
-                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, boot_count);
-                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, boot_count++);
-            }
-            else if (d == &Devices::quake()) {
-                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, boot_count);
-                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, boot_count++);
-            }
-            else if (d == &Devices::adcs_system()) {
-                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, boot_count);
-                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, boot_count++);
-            }
-            else if (d == &Devices::spike_and_hold()) {
-                EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, boot_count);
-                EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, boot_count++);
-            }
-        chMtxUnlock(&eeprom_lock);
-    }
 }
 
 namespace ADCS {
-    static Hardware::DeviceState adcs_gyro_state = {false, false, false, false, 1};
-    static Hardware::DeviceState adcs_magnetometer_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_gyroscope_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_magnetometer_1_state = {false, false, false, false, 1};
+    static Hardware::DeviceState adcs_magnetometer_2_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_magnetorquer_x_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_magnetorquer_y_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_magnetorquer_z_state = {false, false, false, false, 1};
@@ -180,8 +161,9 @@ namespace ADCS {
     static Hardware::DeviceState adcs_ssa_adc_4_state = {false, false, false, false, 1};
     static Hardware::DeviceState adcs_ssa_adc_5_state = {false, false, false, false, 1};
     std::map<std::string, Hardware::DeviceState> adcs_hat {
-        {"gyroscope", adcs_gyro_state},
-        {"magnetometer", adcs_magnetometer_state},
+        {"gyroscope", adcs_gyroscope_state},
+        {"magnetometer_1", adcs_magnetometer_1_state},
+        {"magnetometer_2", adcs_magnetometer_2_state},
         {"magnetorquer_x", adcs_magnetorquer_x_state},
         {"magnetorquer_y", adcs_magnetorquer_y_state},
         {"magnetorquer_z", adcs_magnetorquer_z_state},

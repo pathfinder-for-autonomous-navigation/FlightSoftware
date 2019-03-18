@@ -44,8 +44,8 @@ static void read_adcs_data() {
     rwMtxRUnlock(&State::GNC::gnc_state_lock);
     
     std::array<float, 3> rwa_speed_cmds_rd, rwa_ramps_rd, rwa_speeds_rd, gyro_data, mag_data;
-    adcs_system().get_rwa(rwa_speed_cmds_rd.data(), ADCSControllers::Estimator::hwheel_sensor_body, rwa_ramps_rd.data());
-    adcs_system().get_imu(ADCSControllers::Estimator::rate_sensor_body, ADCSControllers::Estimator::magfield_sensor_body);
+    adcs_system().get_rwa(rwa_speed_cmds_rd.data(), ADCSControllers::Estimator::hwheel_sensor_body.data(), rwa_ramps_rd.data());
+    adcs_system().get_imu(ADCSControllers::Estimator::rate_sensor_body.data(), ADCSControllers::Estimator::magfield_sensor_body.data());
     for(int i = 0; i < 3; i++) rwa_speeds_rd[i] = ADCSControllers::Estimator::hwheel_sensor_body[i];
     for(int i = 0; i < 3; i++) gyro_data[i] = ADCSControllers::Estimator::rate_sensor_body[i];
     for(int i = 0; i < 3; i++) mag_data[i] = ADCSControllers::Estimator::magfield_sensor_body[i];
@@ -57,7 +57,7 @@ static void read_adcs_data() {
 
     std::array<float, 3> ssa_vec;
     if (ssa_mode == SSAMode::IN_PROGRESS) {
-        adcs_system().get_ssa(ssa_mode, ADCSControllers::Estimator::sun2sat_sensor_body);
+        adcs_system().get_ssa(ssa_mode, ADCSControllers::Estimator::sun2sat_sensor_body.data());
         rwMtxWLock(&State::ADCS::adcs_state_lock);
             for(int i = 0; i < 3; i++) State::ADCS::ssa_vec[i] = ADCSControllers::Estimator::sun2sat_sensor_body[i];
         rwMtxWLock(&State::ADCS::adcs_state_lock);
@@ -120,8 +120,6 @@ static THD_FUNCTION(adcs_loop, arg) {
         // If ADCS isn't working, power-cycle it. Do this for as many times as it takes for the device
         // to start talking again.
         if (!State::Hardware::check_is_functional(&adcs_system()) && Gomspace::adcs_system_thread == NULL) {
-            // Increment counter for cycling
-            State::Hardware::increment_boot_count(&adcs_system());
             // Specify arguments for thread
             Gomspace::cycler_arg_t cycler_args = {
                 &State::Hardware::adcs_device_lock,
@@ -192,14 +190,14 @@ static THD_FUNCTION(adcs_loop, arg) {
                         else
                             cmd_attitude_eci = State::read(State::ADCS::cmd_attitude, adcs_state_lock);
                         
-                        quat_rot_diff(cmd_attitude_eci.data(), State::ADCS::cur_attitude.data(), AttitudePD::deltaquat);
+                        quat_rot_diff(cmd_attitude_eci.data(), State::ADCS::cur_attitude.data(), AttitudePD::deltaquat.data());
                         for(int i = 0; i < 3; i++) AttitudePD::angrate[i] = State::ADCS::cur_ang_rate[i];
                     rwMtxRUnlock(&adcs_state_lock);
                     AttitudePD::update();
                     rwMtxWLock(&adcs_state_lock);
                         for(int i = 0; i < 3; i++) State::ADCS::rwa_torques[i] = AttitudePD::torque[i];
                     rwMtxWUnlock(&adcs_state_lock);
-                    adcs_system().set_rwa_mode(RWAMode::ACCEL_CTRL, AttitudePD::torque);
+                    adcs_system().set_rwa_mode(RWAMode::ACCEL_CTRL, AttitudePD::torque.data());
                 }
                 break;
                 case ADCSState::ADCS_SAFE_HOLD: {

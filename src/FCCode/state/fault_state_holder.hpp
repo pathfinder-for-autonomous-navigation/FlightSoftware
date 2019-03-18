@@ -46,6 +46,19 @@ namespace FaultState {
     extern rwmutex_t gomspace_faults_state_lock;
   }
 
+  namespace ADCS {
+    //! Ignore error for all magnetometers failing
+    extern bool all_magnetometers_faulty_ignore;
+    //! Ignore error for all sun sensors failing
+    extern bool all_ssa_faulty_ignore;
+    //! Ignore error for motors failing
+    extern bool motor_x_faulty_ignore;
+    extern bool motor_y_faulty_ignore;
+    extern bool motor_z_faulty_ignore;
+    //! Readers-writers lock that prevents multi-process modification of ADCS fault state data.
+    extern rwmutex_t adcs_faults_state_lock;
+  }
+
   namespace Propulsion {
     //! GPS time of when an overpressure event occurred.
     extern gps_time_t overpressure_event;

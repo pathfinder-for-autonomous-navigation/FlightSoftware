@@ -31,7 +31,7 @@ bool Master::standby_needed() {
         return true;
     }
 
-    // Check propulsion issues
+    // Check if propulsion issues happened
     if (!State::read(FaultState::Propulsion::destabilization_event.is_not_set, 
             FaultState::Propulsion::propulsion_faults_state_lock))
         return true;

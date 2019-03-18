@@ -29,7 +29,6 @@ static THD_FUNCTION(power_cycler, args) {
             &Devices::adcs_system(),
             Devices::Gomspace::DEVICE_PINS::ADCS
         };
-        State::Hardware::increment_boot_count(&Devices::adcs_system());
         if (Gomspace::adcs_system_thread == NULL)
             Gomspace::adcs_system_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
                 "POWER CYCLE ADCS", 
@@ -42,7 +41,6 @@ static THD_FUNCTION(power_cycler, args) {
             &Devices::spike_and_hold(),
             Devices::Gomspace::DEVICE_PINS::SPIKE_AND_HOLD
         };
-        State::Hardware::increment_boot_count(&Devices::spike_and_hold());
         if (Gomspace::spike_and_hold_thread == NULL)
             Gomspace::spike_and_hold_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
                 "POWER CYCLE SPIKE AND HOLD", 
@@ -55,7 +53,6 @@ static THD_FUNCTION(power_cycler, args) {
             &Devices::piksi(),
             Devices::Gomspace::DEVICE_PINS::PIKSI
         };
-        State::Hardware::increment_boot_count(&Devices::piksi());
         if (Gomspace::piksi_thread == NULL)
             Gomspace::piksi_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
                 "POWER CYCLE PIKSI", 
@@ -68,7 +65,6 @@ static THD_FUNCTION(power_cycler, args) {
             &Devices::quake(),
             Devices::Gomspace::DEVICE_PINS::QUAKE
         };
-        State::Hardware::increment_boot_count(&Devices::quake());
         if (Gomspace::quake_thread == NULL)
             Gomspace::quake_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
                 "POWER CYCLE QUAKE",
@@ -150,17 +146,26 @@ void Master::apply_uplink_commands() {
     }
 
     // Write "ignore error" bits
-    State::write(FaultState::Propulsion::cannot_pressurize_outer_tank_ignored, 
-                    uplink.cannot_pressurize_outer_tank_ignored, 
-                    FaultState::Propulsion::propulsion_faults_state_lock);
+    rwMtxWLock(&FaultState::Propulsion::propulsion_faults_state_lock);
+        FaultState::Propulsion::cannot_pressurize_outer_tank_ignored = uplink.cannot_pressurize_outer_tank_ignored;
+        FaultState::Propulsion::destabilization_event.is_not_set = uplink.ignore_destabilized;
+        FaultState::Propulsion::overpressure_event.is_not_set = uplink.ignore_overpressure;
+    rwMtxWUnlock(&FaultState::Propulsion::propulsion_faults_state_lock);
     State::write(FaultState::Gomspace::vbatt_ignored, 
                     uplink.vbatt_ignored, 
                     FaultState::Gomspace::gomspace_faults_state_lock);
+    rwMtxWLock(&FaultState::ADCS::adcs_faults_state_lock);
+        FaultState::ADCS::all_magnetometers_faulty_ignore = uplink.all_magnetometers_faulty_ignore;
+        FaultState::ADCS::all_ssa_faulty_ignore = uplink.all_ssa_faulty_ignore;
+        FaultState::ADCS::motor_x_faulty_ignore = uplink.motor_x_faulty_ignore;
+        FaultState::ADCS::motor_y_faulty_ignore = uplink.motor_y_faulty_ignore;
+        FaultState::ADCS::motor_z_faulty_ignore = uplink.motor_z_faulty_ignore;
+    rwMtxWLock(&FaultState::ADCS::adcs_faults_state_lock);
 
     // Command state
     State::write(State::Master::master_state, ms, State::Master::master_state_lock);
     State::write(State::Master::pan_state, ps, State::Master::master_state_lock);
-    
+
     // ADCS
     State::ADCS::ADCSState as = (State::ADCS::ADCSState) uplink.adcs_state;
     if (is_standby) {
@@ -169,6 +174,13 @@ void Master::apply_uplink_commands() {
         State::ADCS::PointingFrame frame = (State::ADCS::PointingFrame) uplink.adcs_frame;                                            
         State::write(State::ADCS::cmd_attitude, cmd_attitude, State::ADCS::adcs_state_lock);
         State::write(State::ADCS::cmd_attitude_frame, frame, State::ADCS::adcs_state_lock);
+    }
+    State::ADCS::ADCSGainState gain_state = (State::ADCS::ADCSGainState) uplink.adcs_gain_state;
+    if (gain_state == State::ADCS::ADCSGainState::NORMAL) {
+        // TODO set gains
+    }
+    else if (gain_state == State::ADCS::ADCSGainState::PAIRED) {
+        // TODO set gains   
     }
 
     // Propulsion

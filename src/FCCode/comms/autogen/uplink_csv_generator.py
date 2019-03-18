@@ -31,21 +31,32 @@ hat_devices = [
 for device in hat_devices:
     FIELDS.append({"name" : "fc_hat_{0}".format(device), "type" : "bool" })
 adcs_hat_devices = [
-    "gyroscope", "magnetometer", "magnetorquer_x", "magnetorquer_y", "magnetorquer_z",
+    "gyroscope", "magnetometer_1", "magnetometer_2", "magnetorquer_x", "magnetorquer_y", "magnetorquer_z",
     "motorpot", "motor_x", "motor_y", "motor_z", "adc_motor_x", "adc_motor_y", "adc_motor_z",
     "ssa_adc_1", "ssa_adc_2", "ssa_adc_3", "ssa_adc_4", "ssa_adc_5"
 ]
 for device in adcs_hat_devices:
     FIELDS.append({"name" : "adcs_hat_{0}".format(device), "type" : "bool" })
 
-## If in safe hold, error ignore parameters
+## If in safe hold or standby, error ignore parameters
+# Safe hold error ignores
 FIELDS.append({"name": "vbatt_ignored",                        "type": "bool" })
 FIELDS.append({"name": "cannot_pressurize_outer_tank_ignored", "type": "bool" })
+FIELDS.append({"name": "all_magnetometers_faulty_ignore", "type": "bool"})
+FIELDS.append({"name": "all_ssa_faulty_ignore", "type": "bool"})
+FIELDS.append({"name": "motor_x_faulty_ignore", "type": "bool"})
+FIELDS.append({"name": "motor_y_faulty_ignore", "type": "bool"})
+FIELDS.append({"name": "motor_z_faulty_ignore", "type": "bool"})
+# Standby error ignores
+FIELDS.append({"name": "ignore_destabilized", "type": "bool" })
+FIELDS.append({"name": "ignore_overpressure", "type": "bool" })
+
 
 ## Actuate actuators
 FIELDS.append({ "name" : "adcs_state",         "type" : "state int", "min" : 0, "max" : 3 })
+FIELDS.append({ "name" : "adcs_gain_state",    "type" : "state int", "min" : 0, "max" : 1 })
 FIELDS.append({ "name" : "command_adcs",       "type" : "bool" })
-FIELDS.append({ "name" : "adcs_frame",         "type" : "state int", "min" : 0, "max" : 3 })
+FIELDS.append({ "name" : "adcs_frame",         "type" : "state int", "min" : 0, "max" : 1 })
 FIELDS.append({ "name" : "adcs_attitude",      "type" : "quaternion" })
 
 FIELDS.append({ "name" : "command_propulsion", "type" : "bool"})

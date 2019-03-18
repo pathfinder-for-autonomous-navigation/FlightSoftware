@@ -2,11 +2,11 @@
 #include <unity_test/unity_fixture.h>
 
 void setup() {
-    delay(2000);
+    while(!Serial);
     UNITY_BEGIN();
-    RUN_TEST_GROUP(FCSoftwareTests);
     RUN_TEST_GROUP(UtilsTests);
     UNITY_END();
+    while(true);
 }
 
 void loop() {}

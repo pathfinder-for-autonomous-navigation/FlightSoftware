@@ -45,13 +45,13 @@ void DockingMotor::reset() {
 }
 
 void DockingMotor::dock() {
-    if (config_) return;
+    if (docked_) return;
     // TODO
-    config_ = true;
+    docked_ = true;
 }
 
 void DockingMotor::undock() {
-    if (!config_) return;
+    if (!docked_) return;
     // TODO
-    config_ = false;
+    docked_ = false;
 }

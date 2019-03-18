@@ -1,4 +1,6 @@
 #include "power_cyclers.hpp"
+#include <EEPROM.h>
+#include "../../state/EEPROMAddresses.hpp"
 #include "../../state/device_states.hpp"
 #include "../../state/state_holder.hpp"
 
@@ -13,7 +15,33 @@ MEMORYPOOL_DECL(Gomspace::power_cycler_pool, 1024, NULL);
 
 THD_FUNCTION(Gomspace::cycler_fn, args) {
     cycler_arg_t* cycler_args = (cycler_arg_t*) args;
+
+    // Increment counter for cycling
+    rwMtxWLock(&State::Hardware::hardware_state_lock);
+        State::Hardware::hat.at(cycler_args->device).boot_count = 
+            State::Hardware::hat.at(cycler_args->device).boot_count++;
+    rwMtxWUnlock(&State::Hardware::hardware_state_lock);
+    chMtxLock(&eeprom_lock);
+        unsigned int boot_count;
+        if (cycler_args->device == &Devices::piksi()) {
+            EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, boot_count);
+            EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_PIKSI, ++boot_count);
+        }
+        else if (cycler_args->device == &Devices::quake()) {
+            EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, boot_count);
+            EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_QUAKE, ++boot_count);
+        }
+        else if (cycler_args->device == &Devices::adcs_system()) {
+            EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, boot_count);
+            EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_ADCS, ++boot_count);
+        }
+        else if (cycler_args->device == &Devices::spike_and_hold()) {
+            EEPROM.get(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, boot_count);
+            EEPROM.put(EEPROM_ADDRESSES::DEVICE_REBOOTS_SPIKE_AND_HOLD, ++boot_count);
+        }
+    chMtxUnlock(&eeprom_lock);
     
+    // Actually cycle device
     chMtxLock(cycler_args->device_lock);
         Devices::gomspace().set_single_output(cycler_args->pin, 0);
         State::write(State::Hardware::hat.at(cycler_args->device).powered_on, 
