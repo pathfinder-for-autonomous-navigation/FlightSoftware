@@ -1,5 +1,6 @@
 #include <unity_test/unity_fixture.h>
 #include <comms_utils.hpp>
+#include <Arduino.h>
 #include <array>
 
 TEST_GROUP(CommsUtilsTests);

@@ -1,7 +1,7 @@
 #include <unity_test/unity_fixture.h>
 #include <Arduino.h>
 
-// Weird linker bugfix
+// Weird bugfix required to fix linker error
 extern "C"{
     int _getpid(){ return -1;}
     int _kill(int pid, int sig){ return -1; }
