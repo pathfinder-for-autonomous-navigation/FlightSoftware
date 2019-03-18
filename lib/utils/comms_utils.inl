@@ -8,23 +8,6 @@
 #include "comms_utils.hpp"
 #include <AttitudeMath.hpp>
 
-template<unsigned int packet_bit_size>
-inline unsigned int Comms::add_packet_checksum(std::bitset<packet_bit_size>& packet,
-                                unsigned int& packet_ptr,
-                                std::array<char, (unsigned int) ceilf(packet_bit_size / 8)>* dest) {
-    // Copy data over to destination char array
-    std::string packet_string = packet.to_string();
-    std::copy(packet_string.begin(), packet_string.end(), dest->data());
-    // Compute checksum
-    FastCRC32 crc32;
-    unsigned int crc32_value = crc32.crc32((const uint8_t*) dest->data(), ((packet_bit_size - 1) - packet_ptr) / 8);
-    // Copy checksum into destination array
-    std::bitset<32> crc32_value_representation(crc32_value);
-    std::string crc32_value_string = crc32_value_representation.to_string();
-    std::copy(packet_string.begin(), packet_string.end(), dest->data() + (unsigned int) ceilf(packet_bit_size / 8));
-    return crc32_value;
-}
-
 template<unsigned int max_size>
 inline void Comms::trim_float(float f, float min, float max, std::bitset<max_size>* result) {
     if(f > max) f = max;

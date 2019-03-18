@@ -10,7 +10,6 @@
 
 #include <bitset>
 #include <array>
-#include <FastCRC/FastCRC.h>
 #include <cmath>
 #include <GPSTime.hpp>
 #include <Piksi/Piksi.hpp>
@@ -44,18 +43,6 @@ namespace Comms {
     constexpr unsigned int MAX_DOUBLE_VECTOR_COMPONENT_SIZE = 18;
     //! Number of bits for squeezing a normalized float vector
     constexpr unsigned int MAX_NORMALIZED_DOUBLE_VECTOR_SIZE = MAX_DOUBLE_VECTOR_COMPONENT_SIZE * 2 + 2;
-
-    /** @brief Create CRC32 checksum at     the end of a packet and copy
-     *  it into a destination character buffer.
-     *  @param[in] packet Packet to find checksum. This field is modified by the function.
-     *  @param[in] packet_ptr Pointer to last bit of data within the packet. This field is modified by the function.
-     *  @param[out] dest Destination character buffer into which to write the checksummed packet.
-     *  @return The value of the computed CRC32 checksum.
-     * **/
-    template<unsigned int packet_bit_size>
-    unsigned int add_packet_checksum(std::bitset<packet_bit_size>& packet,
-                                    unsigned int& packet_ptr,
-                                    std::array<char, (unsigned int) ceilf(packet_bit_size / 8)>* dest);
 
     /** @brief Compress a float into a bitstring.
      *  @param[in] f Float to compress.
