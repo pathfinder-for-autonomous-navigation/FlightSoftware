@@ -6,8 +6,8 @@ inline void static_buffer<T,S>::advance_ptr_(T*& ptr) {
 
 template<typename T, unsigned int S>
 inline void static_buffer<T,S>::decrement_ptr_(T*& ptr) {
+    if (ptr == buf_) ptr = buf_ + sizeof(T)*S;
     ptr--;
-    if (ptr == buf_ - sizeof(T)) ptr = buf_ + sizeof(T)*(S - 1);
 }
 
 template<typename T, unsigned int S>
