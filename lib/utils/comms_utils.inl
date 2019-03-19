@@ -5,6 +5,7 @@
  * decompressing data for downlinking and processing uplinks.
  */
 #include <AttitudeMath.hpp>
+#include <iostream>
 
 template<size_t max_size>
 inline void Comms::trim_float(float f, float min, float max, std::bitset<max_size>* result) {
@@ -206,15 +207,15 @@ template<unsigned int max_int_size>
 inline void Comms::trim_int(int i, int min, int max, std::bitset<max_int_size>* result) {
     if (i > max) i = max;
     if (i < min) i = min;
-    unsigned int resolution = (max - min) / pow(2, max_int_size);
-    unsigned int result_int = (i - min) / resolution;
+    unsigned int resolution = (unsigned int) lround(ceil((max - min) / pow(2.0f, max_int_size)));
+    unsigned int result_int = (i - min) / ((int) resolution);
     std::bitset<max_int_size> result_copy(result_int);
     *result = result_copy;
 }
 
 template<unsigned int max_int_size>
 inline int Comms::expand_int(const std::bitset<max_int_size>& result, int min, int max) {
-    unsigned int resolution = (max - min) / pow(2, max_int_size);
+    unsigned int resolution = (unsigned int) lround(ceil((max - min) / pow(2.0f, max_int_size)));
     return min + result.to_ulong() * resolution;
 }
 

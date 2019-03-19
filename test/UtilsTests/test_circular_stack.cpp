@@ -1,15 +1,10 @@
-#include <unity_fixture.h>
+#include <unity.h>
 #include <circular_stack.hpp>
 #include <array>
-
-TEST_GROUP(CircularStackTests);
-TEST_SETUP(CircularStackTests) {
-
-}
-TEST_TEAR_DOWN(CircularStackTests) {}
+#include "utils_tests.hpp"
 
 // Tests if buffer works fine with just one element.
-TEST(CircularStackTests, test_one_element) {
+static void circular_stack_test_one_element(void) {
     circular_stack<unsigned int, 1> buf;
     TEST_ASSERT(buf.empty());
     buf.put(2);
@@ -19,7 +14,7 @@ TEST(CircularStackTests, test_one_element) {
 }
 
 // Tests FIFO functionality of buffer.
-TEST(CircularStackTests, test_multiple_elements) {
+static void circular_stack_test_multiple_elements(void) {
     circular_stack<unsigned int, 2> buf;
     TEST_ASSERT(buf.empty());
     buf.put(1);
@@ -33,7 +28,7 @@ TEST(CircularStackTests, test_multiple_elements) {
 
 
 // Tests FIFO functionality of buffer with arrays as elements
-TEST(CircularStackTests, test_multiple_elements_array) {
+static void circular_stack_test_multiple_elements_array(void) {
     circular_stack<std::array<unsigned int, 1>, 2> buf;
     TEST_ASSERT(buf.empty());
 
@@ -48,8 +43,8 @@ TEST(CircularStackTests, test_multiple_elements_array) {
     TEST_ASSERT(buf.empty());
 }
 
-TEST_GROUP_RUNNER(CircularStackTests) {
-    RUN_TEST_CASE(CircularStackTests, test_one_element);
-    RUN_TEST_CASE(CircularStackTests, test_multiple_elements);
-    RUN_TEST_CASE(CircularStackTests, test_multiple_elements_array);
+void test_circular_stack() {
+    RUN_TEST(circular_stack_test_one_element);
+    RUN_TEST(circular_stack_test_multiple_elements);
+    RUN_TEST(circular_stack_test_multiple_elements_array);
 }
