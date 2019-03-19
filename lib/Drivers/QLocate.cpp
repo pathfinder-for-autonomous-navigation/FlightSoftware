@@ -12,44 +12,6 @@
 
 using namespace Devices;
 
-/*! QLocate::Message implementation */ // ----------------------------------------
-
-QLocate::Message::Message() {
-  this->length = 0;
-}
-
-QLocate::Message::Message(unsigned int len) {
-  this->length = len;
-}
-
-QLocate::Message::Message(QLocate::Message const &mes) {
-  this->length = mes.length;
-  for(int i = 0; i < this->length; i++)
-    this->mes[i] = mes.mes[i];
-}
-
-QLocate::Message& QLocate::Message::operator=(QLocate::Message const &mes) {
-  this->length = mes.length;
-  for(int i = 0; i < this->length; i++)
-    this->mes[i] = mes.mes[i];
-  return *(this);
-}
-
-int QLocate::Message::get_length() const { return this->length; }
-
-char& QLocate::Message::operator[](int i) {
-  return this->mes[i];
-}
-
-char QLocate::Message::operator[](int i) const {
-  return this->mes[i];
-}
-
-void QLocate::Message::copy_message(char *c) const {
-  for(int i = 0; i < this->length; i++)
-    c[i] = this->mes[i];
-}
-
 /*! QLocate implementation */ // -----------------------------------------------
 
 QLocate::QLocate(const std::string& name,
@@ -63,7 +25,7 @@ QLocate::QLocate(const std::string& name,
 bool QLocate::setup() {
   // Initialize class variables
   this->sbdix_running = false;
-  this->message = Message();
+  this->message = QuakeMessage();
   // Configure QLocate port settings
   this->port->begin(19200);
   this->port->setTimeout(timeout);
@@ -219,13 +181,13 @@ int QLocate::sbdrb() {
   // Capture incoming data and check checksum
   short s;
   if(2 != port->readBytes((char *) &s, 2))
-    return 1; // Message length read fails
+    return 1; // Quake::Message length read fails
   unsigned short size = (s & 0xFF) << 8 | (s >> 8);
 #ifdef DEBUG
   Serial.println("sbdrb > recieving message size= " + String(size));
 #endif
   if(size + 2 != (unsigned short) port->readBytes(message.mes, size + 2))
-    return 0; // Message read fails
+    return 0; // Quake::Message read fails
   s = checksum(message.mes, size);
   if(((s & 0xFF) << 8 | (s >> 8)) != *(short *)(message.mes + size)) {
     return 1; // Checksum error detected
@@ -240,7 +202,7 @@ int QLocate::sbdrb() {
 
 unsigned char QLocate::nr_pin() { return nr_pin_; }
 
-QLocate::Message& QLocate::get_message() { return message; }
+QuakeMessage& QLocate::get_message() { return message; }
 
 int QLocate::consume(String res) {
   // Read in current port input

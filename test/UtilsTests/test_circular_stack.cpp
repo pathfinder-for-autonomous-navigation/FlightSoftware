@@ -1,7 +1,6 @@
-#include <unity_test/unity_fixture.h>
+#include <unity_fixture.h>
 #include <circular_stack.hpp>
 #include <array>
-#include <Arduino.h>
 
 TEST_GROUP(CircularStackTests);
 TEST_SETUP(CircularStackTests) {

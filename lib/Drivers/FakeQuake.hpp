@@ -1,7 +1,7 @@
 #ifndef FAKE_QUAKE_HPP_
 #define FAKE_QUAKE_HPP_
 
-#include <QLocate/QLocate.hpp>
+#include <QLocate.hpp>
 
 namespace Devices {
   class FakeQuake : public QLocate {

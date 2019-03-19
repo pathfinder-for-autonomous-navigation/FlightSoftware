@@ -4,7 +4,7 @@
  * @brief Implementation of reader-writer lock.
  */
 
-#include <rwmutex.hpp>
+#include "rwmutex.hpp"
 
 void rwMtxObjectInit(rwmutex_t *rwmtx) {
     chMtxObjectInit(&rwmtx->mtx);

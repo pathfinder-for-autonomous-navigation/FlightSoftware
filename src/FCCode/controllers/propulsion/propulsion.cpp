@@ -12,7 +12,7 @@
 #include "../../deployment_timer.hpp"
 #include "../../data_collection/data_collection.hpp"
 #include "propulsion_tasks.hpp"
-#include <SpikeAndHold/SpikeAndHold.hpp>
+#include <SpikeAndHold.hpp>
 
 namespace RTOSTasks {
     THD_WORKING_AREA(propulsion_controller_workingArea, 2048);

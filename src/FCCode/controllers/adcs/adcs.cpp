@@ -6,7 +6,7 @@
 
 #include "../controllers.hpp"
 #include "../constants.hpp"
-#include <ADCS/global.hpp>
+#include <ADCSEnums.hpp>
 #include <rwmutex.hpp>
 #include "../../state/state_holder.hpp"
 #include "../gomspace/power_cyclers.hpp"
@@ -54,6 +54,8 @@ static void read_adcs_data() {
     State::write(State::ADCS::rwa_speeds_rd, rwa_speeds_rd, adcs_state_lock);
     State::write(State::ADCS::gyro_data, gyro_data, adcs_state_lock);
     State::write(State::ADCS::mag_data, mag_data, adcs_state_lock);
+
+    // TODO insert position into estimator
 
     std::array<float, 3> ssa_vec;
     if (ssa_mode == SSAMode::IN_PROGRESS) {

@@ -5,14 +5,14 @@
 #include <GPSTime.hpp>
 #include <array>
 #include "../Devices/Device.hpp"
-#include "libsbp/sbp.h"
-#include "libsbp/logging.h"
-#include "libsbp/navigation.h"
-#include "libsbp/observation.h"
-#include "libsbp/settings.h"
-#include "libsbp/system.h"
-#include "libsbp/piksi.h"
-#include "libsbp/user.h"
+#include "../libsbp/sbp.h"
+#include "../libsbp/logging.h"
+#include "../libsbp/navigation.h"
+#include "../libsbp/observation.h"
+#include "../libsbp/settings.h"
+#include "../libsbp/system.h"
+#include "../libsbp/piksi.h"
+#include "../libsbp/user.h"
 
 static const std::string name = "Piksi";
 

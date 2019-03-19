@@ -9,7 +9,7 @@
 #include "gomspace/power_cyclers.hpp"
 #include "../deployment_timer.hpp"
 #include "../data_collection/data_collection.hpp"
-#include <Piksi/Piksi.hpp>
+#include <Piksi.hpp>
 #include <bitset>
 
 using Devices::piksi;

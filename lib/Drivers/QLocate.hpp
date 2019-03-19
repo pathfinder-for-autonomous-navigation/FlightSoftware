@@ -10,6 +10,7 @@
 #ifndef QLocate_hpp
 #define QLocate_hpp
 
+#include "../utils/QuakeMessage.hpp"
 #include <HardwareSerial.h>
 #include "../Devices/Device.hpp"
 
@@ -24,34 +25,6 @@ namespace Devices {
       static constexpr unsigned char DEFAULT_NR_PIN = 35;
       /** Default timeout for serial communications on device. **/
       static constexpr unsigned int DEFAULT_TIMEOUT = 10;
-
-      /*! Holds the data for a mobile terminated (MT) message form the QLocate.
-      */ // -----------------------------------------------------------------------
-      class Message {
-        friend class QLocate;
-        public:
-          /*! Empty constructor sets message length to zero */
-          Message();
-          /*! Constructor sets message to desired length */
-          Message(unsigned int len);
-          /*! Copy constructor */
-          Message(Message const &mes);
-          /*! Returns the current lenght of the message */
-          int get_length() const;
-          /*! Assignment operator */
-          Message& operator=(Message const &mes);
-          /*! Allows array style access to the char array */
-          char& operator[](int i);
-          /*! Allows read-only array style access to the char array */
-          char operator[](int i) const;
-          /*! Copies the current message to the provided char array */
-          void copy_message(char *c) const;
-          /*! Message data pointer */
-          char mes[340];
-        private:
-          /*! Message length in bytes */
-          int length;
-      };
 
     /*! Sets the QLocate serial port and serial timeout value. Do not Initialize
     *  the serial port with begin(), it will be done in the constructor.
@@ -78,7 +51,7 @@ namespace Devices {
     int const *get_sbdix_response();
 
     /*! Returns the object containing the MT message */
-    Message &get_message();
+    QuakeMessage &get_message();
 
     /*! This manipulates the settings of the QLocate and sets it to communicate
     *  via the 3 pin interface. This method sends the QLocate the following AT
@@ -129,7 +102,7 @@ namespace Devices {
     int sbdix_r[6];
 
     /*! Mobile terminated (MT) message data */
-    Message message;
+    QuakeMessage message;
 
     /*! Indicates current sbdix session */
     bool sbdix_running;

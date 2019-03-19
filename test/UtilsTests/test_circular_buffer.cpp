@@ -1,7 +1,6 @@
-#include <unity_test/unity_fixture.h>
+#include <unity_fixture.h>
 #include <circular_buffer.hpp>
 #include <array>
-#include <Arduino.h>
 
 TEST_GROUP(CircularBufferTests);
 TEST_SETUP(CircularBufferTests) {
@@ -14,6 +13,7 @@ TEST(CircularBufferTests, test_one_element) {
     circular_buffer<unsigned int, 1> buf;
     TEST_ASSERT(buf.empty());
     buf.put(2);
+    TEST_ASSERT_FALSE(buf.empty());
     unsigned int v1 = buf.get();
     TEST_ASSERT_EQUAL(v1, 2);
     TEST_ASSERT(buf.empty());
@@ -25,8 +25,10 @@ TEST(CircularBufferTests, test_multiple_elements) {
     TEST_ASSERT(buf.empty());
     buf.put(1);
     buf.put(2);
+    TEST_ASSERT_FALSE(buf.empty());
     unsigned int v1 = buf.get();
     TEST_ASSERT_EQUAL(1, v1);
+    TEST_ASSERT_FALSE(buf.empty());
     unsigned int v2 = buf.get();
     TEST_ASSERT_EQUAL(2, v2);
     TEST_ASSERT(buf.empty());
@@ -41,9 +43,11 @@ TEST(CircularBufferTests, test_multiple_elements_array) {
     std::array<unsigned int, 1> el1 = {1};
     std::array<unsigned int, 1> el2 = {2};
     buf.put(el1);
+    TEST_ASSERT_FALSE(buf.empty());
     buf.put(el2);
     auto v1 = buf.get();
     TEST_ASSERT_EQUAL(el1[0], v1[0]);
+    TEST_ASSERT_FALSE(buf.empty());
     auto v2 = buf.get();
     TEST_ASSERT_EQUAL(el2[0], v2[0]);
     TEST_ASSERT(buf.empty());

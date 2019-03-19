@@ -10,8 +10,9 @@
 
 #include <map>
 #include <rwmutex.hpp>
-#include <Gomspace/Gomspace.hpp>
+#include <Gomspace.hpp>
 #include <AttitudeMath.hpp>
+#include <QuakeMessage.hpp>
 #include <GPSTime.hpp>
 #include <circular_stack.hpp>
 #include "state_definitions.hpp"
@@ -223,7 +224,7 @@ namespace State {
     constexpr unsigned int MAX_DOWNLINK_HISTORY = Comms::NUM_PACKETS * 10;
     //! Packets are automatically added to this stack by the consumer threads if they were 
     // not forcibly required to produce a partial packet.
-    extern circular_stack<Devices::QLocate::Message, MAX_DOWNLINK_HISTORY> downlink_stack;
+    extern circular_stack<QuakeMessage, MAX_DOWNLINK_HISTORY> downlink_stack;
   }
 }
 

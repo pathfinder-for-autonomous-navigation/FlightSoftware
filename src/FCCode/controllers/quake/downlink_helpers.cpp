@@ -4,12 +4,11 @@
 #include "transceiving_thread.hpp"
 
 using Devices::quake;
-using Devices::QLocate;
 using State::Quake::QuakeState;
 using State::Quake::quake_state_lock;
 using namespace Comms;
 
-static int send_packet(const QLocate::Message& packet, QLocate::Message* uplink) {
+static int send_packet(const QuakeMessage& packet, QuakeMessage* uplink) {
     int response;
     if (State::Hardware::check_is_functional(&quake())) {
         chMtxLock(&State::Hardware::quake_device_lock);
@@ -55,7 +54,7 @@ static bool is_downlink_stack_empty() {
     return is_empty;
 }
 
-int Quake::send_downlink_stack(QLocate::Message* uplink) {
+int Quake::send_downlink_stack(QuakeMessage* uplink) {
     while(!is_downlink_stack_empty()) {
         int response = send_packet(State::Quake::downlink_stack.get(), uplink);
         if (response != 0) return response;

@@ -7,12 +7,12 @@
 
 #include "comms_utils.hpp"
 
-void Comms::trim_temperature(int t, std::bitset<9>* result) {
-    trim_int(t, -40, 125, result);
+void Comms::trim_temperature(int t, std::bitset<Comms::TEMPERATURE_SIZE>* result) {
+    trim_int<Comms::TEMPERATURE_SIZE>(t, -40, 125, result);
 }
 
-int Comms::expand_temperature(const std::bitset<9>& t) {
-    return expand_int(t, -40, 125);
+int Comms::expand_temperature(const std::bitset<Comms::TEMPERATURE_SIZE>& t) {
+    return expand_int<Comms::TEMPERATURE_SIZE>(t, -40, 125);
 }
 
 void Comms::trim_quaternion(const std::array<float, 4>& q, std::bitset<Comms::QUATERNION_SIZE>* result) {

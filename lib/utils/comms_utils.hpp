@@ -11,17 +11,8 @@
 #include <bitset>
 #include <array>
 #include <cmath>
-#include <GPSTime.hpp>
-#include <Piksi/Piksi.hpp>
-#include <QLocate/QLocate.hpp>
-
-/** 
- * @brief Directive used to produce a compiler warning if a particular
- * integer supplied to a templated function is not large enough. In this case,
- * we use this directive to check if the size of supplied bitsets is large enough
- * for storing a vector into them.
- * */
-#define REQUIRES(...) typename std::enable_if<(__VA_ARGS__), int>::type = 0
+#include "GPSTime.hpp"
+#include "QuakeMessage.hpp"
 
 /** \addtogroup comms_utils Communication Utilities
  * Functions for compressing and decompressing data for downlinking and processing uplinks.
@@ -32,17 +23,19 @@
  * */
 namespace Comms {
     //! Number of bits for squeezing GPS time
-    constexpr unsigned int GPSTIME_SIZE = 49;
+    constexpr size_t GPSTIME_SIZE = 49;
     //! Number of bits to squeeze a number in the range +/- sqrt(2) for float vector compression
-    constexpr unsigned int MAX_FLOAT_VECTOR_COMPONENT_SIZE = 9;
+    constexpr size_t MAX_FLOAT_VECTOR_COMPONENT_SIZE = 9;
     //! Number of bits for squeezing a quaternion
-    constexpr unsigned int QUATERNION_SIZE = MAX_FLOAT_VECTOR_COMPONENT_SIZE * 3 + 2;
+    constexpr size_t QUATERNION_SIZE = MAX_FLOAT_VECTOR_COMPONENT_SIZE * 3 + 2;
+    //! Number of bits for squeezing a temperature
+    constexpr size_t TEMPERATURE_SIZE = 9;
     //! Number of bits for squeezing a normalized float vector
-    constexpr unsigned int MAX_NORMALIZED_FLOAT_VECTOR_SIZE = MAX_FLOAT_VECTOR_COMPONENT_SIZE * 2 + 2;
+    constexpr size_t MAX_NORMALIZED_FLOAT_VECTOR_SIZE = MAX_FLOAT_VECTOR_COMPONENT_SIZE * 2 + 2;
     //! Number of bits to squeeze a number in the range +/- sqrt(2) for double vector compression
-    constexpr unsigned int MAX_DOUBLE_VECTOR_COMPONENT_SIZE = 18;
+    constexpr size_t MAX_DOUBLE_VECTOR_COMPONENT_SIZE = 18;
     //! Number of bits for squeezing a normalized float vector
-    constexpr unsigned int MAX_NORMALIZED_DOUBLE_VECTOR_SIZE = MAX_DOUBLE_VECTOR_COMPONENT_SIZE * 2 + 2;
+    constexpr size_t MAX_NORMALIZED_DOUBLE_VECTOR_SIZE = MAX_DOUBLE_VECTOR_COMPONENT_SIZE * 2 + 2;
 
     /** @brief Compress a float into a bitstring.
      *  @param[in] f Float to compress.
@@ -50,7 +43,7 @@ namespace Comms {
      *  @param[in] max Maximum possible value of float.
      *  @param[out] result Destination bitstring for storing the compressed float.
      * **/
-    template<unsigned int max_size>
+    template<size_t max_size>
     void trim_float(float f, float min, float max, std::bitset<max_size>* result);
 
     /** @brief Expand a compressed float into its true value.
@@ -59,7 +52,7 @@ namespace Comms {
      *  @param[in] max Maximum possible value of float.
      *  @return Value of float.
      * **/
-    template<unsigned int max_size>
+    template<size_t max_size>
     float expand_float(const std::bitset<max_size>& f, float min, float max);
 
     /** @brief Compress a double into a bitstring.
@@ -68,7 +61,7 @@ namespace Comms {
      *  @param[in] max Maximum possible value of double.
      *  @param[out] result Destination bitstring for storing the compressed double.
      * **/
-    template<unsigned int max_size>
+    template<size_t max_size>
     void trim_double(double d, double min, double max, std::bitset<max_size>* result);
 
     /** @brief Expand a compressed double into its true value.
@@ -77,7 +70,7 @@ namespace Comms {
      *  @param[in] max Maximum possible value of double.
      *  @return Value of double.
      * **/
-    template<unsigned int max_size>
+    template<size_t max_size>
     float expand_double(const std::bitset<max_size>& d, double min, double max);
 
     /** @brief Compress a 3-component vector of floats into a bitstring.
@@ -86,8 +79,9 @@ namespace Comms {
      *  @param[in] max_magnitude Maximum possible magnitude of vector. May be a negative number.
      *  @param[out] result Destination bitstring for storing the compressed vector.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-    void trim_vector(const std::array<float, 3>& v, float min_magnitude, float max_magnitude, std::bitset<max_vec_size>* result);
+    template<size_t max_vec_size>
+    typename std::enable_if<(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE), void>::type
+    trim_vector(const std::array<float, 3>& v, float min_magnitude, float max_magnitude, std::bitset<max_vec_size>* result);
 
     /** @brief Compress a 3-component vector of doubles into a bitstring.
      *  @param[in] v Vector to compress.
@@ -95,24 +89,27 @@ namespace Comms {
      *  @param[in] max_magnitude Maximum possible magnitude of vector. May be a negative number.
      *  @param[out] result Destination bitstring for storing the compressed vector.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-    void trim_vector(const std::array<double, 3>& v, double min_magnitude, double max_magnitude, std::bitset<max_vec_size>* result);
+    template<size_t max_vec_size>
+    typename std::enable_if<(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE), void>::type
+    trim_vector(const std::array<double, 3>& v, double min_magnitude, double max_magnitude, std::bitset<max_vec_size>* result);
 
     /** @brief Compress a 3-component vector of floats into a bitstring.
      *  @param[in] v Vector to compress.
      *  @param[in] max_magnitude Maximum possible magnitude of vector. May be a negative number. (The minimum is assumed to be zero).
      *  @param[out] result Destination bitstring for storing the compressed vector.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-    void trim_vector(const std::array<float, 3>& v, float max_magnitude, std::bitset<max_vec_size>* result);
+    template<size_t max_vec_size>
+    typename std::enable_if<(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE), void>::type
+    trim_vector(const std::array<float, 3>& v, float max_magnitude, std::bitset<max_vec_size>* result);
 
     /** @brief Compress a 3-component vector of doubles into a bitstring.
      *  @param[in] v Vector to compress.
      *  @param[in] max_magnitude Maximum possible magnitude of vector. May be a negative number. (The minimum is assumed to be zero).
      *  @param[out] result Destination bitstring for storing the compressed vector.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-    void trim_vector(const std::array<double, 3>& v, double max_magnitude, std::bitset<max_vec_size>* result);
+    template<size_t max_vec_size>
+    typename std::enable_if<(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE), void>::type
+    trim_vector(const std::array<double, 3>& v, double max_magnitude, std::bitset<max_vec_size>* result);
 
     /** @brief Expand a compressed vector of floats into its true value.
      *  @param[in] v Bitstring containing the compressed vector.
@@ -120,8 +117,9 @@ namespace Comms {
      *  @param[in] max_magnitude Maximum possible magnitude of vector.
      *  @param[out] result Float array into which the uncompressed vector should be stored.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-    void expand_vector(const std::bitset<max_vec_size>& v, float min_magnitude, float max_magnitude, std::array<float, 3>* result);
+    template<size_t max_vec_size>
+    typename std::enable_if<(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE), void>::type
+    expand_vector(const std::bitset<max_vec_size>& v, float min_magnitude, float max_magnitude, std::array<float, 3>* result);
 
     /** @brief Expand a compressed vector of doubles into its true value.
      *  @param[in] v Bitstring containing the compressed vector.
@@ -129,24 +127,27 @@ namespace Comms {
      *  @param[in] max_magnitude Maximum possible magnitude of vector.
      *  @param[out] result Double array into which the uncompressed vector should be stored.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-    void expand_vector(const std::bitset<max_vec_size>& v, double min_magnitude, double max_magnitude, std::array<double, 3>* result);
+    template<size_t max_vec_size>
+    typename std::enable_if<(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE), void>::type
+    expand_vector(const std::bitset<max_vec_size>& v, double min_magnitude, double max_magnitude, std::array<double, 3>* result);
     
     /** @brief Expand a compressed vector of floats into its true value.
      *  @param[in] v Bitstring containing the compressed vector.
      *  @param[in] max_magnitude Maximum possible magnitude of vector.
      *  @param[out] result Float array into which the uncompressed vector should be stored.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-    void expand_vector(const std::bitset<max_vec_size>& v, float max_magnitude, std::array<float, 3>* result);
+    template<size_t max_vec_size>
+    typename std::enable_if<(max_vec_size > MAX_NORMALIZED_FLOAT_VECTOR_SIZE), void>::type
+    expand_vector(const std::bitset<max_vec_size>& v, float max_magnitude, std::array<float, 3>* result);
 
     /** @brief Expand a compressed vector of doubles into its true value.
      *  @param[in] v Bitstring containing the compressed vector.
      *  @param[in] max_magnitude Maximum possible magnitude of vector.
      *  @param[out] result Double array into which the uncompressed vector should be stored.
      * **/
-    template<unsigned int max_vec_size, REQUIRES(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-    void expand_vector(const std::bitset<max_vec_size>& v, double max_magnitude, std::array<double, 3>* result);
+    template<size_t max_vec_size>
+    typename std::enable_if<(max_vec_size > MAX_NORMALIZED_DOUBLE_VECTOR_SIZE), void>::type
+    expand_vector(const std::bitset<max_vec_size>& v, double max_magnitude, std::array<double, 3>* result);
 
     /** @brief Compress an integer into a smaller representation.
      *  @param[in] i Integer to compress.
@@ -166,17 +167,27 @@ namespace Comms {
     template<unsigned int max_int_size>
     int expand_int(const std::bitset<max_int_size>& result, int min, int max);
 
-    /** @brief Compress a temperature into a bitstring.
+    /** @brief Expands bitset into a Quake message
+     * */
+    template<unsigned int bitset_size>
+    void expand_message(const std::bitset<bitset_size>& bitset, QuakeMessage* message);
+
+    /** @brief Converts Quake message into a bitset
+     * */
+    template<unsigned int bitset_size>
+    void trim_message(const QuakeMessage& message, std::bitset<bitset_size>* bitset);
+
+        /** @brief Compress a temperature into a bitstring.
      *  @param[in] t Temperature to compress.
      *  @param[out] result Destination bitstring for storing the compressed temperature.
      * **/
-    void trim_temperature(int t, std::bitset<9>* result);
+    void trim_temperature(int t, std::bitset<TEMPERATURE_SIZE>* result);
     
     /** @brief Expand a compressed temperature into its true value.
      *  @param[in] t Compressed bitstring containing the temperature.
      *  @return Temperature value, as an integer in Celsius.
      * **/
-    int expand_temperature(const std::bitset<9>& t);
+    int expand_temperature(const std::bitset<TEMPERATURE_SIZE>& t);
 
     /** @brief Compress a rotation quaternion into a bitstring.
      *  @param[in] q Quaternion to compress.
@@ -201,16 +212,6 @@ namespace Comms {
      *  @param[out] result GPS time struct containing the uncompressed GPS time.
      * **/
     void expand_gps_time(const std::bitset<GPSTIME_SIZE>& gpstime, gps_time_t* result);
-
-    /** @brief Expands bitset into a Quake message
-     * */
-    template<unsigned int bitset_size>
-    void expand_message(const std::bitset<bitset_size>& bitset, Devices::QLocate::Message* message);
-
-    /** @brief Converts Quake message into a bitset
-     * */
-    template<unsigned int bitset_size>
-    void trim_bitset(const Devices::QLocate::Message& message, std::bitset<bitset_size>* bitset);
 }
 /** @} */
 #include "comms_utils.inl"

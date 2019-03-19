@@ -11,16 +11,16 @@
 #include <rwmutex.hpp>
 #include <map>
 #include "state_definitions.hpp"
-#include <Gomspace/Gomspace.hpp>
-#include <Piksi/Piksi.hpp>
-#include <SpikeAndHold/SpikeAndHold.hpp>
-#include <QLocate/QLocate.hpp>
-#include <ADCS/ADCS.hpp>
-#include <Pressure/PressureSensor.hpp>
-#include <Temperature/TempSensor.hpp>
-#include <DCDC/DCDC.hpp>
-#include <DockingMotor/DockingMotor.hpp>
-#include <DockingSwitch/DockingSwitch.hpp>
+#include <Gomspace.hpp>
+#include <Piksi.hpp>
+#include <SpikeAndHold.hpp>
+#include <QLocate.hpp>
+#include <ADCS.hpp>
+#include <PressureSensor.hpp>
+#include <TempSensor.hpp>
+#include <DCDC.hpp>
+#include <DockingMotor.hpp>
+#include <DockingSwitch.hpp>
 
 namespace Devices {
     //! Gomspace logical device used by flight controller code

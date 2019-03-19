@@ -7,7 +7,7 @@
 #ifndef STATE_DEFINITIONS_HPP_
 #define STATE_DEFINITIONS_HPP_
 
-#include <Piksi/Piksi.hpp>
+#include <Piksi.hpp>
 #include <GPSTime.hpp>
 
 // Containers and enums for holding state

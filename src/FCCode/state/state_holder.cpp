@@ -93,6 +93,6 @@ namespace State {
         QuakeState quake_state = QuakeState::WAITING;
         rwmutex_t quake_state_lock;
 
-        circular_stack<Devices::QLocate::Message, MAX_DOWNLINK_HISTORY> downlink_stack;
+        circular_stack<QuakeMessage, MAX_DOWNLINK_HISTORY> downlink_stack;
     }
 }

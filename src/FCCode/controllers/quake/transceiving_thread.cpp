@@ -6,7 +6,6 @@
 #include <bitset>
 
 using Devices::quake;
-using Devices::QLocate;
 using State::Quake::quake_state_lock;
 using State::Hardware::quake_device_lock;
 using State::Quake::quake_state;
@@ -19,8 +18,8 @@ void Quake::go_to_waiting() {
     State::write(quake_state, QuakeState::WAITING, quake_state_lock);
 }
 
-static void get_latest_uplink(QLocate::Message* uplink) {
-    while(quake().get_sbdix_response()[QLocate::MT_QUEUED] > 0) {
+static void get_latest_uplink(QuakeMessage* uplink) {
+    while(quake().get_sbdix_response()[Devices::QLocate::MT_QUEUED] > 0) {
         int response = -1;
         if (!State::Hardware::check_is_functional(&quake())) return;
         chMtxLock(&quake_device_lock);
@@ -51,12 +50,12 @@ static void get_latest_uplink(QLocate::Message* uplink) {
 }
 
 THD_FUNCTION(Quake::transceiving_fn, args) {
-    QLocate::Message uplink;
+    QuakeMessage uplink;
     // Try sending as many downlinks as you can
     Quake::send_downlink_stack(&uplink);
     // Get the latest uplink that you can
     get_latest_uplink(&uplink);
-    if (uplink.get_length() != 0) {
+    if (uplink.length != 0) {
         rwMtxWLock(&State::Quake::uplink_lock);
             std::bitset<Comms::UPLINK_SIZE_BITS> uplink_bitset(uplink.mes);
             Comms::deserialize_uplink(uplink_bitset, &State::Quake::most_recent_uplink);

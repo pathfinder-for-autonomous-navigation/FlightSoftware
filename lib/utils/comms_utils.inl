@@ -4,11 +4,9 @@
  * @brief Implementation of utilities for compressing and 
  * decompressing data for downlinking and processing uplinks.
  */
-
-#include "comms_utils.hpp"
 #include <AttitudeMath.hpp>
 
-template<unsigned int max_size>
+template<size_t max_size>
 inline void Comms::trim_float(float f, float min, float max, std::bitset<max_size>* result) {
     if(f > max) f = max;
     if(f < min) f = min;
@@ -18,14 +16,14 @@ inline void Comms::trim_float(float f, float min, float max, std::bitset<max_siz
     *result = result_copy;
 }
 
-template<unsigned int max_size>
+template<size_t max_size>
 inline float Comms::expand_float(const std::bitset<max_size>& f, float min, float max) {
     unsigned long f_bits = f.to_ullong();
     float resolution = (max - min) / pow(2, max_size);
     return min + resolution * f_bits;
 }
 
-template<unsigned int max_size>
+template<size_t max_size>
 inline void Comms::trim_double(double d, double min, double max, std::bitset<max_size>* result) {
     if(d > max) d = max;
     if(d < min) d = min;
@@ -35,16 +33,16 @@ inline void Comms::trim_double(double d, double min, double max, std::bitset<max
     *result = result_copy;
 }
 
-template<unsigned int max_size>
+template<size_t max_size>
 inline float Comms::expand_double(const std::bitset<max_size>& d, double min, double max) {
     unsigned long d_bits = d.to_ullong();
     double resolution = (max - min) / pow(2, max_size);
     return min + resolution * d_bits;
 }
 
-
-template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-inline void Comms::trim_vector(const std::array<float, 3>& v, float min_magnitude, float max_magnitude, std::bitset<max_vec_size>* result) {
+template<size_t max_vec_size>
+typename std::enable_if<(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE), void>::type
+inline Comms::trim_vector(const std::array<float, 3>& v, float min_magnitude, float max_magnitude, std::bitset<max_vec_size>* result) {
     float mag = vect_mag(v.data());
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_FLOAT_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_representation;
@@ -85,8 +83,9 @@ inline void Comms::trim_vector(const std::array<float, 3>& v, float min_magnitud
         (*result).set(i + magnitude_bitsize, vec_representation[i]);
 }
 
-template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-inline void Comms::trim_vector(const std::array<double, 3>& v, double min_magnitude, double max_magnitude, std::bitset<max_vec_size>* result) {
+template<size_t max_vec_size>
+typename std::enable_if<(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE), void>::type
+inline Comms::trim_vector(const std::array<double, 3>& v, double min_magnitude, double max_magnitude, std::bitset<max_vec_size>* result) {
     double mag = sqrt(pow(v[0],2)+pow(v[1],2)+pow(v[2],2));
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_DOUBLE_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_representation;
@@ -127,18 +126,21 @@ inline void Comms::trim_vector(const std::array<double, 3>& v, double min_magnit
         (*result).set(i + magnitude_bitsize, vec_representation[i]);
 }
 
-template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-inline void Comms::trim_vector(const std::array<float, 3>& v, float max_magnitude, std::bitset<max_vec_size>* result) {
+template<size_t max_vec_size>
+typename std::enable_if<(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE), void>::type
+inline Comms::trim_vector(const std::array<float, 3>& v, float max_magnitude, std::bitset<max_vec_size>* result) {
     trim_vector(v, 0, max_magnitude, result);
 }
 
-template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-inline void Comms::trim_vector(const std::array<double, 3>& v, double max_magnitude, std::bitset<max_vec_size>* result) {
+template<size_t max_vec_size>
+typename std::enable_if<(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE), void>::type
+inline Comms::trim_vector(const std::array<double, 3>& v, double max_magnitude, std::bitset<max_vec_size>* result) {
     trim_vector(v, 0, max_magnitude, result);
 }
 
-template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, float min_magnitude, float max_magnitude, std::array<float, 3>* result) {
+template<size_t max_vec_size>
+typename std::enable_if<(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE), void>::type
+inline Comms::expand_vector(const std::bitset<max_vec_size>& v, float min_magnitude, float max_magnitude, std::array<float, 3>* result) {
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_FLOAT_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_packed;
     for(int i = 0; i < magnitude_bitsize; i++) magnitude_packed.set(i, v[i]);
@@ -162,8 +164,9 @@ inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, float min_m
         (*result)[i] *= magnitude;
 }
 
-template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, double min_magnitude, double max_magnitude, std::array<double, 3>* result) {
+template<size_t max_vec_size>
+typename std::enable_if<(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE), void>::type
+inline Comms::expand_vector(const std::bitset<max_vec_size>& v, double min_magnitude, double max_magnitude, std::array<double, 3>* result) {
     constexpr unsigned int magnitude_bitsize = max_vec_size - MAX_NORMALIZED_DOUBLE_VECTOR_SIZE;
     std::bitset<magnitude_bitsize> magnitude_packed;
     for(int i = 0; i < magnitude_bitsize; i++) magnitude_packed.set(i, v[i]);
@@ -187,13 +190,15 @@ inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, double min_
         (*result)[i] *= magnitude;
 }
 
-template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE)>
-inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, float max_magnitude, std::array<float, 3>* result) {
+template<size_t max_vec_size>
+typename std::enable_if<(max_vec_size > Comms::MAX_NORMALIZED_FLOAT_VECTOR_SIZE), void>::type
+inline Comms::expand_vector(const std::bitset<max_vec_size>& v, float max_magnitude, std::array<float, 3>* result) {
     expand_vector(v, 0, max_magnitude, result);
 }
 
-template<unsigned int max_vec_size, REQUIRES(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE)>
-inline void Comms::expand_vector(const std::bitset<max_vec_size>& v, double max_magnitude, std::array<double, 3>* result) {
+template<size_t max_vec_size>
+typename std::enable_if<(max_vec_size > Comms::MAX_NORMALIZED_DOUBLE_VECTOR_SIZE), void>::type
+inline Comms::expand_vector(const std::bitset<max_vec_size>& v, double max_magnitude, std::array<double, 3>* result) {
     expand_vector(v, 0, max_magnitude, result);
 }
 
@@ -214,23 +219,23 @@ inline int Comms::expand_int(const std::bitset<max_int_size>& result, int min, i
 }
 
 template<unsigned int bitset_size>
-void Comms::expand_message(const std::bitset<bitset_size>& bitset, Devices::QLocate::Message* message) {
+inline void Comms::expand_message(const std::bitset<bitset_size>& bitset, QuakeMessage* message) {
     unsigned int byte_length = (unsigned int) ceilf((0.0f + bitset.size()) / 8);
     message->length = byte_length;
     char* mes = message->mes;
     for(int i = 0; i < byte_length; i++) {
         std::bitset<8> byte_repr;
-        for(int j = 0; i < 8; j++) byte_repr.set(j, bitset[i*8 + j]);
+        for(int j = 0; j < 8; j++) byte_repr.set(j, bitset[i*8 + j]);
         unsigned char byte_char = (unsigned char) byte_repr.to_ulong();
         mes[i] = byte_char;
     }
 }
 
 template<unsigned int bitset_size>
-void Comms::trim_bitset(const Devices::QLocate::Message& message, std::bitset<bitset_size>* bitset) {
-    unsigned int byte_length = (unsigned int) ceilf((0.0f + bitset.size()) / 8);
+inline void Comms::trim_message(const QuakeMessage& message, std::bitset<bitset_size>* bitset) {
+    unsigned int byte_length = (unsigned int) ceilf((0.0f + bitset->size()) / 8);
     for(int i = 0; i < byte_length; i++) {
         std::bitset<8> byte_repr(message.mes[i]);
-        for(int j = 0; i < 8; j++) bitset.set(i*8+j, bitset[j]);
+        for(int j = 0; j < 8; j++) bitset->set(i*8+j, bitset[j]);
     }
 }

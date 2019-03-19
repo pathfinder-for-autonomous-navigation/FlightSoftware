@@ -1,7 +1,7 @@
 #ifndef FAKE_PIKSI_HPP_
 #define FAKE_PIKSI_HPP_
 
-#include <Piksi/Piksi.hpp>
+#include <Piksi.hpp>
 
 namespace Devices {
   class FakePiksi : public Piksi {
