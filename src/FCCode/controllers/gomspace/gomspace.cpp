@@ -27,9 +27,9 @@ static void gomspace_read() {
         bool successful_response = false;
         if (State::Hardware::check_is_functional(&gomspace())) {
             chMtxLock(&State::Hardware::gomspace_device_lock);
-            rwMtxWLock(&State::Gomspace::gomspace_state_lock);
-                successful_response = gomspace().get_hk();
-            rwMtxWUnlock(&State::Gomspace::gomspace_state_lock);
+                rwMtxWLock(&State::Gomspace::gomspace_state_lock);
+                    successful_response = gomspace().get_hk();
+                rwMtxWUnlock(&State::Gomspace::gomspace_state_lock);
             chMtxUnlock(&State::Hardware::gomspace_device_lock);
         }
         if (successful_response) break;

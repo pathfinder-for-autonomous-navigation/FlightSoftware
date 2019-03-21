@@ -3,6 +3,7 @@
 #include "../../state/fault_state_holder.hpp"
 #include "../gomspace/power_cyclers.hpp"
 #include <rt/chdynamic.h>
+#include <ADCSEnums.hpp>
 
 struct power_cycler_args {
     bool adcs_system;
@@ -170,6 +171,7 @@ void Master::apply_uplink_commands() {
     State::ADCS::ADCSState as = (State::ADCS::ADCSState) uplink.adcs_state;
     if (is_standby) {
         State::write(State::ADCS::adcs_state, as, State::ADCS::adcs_state_lock);
+
         std::array<float, 4> cmd_attitude = uplink.adcs_attitude;
         State::ADCS::PointingFrame frame = (State::ADCS::PointingFrame) uplink.adcs_frame;                                            
         State::write(State::ADCS::cmd_attitude, cmd_attitude, State::ADCS::adcs_state_lock);

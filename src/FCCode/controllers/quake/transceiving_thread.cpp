@@ -18,8 +18,14 @@ void Quake::go_to_waiting() {
     State::write(quake_state, QuakeState::WAITING, quake_state_lock);
 }
 
+static bool is_mt_queued() {
+    chMtxLock(&State::Hardware::quake_device_lock);
+        quake().get_sbdix_response()[Devices::QLocate::MT_QUEUED];
+    chMtxLock(&State::Hardware::quake_device_lock);
+}
+
 static void get_latest_uplink(QuakeMessage* uplink) {
-    while(quake().get_sbdix_response()[Devices::QLocate::MT_QUEUED] > 0) {
+    while(is_mt_queued() > 0) {
         int response = -1;
         if (!State::Hardware::check_is_functional(&quake())) return;
         chMtxLock(&quake_device_lock);

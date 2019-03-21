@@ -185,6 +185,8 @@ namespace State {
     extern std::array<double, 3> gps_velocity_other;
     //! Quaternion representing rotation from ECEF to ECI.
     extern std::array<float, 4> ecef_to_eci;
+    //! Distance between two satellites
+    double distance();
     //! Quaternion representing rotation from ECI to LVLH.
     extern std::array<float, 4> eci_to_lvlh;
     //! Current propagated GPS time. Propagation occurs on each call of current_time(). 

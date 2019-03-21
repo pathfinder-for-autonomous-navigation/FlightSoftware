@@ -169,7 +169,7 @@ static void propulsion_state_controller() {
         }
         break;
         default: {
-            // Uh oh, undefined mode; go to idle since that's safest
+            // Uh oh, undefined mode; go to disabled mode since that's safest
             State::write(State::Propulsion::propulsion_state, PropulsionState::DISABLED, propulsion_state_lock);
         }
         break;

@@ -24,6 +24,7 @@ namespace Constants {
     }
 
     namespace Master {
+        extern unsigned int DOCKING_RANGE; // In meters
         #ifdef DEBUG
             //! Defines how long the master controller safehold callback will wait prior to automatically exiting safe hold.
             extern unsigned int SAFE_HOLD_TIMEOUT;

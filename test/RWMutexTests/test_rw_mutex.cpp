@@ -1,4 +1,6 @@
 #include <unity_fixture.h>
+#include <ChRt.h>
+#include <rwmutex.hpp>
 #include <Arduino.h>
 
 // Weird bugfix required to fix linker error
@@ -12,7 +14,19 @@ TEST_GROUP(RWMutexTests);
 TEST_SETUP(RWMutexTests) {}
 TEST_TEAR_DOWN(RWMutexTests) {}
 
-TEST(RWMutexTests, test_rw_mutex) {
+int w = 2;
+rwmutex_t l;
+static THD_WORKING_AREA(reader1_wA, 256);
+static THD_WORKING_AREA(reader2_wA, 256);
+static THD_FUNCTION(reader1, args) {
+    rwMtxRLock(&l);
+        
+    rwMtxRUnlock(&l);
+}
+static THD_FUNCTION(reader2, args) {
+    
+}
+TEST(RWMutexTests, test_rw_mutex_two_readers) {
     TEST_ASSERT(false);
 }
 

@@ -5,6 +5,7 @@ namespace Constants {
     static unsigned int DUMMY_CONSTANT = 0;
     std::vector<unsigned int*> changeable_constants_map {
         &DUMMY_CONSTANT, // Allows for value to not get changed
+        &Constants::Master::DOCKING_RANGE,
         &Constants::Master::DOCKING_TIMEOUT,
         &Constants::Master::SAFE_HOLD_TIMEOUT,
         &Constants::Propulsion::VALVE_VENT_TIME,
@@ -43,6 +44,7 @@ namespace Constants {
     }
 
     namespace Master {
+        unsigned int DOCKING_RANGE = 1; // In meters
         #ifdef DEBUG
             unsigned int SAFE_HOLD_TIMEOUT = 3; // In seconds
             unsigned int DOCKING_TIMEOUT = 5;   // In seconds

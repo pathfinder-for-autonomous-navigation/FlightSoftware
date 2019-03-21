@@ -60,7 +60,6 @@ bool Master::safe_hold_needed() {
         all_ssa_faulty &= !State::ADCS::adcs_hat.at("ssa_adc_5").is_functional;
     rwMtxRUnlock(&State::ADCS::adcs_state_lock);
     if (all_ssa_faulty && !all_ssa_faulty_ignore) return true;
-    // Check if both magnetometers faulty
-    
+
     return false;
 }

@@ -18,16 +18,10 @@ bool Master::standby_needed() {
     }
 
     // Check if CDGPS lock is not obtained while satellites <100 m apart
-    std::array<double, 3> pos = State::read(State::GNC::gps_position, State::GNC::gnc_state_lock);
-    std::array<double, 3> pos_other = State::read(State::GNC::gps_position_other, State::GNC::gnc_state_lock);
-    pla::Vec3d dpos;
-    for(int i = 0; i < 3; i++) dpos[i] = pos[i] - pos_other[i];
-    double distance = dpos.length();
-    
     bool is_fixed_rtk = State::read(State::Piksi::is_fixed_rtk, State::Piksi::piksi_state_lock);
     bool is_float_rtk = State::read(State::Piksi::is_float_rtk, State::Piksi::piksi_state_lock);
     bool is_rtk = is_fixed_rtk || is_float_rtk;
-    if (distance < Constants::Piksi::CDGPS_RANGE && !is_rtk) {
+    if (State::GNC::distance() < Constants::Piksi::CDGPS_RANGE && !is_rtk) {
         return true;
     }
 

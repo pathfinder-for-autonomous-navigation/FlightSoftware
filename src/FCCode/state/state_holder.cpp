@@ -5,6 +5,7 @@
  */
 
 #include "state_holder.hpp"
+#include "tensor.hpp"
 
 namespace State {
     // Default values for all state-related data
@@ -64,6 +65,14 @@ namespace State {
         systime_t time_collection_timestamp;
         bool has_firing_happened_in_nighttime = false;
         rwmutex_t gnc_state_lock;
+
+        double distance() {
+            std::array<double, 3> pos = State::read(gps_position, gnc_state_lock);
+            std::array<double, 3> pos_other = State::read(gps_position_other, gnc_state_lock);
+            pla::Vec3d dpos;
+            for(int i = 0; i < 3; i++) dpos[i] = pos[i] - pos_other[i];
+            return dpos.length();
+        }
 
         gps_time_t get_current_time() {
             systime_t current_systime = chVTGetSystemTimeX();

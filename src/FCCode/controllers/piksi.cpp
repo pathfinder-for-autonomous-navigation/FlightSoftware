@@ -22,8 +22,12 @@ namespace RTOSTasks {
 static void piksi_read() {
     debug_println("Reading Piksi data");
 
-    // Try to parse Piksi buffer
-    // TODO
+    // Try to parse Piksi buffer three times
+    for(int i = 0; i < 3; i++) {
+        bool successful = Devices::piksi().process_buffer();
+        if (successful) break;
+        chThdSleepMilliseconds(RTOSTasks::LoopTimes::PIKSI / 5); // Wait ~20 ms
+    }
 
     // GPS Time
     gps_time_t current_time;
@@ -51,6 +55,7 @@ static void piksi_read() {
     // GPS other position. We only record this if we're actually getting
     // RTK data (which we can know from the above-defined flags); otherwise, we 
     // let data uplinks update this value for us.
+    // Write flags to state
     if (pos_flags != 0) {
         std::array<double, 3> pos_other;
         piksi().get_base_pos_ecef(&pos_other);
@@ -74,7 +79,6 @@ static void piksi_read() {
         State::write(State::Piksi::is_float_rtk, false, State::Piksi::piksi_state_lock);
         State::write(State::Piksi::is_fixed_rtk, false, State::Piksi::piksi_state_lock);
     }
-    // Write flags to state
 
     // GPS Velocity
     std::array<double, 3> vel;

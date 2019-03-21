@@ -43,8 +43,9 @@ static void master_loop() {
             
             State::ADCS::ADCSState adcs_state = State::read(State::ADCS::adcs_state, State::ADCS::adcs_state_lock);
             
-            if (State::Master::is_deployed && adcs_state != State::ADCS::ADCSState::ADCS_DETUMBLE) {
-                State::write(State::ADCS::adcs_state, 
+            if (State::read(State::Master::is_deployed, master_state_lock) 
+                && adcs_state != State::ADCS::ADCSState::ADCS_DETUMBLE) {
+                    State::write(State::ADCS::adcs_state, 
                     State::ADCS::ADCSState::ADCS_DETUMBLE, State::ADCS::adcs_state_lock);
             }
 
@@ -65,12 +66,21 @@ static void master_loop() {
             if (Master::safe_hold_needed()) Master::safe_hold();
             switch(pan_state_copy) {
                 case PANState::FOLLOWER: {
-                    if (Master::standby_needed()) State::write(pan_state, PANState::STANDBY, master_state_lock);
+                    if (Master::standby_needed()) {
+                        State::write(pan_state, PANState::STANDBY, master_state_lock);
+                        break;
+                    }
+
                     chMtxLock(&eeprom_lock);
                         EEPROM.put(EEPROM_ADDRESSES::IS_FOLLOWER, true);
                     chMtxUnlock(&eeprom_lock);
                     State::write(State::Master::is_follower, true, State::Master::master_state_lock);
                     State::write(RTOSTasks::LoopTimes::GNC, (unsigned int) 60000, RTOSTasks::LoopTimes::gnc_looptime_lock);
+
+                    if(State::GNC::distance() < Constants::read(Constants::Piksi::CDGPS_RANGE)) {
+                        State::write(pan_state, PANState::FOLLOWER_CLOSE_APPROACH, master_state_lock);
+                        break;
+                    }
                     
                     if (State::Quake::msec_since_last_sbdix() >= Constants::read(Constants::Quake::UPLINK_TIMEOUT)) {
                         debug_println("Detected STANDBY condition due to no uplink being received in the last 24 hours.");
@@ -80,8 +90,9 @@ static void master_loop() {
                 break;
                 case PANState::FOLLOWER_CLOSE_APPROACH: {
                     State::write(RTOSTasks::LoopTimes::GNC, (unsigned int) 10000, RTOSTasks::LoopTimes::gnc_looptime_lock);
-                    // TODO Check if close enough to switch to "docking" mode
                     if (Master::standby_needed()) State::write(pan_state, PANState::STANDBY, master_state_lock);
+                    else if (State::GNC::distance() < Constants::Master::DOCKING_RANGE)
+                        State::write(pan_state, PANState::DOCKING, master_state_lock);
                     else ADCSControllers::point_for_close_approach();
                 }
                 break;
@@ -107,8 +118,9 @@ static void master_loop() {
                 }
                 break;
                 case PANState::LEADER_CLOSE_APPROACH: {
-                    // TODO Check if close enough to switch to "docking" mode
                     if (Master::standby_needed()) State::write(pan_state, PANState::STANDBY, master_state_lock);
+                    else if (State::GNC::distance() < Constants::Master::DOCKING_RANGE)
+                        State::write(pan_state, PANState::DOCKING, master_state_lock);
                     else ADCSControllers::point_for_close_approach();
                 }
                 break;
