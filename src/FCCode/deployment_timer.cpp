@@ -44,7 +44,6 @@ void exit_deployment_timer() {
 //! Function that defines the deployment timer thread.
 void deployment_timer_function(void *arg) {
     chRegSetThreadName("DEPLOYMENT");
-    chThdQueueObjectInit(&deployment_timer_waiting);
 
     chMtxLock(&eeprom_lock);
         bool deployed = (EEPROM.read(EEPROM_ADDRESSES::DEPLOYMENT) == 1);

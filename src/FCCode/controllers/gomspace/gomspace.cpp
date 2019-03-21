@@ -68,13 +68,7 @@ static void gomspace_check() {
     debug_println("Checking Gomspace data...");
     
     debug_printf("Checking if Gomspace is functional...");
-    bool is_gomspace_functional = State::read((State::Hardware::hat).at(&gomspace()).is_functional, 
-                                    State::Hardware::hardware_state_lock);
-    if (!is_gomspace_functional) {
-        debug_println("Gomspace is not functional!");
-        return;
-    }
-    else debug_println("Device is functional.");
+    // Already checked by HAT check in gomspace_read()
 
     debug_println("Checking Gomspace inputs (currents and voltages).");
     unsigned short* vboosts = State::Gomspace::gomspace_data.vboost;

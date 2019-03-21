@@ -20,8 +20,9 @@ void Quake::go_to_waiting() {
 
 static bool is_mt_queued() {
     chMtxLock(&State::Hardware::quake_device_lock);
-        quake().get_sbdix_response()[Devices::QLocate::MT_QUEUED];
+        bool queued = quake().get_sbdix_response()[Devices::QLocate::MT_QUEUED];
     chMtxLock(&State::Hardware::quake_device_lock);
+    return queued;
 }
 
 static void get_latest_uplink(QuakeMessage* uplink) {

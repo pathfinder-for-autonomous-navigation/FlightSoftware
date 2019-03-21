@@ -27,9 +27,19 @@ static void propagate_self_orbit() {
     }
 }
 
-static void update_rotation_quaternions() {
-    // TODO update ECI to ECEF
+static void propagate_other_orbit() {
+    std::array<double, 3> gps_pos = State::read(State::GNC::gps_position_other, gnc_state_lock);
+    std::array<double, 3> gps_vel = State::read(State::GNC::gps_velocity_other, gnc_state_lock);
+    j8_propagate(gps_pos, gps_vel, 1.0 / GNC::ORBIT_PROPAGATOR_DELTA_T, scratchpad);
+    State::write(State::GNC::gps_position_other, gps_pos, gnc_state_lock);
+    State::write(State::GNC::gps_velocity_other, gps_vel, gnc_state_lock);
+}
 
+static void update_eci_to_ecef() {
+    // TODO
+}
+
+static void update_eci_to_lvlh() {
     // Compute ECI to LVLH
     std::array<double, 3> v_raw = State::read(State::GNC::gps_velocity, State::GNC::gnc_state_lock);
     std::array<double, 3> r_raw = State::read(State::GNC::gps_position, State::GNC::gnc_state_lock);
@@ -57,14 +67,6 @@ static void update_rotation_quaternions() {
     State::write(State::GNC::eci_to_lvlh, eci_to_lvlh, State::GNC::gnc_state_lock);
 }
 
-static void propagate_other_orbit() {
-    std::array<double, 3> gps_pos = State::read(State::GNC::gps_position_other, gnc_state_lock);
-    std::array<double, 3> gps_vel = State::read(State::GNC::gps_velocity_other, gnc_state_lock);
-    j8_propagate(gps_pos, gps_vel, 1.0 / GNC::ORBIT_PROPAGATOR_DELTA_T, scratchpad);
-    State::write(State::GNC::gps_position_other, gps_pos, gnc_state_lock);
-    State::write(State::GNC::gps_velocity_other, gps_vel, gnc_state_lock);
-}
-
 // TODO matt walsh big buffer
 
 thread_t* GNC::orbit_propagator_thread;
@@ -75,7 +77,12 @@ THD_FUNCTION(GNC::orbit_propagator_controller, args) {
     while (true) {
         time += MS2ST(GNC::ORBIT_PROPAGATOR_DELTA_T);
         propagate_self_orbit();
-        update_rotation_quaternions();
+        rwMtxWLock(&gnc_state_lock);
+            // We're locking these up so that other processes don't update themselves on
+            // mismatched ECI/ECEF and ECI/LVLH quaternions!
+            update_eci_to_ecef();
+            update_eci_to_lvlh();
+        rwMtxWLock(&gnc_state_lock);
         propagate_other_orbit();
         chThdSleepUntil(time);
     }

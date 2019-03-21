@@ -11,10 +11,8 @@
 #include <rt/chvt.h>
 #include <EEPROM.h>
 #include "controllers/controllers.hpp"
-#include "controllers/constants.hpp"
 #include "state/EEPROMAddresses.hpp"
 #include "state/state_holder.hpp"
-#include "state/fault_state_holder.hpp"
 #include <rwmutex.hpp>
 #include "debug.hpp"
 #include "deployment_timer.hpp"
@@ -30,37 +28,6 @@ namespace RTOSTasks {
     thread_t* propulsion_thread;
 }
 using namespace RTOSTasks;
-
-static void initialize_locks() {
-    // Initialize all state locks
-    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
-    rwMtxObjectInit(&State::Master::master_state_lock);
-    rwMtxObjectInit(&State::ADCS::adcs_state_lock);
-    rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
-    rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
-    rwMtxObjectInit(&State::GNC::gnc_state_lock);
-    rwMtxObjectInit(&State::Piksi::piksi_state_lock);
-    rwMtxObjectInit(&State::Quake::quake_state_lock);
-    rwMtxObjectInit(&State::Quake::uplink_lock);
-    rwMtxObjectInit(&Constants::changeable_constants_lock);
-    rwMtxObjectInit(&RTOSTasks::LoopTimes::gnc_looptime_lock);
-    rwMtxObjectInit(&FaultState::Propulsion::propulsion_faults_state_lock);
-    rwMtxObjectInit(&FaultState::Gomspace::gomspace_faults_state_lock);
-    rwMtxObjectInit(&FaultState::ADCS::adcs_faults_state_lock);
-    // Initialize all device locks
-    chMtxObjectInit(&eeprom_lock);
-    chMtxObjectInit(&State::Hardware::adcs_device_lock);
-    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
-    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
-    chMtxObjectInit(&State::Hardware::piksi_device_lock);
-    chMtxObjectInit(&State::Hardware::gomspace_device_lock);
-    chMtxObjectInit(&State::Hardware::quake_device_lock);
-    chMtxObjectInit(&State::Hardware::pressure_sensor_device_lock);
-    chMtxObjectInit(&State::Hardware::temp_sensor_inner_device_lock);
-    chMtxObjectInit(&State::Hardware::temp_sensor_outer_device_lock);
-    chMtxObjectInit(&State::Hardware::docking_motor_device_lock);
-    chMtxObjectInit(&State::Hardware::docking_switch_device_lock);
-}
 
 static void hardware_setup() {
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
@@ -130,7 +97,7 @@ void pan_system_setup() {
     #endif
 
     debug_println("Startup process has begun.");
-    initialize_locks();
+    initialize_rtos_objects();
 
     // Determining boot count
     chMtxLock(&eeprom_lock);
@@ -142,7 +109,6 @@ void pan_system_setup() {
     debug_printf("This is boot #%d since the satellite left the deployer. \n", State::Master::boot_number);
 
     debug_println("Initializing hardware setup.");
-    // set_power_outputs();
     hardware_setup();
 
     debug_println("Starting satellite processes.");
@@ -157,18 +123,9 @@ void pan_system_setup() {
     debug_println("System setup is complete.");
     debug_println("Process terminating.");
     chThdExit((msg_t)0);
-
-    pinMode(13, OUTPUT);
-    while(true) {
-      digitalWrite(13, HIGH);
-      delay(500);
-      digitalWrite(13, LOW);
-      delay(500);
-    }
-    chThdExit((msg_t)0);
 }
 
-// When running tests, we n eed to get rid of setup() and loop(), or C++'s linker complains about multiple definitions!
+// "UNIT_TEST" used to stop "multiple definition" linker errors when running tests
 #ifndef UNIT_TEST
 void setup() {
     chBegin(pan_system_setup);

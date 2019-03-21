@@ -35,6 +35,7 @@ TEST_GROUP_RUNNER(RWMutexTests) {
 }
 
 void setup() {
+    delay(2000);
     Serial.begin(9600);
     while(!Serial);
     UNITY_BEGIN();

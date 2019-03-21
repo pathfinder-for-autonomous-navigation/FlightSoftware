@@ -12,6 +12,9 @@
 #define TASKS_HPP_
 
 namespace RTOSTasks {
+    //! Start lock objects used by processes
+    void initialize_rtos_objects();
+
     //! ADCS state controller process
     extern THD_FUNCTION(adcs_controller, arg);
     //! Gomspace state controller process

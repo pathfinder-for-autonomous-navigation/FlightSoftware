@@ -160,6 +160,7 @@ static THD_FUNCTION(adcs_loop, arg) {
 
 static THD_WORKING_AREA(update_hat_workingArea, 1024);
 static THD_FUNCTION(update_hat, args) {
+    chRegSetThreadName("ADCS HAT UPDATER");
     systime_t t = chVTGetSystemTimeX();
     while(true) {
         t += MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK);
@@ -177,7 +178,6 @@ void RTOSTasks::adcs_controller(void *arg) {
     chRegSetThreadName("ADCS");
     debug_println("ADCS controller process has started.");
     
-    rwMtxObjectInit(&adcs_state_lock);
     chThdCreateStatic(adcs_loop_workingArea, sizeof(adcs_loop_workingArea), 
         RTOSTasks::adcs_thread_priority, adcs_loop, NULL);
 

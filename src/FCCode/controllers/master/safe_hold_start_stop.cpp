@@ -1,13 +1,13 @@
 #include "master_helpers.hpp"
 
-using State::Master::master_state_lock;
+using namespace State::Master;
 
 void Master::stop_safe_hold() {
     chThdTerminate(safe_hold_timer_thread);
-    State::write(State::Master::master_state, State::Master::MasterState::DETUMBLE, master_state_lock);
-    State::write(State::Master::pan_state, State::Master::PANState::MASTER_DETUMBLE, master_state_lock);
+    State::write(master_state, MasterState::DETUMBLE, master_state_lock);
+    State::write(pan_state, PANState::MASTER_DETUMBLE, master_state_lock);
     // Here we set autoexit to false, since this function could be called by an uplink packet
-    State::write(State::Master::autoexited_safe_hold, false, State::Master::master_state_lock); 
+    State::write(autoexited_safe_hold, false, master_state_lock); 
 
     chMtxLock(&eeprom_lock);
         EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_FLAG, false);
@@ -20,8 +20,8 @@ void Master::stop_safe_hold() {
 
 void Master::safe_hold() {
     debug_println("Entering safe hold mode...");
-    State::write(State::Master::master_state, State::Master::MasterState::SAFE_HOLD, master_state_lock);
-    State::write(State::Master::pan_state, State::Master::PANState::MASTER_SAFEHOLD, master_state_lock);
+    State::write(master_state, MasterState::SAFE_HOLD, master_state_lock);
+    State::write(pan_state, PANState::MASTER_SAFEHOLD, master_state_lock);
 
     // Disable ADCS
     State::write(State::ADCS::adcs_state, State::ADCS::ZERO_TORQUE, State::ADCS::adcs_state_lock);
