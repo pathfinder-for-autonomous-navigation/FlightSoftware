@@ -53,6 +53,7 @@ static void update_eci_to_lvlh() {
     e2.normalize();
     pla::Vec3f e3; // e1 x e2
     vect_cross_mult(e1.get_data(), e2.get_data(), e3.get_data());
+    e3.normalize();
     
     pla::Mat3x3f eci_to_lvlh_dcm;
     for(int i = 0; i < 3; i++) {

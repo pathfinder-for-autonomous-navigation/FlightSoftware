@@ -12,6 +12,8 @@ namespace PropulsionTasks {
     extern thread_t* venting_thread;
     extern rwmutex_t propulsion_thread_ptr_lock;
 
+    int can_fire_manuever();
+
     extern THD_WORKING_AREA(pressurizing_thread_wa, 1024);
     extern THD_FUNCTION(pressurizing_fn, args);
     

@@ -108,13 +108,13 @@ namespace Constants {
         //! Milliseconds that we wait between opening the same valve.
         extern unsigned int VALVE_WAIT_TIME;
         //! Milliseconds before the actual thruster firing that the tank 2 pressure-controlling loop is stopped.
-        extern unsigned int STOP_PRESSURIZATION_TIME_DELTA; 
+        extern unsigned int STOP_PRESSURIZATION_TIME_DELTA;
         //! Maximum allowable temperature of inner tank
-        constexpr float MAX_INNER_TANK_TEMPERATURE = 48;
+        extern unsigned int MAX_INNER_TANK_TEMPERATURE;
         //! Maximum allowable temperature of outer tank
-        constexpr float MAX_OUTER_TANK_TEMPERATURE = 48;
+        extern unsigned int MAX_OUTER_TANK_TEMPERATURE;
         //! Maximum allowable pressure of outer tank
-        constexpr float MAX_OUTER_TANK_PRESSURE = 100;
+        extern unsigned int MAX_OUTER_TANK_PRESSURE;
         //! Amount of time, in milliseconds, to wait between intertank ventings
         extern unsigned int WAIT_BETWEEN_PRESSURIZATIONS;
         //! Number of firings to use to pressurize tank

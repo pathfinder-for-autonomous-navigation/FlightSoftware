@@ -12,7 +12,7 @@ bool Master::safe_hold_needed() {
     bool vbatt_ignored = State::read(FaultState::Gomspace::vbatt_ignored, FaultState::Gomspace::gomspace_faults_state_lock);
     if (vbatt < Constants::Gomspace::SAFE_VOLTAGE || !vbatt_ignored)
         return true;
-    // TODO add more battery conditions.
+    // TODO add more battery conditions??
 
     // Check whether propulsion tank is leaking
     rwMtxRLock(&FaultState::Propulsion::propulsion_faults_state_lock);

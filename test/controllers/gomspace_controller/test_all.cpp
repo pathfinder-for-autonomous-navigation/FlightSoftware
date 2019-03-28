@@ -27,6 +27,7 @@ TEST_TEAR_DOWN(GomspaceTests) {
 TEST_GROUP_RUNNER(GomspaceTests) {
     RUN_TEST_GROUP(GomspaceReadTests);
     RUN_TEST_GROUP(GomspaceCheckTests);
+    RUN_TEST_GROUP(GomspacePowerCyclerTests);
 }
 
 void test_setup() {

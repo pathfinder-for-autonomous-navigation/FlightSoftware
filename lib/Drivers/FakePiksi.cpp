@@ -25,7 +25,7 @@ void FakePiksi::reset() {}
 void FakePiksi::disable() {}
 
 void FakePiksi::get_gps_time(gps_time_t* time) {
-    _serial_port.write("TIME");
+    _serial_port.write("rt");
     delay(2);
     char buf[sizeof(gps_time_t)];
     _serial_port.readBytes(buf, sizeof(gps_time_t));
@@ -33,7 +33,7 @@ void FakePiksi::get_gps_time(gps_time_t* time) {
 }
 
 void FakePiksi::get_pos_ecef(std::array<double, 3>* position, unsigned int* tow) {
-    _serial_port.write("POS");
+    _serial_port.write("rp");
     delay(2);
     char buf[sizeof(gps_data_t)];
     _serial_port.readBytes(buf, sizeof(gps_data_t));
@@ -46,7 +46,7 @@ unsigned char FakePiksi::get_pos_ecef_nsats() {
 }
 
 void FakePiksi::get_baseline_ecef(std::array<double, 3>* position, unsigned int* tow) {
-    _serial_port.write("BASELINE");
+    _serial_port.write("rdop");
     delay(2);
     char buf[sizeof(gps_data_t)];
     _serial_port.readBytes(buf, sizeof(gps_data_t));
@@ -59,7 +59,7 @@ unsigned char FakePiksi::get_baseline_ecef_nsats() {
 }
 
 void FakePiksi::get_vel_ecef(std::array<double, 3>* velocity, unsigned int* tow) { 
-    _serial_port.write("VEL");
+    _serial_port.write("rv");
     delay(2);
     char buf[sizeof(gps_data_t)];
     _serial_port.readBytes(buf, sizeof(gps_data_t));
@@ -72,7 +72,7 @@ unsigned char FakePiksi::get_vel_ecef_nsats() {
 }
 
 void FakePiksi::get_base_pos_ecef(std::array<double, 3>* position) { 
-    _serial_port.write("BASELINE POS");
+    _serial_port.write("rop");
     delay(2);
     char buf[sizeof(std::array<double, 3>)];
     _serial_port.readBytes(buf, sizeof(std::array<double, 3>));

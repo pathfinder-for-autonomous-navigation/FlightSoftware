@@ -29,6 +29,7 @@ TEST_GROUP_RUNNER(ADCSTests) {
     RUN_TEST_GROUP(ADCSDetumbleTests);
     RUN_TEST_GROUP(ADCSPointingTests);
     RUN_TEST_GROUP(ADCSZeroTorqueTests);
+    RUN_TEST_GROUP(ADCSSafeHoldTests);
 }
 
 void test_setup() {

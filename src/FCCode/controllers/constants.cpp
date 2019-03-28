@@ -64,6 +64,9 @@ namespace Constants {
         unsigned int NUM_PRESSURIZATIONS = 20;
         unsigned int WAIT_BETWEEN_PRESSURIZATIONS = 30000; // TODO
         unsigned int STOP_PRESSURIZATION_TIME_DELTA = 2000;
+        extern unsigned int MAX_INNER_TANK_TEMPERATURE;
+        extern unsigned int MAX_OUTER_TANK_TEMPERATURE;
+        extern unsigned int MAX_OUTER_TANK_PRESSURE;
     }
 
     namespace Quake {
