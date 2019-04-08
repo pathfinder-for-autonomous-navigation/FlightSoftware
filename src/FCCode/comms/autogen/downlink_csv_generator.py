@@ -230,14 +230,21 @@ def get_statistics():
         if field["type"] == "temperature":
             size += field["buf_size"] * 16
 
-    print "Downlink:"
+    compressed_size = sum([field["total_size"] for field in FIELDS])
+    num_packets = int(math.ceil(compressed_size / 8.0 / 70))
+    print "------------"
+    print "| Downlink |"
+    print "------------"
+    print "Successfully processed all downlink fields into CSV file."
     print "Number of fields: " + str(len(FIELDS))
     print "Full data size: " + str(int(math.ceil(size / 8))) + " bytes"
-    compressed_size = sum([field["total_size"] for field in FIELDS])
     print "Compressed data size: " + str(int(math.ceil(compressed_size / 8))) + " bytes"
+    print "Required # of packets: " + str(num_packets)
     print "Raw compression ratio: " + str(100 - 100 * (compressed_size + 0.0) / size)
-    print "Required # of packets: " + str(
-        int(math.ceil(compressed_size / 8.0 / 70)))
-    print "--------------------------------"
+    print "Actual compression ratio: " + str(100 - 100 * (num_packets * 70*8.0) / size)
+    print ""
+    print "Actual compression ratio takes packet header overhead into account."
+    print ""
+
 
 get_statistics()

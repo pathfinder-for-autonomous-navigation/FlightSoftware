@@ -42,3 +42,4 @@ helper_str = helper_template.render({
 f = open("../../controllers/master/apply_uplink_helpers.cpp", "w")
 f.write(helper_str)
 f.close()
+print "apply_uplink_helpers.cpp generated."

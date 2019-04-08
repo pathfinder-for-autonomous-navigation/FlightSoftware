@@ -118,7 +118,10 @@ def get_statistics():
         if field["type"] == "temperature":
             size += 16
 
-    print "Uplink:"
+    print "----------"
+    print "| Uplink |"
+    print "----------"
+    print "Successfully processed all uplink fields into CSV file."
     print "Number of fields: " + str(len(FIELDS))
     print "Full data size: " + str(int(math.ceil(size / 8))) + " bytes"
     compressed_size = sum([field["size"] for field in FIELDS])
@@ -126,7 +129,7 @@ def get_statistics():
         compressed_size / 8))) + " bytes"
     print "Compression ratio: " + str(100 - 100 *
                                       (compressed_size + 0.0) / size)
-    print "--------------------------------"
+    print ""
 
 
 get_statistics()
