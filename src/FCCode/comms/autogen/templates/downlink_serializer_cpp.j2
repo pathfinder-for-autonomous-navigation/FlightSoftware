@@ -13,7 +13,7 @@ Comms::trim_{{field.type}}({{field.name}},{{field.trim_fn_args}}&(bitset_{{loop_
 {%- endif -%}
 {%- endmacro %}
 
-{% for packet in packets -%}
+{% for packet in packets %}
 static void serialize_packet_{{loop.index}}(std::bitset<Comms::PACKET_SIZE_BITS> &packet, unsigned int downlink_no) {
   unsigned int packet_ptr = 0;
 
@@ -21,7 +21,6 @@ static void serialize_packet_{{loop.index}}(std::bitset<Comms::PACKET_SIZE_BITS>
   for(int i = 0; i < 32; i++) packet.set(packet_ptr++, downlink_num_repr[i]);
   std::bitset<8> packet_num_repr(0);
   for(int i = 0; i < 8; i++) packet.set(packet_ptr++, packet_num_repr[i]);
-
   {% for field in packet %}
   std::bitset<{{field.size}}> bitset_{{loop.index}};
   {% if field.is_history -%}
@@ -32,12 +31,12 @@ static void serialize_packet_{{loop.index}}(std::bitset<Comms::PACKET_SIZE_BITS>
   {{render_field(field, loop.index)}}
   {% endif -%}
   for(int i = 0; i < bitset_{{loop.index}}.size(); i++) packet.set(packet_ptr++, bitset_{{loop.index}}[i]);
-  {% endfor -%}
+{% endfor -%}
 }
 {% endfor %}
 
 void Comms::serialize_downlink(std::bitset<Comms::PACKET_SIZE_BITS> (&packets)[Comms::NUM_PACKETS], unsigned int downlink_no) {
   {% for packet in packets -%}
   serialize_packet_{{loop.index}}(packets[{{loop.index}}], downlink_no);
-  {% endfor -%}
+  {% endfor %}
 }
