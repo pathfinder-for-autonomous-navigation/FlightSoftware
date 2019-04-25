@@ -33,7 +33,7 @@ static void hardware_setup() {
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
 
     // debug_println("Initializing hardware buses.");
-    // Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM); // Gomspace
+    Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM); // Gomspace
 
     debug_println("Initializing hardware peripherals.");
     for (auto device : State::Hardware::hat) {
@@ -51,33 +51,33 @@ static void hardware_setup() {
 
 static void start_satellite_processes() {
     // Start up satellite processes
-    // debug_println("Starting ADCS controller process.");
-    // adcs_thread = chThdCreateStatic(adcs_controller_workingArea, sizeof(adcs_controller_workingArea), 
-    //     adcs_thread_priority, adcs_controller, NULL);
+    debug_println("Starting ADCS controller process.");
+    adcs_thread = chThdCreateStatic(adcs_controller_workingArea, sizeof(adcs_controller_workingArea), 
+        adcs_thread_priority, adcs_controller, NULL);
     
-    // debug_println("Starting Gomspace controller process.");
-    // gomspace_thread = chThdCreateStatic(gomspace_controller_workingArea, sizeof(gomspace_controller_workingArea), 
-    //     gomspace_thread_priority, gomspace_controller, NULL);
+    debug_println("Starting Gomspace controller process.");
+    gomspace_thread = chThdCreateStatic(gomspace_controller_workingArea, sizeof(gomspace_controller_workingArea), 
+        gomspace_thread_priority, gomspace_controller, NULL);
     
-    // debug_println("Starting Piksi controller process.");
-    // piksi_thread = chThdCreateStatic(piksi_controller_workingArea, sizeof(piksi_controller_workingArea), 
-    //     piksi_thread_priority, piksi_controller, NULL);
+    debug_println("Starting Piksi controller process.");
+    piksi_thread = chThdCreateStatic(piksi_controller_workingArea, sizeof(piksi_controller_workingArea), 
+        piksi_thread_priority, piksi_controller, NULL);
 
-    // debug_println("Starting GNC calculation controller process.");
-    // gnc_thread = chThdCreateStatic(gnc_controller_workingArea, sizeof(gnc_controller_workingArea),
-    //     gnc_thread_priority, gnc_controller, NULL);
+    debug_println("Starting GNC calculation controller process.");
+    gnc_thread = chThdCreateStatic(gnc_controller_workingArea, sizeof(gnc_controller_workingArea),
+        gnc_thread_priority, gnc_controller, NULL);
     
-    // debug_println("Starting propulsion controller process.");
-    // propulsion_thread = chThdCreateStatic(propulsion_controller_workingArea, sizeof(propulsion_controller_workingArea), 
-    //     propulsion_thread_priority, propulsion_controller, NULL);
+    debug_println("Starting propulsion controller process.");
+    propulsion_thread = chThdCreateStatic(propulsion_controller_workingArea, sizeof(propulsion_controller_workingArea), 
+        propulsion_thread_priority, propulsion_controller, NULL);
 
     debug_println("Starting Quake radio controller process.");
     quake_thread = chThdCreateStatic(quake_controller_workingArea, sizeof(quake_controller_workingArea), 
         quake_thread_priority, quake_controller, NULL);
     
-    // debug_println("Starting master controller process.");
-    // master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
-    //     master_thread_priority, master_controller, NULL);
+    debug_println("Starting master controller process.");
+    master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
+        master_thread_priority, master_controller, NULL);
 
     #ifdef DEBUG
     (void)chThdCreateStatic(debug_workingArea, sizeof(debug_workingArea), NORMALPRIO, debug_function, NULL);
@@ -100,13 +100,13 @@ void pan_system_setup() {
     initialize_rtos_objects();
 
     // Determining boot count
-    // chMtxLock(&eeprom_lock);
-    // unsigned int boot_number = State::read(State::Master::boot_number, State::Master::master_state_lock);
-    // EEPROM.get(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
-    // State::write(State::Master::boot_number, boot_number++, State::Master::master_state_lock);
-    // EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
-    // chMtxUnlock(&eeprom_lock);
-    // debug_printf("This is boot #%d since the satellite left the deployer. \n", State::Master::boot_number);
+    chMtxLock(&eeprom_lock);
+    unsigned int boot_number = State::read(State::Master::boot_number, State::Master::master_state_lock);
+    EEPROM.get(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
+    State::write(State::Master::boot_number, boot_number++, State::Master::master_state_lock);
+    EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
+    chMtxUnlock(&eeprom_lock);
+    debug_printf("This is boot #%d since the satellite left the deployer. \n", State::Master::boot_number);
 
     debug_println("Initializing hardware setup.");
     hardware_setup();
