@@ -85,29 +85,29 @@ namespace Devices {
 
 namespace State {
 namespace Hardware {
-    static Hardware::DeviceState adcs_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState dcdc_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState docking_motor_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState docking_switch_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState gomspace_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState piksi_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState pressure_sensor_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState adcs_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState dcdc_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState docking_motor_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState docking_switch_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState gomspace_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState piksi_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState pressure_sensor_device_state = {false, false, false, false, 1};
     static Hardware::DeviceState quake_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState sph_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState sph_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false, 1};
     std::map<Devices::Device*, Hardware::DeviceState> hat {
-        {&Devices::adcs_system(), adcs_device_state},
-        {&Devices::dcdc(), dcdc_device_state},
-        {&Devices::docking_motor(), docking_motor_device_state},
-        {&Devices::docking_switch(), docking_switch_device_state},
-        {&Devices::gomspace(), gomspace_device_state},
-        {&Devices::piksi(), piksi_device_state},
-        {&Devices::pressure_sensor(), pressure_sensor_device_state},
+        // {&Devices::adcs_system(), adcs_device_state},
+        // {&Devices::dcdc(), dcdc_device_state},
+        // {&Devices::docking_motor(), docking_motor_device_state},
+        // {&Devices::docking_switch(), docking_switch_device_state},
+        // {&Devices::gomspace(), gomspace_device_state},
+        // {&Devices::piksi(), piksi_device_state},
+        // {&Devices::pressure_sensor(), pressure_sensor_device_state},
         {&Devices::quake(), quake_device_state},
-        {&Devices::spike_and_hold(), sph_device_state},
-        {&Devices::temp_sensor_inner(), temp_sensor_inner_device_state},
-        {&Devices::temp_sensor_outer(), temp_sensor_outer_device_state}
+        // {&Devices::spike_and_hold(), sph_device_state},
+        // {&Devices::temp_sensor_inner(), temp_sensor_inner_device_state},
+        // {&Devices::temp_sensor_outer(), temp_sensor_outer_device_state}
     };
 
     bool is_hardware_setup = false;
