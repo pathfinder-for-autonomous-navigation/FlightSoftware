@@ -14,6 +14,7 @@ namespace Devices {
     static std::string gomspace_name = "gomspace";
     static std::string quake_name = "quake";
     static std::string piksi_name = "piksi";
+    static std::string system_output_name = "system_output";
     static std::string dcdc_name = "dcdc";
     static std::string spike_and_hold_name = "spike_and_hold";
     static std::string adcs_system_name = "adcs_system";
@@ -31,9 +32,12 @@ namespace Devices {
                           Wire, Gomspace::ADDRESS);
         return g;
     }
-
     Piksi& piksi() {
-        static Piksi p(piksi_name, Serial4);
+        static FakePiksi p(piksi_name, Serial4);
+        return p;
+    }
+    SystemOutput& system_output() {
+        static SystemOutput p(system_output_name, Serial4);
         return p;
     }
     SpikeAndHold& spike_and_hold() {
@@ -85,29 +89,31 @@ namespace Devices {
 
 namespace State {
 namespace Hardware {
-    static Hardware::DeviceState adcs_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState dcdc_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState docking_motor_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState docking_switch_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState gomspace_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState adcs_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState dcdc_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState docking_motor_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState docking_switch_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState gomspace_device_state = {false, false, false, false, 1};
     static Hardware::DeviceState piksi_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState pressure_sensor_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState quake_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState sph_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false, 1};
+    static Hardware::DeviceState system_output_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState pressure_sensor_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState quake_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState sph_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false, 1};
+    // static Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false, 1};
     std::map<Devices::Device*, Hardware::DeviceState> hat {
-        {&Devices::adcs_system(), adcs_device_state},
-        {&Devices::dcdc(), dcdc_device_state},
-        {&Devices::docking_motor(), docking_motor_device_state},
-        {&Devices::docking_switch(), docking_switch_device_state},
-        {&Devices::gomspace(), gomspace_device_state},
+        // {&Devices::adcs_system(), adcs_device_state},
+        // {&Devices::dcdc(), dcdc_device_state},
+        // {&Devices::docking_motor(), docking_motor_device_state},
+        // {&Devices::docking_switch(), docking_switch_device_state},
+        // {&Devices::gomspace(), gomspace_device_state},
         {&Devices::piksi(), piksi_device_state},
-        {&Devices::pressure_sensor(), pressure_sensor_device_state},
-        {&Devices::quake(), quake_device_state},
-        {&Devices::spike_and_hold(), sph_device_state},
-        {&Devices::temp_sensor_inner(), temp_sensor_inner_device_state},
-        {&Devices::temp_sensor_outer(), temp_sensor_outer_device_state}
+        {&Devices::system_output(), system_output_device_state},
+        // {&Devices::pressure_sensor(), pressure_sensor_device_state},
+        // {&Devices::quake(), quake_device_state},
+        // {&Devices::spike_and_hold(), sph_device_state},
+        // {&Devices::temp_sensor_inner(), temp_sensor_inner_device_state},
+        // {&Devices::temp_sensor_outer(), temp_sensor_outer_device_state}
     };
 
     bool is_hardware_setup = false;
@@ -117,6 +123,7 @@ namespace Hardware {
     mutex_t adcs_device_lock;
     mutex_t spike_and_hold_device_lock;
     mutex_t piksi_device_lock;
+    mutex_t system_output_device_lock;
     mutex_t quake_device_lock;
     mutex_t gomspace_device_lock;
     mutex_t pressure_sensor_device_lock;
