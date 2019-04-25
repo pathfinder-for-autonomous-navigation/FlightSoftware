@@ -57,6 +57,8 @@ static void master_loop() {
                 State::write(master_state, MasterState::NORMAL, master_state_lock);
                 State::write(pan_state, PANState::STANDBY, master_state_lock);
             }
+
+            // TODO add timeout
         }
         break;
         case MasterState::INITIALIZATION_HOLD:
@@ -150,9 +152,16 @@ static void master_loop() {
                         EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 2);
                     chMtxUnlock(&eeprom_lock);
                     // Do nothing, just wait for ground commands
+                    if (!State::read(State::Master::uplink_command_applied, master_state_lock)) {
+                        Master::apply_uplink_commands();
+                        State::write(State::Master::uplink_command_applied, true, master_state_lock);
+                    }
                 }
                 break;
                 case PANState::PAIRED: {
+                    chMtxLock(&eeprom_lock);
+                        EEPROM.put(EEPROM_ADDRESSES::FINAL_STATE_FLAG, (unsigned char) 3);
+                    chMtxUnlock(&eeprom_lock);
                     // TODO Modify ADCS gains
                     // TODO Modify uplink struct and applicator so that they can un-modify the gains
                     State::write(pan_state, PANState::STANDBY, master_state_lock);
@@ -231,22 +240,22 @@ void master_init() {
             unsigned char final_state = EEPROM.read(EEPROM_ADDRESSES::FINAL_STATE_FLAG);
         chMtxUnlock(&eeprom_lock);
         rwMtxWLock(&State::Master::master_state_lock);
-            if (final_state != 0) {
+            if (final_state != FINAL_STATES::NO_FINAL_STATE) {
                 State::Master::is_follower = is_follower;
             }
-            if (final_state == 1) {
+            if (final_state == FINAL_STATES::DOCKING) {
                 master_state = MasterState::NORMAL;
                 pan_state = PANState::DOCKING;
             }
-            else if (final_state == 2) {
+            else if (final_state == FINAL_STATES::DOCKED) {
                 master_state = MasterState::NORMAL;
                 pan_state = PANState::DOCKED;
             }
-            else if(final_state == 3) {
+            else if(final_state == FINAL_STATES::PAIRED) {
                 master_state = MasterState::NORMAL;
                 pan_state = PANState::PAIRED;
             }
-            else if (final_state == 4) {
+            else if (final_state == FINAL_STATES::SPACEJUNK) {
                 master_state = MasterState::NORMAL;
                 pan_state = PANState::SPACEJUNK;
             }

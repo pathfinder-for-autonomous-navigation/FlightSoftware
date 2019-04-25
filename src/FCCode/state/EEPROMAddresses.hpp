@@ -22,17 +22,21 @@ enum EEPROM_ADDRESSES {
     HOURS_SINCE_SBDIX = 0x34,    // 4-byte integer; counts hours since the last communication occurred with the
                                  // satellite
     IS_FOLLOWER = 0x40, // Boolean: whether or not satellite is follower
-    FINAL_STATE_FLAG = 0x41, // Has value: 0 if satellite is not in a final state
-                             //            1 if satellite is in docking mode
-                             //            2 if satellite is in docked mode
-                             //            3 if satellite is in paired mode
-                             //            4 if satellite is in spacejunk mode
+    FINAL_STATE_FLAG = 0x41, // See enum below for possible values.
     PREFERRED_INTERTANK_VALVE = 0x50, // 0 if main valve is preferred
                                       // 1 if backup valve is preferred
     DEVICE_REBOOTS_PIKSI = 0x60,          // 4-byte integer: number of times Piksi has been rebooted
     DEVICE_REBOOTS_QUAKE = 0x64,          // 4-byte integer: number of times Quake has been rebooted
     DEVICE_REBOOTS_SPIKE_AND_HOLD = 0x68, // 4-byte integer: number of times Spike and Hold has been rebooted
     DEVICE_REBOOTS_ADCS = 0x6C,           // 4-byte integer: number of times ADCS has been rebooted
+};
+
+enum FINAL_STATES {
+    NO_FINAL_STATE = 0,
+    DOCKING = 1,
+    DOCKED = 2,
+    PAIRED = 3,
+    SPACEJUNK = 4
 };
 
 //! Prevents multiple-process access of the EEPROM.

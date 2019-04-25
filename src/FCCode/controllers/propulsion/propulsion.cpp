@@ -93,6 +93,7 @@ static void propulsion_state_controller() {
             float tank_pressure = State::read(State::Propulsion::tank_pressure, propulsion_state_lock);
             if (tank_pressure < Constants::Propulsion::PRE_FIRING_OUTER_TANK_PRESSURE) {
                 // Not enough pressure for a firing
+                // TODO record fault. Why did pressure leak so fast?
                 State::write(State::Propulsion::propulsion_state, PropulsionState::IDLE, propulsion_state_lock);
             }
 
@@ -138,6 +139,7 @@ void RTOSTasks::propulsion_controller(void *arg) {
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
     debug_println("Deployment timer has finished.");
     debug_println("Initializing main operation...");
+    State::write(State::Propulsion::propulsion_state, PropulsionState::IDLE, propulsion_state_lock);
 
     chThdExit((msg_t)0);
 }

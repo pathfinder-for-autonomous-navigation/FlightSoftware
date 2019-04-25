@@ -186,12 +186,6 @@ void RTOSTasks::gomspace_controller(void *arg) {
     (void)chThdCreateStatic(gomspace_read_controller_workingArea, 
         sizeof(gomspace_read_controller_workingArea),
         RTOSTasks::gomspace_thread_priority, gomspace_read_controller, NULL);
-    
-    debug_println("Waiting for deployment timer to finish.");
-    bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
-    if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
-    debug_println("Deployment timer has finished.");
-    debug_println("Initializing main operation...");
 
     chThdExit((msg_t)0);
 }

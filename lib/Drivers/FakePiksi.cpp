@@ -1,5 +1,6 @@
 #include "FakePiksi.hpp"
 #include <Arduino.h>
+#include <AttitudeMath.hpp>
 
 using namespace Devices;
 
@@ -25,7 +26,7 @@ void FakePiksi::reset() {}
 void FakePiksi::disable() {}
 
 void FakePiksi::get_gps_time(gps_time_t* time) {
-    _serial_port.write("rt");
+    _serial_port.write("t");
     delay(2);
     char buf[sizeof(gps_time_t)];
     _serial_port.readBytes(buf, sizeof(gps_time_t));
@@ -33,7 +34,7 @@ void FakePiksi::get_gps_time(gps_time_t* time) {
 }
 
 void FakePiksi::get_pos_ecef(std::array<double, 3>* position, unsigned int* tow) {
-    _serial_port.write("rp");
+    _serial_port.write("r");
     delay(2);
     char buf[sizeof(gps_data_t)];
     _serial_port.readBytes(buf, sizeof(gps_data_t));
@@ -45,13 +46,25 @@ unsigned char FakePiksi::get_pos_ecef_nsats() {
     return 2; // Doesn't matter what this number is; we just need a downlink for downlink practice
 }
 
+static volatile unsigned char flag = 0; // Value is set by get_baseline_ecef
+unsigned char FakePiksi::get_pos_ecef_flags() { 
+    return flag;
+}
+
 void FakePiksi::get_baseline_ecef(std::array<double, 3>* position, unsigned int* tow) {
-    _serial_port.write("rdop");
+    _serial_port.write("u");
     delay(2);
     char buf[sizeof(gps_data_t)];
     _serial_port.readBytes(buf, sizeof(gps_data_t));
     *position = ((gps_data_t*) buf)->data;
     *tow = ((gps_data_t*) buf)->tow;
+
+    // Set GPS flag based on distance
+    float p[3];
+    for(int i = 0; i < 3; i++) p[i] = (*position)[i];
+    if (vect_mag(p) > 200)      { flag = 0; }
+    else if (vect_mag(p) > 100) { flag = 1; }
+    else { flag = 2; }
 }
 
 unsigned char FakePiksi::get_baseline_ecef_nsats() { 
@@ -59,7 +72,7 @@ unsigned char FakePiksi::get_baseline_ecef_nsats() {
 }
 
 void FakePiksi::get_vel_ecef(std::array<double, 3>* velocity, unsigned int* tow) { 
-    _serial_port.write("rv");
+    _serial_port.write("s");
     delay(2);
     char buf[sizeof(gps_data_t)];
     _serial_port.readBytes(buf, sizeof(gps_data_t));
@@ -72,7 +85,7 @@ unsigned char FakePiksi::get_vel_ecef_nsats() {
 }
 
 void FakePiksi::get_base_pos_ecef(std::array<double, 3>* position) { 
-    _serial_port.write("rop");
+    _serial_port.write("l");
     delay(2);
     char buf[sizeof(std::array<double, 3>)];
     _serial_port.readBytes(buf, sizeof(std::array<double, 3>));

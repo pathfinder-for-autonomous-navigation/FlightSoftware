@@ -15,6 +15,7 @@ static void propagate_self_orbit() {
     State::write(State::GNC::gps_position, gps_pos, gnc_state_lock);
     State::write(State::GNC::gps_velocity, gps_vel, gnc_state_lock);
 
+    // TODO
     bool now_in_nighttime = false;
     if (in_nighttime && !now_in_nighttime) {
         in_nighttime = false;

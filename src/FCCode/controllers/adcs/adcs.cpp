@@ -86,6 +86,7 @@ static THD_FUNCTION(adcs_loop, arg) {
                         rwMtxWLock(&adcs_state_lock);
                             State::ADCS::adcs_state = ADCSState::ZERO_TORQUE;
                         rwMtxWUnlock(&adcs_state_lock);
+                        break;
                     }
                     MomentumControl::magfield = ADCSControllers::Estimator::magfield_filter_body;
                     MomentumControl::momentum = ADCSControllers::Estimator::htotal_filter_body;
@@ -198,6 +199,7 @@ void RTOSTasks::adcs_controller(void *arg) {
     chMtxLock(&State::Hardware::adcs_device_lock);
         if (State::Hardware::check_is_functional(&adcs_system()))
             adcs_system().set_mode(Mode::ACTIVE);
+        // TODO what if there's an else?
     chMtxUnlock(&State::Hardware::adcs_device_lock);
 
     chThdExit((msg_t)0);

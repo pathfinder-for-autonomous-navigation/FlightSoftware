@@ -73,7 +73,7 @@ class Piksi : public Device {
     virtual unsigned char get_pos_ecef_nsats();
     /** @brief Get status flags of GPS position measurement.
      *  @return Status flags of GPS position measurement. **/
-    unsigned char get_pos_ecef_flags();
+    virtual unsigned char get_pos_ecef_flags();
 
     /** @brief Gets satellite position in ECEF coordinates relative to base station.
      *  @param position A pointer to the destination struct for the information. **/

@@ -18,6 +18,7 @@ namespace Devices {
 
       void get_pos_ecef(std::array<double, 3>* position, unsigned int* tow) override;
       unsigned char get_pos_ecef_nsats() override;
+      unsigned char get_pos_ecef_flags() override;
 
       void get_baseline_ecef(std::array<double, 3>* position, unsigned int* tow) override;
       unsigned char get_baseline_ecef_nsats() override;

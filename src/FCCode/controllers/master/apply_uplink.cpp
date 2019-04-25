@@ -139,6 +139,10 @@ void Master::apply_uplink_commands() {
     bool is_safehold = ms == State::Master::MasterState::SAFE_HOLD;
     bool is_standby = ps == State::Master::PANState::STANDBY;
 
+    // Command state
+    State::write(State::Master::master_state, ms, State::Master::master_state_lock);
+    State::write(State::Master::pan_state, ps, State::Master::master_state_lock);
+
     // Disable safe hold timer if being commanded out of sate hold
     if (was_safehold && !is_safehold) {
         chThdTerminate(safe_hold_timer_thread);
@@ -162,10 +166,6 @@ void Master::apply_uplink_commands() {
         FaultState::ADCS::motor_y_faulty_ignore = uplink.motor_y_faulty_ignore;
         FaultState::ADCS::motor_z_faulty_ignore = uplink.motor_z_faulty_ignore;
     rwMtxWLock(&FaultState::ADCS::adcs_faults_state_lock);
-
-    // Command state
-    State::write(State::Master::master_state, ms, State::Master::master_state_lock);
-    State::write(State::Master::pan_state, ps, State::Master::master_state_lock);
 
     // ADCS
     State::ADCS::ADCSState as = (State::ADCS::ADCSState) uplink.adcs_state;

@@ -23,11 +23,13 @@ static void piksi_read() {
     debug_println("Reading Piksi data");
 
     // Try to parse Piksi buffer three times
+    bool successful = false;
     for(int i = 0; i < 3; i++) {
-        bool successful = Devices::piksi().process_buffer();
+        successful = Devices::piksi().process_buffer();
         if (successful) break;
         chThdSleepMilliseconds(RTOSTasks::LoopTimes::PIKSI / 5); // Wait ~20 ms
     }
+    if (!successful) return; // TODO add error recording
 
     // GPS Time
     gps_time_t current_time;
@@ -38,6 +40,7 @@ static void piksi_read() {
     // GPS Position
     std::array<double, 3> pos;
     unsigned int pos_tow;
+    unsigned int pos_ns; // TODO add function to Piksi to get nanoseconds as well
     piksi().get_pos_ecef(&pos, &pos_tow);
     gps_time_t pos_time = current_time;
     pos_time.gpstime.tow = pos_tow;
@@ -61,11 +64,11 @@ static void piksi_read() {
         piksi().get_base_pos_ecef(&pos_other);
         gps_time_t pos_other_time = current_time;
         pos_other_time.gpstime.tow = pos_tow;
-        if (pos != State::Piksi::recorded_gps_position_other) {
+        pos_other_time.gpstime.ns = pos_ns;
+        if (pos_other != State::Piksi::recorded_gps_position_other) {
             State::write(State::Piksi::recorded_gps_position_other, pos_other, piksi_state_lock);
             State::write(State::Piksi::recorded_gps_position_other_time, pos_other_time, piksi_state_lock);
         }
-
         if (pos_flags == 1) {
             State::write(State::Piksi::is_float_rtk, true, State::Piksi::piksi_state_lock);
             State::write(State::Piksi::is_fixed_rtk, false, State::Piksi::piksi_state_lock);
@@ -112,6 +115,7 @@ void RTOSTasks::piksi_controller(void *arg) {
 
         // Power cycle Piksi if failing. Do this for as many times as it takes for the device
         // to start talking again.
+        // TODO add option from ground to disable power cycling
         if (!State::Hardware::check_is_functional(&piksi()) && Gomspace::piksi_thread == NULL) {
             // Specify arguments for thread
             Gomspace::cycler_arg_t cycler_args = {
@@ -125,8 +129,7 @@ void RTOSTasks::piksi_controller(void *arg) {
                 RTOSTasks::master_thread_priority,
                 Gomspace::cycler_fn, (void*) &cycler_args);
         }
-
-        if (State::Hardware::check_is_functional(&piksi())) {
+        else if (State::Hardware::check_is_functional(&piksi())) {
             piksi_read();
         }
 
