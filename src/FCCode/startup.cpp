@@ -18,7 +18,7 @@
 #include <rwmutex.hpp>
 #include "debug.hpp"
 #include "deployment_timer.hpp"
-//#include "data_collection/adcs_threads.h"
+#include "data_collection/adcs_threads.h"
 
 thread_t *deployment_timer_thread;
 namespace RTOSTasks
@@ -138,31 +138,31 @@ void pan_system_setup()
     debug_eeprom_initialization();
 #endif
 
-    debug_println("Startup process has begun.");
-    initialize_rtos_objects();
+    // debug_println("Startup process has begun.");
+    // initialize_rtos_objects();
 
-    // Determining boot count
-    chMtxLock(&eeprom_lock);
-    unsigned int boot_number = State::read(State::Master::boot_number, State::Master::master_state_lock);
-    EEPROM.get(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
-    State::write(State::Master::boot_number, boot_number++, State::Master::master_state_lock);
-    EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
-    chMtxUnlock(&eeprom_lock);
-    debug_printf("This is boot #%d since the satellite left the deployer. \n", State::Master::boot_number);
+    // // Determining boot count
+    // chMtxLock(&eeprom_lock);
+    // unsigned int boot_number = State::read(State::Master::boot_number, State::Master::master_state_lock);
+    // EEPROM.get(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
+    // State::write(State::Master::boot_number, boot_number++, State::Master::master_state_lock);
+    // EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
+    // chMtxUnlock(&eeprom_lock);
+    // debug_printf("This is boot #%d since the satellite left the deployer. \n", State::Master::boot_number);
 
-    debug_println("Initializing hardware setup.");
-    hardware_setup();
+    // debug_println("Initializing hardware setup.");
+    // hardware_setup();
 
-    debug_println("Starting satellite processes.");
+    // debug_println("Starting satellite processes.");
 
-    // Start deployment thread
-    deployment_timer_thread = chThdCreateStatic(deployment_timer_workingArea,
-                                                sizeof(deployment_timer_workingArea), RTOSTasks::MAX_THREAD_PRIORITY + 1,
-                                                deployment_timer_function, NULL);
+    // // Start deployment thread
+    // deployment_timer_thread = chThdCreateStatic(deployment_timer_workingArea,
+    //                                             sizeof(deployment_timer_workingArea), RTOSTasks::MAX_THREAD_PRIORITY + 1,
+    //                                             deployment_timer_function, NULL);
 
-    start_satellite_processes();
+    // start_satellite_processes();
     debug_println("Starting adcs data collection.");
-    //adcs_threads::init();
+    adcs_threads::init();
 
     debug_println("System setup is complete.");
     debug_println("Process terminating.");
