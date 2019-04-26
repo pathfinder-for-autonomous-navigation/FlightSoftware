@@ -19,10 +19,7 @@ void ADCSControllers::read_adcs_data() {
 
     rwMtxWLock(&adcs_state_lock);
     rwMtxRLock(&State::GNC::gnc_state_lock);
-        for(int i = 0; i < 3; i++) Estimator::r_gps_ecef[i] = State::GNC::gps_position[i];
-        for(int i = 0; i < 3; i++) Estimator::v_gps_ecef[i] = State::GNC::gps_velocity[i];
-        for(int i = 0; i < 3; i++) Estimator::r2other_gps_ecef[i] = State::GNC::gps_position_other[i];
-        for(int i = 0; i < 3; i++) Estimator::v2other_gps_ecef[i] = State::GNC::gps_velocity_other[i];
+        for(int i = 0; i < 3; i++) Estimator::r_gps_eci[i] = State::GNC::gps_position[i];
         for(int i = 0; i < 4; i++) Estimator::q_gps_ecef[i] = State::GNC::ecef_to_eci[i];
         Estimator::time = (unsigned int) State::GNC::get_current_time();
     rwMtxRUnlock(&State::GNC::gnc_state_lock);
@@ -50,9 +47,9 @@ void ADCSControllers::read_adcs_data() {
     std::array<float, 3> ssa_vec;
     if (ssa_mode == SSAMode::IN_PROGRESS) {
         chMtxLock(&adcs_device_lock);
-            adcs_system().get_ssa(ssa_mode, Estimator::sun2sat_sensor_body.data());
+            adcs_system().get_ssa(ssa_mode, Estimator::sat2sun_sensor_body.data());
         chMtxUnlock(&adcs_device_lock);
-        State::write(State::ADCS::ssa_vec, Estimator::sun2sat_sensor_body, adcs_state_lock);
+        State::write(State::ADCS::ssa_vec, Estimator::sat2sun_sensor_body, adcs_state_lock);
         if (ssa_mode == SSAMode::COMPLETE) {
             rwMtxWLock(&adcs_state_lock);
             State::ADCS::ssa_vec = ssa_vec;

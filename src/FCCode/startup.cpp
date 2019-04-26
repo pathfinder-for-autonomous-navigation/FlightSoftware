@@ -11,12 +11,14 @@
 #include <rt/chvt.h>
 #include <EEPROM.h>
 #include "controllers/controllers.hpp"
+#include "controllers/constants.hpp"
 #include "state/EEPROMAddresses.hpp"
 #include "state/state_holder.hpp"
+#include "state/fault_state_holder.hpp"
 #include <rwmutex.hpp>
 #include "debug.hpp"
 #include "deployment_timer.hpp"
-#include "data_collection/adcs_threads.h"
+//#include "data_collection/adcs_threads.h"
 
 thread_t *deployment_timer_thread;
 namespace RTOSTasks
@@ -31,9 +33,6 @@ thread_t *propulsion_thread;
 } // namespace RTOSTasks
 using namespace RTOSTasks;
 
-<<<<<<< Updated upstream
-static void hardware_setup() {
-=======
 static void initialize_locks()
 {
     // Initialize all state locks
@@ -68,7 +67,6 @@ static void initialize_locks()
 
 static void hardware_setup()
 {
->>>>>>> Stashed changes
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
 
     // debug_println("Initializing hardware buses.");
@@ -164,24 +162,11 @@ void pan_system_setup()
 
     start_satellite_processes();
     debug_println("Starting adcs data collection.");
-    adcs_threads::init();
+    //adcs_threads::init();
 
     debug_println("System setup is complete.");
     debug_println("Process terminating.");
     chThdExit((msg_t)0);
-<<<<<<< Updated upstream
-=======
-
-    pinMode(13, OUTPUT);
-    while (true)
-    {
-        digitalWrite(13, HIGH);
-        delay(500);
-        digitalWrite(13, LOW);
-        delay(500);
-    }
-    chThdExit((msg_t)0);
->>>>>>> Stashed changes
 }
 
 // "UNIT_TEST" used to stop "multiple definition" linker errors when running tests
