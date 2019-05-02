@@ -174,22 +174,22 @@ void adcs_threads::init()
  // Does loop index refer to the inner loop index? 
  // -------------------------------------------------------------------------------------
   // ------------------------------------------------------------------------------------
-// #define GEN_PROD_THREADS
-// {% for namespace in namespaces -%}
-//     {% for field in namespace.fields -%}
+#define GEN_PROD_THREADS
+{% for namespace in namespaces -%}
+    {% for field in namespace.fields -%}
 
-//       auto datt_{{loop.index}} = Data<{{field.type}}, {{field.samples}}>(State::{{namespace.name}}::{{field.source}}, 
-//         StateHistory::{{namespace.name}}::{{field.name}}, 
-//         StateHistory::Rates::{{namespace.name}}::{{field.name}}, 
-//         {{loop.index}});
+      auto datt_{{loop.index}} = Data<{{field.type}}, {{field.samples}}>(State::{{namespace.name}}::{{field.source}}, 
+        StateHistory::{{namespace.name}}::{{field.name}}, 
+        StateHistory::Rates::{{namespace.name}}::{{field.name}}, 
+        {{loop.index}});
 
-//       adcs_threads::prod_threads[{{loop.index}}] = 
-//         chThdCreateStatic(waProd[{{loop.index}}], sizeof(waProd[{{loop.index}}]), NORMALPRIO + 1, 
-//         adcs_threads::producer<{{field.type}}, {{field.samples}}>, 
-//         (void *)&datt_{{loop.index}});
+      adcs_threads::prod_threads[{{loop.index}}] = 
+        chThdCreateStatic(waProd[{{loop.index}}], sizeof(waProd[{{loop.index}}]), NORMALPRIO + 1, 
+        adcs_threads::producer<{{field.type}}, {{field.samples}}>, 
+        (void *)&datt_{{loop.index}});
 
-//     {% endfor %}
-// {% endfor -%}
+    {% endfor %}
+{% endfor -%}
 
 /* Auto generate section end -------------------------------------------------- */
 
