@@ -118,19 +118,19 @@ GNC_FIELDS = [
 FIELDS.extend(GNC_FIELDS)
 
 ADCS_HISTORY_FIELDS = []
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "gyro_history",              "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : -2.2, "max" : 2.2 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "gyro_fast_history",         "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "attitude_cmd_history",      "type" : "quaternion" , "buf_size" : 10 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "attitude_history",          "type" : "quaternion" , "buf_size" : 10 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "attitude_fast_history",     "type" : "quaternion" , "buf_size" : 10 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "rate_history",              "type" : "float vector", "size" : 30, "buf_size" : 10, "min" : -2.2, "max" : 2.2 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "rate_fast_history",         "type" : "float vector", "size" : 30, "buf_size" : 10, "min" : -2.2, "max" : 2.2 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "spacecraft_L_history",      "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "spacecraft_L_fast_history", "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "magnetometer_history",      "type" : "float vector", "size" : 29, "buf_size" : 10, "min" : 0, "max" : 0.005 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "rwa_ramp_cmd_history",      "type" : "float vector", "size" : 29, "buf_size" : 10, "min" : -310.2, "max" : 310.2 })
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "mtr_cmd_history",           "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
-ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "name" : "ssa_vector_history",        "type" : "float vector", "size" : 21, "buf_size" : 10, "min" : 0, "max" : 1 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "gyro_data",     "name" : "gyro_history",              "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : -2.2, "max" : 2.2 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "gyro_data",     "name" : "gyro_fast_history",         "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "cmd_attitude",  "name" : "attitude_cmd_history",      "type" : "quaternion" , "buf_size" : 10 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "cur_attitude",  "name" : "attitude_history",          "type" : "quaternion" , "buf_size" : 10 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "cur_attitude",  "name" : "attitude_fast_history",     "type" : "quaternion" , "buf_size" : 10 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "cur_ang_rate",  "name" : "rate_history",              "type" : "float vector", "size" : 30, "buf_size" : 10, "min" : -2.2, "max" : 2.2 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "cur_ang_rate",  "name" : "rate_fast_history",         "type" : "float vector", "size" : 30, "buf_size" : 10, "min" : -2.2, "max" : 2.2 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "rwa_speeds_rd", "name" : "spacecraft_L_history",      "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "rwa_speeds_rd", "name" : "spacecraft_L_fast_history", "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "mag_data",      "name" : "magnetometer_history",      "type" : "float vector", "size" : 29, "buf_size" : 10, "min" : 0, "max" : 0.005 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "rwa_ramps_rd",  "name" : "rwa_ramp_cmd_history",      "type" : "float vector", "size" : 29, "buf_size" : 10, "min" : -310.2, "max" : 310.2 })
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "mtr_cmds"    ,  "name" : "mtr_cmd_history",           "type" : "float vector", "size" : 50, "buf_size" : 10, "min" : 0, "max" : 0 }) #TODO
+ADCS_HISTORY_FIELDS.append({ "group" : "adcs_history", "source" : "ssa_vec"     ,  "name" : "ssa_vector_history",        "type" : "float vector", "size" : 21, "buf_size" : 10, "min" : 0, "max" : 1 })
 FIELDS.extend(ADCS_HISTORY_FIELDS)
 
 PIKSI_HISTORY_FIELDS = []
