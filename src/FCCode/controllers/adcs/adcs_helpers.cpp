@@ -11,7 +11,7 @@ using State::ADCS::adcs_state_lock;
 static void command_optimal_long_edge(const pla::Vec3f& r) {
     // Unit vector z--antenna direction of satellite
     std::array<float, 3> z = {0,0,1};
-    std::array<float, 3> sun_vector = State::read(ADCSControllers::Estimator::sun2sat_filter_body, adcs_state_lock);
+    std::array<float, 3> sun_vector = State::read(ADCSControllers::Estimator::sat2sun_filter_body, adcs_state_lock);
     // Get normals to the four long edges of the satellite
     std::array<float, 3> long_edge_vectors[4];
     long_edge_vectors[0] = {1.0f / sqrt(2), 1.0f / sqrt(2), 0}; // 1/sqrt(2) (x + y)

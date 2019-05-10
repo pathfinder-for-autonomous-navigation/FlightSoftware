@@ -1,13 +1,13 @@
 #ifndef SYSTEM_OUTPUT_HPP_
 #define SYSTEM_OUTPUT_HPP_
 
+#include <Arduino.h>
 #include <Device.hpp>
-#include <HardwareSerial.h>
 
 namespace Devices {
   class SystemOutput : public Device {
     public:
-      SystemOutput(const std::string& name, HardwareSerial& sp);
+      SystemOutput(const std::string& n, HardwareSerial& sp);
 
       bool setup() override;
       bool is_functional() override;

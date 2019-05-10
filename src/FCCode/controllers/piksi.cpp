@@ -39,11 +39,8 @@ static void piksi_read() {
 
     // GPS Position
     std::array<double, 3> pos;
-    unsigned int pos_tow;
     unsigned int pos_ns; // TODO add function to Piksi to get nanoseconds as well
-    piksi().get_pos_ecef(&pos, &pos_tow);
-    gps_time_t pos_time = current_time;
-    pos_time.gpstime.tow = pos_tow;
+    piksi().get_pos_ecef(&pos);
     
     chMtxLock(&State::Hardware::piksi_device_lock);
         unsigned char pos_nsats = piksi().get_pos_ecef_nsats();
@@ -51,7 +48,7 @@ static void piksi_read() {
     chMtxUnlock(&State::Hardware::piksi_device_lock);
     if (pos != State::Piksi::recorded_gps_position) {
         State::write(State::Piksi::recorded_gps_position, pos, piksi_state_lock);
-        State::write(State::Piksi::recorded_gps_position_time, pos_time, piksi_state_lock);
+        State::write(State::Piksi::recorded_gps_position_time, current_time, piksi_state_lock);
         State::write(State::Piksi::recorded_gps_position_nsats, pos_nsats, piksi_state_lock);
     }
 
@@ -62,12 +59,9 @@ static void piksi_read() {
     if (pos_flags != 0) {
         std::array<double, 3> pos_other;
         piksi().get_base_pos_ecef(&pos_other);
-        gps_time_t pos_other_time = current_time;
-        pos_other_time.gpstime.tow = pos_tow;
-        pos_other_time.gpstime.ns = pos_ns;
         if (pos_other != State::Piksi::recorded_gps_position_other) {
             State::write(State::Piksi::recorded_gps_position_other, pos_other, piksi_state_lock);
-            State::write(State::Piksi::recorded_gps_position_other_time, pos_other_time, piksi_state_lock);
+            State::write(State::Piksi::recorded_gps_position_other_time, current_time, piksi_state_lock);
         }
         if (pos_flags == 1) {
             State::write(State::Piksi::is_float_rtk, true, State::Piksi::piksi_state_lock);
@@ -85,14 +79,12 @@ static void piksi_read() {
 
     // GPS Velocity
     std::array<double, 3> vel;
-    unsigned int vel_tow;
-    piksi().get_vel_ecef(&pos, &vel_tow);
-    gps_time_t vel_time = current_time;
-    vel_time.gpstime.tow = vel_tow;
+    piksi().get_vel_ecef(&pos);
+
     unsigned char vel_nsats = piksi().get_vel_ecef_nsats();
     if (vel != State::Piksi::recorded_gps_velocity) {
         State::write(State::Piksi::recorded_gps_velocity, vel, piksi_state_lock);
-        State::write(State::Piksi::recorded_gps_velocity_time, vel_time, piksi_state_lock);
+        State::write(State::Piksi::recorded_gps_velocity_time, current_time, piksi_state_lock);
         State::write(State::Piksi::recorded_gps_velocity_nsats, vel_nsats, piksi_state_lock);
     }
 }

@@ -1,14 +1,8 @@
 #include "FakePiksi.hpp"
-#include <Arduino.h>
+#include <fake_device_io.hpp>
 #include <AttitudeMath.hpp>
 
 using namespace Devices;
-
-// Used for packaging serial data sent to and from "Fake Piksi" Teensy
-struct gps_data_t {
-    std::array<double, 3> data;
-    unsigned int tow;
-};
 
 bool FakePiksi::setup() {
     _serial_port.begin(BAUD_RATE);
@@ -16,30 +10,26 @@ bool FakePiksi::setup() {
 }
 
 bool FakePiksi::is_functional() {
-    _serial_port.write("PING");
+    _serial_port.write('p');
     delay(2);
-    if (_serial_port.read() != 0x50) return false; // Capital "P" in ASCII
+    if (_serial_port.read() != 'P') return false;
     return true;
 }
 
 void FakePiksi::reset() {}
 void FakePiksi::disable() {}
 
-void FakePiksi::get_gps_time(gps_time_t* time) {
-    _serial_port.write("t");
-    delay(2);
-    char buf[sizeof(gps_time_t)];
-    _serial_port.readBytes(buf, sizeof(gps_time_t));
-    memcpy(time, buf, sizeof(gps_time_t));
+bool Piksi::process_buffer() {
+    return true;
 }
 
-void FakePiksi::get_pos_ecef(std::array<double, 3>* position, unsigned int* tow) {
+void FakePiksi::get_gps_time(gps_time_t* time) {
+    read_gps_time(_serial_port, time);
+}
+
+void FakePiksi::get_pos_ecef(std::array<double, 3>* position) {
     _serial_port.write("r");
-    delay(2);
-    char buf[sizeof(gps_data_t)];
-    _serial_port.readBytes(buf, sizeof(gps_data_t));
-    *position = ((gps_data_t*) buf)->data;
-    *tow = ((gps_data_t*) buf)->tow;
+    read_double_arr(_serial_port, position->data());
 }
 
 unsigned char FakePiksi::get_pos_ecef_nsats() { 
@@ -51,13 +41,9 @@ unsigned char FakePiksi::get_pos_ecef_flags() {
     return flag;
 }
 
-void FakePiksi::get_baseline_ecef(std::array<double, 3>* position, unsigned int* tow) {
-    _serial_port.write("u");
-    delay(2);
-    char buf[sizeof(gps_data_t)];
-    _serial_port.readBytes(buf, sizeof(gps_data_t));
-    *position = ((gps_data_t*) buf)->data;
-    *tow = ((gps_data_t*) buf)->tow;
+void FakePiksi::get_baseline_ecef(std::array<double, 3>* position) {
+    _serial_port.write("l");
+    read_double_arr(_serial_port, position->data());
 
     // Set GPS flag based on distance
     float p[3];
@@ -71,13 +57,9 @@ unsigned char FakePiksi::get_baseline_ecef_nsats() {
     return 2; // Doesn't matter what this number is; we just need a downlink for downlink practice
 }
 
-void FakePiksi::get_vel_ecef(std::array<double, 3>* velocity, unsigned int* tow) { 
-    _serial_port.write("s");
-    delay(2);
-    char buf[sizeof(gps_data_t)];
-    _serial_port.readBytes(buf, sizeof(gps_data_t));
-    *velocity = ((gps_data_t*) buf)->data;
-    *tow = ((gps_data_t*) buf)->tow;
+void FakePiksi::get_vel_ecef(std::array<double, 3>* velocity) { 
+    _serial_port.write("u");
+    read_double_arr(_serial_port, velocity->data());
 }
 
 unsigned char FakePiksi::get_vel_ecef_nsats() { 
@@ -85,11 +67,8 @@ unsigned char FakePiksi::get_vel_ecef_nsats() {
 }
 
 void FakePiksi::get_base_pos_ecef(std::array<double, 3>* position) { 
-    _serial_port.write("l");
-    delay(2);
-    char buf[sizeof(std::array<double, 3>)];
-    _serial_port.readBytes(buf, sizeof(std::array<double, 3>));
-    *position = *((std::array<double, 3>*) buf);
+    _serial_port.write("x");
+    read_double_arr(_serial_port, position->data());
 }
 
 unsigned int FakePiksi::get_iar() { 

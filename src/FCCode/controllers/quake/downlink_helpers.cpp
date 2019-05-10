@@ -58,6 +58,7 @@ int Quake::send_downlink_stack(QuakeMessage* uplink) {
     while(!is_downlink_stack_empty()) {
         int response = send_packet(State::Quake::downlink_stack.get(), uplink);
         if (response != 0) return response;
+        // TODO requeue packet on stack if response is nonzero
     }
     return 0;
 }

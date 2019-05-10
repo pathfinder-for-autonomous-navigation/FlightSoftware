@@ -7,6 +7,7 @@ namespace Rates {
 
     constexpr unsigned int COLLECTION_PERIOD = 300000; // Collect five minutes worth of data in buffers
     {% for namespace in namespaces -%}
+    {{loop.index}}
     namespace {{namespace.name}} {
         {%- for field in namespace.fields %}
         constexpr unsigned int {{field.name}} = COLLECTION_PERIOD / {{field.samples}};
@@ -15,5 +16,15 @@ namespace Rates {
     {% endfor %}
 }
 }
-
 #endif
+
+auto datt = Data<4, 10, float>(State::{{namespace.name}})
+
+namespaces : [{
+    namespace : "Piksi",
+    fields : [{
+        "name" : "position_history",
+        "type" : "std::array<float, 4">,
+        "samples" : 10
+    }]
+}]
