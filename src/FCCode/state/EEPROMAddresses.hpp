@@ -18,10 +18,8 @@ enum EEPROM_ADDRESSES {
     SAFE_HOLD_FLAG = offset + 0x20, // Boolean: whether or not system is currently in safe hold
     SAFE_HOLD_TIMER = offset + 0x21, // 4-byte integer. Each +1 increment represents an hour.
     INITIALIZATION_HOLD_FLAG = offset + 0x25, // Boolean: whether or not system is currently in initialization hold
-    LAST_DOWNLINK_NUMBER = offset + 0x30, // 4-byte integer; tracks the number of the latest downlink successfully sent
-                                 // TODO work into downlink logic
-    HOURS_SINCE_SBDIX = offset + 0x34,    // 4-byte integer; counts hours since the last communication occurred with the
-                                 // satellite
+    HOURS_SINCE_SBDIX = offset + 0x30,    // 4-byte integer; counts hours since the last communication occurred with the
+                                          // satellite
     IS_FOLLOWER = offset + 0x40, // Boolean: whether or not satellite is follower
     FINAL_STATE_FLAG = offset + 0x41, // See enum below for possible values.
     PREFERRED_INTERTANK_VALVE = offset + 0x50, // 0 if main valve is preferred
