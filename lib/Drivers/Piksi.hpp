@@ -14,8 +14,6 @@
 #include "../libsbp/piksi.h"
 #include "../libsbp/user.h"
 
-static const std::string name = "Piksi";
-
 namespace Devices {
 /**
  * @brief Device class for interacting with the Piksi GPS system.

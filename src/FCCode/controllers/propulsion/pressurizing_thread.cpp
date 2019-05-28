@@ -16,9 +16,9 @@ static void intertank_fire() {
     unsigned int valve_vent_time = Constants::read(VALVE_VENT_TIME);
     firings[preferred_valve] = valve_vent_time;
     
-    if (State::Hardware::check_is_functional(&spike_and_hold())) {
+    if (State::Hardware::check_is_functional(spike_and_hold)) {
         chMtxLock(&spike_and_hold_device_lock);
-            spike_and_hold().execute_schedule(firings);
+            spike_and_hold->execute_schedule(firings);
         chMtxUnlock(&spike_and_hold_device_lock);
     }
 }
@@ -34,7 +34,7 @@ THD_FUNCTION(PropulsionTasks::pressurizing_fn, args) {
     for(int i = 0; i < 20; i++) {
         intertank_fire();
         chThdSleepMilliseconds(WAIT_BETWEEN_PRESSURIZATIONS);
-        State::write(State::Propulsion::tank_pressure, Devices::pressure_sensor().get(), propulsion_state_lock);
+        State::write(State::Propulsion::tank_pressure, Devices::pressure_sensor->get(), propulsion_state_lock);
         tank_pressure = State::read(State::Propulsion::tank_pressure, propulsion_state_lock);
         if (tank_pressure >= PRE_FIRING_OUTER_TANK_PRESSURE) break;
     }

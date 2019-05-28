@@ -26,29 +26,29 @@
 
 namespace Devices {
     //! Gomspace logical device used by flight controller code
-    Gomspace& gomspace();
+    extern Gomspace* gomspace;
     //! Piksi logical device used by flight controller code
-    Piksi& piksi();
+    extern Piksi* piksi;
     //! Debug device for system internals
-    SystemOutput& system_output();
+    extern SystemOutput* system_output;
     //! Spike and Hold logical device used by flight controller code
-    SpikeAndHold& spike_and_hold();
+    extern SpikeAndHold* spike_and_hold;
     //! DCDC logical device used by flight controller code
-    DCDC& dcdc();
+    extern DCDC* dcdc;
     //! Quake logical device used by flight controller code
-    QLocate& quake();
+    extern QLocate* quake;
     //! ADCS logical device used by flight controller code
-    ADCS& adcs_system();
+    extern ADCS* adcs_system;
     //! Main pressure sensor in outer tank
-    PressureSensor& pressure_sensor();
+    extern PressureSensor* pressure_sensor;
     //! Temperature sensor in inner tank
-    TempSensor& temp_sensor_inner();
+    extern TempSensor* temp_sensor_inner;
     //! Temperature sensor in outer tank
-    TempSensor& temp_sensor_outer();
+    extern TempSensor* temp_sensor_outer;
     //! Docking motor
-    DockingMotor& docking_motor();
+    extern DockingMotor* docking_motor;
     //! Docking switch
-    DockingSwitch& docking_switch();
+    extern DockingSwitch* docking_switch;
 }
 
 namespace State {

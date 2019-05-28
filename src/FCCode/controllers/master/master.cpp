@@ -24,7 +24,7 @@ namespace RTOSTasks {
 static void check_docking_switch() {
     chMtxLock(&State::Hardware::docking_switch_device_lock);
         State::write(State::Master::docking_switch_pressed,
-                     Devices::docking_switch().pressed(),
+                     Devices::docking_switch->pressed(),
                      master_state_lock);
     chMtxUnlock(&State::Hardware::docking_switch_device_lock);
 }
@@ -135,14 +135,14 @@ static void master_loop() {
                     State::write(State::Propulsion::propulsion_state, 
                         State::Propulsion::PropulsionState::DISABLED, State::Propulsion::propulsion_state_lock);
                     chMtxLock(&State::Hardware::docking_motor_device_lock);
-                        if (State::Hardware::check_is_functional(&Devices::docking_motor()))
-                            Devices::docking_motor().dock();
+                        if (State::Hardware::check_is_functional(Devices::docking_motor))
+                            Devices::docking_motor->dock();
                     chMtxUnlock(&State::Hardware::docking_motor_device_lock);
 
                     unsigned int docking_timeout = Constants::read(Constants::Master::DOCKING_TIMEOUT);
                     chVTDoSetI(&Master::docking_timer, S2ST(docking_timeout), Master::stop_docking_mode, NULL);
                     bool docking_switch_pressed = State::read(State::Master::docking_switch_pressed, master_state_lock);
-                    if (docking_switch_pressed && State::Hardware::check_is_functional(&Devices::docking_switch())) {
+                    if (docking_switch_pressed && State::Hardware::check_is_functional(Devices::docking_switch)) {
                         State::write(State::Master::pan_state, PANState::DOCKED, master_state_lock);
                     }
                 }

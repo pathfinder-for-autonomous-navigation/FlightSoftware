@@ -43,9 +43,9 @@ hat_fields = ["powered_on", "enabled", "is_functional", "error_ignored"]
 HAT_FIELDS = []
 for device in hat_devices:
     for field in hat_fields:
-        HAT_FIELDS.append({ "group" : "hardware", "name" : "hat.at(&(Devices::{0}())).{1}".format(device, field), "type" : "bool" })
+        HAT_FIELDS.append({ "group" : "hardware", "name" : "hat.at(Devices::{0}).{1}".format(device, field), "type" : "bool" })
 for device in ["piksi", "quake", "adcs_system", "spike_and_hold"]:
-    HAT_FIELDS.append({"group" : "hardware", "name" : "hat.at(&(Devices::{0}())).boot_count".format(device), "type" : "state int", "min" : 1, "max" : 65536})
+    HAT_FIELDS.append({"group" : "hardware", "name" : "hat.at(Devices::{0}).boot_count".format(device), "type" : "state int", "min" : 1, "max" : 65536})
 FIELDS.extend(HAT_FIELDS)
 
 adcs_hat_devices = [

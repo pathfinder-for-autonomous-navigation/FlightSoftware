@@ -6,6 +6,8 @@
 
 #include "ADCS.hpp"
 
+using namespace Devices;
+
 ADCS::ADCS(const std::string& name, 
            i2c_t3 &i2c_wire,
            unsigned char address) : I2CDevice(name, i2c_wire, address) {}

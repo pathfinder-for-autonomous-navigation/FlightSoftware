@@ -16,22 +16,10 @@
 #include "state/state_holder.hpp"
 #include "state/fault_state_holder.hpp"
 #include <rwmutex.hpp>
+#include "startup.hpp"
 #include "debug.hpp"
 #include "deployment_timer.hpp"
 //#include "data_collection/adcs_threads.h"
-
-thread_t *deployment_timer_thread;
-namespace RTOSTasks
-{
-thread_t *master_thread;
-thread_t *gomspace_thread;
-thread_t *piksi_thread;
-thread_t *quake_thread;
-thread_t *adcs_thread;
-thread_t *gnc_thread;
-thread_t *propulsion_thread;
-} // namespace RTOSTasks
-using namespace RTOSTasks;
 
 // thread_t* deployment_timer_thread;
 namespace RTOSTasks {
@@ -43,29 +31,37 @@ namespace RTOSTasks {
     thread_t* gnc_thread;
     // thread_t* propulsion_thread;
 }
+using namespace RTOSTasks;
 
-static void hardware_setup()
-{
+void initialize_locks() {
+    // Initialize all state locks
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
-
-    debug_println("Initializing hardware buses.");
-    // Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM); // Gomspace
-
-    debug_println("Initializing hardware peripherals.");
-    for (auto device : State::Hardware::hat)
-    {
-        Devices::Device *dptr = device.first;
-        debug_printf("Setting up device: %s...", dptr->name().c_str());
-        dptr->setup();
-        if (dptr->is_functional())
-        {
-            debug_printf_headless("setup was successful!\n");
-            State::write((State::Hardware::hat).at(device.first).powered_on, true, State::Hardware::hardware_state_lock);
-            State::write((State::Hardware::hat).at(device.first).is_functional, true, State::Hardware::hardware_state_lock);
-        }
-        else
-            debug_printf_headless("setup was unsuccessful.\n");
-    }
+    rwMtxObjectInit(&State::Master::master_state_lock);
+    rwMtxObjectInit(&State::ADCS::adcs_state_lock);
+    rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
+    rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
+    rwMtxObjectInit(&State::GNC::gnc_state_lock);
+    rwMtxObjectInit(&State::Piksi::piksi_state_lock);
+    rwMtxObjectInit(&State::Quake::quake_state_lock);
+    rwMtxObjectInit(&State::Quake::uplink_lock);
+    rwMtxObjectInit(&Constants::changeable_constants_lock);
+    rwMtxObjectInit(&RTOSTasks::LoopTimes::gnc_looptime_lock);
+    rwMtxObjectInit(&FaultState::Propulsion::propulsion_faults_state_lock);
+    rwMtxObjectInit(&FaultState::Gomspace::gomspace_faults_state_lock);
+    rwMtxObjectInit(&FaultState::ADCS::adcs_faults_state_lock);
+    // Initialize all device locks
+    chMtxObjectInit(&eeprom_lock);
+    chMtxObjectInit(&State::Hardware::adcs_device_lock);
+    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
+    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
+    chMtxObjectInit(&State::Hardware::piksi_device_lock);
+    chMtxObjectInit(&State::Hardware::gomspace_device_lock);
+    chMtxObjectInit(&State::Hardware::quake_device_lock);
+    chMtxObjectInit(&State::Hardware::pressure_sensor_device_lock);
+    chMtxObjectInit(&State::Hardware::temp_sensor_inner_device_lock);
+    chMtxObjectInit(&State::Hardware::temp_sensor_outer_device_lock);
+    chMtxObjectInit(&State::Hardware::docking_motor_device_lock);
+    chMtxObjectInit(&State::Hardware::docking_switch_device_lock);
 }
 
 static void start_satellite_processes()
@@ -110,7 +106,7 @@ void pan_system_setup()
 
 #ifdef DEBUG
     debug_begin();
-    print_pan_logo();
+    //print_pan_logo();
     debug_println_headless("");
     debug_println_headless("Satellite is booting up...");
     debug_println_headless("");
@@ -140,7 +136,7 @@ void pan_system_setup()
     //         deployment_timer_function, NULL);
 
     start_satellite_processes();
-    debug_println("Starting adcs data collection.");
+    //debug_println("Starting adcs data collection.");
     //adcs_threads::init();
 
     debug_println("System setup is complete.");

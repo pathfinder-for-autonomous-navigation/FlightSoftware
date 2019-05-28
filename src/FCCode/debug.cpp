@@ -46,6 +46,7 @@ void debug_printf_headless(const char* format, ...) {
     chSysLock();
         vsnprintf(buf, sizeof(buf), format, args);
         Serial.print(buf);
+        Serial.flush();
     chSysUnlock();
     va_end( args );
 }
@@ -60,6 +61,7 @@ void debug_printf(const char* format, ...) {
         chSysLock();
             Serial.printf("[%s] ", name);
             Serial.print(buf);
+            Serial.flush();
         chSysUnlock();
     }
     va_end( args );
@@ -78,12 +80,14 @@ void debug_println(const char* str) {
 void debug_println_headless(const char* str) {
     chSysLock();
         Serial.println(str);
+        Serial.flush();
     chSysUnlock();
 }
 
 void debug_println_headless(void) {
     chSysLock();
         Serial.println();
+        Serial.flush();
     chSysUnlock();
 }
 

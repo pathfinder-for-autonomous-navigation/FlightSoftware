@@ -16,7 +16,7 @@ void Master::initialization_hold() {
     chMtxUnlock(&eeprom_lock);
 
     if (State::ADCS::angular_rate() >= Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
-        if (State::Hardware::check_is_functional(&Devices::adcs_system())) {
+        if (State::Hardware::check_is_functional(Devices::adcs_system)) {
             State::write(State::ADCS::adcs_state, State::ADCS::ADCSState::ADCS_DETUMBLE, State::ADCS::adcs_state_lock);
             chThdEnqueueTimeoutS(&RTOSTasks::adcs_detumbled, S2ST(Constants::Master::INITIALIZATION_HOLD_DETUMBLE_WAIT)); // Wait for detumble to finish.
         }

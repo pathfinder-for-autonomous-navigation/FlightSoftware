@@ -9,18 +9,14 @@ bool SystemOutput::setup() {
     _serial_port.begin(115200); 
     return true;
 }
-bool SystemOutput::is_functional() { return true; }
+bool SystemOutput::is_functional() { 
+    _serial_port.write('t');
+    delay(2);
+    if (_serial_port.read() != 't') return false;
+    return true;
+}
 void SystemOutput::reset() { }
 void SystemOutput::disable() { }
-
-static void write_double_arr(HardwareSerial& s, volatile double (&arr)[3]) {
-    char buf[3*sizeof(double)];
-    double arr_buf[3];
-    for(int i = 0; i < 3; i++) arr_buf[i] = arr[i];
-    memcpy(buf, (char*) arr_buf, 3*sizeof(double));
-    s.write(buf, 3*sizeof(double));
-    s.flush();
-}
 
 void SystemOutput::send_impulse(double (&impulse)[3]) {
     _serial_port.write('i');

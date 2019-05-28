@@ -53,11 +53,11 @@ static THD_FUNCTION(adcs_loop, arg) {
 
         // If ADCS isn't working, power-cycle it. Do this for as many times as it takes for the device
         // to start talking again.
-        if (!State::Hardware::check_is_functional(&adcs_system()) && Gomspace::adcs_system_thread == NULL) {
+        if (!State::Hardware::check_is_functional(adcs_system) && Gomspace::adcs_system_thread == NULL) {
             // Specify arguments for thread
             Gomspace::cycler_arg_t cycler_args = {
                 &State::Hardware::adcs_device_lock,
-                &Devices::adcs_system(),
+                Devices::adcs_system,
                 Devices::Gomspace::DEVICE_PINS::ADCS
             };
             // Start cycler thread
@@ -78,8 +78,8 @@ static THD_FUNCTION(adcs_loop, arg) {
             switch(adcs_state) {
                 case ADCSState::ADCS_DETUMBLE: {
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system()))
-                            Devices::adcs_system().set_mode(Mode::ACTIVE);
+                        if (!State::Hardware::check_is_functional(Devices::adcs_system))
+                            adcs_system->set_mode(Mode::ACTIVE);
                     chMtxLock(&State::Hardware::adcs_device_lock);
                     if (State::ADCS::angular_rate() < Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
                         chThdDequeueAllI(&RTOSTasks::adcs_detumbled, (msg_t) 0);
@@ -94,14 +94,14 @@ static THD_FUNCTION(adcs_loop, arg) {
                     State::write(State::ADCS::mtr_cmds, MomentumControl::moment, adcs_state_lock);
                     rwMtxRLock(&adcs_state_lock);
                         std::array<float, 3> mtr_cmds = State::ADCS::mtr_cmds;
-                        adcs_system().set_mtr_cmd(mtr_cmds.data());
+                        adcs_system->set_mtr_cmd(mtr_cmds.data());
                     rwMtxRUnlock(&adcs_state_lock);
                 }
                 break;
                 case ADCSState::ZERO_TORQUE: {
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system()))
-                            Devices::adcs_system().set_mode(Mode::ACTIVE);
+                        if (!State::Hardware::check_is_functional(adcs_system))
+                            adcs_system->set_mode(Mode::ACTIVE);
                     chMtxLock(&State::Hardware::adcs_device_lock);
                     // Set MTR to zero in state
                     rwMtxWLock(&adcs_state_lock);
@@ -114,17 +114,17 @@ static THD_FUNCTION(adcs_loop, arg) {
                         rwa_speed_cmds = State::ADCS::rwa_speed_cmds;
                     rwMtxRUnlock(&adcs_state_lock);
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system())) {
-                            adcs_system().set_mtr_cmd(mtr_cmds.data());
-                            adcs_system().set_rwa_mode(RWAMode::SPEED_CTRL, rwa_speed_cmds.data());
+                        if (!State::Hardware::check_is_functional(adcs_system)) {
+                            adcs_system->set_mtr_cmd(mtr_cmds.data());
+                            adcs_system->set_rwa_mode(RWAMode::SPEED_CTRL, rwa_speed_cmds.data());
                         }
                     chMtxUnlock(&State::Hardware::adcs_device_lock);
                 }
                 break;
                 case ADCSState::POINTING: {
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system()))
-                            Devices::adcs_system().set_mode(Mode::ACTIVE);
+                        if (!State::Hardware::check_is_functional(adcs_system))
+                            adcs_system->set_mode(Mode::ACTIVE);
                     chMtxLock(&State::Hardware::adcs_device_lock);
 
                     rwMtxRLock(&adcs_state_lock);
@@ -139,13 +139,13 @@ static THD_FUNCTION(adcs_loop, arg) {
                     AttitudePD::update();
                     State::write(State::ADCS::rwa_torques, AttitudePD::torque, adcs_state_lock);
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system()))
-                            adcs_system().set_rwa_mode(RWAMode::ACCEL_CTRL, AttitudePD::torque.data());
+                        if (!State::Hardware::check_is_functional(Devices::adcs_system))
+                            adcs_system->set_rwa_mode(RWAMode::ACCEL_CTRL, AttitudePD::torque.data());
                     chMtxUnlock(&State::Hardware::adcs_device_lock);
                 }
                 break;
                 case ADCSState::ADCS_SAFE_HOLD: {
-                    adcs_system().set_mode(Mode::PASSIVE);
+                    adcs_system->set_mode(Mode::PASSIVE);
                 }
                 break;
                 default: {
@@ -167,8 +167,8 @@ static THD_FUNCTION(update_hat, args) {
         t += MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK);
 
         chMtxLock(&State::Hardware::adcs_device_lock);
-            if (State::Hardware::check_is_functional(&adcs_system())) 
-                adcs_system().update_hat(); // TODO fix
+            if (State::Hardware::check_is_functional(adcs_system)) 
+                adcs_system->update_hat(); // TODO fix
         chMtxUnlock(&State::Hardware::adcs_device_lock);
 
         chThdSleepUntil(t);
@@ -197,8 +197,8 @@ void RTOSTasks::adcs_controller(void *arg) {
     
     debug_println("Initializing main operation...");
     chMtxLock(&State::Hardware::adcs_device_lock);
-        if (State::Hardware::check_is_functional(&adcs_system()))
-            adcs_system().set_mode(Mode::ACTIVE);
+        if (State::Hardware::check_is_functional(adcs_system))
+            adcs_system->set_mode(Mode::ACTIVE);
         // TODO what if there's an else?
     chMtxUnlock(&State::Hardware::adcs_device_lock);
 

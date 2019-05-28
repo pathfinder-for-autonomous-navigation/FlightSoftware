@@ -25,10 +25,10 @@ static void gomspace_read() {
     unsigned char t = 0; // # of tries at reading housekeeping data
     while (t < 5) {
         bool successful_response = false;
-        if (State::Hardware::check_is_functional(&gomspace())) {
+        if (State::Hardware::check_is_functional(gomspace)) {
             chMtxLock(&State::Hardware::gomspace_device_lock);
                 rwMtxWLock(&State::Gomspace::gomspace_state_lock);
-                    successful_response = gomspace().get_hk();
+                    successful_response = gomspace->get_hk();
                 rwMtxWUnlock(&State::Gomspace::gomspace_state_lock);
             chMtxUnlock(&State::Hardware::gomspace_device_lock);
         }
@@ -37,7 +37,7 @@ static void gomspace_read() {
     }
     if (t == 5) {
         debug_println("unable to read Gomspace data.");
-        State::write((State::Hardware::hat).at(&gomspace()).is_functional, 
+        State::write((State::Hardware::hat).at(gomspace).is_functional, 
                             false, State::Hardware::hardware_state_lock);
     }
     else debug_printf("battery voltage (mV): %d\n", gomspace_data.vbatt);
@@ -49,12 +49,12 @@ static void set_error(GOMSPACE_FAULTS fault, bool value) {
     rwMtxWUnlock(&FaultState::Gomspace::gomspace_faults_state_lock);
 }
 
-static void set_hardware_error(const Devices::Device* dev_name, const std::string field, bool value) {
+static void set_hardware_error(const Devices::Device* dev, const std::string field, bool value) {
     GOMSPACE_FAULTS group;
-    if (dev_name == &Devices::piksi()) group = GOMSPACE_FAULTS::OUTPUT_PIKSI_TOGGLED;
-    if (dev_name == &Devices::spike_and_hold()) group = GOMSPACE_FAULTS::OUTPUT_SPIKE_AND_HOLD_TOGGLED;
-    if (dev_name == &Devices::quake()) group = GOMSPACE_FAULTS::OUTPUT_QUAKE_TOGGLED;
-    if (dev_name == &Devices::adcs_system()) group = GOMSPACE_FAULTS::OUTPUT_ADCS_TOGGLED;
+    if (dev == Devices::piksi) group = GOMSPACE_FAULTS::OUTPUT_PIKSI_TOGGLED;
+    if (dev == Devices::spike_and_hold) group = GOMSPACE_FAULTS::OUTPUT_SPIKE_AND_HOLD_TOGGLED;
+    if (dev == Devices::quake) group = GOMSPACE_FAULTS::OUTPUT_QUAKE_TOGGLED;
+    if (dev == Devices::adcs_system) group = GOMSPACE_FAULTS::OUTPUT_ADCS_TOGGLED;
     
     int offset = 0;
     if (field == "TOGGLE") offset = 0;
@@ -97,49 +97,49 @@ static void gomspace_check() {
         }
         else
             set_error(GOMSPACE_FAULTS::BOOST_CURRENT_TOTAL, false);
-    rwMtxRLock(&gomspace_state_lock);
+    rwMtxRUnlock(&gomspace_state_lock);
 
     debug_println("Checking Gomspace outputs (currents and voltages).");
     unsigned char* outputs = State::Gomspace::gomspace_data.output;
     unsigned short* currents = State::Gomspace::gomspace_data.curout;
     rwMtxRLock(&gomspace_state_lock);
-        if(State::Hardware::hat.at(&Devices::quake()).powered_on != outputs[Gomspace::DEVICE_PINS::QUAKE])
-            set_hardware_error(&Devices::quake(), "TOGGLE", true);
+        if(State::Hardware::hat.at(Devices::quake).powered_on != outputs[Gomspace::DEVICE_PINS::QUAKE])
+            set_hardware_error(Devices::quake, "TOGGLE", true);
         else
-            set_hardware_error(&Devices::quake(), "TOGGLE", false);
-        if(State::Hardware::hat.at(&Devices::adcs_system()).powered_on != outputs[Gomspace::DEVICE_PINS::ADCS])
-            set_hardware_error(&Devices::adcs_system(), "TOGGLE", true);
+            set_hardware_error(Devices::quake, "TOGGLE", false);
+        if(State::Hardware::hat.at(Devices::adcs_system).powered_on != outputs[Gomspace::DEVICE_PINS::ADCS])
+            set_hardware_error(Devices::adcs_system, "TOGGLE", true);
         else
-            set_hardware_error(&Devices::adcs_system(), "TOGGLE", false);
-        if(State::Hardware::hat.at(&Devices::spike_and_hold()).powered_on != outputs[Gomspace::DEVICE_PINS::SPIKE_AND_HOLD])
-            set_hardware_error(&Devices::spike_and_hold(), "TOGGLE", true);
+            set_hardware_error(Devices::adcs_system, "TOGGLE", false);
+        if(State::Hardware::hat.at(Devices::spike_and_hold).powered_on != outputs[Gomspace::DEVICE_PINS::SPIKE_AND_HOLD])
+            set_hardware_error(Devices::spike_and_hold, "TOGGLE", true);
         else
-            set_hardware_error(&Devices::spike_and_hold(), "TOGGLE", false);
-        if(State::Hardware::hat.at(&Devices::piksi()).powered_on != outputs[Gomspace::DEVICE_PINS::PIKSI])
-            set_hardware_error(&Devices::piksi(), "TOGGLE", true);
+            set_hardware_error(Devices::spike_and_hold, "TOGGLE", false);
+        if(State::Hardware::hat.at(Devices::piksi).powered_on != outputs[Gomspace::DEVICE_PINS::PIKSI])
+            set_hardware_error(Devices::piksi, "TOGGLE", true);
         else
-            set_hardware_error(&Devices::piksi(), "TOGGLE", false);
+            set_hardware_error(Devices::piksi, "TOGGLE", false);
 
         if(currents[Gomspace::DEVICE_PINS::QUAKE] >= Constants::Gomspace::quake_limits.min
             || currents[Gomspace::DEVICE_PINS::QUAKE] >= Constants::Gomspace::quake_limits.max)
-            set_hardware_error(&Devices::quake(), "CURRENT", true);
+            set_hardware_error(Devices::quake, "CURRENT", true);
         else
-            set_hardware_error(&Devices::quake(), "CURRENT", false);
+            set_hardware_error(Devices::quake, "CURRENT", false);
         if(currents[Gomspace::DEVICE_PINS::ADCS] >= Constants::Gomspace::adcs_system_limits.min
             || currents[Gomspace::DEVICE_PINS::ADCS] >= Constants::Gomspace::adcs_system_limits.max)
-            set_hardware_error(&Devices::adcs_system(), "CURRENT", true);
+            set_hardware_error(Devices::adcs_system, "CURRENT", true);
         else
-            set_hardware_error(&Devices::adcs_system(), "CURRENT", false);
+            set_hardware_error(Devices::adcs_system, "CURRENT", false);
         if(currents[Gomspace::DEVICE_PINS::SPIKE_AND_HOLD] >= Constants::Gomspace::spike_and_hold_limits.min
             || currents[Gomspace::DEVICE_PINS::SPIKE_AND_HOLD] >= Constants::Gomspace::spike_and_hold_limits.max)
-            set_hardware_error(&Devices::spike_and_hold(), "CURRENT", true);
+            set_hardware_error(Devices::spike_and_hold, "CURRENT", true);
         else
-            set_hardware_error(&Devices::spike_and_hold(), "CURRENT", false);
+            set_hardware_error(Devices::spike_and_hold, "CURRENT", false);
         if(currents[Gomspace::DEVICE_PINS::PIKSI] >= Constants::Gomspace::piksi_limits.min
             || currents[Gomspace::DEVICE_PINS::PIKSI] >= Constants::Gomspace::piksi_limits.max)
-            set_hardware_error(&Devices::piksi(), "CURRENT", true);
+            set_hardware_error(Devices::piksi, "CURRENT", true);
         else
-            set_hardware_error(&Devices::piksi(), "CURRENT", false);
+            set_hardware_error(Devices::piksi, "CURRENT", false);
 
         unsigned short cursys = State::Gomspace::gomspace_data.cursys;
         if(cursys >= Constants::Gomspace::battery_current_limits.min
@@ -148,7 +148,7 @@ static void gomspace_check() {
         }
         else
             set_error(GOMSPACE_FAULTS::BATTERY_CURRENT, false);
-    rwMtxRLock(&gomspace_state_lock);
+    rwMtxRUnlock(&gomspace_state_lock);
 
     debug_println("Checking Gomspace temperature.");
     short* temps = State::Gomspace::gomspace_data.temp;

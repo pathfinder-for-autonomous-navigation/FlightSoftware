@@ -12,13 +12,14 @@ struct power_cycler_args {
     bool quake;
     bool gomspace;
 };
+
 static THD_WORKING_AREA(power_cycler_wA, 256);
 static THD_FUNCTION(power_cycler, args) {
     power_cycler_args* pcargs = (power_cycler_args*) args;
 
     if (pcargs->gomspace) {
         chMtxLock(&State::Hardware::gomspace_device_lock);
-            Devices::gomspace().reboot();
+            Devices::gomspace->reboot();
         chMtxUnlock(&State::Hardware::gomspace_device_lock); // Note: this actually never gets called, 
                                                              // since Gomspace reboots
         chThdExit((msg_t) 0); // Note: this actually never gets called, since Gomspace reboots
@@ -27,7 +28,7 @@ static THD_FUNCTION(power_cycler, args) {
     if (pcargs->adcs_system) {
         Gomspace::cycler_arg_t cycler_args = {
             &State::Hardware::adcs_device_lock,
-            &Devices::adcs_system(),
+            Devices::adcs_system,
             Devices::Gomspace::DEVICE_PINS::ADCS
         };
         if (Gomspace::adcs_system_thread == NULL)
@@ -39,7 +40,7 @@ static THD_FUNCTION(power_cycler, args) {
     if (pcargs->spike_and_hold) {
         Gomspace::cycler_arg_t cycler_args = {
             &State::Hardware::spike_and_hold_device_lock,
-            &Devices::spike_and_hold(),
+            Devices::spike_and_hold,
             Devices::Gomspace::DEVICE_PINS::SPIKE_AND_HOLD
         };
         if (Gomspace::spike_and_hold_thread == NULL)
@@ -51,7 +52,7 @@ static THD_FUNCTION(power_cycler, args) {
     if (pcargs->piksi) {
         Gomspace::cycler_arg_t cycler_args = {
             &State::Hardware::piksi_device_lock,
-            &Devices::piksi(),
+            Devices::piksi,
             Devices::Gomspace::DEVICE_PINS::PIKSI
         };
         if (Gomspace::piksi_thread == NULL)
@@ -63,7 +64,7 @@ static THD_FUNCTION(power_cycler, args) {
     if (pcargs->quake) {
         Gomspace::cycler_arg_t cycler_args = {
             &State::Hardware::quake_device_lock,
-            &Devices::quake(),
+            Devices::quake,
             Devices::Gomspace::DEVICE_PINS::QUAKE
         };
         if (Gomspace::quake_thread == NULL)
@@ -96,12 +97,12 @@ static THD_WORKING_AREA(docking_motor_toggler_wA, 256);
 static THD_FUNCTION(docking_motor_toggler, args) {
     bool docking_motor_docked = *((bool*) args);
     if (docking_motor_docked) {
-        if (State::Hardware::check_is_functional(&Devices::docking_motor()))
-            Devices::docking_motor().dock();
+        if (State::Hardware::check_is_functional(Devices::docking_motor))
+            Devices::docking_motor->dock();
     }
     else {
-        if (State::Hardware::check_is_functional(&Devices::docking_motor()))
-            Devices::docking_motor().undock();
+        if (State::Hardware::check_is_functional(Devices::docking_motor))
+            Devices::docking_motor->undock();
     }
     chThdExit((msg_t) 0);
 }
@@ -197,22 +198,22 @@ void Master::apply_uplink_commands() {
     // Resets
     if (uplink.reset_dcdc) {
         chMtxLock(&State::Hardware::dcdc_device_lock);
-            Devices::dcdc().reset();
+            Devices::dcdc->reset();
         chMtxUnlock(&State::Hardware::dcdc_device_lock);
     }
     if (uplink.reset_spike_and_hold) {
         chMtxLock(&State::Hardware::spike_and_hold_device_lock);
-            Devices::spike_and_hold().reset();
+            Devices::spike_and_hold->reset();
         chMtxUnlock(&State::Hardware::spike_and_hold_device_lock);
     }
     if (uplink.reset_piksi) {
         chMtxLock(&State::Hardware::piksi_device_lock);
-            Devices::piksi().reset();
+            Devices::piksi->reset();
         chMtxUnlock(&State::Hardware::piksi_device_lock);
     }
     if (uplink.reset_quake) {
         chMtxLock(&State::Hardware::quake_device_lock);
-            Devices::quake().reset();
+            Devices::quake->reset();
         chMtxUnlock(&State::Hardware::quake_device_lock);
     }
 
