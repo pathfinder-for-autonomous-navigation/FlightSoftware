@@ -38,7 +38,7 @@ static void update_gain_constants() {
 
 static THD_WORKING_AREA(adcs_loop_workingArea, 4096);
 static THD_FUNCTION(adcs_loop, arg) {
-    chRegSetThreadName("ADCS LOOP");
+    chRegSetThreadName("adcs.loop");
 
     systime_t t0 = chVTGetSystemTimeX();
     while(true) {
@@ -159,9 +159,9 @@ static THD_FUNCTION(adcs_loop, arg) {
     }
 }
 
-static THD_WORKING_AREA(update_hat_workingArea, 1024);
-static THD_FUNCTION(update_hat, args) {
-    chRegSetThreadName("ADCS HAT UPDATER");
+static THD_WORKING_AREA(update_adcs_hat_workingArea, 1024);
+static THD_FUNCTION(update_adcs_hat, args) {
+    chRegSetThreadName("adcs.update_hat");
     systime_t t = chVTGetSystemTimeX();
     while(true) {
         t += MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK);
@@ -176,8 +176,8 @@ static THD_FUNCTION(update_hat, args) {
 }
 
 void RTOSTasks::adcs_controller(void *arg) {
-    chRegSetThreadName("ADCS");
-    debug_println("ADCS controller process has started.");
+    chRegSetThreadName("adcs");
+    dbg.println("ADCS controller process has started.");
     
     chThdCreateStatic(adcs_loop_workingArea, sizeof(adcs_loop_workingArea), 
         RTOSTasks::adcs_thread_priority, adcs_loop, NULL);
@@ -185,17 +185,17 @@ void RTOSTasks::adcs_controller(void *arg) {
     DataCollection::initialize_adcs_history_timers();
 
     // Create HAT updater thread
-    chThdCreateStatic(update_hat_workingArea,
-        sizeof(update_hat_workingArea), RTOSTasks::adcs_thread_priority, update_hat, NULL);
+    chThdCreateStatic(update_adcs_hat_workingArea,
+        sizeof(update_adcs_hat_workingArea), RTOSTasks::adcs_thread_priority, update_adcs_hat, NULL);
 
-    debug_println("Waiting for deployment timer to finish.");
+    dbg.println("Waiting for deployment timer to finish.");
     rwMtxRLock(&State::Master::master_state_lock);
         bool is_deployed = State::Master::is_deployed;
     rwMtxRUnlock(&State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
-    debug_println("Deployment timer has finished.");
+    dbg.println("Deployment timer has finished.");
     
-    debug_println("Initializing main operation...");
+    dbg.println("Initializing main operation...");
     chMtxLock(&State::Hardware::adcs_device_lock);
         if (State::Hardware::check_is_functional(adcs_system))
             adcs_system->set_mode(Mode::ACTIVE);

@@ -15,11 +15,11 @@ void Master::stop_safe_hold() {
     chMtxUnlock(&eeprom_lock);
 
     State::write(State::Propulsion::propulsion_state, State::Propulsion::PropulsionState::IDLE, State::Propulsion::propulsion_state_lock);
-    debug_println("Safe hold completed!");
+    dbg.println("Safe hold completed!");
 }
 
 void Master::safe_hold() {
-    debug_println("Entering safe hold mode...");
+    dbg.println("Entering safe hold mode...");
     State::write(master_state, MasterState::SAFE_HOLD, master_state_lock);
     State::write(pan_state, PANState::MASTER_SAFEHOLD, master_state_lock);
 

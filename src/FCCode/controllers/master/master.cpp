@@ -85,7 +85,7 @@ static void master_loop() {
                     }
                     
                     if (State::Quake::msec_since_last_sbdix() >= Constants::read(Constants::Quake::UPLINK_TIMEOUT)) {
-                        debug_println("Detected STANDBY condition due to no uplink being received in the last 24 hours.");
+                        dbg.println("Detected STANDBY condition due to no uplink being received in the last 24 hours.");
                         State::write(pan_state, PANState::STANDBY, master_state_lock);
                     }
                 }
@@ -186,7 +186,7 @@ static void master_loop() {
             // Don't do anything; this is already being handled by the safe hold callback function!
             break;
         default: {
-            debug_printf("%d\n", master_state);
+            dbg.printf("%d", master_state);
             Master::safe_hold();
         }
     }
@@ -199,8 +199,8 @@ static void master_loop() {
  * of the master controller appropriately.
  */
 void master_init() {
-    chRegSetThreadName("MASTER");
-    debug_println("Master controller process has started.");
+    chRegSetThreadName("master");
+    dbg.println("Master controller process has started.");
 
     chVTObjectInit(&Master::docking_timer);
 
@@ -210,7 +210,7 @@ void master_init() {
         EEPROM.get(EEPROM_ADDRESSES::SAFE_HOLD_FLAG, previous_boot_safehold);
     chMtxUnlock(&eeprom_lock);
     if (previous_boot_safehold) {
-        debug_println("Previous boot ended in safehold mode! The system will start in safehold now.");
+        dbg.println("Previous boot ended in safehold mode! The system will start in safehold now.");
         Master::safe_hold();
         return;
     }
@@ -220,12 +220,12 @@ void master_init() {
         EEPROM.get(EEPROM_ADDRESSES::INITIALIZATION_HOLD_FLAG, prevboot_initialization_hold);
     chMtxUnlock(&eeprom_lock);
     if (prevboot_initialization_hold) {
-        debug_println("Previous boot ended in initialization hold mode! The system will start in initialization hold now.");
+        dbg.println("Previous boot ended in initialization hold mode! The system will start in initialization hold now.");
         Master::initialization_hold();
         return;
     }
 
-    debug_println("Previous boot did not end in initialization or safe hold mode. Checking to see if a hold is necessary...");
+    dbg.println("Previous boot did not end in initialization or safe hold mode. Checking to see if a hold is necessary...");
     if (Master::safe_hold_needed()) {
         unsigned int boot_number = State::read(State::Master::boot_number, master_state_lock);
         if (boot_number == 1)
@@ -234,7 +234,7 @@ void master_init() {
             Master::safe_hold();
     }
     else {
-        debug_println("Proceeding to normal boot.");
+        dbg.println("Proceeding to normal boot.");
         chMtxLock(&eeprom_lock);
             bool is_follower = EEPROM.read(EEPROM_ADDRESSES::IS_FOLLOWER);
             unsigned char final_state = EEPROM.read(EEPROM_ADDRESSES::FINAL_STATE_FLAG);

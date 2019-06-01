@@ -36,35 +36,35 @@ using namespace RTOSTasks;
 
 static void start_satellite_processes() {
     // Start up satellite processes
-    // debug_println("Starting ADCS controller process.");
+    // dbg.println("Starting ADCS controller process.");
     // adcs_thread = chThdCreateStatic(adcs_controller_workingArea, sizeof(adcs_controller_workingArea), 
     //     adcs_thread_priority, adcs_controller, NULL);
     
-    // debug_println("Starting Gomspace controller process.");
+    // dbg.println("Starting Gomspace controller process.");
     // gomspace_thread = chThdCreateStatic(gomspace_controller_workingArea, sizeof(gomspace_controller_workingArea), 
     //     gomspace_thread_priority, gomspace_controller, NULL);
     
-    debug_println("Starting Piksi controller process.");
+    dbg.println("Starting Piksi controller process.");
     piksi_thread = chThdCreateStatic(piksi_controller_workingArea, sizeof(piksi_controller_workingArea),
                                      piksi_thread_priority, piksi_controller, NULL);
 
-    debug_println("Starting GNC calculation controller process.");
+    dbg.println("Starting GNC calculation controller process.");
     gnc_thread = chThdCreateStatic(gnc_controller_workingArea, sizeof(gnc_controller_workingArea),
         gnc_thread_priority, gnc_controller, NULL);
 
-    debug_println("Starting system output controller process.");
+    dbg.println("Starting system output controller process.");
     system_output_thread = chThdCreateStatic(system_output_controller_workingArea, sizeof(system_output_controller_workingArea),
                                      system_output_thread_priority, system_output_controller, NULL);
     
-    // debug_println("Starting propulsion controller process.");
+    // dbg.println("Starting propulsion controller process.");
     // propulsion_thread = chThdCreateStatic(propulsion_controller_workingArea, sizeof(propulsion_controller_workingArea), 
     //     propulsion_thread_priority, propulsion_controller, NULL);
 
-    // debug_println("Starting Quake radio controller process.");
+    // dbg.println("Starting Quake radio controller process.");
     // quake_thread = chThdCreateStatic(quake_controller_workingArea, sizeof(quake_controller_workingArea), 
     //     quake_thread_priority, quake_controller, NULL);
     
-    // debug_println("Starting master controller process.");
+    // dbg.println("Starting master controller process.");
     // master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
     //     master_thread_priority, master_controller, NULL);
 
@@ -75,15 +75,14 @@ static void start_satellite_processes() {
 
 void pan_system_setup()
 {
-    chRegSetThreadName("STARTUP");
+    chRegSetThreadName("startup");
 
 #ifdef DEBUG
-    debug_begin();
-    print_pan_logo();
+    dbg.begin();
     debug_eeprom_initialization();
 #endif
 
-    debug_println("Startup process has begun.");
+    dbg.println("Startup process has begun.");
     initialize_rtos_objects();
 
     // Determining boot count
@@ -93,12 +92,12 @@ void pan_system_setup()
     // State::write(State::Master::boot_number, boot_number++, State::Master::master_state_lock);
     // EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
     // chMtxUnlock(&eeprom_lock);
-    // debug_printf("This is boot #%d since the satellite left the deployer. \n", State::Master::boot_number);
+    // dbg.printf("This is boot #%d since the satellite left the deployer.", State::Master::boot_number);
 
-    debug_println("Initializing hardware setup.");
+    dbg.println("Initializing hardware setup.");
     hardware_setup();
 
-    debug_println("Starting satellite processes.");
+    dbg.println("Starting satellite processes.");
 
     // Start deployment thread
     // deployment_timer_thread = chThdCreateStatic(deployment_timer_workingArea, 
@@ -106,11 +105,33 @@ void pan_system_setup()
     //         deployment_timer_function, NULL);
 
     start_satellite_processes();
-    //debug_println("Starting adcs data collection.");
+    //dbg.println("Starting adcs data collection.");
     //adcs_threads::init();
 
-    debug_println("System setup is complete.");
-    debug_println("Process terminating.");
+    chThdSleepSeconds(2);
+    /** Silence unwanted threads **/
+    dbg.silence_thread(chRegFindThreadByName("adcs"));
+    //dbg.silence_thread(chRegFindThreadByName("gnc"));
+    dbg.silence_thread(chRegFindThreadByName("gomspace"));
+    dbg.silence_thread(chRegFindThreadByName("master"));
+    dbg.silence_thread(chRegFindThreadByName("master.safehold_timer"));
+    //dbg.silence_thread(chRegFindThreadByName("piksi"));
+    dbg.silence_thread(chRegFindThreadByName("propulsion"));
+    dbg.silence_thread(chRegFindThreadByName("propulsion.firing"));
+    dbg.silence_thread(chRegFindThreadByName("propulsion.venting"));
+    dbg.silence_thread(chRegFindThreadByName("propulsion.pressurizing"));
+    dbg.silence_thread(chRegFindThreadByName("quake"));
+    dbg.silence_thread(chRegFindThreadByName("quake.transceiving"));
+    dbg.silence_thread(chRegFindThreadByName("debug"));
+    dbg.silence_thread(chRegFindThreadByName("startup.deployment_timer"));
+    //dbg.silence_thread(chRegFindThreadByName("startup"));
+    //dbg.silence_thread(chRegFindThreadByName("gomspace.power_cycler.adcs"));
+    //dbg.silence_thread(chRegFindThreadByName("gomspace.power_cycler.quake"));
+    //dbg.silence_thread(chRegFindThreadByName("gomspace.power_cycler.spike_and_hold"));
+    dbg.silence_thread(chRegFindThreadByName("gomspace.power_cycler.piksi"));
+
+    dbg.println("System setup is complete.");
+    dbg.println("Process terminating.");
     chThdExit((msg_t)0);
 }
 

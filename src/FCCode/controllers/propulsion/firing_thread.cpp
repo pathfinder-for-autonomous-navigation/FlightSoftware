@@ -70,15 +70,15 @@ THD_FUNCTION(PropulsionTasks::firing_fn, args) {
     
     // Full-system lock so that the timing of firings is not affected by any interrupts.
     chSysLock();
-        debug_println("Initiating firing.");
+        dbg.println("Initiating firing.");
         if (State::Hardware::check_is_functional(spike_and_hold)) {
             chMtxLock(&spike_and_hold_device_lock);
                 spike_and_hold->execute_schedule(valve_timings);
             chMtxUnlock(&spike_and_hold_device_lock);
-            debug_println("Completed firing.");
+            dbg.println("Completed firing.");
         }
         else {
-            debug_println("Could not complete firing because DCDC is off.");
+            dbg.println("Could not complete firing because DCDC is off.");
         }
     chSysUnlock();
 

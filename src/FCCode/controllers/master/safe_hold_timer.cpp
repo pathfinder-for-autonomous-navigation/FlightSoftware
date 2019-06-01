@@ -19,7 +19,7 @@ namespace Master {
 
 //! Function that defines the safe hold timer thread.
 void Master::safe_hold_timer(void *arg) {
-    chRegSetThreadName("SAFEHOLD TIMER");
+    chRegSetThreadName("master.safehold_timer");
     // Determine time remaining in safe hold
     chMtxLock(&eeprom_lock);
         unsigned char time_elapsed;
@@ -39,7 +39,7 @@ void Master::safe_hold_timer(void *arg) {
             EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_TIMER, time_elapsed);
         chMtxUnlock(&eeprom_lock);
 
-        debug_printf("Time remaining until safe hold wait completed: %d\n", safe_hold_timeout - time_elapsed);
+        dbg.printf("Time remaining until safe hold wait completed: %d", safe_hold_timeout - time_elapsed);
         chThdSleepSeconds(1);
         time_elapsed++;
     }
