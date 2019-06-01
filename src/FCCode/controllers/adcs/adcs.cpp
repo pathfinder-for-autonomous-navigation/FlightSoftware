@@ -62,7 +62,7 @@ static THD_FUNCTION(adcs_loop, arg) {
             };
             // Start cycler thread
             Gomspace::adcs_system_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
-                "POWER CYCLE ADCS",
+                "PCYCLER:ADCS",
                 RTOSTasks::master_thread_priority,
                 Gomspace::cycler_fn, (void*) &cycler_args);
         }

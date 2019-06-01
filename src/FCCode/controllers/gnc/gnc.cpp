@@ -28,8 +28,12 @@ static void gnc_calculation() {
     State::Master::PANState pan_state = State::read(State::Master::pan_state, State::Master::master_state_lock);
     bool is_not_standby = pan_state != State::Master::PANState::STANDBY;
     if (is_valid_firing && is_not_standby) {
+        debug_println("Writing recommended firing to state.");
         State::write(State::Propulsion::firing_data.impulse_vector, firing_vector, propulsion_state_lock);
         State::write(State::Propulsion::firing_data.time, firing_time, propulsion_state_lock);
+    }
+    else {
+        debug_println("No firing recommended.");
     }
 }
 
@@ -44,6 +48,7 @@ void RTOSTasks::gnc_controller(void* arg) {
     systime_t time = chVTGetSystemTimeX();
     while (true) {
         time += MS2ST(RTOSTasks::LoopTimes::GNC);
+        debug_println("Running GNC calculation.");
         gnc_calculation();
         chThdSleepUntil(time);
     }

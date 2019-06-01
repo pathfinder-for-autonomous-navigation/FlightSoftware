@@ -15,32 +15,31 @@
 memory_heap_t device_heap;
 static CH_HEAP_AREA(device_heap_area, DEVICE_HEAP_SIZE);
 
-// static State::Hardware::DeviceState adcs_device_state = {false, false, false, false, 1};
-// static State::Hardware::DeviceState dcdc_device_state = {false, false, false, false, 1};
-// static State::Hardware::DeviceState docking_motor_device_state = {false, false, false, false, 1};
-// static State::Hardware::DeviceState docking_switch_device_state = {false, false, false, false, 1};
-// static State::Hardware::DeviceState gomspace_device_state = {false, false, false, false, 1};
+// Statically-allocated metadata for HAT
+static State::Hardware::DeviceState adcs_device_state = {false, false, false, false, 1};
+static State::Hardware::DeviceState dcdc_device_state = {false, false, false, false, 1};
+static State::Hardware::DeviceState docking_motor_device_state = {false, false, false, false, 1};
+static State::Hardware::DeviceState docking_switch_device_state = {false, false, false, false, 1};
+static State::Hardware::DeviceState gomspace_device_state = {false, false, false, false, 1};
 static State::Hardware::DeviceState piksi_device_state = {false, false, false, false, 1};
 static State::Hardware::DeviceState system_output_device_state = {false, false, false, false, 1};
-// static State::Hardware::DeviceState pressure_sensor_device_state = {false, false, false, false, 1};
-// static State::Hardware::DeviceState quake_device_state = {false, false, false, false, 1};
-// static State::Hardware::DeviceState sph_device_state = {false, false, false, false, 1};
-// static State::Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false, 1};
-// static State::Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false, 1};
-
+static State::Hardware::DeviceState pressure_sensor_device_state = {false, false, false, false, 1};
+static State::Hardware::DeviceState quake_device_state = {false, false, false, false, 1};
+static State::Hardware::DeviceState sph_device_state = {false, false, false, false, 1};
+static State::Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false, 1};
+static State::Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false, 1};
 static std::string adcs_system_name = "adcs_system";
 static std::string dcdc_device_name = "dcdc";
 static std::string docking_motor_device_name = "docking_motor";
 static std::string docking_switch_device_name = "docking_switch";
 static std::string gomspace_device_name = "gomspace";
-static std::string piksi_device_name = "piksi";
+static std::string fake_piksi_device_name = "fake_piksi"; // static std::string piksi_device_name = "piksi";
 static std::string system_output_device_name = "system_output";
 static std::string pressure_sensor_device_name = "pressure_sensor";
 static std::string quake_device_name = "quake";
 static std::string sph_device_name = "spike_and_hold";
 static std::string temp_sensor_inner_device_name = "temp_sensor_inner";
 static std::string temp_sensor_outer_device_name = "temp_sensor_outer";
-
 
 void hardware_setup() {
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
@@ -57,7 +56,7 @@ void hardware_setup() {
     //                                   Devices::SpikeAndHold::DEFAULT_VALVE_PINS, 
     //                                   Devices::SpikeAndHold::DEFAULT_ENABLE_PIN);
     Devices::system_output = new(device_heap) Devices::SystemOutput(system_output_device_name, Serial3);
-    Devices::piksi    = new(device_heap) Devices::FakePiksi(piksi_device_name, Serial4); // Devices::Piksi("piksi", Serial4);
+    Devices::piksi    = new(device_heap) Devices::FakePiksi(fake_piksi_device_name, Serial4); // Devices::Piksi(piksi_device_name, Serial4);
     // Devices::dcdc  = new(device_heap) Devices::DCDC(dcdc_device_name, Devices::DCDC::DEFAULT_ENABLE_PIN);
     // Devices::quake = new(device_heap) Devices::QLocate(quake_device_name, &Serial3, Devices::QLocate::DEFAULT_NR_PIN, 
     //                          Devices::QLocate::DEFAULT_TIMEOUT);
@@ -99,15 +98,15 @@ void hardware_setup() {
     for (auto device : State::Hardware::hat)
     {
         Devices::Device *dptr = device.first;
-        debug_printf("Setting up device: %s...", dptr->name().c_str());
+        const char* dev_name = dptr->name().c_str();
         dptr->setup();
         if (dptr->is_functional())
         {
-            debug_println_headless("setup was successful!");
+            debug_printf("Setup of %s: successful!\n", dev_name);
             State::write((State::Hardware::hat).at(device.first).powered_on, true, State::Hardware::hardware_state_lock);
             State::write((State::Hardware::hat).at(device.first).is_functional, true, State::Hardware::hardware_state_lock);
         }
         else
-            debug_println_headless("setup was unsuccessful.");
+            debug_printf("Setup of %s: unsuccessful.\n", dev_name);
     }
 }

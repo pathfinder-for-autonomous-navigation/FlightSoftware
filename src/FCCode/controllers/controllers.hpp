@@ -25,6 +25,8 @@ namespace RTOSTasks {
     extern THD_FUNCTION(gnc_controller, arg);
     //! Piksi state controller process
     extern THD_FUNCTION(piksi_controller, arg);
+    //! System Output controller process
+    extern THD_FUNCTION(system_output_controller, arg);
     //! Propulsion state controller process
     extern THD_FUNCTION(propulsion_controller, arg);
     //! Quake state controller process
@@ -40,6 +42,8 @@ namespace RTOSTasks {
     extern THD_WORKING_AREA(gnc_controller_workingArea, 2048);
     //! Working area for Piksi state controller process
     extern THD_WORKING_AREA(piksi_controller_workingArea, 2048);
+    //! Working area for system output state controller process
+    extern THD_WORKING_AREA(system_output_controller_workingArea, 2048);
     //! Working area for propulsion state controller process
     extern THD_WORKING_AREA(propulsion_controller_workingArea, 2048);
     //! Working area for Quake state controller process
@@ -54,6 +58,8 @@ namespace RTOSTasks {
     //! Pointer to the GNC calculation controller's thread object
     extern thread_t* gnc_thread;
     //! Pointer to the Piksi controller's thread object
+    extern thread_t* piksi_thread;
+    //! Pointer to the System Output controller's thread object
     extern thread_t* piksi_thread;
     //! Pointer to the propulsion controller's thread object
     extern thread_t* propulsion_thread;
@@ -76,6 +82,8 @@ namespace RTOSTasks {
     constexpr tprio_t gnc_thread_priority = MAX_THREAD_PRIORITY;
     //! Priority of Piksi controller's thread
     constexpr tprio_t piksi_thread_priority = MAX_THREAD_PRIORITY;
+    //! Priority of Piksi controller's thread
+    constexpr tprio_t system_output_thread_priority = MAX_THREAD_PRIORITY;
     //! Priority of propulsion controller's thread
     constexpr tprio_t propulsion_thread_priority = MAX_THREAD_PRIORITY;
     //! Priority of Quake controller's thread
@@ -97,6 +105,8 @@ namespace RTOSTasks {
         static rwmutex_t gnc_looptime_lock;
         //! Number of milliseconds between Piksi state controller iterations
         static constexpr unsigned int PIKSI = 100;
+        //! Number of milliseconds between system output state controller iterations
+        static constexpr unsigned int SYSTEM_OUTPUT = 100;
         //! Number of milliseconds between propulsion actuations. This is really high
         // so that the pressure reading has time to stabilize.
         static constexpr unsigned int PROPULSION_ACTUATION_LOOP = 30000;

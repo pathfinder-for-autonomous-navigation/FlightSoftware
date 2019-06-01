@@ -33,7 +33,7 @@ static THD_FUNCTION(power_cycler, args) {
         };
         if (Gomspace::adcs_system_thread == NULL)
             Gomspace::adcs_system_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
-                "POWER CYCLE ADCS", 
+                "PCYCLER:ADCS", 
                 RTOSTasks::master_thread_priority,
                 Gomspace::cycler_fn, (void*) &cycler_args);
     }
@@ -45,7 +45,7 @@ static THD_FUNCTION(power_cycler, args) {
         };
         if (Gomspace::spike_and_hold_thread == NULL)
             Gomspace::spike_and_hold_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
-                "POWER CYCLE SPIKE AND HOLD", 
+                "PCYCLER:SPH", 
                 RTOSTasks::master_thread_priority,
                 Gomspace::cycler_fn, (void*) &cycler_args);
     }
@@ -57,7 +57,7 @@ static THD_FUNCTION(power_cycler, args) {
         };
         if (Gomspace::piksi_thread == NULL)
             Gomspace::piksi_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
-                "POWER CYCLE PIKSI", 
+                "PCYCLER:PIKSI", 
                 RTOSTasks::master_thread_priority,
                 Gomspace::cycler_fn, (void*) &cycler_args);
     }
@@ -69,7 +69,7 @@ static THD_FUNCTION(power_cycler, args) {
         };
         if (Gomspace::quake_thread == NULL)
             Gomspace::quake_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
-                "POWER CYCLE QUAKE",
+                "PCYCLER:QUAKE",
                 RTOSTasks::master_thread_priority,
                 Gomspace::cycler_fn, (void*) &cycler_args);
     }

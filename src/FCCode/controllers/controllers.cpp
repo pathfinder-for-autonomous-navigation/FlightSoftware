@@ -32,6 +32,7 @@ void RTOSTasks::initialize_rtos_objects() {
     chMtxObjectInit(&State::Hardware::dcdc_device_lock);
     chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
     chMtxObjectInit(&State::Hardware::piksi_device_lock);
+    chMtxObjectInit(&State::Hardware::system_output_device_lock);
     chMtxObjectInit(&State::Hardware::gomspace_device_lock);
     chMtxObjectInit(&State::Hardware::quake_device_lock);
     chMtxObjectInit(&State::Hardware::pressure_sensor_device_lock);

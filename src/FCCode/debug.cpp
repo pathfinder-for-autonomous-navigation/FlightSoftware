@@ -15,12 +15,28 @@
 
 #ifdef DEBUG
 
- /** @brief Threads whose output we don't care about, and are therefore silenced. */
+ /** @brief Threads whose output we don't care about, and are therefore silenced.
+  * If a thread is commented, that means it is NOT silent.
+  */
 std::unordered_set<const char *> silenced_threads = {
+    "ADCS",
+    "ADCS LOOP",
+    "ADCS HAT UPDATER",
+    // "GNC",
     "GS READ",
-    "DEBUG",
-    "PIKSI",
+    "GOMSPACE",
+    "MASTER",
+    "SAFEHOLD TIMER",
+    // "PIKSI",
+    "PROP",
     "QUAKE",
+    "DEBUG",
+    "DEPLOYMENT",
+    // "STARTUP",
+    // "PCYCLER:ADCS",
+    // "PCYCLER:QUAKE",
+    // "PCYCLER:SPH",
+    "PCYCLER:PIKSI",
 };
 
 void debug_begin() {
@@ -103,20 +119,24 @@ void debug_blink_led() {
 }
 
 void print_pan_logo() {
-    debug_println_headless(" _______     _       ____  _____  ");
-    debug_println_headless("|_   __ \\   / \\     |_   \\|_   _| ");
-    debug_println_headless("  | |__) | / _ \\      |   \\ | |   ");
-    debug_println_headless("  |  ___/ / ___ \\     | |\\ \\| |   ");
-    debug_println_headless(" _| |_  _/ /   \\ \\_  _| |_\\   |_  ");
-    debug_println_headless("|_____||____| |____||_____|\\____| ");
-    debug_println_headless("");
-    debug_println_headless("Pathfinder for Autonomous Navigation");
-    debug_println_headless("Space Systems Design Studio, Cornell Unversity");
-    debug_println_headless("Flight Code | Version 1.0 | Tanishq Aggarwal (ta335@cornell.edu)");
-    debug_println_headless("                            Kyle Krol (kpk36@cornell.edu)");
-    debug_println_headless("                            Nathan Zimmerberg (nhz2@cornell.edu)");
-    debug_println_headless("                            Athena Cheung (afc65@cornell.edu)");
-    debug_println_headless("                            Anusha Choudhury (ac978@cornell.edu)");
+    Serial.println(" _______     _       ____  _____  ");
+    Serial.println("|_   __ \\   / \\     |_   \\|_   _| ");
+    Serial.println("  | |__) | / _ \\      |   \\ | |   ");
+    Serial.println("  |  ___/ / ___ \\     | |\\ \\| |   ");
+    Serial.println(" _| |_  _/ /   \\ \\_  _| |_\\   |_  ");
+    Serial.println("|_____||____| |____||_____|\\____| ");
+    Serial.println("");
+    Serial.println("Pathfinder for Autonomous Navigation");
+    Serial.println("Space Systems Design Studio, Cornell Unversity");
+    Serial.println("Flight Code | Version 1.0 | Tanishq Aggarwal (ta335@cornell.edu)");
+    Serial.println("                            Kyle Krol (kpk36@cornell.edu)");
+    Serial.println("                            Nathan Zimmerberg (nhz2@cornell.edu)");
+    Serial.println("                            Athena Cheung (afc65@cornell.edu)");
+    Serial.println("                            Anusha Choudhury (ac978@cornell.edu)");
+    Serial.println();
+    Serial.println("Satellite is booting up...");
+    Serial.println();
+    Serial.flush();
 }
 
 /** @brief Working area for main debugger thread process. */

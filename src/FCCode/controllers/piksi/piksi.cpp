@@ -105,23 +105,28 @@ void RTOSTasks::piksi_controller(void *arg) {
     while(true) {
         time += MS2ST(RTOSTasks::LoopTimes::PIKSI);
 
-        // Power cycle Piksi if failing. Do this for as many times as it takes for the device
+        // PCYCLER:PIKSI if failing. Do this for as many times as it takes for the device
         // to start talking again.
+        bool is_fake_piksi = piksi->name().compare("fake_piksi") == 0;
         // TODO add option from ground to disable power cycling
         if (!State::Hardware::check_is_functional(piksi)) {
-            debug_println("Piksi not functional. Power cycling...");
-            if (Gomspace::piksi_thread == NULL) {
-                // Specify arguments for thread
-                Gomspace::cycler_arg_t cycler_args = {
-                    &State::Hardware::piksi_device_lock,
-                    piksi,
-                    Devices::Gomspace::DEVICE_PINS::PIKSI
-                };
-                // Start cycler thread
-                Gomspace::piksi_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
-                    "POWER CYCLE PIKSI",
-                    RTOSTasks::master_thread_priority,
-                    Gomspace::cycler_fn, (void*) &cycler_args);
+            debug_println("Piksi not functional.");
+            if (!is_fake_piksi) {
+                debug_println("Power cycling Piksi.");
+                if (Gomspace::piksi_thread == NULL) {
+                    // TODO fix power cycler; it ain't working
+                    // Specify arguments for thread
+                    Gomspace::cycler_arg_t cycler_args = {
+                        &State::Hardware::piksi_device_lock,
+                        piksi,
+                        Devices::Gomspace::DEVICE_PINS::PIKSI
+                    };
+                    // Start cycler thread
+                    Gomspace::piksi_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
+                        "PCYCLER:PIKSI",
+                        RTOSTasks::master_thread_priority,
+                        Gomspace::cycler_fn, (void*) &cycler_args);
+                }
             }
         }
         else {

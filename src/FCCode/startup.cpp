@@ -26,6 +26,7 @@ namespace RTOSTasks {
     // thread_t* master_thread;
     // thread_t* gomspace_thread;
     thread_t* piksi_thread;
+    thread_t* system_output_thread;
     // thread_t* quake_thread;
     // thread_t* adcs_thread;
     thread_t* gnc_thread;
@@ -33,39 +34,7 @@ namespace RTOSTasks {
 }
 using namespace RTOSTasks;
 
-void initialize_locks() {
-    // Initialize all state locks
-    rwMtxObjectInit(&State::Hardware::hardware_state_lock);
-    rwMtxObjectInit(&State::Master::master_state_lock);
-    rwMtxObjectInit(&State::ADCS::adcs_state_lock);
-    rwMtxObjectInit(&State::Gomspace::gomspace_state_lock);
-    rwMtxObjectInit(&State::Propulsion::propulsion_state_lock);
-    rwMtxObjectInit(&State::GNC::gnc_state_lock);
-    rwMtxObjectInit(&State::Piksi::piksi_state_lock);
-    rwMtxObjectInit(&State::Quake::quake_state_lock);
-    rwMtxObjectInit(&State::Quake::uplink_lock);
-    rwMtxObjectInit(&Constants::changeable_constants_lock);
-    rwMtxObjectInit(&RTOSTasks::LoopTimes::gnc_looptime_lock);
-    rwMtxObjectInit(&FaultState::Propulsion::propulsion_faults_state_lock);
-    rwMtxObjectInit(&FaultState::Gomspace::gomspace_faults_state_lock);
-    rwMtxObjectInit(&FaultState::ADCS::adcs_faults_state_lock);
-    // Initialize all device locks
-    chMtxObjectInit(&eeprom_lock);
-    chMtxObjectInit(&State::Hardware::adcs_device_lock);
-    chMtxObjectInit(&State::Hardware::dcdc_device_lock);
-    chMtxObjectInit(&State::Hardware::spike_and_hold_device_lock);
-    chMtxObjectInit(&State::Hardware::piksi_device_lock);
-    chMtxObjectInit(&State::Hardware::gomspace_device_lock);
-    chMtxObjectInit(&State::Hardware::quake_device_lock);
-    chMtxObjectInit(&State::Hardware::pressure_sensor_device_lock);
-    chMtxObjectInit(&State::Hardware::temp_sensor_inner_device_lock);
-    chMtxObjectInit(&State::Hardware::temp_sensor_outer_device_lock);
-    chMtxObjectInit(&State::Hardware::docking_motor_device_lock);
-    chMtxObjectInit(&State::Hardware::docking_switch_device_lock);
-}
-
-static void start_satellite_processes()
-{
+static void start_satellite_processes() {
     // Start up satellite processes
     // debug_println("Starting ADCS controller process.");
     // adcs_thread = chThdCreateStatic(adcs_controller_workingArea, sizeof(adcs_controller_workingArea), 
@@ -82,6 +51,10 @@ static void start_satellite_processes()
     debug_println("Starting GNC calculation controller process.");
     gnc_thread = chThdCreateStatic(gnc_controller_workingArea, sizeof(gnc_controller_workingArea),
         gnc_thread_priority, gnc_controller, NULL);
+
+    debug_println("Starting system output controller process.");
+    system_output_thread = chThdCreateStatic(system_output_controller_workingArea, sizeof(system_output_controller_workingArea),
+                                     system_output_thread_priority, system_output_controller, NULL);
     
     // debug_println("Starting propulsion controller process.");
     // propulsion_thread = chThdCreateStatic(propulsion_controller_workingArea, sizeof(propulsion_controller_workingArea), 
@@ -106,10 +79,7 @@ void pan_system_setup()
 
 #ifdef DEBUG
     debug_begin();
-    //print_pan_logo();
-    debug_println_headless("");
-    debug_println_headless("Satellite is booting up...");
-    debug_println_headless("");
+    print_pan_logo();
     debug_eeprom_initialization();
 #endif
 
