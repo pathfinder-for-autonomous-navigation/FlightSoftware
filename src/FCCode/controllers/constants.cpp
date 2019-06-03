@@ -45,7 +45,7 @@ namespace Constants {
 
     namespace Master {
         unsigned int DOCKING_RANGE = 1; // In meters
-        #ifdef DEBUG
+        #ifdef DEBUG_ENABLED
             unsigned int SAFE_HOLD_TIMEOUT = 3; // In seconds
             unsigned int DOCKING_TIMEOUT = 5;   // In seconds
         #else
@@ -71,7 +71,7 @@ namespace Constants {
 
     namespace Quake {
         unsigned int NUM_RETRIES = 5;
-        #ifdef DEBUG
+        #ifdef DEBUG_ENABLED
         unsigned int UPLINK_TIMEOUT = 10;
         unsigned int QUAKE_WAIT_PERIOD = 5;
         unsigned int WAIT_BETWEEN_RETRIES = 500;

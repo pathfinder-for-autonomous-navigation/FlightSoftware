@@ -122,7 +122,7 @@ static THD_FUNCTION(propulsion_loop, args) {
 
 void RTOSTasks::propulsion_controller(void *arg) {
     chRegSetThreadName("propulsion");
-    dbg.println("Propulsion controller process has started.");
+    dbg.println(debug_console::severity::INFO, "Propulsion controller process has started.");
     chThdCreateStatic(propulsion_loop_wa, sizeof(propulsion_loop_wa), 
         RTOSTasks::propulsion_thread_priority, propulsion_loop, NULL);
 
@@ -134,11 +134,11 @@ void RTOSTasks::propulsion_controller(void *arg) {
     chMtxUnlock(&eeprom_lock);
     State::write(State::Propulsion::intertank_firing_valve, preferred_valve, propulsion_state_lock);
 
-    dbg.println("Waiting for deployment timer to finish.");
+    dbg.println(debug_console::severity::INFO, "Waiting for deployment timer to finish.");
     bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
-    dbg.println("Deployment timer has finished.");
-    dbg.println("Initializing main operation...");
+    dbg.println(debug_console::severity::INFO, "Deployment timer has finished.");
+    dbg.println(debug_console::severity::INFO, "Initializing main operation...");
     State::write(State::Propulsion::propulsion_state, PropulsionState::IDLE, propulsion_state_lock);
 
     chThdExit((msg_t)0);

@@ -2,11 +2,28 @@
 #include <Arduino.h>
 #include <ChRt.h>
 
+std::map<debug_console::severity, const char *> debug_console::severity_strs {
+    {DEBUG, "DEBUG"},
+    {INFO, "INFO"},
+    {NOTICE, "NOTICE"},
+    {WARNING, "WARNING"},
+    {ERROR, "ERROR"},
+    {CRITICAL, "CRITICAL"},
+    {ALERT, "ALERT"},
+    {EMERGENCY, "EMERGENCY"},
+};
+
 debug_console::debug_console() : _silenced_threads() {}
 
 unsigned int debug_console::_get_elapsed_time() {
     systime_t current_time = chVTGetSystemTimeX();
-    if (!Serial) _start_time = current_time; // Reset time if Serial is unconnected
+    if (!Serial) {
+        /** Reset the start time if Serial is unconnected. We
+         * do this so that the logging utility on the computer
+         * can always produce a correct timestamp.
+        */
+        _start_time = current_time;
+    }
     unsigned int elapsed_time = ST2MS(current_time - _start_time);
     return elapsed_time;
 }
@@ -17,13 +34,17 @@ bool debug_console::_print_call_is_from_silenced_thread() {
     return false;
 }
 
-void debug_console::_print_json_msg(const char* msg) {
+void debug_console::_print_json_msg(severity s, const char* msg) {
     chSysLock();
     Serial.printf("{\"t\":%d,"
+                   "\"svrty\":\"%s\","
                    "\"thd\":\"%s\","
                    "\"msg\":\"%s\""
                   "}\n",
-        _get_elapsed_time(), chThdGetSelfX()->name, msg);
+        _get_elapsed_time(),
+        severity_strs.at(s),
+        chThdGetSelfX()->name,
+        msg);
     chSysUnlock();
 }
 
@@ -40,20 +61,20 @@ void debug_console::silence_thread(thread_t* thd) {
     _silenced_threads.emplace(thd);
 }
 
-void debug_console::printf(const char* format, ...) {
+void debug_console::printf(severity s, const char* format, ...) {
     if (_print_call_is_from_silenced_thread()) return;
 
     char buf[1024];
     va_list args;
     va_start( args, format );
     vsnprintf(buf, sizeof(buf), format, args);
-    _print_json_msg(buf);
+    _print_json_msg(s, buf);
     va_end( args );
 }
 
-void debug_console::println(const char* str) {
+void debug_console::println(severity s, const char* str) {
     if (_print_call_is_from_silenced_thread()) return;
-    _print_json_msg(str);
+    _print_json_msg(s, str);
 }
 
 void debug_console::blink_led() {

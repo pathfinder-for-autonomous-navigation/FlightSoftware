@@ -11,7 +11,7 @@
 #ifndef DEBUG_HPP_
 #define DEBUG_HPP_
 
-#define DEBUG true
+#define DEBUG_ENABLED true
 
 /**
  * @brief Initializes the EEPROM in a particular way in order to test the spacecraft code with

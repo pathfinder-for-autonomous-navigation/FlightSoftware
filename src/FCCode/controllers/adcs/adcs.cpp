@@ -177,7 +177,7 @@ static THD_FUNCTION(update_adcs_hat, args) {
 
 void RTOSTasks::adcs_controller(void *arg) {
     chRegSetThreadName("adcs");
-    dbg.println("ADCS controller process has started.");
+    dbg.println(debug_console::severity::INFO, "ADCS controller process has started.");
     
     chThdCreateStatic(adcs_loop_workingArea, sizeof(adcs_loop_workingArea), 
         RTOSTasks::adcs_thread_priority, adcs_loop, NULL);
@@ -188,14 +188,14 @@ void RTOSTasks::adcs_controller(void *arg) {
     chThdCreateStatic(update_adcs_hat_workingArea,
         sizeof(update_adcs_hat_workingArea), RTOSTasks::adcs_thread_priority, update_adcs_hat, NULL);
 
-    dbg.println("Waiting for deployment timer to finish.");
+    dbg.println(debug_console::severity::INFO, "Waiting for deployment timer to finish.");
     rwMtxRLock(&State::Master::master_state_lock);
         bool is_deployed = State::Master::is_deployed;
     rwMtxRUnlock(&State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
-    dbg.println("Deployment timer has finished.");
+    dbg.println(debug_console::severity::INFO, "Deployment timer has finished.");
     
-    dbg.println("Initializing main operation...");
+    dbg.println(debug_console::severity::INFO, "Initializing main operation...");
     chMtxLock(&State::Hardware::adcs_device_lock);
         if (State::Hardware::check_is_functional(adcs_system))
             adcs_system->set_mode(Mode::ACTIVE);

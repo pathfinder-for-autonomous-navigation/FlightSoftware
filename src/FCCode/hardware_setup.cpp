@@ -44,7 +44,7 @@ static std::string temp_sensor_outer_device_name = "temp_sensor_outer";
 void hardware_setup() {
     rwMtxObjectInit(&State::Hardware::hardware_state_lock);
 
-    dbg.println("Initializing logical device objects.");
+    dbg.println(debug_console::severity::INFO, "Initializing logical device objects.");
     chHeapObjectInit(&device_heap, device_heap_area, DEVICE_HEAP_SIZE);
 
     // Devices::gomspace = new(device_heap) Devices::Gomspace(gomspace_device_name,
@@ -77,7 +77,7 @@ void hardware_setup() {
     // Devices::docking_switch = new(device_heap) Devices::DockingSwitch(docking_switch_device_name, 
     //                                  Devices::DockingSwitch::DEFAULT_SWITCH_PIN);
 
-    dbg.println("Adding devices to HAT.");
+    dbg.println(debug_console::severity::INFO, "Adding devices to HAT.");
     // State::Hardware::hat.insert({Devices::gomspace, gomspace_device_state});
     // State::Hardware::hat.insert({Devices::spike_and_hold, sph_device_state});
     State::Hardware::hat.insert({Devices::system_output, system_output_device_state});
@@ -91,10 +91,10 @@ void hardware_setup() {
     // State::Hardware::hat.insert({Devices::docking_motor, docking_motor_device_state});
     // State::Hardware::hat.insert({Devices::docking_switch, docking_switch_device_state});
 
-    dbg.println("Initializing hardware buses.");
+    dbg.println(debug_console::severity::INFO, "Initializing hardware buses.");
     // Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM); // Gomspace
 
-    dbg.println("Setting up hardware.");
+    dbg.println(debug_console::severity::INFO, "Setting up hardware.");
     for (auto device : State::Hardware::hat)
     {
         Devices::Device *dptr = device.first;
@@ -102,11 +102,11 @@ void hardware_setup() {
         dptr->setup();
         if (dptr->is_functional())
         {
-            dbg.printf("Setup of %s: successful!", dev_name);
+            dbg.printf(debug_console::severity::INFO, "Setup of %s: successful!", dev_name);
             State::write((State::Hardware::hat).at(device.first).powered_on, true, State::Hardware::hardware_state_lock);
             State::write((State::Hardware::hat).at(device.first).is_functional, true, State::Hardware::hardware_state_lock);
         }
         else
-            dbg.printf("Setup of %s: unsuccessful.", dev_name);
+            dbg.printf(debug_console::severity::INFO, "Setup of %s: unsuccessful.", dev_name);
     }
 }

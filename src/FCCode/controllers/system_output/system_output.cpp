@@ -46,13 +46,13 @@ static void send_data() {
 
 void RTOSTasks::system_output_controller(void *arg) {
     chRegSetThreadName("system_output");
-    dbg.println("System output controller process has started.");
+    dbg.println(debug_console::severity::INFO, "System output controller process has started.");
     
-    dbg.println("Waiting for deployment timer to finish.");
+    dbg.println(debug_console::severity::INFO, "Waiting for deployment timer to finish.");
     bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
-    dbg.println("Deployment timer has finished.");
-    dbg.println("Initializing main operation...");
+    dbg.println(debug_console::severity::INFO, "Deployment timer has finished.");
+    dbg.println(debug_console::severity::INFO, "Initializing main operation...");
 
     systime_t time = chVTGetSystemTimeX();
     while(true) {

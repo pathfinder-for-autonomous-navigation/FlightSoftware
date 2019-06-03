@@ -39,7 +39,7 @@ void Master::safe_hold_timer(void *arg) {
             EEPROM.put(EEPROM_ADDRESSES::SAFE_HOLD_TIMER, time_elapsed);
         chMtxUnlock(&eeprom_lock);
 
-        dbg.printf("Time remaining until safe hold wait completed: %d", safe_hold_timeout - time_elapsed);
+        dbg.printf(debug_console::severity::INFO, "Time remaining until safe hold wait completed: %d", safe_hold_timeout - time_elapsed);
         chThdSleepSeconds(1);
         time_elapsed++;
     }

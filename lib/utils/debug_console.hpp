@@ -2,6 +2,7 @@
 #define DEBUG_CONSOLE_HPP_
 
 #include <set>
+#include <map>
 #include <ChRt.h>
 
 /**
@@ -10,14 +11,21 @@
  * 
  */
 class debug_console {
-  private:
-    std::set<thread_t*> _silenced_threads;
-    systime_t _start_time;
-
-    unsigned int _get_elapsed_time();
-    bool _print_call_is_from_silenced_thread();
-    void _print_json_msg(const char* msg);
   public:
+    // Severity levels based off of https://support.solarwinds.com/SuccessCenter/s/article/Syslog-Severity-levels
+    // See the article for an explanation of when to use which severity level.
+    enum severity {
+      DEBUG,
+      INFO,
+      NOTICE,
+      WARNING,
+      ERROR,
+      CRITICAL,
+      ALERT,
+      EMERGENCY
+    };
+    static std::map<severity, const char *> severity_strs;
+
     debug_console();
 
     /**
@@ -34,16 +42,23 @@ class debug_console {
      * @param format The format string specifying how data should be represented.
      * @param ... One or more arguments containing the data to be printed.
      */
-    void printf(const char* format, ...);
+    void printf(severity s, const char* format, ...);
 
     /**
      * @brief Prints a string to console. Computer console automatically appends newline.
      * @param str The string to be printed. 
      */
-    void println(const char* str);
+    void println(severity s, const char* str);
 
     /** @brief Blinks an LED at a rate of 1 Hz. */
     void blink_led();
+  private:
+    std::set<thread_t*> _silenced_threads;
+    systime_t _start_time;
+
+    unsigned int _get_elapsed_time();
+    bool _print_call_is_from_silenced_thread();
+    void _print_json_msg(severity s, const char* msg);
 };
 
 
