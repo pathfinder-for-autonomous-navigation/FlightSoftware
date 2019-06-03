@@ -15,6 +15,8 @@ class debug_console {
     systime_t _start_time;
 
     unsigned int _get_elapsed_time();
+    bool _print_call_is_from_silenced_thread();
+    void _print_json_msg(const char* msg);
   public:
     debug_console();
 
