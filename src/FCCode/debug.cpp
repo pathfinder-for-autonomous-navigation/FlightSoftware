@@ -36,16 +36,16 @@ THD_WORKING_AREA(debug_workingArea, 4096);
 void debug_function(void *arg) {
     chRegSetThreadName("debug");
 
-    dbg.println(debug_console::severity::INFO, "Debug thread initializing.");
+    dbg.println(debug_severity::INFO, "Debug thread initializing.");
     while(true) {
         // Use this to report stack space and stuff.
-        dbg.println(debug_console::severity::DEBUG, "Stack space remaining:");
-        dbg.printf(debug_console::severity::DEBUG, "ADCS: %d", chUnusedThreadStack(RTOSTasks::adcs_controller_workingArea, sizeof(RTOSTasks::adcs_controller_workingArea)));
-        dbg.printf(debug_console::severity::DEBUG, "Gomspace: %d", chUnusedThreadStack(RTOSTasks::gomspace_controller_workingArea, sizeof(RTOSTasks::gomspace_controller_workingArea)));
-        dbg.printf(debug_console::severity::DEBUG, "Master: %d", chUnusedThreadStack(RTOSTasks::master_controller_workingArea, sizeof(RTOSTasks::master_controller_workingArea)));
-        dbg.printf(debug_console::severity::DEBUG, "Piksi: %d", chUnusedThreadStack(RTOSTasks::piksi_controller_workingArea, sizeof(RTOSTasks::piksi_controller_workingArea)));
-        dbg.printf(debug_console::severity::DEBUG, "Propulsion: %d", chUnusedThreadStack(RTOSTasks::propulsion_controller_workingArea, sizeof(RTOSTasks::propulsion_controller_workingArea)));
-        dbg.printf(debug_console::severity::DEBUG, "Quake: %d", chUnusedThreadStack(RTOSTasks::quake_controller_workingArea, sizeof(RTOSTasks::quake_controller_workingArea)));
+        dbg.println(debug_severity::DEBUG, "Stack space remaining:");
+        dbg.printf(debug_severity::DEBUG, "ADCS: %d", chUnusedThreadStack(RTOSTasks::adcs_controller_workingArea, sizeof(RTOSTasks::adcs_controller_workingArea)));
+        dbg.printf(debug_severity::DEBUG, "Gomspace: %d", chUnusedThreadStack(RTOSTasks::gomspace_controller_workingArea, sizeof(RTOSTasks::gomspace_controller_workingArea)));
+        dbg.printf(debug_severity::DEBUG, "Master: %d", chUnusedThreadStack(RTOSTasks::master_controller_workingArea, sizeof(RTOSTasks::master_controller_workingArea)));
+        dbg.printf(debug_severity::DEBUG, "Piksi: %d", chUnusedThreadStack(RTOSTasks::piksi_controller_workingArea, sizeof(RTOSTasks::piksi_controller_workingArea)));
+        dbg.printf(debug_severity::DEBUG, "Propulsion: %d", chUnusedThreadStack(RTOSTasks::propulsion_controller_workingArea, sizeof(RTOSTasks::propulsion_controller_workingArea)));
+        dbg.printf(debug_severity::DEBUG, "Quake: %d", chUnusedThreadStack(RTOSTasks::quake_controller_workingArea, sizeof(RTOSTasks::quake_controller_workingArea)));
         dbg.blink_led();
         chThdSleepSeconds(5);
     }

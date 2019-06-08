@@ -61,5 +61,6 @@ class debug_console {
     void _print_json_msg(severity s, const char* msg);
 };
 
+typedef debug_console::severity debug_severity;
 
 #endif

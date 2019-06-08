@@ -2,15 +2,15 @@
 #include <Arduino.h>
 #include <ChRt.h>
 
-std::map<debug_console::severity, const char *> debug_console::severity_strs {
-    {DEBUG, "DEBUG"},
-    {INFO, "INFO"},
-    {NOTICE, "NOTICE"},
-    {WARNING, "WARNING"},
-    {ERROR, "ERROR"},
-    {CRITICAL, "CRITICAL"},
-    {ALERT, "ALERT"},
-    {EMERGENCY, "EMERGENCY"},
+std::map<debug_severity, const char *> debug_console::severity_strs {
+    {debug_severity::DEBUG, "DEBUG"},
+    {debug_severity::INFO, "INFO"},
+    {debug_severity::NOTICE, "NOTICE"},
+    {debug_severity::WARNING, "WARNING"},
+    {debug_severity::ERROR, "ERROR"},
+    {debug_severity::CRITICAL, "CRITICAL"},
+    {debug_severity::ALERT, "ALERT"},
+    {debug_severity::EMERGENCY, "EMERGENCY"},
 };
 
 debug_console::debug_console() : _silenced_threads() {}

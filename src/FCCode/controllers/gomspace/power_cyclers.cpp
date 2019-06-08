@@ -17,7 +17,7 @@ MEMORYPOOL_DECL(Gomspace::power_cycler_pool, 1024, NULL);
 THD_FUNCTION(Gomspace::cycler_fn, args) {
     cycler_arg_t* cycler_args = (cycler_arg_t*) args;
 
-    dbg.println(debug_console::severity::INFO, "Incrementing cycle count.");
+    dbg.println(debug_severity::INFO, "Incrementing cycle count.");
     rwMtxWLock(&State::Hardware::hardware_state_lock);
         State::Hardware::hat.at(cycler_args->device).boot_count = 
             State::Hardware::hat.at(cycler_args->device).boot_count++;
@@ -42,10 +42,10 @@ THD_FUNCTION(Gomspace::cycler_fn, args) {
         }
     chMtxUnlock(&eeprom_lock);
     
-    dbg.println(debug_console::severity::INFO, "Checking if Gomspace is functional.");
+    dbg.println(debug_severity::INFO, "Checking if Gomspace is functional.");
     chMtxLock(cycler_args->device_lock);
         if (State::Hardware::check_is_functional(gomspace)) {
-            dbg.println(debug_console::severity::INFO, "Gomspace is functional. Turning off device.");
+            dbg.println(debug_severity::INFO, "Gomspace is functional. Turning off device.");
             gomspace->set_single_output(cycler_args->pin, 0);
             State::write(State::Hardware::hat.at(cycler_args->device).powered_on, 
                 false, State::Hardware::hardware_state_lock);
@@ -55,19 +55,19 @@ THD_FUNCTION(Gomspace::cycler_fn, args) {
             // Wait for output capacitor voltage to go all the way down to zero.
             chThdSleepSeconds(30);
 
-            dbg.println(debug_console::severity::INFO, "Turning on device.");
+            dbg.println(debug_severity::INFO, "Turning on device.");
             gomspace->set_single_output(cycler_args->pin, 1);
             chThdSleepMilliseconds(10);
 
-            dbg.println(debug_console::severity::INFO, "Writing device status to state.");
+            dbg.println(debug_severity::INFO, "Writing device status to state.");
             State::write(State::Hardware::hat.at(cycler_args->device).powered_on, 
                 true, State::Hardware::hardware_state_lock);
             State::write(State::Hardware::hat.at(cycler_args->device).is_functional, 
                 (cycler_args->device)->is_functional(), State::Hardware::hardware_state_lock);
 
-            dbg.println(debug_console::severity::INFO, "Completed power cycle.");
+            dbg.println(debug_severity::INFO, "Completed power cycle.");
         }
-        else dbg.println(debug_console::severity::ERROR, "Gomspace is nonfunctional.");
+        else dbg.println(debug_severity::ERROR, "Gomspace is nonfunctional.");
     chMtxUnlock(cycler_args->device_lock);
 
     chThdExit((msg_t) 0);

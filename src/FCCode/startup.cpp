@@ -36,35 +36,35 @@ using namespace RTOSTasks;
 
 static void start_satellite_processes() {
     // Start up satellite processes
-    // dbg.println(debug_console::severity::INFO, "Starting ADCS controller process.");
+    // dbg.println(debug_severity::INFO, "Starting ADCS controller process.");
     // adcs_thread = chThdCreateStatic(adcs_controller_workingArea, sizeof(adcs_controller_workingArea), 
     //     adcs_thread_priority, adcs_controller, NULL);
     
-    // dbg.println(debug_console::severity::INFO, "Starting Gomspace controller process.");
+    // dbg.println(debug_severity::INFO, "Starting Gomspace controller process.");
     // gomspace_thread = chThdCreateStatic(gomspace_controller_workingArea, sizeof(gomspace_controller_workingArea), 
     //     gomspace_thread_priority, gomspace_controller, NULL);
     
-    dbg.println(debug_console::severity::INFO, "Starting Piksi controller process.");
+    dbg.println(debug_severity::INFO, "Starting Piksi controller process.");
     piksi_thread = chThdCreateStatic(piksi_controller_workingArea, sizeof(piksi_controller_workingArea),
                                      piksi_thread_priority, piksi_controller, NULL);
 
-    dbg.println(debug_console::severity::INFO, "Starting GNC calculation controller process.");
+    dbg.println(debug_severity::INFO, "Starting GNC calculation controller process.");
     gnc_thread = chThdCreateStatic(gnc_controller_workingArea, sizeof(gnc_controller_workingArea),
         gnc_thread_priority, gnc_controller, NULL);
 
-    dbg.println(debug_console::severity::INFO, "Starting system output controller process.");
+    dbg.println(debug_severity::INFO, "Starting system output controller process.");
     system_output_thread = chThdCreateStatic(system_output_controller_workingArea, sizeof(system_output_controller_workingArea),
                                      system_output_thread_priority, system_output_controller, NULL);
     
-    // dbg.println(debug_console::severity::INFO, "Starting propulsion controller process.");
+    // dbg.println(debug_severity::INFO, "Starting propulsion controller process.");
     // propulsion_thread = chThdCreateStatic(propulsion_controller_workingArea, sizeof(propulsion_controller_workingArea), 
     //     propulsion_thread_priority, propulsion_controller, NULL);
 
-    // dbg.println(debug_console::severity::INFO, "Starting Quake radio controller process.");
+    // dbg.println(debug_severity::INFO, "Starting Quake radio controller process.");
     // quake_thread = chThdCreateStatic(quake_controller_workingArea, sizeof(quake_controller_workingArea), 
     //     quake_thread_priority, quake_controller, NULL);
     
-    // dbg.println(debug_console::severity::INFO, "Starting master controller process.");
+    // dbg.println(debug_severity::INFO, "Starting master controller process.");
     // master_thread = chThdCreateStatic(master_controller_workingArea, sizeof(master_controller_workingArea),
     //     master_thread_priority, master_controller, NULL);
 
@@ -82,7 +82,7 @@ void pan_system_setup()
     debug_eeprom_initialization();
 #endif
 
-    dbg.println(debug_console::severity::INFO, "Startup process has begun.");
+    dbg.println(debug_severity::INFO, "Startup process has begun.");
     initialize_rtos_objects();
 
     // Determining boot count
@@ -92,12 +92,12 @@ void pan_system_setup()
     // State::write(State::Master::boot_number, boot_number++, State::Master::master_state_lock);
     // EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, boot_number);
     // chMtxUnlock(&eeprom_lock);
-    // dbg.printf(debug_console::severity::INFO, "This is boot #%d since the satellite left the deployer.", State::Master::boot_number);
+    // dbg.printf(debug_severity::INFO, "This is boot #%d since the satellite left the deployer.", State::Master::boot_number);
 
-    dbg.println(debug_console::severity::INFO, "Initializing hardware setup.");
+    dbg.println(debug_severity::INFO, "Initializing hardware setup.");
     hardware_setup();
 
-    dbg.println(debug_console::severity::INFO, "Starting satellite processes.");
+    dbg.println(debug_severity::INFO, "Starting satellite processes.");
 
     // Start deployment thread
     // deployment_timer_thread = chThdCreateStatic(deployment_timer_workingArea, 
@@ -105,7 +105,7 @@ void pan_system_setup()
     //         deployment_timer_function, NULL);
 
     start_satellite_processes();
-    //dbg.println(debug_console::severity::INFO, "Starting adcs data collection.");
+    //dbg.println(debug_severity::INFO, "Starting adcs data collection.");
     //adcs_threads::init();
 
     chThdSleepSeconds(2);
@@ -130,8 +130,8 @@ void pan_system_setup()
     //dbg.silence_thread(chRegFindThreadByName("gomspace.power_cycler.spike_and_hold"));
     dbg.silence_thread(chRegFindThreadByName("gomspace.power_cycler.piksi"));
 
-    dbg.println(debug_console::severity::INFO, "System setup is complete.");
-    dbg.println(debug_console::severity::INFO, "Process terminating.");
+    dbg.println(debug_severity::INFO, "System setup is complete.");
+    dbg.println(debug_severity::INFO, "Process terminating.");
     chThdExit((msg_t)0);
 }
 
