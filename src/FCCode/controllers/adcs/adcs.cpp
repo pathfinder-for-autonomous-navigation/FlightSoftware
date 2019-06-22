@@ -13,7 +13,7 @@
 #include "../gomspace/power_cyclers.hpp"
 #include "../../deployment_timer.hpp"
 #include "../../data_collection/data_collection.hpp"
-#include <AttitudePDcontrol.hpp>
+#include <AttitudePDControl.hpp>
 #include <AttitudeEstimator.hpp>
 #include <AttitudeMath.hpp>
 #include <tensor.hpp>
