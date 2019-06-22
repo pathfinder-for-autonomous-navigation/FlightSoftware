@@ -53,6 +53,7 @@ class debug_console {
     /** @brief Blinks an LED at a rate of 1 Hz. */
     void blink_led();
   private:
+    mutex_t debug_console_lock;
     std::set<thread_t*> _silenced_threads;
     systime_t _start_time;
 

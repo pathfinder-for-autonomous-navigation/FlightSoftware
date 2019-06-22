@@ -6,7 +6,7 @@
  * and control of hardware peripherals.
  */
 
-#include <string>
+#include "../utils/Nameable.hpp"
 
 /** \addtogroup Devices
  *  @{ **/
@@ -29,11 +29,10 @@ namespace Devices {
  *  This interface ensures that all peripherials in communication with a
  *  flight computer have common functionality. This will be most useful for
  *  communications downlinks and updates on the satellites health. **/
-class Device {
- protected:
-  const std::string& name_;
+class Device : public Nameable {
  public:
-  Device(const std::string& n);
+  using Nameable::Nameable;
+
   ~Device();
   /** @brief Sets up communication with the device and verifies
    *         the device is responding to communication attempts.

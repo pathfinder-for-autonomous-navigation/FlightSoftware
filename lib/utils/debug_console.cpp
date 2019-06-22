@@ -35,7 +35,9 @@ bool debug_console::_print_call_is_from_silenced_thread() {
 }
 
 void debug_console::_print_json_msg(severity s, const char* msg) {
-    chSysLock();
+    // TODO check if we're within a thread
+    chMtxLock(&debug_console_lock);
+
     Serial.printf("{\"t\":%d,"
                    "\"svrty\":\"%s\","
                    "\"thd\":\"%s\","
@@ -45,7 +47,9 @@ void debug_console::_print_json_msg(severity s, const char* msg) {
         severity_strs.at(s),
         chThdGetSelfX()->name,
         msg);
-    chSysUnlock();
+    
+    // TODO check if we're within a thread
+    chMtxUnlock(&debug_console_lock);
 }
 
 void debug_console::begin() {
@@ -55,6 +59,9 @@ void debug_console::begin() {
     Serial.println("Waiting for serial console.");
     while (!Serial);
     _start_time = chVTGetSystemTimeX();
+    
+    // TODO check if we're within a thread
+    chMtxObjectInit(&debug_console_lock);
 }
 
 void debug_console::silence_thread(thread_t* thd) {
@@ -63,7 +70,6 @@ void debug_console::silence_thread(thread_t* thd) {
 
 void debug_console::printf(severity s, const char* format, ...) {
     if (_print_call_is_from_silenced_thread()) return;
-
     char buf[1024];
     va_list args;
     va_start( args, format );
