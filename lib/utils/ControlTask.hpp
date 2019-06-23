@@ -9,7 +9,10 @@
  * @brief Dummy class used so that we can produce generic pointers to
  * ControlTasks.
  */
-class Task {};
+class Task : public Nameable {
+  public:
+    Task(const std::string& name);
+};
 
 /**
  * @brief A control task is a task that is executed whilst within a state machine.
@@ -18,12 +21,12 @@ class Task {};
  * of execute() for different kinds of ControlTasks.
  */
 template<typename T>
-class ControlTask : public Task, Nameable, Debuggable {
+class ControlTask : public Task, Debuggable {
   public:
     /**
      * @brief Construct a new Control Task object
      */
-    ControlTask(std::string& name, debug_console& dbg);
+    ControlTask(const std::string& name, debug_console& dbg);
     /**
      * @brief Run main method of control task.
      */
@@ -31,10 +34,23 @@ class ControlTask : public Task, Nameable, Debuggable {
 };
 
 template <typename T>
-ControlTask<T>::ControlTask(std::string& name, 
+ControlTask<T>::ControlTask(const std::string& name, 
                             debug_console& dbg) : 
-    Task(),
-    Nameable(name),
+    Task(name),
     Debuggable(dbg) {}
+
+class StateHandler : public ControlTask<unsigned int> {
+  public:
+    StateHandler(std::string& name,
+                 debug_console& dbg);
+    virtual unsigned int execute() = 0;
+};
+
+class TransitionHandler : public ControlTask<void> {
+  public:
+    TransitionHandler(std::string& name, 
+                      debug_console& dbg);
+    virtual void execute() = 0;
+};
 
 #endif

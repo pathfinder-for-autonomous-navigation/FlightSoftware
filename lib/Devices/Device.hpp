@@ -52,8 +52,6 @@ class Device : public Nameable {
    *         cases, this should only be called as the result of a ground
    *         originated command. **/
   virtual void disable();
-
-  const std::string& name() const;
 };
 }  // namespace Devices
 

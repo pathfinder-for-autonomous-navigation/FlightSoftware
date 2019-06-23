@@ -55,14 +55,14 @@ class StateField : public DataField, Debuggable {
      * fetch function (e.g. a device peripheral.) We require that the lock already be initialized,
      * or else the program will abort when tested.
      */
-    StateField(std::string& name,
+    StateField(const std::string& name,
                rwmutex_t* l,
                bool gr, 
                bool gw,
                StateFieldRegistry& reg,
                debug_console& dbg_console,
-               fetch_f fetcher = &null_fetcher,
-               mutex_t* f_l = NULL);
+               typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+               mutex_t* f_l = nullptr);
 
     std::string& name() const;
 
@@ -176,12 +176,12 @@ class InternalStateField : public StateField<T> {
      * fetch function (e.g. a device peripheral.)
      */
     InternalStateField(
-      std::string& name,
+      const std::string& name,
       rwmutex_t* l,
       StateFieldRegistry& reg,
       debug_console& dbg_console,
-      fetch_f fetcher = &null_fetcher,
-      mutex_t* f_l = null_dev_lock);
+      typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+      mutex_t* f_l = nullptr);
 };
 
 /**
@@ -191,10 +191,10 @@ class InternalStateField : public StateField<T> {
  * @tparam T Type of state field.
  * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
-template<typename T, unsigned int compressed_size>
+template<typename T, typename U, unsigned int compressed_sz>
 class SerializableStateField : public StateField<T> {
   protected:
-    Serializer<T, compressed_size>& _serializer;
+    Serializer<T, U, compressed_sz>& _serializer;
   public:
     /**
      * @brief Construct a new Serializable State Field object
@@ -211,14 +211,14 @@ class SerializableStateField : public StateField<T> {
      * @param f_l Lock that synchronizes access to resources that may be used within the 
      * fetch function (e.g. a device peripheral.)
      */
-    SerializableStateField(std::string& name,
+    SerializableStateField(const std::string& name,
       rwmutex_t* l,
       bool gw,
       StateFieldRegistry& reg,
-      Serializer<T, compressed_size>& s,
+      Serializer<T, U, compressed_sz>& s,
       debug_console& dbg_console,
-      fetch_f fetcher = &null_fetcher,
-      mutex_t* f_l = null_dev_lock);
+      typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+      mutex_t* f_l = nullptr);
     
     /**
      * @brief Serialize field data into the provided bitset.
@@ -227,7 +227,7 @@ class SerializableStateField : public StateField<T> {
      * @return true If serialization was possible within the given bitset.
      * @return false If the given bitset is too small, serialization will not be possible.
      */
-    void serialize(std::bitset<compressed_size>* dest);
+    void serialize(std::bitset<compressed_sz>* dest);
 
     /**
      * @brief Deserialize field data from the provided bitset.
@@ -236,7 +236,7 @@ class SerializableStateField : public StateField<T> {
      * @return true If serialization was possible within the given bitset.
      * @return false If the given bitset is too small, serialization will not be possible.
      */
-    void deserialize(const std::bitset<compressed_size>& src);
+    void deserialize(const std::bitset<compressed_sz>& src);
 
     /**
      * @brief Write human-readable value of state field to a supplied string.
@@ -252,8 +252,8 @@ class SerializableStateField : public StateField<T> {
  * @tparam T Type of state field.
  * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
-template<typename T, unsigned int compressed_size>
-class WritableStateField : public SerializableStateField<T, compressed_size> {
+template<typename T, typename U, unsigned int compressed_sz>
+class WritableStateField : public SerializableStateField<T, U, compressed_sz> {
   public:
     /**
      * @brief Construct a new Writable State Field object
@@ -269,13 +269,13 @@ class WritableStateField : public SerializableStateField<T, compressed_size> {
      * @param f_l Lock that synchronizes access to resources that may be used within the 
      * fetch function (e.g. a device peripheral.)
      */
-    WritableStateField(std::string& name,
+    WritableStateField(const std::string& name,
       rwmutex_t* l,
       StateFieldRegistry& reg,
-      Serializer<T, compressed_size>& s,
+      Serializer<T, U, compressed_sz>& s,
       debug_console& dbg_console,
-      fetch_f fetcher = &null_fetcher,
-      mutex_t* f_l = null_dev_lock);
+      typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+      mutex_t* f_l = nullptr);
 };
 
 #include "StateField.inl"

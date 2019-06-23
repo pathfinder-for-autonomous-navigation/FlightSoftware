@@ -83,6 +83,31 @@ public:
 };
 
 /**
+ * @brief Specialization of Serializer for booleans.
+ */
+template <size_t compressed_sz>
+class Serializer<bool, bool, compressed_sz>
+{
+protected:
+    bool _min;
+    bool _max;
+
+public:
+    Serializer(bool min = false, 
+               bool max = true) : _min(min), _max(max) {}
+
+    void serialize(const bool &src, std::bitset<compressed_sz> *dest)
+    {
+        // TODO
+    }
+
+    void deserialize(const std::bitset<compressed_sz> &src, bool *dest)
+    {
+        // TODO
+    }
+};
+
+/**
  * @brief Specialization of Serializer for unsigned ints.
  */
 template <size_t compressed_sz>
@@ -310,9 +335,10 @@ protected:
 
 public:
     static constexpr int TEMPERATURE_MIN = -40;
-    static constexpr int TEMPERATURE_MIN = -125;
+    static constexpr int TEMPERATURE_MAX = 125;
 
-    Serializer(signed int min, signed int max) : _min(TEMPERATURE_MIN), _max(TEMPERATURE_MAX)
+    Serializer(signed int min = TEMPERATURE_MIN,
+               signed int max = TEMPERATURE_MAX) : _min(min), _max(max)
     {
         // Note: argument values are completely ignored because they don't matter.
     }

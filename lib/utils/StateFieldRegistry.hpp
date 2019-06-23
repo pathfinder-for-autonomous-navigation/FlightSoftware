@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <Nameable.hpp>
 #include <Debuggable.hpp>
 #include "ControlTask.hpp"
 #include <ChRt.h>
@@ -11,7 +12,10 @@
  * @brief Dummy class so that we can create pointers of type DataField that point to
  * objects of type StateField<T>. See "StateField.hpp"
  */
-class DataField {};
+class DataField : public Nameable {
+  public:
+    DataField(const std::string& name);
+};
 
 /**
  * @brief Registry of state fields and which threads have read/write access to the
@@ -60,6 +64,24 @@ class StateFieldRegistry : public Debuggable {
      * @return false If Control Task does not have write access to state field.
      */
     bool can_write(Task& r, DataField& field);
+};
+
+template<typename T>
+class StateFieldRegistryReader : public ControlTask<T> {
+  protected:
+    const StateFieldRegistry& _registry;
+  public:
+    StateFieldRegistryReader(const std::string& name,
+                             debug_console& dbg,
+                             const StateFieldRegistry& registry) : 
+        ControlTask<T>(name, dbg), _registry(registry) {}
+
+    bool can_read(DataField& field) {
+      return (this->_registry).can_read(*this, field);
+    }
+    bool can_write(DataField& field) {
+      return (this->_registry).can_read(*this, field);
+    }
 };
 
 #endif

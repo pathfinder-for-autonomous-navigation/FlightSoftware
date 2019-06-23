@@ -1,5 +1,7 @@
 #include "StateFieldRegistry.hpp"
 
+DataField::DataField(const std::string& name) : Nameable(name) {}
+
 void StateFieldRegistry::add_reader(Task& reader, DataField& field) {
     if (_fields_allowed_to_read.count(&reader) == 0) {
         // TODO add debug console
