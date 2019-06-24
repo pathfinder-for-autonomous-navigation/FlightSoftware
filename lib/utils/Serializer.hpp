@@ -80,13 +80,19 @@ public:
      * @param dest 
      */
     void deserialize(const std::bitset<compressed_sz> &src, T *dest);
+
+    /**
+     * @brief Outputs a string representation of the source value into
+     * the given destination string.
+     */
+    void print(const T &src, std::string* dest);
 };
 
 /**
  * @brief Specialization of Serializer for booleans.
  */
-template <size_t compressed_sz>
-class Serializer<bool, bool, compressed_sz>
+template <>
+class Serializer<bool, bool, static_cast<size_t>(1)>
 {
 protected:
     bool _min;
@@ -96,13 +102,17 @@ public:
     Serializer(bool min = false, 
                bool max = true) : _min(min), _max(max) {}
 
-    void serialize(const bool &src, std::bitset<compressed_sz> *dest)
+    void serialize(const bool &src, std::bitset<static_cast<size_t>(1)> *dest)
     {
         // TODO
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, bool *dest)
+    void deserialize(const std::bitset<static_cast<size_t>(1)> &src, bool *dest)
     {
+        // TODO
+    }
+
+    void print(const bool &src, std::string* dest) {
         // TODO
     }
 };
@@ -129,6 +139,10 @@ public:
     {
         // TODO
     }
+
+    void print(const unsigned int &src, std::string* dest) {
+        // TODO
+    }
 };
 
 /**
@@ -151,6 +165,10 @@ public:
 
     void deserialize(const std::bitset<compressed_sz> &src, signed int *dest)
     {
+        // TODO
+    }
+
+    void print(const signed int &src, std::string* dest) {
         // TODO
     }
 };
@@ -177,6 +195,10 @@ public:
     {
         // TODO
     }
+
+    void print(const float &src, std::string* dest) {
+        // TODO
+    }
 };
 
 /**
@@ -199,6 +221,10 @@ public:
 
     void deserialize(const std::bitset<compressed_sz> &src, double *dest)
     {
+        // TODO
+    }
+
+    void print(const double &src, std::string* dest) {
         // TODO
     }
 };
@@ -225,6 +251,10 @@ public:
     {
         // TODO
     }
+
+    void print(const f_vector_t &src, std::string* dest) {
+        // TODO
+    }
 };
 
 /**
@@ -249,28 +279,35 @@ public:
     {
         // TODO
     }
+
+    void print(const d_vector_t &src, std::string* dest) {
+        // TODO
+    }
 };
 
 /**
  * @brief Specialization of Serializer for float quaternion.
  */
-template <size_t compressed_sz>
-class Serializer<f_quaternion_t, float, compressed_sz>
+template <>
+class Serializer<f_quaternion_t, float, SerializerBase::f_quat_sz>
 {
 protected:
     float _min;
     float _max;
-
 public:
     Serializer(float min, float max) : _min(min), _max(max) {}
 
-    void serialize(const f_quaternion_t &src, std::bitset<compressed_sz> *dest)
+    void serialize(const f_quaternion_t &src, std::bitset<SerializerBase::f_quat_sz> *dest)
     {
         // TODO
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, f_quaternion_t *dest)
+    void deserialize(const std::bitset<SerializerBase::f_quat_sz> &src, f_quaternion_t *dest)
     {
+        // TODO
+    }
+
+    void print(const f_quaternion_t &src, std::string* dest) {
         // TODO
     }
 };
@@ -278,23 +315,26 @@ public:
 /**
  * @brief Specialization of Serializer for double quaternion.
  */
-template <size_t compressed_sz>
-class Serializer<d_quaternion_t, double, compressed_sz>
+template <>
+class Serializer<d_quaternion_t, double, SerializerBase::d_quat_sz>
 {
 protected:
     double _min;
     double _max;
-
 public:
     Serializer(double min, double max) : _min(min), _max(max) {}
 
-    void serialize(const d_quaternion_t &src, std::bitset<compressed_sz> *dest)
+    void serialize(const d_quaternion_t &src, std::bitset<SerializerBase::d_quat_sz> *dest)
     {
         // TODO
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, d_quaternion_t *dest)
+    void deserialize(const std::bitset<SerializerBase::d_quat_sz> &src, d_quaternion_t *dest)
     {
+        // TODO
+    }
+
+    void print(const d_quaternion_t &src, std::string* dest) {
         // TODO
     }
 };
@@ -302,23 +342,26 @@ public:
 /**
  * @brief Specialization of Serializer for GPS time.
  */
-template <size_t compressed_sz>
-class Serializer<gps_time_t, bool, compressed_sz>
+template <>
+class Serializer<gps_time_t, bool, SerializerBase::gps_time_sz>
 {
 protected:
     bool _min;
     bool _max;
-
 public:
     Serializer(bool min, bool max) : _min(min), _max(max) {}
 
-    void serialize(const gps_time_t &src, std::bitset<compressed_sz> *dest)
+    void serialize(const gps_time_t &src, std::bitset<SerializerBase::gps_time_sz> *dest)
     {
         // TODO
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, gps_time_t *dest)
+    void deserialize(const std::bitset<SerializerBase::gps_time_sz> &src, gps_time_t *dest)
     {
+        // TODO
+    }
+
+    void print(const gps_time_t &src, std::string* dest) {
         // TODO
     }
 };
@@ -326,13 +369,12 @@ public:
 /**
  * @brief Specialization of Serializer for temperature values.
  */
-template <size_t compressed_sz>
-class Serializer<temperature_t, signed int, compressed_sz>
+template <>
+class Serializer<temperature_t, signed int, SerializerBase::temp_sz>
 {
 protected:
     signed int _min;
     signed int _max;
-
 public:
     static constexpr int TEMPERATURE_MIN = -40;
     static constexpr int TEMPERATURE_MAX = 125;
@@ -343,13 +385,17 @@ public:
         // Note: argument values are completely ignored because they don't matter.
     }
 
-    void serialize(const gps_time_t &src, std::bitset<compressed_sz> *dest)
+    void serialize(const temperature_t &src, std::bitset<SerializerBase::temp_sz> *dest)
     {
         // TODO
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, gps_time_t *dest)
+    void deserialize(const std::bitset<SerializerBase::temp_sz> &src, temperature_t *dest)
     {
+        // TODO
+    }
+
+    void print(const temperature_t &src, std::string* dest) {
         // TODO
     }
 };

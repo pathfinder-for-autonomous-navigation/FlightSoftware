@@ -25,7 +25,9 @@ template<typename T>
 class StateField : public DataField, Debuggable {
   public:
     /**
-     * @brief Function for fetching value of state field.
+     * @brief Type definition for a pointer to a function that fetches 
+     * the value of the state field.
+     * 
      * This is useful if the value of the state field is directly
      * accessed from some peripheral or is computed by combining the values
      * of several state fields.
@@ -38,6 +40,16 @@ class StateField : public DataField, Debuggable {
      * @return T Current value of the state.
      */
     T null_fetcher();
+
+    /**
+     * @brief Type definition for a pointer to function that 
+     * checks sanity of state field.
+     */
+    typedef bool (StateField<T>::*sanity_check_f)(const T& val) const;
+    /**
+     * @brief Default sanity checker. Always returns true.
+     */
+    bool null_sanity_check(const T& val) const;
 
     /**
      * @brief Construct a new State Field object
@@ -56,13 +68,14 @@ class StateField : public DataField, Debuggable {
      * or else the program will abort when tested.
      */
     StateField(const std::string& name,
+               debug_console& dbg_console,
                rwmutex_t* l,
                bool gr, 
                bool gw,
                StateFieldRegistry& reg,
-               debug_console& dbg_console,
                typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
-               mutex_t* f_l = nullptr);
+               mutex_t* f_l = nullptr,
+               typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 
     std::string& name() const;
 
@@ -141,8 +154,16 @@ class StateField : public DataField, Debuggable {
      * which thread was the offender.
      */
     void fetch(Task* setter);
+
+    /**
+     * @brief Checks the sanity of the internally contained value. Note that the
+     * calling thread must have read permissions for the state field because this function
+     * internally calls get(). No error will be produced, and the sanity will still be evaluated,
+     * but a debug message will be written to the console indicating which thread was the offender.
+     */
+    bool sanity_check(Task* getter) const;
+
   protected:
-    std::string _name;
     bool _ground_readable;
     bool _ground_writable;
     T _val;
@@ -150,6 +171,7 @@ class StateField : public DataField, Debuggable {
     StateFieldRegistry& _registry;
     fetch_f _fetcher;
     mutex_t* _fetch_lock;
+    sanity_check_f _checker;
 };
 
 /**
@@ -177,9 +199,9 @@ class InternalStateField : public StateField<T> {
      */
     InternalStateField(
       const std::string& name,
+      debug_console& dbg_console,
       rwmutex_t* l,
       StateFieldRegistry& reg,
-      debug_console& dbg_console,
       typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
       mutex_t* f_l = nullptr);
 };
@@ -212,13 +234,13 @@ class SerializableStateField : public StateField<T> {
      * fetch function (e.g. a device peripheral.)
      */
     SerializableStateField(const std::string& name,
-      rwmutex_t* l,
-      bool gw,
-      StateFieldRegistry& reg,
-      Serializer<T, U, compressed_sz>& s,
-      debug_console& dbg_console,
-      typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
-      mutex_t* f_l = nullptr);
+                           debug_console& dbg_console,
+                           rwmutex_t* l,
+                           bool gw,
+                           StateFieldRegistry& reg,
+                           Serializer<T, U, compressed_sz>& s,
+                           typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+                           mutex_t* f_l = nullptr);
     
     /**
      * @brief Serialize field data into the provided bitset.
@@ -243,7 +265,7 @@ class SerializableStateField : public StateField<T> {
      * 
      * @param dest 
      */
-    virtual void print(std::string& dest);
+    void print(std::string* dest);
 };
 
 /**
@@ -270,12 +292,12 @@ class WritableStateField : public SerializableStateField<T, U, compressed_sz> {
      * fetch function (e.g. a device peripheral.)
      */
     WritableStateField(const std::string& name,
-      rwmutex_t* l,
-      StateFieldRegistry& reg,
-      Serializer<T, U, compressed_sz>& s,
-      debug_console& dbg_console,
-      typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
-      mutex_t* f_l = nullptr);
+                       debug_console& dbg_console,
+                       rwmutex_t* l,
+                       StateFieldRegistry& reg,
+                       Serializer<T, U, compressed_sz>& s,
+                       typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+                       mutex_t* f_l = nullptr);
 };
 
 #include "StateField.inl"

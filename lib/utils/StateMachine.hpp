@@ -28,6 +28,15 @@ class StateMachine : public StateFieldRegistryReader<void> {
                  StateFieldRegistry& r);
 
     /**
+     * @brief Checks if provided state is a valid state. The
+     * valid states are defined in the protected state variable field.
+     * 
+     * @param state The state to check
+     * @return Whether or not the state is valid
+     */
+    bool is_valid_state(unsigned int state) const;
+
+    /**
      * @brief Initialize state to the specified state.
      * 
      * @param initial_state State to set the state machine in.
@@ -98,17 +107,30 @@ StateMachine<compressed_state_sz>::StateMachine(SMStateField<compressed_state_sz
 }
 
 template<size_t compressed_state_sz>
+bool StateMachine<compressed_state_sz>::is_valid_state(unsigned int state) const {
+    return state < _state._state_names.size();
+}
+
+template<size_t compressed_state_sz>
 void StateMachine<compressed_state_sz>::init(unsigned int initial_state) {
+    static_assert(is_valid_state(initial_state), "Invalid state number passed into function.");
+
     set_state(initial_state);
 }
 
 template<size_t compressed_state_sz>
 void StateMachine<compressed_state_sz>::set_state(unsigned int state) {
+    static_assert(is_valid_state(state), "Invalid state number passed into function.");
+
     _state.set(state);
+    StateHandler* state_handler = _state_handlers.at(state);
+    state_handler->has_executed = false;
 }
 
 template<size_t compressed_state_sz>
 void StateMachine<compressed_state_sz>::register_state_handler(unsigned int state, StateHandler& handler) {
+    static_assert(is_valid_state(state), "Invalid state number passed into function.");
+
      _transition_handlers.emplace(state, &handler);
 }
 
@@ -116,6 +138,14 @@ template<size_t compressed_state_sz>
 void StateMachine<compressed_state_sz>::register_transition_handler(unsigned int state_1, 
                                                                     unsigned int state_2, 
                                                                     TransitionHandler& handler) {
+    static_assert(is_valid_state(state_1), "Invalid state number passed into function.");
+    static_assert(is_valid_state(state_1), "Invalid state number passed into function.");
+    if (state_1 == state_2) {
+        _dbg_console.println(debug_severity::ERROR, 
+            "Should not be setting a transition handler between two of the same state.");
+        return;
+    }
+
     std::pair<unsigned int, unsigned int> state_pair(state_1, state_2);
     _transition_handlers.emplace(state_pair, &handler);
 }
@@ -124,16 +154,30 @@ template<size_t compressed_state_sz>
 void StateMachine<compressed_state_sz>::update_state_machine() {
     // Get current state and state handler
     unsigned int cur_state = _state.get();
-    StateHandler* state_handler = _state_handlers.at(cur_state);
+    static_assert(is_valid_state(cur_state), "Invalid state number for current state.");
 
-    // Get next state and run pre-transition handler
-    unsigned int next_state = state_handler->execute();
-    std::pair<unsigned int, unsigned int> state_pair(cur_state, next_state);
-    TransitionHandler* transition_handler = _transition_handlers.at(state_pair);
-    transition_handler->execute();
-    
-    // Set current state equal to next state
-    set_state(next_state);
+    StateHandler* state_handler = nullptr;
+    try {
+        StateHandler* state_handler = _state_handlers.at(cur_state);
+    }
+    catch (std::out_of_range& err) {
+        _dbg_console.printf(debug_console::ERROR, "No state handler specified for state %d!", cur_state);
+        return;
+    }
+
+    // Get next state and run transition handler
+    unsigned int next_state = cur_state;
+    if (!state_handler->only_execute_once || !state_handler->has_executed) {
+        next_state = state_handler->execute();
+        state_handler->has_executed = true;
+
+        static_assert(is_valid_state(next_state), "Invalid state number for next state.");
+        std::pair<unsigned int, unsigned int> state_pair(cur_state, next_state);
+        TransitionHandler* transition_handler = _transition_handlers.at(state_pair);
+        transition_handler->execute();
+        // Set current state equal to next state
+        set_state(next_state);
+    }
 }
 
 template<size_t compressed_state_sz>

@@ -14,7 +14,7 @@
 #include <AttitudeMath.hpp>
 #include <QuakeMessage.hpp>
 #include <GPSTime.hpp>
-#include <circular_stack.hpp>
+#include <static_buffers.hpp>
 #include "state_definitions.hpp"
 #include "device_states.hpp"
 #include "../controllers/controllers.hpp"

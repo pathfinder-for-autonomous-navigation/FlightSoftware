@@ -23,6 +23,7 @@
  *  Implementation inspired by https://doc.qt.io/archives/qq/qq11-mutex.html.
  * **/
 struct rwmutex_t {
+    bool initialized = false;
     //! Mutex that is locked if a process requires exclusive write access to the data
     // protected by this readers-writers mutex.
     mutex_t mtx;

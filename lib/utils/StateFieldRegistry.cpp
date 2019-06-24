@@ -21,9 +21,24 @@ void StateFieldRegistry::add_writer(Task& writer, DataField& field) {
 }
 
 bool StateFieldRegistry::can_read(Task& reader, DataField& field) {
-    // TODO
+    if (!access_lock.initialized) rwMtxObjectInit(&access_lock);
+    
+    if (chThdGetSelfX() != nullptr) rwMtxRLock(&access_lock);
+    {
+        // TODO
+    }
+    if (chThdGetSelfX() != nullptr) rwMtxRUnlock(&access_lock);
+
+    return false;
 }
 
 bool StateFieldRegistry::can_write(Task& reader, DataField& field) {
-    // TODO
+    if (!access_lock.initialized) rwMtxObjectInit(&access_lock);
+    
+    if (chThdGetSelfX() != nullptr) rwMtxRLock(&access_lock);
+    {
+        // TODO        
+    }
+    if (chThdGetSelfX() != nullptr) rwMtxRUnlock(&access_lock);
+    return false;
 }

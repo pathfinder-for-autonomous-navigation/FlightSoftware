@@ -7,6 +7,7 @@
 #include "rwmutex.hpp"
 
 void rwMtxObjectInit(rwmutex_t *rwmtx) {
+    rwmtx->initialized = true;
     chMtxObjectInit(&rwmtx->mtx);
     chSemObjectInit(&rwmtx->sem, rwmtx->max_readers);
 }

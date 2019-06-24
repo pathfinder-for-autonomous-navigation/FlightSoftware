@@ -6,7 +6,7 @@
 #include <Nameable.hpp>
 #include <Debuggable.hpp>
 #include "ControlTask.hpp"
-#include <ChRt.h>
+#include "rwmutex.hpp"
 
 /**
  * @brief Dummy class so that we can create pointers of type DataField that point to
@@ -26,6 +26,7 @@ class StateFieldRegistry : public Debuggable {
   private:
     std::multimap<Task*, std::vector<DataField*>> _fields_allowed_to_read;
     std::multimap<Task*, std::vector<DataField*>> _fields_allowed_to_write;
+    rwmutex_t access_lock;
   public:
     using Debuggable::Debuggable;
 
@@ -66,6 +67,9 @@ class StateFieldRegistry : public Debuggable {
     bool can_write(Task& r, DataField& field);
 };
 
+/**
+ * @brief Interface for the State Field Registry.
+ */
 template<typename T>
 class StateFieldRegistryReader : public ControlTask<T> {
   protected:
@@ -74,7 +78,9 @@ class StateFieldRegistryReader : public ControlTask<T> {
     StateFieldRegistryReader(const std::string& name,
                              debug_console& dbg,
                              const StateFieldRegistry& registry) : 
-        ControlTask<T>(name, dbg), _registry(registry) {}
+        ControlTask<T>(name, dbg), _registry(registry) {
+
+    }
 
     bool can_read(DataField& field) {
       return (this->_registry).can_read(*this, field);
