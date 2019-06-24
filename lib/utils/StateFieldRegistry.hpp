@@ -75,6 +75,13 @@ class StateFieldRegistryReader : public ControlTask<T> {
   protected:
     const StateFieldRegistry& _registry;
   public:
+    /**
+     * @brief Construct a new State Field Registry Reader object
+     * 
+     * @param name 
+     * @param dbg 
+     * @param registry Registry to read.
+     */
     StateFieldRegistryReader(const std::string& name,
                              debug_console& dbg,
                              const StateFieldRegistry& registry) : 
@@ -82,9 +89,24 @@ class StateFieldRegistryReader : public ControlTask<T> {
 
     }
 
+    /**
+     * @brief Checks registry for write access.
+     * 
+     * @param field 
+     * @return true 
+     * @return false 
+     */
     bool can_read(DataField& field) {
       return (this->_registry).can_read(*this, field);
     }
+
+    /**
+     * @brief Checks registry for read access.
+     * 
+     * @param field 
+     * @return true 
+     * @return false 
+     */
     bool can_write(DataField& field) {
       return (this->_registry).can_read(*this, field);
     }

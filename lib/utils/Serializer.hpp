@@ -289,7 +289,7 @@ public:
  * @brief Specialization of Serializer for float quaternion.
  */
 template <>
-class Serializer<f_quaternion_t, float, SerializerBase::f_quat_sz>
+class Serializer<f_quat_t, float, SerializerBase::f_quat_sz>
 {
 protected:
     float _min;
@@ -297,17 +297,17 @@ protected:
 public:
     Serializer(float min, float max) : _min(min), _max(max) {}
 
-    void serialize(const f_quaternion_t &src, std::bitset<SerializerBase::f_quat_sz> *dest)
+    void serialize(const f_quat_t &src, std::bitset<SerializerBase::f_quat_sz> *dest)
     {
         // TODO
     }
 
-    void deserialize(const std::bitset<SerializerBase::f_quat_sz> &src, f_quaternion_t *dest)
+    void deserialize(const std::bitset<SerializerBase::f_quat_sz> &src, f_quat_t *dest)
     {
         // TODO
     }
 
-    void print(const f_quaternion_t &src, std::string* dest) {
+    void print(const f_quat_t &src, std::string* dest) {
         // TODO
     }
 };
@@ -316,7 +316,7 @@ public:
  * @brief Specialization of Serializer for double quaternion.
  */
 template <>
-class Serializer<d_quaternion_t, double, SerializerBase::d_quat_sz>
+class Serializer<d_quat_t, double, SerializerBase::d_quat_sz>
 {
 protected:
     double _min;
@@ -324,17 +324,17 @@ protected:
 public:
     Serializer(double min, double max) : _min(min), _max(max) {}
 
-    void serialize(const d_quaternion_t &src, std::bitset<SerializerBase::d_quat_sz> *dest)
+    void serialize(const d_quat_t &src, std::bitset<SerializerBase::d_quat_sz> *dest)
     {
         // TODO
     }
 
-    void deserialize(const std::bitset<SerializerBase::d_quat_sz> &src, d_quaternion_t *dest)
+    void deserialize(const std::bitset<SerializerBase::d_quat_sz> &src, d_quat_t *dest)
     {
         // TODO
     }
 
-    void print(const d_quaternion_t &src, std::string* dest) {
+    void print(const d_quat_t &src, std::string* dest) {
         // TODO
     }
 };

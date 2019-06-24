@@ -54,9 +54,29 @@ class ThreadedTask : public ControlTask<void> {
     bool is_timer_initialized;
     bool is_thd_created;
   public:
+    /**
+     * @brief Construct a new Threaded Task object
+     * 
+     * @param name
+     * @param debug 
+     */
     ThreadedTask(const std::string& name, debug_console& debug);
 
+    /**
+     * @brief Starts a threaded task immediately, with no delay and with optional
+     * arguments.
+     * 
+     * @param args 
+     */
     void start_now(void* args = nullptr);
+
+    /**
+     * @brief Starts a threaded task with an optional delay and optional arguments
+     * to the task.
+     * 
+     * @param delay 
+     * @param args 
+     */
     void start(const systime_t delay = static_cast<systime_t>(0), void* args = nullptr);
     
     virtual void execute() = 0;
@@ -104,15 +124,45 @@ void ThreadedTask<thd_working_area>::start(const systime_t delay, void* args) {
   chVTSetI(&(this->timer), delay, this->start_now, args);
 }
 
+/**
+ * @brief Represents a control task specifically designed for handling
+ * the actions that should be run during a state.
+ * 
+ */
 class StateHandler : public ControlTask<unsigned int> {
   public:
+    /**
+     * @brief Construct a new State Handler object
+     * 
+     * @param name 
+     * @param dbg 
+     * @param only_once If this is true, the state handler is run only once by the state
+     * machine, when the machine enters the state. Otherwise, the state handler runs
+     * execute() on every dispatch of the state machine.
+     */
     StateHandler(const std::string& name, debug_console& dbg, bool only_once = false);
     virtual unsigned int execute() = 0;
 
+    /**
+     * @brief If true, the state handler is run only once by the state
+     * machine, when the machine enters the state. Otherwise, the state handler runs
+     * execute() on every dispatch of the state machine.
+     * 
+     */
     bool only_execute_once;
+
+    /**
+     * @brief Tracks whether or not the execute() function has already been run once.
+     * 
+     */
     bool has_executed;
 };
 
+/**
+ * @brief Represents a control task specifically designed for handling
+ * the actions that should happen during a transition between two states.
+ * 
+ */
 class TransitionHandler : public ControlTask<void> {
   public:
     using ControlTask<void>::ControlTask;

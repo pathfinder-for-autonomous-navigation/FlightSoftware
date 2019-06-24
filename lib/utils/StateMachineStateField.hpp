@@ -11,9 +11,19 @@ inline constexpr size_t compressed_state_size(size_t num_states) {
   return (size_t) ceil(log(static_cast<float>(num_states)) / log(2.0f));
 }
 
+/**
+ * @brief Specialized serializer for state machine state. Reduces
+ * a state number N down to ceil(log2(N)) bits.
+ * 
+ * @tparam num_states 
+ */
 template<size_t num_states>
 class SMStateSerializer : public Serializer<unsigned int, unsigned int, compressed_state_size(num_states)> {
   public:
+    /**
+     * @brief Construct a new SMStateSerializer object.
+     * 
+     */
     SMStateSerializer();
 };
 
@@ -21,6 +31,11 @@ template<size_t num_states>
 SMStateSerializer<num_states>::SMStateSerializer() : 
   Serializer<unsigned int, unsigned int, compressed_state_size(num_states)>(0, num_states - 1) {}
 
+/**
+ * @brief A specialization of state field for state machine state.
+ * 
+ * @tparam num_states 
+ */
 template<size_t num_states>
 class SMStateField : public WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)> {
   public:
@@ -36,6 +51,10 @@ class SMStateField : public WritableStateField<unsigned int, unsigned int, compr
       SMStateSerializer<num_states>& s,
       debug_console& dbg_console);
     
+    /**
+     * @brief Array that maps index number (state) to the name of the state (a string).
+     * 
+     */
     std::array<std::string, num_states> _state_names;
 };
 
