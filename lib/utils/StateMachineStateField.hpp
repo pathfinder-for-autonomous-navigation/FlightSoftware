@@ -45,12 +45,11 @@ class SMStateField : public WritableStateField<unsigned int, unsigned int, compr
      * Parameters inherited from WritableStateField, but there are no fetchers,
      * so the optional parameter values are set to their defaults mandatorily.
      */
-    SMStateField(const std::string& name,
-      rwmutex_t* l,
-      StateFieldRegistry& reg,
-      SMStateSerializer<num_states>& s,
-      debug_console& dbg_console);
-    
+    SMStateField(const std::string &name,
+                 debug_console &dbg_console,
+                 StateFieldRegistry &reg,
+                 SMStateSerializer<num_states> &s);
+
     /**
      * @brief Array that maps index number (state) to the name of the state (a string).
      * 
@@ -58,13 +57,11 @@ class SMStateField : public WritableStateField<unsigned int, unsigned int, compr
     std::array<std::string, num_states> _state_names;
 };
 
-template<size_t num_states>
+template <size_t num_states>
 SMStateField<num_states>::SMStateField(
-        const std::string& name,
-        rwmutex_t* l,
-        StateFieldRegistry& reg,
-        SMStateSerializer<num_states>& s,
-        debug_console& dbg_console) :
-    WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>(name, l, reg, s, dbg_console) {}
+    const std::string &name,
+    debug_console &dbg_console,
+    StateFieldRegistry &reg,
+    SMStateSerializer<num_states> &s) : WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>(name, dbg_console, reg, s) {}
 
 #endif

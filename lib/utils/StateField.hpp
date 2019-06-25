@@ -69,12 +69,10 @@ class StateField : public DataField, Debuggable {
      */
     StateField(const std::string& name,
                debug_console& dbg_console,
-               rwmutex_t* l,
                bool gr, 
                bool gw,
                StateFieldRegistry& reg,
                typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
-               mutex_t* f_l = nullptr,
                typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 
     std::string& name() const;
@@ -167,10 +165,8 @@ class StateField : public DataField, Debuggable {
     bool _ground_readable;
     bool _ground_writable;
     T _val;
-    rwmutex_t* _lock;
     StateFieldRegistry& _registry;
     fetch_f _fetcher;
-    mutex_t* _fetch_lock;
     sanity_check_f _checker;
 };
 
@@ -200,10 +196,8 @@ class InternalStateField : public StateField<T> {
     InternalStateField(
       const std::string& name,
       debug_console& dbg_console,
-      rwmutex_t* l,
       StateFieldRegistry& reg,
-      typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
-      mutex_t* f_l = nullptr);
+      typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher);
 };
 
 /**
@@ -235,12 +229,10 @@ class SerializableStateField : public StateField<T> {
      */
     SerializableStateField(const std::string& name,
                            debug_console& dbg_console,
-                           rwmutex_t* l,
                            bool gw,
                            StateFieldRegistry& reg,
                            Serializer<T, U, compressed_sz>& s,
-                           typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
-                           mutex_t* f_l = nullptr);
+                           typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher);
     
     /**
      * @brief Serialize field data into the provided bitset.
@@ -266,6 +258,37 @@ class SerializableStateField : public StateField<T> {
      * @param dest 
      */
     void print(std::string* dest);
+};
+
+/**
+ * @brief A state field that is readable only, i.e. whose value cannot be modified via uplink.
+ * 
+ * @tparam T Type of state field.
+ * @tparam compressed_size Size, in bits, of field when its value is compressed.
+ */
+template <typename T, typename U, unsigned int compressed_sz>
+class ReadableStateField : public SerializableStateField<T, U, compressed_sz>
+{
+public:
+  /**
+     * @brief Construct a new Writable State Field object
+     * 
+     * @param name Name of state field. Useful for debugging.
+     * @param l Lock that synchronizes access to state field.
+     * @param reg The state field registry. This is needed so that the StateField
+     * can check which threads are allowed to read/write its value.
+     * @param s Serializer object that handles serialization/deserialization of this state field.
+     * @param dbg_console Reference to a debug console, which may be used to write error messages.
+     * @param fetcher A function to fetch this value from some device. By default,
+     * there is no fetcher.
+     * @param f_l Lock that synchronizes access to resources that may be used within the 
+     * fetch function (e.g. a device peripheral.)
+     */
+  ReadableStateField(const std::string &name,
+                     debug_console &dbg_console,
+                     StateFieldRegistry &reg,
+                     Serializer<T, U, compressed_sz> &s,
+                     typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher);
 };
 
 /**
@@ -296,8 +319,7 @@ class WritableStateField : public SerializableStateField<T, U, compressed_sz> {
                        rwmutex_t* l,
                        StateFieldRegistry& reg,
                        Serializer<T, U, compressed_sz>& s,
-                       typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
-                       mutex_t* f_l = nullptr);
+                       typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher);
 };
 
 #include "StateField.inl"

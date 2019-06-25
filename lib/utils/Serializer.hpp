@@ -104,16 +104,16 @@ public:
 
     void serialize(const bool &src, std::bitset<static_cast<size_t>(1)> *dest)
     {
-        // TODO
+        (*dest)[0] = src;
     }
 
     void deserialize(const std::bitset<static_cast<size_t>(1)> &src, bool *dest)
     {
-        // TODO
+        *dest = src[0];
     }
 
     void print(const bool &src, std::string* dest) {
-        // TODO
+        *dest = src ? "true" : "false";
     }
 };
 
@@ -130,18 +130,29 @@ protected:
 public:
     Serializer(unsigned int min, unsigned int max) : _min(min), _max(max) {}
 
+    unsigned int _resolution() const {
+        return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, compressed_sz)));
+    }
+
     void serialize(const unsigned int &src, std::bitset<compressed_sz> *dest)
-    {
-        // TODO
+    {   
+        unsigned int src_copy = src;
+        if (src_copy > _max)
+            src_copy = _max;
+        if (src_copy < _min)
+            src_copy = _min;
+        unsigned int result_int = (src_copy - _min) / _resolution();
+        std::bitset<compressed_sz> result_copy(result_int);
+        *dest = result_copy;
     }
 
     void deserialize(const std::bitset<compressed_sz> &src, unsigned int *dest)
     {
-        // TODO
+        *dest = _min + src.to_ulong() * _resolution();
     }
 
     void print(const unsigned int &src, std::string* dest) {
-        // TODO
+        *dest = std::string(src);
     }
 };
 
@@ -158,18 +169,30 @@ protected:
 public:
     Serializer(signed int min, signed int max) : _min(min), _max(max) {}
 
+    unsigned int _resolution() const
+    {
+        return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, compressed_sz)));
+    }
+
     void serialize(const signed int &src, std::bitset<compressed_sz> *dest)
     {
-        // TODO
+        unsigned int src_copy = src;
+        if (src_copy > _max)
+            src_copy = _max;
+        if (src_copy < _min)
+            src_copy = _min;
+        unsigned int result_int = (src_copy - _min) / _resolution();
+        std::bitset<compressed_sz> result_copy(result_int);
+        *dest = result_copy;
     }
 
     void deserialize(const std::bitset<compressed_sz> &src, signed int *dest)
     {
-        // TODO
+        *dest = _min + src.to_ulong() * _resolution();
     }
 
     void print(const signed int &src, std::string* dest) {
-        // TODO
+        *dest = std::string(src);
     }
 };
 
@@ -187,17 +210,27 @@ public:
     Serializer(float min, float max) : _min(min), _max(max) {}
 
     void serialize(const float &src, std::bitset<compressed_sz> *dest)
-    {
-        // TODO
+    {   
+        float src_copy = src;
+        if (src_copy > _max)
+            src_copy = _max;
+        if (src_copy < _min)
+            src_copy = _min;
+        float resolution = (_max - _min) / pow(2, compressed_sz);
+        unsigned int result_int = (unsigned int)((src_copy - _min) / resolution);
+        std::bitset<compressed_sz> result_copy(result_int);
+        *dest = result_copy;
     }
 
     void deserialize(const std::bitset<compressed_sz> &src, float *dest)
     {
-        // TODO
+        unsigned long f_bits = src.to_ullong();
+        float resolution = (_max - _min) / pow(2, compressed_sz);
+        return _min + resolution * f_bits;
     }
 
     void print(const float &src, std::string* dest) {
-        // TODO
+        *dest = std::string(src);
     }
 };
 
@@ -216,16 +249,26 @@ public:
 
     void serialize(const double &src, std::bitset<compressed_sz> *dest)
     {
-        // TODO
+        double src_copy = src;
+        if (src_copy > _max)
+            src_copy = _max;
+        if (src_copy < _min)
+            src_copy = _min;
+        double resolution = (_max - _min) / pow(2, compressed_sz);
+        unsigned int result_int = (unsigned int)((src_copy - _min) / resolution);
+        std::bitset<compressed_sz> result_copy(result_int);
+        *dest = result_copy;
     }
 
     void deserialize(const std::bitset<compressed_sz> &src, double *dest)
     {
-        // TODO
+        unsigned long f_bits = src.to_ullong();
+        double resolution = (_max - _min) / pow(2, compressed_sz);
+        return _min + resolution * f_bits;
     }
 
     void print(const double &src, std::string* dest) {
-        // TODO
+        *dest = std::string(src);
     }
 };
 
@@ -244,12 +287,89 @@ public:
 
     void serialize(const f_vector_t &src, std::bitset<compressed_sz> *dest)
     {
-        // TODO
+        float mag = vect_mag(src.data());
+        constexpr unsigned int magnitude_bitsize = compressed_sz - SerializerBase::f_vec_min_sz;
+        std::bitset<magnitude_bitsize> magnitude_representation;
+        
+        // TODO replace
+        trim_float(mag, _min, _max, &magnitude_representation);
+
+        // Compress unit vector into two compressed floats
+        std::bitset<SerializerBase::f_vec_min_sz> vec_representation;
+        std::bitset<SerializerBase::f_vec_component_sz> vec_element_representations[2];
+        std::array<float, 3> v_mags; // Magnitudes of elements in vector
+        for (int i = 0; i < 3; i++)
+            v_mags[i] = std::abs(src[i]);
+
+        int max_element_idx = 0;
+        float max_element_value = std::max(std::max(v_mags[0], v_mags[1]), v_mags[2]);
+        if (v_mags[0] == max_element_value)
+            max_element_idx = 0;
+        if (v_mags[1] == max_element_value)
+            max_element_idx = 1;
+        if (v_mags[2] == max_element_value)
+            max_element_idx = 2;
+        int vec_number = 0; // The current compressed vector bitset that we're modifying
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == max_element_idx)
+            {
+                std::bitset<2> largest_element_representation(i);
+                vec_representation.set(0, largest_element_representation[0]);
+                vec_representation.set(1, largest_element_representation[1]);
+            }
+            else
+            {
+                float v_element_scaled = src[vec_number] / mag;
+
+                // TODO replace
+                trim_float(v_element_scaled, -sqrt(2), sqrt(2), &vec_element_representations[vec_number]);
+                vec_number++;
+            }
+        }
+        // Add floats to final bit representation
+        for (int i = 0; i < SerializerBase::f_vec_component_sz; i++)
+        {
+            vec_representation.set(i + 2, vec_element_representations[0][i]);
+            vec_representation.set(i + 11, vec_element_representations[1][i]);
+        }
+        for (unsigned int i = 0; i < magnitude_bitsize; i++)
+            (*dest).set(i, magnitude_representation[i]);
+        for (int i = 0; i < SerializerBase::f_vec_min_sz; i++)
+            (*dest).set(i + magnitude_bitsize, vec_representation[i]);
     }
 
     void deserialize(const std::bitset<compressed_sz> &src, f_vector_t *dest)
     {
-        // TODO
+        constexpr unsigned int magnitude_bitsize = compressed_sz - SerializerBase::f_vec_min_sz;
+        std::bitset<magnitude_bitsize> magnitude_packed;
+        for (int i = 0; i < magnitude_bitsize; i++)
+            magnitude_packed.set(i, src[i]);
+
+        // TODO replace
+        float magnitude = expand_float(magnitude_packed, _min, _max);
+
+        unsigned int missing_component = (src[magnitude_bitsize] << 1) + src[magnitude_bitsize + 1];
+        (*dest)[missing_component] = 1;
+        int j = 0; // Index of current component being processed
+        for (int i = 0; i < 3; i++)
+        {
+            if (i != missing_component)
+            {
+                std::bitset<SerializerBase::f_vec_component_sz> vec_component_packed;
+                for (int k = 0; k < SerializerBase::f_vec_component_sz; k++)
+                    vec_component_packed.set(k, src[compressed_sz - SerializerBase::f_vec_min_sz + 2 + j * SerializerBase::f_vec_component_sz + k]);
+
+                // TODO replace
+                (*dest)[i] = expand_float(vec_component_packed, -sqrt(2), sqrt(2));
+                (*dest)[missing_component] -= pow((*dest)[i], 2);
+                j++;
+            }
+        }
+        (*dest)[missing_component] = sqrt((*dest)[missing_component]);
+
+        for (int i = 0; i < 3; i++)
+            (*dest)[i] *= magnitude;
     }
 
     void print(const f_vector_t &src, std::string* dest) {
@@ -272,12 +392,85 @@ public:
 
     void serialize(const d_vector_t &src, std::bitset<compressed_sz> *dest)
     {
-        // TODO
+        double mag = sqrt(pow(src[0], 2) + pow(src[1], 2) + pow(src[2], 2));
+        constexpr unsigned int magnitude_bitsize = compressed_sz - SerializerBase::d_vec_min_sz;
+        std::bitset<magnitude_bitsize> magnitude_representation;
+        trim_double(mag, _min, _max, &magnitude_representation);
+
+        // Compress unit vector into two compressed doubles
+        std::bitset<SerializerBase::d_vec_min_sz> vec_representation;
+        std::bitset<SerializerBase::d_vec_component_sz> vec_element_representations[2];
+        std::array<double, 3> v_mags; // Magnitudes of elements in vector
+        for (int i = 0; i < 3; i++)
+            v_mags[i] = std::abs(src[i]);
+
+        int max_element_idx = 0;
+        double max_element_value = std::max(std::max(v_mags[0], v_mags[1]), v_mags[2]);
+        if (v_mags[0] == max_element_value)
+            max_element_idx = 0;
+        if (v_mags[1] == max_element_value)
+            max_element_idx = 1;
+        if (v_mags[2] == max_element_value)
+            max_element_idx = 2;
+        int vec_number = 0; // The current compressed vector bitset that we're modifying
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == max_element_idx)
+            {
+                std::bitset<2> largest_element_representation(i);
+                vec_representation.set(0, largest_element_representation[0]);
+                vec_representation.set(1, largest_element_representation[1]);
+            }
+            else
+            {
+                double v_element_scaled = src[vec_number] / mag;
+                trim_double(v_element_scaled, -sqrt(2), sqrt(2), &vec_element_representations[vec_number]);
+                vec_number++;
+            }
+        }
+        // Add doubles to final bit representation
+        for (int i = 0; i < SerializerBase::d_vec_component_sz; i++)
+        {
+            vec_representation.set(i + 2, vec_element_representations[0][i]);
+            vec_representation.set(i + 11, vec_element_representations[1][i]);
+        }
+        for (unsigned int i = 0; i < magnitude_bitsize; i++)
+            (*dest).set(i, magnitude_representation[i]);
+        for (int i = 0; i < SerializerBase::d_vec_min_sz; i++)
+            (*dest).set(i + magnitude_bitsize, vec_representation[i]);
     }
 
     void deserialize(const std::bitset<compressed_sz> &src, d_vector_t *dest)
     {
-        // TODO
+        constexpr unsigned int magnitude_bitsize = compressed_sz - SerializerBase::d_vec_min_sz;
+        std::bitset<magnitude_bitsize> magnitude_packed;
+        for (int i = 0; i < magnitude_bitsize; i++)
+            magnitude_packed.set(i, src[i]);
+
+        // TODO replace
+        double magnitude = expand_double(magnitude_packed, _min, _max);
+
+        unsigned int missing_component = (src[magnitude_bitsize] << 1) + src[magnitude_bitsize + 1];
+        (*dest)[missing_component] = 1;
+        int j = 0; // Index of current component being processed
+        for (int i = 0; i < 3; i++)
+        {
+            if (i != missing_component)
+            {
+                std::bitset<SerializerBase::d_vec_component_sz> vec_component_packed;
+                for (int k = 0; k < SerializerBase::d_vec_component_sz; k++)
+                    vec_component_packed.set(k, src[compressed_sz - SerializerBase::d_vec_component_sz + 2 + j * SerializerBase::d_vec_component_sz + k]);
+
+                // TODO replace
+                (*dest)[i] = expand_double(vec_component_packed, -sqrt(2), sqrt(2));
+                (*dest)[missing_component] -= pow((*dest)[i], 2);
+                j++;
+            }
+        }
+        (*dest)[missing_component] = sqrt((*dest)[missing_component]);
+
+        for (int i = 0; i < 3; i++)
+            (*dest)[i] *= magnitude;
     }
 
     void print(const d_vector_t &src, std::string* dest) {
@@ -299,12 +492,64 @@ public:
 
     void serialize(const f_quat_t &src, std::bitset<SerializerBase::f_quat_sz> *dest)
     {
-        // TODO
+        std::bitset<9> quat_element_representations[3];
+        std::array<float, 4> q_mags; // Magnitudes of elements in quaternion
+        for (int i = 0; i < 4; i++)
+            q_mags[i] = std::abs(src[i]);
+
+        int max_element_idx = 0;
+        float max_element_value = std::max(std::max(q_mags[0], q_mags[1]), std::max(q_mags[2], q_mags[3]));
+        if (q_mags[0] == max_element_value)
+            max_element_idx = 0;
+        if (q_mags[1] == max_element_value)
+            max_element_idx = 1;
+        if (q_mags[2] == max_element_value)
+            max_element_idx = 2;
+        if (q_mags[3] == max_element_value)
+            max_element_idx = 3;
+        int quat_number = 0; // The current compressed vector bitset that we're modifying
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == max_element_idx)
+            {
+                std::bitset<2> largest_element_representation(i);
+                dest->set(0, largest_element_representation[0]);
+                dest->set(1, largest_element_representation[1]);
+            }
+            else
+            {
+                // TODO replace
+                trim_float(src[quat_number], -sqrt(2), sqrt(2), &quat_element_representations[quat_number]);
+                quat_number++;
+            }
+        }
+        for (int i = 0; i < 9; i++)
+        {
+            dest->set(i + 2, quat_element_representations[0][i]);
+            dest->set(i + 11, quat_element_representations[1][i]);
+            dest->set(i + 20, quat_element_representations[2][i]);
+        }
     }
 
     void deserialize(const std::bitset<SerializerBase::f_quat_sz> &src, f_quat_t *dest)
     {
-        // TODO
+        int missing_element = (src[0] << 1) + src[1];
+        (*dest)[missing_element] = 1;
+        int j = 0; // Currently processed packed quaternion element
+        for (int i = 0; i < 4; i++)
+        {
+            if (i != missing_element)
+            {
+                std::bitset<9> quat_element_packed;
+                for (int k = 0; k < 9; k++)
+                    quat_element_packed.set(k, src[2 + j * 9 + k]);
+
+                // TODO replace
+                (*dest)[i] = expand_float(quat_element_packed, -sqrt(2), sqrt(2));
+                (*dest)[missing_element] -= pow((*dest)[i], 2);
+            }
+        }
+        (*dest)[missing_element] = sqrt((*dest)[missing_element]);
     }
 
     void print(const f_quat_t &src, std::string* dest) {
@@ -353,12 +598,30 @@ public:
 
     void serialize(const gps_time_t &src, std::bitset<SerializerBase::gps_time_sz> *dest)
     {
-        // TODO
+        if (src.is_not_set)
+        {
+            dest->set(0, false);
+            return;
+        }
+        dest->set(0, true);
+        std::bitset<16> wn((unsigned short int)src.gpstime.wn);
+        std::bitset<32> tow(src.gpstime.tow);
+        for (int i = 0; i < 16; i++)
+            dest->set(i + 1, wn[i]);
+        for (int i = 0; i < 32; i++)
+            dest->set(i + 17, tow[i]);
     }
 
     void deserialize(const std::bitset<SerializerBase::gps_time_sz> &src, gps_time_t *dest)
     {
-        // TODO
+        std::bitset<16> wn;
+        std::bitset<32> tow;
+        for (int i = 0; i < 16; i++)
+            wn.set(i + 1, src[i]);
+        for (int i = 0; i < 32; i++)
+            tow.set(i + 1, src[16 + i]);
+        dest->gpstime.wn = (unsigned int)wn.to_ulong();
+        dest->gpstime.tow = (unsigned int)tow.to_ulong();
     }
 
     void print(const gps_time_t &src, std::string* dest) {
@@ -370,17 +633,17 @@ public:
  * @brief Specialization of Serializer for temperature values.
  */
 template <>
-class Serializer<temperature_t, signed int, SerializerBase::temp_sz>
+class Serializer<temperature_t, temperature_t, SerializerBase::temp_sz>
 {
 protected:
-    signed int _min;
-    signed int _max;
+    temperature_t _min;
+    temperature_t _max;
 public:
-    static constexpr int TEMPERATURE_MIN = -40;
-    static constexpr int TEMPERATURE_MAX = 125;
+    static constexpr temperature_t TEMPERATURE_MIN = static_cast<temperature_t>(-40);
+    static constexpr temperature_t TEMPERATURE_MAX = static_cast<temperature_t>(125);
 
-    Serializer(signed int min = TEMPERATURE_MIN,
-               signed int max = TEMPERATURE_MAX) : _min(min), _max(max)
+    Serializer(temperature_t min = TEMPERATURE_MIN,
+               temperature_t max = TEMPERATURE_MAX) : _min(min), _max(max)
     {
         // Note: argument values are completely ignored because they don't matter.
     }

@@ -20,21 +20,17 @@ inline bool StateField<T>::null_sanity_check(const T& val) const {
 template<typename T>
 inline StateField<T>::StateField(const std::string& name,
                                  debug_console& dbg_console,
-                                 rwmutex_t* l, 
                                  bool gr, 
                                  bool gw, 
                                  StateFieldRegistry& reg,
                                  typename StateField<T>::fetch_f fetcher,
-                                 mutex_t* f_l,
                                  typename StateField<T>::sanity_check_f checker) :
     DataField(name),
     Debuggable(dbg_console),
-    _lock(l),
     _ground_readable(gr),
     _ground_writable(gw),
     _registry(reg),
     _fetcher(fetcher),
-    _fetch_lock(f_l),
     _checker(checker) {}
 
 template<typename T>
@@ -65,10 +61,7 @@ inline T StateField<T>::get(Task* getter) {
         _dbg_console.printf(debug_severity::ALERT, 
             "Task %s illegally tried to read state field %s.", getter->name().c_str(), this->name().c_str());
 
-    rwMtxRLock(_lock);
-    T retval = _val;
-    rwMtxRUnlock(_lock);
-    return retval;
+    return _val;
 }
 
 template<typename T>
@@ -77,45 +70,35 @@ inline void StateField<T>::set(Task* setter, const T& t) {
         _dbg_console.printf(debug_severity::ALERT, 
             "Task %s illegally tried to read state field %s.", setter->name().c_str(), this->name().c_str());
 
-    rwMtxWLock(_lock);
     _val = t;
-    rwMtxWUnlock(_lock);
 }
 
 template<typename T>
 inline void StateField<T>::fetch(Task* setter) {
-    if (_fetch_lock != NULL) chMtxLock(_fetch_lock);
-        T new_val = _fetcher();
-    if (_fetch_lock != NULL) chMtxUnlock(_fetch_lock);
-    set(setter, new_val);
+    set(setter, _fetcher());
 }
 
 template<typename T>
 inline bool StateField<T>::sanity_check(Task* getter) const {
-    T val = get(getter);
-    return _checker(val);
+    return _checker(get(getter));
 }
 
 template<typename T>
 inline InternalStateField<T>::InternalStateField(const std::string& name, 
                                                  debug_console& dbg_console,
-                                                 rwmutex_t* l,
                                                  StateFieldRegistry& reg,
-                                                 typename StateField<T>::fetch_f fetcher,
-                                                 mutex_t* f_l) : 
-                            StateField<T>(name, dbg_console, l, false, false, reg, fetcher, f_l) {}
+                                                 typename StateField<T>::fetch_f fetcher) : 
+                            StateField<T>(name, dbg_console, false, false, reg, fetcher) {}
 
 template<typename T, typename U, unsigned int compressed_sz>
 inline SerializableStateField<T, U, compressed_sz>::SerializableStateField(
                                                     const std::string& name,
                                                     debug_console& dbg_console,
-                                                    rwmutex_t* l, 
                                                     bool gw,
                                                     StateFieldRegistry& reg,
                                                     Serializer<T, U, compressed_sz>& s,
-                                                    typename StateField<T>::fetch_f fetcher,
-                                                    mutex_t* f_l) : 
-        StateField<T>(name, dbg_console, l, true, gw, reg, fetcher, f_l), _serializer(s) {}
+                                                    typename StateField<T>::fetch_f fetcher) : 
+        StateField<T>(name, dbg_console, true, gw, reg, fetcher), _serializer(s) {}
 
 template<typename T, typename U, unsigned int compressed_sz>
 inline void SerializableStateField<T, U, compressed_sz>::serialize(std::bitset<compressed_sz>* dest) {
@@ -138,12 +121,18 @@ inline void SerializableStateField<T, U, compressed_sz>::print(std::string* dest
     rwMtxWUnlock((this->_lock));
 }
 
+template <typename T, typename U, unsigned int compressed_sz>
+inline ReadableStateField<T, U, compressed_sz>::ReadableStateField(const std::string &name,
+                                                                   debug_console &dbg_console,
+                                                                   StateFieldRegistry &reg,
+                                                                   Serializer<T, U, compressed_sz> &s,
+                                                                   typename StateField<T>::fetch_f fetcher) : 
+    SerializableStateField<T, U, compressed_sz>(name, dbg_console, false, reg, s, fetcher) {}
+
 template<typename T, typename U, unsigned int compressed_sz>
 inline WritableStateField<T, U, compressed_sz>::WritableStateField(const std::string& name,
                                                                    debug_console& dbg_console,
-                                                                   rwmutex_t* l,
                                                                    StateFieldRegistry& reg,
                                                                    Serializer<T, U, compressed_sz>& s,
-                                                                   typename StateField<T>::fetch_f fetcher,
-                                                                   mutex_t* f_l) :
-    SerializableStateField<T, U, compressed_sz>(name, dbg_console, l, true, reg, s, fetcher, f_l) {}
+                                                                   typename StateField<T>::fetch_f fetcher) :
+    SerializableStateField<T, U, compressed_sz>(name, dbg_console, true, reg, s, fetcher) {}
