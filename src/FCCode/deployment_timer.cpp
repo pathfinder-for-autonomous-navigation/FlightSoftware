@@ -33,28 +33,28 @@ void exit_deployment_timer() {
         chMtxUnlock(&State::Hardware::spike_and_hold_device_lock);
     }
 
-    debug_println("Notifying all processes waiting on deployment timer that timer has been completed.");
+    dbg.println(debug_severity::INFO, "Notifying all processes waiting on deployment timer that timer has been completed.");
     chSysLock();
         chThdDequeueAllI(&deployment_timer_waiting, MSG_OK);
     chSysUnlock();
-    debug_println("Process terminating.");
+    dbg.println(debug_severity::INFO, "Process terminating.");
     chThdExit((msg_t)0);
 }
 
 //! Function that defines the deployment timer thread.
 void deployment_timer_function(void *arg) {
-    chRegSetThreadName("DEPLOYMENT");
+    chRegSetThreadName("startup.deployment_timer");
 
     chMtxLock(&eeprom_lock);
         bool deployed = (EEPROM.read(EEPROM_ADDRESSES::DEPLOYMENT) == 1);
     chMtxUnlock(&eeprom_lock);
     if (deployed) {
-        debug_println("Deployment hold time constraint has been met. Skipping deployment timer.");
+        dbg.println(debug_severity::NOTICE, "Deployment hold time constraint has been met. Skipping deployment timer.");
         exit_deployment_timer();
     }
-    else debug_println("Deployment hold time constraint has not been met. Initializing deployment timer.");
+    else dbg.println(debug_severity::NOTICE, "Deployment hold time constraint has not been met. Initializing deployment timer.");
 
-    debug_println("Deployment timer has been started.");
+    dbg.println(debug_severity::NOTICE, "Deployment timer has been started.");
 
     // Determine time remaining in deployment
     chMtxLock(&eeprom_lock);
@@ -68,11 +68,11 @@ void deployment_timer_function(void *arg) {
             EEPROM.put(EEPROM_ADDRESSES::DEPLOYMENT_TIMER, time_elapsed);
         chMtxUnlock(&eeprom_lock);
 
-        debug_printf("Time remaining until deployment wait completed: %d\n", DEPLOYMENT_LENGTH - time_elapsed);
+        dbg.printf(debug_severity::NOTICE, "Time remaining until deployment wait completed: %d", DEPLOYMENT_LENGTH - time_elapsed);
         chThdSleepSeconds(1);
         time_elapsed++;
     }
 
-    debug_println("Deployment timer completed! Writing achievement to permanent memory.");
+    dbg.println(debug_severity::NOTICE, "Deployment timer completed! Writing achievement to permanent memory.");
     exit_deployment_timer();
 }

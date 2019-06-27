@@ -2,7 +2,7 @@
 #ifndef STATE_HISTORY_HOLDER_HPP_
 #define STATE_HISTORY_HOLDER_HPP_
 
-#include <circular_buffer.hpp>
+#include <static_buffers.hpp>
 #include <array>
 
 #include <rwmutex.hpp>

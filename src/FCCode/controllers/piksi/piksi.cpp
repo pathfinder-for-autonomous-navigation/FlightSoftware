@@ -20,7 +20,7 @@ namespace RTOSTasks {
 }
 
 static void piksi_read() {
-    debug_println("Reading Piksi data");
+    dbg.println(debug_severity::INFO, "Reading Piksi data");
 
     // Try to parse Piksi buffer three times
     bool successful = false;
@@ -90,16 +90,16 @@ static void piksi_read() {
 }
 
 void RTOSTasks::piksi_controller(void *arg) {
-    chRegSetThreadName("PIKSI");
-    debug_println("Piksi controller process has started.");
+    chRegSetThreadName("piksi");
+    dbg.println(debug_severity::INFO, "Piksi controller process has started.");
 
     DataCollection::initialize_piksi_history_timers();
     
-    debug_println("Waiting for deployment timer to finish.");
+    dbg.println(debug_severity::INFO, "Waiting for deployment timer to finish.");
     bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
-    debug_println("Deployment timer has finished.");
-    debug_println("Initializing main operation...");
+    dbg.println(debug_severity::INFO, "Deployment timer has finished.");
+    dbg.println(debug_severity::INFO, "Initializing main operation...");
 
     systime_t time = chVTGetSystemTimeX();
     while(true) {
@@ -110,9 +110,9 @@ void RTOSTasks::piksi_controller(void *arg) {
         bool is_fake_piksi = piksi->name().compare("fake_piksi") == 0;
         // TODO add option from ground to disable power cycling
         if (!State::Hardware::check_is_functional(piksi)) {
-            debug_println("Piksi not functional.");
+            dbg.println(debug_severity::ERROR, "Piksi not functional.");
             if (!is_fake_piksi) {
-                debug_println("Power cycling Piksi.");
+                dbg.println(debug_severity::NOTICE, "Power cycling Piksi.");
                 if (Gomspace::piksi_thread == NULL) {
                     // TODO fix power cycler; it ain't working
                     // Specify arguments for thread
@@ -130,7 +130,7 @@ void RTOSTasks::piksi_controller(void *arg) {
             }
         }
         else {
-            debug_println("Piksi functional.");
+            dbg.println(debug_severity::INFO, "Piksi functional.");
             piksi_read();
         }
 

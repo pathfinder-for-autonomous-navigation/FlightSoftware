@@ -21,7 +21,7 @@ namespace RTOSTasks {
 }
 
 static void gomspace_read() {
-    debug_printf("Reading Gomspace data...");
+    dbg.printf(debug_severity::INFO, "Reading Gomspace data...");
     unsigned char t = 0; // # of tries at reading housekeeping data
     while (t < 5) {
         bool successful_response = false;
@@ -36,11 +36,11 @@ static void gomspace_read() {
         t++;
     }
     if (t == 5) {
-        debug_println("unable to read Gomspace data.");
+        dbg.println(debug_severity::ERROR, "unable to read Gomspace data.");
         State::write((State::Hardware::hat).at(gomspace).is_functional, 
                             false, State::Hardware::hardware_state_lock);
     }
-    else debug_printf("battery voltage (mV): %d\n", gomspace_data.vbatt);
+    else dbg.printf(debug_severity::INFO, "battery voltage (mV): %d", gomspace_data.vbatt);
 }
 
 static void set_error(GOMSPACE_FAULTS fault, bool value) {
@@ -65,12 +65,12 @@ static void set_hardware_error(const Devices::Device* dev, const std::string fie
 }
 
 static void gomspace_check() {
-    debug_println("Checking Gomspace data...");
+    dbg.println(debug_severity::INFO, "Checking Gomspace data...");
     
-    debug_printf("Checking if Gomspace is functional...");
+    dbg.printf(debug_severity::INFO, "Checking if Gomspace is functional...");
     // Already checked by HAT check in gomspace_read()
 
-    debug_println("Checking Gomspace inputs (currents and voltages).");
+    dbg.println(debug_severity::INFO, "Checking Gomspace inputs (currents and voltages).");
     unsigned short* vboosts = State::Gomspace::gomspace_data.vboost;
     unsigned short* curins = State::Gomspace::gomspace_data.curin;
     rwMtxRLock(&gomspace_state_lock);
@@ -99,7 +99,7 @@ static void gomspace_check() {
             set_error(GOMSPACE_FAULTS::BOOST_CURRENT_TOTAL, false);
     rwMtxRUnlock(&gomspace_state_lock);
 
-    debug_println("Checking Gomspace outputs (currents and voltages).");
+    dbg.println(debug_severity::INFO, "Checking Gomspace outputs (currents and voltages).");
     unsigned char* outputs = State::Gomspace::gomspace_data.output;
     unsigned short* currents = State::Gomspace::gomspace_data.curout;
     rwMtxRLock(&gomspace_state_lock);
@@ -150,7 +150,7 @@ static void gomspace_check() {
             set_error(GOMSPACE_FAULTS::BATTERY_CURRENT, false);
     rwMtxRUnlock(&gomspace_state_lock);
 
-    debug_println("Checking Gomspace temperature.");
+    dbg.println(debug_severity::INFO, "Checking Gomspace temperature.");
     short* temps = State::Gomspace::gomspace_data.temp;
     rwMtxRLock(&gomspace_state_lock);
         for(int i = 0; i < 4; i++) {
@@ -164,10 +164,10 @@ static void gomspace_check() {
     rwMtxRUnlock(&gomspace_state_lock);
 }
 
-static THD_WORKING_AREA(gomspace_read_controller_workingArea, 4096);
-static void gomspace_read_controller(void *arg) {
-    chRegSetThreadName("GS READ");
-    debug_println("Starting Gomspace reading and checking process.");
+void RTOSTasks::gomspace_controller(void *arg) {
+    chRegSetThreadName("gomspace");
+    dbg.println(debug_severity::INFO, "Gomspace controller process has started.");
+    dbg.println(debug_severity::INFO, "Starting Gomspace reading and checking process.");
 
     systime_t time = chVTGetSystemTimeX(); // T0
     while (true) {
@@ -178,14 +178,4 @@ static void gomspace_read_controller(void *arg) {
 
         chThdSleepUntil(time);
     }
-}
-
-void RTOSTasks::gomspace_controller(void *arg) {
-    chRegSetThreadName("GOMSPACE");
-    debug_println("Gomspace controller process has started.");
-    (void)chThdCreateStatic(gomspace_read_controller_workingArea, 
-        sizeof(gomspace_read_controller_workingArea),
-        RTOSTasks::gomspace_thread_priority, gomspace_read_controller, NULL);
-
-    chThdExit((msg_t)0);
 }

@@ -9,7 +9,7 @@
 #ifndef DEPLOYMENT_TIMER_HPP_
 #define DEPLOYMENT_TIMER_HPP_
 
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
 static constexpr unsigned int DEPLOYMENT_LENGTH = 5; // in seconds
 #else
 static constexpr unsigned int DEPLOYMENT_LENGTH = 30*60; // in seconds

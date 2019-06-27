@@ -6,7 +6,7 @@
  * @param reason The failure code that's responsible for entering initialization hold mode.
  */
 void Master::initialization_hold() {
-    debug_println("Entering initialization hold mode...");
+    dbg.println(debug_severity::NOTICE, "Entering initialization hold mode...");
     // The two state declarations below don't do anything; they're just for cosmetics/maintaining invariants
     State::write(State::Master::master_state, State::Master::MasterState::INITIALIZATION_HOLD, State::Master::master_state_lock);
     State::write(State::Master::pan_state, State::Master::PANState::MASTER_INITIALIZATIONHOLD, State::Master::master_state_lock);

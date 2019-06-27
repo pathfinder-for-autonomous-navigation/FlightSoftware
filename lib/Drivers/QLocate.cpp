@@ -68,26 +68,26 @@ int QLocate::config() {
     success = consume(F("\r\nOK\r\n"));
   }
   if(success == -1) {
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
   Serial.println("config > AT&F0 status=" + String(success));
 #endif
     return success;
   }
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
   Serial.println("config > AT&F0 status=" + String(success));
 #endif
   // Disable flow control, disable DTR, disabl echo, set numeric rasponses, and
   // disable "RING" alerts
   port->print(F("AT&K0;&D0;E0;V0;+SBDMTA=0\r"));
   success |= consume(F("AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r"));
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
   Serial.println("       > AT&K0;&D0;E0;V0;+SBDMTA=0 status="
       + String(success));
 #endif
   // Clear QLocate MO and MT buffers
   port->print(F("AT+SBDD2\r"));
   success |= consume(F("0\r\n0\r"));
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
   Serial.println("       > AT+SBDD2 status=" + String(success));
 #endif
   return success;
@@ -103,7 +103,7 @@ int QLocate::sbdwb(char const *c, int len) {
   port->print(String(len));
   port->write('\r');
   int code = consume(F("READY\r\n"));
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
   Serial.println("load_mo > write_req_res= " + String(code));
 #endif
   if(code != 0) return code;
@@ -113,7 +113,7 @@ int QLocate::sbdwb(char const *c, int len) {
   port->write((char)(s >> 8));
   port->write((char) s);
   port->flush();
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
   Serial.print("        > mes=");
   for(int i = 0; i < len; i++)
     Serial.print(c[i], HEX);
@@ -124,7 +124,7 @@ int QLocate::sbdwb(char const *c, int len) {
   char buf[4];
   len = port->readBytes(buf, 3);
   buf[len] = '\0';
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
   Serial.print("        > res=");
   for(int i = 0; i < len; i++)
     Serial.print(buf[i], HEX);
@@ -140,7 +140,7 @@ int QLocate::run_sbdix() {
   // Request sbdix session
   port->print(F("AT+SBDIX\r"));
   sbdix_running = true;
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
   Serial.println("run_sbdix > return= 0");
 #endif
   return 0;
@@ -183,7 +183,7 @@ int QLocate::sbdrb() {
   if(2 != port->readBytes((char *) &s, 2))
     return 1; // Quake::Message length read fails
   unsigned short size = (s & 0xFF) << 8 | (s >> 8);
-#ifdef DEBUG
+#ifdef DEBUG_ENABLED
   Serial.println("sbdrb > recieving message size= " + String(size));
 #endif
   if(size + 2 != (unsigned short) port->readBytes(message.mes, size + 2))
@@ -191,7 +191,7 @@ int QLocate::sbdrb() {
   s = checksum(message.mes, size);
   if(((s & 0xFF) << 8 | (s >> 8)) != *(short *)(message.mes + size)) {
     return 1; // Checksum error detected
-  #ifdef DEBUG
+  #ifdef DEBUG_ENABLED
     Serial.println("");
   #endif
   }

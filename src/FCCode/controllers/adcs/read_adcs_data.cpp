@@ -14,6 +14,11 @@ static unsigned int ssa_tries = 0; // Number of consecutive loops that we've tri
                                    // collect SSA data
 void ADCSControllers::read_adcs_data() {
     chMtxLock(&adcs_device_lock);
+        adcs_system->update_hat(); // TODO fix
+    chMtxUnlock(&adcs_device_lock);
+    // TODO add logic to stop read of ADCS data if HAT is fucked up.
+
+    chMtxLock(&adcs_device_lock);
         adcs_system->set_ssa_mode(ssa_mode);
     chMtxUnlock(&adcs_device_lock);
 

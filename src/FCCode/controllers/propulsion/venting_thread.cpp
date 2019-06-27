@@ -7,7 +7,7 @@ using Devices::spike_and_hold;
 thread_t* PropulsionTasks::venting_thread;
 THD_WORKING_AREA(PropulsionTasks::venting_thread_wa, 1024);
 THD_FUNCTION(PropulsionTasks::venting_fn, args) {
-    debug_println("Tank temperature or pressures are too high. Venting to reduce vapor pressure.");
+    dbg.println(debug_severity::NOTICE, "Tank temperature or pressures are too high. Venting to reduce vapor pressure.");
     // TODO fix
     for(int i = 0; i < 10; i++) {  
         if (State::Hardware::check_is_functional(Devices::spike_and_hold)) {

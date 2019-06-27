@@ -84,16 +84,16 @@ static void quake_loop() {
 }
 
 void RTOSTasks::quake_controller(void *arg) {
-    chRegSetThreadName("QUAKE");
-    debug_println("Quake radio controller process has started.");
+    chRegSetThreadName("quake");
+    dbg.println(debug_severity::INFO, "Quake radio controller process has started.");
     chVTObjectInit(&waiting_timer);
     attachInterrupt(quake->nr_pin(), network_ready_handler, RISING);
-    debug_println("Waiting for deployment timer to finish.");
+    dbg.println(debug_severity::INFO, "Waiting for deployment timer to finish.");
     
     bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
-    debug_println("Deployment timer has finished.");
-    debug_println("Initializing main operation...");
+    dbg.println(debug_severity::INFO, "Deployment timer has finished.");
+    dbg.println(debug_severity::INFO, "Initializing main operation...");
 
     systime_t deadline = chVTGetSystemTimeX();
     while(true) {
