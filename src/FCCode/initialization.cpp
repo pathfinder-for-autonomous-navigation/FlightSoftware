@@ -1,4 +1,4 @@
-#include "../debug.hpp"
+#include "debug.hpp"
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
 #include "Serializer.hpp"

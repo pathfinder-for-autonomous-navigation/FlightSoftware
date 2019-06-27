@@ -6,9 +6,6 @@
 
 #include "state_holder.hpp"
 #include "tensor.hpp"
-#include "StateField.hpp"
-#include "StateFieldRegistry.hpp"
-#include "StateMachine.hpp"
 
 namespace State {
     // Default values for all state-related data
