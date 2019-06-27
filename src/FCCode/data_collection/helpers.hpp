@@ -9,7 +9,7 @@
 
 #include <rwmutex.hpp>
 #include <array>
-#include <circular_buffer.hpp>
+#include <static_buffers.hpp>
 
 namespace DataCollection {
     /**

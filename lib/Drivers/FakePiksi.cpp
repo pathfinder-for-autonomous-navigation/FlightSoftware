@@ -19,7 +19,7 @@ bool FakePiksi::is_functional() {
 void FakePiksi::reset() {}
 void FakePiksi::disable() {}
 
-bool Piksi::process_buffer() {
+bool FakePiksi::process_buffer() {
     return true;
 }
 

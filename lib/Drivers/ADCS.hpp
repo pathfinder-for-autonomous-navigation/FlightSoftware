@@ -10,7 +10,9 @@
 #include <I2CDevice.hpp>
 #include <string>
 
-class ADCS : public Devices::I2CDevice {
+namespace Devices {
+
+class ADCS : public I2CDevice {
  public:
   static constexpr unsigned int ADDRESS = 0x00;
   /** **/
@@ -51,5 +53,7 @@ class ADCS : public Devices::I2CDevice {
   /** **/
   void update_hat();
 };
+
+}
 
 #endif

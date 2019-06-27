@@ -10,19 +10,19 @@ using State::Propulsion::PropulsionState;
 using State::Propulsion::propulsion_state_lock;
 
 int PropulsionTasks::can_fire_manuever() {
-    if(State::Hardware::check_is_functional(&pressure_sensor()))
-        State::write(State::Propulsion::tank_pressure, pressure_sensor().get(), propulsion_state_lock);
-    if(State::Hardware::check_is_functional(&temp_sensor_inner()))
-        State::write(State::Propulsion::tank_inner_temperature, temp_sensor_inner().get(), propulsion_state_lock);
-    if(State::Hardware::check_is_functional(&temp_sensor_outer()))
-        State::write(State::Propulsion::tank_outer_temperature, temp_sensor_outer().get(), propulsion_state_lock);
+    if(State::Hardware::check_is_functional(pressure_sensor))
+        State::write(State::Propulsion::tank_pressure, pressure_sensor->get(), propulsion_state_lock);
+    if(State::Hardware::check_is_functional(temp_sensor_inner))
+        State::write(State::Propulsion::tank_inner_temperature, temp_sensor_inner->get(), propulsion_state_lock);
+    if(State::Hardware::check_is_functional(temp_sensor_outer))
+        State::write(State::Propulsion::tank_outer_temperature, temp_sensor_outer->get(), propulsion_state_lock);
 
     bool is_outer_tank_pressure_too_high = State::read(State::Propulsion::tank_pressure, propulsion_state_lock) >= 48
-                                            && State::Hardware::check_is_functional(&pressure_sensor());
+                                            && State::Hardware::check_is_functional(pressure_sensor);
     bool is_inner_tank_temperature_too_high = State::read(State::Propulsion::tank_inner_temperature, propulsion_state_lock) >= 100 
-                                            && State::Hardware::check_is_functional(&temp_sensor_inner());
+                                            && State::Hardware::check_is_functional(temp_sensor_inner);
     bool is_outer_tank_temperature_too_high = State::read(State::Propulsion::tank_outer_temperature, propulsion_state_lock) >= 48
-                                            && State::Hardware::check_is_functional(&temp_sensor_outer());
+                                            && State::Hardware::check_is_functional(temp_sensor_outer);
 
     if (is_inner_tank_temperature_too_high || is_outer_tank_temperature_too_high || is_outer_tank_pressure_too_high) {
         State::write(FaultState::Propulsion::overpressure_event,

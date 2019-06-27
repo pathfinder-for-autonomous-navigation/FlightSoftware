@@ -5,8 +5,8 @@
 using State::Master::master_state_lock;
 
 bool Master::standby_needed() {
-    if (!State::Hardware::is_functional(&Devices::piksi())) return true;
-    if (!State::Hardware::is_functional(&Devices::quake())) return true;
+    if (!State::Hardware::is_functional(Devices::piksi)) return true;
+    if (!State::Hardware::is_functional(Devices::quake)) return true;
     
     // Check comms timeout
     State::Master::PANState pan_state = State::read(State::Master::pan_state, master_state_lock);

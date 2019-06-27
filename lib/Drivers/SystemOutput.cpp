@@ -9,7 +9,12 @@ bool SystemOutput::setup() {
     _serial_port.begin(115200); 
     return true;
 }
-bool SystemOutput::is_functional() { return true; }
+bool SystemOutput::is_functional() { 
+    _serial_port.write('t');
+    delay(2);
+    if (_serial_port.read() != 't') return false;
+    return true;
+}
 void SystemOutput::reset() { }
 void SystemOutput::disable() { }
 

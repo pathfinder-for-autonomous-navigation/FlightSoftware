@@ -13,6 +13,8 @@
 #include "state_definitions.hpp"
 #include <Gomspace.hpp>
 #include <Piksi.hpp>
+#include <FakePiksi.hpp>
+#include <SystemOutput.hpp>
 #include <SpikeAndHold.hpp>
 #include <QLocate.hpp>
 #include <ADCS.hpp>
@@ -24,27 +26,29 @@
 
 namespace Devices {
     //! Gomspace logical device used by flight controller code
-    extern Gomspace& gomspace();
+    extern Gomspace* gomspace;
     //! Piksi logical device used by flight controller code
-    extern Piksi& piksi();
+    extern Piksi* piksi;
+    //! Debug device for system internals
+    extern SystemOutput* system_output;
     //! Spike and Hold logical device used by flight controller code
-    extern SpikeAndHold& spike_and_hold();
+    extern SpikeAndHold* spike_and_hold;
     //! DCDC logical device used by flight controller code
-    extern DCDC& dcdc();
+    extern DCDC* dcdc;
     //! Quake logical device used by flight controller code
-    extern QLocate& quake();
+    extern QLocate* quake;
     //! ADCS logical device used by flight controller code
-    extern ADCS& adcs_system();
+    extern ADCS* adcs_system;
     //! Main pressure sensor in outer tank
-    extern PressureSensor& pressure_sensor();
+    extern PressureSensor* pressure_sensor;
     //! Temperature sensor in inner tank
-    extern TempSensor& temp_sensor_inner();
+    extern TempSensor* temp_sensor_inner;
     //! Temperature sensor in outer tank
-    extern TempSensor& temp_sensor_outer();
+    extern TempSensor* temp_sensor_outer;
     //! Docking motor
-    extern DockingMotor& docking_motor();
+    extern DockingMotor* docking_motor;
     //! Docking switch
-    extern DockingSwitch& docking_switch();
+    extern DockingSwitch* docking_switch;
 }
 
 namespace State {
@@ -73,6 +77,8 @@ namespace Hardware {
     extern mutex_t spike_and_hold_device_lock;
     //! Protects access to Piksi device. May be used by master process to rewrite device defaults.
     extern mutex_t piksi_device_lock;
+    //! Protects access to System Output device (used during development/debugging).
+    extern mutex_t system_output_device_lock;
     //! Protects access to Quake device. May be used by master process to rewrite device defaults.
     extern mutex_t quake_device_lock;
     //! Protects access to device_pressure sensor.

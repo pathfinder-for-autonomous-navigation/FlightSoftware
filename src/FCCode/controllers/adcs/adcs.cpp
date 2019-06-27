@@ -13,7 +13,7 @@
 #include "../gomspace/power_cyclers.hpp"
 #include "../../deployment_timer.hpp"
 #include "../../data_collection/data_collection.hpp"
-#include <AttitudePDcontrol.hpp>
+#include <AttitudePDControl.hpp>
 #include <AttitudeEstimator.hpp>
 #include <AttitudeMath.hpp>
 #include <tensor.hpp>
@@ -38,7 +38,7 @@ static void update_gain_constants() {
 
 static THD_WORKING_AREA(adcs_loop_workingArea, 4096);
 static THD_FUNCTION(adcs_loop, arg) {
-    chRegSetThreadName("ADCS LOOP");
+    chRegSetThreadName("adcs.loop");
 
     systime_t t0 = chVTGetSystemTimeX();
     while(true) {
@@ -53,16 +53,16 @@ static THD_FUNCTION(adcs_loop, arg) {
 
         // If ADCS isn't working, power-cycle it. Do this for as many times as it takes for the device
         // to start talking again.
-        if (!State::Hardware::check_is_functional(&adcs_system()) && Gomspace::adcs_system_thread == NULL) {
+        if (!State::Hardware::check_is_functional(adcs_system) && Gomspace::adcs_system_thread == NULL) {
             // Specify arguments for thread
             Gomspace::cycler_arg_t cycler_args = {
                 &State::Hardware::adcs_device_lock,
-                &Devices::adcs_system(),
+                Devices::adcs_system,
                 Devices::Gomspace::DEVICE_PINS::ADCS
             };
             // Start cycler thread
             Gomspace::adcs_system_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
-                "POWER CYCLE ADCS",
+                "PCYCLER:ADCS",
                 RTOSTasks::master_thread_priority,
                 Gomspace::cycler_fn, (void*) &cycler_args);
         }
@@ -78,8 +78,8 @@ static THD_FUNCTION(adcs_loop, arg) {
             switch(adcs_state) {
                 case ADCSState::ADCS_DETUMBLE: {
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system()))
-                            Devices::adcs_system().set_mode(Mode::ACTIVE);
+                        if (!State::Hardware::check_is_functional(Devices::adcs_system))
+                            adcs_system->set_mode(Mode::ACTIVE);
                     chMtxLock(&State::Hardware::adcs_device_lock);
                     if (State::ADCS::angular_rate() < Constants::ADCS::MAX_STABLE_ANGULAR_RATE) {
                         chThdDequeueAllI(&RTOSTasks::adcs_detumbled, (msg_t) 0);
@@ -94,14 +94,14 @@ static THD_FUNCTION(adcs_loop, arg) {
                     State::write(State::ADCS::mtr_cmds, MomentumControl::moment, adcs_state_lock);
                     rwMtxRLock(&adcs_state_lock);
                         std::array<float, 3> mtr_cmds = State::ADCS::mtr_cmds;
-                        adcs_system().set_mtr_cmd(mtr_cmds.data());
+                        adcs_system->set_mtr_cmd(mtr_cmds.data());
                     rwMtxRUnlock(&adcs_state_lock);
                 }
                 break;
                 case ADCSState::ZERO_TORQUE: {
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system()))
-                            Devices::adcs_system().set_mode(Mode::ACTIVE);
+                        if (!State::Hardware::check_is_functional(adcs_system))
+                            adcs_system->set_mode(Mode::ACTIVE);
                     chMtxLock(&State::Hardware::adcs_device_lock);
                     // Set MTR to zero in state
                     rwMtxWLock(&adcs_state_lock);
@@ -114,17 +114,17 @@ static THD_FUNCTION(adcs_loop, arg) {
                         rwa_speed_cmds = State::ADCS::rwa_speed_cmds;
                     rwMtxRUnlock(&adcs_state_lock);
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system())) {
-                            adcs_system().set_mtr_cmd(mtr_cmds.data());
-                            adcs_system().set_rwa_mode(RWAMode::SPEED_CTRL, rwa_speed_cmds.data());
+                        if (!State::Hardware::check_is_functional(adcs_system)) {
+                            adcs_system->set_mtr_cmd(mtr_cmds.data());
+                            adcs_system->set_rwa_mode(RWAMode::SPEED_CTRL, rwa_speed_cmds.data());
                         }
                     chMtxUnlock(&State::Hardware::adcs_device_lock);
                 }
                 break;
                 case ADCSState::POINTING: {
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system()))
-                            Devices::adcs_system().set_mode(Mode::ACTIVE);
+                        if (!State::Hardware::check_is_functional(adcs_system))
+                            adcs_system->set_mode(Mode::ACTIVE);
                     chMtxLock(&State::Hardware::adcs_device_lock);
 
                     rwMtxRLock(&adcs_state_lock);
@@ -139,13 +139,13 @@ static THD_FUNCTION(adcs_loop, arg) {
                     AttitudePD::update();
                     State::write(State::ADCS::rwa_torques, AttitudePD::torque, adcs_state_lock);
                     chMtxLock(&State::Hardware::adcs_device_lock);
-                        if (!State::Hardware::check_is_functional(&Devices::adcs_system()))
-                            adcs_system().set_rwa_mode(RWAMode::ACCEL_CTRL, AttitudePD::torque.data());
+                        if (!State::Hardware::check_is_functional(Devices::adcs_system))
+                            adcs_system->set_rwa_mode(RWAMode::ACCEL_CTRL, AttitudePD::torque.data());
                     chMtxUnlock(&State::Hardware::adcs_device_lock);
                 }
                 break;
                 case ADCSState::ADCS_SAFE_HOLD: {
-                    adcs_system().set_mode(Mode::PASSIVE);
+                    adcs_system->set_mode(Mode::PASSIVE);
                 }
                 break;
                 default: {
@@ -159,16 +159,16 @@ static THD_FUNCTION(adcs_loop, arg) {
     }
 }
 
-static THD_WORKING_AREA(update_hat_workingArea, 1024);
-static THD_FUNCTION(update_hat, args) {
-    chRegSetThreadName("ADCS HAT UPDATER");
+static THD_WORKING_AREA(update_adcs_hat_workingArea, 1024);
+static THD_FUNCTION(update_adcs_hat, args) {
+    chRegSetThreadName("adcs.update_hat");
     systime_t t = chVTGetSystemTimeX();
     while(true) {
         t += MS2ST(RTOSTasks::LoopTimes::ADCS_HAT_CHECK);
 
         chMtxLock(&State::Hardware::adcs_device_lock);
-            if (State::Hardware::check_is_functional(&adcs_system())) 
-                adcs_system().update_hat(); // TODO fix
+            if (State::Hardware::check_is_functional(adcs_system)) 
+                adcs_system->update_hat(); // TODO fix
         chMtxUnlock(&State::Hardware::adcs_device_lock);
 
         chThdSleepUntil(t);
@@ -176,8 +176,8 @@ static THD_FUNCTION(update_hat, args) {
 }
 
 void RTOSTasks::adcs_controller(void *arg) {
-    chRegSetThreadName("ADCS");
-    debug_println("ADCS controller process has started.");
+    chRegSetThreadName("adcs");
+    dbg.println(debug_severity::INFO, "ADCS controller process has started.");
     
     chThdCreateStatic(adcs_loop_workingArea, sizeof(adcs_loop_workingArea), 
         RTOSTasks::adcs_thread_priority, adcs_loop, NULL);
@@ -185,20 +185,20 @@ void RTOSTasks::adcs_controller(void *arg) {
     DataCollection::initialize_adcs_history_timers();
 
     // Create HAT updater thread
-    chThdCreateStatic(update_hat_workingArea,
-        sizeof(update_hat_workingArea), RTOSTasks::adcs_thread_priority, update_hat, NULL);
+    chThdCreateStatic(update_adcs_hat_workingArea,
+        sizeof(update_adcs_hat_workingArea), RTOSTasks::adcs_thread_priority, update_adcs_hat, NULL);
 
-    debug_println("Waiting for deployment timer to finish.");
+    dbg.println(debug_severity::INFO, "Waiting for deployment timer to finish.");
     rwMtxRLock(&State::Master::master_state_lock);
         bool is_deployed = State::Master::is_deployed;
     rwMtxRUnlock(&State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
-    debug_println("Deployment timer has finished.");
+    dbg.println(debug_severity::INFO, "Deployment timer has finished.");
     
-    debug_println("Initializing main operation...");
+    dbg.println(debug_severity::INFO, "Initializing main operation...");
     chMtxLock(&State::Hardware::adcs_device_lock);
-        if (State::Hardware::check_is_functional(&adcs_system()))
-            adcs_system().set_mode(Mode::ACTIVE);
+        if (State::Hardware::check_is_functional(adcs_system))
+            adcs_system->set_mode(Mode::ACTIVE);
         // TODO what if there's an else?
     chMtxUnlock(&State::Hardware::adcs_device_lock);
 

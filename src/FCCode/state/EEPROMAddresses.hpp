@@ -23,7 +23,7 @@ enum EEPROM_ADDRESSES {
     IS_FOLLOWER = offset + 0x40, // Boolean: whether or not satellite is follower
     FINAL_STATE_FLAG = offset + 0x41, // See enum below for possible values.
     PREFERRED_INTERTANK_VALVE = offset + 0x50, // 0 if main valve is preferred
-                                      // 1 if backup valve is preferred
+                                               // 1 if backup valve is preferred
     DEVICE_REBOOTS_PIKSI = offset + 0x60,          // 4-byte integer: number of times Piksi has been rebooted
     DEVICE_REBOOTS_QUAKE = offset + 0x64,          // 4-byte integer: number of times Quake has been rebooted
     DEVICE_REBOOTS_SPIKE_AND_HOLD = offset + 0x68, // 4-byte integer: number of times Spike and Hold has been rebooted

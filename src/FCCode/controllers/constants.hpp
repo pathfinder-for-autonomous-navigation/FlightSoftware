@@ -25,7 +25,7 @@ namespace Constants {
 
     namespace Master {
         extern unsigned int DOCKING_RANGE; // In meters
-        #ifdef DEBUG
+        #ifdef DEBUG_ENABLED
             //! Defines how long the master controller safehold callback will wait prior to automatically exiting safe hold.
             extern unsigned int SAFE_HOLD_TIMEOUT;
             //! Seconds before initialization hold stops trying to detumble and instead tries to send a Quake packet while still spinning
@@ -139,7 +139,7 @@ namespace Constants {
     namespace Quake {
         //! Number of times to try sending a packet
         extern unsigned int NUM_RETRIES;
-        #ifdef DEBUG
+        #ifdef DEBUG_ENABLED
         //! Maximum number of seconds before safe hold happens because of an uplink timeout
         extern unsigned int UPLINK_TIMEOUT;
         //! Period to wait prior to forcibly trying a downlink (seconds)

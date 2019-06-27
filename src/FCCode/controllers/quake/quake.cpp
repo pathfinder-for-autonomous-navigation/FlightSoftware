@@ -38,18 +38,18 @@ static CH_IRQ_HANDLER(network_ready_handler) {
 };
 
 static void quake_loop() {
-    // Power cycle Quake if failing. Do this for as many times as it takes for the device
+    // PCYCLER:QUAKE if failing. Do this for as many times as it takes for the device
     // to start talking again.
-    if (!State::Hardware::check_is_functional(&quake()) && Gomspace::quake_thread == NULL) {
+    if (!State::Hardware::check_is_functional(quake) && Gomspace::quake_thread == NULL) {
         // Specify arguments for thread
         Gomspace::cycler_arg_t cycler_args = {
             &State::Hardware::quake_device_lock,
-            &quake(),
+            quake,
             Devices::Gomspace::DEVICE_PINS::QUAKE
         };
         // Start cycler thread
         Gomspace::quake_thread = chThdCreateFromMemoryPool(&Gomspace::power_cycler_pool,
-            "POWER CYCLE QUAKE",
+            "PCYCLER:QUAKE",
             RTOSTasks::master_thread_priority,
             Gomspace::cycler_fn, (void*) &cycler_args);
         return;
@@ -84,16 +84,16 @@ static void quake_loop() {
 }
 
 void RTOSTasks::quake_controller(void *arg) {
-    chRegSetThreadName("QUAKE");
-    debug_println("Quake radio controller process has started.");
+    chRegSetThreadName("quake");
+    dbg.println(debug_severity::INFO, "Quake radio controller process has started.");
     chVTObjectInit(&waiting_timer);
-    attachInterrupt(Devices::quake().nr_pin(), network_ready_handler, RISING);
-    debug_println("Waiting for deployment timer to finish.");
+    attachInterrupt(quake->nr_pin(), network_ready_handler, RISING);
+    dbg.println(debug_severity::INFO, "Waiting for deployment timer to finish.");
     
     bool is_deployed = State::read(State::Master::is_deployed, State::Master::master_state_lock);
     if (!is_deployed) chThdEnqueueTimeoutS(&deployment_timer_waiting, S2ST(DEPLOYMENT_LENGTH));
-    debug_println("Deployment timer has finished.");
-    debug_println("Initializing main operation...");
+    dbg.println(debug_severity::INFO, "Deployment timer has finished.");
+    dbg.println(debug_severity::INFO, "Initializing main operation...");
 
     systime_t deadline = chVTGetSystemTimeX();
     while(true) {

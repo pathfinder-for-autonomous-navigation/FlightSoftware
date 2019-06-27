@@ -1,4 +1,5 @@
-/** @file device_declarations.cpp
+/** 
+ * @file device_declarations.cpp
  * @author Tanishq Aggarwal
  * @date 6 Feb 2018
  * @brief Contains initializations for device objects representing devices in the satellite.
@@ -11,104 +12,23 @@
 #include "state_holder.hpp"
 
 namespace Devices {
-    static std::string gomspace_name = "gomspace";
-    static std::string quake_name = "quake";
-    static std::string piksi_name = "piksi";
-    static std::string dcdc_name = "dcdc";
-    static std::string spike_and_hold_name = "spike_and_hold";
-    static std::string adcs_system_name = "adcs_system";
-    static std::string pressure_sensor_name = "pressure_sensor";
-    static std::string temp_sensor_inner_name = "temp_sensor_inner";
-    static std::string temp_sensor_outer_name = "temp_sensor_outer";
-    static std::string docking_switch_name = "docking_switch";
-    static std::string docking_motor_name = "docking_motor";
-
-    Gomspace& gomspace() {
-        static Gomspace g(gomspace_name,
-                          &State::Gomspace::gomspace_data,
-                          &State::Gomspace::gomspace_config,
-                          &State::Gomspace::gomspace_config2, 
-                          Wire, Gomspace::ADDRESS);
-        return g;
-    }
-
-    Piksi& piksi() {
-        static Piksi p(piksi_name, Serial4);
-        return p;
-    }
-    SpikeAndHold& spike_and_hold() {
-        static SpikeAndHold s(spike_and_hold_name, 
-                              SpikeAndHold::DEFAULT_VALVE_PINS, 
-                              SpikeAndHold::DEFAULT_ENABLE_PIN);
-        return s;
-    }
-    DCDC& dcdc() {
-        static DCDC d(dcdc_name, DCDC::DEFAULT_ENABLE_PIN);
-        return d;
-    }
-    QLocate& quake() {
-        static QLocate q(quake_name, &Serial3, QLocate::DEFAULT_NR_PIN, QLocate::DEFAULT_TIMEOUT);
-        return q;
-    }
-    ADCS& adcs_system() {
-        static ADCS a(adcs_system_name, Wire, ADCS::ADDRESS);
-        return a;
-    }
-    PressureSensor& pressure_sensor() {
-        static PressureSensor p(pressure_sensor_name,
-                                    PressureSensor::DEFAULT_LOW_PRESSURE_PIN,
-                                    PressureSensor::DEFAULT_HIGH_PRESSURE_PIN);
-        return p;
-    }
-    TempSensor& temp_sensor_inner() {
-        static TempSensor t(temp_sensor_inner_name, TempSensor::DEFAULT_PIN_INNER_TANK);
-        return t;
-    }
-    TempSensor& temp_sensor_outer() {
-        static TempSensor t(temp_sensor_outer_name, TempSensor::DEFAULT_PIN_OUTER_TANK);
-        return t;
-    }
-    DockingMotor& docking_motor() {
-        static DockingMotor d(docking_motor_name, 
-                              DockingMotor::DEFAULT_MOTOR_I1_PIN,
-                              DockingMotor::DEFAULT_MOTOR_I2_PIN,
-                              DockingMotor::DEFAULT_MOTOR_DIRECTION_PIN,
-                              DockingMotor::DEFAULT_MOTOR_SLEEP_PIN,
-                              DockingMotor::DEFAULT_MOTOR_STEP_PIN);
-        return d;
-    }
-    DockingSwitch& docking_switch() {
-        static DockingSwitch d(docking_switch_name, DockingSwitch::DEFAULT_SWITCH_PIN);
-        return d;
-    }
+    Gomspace* gomspace;
+    SpikeAndHold* spike_and_hold;
+    SystemOutput* system_output;
+    Piksi* piksi;
+    DCDC* dcdc;
+    QLocate* quake;
+    ADCS* adcs_system;
+    PressureSensor* pressure_sensor;
+    TempSensor* temp_sensor_inner;
+    TempSensor* temp_sensor_outer;
+    DockingMotor* docking_motor;
+    DockingSwitch* docking_switch;
 }
 
 namespace State {
 namespace Hardware {
-    static Hardware::DeviceState adcs_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState dcdc_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState docking_motor_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState docking_switch_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState gomspace_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState piksi_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState pressure_sensor_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState quake_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState sph_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState temp_sensor_inner_device_state = {false, false, false, false, 1};
-    static Hardware::DeviceState temp_sensor_outer_device_state = {false, false, false, false, 1};
-    std::map<Devices::Device*, Hardware::DeviceState> hat {
-        {&Devices::adcs_system(), adcs_device_state},
-        {&Devices::dcdc(), dcdc_device_state},
-        {&Devices::docking_motor(), docking_motor_device_state},
-        {&Devices::docking_switch(), docking_switch_device_state},
-        {&Devices::gomspace(), gomspace_device_state},
-        {&Devices::piksi(), piksi_device_state},
-        {&Devices::pressure_sensor(), pressure_sensor_device_state},
-        {&Devices::quake(), quake_device_state},
-        {&Devices::spike_and_hold(), sph_device_state},
-        {&Devices::temp_sensor_inner(), temp_sensor_inner_device_state},
-        {&Devices::temp_sensor_outer(), temp_sensor_outer_device_state}
-    };
+    std::map<Devices::Device*, Hardware::DeviceState> hat;
 
     bool is_hardware_setup = false;
     rwmutex_t hardware_state_lock;
@@ -117,6 +37,7 @@ namespace Hardware {
     mutex_t adcs_device_lock;
     mutex_t spike_and_hold_device_lock;
     mutex_t piksi_device_lock;
+    mutex_t system_output_device_lock;
     mutex_t quake_device_lock;
     mutex_t gomspace_device_lock;
     mutex_t pressure_sensor_device_lock;

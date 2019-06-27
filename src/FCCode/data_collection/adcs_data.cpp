@@ -7,7 +7,7 @@
 #include <AttitudeEstimator.hpp>
 #include "../state/state_holder.hpp"
 #include "../state/state_history_holder.hpp"
-#include <circular_buffer.hpp>
+#include <static_buffers.hpp>
 #include "helpers.hpp"
 #include "data_collection.hpp"
 

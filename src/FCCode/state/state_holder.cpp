@@ -24,6 +24,7 @@ namespace State {
     }
 
     namespace ADCS {
+        // TODO add exciting new state fields!
         ADCSState adcs_state = ADCSState::ADCS_SAFE_HOLD;
         std::array<float, 4> cmd_attitude;
         PointingFrame cmd_attitude_frame = PointingFrame::ECI;

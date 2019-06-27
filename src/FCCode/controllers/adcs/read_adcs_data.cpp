@@ -14,7 +14,12 @@ static unsigned int ssa_tries = 0; // Number of consecutive loops that we've tri
                                    // collect SSA data
 void ADCSControllers::read_adcs_data() {
     chMtxLock(&adcs_device_lock);
-        adcs_system().set_ssa_mode(ssa_mode);
+        adcs_system->update_hat(); // TODO fix
+    chMtxLock(&adcs_device_lock);
+    // TODO add logic to stop read of ADCS data if HAT is fucked up.
+
+    chMtxLock(&adcs_device_lock);
+        adcs_system->set_ssa_mode(ssa_mode);
     chMtxUnlock(&adcs_device_lock);
 
     rwMtxWLock(&adcs_state_lock);
@@ -28,8 +33,8 @@ void ADCSControllers::read_adcs_data() {
     std::array<float, 3> rwa_speed_cmds_rd, rwa_ramps_rd, rwa_speeds_rd, gyro_data, mag_data;
     chMtxLock(&adcs_device_lock);
     rwMtxWLock(&adcs_state_lock);
-        adcs_system().get_rwa(rwa_speed_cmds_rd.data(), rwa_speeds_rd.data(), rwa_ramps_rd.data());
-        adcs_system().get_imu(gyro_data.data(), mag_data.data());
+        adcs_system->get_rwa(rwa_speed_cmds_rd.data(), rwa_speeds_rd.data(), rwa_ramps_rd.data());
+        adcs_system->get_imu(gyro_data.data(), mag_data.data());
     rwMtxWUnlock(&adcs_state_lock);
     chMtxUnlock(&adcs_device_lock);
     
@@ -47,7 +52,7 @@ void ADCSControllers::read_adcs_data() {
     std::array<float, 3> ssa_vec;
     if (ssa_mode == SSAMode::IN_PROGRESS) {
         chMtxLock(&adcs_device_lock);
-            adcs_system().get_ssa(ssa_mode, Estimator::sat2sun_sensor_body.data());
+            adcs_system->get_ssa(ssa_mode, Estimator::sat2sun_sensor_body.data());
         chMtxUnlock(&adcs_device_lock);
         State::write(State::ADCS::ssa_vec, Estimator::sat2sun_sensor_body, adcs_state_lock);
         if (ssa_mode == SSAMode::COMPLETE) {
