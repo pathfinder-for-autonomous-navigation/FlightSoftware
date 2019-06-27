@@ -1,5 +1,5 @@
 #include <unity.h>
-#include <circular_buffer.hpp>
+#include <utils/circular_buffer.hpp>
 #include <array>
 #include "utils_tests.hpp"
 
@@ -28,7 +28,6 @@ static void circular_buffer_test_multiple_elements(void) {
     TEST_ASSERT_EQUAL(2, v2);
     TEST_ASSERT(buf.empty());
 }
-
 
 // Tests FIFO functionality of buffer with arrays as elements
 static void circular_buffer_test_multiple_elements_array(void) {
