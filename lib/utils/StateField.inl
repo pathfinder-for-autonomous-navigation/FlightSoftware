@@ -18,20 +18,22 @@ inline bool StateField<T>::null_sanity_check(const T& val) const {
 }
 
 template<typename T>
-inline StateField<T>::StateField(const std::string& name,
-                                 debug_console& dbg_console,
-                                 bool gr, 
-                                 bool gw, 
-                                 StateFieldRegistry& reg,
-                                 typename StateField<T>::fetch_f fetcher,
-                                 typename StateField<T>::sanity_check_f checker) :
-    DataField(name),
-    Debuggable(dbg_console),
-    _ground_readable(gr),
-    _ground_writable(gw),
-    _registry(reg),
-    _fetcher(fetcher),
-    _checker(checker) {}
+inline StateField<T>::StateField(const std::string& name, 
+                                 debug_console& dbg) : DataField(name), 
+                                                       Debuggable(dbg) {}
+
+template<typename T>
+inline void StateField<T>::init(bool gr, 
+                                bool gw, 
+                                StateFieldRegistry& reg,
+                                typename StateField<T>::fetch_f fetcher,
+                                typename StateField<T>::sanity_check_f checker) {
+    _ground_readable = gr;
+    _ground_writable = gw;
+    _registry = reg;
+    _fetcher = fetcher;
+    _checker = checker;
+}
 
 template<typename T>
 inline std::string& StateField<T>::name() const { return _name; }
@@ -84,21 +86,22 @@ inline bool StateField<T>::sanity_check(Task* getter) const {
 }
 
 template<typename T>
-inline InternalStateField<T>::InternalStateField(const std::string& name, 
-                                                 debug_console& dbg_console,
-                                                 StateFieldRegistry& reg,
-                                                 typename StateField<T>::fetch_f fetcher) : 
-                            StateField<T>(name, dbg_console, false, false, reg, fetcher) {}
+void InternalStateField<T>::init(StateFieldRegistry& reg,
+                                 typename StateField<T>::fetch_f fetcher,
+                                 typename StateField<T>::sanity_check_f checker) {
+    StateField<T>::init(false, false, reg, fetcher, checker);
+}
 
 template<typename T, typename U, unsigned int compressed_sz>
-inline SerializableStateField<T, U, compressed_sz>::SerializableStateField(
-                                                    const std::string& name,
-                                                    debug_console& dbg_console,
-                                                    bool gw,
-                                                    StateFieldRegistry& reg,
-                                                    Serializer<T, U, compressed_sz>& s,
-                                                    typename StateField<T>::fetch_f fetcher) : 
-        StateField<T>(name, dbg_console, true, gw, reg, fetcher), _serializer(s) {}
+inline void SerializableStateField<T, U, compressed_sz>::init(bool gw,
+                                                              StateFieldRegistry& reg,
+                                                              Serializer<T, U, compressed_sz>& s,
+                                                              typename StateField<T>::fetch_f fetcher,
+                                                              typename StateField<T>::sanity_check_f checker)
+{
+    StateField<T>::init(true, gw, reg, fetcher, checker);
+    _serializer = s;
+}
 
 template<typename T, typename U, unsigned int compressed_sz>
 inline void SerializableStateField<T, U, compressed_sz>::serialize(std::bitset<compressed_sz>* dest) {
@@ -122,17 +125,19 @@ inline void SerializableStateField<T, U, compressed_sz>::print(std::string* dest
 }
 
 template <typename T, typename U, unsigned int compressed_sz>
-inline ReadableStateField<T, U, compressed_sz>::ReadableStateField(const std::string &name,
-                                                                   debug_console &dbg_console,
-                                                                   StateFieldRegistry &reg,
-                                                                   Serializer<T, U, compressed_sz> &s,
-                                                                   typename StateField<T>::fetch_f fetcher) : 
-    SerializableStateField<T, U, compressed_sz>(name, dbg_console, false, reg, s, fetcher) {}
+inline void ReadableStateField<T, U, compressed_sz>::init(StateFieldRegistry &reg,
+                                                          Serializer<T, U, compressed_sz> &s,
+                                                          typename StateField<T>::fetch_f fetcher,
+                                                          typename StateField<T>::sanity_check_f checker)
+{
+    SerializableStateField<T,U,compressed_sz>::init(false, reg, s, fetcher, checker);
+}
 
 template<typename T, typename U, unsigned int compressed_sz>
-inline WritableStateField<T, U, compressed_sz>::WritableStateField(const std::string& name,
-                                                                   debug_console& dbg_console,
-                                                                   StateFieldRegistry& reg,
-                                                                   Serializer<T, U, compressed_sz>& s,
-                                                                   typename StateField<T>::fetch_f fetcher) :
-    SerializableStateField<T, U, compressed_sz>(name, dbg_console, true, reg, s, fetcher) {}
+inline void WritableStateField<T, U, compressed_sz>::init(StateFieldRegistry& reg,
+                                                          Serializer<T, U, compressed_sz>& s,
+                                                          typename StateField<T>::fetch_f fetcher,
+                                                          typename StateField<T>::sanity_check_f checker)
+{
+    SerializableStateField<T,U,compressed_sz>::init(true, reg, s, fetcher, checker);                                                  
+}

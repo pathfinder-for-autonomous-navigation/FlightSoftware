@@ -8,7 +8,8 @@
 #include "StateField.hpp"
 
 inline constexpr size_t compressed_state_size(size_t num_states) {
-  return (size_t) ceil(log(static_cast<float>(num_states)) / log(2.0f));
+
+  return static_cast<size_t>(ceil(log(static_cast<float>(num_states)) / logf(2.0f)));
 }
 
 /**
@@ -29,7 +30,7 @@ class SMStateSerializer : public Serializer<unsigned int, unsigned int, compress
 
 template<size_t num_states>
 SMStateSerializer<num_states>::SMStateSerializer() : 
-  Serializer<unsigned int, unsigned int, compressed_state_size(num_states)>(0, num_states - 1) {}
+  Serializer<unsigned int, unsigned int, compressed_state_size(num_states)>(static_cast<unsigned int>(0), static_cast<unsigned int>(num_states - 1)) {}
 
 /**
  * @brief A specialization of state field for state machine state.
@@ -45,10 +46,14 @@ class SMStateField : public WritableStateField<unsigned int, unsigned int, compr
      * Parameters inherited from WritableStateField, but there are no fetchers,
      * so the optional parameter values are set to their defaults mandatorily.
      */
-    SMStateField(const std::string &name,
-                 debug_console &dbg_console,
-                 StateFieldRegistry &reg,
-                 SMStateSerializer<num_states> &s);
+    using WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>::WritableStateField;
+    virtual void init(StateFieldRegistry &reg,
+                                    SMStateSerializer<num_states> &s,
+                                    typename StateField<unsigned int>::fetch_f fetcher,
+                                    typename StateField<unsigned int>::sanity_check_f checker) 
+    {
+      WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>::init(reg, s, fetcher, checker);
+    }
 
     /**
      * @brief Array that maps index number (state) to the name of the state (a string).
@@ -56,12 +61,5 @@ class SMStateField : public WritableStateField<unsigned int, unsigned int, compr
      */
     std::array<std::string, num_states> _state_names;
 };
-
-template <size_t num_states>
-SMStateField<num_states>::SMStateField(
-    const std::string &name,
-    debug_console &dbg_console,
-    StateFieldRegistry &reg,
-    SMStateSerializer<num_states> &s) : WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>(name, dbg_console, reg, s) {}
 
 #endif

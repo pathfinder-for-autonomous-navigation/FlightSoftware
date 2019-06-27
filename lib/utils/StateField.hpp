@@ -52,10 +52,16 @@ class StateField : public DataField, Debuggable {
     bool null_sanity_check(const T& val) const;
 
     /**
-     * @brief Construct a new State Field object
+     * @brief Construct a new StateField object
      * 
      * @param name Name of state field. Useful for debugging.
      * @param l Lock that synchronizes access to state field.
+     */
+    StateField(const std::string& name, debug_console& dbg_console);
+
+    /**
+     * @brief Initialize a State Field object
+     * 
      * @param gr If true, this field is sent via downlink to the ground.
      * @param gw If true, this field can be set via uplink from the ground.
      * @param reg The state field registry. This is needed so that the StateField
@@ -67,13 +73,11 @@ class StateField : public DataField, Debuggable {
      * fetch function (e.g. a device peripheral.) We require that the lock already be initialized,
      * or else the program will abort when tested.
      */
-    StateField(const std::string& name,
-               debug_console& dbg_console,
-               bool gr, 
-               bool gw,
-               StateFieldRegistry& reg,
-               typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
-               typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
+    virtual void init(bool gr,
+                      bool gw,
+                      StateFieldRegistry& reg,
+                      typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+                      typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 
     std::string& name() const;
 
@@ -180,6 +184,7 @@ class StateField : public DataField, Debuggable {
 template<typename T>
 class InternalStateField : public StateField<T> {
   public:
+    using StateField<T>::StateField;
     /**
      * @brief Construct a new Internal State Field object
      *
@@ -193,11 +198,9 @@ class InternalStateField : public StateField<T> {
      * @param f_l Lock that synchronizes access to resources that may be used within the 
      * fetch function (e.g. a device peripheral.)
      */
-    InternalStateField(
-      const std::string& name,
-      debug_console& dbg_console,
-      StateFieldRegistry& reg,
-      typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher);
+    void init(StateFieldRegistry& reg,
+              typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+              typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 };
 
 /**
@@ -212,11 +215,10 @@ class SerializableStateField : public StateField<T> {
   protected:
     Serializer<T, U, compressed_sz>& _serializer;
   public:
+    using StateField<T>::StateField;
     /**
-     * @brief Construct a new Serializable State Field object
+     * @brief Initialize a new Serializable State Field object
      * 
-     * @param name Name of state field. Useful for debugging.
-     * @param l  Lock that synchronizes access to state field.
      * @param gw If true, this field can be set via uplink from the ground.
      * @param reg The state field registry. This is needed so that the StateField
      * can check which threads are allowed to read/write its value.
@@ -227,12 +229,11 @@ class SerializableStateField : public StateField<T> {
      * @param f_l Lock that synchronizes access to resources that may be used within the 
      * fetch function (e.g. a device peripheral.)
      */
-    SerializableStateField(const std::string& name,
-                           debug_console& dbg_console,
-                           bool gw,
-                           StateFieldRegistry& reg,
-                           Serializer<T, U, compressed_sz>& s,
-                           typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher);
+    void init(bool gw,
+              StateFieldRegistry& reg,
+              Serializer<T, U, compressed_sz>& s,
+              typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+              typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
     
     /**
      * @brief Serialize field data into the provided bitset.
@@ -270,25 +271,23 @@ template <typename T, typename U, unsigned int compressed_sz>
 class ReadableStateField : public SerializableStateField<T, U, compressed_sz>
 {
 public:
+  using StateField<T>::StateField;
   /**
-     * @brief Construct a new Writable State Field object
-     * 
-     * @param name Name of state field. Useful for debugging.
-     * @param l Lock that synchronizes access to state field.
-     * @param reg The state field registry. This is needed so that the StateField
-     * can check which threads are allowed to read/write its value.
-     * @param s Serializer object that handles serialization/deserialization of this state field.
-     * @param dbg_console Reference to a debug console, which may be used to write error messages.
-     * @param fetcher A function to fetch this value from some device. By default,
-     * there is no fetcher.
-     * @param f_l Lock that synchronizes access to resources that may be used within the 
-     * fetch function (e.g. a device peripheral.)
-     */
-  ReadableStateField(const std::string &name,
-                     debug_console &dbg_console,
-                     StateFieldRegistry &reg,
-                     Serializer<T, U, compressed_sz> &s,
-                     typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher);
+   * @brief Initialize a new Readable State Field object
+   * 
+   * @param reg The state field registry. This is needed so that the StateField
+   * can check which threads are allowed to read/write its value.
+   * @param s Serializer object that handles serialization/deserialization of this state field.
+   * @param dbg_console Reference to a debug console, which may be used to write error messages.
+   * @param fetcher A function to fetch this value from some device. By default,
+   * there is no fetcher.
+   * @param f_l Lock that synchronizes access to resources that may be used within the 
+   * fetch function (e.g. a device peripheral.)
+   */
+  void init(StateFieldRegistry &reg,
+            Serializer<T, U, compressed_sz> &s,
+            typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+            typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 };
 
 /**
@@ -300,26 +299,22 @@ public:
 template<typename T, typename U, unsigned int compressed_sz>
 class WritableStateField : public SerializableStateField<T, U, compressed_sz> {
   public:
+    using StateField<T>::StateField;
     /**
-     * @brief Construct a new Writable State Field object
+     * @brief Initialize a new Writable State Field object
      * 
-     * @param name Name of state field. Useful for debugging.
-     * @param l Lock that synchronizes access to state field.
      * @param reg The state field registry. This is needed so that the StateField
      * can check which threads are allowed to read/write its value.
      * @param s Serializer object that handles serialization/deserialization of this state field.
-     * @param dbg_console Reference to a debug console, which may be used to write error messages.
      * @param fetcher A function to fetch this value from some device. By default,
      * there is no fetcher.
      * @param f_l Lock that synchronizes access to resources that may be used within the 
      * fetch function (e.g. a device peripheral.)
      */
-    WritableStateField(const std::string& name,
-                       debug_console& dbg_console,
-                       rwmutex_t* l,
-                       StateFieldRegistry& reg,
-                       Serializer<T, U, compressed_sz>& s,
-                       typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher);
+    void init(StateFieldRegistry& reg,
+              Serializer<T, U, compressed_sz>& s,
+              typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+              typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 };
 
 #include "StateField.inl"

@@ -2,6 +2,11 @@
 
 DataField::DataField(const std::string& name) : Nameable(name) {}
 
+void StateFieldRegistry::operator=(const StateFieldRegistry& r) {
+    _fields_allowed_to_read = r._fields_allowed_to_read;
+    _fields_allowed_to_write = r._fields_allowed_to_write;
+}
+
 void StateFieldRegistry::add_reader(Task& reader, DataField& field) {
     if (_fields_allowed_to_read.count(&reader) == 0) {
         // TODO add debug console
@@ -21,24 +26,11 @@ void StateFieldRegistry::add_writer(Task& writer, DataField& field) {
 }
 
 bool StateFieldRegistry::can_read(Task& reader, DataField& field) {
-    if (!access_lock.initialized) rwMtxObjectInit(&access_lock);
-    
-    if (chThdGetSelfX() != nullptr) rwMtxRLock(&access_lock);
-    {
-        // TODO
-    }
-    if (chThdGetSelfX() != nullptr) rwMtxRUnlock(&access_lock);
-
+    // TODO
     return false;
 }
 
 bool StateFieldRegistry::can_write(Task& reader, DataField& field) {
-    if (!access_lock.initialized) rwMtxObjectInit(&access_lock);
-    
-    if (chThdGetSelfX() != nullptr) rwMtxRLock(&access_lock);
-    {
-        // TODO        
-    }
-    if (chThdGetSelfX() != nullptr) rwMtxRUnlock(&access_lock);
+    // TODO
     return false;
 }

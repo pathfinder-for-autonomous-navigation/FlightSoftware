@@ -26,9 +26,13 @@ class StateFieldRegistry : public Debuggable {
   private:
     std::multimap<Task*, std::vector<DataField*>> _fields_allowed_to_read;
     std::multimap<Task*, std::vector<DataField*>> _fields_allowed_to_write;
-    rwmutex_t access_lock;
   public:
     using Debuggable::Debuggable;
+
+    /**
+     * @brief Copy constructor.
+     */
+    void operator=(const StateFieldRegistry& r);
 
     /**
      * @brief Allows the specified Control Task to read the specified state field.
