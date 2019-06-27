@@ -1,5 +1,4 @@
 /**
- * @file StateField.hpp
  * @author Tanishq Aggarwal (ta335@cornell.edu)
  * @date 2019-05-30
  */
@@ -10,6 +9,7 @@
 #include "StateFieldRegistry.hpp"
 #include "ControlTask.hpp"
 #include "Serializer.hpp"
+#include "InitializationRequired.hpp"
 #include <vector>
 #include <ChRt.h>
 #include <rwmutex.hpp>
@@ -22,7 +22,7 @@
  * @tparam compressed_size Size of the state field when being sent in a downlink or uplink packet.
  */
 template<typename T>
-class StateField : public DataField, Debuggable {
+class StateField : public DataField, Debuggable, InitializationRequired {
   public:
     /**
      * @brief Type definition for a pointer to a function that fetches 
@@ -56,41 +56,42 @@ class StateField : public DataField, Debuggable {
      * 
      * @param name Name of state field. Useful for debugging.
      * @param l Lock that synchronizes access to state field.
+     * @param reg The state field registry. This is needed so that the StateField
+     * can check which threads are allowed to read/write its value.
      */
-    StateField(const std::string& name, debug_console& dbg_console);
+    StateField(const std::string& name, debug_console& dbg_console, 
+               StateFieldRegistry& reg);
 
     /**
      * @brief Initialize a State Field object
      * 
      * @param gr If true, this field is sent via downlink to the ground.
      * @param gw If true, this field can be set via uplink from the ground.
-     * @param reg The state field registry. This is needed so that the StateField
-     * can check which threads are allowed to read/write its value.
      * @param dbg_console Reference to a debug console, which may be used to write error messages.
      * @param fetcher A function to fetch this value from some device. By default,
      * there is no fetcher.
      * @param f_l Lock that synchronizes access to resources that may be used within the 
      * fetch function (e.g. a device peripheral.) We require that the lock already be initialized,
      * or else the program will abort when tested.
+     * 
+     * @bool Returns true if succeed, false if state field registry is uninitialized.
      */
-    virtual void init(bool gr,
+    virtual bool init(bool gr,
                       bool gw,
-                      StateFieldRegistry& reg,
                       typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
                       typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 
-    std::string& name() const;
-
     /**
      * @brief Returns a generic pointer to this state field. Useful for creating
-     * collections of StateFields.
+     * collections of StateFields. If the field is not initialized, returns a null pointer.
      * 
      * @return DataField* Generic pointer to this state field.
      */
     DataField* ptr();
 
     /**
-     * @brief Checks registry for read access.
+     * @brief Checks registry for read access. If the field is not initialized it
+     * will return false.
      * 
      * @param r 
      * @return true If Control Task has read access to state field.
@@ -99,7 +100,8 @@ class StateField : public DataField, Debuggable {
     bool can_read(Task& r);
 
     /**
-     * @brief Checks registry for write access.
+     * @brief Checks registry for write access. If the field is not initialized it
+     * will return false.
      * 
      * @param r 
      * @return true If Control Task has write access to state field.
@@ -111,15 +113,17 @@ class StateField : public DataField, Debuggable {
      * @brief Provides a thread with write permissions to this state field.
      * 
      * @param w Thread to add as writer.
+     * @return True if succeeded, false if field is not initialized.
      */
-    void add_writer(Task& w);
+    bool add_writer(Task& w);
 
     /**
      * @brief Provides a thread with read permissions to this state field.
      * 
      * @param r Thread to add as reader.
+     * @return True if succeeded, false if field is not initialized.
      */
-    void add_reader(Task& r);
+    bool add_reader(Task& r);
 
     /**
      * @brief Returns a copy of field data. The calling thread must have
@@ -127,7 +131,8 @@ class StateField : public DataField, Debuggable {
      * request will still be fulfilled, but a debug message will be written to the 
      * console indicating which thread was the offender.
      * 
-     * @return T Copy of of field value.
+     * @return T Copy of of field value. If the field is not initialized, this
+     * function fails silently (returns nonsense.)
      */
     T get(Task* getter);
 
@@ -138,8 +143,9 @@ class StateField : public DataField, Debuggable {
      * console indicating which thread was the offender.
      * 
      * @param t 
+     * @return True if succeeded, false if field is not initialized.
      */
-    void set(Task* setter, const T& t);
+    bool set(Task* setter, const T& t);
 
     /**
      * @brief Fetch value by calling the fetcher function that may be provided in the 
@@ -154,16 +160,31 @@ class StateField : public DataField, Debuggable {
      * this function internally calls set(). No error will be produced, and the fetch 
      * will still happen, but a debug message will be written to the console indicating 
      * which thread was the offender.
+     * 
+     * @return True if succeeded, false if field is not initialized.
      */
-    void fetch(Task* setter);
+    bool fetch(Task* setter);
 
     /**
      * @brief Checks the sanity of the internally contained value. Note that the
      * calling thread must have read permissions for the state field because this function
      * internally calls get(). No error will be produced, and the sanity will still be evaluated,
      * but a debug message will be written to the console indicating which thread was the offender.
+     * 
+     * @return True if the field value is valid, false if the field value is invalid or is uninitialized.
      */
     bool sanity_check(Task* getter) const;
+
+    /**
+     * @brief Accessors.
+     * 
+     * @{
+     */
+    bool is_readable() const;
+    bool is_writable() const;
+    /**
+     * @}
+     */
 
   protected:
     bool _ground_readable;
@@ -186,20 +207,9 @@ class InternalStateField : public StateField<T> {
   public:
     using StateField<T>::StateField;
     /**
-     * @brief Construct a new Internal State Field object
-     *
-     * @param name Name of state field. Useful for debugging.
-     * @param l Lock that synchronizes access to state field.
-     * @param reg The state field registry. This is needed so that the StateField
-     * can check which threads are allowed to read/write its value.
-     * @param dbg_console Reference to a debug console, which may be used to write error messages.
-     * @param fetcher A function to fetch this value from some device. By default,
-     * there is no fetcher.
-     * @param f_l Lock that synchronizes access to resources that may be used within the 
-     * fetch function (e.g. a device peripheral.)
+     * @brief Construct a new Internal State Field object (not ground readable or writable.)
      */
-    void init(StateFieldRegistry& reg,
-              typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
+    bool init(typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
               typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 };
 
@@ -213,25 +223,17 @@ class InternalStateField : public StateField<T> {
 template<typename T, typename U, unsigned int compressed_sz>
 class SerializableStateField : public StateField<T> {
   protected:
-    Serializer<T, U, compressed_sz>& _serializer;
+    Serializer<T, U, compressed_sz>* _serializer;
   public:
-    using StateField<T>::StateField;
+    SerializableStateField(const std::string& name, debug_console& dbg_console, StateFieldRegistry& reg);
     /**
-     * @brief Initialize a new Serializable State Field object
+     * @brief Initialize a new Serializable State Field object (definitely ground readable, but
+     * may or may not be ground writable.)
      * 
-     * @param gw If true, this field can be set via uplink from the ground.
-     * @param reg The state field registry. This is needed so that the StateField
-     * can check which threads are allowed to read/write its value.
-     * @param s  Serializer object that handles serialization/deserialization of this state field.
-     * @param dbg_console Reference to a debug console, which may be used to write error messages.
-     * @param fetcher A function to fetch this value from some device. By default,
-     * there is no fetcher.
-     * @param f_l Lock that synchronizes access to resources that may be used within the 
-     * fetch function (e.g. a device peripheral.)
+     * @param s The serializer to use for serializing the field.
      */
-    void init(bool gw,
-              StateFieldRegistry& reg,
-              Serializer<T, U, compressed_sz>& s,
+    bool init(bool gw,
+              Serializer<T, U, compressed_sz>* s,
               typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
               typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
     
@@ -239,26 +241,29 @@ class SerializableStateField : public StateField<T> {
      * @brief Serialize field data into the provided bitset.
      * 
      * @param dest 
-     * @return true If serialization was possible within the given bitset.
-     * @return false If the given bitset is too small, serialization will not be possible.
+     * @return true  If serialization was possible within the given bitset.
+     * @return false If the given bitset is too small, serialization will not be possible. Also returns
+     *               false if the serializer or the state field was not initialized.
      */
-    void serialize(std::bitset<compressed_sz>* dest);
+    bool serialize(std::bitset<compressed_sz>* dest);
 
     /**
      * @brief Deserialize field data from the provided bitset.
      * 
      * @param src 
-     * @return true If serialization was possible within the given bitset.
-     * @return false If the given bitset is too small, serialization will not be possible.
+     * @return true  If serialization was possible within the given bitset.
+     * @return false If the given bitset is too small, serialization will not be possible. Also returns
+     *               false if the serializer or the state field was not initialized.
      */
-    void deserialize(const std::bitset<compressed_sz>& src);
+    bool deserialize(const std::bitset<compressed_sz>& src);
 
     /**
      * @brief Write human-readable value of state field to a supplied string.
      * 
      * @param dest 
+     * @return True if print succeeded, false if field is uninitialized.
      */
-    void print(std::string* dest);
+    bool print(std::string* dest);
 };
 
 /**
@@ -273,19 +278,9 @@ class ReadableStateField : public SerializableStateField<T, U, compressed_sz>
 public:
   using StateField<T>::StateField;
   /**
-   * @brief Initialize a new Readable State Field object
-   * 
-   * @param reg The state field registry. This is needed so that the StateField
-   * can check which threads are allowed to read/write its value.
-   * @param s Serializer object that handles serialization/deserialization of this state field.
-   * @param dbg_console Reference to a debug console, which may be used to write error messages.
-   * @param fetcher A function to fetch this value from some device. By default,
-   * there is no fetcher.
-   * @param f_l Lock that synchronizes access to resources that may be used within the 
-   * fetch function (e.g. a device peripheral.)
+   * @brief Initialize a new Readable State Field object (readable from ground but not writable.)
    */
-  void init(StateFieldRegistry &reg,
-            Serializer<T, U, compressed_sz> &s,
+  bool init(Serializer<T, U, compressed_sz>* s,
             typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
             typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 };
@@ -301,18 +296,9 @@ class WritableStateField : public SerializableStateField<T, U, compressed_sz> {
   public:
     using StateField<T>::StateField;
     /**
-     * @brief Initialize a new Writable State Field object
-     * 
-     * @param reg The state field registry. This is needed so that the StateField
-     * can check which threads are allowed to read/write its value.
-     * @param s Serializer object that handles serialization/deserialization of this state field.
-     * @param fetcher A function to fetch this value from some device. By default,
-     * there is no fetcher.
-     * @param f_l Lock that synchronizes access to resources that may be used within the 
-     * fetch function (e.g. a device peripheral.)
+     * @brief Initialize a new Writable State Field object (readable and writable from ground.)
      */
-    void init(StateFieldRegistry& reg,
-              Serializer<T, U, compressed_sz>& s,
+    bool init(Serializer<T, U, compressed_sz>* s,
               typename StateField<T>::fetch_f fetcher = &StateField<T>::null_fetcher,
               typename StateField<T>::sanity_check_f checker = &StateField<T>::null_sanity_check);
 };

@@ -27,7 +27,7 @@ class StateFieldRegistry : public Debuggable {
     std::multimap<Task*, std::vector<DataField*>> _fields_allowed_to_read;
     std::multimap<Task*, std::vector<DataField*>> _fields_allowed_to_write;
   public:
-    using Debuggable::Debuggable;
+    StateFieldRegistry(debug_console& dbg);
 
     /**
      * @brief Copy constructor.

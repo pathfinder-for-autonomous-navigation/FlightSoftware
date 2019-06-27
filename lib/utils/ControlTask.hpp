@@ -45,7 +45,7 @@ ControlTask<T>::ControlTask(const std::string& name,
  * tasks that execute some time after their initialization.
  */
 template<size_t thd_working_area>
-class ThreadedTask : public ControlTask<void> {
+class ThreadedTask : public ControlTask<bool> {
   protected:
     virtual_timer_t timer;
     stkalign_t working_area[thd_working_area];
@@ -66,7 +66,7 @@ class ThreadedTask : public ControlTask<void> {
      * @brief Starts a threaded task immediately, with no delay and with optional
      * arguments.
      * 
-     * @param args 
+     * @param args
      */
     void start_now(void* args = nullptr);
 

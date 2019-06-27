@@ -14,7 +14,7 @@
  * @brief A generic class for a state machine controller.
  */
 template<size_t compressed_state_sz>
-class StateMachine : public StateFieldRegistryReader<void> {
+class StateMachine : public StateFieldRegistryReader<bool> {
   public:
     /**
      * @brief Construct a new State Machine object
@@ -40,15 +40,17 @@ class StateMachine : public StateFieldRegistryReader<void> {
      * @brief Initialize state to the specified state.
      * 
      * @param initial_state State to set the state machine in.
+     * @return True if succeeded, false if state variable is not initialized.
      */
-    void init(unsigned int initial_state);
+    bool init(unsigned int initial_state);
 
     /**
      * @brief Forcibly set the state of the state machine to a given state.
      * 
      * @param initial_state State to set the state machine in.
+     * @return True if succeeded, false if state variable is not initialized.
      */
-    void set_state(unsigned int state);
+    bool set_state(unsigned int state);
 
     /**
      * @brief Add a ControlTask handler that executes upon every call
@@ -56,7 +58,8 @@ class StateMachine : public StateFieldRegistryReader<void> {
      * the specified state.
      * 
      * @param state 
-     * @param handler 
+     * @param handler
+     * @return True if succeeded, false if state variable is not initialized.
      */
     void register_state_handler(unsigned int state, StateHandler& handler);
 
@@ -68,6 +71,7 @@ class StateMachine : public StateFieldRegistryReader<void> {
      * @param state_1
      * @param state_2
      * @param handler
+     * @return True if succeeded, false if state variable is not initialized.
      */
     void register_transition_handler(unsigned int state_1, 
                                      unsigned int state_2, 
@@ -77,9 +81,11 @@ class StateMachine : public StateFieldRegistryReader<void> {
      * @brief Run a full update cycle on the state machine, which means running
      * the state handler for the current state, getting the value of the next state,
      * running the pre-transition handler and setting the next state.
+     * 
+     * @return True if succeeded, false if state variable is not initialized.
      */
-    void update_state_machine();
-    void execute() override;
+    bool update_state_machine();
+    bool execute() override;
 
   protected:
     SMStateField<compressed_state_sz>& _state;
@@ -112,19 +118,21 @@ bool StateMachine<compressed_state_sz>::is_valid_state(unsigned int state) const
 }
 
 template<size_t compressed_state_sz>
-void StateMachine<compressed_state_sz>::init(unsigned int initial_state) {
+bool StateMachine<compressed_state_sz>::init(unsigned int initial_state) {
     static_assert(is_valid_state(initial_state), "Invalid state number passed into function.");
 
-    set_state(initial_state);
+    return set_state(initial_state);
 }
 
 template<size_t compressed_state_sz>
-void StateMachine<compressed_state_sz>::set_state(unsigned int state) {
+bool StateMachine<compressed_state_sz>::set_state(unsigned int state) {
     static_assert(is_valid_state(state), "Invalid state number passed into function.");
 
-    _state.set(state);
+    if(!_state.set(state)) return false;
     StateHandler* state_handler = _state_handlers.at(state);
     state_handler->has_executed = false;
+    
+    return true;
 }
 
 template<size_t compressed_state_sz>
@@ -151,7 +159,7 @@ void StateMachine<compressed_state_sz>::register_transition_handler(unsigned int
 }
 
 template<size_t compressed_state_sz>
-void StateMachine<compressed_state_sz>::update_state_machine() {
+bool StateMachine<compressed_state_sz>::update_state_machine() {
     // Get current state and state handler
     unsigned int cur_state = _state.get();
     static_assert(is_valid_state(cur_state), "Invalid state number for current state.");
@@ -162,7 +170,7 @@ void StateMachine<compressed_state_sz>::update_state_machine() {
     }
     catch (std::out_of_range& err) {
         _dbg_console.printf(debug_console::ERROR, "No state handler specified for state %d!", cur_state);
-        return;
+        return false;
     }
 
     // Get next state and run transition handler
@@ -176,13 +184,14 @@ void StateMachine<compressed_state_sz>::update_state_machine() {
         TransitionHandler* transition_handler = _transition_handlers.at(state_pair);
         transition_handler->execute();
         // Set current state equal to next state
-        set_state(next_state);
+        return set_state(next_state);
     }
+    return true;
 }
 
 template<size_t compressed_state_sz>
-void StateMachine<compressed_state_sz>::execute() {
-    update_state_machine();
+bool StateMachine<compressed_state_sz>::execute() {
+    return update_state_machine();
 }
 
 #endif

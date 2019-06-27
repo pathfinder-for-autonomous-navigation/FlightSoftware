@@ -19,46 +19,62 @@ inline bool StateField<T>::null_sanity_check(const T& val) const {
 
 template<typename T>
 inline StateField<T>::StateField(const std::string& name, 
-                                 debug_console& dbg) : DataField(name), 
-                                                       Debuggable(dbg) {}
+                                 debug_console& dbg,
+                                 StateFieldRegistry& reg) : DataField(name), 
+                                                            Debuggable(dbg),
+                                                            InitializationRequired(),
+                                                            _ground_readable(false),
+                                                            _ground_writable(false),
+                                                            _val(),
+                                                            _registry(reg),
+                                                            _fetcher(nullptr),
+                                                            _checker(nullptr) {}
 
 template<typename T>
-inline void StateField<T>::init(bool gr, 
+inline bool StateField<T>::init(bool gr, 
                                 bool gw, 
-                                StateFieldRegistry& reg,
                                 typename StateField<T>::fetch_f fetcher,
                                 typename StateField<T>::sanity_check_f checker) {
     _ground_readable = gr;
     _ground_writable = gw;
-    _registry = reg;
     _fetcher = fetcher;
     _checker = checker;
+    return InitializationRequired::init();
 }
 
 template<typename T>
-inline std::string& StateField<T>::name() const { return _name; }
+inline bool StateField<T>::add_reader(Task& reader) {
+    if (!_is_initialized) return false;
+    return _registry.add_reader(&reader, this);
+}
 
 template<typename T>
-inline void StateField<T>::add_reader(Task& reader) { _registry.add_reader(&reader, this); }
+inline bool StateField<T>::add_writer(Task& writer) {
+    if (!_is_initialized) return false;
+    return _registry.add_writer(&writer, this);
+}
 
 template<typename T>
-inline void StateField<T>::add_writer(Task& writer) { _registry.add_writer(&writer, this); }
-
-template<typename T>
-inline DataField* StateField<T>::ptr() { return this; }
+inline DataField* StateField<T>::ptr() {
+    if (!_is_initialized) return nullptr;
+    return this;
+}
 
 template<typename T>
 inline bool StateField<T>::can_read(Task& getter) {
+    if (!_is_initialized) return false;
     return _registry.can_read(getter, *this);
 }
 
 template<typename T>
 inline bool StateField<T>::can_write(Task& setter) {
+    if (!_is_initialized) return false;
     return _registry.can_write(setter, *this);
 }
 
 template<typename T>
 inline T StateField<T>::get(Task* getter) {
+    if (!_is_initialized) return _val;
     if (!can_read(getter))
         _dbg_console.printf(debug_severity::ALERT, 
             "Task %s illegally tried to read state field %s.", getter->name().c_str(), this->name().c_str());
@@ -67,17 +83,18 @@ inline T StateField<T>::get(Task* getter) {
 }
 
 template<typename T>
-inline void StateField<T>::set(Task* setter, const T& t) {
+inline bool StateField<T>::set(Task* setter, const T& t) {
+    if (!_is_initialized) return false;
     if (!can_write(setter))
         _dbg_console.printf(debug_severity::ALERT, 
             "Task %s illegally tried to read state field %s.", setter->name().c_str(), this->name().c_str());
-
     _val = t;
+    return true;
 }
 
 template<typename T>
-inline void StateField<T>::fetch(Task* setter) {
-    set(setter, _fetcher());
+inline bool StateField<T>::fetch(Task* setter) {
+    return set(setter, _fetcher());
 }
 
 template<typename T>
@@ -86,58 +103,66 @@ inline bool StateField<T>::sanity_check(Task* getter) const {
 }
 
 template<typename T>
-void InternalStateField<T>::init(StateFieldRegistry& reg,
-                                 typename StateField<T>::fetch_f fetcher,
+inline bool StateField<T>::is_readable() const {
+    return _ground_readable;
+}
+
+template<typename T>
+inline bool StateField<T>::is_writable() const {
+    return _ground_writable;
+}
+
+template<typename T>
+bool InternalStateField<T>::init(typename StateField<T>::fetch_f fetcher,
                                  typename StateField<T>::sanity_check_f checker) {
-    StateField<T>::init(false, false, reg, fetcher, checker);
+    return StateField<T>::init(false, false, fetcher, checker);
 }
 
 template<typename T, typename U, unsigned int compressed_sz>
-inline void SerializableStateField<T, U, compressed_sz>::init(bool gw,
-                                                              StateFieldRegistry& reg,
-                                                              Serializer<T, U, compressed_sz>& s,
+SerializableStateField<T, U, compressed_sz>::SerializableStateField(const std::string& name, 
+                                                                    debug_console& dbg_console,
+                                                                    StateFieldRegistry& reg) : 
+                                                            StateField<T>(name, dbg_console), 
+                                                            _serializer(nullptr) { }
+
+template<typename T, typename U, unsigned int compressed_sz>
+inline bool SerializableStateField<T, U, compressed_sz>::init(bool gw,
+                                                              Serializer<T, U, compressed_sz>* s,
                                                               typename StateField<T>::fetch_f fetcher,
                                                               typename StateField<T>::sanity_check_f checker)
 {
-    StateField<T>::init(true, gw, reg, fetcher, checker);
+    if (!s._is_initializedialized()) return false;
     _serializer = s;
+    return StateField<T>::init(true, gw, fetcher, checker);
 }
 
 template<typename T, typename U, unsigned int compressed_sz>
-inline void SerializableStateField<T, U, compressed_sz>::serialize(std::bitset<compressed_sz>* dest) {
-    rwMtxRLock((this->_lock));
-    (this->_serializer).serialize(this->_val, dest);
-    rwMtxRUnlock((this->_lock));
+inline bool SerializableStateField<T, U, compressed_sz>::serialize(std::bitset<compressed_sz>* dest) {
+    return this->_is_initialized && (this->_serializer).serialize(this->_val, dest);
 }
 
 template<typename T, typename U, unsigned int compressed_sz>
-inline void SerializableStateField<T, U, compressed_sz>::deserialize(const std::bitset<compressed_sz>& src) {
-    rwMtxWLock((this->_lock));
-    (this->_serializer).deserialize(src, &(this->_val));
-    rwMtxWUnlock((this->_lock));
+inline bool SerializableStateField<T, U, compressed_sz>::deserialize(const std::bitset<compressed_sz>& src) {
+    return this->_is_initialized && (this->_serializer).deserialize(src, &(this->_val));
 }
 
 template<typename T, typename U, unsigned int compressed_sz>
-inline void SerializableStateField<T, U, compressed_sz>::print(std::string* dest) {
-    rwMtxWLock((this->_lock));
-    (this->_serializer).print(this->_val, dest);
-    rwMtxWUnlock((this->_lock));
+inline bool SerializableStateField<T, U, compressed_sz>::print(std::string* dest) {
+    return this->_is_initialized && (this->_serializer).print(this->_val, dest);
 }
 
 template <typename T, typename U, unsigned int compressed_sz>
-inline void ReadableStateField<T, U, compressed_sz>::init(StateFieldRegistry &reg,
-                                                          Serializer<T, U, compressed_sz> &s,
+inline bool ReadableStateField<T, U, compressed_sz>::init(Serializer<T, U, compressed_sz>* s,
                                                           typename StateField<T>::fetch_f fetcher,
                                                           typename StateField<T>::sanity_check_f checker)
 {
-    SerializableStateField<T,U,compressed_sz>::init(false, reg, s, fetcher, checker);
+    return SerializableStateField<T,U,compressed_sz>::init(false, s, fetcher, checker);
 }
 
 template<typename T, typename U, unsigned int compressed_sz>
-inline void WritableStateField<T, U, compressed_sz>::init(StateFieldRegistry& reg,
-                                                          Serializer<T, U, compressed_sz>& s,
+inline bool WritableStateField<T, U, compressed_sz>::init(Serializer<T, U, compressed_sz>* s,
                                                           typename StateField<T>::fetch_f fetcher,
                                                           typename StateField<T>::sanity_check_f checker)
 {
-    SerializableStateField<T,U,compressed_sz>::init(true, reg, s, fetcher, checker);                                                  
+    return SerializableStateField<T,U,compressed_sz>::init(true, s, fetcher, checker);                                                  
 }

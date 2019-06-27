@@ -7,6 +7,7 @@
 #ifndef SERIALIZER_HPP_
 #define SERIALIZER_HPP_
 
+#include "InitializationRequired.hpp"
 #include <bitset>
 #include <cmath>
 #include "GPSTime.hpp"
@@ -31,9 +32,8 @@ class SerializerConstants {
     constexpr static size_t d_quat_component_sz = 9;
 };
 
-template<typename U> class SerializerBase {
+template<typename U> class SerializerBase : public InitializationRequired {
   protected:
-    bool is_init;
     U _min;
     U _max;
 
@@ -41,13 +41,13 @@ template<typename U> class SerializerBase {
      * @brief Argumented constructor. Accepts the same arguments as init(), but
      * should NOT be used in a public-facing interface.
      */
-    SerializerBase(U min, U max) : is_init(false), _min(min), _max(max) {}
+    SerializerBase(U min, U max) : InitializationRequired(), _min(min), _max(max) {}
   public:
     /**
      * @brief Default constructor. Empty-initializes the minimum and maximum.
      * This constructor should NOT be used.
      */
-    SerializerBase() : is_init(false), _min(), _max() {}
+    SerializerBase() : InitializationRequired(), _min(), _max() {}
 
     /**
      * @brief A minimum and a maximum value must be supplied to the serializer, which 
@@ -62,10 +62,10 @@ template<typename U> class SerializerBase {
      * @param min The minimum value of the object that can be compressed.
      * @param max The maximum value of the object that can be compressed.
      */
-    void init(U min, U max) {
+    bool init(U min, U max) {
         _min = min;
         _max = max;
-        is_init = true;
+        return InitializationRequired::init();
     }
 };
 
@@ -84,8 +84,11 @@ class Serializer : SerializerBase<U> {
      * 
      * @param src 
      * @param dest 
+     * 
+     * @return True if serialization succeeded, false if serializer was
+     *         uninitialized.
      */
-    void serialize(const T &src, std::bitset<compressed_sz> *dest);
+    bool serialize(const T &src, std::bitset<compressed_sz> *dest);
 
     /**
      * @brief Deserializes a bitset and stores the result in the provided 
@@ -93,14 +96,20 @@ class Serializer : SerializerBase<U> {
      * 
      * @param src 
      * @param dest 
+     * 
+     * @return True if serialization succeeded, false if serializer was
+     *         uninitialized.
      */
-    void deserialize(const std::bitset<compressed_sz> &src, T *dest);
+    bool deserialize(const std::bitset<compressed_sz> &src, T *dest);
 
     /**
      * @brief Outputs a string representation of the source value into
      * the given destination string.
+     * 
+     * @return True if serialization succeeded, false if serializer was
+     *         uninitialized.
      */
-    void print(const T &src, std::string* dest);
+    bool print(const T &src, std::string* dest);
 };
 
 /**
@@ -111,18 +120,22 @@ class Serializer<bool, bool, static_cast<size_t>(1)> : public SerializerBase<boo
   public:
     Serializer() : SerializerBase<bool>(false, true) {}
 
-    void serialize(const bool &src, std::bitset<static_cast<size_t>(1)> *dest)
-    {
+    bool serialize(const bool &src, std::bitset<static_cast<size_t>(1)> *dest) {
+        if (!_is_initialized) return false;
         (*dest)[0] = src;
+        return true;
     }
 
-    void deserialize(const std::bitset<static_cast<size_t>(1)> &src, bool *dest)
-    {
+    bool deserialize(const std::bitset<static_cast<size_t>(1)> &src, bool *dest) {
+        if (!_is_initialized) return false;    
         *dest = src[0];
+        return true;
     }
 
-    void print(const bool &src, std::string* dest) {
+    bool print(const bool &src, std::string* dest) {
+        if (!_is_initialized) return false;
         *dest = src ? "true" : "false";
+        return true;
     }
 };
 
@@ -138,8 +151,9 @@ class Serializer<unsigned int, unsigned int, compressed_sz> : public SerializerB
         return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, compressed_sz)));
     }
 
-    void serialize(const unsigned int &src, std::bitset<compressed_sz> *dest)
-    {   
+    bool serialize(const unsigned int &src, std::bitset<compressed_sz> *dest) {   
+        if (!_is_initialized) return false;
+
         unsigned int src_copy = src;
         if (src_copy > _max)
             src_copy = _max;
@@ -148,15 +162,21 @@ class Serializer<unsigned int, unsigned int, compressed_sz> : public SerializerB
         unsigned int result_int = (src_copy - _min) / _resolution();
         std::bitset<compressed_sz> result_copy(result_int);
         *dest = result_copy;
+
+        return true;
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, unsigned int *dest)
+    bool deserialize(const std::bitset<compressed_sz> &src, unsigned int *dest)
     {
+        if (!_is_initialized) return false;
         *dest = _min + src.to_ulong() * _resolution();
+        return true;
     }
 
-    void print(const unsigned int &src, std::string* dest) {
+    bool print(const unsigned int &src, std::string* dest) {
+        if (!_is_initialized) return false;
         *dest = std::string(src);
+        return true;
     }
 };
 
@@ -173,8 +193,9 @@ class Serializer<signed int, signed int, compressed_sz> : public SerializerBase<
         return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, compressed_sz)));
     }
 
-    void serialize(const signed int &src, std::bitset<compressed_sz> *dest)
-    {
+    bool serialize(const signed int &src, std::bitset<compressed_sz> *dest) {
+        if (!_is_initialized) return false;
+
         unsigned int src_copy = src;
         if (src_copy > _max)
             src_copy = _max;
@@ -183,15 +204,20 @@ class Serializer<signed int, signed int, compressed_sz> : public SerializerBase<
         unsigned int result_int = (src_copy - _min) / _resolution();
         std::bitset<compressed_sz> result_copy(result_int);
         *dest = result_copy;
+
+        return true;
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, signed int *dest)
-    {
+    bool deserialize(const std::bitset<compressed_sz> &src, signed int *dest) {   
+        if (!_is_initialized) return false;
         *dest = _min + src.to_ulong() * _resolution();
+        return true;
     }
 
-    void print(const signed int &src, std::string* dest) {
+    bool print(const signed int &src, std::string* dest) {
+        if (!_is_initialized) return false;
         *dest = std::string(src);
+        return false;
     }
 };
 
@@ -203,13 +229,15 @@ class Serializer<float, float, compressed_sz> : public SerializerBase<float> {
   public:
     Serializer() : SerializerBase<float>(0.0f, 0.0f) {}
 
-    void init(float min, float max) {
+    bool init(float min, float max) {
         _min = min;
         _max = max;
+        return InitializationRequired::init();
     }
 
-    void serialize(const float &src, std::bitset<compressed_sz> *dest)
-    {   
+    bool serialize(const float &src, std::bitset<compressed_sz> *dest) {   
+        if (!_is_initialized) return false;
+
         float src_copy = src;
         if (src_copy > _max)
             src_copy = _max;
@@ -219,17 +247,24 @@ class Serializer<float, float, compressed_sz> : public SerializerBase<float> {
         unsigned int result_int = (unsigned int)((src_copy - _min) / resolution);
         std::bitset<compressed_sz> result_copy(result_int);
         *dest = result_copy;
+
+        return true;
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, float *dest)
-    {
+    bool deserialize(const std::bitset<compressed_sz> &src, float *dest) {
+        if (!_is_initialized) return false;
+
         unsigned long f_bits = src.to_ullong();
         float resolution = (_max - _min) / pow(2, compressed_sz);
         *dest = _min + resolution * f_bits;
+
+        return true;
     }
 
-    void print(const float &src, std::string* dest) {
+    bool print(const float &src, std::string* dest) {
+        if (!_is_initialized) return false;
         *dest = std::string(src);
+        return true;
     }
 };
 
@@ -241,13 +276,9 @@ class Serializer<double, double, compressed_sz> : public SerializerBase<double> 
   public:
     Serializer() : SerializerBase<double>(0, 0) {}
 
-    void init(double min, double max) {
-        _min = min;
-        _max = max;
-    }
+    bool serialize(const double &src, std::bitset<compressed_sz> *dest) {
+        if (!_is_initialized) return false;
 
-    void serialize(const double &src, std::bitset<compressed_sz> *dest)
-    {
         double src_copy = src;
         if (src_copy > _max)
             src_copy = _max;
@@ -257,17 +288,24 @@ class Serializer<double, double, compressed_sz> : public SerializerBase<double> 
         unsigned int result_int = (unsigned int)((src_copy - _min) / resolution);
         std::bitset<compressed_sz> result_copy(result_int);
         *dest = result_copy;
+
+        return true;
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, double *dest)
-    {
+    bool deserialize(const std::bitset<compressed_sz> &src, double *dest) {
+        if (!_is_initialized) return false;
+
         unsigned long f_bits = src.to_ullong();
         double resolution = (_max - _min) / pow(2, compressed_sz);
         return _min + resolution * f_bits;
+
+        return true;
     }
 
-    void print(const double &src, std::string* dest) {
+    bool print(const double &src, std::string* dest) {
+        if (!_is_initialized) return false;
         *dest = std::string(src);
+        return true;
     }
 };
 
@@ -279,8 +317,9 @@ class Serializer<f_vector_t, float, compressed_sz> : public SerializerBase<float
   public:
     Serializer() : SerializerBase(0.0f, 0.0f) {}
 
-    void serialize(const f_vector_t &src, std::bitset<compressed_sz> *dest)
-    {
+    bool serialize(const f_vector_t &src, std::bitset<compressed_sz> *dest) {
+        if (!_is_initialized) return false;
+
         float mag = sqrtf(powf(src[0], 2.0f) + pow(src[1], 2.0f) + pow(src[2], 2.0f));
         constexpr unsigned int magnitude_bitsize = compressed_sz - SerializerConstants::f_vec_min_sz;
         std::bitset<magnitude_bitsize> magnitude_representation;
@@ -333,10 +372,13 @@ class Serializer<f_vector_t, float, compressed_sz> : public SerializerBase<float
             (*dest).set(i, magnitude_representation[i]);
         for (int i = 0; i < SerializerConstants::f_vec_min_sz; i++)
             (*dest).set(i + magnitude_bitsize, vec_representation[i]);
+
+        return true;
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, f_vector_t *dest)
-    {
+    bool deserialize(const std::bitset<compressed_sz> &src, f_vector_t *dest) {
+        if (!_is_initialized) return false;
+
         constexpr size_t magnitude_bitsize = compressed_sz - SerializerConstants::f_vec_min_sz;
         std::bitset<magnitude_bitsize> magnitude_packed;
         for (int i = 0; i < magnitude_bitsize; i++)
@@ -368,10 +410,14 @@ class Serializer<f_vector_t, float, compressed_sz> : public SerializerBase<float
 
         for (int i = 0; i < 3; i++)
             (*dest)[i] *= magnitude;
+
+        return true;
     }
 
-    void print(const f_vector_t &src, std::string* dest) {
+    bool print(const f_vector_t &src, std::string* dest) {
+        if (!_is_initialized) return false;
         // TODO
+        return true;
     }
 };
 
@@ -382,10 +428,11 @@ template <size_t compressed_sz>
 class Serializer<d_vector_t, double, compressed_sz> : public SerializerBase<double>
 {
   public:
-    Serializer() : SerializerBase<double>(0.0) {}
+    Serializer() : SerializerBase<double>(0.0, 0.0) {}
 
-    void serialize(const d_vector_t &src, std::bitset<compressed_sz> *dest)
-    {
+    bool serialize(const d_vector_t &src, std::bitset<compressed_sz> *dest) {
+        if (!_is_initialized) return false;
+
         double mag = sqrt(pow(src[0], 2) + pow(src[1], 2) + pow(src[2], 2));
         constexpr unsigned int magnitude_bitsize = compressed_sz - SerializerConstants::d_vec_min_sz;
         std::bitset<magnitude_bitsize> magnitude_representation;
@@ -437,10 +484,13 @@ class Serializer<d_vector_t, double, compressed_sz> : public SerializerBase<doub
             (*dest).set(i, magnitude_representation[i]);
         for (int i = 0; i < SerializerConstants::d_vec_min_sz; i++)
             (*dest).set(i + magnitude_bitsize, vec_representation[i]);
+        
+        return true;
     }
 
-    void deserialize(const std::bitset<compressed_sz> &src, d_vector_t *dest)
-    {
+    bool deserialize(const std::bitset<compressed_sz> &src, d_vector_t *dest) {
+        if (!_is_initialized) return false;
+
         constexpr size_t magnitude_bitsize = compressed_sz - SerializerConstants::d_vec_min_sz;
         std::bitset<magnitude_bitsize> magnitude_packed;
         for (int i = 0; i < magnitude_bitsize; i++)
@@ -473,10 +523,14 @@ class Serializer<d_vector_t, double, compressed_sz> : public SerializerBase<doub
 
         for (int i = 0; i < 3; i++)
             (*dest)[i] *= magnitude;
+
+        return true;
     }
 
-    void print(const d_vector_t &src, std::string* dest) {
+    bool print(const d_vector_t &src, std::string* dest) {
+        if (!_is_initialized) return false;
         // TODO
+        return true;
     }
 };
 
@@ -489,8 +543,9 @@ class Serializer<f_quat_t, float, SerializerConstants::f_quat_sz> : public Seria
   public:
     Serializer() : SerializerBase<float>(0.0f, 0.0f) {}
 
-    void serialize(const f_quat_t &src, std::bitset<SerializerConstants::f_quat_sz> *dest)
-    {
+    bool serialize(const f_quat_t &src, std::bitset<SerializerConstants::f_quat_sz> *dest) {
+        if (!_is_initialized) return false;
+
         std::bitset<SerializerConstants::f_quat_component_sz> quat_element_representations[3];
         std::array<float, 4> q_mags; // Magnitudes of elements in quaternion
         for (int i = 0; i < 4; i++)
@@ -529,10 +584,13 @@ class Serializer<f_quat_t, float, SerializerConstants::f_quat_sz> : public Seria
             dest->set(i + 11, quat_element_representations[1][i]);
             dest->set(i + 20, quat_element_representations[2][i]);
         }
+
+        return true;
     }
 
-    void deserialize(const std::bitset<SerializerConstants::f_quat_sz> &src, f_quat_t *dest)
-    {
+    bool deserialize(const std::bitset<SerializerConstants::f_quat_sz> &src, f_quat_t *dest) {
+        if (!_is_initialized) return false;
+
         int missing_element = (src[0] << 1) + src[1];
         (*dest)[missing_element] = 1;
         int j = 0; // Currently processed packed quaternion element
@@ -552,10 +610,14 @@ class Serializer<f_quat_t, float, SerializerConstants::f_quat_sz> : public Seria
             }
         }
         (*dest)[missing_element] = sqrt((*dest)[missing_element]);
+
+        return true;
     }
 
-    void print(const f_quat_t &src, std::string* dest) {
+    bool print(const f_quat_t &src, std::string* dest) {
+        if (!_is_initialized) return false;
         // TODO
+        return true;
     }
 };
 
@@ -568,18 +630,22 @@ class Serializer<d_quat_t, double, SerializerConstants::d_quat_sz> : public Seri
   public:
     Serializer() : SerializerBase<double>(0.0, 0.0) {}
 
-    void serialize(const d_quat_t &src, std::bitset<SerializerConstants::d_quat_sz> *dest)
-    {
+    bool serialize(const d_quat_t &src, std::bitset<SerializerConstants::d_quat_sz> *dest) {
+        if (!_is_initialized) return false;
         // TODO
+        return true;
     }
 
-    void deserialize(const std::bitset<SerializerConstants::d_quat_sz> &src, d_quat_t *dest)
-    {
+    bool deserialize(const std::bitset<SerializerConstants::d_quat_sz> &src, d_quat_t *dest) {
+        if (!_is_initialized) return false;
         // TODO
+        return true;
     }
 
-    void print(const d_quat_t &src, std::string* dest) {
+    bool print(const d_quat_t &src, std::string* dest) {
+        if (!_is_initialized) return false;
         // TODO
+        return true;
     }
 };
 
@@ -591,12 +657,13 @@ class Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz> : public Se
   public:
     Serializer() : SerializerBase<bool>(false, false) {}
 
-    void serialize(const gps_time_t &src, std::bitset<SerializerConstants::gps_time_sz> *dest)
-    {
+    bool serialize(const gps_time_t &src, std::bitset<SerializerConstants::gps_time_sz> *dest) {
+        if (!_is_initialized) return false;
+
         if (src.is_not_set)
         {
             dest->set(0, false);
-            return;
+            return false;
         }
         dest->set(0, true);
         std::bitset<16> wn((unsigned short int)src.gpstime.wn);
@@ -605,22 +672,30 @@ class Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz> : public Se
             dest->set(i + 1, wn[i]);
         for (int i = 0; i < 32; i++)
             dest->set(i + 17, tow[i]);
+        
+        return true;
     }
 
-    void deserialize(const std::bitset<SerializerConstants::gps_time_sz> &src, gps_time_t *dest)
-    {
+    bool deserialize(const std::bitset<SerializerConstants::gps_time_sz> &src, gps_time_t *dest) {
+        if (!_is_initialized) return false;
+
         std::bitset<16> wn;
         std::bitset<32> tow;
         for (int i = 0; i < 16; i++)
             wn.set(i + 1, src[i]);
         for (int i = 0; i < 32; i++)
             tow.set(i + 1, src[16 + i]);
+        dest->is_not_set = false;
         dest->gpstime.wn = (unsigned int)wn.to_ulong();
         dest->gpstime.tow = (unsigned int)tow.to_ulong();
+
+        return true;
     }
 
-    void print(const gps_time_t &src, std::string* dest) {
+    bool print(const gps_time_t &src, std::string* dest) {
+        if (!_is_initialized) return false;
         // TODO
+        return true;
     }
 };
 
@@ -628,26 +703,28 @@ class Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz> : public Se
  * @brief Specialization of Serializer for temperature values.
  */
 template <>
-class Serializer<temperature_t, temperature_t, SerializerConstants::temp_sz> : public SerializerBase<temperature_t>
-{
+class Serializer<temperature_t, temperature_t, SerializerConstants::temp_sz> : public SerializerBase<temperature_t> {
   public:
     static constexpr temperature_t TEMPERATURE_MIN = static_cast<temperature_t>(-40);
     static constexpr temperature_t TEMPERATURE_MAX = static_cast<temperature_t>(125);
 
     Serializer() : SerializerBase<temperature_t>(TEMPERATURE_MIN, TEMPERATURE_MAX) { }
 
-    void serialize(const temperature_t &src, std::bitset<SerializerConstants::temp_sz> *dest)
-    {
+    bool serialize(const temperature_t &src, std::bitset<SerializerConstants::temp_sz> *dest) {
+        if (!_is_initialized) return false;
         // TODO
+        return true;
     }
 
-    void deserialize(const std::bitset<SerializerConstants::temp_sz> &src, temperature_t *dest)
-    {
+    bool deserialize(const std::bitset<SerializerConstants::temp_sz> &src, temperature_t *dest) {
+        if (!_is_initialized) return false;
         // TODO
+        return true;
     }
 
-    void print(const temperature_t &src, std::string* dest) {
+    bool print(const temperature_t &src, std::string* dest) {
         // TODO
+        return true;
     }
 };
 #endif

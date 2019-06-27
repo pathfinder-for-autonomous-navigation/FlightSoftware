@@ -2,6 +2,11 @@
 
 DataField::DataField(const std::string& name) : Nameable(name) {}
 
+StateFieldRegistry::StateFieldRegistry(debug_console& dbg) : 
+                                    Debuggable(dbg),
+                                    _fields_allowed_to_read(),
+                                    _fields_allowed_to_write() {}
+
 void StateFieldRegistry::operator=(const StateFieldRegistry& r) {
     _fields_allowed_to_read = r._fields_allowed_to_read;
     _fields_allowed_to_write = r._fields_allowed_to_write;
