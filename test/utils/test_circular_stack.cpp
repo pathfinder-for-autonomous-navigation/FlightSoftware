@@ -1,5 +1,5 @@
 #include <unity.h>
-#include <utils/circular_stack.hpp>
+#include <static_buffers.hpp>
 #include <array>
 #include "utils_tests.hpp"
 

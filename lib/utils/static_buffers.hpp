@@ -68,7 +68,7 @@ class static_buffer {
      * 
      * @return Maximum size of buffer.
      */
-    constexpr unsigned int size();
+    size_t size() const;
 };
 
 /** @brief An statically-allocated circular buffer data structure. 
@@ -141,7 +141,7 @@ bool static_buffer<T,S>::full() const {
 }
 
 template<typename T, size_t S>
-constexpr size_t static_buffer<T,S>::size() {
+size_t static_buffer<T,S>::size() const {
     return S;
 }
 
