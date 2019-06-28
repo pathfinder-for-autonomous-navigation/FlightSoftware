@@ -3,14 +3,14 @@
 
 #include <set>
 #include <map>
-#include <ChRt.h>
+#include <InitializationRequired.hpp>
 
 /**
  * @brief Provides access to Serial via a convenient wrapper that plays
  * well with ChibiOS.
  * 
  */
-class debug_console {
+class debug_console : public InitializationRequired {
   public:
     // Severity levels based off of https://support.solarwinds.com/SuccessCenter/s/article/Syslog-Severity-levels
     // See the article for an explanation of when to use which severity level.
@@ -31,7 +31,7 @@ class debug_console {
     /**
      * @brief Starts the debug console.
      */
-    void begin();
+    void init();
 
     /**@brief Prevent a thread from writing to the debug console. **/
     void silence_thread(thread_t* thd);

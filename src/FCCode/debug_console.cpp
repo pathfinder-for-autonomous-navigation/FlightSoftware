@@ -13,7 +13,7 @@ std::map<debug_severity, const char *> debug_console::severity_strs {
     {debug_severity::EMERGENCY, "EMERGENCY"},
 };
 
-debug_console::debug_console() : _silenced_threads() {}
+debug_console::debug_console() : InitializationRequired(), _silenced_threads() {}
 
 unsigned int debug_console::_get_elapsed_time() {
     systime_t current_time = chVTGetSystemTimeX();
@@ -52,7 +52,7 @@ void debug_console::_print_json_msg(severity s, const char* msg) {
     chMtxUnlock(&debug_console_lock);
 }
 
-void debug_console::begin() {
+bool debug_console::init() {
     Serial.begin(9600);
     pinMode(13, OUTPUT);
 
@@ -62,6 +62,8 @@ void debug_console::begin() {
     
     // TODO check if we're within a thread
     chMtxObjectInit(&debug_console_lock);
+
+    return InitializationRequired::init();
 }
 
 void debug_console::silence_thread(thread_t* thd) {
