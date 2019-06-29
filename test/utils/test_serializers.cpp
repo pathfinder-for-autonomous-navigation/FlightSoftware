@@ -1,4 +1,5 @@
 #include "utils_tests.hpp"
+#include <iostream>
 #include <Serializer.hpp>
 
 /**
@@ -42,34 +43,88 @@ void test_bool_serializer() {
  *   do not lose resolution.
  * - Bitsets with fewer bits than needed to fully contain the range
  *   of the serializer lose resolution in a predictable way.
- *   - If rounding is necessary, we round down.
+ * - Ranges that start with zero work just as well as ranges that don't
+ *   start at zero.
  */
 void test_uint_serializer() {
-    // Test a normal serializer, ranging from 0 to some value.
-    Serializer<unsigned int, unsigned int, 10> serializer;
-    serializer.init(0, 100);
+    /**
+     * Test serializer with a number of bits that is more than what's needed
+     * to represent a value in the range. Verify that all values can be
+     * represented correctly.
+     */
+    Serializer<unsigned int, unsigned int, 10> serializer; // 2^10 = 1024, which is greater than 20
+    serializer.init(0, 20);
+    
+    // Dummy variables needed for loop
+    std::bitset<10> bitset;
+    unsigned int result;
+    for (unsigned int i = 0; i <= 20; i++) {
+        serializer.serialize(i, &bitset);
+        serializer.deserialize(bitset, &result);
+        TEST_ASSERT_EQUAL(i, result);
+    }
+    // Test the same thing with a serializer that doesn't begin at zero.
+    serializer.init(5, 25);
+    for (unsigned int i = 5; i <= 25; i++)
+    {
+        serializer.serialize(i, &bitset);
+        serializer.deserialize(bitset, &result);
+        TEST_ASSERT_EQUAL(i, result);
+    }
 
-    // Test a serializer that has a non-zero start value.
-    serializer.init(10, 100);
+    /**
+     * Test serializer with a number of bits that is less than what's needed
+     * to represent a value in the range. Verify that all values can be
+     * represented correctly.
+     */
+    Serializer<unsigned int, unsigned int, 4> serializer2; // 2^4 = 16, which is less than 20
+    serializer2.init(0, 20);
 
-    // Test a serializer that 
+    // Dummy variables needed for loop
+    std::bitset<4> bitset2;
+    unsigned int result2;
+    for (unsigned int i = 0; i <= 20; i++)
+    {
+        serializer2.serialize(i, &bitset2);
+        serializer2.deserialize(bitset2, &result2);
+        TEST_ASSERT_EQUAL(i, result);
+    }
+    // Test the same thing with a serializer that doesn't begin at zero.
+    serializer2.init(5, 25);
+    for (unsigned int i = 5; i <= 25; i++)
+    {
+        serializer2.serialize(i, &bitset2);
+        serializer2.deserialize(bitset2, &result2);
+        TEST_ASSERT_EQUAL(i, result);
+    }
 }
 
 /**
  * @brief Verify that the signed int serializer properly
  * encapsulates integers of various sizes.
+ * 
+ * Success criteria:
+ * - Same as unsigned int critera, with the addition of
+ * - Ranges that start at negative values work just as well
+ *   as other range starts.
  */
 void test_sint_serializer() { /* TODO */ }
 
 /**
  * @brief Verify that the float serializer properly
  * encapsulates float values of various sizes.
+ * 
+ * Success criteria: same as signed int serializer. Comparisons
+ * for accuracy, however, cannot be an equality--they must be
+ * based on resolution thresholds.
  */
 void test_float_serializer() { /* TODO */ }
 
 /**
  * @brief Verify that the double serializer properly
  * encapsulates double values of various sizes.
+ * 
+ * Success criteria: same as float.
  */
 void test_double_serializer() { /* TODO */ }
 

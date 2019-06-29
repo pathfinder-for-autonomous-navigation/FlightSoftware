@@ -42,7 +42,7 @@ class StateMachine : public StateFieldRegistryReader<bool> {
      * @param initial_state State to set the state machine in.
      * @return True if succeeded, false if state variable is not initialized.
      */
-    bool init(unsigned int initial_state);
+    virtual bool init(unsigned int initial_state);
 
     /**
      * @brief Forcibly set the state of the state machine to a given state.

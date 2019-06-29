@@ -50,7 +50,9 @@ class debug_console : public InitializationRequired {
      */
     void println(severity s, const char* str);
 
-    /** @brief Blinks an LED at a rate of 1 Hz. */
+    /** 
+     * @brief Blinks an LED at a rate of 1 Hz. 
+     */
     void blink_led();
   private:
     mutex_t debug_console_lock;
@@ -63,5 +65,13 @@ class debug_console : public InitializationRequired {
 };
 
 typedef debug_console::severity debug_severity;
+
+// TODO add include guards to prevent use of this function during flight environments. This function
+// should be used in initialization tests only.
+//
+#define abort_if_init_fail(initialization, console) {                                             \
+    console.printf(debug_severity::ERROR, "Initialization failed at %s:%s.", __FILE__, __LINE__); \
+    return false;                                                                                 \
+  }
 
 #endif
