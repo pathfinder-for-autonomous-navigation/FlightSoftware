@@ -2,8 +2,9 @@
 #define CONTROL_TASK_HPP_
 
 #include <string>
-#include <Debuggable.hpp>
-#include <Nameable.hpp>
+#include "Debuggable.hpp"
+#include "Nameable.hpp"
+#include "ChRt.h"
 
 /**
  * @brief Dummy class used so that we can produce generic pointers to
@@ -26,7 +27,7 @@ class ControlTask : public Task, Debuggable {
     /**
      * @brief Construct a new Control Task object
      */
-    ControlTask(const std::string& name, debug_console& dbg);
+    ControlTask(const std::string& name);
     /**
      * @brief Run main method of control task.
      */
@@ -34,10 +35,9 @@ class ControlTask : public Task, Debuggable {
 };
 
 template <typename T>
-ControlTask<T>::ControlTask(const std::string& name, 
-                            debug_console& dbg) : 
+ControlTask<T>::ControlTask(const std::string& name) : 
     Task(name),
-    Debuggable(dbg) {}
+    Debuggable() {}
 
 /**
  * @brief Creates a wrapper around the ChibiOS thread interface
@@ -60,7 +60,7 @@ class ThreadedTask : public ControlTask<bool> {
      * @param name
      * @param debug 
      */
-    ThreadedTask(const std::string& name, debug_console& debug);
+    ThreadedTask(const std::string& name);
 
     /**
      * @brief Starts a threaded task immediately, with no delay and with optional
@@ -83,8 +83,8 @@ class ThreadedTask : public ControlTask<bool> {
 };
 
 template<size_t thd_working_area>
-ThreadedTask<thd_working_area>::ThreadedTask(const std::string& name, debug_console& debug) : 
-                                ControlTask<void>(name, debug), 
+ThreadedTask<thd_working_area>::ThreadedTask(const std::string& name) : 
+                                ControlTask<void>(name), 
                                 timer(),
                                 working_area(),
                                 thd(nullptr),
@@ -123,50 +123,5 @@ void ThreadedTask<thd_working_area>::start(const systime_t delay, void* args) {
   // Start timer to execute the task, resetting it if necessary
   chVTSetI(&(this->timer), delay, this->start_now, args);
 }
-
-/**
- * @brief Represents a control task specifically designed for handling
- * the actions that should be run during a state.
- * 
- */
-class StateHandler : public ControlTask<unsigned int> {
-  public:
-    /**
-     * @brief Construct a new State Handler object
-     * 
-     * @param name 
-     * @param dbg 
-     * @param only_once If this is true, the state handler is run only once by the state
-     * machine, when the machine enters the state. Otherwise, the state handler runs
-     * execute() on every dispatch of the state machine.
-     */
-    StateHandler(const std::string& name, debug_console& dbg, bool only_once = false);
-    virtual unsigned int execute() = 0;
-
-    /**
-     * @brief If true, the state handler is run only once by the state
-     * machine, when the machine enters the state. Otherwise, the state handler runs
-     * execute() on every dispatch of the state machine.
-     * 
-     */
-    bool only_execute_once;
-
-    /**
-     * @brief Tracks whether or not the execute() function has already been run once.
-     * 
-     */
-    bool has_executed;
-};
-
-/**
- * @brief Represents a control task specifically designed for handling
- * the actions that should happen during a transition between two states.
- * 
- */
-class TransitionHandler : public ControlTask<void> {
-  public:
-    using ControlTask<void>::ControlTask;
-    virtual void execute() = 0;
-};
 
 #endif

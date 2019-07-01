@@ -21,6 +21,9 @@ template<size_t num_states>
 class SMStateSerializer : public Serializer<unsigned int, unsigned int, compressed_state_size(num_states)> {
   public:
     using Serializer<unsigned int, unsigned int, compressed_state_size(num_states)>::Serializer;
+    bool init() {
+      return Serializer<unsigned int, unsigned int, compressed_state_size(num_states)>::init(0, num_states - 1);
+    }
 };
 
 /**
@@ -34,12 +37,14 @@ class SMStateField : public WritableStateField<unsigned int, unsigned int, compr
     /**
      * @brief Construct a new State Machine State Field object
      */
-    SMStateField(const std::string& name, debug_console& dbg, StateFieldRegistry& reg) : 
-                          WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>(name, dbg, reg),
+    SMStateField(const std::string& name, StateFieldRegistry& reg) : 
+                          WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>(name, reg),
                           _state_names() {}
 
-    virtual void init(SMStateSerializer<num_states>* s,
-                      typename StateField<unsigned int>::sanity_check_f checker) {
+    void init(const std::array<std::string, num_states>& state_names,
+              SMStateSerializer<num_states>* s,
+              typename StateFieldFunctions<unsigned int>::sanity_check_f checker = StateFieldFunctions<unsigned int>::null_sanity_check) {
+      _state_names = state_names;
       WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>::init(s, nullptr, checker);
     }
 

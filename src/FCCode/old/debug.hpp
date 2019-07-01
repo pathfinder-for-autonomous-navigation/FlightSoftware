@@ -5,7 +5,7 @@
  * debugging.
  */
 
-#include <debug_console.hpp>
+#include "debug_console.hpp"
 #include <ChRt.h>
 
 #ifndef DEBUG_HPP_

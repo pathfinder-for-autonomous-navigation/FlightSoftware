@@ -78,7 +78,7 @@ void pan_system_setup()
     chRegSetThreadName("startup");
 
 #ifdef DEBUG_ENABLED
-    dbg.begin();
+    dbg.init();
     debug_eeprom_initialization();
 #endif
 

@@ -8,6 +8,7 @@
 #define SERIALIZER_HPP_
 
 #include "InitializationRequired.hpp"
+#include <stdio.h>
 #include <bitset>
 #include <cmath>
 #include "GPSTime.hpp"
@@ -81,6 +82,7 @@ class SerializerBase : public InitializationRequired, public SerializerConstants
 template <typename T, typename U, size_t compressed_sz>
 class Serializer : SerializerBase<U> {
   public:
+    using SerializerBase<U>::SerializerBase;
     /**
      * @brief Serializes a given object and stores the compressed object
      * into the provided bitset.
@@ -122,6 +124,11 @@ template <>
 class Serializer<bool, bool, SerializerConstants::bool_sz> : public SerializerBase<bool> {
   public:
     Serializer() : SerializerBase<bool>(false, true) {}
+
+    bool init() {
+        // Already initialized.
+        return true;
+    }
 
     bool serialize(const bool &src, std::bitset<bool_sz> *dest) {
         if (!_is_initialized) return false;
@@ -178,7 +185,10 @@ class Serializer<unsigned int, unsigned int, compressed_sz> : public SerializerB
 
     bool print(const unsigned int &src, std::string* dest) {
         if (!_is_initialized) return false;
-        *dest = std::to_string(src);
+
+        char buf[20];
+        sprintf(buf, "%d", src);
+        *dest = buf;
         return true;
     }
 };
@@ -219,7 +229,10 @@ class Serializer<signed int, signed int, compressed_sz> : public SerializerBase<
 
     bool print(const signed int &src, std::string* dest) {
         if (!_is_initialized) return false;
-        *dest = std::to_string(src);
+
+        char buf[20];
+        sprintf(buf, "%d", src);
+        *dest = buf;
         return false;
     }
 };
@@ -266,7 +279,10 @@ class Serializer<float, float, compressed_sz> : public SerializerBase<float> {
 
     bool print(const float &src, std::string* dest) {
         if (!_is_initialized) return false;
-        *dest = std::to_string(src);
+        
+        char buf[20];
+        sprintf(buf, "%f", src);
+        *dest = buf;
         return true;
     }
 };
@@ -307,7 +323,10 @@ class Serializer<double, double, compressed_sz> : public SerializerBase<double> 
 
     bool print(const double &src, std::string* dest) {
         if (!_is_initialized) return false;
-        *dest = std::to_string(src);
+        
+        char buf[20];
+        sprintf(buf, "%f", src);
+        *dest = buf;
         return true;
     }
 };
@@ -660,6 +679,11 @@ class Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz> : public Se
   public:
     Serializer() : SerializerBase<bool>(false, false) {}
 
+    bool init() {
+        // No need for initialization.
+        return true;
+    }
+
     bool serialize(const gps_time_t &src, std::bitset<gps_time_sz> *dest) {
         if (!_is_initialized) return false;
 
@@ -712,6 +736,11 @@ class Serializer<temperature_t, temperature_t, SerializerConstants::temp_sz> : p
     static constexpr temperature_t TEMPERATURE_MAX = static_cast<temperature_t>(125);
 
     Serializer() : SerializerBase<temperature_t>(TEMPERATURE_MIN, TEMPERATURE_MAX) { }
+
+    bool init() {
+        // Already initialized by constructor.
+        return true;
+    }
 
     bool serialize(const temperature_t &src, std::bitset<temp_sz> *dest) {
         if (!_is_initialized) return false;

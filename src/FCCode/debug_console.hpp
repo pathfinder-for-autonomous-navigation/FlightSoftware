@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include <InitializationRequired.hpp>
+#include "ChRt.h"
 
 /**
  * @brief Provides access to Serial via a convenient wrapper that plays
@@ -26,12 +27,20 @@ class debug_console : public InitializationRequired {
     };
     static std::map<severity, const char *> severity_strs;
 
-    debug_console();
+    /**
+     * Factory for debug console creation that ensures that
+     * the console can only be created once.
+     */
+    static bool create(debug_console* console) {
+      static debug_console dbg;
+      console = &dbg;
+      return dbg.init();
+    }
 
     /**
      * @brief Starts the debug console.
      */
-    void init();
+    bool init();
 
     /**@brief Prevent a thread from writing to the debug console. **/
     void silence_thread(thread_t* thd);
@@ -55,6 +64,11 @@ class debug_console : public InitializationRequired {
      */
     void blink_led();
   private:
+    // Singleton, so that multiple debug consoles cannot be created.
+    debug_console();
+    debug_console(const debug_console&);
+    debug_console& operator=(const debug_console&);
+
     mutex_t debug_console_lock;
     std::set<thread_t*> _silenced_threads;
     systime_t _start_time;
@@ -69,9 +83,10 @@ typedef debug_console::severity debug_severity;
 // TODO add include guards to prevent use of this function during flight environments. This function
 // should be used in initialization tests only.
 //
-#define abort_if_init_fail(initialization, console) {                                             \
-    console.printf(debug_severity::ERROR, "Initialization failed at %s:%s.", __FILE__, __LINE__); \
-    return false;                                                                                 \
+#define abort_if_init_fail(initialization)                                                              \
+  if (!initialization) {                                                                                \
+    _dbg_console->printf(debug_severity::ERROR, "Initialization failed at %s:%s.", __FILE__, __LINE__); \
+    return false;                                                                                       \
   }
 
 #endif

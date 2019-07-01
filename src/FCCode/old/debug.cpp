@@ -13,8 +13,6 @@
 #include "debug.hpp"
 #include "controllers/controllers.hpp"
 
-debug_console dbg;
-
 void debug_eeprom_initialization() {
     chSysLock();
         EEPROM.put(EEPROM_ADDRESSES::NUM_REBOOTS_H, (unsigned int) 1);

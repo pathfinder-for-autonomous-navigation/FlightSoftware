@@ -9,14 +9,14 @@
  */
 class Debuggable {
   protected:
-    debug_console& _dbg_console;
+    debug_console* _dbg_console;
   public:
     /**
      * @brief Construct a new Debuggable object
      * 
      * @param dbg 
      */
-    Debuggable(debug_console& dbg);
+    Debuggable();
 };
 
 #endif
