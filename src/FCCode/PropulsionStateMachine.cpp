@@ -58,36 +58,22 @@ PropulsionStateMachine::PropulsionStateMachine(StateFieldRegistry &r) : StateMac
                                                                         firing_time_serializer(),
                                                                         firing_vector_serializer() {}
 
-static void _create_handlers() {
-    // Add state handlers
-    for(unsigned int i = 0; i < static_cast<unsigned int>(state_t::num_states); i++) {
-        const std::string state_handler_name = std::string("prop.state_handler.") + _state._state_names[i];
-        register_state_handler(i, new PropulsionStateHandler<(state_t) i>(state_handler_name));
-    }
-
-    // Add state transition handlers
-    for(unsigned int i = 0; i < static_cast<unsigned int>(state_transition_t::num_transitions); i++) {
-        const std::string transition_handler_name = std::string("prop.transition_handler.") + _state._state_names[i];
-        register_state_handler(i, new PropulsionTransitionHandler<(state_transition_t) i>(transition_handler_name));
-    }
-}
-
 bool PropulsionStateMachine::init(unsigned int initial_state) {
     // Initializer serializers
-    abort_if_init_fail(temperature_serializer.init());
-    abort_if_init_fail(pressure_serializer.init(0, max_serialization_pressure));
-    abort_if_init_fail(intertank_valve_serializer.init());
-    abort_if_init_fail(firing_time_serializer.init());
-    abort_if_init_fail(firing_vector_serializer.init(0, max_impulse));
+    abort_if_init_fail(temperature_serializer.init(), (this->_dbg_console));
+    abort_if_init_fail(pressure_serializer.init(0, max_serialization_pressure), (this->_dbg_console));
+    abort_if_init_fail(intertank_valve_serializer.init(), (this->_dbg_console));
+    abort_if_init_fail(firing_time_serializer.init(), (this->_dbg_console));
+    abort_if_init_fail(firing_vector_serializer.init(0, max_impulse), (this->_dbg_console));
 
     // Initialize state variables
-    abort_if_init_fail(tank_inner_temperature.init(&temperature_serializer, tank_inner_temp_fetcher, tank_inner_temp_sanity_check));
-    abort_if_init_fail(tank_outer_temperature.init(&temperature_serializer, tank_outer_temp_fetcher, tank_outer_temp_sanity_check));
-    abort_if_init_fail(tank_pressure.init(&pressure_serializer, pressure_fetcher, pressure_sanity_checker));
-    abort_if_init_fail(intertank_valve.init(&intertank_valve_serializer, StateFieldFunctions<bool>::null_fetcher, StateFieldFunctions<bool>::null_sanity_check));
-    abort_if_init_fail(firing_time.init(&firing_time_serializer, StateFieldFunctions<gps_time_t>::null_fetcher, firing_time_sanity_check));
-    abort_if_init_fail(firing_vector.init(&firing_vector_serializer, StateFieldFunctions<f_vector_t>::null_fetcher, firing_vector_sanity_check));
-    abort_if_init_fail(StateMachine<num_prop_states>::init(state_names, initial_state));
+    abort_if_init_fail(tank_inner_temperature.init(&temperature_serializer, tank_inner_temp_fetcher, tank_inner_temp_sanity_check), (this->_dbg_console));
+    abort_if_init_fail(tank_outer_temperature.init(&temperature_serializer, tank_outer_temp_fetcher, tank_outer_temp_sanity_check), (this->_dbg_console));
+    abort_if_init_fail(tank_pressure.init(&pressure_serializer, pressure_fetcher, pressure_sanity_checker), _dbg_console);
+    abort_if_init_fail(intertank_valve.init(&intertank_valve_serializer, StateFieldFunctions<bool>::null_fetcher, StateFieldFunctions<bool>::null_sanity_check), (this->_dbg_console));
+    abort_if_init_fail(firing_time.init(&firing_time_serializer, StateFieldFunctions<gps_time_t>::null_fetcher, firing_time_sanity_check), (this->_dbg_console));
+    abort_if_init_fail(firing_vector.init(&firing_vector_serializer, StateFieldFunctions<f_vector_t>::null_fetcher, firing_vector_sanity_check), (this->_dbg_console));
+    abort_if_init_fail(StateMachine<num_prop_states>::init(state_names, initial_state), (this->_dbg_console));
 
     // Allow this state machine access to its own state variables
     _registry.add_writer(static_cast<Task&>(*this), tank_inner_temperature);
@@ -97,7 +83,21 @@ bool PropulsionStateMachine::init(unsigned int initial_state) {
     _registry.add_reader(static_cast<Task&>(*this), firing_time);
     _registry.add_reader(static_cast<Task&>(*this), firing_vector);
 
-    create_handlers();
+    // Add state handlers
+    for (unsigned int i = 0; i < static_cast<unsigned int>(state_t::num_states); i++)
+    {
+        const unsigned int i_cpy = i;
+        const std::string state_handler_name = std::string("prop.state_handler.") + _state._state_names[i];
+        register_state_handler(i, new PropulsionStateHandler<(state_t)i_cpy>(state_handler_name));
+    }
+
+    // Add state transition handlers
+    for (unsigned int i = 0; i < static_cast<unsigned int>(state_transition_t::num_transitions); i++)
+    {
+        const unsigned int i_cpy = i;
+        const std::string transition_handler_name = std::string("prop.transition_handler.") + _state._state_names[i];
+        register_state_handler(i, new PropulsionTransitionHandler<(state_transition_t)i_cpy>(transition_handler_name));
+    }
 
     // Give the state and transition handlers access to their required variables
     // TODO

@@ -121,7 +121,7 @@ bool InternalStateField<T>::init(typename StateField<T>::fetch_f fetcher,
 template<typename T, typename U, unsigned int compressed_sz>
 SerializableStateField<T, U, compressed_sz>::SerializableStateField(const std::string& name,
                                                                     StateFieldRegistry& reg) : 
-                                                            StateField<T>(name), 
+                                                            StateField<T>(name, reg),
                                                             _serializer(nullptr) { }
 
 template<typename T, typename U, unsigned int compressed_sz>
@@ -130,7 +130,7 @@ inline bool SerializableStateField<T, U, compressed_sz>::init(bool gw,
                                                               typename StateFieldFunctions<T>::fetch_f fetcher,
                                                               typename StateFieldFunctions<T>::sanity_check_f checker)
 {
-    if (!s._is_initialized()) return false;
+    if (!s.is_initialized()) return false;
     _serializer = s;
     return StateField<T>::init(true, gw, fetcher, checker);
 }

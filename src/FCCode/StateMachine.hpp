@@ -15,10 +15,9 @@
  * @brief Singleton pattern used by derived classes
  * to limit construction of state machines.
  */
-#define SINGLETON(classname)                \
-    classname() {}                          \
-    classname(const classname&);            \
-    classname& operator=(const classname&);
+#define SINGLETON(classname)                        \
+    classname(const classname&) = delete;           \
+    classname& operator=(const classname&) = delete \
 
 /**
  * @brief A generic class for a state machine controller.
@@ -119,12 +118,12 @@ StateMachine<num_states>::StateMachine(const std::string& name,
                                                                 _transition_handlers(),
                                                                 _state_serializer() {
     if (!can_read(_state))
-        _dbg_console->printf(debug_severity::WARNING,
+        (this->_dbg_console)->printf(debug_severity::WARNING,
             "State machine %s does not have read access to its own state variable %s.", 
             name.c_str(),
             _state.name().c_str());
     if (!can_write(_state))
-        _dbg_console->printf(debug_severity::WARNING,
+        (this->_dbg_console)->printf(debug_severity::WARNING,
             "State machine %s does not have write access to its own state variable %s.", 
             name.c_str(),
             _state.name().c_str());

@@ -42,9 +42,6 @@ class debug_console : public InitializationRequired {
      */
     bool init();
 
-    /**@brief Prevent a thread from writing to the debug console. **/
-    void silence_thread(thread_t* thd);
-
     /**
      * @brief Prints a formatted string and prepends the process name at the beginning of the string.
      * The use of a formatted string allows for the easy printing of arbitrary data.
@@ -69,12 +66,9 @@ class debug_console : public InitializationRequired {
     debug_console(const debug_console&);
     debug_console& operator=(const debug_console&);
 
-    mutex_t debug_console_lock;
-    std::set<thread_t*> _silenced_threads;
     systime_t _start_time;
 
     unsigned int _get_elapsed_time();
-    bool _print_call_is_from_silenced_thread();
     void _print_json_msg(severity s, const char* msg);
 };
 

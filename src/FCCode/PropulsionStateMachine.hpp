@@ -21,7 +21,7 @@ class PropulsionStateMachine : public StateMachine<num_prop_states>
 {
   private:
     // Prevent multiple copies of this class, and provide a constructor for internal use.
-    SINGLETON(PropulsionStateMachine)
+    SINGLETON(PropulsionStateMachine);
     explicit PropulsionStateMachine(StateFieldRegistry &r);
 
     // TODO add propulsion devices (SpikeAndHold).

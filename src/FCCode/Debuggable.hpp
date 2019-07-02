@@ -3,6 +3,9 @@
 
 #include "debug_console.hpp"
 
+// TODO Make Debuggable a ControlTask, use (this) as a param for debug console
+// messages.
+
 /**
  * @brief Interface for a class that wants to print debug messages to console.
  * 

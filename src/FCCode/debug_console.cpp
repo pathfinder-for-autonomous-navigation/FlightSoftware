@@ -13,7 +13,8 @@ std::map<debug_severity, const char *> debug_console::severity_strs {
     {debug_severity::EMERGENCY, "EMERGENCY"},
 };
 
-debug_console::debug_console() : InitializationRequired(), _silenced_threads() {}
+debug_console::debug_console() : InitializationRequired(),
+                                 _start_time(static_cast<systime_t>(0)) {}
 
 unsigned int debug_console::_get_elapsed_time() {
     systime_t current_time = chVTGetSystemTimeX();
@@ -28,28 +29,14 @@ unsigned int debug_console::_get_elapsed_time() {
     return elapsed_time;
 }
 
-bool debug_console::_print_call_is_from_silenced_thread() {
-    thread_t* cur_thd = chThdGetSelfX();
-    if (_silenced_threads.find(cur_thd) != _silenced_threads.end()) return true;
-    return false;
-}
-
 void debug_console::_print_json_msg(severity s, const char* msg) {
-    // TODO check if we're within a thread
-    chMtxLock(&debug_console_lock);
-
     Serial.printf("{\"t\":%d,"
                    "\"svrty\":\"%s\","
-                   "\"thd\":\"%s\","
                    "\"msg\":\"%s\""
                   "}\n",
         _get_elapsed_time(),
         severity_strs.at(s),
-        chThdGetSelfX()->name,
         msg);
-    
-    // TODO check if we're within a thread
-    chMtxUnlock(&debug_console_lock);
 }
 
 bool debug_console::init() {
@@ -59,19 +46,11 @@ bool debug_console::init() {
     Serial.println("Waiting for serial console.");
     while (!Serial);
     _start_time = chVTGetSystemTimeX();
-    
-    // TODO check if we're within a thread
-    chMtxObjectInit(&debug_console_lock);
 
     return InitializationRequired::init();
 }
 
-void debug_console::silence_thread(thread_t* thd) {
-    _silenced_threads.emplace(thd);
-}
-
 void debug_console::printf(severity s, const char* format, ...) {
-    if (_print_call_is_from_silenced_thread()) return;
     char buf[1024];
     va_list args;
     va_start( args, format );
@@ -81,7 +60,6 @@ void debug_console::printf(severity s, const char* format, ...) {
 }
 
 void debug_console::println(severity s, const char* str) {
-    if (_print_call_is_from_silenced_thread()) return;
     _print_json_msg(s, str);
 }
 
