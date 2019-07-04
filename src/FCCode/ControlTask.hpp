@@ -2,7 +2,7 @@
 #define CONTROL_TASK_HPP_
 
 #include <string>
-#include "Debuggable.hpp"
+#include "debug_console.hpp"
 #include "Nameable.hpp"
 #include "ChRt.h"
 
@@ -22,7 +22,7 @@ class Task : public Nameable {
  * of execute() for different kinds of ControlTasks.
  */
 template<typename T>
-class ControlTask : public Task, Debuggable {
+class ControlTask : public Task, public Debuggable {
   public:
     /**
      * @brief Construct a new Control Task object

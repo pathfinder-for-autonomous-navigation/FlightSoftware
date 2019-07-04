@@ -35,19 +35,13 @@ class PropulsionStateMachine : public StateMachine<num_prop_states>
     temperature_t tank_inner_temp_fetcher();
     temperature_t tank_outer_temp_fetcher();
 
-    bool pressure_sanity_check(const float& pressure);
-    bool tank_inner_temp_sanity_check(const temperature_t& temp);
-    bool tank_outer_temp_sanity_check(const temperature_t& temp);
-    bool firing_time_sanity_check(const gps_time_t& time);
-    bool firing_vector_sanity_check(const f_vector_t& vec);
+    static bool pressure_sanity_check(const float& pressure);
+    static bool tank_inner_temp_sanity_check(const temperature_t& temp);
+    static bool tank_outer_temp_sanity_check(const temperature_t& temp);
+    static bool firing_time_sanity_check(const gps_time_t& time);
+    static bool firing_vector_sanity_check(const f_vector_t& vec);
 
   public:
-    /**
-     * @brief Names of available states for this state machine. These
-     * are passed to the state variable upon initialization.
-     */
-    static std::array<std::string, num_prop_states> state_names;
-
     /**
      * @brief Enumeration of available states.
      */
@@ -58,7 +52,7 @@ class PropulsionStateMachine : public StateMachine<num_prop_states>
       pressurizing,
       wait_for_inject,
       injecting,
-      num_states = injecting
+      num_states
     };
 
     /**
@@ -83,8 +77,15 @@ class PropulsionStateMachine : public StateMachine<num_prop_states>
       wait_for_inject_to_safed,
 
       injecting_to_idle,
-      num_transitions = injecting_to_idle,
+      num_transitions,
     };
+
+    /**
+     * @brief Names of available states for this state machine. These
+     * are passed to the state variable upon initialization.
+     */
+    static std::array<std::string, static_cast<unsigned int>(state_t::num_states)> state_names;
+    static std::array<std::string, static_cast<unsigned int>(state_transition_t::num_transitions)> transition_names;
 
     /**
      * @brief Constants for use within the sanity check functions.

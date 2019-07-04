@@ -51,6 +51,7 @@ bool debug_console::init() {
 }
 
 void debug_console::printf(severity s, const char* format, ...) {
+    if (!is_initialized()) return;
     char buf[1024];
     va_list args;
     va_start( args, format );
@@ -60,10 +61,12 @@ void debug_console::printf(severity s, const char* format, ...) {
 }
 
 void debug_console::println(severity s, const char* str) {
+    if (!is_initialized()) return;
     _print_json_msg(s, str);
 }
 
 void debug_console::blink_led() {
+    if (!is_initialized()) return;
     digitalWrite(13, HIGH);
     chThdSleepMilliseconds(500);
     digitalWrite(13, LOW);

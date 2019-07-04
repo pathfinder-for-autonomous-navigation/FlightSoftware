@@ -119,7 +119,7 @@ class StateFieldRegistry : public Debuggable {
  * @brief Interface for the State Field Registry.
  */
 template<typename T>
-class StateFieldRegistryReader : public ControlTask<T> {
+class StateFieldRegistryReader : protected ControlTask<T> {
   protected:
     StateFieldRegistry& _registry;
   public:
@@ -167,7 +167,7 @@ class StateFieldRegistryReader : public ControlTask<T> {
  * @tparam compressed_size Size of the state field when being sent in a downlink or uplink packet.
  */
 template<typename T>
-class StateField : public DataField, Debuggable, InitializationRequired {
+class StateField : public DataField, protected Debuggable {
   public:
     /**
      * @brief Construct a new StateField object

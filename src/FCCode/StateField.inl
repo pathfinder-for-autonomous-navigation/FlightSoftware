@@ -22,7 +22,6 @@ template<typename T>
 inline StateField<T>::StateField(const std::string& name,
                                  StateFieldRegistry& reg) : DataField(name), 
                                                             Debuggable(),
-                                                            InitializationRequired(),
                                                             _ground_readable(false),
                                                             _ground_writable(false),
                                                             _val(),
@@ -39,44 +38,44 @@ inline bool StateField<T>::init(bool gr,
     _ground_writable = gw;
     _fetcher = fetcher;
     _checker = checker;
-    return InitializationRequired::init();
+    return Debuggable::init();
 }
 
 template<typename T>
 inline bool StateField<T>::add_reader(Task& reader) {
-    if (!_is_initialized) return false;
+    if (!this->is_initialized()) return false;
     return _registry.add_reader(&reader, this);
 }
 
 template<typename T>
 inline bool StateField<T>::add_writer(Task& writer) {
-    if (!_is_initialized) return false;
+    if (!this->is_initialized()) return false;
     return _registry.add_writer(&writer, this);
 }
 
 template<typename T>
 inline DataField* StateField<T>::ptr() {
-    if (!_is_initialized) return nullptr;
+    if (!this->is_initialized()) return nullptr;
     return this;
 }
 
 template<typename T>
 inline bool StateField<T>::can_read(Task& getter) {
-    if (!_is_initialized) return false;
+    if (!this->is_initialized()) return false;
     return _registry.can_read(getter, *this);
 }
 
 template<typename T>
 inline bool StateField<T>::can_write(Task& setter) {
-    if (!_is_initialized) return false;
+    if (!this->is_initialized()) return false;
     return _registry.can_write(setter, *this);
 }
 
 template<typename T>
 inline T StateField<T>::get(Task* getter) {
-    if (!_is_initialized) return _val;
+    if (!is_initialized()) return _val;
     if (!can_read(*getter))
-        _dbg_console->printf(debug_severity::ALERT, 
+        printf(debug_severity::ALERT, 
             "Task %s illegally tried to read state field %s.", getter->name().c_str(), this->name().c_str());
 
     return _val;
@@ -84,9 +83,9 @@ inline T StateField<T>::get(Task* getter) {
 
 template<typename T>
 inline bool StateField<T>::set(Task* setter, const T& t) {
-    if (!_is_initialized) return false;
-    if (!can_write(setter))
-        _dbg_console->printf(debug_severity::ALERT, 
+    if (!is_initialized()) return false;
+    if (!can_write(*setter))
+        printf(debug_severity::ALERT, 
             "Task %s illegally tried to read state field %s.", setter->name().c_str(), this->name().c_str());
     _val = t;
     return true;
@@ -130,7 +129,7 @@ inline bool SerializableStateField<T, U, compressed_sz>::init(bool gw,
                                                               typename StateFieldFunctions<T>::fetch_f fetcher,
                                                               typename StateFieldFunctions<T>::sanity_check_f checker)
 {
-    if (!s.is_initialized()) return false;
+    if (!s->is_initialized()) return false;
     _serializer = s;
     return StateField<T>::init(true, gw, fetcher, checker);
 }

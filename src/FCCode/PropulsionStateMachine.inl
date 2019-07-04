@@ -12,7 +12,9 @@ class PropulsionStateMachine::PropulsionStateHandler<
       PropulsionStateMachine::state_t::idle> : public StateHandler {
   public:
     using StateHandler::StateHandler;
-    unsigned int execute() override { }
+    unsigned int execute() override {
+      return 0;
+    }
 };
 
 template<>
@@ -20,7 +22,9 @@ class PropulsionStateMachine::PropulsionStateHandler<
       PropulsionStateMachine::state_t::safed> : public StateHandler {
   public:
     using StateHandler::StateHandler;
-    unsigned int execute() override { }
+    unsigned int execute() override {
+      return 0;
+    }
 };
 
 template<>
@@ -28,7 +32,9 @@ class PropulsionStateMachine::PropulsionStateHandler<
       PropulsionStateMachine::state_t::wait_for_pressurize> : public StateHandler {
   public:
     using StateHandler::StateHandler;
-    unsigned int execute() override { }
+    unsigned int execute() override {
+      return 0;
+    }
 };
 
 template<>
@@ -36,7 +42,9 @@ class PropulsionStateMachine::PropulsionStateHandler<
       PropulsionStateMachine::state_t::pressurizing> : public StateHandler {
   public:
     using StateHandler::StateHandler;
-    unsigned int execute() override { }
+    unsigned int execute() override {
+      return 0;
+    }
 };
 
 template<>
@@ -44,7 +52,9 @@ class PropulsionStateMachine::PropulsionStateHandler<
       PropulsionStateMachine::state_t::wait_for_inject> : public StateHandler {
   public:
     using StateHandler::StateHandler;
-    unsigned int execute() override { }
+    unsigned int execute() override { 
+      return 0;
+    }
 };
 
 template<>
@@ -52,7 +62,9 @@ class PropulsionStateMachine::PropulsionStateHandler<
       PropulsionStateMachine::state_t::injecting> : public StateHandler {
   public:
     using StateHandler::StateHandler;
-    unsigned int execute() override { }
+    unsigned int execute() override {
+      return 0;
+    }
 };
 
 // Transition handler specializations

@@ -31,10 +31,9 @@ class debug_console : public InitializationRequired {
      * Factory for debug console creation that ensures that
      * the console can only be created once.
      */
-    static bool create(debug_console* console) {
+    static debug_console* create() {
       static debug_console dbg;
-      console = &dbg;
-      return dbg.init();
+      return &dbg;
     }
 
     /**
@@ -60,7 +59,7 @@ class debug_console : public InitializationRequired {
      * @brief Blinks an LED at a rate of 1 Hz. 
      */
     void blink_led();
-  private:
+  protected:
     // Singleton, so that multiple debug consoles cannot be created.
     debug_console();
     debug_console(const debug_console&);
@@ -74,13 +73,23 @@ class debug_console : public InitializationRequired {
 
 typedef debug_console::severity debug_severity;
 
-// TODO add include guards to prevent use of this function during flight environments. This function
-// should be used in initialization tests only.
-//
-#define abort_if_init_fail(initialization)                                                              \
-  if (!initialization) {                                                                                \
-    _dbg_console->printf(debug_severity::ERROR, "Initialization failed at %s:%s.", __FILE__, __LINE__); \
-    return false;                                                                                       \
-  }
+class Debuggable : public debug_console {
+  public:
+    Debuggable() : debug_console() {}
+};
+
+/**
+ * Macros used for BOOTL cases.
+ */
+
+#define abort_if_msg(initialization, msg)                                 \
+   if(!(initialization)) {                                                \
+     printf(debug_severity::ERROR, "%s %s:%s.", msg, __FILE__, __LINE__); \
+     return false;                                                        \
+   }
+
+#define abort_if_not(initialization) abort_if_msg(initialization, "Error occurred at ")
+
+#define abort_if_init_fail(initialization) abort_if_msg(initialization, "Initialization failed at")
 
 #endif

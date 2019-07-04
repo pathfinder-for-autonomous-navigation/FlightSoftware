@@ -8,8 +8,8 @@
 #include "ControlTask.hpp"
 #include "StateMachineTasks.hpp"
 #include "StateField.hpp"
-#include "StateMachineStateField.hpp"
-#include "Debuggable.hpp"
+#include "SMStateField.hpp"
+#include "debug_console.hpp"
 
 /**
  * @brief Singleton pattern used by derived classes
@@ -118,12 +118,12 @@ StateMachine<num_states>::StateMachine(const std::string& name,
                                                                 _transition_handlers(),
                                                                 _state_serializer() {
     if (!can_read(_state))
-        (this->_dbg_console)->printf(debug_severity::WARNING,
+        printf(debug_severity::WARNING,
             "State machine %s does not have read access to its own state variable %s.", 
             name.c_str(),
             _state.name().c_str());
     if (!can_write(_state))
-        (this->_dbg_console)->printf(debug_severity::WARNING,
+        printf(debug_severity::WARNING,
             "State machine %s does not have write access to its own state variable %s.", 
             name.c_str(),
             _state.name().c_str());
@@ -142,7 +142,7 @@ bool StateMachine<num_states>::init(const std::array<std::string, num_states>& s
                                                   // we already check this value via
                                                   // is_valid_state() assertions.
     if (!is_valid_state(initial_state)) {
-        _dbg_console->printf(debug_severity::ERROR, "Invalid state number %d passed into function.", initial_state);
+        printf(debug_severity::ERROR, "Invalid state number %d passed into function.", initial_state);
         return false;
     }
 
@@ -152,11 +152,11 @@ bool StateMachine<num_states>::init(const std::array<std::string, num_states>& s
 template<size_t num_states>
 bool StateMachine<num_states>::set_state(unsigned int state) {
     if (!is_valid_state(state)) {
-        _dbg_console->printf(debug_severity::ERROR, "Invalid state number %d passed into function.", state);
+        printf(debug_severity::ERROR, "Invalid state number %d passed into function.", state);
         return false;
     }
 
-    if(!_state.set(state)) return false;
+    if(!_state.set(this, state)) return false;
     StateHandler* state_handler = _state_handlers.at(state);
     state_handler->has_executed = false;
     
@@ -166,7 +166,7 @@ bool StateMachine<num_states>::set_state(unsigned int state) {
 template<size_t num_states>
 void StateMachine<num_states>::register_state_handler(unsigned int state, StateHandler& handler) {
     if (!is_valid_state(state))
-        _dbg_console->printf(debug_severity::ERROR, "Invalid state number %d passed into function.", state);
+        printf(debug_severity::ERROR, "Invalid state number %d passed into function.", state);
 
      _transition_handlers.emplace(state, &handler);
 }
@@ -176,12 +176,12 @@ void StateMachine<num_states>::register_transition_handler(unsigned int state_1,
                                                                     unsigned int state_2, 
                                                                     TransitionHandler& handler) {
     if (!is_valid_state(state_1))
-        _dbg_console->printf(debug_severity::ERROR, "Invalid current state number %d passed into function.", state_1);
+        printf(debug_severity::ERROR, "Invalid current state number %d passed into function.", state_1);
     if (!is_valid_state(state_2))
-        _dbg_console->printf(debug_severity::ERROR, "Invalid current state number %d passed into function.", state_2);
+        printf(debug_severity::ERROR, "Invalid current state number %d passed into function.", state_2);
 
     if (state_1 == state_2) {
-        _dbg_console->println(debug_severity::ERROR, 
+        println(debug_severity::ERROR, 
             "Should not be setting a transition handler between two of the same state.");
         return;
     }
@@ -195,14 +195,14 @@ bool StateMachine<num_states>::update_state_machine() {
     // Get current state and state handler
     const unsigned int cur_state = _state.get(this);
     if (!is_valid_state(cur_state))
-        _dbg_console->printf(debug_severity::ERROR, "Invalid state number %d for current state.", cur_state);
+        printf(debug_severity::ERROR, "Invalid state number %d for current state.", cur_state);
 
     StateHandler* state_handler = nullptr;
     try {
         state_handler = _state_handlers.at(cur_state);
     }
     catch (std::out_of_range& err) {
-        _dbg_console->printf(debug_console::ERROR, "No state handler specified for state %d!", cur_state);
+        printf(debug_console::ERROR, "No state handler specified for state %d!", cur_state);
         return false;
     }
 
@@ -213,7 +213,7 @@ bool StateMachine<num_states>::update_state_machine() {
         state_handler->has_executed = true;
 
         if (!is_valid_state(next_state)) {
-            _dbg_console->printf(debug_console::ERROR, "Invalid state %d specified for next state.", next_state);
+            printf(debug_console::ERROR, "Invalid state %d specified for next state.", next_state);
             return false;
         }
 
