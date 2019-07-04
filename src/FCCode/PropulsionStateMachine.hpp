@@ -41,6 +41,12 @@ class PropulsionStateMachine : public StateMachine<num_prop_states>
     static bool firing_time_sanity_check(const gps_time_t& time);
     static bool firing_vector_sanity_check(const f_vector_t& vec);
 
+    static constexpr StateFieldFunctions<float>::sanity_check_f pressure_sanity_checker = pressure_sanity_check;
+    static constexpr StateFieldFunctions<temperature_t>::sanity_check_f tank_inner_temp_sanity_checker = tank_inner_temp_sanity_check;
+    static constexpr StateFieldFunctions<temperature_t>::sanity_check_f tank_outer_temp_sanity_checker = tank_outer_temp_sanity_check;
+    static constexpr StateFieldFunctions<gps_time_t>::sanity_check_f firing_time_sanity_checker = firing_time_sanity_check;
+    static constexpr StateFieldFunctions<f_vector_t>::sanity_check_f firing_vector_sanity_checker = firing_vector_sanity_check;
+
   public:
     /**
      * @brief Enumeration of available states.

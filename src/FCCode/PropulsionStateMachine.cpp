@@ -95,12 +95,12 @@ bool PropulsionStateMachine::init(unsigned int initial_state) {
     abort_if_init_fail(firing_vector_serializer.init(0, max_impulse));
 
     // Initialize state variables
-    abort_if_init_fail(tank_inner_temperature.init(&temperature_serializer, tank_inner_temp_fetcher, &PropulsionStateMachine::tank_inner_temp_sanity_check));
-    abort_if_init_fail(tank_outer_temperature.init(&temperature_serializer, tank_outer_temp_fetcher, &PropulsionStateMachine::tank_outer_temp_sanity_check));
-    abort_if_init_fail(tank_pressure.init(&pressure_serializer, pressure_fetcher, &PropulsionStateMachine::pressure_sanity_check));
+    abort_if_init_fail(tank_inner_temperature.init(&temperature_serializer, tank_inner_temp_fetcher, pressure_sanity_checker));
+    abort_if_init_fail(tank_outer_temperature.init(&temperature_serializer, tank_outer_temp_fetcher, tank_outer_temp_sanity_checker));
+    abort_if_init_fail(tank_pressure.init(&pressure_serializer, pressure_fetcher, pressure_sanity_checker));
     abort_if_init_fail(intertank_valve.init(&intertank_valve_serializer, StateFieldFunctions<bool>::null_fetcher, StateFieldFunctions<bool>::null_sanity_check));
-    abort_if_init_fail(firing_time.init(&firing_time_serializer, StateFieldFunctions<gps_time_t>::null_fetcher, firing_time_sanity_check));
-    abort_if_init_fail(firing_vector.init(&firing_vector_serializer, StateFieldFunctions<f_vector_t>::null_fetcher, firing_vector_sanity_check));
+    abort_if_init_fail(firing_time.init(&firing_time_serializer, StateFieldFunctions<gps_time_t>::null_fetcher, firing_time_sanity_checker));
+    abort_if_init_fail(firing_vector.init(&firing_vector_serializer, StateFieldFunctions<f_vector_t>::null_fetcher, firing_vector_sanity_checker));
     abort_if_init_fail(StateMachine<num_prop_states>::init(state_names, static_cast<unsigned int>(state_t::safed)));
 
     // Allow this state machine access to its own state variables
