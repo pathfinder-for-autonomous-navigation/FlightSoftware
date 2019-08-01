@@ -6,6 +6,8 @@
 #ifndef STATE_FIELD_HPP_
 #define STATE_FIELD_HPP_
 
+#include <memory>
+
 #include "ControlTask.hpp"
 #include "Serializer.hpp"
 #include "InitializationRequired.hpp"
@@ -32,7 +34,10 @@ class StateFieldFunctions {
      * 
      * @return T Current value of the state.
      */
-    static T null_fetcher();
+    static T null_fetcher() {
+      static T val;
+      return val;
+    }
 
     /**
      * @brief Type definition for a pointer to function that 
@@ -43,7 +48,9 @@ class StateFieldFunctions {
     /**
      * @brief Default sanity checker. Always returns true.
      */
-    static bool null_sanity_check(const T& val);
+    static bool null_sanity_check(const T& val) {
+      return true;
+    }
 };
 
 /**
@@ -65,9 +72,9 @@ class DataField : public Nameable {
  */
 class StateFieldRegistry : public Debuggable {
   private:
-    std::map<std::string, DataField*> _fields;
-    std::map<Task*, std::vector<DataField*>> _fields_allowed_to_read;
-    std::map<Task*, std::vector<DataField*>> _fields_allowed_to_write;
+    std::map<std::string, std::shared_ptr<DataField>> _fields;
+    std::map<std::shared_ptr<Task>, std::vector<std::shared_ptr<DataField>>> _fields_allowed_to_read;
+    std::map<std::shared_ptr<Task>, std::vector<std::shared_ptr<DataField>>> _fields_allowed_to_write;
   public:
     StateFieldRegistry();
 
@@ -83,7 +90,7 @@ class StateFieldRegistry : public Debuggable {
      * @param r Task
      * @param field State field
      */
-    void add_reader(Task& r, DataField& field);
+    void add_reader(const std::shared_ptr<Task>& r, const std::shared_ptr<DataField>& field);
 
     /**
      * @brief Allows the specified Control Task to write to the specified state field.
@@ -92,7 +99,7 @@ class StateFieldRegistry : public Debuggable {
      * @param r Task
      * @param field Data field
      */
-    void add_writer(Task& w, DataField& field);
+    void add_writer(const std::shared_ptr<Task>& w, const std::shared_ptr<DataField>& field);
 
     /**
      * @brief Checks registry for read access.
@@ -102,7 +109,7 @@ class StateFieldRegistry : public Debuggable {
      * @return true If Control Task has read access to state field.
      * @return false If Control Task does not have read access to state field.
      */
-    bool can_read(Task& r, DataField& field);
+    bool can_read(const std::shared_ptr<Task>& r, const std::shared_ptr<DataField>& field);
 
     /**
      * @brief Checks registry for write access.
@@ -112,14 +119,14 @@ class StateFieldRegistry : public Debuggable {
      * @return true If Control Task has write access to state field.
      * @return false If Control Task does not have write access to state field.
      */
-    bool can_write(Task& r, DataField& field);
+    bool can_write(const std::shared_ptr<Task>& r, const std::shared_ptr<DataField>& field);
 };
 
 /**
  * @brief Interface for the State Field Registry.
  */
 template<typename T>
-class StateFieldRegistryReader : protected ControlTask<T> {
+class StateFieldRegistryReader : public ControlTask<T> {
   protected:
     StateFieldRegistry& _registry;
   public:
@@ -143,8 +150,9 @@ class StateFieldRegistryReader : protected ControlTask<T> {
      * @return true 
      * @return false 
      */
-    bool can_read(DataField& field) {
-      return (this->_registry).can_read(*this, field);
+    bool can_read(const std::shared_ptr<DataField>& field) {
+
+      return (this->_registry).can_read(std::shared_ptr<Task>(this), field);
     }
 
     /**
@@ -154,8 +162,8 @@ class StateFieldRegistryReader : protected ControlTask<T> {
      * @return true 
      * @return false 
      */
-    bool can_write(DataField& field) {
-      return (this->_registry).can_read(*this, field);
+    bool can_write(const std::shared_ptr<DataField>& field) {
+      return (this->_registry).can_read(std::shared_ptr<Task>(this), field);
     }
 };
 
@@ -167,7 +175,14 @@ class StateFieldRegistryReader : protected ControlTask<T> {
  * @tparam compressed_size Size of the state field when being sent in a downlink or uplink packet.
  */
 template<typename T>
-class StateField : public DataField, protected Debuggable {
+class StateField : public DataField, public Debuggable {
+  protected:
+    bool _ground_readable;
+    bool _ground_writable;
+    T _val;
+    StateFieldRegistry& _registry;
+    typename StateFieldFunctions<T>::fetch_f _fetcher;
+    typename StateFieldFunctions<T>::sanity_check_f _checker;
   public:
     /**
      * @brief Construct a new StateField object
@@ -177,7 +192,14 @@ class StateField : public DataField, protected Debuggable {
      * @param reg The state field registry. This is needed so that the StateField
      * can check which threads are allowed to read/write its value.
      */
-    StateField(const std::string& name, StateFieldRegistry& reg);
+    StateField(const std::string& name, StateFieldRegistry& reg) : DataField(name), 
+                                                            Debuggable(),
+                                                            _ground_readable(false),
+                                                            _ground_writable(false),
+                                                            _val(),
+                                                            _registry(reg),
+                                                            _fetcher(nullptr),
+                                                            _checker(nullptr) {}
 
     /**
      * @brief Initialize a State Field object
@@ -196,7 +218,14 @@ class StateField : public DataField, protected Debuggable {
     virtual bool init(bool gr,
                       bool gw,
                       typename StateFieldFunctions<T>::fetch_f fetcher = StateFieldFunctions<T>::null_fetcher,
-                      typename StateFieldFunctions<T>::sanity_check_f checker = StateFieldFunctions<T>::null_sanity_check);
+                      typename StateFieldFunctions<T>::sanity_check_f checker = StateFieldFunctions<T>::null_sanity_check)
+    {
+      _ground_readable = gr;
+      _ground_writable = gw;
+      _fetcher = fetcher;
+      _checker = checker;
+      return Debuggable::init();
+    }
 
     /**
      * @brief Returns a generic pointer to this state field. Useful for creating
@@ -204,7 +233,10 @@ class StateField : public DataField, protected Debuggable {
      * 
      * @return DataField* Generic pointer to this state field.
      */
-    DataField* ptr();
+    std::shared_ptr<DataField> ptr() {
+      if (!this->is_initialized()) return nullptr;
+      return this;
+    }
 
     /**
      * @brief Checks registry for read access. If the field is not initialized it
@@ -214,7 +246,10 @@ class StateField : public DataField, protected Debuggable {
      * @return true If Control Task has read access to state field.
      * @return false If Control Task does not have read access to state field.
      */
-    bool can_read(Task& r);
+    bool can_read(const std::shared_ptr<Task>& r) {
+      if (!this->is_initialized()) return false;
+      return _registry.can_read(r, std::shared_ptr<DataField>(this));
+    }
 
     /**
      * @brief Checks registry for write access. If the field is not initialized it
@@ -224,7 +259,10 @@ class StateField : public DataField, protected Debuggable {
      * @return true If Control Task has write access to state field.
      * @return false If Control Task does not have write access to state field.
      */
-    bool can_write(Task& r);
+    bool can_write(const std::shared_ptr<Task>& w) {
+      if (!this->is_initialized()) return false;
+      return _registry.can_write(w, std::shared_ptr<DataField>(this));
+    }
 
     /**
      * @brief Provides a thread with write permissions to this state field.
@@ -232,7 +270,10 @@ class StateField : public DataField, protected Debuggable {
      * @param w Thread to add as writer.
      * @return True if succeeded, false if field is not initialized.
      */
-    bool add_writer(Task& w);
+    bool add_writer(Task& w) {
+      if (!this->is_initialized()) return false;
+      return _registry.add_writer(&w, this);
+    }
 
     /**
      * @brief Provides a thread with read permissions to this state field.
@@ -240,7 +281,10 @@ class StateField : public DataField, protected Debuggable {
      * @param r Thread to add as reader.
      * @return True if succeeded, false if field is not initialized.
      */
-    bool add_reader(Task& r);
+    bool add_reader(Task& r) {
+      if (!this->is_initialized()) return false;
+      return _registry.add_reader(&r, this);
+    }
 
     /**
      * @brief Returns a copy of field data. The calling thread must have
@@ -251,7 +295,13 @@ class StateField : public DataField, protected Debuggable {
      * @return T Copy of of field value. If the field is not initialized, this
      * function fails silently (returns nonsense.)
      */
-    T get(Task* getter);
+    T get(const std::shared_ptr<Task>& getter) {
+      if (!is_initialized()) return _val;
+      if (!can_read(getter))
+          printf(debug_severity::ALERT, 
+              "Task %s illegally tried to read state field %s.", getter->name().c_str(), this->name().c_str());
+      return _val;
+    }
 
     /**
      * @brief Sets value of field data to provided value. The calling thread must have
@@ -262,7 +312,14 @@ class StateField : public DataField, protected Debuggable {
      * @param t 
      * @return True if succeeded, false if field is not initialized.
      */
-    bool set(Task* setter, const T& t);
+    bool set(const std::shared_ptr<Task>& setter, const T& t) {
+      if (!is_initialized()) return false;
+      if (!can_write(setter))
+          printf(debug_severity::ALERT, 
+             "Task %s illegally tried to read state field %s.", setter->name().c_str(), this->name().c_str());
+      _val = t;
+      return true;
+    }
 
     /**
      * @brief Fetch value by calling the fetcher function that may be provided in the 
@@ -280,7 +337,9 @@ class StateField : public DataField, protected Debuggable {
      * 
      * @return True if succeeded, false if field is not initialized.
      */
-    bool fetch(Task* setter);
+    bool fetch(const std::shared_ptr<Task>& setter) {
+      return set(setter, _fetcher());
+    }
 
     /**
      * @brief Checks the sanity of the internally contained value. Note that the
@@ -290,26 +349,24 @@ class StateField : public DataField, protected Debuggable {
      * 
      * @return True if the field value is valid, false if the field value is invalid or is uninitialized.
      */
-    bool sanity_check(Task* getter) const;
+    bool sanity_check(const std::shared_ptr<Task>& getter) const {
+      return _checker(get(getter));
+    }
 
     /**
      * @brief Accessors.
      * 
      * @{
      */
-    bool is_readable() const;
-    bool is_writable() const;
+    bool is_readable() const {
+      return _ground_readable;
+    }
+    bool is_writable() const {
+      return _ground_writable;
+    }
     /**
      * @}
      */
-
-  protected:
-    bool _ground_readable;
-    bool _ground_writable;
-    T _val;
-    StateFieldRegistry& _registry;
-    typename StateFieldFunctions<T>::fetch_f _fetcher;
-    typename StateFieldFunctions<T>::sanity_check_f _checker;
 };
 
 /**
@@ -327,7 +384,10 @@ class InternalStateField : public StateField<T> {
      * @brief Construct a new Internal State Field object (not ground readable or writable.)
      */
     bool init(typename StateField<T>::fetch_f fetcher = StateField<T>::null_fetcher,
-              typename StateField<T>::sanity_check_f checker = StateField<T>::null_sanity_check);
+              typename StateField<T>::sanity_check_f checker = StateField<T>::null_sanity_check)
+    {
+      return StateField<T>::init(false, false, fetcher, checker);
+    }
 };
 
 /**
@@ -340,9 +400,11 @@ class InternalStateField : public StateField<T> {
 template<typename T, typename U, unsigned int compressed_sz>
 class SerializableStateField : public StateField<T> {
   protected:
-    Serializer<T, U, compressed_sz>* _serializer;
+    std::shared_ptr<Serializer<T, U, compressed_sz>> _serializer;
   public:
-    SerializableStateField(const std::string& name, StateFieldRegistry& reg);
+    SerializableStateField(const std::string& name, StateFieldRegistry& reg) : 
+                                                            StateField<T>(name, reg),
+                                                            _serializer(nullptr) { }
     /**
      * @brief Initialize a new Serializable State Field object (definitely ground readable, but
      * may or may not be ground writable.)
@@ -350,9 +412,14 @@ class SerializableStateField : public StateField<T> {
      * @param s The serializer to use for serializing the field.
      */
     bool init(bool gw,
-              Serializer<T, U, compressed_sz>* s,
+              const std::shared_ptr<Serializer<T, U, compressed_sz>>& s,
               typename StateFieldFunctions<T>::fetch_f fetcher = StateFieldFunctions<T>::null_fetcher,
-              typename StateFieldFunctions<T>::sanity_check_f checker = StateFieldFunctions<T>::null_sanity_check);
+              typename StateFieldFunctions<T>::sanity_check_f checker = StateFieldFunctions<T>::null_sanity_check)
+    {
+      if (!s->is_initialized()) return false;
+      _serializer = s;
+      return StateField<T>::init(true, gw, fetcher, checker);
+    }
     
     /**
      * @brief Serialize field data into the provided bitset.
@@ -362,7 +429,9 @@ class SerializableStateField : public StateField<T> {
      * @return false If the given bitset is too small, serialization will not be possible. Also returns
      *               false if the serializer or the state field was not initialized.
      */
-    bool serialize(std::bitset<compressed_sz>* dest);
+    bool serialize(std::bitset<compressed_sz>* dest) {
+      return this->_is_initialized && (this->_serializer).serialize(this->_val, dest);
+    }
 
     /**
      * @brief Deserialize field data from the provided bitset.
@@ -372,7 +441,9 @@ class SerializableStateField : public StateField<T> {
      * @return false If the given bitset is too small, serialization will not be possible. Also returns
      *               false if the serializer or the state field was not initialized.
      */
-    bool deserialize(const std::bitset<compressed_sz>& src);
+    bool deserialize(const std::bitset<compressed_sz>& src) {
+      return this->_is_initialized && (this->_serializer).deserialize(src, &(this->_val));
+    }
 
     /**
      * @brief Write human-readable value of state field to a supplied string.
@@ -380,7 +451,9 @@ class SerializableStateField : public StateField<T> {
      * @param dest 
      * @return True if print succeeded, false if field is uninitialized.
      */
-    bool print(std::string* dest);
+    bool print(std::string* dest) {
+      return this->_is_initialized && (this->_serializer).print(this->_val, dest);
+    }
 };
 
 /**
@@ -397,10 +470,15 @@ public:
   /**
    * @brief Initialize a new Readable State Field object (readable from ground but not writable.)
    */
-  bool init(Serializer<T, U, compressed_sz>* s,
+  bool init(const std::shared_ptr<Serializer<T, U, compressed_sz>>& s,
             typename StateFieldFunctions<T>::fetch_f fetcher = StateFieldFunctions<T>::null_fetcher,
-            typename StateFieldFunctions<T>::sanity_check_f checker = StateFieldFunctions<T>::null_sanity_check);
+            typename StateFieldFunctions<T>::sanity_check_f checker = StateFieldFunctions<T>::null_sanity_check)
+  {
+    return SerializableStateField<T,U,compressed_sz>::init(false, s, fetcher, checker);
+  }
+
 };
+
 
 /**
  * @brief A state field that is writable, i.e. whose value can be modified via uplink.
@@ -415,11 +493,12 @@ class WritableStateField : public SerializableStateField<T, U, compressed_sz> {
     /**
      * @brief Initialize a new Writable State Field object (readable and writable from ground.)
      */
-    bool init(Serializer<T, U, compressed_sz>* s,
+    bool init(const std::shared_ptr<Serializer<T, U, compressed_sz>>& s,
               typename StateFieldFunctions<T>::fetch_f fetcher = StateFieldFunctions<T>::null_fetcher,
-              typename StateFieldFunctions<T>::sanity_check_f checker = StateFieldFunctions<T>::null_sanity_check);
+              typename StateFieldFunctions<T>::sanity_check_f checker = StateFieldFunctions<T>::null_sanity_check)
+    {
+      return SerializableStateField<T,U,compressed_sz>::init(true, s, fetcher, checker);                                                  
+    }
 };
-
-#include "StateField.inl"
 
 #endif

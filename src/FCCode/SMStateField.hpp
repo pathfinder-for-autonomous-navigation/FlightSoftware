@@ -42,7 +42,7 @@ class SMStateField : public WritableStateField<unsigned int, unsigned int, compr
                           _state_names() {}
 
     void init(const std::array<std::string, num_states>& state_names,
-              SMStateSerializer<num_states>* s,
+              const std::shared_ptr<SMStateSerializer<num_states>>& s,
               typename StateFieldFunctions<unsigned int>::sanity_check_f checker = StateFieldFunctions<unsigned int>::null_sanity_check) {
       _state_names = state_names;
       WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>::init(s, nullptr, checker);

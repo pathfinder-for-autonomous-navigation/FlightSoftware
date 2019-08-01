@@ -31,22 +31,6 @@ class PropulsionStateMachine : public StateMachine<num_prop_states>
     Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz> firing_time_serializer;
     Serializer<f_vector_t, float, prop_firing_sz> firing_vector_serializer;
 
-    float pressure_fetcher();
-    temperature_t tank_inner_temp_fetcher();
-    temperature_t tank_outer_temp_fetcher();
-
-    static bool pressure_sanity_check(const float& pressure);
-    static bool tank_inner_temp_sanity_check(const temperature_t& temp);
-    static bool tank_outer_temp_sanity_check(const temperature_t& temp);
-    static bool firing_time_sanity_check(const gps_time_t& time);
-    static bool firing_vector_sanity_check(const f_vector_t& vec);
-
-    static constexpr StateFieldFunctions<float>::sanity_check_f pressure_sanity_checker = pressure_sanity_check;
-    static constexpr StateFieldFunctions<temperature_t>::sanity_check_f tank_inner_temp_sanity_checker = tank_inner_temp_sanity_check;
-    static constexpr StateFieldFunctions<temperature_t>::sanity_check_f tank_outer_temp_sanity_checker = tank_outer_temp_sanity_check;
-    static constexpr StateFieldFunctions<gps_time_t>::sanity_check_f firing_time_sanity_checker = firing_time_sanity_check;
-    static constexpr StateFieldFunctions<f_vector_t>::sanity_check_f firing_vector_sanity_checker = firing_vector_sanity_check;
-
   public:
     /**
      * @brief Enumeration of available states.
@@ -90,8 +74,8 @@ class PropulsionStateMachine : public StateMachine<num_prop_states>
      * @brief Names of available states for this state machine. These
      * are passed to the state variable upon initialization.
      */
-    static std::array<std::string, static_cast<unsigned int>(state_t::num_states)> state_names;
-    static std::array<std::string, static_cast<unsigned int>(state_transition_t::num_transitions)> transition_names;
+    static const std::array<std::string, static_cast<unsigned int>(state_t::num_states)> state_names;
+    static const std::array<std::string, static_cast<unsigned int>(state_transition_t::num_transitions)> transition_names;
 
     /**
      * @brief Constants for use within the sanity check functions.
@@ -104,14 +88,8 @@ class PropulsionStateMachine : public StateMachine<num_prop_states>
 
     bool init(unsigned int initial_state);
 
-    static bool create(unsigned int initial_state,
-                       StateFieldRegistry &r,
-                       PropulsionStateMachine* dest) {
-      static PropulsionStateMachine psm(r);
-      dest = &psm;
-      return psm.init(initial_state);
-    }
-      
+    static std::unique_ptr<PropulsionStateMachine> create(StateFieldRegistry &r);
+
   protected:
     // Base classes for state machine handlers. Specialized versions defined in
     // PropulsionStateMachine.inl

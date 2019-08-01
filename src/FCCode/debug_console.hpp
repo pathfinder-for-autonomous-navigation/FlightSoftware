@@ -82,14 +82,18 @@ class Debuggable : public debug_console {
  * Macros used for BOOTL cases.
  */
 
-#define abort_if_msg(initialization, msg)                                 \
-   if(!(initialization)) {                                                \
+#define AbortIfMsg(initialization, msg, retval)                           \
+  if(initialization) {                                                    \
      printf(debug_severity::ERROR, "%s %s:%s.", msg, __FILE__, __LINE__); \
-     return false;                                                        \
+     return retval;                                                       \
    }
 
-#define abort_if_not(initialization) abort_if_msg(initialization, "Error occurred at ")
+#define AbortIf(initialization, retval) AbortIfMsg(initialization, "Error occurred at ", retval)
 
-#define abort_if_init_fail(initialization) abort_if_msg(initialization, "Initialization failed at")
+#define AbortIfNotMsg(initialization, msg, retval) AbortIfMsg(!(initialization), msg, retval)
+
+#define AbortIfNot(initialization, retval) AbortIfNotMsg(initialization, "Error occurred at ", retval)
+
+#define AbortIfInitFail(initialization, retval) AbortIfMsg(initialization, "Initialization failed at", retval)
 
 #endif
