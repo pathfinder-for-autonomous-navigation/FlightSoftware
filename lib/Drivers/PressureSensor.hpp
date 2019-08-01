@@ -8,29 +8,29 @@ namespace Devices {
  * @brief Class for interfacing with a pressure sensor.
  */
 class PressureSensor : public Device {
-public:
-  static constexpr unsigned char DEFAULT_LOW_PRESSURE_PIN = 20;
-  static constexpr unsigned char DEFAULT_HIGH_PRESSURE_PIN = 23;
+   public:
+    static constexpr unsigned char DEFAULT_LOW_PRESSURE_PIN = 20;
+    static constexpr unsigned char DEFAULT_HIGH_PRESSURE_PIN = 23;
 
-  /** @brief Construct a new Pressure Sensor object
-   *  @param low_pressure_pin Pin # attached to the low-gain ADC to measure low
-   * pressures.
-   *  @param high_pressure_pin Pin # attached to the high-gain ADC to measure
-   * high pressures.
-   */
-  PressureSensor(const std::string &name, unsigned char low_pressure_pin,
-                 unsigned char high_pressure_pin);
+    /** @brief Construct a new Pressure Sensor object
+     *  @param low_pressure_pin Pin # attached to the low-gain ADC to measure low
+     * pressures.
+     *  @param high_pressure_pin Pin # attached to the high-gain ADC to measure
+     * high pressures.
+     */
+    PressureSensor(const std::string &name, unsigned char low_pressure_pin,
+                   unsigned char high_pressure_pin);
 
-  // Device functions
-  bool setup() override;
-  bool is_functional() override;
-  void disable() override;
-  void reset() override;
+    // Device functions
+    bool setup() override;
+    bool is_functional() override;
+    void disable() override;
+    void reset() override;
 
-  float get();
+    float get();
 
-private:
-  unsigned char low_pressure_pin_, high_pressure_pin_;
+   private:
+    unsigned char low_pressure_pin_, high_pressure_pin_;
 };
 }
 

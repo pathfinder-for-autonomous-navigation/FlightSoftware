@@ -15,28 +15,28 @@
 namespace FaultState {
 namespace Gomspace {
 enum GOMSPACE_FAULTS {
-  BATTERY_VOLTAGE,
-  BOOST_VOLTAGE_1,
-  BOOST_VOLTAGE_2,
-  BOOST_VOLTAGE_3,
-  BOOST_CURRENT_1,
-  BOOST_CURRENT_2,
-  BOOST_CURRENT_3,
-  BOOST_CURRENT_TOTAL,
-  OUTPUT_PIKSI_TOGGLED,
-  OUTPUT_PIKSI_CURRENT,
-  OUTPUT_QUAKE_TOGGLED,
-  OUTPUT_QUAKE_CURRENT,
-  OUTPUT_ADCS_TOGGLED,
-  OUTPUT_ADCS_CURRENT,
-  OUTPUT_SPIKE_AND_HOLD_TOGGLED,
-  OUTPUT_SPIKE_AND_HOLD_CURRENT,
-  BATTERY_CURRENT,
-  TEMPERATURE_1,
-  TEMPERATURE_2,
-  TEMPERATURE_3,
-  TEMPERATURE_4,
-  NUMBER_FAULTS = TEMPERATURE_4
+    BATTERY_VOLTAGE,
+    BOOST_VOLTAGE_1,
+    BOOST_VOLTAGE_2,
+    BOOST_VOLTAGE_3,
+    BOOST_CURRENT_1,
+    BOOST_CURRENT_2,
+    BOOST_CURRENT_3,
+    BOOST_CURRENT_TOTAL,
+    OUTPUT_PIKSI_TOGGLED,
+    OUTPUT_PIKSI_CURRENT,
+    OUTPUT_QUAKE_TOGGLED,
+    OUTPUT_QUAKE_CURRENT,
+    OUTPUT_ADCS_TOGGLED,
+    OUTPUT_ADCS_CURRENT,
+    OUTPUT_SPIKE_AND_HOLD_TOGGLED,
+    OUTPUT_SPIKE_AND_HOLD_CURRENT,
+    BATTERY_CURRENT,
+    TEMPERATURE_1,
+    TEMPERATURE_2,
+    TEMPERATURE_3,
+    TEMPERATURE_4,
+    NUMBER_FAULTS = TEMPERATURE_4
 };
 //! Stores current faults of Gomspace system
 extern std::bitset<GOMSPACE_FAULTS::NUMBER_FAULTS> fault_bits;
@@ -45,7 +45,7 @@ extern bool vbatt_ignored;
 //! Readers-writers lock that prevents multi-process modification of Gomspace
 //! fault state data.
 extern rwmutex_t gomspace_faults_state_lock;
-} // namespace Gomspace
+}  // namespace Gomspace
 
 namespace ADCS {
 //! Ignore error for all magnetometers failing
@@ -59,17 +59,17 @@ extern bool motor_z_faulty_ignore;
 //! Readers-writers lock that prevents multi-process modification of ADCS fault
 //! state data.
 extern rwmutex_t adcs_faults_state_lock;
-} // namespace ADCS
+}  // namespace ADCS
 
 namespace Propulsion {
 //! GPS time of when an overpressure event occurred.
 extern gps_time_t overpressure_event;
 //! Type of condition that triggered overpressure event.
 enum OVERPRESSURE_EVENT {
-  NONE,
-  INNER_TANK_TEMPERATURE,
-  OUTER_TANK_TEMPERATURE,
-  OUTER_TANK_PRESSURE
+    NONE,
+    INNER_TANK_TEMPERATURE,
+    OUTER_TANK_TEMPERATURE,
+    OUTER_TANK_PRESSURE
 };
 extern OVERPRESSURE_EVENT overpressure_event_id;
 //! GPS time of a firing that was cancelled due to unstable pointing.
@@ -82,7 +82,7 @@ extern bool cannot_pressurize_outer_tank_ignored;
 //! Readers-writers lock that prevents multi-process modification of propulsion
 //! fault state data.
 extern rwmutex_t propulsion_faults_state_lock;
-} // namespace Propulsion
-} // namespace FaultState
+}  // namespace Propulsion
+}  // namespace FaultState
 
 #endif

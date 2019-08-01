@@ -23,18 +23,18 @@
  *  Implementation inspired by https://doc.qt.io/archives/qq/qq11-mutex.html.
  * **/
 struct rwmutex_t {
-  bool initialized = false;
-  //! Mutex that is locked if a process requires exclusive write access to the
-  //! data
-  // protected by this readers-writers mutex.
-  mutex_t mtx;
-  //! Semaphore that keeps track of how many readers are present on this mutex.
-  //! Locks
-  // out if either too many readers are present or if a writer is present.
-  semaphore_t sem;
-  //! The number of allowed readers on this readers-writers lock. Defaults to
-  //! 32.
-  int max_readers = 32;
+    bool initialized = false;
+    //! Mutex that is locked if a process requires exclusive write access to the
+    //! data
+    // protected by this readers-writers mutex.
+    mutex_t mtx;
+    //! Semaphore that keeps track of how many readers are present on this mutex.
+    //! Locks
+    // out if either too many readers are present or if a writer is present.
+    semaphore_t sem;
+    //! The number of allowed readers on this readers-writers lock. Defaults to
+    //! 32.
+    int max_readers = 32;
 };
 
 // TODO test this implementation!

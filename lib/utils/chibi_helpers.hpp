@@ -14,9 +14,7 @@
 #include <new>
 
 // Helper function for ChibiOS-specific placement-new
-inline void *operator new(size_t size, memory_heap_t &heap) {
-  return chHeapAlloc(&heap, size);
-}
+inline void *operator new(size_t size, memory_heap_t &heap) { return chHeapAlloc(&heap, size); }
 // Helper function for ChibiOS-specific delete
 inline void operator delete(void *ptr) { chHeapFree(ptr); }
 

@@ -5,9 +5,9 @@
  * controllers.
  */
 
-#include "../debug.hpp"
 #include <ChRt.h>
 #include <rwmutex.hpp>
+#include "../debug.hpp"
 
 #ifndef TASKS_HPP_
 #define TASKS_HPP_
@@ -92,35 +92,35 @@ constexpr tprio_t quake_thread_priority = MAX_THREAD_PRIORITY;
 
 //! Loop times for each process running within the satellite.
 class LoopTimes {
-public:
-  //! Number of milliseconds between ADCS state controller iterations
-  static constexpr unsigned int ADCS = 100;
-  //! Number of milliseconds between ADCS HAT checking iterations
-  static constexpr unsigned int ADCS_HAT_CHECK = 50;
-  //! Number of milliseconds between Gomspace state controller iterations
-  static constexpr unsigned int GOMSPACE = 1000;
-  //! Number of milliseconds between master state controller iterations
-  static constexpr unsigned int MASTER = 1000;
-  //! Number of milliseconds between GNC calculation iterations
-  static unsigned int GNC;
-  static rwmutex_t gnc_looptime_lock;
-  //! Number of milliseconds between Piksi state controller iterations
-  static constexpr unsigned int PIKSI = 100;
-  //! Number of milliseconds between system output state controller iterations
-  static constexpr unsigned int SYSTEM_OUTPUT = 100;
-  //! Number of milliseconds between propulsion actuations. This is really high
-  // so that the pressure reading has time to stabilize.
-  static constexpr unsigned int PROPULSION_ACTUATION_LOOP = 30000;
-  //! Number of milliseconds between propulsion repressurization/firing loop
-  //! iterations
-  static constexpr unsigned int PROPULSION_LOOP = 1000;
-  //! Number of milliseconds between quake controller iterations
-  static constexpr unsigned int QUAKE = 500;
+   public:
+    //! Number of milliseconds between ADCS state controller iterations
+    static constexpr unsigned int ADCS = 100;
+    //! Number of milliseconds between ADCS HAT checking iterations
+    static constexpr unsigned int ADCS_HAT_CHECK = 50;
+    //! Number of milliseconds between Gomspace state controller iterations
+    static constexpr unsigned int GOMSPACE = 1000;
+    //! Number of milliseconds between master state controller iterations
+    static constexpr unsigned int MASTER = 1000;
+    //! Number of milliseconds between GNC calculation iterations
+    static unsigned int GNC;
+    static rwmutex_t gnc_looptime_lock;
+    //! Number of milliseconds between Piksi state controller iterations
+    static constexpr unsigned int PIKSI = 100;
+    //! Number of milliseconds between system output state controller iterations
+    static constexpr unsigned int SYSTEM_OUTPUT = 100;
+    //! Number of milliseconds between propulsion actuations. This is really high
+    // so that the pressure reading has time to stabilize.
+    static constexpr unsigned int PROPULSION_ACTUATION_LOOP = 30000;
+    //! Number of milliseconds between propulsion repressurization/firing loop
+    //! iterations
+    static constexpr unsigned int PROPULSION_LOOP = 1000;
+    //! Number of milliseconds between quake controller iterations
+    static constexpr unsigned int QUAKE = 500;
 };
 
 // ADCS specific
 //! Threads waiting on a finish of ADCS detumbling
 extern threads_queue_t adcs_detumbled;
-} // namespace RTOSTasks
+}  // namespace RTOSTasks
 
 #endif

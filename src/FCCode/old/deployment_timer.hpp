@@ -11,9 +11,9 @@
 #define DEPLOYMENT_TIMER_HPP_
 
 #ifdef DEBUG_ENABLED
-static constexpr unsigned int DEPLOYMENT_LENGTH = 5; // in seconds
+static constexpr unsigned int DEPLOYMENT_LENGTH = 5;  // in seconds
 #else
-static constexpr unsigned int DEPLOYMENT_LENGTH = 30 * 60; // in seconds
+static constexpr unsigned int DEPLOYMENT_LENGTH = 30 * 60;  // in seconds
 #endif
 
 //! Thread object for the deployment timer.

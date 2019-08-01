@@ -14,7 +14,7 @@ extern circular_buffer<int, 10> inner_tank_temperature_history;
 extern circular_buffer<int, 10> outer_tank_temperature_history;
 
 extern rwmutex_t propulsion_history_state_lock;
-} // namespace Propulsion
+}  // namespace Propulsion
 namespace Piksi {
 extern circular_buffer<unsigned int, 10> iar_history;
 extern circular_buffer<unsigned int, 10> nsats_history;
@@ -22,15 +22,14 @@ extern circular_buffer<unsigned int, 10> is_float_rtk_history;
 extern circular_buffer<unsigned int, 10> is_fixed_rtk_history;
 extern circular_buffer<std::array<double, 3>, 10> recorded_position_history;
 extern circular_buffer<std::array<double, 3>, 10> recorded_velocity_history;
-extern circular_buffer<std::array<double, 3>, 10>
-    recorded_position_other_history;
+extern circular_buffer<std::array<double, 3>, 10> recorded_position_other_history;
 extern circular_buffer<std::array<double, 3>, 10> position_history;
 extern circular_buffer<std::array<double, 3>, 10> velocity_history;
 extern circular_buffer<std::array<double, 3>, 10> position_other_history;
 extern circular_buffer<std::array<double, 3>, 10> velocity_other_history;
 
 extern rwmutex_t piksi_history_state_lock;
-} // namespace Piksi
+}  // namespace Piksi
 namespace ADCS {
 extern circular_buffer<std::array<float, 3>, 10> gyro_history;
 extern circular_buffer<std::array<float, 3>, 10> gyro_fast_history;
@@ -47,7 +46,7 @@ extern circular_buffer<std::array<float, 3>, 10> mtr_cmd_history;
 extern circular_buffer<std::array<float, 3>, 10> ssa_vector_history;
 
 extern rwmutex_t adcs_history_state_lock;
-} // namespace ADCS
-} // namespace StateHistory
+}  // namespace ADCS
+}  // namespace StateHistory
 
 #endif

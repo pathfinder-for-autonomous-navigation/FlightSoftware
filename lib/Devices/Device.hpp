@@ -31,30 +31,30 @@ namespace Devices {
  *  flight computer have common functionality. This will be most useful for
  *  communications downlinks and updates on the satellites health. **/
 class Device : public Nameable {
-public:
-  using Nameable::Nameable;
+   public:
+    using Nameable::Nameable;
 
-  ~Device();
-  /** @brief Sets up communication with the device and verifies
-   *         the device is responding to communication attempts.
-   *
-   *
-   *  @returns True if device is working properly, false otherwise. **/
-  virtual bool setup();
-  /** @brief Verifies the device is responding to communications.
-   *  @returns True if device is responding to communications, false otherwise.
-   * **/
-  virtual bool is_functional();
-  /** @brief Attempts to reset a non-functional device. All error state
-   *         variables should be reset. In most cases, this should only be
-   *         be called as the result of a ground originated command. **/
-  virtual void reset();
-  /** @brief Disables a device regardless of it's current error state. In most
-   *         cases, this should only be called as the result of a ground
-   *         originated command. **/
-  virtual void disable();
+    ~Device();
+    /** @brief Sets up communication with the device and verifies
+     *         the device is responding to communication attempts.
+     *
+     *
+     *  @returns True if device is working properly, false otherwise. **/
+    virtual bool setup();
+    /** @brief Verifies the device is responding to communications.
+     *  @returns True if device is responding to communications, false otherwise.
+     * **/
+    virtual bool is_functional();
+    /** @brief Attempts to reset a non-functional device. All error state
+     *         variables should be reset. In most cases, this should only be
+     *         be called as the result of a ground originated command. **/
+    virtual void reset();
+    /** @brief Disables a device regardless of it's current error state. In most
+     *         cases, this should only be called as the result of a ground
+     *         originated command. **/
+    virtual void disable();
 };
-} // namespace Devices
+}  // namespace Devices
 
 #endif
 

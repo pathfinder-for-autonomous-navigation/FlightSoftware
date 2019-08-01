@@ -7,8 +7,8 @@ DockingSwitch::DockingSwitch(const std::string &name, unsigned char sw)
     : Device(name), switch_pin_(sw) {}
 
 bool DockingSwitch::setup() {
-  pinMode(switch_pin_, INPUT);
-  return true;
+    pinMode(switch_pin_, INPUT);
+    return true;
 }
 
 bool DockingSwitch::is_functional() { return true; }

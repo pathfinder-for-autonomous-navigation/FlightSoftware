@@ -16,21 +16,21 @@
  * fixed-size array until no more can be added.
  */
 class PacketBuilder {
-private:
-  unsigned int _pkt_ptr;
-  QuakeMessage *_pkt;
+   private:
+    unsigned int _pkt_ptr;
+    QuakeMessage *_pkt;
 
-public:
-  static constexpr unsigned int PACKET_SIZE_BYTES = 70;
-  static constexpr unsigned int PACKET_SIZE_BITS = 560;
+   public:
+    static constexpr unsigned int PACKET_SIZE_BYTES = 70;
+    static constexpr unsigned int PACKET_SIZE_BITS = 560;
 
-  PacketBuilder(QuakeMessage *pkt);
+    PacketBuilder(QuakeMessage *pkt);
 
-  template <unsigned int bitset_size>
-  bool add_field(std::bitset<bitset_size> &src);
+    template <unsigned int bitset_size>
+    bool add_field(std::bitset<bitset_size> &src);
 
-  template <typename T, unsigned int bitset_size>
-  bool add_field(StateField<T, bitset_size> &src);
+    template <typename T, unsigned int bitset_size>
+    bool add_field(StateField<T, bitset_size> &src);
 };
 
 #endif

@@ -51,7 +51,7 @@ void add_to_avg(std::array<float, 3> &avg, const std::array<float, 3> &val,
  */
 template <unsigned int size>
 void reset_avg(std::array<float, size> *avg, unsigned int *num_measurements);
-} // namespace DataCollection
+}  // namespace DataCollection
 
 #include "helpers.inl"
 

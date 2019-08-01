@@ -1,11 +1,11 @@
 #ifndef MASTER_HELPERS_HPP_
 #define MASTER_HELPERS_HPP_
 
+#include <EEPROM.h>
 #include "../../comms/uplink_struct.hpp"
 #include "../../state/EEPROMAddresses.hpp"
 #include "../../state/state_holder.hpp"
 #include "../constants.hpp"
-#include <EEPROM.h>
 
 namespace Master {
 bool safe_hold_needed();
@@ -32,6 +32,6 @@ void apply_uplink_resets();
 void apply_uplink_constants(const Comms::Uplink &uplink);
 void apply_uplink_fc_hat(const Comms::Uplink &uplink);
 void apply_uplink_adcs_hat(const Comms::Uplink &uplink);
-} // namespace Master
+}  // namespace Master
 
 #endif

@@ -14,6 +14,6 @@ void initialize_adcs_history_timers();
 void initialize_propulsion_history_timers();
 /** @brief Initialize Piksi history data collection callbacks. */
 void initialize_piksi_history_timers();
-} // namespace DataCollection
+}  // namespace DataCollection
 
 #endif

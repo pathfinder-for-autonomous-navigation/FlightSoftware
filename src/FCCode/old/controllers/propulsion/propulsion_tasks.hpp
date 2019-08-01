@@ -1,10 +1,10 @@
 #ifndef PROPULSION_THREADS_HPP_
 #define PROPULSION_THREADS_HPP_
 
+#include <ChRt.h>
 #include "../../state/state_holder.hpp"
 #include "../constants.hpp"
 #include "../controllers.hpp"
-#include <ChRt.h>
 
 namespace PropulsionTasks {
 extern thread_t *pressurizing_thread;
@@ -22,6 +22,6 @@ extern THD_FUNCTION(firing_fn, args);
 
 extern THD_WORKING_AREA(venting_thread_wa, 1024);
 extern THD_FUNCTION(venting_fn, args);
-} // namespace PropulsionTasks
+}  // namespace PropulsionTasks
 
 #endif

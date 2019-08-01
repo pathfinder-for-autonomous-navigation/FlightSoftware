@@ -8,11 +8,6 @@
 #ifndef STATE_HOLDER_HPP_
 #define STATE_HOLDER_HPP_
 
-#include "../comms/downlink_serializer.hpp"
-#include "../comms/uplink_struct.hpp"
-#include "../controllers/controllers.hpp"
-#include "device_states.hpp"
-#include "state_definitions.hpp"
 #include <AttitudeMath.hpp>
 #include <GPSTime.hpp>
 #include <Gomspace.hpp>
@@ -20,23 +15,29 @@
 #include <map>
 #include <rwmutex.hpp>
 #include <static_buffers.hpp>
+#include "../comms/downlink_serializer.hpp"
+#include "../comms/uplink_struct.hpp"
+#include "../controllers/controllers.hpp"
+#include "device_states.hpp"
+#include "state_definitions.hpp"
 
 namespace State {
 //! Helper function to read from state variables in a protected way
-template <typename T> inline T read(const T &val, rwmutex_t &lock) {
-  T val_cpy;
-  rwMtxRLock(&lock);
-  val_cpy = val;
-  rwMtxRUnlock(&lock);
-  return val_cpy;
+template <typename T>
+inline T read(const T &val, rwmutex_t &lock) {
+    T val_cpy;
+    rwMtxRLock(&lock);
+    val_cpy = val;
+    rwMtxRUnlock(&lock);
+    return val_cpy;
 }
 
 //! Helper function to write to state variables in a protected way
 template <typename T>
 inline void write(T &val, const T &new_val, rwmutex_t &lock) {
-  rwMtxWLock(&lock);
-  val = new_val;
-  rwMtxWUnlock(&lock);
+    rwMtxWLock(&lock);
+    val = new_val;
+    rwMtxWUnlock(&lock);
 }
 
 namespace Master {
@@ -64,7 +65,7 @@ extern bool autoexited_safe_hold;
 //! Readers-writers lock that prevents multi-process modification of the master
 //! state.
 extern rwmutex_t master_state_lock;
-} // namespace Master
+}  // namespace Master
 
 namespace ADCS {
 //! Finite State Machine state of ADCS system.
@@ -116,7 +117,7 @@ extern std::array<float, 20> ssa_adc_data;
 //! Readers-writers lock that prevents multi-process modification of ADCS state
 //! data.
 extern rwmutex_t adcs_state_lock;
-} // namespace ADCS
+}  // namespace ADCS
 
 namespace Gomspace {
 //! Gomspace housekeeping data.
@@ -128,7 +129,7 @@ extern Devices::Gomspace::eps_config2_t gomspace_config2;
 //! Readers-writers lock that prevents multi-process modification of Gomspace
 //! state data.
 extern rwmutex_t gomspace_state_lock;
-} // namespace Gomspace
+}  // namespace Gomspace
 
 namespace Propulsion {
 //! State of propulsion state controller.
@@ -146,7 +147,7 @@ extern unsigned char intertank_firing_valve;
 //! Readers-writers lock that prevents multi-process modification of propulsion
 //! state data.
 extern rwmutex_t propulsion_state_lock;
-} // namespace Propulsion
+}  // namespace Propulsion
 
 namespace Piksi {
 //! Current time in GPS format, as last obtained from Piksi.
@@ -178,7 +179,7 @@ extern bool is_fixed_rtk;
 //! Readers-writers lock that prevents multi-process modification of Piksi state
 //! data.
 extern rwmutex_t piksi_state_lock;
-} // namespace Piksi
+}  // namespace Piksi
 
 namespace GNC {
 //! Most recent GPS position, as last obtained from the orbit propagator.
@@ -213,7 +214,7 @@ extern bool has_firing_happened_in_nighttime;
 //! Readers-writers lock that prevents multi-process modification of GNC state
 //! data.
 extern rwmutex_t gnc_state_lock;
-} // namespace GNC
+}  // namespace GNC
 
 namespace Quake {
 //! Readers-writers lock that prevents multi-process modification of Quake state
@@ -227,8 +228,8 @@ extern Comms::Uplink most_recent_uplink;
 // to determine fault condition.
 extern gps_time_t sbdix_time_received;
 inline unsigned int msec_since_last_sbdix() {
-  return (unsigned int)(State::GNC::get_current_time() -
-                        State::read(sbdix_time_received, quake_state_lock));
+    return (unsigned int)(State::GNC::get_current_time() -
+                          State::read(sbdix_time_received, quake_state_lock));
 }
 //! Readers-writers lock that prevents multi-process modification of most recent
 //! uplink
@@ -243,7 +244,7 @@ constexpr unsigned int MAX_DOWNLINK_HISTORY = Comms::NUM_PACKETS * 10;
 //! they were
 // not forcibly required to produce a partial packet.
 extern circular_stack<QuakeMessage, MAX_DOWNLINK_HISTORY> downlink_stack;
-} // namespace Quake
-} // namespace State
+}  // namespace Quake
+}  // namespace State
 
 #endif

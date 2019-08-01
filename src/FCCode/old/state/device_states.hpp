@@ -8,7 +8,6 @@
 #ifndef DEVICE_DECLARATIONS_HPP_
 #define DEVICE_DECLARATIONS_HPP_
 
-#include "state_definitions.hpp"
 #include <ADCS.hpp>
 #include <DCDC.hpp>
 #include <Device.hpp>
@@ -24,6 +23,7 @@
 #include <TempSensor.hpp>
 #include <map>
 #include <rwmutex.hpp>
+#include "state_definitions.hpp"
 
 namespace Devices {
 //! Gomspace logical device used by flight controller code
@@ -50,7 +50,7 @@ extern TempSensor *temp_sensor_outer;
 extern DockingMotor *docking_motor;
 //! Docking switch
 extern DockingSwitch *docking_switch;
-} // namespace Devices
+}  // namespace Devices
 
 namespace State {
 namespace Hardware {
@@ -99,7 +99,7 @@ extern mutex_t temp_sensor_outer_device_lock;
 extern mutex_t docking_motor_device_lock;
 //! Protects access to docking switch.
 extern mutex_t docking_switch_device_lock;
-} // namespace Hardware
+}  // namespace Hardware
 
 namespace ADCS {
 //! Hardware availability table of devices attached to ADCS.
@@ -107,7 +107,7 @@ extern std::map<std::string, Hardware::DeviceState> adcs_hat;
 //! Readers-writers lock that prevents multi-process modification of hardware
 //! availability table data.
 extern rwmutex_t adcs_hardware_state_lock;
-} // namespace ADCS
-} // namespace State
+}  // namespace ADCS
+}  // namespace State
 
 #endif

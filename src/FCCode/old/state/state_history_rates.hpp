@@ -5,13 +5,12 @@
 namespace StateHistory {
 namespace Rates {
 
-constexpr unsigned int COLLECTION_PERIOD =
-    300000; // Collect five minutes worth of data in buffers
+constexpr unsigned int COLLECTION_PERIOD = 300000;  // Collect five minutes worth of data in buffers
 namespace Propulsion {
 constexpr unsigned int tank_pressure_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int inner_tank_temperature_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int outer_tank_temperature_history = COLLECTION_PERIOD / 10;
-} // namespace Propulsion
+}  // namespace Propulsion
 namespace Piksi {
 constexpr unsigned int iar_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int nsats_history = COLLECTION_PERIOD / 10;
@@ -24,7 +23,7 @@ constexpr unsigned int position_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int velocity_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int position_other_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int velocity_other_history = COLLECTION_PERIOD / 10;
-} // namespace Piksi
+}  // namespace Piksi
 namespace ADCS {
 constexpr unsigned int gyro_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int gyro_fast_history = COLLECTION_PERIOD / 10;
@@ -39,9 +38,9 @@ constexpr unsigned int magnetometer_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int rwa_ramp_cmd_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int mtr_cmd_history = COLLECTION_PERIOD / 10;
 constexpr unsigned int ssa_vector_history = COLLECTION_PERIOD / 10;
-} // namespace ADCS
+}  // namespace ADCS
 
-} // namespace Rates
-} // namespace StateHistory
+}  // namespace Rates
+}  // namespace StateHistory
 
 #endif
