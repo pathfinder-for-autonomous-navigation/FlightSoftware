@@ -13,12 +13,12 @@
 namespace Devices {
 
 class ADCS : public I2CDevice {
- public:
+public:
   static constexpr unsigned int ADDRESS = 0x00;
   /** **/
   virtual bool i2c_ping() override;
   /** **/
-  ADCS(const std::string& name, i2c_t3 &i2c_wire, unsigned char address);
+  ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address);
   /** **/
   void set_mode(unsigned char mode);
   /** **/
@@ -53,7 +53,6 @@ class ADCS : public I2CDevice {
   /** **/
   void update_hat();
 };
-
 }
 
 #endif

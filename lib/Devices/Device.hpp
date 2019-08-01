@@ -2,7 +2,8 @@
  * @author Tanishq Aggarwal
  * @author Kyle Krol
  * @date 6 Feb 2018
- * @brief Contains declaration for Device interface, which standardizes the access
+ * @brief Contains declaration for Device interface, which standardizes the
+ * access
  * and control of hardware peripherals.
  */
 
@@ -30,7 +31,7 @@ namespace Devices {
  *  flight computer have common functionality. This will be most useful for
  *  communications downlinks and updates on the satellites health. **/
 class Device : public Nameable {
- public:
+public:
   using Nameable::Nameable;
 
   ~Device();
@@ -53,7 +54,7 @@ class Device : public Nameable {
    *         originated command. **/
   virtual void disable();
 };
-}  // namespace Devices
+} // namespace Devices
 
 #endif
 

@@ -133,6 +133,6 @@ struct Registers {
 /** @brief External, volatile struct to hold all i2c register information. **/
 extern struct Registers volatile reg;
 
-}  // namespace global_1_0
+} // namespace global_1_0
 
 #endif
