@@ -94,8 +94,10 @@ class PropulsionStateMachine : public StateMachine<num_prop_states> {
     static std::unique_ptr<PropulsionStateMachine> create(StateFieldRegistry &r);
 
    protected:
-    // Base classes for state machine handlers. Specialized versions defined in
-    // PropulsionStateMachine.inl
+    /**
+     * @brief Base classes for state machine handlers. Specialized versions
+     * defined in PropulsionStateMachine.inl
+     */
     template <state_t state>
     class PropulsionStateHandler : public StateHandler {};
     template <state_transition_t transition>
