@@ -71,7 +71,9 @@ static void quake_loop() {
                     Quake::transceiving_thread_priority, Quake::transceiving_fn, NULL);
             }
         }; break;
-        default: { Quake::go_to_waiting(); }
+        default: {
+            Quake::go_to_waiting();
+        }
     }
 }
 

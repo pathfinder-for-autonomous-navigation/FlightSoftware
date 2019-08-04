@@ -23,6 +23,6 @@ class SystemOutput : public Device {
    private:
     HardwareSerial &_serial_port;
 };
-}
+}  // namespace Devices
 
 #endif

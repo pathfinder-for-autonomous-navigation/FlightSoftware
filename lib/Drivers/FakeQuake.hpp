@@ -6,7 +6,7 @@
 namespace Devices {
 class FakeQuake : public QLocate {
     /*! Sets the QLocate serial port and serial timeout value. Do not initialize
-    *  the serial port with begin(), it will be done in the constructor. */
+     *  the serial port with begin(), it will be done in the constructor. */
     using QLocate::QLocate;
 
     bool is_functional() override;
@@ -21,6 +21,6 @@ class FakeQuake : public QLocate {
 
     int sbdrb() override;
 };
-}
+}  // namespace Devices
 
 #endif

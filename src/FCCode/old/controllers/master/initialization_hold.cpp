@@ -25,9 +25,8 @@ void Master::initialization_hold() {
                          State::ADCS::adcs_state_lock);
             chThdEnqueueTimeoutS(
                 &RTOSTasks::adcs_detumbled,
-                S2ST(
-                    Constants::Master::INITIALIZATION_HOLD_DETUMBLE_WAIT));  // Wait for detumble to
-                                                                             // finish.
+                S2ST(Constants::Master::INITIALIZATION_HOLD_DETUMBLE_WAIT));  // Wait for detumble
+                                                                              // to finish.
         }
     }
     // Quake controller will send packets automatically once deployment happens.

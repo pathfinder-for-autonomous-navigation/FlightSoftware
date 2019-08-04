@@ -247,6 +247,6 @@ class Gomspace : public I2CDevice {
     void _hk_wdt_endian_flip();
     void _hk_basic_endian_flip();
 };
-}
+}  // namespace Devices
 
 #endif

@@ -5,22 +5,12 @@
 #include "StateField.hpp"
 
 /**
- * @brief Represents a control task specifically designed for handling
+ * @brief Represents a control ControlTaskBase specifically designed for handling
  * the actions that should be run during a state.
  *
  */
-class StateHandler : public StateFieldRegistryReader<unsigned int> {
+class StateHandler : public ControlTask<unsigned int> {
    public:
-    /**
-     * @brief Construct a new State Handler object
-     *
-     * @param only_once If this is true, the state handler is run only once by the
-     * state machine, when the machine enters the state. Otherwise, the state
-     * handler runs execute() on every dispatch of the state machine.
-     */
-    StateHandler(const std::string &name, StateFieldRegistry &r, bool only_once = false);
-    virtual unsigned int execute() = 0;
-
     /**
      * @brief If true, the state handler is run only once by the state
      * machine, when the machine enters the state. Otherwise, the state handler
@@ -34,17 +24,30 @@ class StateHandler : public StateFieldRegistryReader<unsigned int> {
      * once.
      *
      */
-    bool has_executed;
+    bool has_executed = false;
+
+    /**
+     * @brief Construct a new State Handler object
+     *
+     * @param only_once If this is true, the state handler is run only once by the
+     * state machine, when the machine enters the state. Otherwise, the state
+     * handler runs execute() on every dispatch of the state machine.
+     */
+    StateHandler(const std::string &name, const std::shared_ptr<StateFieldRegistry> &r,
+                 bool only_once = false)
+        : ControlTask<unsigned int>(name, r), only_execute_once(only_once) {}
+
+    virtual unsigned int execute() = 0;
 };
 
 /**
- * @brief Represents a control task specifically designed for handling
+ * @brief Represents a control ControlTaskBase specifically designed for handling
  * the actions that should happen during a transition between two states.
  *
  */
-class TransitionHandler : public StateFieldRegistryReader<void> {
+class TransitionHandler : public ControlTask<void> {
    public:
-    using StateFieldRegistryReader<void>::StateFieldRegistryReader;
+    using ControlTask<void>::ControlTask;
     virtual void execute() = 0;
 };
 

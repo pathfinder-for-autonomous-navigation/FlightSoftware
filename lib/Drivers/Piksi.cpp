@@ -80,9 +80,8 @@ void Piksi::write_default_settings() {
     const char *gpgsv_output_rate = "nmea\000gpgsv msg rate\0000";
     const char *gprmc_output_rate = "nmea\000gprmc msg rate\0000";
     const char *gpvtg_output_rate = "nmea\000gpvtg msg rate\0000";
-    const char *obs_msg_max_size =
-        "sbp\000obs msg max size\000102";  // This is a default specified by
-                                           // SwiftNav
+    const char *obs_msg_max_size = "sbp\000obs msg max size\000102";  // This is a default specified
+                                                                      // by SwiftNav
     const char *obs_output_rate = "solution\000output every n obs\0001";
     const char *soln_frequency =
         "solution\000soln freq\00010";  // This is a default specified by SwiftNav
@@ -104,9 +103,8 @@ void Piksi::write_default_settings() {
         "uart uarta\000sbp message mask\0000x0840";  // MSG_OBS | MSG_USER_DATA
     const char *uart_a_configure_radio_on_boot =
         "uart uarta\000configure telemetry radio on boot\000true";
-    const char *uart_a_baudrate =
-        "uart uarta\000baudrate\00057600";  // This is a default specified by
-                                            // SwiftNav
+    const char *uart_a_baudrate = "uart uarta\000baudrate\00057600";  // This is a default specified
+                                                                      // by SwiftNav
 
     // UART B (controller) output mask.
     const char *uart_b_output_mask =
@@ -114,9 +112,8 @@ void Piksi::write_default_settings() {
                                                      // controller
     const char *uart_b_configure_radio_on_boot =
         "uart uarta\000configure telemetry radio on boot\000false";
-    const char *uart_b_baudrate =
-        "uart uarta\000baudrate\000115200";  // This is a default specified by
-                                             // SwiftNav
+    const char *uart_b_baudrate = "uart uarta\000baudrate\000115200";  // This is a default
+                                                                       // specified by SwiftNav
 
     // Now write the settings to the device!
     const char *settings[] = {gpgll_output_rate,

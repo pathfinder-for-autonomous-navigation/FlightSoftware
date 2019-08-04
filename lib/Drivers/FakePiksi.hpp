@@ -31,6 +31,6 @@ class FakePiksi : public Piksi {
     void get_base_pos_ecef(std::array<double, 3> *position) override;
     unsigned int get_iar() override;
 };
-}
+}  // namespace Devices
 
 #endif

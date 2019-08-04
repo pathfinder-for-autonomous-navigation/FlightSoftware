@@ -60,21 +60,21 @@ static void start_satellite_processes() {
         system_output_controller_workingArea, sizeof(system_output_controller_workingArea),
         system_output_thread_priority, system_output_controller, NULL);
 
-// dbg.println(debug_severity::INFO, "Starting propulsion controller
-// process."); propulsion_thread =
-// chThdCreateStatic(propulsion_controller_workingArea,
-// sizeof(propulsion_controller_workingArea),
-//     propulsion_thread_priority, propulsion_controller, NULL);
+    // dbg.println(debug_severity::INFO, "Starting propulsion controller
+    // process."); propulsion_thread =
+    // chThdCreateStatic(propulsion_controller_workingArea,
+    // sizeof(propulsion_controller_workingArea),
+    //     propulsion_thread_priority, propulsion_controller, NULL);
 
-// dbg.println(debug_severity::INFO, "Starting Quake radio controller
-// process."); quake_thread = chThdCreateStatic(quake_controller_workingArea,
-// sizeof(quake_controller_workingArea),
-//     quake_thread_priority, quake_controller, NULL);
+    // dbg.println(debug_severity::INFO, "Starting Quake radio controller
+    // process."); quake_thread = chThdCreateStatic(quake_controller_workingArea,
+    // sizeof(quake_controller_workingArea),
+    //     quake_thread_priority, quake_controller, NULL);
 
-// dbg.println(debug_severity::INFO, "Starting master controller process.");
-// master_thread = chThdCreateStatic(master_controller_workingArea,
-// sizeof(master_controller_workingArea),
-//     master_thread_priority, master_controller, NULL);
+    // dbg.println(debug_severity::INFO, "Starting master controller process.");
+    // master_thread = chThdCreateStatic(master_controller_workingArea,
+    // sizeof(master_controller_workingArea),
+    //     master_thread_priority, master_controller, NULL);
 
 #ifdef DEBUG_ENABLED
     (void)chThdCreateStatic(debug_workingArea, sizeof(debug_workingArea), NORMALPRIO,

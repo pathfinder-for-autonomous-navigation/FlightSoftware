@@ -23,7 +23,7 @@
  * @brief A generic class for a state machine controller.
  */
 template <size_t num_states>
-class StateMachine : public StateFieldRegistryReader<bool> {
+class StateMachine : public ControlTask<bool> {
    public:
     /**
      * @brief Checks if provided state is a valid state. The
@@ -94,27 +94,27 @@ class StateMachine : public StateFieldRegistryReader<bool> {
      * instantiated; only derived classes can, and they must specify an explicit
      * public constructor.
      *
-     * @param sv Variable that contains the state upon which this state machine
-     * acts.
-     * @param dbg_console Console for outputting state machine error messages, if
+     * @param name Name of state machine, as should be registered as a ControlTask.
+     * @param state_name Name to set for the state machine state variable.
+     * @param r Reference to a state field registry.
      * any.
      */
-    StateMachine(const std::string &name, const std::string &state_name, StateFieldRegistry &r);
+    StateMachine(const std::string &name, const std::string &state_name,
+                 const std::shared_ptr<StateFieldRegistry> &r);
 
     SMStateField<num_states> _state;
     std::map<unsigned int, std::shared_ptr<StateHandler>> _state_handlers;
     std::map<std::pair<unsigned int, unsigned int>, std::shared_ptr<TransitionHandler>>
         _transition_handlers;
 
-   private:
     SMStateSerializer<num_states> _state_serializer;
 };
 
 template <size_t num_states>
 StateMachine<num_states>::StateMachine(const std::string &name, const std::string &state_name,
-                                       StateFieldRegistry &r)
-    : StateFieldRegistryReader(name, r),
-      _state(state_name, r),
+                                       const std::shared_ptr<StateFieldRegistry> &r)
+    : ControlTask(name, r),
+      _state(state_name),
       _state_handlers(),
       _transition_handlers(),
       _state_serializer() {}
@@ -152,7 +152,7 @@ bool StateMachine<num_states>::set_state(unsigned int state) {
         return false;
     }
 
-    if (!_state.set(std::shared_ptr<Task>(this), state)) return false;
+    if (!_state.set(std::shared_ptr<ControlTask<bool>>(this), state)) return false;
     std::shared_ptr<StateHandler> state_handler = _state_handlers.at(state);
     state_handler->has_executed = false;
 
@@ -192,7 +192,7 @@ void StateMachine<num_states>::register_transition_handler(
 template <size_t num_states>
 bool StateMachine<num_states>::update_state_machine() {
     // Get current state and state handler
-    const unsigned int cur_state = _state.get(std::shared_ptr<Task>(this));
+    const unsigned int cur_state = _state.get(std::shared_ptr<ControlTask<bool>>(this));
     if (!is_valid_state(cur_state))
         printf(debug_severity::ERROR, "Invalid state number %d for current state.", cur_state);
 

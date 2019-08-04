@@ -15,6 +15,6 @@ extern THD_FUNCTION(orbit_propagator_controller, arg);
 constexpr tprio_t orbit_propagator_thread_priority = RTOSTasks::MAX_THREAD_PRIORITY;
 //! Milliseconds between orbit propagator repetitions
 constexpr unsigned int ORBIT_PROPAGATOR_DELTA_T = 100;
-}
+}  // namespace GNC
 
 #endif

@@ -258,6 +258,6 @@ class Piksi : public Device {
     msg_uart_state_t _uart_state;
     msg_user_data_t _user_data;
 };
-}
+}  // namespace Devices
 
 #endif

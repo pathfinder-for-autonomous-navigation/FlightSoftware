@@ -82,5 +82,5 @@ struct Uplink {
     bool power_cycle_adcs_system;
     bool power_cycle_spike_and_hold;
 };
-}
+}  // namespace Comms
 #endif

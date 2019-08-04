@@ -9,7 +9,9 @@ std::map<debug_severity, const char *> debug_console::severity_strs{
     {debug_severity::ALERT, "ALERT"},   {debug_severity::EMERGENCY, "EMERGENCY"},
 };
 
-debug_console::debug_console() : InitializationRequired(), _start_time(static_cast<systime_t>(0)) {}
+// Static initialization of debugger.
+systime_t debug_console::_start_time = static_cast<systime_t>(0);
+bool debug_console::is_init = false;
 
 unsigned int debug_console::_get_elapsed_time() {
     systime_t current_time = chVTGetSystemTimeX();
@@ -34,19 +36,19 @@ void debug_console::_print_json_msg(severity s, const char *msg) {
 }
 
 bool debug_console::init() {
+    is_init = true;
     Serial.begin(9600);
     pinMode(13, OUTPUT);
 
     Serial.println("Waiting for serial console.");
-    while (!Serial)
-        ;
+    while (!Serial);
     _start_time = chVTGetSystemTimeX();
-
-    return InitializationRequired::init();
+    
+    return is_init;
 }
 
 void debug_console::printf(severity s, const char *format, ...) {
-    if (!is_initialized()) return;
+    if (!is_init) return;
     char buf[1024];
     va_list args;
     va_start(args, format);
@@ -56,12 +58,12 @@ void debug_console::printf(severity s, const char *format, ...) {
 }
 
 void debug_console::println(severity s, const char *str) {
-    if (!is_initialized()) return;
+    if (!is_init) return;
     _print_json_msg(s, str);
 }
 
 void debug_console::blink_led() {
-    if (!is_initialized()) return;
+    if (!is_init) return;
     digitalWrite(13, HIGH);
     chThdSleepMilliseconds(500);
     digitalWrite(13, LOW);

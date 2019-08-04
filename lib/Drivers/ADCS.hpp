@@ -52,6 +52,6 @@ class ADCS : public I2CDevice {
     /** **/
     void update_hat();
 };
-}
+}  // namespace Devices
 
 #endif

@@ -64,6 +64,6 @@ class DockingMotor : public Device {
     //! configuration.
     bool docked_;
 };
-}
+}  // namespace Devices
 
 #endif

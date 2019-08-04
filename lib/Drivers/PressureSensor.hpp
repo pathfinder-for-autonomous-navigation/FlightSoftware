@@ -32,6 +32,6 @@ class PressureSensor : public Device {
    private:
     unsigned char low_pressure_pin_, high_pressure_pin_;
 };
-}
+}  // namespace Devices
 
 #endif

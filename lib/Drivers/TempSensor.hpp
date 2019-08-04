@@ -14,7 +14,7 @@ class TempSensor : public Device {
 
     /** @brief Construct a new Pressure Sensor object.
      * @param pin Pin # that temperature sensor is attached to.
-    */
+     */
     TempSensor(const std::string &name, unsigned char pin);
 
     // Device functions
@@ -28,6 +28,6 @@ class TempSensor : public Device {
    private:
     unsigned char pin_;
 };
-}
+}  // namespace Devices
 
 #endif

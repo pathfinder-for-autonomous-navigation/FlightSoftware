@@ -7,7 +7,7 @@
 #include "Serializer.hpp"
 #include "StateField.hpp"
 
-inline constexpr size_t compressed_state_size(size_t num_states) {
+inline constexpr size_t csz_state(size_t num_states) {
     return static_cast<size_t>(ceil(log(static_cast<float>(num_states)) / logf(2.0f)));
 }
 
@@ -19,11 +19,11 @@ inline constexpr size_t compressed_state_size(size_t num_states) {
  */
 template <size_t num_states>
 class SMStateSerializer
-    : public Serializer<unsigned int, unsigned int, compressed_state_size(num_states)> {
+    : public Serializer<unsigned int, unsigned int, csz_state(num_states)> {
    public:
-    using Serializer<unsigned int, unsigned int, compressed_state_size(num_states)>::Serializer;
+    using Serializer<unsigned int, unsigned int, csz_state(num_states)>::Serializer;
     bool init() {
-        return Serializer<unsigned int, unsigned int, compressed_state_size(num_states)>::init(
+        return Serializer<unsigned int, unsigned int, csz_state(num_states)>::init(
             0, num_states - 1);
     }
 };
@@ -35,22 +35,21 @@ class SMStateSerializer
  */
 template <size_t num_states>
 class SMStateField
-    : public WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)> {
+    : public WritableStateField<unsigned int, unsigned int, csz_state(num_states)> {
    public:
     /**
      * @brief Construct a new State Machine State Field object
      */
-    SMStateField(const std::string &name, StateFieldRegistry &reg)
-        : WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>(name,
-                                                                                            reg),
+    SMStateField(const std::string &name)
+        : WritableStateField<unsigned int, unsigned int, csz_state(num_states)>(name),
           _state_names() {}
 
     void init(const std::array<std::string, num_states> &state_names,
               const std::shared_ptr<SMStateSerializer<num_states>> &s,
-              typename StateFieldFunctions<unsigned int>::sanity_check_f checker =
-                  StateFieldFunctions<unsigned int>::null_sanity_check) {
+              typename StateField<unsigned int>::sanity_check_f checker =
+                  StateField<unsigned int>::null_sanity_check) {
         _state_names = state_names;
-        WritableStateField<unsigned int, unsigned int, compressed_state_size(num_states)>::init(
+        WritableStateField<unsigned int, unsigned int, csz_state(num_states)>::init(
             s, nullptr, checker);
     }
 

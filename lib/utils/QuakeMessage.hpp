@@ -2,7 +2,7 @@
 #define QUAKE_MESSAGE_HPP_
 
 /*! Holds the data for a mobile terminated (MT) message form the QLocate.
-*/  // -----------------------------------------------------------------------
+ */  // -----------------------------------------------------------------------
 class QuakeMessage {
     friend class QLocate;
 

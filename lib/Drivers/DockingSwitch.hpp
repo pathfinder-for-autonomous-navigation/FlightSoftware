@@ -31,6 +31,6 @@ class DockingSwitch : public Device {
     //! Pin to which the docking switch is connected.
     unsigned char switch_pin_;
 };
-}
+}  // namespace Devices
 
 #endif

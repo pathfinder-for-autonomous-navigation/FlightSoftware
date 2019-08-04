@@ -33,6 +33,6 @@ class DCDC : public Device {
     //! Whether or not Spike and Hold is on or not.
     bool is_enabled;
 };
-}
+}  // namespace Devices
 
 #endif

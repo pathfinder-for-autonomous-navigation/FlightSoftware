@@ -22,10 +22,10 @@
 namespace RTOSTasks {
 THD_WORKING_AREA(adcs_controller_workingArea, 2048);
 threads_queue_t adcs_detumbled;
-}
-using State::ADCS::ADCSState;
-using State::ADCS::adcs_state_lock;
+}  // namespace RTOSTasks
 using Devices::adcs_system;
+using State::ADCS::adcs_state_lock;
+using State::ADCS::ADCSState;
 
 using namespace ADCSControllers;
 

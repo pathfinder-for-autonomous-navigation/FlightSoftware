@@ -198,10 +198,10 @@ template <unsigned int bitset_size>
 void trim_message(const QuakeMessage &message, std::bitset<bitset_size> *bitset);
 
 /** @brief Compress a temperature into a bitstring.
-*  @param[in] t Temperature to compress.
-*  @param[out] result Destination bitstring for storing the compressed
-* temperature.
-* **/
+ *  @param[in] t Temperature to compress.
+ *  @param[out] result Destination bitstring for storing the compressed
+ * temperature.
+ * **/
 void trim_temperature(int t, std::bitset<TEMPERATURE_SIZE> *result);
 
 /** @brief Expand a compressed temperature into its true value.
@@ -236,7 +236,7 @@ void trim_gps_time(const gps_time_t &gpstime, std::bitset<GPSTIME_SIZE> *result)
  *  @param[out] result GPS time struct containing the uncompressed GPS time.
  * **/
 void expand_gps_time(const std::bitset<GPSTIME_SIZE> &gpstime, gps_time_t *result);
-}
+}  // namespace Comms
 /** @} */
 #include "comms_utils.inl"
 

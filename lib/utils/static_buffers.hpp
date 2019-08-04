@@ -11,7 +11,7 @@
  *providing buffer functionality.
  * Functionality credit for most of this is to
  *https://embeddedartistry.com/blog/2017/4/6/circular-buffers-in-cc#c-
-**/
+ **/
 template <typename T, size_t S>
 class static_buffer {
    protected:
@@ -82,7 +82,7 @@ class static_buffer {
 /** @brief An statically-allocated circular buffer data structure.
  * Useful for downlink data storage since it prevents heap fragmentation whilst
  *providing queue functionality.
-**/
+ **/
 template <typename T, size_t S>
 class circular_buffer : public static_buffer<T, S> {
    public:
@@ -98,7 +98,7 @@ class circular_buffer : public static_buffer<T, S> {
 /** @brief An statically-allocated circular stack data structure.
  * Useful for downlink data storage since it prevents heap fragmentation whilst
  *providing stack functionality.
-**/
+ **/
 template <typename T, size_t S>
 class circular_stack : public static_buffer<T, S> {
    public:
