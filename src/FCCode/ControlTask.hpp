@@ -3,9 +3,9 @@
 
 #include <memory>
 #include <string>
-#include "ChRt.h"
 #include "ControlTaskBase.hpp"
 #include "Nameable.hpp"
+#include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
 #include "debug_console.hpp"
 
@@ -19,7 +19,7 @@
 template <typename T>
 class ControlTask : public ControlTaskBase {
    protected:
-    std::shared_ptr<StateFieldRegistry> _registry;
+    std::shared_ptr<StateFieldRegistry> registry;
 
    public:
     /**
@@ -29,7 +29,7 @@ class ControlTask : public ControlTaskBase {
      * @param registry Pointer to state field registry
      */
     ControlTask(const std::string& name, const std::shared_ptr<StateFieldRegistry>& registry)
-        : ControlTaskBase(name), _registry(registry) {}
+        : ControlTaskBase(name), registry(registry) {}
 
     /**
      * @brief Run main method of control ControlTaskBase.
@@ -45,49 +45,26 @@ class ControlTask : public ControlTaskBase {
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
     std::shared_ptr<StateFieldBase> find_field(const std::string& name) {
-        return _registry->find_field(name);
+        return registry->find_field(name);
     }
 
     /**
-     * @brief Allows this task to read the specified state field.
-     * If the field is not present in the registry yet, it is added.
+     * @brief Marks a field as being downloadable by ground.
      *
      * @param field State field
      */
-    void add_reader(const std::shared_ptr<StateFieldBase> &field) {
-        _registry->add_reader(std::shared_ptr<ControlTaskBase>(this), field);
+    bool add_readable(std::shared_ptr<StateFieldBase>& field) {
+        return registry->add_readable(field);
     }
 
     /**
-     * @brief Allows this task to write to the specified state
-     * field. If the field is not present in the registry yet, it is added.
+     * @brief Marks a field as being uploadable by ground.
      *
+     * @param r ControlTaskBase
      * @param field Data field
      */
-    void add_writer(const std::shared_ptr<StateFieldBase> &field) {
-        _registry->add_writer(std::shared_ptr<ControlTaskBase>(this), field);
-    }
-
-    /**
-     * @brief Checks registry for write access.
-     *
-     * @param field
-     * @return true
-     * @return false
-     */
-    bool can_read(const std::shared_ptr<StateFieldBase>& field) {
-        return _registry->can_read(std::shared_ptr<ControlTaskBase>(this), field);
-    }
-
-    /**
-     * @brief Checks registry for read access.
-     *
-     * @param field
-     * @return true
-     * @return false
-     */
-    bool can_write(const std::shared_ptr<StateFieldBase>& field) {
-        return _registry->can_read(std::shared_ptr<ControlTaskBase>(this), field);
+    bool add_writable(std::shared_ptr<StateFieldBase>& field) {
+        return registry->add_writable(field);
     }
 };
 

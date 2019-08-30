@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <bitset>
 #include <cmath>
+#include <memory>
 #include "GPSTime.hpp"
 #include "InitializationRequired.hpp"
 #include "types.hpp"
@@ -98,7 +99,7 @@ class Serializer : SerializerBase<U> {
      * @return True if serialization succeeded, false if serializer was
      *         uninitialized.
      */
-    bool serialize(const T &src, std::bitset<csz> *dest);
+    bool serialize(const T &src, std::shared_ptr<std::bitset<csz>> &dest);
 
     /**
      * @brief Deserializes a bitset and stores the result in the provided
@@ -110,7 +111,7 @@ class Serializer : SerializerBase<U> {
      * @return True if serialization succeeded, false if serializer was
      *         uninitialized.
      */
-    bool deserialize(const std::bitset<csz> &src, T *dest);
+    bool deserialize(const std::bitset<csz> &src, std::shared_ptr<T> &dest);
 
     /**
      * @brief Outputs a string representation of the source value into
@@ -119,7 +120,7 @@ class Serializer : SerializerBase<U> {
      * @return True if serialization succeeded, false if serializer was
      *         uninitialized.
      */
-    bool print(const T &src, std::string *dest);
+    bool print(const T &src, std::shared_ptr<std::string> &dest);
 };
 
 #include "SerializerTypes.inl"

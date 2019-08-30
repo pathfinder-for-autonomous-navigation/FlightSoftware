@@ -18,13 +18,12 @@ inline constexpr size_t csz_state(size_t num_states) {
  * @tparam num_states
  */
 template <size_t num_states>
-class SMStateSerializer
-    : public Serializer<unsigned int, unsigned int, csz_state(num_states)> {
+class SMStateSerializer : public Serializer<unsigned int, unsigned int, csz_state(num_states)> {
    public:
     using Serializer<unsigned int, unsigned int, csz_state(num_states)>::Serializer;
     bool init() {
-        return Serializer<unsigned int, unsigned int, csz_state(num_states)>::init(
-            0, num_states - 1);
+        return Serializer<unsigned int, unsigned int, csz_state(num_states)>::init(0,
+                                                                                   num_states - 1);
     }
 };
 
@@ -34,8 +33,7 @@ class SMStateSerializer
  * @tparam num_states
  */
 template <size_t num_states>
-class SMStateField
-    : public WritableStateField<unsigned int, unsigned int, csz_state(num_states)> {
+class SMStateField : public WritableStateField<unsigned int, unsigned int, csz_state(num_states)> {
    public:
     /**
      * @brief Construct a new State Machine State Field object
@@ -49,8 +47,8 @@ class SMStateField
               typename StateField<unsigned int>::sanity_check_f checker =
                   StateField<unsigned int>::null_sanity_check) {
         _state_names = state_names;
-        WritableStateField<unsigned int, unsigned int, csz_state(num_states)>::init(
-            s, nullptr, checker);
+        WritableStateField<unsigned int, unsigned int, csz_state(num_states)>::init(s, nullptr,
+                                                                                    checker);
     }
 
     /**

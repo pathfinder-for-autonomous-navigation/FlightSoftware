@@ -3,12 +3,15 @@
 
 class InitializationRequired {
    protected:
-    bool _is_initialized;
+    bool _is_initialized = false;
 
    public:
     InitializationRequired();
-    bool init();
-    bool is_initialized() const;
+    virtual bool init() {
+        _is_initialized = true;
+        return true;
+    }
+    bool is_initialized() const { return _is_initialized; }
 };
 
 #endif

@@ -1,14 +1,15 @@
+#include "Serializer.hpp"
 #include "StateField.hpp"
 
 /**
  * @brief Empty base class for internal state fields.
  */
-class InternalStateFieldBase {
+class InternalStateFieldBase : public StateFieldBase {
    protected:
     /**
      * @brief Constructor. Should not be used.
      */
-    InternalStateFieldBase() {}
+    InternalStateFieldBase(const std::string &name) : StateFieldBase(name) {}
 };
 
 /**
@@ -27,21 +28,20 @@ class InternalStateField : public StateField<T>, public InternalStateFieldBase {
      * @brief Construct a new Internal State Field object (not ground readable or
      * writable.)
      */
-    bool init(typename StateField<T>::fetch_f fetcher = StateField<T>::null_fetcher,
-              typename StateField<T>::sanity_check_f checker = StateField<T>::null_sanity_check) {
-        return StateField<T>::init(false, false, fetcher, checker);
+    bool init() {
+        return StateField<T>::init(false, false);
     }
 };
 
 /**
  * @brief Empty base class for serializable state fields.
  */
-class SerializableStateFieldBase {
+class SerializableStateFieldBase : public StateFieldBase {
    protected:
     /**
      * @brief Constructor. Should not be used.
      */
-    SerializableStateFieldBase() {}
+    SerializableStateFieldBase(const std::string &name) : StateFieldBase(name) {}
 };
 
 /**
@@ -56,13 +56,12 @@ class SerializableStateFieldBase {
  * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
 template <typename T, typename U, size_t csz>
-class SerializableStateField : public StateField<T>, public SerializableStateFieldBase {
+class SerializableStateField : public StateField<T> {
    protected:
     std::shared_ptr<Serializer<T, U, csz>> _serializer;
 
    public:
-    SerializableStateField(const std::string &name)
-        : StateField<T>(name), SerializableStateFieldBase(), _serializer(nullptr) {}
+    SerializableStateField(const std::string &name) : StateField<T>(name), _serializer(nullptr) {}
 
     /**
      * @brief Initialize a new Serializable State Field object (definitely ground
@@ -70,12 +69,9 @@ class SerializableStateField : public StateField<T>, public SerializableStateFie
      *
      * @param s The serializer to use for serializing the field.
      */
-    bool init(bool gw, const std::shared_ptr<Serializer<T, U, csz>> &s,
-              typename StateField<T>::fetch_f fetcher = StateField<T>::null_fetcher,
-              typename StateField<T>::sanity_check_f checker = StateField<T>::null_sanity_check) {
-        if (!s->is_initialized()) return false;
+    bool init(bool gw, const std::shared_ptr<Serializer<T, U, csz>> &s) {
         _serializer = s;
-        return StateField<T>::init(true, gw, fetcher, checker);
+        return StateField<T>::init(true, gw);
     }
 
     /**
@@ -118,12 +114,12 @@ class SerializableStateField : public StateField<T>, public SerializableStateFie
 /**
  * @brief Empty base class for ground-readable state fields.
  */
-class ReadableStateFieldBase {
+class ReadableStateFieldBase : public StateFieldBase {
    protected:
     /**
      * @brief Constructor. Should not be used.
      */
-    ReadableStateFieldBase() {}
+    ReadableStateFieldBase(const std::string &name) : StateFieldBase(name) {}
 };
 
 /**
@@ -134,32 +130,28 @@ class ReadableStateFieldBase {
  * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
 template <typename T, typename U, unsigned int csz>
-class ReadableStateField : public SerializableStateField<T, U, csz>,
-                           public ReadableStateFieldBase {
+class ReadableStateField : public SerializableStateField<T, U, csz> {
    public:
-    ReadableStateField(const std::string &name)
-        : SerializableStateField<T, U, csz>(name), ReadableStateFieldBase() {}
+    ReadableStateField(const std::string &name) : SerializableStateField<T, U, csz>(name) {}
 
     /**
      * @brief Initialize a new Readable State Field object (readable from ground
      * but not writable.)
      */
-    bool init(const std::shared_ptr<Serializer<T, U, csz>> &s,
-              typename StateField<T>::fetch_f fetcher = StateField<T>::null_fetcher,
-              typename StateField<T>::sanity_check_f checker = StateField<T>::null_sanity_check) {
-        return SerializableStateField<T, U, csz>::init(false, s, fetcher, checker);
+    bool init(const std::shared_ptr<Serializer<T, U, csz>> &s) {
+        return SerializableStateField<T, U, csz>::init(false, s);
     }
 };
 
 /**
  * @brief Empty base class for ground-writable state fields.
  */
-class WritableStateFieldBase {
+class WritableStateFieldBase : public StateFieldBase {
    protected:
     /**
      * @brief Constructor. Should not be used.
      */
-    WritableStateFieldBase() {}
+    WritableStateFieldBase(const std::string &name) : StateFieldBase(name) {}
 };
 
 /**
@@ -170,19 +162,15 @@ class WritableStateFieldBase {
  * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
 template <typename T, typename U, unsigned int csz>
-class WritableStateField : public SerializableStateField<T, U, csz>,
-                           public WritableStateFieldBase {
+class WritableStateField : public SerializableStateField<T, U, csz> {
    public:
-    WritableStateField(const std::string &name)
-        : SerializableStateField<T, U, csz>(name), WritableStateFieldBase() {}
+    WritableStateField(const std::string &name) : SerializableStateField<T, U, csz>(name) {}
 
     /**
      * @brief Initialize a new Writable State Field object (readable and writable
      * from ground.)
      */
-    bool init(const std::shared_ptr<Serializer<T, U, csz>> &s,
-              typename StateField<T>::fetch_f fetcher = StateField<T>::null_fetcher,
-              typename StateField<T>::sanity_check_f checker = StateField<T>::null_sanity_check) {
-        return SerializableStateField<T, U, csz>::init(true, s, fetcher, checker);
+    bool init(const std::shared_ptr<Serializer<T, U, csz>> &s) {
+        return SerializableStateField<T, U, csz>::init(true, s);
     }
 };

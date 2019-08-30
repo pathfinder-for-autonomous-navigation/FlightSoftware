@@ -16,20 +16,22 @@
  */
 class StateFieldRegistry : public Debuggable {
    private:
-    std::map<std::string, std::shared_ptr<StateFieldBase>> _fields;
-    std::map<std::shared_ptr<ControlTaskBase>, std::vector<std::shared_ptr<StateFieldBase>>>
-        _fields_allowed_to_read;
-    std::map<std::shared_ptr<ControlTaskBase>, std::vector<std::shared_ptr<StateFieldBase>>>
-        _fields_allowed_to_write;
+    std::set<std::shared_ptr<StateFieldBase>> fields;
+    std::set<std::shared_ptr<StateFieldBase>> readable_fields;
+    std::set<std::shared_ptr<StateFieldBase>> writable_fields;
 
    public:
     // TODO make a singleton
-    StateFieldRegistry();
+    StateFieldRegistry() {}
 
     /**
      * @brief Copy constructor.
      */
-    void operator=(const StateFieldRegistry &r);
+    void operator=(const StateFieldRegistry &r) {
+        this->fields = r.fields;
+        this->readable_fields = r.readable_fields;
+        this->writable_fields = r.writable_fields;
+    }
 
     /**
      * @brief Find a field of a given name within the state registry
@@ -39,56 +41,38 @@ class StateFieldRegistry : public Debuggable {
      *
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
-    std::shared_ptr<StateFieldBase> find_field(const std::string& name) {
-        auto it = _fields.find(name);
+    std::shared_ptr<StateFieldBase> find_field(const std::string &name) {
+        for (auto const &field : fields) {
+            if (name == field->name()) return field;
+        }
 
-        if (it != _fields.end())
-            return it->second;
-        else
-            return std::shared_ptr<StateFieldBase>(nullptr);
+        return std::shared_ptr<StateFieldBase>(nullptr);
     }
 
     /**
-     * @brief Allows the specified Control ControlTaskBase to read the specified state field.
-     * If the field is not present in the registry yet, it is added.
+     * @brief Marks a field as being downloadable by ground.
      *
-     * @param r ControlTaskBase
      * @param field State field
      */
-    void add_reader(const std::shared_ptr<ControlTaskBase> &r,
-                    const std::shared_ptr<StateFieldBase> &field);
+    bool add_readable(std::shared_ptr<StateFieldBase> &field) {
+        if (find_field(field->name())) return false;
+        fields.insert(field);
+        readable_fields.insert(field);
+        return true;
+    }
 
     /**
-     * @brief Allows the specified Control ControlTaskBase to write to the specified state
-     * field. If the field is not present in the registry yet, it is added.
+     * @brief Marks a field as being uploadable by ground.
      *
      * @param r ControlTaskBase
      * @param field Data field
      */
-    void add_writer(const std::shared_ptr<ControlTaskBase> &w,
-                    const std::shared_ptr<StateFieldBase> &field);
-
-    /**
-     * @brief Checks registry for read access.
-     *
-     * @param r
-     * @param field
-     * @return true If Control ControlTaskBase has read access to state field.
-     * @return false If Control ControlTaskBase does not have read access to state field.
-     */
-    bool can_read(const std::shared_ptr<ControlTaskBase> &r,
-                  const std::shared_ptr<StateFieldBase> &field);
-
-    /**
-     * @brief Checks registry for write access.
-     *
-     * @param w
-     * @param field
-     * @return true If Control ControlTaskBase has write access to state field.
-     * @return false If Control ControlTaskBase does not have write access to state field.
-     */
-    bool can_write(const std::shared_ptr<ControlTaskBase> &r,
-                   const std::shared_ptr<StateFieldBase> &field);
+    bool add_writable(std::shared_ptr<StateFieldBase> &field) {
+        if (find_field(field->name())) return false;
+        fields.insert(field);
+        writable_fields.insert(field);
+        return true;
+    }
 };
 
 #endif

@@ -31,6 +31,6 @@ typedef std::array<double, 4> d_quat_t;
  * @brief Wrapper around integer for a temperature.
  *
  */
-typedef unsigned int temperature_t;
+typedef signed int temperature_t;
 
 #endif

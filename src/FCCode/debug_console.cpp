@@ -41,9 +41,10 @@ bool debug_console::init() {
     pinMode(13, OUTPUT);
 
     Serial.println("Waiting for serial console.");
-    while (!Serial);
+    while (!Serial)
+        ;
     _start_time = chVTGetSystemTimeX();
-    
+
     return is_init;
 }
 

@@ -1,4 +1,3 @@
-#include "PropulsionControl.hpp"
 #include "StateField.hpp"
 
 /*
@@ -8,24 +7,32 @@
  * takes precedence.
  */
 #include <Arduino.h>
+#include <ChRt.h>
 
-void setup() {
+void pan_system_setup() {
     auto registry_ptr = std::make_shared<StateFieldRegistry>();
 
-    auto tank_inner_temperature_ptr = std::make_shared<
-        ReadableStateField<temperature_t, temperature_t, SerializerConstants::temp_sz>>("prop.temp_inner");
-    auto tank_outer_temperature_ptr = std::make_shared<
-        ReadableStateField<temperature_t, temperature_t, SerializerConstants::temp_sz>>("prop.temp_outer");
-    auto tank_pressure_ptr =
-        std::make_shared<ReadableStateField<float, float, PropulsionControl::tank_pressure_sz>>("prop.pressure");
-    auto firing_time_ptr =
-        std::make_shared<WritableStateField<gps_time_t, bool, SerializerConstants::gps_time_sz>>("gnc.manuever.time");
-    auto firing_vector_ptr = std::make_shared<
-        WritableStateField<f_vector_t, float, PropulsionControl::prop_firing_sz>>("gnc.manuever.vector");
+    // Helpful type definitions for state fields
+    typedef ReadableStateField<temperature_t, temperature_t, SerializerConstants::temp_sz>
+        ReadableTemperatureStateField;
+    typedef WritableStateField<gps_time_t, bool, SerializerConstants::gps_time_sz>
+        WritableGPSTimeStateField;
 
-    std::unique_ptr<PropulsionControl> psm =
-        PropulsionControl::create(registry_ptr, tank_inner_temperature_ptr, tank_outer_temperature_ptr,
-                                  tank_pressure_ptr, firing_time_ptr, firing_vector_ptr);
+    auto tank_inner_temperature_ptr =
+        std::make_shared<ReadableTemperatureStateField>("prop.temp_inner");
+    auto tank_outer_temperature_ptr =
+        std::make_shared<ReadableTemperatureStateField>("prop.temp_outer");
+    auto firing_time_ptr = std::make_shared<WritableGPSTimeStateField>("gnc.manuever.time");
+}
+
+// "UNIT_TEST" used to stop "multiple definition" linker errors when running
+// tests
+#ifndef UNIT_TEST
+void setup() {
+    chBegin(pan_system_setup);
+    while (true)
+        ;
 }
 
 void loop() {}
+#endif

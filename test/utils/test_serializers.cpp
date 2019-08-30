@@ -25,13 +25,13 @@ void test_serializerbase_init_ok() {
  */
 void test_bool_serializer() {
     Serializer<bool, bool, SerializerConstants::bool_sz> serializer;
-    serializer.init(false, true);
+    serializer.init();
 
-    std::bitset<SerializerConstants::bool_sz> dest;
-    serializer.serialize(true, &dest);
-    TEST_ASSERT(dest[0]);
-    serializer.serialize(false, &dest);
-    TEST_ASSERT_FALSE(dest[0]);
+    auto dest_ptr = std::make_shared<std::bitset<SerializerConstants::bool_sz>>();
+    serializer.serialize(true, dest_ptr);
+    TEST_ASSERT((*dest_ptr)[0]);
+    serializer.serialize(false, dest_ptr);
+    TEST_ASSERT_FALSE((*dest_ptr)[0]);
 }
 
 /**
@@ -56,19 +56,19 @@ void test_uint_serializer() {
     serializer.init(0, 20);
 
     // Dummy variables needed for loop
-    std::bitset<10> bitset;
-    unsigned int result;
+    auto bitset_ptr = std::make_shared<std::bitset<10>>();
+    auto result_ptr = std::make_shared<unsigned int>();
     for (unsigned int i = 0; i <= 20; i++) {
-        serializer.serialize(i, &bitset);
-        serializer.deserialize(bitset, &result);
-        TEST_ASSERT_EQUAL(i, result);
+        serializer.serialize(i, bitset_ptr);
+        serializer.deserialize(*bitset_ptr, result_ptr);
+        TEST_ASSERT_EQUAL(i, *result_ptr);
     }
     // Test the same thing with a serializer that doesn't begin at zero.
     serializer.init(5, 25);
     for (unsigned int i = 5; i <= 25; i++) {
-        serializer.serialize(i, &bitset);
-        serializer.deserialize(bitset, &result);
-        TEST_ASSERT_EQUAL(i, result);
+        serializer.serialize(i, bitset_ptr);
+        serializer.deserialize(*bitset_ptr, result_ptr);
+        TEST_ASSERT_EQUAL(i, *result_ptr);
     }
 
     /**
@@ -80,19 +80,19 @@ void test_uint_serializer() {
     serializer2.init(0, 20);
 
     // Dummy variables needed for loop
-    std::bitset<4> bitset2;
-    unsigned int result2;
+    auto bitset2_ptr = std::make_shared<std::bitset<4>>();
+    auto result2_ptr = std::make_shared<unsigned int>();
     for (unsigned int i = 0; i <= 20; i++) {
-        serializer2.serialize(i, &bitset2);
-        serializer2.deserialize(bitset2, &result2);
-        TEST_ASSERT_EQUAL(i, result);
+        serializer2.serialize(i, bitset2_ptr);
+        serializer2.deserialize(*bitset2_ptr, result2_ptr);
+        TEST_ASSERT_EQUAL(i, *result2_ptr);
     }
     // Test the same thing with a serializer that doesn't begin at zero.
     serializer2.init(5, 25);
     for (unsigned int i = 5; i <= 25; i++) {
-        serializer2.serialize(i, &bitset2);
-        serializer2.deserialize(bitset2, &result2);
-        TEST_ASSERT_EQUAL(i, result);
+        serializer2.serialize(i, bitset2_ptr);
+        serializer2.deserialize(*bitset2_ptr, result2_ptr);
+        TEST_ASSERT_EQUAL(i, *result2_ptr);
     }
 }
 
