@@ -34,8 +34,7 @@ class StateFieldRegistry : public Debuggable {
     }
 
     /**
-     * @brief Find a field of a given name within the state registry
-     * and return a pointer to it.
+     * @brief Find a field of a given name within the state registry and return a pointer to it.
      *
      * @param name Name of state field.
      *

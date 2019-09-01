@@ -15,19 +15,19 @@ class Serializer<bool, bool, SerializerConstants::bool_sz> : public SerializerBa
     }
 
     bool serialize(const bool &src, std::shared_ptr<std::bitset<bool_sz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         (*dest)[0] = src;
         return true;
     }
 
     bool deserialize(const std::bitset<bool_sz> &src, std::shared_ptr<bool> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         *dest = src[0];
         return true;
     }
 
     bool print(const bool &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         *dest = src ? "true" : "false";
         return true;
     }
@@ -46,7 +46,7 @@ class Serializer<unsigned int, unsigned int, csz> : public SerializerBase<unsign
     }
 
     bool serialize(const unsigned int &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         unsigned int src_copy = src;
         if (src_copy > _max) src_copy = _max;
@@ -59,13 +59,13 @@ class Serializer<unsigned int, unsigned int, csz> : public SerializerBase<unsign
     }
 
     bool deserialize(const std::bitset<csz> &src, std::shared_ptr<unsigned int> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         *dest = _min + src.to_ulong() * _resolution();
         return true;
     }
 
     bool print(const unsigned int &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         char buf[20];
         sprintf(buf, "%d", src);
@@ -87,7 +87,7 @@ class Serializer<signed int, signed int, csz> : public SerializerBase<signed int
     }
 
     bool serialize(const signed int &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         unsigned int src_copy = src;
         if (src_copy > _max) src_copy = _max;
@@ -100,13 +100,13 @@ class Serializer<signed int, signed int, csz> : public SerializerBase<signed int
     }
 
     bool deserialize(const std::bitset<csz> &src, std::shared_ptr<signed int> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         *dest = _min + src.to_ulong() * _resolution();
         return true;
     }
 
     bool print(const signed int &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         char buf[20];
         sprintf(buf, "%d", src);
@@ -130,7 +130,7 @@ class Serializer<float, float, csz> : public SerializerBase<float> {
     }
 
     bool serialize(const float &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         float src_copy = src;
         if (src_copy > _max) src_copy = _max;
@@ -144,7 +144,7 @@ class Serializer<float, float, csz> : public SerializerBase<float> {
     }
 
     bool deserialize(const std::bitset<csz> &src, std::shared_ptr<float> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         unsigned long f_bits = src.to_ullong();
         float resolution = (_max - _min) / pow(2, csz);
@@ -154,7 +154,7 @@ class Serializer<float, float, csz> : public SerializerBase<float> {
     }
 
     bool print(const float &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         char buf[20];
         sprintf(buf, "%f", src);
@@ -172,7 +172,7 @@ class Serializer<double, double, csz> : public SerializerBase<double> {
     Serializer() : SerializerBase<double>(0, 0) {}
 
     bool serialize(const double &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         double src_copy = src;
         if (src_copy > _max) src_copy = _max;
@@ -186,7 +186,7 @@ class Serializer<double, double, csz> : public SerializerBase<double> {
     }
 
     bool deserialize(const std::bitset<csz> &src, std::shared_ptr<double> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         unsigned long f_bits = src.to_ullong();
         double resolution = (_max - _min) / pow(2, csz);
@@ -196,7 +196,7 @@ class Serializer<double, double, csz> : public SerializerBase<double> {
     }
 
     bool print(const double &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         char buf[20];
         sprintf(buf, "%f", src);
@@ -214,7 +214,7 @@ class Serializer<f_vector_t, float, csz> : public SerializerBase<float> {
     Serializer() : SerializerBase(0.0f, 0.0f) {}
 
     bool serialize(const f_vector_t &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         float mag = sqrtf(powf(src[0], 2.0f) + pow(src[1], 2.0f) + pow(src[2], 2.0f));
         constexpr unsigned int magnitude_bitsize = csz - f_vec_min_sz;
@@ -259,8 +259,7 @@ class Serializer<f_vector_t, float, csz> : public SerializerBase<float> {
             vec_representation.set(i + 2, vec_element_representations[0][i]);
             vec_representation.set(i + 11, vec_element_representations[1][i]);
         }
-        for (size_t i = 0; i < magnitude_bitsize; i++)
-            (*dest).set(i, magnitude_representation[i]);
+        for (size_t i = 0; i < magnitude_bitsize; i++) (*dest).set(i, magnitude_representation[i]);
         for (size_t i = 0; i < f_vec_min_sz; i++)
             (*dest).set(i + magnitude_bitsize, vec_representation[i]);
 
@@ -268,7 +267,7 @@ class Serializer<f_vector_t, float, csz> : public SerializerBase<float> {
     }
 
     bool deserialize(const std::bitset<csz> &src, std::shared_ptr<f_vector_t> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         constexpr size_t magnitude_bitsize = csz - f_vec_min_sz;
         std::bitset<magnitude_bitsize> magnitude_packed;
@@ -304,7 +303,7 @@ class Serializer<f_vector_t, float, csz> : public SerializerBase<float> {
     }
 
     bool print(const f_vector_t &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         // TODO
         return true;
     }
@@ -319,7 +318,7 @@ class Serializer<d_vector_t, double, csz> : public SerializerBase<double> {
     Serializer() : SerializerBase<double>(0.0, 0.0) {}
 
     bool serialize(const d_vector_t &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         double mag = sqrt(pow(src[0], 2) + pow(src[1], 2) + pow(src[2], 2));
         constexpr unsigned int magnitude_bitsize = csz - d_vec_min_sz;
@@ -363,8 +362,7 @@ class Serializer<d_vector_t, double, csz> : public SerializerBase<double> {
             vec_representation.set(i + 2, vec_element_representations[0][i]);
             vec_representation.set(i + 11, vec_element_representations[1][i]);
         }
-        for (size_t i = 0; i < magnitude_bitsize; i++)
-            (*dest).set(i, magnitude_representation[i]);
+        for (size_t i = 0; i < magnitude_bitsize; i++) (*dest).set(i, magnitude_representation[i]);
         for (size_t i = 0; i < d_vec_min_sz; i++)
             (*dest).set(i + magnitude_bitsize, vec_representation[i]);
 
@@ -372,7 +370,7 @@ class Serializer<d_vector_t, double, csz> : public SerializerBase<double> {
     }
 
     bool deserialize(const std::bitset<csz> &src, std::shared_ptr<d_vector_t> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         constexpr size_t magnitude_bitsize = csz - d_vec_min_sz;
         std::bitset<magnitude_bitsize> magnitude_packed;
@@ -408,7 +406,7 @@ class Serializer<d_vector_t, double, csz> : public SerializerBase<double> {
     }
 
     bool print(const d_vector_t &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         // TODO
         return true;
     }
@@ -423,7 +421,7 @@ class Serializer<f_quat_t, float, SerializerConstants::f_quat_sz> : public Seria
     Serializer() : SerializerBase<float>(0.0f, 0.0f) {}
 
     bool serialize(const f_quat_t &src, std::shared_ptr<std::bitset<f_quat_sz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         std::bitset<f_quat_component_sz> quat_element_representations[3];
         std::array<float, 4> q_mags;  // Magnitudes of elements in quaternion
@@ -463,7 +461,7 @@ class Serializer<f_quat_t, float, SerializerConstants::f_quat_sz> : public Seria
     }
 
     bool deserialize(const std::bitset<f_quat_sz> &src, std::shared_ptr<f_quat_t> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         size_t missing_element = (src[0] << 1) + src[1];
         (*dest)[missing_element] = 1;
@@ -486,7 +484,7 @@ class Serializer<f_quat_t, float, SerializerConstants::f_quat_sz> : public Seria
     }
 
     bool print(const f_quat_t &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         // TODO
         return true;
     }
@@ -501,19 +499,19 @@ class Serializer<d_quat_t, double, SerializerConstants::d_quat_sz> : public Seri
     Serializer() : SerializerBase<double>(0.0, 0.0) {}
 
     bool serialize(const d_quat_t &src, std::shared_ptr<std::bitset<d_quat_sz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         // TODO
         return true;
     }
 
     bool deserialize(const std::bitset<d_quat_sz> &src, std::shared_ptr<d_quat_t> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         // TODO
         return true;
     }
 
     bool print(const d_quat_t &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         // TODO
         return true;
     }
@@ -533,7 +531,7 @@ class Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz> : public Se
     }
 
     bool serialize(const gps_time_t &src, std::shared_ptr<std::bitset<gps_time_sz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         if (src.is_not_set) {
             dest->set(0, false);
@@ -549,7 +547,7 @@ class Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz> : public Se
     }
 
     bool deserialize(const std::bitset<gps_time_sz> &src, std::shared_ptr<gps_time_t> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
 
         std::bitset<16> wn;
         std::bitset<32> tow;
@@ -563,7 +561,7 @@ class Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz> : public Se
     }
 
     bool print(const gps_time_t &src, std::shared_ptr<std::string> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         // TODO
         return true;
     }
@@ -587,13 +585,13 @@ class Serializer<temperature_t, temperature_t, SerializerConstants::temp_sz>
     }
 
     bool serialize(const temperature_t &src, std::shared_ptr<std::bitset<temp_sz>> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         // TODO
         return true;
     }
 
     bool deserialize(const std::bitset<temp_sz> &src, std::shared_ptr<temperature_t> &dest) {
-        if (!_is_initialized) return false;
+        if (!is_initialized()) return false;
         // TODO
         return true;
     }

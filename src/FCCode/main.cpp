@@ -17,12 +17,15 @@ void pan_system_setup() {
         ReadableTemperatureStateField;
     typedef WritableStateField<gps_time_t, bool, SerializerConstants::gps_time_sz>
         WritableGPSTimeStateField;
+    
+    auto temperature_serializer = std::make_shared<Serializer<temperature_t, temperature_t, SerializerConstants::temp_sz>>();
+    auto gps_time_serializer = std::make_shared<Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz>>();
 
     auto tank_inner_temperature_ptr =
-        std::make_shared<ReadableTemperatureStateField>("prop.temp_inner");
+        std::make_shared<ReadableTemperatureStateField>("prop.temp_inner", temperature_serializer);
     auto tank_outer_temperature_ptr =
-        std::make_shared<ReadableTemperatureStateField>("prop.temp_outer");
-    auto firing_time_ptr = std::make_shared<WritableGPSTimeStateField>("gnc.manuever.time");
+        std::make_shared<ReadableTemperatureStateField>("prop.temp_outer", temperature_serializer);
+    auto firing_time_ptr = std::make_shared<WritableGPSTimeStateField>("gnc.manuever.time", gps_time_serializer);
 }
 
 // "UNIT_TEST" used to stop "multiple definition" linker errors when running

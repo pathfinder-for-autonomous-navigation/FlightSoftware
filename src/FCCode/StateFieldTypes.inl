@@ -9,7 +9,7 @@ class InternalStateFieldBase : public StateFieldBase {
     /**
      * @brief Constructor. Should not be used.
      */
-    InternalStateFieldBase(const std::string &name) : StateFieldBase(name) {}
+    InternalStateFieldBase(const std::string &name) : StateFieldBase(name, false, false) {}
 };
 
 /**
@@ -22,15 +22,8 @@ class InternalStateFieldBase : public StateFieldBase {
 template <typename T>
 class InternalStateField : public StateField<T>, public InternalStateFieldBase {
    public:
-    InternalStateField(const std::string &name) : StateField<T>(name), InternalStateFieldBase() {}
-
-    /**
-     * @brief Construct a new Internal State Field object (not ground readable or
-     * writable.)
-     */
-    bool init() {
-        return StateField<T>::init(false, false);
-    }
+    InternalStateField(const std::string &name)
+        : StateField<T>(name, false, false), InternalStateFieldBase() {}
 };
 
 /**
@@ -41,7 +34,7 @@ class SerializableStateFieldBase : public StateFieldBase {
     /**
      * @brief Constructor. Should not be used.
      */
-    SerializableStateFieldBase(const std::string &name) : StateFieldBase(name) {}
+    SerializableStateFieldBase(const std::string &name, const bool ground_writable) : StateFieldBase(name, true, ground_writable) {}
 };
 
 /**
@@ -61,18 +54,9 @@ class SerializableStateField : public StateField<T> {
     std::shared_ptr<Serializer<T, U, csz>> _serializer;
 
    public:
-    SerializableStateField(const std::string &name) : StateField<T>(name), _serializer(nullptr) {}
-
-    /**
-     * @brief Initialize a new Serializable State Field object (definitely ground
-     * readable, but may or may not be ground writable.)
-     *
-     * @param s The serializer to use for serializing the field.
-     */
-    bool init(bool gw, const std::shared_ptr<Serializer<T, U, csz>> &s) {
-        _serializer = s;
-        return StateField<T>::init(true, gw);
-    }
+    SerializableStateField(const std::string &name, const bool ground_writable,
+                           const std::shared_ptr<Serializer<T, U, csz>> &s)
+        : StateField<T>(name, false, ground_writable), _serializer(s) {}
 
     /**
      * @brief Serialize field data into the provided bitset.
@@ -119,7 +103,7 @@ class ReadableStateFieldBase : public StateFieldBase {
     /**
      * @brief Constructor. Should not be used.
      */
-    ReadableStateFieldBase(const std::string &name) : StateFieldBase(name) {}
+    ReadableStateFieldBase(const std::string &name) : StateFieldBase(name, true, false) {}
 };
 
 /**
@@ -132,15 +116,7 @@ class ReadableStateFieldBase : public StateFieldBase {
 template <typename T, typename U, unsigned int csz>
 class ReadableStateField : public SerializableStateField<T, U, csz> {
    public:
-    ReadableStateField(const std::string &name) : SerializableStateField<T, U, csz>(name) {}
-
-    /**
-     * @brief Initialize a new Readable State Field object (readable from ground
-     * but not writable.)
-     */
-    bool init(const std::shared_ptr<Serializer<T, U, csz>> &s) {
-        return SerializableStateField<T, U, csz>::init(false, s);
-    }
+    ReadableStateField(const std::string &name, const std::shared_ptr<Serializer<T, U, csz>> &s) : SerializableStateField<T, U, csz>(name, false, s) {}
 };
 
 /**
@@ -151,7 +127,7 @@ class WritableStateFieldBase : public StateFieldBase {
     /**
      * @brief Constructor. Should not be used.
      */
-    WritableStateFieldBase(const std::string &name) : StateFieldBase(name) {}
+    WritableStateFieldBase(const std::string &name) : StateFieldBase(name, true, true) {}
 };
 
 /**
@@ -164,13 +140,5 @@ class WritableStateFieldBase : public StateFieldBase {
 template <typename T, typename U, unsigned int csz>
 class WritableStateField : public SerializableStateField<T, U, csz> {
    public:
-    WritableStateField(const std::string &name) : SerializableStateField<T, U, csz>(name) {}
-
-    /**
-     * @brief Initialize a new Writable State Field object (readable and writable
-     * from ground.)
-     */
-    bool init(const std::shared_ptr<Serializer<T, U, csz>> &s) {
-        return SerializableStateField<T, U, csz>::init(true, s);
-    }
+    WritableStateField(const std::string &name, const std::shared_ptr<Serializer<T, U, csz>> &s) : SerializableStateField<T, U, csz>(name, true, s) {}
 };
