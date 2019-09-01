@@ -2,9 +2,9 @@
 #define STATE_FIELD_REGISTRY_HPP_
 
 #include <map>
+#include <set>
 #include <memory>
 #include <vector>
-#include "ControlTaskBase.hpp"
 #include "StateFieldBase.hpp"
 
 /**

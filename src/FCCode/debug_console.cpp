@@ -35,6 +35,16 @@ void debug_console::_print_json_msg(severity s, const char *msg) {
         _get_elapsed_time(), severity_strs.at(s), msg);
 }
 
+void debug_console::print_state_field(const SerializableStateFieldBase& field) {
+    char* buf = field.print();
+    Serial.printf(
+        "{\"t\":%d,"
+        "\"field\":\"%s\","
+        "\"val\":\"%s\""
+        "}\n",
+        _get_elapsed_time(), field.name().c_str(), buf);
+}
+
 bool debug_console::init() {
     is_init = true;
     Serial.begin(9600);

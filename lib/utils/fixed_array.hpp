@@ -6,7 +6,6 @@
 #include <cmath>
 #include <vector>
 #include <bitset>
-#include "InitializationRequired.hpp"
 
 /**
  * Behaves like an array (i.e. the size cannot be modified), but the size is specified upon

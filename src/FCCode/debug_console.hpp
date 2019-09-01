@@ -1,7 +1,7 @@
 #ifndef DEBUG_CONSOLE_HPP_
 #define DEBUG_CONSOLE_HPP_
 
-#include <InitializationRequired.hpp>
+#include "StateField.hpp"
 #include <map>
 #include <set>
 #include "ChRt.h"
@@ -44,6 +44,8 @@ class debug_console {
      * @brief Blinks an LED at a rate of 1 Hz.
      */
     static void blink_led();
+
+    static void print_state_field(const SerializableStateFieldBase& field);
 
    protected:
     // Prevent construction.

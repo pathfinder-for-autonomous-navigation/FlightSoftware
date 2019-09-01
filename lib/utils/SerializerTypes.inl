@@ -15,16 +15,17 @@ class Serializer<bool> : public SerializerBase<bool> {
 
     void serialize(const bool &src) { serialized_val[0] = src; }
 
-    void deserialize(std::shared_ptr<bool> &dest) { *dest = serialized_val[0]; }
+    void deserialize(std::shared_ptr<bool> &dest) const { *dest = serialized_val[0]; }
 
-    static void print(const bool &src, char *dest) {
+    static constexpr size_t strlen = 5;
+
+    char* print(const bool &src) const {
         if (src)
-            strcpy(dest, "true");
+            strcpy(this->printed_val, "true");
         else
-            strcpy(dest, "false");
+            strcpy(this->printed_val, "false");
+        return this->printed_val;
     }
-
-    size_t strlen() const override { return 5; };
 };
 
 /**
@@ -47,13 +48,16 @@ class Serializer<unsigned int> : public SerializerBase<unsigned int> {
         serialized_val.set_int(result_int);
     }
 
-    void deserialize(std::shared_ptr<unsigned int> &dest) {
+    void deserialize(const std::shared_ptr<unsigned int> &dest) const {
         *dest = _min + serialized_val.to_ulong() * _resolution();
     }
 
-    static void print(const unsigned int &src, char *dest) { sprintf(dest, "%d", src); }
+    static constexpr size_t strlen = 20;
 
-    size_t strlen() const override { return 20; };
+    char* print(const unsigned int &src) const {
+        sprintf(this->printed_val, "%d", src);
+        return this->printed_val;
+    }
 };
 
 /**
@@ -76,13 +80,16 @@ class Serializer<signed int> : public SerializerBase<signed int> {
         serialized_val.set_int(result_int);
     }
 
-    void deserialize(std::shared_ptr<signed int> &dest) {
+    void deserialize(const std::shared_ptr<signed int> &dest) const {
         *dest = _min + serialized_val.to_ulong() * _resolution();
     }
 
-    static void print(const signed int &src, char *dest) { sprintf(dest, "%d", src); }
+    static constexpr size_t strlen = 20;
 
-    size_t strlen() const override { return 20; };
+    char* print(const signed int &src) const {
+        sprintf(this->printed_val, "%d", src);
+        return this->printed_val;
+    }
 };
 
 /**
@@ -102,15 +109,18 @@ class Serializer<float> : public SerializerBase<float> {
         serialized_val.set_int(result_int);
     }
 
-    void deserialize(std::shared_ptr<float> &dest) {
+    void deserialize(const std::shared_ptr<float> &dest) const {
         unsigned long f_bits = serialized_val.to_ullong();
         float resolution = (_max - _min) / pow(2, serialized_val.size());
         *dest = _min + resolution * f_bits;
     }
 
-    static void print(const float &src, char *dest) { sprintf(dest, "%6.6f", src); }
+    static constexpr size_t strlen = 14;
 
-    size_t strlen() const override { return 14; };
+    char* print(const float &src) const {
+        sprintf(this->printed_val, "%6.6f", src);
+        return this->printed_val;
+    }
 };
 
 /**
@@ -130,15 +140,18 @@ class Serializer<double> : public SerializerBase<double> {
         serialized_val.set_int(result_int);
     }
 
-    void deserialize(std::shared_ptr<double> &dest) {
+    void deserialize(const std::shared_ptr<double> &dest) const {
         unsigned long f_bits = serialized_val.to_ullong();
         double resolution = (_max - _min) / pow(2, serialized_val.size());
         *dest = _min + resolution * f_bits;
     }
 
-    static void print(const double &src, char *dest) { sprintf(dest, "%6.6f", src); }
+    static constexpr size_t strlen = 14;
 
-    size_t strlen() const override { return 14; };
+    char* print(const double &src) const {
+        sprintf(this->printed_val, "%6.6f", src);
+        return this->printed_val;
+    }
 };
 
 /**
@@ -236,13 +249,12 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
         }
     }
 
-    void deserialize(std::shared_ptr<std::array<float, N>> &dest) {
+    void deserialize(const std::shared_ptr<std::array<float, N>> &dest) const {
         float magnitude = 0.0f;
         std::shared_ptr<float> magnitude_ptr(&magnitude);
         magnitude_serializer->deserialize(magnitude_ptr);
 
-        unsigned int missing_component = (this->serialized_val[magnitude_serializer->bitsize()] << 1) +
-                                         this->serialized_val[magnitude_serializer->bitsize() + 1];
+        const unsigned int missing_component = (this->serialized_val[magnitude_serializer->bitsize()] << 1) + this->serialized_val[magnitude_serializer->bitsize() + 1];
         (*dest)[missing_component] = 1;
         int j = 0;  // Index of current component being processed
         for (int i = 0; i < N; i++) {
@@ -257,13 +269,14 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
         for (int i = 0; i < N; i++) (*dest)[i] *= magnitude;
     }
 
-    void print(const std::array<float, N> &src, char *dest) {
-        for (size_t i = 0; i < N; i++) {
-            sprintf(dest + 14 * i, "%6.6f,", src[i]);
-        }
-    }
+    static constexpr size_t strlen = 14 * N;
 
-    size_t strlen() const override { return 14 * N; };
+    char* print(const std::array<float, N> &src) const {
+        for (size_t i = 0; i < N; i++) {
+            sprintf(this->printed_val + 14 * i, "%6.6f,", src[i]);
+        }
+        return this->printed_val;
+    }
 };
 
 /**
@@ -271,12 +284,10 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
  */
 template <>
 class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
-   protected:
-    static const gps_time_t dummy_gpstime;
-
    public:
     Serializer()
-        : SerializerBase<gps_time_t>(dummy_gpstime, dummy_gpstime,
+        : SerializerBase<gps_time_t>(SerializerConstants::dummy_gpstime, 
+                                     SerializerConstants::dummy_gpstime,
                                      SerializerConstants::gps_time_sz) {}
 
     void serialize(const gps_time_t &src) {
@@ -290,7 +301,7 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         for (int i = 0; i < 32; i++) serialized_val[i + 17] = tow[i];
     }
 
-    void deserialize(std::shared_ptr<gps_time_t> &dest) {
+    void deserialize(std::shared_ptr<gps_time_t> &dest) const {
         std::bitset<16> wn;
         std::bitset<32> tow;
         for (int i = 0; i < 16; i++) wn.set(i + 1, serialized_val[i]);
@@ -300,11 +311,10 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         dest->gpstime.tow = (unsigned int)tow.to_ulong();
     }
 
-    void print(const gps_time_t &src, char *dest) {
+    static constexpr size_t strlen = 14;
+
+    char* print(const gps_time_t &src) const {
         // TODO
+        return this->printed_val;
     }
-
-    size_t strlen() const override { return 14; }
 };
-
-const gps_time_t Serializer<gps_time_t>::dummy_gpstime;

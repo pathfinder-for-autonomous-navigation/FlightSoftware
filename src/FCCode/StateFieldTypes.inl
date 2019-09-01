@@ -1,5 +1,5 @@
-#include "Serializer.hpp"
 #include "StateField.hpp"
+#include "Serializer.hpp"
 
 /**
  * @brief Empty base class for internal state fields.
@@ -35,6 +35,11 @@ class SerializableStateFieldBase : public StateFieldBase {
      * @brief Constructor. Should not be used.
      */
     SerializableStateFieldBase(const std::string &name, const bool ground_writable) : StateFieldBase(name, true, ground_writable) {}
+
+   public:
+    virtual void serialize() = 0;
+    virtual void deserialize() = 0;
+    virtual char* print() const = 0;
 };
 
 /**
@@ -44,14 +49,42 @@ class SerializableStateFieldBase : public StateFieldBase {
  * @tparam T Type of state field.
  */
 template <typename T>
-class SerializableStateField : public StateField<T> {
+class SerializableStateField : public StateField<T>, public SerializableStateFieldBase {
    protected:
     std::shared_ptr<Serializer<T>> _serializer;
 
    public:
     SerializableStateField(const std::string &name, const bool ground_writable,
                            const std::shared_ptr<Serializer<T>> &s)
-        : StateField<T>(name, false, ground_writable), _serializer(s) {}
+        : StateField<T>(name, false, ground_writable), SerializableStateFieldBase(name, ground_writable), _serializer(s) {}
+
+    /**
+     * @brief Get the stored bit array containing the serialized value.
+     *
+     * @return const bit_array&
+     */
+    const bit_array &get_bit_array() const { return _serializer->get_bit_array(); }
+
+    /**
+     * @brief Return size of bit array held by this serializer.
+     *
+     * @return size_t
+     */
+    size_t bitsize() const { return _serializer->bitsize(); }
+
+    /**
+     * @brief Get string length that is necessary to print the value
+     * of the stored contents.
+     *
+     * @return size_t
+     */
+    size_t strlen() const { return _serializer->strlen(); }
+
+    /**
+     * @brief Set the internally stored serialized value. Do nothing if the source bit arary does
+     * not have the same size as the internally stored bit array.
+     */
+    void set_bit_array(const bit_array &src) { _serializer->set_bit_array(src); }
 
     /**
      * @brief Serialize field data into the provided bitset.
@@ -62,9 +95,7 @@ class SerializableStateField : public StateField<T> {
      * possible. Also returns false if the serializer or the state field was not
      * initialized.
      */
-    bool serialize(bit_array *dest) {
-        return this->_is_initialized && (this->_serializer).serialize(this->_val, dest);
-    }
+    void serialize() { (this->_serializer)->serialize(this->_val); }
 
     /**
      * @brief Deserialize field data from the provided bitset.
@@ -75,19 +106,17 @@ class SerializableStateField : public StateField<T> {
      * possible. Also returns false if the serializer or the state field was not
      * initialized.
      */
-    bool deserialize(const bit_array &src) {
-        return this->_is_initialized && (this->_serializer).deserialize(src, &(this->_val));
+    void deserialize() {
+        std::shared_ptr<T> val_ptr(&(this->_val));
+        (this->_serializer)->deserialize(val_ptr);
     }
 
     /**
      * @brief Write human-readable value of state field to a supplied string.
      *
-     * @param dest
      * @return True if print succeeded, false if field is uninitialized.
      */
-    bool print(std::string *dest) {
-        return this->_is_initialized && (this->_serializer).print(this->_val, dest);
-    }
+    char* print() const { return (this->_serializer)->print(this->_val); }
 };
 
 /**
@@ -109,9 +138,9 @@ class ReadableStateFieldBase : public StateFieldBase {
  * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
 template <typename T>
-class ReadableStateField : public SerializableStateField<T> {
+class ReadableStateField : public SerializableStateField<T>, public ReadableStateFieldBase {
    public:
-    ReadableStateField(const std::string &name, const std::shared_ptr<Serializer<T>> &s) : SerializableStateField<T>(name, false, s) {}
+    ReadableStateField(const std::string &name, const std::shared_ptr<Serializer<T>> &s) : SerializableStateField<T>(name, false, s), ReadableStateFieldBase(name) {}
 };
 
 /**
@@ -133,7 +162,7 @@ class WritableStateFieldBase : public StateFieldBase {
  * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
 template <typename T>
-class WritableStateField : public SerializableStateField<T> {
+class WritableStateField : public SerializableStateField<T>, WritableStateFieldBase {
    public:
-    WritableStateField(const std::string &name, const std::shared_ptr<Serializer<T>> &s) : SerializableStateField<T>(name, true, s) {}
+    WritableStateField(const std::string &name, const std::shared_ptr<Serializer<T>> &s) : SerializableStateField<T>(name, true, s), WritableStateFieldBase(name) {}
 };

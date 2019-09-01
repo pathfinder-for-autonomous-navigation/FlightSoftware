@@ -6,14 +6,12 @@
 #ifndef STATE_FIELD_HPP_
 #define STATE_FIELD_HPP_
 
-#include <memory>
-
-#include <vector>
-#include "ControlTask.hpp"
-#include "InitializationRequired.hpp"
 #include "Serializer.hpp"
 #include "StateFieldBase.hpp"
 #include "StateFieldRegistry.hpp"
+
+#include <vector>
+#include <memory>
 
 /**
  * @brief A lightweight container around state fields that allows thread-safe
@@ -24,7 +22,7 @@
  * or uplink packet.
  */
 template <typename T>
-class StateField : public StateFieldBase, public InitializationRequired {
+class StateField : public StateFieldBase {
    protected:
     T _val;
 
@@ -36,10 +34,7 @@ class StateField : public StateFieldBase, public InitializationRequired {
      */
     StateField(const std::string &name, const bool ground_readable, const bool ground_writable)
         : StateFieldBase(name, ground_readable, ground_writable),
-          InitializationRequired(),
-          _val() {
-        Debuggable::init();
-    }
+          _val() {}
 
     /**
      * @brief Returns a generic pointer to this state field. Useful for creating
