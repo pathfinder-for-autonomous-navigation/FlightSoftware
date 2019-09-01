@@ -7,13 +7,8 @@
 #ifndef SERIALIZER_HPP_
 #define SERIALIZER_HPP_
 
-#include <stdio.h>
-#include <bitset>
-#include <cmath>
-#include <memory>
-#include "GPSTime.hpp"
-#include "InitializationRequired.hpp"
-#include "types.hpp"
+#include "fixed_array.hpp"
+#include <string>
 
 class SerializerConstants {
    public:
@@ -28,99 +23,125 @@ class SerializerConstants {
     constexpr static size_t temp_sz = 30;
 
     constexpr static size_t f_vec_min_sz = 30;
-    constexpr static size_t f_vec_component_sz = 9;
-    constexpr static size_t f_quat_component_sz = 9;
+    constexpr static size_t f_vec_quat_component_sz = 9;
     constexpr static size_t d_vec_min_sz = 30;
-    constexpr static size_t d_vec_component_sz = 9;
-    constexpr static size_t d_quat_component_sz = 9;
+    constexpr static size_t d_vec_quat_component_sz = 9;
+
+    static const constexpr char* const serializable_types[] = {
+    "bool", "f_quat", "f_vec", "d_quat", "d_vec", "gpstime",
+    "int",  "uint",   "float",  "double"};
 };
 
-template <typename U>
-class SerializerBase : public InitializationRequired, public SerializerConstants {
+constexpr const char* const SerializerConstants::serializable_types[];
+
+/**
+ * @brief Base class that manages memory for a serializer. Specifically, it ensures that the
+ * bit array used to store the results of serialization is allocated at most once.
+ * 
+ * @tparam T Type of stored value.
+ */
+template <typename T>
+class SerializerBase : protected SerializerConstants {
    protected:
-    U _min;
-    U _max;
+    T _min;
+    T _max;
+    bit_array serialized_val;
 
     /**
-     * @brief Argumented constructor. Accepts the same arguments as init(), but
-     * should NOT be used in a public-facing interface.
+     * @brief Argumented constructor. This is protected to prevent construction of this
+     * implementation-less base class.
+     *
+     * If the provided size is less than 0 (which could happen if you're constructing the magnitude
+     * serializer for a vector serializer), return from the constructor and do not resize the
+     * serialized bit array.
      */
-    SerializerBase(U min, U max)
-        : InitializationRequired(), SerializerConstants(), _min(min), _max(max) {}
+    SerializerBase(T min, T max, size_t compressed_size) : _min(min), _max(max) {
+        if (static_cast<int>(compressed_size) < 0) return;
+        serialized_val.resize(compressed_size);
+    }
 
    public:
     /**
-     * @brief Default constructor. Empty-initializes the minimum and maximum.
-     * This constructor should NOT be used.
+     * @brief Get the stored bit array containing the serialized value.
+     *
+     * @return const bit_array&
      */
-    SerializerBase() : InitializationRequired(), _min(), _max() {}
+    const bit_array &get_bit_array() const { return serialized_val; }
 
     /**
-     * @brief A minimum and a maximum value must be supplied to the serializer,
-     * which will use them in some way to construct a fixed-point scheme for
-     * compressing numerical data.
+     * @brief Return size of bit array held by this serializer.
      *
-     * For example, some integer state field might have a minimum value of 0
-     * and a maximum value of 100. So all allowable values can be represented
-     * in 7 bits (since 2^7 = 128), which is significantly less than the
-     * 32-bit allocation of a standard integer.
-     *
-     * @param min The minimum value of the object that can be compressed.
-     * @param max The maximum value of the object that can be compressed.
-     * @return True if initialization was successful, false if maximum was less
-     * than minimum.
+     * @return size_t
      */
-    bool init(U min, U max) {
-        if (min > max) return false;
-        _min = min;
-        _max = max;
-        return InitializationRequired::init();
+    size_t bitsize() const { return serialized_val.size(); }
+
+    /**
+     * @brief Get string length that is necessary to print the value
+     * of the stored contents.
+     *
+     * @return size_t
+     */
+    virtual size_t strlen() const = 0;
+
+    /**
+     * @brief Set the internally stored serialized value. Do nothing if the source bit arary does
+     * not have the same size as the internally stored bit array.
+     */
+    void set_bit_array(const bit_array &src) {
+        if (src.size() != serialized_val.size()) return;
+        serialized_val = src;
     }
 };
 
 /**
- * @brief Provides serialization functionality for use by
- * SerializableStateField.
- *
- * @tparam T Type to serialize.
- * @tparam csz Size, in bits, of compressed object.
+ * @brief Base class for all serializers. Provides serialization, deserialization, and printing
+ * functions that are expected to be defined in template specializations.
+ * 
+ * @tparam T 
  */
-template <typename T, typename U, size_t csz>
-class Serializer : SerializerBase<U> {
+template <typename T>
+class Serializer : public SerializerBase<T> {
    public:
-    using SerializerBase<U>::SerializerBase;
-    /**
-     * @brief Serializes a given object and stores the compressed object
-     * into the provided bitset.
-     *
-     * @param src
-     * @param dest
-     *
-     * @return True if serialization succeeded, false if serializer was
-     *         uninitialized.
-     */
-    bool serialize(const T &src, std::shared_ptr<std::bitset<csz>> &dest);
+    Serializer(T min, T max, size_t compressed_size) : SerializerBase<T>(min, max, compressed_size) {}
 
     /**
-     * @brief Deserializes a bitset and stores the result in the provided
-     * object pointer.
+     * @brief Serializes a given object and stores the compressed object
+     * into the member bitset.
      *
      * @param src
+     *
+     * @return True if serialization succeeded, false if serializer was
+     *         uninitialized.
+     */
+    void serialize(const T &src);
+
+    /**
+     * @brief Deserializes the bit array and stores the result in the provided
+     * object pointer.
+     *
      * @param dest
      *
      * @return True if serialization succeeded, false if serializer was
      *         uninitialized.
      */
-    bool deserialize(const std::bitset<csz> &src, std::shared_ptr<T> &dest);
+    void deserialize(std::shared_ptr<T> &dest);
 
     /**
      * @brief Outputs a string representation of the source value into
      * the given destination string.
      *
+     * This function does not perform length-checking on the string, so
+     * it is up to the user to ensure that the requisite space is available.
+     * The strlen function provided in SerializerBase can be used
+     * to find the string space required by this function.
+     *
+     * @param src  Source value
+     * @param dest Destination string
+     *
      * @return True if serialization succeeded, false if serializer was
      *         uninitialized.
      */
-    bool print(const T &src, std::shared_ptr<std::string> &dest);
+    static void print(const T &src, char *dest);
 };
 
 #include "SerializerTypes.inl"

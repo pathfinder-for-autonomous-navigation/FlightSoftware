@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <string>
 #include <vector>
+#include <bitset>
 #include "InitializationRequired.hpp"
 
 /**
@@ -30,7 +30,7 @@ class fixed_array_base : public std::vector<T> {
     /**
      * @brief Default constructor.
      */
-    fixed_array_base() {}
+    explicit fixed_array_base() {}
 
     /**
      * @brief Construct a new fixed array object
@@ -59,7 +59,7 @@ class fixed_array_base : public std::vector<T> {
      * @return fixed_array&
      */
     fixed_array_base& operator=(const fixed_array_base<T>& arr) {
-        if (arr.size() != size()) return *this;
+        if (arr.size() != this->size()) return *this;
         for (size_t i = 0; i < arr.size(); i++) (*this)[i] = arr[i];
         return *this;
     }
@@ -88,7 +88,12 @@ class fixed_array_base : public std::vector<T> {
 template <typename T>
 class fixed_array : public fixed_array_base<T> {
    public:
-    using fixed_array_base<T>::fixed_array_base;
+    /**
+     * Same constructors as fixed_array_base.
+     */
+    explicit fixed_array() : fixed_array_base<T>() {}
+    explicit fixed_array(const size_t size) : fixed_array_base<T>(size) {}
+    explicit fixed_array(const fixed_array<T>& arr) : fixed_array_base<T>(arr) {}
 };
 
 /**
@@ -97,7 +102,12 @@ class fixed_array : public fixed_array_base<T> {
 template <>
 class fixed_array<bool> : public fixed_array_base<bool> {
    public:
-    using fixed_array_base<bool>::fixed_array_base;
+    /**
+     * Same constructors as fixed_array_base, but made public.
+     */
+    explicit fixed_array() : fixed_array_base<bool>() {}
+    explicit fixed_array(const size_t size) : fixed_array_base<bool>(size) {}
+    explicit fixed_array(const fixed_array<bool>& arr) : fixed_array_base<bool>(arr) {}
 
     /**
      * @brief Explicit copy constructor for a bitset. Constructs the fixed array to be of the same
@@ -215,6 +225,9 @@ class fixed_array<bool> : public fixed_array_base<bool> {
     }
 };
 
+/**
+ * @brief Convenience definition for fixed array of bits.
+ */
 typedef fixed_array<bool> bit_array;
 
 #endif

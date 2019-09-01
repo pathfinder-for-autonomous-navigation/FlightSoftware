@@ -42,20 +42,15 @@ class SerializableStateFieldBase : public StateFieldBase {
  * converted into a compressed format that enables transfer over radio.
  *
  * @tparam T Type of state field.
- * @tparam U An additional type that is used to serialize the field. For example,
- *           if T is a float vector, U might be a float, since the vector magnitude
- *           is stored separately from the vector direction when the vector is
- *           serialized.
- * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
-template <typename T, typename U, size_t csz>
+template <typename T>
 class SerializableStateField : public StateField<T> {
    protected:
-    std::shared_ptr<Serializer<T, U, csz>> _serializer;
+    std::shared_ptr<Serializer<T>> _serializer;
 
    public:
     SerializableStateField(const std::string &name, const bool ground_writable,
-                           const std::shared_ptr<Serializer<T, U, csz>> &s)
+                           const std::shared_ptr<Serializer<T>> &s)
         : StateField<T>(name, false, ground_writable), _serializer(s) {}
 
     /**
@@ -67,7 +62,7 @@ class SerializableStateField : public StateField<T> {
      * possible. Also returns false if the serializer or the state field was not
      * initialized.
      */
-    bool serialize(std::bitset<csz> *dest) {
+    bool serialize(bit_array *dest) {
         return this->_is_initialized && (this->_serializer).serialize(this->_val, dest);
     }
 
@@ -80,7 +75,7 @@ class SerializableStateField : public StateField<T> {
      * possible. Also returns false if the serializer or the state field was not
      * initialized.
      */
-    bool deserialize(const std::bitset<csz> &src) {
+    bool deserialize(const bit_array &src) {
         return this->_is_initialized && (this->_serializer).deserialize(src, &(this->_val));
     }
 
@@ -113,10 +108,10 @@ class ReadableStateFieldBase : public StateFieldBase {
  * @tparam T Type of state field.
  * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
-template <typename T, typename U, unsigned int csz>
-class ReadableStateField : public SerializableStateField<T, U, csz> {
+template <typename T>
+class ReadableStateField : public SerializableStateField<T> {
    public:
-    ReadableStateField(const std::string &name, const std::shared_ptr<Serializer<T, U, csz>> &s) : SerializableStateField<T, U, csz>(name, false, s) {}
+    ReadableStateField(const std::string &name, const std::shared_ptr<Serializer<T>> &s) : SerializableStateField<T>(name, false, s) {}
 };
 
 /**
@@ -137,8 +132,8 @@ class WritableStateFieldBase : public StateFieldBase {
  * @tparam T Type of state field.
  * @tparam compressed_size Size, in bits, of field when its value is compressed.
  */
-template <typename T, typename U, unsigned int csz>
-class WritableStateField : public SerializableStateField<T, U, csz> {
+template <typename T>
+class WritableStateField : public SerializableStateField<T> {
    public:
-    WritableStateField(const std::string &name, const std::shared_ptr<Serializer<T, U, csz>> &s) : SerializableStateField<T, U, csz>(name, true, s) {}
+    WritableStateField(const std::string &name, const std::shared_ptr<Serializer<T>> &s) : SerializableStateField<T>(name, true, s) {}
 };

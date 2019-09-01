@@ -1,603 +1,310 @@
 
+#include <stdio.h>
+#include <cstring>
+#include "types.hpp"
+#include "GPSTime.hpp"
 #include "Serializer.hpp"
 
 /**
  * @brief Specialization of Serializer for booleans.
  */
 template <>
-class Serializer<bool, bool, SerializerConstants::bool_sz> : public SerializerBase<bool> {
+class Serializer<bool> : public SerializerBase<bool> {
    public:
-    Serializer() : SerializerBase<bool>(false, true) {}
+    Serializer() : SerializerBase<bool>(false, true, 1) {}
 
-    bool init() {
-        // Already initialized.
-        return true;
+    void serialize(const bool &src) { serialized_val[0] = src; }
+
+    void deserialize(std::shared_ptr<bool> &dest) { *dest = serialized_val[0]; }
+
+    static void print(const bool &src, char *dest) {
+        if (src)
+            strcpy(dest, "true");
+        else
+            strcpy(dest, "false");
     }
 
-    bool serialize(const bool &src, std::shared_ptr<std::bitset<bool_sz>> &dest) {
-        if (!is_initialized()) return false;
-        (*dest)[0] = src;
-        return true;
-    }
-
-    bool deserialize(const std::bitset<bool_sz> &src, std::shared_ptr<bool> &dest) {
-        if (!is_initialized()) return false;
-        *dest = src[0];
-        return true;
-    }
-
-    bool print(const bool &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
-        *dest = src ? "true" : "false";
-        return true;
-    }
+    size_t strlen() const override { return 5; };
 };
 
 /**
  * @brief Specialization of Serializer for unsigned ints.
  */
-template <size_t csz>
-class Serializer<unsigned int, unsigned int, csz> : public SerializerBase<unsigned int> {
+template <>
+class Serializer<unsigned int> : public SerializerBase<unsigned int> {
    public:
-    Serializer() : SerializerBase<unsigned int>(0, 0) {}
+    Serializer(unsigned int min, unsigned int max, size_t compressed_size) : SerializerBase<unsigned int>(min, max, compressed_size) {}
 
     unsigned int _resolution() const {
-        return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, csz)));
+        return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, serialized_val.size())));
     }
 
-    bool serialize(const unsigned int &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!is_initialized()) return false;
-
+    void serialize(const unsigned int &src) {
         unsigned int src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
         unsigned int result_int = (src_copy - _min) / _resolution();
-        std::bitset<csz> result_copy(result_int);
-        *dest = result_copy;
-
-        return true;
+        serialized_val.set_int(result_int);
     }
 
-    bool deserialize(const std::bitset<csz> &src, std::shared_ptr<unsigned int> &dest) {
-        if (!is_initialized()) return false;
-        *dest = _min + src.to_ulong() * _resolution();
-        return true;
+    void deserialize(std::shared_ptr<unsigned int> &dest) {
+        *dest = _min + serialized_val.to_ulong() * _resolution();
     }
 
-    bool print(const unsigned int &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
+    static void print(const unsigned int &src, char *dest) { sprintf(dest, "%d", src); }
 
-        char buf[20];
-        sprintf(buf, "%d", src);
-        *dest = buf;
-        return true;
-    }
+    size_t strlen() const override { return 20; };
 };
 
 /**
  * @brief Specialization of Serializer for signed integers.
  */
-template <size_t csz>
-class Serializer<signed int, signed int, csz> : public SerializerBase<signed int> {
+template <>
+class Serializer<signed int> : public SerializerBase<signed int> {
    public:
-    Serializer() : SerializerBase<signed int>(0, 0) {}
+    Serializer(signed int min, signed int max, size_t compressed_size) : SerializerBase<signed int>(min, max, compressed_size) {}
 
     unsigned int _resolution() const {
-        return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, csz)));
+        return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, serialized_val.size())));
     }
 
-    bool serialize(const signed int &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!is_initialized()) return false;
-
-        unsigned int src_copy = src;
+    void serialize(const signed int &src) {
+        signed int src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
         unsigned int result_int = (src_copy - _min) / _resolution();
-        std::bitset<csz> result_copy(result_int);
-        *dest = result_copy;
-
-        return true;
+        serialized_val.set_int(result_int);
     }
 
-    bool deserialize(const std::bitset<csz> &src, std::shared_ptr<signed int> &dest) {
-        if (!is_initialized()) return false;
-        *dest = _min + src.to_ulong() * _resolution();
-        return true;
+    void deserialize(std::shared_ptr<signed int> &dest) {
+        *dest = _min + serialized_val.to_ulong() * _resolution();
     }
 
-    bool print(const signed int &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
+    static void print(const signed int &src, char *dest) { sprintf(dest, "%d", src); }
 
-        char buf[20];
-        sprintf(buf, "%d", src);
-        *dest = buf;
-        return false;
-    }
+    size_t strlen() const override { return 20; };
 };
 
 /**
  * @brief Specialization of Serializer for floats.
  */
-template <size_t csz>
-class Serializer<float, float, csz> : public SerializerBase<float> {
+template <>
+class Serializer<float> : public SerializerBase<float> {
    public:
-    Serializer() : SerializerBase<float>(0.0f, 0.0f) {}
+    Serializer(float min, float max, size_t compressed_size) : SerializerBase<float>(min, max, compressed_size) {}
 
-    bool init(float min, float max) {
-        _min = min;
-        _max = max;
-        return InitializationRequired::init();
-    }
-
-    bool serialize(const float &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!is_initialized()) return false;
-
+    void serialize(const float &src) {
         float src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
-        float resolution = (_max - _min) / pow(2, csz);
+        float resolution = (_max - _min) / pow(2, serialized_val.size());
         unsigned int result_int = (unsigned int)((src_copy - _min) / resolution);
-        std::bitset<csz> result_copy(result_int);
-        *dest = result_copy;
-
-        return true;
+        serialized_val.set_int(result_int);
     }
 
-    bool deserialize(const std::bitset<csz> &src, std::shared_ptr<float> &dest) {
-        if (!is_initialized()) return false;
-
-        unsigned long f_bits = src.to_ullong();
-        float resolution = (_max - _min) / pow(2, csz);
+    void deserialize(std::shared_ptr<float> &dest) {
+        unsigned long f_bits = serialized_val.to_ullong();
+        float resolution = (_max - _min) / pow(2, serialized_val.size());
         *dest = _min + resolution * f_bits;
-
-        return true;
     }
 
-    bool print(const float &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
+    static void print(const float &src, char *dest) { sprintf(dest, "%6.6f", src); }
 
-        char buf[20];
-        sprintf(buf, "%f", src);
-        *dest = buf;
-        return true;
-    }
+    size_t strlen() const override { return 14; };
 };
 
 /**
  * @brief Specialization of Serializer for doubles.
  */
-template <size_t csz>
-class Serializer<double, double, csz> : public SerializerBase<double> {
+template <>
+class Serializer<double> : public SerializerBase<double> {
    public:
-    Serializer() : SerializerBase<double>(0, 0) {}
+    Serializer(double min, double max, size_t compressed_size) : SerializerBase<double>(min, max, compressed_size) {}
 
-    bool serialize(const double &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!is_initialized()) return false;
-
+    void serialize(const double &src) {
         double src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
-        double resolution = (_max - _min) / pow(2, csz);
+        double resolution = (_max - _min) / pow(2, serialized_val.size());
         unsigned int result_int = (unsigned int)((src_copy - _min) / resolution);
-        std::bitset<csz> result_copy(result_int);
-        *dest = result_copy;
-
-        return true;
+        serialized_val.set_int(result_int);
     }
 
-    bool deserialize(const std::bitset<csz> &src, std::shared_ptr<double> &dest) {
-        if (!is_initialized()) return false;
-
-        unsigned long f_bits = src.to_ullong();
-        double resolution = (_max - _min) / pow(2, csz);
-        return _min + resolution * f_bits;
-
-        return true;
+    void deserialize(std::shared_ptr<double> &dest) {
+        unsigned long f_bits = serialized_val.to_ullong();
+        double resolution = (_max - _min) / pow(2, serialized_val.size());
+        *dest = _min + resolution * f_bits;
     }
 
-    bool print(const double &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
+    static void print(const double &src, char *dest) { sprintf(dest, "%6.6f", src); }
 
-        char buf[20];
-        sprintf(buf, "%f", src);
-        *dest = buf;
-        return true;
-    }
+    size_t strlen() const override { return 14; };
 };
 
 /**
- * @brief Specialization of Serializer for float vector.
+ * @brief Specialization of Serializer for float vectors and quaternions.
  */
-template <size_t csz>
-class Serializer<f_vector_t, float, csz> : public SerializerBase<float> {
+template <size_t N>
+class Serializer<std::array<float, N>> : public SerializerBase<std::array<float, N>> {
+   protected:
+    /**
+     * We need these variables, since we don't want to use the base-class provided vectors for
+     * storing the minimum and maximum magnitude. We also need a dummy value to feed into the
+     * base class, as well.
+     */
+    float magnitude_min;
+    float magnitude_max;
+    static std::array<float, N> dummy_vector;
+
+    /**
+     * @brief Serializer for vector magnitude.
+     */
+    std::unique_ptr<Serializer<float>> magnitude_serializer;
+
+    /**
+     * @brief Serializer for vector components.
+     */
+    std::array<std::unique_ptr<Serializer<float>>, N - 1> vector_element_serializers;
+
+    /**
+     * @brief Bit array that stores which element of the vector is maximal.
+     */
+    bit_array max_component;
+
+    /**
+     * @brief Bit arrays that store the scaled-down representations of each vector component.
+     */
+    std::array<bit_array, N - 1> component_scaled_values;
+
    public:
-    Serializer() : SerializerBase(0.0f, 0.0f) {}
+    /**
+     * @brief Construct a new Serializer object, with default arguments being set to
+     * values appropriate for a quaternion.
+     *
+     * @param min Minimum magnitude of float vector
+     * @param max Maximum value of float vector
+     * @param size Number of bits to compress the vector into. If this is less
+     *             than the minimum possible size for float vectors, construction will fail.
+     */
+    Serializer(float min = 0.0, float max = 1.0, size_t size = SerializerConstants::f_quat_sz)
+        : SerializerBase<f_vector_t>(dummy_vector, dummy_vector, size),
+          magnitude_min(min),
+          magnitude_max(max),
+          magnitude_serializer(
+              std::make_unique<Serializer<float>>(min, max, size - SerializerConstants::f_vec_min_sz)) {
+        max_component.resize(2);
+        for (size_t i = 0; i < N - 1; i++) {
+            component_scaled_values[i].resize(SerializerConstants::f_vec_quat_component_sz);
+            vector_element_serializers[i] =
+                std::make_unique<Serializer<float>>(0.0f, sqrtf(2.0f), SerializerConstants::f_vec_quat_component_sz);
+        }
+    }
 
-    bool serialize(const f_vector_t &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!is_initialized()) return false;
+    void serialize(const std::array<float, N> &src) {
+        auto serialized_position = this->serialized_val.begin();
 
-        float mag = sqrtf(powf(src[0], 2.0f) + pow(src[1], 2.0f) + pow(src[2], 2.0f));
-        constexpr unsigned int magnitude_bitsize = csz - f_vec_min_sz;
-        std::bitset<magnitude_bitsize> magnitude_representation;
-
-        Serializer<float, float, magnitude_bitsize> magnitude_serializer;
-        magnitude_serializer.init(_min, _max);
-        magnitude_serializer.serialize(mag, &magnitude_representation);
+        float mag;
+        if (N == 4)
+            mag = 1.0f;
+        else {
+            for (int i = 0; i < 3; i++) {
+                mag += src[i] * src[i];
+            }
+        }
+        magnitude_serializer->serialize(mag);
+        std::copy(max_component.begin(), max_component.end(), serialized_position);
 
         // Compress unit vector into two compressed floats
-        std::bitset<f_vec_min_sz> vec_representation;
-        std::bitset<f_vec_component_sz> vec_element_representations[2];
         std::array<float, 3> v_mags;  // Magnitudes of elements in vector
-        for (size_t i = 0; i < 3; i++) v_mags[i] = std::abs(src[i]);
-
-        int max_element_idx = 0;
-        float max_element_value = std::max(std::max(v_mags[0], v_mags[1]), v_mags[2]);
-        if (v_mags[0] == max_element_value) max_element_idx = 0;
-        if (v_mags[1] == max_element_value) max_element_idx = 1;
-        if (v_mags[2] == max_element_value) max_element_idx = 2;
-        int vec_number = 0;  // The current compressed vector bitset that we're modifying
-        for (size_t i = 0; i < 3; i++) {
-            if (i == max_element_idx) {
-                std::bitset<2> largest_element_representation(i);
-                vec_representation.set(0, largest_element_representation[0]);
-                vec_representation.set(1, largest_element_representation[1]);
-            } else {
-                float v_element_scaled = src[vec_number] / mag;
-
-                Serializer<float, float, f_vec_component_sz> vector_element_serializer;
-                auto vec_element_representation_ptr =
-                    std::shared_ptr<std::bitset<f_vec_component_sz>>(
-                        &vec_element_representations[vec_number]);
-                vector_element_serializer.init(0, sqrtf(2.0f));
-                vector_element_serializer.serialize(v_element_scaled,
-                                                    vec_element_representation_ptr);
-                vec_number++;
-            }
-        }
-        // Add floats to final bit representation
-        for (size_t i = 0; i < f_vec_component_sz; i++) {
-            vec_representation.set(i + 2, vec_element_representations[0][i]);
-            vec_representation.set(i + 11, vec_element_representations[1][i]);
-        }
-        for (size_t i = 0; i < magnitude_bitsize; i++) (*dest).set(i, magnitude_representation[i]);
-        for (size_t i = 0; i < f_vec_min_sz; i++)
-            (*dest).set(i + magnitude_bitsize, vec_representation[i]);
-
-        return true;
-    }
-
-    bool deserialize(const std::bitset<csz> &src, std::shared_ptr<f_vector_t> &dest) {
-        if (!is_initialized()) return false;
-
-        constexpr size_t magnitude_bitsize = csz - f_vec_min_sz;
-        std::bitset<magnitude_bitsize> magnitude_packed;
-        for (size_t i = 0; i < magnitude_bitsize; i++) magnitude_packed.set(i, src[i]);
-
-        float magnitude = 0.0f;
-        Serializer<float, float, magnitude_bitsize> magnitude_serializer;
-        magnitude_serializer.init(_min, _max);
-        magnitude_serializer.deserialize(magnitude_packed, &magnitude);
-
-        unsigned int missing_component = (src[magnitude_bitsize] << 1) + src[magnitude_bitsize + 1];
-        (*dest)[missing_component] = 1;
-        int j = 0;  // Index of current component being processed
-        for (size_t i = 0; i < 3; i++) {
-            if (i != missing_component) {
-                std::bitset<f_vec_component_sz> vec_component_packed;
-                for (int k = 0; k < f_vec_component_sz; k++)
-                    vec_component_packed.set(
-                        k, src[csz - f_vec_min_sz + 2 + j * f_vec_component_sz + k]);
-
-                Serializer<float, float, f_vec_component_sz> vec_component_serializer;
-                vec_component_serializer.init(0.0f, sqrtf(2.0f));
-                auto component_ptr = std::shared_ptr<float>(&(*dest)[i]);
-                vec_component_serializer.deserialize(vec_component_packed, component_ptr);
-                j++;
-            }
-        }
-        (*dest)[missing_component] = sqrt((*dest)[missing_component]);
-
-        for (size_t i = 0; i < 3; i++) (*dest)[i] *= magnitude;
-
-        return true;
-    }
-
-    bool print(const f_vector_t &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
-        // TODO
-        return true;
-    }
-};
-
-/**
- * @brief Specialization of Serializer for double vector.
- */
-template <size_t csz>
-class Serializer<d_vector_t, double, csz> : public SerializerBase<double> {
-   public:
-    Serializer() : SerializerBase<double>(0.0, 0.0) {}
-
-    bool serialize(const d_vector_t &src, std::shared_ptr<std::bitset<csz>> &dest) {
-        if (!is_initialized()) return false;
-
-        double mag = sqrt(pow(src[0], 2) + pow(src[1], 2) + pow(src[2], 2));
-        constexpr unsigned int magnitude_bitsize = csz - d_vec_min_sz;
-        std::bitset<magnitude_bitsize> magnitude_representation;
-
-        Serializer<double, double, magnitude_bitsize> magnitude_serializer;
-        magnitude_serializer.init(_min, _max);
-        magnitude_serializer.serialize(mag, &magnitude_representation);
-
-        // Compress unit vector into two compressed doubles
-        std::bitset<d_vec_min_sz> vec_representation;
-        std::bitset<d_vec_component_sz> vec_element_representations[2];
-        std::array<double, 3> v_mags;  // Magnitudes of elements in vector
-        for (size_t i = 0; i < 3; i++) v_mags[i] = std::abs(src[i]);
-
-        int max_element_idx = 0;
-        double max_element_value = std::max(std::max(v_mags[0], v_mags[1]), v_mags[2]);
-        if (v_mags[0] == max_element_value) max_element_idx = 0;
-        if (v_mags[1] == max_element_value) max_element_idx = 1;
-        if (v_mags[2] == max_element_value) max_element_idx = 2;
-        int vec_number = 0;  // The current compressed vector bitset that we're modifying
-        for (size_t i = 0; i < 3; i++) {
-            if (i == max_element_idx) {
-                std::bitset<2> largest_element_representation(i);
-                vec_representation.set(0, largest_element_representation[0]);
-                vec_representation.set(1, largest_element_representation[1]);
-            } else {
-                double v_element_scaled = src[vec_number] / mag;
-                Serializer<double, double, d_vec_component_sz> vector_element_serializer;
-                auto vec_element_representation_ptr =
-                    std::shared_ptr<std::bitset<d_vec_component_sz>>(
-                        &vec_element_representations[vec_number]);
-                vector_element_serializer.init(0, sqrt(2.0));
-                vector_element_serializer.serialize(v_element_scaled,
-                                                    vec_element_representation_ptr);
-                vec_number++;
-            }
-        }
-        // Add doubles to final bit representation
-        for (size_t i = 0; i < d_vec_component_sz; i++) {
-            vec_representation.set(i + 2, vec_element_representations[0][i]);
-            vec_representation.set(i + 11, vec_element_representations[1][i]);
-        }
-        for (size_t i = 0; i < magnitude_bitsize; i++) (*dest).set(i, magnitude_representation[i]);
-        for (size_t i = 0; i < d_vec_min_sz; i++)
-            (*dest).set(i + magnitude_bitsize, vec_representation[i]);
-
-        return true;
-    }
-
-    bool deserialize(const std::bitset<csz> &src, std::shared_ptr<d_vector_t> &dest) {
-        if (!is_initialized()) return false;
-
-        constexpr size_t magnitude_bitsize = csz - d_vec_min_sz;
-        std::bitset<magnitude_bitsize> magnitude_packed;
-        for (size_t i = 0; i < magnitude_bitsize; i++) magnitude_packed.set(i, src[i]);
-
-        double magnitude = 0.0;
-        Serializer<double, double, magnitude_bitsize> magnitude_serializer;
-        magnitude_serializer.init(_min, _max);
-        magnitude_serializer.deserialize(magnitude_packed, &magnitude);
-
-        unsigned int missing_component = (src[magnitude_bitsize] << 1) + src[magnitude_bitsize + 1];
-        (*dest)[missing_component] = 1;
-        int j = 0;  // Index of current component being processed
-        for (size_t i = 0; i < 3; i++) {
-            if (i != missing_component) {
-                std::bitset<d_vec_component_sz> vec_component_packed;
-                for (int k = 0; k < d_vec_component_sz; k++)
-                    vec_component_packed.set(
-                        k, src[csz - d_vec_component_sz + 2 + j * d_vec_component_sz + k]);
-
-                Serializer<double, double, magnitude_bitsize> vec_component_serializer;
-                vec_component_serializer.init(0.0, sqrt(2.0));
-                vec_component_serializer.deserialize(vec_component_packed, &((*dest)[i]));
-                (*dest)[missing_component] -= pow((*dest)[i], 2);
-                j++;
-            }
-        }
-        (*dest)[missing_component] = sqrt((*dest)[missing_component]);
-
-        for (size_t i = 0; i < 3; i++) (*dest)[i] *= magnitude;
-
-        return true;
-    }
-
-    bool print(const d_vector_t &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
-        // TODO
-        return true;
-    }
-};
-
-/**
- * @brief Specialization of Serializer for float quaternion.
- */
-template <>
-class Serializer<f_quat_t, float, SerializerConstants::f_quat_sz> : public SerializerBase<float> {
-   public:
-    Serializer() : SerializerBase<float>(0.0f, 0.0f) {}
-
-    bool serialize(const f_quat_t &src, std::shared_ptr<std::bitset<f_quat_sz>> &dest) {
-        if (!is_initialized()) return false;
-
-        std::bitset<f_quat_component_sz> quat_element_representations[3];
-        std::array<float, 4> q_mags;  // Magnitudes of elements in quaternion
-        for (size_t i = 0; i < 4; i++) q_mags[i] = std::abs(src[i]);
+        for (int i = 0; i < 3; i++) v_mags[i] = std::abs(src[i]);
 
         size_t max_element_idx = 0;
-        float max_element_value =
-            std::max(std::max(q_mags[0], q_mags[1]), std::max(q_mags[2], q_mags[3]));
-        if (q_mags[0] == max_element_value) max_element_idx = 0;
-        if (q_mags[1] == max_element_value) max_element_idx = 1;
-        if (q_mags[2] == max_element_value) max_element_idx = 2;
-        if (q_mags[3] == max_element_value) max_element_idx = 3;
-        size_t quat_number = 0;  // The current compressed vector bitset that we're modifying
-        for (size_t i = 0; i < 4; i++) {
-            if (i == max_element_idx) {
-                std::bitset<2> largest_element_representation(i);
-                dest->set(0, largest_element_representation[0]);
-                dest->set(1, largest_element_representation[1]);
+        float max_element_value = std::max(std::max(v_mags[0], v_mags[1]), v_mags[2]);
+        size_t component_number = 0;  // The current compressed vector bitset that we're modifying
+        for (int i = 0; i < N; i++) {
+            if (v_mags[i] == max_element_value) {
+                max_component.set_int(i);
+                std::copy(max_component.begin(), max_component.end(), serialized_position);
             } else {
-                Serializer<float, float, f_quat_component_sz> quat_element_serializer;
-                auto quat_element_representation_ptr =
-                    std::shared_ptr<std::bitset<f_quat_component_sz>>(
-                        &quat_element_representations[quat_number]);
-                quat_element_serializer.init(0.0f, sqrtf(2.0f));
-                quat_element_serializer.serialize(src[quat_number],
-                                                  quat_element_representation_ptr);
-                quat_number++;
+                float element_scaled = src[component_number] / mag;
+                vector_element_serializers[component_number]->serialize(element_scaled);
+                std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
+                          vector_element_serializers[component_number]->get_bit_array().end(),
+                          serialized_position);
+                component_number++;
             }
         }
-        for (size_t i = 0; i < f_quat_component_sz; i++) {
-            dest->set(i + 2, quat_element_representations[0][i]);
-            dest->set(i + 2 + 1 * f_quat_component_sz, quat_element_representations[1][i]);
-            dest->set(i + 2 + 2 * f_quat_component_sz, quat_element_representations[2][i]);
-        }
-
-        return true;
     }
 
-    bool deserialize(const std::bitset<f_quat_sz> &src, std::shared_ptr<f_quat_t> &dest) {
-        if (!is_initialized()) return false;
+    void deserialize(std::shared_ptr<std::array<float, N>> &dest) {
+        float magnitude = 0.0f;
+        std::shared_ptr<float> magnitude_ptr(&magnitude);
+        magnitude_serializer->deserialize(magnitude_ptr);
 
-        size_t missing_element = (src[0] << 1) + src[1];
-        (*dest)[missing_element] = 1;
-        int j = 0;  // Currently processed packed quaternion element
-        for (size_t i = 0; i < 4; i++) {
-            if (i != missing_element) {
-                std::bitset<f_quat_component_sz> quat_element_packed;
-                for (int k = 0; k < 9; k++) quat_element_packed.set(k, src[2 + j * 9 + k]);
-
-                Serializer<float, float, f_quat_component_sz> quat_element_serializer;
-                auto quat_element_ptr = std::shared_ptr<float>(&(*dest)[i]);
-                quat_element_serializer.init(0.0f, sqrtf(2.0f));
-                quat_element_serializer.deserialize(quat_element_packed, quat_element_ptr);
-                (*dest)[missing_element] -= pow((*dest)[i], 2);
+        unsigned int missing_component = (this->serialized_val[magnitude_serializer->bitsize()] << 1) +
+                                         this->serialized_val[magnitude_serializer->bitsize() + 1];
+        (*dest)[missing_component] = 1;
+        int j = 0;  // Index of current component being processed
+        for (int i = 0; i < N; i++) {
+            if (i != missing_component) {
+                auto component_ptr = std::shared_ptr<float>(&(*dest)[i]);
+                vector_element_serializers[i]->deserialize(component_ptr);
+                j++;
             }
         }
-        (*dest)[missing_element] = sqrt((*dest)[missing_element]);
+        (*dest)[missing_component] = sqrt((*dest)[missing_component]);
 
-        return true;
+        for (int i = 0; i < N; i++) (*dest)[i] *= magnitude;
     }
 
-    bool print(const f_quat_t &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
-        // TODO
-        return true;
-    }
-};
-
-/**
- * @brief Specialization of Serializer for double quaternion.
- */
-template <>
-class Serializer<d_quat_t, double, SerializerConstants::d_quat_sz> : public SerializerBase<double> {
-   public:
-    Serializer() : SerializerBase<double>(0.0, 0.0) {}
-
-    bool serialize(const d_quat_t &src, std::shared_ptr<std::bitset<d_quat_sz>> &dest) {
-        if (!is_initialized()) return false;
-        // TODO
-        return true;
+    void print(const std::array<float, N> &src, char *dest) {
+        for (size_t i = 0; i < N; i++) {
+            sprintf(dest + 14 * i, "%6.6f,", src[i]);
+        }
     }
 
-    bool deserialize(const std::bitset<d_quat_sz> &src, std::shared_ptr<d_quat_t> &dest) {
-        if (!is_initialized()) return false;
-        // TODO
-        return true;
-    }
-
-    bool print(const d_quat_t &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
-        // TODO
-        return true;
-    }
+    size_t strlen() const override { return 14 * N; };
 };
 
 /**
  * @brief Specialization of Serializer for GPS time.
  */
 template <>
-class Serializer<gps_time_t, bool, SerializerConstants::gps_time_sz> : public SerializerBase<bool> {
+class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
+   protected:
+    static const gps_time_t dummy_gpstime;
+
    public:
-    Serializer() : SerializerBase<bool>(false, false) {}
+    Serializer()
+        : SerializerBase<gps_time_t>(dummy_gpstime, dummy_gpstime,
+                                     SerializerConstants::gps_time_sz) {}
 
-    bool init() {
-        // No need for initialization.
-        return true;
-    }
-
-    bool serialize(const gps_time_t &src, std::shared_ptr<std::bitset<gps_time_sz>> &dest) {
-        if (!is_initialized()) return false;
-
+    void serialize(const gps_time_t &src) {
         if (src.is_not_set) {
-            dest->set(0, false);
-            return false;
+            serialized_val[0] = false;
         }
-        dest->set(0, true);
+        serialized_val[0] = true;
         std::bitset<16> wn((unsigned short int)src.gpstime.wn);
         std::bitset<32> tow(src.gpstime.tow);
-        for (size_t i = 0; i < 16; i++) dest->set(i + 1, wn[i]);
-        for (size_t i = 0; i < 32; i++) dest->set(i + 17, tow[i]);
-
-        return true;
+        for (int i = 0; i < 16; i++) serialized_val[i + 1] = wn[i];
+        for (int i = 0; i < 32; i++) serialized_val[i + 17] = tow[i];
     }
 
-    bool deserialize(const std::bitset<gps_time_sz> &src, std::shared_ptr<gps_time_t> &dest) {
-        if (!is_initialized()) return false;
-
+    void deserialize(std::shared_ptr<gps_time_t> &dest) {
         std::bitset<16> wn;
         std::bitset<32> tow;
-        for (size_t i = 0; i < 16; i++) wn.set(i + 1, src[i]);
-        for (size_t i = 0; i < 32; i++) tow.set(i + 1, src[16 + i]);
+        for (int i = 0; i < 16; i++) wn.set(i + 1, serialized_val[i]);
+        for (int i = 0; i < 32; i++) tow.set(i + 1, serialized_val[16 + i]);
         dest->is_not_set = false;
         dest->gpstime.wn = (unsigned int)wn.to_ulong();
         dest->gpstime.tow = (unsigned int)tow.to_ulong();
-
-        return true;
     }
 
-    bool print(const gps_time_t &src, std::shared_ptr<std::string> &dest) {
-        if (!is_initialized()) return false;
+    void print(const gps_time_t &src, char *dest) {
         // TODO
-        return true;
     }
+
+    size_t strlen() const override { return 14; }
 };
 
-/**
- * @brief Specialization of Serializer for temperature values.
- */
-template <>
-class Serializer<temperature_t, temperature_t, SerializerConstants::temp_sz>
-    : public SerializerBase<temperature_t> {
-   public:
-    static constexpr temperature_t TEMPERATURE_MIN = static_cast<temperature_t>(-40);
-    static constexpr temperature_t TEMPERATURE_MAX = static_cast<temperature_t>(125);
-
-    Serializer() : SerializerBase<temperature_t>(TEMPERATURE_MIN, TEMPERATURE_MAX) {}
-
-    bool init() {
-        // Already initialized by constructor.
-        return true;
-    }
-
-    bool serialize(const temperature_t &src, std::shared_ptr<std::bitset<temp_sz>> &dest) {
-        if (!is_initialized()) return false;
-        // TODO
-        return true;
-    }
-
-    bool deserialize(const std::bitset<temp_sz> &src, std::shared_ptr<temperature_t> &dest) {
-        if (!is_initialized()) return false;
-        // TODO
-        return true;
-    }
-
-    bool print(const temperature_t &src, std::shared_ptr<std::string> &dest) {
-        // TODO
-        return true;
-    }
-};
+const gps_time_t Serializer<gps_time_t>::dummy_gpstime;

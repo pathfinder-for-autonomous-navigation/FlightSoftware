@@ -24,7 +24,7 @@
  * or uplink packet.
  */
 template <typename T>
-class StateField : public StateFieldBase, public Debuggable, public InitializationRequired {
+class StateField : public StateFieldBase, public InitializationRequired {
    protected:
     T _val;
 
@@ -36,7 +36,6 @@ class StateField : public StateFieldBase, public Debuggable, public Initializati
      */
     StateField(const std::string &name, const bool ground_readable, const bool ground_writable)
         : StateFieldBase(name, ground_readable, ground_writable),
-          Debuggable(),
           InitializationRequired(),
           _val() {
         Debuggable::init();

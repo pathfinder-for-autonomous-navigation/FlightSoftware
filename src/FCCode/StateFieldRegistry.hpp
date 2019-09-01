@@ -6,7 +6,6 @@
 #include <vector>
 #include "ControlTaskBase.hpp"
 #include "StateFieldBase.hpp"
-#include "debug_console.hpp"
 
 /**
  * @brief Registry of state fields and which tasks have read/write access to
@@ -14,7 +13,7 @@
  * their values. Essentially, this class is a lightweight wrapper around
  * multimap.
  */
-class StateFieldRegistry : public Debuggable {
+class StateFieldRegistry {
    private:
     std::set<std::shared_ptr<StateFieldBase>> fields;
     std::set<std::shared_ptr<StateFieldBase>> readable_fields;
