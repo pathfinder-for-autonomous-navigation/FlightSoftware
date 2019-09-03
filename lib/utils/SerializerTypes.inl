@@ -15,6 +15,10 @@ class Serializer<bool> : public SerializerBase<bool> {
 
     void serialize(const bool &src) { serialized_val[0] = src; }
 
+    virtual void deserialize(const char* val, std::shared_ptr<bool>& dest) {
+        // TODO
+    }
+
     void deserialize(std::shared_ptr<bool> &dest) const { *dest = serialized_val[0]; }
 
     static constexpr size_t strlen = 5;
@@ -46,6 +50,10 @@ class Serializer<unsigned int> : public SerializerBase<unsigned int> {
         if (src_copy < _min) src_copy = _min;
         unsigned int result_int = (src_copy - _min) / _resolution();
         serialized_val.set_int(result_int);
+    }
+
+    virtual void deserialize(const char* val, std::shared_ptr<unsigned int>& dest) {
+        // TODO
     }
 
     void deserialize(const std::shared_ptr<unsigned int> &dest) const {
@@ -80,6 +88,10 @@ class Serializer<signed int> : public SerializerBase<signed int> {
         serialized_val.set_int(result_int);
     }
 
+    virtual void deserialize(const char* val, std::shared_ptr<signed int>& dest) {
+        // TODO
+    }
+
     void deserialize(const std::shared_ptr<signed int> &dest) const {
         *dest = _min + serialized_val.to_ulong() * _resolution();
     }
@@ -107,6 +119,10 @@ class Serializer<float> : public SerializerBase<float> {
         float resolution = (_max - _min) / pow(2, serialized_val.size());
         unsigned int result_int = (unsigned int)((src_copy - _min) / resolution);
         serialized_val.set_int(result_int);
+    }
+
+    virtual void deserialize(const char* val, std::shared_ptr<float>& dest) {
+        // TODO
     }
 
     void deserialize(const std::shared_ptr<float> &dest) const {
@@ -138,6 +154,10 @@ class Serializer<double> : public SerializerBase<double> {
         double resolution = (_max - _min) / pow(2, serialized_val.size());
         unsigned int result_int = (unsigned int)((src_copy - _min) / resolution);
         serialized_val.set_int(result_int);
+    }
+
+    virtual void deserialize(const char* val, std::shared_ptr<double>& dest) {
+        // TODO
     }
 
     void deserialize(const std::shared_ptr<double> &dest) const {
@@ -249,6 +269,10 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
         }
     }
 
+    virtual void deserialize(const char* val, std::shared_ptr<std::array<float, N>>& dest) {
+        // TODO
+    }
+
     void deserialize(const std::shared_ptr<std::array<float, N>> &dest) const {
         float magnitude = 0.0f;
         std::shared_ptr<float> magnitude_ptr(&magnitude);
@@ -299,6 +323,10 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         std::bitset<32> tow(src.gpstime.tow);
         for (int i = 0; i < 16; i++) serialized_val[i + 1] = wn[i];
         for (int i = 0; i < 32; i++) serialized_val[i + 17] = tow[i];
+    }
+
+    virtual void deserialize(const char* val, std::shared_ptr<gps_time_t>& dest) {
+        // TODO
     }
 
     void deserialize(std::shared_ptr<gps_time_t> &dest) const {

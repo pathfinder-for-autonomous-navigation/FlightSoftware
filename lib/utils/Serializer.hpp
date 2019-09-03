@@ -145,6 +145,16 @@ class Serializer : public SerializerBase<T> {
     virtual void serialize(const T &src) = 0;
 
     /**
+     * @brief Deserializes the contents stored in the provided character array
+     * and stores the result in the provided object pointer. Also updates
+     * the internally stored bitset.
+     * 
+     * @param val  String containing value to process.
+     * @param dest Value stored in string will be stored into here.
+     */
+    virtual void deserialize(const char* val, std::shared_ptr<T>& dest) = 0;
+
+    /**
      * @brief Deserializes the bit array and stores the result in the provided
      * object pointer.
      *

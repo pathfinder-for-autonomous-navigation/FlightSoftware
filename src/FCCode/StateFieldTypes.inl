@@ -26,6 +26,7 @@ class SerializableStateFieldBase : virtual public StateFieldBase {
    public:
     virtual void serialize() = 0;
     virtual void deserialize() = 0;
+    virtual void deserialize(const char* val) = 0;
     virtual char* print() const = 0;
 };
 
@@ -74,24 +75,14 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
     void set_bit_array(const bit_array &src) { _serializer->set_bit_array(src); }
 
     /**
-     * @brief Serialize field data into the provided bitset.
-     *
-     * @param dest
-     * @return true  If serialization was possible within the given bitset.
-     * @return false If the given bitset is too small, serialization will not be
-     * possible. Also returns false if the serializer or the state field was not
-     * initialized.
+     * @brief Serialize field data and store the serialized result into the internal
+     * bitset.
      */
     void serialize() override { (this->_serializer)->serialize(this->_val); }
 
     /**
-     * @brief Deserialize field data from the provided bitset.
-     *
-     * @param src
-     * @return true  If serialization was possible within the given bitset.
-     * @return false If the given bitset is too small, serialization will not be
-     * possible. Also returns false if the serializer or the state field was not
-     * initialized.
+     * @brief Deserialize field data from the internally contained bitset and store
+     * into the state field value.
      */
     void deserialize() override {
         std::shared_ptr<T> val_ptr(&(this->_val));
@@ -99,9 +90,20 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
     }
 
     /**
+     * @brief Deserialize field data from the provided character array and store
+     * into the state field value.
+     * 
+     * @param val Provided character array.
+     */
+    void deserialize(const char* val) override {
+        std::shared_ptr<T> val_ptr(&(this->_val));
+        (this->_serializer)->deserialize(val, val_ptr);
+    }
+
+    /**
      * @brief Write human-readable value of state field to a supplied string.
      *
-     * @return True if print succeeded, false if field is uninitialized.
+     * @return C-style string containing printed version of state field.
      */
     char* print() const override { return (this->_serializer)->print(this->_val); }
 };

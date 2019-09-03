@@ -125,27 +125,29 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     for(size_t i = 0; i < num_json_msgs_found; i++) {
         if (!msg_ok[i]) continue;
         JsonVariant msg_mode = msgs[i]["r/w"];
-        JsonVariant field = msgs[i]["field"];
-        JsonVariant val = msgs[i]["val"];
+        JsonVariant field_name = msgs[i]["field"];
 
         // Check sanity of data
         if (msg_mode.isNull()) continue;
-        if (field.isNull()) continue;
+        if (field_name.isNull()) continue;
 
         if(!msg_mode.is<unsigned char>()) continue;
         const unsigned char mode = msg_mode.as<unsigned char>();
-        if (mode == 'w' && val.isNull()) continue;
 
         // If data is ok, proceed with state field reading/writing
         switch(mode) {
             case 'r': {
-                std::shared_ptr<ReadableStateFieldBase> field_ptr = registry.find_readable_field(field.as<const char*>());
+                std::shared_ptr<ReadableStateFieldBase> field_ptr = registry.find_readable_field(field_name.as<const char*>());
                 if (!field_ptr) break;
                 else print_state_field(*field_ptr);
             }
             case 'w': {
-                std::shared_ptr<WritableStateFieldBase> field_ptr = registry.find_writable_field(field.as<const char*>());
+                JsonVariant field_val = msgs[i]["val"];
+                if(field_val.isNull()) break;
+
+                std::shared_ptr<WritableStateFieldBase> field_ptr = registry.find_writable_field(field_name.as<const char*>());
                 if (!field_ptr) break;
+                field_ptr->deserialize(field_val.as<const char*>());
                 // TODO convert val into usable value for field and write to field
                 print_state_field(*field_ptr);
                 break;
