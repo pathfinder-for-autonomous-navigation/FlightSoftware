@@ -8,7 +8,6 @@
 
 #include "Serializer.hpp"
 #include "StateFieldBase.hpp"
-#include "StateFieldRegistry.hpp"
 
 #include <vector>
 #include <memory>
@@ -22,9 +21,12 @@
  * or uplink packet.
  */
 template <typename T>
-class StateField : public StateFieldBase {
+class StateField : public virtual StateFieldBase {
    protected:
+    const std::string _name;
     T _val;
+    bool _ground_readable;
+    bool _ground_writable;
 
    public:
     /**
@@ -33,8 +35,9 @@ class StateField : public StateFieldBase {
      * @param name Name of state field. Useful for debugging.
      */
     StateField(const std::string &name, const bool ground_readable, const bool ground_writable)
-        : StateFieldBase(name, ground_readable, ground_writable),
-          _val() {}
+        : StateFieldBase(), _name(name), _val(), _ground_readable(ground_readable), _ground_writable(ground_writable) {}
+
+    const std::string& name() const override { return _name; }
 
     /**
      * @brief Returns a generic pointer to this state field. Useful for creating
@@ -71,8 +74,8 @@ class StateField : public StateFieldBase {
      *
      * @{
      */
-    bool is_readable() const { return _ground_readable; }
-    bool is_writable() const { return _ground_writable; }
+    bool is_readable() const override { return _ground_readable; }
+    bool is_writable() const override { return _ground_writable; }
     /**
      * @}
      */

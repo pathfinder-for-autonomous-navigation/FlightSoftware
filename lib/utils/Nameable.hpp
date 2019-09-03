@@ -4,12 +4,8 @@
 #include <string>
 
 class Nameable {
-   protected:
-    const std::string _name;
-
    public:
-    Nameable(const std::string &name);
-    const std::string &name() const;
+    virtual const std::string &name() const = 0;
 };
 
 #endif

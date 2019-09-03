@@ -31,8 +31,15 @@ namespace Devices {
  *  flight computer have common functionality. This will be most useful for
  *  communications downlinks and updates on the satellites health. **/
 class Device : public Nameable {
+   protected:
+    const std::string _name;
+
    public:
-    using Nameable::Nameable;
+    Device(const std::string& name) : _name(name) {}
+
+    const std::string& name() const override {
+        return _name;
+    }
 
     ~Device();
     /** @brief Sets up communication with the device and verifies

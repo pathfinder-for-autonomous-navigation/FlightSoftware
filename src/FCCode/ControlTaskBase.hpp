@@ -9,8 +9,10 @@
  * ControlTasks.
  */
 class ControlTaskBase : public Nameable, public Debuggable {
+   protected:
+    const std::string _name;
    public:
-    ControlTaskBase(const std::string& name) : Nameable(name), Debuggable() {}
+    ControlTaskBase(const std::string& name) : _name(name) {}
 };
 
 #endif

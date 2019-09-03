@@ -9,14 +9,8 @@
  */
 class StateFieldBase : public Nameable {
    protected:
-    bool _ground_readable;
-    bool _ground_writable;
-
-    /**
-     * @brief Constructor. Should not be used.
-     */
-    StateFieldBase(const std::string &name, const bool ground_readable, const bool ground_writable)
-        : Nameable(name), _ground_readable(ground_readable), _ground_writable(ground_writable) {}
+    virtual bool is_readable() const = 0;
+    virtual bool is_writable() const = 0;
 };
 
 #endif

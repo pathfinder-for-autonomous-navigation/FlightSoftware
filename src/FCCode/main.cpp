@@ -1,4 +1,5 @@
 #include "StateField.hpp"
+#include "StateFieldRegistry.hpp"
 
 /*
  * This import needs to be BELOW other imports. An issue occurred where the

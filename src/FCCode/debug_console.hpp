@@ -2,9 +2,10 @@
 #define DEBUG_CONSOLE_HPP_
 
 #include "StateField.hpp"
+#include "StateFieldRegistry.hpp"
 #include <map>
 #include <set>
-#include "ChRt.h"
+#include <ChRt.h>
 
 /**
  * @brief Provides access to Serial via a convenient wrapper that plays
@@ -45,6 +46,19 @@ class debug_console {
      */
     static void blink_led();
 
+    /**
+     * @brief Reads in from the serial buffer to process incoming commands from a
+     * computer to read/write to state fields.
+     */
+    static void process_commands(const StateFieldRegistry& registry);
+
+    /**
+     * @brief Helper method to write state fields to the console. State fields might
+     * be written to the console if they were requested by the computer or if they're
+     * "always-on" debugging telemetry.
+     * 
+     * @param field 
+     */
     static void print_state_field(const SerializableStateFieldBase& field);
 
    protected:
