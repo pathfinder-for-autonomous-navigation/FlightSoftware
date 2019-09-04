@@ -8,22 +8,24 @@
 /**
  * @brief Specialization of Serializer for booleans.
  */
-template <>
-class Serializer<bool> : public SerializerBase<bool> {
+class BoolSerializer : public Serializer<bool> {
    public:
-    Serializer() : SerializerBase<bool>(false, true, 1) {}
+    BoolSerializer() : Serializer<bool>(false, true, 1) {}
 
-    void serialize(const bool &src) { serialized_val[0] = src; }
+    void serialize(const bool &src) override { serialized_val[0] = src; }
 
-    virtual void deserialize(const char* val, std::shared_ptr<bool>& dest) {
-        // TODO
+    bool deserialize(const char* val, std::shared_ptr<bool>& dest) override {
+        if (val[0] == '0') *dest = false;
+        else if (val[1] == '1') *dest = true;
+        else return false;
+        return true;
     }
 
-    void deserialize(std::shared_ptr<bool> &dest) const { *dest = serialized_val[0]; }
+    void deserialize(std::shared_ptr<bool> &dest) const override { *dest = serialized_val[0]; }
 
     static constexpr size_t strlen = 5;
 
-    char* print(const bool &src) const {
+    char* print(const bool &src) const override {
         if (src)
             strcpy(this->printed_val, "true");
         else
@@ -35,16 +37,15 @@ class Serializer<bool> : public SerializerBase<bool> {
 /**
  * @brief Specialization of Serializer for unsigned ints.
  */
-template <>
-class Serializer<unsigned int> : public SerializerBase<unsigned int> {
+class UnsignedIntSerializer : public Serializer<unsigned int> {
    public:
-    Serializer(unsigned int min, unsigned int max, size_t compressed_size) : SerializerBase<unsigned int>(min, max, compressed_size) {}
+    UnsignedIntSerializer(unsigned int min, unsigned int max, size_t compressed_size) : Serializer<unsigned int>(min, max, compressed_size) {}
 
     unsigned int _resolution() const {
         return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, serialized_val.size())));
     }
 
-    void serialize(const unsigned int &src) {
+    void serialize(const unsigned int &src) override {
         unsigned int src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
@@ -52,17 +53,22 @@ class Serializer<unsigned int> : public SerializerBase<unsigned int> {
         serialized_val.set_int(result_int);
     }
 
-    virtual void deserialize(const char* val, std::shared_ptr<unsigned int>& dest) {
-        // TODO
+    bool deserialize(const char* val, std::shared_ptr<unsigned int>& dest) override {
+        size_t num_values_found = sscanf(val, "%d", dest);
+        if(num_values_found != 1) return false;
+
+        // Store result into current bitset
+        serialize(*dest);
+        return true;
     }
 
-    void deserialize(const std::shared_ptr<unsigned int> &dest) const {
+    void deserialize(std::shared_ptr<unsigned int> &dest) const override {
         *dest = _min + serialized_val.to_ulong() * _resolution();
     }
 
     static constexpr size_t strlen = 20;
 
-    char* print(const unsigned int &src) const {
+    char* print(const unsigned int &src) const override {
         sprintf(this->printed_val, "%d", src);
         return this->printed_val;
     }
@@ -71,16 +77,15 @@ class Serializer<unsigned int> : public SerializerBase<unsigned int> {
 /**
  * @brief Specialization of Serializer for signed integers.
  */
-template <>
-class Serializer<signed int> : public SerializerBase<signed int> {
+class SignedIntSerializer : public Serializer<signed int> {
    public:
-    Serializer(signed int min, signed int max, size_t compressed_size) : SerializerBase<signed int>(min, max, compressed_size) {}
+    SignedIntSerializer(signed int min, signed int max, size_t compressed_size) : Serializer<signed int>(min, max, compressed_size) {}
 
     unsigned int _resolution() const {
         return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, serialized_val.size())));
     }
 
-    void serialize(const signed int &src) {
+    void serialize(const signed int &src) override {
         signed int src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
@@ -88,17 +93,22 @@ class Serializer<signed int> : public SerializerBase<signed int> {
         serialized_val.set_int(result_int);
     }
 
-    virtual void deserialize(const char* val, std::shared_ptr<signed int>& dest) {
-        // TODO
+    bool deserialize(const char* val, std::shared_ptr<signed int>& dest) override {
+        size_t num_values_found = sscanf(val, "%d", dest);
+        if(num_values_found != 1) return false;
+
+        // Store result into current bitset
+        serialize(*dest);
+        return true;
     }
 
-    void deserialize(const std::shared_ptr<signed int> &dest) const {
+    void deserialize(std::shared_ptr<signed int> &dest) const override {
         *dest = _min + serialized_val.to_ulong() * _resolution();
     }
 
     static constexpr size_t strlen = 20;
 
-    char* print(const signed int &src) const {
+    char* print(const signed int &src) const override {
         sprintf(this->printed_val, "%d", src);
         return this->printed_val;
     }
@@ -107,12 +117,11 @@ class Serializer<signed int> : public SerializerBase<signed int> {
 /**
  * @brief Specialization of Serializer for floats.
  */
-template <>
-class Serializer<float> : public SerializerBase<float> {
+class FloatSerializer : public Serializer<float> {
    public:
-    Serializer(float min, float max, size_t compressed_size) : SerializerBase<float>(min, max, compressed_size) {}
+    FloatSerializer(float min, float max, size_t compressed_size) : Serializer<float>(min, max, compressed_size) {}
 
-    void serialize(const float &src) {
+    void serialize(const float &src) override {
         float src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
@@ -121,11 +130,16 @@ class Serializer<float> : public SerializerBase<float> {
         serialized_val.set_int(result_int);
     }
 
-    virtual void deserialize(const char* val, std::shared_ptr<float>& dest) {
-        // TODO
+    bool deserialize(const char* val, std::shared_ptr<float>& dest) override {
+        size_t num_values_found = sscanf(val, "%6.6f", dest);
+        if(num_values_found != 1) return false;
+
+        // Store result into current bitset
+        serialize(*dest);
+        return true;
     }
 
-    void deserialize(const std::shared_ptr<float> &dest) const {
+    void deserialize(std::shared_ptr<float> &dest) const override {
         unsigned long f_bits = serialized_val.to_ullong();
         float resolution = (_max - _min) / pow(2, serialized_val.size());
         *dest = _min + resolution * f_bits;
@@ -133,7 +147,7 @@ class Serializer<float> : public SerializerBase<float> {
 
     static constexpr size_t strlen = 14;
 
-    char* print(const float &src) const {
+    char* print(const float &src) const override {
         sprintf(this->printed_val, "%6.6f", src);
         return this->printed_val;
     }
@@ -142,12 +156,11 @@ class Serializer<float> : public SerializerBase<float> {
 /**
  * @brief Specialization of Serializer for doubles.
  */
-template <>
-class Serializer<double> : public SerializerBase<double> {
+class DoubleSerializer : public Serializer<double> {
    public:
-    Serializer(double min, double max, size_t compressed_size) : SerializerBase<double>(min, max, compressed_size) {}
+    DoubleSerializer(double min, double max, size_t compressed_size) : Serializer<double>(min, max, compressed_size) {}
 
-    void serialize(const double &src) {
+    void serialize(const double &src) override {
         double src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
@@ -156,11 +169,16 @@ class Serializer<double> : public SerializerBase<double> {
         serialized_val.set_int(result_int);
     }
 
-    virtual void deserialize(const char* val, std::shared_ptr<double>& dest) {
-        // TODO
+    bool deserialize(const char* val, std::shared_ptr<double>& dest) override {
+        size_t num_values_found = sscanf(val, "%6.6f", dest);
+        if(num_values_found != 1) return false;
+
+        // Store result into current bitset
+        serialize(*dest);
+        return true;
     }
 
-    void deserialize(const std::shared_ptr<double> &dest) const {
+    void deserialize(std::shared_ptr<double> &dest) const override {
         unsigned long f_bits = serialized_val.to_ullong();
         double resolution = (_max - _min) / pow(2, serialized_val.size());
         *dest = _min + resolution * f_bits;
@@ -168,7 +186,7 @@ class Serializer<double> : public SerializerBase<double> {
 
     static constexpr size_t strlen = 14;
 
-    char* print(const double &src) const {
+    char* print(const double &src) const override {
         sprintf(this->printed_val, "%6.6f", src);
         return this->printed_val;
     }
@@ -178,7 +196,7 @@ class Serializer<double> : public SerializerBase<double> {
  * @brief Specialization of Serializer for float vectors and quaternions.
  */
 template <size_t N>
-class Serializer<std::array<float, N>> : public SerializerBase<std::array<float, N>> {
+class FloatVectorSerializer : public Serializer<std::array<float, N>> {
    protected:
     /**
      * We need these variables, since we don't want to use the base-class provided vectors for
@@ -219,8 +237,8 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
      * @param size Number of bits to compress the vector into. If this is less
      *             than the minimum possible size for float vectors, construction will fail.
      */
-    Serializer(float min = 0.0, float max = 1.0, size_t size = SerializerConstants::f_quat_sz)
-        : SerializerBase<f_vector_t>(dummy_vector, dummy_vector, size),
+    FloatVectorSerializer(float min = 0.0, float max = 1.0, size_t size = SerializerConstants::f_quat_sz)
+        : Serializer<f_vector_t>(dummy_vector, dummy_vector, size),
           magnitude_min(min),
           magnitude_max(max),
           magnitude_serializer(
@@ -233,7 +251,7 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
         }
     }
 
-    void serialize(const std::array<float, N> &src) {
+    void serialize(const std::array<float, N> &src) override {
         auto serialized_position = this->serialized_val.begin();
 
         float mag;
@@ -269,11 +287,19 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
         }
     }
 
-    virtual void deserialize(const char* val, std::shared_ptr<std::array<float, N>>& dest) {
-        // TODO
+    bool deserialize(const char* val, std::shared_ptr<std::array<float, N>>& dest) override {
+        size_t num_values_found = 0;
+        for(size_t i = 0; i < N; i++) {
+            num_values_found += sscanf(val + 14*i, "%6.6f,", &(*dest)[i]);
+        }
+        if(num_values_found != N) return false;
+
+        // Store result into current bitset
+        serialize(*dest);
+        return true;
     }
 
-    void deserialize(const std::shared_ptr<std::array<float, N>> &dest) const {
+    void deserialize(std::shared_ptr<std::array<float, N>> &dest) const override {
         float magnitude = 0.0f;
         std::shared_ptr<float> magnitude_ptr(&magnitude);
         magnitude_serializer->deserialize(magnitude_ptr);
@@ -295,7 +321,7 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
 
     static constexpr size_t strlen = 14 * N;
 
-    char* print(const std::array<float, N> &src) const {
+    char* print(const std::array<float, N> &src) const override {
         for (size_t i = 0; i < N; i++) {
             sprintf(this->printed_val + 14 * i, "%6.6f,", src[i]);
         }
@@ -306,15 +332,14 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
 /**
  * @brief Specialization of Serializer for GPS time.
  */
-template <>
-class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
+class GPSTimeSerializer : public Serializer<gps_time_t> {
    public:
-    Serializer()
-        : SerializerBase<gps_time_t>(SerializerConstants::dummy_gpstime, 
+    GPSTimeSerializer()
+        : Serializer<gps_time_t>(SerializerConstants::dummy_gpstime, 
                                      SerializerConstants::dummy_gpstime,
                                      SerializerConstants::gps_time_sz) {}
 
-    void serialize(const gps_time_t &src) {
+    void serialize(const gps_time_t &src) override {
         if (src.is_not_set) {
             serialized_val[0] = false;
         }
@@ -325,11 +350,12 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         for (int i = 0; i < 32; i++) serialized_val[i + 17] = tow[i];
     }
 
-    virtual void deserialize(const char* val, std::shared_ptr<gps_time_t>& dest) {
+    bool deserialize(const char* val, std::shared_ptr<gps_time_t>& dest) override {
         // TODO
+        return true;
     }
 
-    void deserialize(std::shared_ptr<gps_time_t> &dest) const {
+    void deserialize(std::shared_ptr<gps_time_t> &dest) const override {
         std::bitset<16> wn;
         std::bitset<32> tow;
         for (int i = 0; i < 16; i++) wn.set(i + 1, serialized_val[i]);
@@ -341,7 +367,7 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
 
     static constexpr size_t strlen = 14;
 
-    char* print(const gps_time_t &src) const {
+    char* print(const gps_time_t &src) const override {
         // TODO
         return this->printed_val;
     }

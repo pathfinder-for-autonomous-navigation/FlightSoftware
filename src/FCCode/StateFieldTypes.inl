@@ -26,7 +26,7 @@ class SerializableStateFieldBase : virtual public StateFieldBase {
    public:
     virtual void serialize() = 0;
     virtual void deserialize() = 0;
-    virtual void deserialize(const char* val) = 0;
+    virtual bool deserialize(const char* val) = 0;
     virtual char* print() const = 0;
 };
 
@@ -95,9 +95,9 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * 
      * @param val Provided character array.
      */
-    void deserialize(const char* val) override {
+    bool deserialize(const char* val) override {
         std::shared_ptr<T> val_ptr(&(this->_val));
-        (this->_serializer)->deserialize(val, val_ptr);
+        return (this->_serializer)->deserialize(val, val_ptr);
     }
 
     /**

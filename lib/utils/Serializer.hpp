@@ -42,7 +42,7 @@ class SerializerConstants {
  * @tparam T Type of stored value.
  */
 template <typename T>
-class SerializerBase : protected SerializerConstants {
+class Serializer : protected SerializerConstants {
    public:
     /**
      * @brief String length that is necessary to print the value
@@ -80,60 +80,14 @@ class SerializerBase : protected SerializerConstants {
      * serializer for a vector serializer), return from the constructor and do not resize the
      * serialized bit array.
      */
-    SerializerBase(T min, T max, size_t compressed_size) : _min(min), _max(max) {
+    Serializer(T min, T max, size_t compressed_size) : _min(min), _max(max) {
         if (static_cast<int>(compressed_size) < 0) return;
         serialized_val.resize(compressed_size);
 
         printed_val = new char[this->strlen];
     }
-
-    /**
-     * @brief Destructor.
-     */
-    ~SerializerBase() {
-        delete[] printed_val;
-    }
-
    public:
-    /**
-     * @brief Get the stored bit array containing the serialized value.
-     *
-     * @return const bit_array&
-     */
-    const bit_array &get_bit_array() const { return serialized_val; }
-
-    /**
-     * @brief Return size of bit array held by this serializer.
-     *
-     * @return size_t
-     */
-    size_t bitsize() const { return serialized_val.size(); }
-
-    /**
-     * @brief Set the internally stored serialized value. Do nothing if the source bit arary does
-     * not have the same size as the internally stored bit array.
-     */
-    void set_bit_array(const bit_array &src) {
-        if (src.size() != serialized_val.size()) return;
-        serialized_val = src;
-    }
-};
-
-/**
- * @brief Base class for all serializers. Provides serialization, deserialization, and printing
- * functions that are expected to be defined in template specializations.
- * 
- * @tparam T 
- */
-template <typename T>
-class Serializer : public SerializerBase<T> {
-   public:
-    /**
-     * @brief Construct a new Serializer object. Has same arguments as SerializerBase.
-     */
-    Serializer(T min, T max, size_t compressed_size) : SerializerBase<T>(min, max, compressed_size) {}
-
-    /**
+     /**
      * @brief Serializes a given object and stores the compressed object
      * into the member bitset.
      *
@@ -151,8 +105,10 @@ class Serializer : public SerializerBase<T> {
      * 
      * @param val  String containing value to process.
      * @param dest Value stored in string will be stored into here.
+     * 
+     * @return If deserialization from the provided string was successful.
      */
-    virtual void deserialize(const char* val, std::shared_ptr<T>& dest) = 0;
+    virtual bool deserialize(const char* val, std::shared_ptr<T>& dest) = 0;
 
     /**
      * @brief Deserializes the bit array and stores the result in the provided
@@ -175,6 +131,36 @@ class Serializer : public SerializerBase<T> {
      * @return C-style string containing printed value.
      */
     virtual char* print(const T &src) const = 0;
+
+    /**
+     * @brief Get the stored bit array containing the serialized value.
+     *
+     * @return const bit_array&
+     */
+    const bit_array &get_bit_array() const { return serialized_val; }
+
+    /**
+     * @brief Return size of bit array held by this serializer.
+     *
+     * @return size_t
+     */
+    size_t bitsize() const { return serialized_val.size(); }
+
+    /**
+     * @brief Set the internally stored serialized value. Do nothing if the source bit arary does
+     * not have the same size as the internally stored bit array.
+     */
+    void set_bit_array(const bit_array &src) {
+        if (src.size() != serialized_val.size()) return;
+        serialized_val = src;
+    }
+
+    /**
+     * @brief Destructor.
+     */
+    ~Serializer() {
+        delete[] printed_val;
+    }
 };
 
 #include "SerializerTypes.inl"

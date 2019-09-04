@@ -20,10 +20,21 @@ class debug_console {
     enum severity { DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY };
     static std::map<severity, const char *> severity_strs;
 
+    enum state_field_error_code {
+        MISSING_FIELD_NAME,
+        INVALID_FIELD_NAME,
+        MISSING_MODE,
+        INVALID_MODE,
+        MISSING_FIELD_VAL,
+        INVALID_FIELD_VAL
+    };
+
+    debug_console();
+
     /**
      * @brief Starts the debug console.
      */
-    static bool init();
+    void init();
 
     /**
      * @brief Prints a formatted string and prepends the process name at the
@@ -32,25 +43,25 @@ class debug_console {
      * @param format The format string specifying how data should be represented.
      * @param ... One or more arguments containing the data to be printed.
      */
-    static void printf(severity s, const char *format, ...);
+    void printf(severity s, const char *format, ...);
 
     /**
      * @brief Prints a string to console. Computer console automatically appends
      * newline.
      * @param str The string to be printed.
      */
-    static void println(severity s, const char *str);
+    void println(severity s, const char *str);
 
     /**
      * @brief Blinks an LED at a rate of 1 Hz.
      */
-    static void blink_led();
+    void blink_led();
 
     /**
      * @brief Reads in from the serial buffer to process incoming commands from a
      * computer to read/write to state fields.
      */
-    static void process_commands(const StateFieldRegistry& registry);
+    void process_commands(const StateFieldRegistry& registry);
 
     /**
      * @brief Helper method to write state fields to the console. State fields might
@@ -59,21 +70,56 @@ class debug_console {
      * 
      * @param field 
      */
-    static void print_state_field(const SerializableStateFieldBase& field);
+    void print_state_field(const SerializableStateFieldBase& field);
 
    protected:
-    // Prevent construction.
-    debug_console() {}
+    /**
+     * @brief The system time at which the debug connection with the computer was initiated,
+     * relative to ChibiOS's initialization time.
+     */
+    systime_t _start_time;
 
-    static systime_t _start_time;
-    static bool is_init;
+    /**
+     * @brief Checks whether or not the debug console has been initialized. This is a static
+     * variable so that the debug console is not forcibly initialized several times (which can
+     * happen if multiple ControlTasks initialize the console.)
+     */
+    static bool is_initialized;
 
-    static unsigned int _get_elapsed_time();
-    static void _print_json_msg(severity s, const char *msg);
+    /**
+     * @brief Returns the elapsed time relative to system time.
+     * 
+     * @return unsigned _get_elapsed_time 
+     */
+    unsigned int _get_elapsed_time();
+
+    /**
+     * @brief Prints a message in JSON format to the debug console.
+     * 
+     * @param s 
+     * @param msg 
+     */
+    void _print_json_msg(severity s, const char *msg);
+
+    /**
+     * @brief If a read or write command was issued by a simulation computer to this Flight
+     * Computer, and the command was malformed or unsuccessful, this function prints an
+     * explanation for why the command was unsuccessful.
+     * 
+     * @param field_name The field that the computer tried to read or write.
+     * @param error The error associated with the computer's request.
+     */
+    void _print_error_state_field(const char* field_name, const state_field_error_code error);
 };
 
+/**
+ * @brief Useful type definition to reduce the length of debugging print statements.
+ */
 typedef debug_console::severity debug_severity;
 
+/**
+ * @brief Interface for classes (such as control tasks) that require debugging functionality.
+ */
 class Debuggable : public debug_console {
    public:
     Debuggable() : debug_console() {}

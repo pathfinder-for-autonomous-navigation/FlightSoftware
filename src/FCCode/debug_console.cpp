@@ -11,9 +11,9 @@ std::map<debug_severity, const char *> debug_console::severity_strs{
     {debug_severity::ALERT, "ALERT"},   {debug_severity::EMERGENCY, "EMERGENCY"},
 };
 
-// Static initialization of debugger.
-systime_t debug_console::_start_time = static_cast<systime_t>(0);
-bool debug_console::is_init = false;
+bool debug_console::is_initialized = false;
+
+debug_console::debug_console() : _start_time(static_cast<systime_t>(0)) {}
 
 unsigned int debug_console::_get_elapsed_time() {
     systime_t current_time = chVTGetSystemTimeX();
@@ -37,21 +37,22 @@ void debug_console::_print_json_msg(severity s, const char *msg) {
     Serial.println();
 }
 
-bool debug_console::init() {
-    is_init = true;
-    Serial.begin(9600);
-    pinMode(13, OUTPUT);
+void debug_console::init() {
+    if (!is_initialized) {
+        Serial.begin(9600);
+        pinMode(13, OUTPUT);
 
-    Serial.println("Waiting for serial console.");
-    while (!Serial)
-        ;
-    _start_time = chVTGetSystemTimeX();
+        Serial.println("Waiting for serial console.");
+        while (!Serial)
+            ;
+        _start_time = chVTGetSystemTimeX();
 
-    return is_init;
+        is_initialized = true;
+    }
 }
 
 void debug_console::printf(severity s, const char *format, ...) {
-    if (!is_init) return;
+    if (!is_initialized) return;
     char buf[100];
     va_list args;
     va_start(args, format);
@@ -61,12 +62,12 @@ void debug_console::printf(severity s, const char *format, ...) {
 }
 
 void debug_console::println(severity s, const char *str) {
-    if (!is_init) return;
+    if (!is_initialized) return;
     _print_json_msg(s, str);
 }
 
 void debug_console::blink_led() {
-    if (!is_init) return;
+    if (!is_initialized) return;
     digitalWrite(13, HIGH);
     chThdSleepMilliseconds(500);
     digitalWrite(13, LOW);
@@ -78,6 +79,15 @@ void debug_console::print_state_field(const SerializableStateFieldBase& field) {
     doc["t"] = _get_elapsed_time();
     doc["field"] = field.name().c_str();
     doc["val"] = field.print();
+    serializeJson(doc, Serial);
+    Serial.println();
+}
+
+void debug_console::_print_error_state_field(const char* field_name, const debug_console::state_field_error_code error_code) {
+    StaticJsonDocument<50> doc;
+    doc["t"] = _get_elapsed_time();
+    doc["field"] = field_name;
+    doc["err"] = error_code;
     serializeJson(doc, Serial);
     Serial.println();
 }
@@ -125,32 +135,58 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     for(size_t i = 0; i < num_json_msgs_found; i++) {
         if (!msg_ok[i]) continue;
         JsonVariant msg_mode = msgs[i]["r/w"];
-        JsonVariant field_name = msgs[i]["field"];
+        JsonVariant field = msgs[i]["field"];
 
         // Check sanity of data
-        if (msg_mode.isNull()) continue;
-        if (field_name.isNull()) continue;
+        if (field.isNull()) continue;
 
-        if(!msg_mode.is<unsigned char>()) continue;
+        const char* field_name = field.as<const char*>();
+        if (msg_mode.isNull()) {
+            _print_error_state_field(field_name, MISSING_FIELD_VAL);
+            continue;
+        }
+
+        if(!msg_mode.is<unsigned char>()) {
+            _print_error_state_field(field_name, MISSING_MODE);
+            continue;
+        }
         const unsigned char mode = msg_mode.as<unsigned char>();
 
         // If data is ok, proceed with state field reading/writing
         switch(mode) {
             case 'r': {
-                std::shared_ptr<ReadableStateFieldBase> field_ptr = registry.find_readable_field(field_name.as<const char*>());
-                if (!field_ptr) break;
+                std::shared_ptr<ReadableStateFieldBase> field_ptr = registry.find_readable_field(field_name);
+                if (!field_ptr) {
+                    _print_error_state_field(field_name, INVALID_FIELD_NAME);
+                    break;
+                }
                 else print_state_field(*field_ptr);
             }
+            break;
             case 'w': {
                 JsonVariant field_val = msgs[i]["val"];
-                if(field_val.isNull()) break;
+                if(field_val.isNull()) {
+                    _print_error_state_field(field_name, MISSING_FIELD_VAL);
+                    break;
+                }
 
-                std::shared_ptr<WritableStateFieldBase> field_ptr = registry.find_writable_field(field_name.as<const char*>());
-                if (!field_ptr) break;
-                field_ptr->deserialize(field_val.as<const char*>());
-                // TODO convert val into usable value for field and write to field
+                std::shared_ptr<WritableStateFieldBase> field_ptr = registry.find_writable_field(field_name);
+                if (!field_ptr) {
+                    _print_error_state_field(field_name, INVALID_FIELD_NAME);
+                    break;
+                }
+
+                const char* field_val_serialized = field_val.as<const char*>();
+                if (!field_ptr->deserialize(field_val_serialized)) {
+                    _print_error_state_field(field_name, INVALID_FIELD_VAL);
+                    break;
+                }
                 print_state_field(*field_ptr);
-                break;
+                
+            }
+            break;
+            default: {
+                _print_error_state_field(field_name, INVALID_MODE);
             }
         }
     }

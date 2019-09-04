@@ -17,8 +17,8 @@ void pan_system_setup() {
     typedef ReadableStateField<temperature_t> ReadableTemperatureStateField;
     typedef WritableStateField<gps_time_t> WritableGPSTimeStateField;
     
-    auto temperature_serializer = std::make_shared<Serializer<temperature_t>>(-40, 125, SerializerConstants::temp_sz);
-    auto gps_time_serializer = std::make_shared<Serializer<gps_time_t>>();
+    auto temperature_serializer = std::make_shared<SignedIntSerializer>(-40, 125, SerializerConstants::temp_sz);
+    auto gps_time_serializer = std::make_shared<GPSTimeSerializer>();
 
     auto tank_inner_temperature_ptr =
         std::make_shared<ReadableTemperatureStateField>("prop.temp_inner", temperature_serializer);

@@ -6,7 +6,6 @@
 #include "ControlTaskBase.hpp"
 #include "StateFieldBase.hpp"
 #include "StateFieldRegistry.hpp"
-#include "debug_console.hpp"
 
 /**
  * @brief A control ControlTaskBase is a wrapper around any high-level ControlTaskBase that
@@ -18,7 +17,8 @@
 template <typename T>
 class ControlTask : public ControlTaskBase {
    protected:
-    std::shared_ptr<StateFieldRegistry> registry;
+    std::shared_ptr<StateFieldRegistry> _registry;
+    const std::string _name;
 
    public:
     /**
@@ -28,7 +28,9 @@ class ControlTask : public ControlTaskBase {
      * @param registry Pointer to state field registry
      */
     ControlTask(const std::string& name, const std::shared_ptr<StateFieldRegistry>& registry)
-        : ControlTaskBase(name), registry(registry) {}
+        : _name(name), _registry(registry) {}
+
+    const std::string& name() const override { return _name; };
 
     /**
      * @brief Run main method of control ControlTaskBase.
@@ -44,7 +46,7 @@ class ControlTask : public ControlTaskBase {
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
     std::shared_ptr<StateFieldBase> find_field(const std::string& name) {
-        return registry->find_field(name);
+        return _registry->find_field(name);
     }
 
     /**
@@ -53,7 +55,7 @@ class ControlTask : public ControlTaskBase {
      * @param field State field
      */
     bool add_readable(std::shared_ptr<StateFieldBase>& field) {
-        return registry->add_readable(field);
+        return _registry->add_readable(field);
     }
 
     /**
@@ -63,7 +65,7 @@ class ControlTask : public ControlTaskBase {
      * @param field Data field
      */
     bool add_writable(std::shared_ptr<StateFieldBase>& field) {
-        return registry->add_writable(field);
+        return _registry->add_writable(field);
     }
 };
 
