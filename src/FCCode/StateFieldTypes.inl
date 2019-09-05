@@ -43,8 +43,11 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
 
    public:
     SerializableStateField(const std::string &name, const bool ground_writable,
-                           const std::shared_ptr<Serializer<T>> &s)
-        : StateField<T>(name, false, ground_writable), _serializer(s) {}
+                           const Serializer<T> &s)
+        : StateField<T>(name, false, ground_writable)
+    {
+        _serializer = std::make_shared<Serializer<T>>(s);
+    }
 
     /**
      * @brief Get the stored bit array containing the serialized value.
@@ -78,7 +81,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * @brief Serialize field data and store the serialized result into the internal
      * bitset.
      */
-    void serialize() override { (this->_serializer)->serialize(this->_val); }
+    void serialize() override { _serializer->serialize(this->_val); }
 
     /**
      * @brief Deserialize field data from the internally contained bitset and store
@@ -86,7 +89,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      */
     void deserialize() override {
         std::shared_ptr<T> val_ptr(&(this->_val));
-        (this->_serializer)->deserialize(val_ptr);
+        _serializer->deserialize(val_ptr);
     }
 
     /**
@@ -97,7 +100,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      */
     bool deserialize(const char* val) override {
         std::shared_ptr<T> val_ptr(&(this->_val));
-        return (this->_serializer)->deserialize(val, val_ptr);
+        return _serializer->deserialize(val, val_ptr);
     }
 
     /**
@@ -105,7 +108,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      *
      * @return C-style string containing printed version of state field.
      */
-    char* print() const override { return (this->_serializer)->print(this->_val); }
+    char* print() const override { return _serializer->print(this->_val); }
 };
 
 /**
@@ -123,7 +126,7 @@ class ReadableStateFieldBase : virtual public SerializableStateFieldBase {};
 template <typename T>
 class ReadableStateField : public SerializableStateField<T>, public ReadableStateFieldBase {
    public:
-    ReadableStateField(const std::string &name, const std::shared_ptr<Serializer<T>> &s) :  SerializableStateField<T>(name, false, s) {}
+   ReadableStateField(const std::string &name, const Serializer<T> &s) :  SerializableStateField<T>(name, false, s) {}
 };
 
 /**
@@ -141,5 +144,5 @@ class WritableStateFieldBase : virtual public SerializableStateFieldBase { };
 template <typename T>
 class WritableStateField : public SerializableStateField<T>, public WritableStateFieldBase {
    public:
-    WritableStateField(const std::string &name, const std::shared_ptr<Serializer<T>> &s) : SerializableStateField<T>(name, true, s) {}
+    WritableStateField(const std::string &name, const Serializer<T> &s) : SerializableStateField<T>(name, true, s) {}
 };

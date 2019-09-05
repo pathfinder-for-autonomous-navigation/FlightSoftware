@@ -3,10 +3,14 @@
 
 #include "ControlTask.hpp"
 
-class DebugTask : public ControlTask {
-    protected:
-        const debug_console dbg;
-    
+class DebugTask : public ControlTask<void> {
+  public:
+    DebugTask(StateFieldRegistry& registry) : ControlTask("debug_task", registry) {
+        init();
+    }
+    void execute() override {
+        process_commands(_registry);
+    }
 };
 
 #endif

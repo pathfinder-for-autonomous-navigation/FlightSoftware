@@ -33,8 +33,7 @@ class StateHandler : public ControlTask<unsigned int> {
      * state machine, when the machine enters the state. Otherwise, the state
      * handler runs execute() on every dispatch of the state machine.
      */
-    StateHandler(const std::string &name, const std::shared_ptr<StateFieldRegistry> &r,
-                 bool only_once = false)
+    StateHandler(const std::string &name, StateFieldRegistry &r, bool only_once = false)
         : ControlTask<unsigned int>(name, r), only_execute_once(only_once) {}
 
     virtual unsigned int execute() = 0;

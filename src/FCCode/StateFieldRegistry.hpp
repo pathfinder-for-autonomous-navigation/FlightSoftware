@@ -82,7 +82,7 @@ class StateFieldRegistry {
      *
      * @param field State field
      */
-    bool add_readable(std::shared_ptr<ReadableStateFieldBase> &field) {
+    bool add_readable(std::shared_ptr<ReadableStateFieldBase> field) {
         if (find_field(field->name())) return false;
         fields.insert(field);
         readable_fields.insert(field);
@@ -95,7 +95,7 @@ class StateFieldRegistry {
      * @param r ControlTaskBase
      * @param field Data field
      */
-    bool add_writable(std::shared_ptr<WritableStateFieldBase> &field) {
+    bool add_writable(std::shared_ptr<WritableStateFieldBase> field) {
         if (find_field(field->name())) return false;
         fields.insert(field);
         writable_fields.insert(field);

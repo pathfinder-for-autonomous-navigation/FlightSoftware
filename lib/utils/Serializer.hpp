@@ -42,7 +42,7 @@ class SerializerConstants {
  * @tparam T Type of stored value.
  */
 template <typename T>
-class Serializer : protected SerializerConstants {
+class SerializerBase : protected SerializerConstants {
    public:
     /**
      * @brief String length that is necessary to print the value
@@ -80,12 +80,25 @@ class Serializer : protected SerializerConstants {
      * serializer for a vector serializer), return from the constructor and do not resize the
      * serialized bit array.
      */
-    Serializer(T min, T max, size_t compressed_size) : _min(min), _max(max) {
+    SerializerBase(T min, T max, size_t compressed_size) : _min(min), _max(max) {
         if (static_cast<int>(compressed_size) < 0) return;
         serialized_val.resize(compressed_size);
 
         printed_val = new char[this->strlen];
     }
+
+    /**
+     * @brief Copy constructor. 
+     */
+    SerializerBase(const SerializerBase& cpy) {
+        _min = cpy._min;
+        _max = cpy._max;
+        serialized_val.resize(cpy.serialized_val.size());
+
+        delete[] printed_val;
+        printed_val = new char[cpy.strlen];
+    }
+
    public:
      /**
      * @brief Serializes a given object and stores the compressed object
@@ -158,9 +171,14 @@ class Serializer : protected SerializerConstants {
     /**
      * @brief Destructor.
      */
-    ~Serializer() {
+    ~SerializerBase() {
         delete[] printed_val;
     }
+};
+
+template<typename T>
+class Serializer : public SerializerBase<T> {
+    Serializer(T min, T max, size_t compressed_size) : SerializerBase<T>(min, max, compressed_size) {}
 };
 
 #include "SerializerTypes.inl"

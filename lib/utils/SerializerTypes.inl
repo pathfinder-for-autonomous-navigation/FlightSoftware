@@ -8,9 +8,10 @@
 /**
  * @brief Specialization of Serializer for booleans.
  */
-class BoolSerializer : public Serializer<bool> {
+template<>
+class Serializer<bool> : public SerializerBase<bool> {
    public:
-    BoolSerializer() : Serializer<bool>(false, true, 1) {}
+    Serializer() : SerializerBase<bool>(false, true, 1) {}
 
     void serialize(const bool &src) override { serialized_val[0] = src; }
 
@@ -37,9 +38,10 @@ class BoolSerializer : public Serializer<bool> {
 /**
  * @brief Specialization of Serializer for unsigned ints.
  */
-class UnsignedIntSerializer : public Serializer<unsigned int> {
+template<>
+class Serializer<unsigned int> : public SerializerBase<unsigned int> {
    public:
-    UnsignedIntSerializer(unsigned int min, unsigned int max, size_t compressed_size) : Serializer<unsigned int>(min, max, compressed_size) {}
+    Serializer(unsigned int min, unsigned int max, size_t compressed_size) : SerializerBase<unsigned int>(min, max, compressed_size) {}
 
     unsigned int _resolution() const {
         return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, serialized_val.size())));
@@ -54,7 +56,7 @@ class UnsignedIntSerializer : public Serializer<unsigned int> {
     }
 
     bool deserialize(const char* val, std::shared_ptr<unsigned int>& dest) override {
-        size_t num_values_found = sscanf(val, "%d", dest);
+        size_t num_values_found = sscanf(val, "%d", dest.get());
         if(num_values_found != 1) return false;
 
         // Store result into current bitset
@@ -77,9 +79,10 @@ class UnsignedIntSerializer : public Serializer<unsigned int> {
 /**
  * @brief Specialization of Serializer for signed integers.
  */
-class SignedIntSerializer : public Serializer<signed int> {
+template<>
+class Serializer<signed int> : public SerializerBase<signed int> {
    public:
-    SignedIntSerializer(signed int min, signed int max, size_t compressed_size) : Serializer<signed int>(min, max, compressed_size) {}
+    Serializer(signed int min, signed int max, size_t compressed_size) : SerializerBase<signed int>(min, max, compressed_size) {}
 
     unsigned int _resolution() const {
         return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, serialized_val.size())));
@@ -94,7 +97,7 @@ class SignedIntSerializer : public Serializer<signed int> {
     }
 
     bool deserialize(const char* val, std::shared_ptr<signed int>& dest) override {
-        size_t num_values_found = sscanf(val, "%d", dest);
+        size_t num_values_found = sscanf(val, "%d", dest.get());
         if(num_values_found != 1) return false;
 
         // Store result into current bitset
@@ -117,9 +120,10 @@ class SignedIntSerializer : public Serializer<signed int> {
 /**
  * @brief Specialization of Serializer for floats.
  */
-class FloatSerializer : public Serializer<float> {
+template<>
+class Serializer<float> : public SerializerBase<float> {
    public:
-    FloatSerializer(float min, float max, size_t compressed_size) : Serializer<float>(min, max, compressed_size) {}
+    Serializer(float min, float max, size_t compressed_size) : SerializerBase<float>(min, max, compressed_size) {}
 
     void serialize(const float &src) override {
         float src_copy = src;
@@ -131,7 +135,7 @@ class FloatSerializer : public Serializer<float> {
     }
 
     bool deserialize(const char* val, std::shared_ptr<float>& dest) override {
-        size_t num_values_found = sscanf(val, "%6.6f", dest);
+        size_t num_values_found = sscanf(val, "%f", dest.get());
         if(num_values_found != 1) return false;
 
         // Store result into current bitset
@@ -156,9 +160,10 @@ class FloatSerializer : public Serializer<float> {
 /**
  * @brief Specialization of Serializer for doubles.
  */
-class DoubleSerializer : public Serializer<double> {
+template<>
+class Serializer<double> : public SerializerBase<double> {
    public:
-    DoubleSerializer(double min, double max, size_t compressed_size) : Serializer<double>(min, max, compressed_size) {}
+    Serializer(double min, double max, size_t compressed_size) : SerializerBase<double>(min, max, compressed_size) {}
 
     void serialize(const double &src) override {
         double src_copy = src;
@@ -170,7 +175,7 @@ class DoubleSerializer : public Serializer<double> {
     }
 
     bool deserialize(const char* val, std::shared_ptr<double>& dest) override {
-        size_t num_values_found = sscanf(val, "%6.6f", dest);
+        size_t num_values_found = sscanf(val, "%lf", dest.get());
         if(num_values_found != 1) return false;
 
         // Store result into current bitset
@@ -196,7 +201,7 @@ class DoubleSerializer : public Serializer<double> {
  * @brief Specialization of Serializer for float vectors and quaternions.
  */
 template <size_t N>
-class FloatVectorSerializer : public Serializer<std::array<float, N>> {
+class Serializer<std::array<float, N>> : public SerializerBase<std::array<float, N>> {
    protected:
     /**
      * We need these variables, since we don't want to use the base-class provided vectors for
@@ -210,12 +215,12 @@ class FloatVectorSerializer : public Serializer<std::array<float, N>> {
     /**
      * @brief Serializer for vector magnitude.
      */
-    std::unique_ptr<Serializer<float>> magnitude_serializer;
+    std::unique_ptr<SerializerBase<float>> magnitude_serializer;
 
     /**
      * @brief Serializer for vector components.
      */
-    std::array<std::unique_ptr<Serializer<float>>, N - 1> vector_element_serializers;
+    std::array<std::unique_ptr<SerializerBase<float>>, N - 1> vector_element_serializers;
 
     /**
      * @brief Bit array that stores which element of the vector is maximal.
@@ -237,17 +242,17 @@ class FloatVectorSerializer : public Serializer<std::array<float, N>> {
      * @param size Number of bits to compress the vector into. If this is less
      *             than the minimum possible size for float vectors, construction will fail.
      */
-    FloatVectorSerializer(float min = 0.0, float max = 1.0, size_t size = SerializerConstants::f_quat_sz)
-        : Serializer<f_vector_t>(dummy_vector, dummy_vector, size),
+    Serializer(float min = 0.0, float max = 1.0, size_t size = SerializerConstants::f_quat_sz)
+        : SerializerBase<f_vector_t>(dummy_vector, dummy_vector, size),
           magnitude_min(min),
           magnitude_max(max),
           magnitude_serializer(
-              std::make_unique<Serializer<float>>(min, max, size - SerializerConstants::f_vec_min_sz)) {
+              std::make_unique<SerializerBase<float>>(min, max, size - SerializerConstants::f_vec_min_sz)) {
         max_component.resize(2);
         for (size_t i = 0; i < N - 1; i++) {
             component_scaled_values[i].resize(SerializerConstants::f_vec_quat_component_sz);
             vector_element_serializers[i] =
-                std::make_unique<Serializer<float>>(0.0f, sqrtf(2.0f), SerializerConstants::f_vec_quat_component_sz);
+                std::make_unique<SerializerBase<float>>(0.0f, sqrtf(2.0f), SerializerConstants::f_vec_quat_component_sz);
         }
     }
 
@@ -290,7 +295,7 @@ class FloatVectorSerializer : public Serializer<std::array<float, N>> {
     bool deserialize(const char* val, std::shared_ptr<std::array<float, N>>& dest) override {
         size_t num_values_found = 0;
         for(size_t i = 0; i < N; i++) {
-            num_values_found += sscanf(val + 14*i, "%6.6f,", &(*dest)[i]);
+            num_values_found += sscanf(val + 14*i, "%6.6f,", dest.get() + i);
         }
         if(num_values_found != N) return false;
 
@@ -332,10 +337,10 @@ class FloatVectorSerializer : public Serializer<std::array<float, N>> {
 /**
  * @brief Specialization of Serializer for GPS time.
  */
-class GPSTimeSerializer : public Serializer<gps_time_t> {
+template<>
+class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
    public:
-    GPSTimeSerializer()
-        : Serializer<gps_time_t>(SerializerConstants::dummy_gpstime, 
+    Serializer() : SerializerBase<gps_time_t>(SerializerConstants::dummy_gpstime, 
                                      SerializerConstants::dummy_gpstime,
                                      SerializerConstants::gps_time_sz) {}
 

@@ -6,7 +6,7 @@ The flight software is broken into three key objects:
 - `StateFieldRegistry`: string-indexed database of all state fields. It is up to each Control Task to register its variables into this registry.
 
 There can be several different kinds of Control Tasks:
-- A `TimedTask` will be run periodically between a start and an end time that is specified in its constructor. If no end time is specified, the task is run periodically indefinitely. A timed task uses the ChibiOS API to achieve timing.
+- A `TimedTask` will be run periodically between a start and an end time that is specified in its constructor. If no end time is specified, the task is run periodically indefinitely. A timed task uses the ChibiOS API to achieve timing, and is run asynchronously with respect to the main control loop.
 - A `StateMachine` is a special kind of task that changes its operation based on a state variable. It has `StateHandler` and `TransitionHandler` subtasks.
 
 Control Tasks may need to use hardware to accomplish their functionality. All hardware is accessed via drivers that are subclasses of the `Device` class.

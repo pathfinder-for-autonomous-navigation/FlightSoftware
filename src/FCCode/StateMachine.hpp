@@ -99,8 +99,7 @@ class StateMachine : public ControlTask<bool> {
      * @param r Reference to a state field registry.
      * any.
      */
-    StateMachine(const std::string &name, const std::string &state_name,
-                 const std::shared_ptr<StateFieldRegistry> &r);
+    StateMachine(const std::string &name, const std::string &state_name, StateFieldRegistry &r);
 
     SMStateField<num_states> _state;
     std::map<unsigned int, std::shared_ptr<StateHandler>> _state_handlers;
@@ -112,7 +111,7 @@ class StateMachine : public ControlTask<bool> {
 
 template <size_t num_states>
 StateMachine<num_states>::StateMachine(const std::string &name, const std::string &state_name,
-                                       const std::shared_ptr<StateFieldRegistry> &r)
+                                       StateFieldRegistry &r)
     : ControlTask(name, r),
       _state(state_name),
       _state_handlers(),

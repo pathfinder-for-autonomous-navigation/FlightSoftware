@@ -17,8 +17,8 @@
 template <typename T>
 class ControlTask : public ControlTaskBase {
    protected:
-    std::shared_ptr<StateFieldRegistry> _registry;
     const std::string _name;
+    StateFieldRegistry& _registry;
 
    public:
     /**
@@ -27,7 +27,7 @@ class ControlTask : public ControlTaskBase {
      * @param name     Name of control ControlTaskBase
      * @param registry Pointer to state field registry
      */
-    ControlTask(const std::string& name, const std::shared_ptr<StateFieldRegistry>& registry)
+    ControlTask(const std::string& name, StateFieldRegistry& registry)
         : _name(name), _registry(registry) {}
 
     const std::string& name() const override { return _name; };
@@ -46,7 +46,7 @@ class ControlTask : public ControlTaskBase {
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
     std::shared_ptr<StateFieldBase> find_field(const std::string& name) {
-        return _registry->find_field(name);
+        return _registry.find_field(name);
     }
 
     /**
@@ -54,8 +54,8 @@ class ControlTask : public ControlTaskBase {
      *
      * @param field State field
      */
-    bool add_readable(std::shared_ptr<StateFieldBase>& field) {
-        return _registry->add_readable(field);
+    bool add_readable(std::shared_ptr<ReadableStateFieldBase>& field) {
+        return _registry.add_readable(field);
     }
 
     /**
@@ -64,8 +64,8 @@ class ControlTask : public ControlTaskBase {
      * @param r ControlTaskBase
      * @param field Data field
      */
-    bool add_writable(std::shared_ptr<StateFieldBase>& field) {
-        return _registry->add_writable(field);
+    bool add_writable(std::shared_ptr<WritableStateFieldBase>& field) {
+        return _registry.add_writable(field);
     }
 };
 
