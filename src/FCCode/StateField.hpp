@@ -8,8 +8,8 @@
 
 #include "StateFieldBase.hpp"
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 /**
  * @brief A lightweight container around state fields that allows thread-safe
@@ -32,11 +32,17 @@ class StateField : public virtual StateFieldBase {
      * @brief Construct a new StateField object
      *
      * @param name Name of state field. Useful for debugging.
+     * @ground_readable Specifies if field can be downlinked to ground.
+     * @ground_writable Specifies if field can be uplinked from ground.
      */
     StateField(const std::string &name, const bool ground_readable, const bool ground_writable)
-        : StateFieldBase(), _name(name), _val(), _ground_readable(ground_readable), _ground_writable(ground_writable) {}
+        : StateFieldBase(),
+          _name(name),
+          _val(),
+          _ground_readable(ground_readable),
+          _ground_writable(ground_writable) {}
 
-    const std::string& name() const override { return _name; }
+    const std::string &name() const override { return _name; }
 
     /**
      * @brief Returns a generic pointer to this state field. Useful for creating

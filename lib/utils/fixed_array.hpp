@@ -3,9 +3,9 @@
 
 #include <algorithm>
 #include <array>
+#include <bitset>
 #include <cmath>
 #include <vector>
-#include <bitset>
 
 /**
  * Behaves like an array (i.e. the size cannot be modified), but the size is specified upon

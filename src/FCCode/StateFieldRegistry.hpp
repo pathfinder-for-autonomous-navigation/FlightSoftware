@@ -2,8 +2,8 @@
 #define STATE_FIELD_REGISTRY_HPP_
 
 #include <map>
-#include <set>
 #include <memory>
+#include <set>
 #include <vector>
 #include "StateField.hpp"
 
@@ -48,7 +48,8 @@ class StateFieldRegistry {
     }
 
     /**
-     * @brief Find a readable field of a given name within the state registry and return a pointer to it.
+     * @brief Find a readable field of a given name within the state registry and return a pointer
+     * to it.
      *
      * @param name Name of state field.
      *
@@ -63,7 +64,8 @@ class StateFieldRegistry {
     }
 
     /**
-     * @brief Find a writable field of a given name within the state registry and return a pointer to it.
+     * @brief Find a writable field of a given name within the state registry and return a pointer
+     * to it.
      *
      * @param name Name of state field.
      *

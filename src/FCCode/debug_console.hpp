@@ -1,11 +1,11 @@
 #ifndef DEBUG_CONSOLE_HPP_
 #define DEBUG_CONSOLE_HPP_
 
-#include "StateField.hpp"
-#include "StateFieldRegistry.hpp"
+#include <ChRt.h>
 #include <map>
 #include <set>
-#include <ChRt.h>
+#include "StateField.hpp"
+#include "StateFieldRegistry.hpp"
 
 /**
  * @brief Provides access to Serial via a convenient wrapper that plays
@@ -61,16 +61,16 @@ class debug_console {
      * @brief Reads in from the serial buffer to process incoming commands from a
      * computer to read/write to state fields.
      */
-    void process_commands(const StateFieldRegistry& registry);
+    void process_commands(const StateFieldRegistry &registry);
 
     /**
      * @brief Helper method to write state fields to the console. State fields might
      * be written to the console if they were requested by the computer or if they're
      * "always-on" debugging telemetry.
-     * 
-     * @param field 
+     *
+     * @param field
      */
-    void print_state_field(const SerializableStateFieldBase& field);
+    void print_state_field(const SerializableStateFieldBase &field);
 
    protected:
     /**
@@ -88,16 +88,16 @@ class debug_console {
 
     /**
      * @brief Returns the elapsed time relative to system time.
-     * 
-     * @return unsigned _get_elapsed_time 
+     *
+     * @return unsigned _get_elapsed_time
      */
     unsigned int _get_elapsed_time();
 
     /**
      * @brief Prints a message in JSON format to the debug console.
-     * 
-     * @param s 
-     * @param msg 
+     *
+     * @param s
+     * @param msg
      */
     void _print_json_msg(severity s, const char *msg);
 
@@ -105,11 +105,11 @@ class debug_console {
      * @brief If a read or write command was issued by a simulation computer to this Flight
      * Computer, and the command was malformed or unsuccessful, this function prints an
      * explanation for why the command was unsuccessful.
-     * 
+     *
      * @param field_name The field that the computer tried to read or write.
      * @param error The error associated with the computer's request.
      */
-    void _print_error_state_field(const char* field_name, const state_field_error_code error);
+    void _print_error_state_field(const char *field_name, const state_field_error_code error);
 };
 
 /**

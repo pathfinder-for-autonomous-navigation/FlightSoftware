@@ -37,9 +37,7 @@ class Device : public Nameable {
    public:
     Device(const std::string& name) : _name(name) {}
 
-    const std::string& name() const override {
-        return _name;
-    }
+    const std::string& name() const override { return _name; }
 
     ~Device();
     /** @brief Sets up communication with the device and verifies

@@ -1,10 +1,12 @@
-#include "StateField.hpp"
 #include "Serializer.hpp"
+#include "StateField.hpp"
+
+#include <Arduino.h>
 
 /**
  * @brief Empty base class for internal state fields.
  */
-class InternalStateFieldBase : virtual public StateFieldBase { };
+class InternalStateFieldBase : virtual public StateFieldBase {};
 
 /**
  * @brief A state field that is not accessible from ground; it is
@@ -26,8 +28,8 @@ class SerializableStateFieldBase : virtual public StateFieldBase {
    public:
     virtual void serialize() = 0;
     virtual void deserialize() = 0;
-    virtual bool deserialize(const char* val) = 0;
-    virtual char* print() const = 0;
+    virtual bool deserialize(const char *val) = 0;
+    virtual const char *print() const = 0;
 };
 
 /**
@@ -44,8 +46,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
    public:
     SerializableStateField(const std::string &name, const bool ground_writable,
                            const Serializer<T> &s)
-        : StateField<T>(name, false, ground_writable)
-    {
+        : StateField<T>(name, false, ground_writable) {
         _serializer = std::make_shared<Serializer<T>>(s);
     }
 
@@ -62,14 +63,6 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * @return size_t
      */
     size_t bitsize() const { return _serializer->bitsize(); }
-
-    /**
-     * @brief Get string length that is necessary to print the value
-     * of the stored contents.
-     *
-     * @return size_t
-     */
-    size_t strlen() const { return _serializer->strlen(); }
 
     /**
      * @brief Set the internally stored serialized value. Do nothing if the source bit arary does
@@ -95,10 +88,10 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
     /**
      * @brief Deserialize field data from the provided character array and store
      * into the state field value.
-     * 
+     *
      * @param val Provided character array.
      */
-    bool deserialize(const char* val) override {
+    bool deserialize(const char *val) override {
         std::shared_ptr<T> val_ptr(&(this->_val));
         return _serializer->deserialize(val, val_ptr);
     }
@@ -108,7 +101,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      *
      * @return C-style string containing printed version of state field.
      */
-    char* print() const override { return _serializer->print(this->_val); }
+    const char *print() const override { return _serializer->print(this->_val); }
 };
 
 /**
@@ -126,13 +119,14 @@ class ReadableStateFieldBase : virtual public SerializableStateFieldBase {};
 template <typename T>
 class ReadableStateField : public SerializableStateField<T>, public ReadableStateFieldBase {
    public:
-   ReadableStateField(const std::string &name, const Serializer<T> &s) :  SerializableStateField<T>(name, false, s) {}
+    ReadableStateField(const std::string &name, const Serializer<T> &s)
+        : SerializableStateField<T>(name, false, s) {}
 };
 
 /**
  * @brief Empty base class for ground-writable state fields.
  */
-class WritableStateFieldBase : virtual public SerializableStateFieldBase { };
+class WritableStateFieldBase : virtual public SerializableStateFieldBase {};
 
 /**
  * @brief A state field that is writable, i.e. whose value can be modified via
@@ -144,5 +138,6 @@ class WritableStateFieldBase : virtual public SerializableStateFieldBase { };
 template <typename T>
 class WritableStateField : public SerializableStateField<T>, public WritableStateFieldBase {
    public:
-    WritableStateField(const std::string &name, const Serializer<T> &s) : SerializableStateField<T>(name, true, s) {}
+    WritableStateField(const std::string &name, const Serializer<T> &s)
+        : SerializableStateField<T>(name, true, s) {}
 };

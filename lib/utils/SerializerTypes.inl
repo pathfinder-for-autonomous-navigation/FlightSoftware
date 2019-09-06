@@ -26,7 +26,7 @@ class Serializer<bool> : public SerializerBase<bool> {
 
     static constexpr size_t strlen = 5;
 
-    char* print(const bool &src) const override {
+    const char* print(const bool &src) const override {
         if (src)
             strcpy(this->printed_val, "true");
         else
@@ -70,7 +70,7 @@ class Serializer<unsigned int> : public SerializerBase<unsigned int> {
 
     static constexpr size_t strlen = 20;
 
-    char* print(const unsigned int &src) const override {
+    const char* print(const unsigned int &src) const override {
         sprintf(this->printed_val, "%d", src);
         return this->printed_val;
     }
@@ -111,7 +111,7 @@ class Serializer<signed int> : public SerializerBase<signed int> {
 
     static constexpr size_t strlen = 20;
 
-    char* print(const signed int &src) const override {
+    const char* print(const signed int &src) const override {
         sprintf(this->printed_val, "%d", src);
         return this->printed_val;
     }
@@ -151,7 +151,7 @@ class Serializer<float> : public SerializerBase<float> {
 
     static constexpr size_t strlen = 14;
 
-    char* print(const float &src) const override {
+    const char* print(const float &src) const override {
         sprintf(this->printed_val, "%6.6f", src);
         return this->printed_val;
     }
@@ -191,7 +191,7 @@ class Serializer<double> : public SerializerBase<double> {
 
     static constexpr size_t strlen = 14;
 
-    char* print(const double &src) const override {
+    const char* print(const double &src) const override {
         sprintf(this->printed_val, "%6.6f", src);
         return this->printed_val;
     }
@@ -272,7 +272,7 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
 
         // Compress unit vector into two compressed floats
         std::array<float, 3> v_mags;  // Magnitudes of elements in vector
-        for (int i = 0; i < 3; i++) v_mags[i] = std::abs(src[i]);
+        for (int i = 0; i < 3; i++) v_mags[i] = abs(src[i]);
 
         size_t max_element_idx = 0;
         float max_element_value = std::max(std::max(v_mags[0], v_mags[1]), v_mags[2]);
@@ -326,7 +326,7 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
 
     static constexpr size_t strlen = 14 * N;
 
-    char* print(const std::array<float, N> &src) const override {
+    const char* print(const std::array<float, N> &src) const override {
         for (size_t i = 0; i < N; i++) {
             sprintf(this->printed_val + 14 * i, "%6.6f,", src[i]);
         }
@@ -372,7 +372,7 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
 
     static constexpr size_t strlen = 14;
 
-    char* print(const gps_time_t &src) const override {
+    const char* print(const gps_time_t &src) const override {
         // TODO
         return this->printed_val;
     }

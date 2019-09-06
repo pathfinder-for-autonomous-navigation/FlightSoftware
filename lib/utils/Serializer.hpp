@@ -6,11 +6,12 @@
 
 #ifndef SERIALIZER_HPP_
 #define SERIALIZER_HPP_
-
-#include "fixed_array.hpp"
-#include "GPSTime.hpp"
 #include <memory>
 #include <string>
+#include "GPSTime.hpp"
+#include "fixed_array.hpp"
+
+#include <Arduino.h>
 
 class SerializerConstants {
    public:
@@ -38,7 +39,7 @@ class SerializerConstants {
 /**
  * @brief Base class that manages memory for a serializer. Specifically, it ensures that the
  * bit array used to store the results of serialization is allocated at most once.
- * 
+ *
  * @tparam T Type of stored value.
  */
 template <typename T>
@@ -53,7 +54,7 @@ class SerializerBase : protected SerializerConstants {
    protected:
     /**
      * @brief Minima and maxima used for fixed-point compression of objects.
-     * 
+     *
      * @{
      */
     T _min;
@@ -71,6 +72,7 @@ class SerializerBase : protected SerializerConstants {
      * @brief Container for printed value of serialized object.
      */
     char* printed_val;
+    bool is_printed_val_allocated = false;
 
     /**
      * @brief Argumented constructor. This is protected to prevent construction of this
@@ -83,24 +85,26 @@ class SerializerBase : protected SerializerConstants {
     SerializerBase(T min, T max, size_t compressed_size) : _min(min), _max(max) {
         if (static_cast<int>(compressed_size) < 0) return;
         serialized_val.resize(compressed_size);
-
+        
         printed_val = new char[this->strlen];
+        is_printed_val_allocated = true;
     }
 
     /**
-     * @brief Copy constructor. 
+     * @brief Copy constructor.
      */
     SerializerBase(const SerializerBase& cpy) {
         _min = cpy._min;
         _max = cpy._max;
         serialized_val.resize(cpy.serialized_val.size());
 
-        delete[] printed_val;
+        if (is_printed_val_allocated) delete[] printed_val;
+        is_printed_val_allocated = false;
         printed_val = new char[cpy.strlen];
     }
 
    public:
-     /**
+    /**
      * @brief Serializes a given object and stores the compressed object
      * into the member bitset.
      *
@@ -109,16 +113,16 @@ class SerializerBase : protected SerializerConstants {
      * @return True if serialization succeeded, false if serializer was
      *         uninitialized.
      */
-    virtual void serialize(const T &src) = 0;
+    virtual void serialize(const T& src) = 0;
 
     /**
      * @brief Deserializes the contents stored in the provided character array
      * and stores the result in the provided object pointer. Also updates
      * the internally stored bitset.
-     * 
+     *
      * @param val  String containing value to process.
      * @param dest Value stored in string will be stored into here.
-     * 
+     *
      * @return If deserialization from the provided string was successful.
      */
     virtual bool deserialize(const char* val, std::shared_ptr<T>& dest) = 0;
@@ -132,7 +136,7 @@ class SerializerBase : protected SerializerConstants {
      * @return True if serialization succeeded, false if serializer was
      *         uninitialized.
      */
-    virtual void deserialize(std::shared_ptr<T> &dest) const = 0;
+    virtual void deserialize(std::shared_ptr<T>& dest) const = 0;
 
     /**
      * @brief Outputs a string representation of the source value into
@@ -143,14 +147,14 @@ class SerializerBase : protected SerializerConstants {
      *
      * @return C-style string containing printed value.
      */
-    virtual char* print(const T &src) const = 0;
+    virtual const char* print(const T& src) const = 0;
 
     /**
      * @brief Get the stored bit array containing the serialized value.
      *
      * @return const bit_array&
      */
-    const bit_array &get_bit_array() const { return serialized_val; }
+    const bit_array& get_bit_array() const { return serialized_val; }
 
     /**
      * @brief Return size of bit array held by this serializer.
@@ -163,7 +167,7 @@ class SerializerBase : protected SerializerConstants {
      * @brief Set the internally stored serialized value. Do nothing if the source bit arary does
      * not have the same size as the internally stored bit array.
      */
-    void set_bit_array(const bit_array &src) {
+    void set_bit_array(const bit_array& src) {
         if (src.size() != serialized_val.size()) return;
         serialized_val = src;
     }
@@ -171,14 +175,13 @@ class SerializerBase : protected SerializerConstants {
     /**
      * @brief Destructor.
      */
-    ~SerializerBase() {
-        delete[] printed_val;
-    }
+    ~SerializerBase() { delete[] printed_val; }
 };
 
-template<typename T>
+template <typename T>
 class Serializer : public SerializerBase<T> {
-    Serializer(T min, T max, size_t compressed_size) : SerializerBase<T>(min, max, compressed_size) {}
+    Serializer(T min, T max, size_t compressed_size)
+        : SerializerBase<T>(min, max, compressed_size) {}
 };
 
 #include "SerializerTypes.inl"

@@ -1,10 +1,10 @@
 #include "debug_console.hpp"
-#include <array>
 #include <Arduino.h>
-#include "ArduinoJson.h"
 #include <ChRt.h>
+#include <array>
+#include "ArduinoJson.h"
 
-std::map<debug_severity, const char *> debug_console::severity_strs{
+std::map<debug_severity, const char*> debug_console::severity_strs{
     {debug_severity::DEBUG, "DEBUG"},   {debug_severity::INFO, "INFO"},
     {debug_severity::NOTICE, "NOTICE"}, {debug_severity::WARNING, "WARNING"},
     {debug_severity::ERROR, "ERROR"},   {debug_severity::CRITICAL, "CRITICAL"},
@@ -28,7 +28,7 @@ unsigned int debug_console::_get_elapsed_time() {
     return elapsed_time;
 }
 
-void debug_console::_print_json_msg(severity s, const char *msg) {
+void debug_console::_print_json_msg(severity s, const char* msg) {
     StaticJsonDocument<50> doc;
     doc["t"] = _get_elapsed_time();
     doc["svrty"] = severity_strs.at(s);
@@ -51,7 +51,7 @@ void debug_console::init() {
     }
 }
 
-void debug_console::printf(severity s, const char *format, ...) {
+void debug_console::printf(severity s, const char* format, ...) {
     if (!is_initialized) return;
     char buf[100];
     va_list args;
@@ -61,7 +61,7 @@ void debug_console::printf(severity s, const char *format, ...) {
     va_end(args);
 }
 
-void debug_console::println(severity s, const char *str) {
+void debug_console::println(severity s, const char* str) {
     if (!is_initialized) return;
     _print_json_msg(s, str);
 }
@@ -83,7 +83,8 @@ void debug_console::print_state_field(const SerializableStateFieldBase& field) {
     Serial.println();
 }
 
-void debug_console::_print_error_state_field(const char* field_name, const debug_console::state_field_error_code error_code) {
+void debug_console::_print_error_state_field(
+    const char* field_name, const debug_console::state_field_error_code error_code) {
     StaticJsonDocument<50> doc;
     doc["t"] = _get_elapsed_time();
     doc["field"] = field_name;
@@ -95,7 +96,7 @@ void debug_console::_print_error_state_field(const char* field_name, const debug
 void debug_console::process_commands(const StateFieldRegistry& registry) {
     constexpr size_t SERIAL_BUF_SIZE = 64;
     char buf[SERIAL_BUF_SIZE] = {0};
-    for(size_t i = 0; i < SERIAL_BUF_SIZE && Serial.available(); i++) {
+    for (size_t i = 0; i < SERIAL_BUF_SIZE && Serial.available(); i++) {
         buf[i] = Serial.read();
     }
 
@@ -103,12 +104,11 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     size_t json_msg_starts[5] = {0};
     size_t num_json_msgs_found = 0;
     bool inside_json_msg = false;
-    for(size_t i = 0; i < SERIAL_BUF_SIZE; i++) {
+    for (size_t i = 0; i < SERIAL_BUF_SIZE; i++) {
         if (buf[i] == '{') {
             inside_json_msg = true;
             json_msg_starts[num_json_msgs_found] = i;
-        }
-        else if (inside_json_msg && buf[i] == '}') {
+        } else if (inside_json_msg && buf[i] == '}') {
             inside_json_msg = false;
             num_json_msgs_found++;
             // Replace newline after the JSON object with a null character, so
@@ -123,7 +123,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     // Deserialize all found JSON messages and check their validity
     std::array<StaticJsonDocument<50>, 5> msgs;
     std::array<bool, 5> msg_ok;
-    for(size_t i = 0; i < num_json_msgs_found; i++) {
+    for (size_t i = 0; i < num_json_msgs_found; i++) {
         auto result = deserializeJson(msgs[i], &buf[json_msg_starts[i]]);
         if (result == DeserializationError::Ok) {
             msg_ok[i] = true;
@@ -132,7 +132,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
     // For all valid messages, modify or print the relevant item in the state
     // field registry
-    for(size_t i = 0; i < num_json_msgs_found; i++) {
+    for (size_t i = 0; i < num_json_msgs_found; i++) {
         if (!msg_ok[i]) continue;
         JsonVariant msg_mode = msgs[i]["r/w"];
         JsonVariant field = msgs[i]["field"];
@@ -146,31 +146,32 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
             continue;
         }
 
-        if(!msg_mode.is<unsigned char>()) {
+        if (!msg_mode.is<unsigned char>()) {
             _print_error_state_field(field_name, MISSING_MODE);
             continue;
         }
         const unsigned char mode = msg_mode.as<unsigned char>();
 
         // If data is ok, proceed with state field reading/writing
-        switch(mode) {
+        switch (mode) {
             case 'r': {
-                std::shared_ptr<ReadableStateFieldBase> field_ptr = registry.find_readable_field(field_name);
+                std::shared_ptr<ReadableStateFieldBase> field_ptr =
+                    registry.find_readable_field(field_name);
                 if (!field_ptr) {
                     _print_error_state_field(field_name, INVALID_FIELD_NAME);
                     break;
-                }
-                else print_state_field(*field_ptr);
-            }
-            break;
+                } else
+                    print_state_field(*field_ptr);
+            } break;
             case 'w': {
                 JsonVariant field_val = msgs[i]["val"];
-                if(field_val.isNull()) {
+                if (field_val.isNull()) {
                     _print_error_state_field(field_name, MISSING_FIELD_VAL);
                     break;
                 }
 
-                std::shared_ptr<WritableStateFieldBase> field_ptr = registry.find_writable_field(field_name);
+                std::shared_ptr<WritableStateFieldBase> field_ptr =
+                    registry.find_writable_field(field_name);
                 if (!field_ptr) {
                     _print_error_state_field(field_name, INVALID_FIELD_NAME);
                     break;
@@ -182,9 +183,8 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     break;
                 }
                 print_state_field(*field_ptr);
-                
-            }
-            break;
+
+            } break;
             default: {
                 _print_error_state_field(field_name, INVALID_MODE);
             }
