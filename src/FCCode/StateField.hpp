@@ -6,7 +6,6 @@
 #ifndef STATE_FIELD_HPP_
 #define STATE_FIELD_HPP_
 
-#include "Serializer.hpp"
 #include "StateFieldBase.hpp"
 
 #include <vector>
