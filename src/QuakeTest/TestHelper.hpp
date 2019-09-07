@@ -1,9 +1,9 @@
 
-#include "QLocate.hpp"
-#include "QuakeMessage.hpp"
+#include "../lib/Drivers/QLocate.hpp"
+#include "../lib/utils/QuakeMessage.hpp"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 // Test print helper
 // bSuccess: true for pass, false for failed
@@ -11,13 +11,12 @@
 // errorCode: status code
 void assert(int bSuccess, const std::string &testName, int errorCode);
 
-//Sbdix response structure
-typedef struct sbdix_r
-{
-  int MO_status;
-  int MOMSN;
-  int MT_status;
-  int MTMSN;
-  int MT_length;
-  int MT_queued;
+// Sbdix response structure
+typedef struct sbdix_r {
+    int MO_status;
+    int MOMSN;
+    int MT_status;
+    int MTMSN;
+    int MT_length;
+    int MT_queued;
 } sbdix_r_t;
