@@ -9,11 +9,13 @@ from cmd import Cmd
 from argparse import ArgumentParser
 
 class FCStateCmdPrompt(Cmd):
-    def __init__(self, console_port, logfile_name, store_log):
-        self.logfile = open(logfile_name)
+    def __init__(self, console_port, dbfile_name, logfile_name, store_log):
+        self.logfile = open(logfile_name, "w")
+        self.dbfile = open(dbfile_name, "w")
+        self.field_values = {}
 
         try:
-            self.console = serial.Serial(console_port, 9600)
+            self.console = serial.Serial(console_port, 1152000)
         except serial.SerialException:
             print("Error: unable to open serial port. Exiting.")
             self.do_quit(None)
@@ -25,6 +27,8 @@ class FCStateCmdPrompt(Cmd):
         self.start_time = datetime.datetime.now()
 
     def preloop(self):
+        # Read FC output for debug messages and state variable updates
+
         try:
             # Read line coming from device and parse it
             line = self.console.readline().rstrip()
@@ -35,9 +39,10 @@ class FCStateCmdPrompt(Cmd):
                 logline = "[{}] ({}) {}".format(data["time"], data["svrty"],
                                                 data["msg"])
             else:
-                # Write state variable to 
-                logline = "[{}] (STATEMSG) {} = {}".format(
-                    data["time"], data["field"], data["val"])
+                if data['field'] not in self.field_values:
+                    self.field_values[data['field']] = []
+                if not 'err' in data:
+                    self.field_values[data['field']].append((data['time',data['val']]))
 
             data["time"] = self.start_time + datetime.timedelta(
                 milliseconds=data["t"])
@@ -73,16 +78,17 @@ class FCStateCmdPrompt(Cmd):
             "val" : val
         }
         self.console.write(json.dumps(json_cmd))
-        # Getting a confirmation of the actual value being set is
-        # handled by the logger thread.
+        # Getting a confirmation of the actual value being set is handled by the logger thread.
 
     def do_quit(self, args):
-        """Quits the program."""
+        """Quits the program and stores message log and field telemetry to file."""
         if self.store_log:
-            print("Saving log.")
+            print("Saving log, telemetry, and quitting.")
             self.logfile.close()
+
+        json.dump(self.field_values, self.dbfile)
+        self.dbfile.close()
         self.console.close()
-        print("Quitting.")
         raise SystemExit
 
 if __name__ == '__main__':
@@ -95,10 +101,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     logfile_name = "{}/{}.log".format(args.log_dir, str(datetime.datetime.now()))
+    dbfile_name = "{}/{}.db".format(args.log_dir, str(datetime.datetime.now()))
 
     with open("pan_logo.txt", "r") as pan_logo:
         pan_logo_str = pan_logo.read()
 
-        cmd_prompt = FCStateCmdPrompt(args.port, logfile_name, args.store_log)
+        cmd_prompt = FCStateCmdPrompt(args.port, dbfile_name, logfile_name, args.store_log)
         cmd_prompt.prompt = "> "
         cmd_prompt.cmdloop(pan_logo_str)
