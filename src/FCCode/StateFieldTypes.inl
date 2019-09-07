@@ -1,8 +1,6 @@
 #include "Serializer.hpp"
 #include "StateField.hpp"
 
-#include <Arduino.h>
-
 /**
  * @brief Empty base class for internal state fields.
  */

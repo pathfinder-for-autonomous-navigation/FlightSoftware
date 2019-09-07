@@ -11,7 +11,7 @@ class MainControlLoopTask : public ControlTask<void> {
     DebugTask debug_task;
 
     std::shared_ptr<ReadableStateField<signed int>> tank_inner_temperature;
-    std::shared_ptr<ReadableStateField<signed int>> tank_outer_temperature;
+    std::shared_ptr<WritableStateField<signed int>> tank_outer_temperature;
     std::shared_ptr<WritableStateField<gps_time_t>> firing_time;
 
    public:

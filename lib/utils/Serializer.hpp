@@ -85,7 +85,7 @@ class SerializerBase : protected SerializerConstants {
     SerializerBase(T min, T max, size_t compressed_size) : _min(min), _max(max) {
         if (static_cast<int>(compressed_size) < 0) return;
         serialized_val.resize(compressed_size);
-        
+
         printed_val = new char[this->strlen];
         is_printed_val_allocated = true;
     }

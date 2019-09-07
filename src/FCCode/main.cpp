@@ -8,14 +8,15 @@
 #include "StateFieldRegistry.hpp"
 
 #include <ChRt.h>
-#include <Arduino.h>
+#include <core_pins.h>
+#include <wiring.h>
 
 StateFieldRegistry registry;
 MainControlLoopTask fcp_task(registry);
 
 void pan_system_setup() {
     fcp_task.init();
-    while(true) {
+    while (true) {
         fcp_task.execute();
         digitalWrite(13, HIGH);
         chThdSleepMilliseconds(50);
@@ -29,7 +30,8 @@ void pan_system_setup() {
 #ifndef UNIT_TEST
 void setup() {
     chBegin(pan_system_setup);
-    while(true);
+    while (true)
+        ;
 }
 
 void loop() {}

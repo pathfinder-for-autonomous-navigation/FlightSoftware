@@ -1,8 +1,13 @@
 #include "debug_console.hpp"
-#include <Arduino.h>
-#include <ChRt.h>
+#include <usb_serial.h>
 #include <array>
 #include "ArduinoJson.h"
+
+/**
+ * Needed in order to resolve some strange linking error where
+ * Serial appears undefined.
+ */
+usb_serial_class Serial;
 
 std::map<debug_severity, const char*> debug_console::severity_strs{
     {debug_severity::DEBUG, "DEBUG"},   {debug_severity::INFO, "INFO"},
@@ -29,7 +34,7 @@ unsigned int debug_console::_get_elapsed_time() {
 }
 
 void debug_console::_print_json_msg(severity s, const char* msg) {
-    StaticJsonDocument<50> doc;
+    StaticJsonDocument<100> doc;
     doc["t"] = _get_elapsed_time();
     doc["svrty"] = severity_strs.at(s);
     doc["msg"] = msg;
@@ -39,7 +44,7 @@ void debug_console::_print_json_msg(severity s, const char* msg) {
 
 void debug_console::init() {
     if (!is_initialized) {
-        Serial.begin(9600);
+        Serial.begin(115200);
         pinMode(13, OUTPUT);
 
         Serial.println("Waiting for serial console.");
@@ -75,7 +80,7 @@ void debug_console::blink_led() {
 }
 
 void debug_console::print_state_field(const SerializableStateFieldBase& field) {
-    StaticJsonDocument<50> doc;
+    StaticJsonDocument<100> doc;
     doc["t"] = _get_elapsed_time();
     doc["field"] = field.name().c_str();
     doc["val"] = field.print();
@@ -85,10 +90,10 @@ void debug_console::print_state_field(const SerializableStateFieldBase& field) {
 
 void debug_console::_print_error_state_field(
     const char* field_name, const debug_console::state_field_error_code error_code) {
-    StaticJsonDocument<50> doc;
+    StaticJsonDocument<100> doc;
     doc["t"] = _get_elapsed_time();
     doc["field"] = field_name;
-    doc["err"] = error_code;
+    doc["err"] = static_cast<unsigned int>(error_code);
     serializeJson(doc, Serial);
     Serial.println();
 }
@@ -100,11 +105,13 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
         buf[i] = Serial.read();
     }
 
-    // Get all chunks of the buffer that are complete JSON messages
+    // Get all chunks of the buffer that are complete JSON messages. Read at
+    // most five messages from the buffer. (It's unlikely that more than 5 messages
+    // can fit within a 64 byte buffer)
     size_t json_msg_starts[5] = {0};
     size_t num_json_msgs_found = 0;
     bool inside_json_msg = false;
-    for (size_t i = 0; i < SERIAL_BUF_SIZE; i++) {
+    for (size_t i = 0; i < SERIAL_BUF_SIZE && num_json_msgs_found < 5; i++) {
         if (buf[i] == '{') {
             inside_json_msg = true;
             json_msg_starts[num_json_msgs_found] = i;
@@ -119,16 +126,20 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
             }
         }
     }
+    if (num_json_msgs_found > 0) Serial.printf("Num messages found: %d\n", num_json_msgs_found);
 
     // Deserialize all found JSON messages and check their validity
     std::array<StaticJsonDocument<50>, 5> msgs;
     std::array<bool, 5> msg_ok;
+    unsigned int num_msgs_ok = 0;
     for (size_t i = 0; i < num_json_msgs_found; i++) {
         auto result = deserializeJson(msgs[i], &buf[json_msg_starts[i]]);
         if (result == DeserializationError::Ok) {
+            num_msgs_ok++;
             msg_ok[i] = true;
         }
     }
+    if (num_json_msgs_found > 0) Serial.printf("Num messages ok: %d\n", num_msgs_ok);
 
     // For all valid messages, modify or print the relevant item in the state
     // field registry
@@ -142,12 +153,12 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
         const char* field_name = field.as<const char*>();
         if (msg_mode.isNull()) {
-            _print_error_state_field(field_name, MISSING_FIELD_VAL);
+            _print_error_state_field(field_name, MISSING_MODE);
             continue;
         }
 
         if (!msg_mode.is<unsigned char>()) {
-            _print_error_state_field(field_name, MISSING_MODE);
+            _print_error_state_field(field_name, INVALID_MODE_NOT_CHAR);
             continue;
         }
         const unsigned char mode = msg_mode.as<unsigned char>();
@@ -173,7 +184,13 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 std::shared_ptr<WritableStateFieldBase> field_ptr =
                     registry.find_writable_field(field_name);
                 if (!field_ptr) {
-                    _print_error_state_field(field_name, INVALID_FIELD_NAME);
+                    std::shared_ptr<ReadableStateFieldBase> field_ptr_readable =
+                        registry.find_readable_field(field_name);
+                    if (field_ptr_readable) {
+                        _print_error_state_field(field_name, FIELD_IS_ONLY_READABLE);
+                    } else {
+                        _print_error_state_field(field_name, INVALID_FIELD_NAME);
+                    }
                     break;
                 }
 

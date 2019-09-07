@@ -3,7 +3,6 @@
 
 #include <ChRt.h>
 #include <map>
-#include <set>
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
 
@@ -21,9 +20,10 @@ class debug_console {
     static std::map<severity, const char *> severity_strs;
 
     enum state_field_error_code {
-        MISSING_FIELD_NAME,
         INVALID_FIELD_NAME,
+        FIELD_IS_ONLY_READABLE,
         MISSING_MODE,
+        INVALID_MODE_NOT_CHAR,
         INVALID_MODE,
         MISSING_FIELD_VAL,
         INVALID_FIELD_VAL
@@ -118,17 +118,9 @@ class debug_console {
 typedef debug_console::severity debug_severity;
 
 /**
- * @brief Interface for classes (such as control tasks) that require debugging functionality.
- */
-class Debuggable : public debug_console {
-   public:
-    Debuggable() : debug_console() {}
-};
-
-/**
  * Macros used for testing initialization. These statements should NOT be used
  * in production environments and should ONLY used within initialization
- * contexts. The class using these macros must inherit from Debuggable.
+ * contexts. A class using these macros must inherit from debug_console.
  */
 
 #define ReturnIfMsg(condition, msg, retval)                                  \

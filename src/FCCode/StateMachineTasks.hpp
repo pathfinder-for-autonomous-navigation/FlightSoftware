@@ -5,9 +5,8 @@
 #include "StateField.hpp"
 
 /**
- * @brief Represents a control ControlTaskBase specifically designed for handling
- * the actions that should be run during a state.
- *
+ * @brief Represents a control task specifically designed for handling the actions that should be
+ * run during a state.
  */
 class StateHandler : public ControlTask<unsigned int> {
    public:
@@ -33,8 +32,7 @@ class StateHandler : public ControlTask<unsigned int> {
      * state machine, when the machine enters the state. Otherwise, the state
      * handler runs execute() on every dispatch of the state machine.
      */
-    StateHandler(const std::string &name, StateFieldRegistry &r, bool only_once = false)
-        : ControlTask<unsigned int>(name, r), only_execute_once(only_once) {}
+    StateHandler(const std::string &name, StateFieldRegistry &r, bool only_once = false);
 
     virtual unsigned int execute() = 0;
 };

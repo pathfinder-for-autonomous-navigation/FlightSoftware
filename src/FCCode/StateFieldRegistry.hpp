@@ -1,10 +1,8 @@
 #ifndef STATE_FIELD_REGISTRY_HPP_
 #define STATE_FIELD_REGISTRY_HPP_
 
-#include <map>
 #include <memory>
 #include <set>
-#include <vector>
 #include "StateField.hpp"
 
 /**
@@ -21,16 +19,12 @@ class StateFieldRegistry {
 
    public:
     // TODO make a singleton
-    StateFieldRegistry() {}
+    StateFieldRegistry();
 
     /**
      * @brief Copy constructor.
      */
-    void operator=(const StateFieldRegistry &r) {
-        this->fields = r.fields;
-        this->readable_fields = r.readable_fields;
-        this->writable_fields = r.writable_fields;
-    }
+    void operator=(const StateFieldRegistry &r);
 
     /**
      * @brief Find a field of a given name within the state registry and return a pointer to it.
@@ -39,13 +33,7 @@ class StateFieldRegistry {
      *
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
-    std::shared_ptr<StateFieldBase> find_field(const std::string &name) const {
-        for (auto const &field : fields) {
-            if (name == field->name()) return field;
-        }
-
-        return std::shared_ptr<StateFieldBase>(nullptr);
-    }
+    std::shared_ptr<StateFieldBase> find_field(const std::string &name) const;
 
     /**
      * @brief Find a readable field of a given name within the state registry and return a pointer
@@ -55,13 +43,7 @@ class StateFieldRegistry {
      *
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
-    std::shared_ptr<ReadableStateFieldBase> find_readable_field(const std::string &name) const {
-        for (auto const &field : readable_fields) {
-            if (name == field->name()) return field;
-        }
-
-        return std::shared_ptr<ReadableStateFieldBase>(nullptr);
-    }
+    std::shared_ptr<ReadableStateFieldBase> find_readable_field(const std::string &name) const;
 
     /**
      * @brief Find a writable field of a given name within the state registry and return a pointer
@@ -71,25 +53,14 @@ class StateFieldRegistry {
      *
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
-    std::shared_ptr<WritableStateFieldBase> find_writable_field(const std::string &name) const {
-        for (auto const &field : writable_fields) {
-            if (name == field->name()) return field;
-        }
-
-        return std::shared_ptr<WritableStateFieldBase>(nullptr);
-    }
+    std::shared_ptr<WritableStateFieldBase> find_writable_field(const std::string &name) const;
 
     /**
      * @brief Marks a field as being downloadable by ground.
      *
      * @param field State field
      */
-    bool add_readable(std::shared_ptr<ReadableStateFieldBase> field) {
-        if (find_field(field->name())) return false;
-        fields.insert(field);
-        readable_fields.insert(field);
-        return true;
-    }
+    bool add_readable(std::shared_ptr<ReadableStateFieldBase> field);
 
     /**
      * @brief Marks a field as being uploadable by ground.
@@ -97,12 +68,7 @@ class StateFieldRegistry {
      * @param r ControlTaskBase
      * @param field Data field
      */
-    bool add_writable(std::shared_ptr<WritableStateFieldBase> field) {
-        if (find_field(field->name())) return false;
-        fields.insert(field);
-        writable_fields.insert(field);
-        return true;
-    }
+    bool add_writable(std::shared_ptr<WritableStateFieldBase> field);
 };
 
 #endif

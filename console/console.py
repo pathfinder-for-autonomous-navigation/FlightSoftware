@@ -20,7 +20,7 @@ if __name__ == '__main__':
     parser = ArgumentParser(description="Parses console output from Flight Controller into human-readable, storable logging information.")
     parser.add_argument("-p", "--port", action="store", help="Serial port to open.", required=True)
     parser.add_argument("-s", "--store-log", action="store_true", help="If option selected, saves log to logfile.")
-    parser.add_argument("-d", "--log-dir", action="store", 
+    parser.add_argument("-d", "--log-dir", action="store",
         help="""Directory to store the logs in, relative to the location of the console script. 
               Default is logs/.""", default="logs")
     args = parser.parse_args()
@@ -47,16 +47,15 @@ if __name__ == '__main__':
             line = console.readline().rstrip()
             data = json.loads(line)
 
-            data["time"] = start_time + datetime.timedelta(milliseconds=data["t"])
-
             # Print it to console and (optionally) to logfile
-            logline = "[{}] ({}:{}) {}".format(data["time"], data["thd"], data["svrty"], data["msg"])
-            print(logline)
-            if args.store_log:
-                logfile.write(logline + "\n")
+            if "msg" in data:
+                logline = "[{}] ({}) {}".format(data["time"], data["svrty"], data["msg"])
+            else:
+                logline = "[{}] (STATEMSG) {} = {}".format(data["time"], data["field"], data["val"])
+
+            data["time"] = start_time + datetime.timedelta(milliseconds=data["t"])
         except json.JSONDecodeError:
-            print("Error: data from device is malformed. Exiting.\n")
-            graceful_exit(args)
+            logline = "[RAW] {}".format(line)
         except serial.SerialException:
             print("Error: unable to read serial port. Exiting.")
             graceful_exit(args)
@@ -66,3 +65,7 @@ if __name__ == '__main__':
         except:
             print("Unspecified error. Exiting.")
             graceful_exit(args)
+        
+        print(logline)
+        if args.store_log:
+            logfile.write(logline + "\n")
