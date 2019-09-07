@@ -12,4 +12,5 @@ Flight Code | Version 1.0 | Tanishq Aggarwal (ta335@cornell.edu)
                             Nathan Zimmerberg (nhz2@cornell.edu)
                             Athena Cheung (afc65@cornell.edu)   
                             Anusha Choudhury (ac978@cornell.edu)
-                                                                
+
+Type "help" for a list of commands.
