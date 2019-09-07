@@ -27,11 +27,13 @@ class StateCmd(object):
         if device_name not in ["fc", "adcs"]:
             return
 
+        self.start_time = datetime.datetime.now()
+
         self.logfile_name = "{}/{}/{}.log".format(data_dir,
-                                                  datetime.datetime.now(),
+                                                  self.start_time,
                                                   device_name)
         self.dbfile_name = "{}/{}/{}.db".format(data_dir,
-                                                datetime.datetime.now(),
+                                                self.start_time,
                                                 device_name)
 
         self.logfile = open(self.logfile_name, "w")
@@ -46,8 +48,6 @@ class StateCmd(object):
         except KeyboardInterrupt:
             print("Exiting due to keyboard interrupt.")
             self.quit()
-
-        self.start_time = datetime.datetime.now()
 
     def check_console_msgs(self):
         """
@@ -64,13 +64,15 @@ class StateCmd(object):
                 # Print debug data to the logfile
                 logline = "[{}] ({}) {}".format(data["time"], data["svrty"],
                                                 data["msg"])
+            elif 'err' in data:
+                logline = "[{}] (ERROR) Tried to {} state value named '{}' but encountered an error: {}".format(data["time"], data["mode"], data["field"], data["err"])
             else:
                 if data['field'] not in self.field_values:
                     self.field_values[data['field']] = {"timeseries": []}
-                if not 'err' in data:
-                    self.field_values[data['field']]["now"] = data['val']
-                    self.field_values[data['field']]["timeseries"].append(
-                        (data['time', data['val']]))
+
+                self.field_values[data['field']]["now"] = data['val']
+                self.field_values[data['field']]["timeseries"].append(
+                    (data['time', data['val']]))
 
             data["time"] = self.start_time + datetime.timedelta(
                 milliseconds=data["t"])
@@ -89,7 +91,7 @@ class StateCmd(object):
     def rs(self, field_name):
         """Read the value of the state field associated with the given field name on the flight controller."""
 
-        json_cmd = {"r/w": 'r', "field": field_name}
+        json_cmd = {"mode": 'r', "field": field_name}
         self.console.write(json.dumps(json_cmd))
 
     def ws(self, field_name, val):
@@ -100,7 +102,7 @@ class StateCmd(object):
         ws_fb().
         """
 
-        json_cmd = {"r/w": 'w', "field": field_name, "val": val}
+        json_cmd = {"mode": 'w', "field": field_name, "val": val}
         self.console.write(json.dumps(json_cmd))
 
     def ws_fb(self, args):

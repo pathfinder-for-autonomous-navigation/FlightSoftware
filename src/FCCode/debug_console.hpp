@@ -16,18 +16,21 @@ class debug_console {
     // Severity levels based off of
     // https://support.solarwinds.com/SuccessCenter/s/article/Syslog-Severity-levels
     // See the article for an explanation of when to use which severity level.
-    enum severity { DEBUG, INFO, NOTICE, WARNING, ERROR, CRITICAL, ALERT, EMERGENCY };
+    enum severity { debug, info, notice, warning, error, critical, alert, emergency };
     static std::map<severity, const char *> severity_strs;
 
-    enum state_field_error_code {
-        INVALID_FIELD_NAME,
-        FIELD_IS_ONLY_READABLE,
-        MISSING_MODE,
-        INVALID_MODE_NOT_CHAR,
-        INVALID_MODE,
-        MISSING_FIELD_VAL,
-        INVALID_FIELD_VAL
+    enum state_field_error {
+        invalid_field_name,
+        field_is_only_readable,
+        missing_mode,
+        invalid_mode_not_char,
+        invalid_mode,
+        missing_field_val,
+        invalid_field_val
     };
+    static std::map<state_field_error, const char *> state_field_error_strs;
+    enum state_cmd_mode { unspecified_mode, read_mode, write_mode };
+    static std::map<state_cmd_mode, const char *> state_cmd_mode_strs;
 
     debug_console();
 
@@ -107,9 +110,12 @@ class debug_console {
      * explanation for why the command was unsuccessful.
      *
      * @param field_name The field that the computer tried to read or write.
+     * @param mode Specifies mode that was used in accessing the state field (either "read",
+     * "write", or "unspecified"). This field is used by the console as part of its error message.
      * @param error The error associated with the computer's request.
      */
-    void _print_error_state_field(const char *field_name, const state_field_error_code error);
+    void _print_error_state_field(const char *field_name, const state_cmd_mode mode,
+                                  const state_field_error error);
 };
 
 /**

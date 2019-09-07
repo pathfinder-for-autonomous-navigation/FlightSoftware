@@ -42,8 +42,7 @@ bool StateFieldRegistry::add_readable(std::shared_ptr<ReadableStateFieldBase> fi
 }
 
 bool StateFieldRegistry::add_writable(std::shared_ptr<WritableStateFieldBase> field) {
-    if (find_field(field->name())) return false;
-    fields.insert(field);
+    if (!add_readable(field)) return false;
     writable_fields.insert(field);
     return true;
 }

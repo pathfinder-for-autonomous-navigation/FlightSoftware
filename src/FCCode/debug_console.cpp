@@ -10,10 +10,25 @@
 usb_serial_class Serial;
 
 std::map<debug_severity, const char*> debug_console::severity_strs{
-    {debug_severity::DEBUG, "DEBUG"},   {debug_severity::INFO, "INFO"},
-    {debug_severity::NOTICE, "NOTICE"}, {debug_severity::WARNING, "WARNING"},
-    {debug_severity::ERROR, "ERROR"},   {debug_severity::CRITICAL, "CRITICAL"},
-    {debug_severity::ALERT, "ALERT"},   {debug_severity::EMERGENCY, "EMERGENCY"},
+    {debug_severity::debug, "DEBUG"},   {debug_severity::info, "INFO"},
+    {debug_severity::notice, "NOTICE"}, {debug_severity::warning, "WARNING"},
+    {debug_severity::error, "ERROR"},   {debug_severity::critical, "CRITICAL"},
+    {debug_severity::alert, "ALERT"},   {debug_severity::emergency, "EMERGENCY"},
+};
+
+std::map<debug_console::state_field_error, const char*> debug_console::state_field_error_strs{
+    {state_field_error::invalid_field_name, "invalid field name"},
+    {state_field_error::field_is_only_readable, "field is read-only"},
+    {state_field_error::missing_mode, "missing mode specification"},
+    {state_field_error::invalid_mode_not_char, "mode value is not a character"},
+    {state_field_error::invalid_mode, "mode value is not 'r' or 'w'"},
+    {state_field_error::missing_field_val, "missing value of field to be written"},
+    {state_field_error::invalid_field_val, "field value was invalid"}};
+
+std::map<debug_console::state_cmd_mode, const char*> debug_console::state_cmd_mode_strs{
+    {state_cmd_mode::unspecified_mode, "perform unspecified operation with"},
+    {state_cmd_mode::read_mode, "read"},
+    {state_cmd_mode::write_mode, "write"},
 };
 
 bool debug_console::is_initialized = false;
@@ -88,12 +103,14 @@ void debug_console::print_state_field(const SerializableStateFieldBase& field) {
     Serial.println();
 }
 
-void debug_console::_print_error_state_field(
-    const char* field_name, const debug_console::state_field_error_code error_code) {
+void debug_console::_print_error_state_field(const char* field_name,
+                                             const debug_console::state_cmd_mode mode,
+                                             const debug_console::state_field_error error_code) {
     StaticJsonDocument<100> doc;
     doc["t"] = _get_elapsed_time();
     doc["field"] = field_name;
-    doc["err"] = static_cast<unsigned int>(error_code);
+    doc["mode"] = state_cmd_mode_strs.at(mode);
+    doc["err"] = state_field_error_strs.at(error_code);
     serializeJson(doc, Serial);
     Serial.println();
 }
@@ -126,26 +143,22 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
             }
         }
     }
-    if (num_json_msgs_found > 0) Serial.printf("Num messages found: %d\n", num_json_msgs_found);
 
     // Deserialize all found JSON messages and check their validity
     std::array<StaticJsonDocument<50>, 5> msgs;
     std::array<bool, 5> msg_ok;
-    unsigned int num_msgs_ok = 0;
     for (size_t i = 0; i < num_json_msgs_found; i++) {
         auto result = deserializeJson(msgs[i], &buf[json_msg_starts[i]]);
         if (result == DeserializationError::Ok) {
-            num_msgs_ok++;
             msg_ok[i] = true;
         }
     }
-    if (num_json_msgs_found > 0) Serial.printf("Num messages ok: %d\n", num_msgs_ok);
 
     // For all valid messages, modify or print the relevant item in the state
     // field registry
     for (size_t i = 0; i < num_json_msgs_found; i++) {
         if (!msg_ok[i]) continue;
-        JsonVariant msg_mode = msgs[i]["r/w"];
+        JsonVariant msg_mode = msgs[i]["mode"];
         JsonVariant field = msgs[i]["field"];
 
         // Check sanity of data
@@ -153,12 +166,12 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
         const char* field_name = field.as<const char*>();
         if (msg_mode.isNull()) {
-            _print_error_state_field(field_name, MISSING_MODE);
+            _print_error_state_field(field_name, unspecified_mode, missing_mode);
             continue;
         }
 
         if (!msg_mode.is<unsigned char>()) {
-            _print_error_state_field(field_name, INVALID_MODE_NOT_CHAR);
+            _print_error_state_field(field_name, unspecified_mode, invalid_mode_not_char);
             continue;
         }
         const unsigned char mode = msg_mode.as<unsigned char>();
@@ -169,7 +182,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 std::shared_ptr<ReadableStateFieldBase> field_ptr =
                     registry.find_readable_field(field_name);
                 if (!field_ptr) {
-                    _print_error_state_field(field_name, INVALID_FIELD_NAME);
+                    _print_error_state_field(field_name, read_mode, invalid_field_name);
                     break;
                 } else
                     print_state_field(*field_ptr);
@@ -177,7 +190,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
             case 'w': {
                 JsonVariant field_val = msgs[i]["val"];
                 if (field_val.isNull()) {
-                    _print_error_state_field(field_name, MISSING_FIELD_VAL);
+                    _print_error_state_field(field_name, write_mode, missing_field_val);
                     break;
                 }
 
@@ -187,23 +200,23 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     std::shared_ptr<ReadableStateFieldBase> field_ptr_readable =
                         registry.find_readable_field(field_name);
                     if (field_ptr_readable) {
-                        _print_error_state_field(field_name, FIELD_IS_ONLY_READABLE);
+                        _print_error_state_field(field_name, write_mode, field_is_only_readable);
                     } else {
-                        _print_error_state_field(field_name, INVALID_FIELD_NAME);
+                        _print_error_state_field(field_name, write_mode, invalid_field_name);
                     }
                     break;
                 }
 
                 const char* field_val_serialized = field_val.as<const char*>();
                 if (!field_ptr->deserialize(field_val_serialized)) {
-                    _print_error_state_field(field_name, INVALID_FIELD_VAL);
+                    _print_error_state_field(field_name, write_mode, invalid_field_val);
                     break;
                 }
                 print_state_field(*field_ptr);
 
             } break;
             default: {
-                _print_error_state_field(field_name, INVALID_MODE);
+                _print_error_state_field(field_name, read_mode, invalid_mode);
             }
         }
     }

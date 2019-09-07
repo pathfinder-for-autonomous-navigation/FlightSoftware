@@ -124,7 +124,7 @@ class ReadableStateField : public SerializableStateField<T>, public ReadableStat
 /**
  * @brief Empty base class for ground-writable state fields.
  */
-class WritableStateFieldBase : virtual public SerializableStateFieldBase {};
+class WritableStateFieldBase : virtual public ReadableStateFieldBase {};
 
 /**
  * @brief A state field that is writable, i.e. whose value can be modified via
