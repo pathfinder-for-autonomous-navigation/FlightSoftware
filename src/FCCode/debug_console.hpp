@@ -46,7 +46,7 @@ class debug_console {
      * @param format The format string specifying how data should be represented.
      * @param ... One or more arguments containing the data to be printed.
      */
-    void printf(severity s, const char *format, ...);
+    static void printf(severity s, const char *format, ...);
 
     /**
      * @brief Prints a string to console. Computer console automatically appends
@@ -80,7 +80,7 @@ class debug_console {
      * @brief The system time at which the debug connection with the computer was initiated,
      * relative to ChibiOS's initialization time.
      */
-    systime_t _start_time;
+    static systime_t _start_time;
 
     /**
      * @brief Checks whether or not the debug console has been initialized. This is a static
@@ -94,7 +94,7 @@ class debug_console {
      *
      * @return unsigned _get_elapsed_time
      */
-    unsigned int _get_elapsed_time();
+    static unsigned int _get_elapsed_time();
 
     /**
      * @brief Prints a message in JSON format to the debug console.
@@ -102,7 +102,7 @@ class debug_console {
      * @param s
      * @param msg
      */
-    void _print_json_msg(severity s, const char *msg);
+    static void _print_json_msg(severity s, const char *msg);
 
     /**
      * @brief If a read or write command was issued by a simulation computer to this Flight

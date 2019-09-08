@@ -32,8 +32,9 @@ std::map<debug_console::state_cmd_mode, const char*> debug_console::state_cmd_mo
 };
 
 bool debug_console::is_initialized = false;
+systime_t debug_console::_start_time = 0;
 
-debug_console::debug_console() : _start_time(static_cast<systime_t>(0)) {}
+debug_console::debug_console() {}
 
 unsigned int debug_console::_get_elapsed_time() {
     systime_t current_time = chVTGetSystemTimeX();
