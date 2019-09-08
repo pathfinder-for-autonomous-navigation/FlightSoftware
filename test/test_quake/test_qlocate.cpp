@@ -18,20 +18,15 @@ Devices::QLocate q("anything", &Serial3, 35, 10);
 
 
 void setUp(void) {
-    Serial.begin(9600);
-    Serial.println("Entering setup");
-    q.setup();
-    Serial.println("Setup done");
+  
 }
 
 void tearDown(void) {}
 
-void test_sbdwb_no_session(void) {
-    Serial.println("Running test_sbdwb_no_session");
+void test_sbdwb_sbdix_not_running(void) {
     // testCases is a vector of pairs <testString, expectedStatus>
     std::vector<std::pair<std::string, int>> testCases{
-        std::make_pair("noResponseTest", -1),  // expect error code -1
-        std::make_pair("test2", -1),           // expect 0
+        std::make_pair("Testing SBDWB No Session", 0),  // expect 0 since sbdix is not running
     };
 
     for (std::pair<std::string, int> test : testCases) {
@@ -43,42 +38,48 @@ void test_sbdwb_no_session(void) {
     }
 }
 
-void test_sbdwb(void) {
-    Serial.println("Running test_sbdwb");
+void test_sbdwb_sbdix_running(void) {
     // testCases is a vector of pairs <testString, expectedStatus>
     std::vector<std::pair<std::string, int>> testCases{
-        std::make_pair("test2", 0),  // expect 0
+        std::make_pair("Test SBDIX is running", -1),  // expect -1 b/c sbdix is running
 
     };
     // Start sbdix session
-    q.run_sbdix();
-    Serial.println("run_sbdix done");
+    TEST_ASSERT_EQUAL(0, q.run_sbdix()); // Expect 0 unless sbdix session already running
     for (std::pair<std::string, int> test : testCases) {
         // Retrieve the status code
         int statusCode = q.sbdwb((test.first).c_str(), (test.first).length());
         TEST_ASSERT_EQUAL(test.second, statusCode);
     }
     // End sbdix session
-    q.end_sbdix();
-    Serial.println("end_sbdix done");
-}
+    while(!Serial3.available());
+    delay(100);
+    while(!Serial3.available());
+    TEST_ASSERT_TRUE(q.sbdix_is_running());
+    TEST_ASSERT_EQUAL(0, q.end_sbdix()); // Expect 0 since sbdix should return response codes always
 
-void test_getresponse(void) {
-    Serial.println("Running test_getresponse");
-    q.run_sbdix();
-    TEST_ASSERT_EQUAL(0, q.sbdwb("get_response_test", 17));
-    q.end_sbdix();
-    Serial.println("Getting sbdix_response");
     const int *pResp = q.get_sbdix_response();
     sbdix_r_t *pRes = (sbdix_r_t *)(pResp);
-    TEST_ASSERT_EQUAL(0, pRes->MO_status);
+    TEST_ASSERT_GREATER_OR_EQUAL(3, pRes->MO_status); // If MO_status [0, 2], then downlink was successful
+    TEST_ASSERT_GREATER_OR_EQUAL(3, pRes->MT_status);
+
+}
+
+void test_isFunctional(void){
+    TEST_ASSERT_TRUE(q.is_functional());
 }
 
 void setup() {
-    delay(2000);
+    delay(5000);
+    Serial.begin(9600);
+    pinMode(13, OUTPUT);
+    q.setup();
+    // q.setup();
+    while(!Serial);
     UNITY_BEGIN();
-    RUN_TEST(test_sbdwb_no_session);
-    RUN_TEST(test_sbdwb);
+    RUN_TEST(test_isFunctional);
+    RUN_TEST(test_sbdwb_sbdix_not_running);
+    RUN_TEST(test_sbdwb_sbdix_running);
     UNITY_END();
 }
 

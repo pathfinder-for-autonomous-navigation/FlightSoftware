@@ -6,7 +6,7 @@
 //  Pathfinder for Autonomous Navigation
 //  Cornell University
 //
-
+#define DEBUG_ENABLED
 #include "QLocate.hpp"
 #include <Arduino.h>
 
@@ -30,7 +30,8 @@ bool QLocate::setup() {
 
 bool QLocate::is_functional() {
     port->printf("AT\r");
-    delayMicroseconds(100);
+    // delayMicroseconds(100);
+    delay(10);
     if (!port->available())
         return false;
     else
@@ -135,30 +136,35 @@ int QLocate::run_sbdix() {
     return 0;
 }
 
-// int parsing helper function
+// Parses the result buffer of sbdix into sbdix_r
 int const COUNT_MAX = 75;
-int parse_ints(char const *c, int *i) {
-    int count = 0;
-    while (*c != '\n' && count < COUNT_MAX) {
-        *i = 0;
-        while (*c != ',' && *c != '\r' && count++ < 75) {
-            *i = 10 * *i + *c - '0';
-            count++;
-            c++;
-        }
-        c++;
-        i++;
-    }
-    return count <= COUNT_MAX;
+bool parse_ints(char const *c, int *i) {
+    Serial.println(c);
+    sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i+1, i+2, i+3, i+4, i+5);
+    // int count = 0;
+    // while (*c != '\n' && count < COUNT_MAX) {
+    //     *i = 0;
+    //     while (*c != ',' && *c != '\r' && *c != ' ' && count++ < 75) {
+    //         *i = 10 * *i + *c - '0';
+    //         count++;
+    //         c++;
+    //     }
+    //     c++;
+    //     i++;
+    // }
+    return 1;
 }
 
 int QLocate::end_sbdix() {
     // Ensure sbdix is sbdix is running and data is available
+    delay(15000);
+    Serial.println(port->available());
     if (!sbdix_running || !port->available()) return -1;
     // Parse quake output
     char buf[75];
     port->readBytesUntil('\n', buf, 74);
-    return parse_ints(buf + 7, sbdix_r) - 1;
+    Serial.println(buf);
+    return (parse_ints(buf + 10, sbdix_r) - 1);
 }
 
 int QLocate::sbdrb() {
