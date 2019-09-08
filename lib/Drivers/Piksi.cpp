@@ -1,5 +1,4 @@
 #include "Piksi.hpp"
-#include <Arduino.h>
 
 using namespace Devices;
 

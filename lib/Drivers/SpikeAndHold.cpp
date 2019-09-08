@@ -3,7 +3,7 @@
 #include <climits>
 #include <tuple>
 #include "../Devices/Device.hpp"
-#include "Arduino.h"
+#include <Arduino.h>
 
 using namespace Devices;
 

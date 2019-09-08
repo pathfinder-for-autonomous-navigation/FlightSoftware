@@ -1,13 +1,7 @@
 #include "debug_console.hpp"
-#include <usb_serial.h>
+#include <Arduino.h>
 #include <array>
 #include "ArduinoJson.h"
-
-/**
- * Needed in order to resolve some strange linking error where
- * Serial appears undefined.
- */
-usb_serial_class Serial;
 
 std::map<debug_severity, const char*> debug_console::severity_strs{
     {debug_severity::DEBUG, "DEBUG"},   {debug_severity::INFO, "INFO"},
@@ -202,9 +196,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 print_state_field(*field_ptr);
 
             } break;
-            default: {
-                _print_error_state_field(field_name, INVALID_MODE);
-            }
+            default: { _print_error_state_field(field_name, INVALID_MODE); }
         }
     }
 }

@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+#ifndef UNIT_TEST
 void setup() {
     Serial.begin(9600);
     delay(1000);
@@ -14,3 +15,4 @@ void setup() {
 void loop() {
     // Do nothing.
 }
+#endif
