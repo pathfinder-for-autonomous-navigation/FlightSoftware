@@ -12,9 +12,7 @@ void test_internal_state_field() {
     TEST_ASSERT_EQUAL(isf.get(), 2);
 }
 
-void test_state_field() { 
-    RUN_TEST(test_internal_state_field);
-}
+void test_state_field() { RUN_TEST(test_internal_state_field); }
 
 int main(int argc, char *argv[]) {
     UNITY_BEGIN();

@@ -138,8 +138,8 @@ class SerializerBase : protected SerializerConstants {
 
     /**
      * @brief Outputs a string representation of the source value into
-     * the given destination string. 
-     * 
+     * the given destination string.
+     *
      * In order to enable good use of memory, the maximum length of the string
      * representation can be found in the member variable "strlen".
      *
@@ -166,7 +166,7 @@ class SerializerBase : protected SerializerConstants {
     /**
      * @brief Set the internally stored serialized value. Do nothing if the source bit arary does
      * not have the same size as the internally stored bit array.
-     * 
+     *
      * @param src Bit array to copy.
      */
     void set_bit_array(const bit_array& src) {

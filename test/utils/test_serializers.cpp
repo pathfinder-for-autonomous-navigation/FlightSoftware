@@ -28,7 +28,7 @@ void test_bool_serializer() {
     TEST_ASSERT_EQUAL_STRING(serializer.print(true), "true");
     TEST_ASSERT_EQUAL_STRING(serializer.print(false), "false");
     TEST_ASSERT_EQUAL(serializer.strlen, 5);
-    
+
     // Bit array-related getters
     const bit_array& arr = serializer.get_bit_array();
     TEST_ASSERT_EQUAL(arr.size(), 1);
@@ -62,9 +62,7 @@ void test_bool_serializer() {
  * - Ranges that start with zero work just as well as ranges that don't
  *   start at zero.
  */
-void test_uint_serializer() {
-    TEST_ASSERT(false);
-}
+void test_uint_serializer() { TEST_ASSERT(false); }
 
 /**
  * @brief Verify that the signed int serializer properly
@@ -75,9 +73,7 @@ void test_uint_serializer() {
  * - Ranges that start at negative values work just as well
  *   as other range starts.
  */
-void test_sint_serializer() {
-    TEST_ASSERT(false);
-}
+void test_sint_serializer() { TEST_ASSERT(false); }
 
 /**
  * @brief Verify that the float serializer properly
@@ -87,9 +83,7 @@ void test_sint_serializer() {
  * for accuracy, however, cannot be an equality--they must be
  * based on resolution thresholds.
  */
-void test_float_serializer() {
-    TEST_ASSERT(false);
-}
+void test_float_serializer() { TEST_ASSERT(false); }
 
 /**
  * @brief Verify that the double serializer properly
@@ -97,57 +91,43 @@ void test_float_serializer() {
  *
  * Success criteria: same as float.
  */
-void test_double_serializer() {
-    TEST_ASSERT(false);
-}
+void test_double_serializer() { TEST_ASSERT(false); }
 
 /**
  * @brief Verify that the float vector serializer properly
  * encapsulates float vectors of various sizes.
  */
-void test_f_vec_serializer() {
-    TEST_ASSERT(false);
-}
+void test_f_vec_serializer() { TEST_ASSERT(false); }
 
 /**
  * @brief Verify that the double vector serializer properly
  * encapsulates double vectors of various sizes.
  */
-void test_d_vec_serializer() {
-    TEST_ASSERT(false);
-}
+void test_d_vec_serializer() { TEST_ASSERT(false); }
 
 /**
  * @brief Verify that the float quaternion serializer properly
  * encapsulates float quaternions of various sizes.
  */
-void test_f_quat_serializer() {
-    TEST_ASSERT(false);
-}
+void test_f_quat_serializer() { TEST_ASSERT(false); }
 
 /**
  * @brief Verify that the double quaternion serializer properly
  * encapsulates double quaternions of various sizes.
  */
-void test_d_quat_serializer() {
-    TEST_ASSERT(false);
-}
+void test_d_quat_serializer() { TEST_ASSERT(false); }
 
 /**
  * @brief Verify that the GPS time serializer properly
  * encapsulates various values of GPS time.
  */
-void test_gpstime_serializer() {
-    TEST_ASSERT(false);
-}
+void test_gpstime_serializer() { TEST_ASSERT(false); }
 
 /**
  * @brief Verify that the temperature serializer properly
  * encapsulates various temperatures.
  */
-void test_temperature_serializer() {
-    TEST_ASSERT(false);
-}
+void test_temperature_serializer() { TEST_ASSERT(false); }
 
 void test_serializers() {
     RUN_TEST(test_bool_serializer);
