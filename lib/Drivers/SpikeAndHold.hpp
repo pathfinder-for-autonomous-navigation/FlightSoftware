@@ -2,7 +2,7 @@
 #define SPIKE_AND_HOLD_HPP_
 
 #include "../Devices/Device.hpp"
-
+#include <array>
 namespace Devices {
 /**
  * To use the class, update the firing schedule, and then call
