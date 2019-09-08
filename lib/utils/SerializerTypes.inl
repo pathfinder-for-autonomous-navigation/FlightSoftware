@@ -16,9 +16,9 @@ class Serializer<bool> : public SerializerBase<bool> {
     void serialize(const bool& src) override { serialized_val[0] = src; }
 
     bool deserialize(const char* val, std::shared_ptr<bool>& dest) override {
-        if (val[0] == '0')
+        if (strcmp(val, "false") == 0)
             *dest = false;
-        else if (val[1] == '1')
+        else if (strcmp(val, "true") == 0)
             *dest = true;
         else
             return false;

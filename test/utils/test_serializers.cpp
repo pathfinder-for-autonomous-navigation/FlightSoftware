@@ -3,35 +3,51 @@
 #include "utils_tests.hpp"
 
 /**
- * @brief Verify that initialization works correctly.
- */
-void test_serializerbase_init_ok() {
-    SerializerBase<bool> serializer;
-    // Should not be initialized if not initialized
-    TEST_ASSERT_FALSE(serializer.is_initialized());
-    // Should be initialized if initialized
-    serializer.init(false, true);
-    TEST_ASSERT(serializer.is_initialized());
-
-    // Should fail initialization if maximum is less than minimum
-    Serializer<unsigned int, unsigned int, 10> serializer2;
-    TEST_ASSERT_FALSE(serializer2.init(10, 2));
-    TEST_ASSERT_FALSE(serializer2.is_initialized());
-}
-
-/**
  * @brief Verify that the boolean serializer properly encapsulates
  * a boolean into a bitset.
  */
 void test_bool_serializer() {
-    Serializer<bool, bool, SerializerConstants::bool_sz> serializer;
-    serializer.init();
+    Serializer<bool> serializer;
+    auto dest_ptr = std::make_shared<bool>();
 
-    auto dest_ptr = std::make_shared<std::bitset<SerializerConstants::bool_sz>>();
-    serializer.serialize(true, dest_ptr);
-    TEST_ASSERT((*dest_ptr)[0]);
-    serializer.serialize(false, dest_ptr);
-    TEST_ASSERT_FALSE((*dest_ptr)[0]);
+    // Normal serialize and deserialize
+    serializer.serialize(true);
+    serializer.deserialize(dest_ptr);
+    TEST_ASSERT(*dest_ptr);
+    serializer.serialize(false);
+    serializer.deserialize(dest_ptr);
+    TEST_ASSERT_FALSE(*dest_ptr);
+
+    // String-based deserialize
+    serializer.deserialize("true", dest_ptr);
+    TEST_ASSERT(*dest_ptr);
+    serializer.deserialize("false", dest_ptr);
+    TEST_ASSERT_FALSE(*dest_ptr);
+
+    // Printing
+    TEST_ASSERT_EQUAL_STRING(serializer.print(true), "true");
+    TEST_ASSERT_EQUAL_STRING(serializer.print(false), "false");
+    TEST_ASSERT_EQUAL(serializer.strlen, 5);
+    
+    // Bit array-related getters
+    const bit_array& arr = serializer.get_bit_array();
+    TEST_ASSERT_EQUAL(arr.size(), 1);
+    TEST_ASSERT_EQUAL(serializer.bitsize(), 1);
+    serializer.serialize(true);
+    TEST_ASSERT_EQUAL(arr[0], true);
+    serializer.serialize(false);
+    TEST_ASSERT_EQUAL(arr[0], false);
+
+    // Bit array setter
+    bit_array val(1);
+    val[0] = true;
+    serializer.set_bit_array(val);
+    serializer.deserialize(dest_ptr);
+    TEST_ASSERT(*dest_ptr);
+    val[0] = false;
+    serializer.set_bit_array(val);
+    serializer.deserialize(dest_ptr);
+    TEST_ASSERT_FALSE(*dest_ptr);
 }
 
 /**
@@ -47,53 +63,7 @@ void test_bool_serializer() {
  *   start at zero.
  */
 void test_uint_serializer() {
-    /**
-     * Test serializer with a number of bits that is more than what's needed
-     * to represent a value in the range. Verify that all values can be
-     * represented correctly.
-     */
-    Serializer<unsigned int, unsigned int, 10> serializer;  // 2^10 = 1024, which is greater than 20
-    serializer.init(0, 20);
-
-    // Dummy variables needed for loop
-    auto bitset_ptr = std::make_shared<std::bitset<10>>();
-    auto result_ptr = std::make_shared<unsigned int>();
-    for (unsigned int i = 0; i <= 20; i++) {
-        serializer.serialize(i, bitset_ptr);
-        serializer.deserialize(*bitset_ptr, result_ptr);
-        TEST_ASSERT_EQUAL(i, *result_ptr);
-    }
-    // Test the same thing with a serializer that doesn't begin at zero.
-    serializer.init(5, 25);
-    for (unsigned int i = 5; i <= 25; i++) {
-        serializer.serialize(i, bitset_ptr);
-        serializer.deserialize(*bitset_ptr, result_ptr);
-        TEST_ASSERT_EQUAL(i, *result_ptr);
-    }
-
-    /**
-     * Test serializer with a number of bits that is less than what's needed
-     * to represent a value in the range. Verify that all values can be
-     * represented correctly.
-     */
-    Serializer<unsigned int, unsigned int, 4> serializer2;  // 2^4 = 16, which is less than 20
-    serializer2.init(0, 20);
-
-    // Dummy variables needed for loop
-    auto bitset2_ptr = std::make_shared<std::bitset<4>>();
-    auto result2_ptr = std::make_shared<unsigned int>();
-    for (unsigned int i = 0; i <= 20; i++) {
-        serializer2.serialize(i, bitset2_ptr);
-        serializer2.deserialize(*bitset2_ptr, result2_ptr);
-        TEST_ASSERT_EQUAL(i, *result2_ptr);
-    }
-    // Test the same thing with a serializer that doesn't begin at zero.
-    serializer2.init(5, 25);
-    for (unsigned int i = 5; i <= 25; i++) {
-        serializer2.serialize(i, bitset2_ptr);
-        serializer2.deserialize(*bitset2_ptr, result2_ptr);
-        TEST_ASSERT_EQUAL(i, *result2_ptr);
-    }
+    TEST_ASSERT(false);
 }
 
 /**
@@ -105,7 +75,8 @@ void test_uint_serializer() {
  * - Ranges that start at negative values work just as well
  *   as other range starts.
  */
-void test_sint_serializer() { /* TODO */
+void test_sint_serializer() {
+    TEST_ASSERT(false);
 }
 
 /**
@@ -116,7 +87,8 @@ void test_sint_serializer() { /* TODO */
  * for accuracy, however, cannot be an equality--they must be
  * based on resolution thresholds.
  */
-void test_float_serializer() { /* TODO */
+void test_float_serializer() {
+    TEST_ASSERT(false);
 }
 
 /**
@@ -125,54 +97,59 @@ void test_float_serializer() { /* TODO */
  *
  * Success criteria: same as float.
  */
-void test_double_serializer() { /* TODO */
+void test_double_serializer() {
+    TEST_ASSERT(false);
 }
 
 /**
  * @brief Verify that the float vector serializer properly
  * encapsulates float vectors of various sizes.
  */
-void test_f_vec_serializer() { /* TODO */
+void test_f_vec_serializer() {
+    TEST_ASSERT(false);
 }
 
 /**
  * @brief Verify that the double vector serializer properly
  * encapsulates double vectors of various sizes.
  */
-void test_d_vec_serializer() { /* TODO */
+void test_d_vec_serializer() {
+    TEST_ASSERT(false);
 }
 
 /**
  * @brief Verify that the float quaternion serializer properly
  * encapsulates float quaternions of various sizes.
  */
-void test_f_quat_serializer() { /* TODO */
+void test_f_quat_serializer() {
+    TEST_ASSERT(false);
 }
 
 /**
  * @brief Verify that the double quaternion serializer properly
  * encapsulates double quaternions of various sizes.
  */
-void test_d_quat_serializer() { /* TODO */
+void test_d_quat_serializer() {
+    TEST_ASSERT(false);
 }
 
 /**
  * @brief Verify that the GPS time serializer properly
  * encapsulates various values of GPS time.
  */
-void test_gpstime_serializer() { /* TODO */
+void test_gpstime_serializer() {
+    TEST_ASSERT(false);
 }
 
 /**
  * @brief Verify that the temperature serializer properly
  * encapsulates various temperatures.
  */
-void test_temperature_serializer() { /* TODO */
+void test_temperature_serializer() {
+    TEST_ASSERT(false);
 }
 
 void test_serializers() {
-    RUN_TEST(test_serializerbase_init_ok);
-
     RUN_TEST(test_bool_serializer);
     RUN_TEST(test_uint_serializer);
     RUN_TEST(test_sint_serializer);
@@ -183,5 +160,4 @@ void test_serializers() {
     RUN_TEST(test_f_quat_serializer);
     RUN_TEST(test_d_quat_serializer);
     RUN_TEST(test_gpstime_serializer);
-    RUN_TEST(test_temperature_serializer);
 }

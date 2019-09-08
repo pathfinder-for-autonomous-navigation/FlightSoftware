@@ -68,6 +68,7 @@ class StateCmderAndLogger(object):
                 # Read line coming from device and parse it
                 line = self.console.readline().rstrip()
                 data = json.loads(line)
+                print(line)
 
                 data["time"] = self.start_time + datetime.timedelta(
                     milliseconds=data["t"])
@@ -113,6 +114,7 @@ class StateCmderAndLogger(object):
         Read the value of the state field associated with the given field name on the flight controller.
         '''
 
+        print(field_name)
         json_cmd = {"mode": ord('r'), "field": str(field_name)}
         self.awaiting_value = field_name
         self.console.write(json.dumps(json_cmd).encode())
@@ -134,7 +136,7 @@ class StateCmderAndLogger(object):
         '''
 
         json_cmd = {"mode": ord('w'), "field": str(field_name), "val": str(val)}
-        self.console.write(json.dumps(json_cmd))
+        self.console.write(json.dumps(json_cmd).encode())
 
     def wsfb(self, field_name, val):
         '''
@@ -144,7 +146,9 @@ class StateCmderAndLogger(object):
         then verify (via a read request) that the state was actually set.
         '''
 
+        print("wrote state")
         self.ws(field_name, val)
+        print("reading state")
         return val == self.rs(field_name)
 
     def quit(self):
