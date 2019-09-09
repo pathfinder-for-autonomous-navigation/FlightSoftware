@@ -169,7 +169,9 @@ class StateSession(object):
 
         This function works the same way as ws(), but any fields modified through this function are added
         to a list of overriden variables. Once variables are in this list, ws() cannot be used to modify their
-        state. This prevents Simulation, which only uses ws(), from writing state to the device.
+        state. This prevents Simulation, which only uses ws(), from writing state to the device. The reason
+        for this function's existence is to allow manual overrides of state variables during operation, e.g.
+        via a command prompt or within a test case definition.
         '''
         self.overriden_variables.add(field_name)
         self._write_state_basic(field_name, val)
@@ -189,8 +191,7 @@ class StateSession(object):
         '''
         Override state and check write operation with feedback.
 
-        Overwrite the value of the state field with the given state field name on the flight controller, and
-        then verify (via a read request) that the state was actually set.
+        Behaves the same way as wsfb(), but is strictly written for a state variable that is overriden.
         '''
 
         self.override_state(field_name, val)
