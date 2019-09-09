@@ -1,7 +1,7 @@
 #include "debug_console.hpp"
+#include <Arduino.h>
 #include <array>
 #include "ArduinoJson.h"
-#include <Arduino.h>
 
 /**
  * Needed in order to resolve some strange linking error where
