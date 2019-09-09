@@ -177,8 +177,13 @@ class SerializerBase : protected SerializerConstants {
     /**
      * @brief Destructor.
      */
-    ~SerializerBase() { delete[] printed_val; }
+    virtual ~SerializerBase() = 0;
 };
+
+template <typename T>
+SerializerBase<T>::~SerializerBase() {
+    delete[] printed_val;
+}
 
 template <typename T>
 class Serializer : public SerializerBase<T> {

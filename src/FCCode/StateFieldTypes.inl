@@ -53,20 +53,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      *
      * @return const bit_array&
      */
-    const bit_array &get_bit_array() const { return _serializer->get_bit_array(); }
-
-    /**
-     * @brief Return size of bit array held by this serializer.
-     *
-     * @return size_t
-     */
-    size_t bitsize() const { return _serializer->bitsize(); }
-
-    /**
-     * @brief Set the internally stored serialized value. Do nothing if the source bit arary does
-     * not have the same size as the internally stored bit array.
-     */
-    void set_bit_array(const bit_array &src) { _serializer->set_bit_array(src); }
+    const Serializer<T> &get_serializer() const { return *_serializer; }
 
     /**
      * @brief Serialize field data and store the serialized result into the internal
