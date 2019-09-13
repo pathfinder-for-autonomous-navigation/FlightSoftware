@@ -1,0 +1,6 @@
+platformio run -e teensy35_cli
+platformio run -e teensy36_cli
+platformio run -e teensy35_jlink
+platformio run -e teensy36_jlink
+platformio run -e native
+platformio test -e native

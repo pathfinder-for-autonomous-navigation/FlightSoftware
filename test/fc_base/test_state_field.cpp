@@ -24,11 +24,24 @@ void test_readable_state_field() {
     TEST_ASSERT_EQUAL(rsf.get(), 2);
 }
 
-void test_state_field() { RUN_TEST(test_internal_state_field); }
-
-int main(int argc, char *argv[]) {
+void test_state_field() {
     UNITY_BEGIN();
-    test_state_field();
+    RUN_TEST(test_internal_state_field);
     UNITY_END();
+}
+
+#ifdef DESKTOP
+int main(int argc, char *argv[]) {
+    test_state_field();
     return 0;
 }
+#else
+#include <Arduino.h>
+void setup() {
+    delay(2000);
+    Serial.begin(9600);
+    test_state_field();
+}
+
+void loop() {}
+#endif

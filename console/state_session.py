@@ -6,10 +6,13 @@ import json
 
 class StateSession(object):
     '''
-    This class is used by the simulation software to read and write to a flight computer's state.
+    Represents a connection session with a Flight Computer's state system.
+
+    This class is used by the simulation software and user command prompt to read and write to a
+    flight computer's state.
     '''
 
-    def __init__(self, console_port, baud_rate, data_dir, device_name):
+    def __init__(self, data_dir, device_name):
         '''
         Initializes state cmd prompt.
 
@@ -20,8 +23,6 @@ class StateSession(object):
         '''
         # Device connection
         self.device_name = device_name
-        self.console_port = console_port
-        self.baud_rate = baud_rate
 
         # Simulation
         self.overriden_variables = set()
@@ -32,36 +33,64 @@ class StateSession(object):
         self.dbfile_name = "{}/{}.db".format(data_dir, device_name)
         self.logfile = open(self.logfile_name, "w+")
         self.dbfile = open(self.dbfile_name, "w+")
-        self.field_values = {}
+        self.dbfile.write("[")
+        self.timeseries_data = {}
 
-    def connect(self):
+    def save_timeseries_data(self):
+        '''Write timeseries data to file every 10 seconds.'''
+        while self.running_logger:
+            self.updating_data_lock.acquire()
+            timeseries_data_copy = self.timeseries_data.copy()
+            self.timeseries_data = {}
+            self.updating_data_lock.release()
+
+            json.dump(timeseries_data_copy, self.dbfile, default=str)
+            self.dbfile.write(",")
+            time.sleep(10.0)
+
+        self.dbfile.write("}")
+        # Clean up data into one nice & neat JSON object
+        self.dbfile.seek(0)
+        json.dump(json.load(self.dbfile), self.dbfile, default=str)
+        self.dbfile.close()
+
+    def connect(self, console_port, baud_rate, msg_check_delay=0.02):
         '''Starts serial connection to the flight computer.'''
+        self.console_port = console_port
+        self.baud_rate = baud_rate
 
         try:
             self.console = serial.Serial(self.console_port, self.baud_rate)
 
-            # This variable is used to control the thread that continuously reads the
-            # serial port to listen for incoming messages.
-            self.running_console_msg_check = True
-            self.check_msg_thread = threading.Thread(target=self.check_console_msgs)
-            self.check_msg_thread.start()
+            self.updating_data_lock = threading.Lock()
+            self.logging_thread = threading.Thread(target=self.check_console_msgs, args=(msg_check_delay))
+            self.logging_thread.start()
 
+            # Create thread to periodically save JSON data to disk so that
+            # log data isn't lost.
+            self.running_logger = True
+            self.save_data_thread = threading.Thread(target=self.save_timeseries_data)
+            self.save_data_thread.start()
+
+            self.connected = True
             return True
         except serial.SerialException:
             print("Error: unable to open serial port for {}.".format(
                 self.device_name))
+
+            self.connected = False
             return False
 
-    def check_console_msgs(self):
+    def check_console_msgs(self, delay):
         '''
         Read FC output for debug messages and state variable updates. Record debug messages
         to the logging file, and update the console's record of the state.
+
+        Args:
+        - delay: Time to wait between executions of the message check loop. Default is 20ms.
         '''
 
-        while self.running_console_msg_check:
-            if not self.console.in_waiting:
-                continue
-
+        while self.running_logger:
             logline = ""
             try:
                 # Read line coming from device and parse it
@@ -72,21 +101,33 @@ class StateSession(object):
                     milliseconds=data["t"])
 
                 if "msg" in data:
-                    # Print debug data to the logfile
+                    # The logline represents a debugging message created by Flight Software. Report the message to the logger.
+
                     logline = "[{}] ({}) {}".format(data["time"],
                                                     data["svrty"], data["msg"])
                 elif "err" in data:
+                    # The log line represents an error in retrieving or writing state data that
+                    # was caused by a StateSession client improperly setting/retrieving a value.
+                    # Report this failure to the logger.
+
                     logline = "[{}] (ERROR) Tried to {} state value named '{}' but encountered an error: {}".format(
                         data["time"], data["mode"], data["field"], data["err"])
                     self.awaiting_value = False
                     self.awaited_value = None
                 else:
-                    if data['field'] not in self.field_values:
-                        self.field_values[data['field']] = {"timeseries": []}
+                    # The log line represents a response to a data request from a StateSession client.
+                    # Process the response and notify the read_state() function when it is processed.
 
-                    self.field_values[data['field']]["now"] = data['val']
-                    self.field_values[data['field']]["timeseries"].append(
+                    self.updating_data_lock.acquire()
+
+                    if data['field'] not in self.timeseries_data:
+                        self.timeseries_data[data['field']] = {"timeseries": []}
+
+                    self.timeseries_data[data['field']]["now"] = data['val']
+                    self.timeseries_data[data['field']]["timeseries"].append(
                         (data['time'], data['val']))
+
+                    self.updating_data_lock.release()
 
                     # If the "read state" command is awaiting the current field's value,
                     # report it!
@@ -105,7 +146,7 @@ class StateSession(object):
             finally:
                 self.logfile.write(logline + "\n")
 
-            time.sleep(0.02)
+            time.sleep(delay)
 
     def read_state(self, field_name):
         '''
@@ -200,13 +241,12 @@ class StateSession(object):
     def disconnect(self):
         '''Quits the program and stores message log and field telemetry to file.'''
 
-        print("Terminating console connection to {}.".format(self.device_name))
-        if self.check_msg_thread.is_alive():
-            self.running_console_msg_check = False
-            self.check_msg_thread.join()
-            self.console.close()
+        print("Terminating console connection to and saving logging/telemetry data for {}.".format(self.device_name))
 
-        print("Saving log and telemetry for {}.".format(self.device_name))
-        self.logfile.close()
-        json.dump(self.field_values, self.dbfile, default=str)
-        self.dbfile.close()
+        # End threads if there was actually a connection to the device
+        if self.connected:
+            self.running_logger = False
+            self.logging_thread.join()
+            self.save_data_thread.join()
+            self.console.close()
+            self.logfile.close()

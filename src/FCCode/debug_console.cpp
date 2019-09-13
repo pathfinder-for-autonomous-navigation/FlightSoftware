@@ -1,7 +1,13 @@
 #include "debug_console.hpp"
-#include <Arduino.h>
+#include <ArduinoJson.h>
 #include <array>
-#include "ArduinoJson.h"
+
+#ifndef DESKTOP
+#include <Arduino.h>
+#else
+#include <time.h>
+#include <iostream>
+#endif
 
 std::map<debug_severity, const char*> debug_console::severity_strs{
     {debug_severity::debug, "DEBUG"},   {debug_severity::info, "INFO"},
@@ -26,11 +32,20 @@ std::map<debug_console::state_cmd_mode, const char*> debug_console::state_cmd_mo
 };
 
 bool debug_console::is_initialized = false;
+#ifndef DESKTOP
 systime_t debug_console::_start_time = 0;
+#else
+unsigned int debug_console::_start_time = 0;
+#endif
 
 debug_console::debug_console() {}
 
 unsigned int debug_console::_get_elapsed_time() {
+#ifdef DESKTOP
+    time_t start = time(0);
+    double ms_since_start = 1000 * difftime(time(0), start);
+    return static_cast<unsigned int>(ms_since_start);
+#else
     systime_t current_time = chVTGetSystemTimeX();
     if (!Serial) {
         /** Reset the start time if Serial is unconnected. We
@@ -41,6 +56,7 @@ unsigned int debug_console::_get_elapsed_time() {
     }
     unsigned int elapsed_time = ST2MS(current_time - _start_time);
     return elapsed_time;
+#endif
 }
 
 void debug_console::_print_json_msg(severity s, const char* msg) {
@@ -48,12 +64,19 @@ void debug_console::_print_json_msg(severity s, const char* msg) {
     doc["t"] = _get_elapsed_time();
     doc["svrty"] = severity_strs.at(s);
     doc["msg"] = msg;
+
+#ifdef DESKTOP
+    serializeJson(doc, std::cout);
+    std::cout << std::endl;
+#else
     serializeJson(doc, Serial);
     Serial.println();
+#endif
 }
 
 void debug_console::init() {
     if (!is_initialized) {
+#ifndef DESKTOP
         Serial.begin(115200);
         pinMode(13, OUTPUT);
 
@@ -61,6 +84,7 @@ void debug_console::init() {
         while (!Serial)
             ;
         _start_time = chVTGetSystemTimeX();
+#endif
 
         is_initialized = true;
     }
@@ -83,10 +107,12 @@ void debug_console::println(severity s, const char* str) {
 
 void debug_console::blink_led() {
     if (!is_initialized) return;
+#ifndef DESKTOP
     digitalWrite(13, HIGH);
     chThdSleepMilliseconds(500);
     digitalWrite(13, LOW);
     chThdSleepMilliseconds(500);
+#endif
 }
 
 void debug_console::print_state_field(const SerializableStateFieldBase& field) {
@@ -94,8 +120,13 @@ void debug_console::print_state_field(const SerializableStateFieldBase& field) {
     doc["t"] = _get_elapsed_time();
     doc["field"] = field.name().c_str();
     doc["val"] = field.print();
+#ifdef DESKTOP
+    serializeJson(doc, std::cout);
+    std::cout << std::endl;
+#else
     serializeJson(doc, Serial);
     Serial.println();
+#endif
 }
 
 void debug_console::_print_error_state_field(const char* field_name,
@@ -106,24 +137,39 @@ void debug_console::_print_error_state_field(const char* field_name,
     doc["field"] = field_name;
     doc["mode"] = state_cmd_mode_strs.at(mode);
     doc["err"] = state_field_error_strs.at(error_code);
+#ifdef DESKTOP
+    serializeJson(doc, std::cout);
+    std::cout << std::endl;
+#else
     serializeJson(doc, Serial);
     Serial.println();
+#endif
 }
 
 void debug_console::process_commands(const StateFieldRegistry& registry) {
     constexpr size_t SERIAL_BUF_SIZE = 64;
     char buf[SERIAL_BUF_SIZE] = {0};
+
+#ifdef DESKTOP
+    char c;
+    for (unsigned int i = 0; i < SERIAL_BUF_SIZE && std::cin.get(c); ++i) {
+        buf[i] = c;
+    }
+#else
     for (size_t i = 0; i < SERIAL_BUF_SIZE && Serial.available(); i++) {
         buf[i] = Serial.read();
     }
+#endif
+
+    constexpr size_t MAX_NUM_JSON_MSGS = 5;
 
     // Get all chunks of the buffer that are complete JSON messages. Read at
     // most five messages from the buffer. (It's unlikely that more than 5 messages
     // can fit within a 64 byte buffer)
-    size_t json_msg_starts[5] = {0};
+    size_t json_msg_starts[MAX_NUM_JSON_MSGS] = {0};
     size_t num_json_msgs_found = 0;
     bool inside_json_msg = false;
-    for (size_t i = 0; i < SERIAL_BUF_SIZE && num_json_msgs_found < 5; i++) {
+    for (size_t i = 0; i < SERIAL_BUF_SIZE && num_json_msgs_found < MAX_NUM_JSON_MSGS; i++) {
         if (buf[i] == '{') {
             inside_json_msg = true;
             json_msg_starts[num_json_msgs_found] = i;
@@ -140,8 +186,8 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     }
 
     // Deserialize all found JSON messages and check their validity
-    std::array<StaticJsonDocument<50>, 5> msgs;
-    std::array<bool, 5> msg_ok;
+    std::array<StaticJsonDocument<50>, MAX_NUM_JSON_MSGS> msgs;
+    std::array<bool, MAX_NUM_JSON_MSGS> msg_ok;
     for (size_t i = 0; i < num_json_msgs_found; i++) {
         auto result = deserializeJson(msgs[i], &buf[json_msg_starts[i]]);
         if (result == DeserializationError::Ok) {

@@ -12,6 +12,9 @@ install:
     - platformio update
 
 script:
+    - platformio run -e teensy35_cli
+    - platformio run -e teensy36_cli
+    - platformio run -e teensy35_jlink
+    - platformio run -e teensy36_jlink
     - platformio run -e native
-    - platformio run -e teensy
     - platformio test -e native

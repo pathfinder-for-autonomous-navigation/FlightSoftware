@@ -11,12 +11,12 @@
 #include "GPSTime.hpp"
 #include "fixed_array.hpp"
 
+/**
+ * @brief Set of constants defining fixed and minimum bitsizes for compressed
+ * objects.
+ */
 class SerializerConstants {
    public:
-    /**
-     * @brief Set of constants defining fixed and minimum bitsizes for compressed
-     * objects.
-     */
     constexpr static size_t bool_sz = 1;
     constexpr static size_t f_quat_sz = 30;
     constexpr static size_t d_quat_sz = 30;
@@ -38,14 +38,22 @@ class SerializerConstants {
  * @brief Base class that manages memory for a serializer. Specifically, it ensures that the
  * bit array used to store the results of serialization is allocated at most once.
  *
+ * This class shouldn't be instantiated. Instead, instantiate specializations of Serializer, which
+ * is derived from this base class.
+ *
  * @tparam T Type of stored value.
  */
 template <typename T>
 class SerializerBase : protected SerializerConstants {
    public:
     /**
-     * @brief String length that is necessary to print the value
+     * @brief Buffer length that is necessary to print the value
      * of the stored contents.
+     *
+     * This is somewhat misleadingly named strlen. If strlen() were called on
+     * the output of print, it would be one less than this value. This is because
+     * this value takes into account the null character that terminates a
+     * C-style string.
      */
     static constexpr size_t strlen = 0;
 
@@ -185,6 +193,11 @@ SerializerBase<T>::~SerializerBase() {
     delete[] printed_val;
 }
 
+/**
+ * @brief Public facing, constructible version of SerializerBase.
+ *
+ * @tparam T Type of value to serialize.
+ */
 template <typename T>
 class Serializer : public SerializerBase<T> {
     Serializer(T min, T max, size_t compressed_size)

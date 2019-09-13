@@ -1,9 +1,10 @@
 
-#include <stdio.h>
 #include <cstring>
 #include "GPSTime.hpp"
 #include "Serializer.hpp"
 #include "types.hpp"
+
+#include <iostream>
 
 /**
  * @brief Specialization of Serializer for booleans.
@@ -27,7 +28,7 @@ class Serializer<bool> : public SerializerBase<bool> {
 
     void deserialize(std::shared_ptr<bool>& dest) const override { *dest = serialized_val[0]; }
 
-    static constexpr size_t strlen = 5;
+    static constexpr size_t strlen = 6;  // size("false\x00") = 6
 
     const char* print(const bool& src) const override {
         if (src)
@@ -45,17 +46,26 @@ template <>
 class Serializer<unsigned int> : public SerializerBase<unsigned int> {
    public:
     Serializer(unsigned int min, unsigned int max, size_t compressed_size)
-        : SerializerBase<unsigned int>(min, max, compressed_size) {}
+        : SerializerBase<unsigned int>(min, max, compressed_size) {
+        if (min > max) _min = max;
+    }
 
     unsigned int _resolution() const {
-        return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, serialized_val.size())));
+        unsigned int range = _max - _min;
+        const float bits = pow(2.0f, serialized_val.size());
+        const float range_per_bit = range / bits;
+        unsigned int range_per_bit_int = static_cast<unsigned int>(ceil(range_per_bit));
+        return range_per_bit_int;
     }
 
     void serialize(const unsigned int& src) override {
         unsigned int src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
-        unsigned int result_int = (src_copy - _min) / _resolution();
+
+        unsigned int resolution = _resolution();
+        if (resolution == 0) resolution = 1;  // Prevent divide-by-zero error
+        unsigned int result_int = (src_copy - _min) / resolution;
         serialized_val.set_int(result_int);
     }
 
@@ -72,7 +82,7 @@ class Serializer<unsigned int> : public SerializerBase<unsigned int> {
         *dest = _min + serialized_val.to_ulong() * _resolution();
     }
 
-    static constexpr size_t strlen = 20;
+    static constexpr size_t strlen = 11;  // Max unsigned int is 4294967296
 
     const char* print(const unsigned int& src) const override {
         sprintf(this->printed_val, "%d", src);
@@ -87,17 +97,26 @@ template <>
 class Serializer<signed int> : public SerializerBase<signed int> {
    public:
     Serializer(signed int min, signed int max, size_t compressed_size)
-        : SerializerBase<signed int>(min, max, compressed_size) {}
+        : SerializerBase<signed int>(min, max, compressed_size) {
+        if (min > max) _min = max;
+    }
 
-    unsigned int _resolution() const {
-        return (unsigned int)lround(ceil((_max - _min) / pow(2.0f, serialized_val.size())));
+    const unsigned int _resolution() const {
+        unsigned int range = _max - _min;
+        const float bits = pow(2.0f, serialized_val.size());
+        const float range_per_bit = range / bits;
+        unsigned int range_per_bit_int = static_cast<unsigned int>(ceil(range_per_bit));
+        return range_per_bit_int;
     }
 
     void serialize(const signed int& src) override {
         signed int src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
-        unsigned int result_int = (src_copy - _min) / _resolution();
+
+        unsigned int resolution = _resolution();
+        if (resolution == 0) resolution = 1;  // Prevent divide-by-zero error
+        unsigned int result_int = (src_copy - _min) / resolution;
         serialized_val.set_int(result_int);
     }
 
@@ -114,7 +133,7 @@ class Serializer<signed int> : public SerializerBase<signed int> {
         *dest = _min + serialized_val.to_ulong() * _resolution();
     }
 
-    static constexpr size_t strlen = 20;
+    static constexpr size_t strlen = 12;  // Minimum signed int is -2147483648
 
     const char* print(const signed int& src) const override {
         sprintf(this->printed_val, "%d", src);
@@ -129,14 +148,24 @@ template <>
 class Serializer<float> : public SerializerBase<float> {
    public:
     Serializer(float min, float max, size_t compressed_size)
-        : SerializerBase<float>(min, max, compressed_size) {}
+        : SerializerBase<float>(min, max, compressed_size) {
+        if (min > max) _min = max;
+    }
 
     void serialize(const float& src) override {
+        const unsigned int num_intervals = pow(2, serialized_val.size()) - 1;
+
         float src_copy = src;
         if (src_copy > _max) src_copy = _max;
         if (src_copy < _min) src_copy = _min;
-        float resolution = (_max - _min) / pow(2, serialized_val.size());
-        unsigned int result_int = (unsigned int)((src_copy - _min) / resolution);
+
+        float resolution;
+        if (num_intervals > 0)
+            resolution = (_max - _min) / num_intervals;
+        else
+            resolution = 0;
+
+        const unsigned int result_int = static_cast<unsigned int>((src_copy - _min) / resolution);
         serialized_val.set_int(result_int);
     }
 
@@ -150,12 +179,20 @@ class Serializer<float> : public SerializerBase<float> {
     }
 
     void deserialize(std::shared_ptr<float>& dest) const override {
-        unsigned long f_bits = serialized_val.to_ullong();
-        float resolution = (_max - _min) / pow(2, serialized_val.size());
+        const unsigned int num_intervals = pow(2, serialized_val.size()) - 1;
+
+        const unsigned int f_bits = serialized_val.to_uint();
+        float resolution;
+        if (num_intervals > 0)
+            resolution = (_max - _min) / num_intervals;
+        else
+            resolution = 0;
+
         *dest = _min + resolution * f_bits;
     }
 
-    static constexpr size_t strlen = 14;
+    static constexpr size_t strlen =
+        14;  // Float is provided 6 digits before and after the decimal point, + 1 comma
 
     const char* print(const float& src) const override {
         sprintf(this->printed_val, "%6.6f", src);
@@ -170,7 +207,9 @@ template <>
 class Serializer<double> : public SerializerBase<double> {
    public:
     Serializer(double min, double max, size_t compressed_size)
-        : SerializerBase<double>(min, max, compressed_size) {}
+        : SerializerBase<double>(min, max, compressed_size) {
+        if (min > max) _min = max;
+    }
 
     void serialize(const double& src) override {
         double src_copy = src;
@@ -191,12 +230,15 @@ class Serializer<double> : public SerializerBase<double> {
     }
 
     void deserialize(std::shared_ptr<double>& dest) const override {
-        unsigned long f_bits = serialized_val.to_ullong();
-        double resolution = (_max - _min) / pow(2, serialized_val.size());
-        *dest = _min + resolution * f_bits;
+        const unsigned long f_bits = serialized_val.to_ullong();
+        const double resolution = (_max - _min) / pow(2, serialized_val.size());
+        const double distance_from_min = resolution * f_bits;
+        const double val = _min + distance_from_min;
+        *dest = val;
     }
 
-    static constexpr size_t strlen = 14;
+    static constexpr size_t strlen =
+        14;  // Double is provided 6 digits before and after the decimal point, + 1 comma
 
     const char* print(const double& src) const override {
         sprintf(this->printed_val, "%6.6f", src);
@@ -281,7 +323,6 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
         std::array<float, 3> v_mags;  // Magnitudes of elements in vector
         for (int i = 0; i < 3; i++) v_mags[i] = abs(src[i]);
 
-        size_t max_element_idx = 0;
         float max_element_value = std::max(std::max(v_mags[0], v_mags[1]), v_mags[2]);
         size_t component_number = 0;  // The current compressed vector bitset that we're modifying
         for (int i = 0; i < N; i++) {
@@ -333,7 +374,8 @@ class Serializer<std::array<float, N>> : public SerializerBase<std::array<float,
         for (int i = 0; i < N; i++) (*dest)[i] *= magnitude;
     }
 
-    static constexpr size_t strlen = 14 * N;
+    static constexpr size_t strlen =
+        14 * N;  // Each float is provided 6 digits before and after the decimal point, + 1 comma
 
     const char* print(const std::array<float, N>& src) const override {
         for (size_t i = 0; i < N; i++) {
@@ -361,29 +403,40 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         serialized_val[0] = true;
         std::bitset<16> wn((unsigned short int)src.gpstime.wn);
         std::bitset<32> tow(src.gpstime.tow);
-        for (int i = 0; i < 16; i++) serialized_val[i + 1] = wn[i];
-        for (int i = 0; i < 32; i++) serialized_val[i + 17] = tow[i];
+        std::bitset<20> ns(src.gpstime.ns);
+        for (size_t i = 0; i < wn.size(); i++) serialized_val[i + 1] = wn[i];
+        for (size_t i = 0; i < tow.size(); i++) serialized_val[i + 1 + wn.size()] = tow[i];
+        for (size_t i = 0; i < ns.size(); i++)
+            serialized_val[i + 1 + wn.size() + tow.size()] = ns[i];
     }
 
     bool deserialize(const char* val, std::shared_ptr<gps_time_t>& dest) override {
-        // TODO
+        size_t num_values_found = sscanf(val, "%hu,%d,%d", &(dest->gpstime.wn),
+                                         &(dest->gpstime.tow), &(dest->gpstime.ns));
+        if (num_values_found != 3) return false;
+
+        serialize(*dest);
         return true;
     }
 
     void deserialize(std::shared_ptr<gps_time_t>& dest) const override {
         std::bitset<16> wn;
         std::bitset<32> tow;
+        std::bitset<20> ns;
         for (int i = 0; i < 16; i++) wn.set(i + 1, serialized_val[i]);
-        for (int i = 0; i < 32; i++) tow.set(i + 1, serialized_val[16 + i]);
+        for (int i = 0; i < 32; i++) tow.set(i + 1, serialized_val[wn.size() + i]);
+        for (int i = 0; i < 32; i++) ns.set(i + 1, serialized_val[wn.size() + tow.size() + i]);
         dest->is_not_set = false;
         dest->gpstime.wn = (unsigned int)wn.to_ulong();
         dest->gpstime.tow = (unsigned int)tow.to_ulong();
+        dest->gpstime.ns = (unsigned int)ns.to_ulong();
     }
 
-    static constexpr size_t strlen = 14;
+    static constexpr size_t strlen =
+        22;  // week number, 4, tow: 9, ns: 7, + 2 commas for separation
 
     const char* print(const gps_time_t& src) const override {
-        // TODO
+        sprintf(this->printed_val, "%hu,%d,%d", src.gpstime.wn, src.gpstime.tow, src.gpstime.ns);
         return this->printed_val;
     }
 };

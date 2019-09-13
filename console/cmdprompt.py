@@ -1,4 +1,3 @@
-#!/usr/local/bin/python3
 import readline
 from cmd import Cmd
 

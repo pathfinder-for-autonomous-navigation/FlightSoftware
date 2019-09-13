@@ -1,9 +1,9 @@
 #include <array>
 #include <static_buffers.hpp>
-#include "utils_tests.hpp"
+#include "test_utils.hpp"
 
 // Tests if buffer works fine with just one element.
-static void circular_stack_test_one_element(void) {
+static void test_circular_stack_one_element(void) {
     circular_stack<unsigned int, 1> buf;
     TEST_ASSERT(buf.empty());
     buf.put(2);
@@ -13,7 +13,7 @@ static void circular_stack_test_one_element(void) {
 }
 
 // Tests FIFO functionality of buffer.
-static void circular_stack_test_multiple_elements(void) {
+static void test_circular_stack_multiple_elements(void) {
     circular_stack<unsigned int, 2> buf;
     TEST_ASSERT(buf.empty());
     buf.put(1);
@@ -26,7 +26,7 @@ static void circular_stack_test_multiple_elements(void) {
 }
 
 // Tests FIFO functionality of buffer with arrays as elements
-static void circular_stack_test_multiple_elements_array(void) {
+static void test_circular_stack_multiple_elements_array(void) {
     circular_stack<std::array<unsigned int, 1>, 2> buf;
     TEST_ASSERT(buf.empty());
 
@@ -42,7 +42,7 @@ static void circular_stack_test_multiple_elements_array(void) {
 }
 
 // Tests if buffer works fine with just one element.
-static void circular_buffer_test_one_element(void) {
+static void test_circular_buffer_one_element(void) {
     circular_buffer<unsigned int, 1> buf;
     TEST_ASSERT(buf.empty());
     buf.put(2);
@@ -53,7 +53,7 @@ static void circular_buffer_test_one_element(void) {
 }
 
 // Tests FIFO functionality of buffer.
-static void circular_buffer_test_multiple_elements(void) {
+static void test_circular_buffer_multiple_elements(void) {
     circular_buffer<unsigned int, 2> buf;
     TEST_ASSERT(buf.empty());
     buf.put(1);
@@ -68,7 +68,7 @@ static void circular_buffer_test_multiple_elements(void) {
 }
 
 // Tests FIFO functionality of buffer with arrays as elements
-static void circular_buffer_test_multiple_elements_array(void) {
+static void test_circular_buffer_multiple_elements_array(void) {
     circular_buffer<std::array<unsigned int, 1>, 2> buf;
     TEST_ASSERT(buf.empty());
 
@@ -86,10 +86,10 @@ static void circular_buffer_test_multiple_elements_array(void) {
 }
 
 void test_static_buffers() {
-    RUN_TEST(circular_stack_test_one_element);
-    RUN_TEST(circular_stack_test_multiple_elements);
-    RUN_TEST(circular_stack_test_multiple_elements_array);
-    RUN_TEST(circular_buffer_test_one_element);
-    RUN_TEST(circular_buffer_test_multiple_elements);
-    RUN_TEST(circular_buffer_test_multiple_elements_array);
+    RUN_TEST(test_circular_stack_one_element);
+    RUN_TEST(test_circular_stack_multiple_elements);
+    RUN_TEST(test_circular_stack_multiple_elements_array);
+    RUN_TEST(test_circular_buffer_one_element);
+    RUN_TEST(test_circular_buffer_multiple_elements);
+    RUN_TEST(test_circular_buffer_multiple_elements_array);
 }

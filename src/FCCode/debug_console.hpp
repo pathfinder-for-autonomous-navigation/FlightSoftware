@@ -1,7 +1,9 @@
 #ifndef DEBUG_CONSOLE_HPP_
 #define DEBUG_CONSOLE_HPP_
 
+#ifndef DESKTOP
 #include <ChRt.h>
+#endif
 #include <map>
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
@@ -76,11 +78,15 @@ class debug_console {
     void print_state_field(const SerializableStateFieldBase &field);
 
    protected:
-    /**
-     * @brief The system time at which the debug connection with the computer was initiated,
-     * relative to ChibiOS's initialization time.
-     */
+/**
+ * @brief The system time at which the debug connection with the computer was initiated,
+ * relative to ChibiOS's initialization time.
+ */
+#ifndef DESKTOP
     static systime_t _start_time;
+#else
+    static unsigned int _start_time;
+#endif
 
     /**
      * @brief Checks whether or not the debug console has been initialized. This is a static

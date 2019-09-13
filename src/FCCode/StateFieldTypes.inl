@@ -87,6 +87,8 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * @return C-style string containing printed version of state field.
      */
     const char *print() const override { return _serializer->print(this->_val); }
+
+    virtual ~SerializableStateField() {}
 };
 
 /**
