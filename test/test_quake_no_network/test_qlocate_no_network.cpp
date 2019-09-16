@@ -2,10 +2,9 @@
 #include <string>
 #include <vector>
 #include "../lib/Drivers/QLocate.hpp"
-#include "../lib/utils/QuakeMessage.hpp"
-#include <Arduino.h>
 #include "../test_quake/quake_common.h"
-
+#include "core_pins.h"
+#include "usb_serial.h"
 /*
     ISU AT Command Reference pg 105
     Note: AT+SBDWB returns one of the 4 responses above (0, 1, 2, 3) with 0 indicating success. In
@@ -40,19 +39,18 @@ void test_sbdix_no_network(void) {
 
     // Expect no network
     TEST_ASSERT_EQUAL(MO_NO_NETWORK, pRes->MO_status);
-    // Expect no message
-    TEST_ASSERT_EQUAL(MT_NO_MSG, pRes->MT_status);
+    // Expect 2 because will not be able to check mailbox
+    TEST_ASSERT_EQUAL(MT_MSG_ERR, pRes->MT_status);
 }
 
-void setup() {
+int main(void) {
     delay(5000);
     Serial.begin(9600);
     pinMode(13, OUTPUT);
     q.setup();
-    // q.setup();
-    while(!Serial);
     UNITY_BEGIN();
     RUN_TEST(test_sbdix_no_network);
     UNITY_END();
+    return 0;
 }
 

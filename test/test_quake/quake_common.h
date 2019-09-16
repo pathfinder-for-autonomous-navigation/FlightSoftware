@@ -67,10 +67,3 @@ void tearDown(void) {
     // should clear buffers and restore settings
     q.config();
 }
-
-void loop() {
-    digitalWrite(13, HIGH);
-    delay(100);
-    digitalWrite(13, LOW);
-    delay(500);
-}
