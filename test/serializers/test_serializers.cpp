@@ -1,6 +1,7 @@
 #include <unity.h>
 #include <Serializer.hpp>
 #include <iostream>
+#include <memory>
 
 // ============================================================================================= //
 //                                      Helper methods                                           //

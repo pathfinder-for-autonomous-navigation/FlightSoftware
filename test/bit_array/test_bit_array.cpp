@@ -1,5 +1,6 @@
 #include <unity.h>
 #include <fixed_array.hpp>
+#include <memory>
 
 void test_bitarray_constructors() {
     // Default constructor
