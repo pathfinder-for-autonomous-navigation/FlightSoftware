@@ -122,6 +122,14 @@ class QLocate : public Device {
     short checksum(char const *c, int len);
 
     unsigned char nr_pin_;
+    private:
+    /*! Parses the data returned from requesting SBD transfer (AT+SBDIX)
+    Example: 
+        char const *c = "SBDI: 1, 2173, 1, 87, 429, 0";
+        This function would parse c into 
+            i = {1, 2173, 1, 87, 429, 0};
+    */
+    bool parse_ints(char const *c, int *i);
 };
 }  // namespace Devices
 

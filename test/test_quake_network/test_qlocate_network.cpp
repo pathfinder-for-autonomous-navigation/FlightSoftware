@@ -53,8 +53,7 @@ void test_sbdrb_with_network(void){
     TEST_ASSERT_GREATER_OR_EQUAL(1, pRes->MT_length);
 
     // Read message
-    // TODO: why does sbdrb return 0 when Quake Message fails?
-    q.sbdrb(); // not sure what response this should be
+    TEST_ASSERT_EQUAL(0, q.sbdrb());
     QuakeMessage msg = q.get_message();
     TEST_ASSERT_NOT_NULL(msg.mes);
 }
@@ -66,7 +65,6 @@ void setup() {
     Serial.begin(9600);
     pinMode(13, OUTPUT);
     q.setup();
-    // q.setup();
     while(!Serial);
     UNITY_BEGIN();
     RUN_TEST(test_sbdix_with_network);
