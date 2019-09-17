@@ -11,14 +11,12 @@
 #include "GPSTime.hpp"
 #include "fixed_array.hpp"
 
-#include <Arduino.h>
-
+/**
+ * @brief Set of constants defining fixed and minimum bitsizes for compressed
+ * objects.
+ */
 class SerializerConstants {
    public:
-    /**
-     * @brief Set of constants defining fixed and minimum bitsizes for compressed
-     * objects.
-     */
     constexpr static size_t bool_sz = 1;
     constexpr static size_t f_quat_sz = 30;
     constexpr static size_t d_quat_sz = 30;
@@ -40,14 +38,22 @@ class SerializerConstants {
  * @brief Base class that manages memory for a serializer. Specifically, it ensures that the
  * bit array used to store the results of serialization is allocated at most once.
  *
+ * This class shouldn't be instantiated. Instead, instantiate specializations of Serializer, which
+ * is derived from this base class.
+ *
  * @tparam T Type of stored value.
  */
 template <typename T>
 class SerializerBase : protected SerializerConstants {
    public:
     /**
-     * @brief String length that is necessary to print the value
+     * @brief Buffer length that is necessary to print the value
      * of the stored contents.
+     *
+     * This is somewhat misleadingly named strlen. If strlen() were called on
+     * the output of print, it would be one less than this value. This is because
+     * this value takes into account the null character that terminates a
+     * C-style string.
      */
     static constexpr size_t strlen = 0;
 
@@ -131,7 +137,7 @@ class SerializerBase : protected SerializerConstants {
      * @brief Deserializes the bit array and stores the result in the provided
      * object pointer.
      *
-     * @param dest
+     * @param dest Where to store the result of the deserialization.
      *
      * @return True if serialization succeeded, false if serializer was
      *         uninitialized.
@@ -140,8 +146,10 @@ class SerializerBase : protected SerializerConstants {
 
     /**
      * @brief Outputs a string representation of the source value into
-     * the given destination string. The length of the string representation
-     * can be found using strlen().
+     * the given destination string.
+     *
+     * In order to enable good use of memory, the maximum length of the string
+     * representation can be found in the member variable "strlen".
      *
      * @param src  Source value
      *
@@ -152,20 +160,22 @@ class SerializerBase : protected SerializerConstants {
     /**
      * @brief Get the stored bit array containing the serialized value.
      *
-     * @return const bit_array&
+     * @return const bit_array& Reference to internal bit array.
      */
     const bit_array& get_bit_array() const { return serialized_val; }
 
     /**
      * @brief Return size of bit array held by this serializer.
      *
-     * @return size_t
+     * @return size_t Size of bit array.
      */
     size_t bitsize() const { return serialized_val.size(); }
 
     /**
      * @brief Set the internally stored serialized value. Do nothing if the source bit arary does
      * not have the same size as the internally stored bit array.
+     *
+     * @param src Bit array to copy.
      */
     void set_bit_array(const bit_array& src) {
         if (src.size() != serialized_val.size()) return;
@@ -175,9 +185,19 @@ class SerializerBase : protected SerializerConstants {
     /**
      * @brief Destructor.
      */
-    ~SerializerBase() { delete[] printed_val; }
+    virtual ~SerializerBase() = 0;
 };
 
+template <typename T>
+SerializerBase<T>::~SerializerBase() {
+    delete[] printed_val;
+}
+
+/**
+ * @brief Public facing, constructible version of SerializerBase.
+ *
+ * @tparam T Type of value to serialize.
+ */
 template <typename T>
 class Serializer : public SerializerBase<T> {
     Serializer(T min, T max, size_t compressed_size)
