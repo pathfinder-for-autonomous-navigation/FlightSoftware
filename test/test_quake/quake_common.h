@@ -1,30 +1,5 @@
 #pragma once
-// GSS is responsible for:
-//      storing and forwarding messages from the ISU to the Host VA Application 
-//      storing messages from the VA Application to forward to the ISU
-// ISU communicates with the GSS via the Iridium satellite constellation
 
-
-// Driver should support:
-// sbdix - initiate an SBD Session Extended
-// sbdwb - write binary data to Quake
-// sbdrb - read binary data from Quake
-
-// MO with MT Message (Send and receive message in one session)
-// 
-// AT+SBDWB=351 - Tell Quake that you will send 351 B message
-// Receive a READY from Quake
-// Send your message followed by 2 byte checksum 
-// Receive 0 if message was loaded successfully
-// AT+SBDIX - Tell Quake to initiate SBD transfer
-// Receive +SBDI: 1, 2173, 1, 87, 429, 0
-//      Message was sent succesfully using MOMSN 2173
-//      A 429 message received using MTMSN 87
-//      No other MT messages queued
-// AT+SBDD0 - tell Quake to clear message queue from MO buffer 
-// Receive 0 when message buffer cleared successfully 
-// AT+SBDRB - tell Quake to transfer message
-// Receive 2B length + 429 B message + 2B checksum
 
 // Sbdix response structure
 typedef struct sbdix_r {

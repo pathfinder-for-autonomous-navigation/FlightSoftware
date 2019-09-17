@@ -5,11 +5,6 @@
 #include "../test_quake/quake_common.h"
 #include "core_pins.h"
 #include "usb_serial.h"
-/*
-    ISU AT Command Reference pg 105
-    Note: AT+SBDWB returns one of the 4 responses above (0, 1, 2, 3) with 0 indicating success. In
-    all cases except response 1, the response is followed by result code ‘OK’. 
-*/
 
 // name, port, pin number, timeout
 Devices::QLocate q("Test_Quake_No_Network", &Serial3, Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT);
@@ -21,12 +16,12 @@ void test_sbdix_no_network(void) {
     // Start SBD session
     TEST_ASSERT_EQUAL(0, q.run_sbdix()); // Expect 0 unless SBD session already running
 
-    // Cannot send messages when we are in SDB session
+    // Cannot send messages when we are in SBD session
     std::string testString("Test SBDIX already running");
     int statusCode = q.sbdwb(testString.c_str(), testString.length());
     TEST_ASSERT_EQUAL(-1, statusCode);
 
-    // End SBD session
+    // Wait to talk to Iridium
     while(!Serial3.available());
     delay(100);
     while(!Serial3.available());
@@ -39,7 +34,7 @@ void test_sbdix_no_network(void) {
 
     // Expect no network
     TEST_ASSERT_EQUAL(MO_NO_NETWORK, pRes->MO_status);
-    // Expect 2 because will not be able to check mailbox
+    // Expect MT_MSG_ERR (2) because will not be able to check mailbox
     TEST_ASSERT_EQUAL(MT_MSG_ERR, pRes->MT_status);
 }
 
