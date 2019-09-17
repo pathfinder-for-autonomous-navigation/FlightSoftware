@@ -59,20 +59,14 @@ class StateField : public virtual StateFieldBase {
      * @return T Copy of of field value. If the field is not initialized, this
      * function fails silently (returns nonsense.)
      */
-    template <typename U>
-    T get() const {
-        return _val;
-    }
+    T get() const { return _val; }
 
     /**
      * @brief Sets value of field data to provided value.
      *
      * @param t
      */
-    template <typename U>
-    void set(const T &t) {
-        _val = t;
-    }
+    void set(const T &t) { _val = t; }
 
     /**
      * @brief Accessors.

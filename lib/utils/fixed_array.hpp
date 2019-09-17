@@ -136,14 +136,25 @@ class fixed_array<bool> : public fixed_array_base<bool> {
     }
 
     /**
-     * @brief Initializes fixed array to an integer value, if there is enough space in the bitset to
-     * do so.
+     * @brief Sets fixed array to an integer value, if there is enough space in the bitset to
+     * do so. If there is not, the old value is preserved.
      *
      * @param val Value to initialize bitset to.
+     * @return Whether or not it was possible to store the integer into this bitset.
      */
-    void set_int(unsigned int val) {
-        size_t val_num_bits = static_cast<size_t>(ceilf(logf(val) / logf(2.0)));
-        if (val_num_bits > size()) return;
+    bool set_int(unsigned int val) {
+        size_t val_num_bits = 32;
+        for (size_t i = 0; i < 32; i++) {
+            if (pow(2, i) > val) {
+                val_num_bits = i;
+                break;
+            }
+        }
+        if (val_num_bits > size()) return false;
+
+        for (size_t i = 0; i < size(); i++) {
+            (*this)[i] = 0;
+        }
 
         int i = 0;
         while (val > 0) {
@@ -151,7 +162,16 @@ class fixed_array<bool> : public fixed_array_base<bool> {
             val /= 2;
             i++;
         }
+
+        return true;
     }
+
+    /**
+     * @brief Converts bitset to integer.
+     *
+     * @return unsigned int
+     */
+    unsigned long to_uint() const { return static_cast<unsigned int>(to_ulong()); }
 
     /**
      * @brief Converts bitset to integer.
@@ -187,13 +207,14 @@ class fixed_array<bool> : public fixed_array_base<bool> {
      *
      * @param str Byte array to modify.
      * @param len Size of byte array.
+     * @return True if possible to write bitset into the string
      */
-    void to_string(char* str, size_t len) const {
+    bool to_string(unsigned char* str, size_t len) const {
         const int size_remainder_bits = len * 8 - size();
-        if (size_remainder_bits < 0) return;
+        if (size_remainder_bits < 0) return false;
 
         for (size_t i = 0; i < size(); i += 8) {
-            bool c[8];
+            bool c[8] = {false};
             for (size_t j = i; j < std::min(i + 8, size()); j++) {
                 c[j - i] = (*this)[j];
             }
@@ -203,6 +224,8 @@ class fixed_array<bool> : public fixed_array_base<bool> {
         for (size_t i = len; i > len - (size_remainder_bits + 7) / 8; i--) {
             str[i] = 0;
         }
+
+        return true;
     }
 
    private:
