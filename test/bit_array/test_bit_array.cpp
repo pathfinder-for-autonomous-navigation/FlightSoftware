@@ -1,5 +1,5 @@
+#include <unity.h>
 #include <fixed_array.hpp>
-#include "test_utils.hpp"
 
 void test_bitarray_constructors() {
     // Default constructor
@@ -72,8 +72,26 @@ void test_bitarray_write_to_string() {
 }
 
 void test_bit_array() {
+    UNITY_BEGIN();
     RUN_TEST(test_bitarray_constructors);
     RUN_TEST(test_bitarray_set_int);
     RUN_TEST(test_bitarray_convert_to_integer);
     RUN_TEST(test_bitarray_write_to_string);
+    UNITY_END();
 }
+
+#ifdef DESKTOP
+int main(int argc, char *argv[]) {
+    test_bit_array();
+    return 0;
+}
+#else
+#include <Arduino.h>
+void setup() {
+    delay(2000);
+    Serial.begin(9600);
+    test_bit_array();
+}
+
+void loop() {}
+#endif

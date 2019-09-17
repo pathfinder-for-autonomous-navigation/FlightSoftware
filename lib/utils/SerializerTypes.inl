@@ -1,10 +1,8 @@
-
+#include <stdio.h>
 #include <cstring>
 #include "GPSTime.hpp"
 #include "Serializer.hpp"
 #include "types.hpp"
-
-#include <iostream>
 
 /**
  * @brief Specialization of Serializer for booleans.
@@ -52,10 +50,14 @@ class Serializer<unsigned int> : public SerializerBase<unsigned int> {
 
     unsigned int _resolution() const {
         unsigned int range = _max - _min;
-        const float bits = pow(2.0f, serialized_val.size());
-        const float range_per_bit = range / bits;
-        unsigned int range_per_bit_int = static_cast<unsigned int>(ceil(range_per_bit));
-        return range_per_bit_int;
+        const unsigned int bits = pow(2.0f, serialized_val.size()) - 1;
+        if (bits == 0) return 0;  // No resolution available.
+
+        unsigned int interval_per_bit = range / bits;
+        if (interval_per_bit * bits >= range)
+            return interval_per_bit;
+        else
+            return interval_per_bit + 1;
     }
 
     void serialize(const unsigned int& src) override {
@@ -64,9 +66,10 @@ class Serializer<unsigned int> : public SerializerBase<unsigned int> {
         if (src_copy < _min) src_copy = _min;
 
         unsigned int resolution = _resolution();
-        if (resolution == 0) resolution = 1;  // Prevent divide-by-zero error
-        unsigned int result_int = (src_copy - _min) / resolution;
-        serialized_val.set_int(result_int);
+        if (resolution == 0)
+            serialized_val.set_int(0);  // Prevent divide-by-zero error
+        else
+            serialized_val.set_int((src_copy - _min) / resolution);
     }
 
     bool deserialize(const char* val, std::shared_ptr<unsigned int>& dest) override {
@@ -103,10 +106,14 @@ class Serializer<signed int> : public SerializerBase<signed int> {
 
     const unsigned int _resolution() const {
         unsigned int range = _max - _min;
-        const float bits = pow(2.0f, serialized_val.size());
-        const float range_per_bit = range / bits;
-        unsigned int range_per_bit_int = static_cast<unsigned int>(ceil(range_per_bit));
-        return range_per_bit_int;
+        const unsigned int bits = pow(2.0f, serialized_val.size()) - 1;
+        if (bits == 0) return 0;  // No resolution available.
+
+        const unsigned int interval_per_bit = range / bits;
+        if (interval_per_bit * bits >= range)
+            return interval_per_bit;
+        else
+            return interval_per_bit + 1;
     }
 
     void serialize(const signed int& src) override {
@@ -115,9 +122,10 @@ class Serializer<signed int> : public SerializerBase<signed int> {
         if (src_copy < _min) src_copy = _min;
 
         unsigned int resolution = _resolution();
-        if (resolution == 0) resolution = 1;  // Prevent divide-by-zero error
-        unsigned int result_int = (src_copy - _min) / resolution;
-        serialized_val.set_int(result_int);
+        if (resolution == 0)
+            serialized_val.set_int(0);  // Prevent divide-by-zero error
+        else
+            serialized_val.set_int((src_copy - _min) / resolution);
     }
 
     bool deserialize(const char* val, std::shared_ptr<signed int>& dest) override {

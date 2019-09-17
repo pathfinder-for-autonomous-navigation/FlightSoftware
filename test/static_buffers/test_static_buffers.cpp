@@ -1,6 +1,6 @@
+#include <unity.h>
 #include <array>
 #include <static_buffers.hpp>
-#include "test_utils.hpp"
 
 // Tests if buffer works fine with just one element.
 static void test_circular_stack_one_element(void) {
@@ -86,10 +86,28 @@ static void test_circular_buffer_multiple_elements_array(void) {
 }
 
 void test_static_buffers() {
+    UNITY_BEGIN();
     RUN_TEST(test_circular_stack_one_element);
     RUN_TEST(test_circular_stack_multiple_elements);
     RUN_TEST(test_circular_stack_multiple_elements_array);
     RUN_TEST(test_circular_buffer_one_element);
     RUN_TEST(test_circular_buffer_multiple_elements);
     RUN_TEST(test_circular_buffer_multiple_elements_array);
+    UNITY_END();
 }
+
+#ifdef DESKTOP
+int main(int argc, char *argv[]) {
+    test_static_buffers();
+    return 0;
+}
+#else
+#include <Arduino.h>
+void setup() {
+    delay(2000);
+    Serial.begin(9600);
+    test_static_buffers();
+}
+
+void loop() {}
+#endif

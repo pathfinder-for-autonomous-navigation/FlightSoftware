@@ -1,6 +1,6 @@
+#include <unity.h>
 #include <Serializer.hpp>
 #include <iostream>
-#include "test_utils.hpp"
 
 // ============================================================================================= //
 //                                      Helper methods                                           //
@@ -24,25 +24,21 @@ void test_value(std::shared_ptr<Serializer<T>>& s, const T val, const T output) 
 }
 
 /**
- * @brief Helper method to test serialization and deserialization specifically for floats.
+ * @brief Helper method to test serialization and deserialization specifically for floats and
+ * doubles.
  */
-void test_value_float(std::shared_ptr<Serializer<float>>& s, const float val, const float output,
-                      const float threshold = 0) {
-    auto val_ptr = std::make_shared<float>();
+template <typename T>
+void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, const T val, const T output,
+                                const T threshold = 0) {
+    auto val_ptr = std::make_shared<T>();
     s->serialize(val);
     s->deserialize(val_ptr);
-    TEST_ASSERT_FLOAT_WITHIN(threshold, output, *val_ptr);
-}
 
-/**
- * @brief Helper method to test serialization and deserialization specifically for doubles.
- */
-void test_value_double(std::shared_ptr<Serializer<double>>& s, const double val,
-                       const double output, const double threshold = 0) {
-    auto val_ptr = std::make_shared<double>();
-    s->serialize(val);
-    s->deserialize(val_ptr);
-    TEST_ASSERT_DOUBLE_WITHIN(threshold, output, *val_ptr);
+    if (std::is_same<T, float>::value) {
+        TEST_ASSERT_FLOAT_WITHIN(threshold, output, *val_ptr);
+    } else {
+        TEST_ASSERT_DOUBLE_WITHIN(threshold, output, *val_ptr);
+    }
 }
 
 // ============================================================================================= //
@@ -210,8 +206,8 @@ void test_sint_serializer() {
     test_value<signed int>(serializer, -1, -1);
     serializer.reset(new Serializer<signed int>(-1, 10, 1));
     test_value<signed int>(serializer, -1, -1);
-    test_value<signed int>(serializer, 4, -1);
-    test_value<signed int>(serializer, 5, 10);
+    test_value<signed int>(serializer, 3, -1);
+    test_value<signed int>(serializer, 8, -1);
     test_value<signed int>(serializer, 10, 10);
     serializer.reset(new Serializer<signed int>(-3, -1, 10));
     test_value<signed int>(serializer, -2, -2);
@@ -219,9 +215,43 @@ void test_sint_serializer() {
     serializer.reset(new Serializer<signed int>(-5, -1, 1));
     test_value<signed int>(serializer, -5, -5);
     test_value<signed int>(serializer, -4, -5);
-    test_value<signed int>(serializer, -3, -5);
-    test_value<signed int>(serializer, -2, -1);
+    test_value<signed int>(serializer, -2, -5);
     test_value<signed int>(serializer, -1, -1);
+}
+
+template <typename T>
+void test_float_or_double_serializer() {
+    std::shared_ptr<Serializer<T>> serializer;
+    auto val_ptr = std::make_shared<T>();
+    T threshold;
+
+    // Test edge-case initializations
+    // TODO
+    serializer.reset(new Serializer<T>(0, 0, 5));
+    threshold = 0;
+    test_value_float_or_double<T>(serializer, 0, 0, threshold);
+    test_value_float_or_double<T>(serializer, -1, 0, threshold);
+    test_value_float_or_double<T>(serializer, 2, 0, threshold);
+
+    // Test normal initializations
+    serializer.reset(new Serializer<T>(0, 3, 5));
+    threshold = 3.0 / 31;
+    for (size_t i = 0; i < 100; i++) {
+        T x = i * 3.0 / 100;
+
+        test_value_float_or_double<T>(serializer, x, x, threshold);
+    }
+    test_value_float_or_double<T>(serializer, 4, 3, threshold);
+    test_value_float_or_double<T>(serializer, -1, 0, threshold);
+
+    serializer.reset(new Serializer<T>(-1, 3, 6));
+    threshold = 4.0 / 63;
+    for (size_t i = 0; i < 1000; i++) {
+        T x = -1.0 + i * 4.0 / 1000;
+        test_value_float_or_double<T>(serializer, x, x, threshold);
+    }
+    test_value_float_or_double<T>(serializer, 4, 3, threshold);
+    test_value_float_or_double<T>(serializer, -2, -1, threshold);
 }
 
 /**
@@ -230,65 +260,46 @@ void test_sint_serializer() {
  * Success criteria: same as signed int serializer. Comparisons for accuracy, however, cannot be an
  * equality--they must be based on resolution thresholds.
  */
-void test_float_serializer() {
-    std::shared_ptr<Serializer<float>> serializer;
-    auto val_ptr = std::make_shared<float>();
-
-    // Test edge-case initializations
-
-    // Test normal initializations
-    serializer.reset(new Serializer<float>(0, 3, 5));
-    for (size_t i = 0; i < 100; i++) {
-        float x = i * 3.0 / 100;
-        float threshold = 3.0 / 32;
-        test_value_float(serializer, x, x, threshold);
-    }
-
-    TEST_ASSERT(false);
-}
+void test_float_serializer() { test_float_or_double_serializer<float>(); }
 
 /**
  * @brief Verify that the double serializer properly encapsulates double values of various sizes.
  *
  * Success criteria: same as float.
  */
-void test_double_serializer() { TEST_ASSERT(false); }
+void test_double_serializer() { test_float_or_double_serializer<double>(); }
 
 /**
  * @brief Verify that the float vector serializer properly encapsulates float vectors of various
  * sizes.
  */
-void test_f_vec_serializer() { TEST_ASSERT(false); }
+void test_f_vec_serializer() { TEST_IGNORE_MESSAGE("Needs to be implemented."); }
 
 /**
  * @brief Verify that the double vector serializer properly encapsulates double vectors of various
  * sizes.
  */
-void test_d_vec_serializer() { TEST_ASSERT(false); }
+void test_d_vec_serializer() { TEST_IGNORE_MESSAGE("Needs to be implemented."); }
 
 /**
  * @brief Verify that the float quaternion serializer properly encapsulates float quaternions of
  * various sizes.
  */
-void test_f_quat_serializer() { TEST_ASSERT(false); }
+void test_f_quat_serializer() { TEST_IGNORE_MESSAGE("Needs to be implemented."); }
 
 /**
  * @brief Verify that the double quaternion serializer properly encapsulates double quaternions
  * of various sizes.
  */
-void test_d_quat_serializer() { TEST_ASSERT(false); }
+void test_d_quat_serializer() { TEST_IGNORE_MESSAGE("Needs to be implemented."); }
 
 /**
  * @brief Verify that the GPS time serializer properly encapsulates various values of GPS time.
  */
-void test_gpstime_serializer() { TEST_ASSERT(false); }
-
-/**
- * @brief Verify that the temperature serializer properly encapsulates various temperatures.
- */
-void test_temperature_serializer() { TEST_ASSERT(false); }
+void test_gpstime_serializer() { TEST_IGNORE_MESSAGE("Needs to be implemented."); }
 
 void test_serializers() {
+    UNITY_BEGIN();
     RUN_TEST(test_bool_serializer);
     RUN_TEST(test_uint_serializer);
     RUN_TEST(test_sint_serializer);
@@ -299,4 +310,21 @@ void test_serializers() {
     RUN_TEST(test_f_quat_serializer);
     RUN_TEST(test_d_quat_serializer);
     RUN_TEST(test_gpstime_serializer);
+    UNITY_END();
 }
+
+#ifdef DESKTOP
+int main(int argc, char* argv[]) {
+    test_serializers();
+    return 0;
+}
+#else
+#include <Arduino.h>
+void setup() {
+    delay(2000);
+    Serial.begin(9600);
+    test_serializers();
+}
+
+void loop() {}
+#endif
