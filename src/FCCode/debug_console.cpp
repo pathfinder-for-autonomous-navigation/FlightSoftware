@@ -1,6 +1,7 @@
 #include "debug_console.hpp"
 #include <ArduinoJson.h>
 #include <array>
+#include <cstdarg>
 
 #ifndef DESKTOP
 #include <Arduino.h>
