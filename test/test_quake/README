@@ -4,7 +4,6 @@ Not specifying the right length does not seem to be a problem
 Specifying 0 or 341 for message size causes a 1 to return
 
 
-
 ISU AT Command Reference pg 105
 Note: AT+SBDWB returns one of the 4 responses above (0, 1, 2, 3) with 0 indicating success. In
 all cases except response 1, the response is followed by result code ‘OK’. 

@@ -26,6 +26,7 @@ void test_sbdix_with_network(void) {
     const int *_pRes = q.get_sbdix_response();
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
     // If MO_status [0, 2], then downlink was successful
+    // But we only pass if we receive a 0
     TEST_ASSERT_EQUAL(MO_OK, pRes->MO_status);  
 }
 
@@ -46,6 +47,7 @@ void test_sbdrb_with_network(void){
     const int *_pRes = q.get_sbdix_response();
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
     // If MO_status [0, 2], then downlink was successful
+    // But we only pass if we receive a 0
     TEST_ASSERT_EQUAL(MO_OK, pRes->MO_status);  
     // Test that we have a message
     TEST_ASSERT_GREATER_OR_EQUAL(1, pRes->MT_length);
