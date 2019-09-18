@@ -6,7 +6,6 @@
 //  Pathfinder for Autonomous Navigation
 //  Cornell University
 //
-
 #include "QLocate.hpp"
 #include <Arduino.h>
 
@@ -30,7 +29,7 @@ bool QLocate::setup() {
 
 bool QLocate::is_functional() {
     port->printf("AT\r");
-    delayMicroseconds(100);
+    delay(10);
     if (!port->available())
         return false;
     else
@@ -71,6 +70,7 @@ int QLocate::config() {
     // Disable flow control, disable DTR, disabl echo, set numeric rasponses, and
     // disable "RING" alerts
     port->print(F("AT&K0;&D0;E0;V0;+SBDMTA=0\r"));
+    delay(10);
     success |= consume(F("AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r"));
 #ifdef DEBUG_ENABLED
     Serial.println("       > AT&K0;&D0;E0;V0;+SBDMTA=0 status=" + String(success));
@@ -90,14 +90,15 @@ int QLocate::sbdwb(char const *c, int len) {
     // Clear serial buffer
     port->clear();
     // Request to write binary data
-    port->print(F("AT+SBDWB="));
-    port->print(String(len));
-    port->write('\r');
+    if (len <= 0 || len > 340)
+        return 3;
+    port->printf("AT+SBDWB=%d\r", len);
     int code = consume(F("READY\r\n"));
 #ifdef DEBUG_ENABLED
     Serial.println("load_mo > write_req_res= " + String(code));
 #endif
     if (code != 0) return code;
+    
     // Write binary data to QLocate
     port->write(c, len);
     short s = checksum(c, len);
@@ -118,7 +119,8 @@ int QLocate::sbdwb(char const *c, int len) {
     Serial.print("        > res=");
     for (int i = 0; i < len; i++) Serial.print(buf[i], HEX);
     Serial.println("\n        > return=" + String(*buf));
-#endif
+#endif  
+    Serial.flush();
     if (buf[1] != '\r' || buf[2] != '\n') return -1;
     return buf[0] - '0';
 }
@@ -135,30 +137,24 @@ int QLocate::run_sbdix() {
     return 0;
 }
 
-// int parsing helper function
-int const COUNT_MAX = 75;
-int parse_ints(char const *c, int *i) {
-    int count = 0;
-    while (*c != '\n' && count < COUNT_MAX) {
-        *i = 0;
-        while (*c != ',' && *c != '\r' && count++ < 75) {
-            *i = 10 * *i + *c - '0';
-            count++;
-            c++;
-        }
-        c++;
-        i++;
-    }
-    return count <= COUNT_MAX;
+// Parses the result buffer of sbdix into sbdix_r
+bool parse_ints(char const *c, int *i) {
+    Serial.println(c);
+    Serial.flush();
+    sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i+1, i+2, i+3, i+4, i+5);
+    return 1;
 }
 
 int QLocate::end_sbdix() {
     // Ensure sbdix is sbdix is running and data is available
+    delay(15000);
     if (!sbdix_running || !port->available()) return -1;
     // Parse quake output
     char buf[75];
     port->readBytesUntil('\n', buf, 74);
-    return parse_ints(buf + 7, sbdix_r) - 1;
+    Serial.println(buf);
+    Serial.flush();
+    return (parse_ints(buf + 8, sbdix_r) - 1);
 }
 
 int QLocate::sbdrb() {
@@ -175,7 +171,7 @@ int QLocate::sbdrb() {
     Serial.println("sbdrb > recieving message size= " + String(size));
 #endif
     if (size + 2 != (unsigned short)port->readBytes(message.mes, size + 2))
-        return 0;  // Quake::Message read fails
+        return 2;  // Quake::Message read fails
     s = checksum(message.mes, size);
     if (((s & 0xFF) << 8 | (s >> 8)) != *(short *)(message.mes + size)) {
         return 1;  // Checksum error detected
@@ -195,6 +191,8 @@ QuakeMessage &QLocate::get_message() { return message; }
 int QLocate::consume(String res) {
     // Read in current port input
     char buf[res.length() + 1];
+
+    delay(timeout);
     int len = port->readBytes(buf, res.length());
     buf[len] = '\0';
     // Determine status code

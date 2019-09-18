@@ -1,7 +1,6 @@
 #ifndef PIKSI_HPP_
 #define PIKSI_HPP_
 
-#include <HardwareSerial.h>
 #include <GPSTime.hpp>
 #include <array>
 #include "../Devices/Device.hpp"
@@ -13,7 +12,7 @@
 #include "../libsbp/settings.h"
 #include "../libsbp/system.h"
 #include "../libsbp/user.h"
-
+#include <HardwareSerial.h>
 namespace Devices {
 /**
  * @brief Device class for interacting with the Piksi GPS system.

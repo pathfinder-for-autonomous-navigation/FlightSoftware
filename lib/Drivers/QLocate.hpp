@@ -90,7 +90,8 @@ class QLocate : public Device {
     virtual int end_sbdix();
 
     /*! Reads data from the MT buffer on the QLocate into message. Returns 0 for
-     *  success, -1 for no response/running sbdix, and 1 for unexpected input.
+     *  success, -1 for no response/running sbdix, 1 for unexpected input, and
+     *  2 for incorrect message size. 
      */
     virtual int sbdrb();
 
@@ -121,6 +122,14 @@ class QLocate : public Device {
     short checksum(char const *c, int len);
 
     unsigned char nr_pin_;
+    private:
+    /*! Parses the data returned from requesting SBD transfer (AT+SBDIX)
+    Example: 
+        char const *c = "SBDI: 1, 2173, 1, 87, 429, 0";
+        This function would parse c into 
+            i = {1, 2173, 1, 87, 429, 0};
+    */
+    bool parse_ints(char const *c, int *i);
 };
 }  // namespace Devices
 
