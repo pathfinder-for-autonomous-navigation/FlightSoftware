@@ -38,14 +38,6 @@ class SerializableStateFieldBase : virtual public StateFieldBase {
  */
 template <typename T>
 class SerializableStateField : public StateField<T>, virtual public SerializableStateFieldBase {
-   private:
-    /**
-     * @brief Null deleter is a utility used by the deserialize() functions
-     * to prevent the shared_ptr created within these functions from deallocating
-     * static memory.
-     */
-    static void _null_deleter(T *) {}
-
    protected:
     std::shared_ptr<Serializer<T>> _serializer;
 
@@ -74,7 +66,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * into the state field value.
      */
     void deserialize() override {
-        std::shared_ptr<T> val_ptr(&(this->_val), &SerializableStateField<T>::_null_deleter);
+        std::shared_ptr<T> val_ptr(std::shared_ptr<T>{}, &(this->_val));
         _serializer->deserialize(val_ptr);
     }
 
@@ -85,7 +77,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * @param val Provided character array.
      */
     bool deserialize(const char *val) override {
-        std::shared_ptr<T> val_ptr(&(this->_val), &SerializableStateField<T>::_null_deleter);
+        std::shared_ptr<T> val_ptr(std::shared_ptr<T>{}, &(this->_val));
         return _serializer->deserialize(val, val_ptr);
     }
 
