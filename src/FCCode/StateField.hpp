@@ -46,8 +46,7 @@ class StateField : public virtual StateFieldBase {
 
     /**
      * @brief Returns a generic pointer to this state field. Useful for creating
-     * collections of StateFields. If the field is not initialized, returns a null
-     * pointer.
+     * collections of StateFields.
      *
      * @return StateFieldBase* Generic pointer to this state field.
      */
