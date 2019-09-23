@@ -40,11 +40,13 @@ template <typename T>
 class SerializableStateField : public StateField<T>, virtual public SerializableStateFieldBase {
    protected:
     std::shared_ptr<Serializer<T>> _serializer;
+    std::shared_ptr<T> val_ptr;
 
    public:
     SerializableStateField(const std::string &name, const bool ground_writable,
                            const Serializer<T> &s)
-        : StateField<T>(name, false, ground_writable) {
+        : StateField<T>(name, false, ground_writable),
+          val_ptr(std::shared_ptr<T>{}, &(this->_val)) {
         _serializer = std::make_shared<Serializer<T>>(s);
     }
 
@@ -65,10 +67,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * @brief Deserialize field data from the internally contained bitset and store
      * into the state field value.
      */
-    void deserialize() override {
-        std::shared_ptr<T> val_ptr(std::shared_ptr<T>{}, &(this->_val));
-        _serializer->deserialize(val_ptr);
-    }
+    void deserialize() override { _serializer->deserialize(val_ptr); }
 
     /**
      * @brief Deserialize field data from the provided character array and store
