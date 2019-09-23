@@ -2,6 +2,7 @@
 #include <Serializer.hpp>
 #include <iostream>
 #include <memory>
+#include <sstream>
 
 // ============================================================================================= //
 //                                      Helper methods                                           //
@@ -147,6 +148,17 @@ void test_int_serializer() {
     test_value<T>(serializer, 3, 2);
     test_value<T>(serializer, 4, 4);
     test_value<T>(serializer, 5, 4);
+
+    // Test string-based deserialization
+    serializer.reset(new Serializer<T>(0, 10, 3));
+    auto val_ptr = std::make_shared<T>();
+
+    TEST_ASSERT(serializer->deserialize("0", val_ptr));
+    serializer->deserialize(val_ptr);
+    TEST_ASSERT_EQUAL(0, *val_ptr);
+    TEST_ASSERT(serializer->deserialize("1", val_ptr));
+    serializer->deserialize(val_ptr);
+    TEST_ASSERT_EQUAL(0, *val_ptr);
 }
 
 /**
@@ -218,6 +230,20 @@ void test_sint_serializer() {
     test_value<signed int>(serializer, -4, -5);
     test_value<signed int>(serializer, -2, -5);
     test_value<signed int>(serializer, -1, -1);
+
+    // Test string-based deserialization
+    serializer.reset(new Serializer<signed int>(-1, 10, 1));
+    auto val_ptr = std::make_shared<signed int>();
+
+    TEST_ASSERT(serializer->deserialize("-1", val_ptr));
+    serializer->deserialize(val_ptr);
+    TEST_ASSERT_EQUAL(-1, *val_ptr);
+    TEST_ASSERT(serializer->deserialize("3", val_ptr));
+    serializer->deserialize(val_ptr);
+    TEST_ASSERT_EQUAL(-1, *val_ptr);
+    TEST_ASSERT(serializer->deserialize("10", val_ptr));
+    serializer->deserialize(val_ptr);
+    TEST_ASSERT_EQUAL(10, *val_ptr);
 }
 
 template <typename T>
@@ -253,6 +279,22 @@ void test_float_or_double_serializer() {
     }
     test_value_float_or_double<T>(serializer, 4, 3, threshold);
     test_value_float_or_double<T>(serializer, -2, -1, threshold);
+
+    // Test string-based deserialization
+    for (size_t i = 0; i < 1000; i++) {
+        T x = -1.0 + i * 4.0 / 1000;
+
+        std::ostringstream ss;
+        ss << x;
+        const std::string str = ss.str();
+        TEST_ASSERT(serializer->deserialize(str.c_str(), val_ptr));
+        serializer->deserialize(val_ptr);
+        if (std::is_same<T, float>::value) {
+            TEST_ASSERT_FLOAT_WITHIN(threshold, x, *val_ptr);
+        } else {
+            TEST_ASSERT_DOUBLE_WITHIN(threshold, x, *val_ptr);
+        }
+    }
 }
 
 /**

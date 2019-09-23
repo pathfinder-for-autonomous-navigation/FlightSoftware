@@ -90,15 +90,14 @@ int QLocate::sbdwb(char const *c, int len) {
     // Clear serial buffer
     port->clear();
     // Request to write binary data
-    if (len <= 0 || len > 340)
-        return 3;
+    if (len <= 0 || len > 340) return 3;
     port->printf("AT+SBDWB=%d\r", len);
     int code = consume(F("READY\r\n"));
 #ifdef DEBUG_ENABLED
     Serial.println("load_mo > write_req_res= " + String(code));
 #endif
     if (code != 0) return code;
-    
+
     // Write binary data to QLocate
     port->write(c, len);
     short s = checksum(c, len);
@@ -119,7 +118,7 @@ int QLocate::sbdwb(char const *c, int len) {
     Serial.print("        > res=");
     for (int i = 0; i < len; i++) Serial.print(buf[i], HEX);
     Serial.println("\n        > return=" + String(*buf));
-#endif  
+#endif
     Serial.flush();
     if (buf[1] != '\r' || buf[2] != '\n') return -1;
     return buf[0] - '0';
@@ -141,7 +140,7 @@ int QLocate::run_sbdix() {
 bool parse_ints(char const *c, int *i) {
     Serial.println(c);
     Serial.flush();
-    sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i+1, i+2, i+3, i+4, i+5);
+    sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i + 1, i + 2, i + 3, i + 4, i + 5);
     return 1;
 }
 

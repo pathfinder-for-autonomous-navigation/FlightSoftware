@@ -1,9 +1,9 @@
 #include "SpikeAndHold.hpp"
+#include <Arduino.h>
 #include <algorithm>
 #include <climits>
 #include <tuple>
 #include "../Devices/Device.hpp"
-#include <Arduino.h>
 
 using namespace Devices;
 
