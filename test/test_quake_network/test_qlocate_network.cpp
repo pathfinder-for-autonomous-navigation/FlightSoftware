@@ -2,16 +2,16 @@
 #include <string>
 #include <vector>
 #include "../lib/Drivers/QLocate.hpp"
-#include "../lib/utils/QuakeMessage.hpp"
-#include <Arduino.h>
 #include "../test_quake/quake_common.h"
-
+#include "core_pins.h"
+#include "usb_serial.h"
 // name, port, pin number, timeout
 Devices::QLocate q("Test_Quake_With_Network", &Serial3, Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT);
 
 /*Tests that when we requst to start an SBD session by sending AT+SBDIX, that 
  we get the expected response */
 void test_sbdix_with_network(void) {
+
     // Load a message on ISU
     std::string testString("Send this message to ISU");
     TEST_ASSERT_EQUAL(WRITE_OK, q.sbdwb(testString.c_str(), testString.length()));
@@ -58,8 +58,7 @@ void test_sbdrb_with_network(void){
 }
 
 // TODO: need a way to get messages
-
-void setup() {
+int main(void) {
     delay(5000);
     Serial.begin(9600);
     pinMode(13, OUTPUT);
@@ -67,7 +66,7 @@ void setup() {
     while(!Serial);
     UNITY_BEGIN();
     RUN_TEST(test_sbdix_with_network);
-    RUN_TEST(test_sbdrb_with_network);
+    // RUN_TEST(test_sbdrb_with_network);
     UNITY_END();
+    return 0;
 }
-

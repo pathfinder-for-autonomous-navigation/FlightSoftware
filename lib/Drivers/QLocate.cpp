@@ -111,16 +111,24 @@ int QLocate::sbdwb(char const *c, int len) {
     Serial.print((char)(s >> 8), HEX);
     Serial.println((char)s, HEX);
 #endif
+
     // Process QLocate response
-    char buf[4];
-    len = port->readBytes(buf, 3);
-    buf[len] = '\0';
+    char buf[6];
+    memset(buf, '\0', 6);
+    // If 5 bytes are not read before timeout, 
+    // then expect to read 1\r\n after 60 seconds
+    len = port->readBytes(buf, 5);
+
 #ifdef DEBUG_ENABLED
     Serial.print("        > res=");
     for (int i = 0; i < len; i++) Serial.print(buf[i], HEX);
     Serial.println("\n        > return=" + String(*buf));
 #endif  
-    Serial.flush();
+    // Example response: 0\r\n0\r
+    if (len < 5) {
+        delay(60*1000);
+        len = port->readBytes(buf, 3);
+    }
     if (buf[1] != '\r' || buf[2] != '\n') return -1;
     return buf[0] - '0';
 }
@@ -138,9 +146,7 @@ int QLocate::run_sbdix() {
 }
 
 // Parses the result buffer of sbdix into sbdix_r
-bool parse_ints(char const *c, int *i) {
-    Serial.println(c);
-    Serial.flush();
+bool QLocate::parse_ints(char const *c, int *i) {
     sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i+1, i+2, i+3, i+4, i+5);
     return 1;
 }
@@ -152,8 +158,6 @@ int QLocate::end_sbdix() {
     // Parse quake output
     char buf[75];
     port->readBytesUntil('\n', buf, 74);
-    Serial.println(buf);
-    Serial.flush();
     return (parse_ints(buf + 8, sbdix_r) - 1);
 }
 

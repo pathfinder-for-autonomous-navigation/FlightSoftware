@@ -15,10 +15,12 @@ void test_sbdix_no_network(void) {
 
     // Start SBD session
     TEST_ASSERT_EQUAL(0, q.run_sbdix()); // Expect 0 unless SBD session already running
+    // Recieved: +SBDIX: 32, 8, 2, 0, 0, 0\r\n0\r
 
     // Cannot send messages when we are in SBD session
     std::string testString("Test SBDIX already running");
     int statusCode = q.sbdwb(testString.c_str(), testString.length());
+    // No message was sent since SBDIX already running
     TEST_ASSERT_EQUAL(-1, statusCode);
 
     // Wait to talk to Iridium

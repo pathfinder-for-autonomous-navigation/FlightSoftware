@@ -1,33 +1,34 @@
-Test Observations:
+Quake Test Summary and Logs
 
-Not specifying the right length does not seem to be a problem
-Specifying 0 or 341 for message size causes a 1 to return
+------------------------------------------------------------------------------
+Notes:
+------------------------------------------------------------------------------
+Not able to test SBDWB timeout or wrong checksum. 
 
+Serial Pass Through Arduino script with the printed \r and \n in test_quake dir
 
-ISU AT Command Reference pg 105
-Note: AT+SBDWB returns one of the 4 responses above (0, 1, 2, 3) with 0 indicating success. In
-all cases except response 1, the response is followed by result code ‘OK’. 
-
-
+------------------------------------------------------------------------------
+Background: 
+------------------------------------------------------------------------------
 GSS is responsible for:
      storing and forwarding messages from the ISU to the Host VA Application 
      storing messages from the VA Application to forward to the ISU
 ISU communicates with the GSS via the Iridium satellite constellation
 
-
 Driver should support:
 sbdix - initiate an SBD Session Extended
 sbdwb - write binary data to Quake
 sbdrb - read binary data from Quake
-6
-MO with MT Message (Send and receive message in one session)
 
+------------------------------------------------------------------------------
+MO with MT Message (Send and receive message in one session) Example: 
+------------------------------------------------------------------------------
 AT+SBDWB=351 - Tell Quake that you will send 351 B message
 Receive a READY from Quake
 Send your message followed by 2 byte checksum 
 Receive 0 if message was loaded successfully
 AT+SBDIX - Tell Quake to initiate SBD transfer
-Receive +SBDI: 1, 2173, 1, 87, 429, 0
+Receive +SBDIX: 1, 2173, 1, 87, 429, 0
      Message was sent succesfully using MOMSN 2173
      A 429 message received using MTMSN 87
      No other MT messages queued
@@ -35,3 +36,48 @@ AT+SBDD0 - tell Quake to clear message queue from MO buffer
 Receive 0 when message buffer cleared successfully 
 AT+SBDRB - tell Quake to transfer message
 Receive 2B length + 429 B message + 2B checksum
+
+------------------------------------------------------------------------------
+Responses to SBDWB:
+------------------------------------------------------------------------------
+ISU AT Command Reference pg 105
+Note: AT+SBDWB returns one of the 4 responses above (0, 1, 2, 3) with 0 
+indicating success. In all cases except response 1, 
+the response is followed by result code ‘OK’.
+
+The possible responses to SBDWB is one of: 
+
+0\r\n0\r  
+2\r\n0\r 
+3\r\n0\r
+1\r\n 
+
+------------------------------------------------------------------------------
+9/22/19:
+------------------------------------------------------------------------------
+[Resolved] Incorrect offset when parsing the response to AT+SBDIX 
+
+Sent: AT+SBDIX
+Recieved: +SBDIX: 32, 8, 2, 0, 0, 0\r\n0\r
+
+Sent: AT+SBDWB=66
+Recieved: READY\r\n
+Sent: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ |
+Recieved: 0\r\n0\r
+Sent: AT+SBDIX
+Recieved: +SBDIX: 32, 8, 2, 0, 0, 0\r\n0\r
+
+Sent: AT+SBDWB=4
+Recieved: READY\r\n
+Sent: ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ |
+Recieved: 2\r\n0\r
+Sent: AT+SBDIX
+Recieved: +SBDIX: 32, 8, 2, 0, 0, 0\r\n0\r
+
+The last "0\r" after ending the the message was not read from the port. 
+This is likely the OK result code that ISU AT Command Reference pg 105
+refers to. Upon letting the SBDWB timeout:
+
+Sent: AT+SBDWB=69
+Recieved: READY\r\n
+Recieved: 1\r\n
