@@ -90,15 +90,14 @@ int QLocate::sbdwb(char const *c, int len) {
     // Clear serial buffer
     port->clear();
     // Request to write binary data
-    if (len <= 0 || len > 340)
-        return 3;
+    if (len <= 0 || len > 340) return 3;
     port->printf("AT+SBDWB=%d\r", len);
     int code = consume(F("READY\r\n"));
 #ifdef DEBUG_ENABLED
     Serial.println("load_mo > write_req_res= " + String(code));
 #endif
     if (code != 0) return code;
-    
+
     // Write binary data to QLocate
     port->write(c, len);
     short s = checksum(c, len);

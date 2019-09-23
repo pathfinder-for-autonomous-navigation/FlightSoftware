@@ -4,8 +4,8 @@
  * was only resolved by putting this import below the others so that gcc's built-in definition
  * takes precedence.
  */
-#include "MainControlLoopTask.hpp"
-#include "StateFieldRegistry.hpp"
+#include "FCCode/MainControlLoopTask.hpp"
+#include "FCCode/StateFieldRegistry.hpp"
 
 #include <ChRt.h>
 #include <core_pins.h>
@@ -15,7 +15,7 @@ StateFieldRegistry registry;
 MainControlLoopTask fcp_task(registry);
 
 void pan_system_setup() {
-    fcp_task.init();
+    fcp_task.init();  // Inits the debug console
     while (true) {
         fcp_task.execute();
         digitalWrite(13, HIGH);

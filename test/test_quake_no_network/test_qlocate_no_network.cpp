@@ -7,12 +7,12 @@
 #include "usb_serial.h"
 
 // name, port, pin number, timeout
-Devices::QLocate q("Test_Quake_No_Network", &Serial3, Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT);
+Devices::QLocate q("Test_Quake_No_Network", &Serial3, Devices::QLocate::DEFAULT_NR_PIN,
+                   Devices::QLocate::DEFAULT_TIMEOUT);
 
-// Test initializing SBD session with Quake 
+// Test initializing SBD session with Quake
 // Expecting no network connection
 void test_sbdix_no_network(void) {
-
     // Start SBD session
     TEST_ASSERT_EQUAL(0, q.run_sbdix()); // Expect 0 unless SBD session already running
     // Recieved: +SBDIX: 32, 8, 2, 0, 0, 0\r\n0\r
@@ -24,12 +24,15 @@ void test_sbdix_no_network(void) {
     TEST_ASSERT_EQUAL(-1, statusCode);
 
     // Wait to talk to Iridium
-    while(!Serial3.available());
+    while (!Serial3.available())
+        ;
     delay(100);
-    while(!Serial3.available());
+    while (!Serial3.available())
+        ;
     // SBD session should still be running
     TEST_ASSERT_TRUE(q.sbdix_is_running());
-    TEST_ASSERT_EQUAL(0, q.end_sbdix()); // Expect 0 since sbdix should return response codes always
+    TEST_ASSERT_EQUAL(0,
+                      q.end_sbdix());  // Expect 0 since sbdix should return response codes always
 
     const int *_pRes = q.get_sbdix_response();
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
@@ -50,4 +53,3 @@ int main(void) {
     UNITY_END();
     return 0;
 }
-

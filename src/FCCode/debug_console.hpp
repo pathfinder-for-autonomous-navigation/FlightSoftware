@@ -1,9 +1,14 @@
 #ifndef DEBUG_CONSOLE_HPP_
 #define DEBUG_CONSOLE_HPP_
 
-#ifndef DESKTOP
+#ifdef DESKTOP
+#include <chrono>
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::milliseconds milliseconds;
+#else
 #include <ChRt.h>
 #endif
+
 #include <map>
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
@@ -85,7 +90,7 @@ class debug_console {
 #ifndef DESKTOP
     static systime_t _start_time;
 #else
-    static unsigned int _start_time;
+    static Clock::time_point _start_time;
 #endif
 
     /**

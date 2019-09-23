@@ -10,12 +10,9 @@ MainControlLoopTask::MainControlLoopTask(StateFieldRegistry& registry)
         std::make_shared<ReadableStateField<signed int>>("prop.temp_inner", temperature_serializer);
     tank_outer_temperature =
         std::make_shared<WritableStateField<signed int>>("prop.temp_outer", temperature_serializer);
-    firing_time =
-        std::make_shared<WritableStateField<gps_time_t>>("gnc.manuever.time", gps_time_serializer);
 
     registry.add_readable(tank_inner_temperature);
     registry.add_writable(tank_outer_temperature);
-    registry.add_writable(firing_time);
 }
 
 void MainControlLoopTask::execute() { debug_task.execute(); }
