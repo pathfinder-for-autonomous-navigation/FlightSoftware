@@ -114,7 +114,7 @@ int QLocate::sbdwb(char const *c, int len) {
     // Process QLocate response
     char buf[6];
     memset(buf, '\0', 6);
-    // If 5 bytes are not read before timeout, 
+    // If 5 bytes are not read before timeout,
     // then expect to read 1\r\n after 60 seconds
     len = port->readBytes(buf, 5);
 
@@ -122,10 +122,10 @@ int QLocate::sbdwb(char const *c, int len) {
     Serial.print("        > res=");
     for (int i = 0; i < len; i++) Serial.print(buf[i], HEX);
     Serial.println("\n        > return=" + String(*buf));
-#endif  
+#endif
     // Example response: 0\r\n0\r
     if (len < 5) {
-        delay(60*1000);
+        delay(60 * 1000);
         len = port->readBytes(buf, 3);
     }
     if (buf[1] != '\r' || buf[2] != '\n') return -1;
@@ -146,7 +146,7 @@ int QLocate::run_sbdix() {
 
 // Parses the result buffer of sbdix into sbdix_r
 bool QLocate::parse_ints(char const *c, int *i) {
-    sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i+1, i+2, i+3, i+4, i+5);
+    sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i + 1, i + 2, i + 3, i + 4, i + 5);
     return 1;
 }
 

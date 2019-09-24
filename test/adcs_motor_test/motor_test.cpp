@@ -19,12 +19,12 @@
 #include <AD5254.hpp>
 #include <ADS1015.hpp>
 
-#include "../../src/adcs/utl/debug.hpp"
 #include "../../src/adcs/state_constants.hpp"
+#include "../../src/adcs/utl/debug.hpp"
 
+#include <Arduino.h>
 #include <Servo.h>
 #include <i2c_t3.h>
-#include <Arduino.h>
 
 #define RWA_WHEEL0_CW_PIN 26
 #define RWA_WHEEL0_CCW_PIN 39

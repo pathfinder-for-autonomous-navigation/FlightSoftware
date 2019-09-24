@@ -10,9 +10,9 @@
 // Cornell Univeristy
 //
 
-#include <ADS1015.hpp>
-#include <i2c_t3.h>
 #include <Arduino.h>
+#include <i2c_t3.h>
+#include <ADS1015.hpp>
 
 // ADS Face 6 - P17
 ADS1015 adc(&Wire2, ADS1015::ADDR::SSCL, 28, 1000000);

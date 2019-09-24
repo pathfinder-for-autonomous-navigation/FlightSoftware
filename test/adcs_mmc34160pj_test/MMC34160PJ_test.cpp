@@ -15,9 +15,9 @@
 #define DEBUG
 #include "../../src/adcs/utl/debug.hpp"
 
+#include <Arduino.h>
 #include <i2c_t3.h>
 #include <MMC34160PJ.hpp>
-#include <Arduino.h>
 
 MMC34160PJ mag;
 

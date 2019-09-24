@@ -13,7 +13,6 @@ Devices::QLocate q("Test_Quake_With_Network", &Serial3, Devices::QLocate::DEFAUL
 /*Tests that when we requst to start an SBD session by sending AT+SBDIX, that
  we get the expected response */
 void test_sbdix_with_network(void) {
-
     // Load a message on ISU
     std::string testString("Send this message to ISU");
     TEST_ASSERT_EQUAL(WRITE_OK, q.sbdwb(testString.c_str(), testString.length()));

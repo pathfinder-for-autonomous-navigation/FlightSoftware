@@ -14,7 +14,7 @@ Devices::QLocate q("Test_Quake_No_Network", &Serial3, Devices::QLocate::DEFAULT_
 // Expecting no network connection
 void test_sbdix_no_network(void) {
     // Start SBD session
-    TEST_ASSERT_EQUAL(0, q.run_sbdix()); // Expect 0 unless SBD session already running
+    TEST_ASSERT_EQUAL(0, q.run_sbdix());  // Expect 0 unless SBD session already running
     // Recieved: +SBDIX: 32, 8, 2, 0, 0, 0\r\n0\r
 
     // Cannot send messages when we are in SBD session

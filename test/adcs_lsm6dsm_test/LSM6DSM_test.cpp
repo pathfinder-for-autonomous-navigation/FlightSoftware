@@ -13,9 +13,9 @@
 #define DEBUG
 #include "../../src/adcs/utl/debug.hpp"
 
+#include <Arduino.h>
 #include <i2c_t3.h>
 #include <LSM6DSM.hpp>
-#include <Arduino.h>
 
 LSM6DSM gyro;
 

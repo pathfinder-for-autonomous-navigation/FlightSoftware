@@ -21,12 +21,12 @@ void test_sbdwb(void) {
     std::string testString(66, '~');
     TEST_ASSERT_EQUAL(WRITE_OK, q.sbdwb(testString.c_str(), testString.length()));
     delay(DEFAULT_DELAY);
-    // Send the same message again to verify that it's possible to do 
+    // Send the same message again to verify that it's possible to do
     // (it should be, since MO overwrites messages)
     TEST_ASSERT_EQUAL(WRITE_OK, q.sbdwb(testString.c_str(), testString.length()));
     delay(DEFAULT_DELAY);
 
-    std::string otherMsg ("Test write other message");
+    std::string otherMsg("Test write other message");
     TEST_ASSERT_EQUAL(WRITE_OK, q.sbdwb(otherMsg.c_str(), otherMsg.length()));
     delay(DEFAULT_DELAY);
 
