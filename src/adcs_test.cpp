@@ -7,8 +7,10 @@ Devices::ADCS adcs("adcs", Wire, Devices::ADCS::ADDRESS);
 #ifndef UNIT_TEST
 void setup() {
     adcs.setup();
-    Serial.println(adcs.is_functional());
 }
 
-void loop() {}
+void loop() {
+    Serial.println(adcs.is_functional());
+    delay(100);
+}
 #endif
