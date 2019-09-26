@@ -14,7 +14,7 @@ namespace Devices {
 
 class ADCS : public I2CDevice {
    public:
-    static constexpr unsigned int ADDRESS = 0x00;
+    static constexpr unsigned int ADDRESS = 0x4E;
     /** **/
     virtual bool i2c_ping() override;
     /** **/
@@ -42,9 +42,13 @@ class ADCS : public I2CDevice {
     /** **/
     void set_imu_mag_flt(float imu_mag_flt);
     /** **/
+    void get_who_am_i(unsigned char *who_am_i);
+    /** **/
     void get_rwa(float *rwa_speed_cmd_rd, float *rwa_speed_rd, float *rwa_ramp_rd);
     /** **/
-    void get_ssa(unsigned char &ssa_mode, float *ssa_vec_rd);
+    void get_ssa_vector(float *ssa_vector);
+    /** **/
+    void get_ssa_mode(unsigned char *ssa_mode);
     /** **/
     void get_ssa_adcs(float *ssa_adc_rd);
     /** **/
@@ -52,6 +56,48 @@ class ADCS : public I2CDevice {
     /** **/
     void update_hat();
 };
+
+enum Register : unsigned char {
+
+  WHO_AM_I = 0,
+  ENDIANNESS = 1,
+  ADCS_MODE = 2,
+  READ_POINTER = 3,
+
+  RWA_MODE = 4,
+  RWA_COMMAND = 5,
+  RWA_COMMAND_FLAG = 11,
+  RWA_MOMENTUM_FILTER = 12,
+  RWA_RAMP_FILTER = 13,
+  RWA_MOMENTUM_RD = 14,
+  RWA_RAMP_READ = 20,
+  
+  MTR_MODE = 26,
+  MTR_COMMAND = 27,
+  MTR_LIMIT = 33,
+  MTR_COMMAND_FLAG = 35,
+
+  SSA_MODE = 36,
+  SSA_SUN_VECTOR = 37,
+  SSA_VOLTAGE_FILTER = 43,
+  SSA_VOLTAGE_READ = 44,
+
+  IMU_MODE = 64,
+  IMU_MAG_READ = 65,
+  IMU_GYR_READ = 71,
+  IMU_GYR_TEMP_READ = 77,
+  IMU_MAG_FILTER = 79,
+  IMU_GYR_FILTER = 80,
+  IMU_GYR_TEMP_FILTER = 81,
+  IMU_GYR_TEMP_KP = 82,
+  IMU_GYR_TEMP_KI = 86,
+  IMU_GYR_TEMP_KD = 90,
+  IMU_GYR_TEMP_DESIRED = 94,
+
+  ADCS_HAVT = 95
+
+};
+
 }  // namespace Devices
 
 #endif
