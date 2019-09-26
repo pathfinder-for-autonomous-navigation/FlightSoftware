@@ -16,11 +16,28 @@ bool ADCS::i2c_ping() {
     get_who_am_i(&temp); 
     return temp==15;
     }
-void ADCS::i2c_point_and_read(unsigned char data_register, unsigned char* data, std::size_t len) {
+
+template <typename T>
+void ADCS::i2c_point_and_read(unsigned char data_register, T* data, std::size_t len) {
     //Devices:Register::READ_POINTER = 3
     i2c_write_to_subaddr(3, data_register);
     i2c_request_from(len);
     i2c_read(data, len);
+}
+inline float fp(unsigned char ui, float min, float max) {
+  return min + ((float) ui) * (max - min) / 255.0f;
+}
+void ADCS::i2c_read_float(unsigned char data_register, float* data, std::size_t len) {
+    unsigned char temp[len];
+    //float out[len] = {2.5};
+    i2c_point_and_read(Register::SSA_VOLTAGE_READ,temp,20);
+
+    for(unsigned int i = 0;i<len;i++){
+        data[i] = fp(temp[i], 0.0f, 3.3f);
+        //out[i] = 1.0f;
+        //data[i] = 1.0f;
+    }
+
 }
 
 void ADCS::set_mode(unsigned char mode) {}
@@ -73,5 +90,18 @@ void ADCS::get_ssa_mode(unsigned char* a) {
 
     //i2c_read_from_subaddr(Register::SSA_MODE, a, 1);
 }
-void ADCS::get_ssa_vector(float *b) {}
+void ADCS::get_ssa_vector(float *b) {
+    
+}
+
+void ADCS::get_ssa_voltage(float* b) {
+    //i2c_point_and_read(Register::SSA_VOLTAGE_READ, b, 20);
+    i2c_read_float(Register::SSA_VOLTAGE_READ,b,20);
+}
+//this method was reserved for debugging, probably don't use in flight?
+//it returns the raw char's corresponding the the encoded floats as chars
+void ADCS::get_ssa_voltage_char(unsigned char* b){
+    i2c_point_and_read(Register::SSA_VOLTAGE_READ,b,20);
+}
+
 void ADCS::update_hat() {}

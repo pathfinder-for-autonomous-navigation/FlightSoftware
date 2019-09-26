@@ -20,7 +20,10 @@ class ADCS : public I2CDevice {
     /** **/
     ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address);
     /** **/
-    void i2c_point_and_read(unsigned char data_register, unsigned char* data, std::size_t len);
+    template <typename T>
+    void i2c_point_and_read(unsigned char data_register, T* data, std::size_t len);
+    /** **/
+    void i2c_read_float(unsigned char data_register, float* data, std::size_t len);
     /** **/
     void set_mode(unsigned char mode);
     /** **/
@@ -49,6 +52,10 @@ class ADCS : public I2CDevice {
     void get_rwa(float *rwa_speed_cmd_rd, float *rwa_speed_rd, float *rwa_ramp_rd);
     /** **/
     void get_ssa_vector(float *ssa_vector);
+    /** **/
+    void get_ssa_voltage(float *ssa_voltage);
+    /** **/
+    void get_ssa_voltage_char(unsigned char* ssa_voltage);
     /** **/
     void get_ssa_mode(unsigned char *ssa_mode);
     /** **/
