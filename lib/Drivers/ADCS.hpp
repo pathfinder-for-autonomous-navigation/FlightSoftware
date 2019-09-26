@@ -20,6 +20,8 @@ class ADCS : public I2CDevice {
     /** **/
     ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address);
     /** **/
+    void i2c_point_and_read(unsigned char data_register, unsigned char* data, std::size_t len);
+    /** **/
     void set_mode(unsigned char mode);
     /** **/
     void set_read_ptr(unsigned short read_ptr);

@@ -16,6 +16,13 @@ bool ADCS::i2c_ping() {
     get_who_am_i(&temp); 
     return temp==15;
     }
+void ADCS::i2c_point_and_read(unsigned char data_register, unsigned char* data, std::size_t len) {
+    //Devices:Register::READ_POINTER = 3
+    i2c_write_to_subaddr(3, data_register);
+    i2c_request_from(len);
+    i2c_read(data, len);
+}
+
 void ADCS::set_mode(unsigned char mode) {}
 void ADCS::set_ssa_mode(unsigned char ssa_mode) {}
 void ADCS::set_mtr_cmd(const float *a) {}
@@ -30,10 +37,12 @@ void ADCS::get_who_am_i(unsigned char* who_am_i) {
     
     //this block seems to work...
     //I'm not sure if the i2c_finish() is needed
-    i2c_write_to_subaddr(Register::READ_POINTER, Register::WHO_AM_I);
-    i2c_request_from(1);
-    i2c_read(who_am_i, 1);
+    // i2c_write_to_subaddr(Register::READ_POINTER, Register::WHO_AM_I);
+    // i2c_request_from(1);
+    // i2c_read(who_am_i, 1);
     
+    i2c_point_and_read(Register::WHO_AM_I, who_am_i, 1);
+
     //i2c_finish();
 
     // i2c_write_to_subaddr(Register::READ_POINTER, Register::WHO_AM_I);
@@ -50,10 +59,11 @@ void ADCS::get_who_am_i(unsigned char* who_am_i) {
 void ADCS::get_rwa(float *a, float *b, float *c) {}
 void ADCS::get_imu(float *a, float *b) {}
 void ADCS::get_ssa_mode(unsigned char* a) {
-    
-    i2c_write_to_subaddr(Register::READ_POINTER, Register::SSA_MODE);
-    i2c_request_from(1);
-    i2c_read(a, 1);
+
+    i2c_point_and_read(Register::SSA_MODE, a, 1);
+    // i2c_write_to_subaddr(Register::READ_POINTER, Register::SSA_MODE);
+    // i2c_request_from(1);
+    // i2c_read(a, 1);
     
     //the block below causes no errors ADCS, but may not be reading correctly.
     // i2c_write_to_subaddr(Register::READ_POINTER, Register::SSA_MODE);
