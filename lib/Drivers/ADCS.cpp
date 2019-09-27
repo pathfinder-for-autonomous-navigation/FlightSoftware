@@ -99,10 +99,10 @@ void ADCS::set_rwa_mode(unsigned char rwa_mode, std::array<float,3> rwa_cmd){
     unsigned char cmd[6];
     for(int i = 0;i<3;i++){
         //comp is the converted short that will be re-assembled
-        unsigned short comp;
-        if(rwa_mode == 0)
+        unsigned short comp = 0;
+        if(rwa_mode == 1)
             comp = uc(rwa_cmd[i],-680.678f,680.678f);
-        else
+        else if(rwa_mode == 2)
             comp = uc(rwa_cmd[i],-0.0041875f,0.0041875f);
         cmd[2*i] = comp >> 8;
         cmd[2*i+1] = comp & 0xFF; 
@@ -114,7 +114,18 @@ void ADCS::set_rwa_mode(unsigned char rwa_mode, std::array<float,3> rwa_cmd){
 void ADCS::get_who_am_i(unsigned char* who_am_i) {
     i2c_point_and_read(Register::WHO_AM_I, who_am_i, 1);
 }
-void ADCS::get_rwa(float *a, float *b, float *c) {}
+//Tanishq's old get_rwa header
+//void ADCS::get_rwa(float *a, float *b, float *c) {
+void ADCS::get_rwa(std::array<float, 3> rwa_momentum_rd, std::array<float, 3> rwa_ramp_rd) {
+    unsigned char readin[12];
+    i2c_point_and_read(Register::RWA_MOMENTUM_RD, readin, 12);
+
+    for(int i=0;i<6;i++){
+        rwa_momentum_rd[i] = 0;
+    }
+
+
+}
 void ADCS::get_imu(float *a, float *b) {}
 void ADCS::get_ssa_mode(unsigned char* a) {
     i2c_point_and_read(Register::SSA_MODE, a, 1);
