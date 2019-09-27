@@ -116,14 +116,20 @@ void ADCS::get_who_am_i(unsigned char* who_am_i) {
 }
 //Tanishq's old get_rwa header
 //void ADCS::get_rwa(float *a, float *b, float *c) {
-void ADCS::get_rwa(std::array<float, 3> rwa_momentum_rd, std::array<float, 3> rwa_ramp_rd) {
+void ADCS::get_rwa(std::array<float, 3>& rwa_momentum_rd, std::array<float, 3>& rwa_ramp_rd) {
     unsigned char readin[12];
     i2c_point_and_read(Register::RWA_MOMENTUM_RD, readin, 12);
 
-    for(int i=0;i<6;i++){
-        rwa_momentum_rd[i] = 0;
+    for(int i=0;i<3;i++){
+        unsigned short c = (((unsigned short)readin[2*i]) << 8) | (0xFF & readin[2*i+1]);
+        rwa_momentum_rd[i] = fp(c,-0.009189f,0.009189f);
     }
 
+    //starting from readin[6]
+    for(int i=3;i<6;i++){
+        unsigned short c = (((unsigned short)readin[2*i]) << 8) | (0xFF & readin[2*i+1]);
+        rwa_ramp_rd[i] = fp(c,-0.0041875f,0.0041875);
+    }
 
 }
 void ADCS::get_imu(float *a, float *b) {}

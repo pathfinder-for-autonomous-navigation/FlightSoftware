@@ -47,6 +47,30 @@ bool test_set_rwa_mode(){
 
     return true;
 }
+bool test_get_rwa(){
+    std::array<float, 3> rwa_momentum_rd = {1.0f,1.0f,1.0f};
+    std::array<float, 3> rwa_ramp_rd = {1.0f,1.0f,1.0f};;
+
+    std::array<float, 3> rwa_momentum_state = {0.004f, 0.005f, -0.006f}; // Momentum read
+    std::array<float, 3> rwa_ramp_state = {0.001f, 0.002f, -0.003f};
+
+    adcs.get_rwa(rwa_momentum_rd, rwa_ramp_rd);
+
+    Serial.printf("float: %f\n",rwa_momentum_rd[0]);
+    Serial.printf("float: %f\n",rwa_momentum_rd[1]);
+    Serial.printf("float: %f\n",rwa_momentum_rd[2]);
+
+    return rwa_momentum_rd == rwa_momentum_state && rwa_ramp_rd == rwa_ramp_state;
+}
+void helper(std::array<float, 3> in){
+    in[0] = 0.5f;
+}
+void test_array_mechanics(){
+    std::array<float,3> given = {0.0f,1.0f,2.0f};
+    helper(given);
+
+    Serial.printf("helper: %f\n",given[0]);
+}
 bool test_get_ssa_voltage(){
     float temp[20];
     adcs.get_ssa_voltage(temp);
@@ -87,20 +111,12 @@ void loop() {
     //no way to test this;
     Serial.printf("set_rwa_mode: %d\n", test_set_rwa_mode());
 
+    //Serial.printf("get_rwa: %d\n", test_get_rwa());
+    test_array_mechanics();
     //no way to test this;
     Serial.printf("set_mtr_command: %d\n", test_set_mtr_command());
 
-    //learning bitwise ops
-    unsigned short orig = 50;
-
-    unsigned char a = orig >> 8;
-    unsigned char b = orig & 0xFF;
-
-    unsigned short c = (((unsigned short)a) << 8) | (0xFF & b);
-
-    //short c = (((short)a) << 8) | (0x00ff & b);
-
-    Serial.printf("test: %u\n",c);
+    //unsigned short c = (((unsigned short)a) << 8) | (0xFF & b);
 
     Serial.println("");
     delay(1000);
