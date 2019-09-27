@@ -9,6 +9,7 @@
 
 #include <I2CDevice.hpp>
 #include <string>
+#include <array>
 
 namespace Devices {
 
@@ -23,7 +24,7 @@ class ADCS : public I2CDevice {
     template <typename T>
     void i2c_point_and_read(unsigned char data_register, T* data, std::size_t len);
     /** **/
-    void i2c_read_float(unsigned char data_register, float* data, std::size_t len);
+    void i2c_read_float(unsigned char data_register, float* data, const float min, const float max, std::size_t len);
     /** **/
     void set_mode(unsigned char mode);
     /** **/
@@ -37,7 +38,13 @@ class ADCS : public I2CDevice {
     /** **/
     void set_rwa_ramp_flt(float rwa_ramp_flt);
     /** **/
-    void set_mtr_cmd(float const *mtr_cmd);
+    void set_mtr_mode(const unsigned char mtr_mode);
+    /** **/
+    //void set_mtr_cmd(float const *mtr_cmd);
+    /** **/
+    void set_mtr_cmd(const std::array<float, 3> mtr_cmd);
+    /** **/
+    void set_mtr_limit(float const* mtr_limit);
     /** **/
     void set_ssa_adc_flt(float ssa_adc_flt);
     /** **/

@@ -19,51 +19,62 @@ bool test_get_who_am_i(){
     //Serial.println(temp[0]);
 }
 
-bool test_get_ssa_mode(){
-    unsigned char temp1 = 3;
-    adcs.get_ssa_mode(&temp1);
-    
-    Serial.println(temp1);
-    return temp1 == 0;
-}
+bool test_getset_ssa_mode(){
+    //state.cpp default is 0
+    adcs.set_ssa_mode(1);
+    //should change from 4 to 1
+    unsigned char temp = 4;
+    adcs.get_ssa_mode(&temp);
+    return temp == 1;
 
-void test_get_ssa_voltage(){
+}
+bool test_set_mtr_command(){
+    std::array<float,3> cmd = {0.01f,0.01f,-0.01f};
+
+    adcs.set_mtr_cmd(cmd);
+
+    return true;
+}
+bool test_get_ssa_voltage(){
     float temp[20];
     adcs.get_ssa_voltage(temp);
 
     for(unsigned int i = 0;  i < sizeof(temp)/sizeof(temp[0]); i++){
-        Serial.printf("%lf\n",temp[i]);
+        //Serial.printf("%lf\n",temp[i]);
     }
 
-    unsigned char rawdata[20];
-    adcs.get_ssa_voltage_char(rawdata);
-    for(unsigned int i = 0;  i < sizeof(temp)/sizeof(temp[0]); i++){
-        Serial.printf("%u\n",rawdata[i]);
+    float reference[20] = 
+    {1.0f, 2.0f, 3.0f, 0.0f, 0.0f, // Voltage read
+     1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
+     1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
+     1.0f, 2.0f, 3.0f, 0.0f, 0.0f};
+
+    bool ret = true;
+    //check to make sure returned values are within 0.02
+    for(unsigned int i=0; i< sizeof(temp)/sizeof(temp[0]); i++){
+        if(abs(temp[i]-reference[i])>0.02){
+            ret = false;
+        }
     }
 
+    return ret;
 
-    // unsigned char temp[20];
-    // adcs.get_ssa_voltage_char(temp);
-    
-    // for(unsigned int i = 0;  i < sizeof(temp)/sizeof(temp[0]); i++){
-    //     Serial.printf("%c\n",temp[i]);
-    // }
 
 }
 
 void loop() {
     //Serial.println(adcs.is_functional());
     Serial.printf("get_who_am_i: %d\n", test_get_who_am_i());
-    delay(100);
     
-    Serial.printf("get_ssa_mode: %d\n", test_get_ssa_mode());
-    delay(100);
+    Serial.printf("set_ssa_mode: %d\n", test_getset_ssa_mode());
 
-    test_get_ssa_voltage();
-    delay(100);
+    //Serial.printf("get_ssa_mode: %d\n", test_get_ssa_mode());
 
-    Serial.printf("3 serialized into a char: %u",(unsigned char)231.81f);
-    
+    Serial.printf("get_ssa_voltage: %d\n", test_get_ssa_voltage());
+
+    //no way to test this;
+    Serial.printf("set_mtr_command: %d\n", test_set_mtr_command());
+
     Serial.println("");
     delay(1000);
 }
