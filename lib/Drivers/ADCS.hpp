@@ -30,9 +30,7 @@ class ADCS : public I2CDevice {
     /** **/
     void set_read_ptr(unsigned short read_ptr);
     /** **/
-    void set_rwa_mode(unsigned char rwa_mode, float const *rwa_cmd);
-    /** **/
-    void set_rwa_cmd(float const *rwa_cmd);
+    void set_rwa_mode(unsigned char rwa_mode, std::array<float,3> rwa_cmd);
     /** **/
     void set_rwa_speed_flt(float rwa_speed_flt);
     /** **/

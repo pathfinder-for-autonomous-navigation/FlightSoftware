@@ -72,38 +72,45 @@ void ADCS::set_ssa_mode(unsigned char ssa_mode) {
     i2c_write_to_subaddr(Register::SSA_MODE, ssa_mode);
 }
 void ADCS::set_mtr_mode(const unsigned char mtr_mode){
-
+    i2c_write_to_subaddr(Register::MTR_MODE, mtr_mode);
 }
-// void ADCS::set_mtr_cmd(const float *a) {
-//     unsigned char cmd[6];
-//     for(int i = 0;i<6;i++){
-//         cmd[i] = uc(a[i],-)
-//     }
-//     i2c_write_to_subaddr(Register::MTR_COMMAND, std::array<float,3>);
-// }
+
 void ADCS::set_mtr_cmd(const std::array<float, 3> mtr_cmd){
-    // unsigned short cmd[6];
-    // for(int i =0;i<6;i++){
-    //     cmd[i] = uc(mtr_cmd[i],-0.05667f,0.05667f);
-    // }
-    // i2c_write_to_subaddr(Register::MTR_COMMAND,cmd);
-    // unsigned char cmd[3];
-    // for(int i =0;i<3;i++){
-    //    cmd[i] = uc(mtr_cmd[i],-0.05667f,0.05667f);
-    // }
-    // i2c_write_to_subaddr(Register::MTR_COMMAND,cmd,3);
+    //this method should work
     unsigned char cmd[6];
     for(int i = 0;i<3;i++){
+        //comp is the converted short that will be re-assembled
         unsigned short comp = uc(mtr_cmd[i],-0.05667f,0.05667f);
-        // cmd[2*i] = comp & 0xFF;
-        // cmd[2*i+1] = comp >> 8; 
         cmd[2*i] = comp >> 8;
         cmd[2*i+1] = comp & 0xFF; 
     }
     i2c_write_to_subaddr(Register::MTR_COMMAND,cmd,6);
 }
-void ADCS::set_mtr_limit(const float* mtr_limit){}
-void ADCS::set_rwa_mode(unsigned char ssa_mode, const float *a) {}
+void ADCS::set_mtr_limit(const float* mtr_limit){
+    unsigned char cmd[2];
+    unsigned short comp = uc(*mtr_limit,-0.05667f,0.05667f);
+    cmd[0] = comp >> 8;
+    cmd[1] = comp & 0xFF; 
+    i2c_write_to_subaddr(Register::MTR_LIMIT, cmd, 2);
+}
+void ADCS::set_rwa_mode(unsigned char rwa_mode, std::array<float,3> rwa_cmd){
+    i2c_write_to_subaddr(Register::RWA_MODE, rwa_mode);
+
+    unsigned char cmd[6];
+    for(int i = 0;i<3;i++){
+        //comp is the converted short that will be re-assembled
+        unsigned short comp;
+        if(rwa_mode == 0)
+            comp = uc(rwa_cmd[i],-680.678f,680.678f);
+        else
+            comp = uc(rwa_cmd[i],-0.0041875f,0.0041875f);
+        cmd[2*i] = comp >> 8;
+        cmd[2*i+1] = comp & 0xFF; 
+    }
+    i2c_write_to_subaddr(Register::RWA_COMMAND,cmd,6);
+}
+//Tanishq's old method
+//void ADCS::set_rwa_mode(unsigned char ssa_mode, const float *a) {}
 void ADCS::get_who_am_i(unsigned char* who_am_i) {
     i2c_point_and_read(Register::WHO_AM_I, who_am_i, 1);
 }

@@ -35,6 +35,16 @@ bool test_set_mtr_command(){
 
     return true;
 }
+//this isn't working yet
+bool test_set_rwa_mode(){
+    std::array<float,3> cmd = {200.0f,400.0f,500.0f};
+    adcs.set_rwa_mode(1,cmd);
+
+    std::array<float,3> cmdAVG = {0.0001f,0.0002f,-0.0003f};
+    adcs.set_rwa_mode(2,cmdAVG);
+
+    return true;
+}
 bool test_get_ssa_voltage(){
     float temp[20];
     adcs.get_ssa_voltage(temp);
@@ -71,6 +81,9 @@ void loop() {
     //Serial.printf("get_ssa_mode: %d\n", test_get_ssa_mode());
 
     Serial.printf("get_ssa_voltage: %d\n", test_get_ssa_voltage());
+
+    //no way to test this;
+    Serial.printf("set_rwa_mode: %d\n", test_set_rwa_mode());
 
     //no way to test this;
     Serial.printf("set_mtr_command: %d\n", test_set_mtr_command());
