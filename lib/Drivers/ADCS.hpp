@@ -54,6 +54,8 @@ class ADCS : public I2CDevice {
     /** **/
     void get_who_am_i(unsigned char *who_am_i);
     /** **/
+    //this is a debug method remove evnetually
+    void get_rwa_char(unsigned char* rwa_rd12);
     //void get_rwa(float *rwa_speed_cmd_rd, float *rwa_speed_rd, float *rwa_ramp_rd);
     void get_rwa(std::array<float, 3>& rwa_momentum_rd, std::array<float, 3>& rwa_ramp_rd);
     /** **/

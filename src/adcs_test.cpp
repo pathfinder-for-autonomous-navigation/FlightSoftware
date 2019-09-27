@@ -60,9 +60,21 @@ bool test_get_rwa(){
     Serial.printf("float: %f\n",rwa_momentum_rd[1]);
     Serial.printf("float: %f\n",rwa_momentum_rd[2]);
 
+    Serial.printf("float: %f\n",rwa_ramp_rd[0]);
+    Serial.printf("float: %f\n",rwa_ramp_rd[1]);
+    Serial.printf("float: %f\n",rwa_ramp_rd[2]);
+
     return rwa_momentum_rd == rwa_momentum_state && rwa_ramp_rd == rwa_ramp_state;
 }
-void helper(std::array<float, 3> in){
+void rwa_rd12(){
+    unsigned char test[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
+    adcs.get_rwa_char(test);
+    for(int i = 0;i<12;i++){
+        Serial.printf("char: %u\n",test[i]);
+    }
+
+}
+void helper(std::array<float, 3>& in){
     in[0] = 0.5f;
 }
 void test_array_mechanics(){
@@ -111,8 +123,20 @@ void loop() {
     //no way to test this;
     Serial.printf("set_rwa_mode: %d\n", test_set_rwa_mode());
 
-    //Serial.printf("get_rwa: %d\n", test_get_rwa());
-    test_array_mechanics();
+    Serial.printf("get_rwa: %d\n", test_get_rwa());
+    //test_array_mechanics();
+
+    unsigned short orig = 0.1;
+
+    unsigned char a = orig >> 8;
+    unsigned char b = orig & 0xFF;
+
+    unsigned short c = (((unsigned short)a) << 8) | (0xFF & b);
+
+    Serial.printf("test1: %u\n",c);
+
+    rwa_rd12();
+
     //no way to test this;
     Serial.printf("set_mtr_command: %d\n", test_set_mtr_command());
 
