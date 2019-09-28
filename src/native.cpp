@@ -1,7 +1,7 @@
 #include <chrono>
 #include <thread>
 #include "FCCode/MainControlLoopTask.hpp"
-#include "FCCode/StateFieldRegistry.hpp"
+#include <StateFieldRegistry.hpp>
 
 #ifndef UNIT_TEST
 int main(int argc, char *argv[]) {
