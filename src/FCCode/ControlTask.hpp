@@ -4,8 +4,8 @@
 #include <memory>
 #include <string>
 #include "ControlTaskBase.hpp"
-#include "StateFieldBase.hpp"
-#include "StateFieldRegistry.hpp"
+#include <StateFieldBase.hpp>
+#include <StateFieldRegistry.hpp>
 
 /**
  * @brief A control ControlTaskBase is a wrapper around any high-level ControlTaskBase that

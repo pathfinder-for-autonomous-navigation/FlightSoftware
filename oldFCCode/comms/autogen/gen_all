@@ -1,3 +1,0 @@
-./downlink_gen_all
-printf "\n"
-./uplink_gen_all

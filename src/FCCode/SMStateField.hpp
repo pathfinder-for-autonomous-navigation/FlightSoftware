@@ -4,8 +4,8 @@
 #include <cmath>
 #include <string>
 #include <utility>
-#include "Serializer.hpp"
-#include "StateField.hpp"
+#include <Serializer.hpp>
+#include <StateField.hpp>
 
 // Number of bits required to store a state number that has num_states possible states
 inline constexpr size_t csz_state(const size_t num_states) {
