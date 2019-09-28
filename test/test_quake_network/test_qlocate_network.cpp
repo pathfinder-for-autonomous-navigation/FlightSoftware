@@ -13,7 +13,6 @@ Devices::QLocate q("Test_Quake_With_Network", &Serial3, Devices::QLocate::DEFAUL
 /*Tests that when we requst to start an SBD session by sending AT+SBDIX, that
  we get the expected response */
 void test_sbdix_with_network(void) {
-
     // Load a message on ISU
     std::string testString("Send this message to ISU");
     TEST_ASSERT_EQUAL(WRITE_OK, q.sbdwb(testString.c_str(), testString.length()));
@@ -37,7 +36,7 @@ void test_sbdix_with_network(void) {
 /* Tests that we can read messages from MT queue */
 void test_sbdrb_with_network(void) {
     // Load a message on ISU
-    std::string testString("Test Receive Message");
+    std::string testString("Test Receive Message lol");
     TEST_ASSERT_EQUAL(WRITE_OK, q.sbdwb(testString.c_str(), testString.length()));
     TEST_ASSERT_EQUAL(0, q.run_sbdix());
     // While loop is here because to account for timing delays
@@ -60,7 +59,9 @@ void test_sbdrb_with_network(void) {
     // Read message
     TEST_ASSERT_EQUAL(0, q.sbdrb());
     QuakeMessage msg = q.get_message();
-    TEST_ASSERT_NOT_NULL(msg.mes);
+    Serial.printf("***%s***\n", msg.mes);
+    // TEST_ASSERT_EQUAL_STRING("can this plz work????", msg.mes);
+    // TEST_ASSERT_NOT_NULL(msg.mes);
 }
 
 // TODO: need a way to get messages
@@ -72,8 +73,8 @@ int main(void) {
     while (!Serial)
         ;
     UNITY_BEGIN();
-    RUN_TEST(test_sbdix_with_network);
-    // RUN_TEST(test_sbdrb_with_network);
+    //  RUN_TEST(test_sbdix_with_network);
+    RUN_TEST(test_sbdrb_with_network);
     UNITY_END();
     return 0;
 }
