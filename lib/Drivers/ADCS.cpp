@@ -49,13 +49,14 @@ inline signed char sc(float f, float min, float max) {
 }
 
 inline unsigned short us(float f, float min, float max) {
-  return (unsigned short)(65535.0f * (f - min) / (max / min));
+  return (unsigned short)(65535.0f * (f - min) / (max - min));
 }
 
 inline signed short ss(float f, float min, float max) {
   return (signed short)(65535.0f * (f - min) / (max - min) - 32768.0f);
 }
 
+//should never be needed again T__T
 void print_unsigned_char_array(unsigned char* array){
     for(unsigned int i = 0; i<12;i++){
         Serial.printf("arr: %u\n", array[i]);
@@ -122,20 +123,21 @@ void ADCS::get_who_am_i(unsigned char* who_am_i) {
 }
 //Tanishq's old get_rwa header
 //void ADCS::get_rwa(float *a, float *b, float *c) {
+//this is a debug method
 void ADCS::get_rwa_char(unsigned char* rwa_rd12) {
     i2c_point_and_read(Register::RWA_MOMENTUM_RD, rwa_rd12, 12);
 }
-//I can't figure out why all the char's being read in are 0's :(((
+
 void ADCS::get_rwa(std::array<float, 3>& rwa_momentum_rd, std::array<float, 3>& rwa_ramp_rd) {
     unsigned char readin[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
-    print_unsigned_char_array(readin);
-    i2c_point_and_read(Register::RWA_MOMENTUM_RD, &readin, 12);
-    print_unsigned_char_array(readin);
+    //print_unsigned_char_array(readin);
+    i2c_point_and_read(Register::RWA_MOMENTUM_RD, readin, 12);
+    //print_unsigned_char_array(readin);
     for(int i=0;i<3;i++){
         unsigned short c = (((unsigned short)readin[2*i+1]) << 8) | (0xFF & readin[2*i]);
         rwa_momentum_rd[i] = fp(c,-0.009189f,0.009189f);
         
-        Serial.printf("test: %f\n",fp(c,-0.009189f,0.009189f));
+        //Serial.printf("test: %f\n",fp(c,-0.009189f,0.009189f));
         //rwa_momentum_rd[i] = 69.0f;
     }
 
@@ -145,8 +147,8 @@ void ADCS::get_rwa(std::array<float, 3>& rwa_momentum_rd, std::array<float, 3>& 
         rwa_ramp_rd[i] = fp(c,-0.0041875f,0.0041875);
     }
 
-    if(readin[0]==0)
-        rwa_momentum_rd[0]=42.0f;
+    // if(readin[0]==0)
+    //     rwa_momentum_rd[0]=42.0f;
 
 }
 void ADCS::get_imu(float *a, float *b) {}

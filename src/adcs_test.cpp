@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <i2c_t3.h>
 #include <ADCS.hpp>
+#include <array>
 
 Devices::ADCS adcs("adcs", Wire, Devices::ADCS::ADDRESS);
 
@@ -8,6 +9,16 @@ Devices::ADCS adcs("adcs", Wire, Devices::ADCS::ADDRESS);
 void setup() {
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
     adcs.setup();
+}
+template <class T, std::size_t N>
+bool comp_float_arr(std::array<T,N> a,std::array<T,N> b,float margin){
+    bool ret = true;
+    for(unsigned int i = 0;i<N;i++){
+        //Serial.printf("diff: %f\n",abs(a[i]-b[i]));
+        if(abs(a[i]-b[i])>margin)
+            ret = false;
+    }
+    return ret;
 }
 
 bool test_get_who_am_i(){
@@ -47,7 +58,24 @@ bool test_set_rwa_mode(){
 
     return true;
 }
+//should not be needed again
+bool test_desperate(){
+    unsigned char volt[20];
+    adcs.get_ssa_voltage_char(volt);
+    for(unsigned int i = 0; i<20;i++){
+        Serial.printf("arr: %u\n", volt[i]);
+    }
+    
+
+    unsigned char rwadesp[12];
+    adcs.get_rwa_char(rwadesp);
+    for(unsigned int i = 0; i<12;i++){
+        Serial.printf("rwadesp: %u\n", rwadesp[i]);
+    }
+    return false;
+}
 bool test_get_rwa(){
+    //dummy inital values
     std::array<float, 3> rwa_momentum_rd = {1.0f,1.0f,1.0f};
     std::array<float, 3> rwa_ramp_rd = {1.0f,1.0f,1.0f};;
 
@@ -56,15 +84,18 @@ bool test_get_rwa(){
 
     adcs.get_rwa(rwa_momentum_rd, rwa_ramp_rd);
 
-    Serial.printf("float: %f\n",rwa_momentum_rd[0]);
-    Serial.printf("float: %f\n",rwa_momentum_rd[1]);
-    Serial.printf("float: %f\n",rwa_momentum_rd[2]);
+    // Serial.printf("float: %f\n",rwa_momentum_rd[0]);
+    // Serial.printf("float: %f\n",rwa_momentum_rd[1]);
+    // Serial.printf("float: %f\n",rwa_momentum_rd[2]);
 
-    Serial.printf("float: %f\n",rwa_ramp_rd[0]);
-    Serial.printf("float: %f\n",rwa_ramp_rd[1]);
-    Serial.printf("float: %f\n",rwa_ramp_rd[2]);
+    // Serial.printf("float: %f\n",rwa_ramp_rd[0]);
+    // Serial.printf("float: %f\n",rwa_ramp_rd[1]);
+    // Serial.printf("float: %f\n",rwa_ramp_rd[2]);
 
-    return rwa_momentum_rd == rwa_momentum_state && rwa_ramp_rd == rwa_ramp_state;
+    return comp_float_arr(rwa_momentum_rd,rwa_momentum_state,0.0001f);
+    //return true;
+    //return operator==(rwa_momentum_rd,rwa_momentum_state) && operator==(rwa_ramp_rd,rwa_ramp_state);
+    return rwa_momentum_rd == rwa_momentum_state;// && rwa_ramp_rd == rwa_ramp_state;
 }
 void rwa_rd12(){
     unsigned char test[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
@@ -125,17 +156,9 @@ void loop() {
 
     Serial.printf("get_rwa: %d\n", test_get_rwa());
     //test_array_mechanics();
+    //test_desperate();
 
-    unsigned short orig = 0.1;
-
-    unsigned char a = orig >> 8;
-    unsigned char b = orig & 0xFF;
-
-    unsigned short c = (((unsigned short)a) << 8) | (0xFF & b);
-
-    Serial.printf("test1: %u\n",c);
-
-    rwa_rd12();
+    //rwa_rd12();
 
     //no way to test this;
     Serial.printf("set_mtr_command: %d\n", test_set_mtr_command());
