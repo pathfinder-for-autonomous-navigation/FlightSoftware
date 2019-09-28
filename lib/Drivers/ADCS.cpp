@@ -129,16 +129,13 @@ void ADCS::get_rwa_char(unsigned char* rwa_rd12) {
 }
 
 void ADCS::get_rwa(std::array<float, 3>& rwa_momentum_rd, std::array<float, 3>& rwa_ramp_rd) {
+    //read in into an array of chars
     unsigned char readin[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
-    //print_unsigned_char_array(readin);
     i2c_point_and_read(Register::RWA_MOMENTUM_RD, readin, 12);
-    //print_unsigned_char_array(readin);
+
     for(int i=0;i<3;i++){
         unsigned short c = (((unsigned short)readin[2*i+1]) << 8) | (0xFF & readin[2*i]);
         rwa_momentum_rd[i] = fp(c,-0.009189f,0.009189f);
-        
-        //Serial.printf("test: %f\n",fp(c,-0.009189f,0.009189f));
-        //rwa_momentum_rd[i] = 69.0f;
     }
 
     //starting from readin[6]
@@ -146,10 +143,6 @@ void ADCS::get_rwa(std::array<float, 3>& rwa_momentum_rd, std::array<float, 3>& 
         unsigned short c = (((unsigned short)readin[2*i+6+1]) << 8) | (0xFF & readin[2*i+6]);
         rwa_ramp_rd[i] = fp(c,-0.0041875f,0.0041875);
     }
-
-    // if(readin[0]==0)
-    //     rwa_momentum_rd[0]=42.0f;
-
 }
 void ADCS::get_imu(float *a, float *b) {}
 void ADCS::get_ssa_mode(unsigned char* a) {
