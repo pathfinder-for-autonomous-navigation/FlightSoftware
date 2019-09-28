@@ -14,7 +14,7 @@ template <class T, std::size_t N>
 bool comp_float_arr(std::array<T,N> a,std::array<T,N> b,float margin){
     bool ret = true;
     for(unsigned int i = 0;i<N;i++){
-        //Serial.printf("diff: %f\n",abs(a[i]-b[i]));
+        Serial.printf("diff: %f\n",abs(a[i]-b[i]));
         if(abs(a[i]-b[i])>margin)
             ret = false;
     }
@@ -82,8 +82,8 @@ bool test_get_rwa(){
     std::array<float, 3> rwa_momentum_state = {0.004f, 0.005f, -0.006f}; // Momentum read
     std::array<float, 3> rwa_ramp_state = {0.001f, 0.002f, -0.003f};
 
-    adcs.get_rwa(rwa_momentum_rd, rwa_ramp_rd);
-
+    adcs.get_rwa(&rwa_momentum_rd, &rwa_ramp_rd);
+    //adcs.get_rwa(rwa_momentum_rd.data(),rwa_ramp_rd.data());
     // Serial.printf("float: %f\n",rwa_momentum_rd[0]);
     // Serial.printf("float: %f\n",rwa_momentum_rd[1]);
     // Serial.printf("float: %f\n",rwa_momentum_rd[2]);
@@ -92,7 +92,7 @@ bool test_get_rwa(){
     // Serial.printf("float: %f\n",rwa_ramp_rd[1]);
     // Serial.printf("float: %f\n",rwa_ramp_rd[2]);
 
-    return comp_float_arr(rwa_momentum_rd,rwa_momentum_state,0.0001f);
+    return comp_float_arr(rwa_momentum_rd,rwa_momentum_state,0.0001f);// && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.0001f);
     //return true;
     //return operator==(rwa_momentum_rd,rwa_momentum_state) && operator==(rwa_ramp_rd,rwa_ramp_state);
     return rwa_momentum_rd == rwa_momentum_state;// && rwa_ramp_rd == rwa_ramp_state;
@@ -137,7 +137,6 @@ bool test_get_ssa_voltage(){
     }
 
     return ret;
-
 
 }
 
