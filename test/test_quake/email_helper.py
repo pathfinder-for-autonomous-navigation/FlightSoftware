@@ -17,7 +17,7 @@ def sendFile(file_name):
     #Need to create an app specific password for the gmail account
     yag = yagmail.SMTP('pan.ssds.qlocate', 'OAANisKOOL7373')
     #Send the txt file to the designated address
-    yag.send('sbdservice@sbd.iridium.com', 'Hey there!', file_name)
+    yag.send('sbdservice@sbd.iridium.com', '300234030627990', file_name)
 
 def downloadFiles():
     mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
@@ -28,11 +28,13 @@ def downloadFiles():
     mail_ids = data[0]
     id_list = mail_ids.split()
 
+    found_packets = []
+
     for num in id_list:
-        #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
+        #.fetch() fetches the mail for given id where 'RFC822' is an Internet
         # Message Access Protocol.
         typ, data = mail.fetch(num,'(RFC822)')
-        
+
         #go through each component of data and print sender and subject line
         for response_part in data:
             if isinstance(response_part, tuple):
@@ -42,16 +44,16 @@ def downloadFiles():
                 email_subject = msg['subject']
                 print ('From : ' + email_from + '\n')
                 print ('Subject : ' + email_subject + '\n')
-                
+
                 #get the file attached to the message
                 for part in msg.walk():
-                    
+
                     if part.get_content_maintype() == 'multipart':
                         continue
 
                     if part.get('Content-Disposition') is None:
                         continue
-                    
+
                     #check if there is an attachment
                     if part.get_filename() is not None:
                         '''
@@ -67,7 +69,9 @@ def downloadFiles():
                         myfile=open(att_path, 'r')
                         '''
                         attachmentContents=part.get_payload(decode=True).decode('utf8')
-                        print(attachmentContents+'\n')
+                        found_packets.append(attachmentContents)
+    
+    return found_packets
 
 #next step is to process sbd files
 
