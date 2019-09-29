@@ -1,4 +1,6 @@
 import serial
+import time
+from email_helper import downloadFiles, sendFile
 from argparse import ArgumentParser
 
 if __name__ == '__main__':
@@ -15,19 +17,41 @@ if __name__ == '__main__':
         required=False)
     args = parser.parse_args()
 
-    console = serial.Serial(args.port, 9600)
-    console.write("Ready")
+    try:
+        console = serial.Serial(args.port, 9600)
+        console.write("Ready")
+    except serial.SerialException:
+        print("Failed to connect to serial port. Exiting.")
+        raise SystemExit
 
     while True:
         line = console.readline().rstrip()
         if "sending" in line:
-            # TODO collect data that is being sent, download email, verify that data that was sent is the same
-            # as data that was received over Iridium
-            pass
+            time.sleep(20)
+            found_packets = downloadFiles()
+            try:
+                if found_packets[0] == "hello from PAN!":
+                    console.write("received")
+                    print("received")
+                else:
+                    raise ValueError
+            except:
+                console.write("not found")
+                print("not received")
 
         if "waiting" in line:
-            # TODO Send uplink via email to Iridium, send Teensy the data that was sent so that it can verify the data
-            pass
+            with open("uplink_data.txt", "w") as f:
+                f.write("Hello from ground!")
+
+            found_packets = sendFile("uplink_data.txt")
+            while True:
+                line = console.readline.rstrip()
+                if "received" in line:
+                    console.write("received")
+                    print("received")
+                else:
+                    console.write("not received")
+                    print("received")
 
         if "exiting" in line:
             break
