@@ -17,8 +17,12 @@ if __name__ == '__main__':
         required=False)
     args = parser.parse_args()
 
-    console = serial.Serial(args.port, 9600)
-    console.write("Ready")
+    try:
+        console = serial.Serial(args.port, 9600)
+        console.write("Ready")
+    except serial.SerialException:
+        print("Failed to connect to serial port. Exiting.")
+        raise SystemExit
 
     while True:
         line = console.readline().rstrip()
