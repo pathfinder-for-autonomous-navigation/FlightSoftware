@@ -26,27 +26,52 @@ class ADCS : public I2CDevice {
     /** **/
     void i2c_read_float(unsigned char data_register, float* data, const float min, const float max, std::size_t len);
     /** **/
-    void set_mode(unsigned char mode);
+    void set_endianess(const unsigned char end);
     /** **/
-    void set_read_ptr(unsigned short read_ptr);
+    void set_mode(const unsigned char mode);
     /** **/
-    void set_rwa_mode(unsigned char rwa_mode, std::array<float,3> rwa_cmd);
+    //void set_read_ptr(const unsigned short read_ptr);
+    void set_read_ptr(const unsigned char read_ptr);
     /** **/
-    void set_rwa_speed_flt(float rwa_speed_flt);
+    void set_rwa_mode(const unsigned char rwa_mode, const std::array<float,3>& rwa_cmd);
     /** **/
-    void set_rwa_ramp_flt(float rwa_ramp_flt);
+    void set_rwa_speed_flt(const float rwa_speed_flt);
+    /** **/
+    void set_rwa_ramp_flt(const float rwa_ramp_flt);
+    /** **/
+    void set_rwa_momentum_filter(const float mom_filter);
+    /** **/
+    void set_ramp_filter(const float ramp_filter);
     /** **/
     void set_mtr_mode(const unsigned char mtr_mode);
     /** **/
     //void set_mtr_cmd(float const *mtr_cmd);
     /** **/
-    void set_mtr_cmd(const std::array<float, 3> mtr_cmd);
+    void set_mtr_cmd(const std::array<float, 3>& mtr_cmd);
     /** **/
-    void set_mtr_limit(float const* mtr_limit);
+    void set_mtr_limit(const float mtr_limit);
+    /** **/
+    void set_ssa_voltage_filter(const float voltage_filter);
+    /** **/
+    void set_imu_mode(const unsigned char mode);
+    /** **/
+    void set_imu_mag_filter(const float mag_filter);
+    /** **/
+    void set_imu_gyr_filter(const float gyr_filter);
+    /** **/
+    void set_imu_gyr_temp_filter(const float temp_filter);
+    /** **/
+    void set_imu_gyr_temp_kp(const float kp);
+    /** **/
+    void set_imu_gyr_temp_ki(const float ki);
+    /** **/
+    void set_imu_gyr_temp_kd(const float kd);
+    /** **/
+    void set_imu_gyr_temp_target(const float temp);
     /** **/
     void set_ssa_adc_flt(float ssa_adc_flt);
     /** **/
-    void set_ssa_mode(unsigned char ssa_mode);
+    void set_ssa_mode(const unsigned char ssa_mode);
     /** **/
     void set_imu_gyr_flt(float imu_gyr_flt);
     /** **/
@@ -59,7 +84,8 @@ class ADCS : public I2CDevice {
     //void get_rwa(float *rwa_speed_cmd_rd, float *rwa_speed_rd, float *rwa_ramp_rd);
     void get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd);
     /** **/
-    void get_ssa_vector(float *ssa_vector);
+    //void get_ssa_vector(float *ssa_vector);
+    void get_ssa_vector(std::array<float, 3>* ssa_sun_vec);
     /** **/
     void get_ssa_voltage(float *ssa_voltage);
     /** **/
@@ -69,7 +95,10 @@ class ADCS : public I2CDevice {
     /** **/
     void get_ssa_adcs(float *ssa_adc_rd);
     /** **/
-    void get_imu(float *gyr_rd, float *mag_rd);
+    //void get_imu(float *gyr_rd, float *mag_rd);
+    //void get_imu(std::array<float,3>* gyr_rd,std::array<float,3>* mag_rd,float* gyr_temp_rd);
+    void get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd);
+    
     /** **/
     void update_hat();
 };

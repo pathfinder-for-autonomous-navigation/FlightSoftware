@@ -14,13 +14,44 @@ template <class T, std::size_t N>
 bool comp_float_arr(std::array<T,N> a,std::array<T,N> b,float margin){
     bool ret = true;
     for(unsigned int i = 0;i<N;i++){
-        Serial.printf("diff: %f\n",abs(a[i]-b[i]));
+        //Serial.printf("diff: %f\n",abs(a[i]-b[i]));
         if(abs(a[i]-b[i])>margin)
             ret = false;
     }
     return ret;
 }
 
+bool comp_float(float a,float b,float margin){
+    if(abs(a-b)>margin)
+        return false;
+    return true;
+}
+
+bool test_set_endianess(){
+    adcs.set_endianess(0);
+
+    //lmao don't set endianess to 1
+    //stuff will stop working
+
+    // adcs.set_endianess(1);
+    // adcs.set_endianess(0);
+    return true;
+}
+bool test_set_mode(){
+    adcs.set_mode(0);
+    adcs.set_mode(1);
+    adcs.set_mode(0);
+
+    return true;
+}
+bool test_set_rwa_momentum_filter(){
+    adcs.set_rwa_momentum_filter(0.77f);
+    return true;
+}
+bool test_set_rwa_ramp_filter(){
+    adcs.set_ramp_filter(0.88f);
+    return true;
+}
 bool test_get_who_am_i(){
     unsigned char temp = 2;
     adcs.get_who_am_i(&temp);
@@ -39,12 +70,52 @@ bool test_getset_ssa_mode(){
     return temp == 1;
 
 }
+
+bool test_get_ssa_vector(){
+
+    std::array<float, 3> ssa_vec_rd = {0.5f,0.5f,0.5f};
+    std::array<float, 3> ssa_vec_state = {0.69f, 0.42f, -.88f};           // Sun vector read
+
+    adcs.get_ssa_vector(&ssa_vec_rd);
+
+    return comp_float_arr(ssa_vec_rd,ssa_vec_state, 0.001f);
+
+}
+
+bool test_get_imu(){
+//void ADCS::get_imu(std::array<float,3>* gyr_rd,std::array<float,3>* mag_rd,float* gyr_temp_rd){
+
+    std::array<float, 3> gyr_rd = {1.0f,1.0f,1.0f};
+    std::array<float, 3> mag_rd = {1.0f,1.0f,1.0f};;
+
+    std::array<float, 3> gyr_state = {3.0f, 1.5f, -1.2f}; 
+    std::array<float, 3> mag_state = {0.001f, 0.0008f, -0.0006f};
+
+    float gyr_temp_rd = 1.0f;
+    float gyr_temp_state = 42.0f;
+
+    adcs.get_imu(&mag_rd, &gyr_rd, &gyr_temp_rd);
+
+    //Serial.printf("temp: %f\n", gyr_temp_rd);
+
+    return (comp_float_arr(mag_rd,mag_state,0.0001f) && comp_float_arr(gyr_rd,gyr_state,0.001f)
+    && comp_float(gyr_temp_rd,gyr_temp_state,0.01f));
+
+    return false;
+}
+
+bool test_set_mtr_mode(){
+    return false;
+}
 bool test_set_mtr_command(){
     std::array<float,3> cmd = {0.01f,0.01f,-0.01f};
 
     adcs.set_mtr_cmd(cmd);
 
     return true;
+}
+bool test_set_mtr_limit(){
+    return false;
 }
 //this is now working
 //just not too sure about when rwa mode = 2
@@ -66,7 +137,6 @@ bool test_desperate(){
         Serial.printf("arr: %u\n", volt[i]);
     }
     
-
     unsigned char rwadesp[12];
     adcs.get_rwa_char(rwadesp);
     for(unsigned int i = 0; i<12;i++){
@@ -92,7 +162,7 @@ bool test_get_rwa(){
     // Serial.printf("float: %f\n",rwa_ramp_rd[1]);
     // Serial.printf("float: %f\n",rwa_ramp_rd[2]);
 
-    return comp_float_arr(rwa_momentum_rd,rwa_momentum_state,0.0001f);// && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.0001f);
+    return comp_float_arr(rwa_momentum_rd,rwa_momentum_state,0.0001f) && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.0001f);
     //return true;
     //return operator==(rwa_momentum_rd,rwa_momentum_state) && operator==(rwa_ramp_rd,rwa_ramp_state);
     return rwa_momentum_rd == rwa_momentum_state;// && rwa_ramp_rd == rwa_ramp_state;
@@ -142,25 +212,41 @@ bool test_get_ssa_voltage(){
 
 void loop() {
     //Serial.println(adcs.is_functional());
+
+    //no way to test this, but manually verified to work
+    Serial.printf("set_endianess: %d\n", test_set_endianess());
+
+    //no way to test this, but manually verified to work
+    Serial.printf("set_mode: %d\n", test_set_mode());
+
+    //set read ptr implicitly works
+
+    //no way to test this, but manually verified to work;
+    Serial.printf("set_rwa_mode: %d\n", test_set_rwa_mode());
+
+    //works
+    Serial.printf("set_rwa_momentum_filter: %d\n", test_set_rwa_momentum_filter());
+
+    //works
+    Serial.printf("set_ramp_filter: %d\n", test_set_rwa_ramp_filter());
+
+    //no way to test this, but manually verified to work;
+    Serial.printf("set_mtr_command: %d\n", test_set_mtr_command());
+    
     Serial.printf("get_who_am_i: %d\n", test_get_who_am_i());
     
-    Serial.printf("set_ssa_mode: %d\n", test_getset_ssa_mode());
+    Serial.printf("getset_ssa_mode: %d\n", test_getset_ssa_mode());
 
+    Serial.printf("get_ssa_sun_vector: %d\n", test_get_ssa_vector());
     //Serial.printf("get_ssa_mode: %d\n", test_get_ssa_mode());
 
     Serial.printf("get_ssa_voltage: %d\n", test_get_ssa_voltage());
 
-    //no way to test this;
-    Serial.printf("set_rwa_mode: %d\n", test_set_rwa_mode());
-
     Serial.printf("get_rwa: %d\n", test_get_rwa());
-    //test_array_mechanics();
-    //test_desperate();
 
-    //rwa_rd12();
+    Serial.printf("get_imu:%d\n", test_get_imu());
 
-    //no way to test this;
-    Serial.printf("set_mtr_command: %d\n", test_set_mtr_command());
+    
 
     //unsigned short c = (((unsigned short)a) << 8) | (0xFF & b);
 
