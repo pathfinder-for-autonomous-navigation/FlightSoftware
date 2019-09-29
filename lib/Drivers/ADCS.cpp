@@ -95,11 +95,13 @@ void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& 
         //comp is the converted short that will be re-assembled
         unsigned short comp = 0;
         if(rwa_mode == 1)
-            comp = uc(rwa_cmd[i],-680.678f,680.678f);
+            comp = us(rwa_cmd[i],-680.678f,680.678f);
         else if(rwa_mode == 2)
-            comp = uc(rwa_cmd[i],-0.0041875f,0.0041875f);
-        cmd[2*i] = comp >> 8;
-        cmd[2*i+1] = comp & 0xFF; 
+            comp = us(rwa_cmd[i],-0.0041875f,0.0041875f);
+        // cmd[2*i] = comp >> 8;
+        // cmd[2*i+1] = comp & 0xFF;
+        cmd[2*i] = comp;
+        cmd[2*i+1] = comp >> 8;
     }
     i2c_write_to_subaddr(Register::RWA_COMMAND,cmd,6);
 }
@@ -122,37 +124,50 @@ void ADCS::set_mtr_cmd(const std::array<float, 3> &mtr_cmd){
     unsigned char cmd[6];
     for(int i = 0;i<3;i++){
         //comp is the converted short that will be re-assembled
-        unsigned short comp = uc(mtr_cmd[i],-0.05667f,0.05667f);
-        cmd[2*i] = comp >> 8;
-        cmd[2*i+1] = comp & 0xFF; 
+        unsigned short comp = us(mtr_cmd[i],-0.05667f,0.05667f);
+        cmd[2*i] = comp;
+        cmd[2*i+1] = comp >> 8; 
     }
     i2c_write_to_subaddr(Register::MTR_COMMAND,cmd,6);
 }
 void ADCS::set_mtr_limit(const float mtr_limit){
     unsigned char cmd[2];
-    unsigned short comp = uc(mtr_limit,-0.05667f,0.05667f);
-    cmd[0] = comp >> 8;
-    cmd[1] = comp & 0xFF; 
+    unsigned short comp = us(mtr_limit,-0.05667f,0.05667f);
+    cmd[0] = comp;
+    cmd[1] = comp >> 8; 
     i2c_write_to_subaddr(Register::MTR_LIMIT, cmd, 2);
 }
 void ADCS::set_ssa_mode(const unsigned char ssa_mode) {
     i2c_write_to_subaddr(Register::SSA_MODE, ssa_mode);
 }
 void ADCS::set_ssa_voltage_filter(const float voltage_filter) {
-
+    unsigned char comp = uc(voltage_filter,0.0f,1.0f);
+    i2c_write_to_subaddr(Register::SSA_VOLTAGE_FILTER, comp);
 }
 //i have no idea what this mode entails with the last "free mode" part
 void ADCS::set_imu_mode(const unsigned char mode){
-
+    i2c_write_to_subaddr(Register::IMU_MODE, mode);
 }
 void ADCS::set_imu_mag_filter(const float mag_filter){
-
+    unsigned char comp = uc(mag_filter,0.0f,1.0f);
+    i2c_write_to_subaddr(Register::IMU_MAG_FILTER, comp);
 }
 void ADCS::set_imu_gyr_filter(const float gyr_filter){
-
+    unsigned char comp = uc(gyr_filter,0.0f,1.0f);
+    i2c_write_to_subaddr(Register::IMU_GYR_FILTER, comp);
 }
 void ADCS::set_imu_gyr_temp_filter(const float temp_filter){
+    unsigned char comp = uc(temp_filter,0.0f,1.0f);
+    i2c_write_to_subaddr(Register::IMU_GYR_TEMP_FILTER, comp);
+}
+void float_decomp(const float input, std::array<unsigned char, 4>* bytes){
+    //unsigned char bytes[4];
+    //reinterpret_cast<unsigned char const *>(&f)
 
+    // bytes[0] = (input >> 24) & 0xFF;
+    // bytes[1] = (input  >> 16) & 0xFF;
+    // bytes[2] = (input >> 8) & 0xFF;
+    // bytes[3] = input & 0xFF;
 }
 void ADCS::set_imu_gyr_temp_kp(const float kp){
 

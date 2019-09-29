@@ -52,6 +52,40 @@ bool test_set_rwa_ramp_filter(){
     adcs.set_ramp_filter(0.88f);
     return true;
 }
+bool test_set_mtr_mode(){
+    adcs.set_mtr_mode(0);
+    adcs.set_mtr_mode(1);
+    adcs.set_mtr_mode(0);
+    return true;
+}
+bool test_set_mtr_command(){
+    std::array<float,3> cmd = {0.01f,0.01f,-0.01f};
+
+    adcs.set_mtr_cmd(cmd);
+
+    return true;
+}
+bool test_set_mtr_limit(){
+
+    float lim = 0.0420f;
+    float nlim = -0.0234f;
+    float lim1 = 0.035;
+    float nlim1 = -0.045;
+    adcs.set_mtr_limit(lim);
+    adcs.set_mtr_limit(nlim);
+    adcs.set_mtr_limit(lim1);
+    adcs.set_mtr_limit(nlim1);
+    
+    return true;
+}
+bool test_set_imu_filters(){
+    adcs.set_imu_mag_filter(0.39f);
+    adcs.set_imu_gyr_filter(0.4f);
+    adcs.set_imu_gyr_temp_filter(0.41f);
+
+    return true;
+    
+}
 bool test_get_who_am_i(){
     unsigned char temp = 2;
     adcs.get_who_am_i(&temp);
@@ -70,7 +104,20 @@ bool test_getset_ssa_mode(){
     return temp == 1;
 
 }
+bool test_set_ssa_voltage_filter(){
+    adcs.set_ssa_voltage_filter(0.8f);
+    adcs.set_ssa_voltage_filter(0.32f);
 
+    return true;
+}
+bool test_set_imu_mode(){
+    adcs.set_imu_mode(0);
+    adcs.set_imu_mode(1);
+    adcs.set_imu_mode(2);
+    adcs.set_imu_mode(0);
+
+    return true;
+}
 bool test_get_ssa_vector(){
 
     std::array<float, 3> ssa_vec_rd = {0.5f,0.5f,0.5f};
@@ -104,19 +151,7 @@ bool test_get_imu(){
     return false;
 }
 
-bool test_set_mtr_mode(){
-    return false;
-}
-bool test_set_mtr_command(){
-    std::array<float,3> cmd = {0.01f,0.01f,-0.01f};
 
-    adcs.set_mtr_cmd(cmd);
-
-    return true;
-}
-bool test_set_mtr_limit(){
-    return false;
-}
 //this is now working
 //just not too sure about when rwa mode = 2
 //values too small to verify
@@ -230,12 +265,31 @@ void loop() {
     //works
     Serial.printf("set_ramp_filter: %d\n", test_set_rwa_ramp_filter());
 
+    //works
+    Serial.printf("set_mtr_mode: %d\n", test_set_mtr_mode());
+
     //no way to test this, but manually verified to work;
     Serial.printf("set_mtr_command: %d\n", test_set_mtr_command());
     
+    //works
+    Serial.printf("set_mtr_limit: %d\n", test_set_mtr_limit());
+
+    //works
+    Serial.printf("getset_ssa_mode: %d\n", test_getset_ssa_mode());
+
+    //works
+    Serial.printf("set_voltage_filter: %d\n", test_set_ssa_voltage_filter());
+
+    //works; but check calibration idk? - Shihao
+    Serial.printf("set_imu_mode: %d\n", test_set_imu_mode());
+
+    //works;
+    Serial.printf("set_imu_filters: %d\n", test_set_imu_filters());
+
+    
     Serial.printf("get_who_am_i: %d\n", test_get_who_am_i());
     
-    Serial.printf("getset_ssa_mode: %d\n", test_getset_ssa_mode());
+    
 
     Serial.printf("get_ssa_sun_vector: %d\n", test_get_ssa_vector());
     //Serial.printf("get_ssa_mode: %d\n", test_get_ssa_mode());
