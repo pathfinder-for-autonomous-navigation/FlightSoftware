@@ -15,4 +15,6 @@ MainControlLoopTask::MainControlLoopTask(StateFieldRegistry& registry)
     registry.add_writable(tank_outer_temperature);
 }
 
-void MainControlLoopTask::execute() { debug_task.execute(); }
+void MainControlLoopTask::execute() {
+    debug_task.execute();
+}
