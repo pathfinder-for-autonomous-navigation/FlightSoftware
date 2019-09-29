@@ -1,4 +1,0 @@
-python uplink_csv_generator.py
-python uplink_struct_codegen.py
-python uplink_apply_codegen.py
-python uplink_deserializer_codegen.py

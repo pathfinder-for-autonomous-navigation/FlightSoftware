@@ -158,10 +158,7 @@ int QLocate::end_sbdix() {
     char buf[75];
     port->readBytesUntil('\n', buf, 74);
     sbdix_running = false;
-    return (parse_ints(buf + 8, sbdix_r) - 1);
 }
-
-int QLocate::sbdrb() {
     // Ensure no ongoing sbdix session and flush buffer
     if (sbdix_running) return -1;
     port->clear();

@@ -5,7 +5,7 @@
  * takes precedence.
  */
 #include "FCCode/MainControlLoopTask.hpp"
-#include "FCCode/StateFieldRegistry.hpp"
+#include <StateFieldRegistry.hpp>
 
 #include <ChRt.h>
 #include <core_pins.h>
