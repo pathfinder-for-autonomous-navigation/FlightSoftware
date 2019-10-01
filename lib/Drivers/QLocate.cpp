@@ -158,7 +158,10 @@ int QLocate::end_sbdix() {
     char buf[75];
     port->readBytesUntil('\n', buf, 74);
     sbdix_running = false;
+    return (parse_ints(buf + 8, sbdix_r) - 1);
 }
+
+int QLocate::sbdrb() {
     // Ensure no ongoing sbdix session and flush buffer
     if (sbdix_running) return -1;
     port->clear();
@@ -173,21 +176,23 @@ int QLocate::end_sbdix() {
 #ifdef DEBUG_ENABLED
     Serial.println("sbdrb > recieving message size= " + String(size));
 #endif
+    memset(message.mes, 0, 340);
     if (size + 2 != (unsigned short)port->readBytes(message.mes, size + 2))
         return 2;  // Quake::Message read fails
     delay(10);
     s = checksum(message.mes, size);
     if (((s & 0xFF) << 8 | (s >> 8)) != *(short *)(message.mes + size))
         return 1;  // Checksum error detected
-#ifdef DEBUG_ENABLED
-    for (int i = 0; i < 340; i++) {
-        Serial.printf("[%c]", message.mes[i]);
-    }
-    // Serial.printf("%s", message.mes);
-    Serial.flush();
-#endif
     // Format as a string
     message.mes[size] = '\0';
+#ifdef DEBUG_ENABLED
+    // for (int i = 0; i < 340; i++) {
+    //     Serial.printf("[%c]", message.mes[i]);
+    // }
+    Serial.printf("Message: [%s]", message.mes);
+    Serial.flush();
+#endif
+
     return 0;
 }
 
