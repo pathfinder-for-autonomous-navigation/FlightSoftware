@@ -164,21 +164,7 @@ bool test_set_rwa_mode(){
 
     return true;
 }
-//should not be needed again
-bool test_desperate(){
-    unsigned char volt[20];
-    adcs.get_ssa_voltage_char(volt);
-    for(unsigned int i = 0; i<20;i++){
-        Serial.printf("arr: %u\n", volt[i]);
-    }
-    
-    unsigned char rwadesp[12];
-    adcs.get_rwa_char(rwadesp);
-    for(unsigned int i = 0; i<12;i++){
-        Serial.printf("rwadesp: %u\n", rwadesp[i]);
-    }
-    return false;
-}
+
 bool test_get_rwa(){
     //dummy inital values
     std::array<float, 3> rwa_momentum_rd = {1.0f,1.0f,1.0f};
@@ -188,37 +174,11 @@ bool test_get_rwa(){
     std::array<float, 3> rwa_ramp_state = {0.001f, 0.002f, -0.003f};
 
     adcs.get_rwa(&rwa_momentum_rd, &rwa_ramp_rd);
-    //adcs.get_rwa(rwa_momentum_rd.data(),rwa_ramp_rd.data());
-    // Serial.printf("float: %f\n",rwa_momentum_rd[0]);
-    // Serial.printf("float: %f\n",rwa_momentum_rd[1]);
-    // Serial.printf("float: %f\n",rwa_momentum_rd[2]);
 
-    // Serial.printf("float: %f\n",rwa_ramp_rd[0]);
-    // Serial.printf("float: %f\n",rwa_ramp_rd[1]);
-    // Serial.printf("float: %f\n",rwa_ramp_rd[2]);
+    return comp_float_arr(rwa_momentum_rd,rwa_momentum_state,0.0001f)
+     && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.0001f);
+}
 
-    return comp_float_arr(rwa_momentum_rd,rwa_momentum_state,0.0001f) && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.0001f);
-    //return true;
-    //return operator==(rwa_momentum_rd,rwa_momentum_state) && operator==(rwa_ramp_rd,rwa_ramp_state);
-    return rwa_momentum_rd == rwa_momentum_state;// && rwa_ramp_rd == rwa_ramp_state;
-}
-void rwa_rd12(){
-    unsigned char test[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
-    adcs.get_rwa_char(test);
-    for(int i = 0;i<12;i++){
-        Serial.printf("char: %u\n",test[i]);
-    }
-
-}
-void helper(std::array<float, 3>& in){
-    in[0] = 0.5f;
-}
-void test_array_mechanics(){
-    std::array<float,3> given = {0.0f,1.0f,2.0f};
-    helper(given);
-
-    Serial.printf("helper: %f\n",given[0]);
-}
 bool test_get_ssa_voltage(){
     float temp[20];
     adcs.get_ssa_voltage(temp);
@@ -246,7 +206,7 @@ bool test_get_ssa_voltage(){
 }
 
 void loop() {
-    //Serial.println(adcs.is_functional());
+    Serial.println(adcs.is_functional());
 
     //no way to test this, but manually verified to work
     Serial.printf("set_endianess: %d\n", test_set_endianess());
