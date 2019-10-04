@@ -58,13 +58,6 @@ inline signed short ss(float f, float min, float max) {
   return (signed short)(65535.0f * (f - min) / (max - min) - 32768.0f);
 }
 
-//should never be needed again T__T
-void print_unsigned_char_array(unsigned char* array){
-    for(unsigned int i = 0; i<12;i++){
-        Serial.printf("arr: %u\n", array[i]);
-    }
-}
-
 void ADCS::i2c_read_float(unsigned char data_register, float* data, const float min, const float max, std::size_t len) {
     unsigned char temp[len];
     i2c_point_and_read(data_register,temp,20);
@@ -73,8 +66,6 @@ void ADCS::i2c_read_float(unsigned char data_register, float* data, const float 
     }
 
 }
-//methods actually start here
-
 void ADCS::set_endianess(const unsigned char end){
     i2c_write_to_subaddr(Register::ENDIANNESS, end);
 }
@@ -92,22 +83,16 @@ void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& 
 
     unsigned char cmd[6];
     for(int i = 0;i<3;i++){
-        //comp is the converted short that will be re-assembled
         unsigned short comp = 0;
         if(rwa_mode == 1)
             comp = us(rwa_cmd[i],-680.678f,680.678f);
         else if(rwa_mode == 2)
             comp = us(rwa_cmd[i],-0.0041875f,0.0041875f);
-        // cmd[2*i] = comp >> 8;
-        // cmd[2*i+1] = comp & 0xFF;
         cmd[2*i] = comp;
         cmd[2*i+1] = comp >> 8;
     }
     i2c_write_to_subaddr(Register::RWA_COMMAND,cmd,6);
 }
-//Tanishq's old method
-//void ADCS::set_rwa_mode(unsigned char ssa_mode, const float *a) {}
-
 void ADCS::set_rwa_momentum_filter(const float mom_filter){
     unsigned char comp = uc(mom_filter,0.0f,1.0f);
     i2c_write_to_subaddr(Register::RWA_MOMENTUM_FILTER, comp);
@@ -120,10 +105,8 @@ void ADCS::set_mtr_mode(const unsigned char mtr_mode){
     i2c_write_to_subaddr(Register::MTR_MODE, mtr_mode);
 }
 void ADCS::set_mtr_cmd(const std::array<float, 3> &mtr_cmd){
-    //this method should work
     unsigned char cmd[6];
     for(int i = 0;i<3;i++){
-        //comp is the converted short that will be re-assembled
         unsigned short comp = us(mtr_cmd[i],-0.05667f,0.05667f);
         cmd[2*i] = comp;
         cmd[2*i+1] = comp >> 8; 
