@@ -144,16 +144,27 @@ void ADCS::set_imu_gyr_temp_filter(const float temp_filter){
     i2c_write_to_subaddr(Register::IMU_GYR_TEMP_FILTER, comp);
 }
 void float_decomp(const float input, std::array<unsigned char, 4>* bytes){
-    //unsigned char bytes[4];
+    unsigned char temp[4];
     //reinterpret_cast<unsigned char const *>(&f)
-
-    // bytes[0] = (input >> 24) & 0xFF;
-    // bytes[1] = (input  >> 16) & 0xFF;
-    // bytes[2] = (input >> 8) & 0xFF;
-    // bytes[3] = input & 0xFF;
+    *(float*)(temp) = input;
+    (*bytes)[0] = temp[0];//(input >> 24) & 0xFF;
+    (*bytes)[1] = temp[1];//(input  >> 16) & 0xFF;
+    (*bytes)[2] = temp[2];//(input >> 8) & 0xFF;
+    (*bytes)[3] = temp[3];//input & 0xFF;
+}
+void float_decomp(const float input, unsigned char* temp){
+    //unsigned char temp[4];
+    //reinterpret_cast<unsigned char const *>(&f)
+    *(float*)(temp) = input;
+    // (*bytes)[0] = temp[0];//(input >> 24) & 0xFF;
+    // (*bytes)[1] = temp[1];//(input  >> 16) & 0xFF;
+    // (*bytes)[2] = temp[2];//(input >> 8) & 0xFF;
+    // (*bytes)[3] = temp[3];//input & 0xFF;
 }
 void ADCS::set_imu_gyr_temp_kp(const float kp){
-
+    unsigned char cmd[4];
+    float_decomp(kp, cmd);
+    i2c_write_to_subaddr(Register::IMU_GYR_TEMP_KP,cmd,4);
 }
 void ADCS::set_imu_gyr_temp_ki(const float ki){
 

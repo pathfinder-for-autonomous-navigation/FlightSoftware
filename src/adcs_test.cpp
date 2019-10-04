@@ -83,6 +83,8 @@ bool test_set_imu_filters(){
     adcs.set_imu_gyr_filter(0.4f);
     adcs.set_imu_gyr_temp_filter(0.41f);
 
+    //works, what are bounds?
+    adcs.set_imu_gyr_temp_kp(88.0f);
     return true;
     
 }
@@ -245,7 +247,6 @@ void loop() {
 
     //works;
     Serial.printf("set_imu_filters: %d\n", test_set_imu_filters());
-
     
     Serial.printf("get_who_am_i: %d\n", test_get_who_am_i());
     
@@ -261,6 +262,15 @@ void loop() {
     Serial.printf("get_imu:%d\n", test_get_imu());
 
     
+
+    unsigned char bytes[4];
+    //reinterpret_cast<unsigned char const *>(&f)
+    *(float*)(bytes) = 69;
+    Serial.println(bytes[0]);
+    Serial.println(bytes[1]);
+    Serial.println(bytes[2]);
+    Serial.println(bytes[3]);
+
 
     //unsigned short c = (((unsigned short)a) << 8) | (0xFF & b);
 
