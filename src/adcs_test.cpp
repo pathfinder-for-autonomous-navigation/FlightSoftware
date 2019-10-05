@@ -85,6 +85,9 @@ bool test_set_imu_filters(){
 
     //works, what are bounds?
     adcs.set_imu_gyr_temp_kp(88.0f);
+    adcs.set_imu_gyr_temp_ki(98.0f);
+    adcs.set_imu_gyr_temp_kd(108.0f);
+    adcs.set_imu_gyr_temp_desired(18.0f);
     return true;
     
 }
@@ -182,12 +185,8 @@ bool test_get_rwa(){
 }
 
 bool test_get_ssa_voltage(){
-    float temp[20];
-    adcs.get_ssa_voltage(temp);
-
-    for(unsigned int i = 0;  i < sizeof(temp)/sizeof(temp[0]); i++){
-        //Serial.printf("%lf\n",temp[i]);
-    }
+    std::array<float,20> temp;
+    adcs.get_ssa_voltage(&temp);
 
     float reference[20] = 
     {1.0f, 2.0f, 3.0f, 0.0f, 0.0f, // Voltage read
@@ -261,20 +260,6 @@ void loop() {
 
     Serial.printf("get_imu:%d\n", test_get_imu());
 
-    
-
-    unsigned char bytes[4];
-    //reinterpret_cast<unsigned char const *>(&f)
-    *(float*)(bytes) = 69;
-    Serial.println(bytes[0]);
-    Serial.println(bytes[1]);
-    Serial.println(bytes[2]);
-    Serial.println(bytes[3]);
-
-
-    //unsigned short c = (((unsigned short)a) << 8) | (0xFF & b);
-
-    Serial.println("");
     delay(1000);
 }
 #endif

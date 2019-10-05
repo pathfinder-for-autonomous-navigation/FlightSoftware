@@ -67,7 +67,7 @@ class ADCS : public I2CDevice {
     /** **/
     void set_imu_gyr_temp_kd(const float kd);
     /** **/
-    void set_imu_gyr_temp_target(const float temp);
+    void set_imu_gyr_temp_desired(const float desired);
     /** **/
     void set_ssa_adc_flt(float ssa_adc_flt);
     /** **/
@@ -87,7 +87,7 @@ class ADCS : public I2CDevice {
     //void get_ssa_vector(float *ssa_vector);
     void get_ssa_vector(std::array<float, 3>* ssa_sun_vec);
     /** **/
-    void get_ssa_voltage(float *ssa_voltage);
+    void get_ssa_voltage(std::array<float, 20>* voltages);
     /** **/
     void get_ssa_voltage_char(unsigned char* ssa_voltage);
     /** **/

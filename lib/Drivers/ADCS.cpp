@@ -153,13 +153,8 @@ void float_decomp(const float input, std::array<unsigned char, 4>* bytes){
     (*bytes)[3] = temp[3];//input & 0xFF;
 }
 void float_decomp(const float input, unsigned char* temp){
-    //unsigned char temp[4];
-    //reinterpret_cast<unsigned char const *>(&f)
+    //turns the input float into 4 chars
     *(float*)(temp) = input;
-    // (*bytes)[0] = temp[0];//(input >> 24) & 0xFF;
-    // (*bytes)[1] = temp[1];//(input  >> 16) & 0xFF;
-    // (*bytes)[2] = temp[2];//(input >> 8) & 0xFF;
-    // (*bytes)[3] = temp[3];//input & 0xFF;
 }
 void ADCS::set_imu_gyr_temp_kp(const float kp){
     unsigned char cmd[4];
@@ -167,27 +162,24 @@ void ADCS::set_imu_gyr_temp_kp(const float kp){
     i2c_write_to_subaddr(Register::IMU_GYR_TEMP_KP,cmd,4);
 }
 void ADCS::set_imu_gyr_temp_ki(const float ki){
-
+    unsigned char cmd[4];
+    float_decomp(ki, cmd);
+    i2c_write_to_subaddr(Register::IMU_GYR_TEMP_KI,cmd,4);
 }
 void ADCS::set_imu_gyr_temp_kd(const float kd){
-
+    unsigned char cmd[4];
+    float_decomp(kd, cmd);
+    i2c_write_to_subaddr(Register::IMU_GYR_TEMP_KD,cmd,4);
 }
-void ADCS::set_imu_gyr_temp_target(const float temp){
-
+void ADCS::set_imu_gyr_temp_desired(const float desired){
+    unsigned char cmd = uc(desired,-40.0f,85.0f);
+    i2c_write_to_subaddr(Register::IMU_GYR_TEMP_DESIRED,cmd);
 }
 
-//begin read methods
 
 void ADCS::get_who_am_i(unsigned char* who_am_i) {
     i2c_point_and_read(Register::WHO_AM_I, who_am_i, 1);
 }
-//Tanishq's old get_rwa header
-//void ADCS::get_rwa(float *a, float *b, float *c) {
-//this is a debug method
-void ADCS::get_rwa_char(unsigned char* rwa_rd12) {
-    i2c_point_and_read(Register::RWA_MOMENTUM_RD, rwa_rd12, 12);
-}
-
 void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd) {
     //read in into an array of chars
     unsigned char readin[12] = {1,1,1,1,1,1,1,1,1,1,1,1};
@@ -196,10 +188,7 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* 
     for(int i=0;i<3;i++){
         unsigned short c = (((unsigned short)readin[2*i+1]) << 8) | (0xFF & readin[2*i]);
         (*rwa_momentum_rd)[i] = fp(c,-0.009189f,0.009189f);
-        //(*rwa_momentum_rd).at(i) = fp(c,-0.009189f,0.009189f);
     }
-
-    //starting from readin[6]
     for(int i=0;i<3;i++){
         unsigned short c = (((unsigned short)readin[2*i+6+1]) << 8) | (0xFF & readin[2*i+6]);
         (*rwa_ramp_rd)[i] = fp(c,-0.0041875f,0.0041875);
@@ -214,15 +203,12 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
         unsigned short c = (((unsigned short)readin[2*i+1]) << 8) | (0xFF & readin[2*i]);
         //(*mag_rd)[i] = fp(c,imu::min_mag,imu::max_mag);
         (*mag_rd)[i] = fp(c,-0.0016f,0.0016f);
-        //Serial.printf("test: %f\n",(*mag_rd)[i]);
     }
 
-    //starting from readin[6]
     for(int i=0;i<3;i++){
         unsigned short c = (((unsigned short)readin[2*i+6+1]) << 8) | (0xFF & readin[2*i+6]);
         //(*gyr_rd)[i] = fp(c,imu::min_omega,imu::max_omega);
         (*gyr_rd)[i] = fp(c,-125.0f * 0.03490658504f,125.0f * 0.03490658504f);
-        //Serial.printf("test: %f\n",(*gyr_rd)[i]);
     } 
 
     unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
@@ -233,7 +219,6 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
 void ADCS::get_ssa_mode(unsigned char* a) {
     i2c_point_and_read(Register::SSA_MODE, a, 1);
 }
-//void ADCS::get_ssa_vector(float *b) {
 void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
     unsigned char readin[6];
     i2c_point_and_read(Register::SSA_SUN_VECTOR, readin,6);
@@ -241,13 +226,16 @@ void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
         unsigned short c = (((unsigned short)readin[2*i+1]) << 8) | (0xFF & readin[2*i]);
 
         (*ssa_sun_vec)[i] = fp(c,-1.0f,1.0f);
-        //Serial.printf("vec: %f\n",(*ssa_sun_vec)[i]);
     }
 
 }
-
-void ADCS::get_ssa_voltage(float* b) {
-    i2c_read_float(Register::SSA_VOLTAGE_READ,b,0.0f,3.3f,20);
+void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
+    unsigned char temp[20];
+    i2c_point_and_read(Register::SSA_VOLTAGE_READ,temp,20);
+    
+    for(int i = 0;i<20;i++){
+        (*voltages)[i] = fp(temp[i], 0.0, 3.3);
+    }
 }
 //this method was reserved for debugging, probably don't use in flight?
 //it returns the raw char's corresponding the the encoded floats as chars
