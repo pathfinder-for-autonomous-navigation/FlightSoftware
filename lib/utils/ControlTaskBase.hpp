@@ -8,6 +8,6 @@
  * @brief Dummy class used so that we can produce generic pointers to
  * ControlTasks.
  */
-class ControlTaskBase : public Nameable, public debug_console {};
+class ControlTaskBase : public Nameable, protected debug_console {};
 
 #endif
