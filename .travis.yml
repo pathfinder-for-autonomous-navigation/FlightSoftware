@@ -13,4 +13,4 @@ install:
 
 script:
     - platformio run
-    - platformio test -e native -i "test_quake*"
+    - platformio test -e native
