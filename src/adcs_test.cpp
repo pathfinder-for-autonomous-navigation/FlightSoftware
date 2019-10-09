@@ -95,9 +95,8 @@ bool test_get_who_am_i(){
     unsigned char temp = 2;
     adcs.get_who_am_i(&temp);
     
-    Serial.println(temp);
+    //Serial.println(temp);
     return 15 == temp;
-    //Serial.println(temp[0]);
 }
 
 bool test_getset_ssa_mode(){
@@ -188,26 +187,40 @@ bool test_get_ssa_voltage(){
     std::array<float,20> temp;
     adcs.get_ssa_voltage(&temp);
 
-    float reference[20] = 
+    std::array<float,20> reference =
     {1.0f, 2.0f, 3.0f, 0.0f, 0.0f, // Voltage read
      1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
      1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
      1.0f, 2.0f, 3.0f, 0.0f, 0.0f};
 
-    bool ret = true;
-    //check to make sure returned values are within 0.02
-    for(unsigned int i=0; i< sizeof(temp)/sizeof(temp[0]); i++){
-        if(abs(temp[i]-reference[i])>0.02){
-            ret = false;
-        }
-    }
-
-    return ret;
+    return comp_float_arr(reference,temp,0.02f);
 
 }
+bool test_everything(){
+    return 
+    adcs.is_functional() &&
 
+    test_set_endianess() &&
+    test_set_mode() &&
+    test_set_rwa_mode() &&
+    test_set_rwa_momentum_filter() &&
+    test_set_rwa_ramp_filter() &&
+    test_set_mtr_mode() &&
+    test_set_mtr_command() &&
+    test_set_mtr_limit() &&
+    test_getset_ssa_mode() &&
+    test_set_ssa_voltage_filter() &&
+    test_set_imu_mode() &&
+    test_set_imu_filters() &&
+
+    test_get_who_am_i() &&
+    test_get_ssa_vector() &&
+    test_get_ssa_voltage() &&
+    test_get_rwa() &&
+    test_get_imu();
+}
 void loop() {
-    Serial.println(adcs.is_functional());
+    Serial.printf("is functional: %d\n", adcs.is_functional());
 
     //no way to test this, but manually verified to work
     Serial.printf("set_endianess: %d\n", test_set_endianess());
@@ -247,19 +260,18 @@ void loop() {
     //works;
     Serial.printf("set_imu_filters: %d\n", test_set_imu_filters());
     
+
     Serial.printf("get_who_am_i: %d\n", test_get_who_am_i());
-    
-    
 
     Serial.printf("get_ssa_sun_vector: %d\n", test_get_ssa_vector());
-    //Serial.printf("get_ssa_mode: %d\n", test_get_ssa_mode());
 
     Serial.printf("get_ssa_voltage: %d\n", test_get_ssa_voltage());
 
     Serial.printf("get_rwa: %d\n", test_get_rwa());
 
-    Serial.printf("get_imu:%d\n", test_get_imu());
+    Serial.printf("get_imu: %d\n", test_get_imu());
 
+    Serial.printf("TEST EVERYTHING: %d\n", test_get_imu());  
     delay(1000);
 }
 #endif
