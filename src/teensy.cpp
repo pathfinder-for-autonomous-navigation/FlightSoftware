@@ -18,10 +18,6 @@ void pan_system_setup() {
     fcp_task.init();  // Inits the debug console
     while (true) {
         fcp_task.execute();
-        digitalWrite(13, HIGH);
-        chThdSleepMilliseconds(50);
-        digitalWrite(13, LOW);
-        chThdSleepMilliseconds(50);
     }
 }
 
