@@ -2,8 +2,10 @@
 #define CONTROL_TASK_HPP_
 
 #include <memory>
+#include <iostream>
 #include <string>
-#include "ControlTaskBase.hpp"
+#include <debug_console.hpp>
+#include <Nameable.hpp>
 #include <StateFieldBase.hpp>
 #include <StateFieldRegistry.hpp>
 
@@ -15,7 +17,7 @@
  * implementations of execute() for different kinds of ControlTasks.
  */
 template <typename T>
-class ControlTask : protected ControlTaskBase {
+class ControlTask : protected debug_console {
   public:
     /**
      * @brief Construct a new Control ControlTaskBase object
@@ -23,10 +25,7 @@ class ControlTask : protected ControlTaskBase {
      * @param name     Name of control ControlTaskBase
      * @param registry Pointer to state field registry
      */
-    ControlTask(const std::string& name, StateFieldRegistry& registry)
-        : _name(name), _registry(registry) {}
-
-    const std::string& name() const override { return _name; };
+    ControlTask(StateFieldRegistry& registry) : _registry(registry) {}
 
     /**
      * @brief Run main method of control ControlTaskBase.
@@ -34,7 +33,6 @@ class ControlTask : protected ControlTaskBase {
     virtual T execute() = 0;
 
   protected:
-    const std::string _name;
     StateFieldRegistry& _registry;
 
     /**
@@ -49,33 +47,34 @@ class ControlTask : protected ControlTaskBase {
         return _registry.find_field(name);
     }
 
-    /**
-     * @brief Marks a field as being downloadable by ground.
-     *
-     * @param field State field
-     */
-    bool add_readable(std::shared_ptr<ReadableStateFieldBase>& field) {
-        return _registry.add_readable(field);
+    template<typename U>
+    void add_readable(ReadableStateField<U>& field) {
+        std::shared_ptr<ReadableStateField<U>> field_ptr(
+            std::shared_ptr<ReadableStateField<U>>{}, &field);
+        _registry.add_readable(field_ptr);
     }
 
-    /**
-     * @brief Marks a field as being uploadable by ground.
-     *
-     * @param r ControlTaskBase
-     * @param field Data field
-     */
-    bool add_writable(std::shared_ptr<WritableStateFieldBase>& field) {
-        return _registry.add_writable(field);
+    template<typename U>
+    void add_writable(WritableStateField<U>& field) {
+        std::shared_ptr<WritableStateField<U>> field_ptr(
+            std::shared_ptr<WritableStateField<U>>{}, &field);
+        _registry.add_writable(field_ptr);
     }
 
-    /**
-     * @brief Convenience function for telling the console that the ControlTask tried to load a reference
-     * to a state field that it expected to exist, but couldn't find it.
-     * 
-     * @param field_name Field that task tried to load.
-     */
-    void print_registry_404_error(const char* field_name) {
-        printf(debug_severity::error, "Field required by %s is not present in state registry: %s\n", (this->name()).c_str(), field_name);
+    template<typename U>
+    void find_readable_field(const char* field, std::shared_ptr<ReadableStateField<U>>* field_ptr, const char* file, const unsigned int line) {
+        *field_ptr = std::dynamic_pointer_cast<ReadableStateField<U>>(_registry.find_readable_field(field));
+        if (!(*field_ptr)) { 
+            printf(debug_severity::error, "%s:%d: Readable field required is not present in state registry: %s\n", file, line, field);
+        }
+    }
+
+    template<typename U>
+    void find_writable_field(const char* field, std::shared_ptr<WritableStateField<U>>* field_ptr, const char* file, const unsigned int line) {
+        *field_ptr = std::dynamic_pointer_cast<WritableStateField<U>>(_registry.find_writable_field(field));
+        if (!(*field_ptr)) { 
+            printf(debug_severity::error, "%s:%d: Writable field required is not present in state registry: %s\n", file, line, field);
+        }
     }
 };
 
