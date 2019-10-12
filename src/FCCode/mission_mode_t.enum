@@ -2,6 +2,7 @@
 #define mission_mode_enum_h_
 
 enum class mission_mode_t {
+    startup,
     detumble,
     initialization_hold,
     follower,

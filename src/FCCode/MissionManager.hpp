@@ -2,8 +2,6 @@
 #define MISSION_MANAGER_HPP_
 
 #include <ControlTask.hpp>
-#include <StateField.hpp>
-#include <memory>
 
 #include "mission_mode_t.enum"
 
@@ -13,10 +11,8 @@ class MissionManager : public ControlTask<void> {
     void execute() override;
 
    protected:
+    void dispatch_startup();
     void dispatch_detumble();
-    std::shared_ptr<WritableStateField<unsigned int>> adcs_mode_fp;
-    std::shared_ptr<WritableStateField<std::array<float, 3>>> adcs_cmd_attitude_fp;
-
     void dispatch_initialization_hold();
     void dispatch_follower();
     void dispatch_follower_close_approach();
@@ -28,10 +24,16 @@ class MissionManager : public ControlTask<void> {
     void dispatch_spacejunk();
     void dispatch_safehold();
 
-    Serializer<unsigned int> mission_mode_serializer;
+    // Fields required for control of ADCS subsystem.
+    std::shared_ptr<WritableStateField<unsigned int>> adcs_mode_fp;
+    std::shared_ptr<WritableStateField<f_quat_t>> adcs_cmd_attitude_fp;
+
+    // Fields that control overall mission state.
+    Serializer<unsigned int> mission_mode_sr;
     WritableStateField<unsigned int> mission_mode_f;
-    Serializer<bool> is_deployed_serializer;
+    Serializer<bool> is_deployed_sr;
     ReadableStateField<bool> is_deployed_f;
+    std::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
 };
 
 #endif

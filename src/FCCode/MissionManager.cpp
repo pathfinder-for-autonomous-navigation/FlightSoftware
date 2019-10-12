@@ -1,26 +1,17 @@
 #include "MissionManager.hpp"
 
-MissionManager::MissionManager(StateFieldRegistry& registry) : 
-    ControlTask<void>("pan.manager", registry),
-    mission_mode_serializer(0, 10, 4),
-    mission_mode_f("pan.mode", mission_mode_serializer),
-    is_deployed_serializer(),
-    is_deployed_f("pan.deployed", is_deployed_serializer)
+MissionManager::MissionManager(StateFieldRegistry& registry) : ControlTask<void>(registry),
+    mission_mode_sr(0, 10, 4),
+    mission_mode_f("pan.mode", mission_mode_sr),
+    is_deployed_sr(),
+    is_deployed_f("pan.deployed", is_deployed_sr)
 {
-    println(debug_severity::info, "Made it");
-    std::shared_ptr<WritableStateField<unsigned int>> mission_mode_f_ptr(
-        std::shared_ptr<WritableStateField<unsigned int>>{}, &mission_mode_f);
-    registry.add_writable(mission_mode_f_ptr);
-    
-    std::shared_ptr<ReadableStateField<bool>> is_deployed_f_ptr(
-        std::shared_ptr<ReadableStateField<bool>>{}, &is_deployed_f);
-    registry.add_readable(is_deployed_f_ptr);
+    add_writable(mission_mode_f);
+    add_readable(is_deployed_f);
 
-    adcs_mode_fp = std::dynamic_pointer_cast<WritableStateField<unsigned int>>(registry.find_writable_field("adcs.mode"));
-    if (!adcs_mode_fp) { print_registry_404_error("adcs.mode"); }
-
-    adcs_cmd_attitude_fp = std::dynamic_pointer_cast<WritableStateField<std::array<float, 3>>>(registry.find_writable_field("adcs.cmd_attitude"));
-    if (!adcs_cmd_attitude_fp) { print_registry_404_error("adcs.cmd_attitude"); }
+    find_readable_field("pan.cycle_no", &control_cycle_count_fp, __FILE__, __LINE__);
+    find_writable_field("adcs.mode", &adcs_mode_fp, __FILE__, __LINE__);
+    find_writable_field("adcs.cmd_attitude", &adcs_cmd_attitude_fp, __FILE__, __LINE__);
 
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::detumble));
 }
@@ -28,6 +19,9 @@ MissionManager::MissionManager(StateFieldRegistry& registry) :
 void MissionManager::execute() {
     mission_mode_t mode = static_cast<mission_mode_t>(mission_mode_f.get());
     switch(mode) {
+        case mission_mode_t::startup:
+            dispatch_startup();
+            break;
         case mission_mode_t::detumble:
             dispatch_detumble();
             break;
@@ -64,12 +58,17 @@ void MissionManager::execute() {
         default:
             printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned int>(mode));
             mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::safehold));
+            break;
     }
 }
 
+void MissionManager::dispatch_startup() {
+    // For now, do absolutely nothing. Wait for the startup controller to
+    // bring us out of this mode.
+}
+
 void MissionManager::dispatch_detumble() {
-    adcs_mode_fp->set(3);
-    // TODO
+    adcs_mode_fp->set(static_cast<unsigned int>(mission_mode_t::detumble));
 }
 
 void MissionManager::dispatch_initialization_hold() {
