@@ -63,7 +63,7 @@ class ControlTask : protected debug_console {
 
     template<typename U>
     void find_readable_field(const char* field, std::shared_ptr<ReadableStateField<U>>* field_ptr, const char* file, const unsigned int line) {
-        *field_ptr = std::dynamic_pointer_cast<ReadableStateField<U>>(_registry.find_readable_field(field));
+        *field_ptr = std::static_pointer_cast<ReadableStateField<U>>(_registry.find_readable_field(field));
         if (!(*field_ptr)) { 
             printf(debug_severity::error, "%s:%d: Readable field required is not present in state registry: %s\n", file, line, field);
         }
@@ -71,7 +71,7 @@ class ControlTask : protected debug_console {
 
     template<typename U>
     void find_writable_field(const char* field, std::shared_ptr<WritableStateField<U>>* field_ptr, const char* file, const unsigned int line) {
-        *field_ptr = std::dynamic_pointer_cast<WritableStateField<U>>(_registry.find_writable_field(field));
+        *field_ptr = std::static_pointer_cast<WritableStateField<U>>(_registry.find_writable_field(field));
         if (!(*field_ptr)) { 
             printf(debug_severity::error, "%s:%d: Writable field required is not present in state registry: %s\n", file, line, field);
         }
