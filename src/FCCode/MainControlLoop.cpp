@@ -1,9 +1,10 @@
-#include "MainControlLoopTask.hpp"
+#include "MainControlLoop.hpp"
 #include "DebugTask.hpp"
 
-MainControlLoopTask::MainControlLoopTask(StateFieldRegistry& registry)
-    : ControlTask<void>("fcp", registry), debug_task(registry) {
-    Serializer<signed int> temperature_serializer(-40, 125, SerializerConstants::temp_sz);
+MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
+    : ControlTask<void>(registry), debug_task(registry)
+{
+    Serializer<signed int> temperature_serializer(-40, 125, Serializer<signed int>::temp_sz);
     Serializer<gps_time_t> gps_time_serializer;
 
     tank_inner_temperature =
@@ -15,6 +16,10 @@ MainControlLoopTask::MainControlLoopTask(StateFieldRegistry& registry)
     registry.add_writable(tank_outer_temperature);
 }
 
-void MainControlLoopTask::execute() {
+void MainControlLoop::execute() {
     debug_task.execute();
+}
+
+void MainControlLoop::init() {
+    debug_task.init();
 }

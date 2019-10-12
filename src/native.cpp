@@ -1,14 +1,14 @@
-#include "FCCode/MainControlLoopTask.hpp"
+#include "FCCode/MainControlLoop.hpp"
 #include <StateFieldRegistry.hpp>
 
 #ifndef UNIT_TEST
-int main(int argc, char *argv[]) {
+int main() {
     StateFieldRegistry registry;
-    MainControlLoopTask fcp_task(registry);
-    fcp_task.init();
+    MainControlLoop fcp(registry);
+    fcp.init();
 
     while (true) {
-        fcp_task.execute();
+        fcp.execute();
     }
     return 0;
 }

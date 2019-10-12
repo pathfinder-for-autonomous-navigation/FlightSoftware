@@ -6,7 +6,7 @@
 #include <StateField.hpp>
 #include <StateFieldRegistry.hpp>
 
-class MainControlLoopTask : public ControlTask<void> {
+class MainControlLoop : public ControlTask<void> {
    protected:
     DebugTask debug_task;
 
@@ -14,7 +14,21 @@ class MainControlLoopTask : public ControlTask<void> {
     std::shared_ptr<WritableStateField<signed int>> tank_outer_temperature;
 
    public:
-    MainControlLoopTask(StateFieldRegistry& registry);
+    /**
+     * @brief Construct a new Main Control Loop Task object
+     * 
+     * @param registry State field registry
+     */
+    MainControlLoop(StateFieldRegistry& registry);
+
+    /**
+     * @brief Initializes debug console.
+     */
+    void init();
+
+    /**
+     * @brief Processes state field commands present in the serial buffer.
+     */
     void execute() override;
 };
 
