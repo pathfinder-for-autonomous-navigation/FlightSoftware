@@ -4,14 +4,20 @@ MissionManager::MissionManager(StateFieldRegistry& registry) : ControlTask<void>
     mission_mode_sr(0, 10, 4),
     mission_mode_f("pan.mode", mission_mode_sr),
     is_deployed_sr(),
-    is_deployed_f("pan.deployed", is_deployed_sr)
+    is_deployed_f("pan.deployed", is_deployed_sr),
+    sat_designation_sr(0, 2, 2),
+    sat_designation_f("pan.sat_designation", sat_designation_sr)
 {
-    add_writable(mission_mode_f);
-    add_readable(is_deployed_f);
-
     find_readable_field("pan.cycle_no", &control_cycle_count_fp, __FILE__, __LINE__);
+
+    add_writable_field(mission_mode_f);
+    add_readable_field(is_deployed_f);
+    add_readable_field(sat_designation_f);
+
     find_writable_field("adcs.mode", &adcs_mode_fp, __FILE__, __LINE__);
     find_writable_field("adcs.cmd_attitude", &adcs_cmd_attitude_fp, __FILE__, __LINE__);
+    find_readable_field("adcs.ang_rate", &adcs_ang_rate_fp, __FILE__, __LINE__);
+    find_writable_field("adcs.min_stable_ang_rate", &adcs_min_stable_ang_rate_fp, __FILE__, __LINE__);
 
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::detumble));
 }
@@ -68,7 +74,14 @@ void MissionManager::dispatch_startup() {
 }
 
 void MissionManager::dispatch_detumble() {
-    adcs_mode_fp->set(static_cast<unsigned int>(mission_mode_t::detumble));
+    // Dummy code
+    adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::detumble));
+    if (adcs_ang_rate_fp->get() < adcs_min_stable_ang_rate_fp->get())
+    {
+        adcs_cmd_attitude_fp->set({0,0,0}); // TODO fix to a good value
+        adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::pointing));
+        mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::standby));
+    }
 }
 
 void MissionManager::dispatch_initialization_hold() {
@@ -76,6 +89,7 @@ void MissionManager::dispatch_initialization_hold() {
 }
 
 void MissionManager::dispatch_follower() {
+    
     // TODO
 }
 

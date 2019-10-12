@@ -1,4 +1,4 @@
-#include <StateFieldRegistry.hpp>
+#include "../StateFieldRegistryMock.hpp"
 #include <StateField.hpp>
 #include <Serializer.hpp>
 #include "../src/FCCode/MissionManager.hpp"
@@ -6,29 +6,22 @@
 
 #include <unity.h>
 
-void test_foo() {
-    StateFieldRegistry registry;
+void test_valid_initialization() {
+    StateFieldRegistryMock registry;
 
-    Serializer<unsigned int> adcs_mode_serializer(0, 10, 4);
-    WritableStateField<unsigned int> adcs_mode_f("adcs.mode", adcs_mode_serializer);
-    std::shared_ptr<WritableStateField<unsigned int>> adcs_mode_f_ptr(
-        std::shared_ptr<WritableStateField<unsigned int>>{}, &adcs_mode_f);
-    registry.add_writable(adcs_mode_f_ptr);
-
-    Serializer<f_quat_t> adcs_cmd_attitude_serializer;
-    WritableStateField<f_quat_t> adcs_cmd_attitude_f("adcs.cmd_attitude", adcs_cmd_attitude_serializer);
-    std::shared_ptr<WritableStateField<f_quat_t>> adcs_cmd_attitude_f_ptr(
-        std::shared_ptr<WritableStateField<f_quat_t>>{}, &adcs_cmd_attitude_f);
-    registry.add_writable(adcs_cmd_attitude_f_ptr);
+    registry.create_writable_field<unsigned int>("adcs.mode", 0, 10, 4);
+    registry.create_writable_field<f_quat_t>("adcs.cmd_attitude");
+    registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
+    registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
 
     MissionManager mission_manager(registry);
 
-    mission_manager.execute();
+    //mission_manager.execute();
 }
 
 int test_mission_manager() {
     UNITY_BEGIN();
-    RUN_TEST(test_foo);
+    RUN_TEST(test_valid_initialization);
     return UNITY_END();
 }
 

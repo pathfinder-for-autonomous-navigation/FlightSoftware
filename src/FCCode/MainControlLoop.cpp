@@ -12,8 +12,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
     tank_outer_temperature =
         std::make_shared<WritableStateField<signed int>>("prop.temp_outer", temperature_serializer);
 
-    registry.add_readable(tank_inner_temperature);
-    registry.add_writable(tank_outer_temperature);
+    registry.add_readable_field(tank_inner_temperature);
+    registry.add_writable_field(tank_outer_temperature);
 }
 
 void MainControlLoop::execute() {

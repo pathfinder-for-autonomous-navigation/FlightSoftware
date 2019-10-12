@@ -19,14 +19,12 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     std::shared_ptr<ReadableStateField<T>> create_readable_field(const std::string name) {
-        /**
-         * Due to the definitions of the serializer constructors, this function can
-         * only be used to create state fields of specific types.
-         */
-        static_assert(std::is_same<T, bool> ||
-                      std::is_same<T, gps_time_t> ||
-                      std::is_same<T, f_quat_t> ||
-                      std::is_same<T, d_quat_t>, 
+        // Due to the definitions of the serializer constructors, this function can
+        // only be used to create state fields of specific types.
+        static_assert(std::is_same<T, bool>::value ||
+                      std::is_same<T, gps_time_t>::value ||
+                      std::is_same<T, f_quat_t>::value ||
+                      std::is_same<T, d_quat_t>::value, 
             "This function can only be used to create boolean, GPS-time, float-quaternion"
             "or double-quaternion state fields.");
 
@@ -34,7 +32,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         ReadableStateField<T> field_f(name, field_sr);
         std::shared_ptr<ReadableStateField<T>> field_ptr(
             std::shared_ptr<ReadableStateField<T>>{}, &field_f);
-        add_readable(field_ptr);
+        add_readable_field(field_ptr);
         return field_ptr;
     }
 
@@ -46,14 +44,12 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     std::shared_ptr<WritableStateField<T>> create_writable_field(const std::string name) {
-        /**
-         * Due to the definitions of the serializer constructors, this function can
-         * only be used to create state fields of specific types.
-         */
-        static_assert(std::is_same<T, bool> ||
-                      std::is_same<T, gps_time_t> ||
-                      std::is_same<T, f_quat_t> ||
-                      std::is_same<T, d_quat_t>,
+        // Due to the definitions of the serializer constructors, this function can
+        // only be used to create state fields of specific types.
+        static_assert(std::is_same<T, bool>::value ||
+                      std::is_same<T, gps_time_t>::value ||
+                      std::is_same<T, f_quat_t>::value ||
+                      std::is_same<T, d_quat_t>::value,
             "This function can only be used to create boolean, GPS-time, float-quaternion"
             "or double-quaternion state fields.");
 
@@ -61,7 +57,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         WritableStateField<T> field_f(name, field_sr);
         std::shared_ptr<WritableStateField<T>> field_ptr(
             std::shared_ptr<WritableStateField<T>>{}, &field_f);
-        add_writable(field_ptr);
+        add_writable_field(field_ptr);
         return field_ptr;
     }
 
@@ -80,14 +76,12 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     std::shared_ptr<ReadableStateField<T>> create_readable_field(const std::string name, 
         T min, T max, size_t bitsize)
     {
-        /**
-         * Due to the definitions of the serializer constructors, this function can
-         * only be used to create state fields of specific types.
-         */
-        static_assert(std::is_same<T, signed int> ||
-            std::is_same<T, unsigned int> ||
-            std::is_same<T, float> ||
-            std::is_same<T, double>,
+        // Due to the definitions of the serializer constructors, this function can
+        // only be used to create state fields of specific types.
+        static_assert(std::is_same<T, signed int>::value ||
+            std::is_same<T, unsigned int>::value ||
+            std::is_same<T, float>::value ||
+            std::is_same<T, double>::value,
         "This function can only be used to create signed int, unsigned int, float or double"
         "state fields.");
 
@@ -95,7 +89,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         ReadableStateField<T> field_f(name, field_sr);
         std::shared_ptr<ReadableStateField<T>> field_ptr(
             std::shared_ptr<ReadableStateField<T>>{}, &field_f);
-        add_readable(field_ptr);
+        add_readable_field(field_ptr);
         return field_ptr;
     }
 
@@ -114,14 +108,12 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     std::shared_ptr<WritableStateField<T>> create_writable_field(const std::string name, 
         T min, T max, size_t bitsize)
     {
-        /**
-         * Due to the definitions of the serializer constructors, this function can
-         * only be used to create state fields of specific types.
-         */
-        static_assert(std::is_same<T, signed int> ||
-            std::is_same<T, unsigned int> ||
-            std::is_same<T, float> ||
-            std::is_same<T, double>,
+        // Due to the definitions of the serializer constructors, this function can
+        // only be used to create state fields of specific types.
+        static_assert(std::is_same<T, signed int>::value ||
+            std::is_same<T, unsigned int>::value ||
+            std::is_same<T, float>::value ||
+            std::is_same<T, double>::value,
         "This function can only be used to create signed int, unsigned int, float or double"
         "state fields.");
 
@@ -129,7 +121,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         WritableStateField<T> field_f(name, field_sr);
         std::shared_ptr<WritableStateField<T>> field_ptr(
             std::shared_ptr<WritableStateField<T>>{}, &field_f);
-        add_writable(field_ptr);
+        add_writable_field(field_ptr);
         return field_ptr;
     }
 
@@ -145,22 +137,20 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @return Pointer to field that was created.
      */
     template<typename T>
-    std::shared_ptr<ReadableStateField<T>> create_readable_vec_field(const std::string name, 
-        std::array<T, 3>)
+    std::shared_ptr<ReadableStateField<T>> create_writable_vector_field(const std::string name,
+        T min, T max, size_t bitsize)
     {
-        /**
-         * Due to the definitions of the serializer constructors, this function can
-         * only be used to create state fields of specific types.
-         */
-        static_assert(std::is_same<T, float> ||
-                      std::is_same<T, double>,
+        // Due to the definitions of the serializer constructors, this function can
+        // only be used to create state fields of specific types.
+        static_assert(std::is_same<T, f_vector_t>::value ||
+                      std::is_same<T, d_vector_t>::value,
         "This function can only be used to create float- or double-vector state fields.");
 
         Serializer<T> field_sr(min, max, bitsize);
         ReadableStateField<T> field_f(name, field_sr);
         std::shared_ptr<ReadableStateField<T>> field_ptr(
             std::shared_ptr<ReadableStateField<T>>{}, &field_f);
-        add_readable(field_ptr);
+        add_readable_field(field_ptr);
         return field_ptr;
     }
 
@@ -176,22 +166,20 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @return Pointer to field that was created.
      */
     template<typename T>
-    std::shared_ptr<WritableStateField<T>> create_writable_vec_field(const std::string name, 
-        std::array<T, 3>)
+    std::shared_ptr<WritableStateField<T>> create_writable_vector_field(const std::string name,
+        T min, T max, size_t bitsize)
     {
-        /**
-         * Due to the definitions of the serializer constructors, this function can
-         * only be used to create state fields of specific types.
-         */
-        static_assert(std::is_same<T, float> ||
-                      std::is_same<T, double>,
+        // Due to the definitions of the serializer constructors, this function can
+        // only be used to create state fields of specific types.
+        static_assert(std::is_same<T, f_vector_t>::value ||
+                      std::is_same<T, d_vector_t>::value,
         "This function can only be used to create float- or double-vector state fields.");
 
         Serializer<T> field_sr(min, max, bitsize);
         WritableStateField<T> field_f(name, field_sr);
         std::shared_ptr<WritableStateField<T>> field_ptr(
             std::shared_ptr<WritableStateField<T>>{}, &field_f);
-        add_writable(field_ptr);
+        add_writable_field(field_ptr);
         return field_ptr;
     }
 };

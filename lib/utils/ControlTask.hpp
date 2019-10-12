@@ -48,17 +48,17 @@ class ControlTask : protected debug_console {
     }
 
     template<typename U>
-    void add_readable(ReadableStateField<U>& field) {
+    void add_readable_field(ReadableStateField<U>& field) {
         std::shared_ptr<ReadableStateField<U>> field_ptr(
             std::shared_ptr<ReadableStateField<U>>{}, &field);
-        _registry.add_readable(field_ptr);
+        _registry.add_readable_field(field_ptr);
     }
 
     template<typename U>
-    void add_writable(WritableStateField<U>& field) {
+    void add_writable_field(WritableStateField<U>& field) {
         std::shared_ptr<WritableStateField<U>> field_ptr(
             std::shared_ptr<WritableStateField<U>>{}, &field);
-        _registry.add_writable(field_ptr);
+        _registry.add_writable_field(field_ptr);
     }
 
     template<typename U>
