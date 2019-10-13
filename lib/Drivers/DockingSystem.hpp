@@ -6,6 +6,9 @@
 namespace Devices {
 /**
  * @brief Logical interface to docking motor.
+ * 
+ * The flight software is responsible for determining if the system is docked
+ * or not.
  * **/
 class DockingSystem : public Device {
    public:
