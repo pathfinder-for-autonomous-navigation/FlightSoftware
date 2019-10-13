@@ -2,8 +2,7 @@ set -e # Exit on error
 
 # Compile and run native environments
 platformio run -e native
-platformio run -e native_test
-platformio test -e native_test
+platformio test -e native
 platformio run -e native_dummy
 python -m unittest test_dummy
 
