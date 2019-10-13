@@ -2,15 +2,23 @@
 #include "DummyControlTask.hpp"
 #include <unity.h>
 
-void test_foo() {
+void test_task_initialization() {
+    StateFieldRegistry registry;
+    DummyControlTask task(registry);
+}
+
+void test_task_execute() {
     StateFieldRegistry registry;
     DummyControlTask task(registry);
     TEST_ASSERT_EQUAL(2, task.x);
+    task.execute();
+    TEST_ASSERT_EQUAL(3, task.x);
 }
 
 int test_control_task() {
     UNITY_BEGIN();
-    RUN_TEST(test_foo);
+    RUN_TEST(test_task_initialization);
+    RUN_TEST(test_task_execute);
     return UNITY_END();
 }
 
@@ -18,7 +26,7 @@ int test_control_task() {
 int main() {
     return test_control_task();
 }
-#else 
+#else
 #include <Arduino.h>
 void setup() {
     delay(2000);
