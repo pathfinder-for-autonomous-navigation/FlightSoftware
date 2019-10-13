@@ -13,4 +13,5 @@ install:
 
 script:
     - platformio run
+    - python -m unittest test_dummy
     - platformio test -e native
