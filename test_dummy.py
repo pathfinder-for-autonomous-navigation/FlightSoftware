@@ -18,7 +18,7 @@ class TestFlightSoftwareBinary(unittest.TestCase):
     def setUp(self):
         master_fd, slave_fd = pty.openpty()
         self.dummy_fsw = subprocess.Popen([".pio/build/native_dummy/program"], stdin=master_fd, stdout=master_fd)
-        self.console = serial.Serial(os.ttyname(slave_fd), 9600)
+        self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
     def testInvalidCmd(self):
         input = json.dumps({"field": "readable_field"}) + "\n"
