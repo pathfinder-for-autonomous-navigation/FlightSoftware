@@ -12,6 +12,4 @@ install:
     - platformio update
 
 script:
-    - platformio run
-    - python -m unittest test_dummy
-    - platformio test -e native
+    - ./travis_script.sh

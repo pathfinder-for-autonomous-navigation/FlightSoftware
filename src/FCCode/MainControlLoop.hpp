@@ -10,8 +10,9 @@ class MainControlLoop : public ControlTask<void> {
    protected:
     DebugTask debug_task;
 
-    std::shared_ptr<ReadableStateField<signed int>> tank_inner_temperature;
-    std::shared_ptr<WritableStateField<signed int>> tank_outer_temperature;
+    Serializer<unsigned int> value_sr;
+    ReadableStateField<unsigned int> readable_f;
+    WritableStateField<unsigned int> writable_f;
 
    public:
     /**

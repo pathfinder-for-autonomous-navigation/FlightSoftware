@@ -64,7 +64,7 @@ class TestFlightSoftwareBinary(unittest.TestCase):
         self.assertEqual(response['field'], "writable_field")
         self.assertEqual(response['val'], "2")
 
-        # The write is persistent on the device.
+        # Ensure the write is persistent on the device.
         input = json.dumps({"field": "writable_field", "mode": ord('r')}) + "\n"
         self.console.write(input.encode())
         response = json.loads(self.console.readline().rstrip())
