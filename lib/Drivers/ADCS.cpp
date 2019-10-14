@@ -71,10 +71,9 @@ void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& 
     for(int i = 0;i<3;i++){
         unsigned short comp = 0;
         if(rwa_mode == 1)
-            //comp = us(rwa_cmd[i],)
-            comp = us(rwa_cmd[i],-680.678f,680.678f);
+            comp = us(rwa_cmd[i],rwa::min_speed_command,rwa::max_speed_command)
         else if(rwa_mode == 2)
-            comp = us(rwa_cmd[i],-0.0041875f,0.0041875f);
+            comp = us(rwa_cmd[i],rwa::min_torque,rwa::max_torque);
         cmd[2*i] = comp;
         cmd[2*i+1] = comp >> 8;
     }
@@ -94,7 +93,7 @@ void ADCS::set_mtr_mode(const unsigned char mtr_mode){
 void ADCS::set_mtr_cmd(const std::array<float, 3> &mtr_cmd){
     unsigned char cmd[6];
     for(int i = 0;i<3;i++){
-        unsigned short comp = us(mtr_cmd[i],-0.05667f,0.05667f);
+        unsigned short comp = us(mtr_cmd[i],mtr::min_moment,mtr::max_moment);
         cmd[2*i] = comp;
         cmd[2*i+1] = comp >> 8; 
     }
@@ -102,7 +101,7 @@ void ADCS::set_mtr_cmd(const std::array<float, 3> &mtr_cmd){
 }
 void ADCS::set_mtr_limit(const float mtr_limit){
     unsigned char cmd[2];
-    unsigned short comp = us(mtr_limit,-0.05667f,0.05667f);
+    unsigned short comp = us(mtr_limit,mtr::min_moment,mtr::max_moment);
     cmd[0] = comp;
     cmd[1] = comp >> 8; 
     i2c_write_to_subaddr(MTR_LIMIT, cmd, 2);
@@ -150,7 +149,7 @@ void ADCS::set_imu_gyr_temp_kd(const float kd){
     i2c_write_to_subaddr(IMU_GYR_TEMP_KD,cmd,4);
 }
 void ADCS::set_imu_gyr_temp_desired(const float desired){
-    unsigned char cmd = uc(desired,-40.0f,85.0f);
+    unsigned char cmd = uc(desired,imu::min_eq_temp,imu::max_eq_temp);
     i2c_write_to_subaddr(IMU_GYR_TEMP_DESIRED,cmd);
 }
 
@@ -167,13 +166,13 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* 
         unsigned short a = readin[2*i+1] << 8;
         unsigned short b = 0xFF & readin[2*i];
         unsigned short c = a | b;
-        (*rwa_momentum_rd)[i] = fp(c,-0.009189f,0.009189f);
+        (*rwa_momentum_rd)[i] = fp(c,rwa::min_momentum,rwa::max_momentum);
     }
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1+6] << 8;
         unsigned short b = 0xFF & readin[2*i+6];
         unsigned short c = a | b;
-        (*rwa_ramp_rd)[i] = fp(c,-0.0041875f,0.0041875);
+        (*rwa_ramp_rd)[i] = fp(c,rwa::min_torque,rwa::max_torque);
     }
 
 }
@@ -185,21 +184,19 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
         unsigned short a = readin[2*i+1] << 8;
         unsigned short b = 0xFF & readin[2*i];
         unsigned short c = a | b;        
-        //(*mag_rd)[i] = fp(c,imu::min_mag,imu::max_mag);
-        (*mag_rd)[i] = fp(c,-0.0016f,0.0016f);
+        (*mag_rd)[i] = fp(c,imu::min_rd_mag,imu::max_rd_mag);
     }
 
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1+6] << 8;
         unsigned short b = 0xFF & readin[2*i+6];
         unsigned short c = a | b;
-        //(*gyr_rd)[i] = fp(c,imu::min_omega,imu::max_omega);
-        (*gyr_rd)[i] = fp(c,-125.0f * 0.03490658504f,125.0f * 0.03490658504f);
+        (*gyr_rd)[i] = fp(c,imu::min_rd_omega,imu::max_rd_omega);
     } 
 
     unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
-    //gyr_temp_rd = fp(c,imu::min_read_temp,imu::max_read_temp);
-    *gyr_temp_rd = fp(c,25.0f-128.0f,25.0f+128.0f);
+    *gyr_temp_rd = fp(c,imu::min_rd_temp,imu::max_rd_temp);
+    //*gyr_temp_rd = fp(c,25.0f-128.0f,25.0f+128.0f);
 
 }
 void ADCS::get_ssa_mode(unsigned char* a) {
@@ -220,7 +217,7 @@ void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
     i2c_point_and_read(SSA_VOLTAGE_READ,temp,20);
     
     for(int i = 0;i<20;i++){
-        (*voltages)[i] = fp(temp[i], 0.0, 3.3);
+        (*voltages)[i] = fp(temp[i], ssa::min_voltage_rd, ssa::max_voltage_rd);
     }
 }
 
