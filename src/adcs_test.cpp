@@ -4,11 +4,12 @@
 #include <array>
 
 Devices::ADCS adcs("adcs", Wire, Devices::ADCS::ADDRESS);
-
+int cnt;
 #ifndef UNIT_TEST
 void setup() {
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
     adcs.setup();
+    cnt = 0;
 }
 template <class T, std::size_t N>
 bool comp_float_arr(std::array<T,N> a,std::array<T,N> b,float margin){
@@ -27,16 +28,6 @@ bool comp_float(float a,float b,float margin){
     return true;
 }
 
-bool test_set_endianess(){
-    adcs.set_endianess(0);
-
-    //lmao don't set endianess to 1
-    //stuff will stop working
-
-    // adcs.set_endianess(1);
-    // adcs.set_endianess(0);
-    return true;
-}
 bool test_set_mode(){
     adcs.set_mode(0);
     adcs.set_mode(1);
@@ -200,7 +191,6 @@ bool test_everything(){
     return 
     adcs.is_functional() &&
 
-    test_set_endianess() &&
     test_set_mode() &&
     test_set_rwa_mode() &&
     test_set_rwa_momentum_filter() &&
@@ -220,10 +210,8 @@ bool test_everything(){
     test_get_imu();
 }
 void loop() {
+    Serial.println("");
     Serial.printf("is functional: %d\n", adcs.is_functional());
-
-    //no way to test this, but manually verified to work
-    Serial.printf("set_endianess: %d\n", test_set_endianess());
 
     //no way to test this, but manually verified to work
     Serial.printf("set_mode: %d\n", test_set_mode());
@@ -272,6 +260,10 @@ void loop() {
     Serial.printf("get_imu: %d\n", test_get_imu());
 
     Serial.printf("TEST EVERYTHING: %d\n", test_get_imu());  
+
+    Serial.printf("Count (for debugging): %i\n", cnt);
+    cnt++;
+
     delay(1000);
 }
 #endif
