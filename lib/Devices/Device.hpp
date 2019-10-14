@@ -7,7 +7,7 @@
  * and control of hardware peripherals.
  */
 
-#include "../utils/Nameable.hpp"
+#include <Nameable.hpp>
 
 /** \addtogroup Devices
  *  @{ **/

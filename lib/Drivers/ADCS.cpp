@@ -71,7 +71,7 @@ void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& 
     for(int i = 0;i<3;i++){
         unsigned short comp = 0;
         if(rwa_mode == 1)
-            comp = us(rwa_cmd[i],rwa::min_speed_command,rwa::max_speed_command)
+            comp = us(rwa_cmd[i],rwa::min_speed_command,rwa::max_speed_command);
         else if(rwa_mode == 2)
             comp = us(rwa_cmd[i],rwa::min_torque,rwa::max_torque);
         cmd[2*i] = comp;

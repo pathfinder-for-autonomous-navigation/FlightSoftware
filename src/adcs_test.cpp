@@ -259,7 +259,7 @@ void loop() {
 
     Serial.printf("get_imu: %d\n", test_get_imu());
 
-    Serial.printf("TEST EVERYTHING: %d\n", test_get_imu());  
+    Serial.printf("TEST EVERYTHING: %d\n", test_everything());  
 
     Serial.printf("Count (for debugging): %i\n", cnt);
     cnt++;
