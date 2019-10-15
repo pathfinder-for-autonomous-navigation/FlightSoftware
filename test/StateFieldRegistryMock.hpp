@@ -129,7 +129,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @return Pointer to field that was created.
      */
     template<typename T>
-    std::shared_ptr<ReadableStateField<T>> create_writable_vector_field(const std::string& name,
+    std::shared_ptr<ReadableStateField<std::array<T,3>>> create_readable_vector_field(const std::string& name,
         T min, T max, size_t bitsize)
     {
         // Due to the definitions of the serializer constructors, this function can
@@ -156,7 +156,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @return Pointer to field that was created.
      */
     template<typename T>
-    std::shared_ptr<WritableStateField<T>> create_writable_vector_field(const std::string& name,
+    std::shared_ptr<WritableStateField<std::array<T, 3>>> create_writable_vector_field(const std::string& name,
         T min, T max, size_t bitsize)
     {
         // Due to the definitions of the serializer constructors, this function can
