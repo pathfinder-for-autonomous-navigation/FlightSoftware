@@ -13,3 +13,6 @@ install:
 
 script:
     - ./tools/travis_script.sh
+
+after_success:
+    -  coveralls -r . -b . -e "./test/output_export.cpp"
