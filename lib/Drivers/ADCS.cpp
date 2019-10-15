@@ -16,7 +16,7 @@ ADCS::ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address)
 bool ADCS::i2c_ping() {
     unsigned char temp;
     get_who_am_i(&temp); 
-    return temp==15;
+    return temp==WHO_AM_I_EXPECTED;
     }
 
 template <typename T>
@@ -40,7 +40,7 @@ inline float fp(signed short si, float min, float max) {
 inline float fp(unsigned short ui, float min, float max) {
   return min + ((float) ui) * (max - min) / 65535.0f;
 }
-//float f to unsigned char
+
 inline unsigned char uc(float f, float min, float max) {
   return (unsigned char)(255.0f * (f - min) / (max - min));
 }
@@ -113,7 +113,7 @@ void ADCS::set_ssa_voltage_filter(const float voltage_filter) {
     unsigned char comp = uc(voltage_filter,0.0f,1.0f);
     i2c_write_to_subaddr(SSA_VOLTAGE_FILTER, comp);
 }
-//i have no idea what this mode entails with the last "free mode" part
+
 void ADCS::set_imu_mode(const unsigned char mode){
     i2c_write_to_subaddr(IMU_MODE, mode);
 }
@@ -158,7 +158,6 @@ void ADCS::get_who_am_i(unsigned char* who_am_i) {
     i2c_point_and_read(WHO_AM_I, who_am_i, 1);
 }
 void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd) {
-    //read in into an array of chars
     unsigned char readin[12];
     i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
 
@@ -196,8 +195,6 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
 
     unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
     *gyr_temp_rd = fp(c,imu::min_rd_temp,imu::max_rd_temp);
-    //*gyr_temp_rd = fp(c,25.0f-128.0f,25.0f+128.0f);
-
 }
 void ADCS::get_ssa_mode(unsigned char* a) {
     i2c_point_and_read(SSA_MODE, a, 1);

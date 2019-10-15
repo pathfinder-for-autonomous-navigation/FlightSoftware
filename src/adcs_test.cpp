@@ -74,7 +74,6 @@ bool test_set_imu_filters(){
     adcs.set_imu_gyr_filter(0.4f);
     adcs.set_imu_gyr_temp_filter(0.41f);
 
-    //works, what are bounds?
     adcs.set_imu_gyr_temp_kp(88.0f);
     adcs.set_imu_gyr_temp_ki(98.0f);
     adcs.set_imu_gyr_temp_kd(108.0f);
@@ -83,18 +82,16 @@ bool test_set_imu_filters(){
     
 }
 bool test_get_who_am_i(){
-    unsigned char temp = 2;
+    unsigned char temp;
     adcs.get_who_am_i(&temp);
     
-    //Serial.println(temp);
-    return 15 == temp;
+    return Devices::ADCS::WHO_AM_I_EXPECTED == temp;
 }
 
 bool test_getset_ssa_mode(){
     //state.cpp default is 0
     adcs.set_ssa_mode(1);
-    //should change from 4 to 1
-    unsigned char temp = 4;
+    unsigned char temp = 0;
     adcs.get_ssa_mode(&temp);
     return temp == 1;
 
@@ -116,7 +113,7 @@ bool test_set_imu_mode(){
 bool test_get_ssa_vector(){
 
     std::array<float, 3> ssa_vec_rd = {0.5f,0.5f,0.5f};
-    std::array<float, 3> ssa_vec_state = {0.69f, 0.42f, -.88f};           // Sun vector read
+    std::array<float, 3> ssa_vec_state = {0.69f, 0.42f, -.88f};
 
     adcs.get_ssa_vector(&ssa_vec_rd);
 
@@ -125,8 +122,6 @@ bool test_get_ssa_vector(){
 }
 
 bool test_get_imu(){
-//void ADCS::get_imu(std::array<float,3>* gyr_rd,std::array<float,3>* mag_rd,float* gyr_temp_rd){
-
     std::array<float, 3> gyr_rd = {1.0f,1.0f,1.0f};
     std::array<float, 3> mag_rd = {1.0f,1.0f,1.0f};;
 
@@ -138,18 +133,12 @@ bool test_get_imu(){
 
     adcs.get_imu(&mag_rd, &gyr_rd, &gyr_temp_rd);
 
-    //Serial.printf("temp: %f\n", gyr_temp_rd);
-
     return (comp_float_arr(mag_rd,mag_state,0.0001f) && comp_float_arr(gyr_rd,gyr_state,0.001f)
     && comp_float(gyr_temp_rd,gyr_temp_state,0.01f));
 
     return false;
 }
 
-
-//this is now working
-//just not too sure about when rwa mode = 2
-//values too small to verify
 bool test_set_rwa_mode(){
     std::array<float,3> cmd = {200.0f,400.0f,-500.0f};
     adcs.set_rwa_mode(1,cmd);
@@ -161,7 +150,6 @@ bool test_set_rwa_mode(){
 }
 
 bool test_get_rwa(){
-    //dummy inital values
     std::array<float, 3> rwa_momentum_rd = {1.0f,1.0f,1.0f};
     std::array<float, 3> rwa_ramp_rd = {1.0f,1.0f,1.0f};;
 
@@ -179,7 +167,7 @@ bool test_get_ssa_voltage(){
     adcs.get_ssa_voltage(&temp);
 
     std::array<float,20> reference =
-    {1.0f, 2.0f, 3.0f, 0.0f, 0.0f, // Voltage read
+    {1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
      1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
      1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
      1.0f, 2.0f, 3.0f, 0.0f, 0.0f};
@@ -190,6 +178,7 @@ bool test_get_ssa_voltage(){
 bool test_everything(){
     return 
     adcs.is_functional() &&
+    adcs.i2c_ping() &&
 
     test_set_mode() &&
     test_set_rwa_mode() &&
@@ -212,6 +201,8 @@ bool test_everything(){
 void loop() {
     Serial.println("");
     Serial.printf("is functional: %d\n", adcs.is_functional());
+
+    Serial.printf("i2c ping: %d\n", adcs.i2c_ping());
 
     //no way to test this, but manually verified to work
     Serial.printf("set_mode: %d\n", test_set_mode());

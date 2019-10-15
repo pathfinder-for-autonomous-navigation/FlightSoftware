@@ -16,14 +16,22 @@ namespace Devices {
 class ADCS : public I2CDevice {
    public:
     static constexpr unsigned int ADDRESS = 0x4E;
-    /** **/
+    static constexpr unsigned int WHO_AM_I_EXPECTED = 0x0F;
+    /**
+     * @brief quickly tests that the device is active and working on i2c
+     * 
+     * @return true
+     * returns true if get_who_am_i returns the expected value
+     * @return false 
+     * returns false if get_who_am_i does not return the expected value
+     */
     virtual bool i2c_ping() override;
     /**
      * @brief Construct a new ADCS object
      * 
-     * @param name 
-     * @param i2c_wire 
-     * @param address 
+     * @param name The name
+     * @param i2c_wire The assoicated i2c wire
+     * @param address The address on i2c bus
      */
     ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address);
     /**
