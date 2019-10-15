@@ -12,4 +12,4 @@ install:
     - platformio update
 
 script:
-    - ./travis_script.sh
+    - ./tools/travis_script.sh
