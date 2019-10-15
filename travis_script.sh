@@ -1,10 +1,10 @@
 set -e # Exit on error
 
 # Compile and run native environments
+platformio run -e native_ci
+platformio test -e native_ci
+python -m unittest test_dummy_fsw
 platformio run -e native
-platformio test -e native
-platformio run -e native_dummy
-python -m unittest test_dummy
 
 # Compile and run HOOTL/Flight Teensy environments
 platformio run -e teensy35_cli_hootl

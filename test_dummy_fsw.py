@@ -1,5 +1,5 @@
-# Tests the native_dummy target output to ensure that input and
-# output work as intended.
+# Tests the native_ci target output to ensure that input and output 
+# to the Flight Software work as intended.
 
 import subprocess
 import pty
@@ -9,7 +9,7 @@ import serial
 import traceback
 import unittest
 
-class TestFlightSoftwareBinary(unittest.TestCase):
+class TestDummyFlightSoftwareBinary(unittest.TestCase):
     """
     Ensures that basic state field read-write functionality works as expected within
     Flight Software.
