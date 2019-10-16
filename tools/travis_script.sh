@@ -2,7 +2,7 @@ set -e # Exit on error
 
 # Compile and run functional test for non-optimized native environment
 platformio run -e native_ci
-python -m unittest test_dummy_fsw
+python -m unittest -v test_dummy_fsw
 
 # Verify compilation and unit tests for optimized native environment
 platformio run -e native

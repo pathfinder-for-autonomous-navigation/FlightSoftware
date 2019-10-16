@@ -2,6 +2,7 @@
 #define STATE_FIELD_REGISTRY_MOCK_HPP_
 
 #include <StateFieldRegistry.hpp>
+#include <iostream>
 
 /**
  * @brief Provides a state field registry with additional field creation
