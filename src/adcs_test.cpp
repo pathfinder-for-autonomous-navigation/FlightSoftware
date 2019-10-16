@@ -17,7 +17,6 @@ template <class T, std::size_t N>
 bool comp_float_arr(std::array<T,N> a,std::array<T,N> b,float margin){
     bool ret = true;
     for(unsigned int i = 0;i<N;i++){
-        //Serial.printf("diff: %f\n",abs(a[i]-b[i]));
         if(abs(a[i]-b[i])>margin)
             ret = false;
     }

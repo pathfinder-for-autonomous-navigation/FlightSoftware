@@ -102,7 +102,8 @@ class ADCS : public I2CDevice {
      * 
      * @param mtr_cmd Array of three floats, mapping to 16-bit unsigned integers 
      * for the x axis, y axis, and z axis in the body frame respectively.
-     * Each value maps to a magnetic moment command, limited by maximum magnetic moment
+     * Each value maps to a magnetic moment command 
+     * limited by maximum magnetic moment (and min)
      */
     void set_mtr_cmd(const std::array<float, 3>& mtr_cmd);
 
@@ -110,7 +111,8 @@ class ADCS : public I2CDevice {
      * @brief Set the magnetorquer maximum moment limit
      * 
      * @param mtr_limit float representing the limit
-     * Float maps to a 16-bit unsigned integer limited by maximum magnetic moment
+     * Float maps to a 16-bit unsigned integer 
+     * limited by maximum magnetic moment (and min)
      */
     void set_mtr_limit(const float mtr_limit);
 
@@ -134,7 +136,7 @@ class ADCS : public I2CDevice {
     void set_ssa_voltage_filter(const float voltage_filter);
 
     /**
-     * @brief Set the imu mode
+     * @brief Set the inertial measurement unit mode
      * 
      * @param char represnting the imu mode
      * 0x00 – Use magnetometer one (default) 
@@ -144,7 +146,7 @@ class ADCS : public I2CDevice {
     void set_imu_mode(const unsigned char mode);
 
     /**
-     * @brief Set the imu magnetometer exponential filter
+     * @brief Set the inertial mesaurement unit magnetometer exponential filter
      * 
      * @param mag_filter float representing imu filter from [0.0, 1.0].
      * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0]. 
@@ -153,7 +155,7 @@ class ADCS : public I2CDevice {
     void set_imu_mag_filter(const float mag_filter);
 
     /**
-     * @brief Set the imu gyroscope exponential filter
+     * @brief Set the inertial measurement unit gyroscope exponential filter
      * 
      * @param gyr_filter float representing gyroscope filter from [0.0, 1.0].
      * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0]. 
@@ -194,8 +196,9 @@ class ADCS : public I2CDevice {
     /**
      * @brief Sets the desired gyroscope equilibrium temperature. 
      * 
-     * @param desired a float from [-40.0, 85.0]
-     * The float maps to an eight-bit unsigned integer mapping from [-40.0, 85.0] degrees Celsius.  
+     * @param desired a float from imu::min_eq_temp to imu::max_eq_temp
+     * The float maps to an eight-bit unsigned integer 
+     * mapping from imu::min_eq_temp to imu::max_eq_temp degrees Celsius.  
      */
     void set_imu_gyr_temp_desired(const float desired);
     
@@ -207,27 +210,29 @@ class ADCS : public I2CDevice {
     void get_who_am_i(unsigned char *who_am_i);
 
     /**
-     * @brief Get the rwa momentum and ramp readings
+     * @brief Get the reaction wheel assembly momentum and ramp readings
      * 
      * @param rwa_momentum_rd Pointer to output std::array of floats for momentum
-     * 3 unsigned shorts map to wheel angular momentums from [-0.009189, 0.009189] kg m^2 s^-1 
+     * 3 unsigned shorts map to wheel angular momentums from 
+     * rwa::min_momentum to rwa::max_momentum in kg m^2 / s
      * in the x, y, and z direction in the body frame. 
      * 
      * @param rwa_ramp_rd Pointer to output std::array of floats for ramp
-     * 3 unsigned shorts map to wheel torque commands from [-0.0041875, 0.0041875] N m 
+     * 3 unsigned shorts map to wheel torque commands from 
+     * rwa::min_torque to rwa::max_torque in N m
      * in the x, y, and z direction in the body frame. 
      */
     void get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd);
 
     /**
-     * @brief Get the ssa mode
+     * @brief Get the sun sensor array mode
      * 
      * @param ssa_mode Pointer to output current ssa mode value
      */
     void get_ssa_mode(unsigned char *ssa_mode);
 
     /**
-     * @brief Get the ssa vector
+     * @brief Get the sun sensor array vector
      * 
      * @param ssa_sun_vec Pointer to output std::array of floats
      * Three 16-bit unsigned integers that encode the unit vector 
@@ -237,11 +242,12 @@ class ADCS : public I2CDevice {
     void get_ssa_vector(std::array<float, 3>* ssa_sun_vec);
 
     /**
-     * @brief Get the ssa voltage array
+     * @brief Get the sun sensor array voltages
      * 
      * @param voltages Pointer to output std::array of floats of
      * Consists of 20 eight-bit unsigned integers mapped to floats specifying 
-     * the voltage measurements at each photodiode on the range [0.0, 3.3] V. 
+     * the voltage measurements at each photodiode on the range 
+     * of ssa::min_voltage_rd to ssa::max_voltage_rd Volts
      */
     void get_ssa_voltage(std::array<float, 20>* voltages);
 
@@ -250,14 +256,17 @@ class ADCS : public I2CDevice {
      * 
      * @param mag_rd Pointer to output std::array of floats
      * Three unsigned shorts encode the magnetic field measurement in the 
-     * body frame of the spacecraft on the range [-16e-4, 16e-4] T. 
+     * body frame of the spacecraft on the range 
+     * imu::min_rd_mag to imu::max_rd_mag in Tesla
      * 
      * @param gyr_rd Pointer to output std::array of floats
      * Three unsigned shorts encode the angular rate measurement in the 
-     * body frame of the spacecraft on the range [-4.363, 4.363] radians s^-1.
+     * body frame of the spacecraft on the range 
+     * imu::min_rd_omega to imu::max_rd_omega in radians per second
      *  
      * @param gyr_temp_rd Pointer to output float
-     * One unsigned short encodes the gyroscope temperature on the range [-103, 153] degrees Celsius. 
+     * One unsigned short encodes the gyroscope temperature on 
+     * the range imu::min_rd_temp imu::max_rd_temp Celcius
      */
     void get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd);
     
