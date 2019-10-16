@@ -37,35 +37,32 @@ class ControlTask : public ControlTaskBase {
      */
     virtual T execute() = 0;
 
-    /**
-     * @brief Find a field of a given name within the state registry
-     * and return a pointer to it.
-     *
-     * @param name Name of state field.
-     *
-     * @return Pointer to field, or null pointer if field doesn't exist.
-     */
-    std::shared_ptr<StateFieldBase> find_field(const std::string& name) {
-        return _registry.find_field(name);
+    template<typename U>
+    bool add_readable_field(ReadableStateField<U> field) {
+        return _registry.add_readable_field(field.ptr());
     }
 
-    /**
-     * @brief Marks a field as being downloadable by ground.
-     *
-     * @param field State field
-     */
-    bool add_readable(std::shared_ptr<ReadableStateFieldBase>& field) {
-        return _registry.add_readable(field);
+    template<typename U>
+    bool add_writable_field(WritableStateField<U> field) {
+        return _registry.add_writable_field(field.ptr());
     }
 
-    /**
-     * @brief Marks a field as being uploadable by ground.
-     *
-     * @param r ControlTaskBase
-     * @param field Data field
-     */
-    bool add_writable(std::shared_ptr<WritableStateFieldBase>& field) {
-        return _registry.add_writable(field);
+    template<typename U>
+    std::shared_ptr<ReadableStateField<U>> find_readable_field(const char* field, const char* file, const unsigned int line) {
+        auto field_ptr = std::static_pointer_cast<ReadableStateField<U>>(_registry.find_readable_field(field));
+        if (!field_ptr) { 
+            printf(debug_severity::error, "%s:%d: Readable field required is not present in state registry: %s\n", file, line, field);
+        }
+        return field_ptr;
+    }
+
+    template<typename U>
+    std::shared_ptr<WritableStateField<U>> find_writable_field(const char* field, const char* file, const unsigned int line) {
+        auto field_ptr = std::static_pointer_cast<WritableStateField<U>>(_registry.find_writable_field(field));
+        if (!field_ptr) { 
+            printf(debug_severity::error, "%s:%d: Writable field required is not present in state registry: %s\n", file, line, field);
+        }
+        return field_ptr;
     }
 };
 
