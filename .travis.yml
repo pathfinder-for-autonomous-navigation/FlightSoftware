@@ -15,4 +15,5 @@ script:
     - ./tools/travis_script.sh
 
 after_success:
-    -  coveralls -r . -b . -e "./test/output_export.cpp"
+    - ./tools/generate_coverage.sh
+    - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
