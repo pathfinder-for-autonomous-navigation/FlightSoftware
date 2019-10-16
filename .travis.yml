@@ -17,6 +17,7 @@ addons:
 install:
     - pip install -U platformio
     - platformio update
+    - sudo gem install coveralls-lcov
 
 script:
     - ./tools/travis_script.sh
