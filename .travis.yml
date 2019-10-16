@@ -7,6 +7,13 @@ cache:
     directories:
         - "~/.platformio"
 
+addons:
+  apt:
+    packages:
+     - lcov
+     - cppcheck
+     - valgrind
+
 install:
     - pip install -U platformio
     - platformio update
