@@ -20,12 +20,10 @@ class ADCS : public I2CDevice {
     /**
      * @brief quickly tests that the device is active and working on i2c
      * 
-     * @return true
-     * returns true if get_who_am_i returns the expected value
-     * @return false 
-     * returns false if get_who_am_i does not return the expected value
+     * @return returns true if get_who_am_i returns the expected value, else false
      */
     virtual bool i2c_ping() override;
+
     /**
      * @brief Construct a new ADCS object
      * 
@@ -34,6 +32,7 @@ class ADCS : public I2CDevice {
      * @param address The address on i2c bus
      */
     ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address);
+
     /**
      * @brief Sets the read pointer, writes len bytes into data
      * 
@@ -43,6 +42,7 @@ class ADCS : public I2CDevice {
      */
     template <typename T>
     void i2c_point_and_read(unsigned char data_register, T* data, std::size_t len);
+
     /**
      * @brief Set the mode of the ADCS controller
      * 
@@ -51,12 +51,14 @@ class ADCS : public I2CDevice {
      * 0x01–ADCS active mode 
      */
     void set_mode(const unsigned char mode);
+
     /**
      * @brief Set what address the the ADCS controller should read from
      * 
      * @param read_ptr address to read from
      */
     void set_read_ptr(const unsigned char read_ptr);
+
     /**
      * @brief Set the rwa mode
      * 
@@ -72,6 +74,7 @@ class ADCS : public I2CDevice {
      * Defaults to 0x0000 0x0000 0x0000 
      */
     void set_rwa_mode(const unsigned char rwa_mode, const std::array<float,3>& rwa_cmd);
+
     /**
      * @brief Set the reaction wheel momentum read exponential filter constant 
      * 
@@ -80,6 +83,7 @@ class ADCS : public I2CDevice {
      * Defaults to 0xFF. 
      */
     void set_rwa_momentum_filter(const float mom_filter);
+
     /**
      * @brief Set the rwa ramp filter
      * 
@@ -88,14 +92,16 @@ class ADCS : public I2CDevice {
      * Defaults to 0xFF.   
      */
     void set_ramp_filter(const float ramp_filter);
+
     /**
-     * @brief Set the magnetorquer mode
+     * @brief Set the magnetorquer command mode
      * 
      * @param mtr_mode single byte representing mode
      * 0x00 – Disabled (default) 
      * 0x01 – Enabled 
      */
     void set_mtr_mode(const unsigned char mtr_mode);
+
     /**
      * @brief Set the magnetorquer mode
      * 
@@ -104,6 +110,7 @@ class ADCS : public I2CDevice {
      * Each value maps to a magnetic moment command in the range [-0.05667, 0.05667] A m^2 
      */
     void set_mtr_cmd(const std::array<float, 3>& mtr_cmd);
+
     /**
      * @brief Set the magnetorquer maximum moment limit
      * 
@@ -111,6 +118,7 @@ class ADCS : public I2CDevice {
      * Float maps to a 16-bit unsigned integer mapping to [-0.05667, 0.05667] A m^2.
      */
     void set_mtr_limit(const float mtr_limit);
+
     /**
      * @brief Set the sun sensor array mode
      * 
@@ -120,6 +128,7 @@ class ADCS : public I2CDevice {
      * 0x02 – Indicates success of a sun vector calculation 
      */
     void set_ssa_mode(const unsigned char ssa_mode);
+
     /**
      * @brief Set the sun sensor array voltage exponential filter
      * 
@@ -128,6 +137,7 @@ class ADCS : public I2CDevice {
      * Defaults to 0xFF. 
      */
     void set_ssa_voltage_filter(const float voltage_filter);
+
     /**
      * @brief Set the imu mode
      * 
@@ -137,6 +147,7 @@ class ADCS : public I2CDevice {
      * 0b1X – Calibrate the magnetometer in use (specified by the free bit) 
      */
     void set_imu_mode(const unsigned char mode);
+
     /**
      * @brief Set the imu magnetometer exponential filter
      * 
@@ -145,6 +156,7 @@ class ADCS : public I2CDevice {
      * Defaults to 0xFF. 
      */
     void set_imu_mag_filter(const float mag_filter);
+
     /**
      * @brief Set the imu gyroscope exponential filter
      * 
@@ -153,6 +165,7 @@ class ADCS : public I2CDevice {
      * Defaults to 0xFF. 
      */
     void set_imu_gyr_filter(const float gyr_filter);
+
     /**
      * @brief Set the gyroscope temperature exponential filter constant 
      * 
@@ -161,24 +174,28 @@ class ADCS : public I2CDevice {
      * Defaults to 0xFF. 
      */
     void set_imu_gyr_temp_filter(const float temp_filter);
+
     /**
      * @brief Sets the proportional gain on the gyroscope temperature controller.
      * 
      * @param kp proportional gain, full float is passed to ADCS over i2c
      */
     void set_imu_gyr_temp_kp(const float kp);
+
     /**
      * @brief Sets the integral gain on the gyroscope temperature controller
      * 
      * @param ki integral gain, full float is passed to ADCS over i2c
      */
     void set_imu_gyr_temp_ki(const float ki);
+
     /**
      * @brief Sets the derivative gain on the gyroscope temperature controller
      * 
      * @param kd derivative gain, full float is passed to ADCS over i2c
      */
     void set_imu_gyr_temp_kd(const float kd);
+
     /**
      * @brief Sets the desired gyroscope equilibrium temperature. 
      * 
@@ -193,6 +210,7 @@ class ADCS : public I2CDevice {
      * @param who_am_i A output pointer where the read value is stored
      */
     void get_who_am_i(unsigned char *who_am_i);
+
     /**
      * @brief Get the rwa momentum and ramp readings
      * 
@@ -205,12 +223,14 @@ class ADCS : public I2CDevice {
      * in the x, y, and z direction in the body frame. 
      */
     void get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd);
+
     /**
      * @brief Get the ssa mode
      * 
      * @param ssa_mode Pointer to output current ssa mode value
      */
     void get_ssa_mode(unsigned char *ssa_mode);
+
     /**
      * @brief Get the ssa vector
      * 
@@ -220,6 +240,7 @@ class ADCS : public I2CDevice {
      * The 16-bit unsigned integers map [-1.0, 1.0] and are encoded into floats.
      */
     void get_ssa_vector(std::array<float, 3>* ssa_sun_vec);
+
     /**
      * @brief Get the ssa voltage array
      * 
@@ -228,6 +249,7 @@ class ADCS : public I2CDevice {
      * the voltage measurements at each photodiode on the range [0.0, 3.3] V. 
      */
     void get_ssa_voltage(std::array<float, 20>* voltages);
+
     /**
      * @brief Get the imu magnetoruqer, gyroscope and gyroscope temperature reading
      * 

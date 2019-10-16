@@ -2,6 +2,7 @@
 #include <i2c_t3.h>
 #include <ADCS.hpp>
 #include <array>
+#include <adcs_constants.hpp>
 
 Devices::ADCS adcs("adcs", Wire, Devices::ADCS::ADDRESS);
 int cnt;
@@ -11,6 +12,7 @@ void setup() {
     adcs.setup();
     cnt = 0;
 }
+
 template <class T, std::size_t N>
 bool comp_float_arr(std::array<T,N> a,std::array<T,N> b,float margin){
     bool ret = true;
@@ -29,35 +31,44 @@ bool comp_float(float a,float b,float margin){
 }
 
 bool test_set_mode(){
-    adcs.set_mode(0);
-    adcs.set_mode(1);
-    adcs.set_mode(0);
+    adcs.set_mode(ADCSMode::ADCS_PASSIVE);
+    adcs.set_mode(ADCSMode::ADCS_ACTIVE);
+    adcs.set_mode(ADCSMode::ADCS_PASSIVE);
 
     return true;
 }
+
 bool test_set_rwa_momentum_filter(){
+    //arbitrary test value
     adcs.set_rwa_momentum_filter(0.77f);
     return true;
 }
+
 bool test_set_rwa_ramp_filter(){
+    //arbitrary test value
     adcs.set_ramp_filter(0.88f);
     return true;
 }
+
 bool test_set_mtr_mode(){
-    adcs.set_mtr_mode(0);
-    adcs.set_mtr_mode(1);
-    adcs.set_mtr_mode(0);
+    adcs.set_mtr_mode(MTRMode::MTR_DISABLED);
+    adcs.set_mtr_mode(MTRMode::MTR_ENABLED);
+    adcs.set_mtr_mode(MTRMode::MTR_DISABLED);
     return true;
 }
+
 bool test_set_mtr_command(){
+    //arbitrary test values
     std::array<float,3> cmd = {0.01f,0.01f,-0.01f};
 
     adcs.set_mtr_cmd(cmd);
 
     return true;
 }
+
 bool test_set_mtr_limit(){
 
+    //arbitrary test values
     float lim = 0.0420f;
     float nlim = -0.0234f;
     float lim1 = 0.035;
@@ -69,7 +80,9 @@ bool test_set_mtr_limit(){
     
     return true;
 }
+
 bool test_set_imu_filters(){
+    //arbitrary test values
     adcs.set_imu_mag_filter(0.39f);
     adcs.set_imu_gyr_filter(0.4f);
     adcs.set_imu_gyr_temp_filter(0.41f);
@@ -81,6 +94,7 @@ bool test_set_imu_filters(){
     return true;
     
 }
+
 bool test_get_who_am_i(){
     unsigned char temp;
     adcs.get_who_am_i(&temp);
@@ -90,28 +104,34 @@ bool test_get_who_am_i(){
 
 bool test_getset_ssa_mode(){
     //state.cpp default is 0
-    adcs.set_ssa_mode(1);
+    adcs.set_ssa_mode(SSAMode::SSA_IN_PROGRESS);
     unsigned char temp = 0;
     adcs.get_ssa_mode(&temp);
-    return temp == 1;
+    return temp == SSAMode::SSA_IN_PROGRESS;
 
 }
+
 bool test_set_ssa_voltage_filter(){
+    //arbitrary test values
     adcs.set_ssa_voltage_filter(0.8f);
     adcs.set_ssa_voltage_filter(0.32f);
 
     return true;
 }
+
 bool test_set_imu_mode(){
-    adcs.set_imu_mode(0);
-    adcs.set_imu_mode(1);
-    adcs.set_imu_mode(2);
-    adcs.set_imu_mode(0);
+    adcs.set_imu_mode(IMUMode::MAG1);
+    adcs.set_imu_mode(IMUMode::MAG2);
+    adcs.set_imu_mode(IMUMode::MAG1_CALIBRATE);
+    adcs.set_imu_mode(IMUMode::MAG2_CALIBRATE);
+    adcs.set_imu_mode(IMUMode::MAG1);
 
     return true;
 }
+
 bool test_get_ssa_vector(){
 
+    //arbitrary test values
     std::array<float, 3> ssa_vec_rd = {0.5f,0.5f,0.5f};
     std::array<float, 3> ssa_vec_state = {0.69f, 0.42f, -.88f};
 
@@ -122,6 +142,7 @@ bool test_get_ssa_vector(){
 }
 
 bool test_get_imu(){
+    //arbitrary test values
     std::array<float, 3> gyr_rd = {1.0f,1.0f,1.0f};
     std::array<float, 3> mag_rd = {1.0f,1.0f,1.0f};;
 
@@ -140,6 +161,7 @@ bool test_get_imu(){
 }
 
 bool test_set_rwa_mode(){
+    //arbitrary test values
     std::array<float,3> cmd = {200.0f,400.0f,-500.0f};
     adcs.set_rwa_mode(1,cmd);
 
@@ -149,7 +171,8 @@ bool test_set_rwa_mode(){
     return true;
 }
 
-bool test_get_rwa(){
+bool test_get_rwa() {
+    //arbitrary test values
     std::array<float, 3> rwa_momentum_rd = {1.0f,1.0f,1.0f};
     std::array<float, 3> rwa_ramp_rd = {1.0f,1.0f,1.0f};;
 
@@ -166,6 +189,7 @@ bool test_get_ssa_voltage(){
     std::array<float,20> temp;
     adcs.get_ssa_voltage(&temp);
 
+    //arbitrary test values
     std::array<float,20> reference =
     {1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
      1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
@@ -175,6 +199,7 @@ bool test_get_ssa_voltage(){
     return comp_float_arr(reference,temp,0.02f);
 
 }
+
 bool test_everything(){
     return 
     adcs.is_functional() &&
@@ -198,8 +223,10 @@ bool test_everything(){
     test_get_rwa() &&
     test_get_imu();
 }
+
 void loop() {
     Serial.println("");
+
     Serial.printf("is functional: %d\n", adcs.is_functional());
 
     Serial.printf("i2c ping: %d\n", adcs.i2c_ping());
