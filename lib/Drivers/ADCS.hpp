@@ -60,23 +60,18 @@ class ADCS : public I2CDevice {
     void set_read_ptr(const unsigned char read_ptr);
 
     /**
-     * @brief Set the rwa mode
+     * @brief Set the reaction wheel assembly mode
      * 
-     * @param rwa_mode mode of RWA
-     * 0x00 – Reaction wheels disabled (default) 
-     * 0x01 – Speed control 
-     * 0x02 – Acceleration control 
+     * @param rwa_mode modes specified by RWAModes
      * 
-     * @param rwa_cmd Command associated with specific RWA ramp mode, 3 floats
-     * The 3 floats map to three 16-bit unsigned integers mapping to the x axis, y axis, and z axis in the body frame respectively. 
-     * When in speed control, the number maps [-680.678, 680.678] radiances per second. 
-     * When in acceleration control, the number maps [-0.0041875, 0.0041875] N m. 
-     * Defaults to 0x0000 0x0000 0x0000 
+     * @param rwa_cmd command specific to mode, a float per axis
+     * When in speed control, limited by max speed
+     * When in acceleration control, limited by max torque
      */
     void set_rwa_mode(const unsigned char rwa_mode, const std::array<float,3>& rwa_cmd);
 
     /**
-     * @brief Set the reaction wheel momentum read exponential filter constant 
+     * @brief Set the reaction wheel assembly momentum read exponential filter constant 
      * 
      * @param rwa_speed_flt momentum read exponential filter, a float from [0.0, 1.0].
      * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0].
@@ -85,7 +80,7 @@ class ADCS : public I2CDevice {
     void set_rwa_momentum_filter(const float mom_filter);
 
     /**
-     * @brief Set the rwa ramp filter
+     * @brief Set the reaction wheel assembly ramp filter
      * 
      * @param rwa_ramp_flt ramp read exponential filter, a float from [0.0, 1.0].
      * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0].
@@ -103,11 +98,11 @@ class ADCS : public I2CDevice {
     void set_mtr_mode(const unsigned char mtr_mode);
 
     /**
-     * @brief Set the magnetorquer mode
+     * @brief Set the magnetorquer command itself
      * 
-     * @param mtr_cmd Array of three floats, mapping to 16-bit unsigned integers for the
-     * x axis, y axis, and z axis in the body frame respectively. 
-     * Each value maps to a magnetic moment command in the range [-0.05667, 0.05667] A m^2 
+     * @param mtr_cmd Array of three floats, mapping to 16-bit unsigned integers 
+     * for the x axis, y axis, and z axis in the body frame respectively.
+     * Each value maps to a magnetic moment command, limited by maximum magnetic moment
      */
     void set_mtr_cmd(const std::array<float, 3>& mtr_cmd);
 
@@ -115,7 +110,7 @@ class ADCS : public I2CDevice {
      * @brief Set the magnetorquer maximum moment limit
      * 
      * @param mtr_limit float representing the limit
-     * Float maps to a 16-bit unsigned integer mapping to [-0.05667, 0.05667] A m^2.
+     * Float maps to a 16-bit unsigned integer limited by maximum magnetic moment
      */
     void set_mtr_limit(const float mtr_limit);
 
