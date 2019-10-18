@@ -4,6 +4,7 @@
 #include <climits>
 #include <tuple>
 #include "../Devices/Device.hpp"
+#include "DCDC.hpp"
 
 using namespace Devices;
 
@@ -61,7 +62,7 @@ signed int PropulsionSystem::get_temp_outer() {
     return 0;
 }
 
-bool PropulsionSystem::is_functional() { return true; }
+bool PropulsionSystem::is_functional() { return digitalRead(DCDC::dcdc_sph_enable_pin); }
 
 void PropulsionSystem::set_thrust_valve_state(const std::array<unsigned char, 4> &setting) {
     for (unsigned char i = 2; i < 6; i++) { digitalWrite(valve_pins[i], setting[i]); }
