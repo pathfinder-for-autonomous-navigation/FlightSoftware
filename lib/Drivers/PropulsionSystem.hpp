@@ -3,6 +3,8 @@
 
 #include <array>
 #include "../Devices/Device.hpp"
+#include <IntervalTimer.h>
+
 namespace Devices {
 /**
  * To use the class, update the firing schedule, and then call
@@ -26,11 +28,11 @@ class PropulsionSystem : public Device {
 
     //! Default mapping of physical GPIO pin #s (values) to logical pin #s
     //! (indices).
-    static const std::array<unsigned char, 6> default_valve_pins;
+    static const std::array<unsigned char, 6> valve_pins;
     static constexpr unsigned char pressure_sensor_low_pin = 20;
     static constexpr unsigned char pressure_sensor_high_pin = 23;
-    static constexpr unsigned char temp_inner_pin = 21;
-    static constexpr unsigned char temp_outer_pin = 22;
+    static constexpr unsigned char temp_sensor_inner_pin = 21;
+    static constexpr unsigned char temp_sensor_outer_pin = 22;
 
     /** @brief Default constructor. **/
     PropulsionSystem();
@@ -39,20 +41,26 @@ class PropulsionSystem : public Device {
     bool is_functional() override;
 
     /**
-     * @brief Shuts off all valves.
+     * @brief Shuts off all valves and turns off the thrust valve loop timer.
      */
     void disable() override;
+
+    /**
+     * @brief Turns on the thrust valve loop timer.
+     */
+    void enable();
+
     void reset() override;
 
     float get_pressure();
     signed int get_temp_inner();
     signed int get_temp_outer();
 
-    /** @brief Set the thrust valve states, as specified by the array.
+    /** @brief Set the thrust valve schedule, as specified by the array.
      * 
      * Index i corresponds to nozzle i + 1.
      **/
-    void set_thrust_valve_state(const std::array<unsigned char, 4> &setting);
+    void set_thrust_valve_schedule(const std::array<unsigned int, 4> &setting);
 
     /**
      * @brief Set the tank valve state for the given tank valve.
@@ -64,14 +72,27 @@ class PropulsionSystem : public Device {
      */
     void set_tank_valve_state(bool valve, bool state);
 
-    /** @brief Shut all valves. **/
-    void shut_all_valves();
-
    private:
-    //! # of GPIO pin that valve is connected to.
-    std::array<unsigned char, 6> valve_pins;
+    //! If true, a thrust valve was opened on the current cycle
+    // of the thrust valve loop, so another valve (thrust or prop)
+    // should not be opened during the current cycle.
+    volatile bool valve_start_locked_out = false;
 
-    unsigned int preferred_tank_valve;
+    //! Runs thrust_valve_loop every 5 ms. Initialized in setup().
+    IntervalTimer thrust_valve_loop_timer;
+    //! Loop interval in microseconds.
+    static constexpr unsigned int thrust_valve_loop_interval_us = 5000;
+    //! Loop interval in milliseconds.
+    static constexpr unsigned int thrust_valve_loop_interval_ms =
+        thrust_valve_loop_interval_us / 1000;
+
+    //! Tracks if thrust valves are open.
+    volatile bool is_valve_opened[4];
+
+    //! Thrust valve schedule, specified by flight software. Times are in
+    // milliseconds.
+    volatile unsigned int thrust_valve_schedule[4];
+    void thrust_valve_loop();
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
