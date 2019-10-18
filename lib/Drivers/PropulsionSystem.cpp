@@ -1,4 +1,4 @@
-#include "SpikeAndHold.hpp"
+#include "PropulsionSystem.hpp"
 #include <Arduino.h>
 #include <algorithm>
 #include <climits>
@@ -9,12 +9,12 @@
 using namespace Devices;
 
 const std::array<unsigned char, 6>
-PropulsionSystem::default_valve_pins = {27, 28, 3, 4, 5, 6};
+PropulsionSystem::valve_pins = {27, 28, 3, 4, 5, 6};
 
 PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
 
 bool PropulsionSystem::setup() {
-    for (unsigned char i = 0; i < SpikeAndHold::num_valves; i++) {
+    for (unsigned char i = 0; i < 6; i++) {
         pinMode(valve_pins[i], OUTPUT);
     }
 
@@ -22,15 +22,21 @@ bool PropulsionSystem::setup() {
     pinMode(pressure_sensor_high_pin, INPUT);
     pinMode(temp_sensor_inner_pin, INPUT);
     pinMode(temp_sensor_outer_pin, INPUT);
+
+    thrust_valve_loop_timer.begin(thrust_valve_loop, thrust_valve_loop_interval_us); // Every 5 ms
     return true;
 }
 
 void PropulsionSystem::disable() {
-    shut_all_valves();
+    for (unsigned char i = 0; i < 6; i++) digitalWrite(valve_pins[i], LOW);
+    thrust_valve_loop_timer.end();
+}
+
+void PropulsionSystem::enable() {
+    thrust_valve_loop_timer.begin(thrust_valve_loop, thrust_valve_loop_interval_us);
 }
 
 void PropulsionSystem::reset() {
-    shut_all_valves();
     disable();
     delay(10);
     enable();
@@ -64,14 +70,39 @@ signed int PropulsionSystem::get_temp_outer() {
 
 bool PropulsionSystem::is_functional() { return digitalRead(DCDC::dcdc_sph_enable_pin); }
 
-void PropulsionSystem::set_thrust_valve_state(const std::array<unsigned char, 4> &setting) {
-    for (unsigned char i = 2; i < 6; i++) { digitalWrite(valve_pins[i], setting[i]); }
+void PropulsionSystem::set_thrust_valve_schedule(const std::array<unsigned int, 4> &setting) {
+    disable();
+    delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
+    for(size_t i = 0; i < 4; i++) thrust_valve_schedule[i] = setting[i];
+    enable();
 }
 
 void PropulsionSystem::set_tank_valve_state(bool valve, bool state) {
+    disable();
+    delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
     digitalWrite(valve_pins[valve], state);
+    enable();
 }
 
-void PropulsionSystem::shut_all_valves() {
-    for (unsigned char i = 0; i < num_valves; i++) digitalWrite(valve_pins[i], OFF);
+void PropulsionSystem::thrust_valve_loop() {
+    for (unsigned char i = 2; i < 6; i++) {
+        if (thrust_valve_schedule[i] < thrust_valve_loop_interval_ms) {
+            digitalWrite(valve_pins[i], LOW);
+            thrust_valve_schedule[i] = 0;
+            is_valve_opened[i] = false;
+            continue;
+        }
+        else if (!is_valve_opened[i] && !valve_start_locked_out) {
+            valve_start_locked_out = true;
+            digitalWrite(valve_pins[i], HIGH);
+            is_valve_opened[i] = true;
+        }
+        else if (valve_start_locked_out) {
+            valve_start_locked_out = false;
+        }
+
+        if (is_valve_opened[i]) {
+            thrust_valve_schedule[i] -= thrust_valve_loop_interval_ms;
+        }
+    }
 }
