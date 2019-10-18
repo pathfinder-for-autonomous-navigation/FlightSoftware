@@ -62,7 +62,7 @@ void DockingSystem::dock() {
         digitalWrite(motor_direction_pin, LOW);
     }
 
-    step_motor();
+    step_motor(180.0f);
 }
 
 void DockingSystem::undock() {
@@ -72,11 +72,11 @@ void DockingSystem::undock() {
     else {
         digitalWrite(motor_direction_pin, HIGH);
     }
-    step_motor();
+    step_motor(180.0f);
 }
 
-void step_motor() {
-    unsigned int steps = (int)(180.0f/step_angle);
+void DockingSystem::step_motor(float angle) {
+    unsigned int steps = (int)(angle/step_angle);
     unsigned int current_step = 0;
 
     // step at a frequency of 500Hz
