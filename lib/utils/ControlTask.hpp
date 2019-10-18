@@ -31,6 +31,13 @@ class ControlTask : protected debug_console {
      */
     virtual T execute() = 0;
 
+    /**
+     * @brief Destroy the Control Task object
+     * 
+     * We need to have this destructor to avoid compilation errors.
+     */
+    virtual ~ControlTask() = 0;
+
   protected:
     StateFieldRegistry& _registry;
 
@@ -62,5 +69,8 @@ class ControlTask : protected debug_console {
         return field_ptr;
     }
 };
+
+template<typename T>
+ControlTask<T>::~ControlTask() {}
 
 #endif

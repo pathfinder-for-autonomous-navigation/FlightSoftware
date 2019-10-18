@@ -19,6 +19,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry) : ControlTask<void>
     adcs_ang_rate_fp = find_readable_field<float>("adcs.ang_rate", __FILE__, __LINE__);
     adcs_min_stable_ang_rate_fp = find_writable_field<float>("adcs.min_stable_ang_rate", __FILE__, __LINE__);
 
+    // TODO change to startup.
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::detumble));
 }
 
@@ -76,9 +77,9 @@ void MissionManager::dispatch_startup() {
 void MissionManager::dispatch_detumble() {
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::detumble));
     adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::detumble));
-    if (adcs_ang_rate_fp->get() < adcs_min_stable_ang_rate_fp->get())
+    if (adcs_ang_rate_fp->get() <= adcs_min_stable_ang_rate_fp->get())
     {
-        adcs_cmd_attitude_fp->set({0,0,0}); // TODO fix to a good value
+        adcs_cmd_attitude_fp->set({2,2,2,2}); // TODO fix to a good value
         adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::pointing));
         mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::standby));
     }
