@@ -32,6 +32,7 @@ class DockingSystem : public Device {
 
     bool setup() override;
     bool is_functional() override;
+
     void disable() override;
     void enable();
     void reset() override;
@@ -52,19 +53,21 @@ class DockingSystem : public Device {
     bool DockingSystem::check_docked() const;
 
     /**
-     * @brief Adjust rotation parameter for docking motor.
+     * @brief Adjust step angle for docking motor.
      * 
      * @param parameter
      */
-    void DockingSystem::set_rotation_parameter(unsigned int parameter);
+    void DockingSystem::set_step_angle(float angle);
 
    private:
-    // Sets how long the motors need to rotate to change between the "docked"
-    // and "undocked" states. 
-    unsigned int rotation_parameter;
+    // Sets how many degrees the motor turns in one step.
+    float step_angle = (15.0f*PI)/180.0f;
+
+    // Status of motor directionality.
+    bool is_turning_clockwise = false;
 
     // Status of motor sleep pin (and therefore of overall docking motor.)
-    bool is_enabled;
+    bool is_enabled = false;
 };
 }  // namespace Devices
 
