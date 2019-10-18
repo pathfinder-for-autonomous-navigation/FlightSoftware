@@ -1,11 +1,11 @@
 #include "DockingMotor.hpp"
+#include "DCDC.hpp"
 #include "Arduino.h"
 
 using namespace Devices;
 
-DockingSystem::DockingSystem(const std::string &name, unsigned char i1, unsigned char i2,
-                           unsigned char dir, unsigned char sleep, unsigned char step)
-    : Device("docking_system"), rotation_parameter(0), is_enabled(false) {}
+DockingSystem::DockingSystem()
+    : Device("docking_system") {}
 
 bool DockingSystem::setup() {
     pinMode(motor_sleep_pin, OUTPUT);
@@ -28,16 +28,15 @@ bool DockingSystem::setup() {
 }
 
 bool DockingSystem::is_functional() {
-    return digitalRead(dcdc_enable_pin) && is_enabled;
+    return digitalRead(DCDC::dcdc_sph_enable_pin)
+        && digitalRead(motor_sleep_pin);
 }
 
 void DockingSystem::disable() { 
     digitalWrite(motor_sleep_pin, LOW);
-    is_enabled = false;
 }
 void DockingSystem::enable() {
     digitalWrite(motor_sleep_pin, HIGH);
-    is_enabled = true;
 }
 
 void DockingSystem::reset() {

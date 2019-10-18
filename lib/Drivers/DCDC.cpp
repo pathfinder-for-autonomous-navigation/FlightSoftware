@@ -8,8 +8,8 @@ DCDC::DCDC() : Device("dcdc") {}
 bool DCDC::setup() {
     pinMode(dcdc_motor_enable_pin, OUTPUT);
     pinMode(dcdc_sph_enable_pin, OUTPUT);
-    digitalWrite(dcdc_motor_enable_pin, OFF);
-    digitalWrite(dcdc_sph_enable_pin, OFF);
+    digitalWrite(dcdc_motor_enable_pin, LOW);
+    digitalWrite(dcdc_sph_enable_pin, LOW);
     return true;
 }
 
@@ -23,19 +23,19 @@ void DCDC::disable() {
 }
 
 void DCDC::enable_adcs() {
-    digitalWrite(dcdc_motor_enable_pin, ON);
+    digitalWrite(dcdc_motor_enable_pin, HIGH);
 }
 
 void DCDC::enable_sph() {
-    digitalWrite(dcdc_sph_enable_pin, ON);
+    digitalWrite(dcdc_sph_enable_pin, HIGH);
 }
 
 void DCDC::disable_adcs() {
-    digitalWrite(dcdc_motor_enable_pin, OFF);
+    digitalWrite(dcdc_motor_enable_pin, LOW);
 }
 
 void DCDC::disable_sph() {
-    digitalWrite(dcdc_sph_enable_pin, OFF);
+    digitalWrite(dcdc_sph_enable_pin, LOW);
 }
 
 void DCDC::reset() {
