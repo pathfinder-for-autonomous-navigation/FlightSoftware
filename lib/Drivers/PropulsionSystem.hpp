@@ -27,7 +27,6 @@ class PropulsionSystem : public Device {
     //! Default mapping of physical GPIO pin #s (values) to logical pin #s
     //! (indices).
     static const std::array<unsigned char, 6> default_valve_pins;
-    static constexpr unsigned char dcdc_sph_enable_pin = 25;
     static constexpr unsigned char pressure_sensor_low_pin = 20;
     static constexpr unsigned char pressure_sensor_high_pin = 23;
     static constexpr unsigned char temp_inner_pin = 21;
@@ -38,21 +37,32 @@ class PropulsionSystem : public Device {
 
     bool setup() override;
     bool is_functional() override;
+
+    /**
+     * @brief Shuts off all valves.
+     */
     void disable() override;
     void reset() override;
-
-    /** @brief Turn on Spike and Hold by holding the enable pin high. **/
-    void enable();
 
     float get_pressure();
     signed int get_temp_inner();
     signed int get_temp_outer();
 
-    /** @brief Set the valves, as specified by the array.
+    /** @brief Set the thrust valve states, as specified by the array.
      * 
      * Index i corresponds to nozzle i + 1.
      **/
-    void set_valves(const std::array<unsigned char, 4> &setting);
+    void set_thrust_valve_state(const std::array<unsigned char, 4> &setting);
+
+    /**
+     * @brief Set the tank valve state for the given tank valve.
+     * 
+     * @param valve 1 if the main tank valve should be set, 0 if the backup
+     *              should be set.
+     * @param state 1 if the valve should be open, 0 if the valve should be
+     *              closed.
+     */
+    void set_tank_valve_state(bool valve, bool state);
 
     /** @brief Shut all valves. **/
     void shut_all_valves();
@@ -60,8 +70,15 @@ class PropulsionSystem : public Device {
    private:
     //! # of GPIO pin that valve is connected to.
     std::array<unsigned char, 6> valve_pins;
-    //! Whether or not Spike and Hold is on.
-    bool is_enabled;
+
+    unsigned int preferred_tank_valve;
+
+    // Pressure sensor offsets and slopes from PAN-TPS-002 test data
+    // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
+    const double high_gain_offset = -0.119001938553720;
+    const double high_gain_slope = 0.048713211537332;
+    const double low_gain_offset = 0.154615074342874;
+    const double low_gain_slope = 0.099017990785657;
 };
 }  // namespace Devices
 

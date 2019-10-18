@@ -22,13 +22,17 @@ bool DockingSystem::setup() {
     // SLEEP pins is set low to enable sleep
     digitalWrite(motor_sleep_pin, LOW);
 
+    enable();
+
     return true;
 }
 
-bool DockingSystem::is_functional() { return true; }
+bool DockingSystem::is_functional() {
+    return digitalRead(dcdc_enable_pin) && is_enabled;
+}
 
 void DockingSystem::disable() { 
-    digitalWrite(motor_sleep_pin, LOW); 
+    digitalWrite(motor_sleep_pin, LOW);
     is_enabled = false;
 }
 void DockingSystem::enable() {
@@ -46,14 +50,41 @@ bool DockingSystem::check_docked() const {
     return digitalRead(switch_pin);
 }
 
-void DockingSystem::set_rotation_parameter(unsigned int parameter) {
-    rotation_parameter = parameter;
+void DockingSystem::set_step_angle(float angle) {
+    step_angle = angle;
 }
 
 void DockingSystem::dock() {
-    // TODO
+    if (is_turning_clockwise) {
+        digitalWrite(motor_direction_pin, HIGH);
+    } 
+    else {
+        digitalWrite(motor_direction_pin, LOW);
+    }
+
+    step_motor();
 }
 
 void DockingSystem::undock() {
-    // TODO
+    if (is_turning_clockwise) {
+        digitalWrite(motor_direction_pin, LOW);
+    } 
+    else {
+        digitalWrite(motor_direction_pin, HIGH);
+    }
+    step_motor();
+}
+
+void step_motor() {
+    unsigned int steps = (int)(180.0f/step_angle);
+    unsigned int current_step = 0;
+
+    // step at a frequency of 500Hz
+    while (current_step < steps){
+        digitalWrite(stepper_pin_, LOW);
+        delayMicroseconds(1000);
+        digitalWrite(stepper_pin_, HIGH);
+        delayMicroseconds(1000);
+        current_step++;
+    }
 }
