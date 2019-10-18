@@ -9,7 +9,7 @@ namespace Devices {
  * 
  * The flight software is responsible for determining if the system is docked
  * or not.
- * **/
+ **/
 class DockingSystem : public Device {
    public:
     //! Default pin for docking motor I1.
@@ -44,6 +44,13 @@ class DockingSystem : public Device {
     /** @brief Turn the docking motor into the "undocked" configuration.
      **/
     void undock();
+
+    /**
+     * @brief Manually step motor by a given amount.
+     * 
+     * @param angle in degrees.
+     */
+    void step_motor(float angle);
 
     /**
      * @brief Check state of docking switch.
