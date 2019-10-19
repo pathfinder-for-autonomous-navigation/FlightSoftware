@@ -40,6 +40,7 @@ class Piksi : public Device {
      *  @returns Whether or not any data was processed. **/
     virtual bool process_buffer();
 
+    virtual int process_buffer_i();
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/
     virtual void get_gps_time(gps_time_t *time);
@@ -67,6 +68,8 @@ class Piksi : public Device {
      *  @param position A pointer to the destination struct for the information.
      * **/
     virtual void get_pos_ecef(std::array<double, 3> *position);
+    //debug method please **
+    virtual void get_pos_ecef(unsigned int* tow, std::array<double, 3> *position);
     /** @brief Get number of satellites used for determining GPS position.
      *  @return Number of satellites used for determining GPS position. **/
     virtual unsigned char get_pos_ecef_nsats();

@@ -163,6 +163,14 @@ unsigned short int Piksi::get_dops_time() { return _dops.tdop; }
 unsigned short int Piksi::get_dops_horizontal() { return _dops.hdop; }
 unsigned short int Piksi::get_dops_vertical() { return _dops.vdop; }
 
+//debug method
+void Piksi::get_pos_ecef(unsigned int* tow, std::array<double, 3> *position) {
+    *tow = _pos_ecef.tow;
+    (*position)[0] = _pos_ecef.x;
+    (*position)[1] = _pos_ecef.y;
+    (*position)[2] = _pos_ecef.z;
+}
+
 void Piksi::get_pos_ecef(std::array<double, 3> *position) {
     (*position)[0] = _pos_ecef.x;
     (*position)[1] = _pos_ecef.y;
@@ -180,9 +188,9 @@ unsigned char Piksi::get_baseline_ecef_nsats() { return _baseline_ecef.n_sats; }
 unsigned char Piksi::get_baseline_ecef_flags() { return _baseline_ecef.flags; }
 
 void Piksi::get_vel_ecef(std::array<double, 3> *velocity) {
-    (*velocity)[0] = _pos_ecef.x;
-    (*velocity)[1] = _pos_ecef.y;
-    (*velocity)[2] = _pos_ecef.z;
+    (*velocity)[0] = _vel_ecef.x;
+    (*velocity)[1] = _vel_ecef.y;
+    (*velocity)[2] = _vel_ecef.z;
 }
 unsigned char Piksi::get_vel_ecef_nsats() { return _vel_ecef.n_sats; }
 unsigned char Piksi::get_vel_ecef_flags() { return _vel_ecef.flags; }
@@ -247,7 +255,17 @@ void Piksi::send_user_data(const msg_user_data_t &data) {
                      (unsigned char *)&data, &Piksi::_uart_write);
 }
 
-bool Piksi::process_buffer() { return sbp_process(&_sbp_state, Piksi::_uart_read) > 0; }
+bool Piksi::process_buffer() { 
+    int numbytes_read = sbp_process(&_sbp_state, Piksi::_uart_read);
+    // Serial.printf("NUMBYTES_READ: %i\n", numbytes_read);
+    return numbytes_read; 
+    }
+
+int Piksi::process_buffer_i() { 
+    int numbytes_read = sbp_process(&_sbp_state, Piksi::_uart_read);
+    // Serial.printf("NUMBYTES_READ: %i\n", numbytes_read);
+    return numbytes_read; 
+    }
 
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     Piksi *piksi = (Piksi *)context;
