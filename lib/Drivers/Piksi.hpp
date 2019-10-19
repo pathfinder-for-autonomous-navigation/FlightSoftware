@@ -95,6 +95,8 @@ class Piksi : public Device {
      *  @param velocity A pointer to the destination struct for the information.
      * **/
     virtual void get_vel_ecef(std::array<double, 3> *velocity);
+
+    virtual void get_vel_ecef(unsigned int* tow, std::array<double, 3> *velocity);
     /** @brief Get number of satellites used for determining GPS velocity.
      *  @return Number of satellites used for determining GPS velocity. **/
     virtual unsigned char get_vel_ecef_nsats();

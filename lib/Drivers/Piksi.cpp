@@ -187,6 +187,13 @@ void Piksi::get_baseline_ecef(std::array<double, 3> *position) {
 unsigned char Piksi::get_baseline_ecef_nsats() { return _baseline_ecef.n_sats; }
 unsigned char Piksi::get_baseline_ecef_flags() { return _baseline_ecef.flags; }
 
+void Piksi::get_vel_ecef(unsigned int* tow, std::array<double, 3> *velocity) {
+    *tow = _vel_ecef.tow;
+    (*velocity)[0] = _vel_ecef.x;
+    (*velocity)[1] = _vel_ecef.y;
+    (*velocity)[2] = _vel_ecef.z;
+}
+
 void Piksi::get_vel_ecef(std::array<double, 3> *velocity) {
     (*velocity)[0] = _vel_ecef.x;
     (*velocity)[1] = _vel_ecef.y;

@@ -63,12 +63,18 @@ void test_piksi_fast_vel() {
     //while (!piksi.process_buffer() || pos[0] == 0) {
     bool keeprun = true;
     int out = -5;
+
+    unsigned int tow = 0;
+    piksi.get_vel_ecef(&tow,&vel);
+    unsigned int prevtow = tow;
     //while (piksi.process_buffer() == SBP_OK || pos[0] ==0 ) {
     while (keeprun || vel[0] == 0 ) {
         out = piksi.process_buffer_i();
-        delayMicroseconds(1000);
-        piksi.get_vel_ecef(&vel);
-        if(out==SBP_OK_CALLBACK_EXECUTED)
+        piksi.get_vel_ecef(&tow,&vel);
+
+        delayMicroseconds(1);
+        //if(out==SBP_OK_CALLBACK_EXECUTED)
+        if(tow != prevtow)
             keeprun = false;
     }
     Serial.printf("PROCESS BUFF OUT: %i\n", out );
@@ -130,12 +136,15 @@ int main(void) {
     RUN_TEST(test_piksi_fastread_pos);
     delay(weird_delay);
     RUN_TEST(test_piksi_fastread_pos);
-    delay(weird_delay);
+    
     Serial.println("****************************************************");
+    int wd = 666;
+    
+    delay(wd);
     RUN_TEST(test_piksi_fast_vel);
-    delay(weird_delay);
+    delay(wd);
     RUN_TEST(test_piksi_fast_vel);
-    delay(weird_delay);
+    delay(wd);
     RUN_TEST(test_piksi_fast_vel);
     delay(weird_delay);
     RUN_TEST(test_sats);
