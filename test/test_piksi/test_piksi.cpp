@@ -28,7 +28,9 @@ void test_piksi_fastread_pos() {
     while (keeprun || pos[0] ==0 ) {
         out = piksi.process_buffer_i();
         piksi.get_pos_ecef(&tow,&pos);
-
+        //TRY WITH THIS SET TO 0
+        //TODO
+        //TRY GETTING EVERYTHING EVERY 100 MS
         delayMicroseconds(1);
         //if(out==SBP_OK_CALLBACK_EXECUTED)
         if(tow!=prevtow)
@@ -129,7 +131,7 @@ int main(void) {
     UNITY_BEGIN();
     //RUN_TEST(test_piksi_functional);
     piksi.setup();
-    int weird_delay = 666;
+    int weird_delay = 0;
     delay(weird_delay);
     RUN_TEST(test_piksi_fastread_pos);
     delay(weird_delay);
@@ -138,7 +140,10 @@ int main(void) {
     RUN_TEST(test_piksi_fastread_pos);
     
     Serial.println("****************************************************");
-    int wd = 666;
+    //set wd = 0 for max fast calls;
+    //tho response time is limited by internall condition that
+    //tow != prevtow
+    int wd = 0;
     
     delay(wd);
     RUN_TEST(test_piksi_fast_vel);
