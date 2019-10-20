@@ -29,7 +29,7 @@ void test_piksi_manyreading_fast() {
 
     Serial.printf("TOW INIT: %u\n", prevtime.tow);
 
-    while
+    //while
     while (currenttow == prevtime.tow) {
         currenttow = UINT_MAX;
 
@@ -69,8 +69,6 @@ void test_piksi_manyreading() {
     Serial.println("EVERYTHING: Attempting to get solution...");
 
     // while (!piksi.process_buffer() || pos[0] == 0) {
-    bool keeprun = true;
-
     int out = -5;
     // unsigned int tow = 0;
     // unsigned int ptow = 0;
@@ -91,11 +89,8 @@ void test_piksi_manyreading() {
         out = piksi.process_buffer();
         piksi.get_pos_ecef(&ptow, &pos);
         piksi.get_vel_ecef(&vtow, &vel);
-        // TRY WITH THIS SET TO 0
-        // TODO
-        // TRY GETTING EVERYTHING EVERY 100 MS
-        // THIS MUST BE BELOW 500 micro seconds!
-        // something sometihng nyquist?
+
+        //set below .5 ms for nyquist
         delayMicroseconds(100);
         // if(out==SBP_OK_CALLBACK_EXECUTED)
         // Serial.println(out);
@@ -132,11 +127,8 @@ void test_piksi_fastread_pos() {
     while (keeprun) {
         out = piksi.process_buffer_i();
         piksi.get_pos_ecef(&tow, &pos);
-        // TRY WITH THIS SET TO 0
-        // TODO
-        // TRY GETTING EVERYTHING EVERY 100 MS
-        // THIS MUST BE BELOW 500 micro seconds!
-        // something sometihng nyquist?
+        
+        //set below .5 ms for nyquist
         delayMicroseconds(100);
         // if(out==SBP_OK_CALLBACK_EXECUTED)
         // Serial.println(out);
@@ -238,35 +230,40 @@ int main(void) {
     UNITY_BEGIN();
     // RUN_TEST(test_piksi_functional);
     piksi.setup();
-    int weird_delay = 0;
+    int weird_delay = 110;
 
     RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
     RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
     RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
+    RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
 
-    delay(weird_delay);
-    RUN_TEST(test_piksi_fastread_pos);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_fastread_pos);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_fastread_pos);
+    // delay(weird_delay);
+    // RUN_TEST(test_piksi_fastread_pos);
+    // delay(weird_delay);
+    // RUN_TEST(test_piksi_fastread_pos);
+    // delay(weird_delay);
+    // RUN_TEST(test_piksi_fastread_pos);
 
-    Serial.println("****************************************************");
-    // set wd = 0 for max fast calls;
-    // tho response time is limited by internall condition that
-    // tow != prevtow
-    int wd = 0;
+    // Serial.println("****************************************************");
+    // // set wd = 0 for max fast calls;
+    // // tho response time is limited by internall condition that
+    // // tow != prevtow
+    // int wd = 0;
 
-    delay(wd);
-    RUN_TEST(test_piksi_fast_vel);
-    delay(wd);
-    RUN_TEST(test_piksi_fast_vel);
-    delay(wd);
-    RUN_TEST(test_piksi_fast_vel);
-    delay(weird_delay);
-    RUN_TEST(test_sats);
+    // delay(wd);
+    // RUN_TEST(test_piksi_fast_vel);
+    // delay(wd);
+    // RUN_TEST(test_piksi_fast_vel);
+    // delay(wd);
+    // RUN_TEST(test_piksi_fast_vel);
+    // delay(weird_delay);
+    // RUN_TEST(test_sats);
 
-    delay(weird_delay);
+    // delay(weird_delay);
     RUN_TEST(test_sats);
     UNITY_END();
     return 0;
