@@ -200,6 +200,9 @@ class Piksi : public Device {
     /** @brief Clear out logbook. */
     void clear_log();
 
+     //debug
+    u32 bytes_available();
+
    protected:
     HardwareSerial &_serial_port;  // This is protected instead of private so that FakePiksi
                                    // can access the port variable

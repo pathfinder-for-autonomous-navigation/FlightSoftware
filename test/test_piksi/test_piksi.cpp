@@ -18,7 +18,7 @@ void test_piksi_manyreading_fast() {
     Serial.println("EVERYTHING: Attempting to get solution...");
 
     // while (!piksi.process_buffer() || pos[0] == 0) {
-    bool keeprun = true;
+    //bool keeprun = true;
 
     int out = -5;
     msg_gps_time_t prevtime;
@@ -28,7 +28,7 @@ void test_piksi_manyreading_fast() {
     unsigned int temptow;
 
     Serial.printf("TOW INIT: %u\n", prevtime.tow);
-
+    Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
     //while
     while (currenttow == prevtime.tow) {
         currenttow = UINT_MAX;
@@ -67,13 +67,15 @@ void test_piksi_manyreading() {
     // Serial.printf("Preread val: %d\n", pos[0]);
     preread_time = millis();
     Serial.println("EVERYTHING: Attempting to get solution...");
+    Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
+
 
     // while (!piksi.process_buffer() || pos[0] == 0) {
     int out = -5;
     // unsigned int tow = 0;
     // unsigned int ptow = 0;
     // unsigned int vtow = 0;
-    unsigned int tow = 0;
+    //unsigned int tow = 0;
     unsigned int ptow;
     unsigned int vtow;
     piksi.get_pos_ecef(&ptow, &pos);

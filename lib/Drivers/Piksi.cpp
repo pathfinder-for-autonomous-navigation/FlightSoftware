@@ -275,6 +275,11 @@ int Piksi::process_buffer_i() {
     return numbytes_read; 
     }
 
+//debug method from shihao
+u32 Piksi::bytes_available() {
+
+    return _serial_port.available();
+}
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     Piksi *piksi = (Piksi *)context;
     HardwareSerial &sp = piksi->_serial_port;
