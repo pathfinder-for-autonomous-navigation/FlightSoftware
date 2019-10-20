@@ -43,7 +43,9 @@ class Piksi : public Device {
     virtual int process_buffer_i();
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/
-    virtual void get_gps_time(gps_time_t *time);
+    //virtual void get_gps_time(gps_time_t *time);
+
+    virtual void get_gps_time(msg_gps_time_t *time);
 
     /** @brief Gets Dilution of Precision timestamp.
      *  @return Time-of-week of dilution precision report, in milliseconds. **/

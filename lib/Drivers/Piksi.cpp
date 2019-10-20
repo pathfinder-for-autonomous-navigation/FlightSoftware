@@ -151,9 +151,9 @@ void Piksi::disable() {
     // Do nothing; we really don't want to disable Piksi
 }
 
-void Piksi::get_gps_time(gps_time_t *time) {
-    time->gpstime.wn = _gps_time.wn;
-    time->gpstime.tow = _gps_time.tow;
+void Piksi::get_gps_time(msg_gps_time_t *time) {
+    time->wn = _gps_time.wn;
+    time->tow = _gps_time.tow;
 }
 
 unsigned int Piksi::get_dops_tow() { return _dops.tow; }
@@ -199,6 +199,7 @@ void Piksi::get_vel_ecef(std::array<double, 3> *velocity) {
     (*velocity)[1] = _vel_ecef.y;
     (*velocity)[2] = _vel_ecef.z;
 }
+
 unsigned char Piksi::get_vel_ecef_nsats() { return _vel_ecef.n_sats; }
 unsigned char Piksi::get_vel_ecef_flags() { return _vel_ecef.flags; }
 
