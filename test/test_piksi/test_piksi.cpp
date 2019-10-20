@@ -9,7 +9,7 @@ int setup_start_time;
 int second_time;
 int preread_time;
 
-//assume piksi already setup
+// assume piksi already setup
 void test_piksi_manyreading_fast() {
     std::array<double, 3> pos = {0};
     std::array<double, 3> vel = {0};
@@ -18,7 +18,7 @@ void test_piksi_manyreading_fast() {
     Serial.println("EVERYTHING: Attempting to get solution...");
 
     // while (!piksi.process_buffer() || pos[0] == 0) {
-    //bool keeprun = true;
+    // bool keeprun = true;
 
     int out = -5;
     msg_gps_time_t prevtime;
@@ -29,19 +29,19 @@ void test_piksi_manyreading_fast() {
 
     Serial.printf("TOW INIT: %u\n", prevtime.tow);
     Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
-    //while
+    // while
     while (currenttow == prevtime.tow) {
         currenttow = UINT_MAX;
 
         out = piksi.process_buffer();
         piksi.get_pos_ecef(&temptow, &pos);
-        //sets current tow to be the minimum of all measurements
+        // sets current tow to be the minimum of all measurements
         currenttow = std::min(currenttow, temptow);
 
         piksi.get_vel_ecef(&temptow, &vel);
         currenttow = std::min(currenttow, temptow);
 
-        //set below .5 ms for nyquist
+        // set below .5 ms for nyquist
         delayMicroseconds(100);
     }
     Serial.printf("PROCESS BUFF OUT: %hi\n", out);
@@ -64,38 +64,47 @@ void test_piksi_manyreading_fast() {
 void test_piksi_manyreading() {
     std::array<double, 3> pos = {0};
     std::array<double, 3> vel = {0};
+    msg_gps_time_t time;
+
     // Serial.printf("Preread val: %d\n", pos[0]);
     preread_time = millis();
     Serial.println("EVERYTHING: Attempting to get solution...");
     Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
 
-
-    // while (!piksi.process_buffer() || pos[0] == 0) {
     int out = -5;
-    // unsigned int tow = 0;
-    // unsigned int ptow = 0;
-    // unsigned int vtow = 0;
-    //unsigned int tow = 0;
-    unsigned int ptow;
-    unsigned int vtow;
-    piksi.get_pos_ecef(&ptow, &pos);
-    piksi.get_vel_ecef(&vtow, &vel);
+    if (piksi.bytes_available()) {
+        while (piksi.bytes_available()) {
+            piksi.process_buffer();
+            delayMicroseconds(100);
+        }
+        piksi.get_pos_ecef(&pos);
+        piksi.get_vel_ecef(&vel);
+        piksi.get_gps_time(&time);
 
-    Serial.printf("TOW INIT: %u\n", ptow);
-    Serial.printf("VTOW INIT: %u\n", vtow);
-    unsigned int prevptow = ptow;
-    unsigned int prevvtow = vtow;
-
-    // while (piksi.process_buffer() == SBP_OK || pos[0] ==0 ) {
-    while (ptow == prevptow || vtow == prevvtow) {
-        out = piksi.process_buffer();
+    }
+    //this takes max 99.99 ms if called while there is no buffer available. 
+    else {
+        unsigned int ptow;
+        unsigned int vtow;
         piksi.get_pos_ecef(&ptow, &pos);
         piksi.get_vel_ecef(&vtow, &vel);
 
-        //set below .5 ms for nyquist
-        delayMicroseconds(100);
-        // if(out==SBP_OK_CALLBACK_EXECUTED)
-        // Serial.println(out);
+        Serial.printf("TOW INIT: %u\n", ptow);
+        Serial.printf("VTOW INIT: %u\n", vtow);
+        unsigned int prevptow = ptow;
+        unsigned int prevvtow = vtow;
+
+        // while (piksi.process_buffer() == SBP_OK || pos[0] ==0 ) {
+        while (ptow == prevptow || vtow == prevvtow) {
+            out = piksi.process_buffer();
+            piksi.get_pos_ecef(&ptow, &pos);
+            piksi.get_vel_ecef(&vtow, &vel);
+            piksi.get_gps_time(&time);
+            // set below .5 ms for nyquist
+            delayMicroseconds(100);
+            // if(out==SBP_OK_CALLBACK_EXECUTED)
+            // Serial.println(out);
+        }
     }
     Serial.printf("PROCESS BUFF OUT: %hi\n", out);
 
@@ -109,39 +118,6 @@ void test_piksi_manyreading() {
     Serial.printf("Vel position: %lf,%lf,%lf\n", vel[0], vel[1], vel[2]);
     double vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
     TEST_ASSERT_DOUBLE_WITHIN(1E3, 3.9E3, vel_mag);  // We're fast?
-    // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites to
-    // get position.
-}
-void test_piksi_fastread_pos() {
-    std::array<double, 3> pos = {0};
-    Serial.printf("Preread val: %d\n", pos[0]);
-    preread_time = millis();
-    Serial.println("FAST_POS: Attempting to get solution...");
-
-    // while (!piksi.process_buffer() || pos[0] == 0) {
-    bool keeprun = true;
-    int out = -5;
-    unsigned int tow = 0;
-    piksi.get_pos_ecef(&tow, &pos);
-    unsigned int prevtow = tow;
-
-    // while (piksi.process_buffer() == SBP_OK || pos[0] ==0 ) {
-    while (keeprun) {
-        out = piksi.process_buffer_i();
-        piksi.get_pos_ecef(&tow, &pos);
-        
-        //set below .5 ms for nyquist
-        delayMicroseconds(100);
-        // if(out==SBP_OK_CALLBACK_EXECUTED)
-        // Serial.println(out);
-        if (tow != prevtow) keeprun = false;
-    }
-    Serial.printf("PROCESS BUFF OUT: %hi\n", out);
-
-    Serial.printf("Read time: %d ms\n", millis() - preread_time);
-    Serial.printf("GPS position: %lf,%lf,%lf\n", pos[0], pos[1], pos[2]);
-    double pos_mag = sqrt(pos[0] * pos[0] + pos[1] * pos[1] + pos[2] * pos[2]);
-    TEST_ASSERT_DOUBLE_WITHIN(1E3, 6.37E6, pos_mag);  // We're somewhere on Earth.
     // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites to
     // get position.
 }
@@ -233,9 +209,12 @@ int main(void) {
     // RUN_TEST(test_piksi_functional);
     piksi.setup();
     int weird_delay = 110;
-
+    RUN_TEST(test_piksi_manyreading);
+    RUN_TEST(test_piksi_manyreading);
     RUN_TEST(test_piksi_manyreading);
     delay(weird_delay);
+    Serial.println("****************************************************");
+
     RUN_TEST(test_piksi_manyreading);
     delay(weird_delay);
     RUN_TEST(test_piksi_manyreading);

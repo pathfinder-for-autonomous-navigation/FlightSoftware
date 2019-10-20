@@ -1,6 +1,9 @@
 #ifndef PIKSI_HPP_
 #define PIKSI_HPP_
 
+#undef SERIAL4_RX_BUFFER_SIZE
+#define SERIAL4_RX_BUFFER_SIZE 256
+
 #include <HardwareSerial.h>
 #include <GPSTime.hpp>
 #include <array>
