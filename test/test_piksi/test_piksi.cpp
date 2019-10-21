@@ -192,6 +192,16 @@ int main(void) {
     
     Serial.println("***************************************************************");
 
+    //mimic exact 100 ms control cycle
+    int prevtime = millis();
+    for(int i = 0;i<20;i++){
+        //Serial.println(100 - (millis()-prevtime));
+        delay(100 - (millis()-prevtime));
+        prevtime = millis();
+        RUN_TEST(test_piksi_manyreading);
+        
+    }
+
     delay(weird_delay);
     RUN_TEST(test_piksi_manyreading);
     delay(weird_delay);
