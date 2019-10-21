@@ -89,6 +89,58 @@ void test_sats() {
     Serial.printf("Num Sats Read Time: %d ms\n", millis() - preread_time);
 }
 
+bool test_piksi_manyreading_fast() {
+    std::array<double, 3> pos = {0};
+    std::array<double, 3> vel = {0};
+    msg_gps_time_t time;
+
+    // Serial.printf("Preread val: %d\n", pos[0]);
+    preread_time = micros();
+
+    //int out = -5;
+    // tune parameters?
+    // 
+    //CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
+    //COULD BE A CASE WHERE ONCE IN SPACE, MESSAGE LENGTH ALWAYS NOT 299
+    //if (piksi.bytes_available() == 299) {
+    if (piksi.bytes_available() >= 200 && piksi.bytes_available()<599) {
+        while (piksi.bytes_available()) {
+            piksi.process_buffer();
+            delayMicroseconds(100);
+        }
+        piksi.get_pos_ecef(&pos);
+        piksi.get_vel_ecef(&vel);
+        piksi.get_gps_time(&time);
+
+    }
+
+    else {
+        // if no data in buffer throw error
+        //Serial.println("NOT A CLEAN READ");
+
+        // getrid of extra bytes:
+        // while(piksi.bytes_available()){
+        //     piksi.process_buffer();
+        // }
+
+        if (piksi.bytes_available()) {
+           // Serial.println("KILLING EXTRA BYTES************************************************************");
+        }
+        while (piksi.bytes_available()) {
+            piksi.clear_bytes();
+        }
+        //set to 
+        //TEST_ASSERT_TRUE(false);
+        //to see what % of payloads are not 299 bytes long
+        //TEST_ASSERT_TRUE(false);
+    }
+
+    //Serial.printf("Read time: %d ms\n", micros() - preread_time);
+    //Serial.println();
+
+    return ((micros() - preread_time) < 7500);
+}
+
 int main(void) {
     /*okay this stuff is really whack
     it seems like a normal packet is 299 bytes long
@@ -116,13 +168,15 @@ int main(void) {
 
     // mimic exact 100 ms control cycle
     int prevtime = millis();
-    for (int i = 0; i < 100; i++) {
+    int count = 0;
+    for (int i = 0; i < 200; i++) {
         // Serial.println(100 - (millis()-prevtime));
         delay(120 - (millis() - prevtime));
         prevtime = millis();
-        RUN_TEST(test_piksi_manyreading);
+        count += test_piksi_manyreading_fast();
     }
 
+    Serial.printf("OUT OF 200: %i\n", count);
     //RUN_TEST(test_sats);
     UNITY_END();
     return 0;
