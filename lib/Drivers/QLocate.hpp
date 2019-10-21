@@ -23,15 +23,16 @@ namespace Devices {
  * Nonzero codes indicate failure
  * Codes 0 - 3 is consistent with SBDWB codes
  * */
-static constexpr int OK = 0;                     // command was succesfully executed, expected response received
-static constexpr int TIMEOUT = 1;                // response not received before timeout
+static constexpr int OK = 0;       // command was succesfully executed, expected response received
+static constexpr int TIMEOUT = 1;  // response not received before timeout
 static constexpr int BAD_CHECKSUM = 2;           // checksum doesn't match ISU calculated checksum
 static constexpr int WRONG_LENGTH = 3;           // message size differs from expected message size
 static constexpr int UNEXPECTED_RESPONSE = -20;  // actual response does not match expected response
-static constexpr int PORT_UNAVAILABLE = -50;     // attempt to read port that is not available (no data available)
-static constexpr int WRONG_STATE = -40;          // driver is not in the expected state
-static constexpr int WRITE_FAIL = -30;           // failed to send command (write command to output port)
-static constexpr int UNKNOWN = -60;              // unknown errror
+static constexpr int PORT_UNAVAILABLE =
+    -50;  // attempt to read port that is not available (no data available)
+static constexpr int WRONG_STATE = -40;  // driver is not in the expected state
+static constexpr int WRITE_FAIL = -30;   // failed to send command (write command to output port)
+static constexpr int UNKNOWN = -60;      // unknown errror
 
 /**
  * QLocate driver states
@@ -149,26 +150,26 @@ class QLocate : public Device {
     /*! Attempt to retrieve sbdwb status code returned from loading the message */
     virtual int get_sbdwb();
 
-    /*! Initilizes an SBDIX session with the quake. 
+    /*! Initilizes an SBDIX session with the quake.
      *  Returns a OK if the method was successful (driver was IDLE).
      */
     virtual int query_sbdix_1();
 
-    /*! Reads the response to the previous SBDIX session. 
+    /*! Reads the response to the previous SBDIX session.
      * Returns
      * PORT_UNAVAILABLE if no response has been received
      * OK if successfully received response and wrote to response array
      */
     virtual int get_sbdix();
 
-    /*! Initializes SBDRB session. 
+    /*! Initializes SBDRB session.
      */
     virtual int query_sbdrb_1();
 
-    /*! Reads data from the MT buffer on the QLocate into message. 
-     * Returns 
-     * OK on success 
-     * PORT_UNAVAILABLE for no response 
+    /*! Reads data from the MT buffer on the QLocate into message.
+     * Returns
+     * OK on success
+     * PORT_UNAVAILABLE for no response
      * WRONG_LENGTH for invalid message size
      * UNEXPECTED_RESPONSE if message does not match message size
      * BAD_CHECKSUM for incorrect message checksum
@@ -193,7 +194,7 @@ class QLocate : public Device {
     int timeout;
 
     /*! Attempts to read [expected] from the QLocate's serial port.
-     * Does not clear the port after a read. 
+     * Does not clear the port after a read.
      * Returns:
      * OK if the expected response is read
      * UNEXPECTED_RESPONSE if an unexpected response is read
@@ -220,7 +221,7 @@ class QLocate : public Device {
 
     /**
      * Clears the read port and writes the string to the port
-     * Returns 
+     * Returns
      * OK if at least one byte is written
      * WRITE_FAIL if no bytes were written */
     int sendCommand(const char *);

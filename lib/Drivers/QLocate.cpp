@@ -40,9 +40,9 @@ int QLocate::query_is_functional_1() {
 
 int QLocate::get_is_functional() {
     ASSERT_STATE(IS_FUNCTIONAL);
-    int status = consume(F("OK\r\n"));
-    if (status != OK) return status;
+    int status = consume(F("\r\nOK\r\n"));
     CurrentState = IDLE;
+    if (status != OK) return status;
     return OK;
 }
 
@@ -56,8 +56,7 @@ int QLocate::query_config_1() {
 
 int QLocate::query_config_2() {
     ASSERT_STATE(CONFIG);
-    int status = consume(F("\r\nOK\r\n"));
-    if (status != OK) return status;
+    consume(F("\r\nOK\r\n"));  // I guess we don't care?
     // Disable flow control, disable DTR, disabl echo, set numeric rasponses, and
     // disable "RING" alerts
     return sendCommand("AT&K0;&D0;E0;V0;+SBDMTA=0\r");
@@ -65,8 +64,7 @@ int QLocate::query_config_2() {
 
 int QLocate::query_config_3() {
     ASSERT_STATE(CONFIG);
-    int status = consume(F("AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r"));
-    if (status != OK) return status;
+    consume(F("AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r"));
     // Clear QLocate MO and MT buffers
     return sendCommand("AT+SBDD2\r");
 }
@@ -74,8 +72,7 @@ int QLocate::query_config_3() {
 int QLocate::get_config() {
     ASSERT_STATE(CONFIG);
     CurrentState = IDLE;
-    int status = consume(F("0\r\n0\r"));
-    if (status != OK) return status;
+    consume(F("0\r\n0\r"));
     return OK;
 }
 
@@ -86,8 +83,8 @@ int QLocate::query_sbdwb_1(int len) {
     // Only set the state of if [len] is valid.
     CurrentState = SBDWB;
     port->clear();
-    // printf returns 0 on success
-    return port->printf("AT+SBDWB=%d\r", len);
+    if (port->printf("AT+SBDWB=%d\r", len) == 0) return WRITE_FAIL;
+    return OK;
 }
 
 int QLocate::query_sbdwb_2(char const *c, int len) {
@@ -98,8 +95,8 @@ int QLocate::query_sbdwb_2(char const *c, int len) {
     // Write binary data to QLocate
     if ((size_t)len != port->write(c, len)) return WRITE_FAIL;
     short s = checksum(c, len);
-    if (!port->write((char)(s >> 8))) return WRITE_FAIL;
-    if (!port->write((char)s)) return WRITE_FAIL;
+    if (port->write((char)(s >> 8)) != 1) return WRITE_FAIL;
+    if (port->write((char)s) != 1) return WRITE_FAIL;
     // WARNING: this method blocks
     port->flush();
 #ifdef DEBUG_ENABLED
@@ -116,8 +113,7 @@ int QLocate::get_sbdwb() {
     // If it is a timeout, then port will not be available anyway
     CHECK_PORT_AVAILABLE();
     // Process sbdwb response
-    char buf[6];
-    memset(buf, '\0', 6);
+    char buf[6] = {0};
     // expect to read <sbdwb status>\r\n0\r
     int len = port->readBytes(buf, 5);
 
@@ -130,16 +126,11 @@ int QLocate::get_sbdwb() {
     // SBDWB status is returned in buf[0]
     int status = buf[0] - '0';
 
-    // Since we are timing out, attempt to catch the three bytes: 1\r\n
-    if (len == 3 && status == TIMEOUT && buf[1] == '\r' && buf[2] == '\n') 
-        return status;
+    if (len < 3) return UNKNOWN;
 
-    if (len < 5) return UNKNOWN;    
+    if (buf[1] != '\r' || buf[2] != '\n') return UNEXPECTED_RESPONSE;
 
-    if (buf[1] == '\r' || buf[2] == '\n' || buf[3] == '0' || buf[4] == '\r')
-        return status;
-
-    return UNEXPECTED_RESPONSE;
+    return status;
 }
 
 // Parses the result buffer of sbdix into sbdix_r
@@ -188,7 +179,7 @@ int QLocate::get_sbdrb() {
 #ifdef DEBUG_ENABLED
     Serial.println("sbdrb > recieving message size= " + String(size));
 #endif
-    memset(message.mes, '\0', MAX_MSG_SIZE);
+    memset(message.mes, 0, MAX_MSG_SIZE);
 
     // Attempt to read the message
     if (size + 2 != (unsigned short)port->readBytes(message.mes, size + 2))
@@ -196,8 +187,7 @@ int QLocate::get_sbdrb() {
 
     // Verify checksum
     s = checksum(message.mes, size);
-    if (((s & 0xFF) << 8 | (s >> 8)) != *(short *)(message.mes + size))
-        return BAD_CHECKSUM;
+    if (((s & 0xFF) << 8 | (s >> 8)) != *(short *)(message.mes + size)) return BAD_CHECKSUM;
 
 #ifdef DEBUG_ENABLED
     Serial.printf("Message: [%s]", message.mes);
@@ -216,26 +206,34 @@ int QLocate::consume(String expected) {
     CHECK_PORT_AVAILABLE();
 
     int expectLength = expected.length();
-    char buf[expectLength + 1];
-
+    char buf[expectLength + 1] = {0};
     // Read current data at port
     int len = port->readBytes(buf, expectLength);
-    buf[len] = '\0';
 
 #ifdef DEBUG_ENABLED
-    Serial.printf("Consume: [%s]", buf);
+    Serial.printf("Consumed[");
+    for (int i = 0; i < len; i++) {
+        if (buf[i] == '\r')
+            Serial.printf("\\r");
+        else if (buf[i] == '\n')
+            Serial.printf("\\n");
+        else
+            Serial.printf("%c", buf[i]);
+    }
+    Serial.printf("]\n");
     Serial.flush();
 #endif
 
-    // Data read does not match expected data
-    if (expected.equals(String(buf))) return UNEXPECTED_RESPONSE;
     // Did not read enough bytes
     if (len != expectLength) return WRONG_LENGTH;
+
+    // Data read does not match expected data
+    if (!expected.equals(String(buf)) || port->available()) return UNEXPECTED_RESPONSE;
     return OK;
 }
 
 int QLocate::sendCommand(const char *cmd) {
-    // The writer is responsible for clearing the read port 
+    // The writer is responsible for clearing the read port
     port->clear();
     // port->print returns the number of characters printed
     if (port->print(F(cmd)) != 0) return OK;
@@ -256,6 +254,4 @@ void QLocate::disable() {
     // Do nothing; we really don't want to disable Quake
 }
 
-int QLocate::bPortAvail(){
-    return port->available();
-}
+int QLocate::bPortAvail() { return port->available(); }
