@@ -10,71 +10,23 @@ int second_time;
 int preread_time;
 
 // assume piksi already setup
-void test_piksi_manyreading_fast() {
-    std::array<double, 3> pos = {0};
-    std::array<double, 3> vel = {0};
-    // Serial.printf("Preread val: %d\n", pos[0]);
-    preread_time = millis();
-    Serial.println("EVERYTHING: Attempting to get solution...");
-
-    // while (!piksi.process_buffer() || pos[0] == 0) {
-    // bool keeprun = true;
-
-    int out = -5;
-    msg_gps_time_t prevtime;
-    piksi.get_gps_time(&prevtime);
-
-    unsigned int currenttow = prevtime.tow;
-    unsigned int temptow;
-
-    Serial.printf("TOW INIT: %u\n", prevtime.tow);
-    Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
-    // while
-    while (currenttow == prevtime.tow) {
-        currenttow = UINT_MAX;
-
-        out = piksi.process_buffer();
-        piksi.get_pos_ecef(&temptow, &pos);
-        // sets current tow to be the minimum of all measurements
-        currenttow = std::min(currenttow, temptow);
-
-        piksi.get_vel_ecef(&temptow, &vel);
-        currenttow = std::min(currenttow, temptow);
-
-        // set below .5 ms for nyquist
-        delayMicroseconds(100);
-    }
-    Serial.printf("PROCESS BUFF OUT: %hi\n", out);
-
-    Serial.printf("Read time: %d ms\n", millis() - preread_time);
-    Serial.printf("GPS position: %lf,%lf,%lf\n", pos[0], pos[1], pos[2]);
-    double pos_mag = sqrt(pos[0] * pos[0] + pos[1] * pos[1] + pos[2] * pos[2]);
-    TEST_ASSERT_DOUBLE_WITHIN(1E3, 6.37E6, pos_mag);  // We're somewhere on Earth.
-    // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites to
-    // get position.
-
-    Serial.printf("Vel position: %lf,%lf,%lf\n", vel[0], vel[1], vel[2]);
-    double vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
-    TEST_ASSERT_DOUBLE_WITHIN(1E3, 3.9E3, vel_mag);  // We're fast?
-    // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites to
-    // get position.
-}
-
-// assume piksi already setup
 void test_piksi_manyreading() {
     std::array<double, 3> pos = {0};
     std::array<double, 3> vel = {0};
     msg_gps_time_t time;
 
     // Serial.printf("Preread val: %d\n", pos[0]);
-    preread_time = millis();
+    preread_time = micros();
     Serial.println("EVERYTHING: Attempting to get solution...");
     Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
 
     int out = -5;
     // tune parameters?
-    // if (piksi.bytes_available() >= 299 && piksi.bytes_available()<599) {
-    if (piksi.bytes_available() == 299) {
+    // 
+    //CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
+    //COULD BE A CASE WHERE ONCE IN SPACE, MESSAGE LENGTH ALWAYS NOT 299
+    //if (piksi.bytes_available() == 299) {
+    if (piksi.bytes_available() >= 200 && piksi.bytes_available()<599) {
         while (piksi.bytes_available()) {
             piksi.process_buffer();
             delayMicroseconds(100);
@@ -95,7 +47,10 @@ void test_piksi_manyreading() {
         Serial.printf("Vel position: %lf,%lf,%lf\n", vel[0], vel[1], vel[2]);
         double vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
         TEST_ASSERT_DOUBLE_WITHIN(1E3, 3.9E3, vel_mag);  // We're fast?
-        // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites
+        
+        TEST_ASSERT_GREATER_THAN(3, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites
+
+        //TEST_ASSERT_NOT_EQUAL(0, )
         // to get position.
     }
 
@@ -120,10 +75,10 @@ void test_piksi_manyreading() {
         TEST_ASSERT_TRUE(false);
     }
 
-    Serial.printf("Read time: %d ms\n", millis() - preread_time);
+    Serial.printf("Read time: %d ms\n", micros() - preread_time);
     Serial.println();
 
-    TEST_ASSERT_TRUE((millis() - preread_time) < 7);
+    TEST_ASSERT_TRUE((micros() - preread_time) < 7000);
 }
 
 void test_sats() {
@@ -132,42 +87,6 @@ void test_sats() {
     TEST_ASSERT_GREATER_THAN(
         4, piksi.get_pos_ecef_nsats());  // We need at least 4 satellites to get position.
     Serial.printf("Num Sats Read Time: %d ms\n", millis() - preread_time);
-}
-
-void test_piksi_functional() {
-    setup_start_time = millis();
-    piksi.setup();
-    Serial.println("Attempting to get solution...");
-
-    std::array<double, 3> pos = {0};
-    // while (!piksi.process_buffer() || pos[0] == 0) {
-    while (piksi.process_buffer() == SBP_OK || pos[0] == 0) {
-        delayMicroseconds(1000);
-        piksi.get_pos_ecef(&pos);
-    };
-
-    Serial.printf("Setup time: %d ms\n", millis() - setup_start_time);
-    Serial.printf("GPS position: %lf,%lf,%lf\n", pos[0], pos[1], pos[2]);
-    double pos_mag = sqrt(pos[0] * pos[0] + pos[1] * pos[1] + pos[2] * pos[2]);
-    TEST_ASSERT_DOUBLE_WITHIN(1E3, 6.37E6, pos_mag);  // We're somewhere on Earth.
-    // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites to
-    // get position.
-
-    // second_time = millis();
-
-    // pos = {0,0,0};
-    // //while (!piksi.process_buffer() || pos[0] == 0) {
-    // while (piksi.process_buffer() == SBP_OK || pos[0] ==0 ) {
-    //     delayMicroseconds(1000);
-    //     piksi.get_pos_ecef(&pos);
-    // };
-
-    // Serial.printf("Second time: %d ms\n", millis() - second_time);
-    // Serial.printf("GPS position: %lf,%lf,%lf\n", pos[0], pos[1], pos[2]);
-    // pos_mag = sqrt(pos[0]*pos[0] + pos[1]*pos[1] + pos[2]*pos[2]);
-    // TEST_ASSERT_DOUBLE_WITHIN(1E3, 6.37E6, pos_mag); // We're somewhere on Earth.
-    // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites to
-    // get position.
 }
 
 int main(void) {
@@ -188,7 +107,7 @@ int main(void) {
     UNITY_BEGIN();
     // RUN_TEST(test_piksi_functional);
     piksi.setup();
-    int weird_delay = 100;
+    //int weird_delay = 100;
     // ensure that atleast one message comes in;
     // this one should error out, no bytes in
     RUN_TEST(test_piksi_manyreading);
@@ -199,7 +118,7 @@ int main(void) {
     int prevtime = millis();
     for (int i = 0; i < 100; i++) {
         // Serial.println(100 - (millis()-prevtime));
-        delay(100 - (millis() - prevtime));
+        delay(120 - (millis() - prevtime));
         prevtime = millis();
         RUN_TEST(test_piksi_manyreading);
     }
