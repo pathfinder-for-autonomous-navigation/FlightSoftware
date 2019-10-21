@@ -72,8 +72,9 @@ void test_piksi_manyreading() {
     Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
 
     int out = -5;
-    //tune parameters?
-    if (piksi.bytes_available() >= 299 && piksi.bytes_available()<599) {
+    // tune parameters?
+    // if (piksi.bytes_available() >= 299 && piksi.bytes_available()<599) {
+    if (piksi.bytes_available() == 299) {
         while (piksi.bytes_available()) {
             piksi.process_buffer();
             delayMicroseconds(100);
@@ -106,19 +107,23 @@ void test_piksi_manyreading() {
         // while(piksi.bytes_available()){
         //     piksi.process_buffer();
         // }
-        
 
-        TEST_ASSERT_TRUE(true);
-    }
-    if(piksi.bytes_available()){
-        Serial.println("KILLING EXTRA BYTES");
-    }
-    while (piksi.bytes_available()) {
+        if (piksi.bytes_available()) {
+            Serial.println("KILLING EXTRA BYTES************************************************************");
+        }
+        while (piksi.bytes_available()) {
             piksi.clear_bytes();
+        }
+        //set to 
+        //TEST_ASSERT_TRUE(false);
+        //to see what % of payloads are not 299 bytes long
+        TEST_ASSERT_TRUE(false);
     }
+
     Serial.printf("Read time: %d ms\n", millis() - preread_time);
     Serial.println();
 
+    TEST_ASSERT_TRUE((millis() - preread_time) < 7);
 }
 
 void test_sats() {
@@ -166,17 +171,15 @@ void test_piksi_functional() {
 }
 
 int main(void) {
-
     /*okay this stuff is really whack
     it seems like a normal packet is 299 bytes long
-    when you get like 330 some bytes it's correlated with the 
+    when you get like 330 some bytes it's correlated with the
     gps time spiking up 200ms
-    so i think whats happening is the call of the test happened at the exact 
+    so i think whats happening is the call of the test happened at the exact
     same time as data coming over the line
 
     the entire payload could also be variable in length
     */
-
 
     delay(5000);
     Serial.begin(9600);
@@ -187,74 +190,21 @@ int main(void) {
     piksi.setup();
     int weird_delay = 100;
     // ensure that atleast one message comes in;
-    //this one should error out, no bytes in
+    // this one should error out, no bytes in
     RUN_TEST(test_piksi_manyreading);
-    
+
     Serial.println("***************************************************************");
 
-    //mimic exact 100 ms control cycle
+    // mimic exact 100 ms control cycle
     int prevtime = millis();
-    for(int i = 0;i<20;i++){
-        //Serial.println(100 - (millis()-prevtime));
-        delay(100 - (millis()-prevtime));
+    for (int i = 0; i < 100; i++) {
+        // Serial.println(100 - (millis()-prevtime));
+        delay(100 - (millis() - prevtime));
         prevtime = millis();
         RUN_TEST(test_piksi_manyreading);
-        
     }
 
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-
-    Serial.println("***************************************************************");
-
-    delay(weird_delay);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    delay(weird_delay);
-    RUN_TEST(test_piksi_manyreading);
-
-    // delay(weird_delay);
-    // RUN_TEST(test_piksi_fastread_pos);
-    // delay(weird_delay);
-    // RUN_TEST(test_piksi_fastread_pos);
-    // delay(weird_delay);
-    // RUN_TEST(test_piksi_fastread_pos);
-
-    // Serial.println("****************************************************");
-    // // set wd = 0 for max fast calls;
-    // // tho response time is limited by internall condition that
-    // // tow != prevtow
-    // int wd = 0;
-
-    // delay(wd);
-    // RUN_TEST(test_piksi_fast_vel);
-    // delay(wd);
-    // RUN_TEST(test_piksi_fast_vel);
-    // delay(wd);
-    // RUN_TEST(test_piksi_fast_vel);
-    // delay(weird_delay);
-    // RUN_TEST(test_sats);
-
-    // delay(weird_delay);
-    RUN_TEST(test_sats);
+    //RUN_TEST(test_sats);
     UNITY_END();
     return 0;
 }
