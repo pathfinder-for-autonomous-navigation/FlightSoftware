@@ -1,9 +1,6 @@
 #ifndef PIKSI_HPP_
 #define PIKSI_HPP_
 
-#undef SERIAL4_RX_BUFFER_SIZE
-#define SERIAL4_RX_BUFFER_SIZE 256
-
 #include <HardwareSerial.h>
 #include <GPSTime.hpp>
 #include <array>
@@ -43,7 +40,6 @@ class Piksi : public Device {
      *  @returns Whether or not any data was processed. **/
     virtual bool process_buffer();
 
-    virtual int process_buffer_i();
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/
     //virtual void get_gps_time(gps_time_t *time);
@@ -205,6 +201,8 @@ class Piksi : public Device {
 
      //debug
     u32 bytes_available();
+
+    void clear_bytes();
 
    protected:
     HardwareSerial &_serial_port;  // This is protected instead of private so that FakePiksi

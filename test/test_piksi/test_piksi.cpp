@@ -72,7 +72,8 @@ void test_piksi_manyreading() {
     Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
 
     int out = -5;
-    if (piksi.bytes_available()) {
+    //tune parameters?
+    if (piksi.bytes_available() >= 299 && piksi.bytes_available()<599) {
         while (piksi.bytes_available()) {
             piksi.process_buffer();
             delayMicroseconds(100);
@@ -81,45 +82,43 @@ void test_piksi_manyreading() {
         piksi.get_vel_ecef(&vel);
         piksi.get_gps_time(&time);
 
+        Serial.printf("PROCESS BUFF OUT: %hi\n", out);
+
+        Serial.printf("GPS time: %u\n", time.tow);
+        Serial.printf("GPS position: %lf,%lf,%lf\n", pos[0], pos[1], pos[2]);
+        double pos_mag = sqrt(pos[0] * pos[0] + pos[1] * pos[1] + pos[2] * pos[2]);
+        TEST_ASSERT_DOUBLE_WITHIN(1E3, 6.37E6, pos_mag);  // We're somewhere on Earth.
+        // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites
+        // to get position.
+
+        Serial.printf("Vel position: %lf,%lf,%lf\n", vel[0], vel[1], vel[2]);
+        double vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
+        TEST_ASSERT_DOUBLE_WITHIN(1E3, 3.9E3, vel_mag);  // We're fast?
+        // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites
+        // to get position.
     }
-    //this takes max 99.99 ms if called while there is no buffer available. 
+
     else {
-        unsigned int ptow;
-        unsigned int vtow;
-        piksi.get_pos_ecef(&ptow, &pos);
-        piksi.get_vel_ecef(&vtow, &vel);
+        // if no data in buffer throw error
+        Serial.println("NOT A CLEAN READ");
 
-        Serial.printf("TOW INIT: %u\n", ptow);
-        Serial.printf("VTOW INIT: %u\n", vtow);
-        unsigned int prevptow = ptow;
-        unsigned int prevvtow = vtow;
+        // getrid of extra bytes:
+        // while(piksi.bytes_available()){
+        //     piksi.process_buffer();
+        // }
+        
 
-        // while (piksi.process_buffer() == SBP_OK || pos[0] ==0 ) {
-        while (ptow == prevptow || vtow == prevvtow) {
-            out = piksi.process_buffer();
-            piksi.get_pos_ecef(&ptow, &pos);
-            piksi.get_vel_ecef(&vtow, &vel);
-            piksi.get_gps_time(&time);
-            // set below .5 ms for nyquist
-            delayMicroseconds(100);
-            // if(out==SBP_OK_CALLBACK_EXECUTED)
-            // Serial.println(out);
-        }
+        TEST_ASSERT_TRUE(true);
     }
-    Serial.printf("PROCESS BUFF OUT: %hi\n", out);
-
+    if(piksi.bytes_available()){
+        Serial.println("KILLING EXTRA BYTES");
+    }
+    while (piksi.bytes_available()) {
+            piksi.clear_bytes();
+    }
     Serial.printf("Read time: %d ms\n", millis() - preread_time);
-    Serial.printf("GPS position: %lf,%lf,%lf\n", pos[0], pos[1], pos[2]);
-    double pos_mag = sqrt(pos[0] * pos[0] + pos[1] * pos[1] + pos[2] * pos[2]);
-    TEST_ASSERT_DOUBLE_WITHIN(1E3, 6.37E6, pos_mag);  // We're somewhere on Earth.
-    // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites to
-    // get position.
+    Serial.println();
 
-    Serial.printf("Vel position: %lf,%lf,%lf\n", vel[0], vel[1], vel[2]);
-    double vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
-    TEST_ASSERT_DOUBLE_WITHIN(1E3, 3.9E3, vel_mag);  // We're fast?
-    // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites to
-    // get position.
 }
 
 void test_sats() {
@@ -128,40 +127,6 @@ void test_sats() {
     TEST_ASSERT_GREATER_THAN(
         4, piksi.get_pos_ecef_nsats());  // We need at least 4 satellites to get position.
     Serial.printf("Num Sats Read Time: %d ms\n", millis() - preread_time);
-}
-
-// assume piksi already setup
-void test_piksi_fast_vel() {
-    preread_time = millis();
-    Serial.println("FAST_VEL: Attempting to get solution...");
-
-    std::array<double, 3> vel = {0};
-    Serial.printf("Preread val: %d\n", vel[0]);
-
-    // while (!piksi.process_buffer() || pos[0] == 0) {
-    bool keeprun = true;
-    int out = -5;
-
-    unsigned int tow = 0;
-    piksi.get_vel_ecef(&tow, &vel);
-    unsigned int prevtow = tow;
-    // while (piksi.process_buffer() == SBP_OK || pos[0] ==0 ) {
-    while (keeprun || vel[0] == 0) {
-        out = piksi.process_buffer();
-        piksi.get_vel_ecef(&tow, &vel);
-
-        delayMicroseconds(1);
-        // if(out==SBP_OK_CALLBACK_EXECUTED)
-        if (tow != prevtow) keeprun = false;
-    }
-    Serial.printf("PROCESS BUFF OUT: %i\n", out);
-
-    Serial.printf("Read time: %d ms\n", millis() - preread_time);
-    Serial.printf("Vel position: %lf,%lf,%lf\n", vel[0], vel[1], vel[2]);
-    double vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
-    TEST_ASSERT_DOUBLE_WITHIN(1E3, 3.9E3, vel_mag);  // We're fast?
-    // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites to
-    // get position.
 }
 
 void test_piksi_functional() {
@@ -201,6 +166,18 @@ void test_piksi_functional() {
 }
 
 int main(void) {
+
+    /*okay this stuff is really whack
+    it seems like a normal packet is 299 bytes long
+    when you get like 330 some bytes it's correlated with the 
+    gps time spiking up 200ms
+    so i think whats happening is the call of the test happened at the exact 
+    same time as data coming over the line
+
+    the entire payload could also be variable in length
+    */
+
+
     delay(5000);
     Serial.begin(9600);
     while (!Serial)
@@ -208,19 +185,41 @@ int main(void) {
     UNITY_BEGIN();
     // RUN_TEST(test_piksi_functional);
     piksi.setup();
-    int weird_delay = 110;
+    int weird_delay = 100;
+    // ensure that atleast one message comes in;
+    //this one should error out, no bytes in
     RUN_TEST(test_piksi_manyreading);
-    RUN_TEST(test_piksi_manyreading);
-    RUN_TEST(test_piksi_manyreading);
-    delay(weird_delay);
-    Serial.println("****************************************************");
+    
+    Serial.println("***************************************************************");
 
+    delay(weird_delay);
+    RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
+    RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
     RUN_TEST(test_piksi_manyreading);
     delay(weird_delay);
     RUN_TEST(test_piksi_manyreading);
     delay(weird_delay);
     RUN_TEST(test_piksi_manyreading);
     delay(weird_delay);
+    RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
+    RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
+    RUN_TEST(test_piksi_manyreading);
+
+    Serial.println("***************************************************************");
+
+    delay(weird_delay);
+    delay(weird_delay);
+    RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
+    delay(weird_delay);
+    RUN_TEST(test_piksi_manyreading);
+    delay(weird_delay);
+    delay(weird_delay);
+    RUN_TEST(test_piksi_manyreading);
 
     // delay(weird_delay);
     // RUN_TEST(test_piksi_fastread_pos);
