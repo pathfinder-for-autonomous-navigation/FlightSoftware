@@ -9,76 +9,110 @@ int setup_start_time;
 int second_time;
 int preread_time;
 
+template <typename T>
+bool comp(T a, T b, float margin) {
+    if (abs(a - b) > margin) return false;
+    return true;
+}
+
 // assume piksi already setup
-void test_piksi_manyreading() {
-    std::array<double, 3> pos = {0};
-    std::array<double, 3> vel = {0};
+bool execute_piksi_all() {
+    std::array<int, 3> pos = {0};
+    std::array<int, 3> vel = {0};
+    std::array<int, 3> baseline_pos = {0};
     msg_gps_time_t time;
 
     // Serial.printf("Preread val: %d\n", pos[0]);
     preread_time = micros();
-    Serial.println("EVERYTHING: Attempting to get solution...");
-    Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
+    // Serial.println("EVERYTHING: Attempting to get solution...");
+    // Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
 
-    int out = -5;
+    int out = -69;
+    bool ret = true;
     // tune parameters?
-    // 
-    //CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
-    //COULD BE A CASE WHERE ONCE IN SPACE, MESSAGE LENGTH ALWAYS NOT 299
-    //if (piksi.bytes_available() == 299) {
-    if (piksi.bytes_available() >= 200 && piksi.bytes_available()<599) {
+    //
+    // CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
+    // COULD BE A CASE WHERE ONCE IN SPACE, MESSAGE LENGTH ALWAYS NOT 299
+    // if (piksi.bytes_available() == 299) {
+    if (piksi.bytes_available() >= 200 && piksi.bytes_available() < 599) {
         while (piksi.bytes_available()) {
-            piksi.process_buffer();
+            out = piksi.process_buffer();
             delayMicroseconds(100);
         }
-        piksi.get_pos_ecef(&pos);
-        piksi.get_vel_ecef(&vel);
+        unsigned int prev_tow = time.tow;
         piksi.get_gps_time(&time);
 
-        Serial.printf("PROCESS BUFF OUT: %hi\n", out);
+        piksi.get_pos_ecef(&pos);
+        piksi.get_vel_ecef(&vel);
 
-        Serial.printf("GPS time: %u\n", time.tow);
-        Serial.printf("GPS position: %lf,%lf,%lf\n", pos[0], pos[1], pos[2]);
-        double pos_mag = sqrt(pos[0] * pos[0] + pos[1] * pos[1] + pos[2] * pos[2]);
-        TEST_ASSERT_DOUBLE_WITHIN(1E3, 6.37E6, pos_mag);  // We're somewhere on Earth.
-        // TEST_ASSERT_GREATER_THAN(4, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites
-        // to get position.
+        piksi.get_baseline_ecef(&baseline_pos);
+        // Serial.printf("PROCESS BUFF OUT: %hi\n", out);
 
-        Serial.printf("Vel position: %lf,%lf,%lf\n", vel[0], vel[1], vel[2]);
-        double vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
-        TEST_ASSERT_DOUBLE_WITHIN(1E3, 3.9E3, vel_mag);  // We're fast?
+        // Serial.printf("GPS week: %d\n", time.wn);
+        // Serial.printf("GPS OLD tow: %u\n", prev_tow);
+        // Serial.printf("GPS tow: %u\n", time.tow);
+
+        // Serial.printf("GPS position: %d,%d,%d\n", pos[0], pos[1], pos[2]);
+        // Serial.printf("GPS baseline position: %d,%d,%d\n", baseline_pos[0], baseline_pos[1],
+        //               baseline_pos[2]);
+
+        // Serial.printf("Vel position: %d,%d,%d\n", vel[0], vel[1], vel[2]);
+
+        // Serial.printf("pos_ecef_flags: %d\n", piksi.get_pos_ecef_flags());
+        // Serial.printf("vel_ecef_flags: %d\n", piksi.get_vel_ecef_flags());
+
+        // Serial.printf("Nsat Pos: %d\n", piksi.get_pos_ecef_nsats());
+        // Serial.printf("Nsat Vel: %d\n", piksi.get_vel_ecef_nsats());
+
+        // Verify that last call to process_buffer was successful
+        ret = ret && (out == 1);
+        // Verify that time has increased
+        ret = ret && time.tow > prev_tow;
+
+        // Check magnitude of position
+        float pos_mag = sqrt(pos[0] * pos[0] + pos[1] * pos[1] + pos[2] * pos[2]);
+        ret = ret && (piksi.get_pos_ecef_nsats() > 3);
+        ret = ret && comp(6.37E6, pos_mag, 1.0E3);
+
         
-        TEST_ASSERT_GREATER_THAN(3, piksi.get_pos_ecef_nsats()); // We need at least 4 satellites
 
-        //TEST_ASSERT_NOT_EQUAL(0, )
-        // to get position.
+        // Check flag
+        ret = ret && (piksi.get_pos_ecef_flags() == 1);
+
+        float baseline_mag =
+            sqrt(baseline_pos[0] * baseline_pos[0] + baseline_pos[1] * baseline_pos[1] +
+                 baseline_pos[2] * baseline_pos[2]);
+
+        Serial.printf("baseline_mag: %d\n", baseline_mag);
+
+        //ret = ret && comp(1.0E5, baseline_mag, 9.9E4);
+
+        // Check mangitude of velocity
+        float vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
+        
+        Serial.printf("veloicty_mag: %d\n", vel_mag);
+        // units of mm/s btw
+        ret = ret && (piksi.get_vel_ecef_nsats() > 3);
+        ret = ret && comp(3.9E3, vel_mag, 5.0E2);
+
+        ret = ret && (piksi.get_vel_ecef_flags() == 0);
+
+        // Serial.printf("RET: %d\n",ret);
     }
 
     else {
         // if no data in buffer throw error
-        Serial.println("NOT A CLEAN READ");
-
-        // getrid of extra bytes:
-        // while(piksi.bytes_available()){
-        //     piksi.process_buffer();
-        // }
-
-        if (piksi.bytes_available()) {
-            Serial.println("KILLING EXTRA BYTES************************************************************");
-        }
+        Serial.println("NOT A CLEAN READ ***");
         while (piksi.bytes_available()) {
             piksi.clear_bytes();
         }
-        //set to 
-        //TEST_ASSERT_TRUE(false);
-        //to see what % of payloads are not 299 bytes long
-        TEST_ASSERT_TRUE(false);
+        ret = false;
     }
 
     Serial.printf("Read time: %d ms\n", micros() - preread_time);
-    Serial.println();
+    // Serial.println();
 
-    TEST_ASSERT_TRUE((micros() - preread_time) < 7000);
+    return ret;
 }
 
 void test_sats() {
@@ -87,58 +121,6 @@ void test_sats() {
     TEST_ASSERT_GREATER_THAN(
         4, piksi.get_pos_ecef_nsats());  // We need at least 4 satellites to get position.
     Serial.printf("Num Sats Read Time: %d ms\n", millis() - preread_time);
-}
-
-bool test_piksi_manyreading_fast() {
-    std::array<double, 3> pos = {0};
-    std::array<double, 3> vel = {0};
-    msg_gps_time_t time;
-
-    // Serial.printf("Preread val: %d\n", pos[0]);
-    preread_time = micros();
-
-    //int out = -5;
-    // tune parameters?
-    // 
-    //CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
-    //COULD BE A CASE WHERE ONCE IN SPACE, MESSAGE LENGTH ALWAYS NOT 299
-    //if (piksi.bytes_available() == 299) {
-    if (piksi.bytes_available() >= 200 && piksi.bytes_available()<599) {
-        while (piksi.bytes_available()) {
-            piksi.process_buffer();
-            delayMicroseconds(100);
-        }
-        piksi.get_pos_ecef(&pos);
-        piksi.get_vel_ecef(&vel);
-        piksi.get_gps_time(&time);
-
-    }
-
-    else {
-        // if no data in buffer throw error
-        //Serial.println("NOT A CLEAN READ");
-
-        // getrid of extra bytes:
-        // while(piksi.bytes_available()){
-        //     piksi.process_buffer();
-        // }
-
-        if (piksi.bytes_available()) {
-           // Serial.println("KILLING EXTRA BYTES************************************************************");
-        }
-        while (piksi.bytes_available()) {
-            piksi.clear_bytes();
-        }
-        //set to 
-        //TEST_ASSERT_TRUE(false);
-        //to see what % of payloads are not 299 bytes long
-        //TEST_ASSERT_TRUE(false);
-    }
-
-    //Serial.printf("Read time: %d ms\n", micros() - preread_time);
-    //Serial.println();
-
-    return ((micros() - preread_time) < 7500);
 }
 
 int main(void) {
@@ -159,25 +141,27 @@ int main(void) {
     UNITY_BEGIN();
     // RUN_TEST(test_piksi_functional);
     piksi.setup();
-    //int weird_delay = 100;
+    // int weird_delay = 100;
     // ensure that atleast one message comes in;
     // this one should error out, no bytes in
-    RUN_TEST(test_piksi_manyreading);
 
     Serial.println("***************************************************************");
 
-    // mimic exact 100 ms control cycle
+    // mimic exact 120 ms control cycle
     int prevtime = millis();
     int count = 0;
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 100; i++) {
         // Serial.println(100 - (millis()-prevtime));
         delay(120 - (millis() - prevtime));
         prevtime = millis();
-        count += test_piksi_manyreading_fast();
+
+        // count += piksi_fast_read();
+        count += execute_piksi_all();
+        // RUN_TEST(test_piksi_all);
     }
 
-    Serial.printf("OUT OF 200: %i\n", count);
-    //RUN_TEST(test_sats);
+    Serial.printf("OUT OF 100: %i\n", count);
+    RUN_TEST(test_sats);
     UNITY_END();
     return 0;
 }

@@ -68,9 +68,7 @@ class Piksi : public Device {
     /** @brief Gets satellite position in ECEF coordinates.
      *  @param position A pointer to the destination struct for the information.
      * **/
-    virtual void get_pos_ecef(std::array<double, 3> *position);
-    //debug method please **
-    virtual void get_pos_ecef(unsigned int* tow, std::array<double, 3> *position);
+    virtual void get_pos_ecef(std::array<int, 3> *position);
     /** @brief Get number of satellites used for determining GPS position.
      *  @return Number of satellites used for determining GPS position. **/
     virtual unsigned char get_pos_ecef_nsats();
@@ -82,7 +80,7 @@ class Piksi : public Device {
      * station.
      *  @param position A pointer to the destination struct for the information.
      * **/
-    virtual void get_baseline_ecef(std::array<double, 3> *position);
+    virtual void get_baseline_ecef(std::array<int, 3> *position);
     /** @brief Get number of satellites used for determining GPS baseline
      * position.
      *  @return Number of satellites used for determining GPS baseline position.
@@ -95,9 +93,8 @@ class Piksi : public Device {
     /** @brief Gets satellite velocity in ECEF coordinates.
      *  @param velocity A pointer to the destination struct for the information.
      * **/
-    virtual void get_vel_ecef(std::array<double, 3> *velocity);
+    virtual void get_vel_ecef(std::array<int, 3> *velocity);
 
-    virtual void get_vel_ecef(unsigned int* tow, std::array<double, 3> *velocity);
     /** @brief Get number of satellites used for determining GPS velocity.
      *  @return Number of satellites used for determining GPS velocity. **/
     virtual unsigned char get_vel_ecef_nsats();
@@ -108,7 +105,7 @@ class Piksi : public Device {
     /** @brief Gets base station position in ECEF coordinates.
      *  @param position A pointer to an array for storing the x,y,z coordinates of
      * the base station. **/
-    virtual void get_base_pos_ecef(std::array<double, 3> *position);
+    virtual void get_base_pos_ecef(std::array<int, 3> *position);
 
     /** @brief Returns state of integer ambiguity resolution (IAR) process. **/
     virtual unsigned int get_iar();
