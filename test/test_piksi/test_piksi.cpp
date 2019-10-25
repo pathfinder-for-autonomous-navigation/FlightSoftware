@@ -9,25 +9,103 @@ int setup_start_time;
 int second_time;
 int preread_time;
 
+std::array<int, 3> pos;
+std::array<int, 3> vel;
+std::array<int, 3> baseline_pos;
+msg_gps_time_t time;
+unsigned int prev_tow = 0;
+int out;
+
 template <typename T>
 bool comp(T a, T b, float margin) {
     if (abs(a - b) > margin) return false;
     return true;
 }
+float ssqrt(std::array<int, 3> in) {
+    return (float)sqrt(((float)in[0]) * ((float)in[0]) + ((float)in[1]) * ((float)in[1]) +
+                ((float)in[2]) * ((float)in[2]));
+}
+bool verify_out() {
+    // Verify that last call to process_buffer was successful
+    bool ret = (out == 1);
+
+    if (!ret) Serial.printf("Process Out: %d\n", out);
+
+    return ret;
+}
+bool verify_time() {
+    // Verify that time has increased
+    bool ret = time.tow > prev_tow;
+
+    if (!ret) {
+        // Serial.printf("GPS week: %d\n", time.wn);
+        // Serial.printf("GPS OLD tow: %u\n", prev_tow);
+        // Serial.printf("GPS tow: %u\n", time.tow);
+    }
+
+    return ret;
+}
+bool verify_pos() {
+    // Check magnitude of position
+    // float pos_mag = sqrt((float)pos[0] * (float)pos[0] + (float)pos[1] * (float)pos[1] +
+    //                      (float)pos[2] * (float)pos[2]);
+    float pos_mag = ssqrt(pos);
+    bool ret = (piksi.get_pos_ecef_nsats() > 3);
+    ret = ret && comp(6.37E6, pos_mag, 1.0E3);
+
+    // Check flag
+    ret = ret && (piksi.get_pos_ecef_flags() == 1);
+
+    if (!ret) {
+        Serial.printf("GPS position: %d,%d,%d\n", pos[0], pos[1], pos[2]);
+        Serial.printf("pos_ecef_flags: %d\n", piksi.get_pos_ecef_flags());
+
+        Serial.printf("Nsat Pos: %d\n", piksi.get_pos_ecef_nsats());
+    }
+
+    return ret;
+}
+bool verify_vel() {
+    // Check mangitude of velocity
+    float vel_mag = ssqrt(vel);
+
+    // units of mm/s btw
+    bool ret = (piksi.get_vel_ecef_nsats() > 3);
+    ret = ret && comp(3.9E3, vel_mag, 5.0E2);
+
+    ret = ret && (piksi.get_vel_ecef_flags() == 0);
+
+    if (!ret) {
+        Serial.printf("Vel: %d,%d,%d\n", vel[0], vel[1], vel[2]);
+        Serial.printf("veloicty_mag: %g\n", vel_mag);
+        Serial.printf("vel_ecef_flags: %d\n", piksi.get_vel_ecef_flags());
+
+        Serial.printf("Nsat Vel: %d\n", piksi.get_vel_ecef_nsats());
+    }
+
+    return ret;
+}
+bool verify_baseline() {
+    // float baseline_mag =
+    //     sqrt(baseline_pos[0] * baseline_pos[0] + baseline_pos[1] * baseline_pos[1] +
+    //          baseline_pos[2] * baseline_pos[2]);
+    float baseline_mag = ssqrt(baseline_pos);
+
+    bool ret = comp(1.0E5, baseline_mag, 2E3);
+    if (!ret) {
+        Serial.printf("GPS baseline position: %d,%d,%d\n", baseline_pos[0], baseline_pos[1],
+                      baseline_pos[2]);
+        Serial.printf("baseline_mag: %g\n", baseline_mag);
+    }
+    return ret;
+}
 
 // assume piksi already setup
 bool execute_piksi_all() {
-    std::array<int, 3> pos = {0};
-    std::array<int, 3> vel = {0};
-    std::array<int, 3> baseline_pos = {0};
-    msg_gps_time_t time;
-
     // Serial.printf("Preread val: %d\n", pos[0]);
     preread_time = micros();
     // Serial.println("EVERYTHING: Attempting to get solution...");
     // Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
-
-    int out = -69;
     bool ret = true;
     // tune parameters?
     //
@@ -39,7 +117,7 @@ bool execute_piksi_all() {
             out = piksi.process_buffer();
             delayMicroseconds(100);
         }
-        unsigned int prev_tow = time.tow;
+        prev_tow = time.tow;
         piksi.get_gps_time(&time);
 
         piksi.get_pos_ecef(&pos);
@@ -48,56 +126,9 @@ bool execute_piksi_all() {
         piksi.get_baseline_ecef(&baseline_pos);
         // Serial.printf("PROCESS BUFF OUT: %hi\n", out);
 
-        // Serial.printf("GPS week: %d\n", time.wn);
-        // Serial.printf("GPS OLD tow: %u\n", prev_tow);
-        // Serial.printf("GPS tow: %u\n", time.tow);
-
-        // Serial.printf("GPS position: %d,%d,%d\n", pos[0], pos[1], pos[2]);
-        // Serial.printf("GPS baseline position: %d,%d,%d\n", baseline_pos[0], baseline_pos[1],
-        //               baseline_pos[2]);
-
-        // Serial.printf("Vel position: %d,%d,%d\n", vel[0], vel[1], vel[2]);
-
-        // Serial.printf("pos_ecef_flags: %d\n", piksi.get_pos_ecef_flags());
-        // Serial.printf("vel_ecef_flags: %d\n", piksi.get_vel_ecef_flags());
-
-        // Serial.printf("Nsat Pos: %d\n", piksi.get_pos_ecef_nsats());
-        // Serial.printf("Nsat Vel: %d\n", piksi.get_vel_ecef_nsats());
-
-        // Verify that last call to process_buffer was successful
-        ret = ret && (out == 1);
-        // Verify that time has increased
-        ret = ret && time.tow > prev_tow;
-
-        // Check magnitude of position
-        float pos_mag = sqrt(pos[0] * pos[0] + pos[1] * pos[1] + pos[2] * pos[2]);
-        ret = ret && (piksi.get_pos_ecef_nsats() > 3);
-        ret = ret && comp(6.37E6, pos_mag, 1.0E3);
-
-        
-
-        // Check flag
-        ret = ret && (piksi.get_pos_ecef_flags() == 1);
-
-        float baseline_mag =
-            sqrt(baseline_pos[0] * baseline_pos[0] + baseline_pos[1] * baseline_pos[1] +
-                 baseline_pos[2] * baseline_pos[2]);
-
-        Serial.printf("baseline_mag: %d\n", baseline_mag);
-
-        //ret = ret && comp(1.0E5, baseline_mag, 9.9E4);
-
-        // Check mangitude of velocity
-        float vel_mag = sqrt(vel[0] * vel[0] + vel[1] * vel[1] + vel[2] * vel[2]);
-        
-        Serial.printf("veloicty_mag: %d\n", vel_mag);
-        // units of mm/s btw
-        ret = ret && (piksi.get_vel_ecef_nsats() > 3);
-        ret = ret && comp(3.9E3, vel_mag, 5.0E2);
-
-        ret = ret && (piksi.get_vel_ecef_flags() == 0);
-
         // Serial.printf("RET: %d\n",ret);
+
+        ret = verify_out() & verify_time() & verify_baseline() & verify_pos() & verify_vel();
     }
 
     else {
@@ -148,19 +179,25 @@ int main(void) {
     Serial.println("***************************************************************");
 
     // mimic exact 120 ms control cycle
-    int prevtime = millis();
-    int count = 0;
+    int prevtime = micros();
+    int posttime = micros();
+    int exec_pass_count = 0;
+    int timing_pass_count = 0;
+    int PIKSI_READ_ALLOTED = 7200;
     for (int i = 0; i < 100; i++) {
         // Serial.println(100 - (millis()-prevtime));
-        delay(120 - (millis() - prevtime));
-        prevtime = millis();
+        delay(120 - (micros() - prevtime) / 1000);
+        prevtime = micros();
 
         // count += piksi_fast_read();
-        count += execute_piksi_all();
+        exec_pass_count += execute_piksi_all();
+        posttime = micros();
+        if (posttime - prevtime < PIKSI_READ_ALLOTED) timing_pass_count++;
         // RUN_TEST(test_piksi_all);
     }
 
-    Serial.printf("OUT OF 100: %i\n", count);
+    Serial.printf("EXEC PASS COUNT OF 100: %d\n", exec_pass_count);
+    Serial.printf("TIMING PASS COUNT OF 100: %d\n", timing_pass_count);
     RUN_TEST(test_sats);
     UNITY_END();
     return 0;
