@@ -11,6 +11,8 @@ using namespace Devices;
 const std::array<unsigned char, 6>
 PropulsionSystem::valve_pins = {27, 28, 3, 4, 5, 6};
 
+volatile bool PropulsionSystem::valve_start_locked_out = false;
+
 PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
 
 bool PropulsionSystem::setup() {
@@ -86,15 +88,15 @@ void PropulsionSystem::set_tank_valve_state(bool valve, bool state) {
 
 void PropulsionSystem::thrust_valve_loop() {
     for (unsigned char i = 2; i < 6; i++) {
-        if (thrust_valve_schedule[i] < thrust_valve_loop_interval_ms) {
-            digitalWrite(valve_pins[i], LOW);
-            thrust_valve_schedule[i] = 0;
+        if (thrust_valve_schedule[i - 2] < thrust_valve_loop_interval_ms) {
+            digitalWrite(valve_pins[i - 2], LOW);
+            thrust_valve_schedule[i - 2] = 0;
             is_valve_opened[i] = false;
             continue;
         }
         else if (!is_valve_opened[i] && !valve_start_locked_out) {
             valve_start_locked_out = true;
-            digitalWrite(valve_pins[i], HIGH);
+            digitalWrite(valve_pins[i - 2], HIGH);
             is_valve_opened[i] = true;
         }
         else if (valve_start_locked_out) {
@@ -102,7 +104,7 @@ void PropulsionSystem::thrust_valve_loop() {
         }
 
         if (is_valve_opened[i]) {
-            thrust_valve_schedule[i] -= thrust_valve_loop_interval_ms;
+            thrust_valve_schedule[i - 2] -= thrust_valve_loop_interval_ms;
         }
     }
 }

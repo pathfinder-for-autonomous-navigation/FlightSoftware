@@ -1,4 +1,4 @@
-#include "DockingMotor.hpp"
+#include "DockingSystem.hpp"
 #include "DCDC.hpp"
 #include "Arduino.h"
 
@@ -80,9 +80,9 @@ void DockingSystem::step_motor(float angle) {
 
     // step at a frequency of 500Hz
     while (current_step < steps){
-        digitalWrite(stepper_pin_, LOW);
+        digitalWrite(motor_step_pin, LOW);
         delayMicroseconds(1000);
-        digitalWrite(stepper_pin_, HIGH);
+        digitalWrite(motor_step_pin, HIGH);
         delayMicroseconds(1000);
         current_step++;
     }
