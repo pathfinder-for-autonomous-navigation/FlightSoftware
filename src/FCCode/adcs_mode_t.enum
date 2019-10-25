@@ -1,0 +1,13 @@
+#ifndef adcs_mode_t_enum_
+#define adcs_mode_t_enum_
+
+// adcs.mode
+enum class adcs_mode_t {
+    startup,
+    limited,
+    zero_torque,
+    detumble,
+    pointing
+};
+
+#endif

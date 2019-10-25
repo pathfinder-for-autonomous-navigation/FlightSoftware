@@ -4,24 +4,21 @@
  * was only resolved by putting this import below the others so that gcc's built-in definition
  * takes precedence.
  */
-#include "FCCode/MainControlLoopTask.hpp"
+
+#include "FCCode/MainControlLoop.hpp"
 #include <StateFieldRegistry.hpp>
 
 #include <ChRt.h>
 #include <core_pins.h>
 #include <wiring.h>
 
-StateFieldRegistry registry;
-MainControlLoopTask fcp_task(registry);
-
 void pan_system_setup() {
-    fcp_task.init();  // Inits the debug console
+    StateFieldRegistry registry;
+    MainControlLoop fcp(registry);
+
+    fcp.init();  // Inits the debug console
     while (true) {
-        fcp_task.execute();
-        digitalWrite(13, HIGH);
-        chThdSleepMilliseconds(50);
-        digitalWrite(13, LOW);
-        chThdSleepMilliseconds(50);
+        fcp.execute();
     }
 }
 

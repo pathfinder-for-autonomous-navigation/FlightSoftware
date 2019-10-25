@@ -1,10 +1,10 @@
-#include "FCCode/MainControlLoop.hpp"
+#include "FCCode/DummyMainControlLoop.hpp"
 #include <StateFieldRegistry.hpp>
 
 #ifndef UNIT_TEST
 int main() {
     StateFieldRegistry registry;
-    MainControlLoop fcp(registry);
+    DummyMainControlLoop fcp(registry);
     fcp.init();
 
     while (true) {

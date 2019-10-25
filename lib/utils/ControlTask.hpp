@@ -3,7 +3,8 @@
 
 #include <memory>
 #include <string>
-#include "ControlTaskBase.hpp"
+#include <debug_console.hpp>
+#include <Nameable.hpp>
 #include <StateFieldBase.hpp>
 #include <StateFieldRegistry.hpp>
 
@@ -15,27 +16,30 @@
  * implementations of execute() for different kinds of ControlTasks.
  */
 template <typename T>
-class ControlTask : public ControlTaskBase {
-   protected:
-    const std::string _name;
-    StateFieldRegistry& _registry;
-
-   public:
+class ControlTask : protected debug_console {
+  public:
     /**
      * @brief Construct a new Control ControlTaskBase object
      *
      * @param name     Name of control ControlTaskBase
      * @param registry Pointer to state field registry
      */
-    ControlTask(const std::string& name, StateFieldRegistry& registry)
-        : _name(name), _registry(registry) {}
-
-    const std::string& name() const override { return _name; };
+    ControlTask(StateFieldRegistry& registry) : _registry(registry) {}
 
     /**
      * @brief Run main method of control ControlTaskBase.
      */
     virtual T execute() = 0;
+
+    /**
+     * @brief Destroy the Control Task object
+     * 
+     * We need to have this destructor to avoid compilation errors.
+     */
+    virtual ~ControlTask() = 0;
+
+  protected:
+    StateFieldRegistry& _registry;
 
     template<typename U>
     bool add_readable_field(ReadableStateField<U> field) {
@@ -65,5 +69,8 @@ class ControlTask : public ControlTaskBase {
         return field_ptr;
     }
 };
+
+template<typename T>
+ControlTask<T>::~ControlTask() {}
 
 #endif
