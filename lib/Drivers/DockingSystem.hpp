@@ -2,6 +2,7 @@
 #define DOCKING_MOTOR_HPP_
 
 #include "../Devices/Device.hpp"
+#include <cmath>
 
 namespace Devices {
 /**
@@ -57,18 +58,18 @@ class DockingSystem : public Device {
      * 
      * @return True if switch is pressed.
      */
-    bool DockingSystem::check_docked() const;
+    bool check_docked() const;
 
     /**
      * @brief Adjust step angle for docking motor.
      * 
      * @param parameter
      */
-    void DockingSystem::set_step_angle(float angle);
+    void set_step_angle(float angle);
 
    private:
     // Sets how many degrees the motor turns in one step.
-    float step_angle = (15.0f*PI)/180.0f;
+    float step_angle = (15.0f*M_PI)/180.0f;
 
     // Status of motor directionality.
     bool is_turning_clockwise = false;

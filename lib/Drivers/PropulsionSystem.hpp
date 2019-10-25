@@ -73,10 +73,14 @@ class PropulsionSystem : public Device {
     void set_tank_valve_state(bool valve, bool state);
 
    private:
+    // A bunch of these variables are static so that the interval timer can call
+    // a static function. Practically, this is OK because we only expect to
+    // create the propulsion system object once.
+
     //! If true, a thrust valve was opened on the current cycle
     // of the thrust valve loop, so another valve (thrust or prop)
     // should not be opened during the current cycle.
-    volatile bool valve_start_locked_out = false;
+    static volatile bool valve_start_locked_out;
 
     //! Runs thrust_valve_loop every 5 ms. Initialized in setup().
     IntervalTimer thrust_valve_loop_timer;
@@ -87,12 +91,12 @@ class PropulsionSystem : public Device {
         thrust_valve_loop_interval_us / 1000;
 
     //! Tracks if thrust valves are open.
-    volatile bool is_valve_opened[4];
+    static volatile bool is_valve_opened[4];
 
     //! Thrust valve schedule, specified by flight software. Times are in
     // milliseconds.
-    volatile unsigned int thrust_valve_schedule[4];
-    void thrust_valve_loop();
+    static volatile unsigned int thrust_valve_schedule[4];
+    static void thrust_valve_loop();
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
