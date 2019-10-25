@@ -8,21 +8,23 @@ DockingSystem::DockingSystem()
     : Device("docking_system") {}
 
 bool DockingSystem::setup() {
-    pinMode(motor_sleep_pin, OUTPUT);
-    pinMode(motor_step_pin, OUTPUT);
-    pinMode(motor_direction_pin, OUTPUT);
-    pinMode(motor_i1_pin, OUTPUT);
-    pinMode(motor_i2_pin, OUTPUT);
-    pinMode(switch_pin, INPUT);
+    #ifndef DESKTOP
+        pinMode(motor_sleep_pin, OUTPUT);
+        pinMode(motor_step_pin, OUTPUT);
+        pinMode(motor_direction_pin, OUTPUT);
+        pinMode(motor_i1_pin, OUTPUT);
+        pinMode(motor_i2_pin, OUTPUT);
+        pinMode(switch_pin, INPUT);
 
-    // set current limit (I2 low, I1 93.8% duty cycle)
-    digitalWrite(motor_i2_pin, LOW);
-    analogWrite(motor_i1_pin, 239);
+        // set current limit (I2 low, I1 93.8% duty cycle)
+        digitalWrite(motor_i2_pin, LOW);
+        analogWrite(motor_i1_pin, 239);
 
-    // SLEEP pins is set low to enable sleep
-    digitalWrite(motor_sleep_pin, LOW);
+        // SLEEP pins is set low to enable sleep
+        digitalWrite(motor_sleep_pin, LOW);
 
-    enable();
+        enable();
+    #endif
 
     return true;
 }
