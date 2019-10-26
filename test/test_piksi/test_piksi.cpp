@@ -15,6 +15,16 @@ std::array<int, 3> baseline_pos;
 msg_gps_time_t time;
 unsigned int prev_tow = 0;
 int out;
+unsigned int iar;
+
+unsigned int pos_past;
+unsigned int pos_tow;
+
+unsigned int vel_past;
+unsigned int vel_tow;
+
+unsigned int baseline_past;
+unsigned int baseline_tow;
 
 template <typename T>
 bool comp(T a, T b, float margin) {
@@ -23,7 +33,7 @@ bool comp(T a, T b, float margin) {
 }
 float ssqrt(std::array<int, 3> in) {
     return (float)sqrt(((float)in[0]) * ((float)in[0]) + ((float)in[1]) * ((float)in[1]) +
-                ((float)in[2]) * ((float)in[2]));
+                       ((float)in[2]) * ((float)in[2]));
 }
 bool verify_out() {
     // Verify that last call to process_buffer was successful
@@ -56,11 +66,15 @@ bool verify_pos() {
     // Check flag
     ret = ret && (piksi.get_pos_ecef_flags() == 1);
 
+    ret = ret && pos_tow > pos_past;
+
     if (!ret) {
         Serial.printf("GPS position: %d,%d,%d\n", pos[0], pos[1], pos[2]);
         Serial.printf("pos_ecef_flags: %d\n", piksi.get_pos_ecef_flags());
 
         Serial.printf("Nsat Pos: %d\n", piksi.get_pos_ecef_nsats());
+
+        Serial.printf("PAST: %u, CURR: %u\n", pos_past, pos_tow);
     }
 
     return ret;
@@ -71,7 +85,7 @@ bool verify_vel() {
 
     // units of mm/s btw
     bool ret = (piksi.get_vel_ecef_nsats() > 3);
-    ret = ret && comp(3.9E3, vel_mag, 5.0E2);
+    ret = ret && comp(3.9E3, vel_mag, 6.0E2);
 
     ret = ret && (piksi.get_vel_ecef_flags() == 0);
 
@@ -81,6 +95,7 @@ bool verify_vel() {
         Serial.printf("vel_ecef_flags: %d\n", piksi.get_vel_ecef_flags());
 
         Serial.printf("Nsat Vel: %d\n", piksi.get_vel_ecef_nsats());
+        Serial.printf("PAST: %u, CURR: %u\n", vel_past, vel_tow);
     }
 
     return ret;
@@ -92,14 +107,28 @@ bool verify_baseline() {
     float baseline_mag = ssqrt(baseline_pos);
 
     bool ret = comp(1.0E5, baseline_mag, 2E3);
+    ret = ret && piksi.get_baseline_ecef_nsats() > 3;
+    ret = ret && piksi.get_baseline_ecef_flags() == 1;
     if (!ret) {
         Serial.printf("GPS baseline position: %d,%d,%d\n", baseline_pos[0], baseline_pos[1],
                       baseline_pos[2]);
         Serial.printf("baseline_mag: %g\n", baseline_mag);
+        Serial.printf("baseline_ecef_flags: %d\n", piksi.get_baseline_ecef_flags());
+        Serial.printf("Nsat basline: %d\n", piksi.get_baseline_ecef_nsats());
+        Serial.printf("PAST: %u, CURR: %u\n", baseline_past, baseline_tow);
     }
     return ret;
 }
+bool verify_iar() {
+    //experimentally during sim, iar should == 0
+    bool ret = iar == 0;
 
+    if (!ret) {
+        Serial.printf("IAR: %u\n", iar);
+    }
+
+    return ret;
+}
 // assume piksi already setup
 bool execute_piksi_all() {
     // Serial.printf("Preread val: %d\n", pos[0]);
@@ -112,23 +141,36 @@ bool execute_piksi_all() {
     // CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
     // COULD BE A CASE WHERE ONCE IN SPACE, MESSAGE LENGTH ALWAYS NOT 299
     // if (piksi.bytes_available() == 299) {
-    if (piksi.bytes_available() >= 200 && piksi.bytes_available() < 599) {
+    // if (piksi.bytes_available() >= 200 && piksi.bytes_available() < 599) {
+    if (piksi.bytes_available()) {
+        // abnormal byte number:
+        if (!(piksi.bytes_available() >= 180 && piksi.bytes_available() < 599))
+            Serial.printf("BYTES: %d\n", piksi.bytes_available());
+
         while (piksi.bytes_available()) {
             out = piksi.process_buffer();
             delayMicroseconds(100);
         }
         prev_tow = time.tow;
+
         piksi.get_gps_time(&time);
 
-        piksi.get_pos_ecef(&pos);
-        piksi.get_vel_ecef(&vel);
 
-        piksi.get_baseline_ecef(&baseline_pos);
+        pos_past = pos_tow;
+        vel_past = vel_tow;
+        baseline_past = baseline_tow;
+
+        piksi.get_pos_ecef(&pos_tow, &pos);
+        piksi.get_vel_ecef(&vel_tow, &vel);
+        piksi.get_baseline_ecef(&baseline_tow, &baseline_pos);
+
+        iar = piksi.get_iar();
         // Serial.printf("PROCESS BUFF OUT: %hi\n", out);
 
         // Serial.printf("RET: %d\n",ret);
 
-        ret = verify_out() & verify_time() & verify_baseline() & verify_pos() & verify_vel();
+        ret = verify_out() & verify_time() & verify_baseline() & verify_pos() & verify_vel() &
+              verify_iar();
     }
 
     else {
@@ -140,7 +182,7 @@ bool execute_piksi_all() {
         ret = false;
     }
 
-    Serial.printf("Read time: %d ms\n", micros() - preread_time);
+    // Serial.printf("Read time: %d ms\n", micros() - preread_time);
     // Serial.println();
 
     return ret;
@@ -192,7 +234,11 @@ int main(void) {
         // count += piksi_fast_read();
         exec_pass_count += execute_piksi_all();
         posttime = micros();
-        if (posttime - prevtime < PIKSI_READ_ALLOTED) timing_pass_count++;
+        if (posttime - prevtime < PIKSI_READ_ALLOTED) {
+            timing_pass_count++;
+        } else {
+            Serial.printf("EXCEED: %d\n", posttime - prevtime);
+        }
         // RUN_TEST(test_piksi_all);
     }
 

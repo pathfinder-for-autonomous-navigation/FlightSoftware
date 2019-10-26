@@ -69,6 +69,9 @@ class Piksi : public Device {
      *  @param position A pointer to the destination struct for the information.
      * **/
     virtual void get_pos_ecef(std::array<int, 3> *position);
+
+    virtual void get_pos_ecef(unsigned int* tow, std::array<int, 3> *position);
+
     /** @brief Get number of satellites used for determining GPS position.
      *  @return Number of satellites used for determining GPS position. **/
     virtual unsigned char get_pos_ecef_nsats();
@@ -81,6 +84,9 @@ class Piksi : public Device {
      *  @param position A pointer to the destination struct for the information.
      * **/
     virtual void get_baseline_ecef(std::array<int, 3> *position);
+
+    virtual void get_baseline_ecef(unsigned int* tow, std::array<int, 3> *position);
+
     /** @brief Get number of satellites used for determining GPS baseline
      * position.
      *  @return Number of satellites used for determining GPS baseline position.
@@ -94,6 +100,8 @@ class Piksi : public Device {
      *  @param velocity A pointer to the destination struct for the information.
      * **/
     virtual void get_vel_ecef(std::array<int, 3> *velocity);
+
+    virtual void get_vel_ecef(unsigned int* tow, std::array<int, 3> *velocity);
 
     /** @brief Get number of satellites used for determining GPS velocity.
      *  @return Number of satellites used for determining GPS velocity. **/
