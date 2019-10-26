@@ -4,6 +4,9 @@
 #include <array>
 #include "../lib/Drivers/Piksi.hpp"
 
+#define PIKSI_READ_ALLOTED 7200
+#define SAFETY 250
+
 Devices::Piksi piksi("piksi", Serial4);
 int setup_start_time;
 int second_time;
@@ -25,6 +28,8 @@ unsigned int vel_tow;
 
 unsigned int baseline_past;
 unsigned int baseline_tow;
+
+bool bad_bytes;
 
 template <typename T>
 bool comp(T a, T b, float margin) {
@@ -61,7 +66,7 @@ bool verify_pos() {
     //                      (float)pos[2] * (float)pos[2]);
     float pos_mag = ssqrt(pos);
     bool ret = (piksi.get_pos_ecef_nsats() > 3);
-    ret = ret && comp(6.37E6, pos_mag, 1.0E3);
+    ret = ret && comp(6.37E6, pos_mag, 5.0E3);
 
     // Check flag
     ret = ret && (piksi.get_pos_ecef_flags() == 1);
@@ -70,6 +75,7 @@ bool verify_pos() {
 
     if (!ret) {
         Serial.printf("GPS position: %d,%d,%d\n", pos[0], pos[1], pos[2]);
+        Serial.printf("position_mag: %g\n", pos_mag);
         Serial.printf("pos_ecef_flags: %d\n", piksi.get_pos_ecef_flags());
 
         Serial.printf("Nsat Pos: %d\n", piksi.get_pos_ecef_nsats());
@@ -142,9 +148,10 @@ bool execute_piksi_all() {
     // COULD BE A CASE WHERE ONCE IN SPACE, MESSAGE LENGTH ALWAYS NOT 299
     // if (piksi.bytes_available() == 299) {
     int initial_bytes = piksi.bytes_available();
-    //if (initial_bytes >= 200 && initial_bytes < 599) {
-    if (piksi.bytes_available()) {
-        Serial.printf("BYTES: %d\n", initial_bytes);
+    // if (initial_bytes >= 200 && initial_bytes < 599) {
+    if (piksi.bytes_available() == 299) {
+        // Serial.printf("BYTES: %d\n", initial_bytes);
+        Serial.printf("BYTES: %d ", initial_bytes);
 
         // abnormal byte number:
 
@@ -154,38 +161,58 @@ bool execute_piksi_all() {
         while (piksi.bytes_available()) {
             out = piksi.process_buffer();
             delayMicroseconds(100);
+            //
+
+            // quit just before deadline
+            if (micros() - preread_time > (PIKSI_READ_ALLOTED - SAFETY)) {
+                bad_bytes = true;
+                //print this if we're probably being interrupted by a piksi scream
+                Serial.print("BAD FEELING ");
+                break;
+            }
         }
-        prev_tow = time.tow;
+        if (!bad_bytes) {
+            prev_tow = time.tow;
 
-        piksi.get_gps_time(&time);
+            piksi.get_gps_time(&time);
 
-        pos_past = pos_tow;
-        vel_past = vel_tow;
-        baseline_past = baseline_tow;
+            pos_past = pos_tow;
+            vel_past = vel_tow;
+            baseline_past = baseline_tow;
 
-        piksi.get_pos_ecef(&pos_tow, &pos);
-        piksi.get_vel_ecef(&vel_tow, &vel);
-        piksi.get_baseline_ecef(&baseline_tow, &baseline_pos);
+            piksi.get_pos_ecef(&pos_tow, &pos);
+            piksi.get_vel_ecef(&vel_tow, &vel);
+            piksi.get_baseline_ecef(&baseline_tow, &baseline_pos);
 
-        iar = piksi.get_iar();
-        // Serial.printf("PROCESS BUFF OUT: %hi\n", out);
+            iar = piksi.get_iar();
+            // Serial.printf("PROCESS BUFF OUT: %hi\n", out);
 
-        // Serial.printf("RET: %d\n",ret);
+            // Serial.printf("RET: %d\n",ret);
+        }
+        // ret = verify_out() & verify_time() & verify_baseline() & verify_pos() & verify_vel() &
+        //         verify_iar();
 
-        ret = verify_out() & verify_time() & verify_baseline() & verify_pos() & verify_vel() &
-              verify_iar();
+        ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
+
     }
 
     else {
         // if no data in buffer throw error
-        Serial.println("NOT A CLEAN READ ***");
-        while (piksi.bytes_available()) {
-            piksi.clear_bytes();
+        if (bad_bytes) {
+            Serial.print("NOT CLEAN ");
+            while (piksi.bytes_available()) {
+                piksi.clear_bytes();
+            }
+            ret = false;
+            bad_bytes = false;
+        } else {
+            //piksi scream began just before calling the while loop
+            Serial.print("ALREADY BAD");
+            bad_bytes = true;
         }
-        ret = false;
     }
 
-    // Serial.printf("Read time: %d ms\n", micros() - preread_time);
+    Serial.printf(" - time: %d ms\n", micros() - preread_time);
     // Serial.println();
 
     return ret;
@@ -228,7 +255,6 @@ int main(void) {
     int posttime = micros();
     int exec_pass_count = 0;
     int timing_pass_count = 0;
-    int PIKSI_READ_ALLOTED = 7200;
     for (int i = 0; i < 100; i++) {
         // Serial.println(100 - (millis()-prevtime));
         delay(120 - (micros() - prevtime) / 1000);
