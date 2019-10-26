@@ -85,13 +85,13 @@ bool verify_vel() {
 
     // units of mm/s btw
     bool ret = (piksi.get_vel_ecef_nsats() > 3);
-    ret = ret && comp(3.9E3, vel_mag, 6.0E2);
+    ret = ret && comp(3.9E3, vel_mag, 7.0E2);
 
     ret = ret && (piksi.get_vel_ecef_flags() == 0);
 
     if (!ret) {
         Serial.printf("Vel: %d,%d,%d\n", vel[0], vel[1], vel[2]);
-        Serial.printf("veloicty_mag: %g\n", vel_mag);
+        Serial.printf("velocity_mag: %g\n", vel_mag);
         Serial.printf("vel_ecef_flags: %d\n", piksi.get_vel_ecef_flags());
 
         Serial.printf("Nsat Vel: %d\n", piksi.get_vel_ecef_nsats());
@@ -120,7 +120,7 @@ bool verify_baseline() {
     return ret;
 }
 bool verify_iar() {
-    //experimentally during sim, iar should == 0
+    // experimentally during sim, iar should == 0
     bool ret = iar == 0;
 
     if (!ret) {
@@ -141,11 +141,15 @@ bool execute_piksi_all() {
     // CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
     // COULD BE A CASE WHERE ONCE IN SPACE, MESSAGE LENGTH ALWAYS NOT 299
     // if (piksi.bytes_available() == 299) {
-    // if (piksi.bytes_available() >= 200 && piksi.bytes_available() < 599) {
+    int initial_bytes = piksi.bytes_available();
+    //if (initial_bytes >= 200 && initial_bytes < 599) {
     if (piksi.bytes_available()) {
+        Serial.printf("BYTES: %d\n", initial_bytes);
+
         // abnormal byte number:
-        if (!(piksi.bytes_available() >= 180 && piksi.bytes_available() < 599))
-            Serial.printf("BYTES: %d\n", piksi.bytes_available());
+
+        // if (!(piksi.bytes_available() >= 180 && piksi.bytes_available() < 599))
+        //     Serial.printf("BYTES: %d\n", piksi.bytes_available());
 
         while (piksi.bytes_available()) {
             out = piksi.process_buffer();
@@ -154,7 +158,6 @@ bool execute_piksi_all() {
         prev_tow = time.tow;
 
         piksi.get_gps_time(&time);
-
 
         pos_past = pos_tow;
         vel_past = vel_tow;
