@@ -7,10 +7,21 @@ cache:
     directories:
         - "~/.platformio"
 
+addons:
+  apt:
+    packages:
+     - lcov
+     - cppcheck
+     - valgrind
+
 install:
     - pip install -U platformio
     - platformio update
+    - sudo gem install coveralls-lcov
 
 script:
-    - platformio run
-    - platformio test -e native -i "test_quake*"
+    - ./tools/travis_script.sh
+
+after_success:
+    - ./tools/generate_coverage.sh
+    - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
