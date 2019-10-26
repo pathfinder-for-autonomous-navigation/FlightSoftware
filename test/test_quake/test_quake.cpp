@@ -18,6 +18,7 @@ void test_config(void) {
     delay(DEFAULT_DELAY);
     TEST_ASSERT_EQUAL(Devices::OK, q.query_config_1());
     delay(DEFAULT_DELAY);
+    delay(DEFAULT_DELAY);
     TEST_ASSERT_EQUAL(0, q.query_config_2());
     delay(DEFAULT_DELAY);
     TEST_ASSERT_EQUAL(0, q.query_config_3());
@@ -52,6 +53,7 @@ void test_sbdwb(void) {
     // test that we can send the maximum number of bytes
     std::string maxLenMsg(340, 'a');
     delay(DEFAULT_DELAY);
+
     TEST_ASSERT_EQUAL(0, q.query_sbdwb_1(maxLenMsg.length()));
     // test timeout responses
     delay(DEFAULT_DELAY);
@@ -84,6 +86,7 @@ void test_sbdwb(void) {
     // test bad checksum by sending extraneous data
     delay(DEFAULT_DELAY);
     TEST_ASSERT_EQUAL(0, q.query_sbdwb_2("ZZ", 2));
+    delay(DEFAULT_DELAY);
     TEST_ASSERT_EQUAL(Devices::BAD_CHECKSUM, q.get_sbdwb());
     // Check that if bad checksum is encountered, we still reset state to idle
     TEST_ASSERT_EQUAL(Devices::IDLE, q.GetCurrentState());
@@ -100,10 +103,12 @@ int main(void) {
     delay(5000);
     Serial.begin(9600);
     pinMode(13, OUTPUT);
+    while (!Serial)
+        ;
     q.setup();
     UNITY_BEGIN();
-    // RUN_TEST(test_isFunctional);
     RUN_TEST(test_config);
+    RUN_TEST(test_isFunctional);
     RUN_TEST(test_sbdwb);
     UNITY_END();
     return 0;

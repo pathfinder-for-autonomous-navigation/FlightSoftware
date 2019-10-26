@@ -40,7 +40,7 @@ int QLocate::query_is_functional_1() {
 
 int QLocate::get_is_functional() {
     ASSERT_STATE(IS_FUNCTIONAL);
-    int status = consume(F("\r\nOK\r\n"));
+    int status = consume(F("0\r"));
     CurrentState = IDLE;
     if (status != OK) return status;
     return OK;
@@ -50,13 +50,15 @@ int const *QLocate::get_sbdix_response() { return this->sbdix_r; }
 
 int QLocate::query_config_1() {
     // Config can run in any state
+    port->clear();
     CurrentState = CONFIG;
     return sendCommand("AT&F0\r");
 }
 
 int QLocate::query_config_2() {
     ASSERT_STATE(CONFIG);
-    consume(F("\r\nOK\r\n"));  // I guess we don't care?
+    CHECK_PORT_AVAILABLE();
+    port->clear();  // we don't care what is returned for factory reset
     // Disable flow control, disable DTR, disabl echo, set numeric rasponses, and
     // disable "RING" alerts
     return sendCommand("AT&K0;&D0;E0;V0;+SBDMTA=0\r");
@@ -64,7 +66,8 @@ int QLocate::query_config_2() {
 
 int QLocate::query_config_3() {
     ASSERT_STATE(CONFIG);
-    consume(F("AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r"));
+    int status = consume(F("AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r"));
+    if (status != OK) return status;
     // Clear QLocate MO and MT buffers
     return sendCommand("AT+SBDD2\r");
 }
@@ -72,8 +75,7 @@ int QLocate::query_config_3() {
 int QLocate::get_config() {
     ASSERT_STATE(CONFIG);
     CurrentState = IDLE;
-    consume(F("0\r\n0\r"));
-    return OK;
+    return consume(F("0\r\n0\r"));
 }
 
 int QLocate::query_sbdwb_1(int len) {
@@ -223,12 +225,12 @@ int QLocate::consume(String expected) {
     Serial.printf("]\n");
     Serial.flush();
 #endif
-
+    port->clear();
     // Did not read enough bytes
     if (len != expectLength) return WRONG_LENGTH;
 
     // Data read does not match expected data
-    if (!expected.equals(String(buf)) || port->available()) return UNEXPECTED_RESPONSE;
+    if (!expected.equals(String(buf))) return UNEXPECTED_RESPONSE;
     return OK;
 }
 
