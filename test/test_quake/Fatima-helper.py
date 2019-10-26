@@ -17,7 +17,7 @@ def sendFile(file_name):
     #Need to create an app specific password for the gmail account
     yag = yagmail.SMTP('pan.ssds.qlocate', 'OAANisKOOL7373')
     #Send the txt file to the designated address
-    yag.send('sbdservice@sbd.iridium.com', 'Hey there!', file_name)
+    yag.send('fatima.yousuf.0@gmail.com', 'Hey there!', file_name)
 
 def downloadFiles():
     mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
@@ -73,4 +73,4 @@ def downloadFiles():
 
 
 if __name__ == '__main__':
-    downloadFiles()
+    sendFile(create_txt_file("message"))
