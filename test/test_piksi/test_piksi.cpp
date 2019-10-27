@@ -148,6 +148,7 @@ bool execute_piksi_all() {
     bool ret = false;
     int pbuff_count = 0;
 
+    unsigned char nread = 0;
     // tune parameters?
     //
     // CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
@@ -166,9 +167,15 @@ bool execute_piksi_all() {
 
         // time to read one burst is like 275 ms
         
-        
+        int pre_loop = piksi.bytes_available();
         while (piksi.bytes_available() && (micros() - preread_time < (PIKSI_READ_ALLOTED - SAFETY))) {
-            out = piksi.process_buffer();
+            //Serial.printf("bytes: %u ", piksi.bytes_available());
+
+            nread = piksi.process_buffer_nread();
+            Serial.printf("n: %u ", nread);
+            // if((pre_loop - nread) != piksi.bytes_available()){
+            //     Serial.print("FIESTA ");
+            // }
             pbuff_count++;
             //delayMicroseconds(100);
             //

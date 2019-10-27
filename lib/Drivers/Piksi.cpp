@@ -273,10 +273,23 @@ void Piksi::send_user_data(const msg_user_data_t &data) {
                      (unsigned char *)&data, &Piksi::_uart_write);
 }
 
-bool Piksi::process_buffer() { 
+int Piksi::process_buffer() { 
     int numbytes_read = (int)((signed char)sbp_process(&_sbp_state, Piksi::_uart_read));
     // Serial.printf("NUMBYTES_READ: %i\n", numbytes_read);
     return numbytes_read; 
+    }
+
+unsigned char Piksi::process_buffer_nread() { 
+    unsigned char pre = _sbp_state.msg_len;
+    unsigned char nread = _sbp_state.n_read;
+    signed char status = ((signed char)sbp_process(&_sbp_state, Piksi::_uart_read));
+    
+    if(status == SBP_OK_CALLBACK_EXECUTED || status == SBP_OK_CALLBACK_UNDEFINED )
+    // Serial.printf("NUMBYTES_READ: %i\n", numbytes_read);
+        //return nread;
+        return pre;
+        //return sizeof(_sbp_state.msg_buff);
+    return 0;
     }
 
 bool Piksi::read_buffer() {

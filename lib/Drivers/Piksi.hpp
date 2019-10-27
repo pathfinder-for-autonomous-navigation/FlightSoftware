@@ -38,7 +38,10 @@ class Piksi : public Device {
     /** @brief Runs read over UART buffer to process values sent by Piksi into
      * memory.
      *  @returns Whether or not any data was processed. **/
-    virtual bool process_buffer();
+    virtual int process_buffer();
+
+    virtual unsigned char process_buffer_nread();
+
 
     virtual bool read_buffer();
 
