@@ -168,10 +168,12 @@ bool execute_piksi_all() {
         // time to read one burst is like 275 ms
         
         int pre_loop = piksi.bytes_available();
+        int msg_len_sum = 0;
         while (piksi.bytes_available() && (micros() - preread_time < (PIKSI_READ_ALLOTED - SAFETY))) {
             //Serial.printf("bytes: %u ", piksi.bytes_available());
 
             nread = piksi.process_buffer_nread();
+            msg_len_sum += nread;
             Serial.printf("n: %u ", nread);
             // if((pre_loop - nread) != piksi.bytes_available()){
             //     Serial.print("FIESTA ");
@@ -216,7 +218,9 @@ bool execute_piksi_all() {
         //         verify_iar();
 
         ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
-        Serial.printf("TOW: %u pos: %u", time.tow, pos_tow);
+        Serial.printf("TOW: %u pos: %u ", time.tow, pos_tow);
+        //sum should be 227 or 245
+        Serial.printf("SUM: %d ",msg_len_sum);
     }
 
     else {
