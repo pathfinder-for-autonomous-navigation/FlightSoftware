@@ -163,6 +163,10 @@ bool execute_piksi_all() {
             delayMicroseconds(100);
             //
 
+            //TODO MOVE TIMING INTO DRIVER
+            //TODO CLEAN UP SO TANISHQ DONT FLAME ME
+            //TODO TRY CLEARING ON LOOP WHEN BAD SHIT INTERRUPT INSTEAD OF WAIT
+
             // quit just before deadline
             if (micros() - preread_time > (PIKSI_READ_ALLOTED - SAFETY)) {
                 bad_bytes = true;
