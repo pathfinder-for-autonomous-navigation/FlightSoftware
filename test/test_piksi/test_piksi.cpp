@@ -70,7 +70,7 @@ bool verify_pos() {
     ret = ret && comp(6.37E6, pos_mag, 5.0E3);
 
     // Check flag
-    //ret = ret && (piksi.get_pos_ecef_flags() == 1);
+    // ret = ret && (piksi.get_pos_ecef_flags() == 1);
 
     ret = ret && pos_tow > pos_past;
 
@@ -148,7 +148,7 @@ bool execute_piksi_all() {
     bool ret = false;
     int pbuff_count = 0;
 
-    unsigned char nread = 0;
+    unsigned char msg_len = 0;
     // tune parameters?
     //
     // CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
@@ -156,9 +156,10 @@ bool execute_piksi_all() {
     // if (piksi.bytes_available() == 299) {
     int initial_bytes = piksi.bytes_available();
     // if (initial_bytes >= 200 && initial_bytes < 599) {
+
     if (initial_bytes == 299 || initial_bytes == 333) {
         // Serial.printf("BYTES: %d\n", initial_bytes);
-        Serial.printf("BYTES: %d ", initial_bytes);
+        //Serial.printf("BYTES: %d ", initial_bytes);
 
         // abnormal byte number:
 
@@ -166,34 +167,36 @@ bool execute_piksi_all() {
         //     Serial.printf("BYTES: %d\n", piksi.bytes_available());
 
         // time to read one burst is like 275 ms
-        
+
         int pre_loop = piksi.bytes_available();
         int msg_len_sum = 0;
-        while (piksi.bytes_available() && (micros() - preread_time < (PIKSI_READ_ALLOTED - SAFETY))) {
-            //Serial.printf("bytes: %u ", piksi.bytes_available());
 
-            nread = piksi.process_buffer_nread();
-            msg_len_sum += nread;
-            Serial.printf("n: %u ", nread);
+        // loop can finish before new bytes added?
+        while (piksi.bytes_available() &&
+               (micros() - preread_time < (PIKSI_READ_ALLOTED - SAFETY))) {
+            // Serial.printf("bytes: %u ", piksi.bytes_available());
+
+            msg_len = piksi.process_buffer_nread();
+            msg_len_sum += msg_len;
+            // Serial.printf("n: %u ", nread);
             // if((pre_loop - nread) != piksi.bytes_available()){
             //     Serial.print("FIESTA ");
             // }
-            pbuff_count++;
-            //delayMicroseconds(100);
+            // pbuff_count++;
+            // delayMicroseconds(100);
             //
 
-            //TODO MOVE TIMING INTO DRIVER
-            //TODO CLEAN UP SO TANISHQ DONT FLAME ME
-            //TODO TRY CLEARING ON LOOP WHEN BAD SHIT INTERRUPT INSTEAD OF WAIT
+            // TODO MOVE TIMING INTO DRIVER
+            // TODO CLEAN UP SO TANISHQ DONT FLAME ME
+            // TODO TRY CLEARING ON LOOP WHEN BAD SHIT INTERRUPT INSTEAD OF WAIT
 
-            //TODO GRACEFULLY DEAL WITH 2nd DATA BURST
+            // TODO GRACEFULLY DEAL WITH 2nd DATA BURST
 
             // quit just before deadline
             if (micros() - preread_time > (PIKSI_READ_ALLOTED - SAFETY)) {
                 bad_bytes = true;
-                //print this if we're probably being interrupted by a piksi scream
+                // print this if we're probably being interrupted by a piksi scream
                 Serial.print("BAD FEELING ");
-                
             }
         }
         if (!bad_bytes) {
@@ -218,24 +221,33 @@ bool execute_piksi_all() {
         //         verify_iar();
 
         ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
-        Serial.printf("TOW: %u pos: %u ", time.tow, pos_tow);
-        //sum should be 227 or 245
-        Serial.printf("SUM: %d ",msg_len_sum);
+        // Serial.printf("TOW: %u pos: %u ", time.tow, pos_tow);
+        // sum should be 227 or 245
+        // Serial.printf("SUM: %d ",msg_len_sum);
+        if (initial_bytes == 299 && msg_len_sum != 227){
+            Serial.print("Process wrong # ");
+            ret = false;
+        }
+        else if (initial_bytes == 333 && msg_len_sum != 245){
+            Serial.print("Process wrong # ");
+            ret = false;
+        }
+
     }
 
     else {
         // if no data in buffer throw error
-        Serial.print("Clearing bytes ");
-        while(piksi.bytes_available() && (micros()-preread_time) < (PIKSI_READ_ALLOTED - SAFETY)){
+        //Serial.print("Clearing bytes ");
+        while (piksi.bytes_available() &&
+               (micros() - preread_time) < (PIKSI_READ_ALLOTED - SAFETY)) {
             piksi.clear_bytes();
             delayMicroseconds(10);
-
         }
     }
 
-    //Serial.printf("pbuff count: %d", pbuff_count);
-    Serial.printf(" - time: %d micros\n", micros() - preread_time);
-    
+    // Serial.printf("pbuff count: %d", pbuff_count);
+    //Serial.printf(" - time: %d micros\n", micros() - preread_time);
+
     // Serial.println();
 
     return ret;
@@ -274,7 +286,7 @@ int main(void) {
     Serial.println("***************************************************************");
 
     // mimic exact 120 ms control cycle
-    //int start_time = micros();
+    // int start_time = micros();
     int prevtime = micros();
     int posttime = micros();
     int exec_pass_count = 0;
@@ -283,13 +295,12 @@ int main(void) {
     // while(micros()-start_time < 1000*500){
 
     //     Serial.printf("TIME: %d ", micros() - start_time);
-    //     Serial.printf("BYTES: %d\n", piksi.bytes_available()); 
+    //     Serial.printf("BYTES: %d\n", piksi.bytes_available());
     //     delayMicroseconds(1000);
-        
+
     //     //83135
     //     //57233
     // }
-
 
     for (int i = 0; i < 100; i++) {
         // Serial.println(100 - (millis()-prevtime));
@@ -297,11 +308,12 @@ int main(void) {
         prevtime = micros();
 
         // count += piksi_fast_read();
-        if(execute_piksi_all()){
+        if (execute_piksi_all()) {
             exec_pass_count += 1;
-            //Serial.print("PASS \n");
+            // Serial.print("PASS \n");
         }
         posttime = micros();
+        Serial.printf("EXEC TIME: %d micros\n", posttime-prevtime);
         if (posttime - prevtime < PIKSI_READ_ALLOTED) {
             timing_pass_count++;
         } else {
