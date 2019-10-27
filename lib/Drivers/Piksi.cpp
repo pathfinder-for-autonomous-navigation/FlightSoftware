@@ -279,6 +279,13 @@ bool Piksi::process_buffer() {
     return numbytes_read; 
     }
 
+bool Piksi::read_buffer() {
+
+    
+
+    return false;
+}
+
 //debug method from shihao
 u32 Piksi::bytes_available() {
 

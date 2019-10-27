@@ -94,6 +94,7 @@ bool verify_vel() {
     ret = ret && comp(3.9E3, vel_mag, 7.0E2);
 
     ret = ret && (piksi.get_vel_ecef_flags() == 0);
+    ret = ret && vel_tow > vel_past;
 
     if (!ret) {
         Serial.printf("Vel: %d,%d,%d\n", vel[0], vel[1], vel[2]);
@@ -115,6 +116,8 @@ bool verify_baseline() {
     bool ret = comp(1.0E5, baseline_mag, 2E3);
     ret = ret && piksi.get_baseline_ecef_nsats() > 3;
     ret = ret && piksi.get_baseline_ecef_flags() == 1;
+    ret = ret && baseline_tow > baseline_past;
+
     if (!ret) {
         Serial.printf("GPS baseline position: %d,%d,%d\n", baseline_pos[0], baseline_pos[1],
                       baseline_pos[2]);
@@ -141,7 +144,7 @@ bool execute_piksi_all() {
     preread_time = micros();
     // Serial.println("EVERYTHING: Attempting to get solution...");
     // Serial.printf("BYTES AVAIL: %u\n", piksi.bytes_available());
-    bool ret = true;
+    bool ret = false;
     // tune parameters?
     //
     // CANNOT DO THIS, MESSAGES WILL VARY IN LENGTH
@@ -212,6 +215,7 @@ bool execute_piksi_all() {
         } else {
             //piksi scream began just before calling the while loop
             Serial.print("ALREADY BAD");
+            ret = false;
             bad_bytes = true;
         }
     }
@@ -265,7 +269,10 @@ int main(void) {
         prevtime = micros();
 
         // count += piksi_fast_read();
-        exec_pass_count += execute_piksi_all();
+        if(execute_piksi_all()){
+            exec_pass_count += 1;
+            Serial.print("PASS \n");
+        }
         posttime = micros();
         if (posttime - prevtime < PIKSI_READ_ALLOTED) {
             timing_pass_count++;

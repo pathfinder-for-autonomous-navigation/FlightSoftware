@@ -40,6 +40,8 @@ class Piksi : public Device {
      *  @returns Whether or not any data was processed. **/
     virtual bool process_buffer();
 
+    virtual bool read_buffer();
+
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/
     //virtual void get_gps_time(gps_time_t *time);
