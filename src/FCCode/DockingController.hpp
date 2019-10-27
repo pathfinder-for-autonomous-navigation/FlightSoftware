@@ -17,15 +17,15 @@ class DockingController : public ControlTask<void> {
 
     std::shared_ptr<WritableStateField<float>> step_angle_fp;
     Serializer<float> step_angle_sr;
-    WritableStateField<float>step_angle;
+    WritableStateField<float>step_angle_f;
 
     std::shared_ptr<WritableStateField<bool>> is_turning_clockwise_fp;
     Serializer<bool> is_turning_clockwise_sr;
-    ReadableStateField<bool>is_turning_clockwise;
+    ReadableStateField<bool>is_turning_clockwise_f;
 
     std::shared_ptr<WritableStateField<float>> is_enabled_fp;
     Serializer<bool> is_enabled_sr;
-    ReadableStateField<bool>is_enabled;
+    ReadableStateField<bool>is_enabled_f;
     
 };
 
