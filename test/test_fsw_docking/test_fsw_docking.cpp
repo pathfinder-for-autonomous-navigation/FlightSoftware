@@ -46,3 +46,9 @@ int test_control_task() {
     RUN_TEST(test_task_execute);
     return UNITY_END();
 }
+
+#ifdef DESKTOP
+int main() {
+    return test_control_task();
+}
+#endif
