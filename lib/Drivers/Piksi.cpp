@@ -163,14 +163,13 @@ unsigned short int Piksi::get_dops_time() { return _dops.tdop; }
 unsigned short int Piksi::get_dops_horizontal() { return _dops.hdop; }
 unsigned short int Piksi::get_dops_vertical() { return _dops.vdop; }
 
-
 void Piksi::get_pos_ecef(std::array<int, 3> *position) {
     (*position)[0] = _pos_ecef.x;
     (*position)[1] = _pos_ecef.y;
     (*position)[2] = _pos_ecef.z;
 }
 
-void Piksi::get_pos_ecef(unsigned int* tow, std::array<int, 3> *position) {
+void Piksi::get_pos_ecef(unsigned int *tow, std::array<int, 3> *position) {
     (*tow) = _pos_ecef.tow;
     (*position)[0] = _pos_ecef.x;
     (*position)[1] = _pos_ecef.y;
@@ -186,7 +185,7 @@ void Piksi::get_baseline_ecef(std::array<int, 3> *position) {
     (*position)[2] = _baseline_ecef.z;
 }
 
-void Piksi::get_baseline_ecef(unsigned int* tow, std::array<int, 3> *position) {
+void Piksi::get_baseline_ecef(unsigned int *tow, std::array<int, 3> *position) {
     *tow = _baseline_ecef.tow;
     (*position)[0] = _baseline_ecef.x;
     (*position)[1] = _baseline_ecef.y;
@@ -202,7 +201,7 @@ void Piksi::get_vel_ecef(std::array<int, 3> *velocity) {
     (*velocity)[2] = _vel_ecef.z;
 }
 
-void Piksi::get_vel_ecef(unsigned int* tow, std::array<int, 3> *velocity) {
+void Piksi::get_vel_ecef(unsigned int *tow, std::array<int, 3> *velocity) {
     *tow = _vel_ecef.tow;
     (*velocity)[0] = _vel_ecef.x;
     (*velocity)[1] = _vel_ecef.y;
@@ -217,7 +216,6 @@ void Piksi::get_base_pos_ecef(std::array<int, 3> *position) {
     (*position)[1] = _pos_ecef.y;
     (*position)[2] = _pos_ecef.z;
 }
-
 
 unsigned int Piksi::get_iar() { return _iar.num_hyps; }
 
@@ -273,41 +271,52 @@ void Piksi::send_user_data(const msg_user_data_t &data) {
                      (unsigned char *)&data, &Piksi::_uart_write);
 }
 
-int Piksi::process_buffer() { 
-    int numbytes_read = (int)((signed char)sbp_process(&_sbp_state, Piksi::_uart_read));
-    // Serial.printf("NUMBYTES_READ: %i\n", numbytes_read);
-    return numbytes_read; 
-    }
+signed char Piksi::process_buffer() {
+    signed char status = ((signed char)sbp_process(&_sbp_state, Piksi::_uart_read));
+    return status;
+}
 
-unsigned char Piksi::process_buffer_nread() { 
+unsigned char Piksi::process_buffer_msg_len() {
     unsigned char pre = _sbp_state.msg_len;
     unsigned char nread = _sbp_state.n_read;
     signed char status = ((signed char)sbp_process(&_sbp_state, Piksi::_uart_read));
-    
-    if(status == SBP_OK_CALLBACK_EXECUTED || status == SBP_OK_CALLBACK_UNDEFINED )
-    // Serial.printf("NUMBYTES_READ: %i\n", numbytes_read);
-        //return nread;
+
+    if (status == SBP_OK_CALLBACK_EXECUTED || status == SBP_OK_CALLBACK_UNDEFINED)
+        // Serial.printf("NUMBYTES_READ: %i\n", numbytes_read);
+        // return nread;
         return pre;
-        //return sizeof(_sbp_state.msg_buff);
+    // return sizeof(_sbp_state.msg_buff);
     return 0;
+}
+
+signed char Piksi::read_buffer() {
+    int initial_bytes = bytes_available();
+
+    if (initial_bytes == 299 || initial_bytes == 333) {
+        int msg_len_sum = 0;
+        while (bytes_available()) {
+            msg_len_sum += process_buffer_msg_len();
+        }
+
+        if (initial_bytes == 299 && msg_len_sum != 227) {
+            return -1;
+        } else if (initial_bytes == 333 && msg_len_sum != 245) {
+            return -1;
+        } else
+            return 1;
+
     }
 
-bool Piksi::read_buffer() {
-
-    
-
-    return false;
+    else {
+        while (bytes_available()) {
+            clear_bytes();
+        }
+        return 0;
+    }
 }
 
-//debug method from shihao
-u32 Piksi::bytes_available() {
-
-    return _serial_port.available();
-}
-void Piksi::clear_bytes() {
-
-    _serial_port.clear();
-}
+u32 Piksi::bytes_available() { return _serial_port.available(); }
+void Piksi::clear_bytes() { _serial_port.clear(); }
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     Piksi *piksi = (Piksi *)context;
     HardwareSerial &sp = piksi->_serial_port;

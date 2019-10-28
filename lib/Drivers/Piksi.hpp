@@ -38,12 +38,12 @@ class Piksi : public Device {
     /** @brief Runs read over UART buffer to process values sent by Piksi into
      * memory.
      *  @returns Whether or not any data was processed. **/
-    virtual int process_buffer();
+    virtual signed char process_buffer();
 
-    virtual unsigned char process_buffer_nread();
+    virtual unsigned char process_buffer_msg_len();
 
 
-    virtual bool read_buffer();
+    virtual signed char read_buffer();
 
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/
