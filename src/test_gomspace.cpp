@@ -90,17 +90,17 @@ void setup() {
     while(!Serial);
 
     gs.setup();
-    bool found_hk_data = false;
-    unsigned int data_fetch_time;
-    while (!found_hk_data) {
-        data_fetch_time = micros();
-        found_hk_data = gs.get_hk();
-        data_fetch_time = micros() - data_fetch_time;
-        delay(1000);
-    }
-    print_data(hk_data);
-    Serial.println("--------------");
-    Serial.printf("Time to fetch data: %d us\n", data_fetch_time);
 }
 
-void loop() {}
+void loop() {
+    unsigned int data_fetch_time = micros();
+    unsigned int num_tries = 1;
+    while (!gs.get_hk()) { num_tries++; }
+    data_fetch_time = micros() - data_fetch_time;
+    print_data(hk_data);
+    Serial.printf("Time to fetch data: %d us\n", data_fetch_time);
+    Serial.printf("# tries to fetch data: %d\n", num_tries);
+    Serial.println("--------------");
+
+    delay(100);
+}

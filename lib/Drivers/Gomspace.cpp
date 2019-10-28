@@ -12,7 +12,7 @@ Gomspace::Gomspace(const std::string &name, volatile Gomspace::eps_hk_t *hk_data
                    volatile Gomspace::eps_config_t *config_data,
                    volatile Gomspace::eps_config2_t *config2_data, i2c_t3 &i2c_wire,
                    unsigned char i2c_addr)
-    : I2CDevice(name, i2c_wire, i2c_addr, 5000),
+    : I2CDevice(name, i2c_wire, i2c_addr, 10000),
       hk(hk_data),
       gspace_config(config_data),
       gspace_config2(config2_data) {
@@ -486,8 +486,8 @@ void Gomspace::_hk_wdt_endian_flip() {
 }
 
 void Gomspace::_hk_basic_endian_flip() {
+    hk_basic->counter_boot = __bswap_32(hk_basic->counter_boot);
     for (unsigned char i = 0; i < 6; i++) {
         hk_basic->temp[i] = __bswap_16(hk_basic->temp[i]);
     }
-    hk_basic->counter_boot = __bswap_16(hk_basic->counter_boot);
 }
