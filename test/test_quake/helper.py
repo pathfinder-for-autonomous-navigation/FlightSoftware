@@ -45,11 +45,11 @@ if __name__ == '__main__':
 
         if "waiting" in line:
             print("waiting...")
-            with open("uplinkdata.sbd", "w") as f:
-                f.write("Hello from ground!")
+            # with open("uplinkdata.sbd", "w") as f:
+            #     f.write("Hello from ground!")
 
-            sendFile("uplinkdata.sbd")
-            time.sleep(40)
+            # sendFile("uplinkdata.sbd")
+            # time.sleep(40)
             console.write(str.encode("message sent"))
             print("message sent")
             # need to wait?
