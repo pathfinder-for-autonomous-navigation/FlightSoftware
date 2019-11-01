@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #ifndef DOCKING_SWITCH_HPP_
 #define DOCKING_SWITCH_HPP_
 
@@ -33,4 +34,5 @@ class DockingSwitch : public Device {
 };
 }  // namespace Devices
 
+#endif
 #endif

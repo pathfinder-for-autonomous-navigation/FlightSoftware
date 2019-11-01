@@ -1,4 +1,5 @@
 #include "QuakeControlTask.h"
+
 using namespace Devices;
 
 void QuakeControlTask::set_downlink_msg(const char *_szMsg, size_t _len)
@@ -21,13 +22,11 @@ bool QuakeControlTask::request_state(int requested_state)
 {
   if (requested_state == CONFIG)
     currentState = CONFIG;
-  else if (currentState = IDLE)
-  {
+  else if (currentState == IDLE)
     currentState = requested_state;
-    fnSeqNum = 0;
-  }
   else
     return false;
+  fnSeqNum = 0;
   return true;
 }
 

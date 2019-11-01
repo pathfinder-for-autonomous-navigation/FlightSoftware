@@ -1,9 +1,16 @@
 #include <StateFieldRegistry.hpp>
-#include "QuakeControlTask.h"
+#include "../../src/FCCode/QuakeControlTask.h"
 #include <unity.h>
+
 using namespace Devices;
 
 #define DEFAULT_DELAY 10
+
+#ifdef DESKTOP
+void delay(size_t)
+{
+}
+#endif
 
 void test_task_initialization()
 {

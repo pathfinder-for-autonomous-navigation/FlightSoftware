@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #ifndef SPIKE_AND_HOLD_HPP_
 #define SPIKE_AND_HOLD_HPP_
 
@@ -67,4 +68,5 @@ class SpikeAndHold : public Device {
 };
 }  // namespace Devices
 
+#endif
 #endif

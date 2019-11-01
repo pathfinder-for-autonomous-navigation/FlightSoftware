@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #include "TempSensor.hpp"
 
 using namespace Devices;
@@ -15,3 +16,4 @@ float TempSensor::get() {
     // TODO implement
     return 0.0f;
 }
+#endif

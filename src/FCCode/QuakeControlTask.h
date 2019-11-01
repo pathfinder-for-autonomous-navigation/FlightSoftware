@@ -1,23 +1,50 @@
 #pragma once
 
 #include <ControlTask.hpp>
-#include <QLocate.hpp>
+#include "../../lib/Drivers/QLocate.hpp"
 using namespace Devices;
+
+/**
+ * QLocate driver states
+ * QLocate is initialized to IDLE in setup()
+ * Operations are split into command sequences since many operations require
+ * multiple commands. Also, we want to account for differences in timing
+ * between sending commands and reading expected responses.
+ */
+static constexpr int IDLE = 0;
+static constexpr int SBDWB = 1;         // SBDWB operation
+static constexpr int SBDRB = 2;         // SBDRB operation
+static constexpr int SBDIX = 3;         // SBDIX operation
+static constexpr int CONFIG = 4;        // Config operation
+static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
+
+
+#define QUAKE_NAME "Quake"
 
 class QuakeControlTask : public ControlTask<int>
 {
 public:
   // TODO: decide how we want to initialize the Driver
+  #ifndef DESKTOP
   QuakeControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
                                                    currentState(IDLE),
                                                    fnSeqNum(0),
                                                    szMsg(nullptr),
                                                    len(0),
                                                    quake(
-                                                       QLocate("QUAKE NAME: change this",
+                                                       QLocate(QUAKE_NAME,
                                                                &Serial3,
                                                                QLocate::DEFAULT_NR_PIN,
                                                                QLocate::DEFAULT_TIMEOUT)) {}
+  #else
+  QuakeControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
+                                                   quake(
+                                                       QLocate()),
+                                                   currentState(IDLE),
+                                                   fnSeqNum(0),
+                                                   szMsg(nullptr),
+                                                   len(0) {}
+  #endif
   /** 
    * execute is overriden from ControlTask 
    * Calling execute() when the state is IDLE generates no effects. 

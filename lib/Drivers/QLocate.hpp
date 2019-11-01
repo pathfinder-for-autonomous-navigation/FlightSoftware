@@ -10,8 +10,14 @@
 #ifndef QLocate_hpp
 #define QLocate_hpp
 
+#ifndef DESKTOP
 #include <HardwareSerial.h>
 #include "../Devices/Device.hpp"
+#else
+#include <iostream>
+#include <string>
+#endif
+
 
 namespace Devices
 {
@@ -36,20 +42,6 @@ static constexpr int PORT_UNAVAILABLE =
 static constexpr int UNKNOWN = -60;        // unknown errror
 static constexpr int WRONG_FN_ORDER = -70; // attempt to execute commands in the wrong order (unexpected order)
                                            // Ex: calling query_config_2() without calling query_config_1()
-
-/**
- * QLocate driver states
- * QLocate is initialized to IDLE in setup()
- * Operations are split into command sequences since many operations require
- * multiple commands. Also, we want to account for differences in timing
- * between sending commands and reading expected responses.
- */
-static constexpr int IDLE = 0;
-static constexpr int SBDWB = 1;         // SBDWB operation
-static constexpr int SBDRB = 2;         // SBDRB operation
-static constexpr int SBDIX = 3;         // SBDIX operation
-static constexpr int CONFIG = 4;        // Config operation
-static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
 /**
  * Functions are formated as follows:
@@ -88,10 +80,13 @@ static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
  *  the 3 wire communication interface with no ring alerts. The following
  *  communications are supported: sbdrb, sbdix, and sbdwb.
  */
+#ifndef DESKTOP
 class QLocate : public Device
+#else
+class QLocate
+#endif
 {
 public:
-    int bPortAvail();
     /** Default pin # for network ready pin. **/
     static constexpr unsigned char DEFAULT_NR_PIN = 35;
     /** Default timeout for serial communications on device. **/
@@ -100,10 +95,18 @@ public:
     /*! Sets the QLocate serial port and serial timeout value. Do not Initialize
      *  the serial port with begin(), it will be done in the constructor.
      */
+#ifndef DESKTOP
     QLocate(const std::string &name, HardwareSerial *const port, unsigned char nr_pin, int timeout);
-
+#else 
+    using String = std::string;
+    QLocate();
+#endif
     /*! Sets up QLocate. Initializes state to IDLE */
+#ifndef DESKTOP
     bool setup() override;
+#else
+bool setup();
+#endif
 
     /*! Sends an AT message to test comms. */
     int query_is_functional_1();
@@ -183,9 +186,6 @@ public:
     /*! Returns pin # for Network Ready pin. */
     unsigned char nr_pin();
 
-    /*! Returns the current status of the driver */
-    int GetCurrentState();
-
 protected:
     /*! Mobile terminated (MT) message data */
     char message[340];
@@ -194,7 +194,9 @@ protected:
     int sbdix_r[6];
 
     /*! Serial port designated to the QLocate */
+#ifndef DESKTOP
     HardwareSerial *const port;
+#endif
     int timeout;
 
     /*! Attempts to read [expected] from the QLocate's serial port.
@@ -206,14 +208,13 @@ protected:
      */
     int consume(String expected);
 
+
     /*! Returns a message checksum according to the Iridium requirements */
     short checksum(char const *c, int len);
 
     unsigned char nr_pin_;
 
 private:
-    /**! Represents the current state of the driver. See above for specific states */
-    int CurrentState;
 
     /** ! Parses the data returned from requesting SBD transfer (AT+SBDIX)
      * Example:
@@ -231,7 +232,9 @@ private:
     int sendCommand(const char *);
 
     /** Does nothing */
+#ifndef DESKTOP
     void disable() override;
+#endif
 };
 } // namespace Devices
 // End QLocate
