@@ -52,10 +52,10 @@ public:
   bool request_state(int requested_state);
 
   /** Returns the current state of the Quake */
-  int get_current_state();
+  int get_current_state() const;
 
   /** Returns the current function number (for testing purposes) */
-  size_t get_current_fn_number();
+  size_t get_current_fn_number() const;
 
   /**
    * Set the message that Quake should downlink.  */

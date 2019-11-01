@@ -8,12 +8,12 @@ void QuakeControlTask::set_downlink_msg(const char *_szMsg, size_t _len)
   len = _len;
 }
 
-int QuakeControlTask::get_current_state()
+int QuakeControlTask::get_current_state() const
 {
   return currentState;
 }
 
-size_t QuakeControlTask::get_current_fn_number()
+size_t QuakeControlTask::get_current_fn_number() const
 {
   return fnSeqNum;
 }
