@@ -2,7 +2,6 @@
 
 #include <ControlTask.hpp>
 #include "../../lib/Drivers/QLocate.hpp"
-using namespace Devices;
 
 /**
  * QLocate driver states
@@ -18,9 +17,6 @@ static constexpr int SBDIX = 3;         // SBDIX operation
 static constexpr int CONFIG = 4;        // Config operation
 static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
-
-#define QUAKE_NAME "Quake"
-
 class QuakeControlTask : public ControlTask<int>
 {
 public:
@@ -31,15 +27,10 @@ public:
                                                    fnSeqNum(0),
                                                    szMsg(nullptr),
                                                    len(0),
-                                                   quake(
-                                                       QLocate(QUAKE_NAME,
-                                                               &Serial3,
-                                                               QLocate::DEFAULT_NR_PIN,
-                                                               QLocate::DEFAULT_TIMEOUT)) {}
+                                                   quake("Quake", &Serial3,QLocate::DEFAULT_NR_PIN, QLocate::DEFAULT_TIMEOUT) {}
   #else
   QuakeControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
-                                                   quake(
-                                                       QLocate()),
+                                                   quake(),
                                                    currentState(IDLE),
                                                    fnSeqNum(0),
                                                    szMsg(nullptr),
