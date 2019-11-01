@@ -8,10 +8,11 @@
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
-    std::shared_ptr<WritableStateField<unsigned int>>check_mode_fp;
+    DockingSystem docksys;
+    std::shared_ptr<WritableStateField<unsigned int>>set_mode_fp;
 
     std::unique_ptr<DockingController> docking_task;
-    std::shared_ptr<WritableStateField<unsigned int>>set_mode_fp;
+    std::shared_ptr<WritableStateField<unsigned int>>check_mode_fp;
 
     TestFixture() : registry() {
         set_mode_fp = registry.create_writable_field<unsigned int>("set_mode", 0, 10, 10);
@@ -31,6 +32,7 @@ void test_task_execute() {
     TestFixture tf;
     TEST_ASSERT_EQUAL(0, tf.check_mode_fp->get());
     tf.set_mode_fp->set(1);
+    TEST_ASSERT_EQUAL(1, tf.set_mode_fp->get());
     tf.docking_task->execute();
     TEST_ASSERT_EQUAL(1, tf.check_mode_fp->get());
 }
