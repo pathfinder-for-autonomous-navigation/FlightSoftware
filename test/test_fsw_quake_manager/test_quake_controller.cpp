@@ -26,7 +26,7 @@ void test_task_execute()
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
 
   // Test SBDWB
-  TEST_ASSERT_EQUAL(true, task.set_requested_state(SBDWB));
+  TEST_ASSERT_EQUAL(true, task.request_state(SBDWB));
   TEST_ASSERT_EQUAL(SBDWB, task.get_current_state());
   // fnNumber should still be 0 at this point
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
@@ -40,7 +40,7 @@ void test_task_execute()
 
   // Set the message and length and try SBDWB again
   task.set_downlink_msg("hello", 5);
-  TEST_ASSERT_EQUAL(true, task.set_requested_state(SBDWB));
+  TEST_ASSERT_EQUAL(true, task.request_state(SBDWB));
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
 
   // Execute should be good this time
@@ -49,7 +49,7 @@ void test_task_execute()
   TEST_ASSERT_EQUAL(1, task.get_current_fn_number());
 
   // Check that changing state is not ok and does not change the fn number or state
-  TEST_ASSERT_EQUAL(false, task.set_requested_state(SBDIX));
+  TEST_ASSERT_EQUAL(false, task.request_state(SBDIX));
   TEST_ASSERT_EQUAL(1, task.get_current_fn_number());
   TEST_ASSERT_EQUAL(SBDWB, task.get_current_state());
 
@@ -63,7 +63,7 @@ void test_task_execute()
   TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
 
   // Check that config can interrupt SBDIX
-  TEST_ASSERT_EQUAL(true, task.set_requested_state(SBDIX));
+  TEST_ASSERT_EQUAL(true, task.request_state(SBDIX));
   TEST_ASSERT_EQUAL(SBDIX, task.get_current_state());
   delay(DEFAULT_DELAY);
   TEST_ASSERT_EQUAL(0, task.execute());
@@ -71,7 +71,7 @@ void test_task_execute()
   TEST_ASSERT_EQUAL(1, task.get_current_fn_number());
 
   // Test config
-  TEST_ASSERT_EQUAL(true, task.set_requested_state(CONFIG));
+  TEST_ASSERT_EQUAL(true, task.request_state(CONFIG));
   TEST_ASSERT_EQUAL(CONFIG, task.get_current_state());
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
   delay(DEFAULT_DELAY);

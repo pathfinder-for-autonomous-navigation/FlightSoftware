@@ -18,7 +18,10 @@ public:
                                                                &Serial3,
                                                                QLocate::DEFAULT_NR_PIN,
                                                                QLocate::DEFAULT_TIMEOUT)) {}
-  /** execute is overriden from ControlTask */
+  /** 
+   * execute is overriden from ControlTask 
+   * Calling execute() when the state is IDLE generates no effects. 
+  */
   int execute();
 
   /**
@@ -28,7 +31,7 @@ public:
    * Returns true if the state is succsfully changed to the requested_state.
    * Returns false otherwise. 
    */
-  bool set_requested_state(int requested_state);
+  bool request_state(int requested_state);
 
   /** Returns the current state of the Quake */
   int get_current_state();
@@ -42,7 +45,7 @@ public:
 
 private:
   // all dispatch_x functions return 0 on success and an error code otherwise
-  int dispatch_sbdwb(const char *, size_t);
+  int dispatch_sbdwb();
   int dispatch_sbdrb();
   int dispatch_sbdix();
   int dispatch_config();

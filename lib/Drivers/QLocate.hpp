@@ -12,9 +12,9 @@
 
 #include <HardwareSerial.h>
 #include "../Devices/Device.hpp"
-#include "../utils/QuakeMessage.hpp"
 
-namespace Devices {
+namespace Devices
+{
 
 #define MAX_MSG_SIZE 340
 
@@ -23,16 +23,19 @@ namespace Devices {
  * Nonzero codes indicate failure
  * Codes 0 - 3 is consistent with SBDWB codes
  * */
-static constexpr int OK = 0;       // command was succesfully executed, expected response received
-static constexpr int TIMEOUT = 1;  // response not received before timeout
-static constexpr int BAD_CHECKSUM = 2;           // checksum doesn't match ISU calculated checksum
-static constexpr int WRONG_LENGTH = 3;           // message size differs from expected message size
-static constexpr int UNEXPECTED_RESPONSE = -20;  // actual response does not match expected response
+static constexpr int OK = 0;                    // command was succesfully executed, expected response received
+static constexpr int TIMEOUT = 1;               // response not received before timeout
+static constexpr int BAD_CHECKSUM = 2;          // checksum doesn't match ISU calculated checksum
+static constexpr int WRONG_LENGTH = 3;          // message size differs from expected message size
+static constexpr int UNEXPECTED_RESPONSE = -20; // actual response does not match expected response
+static constexpr int WRITE_FAIL = -30;          // failed to send command (write command to output port)
+static constexpr int WRONG_STATE = -40;         // driver is not in the expected state
 static constexpr int PORT_UNAVAILABLE =
-    -50;  // attempt to read port that is not available (no data available)
-static constexpr int WRONG_STATE = -40;  // driver is not in the expected state
-static constexpr int WRITE_FAIL = -30;   // failed to send command (write command to output port)
-static constexpr int UNKNOWN = -60;      // unknown errror
+    -50; // attempt to read port that is not available (no data available)
+
+static constexpr int UNKNOWN = -60;        // unknown errror
+static constexpr int WRONG_FN_ORDER = -70; // attempt to execute commands in the wrong order (unexpected order)
+                                           // Ex: calling query_config_2() without calling query_config_1()
 
 /**
  * QLocate driver states
@@ -42,11 +45,11 @@ static constexpr int UNKNOWN = -60;      // unknown errror
  * between sending commands and reading expected responses.
  */
 static constexpr int IDLE = 0;
-static constexpr int SBDWB = 1;          // SBDWB operation
-static constexpr int SBDRB = 2;          // SBDRB operation
-static constexpr int SBDIX = 3;          // SBDIX operation
-static constexpr int CONFIG = 4;         // Config operation
-static constexpr int IS_FUNCTIONAL = 5;  // Is_Functional operation
+static constexpr int SBDWB = 1;         // SBDWB operation
+static constexpr int SBDRB = 2;         // SBDRB operation
+static constexpr int SBDIX = 3;         // SBDIX operation
+static constexpr int CONFIG = 4;        // Config operation
+static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
 /**
  * Functions are formated as follows:
@@ -85,8 +88,9 @@ static constexpr int IS_FUNCTIONAL = 5;  // Is_Functional operation
  *  the 3 wire communication interface with no ring alerts. The following
  *  communications are supported: sbdrb, sbdix, and sbdwb.
  */
-class QLocate : public Device {
-   public:
+class QLocate : public Device
+{
+public:
     int bPortAvail();
     /** Default pin # for network ready pin. **/
     static constexpr unsigned char DEFAULT_NR_PIN = 35;
@@ -110,8 +114,8 @@ class QLocate : public Device {
     /*! Returns a pointer to the sbdix response codes */
     int const *get_sbdix_response();
 
-    /*! Returns the MT message as a QuakeMessage object */
-    QuakeMessage &get_message();
+    /*! Returns the null-termianted MT message*/
+    char *get_message();
 
     /*! This manipulates the settings of the QLocate and sets it to communicate
      *  via the 3 pin interface.
@@ -182,12 +186,12 @@ class QLocate : public Device {
     /*! Returns the current status of the driver */
     int GetCurrentState();
 
-   protected:
+protected:
+    /*! Mobile terminated (MT) message data */
+    char message[340];
+
     /*! sbdix integer response array */
     int sbdix_r[6];
-
-    /*! Mobile terminated (MT) message data */
-    QuakeMessage message;
 
     /*! Serial port designated to the QLocate */
     HardwareSerial *const port;
@@ -207,7 +211,7 @@ class QLocate : public Device {
 
     unsigned char nr_pin_;
 
-   private:
+private:
     /**! Represents the current state of the driver. See above for specific states */
     int CurrentState;
 
@@ -229,7 +233,7 @@ class QLocate : public Device {
     /** Does nothing */
     void disable() override;
 };
-}  // namespace Devices
+} // namespace Devices
 // End QLocate
 // -----------------------------------------------------------------------------
 

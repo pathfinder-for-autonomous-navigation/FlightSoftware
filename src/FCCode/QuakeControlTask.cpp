@@ -17,7 +17,7 @@ size_t QuakeControlTask::get_current_fn_number()
   return fnSeqNum;
 }
 
-bool QuakeControlTask::set_requested_state(int requested_state)
+bool QuakeControlTask::request_state(int requested_state)
 {
   if (requested_state == CONFIG)
     currentState = CONFIG;
@@ -38,7 +38,7 @@ int QuakeControlTask::execute()
   switch (currentState)
   {
   case SBDWB:
-    result = dispatch_sbdwb(szMsg, len);
+    result = dispatch_sbdwb();
     break;
   case SBDRB:
     result = dispatch_sbdrb();
@@ -66,7 +66,7 @@ int QuakeControlTask::execute()
   return result;
 }
 
-int QuakeControlTask::dispatch_sbdwb(const char *szMsg, size_t len)
+int QuakeControlTask::dispatch_sbdwb()
 {
   int errCode = -1;
   switch (fnSeqNum)
