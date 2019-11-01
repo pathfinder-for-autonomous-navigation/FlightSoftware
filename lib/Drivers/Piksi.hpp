@@ -40,32 +40,58 @@ class Piksi : public Device {
      *  @returns Whether or not any data was processed. **/
     virtual signed char process_buffer();
 
+    /**
+     * @brief Runs read over UART buffer to process values sent by Piksi using libsbp
+     *
+     * @return Returns the number of bytes processed by a call of process_buffer_msg_len()
+     * These values coincide with the message size in the piksi documentation
+     * Note that message size is not the same number of bytes
+     * that is sent for that message (unfortunately)
+     */
     virtual unsigned char process_buffer_msg_len();
 
-
+    /**
+     * @brief Processes the buffer within a while loop, looking for a good buffer.
+     *
+     * If the initial number of bytes is proper 299 or 333, deal with all the bytes
+     * by repeatedly calling process_buffer_msg_len()
+     * Checks that the correct sum of byte size in the message is processed
+     * Values of 227 and 245 are experimentally determined.
+     * If improper initial number of bytes clear the buffer until empty,
+     * It likely takes two control cycles to clear/desync from burst time
+     *
+     * @return return code, 1 if buffer was successfully processed (to the knowledge of the driver)
+     * 0 if buffer already has parts of multiple bursts of data, or an incomplete burst
+     * -1 if buffer is interrupted with new data
+     */
     virtual signed char read_buffer();
 
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/
-    //virtual void get_gps_time(gps_time_t *time);
+    // virtual void get_gps_time(gps_time_t *time);
 
     virtual void get_gps_time(msg_gps_time_t *time);
 
     /** @brief Gets Dilution of Precision timestamp.
      *  @return Time-of-week of dilution precision report, in milliseconds. **/
     unsigned int get_dops_tow();
+
     /** @brief Gets Geometric Dilution of Precision.
      *  @return Geometric dilution of precision. **/
     unsigned short int get_dops_geometric();
+
     /** @brief Gets Position Dilution of Precision.
      *  @return Position dilution of precision. **/
     unsigned short int get_dops_position();
+
     /** @brief Gets Time Dilution of Precision.
      *  @return Time dilution of precision. **/
     unsigned short int get_dops_time();
+
     /** @brief Gets Horizontal Dilution of Precision.
      *  @return Horizontal dilution of precision. **/
     unsigned short int get_dops_horizontal();
+
     /** @brief Gets Vertical Dilution of Precision.
      *  @return Vertical dilution of precision. **/
     unsigned short int get_dops_vertical();
@@ -75,11 +101,18 @@ class Piksi : public Device {
      * **/
     virtual void get_pos_ecef(std::array<int, 3> *position);
 
-    virtual void get_pos_ecef(unsigned int* tow, std::array<int, 3> *position);
+    /**
+     * @brief Get the Position in ECEF coordinates, and the time of week int
+     *
+     * @param tow A pointer to the tow int
+     * @param position A pointer to the std::array of position
+     */
+    virtual void get_pos_ecef(unsigned int *tow, std::array<int, 3> *position);
 
     /** @brief Get number of satellites used for determining GPS position.
      *  @return Number of satellites used for determining GPS position. **/
     virtual unsigned char get_pos_ecef_nsats();
+
     /** @brief Get status flags of GPS position measurement.
      *  @return Status flags of GPS position measurement. **/
     virtual unsigned char get_pos_ecef_flags();
@@ -90,27 +123,41 @@ class Piksi : public Device {
      * **/
     virtual void get_baseline_ecef(std::array<int, 3> *position);
 
-    virtual void get_baseline_ecef(unsigned int* tow, std::array<int, 3> *position);
+    /**
+     * @brief Get the baseline ECEF coordinates, and the time of week int
+     *
+     * @param tow A pointer to the tow int
+     * @param position A pointer to the std::array of the baseline position
+     */
+    virtual void get_baseline_ecef(unsigned int *tow, std::array<int, 3> *position);
 
     /** @brief Get number of satellites used for determining GPS baseline
      * position.
      *  @return Number of satellites used for determining GPS baseline position.
      * **/
     virtual unsigned char get_baseline_ecef_nsats();
+
     /** @brief Get status flags of GPS baseline position measurement.
      *  @return Status flags of GPS baseline position measurement. **/
     unsigned char get_baseline_ecef_flags();
 
     /** @brief Gets satellite velocity in ECEF coordinates.
-     *  @param velocity A pointer to the destination struct for the information.
+     *  @param velocity A pointer to the std::array for velocity
      * **/
     virtual void get_vel_ecef(std::array<int, 3> *velocity);
 
-    virtual void get_vel_ecef(unsigned int* tow, std::array<int, 3> *velocity);
+    /**
+     * @brief Gets satellite velocity in ECEF coordinates and the time of week.
+     *
+     * @param int A pointer to the tow int
+     * @param velocity A pointer to the std::array for velocity
+     */
+    virtual void get_vel_ecef(unsigned int *tow, std::array<int, 3> *velocity);
 
     /** @brief Get number of satellites used for determining GPS velocity.
      *  @return Number of satellites used for determining GPS velocity. **/
     virtual unsigned char get_vel_ecef_nsats();
+
     /** @brief Get status flags of GPS velocity measurement.
      *  @return Status flags of GPS velocity measurement. **/
     unsigned char get_vel_ecef_flags();
@@ -130,15 +177,19 @@ class Piksi : public Device {
     /** @brief Reads status flags of Piksi (i.e. the "heartbeat").
      *  @return Status flags of Piksi, as a libsbp struct. **/
     unsigned int get_heartbeat();
+
     /** @brief Reads "system health" bit of status flags of Piksi.
      *  @return Whether or not the system is healthy. **/
     bool is_system_healthy();
+
     /** @brief Reads "system I/O health" bit of status flags of Piksi.
      *  @return Whether or not the system I/O is healthy. **/
     bool is_system_io_healthy();
+
     /** @brief Reads "SwiftNAP health" bit of status flags of Piksi.
      *  @return Whether or not the SwiftNAP system is healthy. **/
     bool is_swiftnap_healthy();
+
     /** @brief Reads "antenna health" bit of status flags of Piksi.
      *  @return Whether or not the antenna is healthy. **/
     bool is_antenna_healthy();
@@ -146,18 +197,23 @@ class Piksi : public Device {
     /** @brief Reads UART channel A transmission throughput.
      *  @return UART A channel transmission throughput. **/
     float get_uart_a_tx_throughput();
+
     /** @brief Reads UART channel A reception throughput.
      *  @return UART A channel reception throughput. **/
     float get_uart_a_rx_throughput();
+
     /** @brief Reads UART channel A CRC error count.
      *  @return UART A channel CRC error count. **/
     unsigned short int get_uart_a_crc_error_count();
+
     /** @brief Reads UART channel A I/O error count.
      *  @return UART A channel I/O error count. **/
     unsigned short int get_uart_a_io_error_count();
+
     /** @brief Reads UART channel A transmission buffer utilization.
      *  @return UART A channel transmission buffer utilization. **/
     unsigned char get_uart_a_tx_buffer_utilization();
+
     /** @brief Reads UART channel A reception buffer utilization.
      *  @return UART A channel reception buffer utilization. **/
     unsigned char get_uart_a_rx_buffer_utilization();
@@ -165,18 +221,23 @@ class Piksi : public Device {
     /** @brief Reads UART channel B transmission throughput.
      *  @return UART B channel transmission throughput. **/
     float get_uart_b_tx_throughput();
+
     /** @brief Reads UART channel B reception throughput.
      *  @return UART B channel reception throughput. **/
     float get_uart_b_rx_throughput();
+
     /** @brief Reads UART channel B CRC error count.
      *  @return UART B channel CRC error count. **/
     unsigned short int get_uart_b_crc_error_count();
+
     /** @brief Reads UART channel B I/O error count.
      *  @return UART B channel I/O error count. **/
     unsigned short int get_uart_b_io_error_count();
+
     /** @brief Reads UART channel B transmission buffer utilization.
      *  @return UART B channel transmission buffer utilization. **/
     unsigned char get_uart_b_tx_buffer_utilization();
+
     /** @brief Reads UART channel B reception buffer utilization.
      *  @return UART B channel reception buffer utilization. **/
     unsigned char get_uart_b_rx_buffer_utilization();
@@ -187,9 +248,11 @@ class Piksi : public Device {
 
     /** @brief Saves the data settings to flash. **/
     void settings_save();
+
     /** @brief Writes the desired settings to the Piksi's RAM.
      * @param settings Struct containing setting changes for the Piksi. **/
     void settings_write(const msg_settings_write_t &settings);
+
     /** @brief Creates settings object containing default settings for PAN and
      * writes them to RAM. **/
     void write_default_settings();
@@ -209,9 +272,17 @@ class Piksi : public Device {
     /** @brief Clear out logbook. */
     void clear_log();
 
-     //debug
+    /**
+     * @brief Returns the number of bytes available on the serial port to read
+     *
+     * @return u32 number of bytes available
+     */
     u32 bytes_available();
 
+    /**
+     * @brief Clears all the bytes waiting to be read on the serial port
+     *
+     */
     void clear_bytes();
 
    protected:

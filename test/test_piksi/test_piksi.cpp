@@ -4,7 +4,7 @@
 #include <array>
 #include "../lib/Drivers/Piksi.hpp"
 
-#define PIKSI_READ_ALLOTED 1000
+#define PIKSI_READ_ALLOTED 300
 #define SAFETY 250
 #define CONTROL_CYCLE 120
 
@@ -218,6 +218,16 @@ int execute_piksi_all() {
         return 0;
     }
 }
+/**
+ * @brief This method actually calls the getters of Piksi,
+ * This will only make sense if read_buffer was called just before.
+ * Otherwise, it will pull OLD data.
+ * 
+ * Currently in use by the test script below
+ * 
+ * @return true If data is good and new
+ * @return false If otherwise
+ */
 bool verify_all(){
     prev_tow = time.tow;
 
@@ -236,6 +246,7 @@ bool verify_all(){
     bool ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
     return ret;
 }
+
 void test_get_data(){
     prev_tow = time.tow;
 
@@ -254,6 +265,7 @@ void test_get_data(){
     bool ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
     TEST_ASSERT_TRUE(ret);
 }
+
 void test_sats() {
     preread_time = millis();
 
@@ -263,45 +275,27 @@ void test_sats() {
 }
 
 int main(void) {
-    /*okay this stuff is really whack
-    it seems like a normal packet is 299 bytes long
-    when you get like 330 some bytes it's correlated with the
-    gps time spiking up 200ms
-    so i think whats happening is the call of the test happened at the exact
-    same time as data coming over the line
-
-    the entire payload could also be variable in length
-    */
 
     delay(5000);
     Serial.begin(9600);
     while (!Serial)
         ;
     UNITY_BEGIN();
-    // RUN_TEST(test_piksi_functional);
+
     piksi.setup();
-    // int weird_delay = 100;
-    // ensure that atleast one message comes in;
-    // this one should error out, no bytes in
 
     Serial.println("***************************************************************");
 
-    // mimic exact 120 ms control cycle
-    // int start_time = micros();
     
     int start_millis = millis();
-    int start_time = micros();
 
-    //while(micros()-start_time < 1000*50){
+    //this initial loop is just for debugging, verify that there are indeed bytes coming over the line
     while(millis() - start_millis < 200){
 
         Serial.printf("TIME: %d ", millis() - start_millis);
         Serial.printf("BYTES: %d\n", piksi.bytes_available());
-        //delayMicroseconds(1000);
         delay(20);
 
-        //83135
-        //57233s
     }
     Serial.println("FINISH WHILE LOOP");
 
@@ -310,22 +304,29 @@ int main(void) {
     int exec_pass_count = 0;
     int timing_pass_count = 0;
     int msg_len_fail_count = 0;
+    int data_fail_count = 0;
+    int bad_buffer = 0;
 
     for (int i = 0; i < 200; i++) {
-        // Serial.println(100 - (millis()-prevtime));
+        //this syncs up command to execute exactly every 120 ms 
+        //(barring a failure on the previous loop)
         delay(CONTROL_CYCLE - (micros() - prevtime) / 1000);
         prevtime = micros();
 
-        // count += piksi_fast_read();
         int res = piksi.read_buffer();
-        //Serial.printf("RES: %d",res);
-        if (res == 1 && verify_all()) {
-            exec_pass_count += 1;
-            // Serial.print("PASS \n");
+        if (res == 1) {
+            if(verify_all())
+                exec_pass_count += 1;
+            else
+                data_fail_count += 1;
+            
         }
+
         else if(res == -1){
             msg_len_fail_count += 1;
         }
+        else
+            bad_buffer += 1;
 
         posttime = micros();
         Serial.printf("EXEC TIME: %d micros\n", posttime-prevtime);
@@ -334,13 +335,43 @@ int main(void) {
         } else {
             Serial.printf("EXCEED: %d\n", posttime - prevtime);
         }
-        // RUN_TEST(test_piksi_all);
     }
+    Serial.println("\n********************************************");
 
     Serial.printf("MSG LEN FAIL COUNT: %d\n", msg_len_fail_count);
-
     Serial.printf("EXEC PASS COUNT: %d\n", exec_pass_count);
+    Serial.printf("VERIFY FAIL COUNT: %d\n", data_fail_count);
+    Serial.printf("BAD BUFFER COUNT: %d\n", bad_buffer);
     Serial.printf("TIMING PASS COUNT: %d\n", timing_pass_count);
+
+
+    /*
+
+    Looking for these things in the output (assumed to test for 200 control cycles):
+
+    EXEC TIME: Is the time each ReadPiksiControlTask would take
+        looking for it to be under 250 micros.
+        Nominally it is around 213 for the 299 byte packets, and 239 micros for the 333 byte packets.
+
+    MSG LEN FAIL COUNT: Number of times data came through to the buffer 
+        WHILE a the process buffer loop was executing
+        this is rare, but not non zero, expect to see a 0 1 or 2 at max. 
+        if it occurs, it is handled gracefully, you need not worry.
+
+    EXEC PASS COUNT: Number of times it successfully read data from the buffer
+        Expect about half of all test control tasks to pass
+
+    VERIFY FAIL COUNT: Number of times buffer was properly processed, 
+        BUT the data was not within expected bounds or flags
+
+    BAD BUFFER COUNT: Number of times there was not a clean entire packet in the buffer
+        Expect about half of all test control tasks to fail this
+
+    TIMING PASS COUNT: Number of executions that succesfully executed within the time limit.
+
+    EXCEED: This line will only print if a simulated control cycle exceeds the defined bounds.
+    */
+
     RUN_TEST(test_sats);
     UNITY_END();
     return 0;
