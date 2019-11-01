@@ -4,14 +4,6 @@
 
 using namespace Devices;
 
-#define DEFAULT_DELAY 10
-
-#ifdef DESKTOP
-void delay(size_t)
-{
-}
-#endif
-
 void test_task_initialization()
 {
   StateFieldRegistry registry;
@@ -27,8 +19,7 @@ void test_task_execute()
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
 
   // Check that calling execute() when IDLE does not change anything
-  delay(DEFAULT_DELAY);
-  task.execute();
+  TEST_ASSERT_EQUAL(0, task.execute());
   TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
 
@@ -39,7 +30,7 @@ void test_task_execute()
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
 
   // Check that sbdwb with a zero length message should fail and not change fnNumber
-  delay(DEFAULT_DELAY);
+ 
   TEST_ASSERT_EQUAL(3, task.execute());
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
   // Check that a failure from fnNum = 0 resets the state to IDLE
@@ -51,7 +42,7 @@ void test_task_execute()
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
 
   // Execute should be good this time
-  delay(DEFAULT_DELAY);
+ 
   TEST_ASSERT_EQUAL(0, task.execute());
   TEST_ASSERT_EQUAL(1, task.get_current_fn_number());
 
@@ -60,10 +51,10 @@ void test_task_execute()
   TEST_ASSERT_EQUAL(1, task.get_current_fn_number());
   TEST_ASSERT_EQUAL(SBDWB, task.get_current_state());
 
-  delay(DEFAULT_DELAY);
+ 
   TEST_ASSERT_EQUAL(0, task.execute());
   TEST_ASSERT_EQUAL(2, task.get_current_fn_number());
-  delay(DEFAULT_DELAY);
+ 
   // Test that the state is reset back to idle and fnNumber is set back to 0
   TEST_ASSERT_EQUAL(0, task.execute());
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
@@ -72,7 +63,7 @@ void test_task_execute()
   // Check that config can interrupt SBDIX
   TEST_ASSERT_EQUAL(true, task.request_state(SBDIX));
   TEST_ASSERT_EQUAL(SBDIX, task.get_current_state());
-  delay(DEFAULT_DELAY);
+ 
   TEST_ASSERT_EQUAL(0, task.execute());
   TEST_ASSERT_EQUAL(SBDIX, task.get_current_state());
   TEST_ASSERT_EQUAL(1, task.get_current_fn_number());
@@ -81,15 +72,15 @@ void test_task_execute()
   TEST_ASSERT_EQUAL(true, task.request_state(CONFIG));
   TEST_ASSERT_EQUAL(CONFIG, task.get_current_state());
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
-  delay(DEFAULT_DELAY);
+ 
   TEST_ASSERT_EQUAL(0, task.execute());
-  delay(DEFAULT_DELAY);
+ 
   TEST_ASSERT_EQUAL(0, task.execute());
-  delay(DEFAULT_DELAY);
+ 
   TEST_ASSERT_EQUAL(0, task.execute());
-  delay(DEFAULT_DELAY);
+ 
   TEST_ASSERT_EQUAL(0, task.execute());
-  delay(DEFAULT_DELAY);
+ 
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
   TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
 }
