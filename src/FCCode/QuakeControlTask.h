@@ -68,7 +68,7 @@ private:
   int dispatch_sbdix();
   int dispatch_config();
   int dispatch_is_functional();
-  QLocate quake;
+  Devices::QLocate quake;
   // Quake should never be in both IDLE and fnSeqNum != 0
   int currentState; // the state of the Quake
   int fnSeqNum;     // the sequence we are on

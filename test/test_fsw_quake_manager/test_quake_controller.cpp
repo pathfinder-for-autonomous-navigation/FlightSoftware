@@ -63,24 +63,37 @@ void test_task_execute()
   // Check that config can interrupt SBDIX
   TEST_ASSERT_EQUAL(true, task.request_state(SBDIX));
   TEST_ASSERT_EQUAL(SBDIX, task.get_current_state());
- 
   TEST_ASSERT_EQUAL(0, task.execute());
   TEST_ASSERT_EQUAL(SBDIX, task.get_current_state());
   TEST_ASSERT_EQUAL(1, task.get_current_fn_number());
-
   // Test config
   TEST_ASSERT_EQUAL(true, task.request_state(CONFIG));
   TEST_ASSERT_EQUAL(CONFIG, task.get_current_state());
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
- 
   TEST_ASSERT_EQUAL(0, task.execute());
- 
   TEST_ASSERT_EQUAL(0, task.execute());
- 
   TEST_ASSERT_EQUAL(0, task.execute());
- 
   TEST_ASSERT_EQUAL(0, task.execute());
- 
+  TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
+  TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
+
+  // test SBDIX
+  TEST_ASSERT_EQUAL(true, task.request_state(SBDIX));
+  TEST_ASSERT_EQUAL(SBDIX, task.get_current_state());
+  TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
+  TEST_ASSERT_EQUAL(0, task.execute());
+  TEST_ASSERT_EQUAL(1, task.get_current_fn_number());
+  TEST_ASSERT_EQUAL(0, task.execute());
+  TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
+  TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
+
+  // test SBDRB
+  TEST_ASSERT_EQUAL(true, task.request_state(SBDRB));
+  TEST_ASSERT_EQUAL(SBDRB, task.get_current_state());
+  TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
+  TEST_ASSERT_EQUAL(0, task.execute());
+  TEST_ASSERT_EQUAL(1, task.get_current_fn_number());
+  TEST_ASSERT_EQUAL(0, task.execute());
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
   TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
 }
