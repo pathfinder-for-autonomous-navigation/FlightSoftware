@@ -20,7 +20,8 @@ def sendFile(file_name):
     password = os.environ['PAN_PASS']
     yag = yagmail.SMTP('pan.ssds.qlocate', password)
     # Send the txt file to the designated address
-    yag.send('data@sbd.iridium.com', '300234030627990', file_name)
+    imei_num = os.environ['IMEI_NUM']
+    yag.send('data@sbd.iridium.com', imei_num, file_name)
 
 
 def downloadFiles():
