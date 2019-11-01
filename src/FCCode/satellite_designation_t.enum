@@ -1,0 +1,11 @@
+#ifndef satellite_designation_t_enum_
+#define satellite_designation_t_enum_
+
+// pan.sat_designation
+enum class satellite_designation_t {
+    undecided,
+    leader,
+    follower
+};
+
+#endif
