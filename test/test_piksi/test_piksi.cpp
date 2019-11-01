@@ -314,7 +314,7 @@ int main(void) {
         prevtime = micros();
 
         int res = piksi.read_buffer();
-        if (res == 1) {
+        if (res == 0) {
             if(verify_all())
                 exec_pass_count += 1;
             else
@@ -322,10 +322,10 @@ int main(void) {
             
         }
 
-        else if(res == -1){
+        else if(res == 2){
             msg_len_fail_count += 1;
         }
-        else
+        else if(res == 1)
             bad_buffer += 1;
 
         posttime = micros();

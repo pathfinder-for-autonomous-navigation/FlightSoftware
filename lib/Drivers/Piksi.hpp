@@ -60,11 +60,11 @@ class Piksi : public Device {
      * If improper initial number of bytes clear the buffer until empty,
      * It likely takes two control cycles to clear/desync from burst time
      *
-     * @return return code, 1 if buffer was successfully processed (to the knowledge of the driver)
-     * 0 if buffer already has parts of multiple bursts of data, or an incomplete burst
-     * -1 if buffer is interrupted with new data
+     * @return return code, 0 if buffer was successfully processed (to the knowledge of the driver)
+     * 1 if buffer already has parts of multiple bursts of data, or an incomplete burst
+     * 2 if buffer is interrupted with new data
      */
-    virtual signed char read_buffer();
+    virtual unsigned char read_buffer();
 
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/

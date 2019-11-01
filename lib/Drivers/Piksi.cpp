@@ -286,7 +286,7 @@ unsigned char Piksi::process_buffer_msg_len() {
     return 0;
 }
 
-signed char Piksi::read_buffer() {
+unsigned char Piksi::read_buffer() {
     int initial_bytes = bytes_available();
 
     if (initial_bytes == 299 || initial_bytes == 333) {
@@ -296,11 +296,11 @@ signed char Piksi::read_buffer() {
         }
 
         if (initial_bytes == 299 && msg_len_sum != 227) {
-            return -1;
+            return 2;
         } else if (initial_bytes == 333 && msg_len_sum != 245) {
-            return -1;
+            return 2;
         } else
-            return 1;
+            return 0;
 
     }
 
@@ -308,7 +308,7 @@ signed char Piksi::read_buffer() {
         while (bytes_available()) {
             clear_bytes();
         }
-        return 0;
+        return 1;
     }
 }
 
