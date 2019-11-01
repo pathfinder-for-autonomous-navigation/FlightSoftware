@@ -133,18 +133,18 @@ int QLocate::query_sbdwb_2(char const *c, int len)
 
 int QLocate::get_sbdwb()
 {
-    // Process sbdwb response
-    char buf[6] = {0};
-    int len = 0;
 #ifdef DESKTOP
     return OK;
 #else
+    // Process sbdwb response
+    char buf[6] = {0};
+    int len = 0;
     // If it is a timeout, then port will not be available anyway
     CHECK_PORT_AVAILABLE();
     // expect to read <sbdwb status>\r\n0\r
     len = port->readBytes(buf, 5);
 
-#endif
+
 #ifdef DEBUG_ENABLED
     Serial.print("        > res=");
     for (int i = 0; i < len; i++)
@@ -161,6 +161,7 @@ int QLocate::get_sbdwb()
         return UNEXPECTED_RESPONSE;
 
     return status;
+#endif
 }
 
 // Parses the result buffer of sbdix into sbdix_r
