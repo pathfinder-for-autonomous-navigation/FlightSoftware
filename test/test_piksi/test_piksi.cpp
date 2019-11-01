@@ -288,21 +288,28 @@ int main(void) {
 
     // mimic exact 120 ms control cycle
     // int start_time = micros();
+    
+    int start_millis = millis();
+    int start_time = micros();
+
+    //while(micros()-start_time < 1000*50){
+    while(millis() - start_millis < 200){
+
+        Serial.printf("TIME: %d ", millis() - start_millis);
+        Serial.printf("BYTES: %d\n", piksi.bytes_available());
+        //delayMicroseconds(1000);
+        delay(20);
+
+        //83135
+        //57233s
+    }
+    Serial.println("FINISH WHILE LOOP");
+
     int prevtime = micros();
     int posttime = micros();
     int exec_pass_count = 0;
     int timing_pass_count = 0;
     int msg_len_fail_count = 0;
-
-    // while(micros()-start_time < 1000*500){
-
-    //     Serial.printf("TIME: %d ", micros() - start_time);
-    //     Serial.printf("BYTES: %d\n", piksi.bytes_available());
-    //     delayMicroseconds(1000);
-
-    //     //83135
-    //     //57233
-    // }
 
     for (int i = 0; i < 200; i++) {
         // Serial.println(100 - (millis()-prevtime));
@@ -311,6 +318,7 @@ int main(void) {
 
         // count += piksi_fast_read();
         int res = piksi.read_buffer();
+        //Serial.printf("RES: %d",res);
         if (res == 1 && verify_all()) {
             exec_pass_count += 1;
             // Serial.print("PASS \n");
