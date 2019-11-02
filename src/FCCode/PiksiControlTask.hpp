@@ -24,14 +24,14 @@ public:
   // TODO: decide how we want to initialize the Driver
   #ifndef DESKTOP
   PiksiControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
-                                                   quake("Piksi", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
+                                                   piksi("Piksi", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
                                                    currentState(IDLE),
                                                    fnSeqNum(0),
                                                    szMsg(nullptr),
                                                    len(0){}
   #else
   PiksiControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
-                                                   quake(),
+                                                   piksi("Piksi"),
                                                    currentState(IDLE),
                                                    fnSeqNum(0),
                                                    szMsg(nullptr),

@@ -1,8 +1,10 @@
 #ifndef PIKSI_HPP_
 #define PIKSI_HPP_
 
+#ifndef DESKTOP
 #include <HardwareSerial.h>
 #include "../Devices/Device.hpp"
+#endif
 
 #include <GPSTime.hpp>
 #include <array>
@@ -18,7 +20,11 @@ namespace Devices {
 /**
  * @brief Device class for interacting with the Piksi GPS system.
  */
+#ifndef DESKTOP
 class Piksi : public Device {
+#else
+class Piksi {
+#endif
    public:
     //! Baud rate of communication with Piksi.
     static constexpr unsigned int BAUD_RATE = 115200;
@@ -28,13 +34,28 @@ class Piksi : public Device {
      *
      * @param serial_port The serial port that the Piksi communicates over.
      */
+    #ifndef DESKTOP
     Piksi(const std::string &name, HardwareSerial &serial_port);
+    #else
+    //using String = std::string;
+
+    Piksi(const std::string &name);
+    #endif
 
     // Standard device functions
+    #ifndef DESKTOP
     bool setup() override;
     bool is_functional() override;
     void reset() override;
     void disable() override;  // Sets Piksi's power consumption to a minimum
+    #else
+    bool setup();
+    bool is_functional();
+    void reset();
+    void disable();  // Sets Piksi's power consumption to a minimum
+    #endif
+
+    
 
     /** @brief Runs read over UART buffer to process values sent by Piksi into
      * memory.
@@ -290,8 +311,10 @@ class Piksi : public Device {
     void clear_bytes();
 
    protected:
+   #ifndef DESKTOP
     HardwareSerial &_serial_port;  // This is protected instead of private so that FakePiksi
                                    // can access the port variable
+    #endif
    private:
     // Internal values required by libsbp. See sbp.c
     sbp_state_t _sbp_state;
