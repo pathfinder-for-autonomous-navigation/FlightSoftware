@@ -2,7 +2,7 @@
 
 #include <ControlTask.hpp>
 //#include "../../lib/Drivers/QLocate.hpp"
-#include <Piksi.hpp>
+#include "../../lib/Drivers/Piksi.hpp"
 
 /**
  * QLocate driver states
