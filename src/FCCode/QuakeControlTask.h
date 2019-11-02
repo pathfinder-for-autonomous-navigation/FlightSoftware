@@ -23,7 +23,7 @@ public:
   // TODO: decide how we want to initialize the Driver
   #ifndef DESKTOP
   QuakeControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
-                                                  quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
+                                                   quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
                                                    currentState(IDLE),
                                                    fnSeqNum(0),
                                                    szMsg(nullptr),
