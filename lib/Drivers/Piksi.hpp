@@ -2,9 +2,10 @@
 #define PIKSI_HPP_
 
 #include <HardwareSerial.h>
+#include "../Devices/Device.hpp"
+
 #include <GPSTime.hpp>
 #include <array>
-#include "../Devices/Device.hpp"
 #include "../libsbp/logging.h"
 #include "../libsbp/navigation.h"
 #include "../libsbp/observation.h"

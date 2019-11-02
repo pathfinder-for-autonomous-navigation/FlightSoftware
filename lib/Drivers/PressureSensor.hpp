@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #ifndef PRESSURE_SENSOR_HPP_
 #define PRESSURE_SENSOR_HPP_
 
@@ -34,4 +35,5 @@ class PressureSensor : public Device {
 };
 }  // namespace Devices
 
+#endif
 #endif

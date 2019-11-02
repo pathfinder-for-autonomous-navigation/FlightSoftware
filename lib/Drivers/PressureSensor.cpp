@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #include "PressureSensor.hpp"
 
 using namespace Devices;
@@ -16,3 +17,4 @@ float PressureSensor::get() {
     // TODO implement
     return 0.0f;
 }
+#endif
