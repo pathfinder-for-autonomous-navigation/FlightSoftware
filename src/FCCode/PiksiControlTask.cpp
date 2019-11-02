@@ -2,40 +2,41 @@
 
 using namespace Devices;
 
-void PiksiControlTask::set_downlink_msg(const char *_szMsg, size_t _len)
-{
-  szMsg = _szMsg;
-  len = _len;
-}
 
-int PiksiControlTask::get_current_state() const
-{
-  return currentState;
-}
+// void PiksiControlTask::set_downlink_msg(const char *_szMsg, size_t _len)
+// {
+//   szMsg = _szMsg;
+//   len = _len;
+// }
 
-size_t PiksiControlTask::get_current_fn_number() const
-{
-  return fnSeqNum;
-}
+// int PiksiControlTask::get_current_state() const
+// {
+//   return currentState;
+// }
 
-bool PiksiControlTask::request_state(int requested_state)
-{
-  if (requested_state == CONFIG)
-    currentState = CONFIG;
-  else if (currentState == IDLE)
-    currentState = requested_state;
-  else
-    return false;
-  fnSeqNum = 0;
-  return true;
-}
+// size_t PiksiControlTask::get_current_fn_number() const
+// {
+//   return fnSeqNum;
+// }
+
+// bool PiksiControlTask::request_state(int requested_state)
+// {
+//   if (requested_state == CONFIG)
+//     currentState = CONFIG;
+//   else if (currentState == IDLE)
+//     currentState = requested_state;
+//   else
+//     return false;
+//   fnSeqNum = 0;
+//   return true;
+// }
 
 int PiksiControlTask::execute()
 {
   // TODO: allow any state to ignore state and call CONFIG, remember to reset fnSeqNum
   int result = 1;
-  
-  result = piksi.read_buffer();
+  result = exec_read_buffer();
+  //result = piksi.read_buffer();
   return result;
 
   // switch (currentState)
@@ -67,6 +68,10 @@ int PiksiControlTask::execute()
   // if (fnSeqNum == 0)
   //   currentState = IDLE;
   // return result;
+}
+int PiksiControlTask::exec_read_buffer(){
+  return 0;
+  //return piksi.read_buffer();
 }
 
 // int PiksiControlTask::dispatch_sbdwb()

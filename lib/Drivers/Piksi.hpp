@@ -4,6 +4,9 @@
 #ifndef DESKTOP
 #include <HardwareSerial.h>
 #include "../Devices/Device.hpp"
+#else
+#include <iostream>
+#include <string>
 #endif
 
 #include <GPSTime.hpp>
@@ -37,8 +40,8 @@ class Piksi {
     #ifndef DESKTOP
     Piksi(const std::string &name, HardwareSerial &serial_port);
     #else
-    //using String = std::string;
-
+    using String = std::string;
+    //Piksi();
     Piksi(const std::string &name);
     #endif
 

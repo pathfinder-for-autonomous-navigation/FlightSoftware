@@ -18,11 +18,20 @@ sbp_msg_callbacks_node_t Piksi::_heartbeat_callback_node;
 sbp_msg_callbacks_node_t Piksi::_uart_state_callback_node;
 sbp_msg_callbacks_node_t Piksi::_user_data_callback_node;
 
+#ifndef DESKTOP
 Piksi::Piksi(const std::string &name, HardwareSerial &serial_port)
     : Device(name), _serial_port(serial_port) {}
+#else
+Piksi::Piksi(const std::string &name) 
+    : Device(name) {}
+//Piksi::Piksi();
+#endif
+
 
 bool Piksi::setup() {
+    #ifndef DESKTOP
     _serial_port.begin(BAUD_RATE);
+    #endif
 
     clear_log();
     _heartbeat.flags = 1;  // By default, let there be an error in the system.
@@ -312,10 +321,21 @@ unsigned char Piksi::read_buffer() {
     }
 }
 
-u32 Piksi::bytes_available() { return _serial_port.available(); }
-void Piksi::clear_bytes() { _serial_port.clear(); }
+u32 Piksi::bytes_available() { 
+    #ifndef DESKTOP
+    return _serial_port.available(); 
+    #endif
+    return 0;
+}
+void Piksi::clear_bytes() { 
+    #ifndef DESKTOP
+    _serial_port.clear(); 
+    #endif
+    }
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     Piksi *piksi = (Piksi *)context;
+    
+    #ifndef DESKTOP
     HardwareSerial &sp = piksi->_serial_port;
 
     u32 i;
@@ -326,16 +346,23 @@ u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
             break;
     }
     return i;
+    #else
+    return 0;
+    #endif
 }
 
 u32 Piksi::_uart_write(u8 *buff, u32 n, void *context) {
     Piksi *piksi = (Piksi *)context;
+    #ifndef DESKTOP
     HardwareSerial &sp = piksi->_serial_port;
     u32 i;
     for (i = 0; i < n; i++) {
         if (sp.write(buff[i]) == 0) break;
     }
     return i;
+    #else
+    return 0;
+    #endif
 }
 
 void Piksi::_insert_log_msg(u8 msg[]) {
