@@ -96,18 +96,20 @@ class Piksi : public Device {
      *  @return Vertical dilution of precision. **/
     unsigned short int get_dops_vertical();
 
-    /** @brief Gets satellite position in ECEF coordinates.
-     *  @param position A pointer to the destination struct for the information.
-     * **/
-    virtual void get_pos_ecef(std::array<int, 3> *position);
+    /**
+     * @brief Get the position in ECEF coordinates
+     * 
+     * @param position A pointer to an std::array of doubles for the position
+     */
+    virtual void get_pos_ecef(std::array<double, 3> *position);
 
     /**
      * @brief Get the Position in ECEF coordinates, and the time of week int
      *
      * @param tow A pointer to the tow int
-     * @param position A pointer to the std::array of position
+     * @param position A pointer to the std::array of doubles for the position
      */
-    virtual void get_pos_ecef(unsigned int *tow, std::array<int, 3> *position);
+    virtual void get_pos_ecef(unsigned int *tow, std::array<double, 3> *position);
 
     /** @brief Get number of satellites used for determining GPS position.
      *  @return Number of satellites used for determining GPS position. **/
@@ -117,19 +119,20 @@ class Piksi : public Device {
      *  @return Status flags of GPS position measurement. **/
     virtual unsigned char get_pos_ecef_flags();
 
-    /** @brief Gets satellite position in ECEF coordinates relative to base
-     * station.
-     *  @param position A pointer to the destination struct for the information.
-     * **/
-    virtual void get_baseline_ecef(std::array<int, 3> *position);
+    /**
+     * @brief Get the baseline ECEF coordinates
+     * 
+     * @param position A pointer to the std::array of doubles for the baseline position
+     */
+    virtual void get_baseline_ecef(std::array<double, 3> *position);
 
     /**
      * @brief Get the baseline ECEF coordinates, and the time of week int
      *
      * @param tow A pointer to the tow int
-     * @param position A pointer to the std::array of the baseline position
+     * @param position A pointer to the std::array of doubles for the baseline position
      */
-    virtual void get_baseline_ecef(unsigned int *tow, std::array<int, 3> *position);
+    virtual void get_baseline_ecef(unsigned int *tow, std::array<double, 3> *position);
 
     /** @brief Get number of satellites used for determining GPS baseline
      * position.
@@ -142,17 +145,17 @@ class Piksi : public Device {
     unsigned char get_baseline_ecef_flags();
 
     /** @brief Gets satellite velocity in ECEF coordinates.
-     *  @param velocity A pointer to the std::array for velocity
+     *  @param velocity A pointer to the std::array of doubles for velocity
      * **/
-    virtual void get_vel_ecef(std::array<int, 3> *velocity);
+    virtual void get_vel_ecef(std::array<double, 3> *velocity);
 
     /**
      * @brief Gets satellite velocity in ECEF coordinates and the time of week.
      *
      * @param int A pointer to the tow int
-     * @param velocity A pointer to the std::array for velocity
+     * @param velocity A pointer to the std::array of doubles for velocity
      */
-    virtual void get_vel_ecef(unsigned int *tow, std::array<int, 3> *velocity);
+    virtual void get_vel_ecef(unsigned int *tow, std::array<double, 3> *velocity);
 
     /** @brief Get number of satellites used for determining GPS velocity.
      *  @return Number of satellites used for determining GPS velocity. **/
@@ -163,9 +166,9 @@ class Piksi : public Device {
     unsigned char get_vel_ecef_flags();
 
     /** @brief Gets base station position in ECEF coordinates.
-     *  @param position A pointer to an array for storing the x,y,z coordinates of
+     *  @param position A pointer to an std::array of doubles for storing the x,y,z coordinates of
      * the base station. **/
-    virtual void get_base_pos_ecef(std::array<int, 3> *position);
+    virtual void get_base_pos_ecef(std::array<double, 3> *position);
 
     /** @brief Returns state of integer ambiguity resolution (IAR) process. **/
     virtual unsigned int get_iar();

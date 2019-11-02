@@ -13,9 +13,9 @@ int setup_start_time;
 int second_time;
 int preread_time;
 
-std::array<int, 3> pos;
-std::array<int, 3> vel;
-std::array<int, 3> baseline_pos;
+std::array<double, 3> pos;
+std::array<double, 3> vel;
+std::array<double, 3> baseline_pos;
 msg_gps_time_t time;
 unsigned int prev_tow = 0;
 int out;
@@ -38,6 +38,10 @@ bool comp(T a, T b, float margin) {
     return true;
 }
 float ssqrt(std::array<int, 3> in) {
+    return (float)sqrt(((float)in[0]) * ((float)in[0]) + ((float)in[1]) * ((float)in[1]) +
+                       ((float)in[2]) * ((float)in[2]));
+}
+float ssqrt(std::array<double, 3> in) {
     return (float)sqrt(((float)in[0]) * ((float)in[0]) + ((float)in[1]) * ((float)in[1]) +
                        ((float)in[2]) * ((float)in[2]));
 }
