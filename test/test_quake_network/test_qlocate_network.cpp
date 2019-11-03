@@ -131,7 +131,7 @@ int main(void)
     while (!Serial)
         ;
     UNITY_BEGIN();
-    // RUN_TEST(test_sbdix_with_network);
+    RUN_TEST(test_sbdix_with_network);
     RUN_TEST(test_sbdrb_with_network);
     UNITY_END();
     return 0;
