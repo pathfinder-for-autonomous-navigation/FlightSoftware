@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 //
 //  QLocate.hpp
 //  QLocate
@@ -209,3 +210,4 @@ short QLocate::checksum(char const *c, int len) {
     while (c < cf) s += *(c++);
     return s;
 }
+#endif

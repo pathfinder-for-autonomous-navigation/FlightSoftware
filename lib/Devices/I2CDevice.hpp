@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 /** @file I2CDevice.cpp
  * @author Tanishq Aggarwal
  * @author Kyle Krol
@@ -192,4 +193,5 @@ class I2CDevice : public Device {
 
 #include "I2CDevice.inl"
 
+#endif
 #endif

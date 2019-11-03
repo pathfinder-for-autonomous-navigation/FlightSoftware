@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 //
 //  QLocate.hpp
 //  QLocate
@@ -137,4 +138,5 @@ class QLocate : public Device {
 // End QLocate
 // -----------------------------------------------------------------------------
 
+#endif
 #endif

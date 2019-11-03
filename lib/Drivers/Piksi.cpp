@@ -22,8 +22,8 @@ sbp_msg_callbacks_node_t Piksi::_user_data_callback_node;
 Piksi::Piksi(const std::string &name, HardwareSerial &serial_port)
     : Device(name), _serial_port(serial_port) {}
 #else
-Piksi::Piksi(const std::string &name) 
-    : Device(name) {}
+Piksi::Piksi(const std::string &name) {}
+    //: Device(name) {}
 //Piksi::Piksi();
 #endif
 
@@ -333,9 +333,9 @@ void Piksi::clear_bytes() {
     #endif
     }
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
+    #ifndef DESKTOP
     Piksi *piksi = (Piksi *)context;
     
-    #ifndef DESKTOP
     HardwareSerial &sp = piksi->_serial_port;
 
     u32 i;
@@ -352,8 +352,9 @@ u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
 }
 
 u32 Piksi::_uart_write(u8 *buff, u32 n, void *context) {
-    Piksi *piksi = (Piksi *)context;
     #ifndef DESKTOP
+
+    Piksi *piksi = (Piksi *)context;
     HardwareSerial &sp = piksi->_serial_port;
     u32 i;
     for (i = 0; i < n; i++) {
