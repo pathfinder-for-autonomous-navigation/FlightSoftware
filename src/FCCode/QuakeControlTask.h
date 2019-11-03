@@ -20,7 +20,6 @@ static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 class QuakeControlTask : public ControlTask<int>
 {
 public:
-  // TODO: decide how we want to initialize the Driver
   #ifndef DESKTOP
   QuakeControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
                                                    quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
