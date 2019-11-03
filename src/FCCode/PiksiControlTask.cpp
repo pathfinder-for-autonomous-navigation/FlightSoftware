@@ -70,8 +70,8 @@ int PiksiControlTask::execute()
   // return result;
 }
 int PiksiControlTask::exec_read_buffer(){
-  return 0;
-  //return piksi.read_buffer();
+  //return 0;
+  return piksi.read_buffer();
 }
 
 // int PiksiControlTask::dispatch_sbdwb()

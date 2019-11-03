@@ -281,10 +281,6 @@ class Piksi {
      * @param settings Struct containing setting changes for the Piksi. **/
     void settings_write(const msg_settings_write_t &settings);
 
-    /** @brief Creates settings object containing default settings for PAN and
-     * writes them to RAM. **/
-    void write_default_settings();
-
     /** @brief Resets Piksi. **/
     void piksi_reset();
 

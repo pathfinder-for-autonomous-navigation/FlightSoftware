@@ -1,6 +1,9 @@
 #include "Piksi.hpp"
+#include <cstring>
 
 using namespace Devices;
+//using namespace std;
+
 
 // Initialize callback nodes so that C++ doesn't complain about them not being
 // defined.
@@ -80,73 +83,6 @@ bool Piksi::setup() {
                               &Piksi::_user_data_callback_node);
 
     return (registration_successful == 0);
-}
-
-void Piksi::write_default_settings() {
-    // Output controls.
-    const char *gpgll_output_rate = "nmea\000gpgll msg rate\0000";
-    const char *gpgsv_output_rate = "nmea\000gpgsv msg rate\0000";
-    const char *gprmc_output_rate = "nmea\000gprmc msg rate\0000";
-    const char *gpvtg_output_rate = "nmea\000gpvtg msg rate\0000";
-    const char *obs_msg_max_size = "sbp\000obs msg max size\000102";  // This is a default specified
-                                                                      // by SwiftNav
-    const char *obs_output_rate = "solution\000output every n obs\0001";
-    const char *soln_frequency =
-        "solution\000soln freq\00010";  // This is a default specified by SwiftNav
-    const char *broadcast_surveyed_position = "surveyed position\000broadcast\000true";
-    // RTK solution settings.
-    const char *dgnss_solution_mode = "solution\000dgnss solution mode\000TimeMatched";
-    // Hardware watchdog.
-    const char *enable_hardware_watchdog = "system monitor\000watchdog\000true";
-    // Heartbeat output rate.
-    const char *heartbeat_period = "system monitor\000heartbeat period milliseconds\00010000";
-    // Telemetry radio settings
-    const char *telemetry_settings =
-        "telemetry radio\000configuration "
-        "string\000AT&F,ATS1=57,ATS2=64,ATS5=0,AT&W,"
-        "ATZ";
-
-    // UART A (radio) settings.
-    const char *uart_a_output_mask =
-        "uart uarta\000sbp message mask\0000x0840";  // MSG_OBS | MSG_USER_DATA
-    const char *uart_a_configure_radio_on_boot =
-        "uart uarta\000configure telemetry radio on boot\000true";
-    const char *uart_a_baudrate = "uart uarta\000baudrate\00057600";  // This is a default specified
-                                                                      // by SwiftNav
-
-    // UART B (controller) output mask.
-    const char *uart_b_output_mask =
-        "uart uarta\000sbp message mask\0000xffff";  // Every message is passed to
-                                                     // controller
-    const char *uart_b_configure_radio_on_boot =
-        "uart uarta\000configure telemetry radio on boot\000false";
-    const char *uart_b_baudrate = "uart uarta\000baudrate\000115200";  // This is a default
-                                                                       // specified by SwiftNav
-
-    // Now write the settings to the device!
-    const char *settings[] = {gpgll_output_rate,
-                              gpgsv_output_rate,
-                              gprmc_output_rate,
-                              gpvtg_output_rate,
-                              obs_msg_max_size,
-                              obs_output_rate,
-                              soln_frequency,
-                              broadcast_surveyed_position,
-                              dgnss_solution_mode,
-                              enable_hardware_watchdog,
-                              heartbeat_period,
-                              telemetry_settings,
-                              uart_a_output_mask,
-                              uart_a_configure_radio_on_boot,
-                              uart_a_baudrate,
-                              uart_b_output_mask,
-                              uart_b_configure_radio_on_boot,
-                              uart_b_baudrate};
-    for (unsigned char i = 0; i < sizeof(settings) / sizeof(std::string); i++) {
-        msg_settings_write_t setting;
-        memcpy(setting.setting, settings[i], sizeof(settings[i]) / sizeof(char));
-        settings_write(setting);
-    }
 }
 
 bool Piksi::is_functional() {
