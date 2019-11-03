@@ -8,16 +8,19 @@
 
 class DockingController : public ControlTask<void> {
    public:
-    DockingSystem& docksys;
-    DockingController(StateFieldRegistry& registry);
+    
+    DockingController(StateFieldRegistry& registry, DockingSystem& docksys);
     void execute() override;
 
    protected:
 
-    std::shared_ptr<WritableStateField<unsigned int>> set_mode_fp;
+    std::shared_ptr<WritableStateField<unsigned int>> is_turning_fp;
+    Serializer<unsigned int> is_turning_sr;
+    WritableStateField<unsigned int>is_turning_f;
 
-    Serializer<unsigned int> check_mode_sr;
-    WritableStateField<unsigned int>check_mode_f;
+    std::shared_ptr<WritableStateField<unsigned int>> docking_mode_fp;
+    Serializer<unsigned int> docking_mode_sr;
+    WritableStateField<unsigned int>docking_mode_f;
 
 };
 
