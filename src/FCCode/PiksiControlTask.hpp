@@ -33,7 +33,7 @@ public:
                                                   //  szMsg(nullptr),
                                                   //  len(0){}
   #else
-  PiksiControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry), piksi("piksi"){}
+  PiksiControlTask(StateFieldRegistry &registry);
 
   //PiksiControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),piksi("Piksi"){}
   
@@ -80,7 +80,7 @@ private:
   //piksi
   Devices::Piksi piksi;
   //Piksi piksi;
-
+  
   // Piksi should never be in both IDLE and fnSeqNum != 0
   // int currentState; // the state of the Piksi
   // int fnSeqNum;     // the sequence we are on

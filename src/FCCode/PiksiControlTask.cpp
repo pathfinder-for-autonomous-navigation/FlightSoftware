@@ -2,6 +2,8 @@
 
 using namespace Devices;
 
+PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry), 
+  piksi("piksi"){}
 
 // void PiksiControlTask::set_downlink_msg(const char *_szMsg, size_t _len)
 // {
