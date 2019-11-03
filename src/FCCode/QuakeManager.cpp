@@ -3,11 +3,7 @@
 QuakeManager::QuakeManager(StateFieldRegistry &registry) : ControlTask<void>(registry),
     radio_mode_sr(0, 10, 4),
     radio_mode_f("radio.mode", radio_mode_sr),
-#ifdef DESKTOP
-    qct()
-#else 
-
-#endif
+    qct(registry)
 { 
     control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 }
