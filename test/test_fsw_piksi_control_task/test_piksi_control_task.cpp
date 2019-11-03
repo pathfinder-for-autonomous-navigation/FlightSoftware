@@ -14,7 +14,9 @@ void test_task_execute()
 {
     StateFieldRegistry registry;
     PiksiControlTask task(registry);
-    TEST_ASSERT_TRUE(true);
+
+    //expect 1 cuz no bytes can be read lmao
+    TEST_ASSERT_EQUAL(1,task.execute());
     // Check that things are initialized correctly
     //   TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
     //   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());

@@ -67,6 +67,11 @@ public:
   // /**
   //  * Set the message that Piksi should downlink.  */
   // void set_downlink_msg(const char *, size_t);
+protected:
+  Devices::Piksi piksi;
+
+  Serializer<d_vector_t> pos_sr;
+  ReadableStateField<d_vector_t> pos_f;
 
 private:
   // all dispatch_x functions return 0 on success and an error code otherwise
@@ -78,7 +83,6 @@ private:
   // int dispatch_config();
   // int dispatch_is_functional();
   //piksi
-  Devices::Piksi piksi;
   //Piksi piksi;
   
   // Piksi should never be in both IDLE and fnSeqNum != 0
@@ -87,4 +91,6 @@ private:
 
   // const char *szMsg; // the message to downlink
   // size_t len;        // length of the message to downlink
+
+  
 };

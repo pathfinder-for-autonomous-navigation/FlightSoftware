@@ -3,7 +3,10 @@
 using namespace Devices;
 
 PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry), 
-  piksi("piksi"){}
+  piksi("piksi"),
+  pos_sr(0,100000,10),
+  pos_f("piksi.pos",pos_sr)
+  {}
 
 // void PiksiControlTask::set_downlink_msg(const char *_szMsg, size_t _len)
 // {
@@ -36,7 +39,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<i
 int PiksiControlTask::execute()
 {
   // TODO: allow any state to ignore state and call CONFIG, remember to reset fnSeqNum
-  int result = 1;
+  int result = -1;
   result = exec_read_buffer();
   //result = piksi.read_buffer();
   return result;
@@ -72,7 +75,7 @@ int PiksiControlTask::execute()
   // return result;
 }
 int PiksiControlTask::exec_read_buffer(){
-  //return 0;
+  //returns 1 when buffer is empty, which it will be on desktop
   return piksi.read_buffer();
 }
 
