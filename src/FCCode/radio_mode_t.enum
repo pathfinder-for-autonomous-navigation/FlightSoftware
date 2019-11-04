@@ -6,7 +6,7 @@ enum class radio_mode_t {
   startup,
   waiting,
   transceiving,
-  manual
+  manual, // Always try to receive comms
 };
 
 #endif

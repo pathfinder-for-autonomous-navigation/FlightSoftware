@@ -186,12 +186,12 @@ bool setup();
     /*! Returns pin # for Network Ready pin. */
     unsigned char nr_pin();
 
+    /*! sbdix integer response array */
+    int sbdix_r[6];
+
 protected:
     /*! Mobile terminated (MT) message data */
     char message[340];
-
-    /*! sbdix integer response array */
-    int sbdix_r[6];
 
     /*! Serial port designated to the QLocate */
 #ifndef DESKTOP

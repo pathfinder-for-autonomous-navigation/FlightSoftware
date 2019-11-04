@@ -17,6 +17,27 @@ static constexpr int SBDIX = 3;         // SBDIX operation
 static constexpr int CONFIG = 4;        // Config operation
 static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
+const char* translate_state(int state)
+{
+  switch (state)
+  {
+    case IDLE:
+      return "IDLE";
+    case SBDWB:
+      return "SBDWB";
+    case SBDRB:
+      return "SBDRB";
+    case SBDIX:
+      return "SBDIX";
+    case CONFIG:
+      return "CONFIG";
+    case IS_FUNCTIONAL:
+      return "IS_FUNCTIONAL";
+    default:
+      "[Error]: INVALID_QUAKE_STATE";
+  }
+}
+
 class QuakeControlTask : public ControlTask<int>
 {
 public:
@@ -61,6 +82,8 @@ public:
    * Set the message that Quake should downlink.  */
   void set_downlink_msg(const char *, size_t);
 
+  Devices::QLocate quake;
+
 private:
   // all dispatch_x functions return 0 on success and an error code otherwise
   int dispatch_sbdwb();
@@ -68,7 +91,7 @@ private:
   int dispatch_sbdix();
   int dispatch_config();
   int dispatch_is_functional();
-  Devices::QLocate quake;
+
   // Quake should never be in both IDLE and fnSeqNum != 0
   int currentState; // the state of the Quake
   int fnSeqNum;     // the sequence we are on
