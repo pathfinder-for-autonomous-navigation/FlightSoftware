@@ -198,6 +198,15 @@ class Piksi {
     /** @brief Returns state of integer ambiguity resolution (IAR) process. **/
     virtual unsigned int get_iar();
 
+    //meme
+    #ifdef DESKTOP
+    void set_gps_time(const unsigned int tow);
+    void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position);
+    void set_vel_ecef(const unsigned int tow, const std::array<double, 3>& velocity);
+    void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position);
+    void set_read_return(const unsigned int out);
+    #endif
+
     /** @brief Reads current settings in Piksi RAM.
      *  @return Current settings in Piksi RAM, as a libsbp struct. **/
     char *get_settings_read_resp();
@@ -374,6 +383,10 @@ class Piksi {
     msg_heartbeat_t _heartbeat;
     msg_uart_state_t _uart_state;
     msg_user_data_t _user_data;
+
+    #ifdef DESKTOP
+    unsigned int _read_return;
+    #endif
 };
 }  // namespace Devices
 

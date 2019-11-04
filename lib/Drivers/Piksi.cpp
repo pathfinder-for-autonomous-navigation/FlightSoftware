@@ -151,6 +151,7 @@ void Piksi::get_vel_ecef(unsigned int *tow, std::array<double, 3> *velocity) {
     (*velocity)[0] = _vel_ecef.x;
     (*velocity)[1] = _vel_ecef.y;
     (*velocity)[2] = _vel_ecef.z;
+    
 }
 
 unsigned char Piksi::get_vel_ecef_nsats() { return _vel_ecef.n_sats; }
@@ -161,6 +162,33 @@ void Piksi::get_base_pos_ecef(std::array<double, 3> *position) {
     (*position)[1] = _pos_ecef.y;
     (*position)[2] = _pos_ecef.z;
 }
+
+#ifdef DESKTOP
+void Piksi::set_gps_time(const unsigned int tow){
+    _gps_time.tow = tow;
+}
+void Piksi::set_pos_ecef(const unsigned int tow, const std::array<double,3>& position){
+    _pos_ecef.tow = tow;
+    _pos_ecef.x = position[0];
+    _pos_ecef.y = position[1];
+    _pos_ecef.z = position[2];
+}
+void Piksi::set_vel_ecef(const unsigned int tow, const std::array<double,3>& velocity){
+    _vel_ecef.tow = tow;
+    _vel_ecef.x = velocity[0];
+    _vel_ecef.y = velocity[1];
+    _vel_ecef.z = velocity[2];
+}
+void Piksi::set_baseline_ecef(const unsigned int tow, const std::array<double,3>& position){
+    _baseline_ecef.tow = tow;
+    _baseline_ecef.x = position[0];
+    _baseline_ecef.y = position[1];
+    _baseline_ecef.z = position[2];
+}
+void Piksi::set_read_return(const unsigned int out){
+    _read_return = out;
+}
+#endif
 
 unsigned int Piksi::get_iar() { return _iar.num_hyps; }
 
@@ -232,6 +260,7 @@ unsigned char Piksi::process_buffer_msg_len() {
 }
 
 unsigned char Piksi::read_buffer() {
+    #ifndef DESKTOP
     int initial_bytes = bytes_available();
 
     if (initial_bytes == 299 || initial_bytes == 333) {
@@ -255,11 +284,18 @@ unsigned char Piksi::read_buffer() {
         }
         return 1;
     }
+    #else
+        return _read_return;
+    #endif
+    //make compiler happy
+    //return 3;
 }
 
 u32 Piksi::bytes_available() { 
     #ifndef DESKTOP
     return _serial_port.available(); 
+    #else
+
     #endif
     return 0;
 }

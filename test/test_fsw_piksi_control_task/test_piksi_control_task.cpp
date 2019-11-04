@@ -1,6 +1,10 @@
 #include <StateFieldRegistry.hpp>
 #include "../../src/FCCode/PiksiControlTask.hpp"
 #include <unity.h>
+#include <Piksi.hpp>
+
+#include <chrono>
+#include <ctime>
 
 using namespace Devices;
 
@@ -15,8 +19,56 @@ void test_task_execute()
     StateFieldRegistry registry;
     PiksiControlTask task(registry);
 
+    //TEST_ASSERT_EQUAL()
+    std::array<double, 3> pos = {4000.0, 5000.0, 6000.0};
+    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+    std::array<double, 3> baseline_pos = {4000.0, 5000.0, 6000.0};
+
+
+    unsigned int tow = 0;
+    task.piksi.set_gps_time(tow);
+    task.execute();
+
+    TEST_ASSERT_EQUAL(BAD_DATA, task.get_current_state());
+
+    tow = 100;
+
+    task.piksi.set_gps_time(tow);
+    task.piksi.set_read_return(0);
+    task.piksi.set_pos_ecef(tow, pos);
+    task.piksi.set_vel_ecef(tow, vel);
+    task.piksi.set_baseline_ecef(tow, baseline_pos);
+
+    task.execute();
+    TEST_ASSERT_EQUAL(SUCCESS, task.get_current_state());
+
+    tow = 200;
+    task.piksi.set_gps_time(tow);
+    task.piksi.set_read_return(0);
+    task.piksi.set_pos_ecef(tow, pos);
+    task.piksi.set_vel_ecef(tow, vel);
+    task.piksi.set_baseline_ecef(tow, baseline_pos);
+
+    task.execute();
+    TEST_ASSERT_EQUAL(SUCCESS, task.get_current_state());
+
+    //don't update the time, should yield BAD_TIME
+    task.piksi.set_gps_time(tow);
+    task.piksi.set_read_return(0);
+    task.piksi.set_pos_ecef(tow, pos);
+    task.piksi.set_vel_ecef(tow, vel);
+    task.piksi.set_baseline_ecef(tow, baseline_pos);
+
+    task.execute();
+    TEST_ASSERT_EQUAL(BAD_DATA, task.get_current_state());
+
+    
+
+ 
     //expect 1 cuz no bytes can be read lmao
-    TEST_ASSERT_EQUAL(1,task.execute());
+    // int read_res = task.exec_read_buffer();
+    // int update_res = task.
+
     // Check that things are initialized correctly
     //   TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
     //   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());

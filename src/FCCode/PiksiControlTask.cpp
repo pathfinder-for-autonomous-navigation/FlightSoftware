@@ -2,11 +2,22 @@
 
 using namespace Devices;
 
-PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry), 
-  piksi("piksi"),
-  pos_sr(0,100000,10),
-  pos_f("piksi.pos",pos_sr)
-  {}
+PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<void>(registry),
+                                                                   piksi("piksi"),
+                                                                   pos_sr(0, 100000, 10),
+                                                                   pos_f("piksi.pos", pos_sr),
+                                                                   vel_sr(0, 100000, 10),
+                                                                   vel_f("piksi.vel", vel_sr),
+                                                                   baseline_pos_sr(0, 100000, 10),
+                                                                   baseline_pos_f("piksi.baseline.pos", baseline_pos_sr),
+                                                                   currentState_sr(0, 2, 2),
+                                                                   currentState_f("piksi.state", currentState_sr)
+{
+  add_readable_field(pos_f);
+  add_readable_field(vel_f);
+  add_readable_field(baseline_pos_f);
+  add_readable_field(currentState_f);
+}
 
 // void PiksiControlTask::set_downlink_msg(const char *_szMsg, size_t _len)
 // {
@@ -14,10 +25,10 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<i
 //   len = _len;
 // }
 
-// int PiksiControlTask::get_current_state() const
-// {
-//   return currentState;
-// }
+int PiksiControlTask::get_current_state() const
+{
+  return currentState;
+}
 
 // size_t PiksiControlTask::get_current_fn_number() const
 // {
@@ -36,13 +47,48 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<i
 //   return true;
 // }
 
-int PiksiControlTask::execute()
+void PiksiControlTask::execute()
 {
   // TODO: allow any state to ignore state and call CONFIG, remember to reset fnSeqNum
-  int result = -1;
-  result = exec_read_buffer();
+  int res_buffer_read = piksi.read_buffer();
+  if (res_buffer_read == 1){
+    currentState = BAD_BUFFER;
+  }
+  else if(res_buffer_read == 2){
+    currentState = MSG_LEN_WRONG;
+  }
+  //res_buffer = 0;
+  else{
+    get_values();
+    //int ver_good = verify_good();
+
+    bool time_valid = pos_tow == time.tow && vel_tow == time.tow 
+    && baseline_tow == time.tow && time.tow > tow_past;
+    bool nsats_valid = true;
+
+    if(time_valid && nsats_valid){
+      pos_f.set(pos);
+      vel_f.set(vel);
+      baseline_pos_f.set(baseline_pos);
+      currentState = SUCCESS;
+    }
+    else if(time_valid && !nsats_valid){
+      // TODO SET TIME STATE FIELD
+      currentState = BAD_NSATS;
+    }
+    else
+    {
+      // time is not good and nsats not good, so nothing is good, set nothing
+      currentState = BAD_DATA;
+    }
+
+    
+  }
+
+  currentState_f.set(currentState);
+
   //result = piksi.read_buffer();
-  return result;
+  //return res1 + res2;
 
   // switch (currentState)
   // {
@@ -74,9 +120,28 @@ int PiksiControlTask::execute()
   //   currentState = IDLE;
   // return result;
 }
-int PiksiControlTask::exec_read_buffer(){
-  //returns 1 when buffer is empty, which it will be on desktop
-  return piksi.read_buffer();
+
+int PiksiControlTask::get_values()
+{
+  tow_past = time.tow;
+  piksi.get_gps_time(&time);
+
+  pos_past = pos_tow;
+  vel_past = vel_tow;
+  baseline_past = baseline_tow;
+
+  piksi.get_pos_ecef(&pos_tow, &pos);
+
+  //pos_f.set(static_cast<d_vector_t>(pos_tow));
+  //pos_f.set(pos);
+
+  piksi.get_vel_ecef(&vel_tow, &vel);
+  piksi.get_baseline_ecef(&baseline_tow, &baseline_pos);
+
+  iar = piksi.get_iar();
+
+  //bool ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
+  return 0;
 }
 
 // int PiksiControlTask::dispatch_sbdwb()
