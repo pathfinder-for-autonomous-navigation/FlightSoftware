@@ -25,7 +25,7 @@ class TestFixture {
         const unsigned int control_cycle_size = 8000000;
         clock_manager = std::make_unique<ClockManager>(registry, control_cycle_size);
 
-        constexpr unsigned int allocated_starts[2] = {2000, 6000};
+        constexpr unsigned int allocated_starts[2] = {2001, 6001};
         dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, allocated_starts[0]);
         dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, allocated_starts[1]);
     }
@@ -62,29 +62,24 @@ void test_task_execute() {
     t_end2 = tf.get_system_time();
     t_delta1 = tf.duration_to_us(t_end1 - t_start);
     t_delta2 = tf.duration_to_us(t_end2 - t_start);
-    TEST_ASSERT_GREATER_OR_EQUAL(2000, t_delta1);
-    TEST_ASSERT_LESS_OR_EQUAL(3000, t_delta1);
-    TEST_ASSERT_GREATER_OR_EQUAL(6000, t_delta2);
-    TEST_ASSERT_LESS_OR_EQUAL(7000, t_delta2);
+    TEST_ASSERT_UINT32_WITHIN(10, 2000, t_delta1);
+    TEST_ASSERT_UINT32_WITHIN(10, 6000, t_delta2);
 
     // Two-cycle test
     t_end1 = tf.execute();
     t_end2 = tf.get_system_time();
     t_delta1 = tf.duration_to_us(t_end1 - t_start);
     t_delta2 = tf.duration_to_us(t_end2 - t_start);
-    TEST_ASSERT_GREATER_OR_EQUAL(10000, t_delta1);
-    TEST_ASSERT_LESS_OR_EQUAL(11000, t_delta1);
-    TEST_ASSERT_GREATER_OR_EQUAL(14000, t_delta2);
-    TEST_ASSERT_LESS_OR_EQUAL(15000, t_delta2);
+    TEST_ASSERT_UINT32_WITHIN(10, 10000, t_delta1);
+    TEST_ASSERT_UINT32_WITHIN(10, 14000, t_delta2);
 
     // Stress test the timing guarantee for the control cycle
     // time over many cycles
     t_start = tf.get_system_time();
-    for(int i = 0; i < 100; i++) tf.execute();
+    for(int i = 0; i < 1000; i++) tf.execute();
     const systime_t t_end = tf.get_system_time();
     const unsigned int t_delta = tf.duration_to_us(t_end - t_start);
-    TEST_ASSERT_GREATER_OR_EQUAL(798000, t_delta);
-    TEST_ASSERT_LESS_OR_EQUAL(799000, t_delta);
+    TEST_ASSERT_UINT32_WITHIN(2000, 7998000, t_delta); // 2 ms drift over a period of 8 seconds. Pretty good!
 }
 
 int test_timed_control_task() {

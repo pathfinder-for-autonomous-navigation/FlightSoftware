@@ -55,7 +55,7 @@ class TimedControlTask : public ControlTask<T> {
      */
     void wait_until_time(const systime_t& time) const {
       #ifdef DESKTOP
-        while((signed int) duration_to_us(time - get_system_time()) >= 0);
+        while((signed int) duration_to_us(time - get_system_time()) > 0);
       #else
         while ((signed int)(time - micros()) > 0) {
           delayMicroseconds(10);
@@ -114,7 +114,7 @@ class TimedControlTask : public ControlTask<T> {
     TimedControlTask(
                       StateFieldRegistry& registry,
                       const unsigned int _offset) :
-        ControlTask<T>(registry), offset(us_to_duration(_offset))
+        ControlTask<T>(registry), offset(us_to_duration(_offset + 1))
     {}
   private:
     /**
