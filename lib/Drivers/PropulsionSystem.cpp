@@ -28,7 +28,7 @@ bool PropulsionSystem::setup() {
     pinMode(temp_sensor_inner_pin, INPUT);
     pinMode(temp_sensor_outer_pin, INPUT);
 
-    thrust_valve_loop_timer.begin(thrust_valve_loop, thrust_valve_loop_interval_us); // Every 5 ms
+    thrust_valve_loop_timer.begin(thrust_valve_loop, thrust_valve_loop_interval_us);
 #endif
     return true;
 }
@@ -37,6 +37,7 @@ void PropulsionSystem::disable() {
 #ifdef DESKTOP
 // TODO
 #else
+    for (unsigned char i = 0; i < 4; i++) thrust_valve_schedule[i] = 0;
     for (unsigned char i = 0; i < 6; i++) digitalWrite(valve_pins[i], LOW);
     thrust_valve_loop_timer.end();
 #endif
@@ -91,6 +92,7 @@ signed int PropulsionSystem::get_temp_inner() {
     return 0; // TODO replace with analogRead
 #endif
 }
+
 signed int PropulsionSystem::get_temp_outer() {
 #ifdef DESKTOP
     return 0;
@@ -128,6 +130,7 @@ void PropulsionSystem::set_tank_valve_state(bool valve, bool state) {
 void PropulsionSystem::thrust_valve_loop() {
     for (unsigned char i = 2; i < 6; i++) {
         if (thrust_valve_schedule[i - 2] < thrust_valve_loop_interval_ms) {
+            // Firing on valve i - 2 is complete
             #ifndef DESKTOP
             digitalWrite(valve_pins[i - 2], LOW);
             #endif
@@ -136,6 +139,7 @@ void PropulsionSystem::thrust_valve_loop() {
             continue;
         }
         else if (!is_valve_opened[i] && !valve_start_locked_out) {
+            // Open valve and prevent other valves from opening at the same time
             valve_start_locked_out = true;
             #ifndef DESKTOP
             digitalWrite(valve_pins[i - 2], HIGH);
@@ -143,10 +147,13 @@ void PropulsionSystem::thrust_valve_loop() {
             is_valve_opened[i] = true;
         }
         else if (valve_start_locked_out) {
+            // 2 ms have passed since the lockout happened, so it's safe to unlock
+            // the valves.
             valve_start_locked_out = false;
         }
 
         if (is_valve_opened[i]) {
+            // Decrement the timer for the valve being open
             thrust_valve_schedule[i - 2] -= thrust_valve_loop_interval_ms;
         }
     }

@@ -17,7 +17,7 @@ namespace Devices {
 class PropulsionSystem : public Device {
    public:
     //! Specifies which valve # corresponds to which physical valve
-    enum valve_ids {
+    enum class valve_ids {
         intertank_main = 0,    // Main tank 1 to tank 2 valve
         intertank_backup = 1,  // Backup tank 1 to tank 2 valve
         nozzle_1 = 2,          // Nozzle valve
@@ -82,10 +82,10 @@ class PropulsionSystem : public Device {
     // should not be opened during the current cycle.
     static volatile bool valve_start_locked_out;
 
-    //! Runs thrust_valve_loop every 5 ms. Initialized in setup().
+    //! Runs thrust_valve_loop every 3 ms. Initialized in setup().
     IntervalTimer thrust_valve_loop_timer;
     //! Loop interval in microseconds.
-    static constexpr unsigned int thrust_valve_loop_interval_us = 5000;
+    static constexpr unsigned int thrust_valve_loop_interval_us = 3000;
     //! Loop interval in milliseconds.
     static constexpr unsigned int thrust_valve_loop_interval_ms =
         thrust_valve_loop_interval_us / 1000;
