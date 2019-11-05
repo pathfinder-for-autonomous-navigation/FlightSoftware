@@ -1,16 +1,16 @@
 #include "../../src/FCCode/TimedControlTask.hpp"
 #include "../../src/FCCode/ClockManager.hpp"
 #include <unity.h>
+#include <iostream>
 
-class DummyTimedControlTask : public TimedControlTask<unsigned int> {
+class DummyTimedControlTask : public TimedControlTask<void> {
   public:
     DummyTimedControlTask(StateFieldRegistry &registry, const unsigned int offset) :
-      TimedControlTask<unsigned int>(registry, offset) {}
+      TimedControlTask<void>(registry, offset) {}
 
     int i = 0;
-    unsigned int execute() {
+    void execute() {
       i++;
-      return i;
     }
 };
 
@@ -63,8 +63,8 @@ void test_task_execute() {
     tf.execute();
     t_end = tf.get_system_time();
     t_delta = tf.duration_to_us(tf.get_time_delta(t_start, t_end));
-    TEST_ASSERT_GREATER_OR_EQUAL(6000, t_delta);
-    TEST_ASSERT_LESS_OR_EQUAL(6020, t_delta);
+    TEST_ASSERT_GREATER_OR_EQUAL(4000, t_delta);
+    TEST_ASSERT_LESS_OR_EQUAL(6000, t_delta);
 
     // Two-cycle test
     systime_t t_original_start = t_start;
@@ -73,10 +73,10 @@ void test_task_execute() {
     t_end = tf.get_system_time();
     t_delta = tf.duration_to_us(tf.get_time_delta(t_start, t_end));
     TEST_ASSERT_GREATER_OR_EQUAL(8000, t_delta);
-    TEST_ASSERT_LESS_OR_EQUAL(8100, t_delta);
+    TEST_ASSERT_LESS_OR_EQUAL(9000, t_delta);
     unsigned int t_total_delta = tf.duration_to_us(tf.get_time_delta(t_original_start, t_end));
-    TEST_ASSERT_GREATER_OR_EQUAL(16000, t_total_delta);
-    TEST_ASSERT_LESS_OR_EQUAL(16020, t_total_delta);
+    TEST_ASSERT_GREATER_OR_EQUAL(12000, t_total_delta);
+    TEST_ASSERT_LESS_OR_EQUAL(14000, t_total_delta);
 
     // Stress test many cycles
     t_start = tf.get_system_time();
@@ -85,8 +85,8 @@ void test_task_execute() {
     }
     t_end = tf.get_system_time();
     t_delta = tf.duration_to_us(tf.get_time_delta(t_start, t_end));
-    TEST_ASSERT_GREATER_OR_EQUAL(80000, t_delta);
-    TEST_ASSERT_LESS_OR_EQUAL(80020, t_delta);
+    TEST_ASSERT_GREATER_OR_EQUAL(796000, t_delta);
+    TEST_ASSERT_LESS_OR_EQUAL(798000, t_delta);
 }
 
 int test_timed_control_task() {
