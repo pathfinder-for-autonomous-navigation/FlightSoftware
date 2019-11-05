@@ -66,6 +66,22 @@ void DockingSystem::dock() {
     step_motor(180.0f);
 }
 
+void DockingSystem::startDock() {
+    if (is_turning_clockwise) {
+        digitalWrite(motor_direction_pin, HIGH);
+    } 
+    else {
+        digitalWrite(motor_direction_pin, LOW);
+    }
+
+    step_motor(180.0f);
+
+}
+
+bool DockingSystem::endDock() {
+    return digitalRead(switch_pin);
+}
+
 void DockingSystem::undock() {
     if (is_turning_clockwise) {
         digitalWrite(motor_direction_pin, LOW);

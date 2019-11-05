@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef DOCKING_CONTROLLER_HPP_
 #define DOCKING_CONTROLLER_HPP_
 
@@ -9,18 +11,25 @@
 class DockingController : public ControlTask<void> {
    public:
     
-    DockingController(StateFieldRegistry& registry, DockingSystem& docksys);
+    #ifndef DESKTOP
+     DockingController(StateFieldRegistry &registry) : ControlTask<int>(registry), DockingSystem() {}
+    #else
+     DockingController(StateFieldRegistry &registry);
+     Devices::DockingSystem DockSys;
+    #endif
+
     void execute() override;
 
    protected:
 
-    std::shared_ptr<WritableStateField<unsigned int>> is_turning_fp;
-    Serializer<unsigned int> is_turning_sr;
-    WritableStateField<unsigned int>is_turning_f;
+    #ifndef DESKTOP
+     Devices::DockingSystem docksys;
+    #endif
 
-    std::shared_ptr<WritableStateField<unsigned int>> docking_mode_fp;
-    Serializer<unsigned int> docking_mode_sr;
-    WritableStateField<unsigned int>docking_mode_f;
+    std::shared_ptr<WritableStateField<bool>> docking_motor_dock_fp;
+
+    Serializer<unsigned int> docked_sr;
+    ReadableStateField<unsigned int>docked_f;
 
 };
 
