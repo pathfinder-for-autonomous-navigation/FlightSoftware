@@ -52,7 +52,9 @@ void PropulsionSystem::enable() {
 
 void PropulsionSystem::reset() {
     disable();
+#ifndef DESKTOP
     delay(10);
+#endif
     enable();
 }
 
@@ -118,8 +120,8 @@ void PropulsionSystem::set_tank_valve_state(bool valve, bool state) {
     disable();
 #ifndef DESKTOP
     delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
-#endif
     digitalWrite(valve_pins[valve], state);
+#endif
     enable();
 }
 

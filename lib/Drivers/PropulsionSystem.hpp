@@ -100,10 +100,10 @@ class PropulsionSystem : public Device {
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
-    const double high_gain_offset = -0.119001938553720;
-    const double high_gain_slope = 0.048713211537332;
-    const double low_gain_offset = 0.154615074342874;
-    const double low_gain_slope = 0.099017990785657;
+    static constexpr double high_gain_offset = -0.119001938553720;
+    static constexpr double high_gain_slope = 0.048713211537332;
+    static constexpr double low_gain_offset = 0.154615074342874;
+    static constexpr double low_gain_slope = 0.099017990785657;
 };
 }  // namespace Devices
 
