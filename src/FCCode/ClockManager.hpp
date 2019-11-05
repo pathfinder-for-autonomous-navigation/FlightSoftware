@@ -14,7 +14,7 @@ class ClockManager : public TimedControlTask<void> {
     ClockManager(StateFieldRegistry& registry, const unsigned int control_cycle_size);
     void execute() override;
 
-    systime_t get_control_cycle_start_time();
+    sys_time_t get_control_cycle_start_time();
    private:
     /**
      * @brief If no control cycle has ended yet, this is set to false.
@@ -26,7 +26,7 @@ class ClockManager : public TimedControlTask<void> {
      * @brief Start time of the most recent control cycle that ended.
      * If no control cycle has ended yet, then this value is undefined.
      */
-    systime_t control_cycle_start_time;
+    sys_time_t control_cycle_start_time;
 
     /**
      * @brief Duration of a control cycle.

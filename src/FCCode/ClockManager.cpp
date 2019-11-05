@@ -14,7 +14,7 @@ ClockManager::ClockManager(StateFieldRegistry &registry,
 
 void ClockManager::execute() {
     if (has_executed) {
-        systime_t earliest_start_time = control_cycle_start_time + control_cycle_size;
+        sys_time_t earliest_start_time = control_cycle_start_time + control_cycle_size;
         wait_until_time(earliest_start_time);
     }
 
@@ -23,6 +23,6 @@ void ClockManager::execute() {
     control_cycle_count_f.set(control_cycle_count_f.get() + 1);
 }
 
-systime_t ClockManager::get_control_cycle_start_time() {
+sys_time_t ClockManager::get_control_cycle_start_time() {
     return control_cycle_start_time;
 }

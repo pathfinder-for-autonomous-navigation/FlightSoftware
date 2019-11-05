@@ -30,15 +30,15 @@ class TestFixture {
         dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, allocated_starts[1]);
     }
 
-    systime_t execute() {
+    sys_time_t execute() {
         clock_manager->execute();
         dummy_task_1->execute_on_time(clock_manager->get_control_cycle_start_time());
-        systime_t ret_time = get_system_time();
+        sys_time_t ret_time = get_system_time();
         dummy_task_2->execute_on_time(clock_manager->get_control_cycle_start_time());
         return ret_time;
     }
 
-    systime_t get_system_time() {
+    sys_time_t get_system_time() {
         return clock_manager->get_system_time();
     }
 
@@ -53,7 +53,7 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
-    systime_t t_start, t_end1, t_end2;
+    sys_time_t t_start, t_end1, t_end2;
     unsigned int t_delta1, t_delta2;
 
     // Single-cycle test
@@ -77,7 +77,7 @@ void test_task_execute() {
     // time over many cycles
     t_start = tf.get_system_time();
     for(int i = 0; i < 1000; i++) tf.execute();
-    const systime_t t_end = tf.get_system_time();
+    const sys_time_t t_end = tf.get_system_time();
     const unsigned int t_delta = tf.duration_to_us(t_end - t_start);
     TEST_ASSERT_UINT32_WITHIN(2000, 7998000, t_delta); // 2 ms drift over a period of 8 seconds. Pretty good!
 }
