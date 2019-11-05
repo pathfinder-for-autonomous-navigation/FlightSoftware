@@ -8,8 +8,9 @@ DockingController::DockingController(StateFieldRegistry& registry)
     }
 
     void DockingController::execute() { 
-      docked_f.set(docksys.check_docked());
+      //if the mission manager says to dock the spacecraft, then call the dock function on the docking system
       if (docking_motor_dock_fp->get()){
         docksys.dock();
       }
+      docked_f.set(docksys.check_docked());
     }
