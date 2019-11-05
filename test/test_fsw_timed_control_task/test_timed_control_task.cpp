@@ -22,22 +22,20 @@ class TestFixture {
     std::unique_ptr<DummyTimedControlTask> dummy_task_2;
 
     TestFixture() : registry() {
-        const unsigned int control_cycle_size = 8000;
+        const unsigned int control_cycle_size = 8000000;
         clock_manager = std::make_unique<ClockManager>(registry, control_cycle_size);
 
-        constexpr unsigned int allocated_times[2] = {2000, 4000};
-        dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, allocated_times[0]);
-        dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, allocated_times[1]);
+        constexpr unsigned int allocated_starts[2] = {2000, 6000};
+        dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, allocated_starts[0]);
+        dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, allocated_starts[1]);
     }
 
-    void execute() {
+    systime_t execute() {
         clock_manager->execute();
         dummy_task_1->execute_on_time(clock_manager->get_control_cycle_start_time());
+        systime_t ret_time = get_system_time();
         dummy_task_2->execute_on_time(clock_manager->get_control_cycle_start_time());
-    }
-
-    systime_duration_t get_time_delta(const systime_t& t1, const systime_t& t2) {
-        return clock_manager->get_time_delta(t1, t2);
+        return ret_time;
     }
 
     systime_t get_system_time() {
@@ -55,38 +53,38 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
-    systime_t t_start, t_end;
-    unsigned int t_delta;
+    systime_t t_start, t_end1, t_end2;
+    unsigned int t_delta1, t_delta2;
 
     // Single-cycle test
     t_start = tf.get_system_time();
-    tf.execute();
-    t_end = tf.get_system_time();
-    t_delta = tf.duration_to_us(tf.get_time_delta(t_start, t_end));
-    TEST_ASSERT_GREATER_OR_EQUAL(4000, t_delta);
-    TEST_ASSERT_LESS_OR_EQUAL(6000, t_delta);
+    t_end1 = tf.execute();
+    t_end2 = tf.get_system_time();
+    t_delta1 = tf.duration_to_us(t_end1 - t_start);
+    t_delta2 = tf.duration_to_us(t_end2 - t_start);
+    TEST_ASSERT_GREATER_OR_EQUAL(2000, t_delta1);
+    TEST_ASSERT_LESS_OR_EQUAL(3000, t_delta1);
+    TEST_ASSERT_GREATER_OR_EQUAL(6000, t_delta2);
+    TEST_ASSERT_LESS_OR_EQUAL(7000, t_delta2);
 
     // Two-cycle test
-    systime_t t_original_start = t_start;
-    t_start = tf.get_system_time();
-    tf.execute();
-    t_end = tf.get_system_time();
-    t_delta = tf.duration_to_us(tf.get_time_delta(t_start, t_end));
-    TEST_ASSERT_GREATER_OR_EQUAL(8000, t_delta);
-    TEST_ASSERT_LESS_OR_EQUAL(9000, t_delta);
-    unsigned int t_total_delta = tf.duration_to_us(tf.get_time_delta(t_original_start, t_end));
-    TEST_ASSERT_GREATER_OR_EQUAL(12000, t_total_delta);
-    TEST_ASSERT_LESS_OR_EQUAL(14000, t_total_delta);
+    t_end1 = tf.execute();
+    t_end2 = tf.get_system_time();
+    t_delta1 = tf.duration_to_us(t_end1 - t_start);
+    t_delta2 = tf.duration_to_us(t_end2 - t_start);
+    TEST_ASSERT_GREATER_OR_EQUAL(10000, t_delta1);
+    TEST_ASSERT_LESS_OR_EQUAL(11000, t_delta1);
+    TEST_ASSERT_GREATER_OR_EQUAL(14000, t_delta2);
+    TEST_ASSERT_LESS_OR_EQUAL(15000, t_delta2);
 
-    // Stress test many cycles
+    // Stress test the timing guarantee for the control cycle
+    // time over many cycles
     t_start = tf.get_system_time();
-    for(int i = 0; i < 100; i++) {
-        tf.execute();
-    }
-    t_end = tf.get_system_time();
-    t_delta = tf.duration_to_us(tf.get_time_delta(t_start, t_end));
-    TEST_ASSERT_GREATER_OR_EQUAL(796000, t_delta);
-    TEST_ASSERT_LESS_OR_EQUAL(798000, t_delta);
+    for(int i = 0; i < 100; i++) tf.execute();
+    const systime_t t_end = tf.get_system_time();
+    const unsigned int t_delta = tf.duration_to_us(t_end - t_start);
+    TEST_ASSERT_GREATER_OR_EQUAL(798000, t_delta);
+    TEST_ASSERT_LESS_OR_EQUAL(799000, t_delta);
 }
 
 int test_timed_control_task() {

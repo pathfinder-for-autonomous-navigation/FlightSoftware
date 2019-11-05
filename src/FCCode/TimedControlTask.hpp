@@ -6,6 +6,7 @@
 #ifdef DESKTOP
 #include <thread>
 #include <chrono>
+#include <time.h>
 #else
 #include <Arduino.h>
 #endif
@@ -22,9 +23,8 @@
  * these two constructs. See below.
  */
 #ifdef DESKTOP
-typedef std::chrono::time_point<std::chrono::system_clock, std::chrono::microseconds>
-    systime_t;
-typedef systime_t::duration systime_duration_t;
+typedef std::chrono::steady_clock::time_point systime_t;
+typedef std::chrono::steady_clock::duration systime_duration_t;
 #else
 typedef unsigned int systime_t;
 typedef unsigned int systime_duration_t;
@@ -55,7 +55,7 @@ class TimedControlTask : public ControlTask<T> {
      */
     void wait_until_time(const systime_t& time) const {
       #ifdef DESKTOP
-        std::this_thread::sleep_until(time);
+        while((signed int) duration_to_us(time - get_system_time()) >= 0);
       #else
         while ((signed int)(time - micros()) > 0) {
           delayMicroseconds(10);
@@ -70,7 +70,7 @@ class TimedControlTask : public ControlTask<T> {
      */
     systime_t get_system_time() const {
       #ifdef DESKTOP
-        return std::chrono::system_clock::now();
+        return std::chrono::steady_clock::now();
       #else
         return micros();
       #endif
@@ -84,7 +84,7 @@ class TimedControlTask : public ControlTask<T> {
      */
     const unsigned int duration_to_us(const systime_duration_t& delta) const {
       #ifdef DESKTOP
-        return delta.count();
+        return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
       #else
         return delta;
       #endif
@@ -102,17 +102,6 @@ class TimedControlTask : public ControlTask<T> {
       #else
         return delta;
       #endif
-    }
-
-    /**
-     * @brief Return the duration between two system times as an object.
-     * 
-     * @param t1 The earlier time.
-     * @param t2 The later time.
-     * @return Duration.
-     */
-    systime_duration_t get_time_delta(const systime_t& t1, const systime_t& t2) const {
-      return t2 - t1;
     }
 
     /**

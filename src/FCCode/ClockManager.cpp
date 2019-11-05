@@ -1,4 +1,5 @@
 #include "ClockManager.hpp"
+#include <iostream>
 
 ClockManager::ClockManager(StateFieldRegistry &registry,
                            const unsigned int _control_cycle_size) :

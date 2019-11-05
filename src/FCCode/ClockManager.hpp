@@ -1,10 +1,16 @@
-#ifndef MISSION_MANAGER_HPP_
-#define MISSION_MANAGER_HPP_
+#ifndef CLOCK_MANAGER_HPP_
+#define CLOCK_MANAGER_HPP_
 
 #include "TimedControlTask.hpp"
 
 class ClockManager : public TimedControlTask<void> {
    public:
+    /**
+     * @brief Construct a new Clock Manager
+     * 
+     * @param registry State field registry
+     * @param control_cycle_size Control cycle time, in _nanoseconds_
+     */
     ClockManager(StateFieldRegistry& registry, const unsigned int control_cycle_size);
     void execute() override;
 
@@ -23,7 +29,7 @@ class ClockManager : public TimedControlTask<void> {
     systime_t control_cycle_start_time;
 
     /**
-     * @brief Duration of a control cycle in microseconds.
+     * @brief Duration of a control cycle.
      */
     systime_duration_t control_cycle_size;
 
