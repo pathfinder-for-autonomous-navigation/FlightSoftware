@@ -62,16 +62,16 @@ void test_task_execute() {
     t_end2 = tf.get_system_time();
     t_delta1 = tf.duration_to_us(t_end1 - t_start);
     t_delta2 = tf.duration_to_us(t_end2 - t_start);
-    TEST_ASSERT_UINT32_WITHIN(10, 2000, t_delta1);
-    TEST_ASSERT_UINT32_WITHIN(10, 6000, t_delta2);
+    TEST_ASSERT_UINT32_WITHIN(20, 2000, t_delta1);
+    TEST_ASSERT_UINT32_WITHIN(20, 6000, t_delta2);
 
     // Two-cycle test
     t_end1 = tf.execute();
     t_end2 = tf.get_system_time();
     t_delta1 = tf.duration_to_us(t_end1 - t_start);
     t_delta2 = tf.duration_to_us(t_end2 - t_start);
-    TEST_ASSERT_UINT32_WITHIN(10, 10000, t_delta1);
-    TEST_ASSERT_UINT32_WITHIN(10, 14000, t_delta2);
+    TEST_ASSERT_UINT32_WITHIN(20, 10000, t_delta1);
+    TEST_ASSERT_UINT32_WITHIN(20, 14000, t_delta2);
 
     // Stress test the timing guarantee for the control cycle
     // time over many cycles
