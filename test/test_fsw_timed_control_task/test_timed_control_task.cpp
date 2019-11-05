@@ -52,6 +52,9 @@ void test_task_initialization() {
 }
 
 void test_task_execute() {
+    TEST_IGNORE_MESSAGE("Run this test locally for benchmarking. It doesn't work on CI because"
+        " of virtual machine timing.");
+
     TestFixture tf;
     sys_time_t t_start, t_end1, t_end2;
     unsigned int t_delta1, t_delta2;
