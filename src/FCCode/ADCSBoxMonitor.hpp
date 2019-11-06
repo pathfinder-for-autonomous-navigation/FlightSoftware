@@ -7,6 +7,11 @@
 class ADCSBoxMonitor : public ControlTask<void> {
   public:
    ADCSBoxMonitor(StateFieldRegistry& registry, Devices::ADCS& adcs);
+
+   /**
+    * @brief Gets inputs from the ADCS box and dumps them into the state
+    * fields listed below.
+    */
    void execute() override;
 
   protected:

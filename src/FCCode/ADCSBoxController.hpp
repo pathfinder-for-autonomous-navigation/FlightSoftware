@@ -7,6 +7,11 @@
 class ADCSBoxController : public ControlTask<void> {
   public:
    ADCSBoxController(StateFieldRegistry& registry, Devices::ADCS& adcs);
+
+   /**
+    * @brief Writes outputs to the ADCS box from the values in the state fields
+    * listed below.
+    */
    void execute() override;
 
   protected:
