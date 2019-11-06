@@ -17,6 +17,14 @@ class AttitudeComputer : public ControlTask<void> {
     void execute() override;
 
    protected:
+    void dispatch_startup();
+    void dispatch_limited();
+    void dispatch_zero_torque();
+    void dispatch_detumble();
+    void dispatch_point_manual();
+    void dispatch_point_standby();
+    void dispatch_point_docking();
+
     /**
      * @brief Inputs, a.k.a estimator outputs.
      */
