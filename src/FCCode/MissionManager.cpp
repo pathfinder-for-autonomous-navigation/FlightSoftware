@@ -80,7 +80,7 @@ void MissionManager::dispatch_detumble() {
     if (adcs_ang_rate_fp->get() <= adcs_min_stable_ang_rate_fp->get())
     {
         adcs_cmd_attitude_fp->set({2,2,2,2}); // TODO fix to a good value
-        adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::pointing));
+        adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::point_standby));
         mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::standby));
     }
 }
