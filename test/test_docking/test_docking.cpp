@@ -1,13 +1,13 @@
 #include <unity.h>
 #include <Arduino.h>
-#include <PropulsionSystem.hpp>
+#include <DockingSystem.hpp>
 
-Devices::PropulsionSystem prop_system;
+Devices::DockingSystem docking_system;
 
 void setup() {
     delay(2000);
     Serial.begin(9600);
-    prop_system.setup();
+    docking_system.setup();
 
     UNITY_BEGIN();
     UNITY_END();
