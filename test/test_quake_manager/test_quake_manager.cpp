@@ -49,15 +49,15 @@ void test_dispatch_waiting()
 {
   TestFixture tf;
   tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::waiting));
-  tf.quake_manager.execute();
+  tf.quake_manager->execute();
   TEST_ASSERT_EQUAL(static_cast<unsigned int>(radio_mode_t::waiting), tf.radio_mode_fp->get());
   // Pretend time has passed (3001 control cycles later...)
   tf.incr_time(3001);
-  tf.quake_manager.execute(); 
+  tf.quake_manager->execute(); 
   TEST_ASSERT_EQUAL(SBDWB, static_cast<unsigned int>(tf.quake_manager.qct.get_current_state()));
 
   tf.incr_time();
-  tf.quake_manager.execute();
+  tf.quake_manager->execute();
   TEST_ASSERT_EQUAL(static_cast<unsigned int>(radio_mode_t::transceiving), tf.radio_mode_fp->get());
   
 
