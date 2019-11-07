@@ -45,7 +45,8 @@ class DockingSystem : public Device {
 
     /** @brief Turn the docking motor into the "undocked" configuration.
      **/
-    void undock();
+    void startUndock();
+    bool endUndock();
 
     /** @brief Turn the docking motor into the "undocked" configuration.
      **/

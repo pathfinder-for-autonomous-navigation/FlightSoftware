@@ -80,7 +80,7 @@ void DockingSystem::startUndock(){
     step_motor(180.0f);
 }
 
-void DockingSystem::endUndock(){
+bool DockingSystem::endUndock(){
     return digitalRead(switch_pin);
 }
 
