@@ -23,7 +23,7 @@ DockingController::DockingController(StateFieldRegistry &registry, DockingSystem
           docksys.set_steps(docksys.get_steps()-1);
         }
 
-        //if the system is docked, then end the docking
+        //if theere are no more steps to turn, then end the docking
         if (docksys.get_steps()==0) {
           docksys.endDock();
         }
