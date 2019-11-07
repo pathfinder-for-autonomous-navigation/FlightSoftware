@@ -63,7 +63,7 @@ void DockingSystem::startDock() {
         digitalWrite(motor_direction_pin, LOW);
     }
 
-    step_motor(180.0f);
+    //step_motor(180.0f);
 }
 
 bool DockingSystem::endDock() {
@@ -77,7 +77,7 @@ void DockingSystem::startUndock() {
     else {
         digitalWrite(motor_direction_pin, HIGH);
     }
-    step_motor(180.0f);
+    //step_motor(180.0f);
 }
 
 bool DockingSystem::endUndock() {
@@ -89,15 +89,16 @@ bool DockingSystem::check_turning(){
 }
 
 void DockingSystem::step_motor(float angle) {
-    unsigned int steps = (int)(angle/step_angle);
-    unsigned int current_step = 0;
+    digitalWrite(motor_step_pin, LOW);
+    delayMicroseconds(1000);
+    digitalWrite(motor_step_pin, HIGH);
+    delayMicroseconds(1000);
+}
 
-    // step at a frequency of 500Hz
-    while (current_step < steps){
-        digitalWrite(motor_step_pin, LOW);
-        delayMicroseconds(1000);
-        digitalWrite(motor_step_pin, HIGH);
-        delayMicroseconds(1000);
-        current_step++;
-    }
+float DockingSystem::get_step_angle(){
+    return step_angle;
+}
+
+void DockingSystem::set_steps(){
+    steps=180/step_angle;
 }

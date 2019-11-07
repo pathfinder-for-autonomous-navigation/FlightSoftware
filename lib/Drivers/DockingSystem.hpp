@@ -60,6 +60,13 @@ class DockingSystem : public Device {
     void step_motor(float angle);
 
     /**
+     * @brief Return current step angle.
+     * 
+     * @param angle in degrees.
+     */
+    float get_step_angle();
+
+    /**
      * @brief Check state of docking switch.
      * 
      * @return True if switch is pressed.
@@ -73,6 +80,8 @@ class DockingSystem : public Device {
      */
     void set_step_angle(float angle);
 
+    void set_steps();
+
    private:
     // Sets how many degrees the motor turns in one step.
     float step_angle = (15.0f*M_PI)/180.0f;
@@ -82,6 +91,9 @@ class DockingSystem : public Device {
 
     // Status of motor sleep pin (and therefore of overall docking motor.)
     bool is_enabled = false;
+
+    //number of steps left to complete
+    float steps = 0;
 };
 }  // namespace Devices
 

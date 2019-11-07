@@ -17,7 +17,10 @@ DockingController::DockingController(StateFieldRegistry &registry, DockingSystem
           docksys.startDock();
         }
 
-        //if the docking system isn't docked and is turning, then keep going
+        //if the docking system isn't docked and is turning, then keep stepping the motor
+        while (!docksys.check_docked() && docksys.check_turning()){
+          docksys.step_motor(docksys.get_step_angle());
+        }
 
         //if the system is docked, then end the docking
         if (docksys.check_docked()) {
