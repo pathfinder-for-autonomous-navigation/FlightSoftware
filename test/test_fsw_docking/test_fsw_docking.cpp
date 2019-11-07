@@ -10,34 +10,36 @@ class TestFixture {
     StateFieldRegistryMock registry;
     DockingSystem docksys;
 
-    std::shared_ptr<WritableStateField<unsigned int>>is_turning_fp;
-    std::shared_ptr<WritableStateField<unsigned int>>docking_mode_fp;
-    std::unique_ptr<DockingController> docking_task;
+    std::shared_ptr<WritableStateField<bool>> docking_motor_dock_fp;
+
+    std::unique_ptr<DockingController> docking_controller;
+
+    std::shared_ptr<ReadableStateField<bool>>is_turning_fp;
+    std::shared_ptr<ReadableStateField<bool>>docked_fp;
 
     TestFixture() : registry() {
-        is_turning_fp = registry.create_writable_field<unsigned int>("is_turning", 0, 10, 10);
-        is_turning_fp->set(3);
-        docking_mode_fp = registry.create_writable_field<unsigned int>("docking_mode", 0, 10, 10);
-        docking_mode_fp->set(2);
+        docking_motor_dock_fp = registry.create_writable_field<bool>("docking_motor_dock");
+        docking_motor_dock_fp->set(false);
 
-        docking_task = std::make_unique<DockingController>(registry);
-        is_turning_fp = std::static_pointer_cast<WritableStateField<unsigned int>>(registry.find_writable_field("is_turning"));
-        docking_mode_fp = std::static_pointer_cast<WritableStateField<unsigned int>>(registry.find_writable_field("docking_mode"));
+        docking_controller = std::make_unique<DockingController>(registry); 
+
+        docked_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docked"));
+        is_turning_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("is_turning"));
     }
 };
 
 void test_task_initialization() {
     TestFixture tf;
-    TEST_ASSERT_EQUAL(3, tf.is_turning_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.docking_motor_dock_fp->get());
 }
 
 void test_task_execute() {
     TestFixture tf;
-    TEST_ASSERT_EQUAL(2, tf.docking_mode_fp->get());
-    tf.docking_mode_fp->set(1);
-    TEST_ASSERT_EQUAL(1, tf.docking_mode_fp->get());
-    tf.docking_task->execute();
-    TEST_ASSERT_EQUAL(1, tf.docking_mode_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.docked_fp->get());
+    tf.docked_fp->set(false);
+    TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
+    tf.docking_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
 }
 
 int test_control_task() {

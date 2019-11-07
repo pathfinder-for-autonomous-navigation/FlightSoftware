@@ -92,6 +92,10 @@ void DockingSystem::undock() {
     step_motor(180.0f);
 }
 
+bool DockingSystem::check_turning(){
+    return is_turning_clockwise;
+}
+
 void DockingSystem::step_motor(float angle) {
     unsigned int steps = (int)(angle/step_angle);
     unsigned int current_step = 0;

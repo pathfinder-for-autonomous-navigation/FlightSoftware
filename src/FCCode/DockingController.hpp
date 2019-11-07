@@ -13,11 +13,10 @@ class DockingController : public ControlTask<void> {
     
     //construct a control task object with state field registry and docking system
     #ifndef DESKTOP
-     //im getting an error here that ControlTask and DockingSystem are not nonstatic members of base class DockingController???
-     DockingController(StateFieldRegistry &registry) : ControlTask<int>(registry), DockingSystem() {}
+     //im getting an error here that DockingSystem is not nonstatic members of base class DockingController???
+     DockingController(StateFieldRegistry &registry) : ControlTask<void>(registry), DockingSystem();
     #else
      DockingController(StateFieldRegistry &registry);
-     Devices::DockingSystem docksys;
     #endif
 
     void execute() override;
@@ -33,8 +32,12 @@ class DockingController : public ControlTask<void> {
     std::shared_ptr<WritableStateField<bool>> docking_motor_dock_fp;
 
     //state field returns whether or not the spacecraft are docked with one another
-    Serializer<unsigned int> docked_sr;
-    ReadableStateField<unsigned int>docked_f;
+    Serializer<bool> docked_sr;
+    ReadableStateField<bool> docked_f;
+
+    //state field returns whether or not the docking system in turning
+    Serializer<bool> is_turning_sr;
+    ReadableStateField<bool> is_turning_f;
 
 };
 

@@ -48,6 +48,10 @@ class DockingSystem : public Device {
      **/
     void undock();
 
+    /** @brief Turn the docking motor into the "undocked" configuration.
+     **/
+    bool check_turning();
+
     /**
      * @brief Manually step motor by a given amount.
      * 
