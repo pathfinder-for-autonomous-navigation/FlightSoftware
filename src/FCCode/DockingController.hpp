@@ -12,22 +12,29 @@ class DockingController : public ControlTask<void> {
    public:
     
     //construct a control task object with state field registry and docking system
+    DockingController(StateFieldRegistry& registry, Devices::DockingSystem &docksys);
+
+    /**
     #ifndef DESKTOP
      //im getting an error here that DockingSystem is not a nonstatic member of base class DockingController???
-     DockingController(StateFieldRegistry &registry) : ControlTask<void>(registry), DockingSystem();
+     DockingController(StateFieldRegistry &registry) : ControlTask<void>(registry), docksys();
 
     #else
      DockingController(StateFieldRegistry &registry);
     #endif
-
+    **/
     void execute() override;
 
    protected:
 
     //docking system
+    /**
     #ifndef DESKTOP
      Devices::DockingSystem docksys;
     #endif
+    **/
+
+    Devices::DockingSystem docksys;
 
     //shared pointer set by mission manager - tells control task to dock or undock motor
     std::shared_ptr<WritableStateField<bool>> docking_motor_dock_fp;
