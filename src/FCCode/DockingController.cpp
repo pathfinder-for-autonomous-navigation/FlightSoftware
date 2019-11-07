@@ -24,7 +24,7 @@ DockingController::DockingController(StateFieldRegistry &registry, DockingSystem
         }
 
         //if the system is docked, then end the docking
-        if (docksys.check_docked()) {
+        if (docksys.get_steps()==0) {
           docksys.endDock();
         }
       }
