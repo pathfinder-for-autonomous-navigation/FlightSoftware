@@ -9,6 +9,7 @@ DockingController::DockingController(StateFieldRegistry& registry)
     }
 
     void DockingController::execute() { 
+      //DOCKING
       //if mission manager requests to dock the spacecraft and the system isn't already docked, then start docking
       if (docking_motor_dock_fp->get() && !docksys.check_docked()){
         //if the docking system isn't turning, then start docking
@@ -25,7 +26,8 @@ DockingController::DockingController(StateFieldRegistry& registry)
         docksys.endDock();
       }
 
-      //if mission manager requests to undockthe spacecraft and the system is docked, then start undocking
+      //UNDOCKING
+      //if mission manager requests to undock the spacecraft and the system is docked, then start undocking
       if (!(docking_motor_dock_fp->get()) && docksys.check_docked()) {
         //if the docking system isn't turning, then start undocking
         if (!docksys.check_turning()){
@@ -36,11 +38,12 @@ DockingController::DockingController(StateFieldRegistry& registry)
           continue;
         }
       }
-      //end the undocking when the system is docked
+      //end the undocking when the system is undocked
       if (!docking_motor_dock_fp->get() && !docksys.check_docked()){
         docksys.endDock();
       }
       
+      //SETTING STATEFIELDS
       docked_f.set(docksys.check_docked());
       is_turning_f.set(docksys.check_turning());
     }

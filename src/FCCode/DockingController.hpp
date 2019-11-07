@@ -15,6 +15,7 @@ class DockingController : public ControlTask<void> {
     #ifndef DESKTOP
      //im getting an error here that DockingSystem is not nonstatic members of base class DockingController???
      DockingController(StateFieldRegistry &registry) : ControlTask<void>(registry), DockingSystem();
+
     #else
      DockingController(StateFieldRegistry &registry);
     #endif

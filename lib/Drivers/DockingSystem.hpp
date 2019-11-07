@@ -40,7 +40,6 @@ class DockingSystem : public Device {
 
     /** @brief Turn the docking motor into the "docked" configuration.
      **/
-    void dock();
     void startDock();
     bool endDock();
 
