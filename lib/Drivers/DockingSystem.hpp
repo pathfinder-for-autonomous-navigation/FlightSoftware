@@ -80,7 +80,15 @@ class DockingSystem : public Device {
      */
     void set_step_angle(float angle);
 
-    void set_steps();
+    /**
+     * @brief Set number of steps left to turn.
+     */
+    void set_steps(float angle);
+
+    /**
+     * @brief Returns number of steps left to turn.
+     */
+    float get_steps();
 
    private:
     // Sets how many degrees the motor turns in one step.

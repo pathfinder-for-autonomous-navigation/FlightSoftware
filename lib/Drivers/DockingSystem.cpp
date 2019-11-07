@@ -99,6 +99,10 @@ float DockingSystem::get_step_angle(){
     return step_angle;
 }
 
-void DockingSystem::set_steps(){
-    steps=180/step_angle;
+void DockingSystem::set_steps(float angle){
+    steps=angle/step_angle;
+}
+
+float DockingSystem::get_steps(){
+    return steps;
 }
