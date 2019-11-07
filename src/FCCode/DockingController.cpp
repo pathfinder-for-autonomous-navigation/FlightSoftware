@@ -29,7 +29,7 @@ DockingController::DockingController(StateFieldRegistry &registry, DockingSystem
         }
       }
 
-      //UNDOCKING
+      //UNDOCKING (Not done yet)
       if (!(docking_motor_dock_fp->get())) {
         //if the docking system is docked and isn't turning, then start undocking
         if (docksys.check_docked() && !docksys.check_turning()){
