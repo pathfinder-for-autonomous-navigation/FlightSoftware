@@ -70,7 +70,7 @@ bool DockingSystem::endDock() {
     return digitalRead(switch_pin);
 }
 
-void DockingSystem::startUndock(){
+void DockingSystem::startUndock() {
     if (is_turning_clockwise) {
         digitalWrite(motor_direction_pin, LOW);
     } 
@@ -80,7 +80,7 @@ void DockingSystem::startUndock(){
     step_motor(180.0f);
 }
 
-bool DockingSystem::endUndock(){
+bool DockingSystem::endUndock() {
     return digitalRead(switch_pin);
 }
 
