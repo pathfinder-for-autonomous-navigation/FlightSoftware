@@ -19,7 +19,9 @@ class DockingController : public ControlTask<void> {
      */
     DockingController(StateFieldRegistry& registry, Devices::DockingSystem &docksys);
 
-    // TODO add a comment here describing the function
+    /**
+     * @brief Sets statefield variables and moves the motor to docking/undocking configuration should mission manager request it.
+     */
     void execute() override;
 
    protected:

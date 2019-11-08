@@ -13,9 +13,7 @@ DockingController::DockingController(StateFieldRegistry &registry, Devices::Dock
 }
 
 void DockingController::execute() {
-  //if mission manager requests to dock the spacecraft, then start docking
-
-  //DOCKING
+  //MOVE TO DOCKING CONFIGURATION
   if (docking_config_cmd_fp->get()){
     if (!dock_config_f.get()) {
       docksys.start_dock();
@@ -28,7 +26,7 @@ void DockingController::execute() {
     }
   }
 
-  //UNDOCKING
+  //MOVE TO UNDOCKING CONFIGURATION
   if (!(docking_config_cmd_fp->get())) {
     if (dock_config_f.get()){
       docksys.start_undock();
@@ -41,6 +39,6 @@ void DockingController::execute() {
     }
   }
 
-  //SETTING STATEFIELDS
+  //SET STATEFIELDS
   docked_f.set(docksys.check_docked());
 }
