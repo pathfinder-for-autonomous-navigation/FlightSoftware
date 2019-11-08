@@ -74,14 +74,15 @@ bool verify_pos() {
     ret = ret && comp(6.37E6, pos_mag, 5.0E3);
 
     // Check flag
-    // ret = ret && (piksi.get_pos_ecef_flags() == 1);
+    // 1 means float rtk
+    ret = ret && (piksi.get_pos_ecef_flags() == 1);
 
     ret = ret && pos_tow > pos_past;
 
     if (!ret) {
-        Serial.printf("GPS position: %d,%d,%d\n", pos[0], pos[1], pos[2]);
+        Serial.printf("GPS position: %g,%g,%g\n", pos[0], pos[1], pos[2]);
         Serial.printf("position_mag: %g\n", pos_mag);
-        Serial.printf("pos_ecef_flags: %d\n", piksi.get_pos_ecef_flags());
+        Serial.printf("pos_ecef_flags: %u\n", piksi.get_pos_ecef_flags());
 
         Serial.printf("Nsat Pos: %d\n", piksi.get_pos_ecef_nsats());
 
@@ -102,9 +103,9 @@ bool verify_vel() {
     ret = ret && vel_tow > vel_past;
 
     if (!ret) {
-        Serial.printf("Vel: %d,%d,%d\n", vel[0], vel[1], vel[2]);
+        Serial.printf("Vel: %g,%g,%g\n", vel[0], vel[1], vel[2]);
         Serial.printf("velocity_mag: %g\n", vel_mag);
-        Serial.printf("vel_ecef_flags: %d\n", piksi.get_vel_ecef_flags());
+        Serial.printf("vel_ecef_flags: %u\n", piksi.get_vel_ecef_flags());
 
         Serial.printf("Nsat Vel: %d\n", piksi.get_vel_ecef_nsats());
         Serial.printf("PAST: %u, CURR: %u\n", vel_past, vel_tow);
@@ -120,14 +121,16 @@ bool verify_baseline() {
 
     bool ret = comp(1.0E5, baseline_mag, 2E3);
     ret = ret && piksi.get_baseline_ecef_nsats() > 3;
+
+    // 1 means fixed RTK
     ret = ret && piksi.get_baseline_ecef_flags() == 1;
     ret = ret && baseline_tow > baseline_past;
 
     if (!ret) {
-        Serial.printf("GPS baseline position: %d,%d,%d\n", baseline_pos[0], baseline_pos[1],
+        Serial.printf("GPS baseline position: %g,%g,%g", baseline_pos[0], baseline_pos[1],
                       baseline_pos[2]);
         Serial.printf("baseline_mag: %g\n", baseline_mag);
-        Serial.printf("baseline_ecef_flags: %d\n", piksi.get_baseline_ecef_flags());
+        Serial.printf("baseline_ecef_flags: %u\n", piksi.get_baseline_ecef_flags());
         Serial.printf("Nsat basline: %d\n", piksi.get_baseline_ecef_nsats());
         Serial.printf("PAST: %u, CURR: %u\n", baseline_past, baseline_tow);
     }
@@ -317,6 +320,17 @@ int main(void) {
         delay(CONTROL_CYCLE - (micros() - prevtime) / 1000);
         prevtime = micros();
 
+        //SPP only
+        //firmware 1: 159 bytes
+
+        //SAT addition
+        //firmware 3: 159 bytes
+
+        //RTK Float
+        //firmware 7: 159 bytes
+
+
+        Serial.printf("BYTES AVAIL: %u\n",piksi.bytes_available());
         int res = piksi.read_buffer();
         if (res == 0) {
             if(verify_all())
