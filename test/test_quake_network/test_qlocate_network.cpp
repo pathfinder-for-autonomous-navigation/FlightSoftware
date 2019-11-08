@@ -6,6 +6,8 @@
 #include "core_pins.h"
 #include "usb_serial.h"
 
+static const int DEFAULT_DELAY = 100;
+
 #define DEFAULT_DELAY 10
 
 // name, port, pin number, timeout
@@ -57,13 +59,14 @@ void test_sbdix_with_network(void)
     numBytesRead = Serial.readBytes(buf, 16);
     buf[numBytesRead] = '\0';
     TEST_ASSERT_EQUAL_STRING("received", buf);
+    Serial.println("waiting");
 }
 
 /* Tests that we can read messages from MT queue */
 void test_sbdrb_with_network(void)
 {
-    int numBytesRead;
-    char buf[16];
+    //  int numBytesRead;
+    // char buf[16];
     while (!Serial.available())
         ;
 
@@ -76,11 +79,13 @@ void test_sbdrb_with_network(void)
     // Load a message on ISU
     // std::string testString("hello from PAN!");
     // TEST_ASSERT_EQUAL(WRITE_OK, q.sbdwb(testString.c_str(), testString.length()));
-    // do
+    //  do
     // {
     //     numBytesRead = Serial.readBytes(buf, 16);
     //     buf[numBytesRead] = '\0';
     // } while (strcmp(buf, "message sent"));
+
+    delay(DEFAULT_DELAY);
     TEST_ASSERT_EQUAL(0, q.query_sbdix_1());
     // While loop is here because to account for timing delays
     // when attempting to receive response from SBDIX
@@ -96,7 +101,7 @@ void test_sbdrb_with_network(void)
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
     // If MO_status [0, 2], then downlink was successful
     // But we only pass if we receive a 0
-    TEST_ASSERT_EQUAL(MO_OK, pRes->MO_status);
+    TEST_ASSERT_LESS_OR_EQUAL(MO_NO_UPDATE, pRes->MO_status);
     // Test that we have a message
     if (pRes->MT_length > 1)
         Serial.println("received");
@@ -105,11 +110,15 @@ void test_sbdrb_with_network(void)
     // Read message
     TEST_ASSERT_EQUAL(0, q.query_sbdrb_1());
     delay(1000);
-    TEST_ASSERT_EQUAL(Devices::OK, q.get_sbdrb());
-    QuakeMessage msg = q.get_message();
-    Serial.printf("*** %s ***\n", msg.mes);
-    TEST_ASSERT_EQUAL_STRING("Hello from ground!", msg.mes);
-    // TEST_ASSERT_NOT_NULL(msg.mes);
+    q.get_sbdrb();
+    // TEST_ASSERT_EQUAL(Devices::OK, q.get_sbdrb());
+
+    char *szMsg = q.get_message();
+    digitalWrite(13, HIGH);
+    Serial.printf("*** %s ***\n", szMsg);
+    digitalWrite(13, LOW);
+    TEST_ASSERT_EQUAL_STRING("Hello from ground!", szMsg);
+    Serial.println("exiting");
 }
 
 // TODO: need a way to get messages
@@ -122,7 +131,7 @@ int main(void)
     while (!Serial)
         ;
     UNITY_BEGIN();
-    //  RUN_TEST(test_sbdix_with_network);
+    RUN_TEST(test_sbdix_with_network);
     RUN_TEST(test_sbdrb_with_network);
     UNITY_END();
     return 0;
