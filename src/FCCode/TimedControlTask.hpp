@@ -111,10 +111,10 @@ class TimedControlTask : public ControlTask<T> {
      * @param offset Time offset of start of this task from the beginning of a
      *               control cycle, in microseconds.
      */
-    TimedControlTask(
-                      StateFieldRegistry& registry,
-                      const unsigned int _offset) :
-        ControlTask<T>(registry), offset(us_to_duration(_offset + 1))
+    TimedControlTask(StateFieldRegistry& registry,
+                     const unsigned int _offset) :
+        ControlTask<T>(registry),
+        offset(us_to_duration(_offset + 1))
     {}
   private:
     /**
