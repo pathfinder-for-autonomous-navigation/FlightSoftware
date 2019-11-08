@@ -11,42 +11,30 @@
 class DockingController : public ControlTask<void> {
    public:
     
-    //construct a control task object with state field registry and docking system
+    /**
+     * @brief Construct a new Docking Controller object
+     * 
+     * @param registry 
+     * @param docksys 
+     */
     DockingController(StateFieldRegistry& registry, Devices::DockingSystem &docksys);
 
-    /**
-    #ifndef DESKTOP
-     //im getting an error here that DockingSystem is not a nonstatic member of base class DockingController???
-     DockingController(StateFieldRegistry &registry) : ControlTask<void>(registry), docksys();
-
-    #else
-     DockingController(StateFieldRegistry &registry);
-    #endif
-    **/
+    // TODO add a comment here describing the function
     void execute() override;
 
    protected:
-
-    //docking system
-    /**
-    #ifndef DESKTOP
-     Devices::DockingSystem docksys;
-    #endif
-    **/
-
-    Devices::DockingSystem docksys;
+    Devices::DockingSystem& docksys;
 
     //shared pointer set by mission manager - tells control task to dock or undock motor
-    std::shared_ptr<WritableStateField<bool>> docking_motor_dock_fp;
+    std::shared_ptr<WritableStateField<bool>> docking_config_cmd_fp;
 
     //state field returns whether or not the spacecraft are docked with one another
     Serializer<bool> docked_sr;
     ReadableStateField<bool> docked_f;
 
-    //state field returns whether or not the docking system in turning
-    Serializer<bool> is_turning_sr;
-    ReadableStateField<bool> is_turning_f;
-
+    //state field returns whether or not the motor is in the docking configuration
+    Serializer<bool> dock_config_sr;
+    ReadableStateField<bool> dock_config_f;
 };
 
 #endif

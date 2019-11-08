@@ -1,53 +1,46 @@
 #include "DockingController.hpp"
 
-DockingController::DockingController(StateFieldRegistry &registry, DockingSystem &docksys)
-    : ControlTask<void>(registry), docked_sr(), docked_f("docked", docked_sr), is_turning_sr(), is_turning_f("is_turning", is_turning_sr)
-    {
-        add_readable_field(docked_f);
-        add_readable_field(is_turning_f);
-        docking_motor_dock_fp = find_writable_field<unsigned int>("docking_motor_dock", __FILE__, __LINE__);
+DockingController::DockingController(StateFieldRegistry &registry, Devices::DockingSystem &_docksys)
+    : ControlTask<void>(registry), docked_sr(),
+      docked_f("docksys.docked", docked_sr),
+      dock_config_sr(),
+      dock_config_f("docksys.dock_config", dock_config_sr),
+      docksys(_docksys)
+{
+  add_readable_field(docked_f);
+  add_readable_field(dock_config_f);
+  docking_config_cmd_fp = find_writable_field<unsigned int>("docksys.config_cmd", __FILE__, __LINE__);
+}
+
+void DockingController::execute() {
+  //if mission manager requests to dock the spacecraft, then start docking
+
+  //DOCKING
+  if (docking_config_cmd_fp->get()){
+    if (!dock_config_f.get()) {
+      docksys.start_dock();
+      if (docksys.get_steps() > 0) {
+        docksys.step_motor();
+      }
+      else {
+        dock_config_f.set(true);
+      }
     }
+  }
 
-    void DockingController::execute() { 
-      //DOCKING
-      //if mission manager requests to dock the spacecraft, then start docking
-      if (docking_motor_dock_fp->get()){
-        //if the docking system isn't docked and isn't turning, then start docking
-        if (!docksys.check_docked() && !docksys.check_turning()){
-          docksys.startDock();
-        }
-
-        //if the docking system isn't docked and there are still steps to turn, then step the motor
-        if (!docksys.check_docked() && docksys.get_steps()>0){
-          docksys.step_motor(docksys.get_step_angle());
-          docksys.set_steps(docksys.get_steps()-1);
-        }
-
-        //if theere are no more steps to turn, then end the docking
-        if (docksys.get_steps()==0) {
-          docksys.endDock();
-        }
+  //UNDOCKING
+  if (!(docking_config_cmd_fp->get())) {
+    if (dock_config_f.get()){
+      docksys.start_undock();
+      if (docksys.get_steps() > 0) {
+        docksys.step_motor();
       }
-
-      //UNDOCKING (Not done yet)
-      if (!(docking_motor_dock_fp->get())) {
-        //if the docking system is docked and isn't turning, then start undocking
-        if (docksys.check_docked() && !docksys.check_turning()){
-          docksys.startUndock();
-        }
-        //if the docking system is docked and is turning, then keep going
-
-        //if the system is undocked, then end the undocking
-        if (!docksys.check_docked()) {
-          docksys.endUndock();
-        }
+      else {
+        dock_config_f.set(false);
       }
-      //end the undocking when the system is undocked
-      if (!docking_motor_dock_fp->get() && !docksys.check_docked()){
-        docksys.endDock();
-      }
-      
-      //SETTING STATEFIELDS
-      docked_f.set(docksys.check_docked());
-      is_turning_f.set(docksys.check_turning());
     }
+  }
+
+  //SETTING STATEFIELDS
+  docked_f.set(docksys.check_docked());
+}

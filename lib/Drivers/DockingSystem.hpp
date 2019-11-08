@@ -38,33 +38,26 @@ class DockingSystem : public Device {
     void enable();
     void reset() override;
 
-    /** @brief Turn the docking motor into the "docked" configuration.
+    /** 
+     * @brief Put the docking motor into the "docked" turning configuration.
      **/
-    void startDock();
-    bool endDock();
+    void start_dock();
 
-    /** @brief Turn the docking motor into the "undocked" configuration.
+    /** @brief Put the docking motor into the "undocked" turning configuration.
      **/
-    void startUndock();
-    bool endUndock();
-
-    /** @brief Turn the docking motor into the "undocked" configuration.
-     **/
-    bool check_turning();
+    void start_undock();
 
     /**
-     * @brief Manually step motor by a given amount.
-     * 
-     * @param angle in degrees.
+     * @brief Manually step motor by one step.
      */
-    void step_motor(float angle);
+    void step_motor();
 
     /**
      * @brief Return current step angle.
      * 
      * @param angle in degrees.
      */
-    float get_step_angle();
+    float get_step_angle() const;
 
     /**
      * @brief Check state of docking switch.
@@ -83,12 +76,12 @@ class DockingSystem : public Device {
     /**
      * @brief Set number of steps left to turn.
      */
-    void set_steps(float angle);
+    void set_turn_angle(float angle);
 
     /**
      * @brief Returns number of steps left to turn.
      */
-    float get_steps();
+    unsigned int get_steps() const;
 
    private:
     // Sets how many degrees the motor turns in one step.
@@ -101,7 +94,7 @@ class DockingSystem : public Device {
     bool is_enabled = false;
 
     //number of steps left to complete
-    float steps = 0;
+    unsigned int steps = 0;
 };
 }  // namespace Devices
 

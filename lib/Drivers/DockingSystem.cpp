@@ -55,54 +55,30 @@ void DockingSystem::set_step_angle(float angle) {
     step_angle = angle;
 }
 
-void DockingSystem::startDock() {
-    if (is_turning_clockwise) {
-        digitalWrite(motor_direction_pin, HIGH);
-    } 
-    else {
-        digitalWrite(motor_direction_pin, LOW);
-    }
-
-    //step_motor(180.0f);
+void DockingSystem::start_dock() {
+    digitalWrite(motor_direction_pin, LOW);
+    set_turn_angle(180.0f);
 }
 
-bool DockingSystem::endDock() {
-    return digitalRead(switch_pin);
+void DockingSystem::start_undock() {
+    digitalWrite(motor_direction_pin, HIGH);
+    set_turn_angle(180);
 }
 
-void DockingSystem::startUndock() {
-    if (is_turning_clockwise) {
-        digitalWrite(motor_direction_pin, LOW);
-    } 
-    else {
-        digitalWrite(motor_direction_pin, HIGH);
-    }
-    //step_motor(180.0f);
-}
-
-bool DockingSystem::endUndock() {
-    return digitalRead(switch_pin);
-}
-
-bool DockingSystem::check_turning(){
-    return is_turning_clockwise;
-}
-
-void DockingSystem::step_motor(float angle) {
+void DockingSystem::step_motor() {
     digitalWrite(motor_step_pin, LOW);
     delayMicroseconds(1000);
     digitalWrite(motor_step_pin, HIGH);
-    delayMicroseconds(1000);
 }
 
-float DockingSystem::get_step_angle(){
+float DockingSystem::get_step_angle() const {
     return step_angle;
 }
 
-void DockingSystem::set_steps(float angle){
+void DockingSystem::set_turn_angle(float angle) {
     steps=angle/step_angle;
 }
 
-float DockingSystem::get_steps(){
+unsigned int DockingSystem::get_steps() const {
     return steps;
 }
