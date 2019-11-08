@@ -16,7 +16,7 @@ class ADCSBoxMonitor : public ControlTask<void> {
     * @param registry 
     * @param adcs 
     */
-   ADCSBoxMonitor(StateFieldRegistry& registry, Devices::ADCS& adcs);
+   ADCSBoxMonitor(StateFieldRegistry& registry, const Devices::ADCS& adcs);
 
    /**
     * @brief Gets inputs from the ADCS box and dumps them into the state
@@ -26,7 +26,7 @@ class ADCSBoxMonitor : public ControlTask<void> {
 
   protected:
    /** ADCS Driver. **/
-   Devices::ADCS& adcs_system;
+   const Devices::ADCS& adcs_system;
 
    /**
     * @brief Inputs to get from ADCS box.

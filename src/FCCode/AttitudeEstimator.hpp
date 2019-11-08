@@ -44,9 +44,8 @@ class AttitudeEstimator : public ControlTask<void> {
     /**
      * @brief Constant parameters for calculation.
      */
-    static const f_vector_t gyro_bias;   /**< Gyroscope bias **/
-    static const f_vector_t mag_bias;    /**< Magnetometer bias **/
-    static const std::array<float, 6> I; /**< Moment of inertia **/
+    WritableStateField<f_vector_t> gyro_bias_fp;   /**< Gyroscope bias **/
+    WritableStateField<f_vector_t> mag_bias_fp;    /**< Magnetometer bias **/
 
     /**
      * @brief Estimation outputs.

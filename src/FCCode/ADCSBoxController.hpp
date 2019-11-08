@@ -40,7 +40,7 @@ class ADCSBoxController : public ControlTask<void> {
    //! Magnetic moment to apply on the magnetorquers.
    ReadableStateField<f_vector_t> mtr_cmd_vec_f;
    //! Temperature setpoint of the gyroscope heater.
-   ReadableStateField<float> gyr_temp_f;
+   ReadableStateField<float> gyr_temp_eq_f;
    // We don't expect the following values to change very often, but we
    // send them on every control cycle anyway.
    //! Exponential filter coefficient for the reaction wheel angular momentum.
