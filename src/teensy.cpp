@@ -8,7 +8,6 @@
 #include "FCCode/MainControlLoop.hpp"
 #include <StateFieldRegistry.hpp>
 
-#include <ChRt.h>
 #include <core_pins.h>
 #include <wiring.h>
 
@@ -26,7 +25,7 @@ void pan_system_setup() {
 // tests
 #ifndef UNIT_TEST
 void setup() {
-    chBegin(pan_system_setup);
+    pan_system_setup();
     while (true)
         ;
 }
