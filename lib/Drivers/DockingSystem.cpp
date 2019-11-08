@@ -55,13 +55,24 @@ void DockingSystem::set_step_angle(float angle) {
     step_angle = angle;
 }
 
+void DockingSystem::set_direction(bool set_clockwise) {
+    if (set_clockwise) {
+        digitalWrite(motor_direction_pin, LOW);
+    }
+    else {
+        digitalWrite(motor_direction_pin, HIGH);
+    }
+}
+
 void DockingSystem::start_dock() {
-    digitalWrite(motor_direction_pin, LOW);
+    const bool clockwise_direction = true;
+    set_direction(clockwise_direction);
     set_turn_angle(180.0f);
 }
 
 void DockingSystem::start_undock() {
-    digitalWrite(motor_direction_pin, HIGH);
+    const bool clockwise_direction = false;
+    set_direction(clockwise_direction);
     set_turn_angle(180);
 }
 

@@ -38,6 +38,13 @@ class DockingSystem : public Device {
     void enable();
     void reset() override;
 
+    /**
+     * @brief Set the direction of the motor turning.
+     * 
+     * @param clockwise True if we want to turn the motor clockwise.
+     */
+    void set_direction(bool clockwise);
+
     /** 
      * @brief Put the docking motor into the "docked" turning configuration.
      **/
@@ -86,9 +93,6 @@ class DockingSystem : public Device {
    private:
     // Sets how many degrees the motor turns in one step.
     float step_angle = (15.0f*M_PI)/180.0f;
-
-    // Status of motor directionality.
-    bool is_turning_clockwise = false;
 
     // Status of motor sleep pin (and therefore of overall docking motor.)
     bool is_enabled = false;
