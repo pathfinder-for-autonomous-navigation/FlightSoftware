@@ -32,7 +32,7 @@ class ADCSBoxController : public ControlTask<void> {
     * @brief Outputs to send to ADCS box.
     */
    //! Box mode (enabled or disabled.)
-   ReadableStateField<bool> adcs_box_mode_f;
+   WritableStateField<bool> adcs_box_mode_f;
    //! Torque command to apply to reaction wheels.
    ReadableStateField<f_vector_t> rwa_torque_vec_f;
    //! Speed command to apply to reaction wheels.
