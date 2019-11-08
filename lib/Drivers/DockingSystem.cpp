@@ -1,11 +1,17 @@
 #include "DockingSystem.hpp"
 #include "DCDC.hpp"
+#ifndef DESKTOP
 #include "Arduino.h"
+#endif
 
 using namespace Devices;
 
+#ifndef DESKTOP
 DockingSystem::DockingSystem()
     : Device("docking_system") {}
+#else
+DockingSystem::DockingSystem() {}
+#endif
 
 bool DockingSystem::setup() {
     #ifndef DESKTOP
@@ -28,6 +34,8 @@ bool DockingSystem::setup() {
 
     return true;
 }
+
+#ifndef DESKTOP
 
 bool DockingSystem::is_functional() {
     return digitalRead(DCDC::dcdc_sph_enable_pin)
@@ -93,3 +101,5 @@ void DockingSystem::set_turn_angle(float angle) {
 unsigned int DockingSystem::get_steps() const {
     return steps;
 }
+
+#endif

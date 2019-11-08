@@ -1,7 +1,9 @@
 #ifndef DOCKING_MOTOR_HPP_
 #define DOCKING_MOTOR_HPP_
 
+#ifndef DESKTOP
 #include "../Devices/Device.hpp"
+#endif
 #include <cmath>
 
 namespace Devices {
@@ -11,7 +13,11 @@ namespace Devices {
  * The flight software is responsible for determining if the system is docked
  * or not.
  **/
+#ifndef DESKTOP
 class DockingSystem : public Device {
+#else
+class DockingSystem {
+#endif
    public:
     //! Default pin for docking motor I1.
     static constexpr unsigned char motor_i1_pin = 14;
@@ -31,12 +37,23 @@ class DockingSystem : public Device {
      */
     DockingSystem();
 
+    #ifndef DESKTOP
     bool setup() override;
     bool is_functional() override;
 
     void disable() override;
     void enable();
     void reset() override;
+
+    #else
+    bool setup();
+    bool is_functional();
+
+    void disable();
+    void enable();
+    void reset();
+
+    #endif
 
     /**
      * @brief Set the direction of the motor turning.

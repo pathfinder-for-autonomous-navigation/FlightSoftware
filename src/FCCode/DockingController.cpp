@@ -1,15 +1,14 @@
 #include "DockingController.hpp"
 
 DockingController::DockingController(StateFieldRegistry &registry, Devices::DockingSystem &_docksys)
-    : ControlTask<void>(registry), docked_sr(),
+    : ControlTask<void>(registry), docksys(_docksys), docked_sr(),
       docked_f("docksys.docked", docked_sr),
       dock_config_sr(),
-      dock_config_f("docksys.dock_config", dock_config_sr),
-      docksys(_docksys)
+      dock_config_f("docksys.dock_config", dock_config_sr)
 {
   add_readable_field(docked_f);
   add_readable_field(dock_config_f);
-  docking_config_cmd_fp = find_writable_field<unsigned int>("docksys.config_cmd", __FILE__, __LINE__);
+  docking_config_cmd_fp = find_writable_field<bool>("docksys.config_cmd", __FILE__, __LINE__);
 }
 
 void DockingController::execute() {
