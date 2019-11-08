@@ -58,15 +58,25 @@ class AttitudeComputer : public ControlTask<void> {
      */
     //! Desired attitude.
     ReadableStateField<f_quat_t> cmd_attitude_f;
+    //! True if the next command to apply on the reaction wheels is a torque command
+    //! false if it should be a speed command. 
+    ReadableStateField<bool> rwa_cmd_mode_f;
     //! Reaction wheel torques to apply on the next timestep in order to start
     //! reaching the desired attitude.
-    std::shared_ptr<ReadableStateField<f_vector_t>> rwa_torque_vec_f;
+    ReadableStateField<f_vector_t> rwa_torque_cmd_vec_f;
     //! Reaction wheel speeds to apply on the next timestep in order to start
     //! reaching the desired attitude.
-    std::shared_ptr<ReadableStateField<f_vector_t>> rwa_speed_vec_f;
+    ReadableStateField<f_vector_t> rwa_speed_cmd_vec_f;
     //! Magnetorquer moment commands to apply on the next timestep in order to start
     //! reaching the desired attitude.
-    std::shared_ptr<ReadableStateField<f_vector_t>> mtr_cmd_vec_f;
+    ReadableStateField<f_vector_t> mtr_cmd_vec_f;
+
+    /**
+     * @brief Fault flags.
+     */
+    //! True if the most recently computed commanded attitude is within
+    //! validity bounds.
+    ReadableStateField<bool> cmd_attitude_valid_f;
 };
 
 #endif

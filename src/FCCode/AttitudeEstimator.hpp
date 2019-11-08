@@ -27,20 +27,18 @@ class AttitudeEstimator : public ControlTask<void> {
      * @brief Inputs collected from ADCSBoxMonitor.
      */
     //! Sun vector in the body frame.
-    std::shared_ptr<ReadableStateField<f_vector_t>> sun_vec_body_rd_fp;
+    std::shared_ptr<ReadableStateField<f_vector_t>> ssa_vec_rd_fp;
     //! Validity of the sun vector that was computed.
-    std::shared_ptr<ReadableStateField<bool>> sun_vec_body_rd_valid_fp;
+    std::shared_ptr<ReadableStateField<bool>> ssa_vec_rd_valid_fp;
     //! Magnetic field vector in the body frame.
-    std::shared_ptr<ReadableStateField<f_vector_t>> mag_vec_body_rd_fp;
+    std::shared_ptr<ReadableStateField<f_vector_t>> mag_vec_fp;
     //! Gyroscope vector in the body frame.
-    std::shared_ptr<ReadableStateField<f_vector_t>> gyr_vec_body_rd_fp;
+    std::shared_ptr<ReadableStateField<f_vector_t>> gyr_vec_fp;
     //! Reaction wheel speeds.
     std::shared_ptr<ReadableStateField<f_vector_t>> rwa_rd_fp;
-    //! Position of current satellite, in the ECI frame.
-    std::shared_ptr<ReadableStateField<f_vector_t>> r1_vec_eci_fp;
-    //! Position of other satellite, in the ECI frame.
-    std::shared_ptr<ReadableStateField<f_vector_t>> r2_vec_eci_fp;
-    
+    //! Position of this satellite, in the ECI frame.
+    std::shared_ptr<ReadableStateField<f_vector_t>> r1_vec_ecef_rd_fp;
+
     /**
      * @brief Constant parameters for calculation.
      */
