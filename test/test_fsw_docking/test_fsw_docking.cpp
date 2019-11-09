@@ -44,11 +44,17 @@ void test_task_execute() {
     TestFixture tf;
     tf.docked_fp->set(false);
     TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
+    //test docking
     while (!tf.dock_config_fp->get()){
         tf.docking_controller->execute();
     }
-    //this test should pass but it doesnt
     TEST_ASSERT_EQUAL(true, tf.dock_config_fp->get());
+    //test undocking
+    tf.docking_config_cmd_fp->set(false);
+    while (tf.dock_config_fp->get()){
+        tf.docking_controller->execute();
+    }
+    TEST_ASSERT_EQUAL(false, tf.dock_config_fp->get());
 }
 
 int test_control_task() {
