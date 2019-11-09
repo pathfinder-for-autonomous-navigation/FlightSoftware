@@ -1,27 +1,37 @@
-language: python
-python:
-    - "2.7"
-
 sudo: false
 cache:
     directories:
         - "~/.platformio"
 
-addons:
-  apt:
-    packages:
-     - lcov
-     - cppcheck
-     - valgrind
-
+language: python
 install:
     - pip install -U platformio
     - platformio update
-    - sudo gem install coveralls-lcov
 
-script:
-    - ./tools/travis_script.sh
+matrix:
+    include:
+      - python:
+            - "2.7"
+        addons:
+        apt:
+            packages:
+            - lcov
+            - cppcheck
+            - valgrind
+        install:
+            - sudo gem install coveralls-lcov
+        script:
+            - ./tools/run_desktop_unit_tests.sh
+        after_success:
+            - ./tools/generate_coverage.sh
+            - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-after_success:
-    - ./tools/generate_coverage.sh
-    - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
+      - python:
+            - "2.7"
+        script:
+            - ./tools/verify_teensy_builds.sh
+
+      - python:
+            - "3.7"
+        script:
+            - platformio remote test -e teensy_ci -v
