@@ -332,6 +332,7 @@ int main(void) {
 
         Serial.printf("BYTES AVAIL: %u\n",piksi.bytes_available());
         int res = piksi.read_buffer();
+        Serial.printf("RES: %d\n", res);
         if (res == 0) {
             if(verify_all())
                 exec_pass_count += 1;
