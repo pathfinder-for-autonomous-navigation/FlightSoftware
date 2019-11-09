@@ -101,6 +101,7 @@ void DockingSystem::step_motor() {
     delayMicroseconds(1000);
     digitalWrite(motor_step_pin, HIGH);
     #endif
+    steps=steps-1;
 }
 
 float DockingSystem::get_step_angle() const {
