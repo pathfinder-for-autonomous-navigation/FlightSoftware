@@ -1,7 +1,6 @@
 #ifndef DOCKING_SYSTEM_HPP_
 #define DOCKING_SYSTEM_HPP_
 
-
 #include "../Devices/Device.hpp"
 #include <cmath>
 
