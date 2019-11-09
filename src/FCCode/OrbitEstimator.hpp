@@ -24,13 +24,14 @@ class OrbitEstimator : public ControlTask<void> {
 
     //! Position and velocity of this satellite, as read directly from the Piksi in the
     //! ECEF frame.
-    std::shared_ptr<ReadableStateField<d_vector_t>> r1_vec_ecef_rd_fp;
-    std::shared_ptr<ReadableStateField<d_vector_t>> v1_vec_ecef_rd_fp;
+    std::shared_ptr<ReadableStateField<d_vector_t>> r1_vec_eci_rd_fp;
+    std::shared_ptr<ReadableStateField<d_vector_t>> v1_vec_eci_rd_fp;
 
     //! Position and velocity of this satellite, as (either) read directly from the Piksi
     //! or updated by the ground.
-    std::shared_ptr<ReadableStateField<d_vector_t>> r2_vec_ecef_rd_fp;
-    std::shared_ptr<ReadableStateField<d_vector_t>> v2_vec_ecef_rd_fp;
+    std::shared_ptr<ReadableStateField<d_vector_t>> dr_vec_eci_rd_fp;
+    std::shared_ptr<ReadableStateField<d_vector_t>> r2_vec_eci_rd_fp;
+    std::shared_ptr<ReadableStateField<d_vector_t>> v2_vec_eci_rd_fp;
 
     // TODO insert other state fields we need to know in order to determine orbital state.
 
