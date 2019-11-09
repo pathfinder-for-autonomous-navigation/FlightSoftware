@@ -1,7 +1,7 @@
 #include "../StateFieldRegistryMock.hpp"
 #include <StateField.hpp>
 #include <Serializer.hpp>
-#include "../src/FCCode/DockingController.hpp"
+#include "../src/FCCode/DockingController.cpp"
 
 #include <unity.h>
 

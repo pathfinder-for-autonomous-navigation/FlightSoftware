@@ -1,5 +1,5 @@
-#ifndef DOCKING_MOTOR_HPP_
-#define DOCKING_MOTOR_HPP_
+#ifndef DOCKING_SYSTEM_HPP_
+#define DOCKING_SYSTEM_HPP_
 
 #ifndef DESKTOP
 #include "../Devices/Device.hpp"
@@ -67,7 +67,8 @@ class DockingSystem {
      **/
     void start_dock();
 
-    /** @brief Put the docking motor into the "undocked" turning configuration.
+    /** 
+     * @brief Put the docking motor into the "undocked" turning configuration.
      **/
     void start_undock();
 
