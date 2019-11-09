@@ -28,16 +28,17 @@
 //             return "Err code not found";
 //     }
 // }
-class QuakeManager : public ControlTask<void> {
+class QuakeManager : public ControlTask<bool> {
    public:
+     QuakeControlTask qct;
     QuakeManager(StateFieldRegistry& registry);
-    void execute() override;
+    bool execute() override;
 
    protected:
-   void dispatch_startup();
-   void dispatch_waiting();
-   void dispatch_transceiving();
-   void dispatch_manual();
+   bool dispatch_startup();
+   bool dispatch_waiting();
+   bool dispatch_transceiving();
+   bool dispatch_manual();
 
    /**
      * @brief Control cycle count, provided by ClockManager.
@@ -53,9 +54,8 @@ class QuakeManager : public ControlTask<void> {
    /**
     * @brief Pointer to the downlink message stack
     **/ 
-   InternalStateField<char [70]> radio_msg_queue_fp;
+   InternalStateField<char*> radio_msg_queue_fp;
 
-   QuakeControlTask qct;
    // The last cycle for which we had comms
    unsigned int last_checkin_cycle;
 

@@ -34,7 +34,7 @@ const char* translate_state(int state)
     case IS_FUNCTIONAL:
       return "IS_FUNCTIONAL";
     default:
-      "[Error]: INVALID_QUAKE_STATE";
+      return "[Error]: INVALID_QUAKE_STATE";
   }
 }
 

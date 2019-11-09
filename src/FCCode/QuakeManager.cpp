@@ -3,7 +3,7 @@
 #include "QLocate.hpp"
 
 // Quake driver setup is initialized when QuakeController constructor is called
-QuakeManager::QuakeManager(StateFieldRegistry &registry) : ControlTask<void>(registry),
+QuakeManager::QuakeManager(StateFieldRegistry &registry) : ControlTask<bool>(registry),
     radio_mode_sr(0, 10, 4),
     radio_mode_f("radio.mode", radio_mode_sr),
     radio_msg_queue_fp("radio.mo_msg_queue"),
@@ -15,29 +15,25 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry) : ControlTask<void>(reg
     radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::manual));
 }
 
-void QuakeManager::execute() {
+bool QuakeManager::execute() {
     radio_mode_t mode = static_cast<radio_mode_t>(radio_mode_f.get());
     switch(mode){
         case radio_mode_t::startup:
-        dispatch_startup();
-        break;
+        return dispatch_startup();
         case radio_mode_t::manual:
-        dispatch_manual();
-        break;
+        return dispatch_manual();
         case radio_mode_t::waiting:
-        dispatch_waiting();
-        break;
+        return dispatch_waiting();
         case radio_mode_t::transceiving:
-        dispatch_transceiving();
-        break;
+        return dispatch_transceiving();
         default:
             printf(debug_severity::error, "Radio state not defined: %d\n", static_cast<unsigned int>(mode));
-            break;
+            return false;
 
     }
 }
 
-void QuakeManager::dispatch_startup() {
+bool QuakeManager::dispatch_startup() {
     int err_code = -1;
     int fn_number = qct.get_current_fn_number();
     // Determine what stage of config we are in
@@ -56,55 +52,73 @@ void QuakeManager::dispatch_startup() {
             radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::manual));
             break; 
         default:
-            printf(debug_severity::error, "Radio startup fn_number not defined: %d\n", fn_number);
-            return;
+            printf(debug_severity::error, 
+                "Radio startup fn_number not defined: %d\n", 
+                fn_number);
+            return false;
 
    }
-    if(err_code != Devices::OK)
-        printf(debug_severity::error, "Execution of Quake Config failed with code: %d at fn_number: %d\n", (err_code), fn_number);
-
+    if(err_code != Devices::OK){
+        printf(debug_severity::error, 
+            "Execution of Quake Config failed with code: %d at fn_number: %d\n", 
+            (err_code), fn_number);
+        return false;
+    }
+    return true;
 }
 
-void QuakeManager::dispatch_manual(){
+bool QuakeManager::dispatch_manual(){
     // In this mode keep checking for comms
-
+    return false;
 }
 
-void QuakeManager::dispatch_waiting(){
+bool QuakeManager::dispatch_waiting(){
     // See how long we have been waiting for
     unsigned int delta = control_cycle_count_fp->get() - last_checkin_cycle;
-    // If we have waited for longer than 5 minutes, check for comms
-    if (delta > 3000) 
-    {
-        int state = qct.get_current_state();
-        int err_code = -1;
-        if (state == IDLE){
-            if (qct.request_state(SBDIX)){
-                radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::manual));
-                // Request SBDIX
-                err_code = qct.execute();
-            }else{
-                printf(debug_severity::error, "Unable to transition Quake state to SBDIX from %s\n", translate_state(qct.get_current_state()));
-                return;
-            }
-  
-        }else if (state == SBDIX){
-            // Get SBDIX response
-            err_code = qct.execute();
-            // State should be IDLE after this execute as long as  it was successful
-            if (err_code == Devices::OK){
-                const int* sbdix_response = qct.quake.sbdix_r;
-                
-                if (sbdix_response[0] < 5){ // Downlink was successful
-                    // Update last checkin_cycle
-                    last_checkin_cycle = control_cycle_count_fp->get();
-                    // go into transceiving mode
-                    radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::transceiving));
-                }
+    // Return if we have not waited longer than 5 minutes
+    if (delta < 3000) return false;
+
+    int state = qct.get_current_state();
+    bool bOk;
+    int err_code = -1;
+    if (state == IDLE){
+        // Request SBDIX
+        bOk = qct.request_state(SBDIX);
+        if (!bOk)
+        {
+            printf(debug_severity::error, 
+            "Unable to transition Quake state to SBDIX from %s\n", 
+            translate_state(qct.get_current_state()));
+            return false;
         }
-        if (err_code != Devices::OK || err_code != Devices::PORT_UNAVAILABLE) // don't log waiting
-            printf(debug_severity::error, "SBDIX execution failed to execute at fn_number: %d with error code %d\n", qct.get_current_fn_number(), (err_code));
+        radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::manual));
+        // Start SBDIX
+        err_code = qct.execute();
+
+    }else if (state == SBDIX){
+        // Get SBDIX response
+        err_code = qct.execute();
+        // State should be IDLE after this execute when successful
+        if (err_code != Devices::OK) return false;
+
+        const int* sbdix_response = qct.quake.sbdix_r;
+        // If downlink was successful
+        if (sbdix_response[0] < 5){ 
+            // Update last checkin_cycle
+            last_checkin_cycle = control_cycle_count_fp->get();
+            // go into transceiving mode
+            radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::transceiving));
+        }
+        // Otherwise, we will stay in waiting mode and go back into transcieving later 
     }
+    if (err_code != Devices::OK || err_code != Devices::PORT_UNAVAILABLE) // don't log waiting
+    {
+        printf(debug_severity::error, 
+            "SBDIX execution failed to execute at fn_number: %d with error code %d\n", 
+            qct.get_current_fn_number(), (err_code));
+        return false;
+    }    
+    return true;
 }
 
 
