@@ -15,11 +15,12 @@ matrix:
           apt:
             packages:
             - lcov
-            - cppcheck
             - valgrind
         before_install:
             - chmod +x tools/run_desktop_tests.sh
         install:
+            - pip install -U platformio
+            - platformio update
             - sudo gem install coveralls-lcov
         script:
             - ./tools/run_desktop_tests.sh
@@ -27,7 +28,11 @@ matrix:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-      - script:
+      - addons:
+          apt:
+            packages:
+            - cppcheck
+        script:
             - ./tools/verify_teensy_builds.sh
 
       - script:
