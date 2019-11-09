@@ -262,7 +262,7 @@ unsigned char Piksi::process_buffer_msg_len() {
 unsigned char Piksi::read_buffer() {
     int initial_bytes = bytes_available();
 
-    if (initial_bytes == 299 || initial_bytes == 333 || initial_bytes == 159 {
+    if (initial_bytes == 299 || initial_bytes == 333 || initial_bytes == 159 ){
         int msg_len_sum = 0;
         while (bytes_available()) {
             msg_len_sum += process_buffer_msg_len();

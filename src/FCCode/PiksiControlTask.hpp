@@ -16,7 +16,7 @@
  */
 static constexpr int SUCCESS = 0;
 
-static constexpr int BAD_BUFFER = 1; // SBDWB operation
+static constexpr int BAD_BUFFER = 1;
 static constexpr int BAD_TIME_OR_NSATS = 2;
 static constexpr int BAD_NSATS = 3;
 static constexpr int BAD_DATA = 4;
