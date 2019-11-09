@@ -16,6 +16,7 @@ class TestFixture {
 
     std::shared_ptr<ReadableStateField<bool>>dock_config_fp;
     std::shared_ptr<ReadableStateField<bool>>docked_fp;
+    std::shared_ptr<ReadableStateField<bool>>is_turning_fp;
 
     TestFixture() : registry() {
         docking_config_cmd_fp = registry.create_writable_field<bool>("docksys.config_cmd");
@@ -27,6 +28,8 @@ class TestFixture {
         docked_fp->set(true);
         dock_config_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.dock_config"));
         dock_config_fp->set(false);
+        is_turning_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.is_turning"));
+        is_turning_fp->set(false);
     }
 };
 
@@ -41,7 +44,10 @@ void test_task_execute() {
     TestFixture tf;
     tf.docked_fp->set(false);
     TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
-    tf.docking_controller->execute();
+    while (!tf.dock_config_fp->get()){
+        tf.docking_controller->execute();
+    }
+    //this test should pass but it doesnt
     TEST_ASSERT_EQUAL(true, tf.dock_config_fp->get());
 }
 

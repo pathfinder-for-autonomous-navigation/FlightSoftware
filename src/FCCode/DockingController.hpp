@@ -36,6 +36,11 @@ class DockingController : public ControlTask<void> {
     //state field returns whether or not the motor is in the docking configuration
     Serializer<bool> dock_config_sr;
     ReadableStateField<bool> dock_config_f;
+
+    //state field returns whether or not the motor is turning/in the process of (un)docking
+    Serializer<bool> is_turning_sr;
+    ReadableStateField<bool> is_turning_f;
+
 };
 
 #endif
