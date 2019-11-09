@@ -1,10 +1,16 @@
 #ifndef PIKSI_HPP_
 #define PIKSI_HPP_
 
+#ifndef DESKTOP
 #include <HardwareSerial.h>
+#include "../Devices/Device.hpp"
+#else
+#include <iostream>
+#include <string>
+#endif
+
 #include <GPSTime.hpp>
 #include <array>
-#include "../Devices/Device.hpp"
 #include "../libsbp/logging.h"
 #include "../libsbp/navigation.h"
 #include "../libsbp/observation.h"
@@ -17,7 +23,11 @@ namespace Devices {
 /**
  * @brief Device class for interacting with the Piksi GPS system.
  */
+#ifndef DESKTOP
 class Piksi : public Device {
+#else
+class Piksi {
+#endif
    public:
     //! Baud rate of communication with Piksi.
     static constexpr unsigned int BAUD_RATE = 115200;
@@ -27,13 +37,28 @@ class Piksi : public Device {
      *
      * @param serial_port The serial port that the Piksi communicates over.
      */
+    #ifndef DESKTOP
     Piksi(const std::string &name, HardwareSerial &serial_port);
+    #else
+    using String = std::string;
+    //Piksi();
+    Piksi(const std::string &name);
+    #endif
 
     // Standard device functions
+    #ifndef DESKTOP
     bool setup() override;
     bool is_functional() override;
     void reset() override;
     void disable() override;  // Sets Piksi's power consumption to a minimum
+    #else
+    bool setup();
+    bool is_functional();
+    void reset();
+    void disable();  // Sets Piksi's power consumption to a minimum
+    #endif
+
+    
 
     /** @brief Runs read over UART buffer to process values sent by Piksi into
      * memory.
@@ -173,6 +198,15 @@ class Piksi : public Device {
     /** @brief Returns state of integer ambiguity resolution (IAR) process. **/
     virtual unsigned int get_iar();
 
+    //meme
+    #ifdef DESKTOP
+    void set_gps_time(const unsigned int tow);
+    void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position);
+    void set_vel_ecef(const unsigned int tow, const std::array<double, 3>& velocity);
+    void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position);
+    void set_read_return(const unsigned int out);
+    #endif
+
     /** @brief Reads current settings in Piksi RAM.
      *  @return Current settings in Piksi RAM, as a libsbp struct. **/
     char *get_settings_read_resp();
@@ -256,10 +290,6 @@ class Piksi : public Device {
      * @param settings Struct containing setting changes for the Piksi. **/
     void settings_write(const msg_settings_write_t &settings);
 
-    /** @brief Creates settings object containing default settings for PAN and
-     * writes them to RAM. **/
-    void write_default_settings();
-
     /** @brief Resets Piksi. **/
     void piksi_reset();
 
@@ -289,8 +319,10 @@ class Piksi : public Device {
     void clear_bytes();
 
    protected:
+   #ifndef DESKTOP
     HardwareSerial &_serial_port;  // This is protected instead of private so that FakePiksi
                                    // can access the port variable
+    #endif
    private:
     // Internal values required by libsbp. See sbp.c
     sbp_state_t _sbp_state;
@@ -351,6 +383,10 @@ class Piksi : public Device {
     msg_heartbeat_t _heartbeat;
     msg_uart_state_t _uart_state;
     msg_user_data_t _user_data;
+
+    #ifdef DESKTOP
+    unsigned int _read_return;
+    #endif
 };
 }  // namespace Devices
 

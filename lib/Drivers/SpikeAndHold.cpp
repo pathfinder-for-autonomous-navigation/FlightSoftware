@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #include "SpikeAndHold.hpp"
 #include <Arduino.h>
 #include <algorithm>
@@ -79,3 +80,4 @@ void SpikeAndHold::execute_schedule(const std::array<unsigned int, SpikeAndHold:
 void SpikeAndHold::shut_all_valves() {
     for (unsigned char i = 0; i < NUM_VALVES; i++) digitalWrite(valve_pins[i], CLOSED);
 }
+#endif

@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 /** @file I2CDevice.cpp
  * @author Tanishq Aggarwal
  * @author Kyle Krol
@@ -37,3 +38,4 @@ I2CDevice::I2CDevice(const std::string &name, i2c_t3 &wire, unsigned char addr,
     : Device(name), wire(wire), addr(addr), timeout(timeout), error_count(0), recent_errors(false) {
     // empty
 }
+#endif

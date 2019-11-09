@@ -1,4 +1,5 @@
 #include "DCDC.hpp"
+#ifndef DESKTOP
 #include "Arduino.h"
 
 using namespace Devices;
@@ -29,3 +30,4 @@ void DCDC::reset() {
     delay(10);
     enable();
 }
+#endif

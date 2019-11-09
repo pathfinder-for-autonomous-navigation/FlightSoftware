@@ -1,6 +1,6 @@
 #ifndef DOCKING_MOTOR_HPP_
 #define DOCKING_MOTOR_HPP_
-
+#ifndef DESKTOP
 #include "../Devices/Device.hpp"
 
 namespace Devices {
@@ -66,4 +66,5 @@ class DockingMotor : public Device {
 };
 }  // namespace Devices
 
+#endif
 #endif

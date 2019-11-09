@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #ifndef TEMP_SENSOR_HPP_
 #define TEMP_SENSOR_HPP_
 
@@ -30,4 +31,5 @@ class TempSensor : public Device {
 };
 }  // namespace Devices
 
+#endif
 #endif

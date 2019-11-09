@@ -1,4 +1,5 @@
 #include <string>
+#ifndef DESKTOP
 #include "../Devices/I2CDevice.hpp"
 
 #ifndef GOMSPACE_HPP_
@@ -249,4 +250,5 @@ class Gomspace : public I2CDevice {
 };
 }  // namespace Devices
 
+#endif
 #endif

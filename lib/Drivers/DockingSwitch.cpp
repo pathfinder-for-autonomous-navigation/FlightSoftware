@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #include "DockingSwitch.hpp"
 #include "Arduino.h"
 
@@ -17,3 +18,4 @@ void DockingSwitch::disable() {}
 void DockingSwitch::reset() {}
 
 bool DockingSwitch::pressed() { return (digitalRead(switch_pin_) == 1); }
+#endif

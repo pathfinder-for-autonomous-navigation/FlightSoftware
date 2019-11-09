@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #include "DockingMotor.hpp"
 #include "Arduino.h"
 
@@ -50,3 +51,4 @@ void DockingMotor::undock() {
     // TODO
     docked_ = false;
 }
+#endif

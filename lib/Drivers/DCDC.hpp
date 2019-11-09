@@ -1,5 +1,6 @@
 #ifndef DCDC_HPP_
 #define DCDC_HPP_
+#ifndef DESKTOP
 
 #include "../Devices/Device.hpp"
 
@@ -35,4 +36,5 @@ class DCDC : public Device {
 };
 }  // namespace Devices
 
+#endif
 #endif
