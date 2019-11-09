@@ -30,23 +30,6 @@ int PiksiControlTask::get_current_state() const
   return currentState;
 }
 
-// size_t PiksiControlTask::get_current_fn_number() const
-// {
-//   return fnSeqNum;
-// }
-
-// bool PiksiControlTask::request_state(int requested_state)
-// {
-//   if (requested_state == CONFIG)
-//     currentState = CONFIG;
-//   else if (currentState == IDLE)
-//     currentState = requested_state;
-//   else
-//     return false;
-//   fnSeqNum = 0;
-//   return true;
-// }
-
 void PiksiControlTask::execute()
 {
   // TODO: allow any state to ignore state and call CONFIG, remember to reset fnSeqNum
@@ -64,6 +47,7 @@ void PiksiControlTask::execute()
 
     bool time_valid = pos_tow == time.tow && vel_tow == time.tow 
     && baseline_tow == time.tow && time.tow > tow_past;
+    
     bool nsats_valid = true;
 
     if(time_valid && nsats_valid){

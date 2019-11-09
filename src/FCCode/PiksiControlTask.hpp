@@ -2,7 +2,9 @@
 
 #include <ControlTask.hpp>
 //#include "../../lib/Drivers/QLocate.hpp"
-#include "../../lib/Drivers/Piksi.hpp"
+//#include <"../../lib/Drivers/Piksi.hpp">
+#include <Piksi.hpp>
+//include "Piksi.hpp"
 #include <string>
 
 /**
