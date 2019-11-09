@@ -1,14 +1,14 @@
 #include "../StateFieldRegistryMock.hpp"
 #include <StateField.hpp>
 #include <Serializer.hpp>
-#include "../src/FCCode/DockingController.cpp"
+#include "../src/FCCode/DockingController.hpp"
 
 #include <unity.h>
 
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
-    DockingSystem docksys;
+    Devices::DockingSystem docksys;
 
     std::shared_ptr<WritableStateField<bool>> docking_config_cmd_fp;
 
