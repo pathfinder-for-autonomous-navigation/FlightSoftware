@@ -1,5 +1,7 @@
 #include "DCDC.hpp"
+#ifndef DESKTOP
 #include "Arduino.h"
+#endif
 
 using namespace Devices;
 

@@ -7,6 +7,7 @@
 #ifndef PAN_LIB_DRIVERS_ADCS_HPP_
 #define PAN_LIB_DRIVERS_ADCS_HPP_
 
+#ifndef DESKTOP
 #include <I2CDevice.hpp>
 #include <string>
 #include <array>
@@ -275,5 +276,5 @@ class ADCS : public I2CDevice {
 };
 
 }  // namespace Devices
-
+#endif
 #endif
