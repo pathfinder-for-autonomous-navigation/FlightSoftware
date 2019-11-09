@@ -1,9 +1,8 @@
 #ifndef DOCKING_SYSTEM_HPP_
 #define DOCKING_SYSTEM_HPP_
 
-#ifndef DESKTOP
+
 #include "../Devices/Device.hpp"
-#endif
 #include <cmath>
 
 namespace Devices {
@@ -13,11 +12,7 @@ namespace Devices {
  * The flight software is responsible for determining if the system is docked
  * or not.
  **/
-#ifndef DESKTOP
-class DockingSystem : public Device {
-#else
-class DockingSystem {
-#endif
+class DockingSystem : public Devices::Device {
    public:
     //! Default pin for docking motor I1.
     static constexpr unsigned char motor_i1_pin = 14;
@@ -113,7 +108,9 @@ class DockingSystem {
     float step_angle = (15.0f*M_PI)/180.0f;
 
     // Status of motor sleep pin (and therefore of overall docking motor.)
+    #ifndef DESKTOP
     bool is_enabled = false;
+    #endif
 
     //number of steps left to complete
     unsigned int steps = 0;

@@ -1,14 +1,19 @@
 #ifndef DCDC_HPP_
 #define DCDC_HPP_
-#ifndef DESKTOP
 
+#ifndef DESKTOP
 #include "../Devices/Device.hpp"
+#endif
 
 namespace Devices {
 /**
  * @brief Enables or disables the 7-24V DC-DC converters.
  * **/
+#ifndef DESKTOP
 class DCDC : public Device {
+#else
+class DCDC {
+#endif
    public:
     //! Default enable pin for the DCDCs.
     static constexpr unsigned char dcdc_motor_enable_pin = 24;
@@ -18,6 +23,7 @@ class DCDC : public Device {
      * @brief Default constructor. **/
     DCDC();
 
+    #ifndef DESKTOP
     bool setup() override;
 
     /**
@@ -34,6 +40,12 @@ class DCDC : public Device {
      * @brief Disables and then re-enables both DCDCs.
      **/
     void reset() override;
+    #endif
+
+    bool setup() ;
+    bool is_functional();
+    void disable();
+    void reset();
 
     /**
      * @brief Turn on ADCS DCDC by holding the enable pin high.
@@ -48,7 +60,7 @@ class DCDC : public Device {
 
     /** 
      * @brief Turn off ADCS DCDC by holding the enable pin low.
-     **/
+    **/
     void disable_adcs();
 
     /** 
@@ -60,7 +72,3 @@ class DCDC : public Device {
 }  // namespace Devices
 
 #endif
-<<<<<<< HEAD
-=======
-#endif
->>>>>>> controller/quake

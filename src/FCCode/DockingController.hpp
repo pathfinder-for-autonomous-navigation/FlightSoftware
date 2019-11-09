@@ -5,7 +5,7 @@
 
 #include "../../test/StateFieldRegistryMock.hpp"
 #include <ControlTask.hpp>
-#include "../../lib/Drivers/DockingSystem.cpp"
+#include "../../lib/Drivers/DockingSystem.hpp"
 
 class DockingController : public ControlTask<void> {
    public:

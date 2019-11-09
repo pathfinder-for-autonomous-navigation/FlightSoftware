@@ -6,12 +6,9 @@
 
 using namespace Devices;
 
-#ifndef DESKTOP
+
 DockingSystem::DockingSystem()
     : Device("docking_system") {}
-#else
-DockingSystem::DockingSystem() {}
-#endif
 
 bool DockingSystem::setup() {
     #ifndef DESKTOP
@@ -35,63 +32,75 @@ bool DockingSystem::setup() {
     return true;
 }
 
-#ifndef DESKTOP
 bool DockingSystem::is_functional() {
+    #ifndef DESKTOP
     return digitalRead(DCDC::dcdc_sph_enable_pin)
         && digitalRead(motor_sleep_pin);
+    #else
+    return true;
+    #endif
 }
 
 void DockingSystem::disable() { 
+    #ifndef DESKTOP
     digitalWrite(motor_sleep_pin, LOW);
+    #endif
 }
 void DockingSystem::enable() {
+    #ifndef DESKTOP
     digitalWrite(motor_sleep_pin, HIGH);
+    #endif
 }
 
 void DockingSystem::reset() {
+    #ifndef DESKTOP
     disable();
     delay(10);
     enable();
+    #endif
 }
-
 
 bool DockingSystem::check_docked() const {
+    #ifndef DESKTOP
     return digitalRead(switch_pin);
-}
-
-void DockingSystem::set_direction(bool set_clockwise) {
-    if (set_clockwise) {
-        digitalWrite(motor_direction_pin, LOW);
-    }
-    else {
-        digitalWrite(motor_direction_pin, HIGH);
-    }
-}
-
-void DockingSystem::step_motor() {
-    digitalWrite(motor_step_pin, LOW);
-    delayMicroseconds(1000);
-    digitalWrite(motor_step_pin, HIGH);
+    #else
+    return true;
+    #endif
 }
 
 void DockingSystem::set_step_angle(float angle) {
     step_angle = angle;
 }
 
-void DockingSystem::start_dock() {
+void DockingSystem::set_direction(bool set_clockwise) {
     #ifndef DESKTOP
+    if (set_clockwise) {
+        digitalWrite(motor_direction_pin, LOW);
+    }
+    else {
+        digitalWrite(motor_direction_pin, HIGH);
+    }
+    #endif
+}
+
+void DockingSystem::start_dock() {
     const bool clockwise_direction = true;
     set_direction(clockwise_direction);
-    #endif
     set_turn_angle(180.0f);
 }
 
 void DockingSystem::start_undock() {
-    #ifndef DESKTOP
     const bool clockwise_direction = false;
     set_direction(clockwise_direction);
-    #endif
     set_turn_angle(180);
+}
+
+void DockingSystem::step_motor() {
+    #ifndef DESKTOP
+    digitalWrite(motor_step_pin, LOW);
+    delayMicroseconds(1000);
+    digitalWrite(motor_step_pin, HIGH);
+    #endif
 }
 
 float DockingSystem::get_step_angle() const {
@@ -105,5 +114,3 @@ void DockingSystem::set_turn_angle(float angle) {
 unsigned int DockingSystem::get_steps() const {
     return steps;
 }
-
-#endif
