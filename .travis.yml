@@ -11,7 +11,8 @@ install:
 
 matrix:
     include:
-      - addons:
+      - name: "Desktop tests"
+        addons:
           apt:
             packages:
             - lcov
@@ -28,12 +29,14 @@ matrix:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-      - addons:
+      - name: "Verify Teensy code compiles"
+        addons:
           apt:
             packages:
             - cppcheck
         script:
             - ./tools/verify_teensy_builds.sh
 
-      - script:
+      - name: "Run unit tests on Teensy"
+        script:
             - platformio remote test -e teensy_ci -v
