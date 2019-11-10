@@ -114,9 +114,6 @@ bool setup();
     /*! Attempts to retrieve 'OK' response at port */
     int get_is_functional();
 
-    /*! Returns a pointer to the sbdix response codes */
-    int const *get_sbdix_response();
-
     /*! Returns the null-termianted MT message*/
     char *get_message();
 

@@ -30,7 +30,7 @@ void test_sbdix_no_network(void)
     Serial.printf("NumDelays: %d\n", numDelays);
     // Expect 0 since sbdix should return response codes always
 
-    const int *_pRes = q.get_sbdix_response();
+    const int *_pRes = q.sbdix_r;
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
 
     // Expect no network

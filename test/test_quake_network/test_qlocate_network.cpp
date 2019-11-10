@@ -48,7 +48,7 @@ void test_sbdix_with_network(void)
     // End SBD session
     TEST_ASSERT_EQUAL(0, q.get_sbdix());
     // Get SBDI response
-    const int *_pRes = q.get_sbdix_response();
+    const int *_pRes = q.sbdix_r;
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
     // If MO_status [0, 2], then downlink was successful
     // But we only pass if we receive a 0
@@ -96,7 +96,7 @@ void test_sbdrb_with_network(void)
         ;
     TEST_ASSERT_EQUAL(0, q.get_sbdix());
     // Get SBDI response
-    const int *_pRes = q.get_sbdix_response();
+    const int *_pRes = q.sbdix_r;
 
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
     // If MO_status [0, 2], then downlink was successful

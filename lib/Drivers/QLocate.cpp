@@ -53,8 +53,6 @@ int QLocate::get_is_functional()
     return OK;
 }
 
-int const *QLocate::get_sbdix_response() { return this->sbdix_r; }
-
 int QLocate::query_config_1()
 {
 #ifndef DESKTOP
