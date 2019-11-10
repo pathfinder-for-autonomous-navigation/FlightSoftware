@@ -5,6 +5,7 @@
  * @brief Contains implementation for I2CDevice interface, which standardizes the access
  * and control of I2C-based hardware peripherals.
  */
+#ifndef DESKTOP
 
 namespace Devices {
 inline void I2CDevice::i2c_set_timeout(unsigned long i2c_timeout) {
@@ -128,3 +129,5 @@ inline unsigned char I2CDevice::i2c_peek() {
     return (unsigned char)(val && 0xFF);
 }
 }  // namespace Devices
+
+#endif
