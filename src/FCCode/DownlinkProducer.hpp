@@ -8,8 +8,11 @@ class DownlinkProducer : public ControlTask<void> {
    public:
     /**
      * @brief Flow data object, used in order to specify the
-     * flow rate, the fields going into a flow, and the flow
-     * ID.
+     * - Flow rate.
+     * - The fields going into a flow.
+     * - The flow ID.
+     * - The maximum number of packets of a particular kind of flow to
+     *   save on a stack.
      * 
      * We can create a static list of these and use it to initialize the
      * actual Flow object, which creates pointers to state fields and 
@@ -19,6 +22,7 @@ class DownlinkProducer : public ControlTask<void> {
         unsigned char flow_id;
         std::vector<std::string> field_list;
         unsigned char flow_rate;
+        unsigned int packet_cache_size;
     };
 
     DownlinkProducer(StateFieldRegistry& registry, std::vector<FlowData>& flow_data);
@@ -74,6 +78,8 @@ class DownlinkProducer : public ControlTask<void> {
         //! but excluding COBS encoding.
         //! This is computed upon construction of the flow.
         size_t flow_packet_size = 0;
+
+        circular_stack<char*, packet_cache_size> flow_packets;
 
         /**
          * @brief Produces the serialized float packet, writing it to a provided character
