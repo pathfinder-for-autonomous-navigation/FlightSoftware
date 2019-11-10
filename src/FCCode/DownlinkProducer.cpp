@@ -8,29 +8,57 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     const std::vector<FlowData>& flow_data) : ControlTask<void>(r)
 {
     unsigned char num_flows = flow_data.size();
-    for (auto const& flow : flow_data) {
+    for (const FlowData& flow : flow_data) {
         Flow f(r, flow, num_flows);
-        flows.push_back(f);
+        
+        FlowGroup& group = flow_groups[flow.group_id];
+        group.group_id = flow.group_id;
+        group.flows.push_back(f);
+    }
+
+    for(auto& flow_group_it : flow_groups) {
+        FlowGroup& group = flow_group_it.second;
+        #ifdef DESKTOP
+            assert(group.get_downlink_size() <= 70);
+        #endif
     }
 }
 
 void DownlinkProducer::execute() {
     // If any flow counters are equal to their flow rate,
     // produce a packet for those flows.
-    for(size_t i = 0; i < flows.size(); i++) {
-        Flow& f = flows[i];
-        if (f.flow_counter == f.flow_rate) {
-            f.produce_flow_packet(nullptr);
-            f.flow_counter = 0;
+    for(auto& it : flow_groups) {
+        FlowGroup& flow_group = it.second;
+        for(Flow& f : flow_group.flows) {
+            if (f.counter == f.rate) {
+                f.produce_flow_packet(nullptr);
+                f.counter = 0;
+            }
+            f.counter++;
         }
-        f.flow_counter++;
     }
+}
+
+size_t DownlinkProducer::FlowGroup::get_downlink_size() const {
+    size_t downlink_size = 0;
+    downlink_size += 4; // Control cycle count
+    for(const Flow& flow : flows) {
+        downlink_size += flow.packet_size;
+        downlink_size += 1; // Packet delimiter
+    }
+    if (flows.size() > 0) downlink_size -= 1; // Extra packet delimeter
+    return downlink_size;
+}
+
+void DownlinkProducer::FlowGroup::produce_downlink_packet(unsigned char* dest) {
+    size_t dest_it = 0; // Pointer to iterate through the size of the 
 }
 
 DownlinkProducer::Flow::Flow(
     const StateFieldRegistry& r,
     const FlowData& flow_data,
-    const unsigned char _num_flows) : flow_id(0, flow_data.flow_id),
+    const unsigned char _num_flows) : flow_id_sr(0, flow_data.flow_id),
+                                      group_id(flow_data.group_id),
                                       flow_rate(flow_data.flow_rate),
                                       flow_counter(0)
 {
@@ -42,23 +70,26 @@ DownlinkProducer::Flow::Flow(
         field_list.push_back(field_ptr);
     }
 
-    flow_packet_size += 4; // Control cycle # of when data was collected.
-
-    // Get bitcount of all fields in the flow
-    unsigned int flow_packet_body_bitsize;
-    flow_packet_body_bitsize += flow_id.bitsize();
-    for(auto const& field: field_list) {
-        flow_packet_body_bitsize += field->get_bit_array().size();
-    }
-    unsigned int flow_packet_body_bytesize = (flow_packet_body_bitsize + 7) / 8;
-    flow_packet_size += flow_packet_body_bytesize;
-
     #ifdef DESKTOP
-    assert(flow_packet_size <= 70);
+    assert(get_packet_size() <= 70);
     #endif
 }
 
-int DownlinkProducer::Flow::produce_flow_packet(char* packet_dest) {
+size_t DownlinkProducer::Flow::get_packet_size() const {
+    size_t packet_size = 0;
+    // Get bitcount of all fields in the flow
+    size_t packet_body_bitsize = 0;
+    packet_body_bitsize += flow_id_sr.bitsize();
+    for(auto const& field: field_list) {
+        packet_body_bitsize += field->get_bit_array().size();
+    }
+    size_t packet_body_bytesize = (packet_body_bitsize + 7) / 8;
+    packet_size += packet_body_bytesize;
+
+    return packet_size;
+}
+
+void DownlinkProducer::Flow::produce_flow_packet(unsigned char* packet_dest) {
     unsigned int f_it = 0; // Iterates over the packet at the bit level
 
     // Add flow ID to packet body
@@ -79,21 +110,9 @@ int DownlinkProducer::Flow::produce_flow_packet(char* packet_dest) {
         bit_array::modify_bit(packet_dest[f_it / 8], f_it, 0);
     }
 
-    // Add control cycle count to flow packet
-    f_it = f_it / 8; // Iterate over the byte level now
-    unsigned int control_cycle_no = 2;
-    memcpy(packet_dest + f_it, (char*)(&control_cycle_no), sizeof(unsigned int));
-
-    // COBS-encode the packet
-    auto cobs_encode_result = cobs_encode(packet_dest, flow_packet_size,
-                                packet_dest, flow_packet_size + 1);
-    if (cobs_encode_result.status == COBSR_ENCODE_OK) {
-        return cobs_encode_result.out_len;
-    }
-    else if (cobs_encode_result.status == COBSR_ENCODE_OUT_BUFFER_OVERFLOW) {
-        return -1;
-    }
-    else if (cobs_encode_result.status == COBSR_ENCODE_NULL_POINTER) {
-        return -2;
-    }
+    // COBS-encode the packet. The encoding will never fail since
+    // the destination buffer is larger than the source buffer and
+    // the destination buffer will never be null.
+    cobs_encode(packet_dest, flow_packet_size, packet_dest,
+                flow_packet_size + 1);
 }

@@ -20,12 +20,24 @@ class DownlinkProducer : public ControlTask<void> {
      */
     struct FlowData {
         unsigned char flow_id;
-        std::vector<std::string> field_list;
+        unsigned char group_id;
         unsigned char flow_rate;
         unsigned int packet_cache_size;
+        std::vector<std::string> field_list;
     };
 
+    /**
+     * @brief Construct a new Downlink Producer.
+     * 
+     * @param registry State field registry.
+     * @param flow_data An initializer list of flow data.
+     */
     DownlinkProducer(StateFieldRegistry& registry, std::vector<FlowData>& flow_data);
+
+    /**
+     * @brief Produce flow packets as needed, and keep track of the next
+     * most urgent downlink flow group based on the Quake manager's state.
+     */
     void execute() override;
 
   protected:
@@ -39,12 +51,11 @@ class DownlinkProducer : public ControlTask<void> {
      *   on the current control cycle.
      */
     struct Flow {
-
         /**
-         * @brief Construct a new Flow object
+         * @brief Construct a new telemetry flow
          * 
          * Constructs the flow from the list of state fields
-         * and computes the size of the flow.
+         * and checks bounds on the size of the flow packet.
          * 
          * @param r          State field registry object.
          * @param flow_data  Data about the flow.
@@ -56,13 +67,14 @@ class DownlinkProducer : public ControlTask<void> {
              const unsigned char _num_flows);
 
         //! Flow ID #
-        Serializer<unsigned char> flow_id;
+        Serializer<unsigned char> flow_id_sr;
+        unsigned char group_id;
 
         //! List of fields within the flow
         std::vector<std::shared_ptr<ReadableStateFieldBase>> field_list;
 
         //! Rate of flow
-        unsigned int flow_rate;
+        unsigned int rate;
         
         //! Counts up from the last time a flow packet of this kind of flow
         //! was produced. Once a flow packet of this kind of flow is produced,
@@ -72,32 +84,46 @@ class DownlinkProducer : public ControlTask<void> {
         //! This flow counter will increment from 0 to 1,2,3,4,5 on each control cycle.
         //! After reaching 5, execute will reset it back to zero on the next control cycle
         //! and call produce_flow_packet on this flow.
-        unsigned int flow_counter;
+        unsigned int counter;
         
         //! Number of characters in the entire flow packet, including the packet header,
         //! but excluding COBS encoding.
-        //! This is computed upon construction of the flow.
-        size_t flow_packet_size = 0;
+        size_t get_packet_size() const;
 
-        circular_stack<char*, packet_cache_size> flow_packets;
+        circular_stack<char*, flow_cache_size> flow_packets;
 
         /**
          * @brief Produces the serialized float packet, writing it to a provided character
          * array.
          * 
          * @param dest Destination character array.
-         * 
-         * @return One of three possibilities:
-         *         - If creation and COBS encoding of the packet was successful, return
-         *           the number of bytes written to the destination.
-         *         - If the destination pointer was invalid (null), return -1.
-         *         - If the destination buffer wasn't large enough to store the packet,
-         *           return -2.
          */
-        int produce_flow_packet(char* dest);
+        void produce_flow_packet(unsigned char* dest);
     };
 
-    std::vector<Flow>& flows;
+    struct FlowGroup {
+        unsigned int group_id;
+        std::vector<Flow> flows;
+        circular_stack<char*, group_cache_size> downlink_packets;
+
+        /**
+         * @brief Compute the downlink size in bytes.
+         */
+        size_t get_downlink_size() const;
+
+        /**
+         * @brief Produces a downlink packet
+         * 
+         * @param dest Destination character array, writing it to a provided character
+         * array
+         */
+        void produce_downlink_packet(char* dest);
+    };
+
+    /**
+     * @brief Actual flow data.
+     */
+    std::map<unsigned char, FlowGroup>& flow_groups;
 };
 
 #endif
