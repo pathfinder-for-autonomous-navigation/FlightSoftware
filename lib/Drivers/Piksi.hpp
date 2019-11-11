@@ -91,6 +91,9 @@ class Piksi {
      */
     virtual unsigned char read_buffer();
 
+    virtual unsigned char read_buffer_exp();
+
+
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/
     // virtual void get_gps_time(gps_time_t *time);
@@ -383,6 +386,19 @@ class Piksi {
     msg_heartbeat_t _heartbeat;
     msg_uart_state_t _uart_state;
     msg_user_data_t _user_data;
+
+    bool _gps_time_update;
+    bool _pos_ecef_update;
+    bool _baseline_ecef_update;
+    bool _vel_ecef_update;
+    bool _iar_update;
+
+    bool _heartbeat_update;
+
+    bool _user_data_update;
+
+    //nsats
+    //fixed vs float
 
     #ifdef DESKTOP
     unsigned int _read_return;

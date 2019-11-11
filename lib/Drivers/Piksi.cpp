@@ -259,6 +259,37 @@ unsigned char Piksi::process_buffer_msg_len() {
     return 0;
 }
 
+unsigned char Piksi::read_buffer_exp() {
+    int initial_bytes = bytes_available();
+
+    //if(bytes in the buffer)
+        //process until each call back has been called
+    unsigned char ret = 2;
+    if(initial_bytes > 0){
+        while(bytes_available()){
+            process_buffer_msg_len();
+
+            if(_heartbeat_update && !_gps_time_update) {
+                //to cover case where half of a buffer is left behind
+                _heartbeat_update = false;
+                ret = 1;
+            }
+            if(_heartbeat_update && _gps_time_update){
+                _heartbeat_update = false;
+                _gps_time_update = false;
+                if(ret == 2)
+                    ret = 0;
+                break;
+            }
+            
+        }
+        while (bytes_available()) {
+            clear_bytes();
+        }
+    }
+    return ret;
+}
+
 unsigned char Piksi::read_buffer() {
     int initial_bytes = bytes_available();
 
@@ -360,6 +391,7 @@ void Piksi::_log_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
 void Piksi::_gps_time_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_gps_time)), msg, sizeof(msg_gps_time_t));
+    piksi->_gps_time_update = true;
 }
 void Piksi::_dops_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
@@ -368,14 +400,17 @@ void Piksi::_dops_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
 void Piksi::_pos_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_pos_ecef)), msg, sizeof(msg_pos_ecef_t));
+    piksi->_pos_ecef_update = true;
 }
 void Piksi::_baseline_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_baseline_ecef)), msg, sizeof(msg_baseline_ecef_t));
+    piksi->_baseline_ecef_update;
 }
 void Piksi::_vel_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_vel_ecef)), msg, sizeof(msg_vel_ecef_t));
+    piksi->_vel_ecef_update;
 }
 void Piksi::_base_pos_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
@@ -392,6 +427,7 @@ void Piksi::_settings_read_resp_callback(u16 sender_id, u8 len, u8 msg[], void *
 void Piksi::_heartbeat_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_heartbeat)), msg, sizeof(msg_heartbeat_t));
+    piksi->_heartbeat_update = true;
 }
 void Piksi::_startup_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
@@ -404,4 +440,5 @@ void Piksi::_uart_state_callback(u16 sender_id, u8 len, u8 msg[], void *context)
 void Piksi::_user_data_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_user_data)), msg, sizeof(msg_user_data_t));
+    piksi->_user_data_update = true;
 }
