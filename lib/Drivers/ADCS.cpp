@@ -4,6 +4,7 @@
  * @brief Contains implementation for device interface to ADCS system.
  */
 
+#ifndef DESKTOP
 #include "ADCS.hpp"
 #include <adcs_constants.hpp>
 #include <adcs_registers.hpp>
@@ -219,3 +220,4 @@ void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
 }
 
 void ADCS::update_hat() {}
+#endif
