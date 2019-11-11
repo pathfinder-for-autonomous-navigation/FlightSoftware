@@ -39,4 +39,4 @@ matrix:
 
       - name: "Run unit tests on Teensy"
         script:
-            - platformio remote test -e teensy_ci -v
+            - platformio remote --agent PANTeensyFarm test -e teensy_ci -v
