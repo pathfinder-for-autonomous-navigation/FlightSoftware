@@ -84,8 +84,11 @@ class PropulsionSystem : public Device {
     // should not be opened during the current cycle.
     static volatile bool valve_start_locked_out;
 
+    #ifndef DESKTOP
     //! Runs thrust_valve_loop every 3 ms. Initialized in setup().
     IntervalTimer thrust_valve_loop_timer;
+    #endif
+
     //! Loop interval in microseconds.
     static constexpr unsigned int thrust_valve_loop_interval_us = 3000;
     //! Loop interval in milliseconds.

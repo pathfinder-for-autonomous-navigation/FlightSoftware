@@ -14,6 +14,12 @@ using namespace Devices;
 const std::array<unsigned char, 6>
 PropulsionSystem::valve_pins = {27, 28, 3, 4, 5, 6};
 
+volatile bool
+PropulsionSystem::is_valve_opened[4] = {false, false, false, false};
+
+volatile unsigned int
+PropulsionSystem::thrust_valve_schedule[4] = {0, 0, 0, 0};
+
 volatile bool PropulsionSystem::valve_start_locked_out = false;
 
 PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
