@@ -14,7 +14,7 @@ void test_task_execute() {
     StateFieldRegistry registry;
     MainControlLoop fcp(registry);
     for(int i = 0; i < 5; i++) {
-        task.execute();
+        fcp.execute();
     }
 }
 
