@@ -4,29 +4,42 @@
 #include <ControlTask.hpp>
 #include "ClockManager.hpp"
 #include "DebugTask.hpp"
+#include "FieldCreatorTask.hpp"
 #include "MissionManager.hpp"
 #include "DockingController.hpp"
 #include <StateField.hpp>
 #include <StateFieldRegistry.hpp>
 
+#ifdef HOOTL
+// OK
+#elif FLIGHT
+// OK
+#else
+static_assert(false, "Need to define either the HOOTL or FLIGHT flags.");
+#endif
+
 class MainControlLoop : public ControlTask<void> {
    protected:
+    FieldCreatorTask field_creator_task;
     ClockManager clock_manager;
-    DebugTask debug_task;
+    #ifdef HOOTL
+        DebugTask debug_task;
+    #endif
     MissionManager mission_manager;
 
     Devices::DockingSystem docksys;
     DockingController docking_controller;
 
     // Control cycle time offsets
-    #ifdef DESKTOP
-    static constexpr unsigned int SCALE_FACTOR = 1000000; // Milliseconds to nanoseconds
+    static constexpr unsigned int MILLIS_TO_MICROS = 1000; // Milliseconds to microseconds
+    #ifdef HOOTL
+        static constexpr unsigned int debug_task_offset = 1 * MILLIS_TO_MICROS;
+        static constexpr unsigned int debug_task_duration = 50 * MILLIS_TO_MICROS;
     #else
-    static constexpr unsigned int SCALE_FACTOR = 1000; // Milliseconds to microseconds
+        static constexpr unsigned int debug_task_duration = 0;
     #endif
-    static constexpr unsigned int debug_task_offset = 1 * SCALE_FACTOR;
-    static constexpr unsigned int mission_manager_offset = 51 * SCALE_FACTOR;
-    static constexpr unsigned int docking_controller_offset = 53 * SCALE_FACTOR;
+    static constexpr unsigned int mission_manager_offset    = 1 * MILLIS_TO_MICROS + debug_task_duration;
+    static constexpr unsigned int docking_controller_offset = 2 * MILLIS_TO_MICROS + debug_task_duration;
 
    public:
     /**
