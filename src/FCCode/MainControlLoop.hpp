@@ -30,16 +30,15 @@ class MainControlLoop : public ControlTask<void> {
     Devices::DockingSystem docksys;
     DockingController docking_controller;
 
-    // Control cycle time offsets
-    static constexpr unsigned int MILLIS_TO_MICROS = 1000; // Milliseconds to microseconds
+    // Control cycle time offsets, in microseconds
     #ifdef HOOTL
-        static constexpr unsigned int debug_task_offset = 1 * MILLIS_TO_MICROS;
-        static constexpr unsigned int debug_task_duration = 50 * MILLIS_TO_MICROS;
+        static constexpr unsigned int debug_task_offset = 1000;
+        static constexpr unsigned int debug_task_duration = 50000;
     #else
         static constexpr unsigned int debug_task_duration = 0;
     #endif
-    static constexpr unsigned int mission_manager_offset    = 1 * MILLIS_TO_MICROS + debug_task_duration;
-    static constexpr unsigned int docking_controller_offset = 2 * MILLIS_TO_MICROS + debug_task_duration;
+    static constexpr unsigned int mission_manager_offset    = 1000 + debug_task_duration;
+    static constexpr unsigned int docking_controller_offset = 2000 + debug_task_duration;
 
    public:
     /**
