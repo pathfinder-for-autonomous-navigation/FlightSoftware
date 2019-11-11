@@ -1,5 +1,5 @@
 #include <ControlTask.hpp>
-#include "../../src/FCCode/MainControlLoop.cpp"
+#include "../../src/FCCode/MainControlLoop.hpp"
 #include <unity.h>
 
 // Ensure that main control loop initializes properly and
