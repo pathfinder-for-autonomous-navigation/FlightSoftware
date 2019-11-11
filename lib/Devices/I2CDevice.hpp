@@ -88,7 +88,11 @@ class I2CDevice : public Device {
     /** @brief Constructs an i2c device on the specified wire, with the given
      *         address, and a default timeout values of 0 - i.e. a timeout never
      *         happens. **/
+    #ifndef DESKTOP
     I2CDevice(const std::string &name, i2c_t3 &wire, unsigned char addr, unsigned long timeout = 0);
+    #else
+    I2CDevice(const std::string &name, unsigned char addr, unsigned long timeout = 0);
+    #endif
     /** @brief Returns true if an error has occurred since the last call to
      *         pop_errors and false otherwise. The recent error history variable
      *         is reset and the consecutive communication failure variables is
@@ -107,7 +111,11 @@ class I2CDevice : public Device {
      *         recorded in the recent error history variable. This is a blocking
      *         call. **/
     template <typename T>
+    #ifndef DESKTOP
     void i2c_transmit_data(T const *data, std::size_t len, i2c_stop s = I2C_STOP);
+    #else
+    void i2c_transmit_data(T const *data, std::size_t len, i2c_stop s = I2C_STOP);
+    #endif
     /** @brief Requests and recieves a message over i2c form this device. The
      *         message will be placed in the array data of type T with length len.
      *         The size of the array data will determine how much data is

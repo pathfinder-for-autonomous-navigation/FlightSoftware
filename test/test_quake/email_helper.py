@@ -88,4 +88,4 @@ def downloadFiles():
 
 
 if __name__ == '__main__':
-    downloadFiles()
+    sendFile(create_txt_file("message"))

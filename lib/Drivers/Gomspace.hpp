@@ -12,7 +12,8 @@ namespace Devices {
  */
 class Gomspace : public I2CDevice {
    public:
-    static constexpr unsigned char ADDRESS = 0x02; /**< I2C address of Gomspace device **/
+    static constexpr i2c_t3& wire = Wire; /**< I2C bus of Gomspace device **/
+    static constexpr unsigned char address = 0x02; /**< I2C address of Gomspace device **/
 
     // TODO
     //! Gomspace voltage level designations
@@ -126,9 +127,7 @@ class Gomspace : public I2CDevice {
 
     /** @brief Constructs Gomspace interface on the specified wire and with the
      * given address. */
-    Gomspace(const std::string &name, volatile eps_hk_t *hk_data,
-             volatile eps_config_t *config_data, volatile eps_config2_t *config2_data,
-             i2c_t3 &i2c_wire, unsigned char i2c_addr);
+    Gomspace(eps_hk_t *hk_data, eps_config_t *config_data, eps_config2_t *config2_data);
 
     // Device functions
     bool setup() override;
@@ -221,20 +220,20 @@ class Gomspace : public I2CDevice {
 
     // See struct documentation above for more information
     /** Pointer to full housekeeping struct **/
-    volatile eps_hk_t *hk;
+    eps_hk_t *hk;
     /** Pointer to vi housekeeping struct **/
-    volatile eps_hk_vi_t *hk_vi;
+    eps_hk_vi_t *hk_vi;
     /** Pointer to out housekeeping struct **/
-    volatile eps_hk_out_t *hk_out;
+    eps_hk_out_t *hk_out;
     /** Pointer to wdt housekeeping struct **/
-    volatile eps_hk_wdt_t *hk_wdt;
+    eps_hk_wdt_t *hk_wdt;
     /** Pointer to basic housekeeping struct **/
-    volatile eps_hk_basic_t *hk_basic;
+    eps_hk_basic_t *hk_basic;
 
     /** Configuration storage struct. **/
-    volatile eps_config_t *gspace_config;
+    eps_config_t *gspace_config;
     /** Configuration 2 storage struct. **/
-    volatile eps_config2_t *gspace_config2;
+    eps_config2_t *gspace_config2;
 
    private:
     bool _set_heater(bool mode);
