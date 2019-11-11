@@ -5,9 +5,7 @@
 
 using namespace Devices;
 
-#ifndef DESKTOP
 DCDC::DCDC() : Device("dcdc") {}
-#endif
 
 bool DCDC::setup() {
     #ifndef DESKTOP
