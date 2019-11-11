@@ -4,7 +4,7 @@
 
 void test_task_initialization() {
     StateFieldRegistry registry;
-    DownlinkProducer task(registry);
+    DownlinkProducer task(registry, 2);
 }
 
 int test_downlink_producer_task() {

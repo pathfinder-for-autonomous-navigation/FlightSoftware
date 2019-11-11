@@ -1,5 +1,4 @@
 #include "DownlinkProducer.hpp"
-#include <cobs.h>
 #ifdef DESKTOP
     #include <cassert>
 #endif
