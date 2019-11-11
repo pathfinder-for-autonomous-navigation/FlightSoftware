@@ -1,5 +1,3 @@
-#ifndef DESKTOP
-
 #include "PropulsionSystem.hpp"
 #ifndef DESKTOP
 #include <Arduino.h>
