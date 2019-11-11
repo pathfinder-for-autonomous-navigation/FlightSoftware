@@ -19,7 +19,7 @@ class QuakeManager : public ControlTask<bool> {
     QuakeManager(StateFieldRegistry& registry);
     bool execute() override;
 
-   protected:
+   // protected:
     bool dispatch_config();
     bool dispatch_wait();
     bool dispatch_transceive();
@@ -57,7 +57,7 @@ class QuakeManager : public ControlTask<bool> {
      **/
   InternalStateField<unsigned int> radio_mode_f;
 
-  private:
+  // private:
 
     /**
      * Write error to radio_err_fp,

@@ -83,7 +83,7 @@ public:
 
   Devices::QLocate quake;
 
-private:
+//private:
   // all dispatch_x functions return 0 on success and an error code otherwise
   int dispatch_sbdwb();
   int dispatch_sbdrb();
