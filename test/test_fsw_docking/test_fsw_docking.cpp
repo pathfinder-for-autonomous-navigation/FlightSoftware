@@ -23,7 +23,7 @@ class TestFixture {
         docking_controller = std::make_unique<DockingController>(registry, docksys); 
 
         docked_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.docked"));
-        docked_fp->set(true);
+        docked_fp->set(false);
         dock_config_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.dock_config"));
         dock_config_fp->set(true);
         is_turning_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.is_turning"));
@@ -34,18 +34,18 @@ class TestFixture {
 void test_task_initialization() {
     TestFixture tf;
     TEST_ASSERT_EQUAL(false, tf.docking_config_cmd_fp->get());
-    TEST_ASSERT_EQUAL(true, tf.docked_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
     TEST_ASSERT_EQUAL(true, tf.dock_config_fp->get());
     TEST_ASSERT_EQUAL(false, tf.is_turning_fp->get());
 }
 
 void test_task_execute() {
     TestFixture tf;
-    //affirm that if the motor is docked and the mission manager doesn't want to undock, then the motor should remain docked
-    //note that the docking system driver intializes docked field to false. This is to double check that execute() works as expected
+    //affirm that if the motor is in the docking config and the mission manager doesn't want to undock, then the motor should remain in the docking config
     tf.docking_config_cmd_fp->set(true);
     tf.docking_controller->execute();
-    TEST_ASSERT_EQUAL(true, tf.docked_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.dock_config_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
     //test docking
     tf.docked_fp->set(false);
     tf.dock_config_fp->set(false);
@@ -53,7 +53,7 @@ void test_task_execute() {
         tf.docking_controller->execute();
     }
     TEST_ASSERT_EQUAL(true, tf.dock_config_fp->get());
-    TEST_ASSERT_EQUAL(true, tf.docked_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
     //test undocking
     tf.docking_config_cmd_fp->set(false);
     while (tf.dock_config_fp->get()){
