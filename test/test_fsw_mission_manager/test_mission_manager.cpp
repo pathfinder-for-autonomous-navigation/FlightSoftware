@@ -26,7 +26,7 @@ class TestFixture {
         adcs_cmd_attitude_fp = registry.create_writable_field<f_quat_t>("adcs.cmd_attitude");
         adcs_ang_rate_fp = registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
         adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
-        mission_manager = std::make_unique<MissionManager>(registry);
+        mission_manager = std::make_unique<MissionManager>(registry, 0);
 
         mission_mode_fp = std::static_pointer_cast<WritableStateField<unsigned int>>(registry.find_writable_field("pan.mode"));
     }

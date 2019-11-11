@@ -1,15 +1,15 @@
 #ifndef MISSION_MANAGER_HPP_
 #define MISSION_MANAGER_HPP_
 
-#include <ControlTask.hpp>
+#include <TimedControlTask.hpp>
 
 #include "mission_mode_t.enum"
 #include "adcs_mode_t.enum"
 #include "satellite_designation_t.enum"
 
-class MissionManager : public ControlTask<void> {
+class MissionManager : public TimedControlTask<void> {
    public:
-    MissionManager(StateFieldRegistry& registry);
+    MissionManager(StateFieldRegistry& registry, unsigned int offset);
     void execute() override;
 
    protected:

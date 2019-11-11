@@ -1,6 +1,7 @@
 #include "MissionManager.hpp"
 
-MissionManager::MissionManager(StateFieldRegistry& registry) : ControlTask<void>(registry),
+MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset)
+  : TimedControlTask<void>(registry, offset),
     mission_mode_sr(0, 10, 4),
     mission_mode_f("pan.mode", mission_mode_sr),
     is_deployed_sr(),
