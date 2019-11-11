@@ -1,4 +1,4 @@
-#include "../../src/FCCode/TimedControlTask.hpp"
+#include <TimedControlTask.hpp>
 #include "../../src/FCCode/ClockManager.hpp"
 #include <unity.h>
 #include <iostream>

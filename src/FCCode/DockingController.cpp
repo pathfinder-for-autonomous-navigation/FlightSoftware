@@ -1,7 +1,8 @@
 #include "DockingController.hpp"
 
-DockingController::DockingController(StateFieldRegistry &registry, Devices::DockingSystem &_docksys)
-    : ControlTask<void>(registry), docksys(_docksys), docked_sr(),
+DockingController::DockingController(StateFieldRegistry &registry, unsigned int offset,
+    Devices::DockingSystem &_docksys)
+    : TimedControlTask<void>(registry, offset), docksys(_docksys), docked_sr(),
       docked_f("docksys.docked", docked_sr),
       dock_config_sr(),
       dock_config_f("docksys.dock_config", dock_config_sr),
