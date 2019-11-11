@@ -259,16 +259,23 @@ unsigned char Piksi::process_buffer_msg_len() {
     return 0;
 }
 
+unsigned char Piksi::read_all() {
+    while(bytes_available()){
+        process_buffer();
+    }
+    return 0;
+}
 unsigned char Piksi::read_buffer_exp() {
     int initial_bytes = bytes_available();
 
     //if(bytes in the buffer)
         //process until each call back has been called
-    unsigned char ret = 2;
+    unsigned char ret = 1;
     if(initial_bytes > 0){
         while(bytes_available()){
             process_buffer_msg_len();
 
+            //if(_up)
             if(_heartbeat_update && !_gps_time_update) {
                 //to cover case where half of a buffer is left behind
                 _heartbeat_update = false;
@@ -281,7 +288,7 @@ unsigned char Piksi::read_buffer_exp() {
                     ret = 0;
                 break;
             }
-            
+
         }
         while (bytes_available()) {
             clear_bytes();

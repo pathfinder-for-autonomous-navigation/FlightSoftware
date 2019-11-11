@@ -327,7 +327,21 @@ bool verify_all(){
     bool ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
     return ret;
 }
+void get_data(){
+    prev_tow = time.tow;
 
+    piksi.get_gps_time(&time);
+
+    pos_past = pos_tow;
+    vel_past = vel_tow;
+    baseline_past = baseline_tow;
+
+    piksi.get_pos_ecef(&pos_tow, &pos);
+    piksi.get_vel_ecef(&vel_tow, &vel);
+    piksi.get_baseline_ecef(&baseline_tow, &baseline_pos);
+
+    iar = piksi.get_iar();
+}
 void test_get_data(){
     prev_tow = time.tow;
 
@@ -381,6 +395,47 @@ void test_validate_buffer() {
     //bool ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
     //return ret;
 }
+void print_time(){
+    Serial.printf("GPS week: %d\n", time.wn);
+    Serial.printf("GPS OLD tow: %u\n", prev_tow);
+    Serial.printf("GPS tow: %u\n", time.tow);
+}
+void print_pos(){
+    float pos_mag = ssqrt(pos);
+
+    Serial.printf("GPS position: %g,%g,%g\n", pos[0], pos[1], pos[2]);
+    Serial.printf("position_mag: %g\n", pos_mag);
+    Serial.printf("pos_ecef_flags: %u\n", piksi.get_pos_ecef_flags());
+    Serial.printf("Nsat Pos: %d\n", piksi.get_pos_ecef_nsats());
+    Serial.printf("PAST: %u, CURR: %u\n", pos_past, pos_tow);
+}
+void print_vel(){
+    float vel_mag = ssqrt(vel);
+
+    Serial.printf("Vel: %g,%g,%g\n", vel[0], vel[1], vel[2]);
+    Serial.printf("velocity_mag: %g\n", vel_mag);
+    Serial.printf("vel_ecef_flags: %u\n", piksi.get_vel_ecef_flags());
+
+    Serial.printf("Nsat Vel: %d\n", piksi.get_vel_ecef_nsats());
+    Serial.printf("PAST: %u, CURR: %u\n", vel_past, vel_tow);
+}
+void print_baseline(){
+    float baseline_mag = ssqrt(baseline_pos);
+
+    Serial.printf("GPS baseline position: %g,%g,%g", baseline_pos[0], baseline_pos[1],
+                    baseline_pos[2]);
+    Serial.printf("baseline_mag: %g\n", baseline_mag);
+    Serial.printf("baseline_ecef_flags: %u\n", piksi.get_baseline_ecef_flags());
+    Serial.printf("Nsat basline: %d\n", piksi.get_baseline_ecef_nsats());
+    Serial.printf("PAST: %u, CURR: %u\n", baseline_past, baseline_tow);
+}
+void print_all(){
+    
+    print_time();
+    print_pos();
+    print_vel();
+    print_baseline();
+}
 int main(void) {
 
     delay(5000);
@@ -408,74 +463,79 @@ int main(void) {
 
     bool keeprun = true;
 
-    while(keeprun){
-        int exec_ret = piksi.read_buffer_exp();
-        Serial.printf("RES: %d\n", exec_ret);
+    piksi.read_all();
 
-        if(exec_ret == 0){
-            RUN_TEST(test_get_data);
-            keeprun = false;
-        }
+    get_data();
+    print_all();
 
-        delay(120);
-    }
+    // while(keeprun){
+    //     int exec_ret = piksi.read_buffer_exp();
+    //     Serial.printf("RES: %d\n", exec_ret);
 
-    int prevtime = micros();
-    int posttime = micros();
-    int exec_pass_count = 0;
-    int timing_pass_count = 0;
-    int msg_len_fail_count = 0;
-    int data_fail_count = 0;
-    int bad_buffer = 0;
+    //     if(exec_ret == 0){
+    //         RUN_TEST(test_get_data);
+    //         keeprun = false;
+    //     }
 
-    for (int i = 0; i < 200; i++) {
-        //this syncs up command to execute exactly every 120 ms 
-        //(barring a failure on the previous loop)
-        delay(CONTROL_CYCLE - (micros() - prevtime) / 1000);
-        prevtime = micros();
+    //     delay(120);
+    // }
 
-        //SPP only
-        //firmware 1: 159 bytes
+    // int prevtime = micros();
+    // int posttime = micros();
+    // int exec_pass_count = 0;
+    // int timing_pass_count = 0;
+    // int msg_len_fail_count = 0;
+    // int data_fail_count = 0;
+    // int bad_buffer = 0;
 
-        //SAT addition
-        //firmware 3: 159 bytes
+    // for (int i = 0; i < 200; i++) {
+    //     //this syncs up command to execute exactly every 120 ms 
+    //     //(barring a failure on the previous loop)
+    //     delay(CONTROL_CYCLE - (micros() - prevtime) / 1000);
+    //     prevtime = micros();
 
-        //RTK Float
-        //firmware 7: 159 bytes
+    //     //SPP only
+    //     //firmware 1: 159 bytes
+
+    //     //SAT addition
+    //     //firmware 3: 159 bytes
+
+    //     //RTK Float
+    //     //firmware 7: 159 bytes
 
 
-        Serial.printf("BYTES AVAIL: %u\n",piksi.bytes_available());
-        int res = piksi.read_buffer_exp();
-        Serial.printf("RES: %d\n", res);
-        if (res == 0) {
-            if(verify_all())
-                exec_pass_count += 1;
-            else
-                data_fail_count += 1;
+    //     Serial.printf("BYTES AVAIL: %u\n",piksi.bytes_available());
+    //     int res = piksi.read_buffer_exp();
+    //     Serial.printf("RES: %d\n", res);
+    //     if (res == 0) {
+    //         if(verify_all())
+    //             exec_pass_count += 1;
+    //         else
+    //             data_fail_count += 1;
             
-        }
+    //     }
 
-        else if(res == 2){
-            msg_len_fail_count += 1;
-        }
-        else if(res == 1)
-            bad_buffer += 1;
+    //     else if(res == 2){
+    //         msg_len_fail_count += 1;
+    //     }
+    //     else if(res == 1)
+    //         bad_buffer += 1;
 
-        posttime = micros();
-        Serial.printf("EXEC TIME: %d micros\n", posttime-prevtime);
-        if (posttime - prevtime < PIKSI_READ_ALLOTED) {
-            timing_pass_count++;
-        } else {
-            Serial.printf("EXCEED: %d\n", posttime - prevtime);
-        }
-    }
-    Serial.println("\n********************************************");
+    //     posttime = micros();
+    //     Serial.printf("EXEC TIME: %d micros\n", posttime-prevtime);
+    //     if (posttime - prevtime < PIKSI_READ_ALLOTED) {
+    //         timing_pass_count++;
+    //     } else {
+    //         Serial.printf("EXCEED: %d\n", posttime - prevtime);
+    //     }
+    // }
+    // Serial.println("\n********************************************");
 
-    Serial.printf("MSG LEN FAIL COUNT: %d\n", msg_len_fail_count);
-    Serial.printf("EXEC PASS COUNT: %d\n", exec_pass_count);
-    Serial.printf("VERIFY FAIL COUNT: %d\n", data_fail_count);
-    Serial.printf("BAD BUFFER COUNT: %d\n", bad_buffer);
-    Serial.printf("TIMING PASS COUNT: %d\n", timing_pass_count);
+    // Serial.printf("MSG LEN FAIL COUNT: %d\n", msg_len_fail_count);
+    // Serial.printf("EXEC PASS COUNT: %d\n", exec_pass_count);
+    // Serial.printf("VERIFY FAIL COUNT: %d\n", data_fail_count);
+    // Serial.printf("BAD BUFFER COUNT: %d\n", bad_buffer);
+    // Serial.printf("TIMING PASS COUNT: %d\n", timing_pass_count);
 
 
     /*

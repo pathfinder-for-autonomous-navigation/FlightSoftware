@@ -67,6 +67,12 @@ class Piksi {
 
     /**
      * @brief Runs read over UART buffer to process values sent by Piksi using libsbp
+     * 
+     * TODO DETERMINE IF Piksi is sending baseline packets when SPP
+     * Could be not sending or sending a baseline packet with no data/0's
+     * 
+     * Let it be known that the Piksi doesn't have save previous information
+     * Ex switching into Piksi
      *
      * @return Returns the number of bytes processed by a call of process_buffer_msg_len()
      * These values coincide with the message size in the piksi documentation
@@ -90,6 +96,8 @@ class Piksi {
      * 2 if buffer is interrupted with new data
      */
     virtual unsigned char read_buffer();
+
+    virtual unsigned char read_all();
 
     virtual unsigned char read_buffer_exp();
 
@@ -144,6 +152,9 @@ class Piksi {
     virtual unsigned char get_pos_ecef_nsats();
 
     /** @brief Get status flags of GPS position measurement.
+     * returns 0 if SPP
+     * returns 1 if FIXED RTK
+     * returns 2 if FLOAT RTK
      *  @return Status flags of GPS position measurement. **/
     virtual unsigned char get_pos_ecef_flags();
 
@@ -169,6 +180,9 @@ class Piksi {
     virtual unsigned char get_baseline_ecef_nsats();
 
     /** @brief Get status flags of GPS baseline position measurement.
+     * returns 1 if fixed RTK
+     * returns 0 if float RTK
+     * returns 0 if SPP
      *  @return Status flags of GPS baseline position measurement. **/
     unsigned char get_baseline_ecef_flags();
 
