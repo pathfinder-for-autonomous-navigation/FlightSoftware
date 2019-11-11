@@ -1,7 +1,6 @@
 #include <TimedControlTask.hpp>
 #include "../../src/FCCode/ClockManager.hpp"
 #include <unity.h>
-#include <iostream>
 
 /**
  * @brief Dummy control task that just increments a member variable.
