@@ -109,10 +109,15 @@ class DockingSystem : public Devices::Device {
     // Status of motor sleep pin (and therefore of overall docking motor.)
     #ifndef DESKTOP
     bool is_enabled = false;
+    #else
+    //checks whether or not the motor is docked
+    bool is_docked = false;
     #endif
 
     //number of steps left to complete
     unsigned int steps = 0;
+
+    
 };
 }  // namespace Devices
 

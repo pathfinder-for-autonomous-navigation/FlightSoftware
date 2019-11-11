@@ -18,14 +18,14 @@ class TestFixture {
 
     TestFixture() : registry() {
         docking_config_cmd_fp = registry.create_writable_field<bool>("docksys.config_cmd");
-        docking_config_cmd_fp->set(true);
+        docking_config_cmd_fp->set(false);
 
         docking_controller = std::make_unique<DockingController>(registry, docksys); 
 
         docked_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.docked"));
         docked_fp->set(true);
         dock_config_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.dock_config"));
-        dock_config_fp->set(false);
+        dock_config_fp->set(true);
         is_turning_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.is_turning"));
         is_turning_fp->set(false);
     }
@@ -33,16 +33,21 @@ class TestFixture {
 
 void test_task_initialization() {
     TestFixture tf;
-    TEST_ASSERT_EQUAL(true, tf.docking_config_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.docking_config_cmd_fp->get());
     TEST_ASSERT_EQUAL(true, tf.docked_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.dock_config_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.dock_config_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.is_turning_fp->get());
 }
 
 void test_task_execute() {
     TestFixture tf;
+    //affirm that if the motor isn't docked and the mission manager doesn't want to dock, then the motor should remain undocked
     tf.docked_fp->set(false);
+    tf.dock_config_fp->set(false);
+    tf.docking_controller->execute();
     TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
     //test docking
+    tf.docking_config_cmd_fp->set(true);
     while (!tf.dock_config_fp->get()){
         tf.docking_controller->execute();
     }

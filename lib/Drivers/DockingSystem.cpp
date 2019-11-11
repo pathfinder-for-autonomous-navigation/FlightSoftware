@@ -64,7 +64,7 @@ bool DockingSystem::check_docked() const {
     #ifndef DESKTOP
     return digitalRead(switch_pin);
     #else
-    return true;
+    return is_docked;
     #endif
 }
 
