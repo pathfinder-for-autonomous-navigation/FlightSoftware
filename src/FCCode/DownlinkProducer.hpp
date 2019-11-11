@@ -1,9 +1,9 @@
-#ifndef FLOW_MANAGER_HPP_
-#define FLOW_MANAGER_HPP_
+#ifndef DOWNLINK_PRODUCER_HPP_
+#define DOWNLINK_PRODUCER_HPP_
 
-#include <ControlTask.hpp>
+#include <TimedControlTask.hpp>
 
-class DownlinkProducer : public ControlTask<void> {
+class DownlinkProducer : public TimedControlTask<void> {
    public:
     /**
      * @brief Flow data object, used in order to specify the
@@ -26,9 +26,13 @@ class DownlinkProducer : public ControlTask<void> {
      * @brief Construct a new Downlink Producer.
      * 
      * @param registry State field registry.
+     * @param offset Offset, in microseconds, from the beginning of the control
+     *               task.
      * @param flow_data An initializer list of flow data.
      */
-    DownlinkProducer(StateFieldRegistry& registry, std::vector<FlowData>& flow_data);
+    DownlinkProducer(StateFieldRegistry& registry,
+                     const unsigned int offset,
+                     std::vector<FlowData>& flow_data);
 
     /**
      * @brief Produce flow packets as needed, and keep track of the next

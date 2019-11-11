@@ -5,8 +5,10 @@
 #endif
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
-    const std::vector<FlowData>& flow_data) : ControlTask<void>(r),
-    snapshot_ptr_f(), snapshot_size_bytes_f()
+    const unsigned int offset,
+    const std::vector<FlowData>& flow_data) : TimedControlTask<void>(r, offset),
+                                              snapshot_ptr_f(),
+                                              snapshot_size_bytes_f()
 {
     // Add snapshot fields to the registry
     r.add_field(snapshot_ptr_f);
