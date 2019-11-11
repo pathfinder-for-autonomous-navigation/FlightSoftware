@@ -83,9 +83,22 @@ class QuakeManager : public ControlTask<bool> {
     void transition_radio_state(unsigned int new_state);
 
     /**
+     * If we have written the entire snapshot, load the next snapshot
+     * Otherwise, increment mo_idx to point to the next 70 blocks
+     * 
+     * Essentially points mo_buffer_copy + mo_idx*packet_size to the next
+     * 70 blocks of data that should be downlinked. 
+     */
+    void update_mo();
+
+    /**
      * The last cycle for which we had comms
      */
     unsigned int last_checkin_cycle;
+
+    size_t max_snapshot_size;
+    char* mo_buffer_copy;
+    size_t mo_idx;
 
     /**
      * Max cycles that each radio_mode state is allowed to waste before being 
@@ -98,4 +111,6 @@ class QuakeManager : public ControlTask<bool> {
     static constexpr unsigned int max_transceive_cycles = 140;
     static constexpr unsigned int max_write_cycles = 15;
     static constexpr unsigned int max_read_cycles = 15;
+
+    static constexpr size_t packet_size = 70;
 };

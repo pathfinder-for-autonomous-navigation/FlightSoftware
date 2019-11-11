@@ -65,7 +65,7 @@ public:
   /**
    * Request to change the state of the driver. 
    * This may only be done if the current state is IDLE or if the requested_state
-   * is CONFIG.
+   * is CONFIG (or IDLE). 
    * Returns true if the state is succsfully changed to the requested_state.
    * Returns false otherwise. 
    */

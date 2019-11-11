@@ -20,8 +20,8 @@ size_t QuakeControlTask::get_current_fn_number() const
 
 bool QuakeControlTask::request_state(int requested_state)
 {
-  if (requested_state == CONFIG)
-    currentState = CONFIG;
+  if (requested_state == CONFIG || requested_state == IDLE)
+    currentState = requested_state;
   else if (currentState == IDLE)
     currentState = requested_state;
   else
