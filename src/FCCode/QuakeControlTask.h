@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ControlTask.hpp>
+#include <TimedControlTask.hpp>
 #include "../../lib/Drivers/QLocate.hpp"
 
 /**
@@ -17,7 +17,7 @@ static constexpr int SBDIX = 3;         // SBDIX operation
 static constexpr int CONFIG = 4;        // Config operation
 static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
-class QuakeControlTask : public ControlTask<int>
+class QuakeControlTask : public TimedControlTask<int>
 {
 public:
   #ifndef DESKTOP
