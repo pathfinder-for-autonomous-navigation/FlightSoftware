@@ -87,7 +87,7 @@ inline void I2CDevice::i2c_read_from_subaddr(unsigned char subaddr, unsigned cha
 }
 
 inline unsigned char I2CDevice::i2c_read_from_subaddr(unsigned char subaddr) {
-    unsigned char byte;
+    unsigned char byte = 0;
 #ifndef DESKTOP
     i2c_read_from_subaddr(subaddr, &byte, 1);
 #endif
@@ -119,11 +119,10 @@ inline void I2CDevice::i2c_send_request(std::size_t len, i2c_stop s) {
 
 inline bool I2CDevice::i2c_done() const {
 #ifdef DESKTOP
-    bool wire_done = true;
+    return true;
 #else
-    bool wire_done = this->wire.done() == 1;
+    return (this->wire.done() == 1)
 #endif
-    return wire_done;
 }
 
 inline void I2CDevice::i2c_finish() {
