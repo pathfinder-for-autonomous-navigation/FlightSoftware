@@ -3,7 +3,9 @@
 
 #include <array>
 #include "../Devices/Device.hpp"
+#ifndef DESKTOP
 #include <IntervalTimer.h>
+#endif
 
 namespace Devices {
 /**
@@ -17,7 +19,7 @@ namespace Devices {
 class PropulsionSystem : public Device {
    public:
     //! Specifies which valve # corresponds to which physical valve
-    enum valve_ids {
+    enum class valve_ids {
         intertank_main = 0,    // Main tank 1 to tank 2 valve
         intertank_backup = 1,  // Backup tank 1 to tank 2 valve
         nozzle_1 = 2,          // Nozzle valve
@@ -82,10 +84,13 @@ class PropulsionSystem : public Device {
     // should not be opened during the current cycle.
     static volatile bool valve_start_locked_out;
 
-    //! Runs thrust_valve_loop every 5 ms. Initialized in setup().
+    #ifndef DESKTOP
+    //! Runs thrust_valve_loop every 3 ms. Initialized in setup().
     IntervalTimer thrust_valve_loop_timer;
+    #endif
+
     //! Loop interval in microseconds.
-    static constexpr unsigned int thrust_valve_loop_interval_us = 5000;
+    static constexpr unsigned int thrust_valve_loop_interval_us = 3000;
     //! Loop interval in milliseconds.
     static constexpr unsigned int thrust_valve_loop_interval_ms =
         thrust_valve_loop_interval_us / 1000;
@@ -100,10 +105,10 @@ class PropulsionSystem : public Device {
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
-    const double high_gain_offset = -0.119001938553720;
-    const double high_gain_slope = 0.048713211537332;
-    const double low_gain_offset = 0.154615074342874;
-    const double low_gain_slope = 0.099017990785657;
+    static constexpr double high_gain_offset = -0.119001938553720;
+    static constexpr double high_gain_slope = 0.048713211537332;
+    static constexpr double low_gain_offset = 0.154615074342874;
+    static constexpr double low_gain_slope = 0.099017990785657;
 };
 }  // namespace Devices
 

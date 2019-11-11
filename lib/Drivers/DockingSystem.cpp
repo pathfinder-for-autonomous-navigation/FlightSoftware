@@ -6,7 +6,6 @@
 
 using namespace Devices;
 
-
 DockingSystem::DockingSystem()
     : Device("docking_system") {}
 
@@ -118,6 +117,6 @@ unsigned int DockingSystem::get_steps() const {
 
 #ifdef DESKTOP
 void DockingSystem::set_dock(bool dock) {
-    is_docked=dock;
+    is_docked = dock;
 }
 #endif
