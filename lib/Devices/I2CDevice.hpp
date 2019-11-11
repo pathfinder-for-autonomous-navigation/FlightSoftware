@@ -37,7 +37,13 @@
 /* Note that I2C_AUTO_RETRY should be enabled - I2CDevice makes no calls to
  * resetBus internally.
  */
+#ifdef DESKTOP
+typedef unsigned int i2c_stop;
+typedef unsigned int i2c_t3;
+#define I2C_STOP 0
+#else
 #include "i2c_t3.h"
+#endif
 
 /** \namespace Devices **/
 namespace Devices {

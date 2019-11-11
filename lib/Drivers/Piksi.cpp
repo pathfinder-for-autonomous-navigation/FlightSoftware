@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #include "Piksi.hpp"
 
 using namespace Devices;
@@ -341,3 +342,4 @@ void Piksi::_user_data_callback(u16 sender_id, u8 len, u8 msg[], void *context) 
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_user_data)), msg, sizeof(msg_user_data_t));
 }
+#endif
