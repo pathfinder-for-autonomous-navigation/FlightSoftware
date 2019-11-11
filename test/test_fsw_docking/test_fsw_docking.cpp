@@ -42,6 +42,7 @@ void test_task_initialization() {
 void test_task_execute() {
     TestFixture tf;
     //affirm that if the motor is docked and the mission manager doesn't want to undock, then the motor should remain docked
+    //note that the docking system driver intializes docked field to false. This is to double check that execute() works as expected
     tf.docking_config_cmd_fp->set(true);
     tf.docking_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.docked_fp->get());
