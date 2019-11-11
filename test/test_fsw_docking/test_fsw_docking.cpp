@@ -41,11 +41,10 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
-    //affirm that if the motor isn't docked and the mission manager doesn't want to dock, then the motor should remain undocked
-    tf.docked_fp->set(false);
-    tf.dock_config_fp->set(false);
+    //affirm that if the motor is docked and the mission manager doesn't want to undock, then the motor should remain docked
+    tf.docking_config_cmd_fp->set(true);
     tf.docking_controller->execute();
-    TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.docked_fp->get());
     //test docking
     tf.docking_config_cmd_fp->set(true);
     while (!tf.dock_config_fp->get()){

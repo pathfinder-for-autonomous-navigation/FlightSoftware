@@ -57,5 +57,14 @@ void DockingController::execute() {
   }
 
   //SET STATEFIELDS
+  #ifdef DESKTOP
+  //since we aren't connected to a Teensy, I will assume that if the motor is in docking configuration, it must also be docked
+  if (dock_config_f.get()){
+    docksys.set_dock(true);
+  }
+  else{
+    docksys.set_dock(false);
+  }
+  #endif
   docked_f.set(docksys.check_docked());
 }
