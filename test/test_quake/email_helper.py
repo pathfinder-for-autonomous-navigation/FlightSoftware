@@ -16,10 +16,13 @@ def create_txt_file(name):
 
 
 def sendFile(file_name):
-    #Need to create an app specific password for the gmail account
-    yag = yagmail.SMTP('pan.ssds.qlocate', 'OAANisKOOL7373')
-    #Send the txt file to the designated address
-    yag.send('fatima.yousuf.0@gmail.com', 'Hey there!', file_name)
+    # Need to create an app specific password for the gmail account
+    password = os.environ['PAN_PASS']
+    yag = yagmail.SMTP('pan.ssds.qlocate', password)
+    # Send the txt file to the designated address
+    imei_num = os.environ['IMEI_NUM']
+    yag.send('data@sbd.iridium.com', imei_num, file_name)
+
 
 def downloadFiles():
     mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
