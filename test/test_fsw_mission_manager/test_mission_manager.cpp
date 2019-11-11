@@ -52,7 +52,7 @@ void test_dispatch_detumble() {
     tf.adcs_ang_rate_fp->set(4);
     tf.mission_manager->execute();
     TEST_ASSERT_EQUAL(static_cast<unsigned int>(mission_mode_t::standby), tf.mission_mode_fp->get());
-    TEST_ASSERT_EQUAL(static_cast<unsigned int>(adcs_mode_t::pointing), tf.adcs_mode_fp->get());
+    TEST_ASSERT_EQUAL(static_cast<unsigned int>(adcs_mode_t::point_standby), tf.adcs_mode_fp->get());
     f_quat_t expected_cmd_attitude = {2,2,2,2};
     f_quat_t actual_cmd_attitude = tf.adcs_cmd_attitude_fp->get();
     for(size_t i = 0; i < 4; i++) TEST_ASSERT_DOUBLE_WITHIN(0.01, expected_cmd_attitude[i], actual_cmd_attitude[i]);
