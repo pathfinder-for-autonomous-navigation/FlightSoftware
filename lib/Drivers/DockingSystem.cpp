@@ -115,3 +115,9 @@ void DockingSystem::set_turn_angle(float angle) {
 unsigned int DockingSystem::get_steps() const {
     return steps;
 }
+
+#ifdef DESKTOP
+void DockingSystem::set_dock(bool dock) {
+    is_docked=dock;
+}
+#endif

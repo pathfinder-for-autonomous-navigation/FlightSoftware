@@ -29,6 +29,9 @@ void DockingController::execute() {
       else {
         dock_config_f.set(true);
         is_turning_f.set(false);
+        #ifdef DESKTOP
+        docksys.set_dock(true);
+        #endif
       }
     }
   }
@@ -46,6 +49,9 @@ void DockingController::execute() {
       else {
         dock_config_f.set(false);
         is_turning_f.set(false);
+        #ifdef DESKTOP
+        docksys.set_dock(false);
+        #endif
       }
     }
   }
