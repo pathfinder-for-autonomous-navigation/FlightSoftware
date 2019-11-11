@@ -1,27 +1,42 @@
-language: python
-python:
-    - "2.7"
-
 sudo: false
 cache:
     directories:
         - "~/.platformio"
 
-addons:
-  apt:
-    packages:
-     - lcov
-     - cppcheck
-     - valgrind
-
+language: python
+python: "3.7"
 install:
     - pip install -U platformio
     - platformio update
-    - sudo gem install coveralls-lcov
 
-script:
-    - ./tools/travis_script.sh
+matrix:
+    include:
+      - name: "Desktop tests"
+        addons:
+          apt:
+            packages:
+            - lcov
+            - valgrind
+        before_install:
+            - chmod +x tools/run_desktop_tests.sh
+        install:
+            - pip install -U platformio
+            - platformio update
+            - sudo gem install coveralls-lcov
+        script:
+            - ./tools/run_desktop_tests.sh
+        after_success:
+            - ./tools/generate_coverage.sh
+            - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-after_success:
-    - ./tools/generate_coverage.sh
-    - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
+      - name: "Verify Teensy code compiles"
+        addons:
+          apt:
+            packages:
+            - cppcheck
+        script:
+            - ./tools/verify_teensy_builds.sh
+
+      - name: "Run unit tests on Teensy"
+        script:
+            - platformio remote --agent PANTeensyFarm test -e teensy_ci -v
