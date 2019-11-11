@@ -1,5 +1,6 @@
 #ifndef PIKSI_HPP_
 #define PIKSI_HPP_
+#ifndef DESKTOP
 
 #include <HardwareSerial.h>
 #include <GPSTime.hpp>
@@ -259,4 +260,5 @@ class Piksi : public Device {
 };
 }  // namespace Devices
 
+#endif
 #endif

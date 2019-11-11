@@ -1,5 +1,5 @@
-#ifndef DOCKING_MOTOR_HPP_
-#define DOCKING_MOTOR_HPP_
+#ifndef DOCKING_SYSTEM_HPP_
+#define DOCKING_SYSTEM_HPP_
 
 #include "../Devices/Device.hpp"
 #include <cmath>
@@ -11,7 +11,7 @@ namespace Devices {
  * The flight software is responsible for determining if the system is docked
  * or not.
  **/
-class DockingSystem : public Device {
+class DockingSystem : public Devices::Device {
    public:
     //! Default pin for docking motor I1.
     static constexpr unsigned char motor_i1_pin = 14;
@@ -54,6 +54,35 @@ class DockingSystem : public Device {
     void step_motor(float angle);
 
     /**
+     * @brief Set the direction of the motor turning.
+     * 
+     * @param clockwise True if we want to turn the motor clockwise.
+     */
+    void set_direction(bool clockwise);
+
+    /** 
+     * @brief Put the docking motor into the "docked" turning configuration.
+     **/
+    void start_dock();
+
+    /** 
+     * @brief Put the docking motor into the "undocked" turning configuration.
+     **/
+    void start_undock();
+
+    /**
+     * @brief Manually step motor by one step.
+     */
+    void step_motor();
+
+    /**
+     * @brief Return current step angle.
+     * 
+     * @param angle in degrees.
+     */
+    float get_step_angle() const;
+
+    /**
      * @brief Check state of docking switch.
      * 
      * @return True if switch is pressed.
@@ -67,15 +96,36 @@ class DockingSystem : public Device {
      */
     void set_step_angle(float angle);
 
+    /**
+     * @brief Set number of steps left to turn.
+     */
+    void set_turn_angle(float angle);
+
+    /**
+     * @brief Returns number of steps left to turn.
+     */
+    unsigned int get_steps() const;
+
+    #ifdef DESKTOP
+    void set_dock(bool dock);
+    #endif
+
    private:
     // Sets how many degrees the motor turns in one step.
     float step_angle = (15.0f*M_PI)/180.0f;
 
-    // Status of motor directionality.
-    bool is_turning_clockwise = false;
-
     // Status of motor sleep pin (and therefore of overall docking motor.)
+    #ifndef DESKTOP
     bool is_enabled = false;
+    #endif
+    
+    #ifdef DESKTOP
+    //checks whether or not the motor is docked
+    bool is_docked = false;
+    #endif
+
+    //number of steps left to complete
+    unsigned int steps = 0;
 };
 }  // namespace Devices
 

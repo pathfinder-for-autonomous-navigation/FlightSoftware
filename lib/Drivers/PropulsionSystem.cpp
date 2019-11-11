@@ -1,5 +1,10 @@
+#ifndef DESKTOP
+
 #include "PropulsionSystem.hpp"
+#ifndef DESKTOP
 #include <Arduino.h>
+#endif
+
 #include <algorithm>
 #include <climits>
 #include <tuple>
@@ -64,7 +69,6 @@ float PropulsionSystem::get_pressure() {
     static int high_gain_read = 0;
     static float pressure = 0;
     // set the two pressure pins as inputs
-
     
 #ifdef DESKTOP
     low_gain_read = 2; // TODO fix
@@ -134,6 +138,7 @@ void PropulsionSystem::thrust_valve_loop() {
             #ifndef DESKTOP
             digitalWrite(valve_pins[i - 2], LOW);
             #endif
+
             thrust_valve_schedule[i - 2] = 0;
             is_valve_opened[i] = false;
             continue;

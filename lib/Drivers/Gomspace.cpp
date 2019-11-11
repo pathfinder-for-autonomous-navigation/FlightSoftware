@@ -1,3 +1,4 @@
+#ifndef DESKTOP
 #include "Gomspace.hpp"
 #include <HardwareSerial.h>
 #include "../Devices/I2CDevice.hpp"
@@ -490,3 +491,4 @@ void Gomspace::_hk_basic_endian_flip() {
     }
     hk_basic->counter_boot = __bswap_16(hk_basic->counter_boot);
 }
+#endif

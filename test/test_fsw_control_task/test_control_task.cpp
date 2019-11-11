@@ -1,6 +1,14 @@
-#include <StateFieldRegistry.hpp>
-#include "DummyControlTask.hpp"
+#include <ControlTask.hpp>
 #include <unity.h>
+
+class DummyControlTask : public ControlTask<void> {
+  public:
+    DummyControlTask(StateFieldRegistry& registry) : ControlTask<void>(registry) {}
+    void execute() { 
+      DummyControlTask::x = 3;
+    }
+    int x = 2;
+};
 
 void test_task_initialization() {
     StateFieldRegistry registry;
