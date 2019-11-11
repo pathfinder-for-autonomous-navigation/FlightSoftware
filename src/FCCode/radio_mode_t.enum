@@ -1,12 +1,13 @@
 #ifndef radio_mode_t_enum_
 #define radio_mode_t_enum_
 
-// pan.mode
 enum class radio_mode_t {
-  startup,
-  waiting,
-  transceiving,
-  manual, // Always try to receive comms
+  transceive, // SBDIX
+  wait, 
+  read,       // SBDRB
+  write,      // SBDWB
+  config,
+  manual,     // Don't use state machine
 };
 
 #endif

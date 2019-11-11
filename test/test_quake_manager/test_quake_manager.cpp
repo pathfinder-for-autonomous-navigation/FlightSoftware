@@ -19,8 +19,6 @@ class TestFixture {
 
     std::unique_ptr<QuakeManager> quake_manager;
     // Not sure if this is how it works
-
-
     TestFixture() : registry() {
         cycle_no_fp = registry.create_writable_field<unsigned int>("pan.cycle_no", 0, cycleNumber, 32);
         mt_msg_fp = registry.create_writable_field<char*>("radio.mt_msg_queue");
@@ -39,42 +37,47 @@ class TestFixture {
 
 void test_valid_initialization() {
     TestFixture tf;
-    tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::startup));
-}
-
-void test_dispatch_startup()
-{
-  TestFixture tf;
-  tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::startup));
-  
-}
-
-
-void test_dispatch_waiting()
-{
-  TestFixture tf;
-  tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::waiting));
-  tf.step();
-  TEST_ASSERT_EQUAL(static_cast<unsigned int>(radio_mode_t::waiting), tf.radio_mode_fp->get());
-  tf.step(2999);
-  // Make sure we are still in waiting mode when 3000 cycles have not past
-  TEST_ASSERT_EQUAL(static_cast<unsigned int>(radio_mode_t::waiting), tf.radio_mode_fp->get());
-
-  tf.step(); // query_sbdwb_1 fails bc no message
-  TEST_ASSERT_EQUAL(static_cast<unsigned int>(radio_mode_t::transceiving), tf.radio_mode_fp->get());
+    tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::wait));
 }
 
 void test_dispatch_manual()
 {
   TestFixture tf;
   tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::manual));
-
 }
 
-void test_dispatch_transceiving_comms()
+void test_dispatch_waiting()
 {
   TestFixture tf;
-  tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::transceiving));
+  tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::wait));
+  tf.step();
+  TEST_ASSERT_EQUAL(static_cast<unsigned int>(radio_mode_t::wait), tf.radio_mode_fp->get());
+  tf.step(2999);
+  // Make sure we are still in waiting mode when 3000 cycles have not past
+  TEST_ASSERT_EQUAL(static_cast<unsigned int>(radio_mode_t::wait), tf.radio_mode_fp->get());
+
+  tf.step(); // query_sbdwb_1 fails bc no message
+  TEST_ASSERT_EQUAL(static_cast<unsigned int>(radio_mode_t::transceive), tf.radio_mode_fp->get());
+}
+
+void test_dispatch_read()
+{
+  TestFixture tf;
+  tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::manual));
+}
+
+
+void test_dispatch_write()
+{
+  TestFixture tf;
+  tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::manual));
+}
+
+
+void test_dispatch_transceive()
+{
+  TestFixture tf;
+  tf.radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::transceive));
   tf.step(); // should fail
   TEST_ASSERT_EQUAL(IDLE, static_cast<unsigned int>(tf.quake_manager->qct.get_current_state()));
   char mymessage [] = "here's a message";
@@ -104,9 +107,9 @@ void test_dispatch_transceiving_comms()
 int test_mission_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
-    RUN_TEST(test_dispatch_startup);
+
     RUN_TEST(test_dispatch_manual);
-    RUN_TEST(test_dispatch_transceiving_comms);
+    RUN_TEST(test_dispatch_transceive);
     return UNITY_END();
 }
 

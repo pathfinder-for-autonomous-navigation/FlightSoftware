@@ -3,60 +3,99 @@
 #include "QuakeControlTask.h"
 #include "radio_mode_t.enum"
 
-// // Print the error code
-// const char* TRANSLATE_ERR(int errCode){ 
-//    switch(errCode){
-//         case Devices::OK:
-//             return "OK";
-//         case Devices::TIMEOUT:
-//             return "TIMEOUT";
-//         case Devices::BAD_CHECKSUM:
-//             return "BAD_CHECKSUM";
-//         case Devices::WRONG_LENGTH:
-//             return "WRONG_LENGTH";
-//         case Devices::UNEXPECTED_RESPONSE:
-//             return "UNEXPECTED_RESPONSE";
-//         case Devices::WRITE_FAIL:
-//             return "WRITE_FAIL";
-//         case Devices::PORT_UNAVAILABLE:
-//             return "PORT_UNAVAILABLE";
-//         case Devices::UNKNOWN:
-//             return "UNKNOWN";
-//         case Devices::WRONG_FN_ORDER:
-//             return "WRONG_FN_ORDER";
-//         default:
-//             return "Err code not found";
-//     }
-// }
+/**
+ * QuakeManager decides what commands should be sent to the Quake based on the
+ * current control cycle and the results of prior control cycles. 
+ * 
+ * Dependencies: ClockManager, Downlink Provider
+ * 
+ * States: config, wait, transceive, read, write, manual
+ * 
+ * All methods return true on success, false otherwise. 
+ */ 
 class QuakeManager : public ControlTask<bool> {
    public:
-     QuakeControlTask qct;
+    QuakeControlTask qct;
     QuakeManager(StateFieldRegistry& registry);
     bool execute() override;
 
    protected:
-   bool dispatch_startup();
-   bool dispatch_waiting();
-   bool dispatch_transceiving();
-   bool dispatch_manual();
+    bool dispatch_config();
+    bool dispatch_wait();
+    bool dispatch_transceive();
+    bool dispatch_read();
+    bool dispatch_write();
+    bool dispatch_manual();
 
    /**
      * @brief Control cycle count, provided by ClockManager.
      */
    std::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
-    
+
+   /**
+     * @brief Snapshot size in bytes, provided by DownlinkProducer. 
+     */
+   std::shared_ptr<InternalStateField<size_t>> snapshot_size_fp;
+
+   /**
+    * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
+    **/ 
+   std::shared_ptr<InternalStateField<char*>> radio_mo_packet_fp;
+
+  /**
+    * @brief Pointer to the uplink buffer, provided by DownlinkProducer. 
+    **/ 
+   std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
+
+     /**
+    * @brief Pointer to Quake Error field, provided by DownlinkProducer. 
+    **/ 
+   std::shared_ptr<InternalStateField<int>> radio_err_fp;
+
     /**
      * @brief Current radio mode (see radio_mode_t.enum)
      **/
-   Serializer<unsigned int> radio_mode_sr;
-   WritableStateField<unsigned int> radio_mode_f;
+  InternalStateField<unsigned int> radio_mode_f;
 
-   /**
-    * @brief Pointer to the downlink message stack
-    **/ 
-   InternalStateField<char*> radio_msg_queue_fp;
+  private:
 
-   // The last cycle for which we had comms
-   unsigned int last_checkin_cycle;
+    /**
+     * Write error to radio_err_fp,
+     * print a debug msg, 
+     * transition to wait
+     */
+    bool write_to_error(int err_code);
 
+    /**
+     * If the current state has no more cycles left, 
+     * then transition the radio to the requested state,
+     * printf notice, 
+     * Return true if there are no more control cycles, false otherwise
+     */
+    bool no_more_cycles(size_t max_cycles, unsigned int new_state);
+
+    /**
+     * Transition the radio into the new state
+     * update last_checkin_cycle
+     * Precondition: new_state is one of the defined states
+     * Postcondition: radio_state_f == new_state, last_checkin_cycle = now
+     */ 
+    void transition_radio_state(unsigned int new_state);
+
+    /**
+     * The last cycle for which we had comms
+     */
+    unsigned int last_checkin_cycle;
+
+    /**
+     * Max cycles that each radio_mode state is allowed to waste before being 
+     * transitioned. 
+     */ 
+    // TODO: these values are temporary. Experiments should be conducted
+    // to figure out maximum cycles we are willing to wait. 
+    static constexpr unsigned int max_config_cycles = 30;
+    static constexpr unsigned int max_wait_cycles = 3000; 
+    static constexpr unsigned int max_transceive_cycles = 140;
+    static constexpr unsigned int max_write_cycles = 15;
+    static constexpr unsigned int max_read_cycles = 15;
 };
