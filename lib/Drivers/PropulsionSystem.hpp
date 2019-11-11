@@ -3,7 +3,9 @@
 
 #include <array>
 #include "../Devices/Device.hpp"
+#ifndef DESKTOP
 #include <IntervalTimer.h>
+#endif
 
 namespace Devices {
 /**
