@@ -47,7 +47,7 @@ class DCDC : public Device {
 
     /** 
      * @brief Turn off ADCS DCDC by holding the enable pin low.
-    **/
+     **/
     void disable_adcs();
 
     /** 

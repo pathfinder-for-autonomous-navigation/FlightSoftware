@@ -31,7 +31,6 @@ class DockingSystem : public Devices::Device {
      */
     DockingSystem();
 
-    #ifndef DESKTOP
     bool setup() override;
     bool is_functional() override;
 
@@ -39,15 +38,20 @@ class DockingSystem : public Devices::Device {
     void enable();
     void reset() override;
 
-    #else
-    bool setup();
-    bool is_functional();
+    /** @brief Turn the docking motor into the "docked" configuration.
+     **/
+    void dock();
 
-    void disable();
-    void enable();
-    void reset();
+    /** @brief Turn the docking motor into the "undocked" configuration.
+     **/
+    void undock();
 
-    #endif
+    /**
+     * @brief Manually step motor by a given amount.
+     * 
+     * @param angle in degrees.
+     */
+    void step_motor(float angle);
 
     /**
      * @brief Set the direction of the motor turning.
@@ -122,8 +126,6 @@ class DockingSystem : public Devices::Device {
 
     //number of steps left to complete
     unsigned int steps = 0;
-
-    
 };
 }  // namespace Devices
 
