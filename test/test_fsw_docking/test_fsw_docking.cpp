@@ -47,17 +47,20 @@ void test_task_execute() {
     tf.docking_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.docked_fp->get());
     //test docking
-    tf.docking_config_cmd_fp->set(true);
+    tf.docked_fp->set(false);
+    tf.dock_config_fp->set(false);
     while (!tf.dock_config_fp->get()){
         tf.docking_controller->execute();
     }
     TEST_ASSERT_EQUAL(true, tf.dock_config_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.docked_fp->get());
     //test undocking
     tf.docking_config_cmd_fp->set(false);
     while (tf.dock_config_fp->get()){
         tf.docking_controller->execute();
     }
     TEST_ASSERT_EQUAL(false, tf.dock_config_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
 }
 
 int test_control_task() {
