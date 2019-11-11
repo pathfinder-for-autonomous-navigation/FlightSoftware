@@ -3,6 +3,8 @@
 
 #ifdef HOOTL
 #define DEBUG_TASK debug_task(registry, debug_task_offset),
+#elif FLIGHT
+#define DEBUG_TASK
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
