@@ -12,7 +12,11 @@ DockingController::DockingController(StateFieldRegistry &registry, unsigned int 
   add_readable_field(docked_f);
   add_readable_field(dock_config_f);
   add_readable_field(is_turning_f);
+
   docking_config_cmd_fp = find_writable_field<bool>("docksys.config_cmd", __FILE__, __LINE__);
+  #ifdef DESKTOP
+    assert(docking_config_cmd_fp);
+  #endif
 }
 
 void DockingController::execute() {

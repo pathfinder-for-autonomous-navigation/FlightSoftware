@@ -1,7 +1,7 @@
 #include "MissionManager.hpp"
 
-MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset)
-  : TimedControlTask<void>(registry, offset),
+MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
+    TimedControlTask<void>(registry, offset),
     mission_mode_sr(0, 10, 4),
     mission_mode_f("pan.mode", mission_mode_sr),
     is_deployed_sr(),
@@ -19,6 +19,13 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     adcs_cmd_attitude_fp = find_writable_field<f_quat_t>("adcs.cmd_attitude", __FILE__, __LINE__);
     adcs_ang_rate_fp = find_readable_field<float>("adcs.ang_rate", __FILE__, __LINE__);
     adcs_min_stable_ang_rate_fp = find_writable_field<float>("adcs.min_stable_ang_rate", __FILE__, __LINE__);
+
+    #ifdef DESKTOP
+        assert(adcs_mode_fp);
+        assert(adcs_cmd_attitude_fp);
+        assert(adcs_ang_rate_fp);
+        assert(adcs_min_stable_ang_rate_fp);
+    #endif
 
     // TODO change to startup.
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::detumble));
