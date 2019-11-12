@@ -22,9 +22,7 @@ class MainControlLoop : public ControlTask<void> {
    protected:
     FieldCreatorTask field_creator_task;
     ClockManager clock_manager;
-    #ifdef HOOTL
-        DebugTask debug_task;
-    #endif
+    DebugTask debug_task;
     MissionManager mission_manager;
 
     Devices::DockingSystem docksys;
@@ -32,13 +30,14 @@ class MainControlLoop : public ControlTask<void> {
 
     // Control cycle time offsets, in microseconds
     #ifdef HOOTL
-        static constexpr unsigned int debug_task_offset = 1000;
-        static constexpr unsigned int debug_task_duration = 50000;
+        static constexpr unsigned int debug_task_offset         = 1000;
+        static constexpr unsigned int mission_manager_offset    = 51000;
+        static constexpr unsigned int docking_controller_offset = 52000;
     #else
-        static constexpr unsigned int debug_task_duration = 0;
+        static constexpr unsigned int debug_task_offset         = 1000;
+        static constexpr unsigned int mission_manager_offset    = 1010;
+        static constexpr unsigned int docking_controller_offset = 2010;
     #endif
-    static constexpr unsigned int mission_manager_offset    = 1000 + debug_task_duration;
-    static constexpr unsigned int docking_controller_offset = 2000 + debug_task_duration;
 
    public:
     /**
