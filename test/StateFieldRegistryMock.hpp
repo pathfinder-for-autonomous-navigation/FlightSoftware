@@ -26,7 +26,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
                       std::is_same<T, f_quat_t>::value ||
                       std::is_same<T, d_quat_t>::value, 
             "This function can only be used to create boolean, GPS-time, float-quaternion"
-            "or double-quaternion state fields.");
+            " or double-quaternion state fields.");
 
         Serializer<T> field_sr;
         auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
@@ -49,7 +49,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
                       std::is_same<T, f_quat_t>::value ||
                       std::is_same<T, d_quat_t>::value,
             "This function can only be used to create boolean, GPS-time, float-quaternion"
-            "or double-quaternion state fields.");
+            " or double-quaternion state fields.");
 
         Serializer<T> field_sr;
         auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);
@@ -76,12 +76,48 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         // only be used to create state fields of specific types.
         static_assert(std::is_same<T, signed int>::value ||
             std::is_same<T, unsigned int>::value ||
+            std::is_same<T, signed char>::value ||
+            std::is_same<T, unsigned char>::value ||
             std::is_same<T, float>::value ||
             std::is_same<T, double>::value,
-        "This function can only be used to create signed int, unsigned int, float or double"
-        "state fields.");
+        "This function can only be used to create signed int/char, unsigned int/char, float or double"
+        " state fields.");
 
         Serializer<T> field_sr(min, max, bitsize);
+        auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
+        add_readable_field(field_ptr);
+        return field_ptr;
+    }
+
+    template<typename T>
+    std::shared_ptr<ReadableStateField<T>> create_readable_field(const std::string& name, 
+        T min, T max)
+    {
+        // Due to the definitions of the serializer constructors, this function can
+        // only be used to create state fields of specific types.
+        static_assert(std::is_same<T, signed int>::value ||
+            std::is_same<T, unsigned int>::value ||
+            std::is_same<T, signed char>::value ||
+            std::is_same<T, unsigned char>::value,
+        "This function can only be used to create signed int/char or unsigned int/char"
+        " state fields.");
+
+        Serializer<T> field_sr(min, max);
+        auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
+        add_readable_field(field_ptr);
+        return field_ptr;
+    }
+
+    template<typename T>
+    std::shared_ptr<ReadableStateField<T>> create_readable_field(const std::string& name, T max)
+    {
+        // Due to the definitions of the serializer constructors, this function can
+        // only be used to create state fields of specific types.
+        static_assert(std::is_same<T, unsigned int>::value ||
+                      std::is_same<T, unsigned char>::value,
+        "This function can only be used to create unsigned int/char state fields.");
+
+        Serializer<T> field_sr(max);
         auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
         add_readable_field(field_ptr);
         return field_ptr;
@@ -109,7 +145,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             std::is_same<T, float>::value ||
             std::is_same<T, double>::value,
         "This function can only be used to create signed int, unsigned int, float or double"
-        "state fields.");
+        " state fields.");
 
         Serializer<T> field_sr(min, max, bitsize);
         auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);

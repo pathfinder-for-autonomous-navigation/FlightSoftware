@@ -42,6 +42,11 @@ class ControlTask : protected debug_console {
     StateFieldRegistry& _registry;
 
     template<typename U>
+    bool add_internal_field(InternalStateField<U>& field) {
+        return _registry.add_field(field.ptr());
+    }
+
+    template<typename U>
     bool add_readable_field(ReadableStateField<U>& field) {
         return _registry.add_readable_field(field.ptr());
     }

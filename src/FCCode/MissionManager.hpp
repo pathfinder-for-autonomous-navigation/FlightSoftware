@@ -30,7 +30,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Mode of ADCS system.
      **/
-    std::shared_ptr<WritableStateField<unsigned int>> adcs_mode_fp;
+    std::shared_ptr<WritableStateField<unsigned char>> adcs_mode_fp;
     /**
      * @brief Currently commanded attitude of ADCS system.
      **/
@@ -52,8 +52,8 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Current mission mode (see mission_mode_t.enum)
      */
-    Serializer<unsigned int> mission_mode_sr;
-    WritableStateField<unsigned int> mission_mode_f;
+    Serializer<unsigned char> mission_mode_sr;
+    WritableStateField<unsigned char> mission_mode_f;
     /**
      * @brief True if the satellite has exited the deployment timing phase.
      */
@@ -64,8 +64,8 @@ class MissionManager : public TimedControlTask<void> {
      * satellite is the leader satellite. 0 if the follower/leader designation
      * hasn't been made yet.
      */
-    Serializer<unsigned int> sat_designation_sr;
-    ReadableStateField<unsigned int> sat_designation_f;
+    Serializer<unsigned char> sat_designation_sr;
+    ReadableStateField<unsigned char> sat_designation_f;
     
 };
 

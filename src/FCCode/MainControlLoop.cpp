@@ -1,17 +1,22 @@
 #include "MainControlLoop.hpp"
 #include "DebugTask.hpp"
 
+// Environment-based initializations of the control loop time.
 #ifdef HOOTL
-#define DEBUG_TASK debug_task(registry, debug_task_offset),
+    #ifdef DESKTOP
+        #define CONTROL_CYCLE_TIME 170000000
+    #else
+        #define CONTROL_CYCLE_TIME 170000
+    #endif
 #elif FLIGHT
-#define DEBUG_TASK
+    #define CONTROL_CYCLE_TIME 120000
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
     : ControlTask<void>(registry), 
       field_creator_task(registry),
-      clock_manager(registry, 120000000),
-      DEBUG_TASK
+      clock_manager(registry, CONTROL_CYCLE_TIME),
+      debug_task(registry, debug_task_offset),
       mission_manager(registry, mission_manager_offset),
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys)
