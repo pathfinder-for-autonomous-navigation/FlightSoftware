@@ -29,8 +29,8 @@ class TestFixture {
         adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
         mission_manager = std::make_unique<MissionManager>(registry, 0);
 
-        mission_mode_fp = std::static_pointer_cast<WritableStateField<unsigned char>>(registry.find_writable_field("pan.mode"));
-        sat_designation_fp = std::static_pointer_cast<WritableStateField<unsigned char>>(registry.find_writable_field("pan.sat_designation"));
+        mission_mode_fp = registry.find_writable_field_t<unsigned char>("pan.mode");
+        sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
         #ifdef DESKTOP
             assert(mission_mode_fp);
             assert(sat_designation_fp);

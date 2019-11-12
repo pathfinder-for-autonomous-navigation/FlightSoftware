@@ -13,7 +13,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     add_writable_field(mission_mode_f);
     add_readable_field(is_deployed_f);
-    add_readable_field(sat_designation_f);
+    add_writable_field(sat_designation_f);
 
     adcs_mode_fp = find_writable_field<unsigned char>("adcs.mode", __FILE__, __LINE__);
     adcs_cmd_attitude_fp = find_writable_field<f_quat_t>("adcs.cmd_attitude", __FILE__, __LINE__);

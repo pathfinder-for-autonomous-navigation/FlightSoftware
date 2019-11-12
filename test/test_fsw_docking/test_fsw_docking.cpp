@@ -22,10 +22,10 @@ class TestFixture {
 
         docking_controller = std::make_unique<DockingController>(registry, 0, docksys); 
 
-        docked_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.docked"));
-        dock_config_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.dock_config"));
-        is_turning_fp = std::static_pointer_cast<ReadableStateField<bool>>(registry.find_readable_field("docksys.is_turning"));
-        
+        docked_fp = registry.find_readable_field_t<bool>("docksys.docked");
+        dock_config_fp = registry.find_readable_field_t<bool>("docksys.dock_config");
+        is_turning_fp = registry.find_readable_field_t<bool>("docksys.is_turning");
+
         #ifdef DESKTOP
             assert(docked_fp);
             assert(dock_config_fp);

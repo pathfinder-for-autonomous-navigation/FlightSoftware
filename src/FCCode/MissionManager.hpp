@@ -65,7 +65,7 @@ class MissionManager : public TimedControlTask<void> {
      * hasn't been made yet.
      */
     Serializer<unsigned char> sat_designation_sr;
-    ReadableStateField<unsigned char> sat_designation_f;
+    WritableStateField<unsigned char> sat_designation_f;
     
 };
 
