@@ -4,22 +4,25 @@
 #define DOCKING_CONTROLLER_HPP_
 
 #include "../../test/StateFieldRegistryMock.hpp"
-#include <ControlTask.hpp>
+#include <TimedControlTask.hpp>
 #include "../../lib/Drivers/DockingSystem.hpp"
 
-class DockingController : public ControlTask<void> {
+class DockingController : public TimedControlTask<void> {
    public:
     
     /**
      * @brief Construct a new Docking Controller object
      * 
      * @param registry 
+     * @param offset
      * @param docksys 
      */
-    DockingController(StateFieldRegistry& registry, Devices::DockingSystem &docksys);
+    DockingController(StateFieldRegistry& registry, unsigned int offset,
+        Devices::DockingSystem &docksys);
 
     /**
-     * @brief Sets statefield variables and moves the motor to docking/undocking configuration should mission manager request it.
+     * @brief Sets statefield variables and moves the motor to docking/undocking
+     * configuration should mission manager request it.
      */
     void execute() override;
 

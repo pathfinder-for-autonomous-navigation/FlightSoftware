@@ -42,12 +42,12 @@ class ControlTask : protected debug_console {
     StateFieldRegistry& _registry;
 
     template<typename U>
-    bool add_readable_field(ReadableStateField<U> field) {
+    bool add_readable_field(ReadableStateField<U>& field) {
         return _registry.add_readable_field(field.ptr());
     }
 
     template<typename U>
-    bool add_writable_field(WritableStateField<U> field) {
+    bool add_writable_field(WritableStateField<U>& field) {
         return _registry.add_writable_field(field.ptr());
     }
 

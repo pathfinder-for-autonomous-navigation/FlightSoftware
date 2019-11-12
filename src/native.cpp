@@ -5,7 +5,6 @@
 int main() {
     StateFieldRegistry registry;
     MainControlLoop fcp(registry);
-    fcp.init();
 
     while (true) {
         fcp.execute();

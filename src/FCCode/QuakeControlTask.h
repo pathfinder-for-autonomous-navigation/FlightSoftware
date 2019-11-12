@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ControlTask.hpp>
+#include <TimedControlTask.hpp>
 #include "../../lib/Drivers/QLocate.hpp"
 
 /**
@@ -17,23 +17,25 @@ static constexpr int SBDIX = 3;         // SBDIX operation
 static constexpr int CONFIG = 4;        // Config operation
 static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
-class QuakeControlTask : public ControlTask<int>
+class QuakeControlTask : public TimedControlTask<int>
 {
 public:
   #ifndef DESKTOP
-  QuakeControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
-                                                   quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
-                                                   currentState(IDLE),
-                                                   fnSeqNum(0),
-                                                   szMsg(nullptr),
-                                                   len(0){}
+  QuakeControlTask(StateFieldRegistry &registry, unsigned int offset) :
+      TimedControlTask<int>(registry, offset),
+      quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
+      currentState(IDLE),
+      fnSeqNum(0),
+      szMsg(nullptr),
+      len(0){}
   #else
-  QuakeControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
-                                                   quake(),
-                                                   currentState(IDLE),
-                                                   fnSeqNum(0),
-                                                   szMsg(nullptr),
-                                                   len(0) {}
+  QuakeControlTask(StateFieldRegistry &registry, unsigned int offset) : 
+      TimedControlTask<int>(registry, offset),
+      quake(),
+      currentState(IDLE),
+      fnSeqNum(0),
+      szMsg(nullptr),
+      len(0) {}
   #endif
   /** 
    * execute is overriden from ControlTask 

@@ -1,20 +1,32 @@
 #include "MainControlLoop.hpp"
 #include "DebugTask.hpp"
 
+#ifdef HOOTL
+#define DEBUG_TASK debug_task(registry, debug_task_offset),
+#elif FLIGHT
+#define DEBUG_TASK
+#endif
+
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
-    : ControlTask<void>(registry), debug_task(registry), 
-    value_sr(-40, 125, Serializer<signed int>::temp_sz),
-    readable_f("readable_field", value_sr),
-    writable_f("writable_field", value_sr)
-{
-    add_readable_field(readable_f);
-    add_writable_field(writable_f);
-}
+    : ControlTask<void>(registry), 
+      field_creator_task(registry),
+      clock_manager(registry, 120000000),
+      DEBUG_TASK
+      mission_manager(registry, mission_manager_offset),
+      docksys(),
+      docking_controller(registry, docking_controller_offset, docksys)
+{}
+
+#undef DEBUG_TASK
 
 void MainControlLoop::execute() {
-    debug_task.execute();
-}
+    clock_manager.execute();
+    sys_time_t control_cycle_start = clock_manager.get_control_cycle_start_time();
 
-void MainControlLoop::init() {
-    debug_task.init();
+    #ifdef HOOTL
+    debug_task.execute_on_time(control_cycle_start);
+    #endif
+
+    mission_manager.execute_on_time(control_cycle_start);
+    docking_controller.execute_on_time(control_cycle_start);
 }
