@@ -121,7 +121,7 @@ inline bool I2CDevice::i2c_done() const {
 #ifdef DESKTOP
     return true;
 #else
-    return (this->wire.done() == 1)
+    return (this->wire.done() == 1);
 #endif
 }
 
