@@ -101,6 +101,14 @@ class QuakeManager : public ControlTask<bool> {
     size_t mo_idx;
 
     /**
+     * True if QM encountered an unexpected response
+     * All states transition to wait when this flag is set. 
+     * Wait transitions to config
+     * Only config may unset the flag
+     */
+    bool unexpectedFlag;
+
+    /**
      * Max cycles that each radio_mode state is allowed to waste before being 
      * transitioned. 
      */ 
