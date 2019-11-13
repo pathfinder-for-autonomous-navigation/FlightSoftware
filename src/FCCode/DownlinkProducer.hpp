@@ -32,7 +32,7 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     DownlinkProducer(StateFieldRegistry& registry,
                      const unsigned int offset,
-                     std::vector<FlowData>& flow_data);
+                     const std::vector<FlowData>& flow_data);
 
     /**
      * @brief Produce flow packets as needed, and keep track of the next
@@ -40,9 +40,20 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void execute() override;
 
+    /**
+     * @brief Destructor.s
+     */
     ~DownlinkProducer();
 
   protected:
+    /** @brief Pointer to cycle count. */
+    std::shared_ptr<ReadableStateField<unsigned int>> cycle_count_fp;
+
+    /**
+     * @brief Compute the size of the downlink snapshot.
+     */
+    size_t compute_downlink_size() const;
+
     /**
      * @brief Fields used by the Quake manager to know from where to copy a downlink
      * snapshot, and the length of the snapshot.
@@ -74,7 +85,7 @@ class DownlinkProducer : public TimedControlTask<void> {
          */
         Flow(const StateFieldRegistry& r,
              const FlowData& flow_data,
-             const unsigned char num_flows);
+             const size_t num_flows);
 
         //! Flow ID #
         Serializer<unsigned char> flow_id_sr;
@@ -85,21 +96,12 @@ class DownlinkProducer : public TimedControlTask<void> {
         //! Number of characters in the entire flow packet, including the packet header,
         //! but excluding COBS encoding.
         size_t get_packet_size() const;
-
-        /**
-         * @brief Produces the serialized float packet, writing it to a provided character
-         * array at a given bit offset from the beginning of the array.
-         * 
-         * @param dest Destination character array.
-         * @param offset Bit offset.
-         */
-        void produce_flow_packet(unsigned char* dest, size_t offset);
     };
 
     /**
      * @brief Actual flow data.
      */
-    std::map<unsigned char, Flow>& flows;
+    std::map<unsigned char, Flow> flows;
 };
 
 #endif
