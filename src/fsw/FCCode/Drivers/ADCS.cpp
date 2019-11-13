@@ -22,7 +22,7 @@ ADCS::ADCS()
 
 bool ADCS::i2c_ping() {
     unsigned char temp = 0;
-    get_who_am_i(&temp); 
+    get_who_am_i(&temp);
     return temp==WHO_AM_I_EXPECTED;
     }
 
@@ -108,7 +108,7 @@ void ADCS::set_mtr_cmd(const std::array<float, 3> &mtr_cmd){
     for(int i = 0;i<3;i++){
         unsigned short comp = us(mtr_cmd[i],mtr::min_moment,mtr::max_moment);
         cmd[2*i] = comp;
-        cmd[2*i+1] = comp >> 8; 
+        cmd[2*i+1] = comp >> 8;
     }
     i2c_write_to_subaddr(MTR_COMMAND,cmd,6);
 }
@@ -117,7 +117,7 @@ void ADCS::set_mtr_limit(const float mtr_limit){
     unsigned char cmd[2];
     unsigned short comp = us(mtr_limit,mtr::min_moment,mtr::max_moment);
     cmd[0] = comp;
-    cmd[1] = comp >> 8; 
+    cmd[1] = comp >> 8;
     i2c_write_to_subaddr(MTR_LIMIT, cmd, 2);
 }
 
@@ -130,7 +130,7 @@ void ADCS::set_ssa_voltage_filter(const float voltage_filter) {
     i2c_write_to_subaddr(SSA_VOLTAGE_FILTER, comp);
 }
 
-void ADCS::set_imu_mode(const unsigned char mode){
+void ADCS::set_imu_mode(IMUMode mode){
     i2c_write_to_subaddr(IMU_MODE, mode);
 }
 
@@ -238,7 +238,7 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1] << 8;
         unsigned short b = 0xFF & readin[2*i];
-        unsigned short c = a | b;        
+        unsigned short c = a | b;
         (*mag_rd)[i] = fp(c,imu::min_rd_mag,imu::max_rd_mag);
     }
 
@@ -247,7 +247,7 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
         unsigned short b = 0xFF & readin[2*i+6];
         unsigned short c = a | b;
         (*gyr_rd)[i] = fp(c,imu::min_rd_omega,imu::max_rd_omega);
-    } 
+    }
 
     unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
     *gyr_temp_rd = fp(c,imu::min_rd_temp,imu::max_rd_temp);
@@ -299,7 +299,7 @@ void ADCS::get_ssa_voltage(std::array<float, ssa::num_sun_sensors>* voltages){
     #else
     i2c_point_and_read(SSA_VOLTAGE_READ,temp, ssa::num_sun_sensors);
     #endif
-    
+
     for(int i = 0;i<ssa::num_sun_sensors;i++){
         (*voltages)[i] = fp(temp[i], ssa::min_voltage_rd, ssa::max_voltage_rd);
     }
@@ -319,7 +319,7 @@ void ADCS::get_havt(std::bitset<havt::max_devices>* havt_table){
     #endif
 
     unsigned int encoded;
-    
+
     //assemble chars into an int
     unsigned char * encoded_ptr = (unsigned char *)(&encoded);
     for (unsigned int i = 0; i < 4; i++){
