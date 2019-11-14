@@ -26,7 +26,9 @@ class GomspaceController : public TimedControlTask<void> {
     void execute() override;
 
    protected:
-    Devices::Gomspace& gs;
+    Devices::Gomspace &gs;
+
+    
 };
 
 #endif
