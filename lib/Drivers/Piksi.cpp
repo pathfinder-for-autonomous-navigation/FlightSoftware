@@ -444,7 +444,7 @@ void Piksi::_pos_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
 void Piksi::_baseline_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_baseline_ecef)), msg, sizeof(msg_baseline_ecef_t));
-    piksi->_baseline_ecef_update;
+    piksi->_baseline_ecef_update = true;
 }
 void Piksi::_vel_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
