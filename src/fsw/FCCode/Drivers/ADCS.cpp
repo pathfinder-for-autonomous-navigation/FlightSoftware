@@ -64,7 +64,7 @@ inline signed short ss(float f, float min, float max) {
   return (signed short)(65535.0f * (f - min) / (max - min) - 32768.0f);
 }
 
-void ADCS::set_mode(const unsigned char mode) {
+void ADCS::set_mode(ADCSMode mode) {
     i2c_write_to_subaddr(ADCS_MODE, mode);
 }
 

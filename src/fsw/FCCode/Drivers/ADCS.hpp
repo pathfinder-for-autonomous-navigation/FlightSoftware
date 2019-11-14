@@ -60,14 +60,14 @@ class ADCS : public I2CDevice {
      * 0x00–ADCS passive mode (default)
      * 0x01–ADCS active mode
      */
-    void set_mode(const unsigned char mode);
+    void set_mode(ADCSMode mode);
 
     /**
      * @brief Set what address the the ADCS controller should read from
      *
      * @param read_ptr address to read from
      */
-    void set_read_ptr(const unsigned char read_ptr);
+    void set_read_ptr(unsigned char read_ptr);
 
     /**
      * @brief Set the reaction wheel assembly mode
@@ -105,7 +105,7 @@ class ADCS : public I2CDevice {
      * 0x00 – Disabled (default)
      * 0x01 – Enabled
      */
-    void set_mtr_mode(const unsigned char mtr_mode);
+    void set_mtr_mode(MTRMode mtr_mode);
 
     /**
      * @brief Set the magnetorquer command itself
@@ -134,7 +134,7 @@ class ADCS : public I2CDevice {
      * 0x01 – Starts a sun vector calculation
      * 0x02 – Indicates success of a sun vector calculation
      */
-    void set_ssa_mode(const unsigned char ssa_mode);
+    void set_ssa_mode(SSAMode ssa_mode);
 
     /**
      * @brief Set the sun sensor array voltage exponential filter
@@ -249,7 +249,7 @@ class ADCS : public I2CDevice {
      *
      * @param ssa_mode Pointer to output current ssa mode value
      */
-    void get_ssa_mode(unsigned char *ssa_mode);
+    void get_ssa_mode(SSAMode *ssa_mode);
 
     #ifdef UNIT_TEST
     /**
