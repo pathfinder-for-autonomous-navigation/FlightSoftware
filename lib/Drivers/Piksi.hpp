@@ -155,6 +155,8 @@ class Piksi {
      * returns 0 if SPP
      * returns 1 if FIXED RTK
      * returns 2 if FLOAT RTK
+     * 
+     * modded by 8 to prevent spirulus values
      *  @return Status flags of GPS position measurement. **/
     virtual unsigned char get_pos_ecef_flags();
 

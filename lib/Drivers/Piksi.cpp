@@ -122,7 +122,7 @@ void Piksi::get_pos_ecef(unsigned int *tow, std::array<double, 3> *position) {
 }
 
 unsigned char Piksi::get_pos_ecef_nsats() { return _pos_ecef.n_sats; }
-unsigned char Piksi::get_pos_ecef_flags() { return _pos_ecef.flags; }
+unsigned char Piksi::get_pos_ecef_flags() { return _pos_ecef.flags % 8; }
 
 void Piksi::get_baseline_ecef(std::array<double, 3> *position) {
     (*position)[0] = _baseline_ecef.x;
@@ -275,7 +275,32 @@ unsigned char Piksi::read_buffer_exp() {
         while(bytes_available()){
             process_buffer_msg_len();
 
-            //if(_up)
+            //read until time is updated
+            if(_gps_time_update){
+                if(_pos_ecef_update){
+                    if(_vel_ecef_update){
+                        if(get_pos_ecef_flags == 0)
+                            break;
+                        else if(get_pos_ecef_flags() == 1 || get_pos_ecef_flags() == 2){
+                            
+                        }
+                        else{
+                            break;
+                        }
+                    }
+            //read the pos data
+            //read the pos flag
+            //accquire vel
+            //if the pos flag is 0 -> SPP
+                //terminate
+            //else
+            //if the pos flag is 1 -> RTK FIXED
+            //else if the pos flag is 2 -> RTK FLOAT
+                //accquire baseline
+                //verify baseline flag                                                                             
+                //terminate
+                }
+            }
             if(_heartbeat_update && !_gps_time_update) {
                 //to cover case where half of a buffer is left behind
                 _heartbeat_update = false;
@@ -399,6 +424,12 @@ void Piksi::_gps_time_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_gps_time)), msg, sizeof(msg_gps_time_t));
     piksi->_gps_time_update = true;
+
+    //THIS ESSENTIALLY ENFORCES THAT GPS TIME MUST BE UPDATED FIRST
+    //OTHER PACKETS SHALL BE INGORED
+    piksi->_pos_ecef_update = false;
+    piksi->_vel_ecef_update = false;
+    piksi->_baseline_ecef_update = false;
 }
 void Piksi::_dops_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
