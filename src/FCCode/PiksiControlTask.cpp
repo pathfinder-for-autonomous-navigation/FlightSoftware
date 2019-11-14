@@ -40,23 +40,60 @@ void PiksiControlTask::execute()
   // TODO: allow any state to ignore state and call CONFIG, remember to reset fnSeqNum
   
   //if successfully read data
-  if(piksi.read_buffer() == 0){
-    fix = piksi.get_pos_ecef_flags();
-    //if any kind of RTk
-    if(fix == 1 || fix == 2){
-      //read baseline data
-      piksi.get_baseline_ecef(&baseline_pos);
-    }
-    else if(fix == 0){
-      piksi.get_pos_ecef(&pos);
-      piksi.get_gps_time(&time);
-      piksi.get_vel_ecef(&vel);
-    }
-    else
-      fix = 3;
+  int read_out = piksi.read_all();
 
+  if(read_out == 3){
+    currentState = NO_DATA;
+    return;
+  }
+  else if(read_out == 2){
+    currentState = ERROR;
+    return;
   }
 
+  else if(read_out == 1 || read_out == 0){
+    piksi.get_gps_time(&time);
+    piksi.get_pos_ecef(&baseline_tow, &pos);
+    piksi.get_vel_ecef(&vel_tow, &vel);
+
+    if(read_out == 1)
+      piksi.get_baseline_ecef(&baseline_tow, &baseline_pos);
+
+    bool check_time;
+    if(read_out == 1)
+      check_time = time.tow == pos_tow && time.tow == vel_tow && time.tow == baseline_tow;
+    else
+      check_time = time.tow == pos_tow && time.tow == vel_tow;
+
+    if(!check_time){
+      //error caused by times not matching up
+      //indicitave of packet being split
+      currentState = ERROR;
+      return;
+    }
+
+    int nsats = piksi.get_pos_ecef_nsats();
+    if(nsats < 4){
+      currentState = ERROR;
+      return;
+    }
+
+    if(read_out == 1){
+      int baseline_flag = piksi.get_baseline_ecef_flags();
+      if(baseline_flag == 1)
+        currentState = FIXED_RTK;
+      else if(baseline_flag == 0)
+        currentState = FLOAT_RTK;
+      else
+        currentState = ERROR;
+    }
+    else
+      currentState = SPP;
+
+  }
+  //if read_out is unexpected value which it shouldn't lol
+  else
+    currentState = ERROR;
   // int res_buffer_read = piksi.read_buffer();
   // if (res_buffer_read == 1){
   //   currentState = BAD_BUFFER;

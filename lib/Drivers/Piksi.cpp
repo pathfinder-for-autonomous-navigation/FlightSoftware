@@ -260,10 +260,26 @@ unsigned char Piksi::process_buffer_msg_len() {
 }
 
 unsigned char Piksi::read_all() {
-    while(bytes_available()){
-        process_buffer();
+    _gps_time_update = false;
+    _pos_ecef_update = false;
+    _vel_ecef_update = false;
+    _baseline_ecef_update = false;
+
+    if(bytes_available()){
+        while(bytes_available()){
+            process_buffer();
+        }
+        if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && !_baseline_ecef_update)
+            return 0;
+        else if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && _baseline_ecef_update)
+            return 1;
+        else
+            //error condition, perhaps serial data bad
+            //or time looped around
+            return 2;
     }
-    return 0;
+    else
+        return 3;
 }
 
 void Piksi::read_all_order(std::array<int, 4> *out) {
@@ -450,9 +466,9 @@ void Piksi::_gps_time_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
 
     //THIS ESSENTIALLY ENFORCES THAT GPS TIME MUST BE UPDATED FIRST
     //OTHER PACKETS SHALL BE INGORED
-    piksi->_pos_ecef_update = false;
-    piksi->_vel_ecef_update = false;
-    piksi->_baseline_ecef_update = false;
+    // piksi->_pos_ecef_update = false;
+    // piksi->_vel_ecef_update = false;
+    // piksi->_baseline_ecef_update = false;
 }
 void Piksi::_dops_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;

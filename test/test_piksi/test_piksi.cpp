@@ -4,8 +4,9 @@
 #include <array>
 #include "../lib/Drivers/Piksi.hpp"
 
-#define PIKSI_READ_ALLOTED 300
+#define PIKSI_READ_ALLOTED 650
 #define SAFETY 250
+//good readings rely on small control cycles
 #define CONTROL_CYCLE 120
 
 Devices::Piksi piksi("piksi", Serial4);
@@ -51,6 +52,18 @@ bool verify_out() {
 
     if (!ret) Serial.printf("Process Out: %d\n", out);
 
+    return ret;
+}
+bool verify_same_time(){
+    bool ret = time.tow == pos_tow && time.tow ==vel_tow && time.tow ==baseline_tow;
+    if(!ret){
+        Serial.printf("GPS tow: %u\n", time.tow);
+        Serial.printf("POS PAST: %u, CURR: %u\n", pos_past, pos_tow);
+        Serial.printf("VEL PAST: %u, CURR: %u\n", vel_past, vel_tow);
+        Serial.printf("BASE PAST: %u, CURR: %u\n", baseline_past, baseline_tow);
+
+
+    }
     return ret;
 }
 bool verify_time() {
@@ -136,7 +149,7 @@ bool verify_vel() {
         Serial.printf("vel_ecef_flags: %u\n", piksi.get_vel_ecef_flags());
 
         Serial.printf("Nsat Vel: %d\n", piksi.get_vel_ecef_nsats());
-        Serial.printf("PAST: %u, CURR: %u\n", vel_past, vel_tow);
+        Serial.printf("VEL PAST: %u, CURR: %u\n", vel_past, vel_tow);
     }
 
     return ret;
@@ -177,8 +190,8 @@ bool verify_baseline() {
                       baseline_pos[2]);
         Serial.printf("baseline_mag: %g\n", baseline_mag);
         Serial.printf("baseline_ecef_flags: %u\n", piksi.get_baseline_ecef_flags());
-        Serial.printf("Nsat basline: %d\n", piksi.get_baseline_ecef_nsats());
-        Serial.printf("PAST: %u, CURR: %u\n", baseline_past, baseline_tow);
+        Serial.printf("Nsat baseline: %d\n", piksi.get_baseline_ecef_nsats());
+        Serial.printf("BASE PAST: %u, CURR: %u\n", baseline_past, baseline_tow);
     }
     return ret;
     
@@ -323,8 +336,8 @@ bool verify_all(){
     piksi.get_baseline_ecef(&baseline_tow, &baseline_pos);
 
     iar = piksi.get_iar();
-
-    bool ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
+    
+    bool ret = verify_same_time() & verify_time() & verify_baseline() & verify_pos() & verify_vel();// & verify_iar();
     return ret;
 }
 
@@ -432,7 +445,6 @@ int main(void) {
         //this syncs up command to execute exactly every 120 ms 
         //(barring a failure on the previous loop)
         delay(CONTROL_CYCLE - (micros() - prevtime) / 1000);
-        prevtime = micros();
 
         //SPP only
         //firmware 1: 159 bytes
@@ -445,9 +457,14 @@ int main(void) {
 
 
         Serial.printf("BYTES AVAIL: %u\n",piksi.bytes_available());
-        int res = piksi.read_buffer_exp();
+        
+        prevtime = micros();
+        int res = piksi.read_all();
+        posttime = micros();
+
+        
         Serial.printf("RES: %d\n", res);
-        if (res == 0) {
+        if (res == 1) {
             if(verify_all())
                 exec_pass_count += 1;
             else
@@ -458,10 +475,9 @@ int main(void) {
         else if(res == 2){
             msg_len_fail_count += 1;
         }
-        else if(res == 1)
+        else if(res == 0)
             bad_buffer += 1;
 
-        posttime = micros();
         Serial.printf("EXEC TIME: %d micros\n", posttime-prevtime);
         if (posttime - prevtime < PIKSI_READ_ALLOTED) {
             timing_pass_count++;

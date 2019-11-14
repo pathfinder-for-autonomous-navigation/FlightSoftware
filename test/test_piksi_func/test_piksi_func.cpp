@@ -4,7 +4,7 @@
 #include <array>
 #include "../lib/Drivers/Piksi.hpp"
 
-#define PIKSI_READ_ALLOTED 300
+#define PIKSI_READ_ALLOTED 500
 #define SAFETY 250
 #define CONTROL_CYCLE 120
 

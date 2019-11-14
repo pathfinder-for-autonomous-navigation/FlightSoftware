@@ -14,12 +14,13 @@
  * multiple commands. Also, we want to account for differences in timing
  * between sending commands and reading expected responses.
  */
-static constexpr int SUCCESS = 0;
+static constexpr int SPP = 0;
+static constexpr int FIXED_RTK = 1;
+static constexpr int FLOAT_RTK = 2;
 
-static constexpr int BAD_BUFFER = 1;
-static constexpr int BAD_TIME_OR_NSATS = 2;
-static constexpr int BAD_NSATS = 3;
-static constexpr int BAD_DATA = 4;
+static constexpr int ERROR = 3;
+static constexpr int NO_DATA = 4;
+
 
 static constexpr int MSG_LEN_WRONG = 5;;
 
