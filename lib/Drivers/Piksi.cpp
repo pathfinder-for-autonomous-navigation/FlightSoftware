@@ -276,6 +276,7 @@ unsigned char Piksi::read_buffer_exp() {
             process_buffer_msg_len();
 
             //read until time is updated
+            //check until simulatenously true with new driver?
             if(_gps_time_update){
                 if(_pos_ecef_update){
                     if(_vel_ecef_update){
