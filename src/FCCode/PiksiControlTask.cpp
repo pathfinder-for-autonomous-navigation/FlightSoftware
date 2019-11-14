@@ -30,46 +30,70 @@ int PiksiControlTask::get_current_state() const
   return currentState;
 }
 
+int PiksiControlTask::get_fix() const
+{
+  return fix;
+}
+
 void PiksiControlTask::execute()
 {
   // TODO: allow any state to ignore state and call CONFIG, remember to reset fnSeqNum
-  int res_buffer_read = piksi.read_buffer();
-  if (res_buffer_read == 1){
-    currentState = BAD_BUFFER;
-  }
-  else if(res_buffer_read == 2){
-    currentState = MSG_LEN_WRONG;
-  }
-  //res_buffer = 0;
-  else{
-    get_values();
-    //int ver_good = verify_good();
-
-    bool time_valid = pos_tow == time.tow && vel_tow == time.tow 
-    && baseline_tow == time.tow && time.tow > tow_past;
-    
-    bool nsats_valid = true;
-
-    if(time_valid && nsats_valid){
-      pos_f.set(pos);
-      vel_f.set(vel);
-      baseline_pos_f.set(baseline_pos);
-      currentState = SUCCESS;
+  
+  //if successfully read data
+  if(piksi.read_buffer() == 0){
+    fix = piksi.get_pos_ecef_flags();
+    //if any kind of RTk
+    if(fix == 1 || fix == 2){
+      //read baseline data
+      piksi.get_baseline_ecef(&baseline_pos);
     }
-    else if(time_valid && !nsats_valid){
-      // TODO SET TIME STATE FIELD
-      currentState = BAD_NSATS;
+    else if(fix == 0){
+      piksi.get_pos_ecef(&pos);
+      piksi.get_gps_time(&time);
+      piksi.get_vel_ecef(&vel);
     }
     else
-    {
-      // time is not good and nsats not good, so nothing is good, set nothing
-      currentState = BAD_DATA;
-    }
+      fix = 3;
 
-    
   }
 
-  currentState_f.set(currentState);
+  // int res_buffer_read = piksi.read_buffer();
+  // if (res_buffer_read == 1){
+  //   currentState = BAD_BUFFER;
+  // }
+  // else if(res_buffer_read == 2){
+  //   currentState = MSG_LEN_WRONG;
+  // }
+  // //res_buffer = 0;
+  // else{
+  //   get_values();
+  //   //int ver_good = verify_good();
+
+  //   bool time_valid = pos_tow == time.tow && vel_tow == time.tow 
+  //   && baseline_tow == time.tow && time.tow > tow_past;
+    
+  //   bool nsats_valid = true;
+
+  //   if(time_valid && nsats_valid){
+  //     pos_f.set(pos);
+  //     vel_f.set(vel);
+  //     baseline_pos_f.set(baseline_pos);
+  //     currentState = SUCCESS;
+  //   }
+  //   else if(time_valid && !nsats_valid){
+  //     // TODO SET TIME STATE FIELD
+  //     currentState = BAD_NSATS;
+  //   }
+  //   else
+  //   {
+  //     // time is not good and nsats not good, so nothing is good, set nothing
+  //     currentState = BAD_DATA;
+  //   }
+
+    
+  // }
+
+  // currentState_f.set(currentState);
 
   //result = piksi.read_buffer();
   //return res1 + res2;

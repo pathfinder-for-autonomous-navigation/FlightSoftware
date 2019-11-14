@@ -69,6 +69,7 @@ public:
   /** Returns the current state of the Piksi */
   int get_current_state() const;
 
+  int get_fix() const;
   // /** Returns the current function number (for testing purposes) */
   // size_t get_current_fn_number() const;
 
@@ -91,6 +92,9 @@ protected:
 
   Serializer<int> currentState_sr;
   ReadableStateField<int> currentState_f;
+
+  Serializer<int> fix_sr;
+  ReadableStateField<int> fix_f;
 
   std::array<double, 3> pos;
   std::array<double, 3> vel;
@@ -123,7 +127,7 @@ private:
   // Piksi should never be in both IDLE and fnSeqNum != 0
   int currentState; // the state of the Piksi
   // int fnSeqNum;     // the sequence we are on
-
+  int fix;
   // const char *szMsg; // the message to downlink
   // size_t len;        // length of the message to downlink
 };

@@ -265,61 +265,83 @@ unsigned char Piksi::read_all() {
     }
     return 0;
 }
-unsigned char Piksi::read_buffer_exp() {
-    int initial_bytes = bytes_available();
 
-    //if(bytes in the buffer)
-        //process until each call back has been called
-    unsigned char ret = 1;
-    if(initial_bytes > 0){
-        while(bytes_available()){
-            process_buffer_msg_len();
+void Piksi::read_all_order(std::array<int, 4> *out) {
+    _gps_time_update = false;
+    _pos_ecef_update = false;
+    _vel_ecef_update = false;
+    _baseline_ecef_update = false;
 
-            //read until time is updated
-            //check until simulatenously true with new driver?
+    int cnt = 0;
+    //(*out)[cnt] = 9;
+
+    while(bytes_available()){
+        process_buffer();
+        if(cnt < 4){
             if(_gps_time_update){
-                if(_pos_ecef_update){
-                    if(_vel_ecef_update){
-                        if(get_pos_ecef_flags() == 0)
-                            break;
-                        else if(get_pos_ecef_flags() == 1 || get_pos_ecef_flags() == 2){
-                            
-                        }
-                        else{
-                            break;
-                        }
-                    }
-            //read the pos data
-            //read the pos flag
-            //accquire vel
-            //if the pos flag is 0 -> SPP
-                //terminate
-            //else
-            //if the pos flag is 1 -> RTK FIXED
-            //else if the pos flag is 2 -> RTK FLOAT
-                //accquire baseline
-                //verify baseline flag                                                                             
-                //terminate
-                }
-            }
-            if(_heartbeat_update && !_gps_time_update) {
-                //to cover case where half of a buffer is left behind
-                _heartbeat_update = false;
-                ret = 1;
-            }
-            if(_heartbeat_update && _gps_time_update){
-                _heartbeat_update = false;
+                //(*out)[cnt] = 't';
+                (*out)[cnt] = 0;
                 _gps_time_update = false;
-                if(ret == 2)
-                    ret = 0;
-                break;
+                cnt++;
             }
-
-        }
-        while (bytes_available()) {
-            clear_bytes();
+            if(_pos_ecef_update){
+                (*out)[cnt] = 1;
+                //(*out)[cnt] = 'p';
+                _pos_ecef_update = false;
+                cnt++;
+            }
+            if(_baseline_ecef_update){
+                (*out)[cnt] = 2;
+                //(*out)[cnt] = 'b';
+                _baseline_ecef_update = false;
+                cnt++;
+            }
+            if(_vel_ecef_update){
+                (*out)[cnt] = 3;
+                //(*out)[cnt] = 'v';
+                _vel_ecef_update = false;
+                cnt++;
+            }
         }
     }
+}
+
+unsigned char Piksi::read_buffer_exp() {
+    unsigned char ret = 6;
+    if(bytes_available()){
+        while(bytes_available()){
+            int pb_out = process_buffer();
+            if(pb_out < 0){
+                ret = 5;
+                break;
+            }
+            else if(pb_out == 1){
+                ret = 2;
+                if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && !_baseline_ecef_update){
+                    _gps_time_update = false;
+                    _pos_ecef_update = false;
+                    _vel_ecef_update = false;
+                    _baseline_ecef_update = false;
+
+                    ret = 0;
+                    break;
+                }
+                if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && _baseline_ecef_update){
+                    _gps_time_update = false;
+                    _pos_ecef_update = false;
+                    _vel_ecef_update = false;
+                    _baseline_ecef_update = false;
+                    ret = 1;
+                    break;
+                }
+            }
+        }
+        // while(bytes_available()){
+        //     clear_bytes();
+        // }
+    }
+    else
+        ret = 4;
     return ret;
 }
 

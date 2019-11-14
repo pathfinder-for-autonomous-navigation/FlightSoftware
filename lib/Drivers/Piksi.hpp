@@ -98,6 +98,14 @@ class Piksi {
     virtual unsigned char read_buffer();
 
     virtual unsigned char read_all();
+    /*
+    let it be known the for FIXED RTK
+    time
+    pos
+    vel
+    base
+    */
+    virtual void read_all_order(std::array<int, 4>* out);
 
     virtual unsigned char read_buffer_exp();
 

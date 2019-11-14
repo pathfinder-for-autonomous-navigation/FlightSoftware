@@ -463,7 +463,23 @@ int main(void) {
 
     bool keeprun = true;
 
-    piksi.read_all();
+    // while(piksi.bytes_available())
+    //     Serial.printf("%u ",piksi.process_buffer_msg_len());
+    // //piksi.read_all();
+    // delay(350);
+
+    //piksi.read_all();
+    //Serial.printf("OUT: %u\n", piksi.read_buffer_exp());
+
+    std::array<int, 4> order_out = {7,7,7,7};
+    int st = micros();
+    piksi.read_all_order(&order_out);
+    int et = micros();
+    Serial.printf("TIME: %d\n",et-st);
+    for(int i = 0; i < 4; i++){
+        Serial.printf("%d\n",order_out[i]);
+    }
+    Serial.println("***********");
 
     get_data();
     print_all();
