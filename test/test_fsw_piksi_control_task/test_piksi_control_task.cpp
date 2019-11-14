@@ -20,9 +20,9 @@ void test_task_execute()
     PiksiControlTask task(registry);
 
     //TEST_ASSERT_EQUAL()
-    std::array<double, 3> pos = {4000.0, 5000.0, 6000.0};
-    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-    std::array<double, 3> baseline_pos = {4000.0, 5000.0, 6000.0};
+    // std::array<double, 3> pos = {4000.0, 5000.0, 6000.0};
+    // std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+    // std::array<double, 3> baseline_pos = {4000.0, 5000.0, 6000.0};
 
 
     unsigned int tow = 0;

@@ -10,7 +10,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<v
                                                                    vel_f("piksi.vel", vel_sr),
                                                                    baseline_pos_sr(0, 100000, 10),
                                                                    baseline_pos_f("piksi.baseline.pos", baseline_pos_sr),
-                                                                   currentState_sr(0, 2, 2),
+                                                                   currentState_sr(0, 4, 2),
                                                                    currentState_f("piksi.state", currentState_sr)
 {
   add_readable_field(pos_f);
