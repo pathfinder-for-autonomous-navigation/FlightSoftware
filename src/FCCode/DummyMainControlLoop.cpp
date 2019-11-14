@@ -2,8 +2,8 @@
 #include "DebugTask.hpp"
 
 DummyMainControlLoop::DummyMainControlLoop(StateFieldRegistry& registry)
-    : ControlTask<void>(registry), debug_task(registry), 
-    value_sr(-40, 125, Serializer<signed int>::temp_sz),
+    : ControlTask<void>(registry), debug_task(registry, 0), 
+    value_sr(40, 125, 10),
     readable_f("readable_field", value_sr),
     writable_f("writable_field", value_sr)
 {

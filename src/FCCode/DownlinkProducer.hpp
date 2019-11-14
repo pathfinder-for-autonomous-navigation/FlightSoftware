@@ -1,0 +1,107 @@
+#ifndef DOWNLINK_PRODUCER_HPP_
+#define DOWNLINK_PRODUCER_HPP_
+
+#include "TimedControlTask.hpp"
+
+class DownlinkProducer : public TimedControlTask<void> {
+   public:
+    /**
+     * @brief Flow data object, used in order to specify the
+     * - Flow rate.
+     * - The fields going into a flow.
+     * - The flow ID.
+     * - The maximum number of packets of a particular kind of flow to
+     *   save on a stack.
+     * 
+     * We can create a static list of these and use it to initialize the
+     * actual Flow object, which creates pointers to state fields and 
+     * contains a function to automatically generate a flow packet.
+     */
+    struct FlowData {
+        unsigned char id;
+        std::vector<std::string> field_list;
+    };
+
+    /**
+     * @brief Construct a new Downlink Producer.
+     * 
+     * @param registry State field registry.
+     * @param offset Offset, in microseconds, from the beginning of the control
+     *               task.
+     * @param flow_data An initializer list of flow data.
+     */
+    DownlinkProducer(StateFieldRegistry& registry,
+                     const unsigned int offset,
+                     const std::vector<FlowData>& flow_data);
+
+    /**
+     * @brief Produce flow packets as needed, and keep track of the next
+     * most urgent downlink flow group based on the Quake manager's state.
+     */
+    void execute() override;
+
+    /**
+     * @brief Destructor.s
+     */
+    ~DownlinkProducer();
+
+  protected:
+    /** @brief Pointer to cycle count. */
+    std::shared_ptr<ReadableStateField<unsigned int>> cycle_count_fp;
+
+    /**
+     * @brief Compute the size of the downlink snapshot.
+     */
+    size_t compute_downlink_size() const;
+
+    /**
+     * @brief Fields used by the Quake manager to know from where to copy a downlink
+     * snapshot, and the length of the snapshot.
+     */
+    char* snapshot = nullptr;
+    InternalStateField<char*> snapshot_ptr_f;
+    InternalStateField<size_t> snapshot_size_bytes_f;
+
+    /**
+     * @brief Flow object, which controls the construction and state of a telemetry
+     * flow:
+     * - Ensures a flow packet doesn't span more than 70 bytes.
+     * - Ensures all fields in in the flow packet are available in the state
+     * registry.
+     * - The flow counter tracks whether or not a flow packet should be produced
+     *   on the current control cycle.
+     */
+    struct Flow {
+        /**
+         * @brief Construct a new telemetry flow
+         * 
+         * Constructs the flow from the list of state fields
+         * and checks bounds on the size of the flow packet.
+         * 
+         * @param r          State field registry object.
+         * @param flow_data  Data about the flow.
+         * @param num_flows  Total number of flows. This is used to
+         *                   create the flow ID # serializer
+         */
+        Flow(const StateFieldRegistry& r,
+             const FlowData& flow_data,
+             const size_t num_flows);
+
+        //! Flow ID #
+        Serializer<unsigned char> flow_id_sr;
+
+        //! List of fields within the flow
+        std::vector<std::shared_ptr<ReadableStateFieldBase>> field_list;
+        
+        //! Number of characters in the entire flow packet, including the packet header,
+        //! but excluding COBS encoding.
+        size_t get_packet_size() const;
+    };
+
+    /**
+     * @brief Actual flow data.
+     */
+    std::map<unsigned char, Flow> flows;
+};
+
+#endif

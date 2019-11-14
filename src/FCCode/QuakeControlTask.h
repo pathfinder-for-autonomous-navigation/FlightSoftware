@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ControlTask.hpp>
+#include <TimedControlTask.hpp>
 #include "../../lib/Drivers/QLocate.hpp"
 
 /**
@@ -17,44 +17,25 @@ static constexpr int SBDIX = 3;         // SBDIX operation
 static constexpr int CONFIG = 4;        // Config operation
 static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
-const char* translate_state(int state)
-{
-  switch (state)
-  {
-    case IDLE:
-      return "IDLE";
-    case SBDWB:
-      return "SBDWB";
-    case SBDRB:
-      return "SBDRB";
-    case SBDIX:
-      return "SBDIX";
-    case CONFIG:
-      return "CONFIG";
-    case IS_FUNCTIONAL:
-      return "IS_FUNCTIONAL";
-    default:
-      return "[Error]: INVALID_QUAKE_STATE";
-  }
-}
-
-class QuakeControlTask : public ControlTask<int>
+class QuakeControlTask : public TimedControlTask<int>
 {
 public:
   #ifndef DESKTOP
-  QuakeControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
-                                                   quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
-                                                   currentState(IDLE),
-                                                   fnSeqNum(0),
-                                                   szMsg(nullptr),
-                                                   len(0){}
+  QuakeControlTask(StateFieldRegistry &registry, unsigned int offset) :
+      TimedControlTask<int>(registry, offset),
+      quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
+      currentState(IDLE),
+      fnSeqNum(0),
+      szMsg(nullptr),
+      len(0){}
   #else
-  QuakeControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
-                                                   quake(),
-                                                   currentState(IDLE),
-                                                   fnSeqNum(0),
-                                                   szMsg(nullptr),
-                                                   len(0) {}
+  QuakeControlTask(StateFieldRegistry &registry, unsigned int offset) : 
+      TimedControlTask<int>(registry, offset),
+      quake(),
+      currentState(IDLE),
+      fnSeqNum(0),
+      szMsg(nullptr),
+      len(0) {}
   #endif
   /** 
    * execute is overriden from ControlTask 
@@ -90,7 +71,6 @@ public:
   int dispatch_sbdix();
   int dispatch_config();
   int dispatch_is_functional();
-
   // Quake should never be in both IDLE and fnSeqNum != 0
   int currentState; // the state of the Quake
   int fnSeqNum;     // the sequence we are on

@@ -96,7 +96,11 @@ void test_sbdrb_with_network(void)
         ;
     TEST_ASSERT_EQUAL(0, q.get_sbdix());
     // Get SBDI response
+<<<<<<< HEAD
     const int *_pRes = q.sbdix_r;
+=======
+    const int *_pRes = q.get_sbdix_response();
+>>>>>>> 83a0bc080b1e6b14550a7b241c40e761cac85b7c
 
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
     // If MO_status [0, 2], then downlink was successful

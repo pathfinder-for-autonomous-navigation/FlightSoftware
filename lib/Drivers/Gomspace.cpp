@@ -9,18 +9,17 @@
 
 using namespace Devices;
 
-Gomspace::Gomspace(const std::string &name, volatile Gomspace::eps_hk_t *hk_data,
-                   volatile Gomspace::eps_config_t *config_data,
-                   volatile Gomspace::eps_config2_t *config2_data, i2c_t3 &i2c_wire,
-                   unsigned char i2c_addr)
-    : I2CDevice(name, i2c_wire, i2c_addr, 2000),
+Gomspace::Gomspace(Gomspace::eps_hk_t *hk_data, Gomspace::eps_config_t *config_data,
+                   Gomspace::eps_config2_t *config2_data)
+    : I2CDevice("gomspace", Gomspace::wire, Gomspace::address, 2000),
       hk(hk_data),
       gspace_config(config_data),
-      gspace_config2(config2_data) {
-    hk_vi = (volatile eps_hk_vi_t *)((volatile unsigned char *)hk + 0);
-    hk_out = (volatile eps_hk_out_t *)((volatile unsigned char *)hk_vi + sizeof(eps_hk_vi_t));
-    hk_wdt = (volatile eps_hk_wdt_t *)((volatile unsigned char *)hk_out + sizeof(eps_hk_out_t));
-    hk_basic = (volatile eps_hk_basic_t *)((volatile unsigned char *)hk_wdt + sizeof(eps_hk_wdt_t));
+      gspace_config2(config2_data)
+{
+    hk_vi = (eps_hk_vi_t *)((unsigned char *)hk + 0);
+    hk_out = (eps_hk_out_t *)((unsigned char *)hk_vi + sizeof(eps_hk_vi_t));
+    hk_wdt = (eps_hk_wdt_t *)((unsigned char *)hk_out + sizeof(eps_hk_out_t));
+    hk_basic = (eps_hk_basic_t *)((unsigned char *)hk_wdt + sizeof(eps_hk_wdt_t));
 }
 
 bool Gomspace::setup() { return I2CDevice::setup(); }
