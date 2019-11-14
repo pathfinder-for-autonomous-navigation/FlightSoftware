@@ -280,7 +280,7 @@ unsigned char Piksi::read_buffer_exp() {
             if(_gps_time_update){
                 if(_pos_ecef_update){
                     if(_vel_ecef_update){
-                        if(get_pos_ecef_flags == 0)
+                        if(get_pos_ecef_flags() == 0)
                             break;
                         else if(get_pos_ecef_flags() == 1 || get_pos_ecef_flags() == 2){
                             
