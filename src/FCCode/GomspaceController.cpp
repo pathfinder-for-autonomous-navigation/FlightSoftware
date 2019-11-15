@@ -7,7 +7,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     vboost2_sr(0,10,10), vboost2_f("gomspace.vboost.output2", vboost2_sr),
     vboost3_sr(0,10,10), vboost3_f("gomspace.vboost.output3", vboost3_sr),
 
-    vbat_sr(0,10,10), vbat_f("gomspace.vbat", vbat_sr),
+    vbatt_sr(0,10,10), vbatt_f("gomspace.vbat", vbatt_sr),
 
     curin1_sr(0,10,10), curin1_f("gomspace.curin.output1", curin1_sr),
     curin2_sr(0,10,10), curin2_f("gomspace.curin.output2", curin2_sr),
@@ -94,7 +94,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_readable_field(vboost2_f);
         add_readable_field(vboost3_f);
 
-        add_readable_field(vbat_f);
+        add_readable_field(vbatt_f);
 
         add_readable_field(curin1_f);
         add_readable_field(curin2_f);
@@ -182,92 +182,92 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 void GomspaceController::execute() {
     //get hk data from struct in driver
     assert(gs.get_hk());
-    //set statefields to respective data from 
+    //set statefields to respective data from hk struct 
     vboost1_f.set(gs.hk->vboost[0]);
-    vboost2_f.set(gs.hk_data->vboost[1]);
-    vboost3_f.set(gs.hk_data->vboost[2]);
+    vboost2_f.set(gs.hk->vboost[1]);
+    vboost3_f.set(gs.hk->vboost[2]);
 
-    vbat_f.set(gs.hk_data.vbat);
+    vbatt_f.set(gs.hk->vbatt);
 
-    curin1_f.set(gs.hk_data.curin[0]);
-    curin2_f.set(gs.hk_data.curin[1]);
-    curin3_f.set(gs.hk_data.curin[2]);
+    curin1_f.set(gs.hk->curin[0]);
+    curin2_f.set(gs.hk->curin[1]);
+    curin3_f.set(gs.hk->curin[2]);
 
-    cursun_f.set(gs.hk_data.cursun);
+    cursun_f.set(gs.hk->cursun);
 
-    cursys_f.set(gs.hk_data.cursys);
+    cursys_f.set(gs.hk->cursys);
 
-    reserved1_f.set(gs.hk_data.reserved1);
+    reserved1_f.set(gs.hk->reserved1);
 
-    curout1_f.set(gs.hk_data->curout[0]);
-    curout2_f.set(gs.hk_data.curout[1]);
-    curout3_f.set(gs.hk_data.curout[2]);
-    curout4_f.set(gs.hk_data.curout[3]);
-    curout5_f.set(gs.hk_data.curout[4]);
-    curout6_f.set(gs.hk_data.curout[5]);
+    curout1_f.set(gs.hk->curout[0]);
+    curout2_f.set(gs.hk->curout[1]);
+    curout3_f.set(gs.hk->curout[2]);
+    curout4_f.set(gs.hk->curout[3]);
+    curout5_f.set(gs.hk->curout[4]);
+    curout6_f.set(gs.hk->curout[5]);
 
-    output1_f.set(gs.hk_data.output[0]);
-    output2_f.set(gs.hk_data.output[1]);
-    output3_f.set(gs.hk_data.output[2]);
-    output4_f.set(gs.hk_data.output[3]);
-    output5_f.set(gs.hk_data.output[4]);
-    output6_f.set(gs.hk_data.output[5]);
-    output7_f.set(gs.hk_data.output[6]);
-    output8_f.set(gs.hk_data.output[7]);
+    output1_f.set(gs.hk->output[0]);
+    output2_f.set(gs.hk->output[1]);
+    output3_f.set(gs.hk->output[2]);
+    output4_f.set(gs.hk->output[3]);
+    output5_f.set(gs.hk->output[4]);
+    output6_f.set(gs.hk->output[5]);
+    output7_f.set(gs.hk->output[6]);
+    output8_f.set(gs.hk->output[7]);
 
-    output_on_delta1_f.set(gs.hk_data.output_on_delta[0]);
-    output_on_delta2_f.set(gs.hk_data.output_on_delta[1]);
-    output_on_delta3_f.set(gs.hk_data.output_on_delta[2]);
-    output_on_delta4_f.set(gs.hk_data.output_on_delta[3]);
-    output_on_delta5_f.set(gs.hk_data.output_on_delta[4]);
-    output_on_delta6_f.set(gs.hk_data.output_on_delta[5]);
-    output_on_delta7_f.set(gs.hk_data.output_on_delta[6]);
-    output_on_delta8_f.set(gs.hk_data.output_on_delta[7]);
+    output_on_delta1_f.set(gs.hk->output_on_delta[0]);
+    output_on_delta2_f.set(gs.hk->output_on_delta[1]);
+    output_on_delta3_f.set(gs.hk->output_on_delta[2]);
+    output_on_delta4_f.set(gs.hk->output_on_delta[3]);
+    output_on_delta5_f.set(gs.hk->output_on_delta[4]);
+    output_on_delta6_f.set(gs.hk->output_on_delta[5]);
+    output_on_delta7_f.set(gs.hk->output_on_delta[6]);
+    output_on_delta8_f.set(gs.hk->output_on_delta[7]);
 
-    output_off_delta1_f.set(gs.hk_data.output_off_delta[0]);
-    output_off_delta2_f.set(gs.hk_data.output_off_delta[1]);
-    output_off_delta3_f.set(gs.hk_data.output_off_delta[2]);
-    output_off_delta4_f.set(gs.hk_data.output_off_delta[3]);
-    output_off_delta5_f.set(gs.hk_data.output_off_delta[4]);
-    output_off_delta6_f.set(gs.hk_data.output_off_delta[5]);
-    output_off_delta7_f.set(gs.hk_data.output_off_delta[6]);
-    output_off_delta8_f.set(gs.hk_data.output_off_delta[7]);
+    output_off_delta1_f.set(gs.hk->output_off_delta[0]);
+    output_off_delta2_f.set(gs.hk->output_off_delta[1]);
+    output_off_delta3_f.set(gs.hk->output_off_delta[2]);
+    output_off_delta4_f.set(gs.hk->output_off_delta[3]);
+    output_off_delta5_f.set(gs.hk->output_off_delta[4]);
+    output_off_delta6_f.set(gs.hk->output_off_delta[5]);
+    output_off_delta7_f.set(gs.hk->output_off_delta[6]);
+    output_off_delta8_f.set(gs.hk->output_off_delta[7]);
 
-    latchup1_f.set(gs.hk_data.latchup[0]);
-    latchup2_f.set(gs.hk_data.latchup[1]);
-    latchup3_f.set(gs.hk_data.latchup[2]);
-    latchup4_f.set(gs.hk_data.latchup[3]);
-    latchup5_f.set(gs.hk_data.latchup[4]);
-    latchup6_f.set(gs.hk_data.latchup[5]);
+    latchup1_f.set(gs.hk->latchup[0]);
+    latchup2_f.set(gs.hk->latchup[1]);
+    latchup3_f.set(gs.hk->latchup[2]);
+    latchup4_f.set(gs.hk->latchup[3]);
+    latchup5_f.set(gs.hk->latchup[4]);
+    latchup6_f.set(gs.hk->latchup[5]);
 
-    wdt_i2c_time_left_f.set(gs.hk_data.wdt_i2c_time_left);
+    wdt_i2c_time_left_f.set(gs.hk->wdt_i2c_time_left);
 
-    wdt_gnd_time_left_f.set(gs.hk_data.wdt_gnd_time_left);
+    wdt_gnd_time_left_f.set(gs.hk->wdt_gnd_time_left);
 
-    wdt_csp_pings_left1_f.set(gs.hk_data.wdt_csp_pings_left[0]);
-    wdt_csp_pings_left2_f.set(gs.hk_data.wdt_csp_pings_left[1]);
+    wdt_csp_pings_left1_f.set(gs.hk->wdt_csp_pings_left[0]);
+    wdt_csp_pings_left2_f.set(gs.hk->wdt_csp_pings_left[1]);
 
-    counter_wdt_i2c_f.set(gs.hk_data.counter_wdt_i2c);
+    counter_wdt_i2c_f.set(gs.hk->counter_wdt_i2c);
 
-    counter_wdt_gnd_f.set(gs.hk_data.counter_wdt_gnd);
+    counter_wdt_gnd_f.set(gs.hk->counter_wdt_gnd);
 
-    counter_wdt_csp1_f.set(gs.hk_data.counter_wdt_csp[0]);
-    counter_wdt_csp2_f.set(gs.hk_data.counter_wdt_csp[1]);
+    counter_wdt_csp1_f.set(gs.hk->counter_wdt_csp[0]);
+    counter_wdt_csp2_f.set(gs.hk->counter_wdt_csp[1]);
 
-    counter_boot_f.set(gs.hk_data.counter_boot);
+    counter_boot_f.set(gs.hk->counter_boot);
 
-    temp1_f.set(gs.hk_data.temp[0]);
-    temp2_f.set(gs.hk_data.temp[1]);
-    temp3_f.set(gs.hk_data.temp[2]);
-    temp4_f.set(gs.hk_data.temp[3]);
-    temp5_f.set(gs.hk_data.temp[4]);
-    temp6_f.set(gs.hk_data.temp[5]);
+    temp1_f.set(gs.hk->temp[0]);
+    temp2_f.set(gs.hk->temp[1]);
+    temp3_f.set(gs.hk->temp[2]);
+    temp4_f.set(gs.hk->temp[3]);
+    temp5_f.set(gs.hk->temp[4]);
+    temp6_f.set(gs.hk->temp[5]);
 
-    bootcause_f.set(gs.hk_data.bootcause);
+    bootcause_f.set(gs.hk->bootcause);
 
-    battmode_f.set(gs.hk_data.battmode);
+    battmode_f.set(gs.hk->battmode);
 
-    pptmode_f.set(gs.hk_data.pptmode);
+    pptmode_f.set(gs.hk->pptmode);
 
-    reserved2_f.set(gs.hk_data.reserved2);
+    reserved2_f.set(gs.hk->reserved2);
 }
