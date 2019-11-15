@@ -25,14 +25,14 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     curout5_sr(0,10,10), curout5_f("gomspace.curout.output5", curout5_sr),
     curout6_sr(0,10,10), curout6_f("gomspace.curout.output6", curout6_sr),
 
-    output1_sr(0), output1_f("gomspace.output.output1", output1_sr),
-    output2_sr(0), output2_f("gomspace.output.output2", output2_sr),
-    output3_sr(0), output3_f("gomspace.output.output3", output3_sr),
-    output4_sr(0), output4_f("gomspace.output.output4", output4_sr),
-    output5_sr(0), output5_f("gomspace.output.output5", output5_sr),
-    output6_sr(0), output6_f("gomspace.output.output6", output6_sr),
-    output7_sr(0), output7_f("gomspace.output.output7", output7_sr),
-    output8_sr(0), output8_f("gomspace.output.output8", output8_sr),
+    output1_sr(0,10,10), output1_f("gomspace.output.output1", output1_sr),
+    output2_sr(0,10,10), output2_f("gomspace.output.output2", output2_sr),
+    output3_sr(0,10,10), output3_f("gomspace.output.output3", output3_sr),
+    output4_sr(0,10,10), output4_f("gomspace.output.output4", output4_sr),
+    output5_sr(0,10,10), output5_f("gomspace.output.output5", output5_sr),
+    output6_sr(0,10,10), output6_f("gomspace.output.output6", output6_sr),
+    output7_sr(0,10,10), output7_f("gomspace.output.output7", output7_sr),
+    output8_sr(0,10,10), output8_f("gomspace.output.output8", output8_sr),
 
     output_on_delta1_sr(0,10,10), output_on_delta1_f("gomspace.output_on_delta.output1", output_on_delta1_sr),
     output_on_delta2_sr(0,10,10), output_on_delta2_f("gomspace.output_on_delta.output2", output_on_delta2_sr),
@@ -63,8 +63,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
     wdt_gnd_time_left_sr(0,10,10), wdt_gnd_time_left_f("gomspace.wdt_gnd_time_left", wdt_gnd_time_left_sr),
 
-    wdt_csp_pings_left1_sr(0), wdt_csp_pings_left1_f("gomspace.wdt_csp_pings_left.output1", wdt_csp_pings_left1_sr),
-    wdt_csp_pings_left2_sr(0), wdt_csp_pings_left2_f("gomspace.wdt_csp_pings_left.output2", wdt_csp_pings_left2_sr),
+    wdt_csp_pings_left1_sr(0,10,10), wdt_csp_pings_left1_f("gomspace.wdt_csp_pings_left.output1", wdt_csp_pings_left1_sr),
+    wdt_csp_pings_left2_sr(0,10,10), wdt_csp_pings_left2_f("gomspace.wdt_csp_pings_left.output2", wdt_csp_pings_left2_sr),
 
     counter_wdt_i2c_sr(0,10,10), counter_wdt_i2c_f("gomspace.counter_wdt_i2c", counter_wdt_i2c_sr),
 
@@ -75,20 +75,20 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
     counter_boot_sr(0,10,10), counter_boot_f("gomspace.counter_boot", counter_boot_sr),
 
-    temp1_sr(0), temp1_f("gomspace.counter_boot.output1", temp1_sr),
-    temp2_sr(0), temp2_f("gomspace.counter_boot.output2", temp2_sr),
-    temp3_sr(0), temp3_f("gomspace.counter_boot.output3", temp3_sr),
-    temp4_sr(0), temp4_f("gomspace.counter_boot.output4", temp4_sr),
-    temp5_sr(0), temp5_f("gomspace.counter_boot.output5", temp5_sr),
-    temp6_sr(0), temp6_f("gomspace.counter_boot.output6", temp6_sr),
+    temp1_sr(0,10,10), temp1_f("gomspace.counter_boot.output1", temp1_sr),
+    temp2_sr(0,10,10), temp2_f("gomspace.counter_boot.output2", temp2_sr),
+    temp3_sr(0,10,10), temp3_f("gomspace.counter_boot.output3", temp3_sr),
+    temp4_sr(0,10,10), temp4_f("gomspace.counter_boot.output4", temp4_sr),
+    temp5_sr(0,10,10), temp5_f("gomspace.counter_boot.output5", temp5_sr),
+    temp6_sr(0,10,10), temp6_f("gomspace.counter_boot.output6", temp6_sr),
 
-    bootcause_sr(0), bootcause_f("gomspace.bootcause", bootcause_sr),
+    bootcause_sr(0,10,10), bootcause_f("gomspace.bootcause", bootcause_sr),
 
-    battmode_sr(0), battmode_f("gomspace.battmode", battmode_sr),
+    battmode_sr(0,10,10), battmode_f("gomspace.battmode", battmode_sr),
 
-    pptmode_sr(0), pptmode_f("gomspace.pptmode", pptmode_sr),
+    pptmode_sr(0,10,10), pptmode_f("gomspace.pptmode", pptmode_sr),
 
-    reserved2_sr(0), reserved2_f("gomspace.reserved2", reserved2_sr)
+    reserved2_sr(0,10,10), reserved2_f("gomspace.reserved2", reserved2_sr)
     {
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
@@ -183,9 +183,9 @@ void GomspaceController::execute() {
     //get hk data from struct in driver
     assert(gs.get_hk());
     //set statefields to respective data from 
-    vboost1_f.set(gs.hk_data.vboost[0]);
-    vboost2_f.set(gs.hk_data.vboost[1]);
-    vboost3_f.set(gs.hk_data.vboost[2]);
+    vboost1_f.set(gs.hk->vboost[0]);
+    vboost2_f.set(gs.hk_data->vboost[1]);
+    vboost3_f.set(gs.hk_data->vboost[2]);
 
     vbat_f.set(gs.hk_data.vbat);
 
@@ -199,7 +199,7 @@ void GomspaceController::execute() {
 
     reserved1_f.set(gs.hk_data.reserved1);
 
-    curout1_f.set(gs.hk_data.curout[0]);
+    curout1_f.set(gs.hk_data->curout[0]);
     curout2_f.set(gs.hk_data.curout[1]);
     curout3_f.set(gs.hk_data.curout[2]);
     curout4_f.set(gs.hk_data.curout[3]);
@@ -224,18 +224,50 @@ void GomspaceController::execute() {
     output_on_delta7_f.set(gs.hk_data.output_on_delta[6]);
     output_on_delta8_f.set(gs.hk_data.output_on_delta[7]);
 
-    output_off_delta_f.set(gs.hk_data.output_off_delta);
-    latchup_f.set(gs.hk_data.latchup);
+    output_off_delta1_f.set(gs.hk_data.output_off_delta[0]);
+    output_off_delta2_f.set(gs.hk_data.output_off_delta[1]);
+    output_off_delta3_f.set(gs.hk_data.output_off_delta[2]);
+    output_off_delta4_f.set(gs.hk_data.output_off_delta[3]);
+    output_off_delta5_f.set(gs.hk_data.output_off_delta[4]);
+    output_off_delta6_f.set(gs.hk_data.output_off_delta[5]);
+    output_off_delta7_f.set(gs.hk_data.output_off_delta[6]);
+    output_off_delta8_f.set(gs.hk_data.output_off_delta[7]);
+
+    latchup1_f.set(gs.hk_data.latchup[0]);
+    latchup2_f.set(gs.hk_data.latchup[1]);
+    latchup3_f.set(gs.hk_data.latchup[2]);
+    latchup4_f.set(gs.hk_data.latchup[3]);
+    latchup5_f.set(gs.hk_data.latchup[4]);
+    latchup6_f.set(gs.hk_data.latchup[5]);
+
     wdt_i2c_time_left_f.set(gs.hk_data.wdt_i2c_time_left);
+
     wdt_gnd_time_left_f.set(gs.hk_data.wdt_gnd_time_left);
-    wdt_csp_pings_left_f.set(gs.hk_data.wdt_csp_pings_left);
+
+    wdt_csp_pings_left1_f.set(gs.hk_data.wdt_csp_pings_left[0]);
+    wdt_csp_pings_left2_f.set(gs.hk_data.wdt_csp_pings_left[1]);
+
     counter_wdt_i2c_f.set(gs.hk_data.counter_wdt_i2c);
+
     counter_wdt_gnd_f.set(gs.hk_data.counter_wdt_gnd);
-    counter_wdt_csp_f.set(gs.hk_data.counter_wdt_csp);
+
+    counter_wdt_csp1_f.set(gs.hk_data.counter_wdt_csp[0]);
+    counter_wdt_csp2_f.set(gs.hk_data.counter_wdt_csp[1]);
+
     counter_boot_f.set(gs.hk_data.counter_boot);
-    temp_f.set(gs.hk_data.temp);
+
+    temp1_f.set(gs.hk_data.temp[0]);
+    temp2_f.set(gs.hk_data.temp[1]);
+    temp3_f.set(gs.hk_data.temp[2]);
+    temp4_f.set(gs.hk_data.temp[3]);
+    temp5_f.set(gs.hk_data.temp[4]);
+    temp6_f.set(gs.hk_data.temp[5]);
+
     bootcause_f.set(gs.hk_data.bootcause);
+
     battmode_f.set(gs.hk_data.battmode);
+
     pptmode_f.set(gs.hk_data.pptmode);
+
     reserved2_f.set(gs.hk_data.reserved2);
 }
