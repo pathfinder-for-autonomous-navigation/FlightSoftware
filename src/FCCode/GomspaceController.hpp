@@ -76,7 +76,6 @@ class GomspaceController : public TimedControlTask<void> {
     Serializer<unsigned int> curout6_sr;
     ReadableStateField<unsigned int> curout6_f;
 
-    //how do i serialize chars?
     Serializer<unsigned int> output1_sr;
     ReadableStateField<unsigned int> output1_f;
 
@@ -173,7 +172,6 @@ class GomspaceController : public TimedControlTask<void> {
     Serializer<unsigned int> wdt_gnd_time_left_sr;
     ReadableStateField<unsigned int> wdt_gnd_time_left_f;
 
-    //unsigned ints
     Serializer<unsigned int> wdt_csp_pings_left1_sr;
     ReadableStateField<unsigned int> wdt_csp_pings_left1_f;
 
