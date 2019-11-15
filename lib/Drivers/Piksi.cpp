@@ -167,11 +167,12 @@ void Piksi::get_base_pos_ecef(std::array<double, 3> *position) {
 void Piksi::set_gps_time(const unsigned int tow){
     _gps_time.tow = tow;
 }
-void Piksi::set_pos_ecef(const unsigned int tow, const std::array<double,3>& position){
+void Piksi::set_pos_ecef(const unsigned int tow, const std::array<double,3>& position, const unsigned char nsats){
     _pos_ecef.tow = tow;
     _pos_ecef.x = position[0];
     _pos_ecef.y = position[1];
     _pos_ecef.z = position[2];
+    _pos_ecef.n_sats = nsats;
 }
 void Piksi::set_vel_ecef(const unsigned int tow, const std::array<double,3>& velocity){
     _vel_ecef.tow = tow;
@@ -184,6 +185,9 @@ void Piksi::set_baseline_ecef(const unsigned int tow, const std::array<double,3>
     _baseline_ecef.x = position[0];
     _baseline_ecef.y = position[1];
     _baseline_ecef.z = position[2];
+}
+void Piksi::set_baseline_flag(const unsigned char flag){
+    _baseline_ecef.flags = flag;
 }
 void Piksi::set_read_return(const unsigned int out){
     _read_return = out;
@@ -260,6 +264,10 @@ unsigned char Piksi::process_buffer_msg_len() {
 }
 
 unsigned char Piksi::read_all() {
+    #ifdef DESKTOP
+    return _read_return;
+    #endif
+
     _gps_time_update = false;
     _pos_ecef_update = false;
     _vel_ecef_update = false;

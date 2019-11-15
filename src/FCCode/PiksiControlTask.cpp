@@ -47,13 +47,13 @@ void PiksiControlTask::execute()
     return;
   }
   else if(read_out == 2){
-    currentState = ERROR;
+    currentState = DATA_ERROR;
     return;
   }
 
   else if(read_out == 1 || read_out == 0){
     piksi.get_gps_time(&time);
-    piksi.get_pos_ecef(&baseline_tow, &pos);
+    piksi.get_pos_ecef(&pos_tow, &pos);
     piksi.get_vel_ecef(&vel_tow, &vel);
 
     if(read_out == 1)
@@ -68,15 +68,15 @@ void PiksiControlTask::execute()
     if(!check_time){
       //error caused by times not matching up
       //indicitave of packet being split
-      currentState = ERROR;
-      currentState_f.set(ERROR);
+      currentState = SYNC_ERROR;
+      currentState_f.set(SYNC_ERROR);
       return;
     }
 
     int nsats = piksi.get_pos_ecef_nsats();
     if(nsats < 4){
-      currentState = ERROR;
-      currentState_f.set(ERROR);
+      currentState = NSAT_ERROR;
+      currentState_f.set(NSAT_ERROR);
       return;
     }
 
@@ -95,8 +95,8 @@ void PiksiControlTask::execute()
         currentState_f.set(FLOAT_RTK);
       }
       else{
-        currentState = ERROR;
-        currentState_f.set(ERROR);
+        currentState = DATA_ERROR;
+        currentState_f.set(DATA_ERROR);
         return;
       }
     }
@@ -114,7 +114,7 @@ void PiksiControlTask::execute()
   }
   //if read_out is unexpected value which it shouldn't lol
   else
-    currentState = ERROR;
+    currentState = DATA_ERROR;
   // int res_buffer_read = piksi.read_buffer();
   // if (res_buffer_read == 1){
   //   currentState = BAD_BUFFER;

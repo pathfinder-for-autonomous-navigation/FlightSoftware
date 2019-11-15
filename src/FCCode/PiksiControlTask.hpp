@@ -18,8 +18,10 @@ static constexpr int SPP = 0;
 static constexpr int FIXED_RTK = 1;
 static constexpr int FLOAT_RTK = 2;
 
-static constexpr int ERROR = 3;
-static constexpr int NO_DATA = 4;
+static constexpr int SYNC_ERROR = 3;
+static constexpr int DATA_ERROR = 4;
+static constexpr int NSAT_ERROR = 5;
+static constexpr int NO_DATA = 6;
 
 
 static constexpr int MSG_LEN_WRONG = 5;;

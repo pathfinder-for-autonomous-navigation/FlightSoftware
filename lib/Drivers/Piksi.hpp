@@ -228,9 +228,10 @@ class Piksi {
     //meme
     #ifdef DESKTOP
     void set_gps_time(const unsigned int tow);
-    void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position);
+    void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position, const unsigned char nsats);
     void set_vel_ecef(const unsigned int tow, const std::array<double, 3>& velocity);
     void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position);
+    void set_baseline_flag(const unsigned char flag);
     void set_read_return(const unsigned int out);
     #endif
 
