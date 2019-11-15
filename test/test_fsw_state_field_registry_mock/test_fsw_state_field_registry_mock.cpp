@@ -128,11 +128,11 @@ void test_create_writable_field_args() {
 void test_create_readable_vector_field_args() {
     StateFieldRegistryMock registry;
 
-    registry.create_readable_vector_field<float>("foo", 0, 10, 4);
+    registry.create_readable_vector_field<float>("foo", 0, 10, 40);
     TEST_ASSERT_NOT_NULL(registry.find_readable_field("foo"));
     TEST_ASSERT_NULL(registry.find_writable_field("foo"));
 
-    registry.create_readable_vector_field<double>("foo2", 0, 10, 4);
+    registry.create_readable_vector_field<double>("foo2", 0, 10, 40);
     TEST_ASSERT_NOT_NULL(registry.find_readable_field("foo2"));
     TEST_ASSERT_NULL(registry.find_writable_field("foo2"));
 }
@@ -140,11 +140,11 @@ void test_create_readable_vector_field_args() {
 void test_create_writable_vector_field_args() {
     StateFieldRegistryMock registry;
 
-    registry.create_writable_vector_field<float>("foo", 0, 10, 4);
+    registry.create_writable_vector_field<float>("foo", 0, 10, 40);
     TEST_ASSERT_NOT_NULL(registry.find_readable_field("foo"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo"));
 
-    registry.create_writable_vector_field<double>("foo2", 0, 10, 4);
+    registry.create_writable_vector_field<double>("foo2", 0, 10, 40);
     TEST_ASSERT_NOT_NULL(registry.find_readable_field("foo2"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo2"));
 }
