@@ -18,8 +18,8 @@ class TestFixture {
 
     std::unique_ptr<MissionManager> mission_manager;
     // Output state fields from mission manager
-    std::shared_ptr<WritableStateField<unsigned char>> mission_mode_fp;
-    std::shared_ptr<WritableStateField<unsigned char>> sat_designation_fp;
+    WritableStateField<unsigned char>* mission_mode_fp;
+    WritableStateField<unsigned char>* sat_designation_fp;
 
     TestFixture() : registry() {
         cycle_no_fp = registry.create_writable_field<unsigned int>("pan.cycle_no");
@@ -31,15 +31,14 @@ class TestFixture {
 
         mission_mode_fp = registry.find_writable_field_t<unsigned char>("pan.mode");
         sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
-        #ifdef DESKTOP
-            assert(mission_mode_fp);
-            assert(sat_designation_fp);
-        #endif
     }
 };
 
 void test_valid_initialization() {
     TestFixture tf;
+
+    TEST_ASSERT_NOT_NULL(tf.mission_mode_fp);
+    TEST_ASSERT_NOT_NULL(tf.sat_designation_fp);
 }
 
 void test_dispatch_detumble() {

@@ -15,24 +15,38 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @brief Finds a internal state field of the given name.
      */
     template<typename T>
-    std::shared_ptr<InternalStateField<T>> find_internal_field_t(const std::string& name) {
-        return std::static_pointer_cast<InternalStateField<T>>(find_internal_field(name));
+    InternalStateField<T>* find_internal_field_t(const std::string& name) {
+        return static_cast<InternalStateField<T>*>(find_internal_field(name));
     }
 
     /**
      * @brief Finds a readable state field of the given name.
      */
     template<typename T>
-    std::shared_ptr<ReadableStateField<T>> find_readable_field_t(const std::string& name) {
-        return std::static_pointer_cast<ReadableStateField<T>>(find_readable_field(name));
+    ReadableStateField<T>* find_readable_field_t(const std::string& name) {
+        return static_cast<ReadableStateField<T>*>(find_readable_field(name));
     }
 
     /**
      * @brief Finds a writable state field of the given name.
      */
     template<typename T>
-    std::shared_ptr<WritableStateField<T>> find_writable_field_t(const std::string& name) {
-        return std::static_pointer_cast<WritableStateField<T>>(find_writable_field(name));
+    WritableStateField<T>* find_writable_field_t(const std::string& name) {
+        return static_cast<WritableStateField<T>*>(find_writable_field(name));
+    }
+
+    /**
+     * @brief Create an internal state field.
+     * 
+     * @param name Name of field.
+     * @return Pointer to field that was created.
+     */
+    template<typename T>
+    std::shared_ptr<InternalStateField<T>> create_internal_field(const std::string& name) {
+        auto field_ptr = std::make_shared<InternalStateField<T>>(name);
+        add_internal_field(field_ptr.get());
+        created_internal_fields.push_back(field_ptr);
+        return field_ptr;
     }
 
     /**
@@ -53,7 +67,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<T> field_sr;
         auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
-        add_readable_field(field_ptr);
+        add_readable_field(field_ptr.get());
+        created_readable_fields.push_back(field_ptr);
         return field_ptr;
     }
 
@@ -75,7 +90,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<T> field_sr;
         auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);
-        add_writable_field(field_ptr);
+        add_writable_field(field_ptr.get());
+        created_writable_fields.push_back(field_ptr);
         return field_ptr;
     }
 
@@ -104,7 +120,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<T> field_sr(min, max, bitsize);
         auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
-        add_readable_field(field_ptr);
+        add_readable_field(field_ptr.get());
+        created_readable_fields.push_back(field_ptr);
         return field_ptr;
     }
 
@@ -133,7 +150,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<T> field_sr(min, max, bitsize);
         auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);
-        add_writable_field(field_ptr);
+        add_writable_field(field_ptr.get());
+        created_writable_fields.push_back(field_ptr);
         return field_ptr;
     }
 
@@ -149,7 +167,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<T> field_sr(min, max);
         auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
-        add_readable_field(field_ptr);
+        add_readable_field(field_ptr.get());
+        created_readable_fields.push_back(field_ptr);
         return field_ptr;
     }
 
@@ -166,6 +185,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         Serializer<T> field_sr(min, max);
         auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);
         add_writable_field(field_ptr);
+        created_writable_fields.push_back(field_ptr);
         return field_ptr;
     }
 
@@ -178,7 +198,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<T> field_sr(max);
         auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
-        add_readable_field(field_ptr);
+        add_readable_field(field_ptr.get());
+        created_readable_fields.push_back(field_ptr);
         return field_ptr;
     }
 
@@ -191,7 +212,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<T> field_sr(max);
         auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);
-        add_writable_field(field_ptr);
+        add_writable_field(field_ptr.get());
+        created_writable_fields.push_back(field_ptr);
         return field_ptr;
     }
 
@@ -216,7 +238,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<std::array<T, 3>> field_sr(min, max, bitsize);
         auto field_ptr = std::make_shared<ReadableStateField<std::array<T, 3>>>(name, field_sr);
-        add_readable_field(field_ptr);
+        add_readable_field(field_ptr.get());
+        created_readable_fields.push_back(field_ptr);
         return field_ptr;
     }
 
@@ -241,9 +264,31 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<std::array<T, 3>> field_sr(min, max, bitsize);
         auto field_ptr = std::make_shared<WritableStateField<std::array<T, 3>>>(name, field_sr);
-        add_writable_field(field_ptr);
+        add_writable_field(field_ptr.get());
+        created_writable_fields.push_back(field_ptr);
         return field_ptr;
     }
+
+    /**
+     * @brief Empty the registry.
+     */
+    void clear() {
+        internal_fields.clear();
+        readable_fields.clear();
+        writable_fields.clear();
+        created_internal_fields.clear();
+        created_readable_fields.clear();
+        created_writable_fields.clear();
+    }
+
+  private:
+    // Store pointers to all of the state fields that have been created, in order
+    // to prevent segmentation faults due to shared pointers going out of scope before a
+    // ControlTask has a chance to call find_readable_field().
+    
+    std::vector<std::shared_ptr<InternalStateFieldBase>> created_internal_fields;
+    std::vector<std::shared_ptr<ReadableStateFieldBase>> created_readable_fields;
+    std::vector<std::shared_ptr<WritableStateFieldBase>> created_writable_fields;
 };
 
 #endif

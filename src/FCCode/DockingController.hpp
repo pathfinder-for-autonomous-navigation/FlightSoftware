@@ -30,7 +30,7 @@ class DockingController : public TimedControlTask<void> {
     Devices::DockingSystem& docksys;
 
     //shared pointer set by mission manager - tells control task to dock or undock motor
-    std::shared_ptr<WritableStateField<bool>> docking_config_cmd_fp;
+    WritableStateField<bool>* docking_config_cmd_fp;
 
     //state field returns whether or not the spacecraft are docked with one another
     Serializer<bool> docked_sr;

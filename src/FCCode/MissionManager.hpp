@@ -30,25 +30,25 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Mode of ADCS system.
      **/
-    std::shared_ptr<WritableStateField<unsigned char>> adcs_mode_fp;
+    WritableStateField<unsigned char>* adcs_mode_fp;
     /**
      * @brief Currently commanded attitude of ADCS system.
      **/
-    std::shared_ptr<WritableStateField<f_quat_t>> adcs_cmd_attitude_fp;
+    WritableStateField<f_quat_t>* adcs_cmd_attitude_fp;
     /**
      * @brief Current angular rate of ADCS system in the body frame.
      **/
-    std::shared_ptr<ReadableStateField<float>> adcs_ang_rate_fp;
+    ReadableStateField<float>* adcs_ang_rate_fp;
     /**
      * @brief Minimum angular rate of ADCS system that can be considered "stable".
      **/
-    std::shared_ptr<WritableStateField<float>> adcs_min_stable_ang_rate_fp;
+    WritableStateField<float>* adcs_min_stable_ang_rate_fp;
 
     // Fields that control overall mission state.
     /**
      * @brief Control cycle count, provided by ClockManager.
      */
-    std::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
+    ReadableStateField<unsigned int>* control_cycle_count_fp;
     /**
      * @brief Current mission mode (see mission_mode_t.enum)
      */

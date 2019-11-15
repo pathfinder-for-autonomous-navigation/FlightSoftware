@@ -12,9 +12,9 @@ class TestFixture {
 
     std::unique_ptr<DockingController> docking_controller;
 
-    std::shared_ptr<ReadableStateField<bool>>dock_config_fp;
-    std::shared_ptr<ReadableStateField<bool>>docked_fp;
-    std::shared_ptr<ReadableStateField<bool>>is_turning_fp;
+    ReadableStateField<bool>* dock_config_fp;
+    ReadableStateField<bool>* docked_fp;
+    ReadableStateField<bool>* is_turning_fp;
 
     TestFixture() : registry() {
         docking_config_cmd_fp = registry.create_writable_field<bool>("docksys.config_cmd");
@@ -26,12 +26,6 @@ class TestFixture {
         dock_config_fp = registry.find_readable_field_t<bool>("docksys.dock_config");
         is_turning_fp = registry.find_readable_field_t<bool>("docksys.is_turning");
 
-        #ifdef DESKTOP
-            assert(docked_fp);
-            assert(dock_config_fp);
-            assert(is_turning_fp);
-        #endif
-
         docked_fp->set(false);
         dock_config_fp->set(true);
         is_turning_fp->set(false);
@@ -40,6 +34,10 @@ class TestFixture {
 
 void test_task_initialization() {
     TestFixture tf;
+    TEST_ASSERT_NOT_NULL(tf.docked_fp);
+    TEST_ASSERT_NOT_NULL(tf.dock_config_fp);
+    TEST_ASSERT_NOT_NULL(tf.is_turning_fp);
+
     TEST_ASSERT_EQUAL(false, tf.docking_config_cmd_fp->get());
     TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
     TEST_ASSERT_EQUAL(true, tf.dock_config_fp->get());
