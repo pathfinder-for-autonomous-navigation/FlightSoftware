@@ -37,6 +37,6 @@ matrix:
         script:
             - ./tools/verify_teensy_builds.sh
 
-      - name: "Run unit tests on Teensy"
-        script:
-            - platformio remote --agent PANTeensyFarm test -e teensy_ci -v
+      #- name: "Run unit tests on Teensy"
+        #script:
+            #- platformio remote --agent PANTeensyFarm test -e teensy_ci -v

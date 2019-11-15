@@ -1,8 +1,7 @@
 set -e # Exit on any error
 
-# Verify compilation and unit tests for environments
+# Verify compilation and unit tests for CI environment
 platformio test -e native_ci -v
-platformio test -e native -v
 
 # Check for memory mismanagement
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose .pio/build/native_ci/program

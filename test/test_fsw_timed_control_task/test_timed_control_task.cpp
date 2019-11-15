@@ -1,6 +1,11 @@
 #include <TimedControlTask.hpp>
 #include "../../src/FCCode/ClockManager.hpp"
 #include <unity.h>
+#ifdef DESKTOP
+    #include <iostream>
+#else
+    #include <Arduino.h>
+#endif
 
 /**
  * @brief Dummy control task that just increments a member variable.
@@ -23,6 +28,15 @@ class TestFixture {
     std::unique_ptr<DummyTimedControlTask> dummy_task_1;
     std::unique_ptr<DummyTimedControlTask> dummy_task_2;
 
+    static constexpr unsigned int control_cycle_ms = 8000;
+    #ifdef DESKTOP
+        // Control cycle time must be specified in nanoseconds on desktop
+        static constexpr unsigned int control_cycle_size = control_cycle_ms * 1000;
+    #else
+        // Control cycle time must be specified in microseconds on Teensy
+        static constexpr unsigned int control_cycle_size = control_cycle_ms;
+    #endif
+
     /**
      * @brief Construct a new Test Fixture.
      * 
@@ -31,7 +45,6 @@ class TestFixture {
      * starts 6 ms after the beginning of the cycle.
      */
     TestFixture() : registry() {
-        const unsigned int control_cycle_size = 8000000;
         clock_manager = std::make_unique<ClockManager>(registry, control_cycle_size);
 
         constexpr unsigned int allocated_starts[2] = {2001, 6001};
@@ -72,13 +85,18 @@ class TestFixture {
     }
 };
 
+// Create storage for control cycle size in Test Fixture
+constexpr unsigned int TestFixture::control_cycle_ms;
+constexpr unsigned int TestFixture::control_cycle_size;
+
 void test_task_initialization() {
     TestFixture tf;
 }
 
 void test_task_execute() {
-    TEST_IGNORE_MESSAGE("Run this test locally for benchmarking. It doesn't work on CI because"
-        " of Ubuntu virtual machines having messed-up timing constraints.");
+    #ifdef CI
+    TEST_IGNORE_MESSAGE("This test doesn't work on virtual machines.");
+    #endif
 
     TestFixture tf;
     sys_time_t t_start, t_end1, t_end2;
@@ -106,7 +124,12 @@ void test_task_execute() {
     for(int i = 0; i < 1000; i++) tf.execute();
     const sys_time_t t_end = tf.get_system_time();
     const unsigned int t_delta = tf.duration_to_us(t_end - t_start);
-    TEST_ASSERT_UINT32_WITHIN(2000, 7998000, t_delta); // 2 ms drift over a period of 8 seconds. Pretty good!
+
+    // We subtract 2000 us since the second task will finish early.
+    constexpr unsigned long expected_duration = TestFixture::control_cycle_ms * 1000 - 2000;
+
+    // 4 ms drift over a period of 8 seconds (0.05% clock lag.) Pretty good!
+    TEST_ASSERT_UINT64_WITHIN(4000, expected_duration, t_delta);
 }
 
 int test_timed_control_task() {
@@ -116,15 +139,18 @@ int test_timed_control_task() {
     return UNITY_END();
 }
 
+const char* warning = "PLEASE BE PATIENT. This unit test takes a while "
+                      "because it runs through 1000 control cycles.";
 #ifdef DESKTOP
 int main() {
+    std::cout << warning << std::endl;
     return test_timed_control_task();
 }
 #else
-#include <Arduino.h>
 void setup() {
     delay(2000);
     Serial.begin(9600);
+    Serial.println(warning);
     test_timed_control_task();
 }
 
