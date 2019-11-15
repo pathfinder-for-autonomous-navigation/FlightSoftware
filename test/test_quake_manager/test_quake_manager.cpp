@@ -1,6 +1,5 @@
+#include <StateFieldRegistry.hpp>
 #include "../StateFieldRegistryMock.hpp"
-#include <StateField.hpp>
-#include <Serializer.hpp>
 #include "../../src/FCCode/QuakeManager.h"
 #include "../../src/FCCode/radio_mode_t.enum"
 
@@ -41,16 +40,16 @@ char* snap2 =
 
 class TestFixture {
   public:
-    StateFieldRegistryMock registry;
+    StateFieldRegistry registry;
     // Input state fields to quake manager
-    <WritableStateField<unsigned int> cycle_no_fp;
+    WritableStateField<unsigned int> cycle_no_fp;
 
     // Output state fields from quake manager
-    <WritableStateField<unsigned int> radio_mode_fp;
-    <InternalStateField<char*> radio_mo_packet_fp;
-    <InternalStateField<char*> radio_mt_packet_fp;
-    <WritableStateField<int> radio_err_fp;
-    <WritableStateField<unsigned int> snapshot_size_fp;
+    WritableStateField<unsigned int> radio_mode_fp;
+    InternalStateField<char*> radio_mo_packet_fp;
+    InternalStateField<char*> radio_mt_packet_fp;
+    WritableStateField<int> radio_err_fp;
+    WritableStateField<unsigned int> snapshot_size_fp;
 
     std::unique_ptr<QuakeManager> quake_manager;
     // Create a TestFixture instance of QuakeManager with the following parameters
