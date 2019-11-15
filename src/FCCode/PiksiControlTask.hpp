@@ -94,8 +94,8 @@ protected:
   Serializer<int> currentState_sr;
   ReadableStateField<int> currentState_f;
 
-  Serializer<int> fix_sr;
-  ReadableStateField<int> fix_f;
+  // Serializer<int> fix_sr;
+  // ReadableStateField<int> fix_f;
 
   std::array<double, 3> pos;
   std::array<double, 3> vel;

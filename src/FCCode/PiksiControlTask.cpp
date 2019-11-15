@@ -69,26 +69,47 @@ void PiksiControlTask::execute()
       //error caused by times not matching up
       //indicitave of packet being split
       currentState = ERROR;
+      currentState_f.set(ERROR);
       return;
     }
 
     int nsats = piksi.get_pos_ecef_nsats();
     if(nsats < 4){
       currentState = ERROR;
+      currentState_f.set(ERROR);
       return;
     }
 
+    if(read_out == 0) {
+      currentState = SPP;
+      currentState_f.set(SPP);
+    }
     if(read_out == 1){
       int baseline_flag = piksi.get_baseline_ecef_flags();
-      if(baseline_flag == 1)
+      if(baseline_flag == 1){
         currentState = FIXED_RTK;
-      else if(baseline_flag == 0)
+        currentState_f.set(FIXED_RTK);
+      }
+      else if(baseline_flag == 0){
         currentState = FLOAT_RTK;
-      else
+        currentState_f.set(FLOAT_RTK);
+      }
+      else{
         currentState = ERROR;
+        currentState_f.set(ERROR);
+        return;
+      }
     }
-    else
-      currentState = SPP;
+
+    //set values in statefields
+
+    //LOL ASK TANISHQ ABOUT WHAT KINDA TIME HE WANTS
+    //time_f.set(time);
+    pos_f.set(pos);
+    vel_f.set(vel);
+    if(read_out == 1){
+      baseline_pos_f.set(baseline_pos);
+    }
 
   }
   //if read_out is unexpected value which it shouldn't lol
