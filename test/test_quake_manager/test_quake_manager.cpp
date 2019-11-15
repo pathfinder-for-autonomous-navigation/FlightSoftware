@@ -43,14 +43,14 @@ class TestFixture {
   public:
     StateFieldRegistryMock registry;
     // Input state fields to quake manager
-    std::shared_ptr<WritableStateField<unsigned int>> cycle_no_fp;
+    <WritableStateField<unsigned int> cycle_no_fp;
 
     // Output state fields from quake manager
-    std::shared_ptr<WritableStateField<unsigned int>> radio_mode_fp;
-    std::shared_ptr<InternalStateField<char*>> radio_mo_packet_fp;
-    std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
-    std::shared_ptr<WritableStateField<int>> radio_err_fp;
-    std::shared_ptr<WritableStateField<unsigned int>> snapshot_size_fp;
+    <WritableStateField<unsigned int> radio_mode_fp;
+    <InternalStateField<char*> radio_mo_packet_fp;
+    <InternalStateField<char*> radio_mt_packet_fp;
+    <WritableStateField<int> radio_err_fp;
+    <WritableStateField<unsigned int> snapshot_size_fp;
 
     std::unique_ptr<QuakeManager> quake_manager;
     // Create a TestFixture instance of QuakeManager with the following parameters
@@ -58,7 +58,7 @@ class TestFixture {
         // Create external field dependencies
         cycle_no_fp = registry.create_writable_field<unsigned int>("pan.cycle_no", 0, cycleNumber, 32);
         snapshot_size_fp = registry.create_writable_field<unsigned int>("downlink_producer.snap_size");
-        radio_mo_packet_fp = registry.create_writable_field<char*>("downlink_producer.mo_ptr");
+        radio_mo_packet_fp = registry.create_readable_field<char*>("downlink_producer.mo_ptr");
         radio_mt_packet_fp = registry.create_writable_field<char*>("downlink_producer.mt_ptr");
         radio_err_fp = registry.create_writable_field<int>("downlink_producer.radio_err_ptr");
 
