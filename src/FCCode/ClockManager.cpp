@@ -5,7 +5,7 @@ ClockManager::ClockManager(StateFieldRegistry &registry,
     TimedControlTask<void>(registry, 0),
     control_cycle_start_time(),
     control_cycle_size(_control_cycle_size),
-    control_cycle_count_sr(0, 4294967295, 32),
+    control_cycle_count_sr(),
     control_cycle_count_f("pan.cycle_no", control_cycle_count_sr)
 {
     add_readable_field(control_cycle_count_f);
