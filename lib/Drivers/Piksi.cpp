@@ -153,8 +153,7 @@ void Piksi::disable() {
 }
 
 void Piksi::get_gps_time(gps_time_t *time) {
-    time->gpstime.wn = _gps_time.wn;
-    time->gpstime.tow = _gps_time.tow;
+    *time = _gps_time;
 }
 
 unsigned int Piksi::get_dops_tow() { return _dops.tow; }

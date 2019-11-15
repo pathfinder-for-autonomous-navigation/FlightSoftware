@@ -4,25 +4,23 @@
 // Environment-based initializations of the control loop time.
 #ifdef HOOTL
     #ifdef DESKTOP
-        #define CONTROL_CYCLE_TIME 170000000
+        static constexpr unsigned int control_cycle_time = 170000000;
     #else
-        #define CONTROL_CYCLE_TIME 170000
+        static constexpr unsigned int control_cycle_time = 170000;
     #endif
 #elif FLIGHT
-    #define CONTROL_CYCLE_TIME 120000
+    static constexpr unsigned int control_cycle_time = 120000;
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
     : ControlTask<void>(registry), 
       field_creator_task(registry),
-      clock_manager(registry, CONTROL_CYCLE_TIME),
+      clock_manager(registry, control_cycle_time),
       debug_task(registry, debug_task_offset),
       mission_manager(registry, mission_manager_offset),
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys)
 {}
-
-#undef DEBUG_TASK
 
 void MainControlLoop::execute() {
     clock_manager.execute();
