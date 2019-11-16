@@ -64,7 +64,8 @@ void PiksiControlTask::execute()
   }
 
   else if(read_out == 1 || read_out == 0){
-    piksi.get_gps_time(&time);
+    piksi.get_gps_time(&msg_time);
+    time = gps_time_t(msg_time);
     piksi.get_pos_ecef(&pos_tow, &pos);
     piksi.get_vel_ecef(&vel_tow, &vel);
 

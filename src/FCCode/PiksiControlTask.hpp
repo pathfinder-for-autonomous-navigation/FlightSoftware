@@ -3,6 +3,7 @@
 #include <ControlTask.hpp>
 #include <Piksi.hpp>
 #include <string>
+#include <GPSTime.hpp>
 
 /**
  * Piksi / Piksi Control Task States
@@ -46,22 +47,29 @@ protected:
   Devices::Piksi piksi;
   #endif
 
+  //Serializer and StateField for position
   Serializer<d_vector_t> pos_sr;
   ReadableStateField<d_vector_t> pos_f;
 
+  //Serializer and StateField for velocity
   Serializer<d_vector_t> vel_sr;
   ReadableStateField<d_vector_t> vel_f;
 
+  //Serializer and StateField for baseline
   Serializer<d_vector_t> baseline_pos_sr;
   ReadableStateField<d_vector_t> baseline_pos_f;
 
+  //Serializer and StateField for currentState
   Serializer<int> currentState_sr;
   ReadableStateField<int> currentState_f;
 
+  //Internal Data Containers
   std::array<double, 3> pos;
   std::array<double, 3> vel;
   std::array<double, 3> baseline_pos;
-  msg_gps_time_t time;
+  
+  msg_gps_time_t msg_time;
+  gps_time_t time;
 
   unsigned int tow_past = 0;
   unsigned int iar;
