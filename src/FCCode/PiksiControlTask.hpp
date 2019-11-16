@@ -63,6 +63,10 @@ protected:
   Serializer<int> currentState_sr;
   ReadableStateField<int> currentState_f;
 
+  //Serializer and StateField for time
+  Serializer<gps_time_t> time_sr;
+  ReadableStateField<gps_time_t> time_f;
+
   //Internal Data Containers
   std::array<double, 3> pos;
   std::array<double, 3> vel;

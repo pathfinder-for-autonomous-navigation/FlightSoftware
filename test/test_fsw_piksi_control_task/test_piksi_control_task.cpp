@@ -13,16 +13,9 @@ void test_task_initialization()
     StateFieldRegistry registry;
     PiksiControlTask task(registry);
 }
-
-void test_task_execute()
-{
+void test_read_errors(){
     StateFieldRegistry registry;
     PiksiControlTask task(registry);
-
-    //TEST_ASSERT_EQUAL()
-    std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
-    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-    std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
 
     //returns a two, no relevant packets coming over line
     task.piksi.set_read_return(2);
@@ -38,6 +31,16 @@ void test_task_execute()
     task.piksi.set_read_return(5);
     task.execute();
     TEST_ASSERT_EQUAL(TIME_LIMIT, task.get_current_state());
+}
+void test_task_execute()
+{
+    StateFieldRegistry registry;
+    PiksiControlTask task(registry);
+
+    //TEST_ASSERT_EQUAL()
+    std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
+    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+    std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
 
     //tests to make sure to error out if packets not synced to same tow
     unsigned int tow = 100;
@@ -106,6 +109,7 @@ int test_control_task()
 {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
+    RUN_TEST(test_read_errors);
     RUN_TEST(test_task_execute);
     return UNITY_END();
 }

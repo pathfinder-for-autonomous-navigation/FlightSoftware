@@ -11,12 +11,15 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<v
                                                                    baseline_pos_sr(0, 100000, 100),
                                                                    baseline_pos_f("piksi.baseline.pos", baseline_pos_sr),
                                                                    currentState_sr(0, 4, 2),
-                                                                   currentState_f("piksi.state", currentState_sr)
+                                                                   currentState_f("piksi.state", currentState_sr),
+                                                                   time_sr(),
+                                                                   time_f("piksi.time", time_sr)
 {
   add_readable_field(pos_f);
   add_readable_field(vel_f);
   add_readable_field(baseline_pos_f);
   add_readable_field(currentState_f);
+  add_readable_field(time_f);
 }
 
 int PiksiControlTask::get_current_state() const
@@ -112,9 +115,8 @@ void PiksiControlTask::execute()
     }
 
     //set values in statefields
-
-    //LOL ASK TANISHQ ABOUT WHAT KINDA TIME HE WANTS
-    //time_f.set(time);
+    
+    time_f.set(time);
     pos_f.set(pos);
     vel_f.set(vel);
     if(read_out == 1){
