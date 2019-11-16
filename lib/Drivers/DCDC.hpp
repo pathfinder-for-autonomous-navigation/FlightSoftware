@@ -1,6 +1,6 @@
+#ifndef DESKTOP
 #ifndef DCDC_HPP_
 #define DCDC_HPP_
-#ifndef DESKTOP
 
 #include "../Devices/Device.hpp"
 

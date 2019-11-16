@@ -1,11 +1,10 @@
+#ifndef DESKTOP
 #include "DCDC.hpp"
 #ifndef DESKTOP
 #include "Arduino.h"
 #endif
 
 using namespace Devices;
-
-DCDC::DCDC() : Device("dcdc") {}
 
 bool DCDC::setup() {
     #ifndef DESKTOP
@@ -59,3 +58,4 @@ void DCDC::reset() {
     enable_adcs();
     #endif
 }
+#endif

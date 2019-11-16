@@ -13,10 +13,10 @@
  * 
  * All methods return true on success, false otherwise. 
  */ 
-class QuakeManager : public ControlTask<bool> {
+class QuakeManager : public TimedControlTask<bool> {
    public:
-    QuakeControlTask qct;
-    QuakeManager(StateFieldRegistry& registry);
+    QuakeManager(StateFieldRegistry& registry, unsigned int offset);
+    ~QuakeManager();
     bool execute() override;
 
    // protected:
@@ -30,35 +30,35 @@ class QuakeManager : public ControlTask<bool> {
    /**
      * @brief Control cycle count, provided by ClockManager.
      */
-    ReadableStateField<unsigned int> control_cycle_count_fp;
+    ReadableStateField<unsigned int>* control_cycle_count_fp;
 
    /**
      * @brief Snapshot size in bytes, provided by DownlinkProducer. 
      */
-    InternalStateField<size_t> snapshot_size_fp;
+    InternalStateField<unsigned int>* snapshot_size_fp;
 
    /**
     * @brief Pointer to the snapshot t1o be downlinked in pieces of 70 B, provided by DownlinkProducer.
     **/ 
-    InternalStateField<char*> radio_mo_packet_fp;
+    InternalStateField<char*>* radio_mo_packet_fp;
 
   /**
     * @brief Pointer to the uplink buffer, provided by DownlinkProducer. 
     **/ 
-   InternalStateField<char*> radio_mt_packet_fp;
+   InternalStateField<char*>* radio_mt_packet_fp;
 
      /**
     * @brief Pointer to Quake Error field, provided by DownlinkProducer. 
     **/ 
-   InternalStateField<int> radio_err_fp;
+   InternalStateField<int>* radio_err_fp;
 
     /**
-     * @brief Current radio mode (see radio_mode_t.enum)
+     * @brief Current radio mode (see radio_mode_t.enum), provided by
      **/
     InternalStateField<unsigned int> radio_mode_f;
 
   // private:
-
+    QuakeControlTask qct;
     /**
      * Write error to radio_err_fp,
      * print a debug msg, 

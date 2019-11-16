@@ -15,20 +15,24 @@
  */
 
 // Quake driver setup is initialized when QuakeController constructor is called
-QuakeManager::QuakeManager(StateFieldRegistry &registry) : 
-    ControlTask<bool>(registry),
+QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) : 
+    TimedControlTask<bool>(registry, offset),
     radio_mode_f("radio.mode"),
-    qct(registry)
+    qct(registry, offset)
 { 
-    radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::config));
+    // Retrieve fields from registry
     control_cycle_count_fp = find_readable_field<unsigned int>(
         "pan.cycle_no", __FILE__, __LINE__);
-    snapshot_size_fp = registry.find_field("downlink_producer.snap_size");
-    radio_mo_packet_fp = registry.find_field("downlink_producer.mo_ptr");
-    radio_mt_packet_fp = registry.find_field("downlink_producer.mt_ptr");
-    radio_err_fp = registry.find_field("downlink_producer.radio_err_ptr");
+    snapshot_size_fp = find_internal_field<unsigned int>("downlink_producer.snap_size", __FILE__, __LINE__);
+    radio_mo_packet_fp = find_internal_field<char*>("downlink_producer.mo_ptr", __FILE__, __LINE__);
+    radio_mt_packet_fp = find_internal_field<char*>("downlink_producer.mt_ptr", __FILE__, __LINE__);
+    radio_err_fp = find_internal_field<int>("downlink_producer.radio_err_ptr", __FILE__, __LINE__);
+
+    // Initialize Quake Manager variables
+    radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::config));
     last_checkin_cycle = control_cycle_count_fp->get();
 
+    // Setup MO Buffers
     max_snapshot_size = snapshot_size_fp->get();
     mo_buffer_copy = new char[max_snapshot_size];
 }
@@ -173,7 +177,7 @@ bool QuakeManager::dispatch_write() {
         return false;
 
     // If we just entered this state --> load current snapshot
-    if (qct.get_current_fn_number == 0)
+    if (qct.get_current_fn_number() == 0)
     {
        qct.set_downlink_msg(mo_buffer_copy + (packet_size*mo_idx), packet_size);
        update_mo();
