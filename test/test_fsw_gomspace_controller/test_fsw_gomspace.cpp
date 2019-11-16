@@ -6,6 +6,10 @@
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
+
+    Devices::Gomspace::eps_hk_t hk;
+    Devices::Gomspace::eps_config_t config;
+    Devices::Gomspace::eps_config2_t config2;
     Devices::Gomspace gs;
 
     std::unique_ptr<GomspaceController> gs_controller;
@@ -14,8 +18,8 @@ class TestFixture {
     ReadableStateField<unsigned int>* vboost2_fp;
     ReadableStateField<unsigned int>* vboost3_fp;
 
-    TestFixture() : registry() {
-        gs_controller = std::make_unique<GomspaceController>(registry, 0, &gs);
+    TestFixture() : registry(), gs(&hk, &config, &config2) {
+        gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
 
         vboost1_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output1");
         vboost1_fp->set(7);

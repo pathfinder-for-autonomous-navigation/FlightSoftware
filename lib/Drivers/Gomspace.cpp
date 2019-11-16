@@ -1,6 +1,4 @@
-#ifndef DESKTOP
 #include "Gomspace.hpp"
-#include <HardwareSerial.h>
 #include "../Devices/I2CDevice.hpp"
 
 // Builtins provided by GCC for endian flipping.
@@ -9,9 +7,15 @@
 
 using namespace Devices;
 
+#ifdef DESKTOP
+#define I2C_INITIALIZATION I2CDevice("gomspace", 10000)
+#else
+#define I2C_INITIALIZATION I2CDevice("gomspace", Gomspace::wire, Gomspace::address, 10000)
+#endif
+
 Gomspace::Gomspace(Gomspace::eps_hk_t *hk_data, Gomspace::eps_config_t *config_data,
                    Gomspace::eps_config2_t *config2_data)
-    : I2CDevice("gomspace", Gomspace::wire, Gomspace::address, 2000),
+    : I2C_INITIALIZATION,
       hk(hk_data),
       gspace_config(config_data),
       gspace_config2(config2_data)
@@ -221,8 +225,6 @@ bool Gomspace::turn_on_heater() { return _set_heater(true); }
 bool Gomspace::turn_off_heater() { return _set_heater(false); }
 
 bool Gomspace::_set_heater(bool mode) {
-    if (mode > 1) return false;  // Precondition check to avoid radiation bit flips
-
     unsigned char PORT_BYTE = 0x0D, COMMAND = 0x00;
     unsigned char command[4] = {PORT_BYTE, COMMAND, 1, (unsigned char)mode};
     i2c_begin_transmission();
@@ -491,4 +493,3 @@ void Gomspace::_hk_basic_endian_flip() {
     }
     hk_basic->counter_boot = __bswap_16(hk_basic->counter_boot);
 }
-#endif
