@@ -4,11 +4,11 @@ using namespace Devices;
 
 PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<void>(registry),
                                                                    piksi("piksi"),
-                                                                   pos_sr(0, 100000, 10),
+                                                                   pos_sr(0, 100000, 100),
                                                                    pos_f("piksi.pos", pos_sr),
-                                                                   vel_sr(0, 100000, 10),
+                                                                   vel_sr(0, 100000, 100),
                                                                    vel_f("piksi.vel", vel_sr),
-                                                                   baseline_pos_sr(0, 100000, 10),
+                                                                   baseline_pos_sr(0, 100000, 100),
                                                                    baseline_pos_f("piksi.baseline.pos", baseline_pos_sr),
                                                                    currentState_sr(0, 4, 2),
                                                                    currentState_f("piksi.state", currentState_sr)
