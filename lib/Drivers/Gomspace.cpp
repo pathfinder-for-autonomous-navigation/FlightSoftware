@@ -59,12 +59,14 @@ bool Gomspace::get_hk() {
     if (buffer[0] != PORT_BYTE && buffer[1] != 0)
         return false;
     else {
+        #ifndef DESKTOP
         memcpy((unsigned char *)hk, buffer + 2, struct_size);
         // Flip endianness of all values
         _hk_vi_endian_flip();
         _hk_out_endian_flip();
         _hk_wdt_endian_flip();
         _hk_basic_endian_flip();
+        #endif
         return true;
     }
 }
