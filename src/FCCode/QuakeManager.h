@@ -13,6 +13,16 @@
  * 
  * All methods return true on success, false otherwise. 
  */ 
+
+/**
+ * Comms Protocol Implementation:
+ *  
+ * If we have written the entire snapshot, load the next snapshot
+ * Otherwise, increment mo_idx to point to the next 70 blocks
+ * 
+ * Essentially points mo_buffer_copy + mo_idx*packet_size to the next
+ * 70 blocks of data that should be downlinked. 
+ */
 class QuakeManager : public TimedControlTask<bool> {
    public:
     QuakeManager(StateFieldRegistry& registry, unsigned int offset);
@@ -24,6 +34,7 @@ class QuakeManager : public TimedControlTask<bool> {
     bool dispatch_wait();
     bool dispatch_transceive();
     bool dispatch_read();
+  
     bool dispatch_write();
     bool dispatch_manual();
 
@@ -80,16 +91,7 @@ class QuakeManager : public TimedControlTask<bool> {
      * Precondition: new_state is one of the defined states
      * Postcondition: radio_state_f == new_state, last_checkin_cycle = now
      */ 
-    void transition_radio_state(radio_mode_t new_state);
-
-    /**
-     * If we have written the entire snapshot, load the next snapshot
-     * Otherwise, increment mo_idx to point to the next 70 blocks
-     * 
-     * Essentially points mo_buffer_copy + mo_idx*packet_size to the next
-     * 70 blocks of data that should be downlinked. 
-     */
-    void update_mo();
+    bool transition_radio_state(radio_mode_t new_state);
 
     /**
      * The last cycle for which we had comms

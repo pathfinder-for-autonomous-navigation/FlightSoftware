@@ -18,7 +18,9 @@
 QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) : 
     TimedControlTask<bool>(registry, offset),
     radio_mode_f(radio_mode_t::config),
-    qct(registry, offset)
+    qct(registry, offset),
+    mo_idx(0),
+    unexpectedFlag(false)
 { 
     // Retrieve fields from registry
     control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
@@ -30,10 +32,9 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     // Initialize Quake Manager variables
     last_checkin_cycle = control_cycle_count_fp->get();
     qct.request_state(CONFIG);
-    unexpectedFlag = false;
 
     // Setup MO Buffers
-    max_snapshot_size = snapshot_size_fp->get();
+    max_snapshot_size = snapshot_size_fp->get() + 1;
     mo_buffer_copy = new char[max_snapshot_size];
 }
 
@@ -70,16 +71,18 @@ bool QuakeManager::execute() {
 bool QuakeManager::dispatch_config() {
     if (qct.get_current_state() != CONFIG) 
         return write_to_error(Devices::WRONG_STATE);
+    if (unexpectedFlag) return transition_radio_state(radio_mode_t::wait);
 
-    if ( no_more_cycles(
-            max_config_cycles, 
-            radio_mode_t::wait) )
+    if ( no_more_cycles(max_config_cycles, radio_mode_t::wait) )
+    {
+        unexpectedFlag = true;
         return false;
+    }
 
     int err_code = qct.execute();
     // If we have finished executing this command, then transition to waiting
     if ( qct.get_current_state() == IDLE )
-        transition_radio_state(radio_mode_t::wait);
+        transition_radio_state(radio_mode_t::write);
     return write_to_error(err_code);
 }
 
@@ -87,32 +90,23 @@ bool QuakeManager::dispatch_wait() {
     // If we are done waiting --> load a message
     if (unexpectedFlag) 
     {
-        transition_radio_state(radio_mode_t::config);
+        unexpectedFlag = false; // clear it
+        return transition_radio_state(radio_mode_t::config);
     }
-        
-    if ( no_more_cycles(
-            max_wait_cycles, 
-            radio_mode_t::write) )
-        return false;
-    return true;
+    // Return true if there are still cycles
+    // Otherwise, transition to write in order to load new snapshot
+    return !no_more_cycles(max_wait_cycles, radio_mode_t::write);
 }
 
 bool QuakeManager::dispatch_transceive() {
     if (qct.get_current_state() != SBDIX) 
         return write_to_error(Devices::WRONG_STATE);
+    if (unexpectedFlag) return transition_radio_state(radio_mode_t::wait);
 
     // If we run out of cycles --> go back to waiting
-    if ( no_more_cycles(
-            max_transceive_cycles, 
-            radio_mode_t::wait) )
+    if (no_more_cycles(max_transceive_cycles, radio_mode_t::wait))
         return false;
 
-    // If we have first entered this state, copy a new_snapshot
-    if (qct.get_current_fn_number() == 0) 
-    {
-        mo_idx = 0;
-        update_mo();
-    }
     int err_code = qct.execute();
 
     // If we have finished executing SBDIX, then see if we have a message
@@ -124,6 +118,8 @@ bool QuakeManager::dispatch_transceive() {
             printf(debug_severity::info, 
                 "[Quake Info] SBDIX finished, we have no comms. \
                     Error code: %d \r\n", qct.quake.sbdix_r[0]);
+            // we should stay in transceive but do not update last_checkin
+            qct.request_state(SBDIX);
             return write_to_error(err_code);
         }
 
@@ -132,7 +128,6 @@ bool QuakeManager::dispatch_transceive() {
         {
             printf(debug_severity::info, 
                 "[Quake Info] SBDIX finished, transitioning to SBDRB\r\n");
-            qct.request_state(SBDRB);
             transition_radio_state(radio_mode_t::read);
         }
         // Case 3: We have comms and we have no message --> load next message
@@ -140,7 +135,6 @@ bool QuakeManager::dispatch_transceive() {
         {
             printf(debug_severity::info, 
                 "[Quake Info] SBDIX finished, transitioning to SBDWB\r\n");
-            qct.request_state(SBDWB);
             transition_radio_state(radio_mode_t::write);
         }
     }
@@ -150,11 +144,13 @@ bool QuakeManager::dispatch_transceive() {
 bool QuakeManager::dispatch_read() {
     if (qct.get_current_state() != SBDRB) 
         return write_to_error(Devices::WRONG_STATE);
+    if (unexpectedFlag) return transition_radio_state(radio_mode_t::wait);
 
-    if ( no_more_cycles(
-            max_read_cycles, 
-            radio_mode_t::wait) )
+    if (no_more_cycles(max_read_cycles, radio_mode_t::wait))
+    {
+        unexpectedFlag = true;
         return false;
+    }
 
     int err_code = qct.execute();
 
@@ -165,7 +161,6 @@ bool QuakeManager::dispatch_read() {
             "[Quake Info] SBDRB finished, transitioning to SBDWB\r\n");
 
         radio_mt_packet_fp->set(qct.quake.get_message());
-        qct.request_state(SBDWB);
         transition_radio_state(radio_mode_t::write);
     }
     return write_to_error(err_code);
@@ -174,17 +169,24 @@ bool QuakeManager::dispatch_read() {
 bool QuakeManager::dispatch_write() {
     if (qct.get_current_state() != SBDWB) 
         return write_to_error(Devices::WRONG_STATE);
+    if (unexpectedFlag) return transition_radio_state(radio_mode_t::wait);
 
-    if ( no_more_cycles(
-            max_write_cycles, 
-            radio_mode_t::wait) )
+    if ( no_more_cycles(max_write_cycles, radio_mode_t::wait) ){
+        unexpectedFlag = true;
         return false;
+    }
 
-    // If we just entered this state --> load current snapshot
+    // If we just entered write, copy the current message to our local buf
     if (qct.get_current_fn_number() == 0)
     {
+        // If mo_idx is 0 --> copy current snapshot to local buf
+        if (mo_idx == 0) {
+            memset(mo_buffer_copy, 0, max_snapshot_size);
+            memcpy(mo_buffer_copy, radio_mo_packet_fp->get(), max_snapshot_size);
+        }
+        // load the current 70 bytes of the buffer
        qct.set_downlink_msg(mo_buffer_copy + (packet_size*mo_idx), packet_size);
-       update_mo();
+       mo_idx = (mo_idx + 1) % (max_snapshot_size/packet_size);
     }
 
     int err_code = qct.execute();
@@ -194,7 +196,6 @@ bool QuakeManager::dispatch_write() {
     {
         printf(debug_severity::info, 
             "[Quake Info] SBDWB finished, transitioning to SBDIX\r\n");
-        qct.request_state(SBDIX);
         transition_radio_state(radio_mode_t::transceive);
     }
 
@@ -211,7 +212,7 @@ bool QuakeManager::write_to_error(int err_code)
     if (err_code == Devices::OK) return true;
 
     radio_err_fp->set(err_code);
-
+    unexpectedFlag = true;
     printf(debug_severity::error, 
         "[Quake Error] Execution failed at radio state %d, quake control state \
         %d, and fn_number %d with error code %d\r\n", 
@@ -232,37 +233,46 @@ bool QuakeManager::no_more_cycles(size_t max_cycles, radio_mode_t new_state)
             static_cast<unsigned int> (radio_mode_f));
         // Transition to new_state
         transition_radio_state(new_state);
-        // Update QCT state to IDLE
-        qct.request_state(IDLE); 
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
-void QuakeManager::transition_radio_state(radio_mode_t new_state)
+bool QuakeManager::transition_radio_state(radio_mode_t new_state)
 {
     printf(debug_severity::info, 
         "[Quake Info] Transitioning from radio state %d to %d\r\n", 
         static_cast<unsigned int> (radio_mode_f),
         new_state);
-
+    bool bOk = true;
+    switch(new_state)
+    {
+        case radio_mode_t::wait:
+            bOk = qct.request_state(IDLE);
+            break;
+        case radio_mode_t::config:
+            bOk = qct.request_state(CONFIG);
+            break;
+        case radio_mode_t::read:
+            bOk = qct.request_state(SBDRB);
+            break;
+        case radio_mode_t::write:
+            bOk = qct.request_state(SBDWB);
+            break;
+        case radio_mode_t::transceive:
+            bOk = qct.request_state(SBDIX);
+            break;
+        default:
+        printf(debug_severity::error, "In transition_radio_state:: Radio state not defined: %d\r\n", 
+            static_cast<unsigned int>(radio_mode_f));
+    }
     // Update the last checkin cycle
     last_checkin_cycle = control_cycle_count_fp->get();
     radio_mode_f = new_state;
-}
 
-void QuakeManager::update_mo()
-{
-    if (mo_idx == 0)
-    {
-        printf(debug_severity::info, "[Quake Info] Updating MO buffer...\
-        copying new snapshot\r\n");
-        memcpy(mo_buffer_copy, radio_mo_packet_fp->get(), max_snapshot_size);
-    }
-    else
-    {
-        printf(debug_severity::info, "[Quake Info] Updating MO buffer...\
-        incrementing to the next 70 bytes\r\n");
-        mo_idx = (mo_idx + 1) % (max_snapshot_size/packet_size);
-    }
+    if ( !bOk ) // Sanity check
+        printf(debug_severity::error, "Invalid state transition from %d to %d\r\n",
+        qct.get_current_state(),
+        static_cast<unsigned int>(radio_mode_f));
+    return bOk;
 }
