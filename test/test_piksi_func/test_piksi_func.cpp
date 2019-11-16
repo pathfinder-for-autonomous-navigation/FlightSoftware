@@ -452,7 +452,7 @@ int main(void) {
     int start_millis = millis();
 
     //this initial loop is just for debugging, verify that there are indeed bytes coming over the line
-    while(millis() - start_millis < 200){
+    while(millis() - start_millis < 600){
 
         Serial.printf("TIME: %d ", millis() - start_millis);
         Serial.printf("BYTES: %d\n", piksi.bytes_available());
@@ -471,12 +471,12 @@ int main(void) {
     //piksi.read_all();
     //Serial.printf("OUT: %u\n", piksi.read_buffer_exp());
 
-    std::array<int, 4> order_out = {7,7,7,7};
+    std::array<int, 12> order_out = {7,7,7,7,7,7,7,7,7,7,7,7};
     int st = micros();
     piksi.read_all_order(&order_out);
     int et = micros();
     Serial.printf("TIME: %d\n",et-st);
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 12; i++){
         Serial.printf("%d\n",order_out[i]);
     }
     Serial.println("***********");

@@ -105,7 +105,7 @@ class Piksi {
     vel
     base
     */
-    virtual void read_all_order(std::array<int, 4>* out);
+    virtual void read_all_order(std::array<int, 12>* out);
 
     virtual unsigned char read_buffer_exp();
 

@@ -267,11 +267,12 @@ unsigned char Piksi::read_all() {
     #ifdef DESKTOP
     return _read_return;
     #endif
-
+    
     _gps_time_update = false;
     _pos_ecef_update = false;
     _vel_ecef_update = false;
     _baseline_ecef_update = false;
+    _heartbeat_update = false;
 
     if(bytes_available()){
         while(bytes_available()){
@@ -281,27 +282,37 @@ unsigned char Piksi::read_all() {
             return 0;
         else if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && _baseline_ecef_update)
             return 1;
+        else if(_heartbeat_update)
+            return 3;
         else
             //error condition, perhaps serial data bad
             //or time looped around
             return 2;
     }
     else
-        return 3;
+        //no bytes return condition
+        return 4;
 }
 
-void Piksi::read_all_order(std::array<int, 4> *out) {
+void Piksi::read_all_order(std::array<int, 12> *out) {
     _gps_time_update = false;
     _pos_ecef_update = false;
     _vel_ecef_update = false;
     _baseline_ecef_update = false;
+    _heartbeat_update = false;
 
     int cnt = 0;
     //(*out)[cnt] = 9;
 
     while(bytes_available()){
         process_buffer();
-        if(cnt < 4){
+        if(cnt <12){
+            if(_heartbeat_update){
+                //(*out)[cnt] = 't';
+                (*out)[cnt] = 4;
+                _heartbeat_update = false;
+                cnt++;
+            }
             if(_gps_time_update){
                 //(*out)[cnt] = 't';
                 (*out)[cnt] = 0;

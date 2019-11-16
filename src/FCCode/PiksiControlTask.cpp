@@ -42,13 +42,27 @@ void PiksiControlTask::execute()
   //if successfully read data
   int read_out = piksi.read_all();
 
-  if(read_out == 3){
+  if(read_out == 4 || read_out == 2)
+    since_good_cycles += 1;
+  else 
+    since_good_cycles = 0;
+  
+  //if we haven't had a heartbeat or good reading in ~120 seconds we probably dead
+  if(since_good_cycles > 1000){
+    currentState = DEAD;
+    //prevent rollover lmao
+    since_good_cycles = 1001;
+    return;
+  }
+
+  if(read_out == 4){
     currentState = NO_DATA;
     return;
   }
-  else if(read_out == 2){
-    currentState = DATA_ERROR;
+  else if(read_out == 2 || read_out == 3){
+    currentState = NO_FIX;
     return;
+
   }
 
   else if(read_out == 1 || read_out == 0){

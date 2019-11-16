@@ -419,19 +419,19 @@ int main(void) {
     }
     Serial.println("FINISH WHILE LOOP");
 
-    bool keeprun = true;
+    //bool keeprun = true;
 
-    while(keeprun){
-        int exec_ret = piksi.read_buffer_exp();
-        Serial.printf("RES: %d\n", exec_ret);
+    // while(keeprun){
+    //     int exec_ret = piksi.read_buffer_exp();
+    //     Serial.printf("RES: %d\n", exec_ret);
 
-        if(exec_ret == 0){
-            RUN_TEST(test_get_data);
-            keeprun = false;
-        }
+    //     if(exec_ret == 0){
+    //         RUN_TEST(test_get_data);
+    //         keeprun = false;
+    //     }
 
-        delay(120);
-    }
+    //     delay(120);
+    // }
 
     int prevtime = micros();
     int posttime = micros();
@@ -440,8 +440,9 @@ int main(void) {
     int msg_len_fail_count = 0;
     int data_fail_count = 0;
     int bad_buffer = 0;
+    int read_sum = 0;
 
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 100; i++) {
         //this syncs up command to execute exactly every 120 ms 
         //(barring a failure on the previous loop)
         delay(CONTROL_CYCLE - (micros() - prevtime) / 1000);
@@ -462,7 +463,8 @@ int main(void) {
         int res = piksi.read_all();
         posttime = micros();
 
-        
+        read_sum += res;
+
         Serial.printf("RES: %d\n", res);
         if (res == 1) {
             if(verify_all())
@@ -492,6 +494,9 @@ int main(void) {
     Serial.printf("VERIFY FAIL COUNT: %d\n", data_fail_count);
     Serial.printf("BAD BUFFER COUNT: %d\n", bad_buffer);
     Serial.printf("TIMING PASS COUNT: %d\n", timing_pass_count);
+
+    Serial.printf("READSUM AVG: %f\n", (float)read_sum/(float)100.0);
+
 
 
     /*

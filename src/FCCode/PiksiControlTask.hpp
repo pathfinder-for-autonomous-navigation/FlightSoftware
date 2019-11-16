@@ -18,11 +18,12 @@ static constexpr int SPP = 0;
 static constexpr int FIXED_RTK = 1;
 static constexpr int FLOAT_RTK = 2;
 
-static constexpr int SYNC_ERROR = 3;
-static constexpr int DATA_ERROR = 4;
-static constexpr int NSAT_ERROR = 5;
-static constexpr int NO_DATA = 6;
-
+static constexpr int NO_FIX = 3;
+static constexpr int SYNC_ERROR = 4;
+static constexpr int DATA_ERROR = 5;
+static constexpr int NSAT_ERROR = 6;
+static constexpr int NO_DATA = 7;
+static constexpr int DEAD = 8;
 
 static constexpr int MSG_LEN_WRONG = 5;;
 
@@ -131,6 +132,7 @@ private:
   int currentState; // the state of the Piksi
   // int fnSeqNum;     // the sequence we are on
   int fix;
+  unsigned int since_good_cycles = 0;
   // const char *szMsg; // the message to downlink
   // size_t len;        // length of the message to downlink
 };
