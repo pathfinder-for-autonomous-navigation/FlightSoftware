@@ -10,20 +10,20 @@ class TestFixture {
 
     std::unique_ptr<GomspaceController> gs_controller;
 
-    std::shared_ptr<ReadableStateField<unsigned int>>vboost1_fp;
-    std::shared_ptr<ReadableStateField<unsigned int>>vboost2_fp;
-    std::shared_ptr<ReadableStateField<unsigned int>>vboost3_fp;
+    ReadableStateField<unsigned int>* vboost1_fp;
+    ReadableStateField<unsigned int>* vboost2_fp;
+    ReadableStateField<unsigned int>* vboost3_fp;
 
     TestFixture() : registry() {
         gs_controller = std::make_unique<GomspaceController>(registry, 0, &gs);
 
-        vboost1_fp = std::static_pointer_cast<ReadableStateField<unsigned int>>(registry.find_readable_field("gomspace.vboost.output1"));
+        vboost1_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output1");
         vboost1_fp->set(7);
 
-        vboost2_fp = std::static_pointer_cast<ReadableStateField<unsigned int>>(registry.find_readable_field("gomspace.vboost.output2"));
+        vboost2_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output2");
         vboost2_fp->set(8);
 
-        vboost3_fp = std::static_pointer_cast<ReadableStateField<unsigned int>>(registry.find_readable_field("gomspace.vboost.output3"));
+        vboost3_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output3");
         vboost3_fp->set(9);
     }
 };
