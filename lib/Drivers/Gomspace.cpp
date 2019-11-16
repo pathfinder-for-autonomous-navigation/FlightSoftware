@@ -3,10 +3,8 @@
 #include <cstring>
 
 // Builtins provided by GCC for endian flipping.
-#ifndef DESKTOP
 #define __bswap_16(x) ((unsigned short int)__builtin_bswap16(x))
 #define __bswap_32(x) ((unsigned int)__builtin_bswap32(x))
-#endif
 
 using namespace Devices;
 
@@ -91,8 +89,10 @@ bool Gomspace::get_hk_vi() {
     if (buffer[1] != 0)
         return false;
     else {
+        #ifndef DESKTOP
         memcpy((unsigned char *)hk_vi, buffer + 2, struct_size);
         _hk_vi_endian_flip();
+        #endif
         return true;
     }
 }
@@ -114,8 +114,10 @@ bool Gomspace::get_hk_out() {
     if (buffer[1] != 0)
         return false;
     else {
+        #ifndef DESKTOP
         memcpy((unsigned char *)hk_out, buffer + 2, struct_size);
         _hk_out_endian_flip();
+        #endif
         return true;
     }
 }
@@ -137,8 +139,10 @@ bool Gomspace::get_hk_wdt() {
     if (buffer[1] != 0)
         return false;
     else {
+        #ifndef DESKTOP
         memcpy((unsigned char *)hk_wdt, buffer + 2, struct_size);
         _hk_wdt_endian_flip();
+        #endif
         return true;
     }
 }
@@ -160,8 +164,10 @@ bool Gomspace::get_hk_basic() {
     if (buffer[1] != 0)
         return false;
     else {
+        #ifndef DESKTOP
         memcpy((unsigned char *)hk_basic, buffer + 2, struct_size);
         _hk_basic_endian_flip();
+        #endif
         return true;
     }
 }
@@ -306,6 +312,7 @@ bool Gomspace::config_get() {
     if (buffer[1] != 0)
         return false;
     else {
+        #ifndef DESKTOP
         memcpy((unsigned char *)&gspace_config, buffer + 2, struct_size);
         // Flip endianness
         for (unsigned char i = 0; i < 8; i++) {
@@ -317,6 +324,7 @@ bool Gomspace::config_get() {
         for (unsigned char i = 0; i < 3; i++) {
             gspace_config->vboost[i] = __bswap_16(gspace_config->vboost[i]);
         }
+        #endif
         return true;
     }
 }
@@ -327,6 +335,7 @@ bool Gomspace::config_set(const eps_config_t &c) {
 
     // Flip endianness of all numbers in struct
     unsigned char config_struct[sizeof(eps_config_t)];
+    #ifndef DESKTOP
     memcpy(config_struct, (unsigned char *)&c, sizeof(eps_config_t));
     eps_config_t *config_struct_ptr = (eps_config_t *)config_struct;
     for (unsigned char i = 0; i < 8; i++) {
@@ -338,6 +347,7 @@ bool Gomspace::config_set(const eps_config_t &c) {
     for (unsigned char i = 0; i < 3; i++) {
         config_struct_ptr->vboost[i] = __bswap_16(config_struct_ptr->vboost[i]);
     }
+    #endif
 
     i2c_begin_transmission();
     i2c_write(command, 1);
@@ -372,12 +382,14 @@ bool Gomspace::config2_get() {
     if (buffer[1] != 0)
         return false;
     else {
+        #ifndef DESKTOP
         memcpy((unsigned char *)&gspace_config2, buffer + 2, struct_size);
         // Flip endianness
         gspace_config2->batt_maxvoltage = __bswap_16(gspace_config2->batt_maxvoltage);
         gspace_config2->batt_safevoltage = __bswap_16(gspace_config2->batt_safevoltage);
         gspace_config2->batt_criticalvoltage = __bswap_16(gspace_config2->batt_criticalvoltage);
         gspace_config2->batt_normalvoltage = __bswap_16(gspace_config2->batt_normalvoltage);
+        #endif
         return true;
     }
 }
@@ -401,12 +413,14 @@ bool Gomspace::config2_set(const eps_config2_t &c) {
 
     // Flip endianness of all numbers in struct
     unsigned char config2_struct[sizeof(eps_config2_t)];
+    #ifndef DESKTOP
     memcpy(config2_struct, (unsigned char *)&c, sizeof(eps_config2_t));
     eps_config2_t *config2_struct_ptr = (eps_config2_t *)config2_struct;
     config2_struct_ptr->batt_criticalvoltage = __bswap_16(config2_struct_ptr->batt_criticalvoltage);
     config2_struct_ptr->batt_maxvoltage = __bswap_16(config2_struct_ptr->batt_maxvoltage);
     config2_struct_ptr->batt_safevoltage = __bswap_16(config2_struct_ptr->batt_safevoltage);
     config2_struct_ptr->batt_normalvoltage = __bswap_16(config2_struct_ptr->batt_normalvoltage);
+    #endif
 
     i2c_begin_transmission();
     i2c_write(command, 1);
