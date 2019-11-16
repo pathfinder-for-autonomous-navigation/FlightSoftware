@@ -1,4 +1,3 @@
-#ifndef DESKTOP
 #ifndef DCDC_HPP_
 #define DCDC_HPP_
 
@@ -8,7 +7,11 @@ namespace Devices {
 /**
  * @brief Enables or disables the 7-24V DC-DC converters.
  * **/
+#ifdef DESKTOP
+class DCDC{
+#else
 class DCDC : public Device {
+#endif
    public:
     //! Default enable pin for the DCDCs.
     static constexpr unsigned char dcdc_motor_enable_pin = 24;
@@ -17,7 +20,12 @@ class DCDC : public Device {
     /**
      * @brief Default constructor. **/
     DCDC();
-
+#ifdef DESKTOP
+    bool setup();
+    bool is_functional();
+    void disable();
+    void reset();
+#else
     bool setup() override;
 
     /**
@@ -34,7 +42,7 @@ class DCDC : public Device {
      * @brief Disables and then re-enables both DCDCs.
      **/
     void reset() override;
-
+#endif
     /**
      * @brief Turn on ADCS DCDC by holding the enable pin high.
      **/
@@ -59,5 +67,4 @@ class DCDC : public Device {
 };
 }  // namespace Devices
 
-#endif
 #endif

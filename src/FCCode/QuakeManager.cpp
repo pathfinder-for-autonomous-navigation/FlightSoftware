@@ -87,15 +87,17 @@ bool QuakeManager::dispatch_config() {
 }
 
 bool QuakeManager::dispatch_wait() {
-    // If we are done waiting --> load a message
+    // If we still have cycles, return true
+    if (control_cycle_count_fp->get() - last_checkin_cycle <= max_wait_cycles)
+        return true;
+    // Transition to config to attempt to resolve unexpected errors
     if (unexpectedFlag) 
     {
-        unexpectedFlag = false; // clear it
-        return transition_radio_state(radio_mode_t::config);
+        unexpectedFlag = false; // clear the flag
+        return transition_radio_state(radio_mode_t::config); 
     }
-    // Return true if there are still cycles
     // Otherwise, transition to write in order to load new snapshot
-    return !no_more_cycles(max_wait_cycles, radio_mode_t::write);
+    return transition_radio_state(radio_mode_t::write);
 }
 
 bool QuakeManager::dispatch_transceive() {
@@ -209,8 +211,10 @@ bool QuakeManager::dispatch_manual(){
 
 bool QuakeManager::write_to_error(int err_code)
 {
-    if (err_code == Devices::OK) return true;
+    // These are the only acceptable errors
+    return ((err_code == Devices::OK) || (err_code == Devices::PORT_UNAVAILABLE));
 
+    // Something unexpected definitely happened
     radio_err_fp->set(err_code);
     unexpectedFlag = true;
     printf(debug_severity::error, 
