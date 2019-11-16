@@ -32,9 +32,10 @@ public:
 
 #else
   PiksiControlTask(StateFieldRegistry &registry);
-  Devices::Piksi piksi;
+
 
 #endif
+  Devices::Piksi piksi;
   /** 
    * execute is overriden from ControlTask 
    * Calling execute() when the state is IDLE generates no effects. 
@@ -43,11 +44,6 @@ public:
 
   /** Returns the current state of the Piksi */
   piksi_mode_t get_current_state() const;
-
-protected:
-  #ifndef DESKTOP
-  Devices::Piksi piksi;
-  #endif
 
   //Serializer and StateField for position
   Serializer<d_vector_t> pos_sr;
@@ -68,6 +64,13 @@ protected:
   //Serializer and StateField for time
   Serializer<gps_time_t> time_sr;
   ReadableStateField<gps_time_t> time_f;
+
+protected:
+  // #ifndef DESKTOP
+  // Devices::Piksi piksi;
+  // #endif
+
+  
 
   //Internal Data Containers
   std::array<double, 3> pos;
