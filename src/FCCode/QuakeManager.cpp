@@ -212,7 +212,8 @@ bool QuakeManager::dispatch_manual(){
 bool QuakeManager::write_to_error(int err_code)
 {
     // These are the only acceptable errors
-    return ((err_code == Devices::OK) || (err_code == Devices::PORT_UNAVAILABLE));
+    if ((err_code == Devices::OK) || (err_code == Devices::PORT_UNAVAILABLE))
+        return true;
 
     // Something unexpected definitely happened
     radio_err_fp->set(err_code);

@@ -99,11 +99,15 @@ void test_wait_unexpected()
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::wait), IDLE);
   // If in WAIT and unexpected Flag is set
   tf.quake_manager->unexpectedFlag = true;
-  // then we should clear the flag and start executing config
+  // then execute all the wait cycles
+  tf.realSteps(tf.quake_manager->max_wait_cycles);
+  assert_radio(radio_mode_t::wait);
+  TEST_ASSERT_TRUE(tf.quake_manager->unexpectedFlag);
+  // When wait finishes waiting
   tf.step();
-  TEST_ASSERT_FALSE(tf.quake_manager->unexpectedFlag);
-  assert_qct(CONFIG);
+  // Clear the error flag and transition to config
   assert_radio(radio_mode_t::config);
+  TEST_ASSERT_FALSE(tf.quake_manager->unexpectedFlag);
 }
 
 void test_config_unexpected() 
@@ -111,7 +115,7 @@ void test_config_unexpected()
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::config), CONFIG);
   // If in CONFIG and unexpected Flag is set 
   tf.quake_manager->unexpectedFlag = true;
-  // then we should wait
+  // then wait
   tf.step();
   assert_qct(IDLE);
   assert_radio(radio_mode_t::wait);
@@ -123,7 +127,7 @@ void test_rwt_unexpected(int qct_state, unsigned int radio_mode)
   TestFixture tf(radio_mode, qct_state);
   // If in SBDRB, SBDWB, or SBDIX and unexpected Flag is set
   tf.quake_manager->unexpectedFlag = true;
-  // then we should transition to Wait
+  // then transition to Wait
   tf.step();
   assert_qct(IDLE);
   assert_radio(radio_mode_t::wait);
@@ -147,10 +151,10 @@ void test_trans_unexpected()
 // ---------------------------------------------------------------------------
 void test_wait_no_more_cycles()
 {
-  // If we are in WAIT and there are no more cycles
+  // If in WAIT and there are no more cycles
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::wait), IDLE);
   tf.step(tf.quake_manager->max_wait_cycles);
-  // Then we should execute write on the next cycle
+  // Then execute write on the next cycle
   TEST_ASSERT_EQUAL(initCycles + tf.quake_manager->max_wait_cycles, tf.cycle_no_fp->get());
   tf.step();
   assert_qct(SBDWB);
@@ -161,13 +165,13 @@ void test_wait_no_more_cycles()
 // Helper test Function
 void test_rwc_no_more_cycles(int qct_state, unsigned int radio_mode)
 {
-  // If in CONFIG, WRITE, READ, TRANS and we run out of cycles
+  // If in CONFIG, WRITE, READ, TRANS and run out of cycles
   TestFixture tf(radio_mode, qct_state);
   tf.quake_manager->unexpectedFlag = false;
   tf.cycle_no_fp->set(tf.cycle_no_fp->get() + tf.quake_manager->max_transceive_cycles);
   TEST_ASSERT_EQUAL(initCycles + tf.quake_manager->max_transceive_cycles, tf.cycle_no_fp->get());
   tf.step();
-  // Then we should transition to WAIT and SBDWB, CONFIG, SBDRB should set the error flag
+  // Then transition to WAIT and SBDWB, CONFIG, SBDRB should set the error flag
   assert_qct(IDLE);
   assert_radio(radio_mode_t::wait);
   assert_fn_num(0);
@@ -199,7 +203,7 @@ void test_trans_no_more_cycles()
 // ---------------------------------------------------------------------------
 void test_config_ok()
 {
-  // If we are in CONFIG and we complete config
+  // If in CONFIG and complete config
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::config), CONFIG);
   // Step a bunch of cycles
   tf.step(); // 0
@@ -207,7 +211,7 @@ void test_config_ok()
   tf.step(); // 2
   assert_fn_num(3); // sanity check
   tf.step(); // 3
-  // Then we should execute WRITE on the next cycle
+  // Then execute WRITE on the next cycle
   assert_fn_num(0);
   assert_radio(radio_mode_t::write);
   assert_qct(SBDWB);
@@ -215,12 +219,12 @@ void test_config_ok()
 
 void test_read_ok()
 {
-  // If we are in READ and we complete read
+  // If in READ and complete read
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::read), SBDRB);
   tf.step(); // 0
   assert_radio(radio_mode_t::read); // sanity
   tf.step(); // 1
-  // Then we should execute WRITE on the next cycle
+  // Then execute WRITE on the next cycle
   assert_radio(radio_mode_t::write);
   assert_qct(SBDWB);
   assert_fn_num(0);
@@ -228,13 +232,13 @@ void test_read_ok()
 
 void test_write_ok()
 {
-  // If we are in WRITE and we complete write
+  // If in WRITE and complete write
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::write), SBDWB);
   tf.step(); // 0
   tf.step(); // 1
   assert_radio(radio_mode_t::write); // sanity
   tf.step(); // 2
-  // Then we should execute TRANS on the next cycle
+  // Then execute TRANS on the next cycle
   assert_radio(radio_mode_t::transceive);
   assert_qct(SBDIX);
   assert_fn_num(0);
@@ -244,12 +248,12 @@ void test_write_ok()
 // Transcieve no network
 void test_transceive_ok_no_network()
 {
-  // If we are in TRANS and we complete trans but there is no network
+  // If in TRANS and complete trans but there is no network
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.step(); // 0
   tf.quake_manager->qct.quake.sbdix_r[0] = 32;
   tf.step(); // 1
-  // Then we should try again
+  // Then try again
   assert_radio(radio_mode_t::transceive);
   assert_qct(SBDIX);
   assert_fn_num(0);
@@ -257,13 +261,13 @@ void test_transceive_ok_no_network()
 
 void test_transceive_ok_no_network_timedout()
 {
-  // If we are in TRANS and we complete trans but there is no network and we out of cycles
+  // If in TRANS and complete trans but there is no network and out of cycles
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.cycle_no_fp->set(tf.cycle_no_fp->get() + tf.quake_manager->max_transceive_cycles - 1);
   tf.step(); // 0
   tf.quake_manager->qct.quake.sbdix_r[0] = 32;
   tf.step(); // 1
-  // Then we should transition to WAIT
+  // Then transition to WAIT
   assert_radio(radio_mode_t::wait);
   assert_qct(IDLE);
   assert_fn_num(0);
@@ -272,13 +276,13 @@ void test_transceive_ok_no_network_timedout()
 // Transcieve received MT msg
 void test_transceive_ok_with_mt()
 {
-  // If we are in TRANS and we complete trans and we have msg
+  // If in TRANS and complete trans and have msg
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.step(); // 0
   tf.quake_manager->qct.quake.sbdix_r[0] = 1;
   tf.quake_manager->qct.quake.sbdix_r[4] = 1;
   tf.step(); // 1
-  // Then we should transition to READ
+  // Then transition to READ
   assert_radio(radio_mode_t::read);
   assert_qct(SBDRB);
   assert_fn_num(0);
@@ -287,13 +291,13 @@ void test_transceive_ok_with_mt()
 // Transcieve no MT msg
 void test_transceive_ok_no_mt()
 {
-  // If we are in TRANS and we complete trans and we have msg
+  // If in TRANS and complete trans and have msg
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.step(); // 0
   tf.quake_manager->qct.quake.sbdix_r[0] = 2;
   tf.quake_manager->qct.quake.sbdix_r[4] = 0;
   tf.step(); // 1
-  // Then we should transition to WRITE to load the next msg
+  // Then transition to WRITE to load the next msg
   assert_radio(radio_mode_t::write);
   assert_qct(SBDWB);
   assert_fn_num(0);
@@ -304,14 +308,14 @@ void test_transceive_ok_no_mt()
 // ---------------------------------------------------------------------------
 void test_wrong_state()
 {
-  // If we are in a mismatched state
+  // If in a mismatched state
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), CONFIG);
   TEST_ASSERT_FALSE(tf.quake_manager->unexpectedFlag);
   tf.step();
-  // Then the error flag should be set and we should transition to WAIT
+  // Then the error flag should be set and transition to WAIT
   assert_radio(radio_mode_t::wait);
-  TEST_ASSERT_TRUE(tf.quake_manager->unexpectedFlag);
   assert_qct(IDLE);
+  TEST_ASSERT_TRUE(tf.quake_manager->unexpectedFlag);
 }
 
 // ---------------------------------------------------------------------------
@@ -348,10 +352,10 @@ void test_transition_radio_state()
 void test_no_more_cycles()
 {
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::config), CONFIG);
-  // If there are no more cycles, then we should transition to wait or config
+  // If there are no more cycles, then transition to wait or config
   tf.cycle_no_fp->set(initCycles + tf.quake_manager->max_config_cycles);
   tf.step();
-  // then we should reset the counter and transition
+  // then reset the counter and transition
   TEST_ASSERT_EQUAL(tf.quake_manager->last_checkin_cycle, 
     initCycles + tf.quake_manager->max_config_cycles + 1);
 }
@@ -396,7 +400,7 @@ void test_update_mo_same_snap()
   TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->qct.szMsg);
   tf.radio_mo_packet_fp->set(snap2); 
   tf.step(); // 1
-  tf.quake_manager->qct.quake.sbdix_r[4] = 0; // we have comms but no msg
+  tf.quake_manager->qct.quake.sbdix_r[4] = 0; // have comms but no msg
   tf.step(); // 2
   tf.radio_mo_packet_fp->set(snap2); 
   // Execute SBDIX
@@ -416,13 +420,13 @@ void test_update_mo_same_snap()
 
 void test_update_mo_reset_idx()
 {
-  // If we are writing the last piece of the snapshot
+  // If writing the last piece of the snapshot
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::write), SBDWB);
   tf.realSteps(3); // sbdwb 0, 1, 2
   tf.radio_mo_packet_fp->set(snap2);
   // Execute SBDIX
   TEST_ASSERT_EQUAL(SBDIX, tf.quake_manager->qct.get_current_state());
-  tf.quake_manager->mo_idx = 4; // pretend we are on the last snapshot
+  tf.quake_manager->mo_idx = 4; // pretend on the last snapshot
   tf.realSteps(2); // sbdix 0, 1
   TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->qct.szMsg);
 
@@ -443,9 +447,9 @@ void test_update_mo_reset_idx()
 
 void test_update_mo_load_new_snap()
 {
-  // If we have written the last piece of the first snapshot
+  // If have written the last piece of the first snapshot
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::write), SBDWB);
-  tf.quake_manager->mo_idx = 4; // pretend we are on the last snapshot
+  tf.quake_manager->mo_idx = 4; // pretend on the last snapshot
   // Execute SBDWB
   tf.realSteps(3);
   tf.radio_mo_packet_fp->set(snap2);
@@ -465,7 +469,7 @@ void test_valid_initialization()
 {
     // If QuakeManager has just been created
     TestFixture tf(static_cast<unsigned int>(radio_mode_t::wait), -1);
-    // then we should be in config state and unexpectedFlag should be false
+    // then be in config state and unexpectedFlag should be false
     assert_radio(radio_mode_t::config);
     assert_qct(CONFIG);
     assert_fn_num(0);
