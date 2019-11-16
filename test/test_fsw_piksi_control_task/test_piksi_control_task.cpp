@@ -24,15 +24,22 @@ void test_task_execute()
     std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
     std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
 
-
+    //returns a two, no relevant packets coming over line
     task.piksi.set_read_return(2);
     task.execute();
-    TEST_ASSERT_EQUAL(DATA_ERROR, task.get_current_state());
+    TEST_ASSERT_EQUAL(NO_FIX, task.get_current_state());
 
+    //as if we got a heartbeat packet but nothing else
     task.piksi.set_read_return(3);
     task.execute();
-    TEST_ASSERT_EQUAL(NO_DATA, task.get_current_state());
+    TEST_ASSERT_EQUAL(NO_FIX, task.get_current_state());
 
+    //assert we hit a time limit in read and early termination
+    task.piksi.set_read_return(5);
+    task.execute();
+    TEST_ASSERT_EQUAL(TIME_LIMIT, task.get_current_state());
+
+    //tests to make sure to error out if packets not synced to same tow
     unsigned int tow = 100;
     unsigned int bad_tow = 200;
     task.piksi.set_read_return(1);
@@ -45,6 +52,7 @@ void test_task_execute()
     //should error out because of time inconsistency
     TEST_ASSERT_EQUAL(SYNC_ERROR, task.get_current_state());
 
+    //insufficient nsats
     tow = 200;
     task.piksi.set_read_return(1);
     task.piksi.set_gps_time(tow);
@@ -56,6 +64,7 @@ void test_task_execute()
     //times agree, but insufficient nsat
     TEST_ASSERT_EQUAL(NSAT_ERROR, task.get_current_state());
     
+    //fixed RTK
     tow = 200;
     task.piksi.set_read_return(1);
     task.piksi.set_gps_time(tow);
@@ -67,6 +76,7 @@ void test_task_execute()
     //times should now agree, and be in baseline
     TEST_ASSERT_EQUAL(FIXED_RTK, task.get_current_state());
 
+    //float RTK
     tow = 200;
     task.piksi.set_read_return(1);
     task.piksi.set_gps_time(tow);
@@ -77,6 +87,17 @@ void test_task_execute()
     task.execute();
     //float rtk test
     TEST_ASSERT_EQUAL(FLOAT_RTK, task.get_current_state());
+
+    //SPP check
+    tow = 200;
+    task.piksi.set_read_return(0);
+    task.piksi.set_gps_time(tow);
+    task.piksi.set_pos_ecef(tow, pos, 4);
+    task.piksi.set_vel_ecef(tow, vel);
+    task.execute();
+    //float rtk test
+    TEST_ASSERT_EQUAL(SPP, task.get_current_state());
+
 
     
 }

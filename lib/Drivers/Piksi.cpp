@@ -1,6 +1,10 @@
 #include "Piksi.hpp"
 #include <cstring>
 
+#ifndef DESKTOP
+#include <Arduino.h>
+#endif
+
 using namespace Devices;
 //using namespace std;
 
@@ -266,7 +270,7 @@ unsigned char Piksi::process_buffer_msg_len() {
 unsigned char Piksi::read_all() {
     #ifdef DESKTOP
     return _read_return;
-    #endif
+    #else
     
     _gps_time_update = false;
     _pos_ecef_update = false;
@@ -274,10 +278,17 @@ unsigned char Piksi::read_all() {
     _baseline_ecef_update = false;
     _heartbeat_update = false;
 
+    int initial_time = micros();
+
     if(bytes_available()){
-        while(bytes_available()){
+        while(bytes_available() && (micros() - initial_time < 900)){
             process_buffer();
         }
+        if(micros()-initial_time >= 900){
+            clear_bytes();
+            return 5;
+        }
+  
         if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && !_baseline_ecef_update)
             return 0;
         else if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && _baseline_ecef_update)
@@ -292,6 +303,7 @@ unsigned char Piksi::read_all() {
     else
         //no bytes return condition
         return 4;
+    #endif
 }
 
 void Piksi::read_all_order(std::array<int, 12> *out) {
