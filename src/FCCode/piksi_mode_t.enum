@@ -10,7 +10,12 @@ enum class piksi_mode_t {
   
   SYNC_ERROR,     // CONFIG
   NSAT_ERROR,
+
+  CRC_ERROR,
+  TIME_LIMIT_ERROR,
   DATA_ERROR,     // Unexpected data, but otherwise good packet, ex weird flag
+
+  DEAD
 
   // static constexpr int SPP = 0;
   // static constexpr int FIXED_RTK = 1;

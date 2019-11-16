@@ -5,6 +5,8 @@
 #include <string>
 #include <GPSTime.hpp>
 
+#include "piksi_mode_t.enum"
+
 /**
  * Piksi / Piksi Control Task States
  */
@@ -89,7 +91,7 @@ protected:
 
 private:
 
-  int currentState; // the state of the Piksi
+  piksi_mode_t currentState; // the state of the Piksi
 
   // the number of cycles since a successful / meaningful read operation
   unsigned int since_good_cycles = 0;

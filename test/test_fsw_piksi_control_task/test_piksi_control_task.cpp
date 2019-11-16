@@ -6,6 +6,9 @@
 #include <chrono>
 #include <ctime>
 
+#include "../../src/FCCode/piksi_mode_t.enum"
+//#include <piksi_mode_t.enum>
+
 using namespace Devices;
 
 void test_task_initialization()
@@ -20,17 +23,17 @@ void test_read_errors(){
     //returns a two, no relevant packets coming over line
     task.piksi.set_read_return(2);
     task.execute();
-    TEST_ASSERT_EQUAL(NO_FIX, task.get_current_state());
+    TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, task.get_current_state());
 
-    //as if we got a heartbeat packet but nothing else
+    //crc error return
     task.piksi.set_read_return(3);
     task.execute();
-    TEST_ASSERT_EQUAL(NO_FIX, task.get_current_state());
+    TEST_ASSERT_EQUAL(piksi_mode_t::CRC_ERROR, task.get_current_state());
 
     //assert we hit a time limit in read and early termination
     task.piksi.set_read_return(5);
     task.execute();
-    TEST_ASSERT_EQUAL(TIME_LIMIT, task.get_current_state());
+    TEST_ASSERT_EQUAL(piksi_mode_t::TIME_LIMIT_ERROR, task.get_current_state());
 }
 void test_task_execute()
 {

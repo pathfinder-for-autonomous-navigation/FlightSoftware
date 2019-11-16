@@ -1,4 +1,5 @@
 #include "PiksiControlTask.hpp"
+#include "piksi_mode_t.enum"
 
 using namespace Devices;
 
@@ -30,15 +31,18 @@ int PiksiControlTask::get_current_state() const
 void PiksiControlTask::execute()
 {  
   int read_out = piksi.read_all();
-
-  if(read_out == 4 || read_out == 2 || read_out == 5)
+  
+  //4 means no bytes
+  //3 means CRC error on serial
+  //5 means timing error exceed
+  if(read_out == 4 || read_out == 3 || read_out == 5)
     since_good_cycles += 1;
   else 
     since_good_cycles = 0;
   
-  //if we haven't had a heartbeat or good reading in ~120 seconds we probably dead
+  //if we haven't had a good reading in ~120 seconds we probably dead
   if(since_good_cycles > 1000){
-    currentState = DEAD;
+    currentState = piksi_mode_t::DEAD;
     currentState_f.set(DEAD);
     //prevent rollover lmao
     since_good_cycles = 1001;
@@ -56,7 +60,7 @@ void PiksiControlTask::execute()
     currentState_f.set(NO_DATA);
     return;
   }
-  else if(read_out == 2 || read_out == 3){
+  else if(read_out == 2){
     currentState = NO_FIX;
     currentState_f.set(NO_FIX);
     return;
