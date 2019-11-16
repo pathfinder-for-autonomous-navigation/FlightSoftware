@@ -276,13 +276,15 @@ unsigned char Piksi::read_all() {
     _pos_ecef_update = false;
     _vel_ecef_update = false;
     _baseline_ecef_update = false;
-    _heartbeat_update = false;
 
     int initial_time = micros();
 
     if(bytes_available()){
+        bool crc_error = false;
         while(bytes_available() && (micros() - initial_time < 900)){
-            process_buffer();
+            int p_b_return = process_buffer();
+            if(p_b_return < 0)
+                crc_error = true;
         }
         if(micros()-initial_time >= 900){
             clear_bytes();
@@ -293,7 +295,7 @@ unsigned char Piksi::read_all() {
             return 0;
         else if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && _baseline_ecef_update)
             return 1;
-        else if(_heartbeat_update)
+        else if(crc_error)
             return 3;
         else
             //error condition, perhaps serial data bad
