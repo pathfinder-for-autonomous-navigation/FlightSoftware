@@ -1,16 +1,16 @@
 #ifndef DEBUG_TASK_HPP_
 #define DEBUG_TASK_HPP_
 
-#include <ControlTask.hpp>
+#include <TimedControlTask.hpp>
 
-class DebugTask : public ControlTask<void> {
+class DebugTask : public TimedControlTask<void> {
    public:
     /**
      * @brief Construct a new Debug Task object
      * 
      * @param registry 
      */
-    DebugTask(StateFieldRegistry& registry);
+    DebugTask(StateFieldRegistry& registry, unsigned int offset);
 
     /**
      * @brief Runs the debug task (processes state field commands present in the serial buffer.)

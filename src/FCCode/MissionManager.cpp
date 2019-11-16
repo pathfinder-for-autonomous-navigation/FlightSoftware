@@ -1,23 +1,29 @@
 #include "MissionManager.hpp"
 
-MissionManager::MissionManager(StateFieldRegistry& registry) : ControlTask<void>(registry),
-    mission_mode_sr(0, 10, 4),
+MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
+    TimedControlTask<void>(registry, offset),
+    mission_mode_sr(10),
     mission_mode_f("pan.mode", mission_mode_sr),
     is_deployed_sr(),
     is_deployed_f("pan.deployed", is_deployed_sr),
-    sat_designation_sr(0, 2, 2),
+    sat_designation_sr(2),
     sat_designation_f("pan.sat_designation", sat_designation_sr)
 {
     control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 
     add_writable_field(mission_mode_f);
     add_readable_field(is_deployed_f);
-    add_readable_field(sat_designation_f);
+    add_writable_field(sat_designation_f);
 
-    adcs_mode_fp = find_writable_field<unsigned int>("adcs.mode", __FILE__, __LINE__);
+    adcs_mode_fp = find_writable_field<unsigned char>("adcs.mode", __FILE__, __LINE__);
     adcs_cmd_attitude_fp = find_writable_field<f_quat_t>("adcs.cmd_attitude", __FILE__, __LINE__);
     adcs_ang_rate_fp = find_readable_field<float>("adcs.ang_rate", __FILE__, __LINE__);
     adcs_min_stable_ang_rate_fp = find_writable_field<float>("adcs.min_stable_ang_rate", __FILE__, __LINE__);
+
+    assert(adcs_mode_fp);
+    assert(adcs_cmd_attitude_fp);
+    assert(adcs_ang_rate_fp);
+    assert(adcs_min_stable_ang_rate_fp);
 
     // TODO change to startup.
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::detumble));
@@ -80,7 +86,7 @@ void MissionManager::dispatch_detumble() {
     if (adcs_ang_rate_fp->get() <= adcs_min_stable_ang_rate_fp->get())
     {
         adcs_cmd_attitude_fp->set({2,2,2,2}); // TODO fix to a good value
-        adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::pointing));
+        adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::point_standby));
         mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::standby));
     }
 }

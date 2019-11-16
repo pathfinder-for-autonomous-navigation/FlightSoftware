@@ -1,15 +1,15 @@
 #ifndef MISSION_MANAGER_HPP_
 #define MISSION_MANAGER_HPP_
 
-#include <ControlTask.hpp>
+#include <TimedControlTask.hpp>
 
 #include "mission_mode_t.enum"
 #include "adcs_mode_t.enum"
 #include "satellite_designation_t.enum"
 
-class MissionManager : public ControlTask<void> {
+class MissionManager : public TimedControlTask<void> {
    public:
-    MissionManager(StateFieldRegistry& registry);
+    MissionManager(StateFieldRegistry& registry, unsigned int offset);
     void execute() override;
 
    protected:
@@ -30,30 +30,30 @@ class MissionManager : public ControlTask<void> {
     /**
      * @brief Mode of ADCS system.
      **/
-    std::shared_ptr<WritableStateField<unsigned int>> adcs_mode_fp;
+    WritableStateField<unsigned char>* adcs_mode_fp;
     /**
      * @brief Currently commanded attitude of ADCS system.
      **/
-    std::shared_ptr<WritableStateField<f_quat_t>> adcs_cmd_attitude_fp;
+    WritableStateField<f_quat_t>* adcs_cmd_attitude_fp;
     /**
      * @brief Current angular rate of ADCS system in the body frame.
      **/
-    std::shared_ptr<ReadableStateField<float>> adcs_ang_rate_fp;
+    ReadableStateField<float>* adcs_ang_rate_fp;
     /**
      * @brief Minimum angular rate of ADCS system that can be considered "stable".
      **/
-    std::shared_ptr<WritableStateField<float>> adcs_min_stable_ang_rate_fp;
+    WritableStateField<float>* adcs_min_stable_ang_rate_fp;
 
     // Fields that control overall mission state.
     /**
      * @brief Control cycle count, provided by ClockManager.
      */
-    std::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
+    ReadableStateField<unsigned int>* control_cycle_count_fp;
     /**
      * @brief Current mission mode (see mission_mode_t.enum)
      */
-    Serializer<unsigned int> mission_mode_sr;
-    WritableStateField<unsigned int> mission_mode_f;
+    Serializer<unsigned char> mission_mode_sr;
+    WritableStateField<unsigned char> mission_mode_f;
     /**
      * @brief True if the satellite has exited the deployment timing phase.
      */
@@ -64,8 +64,8 @@ class MissionManager : public ControlTask<void> {
      * satellite is the leader satellite. 0 if the follower/leader designation
      * hasn't been made yet.
      */
-    Serializer<unsigned int> sat_designation_sr;
-    ReadableStateField<unsigned int> sat_designation_f;
+    Serializer<unsigned char> sat_designation_sr;
+    WritableStateField<unsigned char> sat_designation_f;
     
 };
 

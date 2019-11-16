@@ -17,12 +17,6 @@ typedef struct sbdix_r {
     int MT_queued;
 } sbdix_r_t;
 
-// SBDWB command response statuses
-int WRITE_OK = 0;       // message succesfully written to Quake
-int WRITE_TIMEOUT = 1;  // insufficent number of bytes transferred in 60 seconds
-int BAD_CHECKSUM = 2;   // checksum doesn't match ISU calculated checksum
-int WRONG_LENGTH = 3;   // message size not corect
-
 // MT response statuses
 const int MT_NO_MSG = 0;
 const int MT_MSG_RECV = 1;
@@ -39,6 +33,4 @@ void setUp(void) {
 }
 
 void tearDown(void) {
-    // should clear buffers and restore settings
-    q.config();
 }

@@ -42,31 +42,45 @@ class ControlTask : protected debug_console {
     StateFieldRegistry& _registry;
 
     template<typename U>
-    bool add_readable_field(ReadableStateField<U> field) {
+    bool add_internal_field(InternalStateField<U>& field) {
+        return _registry.add_internal_field(field.ptr());
+    }
+
+    template<typename U>
+    bool add_readable_field(ReadableStateField<U>& field) {
         return _registry.add_readable_field(field.ptr());
     }
 
     template<typename U>
-    bool add_writable_field(WritableStateField<U> field) {
+    bool add_writable_field(WritableStateField<U>& field) {
         return _registry.add_writable_field(field.ptr());
     }
 
     template<typename U>
-    std::shared_ptr<ReadableStateField<U>> find_readable_field(const char* field, const char* file, const unsigned int line) {
-        auto field_ptr = std::static_pointer_cast<ReadableStateField<U>>(_registry.find_readable_field(field));
+    InternalStateField<U>* find_internal_field(const char* field, const char* file, const unsigned int line) {
+        auto field_ptr = _registry.find_internal_field(field);
         if (!field_ptr) { 
-            printf(debug_severity::error, "%s:%d: Readable field required is not present in state registry: %s\n", file, line, field);
+            printf(debug_severity::error, "%s:%d: Internal field required is not present in state registry: %s\n", file, line, field);
         }
-        return field_ptr;
+        return static_cast<InternalStateField<U>*>(field_ptr);
     }
 
     template<typename U>
-    std::shared_ptr<WritableStateField<U>> find_writable_field(const char* field, const char* file, const unsigned int line) {
-        auto field_ptr = std::static_pointer_cast<WritableStateField<U>>(_registry.find_writable_field(field));
+    ReadableStateField<U>* find_readable_field(const char* field, const char* file, const unsigned int line) {
+        auto field_ptr = _registry.find_readable_field(field);
+        if (!field_ptr) { 
+            printf(debug_severity::error, "%s:%d: Readable field required is not present in state registry: %s\n", file, line, field);
+        }
+        return static_cast<ReadableStateField<U>*>(field_ptr);
+    }
+
+    template<typename U>
+    WritableStateField<U>* find_writable_field(const char* field, const char* file, const unsigned int line) {
+        auto field_ptr = _registry.find_writable_field(field);
         if (!field_ptr) { 
             printf(debug_severity::error, "%s:%d: Writable field required is not present in state registry: %s\n", file, line, field);
         }
-        return field_ptr;
+        return static_cast<WritableStateField<U>*>(field_ptr);
     }
 };
 

@@ -1,4 +1,3 @@
-#ifndef DESKTOP
 /** @file I2CDevice.cpp
  * @author Tanishq Aggarwal
  * @author Kyle Krol
@@ -7,7 +6,7 @@
  * the access
  * and control of I2C-based hardware peripherals.
  */
-
+#ifndef DESKTOP
 #include "I2CDevice.hpp"
 
 using namespace Devices;
