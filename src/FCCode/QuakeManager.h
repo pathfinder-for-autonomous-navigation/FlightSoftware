@@ -55,7 +55,7 @@ class QuakeManager : public TimedControlTask<bool> {
     /**
      * @brief Current radio mode (see radio_mode_t.enum), provided by
      **/
-    InternalStateField<unsigned int> radio_mode_f;
+    radio_mode_t radio_mode_f;
 
   // private:
     QuakeControlTask qct;
@@ -72,7 +72,7 @@ class QuakeManager : public TimedControlTask<bool> {
      * printf notice, 
      * Return true if there are no more control cycles, false otherwise
      */
-    bool no_more_cycles(size_t max_cycles, unsigned int new_state);
+    bool no_more_cycles(size_t max_cycles, radio_mode_t new_state);
 
     /**
      * Transition the radio into the new state
@@ -80,7 +80,7 @@ class QuakeManager : public TimedControlTask<bool> {
      * Precondition: new_state is one of the defined states
      * Postcondition: radio_state_f == new_state, last_checkin_cycle = now
      */ 
-    void transition_radio_state(unsigned int new_state);
+    void transition_radio_state(radio_mode_t new_state);
 
     /**
      * If we have written the entire snapshot, load the next snapshot

@@ -7,12 +7,12 @@
 
 // Check that state x matches the current state of the QuakeControlTask
 #define assert_qct(x) {\
-  TEST_ASSERT_EQUAL(x, static_cast<unsigned int>(tf.quake_manager->qct.get_current_state()));\
+  TEST_ASSERT_EQUAL(x, tf.quake_manager->qct.get_current_state());\
   }
 
 // Check that radio state x matches the current radio state
 #define assert_radio(x) {\
-  TEST_ASSERT_EQUAL(x, tf.radio_mode_fp->get());\
+  TEST_ASSERT_EQUAL(x, tf.quake_manager->radio_mode_f);\
 }
 
 // Check that x matches the current fn number
@@ -48,7 +48,6 @@ class TestFixture {
     std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
     std::shared_ptr<InternalStateField<int>> radio_err_fp;
     std::shared_ptr<InternalStateField<unsigned int>> snapshot_size_fp;
-    InternalStateField<unsigned int>* radio_mode_fp;
     // Quake has no output state fields since it is created after downlink producer
 
     std::unique_ptr<QuakeManager> quake_manager;
@@ -62,8 +61,6 @@ class TestFixture {
         radio_mt_packet_fp = registry.create_internal_field<char*>("downlink_producer.mt_ptr");
         radio_err_fp = registry.create_internal_field<int>("downlink_producer.radio_err_ptr");
 
-        radio_mode_fp = registry.find_internal_field_t<unsigned int>("radio.mode");
-
         // Initialize external fields
         snapshot_size_fp->set(static_cast<int>(350));
         radio_mo_packet_fp->set(snap1);
@@ -76,7 +73,7 @@ class TestFixture {
         if (qct_state != -1)
         {
           quake_manager->qct.currentState = qct_state;
-          radio_mode_fp->set(radio_mode); 
+          quake_manager->radio_mode_f = static_cast<radio_mode_t>(radio_mode); 
         }
     }
   // Make a step in the world
@@ -346,7 +343,7 @@ void test_transition_radio_state()
   // If I call transition radio state
   tf.step();
   TEST_ASSERT_EQUAL(0, tf.quake_manager->last_checkin_cycle);
-  tf.quake_manager->transition_radio_state(static_cast<unsigned int>(radio_mode_t::config));
+  tf.quake_manager->transition_radio_state(radio_mode_t::config);
   // Then my cycles should be updated
   assert_radio(static_cast<unsigned int>(radio_mode_t::config));
   TEST_ASSERT_EQUAL(1, tf.quake_manager->last_checkin_cycle);
@@ -437,13 +434,13 @@ void test_update_mo_load_new_snap()
 void test_valid_initialization() 
 {
     // If QuakeManager has just been created
-    // TestFixture tf(static_cast<unsigned int>(radio_mode_t::wait), -1);
-    // // then we should be in config state and unexpectedFlag should be false
-    // assert_radio(radio_mode_t::config);
-    // assert_qct(CONFIG);
-    // assert_fn_num(0);
-    // TEST_ASSERT_EQUAL(0, tf.quake_manager->mo_idx);
-    // TEST_ASSERT_FALSE(tf.quake_manager->unexpectedFlag);
+    TestFixture tf(static_cast<unsigned int>(radio_mode_t::wait), -1);
+    // then we should be in config state and unexpectedFlag should be false
+    assert_radio(radio_mode_t::config);
+    assert_qct(CONFIG);
+    assert_fn_num(0);
+    TEST_ASSERT_EQUAL(0, tf.quake_manager->mo_idx);
+    TEST_ASSERT_FALSE(tf.quake_manager->unexpectedFlag);
 }
 
 void test_dispatch_manual()
@@ -453,31 +450,31 @@ void test_dispatch_manual()
 
 int test_mission_manager() {
     UNITY_BEGIN();
-    // RUN_TEST(test_wait_unexpected);
-    // RUN_TEST(test_config_unexpected);
-    // RUN_TEST(test_read_unexpected);
-    // RUN_TEST(test_write_unexpected);
-    // RUN_TEST(test_trans_unexpected);
-    // RUN_TEST(test_wait_no_more_cycles);
-    // RUN_TEST(test_config_no_more_cycles);
-    // RUN_TEST(test_read_no_more_cycles);
-    // RUN_TEST(test_write_no_more_cycles);
-    // RUN_TEST(test_trans_no_more_cycles);
-    // RUN_TEST(test_config_ok);
-    // RUN_TEST(test_read_ok);
-    // RUN_TEST(test_write_ok);
-    // RUN_TEST(test_transceive_ok_no_network);
-    // RUN_TEST(test_transceive_ok_no_network_timedout);
-    // RUN_TEST(test_transceive_ok_with_mt);
-    // RUN_TEST(test_transceive_ok_no_mt);
-    // RUN_TEST(test_wrong_state);
-    // RUN_TEST(test_oldcycles_do_not_change);
-    // RUN_TEST(test_transition_radio_state);
-    // RUN_TEST(test_write_load_message);
-    // RUN_TEST(test_update_mo_same_snap);
-    // RUN_TEST(test_update_mo_reset_idx);
-    // RUN_TEST(test_update_mo_load_new_snap);
-     RUN_TEST(test_valid_initialization);
+    RUN_TEST(test_wait_unexpected);
+    RUN_TEST(test_config_unexpected);
+    RUN_TEST(test_read_unexpected);
+    RUN_TEST(test_write_unexpected);
+    RUN_TEST(test_trans_unexpected);
+    RUN_TEST(test_wait_no_more_cycles);
+    RUN_TEST(test_config_no_more_cycles);
+    RUN_TEST(test_read_no_more_cycles);
+    RUN_TEST(test_write_no_more_cycles);
+    RUN_TEST(test_trans_no_more_cycles);
+    RUN_TEST(test_config_ok);
+    RUN_TEST(test_read_ok);
+    RUN_TEST(test_write_ok);
+    RUN_TEST(test_transceive_ok_no_network);
+    RUN_TEST(test_transceive_ok_no_network_timedout);
+    RUN_TEST(test_transceive_ok_with_mt);
+    RUN_TEST(test_transceive_ok_no_mt);
+    RUN_TEST(test_wrong_state);
+    RUN_TEST(test_oldcycles_do_not_change);
+    RUN_TEST(test_transition_radio_state);
+    RUN_TEST(test_write_load_message);
+    RUN_TEST(test_update_mo_same_snap);
+    RUN_TEST(test_update_mo_reset_idx);
+    RUN_TEST(test_update_mo_load_new_snap);
+    RUN_TEST(test_valid_initialization);
     // RUN_TEST(test_dispatch_manual);
     return UNITY_END();
 }
