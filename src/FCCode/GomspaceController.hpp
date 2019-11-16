@@ -3,9 +3,8 @@
 #ifndef GOMSPACE_CONTROLLER_HPP_
 #define GOMSPACE_CONTROLLER_HPP_
 
-#include "../../test/StateFieldRegistryMock.hpp"
 #include <TimedControlTask.hpp>
-#include "../../lib/Drivers/Gomspace.hpp"
+#include <Gomspace.hpp>
 
 class GomspaceController : public TimedControlTask<void> {
    public:

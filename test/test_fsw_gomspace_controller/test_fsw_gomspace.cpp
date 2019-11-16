@@ -6,7 +6,7 @@
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
-    Devices::Gomspace gs();
+    Devices::Gomspace gs;
 
     std::unique_ptr<GomspaceController> gs_controller;
 
