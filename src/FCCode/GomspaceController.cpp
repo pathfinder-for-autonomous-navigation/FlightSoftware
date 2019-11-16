@@ -7,14 +7,14 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     vboost2_sr(0,10,10), vboost2_f("gomspace.vboost.output2", vboost2_sr),
     vboost3_sr(0,10,10), vboost3_f("gomspace.vboost.output3", vboost3_sr),
 
-    vbatt_sr(0,10,10), vbatt_f("gomspace.vbat", vbatt_sr),
+    vbatt_sr(0,10,10), vbatt_f("gomspace.vbatt", vbatt_sr),
 
     curin1_sr(0,10,10), curin1_f("gomspace.curin.output1", curin1_sr),
     curin2_sr(0,10,10), curin2_f("gomspace.curin.output2", curin2_sr),
     curin3_sr(0,10,10), curin3_f("gomspace.curin.output3", curin3_sr),
 
     cursun_sr(0,10,10), cursun_f("gomspace.cursun", cursun_sr),
-    
+
     cursys_sr(0,10,10), cursys_f("gomspace.cursys", cursys_sr),
 
     reserved1_sr(0,10,10), reserved1_f("gomspace.reserved1", reserved1_sr),
@@ -76,12 +76,12 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
     counter_boot_sr(0,10,10), counter_boot_f("gomspace.counter_boot", counter_boot_sr),
 
-    temp1_sr(0,10,10), temp1_f("gomspace.counter_boot.output1", temp1_sr),
-    temp2_sr(0,10,10), temp2_f("gomspace.counter_boot.output2", temp2_sr),
-    temp3_sr(0,10,10), temp3_f("gomspace.counter_boot.output3", temp3_sr),
-    temp4_sr(0,10,10), temp4_f("gomspace.counter_boot.output4", temp4_sr),
-    temp5_sr(0,10,10), temp5_f("gomspace.counter_boot.output5", temp5_sr),
-    temp6_sr(0,10,10), temp6_f("gomspace.counter_boot.output6", temp6_sr),
+    temp1_sr(0,10,10), temp1_f("gomspace.temp.output1", temp1_sr),
+    temp2_sr(0,10,10), temp2_f("gomspace.temp.output2", temp2_sr),
+    temp3_sr(0,10,10), temp3_f("gomspace.temp.output3", temp3_sr),
+    temp4_sr(0,10,10), temp4_f("gomspace.temp.output4", temp4_sr),
+    temp5_sr(0,10,10), temp5_f("gomspace.temp.output5", temp5_sr),
+    temp6_sr(0,10,10), temp6_f("gomspace.temp.output6", temp6_sr),
 
     bootcause_sr(0,10,10), bootcause_f("gomspace.bootcause", bootcause_sr),
 
