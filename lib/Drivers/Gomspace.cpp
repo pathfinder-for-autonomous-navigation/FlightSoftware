@@ -1,5 +1,6 @@
 #include "Gomspace.hpp"
 #include "../Devices/I2CDevice.hpp"
+#include <cstring>
 
 // Builtins provided by GCC for endian flipping.
 #define __bswap_16(x) ((unsigned short int)__builtin_bswap16(x))
