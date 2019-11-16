@@ -95,7 +95,6 @@ class Piksi {
      * 1 if buffer already has parts of multiple bursts of data, or an incomplete burst
      * 2 if buffer is interrupted with new data
      */
-    virtual unsigned char read_buffer();
 
     virtual unsigned char read_all();
     /*
@@ -106,9 +105,6 @@ class Piksi {
     base
     */
     virtual void read_all_order(std::array<int, 12>* out);
-
-    virtual unsigned char read_buffer_exp();
-
 
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/

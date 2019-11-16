@@ -25,10 +25,7 @@ int PiksiControlTask::get_current_state() const
 }
 
 void PiksiControlTask::execute()
-{
-  // TODO: allow any state to ignore state and call CONFIG, remember to reset fnSeqNum
-  
-  //if successfully read data
+{  
   int read_out = piksi.read_all();
 
   if(read_out == 4 || read_out == 2 || read_out == 5)
