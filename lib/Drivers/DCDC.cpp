@@ -1,4 +1,4 @@
-#ifndef DESKTOP
+
 #include "DCDC.hpp"
 #ifndef DESKTOP
 #include "Arduino.h"
@@ -58,4 +58,3 @@ void DCDC::reset() {
     enable_adcs();
     #endif
 }
-#endif
