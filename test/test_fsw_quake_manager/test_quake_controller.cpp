@@ -7,21 +7,13 @@ using namespace Devices;
 void test_task_initialization()
 {
   StateFieldRegistry registry;
-<<<<<<< HEAD
-  QuakeControlTask task(registry);
-=======
   QuakeControlTask task(registry, 0);
->>>>>>> 83a0bc080b1e6b14550a7b241c40e761cac85b7c
 }
 
 void test_task_execute()
 {
   StateFieldRegistry registry;
-<<<<<<< HEAD
-  QuakeControlTask task(registry);
-=======
   QuakeControlTask task(registry, 0);
->>>>>>> 83a0bc080b1e6b14550a7b241c40e761cac85b7c
   // Check that things are initialized correctly
   TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
