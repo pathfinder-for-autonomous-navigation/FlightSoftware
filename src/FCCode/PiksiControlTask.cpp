@@ -23,7 +23,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<v
   add_readable_field(time_f);
 }
 
-int PiksiControlTask::get_current_state() const
+piksi_mode_t PiksiControlTask::get_current_state() const
 {
   return currentState;
 }
@@ -42,7 +42,7 @@ void PiksiControlTask::execute()
   
   //if we haven't had a good reading in ~120 seconds we probably dead
   if(since_good_cycles > 1000){
-    currentState = piksi_mode_t::DEAD;
+    //currentState =piksi_mode_t::DEAD;
     currentState_f.set(DEAD);
     //prevent rollover lmao
     since_good_cycles = 1001;
@@ -50,19 +50,22 @@ void PiksiControlTask::execute()
   }
 
   if(read_out == 5){
-    currentState = TIME_LIMIT;
+    //currentState =TIME_LIMIT;
     currentState_f.set(TIME_LIMIT);
     return;
   }
 
   if(read_out == 4){
-    currentState = NO_DATA;
+    ////currentState =NO_DATA;
     currentState_f.set(NO_DATA);
     return;
   }
   else if(read_out == 2){
-    currentState = NO_FIX;
-    currentState_f.set(NO_FIX);
+    ////currentState =NO_FIX;
+    //currentState_f.set(NO_FIX);
+    currentState = piksi_mode_t::NO_FIX;
+    currentState_f.set(static_cast<int>(piksi_mode_t::NO_FIX));
+
     return;
 
   }
@@ -85,34 +88,34 @@ void PiksiControlTask::execute()
     if(!check_time){
       //error caused by times not matching up
       //indicitave of packet being split
-      currentState = SYNC_ERROR;
+      ////currentState =SYNC_ERROR;
       currentState_f.set(SYNC_ERROR);
       return;
     }
 
     int nsats = piksi.get_pos_ecef_nsats();
     if(nsats < 4){
-      currentState = NSAT_ERROR;
+      //currentState =NSAT_ERROR;
       currentState_f.set(NSAT_ERROR);
       return;
     }
 
     if(read_out == 0) {
-      currentState = SPP;
+      //currentState =SPP;
       currentState_f.set(SPP);
     }
     if(read_out == 1){
       int baseline_flag = piksi.get_baseline_ecef_flags();
       if(baseline_flag == 1){
-        currentState = FIXED_RTK;
+        //currentState =FIXED_RTK;
         currentState_f.set(FIXED_RTK);
       }
       else if(baseline_flag == 0){
-        currentState = FLOAT_RTK;
+        //currentState =FLOAT_RTK;
         currentState_f.set(FLOAT_RTK);
       }
       else{
-        currentState = DATA_ERROR;
+        //currentState =DATA_ERROR;
         currentState_f.set(DATA_ERROR);
         return;
       }
@@ -129,7 +132,9 @@ void PiksiControlTask::execute()
 
   }
   //if read_out is unexpected value which it shouldn't lol
-  else
-    currentState = DATA_ERROR;
+  else{
+    //currentState =DATA_ERROR;
+    return;
+  }
 
 }

@@ -42,7 +42,7 @@ public:
   void execute();
 
   /** Returns the current state of the Piksi */
-  int get_current_state() const;
+  piksi_mode_t get_current_state() const;
 
 protected:
   #ifndef DESKTOP
