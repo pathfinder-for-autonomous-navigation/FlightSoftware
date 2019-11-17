@@ -3,10 +3,8 @@
 #include <cstring>
 
 // Builtins provided by GCC for endian flipping.
-#ifndef DESKTOP
 #define __bswap_16(x) ((unsigned short int)__builtin_bswap16(x))
 #define __bswap_32(x) ((unsigned int)__builtin_bswap32(x))
-#endif
 
 using namespace Devices;
 
@@ -188,7 +186,9 @@ bool Gomspace::set_single_output(unsigned char channel, unsigned char value, sho
     if (channel > 5) return false;  // Disallow turning on heater with this command.
     if (value > 1) return false;    // Precondition check to avoid radiation bit flips
     // All values must be sent in big-endian order!
+    #ifndef DESKTOP
     delay = __bswap_16(delay);
+    #endif
 
     unsigned char PORT_BYTE = 0x0A;
     unsigned char command[5] = {PORT_BYTE, channel, value, (unsigned char)(delay >> 8),
@@ -203,9 +203,11 @@ bool Gomspace::set_single_output(unsigned char channel, unsigned char value, sho
 bool Gomspace::set_pv_volt(unsigned short int voltage1, unsigned short int voltage2,
                            unsigned short int voltage3) {
     // All values must be sent in big-endian order!
+    #ifndef DESKTOP
     voltage1 = __bswap_16(voltage1);
     voltage2 = __bswap_16(voltage2);
     voltage3 = __bswap_16(voltage3);
+    #endif
 
     unsigned char PORT_BYTE = 0x0B;
     unsigned char command[7] = {PORT_BYTE,
@@ -479,6 +481,7 @@ bool Gomspace::_check_for_error(unsigned char port_byte) {
 }
 
 void Gomspace::_hk_vi_endian_flip() {
+    #ifndef DESKTOP
     for (unsigned char i = 0; i < 3; i++) {
         hk_vi->vboost[i] = __bswap_16(hk_vi->vboost[i]);
         hk_vi->curin[i] = __bswap_16(hk_vi->curin[i]);
@@ -486,9 +489,11 @@ void Gomspace::_hk_vi_endian_flip() {
     hk_vi->vbatt = __bswap_16(hk_vi->vbatt);
     hk_vi->cursun = __bswap_16(hk_vi->cursun);
     hk_vi->cursys = __bswap_16(hk_vi->cursys);
+    #endif
 }
 
 void Gomspace::_hk_out_endian_flip() {
+    #ifndef DESKTOP
     for (unsigned char i = 0; i < 6; i++) {
         hk_out->curout[i] = __bswap_16(hk_out->curout[i]);
         hk_out->latchup[i] = __bswap_16(hk_out->latchup[i]);
@@ -497,20 +502,25 @@ void Gomspace::_hk_out_endian_flip() {
         hk_out->output_on_delta[i] = __bswap_16(hk_out->output_on_delta[i]);
         hk_out->output_off_delta[i] = __bswap_16(hk_out->output_off_delta[i]);
     }
+    #endif
 }
 
 void Gomspace::_hk_wdt_endian_flip() {
+    #ifndef DESKTOP
     hk_wdt->wdt_i2c_time_left = __bswap_32(hk_wdt->wdt_i2c_time_left);
     hk_wdt->wdt_gnd_time_left = __bswap_32(hk_wdt->wdt_gnd_time_left);
     hk_wdt->counter_wdt_i2c = __bswap_32(hk_wdt->counter_wdt_i2c);
     hk_wdt->counter_wdt_gnd = __bswap_32(hk_wdt->counter_wdt_gnd);
     hk_wdt->counter_wdt_csp[0] = __bswap_32(hk_wdt->counter_wdt_csp[0]);
     hk_wdt->counter_wdt_csp[1] = __bswap_32(hk_wdt->counter_wdt_csp[1]);
+    #endif
 }
 
 void Gomspace::_hk_basic_endian_flip() {
+    #ifndef DESKTOP
     for (unsigned char i = 0; i < 6; i++) {
         hk_basic->temp[i] = __bswap_16(hk_basic->temp[i]);
     }
     hk_basic->counter_boot = __bswap_16(hk_basic->counter_boot);
+    #endif
 }
