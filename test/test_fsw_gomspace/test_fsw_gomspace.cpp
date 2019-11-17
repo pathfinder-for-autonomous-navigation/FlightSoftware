@@ -16,7 +16,7 @@ class TestFixture {
         9,
         10,
         {11,12,13,14,15,16},
-        {17,18,19,20,21,22,23,24},
+        {true, false, true, false, true, false, true, false},
         {25,26,27,28,29,30,31,32},
         {33,34,35,36,37,38,39,40},
         {41,42,43,44,45,46},
@@ -53,8 +53,6 @@ class TestFixture {
 
     ReadableStateField<unsigned int>* cursys_fp;
 
-    ReadableStateField<unsigned int>* reserved1_fp;
-
     ReadableStateField<unsigned int>* curout1_fp;
     ReadableStateField<unsigned int>* curout2_fp;
     ReadableStateField<unsigned int>* curout3_fp;
@@ -62,46 +60,16 @@ class TestFixture {
     ReadableStateField<unsigned int>* curout5_fp;
     ReadableStateField<unsigned int>* curout6_fp;
 
-    ReadableStateField<unsigned int>* output1_fp;
-    ReadableStateField<unsigned int>* output2_fp;
-    ReadableStateField<unsigned int>* output3_fp;
-    ReadableStateField<unsigned int>* output4_fp;
-    ReadableStateField<unsigned int>* output5_fp;
-    ReadableStateField<unsigned int>* output6_fp;
-    ReadableStateField<unsigned int>* output7_fp;
-    ReadableStateField<unsigned int>* output8_fp;
-
-    ReadableStateField<unsigned int>* output_on_delta1_fp;
-    ReadableStateField<unsigned int>* output_on_delta2_fp;
-    ReadableStateField<unsigned int>* output_on_delta3_fp;
-    ReadableStateField<unsigned int>* output_on_delta4_fp;
-    ReadableStateField<unsigned int>* output_on_delta5_fp;
-    ReadableStateField<unsigned int>* output_on_delta6_fp;
-    ReadableStateField<unsigned int>* output_on_delta7_fp;
-    ReadableStateField<unsigned int>* output_on_delta8_fp;
-
-    ReadableStateField<unsigned int>* output_off_delta1_fp;
-    ReadableStateField<unsigned int>* output_off_delta2_fp;
-    ReadableStateField<unsigned int>* output_off_delta3_fp;
-    ReadableStateField<unsigned int>* output_off_delta4_fp;
-    ReadableStateField<unsigned int>* output_off_delta5_fp;
-    ReadableStateField<unsigned int>* output_off_delta6_fp;
-    ReadableStateField<unsigned int>* output_off_delta7_fp;
-    ReadableStateField<unsigned int>* output_off_delta8_fp;
-
-    ReadableStateField<unsigned int>* latchup1_fp;
-    ReadableStateField<unsigned int>* latchup2_fp;
-    ReadableStateField<unsigned int>* latchup3_fp;
-    ReadableStateField<unsigned int>* latchup4_fp;
-    ReadableStateField<unsigned int>* latchup5_fp;
-    ReadableStateField<unsigned int>* latchup6_fp;
+    ReadableStateField<bool>* output1_fp;
+    ReadableStateField<bool>* output2_fp;
+    ReadableStateField<bool>* output3_fp;
+    ReadableStateField<bool>* output4_fp;
+    ReadableStateField<bool>* output5_fp;
+    ReadableStateField<bool>* output6_fp;
+    ReadableStateField<bool>* output7_fp;
+    ReadableStateField<bool>* output8_fp;
 
     ReadableStateField<unsigned int>* wdt_i2c_time_left_fp;
-
-    ReadableStateField<unsigned int>* wdt_gnd_time_left_fp;
-
-    ReadableStateField<unsigned int>* wdt_csp_pings_left1_fp;
-    ReadableStateField<unsigned int>* wdt_csp_pings_left2_fp;
 
     ReadableStateField<unsigned int>* counter_wdt_i2c_fp;
 
@@ -125,8 +93,6 @@ class TestFixture {
 
     ReadableStateField<unsigned int>* pptmode_fp;
 
-    ReadableStateField<unsigned int>* reserved2_fp;
-
     TestFixture() : registry(), gs(&hk, &config, &config2) {
         gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
 
@@ -144,8 +110,6 @@ class TestFixture {
 
         cursys_fp = registry.find_readable_field_t<unsigned int>("gomspace.cursys");
 
-        reserved1_fp = registry.find_readable_field_t<unsigned int>("gomspace.reserved1");
-
         curout1_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output1");
         curout2_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output2");
         curout3_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output3");
@@ -153,46 +117,16 @@ class TestFixture {
         curout5_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output5");
         curout6_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output6");
 
-        output1_fp = registry.find_readable_field_t<unsigned int>("gomspace.output.output1");
-        output2_fp = registry.find_readable_field_t<unsigned int>("gomspace.output.output2");
-        output3_fp = registry.find_readable_field_t<unsigned int>("gomspace.output.output3");
-        output4_fp = registry.find_readable_field_t<unsigned int>("gomspace.output.output4");
-        output5_fp = registry.find_readable_field_t<unsigned int>("gomspace.output.output5");
-        output6_fp = registry.find_readable_field_t<unsigned int>("gomspace.output.output6");
-        output7_fp = registry.find_readable_field_t<unsigned int>("gomspace.output.output7");
-        output8_fp = registry.find_readable_field_t<unsigned int>("gomspace.output.output8");
-
-        output_on_delta1_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_on_delta.output1");
-        output_on_delta2_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_on_delta.output2");
-        output_on_delta3_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_on_delta.output3");
-        output_on_delta4_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_on_delta.output4");
-        output_on_delta5_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_on_delta.output5");
-        output_on_delta6_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_on_delta.output6");
-        output_on_delta7_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_on_delta.output7");
-        output_on_delta8_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_on_delta.output8");
-
-        output_off_delta1_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_off_delta.output1");
-        output_off_delta2_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_off_delta.output2");
-        output_off_delta3_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_off_delta.output3");
-        output_off_delta4_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_off_delta.output4");
-        output_off_delta5_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_off_delta.output5");
-        output_off_delta6_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_off_delta.output6");
-        output_off_delta7_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_off_delta.output7");
-        output_off_delta8_fp = registry.find_readable_field_t<unsigned int>("gomspace.output_off_delta.output8");
-
-        latchup1_fp = registry.find_readable_field_t<unsigned int>("gomspace.latchup.output1");
-        latchup2_fp = registry.find_readable_field_t<unsigned int>("gomspace.latchup.output2");
-        latchup3_fp = registry.find_readable_field_t<unsigned int>("gomspace.latchup.output3");
-        latchup4_fp = registry.find_readable_field_t<unsigned int>("gomspace.latchup.output4");
-        latchup5_fp = registry.find_readable_field_t<unsigned int>("gomspace.latchup.output5");
-        latchup6_fp = registry.find_readable_field_t<unsigned int>("gomspace.latchup.output6");
+        output1_fp = registry.find_readable_field_t<bool>("gomspace.output.output1");
+        output2_fp = registry.find_readable_field_t<bool>("gomspace.output.output2");
+        output3_fp = registry.find_readable_field_t<bool>("gomspace.output.output3");
+        output4_fp = registry.find_readable_field_t<bool>("gomspace.output.output4");
+        output5_fp = registry.find_readable_field_t<bool>("gomspace.output.output5");
+        output6_fp = registry.find_readable_field_t<bool>("gomspace.output.output6");
+        output7_fp = registry.find_readable_field_t<bool>("gomspace.output.output7");
+        output8_fp = registry.find_readable_field_t<bool>("gomspace.output.output8");
 
         wdt_i2c_time_left_fp = registry.find_readable_field_t<unsigned int>("gomspace.wdt_i2c_time_left");
-
-        wdt_gnd_time_left_fp = registry.find_readable_field_t<unsigned int>("gomspace.wdt_gnd_time_left");
-
-        wdt_csp_pings_left1_fp = registry.find_readable_field_t<unsigned int>("gomspace.wdt_csp_pings_left.output1");
-        wdt_csp_pings_left2_fp = registry.find_readable_field_t<unsigned int>("gomspace.wdt_csp_pings_left.output2");
 
         counter_wdt_i2c_fp = registry.find_readable_field_t<unsigned int>("gomspace.counter_wdt_i2c");
 
@@ -215,8 +149,6 @@ class TestFixture {
         battmode_fp = registry.find_readable_field_t<unsigned int>("gomspace.battmode");
 
         pptmode_fp = registry.find_readable_field_t<unsigned int>("gomspace.pptmode");
-
-        reserved2_fp = registry.find_readable_field_t<unsigned int>("gomspace.reserved2");
     }
 };
 
@@ -237,8 +169,6 @@ void test_task_initialization() {
 
     TEST_ASSERT_EQUAL(9, tf.gs.hk->cursys);
 
-    TEST_ASSERT_EQUAL(10, tf.gs.hk->reserved1);
-
     TEST_ASSERT_EQUAL(11, tf.gs.hk->curout[0]);
     TEST_ASSERT_EQUAL(12, tf.gs.hk->curout[1]);
     TEST_ASSERT_EQUAL(13, tf.gs.hk->curout[2]);
@@ -246,46 +176,16 @@ void test_task_initialization() {
     TEST_ASSERT_EQUAL(15, tf.gs.hk->curout[4]);
     TEST_ASSERT_EQUAL(16, tf.gs.hk->curout[5]);
 
-    TEST_ASSERT_EQUAL(17, tf.gs.hk->output[0]);
-    TEST_ASSERT_EQUAL(18, tf.gs.hk->output[1]);
-    TEST_ASSERT_EQUAL(19, tf.gs.hk->output[2]);
-    TEST_ASSERT_EQUAL(20, tf.gs.hk->output[3]);
-    TEST_ASSERT_EQUAL(21, tf.gs.hk->output[4]);
-    TEST_ASSERT_EQUAL(22, tf.gs.hk->output[5]);
-    TEST_ASSERT_EQUAL(23, tf.gs.hk->output[6]);
-    TEST_ASSERT_EQUAL(24, tf.gs.hk->output[7]);
-
-    TEST_ASSERT_EQUAL(25, tf.gs.hk->output_on_delta[0]);
-    TEST_ASSERT_EQUAL(26, tf.gs.hk->output_on_delta[1]);
-    TEST_ASSERT_EQUAL(27, tf.gs.hk->output_on_delta[2]);
-    TEST_ASSERT_EQUAL(28, tf.gs.hk->output_on_delta[3]);
-    TEST_ASSERT_EQUAL(29, tf.gs.hk->output_on_delta[4]);
-    TEST_ASSERT_EQUAL(30, tf.gs.hk->output_on_delta[5]);
-    TEST_ASSERT_EQUAL(31, tf.gs.hk->output_on_delta[6]);
-    TEST_ASSERT_EQUAL(32, tf.gs.hk->output_on_delta[7]);
-
-    TEST_ASSERT_EQUAL(33, tf.gs.hk->output_off_delta[0]);
-    TEST_ASSERT_EQUAL(34, tf.gs.hk->output_off_delta[1]);
-    TEST_ASSERT_EQUAL(35, tf.gs.hk->output_off_delta[2]);
-    TEST_ASSERT_EQUAL(36, tf.gs.hk->output_off_delta[3]);
-    TEST_ASSERT_EQUAL(37, tf.gs.hk->output_off_delta[4]);
-    TEST_ASSERT_EQUAL(38, tf.gs.hk->output_off_delta[5]);
-    TEST_ASSERT_EQUAL(39, tf.gs.hk->output_off_delta[6]);
-    TEST_ASSERT_EQUAL(40, tf.gs.hk->output_off_delta[7]);
-
-    TEST_ASSERT_EQUAL(41, tf.gs.hk->latchup[0]);
-    TEST_ASSERT_EQUAL(42, tf.gs.hk->latchup[1]);
-    TEST_ASSERT_EQUAL(43, tf.gs.hk->latchup[2]);
-    TEST_ASSERT_EQUAL(44, tf.gs.hk->latchup[3]);
-    TEST_ASSERT_EQUAL(45, tf.gs.hk->latchup[4]);
-    TEST_ASSERT_EQUAL(46, tf.gs.hk->latchup[5]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[0]);
+    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[1]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[2]);
+    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[3]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[4]);
+    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[5]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[6]);
+    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[7]);
 
     TEST_ASSERT_EQUAL(47, tf.gs.hk->wdt_i2c_time_left);
-
-    TEST_ASSERT_EQUAL(48, tf.gs.hk->wdt_gnd_time_left);
-
-    TEST_ASSERT_EQUAL(49, tf.gs.hk->wdt_csp_pings_left[0]);
-    TEST_ASSERT_EQUAL(50, tf.gs.hk->wdt_csp_pings_left[1]);
 
     TEST_ASSERT_EQUAL(51, tf.gs.hk->counter_wdt_i2c);
 
@@ -308,8 +208,6 @@ void test_task_initialization() {
     TEST_ASSERT_EQUAL(63, tf.gs.hk->battmode);
     
     TEST_ASSERT_EQUAL(64, tf.gs.hk->pptmode);
-
-    TEST_ASSERT_EQUAL(65, tf.gs.hk->reserved2);
 }
 
 void test_task_execute() {
@@ -331,8 +229,6 @@ void test_task_execute() {
 
     TEST_ASSERT_EQUAL(9, tf.cursys_fp->get());
 
-    TEST_ASSERT_EQUAL(10, tf.reserved1_fp->get());
-
     TEST_ASSERT_EQUAL(11, tf.curout1_fp->get());
     TEST_ASSERT_EQUAL(12, tf.curout2_fp->get());
     TEST_ASSERT_EQUAL(13, tf.curout3_fp->get());
@@ -340,46 +236,16 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(15, tf.curout5_fp->get());
     TEST_ASSERT_EQUAL(16, tf.curout6_fp->get());
 
-    TEST_ASSERT_EQUAL(17, tf.output1_fp->get());
-    TEST_ASSERT_EQUAL(18, tf.output2_fp->get());
-    TEST_ASSERT_EQUAL(19, tf.output3_fp->get());
-    TEST_ASSERT_EQUAL(20, tf.output4_fp->get());
-    TEST_ASSERT_EQUAL(21, tf.output5_fp->get());
-    TEST_ASSERT_EQUAL(22, tf.output6_fp->get());
-    TEST_ASSERT_EQUAL(23, tf.output7_fp->get());
-    TEST_ASSERT_EQUAL(24, tf.output8_fp->get());
-
-    TEST_ASSERT_EQUAL(25, tf.output_on_delta1_fp->get());
-    TEST_ASSERT_EQUAL(26, tf.output_on_delta2_fp->get());
-    TEST_ASSERT_EQUAL(27, tf.output_on_delta3_fp->get());
-    TEST_ASSERT_EQUAL(28, tf.output_on_delta4_fp->get());
-    TEST_ASSERT_EQUAL(29, tf.output_on_delta5_fp->get());
-    TEST_ASSERT_EQUAL(30, tf.output_on_delta6_fp->get());
-    TEST_ASSERT_EQUAL(31, tf.output_on_delta7_fp->get());
-    TEST_ASSERT_EQUAL(32, tf.output_on_delta8_fp->get());
-
-    TEST_ASSERT_EQUAL(33, tf.output_off_delta1_fp->get());
-    TEST_ASSERT_EQUAL(34, tf.output_off_delta2_fp->get());
-    TEST_ASSERT_EQUAL(35, tf.output_off_delta3_fp->get());
-    TEST_ASSERT_EQUAL(36, tf.output_off_delta4_fp->get());
-    TEST_ASSERT_EQUAL(37, tf.output_off_delta5_fp->get());
-    TEST_ASSERT_EQUAL(38, tf.output_off_delta6_fp->get());
-    TEST_ASSERT_EQUAL(39, tf.output_off_delta7_fp->get());
-    TEST_ASSERT_EQUAL(40, tf.output_off_delta8_fp->get());
-
-    TEST_ASSERT_EQUAL(41, tf.latchup1_fp->get());
-    TEST_ASSERT_EQUAL(42, tf.latchup2_fp->get());
-    TEST_ASSERT_EQUAL(43, tf.latchup3_fp->get());
-    TEST_ASSERT_EQUAL(44, tf.latchup4_fp->get());
-    TEST_ASSERT_EQUAL(45, tf.latchup5_fp->get());
-    TEST_ASSERT_EQUAL(46, tf.latchup6_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output1_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output2_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output3_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output4_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output5_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output6_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output7_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output8_fp->get());
 
     TEST_ASSERT_EQUAL(47, tf.wdt_i2c_time_left_fp->get());
-
-    TEST_ASSERT_EQUAL(48, tf.wdt_gnd_time_left_fp->get());
-
-    TEST_ASSERT_EQUAL(49, tf.wdt_csp_pings_left1_fp->get());
-    TEST_ASSERT_EQUAL(50, tf.wdt_csp_pings_left2_fp->get());
 
     TEST_ASSERT_EQUAL(51, tf.counter_wdt_i2c_fp->get());
 
@@ -402,8 +268,6 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(63, tf.battmode_fp->get());
     
     TEST_ASSERT_EQUAL(64, tf.pptmode_fp->get());
-
-    TEST_ASSERT_EQUAL(65, tf.reserved2_fp->get());
 }
 
 int test_control_task() {
