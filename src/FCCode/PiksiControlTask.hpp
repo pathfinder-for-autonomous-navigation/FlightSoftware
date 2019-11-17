@@ -12,13 +12,8 @@
 class PiksiControlTask : public TimedControlTask<void>
 {
 public:
-#ifndef DESKTOP
     PiksiControlTask(StateFieldRegistry &registry, unsigned int offset, Devices::Piksi &_piksi);
-
-#else
-    PiksiControlTask(StateFieldRegistry &registry, unsigned int offset, Devices::Piksi &_piksi);
-
-#endif
+    
     Devices::Piksi& piksi;
     /** 
     * execute is overriden from TimedControlTask 
