@@ -91,25 +91,15 @@ class Piksi {
      * If improper initial number of bytes clear the buffer until empty,
      * It likely takes two control cycles to clear/desync from burst time
      *
-     * @return return code, 0 if buffer was successfully processed (to the knowledge of the driver)
+     * @return return code
+     * 0 if the buffer
      * 1 if buffer already has parts of multiple bursts of data, or an incomplete burst
      * 2 if buffer is interrupted with new data
      */
-
     virtual unsigned char read_all();
-    /*
-    let it be known the for FIXED RTK
-    time
-    pos
-    vel
-    base
-    */
-    virtual void read_all_order(std::array<int, 12>* out);
 
     /** @brief Gets GPS time.
      *  @return GPS time, as nanoseconds since the epoch. **/
-    // virtual void get_gps_time(gps_time_t *time);
-
     virtual void get_gps_time(msg_gps_time_t *time);
 
     /** @brief Gets Dilution of Precision timestamp.
@@ -221,7 +211,7 @@ class Piksi {
     /** @brief Returns state of integer ambiguity resolution (IAR) process. **/
     virtual unsigned int get_iar();
 
-    //meme
+    //set of mocking methods
     #ifdef DESKTOP
     void set_gps_time(const unsigned int tow);
     void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position, const unsigned char nsats);
@@ -408,23 +398,20 @@ class Piksi {
     msg_uart_state_t _uart_state;
     msg_user_data_t _user_data;
 
+    //set of fields to see if callbacks have been called
     bool _gps_time_update;
     bool _pos_ecef_update;
     bool _baseline_ecef_update;
     bool _vel_ecef_update;
     bool _iar_update;
-
     bool _heartbeat_update;
-
     bool _user_data_update;
 
-    //nsats
-    //fixed vs float
-
+    //set read return mock
     #ifdef DESKTOP
     unsigned int _read_return;
     #endif
 };
-}  // namespace Devices
+}
 
 #endif

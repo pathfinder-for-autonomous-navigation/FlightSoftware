@@ -314,53 +314,6 @@ unsigned char Piksi::read_all() {
     #endif
 }
 
-void Piksi::read_all_order(std::array<int, 12> *out) {
-    _gps_time_update = false;
-    _pos_ecef_update = false;
-    _vel_ecef_update = false;
-    _baseline_ecef_update = false;
-    _heartbeat_update = false;
-
-    int cnt = 0;
-    //(*out)[cnt] = 9;
-
-    while(bytes_available()){
-        process_buffer();
-        if(cnt <12){
-            if(_heartbeat_update){
-                //(*out)[cnt] = 't';
-                (*out)[cnt] = 4;
-                _heartbeat_update = false;
-                cnt++;
-            }
-            if(_gps_time_update){
-                //(*out)[cnt] = 't';
-                (*out)[cnt] = 0;
-                _gps_time_update = false;
-                cnt++;
-            }
-            if(_pos_ecef_update){
-                (*out)[cnt] = 1;
-                //(*out)[cnt] = 'p';
-                _pos_ecef_update = false;
-                cnt++;
-            }
-            if(_baseline_ecef_update){
-                (*out)[cnt] = 2;
-                //(*out)[cnt] = 'b';
-                _baseline_ecef_update = false;
-                cnt++;
-            }
-            if(_vel_ecef_update){
-                (*out)[cnt] = 3;
-                //(*out)[cnt] = 'v';
-                _vel_ecef_update = false;
-                cnt++;
-            }
-        }
-    }
-}
-
 u32 Piksi::bytes_available() { 
     #ifndef DESKTOP
     return _serial_port.available(); 
@@ -369,11 +322,13 @@ u32 Piksi::bytes_available() {
     #endif
     return 0;
 }
+
 void Piksi::clear_bytes() { 
     #ifndef DESKTOP
     _serial_port.clear(); 
     #endif
     }
+
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     #ifndef DESKTOP
     Piksi *piksi = (Piksi *)context;
@@ -432,17 +387,13 @@ void Piksi::_gps_time_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_gps_time)), msg, sizeof(msg_gps_time_t));
     piksi->_gps_time_update = true;
-
-    //THIS ESSENTIALLY ENFORCES THAT GPS TIME MUST BE UPDATED FIRST
-    //OTHER PACKETS SHALL BE INGORED
-    // piksi->_pos_ecef_update = false;
-    // piksi->_vel_ecef_update = false;
-    // piksi->_baseline_ecef_update = false;
 }
+
 void Piksi::_dops_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_dops)), msg, sizeof(msg_dops_t));
 }
+
 void Piksi::_pos_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_pos_ecef)), msg, sizeof(msg_pos_ecef_t));
