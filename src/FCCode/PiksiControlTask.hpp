@@ -5,25 +5,26 @@
 #include <string>
 #include <GPSTime.hpp>
 
+#include <TimedControlTask.hpp>
+
 #include "piksi_mode_t.enum"
 
-class PiksiControlTask : public ControlTask<void>
+class PiksiControlTask : public TimedControlTask<void>
 {
 public:
 #ifndef DESKTOP
-    PiksiControlTask(StateFieldRegistry &registry) : ControlTask<int>(registry),
-                                                    piksi("Piksi", Serial4) {}
+    PiksiControlTask(StateFieldRegistry &registry, unsigned int offset) : TimedControlTask<void>(registry, offset),
+                                                    piksi("Piksi", Serial4){}
 
 #else
-    PiksiControlTask(StateFieldRegistry &registry);
+    PiksiControlTask(StateFieldRegistry &registry, unsigned int offset);
 
 #endif
     Devices::Piksi piksi;
     /** 
-    * execute is overriden from ControlTask 
-    * Calling execute() when the state is IDLE generates no effects. 
+    * execute is overriden from TimedControlTask 
     */
-    void execute();
+    void execute() override;
 
     //Serializer and StateField for position
     Serializer<d_vector_t> pos_sr;
