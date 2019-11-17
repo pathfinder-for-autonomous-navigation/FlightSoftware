@@ -61,21 +61,12 @@ class GomspaceController : public TimedControlTask<void> {
     ReadableStateField<bool> output4_f;
     ReadableStateField<bool> output5_f;
     ReadableStateField<bool> output6_f;
-    ReadableStateField<bool> output7_f;
-    ReadableStateField<bool> output8_f;
 
     Serializer<unsigned int> wdt_i2c_time_left_sr;
     ReadableStateField<unsigned int> wdt_i2c_time_left_f;
 
     Serializer<unsigned int> counter_wdt_i2c_sr;
     ReadableStateField<unsigned int> counter_wdt_i2c_f;
-
-    Serializer<unsigned int> counter_wdt_gnd_sr;
-    ReadableStateField<unsigned int> counter_wdt_gnd_f;
-
-    Serializer<unsigned int> counter_wdt_csp_sr;
-    ReadableStateField<unsigned int> counter_wdt_csp1_f;
-    ReadableStateField<unsigned int> counter_wdt_csp2_f;
 
     Serializer<unsigned int> counter_boot_sr;
     ReadableStateField<unsigned int> counter_boot_f;
@@ -88,14 +79,14 @@ class GomspaceController : public TimedControlTask<void> {
     ReadableStateField<signed int> temp5_f;
     ReadableStateField<signed int> temp6_f;
 
-    Serializer<unsigned int> bootcause_sr;
-    ReadableStateField<unsigned int> bootcause_f;
+    Serializer<unsigned char> bootcause_sr;
+    ReadableStateField<unsigned char> bootcause_f;
 
-    Serializer<unsigned int> battmode_sr;
-    ReadableStateField<unsigned int> battmode_f;
+    Serializer<unsigned char> battmode_sr;
+    ReadableStateField<unsigned char> battmode_f;
 
-    Serializer<unsigned int> pptmode_sr;
-    ReadableStateField<unsigned int> pptmode_f;
+    Serializer<unsigned char> pptmode_sr;
+    ReadableStateField<unsigned char> pptmode_f;
 
 };
 

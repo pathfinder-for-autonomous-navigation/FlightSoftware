@@ -3,21 +3,24 @@
 GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, offset), gs(_gs), 
-    vboost_sr(0,3700,12), 
+    vboost_sr(0,4000,9), 
     vboost1_f("gomspace.vboost.output1", vboost_sr),
     vboost2_f("gomspace.vboost.output2", vboost_sr),
     vboost3_f("gomspace.vboost.output3", vboost_sr),
 
-    vbatt_sr(5000,9000,14), vbatt_f("gomspace.vbatt", vbatt_sr),
+    vbatt_sr(5000,9000,10),
+    vbatt_f("gomspace.vbatt", vbatt_sr),
 
     curin_sr(0,10,10), 
     curin1_f("gomspace.curin.output1", curin_sr),
     curin2_f("gomspace.curin.output2", curin_sr),
     curin3_f("gomspace.curin.output3", curin_sr),
 
-    cursun_sr(0,10,10), cursun_f("gomspace.cursun", cursun_sr),
+    cursun_sr(0,10,10), 
+    cursun_f("gomspace.cursun", cursun_sr),
 
-    cursys_sr(0,10,10), cursys_f("gomspace.cursys", cursys_sr),
+    cursys_sr(0,10,10), 
+    cursys_f("gomspace.cursys", cursys_sr),
 
     curout_sr(0,10,10), 
     curout1_f("gomspace.curout.output1", curout_sr),
@@ -34,20 +37,15 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     output4_f("gomspace.output.output4", output_sr),
     output5_f("gomspace.output.output5", output_sr),
     output6_f("gomspace.output.output6", output_sr),
-    output7_f("gomspace.output.output7", output_sr),
-    output8_f("gomspace.output.output8", output_sr),
 
-    wdt_i2c_time_left_sr(0,1000,10), wdt_i2c_time_left_f("gomspace.wdt_i2c_time_left", wdt_i2c_time_left_sr),
+    wdt_i2c_time_left_sr(0,1000,10), 
+    wdt_i2c_time_left_f("gomspace.wdt_i2c_time_left", wdt_i2c_time_left_sr),
 
-    counter_wdt_i2c_sr(), counter_wdt_i2c_f("gomspace.counter_wdt_i2c", counter_wdt_i2c_sr),
+    counter_wdt_i2c_sr(), 
+    counter_wdt_i2c_f("gomspace.counter_wdt_i2c", counter_wdt_i2c_sr),
 
-    counter_wdt_gnd_sr(0,10,10), counter_wdt_gnd_f("gomspace.counter_wdt_gnd", counter_wdt_gnd_sr),
-
-    counter_wdt_csp_sr(0,10,10), 
-    counter_wdt_csp1_f("gomspace.counter_wdt_csp.output1", counter_wdt_csp_sr),
-    counter_wdt_csp2_f("gomspace.counter_wdt_csp.output2", counter_wdt_csp_sr),
-
-    counter_boot_sr(0,10,10), counter_boot_f("gomspace.counter_boot", counter_boot_sr),
+    counter_boot_sr(), 
+    counter_boot_f("gomspace.counter_boot", counter_boot_sr),
 
     temp_sr(-40,125), 
     temp1_f("gomspace.temp.output1", temp_sr),
@@ -57,11 +55,14 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     temp5_f("gomspace.temp.output5", temp_sr),
     temp6_f("gomspace.temp.output6", temp_sr),
 
-    bootcause_sr(0,8), bootcause_f("gomspace.bootcause", bootcause_sr),
+    bootcause_sr(0,8), 
+    bootcause_f("gomspace.bootcause", bootcause_sr),
 
-    battmode_sr(0,10,10), battmode_f("gomspace.battmode", battmode_sr),
+    battmode_sr(0,4), 
+    battmode_f("gomspace.battmode", battmode_sr),
 
-    pptmode_sr(0,10,10), pptmode_f("gomspace.pptmode", pptmode_sr)
+    pptmode_sr(1,2), 
+    pptmode_f("gomspace.pptmode", pptmode_sr)
     {
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
@@ -90,17 +91,10 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_readable_field(output4_f);
         add_readable_field(output5_f);
         add_readable_field(output6_f);
-        add_readable_field(output7_f);
-        add_readable_field(output8_f);
 
         add_readable_field(wdt_i2c_time_left_f);
 
         add_readable_field(counter_wdt_i2c_f);
-
-        add_readable_field(counter_wdt_gnd_f);
-
-        add_readable_field(counter_wdt_csp1_f);
-        add_readable_field(counter_wdt_csp2_f);
 
         add_readable_field(counter_boot_f);
 
@@ -149,17 +143,10 @@ void GomspaceController::execute() {
     output4_f.set(gs.hk->output[3]);
     output5_f.set(gs.hk->output[4]);
     output6_f.set(gs.hk->output[5]);
-    output7_f.set(gs.hk->output[6]);
-    output8_f.set(gs.hk->output[7]);
 
     wdt_i2c_time_left_f.set(gs.hk->wdt_i2c_time_left);
 
     counter_wdt_i2c_f.set(gs.hk->counter_wdt_i2c);
-
-    counter_wdt_gnd_f.set(gs.hk->counter_wdt_gnd);
-
-    counter_wdt_csp1_f.set(gs.hk->counter_wdt_csp[0]);
-    counter_wdt_csp2_f.set(gs.hk->counter_wdt_csp[1]);
 
     counter_boot_f.set(gs.hk->counter_boot);
 

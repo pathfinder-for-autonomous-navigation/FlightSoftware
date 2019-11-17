@@ -66,8 +66,6 @@ class TestFixture {
     ReadableStateField<bool>* output4_fp;
     ReadableStateField<bool>* output5_fp;
     ReadableStateField<bool>* output6_fp;
-    ReadableStateField<bool>* output7_fp;
-    ReadableStateField<bool>* output8_fp;
 
     ReadableStateField<unsigned int>* wdt_i2c_time_left_fp;
 
@@ -87,11 +85,11 @@ class TestFixture {
     ReadableStateField<unsigned int>* temp5_fp;
     ReadableStateField<unsigned int>* temp6_fp;
 
-    ReadableStateField<unsigned int>* bootcause_fp;
+    ReadableStateField<unsigned char>* bootcause_fp;
 
-    ReadableStateField<unsigned int>* battmode_fp;
+    ReadableStateField<unsigned char>* battmode_fp;
 
-    ReadableStateField<unsigned int>* pptmode_fp;
+    ReadableStateField<unsigned char>* pptmode_fp;
 
     TestFixture() : registry(), gs(&hk, &config, &config2) {
         gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
@@ -123,17 +121,10 @@ class TestFixture {
         output4_fp = registry.find_readable_field_t<bool>("gomspace.output.output4");
         output5_fp = registry.find_readable_field_t<bool>("gomspace.output.output5");
         output6_fp = registry.find_readable_field_t<bool>("gomspace.output.output6");
-        output7_fp = registry.find_readable_field_t<bool>("gomspace.output.output7");
-        output8_fp = registry.find_readable_field_t<bool>("gomspace.output.output8");
 
         wdt_i2c_time_left_fp = registry.find_readable_field_t<unsigned int>("gomspace.wdt_i2c_time_left");
 
         counter_wdt_i2c_fp = registry.find_readable_field_t<unsigned int>("gomspace.counter_wdt_i2c");
-
-        counter_wdt_gnd_fp = registry.find_readable_field_t<unsigned int>("gomspace.counter_wdt_gnd");
-
-        counter_wdt_csp1_fp = registry.find_readable_field_t<unsigned int>("gomspace.counter_wdt_csp.output1");
-        counter_wdt_csp2_fp = registry.find_readable_field_t<unsigned int>("gomspace.counter_wdt_csp.output2");
 
         counter_boot_fp = registry.find_readable_field_t<unsigned int>("gomspace.counter_boot");
 
@@ -144,11 +135,11 @@ class TestFixture {
         temp5_fp = registry.find_readable_field_t<unsigned int>("gomspace.temp.output5");
         temp6_fp = registry.find_readable_field_t<unsigned int>("gomspace.temp.output6");
 
-        bootcause_fp = registry.find_readable_field_t<unsigned int>("gomspace.bootcause");
+        bootcause_fp = registry.find_readable_field_t<unsigned char>("gomspace.bootcause");
 
-        battmode_fp = registry.find_readable_field_t<unsigned int>("gomspace.battmode");
+        battmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.battmode");
 
-        pptmode_fp = registry.find_readable_field_t<unsigned int>("gomspace.pptmode");
+        pptmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.pptmode");
     }
 };
 
@@ -182,17 +173,10 @@ void test_task_initialization() {
     TEST_ASSERT_EQUAL(false, tf.gs.hk->output[3]);
     TEST_ASSERT_EQUAL(true, tf.gs.hk->output[4]);
     TEST_ASSERT_EQUAL(false, tf.gs.hk->output[5]);
-    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[6]);
-    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[7]);
 
     TEST_ASSERT_EQUAL(47, tf.gs.hk->wdt_i2c_time_left);
 
     TEST_ASSERT_EQUAL(51, tf.gs.hk->counter_wdt_i2c);
-
-    TEST_ASSERT_EQUAL(52, tf.gs.hk->counter_wdt_gnd);
-
-    TEST_ASSERT_EQUAL(53, tf.gs.hk->counter_wdt_csp[0]);
-    TEST_ASSERT_EQUAL(54, tf.gs.hk->counter_wdt_csp[1]);
 
     TEST_ASSERT_EQUAL(55, tf.gs.hk->counter_boot);
 
@@ -242,17 +226,10 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(false, tf.output4_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output5_fp->get());
     TEST_ASSERT_EQUAL(false, tf.output6_fp->get());
-    TEST_ASSERT_EQUAL(true, tf.output7_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output8_fp->get());
 
     TEST_ASSERT_EQUAL(47, tf.wdt_i2c_time_left_fp->get());
 
     TEST_ASSERT_EQUAL(51, tf.counter_wdt_i2c_fp->get());
-
-    TEST_ASSERT_EQUAL(52, tf.counter_wdt_gnd_fp->get());
-
-    TEST_ASSERT_EQUAL(53, tf.counter_wdt_csp1_fp->get());
-    TEST_ASSERT_EQUAL(54, tf.counter_wdt_csp2_fp->get());
 
     TEST_ASSERT_EQUAL(55, tf.counter_boot_fp->get());
 
