@@ -10,7 +10,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<v
                                                                    vel_sr(0, 100000, 100),
                                                                    vel_f("piksi.vel", vel_sr),
                                                                    baseline_pos_sr(0, 100000, 100),
-                                                                   baseline_pos_f("piksi.baseline.pos", baseline_pos_sr),
+                                                                   baseline_pos_f("piksi.baseline_pos", baseline_pos_sr),
                                                                    currentState_sr(0, 4, 2),
                                                                    currentState_f("piksi.state", currentState_sr),
                                                                    time_sr(),
@@ -21,6 +21,8 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry) : ControlTask<v
   add_readable_field(baseline_pos_f);
   add_readable_field(currentState_f);
   add_readable_field(time_f);
+
+  currentState_f.set(static_cast<int>(piksi_mode_t::NO_FIX));
 }
 
 piksi_mode_t PiksiControlTask::get_current_state() const

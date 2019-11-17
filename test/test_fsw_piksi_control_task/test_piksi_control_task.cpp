@@ -23,78 +23,79 @@ class TestFixture {
     // Input state fields to quake manager
     // std::shared_ptr<ReadableStateField<unsigned int>> cycle_no_fp;
 
-    // std::shared_ptr<InternalStateField<char*>> radio_mo_packet_fp;
-    // std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
-    // std::shared_ptr<InternalStateField<int>> radio_err_fp;
-    // std::shared_ptr<InternalStateField<unsigned int>> snapshot_size_fp;
-    // Quake has no output state fields since it is created after downlink producer
-
+    // pointers to statefields for easy access
     ReadableStateField<int>* currentState_fp;
+    ReadableStateField<d_vector_t>* pos_fp;
+    ReadableStateField<d_vector_t>* vel_fp;
+    ReadableStateField<d_vector_t>* baseline_fp;
+    ReadableStateField<gps_time_t>* time_fp;
 
     std::unique_ptr<PiksiControlTask> piksi_task;
 
     // Create a TestFixture instance of QuakeManager with the following parameters
     TestFixture() : registry() {
-        // Create external field dependencies
-        // cycle_no_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
-        // snapshot_size_fp = registry.create_internal_field<unsigned int>("downlink_producer.snap_size");
-        // radio_mo_packet_fp = registry.create_internal_field<char*>("downlink_producer.mo_ptr");
-        // radio_mt_packet_fp = registry.create_internal_field<char*>("downlink_producer.mt_ptr");
-        // radio_err_fp = registry.create_internal_field<int>("downlink_producer.radio_err_ptr");
 
-        // Initialize external fields
-        // snapshot_size_fp->set(static_cast<int>(350));
-        // radio_mo_packet_fp->set(snap1);
-        // cycle_no_fp->set(static_cast<unsigned int>(initCycles));
+        piksi_task = std::make_unique<PiksiControlTask>(registry);  
 
-        // Create Quake Manager instance
-        piksi_task = std::make_unique<PiksiControlTask>(registry);
-        //piksi_task->piksi.set_read_return(read_out);
-        
+        // initialize pointers to statefields      
         currentState_fp = registry.find_readable_field_t<int>("piksi.state");
+        pos_fp = registry.find_readable_field_t<d_vector_t>("piksi.pos");
+        vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
+        baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
+        time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
         
     }
-    void set_read_return(unsigned int read_out){
-        piksi_task->piksi.set_read_return(read_out);
-    }
+
+    //method to make calling execute faster
     void execute(){
         piksi_task->execute();
     }
 
+    //set of mocking methods
+    void set_read_return(unsigned int read_out){
+        piksi_task->piksi.set_read_return(read_out);
+    }
+    void set_gps_time(const unsigned int tow){
+        piksi_task->piksi.set_gps_time(tow);
+    }
+    void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position, const unsigned char nsats){
+        piksi_task->piksi.set_pos_ecef(tow, position, nsats);
+    }
+    void set_vel_ecef(const unsigned int tow, const std::array<double, 3>& velocity){
+        piksi_task->piksi.set_vel_ecef(tow, velocity);
+    }
+    void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position){
+        piksi_task->piksi.set_baseline_ecef(tow, position);
+    }
+    void set_baseline_flag(const unsigned char flag){
+        piksi_task->piksi.set_baseline_flag(flag);
+    }
 };
+
+//returns the magnitude^2 of a vector 3 of doubles
+float mag_2(const std::array<double, 3> input){
+    return (float)(input[0]*input[0] + input[1]*input[1] + input[2]*input[2]);
+}
 
 void test_task_initialization()
 {
     TestFixture tf;
-    // StateFieldRegistry registry;
-    // PiksiControlTask task(registry);
+    assert_piksi_mode(piksi_mode_t::NO_FIX);
 }
-// void test_execute(){
-//     TestFixture tf;
-//     tf.set_read_return(2);
-//     tf.execute();
-//     TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, static_cast<piksi_mode_t>(tf.currentState_fp->get()));
-// }
 void test_read_errors(){
     TestFixture tf;
-    //returns a two, no relevant packets coming over line
-    //task.piksi.set_read_return(2);
-    // tf.set_read_return(2);
-    // tf.execute();
-    // TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, static_cast<piksi_mode_t>(tf.currentState_fp->get()));
-    // //assert_piksi_mode(piksi_mode_t::NO_FIX);
-    
-    //crc error return
+
+    //read out == 3 means a CRC error occurred
     tf.set_read_return(3);
     tf.execute();
-    //TEST_ASSERT_EQUAL(piksi_mode_t::CRC_ERROR, task.get_current_state());
     assert_piksi_mode(piksi_mode_t::CRC_ERROR);
 
+    //read out == 4 means no bytes were in the buffer
     tf.set_read_return(4);
     tf.execute();
     assert_piksi_mode(piksi_mode_t::NO_DATA_ERROR);
 
-    //assert we hit a time limit in read and early termination
+    //read out == 5 means we were processing bytes for more than 900 microseconds
     tf.set_read_return(5);
     tf.execute();
     assert_piksi_mode(piksi_mode_t::TIME_LIMIT_ERROR);
@@ -107,73 +108,72 @@ void test_read_errors(){
 }
 void test_task_execute()
 {
-    // StateFieldRegistry registry;
-    // PiksiControlTask task(registry);
+    TestFixture tf;
 
     // //TEST_ASSERT_EQUAL()
-    // std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
-    // std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-    // std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
+    std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
+    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+    std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
 
-    // //tests to make sure to error out if packets not synced to same tow
-    // unsigned int tow = 100;
-    // unsigned int bad_tow = 200;
-    // task.piksi.set_read_return(1);
-    // task.piksi.set_gps_time(bad_tow);
-    // task.piksi.set_pos_ecef(tow, pos, 4);
-    // task.piksi.set_vel_ecef(tow, vel);
-    // task.piksi.set_baseline_ecef(tow, baseline);
-    // task.piksi.set_baseline_flag(1);
-    // task.execute();
-    // //should error out because of time inconsistency
-    // TEST_ASSERT_EQUAL(SYNC_ERROR, task.get_current_state());
+    //tests to make sure to error out if packets not synced to same tow
+    unsigned int tow = 100;
+    unsigned int bad_tow = 200;
+    tf.set_read_return(1);
+    tf.set_gps_time(bad_tow);
+    tf.set_pos_ecef(tow, pos, 4);
+    tf.set_vel_ecef(tow, vel);
+    tf.set_baseline_ecef(tow, baseline);
+    tf.set_baseline_flag(1);
+    tf.execute();
+    //should error out because of time inconsistency
+    assert_piksi_mode(piksi_mode_t::SYNC_ERROR);
 
-    // //insufficient nsats
-    // tow = 200;
-    // task.piksi.set_read_return(1);
-    // task.piksi.set_gps_time(tow);
-    // task.piksi.set_pos_ecef(tow, pos, 3);
-    // task.piksi.set_vel_ecef(tow, vel);
-    // task.piksi.set_baseline_ecef(tow, baseline);
-    // task.piksi.set_baseline_flag(1);
-    // task.execute();
-    // //times agree, but insufficient nsat
-    // TEST_ASSERT_EQUAL(NSAT_ERROR, task.get_current_state());
-    
-    // //fixed RTK
-    // tow = 200;
-    // task.piksi.set_read_return(1);
-    // task.piksi.set_gps_time(tow);
-    // task.piksi.set_pos_ecef(tow, pos, 4);
-    // task.piksi.set_vel_ecef(tow, vel);
-    // task.piksi.set_baseline_ecef(tow, baseline);
-    // task.piksi.set_baseline_flag(1);
-    // task.execute();
-    // //times should now agree, and be in baseline
-    // TEST_ASSERT_EQUAL(FIXED_RTK, task.get_current_state());
 
-    // //float RTK
-    // tow = 200;
-    // task.piksi.set_read_return(1);
-    // task.piksi.set_gps_time(tow);
-    // task.piksi.set_pos_ecef(tow, pos, 4);
-    // task.piksi.set_vel_ecef(tow, vel);
-    // task.piksi.set_baseline_ecef(tow, baseline);
-    // task.piksi.set_baseline_flag(0);
-    // task.execute();
-    // //float rtk test
-    // TEST_ASSERT_EQUAL(FLOAT_RTK, task.get_current_state());
+    //insufficient nsats
+    tow = 200;
+    tf.set_read_return(1);
+    tf.set_gps_time(tow);
+    tf.set_pos_ecef(tow, pos, 3);
+    tf.set_vel_ecef(tow, vel);
+    tf.set_baseline_ecef(tow, baseline);
+    tf.set_baseline_flag(1);
+    tf.execute();
+    //times agree, but insufficient nsat
+    assert_piksi_mode(piksi_mode_t::NSAT_ERROR);
 
-    // //SPP check
-    // tow = 200;
-    // task.piksi.set_read_return(0);
-    // task.piksi.set_gps_time(tow);
-    // task.piksi.set_pos_ecef(tow, pos, 4);
-    // task.piksi.set_vel_ecef(tow, vel);
-    // task.execute();
-    // //float rtk test
-    // TEST_ASSERT_EQUAL(SPP, task.get_current_state());
+    //fixed RTK
+    tow = 200;
+    tf.set_read_return(1);
+    tf.set_gps_time(tow);
+    tf.set_pos_ecef(tow, pos, 4);
+    tf.set_vel_ecef(tow, vel);
+    tf.set_baseline_ecef(tow, baseline);
+    tf.set_baseline_flag(1);
+    tf.execute();
+    //times should now agree, and be in baseline
+    assert_piksi_mode(piksi_mode_t::FIXED_RTK);
 
+    //float RTK
+    tow = 300;
+    tf.set_read_return(1);
+    tf.set_gps_time(tow);
+    tf.set_pos_ecef(tow, pos, 4);
+    tf.set_vel_ecef(tow, vel);
+    tf.set_baseline_ecef(tow, baseline);
+    tf.set_baseline_flag(0);
+    tf.execute();
+    //float rtk test
+    assert_piksi_mode(piksi_mode_t::FLOAT_RTK);
+
+    //SPP check
+    tow = 500;
+    tf.set_read_return(0);
+    tf.set_gps_time(tow);
+    tf.set_pos_ecef(tow, pos, 4);
+    tf.set_vel_ecef(tow, vel);
+    tf.execute();
+    //check in SPP
+    assert_piksi_mode(piksi_mode_t::SPP);
 
     
 }
