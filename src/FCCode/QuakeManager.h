@@ -34,7 +34,6 @@ class QuakeManager : public TimedControlTask<bool> {
     bool dispatch_wait();
     bool dispatch_transceive();
     bool dispatch_read();
-  
     bool dispatch_write();
     bool dispatch_manual();
 
@@ -71,23 +70,26 @@ class QuakeManager : public TimedControlTask<bool> {
   // private:
     QuakeControlTask qct;
     /**
-     * Write error to radio_err_fp,
-     * print a debug msg, 
-     * transition to wait
+     * Returns true if err_code either OK or PORT_UNAVAILABLE.
+     * Otherwise: 
+     *  Write error to radio_err_fp,
+     *  print a debug msg, 
+     *  sets the unexpectedFlag
+     *  transition to wait
      */
     bool write_to_error(int err_code);
 
     /**
      * If the current state has no more cycles left, 
      * then transition the radio to the requested state,
-     * printf notice, 
+     * printf a notice about the transition 
      * Return true if there are no more control cycles, false otherwise
      */
     bool no_more_cycles(size_t max_cycles, radio_mode_t new_state);
 
     /**
      * Transition the radio into the new state
-     * update last_checkin_cycle
+     * update last_checkin_cycle to current cycle
      * Precondition: new_state is one of the defined states
      * Postcondition: radio_state_f == new_state, last_checkin_cycle = now
      */ 
@@ -97,16 +99,29 @@ class QuakeManager : public TimedControlTask<bool> {
      * The last cycle for which we had comms
      */
     unsigned int last_checkin_cycle;
-
+    /**
+     * Local copy of max_snapshot_size given by DownlinkProducer
+     */
     size_t max_snapshot_size;
+
+    /**
+     * Temporary buffer of size max_snapshot_size + 1
+     * Only SBDWB may write to mo_buffer_copy or mo_idx
+     */
     char* mo_buffer_copy;
+
+    /**
+     * The index into mo_buffer_copy in multiples of max_packet_size 
+     * SBDWB will send the next 70 bytes that start at mo_idx*max_packet_size
+     * from the beginning of mo_buffer_copy
+     */
     size_t mo_idx;
 
     /**
-     * True if QM encountered an unexpected response
+     * True if QM encountered an unexpected response from execute()
      * All states transition to wait when this flag is set. 
-     * Wait transitions to config
-     * Only config may unset the flag
+     * Wait transitions to config after max_wait_cycles passes by
+     * Only wait may clear the flag
      */
     bool unexpectedFlag;
 
