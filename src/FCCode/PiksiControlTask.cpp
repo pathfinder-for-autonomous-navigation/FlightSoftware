@@ -32,12 +32,13 @@ void PiksiControlTask::execute()
     //4 means no bytes
     //3 means CRC error on serial
     //5 means timing error exceed
-    if(read_out == 4 || read_out == 3 || read_out == 5)
+    if(read_out == 3|| read_out == 4|| read_out == 5)
         since_good_cycles += 1;
     else 
         since_good_cycles = 0;
         
     //if we haven't had a good reading in ~120 seconds the piksi is probably dead
+    //eventually replace with HAVT logic
     if(since_good_cycles > 1000){
         currentState_f.set(static_cast<int>(piksi_mode_t::DEAD));
         //prevent roll over

@@ -53,9 +53,7 @@ protected:
 
     msg_gps_time_t msg_time;
     gps_time_t time;
-    gps_time_t time_old;
 
-    unsigned int tow_past = 0;
     unsigned int iar;
 
     unsigned int pos_tow;
@@ -65,9 +63,6 @@ protected:
     unsigned int baseline_tow;
 
 private:
-
-    piksi_mode_t currentState; // the state of the Piksi
-
     // the number of cycles since a successful / meaningful read operation
     unsigned int since_good_cycles = 0;
 

@@ -151,7 +151,7 @@ void test_normal_errors(){
     assert_piksi_mode(piksi_mode_t::DATA_ERROR);
 }
 
-//test executions that should yield some sort of fix
+//test executions that should yield some sort of fix/lock
 void test_task_execute()
 {
     TestFixture tf;
@@ -218,6 +218,42 @@ void test_task_execute()
 
 }
 
+//test to make sure the control task goes into dead mode if it happens
+void test_dead(){
+    TestFixture tf;
+
+    std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
+    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+    std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};  
+
+    //get a good reading from driver
+    unsigned int tow = 200;
+    tf.set_read_return(1);
+    tf.set_gps_time(tow);
+    tf.set_pos_ecef(tow, pos, 4);
+    tf.set_vel_ecef(tow, vel);
+    tf.set_baseline_ecef(tow, baseline);
+    tf.set_baseline_flag(1);
+    tf.execute();
+    //times should now agree, and be in baseline
+    assert_piksi_mode(piksi_mode_t::FIXED_RTK);
+    TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
+
+    //simulate that the piksi is not sending any data for 1000 control cycles
+    tf.set_read_return(4);
+    for(int i = 0;i<1000;i++){
+        tf.execute();
+    }
+    assert_piksi_mode(piksi_mode_t::NO_DATA_ERROR);
+
+    //one more execution to throw into DEAD mode
+    tf.execute();
+    assert_piksi_mode(piksi_mode_t::DEAD);
+}
+
 int test_control_task()
 {
     UNITY_BEGIN();
@@ -225,6 +261,7 @@ int test_control_task()
     RUN_TEST(test_read_errors);
     RUN_TEST(test_normal_errors);
     RUN_TEST(test_task_execute);
+    RUN_TEST(test_dead);
     return UNITY_END();
 }
 
