@@ -6,6 +6,7 @@
 
 #define PIKSI_READ_ALLOTED 650
 #define SAFETY 250
+#define RUNS 200
 //good readings rely on small control cycles
 #define CONTROL_CYCLE 120
 
@@ -394,6 +395,65 @@ void test_validate_buffer() {
     //bool ret = verify_time() & verify_baseline() & verify_pos() & verify_vel() & verify_iar();
     //return ret;
 }
+
+void get_data(){
+    prev_tow = time.tow;
+
+    piksi.get_gps_time(&time);
+
+    pos_past = pos_tow;
+    vel_past = vel_tow;
+    baseline_past = baseline_tow;
+
+    piksi.get_pos_ecef(&pos_tow, &pos);
+    piksi.get_vel_ecef(&vel_tow, &vel);
+    piksi.get_baseline_ecef(&baseline_tow, &baseline_pos);
+
+    iar = piksi.get_iar();
+}
+
+void print_time(){
+    Serial.printf("GPS week: %d\n", time.wn);
+    Serial.printf("GPS OLD tow: %u\n", prev_tow);
+    Serial.printf("GPS tow: %u\n", time.tow);
+}
+void print_pos(){
+    float pos_mag = ssqrt(pos);
+
+    Serial.printf("GPS position: %g,%g,%g\n", pos[0], pos[1], pos[2]);
+    Serial.printf("position_mag: %g\n", pos_mag);
+    Serial.printf("pos_ecef_flags: %u\n", piksi.get_pos_ecef_flags());
+    Serial.printf("Nsat Pos: %d\n", piksi.get_pos_ecef_nsats());
+    Serial.printf("PAST: %u, CURR: %u\n", pos_past, pos_tow);
+}
+void print_vel(){
+    float vel_mag = ssqrt(vel);
+
+    Serial.printf("Vel: %g,%g,%g\n", vel[0], vel[1], vel[2]);
+    Serial.printf("velocity_mag: %g\n", vel_mag);
+    Serial.printf("vel_ecef_flags: %u\n", piksi.get_vel_ecef_flags());
+
+    Serial.printf("Nsat Vel: %d\n", piksi.get_vel_ecef_nsats());
+    Serial.printf("PAST: %u, CURR: %u\n", vel_past, vel_tow);
+}
+void print_baseline(){
+    float baseline_mag = ssqrt(baseline_pos);
+
+    Serial.printf("GPS baseline position: %g,%g,%g", baseline_pos[0], baseline_pos[1],
+                    baseline_pos[2]);
+    Serial.printf("baseline_mag: %g\n", baseline_mag);
+    Serial.printf("baseline_ecef_flags: %u\n", piksi.get_baseline_ecef_flags());
+    Serial.printf("Nsat basline: %d\n", piksi.get_baseline_ecef_nsats());
+    Serial.printf("PAST: %u, CURR: %u\n", baseline_past, baseline_tow);
+}
+void print_all(){
+    
+    print_time();
+    print_pos();
+    print_vel();
+    print_baseline();
+}
+
 int main(void) {
 
     delay(5000);
@@ -441,10 +501,15 @@ int main(void) {
     int data_fail_count = 0;
     int bad_buffer = 0;
     int read_sum = 0;
+    int max_exec_time = 0;
 
-    for (int i = 0; i < 100; i++) {
+    std::array<int, 6> read_ct{};
+
+    for (int i = 0; i < RUNS; i++) {
         //this syncs up command to execute exactly every 120 ms 
         //(barring a failure on the previous loop)
+        //Serial.printf("delay: %d\n", CONTROL_CYCLE - (micros() - prevtime) / 1000);
+
         delay(CONTROL_CYCLE - (micros() - prevtime) / 1000);
 
         //SPP only
@@ -463,22 +528,30 @@ int main(void) {
         int res = piksi.read_all();
         posttime = micros();
 
+        if(posttime - prevtime > max_exec_time){
+            max_exec_time = posttime - prevtime;
+        }
         read_sum += res;
+        read_ct[res] += 1;
+
 
         Serial.printf("RES: %d\n", res);
-        if (res == 1) {
-            if(verify_all())
-                exec_pass_count += 1;
-            else
-                data_fail_count += 1;
+        // if (res == 1) {
+        //     if(verify_all())
+        //         exec_pass_count += 1;
+        //     else
+        //         data_fail_count += 1;
             
-        }
+        // }
 
-        else if(res == 2){
-            msg_len_fail_count += 1;
-        }
-        else if(res == 0)
-            bad_buffer += 1;
+        // else if(res == 2){
+        //     msg_len_fail_count += 1;
+        // }
+        // else if(res == 0)
+        //     bad_buffer += 1;
+
+        get_data();
+        print_all();
 
         Serial.printf("EXEC TIME: %d micros\n", posttime-prevtime);
         if (posttime - prevtime < PIKSI_READ_ALLOTED) {
@@ -495,8 +568,11 @@ int main(void) {
     Serial.printf("BAD BUFFER COUNT: %d\n", bad_buffer);
     Serial.printf("TIMING PASS COUNT: %d\n", timing_pass_count);
 
-    Serial.printf("READSUM AVG: %f\n", (float)read_sum/(float)100.0);
+    Serial.printf("MAX EXEC TIME: %d\n", max_exec_time);
+    Serial.printf("READSUM AVG: %f\n", (float)read_sum/(float)RUNS);
 
+    for(int i = 0; i<6;i++)
+    Serial.printf("OUT %d: %d\n",i,read_ct[i]);
 
 
     /*
