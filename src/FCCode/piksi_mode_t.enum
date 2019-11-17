@@ -1,0 +1,23 @@
+#ifndef piksi_mode_t_enum_
+#define piksi_mode_t_enum_
+
+enum class piksi_mode_t {
+  SPP, // Single Point Position
+  FIXED_RTK, // Fixed RTK fix
+  FLOAT_RTK, // Float RTK fix
+
+  NO_FIX, // Insufficient GPS signal for any fix
+  
+  SYNC_ERROR, // Time of weeks not sync'd, 
+  NSAT_ERROR, // #Satellites < 4
+
+  CRC_ERROR, // Corrupted data caused a CRC error
+  TIME_LIMIT_ERROR, // Exceeded 900 microseconds during process_buffer loop
+  DATA_ERROR, // Unexpected data, but otherwise good packet, ex weird flag
+  NO_DATA_ERROR, // No bytes to read from the buffer
+
+  DEAD //Piksi not functional
+
+};
+
+#endif
