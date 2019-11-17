@@ -63,7 +63,7 @@ bool Gomspace::get_hk() {
     // }
     // Serial.println();
     i2c_finish();
-    
+
     #ifndef DESKTOP
     if (buffer[0] != PORT_BYTE && buffer[1] != 0)
         return false;
@@ -78,6 +78,8 @@ bool Gomspace::get_hk() {
         
         return true;
     }
+    #else
+    return true;
     #endif
 }
 
@@ -90,20 +92,25 @@ bool Gomspace::get_hk_vi() {
     i2c_end_transmission(I2C_NOSTOP);
 
     size_t struct_size = sizeof(eps_hk_vi_t);
+    #ifndef DESKTOP
     unsigned char buffer[struct_size + 2];
+    #endif
 
     i2c_request_from((struct_size + 2), I2C_STOP);
+    #ifndef DESKTOP
     i2c_read(buffer, struct_size + 2);
+    #endif
 
+    #ifndef DESKTOP
     if (buffer[1] != 0)
         return false;
     else {
-        #ifndef DESKTOP
+        
         memcpy((unsigned char *)hk_vi, buffer + 2, struct_size);
         _hk_vi_endian_flip();
-        #endif
         return true;
     }
+    #endif
 }
 
 bool Gomspace::get_hk_out() {
@@ -115,20 +122,24 @@ bool Gomspace::get_hk_out() {
     i2c_end_transmission(I2C_NOSTOP);
 
     size_t struct_size = sizeof(eps_hk_out_t);
+    #ifndef DESKTOP
     unsigned char buffer[struct_size + 2];
+    #endif
 
     i2c_request_from((struct_size + 2), I2C_STOP);
+    #ifndef DESKTOP
     i2c_read(buffer, struct_size + 2);
+    #endif
 
+    #ifndef DESKTOP
     if (buffer[1] != 0)
         return false;
     else {
-        #ifndef DESKTOP
         memcpy((unsigned char *)hk_out, buffer + 2, struct_size);
         _hk_out_endian_flip();
-        #endif
         return true;
     }
+    #endif
 }
 
 bool Gomspace::get_hk_wdt() {
@@ -140,20 +151,24 @@ bool Gomspace::get_hk_wdt() {
     i2c_end_transmission(I2C_NOSTOP);
 
     size_t struct_size = sizeof(eps_hk_wdt_t);
+    #ifndef DESKTOP
     unsigned char buffer[struct_size + 2];
+    #endif
 
     i2c_request_from((struct_size + 2), I2C_STOP);
+    #ifndef DESKTOP
     i2c_read(buffer, struct_size + 2);
+    #endif
 
+    #ifndef DESKTOP
     if (buffer[1] != 0)
         return false;
     else {
-        #ifndef DESKTOP
         memcpy((unsigned char *)hk_wdt, buffer + 2, struct_size);
         _hk_wdt_endian_flip();
-        #endif
         return true;
     }
+    #endif
 }
 
 bool Gomspace::get_hk_basic() {
@@ -165,20 +180,24 @@ bool Gomspace::get_hk_basic() {
     i2c_end_transmission(I2C_NOSTOP);
 
     size_t struct_size = sizeof(eps_hk_basic_t);
+    #ifndef DESKTOP
     unsigned char buffer[struct_size + 2];
+    #endif
 
     i2c_request_from((struct_size + 2), I2C_STOP);
+    #ifndef DESKTOP
     i2c_read(buffer, struct_size + 2);
+    #endif
 
+    #ifndef DESKTOP
     if (buffer[1] != 0)
         return false;
     else {
-        #ifndef DESKTOP
         memcpy((unsigned char *)hk_basic, buffer + 2, struct_size);
         _hk_basic_endian_flip();
-        #endif
         return true;
     }
+    #endif
 }
 
 bool Gomspace::set_output(unsigned char output_byte) {
@@ -255,6 +274,7 @@ bool Gomspace::_set_heater(bool mode) {
     i2c_write(command, 4);
     i2c_end_transmission(I2C_NOSTOP);
 
+    #ifndef DESKTOP
     unsigned char buffer[4];
     i2c_request_from(4, I2C_STOP);
     i2c_read(buffer, 4);
@@ -267,6 +287,7 @@ bool Gomspace::_set_heater(bool mode) {
                        // it better have been reported to be turned on/off.
     else
         return true;
+    #endif
 }
 
 unsigned char Gomspace::get_heater() {
@@ -276,6 +297,7 @@ unsigned char Gomspace::get_heater() {
     i2c_write(command, 1);
     i2c_end_transmission(I2C_NOSTOP);
 
+    #ifndef DESKTOP
     unsigned char buffer[4];
     i2c_request_from(4, I2C_STOP);
     i2c_read(buffer, 4);
@@ -286,6 +308,7 @@ unsigned char Gomspace::get_heater() {
     // care about this value since we don't have a BP4 pack.
     // buffer[3] contains 0 or 1, indicating whether onboard heater is on.
     return buffer[3];
+    #endif
 }
 
 bool Gomspace::reset_counters() {
@@ -318,14 +341,18 @@ bool Gomspace::config_get() {
     i2c_end_transmission(I2C_NOSTOP);
 
     size_t struct_size = sizeof(eps_config_t);
+    #ifndef DESKTOP
     unsigned char buffer[struct_size + 2];
+    #endif
     i2c_request_from((struct_size + 2), I2C_STOP);
+    #ifndef DESKTOP
     i2c_read(buffer, struct_size + 2);
+    #endif
 
+    #ifndef DESKTOP
     if (buffer[1] != 0)
         return false;
     else {
-        #ifndef DESKTOP
         memcpy((unsigned char *)&gspace_config, buffer + 2, struct_size);
         // Flip endianness
         for (unsigned char i = 0; i < 8; i++) {
@@ -337,9 +364,9 @@ bool Gomspace::config_get() {
         for (unsigned char i = 0; i < 3; i++) {
             gspace_config->vboost[i] = __bswap_16(gspace_config->vboost[i]);
         }
-        #endif
         return true;
     }
+    #endif
 }
 
 bool Gomspace::config_set(const eps_config_t &c) {
@@ -388,23 +415,25 @@ bool Gomspace::config2_get() {
     i2c_end_transmission(I2C_NOSTOP);
 
     size_t struct_size = sizeof(eps_config2_t);
+    #ifndef DESKTOP
     unsigned char buffer[struct_size + 2];
+    #endif
     i2c_request_from((struct_size + 2), I2C_STOP);
+    #ifndef DESKTOP
     i2c_read(buffer, struct_size + 2);
 
     if (buffer[1] != 0)
         return false;
     else {
-        #ifndef DESKTOP
         memcpy((unsigned char *)&gspace_config2, buffer + 2, struct_size);
         // Flip endianness
         gspace_config2->batt_maxvoltage = __bswap_16(gspace_config2->batt_maxvoltage);
         gspace_config2->batt_safevoltage = __bswap_16(gspace_config2->batt_safevoltage);
         gspace_config2->batt_criticalvoltage = __bswap_16(gspace_config2->batt_criticalvoltage);
         gspace_config2->batt_normalvoltage = __bswap_16(gspace_config2->batt_normalvoltage);
-        #endif
         return true;
     }
+    #endif
 }
 
 bool Gomspace::restore_default_config2() {
@@ -463,11 +492,15 @@ bool Gomspace::ping(unsigned char value) {
     i2c_write(command, 2);
     i2c_end_transmission(I2C_NOSTOP);
 
+    #ifndef DESKTOP
     unsigned char buffer[3];
+    #endif
     i2c_request_from(3, I2C_STOP);
+    #ifndef DESKTOP
     i2c_read(buffer, 3);
 
     return (buffer[1] == 0) && (value == buffer[2]);
+    #endif
 }
 
 void Gomspace::reboot() {
@@ -481,11 +514,15 @@ void Gomspace::reboot() {
 }
 
 bool Gomspace::_check_for_error(unsigned char port_byte) {
+    #ifndef DESKTOP
     unsigned char buffer[2];
+    #endif
     i2c_request_from(2, I2C_STOP);
+    #ifndef DESKTOP
     i2c_read(buffer, 2);
 
     if (buffer[0] == port_byte && buffer[1] == 0) return true;
+    #endif
     return false;
 }
 
