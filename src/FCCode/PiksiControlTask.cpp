@@ -37,11 +37,17 @@ void PiksiControlTask::execute()
     else 
         since_good_cycles = 0;
         
-    //if we haven't had a good reading in ~120 seconds we probably dead
+    //if we haven't had a good reading in ~120 seconds the piksi is probably dead
     if(since_good_cycles > 1000){
         currentState_f.set(static_cast<int>(piksi_mode_t::DEAD));
         //prevent roll over
         since_good_cycles = 1001;
+        return;
+    }
+
+    //6 means the buffer was full when executing read
+    if(read_out == 6){
+        currentState_f.set(static_cast<int>(piksi_mode_t::MAX_BUFFER_ERROR));
         return;
     }
 
@@ -85,20 +91,21 @@ void PiksiControlTask::execute()
         if(!check_time){
             //error caused by times not matching up
             //indicitave of getting only part of the next scream
+
             currentState_f.set(static_cast<int>(piksi_mode_t::SYNC_ERROR));
             return;
         }
 
+        time_old = time;
+
         int nsats = piksi.get_pos_ecef_nsats();
         if(nsats < 4){
-            //currentState =NSAT_ERROR;
             currentState_f.set(static_cast<int>(piksi_mode_t::NSAT_ERROR));
             return;
         }
 
         if(read_out == 0) {
-            //currentState =SPP;
-            currentState_f.set(SPP);
+            currentState_f.set(static_cast<int>(piksi_mode_t::SPP));
         }
         if(read_out == 1){
             int baseline_flag = piksi.get_baseline_ecef_flags();

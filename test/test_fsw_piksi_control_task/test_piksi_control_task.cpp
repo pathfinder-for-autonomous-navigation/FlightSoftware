@@ -100,8 +100,13 @@ void test_read_errors(){
     tf.execute();
     assert_piksi_mode(piksi_mode_t::TIME_LIMIT_ERROR);
 
-    //not cataloged read_return value
+    //read out == 6 means the buffer was full and could be extremely old/bad
     tf.set_read_return(6);
+    tf.execute();
+    assert_piksi_mode(piksi_mode_t::MAX_BUFFER_ERROR);
+
+    //not cataloged read_return value
+    tf.set_read_return(7);
     tf.execute();
     assert_piksi_mode(piksi_mode_t::DATA_ERROR);
     
@@ -161,9 +166,17 @@ void test_task_execute()
     tf.execute();
     //times should now agree, and be in baseline
     assert_piksi_mode(piksi_mode_t::FIXED_RTK);
+    TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
 
     //float RTK
     tow = 300;
+    pos = {1200.0, 2200.0, 3200.0};
+    vel = {4200.0, 5200.0, 6200.0};
+    baseline = {7200.0, 8200.0, 9200.0};
+
     tf.set_read_return(1);
     tf.set_gps_time(tow);
     tf.set_pos_ecef(tow, pos, 4);
@@ -173,9 +186,16 @@ void test_task_execute()
     tf.execute();
     //float rtk test
     assert_piksi_mode(piksi_mode_t::FLOAT_RTK);
+    TEST_ASSERT_TRUE(gps_time_t(0,300,0) == tf.time_fp->get());
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
 
     //SPP check
     tow = 500;
+    pos = {1230.0, 2230.0, 3230.0};
+    vel = {4230.0, 5230.0, 6230.0};
+
     tf.set_read_return(0);
     tf.set_gps_time(tow);
     tf.set_pos_ecef(tow, pos, 4);
@@ -183,6 +203,9 @@ void test_task_execute()
     tf.execute();
     //check in SPP
     assert_piksi_mode(piksi_mode_t::SPP);
+    TEST_ASSERT_TRUE(gps_time_t(0,500,0) == tf.time_fp->get());
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
+    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
 
 }
 

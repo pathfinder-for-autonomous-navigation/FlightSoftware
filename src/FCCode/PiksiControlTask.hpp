@@ -7,22 +7,6 @@
 
 #include "piksi_mode_t.enum"
 
-/**
- * Piksi / Piksi Control Task States
- */
-static constexpr int SPP = 0;
-static constexpr int FIXED_RTK = 1;
-static constexpr int FLOAT_RTK = 2;
-
-static constexpr int NO_FIX = 3;
-static constexpr int SYNC_ERROR = 4;
-static constexpr int DATA_ERROR = 5;
-static constexpr int NSAT_ERROR = 6;
-static constexpr int NO_DATA = 7;
-static constexpr int TIME_LIMIT = 8;
-
-static constexpr int DEAD = 9;
-
 class PiksiControlTask : public ControlTask<void>
 {
 public:
@@ -37,8 +21,8 @@ public:
 #endif
     Devices::Piksi piksi;
     /** 
-   * execute is overriden from ControlTask 
-   * Calling execute() when the state is IDLE generates no effects. 
+    * execute is overriden from ControlTask 
+    * Calling execute() when the state is IDLE generates no effects. 
     */
     void execute();
 
@@ -63,10 +47,6 @@ public:
     ReadableStateField<gps_time_t> time_f;
 
 protected:
-    // #ifndef DESKTOP
-    // Devices::Piksi piksi;
-    // #endif
-
     //Internal Data Containers
     std::array<double, 3> pos;
     std::array<double, 3> vel;
@@ -74,17 +54,15 @@ protected:
 
     msg_gps_time_t msg_time;
     gps_time_t time;
+    gps_time_t time_old;
 
     unsigned int tow_past = 0;
     unsigned int iar;
 
-    unsigned int pos_past;
     unsigned int pos_tow;
 
-    unsigned int vel_past;
     unsigned int vel_tow;
 
-    unsigned int baseline_past;
     unsigned int baseline_tow;
 
 private:

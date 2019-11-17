@@ -279,6 +279,12 @@ unsigned char Piksi::read_all() {
 
     int initial_time = micros();
 
+    //this means buffer has hit max cap, and could be substantially old
+    if(bytes_available() == 1023){
+        clear_bytes();
+        return 6;
+    }
+    
     if(bytes_available()){
         bool crc_error = false;
         while(bytes_available() && (micros() - initial_time < 900)){

@@ -15,6 +15,7 @@ enum class piksi_mode_t {
   TIME_LIMIT_ERROR,
   DATA_ERROR,     // Unexpected data, but otherwise good packet, ex weird flag
   NO_DATA_ERROR,
+  MAX_BUFFER_ERROR,
 
   DEAD
 
