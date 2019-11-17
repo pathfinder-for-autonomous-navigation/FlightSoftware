@@ -19,8 +19,6 @@ using namespace Devices;
 class TestFixture {
     public:
         StateFieldRegistryMock registry;
-        // Input state fields to quake manager
-        // std::shared_ptr<ReadableStateField<unsigned int>> cycle_no_fp;
 
         // pointers to statefields for easy access
         ReadableStateField<int>* currentState_fp;
@@ -32,7 +30,7 @@ class TestFixture {
         std::unique_ptr<PiksiControlTask> piksi_task;
 
         Piksi piksi;
-        // Create a TestFixture instance of QuakeManager with the following parameters
+        // Create a TestFixture instance of PiksiController with pointers to statefields
         #ifndef DESKTOP
         TestFixture() : registry(), piksi("piksi", Serial4){
 
@@ -60,7 +58,7 @@ class TestFixture {
         
         }
         #endif
-        
+
         //method to make calling execute faster
         void execute(){
                 piksi_task->execute();
