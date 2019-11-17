@@ -290,16 +290,16 @@ unsigned char Piksi::read_all() {
             clear_bytes();
             return 5;
         }
-  
-        if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && !_baseline_ecef_update)
+        if(crc_error)
+            return 3;
+        else if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && !_baseline_ecef_update)
+            //SPP
             return 0;
         else if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && _baseline_ecef_update)
+            //Something RTK
             return 1;
-        else if(crc_error)
-            return 3;
         else
-            //error condition, perhaps serial data bad
-            //or time looped around
+            //no relevant callbacks or crc_errors -> NO_FIX
             return 2;
     }
     else
