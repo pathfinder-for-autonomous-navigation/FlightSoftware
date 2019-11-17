@@ -3,8 +3,9 @@
 #include <cstring>
 
 // Builtins provided by GCC for endian flipping.
-#ifndef DESKTOP
+
 #define __bswap_16(x) ((unsigned short int)__builtin_bswap16(x))
+#ifndef DESKTOP
 #define __bswap_32(x) ((unsigned int)__builtin_bswap32(x))
 #endif
 
