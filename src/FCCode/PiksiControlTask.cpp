@@ -90,8 +90,6 @@ void PiksiControlTask::execute()
             return;
         }
 
-        time_old = time;
-
         int nsats = piksi.get_pos_ecef_nsats();
         if(nsats < 4){
             currentState_f.set(static_cast<int>(piksi_mode_t::NSAT_ERROR));

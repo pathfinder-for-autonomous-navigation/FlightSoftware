@@ -1,4 +1,3 @@
-//#include <StateFieldRegistryMock.hpp>
 #include "../StateFieldRegistryMock.hpp"
 
 #include "../../src/FCCode/PiksiControlTask.hpp"
@@ -9,7 +8,6 @@
 #include <ctime>
 
 #include "../../src/FCCode/piksi_mode_t.enum"
-//#include <piksi_mode_t.enum>
 
 #define assert_piksi_mode(x) {\
   TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\
@@ -139,6 +137,18 @@ void test_normal_errors(){
     tf.execute();
     //times agree, but insufficient nsat
     assert_piksi_mode(piksi_mode_t::NSAT_ERROR);
+
+    //unexpected baseline flag, should only be 0 or 1
+    tow = 200;
+    tf.set_read_return(1);
+    tf.set_gps_time(tow);
+    tf.set_pos_ecef(tow, pos, 4);
+    tf.set_vel_ecef(tow, vel);
+    tf.set_baseline_ecef(tow, baseline);
+    tf.set_baseline_flag(2);
+    tf.execute();
+    //times agree, but insufficient nsat
+    assert_piksi_mode(piksi_mode_t::DATA_ERROR);
 }
 
 //test executions that should yield some sort of fix
