@@ -4,8 +4,8 @@
 
 // Builtins provided by GCC for endian flipping.
 
-#define __bswap_16(x) ((unsigned short int)__builtin_bswap16(x))
 #ifndef DESKTOP
+#define __bswap_16(x) ((unsigned short int)__builtin_bswap16(x))
 #define __bswap_32(x) ((unsigned int)__builtin_bswap32(x))
 #endif
 
@@ -48,10 +48,14 @@ bool Gomspace::get_hk() {
     i2c_end_transmission(I2C_NOSTOP);
 
     size_t struct_size = sizeof(eps_hk_t);
+    #ifndef DESKTOP
     unsigned char buffer[struct_size + 2];
+    #endif
 
     i2c_request_from((struct_size + 2), I2C_STOP);
+    #ifndef DESKTOP
     i2c_read(buffer, struct_size + 2);
+    #endif
 
     // FOR DEBUGGING
     // for(unsigned char i = 0; i < sizeof(buffer); i++) {
@@ -59,20 +63,22 @@ bool Gomspace::get_hk() {
     // }
     // Serial.println();
     i2c_finish();
-
+    
+    #ifndef DESKTOP
     if (buffer[0] != PORT_BYTE && buffer[1] != 0)
         return false;
     else {
-        #ifndef DESKTOP
+        
         memcpy((unsigned char *)hk, buffer + 2, struct_size);
         // Flip endianness of all values
         _hk_vi_endian_flip();
         _hk_out_endian_flip();
         _hk_wdt_endian_flip();
         _hk_basic_endian_flip();
-        #endif
+        
         return true;
     }
+    #endif
 }
 
 bool Gomspace::get_hk_vi() {
