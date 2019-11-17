@@ -106,11 +106,11 @@ void test_read_errors(){
     assert_piksi_mode(piksi_mode_t::DATA_ERROR);
     
 }
-void test_task_execute()
-{
+
+//normal errors that come up, but don't mean that the piksi has failed
+void test_normal_errors(){
     TestFixture tf;
 
-    // //TEST_ASSERT_EQUAL()
     std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
     std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
     std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
@@ -128,7 +128,6 @@ void test_task_execute()
     //should error out because of time inconsistency
     assert_piksi_mode(piksi_mode_t::SYNC_ERROR);
 
-
     //insufficient nsats
     tow = 200;
     tf.set_read_return(1);
@@ -140,9 +139,19 @@ void test_task_execute()
     tf.execute();
     //times agree, but insufficient nsat
     assert_piksi_mode(piksi_mode_t::NSAT_ERROR);
+}
+
+//test executions that should yield some sort of fix
+void test_task_execute()
+{
+    TestFixture tf;
+
+    std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
+    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+    std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
 
     //fixed RTK
-    tow = 200;
+    unsigned int tow = 200;
     tf.set_read_return(1);
     tf.set_gps_time(tow);
     tf.set_pos_ecef(tow, pos, 4);
@@ -175,7 +184,6 @@ void test_task_execute()
     //check in SPP
     assert_piksi_mode(piksi_mode_t::SPP);
 
-    
 }
 
 int test_control_task()
@@ -183,6 +191,7 @@ int test_control_task()
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_read_errors);
+    RUN_TEST(test_normal_errors);
     RUN_TEST(test_task_execute);
     return UNITY_END();
 }
