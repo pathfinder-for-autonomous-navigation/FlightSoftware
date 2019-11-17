@@ -76,8 +76,6 @@ class GomspaceController : public TimedControlTask<void> {
     ReadableStateField<signed int> temp2_f;
     ReadableStateField<signed int> temp3_f;
     ReadableStateField<signed int> temp4_f;
-    ReadableStateField<signed int> temp5_f;
-    ReadableStateField<signed int> temp6_f;
 
     Serializer<unsigned char> bootcause_sr;
     ReadableStateField<unsigned char> bootcause_f;

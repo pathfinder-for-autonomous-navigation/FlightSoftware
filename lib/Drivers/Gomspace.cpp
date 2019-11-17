@@ -30,6 +30,8 @@ Gomspace::Gomspace(Gomspace::eps_hk_t *hk_data, Gomspace::eps_config_t *config_d
     hk_basic = (eps_hk_basic_t *)((unsigned char *)hk_wdt + sizeof(eps_hk_wdt_t));
 }
 
+#undef I2C_INITIALIZATION
+
 bool Gomspace::setup() { return I2CDevice::setup(); }
 
 void Gomspace::reset() {

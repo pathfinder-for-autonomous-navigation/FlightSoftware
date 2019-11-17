@@ -52,8 +52,6 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     temp2_f("gomspace.temp.output2", temp_sr),
     temp3_f("gomspace.temp.output3", temp_sr),
     temp4_f("gomspace.temp.output4", temp_sr),
-    temp5_f("gomspace.temp.output5", temp_sr),
-    temp6_f("gomspace.temp.output6", temp_sr),
 
     bootcause_sr(0,8), 
     bootcause_f("gomspace.bootcause", bootcause_sr),
@@ -102,8 +100,6 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_readable_field(temp2_f);
         add_readable_field(temp3_f);
         add_readable_field(temp4_f);
-        add_readable_field(temp5_f);
-        add_readable_field(temp6_f);
 
         add_readable_field(bootcause_f);
 
@@ -154,8 +150,6 @@ void GomspaceController::execute() {
     temp2_f.set(gs.hk->temp[1]);
     temp3_f.set(gs.hk->temp[2]);
     temp4_f.set(gs.hk->temp[3]);
-    temp5_f.set(gs.hk->temp[4]);
-    temp6_f.set(gs.hk->temp[5]);
 
     bootcause_f.set(gs.hk->bootcause);
 
