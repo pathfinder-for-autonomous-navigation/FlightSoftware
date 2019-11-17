@@ -110,6 +110,8 @@ bool Gomspace::get_hk_vi() {
         _hk_vi_endian_flip();
         return true;
     }
+    #else
+    return true;
     #endif
 }
 
@@ -139,6 +141,8 @@ bool Gomspace::get_hk_out() {
         _hk_out_endian_flip();
         return true;
     }
+    #else
+    return true;
     #endif
 }
 
@@ -168,6 +172,8 @@ bool Gomspace::get_hk_wdt() {
         _hk_wdt_endian_flip();
         return true;
     }
+    #else
+    return true;
     #endif
 }
 
@@ -197,6 +203,8 @@ bool Gomspace::get_hk_basic() {
         _hk_basic_endian_flip();
         return true;
     }
+    #else
+    return true;
     #endif
 }
 
@@ -287,6 +295,8 @@ bool Gomspace::_set_heater(bool mode) {
                        // it better have been reported to be turned on/off.
     else
         return true;
+    #else
+    return true;
     #endif
 }
 
@@ -308,6 +318,8 @@ unsigned char Gomspace::get_heater() {
     // care about this value since we don't have a BP4 pack.
     // buffer[3] contains 0 or 1, indicating whether onboard heater is on.
     return buffer[3];
+    #else
+    return 0;
     #endif
 }
 
