@@ -3,8 +3,8 @@
 
 using namespace Devices;
 
-PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry, unsigned int offset) : TimedControlTask<void>(registry, offset),
-                                                                   piksi("piksi"),
+PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry, unsigned int offset, Devices::Piksi &_piksi) : TimedControlTask<void>(registry, offset),
+                                                                   piksi(_piksi),
                                                                    pos_sr(0, 100000, 100),
                                                                    pos_f("piksi.pos", pos_sr),
                                                                    vel_sr(0, 100000, 100),

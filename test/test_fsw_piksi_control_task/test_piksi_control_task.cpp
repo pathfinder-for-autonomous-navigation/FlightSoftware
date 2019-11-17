@@ -10,273 +10,290 @@
 #include "../../src/FCCode/piksi_mode_t.enum"
 
 #define assert_piksi_mode(x) {\
-  TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\
+    TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\
 }
 
 using namespace Devices;
 
+
 class TestFixture {
-  public:
-    StateFieldRegistryMock registry;
-    // Input state fields to quake manager
-    // std::shared_ptr<ReadableStateField<unsigned int>> cycle_no_fp;
+    public:
+        StateFieldRegistryMock registry;
+        // Input state fields to quake manager
+        // std::shared_ptr<ReadableStateField<unsigned int>> cycle_no_fp;
 
-    // pointers to statefields for easy access
-    ReadableStateField<int>* currentState_fp;
-    ReadableStateField<d_vector_t>* pos_fp;
-    ReadableStateField<d_vector_t>* vel_fp;
-    ReadableStateField<d_vector_t>* baseline_fp;
-    ReadableStateField<gps_time_t>* time_fp;
+        // pointers to statefields for easy access
+        ReadableStateField<int>* currentState_fp;
+        ReadableStateField<d_vector_t>* pos_fp;
+        ReadableStateField<d_vector_t>* vel_fp;
+        ReadableStateField<d_vector_t>* baseline_fp;
+        ReadableStateField<gps_time_t>* time_fp;
 
-    std::unique_ptr<PiksiControlTask> piksi_task;
+        std::unique_ptr<PiksiControlTask> piksi_task;
 
-    // Create a TestFixture instance of QuakeManager with the following parameters
-    TestFixture() : registry() {
+        Piksi piksi;
+        // Create a TestFixture instance of QuakeManager with the following parameters
+        #ifndef DESKTOP
+        TestFixture() : registry(), piksi("piksi", Serial4){
 
-        piksi_task = std::make_unique<PiksiControlTask>(registry, 0);  
+                piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
 
-        // initialize pointers to statefields      
-        currentState_fp = registry.find_readable_field_t<int>("piksi.state");
-        pos_fp = registry.find_readable_field_t<d_vector_t>("piksi.pos");
-        vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
-        baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
-        time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
+                // initialize pointers to statefields      
+                currentState_fp = registry.find_readable_field_t<int>("piksi.state");
+                pos_fp = registry.find_readable_field_t<d_vector_t>("piksi.pos");
+                vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
+                baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
+                time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
         
-    }
+        }
+        #else
+        TestFixture() : registry(), piksi("piksi"){
 
-    //method to make calling execute faster
-    void execute(){
-        piksi_task->execute();
-    }
+                piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
 
-    //set of mocking methods
-    void set_read_return(unsigned int read_out){
-        piksi_task->piksi.set_read_return(read_out);
-    }
-    void set_gps_time(const unsigned int tow){
-        piksi_task->piksi.set_gps_time(tow);
-    }
-    void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position, const unsigned char nsats){
-        piksi_task->piksi.set_pos_ecef(tow, position, nsats);
-    }
-    void set_vel_ecef(const unsigned int tow, const std::array<double, 3>& velocity){
-        piksi_task->piksi.set_vel_ecef(tow, velocity);
-    }
-    void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position){
-        piksi_task->piksi.set_baseline_ecef(tow, position);
-    }
-    void set_baseline_flag(const unsigned char flag){
-        piksi_task->piksi.set_baseline_flag(flag);
-    }
+                // initialize pointers to statefields      
+                currentState_fp = registry.find_readable_field_t<int>("piksi.state");
+                pos_fp = registry.find_readable_field_t<d_vector_t>("piksi.pos");
+                vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
+                baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
+                time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
+        
+        }
+        #endif
+        
+        //method to make calling execute faster
+        void execute(){
+                piksi_task->execute();
+        }
+
+        //set of mocking methods
+        void set_read_return(unsigned int read_out){
+                piksi_task->piksi.set_read_return(read_out);
+        }
+        void set_gps_time(const unsigned int tow){
+                piksi_task->piksi.set_gps_time(tow);
+        }
+        void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position, const unsigned char nsats){
+                piksi_task->piksi.set_pos_ecef(tow, position, nsats);
+        }
+        void set_vel_ecef(const unsigned int tow, const std::array<double, 3>& velocity){
+                piksi_task->piksi.set_vel_ecef(tow, velocity);
+        }
+        void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position){
+                piksi_task->piksi.set_baseline_ecef(tow, position);
+        }
+        void set_baseline_flag(const unsigned char flag){
+                piksi_task->piksi.set_baseline_flag(flag);
+        }
 };
 
 //returns the magnitude^2 of a vector 3 of doubles
 float mag_2(const std::array<double, 3> input){
-    return (float)(input[0]*input[0] + input[1]*input[1] + input[2]*input[2]);
+        return (float)(input[0]*input[0] + input[1]*input[1] + input[2]*input[2]);
 }
 
 void test_task_initialization()
 {
-    TestFixture tf;
-    assert_piksi_mode(piksi_mode_t::NO_FIX);
+        TestFixture tf;
+        assert_piksi_mode(piksi_mode_t::NO_FIX);
 }
 void test_read_errors(){
-    TestFixture tf;
+        TestFixture tf;
 
-    //read out == 3 means a CRC error occurred
-    tf.set_read_return(3);
-    tf.execute();
-    assert_piksi_mode(piksi_mode_t::CRC_ERROR);
+        //read out == 3 means a CRC error occurred
+        tf.set_read_return(3);
+        tf.execute();
+        assert_piksi_mode(piksi_mode_t::CRC_ERROR);
 
-    //read out == 4 means no bytes were in the buffer
-    tf.set_read_return(4);
-    tf.execute();
-    assert_piksi_mode(piksi_mode_t::NO_DATA_ERROR);
+        //read out == 4 means no bytes were in the buffer
+        tf.set_read_return(4);
+        tf.execute();
+        assert_piksi_mode(piksi_mode_t::NO_DATA_ERROR);
 
-    //read out == 5 means we were processing bytes for more than 900 microseconds
-    tf.set_read_return(5);
-    tf.execute();
-    assert_piksi_mode(piksi_mode_t::TIME_LIMIT_ERROR);
+        //read out == 5 means we were processing bytes for more than 900 microseconds
+        tf.set_read_return(5);
+        tf.execute();
+        assert_piksi_mode(piksi_mode_t::TIME_LIMIT_ERROR);
 
-    //not cataloged read_return value
-    tf.set_read_return(7);
-    tf.execute();
-    assert_piksi_mode(piksi_mode_t::DATA_ERROR);
+        //not cataloged read_return value
+        tf.set_read_return(7);
+        tf.execute();
+        assert_piksi_mode(piksi_mode_t::DATA_ERROR);
     
 }
 
 //normal errors that come up, but don't mean that the piksi has failed
 void test_normal_errors(){
-    TestFixture tf;
+        TestFixture tf;
 
-    std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
-    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-    std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
+        std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
+        std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+        std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
 
-    //tests to make sure to error out if packets not synced to same tow
-    unsigned int tow = 100;
-    unsigned int bad_tow = 200;
-    tf.set_read_return(1);
-    tf.set_gps_time(bad_tow);
-    tf.set_pos_ecef(tow, pos, 4);
-    tf.set_vel_ecef(tow, vel);
-    tf.set_baseline_ecef(tow, baseline);
-    tf.set_baseline_flag(1);
-    tf.execute();
-    //should error out because of time inconsistency
-    assert_piksi_mode(piksi_mode_t::SYNC_ERROR);
+        //tests to make sure to error out if packets not synced to same tow
+        unsigned int tow = 100;
+        unsigned int bad_tow = 200;
+        tf.set_read_return(1);
+        tf.set_gps_time(bad_tow);
+        tf.set_pos_ecef(tow, pos, 4);
+        tf.set_vel_ecef(tow, vel);
+        tf.set_baseline_ecef(tow, baseline);
+        tf.set_baseline_flag(1);
+        tf.execute();
+        //should error out because of time inconsistency
+        assert_piksi_mode(piksi_mode_t::SYNC_ERROR);
 
-    //insufficient nsats
-    tow = 200;
-    tf.set_read_return(1);
-    tf.set_gps_time(tow);
-    tf.set_pos_ecef(tow, pos, 3);
-    tf.set_vel_ecef(tow, vel);
-    tf.set_baseline_ecef(tow, baseline);
-    tf.set_baseline_flag(1);
-    tf.execute();
-    //times agree, but insufficient nsat
-    assert_piksi_mode(piksi_mode_t::NSAT_ERROR);
+        //insufficient nsats
+        tow = 200;
+        tf.set_read_return(1);
+        tf.set_gps_time(tow);
+        tf.set_pos_ecef(tow, pos, 3);
+        tf.set_vel_ecef(tow, vel);
+        tf.set_baseline_ecef(tow, baseline);
+        tf.set_baseline_flag(1);
+        tf.execute();
+        //times agree, but insufficient nsat
+        assert_piksi_mode(piksi_mode_t::NSAT_ERROR);
 
-    //unexpected baseline flag, should only be 0 or 1
-    tow = 200;
-    tf.set_read_return(1);
-    tf.set_gps_time(tow);
-    tf.set_pos_ecef(tow, pos, 4);
-    tf.set_vel_ecef(tow, vel);
-    tf.set_baseline_ecef(tow, baseline);
-    tf.set_baseline_flag(2);
-    tf.execute();
-    //times agree, but insufficient nsat
-    assert_piksi_mode(piksi_mode_t::DATA_ERROR);
+        //unexpected baseline flag, should only be 0 or 1
+        tow = 200;
+        tf.set_read_return(1);
+        tf.set_gps_time(tow);
+        tf.set_pos_ecef(tow, pos, 4);
+        tf.set_vel_ecef(tow, vel);
+        tf.set_baseline_ecef(tow, baseline);
+        tf.set_baseline_flag(2);
+        tf.execute();
+        //times agree, but insufficient nsat
+        assert_piksi_mode(piksi_mode_t::DATA_ERROR);
 }
 
 //test executions that should yield some sort of fix/lock
 void test_task_execute()
 {
-    TestFixture tf;
+        TestFixture tf;
 
-    std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
-    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-    std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
+        std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
+        std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+        std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
 
-    tf.set_read_return(2);
-    tf.execute();
-    assert_piksi_mode(piksi_mode_t::NO_FIX);
+        tf.set_read_return(2);
+        tf.execute();
+        assert_piksi_mode(piksi_mode_t::NO_FIX);
 
-    //fixed RTK
-    unsigned int tow = 200;
-    tf.set_read_return(1);
-    tf.set_gps_time(tow);
-    tf.set_pos_ecef(tow, pos, 4);
-    tf.set_vel_ecef(tow, vel);
-    tf.set_baseline_ecef(tow, baseline);
-    tf.set_baseline_flag(1);
-    tf.execute();
-    //times should now agree, and be in baseline
-    assert_piksi_mode(piksi_mode_t::FIXED_RTK);
-    TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
+        //fixed RTK
+        unsigned int tow = 200;
+        tf.set_read_return(1);
+        tf.set_gps_time(tow);
+        tf.set_pos_ecef(tow, pos, 4);
+        tf.set_vel_ecef(tow, vel);
+        tf.set_baseline_ecef(tow, baseline);
+        tf.set_baseline_flag(1);
+        tf.execute();
+        //times should now agree, and be in baseline
+        assert_piksi_mode(piksi_mode_t::FIXED_RTK);
+        TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
 
-    //float RTK
-    tow = 300;
-    pos = {1200.0, 2200.0, 3200.0};
-    vel = {4200.0, 5200.0, 6200.0};
-    baseline = {7200.0, 8200.0, 9200.0};
+        //float RTK
+        tow = 300;
+        pos = {1200.0, 2200.0, 3200.0};
+        vel = {4200.0, 5200.0, 6200.0};
+        baseline = {7200.0, 8200.0, 9200.0};
 
-    tf.set_read_return(1);
-    tf.set_gps_time(tow);
-    tf.set_pos_ecef(tow, pos, 4);
-    tf.set_vel_ecef(tow, vel);
-    tf.set_baseline_ecef(tow, baseline);
-    tf.set_baseline_flag(0);
-    tf.execute();
-    //float rtk test
-    assert_piksi_mode(piksi_mode_t::FLOAT_RTK);
-    TEST_ASSERT_TRUE(gps_time_t(0,300,0) == tf.time_fp->get());
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
+        tf.set_read_return(1);
+        tf.set_gps_time(tow);
+        tf.set_pos_ecef(tow, pos, 4);
+        tf.set_vel_ecef(tow, vel);
+        tf.set_baseline_ecef(tow, baseline);
+        tf.set_baseline_flag(0);
+        tf.execute();
+        //float rtk test
+        assert_piksi_mode(piksi_mode_t::FLOAT_RTK);
+        TEST_ASSERT_TRUE(gps_time_t(0,300,0) == tf.time_fp->get());
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
 
-    //SPP check
-    tow = 500;
-    pos = {1230.0, 2230.0, 3230.0};
-    vel = {4230.0, 5230.0, 6230.0};
+        //SPP check
+        tow = 500;
+        pos = {1230.0, 2230.0, 3230.0};
+        vel = {4230.0, 5230.0, 6230.0};
 
-    tf.set_read_return(0);
-    tf.set_gps_time(tow);
-    tf.set_pos_ecef(tow, pos, 4);
-    tf.set_vel_ecef(tow, vel);
-    tf.execute();
-    //check in SPP
-    assert_piksi_mode(piksi_mode_t::SPP);
-    TEST_ASSERT_TRUE(gps_time_t(0,500,0) == tf.time_fp->get());
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
+        tf.set_read_return(0);
+        tf.set_gps_time(tow);
+        tf.set_pos_ecef(tow, pos, 4);
+        tf.set_vel_ecef(tow, vel);
+        tf.execute();
+        //check in SPP
+        assert_piksi_mode(piksi_mode_t::SPP);
+        TEST_ASSERT_TRUE(gps_time_t(0,500,0) == tf.time_fp->get());
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
 
 }
 
 //test to make sure the control task goes into dead mode if it happens
 void test_dead(){
-    TestFixture tf;
+        TestFixture tf;
 
-    std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
-    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-    std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};  
+        std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
+        std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+        std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};  
 
-    //get a good reading from driver
-    unsigned int tow = 200;
-    tf.set_read_return(1);
-    tf.set_gps_time(tow);
-    tf.set_pos_ecef(tow, pos, 4);
-    tf.set_vel_ecef(tow, vel);
-    tf.set_baseline_ecef(tow, baseline);
-    tf.set_baseline_flag(1);
-    tf.execute();
-    //times should now agree, and be in baseline
-    assert_piksi_mode(piksi_mode_t::FIXED_RTK);
-    TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
-
-    //simulate that the piksi is not sending any data for 1000 control cycles
-    tf.set_read_return(4);
-    for(int i = 0;i<1000;i++){
+        //get a good reading from driver
+        unsigned int tow = 200;
+        tf.set_read_return(1);
+        tf.set_gps_time(tow);
+        tf.set_pos_ecef(tow, pos, 4);
+        tf.set_vel_ecef(tow, vel);
+        tf.set_baseline_ecef(tow, baseline);
+        tf.set_baseline_flag(1);
         tf.execute();
-    }
-    assert_piksi_mode(piksi_mode_t::NO_DATA_ERROR);
+        //times should now agree, and be in baseline
+        assert_piksi_mode(piksi_mode_t::FIXED_RTK);
+        TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
+        TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
 
-    //one more execution to throw into DEAD mode
-    tf.execute();
-    assert_piksi_mode(piksi_mode_t::DEAD);
+        //simulate that the piksi is not sending any data for 1000 control cycles
+        tf.set_read_return(4);
+        for(int i = 0;i<1000;i++){
+                tf.execute();
+        }
+        assert_piksi_mode(piksi_mode_t::NO_DATA_ERROR);
+
+        //one more execution to throw into DEAD mode
+        tf.execute();
+        assert_piksi_mode(piksi_mode_t::DEAD);
 }
 
 int test_control_task()
 {
-    UNITY_BEGIN();
-    RUN_TEST(test_task_initialization);
-    RUN_TEST(test_read_errors);
-    RUN_TEST(test_normal_errors);
-    RUN_TEST(test_task_execute);
-    RUN_TEST(test_dead);
-    return UNITY_END();
+        UNITY_BEGIN();
+        RUN_TEST(test_task_initialization);
+        RUN_TEST(test_read_errors);
+        RUN_TEST(test_normal_errors);
+        RUN_TEST(test_task_execute);
+        RUN_TEST(test_dead);
+        return UNITY_END();
 }
 
 #ifdef DESKTOP
 int main()
 {
-    return test_control_task();
+        return test_control_task();
 }
 #else
 #include <Arduino.h>
 void setup()
 {
-    delay(2000);
-    Serial.begin(9600);
-    test_control_task();
+        delay(2000);
+        Serial.begin(9600);
+        test_control_task();
 }
 
 void loop() {}
