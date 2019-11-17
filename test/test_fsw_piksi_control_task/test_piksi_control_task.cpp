@@ -12,7 +12,7 @@
 //#include <piksi_mode_t.enum>
 
 #define assert_piksi_mode(x) {\
-  TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(task.currentState_f));\
+  TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\
 }
 
 using namespace Devices;
@@ -69,42 +69,41 @@ void test_task_initialization()
     // StateFieldRegistry registry;
     // PiksiControlTask task(registry);
 }
-// void test_tf(){
-//     TestFixture tf(2);
-//     tf.piksi_task->execute();
-//     assert_
+// void test_execute(){
+//     TestFixture tf;
+//     tf.set_read_return(2);
+//     tf.execute();
+//     TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, static_cast<piksi_mode_t>(tf.currentState_fp->get()));
 // }
 void test_read_errors(){
     TestFixture tf;
     //returns a two, no relevant packets coming over line
     //task.piksi.set_read_return(2);
-    tf.set_read_return(2);
-    tf.execute();
-    //TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, task.get_current_state());
-    //TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX,static_cast<piksi_mode_t>(task.get_current_state()));
-    //TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, static_cast<piksi_mode_t>(task.currentState_f));
-    TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, static_cast<piksi_mode_t>(tf.currentState_fp->get()));
-}
-void test_read_errors1(){
-    // TestFixture tf;
-    // //returns a two, no relevant packets coming over line
-    // //task.piksi.set_read_return(2);
     // tf.set_read_return(2);
-    // task.execute();
-    // //TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, task.get_current_state());
-    // //TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX,static_cast<piksi_mode_t>(task.get_current_state()));
-    // //TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, static_cast<piksi_mode_t>(task.currentState_f));
+    // tf.execute();
     // TEST_ASSERT_EQUAL(piksi_mode_t::NO_FIX, static_cast<piksi_mode_t>(tf.currentState_fp->get()));
     // //assert_piksi_mode(piksi_mode_t::NO_FIX);
-    // //crc error return
-    // task.piksi.set_read_return(3);
-    // task.execute();
-    // TEST_ASSERT_EQUAL(piksi_mode_t::CRC_ERROR, task.get_current_state());
+    
+    //crc error return
+    tf.set_read_return(3);
+    tf.execute();
+    //TEST_ASSERT_EQUAL(piksi_mode_t::CRC_ERROR, task.get_current_state());
+    assert_piksi_mode(piksi_mode_t::CRC_ERROR);
 
-    // //assert we hit a time limit in read and early termination
-    // task.piksi.set_read_return(5);
-    // task.execute();
-    // TEST_ASSERT_EQUAL(piksi_mode_t::TIME_LIMIT_ERROR, task.get_current_state());
+    tf.set_read_return(4);
+    tf.execute();
+    assert_piksi_mode(piksi_mode_t::NO_DATA_ERROR);
+
+    //assert we hit a time limit in read and early termination
+    tf.set_read_return(5);
+    tf.execute();
+    assert_piksi_mode(piksi_mode_t::TIME_LIMIT_ERROR);
+
+    //not cataloged read_return value
+    tf.set_read_return(6);
+    tf.execute();
+    assert_piksi_mode(piksi_mode_t::DATA_ERROR);
+    
 }
 void test_task_execute()
 {

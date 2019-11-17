@@ -14,6 +14,7 @@ enum class piksi_mode_t {
   CRC_ERROR,
   TIME_LIMIT_ERROR,
   DATA_ERROR,     // Unexpected data, but otherwise good packet, ex weird flag
+  NO_DATA_ERROR,
 
   DEAD
 
