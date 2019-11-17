@@ -100,11 +100,6 @@ void test_read_errors(){
     tf.execute();
     assert_piksi_mode(piksi_mode_t::TIME_LIMIT_ERROR);
 
-    //read out == 6 means the buffer was full and could be extremely old/bad
-    tf.set_read_return(6);
-    tf.execute();
-    assert_piksi_mode(piksi_mode_t::MAX_BUFFER_ERROR);
-
     //not cataloged read_return value
     tf.set_read_return(7);
     tf.execute();
@@ -154,6 +149,10 @@ void test_task_execute()
     std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
     std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
     std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};
+
+    tf.set_read_return(2);
+    tf.execute();
+    assert_piksi_mode(piksi_mode_t::NO_FIX);
 
     //fixed RTK
     unsigned int tow = 200;

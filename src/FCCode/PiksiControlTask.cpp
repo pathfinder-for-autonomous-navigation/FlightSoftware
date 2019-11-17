@@ -45,12 +45,6 @@ void PiksiControlTask::execute()
         return;
     }
 
-    //6 means the buffer was full when executing read
-    if(read_out == 6){
-        currentState_f.set(static_cast<int>(piksi_mode_t::MAX_BUFFER_ERROR));
-        return;
-    }
-
     if(read_out == 5){
         currentState_f.set(static_cast<int>(piksi_mode_t::TIME_LIMIT_ERROR));
         return;

@@ -82,24 +82,26 @@ class Piksi {
     virtual unsigned char process_buffer_msg_len();
 
     /**
-     * @brief Processes the buffer within a while loop, looking for a good buffer.
+     * @brief While bytes are in the buffer, process them.
      *
-     * If the initial number of bytes is proper 299 or 333, deal with all the bytes
-     * by repeatedly calling process_buffer_msg_len()
-     * Checks that the correct sum of byte size in the message is processed
-     * Values of 227 and 245 are experimentally determined.
-     * If improper initial number of bytes clear the buffer until empty,
-     * It likely takes two control cycles to clear/desync from burst time
-     *
+     * This method will process bytes in the buffer and set internal fields
+     * in the driver to be harvested by a control task by calling getters.
+     * 
+     * Experimentally this always finished in 650 +- 50 microseconds
+     * 
+     * 
      * @return return code
-     * 0 if the buffer
-     * 1 if buffer already has parts of multiple bursts of data, or an incomplete burst
-     * 2 if buffer is interrupted with new data
+     * 0 if only time, pos and vel were updated, indicative of SPP
+     * 1 if time, pos, vel and baseline were updated indicative of something_RTK
+     * 2 if time, pos and vel were not updated, indicative of NO_FIX
+     * 3 if time, pos and vel were not updated, and a crc error happened
+     * 4 if there are no bytes in the buffer
+     * 5 if the process_buffer loop is unable to deal with all the bytes in 900 microseconds
      */
     virtual unsigned char read_all();
 
     /** @brief Gets GPS time.
-     *  @return GPS time, as nanoseconds since the epoch. **/
+     *  @return msg_gps_time_t, a struct of time since epoch **/
     virtual void get_gps_time(msg_gps_time_t *time);
 
     /** @brief Gets Dilution of Precision timestamp.

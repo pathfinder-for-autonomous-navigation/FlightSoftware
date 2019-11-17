@@ -17,7 +17,6 @@ public:
 #else
     PiksiControlTask(StateFieldRegistry &registry);
 
-
 #endif
     Devices::Piksi piksi;
     /** 
