@@ -378,6 +378,8 @@ bool Gomspace::config_get() {
         }
         return true;
     }
+    #else
+    return true;
     #endif
 }
 
@@ -445,6 +447,8 @@ bool Gomspace::config2_get() {
         gspace_config2->batt_normalvoltage = __bswap_16(gspace_config2->batt_normalvoltage);
         return true;
     }
+    #else
+    return true;
     #endif
 }
 
@@ -512,6 +516,8 @@ bool Gomspace::ping(unsigned char value) {
     i2c_read(buffer, 3);
 
     return (buffer[1] == 0) && (value == buffer[2]);
+    #else
+    return true;
     #endif
 }
 
@@ -534,8 +540,11 @@ bool Gomspace::_check_for_error(unsigned char port_byte) {
     i2c_read(buffer, 2);
 
     if (buffer[0] == port_byte && buffer[1] == 0) return true;
-    #endif
     return false;
+    #else
+    return true;
+    #endif
+    
 }
 
 void Gomspace::_hk_vi_endian_flip() {
