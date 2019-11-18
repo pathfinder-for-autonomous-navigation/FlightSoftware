@@ -66,8 +66,46 @@ class QuakeManager : public TimedControlTask<bool> {
      * @brief Current radio mode (see radio_mode_t.enum), provided by
      **/
     radio_mode_t radio_mode_f;
+  
+  #ifdef DEBUG
 
-  // private:
+  QuakeControlTask& dbg_get_qct()
+  {
+    return qct;
+  }
+  size_t& dbg_get_max_snap()
+  {
+    return max_snapshot_size;
+  }
+
+  unsigned int& dbg_get_last_checkin()
+  {
+    return last_checkin_cycle;
+  }
+
+  char* dbg_get_mo_buffer_copy()
+  {
+    return mo_buffer_copy;
+  }
+
+  size_t& dbg_get_mo_idx()
+  {
+    return mo_idx;
+  }
+
+  bool& dbg_get_unexpectedFlag()
+  {
+    return unexpectedFlag;
+  }
+
+  bool dbg_transition_radio_state(radio_mode_t new_state)
+  {
+    return transition_radio_state(new_state);
+  }
+
+  #endif
+
+  private:
     QuakeControlTask qct;
     /**
      * Returns true if err_code either OK or PORT_UNAVAILABLE.
@@ -131,6 +169,7 @@ class QuakeManager : public TimedControlTask<bool> {
      */ 
     // TODO: these values are temporary. Experiments should be conducted
     // to figure out maximum cycles we are willing to wait. 
+  public:
     static constexpr unsigned int max_config_cycles = 30;
     static constexpr unsigned int max_wait_cycles = 3000; 
     static constexpr unsigned int max_transceive_cycles = 140;

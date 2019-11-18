@@ -4,8 +4,8 @@ using namespace Devices;
 
 void QuakeControlTask::set_downlink_msg(const char *_szMsg, size_t _len)
 {
-  szMsg = _szMsg;
-  len = _len;
+  MO_msg_p = _szMsg;
+  MO_msg_len = _len;
 }
 
 int QuakeControlTask::get_current_state() const
@@ -52,12 +52,9 @@ int QuakeControlTask::execute()
     result = dispatch_is_functional();
     break;
   case IDLE:
-    // TODO: check if statefield registry request has been set
-    // if so, set currentState and rerun execute
     break;
   default:
-    // TODO: set error message
-    currentState = IDLE;
+    fnSeqNum = 0;
   }
   // Reset currentState to idle if fnSeqNum == 0 since that means we executed the last function
   if (fnSeqNum == 0)
@@ -71,10 +68,10 @@ int QuakeControlTask::dispatch_sbdwb()
   switch (fnSeqNum)
   {
   case 0:
-    errCode = quake.query_sbdwb_1(len);
+    errCode = quake.query_sbdwb_1(MO_msg_len);
     break;
   case 1:
-    errCode = quake.query_sbdwb_2(szMsg, len);
+    errCode = quake.query_sbdwb_2(MO_msg_p, MO_msg_len);
     break;
   case 2:
     errCode = quake.get_sbdwb();
@@ -83,7 +80,7 @@ int QuakeControlTask::dispatch_sbdwb()
     return WRONG_FN_ORDER; // don't know why fnSeqNum would be wrong
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % 3;
+    fnSeqNum = (fnSeqNum + 1) % nSeqSBDWB;
   return errCode;
 }
 
@@ -102,7 +99,7 @@ int QuakeControlTask::dispatch_sbdrb()
     return WRONG_FN_ORDER;
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % 2;
+    fnSeqNum = (fnSeqNum + 1) % nSeqSBDRB;
   return errCode;
 }
 
@@ -121,7 +118,7 @@ int QuakeControlTask::dispatch_sbdix()
     return WRONG_FN_ORDER;
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % 2;
+    fnSeqNum = (fnSeqNum + 1) % nSeqSBDIX;
   return errCode;
 }
 
@@ -146,7 +143,7 @@ int QuakeControlTask::dispatch_config()
     return WRONG_FN_ORDER;
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % 4;
+    fnSeqNum = (fnSeqNum + 1) % nSeqCONFIG;
   return errCode;
 }
 
@@ -165,6 +162,6 @@ int QuakeControlTask::dispatch_is_functional()
     return WRONG_FN_ORDER;
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % 2;
+    fnSeqNum = (fnSeqNum + 1) % nSeqIS_FUNCTIONAL;
   return errCode;
 }

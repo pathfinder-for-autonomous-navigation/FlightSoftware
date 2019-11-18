@@ -1,3 +1,4 @@
+#define DEBUG
 #include <StateFieldRegistry.hpp>
 #include "../StateFieldRegistryMock.hpp"
 #include "../../src/FCCode/QuakeManager.h"
@@ -5,9 +6,10 @@
 
 #include <unity.h>
 
+
 // Check that state x matches the current state of the QuakeControlTask
 #define assert_qct(x) {\
-  TEST_ASSERT_EQUAL(x, tf.quake_manager->qct.get_current_state());\
+  TEST_ASSERT_EQUAL(x, tf.quake_manager->dbg_get_qct().get_current_state());\
   }
 
 // Check that radio state x matches the current radio state
@@ -17,7 +19,7 @@
 
 // Check that x matches the current fn number
 #define assert_fn_num(x) {\
-  TEST_ASSERT_EQUAL(x, tf.quake_manager->qct.get_current_fn_number());\
+  TEST_ASSERT_EQUAL(x, tf.quake_manager->dbg_get_qct().get_current_fn_number());\
 }
 
 // ---------------------------------------------------------------------------
@@ -73,7 +75,7 @@ class TestFixture {
         // Initialize internal fields
         if (qct_state != -1)
         {
-          quake_manager->qct.currentState = qct_state;
+          quake_manager->dbg_get_qct().dbg_set_state(qct_state);
           quake_manager->radio_mode_f = static_cast<radio_mode_t>(radio_mode); 
         }
     }
@@ -98,23 +100,23 @@ void test_wait_unexpected()
   // setup
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::wait), IDLE);
   // If in WAIT and unexpected Flag is set
-  tf.quake_manager->unexpectedFlag = true;
+  tf.quake_manager->dbg_get_unexpectedFlag() = true;
   // then execute all the wait cycles
   tf.realSteps(tf.quake_manager->max_wait_cycles);
   assert_radio(radio_mode_t::wait);
-  TEST_ASSERT_TRUE(tf.quake_manager->unexpectedFlag);
+  TEST_ASSERT_TRUE(tf.quake_manager->dbg_get_unexpectedFlag());
   // When wait finishes waiting
   tf.step();
   // Clear the error flag and transition to config
   assert_radio(radio_mode_t::config);
-  TEST_ASSERT_FALSE(tf.quake_manager->unexpectedFlag);
+  TEST_ASSERT_FALSE(tf.quake_manager->dbg_get_unexpectedFlag());
 }
 
 void test_config_unexpected() 
 {
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::config), CONFIG);
   // If in CONFIG and unexpected Flag is set 
-  tf.quake_manager->unexpectedFlag = true;
+  tf.quake_manager->dbg_get_unexpectedFlag() = true;
   // then wait
   tf.step();
   assert_qct(IDLE);
@@ -126,7 +128,7 @@ void test_rwt_unexpected(int qct_state, unsigned int radio_mode)
 {
   TestFixture tf(radio_mode, qct_state);
   // If in SBDRB, SBDWB, or SBDIX and unexpected Flag is set
-  tf.quake_manager->unexpectedFlag = true;
+  tf.quake_manager->dbg_get_unexpectedFlag() = true;
   // then transition to Wait
   tf.step();
   assert_qct(IDLE);
@@ -167,7 +169,7 @@ void test_rwc_no_more_cycles(int qct_state, unsigned int radio_mode)
 {
   // If in CONFIG, WRITE, READ, TRANS and run out of cycles
   TestFixture tf(radio_mode, qct_state);
-  tf.quake_manager->unexpectedFlag = false;
+  tf.quake_manager->dbg_get_unexpectedFlag() = false;
   tf.cycle_no_fp->set(tf.cycle_no_fp->get() + tf.quake_manager->max_transceive_cycles);
   TEST_ASSERT_EQUAL(initCycles + tf.quake_manager->max_transceive_cycles, tf.cycle_no_fp->get());
   tf.step();
@@ -177,7 +179,7 @@ void test_rwc_no_more_cycles(int qct_state, unsigned int radio_mode)
   assert_fn_num(0);
   if (static_cast<unsigned int>(radio_mode) != static_cast<unsigned int>(radio_mode_t::transceive))
   {
-    TEST_ASSERT_TRUE(tf.quake_manager->unexpectedFlag);
+    TEST_ASSERT_TRUE(tf.quake_manager->dbg_get_unexpectedFlag());
   }
 }
 
@@ -251,7 +253,7 @@ void test_transceive_ok_no_network()
   // If in TRANS and complete trans but there is no network
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.step(); // 0
-  tf.quake_manager->qct.quake.sbdix_r[0] = 32;
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[0] = 32;
   tf.step(); // 1
   // Then try again
   assert_radio(radio_mode_t::transceive);
@@ -265,7 +267,7 @@ void test_transceive_ok_no_network_timedout()
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.cycle_no_fp->set(tf.cycle_no_fp->get() + tf.quake_manager->max_transceive_cycles - 1);
   tf.step(); // 0
-  tf.quake_manager->qct.quake.sbdix_r[0] = 32;
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[0] = 32;
   tf.step(); // 1
   // Then transition to WAIT
   assert_radio(radio_mode_t::wait);
@@ -279,8 +281,8 @@ void test_transceive_ok_with_mt()
   // If in TRANS and complete trans and have msg
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.step(); // 0
-  tf.quake_manager->qct.quake.sbdix_r[0] = 1;
-  tf.quake_manager->qct.quake.sbdix_r[4] = 1;
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[0] = 1;
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[4] = 1;
   tf.step(); // 1
   // Then transition to READ
   assert_radio(radio_mode_t::read);
@@ -294,8 +296,8 @@ void test_transceive_ok_no_mt()
   // If in TRANS and complete trans and have msg
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.step(); // 0
-  tf.quake_manager->qct.quake.sbdix_r[0] = 2;
-  tf.quake_manager->qct.quake.sbdix_r[4] = 0;
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[0] = 2;
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[4] = 0;
   tf.step(); // 1
   // Then transition to WRITE to load the next msg
   assert_radio(radio_mode_t::write);
@@ -310,12 +312,12 @@ void test_wrong_state()
 {
   // If in a mismatched state
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), CONFIG);
-  TEST_ASSERT_FALSE(tf.quake_manager->unexpectedFlag);
+  TEST_ASSERT_FALSE(tf.quake_manager->dbg_get_unexpectedFlag());
   tf.step();
   // Then the error flag should be set and transition to WAIT
   assert_radio(radio_mode_t::wait);
   assert_qct(IDLE);
-  TEST_ASSERT_TRUE(tf.quake_manager->unexpectedFlag);
+  TEST_ASSERT_TRUE(tf.quake_manager->dbg_get_unexpectedFlag());
 }
 
 // ---------------------------------------------------------------------------
@@ -326,15 +328,15 @@ void test_oldcycles_do_not_change()
 {
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::wait), IDLE);
   tf.step();
-  TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->last_checkin_cycle);
+  TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->dbg_get_last_checkin());
   // If I do not use up my cycles
   tf.step(tf.quake_manager->max_wait_cycles - 1);
   // Then my last_checkin_cycles should still be the same
-  TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->last_checkin_cycle);
+  TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->dbg_get_last_checkin());
   // If I use up my cycles
   tf.step();
   // Then my last_checkin_cycles == current cycles number
-  TEST_ASSERT_EQUAL(tf.cycle_no_fp->get(), tf.quake_manager->last_checkin_cycle);
+  TEST_ASSERT_EQUAL(tf.cycle_no_fp->get(), tf.quake_manager->dbg_get_last_checkin());
 }
 
 void test_transition_radio_state()
@@ -342,11 +344,11 @@ void test_transition_radio_state()
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::wait), IDLE);
   // If I call transition radio state
   tf.step();
-  TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->last_checkin_cycle);
-  tf.quake_manager->transition_radio_state(radio_mode_t::config);
+  TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->dbg_get_last_checkin());
+  tf.quake_manager->dbg_transition_radio_state(radio_mode_t::config);
   // Then my cycles should be updated
   assert_radio(static_cast<unsigned int>(radio_mode_t::config));
-  TEST_ASSERT_EQUAL(initCycles+1, tf.quake_manager->last_checkin_cycle);
+  TEST_ASSERT_EQUAL(initCycles+1, tf.quake_manager->dbg_get_last_checkin());
 }
 
 void test_no_more_cycles()
@@ -356,7 +358,7 @@ void test_no_more_cycles()
   tf.cycle_no_fp->set(initCycles + tf.quake_manager->max_config_cycles);
   tf.step();
   // then reset the counter and transition
-  TEST_ASSERT_EQUAL(tf.quake_manager->last_checkin_cycle, 
+  TEST_ASSERT_EQUAL(tf.quake_manager->dbg_get_last_checkin(), 
     initCycles + tf.quake_manager->max_config_cycles + 1);
 }
 
@@ -380,14 +382,14 @@ void test_write_load_message()
   // If we've executed the first request to write
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::write), SBDWB);
   TEST_ASSERT_EQUAL_STRING(snap1, tf.radio_mo_packet_fp->get());
-  TEST_ASSERT_EQUAL(0, tf.quake_manager->mo_idx);
-  TEST_ASSERT_EQUAL(0, tf.quake_manager->qct.get_current_fn_number());
+  TEST_ASSERT_EQUAL(0, tf.quake_manager->dbg_get_mo_idx());
+  TEST_ASSERT_EQUAL(0, tf.quake_manager->dbg_get_qct().get_current_fn_number());
   tf.step();
   // Then the first seciton of the snapshot should be loaded
-  TEST_ASSERT_EQUAL(70, tf.quake_manager->qct.len);
+  TEST_ASSERT_EQUAL(70, tf.quake_manager->dbg_get_qct().dbg_get_MO_len());
   check_buf_bytes(
     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", 
-    tf.quake_manager->qct.szMsg, tf.quake_manager->qct.len); 
+    tf.quake_manager->dbg_get_qct().dbg_get_MO_msg, *(tf.quake_manager->dbg_get_qct().dbg_get_MO_len)); 
   tf.step();
 }
 
@@ -397,25 +399,25 @@ void test_update_mo_same_snap()
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::write), SBDWB);
   TEST_ASSERT_EQUAL_STRING(snap1, tf.radio_mo_packet_fp->get());
   tf.step(); // sbdwb 0
-  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->qct.szMsg);
+  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->dbg_get_qct().dbg_get_MO_msg());
   tf.radio_mo_packet_fp->set(snap2); 
   tf.step(); // 1
-  tf.quake_manager->qct.quake.sbdix_r[4] = 0; // have comms but no msg
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[4] = 0; // have comms but no msg
   tf.step(); // 2
   tf.radio_mo_packet_fp->set(snap2); 
   // Execute SBDIX
-  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->qct.szMsg);
+  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->dbg_get_qct().dbg_get_MO_msg());
   tf.step(); // sbdix 0
   tf.radio_mo_packet_fp->set(snap2); 
   tf.step(); // sbdix 1
   tf.radio_mo_packet_fp->set(snap2); 
-  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->qct.szMsg);
+  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->dbg_get_qct().dbg_get_MO_msg());
   // Return to SBDWB
   tf.step(); // sbdwb 0
   // Then the second piece of the snapshot should be loaded on the next write
   check_buf_bytes(
     "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB", 
-    tf.quake_manager->qct.szMsg, tf.quake_manager->qct.len); 
+    tf.quake_manager->dbg_get_qct().dbg_get_MO_msg(), tf.quake_manager->dbg_get_qct().dbg_get_MO_len()); 
 }
 
 void test_update_mo_reset_idx()
@@ -425,31 +427,31 @@ void test_update_mo_reset_idx()
   tf.realSteps(3); // sbdwb 0, 1, 2
   tf.radio_mo_packet_fp->set(snap2);
   // Execute SBDIX
-  TEST_ASSERT_EQUAL(SBDIX, tf.quake_manager->qct.get_current_state());
-  tf.quake_manager->mo_idx = 4; // pretend on the last snapshot
+  TEST_ASSERT_EQUAL(SBDIX, tf.quake_manager->dbg_get_qct().get_current_state());
+  tf.quake_manager->dbg_get_mo_idx() = 4; // pretend on the last snapshot
   tf.realSteps(2); // sbdix 0, 1
-  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->qct.szMsg);
+  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->dbg_get_qct().dbg_get_MO_msg());
 
   // Then the last piece should be loaded and mo_idx reset to 0
-  TEST_ASSERT_EQUAL(SBDWB, tf.quake_manager->qct.get_current_state());
-  TEST_ASSERT_EQUAL(0, tf.quake_manager->qct.get_current_fn_number());
+  TEST_ASSERT_EQUAL(SBDWB, tf.quake_manager->dbg_get_qct().get_current_state());
+  TEST_ASSERT_EQUAL(0, tf.quake_manager->dbg_get_qct().get_current_fn_number());
   tf.step(); // 0
-  TEST_ASSERT_EQUAL(1, tf.quake_manager->qct.get_current_fn_number());
+  TEST_ASSERT_EQUAL(1, tf.quake_manager->dbg_get_qct().get_current_fn_number());
   check_buf_bytes(
     "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE", 
-    tf.quake_manager->qct.szMsg, tf.quake_manager->qct.len); 
+    tf.quake_manager->dbg_get_qct().dbg_get_MO_msg(), tf.quake_manager->dbg_get_qct().dbg_get_MO_len()); 
   tf.realSteps(2); // 1, 2
   tf.radio_mo_packet_fp->set(snap2);
   // Then mo_idx should be reset to 0 but mo_buffer should still be the same
-  TEST_ASSERT_EQUAL(0, tf.quake_manager->mo_idx);
-  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->mo_buffer_copy);
+  TEST_ASSERT_EQUAL(0, tf.quake_manager->dbg_get_mo_idx());
+  TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->dbg_get_mo_buffer_copy());
 }
 
 void test_update_mo_load_new_snap()
 {
   // If have written the last piece of the first snapshot
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::write), SBDWB);
-  tf.quake_manager->mo_idx = 4; // pretend on the last snapshot
+  tf.quake_manager->dbg_get_mo_idx() = 4; // pretend on the last snapshot
   // Execute SBDWB
   tf.realSteps(3);
   tf.radio_mo_packet_fp->set(snap2);
@@ -458,10 +460,10 @@ void test_update_mo_load_new_snap()
 
   tf.step(); // sbdwb 0
   // Then snap2 should be copied to mo_buffer and snap2 part 1 loaded
-  TEST_ASSERT_EQUAL_STRING(snap2, tf.quake_manager->qct.szMsg);
+  TEST_ASSERT_EQUAL_STRING(snap2, tf.quake_manager->dbg_get_qct().dbg_get_MO_len());
   check_buf_bytes(
     "1111111111111111111111111111111111111111111111111111111111111111111111", 
-    tf.quake_manager->qct.szMsg, tf.quake_manager->qct.len); 
+    tf.quake_manager->dbg_get_qct().dbg_get_MO_msg(), tf.quake_manager->dbg_get_qct().dbg_get_MO_len()); 
   tf.step(); 
 }
 
@@ -473,8 +475,8 @@ void test_valid_initialization()
     assert_radio(radio_mode_t::config);
     assert_qct(CONFIG);
     assert_fn_num(0);
-    TEST_ASSERT_EQUAL(0, tf.quake_manager->mo_idx);
-    TEST_ASSERT_FALSE(tf.quake_manager->unexpectedFlag);
+    TEST_ASSERT_EQUAL(0, tf.quake_manager->dbg_get_mo_idx());
+    TEST_ASSERT_FALSE(tf.quake_manager->dbg_get_unexpectedFlag());
 }
 
 void test_dispatch_manual()

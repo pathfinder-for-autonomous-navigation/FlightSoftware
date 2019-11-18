@@ -177,7 +177,7 @@ public:
      */
     char mt_message[MAX_MSG_SIZE];
 
-protected:
+private:
 
     /*! Serial port designated to the QLocate */
 #ifndef DESKTOP
@@ -202,8 +202,6 @@ protected:
     /*! Network ready pin (unused) */
     unsigned char nr_pin_;
 
-private:
-
     /** ! Parses the data returned from requesting SBD transfer (AT+SBDIX)
      * Example:
      * char const *c = "SBDI: 1, 2173, 1, 87, 429, 0";
@@ -224,8 +222,5 @@ private:
     void disable() override;
 #endif
 };
-} // namespace Devices
-// End QLocate
-// -----------------------------------------------------------------------------
-
+} 
 #endif

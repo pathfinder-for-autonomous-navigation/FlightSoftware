@@ -17,6 +17,12 @@ static constexpr int SBDIX = 3;         // SBDIX operation
 static constexpr int CONFIG = 4;        // Config operation
 static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
+static constexpr int nSeqSBDWB = 3;         // number of command sequences in SBDWB
+static constexpr int nSeqSBDRB = 2;         // number of command sequences in SBDRB
+static constexpr int nSeqSBDIX = 2;         // number of command sequences in SBDIX
+static constexpr int nSeqCONFIG = 4;        // number of command sequences in CONFIG
+static constexpr int nSeqIS_FUNCTIONAL = 2; // number of command sequences in IS_FUNCTIONAL
+
 class QuakeControlTask : public TimedControlTask<int>
 {
 public:
@@ -26,8 +32,8 @@ public:
       quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
       currentState(IDLE),
       fnSeqNum(0),
-      szMsg(nullptr),
-      len(0){}
+      MO_msg_p(nullptr),
+      MO_msg_len(0){}
   #else
   QuakeControlTask(StateFieldRegistry &registry, unsigned int offset) : 
       TimedControlTask<int>(registry, offset),
@@ -38,7 +44,7 @@ public:
       len(0) {}
   #endif
   /** 
-   * execute is overriden from ControlTask 
+   * execute is overriden from TimesControlTask 
    * Calling execute() when the state is IDLE generates no effects. 
   */
   int execute();
@@ -62,19 +68,48 @@ public:
    * Set the message that Quake should downlink.  */
   void set_downlink_msg(const char *, size_t);
 
-  Devices::QLocate quake;
+#ifdef DEBUG
+  void dbg_set_state(int state) 
+  {
+    currentState = state;
+  }
 
-//private:
+  void dbg_set_fnSeqNum(int num)
+  {
+    fnSeqNum = num;
+  }
+
+  Devices::QLocate& dbg_get_quake()
+  {
+    return quake;
+  }
+
+  const char* dbg_get_MO_msg()
+  {
+    return MO_msg_p;
+  }
+
+  size_t& dbg_get_MO_len()
+  {
+    return MO_msg_len;
+  }
+#endif
+
+protected:
   // all dispatch_x functions return 0 on success and an error code otherwise
   int dispatch_sbdwb();
   int dispatch_sbdrb();
   int dispatch_sbdix();
   int dispatch_config();
   int dispatch_is_functional();
+
+private:
   // Quake should never be in both IDLE and fnSeqNum != 0
+  Devices::QLocate quake;
+
   int currentState; // the state of the Quake
   int fnSeqNum;     // the sequence we are on
 
-  const char *szMsg; // the message to downlink
-  size_t len;        // length of the message to downlink
+  const char *MO_msg_p;   // the message to downlink
+  size_t MO_msg_len;      // length of the message to downlink
 };
