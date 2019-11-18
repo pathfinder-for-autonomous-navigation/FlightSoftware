@@ -22,11 +22,9 @@
 namespace Devices
 {
 
-#define MAX_MSG_SIZE 340
-
 /*! RETURN values:
  * All methods return one of the following return codes.
- * Nonzero codes indicate failure
+ * Nonzero codes indicate failure. 
  * Codes 0 - 3 is consistent with SBDWB codes
  * */
 static constexpr int OK = 0;                    // command was succesfully executed, expected response received
@@ -38,7 +36,6 @@ static constexpr int WRITE_FAIL = -30;          // failed to send command (write
 static constexpr int WRONG_STATE = -40;         // driver is not in the expected state
 static constexpr int PORT_UNAVAILABLE =
     -50; // attempt to read port that is not available (no data available)
-
 static constexpr int UNKNOWN = -60;        // unknown errror
 static constexpr int WRONG_FN_ORDER = -70; // attempt to execute commands in the wrong order (unexpected order)
                                            // Ex: calling query_config_2() without calling query_config_1()
@@ -46,34 +43,23 @@ static constexpr int WRONG_FN_ORDER = -70; // attempt to execute commands in the
 /**
  * Functions are formated as follows:
  * Methods that send commands are prefixed with "query_" followed by the name
- * of their operation
- * Methods that end an operation are prefixed with "get_" followed by the name
- * of their operation. These methods usually return a status code
+ * of their command
+ * Methods that end a command sequence are prefixed with "get_" followed by the name
+ * of their command. These methods usually return a status code
  * or retrieve a message.
  *
  * Methods are numbered by the order in which they should be executed.
  * The client is responsible for executing methods in the correct order.
- * The driver only checks that QLocate is in the appropriate state.
  *
  * The first method of an operation will have a "1" suffix. (Ex: query_sbdwb_1)
- * All methods with "1" require that the driver be in an IDLE state and will
- * change the state of the driver iff the method was successful.
- * If the method fails, the driver state is reset to IDLE.
- * The exception to this is the CONFIG command, which may be called from any
- * state since it resets the Quake.
  *
- * "query_" methods with a suffix greater than 1 implicitly reads some expected
+ * "query_" methods with a suffix greater than 1 implicitly read some expected
  * response ("READY", "OK", etc.) and then sends another message. The client
  * is responsible for ensuring the correct delay timings between queries.
- * The driver must be in the appropriate state. These methods will not change
- * the driver state. Calling the next "query_" method too early will likely
- * return PORT_UNAVAILABLE. Calling these methods in the incorrect state
- * will return WRONG_STATE.
+ * Calling the next "query_" method too early will likely return 
+ * PORT_UNAVAILABLE. 
  *
  * "get_" methods end the command sequence of the operation and will set the
- * state of the driver to IDLE provided that it reads data from the port. If
- * the method returns PORT_UNAVAILABLE or TIMEOUT
- * then it will not reset state to IDLE
  */
 
 /*! Driver class for the QLocate attached to an arbitrary serial port. Supports
@@ -91,6 +77,8 @@ public:
     static constexpr unsigned char DEFAULT_NR_PIN = 35;
     /** Default timeout for serial communications on device. **/
     static constexpr unsigned int DEFAULT_TIMEOUT = 10;
+    /** Maximum size of an MT or MO message **/ 
+    static constexpr int MAX_MSG_SIZE = 340;
 
     /*! Sets the QLocate serial port and serial timeout value. Do not Initialize
      *  the serial port with begin(), it will be done in the constructor.
@@ -105,7 +93,7 @@ public:
 #ifndef DESKTOP
     bool setup() override;
 #else
-bool setup();
+    bool setup();
 #endif
 
     /*! Sends an AT message to test comms. */
@@ -113,9 +101,6 @@ bool setup();
 
     /*! Attempts to retrieve 'OK' response at port */
     int get_is_functional();
-
-    /*! Returns the null-termianted MT message*/
-    char *get_message();
 
     /*! This manipulates the settings of the QLocate and sets it to communicate
      *  via the 3 pin interface.
@@ -128,11 +113,9 @@ bool setup();
      *    5. ATV0        - sets responses to numeric mode
      *    6. AT+SBDMTA=0 - disables RING alerts
      *    7. +SBDD2      - clears the QLocate's buffer
-     *  Returns:
+     *  Returns: 
      *  OK if it was succesful,
      *  PORT_UNAVAILABLE if no data at port
-     *
-     * Note: Requires 10ms delay between calls
      */
     int query_config_1();
     int query_config_2();
@@ -141,11 +124,10 @@ bool setup();
 
     /*! SBDWB operation:
      * Loads a message into the MO buffer to be sent during the next
-     * sbdix session.
+     * SBD session.
      * The MO buffer can only hold a single message at a time with a
      * max length of 340 bytes.
      */
-
     /*! Request to load a message of size [len].
      * Returns WRONG_LENGTH if len > 340 */
     virtual int query_sbdwb_1(int len);
@@ -183,12 +165,19 @@ bool setup();
     /*! Returns pin # for Network Ready pin. */
     unsigned char nr_pin();
 
-    /*! sbdix integer response array */
+    /**
+     * sbdix command response array of the following format: 
+     * +SBDIX:<MO status>,<MOMSN>,<MT status>,<MTMSN>,<MT length>,<MT queued>
+     * */
     int sbdix_r[6];
 
+    /**
+     * Contains the contents of the Mobile terminated (MT) message 
+     * retreived from the last SBDRB session. 
+     */
+    char mt_message[MAX_MSG_SIZE];
+
 protected:
-    /*! Mobile terminated (MT) message data */
-    char message[340];
 
     /*! Serial port designated to the QLocate */
 #ifndef DESKTOP
@@ -197,7 +186,8 @@ protected:
     int timeout;
 
     /*! Attempts to read [expected] from the QLocate's serial port.
-     * Does not clear the port after a read.
+     * Clears the port after a reading an amount of bytes equal to 
+     * the length of [expected]. 
      * Returns:
      * OK if the expected response is read
      * UNEXPECTED_RESPONSE if an unexpected response is read
@@ -209,6 +199,7 @@ protected:
     /*! Returns a message checksum according to the Iridium requirements */
     short checksum(char const *c, int len);
 
+    /*! Network ready pin (unused) */
     unsigned char nr_pin_;
 
 private:

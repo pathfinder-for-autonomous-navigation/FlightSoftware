@@ -69,7 +69,8 @@ int QLocate::query_config_2()
     CHECK_PORT_AVAILABLE();
     port->clear(); // we don't care what is returned for factory reset
 #endif
-    // Disable flow control, disable DTR, disabl echo, set numeric rasponses, and
+    // Disable flow control, disable DTR, disable echo, 
+    // set numeric rasponses, and
     // disable "RING" alerts
     return sendCommand("AT&K0;&D0;E0;V0;+SBDMTA=0\r");
 }
@@ -166,12 +167,7 @@ int QLocate::get_sbdwb()
 int QLocate::parse_ints(char const *c, int *i)
 {
     int status = sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i + 1, i + 2, i + 3, i + 4, i + 5);
-    Serial.printf("\n[%s]: %d", c, status);
-    for (int j = 0; j <  6; j++) 
-    {
-        Serial.printf("[%d], ", i[j]);
-    }
-    if (status == 6)
+    if (status == 6) 
         return OK;
     return UNEXPECTED_RESPONSE;
 }
@@ -189,7 +185,7 @@ int QLocate::get_sbdix()
     return OK;
 #else
     CHECK_PORT_AVAILABLE();
-    // Parse quake output
+    // Parse SBDIX output
     char buf[75] = {0};
     port->readBytesUntil('\n', buf, 74);
     return parse_ints(buf + 8, sbdix_r);
@@ -198,7 +194,6 @@ int QLocate::get_sbdix()
 
 int QLocate::query_sbdrb_1()
 {
-    // Request data
     return sendCommand("AT+SBDRB\r");
 }
 
@@ -208,36 +203,33 @@ int QLocate::get_sbdrb()
     CHECK_PORT_AVAILABLE();
     short s = 0;
     // Read the message size
-    if (2 != port->readBytes((char *)&s, 2))
-        return WRONG_LENGTH;
+    if (2 != port->readBytes((char *)&s, 2)) return WRONG_LENGTH;
 
     size_t size = (s & 0xFF) << 8 | (s >> 8);
 #ifdef DEBUG_ENABLED
     Serial.println("sbdrb > recieving message size= " + String(size));
 #endif
-    memset(message, 0, MAX_MSG_SIZE);
+    memset(mt_message, 0, MAX_MSG_SIZE);
     // Read the message
-    if (size != port->readBytes(message, size))
+    if (size != port->readBytes(mt_message, size))
         return UNEXPECTED_RESPONSE; // Quake::Message read
     // Read the checksum
     s = 0;
     if (2 != port->readBytes((char *)&s, 2))
         return UNEXPECTED_RESPONSE;
 #ifdef DEBUG_ENABLED
-    Serial.printf("Message: [%s]", message);
+    Serial.printf("Message: [%s]", mt_message);
     Serial.flush();
 #endif
     // Verify checksum
     // Possibly just compare s != checksum(message, size)
-    if (((s & 0xFF) << 8 | (s >> 8)) != checksum(message, size))
+    if (((s & 0xFF) << 8 | (s >> 8)) != checksum(mt_message, size))
         return BAD_CHECKSUM;
 #endif
     return OK;
 }
 
 unsigned char QLocate::nr_pin() { return nr_pin_; }
-
-char *QLocate::get_message() { return message; }
 
 // Read the data at port and make sure it matches expected
 int QLocate::consume(String expected)
@@ -247,13 +239,11 @@ int QLocate::consume(String expected)
 #else
     // Return if nothing at the port
     CHECK_PORT_AVAILABLE();
-
-
     int expectLength = expected.length();
     char buf[expectLength + 1] = {0};
+
     // Read current data at port
     int len;
-
     len = port->readBytes(buf, expectLength);
 
 #ifdef DEBUG_ENABLED
