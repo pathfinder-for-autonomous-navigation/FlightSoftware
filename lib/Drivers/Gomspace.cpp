@@ -67,7 +67,7 @@ bool Gomspace::get_hk() {
     i2c_finish();
 
     #ifndef DESKTOP
-    if (buffer[0] != PORT_BYTE && buffer[1] != 0)
+    if (buffer[0] != PORT_BYTE || buffer[1] != 0)
         return false;
     else {
         
