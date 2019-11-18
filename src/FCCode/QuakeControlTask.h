@@ -40,8 +40,8 @@ public:
       quake(),
       currentState(IDLE),
       fnSeqNum(0),
-      szMsg(nullptr),
-      len(0) {}
+      MO_msg_p(nullptr),
+      MO_msg_len(0) {}
   #endif
   /** 
    * execute is overriden from TimesControlTask 
@@ -67,6 +67,27 @@ public:
   /**
    * Set the message that Quake should downlink.  */
   void set_downlink_msg(const char *, size_t);
+
+  char* const get_MT_msg()
+  {
+    return quake.mt_message;
+  }
+
+  int get_MO_status()
+  {
+    return quake.sbdix_r[0];
+  }
+
+  int get_MT_status()
+  {
+    return quake.sbdix_r[2];
+  }
+
+  int get_MT_length()
+  {
+    return quake.sbdix_r[4];
+  }
+
 
 #ifdef DEBUG
   void dbg_set_state(int state) 

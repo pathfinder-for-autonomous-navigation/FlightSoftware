@@ -182,8 +182,8 @@ private:
     /*! Serial port designated to the QLocate */
 #ifndef DESKTOP
     HardwareSerial *const port;
-#endif
     int timeout;
+#endif
 
     /*! Attempts to read [expected] from the QLocate's serial port.
      * Clears the port after a reading an amount of bytes equal to 

@@ -1,7 +1,6 @@
 
 #include "QuakeManager.h"
 #include "QLocate.hpp"
-
 /**
  * QuakeManager Implementation Info: 
  * 
@@ -115,18 +114,18 @@ bool QuakeManager::dispatch_transceive() {
     if ( qct.get_current_state() == IDLE )
     {
         // Case 1: We have no comms --> try again
-        if (qct.quake.sbdix_r[0] > 4)
+        if (qct.get_MO_status() > 4)
         {
             printf(debug_severity::info, 
                 "[Quake Info] SBDIX finished, we have no comms. \
-                    Error code: %d \r\n", qct.quake.sbdix_r[0]);
+                    Error code: %d \r\n", qct.get_MO_status());
             // we should stay in transceive but do not update last_checkin
             qct.request_state(SBDIX);
             return write_to_error(err_code);
         }
 
         // Case 2: We have comms and we have message --> read message
-        if (qct.quake.sbdix_r[4] > 0) 
+        if (qct.get_MT_status() == 1) // SBD message successfully retrieved
         {
             printf(debug_severity::info, 
                 "[Quake Info] SBDIX finished, transitioning to SBDRB\r\n");
@@ -162,7 +161,8 @@ bool QuakeManager::dispatch_read() {
         printf(debug_severity::info, 
             "[Quake Info] SBDRB finished, transitioning to SBDWB\r\n");
 
-        radio_mt_packet_fp->set(qct.quake.get_message());
+        radio_mt_packet_fp->set(qct.get_MT_msg());
+
         transition_radio_state(radio_mode_t::write);
     }
     return write_to_error(err_code);

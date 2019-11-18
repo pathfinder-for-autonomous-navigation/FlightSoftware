@@ -282,7 +282,7 @@ void test_transceive_ok_with_mt()
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.step(); // 0
   tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[0] = 1;
-  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[4] = 1;
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[2] = 1;
   tf.step(); // 1
   // Then transition to READ
   assert_radio(radio_mode_t::read);
@@ -297,7 +297,7 @@ void test_transceive_ok_no_mt()
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
   tf.step(); // 0
   tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[0] = 2;
-  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[4] = 0;
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[2] = 0;
   tf.step(); // 1
   // Then transition to WRITE to load the next msg
   assert_radio(radio_mode_t::write);
@@ -389,7 +389,7 @@ void test_write_load_message()
   TEST_ASSERT_EQUAL(70, tf.quake_manager->dbg_get_qct().dbg_get_MO_len());
   check_buf_bytes(
     "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", 
-    tf.quake_manager->dbg_get_qct().dbg_get_MO_msg, *(tf.quake_manager->dbg_get_qct().dbg_get_MO_len)); 
+    tf.quake_manager->dbg_get_qct().dbg_get_MO_msg(), tf.quake_manager->dbg_get_qct().dbg_get_MO_len()); 
   tf.step();
 }
 
@@ -402,7 +402,7 @@ void test_update_mo_same_snap()
   TEST_ASSERT_EQUAL_STRING(snap1, tf.quake_manager->dbg_get_qct().dbg_get_MO_msg());
   tf.radio_mo_packet_fp->set(snap2); 
   tf.step(); // 1
-  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[4] = 0; // have comms but no msg
+  tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[2] = 0; // have comms but no msg
   tf.step(); // 2
   tf.radio_mo_packet_fp->set(snap2); 
   // Execute SBDIX
@@ -451,16 +451,20 @@ void test_update_mo_load_new_snap()
 {
   // If have written the last piece of the first snapshot
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::write), SBDWB);
-  tf.quake_manager->dbg_get_mo_idx() = 4; // pretend on the last snapshot
-  // Execute SBDWB
-  tf.realSteps(3);
+  // Read Snap 1
+  tf.realSteps(nSeqSBDWB);
   tf.radio_mo_packet_fp->set(snap2);
-  // Execute SBDIX
-  tf.realSteps(2);
+  tf.realSteps(nSeqSBDIX);
+  for (int i = 0; i < 4; i++)
+  {
+    // Read Snap 1 Part i+1
+    tf.realSteps(nSeqSBDWB);
+    tf.realSteps(nSeqSBDIX);
+  }
 
   tf.step(); // sbdwb 0
   // Then snap2 should be copied to mo_buffer and snap2 part 1 loaded
-  TEST_ASSERT_EQUAL_STRING(snap2, tf.quake_manager->dbg_get_qct().dbg_get_MO_len());
+  TEST_ASSERT_EQUAL_STRING(snap2, tf.quake_manager->dbg_get_qct().dbg_get_MO_msg());
   check_buf_bytes(
     "1111111111111111111111111111111111111111111111111111111111111111111111", 
     tf.quake_manager->dbg_get_qct().dbg_get_MO_msg(), tf.quake_manager->dbg_get_qct().dbg_get_MO_len()); 

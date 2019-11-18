@@ -38,10 +38,12 @@ void test_config_can_interrupt()
 {
   StateFieldRegistry registry;
   QuakeControlTask task(registry, 0);
+  task.set_downlink_msg("Blah", 4);
   TEST_ASSERT_EQUAL(true, task.request_state(SBDWB));
   exec_check(task, SBDWB, 1);
 
   TEST_ASSERT_EQUAL(true, task.request_state(CONFIG));
+  TEST_ASSERT_EQUAL(CONFIG, task.get_current_state());
   exec_check(task, CONFIG, 1);
 }
 
@@ -73,7 +75,9 @@ void test_sbdwb_fail()
   StateFieldRegistry registry;
   QuakeControlTask task(registry, 0);
   TEST_ASSERT_EQUAL(true, task.request_state(SBDWB));
-  exec_check(task, IDLE, 0);
+  TEST_ASSERT_EQUAL(Devices::WRONG_LENGTH, task.execute());
+  TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
+  TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
 }
 
 void test_sbdwb()
@@ -125,7 +129,7 @@ void test_sbdwb_noint()
   QuakeControlTask task(registry, 0);
   TEST_ASSERT_EQUAL(true, task.request_state(CONFIG));
   exec_check(task, CONFIG, 1);
-  TEST_ASSERT_EQUAL(SBDWB, task.get_current_state());
+  TEST_ASSERT_EQUAL(CONFIG, task.get_current_state());
 }
 
 void test_task_execute()
