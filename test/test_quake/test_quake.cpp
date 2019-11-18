@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include "../lib/Drivers/QLocate.hpp"
-#include "../lib/utils/QuakeMessage.hpp"
 #include "core_pins.h"
 #include "quake_common.h"
 #include "usb_serial.h"
@@ -32,12 +31,12 @@ void test_sbdwb(void) {
     delay(DEFAULT_DELAY);
     TEST_ASSERT_EQUAL(0, q.query_sbdwb_1(testString.length()));
     // Test do not allow query when in sbdwb
-    TEST_ASSERT_EQUAL(Devices::WRONG_STATE, q.query_sbdix_1());
+    // TEST_ASSERT_EQUAL(Devices::WRONG_STATE, q.query_sbdix_1());
     delay(DEFAULT_DELAY);
     TEST_ASSERT_EQUAL(0, q.query_sbdwb_2(testString.c_str(), testString.length()));
     delay(DEFAULT_DELAY);
     // Test do not alloq get sbdix when in sbdwb
-    TEST_ASSERT_EQUAL(Devices::WRONG_STATE, q.get_sbdix());
+    // TEST_ASSERT_EQUAL(Devices::WRONG_STATE, q.get_sbdix());
     TEST_ASSERT_EQUAL(Devices::OK, q.get_sbdwb());
 
     // Write a different message

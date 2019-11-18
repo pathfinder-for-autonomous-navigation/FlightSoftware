@@ -20,18 +20,17 @@ void test_sbdix_with_network(void)
 {
     // Load a message on ISU
     int numBytesRead;
-    char buf[16];
-    while (!Serial.available())
-        ;
-
-    do
-    {
-        numBytesRead = Serial.readBytes(buf, 16);
-        buf[numBytesRead] = '\0';
-    } while (strcmp(buf, "Ready"));
+    // char buf[16];
+    // while (!Serial.available())
+    //     ;
+    // do
+    // {
+    //     numBytesRead = Serial.readBytes(buf, 16);
+    //     buf[numBytesRead] = '\0';
+    // } while (strcmp(buf, "Ready"));
 
     std::string testString("hello from PAN!");
-    Serial.printf("sending");
+    // Serial.printf("sending");
     TEST_ASSERT_EQUAL(0, q.query_sbdwb_1(testString.length()));
     delay(DEFAULT_DELAY);
     TEST_ASSERT_EQUAL(0, q.query_sbdwb_2(testString.c_str(), testString.length()));
@@ -39,27 +38,32 @@ void test_sbdix_with_network(void)
     TEST_ASSERT_EQUAL(0, q.get_sbdwb());
     // Start SBD session
     delay(DEFAULT_DELAY);
+
     TEST_ASSERT_EQUAL(0, q.query_sbdix_1());
-    while (!Serial3.available())
-        ;
-    delay(100);
-    while (!Serial3.available())
-        ;
-    // End SBD session
-    TEST_ASSERT_EQUAL(0, q.get_sbdix());
+    // Port should be unavailable at this point
+    TEST_ASSERT_EQUAL(Devices::PORT_UNAVAILABLE, q.get_sbdix());
+    // Wait to talk to Iridium
+    int numDelays = 0;
+    while (q.get_sbdix() != Devices::OK)
+    {
+        delay(100);
+        ++numDelays;
+    }
+    Serial.printf("NumDelays: %d\n", numDelays);
+
     // Get SBDI response
     const int *_pRes = q.sbdix_r;
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
     // If MO_status [0, 2], then downlink was successful
     // But we only pass if we receive a 0
     TEST_ASSERT_EQUAL(MO_OK, pRes->MO_status);
-    while (!Serial.available())
-        ;
+    // while (!Serial.available())
+    //     ;
 
-    numBytesRead = Serial.readBytes(buf, 16);
-    buf[numBytesRead] = '\0';
-    TEST_ASSERT_EQUAL_STRING("received", buf);
-    Serial.println("waiting");
+    // numBytesRead = Serial.readBytes(buf, 16);
+    // buf[numBytesRead] = '\0';
+    // TEST_ASSERT_EQUAL_STRING("received", buf);
+    // Serial.println("waiting");
 }
 
 /* Tests that we can read messages from MT queue */
@@ -96,11 +100,7 @@ void test_sbdrb_with_network(void)
         ;
     TEST_ASSERT_EQUAL(0, q.get_sbdix());
     // Get SBDI response
-<<<<<<< HEAD
     const int *_pRes = q.sbdix_r;
-=======
-    const int *_pRes = q.get_sbdix_response();
->>>>>>> 83a0bc080b1e6b14550a7b241c40e761cac85b7c
 
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
     // If MO_status [0, 2], then downlink was successful
@@ -131,9 +131,9 @@ int main(void)
     delay(5000);
     Serial.begin(9600);
     pinMode(13, OUTPUT);
-    q.setup();
     while (!Serial)
         ;
+    q.setup();
     UNITY_BEGIN();
     RUN_TEST(test_sbdix_with_network);
     RUN_TEST(test_sbdrb_with_network);

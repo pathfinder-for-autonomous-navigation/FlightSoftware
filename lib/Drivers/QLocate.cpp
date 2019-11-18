@@ -166,6 +166,11 @@ int QLocate::get_sbdwb()
 int QLocate::parse_ints(char const *c, int *i)
 {
     int status = sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i + 1, i + 2, i + 3, i + 4, i + 5);
+    Serial.printf("\n[%s]: %d", c, status);
+    for (int j = 0; j <  6; j++) 
+    {
+        Serial.printf("[%d], ", i[j]);
+    }
     if (status == 6)
         return OK;
     return UNEXPECTED_RESPONSE;
