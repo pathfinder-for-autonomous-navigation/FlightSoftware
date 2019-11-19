@@ -7,7 +7,7 @@
 DownlinkParser::DownlinkParser() : 
     downlinked_state(),
     fcp(downlinked_state),
-    downlink_producer(fcp.get_downlink_producer()->get_flows()) {}
+    flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
 std::string DownlinkParser::process_downlink_file(const std::string& filename) {
     std::ifstream downlink_file(filename, std::ios::in | std::ios::binary);
@@ -46,7 +46,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
 
         // Step 2: remove headers from the packet.
         for(int i = frame_bits.size() / 560; i >= 0; i--) {
-            frame_bits.erase(i * 560);
+            frame_bits.erase(frame_bits.begin() + i * 560);
         }
 
         // Step 3: Process control cycle count
@@ -76,9 +76,9 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
             frame_bits.erase(frame_bits.begin(), frame_bits.begin() + flow_id_bits.size());
 
             // Step 4.2. Find flow in Downlink Producer flows list. 
-            Flow* flow = nullptr;
-            for(const Flow& f : flow_data) {
-                unsigned int found_flow_id;
+            const DownlinkProducer::Flow* flow = nullptr;
+            for(const DownlinkProducer::Flow& f : flow_data) {
+                unsigned char found_flow_id;
                 f.id_sr.deserialize(&found_flow_id);
                 if (flow_id == found_flow_id) {
                     flow = &f;
@@ -91,7 +91,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
             }
 
             // Step 4.3. Process the items in the flow.
-            for(const ReadableStateFieldBase* field : flow.fields_list) {
+            for(const ReadableStateFieldBase* field : flow->field_list) {
                 const std::vector<bool>::iterator field_end_it =
                     frame_bits.begin() + field->get_bit_array().size();
                 if (field_end_it > frame_bits.begin() + frame_bits.size()) {
@@ -99,7 +99,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
                 }
 
                 std::vector<bool> field_bits(frame_bits.begin(), field_end_it);
-                field.set_bit_array(field_bits);
+                field->set_bit_array(field_bits);
                 field->deserialize(ret["fields"][field->name()]);
 
                 frame_bits.erase(frame_bits.begin(), field_end_it);
