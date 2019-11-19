@@ -2,7 +2,10 @@
 #include <unity.h>
 
 void test_task_initialization() {
-    DownlinkParser dp;
+    StateFieldRegistryMock reg;
+    reg.create_readable_field<gps_time_t>("foo1");
+    reg.create_readable_field<gps_time_t>("foo2");
+    DownlinkParser dp(reg);
 }
 
 void test_task_execute() {

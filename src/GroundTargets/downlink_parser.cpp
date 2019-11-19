@@ -3,8 +3,10 @@
 #include <chrono>
 #include <thread>
 
+#ifndef UNIT_TEST
 int main() {
-    DownlinkParser dp;
+    StateFieldRegistry reg;
+    DownlinkParser dp(reg);
     std::string filename;
     while(true) {
         std::getline(std::cin, filename);
@@ -12,3 +14,4 @@ int main() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
+#endif

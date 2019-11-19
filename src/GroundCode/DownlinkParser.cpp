@@ -4,9 +4,8 @@
 #include <fstream>
 #include <json.hpp>
 
-DownlinkParser::DownlinkParser() : 
-    downlinked_state(),
-    fcp(downlinked_state),
+DownlinkParser::DownlinkParser(StateFieldRegistry& r) :
+    fcp(r),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
 std::string DownlinkParser::process_downlink_file(const std::string& filename) {
@@ -99,7 +98,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
             }
 
             // Step 4.3. Process the items in the flow.
-            for(const ReadableStateFieldBase* field : flow->field_list) {
+            for(ReadableStateFieldBase* field : flow->field_list) {
                 const std::vector<bool>::iterator field_end_it =
                     frame_bits.begin() + field->get_bit_array().size();
                 if (field_end_it > frame_bits.begin() + frame_bits.size()) {
