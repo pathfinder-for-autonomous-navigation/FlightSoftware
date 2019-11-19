@@ -30,17 +30,19 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
         if (flow.is_active) num_active_flows++;
     }
 
-    const size_t downlink_size = compute_downlink_size();
-    snapshot_size_bytes_f.set(downlink_size);
-    snapshot = new char[downlink_size];
+    const size_t max_downlink_size = compute_max_downlink_size();
+    const size_t current_downlink_size = compute_downlink_size();
+    snapshot = new char[max_downlink_size];
     snapshot_ptr_f.set(snapshot);
+    snapshot_size_bytes_f.set(current_downlink_size);
 }
 
-size_t DownlinkProducer::compute_downlink_size() const {
+size_t DownlinkProducer::compute_downlink_size(const bool compute_max) const {
     size_t downlink_max_size_bits = 0;
 
-    for (auto const& flow : flows) {
-        downlink_max_size_bits += flow.get_packet_size();
+    for (const Flow& flow : flows) {
+        if (flow.is_active || compute_max)
+            downlink_max_size_bits += flow.get_packet_size();
     }
 
     // Compute additional bits in the downlink size due to header information.
@@ -55,11 +57,15 @@ size_t DownlinkProducer::compute_downlink_size() const {
     return downlink_max_size_bytes;
 }
 
-static void add_field_bits_to_downlink_packet(const bit_array& field_bits,
-                                              char* snapshot_ptr,
-                                              size_t& packet_offset,
-                                              size_t& packet_counter,
-                                              size_t& downlink_frame_offset)
+size_t DownlinkProducer::compute_max_downlink_size() const {
+    return compute_downlink_size(true);
+}
+
+static void add_field_bits_to_downlink_frame(const bit_array& field_bits,
+                                             char* snapshot_ptr,
+                                             size_t& packet_offset,
+                                             size_t& packet_counter,
+                                             size_t& downlink_frame_offset)
 {
     const size_t field_size = field_bits.size();
     const int field_overflow = (field_size + packet_offset) - 560;
@@ -90,7 +96,12 @@ static void add_field_bits_to_downlink_packet(const bit_array& field_bits,
 }
 
 void DownlinkProducer::execute() {
-    char* snapshot_ptr = snapshot_ptr_f.get();  // Pointer to output buffer
+    // Set the snapshot size in order to let the Quake Manager know about
+    // the size of the current downlink.
+    snapshot_size_bytes_f.set(compute_downlink_size());
+
+    char* snapshot_ptr = snapshot_ptr_f.get();
+    // Create the required iterators
     size_t downlink_frame_offset = 0; // Bit offset from the beginning
                                       // of the snapshot buffer
     size_t packet_counter = 0;        // Current downlink packet count
@@ -102,7 +113,7 @@ void DownlinkProducer::execute() {
     downlink_frame_offset++;
     packet_offset++;
 
-    // Add control cycle count
+    // Add control cycle count to the initial packet
     const bit_array& cycle_count_ba = cycle_count_fp->get_bit_array();
     cycle_count_ba.to_string(snapshot_ptr, downlink_frame_offset);
     downlink_frame_offset += cycle_count_ba.size();
@@ -112,15 +123,15 @@ void DownlinkProducer::execute() {
         if (!flow.is_active) continue;
 
         // Add a flow field one at a time to the snapshot, taking
-        // care to add a downlink packet delimeter every now
-        // and then.
+        // care to add a downlink packet delimeter if the current
+        // packet size exceeds 70 bytes.
         const bit_array& flow_id_bits = flow.id_sr.get_bit_array();
-        add_field_bits_to_downlink_packet(flow_id_bits, snapshot_ptr, packet_offset,
+        add_field_bits_to_downlink_frame(flow_id_bits, snapshot_ptr, packet_offset,
                 packet_counter, downlink_frame_offset);
 
         for(auto const& field : flow.field_list) {
             const bit_array& field_bits = field->get_bit_array();
-            add_field_bits_to_downlink_packet(field_bits, snapshot_ptr, packet_offset,
+            add_field_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
                 packet_counter, downlink_frame_offset);
         }
     }
@@ -129,6 +140,12 @@ void DownlinkProducer::execute() {
 DownlinkProducer::~DownlinkProducer() {
     delete[] snapshot;
 }
+
+#ifdef GSW
+const std::vector<DownlinkProducer::Flow>& DownlinkProducer::get_flows() const {
+    return flows;
+}
+#endif
 
 DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
                         const FlowData& flow_data,

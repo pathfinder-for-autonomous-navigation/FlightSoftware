@@ -35,32 +35,25 @@ class DownlinkProducer : public TimedControlTask<void> {
                      const std::vector<FlowData>& flow_data);
 
     /**
+     * @brief Compute the size of the downlink snapshot.
+     * 
+     * @param If true, this computes the maximum possible size of the snapshot.
+     * If false, this computes the size while only considering active flows.
+     */
+    size_t compute_downlink_size(const bool compute_max = false) const;
+    size_t compute_max_downlink_size() const;
+
+    /**
      * @brief Produce flow packets as needed, and keep track of the next
      * most urgent downlink flow group based on the Quake manager's state.
      */
     void execute() override;
 
     /**
-     * @brief Destructor.s
+     * @brief Destructor; clears the memory allocated for the snapshot
+     * buffer.
      */
     ~DownlinkProducer();
-
-  protected:
-    /** @brief Pointer to cycle count. */
-    ReadableStateField<unsigned int>* cycle_count_fp;
-
-    /**
-     * @brief Compute the size of the downlink snapshot.
-     */
-    size_t compute_downlink_size() const;
-
-    /**
-     * @brief Fields used by the Quake manager to know from where to copy a downlink
-     * snapshot, and the length of the snapshot.
-     */
-    char* snapshot = nullptr;
-    InternalStateField<char*> snapshot_ptr_f;
-    InternalStateField<size_t> snapshot_size_bytes_f;
 
     /**
      * @brief Flow object, which controls the construction and state of a telemetry
@@ -95,16 +88,14 @@ class DownlinkProducer : public TimedControlTask<void> {
 
         //! List of fields within the flow
         std::vector<ReadableStateFieldBase*> field_list;
-        
+
         //! Number of bits in the entire flow packet, including the flow ID.
         size_t get_packet_size() const;
     };
 
-    /**
-     * @brief Actual flow data.
-     */
-    unsigned int num_active_flows = 0;
-    std::vector<Flow> flows;
+    #ifdef GSW
+    const std::vector<Flow>& get_flows() const;
+    #endif
 
     /**
      * @brief Toggle a flow on or off.
@@ -116,6 +107,24 @@ class DownlinkProducer : public TimedControlTask<void> {
      * their active status.
      */
     void swap_flow_priorities(unsigned char id1, unsigned char id2);
+
+  protected:
+    /** @brief Pointer to cycle count. */
+    ReadableStateField<unsigned int>* cycle_count_fp;
+
+    /**
+     * @brief Fields used by the Quake manager to know from where to copy a downlink
+     * snapshot, and the length of the snapshot.
+     */
+    char* snapshot = nullptr;
+    InternalStateField<char*> snapshot_ptr_f;
+    InternalStateField<size_t> snapshot_size_bytes_f;
+
+    /**
+     * @brief Actual flow data.
+     */
+    unsigned int num_active_flows = 0;
+    std::vector<Flow> flows;
 };
 
 #endif
