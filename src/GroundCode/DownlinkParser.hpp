@@ -28,6 +28,10 @@ class DownlinkParser {
      */
     std::string process_downlink_file(const std::string& filename);
 
+    #ifdef UNIT_TEST
+    DownlinkProducer* get_downlink_producer();
+    #endif
+
   protected:
     /**
      * @brief Initialize flight software in order to get downlink flows.

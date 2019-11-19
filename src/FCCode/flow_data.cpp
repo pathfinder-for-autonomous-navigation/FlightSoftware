@@ -1,7 +1,7 @@
-#include "DownlinkProducer.hpp"
+#include "MainControlLoop.hpp"
 
-namespace PAN {
-std::vector<DownlinkProducer::FlowData> flow_data = {
+const std::vector<DownlinkProducer::FlowData>
+MainControlLoop::flow_data = {
     {
         // Flow ID 0: contains the GPS time and position.
         0,
@@ -12,4 +12,3 @@ std::vector<DownlinkProducer::FlowData> flow_data = {
         }
     }
 };
-} // namespace PAN

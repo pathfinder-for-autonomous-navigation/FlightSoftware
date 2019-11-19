@@ -9,6 +9,7 @@ valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose .
 # Compile and run functional test for environments
 platformio run -e native_ci
 platformio run -e native
+platformio run -e downlink_parser
 pushd test
 python -m unittest discover -v
 popd

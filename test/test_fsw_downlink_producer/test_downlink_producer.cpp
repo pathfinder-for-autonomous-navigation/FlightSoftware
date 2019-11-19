@@ -249,6 +249,66 @@ void test_initialization_multiple_flows() {
     }
 }
 
+/**
+ * @brief Verify that setting some flows inactive can change the snapshot
+ * size.
+ */
+void test_initialization_some_inactive() {
+    {
+        TestFixture tf;
+
+        tf.registry.create_readable_field<gps_time_t>("foo1");
+        tf.registry.create_readable_field<gps_time_t>("foo2");
+
+        std::vector<DownlinkProducer::FlowData> flow_data = {
+            {
+                0,
+                true,
+                {
+                    "foo1", // 59 bits
+                    "foo2", // 59 bits
+                } // Flow size 121 bits (118 + 3)
+            },
+            {
+                1,
+                true,
+                {
+                    "foo1", // 59 bits
+                    "foo2", // 59 bits
+                } // Flow size: 121 bits (118 + 3)
+            },
+            {
+                2,
+                false,
+                {
+                    "foo1", // 59 bits
+                    "foo2", // 59 bits
+                } // Flow size: 121 bits (118 + 3)
+            },
+            {
+                3,
+                false,
+                {
+                    "foo1", // 59 bits
+                    "foo2", // 59 bits
+                } // Flow size: 121 bits (118 + 3)
+            },
+            {
+                4,
+                false,
+                {
+                    "foo1", // 59 bits
+                    "foo2", // 59 bits
+                } // Flow size: 121 bits (118 + 3)
+            }
+        };
+        tf.init(flow_data);
+
+        // ceil((1 + 32 + (121 + 121) + 1) / 8)
+        TEST_ASSERT_EQUAL(35, tf.snapshot_size_bytes_fp->get());
+    }
+}
+
 
 int test_downlink_producer_task() {
     UNITY_BEGIN();
@@ -256,6 +316,7 @@ int test_downlink_producer_task() {
     RUN_TEST(test_initialization_one_flow);
     RUN_TEST(test_initialization_one_flow_multityped);
     RUN_TEST(test_initialization_multiple_flows);
+    RUN_TEST(test_initialization_some_inactive);
     return UNITY_END();
 }
 

@@ -31,6 +31,8 @@ class MainControlLoop : public ControlTask<void> {
 
     Devices::DockingSystem docksys;
     DockingController docking_controller;
+
+    static const std::vector<DownlinkProducer::FlowData> flow_data;
     DownlinkProducer downlink_producer;
 
     // Control cycle time offsets, in microseconds. These constants
@@ -61,7 +63,7 @@ class MainControlLoop : public ControlTask<void> {
      */
     void execute() override;
 
-    #ifdef DESKTOP
+    #ifdef UNIT_TEST
         /**
          * @brief This function allows ground software to access the downlink.
          */

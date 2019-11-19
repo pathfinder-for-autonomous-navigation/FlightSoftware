@@ -18,6 +18,12 @@ std::string DownlinkParser::process_downlink_file(const std::string& filename) {
     return process_downlink_packet(packet);
 }
 
+#ifdef UNIT_TEST
+DownlinkProducer* DownlinkParser::get_downlink_producer() {
+    return fcp.get_downlink_producer();
+}
+#endif
+
 std::string DownlinkParser::process_downlink_packet(const std::vector<char>& packet) {
     // The returned JSON object.
     nlohmann::json ret;
@@ -50,11 +56,13 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
         }
 
         // Step 3: Process control cycle count
+        unsigned int cycle_count;
         Serializer<unsigned int> cycle_count_sr;
         std::vector<bool> cycle_count_bits(frame_bits.begin(), frame_bits.begin() + 32);
         cycle_count_sr.set_bit_array(cycle_count_bits);
-        cycle_count_sr.deserialize((char*)(&ret["fields"]["pan.cycle_no"]));
-        ret["metadata"]["cycle_no"] = ret["fields"]["pan.cycle_no"];
+        cycle_count_sr.deserialize(&cycle_count);
+        ret["fields"]["pan.cycle_no"] = cycle_count;
+        ret["metadata"]["cycle_no"] = cycle_count;
         frame_bits.erase(frame_bits.begin(), frame_bits.begin() + 32);
 
         // Step 4: Process flows by ID. If, at any point, the expected
@@ -100,7 +108,8 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
 
                 std::vector<bool> field_bits(frame_bits.begin(), field_end_it);
                 field->set_bit_array(field_bits);
-                field->deserialize(ret["fields"][field->name()]);
+                field->deserialize();
+                ret["fields"][field->name()] = std::string(field->print());
 
                 frame_bits.erase(frame_bits.begin(), field_end_it);
             }

@@ -1,8 +1,6 @@
 #include "MainControlLoop.hpp"
 #include "DebugTask.hpp"
 
-#include "flow_data.cpp"
-
 // Environment-based initializations of the control loop time.
 #ifdef HOOTL
     #ifdef DESKTOP
@@ -22,7 +20,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
       mission_manager(registry, mission_manager_offset),
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys),
-      downlink_producer(registry, downlink_producer_offset, PAN::flow_data)
+      downlink_producer(registry, downlink_producer_offset, flow_data)
 {}
 
 void MainControlLoop::execute() {
@@ -37,7 +35,7 @@ void MainControlLoop::execute() {
     docking_controller.execute_on_time(control_cycle_start);
 }
 
-#ifdef DESKTOP
+#ifdef UNIT_TEST
 DownlinkProducer* MainControlLoop::get_downlink_producer() {
     return &downlink_producer;
 }
