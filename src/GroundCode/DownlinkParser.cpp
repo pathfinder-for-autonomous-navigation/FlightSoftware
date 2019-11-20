@@ -55,8 +55,8 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
         std::vector<bool> cycle_count_bits(frame_bits.begin(), frame_bits.begin() + 32);
         cycle_count_sr.set_bit_array(cycle_count_bits);
         cycle_count_sr.deserialize(&cycle_count);
-        ret["fields"]["pan.cycle_no"] = cycle_count;
-        ret["metadata"]["cycle_no"] = cycle_count;
+        ret["pan.cycle_no"]["value"] = cycle_count;
+        ret["pan.cycle_no"]["num_bits"] = 32;
         frame_bits.erase(frame_bits.begin(), frame_bits.begin() + 32);
 
         // Step 4: Process flows by ID. If, at any point, the expected
@@ -74,7 +74,6 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
             std::vector<bool> flow_id_bits(frame_bits.begin(), flow_id_end_it);
             flow_id_sr.set_bit_array(flow_id_bits);
             flow_id_sr.deserialize(&flow_id);
-            ret["metadata"]["flow_ids"].push_back(flow_id);
             frame_bits.erase(frame_bits.begin(), frame_bits.begin() + flow_id_bits.size());
 
             // Step 4.2. Find flow in Downlink Producer flows list. 
@@ -103,7 +102,8 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
                 std::vector<bool> field_bits(frame_bits.begin(), field_end_it);
                 field->set_bit_array(field_bits);
                 field->deserialize();
-                ret["fields"][field->name()] = std::string(field->print());
+                ret[field->name()]["value"] = std::string(field->print());
+                ret[field->name()]["num_bits"] = field_bits.size();
 
                 frame_bits.erase(frame_bits.begin(), field_end_it);
             }
