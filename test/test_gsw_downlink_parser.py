@@ -13,7 +13,7 @@ class TestDownlinkParser(unittest.TestCase):
 
     filepath = os.path.dirname(os.path.abspath(__file__))
     binary_dir = os.path.join(filepath, "../.pio/build/downlink_parser/program")
-    data_dir = os.path.join(filepath, "dat")
+    data_dir = os.path.join(filepath, "dat/DownlinkParser")
 
     def setUp(self):
         master_fd, slave_fd = pty.openpty()
@@ -58,7 +58,7 @@ class TestDownlinkParser(unittest.TestCase):
         """
         self.console.write(os.path.join(data_dir,"downlink1").encode())
         response = json.loads(self.console.readline().rstrip())
-        assert response == json.load(open(os.path.join(data_dir, "data.json")))
+        assert response == json.load(open(os.path.join(data_dir, "expected_parser_output.json")))
 
     def tearDown(self):
         self.downlink_parser.kill()

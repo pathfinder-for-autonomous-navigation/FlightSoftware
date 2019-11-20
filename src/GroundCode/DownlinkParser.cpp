@@ -4,8 +4,9 @@
 #include <fstream>
 #include <json.hpp>
 
-DownlinkParser::DownlinkParser(StateFieldRegistry& r) :
-    fcp(r),
+DownlinkParser::DownlinkParser(StateFieldRegistry& r,
+                               const std::vector<DownlinkProducer::FlowData>& flow_metadata) :
+    fcp(r, flow_metadata),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
 std::string DownlinkParser::process_downlink_file(const std::string& filename) {

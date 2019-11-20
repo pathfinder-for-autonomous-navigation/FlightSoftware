@@ -31,8 +31,6 @@ class MainControlLoop : public ControlTask<void> {
 
     Devices::DockingSystem docksys;
     DockingController docking_controller;
-
-    static const std::vector<DownlinkProducer::FlowData> flow_data;
     DownlinkProducer downlink_producer;
 
     // Control cycle time offsets, in microseconds. These constants
@@ -55,15 +53,17 @@ class MainControlLoop : public ControlTask<void> {
      * @brief Construct a new Main Control Loop Task object
      * 
      * @param registry State field registry
+     * @param flow_data Metadata for telemetry flows.
      */
-    MainControlLoop(StateFieldRegistry& registry);
+    MainControlLoop(StateFieldRegistry& registry,
+        const std::vector<DownlinkProducer::FlowData>& flow_data);
 
     /**
      * @brief Processes state field commands present in the serial buffer.
      */
     void execute() override;
 
-    #ifdef UNIT_TEST
+    #ifdef GSW
         /**
          * @brief This function allows ground software to access the downlink.
          */

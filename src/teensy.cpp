@@ -7,13 +7,14 @@
 
 #include "FCCode/MainControlLoop.hpp"
 #include <StateFieldRegistry.hpp>
+#include "flow_data.hpp"
 
 #include <core_pins.h>
 #include <wiring.h>
 
 void pan_system_setup() {
     StateFieldRegistry registry;
-    MainControlLoop fcp(registry);
+    MainControlLoop fcp(registry, PAN::flow_data);
 
     while (true) {
         fcp.execute();

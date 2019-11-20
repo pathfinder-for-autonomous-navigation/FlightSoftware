@@ -16,7 +16,7 @@ class DownlinkParser {
      * @brief Construct a new Downlink Parser.
      * 
      */
-    DownlinkParser(StateFieldRegistry& r);
+    DownlinkParser(StateFieldRegistry& r, const std::vector<DownlinkProducer::FlowData>& flow_metadata);
 
     /**
      * @brief Process a file containing a downlink, and return a JSON
@@ -37,6 +37,11 @@ class DownlinkParser {
      * @brief Initialize flight software in order to get downlink flows.
      */
     MainControlLoop fcp;
+
+    /**
+     * @brief Downlink flow data.
+     * 
+     */
     const std::vector<DownlinkProducer::Flow>& flow_data;
 
     /**

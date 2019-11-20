@@ -12,7 +12,8 @@
     static constexpr unsigned int control_cycle_time = 120000;
 #endif
 
-MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
+MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
+        const std::vector<DownlinkProducer::FlowData>& flow_data)
     : ControlTask<void>(registry), 
       field_creator_task(registry),
       clock_manager(registry, control_cycle_time),
@@ -35,7 +36,7 @@ void MainControlLoop::execute() {
     docking_controller.execute_on_time(control_cycle_start);
 }
 
-#ifdef UNIT_TEST
+#ifdef GSW
 DownlinkProducer* MainControlLoop::get_downlink_producer() {
     return &downlink_producer;
 }
