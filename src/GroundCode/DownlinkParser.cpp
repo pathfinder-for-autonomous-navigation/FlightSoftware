@@ -18,12 +18,6 @@ std::string DownlinkParser::process_downlink_file(const std::string& filename) {
     return process_downlink_packet(packet);
 }
 
-#ifdef UNIT_TEST
-DownlinkProducer* DownlinkParser::get_downlink_producer() {
-    return fcp.get_downlink_producer();
-}
-#endif
-
 std::string DownlinkParser::process_downlink_packet(const std::vector<char>& packet) {
     // The returned JSON object.
     nlohmann::json ret;

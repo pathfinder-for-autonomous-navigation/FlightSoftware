@@ -9,4 +9,8 @@ void DebugTask::execute() {
     #endif
 }
 
-void DebugTask::init() { debug_console::init(); }
+void DebugTask::init() {
+ #ifndef GSW
+    debug_console::init();
+ #endif
+}

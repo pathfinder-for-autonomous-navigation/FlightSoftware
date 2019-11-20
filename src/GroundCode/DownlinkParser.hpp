@@ -16,7 +16,8 @@ class DownlinkParser {
      * @brief Construct a new Downlink Parser.
      * 
      */
-    DownlinkParser(StateFieldRegistry& r, const std::vector<DownlinkProducer::FlowData>& flow_metadata);
+    DownlinkParser(StateFieldRegistry& r,
+        const std::vector<DownlinkProducer::FlowData>& flow_metadata);
 
     /**
      * @brief Process a file containing a downlink, and return a JSON
@@ -27,10 +28,6 @@ class DownlinkParser {
      * packet.
      */
     std::string process_downlink_file(const std::string& filename);
-
-    #ifdef UNIT_TEST
-    DownlinkProducer* get_downlink_producer();
-    #endif
 
   protected:
     /**
