@@ -30,11 +30,13 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
         if (flow.is_active) num_active_flows++;
     }
 
+    // Set the snapshot size to the maximum possible downlink size,
+    // so that the Quake Manager allocates sufficient space for
+    // its copy of the snapshot.
     const size_t max_downlink_size = compute_max_downlink_size();
-    const size_t current_downlink_size = compute_downlink_size();
     snapshot = new char[max_downlink_size];
     snapshot_ptr_f.set(snapshot);
-    snapshot_size_bytes_f.set(current_downlink_size);
+    snapshot_size_bytes_f.set(max_downlink_size);
 }
 
 size_t DownlinkProducer::compute_downlink_size(const bool compute_max) const {

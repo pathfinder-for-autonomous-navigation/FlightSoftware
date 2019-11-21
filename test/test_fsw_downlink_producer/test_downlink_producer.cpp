@@ -4,18 +4,18 @@
 #include <unity.h>
 #include <iostream>
 
-class TestFixture {
-  public:
+struct TestFixture {
     StateFieldRegistryMock registry;
     std::unique_ptr<DownlinkProducer> downlink_producer;
 
+    std::shared_ptr<ReadableStateField<unsigned int>> cycle_no_fp;
     InternalStateField<char*>* snapshot_ptr_fp;
     InternalStateField<size_t>* snapshot_size_bytes_fp;
 
     TestFixture() : registry() {}
 
     void init(const std::vector<DownlinkProducer::FlowData>& flow_data) {
-        registry.create_readable_field<unsigned int>("pan.cycle_no");
+        cycle_no_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
         downlink_producer = std::make_unique<DownlinkProducer>(registry, 0, flow_data);
         snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink_producer.mo_ptr");
         snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>(
@@ -250,8 +250,8 @@ void test_initialization_multiple_flows() {
 }
 
 /**
- * @brief Verify that setting some flows inactive can change the snapshot
- * size.
+ * @brief Verify that setting some flows inactive does not change the initial snapshot size, but
+ * does change the snapshot size after one execution.
  */
 void test_initialization_some_inactive() {
     {
@@ -304,6 +304,10 @@ void test_initialization_some_inactive() {
         };
         tf.init(flow_data);
 
+        // The flow is the same as the previous test, so the
+        // size should be the same
+        TEST_ASSERT_EQUAL(80, tf.snapshot_size_bytes_fp->get());
+        tf.downlink_producer->execute();
         // ceil((1 + 32 + (121 + 121) + 1) / 8)
         TEST_ASSERT_EQUAL(35, tf.snapshot_size_bytes_fp->get());
     }
@@ -317,6 +321,7 @@ int test_downlink_producer_task() {
     RUN_TEST(test_initialization_one_flow_multityped);
     RUN_TEST(test_initialization_multiple_flows);
     RUN_TEST(test_initialization_some_inactive);
+    RUN_TEST(test_execute_simple_flow);
     return UNITY_END();
 }
 

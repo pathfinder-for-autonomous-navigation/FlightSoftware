@@ -1,10 +1,9 @@
 #include "DownlinkParserMock.hpp"
 #include <unity.h>
-#include <iostream>
+#include <fstream>
 
 // Flow data for test
-class TestFixture {
-  protected:
+struct TestFixture {
     // Flight Software and Ground Software control classes
     StateFieldRegistryMock reg;
     std::unique_ptr<DownlinkParserMock> parser;
@@ -17,7 +16,6 @@ class TestFixture {
     InternalStateField<char*>* snapshot_fp;
     InternalStateField<size_t>* snapshot_size_bytes_fp;
 
-  public:
     static const std::vector<DownlinkProducer::FlowData> flow_data;
 
     DownlinkProducer* producer;
@@ -60,6 +58,8 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
+    tf.foo1_fp->set(gps_time_t(1000, 200, 0));
+    tf.foo2_fp->set(gps_time_t(1000, 300, 0));
     tf.producer->execute();
 }
 

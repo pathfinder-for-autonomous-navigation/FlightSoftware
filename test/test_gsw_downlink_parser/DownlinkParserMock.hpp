@@ -12,6 +12,12 @@ class DownlinkParserMock : public DownlinkParser {
     DownlinkProducer* get_downlink_producer() {
         return this->fcp.get_downlink_producer();
     }
+
+    std::string process_downlink_packet(char* packet, size_t len) {
+        std::vector<char> p(len);
+        for(size_t i = 0; i < len; i++) p[i] = packet[i];
+        process_downlink_packet(p);
+    }
 };
 
 #endif
