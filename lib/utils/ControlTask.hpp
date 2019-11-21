@@ -57,7 +57,6 @@ class ControlTask : protected debug_console {
     bool add_writable_field(WritableStateField<U>& field) {
         return _registry.add_writable_field(
             static_cast<WritableStateFieldBase*>(&field));
-        );
     }
 
     template<typename U>

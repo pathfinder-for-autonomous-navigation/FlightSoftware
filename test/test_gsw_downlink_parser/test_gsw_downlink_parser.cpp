@@ -1,5 +1,6 @@
 #include "DownlinkParserMock.hpp"
 #include <unity.h>
+#include <iostream>
 
 // Flow data for test
 class TestFixture {
@@ -7,7 +8,6 @@ class TestFixture {
     // Flight Software and Ground Software control classes
     StateFieldRegistryMock reg;
     std::unique_ptr<DownlinkParserMock> parser;
-    DownlinkProducer* producer;
 
     // Flow field inputs
     std::shared_ptr<ReadableStateField<gps_time_t>> foo1_fp;
@@ -20,20 +20,18 @@ class TestFixture {
   public:
     static const std::vector<DownlinkProducer::FlowData> flow_data;
 
+    DownlinkProducer* producer;
+
     TestFixture() : reg() {
         // Generate fields required in the flow data
         foo1_fp = reg.create_readable_field<gps_time_t>("foo1");
         foo2_fp = reg.create_readable_field<gps_time_t>("foo2");
 
-        auto parser = std::make_unique<DownlinkParserMock>(reg, flow_data);
+        parser = std::make_unique<DownlinkParserMock>(reg, flow_data);
         producer = parser->get_downlink_producer();
 
         snapshot_fp = reg.find_internal_field_t<char*>("downlink_producer.mo_ptr");
         snapshot_size_bytes_fp = reg.find_internal_field_t<size_t>("downlink_producer.snap_size");
-    }
-
-    DownlinkProducer* get_producer() {
-        return producer;
     }
 };
 
@@ -62,7 +60,7 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
-    tf.get_producer()->execute();
+    tf.producer->execute();
 }
 
 int test_downlink_parser() {
