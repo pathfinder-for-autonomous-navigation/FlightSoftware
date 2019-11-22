@@ -116,10 +116,11 @@ void DownlinkProducer::execute() {
     packet_offset++;
 
     // Add control cycle count to the initial packet
-    // const bit_array& cycle_count_ba = cycle_count_fp->get_bit_array();
-    // cycle_count_ba.to_string(snapshot_ptr, downlink_frame_offset);
-    //downlink_frame_offset += cycle_count_ba.size();
-    //packet_offset += cycle_count_ba.size();
+    cycle_count_fp->serialize();
+    const bit_array& cycle_count_ba = cycle_count_fp->get_bit_array();
+    cycle_count_ba.to_string(snapshot_ptr, downlink_frame_offset);
+    downlink_frame_offset += cycle_count_ba.size();
+    packet_offset += cycle_count_ba.size();
 
     for(auto const& flow : flows) {
         if (!flow.is_active) continue;
@@ -132,6 +133,7 @@ void DownlinkProducer::execute() {
                 packet_counter, downlink_frame_offset);
 
         for(auto const& field : flow.field_list) {
+            field->serialize();
             const bit_array& field_bits = field->get_bit_array();
             add_field_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
                 packet_counter, downlink_frame_offset);
