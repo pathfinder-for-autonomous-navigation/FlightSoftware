@@ -47,7 +47,7 @@ void test_config_can_interrupt()
   exec_check(task, CONFIG, 1);
 }
 
-  // Check that config can interrupt any state
+// Check that idle can interrupt any state
 void test_idle_can_interrupt()
 {
   StateFieldRegistry registry;
@@ -80,6 +80,7 @@ void test_sbdwb_fail()
   TEST_ASSERT_EQUAL(0, task.get_current_fn_number());
 }
 
+// Test that SBDWB completes when a message is loaded
 void test_sbdwb()
 {
   StateFieldRegistry registry;
@@ -93,6 +94,7 @@ void test_sbdwb()
   exec_check(task, IDLE, 0);
 }
 
+// Test that SBDRB completes in two cycles
 void test_sbdrb()
 {
   StateFieldRegistry registry;
@@ -102,6 +104,7 @@ void test_sbdrb()
   exec_check(task, IDLE, 0);
 }
 
+// Test that SBDIX completes in two cycles
 void test_sbdix()
 {
   StateFieldRegistry registry;
@@ -111,6 +114,7 @@ void test_sbdix()
   exec_check(task, IDLE, 0);
 }
 
+// Test that CONFIG completes in two cycles
 void test_config()
 {
   StateFieldRegistry registry;

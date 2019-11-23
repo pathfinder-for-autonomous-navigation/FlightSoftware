@@ -70,7 +70,7 @@ int QLocate::query_config_2()
     port->clear(); // we don't care what is returned for factory reset
 #endif
     // Disable flow control, disable DTR, disable echo, 
-    // set numeric rasponses, and
+    // set numeric responses, and
     // disable "RING" alerts
     return sendCommand("AT&K0;&D0;E0;V0;+SBDMTA=0\r");
 }

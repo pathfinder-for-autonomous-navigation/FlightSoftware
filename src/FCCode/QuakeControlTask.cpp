@@ -80,7 +80,7 @@ int QuakeControlTask::dispatch_sbdwb()
     return WRONG_FN_ORDER; // don't know why fnSeqNum would be wrong
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % nSeqSBDWB;
+    fnSeqNum = (fnSeqNum + 1) % 3;
   return errCode;
 }
 
@@ -99,7 +99,7 @@ int QuakeControlTask::dispatch_sbdrb()
     return WRONG_FN_ORDER;
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % nSeqSBDRB;
+    fnSeqNum = (fnSeqNum + 1) % 2;
   return errCode;
 }
 
@@ -118,7 +118,7 @@ int QuakeControlTask::dispatch_sbdix()
     return WRONG_FN_ORDER;
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % nSeqSBDIX;
+    fnSeqNum = (fnSeqNum + 1) % 2;
   return errCode;
 }
 
@@ -143,7 +143,7 @@ int QuakeControlTask::dispatch_config()
     return WRONG_FN_ORDER;
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % nSeqCONFIG;
+    fnSeqNum = (fnSeqNum + 1) % 4;
   return errCode;
 }
 
@@ -153,7 +153,7 @@ int QuakeControlTask::dispatch_is_functional()
   switch (fnSeqNum)
   {
   case 0:
-    errCode = quake.get_is_functional();
+    errCode = quake.query_is_functional_1();
     break;
   case 1:
     errCode = quake.get_is_functional();
@@ -162,6 +162,6 @@ int QuakeControlTask::dispatch_is_functional()
     return WRONG_FN_ORDER;
   }
   if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % nSeqIS_FUNCTIONAL;
+    fnSeqNum = (fnSeqNum + 1) % 2;
   return errCode;
 }

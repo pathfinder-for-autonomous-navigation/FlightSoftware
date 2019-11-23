@@ -7,11 +7,11 @@ namespace Devices {
 /**
  * @brief Enables or disables the 7-24V DC-DC converters.
  * **/
-#ifdef DESKTOP
-class DCDC{
-#else
+// #ifdef DESKTOP
+// class DCDC{
+// #else
 class DCDC : public Device {
-#endif
+
    public:
     //! Default enable pin for the DCDCs.
     static constexpr unsigned char dcdc_motor_enable_pin = 24;

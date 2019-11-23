@@ -25,7 +25,7 @@ const int MT_MSG_ERR    = 2;    // Error occured
 
 // MO response statuses
 const int MO_OK         = 0;    // msg transfer ok
-const int MO_TOO_BIG    = 1;    // transfer ok but msg in queue too big for transfer
+const int MO_TOO_BIG    = 1;    // transfer ok but MT message too big for transfer
 const int MO_NO_UPDATE  = 2;    // transfer ok but no location update
 const int MO_NO_NETWORK = 32;
 
@@ -37,7 +37,7 @@ void tearDown(void) {
 }
 
 // length of a ctrl cycle in ms
-static const int DEFAULT_CTRL_CYCLE_LENGTH = 140; 
+static const int DEFAULT_CTRL_CYCLE_LENGTH = 120; 
 /**
  * [callback] is a function pointer to a member function of QLocate (i.e. get_sbdwb)
  * This function waits [DEFAULT_CTRL_LENGTH] everytime [callback] returns with

@@ -17,26 +17,20 @@ static constexpr int SBDIX = 3;         // SBDIX operation
 static constexpr int CONFIG = 4;        // Config operation
 static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
-static constexpr int nSeqSBDWB = 3;         // number of command sequences in SBDWB
-static constexpr int nSeqSBDRB = 2;         // number of command sequences in SBDRB
-static constexpr int nSeqSBDIX = 2;         // number of command sequences in SBDIX
-static constexpr int nSeqCONFIG = 4;        // number of command sequences in CONFIG
-static constexpr int nSeqIS_FUNCTIONAL = 2; // number of command sequences in IS_FUNCTIONAL
-
-class QuakeControlTask : public TimedControlTask<int>
+class QuakeControlTask : public ControlTask<int>
 {
 public:
   #ifndef DESKTOP
-  QuakeControlTask(StateFieldRegistry &registry, unsigned int offset) :
-      TimedControlTask<int>(registry, offset),
+  QuakeControlTask(StateFieldRegistry &registry) :
+      ControlTask<int>(registry),
       quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
       currentState(IDLE),
       fnSeqNum(0),
       MO_msg_p(nullptr),
       MO_msg_len(0){}
   #else
-  QuakeControlTask(StateFieldRegistry &registry, unsigned int offset) : 
-      TimedControlTask<int>(registry, offset),
+  QuakeControlTask(StateFieldRegistry &registry) : 
+      ControlTask<int>(registry),
       quake(),
       currentState(IDLE),
       fnSeqNum(0),
@@ -44,7 +38,7 @@ public:
       MO_msg_len(0) {}
   #endif
   /** 
-   * execute is overriden from TimesControlTask 
+   * execute is overriden from ControlTask 
    * Calling execute() when the state is IDLE generates no effects. 
   */
   int execute();

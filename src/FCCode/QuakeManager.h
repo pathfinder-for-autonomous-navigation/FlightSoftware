@@ -1,5 +1,5 @@
 #pragma once
-#include <ControlTask.hpp>
+#include <TimedControlTask.hpp>
 #include "QuakeControlTask.h"
 #include "radio_mode_t.enum"
 
@@ -30,11 +30,33 @@ class QuakeManager : public TimedControlTask<bool> {
     bool execute() override;
 
    // protected:
+   /**
+    * @brief attempts to execute a step in the CONFIG command sequence. This command
+    * sequence is executed on startup and executed whenever the unexpected_flag 
+    * is set
+    */
     bool dispatch_config();
+   /**
+    * @brief unconditionally waits the full amount of its allocated cycles
+    * If the unexpected_flag is set, transitions to config instead of 
+    * transition to wait write
+    */
     bool dispatch_wait();
+   /**
+    * @brief attempts an SBD connection with Iridium.
+    */
     bool dispatch_transceive();
+   /**
+    * @brief reads an MT message from the MT buffer
+    */
     bool dispatch_read();
+   /**
+    * @brief writes a message to the MO buffer
+    */
     bool dispatch_write();
+   /**
+    * @brief does nothing 
+    */
     bool dispatch_manual();
 
    /**
@@ -48,22 +70,29 @@ class QuakeManager : public TimedControlTask<bool> {
     InternalStateField<unsigned int>* snapshot_size_fp;
 
    /**
-    * @brief Pointer to the snapshot t1o be downlinked in pieces of 70 B, provided by DownlinkProducer.
+    * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
     **/ 
     InternalStateField<char*>* radio_mo_packet_fp;
 
   /**
-    * @brief Pointer to the uplink buffer, provided by DownlinkProducer. 
+    * @brief Pointer to the uplink buffer, provided by UplinkProducer. 
     **/ 
    InternalStateField<char*>* radio_mt_packet_fp;
 
      /**
     * @brief Pointer to Quake Error field, provided by DownlinkProducer. 
     **/ 
-   InternalStateField<int>* radio_err_fp;
+   ReadableStateField<int>* radio_err_fp;
+
+  /**
+   * @brief Pointer to MT buffer ready field, provided by UplinkProducer.
+   * Quake sets this field whenever it writes a new message to its mt buffer.
+   * UplingProducer is responsible for checking this field and clearing it. 
+   */
+   InternalStateField<bool>* radio_mt_ready_fp; 
 
     /**
-     * @brief Current radio mode (see radio_mode_t.enum), provided by
+     * @brief Current radio mode (see radio_mode_t.enum), provided by no one
      **/
     radio_mode_t radio_mode_f;
   
@@ -93,9 +122,9 @@ class QuakeManager : public TimedControlTask<bool> {
     return mo_idx;
   }
 
-  bool& dbg_get_unexpectedFlag()
+  bool& dbg_get_unexpected_flag()
   {
-    return unexpectedFlag;
+    return unexpected_flag;
   }
 
   bool dbg_transition_radio_state(radio_mode_t new_state)
@@ -112,7 +141,7 @@ class QuakeManager : public TimedControlTask<bool> {
      * Otherwise: 
      *  Write error to radio_err_fp,
      *  print a debug msg, 
-     *  sets the unexpectedFlag
+     *  sets the unexpected_flag
      *  transition to wait
      */
     bool write_to_error(int err_code);
@@ -161,7 +190,7 @@ class QuakeManager : public TimedControlTask<bool> {
      * Wait transitions to config after max_wait_cycles passes by
      * Only wait may clear the flag
      */
-    bool unexpectedFlag;
+    bool unexpected_flag;
 
     /**
      * Max cycles that each radio_mode state is allowed to waste before being 
