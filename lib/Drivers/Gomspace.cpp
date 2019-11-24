@@ -158,7 +158,7 @@ bool Gomspace::get_hk_wdt() {
 
     size_t struct_size = sizeof(eps_hk_wdt_t);
     #ifndef DESKTOP
-    unsigned char buffer[struct_size + 2];
+    unsigned char buffer[struct_size + 2] = {0};
     #endif
 
     i2c_request_from((struct_size + 2), I2C_STOP);
