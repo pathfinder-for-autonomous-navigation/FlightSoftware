@@ -1,0 +1,13 @@
+#ifndef radio_mode_t_enum_
+#define radio_mode_t_enum_
+
+enum class radio_mode_t {
+  wait,       // IDLE
+  transceive, // SBDIX 
+  read,       // SBDRB
+  write,      // SBDWB
+  config,     // CONFIG
+  manual,     // Don't use state machine
+};
+
+#endif
