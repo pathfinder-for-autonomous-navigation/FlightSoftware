@@ -93,7 +93,7 @@ float mag_2(const std::array<double, 3> input){
 void test_task_initialization()
 {
         TestFixture tf;
-        assert_piksi_mode(piksi_mode_t::NO_FIX);
+        assert_piksi_mode(piksi_mode_t::no_fix);
 }
 void test_read_errors(){
         TestFixture tf;
@@ -101,22 +101,22 @@ void test_read_errors(){
         //read out == 3 means a CRC error occurred
         tf.set_read_return(3);
         tf.execute();
-        assert_piksi_mode(piksi_mode_t::CRC_ERROR);
+        assert_piksi_mode(piksi_mode_t::crc_error);
 
         //read out == 4 means no bytes were in the buffer
         tf.set_read_return(4);
         tf.execute();
-        assert_piksi_mode(piksi_mode_t::NO_DATA_ERROR);
+        assert_piksi_mode(piksi_mode_t::no_data_error);
 
         //read out == 5 means we were processing bytes for more than 900 microseconds
         tf.set_read_return(5);
         tf.execute();
-        assert_piksi_mode(piksi_mode_t::TIME_LIMIT_ERROR);
+        assert_piksi_mode(piksi_mode_t::time_limit_error);
 
         //not cataloged read_return value
         tf.set_read_return(7);
         tf.execute();
-        assert_piksi_mode(piksi_mode_t::DATA_ERROR);
+        assert_piksi_mode(piksi_mode_t::data_error);
     
 }
 
@@ -139,7 +139,7 @@ void test_normal_errors(){
         tf.set_baseline_flag(1);
         tf.execute();
         //should error out because of time inconsistency
-        assert_piksi_mode(piksi_mode_t::SYNC_ERROR);
+        assert_piksi_mode(piksi_mode_t::sync_error);
 
         //insufficient nsats
         tow = 200;
@@ -151,7 +151,7 @@ void test_normal_errors(){
         tf.set_baseline_flag(1);
         tf.execute();
         //times agree, but insufficient nsat
-        assert_piksi_mode(piksi_mode_t::NSAT_ERROR);
+        assert_piksi_mode(piksi_mode_t::nsat_error);
 
         //unexpected baseline flag, should only be 0 or 1
         tow = 200;
@@ -163,7 +163,7 @@ void test_normal_errors(){
         tf.set_baseline_flag(2);
         tf.execute();
         //times agree, but insufficient nsat
-        assert_piksi_mode(piksi_mode_t::DATA_ERROR);
+        assert_piksi_mode(piksi_mode_t::data_error);
 }
 
 //test executions that should yield some sort of fix/lock
@@ -177,7 +177,7 @@ void test_task_execute()
 
         tf.set_read_return(2);
         tf.execute();
-        assert_piksi_mode(piksi_mode_t::NO_FIX);
+        assert_piksi_mode(piksi_mode_t::no_fix);
 
         //fixed RTK
         unsigned int tow = 200;
@@ -189,7 +189,7 @@ void test_task_execute()
         tf.set_baseline_flag(1);
         tf.execute();
         //times should now agree, and be in baseline
-        assert_piksi_mode(piksi_mode_t::FIXED_RTK);
+        assert_piksi_mode(piksi_mode_t::fixed_rtk);
         TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
@@ -209,7 +209,7 @@ void test_task_execute()
         tf.set_baseline_flag(0);
         tf.execute();
         //float rtk test
-        assert_piksi_mode(piksi_mode_t::FLOAT_RTK);
+        assert_piksi_mode(piksi_mode_t::float_rtk);
         TEST_ASSERT_TRUE(gps_time_t(0,300,0) == tf.time_fp->get());
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
@@ -226,7 +226,7 @@ void test_task_execute()
         tf.set_vel_ecef(tow, vel);
         tf.execute();
         //check in SPP
-        assert_piksi_mode(piksi_mode_t::SPP);
+        assert_piksi_mode(piksi_mode_t::spp);
         TEST_ASSERT_TRUE(gps_time_t(0,500,0) == tf.time_fp->get());
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
@@ -251,7 +251,7 @@ void test_dead(){
         tf.set_baseline_flag(1);
         tf.execute();
         //times should now agree, and be in baseline
-        assert_piksi_mode(piksi_mode_t::FIXED_RTK);
+        assert_piksi_mode(piksi_mode_t::fixed_rtk);
         TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
@@ -262,11 +262,11 @@ void test_dead(){
         for(int i = 0;i<1000;i++){
                 tf.execute();
         }
-        assert_piksi_mode(piksi_mode_t::NO_DATA_ERROR);
+        assert_piksi_mode(piksi_mode_t::no_data_error);
 
         //one more execution to throw into DEAD mode
         tf.execute();
-        assert_piksi_mode(piksi_mode_t::DEAD);
+        assert_piksi_mode(piksi_mode_t::dead);
 }
 
 int test_control_task()
