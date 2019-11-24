@@ -68,6 +68,7 @@ void test_bad_lengths(void){
 }
 
 void test_bad_checksum(void) {
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_1(1));
     // test bad checksum by sending extraneous data
     delay(DEFAULT_CTRL_CYCLE_LENGTH);
     TEST_ASSERT_EQUAL(0, q.query_sbdwb_2("ZZ", 2));
