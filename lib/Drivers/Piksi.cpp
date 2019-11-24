@@ -6,8 +6,6 @@
 #endif
 
 using namespace Devices;
-//using namespace std;
-
 
 // Initialize callback nodes so that C++ doesn't complain about them not being
 // defined.
@@ -30,8 +28,6 @@ Piksi::Piksi(const std::string &name, HardwareSerial &serial_port)
     : Device(name), _serial_port(serial_port) {}
 #else
 Piksi::Piksi(const std::string &name) {}
-    //: Device(name) {}
-//Piksi::Piksi();
 #endif
 
 
@@ -281,15 +277,23 @@ unsigned char Piksi::read_all() {
     
     if(bytes_available()){
         bool crc_error = false;
-        while(bytes_available() && (micros() - initial_time < 900)){
+        while(bytes_available() && (micros() - initial_time < READ_ALL_LIMIT)){
             int p_b_return = process_buffer();
             if(p_b_return < 0)
                 crc_error = true;
         }
-        if(micros()-initial_time >= 900){
+
+        //ensure that if the while loop terminated because of exceeding the READ_ALL_LIMIT
+        //it will enter the clear bytes condition below
+        delayMicroseconds(5);
+
+        if(micros()-initial_time >= READ_ALL_LIMIT){
             clear_bytes();
             return 5;
         }
+        
+        //by this point in the code, it is guarenteed that there are no more bytes in buffer
+
         if(crc_error)
             return 3;
         else if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && !_baseline_ecef_update)
@@ -299,7 +303,7 @@ unsigned char Piksi::read_all() {
             //Something RTK
             return 1;
         else
-            //no relevant callbacks or crc_errors -> NO_FIX
+            //no relevant callbacks -> NO_FIX
             return 2;
     }
     else

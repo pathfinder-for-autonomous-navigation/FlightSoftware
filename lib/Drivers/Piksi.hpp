@@ -31,6 +31,8 @@ class Piksi {
    public:
     //! Baud rate of communication with Piksi.
     static constexpr unsigned int BAUD_RATE = 115200;
+    // Driver limit for max processing time of read_all()
+    static constexpr unsigned int READ_ALL_LIMIT = 900;
 
     /**
      * @brief Construct a new Piksi object
