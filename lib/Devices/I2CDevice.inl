@@ -5,7 +5,6 @@
  * @brief Contains implementation for I2CDevice interface, which standardizes the access
  * and control of I2C-based hardware peripherals.
  */
-#ifndef DESKTOP
 
 namespace Devices {
 inline void I2CDevice::i2c_set_timeout(unsigned long i2c_timeout) {
@@ -105,8 +104,8 @@ inline void I2CDevice::i2c_write_to_subaddr(unsigned char subaddr, const unsigne
 }
 
 inline void I2CDevice::i2c_write_to_subaddr(unsigned char subaddr, const unsigned char data) {
-    unsigned char bytes[] = {data};
 #ifndef DESKTOP
+    unsigned char bytes[] = {data};
     i2c_write_to_subaddr(subaddr, bytes, 1);
 #endif
 }
@@ -164,7 +163,7 @@ inline unsigned char I2CDevice::i2c_read() {
 
     bool err = (val == -1);
     this->recent_errors = (this->recent_errors || err);
-    return (unsigned char)(val && 0xFF);
+    return (unsigned char)(val & 0xFF);
 }
 
 template <typename T>
@@ -184,8 +183,6 @@ inline unsigned char I2CDevice::i2c_peek() {
 
     bool err = (val == -1);
     this->recent_errors = (this->recent_errors || err);
-    return (unsigned char)(val && 0xFF);
+    return (unsigned char)(val & 0xFF);
 }
 }  // namespace Devices
-
-#endif
