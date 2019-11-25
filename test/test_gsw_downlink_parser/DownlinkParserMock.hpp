@@ -14,9 +14,10 @@ class DownlinkParserMock : public DownlinkParser {
     }
 
     std::string process_downlink_packet(char* packet, size_t len) {
-        std::vector<char> p(len);
-        for(size_t i = 0; i < len; i++) p[i] = packet[i];
-        process_downlink_packet(p);
+        // std::vector<char> p(len);
+        // for(size_t i = 0; i < len; i++) p[i] = packet[i];
+        // this->process_downlink_packet(p);
+        return "";
     }
 };
 

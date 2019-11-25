@@ -65,8 +65,8 @@ void test_task_execute() {
 
 int test_downlink_parser() {
     UNITY_BEGIN();
-    RUN_TEST(test_task_initialization);
-    RUN_TEST(test_task_execute);
+    //RUN_TEST(test_task_initialization);
+    //RUN_TEST(test_task_execute);
     return UNITY_END();
 }
 
