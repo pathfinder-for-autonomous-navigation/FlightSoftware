@@ -21,6 +21,14 @@ class DebugTask : public TimedControlTask<void> {
      * @brief Initializes the debug console.
      */
     void init();
+ 
+  #ifdef HOOTL
+  protected:
+    /**
+     * @brief Flag used by the simulation to keep flight software cycles in sync with the simulation.
+     */
+    WritableStateField<bool> start_cycle_f;
+  #endif
 };
 
 #endif
