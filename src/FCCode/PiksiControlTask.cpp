@@ -38,7 +38,7 @@ void PiksiControlTask::execute()
         
     //if we haven't had a good reading in ~120 seconds the piksi is probably dead
     //eventually replace with HAVT logic
-    if(since_good_cycles > 1000){
+    if(since_good_cycles > DEAD_CYCLE_COUNT){
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::dead));
         //prevent roll over
         since_good_cycles = 1001;

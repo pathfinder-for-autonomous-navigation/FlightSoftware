@@ -417,7 +417,7 @@ void Piksi::_iar_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
 }
 void Piksi::_settings_read_resp_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
-    memcpy((u8 *)(&(piksi->_base_pos_ecef)), msg, sizeof(msg_settings_read_resp_t));
+    memcpy((u8 *)(&(piksi->_settings_read_resp)), msg, sizeof(msg_settings_read_resp_t));
 }
 void Piksi::_heartbeat_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
