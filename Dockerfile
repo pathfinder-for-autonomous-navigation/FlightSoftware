@@ -1,6 +1,9 @@
-FROM python:3.7-buster
+FROM ubuntu:xenial
 MAINTAINER Tanishq Aggarwal (ta335@cornell.edu)
 
+RUN apt-get update
+RUN apt-get upgrade -y
+RUN apt-get install g++ valgrind python python-pip -y
 RUN pip install -U platformio
 
 RUN pio upgrade
