@@ -14,11 +14,7 @@
 #include "QuakeManager.h"
 #include "DockingController.hpp"
 
-#ifdef HOOTL
-// OK
-#elif FLIGHT
-// OK
-#else
+#if (!defined(HOOTL) && !defined(FLIGHT))
 static_assert(false, "Need to define either the HOOTL or FLIGHT flags.");
 #endif
 
