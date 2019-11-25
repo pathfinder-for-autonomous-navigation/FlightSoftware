@@ -1,6 +1,5 @@
 #pragma once
 
-#include <ControlTask.hpp>
 #include <Piksi.hpp>
 #include <string>
 #include <GPSTime.hpp>
@@ -33,8 +32,8 @@ public:
     ReadableStateField<d_vector_t> baseline_pos_f;
 
     //Serializer and StateField for currentState
-    Serializer<int> currentState_sr;
-    ReadableStateField<int> currentState_f;
+    Serializer<unsigned int> current_state_sr;
+    ReadableStateField<unsigned int> current_state_f;
 
     //Serializer and StateField for time
     Serializer<gps_time_t> time_sr;

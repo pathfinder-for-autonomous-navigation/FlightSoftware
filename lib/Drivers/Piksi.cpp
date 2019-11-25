@@ -278,8 +278,8 @@ unsigned char Piksi::read_all() {
     if(bytes_available()){
         bool crc_error = false;
         while(bytes_available() && (micros() - initial_time < READ_ALL_LIMIT)){
-            int p_b_return = process_buffer();
-            if(p_b_return < 0)
+            //call process_buffer() to process data, and check if crc_error happened
+            if(process_buffer() < 0)
                 crc_error = true;
         }
 

@@ -32,6 +32,7 @@ class Piksi {
     //! Baud rate of communication with Piksi.
     static constexpr unsigned int BAUD_RATE = 115200;
     // Driver limit for max processing time of read_all()
+    // Choose 900 us to large safety bound over average read time of 600 us
     static constexpr unsigned int READ_ALL_LIMIT = 900;
 
     /**
@@ -64,22 +65,17 @@ class Piksi {
 
     /** @brief Runs read over UART buffer to process values sent by Piksi into
      * memory.
-     *  @returns Whether or not any data was processed. **/
+     *  @returns Whether or not any data was processed. Returns -2 if CRC_ERROR **/
     virtual signed char process_buffer();
 
     /**
      * @brief Runs read over UART buffer to process values sent by Piksi using libsbp
-     * 
-     * TODO DETERMINE IF Piksi is sending baseline packets when SPP
-     * Could be not sending or sending a baseline packet with no data/0's
-     * 
-     * Let it be known that the Piksi doesn't have save previous information
-     * Ex switching into Piksi
      *
      * @return Returns the number of bytes processed by a call of process_buffer_msg_len()
-     * These values coincide with the message size in the piksi documentation
-     * Note that message size is not the same number of bytes
-     * that is sent for that message (unfortunately)
+     * These values coincide with the message size in the piksi documentation.
+     * 
+     * However message size is smaller than the actual number of bytes sent/seen in serial port.
+     * Thus the sum of bytes in the serial port != sum of all process_buffer_msg_len() returns.
      */
     virtual unsigned char process_buffer_msg_len();
 
@@ -91,14 +87,13 @@ class Piksi {
      * 
      * Experimentally this always finished in 650 +- 50 microseconds
      * 
-     * 
      * @return return code
      * 0 if only time, pos and vel were updated, indicative of SPP
-     * 1 if time, pos, vel and baseline were updated indicative of something_RTK
+     * 1 if time, pos, vel and baseline were updated, indicative of something_RTK
      * 2 if time, pos and vel were not updated, indicative of NO_FIX
-     * 3 if time, pos and vel were not updated, and a crc error happened
-     * 4 if there are no bytes in the buffer
-     * 5 if the process_buffer loop is unable to deal with all the bytes in 900 microseconds
+     * 3 if a crc error occured
+     * 4 if there were no bytes in the buffer
+     * 5 if the process_buffer loop is unable to deal with all the bytes in READ_ALL_LIMIT microseconds
      */
     virtual unsigned char read_all();
 
@@ -154,7 +149,8 @@ class Piksi {
      * returns 1 if FIXED RTK
      * returns 2 if FLOAT RTK
      * 
-     * modded by 8 to prevent spirulus values
+     * Modded by 8 to prevent spurious values
+     * Let it be known that pos_ecef_flags seems unreliable, not used in PiksiControlTask
      *  @return Status flags of GPS position measurement. **/
     virtual unsigned char get_pos_ecef_flags();
 
@@ -183,6 +179,7 @@ class Piksi {
      * returns 1 if fixed RTK
      * returns 0 if float RTK
      * returns 0 if SPP
+     * 
      *  @return Status flags of GPS baseline position measurement. **/
     unsigned char get_baseline_ecef_flags();
 

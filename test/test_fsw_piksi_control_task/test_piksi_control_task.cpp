@@ -4,17 +4,11 @@
 #include <unity.h>
 #include <Piksi.hpp>
 
-#include <chrono>
-#include <ctime>
-
 #include "../../src/FCCode/piksi_mode_t.enum"
 
 #define assert_piksi_mode(x) {\
     TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\
 }
-
-using namespace Devices;
-
 
 class TestFixture {
     public:
@@ -29,7 +23,7 @@ class TestFixture {
 
         std::unique_ptr<PiksiControlTask> piksi_task;
 
-        Piksi piksi;
+        Devices::Piksi piksi;
         // Create a TestFixture instance of PiksiController with pointers to statefields
         #ifndef DESKTOP
         TestFixture() : registry(), piksi("piksi", Serial4){
@@ -42,6 +36,12 @@ class TestFixture {
                 vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
+
+                assert(currentState_fp);
+                assert(pos_fp);
+                assert(vel_fp);
+                assert(baseline_fp);
+                assert(time_fp);
         
         }
         #else
@@ -55,6 +55,12 @@ class TestFixture {
                 vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
+
+                assert(currentState_fp);
+                assert(pos_fp);
+                assert(vel_fp);
+                assert(baseline_fp);
+                assert(time_fp);
         
         }
         #endif
@@ -95,6 +101,7 @@ void test_task_initialization()
         TestFixture tf;
         assert_piksi_mode(piksi_mode_t::no_fix);
 }
+
 void test_read_errors(){
         TestFixture tf;
 
