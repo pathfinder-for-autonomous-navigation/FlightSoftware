@@ -10,7 +10,7 @@ import serial
 import traceback
 import unittest
 
-class TestDummyFlightSoftwareBinary(unittest.TestCase):
+class TestFlightSoftwareBinary(unittest.TestCase):
     """
     Ensures that basic state field read-write functionality works as expected within
     Flight Software.
@@ -20,15 +20,22 @@ class TestDummyFlightSoftwareBinary(unittest.TestCase):
 
     def setUp(self):
         master_fd, slave_fd = pty.openpty()
-        self.dummy_fsw = subprocess.Popen([self.binary_dir], stdin=master_fd, stdout=master_fd)
+        self.fsw = subprocess.Popen([self.binary_dir], stdin=master_fd, stdout=master_fd)
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
     def read_cycle_no(self):
         input = json.dumps({"field": "pan.cycle_no", "mode" : ord('r')}) + "\n"
         self.console.write(input.encode())
-        response = json.loads(self.console.readline().rstrip())
-        self.assertEqual(response['field'], "pan.cycle_no")
-        return int(response['val'])
+        
+        # Read back 10 responses and hope that one of them contains the
+        # cycle count.
+        responses = []
+        for x in range(0, 10):
+            responses.append(json.loads(self.console.readline().rstrip()))
+        for response in responses:
+            if 'field' in response.keys():
+                self.assertEqual(response['field'], "pan.cycle_no")
+                return int(response['val'])
 
     def testValidRead(self):
         cycle_no = self.read_cycle_no()
@@ -38,7 +45,7 @@ class TestDummyFlightSoftwareBinary(unittest.TestCase):
         self.assertGreater(new_cycle_no, cycle_no)
 
     def tearDown(self):
-        self.dummy_fsw.kill()
+        self.fsw.kill()
         self.console.close()
 
 if __name__ == '__main__':

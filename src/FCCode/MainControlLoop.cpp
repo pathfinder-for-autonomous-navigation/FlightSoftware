@@ -19,7 +19,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
       debug_task(registry, debug_task_offset),
       mission_manager(registry, mission_manager_offset),
       docksys(),
-      docking_controller(registry, docking_controller_offset, docksys)
+      docking_controller(registry, docking_controller_offset, docksys),
+      quake_manager(registry, quake_manager_offset)
 {}
 
 void MainControlLoop::execute() {
@@ -31,5 +32,6 @@ void MainControlLoop::execute() {
     #endif
 
     mission_manager.execute_on_time(control_cycle_start);
+    quake_manager.execute_on_time(control_cycle_start);
     docking_controller.execute_on_time(control_cycle_start);
 }

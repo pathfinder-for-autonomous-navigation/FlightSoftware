@@ -26,7 +26,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_mo_packet_fp = find_internal_field<char*>("downlink_producer.mo_ptr", __FILE__, __LINE__);
     radio_mt_packet_fp = find_internal_field<char*>("uplink_consumer.mt_ptr", __FILE__, __LINE__);
     radio_err_fp = find_readable_field<int>("downlink_producer.radio_err_ptr", __FILE__, __LINE__);
-    radio_mt_ready_fp = find_internal_field<bool>("uplink_producer.mt_ready", __FILE__, __LINE__);
+    radio_mt_ready_fp = find_internal_field<bool>("uplink_consumer.mt_ready", __FILE__, __LINE__);
 
     assert(control_cycle_count_fp);
     assert(snapshot_size_fp);
@@ -48,7 +48,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
 
 QuakeManager::~QuakeManager()
 {
-    delete [] mo_buffer_copy;
+    delete[] mo_buffer_copy;
 }
 
 bool QuakeManager::execute() {
