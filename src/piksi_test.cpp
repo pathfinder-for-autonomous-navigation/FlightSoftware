@@ -1,16 +1,16 @@
 #include <Arduino.h>
-#include <Piksi.hpp>
 #include <HardwareSerial.h>
+#include <Piksi.hpp>
 
 Devices::Piksi piksi("piksi", Serial2);
 
 #ifndef UNIT_TEST
 void setup() {
-    piksi.setup();
-    Serial.begin(9600);
-    delay(2000);
-    Serial.println(piksi.is_functional());
+  piksi.setup();
+  Serial.begin(9600);
+  delay(2000);
+  Serial.println(piksi.is_functional());
 }
 
-void loop() { }
+void loop() {}
 #endif

@@ -15,31 +15,32 @@ ADCS::ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address)
     : I2CDevice(name, i2c_wire, address) {}
 
 bool ADCS::i2c_ping() {
-    unsigned char temp;
-    get_who_am_i(&temp); 
-    return temp==WHO_AM_I_EXPECTED;
-    }
+  unsigned char temp;
+  get_who_am_i(&temp);
+  return temp == WHO_AM_I_EXPECTED;
+}
 
 template <typename T>
-void ADCS::i2c_point_and_read(unsigned char data_register, T* data, std::size_t len) {
-    set_read_ptr(data_register);
-    i2c_request_from(len);
-    i2c_read(data, len);
+void ADCS::i2c_point_and_read(unsigned char data_register, T *data,
+                              std::size_t len) {
+  set_read_ptr(data_register);
+  i2c_request_from(len);
+  i2c_read(data, len);
 }
 inline float fp(signed char si, float min, float max) {
-  return min + (((float) si) + 128.0f) * (max - min) / 255.0f;
+  return min + (((float)si) + 128.0f) * (max - min) / 255.0f;
 }
 
 inline float fp(unsigned char ui, float min, float max) {
-  return min + ((float) ui) * (max - min) / 255.0f;
+  return min + ((float)ui) * (max - min) / 255.0f;
 }
 
 inline float fp(signed short si, float min, float max) {
-  return min + (((float) si) + 32768.0f) * (max - min) / 65535.0f;
+  return min + (((float)si) + 32768.0f) * (max - min) / 65535.0f;
 }
 
 inline float fp(unsigned short ui, float min, float max) {
-  return min + ((float) ui) * (max - min) / 65535.0f;
+  return min + ((float)ui) * (max - min) / 65535.0f;
 }
 
 inline unsigned char uc(float f, float min, float max) {
@@ -59,164 +60,164 @@ inline signed short ss(float f, float min, float max) {
 }
 
 void ADCS::set_mode(const unsigned char mode) {
-    i2c_write_to_subaddr(ADCS_MODE, mode);
+  i2c_write_to_subaddr(ADCS_MODE, mode);
 }
-void ADCS::set_read_ptr(const unsigned char read_ptr){
-    i2c_write_to_subaddr(READ_POINTER, read_ptr);
+void ADCS::set_read_ptr(const unsigned char read_ptr) {
+  i2c_write_to_subaddr(READ_POINTER, read_ptr);
+}
+void ADCS::set_rwa_mode(const unsigned char rwa_mode,
+                        const std::array<float, 3> &rwa_cmd) {
+  i2c_write_to_subaddr(RWA_MODE, rwa_mode);
 
+  unsigned char cmd[6];
+  for (int i = 0; i < 3; i++) {
+    unsigned short comp = 0;
+    if (rwa_mode == 1)
+      comp = us(rwa_cmd[i], rwa::min_speed_command, rwa::max_speed_command);
+    else if (rwa_mode == 2)
+      comp = us(rwa_cmd[i], rwa::min_torque, rwa::max_torque);
+    cmd[2 * i] = comp;
+    cmd[2 * i + 1] = comp >> 8;
+  }
+  i2c_write_to_subaddr(RWA_COMMAND, cmd, 6);
 }
-void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& rwa_cmd){
-    i2c_write_to_subaddr(RWA_MODE, rwa_mode);
-
-    unsigned char cmd[6];
-    for(int i = 0;i<3;i++){
-        unsigned short comp = 0;
-        if(rwa_mode == 1)
-            comp = us(rwa_cmd[i],rwa::min_speed_command,rwa::max_speed_command);
-        else if(rwa_mode == 2)
-            comp = us(rwa_cmd[i],rwa::min_torque,rwa::max_torque);
-        cmd[2*i] = comp;
-        cmd[2*i+1] = comp >> 8;
-    }
-    i2c_write_to_subaddr(RWA_COMMAND,cmd,6);
+void ADCS::set_rwa_momentum_filter(const float mom_filter) {
+  unsigned char comp = uc(mom_filter, 0.0f, 1.0f);
+  i2c_write_to_subaddr(RWA_MOMENTUM_FILTER, comp);
 }
-void ADCS::set_rwa_momentum_filter(const float mom_filter){
-    unsigned char comp = uc(mom_filter,0.0f,1.0f);
-    i2c_write_to_subaddr(RWA_MOMENTUM_FILTER, comp);
+void ADCS::set_ramp_filter(const float ramp_filter) {
+  unsigned char comp = uc(ramp_filter, 0.0f, 1.0f);
+  i2c_write_to_subaddr(RWA_RAMP_FILTER, comp);
 }
-void ADCS::set_ramp_filter(const float ramp_filter){
-    unsigned char comp = uc(ramp_filter,0.0f,1.0f);
-    i2c_write_to_subaddr(RWA_RAMP_FILTER, comp);
+void ADCS::set_mtr_mode(const unsigned char mtr_mode) {
+  i2c_write_to_subaddr(MTR_MODE, mtr_mode);
 }
-void ADCS::set_mtr_mode(const unsigned char mtr_mode){
-    i2c_write_to_subaddr(MTR_MODE, mtr_mode);
+void ADCS::set_mtr_cmd(const std::array<float, 3> &mtr_cmd) {
+  unsigned char cmd[6];
+  for (int i = 0; i < 3; i++) {
+    unsigned short comp = us(mtr_cmd[i], mtr::min_moment, mtr::max_moment);
+    cmd[2 * i] = comp;
+    cmd[2 * i + 1] = comp >> 8;
+  }
+  i2c_write_to_subaddr(MTR_COMMAND, cmd, 6);
 }
-void ADCS::set_mtr_cmd(const std::array<float, 3> &mtr_cmd){
-    unsigned char cmd[6];
-    for(int i = 0;i<3;i++){
-        unsigned short comp = us(mtr_cmd[i],mtr::min_moment,mtr::max_moment);
-        cmd[2*i] = comp;
-        cmd[2*i+1] = comp >> 8; 
-    }
-    i2c_write_to_subaddr(MTR_COMMAND,cmd,6);
-}
-void ADCS::set_mtr_limit(const float mtr_limit){
-    unsigned char cmd[2];
-    unsigned short comp = us(mtr_limit,mtr::min_moment,mtr::max_moment);
-    cmd[0] = comp;
-    cmd[1] = comp >> 8; 
-    i2c_write_to_subaddr(MTR_LIMIT, cmd, 2);
+void ADCS::set_mtr_limit(const float mtr_limit) {
+  unsigned char cmd[2];
+  unsigned short comp = us(mtr_limit, mtr::min_moment, mtr::max_moment);
+  cmd[0] = comp;
+  cmd[1] = comp >> 8;
+  i2c_write_to_subaddr(MTR_LIMIT, cmd, 2);
 }
 void ADCS::set_ssa_mode(const unsigned char ssa_mode) {
-    i2c_write_to_subaddr(SSA_MODE, ssa_mode);
+  i2c_write_to_subaddr(SSA_MODE, ssa_mode);
 }
 void ADCS::set_ssa_voltage_filter(const float voltage_filter) {
-    unsigned char comp = uc(voltage_filter,0.0f,1.0f);
-    i2c_write_to_subaddr(SSA_VOLTAGE_FILTER, comp);
+  unsigned char comp = uc(voltage_filter, 0.0f, 1.0f);
+  i2c_write_to_subaddr(SSA_VOLTAGE_FILTER, comp);
 }
 
-void ADCS::set_imu_mode(const unsigned char mode){
-    i2c_write_to_subaddr(IMU_MODE, mode);
+void ADCS::set_imu_mode(const unsigned char mode) {
+  i2c_write_to_subaddr(IMU_MODE, mode);
 }
-void ADCS::set_imu_mag_filter(const float mag_filter){
-    unsigned char comp = uc(mag_filter,0.0f,1.0f);
-    i2c_write_to_subaddr(IMU_MAG_FILTER, comp);
+void ADCS::set_imu_mag_filter(const float mag_filter) {
+  unsigned char comp = uc(mag_filter, 0.0f, 1.0f);
+  i2c_write_to_subaddr(IMU_MAG_FILTER, comp);
 }
-void ADCS::set_imu_gyr_filter(const float gyr_filter){
-    unsigned char comp = uc(gyr_filter,0.0f,1.0f);
-    i2c_write_to_subaddr(IMU_GYR_FILTER, comp);
+void ADCS::set_imu_gyr_filter(const float gyr_filter) {
+  unsigned char comp = uc(gyr_filter, 0.0f, 1.0f);
+  i2c_write_to_subaddr(IMU_GYR_FILTER, comp);
 }
-void ADCS::set_imu_gyr_temp_filter(const float temp_filter){
-    unsigned char comp = uc(temp_filter,0.0f,1.0f);
-    i2c_write_to_subaddr(IMU_GYR_TEMP_FILTER, comp);
+void ADCS::set_imu_gyr_temp_filter(const float temp_filter) {
+  unsigned char comp = uc(temp_filter, 0.0f, 1.0f);
+  i2c_write_to_subaddr(IMU_GYR_TEMP_FILTER, comp);
 }
-void float_decomp(const float input, unsigned char* temp){
-    //turns the input float into 4 chars
-    *(float*)(temp) = input;
+void float_decomp(const float input, unsigned char *temp) {
+  // turns the input float into 4 chars
+  *(float *)(temp) = input;
 }
-void ADCS::set_imu_gyr_temp_kp(const float kp){
-    unsigned char cmd[4];
-    float_decomp(kp, cmd);
-    i2c_write_to_subaddr(IMU_GYR_TEMP_KP,cmd,4);
+void ADCS::set_imu_gyr_temp_kp(const float kp) {
+  unsigned char cmd[4];
+  float_decomp(kp, cmd);
+  i2c_write_to_subaddr(IMU_GYR_TEMP_KP, cmd, 4);
 }
-void ADCS::set_imu_gyr_temp_ki(const float ki){
-    unsigned char cmd[4];
-    float_decomp(ki, cmd);
-    i2c_write_to_subaddr(IMU_GYR_TEMP_KI,cmd,4);
+void ADCS::set_imu_gyr_temp_ki(const float ki) {
+  unsigned char cmd[4];
+  float_decomp(ki, cmd);
+  i2c_write_to_subaddr(IMU_GYR_TEMP_KI, cmd, 4);
 }
-void ADCS::set_imu_gyr_temp_kd(const float kd){
-    unsigned char cmd[4];
-    float_decomp(kd, cmd);
-    i2c_write_to_subaddr(IMU_GYR_TEMP_KD,cmd,4);
+void ADCS::set_imu_gyr_temp_kd(const float kd) {
+  unsigned char cmd[4];
+  float_decomp(kd, cmd);
+  i2c_write_to_subaddr(IMU_GYR_TEMP_KD, cmd, 4);
 }
-void ADCS::set_imu_gyr_temp_desired(const float desired){
-    unsigned char cmd = uc(desired,imu::min_eq_temp,imu::max_eq_temp);
-    i2c_write_to_subaddr(IMU_GYR_TEMP_DESIRED,cmd);
+void ADCS::set_imu_gyr_temp_desired(const float desired) {
+  unsigned char cmd = uc(desired, imu::min_eq_temp, imu::max_eq_temp);
+  i2c_write_to_subaddr(IMU_GYR_TEMP_DESIRED, cmd);
 }
 
-
-void ADCS::get_who_am_i(unsigned char* who_am_i) {
-    i2c_point_and_read(WHO_AM_I, who_am_i, 1);
+void ADCS::get_who_am_i(unsigned char *who_am_i) {
+  i2c_point_and_read(WHO_AM_I, who_am_i, 1);
 }
-void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd) {
-    unsigned char readin[12];
-    i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
+void ADCS::get_rwa(std::array<float, 3> *rwa_momentum_rd,
+                   std::array<float, 3> *rwa_ramp_rd) {
+  unsigned char readin[12];
+  i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
 
-    for(int i=0;i<3;i++){
-        unsigned short a = readin[2*i+1] << 8;
-        unsigned short b = 0xFF & readin[2*i];
-        unsigned short c = a | b;
-        (*rwa_momentum_rd)[i] = fp(c,rwa::min_momentum,rwa::max_momentum);
-    }
-    for(int i=0;i<3;i++){
-        unsigned short a = readin[2*i+1+6] << 8;
-        unsigned short b = 0xFF & readin[2*i+6];
-        unsigned short c = a | b;
-        (*rwa_ramp_rd)[i] = fp(c,rwa::min_torque,rwa::max_torque);
-    }
-
+  for (int i = 0; i < 3; i++) {
+    unsigned short a = readin[2 * i + 1] << 8;
+    unsigned short b = 0xFF & readin[2 * i];
+    unsigned short c = a | b;
+    (*rwa_momentum_rd)[i] = fp(c, rwa::min_momentum, rwa::max_momentum);
+  }
+  for (int i = 0; i < 3; i++) {
+    unsigned short a = readin[2 * i + 1 + 6] << 8;
+    unsigned short b = 0xFF & readin[2 * i + 6];
+    unsigned short c = a | b;
+    (*rwa_ramp_rd)[i] = fp(c, rwa::min_torque, rwa::max_torque);
+  }
 }
-void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd){
-    unsigned char readin[14];
-    i2c_point_and_read(IMU_MAG_READ, readin, 14);
+void ADCS::get_imu(std::array<float, 3> *mag_rd, std::array<float, 3> *gyr_rd,
+                   float *gyr_temp_rd) {
+  unsigned char readin[14];
+  i2c_point_and_read(IMU_MAG_READ, readin, 14);
 
-    for(int i=0;i<3;i++){
-        unsigned short a = readin[2*i+1] << 8;
-        unsigned short b = 0xFF & readin[2*i];
-        unsigned short c = a | b;        
-        (*mag_rd)[i] = fp(c,imu::min_rd_mag,imu::max_rd_mag);
-    }
+  for (int i = 0; i < 3; i++) {
+    unsigned short a = readin[2 * i + 1] << 8;
+    unsigned short b = 0xFF & readin[2 * i];
+    unsigned short c = a | b;
+    (*mag_rd)[i] = fp(c, imu::min_rd_mag, imu::max_rd_mag);
+  }
 
-    for(int i=0;i<3;i++){
-        unsigned short a = readin[2*i+1+6] << 8;
-        unsigned short b = 0xFF & readin[2*i+6];
-        unsigned short c = a | b;
-        (*gyr_rd)[i] = fp(c,imu::min_rd_omega,imu::max_rd_omega);
-    } 
+  for (int i = 0; i < 3; i++) {
+    unsigned short a = readin[2 * i + 1 + 6] << 8;
+    unsigned short b = 0xFF & readin[2 * i + 6];
+    unsigned short c = a | b;
+    (*gyr_rd)[i] = fp(c, imu::min_rd_omega, imu::max_rd_omega);
+  }
 
-    unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
-    *gyr_temp_rd = fp(c,imu::min_rd_temp,imu::max_rd_temp);
+  unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
+  *gyr_temp_rd = fp(c, imu::min_rd_temp, imu::max_rd_temp);
 }
-void ADCS::get_ssa_mode(unsigned char* a) {
-    i2c_point_and_read(SSA_MODE, a, 1);
+void ADCS::get_ssa_mode(unsigned char *a) {
+  i2c_point_and_read(SSA_MODE, a, 1);
 }
-void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
-    unsigned char readin[6];
-    i2c_point_and_read(SSA_SUN_VECTOR, readin,6);
-    for(int i=0;i<3;i++){
-        unsigned short c = (((unsigned short)readin[2*i+1]) << 8) | (0xFF & readin[2*i]);
+void ADCS::get_ssa_vector(std::array<float, 3> *ssa_sun_vec) {
+  unsigned char readin[6];
+  i2c_point_and_read(SSA_SUN_VECTOR, readin, 6);
+  for (int i = 0; i < 3; i++) {
+    unsigned short c =
+        (((unsigned short)readin[2 * i + 1]) << 8) | (0xFF & readin[2 * i]);
 
-        (*ssa_sun_vec)[i] = fp(c,-1.0f,1.0f);
-    }
-
+    (*ssa_sun_vec)[i] = fp(c, -1.0f, 1.0f);
+  }
 }
-void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
-    unsigned char temp[20];
-    i2c_point_and_read(SSA_VOLTAGE_READ,temp,20);
-    
-    for(int i = 0;i<20;i++){
-        (*voltages)[i] = fp(temp[i], ssa::min_voltage_rd, ssa::max_voltage_rd);
-    }
+void ADCS::get_ssa_voltage(std::array<float, 20> *voltages) {
+  unsigned char temp[20];
+  i2c_point_and_read(SSA_VOLTAGE_READ, temp, 20);
+
+  for (int i = 0; i < 20; i++) {
+    (*voltages)[i] = fp(temp[i], ssa::min_voltage_rd, ssa::max_voltage_rd);
+  }
 }
 
 void ADCS::update_hat() {}

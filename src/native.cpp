@@ -3,12 +3,12 @@
 
 #ifndef UNIT_TEST
 int main() {
-    StateFieldRegistry registry;
-    MainControlLoop fcp(registry);
+  StateFieldRegistry registry;
+  MainControlLoop fcp(registry);
 
-    while (true) {
-        fcp.execute();
-    }
-    return 0;
+  while (true) {
+    fcp.execute();
+  }
+  return 0;
 }
 #endif
