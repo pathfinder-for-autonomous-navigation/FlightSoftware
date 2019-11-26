@@ -404,7 +404,6 @@ class Piksi {
     bool _pos_ecef_update;
     bool _baseline_ecef_update;
     bool _vel_ecef_update;
-    bool _iar_update;
     bool _heartbeat_update;
     bool _user_data_update;
 

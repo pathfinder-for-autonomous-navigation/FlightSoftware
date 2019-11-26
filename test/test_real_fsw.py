@@ -23,12 +23,13 @@ class TestFlightSoftwareBinary(unittest.TestCase):
         self.fsw = subprocess.Popen([self.binary_dir], stdin=master_fd, stdout=master_fd)
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
-    def read_cycle_no(self):
+    def readCycleNumber(self):
         input = json.dumps({"field": "pan.cycle_no", "mode" : ord('r')}) + "\n"
         self.console.write(input.encode())
         
         # Read back 10 responses and hope that one of them contains the
-        # cycle count.
+        # cycle count. We have to do this because the Quake manager sends
+        # out a large number of debug messages
         responses = []
         for x in range(0, 10):
             responses.append(json.loads(self.console.readline().rstrip()))
@@ -37,12 +38,23 @@ class TestFlightSoftwareBinary(unittest.TestCase):
                 self.assertEqual(response['field'], "pan.cycle_no")
                 return int(response['val'])
 
+    def startNextCycle(self):
+        # Send a signal to start the next cycle, like the simulation would.
+        input = json.dumps({"field": "cycle.start", "mode" : ord('w'), "val" : "true"}) + "\n"
+        self.console.write(input.encode())
+        self.console.readline() # Throw away next line
+
     def testValidRead(self):
-        cycle_no = self.read_cycle_no()
-        self.assertGreaterEqual(cycle_no, 0)
-        time.sleep(0.5)
-        new_cycle_no = self.read_cycle_no()
-        self.assertGreater(new_cycle_no, cycle_no)
+        cycleNumber = self.readCycleNumber()
+        self.assertGreaterEqual(cycleNumber, 0)
+
+        self.startNextCycle()
+        newCycleNumber = self.readCycleNumber()
+        self.assertEqual(newCycleNumber, cycleNumber + 1)
+        
+        self.startNextCycle()
+        newCycleNumber = self.readCycleNumber()
+        self.assertEqual(newCycleNumber, cycleNumber + 2)
 
     def tearDown(self):
         self.fsw.kill()
