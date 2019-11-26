@@ -26,14 +26,10 @@ class TestFlightSoftwareBinary(unittest.TestCase):
     def readCycleNumber(self):
         input = json.dumps({"field": "pan.cycle_no", "mode" : ord('r')}) + "\n"
         self.console.write(input.encode())
+        time.sleep(0.200)
         
-        # Read back 10 responses and hope that one of them contains the
-        # cycle count. We have to do this because the Quake manager sends
-        # out a large number of debug messages
-        responses = []
-        for x in range(0, 10):
-            responses.append(json.loads(self.console.readline().rstrip()))
-        for response in responses:
+        while self.console.in_waiting > 0:
+            response = json.loads(self.console.readline().rstrip())
             if 'field' in response.keys():
                 self.assertEqual(response['field'], "pan.cycle_no")
                 return int(response['val'])
