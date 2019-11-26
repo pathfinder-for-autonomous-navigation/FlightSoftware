@@ -95,6 +95,7 @@ InternalStateField<char*>* get_mt_ptr()
     bool validate_packet()
     {
         // Should we validate packet first, or update all valid requests? 
+        return false;
     }
 
   /**

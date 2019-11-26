@@ -5,6 +5,7 @@
 #include "ClockManager.hpp"
 #include "DebugTask.hpp"
 #include "FieldCreatorTask.hpp"
+#include "UplinkConsumer.h"
 #include "MissionManager.hpp"
 #include "DockingController.hpp"
 #include "DownlinkProducer.hpp"
@@ -27,6 +28,7 @@ class MainControlLoop : public ControlTask<void> {
     FieldCreatorTask field_creator_task;
     ClockManager clock_manager;
     DebugTask debug_task;
+    UplinkConsumer uplink_consumer;
     MissionManager mission_manager;
 
     Devices::DockingSystem docksys;
@@ -38,11 +40,13 @@ class MainControlLoop : public ControlTask<void> {
     // OneDrive.
     #ifdef HOOTL
         static constexpr unsigned int debug_task_offset         = 1000;
+       static constexpr unsigned int uplink_consumer_offset = 66000;
         static constexpr unsigned int mission_manager_offset    = 51000;
         static constexpr unsigned int docking_controller_offset = 52000;
         static constexpr unsigned int downlink_producer_offset  = 152900;
     #else
         static constexpr unsigned int debug_task_offset         = 1000;
+        static constexpr unsigned int uplink_consumer_offset = 116000;
         static constexpr unsigned int mission_manager_offset    = 1010;
         static constexpr unsigned int docking_controller_offset = 2010;
         static constexpr unsigned int downlink_producer_offset  = 102900;

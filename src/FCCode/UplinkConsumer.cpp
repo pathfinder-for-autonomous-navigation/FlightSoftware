@@ -13,11 +13,11 @@ UplinkConsumer::UplinkConsumer(StateFieldRegistry& registry, unsigned int offset
 void UplinkConsumer::execute()
 {
     // Check radio_mt_ready_f
-    if ( !radio_mt_ready_f->get() )
+    if ( !radio_mt_ready_f.get() )
         return;
     
     // Check that radio_mt_packet_f is not null, hope that it's valid
-    if ( radio_mt_packet_f->get() )
+    if ( radio_mt_packet_f.get() )
     {
         // complain because this is a big problem, need quakemanager to reassign
         // TODO: how to handle this? 
@@ -32,5 +32,5 @@ void UplinkConsumer::execute()
     // values have been updated? 
 
     // clear flag
-    radio_mt_ready_f->set(0);
+    radio_mt_ready_f.set(0);
 }
