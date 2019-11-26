@@ -26,11 +26,13 @@ class TestFlightSoftwareBinary(unittest.TestCase):
     def readCycleNumber(self):
         input = json.dumps({"field": "pan.cycle_no", "mode" : ord('r')}) + "\n"
         self.console.write(input.encode())
-
-        line = self.console.readline().rstrip()
-        response = json.loads(line)
-        self.assertEqual(response['field'], "pan.cycle_no")
-        return int(response['val'])
+        time.sleep(0.200)
+        
+        while self.console.in_waiting > 0:
+            response = json.loads(self.console.readline().rstrip())
+            if 'field' in response.keys():
+                self.assertEqual(response['field'], "pan.cycle_no")
+                return int(response['val'])
 
     def startNextCycle(self):
         # Send a signal to start the next cycle, like the simulation would.

@@ -56,7 +56,7 @@ class TestFixture {
         radio_mo_packet_fp = registry.create_internal_field<char*>("downlink_producer.mo_ptr");
         radio_mt_packet_fp = registry.create_internal_field<char*>("uplink_consumer.mt_ptr");
         radio_err_fp = registry.create_readable_field<int>("downlink_producer.radio_err_ptr", -90, 10);
-        radio_mt_ready_fp = registry.create_internal_field<bool>("uplink_producer.mt_ready");
+        radio_mt_ready_fp = registry.create_internal_field<bool>("uplink_consumer.mt_ready");
 
         // Initialize external fields
         snapshot_size_fp->set(static_cast<int>(350));
