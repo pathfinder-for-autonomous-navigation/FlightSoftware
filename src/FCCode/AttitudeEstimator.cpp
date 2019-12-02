@@ -22,11 +22,6 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         //find ADCSBoxMonitor inputs
         ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_box.sun_vec", __FILE__, __LINE__);
         mag_vec_fp = find_readable_field<f_vector_t>("adcs_box.mag_vec", __FILE__, __LINE__);
-        
-        //create kyles containers?
-        // gnc::AttitudeEstimatorData data;
-        // gnc::AttitudeEstimatorState state;
-        // gnc::AttitudeEstimate estimate;
 
         //Add outputs
         add_readable_field(q_body_eci_f);
