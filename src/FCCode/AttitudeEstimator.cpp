@@ -3,10 +3,14 @@
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
     : TimedControlTask<void>(registry, offset),
+    data(),
+    state(),
+    estimate(),
     q_body_eci_sr(),
     q_body_eci_f("attitude_estimator.q_body_eci", q_body_eci_sr),
-    w_body_sr(),
-    w_body_f("attitude_estimator.w_body", w_body_sr){
+    w_body_sr(0, 1000, 10),
+    w_body_f("attitude_estimator.w_body", w_body_sr)
+    {
 
         //Find pan epoch
         pan_epoch_fp = find_readable_field<gps_time_t>("pan.epoch", __FILE__, __LINE__);
@@ -61,16 +65,16 @@ void AttitudeEstimator::set_data(){
 void AttitudeEstimator::set_estimate(){
 
     f_quat_t q_temp;
-    q_temp[0] = estimate.q_body_eci.operator()[0];
-    q_temp[1] = estimate.q_body_eci.operator()[1];
-    q_temp[2] = estimate.q_body_eci.operator()[2];
-    q_temp[3] = estimate.q_body_eci.operator()[3];
+    q_temp[0] = estimate.q_body_eci.operator()(0);
+    q_temp[1] = estimate.q_body_eci.operator()(1);
+    q_temp[2] = estimate.q_body_eci.operator()(2);
+    q_temp[3] = estimate.q_body_eci.operator()(3);
     q_body_eci_f.set(q_temp);
 
     f_vector_t w_temp;
-    w_temp[0] = estimate.w_body.operator()[0];
-    w_temp[1] = estimate.w_body.operator()[1];
-    w_temp[2] = estimate.w_body.operator()[2];
+    w_temp[0] = estimate.w_body.operator()(0);
+    w_temp[1] = estimate.w_body.operator()(1);
+    w_temp[2] = estimate.w_body.operator()(2);  
     w_body_f.set(w_temp);
 
 }
