@@ -1,8 +1,8 @@
 #ifndef ATTITUDE_ESTIMATOR_HPP_
 #define ATTITUDE_ESTIMATOR_HPP_
 
-#include "../../.pio/libdeps/teensy35_hootl/psim/include/gnc_attitude_estimation.hpp"
-//#include <gnc_attitude_estimation.hpp>
+//#include "../../.pio/libdeps/teensy35_hootl/psim/include/gnc_attitude_estimation.hpp"
+#include <gnc_attitude_estimation.hpp>
 #include <TimedControlTask.hpp>
 
 /**
