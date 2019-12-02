@@ -26,6 +26,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
       debug_task(registry, debug_task_offset),
       PIKSI_INITIALIZATION,
       piksi_control_task(registry, piksi_control_task_offset, piksi),
+      attitude_estimator(registry, attitude_estimator)
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
       mission_manager(registry, mission_manager_offset),

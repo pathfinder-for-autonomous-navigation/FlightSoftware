@@ -7,6 +7,7 @@
 
 #include "ClockManager.hpp"
 #include "PiksiControlTask.hpp"
+#include "AttitudeEstimator.hpp"
 #include "GomspaceController.hpp"
 #include "DebugTask.hpp"
 #include "FieldCreatorTask.hpp"
@@ -26,6 +27,7 @@ class MainControlLoop : public ControlTask<void> {
 
     Devices::Piksi piksi;
     PiksiControlTask piksi_control_task;
+    AttitudeEstimator attitude_estimator;
 
     Devices::Gomspace::eps_hk_t hk;
     Devices::Gomspace::eps_config_t config; 
@@ -44,6 +46,7 @@ class MainControlLoop : public ControlTask<void> {
     #ifdef HOOTL
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =  55000;
+        static constexpr unsigned int attitude_estimator_offset  =  85500;
         static constexpr unsigned int gomspace_controller_offset = 106500;
         static constexpr unsigned int mission_manager_offset     = 111600;
         static constexpr unsigned int docking_controller_offset  = 152400;
