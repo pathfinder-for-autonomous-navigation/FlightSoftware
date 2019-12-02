@@ -6,9 +6,9 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     data(),
     state(),
     estimate(),
-    q_body_eci_sr(),
+    q_body_eci_sr(0, 1, 22),
     q_body_eci_f("attitude_estimator.q_body_eci", q_body_eci_sr),
-    w_body_sr(0, 1000, 10),
+    w_body_sr(0, 1000, 22),
     w_body_f("attitude_estimator.w_body", w_body_sr)
     {
 
