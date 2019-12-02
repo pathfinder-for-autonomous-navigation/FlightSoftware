@@ -54,6 +54,7 @@ class MainControlLoop : public ControlTask<void> {
     #else
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =   6000;
+        static constexpr unsigned int attitude_estimator_offset  =  85500;
         static constexpr unsigned int gomspace_controller_offset =  57500;
         static constexpr unsigned int mission_manager_offset     =  62600;
         static constexpr unsigned int docking_controller_offset  = 103400;
