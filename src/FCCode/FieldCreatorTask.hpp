@@ -18,7 +18,7 @@ class FieldCreatorTask : public ControlTask<void> {
       WritableStateField<bool> docking_config_cmd_f;
 
       ReadableStateField<f_vector_t> ssa_vec_rd_f;
-      ReadableStateField<f_quat_t> mag_vec_f;
+      ReadableStateField<f_vector_t> mag_vec_f;
 
       InternalStateField<unsigned int> snapshot_size_f;
       InternalStateField<char*> radio_mo_packet_f;
