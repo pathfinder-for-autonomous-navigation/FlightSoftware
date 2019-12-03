@@ -36,10 +36,9 @@ class AttitudeEstimator : public TimedControlTask<void> {
      * 
      */
     void set_estimate();
-
-    //! The time that all gnc calculations begin from
-    ReadableStateField<gps_time_t>* const pan_epoch_fp;
     
+    const gps_time_t pan_epoch;
+
     /**
      * @brief Inputs collected from Piksi and ADCSBoxMonitor.
      */

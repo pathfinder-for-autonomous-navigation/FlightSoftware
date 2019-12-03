@@ -3,7 +3,7 @@
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
     : TimedControlTask<void>(registry, offset),
-    pan_epoch_fp(find_internal_field<gps_time_t>("pan.epoch", __FILE__, __LINE__)),
+    pan_epoch(),
     piksi_time_fp(find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__)),
     pos_vec_ecef_fp(find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__)),
     ssa_vec_rd_fp(find_readable_field<f_vector_t>("adcs_box.sun_vec", __FILE__, __LINE__)),
@@ -18,7 +18,6 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     {
 
         //assert inputs are found
-        assert(pan_epoch_fp);
         assert(piksi_time_fp);
         assert(pos_vec_ecef_fp);
         assert(ssa_vec_rd_fp);
@@ -36,7 +35,7 @@ void AttitudeEstimator::execute(){
 }
 
 void AttitudeEstimator::set_data(){
-    data.t = ((double)(unsigned long)(piksi_time_fp->get() - pan_epoch_fp->get()))/(1e9);
+    data.t = (double)(unsigned long)(piksi_time_fp->get() - pan_epoch)/(1e9L);
 
     data.r_ecef = lin::Vector3d({
         pos_vec_ecef_fp->get()[0], 
