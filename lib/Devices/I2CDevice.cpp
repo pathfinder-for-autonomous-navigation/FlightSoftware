@@ -6,7 +6,6 @@
  * the access
  * and control of I2C-based hardware peripherals.
  */
-
 #include "I2CDevice.hpp"
 
 using namespace Devices;
@@ -32,8 +31,11 @@ void I2CDevice::disable() {
     this->recent_errors = true;
 }
 
-I2CDevice::I2CDevice(const std::string &name, i2c_t3 &wire, unsigned char addr,
-                     unsigned long timeout)
-    : Device(name), wire(wire), addr(addr), timeout(timeout), error_count(0), recent_errors(false) {
-    // empty
-}
+#ifdef DESKTOP
+    I2CDevice::I2CDevice(const std::string &name, unsigned long timeout)
+        : Device(name), timeout(timeout), error_count(0), recent_errors(false) {}
+#else
+    I2CDevice::I2CDevice(const std::string &name, i2c_t3 &wire, unsigned char addr,
+                        unsigned long timeout)
+        : Device(name), wire(wire), addr(addr), timeout(timeout), error_count(0), recent_errors(false) {}
+#endif

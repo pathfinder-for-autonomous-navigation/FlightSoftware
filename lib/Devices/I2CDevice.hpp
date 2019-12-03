@@ -37,7 +37,14 @@
 /* Note that I2C_AUTO_RETRY should be enabled - I2CDevice makes no calls to
  * resetBus internally.
  */
-#include "i2c_t3.h"
+#ifdef DESKTOP
+typedef unsigned int i2c_stop;
+typedef unsigned int i2c_t3;
+#define I2C_STOP 0
+#define I2C_NOSTOP 0
+#else
+#include <i2c_t3.h>
+#endif
 
 /** \namespace Devices **/
 namespace Devices {
@@ -82,7 +89,11 @@ class I2CDevice : public Device {
     /** @brief Constructs an i2c device on the specified wire, with the given
      *         address, and a default timeout values of 0 - i.e. a timeout never
      *         happens. **/
+    #ifndef DESKTOP
     I2CDevice(const std::string &name, i2c_t3 &wire, unsigned char addr, unsigned long timeout = 0);
+    #else
+    I2CDevice(const std::string &name, unsigned long timeout = 0);
+    #endif
     /** @brief Returns true if an error has occurred since the last call to
      *         pop_errors and false otherwise. The recent error history variable
      *         is reset and the consecutive communication failure variables is
@@ -101,7 +112,11 @@ class I2CDevice : public Device {
      *         recorded in the recent error history variable. This is a blocking
      *         call. **/
     template <typename T>
+    #ifndef DESKTOP
     void i2c_transmit_data(T const *data, std::size_t len, i2c_stop s = I2C_STOP);
+    #else
+    void i2c_transmit_data(T const *data, std::size_t len, i2c_stop s = I2C_STOP);
+    #endif
     /** @brief Requests and recieves a message over i2c form this device. The
      *         message will be placed in the array data of type T with length len.
      *         The size of the array data will determine how much data is
@@ -177,10 +192,12 @@ class I2CDevice : public Device {
     inline unsigned char i2c_peek();
 
    private:
-    /** Wire associated with this device **/
-    i2c_t3 &wire;
-    /** I2C address associated with this device **/
-    unsigned char const addr;
+    #ifndef DESKTOP
+        /** Wire associated with this device **/
+        i2c_t3 &wire;
+        /** I2C address associated with this device **/
+        unsigned char const addr;
+    #endif
     /** Timeout value associated with this device for wire calls **/
     unsigned long timeout;
     /** Keeps track of consecutive communication errors **/

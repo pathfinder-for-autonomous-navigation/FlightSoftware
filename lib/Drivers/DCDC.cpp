@@ -1,31 +1,60 @@
+
 #include "DCDC.hpp"
+#ifndef DESKTOP
 #include "Arduino.h"
+#endif
 
 using namespace Devices;
 
-DCDC::DCDC(const std::string &name, unsigned char en) : Device(name), enable_pin_(en) {}
-
 bool DCDC::setup() {
-    pinMode(enable_pin_, OUTPUT);
-    digitalWrite(enable_pin_, OFF);
-    is_enabled = false;
+    #ifndef DESKTOP
+    pinMode(dcdc_motor_enable_pin, OUTPUT);
+    pinMode(dcdc_sph_enable_pin, OUTPUT);
+    digitalWrite(dcdc_motor_enable_pin, LOW);
+    digitalWrite(dcdc_sph_enable_pin, LOW);
+    #endif
     return true;
 }
 
-bool DCDC::is_functional() { return is_enabled; }
-
-void DCDC::disable() {
-    digitalWrite(enable_pin_, OFF);
-    is_enabled = false;
+bool DCDC::is_functional() {
+    return true;
 }
 
-void DCDC::enable() {
-    digitalWrite(enable_pin_, ON);
-    is_enabled = true;
+void DCDC::disable() {
+    disable_adcs();
+    disable_sph();
+}
+
+void DCDC::enable_adcs() {
+    #ifndef DESKTOP
+    digitalWrite(dcdc_motor_enable_pin, HIGH);
+    #endif
+}
+
+void DCDC::enable_sph() {
+    #ifndef DESKTOP
+    digitalWrite(dcdc_sph_enable_pin, HIGH);
+    #endif
+}
+
+void DCDC::disable_adcs() {
+    #ifndef DESKTOP
+    digitalWrite(dcdc_motor_enable_pin, LOW);
+    #endif
+}
+
+void DCDC::disable_sph() {
+    #ifndef DESKTOP
+    digitalWrite(dcdc_sph_enable_pin, LOW);
+    #endif
 }
 
 void DCDC::reset() {
-    disable();
+    #ifndef DESKTOP
+    disable_adcs();
+    disable_sph();
     delay(10);
-    enable();
+    enable_sph();
+    enable_adcs();
+    #endif
 }

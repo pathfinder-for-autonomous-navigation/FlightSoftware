@@ -81,3 +81,17 @@ refers to. Upon letting the SBDWB timeout:
 Sent: AT+SBDWB=69
 Recieved: READY\r\n
 Recieved: 1\r\n
+
+------------------------------------------------------------------------------
+9/27/19:
+------------------------------------------------------------------------------
+Tested the quake driver outside with Iridium connection. All tests pass except 
+printf does not print the contents of the sbdrb message with the %s 
+specifier.
+
+------------------------------------------------------------------------------
+9/29/19:
+------------------------------------------------------------------------------
+sbdrb printf issue:
+Strings must be null-terminated, so possibly the issue was that '\0' was 
+appended to the message after the call to printf.
