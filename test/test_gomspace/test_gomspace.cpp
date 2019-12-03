@@ -205,7 +205,7 @@ int main() {
     delay(6000);
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
     Serial.begin(9600);
-    Serial.println();
+    while(!Serial);
     gs.setup();
     UNITY_BEGIN();
     RUN_TEST(test_fn);

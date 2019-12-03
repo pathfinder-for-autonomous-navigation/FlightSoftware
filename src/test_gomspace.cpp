@@ -6,7 +6,7 @@ using namespace Devices;
 Gomspace::eps_hk_t hk_data;
 Gomspace::eps_config_t config_data;
 Gomspace::eps_config2_t config2_data;
-Gomspace gs("gomspace", &hk_data, &config_data, &config2_data, Wire, 0x02);
+Gomspace gs(&hk_data, &config_data, &config2_data);
 
 void print_data(Gomspace::eps_hk_t& hk_data) {
     Serial.print("Vboost: ");
