@@ -43,13 +43,13 @@ class AttitudeEstimator : public TimedControlTask<void> {
      * @brief Inputs collected from Piksi and ADCSBoxMonitor.
      */
     //! Time from Piksi
-    ReadableStateField<gps_time_t>* const piksi_time_fp;
+    const ReadableStateField<gps_time_t>* piksi_time_fp;
     //! Position of this satellite, Vector of doubles
-    ReadableStateField<d_vector_t>* const pos_vec_ecef_fp;
+    const ReadableStateField<d_vector_t>* pos_vec_ecef_fp;
     //! Sun vector of this satellite, in the body frame.
-    ReadableStateField<f_vector_t>* const ssa_vec_rd_fp;
+    const ReadableStateField<f_vector_t>* ssa_vec_rd_fp;
     //! Magnetic field vector of this satellite in the body frame.
-    ReadableStateField<f_vector_t>* const mag_vec_fp;
+    const ReadableStateField<f_vector_t>* mag_vec_fp;
 
     //kyle's gnc structs
     gnc::AttitudeEstimatorData data;

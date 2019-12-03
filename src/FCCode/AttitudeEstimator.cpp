@@ -4,10 +4,6 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
     : TimedControlTask<void>(registry, offset),
     pan_epoch(),
-    piksi_time_fp(find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__)),
-    pos_vec_ecef_fp(find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__)),
-    ssa_vec_rd_fp(find_readable_field<f_vector_t>("adcs_box.sun_vec", __FILE__, __LINE__)),
-    mag_vec_fp(find_readable_field<f_vector_t>("adcs_box.mag_vec", __FILE__, __LINE__)),
     data(),
     state(),
     estimate(),
@@ -16,6 +12,11 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     w_body_sr(-55, 55, 32*3),
     w_body_f("attitude_estimator.w_body", w_body_sr)
     {
+
+        piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
+        pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
+        ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_box.sun_vec", __FILE__, __LINE__),
+        mag_vec_fp = find_readable_field<f_vector_t>("adcs_box.mag_vec", __FILE__, __LINE__),
 
         //assert inputs are found
         assert(piksi_time_fp);

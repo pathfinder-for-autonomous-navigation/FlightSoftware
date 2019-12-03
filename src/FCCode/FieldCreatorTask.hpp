@@ -17,6 +17,9 @@ class FieldCreatorTask : public ControlTask<void> {
       WritableStateField<float> adcs_min_stable_ang_rate_f;
       WritableStateField<bool> docking_config_cmd_f;
 
+      ReadableStateField<f_vector_t> ssa_vec_rd_f;
+      ReadableStateField<f_quat_t> mag_vec_f;
+
       InternalStateField<unsigned int> snapshot_size_f;
       InternalStateField<char*> radio_mo_packet_f;
       InternalStateField<char*> radio_mt_packet_f;
@@ -30,6 +33,8 @@ class FieldCreatorTask : public ControlTask<void> {
         adcs_ang_rate_f("adcs.ang_rate", Serializer<float>(0, 10, 4)),
         adcs_min_stable_ang_rate_f("adcs.min_stable_ang_rate", Serializer<float>(0, 10, 4)),
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
+        ssa_vec_rd_f("adcs_box.sun_vec", Serializer<f_vector_t>(0,1,32*3)),
+        mag_vec_f("adcs_box.mag_vec", Serializer<f_quat_t>()),
         snapshot_size_f("downlink_producer.snap_size"),
         radio_mo_packet_f("downlink_producer.mo_ptr"),
         radio_mt_packet_f("uplink_consumer.mt_ptr"),
@@ -46,6 +51,10 @@ class FieldCreatorTask : public ControlTask<void> {
 
           // For DockingController
           add_writable_field(docking_config_cmd_f);
+
+          // For AttitudeEstimator
+          add_readable_field(ssa_vec_rd_f);
+          add_readable_field(mag_vec_f);
 
           // For QuakeManager
           add_internal_field(snapshot_size_f);
