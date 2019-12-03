@@ -17,6 +17,8 @@ class AttitudeEstimator : public TimedControlTask<void> {
      */
     AttitudeEstimator(StateFieldRegistry& registry, unsigned int offset);
 
+   protected:
+
     /**
      * @brief Using raw sensor inputs, determine the attitude and angular state
      * of the spacecraft.
@@ -35,7 +37,6 @@ class AttitudeEstimator : public TimedControlTask<void> {
      */
     void set_estimate();
 
-   protected:
     //! The time that all gnc calculations begin from
     ReadableStateField<gps_time_t>* const pan_epoch_fp;
     

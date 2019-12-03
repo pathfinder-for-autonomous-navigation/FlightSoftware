@@ -15,6 +15,9 @@ class FieldCreatorTask : public ControlTask<void> {
       WritableStateField<f_quat_t> adcs_cmd_attitude_f;
       ReadableStateField<float> adcs_ang_rate_f;
       WritableStateField<float> adcs_min_stable_ang_rate_f;
+
+      InternalStateField<gps_time_t> pan_epoch_f;
+
       WritableStateField<bool> docking_config_cmd_f;
 
       InternalStateField<unsigned int> snapshot_size_f;
@@ -29,6 +32,7 @@ class FieldCreatorTask : public ControlTask<void> {
         adcs_cmd_attitude_f("adcs.cmd_attitude", Serializer<f_quat_t>()),
         adcs_ang_rate_f("adcs.ang_rate", Serializer<float>(0, 10, 4)),
         adcs_min_stable_ang_rate_f("adcs.min_stable_ang_rate", Serializer<float>(0, 10, 4)),
+        pan_epoch_f("pan.epoch"),
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
         snapshot_size_f("downlink_producer.snap_size"),
         radio_mo_packet_f("downlink_producer.mo_ptr"),
@@ -46,6 +50,10 @@ class FieldCreatorTask : public ControlTask<void> {
 
           // For DockingController
           add_writable_field(docking_config_cmd_f);
+
+          // For AttitudeEstimator
+          add_internal_field(pan_epoch_f);
+          pan_epoch_f.set(gps_time_t());
 
           // For QuakeManager
           add_internal_field(snapshot_size_f);

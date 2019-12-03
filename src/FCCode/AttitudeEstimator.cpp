@@ -3,7 +3,7 @@
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
     : TimedControlTask<void>(registry, offset),
-    pan_epoch_fp(find_readable_field<gps_time_t>("pan.epoch", __FILE__, __LINE__)),
+    pan_epoch_fp(find_internal_field<gps_time_t>("pan.epoch", __FILE__, __LINE__)),
     piksi_time_fp(find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__)),
     pos_vec_ecef_fp(find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__)),
     ssa_vec_rd_fp(find_readable_field<f_vector_t>("adcs_box.sun_vec", __FILE__, __LINE__)),
@@ -15,19 +15,14 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     q_body_eci_f("attitude_estimator.q_body_eci", q_body_eci_sr),
     w_body_sr(-55, 55, 32*3),
     w_body_f("attitude_estimator.w_body", w_body_sr)
-    
     {
 
-        //Find pan epoch
-        //pan_epoch_fp = find_readable_field<gps_time_t>("pan.epoch", __FILE__, __LINE__);
-
-        //Find piksi inputs
-        //piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__);
-        //pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__);
-
-        //find ADCSBoxMonitor inputs
-        //ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_box.sun_vec", __FILE__, __LINE__);
-        //mag_vec_fp = find_readable_field<f_vector_t>("adcs_box.mag_vec", __FILE__, __LINE__);
+        //assert inputs are found
+        assert(pan_epoch_fp);
+        assert(piksi_time_fp);
+        assert(pos_vec_ecef_fp);
+        assert(ssa_vec_rd_fp);
+        assert(mag_vec_fp);
 
         //Add outputs
         add_readable_field(q_body_eci_f);
