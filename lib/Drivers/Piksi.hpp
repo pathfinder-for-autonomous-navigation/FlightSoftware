@@ -386,7 +386,7 @@ class Piksi {
     msg_log_t *_latest_log;                 // Pointer to the latest log in the list
 
     // Piksi data containers.
-    msg_gps_time_t _gps_time;
+    msg_gps_time_t _gps_time = {};
     msg_dops_t _dops;
     msg_pos_ecef_t _pos_ecef;
     msg_baseline_ecef_t _baseline_ecef;
