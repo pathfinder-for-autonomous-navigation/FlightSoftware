@@ -5,6 +5,7 @@
 
 Repository for all Teensy based flight code for Pathfinder for Autonomous Navigation.
 
+See the "Tools" directory to see how to run tests.
 
 Quake Manager
 ------------------------------------------------------------------------------
