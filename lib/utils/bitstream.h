@@ -3,7 +3,6 @@
  * bitstream represents a stream of bits
  * 
  */
-#include <iostream>
 #include <vector>
 using namespace std;
 

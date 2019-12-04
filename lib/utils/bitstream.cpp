@@ -1,4 +1,5 @@
 #include "bitstream.h"
+#include <cstring>
 
 bitstream::bitstream(char* input, uint32_t stream_size) :
   bit_offset(0),
@@ -13,7 +14,7 @@ bitstream::bitstream(const std::vector<bool>& bit_array, char* res) :
   byte_offset(0)
 {
   size_t stream_size = (bit_array.size() + 7)/8;
-  for (int i = 0; i < stream_size; ++i)
+  for (size_t i = 0; i < stream_size; ++i)
   {
     res[i] = 0;
     for (int j = 0; j < 8; ++j)
@@ -67,7 +68,7 @@ size_t bitstream::nextN(size_t num_bits, uint8_t* res)
   // just read it 8 at a time
   size_t num_iters = num_bits/8;
   size_t modulo = num_bits%8;
-  for (int i = 0; i < num_iters; ++i)
+  for (size_t i = 0; i < num_iters; ++i)
   {
     res[i] = nextN(8);
   }
@@ -100,7 +101,7 @@ void bitstream::nextN(size_t num_bits, std::vector<bool>& bit_arr)
   size_t old_size = bit_arr.size();
   bit_arr.clear();
   bit_arr.resize(old_size, 0);
-  for (int i = 0; i < num_bits; ++i)
+  for (size_t i = 0; i < num_bits; ++i)
   {
     bit_arr[i] = nextN(1);
   }
@@ -113,13 +114,13 @@ void bitstream::peekN(size_t num_bits, std::vector<bool>& bit_arr)
   bit_arr.clear();
   bit_arr.resize(old_size, 0);
 
-  for (int i = 0; i < num_bits; ++i)
+  for (size_t i = 0; i < num_bits; ++i)
   {
     bit_arr[i] = lookN(1, (bit_offset+i)%8, byte_offset + (i/8));
   }
 }
 
-uint32_t bitstream::lookN(size_t i, uint32_t our_bit_off, int our_byte_off)
+uint32_t bitstream::lookN(size_t i, uint32_t our_bit_off, size_t our_byte_off)
 {
   our_bit_off %= 8;
   if (our_byte_off >= max_len)
