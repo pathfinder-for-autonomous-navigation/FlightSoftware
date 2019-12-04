@@ -103,7 +103,7 @@ class bitstream{
  * @param bit_off the bit offset within the specified byte
  * warning: not tested (yet)
  */
-  uint32_t lookN(size_t i, uint32_t bit_off, int byte_off);
+  uint32_t lookN(size_t i, uint32_t bit_off, size_t byte_off);
 
 /**
  * Move the byte pointer [amt] bits in dir [dir]
