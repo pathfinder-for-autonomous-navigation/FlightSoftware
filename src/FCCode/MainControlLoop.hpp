@@ -14,6 +14,7 @@
 #include "MissionManager.hpp"
 #include "QuakeManager.h"
 #include "DockingController.hpp"
+#include "DownlinkProducer.hpp"
 
 #if (!defined(HOOTL) && !defined(FLIGHT))
 static_assert(false, "Need to define either the HOOTL or FLIGHT flags.");
@@ -39,7 +40,7 @@ class MainControlLoop : public ControlTask<void> {
 
     Devices::DockingSystem docksys;
     DockingController docking_controller;
-
+    DownlinkProducer downlink_producer;
     QuakeManager quake_manager;
 
     // Control cycle time offsets, in microseconds
@@ -50,7 +51,8 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int gomspace_controller_offset = 106500;
         static constexpr unsigned int mission_manager_offset     = 111600;
         static constexpr unsigned int docking_controller_offset  = 152400;
-        static constexpr unsigned int quake_manager_offset       = 153400;
+        static constexpr unsigned int downlink_producer_offset   = 153400;
+        static constexpr unsigned int quake_manager_offset       = 153500;
     #else
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =   6000;
@@ -58,21 +60,31 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int gomspace_controller_offset =  57500;
         static constexpr unsigned int mission_manager_offset     =  62600;
         static constexpr unsigned int docking_controller_offset  = 103400;
-        static constexpr unsigned int quake_manager_offset       = 104400;
+        static constexpr unsigned int downlink_producer_offset   = 104400;
+        static constexpr unsigned int quake_manager_offset       = 104500;
     #endif
 
    public:
-    /**
+    /*
      * @brief Construct a new Main Control Loop Task object
      * 
      * @param registry State field registry
+     * @param flow_data Metadata for telemetry flows.
      */
-    MainControlLoop(StateFieldRegistry& registry);
+    MainControlLoop(StateFieldRegistry& registry,
+        const std::vector<DownlinkProducer::FlowData>& flow_data);
 
     /**
      * @brief Processes state field commands present in the serial buffer.
      */
     void execute() override;
+
+    #ifdef GSW
+        /**
+         * @brief This function allows ground software to access the downlink.
+         */
+        DownlinkProducer* get_downlink_producer();
+    #endif
 };
 
 #endif

@@ -81,7 +81,7 @@ class TestFixture {
   }
   void realSteps(unsigned int amt = 1)
   {
-    for (int i = 0; i < amt; i++)
+    for (unsigned int i = 0; i < amt; i++)
     {
       quake_manager->execute();
       cycle_no_fp->set(cycle_no_fp->get() + 1);
@@ -375,7 +375,7 @@ char* snap2 = (char*)
 
 void check_buf_bytes(const char *buf1, const char *buf2, size_t size)
 {
-  for (int i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++)
   {
     if (buf1[i] != buf2[i])
     {

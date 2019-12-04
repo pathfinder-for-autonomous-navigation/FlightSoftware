@@ -19,7 +19,8 @@
     #define PIKSI_INITIALIZATION piksi("piksi", Serial4)
 #endif
 
-MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
+MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
+        const std::vector<DownlinkProducer::FlowData>& flow_data)
     : ControlTask<void>(registry), 
       field_creator_task(registry),
       clock_manager(registry, control_cycle_time),
@@ -32,6 +33,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry)
       mission_manager(registry, mission_manager_offset),
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys),
+      downlink_producer(registry, downlink_producer_offset, flow_data),
       quake_manager(registry, quake_manager_offset)
 {}
 
@@ -45,6 +47,13 @@ void MainControlLoop::execute() {
 
     piksi_control_task.execute_on_time(control_cycle_start);
     mission_manager.execute_on_time(control_cycle_start);
+    downlink_producer.execute_on_time(control_cycle_start);
     quake_manager.execute_on_time(control_cycle_start);
     docking_controller.execute_on_time(control_cycle_start);
 }
+
+#ifdef GSW
+DownlinkProducer* MainControlLoop::get_downlink_producer() {
+    return &downlink_producer;
+}
+#endif
