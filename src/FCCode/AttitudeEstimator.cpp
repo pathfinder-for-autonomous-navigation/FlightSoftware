@@ -1,9 +1,12 @@
 #include "AttitudeEstimator.hpp"
+#include <gnc_constants.hpp>
 
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
     : TimedControlTask<void>(registry, offset),
-    pan_epoch(),
+    pan_epoch(gnc::constant::init_gps_week_number,
+        gnc::constant::init_gps_time_of_week,
+        gnc::constant::init_gps_nanoseconds),
     data(),
     state(),
     estimate(),
@@ -36,7 +39,7 @@ void AttitudeEstimator::execute(){
 }
 
 void AttitudeEstimator::set_data(){
-    data.t = (double)(unsigned long)(piksi_time_fp->get() - pan_epoch)/(1e9L);
+    data.t = (double)(((unsigned long)(piksi_time_fp->get() - pan_epoch))/(1e9L));
 
     data.r_ecef = lin::Vector3d({
         pos_vec_ecef_fp->get()[0], 

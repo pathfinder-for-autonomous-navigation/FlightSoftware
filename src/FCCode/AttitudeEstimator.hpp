@@ -17,13 +17,13 @@ class AttitudeEstimator : public TimedControlTask<void> {
      */
     AttitudeEstimator(StateFieldRegistry& registry, unsigned int offset);
 
-   protected:
-
     /**
      * @brief Using raw sensor inputs, determine the attitude and angular state
      * of the spacecraft.
      */
     void execute() override;
+
+   protected:
 
     /**
      * @brief Read data from field pointers and set the data object
