@@ -7,7 +7,13 @@ class TestFixture {
     public:
         StateFieldRegistryMock registry;
 
-        // pointers to statefields for easy access
+        // pointers to input statefields
+        std::shared_ptr<ReadableStateField<gps_time_t>> piksi_time_fp;
+        std::shared_ptr<ReadableStateField<d_vector_t>> pos_vec_ecef_fp;
+        std::shared_ptr<ReadableStateField<f_vector_t>> ssa_vec_rd_fp;
+        std::shared_ptr<ReadableStateField<f_vector_t>> mag_vec_fp;
+
+        // pointers to output statefields for easy access
         ReadableStateField<f_quat_t>* q_body_eci_fp;
         ReadableStateField<f_vector_t>* w_body_fp;
 
@@ -15,6 +21,12 @@ class TestFixture {
 
         // Create a TestFixture instance of AttitudeEstimator with pointers to statefields
         TestFixture() : registry(){
+
+                //create input statefields
+                piksi_time_fp = registry.create_readable_field<gps_time_t>("piksi.time");
+                pos_vec_ecef_fp = registry.create_readable_vector_field<double>("piksi.pos",0.0L,1000000.0L,64*3);
+                ssa_vec_rd_fp = registry.create_readable_vector_field<float>("adcs_box.sun_vec",-1.0,1.0,32*3),
+                mag_vec_fp = registry.create_readable_vector_field<float>("adcs_box.mag_vec",-16e-4,16e4,32*3),
 
                 attitude_estimator = std::make_unique<AttitudeEstimator>(registry, 0);  
 

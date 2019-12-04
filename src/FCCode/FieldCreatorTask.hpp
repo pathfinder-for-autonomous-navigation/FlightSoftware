@@ -34,7 +34,7 @@ class FieldCreatorTask : public ControlTask<void> {
         adcs_min_stable_ang_rate_f("adcs.min_stable_ang_rate", Serializer<float>(0, 10, 4)),
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
         ssa_vec_rd_f("adcs_box.sun_vec", Serializer<f_vector_t>(0,1,32*3)),
-        mag_vec_f("adcs_box.mag_vec", Serializer<f_quat_t>()),
+        mag_vec_f("adcs_box.mag_vec", Serializer<f_vector_t>(0,1,32*3)),
         snapshot_size_f("downlink_producer.snap_size"),
         radio_mo_packet_f("downlink_producer.mo_ptr"),
         radio_mt_packet_f("uplink_consumer.mt_ptr"),
