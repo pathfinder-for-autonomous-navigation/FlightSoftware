@@ -97,7 +97,7 @@ void test6()
 void test7()
 {
   // '1101 1110 1010 1101 1011 1110 1110 1111'
-  std::vector<bool> bit_arr (32, 0);
+  std::vector<bool> bit_arr(32, 0);
   for (int i = 0; i < 32; ++i)
   {
     bit_arr[i] = (0xdeadbeef >> i) & (0x1);
@@ -121,7 +121,7 @@ void test7()
 void test8()
 {
   // '1101 1110 1010 1101 1011 1110 1110 1111'
-  std::vector<bool> bit_arr (32, 0);
+  std::vector<bool> bit_arr(32, 0);
   for (int i = 0; i < 32; ++i)
   {
     bit_arr[i] = (0xdeadbeef >> i) & (0x1);
@@ -212,7 +212,7 @@ void test12()
 {
   char* myarr = (char*)"\x11\x22\x03\x04\xaa\xbb\xcd\x42\x00\x13";
   bitstream bs(myarr, 10);
-  vector<bool> b_arr = vector<bool>(69, 0);
+  std::vector<bool> b_arr(69, 0);
   TEST_ASSERT_EQUAL(69, b_arr.size());
   bs >> b_arr;
   for (int i = 0; i < 10; ++i)
@@ -315,7 +315,7 @@ void test15()
   memcpy(nonconst3, arr3, 2);
   bitstream bs3(nonconst3, 2);
 
-  vector<bool> b_arr = vector<bool>(16, 0);
+  std::vector<bool> b_arr(16, 0);
   TEST_ASSERT_EQUAL(16, b_arr.size());
   bs3 >> b_arr;
   bs1.seekG(16, bs_beg);
@@ -323,18 +323,6 @@ void test15()
   b_arr << bs1;
   bs1 >> u16;
   TEST_ASSERT_EQUAL(0x7856, u16); // stored in order: b a d c
-}
-
-/**
- * Recursive helper function to print bits into little endian in order to
- * paste into python to evaluate binary numbers
- */
-std::string dumbrecursive(bitstream& bs, int stop, std::string ms)
-{
-  if (stop == 0)
-    return ms;
-  std::string bad =  std::to_string(bs.nextN(1));
-  return dumbrecursive(bs, --stop, bad + ms);
 }
 
 int test_bitstream()
