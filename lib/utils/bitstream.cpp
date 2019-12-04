@@ -91,13 +91,9 @@ size_t bitstream::peekN(size_t num_bits, uint8_t* res)
   return amt;
 }
 
-void bitstream::nextN(size_t num_bits, std::vector<bool>& bit_arr)
+bool bitstream::nextN(size_t num_bits, std::vector<bool>& bit_arr)
 {
-  if (bit_arr.size() < num_bits)
-  {
-    cout << "idk how you expect to shove " << num_bits << " bits into an array of size " << bit_arr.size() << endl;
-    return;
-  }
+  if (bit_arr.size() < num_bits) return false;
   size_t old_size = bit_arr.size();
   bit_arr.clear();
   bit_arr.resize(old_size, 0);
@@ -105,6 +101,7 @@ void bitstream::nextN(size_t num_bits, std::vector<bool>& bit_arr)
   {
     bit_arr[i] = nextN(1);
   }
+  return true;
 }
 
 void bitstream::peekN(size_t num_bits, std::vector<bool>& bit_arr)

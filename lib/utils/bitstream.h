@@ -91,7 +91,7 @@ class bitstream{
  * @param num_bits the number of bits we want form the stream
  * @param bit_arr the bit array to store the consumed bits
  */
-  void nextN(size_t num_bits, std::vector<bool>& bit_arr);
+  bool nextN(size_t num_bits, std::vector<bool>& bit_arr);
 
   void peekN(size_t num_bits, std::vector<bool>& bit_arr);
 
