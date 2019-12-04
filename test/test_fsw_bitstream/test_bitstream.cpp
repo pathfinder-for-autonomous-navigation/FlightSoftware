@@ -1,5 +1,6 @@
 #include <bitstream.h>
 #include <unity.h>
+#include <cstring>
 
 /**
  * Check that we can consume 4 bits at a time (nibble)
