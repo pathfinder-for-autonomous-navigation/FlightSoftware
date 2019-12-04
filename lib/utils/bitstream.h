@@ -4,7 +4,7 @@
  * 
  */
 #include <vector>
-using namespace std;
+#include <cstdint>
 
 #define bs_beg -1 // bit stream in the direction towards the beginning
 #define bs_end 1 // bit stream in the direction towards end of the stream
