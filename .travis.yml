@@ -11,20 +11,34 @@ install:
 
 matrix:
     include:
-      - name: "Desktop tests"
+      - name: "Desktop flight software tests"
         addons:
           apt:
             packages:
             - lcov
             - valgrind
-        before_install:
-            - chmod +x tools/run_desktop_tests.sh
         install:
             - pip install -U platformio
             - platformio update
             - sudo gem install coveralls-lcov
         script:
-            - ./tools/run_desktop_tests.sh
+            - ./tools/run_desktop_flight_tests.sh
+        after_success:
+            - ./tools/generate_coverage.sh
+            - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
+
+      - name: "Ground software tests"
+        addons:
+          apt:
+            packages:
+            - lcov
+            - valgrind
+        install:
+            - pip install -U platformio
+            - platformio update
+            - sudo gem install coveralls-lcov
+        script:
+            - ./tools/run_ground_tests.sh
         after_success:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info

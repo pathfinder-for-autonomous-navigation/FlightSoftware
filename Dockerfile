@@ -13,4 +13,5 @@ RUN mkdir -p /FlightSoftware
 WORKDIR /FlightSoftware
 COPY . .
 
-RUN ./tools/run_desktop_tests.sh
+RUN ./tools/run_desktop_flight_tests.sh
+RUN ./tools/run_ground_tests.sh

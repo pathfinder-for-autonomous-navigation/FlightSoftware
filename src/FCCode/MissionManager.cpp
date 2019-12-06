@@ -25,8 +25,9 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     assert(adcs_ang_rate_fp);
     assert(adcs_min_stable_ang_rate_fp);
 
-    // TODO change to startup.
-    mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::detumble));
+    mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::startup));
+    is_deployed_f.set(false);
+    sat_designation_f.set(0);
 }
 
 void MissionManager::execute() {
