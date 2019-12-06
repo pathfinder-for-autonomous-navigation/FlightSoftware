@@ -7,9 +7,7 @@
 #ifndef PAN_LIB_DRIVERS_ADCS_HPP_
 #define PAN_LIB_DRIVERS_ADCS_HPP_
 
-#ifndef DESKTOP
 #include <I2CDevice.hpp>
-#include <string>
 #include <array>
 
 namespace Devices {
@@ -32,7 +30,11 @@ class ADCS : public I2CDevice {
      * @param i2c_wire The assoicated i2c wire
      * @param address The address on i2c bus
      */
+    #ifndef DESKTOP
     ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address);
+    #else
+    ADCS(const std::string &name, unsigned char address);
+    #endif
 
     /**
      * @brief Sets the read pointer, writes len bytes into data
@@ -276,5 +278,4 @@ class ADCS : public I2CDevice {
 };
 
 }  // namespace Devices
-#endif
 #endif

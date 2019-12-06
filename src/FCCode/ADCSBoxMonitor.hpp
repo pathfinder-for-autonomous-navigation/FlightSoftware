@@ -29,39 +29,39 @@ public:
 
 protected:
     /** ADCS Driver. **/
-    const Devices::ADCS& adcs_system;
+    Devices::ADCS& adcs_system;
 
     /**
     * @brief Inputs to get from ADCS box.
     */
 
     //! Speed reads off of the reaction wheels.
-    ReadableStateField<f_vector_t> rwa_speed_rd_f;
     Serializer<f_vector_t> rwa_speed_rd_sr;
+    ReadableStateField<f_vector_t> rwa_speed_rd_f;
 
     //! Torque reads off of the reaction wheels.
-    ReadableStateField<f_vector_t> rwa_torque_rd_f;
     Serializer<f_vector_t> rwa_torque_rd_sr;
+    ReadableStateField<f_vector_t> rwa_torque_rd_f;
 
     //! Vector to the sun in the body frame.
-    ReadableStateField<f_vector_t> ssa_vec_rd_f;
     Serializer<f_vector_t> ssa_vec_rd_sr;
+    ReadableStateField<f_vector_t> ssa_vec_rd_f;
 
     //! Raw voltages of the sun sensors.
     // std::vector<ReadableStateField<float>> ssa_voltages_f;
     // std::vector<Serializer<float>> ssa_voltages_sr;
 
     //! Magnetic field vector in the body frame.
-    ReadableStateField<f_vector_t> mag_vec_f;
     Serializer<f_vector_t> mag_vec_sr;
+    ReadableStateField<f_vector_t> mag_vec_f;
 
     //! Angular rate vector in the body frame.
-    ReadableStateField<f_vector_t> gyr_vec_f;
     Serializer<f_vector_t> gyr_vec_sr;
+    ReadableStateField<f_vector_t> gyr_vec_f;
 
     //! Temperature near the gyroscope.
-    ReadableStateField<float> gyr_temp_f;
     Serializer<float> gyr_temp_sr;
+    ReadableStateField<float> gyr_temp_f;
 
 
     /**

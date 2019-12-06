@@ -4,18 +4,24 @@
  * @brief Contains implementation for device interface to ADCS system.
  */
 
-#ifndef DESKTOP
 #include "ADCS.hpp"
 #include <adcs_constants.hpp>
 #include <adcs_registers.hpp>
 
+#include <cstring>
+
 using namespace Devices;
 
+#ifndef DESKTOP
 ADCS::ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address)
     : I2CDevice(name, i2c_wire, address) {}
+#else
+ADCS::ADCS(const std::string &name, unsigned char address)
+    : I2CDevice(name, address) {}
+#endif
 
 bool ADCS::i2c_ping() {
-    unsigned char temp;
+    unsigned char temp = 0;
     get_who_am_i(&temp); 
     return temp==WHO_AM_I_EXPECTED;
     }
@@ -160,6 +166,8 @@ void ADCS::get_who_am_i(unsigned char* who_am_i) {
 }
 void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd) {
     unsigned char readin[12];
+    std::memset(readin, 0, sizeof(readin));
+
     i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
 
     for(int i=0;i<3;i++){
@@ -178,6 +186,8 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* 
 }
 void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd){
     unsigned char readin[14];
+    std::memset(readin, 0, sizeof(readin));
+
     i2c_point_and_read(IMU_MAG_READ, readin, 14);
 
     for(int i=0;i<3;i++){
@@ -202,6 +212,8 @@ void ADCS::get_ssa_mode(unsigned char* a) {
 }
 void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
     unsigned char readin[6];
+    std::memset(readin, 0, sizeof(readin));
+
     i2c_point_and_read(SSA_SUN_VECTOR, readin,6);
     for(int i=0;i<3;i++){
         unsigned short c = (((unsigned short)readin[2*i+1]) << 8) | (0xFF & readin[2*i]);
@@ -212,6 +224,8 @@ void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
 }
 void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
     unsigned char temp[20];
+    std::memset(temp, 0, sizeof(temp));
+
     i2c_point_and_read(SSA_VOLTAGE_READ,temp,20);
     
     for(int i = 0;i<20;i++){
@@ -220,4 +234,3 @@ void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
 }
 
 void ADCS::update_hat() {}
-#endif
