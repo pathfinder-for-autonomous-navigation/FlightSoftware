@@ -7,7 +7,6 @@ import json
 import os
 import time
 import serial
-import traceback
 import unittest
 
 class TestFlightSoftwareBinary(unittest.TestCase):
@@ -16,7 +15,8 @@ class TestFlightSoftwareBinary(unittest.TestCase):
     Flight Software.
     """
 
-    binary_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../.pio/build/native/program")
+    binary_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+        "../.pio/build/native/program")
 
     def setUp(self):
         master_fd, slave_fd = pty.openpty()
