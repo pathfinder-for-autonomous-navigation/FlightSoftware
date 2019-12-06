@@ -1,3 +1,5 @@
+#!/bin/bash
+
 set -e # Exit on any error
 
 # Verify compilation and unit tests for CI environment

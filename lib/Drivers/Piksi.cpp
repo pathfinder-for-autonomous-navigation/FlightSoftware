@@ -1,5 +1,9 @@
-#ifndef DESKTOP
 #include "Piksi.hpp"
+#include <cstring>
+
+#ifndef DESKTOP
+#include <Arduino.h>
+#endif
 
 using namespace Devices;
 
@@ -19,11 +23,18 @@ sbp_msg_callbacks_node_t Piksi::_heartbeat_callback_node;
 sbp_msg_callbacks_node_t Piksi::_uart_state_callback_node;
 sbp_msg_callbacks_node_t Piksi::_user_data_callback_node;
 
+#ifndef DESKTOP
 Piksi::Piksi(const std::string &name, HardwareSerial &serial_port)
     : Device(name), _serial_port(serial_port) {}
+#else
+Piksi::Piksi(const std::string &name) {}
+#endif
+
 
 bool Piksi::setup() {
+    #ifndef DESKTOP
     _serial_port.begin(BAUD_RATE);
+    #endif
 
     clear_log();
     _heartbeat.flags = 1;  // By default, let there be an error in the system.
@@ -74,73 +85,6 @@ bool Piksi::setup() {
     return (registration_successful == 0);
 }
 
-void Piksi::write_default_settings() {
-    // Output controls.
-    const char *gpgll_output_rate = "nmea\000gpgll msg rate\0000";
-    const char *gpgsv_output_rate = "nmea\000gpgsv msg rate\0000";
-    const char *gprmc_output_rate = "nmea\000gprmc msg rate\0000";
-    const char *gpvtg_output_rate = "nmea\000gpvtg msg rate\0000";
-    const char *obs_msg_max_size = "sbp\000obs msg max size\000102";  // This is a default specified
-                                                                      // by SwiftNav
-    const char *obs_output_rate = "solution\000output every n obs\0001";
-    const char *soln_frequency =
-        "solution\000soln freq\00010";  // This is a default specified by SwiftNav
-    const char *broadcast_surveyed_position = "surveyed position\000broadcast\000true";
-    // RTK solution settings.
-    const char *dgnss_solution_mode = "solution\000dgnss solution mode\000TimeMatched";
-    // Hardware watchdog.
-    const char *enable_hardware_watchdog = "system monitor\000watchdog\000true";
-    // Heartbeat output rate.
-    const char *heartbeat_period = "system monitor\000heartbeat period milliseconds\00010000";
-    // Telemetry radio settings
-    const char *telemetry_settings =
-        "telemetry radio\000configuration "
-        "string\000AT&F,ATS1=57,ATS2=64,ATS5=0,AT&W,"
-        "ATZ";
-
-    // UART A (radio) settings.
-    const char *uart_a_output_mask =
-        "uart uarta\000sbp message mask\0000x0840";  // MSG_OBS | MSG_USER_DATA
-    const char *uart_a_configure_radio_on_boot =
-        "uart uarta\000configure telemetry radio on boot\000true";
-    const char *uart_a_baudrate = "uart uarta\000baudrate\00057600";  // This is a default specified
-                                                                      // by SwiftNav
-
-    // UART B (controller) output mask.
-    const char *uart_b_output_mask =
-        "uart uarta\000sbp message mask\0000xffff";  // Every message is passed to
-                                                     // controller
-    const char *uart_b_configure_radio_on_boot =
-        "uart uarta\000configure telemetry radio on boot\000false";
-    const char *uart_b_baudrate = "uart uarta\000baudrate\000115200";  // This is a default
-                                                                       // specified by SwiftNav
-
-    // Now write the settings to the device!
-    const char *settings[] = {gpgll_output_rate,
-                              gpgsv_output_rate,
-                              gprmc_output_rate,
-                              gpvtg_output_rate,
-                              obs_msg_max_size,
-                              obs_output_rate,
-                              soln_frequency,
-                              broadcast_surveyed_position,
-                              dgnss_solution_mode,
-                              enable_hardware_watchdog,
-                              heartbeat_period,
-                              telemetry_settings,
-                              uart_a_output_mask,
-                              uart_a_configure_radio_on_boot,
-                              uart_a_baudrate,
-                              uart_b_output_mask,
-                              uart_b_configure_radio_on_boot,
-                              uart_b_baudrate};
-    for (unsigned char i = 0; i < sizeof(settings) / sizeof(std::string); i++) {
-        msg_settings_write_t setting;
-        memcpy(setting.setting, settings[i], sizeof(settings[i]) / sizeof(char));
-        settings_write(setting);
-    }
-}
-
 bool Piksi::is_functional() {
     return is_system_healthy() && is_system_io_healthy() && is_swiftnap_healthy() &&
            is_antenna_healthy();
@@ -152,8 +96,10 @@ void Piksi::disable() {
     // Do nothing; we really don't want to disable Piksi
 }
 
-void Piksi::get_gps_time(gps_time_t *time) {
-    *time = _gps_time;
+void Piksi::get_gps_time(msg_gps_time_t *time) {
+    time->wn = _gps_time.wn;
+    time->tow = _gps_time.tow;
+    time->ns = _gps_time.ns;
 }
 
 unsigned int Piksi::get_dops_tow() { return _dops.tow; }
@@ -168,22 +114,47 @@ void Piksi::get_pos_ecef(std::array<double, 3> *position) {
     (*position)[1] = _pos_ecef.y;
     (*position)[2] = _pos_ecef.z;
 }
-unsigned char Piksi::get_pos_ecef_nsats() { return _pos_ecef.n_sats; }
-unsigned char Piksi::get_pos_ecef_flags() { return _pos_ecef.flags; }
 
-void Piksi::get_baseline_ecef(std::array<double, 3> *position) {
+void Piksi::get_pos_ecef(unsigned int *tow, std::array<double, 3> *position) {
+    (*tow) = _pos_ecef.tow;
     (*position)[0] = _pos_ecef.x;
     (*position)[1] = _pos_ecef.y;
     (*position)[2] = _pos_ecef.z;
 }
+
+unsigned char Piksi::get_pos_ecef_nsats() { return _pos_ecef.n_sats; }
+unsigned char Piksi::get_pos_ecef_flags() { return _pos_ecef.flags % 8; }
+
+void Piksi::get_baseline_ecef(std::array<double, 3> *position) {
+    (*position)[0] = _baseline_ecef.x;
+    (*position)[1] = _baseline_ecef.y;
+    (*position)[2] = _baseline_ecef.z;
+}
+
+void Piksi::get_baseline_ecef(unsigned int *tow, std::array<double, 3> *position) {
+    *tow = _baseline_ecef.tow;
+    (*position)[0] = _baseline_ecef.x;
+    (*position)[1] = _baseline_ecef.y;
+    (*position)[2] = _baseline_ecef.z;
+}
+
 unsigned char Piksi::get_baseline_ecef_nsats() { return _baseline_ecef.n_sats; }
 unsigned char Piksi::get_baseline_ecef_flags() { return _baseline_ecef.flags; }
 
 void Piksi::get_vel_ecef(std::array<double, 3> *velocity) {
-    (*velocity)[0] = _pos_ecef.x;
-    (*velocity)[1] = _pos_ecef.y;
-    (*velocity)[2] = _pos_ecef.z;
+    (*velocity)[0] = _vel_ecef.x;
+    (*velocity)[1] = _vel_ecef.y;
+    (*velocity)[2] = _vel_ecef.z;
 }
+
+void Piksi::get_vel_ecef(unsigned int *tow, std::array<double, 3> *velocity) {
+    *tow = _vel_ecef.tow;
+    (*velocity)[0] = _vel_ecef.x;
+    (*velocity)[1] = _vel_ecef.y;
+    (*velocity)[2] = _vel_ecef.z;
+    
+}
+
 unsigned char Piksi::get_vel_ecef_nsats() { return _vel_ecef.n_sats; }
 unsigned char Piksi::get_vel_ecef_flags() { return _vel_ecef.flags; }
 
@@ -192,6 +163,37 @@ void Piksi::get_base_pos_ecef(std::array<double, 3> *position) {
     (*position)[1] = _pos_ecef.y;
     (*position)[2] = _pos_ecef.z;
 }
+
+#ifdef DESKTOP
+void Piksi::set_gps_time(const unsigned int tow){
+    _gps_time.tow = tow;
+}
+void Piksi::set_pos_ecef(const unsigned int tow, const std::array<double,3>& position, const unsigned char nsats){
+    _pos_ecef.tow = tow;
+    _pos_ecef.x = position[0];
+    _pos_ecef.y = position[1];
+    _pos_ecef.z = position[2];
+    _pos_ecef.n_sats = nsats;
+}
+void Piksi::set_vel_ecef(const unsigned int tow, const std::array<double,3>& velocity){
+    _vel_ecef.tow = tow;
+    _vel_ecef.x = velocity[0];
+    _vel_ecef.y = velocity[1];
+    _vel_ecef.z = velocity[2];
+}
+void Piksi::set_baseline_ecef(const unsigned int tow, const std::array<double,3>& position){
+    _baseline_ecef.tow = tow;
+    _baseline_ecef.x = position[0];
+    _baseline_ecef.y = position[1];
+    _baseline_ecef.z = position[2];
+}
+void Piksi::set_baseline_flag(const unsigned char flag){
+    _baseline_ecef.flags = flag;
+}
+void Piksi::set_read_return(const unsigned int out){
+    _read_return = out;
+}
+#endif
 
 unsigned int Piksi::get_iar() { return _iar.num_hyps; }
 
@@ -247,10 +249,89 @@ void Piksi::send_user_data(const msg_user_data_t &data) {
                      (unsigned char *)&data, &Piksi::_uart_write);
 }
 
-bool Piksi::process_buffer() { return sbp_process(&_sbp_state, Piksi::_uart_read) > 0; }
+signed char Piksi::process_buffer() {
+    signed char status = ((signed char)sbp_process(&_sbp_state, Piksi::_uart_read));
+    return status;
+}
+
+unsigned char Piksi::process_buffer_msg_len() {
+    unsigned char pre = _sbp_state.msg_len;
+    signed char status = ((signed char)sbp_process(&_sbp_state, Piksi::_uart_read));
+
+    if (status == SBP_OK_CALLBACK_EXECUTED || status == SBP_OK_CALLBACK_UNDEFINED)
+        return pre;
+
+    return 0;
+}
+
+unsigned char Piksi::read_all() {
+    #ifdef DESKTOP
+    return _read_return;
+    #else
+    
+    _gps_time_update = false;
+    _pos_ecef_update = false;
+    _vel_ecef_update = false;
+    _baseline_ecef_update = false;
+
+    int initial_time = micros();
+    
+    if(bytes_available()){
+        bool crc_error = false;
+        while(bytes_available() && (micros() - initial_time < READ_ALL_LIMIT)){
+            //call process_buffer() to process data, and check if crc_error happened
+            if(process_buffer() < 0)
+                crc_error = true;
+        }
+
+        //ensure that if the while loop terminated because of exceeding the READ_ALL_LIMIT
+        //it will enter the clear bytes condition below
+        delayMicroseconds(5);
+
+        if(micros()-initial_time >= READ_ALL_LIMIT){
+            clear_bytes();
+            return 5;
+        }
+        
+        //by this point in the code, it is guarenteed that there are no more bytes in buffer
+
+        if(crc_error)
+            return 3;
+        else if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && !_baseline_ecef_update)
+            //SPP
+            return 0;
+        else if(_gps_time_update && _pos_ecef_update && _vel_ecef_update && _baseline_ecef_update)
+            //Something RTK
+            return 1;
+        else
+            //no relevant callbacks -> NO_FIX
+            return 2;
+    }
+    else
+        //no bytes return condition
+        return 4;
+    #endif
+}
+
+u32 Piksi::bytes_available() { 
+    #ifndef DESKTOP
+    return _serial_port.available(); 
+    #else
+
+    #endif
+    return 0;
+}
+
+void Piksi::clear_bytes() { 
+    #ifndef DESKTOP
+    _serial_port.clear(); 
+    #endif
+    }
 
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
+    #ifndef DESKTOP
     Piksi *piksi = (Piksi *)context;
+    
     HardwareSerial &sp = piksi->_serial_port;
 
     u32 i;
@@ -261,9 +342,14 @@ u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
             break;
     }
     return i;
+    #else
+    return 0;
+    #endif
 }
 
 u32 Piksi::_uart_write(u8 *buff, u32 n, void *context) {
+    #ifndef DESKTOP
+
     Piksi *piksi = (Piksi *)context;
     HardwareSerial &sp = piksi->_serial_port;
     u32 i;
@@ -271,6 +357,9 @@ u32 Piksi::_uart_write(u8 *buff, u32 n, void *context) {
         if (sp.write(buff[i]) == 0) break;
     }
     return i;
+    #else
+    return 0;
+    #endif
 }
 
 void Piksi::_insert_log_msg(u8 msg[]) {
@@ -296,22 +385,28 @@ void Piksi::_log_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
 void Piksi::_gps_time_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_gps_time)), msg, sizeof(msg_gps_time_t));
+    piksi->_gps_time_update = true;
 }
+
 void Piksi::_dops_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_dops)), msg, sizeof(msg_dops_t));
 }
+
 void Piksi::_pos_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_pos_ecef)), msg, sizeof(msg_pos_ecef_t));
+    piksi->_pos_ecef_update = true;
 }
 void Piksi::_baseline_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_baseline_ecef)), msg, sizeof(msg_baseline_ecef_t));
+    piksi->_baseline_ecef_update = true;
 }
 void Piksi::_vel_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_vel_ecef)), msg, sizeof(msg_vel_ecef_t));
+    piksi->_vel_ecef_update = true;
 }
 void Piksi::_base_pos_ecef_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
@@ -323,11 +418,12 @@ void Piksi::_iar_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
 }
 void Piksi::_settings_read_resp_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
-    memcpy((u8 *)(&(piksi->_base_pos_ecef)), msg, sizeof(msg_settings_read_resp_t));
+    memcpy((u8 *)(&(piksi->_settings_read_resp)), msg, sizeof(msg_settings_read_resp_t));
 }
 void Piksi::_heartbeat_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_heartbeat)), msg, sizeof(msg_heartbeat_t));
+    piksi->_heartbeat_update = true;
 }
 void Piksi::_startup_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
@@ -340,5 +436,5 @@ void Piksi::_uart_state_callback(u16 sender_id, u8 len, u8 msg[], void *context)
 void Piksi::_user_data_callback(u16 sender_id, u8 len, u8 msg[], void *context) {
     Piksi *piksi = (Piksi *)context;
     memcpy((u8 *)(&(piksi->_user_data)), msg, sizeof(msg_user_data_t));
+    piksi->_user_data_update = true;
 }
-#endif
