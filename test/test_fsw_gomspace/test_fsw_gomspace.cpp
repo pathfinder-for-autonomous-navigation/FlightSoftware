@@ -2,7 +2,6 @@
 #include "../../src/FCCode/GomspaceController.hpp"
 
 #include <unity.h>
-#include <iostream>
 
 class TestFixture {
   public:
