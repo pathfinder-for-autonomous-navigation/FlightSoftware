@@ -4,8 +4,6 @@
 #include <unity.h>
 #include <Piksi.hpp>
 
-#include <iostream>
-
 #include "../../src/FCCode/piksi_mode_t.enum"
 
 #define assert_piksi_mode(x) {\
