@@ -48,8 +48,8 @@ protected:
     ReadableStateField<f_vector_t> ssa_vec_rd_f;
 
     //! Raw voltages of the sun sensors.
-    // std::vector<ReadableStateField<float>> ssa_voltages_f;
-    // std::vector<Serializer<float>> ssa_voltages_sr;
+    std::vector<Serializer<float>> ssa_voltages_sr;
+    std::vector<ReadableStateField<float>> ssa_voltages_f;
 
     //! Magnetic field vector in the body frame.
     Serializer<f_vector_t> mag_vec_sr;
