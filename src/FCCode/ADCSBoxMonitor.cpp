@@ -49,18 +49,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
 
 void ADCSBoxMonitor::execute(){
 
-    // add_readable_field(rwa_momentum_rd_f);
-    // add_readable_field(rwa_torque_rd_f);
-    // add_readable_field(ssa_mode_f);
-    // add_readable_field(ssa_vec_f);
-
-    // for(int i = 0; i<20; i++){
-    //     add_readable_field(ssa_voltages_f[i]);
-    // }
-
-    // add_readable_field(mag_vec_f);
-    // add_readable_field(gyr_vec_f);
-    // add_readable_field(gyr_temp_f);
+    //create internal containers to read data
     f_vector_t rwa_speed_rd{};
     f_vector_t rwa_torque_rd{};
     unsigned char ssa_mode = 0;
@@ -71,22 +60,28 @@ void ADCSBoxMonitor::execute(){
 
     f_vector_t mag_vec{};
     f_vector_t gyr_vec{};
-    f_vector_t gyr_temp{};
+    float gyr_temp = 0.0;
 
+    //ask the driver to fill in values
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
     adcs_system.get_ssa_mode(&ssa_mode);
     adcs_system.get_ssa_vector(&ssa_vector);
     adcs_system.get_ssa_voltage(&ssa_voltages);
+    adcs_system.get_imu(&mag_vec, &gyr_vec, &gyr_temp);
 
+    //set statefields from internal containers
     rwa_speed_rd_f.set(rwa_speed_rd);
     rwa_torque_rd_f.set(rwa_torque_rd);
     ssa_mode_f.set(ssa_mode);
-
-        ssa_vec_f.set(ssa_vector);
+    ssa_vec_f.set(ssa_vector);
 
     for(int i = 0; i<20; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);
     }
+
+    mag_vec_f.set(mag_vec);
+    gyr_vec_f.set(gyr_vec);
+    gyr_temp_f.set(gyr_temp);
 
 
     
