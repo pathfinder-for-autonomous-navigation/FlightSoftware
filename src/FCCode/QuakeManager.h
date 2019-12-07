@@ -67,7 +67,7 @@ class QuakeManager : public TimedControlTask<bool> {
    /**
      * @brief Snapshot size in bytes, provided by DownlinkProducer. 
      */
-    InternalStateField<unsigned int>* snapshot_size_fp;
+    InternalStateField<size_t>* snapshot_size_fp;
 
    /**
     * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
