@@ -9,8 +9,8 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     unsigned int offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry,offset),
     adcs_system(_adcs),
-    rwa_momentum_rd_sr(rwa::min_momentum, rwa::max_momentum, 16*3), //referenced from I2C_Interface.doc
-    rwa_momentum_rd_f("adcs_monitor.rwa_speed_rd", rwa_momentum_rd_sr),
+    rwa_speed_rd_sr(rwa::min_momentum, rwa::max_momentum, 16*3), //referenced from I2C_Interface.doc
+    rwa_speed_rd_f("adcs_monitor.rwa_speed_rd", rwa_speed_rd_sr),
     rwa_torque_rd_sr(rwa::min_torque, rwa::max_torque, 16*3), //referenced from I2C_Interface.doc
     rwa_torque_rd_f("adcs_monitor.rwa_torque_rd", rwa_torque_rd_sr),
     ssa_mode_rd(0,2,2), //referenced from Interface.doc
@@ -31,7 +31,8 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         for(int i = 0; i<20;i++)
             ssa_voltages_f.emplace_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+std::to_string(i),ssa_voltage_sr));
 
-        add_readable_field(rwa_momentum_rd_f);
+        //actually add statefields to registry
+        add_readable_field(rwa_speed_rd_f);
         add_readable_field(rwa_torque_rd_f);
         add_readable_field(ssa_mode_f);
         add_readable_field(ssa_vec_f);
@@ -47,5 +48,46 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     }
 
 void ADCSBoxMonitor::execute(){
+
+    // add_readable_field(rwa_momentum_rd_f);
+    // add_readable_field(rwa_torque_rd_f);
+    // add_readable_field(ssa_mode_f);
+    // add_readable_field(ssa_vec_f);
+
+    // for(int i = 0; i<20; i++){
+    //     add_readable_field(ssa_voltages_f[i]);
+    // }
+
+    // add_readable_field(mag_vec_f);
+    // add_readable_field(gyr_vec_f);
+    // add_readable_field(gyr_temp_f);
+    f_vector_t rwa_speed_rd{};
+    f_vector_t rwa_torque_rd{};
+    unsigned char ssa_mode = 0;
+    f_vector_t ssa_vector{};
+
+    std::array<float, 20> ssa_voltages;
+    ssa_voltages.fill(0);
+
+    f_vector_t mag_vec{};
+    f_vector_t gyr_vec{};
+    f_vector_t gyr_temp{};
+
+    adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
+    adcs_system.get_ssa_mode(&ssa_mode);
+    adcs_system.get_ssa_vector(&ssa_vector);
+    adcs_system.get_ssa_voltage(&ssa_voltages);
+
+    rwa_speed_rd_f.set(rwa_speed_rd);
+    rwa_torque_rd_f.set(rwa_torque_rd);
+    ssa_mode_f.set(ssa_mode);
+
+        ssa_vec_f.set(ssa_vector);
+
+    for(int i = 0; i<20; i++){
+        ssa_voltages_f[i].set(ssa_voltages[i]);
+    }
+
+
     
 }

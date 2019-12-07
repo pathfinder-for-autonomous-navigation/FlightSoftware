@@ -36,9 +36,9 @@ protected:
     * @brief Inputs to get from ADCS box.
     */
 
-    //! Momentum reads off of the reaction wheels.
-    Serializer<f_vector_t> rwa_momentum_rd_sr;
-    ReadableStateField<f_vector_t> rwa_momentum_rd_f;
+    //! Speed reads off of the reaction wheels.
+    Serializer<f_vector_t> rwa_speed_rd_sr;
+    ReadableStateField<f_vector_t> rwa_speed_rd_f;
 
     //! Torque reads off of the reaction wheels.
     Serializer<f_vector_t> rwa_torque_rd_sr;
