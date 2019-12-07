@@ -2,6 +2,7 @@
 
 #include <adcs_constants.hpp>
 #include <string>
+#include <sstream>
 
 //#include "../../.pio/libdeps/native/CommonSoftware/include/adcs_constants.hpp"
 
@@ -26,10 +27,21 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_temp_sr(ssa::min_voltage_rd, ssa::max_voltage_rd, 16), //referenced from I2C_Interface.doc
     gyr_temp_f("adcs_monitor.gyr_temp", gyr_temp_sr)
     {
+
+        std::stringstream ss;
         //actually create the state fields for ssa_voltages
         //only one serializer is needed
-        for(int i = 0; i<20;i++)
-            ssa_voltages_f.emplace_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+std::to_string(i),ssa_voltage_sr));
+        for(int i = 0; i<20;i++){
+            ss<<i;
+            std::string temp;
+            ss>>temp;
+
+            //sprintf!
+
+            //ssa_voltages_f.emplace_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+std::to_string(i),ssa_voltage_sr));
+            ssa_voltages_f.emplace_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+ss.str(), ssa_voltage_sr));
+
+        }
 
         //actually add statefields to registry
         add_readable_field(rwa_speed_rd_f);
