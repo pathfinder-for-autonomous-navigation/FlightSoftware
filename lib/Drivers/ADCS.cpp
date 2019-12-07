@@ -168,13 +168,19 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* 
     unsigned char readin[12];
     std::memset(readin, 0, sizeof(readin));
 
+    #ifndef DESKTOP
     i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
+    #else
+    for(int i = 0;i<12;i++){
+        readin[i] = 255;
+    }
+    #endif
 
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1] << 8;
         unsigned short b = 0xFF & readin[2*i];
         unsigned short c = a | b;
-        (*rwa_momentum_rd)[i] = fp(c,rwa::min_momentum,rwa::max_momentum);
+        (*rwa_momentum_rd)[i] = fp(c,rwa::min_speed_read,rwa::max_speed_read);
     }
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1+6] << 8;
@@ -182,7 +188,6 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* 
         unsigned short c = a | b;
         (*rwa_ramp_rd)[i] = fp(c,rwa::min_torque,rwa::max_torque);
     }
-
 }
 void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd){
     unsigned char readin[14];

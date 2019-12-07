@@ -3,6 +3,7 @@
 #include <ADCS.hpp>
 #include "../../src/FCCode/ADCSBoxMonitor.hpp"
 //#include <ADCSBoxMonitor.hpp>
+#include "adcs_constants.hpp"
 
 #include <unity.h>
 #include <string>
@@ -78,13 +79,25 @@ class TestFixture {
         }
 };
 
+float mag_2(const std::array<float, 3> input){
+        return (float)(input[0]*input[0] + input[1]*input[1] + input[2]*input[2]);
+}
+
+
 void test_task_initialization()
 {
     TestFixture tf;
 }
 
 void test_execute(){
+    TestFixture tf;
 
+    //mocking sets to max output
+    std::array<float, 3> rwa_max_speed = {rwa::max_speed_read,rwa::max_speed_read,rwa::max_speed_read};
+
+    tf.adcs_box->execute();
+
+    TEST_ASSERT_FLOAT_WITHIN(0.001, mag_2(rwa_max_speed), mag_2(tf.rwa_speed_rd_fp->get()));
 }
 
 int test_control_task()
