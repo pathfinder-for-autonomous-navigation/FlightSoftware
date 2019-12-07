@@ -1,18 +1,26 @@
 #include "../StateFieldRegistryMock.hpp"
 
+#include <ADCS.hpp>
 #include "../../src/FCCode/ADCSBoxMonitor.hpp"
 //#include <ADCSBoxMonitor.hpp>
 
 #include <unity.h>
+#include <string>
 
 class TestFixture {
     public:
         StateFieldRegistryMock registry;
 
         // pointers to output statefields for easy access
-        ReadableStateField<f_quat_t>* q_body_eci_fp;
-        ReadableStateField<f_vector_t>* w_body_fp;
-
+        ReadableStateField<f_vector_t>* rwa_speed_rd_fp;
+        ReadableStateField<f_vector_t>* rwa_torque_rd_fp;
+        ReadableStateField<int>* ssa_mode_fp;
+        ReadableStateField<f_vector_t>* ssa_vec_fp;
+        std::vector<ReadableStateField<float>*> ssa_voltages_fp{};
+        ReadableStateField<f_vector_t>* mag_vec_fp;
+        ReadableStateField<f_vector_t>* gyr_vec_fp;
+        ReadableStateField<float>* gyr_temp_fp;
+        
         // adcs_system(_adcs),
         // rwa_momentum_rd_sr(rwa::min_momentum, rwa::max_momentum, 16*3), //referenced from I2C_Interface.doc
         // rwa_momentum_rd_f("adcs_box.rwa_speed_rd", rwa_momentum_rd_sr),
@@ -33,30 +41,46 @@ class TestFixture {
 
         std::unique_ptr<ADCSBoxMonitor> adcs_box;
 
+        Devices::ADCS adcs;// = adcs("adcs", 0);
+
+        unsigned char addr = 0;
         // Create a TestFixture instance of AttitudeEstimator with pointers to statefields
-        TestFixture() : registry(){
+        TestFixture() : registry(), adcs("adcs", addr){
 
-                //create input statefields
-                piksi_time_fp = registry.create_readable_field<gps_time_t>("piksi.time");
-                pos_vec_ecef_fp = registry.create_readable_vector_field<double>("piksi.pos",0.0L,1000000.0L,64*3);
-                ssa_vec_rd_fp = registry.create_readable_vector_field<float>("adcs_box.sun_vec",-1.0,1.0,32*3),
-                mag_vec_fp = registry.create_readable_vector_field<float>("adcs_box.mag_vec",-16e-4,16e4,32*3),
+            adcs_box = std::make_unique<ADCSBoxMonitor>(registry, 0, adcs);  
 
-                attitude_estimator = std::make_unique<AttitudeEstimator>(registry, 0);  
+            // initialize pointers to statefields
+            rwa_speed_rd_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.rwa_speed_rd");
+            rwa_torque_rd_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.rwa_torque_rd");
+            ssa_mode_fp = registry.find_readable_field_t<int>("adcs_monitor.ssa_mode");
+            ssa_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.ssa_vec");
+            
+            for(int i = 0; i<20; i++){
+                ssa_voltages_fp.emplace_back(registry.find_readable_field_t<float>("adcs_monitor.ssa_voltage"+std::to_string(i)));
+            }
 
-                // initialize pointers to statefields
-                q_body_eci_fp = registry.find_readable_field_t<f_quat_t>("attitude_estimator.q_body_eci");
-                w_body_fp = registry.find_readable_field_t<f_vector_t>("attitude_estimator.w_body");
+            mag_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag_vec");
+            gyr_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.gyr_vec");
+            gyr_temp_fp = registry.find_readable_field_t<float>("adcs_monitor.gyr_temp");
 
-                assert(q_body_eci_fp);
-                assert(w_body_fp);
+            assert(rwa_speed_rd_fp);
+            assert(rwa_torque_rd_fp);
+            assert(ssa_mode_fp);
+            assert(ssa_vec_fp);
+
+            for(int i = 0; i<20;i++)
+                assert(ssa_voltages_fp[i]);
+                
+            assert(mag_vec_fp);
+            assert(gyr_vec_fp);
+            assert(gyr_temp_fp);
         
         }
 };
 
 void test_task_initialization()
 {
-        TestFixture tf;
+    TestFixture tf;
 }
 
 void test_execute(){

@@ -48,8 +48,8 @@ protected:
     ReadableStateField<int> ssa_mode_f;
 
     //! Vector to the sun in the body frame.
-    Serializer<f_vector_t> ssa_vec_rd_sr;
-    ReadableStateField<f_vector_t> ssa_vec_rd_f;
+    Serializer<f_vector_t> ssa_vec_sr;
+    ReadableStateField<f_vector_t> ssa_vec_f;
 
     //! Raw voltages of the sun sensors.
     Serializer<float> ssa_voltage_sr;
