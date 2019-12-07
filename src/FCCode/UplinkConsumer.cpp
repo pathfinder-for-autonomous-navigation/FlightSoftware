@@ -13,6 +13,8 @@ UplinkConsumer::UplinkConsumer(StateFieldRegistry& registry, unsigned int offset
     // initialize fields
     radio_mt_packet_len_f.set(0);
     radio_mt_packet_f.set(nullptr); // this must be set by QuakeManager
+
+    for (index_size = 1; registry.writable_fields.size() / (1 << index_size) > 0; ++index_size){}
 }
 
 

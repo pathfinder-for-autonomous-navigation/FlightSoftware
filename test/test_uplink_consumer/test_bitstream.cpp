@@ -272,24 +272,41 @@ void test14()
   u32 << bs;
   bs >> u32;
   TEST_ASSERT_EQUAL(0x9, u32);
-  uint16_t u16 = 0x9988;
 
-  bs.seekG(5, bs_end); 
+  // x34\x56\x78\x90
+  uint16_t u16 = 0x9988;
+  // 4    3    6    5     8    7    0    9
+  // 001|0 1100 0110 1010 0001 1110 0000 1001
+  bs.seekG(3, bs_end); 
   u16 << bs;
-  bs.seekG(5, bs_beg);
+
+  // 4    3    6    5     8    7    0    9
+  // 001|0 1100 0110 1010 0001 1110 0000 1001 
+  //     0 0010 0011 0011 001
+  // 4     4    c    c    c    7
+  u16 = 0;
   bs >> u16;
   TEST_ASSERT_EQUAL(0x9988, u16);
   
-  bs.seekG(16, bs_beg);
+  bs.seekG(16 + 3, bs_beg);
   uint8_t u8 = 0;
   bs >> u8;
-  TEST_ASSERT_EQUAL(0x88, u8); // u8 should be able to retrieve the low bits
-
-  u8 = 0x12;
-  u8 << bs;
-  bs.seekG(8, bs_beg);
+  TEST_ASSERT_EQUAL(0x44, u8); 
   bs >> u16;
-  TEST_ASSERT_EQUAL(0x1288, u16);
+  TEST_ASSERT_EQUAL(0x7ccc, u16);
+
+  // 0000 1001 
+  // Now try t run off the edge
+  // c    d    c    a
+  // 0011 1011 0011 0101
+  u16 = 0xacdc;
+  bs.seekG(1, bs_end);
+  // 000 1001 -->  
+  // 001 1|101
+  u16 << bs;
+  u16 = 0;
+  bs >> u16;
+  TEST_ASSERT_EQUAL(0x5c, u16);
 }
 
 /**
@@ -326,6 +343,64 @@ void test15()
 }
 
 /**
+ *  Test copy on boundary
+ */
+void test16()
+{
+  // 2     1    4    3    6    5    8    7
+  // 0100 1000 0010 1100 0110 1010 0001 1110
+  const char* arr = "\x12\x34\x56\x78";
+  char non_const[4];
+  memcpy(non_const, arr, 4);
+  BitStream bs(non_const, 4);
+
+  // 0100 1
+  uint8_t u8 = u8 = bs.nextN(5);
+  TEST_ASSERT_EQUAL(5, bs.bit_offset);
+  TEST_ASSERT_EQUAL(0, bs.byte_offset);
+  TEST_ASSERT_EQUAL(0x12, u8);
+
+  // 8    7
+  // 0001 1110
+  uint8_t uChange = 0x87;
+  // 2    1    4    3    6    5    8    7
+  //       111 0000 1
+  // 0100 1000 0010 1100 0110 1010 0001 1110
+  //       7
+  uint8_t res0[2];
+  bs.peekN(16, res0);
+  TEST_ASSERT_EQUAL(0xb1a0, *reinterpret_cast<uint16_t*>(res0));
+  uChange << bs;
+  uint16_t res;
+  bs >> res;
+  // 111 0|000 1|100 0|110 1|010
+  // 7     8     1     b
+  TEST_ASSERT_EQUAL(0xb187, res);
+  bs.seekG(5 + 16, bs_beg); // go back in time
+  bs >> res;
+  TEST_ASSERT_EQUAL(0x30f2,res);
+
+  // Test that bits that fall off the end are not written to
+  //     c    3
+  // 001 1|110
+  bs.seekG(9, bs_end);
+  TEST_ASSERT_EQUAL(3, bs.byte_offset);
+  TEST_ASSERT_EQUAL(1, bs.bit_offset);
+  memset(res0, 0, 2);
+  bs.peekN(8, res0);
+  TEST_ASSERT_EQUAL(0x3c, *reinterpret_cast<uint16_t*>(res0));
+  // attempt to write 8 bits
+  // b    a
+  // 1101 010|1 
+  uChange = 0xab;
+  uChange << bs;
+  // Should become
+  memset(res0, 0, 2);
+  bs.peekN(8, res0);
+  TEST_ASSERT_EQUAL(0x2b, *reinterpret_cast<uint16_t*>(res0));
+}
+
+/**
  * Recursive helper function to print bits into little endian in order to
  * paste into python to evaluate binary numbers
  */
@@ -355,6 +430,7 @@ int test_bitstream()
     RUN_TEST(test13);
     RUN_TEST(test14);
     RUN_TEST(test15);
+    RUN_TEST(test16);
     return UNITY_END();
 }
 

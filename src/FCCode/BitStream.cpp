@@ -1,5 +1,5 @@
 #include "BitStream.h"
-
+#include <fixed_array.hpp>
 BitStream::BitStream(char* input, uint32_t stream_size) :
   bit_offset(0),
   stream(reinterpret_cast<uint8_t*>(input)),
@@ -64,6 +64,7 @@ uint32_t BitStream::peekN(size_t i)
 
 size_t BitStream::nextN(size_t num_bits, uint8_t* res)
 {
+  memset(res, 0, (num_bits + 7)/8);
   // just read it 8 at a time
   size_t num_iters = num_bits/8;
   size_t modulo = num_bits%8;
@@ -193,20 +194,29 @@ BitStream& operator >>(BitStream& bs, std::vector<bool>& bit_arr)
 }
 
 BitStream& operator <<(uint32_t& u32, BitStream& bs)
-{
-  if (bs.byte_offset + 4 > bs.max_len) 
-    return bs;
-  
-  *reinterpret_cast<uint32_t*>(bs.stream + bs.byte_offset) = u32;
+{ 
+  // *reinterpret_cast<uint32_t*>(bs.stream + bs.byte_offset) = u32;
+  uint8_t* tmp = reinterpret_cast<uint8_t*>(&u32);
+  size_t i = 0;
+  for (i = 0; i < 4 && bs.has_next(); ++i)
+  {
+    tmp[i] << bs;
+    bs.seekG(8, bs_end);
+  }
+  bs.seekG(i*8, bs_beg);
   return bs;
 }
 
 BitStream& operator <<(uint16_t& u16, BitStream& bs)
 {
-  if (bs.byte_offset + 2 > bs.max_len) 
-    return bs;
-  
-  *reinterpret_cast<uint16_t*>(bs.stream + bs.byte_offset) = u16;
+  uint8_t* tmp = reinterpret_cast<uint8_t*>(&u16);
+  size_t i = 0;
+  for (i = 0; i < 2 && bs.has_next(); ++i)
+  {
+    tmp[i] << bs;
+    bs.seekG(8, bs_end);
+  }
+  bs.seekG(i*8, bs_beg);
   return bs;
 }
 
@@ -215,7 +225,34 @@ BitStream& operator <<(uint8_t& u8, BitStream& bs)
   if (bs.byte_offset + 1 > bs.max_len) 
     return bs;
   
-  *reinterpret_cast<uint8_t*>(bs.stream + bs.byte_offset) = u8;
+  // 2    1|111 0000 1100
+  // 0100 1|000 0010 1100 0110 1010 0001 1110
+  //      1     4    3
+  //        000 0|010 1|100 0|110 1|010 0|001
+  //        0     a     1     b     --> old = 0x3412 << bit_offset (5) --> 0xb1a0
+  //want    111 0 000 1 100 ... 
+  //        7     8     1     b
+
+  uint8_t old = *reinterpret_cast<uint8_t*>(bs.stream + bs.byte_offset);
+  // Write until the next byte starts
+  for (size_t i = 0; i < 8 - bs.bit_offset; ++i, u8 >>= 1)
+    old = bit_array::modify_bit(old, bs.bit_offset + i, u8&1);
+  
+  // Write the lower bits
+  *reinterpret_cast<uint8_t*>(bs.stream + bs.byte_offset) = old;
+  
+  // See if there is a next byte to write
+  if (bs.byte_offset + 2 < bs.max_len)
+  {
+    old = *reinterpret_cast<uint8_t*>(bs.stream + bs.byte_offset + 1);
+    for (size_t i = 0; i < bs.bit_offset; ++i, u8 >>= 1)
+    {
+      old = bit_array::modify_bit(old, i, u8&1);
+    }
+    // Write the rest of the upper bits
+    *reinterpret_cast<uint8_t*>(bs.stream + bs.byte_offset + 1) = old;
+  }
+
   return bs;
 }
 
@@ -230,8 +267,7 @@ BitStream& operator <<(std::vector<bool>& ba, BitStream& bs)
 BitStream& operator <<(BitStream& bs_other, BitStream& bs)
 {
   if (bs_other.max_len + bs.byte_offset > bs.max_len)
-    return bs;
-  
+    return bs; 
   memcpy(bs.stream + bs.byte_offset, bs_other.stream, bs_other.max_len);
   return bs;
 }

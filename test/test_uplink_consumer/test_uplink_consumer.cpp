@@ -37,7 +37,6 @@ class TestFixture {
     // Test Helper function will map field names to indices
     std::map<std::string, size_t> field_map;
 
-    size_t index_size;
     
     // Create a TestFixture instance of QuakeManager with the following parameters
     TestFixture() : registry() {
@@ -48,7 +47,7 @@ class TestFixture {
         adcs_ang_rate_fp = registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
         adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
         mission_mode_fp = registry.create_writable_field<unsigned char>("pan.mode");
-        sat_designation_fp = registry.create_writable_field<unsigned char>("pan.sat_designation");
+        sat_designation_fp = registry.create_writable_field<unsigned char>("pan.sat_designation"); // should be 6 writable fields --> 3 bits
 
         // Make external fields
         char mt_buffer[350]; 
@@ -62,8 +61,7 @@ class TestFixture {
         field_map = std::map<std::string, size_t>();
 
         // Setup field_map and assign some values
-        unsigned int i = 0;
-        for (; i < registry.writable_fields.size(); ++i)
+        for (size_t i = 0; i < registry.writable_fields.size(); ++i)
         {
             auto w = registry.writable_fields[i];
             field_map[w->name().c_str()] = i;
@@ -71,29 +69,78 @@ class TestFixture {
             from_ull(w, rand());
         }
 
-        for (index_size = 1; i / (1 << index_size) > 0; ++index_size){}
-
     }
     /**
-     * @param out The BitStream representation of the packet that is being constructed
-     * @param value The value that we'd like to put into the packet
-     * @param index The index of the writable field that we want to make the data for
+     * @param out The uplink packet as a BitStream
+     * @param in The BitStream representation of the single value to be set for the field
+     * given by index
+     * @param index The index of the writable field that we want to update
      */
-    void create_uplink( BitStream& out, uint8_t* value, size_t index)
+    void create_uplink( BitStream& out, BitStream& in, size_t index)
     {
         auto bit_arr = registry.writable_fields[index]->get_bit_array();
-        size_t field_size = bit_arr.size();
-        BitStream bs_idx(reinterpret_cast<char*>(&index), index_size);
-        BitStream bs_data(reinterpret_cast<char*>(value), field_size);
+        // Slice the index size by converting it to BitStream
+        char * idx_char = reinterpret_cast<char*>(&index);
+        BitStream bs_idx(idx_char, uplink_consumer->index_size);
+        for (int i = 0; i < uplink_consumer->index_size; ++i)
+        {
+            cout << "char index " << (uint32_t)idx_char[i] << endl;
+        }
+        in << out;
         bs_idx << out;
-        bs_data << out;
     }
 
+    /**
+     * @param out The uplink packet as a BitStream
+     * @param val Array of chars containing the data to be assigned to the field
+     * @param val_size The number of bits of val to assign to the field
+     * @param index The index of the writable field that we want to update
+     */
+    void create_uplink( BitStream& out, char* val, size_t val_size, size_t index)
+    {
+        BitStream in(val, uplink_consumer->index_size);
+        create_uplink(out, in, index);
+    }
 };
 
 void test_create_uplink()
 {
     TestFixture tf;
+    // Create the data for the fields
+    char data[4];
+    memcpy(data, "\xff\xaf\x34\xab", 4);
+    BitStream in(data, 4);
+
+    // Create the output packet BitStream
+    char backer[8];
+    memset(backer, 0, 8); 
+    BitStream out(backer, 8);
+
+    // Create the expected result
+    size_t idx = tf.field_map["adcs.mode"];
+    size_t idx_size = tf.uplink_consumer->index_size;
+    size_t field_len = tf.uplink_consumer->get_field_length(idx);
+
+    std::vector<bool> expect(field_len + idx_size, 0);
+    out.peekN(field_len, expect);
+
+    // Create an entry in output packet BitStream to update adcs.mode
+    tf.create_uplink(out, in, idx);
+    // Retrieve data from the packet to see if it's there
+    std::vector<bool> actual(field_len + idx_size, 0);
+    out >> actual;
+
+    for (int i = 0; i < field_len + idx_size; ++i)
+    {
+        cout << expect[i] <<  " " << actual[i] << endl;
+        //TEST_ASSERT_EQUAL(expect[i], actual[i]);
+    }
+
+}
+
+void test_create_uplink_other()
+{
+
 }
 
 void test_valid_initialization() 
@@ -101,6 +148,7 @@ void test_valid_initialization()
     TestFixture tf;
     TEST_ASSERT_EQUAL(0, tf.radio_mt_packet_len_fp->get());
     TEST_ASSERT_NOT_NULL(tf.radio_mt_packet_fp->get());
+    TEST_ASSERT_EQUAL(3, tf.uplink_consumer->index_size);
 }
 
 // ----------------------------------------------------------------------------
@@ -289,9 +337,18 @@ void test_bad_request()
 
 int test_uplink_consumer() {
     UNITY_BEGIN();
+    RUN_TEST(test_create_uplink);
     RUN_TEST(test_valid_initialization);
     RUN_TEST(test_get_field_length);
     RUN_TEST(test_update_field);
+    RUN_TEST(test_clear_mt_packet_len);
+    RUN_TEST(test_perisist_mt_packet_len);
+    RUN_TEST(test_check_ready);
+    RUN_TEST(test_do_not_update_non_writable);
+    RUN_TEST(test_update_writable_field);
+    RUN_TEST(test_multiple_updates);
+    RUN_TEST(test_mixed_validity_updates);
+    RUN_TEST(test_bad_request);
     return UNITY_END();
 }
 

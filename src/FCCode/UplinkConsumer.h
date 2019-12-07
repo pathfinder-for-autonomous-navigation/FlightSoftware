@@ -100,6 +100,12 @@ class UplinkConsumer : public TimedControlTask<void> {
    * Reference to registry so that we can update and read fields
    */
    StateFieldRegistry& registry;
+
+
+    /**
+     * The number of bits to represent an index
+     */
+    size_t index_size;
     
 };
 
