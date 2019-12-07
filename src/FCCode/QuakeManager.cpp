@@ -42,7 +42,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_mt_ready_fp->set(false);
 
     // Setup MO Buffers
-    max_snapshot_size = snapshot_size_fp->get() + 1;
+    max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
     mo_buffer_copy = new char[max_snapshot_size];
 }
 
