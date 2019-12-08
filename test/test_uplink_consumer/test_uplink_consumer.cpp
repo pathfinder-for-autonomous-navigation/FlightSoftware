@@ -98,8 +98,18 @@ class TestFixture {
      */
     void create_uplink( BitStream& out, char* val, size_t val_size, size_t index)
     {
-        BitStream in(val, uplink_consumer->index_size);
-        create_uplink(out, in, index);
+        auto bit_arr = registry.writable_fields[index]->get_bit_array();
+        // Slice the index size by converting it to BitStream
+        char * idx_char = reinterpret_cast<char*>(&index);
+        BitStream bs_idx(idx_char, uplink_consumer->index_size);
+        for (int i = 0; i < uplink_consumer->index_size; ++i)
+        {
+            cout << "char index " << (uint32_t)idx_char[i] << endl;
+        }
+        out.editN(uplink_consumer->index_size, (uint8_t)index);
+        out.seekG(uplink_consumer->index_size-1, bs_end);
+        out.editN(val_size, reinterpret_cast<uint8_t*>(val));
+        //out.seekG(uplink_consumer->index_size, bs_beg);
     }
 };
 
@@ -125,7 +135,7 @@ void test_create_uplink()
     out.peekN(field_len, expect);
 
     // Create an entry in output packet BitStream to update adcs.mode
-    tf.create_uplink(out, in, idx);
+    tf.create_uplink(out, data, field_len, idx);
     // Retrieve data from the packet to see if it's there
     std::vector<bool> actual(field_len + idx_size, 0);
     out >> actual;

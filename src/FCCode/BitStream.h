@@ -114,6 +114,8 @@ class BitStream{
  */
   void seekG(size_t amt, int dir);
 
+  size_t editN(size_t num_bits, uint8_t* new_val);
+  size_t editN(size_t num_bits, uint8_t u8);
 };
 
 /**
