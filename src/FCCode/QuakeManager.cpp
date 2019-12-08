@@ -43,7 +43,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_mt_ready_fp->set(false);
 
 #ifdef RADIO_TESTING
-    max_snapshot_size = 145;
+    max_snapshot_size = 24;
     mo_buffer_copy = new char[max_snapshot_size];
 #else
     // Setup MO Buffers
@@ -129,10 +129,10 @@ bool QuakeManager::dispatch_write() {
     {
         // If mo_idx is 0 --> copy current snapshot to local buf
 #ifdef RADIO_TESTING
-        std::string json_string = "{\"arr\":[1,2,3],\"boolean\": true,\"foo\": 77777.655432,\"null\": null,\"number\": 123,\"object\": {\"a\": \"b\",\"c\": \"d\", \"e\": \"f\"},\"string\": \"Hello World\"}";
+        std::string json_string = "{\"foo\": 4,\"number\": 123}";
         if (mo_idx == 0) {
-            memset(mo_buffer_copy, 0, 145);
-            memcpy(mo_buffer_copy, json_string.c_str(), 145);
+            memset(mo_buffer_copy, 0, 24);
+            memcpy(mo_buffer_copy, json_string.c_str(), 24);
         }
 #else
         if (mo_idx == 0) {
@@ -142,7 +142,7 @@ bool QuakeManager::dispatch_write() {
 #endif
         // load the current 70 bytes of the buffer
        qct.set_downlink_msg(mo_buffer_copy + (packet_size*mo_idx), packet_size);
-       mo_idx = (mo_idx + 1) % (max_snapshot_size/packet_size);
+       mo_idx = (mo_idx + 1) % ((max_snapshot_size + packet_size -1)/packet_size);
     }
 
     int err_code = qct.execute();
@@ -219,6 +219,8 @@ bool QuakeManager::dispatch_read() {
     {
         printf(debug_severity::info, 
             "[Quake Info] SBDRB finished, transitioning to SBDWB");
+        printf(debug_severity::info, 
+            "[Quake SBDRB Message] message: %s", qct.get_MT_msg());
 
         radio_mt_ready_fp->set(true);
         transition_radio_state(radio_mode_t::write);
