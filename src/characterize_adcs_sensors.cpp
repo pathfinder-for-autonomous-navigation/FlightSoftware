@@ -8,7 +8,7 @@
 Devices::ADCS adcs("adcs", Wire, Devices::ADCS::ADDRESS);
 std::array<float,3> wheel_commanded_rate= {0.0f,0.0f,0.0f};
 std::array<float,3> magnetorquer_commanded_moment= {0.0f,0.0f,0.0f};
-Devices::DCDC dcdc;
+Devices::DCDC dcdc("dcdc");
 
 bool test_get_who_am_i(){
     unsigned char temp;
