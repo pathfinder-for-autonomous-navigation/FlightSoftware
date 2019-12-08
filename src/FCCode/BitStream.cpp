@@ -161,9 +161,16 @@ size_t BitStream::editN(size_t i, uint8_t u8)
   if (!has_next() || i > 8) // obviously, don't ask for more than 8 bits..
     return 0;
   uint8_t* pos = stream + byte_offset;
-  *pos &= ((1ul << i) - 1); // zero out the part we're editing
-  uint8_t res = ( u8 >> bit_offset ) & ( (1ul << i) - 1 ); // adjust the part
+  cout << " old_value: " << hex << (uint16_t) *pos << endl;
+  cout << " old u8: " << hex << (uint16_t) u8 << endl;
+  uint16_t mask = ((1ul << i) - 1);
+  mask <<= bit_offset;
+  *pos &= ~mask; // zero out the part we're editing
+  cout << " masked " << i << " bits of old value to : " << (uint16_t)*pos << endl;
+  uint16_t res = ( u8 << bit_offset ) & ( (1ul << i) - 1 ); // adjust the part
+  cout << " adjusted res to " << (uint16_t)res << endl;
   *pos |= res; // write the piece to the stream
+  cout << " edited to " << (uint16_t)*pos << endl;
   // Consume the bits
   bit_offset += i;
   uint32_t num_iters = bit_offset / 8;
@@ -171,10 +178,17 @@ size_t BitStream::editN(size_t i, uint8_t u8)
   {
     ++byte_offset;
     bit_offset %= 8;
-
-    u8 &= ( (1ul << bit_offset) - 1 );
-    u8 <<= (i - bit_offset);
+    pos = stream + byte_offset;
+    cout << " old_value: " << hex << (uint16_t) *pos << endl;
+    mask = ~( (1ul << bit_offset) - 1 );
+    *pos &= ~( (1ul << bit_offset) - 1 );
+    cout << " masked to : " << hex << (uint16_t) *pos << endl;
+    u8 *= ~( (1ul << bit_offset) - 1 );
+    cout << " u8 to : " << hex << (uint16_t) u8 << endl;
+    u8 >>= (i - bit_offset);
+    cout << " u8 shifted to : " << hex << (uint16_t) u8 << endl;
     *pos |= u8;
+   cout << " edited to " << (uint16_t)*pos << endl << endl;
   }
   return res;
 }
@@ -265,9 +279,7 @@ BitStream& operator <<(uint32_t& u32, BitStream& bs)
   for (i = 0; i < 4 && bs.has_next(); ++i)
   {
     tmp[i] << bs;
-    bs.seekG(8, bs_end);
   }
-  bs.seekG(i*8, bs_beg);
   return bs;
 }
 
@@ -278,9 +290,7 @@ BitStream& operator <<(uint16_t& u16, BitStream& bs)
   for (i = 0; i < 2 && bs.has_next(); ++i)
   {
     tmp[i] << bs;
-    bs.seekG(8, bs_end);
   }
-  bs.seekG(i*8, bs_beg);
   return bs;
 }
 

@@ -270,6 +270,7 @@ void test14()
   bs.seekG(32, bs_beg); // go back 32 bits
   u32 = 0x9;
   u32 << bs;
+  bs.seekG(32, bs_beg);
   bs >> u32;
   TEST_ASSERT_EQUAL(0x9, u32);
 
@@ -279,6 +280,7 @@ void test14()
   // 001|0 1100 0110 1010 0001 1110 0000 1001
   bs.seekG(3, bs_end); 
   u16 << bs;
+  bs.seekG(16, bs_beg);
 
   // 4    3    6    5     8    7    0    9
   // 001|0 1100 0110 1010 0001 1110 0000 1001 
@@ -304,6 +306,7 @@ void test14()
   // 000 1001 -->  
   // 001 1|101
   u16 << bs;
+  bs.seekG(16, bs_beg);
   u16 = 0;
   bs >> u16;
   TEST_ASSERT_EQUAL(0x5c, u16);
@@ -323,6 +326,7 @@ void test15()
   BitStream bs1(nonconst, 2);
   BitStream bs2(nonconst2, 2);
   bs2 << bs1;
+  bs1.seekG(16, bs_beg);
   uint16_t u16;
   bs1 >> u16;
   TEST_ASSERT_EQUAL(0xcdab, u16);
@@ -338,6 +342,7 @@ void test15()
   bs1.seekG(16, bs_beg);
 
   b_arr << bs1;
+  bs1.seekG(16, bs_beg);
   bs1 >> u16;
   TEST_ASSERT_EQUAL(0x7856, u16); // stored in order: b a d c
 }
@@ -371,6 +376,7 @@ void test16()
   bs.peekN(16, res0);
   TEST_ASSERT_EQUAL(0xb1a0, *reinterpret_cast<uint16_t*>(res0));
   uChange << bs;
+  bs.seekG(8, bs_beg);
   uint16_t res;
   bs >> res;
   // 111 0|000 1|100 0|110 1|010
@@ -394,6 +400,7 @@ void test16()
   // 1101 010|1 
   uChange = 0xab;
   uChange << bs;
+  bs.seekG(8, bs_beg);
   // Should become
   memset(res0, 0, 2);
   bs.peekN(8, res0);
