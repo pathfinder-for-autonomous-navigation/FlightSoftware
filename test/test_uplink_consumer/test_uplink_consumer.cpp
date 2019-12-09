@@ -79,15 +79,11 @@ class TestFixture {
     void create_uplink( BitStream& out, BitStream& in, size_t index)
     {
         auto bit_arr = registry.writable_fields[index]->get_bit_array();
-        // Slice the index size by converting it to BitStream
-        char * idx_char = reinterpret_cast<char*>(&index);
-        BitStream bs_idx(idx_char, uplink_consumer->index_size);
-        for (int i = 0; i < uplink_consumer->index_size; ++i)
-        {
-            cout << "char index " << (uint32_t)idx_char[i] << endl;
-        }
-        in << out;
-        bs_idx << out;
+        size_t stream_size = (bit_arr.size() + 7) / 8;
+        uint8_t res[stream_size];
+        in.nextN(bit_arr.size(), res);
+        out.editN(uplink_consumer->index_size, (uint8_t)index);
+        out.editN(bit_arr.size(), res);
     }
 
     /**
@@ -144,12 +140,47 @@ void test_create_uplink()
         // cout << expect[i] <<  " " << actual[i] << endl;
         TEST_ASSERT_EQUAL(expect[i], actual[i]);
     }
-
 }
 
 void test_create_uplink_other()
 {
+    TestFixture tf;
+    // Create the data for the fields
+    char data[4];
+    memcpy(data, "\xfa\xaf\x34\xab", 4);
+    BitStream in(data, 4);
 
+    // Create the output packet BitStream
+    char backer[8];
+    memset(backer, 0, 8); 
+    BitStream out(backer, 8);
+
+    // Create the expected result
+    size_t idx = tf.field_map["adcs.mode"];
+    size_t idx_size = tf.uplink_consumer->index_size;
+    size_t field_len = tf.uplink_consumer->get_field_length(idx);
+
+    std::vector<bool> expect(idx_size, 0);
+    expect[0] = 1;
+    expect[1] = 0;
+    expect[2] = 0;
+    expect[3] = 0;
+    expect[4] = 1;
+    expect[5] = 0;
+    expect[6] = 1;
+    // Create an entry in output packet BitStream to update adcs.mode
+    tf.create_uplink(out, in, idx);
+    out.seekG( idx_size + field_len, bs_beg);
+
+    // Retrieve data from the packet to see if it's there
+    std::vector<bool> actual(field_len + idx_size, 0);
+    out >> actual;
+
+    for (int i = 0; i < field_len + idx_size; ++i)
+    {
+       // cout << expect[i] <<  " " << actual[i] << endl;
+        TEST_ASSERT_EQUAL(expect[i], actual[i]);
+    }
 }
 
 void test_valid_initialization() 
@@ -347,6 +378,7 @@ void test_bad_request()
 int test_uplink_consumer() {
     UNITY_BEGIN();
     RUN_TEST(test_create_uplink);
+    RUN_TEST(test_create_uplink_other);
     RUN_TEST(test_valid_initialization);
     RUN_TEST(test_get_field_length);
     RUN_TEST(test_update_field);

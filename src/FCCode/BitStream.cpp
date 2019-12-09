@@ -331,22 +331,28 @@ BitStream& operator <<(BitStream& bs_other, BitStream& bs)
   // if (bs_other.max_len + bs.byte_offset > bs.max_len)
   //   return bs; 
   size_t num_bits = (bs_other.max_len - bs_other.byte_offset)*8 - bs_other.bit_offset;
-  size_t cut_off = 8 - bs_other.bit_offset;
-  uint8_t u8 = bs_other.nextN(cut_off);
-  bs.editN(cut_off, u8);
-  num_bits -= cut_off;
+  size_t arr_size = (num_bits + 7)/8;
+  char tmp[arr_size];
+  memset(tmp, 0, arr_size);
+  bs_other.nextN(num_bits, reinterpret_cast<uint8_t*>(tmp));
+  bs.editN(num_bits, reinterpret_cast<uint8_t*>(tmp));
+  // size_t cut_off = 8 - bs_other.bit_offset;
+  // uint8_t u8 = bs_other.nextN(cut_off);
+  // bs.editN(cut_off, u8);
+  // num_bits -= cut_off;
 
-  size_t num_iters = num_bits/8;
-  size_t modulo = num_bits%8;
-  for (int i = 0; i < num_iters && bs_other.has_next() && bs.has_next() && num_bits > 0; ++i)
-  {
-    bs_other >> u8;
-    bs.editN(8, u8);
-  }
-  if (modulo != 0)
-  {
-    bs_other >> u8;
-    bs.editN(modulo, u8);
-  }
+  // size_t num_iters = num_bits/8;
+  // size_t modulo = num_bits%8;
+  // for (int i = 0; i < num_iters && bs_other.has_next() && bs.has_next() && num_bits > 0; ++i)
+  // {
+  //   bs_other >> u8;
+  //   bs.editN(8, u8);
+  //   num_bits -= 8;
+  // }
+  // if (modulo != 0)
+  // {
+  //   bs_other >> u8;
+  //   bs.editN(modulo, u8);
+  // }
   return bs;
 }
