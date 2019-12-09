@@ -306,7 +306,7 @@ void test14()
   // 000 1001 -->  
   // 001 1|101
   u16 << bs;
-  bs.seekG(16, bs_beg);
+  bs.seekG(7, bs_beg);
   u16 = 0;
   bs >> u16;
   TEST_ASSERT_EQUAL(0x5c, u16);
@@ -400,7 +400,7 @@ void test16()
   // 1101 010|1 
   uChange = 0xab;
   uChange << bs;
-  bs.seekG(8, bs_beg);
+  bs.seekG(7, bs_beg);
   // Should become
   memset(res0, 0, 2);
   bs.peekN(8, res0);

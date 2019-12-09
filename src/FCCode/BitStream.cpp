@@ -38,7 +38,7 @@ uint32_t BitStream::nextN(size_t i)
   // Consume the bits
   bit_offset += i;
   uint32_t num_iters = bit_offset / 8;
-  for (; num_iters > 0; --num_iters)
+  for (; num_iters > 0 && (byte_offset != max_len - 1); --num_iters)
   {
     ++byte_offset;
     bit_offset %= 8;
@@ -47,6 +47,8 @@ uint32_t BitStream::nextN(size_t i)
     remain <<= (i - bit_offset);
     res |= remain;
   }
+  if (byte_offset == max_len)
+    bit_offset = 0;
   return res;
 }
 
@@ -163,12 +165,13 @@ size_t BitStream::editN(size_t i, uint8_t u8)
   uint8_t* pos = stream + byte_offset;
   cout << " old_value: " << hex << (uint16_t) *pos << endl;
   cout << " old u8: " << hex << (uint16_t) u8 << endl;
+  cout << " bit offset " << dec << bit_offset << endl;
   uint16_t mask = ((1ul << i) - 1);
   mask <<= bit_offset;
   *pos &= ~mask; // zero out the part we're editing
-  cout << " masked " << i << " bits of old value to : " << (uint16_t)*pos << endl;
+  cout << " masked " << i << " bits of old value to : " << hex << (uint16_t)*pos << endl;
   uint16_t res = ( u8 << bit_offset ) & ( (1ul << i) - 1 ); // adjust the part
-  cout << " adjusted res to " << (uint16_t)res << endl;
+  cout << " adjusted res to " << hex << (uint16_t)res << endl;
   *pos |= res; // write the piece to the stream
   cout << " edited to " << (uint16_t)*pos << endl;
   // Consume the bits
@@ -178,14 +181,18 @@ size_t BitStream::editN(size_t i, uint8_t u8)
   {
     ++byte_offset;
     bit_offset %= 8;
+if (byte_offset == max_len) 
+{
+  bit_offset = 0;
+  return 0 ;
+}
     pos = stream + byte_offset;
     cout << " old_value: " << hex << (uint16_t) *pos << endl;
-    mask = ~( (1ul << bit_offset) - 1 );
     *pos &= ~( (1ul << bit_offset) - 1 );
     cout << " masked to : " << hex << (uint16_t) *pos << endl;
-    u8 *= ~( (1ul << bit_offset) - 1 );
+    u8 &= ~( (1ul << (8 -bit_offset)) - 1 );
     cout << " u8 to : " << hex << (uint16_t) u8 << endl;
-    u8 >>= (i - bit_offset);
+    u8 >>= (8 - bit_offset);
     cout << " u8 shifted to : " << hex << (uint16_t) u8 << endl;
     *pos |= u8;
    cout << " edited to " << (uint16_t)*pos << endl << endl;
@@ -335,8 +342,26 @@ BitStream& operator <<(std::vector<bool>& ba, BitStream& bs)
 
 BitStream& operator <<(BitStream& bs_other, BitStream& bs)
 {
-  if (bs_other.max_len + bs.byte_offset > bs.max_len)
-    return bs; 
-  memcpy(bs.stream + bs.byte_offset, bs_other.stream, bs_other.max_len);
+  // if (bs_other.max_len + bs.byte_offset > bs.max_len)
+  //   return bs; 
+  size_t num_bits = (bs_other.max_len - bs_other.byte_offset)*8 - bs_other.bit_offset;
+  cout << "num_bits " << num_bits << endl;
+  size_t cut_off = 8 - bs_other.bit_offset;
+  uint8_t u8 = bs_other.nextN(cut_off);
+  bs.editN(cut_off, u8);
+  num_bits -= cut_off;
+
+  size_t num_iters = num_bits/8;
+  size_t modulo = num_bits%8;
+  for (int i = 0; i < num_iters && bs_other.has_next() && bs.has_next() && num_bits > 0; ++i)
+  {
+    bs_other >> u8;
+    bs.editN(8, u8);
+  }
+  if (modulo != 0)
+  {
+    bs_other >> u8;
+    bs.editN(modulo, u8);
+  }
   return bs;
 }
