@@ -163,17 +163,17 @@ size_t BitStream::editN(size_t i, uint8_t u8)
   if (!has_next() || i > 8) // obviously, don't ask for more than 8 bits..
     return 0;
   uint8_t* pos = stream + byte_offset;
-  cout << " old_value: " << hex << (uint16_t) *pos << endl;
-  cout << " old u8: " << hex << (uint16_t) u8 << endl;
-  cout << " bit offset " << dec << bit_offset << endl;
+  // cout << " old_value: " << hex << (uint16_t) *pos << endl;
+  // cout << " old u8: " << hex << (uint16_t) u8 << endl;
+  // cout << " bit offset " << dec << bit_offset << endl;
   uint16_t mask = ((1ul << i) - 1);
   mask <<= bit_offset;
   *pos &= ~mask; // zero out the part we're editing
-  cout << " masked " << i << " bits of old value to : " << hex << (uint16_t)*pos << endl;
-  uint16_t res = ( u8 << bit_offset ) & ( (1ul << i) - 1 ); // adjust the part
-  cout << " adjusted res to " << hex << (uint16_t)res << endl;
+  // cout << " masked " << i << " bits of old value to : " << hex << (uint16_t)*pos << endl;
+  uint16_t res = ( u8 << bit_offset ); // adjust the part
+  // cout << " adjusted res to " << hex << (uint16_t)res << endl;
   *pos |= res; // write the piece to the stream
-  cout << " edited to " << (uint16_t)*pos << endl;
+  // cout << " edited to " << (uint16_t)*pos << endl;
   // Consume the bits
   bit_offset += i;
   uint32_t num_iters = bit_offset / 8;
@@ -187,15 +187,15 @@ if (byte_offset == max_len)
   return 0 ;
 }
     pos = stream + byte_offset;
-    cout << " old_value: " << hex << (uint16_t) *pos << endl;
+    // cout << " old_value: " << hex << (uint16_t) *pos << endl;
     *pos &= ~( (1ul << bit_offset) - 1 );
-    cout << " masked to : " << hex << (uint16_t) *pos << endl;
+    // cout << " masked to : " << hex << (uint16_t) *pos << endl;
     u8 &= ~( (1ul << (8 -bit_offset)) - 1 );
-    cout << " u8 to : " << hex << (uint16_t) u8 << endl;
+    // cout << " u8 to : " << hex << (uint16_t) u8 << endl;
     u8 >>= (8 - bit_offset);
-    cout << " u8 shifted to : " << hex << (uint16_t) u8 << endl;
+    // cout << " u8 shifted to : " << hex << (uint16_t) u8 << endl;
     *pos |= u8;
-   cout << " edited to " << (uint16_t)*pos << endl << endl;
+  //  cout << " edited to " << (uint16_t)*pos << endl << endl;
   }
   return res;
 }
@@ -280,32 +280,18 @@ BitStream& operator >>(BitStream& bs, std::vector<bool>& bit_arr)
 
 BitStream& operator <<(uint32_t& u32, BitStream& bs)
 { 
-  // *reinterpret_cast<uint32_t*>(bs.stream + bs.byte_offset) = u32;
-  uint8_t* tmp = reinterpret_cast<uint8_t*>(&u32);
-  size_t i = 0;
-  for (i = 0; i < 4 && bs.has_next(); ++i)
-  {
-    tmp[i] << bs;
-  }
+  bs.editN(32, reinterpret_cast<uint8_t*>(&u32));
   return bs;
 }
 
 BitStream& operator <<(uint16_t& u16, BitStream& bs)
 {
-  uint8_t* tmp = reinterpret_cast<uint8_t*>(&u16);
-  size_t i = 0;
-  for (i = 0; i < 2 && bs.has_next(); ++i)
-  {
-    tmp[i] << bs;
-  }
+  bs.editN(16, reinterpret_cast<uint8_t*>(&u16));
   return bs;
 }
 
 BitStream& operator <<(uint8_t& u8, BitStream& bs)
 {
-  if (bs.byte_offset + 1 > bs.max_len) 
-    return bs;
-
   bs.editN(8, u8);
 
   // uint8_t old = *reinterpret_cast<uint8_t*>(bs.stream + bs.byte_offset);
@@ -345,7 +331,6 @@ BitStream& operator <<(BitStream& bs_other, BitStream& bs)
   // if (bs_other.max_len + bs.byte_offset > bs.max_len)
   //   return bs; 
   size_t num_bits = (bs_other.max_len - bs_other.byte_offset)*8 - bs_other.bit_offset;
-  cout << "num_bits " << num_bits << endl;
   size_t cut_off = 8 - bs_other.bit_offset;
   uint8_t u8 = bs_other.nextN(cut_off);
   bs.editN(cut_off, u8);

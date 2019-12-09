@@ -100,16 +100,8 @@ class TestFixture {
     {
         auto bit_arr = registry.writable_fields[index]->get_bit_array();
         // Slice the index size by converting it to BitStream
-        char * idx_char = reinterpret_cast<char*>(&index);
-        BitStream bs_idx(idx_char, uplink_consumer->index_size);
-        for (int i = 0; i < uplink_consumer->index_size; ++i)
-        {
-            cout << "char index " << (uint32_t)idx_char[i] << endl;
-        }
         out.editN(uplink_consumer->index_size, (uint8_t)index);
-        out.seekG(uplink_consumer->index_size-1, bs_end);
         out.editN(val_size, reinterpret_cast<uint8_t*>(val));
-        //out.seekG(uplink_consumer->index_size, bs_beg);
     }
 };
 
@@ -118,7 +110,7 @@ void test_create_uplink()
     TestFixture tf;
     // Create the data for the fields
     char data[4];
-    memcpy(data, "\xff\xaf\x34\xab", 4);
+    memcpy(data, "\xfa\xaf\x34\xab", 4);
     BitStream in(data, 4);
 
     // Create the output packet BitStream
@@ -131,19 +123,26 @@ void test_create_uplink()
     size_t idx_size = tf.uplink_consumer->index_size;
     size_t field_len = tf.uplink_consumer->get_field_length(idx);
 
-    std::vector<bool> expect(field_len + idx_size, 0);
-    out.peekN(field_len, expect);
-
+    std::vector<bool> expect(idx_size, 0);
+    expect[0] = 1;
+    expect[1] = 0;
+    expect[2] = 0;
+    expect[3] = 0;
+    expect[4] = 1;
+    expect[5] = 0;
+    expect[6] = 1;
     // Create an entry in output packet BitStream to update adcs.mode
     tf.create_uplink(out, data, field_len, idx);
+    out.seekG( idx_size + field_len, bs_beg);
+
     // Retrieve data from the packet to see if it's there
     std::vector<bool> actual(field_len + idx_size, 0);
     out >> actual;
 
     for (int i = 0; i < field_len + idx_size; ++i)
     {
-        cout << expect[i] <<  " " << actual[i] << endl;
-        //TEST_ASSERT_EQUAL(expect[i], actual[i]);
+        // cout << expect[i] <<  " " << actual[i] << endl;
+        TEST_ASSERT_EQUAL(expect[i], actual[i]);
     }
 
 }
