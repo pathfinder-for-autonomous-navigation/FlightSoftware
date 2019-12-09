@@ -56,8 +56,12 @@ class TestFixture {
             ssa_mode_fp = registry.find_readable_field_t<int>("adcs_monitor.ssa_mode");
             ssa_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.ssa_vec");
             
+            char buffer[3];
+
             for(int i = 0; i<20; i++){
-                ssa_voltages_fp.emplace_back(registry.find_readable_field_t<float>("adcs_monitor.ssa_voltage"+std::to_string(i)));
+                //ssa_voltages_fp.emplace_back(registry.find_readable_field_t<float>("adcs_monitor.ssa_voltage"+std::to_string(i)));
+                ssa_voltages_fp.emplace_back(registry.find_readable_field_t<float>("adcs_monitor.ssa_voltage"+sprintf(buffer, "%u", i)));
+
             }
 
             mag_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag_vec");
@@ -83,6 +87,12 @@ float mag_2(const std::array<float, 3> input){
         return (float)(input[0]*input[0] + input[1]*input[1] + input[2]*input[2]);
 }
 
+void elements_same(const std::array<float, 3> ref, const std::array<float, 3> actual){
+    TEST_ASSERT_FLOAT_WITHIN(0.001, ref[0], actual[0]);
+    TEST_ASSERT_FLOAT_WITHIN(0.001, ref[1], actual[1]);
+    TEST_ASSERT_FLOAT_WITHIN(0.001, ref[2], actual[2]);
+
+}
 
 void test_task_initialization()
 {
@@ -93,11 +103,28 @@ void test_execute(){
     TestFixture tf;
 
     //mocking sets to max output
-    std::array<float, 3> rwa_max_speed = {rwa::max_speed_read,rwa::max_speed_read,rwa::max_speed_read};
+    std::array<float, 3> ref_rwa_max_speed = {rwa::max_speed_read, rwa::max_speed_read, rwa::max_speed_read};
+    std::array<float, 3> ref_rwa_max_torque = {rwa::max_torque, rwa::max_torque, rwa::max_torque};
+    std::array<float, 3> ref_three_unit = {1,1,1};
+    std::array<float, 3> ref_mag_vec = {imu::max_rd_mag, imu::max_rd_mag, imu::max_rd_mag};
+    std::array<float, 3> ref_gyr_vec = {imu::max_rd_omega, imu::max_rd_omega, imu::max_rd_omega};
 
+    //call box monitor control task, to pull values using driver
     tf.adcs_box->execute();
 
-    TEST_ASSERT_FLOAT_WITHIN(0.001, mag_2(rwa_max_speed), mag_2(tf.rwa_speed_rd_fp->get()));
+    elements_same(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get());
+    elements_same(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get());
+    TEST_ASSERT_EQUAL(2, tf.ssa_mode_fp->get());
+    elements_same(ref_three_unit, tf.ssa_vec_fp->get());
+
+    for(int i = 0; i<20; i++){
+        TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
+    }
+
+    elements_same(ref_mag_vec,tf.mag_vec_fp->get());
+    elements_same(ref_gyr_vec, tf.gyr_vec_fp->get());
+    TEST_ASSERT_EQUAL(imu::max_rd_temp, tf.gyr_temp_fp->get());
+
 }
 
 int test_control_task()

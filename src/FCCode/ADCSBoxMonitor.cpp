@@ -31,15 +31,20 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         std::stringstream ss;
         //actually create the state fields for ssa_voltages
         //only one serializer is needed
-        for(int i = 0; i<20;i++){
-            ss<<i;
-            std::string temp;
-            ss>>temp;
+
+        char buffer [3];
+        //return 0;
+
+        for(unsigned int i = 0; i<20;i++){
 
             //sprintf!
 
             //ssa_voltages_f.emplace_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+std::to_string(i),ssa_voltage_sr));
-            ssa_voltages_f.emplace_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+ss.str(), ssa_voltage_sr));
+            //ssa_voltages_f.emplace_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+ss.str(), ssa_voltage_sr));
+            ssa_voltages_f.emplace_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+sprintf(buffer, "%u", i), ssa_voltage_sr));
+
+                        
+
 
         }
 
@@ -95,6 +100,4 @@ void ADCSBoxMonitor::execute(){
     gyr_vec_f.set(gyr_vec);
     gyr_temp_f.set(gyr_temp);
 
-
-    
 }
