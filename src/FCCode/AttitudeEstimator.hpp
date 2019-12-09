@@ -2,7 +2,7 @@
 #define ATTITUDE_ESTIMATOR_HPP_
 
 #include <gnc_attitude_estimation.hpp>
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 
 /**
  * @brief Using raw sensor inputs, determine the attitude and angular state

@@ -1,7 +1,7 @@
 #ifndef MISSION_MANAGER_HPP_
 #define MISSION_MANAGER_HPP_
 
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 
 #include "mission_mode_t.enum"
 #include "adcs_mode_t.enum"

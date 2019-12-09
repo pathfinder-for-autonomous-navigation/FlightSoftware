@@ -1,7 +1,7 @@
 #ifndef DEBUG_TASK_HPP_
 #define DEBUG_TASK_HPP_
 
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 
 class DebugTask : public TimedControlTask<void> {
 public:

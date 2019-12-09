@@ -4,7 +4,7 @@
 #include <string>
 #include <GPSTime.hpp>
 
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 
 #include "piksi_mode_t.enum"
 

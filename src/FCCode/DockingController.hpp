@@ -4,7 +4,7 @@
 #define DOCKING_CONTROLLER_HPP_
 
 #include "../../test/StateFieldRegistryMock.hpp"
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 #include "../../lib/Drivers/DockingSystem.hpp"
 
 class DockingController : public TimedControlTask<void> {

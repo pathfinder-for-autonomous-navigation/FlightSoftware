@@ -3,7 +3,7 @@
 #ifndef GOMSPACE_CONTROLLER_HPP_
 #define GOMSPACE_CONTROLLER_HPP_
 
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 #include <Gomspace.hpp>
 
 class GomspaceController : public TimedControlTask<void> {
