@@ -70,7 +70,7 @@ void serialEvent() {
       adcs.get_imu(&magnetometer1,&gyro,&gyro_temperature);
       reading_time=float(millis())/1000.0f;
       if (!adcs.i2c_data_is_valid()){
-        Serial.println("ADCS box Transmission Failed!");
+        //Serial.println("ADCS box Transmission Failed!");
         gyro={NAN,NAN,NAN};
         magnetometer1={NAN,NAN,NAN};
         gyro_temperature=NAN;
@@ -104,6 +104,7 @@ void serialEvent() {
       adcs.set_mtr_cmd(magnetorquer_commanded_moment);
       break;
   }
+  delay(100);
   Serial.readStringUntil('\n');//clear out rest of command.
   Serial.println('a');//Write acknowledge, tells the computer the teensy is ready for more commands
   digitalWrite(LED_BUILTIN, LOW); // LED off

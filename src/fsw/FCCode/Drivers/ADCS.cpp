@@ -79,11 +79,11 @@ void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& 
     unsigned char cmd[6];
     for(int i = 0;i<3;i++){
         unsigned short comp = 0;
-        if(rwa_mode == 1)
+        if(rwa_mode == RWA_SPEED_CTRL)
             comp = us(rwa_cmd[i],rwa::min_speed_command,rwa::max_speed_command);
-        else if(rwa_mode == 2)
+        else if(rwa_mode == RWA_ACCEL_CTRL)
             comp = us(rwa_cmd[i],rwa::min_torque,rwa::max_torque);
-        cmd[2*i] = comp;
+        cmd[2*i] = comp & 0xFF;
         cmd[2*i+1] = comp >> 8;
     }
     i2c_write_to_subaddr(RWA_COMMAND,cmd,6);
