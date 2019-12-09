@@ -59,11 +59,12 @@ class BitStream{
   bool has_next();
 
 /**
- * @brief consumes the next [i] number of bits if possible
- * @return returns a uint8_t representing the next 8 bits, returns 0 if stream
+ * @brief consumes the next num_bits number of bits if possible
+ * @param num_bits the number of bits to read. Maximum is 8
+ * @return returns a uint8_t containing the next i bits, returns 0 if stream
  * is empty
  */
-  uint32_t nextN(size_t i);
+  uint8_t nextN(size_t num_bits);
 
 /**
  * @brief does not consume the next[i] number of bits
@@ -114,8 +115,18 @@ class BitStream{
  */
   void seekG(size_t amt, int dir);
 
-  size_t editN(size_t num_bits, uint8_t* new_val);
+/**
+ * @brief Writes a specified number of bits of the given unsigned byte to the
+ * current position of the bitstream. The stream is "consumed", so bit_offset
+ * and byte_offset will move to reflect the number of bits written
+ * @param u8 8 bit unsigned int to write to the current position in the stream
+ * @param num_bits the number of bits to write from u8
+ * @return The number of bits written
+ * 
+ */
   size_t editN(size_t num_bits, uint8_t u8);
+  size_t editN(size_t num_bits, uint8_t* new_val);
+  size_t editN(size_t num_bits, BitStream& bs_other);
 };
 
 /**

@@ -407,6 +407,37 @@ void test16()
   TEST_ASSERT_EQUAL(0x2b, *reinterpret_cast<uint16_t*>(res0));
 }
 
+// Test >> operator on BitStreams
+void test17()
+{
+  char mydata[8];
+  // 2    1    4    3    6    5    2    1    9    0    5    0    8
+  // 0100 1000 0010 1100 0110 1010 0100 1000 1001 0000 1010 0000 0001
+  memcpy(mydata, "\x12\x34\x56\x67\x12\x09\x05\x80", 8);
+  char mydata2[2];
+  memset(mydata2, 0, 2);
+
+  BitStream bs1(mydata, 8);
+  BitStream bs2(mydata2, 2);
+
+  // Test write fewer than 8 bits 
+
+  // Test write (destination no more bits)
+
+  // Test write (source no more bits)
+
+  // Test write < 8 bits to source with bit offset
+
+  // Test write < 8 bits from dest with bit offset
+
+  // Test write > 8 bits to source with bit offset
+
+  // Test write > 8 bits from dest with bit offset
+
+  // Test write transform and transform back
+
+}
+
 /**
  * Recursive helper function to print bits into little endian in order to
  * paste into python to evaluate binary numbers
