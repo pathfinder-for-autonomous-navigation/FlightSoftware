@@ -75,10 +75,10 @@ class TestFixture {
         size_t size_of_stream = (total_size + 3*uplink_consumer->index_size + 7) / 8;
         char* tmp = new char[size_of_stream];
         ref_stream = new BitStream(tmp, size_of_stream);
-        for (size_t i = 0; i < registry.writable_fields.size(); ++i)
+        for (uint8_t i = 0; i < registry.writable_fields.size(); ++i)
         {
             std::vector<bool> w = registry.writable_fields[i]->get_bit_array();
-            ref_stream->editN(uplink_consumer->index_size, (uint8_t)i);
+            ref_stream->editN(uplink_consumer->index_size, &i);
             w << *ref_stream;
         }
     }
@@ -94,7 +94,7 @@ class TestFixture {
         size_t stream_size = (bit_arr.size() + 7) / 8;
         uint8_t res[stream_size];
         in.nextN(bit_arr.size(), res);
-        out.editN(uplink_consumer->index_size, (uint8_t)index);
+        out.editN(uplink_consumer->index_size, (uint8_t*)&index);
         out.editN(bit_arr.size(), res);
     }
 
@@ -108,7 +108,7 @@ class TestFixture {
     {
         auto bit_arr = registry.writable_fields[index]->get_bit_array();
         // Slice the index size by converting it to BitStream
-        out.editN(uplink_consumer->index_size, (uint8_t)index);
+        out.editN(uplink_consumer->index_size, (uint8_t*)&index);
         out.editN(val_size, reinterpret_cast<uint8_t*>(val));
     }
 };

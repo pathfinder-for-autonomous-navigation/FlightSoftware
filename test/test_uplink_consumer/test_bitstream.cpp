@@ -7,11 +7,12 @@
 void test1()
 {
   char* myarr = (char*)"\xde\xad\xbe\xef\xab\xcd\xef";
-  uint32_t actual [14] = {0xe, 0xd, 0xd, 0xa, 0xe, 0xb, 0xf, 0xe, 0xb, 0xa, 0xd, 0xc, 0xf, 0xe};
+  uint8_t actual [14] = {0xe, 0xd, 0xd, 0xa, 0xe, 0xb, 0xf, 0xe, 0xb, 0xa, 0xd, 0xc, 0xf, 0xe};
   BitStream bs(myarr, 7);
+  uint8_t res = 0;
   for (int i = 0; i < 14; ++i)
   {
-    uint32_t res = bs.nextN(4);
+    bs.nextN(4, &res);
     TEST_ASSERT_EQUAL(actual[i], res);
   }
 }
@@ -23,9 +24,10 @@ void test2()
 {
   char* myarr = (char*)"\xde\xad\xbe\xef\xab\xcd\xef";
   BitStream bs(myarr, 7);;
+  uint8_t res = 0;
   for (int i = 0; i < 7; ++i)
   {
-    uint32_t res = bs.nextN(8);;
+    bs.nextN(8, &res);
     TEST_ASSERT_EQUAL( *(reinterpret_cast<uint8_t*>(myarr) + i), res);
   }
 }
@@ -36,11 +38,12 @@ void test2()
 void test3()
 {
   char* myarr = (char*)"\xde\xad\xbe\xef\xab\xcd\xef";
-  uint32_t actual [19] = {6, 3, 7, 6, 2, 5, 7, 5, 7, 5, 7, 5, 2, 3, 3, 6, 7, 5, 3};
+  uint8_t actual [19] = {6, 3, 7, 6, 2, 5, 7, 5, 7, 5, 7, 5, 2, 3, 3, 6, 7, 5, 3};
   BitStream bs(myarr, 7);
+  uint8_t res = 0;
   for (int i = 0; i < 19; ++i)
   {
-    uint32_t res = bs.nextN(3);
+    bs.nextN(3, &res);
     TEST_ASSERT_EQUAL(actual[i], res);
   }
 }
@@ -51,11 +54,12 @@ void test3()
 void test4()
 {
   char* myarr = (char*)"\xde\xad\xbe\xef\xab\xcd\xef";
-  uint32_t actual [12] = {30, 14, 11, 29, 27, 23, 15, 21, 13, 30, 27, 1};
+  uint8_t actual [12] = {30, 14, 11, 29, 27, 23, 15, 21, 13, 30, 27, 1};
   BitStream bs(myarr, 7);
+  uint8_t res = 0;
   for (int i = 0; i < 12; ++i)
   {
-    uint32_t res = bs.nextN(5);
+    bs.nextN(5, &res);
     TEST_ASSERT_EQUAL(actual[i], res);
   }
 }
@@ -66,11 +70,12 @@ void test4()
 void test5()
 {
   char* myarr = (char*)"\xde\xad\xbe\xef\xab\xcd\xef";
-  uint32_t actual [8] = {94, 91, 122, 125, 62, 53, 115, 119};
+  uint8_t actual [8] = {94, 91, 122, 125, 62, 53, 115, 119};
   BitStream bs(myarr, 7);
+  uint8_t res = 0;
   for (int i = 0; i < 8; ++i)
   {
-    uint32_t res = bs.nextN(7);
+    bs.nextN(7, &res);
     TEST_ASSERT_EQUAL(actual[i], res);
   }
 }
@@ -84,7 +89,8 @@ void test6()
   uint8_t res[64];
   uint32_t actual [7] = {0xde, 0xad, 0xbe, 0xef, 0xab, 0xcd, 0xef};
   BitStream bs(myarr, 7);
-  bs.nextN(64, res);
+  size_t bits_read = bs.nextN(64, res);
+  TEST_ASSERT_EQUAL(56, bits_read); // there are only 56 bits
   for (int i = 0; i < 7; ++i)
   {
     TEST_ASSERT_EQUAL(actual[i], (uint32_t)res[i]);
@@ -105,8 +111,8 @@ void test7()
   char arr [ (bit_arr.size() + 7)/8 ];
   BitStream bs(bit_arr, arr); 
   uint8_t res[4];
-  bs.nextN(32, res);
-
+  size_t bits_read = bs.nextN(32, res);
+  TEST_ASSERT_EQUAL(32, bits_read);
   uint8_t expect[4] = {0xef, 0xbe, 0xad, 0xde};
   for (int i = 0; i < 4; ++i)
   {
@@ -130,8 +136,8 @@ void test8()
   char arr [ (bit_arr.size() + 7)/8 ];
   BitStream bs(bit_arr, arr); 
   uint8_t res[4];
-  bs.nextN(18, res);
-
+  size_t bits_read = bs.nextN(18, res);
+  TEST_ASSERT_EQUAL(18, bits_read);
   uint8_t expect[4] = {0xef, 0xbe, 0x1};
   for (int i = 0; i < 3; ++i)
   {
@@ -145,12 +151,13 @@ void test8()
 void test9()
 {
   char* myarr = (char*)"\xde\xad\xbe\xef\xab\xcd\xef";
-  uint32_t actual [7] = {222, 173, 190, 239, 171, 205, 239};
+  uint8_t actual [7] = {222, 173, 190, 239, 171, 205, 239};
   BitStream bs(myarr, 7);
+  uint8_t res = 0;
   for (int i = 0; i < 7; ++i)
   {
-    uint32_t res = bs.nextN(8);
-    TEST_ASSERT_EQUAL((uint32_t)actual[i], res);
+    bs.nextN(8, &res);
+    TEST_ASSERT_EQUAL(actual[i], res);
   }
 }
 
@@ -164,7 +171,8 @@ void test10()
   // 0xdeadbeefabcdef
   BitStream bs(myarr, 7);
   std::vector<bool> my_ba = std::vector<bool>(56, 0); 
-  bs.nextN(42, my_ba);
+  size_t bits_read = bs.nextN(42, my_ba);
+  TEST_ASSERT_EQUAL(42, bits_read);
   uint8_t expect;
   for (int i = 0; i < 6; ++i ) 
   {
@@ -178,7 +186,6 @@ void test10()
       TEST_ASSERT_EQUAL( expect, my_ba[i*8 + j] );
     }
   }
-
   for (int i = 42; i < 64; ++i) // everyone else should be 0
   {
     TEST_ASSERT_EQUAL( 0, my_ba[i] );
@@ -250,7 +257,6 @@ void test13()
   bs.seekG(19, bs_beg); // move back 19 bits // 10 1001
   bs >> u8;
   TEST_ASSERT_EQUAL(41, u8);
-
 }
 
 /**
@@ -360,7 +366,8 @@ void test16()
   BitStream bs(non_const, 4);
 
   // 0100 1
-  uint8_t u8 = u8 = bs.nextN(5);
+  uint8_t u8 = 0;
+  bs.nextN(5, &u8);
   TEST_ASSERT_EQUAL(5, bs.bit_offset);
   TEST_ASSERT_EQUAL(0, bs.byte_offset);
   TEST_ASSERT_EQUAL(0x12, u8);
@@ -442,13 +449,13 @@ void test17()
  * Recursive helper function to print bits into little endian in order to
  * paste into python to evaluate binary numbers
  */
-std::string dumbrecursive(BitStream& bs, int stop, std::string ms)
-{
-  if (stop == 0)
-    return ms;
-  std::string bad =  std::to_string(bs.nextN(1));
-  return dumbrecursive(bs, --stop, bad + ms);
-}
+// std::string dumbrecursive(BitStream& bs, int stop, std::string ms)
+// {
+//   if (stop == 0)
+//     return ms;
+//   std::string bad =  std::to_string(bs.nextN(1));
+//   return dumbrecursive(bs, --stop, bad + ms);
+// }
 
 int test_bitstream()
 {
