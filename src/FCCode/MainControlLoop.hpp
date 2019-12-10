@@ -1,7 +1,7 @@
 #ifndef MAIN_CONTROL_LOOP_TASK_HPP_
 #define MAIN_CONTROL_LOOP_TASK_HPP_
 
-#include <ControlTask.hpp>
+#include "ControlTask.hpp"
 #include <StateField.hpp>
 #include <StateFieldRegistry.hpp>
 

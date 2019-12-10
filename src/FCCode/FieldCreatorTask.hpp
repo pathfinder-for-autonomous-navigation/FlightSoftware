@@ -1,7 +1,7 @@
 #ifndef FIELD_CREATOR_TASK_HPP_
 #define FIELD_CREATOR_TASK_HPP_
 
-#include <ControlTask.hpp>
+#include "ControlTask.hpp"
 
 // This class does the unpleasant task of creating state fields that
 // controllers expect to see but for which we haven't defined any
