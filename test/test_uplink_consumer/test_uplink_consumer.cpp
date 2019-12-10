@@ -387,7 +387,7 @@ void test_mixed_validity_updates()
     tf.create_uplink(out, reinterpret_cast<char*>(&new_field_2), idx2);
    
     // Rig the game and add corrupt the packet here
-    out.seekG(4, bs_end);
+    out.seekG(2, bs_end);
 
     uint8_t new_field_3 = (uint8_t)0xf15;
     tf.create_uplink(out, reinterpret_cast<char*>(&new_field_3), idx3);

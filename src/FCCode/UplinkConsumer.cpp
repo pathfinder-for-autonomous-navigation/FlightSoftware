@@ -69,15 +69,24 @@ bool UplinkConsumer::validate_packet()
     size_t packet_bytes = (radio_mt_packet_len_f.get() + 7)/8;
     BitStream bs (radio_mt_packet_f.get(), packet_bytes);
     size_t field_index = 0, field_len = 0, bits_checked = 0, bits_seeked;
-     while (bits_checked < radio_mt_packet_len_f.get())
+    // Keep a bit map to prevent updating the same field twice
+    vector<bool> bit_map(registry.writable_fields.size(), 0);
+ 
+    while (bits_checked < radio_mt_packet_len_f.get())
     {
         // Get indices form bitstream
         bits_checked += bs.nextN(index_size, reinterpret_cast<uint8_t*>(&field_index));
-        
+
         // Check if index is within writable_fields        
         field_len = get_field_length(field_index);
 
-        if (field_len == 0) return false;
+        if (field_len == 0) 
+            return false;
+
+        if (bit_map[field_index]) // there is no updating the same index
+            return false;
+
+        bit_map[field_index] = 1;
 
         bits_seeked = bs.seekG(field_len, bs_end);
 
@@ -88,6 +97,15 @@ bool UplinkConsumer::validate_packet()
 
         bits_checked += bits_seeked;
     }
-    return bs.byte_offset + 1 >= bs.max_len;
+    if (bs.byte_offset + 1 < bs.max_len) 
+        return false;
+
+    // Consume the rest
+    uint8_t u8 = 0;
+    size_t padding = bs.nextN(8, &u8);
+    // Return false if there was more than 8 bits of padding
+    // Also return false if u8 is not 0
+    return (u8 == 0 && padding < 8);
+
 }
 
