@@ -111,15 +111,25 @@ class BitStream{
   size_t seekG(size_t amt, int dir);
 
 /**
- * @brief Writes a specified number of bits of the given unsigned byte to the
- * current position of the bitstream. The stream is "consumed", so bit_offset
- * and byte_offset will move to reflect the number of bits written
- * @param u8 8 bit unsigned int to write to the current position in the stream
- * @param num_bits the number of bits to write from u8
- * @return The number of bits written
+ * @brief Write a number of bits from new_val to this BitStream
+ * @param new_val The data source to read from
+ * @param num_bits The number of bits to write
+ * @return the number of bits written
  */
   size_t editN(size_t num_bits, uint8_t* new_val);
+
+/**
+ * @brief Write a number of bits from bs_other to this BitStream
+ * @param bs_other The source bitstream
+ * @param num_bits The number of bits to write
+ * @return the number of bits written
+ */
   size_t editN(size_t num_bits, BitStream& bs_other);
+
+/**
+ * @brief sets the byte_offset and bit_offset to 0
+ */
+  void reset();
 
   private:
   //These functions are private because they are unsafe
@@ -132,6 +142,14 @@ class BitStream{
  */
   size_t next(size_t num_bits, uint8_t* u8);
 
+/**
+ * @brief Writes a specified number of bits of the given unsigned byte to the
+ * current position of the bitstream. The stream is "consumed", so bit_offset
+ * and byte_offset will move to reflect the number of bits written
+ * @param u8 8 bit unsigned int to write to the current position in the stream
+ * @param num_bits the number of bits to write from u8
+ * @return The number of bits written
+ */
   size_t edit(size_t num_bits, uint8_t* u8);
 
 };

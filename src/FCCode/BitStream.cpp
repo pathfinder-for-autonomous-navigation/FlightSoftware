@@ -143,15 +143,15 @@ size_t BitStream::seekG(size_t amt, int dir)
   return amt;
 }
 
-size_t BitStream::edit(size_t num_bits, uint8_t* u8)
+size_t BitStream::edit(size_t num_bits, uint8_t* val)
 {
   uint8_t old = *reinterpret_cast<uint8_t*>(stream + byte_offset);
-  
+  uint8_t u8 = *val;
   uint8_t bits_written = 0;
   // Write until the next byte starts
   size_t amt = 8 - bit_offset;
-  for (size_t i = 0; i < amt && bits_written < num_bits; ++i, *u8 >>= 1, ++bits_written)
-    old = bit_array::modify_bit(old, bit_offset + i, *u8&1);
+  for (size_t i = 0; i < amt && bits_written < num_bits; ++i, u8 >>= 1, ++bits_written)
+    old = bit_array::modify_bit(old, bit_offset + i, u8&1);
   
   // Write the lower bits
   *reinterpret_cast<uint8_t*>(stream + byte_offset) = old;
@@ -161,9 +161,9 @@ size_t BitStream::edit(size_t num_bits, uint8_t* u8)
   {
     old = *reinterpret_cast<uint8_t*>(stream + byte_offset + 1);
     // Write to the beginning of the next byte
-    for (size_t i = 0; i < bit_offset && bits_written < num_bits; ++i, *u8 >>= 1, ++bits_written)
+    for (size_t i = 0; i < bit_offset && bits_written < num_bits; ++i, u8 >>= 1, ++bits_written)
     {
-      old = bit_array::modify_bit(old, i, *u8&1);
+      old = bit_array::modify_bit(old, i, u8&1);
     }
     // Write the rest of the upper bits
     *reinterpret_cast<uint8_t*>(stream + byte_offset + 1) = old;
@@ -175,29 +175,40 @@ size_t BitStream::edit(size_t num_bits, uint8_t* u8)
 size_t BitStream::editN(size_t num_bits, uint8_t* new_val)
 {
   size_t num_iters = num_bits/8;
+  if (num_iters > byte_offset + max_len)
+    num_iters = max_len - byte_offset;
   size_t modulo = num_bits%8;
   size_t bits_written = 0;
   for (int i = 0; i < num_iters; ++i)
   {
-    bits_written = edit(8, new_val + i);
+    bits_written += edit(8, new_val + i);
   }
   if (modulo != 0)
   {
-    bits_written = edit(modulo, new_val + num_iters);
+    bits_written += edit(modulo, new_val + num_iters);
   }
   return bits_written;
 }
 
-/**
- * @brief Write a number of bits from bs_other to this BitStream
- * @param bs_other The source bitstream
- * @param num_bits The number of bits to write
- * @return the number of bits written
- */
 size_t BitStream::editN(size_t num_bits, BitStream& bs_other)
 {
+  size_t arr_size = (num_bits + 7)/8;
+  uint8_t tmp[arr_size];
+  memset(tmp, 0, arr_size);
 
-  return 0;
+  size_t bits_written = 0;
+
+  // Attempt to read [num_bits] from bs_other
+  bits_written = bs_other.nextN(num_bits, tmp);
+  // Write those bits to this BitStream
+  bits_written = editN(bits_written, tmp);
+  return bits_written;
+}
+
+void BitStream::reset()
+{
+  byte_offset = 0;
+  bit_offset = 0;
 }
 
 BitStream& operator >>(BitStream& bs, uint32_t& res)
@@ -252,31 +263,7 @@ BitStream& operator <<(std::vector<bool>& ba, BitStream& bs)
 
 BitStream& operator <<(BitStream& bs_other, BitStream& bs)
 {
-  // if (bs_other.max_len + bs.byte_offset > bs.max_len)
-  //   return bs; 
   size_t num_bits = (bs_other.max_len - bs_other.byte_offset)*8 - bs_other.bit_offset;
-  size_t arr_size = (num_bits + 7)/8;
-  char tmp[arr_size];
-  memset(tmp, 0, arr_size);
-  bs_other.nextN(num_bits, reinterpret_cast<uint8_t*>(tmp));
-  bs.editN(num_bits, reinterpret_cast<uint8_t*>(tmp));
-  // size_t cut_off = 8 - bs_other.bit_offset;
-  // uint8_t u8 = bs_other.nextN(cut_off);
-  // bs.editN(cut_off, u8);
-  // num_bits -= cut_off;
-
-  // size_t num_iters = num_bits/8;
-  // size_t modulo = num_bits%8;
-  // for (int i = 0; i < num_iters && bs_other.has_next() && bs.has_next() && num_bits > 0; ++i)
-  // {
-  //   bs_other >> u8;
-  //   bs.editN(8, u8);
-  //   num_bits -= 8;
-  // }
-  // if (modulo != 0)
-  // {
-  //   bs_other >> u8;
-  //   bs.editN(modulo, u8);
-  // }
+  bs.editN(num_bits, bs_other);
   return bs;
 }

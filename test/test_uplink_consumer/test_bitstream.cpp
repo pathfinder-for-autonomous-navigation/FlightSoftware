@@ -400,7 +400,8 @@ void test16()
   TEST_ASSERT_EQUAL(3, bs.byte_offset);
   TEST_ASSERT_EQUAL(1, bs.bit_offset);
   memset(res0, 0, 2);
-  bs.peekN(8, res0);
+  size_t amt = bs.peekN(8, res0);
+  TEST_ASSERT_EQUAL(7, amt);
   TEST_ASSERT_EQUAL(0x3c, *reinterpret_cast<uint16_t*>(res0));
   // attempt to write 8 bits
   // b    a
@@ -410,7 +411,8 @@ void test16()
   bs.seekG(7, bs_beg);
   // Should become
   memset(res0, 0, 2);
-  bs.peekN(8, res0);
+  amt = bs.peekN(8, res0);
+  TEST_ASSERT_EQUAL(7, amt);
   TEST_ASSERT_EQUAL(0x2b, *reinterpret_cast<uint16_t*>(res0));
 }
 
@@ -418,31 +420,81 @@ void test16()
 void test17()
 {
   char mydata[8];
-  // 2    1    4    3    6    5    2    1    9    0    5    0    8
-  // 0100 1000 0010 1100 0110 1010 0100 1000 1001 0000 1010 0000 0001
-  memcpy(mydata, "\x12\x34\x56\x67\x12\x09\x05\x80", 8);
+  // 2    1    4    3    6    5    8    7    2    1    9    0    5    0    8
+  // 0100 1000 0010 1100 0110 1010 0001 1110 0100 1000 1001 0000 1010 0000 0001
+  memcpy(mydata, "\x12\x34\x56\x78\x12\x09\x05\x80", 8);
   char mydata2[2];
   memset(mydata2, 0, 2);
 
-  BitStream bs1(mydata, 8);
-  BitStream bs2(mydata2, 2);
+  BitStream bs_src(mydata, 8);
+  BitStream bs_dst(mydata2, 2);
 
   // Test write fewer than 8 bits 
+  size_t num_written = bs_dst.editN(5, bs_src);
+  TEST_ASSERT_EQUAL(num_written, 5);
+  bs_dst.seekG(num_written, bs_beg);
+  uint8_t u8 = 0;
+  bs_dst >> u8;
+  TEST_ASSERT_EQUAL(0x12, u8);
 
   // Test write (destination no more bits)
+  bs_src.reset();
+  bs_dst.reset();
+  num_written = bs_dst.editN(16, bs_src);
+  bs_dst.reset();
+  TEST_ASSERT_EQUAL(16, num_written);
+  uint16_t u16 = 0;
+  bs_dst >> u16;
+  TEST_ASSERT_EQUAL(0x3412, u16);
 
   // Test write (source no more bits)
-
-  // Test write < 8 bits to source with bit offset
-
-  // Test write < 8 bits from dest with bit offset
+  bs_dst.reset();
+  bs_src.reset();
+  bs_src.seekG(8*7,bs_end);
+  bs_src << bs_dst;
+  bs_dst.reset();
+  bs_dst >> u8;
+  TEST_ASSERT_EQUAL(0x80, u8);
+  bs_dst.reset();
+  bs_dst >> u16;
+  TEST_ASSERT_EQUAL(0x3480, u16);
 
   // Test write > 8 bits to source with bit offset
+  bs_dst.reset();
+  bs_src.reset();
+
+  //   b     2     c     3
+  // 0|110 1|010 0|001 1|110 0|100
+  bs_src.seekG(17, bs_end);
+  bs_dst.editN(16, bs_src);
+  bs_dst.reset();
+  bs_dst >> u16;
+ TEST_ASSERT_EQUAL(0x3c2b, u16);
 
   // Test write > 8 bits from dest with bit offset
+  bs_dst.reset();
+  bs_src.reset();
+  bs_dst.seekG(3, bs_end);
+  // 3     9    0    a
+  //     0 1001 0000 0101
+  // 110|1 0100 0011 1100
+  num_written = bs_dst.editN(32, bs_src);
+  TEST_ASSERT_EQUAL(13, num_written);
+  bs_dst.reset();
+  bs_dst >> u16;
+  TEST_ASSERT_EQUAL(0xa093, u16);
 
-  // Test write transform and transform back
-
+  // Test write < 8 bits to dst with bit offset
+  bs_dst.reset(), bs_src.reset();
+  // 1101 0100 00|11 1100
+  bs_dst.seekG(11, bs_end);
+  bs_src.seekG(17, bs_end);
+  //               1 10
+  // 1100 1001 000|0 0101
+  bs_dst.editN(3, bs_src);
+  bs_dst.reset();
+  bs_dst >> u16;
+  TEST_ASSERT_EQUAL(0x9893, u16);
 }
 
 /**
@@ -476,6 +528,7 @@ int test_bitstream()
     RUN_TEST(test14);
     RUN_TEST(test15);
     RUN_TEST(test16);
+    RUN_TEST(test17);
     return UNITY_END();
 }
 
