@@ -17,6 +17,8 @@
  * that stays in scope during the lifetime of the bitstream
  */
 #include <vector>
+#include <cstdint>
+#include <cstddef>
 using namespace std;
 
 #define bs_beg -1 // bit stream in the direction towards the beginning

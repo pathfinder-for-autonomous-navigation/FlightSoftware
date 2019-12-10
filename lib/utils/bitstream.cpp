@@ -1,4 +1,5 @@
 #include "bitstream.h"
+#include <cstring>
 #include <fixed_array.hpp>
 
 bitstream::bitstream(char* input, uint32_t stream_size) :
