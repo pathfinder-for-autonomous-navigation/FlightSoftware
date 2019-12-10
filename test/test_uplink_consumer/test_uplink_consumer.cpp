@@ -38,7 +38,9 @@ class TestFixture {
     std::map<std::string, size_t> field_map;
     size_t total_size; // total size in bits of all the writable fields
     BitStream* ref_stream; // packet representing the initial values of the fields
-
+   
+   // Make external fields
+    char mt_buffer[350];
     
     // Create a TestFixture instance of QuakeManager with the following parameters
     TestFixture() : registry() {
@@ -49,10 +51,7 @@ class TestFixture {
         adcs_ang_rate_fp = registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
         adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
         mission_mode_fp = registry.create_writable_field<unsigned char>("pan.mode");
-        sat_designation_fp = registry.create_writable_field<unsigned char>("pan.sat_designation"); // should be 6 writable fields --> 3 bits
-
-        // Make external fields
-        char mt_buffer[350]; 
+        sat_designation_fp = registry.create_writable_field<unsigned char>("pan.sat_designation"); // should be 6 writable fields --> 3 bits 
 
         // Initialize internal fields
         uplink_consumer = std::make_unique<UplinkConsumer>(registry, 0);
@@ -69,7 +68,7 @@ class TestFixture {
             auto w = registry.writable_fields[i];
             field_map[w->name().c_str()] = i;
             w->name();
-            from_ull(w, rand());
+            from_ull(w, rand()); // no seed so should be the same each time
             total_size += w->get_bit_array().size();
         }
         size_t size_of_stream = (total_size + 3*uplink_consumer->index_size + 7) / 8;
@@ -88,14 +87,13 @@ class TestFixture {
      * given by index
      * @param index The index of the writable field that we want to update
      */
-    void create_uplink( BitStream& out, BitStream& in, size_t index)
+    size_t create_uplink( BitStream& out, BitStream& in, size_t index)
     {
+        size_t bits_written = 0;
         auto bit_arr = registry.writable_fields[index]->get_bit_array();
-        size_t stream_size = (bit_arr.size() + 7) / 8;
-        uint8_t res[stream_size];
-        in.nextN(bit_arr.size(), res);
-        out.editN(uplink_consumer->index_size, (uint8_t*)&index);
-        out.editN(bit_arr.size(), res);
+        bits_written += out.editN(uplink_consumer->index_size, (uint8_t*)&index);
+        bits_written += out.editN(bit_arr.size(), in);
+        return bits_written;
     }
 
     /**
@@ -103,13 +101,17 @@ class TestFixture {
      * @param val Array of chars containing the data to be assigned to the field
      * @param val_size The number of bits of val to assign to the field
      * @param index The index of the writable field that we want to update
+     * @param return 0 if val_size > field size, else the number of bits written
      */
-    void create_uplink( BitStream& out, char* val, size_t val_size, size_t index)
+    size_t create_uplink( BitStream& out, char* val, size_t index)
     {
-        auto bit_arr = registry.writable_fields[index]->get_bit_array();
-        // Slice the index size by converting it to BitStream
-        out.editN(uplink_consumer->index_size, (uint8_t*)&index);
-        out.editN(val_size, reinterpret_cast<uint8_t*>(val));
+        size_t bits_written = 0;
+        size_t field_size = uplink_consumer->get_field_length(index);
+        // Write the index
+        bits_written += out.editN(uplink_consumer->index_size, (uint8_t*)&index);
+        // Write the specified number of bits from val
+        bits_written += out.editN(field_size, reinterpret_cast<uint8_t*>(val));
+        return bits_written;
     }
 };
 
@@ -128,10 +130,9 @@ void test_create_uplink()
 
     // Create the expected result
     size_t idx = tf.field_map["adcs.mode"];
-    size_t idx_size = tf.uplink_consumer->index_size;
-    size_t field_len = tf.uplink_consumer->get_field_length(idx);
+    size_t packet_size = tf.uplink_consumer->index_size + tf.uplink_consumer->get_field_length(idx);
 
-    std::vector<bool> expect(idx_size, 0);
+    std::vector<bool> expect(packet_size, 0);
     expect[0] = 1;
     expect[1] = 0;
     expect[2] = 0;
@@ -140,14 +141,15 @@ void test_create_uplink()
     expect[5] = 0;
     expect[6] = 1;
     // Create an entry in output packet BitStream to update adcs.mode
-    tf.create_uplink(out, data, field_len, idx);
-    out.seekG( idx_size + field_len, bs_beg);
+    size_t bits_written = tf.create_uplink(out, data, idx);
+    TEST_ASSERT_EQUAL(packet_size, bits_written);
+    out.reset();
 
     // Retrieve data from the packet to see if it's there
-    std::vector<bool> actual(field_len + idx_size, 0);
+    std::vector<bool> actual(bits_written, 0);
     out >> actual;
 
-    for (int i = 0; i < field_len + idx_size; ++i)
+    for (int i = 0; i < bits_written; ++i)
     {
         //cout << expect[i] <<  " " << actual[i] << endl;
         TEST_ASSERT_EQUAL(expect[i], actual[i]);
@@ -169,10 +171,9 @@ void test_create_uplink_other()
 
     // Create the expected result
     size_t idx = tf.field_map["adcs.mode"];
-    size_t idx_size = tf.uplink_consumer->index_size;
-    size_t field_len = tf.uplink_consumer->get_field_length(idx);
+    size_t packet_size = tf.uplink_consumer->index_size + tf.uplink_consumer->get_field_length(idx);
 
-    std::vector<bool> expect(idx_size, 0);
+    std::vector<bool> expect(packet_size, 0);
     expect[0] = 1;
     expect[1] = 0;
     expect[2] = 0;
@@ -181,14 +182,15 @@ void test_create_uplink_other()
     expect[5] = 0;
     expect[6] = 1;
     // Create an entry in output packet BitStream to update adcs.mode
-    tf.create_uplink(out, in, idx);
-    out.seekG( idx_size + field_len, bs_beg);
+    size_t bits_written = tf.create_uplink(out, in, idx);
+    TEST_ASSERT_EQUAL(packet_size, bits_written);
+    out.reset();
 
     // Retrieve data from the packet to see if it's there
-    std::vector<bool> actual(field_len + idx_size, 0);
+    std::vector<bool> actual(bits_written, 0);
     out >> actual;
 
-    for (int i = 0; i < field_len + idx_size; ++i)
+    for (int i = 0; i < bits_written; ++i)
     {
         //cout << expect[i] <<  " " << actual[i] << endl;
         TEST_ASSERT_EQUAL(expect[i], actual[i]);
@@ -225,32 +227,53 @@ void test_get_field_length()
 void test_update_field()
 {
     TestFixture tf;
-    // Given a valid field and value
-    size_t idx = tf.field_map["pan.mode"];
-    auto field = tf.registry.writable_fields[idx];
 
-    // Get field sizes and the bit array
-    size_t field_size = field->get_bit_array().size();
-    auto field_bit_arr = field->get_bit_array();
+    // field size is 8, initial value is 0x88
+    // 0001 0001
+    // idx = 4
+    size_t idx = tf.field_map["pan.mode"]; 
 
-    // Set fake data
-    char* fake_data = (char*)"\xce\xfa\xef\xbe\xaa\xbb\xcc\xdd"; 
-    tf.radio_mt_packet_fp->set(fake_data);
-    tf.radio_mt_packet_len_fp->set(8);
-
-    tf.uplink_consumer->update_field(idx);
+    // idx = 3, initial value is 0x6, field len is 4
+    // 0101
+    size_t idx2 = tf.field_map["adcs.min_stable_ang_rate"];
     
-    // Check results
-    field_bit_arr = field->get_bit_array();
-    // Make expected result
-    BitStream bs2(fake_data, 8);
-    vector<bool> expected = vector<bool>(field_size, 0);
-    bs2 >> expected;
+    // 4    3    6    5
+    // 0010 1100 0110 1010
+    // cout << "idx " << idx << " field len " << field_bit_arr.size() << " current val " << field->get_bit_array().to_uint() << endl;
+    char* fake_data = (char*)"\x34\x56\xef\xbe\xaa\xbb\xcc\xdd"; 
+    
+    size_t bits_written = 0;
+    
+    size_t packet_size = 8 + 3 + 4 + 3;
 
-    for (int i = 0; i < field_size; ++i)
-    {
-        TEST_ASSERT_EQUAL(field_bit_arr[i], expected[i]);
-    }
+    char tmp[(packet_size + 7)/8];
+    memset(tmp, 0, (packet_size + 7)/8);
+    BitStream bs_mo(tmp, (packet_size + 7)/8);
+    BitStream bs_in(fake_data, 8);
+    
+    // Create uplink for pan.mode
+    bits_written += tf.create_uplink(bs_mo, bs_in, idx); 
+
+    // Check that bitstream is at the right bit offset
+    TEST_ASSERT_EQUAL((8 + 3)%8, bs_mo.bit_offset);
+
+    // Seek for fun
+    bs_in.seekG(1, bs_end);
+    // Create uplink for adcs.min_stable_ang_rate
+    bits_written += tf.create_uplink(bs_mo, bs_in, idx2); // 110 1 --> 0xb
+    TEST_ASSERT_EQUAL(packet_size, bits_written);
+   
+    // Copy packet into the radio-mt_packet_fp->get()
+    memcpy(tf.radio_mt_packet_fp->get(), tmp, packet_size);
+    tf.radio_mt_packet_len_fp->set(packet_size);
+    tf.uplink_consumer->update_field();
+
+    // Check results
+    unsigned long field1 = tf.registry.writable_fields[idx]->get_bit_array().to_uint();
+    unsigned long field2 = tf.registry.writable_fields[idx2]->get_bit_array().to_uint();
+    // Make expected result
+    TEST_ASSERT_EQUAL(0x34, field1);
+    TEST_ASSERT_EQUAL(0xb, field2);
 }
 
 // ----------------------------------------------------------------------------
@@ -260,7 +283,7 @@ void test_update_field()
 void test_clear_mt_packet_len()
 {
     TestFixture tf;
-    tf.radio_mt_packet_len_fp->set(1);
+    tf.radio_mt_packet_len_fp->set(24);
     // If mt_packet_len is not 0, 
     TEST_ASSERT_TRUE(tf.radio_mt_packet_len_fp->get());
     tf.uplink_consumer->execute();
@@ -280,79 +303,49 @@ void test_perisist_mt_packet_len()
     TEST_ASSERT_FALSE(tf.radio_mt_packet_len_fp->get());
 }
 
-void test_check_ready()
-{
-    TestFixture tf;
-    // If mt_packet_len is 0
-    TEST_ASSERT_FALSE(tf.radio_mt_packet_len_fp->get());
-
-    // Then registry should not be updated
-}
-
-void test_do_not_update_non_writable()
-{
-    TestFixture tf;
-    // If mt_packet_len is not 0 but field specified by packet is not writable
-    size_t idx = tf.field_map["adcs.ang_rate"];
-    auto field = tf.registry.writable_fields[idx];
-
-    char* not_writable_data = (char*)"\xa1";  
-    tf.radio_mt_packet_fp->set(not_writable_data);
-
-    auto old_val = field->get_bit_array().to_ullong();
-
-    // Attempt update
-    tf.uplink_consumer->update_field(idx);
-
-    // Then that field should not be updated after execution
-    auto new_val = field->get_bit_array().to_ullong();
-    TEST_ASSERT_EQUAL(old_val, new_val);
-}
-
 void test_update_writable_field()
 {
     TestFixture tf;
-    // If mt_packet_len is not 0 && packet indicates an update to writable field
-
-    // Given a valid field and value
-    size_t idx = tf.field_map["adcs.mode"];
+    // idx 0 field len 32 current val 585640194
+    size_t idx = tf.field_map["cmd_attitude"]; 
     auto field = tf.registry.writable_fields[idx];
 
-    // Set fake packet and set ready
-    // TODO: serialize the field_index somehow and add it to this packet
-    char* fake_packet = (char*)"\xa1"; 
-    tf.radio_mt_packet_fp->set(fake_packet);
-    tf.radio_mt_packet_len_fp->set(1);
+    // idx2 5 field len 8 current val 184
+    size_t idx2 = tf.field_map["pan.sat_designation"];
+    auto field2 = tf.registry.writable_fields[idx2];
 
-    // Call execute
+    // idx3 1 field len 4 current val 5
+    size_t idx3 = tf.field_map["adcs.mode"];
+    auto field3 = tf.registry.writable_fields[idx3];
+
+    size_t packet_size = field->get_bit_array().size() + field2->get_bit_array().size() + field3->get_bit_array().size() + 3*3;
+    size_t packet_bytes =(packet_size + 7)/8;
+    
+    // Create output BitStream
+    char backer[packet_bytes];
+    memset(backer, 0, packet_bytes);
+    BitStream out(backer, packet_bytes);
+
+    uint32_t new_field = (uint32_t)0xcafefade;
+    tf.create_uplink(out, reinterpret_cast<char*>(&new_field), idx);
+
+    uint8_t new_field_2 = (uint8_t)0xf117;
+    tf.create_uplink(out, reinterpret_cast<char*>(&new_field_2), idx2);
+
+    uint8_t new_field_3 = (uint8_t)0xf15;
+    tf.create_uplink(out, reinterpret_cast<char*>(&new_field_3), idx3);
+
+    // Pretend to set shared pointers
+    memcpy(tf.radio_mt_packet_fp->get(), backer, packet_size);
+    tf.radio_mt_packet_len_fp->set(packet_size);
+
+    // Execute
     tf.uplink_consumer->execute();
 
-    // Make expected result
-    size_t field_size = tf.uplink_consumer->get_field_length(idx);
-    BitStream bs2(tf.radio_mt_packet_fp->get(), 6); // TODO: packet size should be standard
-    vector<bool> expected = vector<bool>(field_size, 0);
-    bs2 >> expected;
-
-    // Then that field should be updated to the expected value after execution
-    auto res  = field->get_bit_array();
-    for (int i = 0; i < field_size; ++i)
-    {
-      //  cout << " [test] new_bit_arr " << (uint16_t) res[i] << " expected " << (uint16_t) expected[i] << endl;
-        TEST_ASSERT_EQUAL(res[i], expected[i]);
-    }
-}
-
-void test_multiple_updates()
-{
-    TestFixture tf;
-    // If mt_packet_len is not 0 && packet requests multiple updates
-    char* multi_packet = (char*)"\xa1";  // TODO: 
-    tf.radio_mt_packet_fp->set(multi_packet);
-    tf.radio_mt_packet_len_fp->set(1);
-
-    tf.uplink_consumer->execute();
-
-    // Then all writable fields should be updated
+    // Check values
+    TEST_ASSERT_EQUAL(new_field, field->get_bit_array().to_ullong());
+    TEST_ASSERT_EQUAL(new_field_2, field2->get_bit_array().to_ulong());
+    TEST_ASSERT_EQUAL(0x5, field3->get_bit_array().to_uint());
 }
 
 // ----------------------------------------------------------------------------
@@ -364,50 +357,74 @@ void test_mixed_validity_updates()
     TestFixture tf;
     // If mt_packet_len is not 0 && packet requests multiple updates && some updates
     // are on not writable fields
-    char* mixed_packet = (char*)"\xa1";  // TODO: 
-    tf.radio_mt_packet_fp->set(mixed_packet);
-    tf.radio_mt_packet_len_fp->set(1);
 
+    size_t idx = tf.field_map["cmd_attitude"]; 
+    auto field = tf.registry.writable_fields[idx];
+    uint64_t old1 = field->get_bit_array().to_ullong();
+
+    // create invalid field
+    size_t idx2 = tf.field_map["adcs.ang_rate"]; 
+    auto field2 = tf.registry.writable_fields[idx2];
+    uint64_t old2 = field2->get_bit_array().to_ullong();
+
+    size_t idx3 = tf.field_map["adcs.mode"];
+    auto field3 = tf.registry.writable_fields[idx3];
+    uint64_t old3 = field3->get_bit_array().to_ullong();
+
+    size_t packet_size = field->get_bit_array().size() + field2->get_bit_array().size() + field3->get_bit_array().size() + 3*3;
+
+    size_t packet_bytes =(packet_size + 7)/8;
+    
+    // Create output BitStream
+    char backer[packet_bytes];
+    memset(backer, 0, packet_bytes);
+    BitStream out(backer, packet_bytes);
+
+    uint32_t new_field = (uint32_t)0xcafefade;
+    tf.create_uplink(out, reinterpret_cast<char*>(&new_field), idx);
+
+    uint8_t new_field_2 = (uint8_t)0xf117;
+    tf.create_uplink(out, reinterpret_cast<char*>(&new_field_2), idx2);
+   
+    // Rig the game and add corrupt the packet here
+    out.seekG(4, bs_end);
+
+    uint8_t new_field_3 = (uint8_t)0xf15;
+    tf.create_uplink(out, reinterpret_cast<char*>(&new_field_3), idx3);
+
+    // Pretend to set shared pointers
+    memcpy(tf.radio_mt_packet_fp->get(), backer, packet_size);
+    tf.radio_mt_packet_len_fp->set(packet_size);
+
+    // Execute
     tf.uplink_consumer->execute();
 
-    // Then do not update any field because packet is probably bad
+    // Check that values are not updated values
+    TEST_ASSERT_EQUAL(old1, field->get_bit_array().to_ullong());
+    TEST_ASSERT_EQUAL(old2, field2->get_bit_array().to_ullong());
+    TEST_ASSERT_EQUAL(old3, field3->get_bit_array().to_ullong());
+    TEST_ASSERT_EQUAL(0,  tf.radio_mt_packet_len_fp->get());
 }
 
-void test_bad_request()
-{
-    TestFixture tf;
-    // If mt_packet_len != 0 && packet is bad request
-    char* bad_packet = (char*)"\xa1";  // TODO: 
-    tf.radio_mt_packet_fp->set(bad_packet);
-    tf.radio_mt_packet_len_fp->set(1);
-
-    tf.uplink_consumer->execute();
-
-    // Then hopefully detect the bad request and do not update
-}
 
 
 int test_uplink_consumer() {
     UNITY_BEGIN();
-    // RUN_TEST(test_create_uplink);
-    // RUN_TEST(test_create_uplink_other);
-    // RUN_TEST(test_valid_initialization);
-    // RUN_TEST(test_get_field_length);
-    // RUN_TEST(test_update_field);
-    // RUN_TEST(test_clear_mt_packet_len);
-    // RUN_TEST(test_perisist_mt_packet_len);
-    // RUN_TEST(test_check_ready);
-    // RUN_TEST(test_do_not_update_non_writable);
-    // RUN_TEST(test_update_writable_field);
-    // RUN_TEST(test_multiple_updates);
-    // RUN_TEST(test_mixed_validity_updates);
-    // RUN_TEST(test_bad_request);
+    RUN_TEST(test_create_uplink);
+    RUN_TEST(test_create_uplink_other);
+    RUN_TEST(test_valid_initialization);
+    RUN_TEST(test_get_field_length);
+    RUN_TEST(test_update_field);
+    RUN_TEST(test_clear_mt_packet_len);
+    RUN_TEST(test_perisist_mt_packet_len);
+    RUN_TEST(test_update_writable_field);
+    RUN_TEST(test_mixed_validity_updates);
     return UNITY_END();
 }
 
 #ifdef DESKTOP
 int main() {
-    test_bitstream();
+    //test_bitstream();
     return test_uplink_consumer();
 }
 #else

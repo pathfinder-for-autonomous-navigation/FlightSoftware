@@ -1,6 +1,6 @@
 #pragma once
 #include <TimedControlTask.hpp>
-
+#include "BitStream.h"
 /**
  * Uplink Consumer parses uplink packets received in its MT buffer. Expects
  * QuakeManager to set radio_mt_packet_fp to point to its MT buffer and expects
@@ -72,7 +72,7 @@ class UplinkConsumer : public TimedControlTask<void> {
      * @param field_index index of the field to be updated
      * @param bs the bit stream for which we update this field
      */
-    void update_field(size_t field_index);
+    void update_field();
 
     /**
      * Checks that all the requests in the packet are valid
