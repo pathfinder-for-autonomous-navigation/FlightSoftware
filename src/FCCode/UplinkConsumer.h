@@ -84,10 +84,12 @@ class UplinkConsumer : public TimedControlTask<void> {
     bool validate_packet();
 
   /**
-   * @brief Flag that indicates whether there is a new uplink packet in radio_mt_packet_f
+   * @brief The length of the newly received mt packet in bits
+   * If it is nonzero, that means a new packet has been read during the current
+   * control cycle
    * QuakeManager sets this field whenever it writes a new message 
    * to its mt buffer.
-   * UplinkProducer is responsible for checking this field and clearing it. 
+   * UplinkProducer is responsible for checking this field and resetting it to 0. 
    */
    InternalStateField<size_t> radio_mt_packet_len_f;
 
@@ -100,7 +102,6 @@ class UplinkConsumer : public TimedControlTask<void> {
    * Reference to registry so that we can update and read fields
    */
    StateFieldRegistry& registry;
-
 
     /**
      * The number of bits to represent an index
