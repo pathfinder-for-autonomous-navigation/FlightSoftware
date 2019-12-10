@@ -77,7 +77,7 @@ protected:
     ReadableStateField<bool> rwa_speed_rd_flag;
     //! Is the reaction wheel torque read outside the validity bounds?
     ReadableStateField<bool> rwa_torque_rd_flag;
-    //! Is ths the sun senso array vector outside the validity bounds?
+    //! Is ths the sun sensor array vector outside the validity bounds?
     ReadableStateField<bool> ssa_vec_flag;
     //! Is the magnetic field vector reading within the validity bounds?
     ReadableStateField<bool> mag_vec_flag;
