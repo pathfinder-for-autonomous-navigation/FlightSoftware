@@ -21,7 +21,14 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_vec_sr(imu::min_rd_omega, imu::max_rd_omega, 16*3), //referenced from I2C_Interface.doc
     gyr_vec_f("adcs_monitor.gyr_vec", gyr_vec_sr),
     gyr_temp_sr(ssa::min_voltage_rd, ssa::max_voltage_rd, 16), //referenced from I2C_Interface.doc
-    gyr_temp_f("adcs_monitor.gyr_temp", gyr_temp_sr)
+    gyr_temp_f("adcs_monitor.gyr_temp", gyr_temp_sr),
+    flag_sr(),
+    rwa_speed_rd_flag("adcs_monitor.speed_rd_flag", flag_sr),
+    rwa_torque_rd_flag("adcs_monitor.torque_rd_flag", flag_sr),
+    ssa_vec_flag("adcs_monitor.ssa_vec_flag", flag_sr),
+    mag_vec_flag("adcs_monitor.mag_vec_flag", flag_sr),
+    gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
+    gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr)
     {
         //fill vector of statefields
         char buffer [3];
@@ -42,7 +49,14 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(mag_vec_f);
         add_readable_field(gyr_vec_f);
         add_readable_field(gyr_temp_f);
-        
+
+        //add flag state fields
+        add_readable_field(rwa_speed_rd_flag);
+        add_readable_field(rwa_torque_rd_flag);
+        add_readable_field(ssa_vec_flag);
+        add_readable_field(mag_vec_flag);
+        add_readable_field(gyr_vec_flag);
+        add_readable_field(gyr_temp_flag);
     }
 
 void ADCSBoxMonitor::execute(){
@@ -80,5 +94,15 @@ void ADCSBoxMonitor::execute(){
     mag_vec_f.set(mag_vec);
     gyr_vec_f.set(gyr_vec);
     gyr_temp_f.set(gyr_temp);
+
+    //flags default to false, meaning there are no issues
+    rwa_speed_rd_flag.set(false);
+    rwa_torque_rd_flag.set(false);
+    ssa_vec_flag.set(false);
+    mag_vec_flag.set(false);
+    gyr_vec_flag.set(false);
+    gyr_temp_flag.set(false);
+
+    //TODO: UPDATE; THESE ARE PLACE HOLDER FLAG BOUNDS
 
 }

@@ -69,20 +69,21 @@ protected:
 
 
     /**
-        * @brief Fault flags.
-        */
-    // //! Is the reaction wheel speed read within the validity bounds?
-    // ReadableStateField<bool> rwa_speed_rd_valid_f;
-    // //! Is the reaction wheel torque read within the validity bounds?
-    // ReadableStateField<bool> rwa_torque_rd_valid_f;
-    // //! Confidence in sun vector estimation (reported by ADCS directly.)
-    // ReadableStateField<bool> ssa_vec_rd_valid_f;
-    // //! Is the magnetic field vector reading within the validity bounds?
-    // ReadableStateField<bool> mag_vec_valid_f;
-    // //! Is the gyroscope rate reading within bounds?
-    // ReadableStateField<bool> gyr_vec_valid_f;
-    // //! Is the gyroscope temperature reading within the validity bounds?
-    // ReadableStateField<float> gyr_temp_valid_f;
+    * @brief Bound flags.
+    */
+    Serializer<bool> flag_sr;
+    //! Is the reaction wheel speed read within the validity bounds?
+    ReadableStateField<bool> rwa_speed_rd_flag;
+    //! Is the reaction wheel torque read within the validity bounds?
+    ReadableStateField<bool> rwa_torque_rd_flag;
+    //! Confidence in sun vector estimation (reported by ADCS directly.)
+    ReadableStateField<bool> ssa_vec_flag;
+    //! Is the magnetic field vector reading within the validity bounds?
+    ReadableStateField<bool> mag_vec_flag;
+    //! Is the gyroscope rate reading within bounds?
+    ReadableStateField<bool> gyr_vec_flag;
+    //! Is the gyroscope temperature reading within the validity bounds?
+    ReadableStateField<bool> gyr_temp_flag;
 };
 
 #endif

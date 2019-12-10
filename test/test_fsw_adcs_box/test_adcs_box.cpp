@@ -20,6 +20,14 @@ class TestFixture {
         ReadableStateField<f_vector_t>* gyr_vec_fp;
         ReadableStateField<float>* gyr_temp_fp;
 
+        // pointers to error flags
+        ReadableStateField<bool>* rwa_speed_rd_flag_p;
+        ReadableStateField<bool>* rwa_torque_rd_flag_p;
+        ReadableStateField<bool>* ssa_vec_flag_p;
+        ReadableStateField<bool>* mag_vec_flag_p;
+        ReadableStateField<bool>* gyr_vec_flag_p;
+        ReadableStateField<bool>* gyr_temp_flag_p;
+
         std::unique_ptr<ADCSBoxMonitor> adcs_box;
 
         Devices::ADCS adcs;
@@ -47,7 +55,15 @@ class TestFixture {
             gyr_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.gyr_vec");
             gyr_temp_fp = registry.find_readable_field_t<float>("adcs_monitor.gyr_temp");
 
-            //aseert the statefields are found
+            //find flag state fields
+            rwa_speed_rd_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.speed_rd_flag");
+            rwa_torque_rd_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.torque_rd_flag");
+            ssa_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.ssa_vec_flag");
+            mag_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.mag_vec_flag");
+            gyr_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_vec_flag");
+            gyr_temp_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_temp_flag");
+
+            //aseert the state fields are found
             assert(rwa_speed_rd_fp);
             assert(rwa_torque_rd_fp);
             assert(ssa_mode_fp);
@@ -59,6 +75,14 @@ class TestFixture {
             assert(mag_vec_fp);
             assert(gyr_vec_fp);
             assert(gyr_temp_fp);
+
+            //assert flag statefields have been found
+            assert(rwa_speed_rd_flag_p);
+            assert(rwa_torque_rd_flag_p);
+            assert(ssa_vec_flag_p);
+            assert(mag_vec_flag_p);
+            assert(gyr_vec_flag_p);
+            assert(gyr_temp_flag_p);
         
         }
 };
