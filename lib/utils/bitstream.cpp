@@ -15,7 +15,7 @@ bitstream::bitstream(const std::vector<bool>& bit_array, char* res) :
   byte_offset(0)
 {
   size_t stream_size = (bit_array.size() + 7)/8;
-  for (int i = 0; i < stream_size; ++i)
+  for (size_t i = 0; i < stream_size; ++i)
   {
     res[i] = 0;
     for (int j = 0; j < 8; ++j)
@@ -62,7 +62,7 @@ size_t bitstream::nextN(size_t num_bits, uint8_t* res)
   size_t bits_written = 0;
 
   size_t num_iters = num_bits/8;
-  for (int i = 0; i < num_iters && has_next(); ++i)
+  for (size_t i = 0; i < num_iters && has_next(); ++i)
   {
     bits_written  += next(8, res + i);
   }
@@ -180,7 +180,7 @@ size_t bitstream::editN(size_t num_bits, uint8_t* new_val)
     num_iters = max_len - byte_offset;
   size_t modulo = num_bits%8;
   size_t bits_written = 0;
-  for (int i = 0; i < num_iters; ++i)
+  for (size_t i = 0; i < num_iters; ++i)
   {
     bits_written += edit(8, new_val + i);
   }
