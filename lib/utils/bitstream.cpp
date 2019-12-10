@@ -123,7 +123,7 @@ size_t bitstream::seekG(size_t amt, int dir)
   int desired_off = 8*byte_offset + bit_offset;
   desired_off += (dir*amt);
 
-  if (desired_off > 8*max_len || desired_off < 0) 
+  if (desired_off > 8*(int)max_len || desired_off < 0) 
     return 0;
 
   // calculate new offset from the current offset

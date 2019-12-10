@@ -54,8 +54,8 @@ class TestFixture {
 
         // Initialize internal fields
         uplink_consumer = std::make_unique<UplinkConsumer>(registry, 0);
-        radio_mt_packet_len_fp = registry.find_internal_field_t<size_t>("uplink_consumer.mt_len");
-        radio_mt_packet_fp = registry.find_internal_field_t<char*>("uplink_consumer.mt_ptr");
+        radio_mt_packet_len_fp = registry.find_internal_field_t<size_t>("uplink.len");
+        radio_mt_packet_fp = registry.find_internal_field_t<char*>("uplink.ptr");
 
         radio_mt_packet_fp->set(mt_buffer);
         field_map = std::map<std::string, size_t>();
@@ -139,7 +139,7 @@ void test_create_uplink()
     std::vector<bool> actual(bits_written, 0);
     out >> actual;
 
-    for (int i = 0; i < bits_written; ++i)
+    for (size_t i = 0; i < bits_written; ++i)
     {
         //cout << expect[i] <<  " " << actual[i] << endl;
         TEST_ASSERT_EQUAL(expect[i], actual[i]);
@@ -180,7 +180,7 @@ void test_create_uplink_other()
     std::vector<bool> actual(bits_written, 0);
     out >> actual;
 
-    for (int i = 0; i < bits_written; ++i)
+    for (size_t i = 0; i < bits_written; ++i)
     {
         //cout << expect[i] <<  " " << actual[i] << endl;
         TEST_ASSERT_EQUAL(expect[i], actual[i]);

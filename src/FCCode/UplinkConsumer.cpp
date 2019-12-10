@@ -2,8 +2,8 @@
 #include <bitstream.h>
 UplinkConsumer::UplinkConsumer(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, offset),
-    radio_mt_packet_len_f("uplink_consumer.mt_len"),
-    radio_mt_packet_f("uplink_consumer.mt_ptr"),
+    radio_mt_packet_len_f("uplink.len"),
+    radio_mt_packet_f("uplink.ptr"),
     registry(registry)
 {
     add_internal_field(radio_mt_packet_f);
@@ -57,8 +57,8 @@ size_t UplinkConsumer::get_field_length(size_t field_index)
         field_len = get_field_length(field_index);
 
         auto field_p = registry.writable_fields[field_index];
-        std::vector<bool> field_bit_arr = field_p->get_bit_array();
-
+        const std::vector<bool>& _bit_arr = field_p->get_bit_array();
+        std::vector<bool>& field_bit_arr = const_cast<std::vector<bool>&>(_bit_arr);
         // Clear field's bit array
         for (size_t i = 0; i < field_len; ++i)
           field_bit_arr[i] = 0;
@@ -76,7 +76,7 @@ bool UplinkConsumer::validate_packet()
     bitstream bs (radio_mt_packet_f.get(), packet_bytes);
     size_t field_index = 0, field_len = 0, bits_checked = 0, bits_consumed = 0;
     // Keep a bit map to prevent updating the same field twice
-    std::vector<bool> bit_map(registry.writable_fields.size(), 0);
+    std::vector<bool> is_field_updated(registry.writable_fields.size(), 0);
  
     while (bits_checked < 8*radio_mt_packet_len_f.get())
     {
@@ -88,7 +88,7 @@ bool UplinkConsumer::validate_packet()
         
         // If we have already seen this field or if the number of bits consumed
         // to get the next index is not index_size
-        if (bit_map[field_index] || bits_consumed != index_size)
+        if (is_field_updated[field_index] || bits_consumed != index_size)
         {
             printf(debug_severity::error, 
                 "[UplinkConsumer validate] Field index %u (num bits: %u) already updated", 
@@ -97,7 +97,7 @@ bool UplinkConsumer::validate_packet()
         }
 
         bits_checked += bits_consumed;
-        bit_map[field_index] = true;
+        is_field_updated[field_index] = true;
 
         // Check if index is within wri∂table_fields and get its length if it is      
         field_len = get_field_length(field_index);
