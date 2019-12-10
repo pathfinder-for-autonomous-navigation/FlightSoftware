@@ -32,7 +32,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     {
         //fill vector of statefields
         char buffer [3];
-        for(unsigned int i = 0; i<20;i++){
+        for(unsigned int i = 0; i<num_sun_sensors;i++){
             ssa_voltages_f.emplace_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+sprintf(buffer, "%u", i), ssa_voltage_sr));
         }
 
@@ -42,7 +42,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(ssa_mode_f);
         add_readable_field(ssa_vec_f);
 
-        for(int i = 0; i<20; i++){
+        for(unsigned int i = 0; i<num_sun_sensors; i++){
             add_readable_field(ssa_voltages_f[i]);
         }
 
@@ -100,7 +100,7 @@ void ADCSBoxMonitor::execute(){
     rwa_speed_rd_f.set(rwa_speed_rd);
     rwa_torque_rd_f.set(rwa_torque_rd);
     ssa_mode_f.set(ssa_mode);
-    ssa_vec_f.set(ssa_vect);
+    ssa_vec_f.set(ssa_vec);
 
     for(int i = 0; i<20; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);
@@ -119,16 +119,18 @@ void ADCSBoxMonitor::execute(){
     gyr_temp_flag.set(false);
 
     //TODO: UPDATE; THESE ARE PLACE HOLDER FLAG BOUNDS
-    if(exceed_bounds(rwa_speed_rd))
+    //They all have bounds of min to max -1 to force a flag for testing purposes
+    //Eventually change to proper bounds
+    if(exceed_bounds(rwa_speed_rd, rwa::min_speed_read, rwa::max_speed_read - 1))
         rwa_speed_rd_flag.set(true);
-    if(exceed_bounds(rwa_torque_rd))
+    if(exceed_bounds(rwa_torque_rd, rwa::min_torque, rwa::max_torque - 1))
         rwa_torque_rd_flag.set(true);
-    if(exceed_bounds(ssa_vec))
+    if(exceed_bounds(ssa_vec, -1, 1 - 1))
         ssa_vec_flag.set(true);
-    if(exceed_bounds(mag_vec))
+    if(exceed_bounds(mag_vec, imu::min_rd_mag, imu::max_rd_mag - 1))
         mag_vec_flag.set(true);
-    if(exceed_bounds(gyr_vec))
+    if(exceed_bounds(gyr_vec, imu::min_rd_omega, imu::max_rd_omega - 1))
         gyr_vec_flag.set(true);
-    if(exceed_bounds(gyr_temp))
+    if(exceed_bounds(gyr_temp, imu::min_rd_temp, imu::max_rd_temp - 1))
         gyr_temp_flag.set(true);
 }

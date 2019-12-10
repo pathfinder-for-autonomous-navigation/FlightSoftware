@@ -2,7 +2,7 @@
 #define ADCS_BOX_MONITOR_HPP_
 
 #include <ADCS.hpp>
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 
 /**
 * @brief Gets inputs from the ADCS box and dumps them into the state
@@ -70,19 +70,20 @@ protected:
 
     /**
     * @brief Bound flags.
+    * If the flag is true, that means it is outside the validity bounds.
     */
     Serializer<bool> flag_sr;
-    //! Is the reaction wheel speed read within the validity bounds?
+    //! Is the reaction wheel speed read outside the validity bounds?
     ReadableStateField<bool> rwa_speed_rd_flag;
-    //! Is the reaction wheel torque read within the validity bounds?
+    //! Is the reaction wheel torque read outside the validity bounds?
     ReadableStateField<bool> rwa_torque_rd_flag;
-    //! Confidence in sun vector estimation (reported by ADCS directly.)
+    //! Is ths the sun senso array vector outside the validity bounds?
     ReadableStateField<bool> ssa_vec_flag;
     //! Is the magnetic field vector reading within the validity bounds?
     ReadableStateField<bool> mag_vec_flag;
-    //! Is the gyroscope rate reading within bounds?
+    //! Is the gyroscope rate reading within the validity bounds?
     ReadableStateField<bool> gyr_vec_flag;
-    //! Is the gyroscope temperature reading within the validity bounds?
+    //! Is the gyroscope temperature reading within the validity bounds?W
     ReadableStateField<bool> gyr_temp_flag;
 };
 

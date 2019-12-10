@@ -47,7 +47,7 @@ class TestFixture {
             
             // fill vector of pointers to statefields
             char buffer[3];
-            for(int i = 0; i<20; i++){
+            for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
                 ssa_voltages_fp.emplace_back(registry.find_readable_field_t<float>("adcs_monitor.ssa_voltage"+sprintf(buffer, "%u", i)));
             }
 
@@ -69,7 +69,7 @@ class TestFixture {
             assert(ssa_mode_fp);
             assert(ssa_vec_fp);
 
-            for(int i = 0; i<20;i++)
+            for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors;i++)
                 assert(ssa_voltages_fp[i]);
                 
             assert(mag_vec_fp);
@@ -120,13 +120,23 @@ void test_execute(){
     TEST_ASSERT_EQUAL(2, tf.ssa_mode_fp->get());
     elements_same(ref_three_unit, tf.ssa_vec_fp->get());
 
-    for(int i = 0; i<20; i++){
+    for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
     elements_same(ref_mag_vec,tf.mag_vec_fp->get());
     elements_same(ref_gyr_vec, tf.gyr_vec_fp->get());
     TEST_ASSERT_EQUAL(imu::max_rd_temp, tf.gyr_temp_fp->get());
+
+    //verify that all flags are set to true
+    //since temp bounds are all max - 1
+    //mocking using max output sets all flags to true
+    TEST_ASSERT_TRUE(tf.rwa_speed_rd_flag_p->get());
+    TEST_ASSERT_TRUE(tf.rwa_torque_rd_flag_p->get());
+    TEST_ASSERT_TRUE(tf.ssa_vec_flag_p->get());
+    TEST_ASSERT_TRUE(tf.mag_vec_flag_p->get());
+    TEST_ASSERT_TRUE(tf.gyr_vec_flag_p->get());
+    TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
 
 }
 
