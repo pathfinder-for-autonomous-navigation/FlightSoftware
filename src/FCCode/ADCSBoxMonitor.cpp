@@ -59,13 +59,28 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(gyr_temp_flag);
     }
 
+bool exceed_bounds(const std::array<float, 3>& input, const float min, const float max){
+    for(int i = 0; i<3; i++){
+        if(input[i] < min || input[i] > max){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool exceed_bounds(const float input, const float min, const float max){
+    if(input < min || input > max)
+        return true;
+    return false;
+}
+
 void ADCSBoxMonitor::execute(){
 
     //create internal containers to read data
     f_vector_t rwa_speed_rd{};
     f_vector_t rwa_torque_rd{};
     unsigned char ssa_mode = 0;
-    f_vector_t ssa_vector{};
+    f_vector_t ssa_vec{};
 
     std::array<float, 20> ssa_voltages;
     ssa_voltages.fill(0);
@@ -77,7 +92,7 @@ void ADCSBoxMonitor::execute(){
     //ask the driver to fill in values
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
     adcs_system.get_ssa_mode(&ssa_mode);
-    adcs_system.get_ssa_vector(&ssa_vector);
+    adcs_system.get_ssa_vector(&ssa_vec);
     adcs_system.get_ssa_voltage(&ssa_voltages);
     adcs_system.get_imu(&mag_vec, &gyr_vec, &gyr_temp);
 
@@ -85,7 +100,7 @@ void ADCSBoxMonitor::execute(){
     rwa_speed_rd_f.set(rwa_speed_rd);
     rwa_torque_rd_f.set(rwa_torque_rd);
     ssa_mode_f.set(ssa_mode);
-    ssa_vec_f.set(ssa_vector);
+    ssa_vec_f.set(ssa_vect);
 
     for(int i = 0; i<20; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);
@@ -104,5 +119,16 @@ void ADCSBoxMonitor::execute(){
     gyr_temp_flag.set(false);
 
     //TODO: UPDATE; THESE ARE PLACE HOLDER FLAG BOUNDS
-
+    if(exceed_bounds(rwa_speed_rd))
+        rwa_speed_rd_flag.set(true);
+    if(exceed_bounds(rwa_torque_rd))
+        rwa_torque_rd_flag.set(true);
+    if(exceed_bounds(ssa_vec))
+        ssa_vec_flag.set(true);
+    if(exceed_bounds(mag_vec))
+        mag_vec_flag.set(true);
+    if(exceed_bounds(gyr_vec))
+        gyr_vec_flag.set(true);
+    if(exceed_bounds(gyr_temp))
+        gyr_temp_flag.set(true);
 }
