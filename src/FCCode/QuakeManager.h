@@ -1,5 +1,5 @@
 #pragma once
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 #include "QuakeControlTask.h"
 #include "radio_mode_t.enum"
 
