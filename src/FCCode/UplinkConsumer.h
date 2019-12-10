@@ -32,6 +32,8 @@
  *      Update field 10 with the value 2
  *      Update field 1 with the value 4
  * 
+ * Fields are indexed starting at 1. There is no field 0.
+ * 
  * Notice that indices must be represented with the same number of bits. 
  * New values are assumed to be the same length as the field's value. If this 
  * packet is valid, we may assume that field 10 can be at most 7, and field 1 can
@@ -41,18 +43,19 @@
 
 class UplinkConsumer : public TimedControlTask<void> {
    public:
-
+    
     /**
      * @param registry State field registry
      * @param offset Offset from the start of the cycle (TimedControlTask)
      */
     UplinkConsumer(StateFieldRegistry& registry, unsigned int offset);
+    
     /**
      * @brief Checks radio_mt_packet_len_f to see if QuakeManager has received a new
      * uplink. If a new uplink has been received, UplinkConsumer expects the
      * contents of the uplink packet to be in the buffer pointed to by radio_mt_packet_f. 
-     * UplinkConsumer will then clear the rardio_mt_packet_len_f flag, parse the packet,
-     * and update the relevant fields in the registry. 
+     * UplinkConsumer will then check the packet, update the fields in the registry,
+     * and reset radio_mt_packet_len_f.
      */
     void execute() override;
 #ifndef DEBUG
@@ -68,54 +71,45 @@ class UplinkConsumer : public TimedControlTask<void> {
     size_t get_field_length(size_t field_index);
 
     /**
-     * @brief Updates the field_index with the new_value 
-     * @param field_index index of the field to be updated
-     * @param bs the bit stream for which we update this field
+     * @brief Applies all the updates specified by mt packet to writable fields
+     * @param packet_size the number of bits in the packet excluding padding
      */
-    void update_field();
+    void update_fields();
 
     /**
-     * Checks that all the requests in the packet are valid
-     * A packet is valid if all requests are for writable fields and if the length
-     * of the packet matches indices and corresponding fields.
-     * 
-     * @return true if all requests are valid and packet is valid, false otherwise
+     * @brief Checks that all the requests in the packet are valid
+     * A packet is valid if 
+     * - all requests are for valid indices in registry.writable_fields
+     * - the length of the packet contains enough data to update all fields
+     * but no more than 7 extra bits of padding
+     * - no field is updated more than once
+     * @return true if packet is valid and false otherwise
      */
     bool validate_packet();
 
   /**
-   * @brief The length of the newly received mt packet in bits
+   * @brief The length of the newly received mt packet in bytes
    * If it is nonzero, that means a new packet has been read during the current
    * control cycle
    * QuakeManager sets this field whenever it writes a new message 
    * to its mt buffer.
-   * UplinkProducer is responsible for checking this field and resetting it to 0. 
+   * UplinkProducer is responsible for checking this field and reseting it to 0. 
    */
    InternalStateField<size_t> radio_mt_packet_len_f;
 
   /**
-    * @brief Pointer to the uplink buffer in QuakeManager. 
+    * @brief Pointer to the uplink buffer in QuakeManager
     **/ 
    InternalStateField<char*> radio_mt_packet_f;
 
   /**
-   * Reference to registry so that we can update and read fields
+   * @brief Reference to registry so that we can update and read fields
    */
    StateFieldRegistry& registry;
 
-    /**
-     * The number of bits to represent an index
-     */
-    size_t index_size;
-    
+  /**
+   * @brief The number of bits to represent an index
+   */
+  size_t index_size;
+
 };
-
-#define change_bit_arr(w, x){\
-    w->set_bit_array(x);\
-    w->deserialize();\
-}
-
-#define read_bit_arr(w, x){\
-    w->serialize();\
-    x = w->get_bit_array();\
-}

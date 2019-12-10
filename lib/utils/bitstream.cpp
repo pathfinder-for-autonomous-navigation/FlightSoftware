@@ -79,8 +79,7 @@ size_t bitstream::nextN(size_t num_bits, std::vector<bool>& bit_arr)
   size_t arr_size = bit_arr.size();
   if (arr_size < num_bits)
     return 0;
-  bit_arr.clear();
-  bit_arr.resize(arr_size, 0);
+  for (size_t i = 0; i < arr_size; ++i) bit_arr[i] = 0;
   size_t bits_written = 0;
   uint8_t u8 = 0;
   for (; bits_written < num_bits && has_next(); ++bits_written)
@@ -99,29 +98,21 @@ size_t bitstream::nextN(size_t num_bits, std::vector<bool>& bit_arr)
 
 size_t bitstream::peekN(size_t num_bits, uint8_t* res)
 {
-  uint32_t byte_offset_ = byte_offset, bit_offset_ = bit_offset;
   size_t bits_peeked = 0;
 
   bits_peeked = nextN(num_bits, res);
-
-  // rewind
-  byte_offset = byte_offset_;
-  bit_offset = bit_offset_;
+  seekG(bits_peeked, bs_beg);
   return bits_peeked;
 }
 
 size_t bitstream::peekN(size_t num_bits, std::vector<bool>& bit_arr)
 {
-  uint32_t byte_offset_ = byte_offset, bit_offset_ = bit_offset;
   size_t bits_peeked = 0;
 
   bits_peeked = nextN(num_bits, bit_arr);
-  // rewind
-  byte_offset = byte_offset_;
-  bit_offset = bit_offset_;
+  seekG(bits_peeked, bs_beg);
   return bits_peeked;
 }
-
 
 size_t bitstream::seekG(size_t amt, int dir)
 {
@@ -129,15 +120,15 @@ size_t bitstream::seekG(size_t amt, int dir)
     return 0;
 
   // get the current absolute bit offset and adjust it accordingly
-  size_t desired_off = 8*byte_offset + bit_offset;
+  int desired_off = 8*byte_offset + bit_offset;
   desired_off += (dir*amt);
+
+  if (desired_off > 8*max_len || desired_off < 0) 
+    return 0;
 
   // calculate new offset from the current offset
   size_t new_byte_off = desired_off/8;
   size_t new_bit_off = desired_off%8;
-
-  if (new_byte_off > max_len || new_byte_off < 0)
-    return 0;
 
   byte_offset = new_byte_off;
   bit_offset = new_bit_off;

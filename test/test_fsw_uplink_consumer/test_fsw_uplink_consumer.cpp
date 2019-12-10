@@ -4,6 +4,7 @@
 #include<bitstream.h>
 #include <unity.h>
 #include <map>
+using namespace std;
 
 // convert n to bits
 void from_ull(WritableStateFieldBase* w, uint64_t n)
@@ -14,7 +15,8 @@ void from_ull(WritableStateFieldBase* w, uint64_t n)
         feels_bad[i] = n&1;
         n >>= 1;
     }
-    change_bit_arr(w, feels_bad);
+    w->set_bit_array(feels_bad);
+    w->deserialize();
 }
 
 class TestFixture {
@@ -35,8 +37,6 @@ class TestFixture {
 
     // Test Helper function will map field names to indices
     std::map<std::string, size_t> field_map;
-    size_t total_size; // total size in bits of all the writable fields
-    bitstream* ref_stream; // packet representing the initial values of the fields
    
    // Make external fields
     char mt_buffer[350];
@@ -61,23 +61,12 @@ class TestFixture {
         field_map = std::map<std::string, size_t>();
 
         // Setup field_map and assign some values
-        total_size = 0;
         for (size_t i = 0; i < registry.writable_fields.size(); ++i)
         {
             auto w = registry.writable_fields[i];
             field_map[w->name().c_str()] = i;
             w->name();
             from_ull(w, rand()); // no seed so should be the same each time
-            total_size += w->get_bit_array().size();
-        }
-        size_t size_of_stream = (total_size + 3*uplink_consumer->index_size + 7) / 8;
-        char* tmp = new char[size_of_stream];
-        ref_stream = new bitstream(tmp, size_of_stream);
-        for (size_t i = 0; i < registry.writable_fields.size(); ++i)
-        {
-            std::vector<bool> w = registry.writable_fields[i]->get_bit_array();
-            ref_stream->editN(uplink_consumer->index_size, (uint8_t*)&i);
-            w << *ref_stream;
         }
     }
     /**
@@ -90,6 +79,7 @@ class TestFixture {
     {
         size_t bits_written = 0;
         auto bit_arr = registry.writable_fields[index]->get_bit_array();
+        ++index; // indices are offset by 1
         bits_written += out.editN(uplink_consumer->index_size, (uint8_t*)&index);
         bits_written += out.editN(bit_arr.size(), in);
         return bits_written;
@@ -107,6 +97,7 @@ class TestFixture {
         size_t bits_written = 0;
         size_t field_size = uplink_consumer->get_field_length(index);
         // Write the index
+        ++index; // indices are offset by 1
         bits_written += out.editN(uplink_consumer->index_size, (uint8_t*)&index);
         // Write the specified number of bits from val
         bits_written += out.editN(field_size, reinterpret_cast<uint8_t*>(val));
@@ -132,8 +123,8 @@ void test_create_uplink()
     size_t packet_size = tf.uplink_consumer->index_size + tf.uplink_consumer->get_field_length(idx);
 
     std::vector<bool> expect(packet_size, 0);
-    expect[0] = 1;
-    expect[1] = 0;
+    expect[0] = 0;
+    expect[1] = 1;
     expect[2] = 0;
     expect[3] = 0;
     expect[4] = 1;
@@ -173,8 +164,8 @@ void test_create_uplink_other()
     size_t packet_size = tf.uplink_consumer->index_size + tf.uplink_consumer->get_field_length(idx);
 
     std::vector<bool> expect(packet_size, 0);
-    expect[0] = 1;
-    expect[1] = 0;
+    expect[0] = 0;
+    expect[1] = 1;
     expect[2] = 0;
     expect[3] = 0;
     expect[4] = 1;
@@ -244,10 +235,11 @@ void test_update_field()
     size_t bits_written = 0;
     
     size_t packet_size = 8 + 3 + 4 + 3;
+    size_t packet_bytes = (packet_size + 7)/8;
 
-    char tmp[(packet_size + 7)/8];
-    memset(tmp, 0, (packet_size + 7)/8);
-    bitstream bs_mo(tmp, (packet_size + 7)/8);
+    char tmp[packet_bytes];
+    memset(tmp, 0, packet_bytes);
+    bitstream bs_mo(tmp, packet_bytes);
     bitstream bs_in(fake_data, 8);
     
     // Create uplink for pan.mode
@@ -263,9 +255,9 @@ void test_update_field()
     TEST_ASSERT_EQUAL(packet_size, bits_written);
    
     // Copy packet into the radio-mt_packet_fp->get()
-    memcpy(tf.radio_mt_packet_fp->get(), tmp, packet_size);
-    tf.radio_mt_packet_len_fp->set(packet_size);
-    tf.uplink_consumer->update_field();
+    memcpy(tf.radio_mt_packet_fp->get(), tmp, packet_bytes);
+    tf.radio_mt_packet_len_fp->set(packet_bytes);
+    tf.uplink_consumer->update_fields();
 
     // Check results
     unsigned long field1 = tf.registry.writable_fields[idx]->get_bit_array().to_uint();
@@ -282,7 +274,7 @@ void test_update_field()
 void test_clear_mt_packet_len()
 {
     TestFixture tf;
-    tf.radio_mt_packet_len_fp->set(24);
+    tf.radio_mt_packet_len_fp->set(3);
     // If mt_packet_len is not 0, 
     TEST_ASSERT_TRUE(tf.radio_mt_packet_len_fp->get());
     tf.uplink_consumer->execute();
@@ -335,8 +327,8 @@ void test_update_writable_field()
     tf.create_uplink(out, reinterpret_cast<char*>(&new_field_3), idx3);
 
     // Pretend to set shared pointers
-    memcpy(tf.radio_mt_packet_fp->get(), backer, packet_size);
-    tf.radio_mt_packet_len_fp->set(packet_size);
+    memcpy(tf.radio_mt_packet_fp->get(), backer, packet_bytes);
+    tf.radio_mt_packet_len_fp->set(packet_bytes);
 
     // Execute
     tf.uplink_consumer->execute();
@@ -392,8 +384,8 @@ void test_mixed_validity_updates()
     tf.create_uplink(out, reinterpret_cast<char*>(&new_field_3), idx3);
 
     // Pretend to set shared pointers
-    memcpy(tf.radio_mt_packet_fp->get(), backer, packet_size);
-    tf.radio_mt_packet_len_fp->set(packet_size);
+    memcpy(tf.radio_mt_packet_fp->get(), backer, packet_bytes);
+    tf.radio_mt_packet_len_fp->set(packet_bytes);
 
     // Execute
     tf.uplink_consumer->execute();
