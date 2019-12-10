@@ -20,8 +20,6 @@ class FieldCreatorTask : public ControlTask<void> {
       ReadableStateField<f_vector_t> ssa_vec_rd_f;
       ReadableStateField<f_vector_t> mag_vec_f;
 
-      InternalStateField<char*> radio_mt_packet_f;
-      InternalStateField<bool> radio_mt_len_f;
       ReadableStateField<signed int> radio_err_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
@@ -33,8 +31,6 @@ class FieldCreatorTask : public ControlTask<void> {
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
         ssa_vec_rd_f("adcs_box.sun_vec", Serializer<f_vector_t>(0,1,32*3)),
         mag_vec_f("adcs_box.mag_vec", Serializer<f_vector_t>(0,1,32*3)),
-        radio_mt_packet_f("uplink.ptr"),
-        radio_mt_len_f("uplink.len"),
         radio_err_f("downlink_producer.radio_err_ptr", Serializer<signed int>(-90, 10))
       {
           // Create the fields!
@@ -53,8 +49,6 @@ class FieldCreatorTask : public ControlTask<void> {
           add_readable_field(mag_vec_f);
 
           // For QuakeManager
-          add_internal_field(radio_mt_packet_f);
-          add_internal_field(radio_mt_len_f);
           add_readable_field(radio_err_f);
       }
 
