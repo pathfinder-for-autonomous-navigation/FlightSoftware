@@ -1,7 +1,7 @@
 #ifndef TIMED_CONTROL_TASK_HPP_
 #define TIMED_CONTROL_TASK_HPP_
 
-#include <ControlTask.hpp>
+#include "ControlTask.hpp"
 
 #ifdef DESKTOP
 #include <thread>
@@ -30,8 +30,16 @@ typedef unsigned int sys_time_t;
 typedef unsigned int systime_duration_t;
 #endif
 
+class TimedControlTaskBase {
+  protected:
+    /**
+     * @brief The time at which the current control cycle started.
+     */
+    static sys_time_t control_cycle_start_time;
+};
+
 template<typename T>
-class TimedControlTask : public ControlTask<T> {
+class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
   public:
     /**
      * @brief Execute this control task's task, but only if it's reached its
@@ -40,8 +48,9 @@ class TimedControlTask : public ControlTask<T> {
      * @param control_cycle_start_time System time for the start of the control task.
      * @return T Value returned by execute().
      */
-    T execute_on_time(const sys_time_t& control_cycle_start_time) {
-      sys_time_t earliest_start_time = control_cycle_start_time + offset;
+    T execute_on_time() {
+      sys_time_t earliest_start_time = 
+        TimedControlTaskBase::control_cycle_start_time + offset;
       wait_until_time(earliest_start_time);
       return this->execute();
     }
@@ -116,6 +125,7 @@ class TimedControlTask : public ControlTask<T> {
         ControlTask<T>(registry),
         offset(us_to_duration(_offset + 1))
     {}
+
   private:
     /**
      * @brief The start time of this control task, relative

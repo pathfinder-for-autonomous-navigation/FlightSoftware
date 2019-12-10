@@ -1,4 +1,4 @@
-#include <TimedControlTask.hpp>
+#include "../../src/FCCode/TimedControlTask.hpp"
 #include "../../src/FCCode/ClockManager.hpp"
 #include <unity.h>
 #ifdef DESKTOP
@@ -59,9 +59,9 @@ class TestFixture {
      */
     sys_time_t execute() {
         clock_manager->execute();
-        dummy_task_1->execute_on_time(clock_manager->get_control_cycle_start_time());
+        dummy_task_1->execute_on_time();
         sys_time_t ret_time = get_system_time();
-        dummy_task_2->execute_on_time(clock_manager->get_control_cycle_start_time());
+        dummy_task_2->execute_on_time();
         return ret_time;
     }
 
