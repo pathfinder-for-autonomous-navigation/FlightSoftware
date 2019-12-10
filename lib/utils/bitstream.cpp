@@ -79,6 +79,7 @@ size_t bitstream::nextN(size_t num_bits, std::vector<bool>& bit_arr)
   size_t arr_size = bit_arr.size();
   if (arr_size < num_bits)
     return 0;
+  bit_arr.clear();
   bit_arr.resize(arr_size, 0);
   size_t bits_written = 0;
   uint8_t u8 = 0;
