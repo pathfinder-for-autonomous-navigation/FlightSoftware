@@ -69,13 +69,9 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(1, downlink["metadata"]["flow_ids"][0]);
 }
 
-int test_downlink_parser() {
+int main() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_task_execute);
     return UNITY_END();
-}
-
-int main() {
-    return test_downlink_parser();
 }
