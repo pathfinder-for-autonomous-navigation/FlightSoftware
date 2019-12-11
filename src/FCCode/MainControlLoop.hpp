@@ -26,7 +26,7 @@ class MainControlLoop : public ControlTask<void> {
     ClockManager clock_manager;
     DebugTask debug_task;
 
-    Devices::Piksi piksi;
+    //Devices::Piksi piksi;
     PiksiControlTask piksi_control_task;
     AttitudeEstimator attitude_estimator;
 
