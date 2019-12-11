@@ -18,42 +18,42 @@ TelemetryInfoGenerator::TelemetryInfoGenerator(
         field_info["min"] = ptr->get_serializer_min(); \
         field_info["max"] = ptr->get_serializer_max(); \
         field_info["bitsize"] = ptr->bitsize(); \
-        return field_info; \
     } \
 }
 
 #define collect_vector_field_info(type, SerializableStateFieldType, field) { \
     typedef SerializableStateFieldType<type> serializer_specialization; \
     if (typeid(field) == typeid(serializer_specialization*)) { \
-        collect_field_info(type, SerializableStateFieldType, field); \
-        field_info["min"] = field_info["min"][0]; \
-        field_info["max"] = field_info["max"][0]; \
+        const serializer_specialization* ptr = \
+            static_cast<serializer_specialization*>(field); \
+        field_info["type"] = #type; \
+        field_info["min"] = ptr->get_serializer_min()[0]; \
+        field_info["max"] = ptr->get_serializer_max()[0]; \
+        field_info["bitsize"] = ptr->bitsize(); \
     } \
 }
 
-#define collect_gpstime_field_info(SerializableStateFieldType, field) { \
-    typedef SerializableStateFieldType<gps_time_t> serializer_specialization; \
+#define collect_unbounded_field_info(type, SerializableStateFieldType, field) { \
+    typedef SerializableStateFieldType<type> serializer_specialization; \
     if (typeid(field) == typeid(serializer_specialization*)) { \
-        field_info["type"] = "gps_time_t"; \
-        field_info["min"] = "N/A"; \
-        field_info["max"] = "N/A"; \
+        field_info["type"] = #type; \
         field_info["bitsize"] = field->bitsize(); \
     } \
 }
 
 #define get_field_info(SerializableStateFieldType, field) { \
-    collect_field_info(bool, SerializableStateFieldType, field); \
     collect_field_info(unsigned int, SerializableStateFieldType, field); \
     collect_field_info(signed int, SerializableStateFieldType, field); \
     collect_field_info(unsigned char, SerializableStateFieldType, field); \
     collect_field_info(signed char, SerializableStateFieldType, field); \
     collect_field_info(float, SerializableStateFieldType, field); \
     collect_field_info(double, SerializableStateFieldType, field); \
-    collect_vector_field_info(f_vector_t, SerializableStateFieldType, field); \
-    collect_vector_field_info(d_vector_t, SerializableStateFieldType, field); \
     collect_field_info(f_quat_t, SerializableStateFieldType, field); \
     collect_field_info(d_quat_t, SerializableStateFieldType, field); \
-    collect_gpstime_field_info(SerializableStateFieldType, field); \
+    collect_vector_field_info(f_vector_t, SerializableStateFieldType, field); \
+    collect_vector_field_info(d_vector_t, SerializableStateFieldType, field); \
+    collect_unbounded_field_info(bool, SerializableStateFieldType, field); \
+    collect_unbounded_field_info(gps_time_t, SerializableStateFieldType, field); \
 }
 
 #define get_readable_field_info(field) get_field_info(ReadableStateField, (field))
