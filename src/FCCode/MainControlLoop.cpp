@@ -13,12 +13,10 @@
 #endif
 
 #ifdef DESKTOP
-    //#define PIKSI_INITIALIZATION piksi("piksi")
-    Devices::Piksi piksi("piksi");
+    #define PIKSI_INITIALIZATION piksi("piksi")
 #else
     #include <HardwareSerial.h>
-    //#define PIKSI_INITIALIZATION piksi("piksi", Serial4)
-    Devices::Piksi piksi("piksi", Serial4);
+    #define PIKSI_INITIALIZATION piksi("piksi", Serial4)
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
@@ -27,7 +25,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       field_creator_task(registry),
       clock_manager(registry, control_cycle_time),
       debug_task(registry, debug_task_offset),
-      //PIKSI_INITIALIZATION,
+      PIKSI_INITIALIZATION,
       piksi_control_task(registry, piksi_control_task_offset, piksi),
       attitude_estimator(registry, attitude_estimator_offset),
       gomspace(&hk, &config, &config2),
