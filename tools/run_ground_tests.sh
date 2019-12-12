@@ -16,3 +16,4 @@ python -m unittest test.test_downlink_parser
 
 # Check that the telemetry info generator compiles
 platformio run -e telem_info_generator
+python -m unittest test.test_telem_info_generator

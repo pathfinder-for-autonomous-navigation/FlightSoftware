@@ -21,7 +21,7 @@ class TestTelemInfoGenerator(unittest.TestCase):
         output, err = proc.communicate()
         returncode = proc.wait()
         self.assertEqual(returncode, 1)
-        self.assertEqual(output, "Need to specify a filename.")
+        self.assertEqual(output.rstrip().decode("utf-8"), "Need to specify a filename.")
 
         # Two arguments doesn't work
         proc = subprocess.Popen([self.binary_dir, "x", "x"], stdin=subprocess.PIPE,
@@ -29,7 +29,7 @@ class TestTelemInfoGenerator(unittest.TestCase):
         output, err = proc.communicate()
         returncode = proc.wait()
         self.assertEqual(returncode, 1)
-        self.assertEqual(output, "Too many arguments.")
+        self.assertEqual(output.rstrip().decode("utf-8"), "Too many arguments.")
 
     def testTelemInfoGeneratorWorks(self):
         """Tests that the telemetry info generator produces a meaningful, intelligible file."""
@@ -44,6 +44,11 @@ class TestTelemInfoGenerator(unittest.TestCase):
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["min"], 0)
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["max"], 4294967295)
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["bitsize"], 32)
+
+            self.assertEqual(telem_info["flows"][0]["id"], 1)
+            self.assertEqual(telem_info["flows"][0]["priority"], 0)
+            self.assertEqual(telem_info["flows"][0]["active"], True)
+            self.assertEqual(telem_info["flows"][0]["fields"][0], "pan.mode")
 
         # Clean up
         os.remove("telem_output.json")
