@@ -15,12 +15,11 @@ DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
 #endif
 
 void DebugTask::execute() {
-// #ifdef HOOTL
-//   start_cycle_f.set(false);
-//   while (!start_cycle_f.get())
-//     process_commands(_registry);
-// #endif
-  process_commands(_registry);
+  #ifdef HOOTL
+    start_cycle_f.set(false);
+    while (!start_cycle_f.get())
+      process_commands(_registry);
+  #endif
 }
 
 void DebugTask::init() { debug_console::init(); }
