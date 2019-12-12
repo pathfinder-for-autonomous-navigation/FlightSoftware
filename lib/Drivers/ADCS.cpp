@@ -13,11 +13,11 @@
 using namespace Devices;
 
 #ifndef DESKTOP
-ADCS::ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address)
-    : I2CDevice(name, i2c_wire, address) {}
+ADCS::ADCS(i2c_t3 &i2c_wire, unsigned char address)
+    : I2CDevice(i2c_wire, address) {}
 #else
-ADCS::ADCS(const std::string &name, unsigned char address)
-    : I2CDevice(name, address) {}
+ADCS::ADCS()
+    : I2CDevice("adcs", 0) {}
 #endif
 
 bool ADCS::i2c_ping() {
@@ -168,12 +168,12 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa
     unsigned char readin[12];
     std::memset(readin, 0, sizeof(readin));
 
-    #ifndef DESKTOP
-    i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
-    #else
+    #if defined(DESKTOP) || defined(UNIT_TEST)
     for(int i = 0;i<12;i++){
         readin[i] = 255;
     }
+    #else
+    i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
     #endif
 
     for(int i=0;i<3;i++){
@@ -193,12 +193,12 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
     unsigned char readin[14];
     std::memset(readin, 0, sizeof(readin));
 
-    #ifndef DESKTOP
-    i2c_point_and_read(IMU_MAG_READ, readin, 14);
-    #else
+    #if defined(DESKTOP) || defined(UNIT_TEST)
     for(int i = 0;i<14;i++){
         readin[i] = 255;
     }
+    #else
+    i2c_point_and_read(IMU_MAG_READ, readin, 14);
     #endif
 
     for(int i=0;i<3;i++){
@@ -219,9 +219,9 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
     *gyr_temp_rd = fp(c,imu::min_rd_temp,imu::max_rd_temp);
 }
 void ADCS::get_ssa_mode(unsigned char* a) {
-    #ifdef DESKTOP
-        //acceleration control mode, mocking output
-        *a = 2;
+    #if defined(DESKTOP) || defined(UNIT_TEST)
+    //acceleration control mode, mocking output
+    *a = 2;
     #else
     i2c_point_and_read(SSA_MODE, a, 1);
     #endif
@@ -230,15 +230,14 @@ void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
     unsigned char readin[6];
     std::memset(readin, 0, sizeof(readin));
 
-    #ifndef DESKTOP
-    i2c_point_and_read(SSA_SUN_VECTOR, readin,6);
-    #else
+    #if defined(DESKTOP) || defined(UNIT_TEST)
     for(int i = 0;i<6;i++){
         readin[i] = 255;
     }
+    #else
+    i2c_point_and_read(SSA_SUN_VECTOR, readin,6);
     #endif
 
-    
     for(int i=0;i<3;i++){
         unsigned short c = (((unsigned short)readin[2*i+1]) << 8) | (0xFF & readin[2*i]);
 
@@ -250,12 +249,12 @@ void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
     unsigned char temp[20];
     std::memset(temp, 0, sizeof(temp));
 
-    #ifndef DESKTOP
-    i2c_point_and_read(SSA_VOLTAGE_READ,temp,20);
-    #else
+    #if defined(DESKTOP) || defined(UNIT_TEST)
     for(int i = 0;i<20;i++){
         temp[i] = 255;
     }
+    #else
+    i2c_point_and_read(SSA_VOLTAGE_READ,temp,20);
     #endif
     
     for(int i = 0;i<20;i++){

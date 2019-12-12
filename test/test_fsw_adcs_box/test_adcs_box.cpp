@@ -15,7 +15,7 @@ class TestFixture {
         ReadableStateField<f_vector_t>* rwa_torque_rd_fp;
         ReadableStateField<int>* ssa_mode_fp;
         ReadableStateField<f_vector_t>* ssa_vec_fp;
-        std::vector<ReadableStateField<float>*> ssa_voltages_fp{};
+        std::vector<ReadableStateField<float>*> ssa_voltages_fp;
         ReadableStateField<f_vector_t>* mag_vec_fp;
         ReadableStateField<f_vector_t>* gyr_vec_fp;
         ReadableStateField<float>* gyr_temp_fp;
@@ -31,11 +31,9 @@ class TestFixture {
         std::unique_ptr<ADCSBoxMonitor> adcs_box;
 
         Devices::ADCS adcs;
-
-        unsigned char addr = 0;
         
         // Create a TestFixture instance of AttitudeEstimator with pointers to statefields
-        TestFixture() : registry(), adcs("adcs", addr){
+        TestFixture() : registry(), adcs(){
 
             adcs_box = std::make_unique<ADCSBoxMonitor>(registry, 0, adcs);  
 
@@ -48,7 +46,7 @@ class TestFixture {
             // fill vector of pointers to statefields
             char buffer[3];
             for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
-                ssa_voltages_fp.emplace_back(registry.find_readable_field_t<float>("adcs_monitor.ssa_voltage"+sprintf(buffer, "%u", i)));
+                ssa_voltages_fp.push_back(registry.find_readable_field_t<float>("adcs_monitor.ssa_voltage"+sprintf(buffer, "%u", i)));
             }
 
             mag_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag_vec");
@@ -83,7 +81,6 @@ class TestFixture {
             assert(mag_vec_flag_p);
             assert(gyr_vec_flag_p);
             assert(gyr_temp_flag_p);
-        
         }
 };
 
@@ -137,7 +134,6 @@ void test_execute(){
     TEST_ASSERT_TRUE(tf.mag_vec_flag_p->get());
     TEST_ASSERT_TRUE(tf.gyr_vec_flag_p->get());
     TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
-
 }
 
 int test_control_task()

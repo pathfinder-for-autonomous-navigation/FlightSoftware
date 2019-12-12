@@ -31,9 +31,9 @@ class ADCS : public I2CDevice {
      * @param address The address on i2c bus
      */
     #ifndef DESKTOP
-    ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address);
+    ADCS(i2c_t3 &i2c_wire, unsigned char address);
     #else
-    ADCS(const std::string &name, unsigned char address);
+    ADCS();
     #endif
 
     /**
