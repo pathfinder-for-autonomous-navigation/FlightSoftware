@@ -46,7 +46,8 @@ class ControlTask : protected debug_console {
         const bool added = _registry.add_internal_field(
             static_cast<InternalStateFieldBase*>(&field));
         if(!added) {
-            printf(debug_severity::error, "Field %s is already in the registry.", field->name());
+            printf(debug_severity::error, "Field %s is already in the registry.",
+                field.name().c_str());
             assert(false);
         }
     }
@@ -56,7 +57,8 @@ class ControlTask : protected debug_console {
         const bool added = _registry.add_readable_field(
             static_cast<ReadableStateFieldBase*>(&field));
         if(!added) {
-            printf(debug_severity::error, "Field %s is already in the registry.", field->name());
+            printf(debug_severity::error, "Field %s is already in the registry.",
+                field.name().c_str());
             assert(false);
         }
     }
@@ -66,7 +68,8 @@ class ControlTask : protected debug_console {
         const bool added = _registry.add_writable_field(
             static_cast<WritableStateFieldBase*>(&field));
         if(!added) {
-            printf(debug_severity::error, "Field %s is already in the registry.", field->name());
+            printf(debug_severity::error, "Field %s is already in the registry.",
+                field.name().c_str());
             assert(false);
         }
     }
