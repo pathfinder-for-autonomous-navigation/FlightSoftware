@@ -190,7 +190,7 @@ size_t DownlinkProducer::Flow::get_packet_size() const {
     packet_size += id_sr.bitsize();
 
     for(auto const& field: field_list) {
-        packet_size += field->bitsize();
+        packet_size += field->get_bit_array().size();
     }
 
     return packet_size;
