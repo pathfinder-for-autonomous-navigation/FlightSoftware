@@ -4,7 +4,7 @@
 #include <json.hpp>
 #include <string>
 #include <StateFieldRegistry.hpp>
-#include "../FCCode/DownlinkProducer.hpp"
+#include "../FCCode/MainControlLoop.hpp"
 
 /**
  * @brief Generates a JSON file describing the minimum,
@@ -45,6 +45,7 @@ class TelemetryInfoGenerator {
     nlohmann::json generate_telemetry_info();
   private:
     StateFieldRegistry r;
+    MainControlLoop fcp;
     const std::vector<DownlinkProducer::FlowData>& flow_data;
 };
 
