@@ -14,9 +14,11 @@
 
 #ifdef DESKTOP
     #define PIKSI_INITIALIZATION piksi("piksi")
+    #define ADCS_INITIALIZATION adcs()
 #else
     #include <HardwareSerial.h>
     #define PIKSI_INITIALIZATION piksi("piksi", Serial4)
+    #define ADCS_INITIALIZATION adcs(Wire, Devices::ADCS::ADDRESS)
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
@@ -27,6 +29,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       debug_task(registry, debug_task_offset),
       PIKSI_INITIALIZATION,
       piksi_control_task(registry, piksi_control_task_offset, piksi),
+      ADCS_INITIALIZATION,
+      adcs_monitor(registry, adcs_monitor_offset, adcs),
       attitude_estimator(registry, attitude_estimator_offset),
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
