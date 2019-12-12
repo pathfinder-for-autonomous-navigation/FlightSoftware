@@ -21,12 +21,6 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_box.sun_vec", __FILE__, __LINE__),
         mag_vec_fp = find_readable_field<f_vector_t>("adcs_box.mag_vec", __FILE__, __LINE__),
 
-        //assert inputs are found
-        assert(piksi_time_fp);
-        assert(pos_vec_ecef_fp);
-        assert(ssa_vec_rd_fp);
-        assert(mag_vec_fp);
-
         //Add outputs
         add_readable_field(q_body_eci_f);
         add_readable_field(w_body_f);

@@ -9,7 +9,6 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
                                               snapshot_size_bytes_f("downlink_producer.snap_size")
 {
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
-    assert(cycle_count_fp);
 
     // Add snapshot fields to the registry
     add_internal_field(snapshot_ptr_f);
@@ -191,7 +190,7 @@ size_t DownlinkProducer::Flow::get_packet_size() const {
     packet_size += id_sr.bitsize();
 
     for(auto const& field: field_list) {
-        packet_size += field->get_bit_array().size();
+        packet_size += field->bitsize();
     }
 
     return packet_size;
