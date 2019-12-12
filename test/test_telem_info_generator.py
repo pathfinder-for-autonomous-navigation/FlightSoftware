@@ -12,7 +12,26 @@ class TestTelemInfoGenerator(unittest.TestCase):
     filepath = os.path.dirname(os.path.abspath(__file__))
     binary_dir = os.path.join(filepath, "../.pio/build/telem_info_generator/program")
 
-    def testTelemInfoGenerator(self):
+    def testTelemInfoGeneratorRequiresOneArgument(self):
+        """Tests that the telemetry info generator requires exactly one argument, the filename."""
+
+        # Zero arguments doesn't work
+        proc = subprocess.Popen([self.binary_dir], stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE)
+        output, err = proc.communicate()
+        returncode = proc.wait()
+        self.assertEqual(returncode, 1)
+        self.assertEqual(output, "Need to specify a filename.")
+
+        # Two arguments doesn't work
+        proc = subprocess.Popen([self.binary_dir, "x", "x"], stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE)
+        output, err = proc.communicate()
+        returncode = proc.wait()
+        self.assertEqual(returncode, 1)
+        self.assertEqual(output, "Too many arguments.")
+
+    def testTelemInfoGeneratorWorks(self):
         """Tests that the telemetry info generator produces a meaningful, intelligible file."""
 
         proc = subprocess.run([self.binary_dir, "telem_output.json"], stdin=subprocess.PIPE,
