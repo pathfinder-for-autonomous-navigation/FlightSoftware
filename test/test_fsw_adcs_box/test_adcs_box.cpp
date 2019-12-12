@@ -44,9 +44,11 @@ class TestFixture {
             ssa_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.ssa_vec");
             
             // fill vector of pointers to statefields
-            char buffer[3];
+            char buffer[50];
             for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
-                ssa_voltages_fp.push_back(registry.find_readable_field_t<float>("adcs_monitor.ssa_voltage"+sprintf(buffer, "%u", i)));
+                sprintf(buffer,"adcs_monitor.ssa_voltage");
+                sprintf(buffer + strlen(buffer), "%u", i);
+                ssa_voltages_fp.push_back(registry.find_readable_field_t<float>(buffer));
             }
 
             mag_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag_vec");

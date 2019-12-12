@@ -31,9 +31,12 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr)
     {
         //fill vector of statefields
-        char buffer [3];
+        //char buffer [3];
+        char buffer[50];
         for(unsigned int i = 0; i<num_sun_sensors;i++){
-            ssa_voltages_f.push_back(ReadableStateField<float>("adcs_monitor.ssa_voltage"+sprintf(buffer, "%u", i), ssa_voltage_sr));
+            sprintf(buffer,"adcs_monitor.ssa_voltage");
+            sprintf(buffer + strlen(buffer), "%u", i);
+            ssa_voltages_f.push_back(ReadableStateField<float>(buffer, ssa_voltage_sr));
         }
 
         //actually add statefields to registry
