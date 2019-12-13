@@ -18,3 +18,7 @@ cp .pio/build/preflight/firmware.hex release/preflight
 cp .pio/build/flight/firmware.hex release/flight
 cp .pio/build/downlink_parser/program release/downlink_parser
 cp .pio/build/telem_info_generator/program release/telem_info_generator
+
+cd release
+chmod +x telem_info_generator
+./telem_info_generator telemetry_report.json # Produce the telemetry report
