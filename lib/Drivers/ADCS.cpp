@@ -14,7 +14,7 @@ using namespace Devices;
 
 #ifndef DESKTOP
 ADCS::ADCS(i2c_t3 &i2c_wire, unsigned char address)
-    : I2CDevice(i2c_wire, address) {}
+    : I2CDevice("adcs", i2c_wire, address) {}
 #else
 ADCS::ADCS()
     : I2CDevice("adcs", 0) {}
@@ -221,7 +221,7 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
 void ADCS::get_ssa_mode(unsigned char* a) {
     #if defined(DESKTOP) || defined(UNIT_TEST)
     //acceleration control mode, mocking output
-    *a = 2;
+    *a = SSAMode::COMPLETE;
     #else
     i2c_point_and_read(SSA_MODE, a, 1);
     #endif

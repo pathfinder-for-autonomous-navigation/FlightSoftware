@@ -94,10 +94,14 @@ void ADCSBoxMonitor::execute(){
 
     //ask the driver to fill in values
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
-    adcs_system.get_ssa_mode(&ssa_mode);
-    adcs_system.get_ssa_vector(&ssa_vec);
     adcs_system.get_ssa_voltage(&ssa_voltages);
     adcs_system.get_imu(&mag_vec, &gyr_vec, &gyr_temp);
+
+    //only update the ssa_vector if and only if the mode was COMPLETE
+    adcs_system.get_ssa_mode(&ssa_mode);
+    if(ssa_mode == SSAMode::SSA_COMPLETE){
+        adcs_system.get_ssa_vector(&ssa_vec);
+    }
 
     //set statefields from internal containers
     rwa_speed_rd_f.set(rwa_speed_rd);
