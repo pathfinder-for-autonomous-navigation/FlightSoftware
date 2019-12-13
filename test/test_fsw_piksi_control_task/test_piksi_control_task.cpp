@@ -36,13 +36,6 @@ class TestFixture {
                 vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
-
-                assert(currentState_fp);
-                assert(pos_fp);
-                assert(vel_fp);
-                assert(baseline_fp);
-                assert(time_fp);
-        
         }
         #else
         TestFixture() : registry(), piksi("piksi"){
@@ -55,13 +48,6 @@ class TestFixture {
                 vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
-
-                assert(currentState_fp);
-                assert(pos_fp);
-                assert(vel_fp);
-                assert(baseline_fp);
-                assert(time_fp);
-        
         }
         #endif
 
