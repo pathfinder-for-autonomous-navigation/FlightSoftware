@@ -221,7 +221,7 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
 void ADCS::get_ssa_mode(unsigned char* a) {
     #if defined(DESKTOP) || defined(UNIT_TEST)
     //acceleration control mode, mocking output
-    *a = SSAMode::COMPLETE;
+    *a = SSAMode::SSA_COMPLETE;
     #else
     i2c_point_and_read(SSA_MODE, a, 1);
     #endif

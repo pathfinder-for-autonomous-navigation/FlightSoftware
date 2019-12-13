@@ -116,7 +116,7 @@ void test_execute(){
     //verify that the values are read into statefields correctly
     elements_same(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get());
     elements_same(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get());
-    TEST_ASSERT_EQUAL(SSAMode::COMPLETE, tf.ssa_mode_fp->get());
+    TEST_ASSERT_EQUAL(SSAMode::SSA_COMPLETE, tf.ssa_mode_fp->get());
     elements_same(ref_three_unit, tf.ssa_vec_fp->get());
 
     for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
