@@ -142,7 +142,7 @@ json TelemetryInfoGenerator::generate_telemetry_info() {
 
     // Get flow data
     ret["flows"] = json::array();
-    for(int i = 0; i < flow_data.size(); i++) {
+    for(size_t i = 0; i < flow_data.size(); i++) {
         const DownlinkProducer::FlowData& f = flow_data[i];
         ret["flows"].push_back({
             {"id", f.id},
