@@ -16,7 +16,9 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     InternalStateField<T>* find_internal_field_t(const std::string& name) {
-        return static_cast<InternalStateField<T>*>(find_internal_field(name));
+        auto ptr = static_cast<InternalStateField<T>*>(find_internal_field(name));
+        assert(ptr);
+        return ptr;
     }
 
     /**
@@ -24,7 +26,9 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     ReadableStateField<T>* find_readable_field_t(const std::string& name) {
-        return static_cast<ReadableStateField<T>*>(find_readable_field(name));
+        auto ptr = static_cast<ReadableStateField<T>*>(find_readable_field(name));
+        assert(ptr);
+        return ptr;
     }
 
     /**
@@ -32,7 +36,9 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     WritableStateField<T>* find_writable_field_t(const std::string& name) {
-        return static_cast<WritableStateField<T>*>(find_writable_field(name));
+        auto ptr = static_cast<WritableStateField<T>*>(find_writable_field(name));
+        assert(ptr);
+        return ptr;
     }
 
     /**

@@ -20,13 +20,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     adcs_ang_rate_fp = find_readable_field<float>("adcs.ang_rate", __FILE__, __LINE__);
     adcs_min_stable_ang_rate_fp = find_writable_field<float>("adcs.min_stable_ang_rate", __FILE__, __LINE__);
 
-    assert(adcs_mode_fp);
-    assert(adcs_cmd_attitude_fp);
-    assert(adcs_ang_rate_fp);
-    assert(adcs_min_stable_ang_rate_fp);
-
-    // TODO change to startup.
-    mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::detumble));
+    mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::startup));
 }
 
 void MissionManager::execute() {
