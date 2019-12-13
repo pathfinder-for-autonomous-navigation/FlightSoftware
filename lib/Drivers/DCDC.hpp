@@ -19,7 +19,7 @@ class DCDC : public Device {
 
     /**
      * @brief Default constructor. **/
-    DCDC();
+    DCDC(const std::string &name) : Device(name){}
 #ifdef DESKTOP
     bool setup();
     bool is_functional();

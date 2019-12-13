@@ -1,7 +1,7 @@
 #ifndef DUMMY_MAIN_CONTROL_LOOP_TASK_HPP_
 #define DUMMY_MAIN_CONTROL_LOOP_TASK_HPP_
 
-#include <ControlTask.hpp>
+#include "ControlTask.hpp"
 #include "DebugTask.hpp"
 #include <StateField.hpp>
 #include <StateFieldRegistry.hpp>

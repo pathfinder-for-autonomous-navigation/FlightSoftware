@@ -39,17 +39,16 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
 
 void MainControlLoop::execute() {
     clock_manager.execute();
-    sys_time_t control_cycle_start = clock_manager.get_control_cycle_start_time();
 
     #ifdef HOOTL
-    debug_task.execute_on_time(control_cycle_start);
+    debug_task.execute_on_time();
     #endif
 
-    piksi_control_task.execute_on_time(control_cycle_start);
-    mission_manager.execute_on_time(control_cycle_start);
-    downlink_producer.execute_on_time(control_cycle_start);
-    quake_manager.execute_on_time(control_cycle_start);
-    docking_controller.execute_on_time(control_cycle_start);
+    piksi_control_task.execute_on_time();
+    mission_manager.execute_on_time();
+    downlink_producer.execute_on_time();
+    quake_manager.execute_on_time();
+    docking_controller.execute_on_time();
 }
 
 #ifdef GSW
