@@ -33,10 +33,6 @@ class TestFixture {
                 // initialize pointers to statefields
                 q_body_eci_fp = registry.find_readable_field_t<f_quat_t>("attitude_estimator.q_body_eci");
                 w_body_fp = registry.find_readable_field_t<f_vector_t>("attitude_estimator.w_body");
-
-                assert(q_body_eci_fp);
-                assert(w_body_fp);
-        
         }
 };
 
