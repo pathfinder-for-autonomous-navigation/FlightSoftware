@@ -45,8 +45,8 @@ QuakeManager::~QuakeManager()
 }
 
 bool QuakeManager::execute() {
-    // printf(debug_severity::info, "[Quake Info] Executing Quake Manager \
-    //     current radio_state %d, current control task state %d", 
+    // printf(debug_severity::info, "[Quake Info] Executing Quake Manager "
+    //     "current radio_state %d, current control task state %d", 
     //         static_cast<unsigned int>(radio_mode_f), 
     //         qct.get_current_state());
     switch(radio_mode_f){
@@ -155,8 +155,8 @@ bool QuakeManager::dispatch_transceive() {
         if (qct.get_MO_status() > 4)
         {
             // printf(debug_severity::info, 
-            //     "[Quake Info] SBDIX finished, we have no comms. \
-            //         Error code: %d", qct.get_MO_status());
+            //     "[Quake Info] SBDIX finished, we have no comms. "
+            //         "Error code: %d", qct.get_MO_status());
             // we should stay in transceive but do not update last_checkin
             qct.request_state(SBDIX);
             return write_to_error(err_code);
@@ -220,8 +220,8 @@ bool QuakeManager::write_to_error(int err_code)
     radio_err_fp->set(err_code);
     unexpected_flag = true;
     // printf(debug_severity::error, 
-    //     "[Quake Error] Execution failed at radio state %d, quake control state \
-    //     %d, and fn_number %d with error code %d", 
+    //     "[Quake Error] Execution failed at radio state %d, quake control state "
+    //     "%d, and fn_number %d with error code %d", 
     //     static_cast<unsigned int> (radio_mode_f),
     //     qct.get_current_state(),
     //     qct.get_current_fn_number(), 
