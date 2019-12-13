@@ -1,12 +1,13 @@
 #include "AttitudeEstimator.hpp"
 #include <gnc_constants.hpp>
 
+const gps_time_t AttitudeEstimator::pan_epoch(gnc::constant::init_gps_week_number,
+                                              gnc::constant::init_gps_time_of_week,
+                                              gnc::constant::init_gps_nanoseconds);
+
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
     : TimedControlTask<void>(registry, offset),
-    pan_epoch(gnc::constant::init_gps_week_number,
-        gnc::constant::init_gps_time_of_week,
-        gnc::constant::init_gps_nanoseconds),
     data(),
     state(),
     estimate(),
