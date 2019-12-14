@@ -23,7 +23,7 @@ public:
    */
   void init();
 
-#ifdef HOOTL
+#ifdef FUNCTIONAL_TEST
 protected:
   /**
    * @brief Flag used by the simulation to keep flight software cycles in sync
