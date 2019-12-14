@@ -57,6 +57,7 @@ void MainControlLoop::execute() {
 
     piksi_control_task.execute_on_time();
     mission_manager.execute_on_time();
+    gomspace_controller.execute_on_time();
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
