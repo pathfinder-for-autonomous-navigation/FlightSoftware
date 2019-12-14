@@ -1,0 +1,6 @@
+# Creates a release of flight software for Linux
+
+FROM fswbase
+MAINTAINER Tanishq Aggarwal (ta335@cornell.edu)
+
+RUN ./tools/run_desktop_tests.sh
