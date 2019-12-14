@@ -39,7 +39,14 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       docking_controller(registry, docking_controller_offset, docksys),
       downlink_producer(registry, downlink_producer_offset, flow_data),
       quake_manager(registry, quake_manager_offset)
-{}
+{
+    //setup for ADCS Box
+    #ifndef DESKTOP
+    Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
+    #endif
+    adcs.setup();
+
+}
 
 void MainControlLoop::execute() {
     clock_manager.execute();

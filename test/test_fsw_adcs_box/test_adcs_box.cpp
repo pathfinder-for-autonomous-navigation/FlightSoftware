@@ -63,26 +63,6 @@ class TestFixture {
             gyr_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_vec_flag");
             gyr_temp_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_temp_flag");
 
-            //aseert the state fields are found
-            assert(rwa_speed_rd_fp);
-            assert(rwa_torque_rd_fp);
-            assert(ssa_mode_fp);
-            assert(ssa_vec_fp);
-
-            for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors;i++)
-                assert(ssa_voltages_fp[i]);
-                
-            assert(mag_vec_fp);
-            assert(gyr_vec_fp);
-            assert(gyr_temp_fp);
-
-            //assert flag statefields have been found
-            assert(rwa_speed_rd_flag_p);
-            assert(rwa_torque_rd_flag_p);
-            assert(ssa_vec_flag_p);
-            assert(mag_vec_flag_p);
-            assert(gyr_vec_flag_p);
-            assert(gyr_temp_flag_p);
         }
 };
 
