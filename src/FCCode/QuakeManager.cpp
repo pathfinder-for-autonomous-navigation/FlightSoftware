@@ -219,13 +219,13 @@ bool QuakeManager::write_to_error(int err_code)
     // Something unexpected definitely happened
     radio_err_fp->set(err_code);
     unexpected_flag = true;
-    // printf(debug_severity::error, 
-    //     "[Quake Error] Execution failed at radio state %d, quake control state "
-    //     "%d, and fn_number %d with error code %d", 
-    //     static_cast<unsigned int> (radio_mode_f),
-    //     qct.get_current_state(),
-    //     qct.get_current_fn_number(), 
-    //     (error));
+    printf(debug_severity::error, 
+        "[Quake Error] Execution failed at radio state %d, quake control state "
+        "%d, and fn_number %d with error code %d", 
+        static_cast<unsigned int> (radio_mode_f),
+        qct.get_current_state(),
+        qct.get_current_fn_number(), 
+        (error));
     transition_radio_state(radio_mode_t::wait);
     return false;
 }
@@ -234,9 +234,9 @@ bool QuakeManager::no_more_cycles(size_t max_cycles, radio_mode_t new_state)
 {
     if (control_cycle_count_fp->get() - last_checkin_cycle > max_cycles)
     {
-        // printf(debug_severity::notice, 
-        //     "[Quake Notice] Radio State %d has ran out of cycles.", 
-        //     static_cast<unsigned int> (radio_mode_f));
+        printf(debug_severity::notice, 
+            "[Quake Notice] Radio State %d has ran out of cycles.", 
+            static_cast<unsigned int> (radio_mode_f));
         // Transition to new_state
         transition_radio_state(new_state);
         return true;
@@ -271,17 +271,17 @@ bool QuakeManager::transition_radio_state(radio_mode_t new_state)
         case radio_mode_t::transceive:
             bOk = qct.request_state(SBDIX);
             break;
-        // default:
-        // printf(debug_severity::error, "In transition_radio_state:: Radio state not defined: %d", 
-        //     static_cast<unsigned int>(radio_mode_f));
+        default:
+        printf(debug_severity::error, "In transition_radio_state:: Radio state not defined: %d", 
+            static_cast<unsigned int>(radio_mode_f));
     }
     // Update the last checkin cycle
     last_checkin_cycle = control_cycle_count_fp->get();
     radio_mode_f = new_state;
 
-    // if ( !bOk ) // Sanity check
-        // printf(debug_severity::error, "Invalid state transition from %d to %d",
-        // qct.get_current_state(),
-        // static_cast<unsigned int>(radio_mode_f));
+    if ( !bOk ) // Sanity check
+        printf(debug_severity::error, "Invalid state transition from %d to %d",
+        qct.get_current_state(),
+        static_cast<unsigned int>(radio_mode_f));
     return bOk;
 }
