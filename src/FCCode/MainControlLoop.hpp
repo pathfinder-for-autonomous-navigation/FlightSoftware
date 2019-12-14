@@ -1,4 +1,3 @@
-git checkout 'master@{7 days ago}' -- path/to/file.txt
 #ifndef MAIN_CONTROL_LOOP_TASK_HPP_
 #define MAIN_CONTROL_LOOP_TASK_HPP_
 
