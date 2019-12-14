@@ -40,11 +40,14 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       downlink_producer(registry, downlink_producer_offset, flow_data),
       quake_manager(registry, quake_manager_offset)
 {
-    //setup for ADCS Box
+    //setup I2C bus for Flight Controller
     #ifndef DESKTOP
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
     #endif
+    
+    //setup I2C devices
     adcs.setup();
+    gomspace.setup();
 
 }
 
