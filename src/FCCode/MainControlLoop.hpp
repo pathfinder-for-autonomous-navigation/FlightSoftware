@@ -7,7 +7,6 @@
 
 #include "ClockManager.hpp"
 #include "PiksiControlTask.hpp"
-#include "ADCSBoxMonitor.hpp"
 #include "AttitudeEstimator.hpp"
 #include "GomspaceController.hpp"
 #include "DebugTask.hpp"
@@ -29,9 +28,6 @@ class MainControlLoop : public ControlTask<void> {
 
     Devices::Piksi piksi;
     PiksiControlTask piksi_control_task;
-
-    Devices::ADCS adcs;
-    ADCSBoxMonitor adcs_monitor;
     AttitudeEstimator attitude_estimator;
 
     Devices::Gomspace::eps_hk_t hk;
@@ -51,20 +47,18 @@ class MainControlLoop : public ControlTask<void> {
     #ifdef HOOTL
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =  55000;
-        static constexpr unsigned int adcs_monitor_offset        =  70500;
         static constexpr unsigned int attitude_estimator_offset  =  85500;
+        static constexpr unsigned int gomspace_controller_offset = 106500;
         static constexpr unsigned int mission_manager_offset     = 111600;
-        static constexpr unsigned int gomspace_controller_offset = 111700;
         static constexpr unsigned int docking_controller_offset  = 152400;
         static constexpr unsigned int downlink_producer_offset   = 153400;
         static constexpr unsigned int quake_manager_offset       = 153500;
     #else
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =   6000;
-        static constexpr unsigned int adcs_monitor_offset        =  70500;
         static constexpr unsigned int attitude_estimator_offset  =  85500;
+        static constexpr unsigned int gomspace_controller_offset =  57500;
         static constexpr unsigned int mission_manager_offset     =  62600;
-        static constexpr unsigned int gomspace_controller_offset =  62700;
         static constexpr unsigned int docking_controller_offset  = 103400;
         static constexpr unsigned int downlink_producer_offset   = 104400;
         static constexpr unsigned int quake_manager_offset       = 104500;
