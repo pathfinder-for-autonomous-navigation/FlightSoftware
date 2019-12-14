@@ -48,7 +48,6 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     //setup I2C devices
     adcs.setup();
     gomspace.setup();
-
 }
 
 void MainControlLoop::execute() {

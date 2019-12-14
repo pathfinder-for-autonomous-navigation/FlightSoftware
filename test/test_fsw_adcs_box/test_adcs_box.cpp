@@ -46,6 +46,7 @@ class TestFixture {
             // fill vector of pointers to statefields
             char buffer[50];
             for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
+                std::memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"adcs_monitor.ssa_voltage");
                 sprintf(buffer + strlen(buffer), "%u", i);
                 ssa_voltages_fp.push_back(registry.find_readable_field_t<float>(buffer));

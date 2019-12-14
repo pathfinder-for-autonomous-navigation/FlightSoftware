@@ -34,6 +34,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         //char buffer [3];
         char buffer[50];
         for(unsigned int i = 0; i<num_sun_sensors;i++){
+            std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.ssa_voltage");
             sprintf(buffer + strlen(buffer), "%u", i);
             ssa_voltages_f.push_back(ReadableStateField<float>(buffer, ssa_voltage_sr));
@@ -80,16 +81,16 @@ bool exceed_bounds(const float input, const float min, const float max){
 void ADCSBoxMonitor::execute(){
 
     //create internal containers to read data
-    f_vector_t rwa_speed_rd{};
-    f_vector_t rwa_torque_rd{};
+    f_vector_t rwa_speed_rd;
+    f_vector_t rwa_torque_rd;
     unsigned char ssa_mode = 0;
-    f_vector_t ssa_vec{};
+    f_vector_t ssa_vec;
 
     std::array<float, 20> ssa_voltages;
     ssa_voltages.fill(0);
 
-    f_vector_t mag_vec{};
-    f_vector_t gyr_vec{};
+    f_vector_t mag_vec;
+    f_vector_t gyr_vec;
     float gyr_temp = 0.0;
 
     //ask the driver to fill in values
