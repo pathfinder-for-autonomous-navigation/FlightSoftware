@@ -62,7 +62,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * 
      * @param time Time until which the system should pause.
      */
-    void wait_until_time(const sys_time_t& time) const {
+    static void wait_until_time(const sys_time_t& time) {
       #ifdef DESKTOP
         while((signed int) duration_to_us(time - get_system_time()) > 0);
       #else
@@ -77,7 +77,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * 
      * @return sys_time_t
      */
-    sys_time_t get_system_time() const {
+    static sys_time_t get_system_time() {
       #ifdef DESKTOP
         return std::chrono::steady_clock::now();
       #else
@@ -91,7 +91,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * @param delta 
      * @return systime_duration_t 
      */
-    const unsigned int duration_to_us(const systime_duration_t& delta) const {
+    static unsigned int duration_to_us(const systime_duration_t& delta) {
       #ifdef DESKTOP
         return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
       #else
@@ -105,7 +105,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * @param delta 
      * @return systime_duration_t 
      */
-    systime_duration_t us_to_duration(const unsigned int delta) const {
+    static systime_duration_t us_to_duration(const unsigned int delta) {
       #ifdef DESKTOP
         return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::microseconds(delta));
       #else

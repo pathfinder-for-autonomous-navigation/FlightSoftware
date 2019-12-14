@@ -20,25 +20,21 @@ class TestFixture {
         ReadableStateField<d_vector_t>* vel_fp;
         ReadableStateField<d_vector_t>* baseline_fp;
         ReadableStateField<gps_time_t>* time_fp;
+        ReadableStateField<gps_time_t>* us_since_last_reading_fp;
+        ReadableStateField<gps_time_t>* propagated_time_fp;
 
         std::unique_ptr<PiksiControlTask> piksi_task;
 
         Devices::Piksi piksi;
-        // Create a TestFixture instance of PiksiController with pointers to statefields
-        #ifndef DESKTOP
-        TestFixture() : registry(), piksi("piksi", Serial4){
-
-                piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
-
-                // initialize pointers to statefields      
-                currentState_fp = registry.find_readable_field_t<int>("piksi.state");
-                pos_fp = registry.find_readable_field_t<d_vector_t>("piksi.pos");
-                vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
-                baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
-                time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
-        }
+        
+        #ifdef DESKTOP
+                #define PIKSI_INITIALIZATION piksi("piksi")
         #else
-        TestFixture() : registry(), piksi("piksi"){
+                #define PIKSI_INITIALIZATION piksi("piksi", Serial4)
+        #endif
+
+        // Create a TestFixture instance of PiksiController with pointers to statefields
+        TestFixture() : registry(), PIKSI_INITIALIZATION {
 
                 piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
 
@@ -48,8 +44,11 @@ class TestFixture {
                 vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
+                us_since_last_reading_fp = registry.find_readable_field_t<unsigned int>("piksi.staleness");
+                time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time.propagated");
         }
-        #endif
+
+        #undef PIKSI_INITIALIZATION
 
         //method to make calling execute faster
         void execute(){
@@ -262,6 +261,11 @@ void test_dead(){
         assert_piksi_mode(piksi_mode_t::dead);
 }
 
+// Ensure that time is propagated even when measurements are unavailable
+void test_time_propagation() {
+
+}
+
 int test_control_task()
 {
         UNITY_BEGIN();
@@ -270,6 +274,7 @@ int test_control_task()
         RUN_TEST(test_normal_errors);
         RUN_TEST(test_task_execute);
         RUN_TEST(test_dead);
+        RUN_TEST(test_time_propagation);
         return UNITY_END();
 }
 

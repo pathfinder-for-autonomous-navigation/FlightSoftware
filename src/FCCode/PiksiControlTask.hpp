@@ -41,6 +41,13 @@ public:
     Serializer<gps_time_t> time_sr;
     ReadableStateField<gps_time_t> time_f;
 
+    // Micros # since last good Piksi reading, and
+    // the current propagated time from that last good
+    // reading
+    sys_time_t last_good_reading;
+    ReadableStateField<unsigned int> us_since_last_reading_f;
+    InternalStateField<gps_time_t> propagated_time_f;
+
 protected:
     //Internal Data Containers
     std::array<double, 3> pos;
