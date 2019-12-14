@@ -14,3 +14,8 @@ cp .pio/build/teensy35_hootl/firmware.hex release/teensy35_hootl
 cp .pio/build/teensy36_hootl/firmware.hex release/teensy36_hootl
 cp .pio/build/preflight/firmware.hex release/preflight
 cp .pio/build/flight/firmware.hex release/flight
+
+docker build -t fswbase -f tools/Dockerfile.base .
+docker build -t fswrelease -f tools/Dockerfile.release .
+docker create --name fswrelease fswrelease
+docker cp fswrelease:/FlightSoftware/.pio/build/native/program release/linux

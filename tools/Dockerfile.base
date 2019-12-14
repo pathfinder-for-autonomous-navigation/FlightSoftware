@@ -12,5 +12,3 @@ RUN pio update
 RUN mkdir -p /FlightSoftware
 WORKDIR /FlightSoftware
 COPY . .
-
-RUN ./tools/run_desktop_tests.sh
