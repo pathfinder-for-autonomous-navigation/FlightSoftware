@@ -1,4 +1,4 @@
-# Creates a release of flight software for Linux
+# Runs desktop unit tests
 
 FROM fswbase
 MAINTAINER Tanishq Aggarwal (ta335@cornell.edu)
