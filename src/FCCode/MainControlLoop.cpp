@@ -2,7 +2,7 @@
 #include "DebugTask.hpp"
 
 // Environment-based initializations of the control loop time.
-#ifdef HOOTL
+#ifdef FUNCTIONAL_TEST
     #ifdef DESKTOP
         static constexpr unsigned int control_cycle_time = 170000000;
     #else
@@ -53,7 +53,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
 void MainControlLoop::execute() {
     clock_manager.execute();
 
-    #ifdef HOOTL
+    #ifdef FUNCTIONAL_TEST
     debug_task.execute_on_time();
     #endif
 

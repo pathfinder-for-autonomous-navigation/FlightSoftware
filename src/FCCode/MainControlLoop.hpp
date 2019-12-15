@@ -17,8 +17,8 @@
 #include "DockingController.hpp"
 #include "DownlinkProducer.hpp"
 
-#if (!defined(HOOTL) && !defined(FLIGHT))
-static_assert(false, "Need to define either the HOOTL or FLIGHT flags.");
+#if (!defined(FUNCTIONAL_TEST) && !defined(FLIGHT))
+static_assert(false, "Need to define either the FUNCTIONAL_TEST or FLIGHT flags.");
 #endif
 
 class MainControlLoop : public ControlTask<void> {
@@ -48,7 +48,7 @@ class MainControlLoop : public ControlTask<void> {
     QuakeManager quake_manager;
 
     // Control cycle time offsets, in microseconds
-    #ifdef HOOTL
+    #ifdef FUNCTIONAL_TEST
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =  55000;
         static constexpr unsigned int adcs_monitor_offset        =  70500;
