@@ -32,16 +32,11 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         piksi.setup();
 
         // Set initial values
+        const double nan = std::numeric_limits<double>::quiet_NaN();
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_fix));
-        pos_f.set({std::numeric_limits<double>::quiet_NaN(),
-                   std::numeric_limits<double>::quiet_NaN(),
-                   std::numeric_limits<double>::quiet_NaN()});
-        vel_f.set({std::numeric_limits<double>::quiet_NaN(),
-                   std::numeric_limits<double>::quiet_NaN(),
-                   std::numeric_limits<double>::quiet_NaN()});
-        baseline_pos_f.set({std::numeric_limits<double>::quiet_NaN(),
-                            std::numeric_limits<double>::quiet_NaN(),
-                            std::numeric_limits<double>::quiet_NaN()});
+        pos_f.set({nan, nan, nan});
+        vel_f.set({nan, nan, nan});
+        baseline_pos_f.set({nan, nan, nan});
     }
 
 void PiksiControlTask::execute()
@@ -148,7 +143,6 @@ void PiksiControlTask::execute()
         if(read_out == 1){
             baseline_pos_f.set(baseline_pos);
         }
-
     }
 
     //if read_out is unexpected value which it shouldn't do lol
@@ -156,5 +150,4 @@ void PiksiControlTask::execute()
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::data_error));
         return;
     }
-
 }
