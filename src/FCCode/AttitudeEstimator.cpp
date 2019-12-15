@@ -36,13 +36,13 @@ void AttitudeEstimator::set_data(){
     data.t = (double)(((unsigned long)(piksi_time_fp->get() - pan_epoch))/(1e9L));
 
     const d_vector_t r_ecef = pos_vec_ecef_fp->get();
-    data.r_ecef = lin::Vector3d({r_ecef[0], r_ecef[1], r_ecef[2]});
+    data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};
     
     const f_vector_t mag_vec = mag_vec_fp->get();
-    data.b_body = lin::Vector3f({mag_vec[0], mag_vec[1], mag_vec[2]});
+    data.b_body = {mag_vec[0], mag_vec[1], mag_vec[2]};
 
     const f_vector_t f_vec = ssa_vec_rd_fp->get();
-    data.s_body = lin::Vector3f({f_vec[0], f_vec[1], f_vec[2]});
+    data.s_body = {f_vec[0], f_vec[1], f_vec[2]};
 }
 
 void AttitudeEstimator::set_estimate(){
