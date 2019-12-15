@@ -2,6 +2,8 @@
 #define TIMED_CONTROL_TASK_HPP_
 
 #include "ControlTask.hpp"
+#include "constants.hpp"
+#include <string>
 
 #ifdef DESKTOP
 #include <thread>
@@ -30,16 +32,41 @@ typedef unsigned int sys_time_t;
 typedef unsigned int systime_duration_t;
 #endif
 
+/**
+ * @brief Values that are shared across all timed control tasks,
+ * irrespective of return type.
+ */
 class TimedControlTaskBase {
   protected:
     /**
      * @brief The time at which the current control cycle started.
      */
     static sys_time_t control_cycle_start_time;
+    static unsigned int control_cycle_count;
 };
 
 template<typename T>
 class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
+  private:
+    /**
+     * @brief The start time of this control task, relative
+     * to the start of any control cycle, in microseconds.
+     */
+    systime_duration_t offset;
+
+    /**
+     * @brief Number of times a timed control task has not had
+     * any time to wait.
+     */
+    std::string num_lates_field_name;
+    ReadableStateField<unsigned int> num_lates_f;
+
+    /**
+     * @brief Number of times a control task
+     */
+    std::string avg_wait_field_name;
+    ReadableStateField<float> avg_wait_f;
+
   public:
     /**
      * @brief Execute this control task's task, but only if it's reached its
@@ -62,14 +89,22 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * 
      * @param time Time until which the system should pause.
      */
-    static void wait_until_time(const sys_time_t& time) {
-      #ifdef DESKTOP
-        while((signed int) duration_to_us(time - get_system_time()) > 0);
-      #else
-        while ((signed int)(time - micros()) > 0) {
+    void wait_until_time(const sys_time_t& time) {
+      // Compute timing statistics and publish them to state fields
+      const signed int delta_t = (signed int) duration_to_us(time - get_system_time());
+      if (delta_t <= 0) {
+        num_lates_f.set(num_lates_f.get() + 1);
+      }
+      const float new_avg_wait = ((avg_wait_f.get() * control_cycle_count) + delta_t) /
+        (control_cycle_count + 1);
+      avg_wait_f.set(new_avg_wait);
+
+      // Wait until execution time
+      while((signed int) duration_to_us(time - get_system_time()) > 0) {
+        #ifndef DESKTOP
           delayMicroseconds(10);
-        }
-      #endif
+        #endif
+      }
     }
 
     /**
@@ -117,21 +152,23 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * @brief Construct a new Timed Control Task object
      * 
      * @param registry State field registry
+     * @param name Name of control task (used in producing state fields for timing statistics)
      * @param offset Time offset of start of this task from the beginning of a
      *               control cycle, in microseconds.
      */
     TimedControlTask(StateFieldRegistry& registry,
+                     const std::string& name,
                      const unsigned int _offset) :
         ControlTask<T>(registry),
-        offset(us_to_duration(_offset + 1))
-    {}
-
-  private:
-    /**
-     * @brief The start time of this control task, relative
-     * to the start of any control cycle, in microseconds.
-     */
-    systime_duration_t offset;
+        offset(us_to_duration(_offset + 1)),
+        num_lates_field_name("timing." + name + ".num_lates"),
+        num_lates_f(num_lates_field_name, Serializer<unsigned int>()),
+        avg_wait_field_name("timing." + name + ".avg_wait"),
+        avg_wait_f(avg_wait_field_name, Serializer<float>(0,PAN::control_cycle_time_us,32))
+    {
+      this->add_readable_field(num_lates_f);
+      this->add_readable_field(avg_wait_f);
+    }
 };
 
 #endif

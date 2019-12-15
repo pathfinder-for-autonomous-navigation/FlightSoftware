@@ -1,15 +1,10 @@
 #include "MainControlLoop.hpp"
 #include "DebugTask.hpp"
+#include "constants.hpp"
 
-// Environment-based initializations of the control loop time.
-#ifdef FUNCTIONAL_TEST
-    #ifdef DESKTOP
-        static constexpr unsigned int control_cycle_time = 170000000;
-    #else
-        static constexpr unsigned int control_cycle_time = 170000;
-    #endif
-#elif FLIGHT
-    static constexpr unsigned int control_cycle_time = 120000;
+// Include for calculating memory use. Works only on Mac and Linux.
+#ifdef DESKTOP
+    #include <unistd.h>
 #endif
 
 #ifdef DESKTOP
@@ -23,7 +18,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
         const std::vector<DownlinkProducer::FlowData>& flow_data)
     : ControlTask<void>(registry), 
       field_creator_task(registry),
-      clock_manager(registry, control_cycle_time),
+      clock_manager(registry, PAN::control_cycle_time),
       debug_task(registry, debug_task_offset),
       PIKSI_INITIALIZATION,
       piksi_control_task(registry, piksi_control_task_offset, piksi),
@@ -34,10 +29,43 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys),
       downlink_producer(registry, downlink_producer_offset, flow_data),
-      quake_manager(registry, quake_manager_offset)
-{}
+      quake_manager(registry, quake_manager_offset),
+      memory_use_f("sys.memory_use", Serializer<unsigned int>())
+{
+    #ifdef FUNCTIONAL_TEST
+        add_readable_field(memory_use_f);
+    #endif
+}
+
+#ifndef DESKTOP
+// Taken from SdFatUtil.h
+static int FreeRam(void) {
+ extern int  __bss_end;
+ extern int* __brkval;
+ int free_memory;
+ if (reinterpret_cast<int>(__brkval) == 0) {
+   // if no heap use from end of bss section
+   free_memory = reinterpret_cast<int>(&free_memory)
+                 - reinterpret_cast<int>(&__bss_end);
+ } else {
+   // use from top of stack to heap
+   free_memory = reinterpret_cast<int>(&free_memory)
+                 - reinterpret_cast<int>(__brkval);
+ }
+ return free_memory;
+}
+#endif
 
 void MainControlLoop::execute() {
+    // Compute memory usage
+    #ifdef DESKTOP
+        unsigned int pages = sysconf(_SC_PHYS_PAGES);
+        unsigned int page_size = sysconf(_SC_PAGE_SIZE);
+        memory_use_f.set(pages * page_size);
+    #else
+        memory_use_f.set(FreeRam());
+    #endif
+
     clock_manager.execute();
 
     #ifdef FUNCTIONAL_TEST

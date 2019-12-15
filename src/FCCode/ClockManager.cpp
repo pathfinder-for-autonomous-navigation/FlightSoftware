@@ -2,7 +2,7 @@
 
 ClockManager::ClockManager(StateFieldRegistry &registry,
                            const unsigned int _control_cycle_size) :
-    TimedControlTask<void>(registry, 0),
+    TimedControlTask<void>(registry, "clock_ct", 0),
     control_cycle_size(_control_cycle_size),
     control_cycle_count_f("pan.cycle_no", Serializer<unsigned int>())
 {
@@ -18,5 +18,6 @@ void ClockManager::execute() {
 
     has_executed = true;
     TimedControlTask<void>::control_cycle_start_time = get_system_time();
-    control_cycle_count_f.set(control_cycle_count_f.get() + 1);
+    control_cycle_count += 1;
+    control_cycle_count_f.set(control_cycle_count);
 }
