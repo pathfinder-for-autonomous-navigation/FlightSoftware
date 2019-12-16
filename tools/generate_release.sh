@@ -15,21 +15,23 @@ platformio run -e flight
 platformio run -e downlink_parser
 platformio run -e telem_info_generator
 
-cp .pio/build/native/program release/macOS
-cp .pio/build/teensy35_hitl/firmware.hex release/teensy35_hitl
-cp .pio/build/teensy36_hitl/firmware.hex release/teensy36_hitl
-cp .pio/build/preflight/firmware.hex release/preflight
-cp .pio/build/flight/firmware.hex release/flight
-cp .pio/build/downlink_parser/program release/downlink_parser
-cp .pio/build/telem_info_generator/program release/telem_info_generator
+cp .pio/build/native/program release/macOS_hootl
+cp .pio/build/teensy35_hitl/firmware.hex release/teensy35_hitl.hex
+cp .pio/build/teensy36_hitl/firmware.hex release/teensy36_hitl.hex
+cp .pio/build/preflight/firmware.hex release/preflight.hex
+cp .pio/build/flight/firmware.hex release/flight.hex
+cp .pio/build/downlink_parser/program release/macOS_downlink_parser
+cp .pio/build/telem_info_generator/program release/macOS_telem_info_generator
 
 docker build -t fswbase -f tools/Dockerfile.base .
 docker build -t fswrelease -f tools/Dockerfile.release .
 docker rm fswrelease
 docker create --name fswrelease fswrelease
-docker cp fswrelease:/FlightSoftware/.pio/build/native/program release/linux-x86_64
+docker cp fswrelease:/FlightSoftware/.pio/build/native/program release/linux-x86_64_hootl
+docker cp fswrelease:/FlightSoftware/.pio/build/native/program release/linux-x86_64_downlink_parser
+docker cp fswrelease:/FlightSoftware/.pio/build/native/program release/linux-x86_64_telem_info_generator
 
 # Produce the telemetry report
 cd release
-chmod +x telem_info_generator
-./telem_info_generator telemetry_report.json
+chmod +x macOS_telem_info_generator
+./macOS_telem_info_generator telemetry_report.json
