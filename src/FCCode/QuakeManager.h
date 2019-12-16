@@ -89,7 +89,7 @@ class QuakeManager : public TimedControlTask<bool> {
    /**
     * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
     **/ 
-   InternalStateField<bool>* radio_mt_len_fp; 
+   InternalStateField<size_t>* radio_mt_len_fp; 
 
     /**
      * @brief Current radio mode (see radio_mode_t.enum), provided by no one

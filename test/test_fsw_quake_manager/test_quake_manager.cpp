@@ -41,7 +41,7 @@ class TestFixture {
 
     std::shared_ptr<InternalStateField<char*>> radio_mo_packet_fp;
     std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
-    std::shared_ptr<InternalStateField<bool>> radio_mt_len_fp;
+    std::shared_ptr<InternalStateField<size_t>> radio_mt_len_fp;
     std::shared_ptr<ReadableStateField<int>> radio_err_fp;
     std::shared_ptr<InternalStateField<size_t>> snapshot_size_fp;
     // Quake has no output state fields since it is created after downlink producer
@@ -55,7 +55,7 @@ class TestFixture {
         snapshot_size_fp = registry.create_internal_field<size_t>("downlink_producer.snap_size");
         radio_mo_packet_fp = registry.create_internal_field<char*>("downlink_producer.mo_ptr");
         radio_mt_packet_fp = registry.create_internal_field<char*>("uplink.ptr");
-        radio_mt_len_fp = registry.create_internal_field<bool>("uplink.len");
+        radio_mt_len_fp = registry.create_internal_field<size_t>("uplink.len");
         radio_err_fp = registry.create_readable_field<int>("downlink_producer.radio_err_ptr", -90, 10);
         // Initialize external fields
         snapshot_size_fp->set(static_cast<int>(350));
