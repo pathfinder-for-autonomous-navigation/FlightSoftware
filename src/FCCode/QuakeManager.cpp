@@ -28,13 +28,6 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_err_fp = find_readable_field<int>("downlink_producer.radio_err_ptr", __FILE__, __LINE__);
     radio_mt_ready_fp = find_internal_field<bool>("uplink_consumer.mt_ready", __FILE__, __LINE__);
 
-    assert(control_cycle_count_fp);
-    assert(snapshot_size_fp);
-    assert(radio_mo_packet_fp);
-    assert(radio_mt_packet_fp);
-    assert(radio_err_fp);
-    assert(radio_mt_ready_fp);
-
     // Initialize Quake Manager variables
     last_checkin_cycle = control_cycle_count_fp->get();
     qct.request_state(CONFIG);

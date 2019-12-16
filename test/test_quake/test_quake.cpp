@@ -3,6 +3,7 @@
 #include <vector>
 #include "../lib/Drivers/QLocate.hpp"
 #include "core_pins.h"
+#include "Arduino.h"
 #include "quake_common.h"
 #include "usb_serial.h"
 
@@ -43,7 +44,7 @@ void test_timeout(void) {
 
     // Force a timeout by not sending all the characters
     delay(DEFAULT_CTRL_CYCLE_LENGTH);
-    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_2("AAAAA", 42));
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_2("AAAAA", 5));
 
     delay(DEFAULT_CTRL_CYCLE_LENGTH);
     TEST_ASSERT_EQUAL(Devices::PORT_UNAVAILABLE, q.get_sbdwb());
