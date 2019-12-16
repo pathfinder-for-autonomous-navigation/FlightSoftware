@@ -21,7 +21,6 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     unexpected_flag(false)
 { 
     // Retrieve fields from registry
-    control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
     snapshot_size_fp = find_internal_field<size_t>("downlink_producer.snap_size", __FILE__, __LINE__);
     radio_mo_packet_fp = find_internal_field<char*>("downlink_producer.mo_ptr", __FILE__, __LINE__);
     radio_mt_packet_fp = find_internal_field<char*>("uplink_consumer.mt_ptr", __FILE__, __LINE__);
@@ -29,7 +28,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_mt_ready_fp = find_internal_field<bool>("uplink_consumer.mt_ready", __FILE__, __LINE__);
 
     // Initialize Quake Manager variables
-    last_checkin_cycle = control_cycle_count_fp->get();
+    last_checkin_cycle = control_cycle_count;
     qct.request_state(CONFIG);
     radio_mt_packet_fp->set(qct.get_MT_msg());
     radio_mt_ready_fp->set(false);
@@ -89,7 +88,7 @@ bool QuakeManager::dispatch_config() {
 
 bool QuakeManager::dispatch_wait() {
     // If we still have cycles, return true
-    if (control_cycle_count_fp->get() - last_checkin_cycle <= max_wait_cycles)
+    if (control_cycle_count - last_checkin_cycle <= max_wait_cycles)
         return true;
     // Transition to config to attempt to resolve unexpected errors
     if (unexpected_flag) 
@@ -232,7 +231,7 @@ bool QuakeManager::write_to_error(int err_code)
 
 bool QuakeManager::no_more_cycles(size_t max_cycles, radio_mode_t new_state)
 {
-    if (control_cycle_count_fp->get() - last_checkin_cycle > max_cycles)
+    if (control_cycle_count - last_checkin_cycle > max_cycles)
     {
         printf(debug_severity::notice, 
             "[Quake Notice] Radio State %d has ran out of cycles.", 
@@ -273,7 +272,7 @@ bool QuakeManager::transition_radio_state(radio_mode_t new_state)
             static_cast<unsigned int>(radio_mode_f));
     }
     // Update the last checkin cycle
-    last_checkin_cycle = control_cycle_count_fp->get();
+    last_checkin_cycle = control_cycle_count;
     radio_mode_f = new_state;
 
     if ( !bOk ) // Sanity check

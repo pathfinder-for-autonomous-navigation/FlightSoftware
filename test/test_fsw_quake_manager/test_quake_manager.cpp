@@ -51,7 +51,6 @@ class TestFixture {
     // Create a TestFixture instance of QuakeManager with the following parameters
     TestFixture(unsigned int radio_mode, int qct_state) : registry() {
         // Create external field dependencies
-        cycle_no_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
         snapshot_size_fp = registry.create_internal_field<size_t>("downlink_producer.snap_size");
         radio_mo_packet_fp = registry.create_internal_field<char*>("downlink_producer.mo_ptr");
         radio_mt_packet_fp = registry.create_internal_field<char*>("uplink_consumer.mt_ptr");
