@@ -284,7 +284,7 @@ void test_time_propagation() {
         TEST_ASSERT_GREATER_OR_EQUAL(1000000, us_since_last_reading);
         // The propagated time value should be increased by 1 second as well.
         unsigned int gps_time = static_cast<unsigned long>(tf.propagated_time_fp->get());
-        TEST_ASSERT_EQUAL(us_since_last_reading + tow * 1000000, gps_time);
+        TEST_ASSERT_EQUAL(us_since_last_reading * 1000 + tow * 1000000, gps_time);
 
         // On the next execution, with good data, the time since the
         // last reading goes down to a few microseconds, since we just
