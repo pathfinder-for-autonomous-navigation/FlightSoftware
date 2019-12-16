@@ -27,7 +27,9 @@ public:
       currentState(IDLE),
       fnSeqNum(0),
       MO_msg_p(nullptr),
-      MO_msg_len(0){}
+      MO_msg_len(0){
+        quake.setup();
+      }
   #else
   QuakeControlTask(StateFieldRegistry &registry) : 
       ControlTask<int>(registry),
