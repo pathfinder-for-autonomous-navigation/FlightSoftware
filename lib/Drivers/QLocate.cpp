@@ -5,6 +5,8 @@
 //  Created by Kyle Krol (kpk63@cornell.edu) on 3/04/18.
 //  Pathfinder for Autonomous Navigation
 //  Cornell University
+// 
+// Updated 12/16/2019
 //
 #include "QLocate.hpp"
 #ifndef DESKTOP
@@ -201,29 +203,23 @@ int QLocate::get_sbdrb()
 {
 #ifndef DESKTOP
     CHECK_PORT_AVAILABLE();
-    short s = 0;
+    unsigned char sbuf[2] = {0, 0};
     // Read the message size
-    if (2 != port->readBytes((char *)&s, 2)) return WRONG_LENGTH;
-
-    size_t size = (s & 0xFF) << 8 | (s >> 8);
-#ifdef DEBUG_ENABLED
-    Serial.println("sbdrb > recieving message size= " + String(size));
-#endif
+    if (2 != port->readBytes(sbuf, 2)) return WRONG_LENGTH;
+    size_t size =  (sbuf[0] << 8) | sbuf[1]; // highest order byte first
     memset(mt_message, 0, MAX_MSG_SIZE);
     // Read the message
-    if (size != port->readBytes(mt_message, size))
+    size_t actual = port->readBytes(mt_message, size);
+    if (actual != size)
+    {
         return UNEXPECTED_RESPONSE; // Quake::Message read
+    }
+    memset(sbuf, 0, 2);
     // Read the checksum
-    s = 0;
-    if (2 != port->readBytes((char *)&s, 2))
-        return UNEXPECTED_RESPONSE;
-#ifdef DEBUG_ENABLED
-    Serial.printf("Message: [%s]", mt_message);
-    Serial.flush();
-#endif
+    if (2 != port->readBytes(sbuf, 2)) return UNEXPECTED_RESPONSE;
+    short s = (sbuf[0] << 8) | sbuf[1];
     // Verify checksum
-    // Possibly just compare s != checksum(message, size)
-    if (((s & 0xFF) << 8 | (s >> 8)) != checksum(mt_message, size))
+    if ( s != checksum(mt_message, size))
         return BAD_CHECKSUM;
 #endif
     return OK;
