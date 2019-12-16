@@ -20,26 +20,21 @@ class TestFixture {
         ReadableStateField<d_vector_t>* vel_fp;
         ReadableStateField<d_vector_t>* baseline_fp;
         ReadableStateField<gps_time_t>* time_fp;
+        ReadableStateField<unsigned int>* fix_error_count_fp;
+        InternalStateField<sys_time_t>* last_fix_time_fp;
 
         std::unique_ptr<PiksiControlTask> piksi_task;
 
         Devices::Piksi piksi;
-        // Create a TestFixture instance of PiksiController with pointers to statefields
-        #ifndef DESKTOP
-        TestFixture() : registry(), piksi("piksi", Serial4){
-
-                piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
-
-                // initialize pointers to statefields      
-                currentState_fp = registry.find_readable_field_t<int>("piksi.state");
-                pos_fp = registry.find_readable_field_t<d_vector_t>("piksi.pos");
-                vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
-                baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
-                time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
-        }
+        
+        #ifdef DESKTOP
+                #define PIKSI_INITIALIZATION piksi("piksi")
         #else
-        TestFixture() : registry(), piksi("piksi"){
+                #define PIKSI_INITIALIZATION piksi("piksi", Serial4)
+        #endif
 
+        // Create a TestFixture instance of PiksiController with pointers to statefields
+        TestFixture() : registry(), PIKSI_INITIALIZATION {
                 piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
 
                 // initialize pointers to statefields      
@@ -48,8 +43,11 @@ class TestFixture {
                 vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
+                fix_error_count_fp = registry.find_readable_field_t<unsigned int>("piksi.fix_error_count");
+                last_fix_time_fp = registry.find_internal_field_t<sys_time_t>("piksi.last_fix_time");
         }
-        #endif
+
+        #undef PIKSI_INITIALIZATION
 
         //method to make calling execute faster
         void execute(){
@@ -223,7 +221,6 @@ void test_task_execute()
         TEST_ASSERT_TRUE(gps_time_t(0,500,0) == tf.time_fp->get());
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
-
 }
 
 //test to make sure the control task goes into dead mode if it happens
@@ -250,11 +247,20 @@ void test_dead(){
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
 
-        //simulate that the piksi is not sending any data for 1000 control cycles
+        //simulate that the piksi is not sending any data for 1000 control cycles.
+        //Make sure that the counter state fields are set correctl.
         tf.set_read_return(4);
-        for(int i = 0;i<1000;i++){
+        for(int i = 0;i<1000;i++) {
+                if (i % 100 == 0) {
+                        TEST_ASSERT_EQUAL(i, tf.fix_error_count_fp->get());
+                }
                 tf.execute();
+                TimedControlTaskBase::wait_duration(1);
         }
+        const unsigned int delta_t = TimedControlTaskBase::duration_to_us(
+                TimedControlTaskBase::get_system_time()
+                - tf.last_fix_time_fp->get());
+        TEST_ASSERT_GREATER_OR_EQUAL(1000, delta_t);
         assert_piksi_mode(piksi_mode_t::no_data_error);
 
         //one more execution to throw into DEAD mode

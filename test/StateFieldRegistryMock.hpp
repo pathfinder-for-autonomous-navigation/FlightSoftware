@@ -3,6 +3,12 @@
 
 #include <StateFieldRegistry.hpp>
 
+#ifdef DESKTOP
+    #include <iostream>
+#else
+    #include <Arduino.h>
+#endif
+
 /**
  * @brief Provides a state field registry with additional field creation
  * utilities for use in unit testing.
@@ -11,13 +17,24 @@ class StateFieldRegistryMock : public StateFieldRegistry {
   public:
     StateFieldRegistryMock() : StateFieldRegistry() {}
 
+    void check_field_exists(StateFieldBase* ptr, const std::string& name) {
+        if (!ptr) {
+            #ifdef DESKTOP
+            std::cout << "Could not find field named \"" << name << "\" in registry." << std::endl;
+            #else
+            Serial.printf("Could not find field named \"%s\" in registry.", name.c_str());
+            #endif
+            assert(false);
+        }
+    }
+
     /**
      * @brief Finds a internal state field of the given name.
      */
     template<typename T>
     InternalStateField<T>* find_internal_field_t(const std::string& name) {
         auto ptr = static_cast<InternalStateField<T>*>(find_internal_field(name));
-        assert(ptr);
+        check_field_exists(ptr, name);
         return ptr;
     }
 
@@ -27,7 +44,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     template<typename T>
     ReadableStateField<T>* find_readable_field_t(const std::string& name) {
         auto ptr = static_cast<ReadableStateField<T>*>(find_readable_field(name));
-        assert(ptr);
+        check_field_exists(ptr, name);
         return ptr;
     }
 
@@ -37,7 +54,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     template<typename T>
     WritableStateField<T>* find_writable_field_t(const std::string& name) {
         auto ptr = static_cast<WritableStateField<T>*>(find_writable_field(name));
-        assert(ptr);
+        check_field_exists(ptr, name);
         return ptr;
     }
 

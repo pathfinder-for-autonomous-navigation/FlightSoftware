@@ -22,7 +22,6 @@ class TestFixture {
     WritableStateField<unsigned char>* sat_designation_fp;
 
     TestFixture() : registry() {
-        cycle_no_fp = registry.create_writable_field<unsigned int>("pan.cycle_no");
         adcs_mode_fp = registry.create_writable_field<unsigned char>("adcs.mode", 10);
         adcs_cmd_attitude_fp = registry.create_writable_field<f_quat_t>("adcs.cmd_attitude");
         adcs_ang_rate_fp = registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
