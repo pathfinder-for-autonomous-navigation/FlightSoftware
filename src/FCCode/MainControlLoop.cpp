@@ -2,9 +2,11 @@
 #include "DebugTask.hpp"
 #include "constants.hpp"
 
-// Include for calculating memory use. Works only on Mac and Linux.
+// Include for calculating memory use.
 #ifdef DESKTOP
-    #include <unistd.h>
+    #include <memuse.h>
+#else
+    extern "C" char* sbrk(int incr);
 #endif
 
 #ifdef DESKTOP
@@ -37,33 +39,13 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     #endif
 }
 
-#ifndef DESKTOP
-// Taken from SdFatUtil.h
-static int FreeRam(void) {
- extern int  __bss_end;
- extern int* __brkval;
- int free_memory;
- if (reinterpret_cast<int>(__brkval) == 0) {
-   // if no heap use from end of bss section
-   free_memory = reinterpret_cast<int>(&free_memory)
-                 - reinterpret_cast<int>(&__bss_end);
- } else {
-   // use from top of stack to heap
-   free_memory = reinterpret_cast<int>(&free_memory)
-                 - reinterpret_cast<int>(__brkval);
- }
- return free_memory;
-}
-#endif
-
 void MainControlLoop::execute() {
     // Compute memory usage
     #ifdef DESKTOP
-        unsigned int pages = sysconf(_SC_PHYS_PAGES);
-        unsigned int page_size = sysconf(_SC_PAGE_SIZE);
-        memory_use_f.set(pages * page_size);
+    memory_use_f.set(getCurrentRSS());
     #else
-        memory_use_f.set(FreeRam());
+    char top;
+    memory_use_f.set(&top - reinterpret_cast<char*>(sbrk(0)));
     #endif
 
     clock_manager.execute();
