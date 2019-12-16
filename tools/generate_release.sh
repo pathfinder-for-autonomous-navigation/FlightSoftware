@@ -28,8 +28,8 @@ docker build -t fswrelease -f tools/Dockerfile.release .
 docker rm fswrelease
 docker create --name fswrelease fswrelease
 docker cp fswrelease:/FlightSoftware/.pio/build/native/program release/linux-x86_64_hootl
-docker cp fswrelease:/FlightSoftware/.pio/build/native/program release/linux-x86_64_downlink_parser
-docker cp fswrelease:/FlightSoftware/.pio/build/native/program release/linux-x86_64_telem_info_generator
+docker cp fswrelease:/FlightSoftware/.pio/build/downlink_parser/program release/linux-x86_64_downlink_parser
+docker cp fswrelease:/FlightSoftware/.pio/build/telem_info_generator/program release/linux-x86_64_telem_info_generator
 
 # Produce the telemetry report
 cd release
