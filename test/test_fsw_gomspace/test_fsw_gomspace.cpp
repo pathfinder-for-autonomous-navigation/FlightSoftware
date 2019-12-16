@@ -92,80 +92,44 @@ class TestFixture {
         gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
 
         vboost1_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output1");
-        assert(vboost1_fp);
         vboost2_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output2");
-        assert(vboost2_fp);
         vboost3_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output3");
-        assert(vboost3_fp);
 
         vbatt_fp = registry.find_readable_field_t<unsigned int>("gomspace.vbatt");
-        assert(vbatt_fp);
 
         curin1_fp = registry.find_readable_field_t<unsigned int>("gomspace.curin.output1");
-        assert(curin1_fp);
         curin2_fp = registry.find_readable_field_t<unsigned int>("gomspace.curin.output2");
-        assert(curin2_fp);
         curin3_fp = registry.find_readable_field_t<unsigned int>("gomspace.curin.output3");
-        assert(curin3_fp);
 
         cursun_fp = registry.find_readable_field_t<unsigned int>("gomspace.cursun");
-        assert(cursun_fp);
-
         cursys_fp = registry.find_readable_field_t<unsigned int>("gomspace.cursys");
-        assert(cursys_fp);
 
         curout1_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output1");
-        assert(curout1_fp);
         curout2_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output2");
-        assert(curout2_fp);
         curout3_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output3");
-        assert(curout3_fp);
         curout4_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output4");
-        assert(curout4_fp);
         curout5_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output5");
-        assert(curout5_fp);
         curout6_fp = registry.find_readable_field_t<unsigned int>("gomspace.curout.output6");
-        assert(curout6_fp);
 
         output1_fp = registry.find_readable_field_t<bool>("gomspace.output.output1");
-        assert(output1_fp);
         output2_fp = registry.find_readable_field_t<bool>("gomspace.output.output2");
-        assert(output2_fp);
         output3_fp = registry.find_readable_field_t<bool>("gomspace.output.output3");
-        assert(output3_fp);
         output4_fp = registry.find_readable_field_t<bool>("gomspace.output.output4");
-        assert(output4_fp);
         output5_fp = registry.find_readable_field_t<bool>("gomspace.output.output5");
-        assert(output5_fp);
         output6_fp = registry.find_readable_field_t<bool>("gomspace.output.output6");
-        assert(output6_fp);
 
         wdt_i2c_time_left_fp = registry.find_readable_field_t<unsigned int>("gomspace.wdt_i2c_time_left");
-        assert(wdt_i2c_time_left_fp);
-
         counter_wdt_i2c_fp = registry.find_readable_field_t<unsigned int>("gomspace.counter_wdt_i2c");
-        assert(counter_wdt_i2c_fp);
-
         counter_boot_fp = registry.find_readable_field_t<unsigned int>("gomspace.counter_boot");
-        assert(counter_boot_fp);
 
         temp1_fp = registry.find_readable_field_t<signed int>("gomspace.temp.output1");
-        assert(temp1_fp);
         temp2_fp = registry.find_readable_field_t<signed int>("gomspace.temp.output2");
-        assert(temp2_fp);
         temp3_fp = registry.find_readable_field_t<signed int>("gomspace.temp.output3");
-        assert(temp3_fp);
         temp4_fp = registry.find_readable_field_t<signed int>("gomspace.temp.output4");
-        assert(temp4_fp);
 
         bootcause_fp = registry.find_readable_field_t<unsigned char>("gomspace.bootcause");
-        assert(bootcause_fp);
-
         battmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.battmode");
-        assert(battmode_fp);
-
         pptmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.pptmode");
-        assert(pptmode_fp);
     }
 };
 
