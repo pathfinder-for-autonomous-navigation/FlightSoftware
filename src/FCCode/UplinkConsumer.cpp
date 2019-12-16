@@ -1,7 +1,7 @@
 #include "UplinkConsumer.h"
 #include <bitstream.h>
 UplinkConsumer::UplinkConsumer(StateFieldRegistry& registry, unsigned int offset) :
-    TimedControlTask<void>(registry, offset),
+    TimedControlTask<void>(registry, "uplink_ct", offset),
     radio_mt_packet_len_f("uplink.len"),
     radio_mt_packet_f("uplink.ptr"),
     registry(registry)
