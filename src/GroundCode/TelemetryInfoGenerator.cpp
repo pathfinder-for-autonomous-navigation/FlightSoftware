@@ -77,6 +77,8 @@ bool try_collect_unbounded_field_info(const StateFieldBaseType* field, json& fie
     if (!ptr) return false;
 
     field_info["type"] = type_name<UnderlyingType>();
+    field_info["min"] = "N/A";
+    field_info["max"] = "N/A";
     return true;
 }
 
@@ -150,6 +152,10 @@ json TelemetryInfoGenerator::generate_telemetry_info() {
         for (const std::string& field_name : f.field_list) {
             ret["fields"][field_name]["flow_id"] = f.id;
         }
+    }
+    for(auto& field : ret["fields"]) {
+        if (field.find("flow_id") == field.end())
+            field["flow_id"] = "undefined";
     }
 
     return ret;
