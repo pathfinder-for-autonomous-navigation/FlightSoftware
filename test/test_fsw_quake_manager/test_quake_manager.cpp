@@ -52,8 +52,8 @@ class TestFixture {
     TestFixture(unsigned int radio_mode, int qct_state) : registry() {
         // Create external field dependencies
         cycle_no_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
-        snapshot_size_fp = registry.create_internal_field<size_t>("downlink_producer.snap_size");
-        radio_mo_packet_fp = registry.create_internal_field<char*>("downlink_producer.mo_ptr");
+        snapshot_size_fp = registry.create_internal_field<size_t>("downlink.snap_size");
+        radio_mo_packet_fp = registry.create_internal_field<char*>("downlink.ptr");
         radio_mt_packet_fp = registry.create_internal_field<char*>("uplink.ptr");
         radio_mt_len_fp = registry.create_internal_field<size_t>("uplink.len");
         radio_err_fp = registry.create_readable_field<int>("downlink_producer.radio_err_ptr", -90, 10);

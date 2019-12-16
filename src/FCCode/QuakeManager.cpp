@@ -22,8 +22,8 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
 { 
     // Retrieve fields from registry
     control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
-    snapshot_size_fp = find_internal_field<size_t>("downlink_producer.snap_size", __FILE__, __LINE__);
-    radio_mo_packet_fp = find_internal_field<char*>("downlink_producer.mo_ptr", __FILE__, __LINE__);
+    snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);
+    radio_mo_packet_fp = find_internal_field<char*>("downlink.ptr", __FILE__, __LINE__);
     radio_err_fp = find_readable_field<int>("downlink_producer.radio_err_ptr", __FILE__, __LINE__);
     radio_mt_packet_fp = find_internal_field<char*>("uplink.ptr", __FILE__, __LINE__);
     radio_mt_len_fp = find_internal_field<size_t>("uplink.len", __FILE__, __LINE__);
