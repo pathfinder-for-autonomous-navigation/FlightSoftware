@@ -70,6 +70,11 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int quake_manager_offset       = 104500;
     #endif
 
+    /**
+     * @brief Total memory use, in bytes.
+     */
+    ReadableStateField<unsigned int> memory_use_f;
+
    public:
     /*
      * @brief Construct a new Main Control Loop Task object

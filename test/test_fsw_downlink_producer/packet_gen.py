@@ -71,3 +71,13 @@ packet = convert_to_bytes(packet)
 print(packet)
 print("Length: " + str(packet.count("\\x")))
 print("-----------------------------------")
+
+int_0 = "0"*32
+print("-----------------------------------")
+print("Expected value for ground software functional testing")
+packet = "1" + int_0 + ("01"[::-1] + "0"*4 + "0" + "00") + ("10"[::-1] + "0" + "0" + "0")
+print(packet)
+packet = convert_to_bytes(packet)
+print(packet)
+print("Length: " + str(packet.count("0x")))
+print("-----------------------------------")

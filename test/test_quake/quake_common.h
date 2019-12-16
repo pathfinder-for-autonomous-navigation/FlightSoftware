@@ -44,36 +44,28 @@ static const int DEFAULT_CTRL_CYCLE_LENGTH = 120;
  * PORT_UNAVAILABLE.
  * [fnName] is the name of the function that callback points to.
  */
-void count_cycles(callback_fnptr callback, const char* fnName)
-{
-    int numCycles   = 0;    // count the number of cycles between commands
-    int retCode     = -1;   // return code/status
-    do
-    {
-        delay(DEFAULT_CTRL_CYCLE_LENGTH);
-        retCode = (q.*callback)();
-        ++numCycles;
-    }
-    while (retCode == Devices::PORT_UNAVAILABLE);
-    
-    Serial.printf("Number of cycles before %s: %d\r\n", fnName, numCycles);
-
-    TEST_ASSERT_EQUAL(Devices::OK, retCode);
-}
+#define count_cycles(callback, fnName) do{\
+    int numCycles   = 0;\
+    int retCode     = -1;\
+    do\
+    {\
+        delay(DEFAULT_CTRL_CYCLE_LENGTH);\
+        retCode = (callback)();\
+        ++numCycles;\
+    }\
+    while (retCode == Devices::PORT_UNAVAILABLE);\
+    Serial.printf("Number of cycles before %s: %d\r\n", fnName, numCycles);\
+    TEST_ASSERT_LESS_OR_EQUAL(1, retCode);\
+    TEST_ASSERT_GREATER_OR_EQUAL(0, retCode);\
+}while(0)
 
 /**
  * We already know that SBDWB works, so just run it here
  */
-void run_sbdwb(std::string msg)
-{
-    // Request SBDWB session
-    delay(DEFAULT_CTRL_CYCLE_LENGTH);
-    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_1(msg.length()));
-
-    // Copy the message to ISU
-    delay(DEFAULT_CTRL_CYCLE_LENGTH);
-    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_2(msg.c_str(), msg.length()));
-
-    // End SBDWB session
-    count_cycles(q.get_sbdwb, "get_sbdwb");
-}
+#define run_sbdwb(msg)do{\
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);\
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_1(msg.length()));\
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);\
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_2(msg.c_str(), msg.length()));\
+    count_cycles(q.get_sbdwb, "get_sbdwb");\
+}while(0)

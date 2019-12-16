@@ -2,14 +2,14 @@
 
 #ifdef FUNCTIONAL_TEST
 DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, offset),
+    : TimedControlTask<void>(registry, "debug", offset),
       start_cycle_f("cycle.start", Serializer<bool>()) {
   add_writable_field(start_cycle_f);
   init();
 }
 #else
 DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, offset) {
+    : TimedControlTask<void>(registry, "debug", offset) {
   init();
 }
 #endif
@@ -22,4 +22,8 @@ void DebugTask::execute() {
 #endif
 }
 
-void DebugTask::init() { debug_console::init(); }
+void DebugTask::init() {
+ #ifndef GSW
+    debug_console::init();
+ #endif
+}

@@ -4,7 +4,7 @@
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     const unsigned int offset,
-    const std::vector<FlowData>& flow_data) : TimedControlTask<void>(r, offset),
+    const std::vector<FlowData>& flow_data) : TimedControlTask<void>(r, "downlink_ct", offset),
                                               snapshot_ptr_f("downlink_producer.mo_ptr"),
                                               snapshot_size_bytes_f("downlink_producer.snap_size")
 {

@@ -24,6 +24,8 @@ class TestDummyFlightSoftwareBinary(unittest.TestCase):
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
     def testInvalidCmd(self):
+        """An invalid command to flight software is caught."""
+
         input = json.dumps({"field": "readable_field"}) + "\n"
         self.console.write(input.encode())
         response = json.loads(self.console.readline().rstrip())
@@ -32,6 +34,8 @@ class TestDummyFlightSoftwareBinary(unittest.TestCase):
         self.assertEqual(response['err'], "missing mode specification")
 
     def testInvalidRead(self):
+        """An attempt to read a nonexistent field is caught."""
+
         input = json.dumps({"field": "nonexistent_field", "mode" : ord('r')}) + "\n"
         self.console.write(input.encode())
         response = json.loads(self.console.readline().rstrip())
@@ -39,6 +43,8 @@ class TestDummyFlightSoftwareBinary(unittest.TestCase):
         self.assertEqual(response['err'], "invalid field name")
 
     def testValidRead(self):
+        """A request to read a readable field is serviced."""
+
         input = json.dumps({"field": "readable_field", "mode" : ord('r')}) + "\n"
         self.console.write(input.encode())
         response = json.loads(self.console.readline().rstrip())
@@ -46,6 +52,8 @@ class TestDummyFlightSoftwareBinary(unittest.TestCase):
         self.assertEqual(response['val'], "0")
 
     def testValidReadOfWritableField(self):
+        """A request to read a writable field is serviced."""
+
         input = json.dumps({"field": "writable_field", "mode": ord('r')}) + "\n"
         self.console.write(input.encode())
         response = json.loads(self.console.readline().rstrip())
@@ -53,6 +61,8 @@ class TestDummyFlightSoftwareBinary(unittest.TestCase):
         self.assertEqual(response['val'], "0")
 
     def testInvalidWrite(self):
+        """An invalid write command that's missing a value to be written is caught."""
+
         input = json.dumps({"field": "writable_field", "mode": ord('w')}) + "\n"
         self.console.write(input.encode())
         response = json.loads(self.console.readline().rstrip())
@@ -60,6 +70,8 @@ class TestDummyFlightSoftwareBinary(unittest.TestCase):
         self.assertEqual(response['err'], "missing value of field to be written")
 
     def testValidWrite(self):
+        """An valid write command to a writable field is serviced."""
+
         # Ensure OK write.
         input = json.dumps({"field": "writable_field", "mode": ord('w'), "val" : "2"}) + "\n"
         self.console.write(input.encode())

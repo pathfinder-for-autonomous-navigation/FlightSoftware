@@ -1,7 +1,7 @@
 #include "MissionManager.hpp"
 
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
-    TimedControlTask<void>(registry, offset),
+    TimedControlTask<void>(registry, "mission_ct", offset),
     mission_mode_sr(10),
     mission_mode_f("pan.mode", mission_mode_sr),
     is_deployed_sr(),
@@ -9,8 +9,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     sat_designation_sr(2),
     sat_designation_f("pan.sat_designation", sat_designation_sr)
 {
-    control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
-
     add_writable_field(mission_mode_f);
     add_readable_field(is_deployed_f);
     add_writable_field(sat_designation_f);
@@ -19,8 +17,10 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     adcs_cmd_attitude_fp = find_writable_field<f_quat_t>("adcs.cmd_attitude", __FILE__, __LINE__);
     adcs_ang_rate_fp = find_readable_field<float>("adcs.ang_rate", __FILE__, __LINE__);
     adcs_min_stable_ang_rate_fp = find_writable_field<float>("adcs.min_stable_ang_rate", __FILE__, __LINE__);
-
+ 
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::startup));
+    is_deployed_f.set(false);
+    sat_designation_f.set(0);
 }
 
 void MissionManager::execute() {
