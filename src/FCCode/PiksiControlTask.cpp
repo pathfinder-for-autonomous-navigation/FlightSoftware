@@ -17,8 +17,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
     time_sr(),
     time_f("piksi.time", time_sr),
     last_good_reading_time(),
-    us_since_last_reading_f("piksi.staleness", Serializer<unsigned int>()),
-    propagated_time_f("piksi.time.propagated")
+    us_since_last_reading_f("piksi.staleness", Serializer<unsigned int>())
     {
         add_readable_field(pos_f);
         add_readable_field(vel_f);
@@ -26,7 +25,6 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         add_readable_field(current_state_f);
         add_readable_field(time_f);
         add_readable_field(us_since_last_reading_f);
-        add_internal_field(propagated_time_f);
 
         //register callbacks and begin the serial port
         piksi.setup();
@@ -44,7 +42,6 @@ void PiksiControlTask::execute()
 {  
     const unsigned int us_since_last_reading = duration_to_us(get_system_time() -  last_good_reading_time);
     us_since_last_reading_f.set(us_since_last_reading);
-    propagated_time_f.set(time_f.get() + us_since_last_reading * 1000);
 
     int read_out = piksi.read_all();
 

@@ -44,7 +44,6 @@ class TestFixture {
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
                 us_since_last_reading_fp = registry.find_readable_field_t<unsigned int>("piksi.staleness");
-                propagated_time_fp = registry.find_internal_field_t<gps_time_t>("piksi.time.propagated");
         }
 
         #undef PIKSI_INITIALIZATION
@@ -282,9 +281,6 @@ void test_time_propagation() {
         tf.execute();
         unsigned int us_since_last_reading =  tf.us_since_last_reading_fp->get();
         TEST_ASSERT_GREATER_OR_EQUAL(1000000, us_since_last_reading);
-        // The propagated time value should be increased by 1 second as well.
-        unsigned int gps_time = static_cast<unsigned long>(tf.propagated_time_fp->get());
-        TEST_ASSERT_EQUAL(us_since_last_reading * 1000 + tow * 1000000, gps_time);
 
         // On the next execution, with good data, the time since the
         // last reading goes down to a few microseconds, since we just
