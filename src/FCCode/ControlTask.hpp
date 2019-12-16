@@ -8,6 +8,12 @@
 #include <StateFieldBase.hpp>
 #include <StateFieldRegistry.hpp>
 
+#ifdef DESKTOP
+    #include <iostream>
+#else
+    #include <Arduino.h>
+#endif
+
 /**
  * @brief A control ControlTaskBase is a wrapper around any high-level ControlTaskBase that
  * interacts with satellite data.
@@ -74,33 +80,45 @@ class ControlTask : protected debug_console {
         }
     }
 
+    void check_field_exists(const StateFieldBase* ptr, const std::string& field_type,
+            const char* field_name) {
+        if(!ptr) {
+            #ifdef UNIT_TEST
+                #ifdef DESKTOP
+                    std::cout << field_type << " field \"" << field_name
+                        << "\" is not present in the registry." << std::endl;
+                #else
+                    Serial.printf("%s field \"%s\" is not present in the registry.",
+                        field_type.c_str(), field_name);
+                #endif
+            #else
+                #ifndef FLIGHT
+                printf(debug_severity::error, "%s field \"%s\" is not present in the registry.",
+                    field_type.c_str(), field_name);
+                #endif
+            #endif
+            assert(false);
+        }
+    }
+
     template<typename U>
     InternalStateField<U>* find_internal_field(const char* field, const char* file, const unsigned int line) {
         auto field_ptr = _registry.find_internal_field(field);
-        if (!field_ptr) {
-            printf(debug_severity::error, "%s:%d: Internal field required is not present in state registry: %s\n", file, line, field);
-            assert(false);
-        }
+        check_field_exists(field_ptr, "internal", field);
         return static_cast<InternalStateField<U>*>(field_ptr);
     }
 
     template<typename U>
     ReadableStateField<U>* find_readable_field(const char* field, const char* file, const unsigned int line) {
         auto field_ptr = _registry.find_readable_field(field);
-        if (!field_ptr) { 
-            printf(debug_severity::error, "%s:%d: Readable field required is not present in state registry: %s\n", file, line, field);
-            assert(false);
-        }
+        check_field_exists(field_ptr, "readable", field);
         return static_cast<ReadableStateField<U>*>(field_ptr);
     }
 
     template<typename U>
     WritableStateField<U>* find_writable_field(const char* field, const char* file, const unsigned int line) {
         auto field_ptr = _registry.find_writable_field(field);
-        if (!field_ptr) { 
-            printf(debug_severity::error, "%s:%d: Writable field required is not present in state registry: %s\n", file, line, field);
-            assert(false);
-        }
+        check_field_exists(field_ptr, "writable", field);
         return static_cast<WritableStateField<U>*>(field_ptr);
     }
 };
