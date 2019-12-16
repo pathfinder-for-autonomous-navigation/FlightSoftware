@@ -42,9 +42,11 @@ class TimedControlTaskBase {
      * @brief The time at which the current control cycle started.
      */
     static sys_time_t control_cycle_start_time;
-    static unsigned int control_cycle_count;
+    
 
   public:
+    static unsigned int control_cycle_count;
+
     /**
      * @brief Get the system time.
      * 

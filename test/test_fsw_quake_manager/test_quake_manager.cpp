@@ -37,8 +37,6 @@ class TestFixture {
   public:
     StateFieldRegistryMock registry;
     // Input state fields to quake manager
-    std::shared_ptr<ReadableStateField<unsigned int>> cycle_no_fp;
-
     std::shared_ptr<InternalStateField<char*>> radio_mo_packet_fp;
     std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
     std::shared_ptr<InternalStateField<bool>> radio_mt_ready_fp;
@@ -60,7 +58,7 @@ class TestFixture {
         // Initialize external fields
         snapshot_size_fp->set(static_cast<int>(350));
         radio_mo_packet_fp->set(snap1);
-        cycle_no_fp->set(static_cast<unsigned int>(initCycles));
+        TimedControlTaskBase::control_cycle_count = initCycles;
 
         // Create Quake Manager instance
         quake_manager = std::make_unique<QuakeManager>(registry, 0);
@@ -74,8 +72,7 @@ class TestFixture {
     }
   // Make a step in the world
   void step(unsigned int amt = 1) {
-    unsigned int cycleNo = cycle_no_fp->get();
-    cycle_no_fp->set(cycleNo + amt); 
+    TimedControlTaskBase::control_cycle_count += amt; 
     quake_manager->execute(); 
   }
   void realSteps(unsigned int amt = 1)
@@ -83,7 +80,7 @@ class TestFixture {
     for (unsigned int i = 0; i < amt; i++)
     {
       quake_manager->execute();
-      cycle_no_fp->set(cycle_no_fp->get() + 1);
+      TimedControlTaskBase::control_cycle_count++;
     }
   }
 };
@@ -152,7 +149,7 @@ void test_wait_no_more_cycles()
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::wait), IDLE);
   tf.step(tf.quake_manager->max_wait_cycles);
   // then expect execute write on the next cycle
-  TEST_ASSERT_EQUAL(initCycles + tf.quake_manager->max_wait_cycles, tf.cycle_no_fp->get());
+  TEST_ASSERT_EQUAL(initCycles + tf.quake_manager->max_wait_cycles, TimedControlTaskBase::control_cycle_count);
   tf.step();
   assert_qct(SBDWB);
   assert_fn_num(0);
@@ -165,8 +162,8 @@ void test_rwc_no_more_cycles(int qct_state, unsigned int radio_mode)
   // If in CONFIG, WRITE, READ, TRANS and run out of cycles
   TestFixture tf(radio_mode, qct_state);
   tf.quake_manager->dbg_get_unexpected_flag() = false;
-  tf.cycle_no_fp->set(tf.cycle_no_fp->get() + tf.quake_manager->max_transceive_cycles);
-  TEST_ASSERT_EQUAL(initCycles + tf.quake_manager->max_transceive_cycles, tf.cycle_no_fp->get());
+  TimedControlTaskBase::control_cycle_count += tf.quake_manager->max_transceive_cycles;
+  TEST_ASSERT_EQUAL(initCycles + tf.quake_manager->max_transceive_cycles, TimedControlTaskBase::control_cycle_count);
   tf.realSteps();
   tf.realSteps();
   // then expect transition to WAIT and SBDWB, CONFIG, SBDRB should set the error flag
@@ -261,7 +258,7 @@ void test_transceive_ok_no_network_timed_out()
 {
   // If in TRANS and complete trans but there is no network and out of cycles
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::transceive), SBDIX);
-  tf.cycle_no_fp->set(tf.cycle_no_fp->get() + tf.quake_manager->max_transceive_cycles - 1);
+  TimedControlTaskBase::control_cycle_count += tf.quake_manager->max_transceive_cycles - 1;
   tf.step(); // 0
   tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[0] = 32;
   tf.step(); // 1
@@ -334,7 +331,7 @@ void test_oldcycles_do_not_change()
   // Take the last step
   tf.step();
   // Expect to no longer be in wait
-  TEST_ASSERT_EQUAL(tf.cycle_no_fp->get(), tf.quake_manager->dbg_get_last_checkin());
+  TEST_ASSERT_EQUAL(TimedControlTaskBase::control_cycle_count, tf.quake_manager->dbg_get_last_checkin());
 }
 
 void test_transition_radio_state()
@@ -353,7 +350,7 @@ void test_no_more_cycles()
 {
   TestFixture tf(static_cast<unsigned int>(radio_mode_t::config), CONFIG);
   // If in config and there are no more cycles
-  tf.cycle_no_fp->set(initCycles + tf.quake_manager->max_config_cycles);
+  TimedControlTaskBase::control_cycle_count = initCycles + tf.quake_manager->max_config_cycles;
   tf.step();
   // then expect reset counter and transition to wait
   TEST_ASSERT_EQUAL(tf.quake_manager->dbg_get_last_checkin(), 
