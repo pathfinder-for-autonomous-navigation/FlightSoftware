@@ -35,13 +35,12 @@ template<template<typename> class StateFieldType,
          class StateFieldBaseType>
 bool try_collect_field_info(const StateFieldBaseType* field, json& field_info) {
     const StateFieldType<UnderlyingType>* ptr = dynamic_cast<const StateFieldType<UnderlyingType>*>(field);
-    if (ptr) {
-        field_info["type"] = type_name<UnderlyingType>();
-        field_info["min"] = ptr->get_serializer_min();
-        field_info["max"] = ptr->get_serializer_max();
-        return true;
-    }
-    return false;
+    if (!ptr) return false;
+
+    field_info["type"] = type_name<UnderlyingType>();
+    field_info["min"] = ptr->get_serializer_min();
+    field_info["max"] = ptr->get_serializer_max();
+    return true;
 }
 
 template<template<typename> class StateFieldType,
@@ -56,13 +55,12 @@ bool try_collect_vector_field_info(const StateFieldBaseType* field, json& field_
 
     const StateFieldType<UnderlyingVectorType>* ptr =
         dynamic_cast<const StateFieldType<UnderlyingVectorType>*>(field);
-    if (ptr) {
-        field_info["type"] = type_name<UnderlyingVectorType>();
-        field_info["min"] = ptr->get_serializer_min()[0];
-        field_info["max"] = ptr->get_serializer_max()[0];
-        return true;
-    }
-    return false;
+    if (!ptr) return false;
+
+    field_info["type"] = type_name<UnderlyingVectorType>();
+    field_info["min"] = ptr->get_serializer_min()[0];
+    field_info["max"] = ptr->get_serializer_max()[0];
+    return true;
 }
 
 template<template<typename> class StateFieldType,
@@ -76,11 +74,10 @@ bool try_collect_unbounded_field_info(const StateFieldBaseType* field, json& fie
         "Can't collect unbounded field info for a non-bool, non-GPS time, or non-quaternion type.");
 
     const StateFieldType<UnderlyingType>* ptr = dynamic_cast<const StateFieldType<UnderlyingType>*>(field);
-    if (ptr) {
-        field_info["type"] = type_name<UnderlyingType>();
-        return true;
-    }
-    return false;
+    if (!ptr) return false;
+
+    field_info["type"] = type_name<UnderlyingType>();
+    return true;
 }
 
 template<template<typename> class StateFieldType, class StateFieldBaseType>
