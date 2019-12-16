@@ -24,6 +24,8 @@ class TestFlightSoftwareBinary(unittest.TestCase):
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
     def readCycleNumber(self):
+        # Helper method to read the cycle count.
+
         input = json.dumps({"field": "pan.cycle_no", "mode" : ord('r')}) + "\n"
         self.console.write(input.encode())
         time.sleep(0.200)
@@ -36,11 +38,14 @@ class TestFlightSoftwareBinary(unittest.TestCase):
 
     def startNextCycle(self):
         # Send a signal to start the next cycle, like the simulation would.
+
         input = json.dumps({"field": "cycle.start", "mode" : ord('w'), "val" : "true"}) + "\n"
         self.console.write(input.encode())
         self.console.readline() # Throw away next line
 
     def testValidRead(self):
+        """Test that the cycle count increments on every control cycle."""
+
         cycleNumber = self.readCycleNumber()
         self.assertGreaterEqual(cycleNumber, 0)
 

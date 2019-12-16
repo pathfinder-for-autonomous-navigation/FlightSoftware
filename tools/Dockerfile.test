@@ -3,4 +3,5 @@
 FROM fswbase
 MAINTAINER Tanishq Aggarwal (ta335@cornell.edu)
 
-RUN ./tools/run_desktop_tests.sh
+RUN ./tools/run_desktop_flight_tests.sh
+RUN ./tools/run_ground_tests.sh
