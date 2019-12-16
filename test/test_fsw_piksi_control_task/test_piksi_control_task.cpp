@@ -294,7 +294,7 @@ void test_time_propagation() {
         tf.set_read_return(3);
         TimedControlTaskBase::wait_duration(10);
         tf.execute();
-        TEST_ASSERT_GREATER_OR_EQUAL(us_since_last_reading + 10, tf.us_since_last_reading_fp->get());
+        TEST_ASSERT_LESS_OR_EQUAL(us_since_last_reading + 10, tf.us_since_last_reading_fp->get());
 
         // Feed a good reading, call execute. The time since the last
         // good reading should be small again.
