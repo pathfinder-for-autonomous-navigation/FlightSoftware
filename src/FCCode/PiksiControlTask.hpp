@@ -44,7 +44,7 @@ public:
     // Micros # since last good Piksi reading, and
     // the current propagated time from that last good
     // reading
-    sys_time_t last_good_reading;
+    sys_time_t last_good_reading_time;
     ReadableStateField<unsigned int> us_since_last_reading_f;
     InternalStateField<gps_time_t> propagated_time_f;
 

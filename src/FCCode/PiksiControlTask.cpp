@@ -16,7 +16,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
     current_state_f("piksi.state", current_state_sr),
     time_sr(),
     time_f("piksi.time", time_sr),
-    last_good_reading(),
+    last_good_reading_time(),
     us_since_last_reading_f("piksi.staleness", Serializer<unsigned int>()),
     propagated_time_f("piksi.time.propagated")
     {
@@ -37,11 +37,12 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         pos_f.set({nan, nan, nan});
         vel_f.set({nan, nan, nan});
         baseline_pos_f.set({nan, nan, nan});
+        last_good_reading_time = get_system_time();
     }
 
 void PiksiControlTask::execute()
 {  
-    const unsigned int us_since_last_reading = duration_to_us(get_system_time() -  last_good_reading);
+    const unsigned int us_since_last_reading = duration_to_us(get_system_time() -  last_good_reading_time);
     us_since_last_reading_f.set(us_since_last_reading);
     propagated_time_f.set(time_f.get() + us_since_last_reading * 1000);
 
@@ -117,17 +118,17 @@ void PiksiControlTask::execute()
 
         if(read_out == 0) {
             current_state_f.set(static_cast<unsigned int>(piksi_mode_t::spp));
-            last_good_reading = get_system_time();
+            last_good_reading_time = get_system_time();
         }
         if(read_out == 1){
             int baseline_flag = piksi.get_baseline_ecef_flags();
             if(baseline_flag == 1){
                 current_state_f.set(static_cast<unsigned int>(piksi_mode_t::fixed_rtk));
-                last_good_reading = get_system_time();
+                last_good_reading_time = get_system_time();
             }
             else if(baseline_flag == 0){
                 current_state_f.set(static_cast<unsigned int>(piksi_mode_t::float_rtk));
-                last_good_reading = get_system_time();
+                last_good_reading_time = get_system_time();
             }
             else{
                 //baseline flag unexpected value

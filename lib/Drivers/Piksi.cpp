@@ -164,7 +164,7 @@ void Piksi::get_base_pos_ecef(std::array<double, 3> *position) {
     (*position)[2] = _pos_ecef.z;
 }
 
-#ifdef DESKTOP
+#ifdef UNIT_TEST
 void Piksi::set_gps_time(const unsigned int tow){
     _gps_time.tow = tow;
 }

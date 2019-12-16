@@ -20,8 +20,8 @@ class TestFixture {
         ReadableStateField<d_vector_t>* vel_fp;
         ReadableStateField<d_vector_t>* baseline_fp;
         ReadableStateField<gps_time_t>* time_fp;
-        ReadableStateField<gps_time_t>* us_since_last_reading_fp;
-        ReadableStateField<gps_time_t>* propagated_time_fp;
+        ReadableStateField<unsigned int>* us_since_last_reading_fp;
+        InternalStateField<gps_time_t>* propagated_time_fp;
 
         std::unique_ptr<PiksiControlTask> piksi_task;
 
@@ -35,7 +35,6 @@ class TestFixture {
 
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry(), PIKSI_INITIALIZATION {
-
                 piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
 
                 // initialize pointers to statefields      
@@ -45,7 +44,7 @@ class TestFixture {
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
                 us_since_last_reading_fp = registry.find_readable_field_t<unsigned int>("piksi.staleness");
-                time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time.propagated");
+                propagated_time_fp = registry.find_internal_field_t<gps_time_t>("piksi.time.propagated");
         }
 
         #undef PIKSI_INITIALIZATION
@@ -222,7 +221,6 @@ void test_task_execute()
         TEST_ASSERT_TRUE(gps_time_t(0,500,0) == tf.time_fp->get());
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
-
 }
 
 //test to make sure the control task goes into dead mode if it happens
@@ -263,7 +261,36 @@ void test_dead(){
 
 // Ensure that time is propagated even when measurements are unavailable
 void test_time_propagation() {
+        TestFixture tf;
 
+        // Get a good reading from driver.
+        tf.set_read_return(1);
+        tf.execute();
+
+        // Wait for about a second. The time since the last reading
+        // should be greater than a second.
+        TimedControlTask<void>::wait_duration(1000000);
+        tf.execute();
+        TEST_ASSERT_GREATER_THAN(1000000, tf.us_since_last_reading_fp->get());
+
+        // On the next execution, with good data, the time since the
+        // last reading goes down to a few microseconds, since we just
+        // called execute
+        tf.execute();
+        const unsigned int us_since_last_reading = tf.us_since_last_reading_fp->get();
+        TEST_ASSERT_LESS_THAN(500, us_since_last_reading);
+
+        // Feed a bad reading, call execute. The time since the last
+        // good reading should increase.
+        tf.set_read_return(3);
+        tf.execute();
+        TEST_ASSERT_GREATER_THAN(us_since_last_reading, tf.us_since_last_reading_fp->get());
+
+        // Feed a good reading, call execute. The time since the last
+        // good reading should be small again.
+        tf.set_read_return(1);
+        tf.execute();
+        TEST_ASSERT_LESS_THAN(500, tf.us_since_last_reading_fp->get());
 }
 
 int test_control_task()

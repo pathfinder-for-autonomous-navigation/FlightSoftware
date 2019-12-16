@@ -95,12 +95,18 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
       if (delta_t <= 0) {
         num_lates_f.set(num_lates_f.get() + 1);
       }
-      const float new_avg_wait = ((avg_wait_f.get() * control_cycle_count) + delta_t) /
+      const unsigned int wait_time = std::max(delta_t, 0);
+      const float new_avg_wait = ((avg_wait_f.get() * control_cycle_count) + wait_time) /
         (control_cycle_count + 1);
       avg_wait_f.set(new_avg_wait);
 
+      wait_duration(delta_t); 
+    }
+
+    static void wait_duration(const unsigned int& delta_t) {
+      const sys_time_t start = get_system_time();
       // Wait until execution time
-      while((signed int) duration_to_us(time - get_system_time()) > 0) {
+      while(duration_to_us(get_system_time() - start) < delta_t) {
         #ifndef DESKTOP
           delayMicroseconds(10);
         #endif
