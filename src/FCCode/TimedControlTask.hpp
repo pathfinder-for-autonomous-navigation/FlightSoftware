@@ -45,16 +45,6 @@ class TimedControlTaskBase {
     static unsigned int control_cycle_count;
 
   public:
-    static void wait_duration(const unsigned int& delta_t) {
-      const sys_time_t start = get_system_time();
-      // Wait until execution time
-      while(duration_to_us(get_system_time() - start) < delta_t) {
-        #ifndef DESKTOP
-          delayMicroseconds(10);
-        #endif
-      }
-    }
-
     /**
      * @brief Get the system time.
      * 
@@ -94,6 +84,16 @@ class TimedControlTaskBase {
       #else
         return delta;
       #endif
+    }
+
+    static void wait_duration(const unsigned int& delta_t) {
+      const sys_time_t start = get_system_time();
+      // Wait until execution time
+      while(duration_to_us(get_system_time() - start) < delta_t) {
+        #ifndef DESKTOP
+          delayMicroseconds(10);
+        #endif
+      }
     }
 };
 
@@ -157,7 +157,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
         (control_cycle_count + 1);
       avg_wait_f.set(new_avg_wait);
 
-      wait_duration(delta_t); 
+      wait_duration(wait_time); 
     }
 
     /**
