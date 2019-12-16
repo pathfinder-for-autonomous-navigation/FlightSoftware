@@ -37,7 +37,7 @@ class AttitudeEstimator : public TimedControlTask<void> {
      */
     void set_estimate();
     
-    const gps_time_t pan_epoch;
+    static const gps_time_t pan_epoch;
 
     /**
      * @brief Inputs collected from Piksi and ADCSBoxMonitor.

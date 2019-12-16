@@ -45,10 +45,10 @@ QuakeManager::~QuakeManager()
 }
 
 bool QuakeManager::execute() {
-    printf(debug_severity::info, "[Quake Info] Executing Quake Manager \
-        current radio_state %d, current control task state %d", 
-            static_cast<unsigned int>(radio_mode_f), 
-            qct.get_current_state());
+    // printf(debug_severity::info, "[Quake Info] Executing Quake Manager "
+    //     "current radio_state %d, current control task state %d", 
+    //         static_cast<unsigned int>(radio_mode_f), 
+    //         qct.get_current_state());
     switch(radio_mode_f){
         case radio_mode_t::config:
         return dispatch_config();
@@ -63,8 +63,8 @@ bool QuakeManager::execute() {
         case radio_mode_t::manual:
         return dispatch_manual();
         default:
-            printf(debug_severity::error, "Radio state not defined: %d", 
-            static_cast<unsigned int>(radio_mode_f));
+            // printf(debug_severity::error, "Radio state not defined: %d", 
+            // static_cast<unsigned int>(radio_mode_f));
             return false;
     }
 }
@@ -129,8 +129,8 @@ bool QuakeManager::dispatch_write() {
     // If we are done with loading messages --> try to transceive
     if (qct.get_current_state() == IDLE)
     {
-        printf(debug_severity::info, 
-            "[Quake Info] SBDWB finished, transitioning to SBDIX");
+        // printf(debug_severity::info, 
+        //     "[Quake Info] SBDWB finished, transitioning to SBDIX");
         transition_radio_state(radio_mode_t::transceive);
     }
 
@@ -154,9 +154,9 @@ bool QuakeManager::dispatch_transceive() {
         // Case 1: We have no comms --> try again
         if (qct.get_MO_status() > 4)
         {
-            printf(debug_severity::info, 
-                "[Quake Info] SBDIX finished, we have no comms. \
-                    Error code: %d", qct.get_MO_status());
+            // printf(debug_severity::info, 
+            //     "[Quake Info] SBDIX finished, we have no comms. "
+            //         "Error code: %d", qct.get_MO_status());
             // we should stay in transceive but do not update last_checkin
             qct.request_state(SBDIX);
             return write_to_error(err_code);
@@ -165,15 +165,15 @@ bool QuakeManager::dispatch_transceive() {
         // Case 2: We have comms and we have message --> read message
         if (qct.get_MT_status() == 1) // SBD message successfully retrieved
         {
-            printf(debug_severity::info, 
-                "[Quake Info] SBDIX finished, transitioning to SBDRB");
+            // printf(debug_severity::info, 
+            //     "[Quake Info] SBDIX finished, transitioning to SBDRB");
             transition_radio_state(radio_mode_t::read);
         }
         // Case 3: We have comms and we have no message --> load next message
         else
         {
-            printf(debug_severity::info, 
-                "[Quake Info] SBDIX finished, transitioning to SBDWB");
+            // printf(debug_severity::info, 
+            //     "[Quake Info] SBDIX finished, transitioning to SBDWB");
             transition_radio_state(radio_mode_t::write);
         }
     }
@@ -196,8 +196,8 @@ bool QuakeManager::dispatch_read() {
     // If we are done with SBDRB --> save message and load next message
     if (qct.get_current_state() == IDLE)
     {
-        printf(debug_severity::info, 
-            "[Quake Info] SBDRB finished, transitioning to SBDWB");
+        // printf(debug_severity::info, 
+        //     "[Quake Info] SBDRB finished, transitioning to SBDWB");
 
         radio_mt_ready_fp->set(true);
         transition_radio_state(radio_mode_t::write);
@@ -220,8 +220,8 @@ bool QuakeManager::write_to_error(int err_code)
     radio_err_fp->set(err_code);
     unexpected_flag = true;
     printf(debug_severity::error, 
-        "[Quake Error] Execution failed at radio state %d, quake control state \
-        %d, and fn_number %d with error code %d", 
+        "[Quake Error] Execution failed at radio state %d, quake control state "
+        "%d, and fn_number %d with error code %d", 
         static_cast<unsigned int> (radio_mode_f),
         qct.get_current_state(),
         qct.get_current_fn_number(), 
@@ -246,13 +246,16 @@ bool QuakeManager::no_more_cycles(size_t max_cycles, radio_mode_t new_state)
 
 bool QuakeManager::transition_radio_state(radio_mode_t new_state)
 {
-    printf(debug_severity::info, 
-        "[Quake Info] Transitioning from radio state %d to %d", 
-        static_cast<unsigned int> (radio_mode_f),
-        new_state);
+    // printf(debug_severity::info, 
+    //     "[Quake Info] Transitioning from radio state %d to %d", 
+    //     static_cast<unsigned int> (radio_mode_f),
+    //     new_state);
     bool bOk = true;
     switch(new_state)
     {
+        case radio_mode_t::manual:
+            // Do nothing
+            break;
         case radio_mode_t::wait:
             bOk = qct.request_state(IDLE);
             break;
