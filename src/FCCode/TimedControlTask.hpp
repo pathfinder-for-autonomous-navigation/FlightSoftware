@@ -33,7 +33,7 @@ typedef unsigned int systime_duration_t;
 #endif
 
 /**
- * @brief Values that are shared across all timed control tasks,
+ * @brief Timing values and functions that are shared across all timed control tasks,
  * irrespective of return type.
  */
 class TimedControlTaskBase {
@@ -43,8 +43,65 @@ class TimedControlTaskBase {
      */
     static sys_time_t control_cycle_start_time;
     static unsigned int control_cycle_count;
+
+  public:
+    static void wait_duration(const unsigned int& delta_t) {
+      const sys_time_t start = get_system_time();
+      // Wait until execution time
+      while(duration_to_us(get_system_time() - start) < delta_t) {
+        #ifndef DESKTOP
+          delayMicroseconds(10);
+        #endif
+      }
+    }
+
+    /**
+     * @brief Get the system time.
+     * 
+     * @return sys_time_t
+     */
+    static sys_time_t get_system_time() {
+      #ifdef DESKTOP
+        return std::chrono::steady_clock::now();
+      #else
+        return micros();
+      #endif
+    }
+
+    /**
+     * @brief Convert a duration object into microseconds.
+     * 
+     * @param delta 
+     * @return systime_duration_t 
+     */
+    static unsigned int duration_to_us(const systime_duration_t& delta) {
+      #ifdef DESKTOP
+        return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
+      #else
+        return delta;
+      #endif
+    }
+
+    /**
+     * @brief Convert microseconds into a duration object.
+     * 
+     * @param delta 
+     * @return systime_duration_t 
+     */
+    static systime_duration_t us_to_duration(const unsigned int delta) {
+      #ifdef DESKTOP
+        return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::microseconds(delta));
+      #else
+        return delta;
+      #endif
+    }
 };
 
+/**
+ * @brief Task-specific methods and values for timed control tasks.
+ * 
+ * @tparam T Return type of control task.
+ */
 template<typename T>
 class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
   private:
@@ -101,57 +158,6 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
       avg_wait_f.set(new_avg_wait);
 
       wait_duration(delta_t); 
-    }
-
-    static void wait_duration(const unsigned int& delta_t) {
-      const sys_time_t start = get_system_time();
-      // Wait until execution time
-      while(duration_to_us(get_system_time() - start) < delta_t) {
-        #ifndef DESKTOP
-          delayMicroseconds(10);
-        #endif
-      }
-    }
-
-    /**
-     * @brief Get the system time.
-     * 
-     * @return sys_time_t
-     */
-    static sys_time_t get_system_time() {
-      #ifdef DESKTOP
-        return std::chrono::steady_clock::now();
-      #else
-        return micros();
-      #endif
-    }
-
-    /**
-     * @brief Convert a duration object into microseconds.
-     * 
-     * @param delta 
-     * @return systime_duration_t 
-     */
-    static unsigned int duration_to_us(const systime_duration_t& delta) {
-      #ifdef DESKTOP
-        return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
-      #else
-        return delta;
-      #endif
-    }
-
-    /**
-     * @brief Convert microseconds into a duration object.
-     * 
-     * @param delta 
-     * @return systime_duration_t 
-     */
-    static systime_duration_t us_to_duration(const unsigned int delta) {
-      #ifdef DESKTOP
-        return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::microseconds(delta));
-      #else
-        return delta;
-      #endif
     }
 
     /**

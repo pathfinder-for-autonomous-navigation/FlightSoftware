@@ -264,27 +264,41 @@ void test_time_propagation() {
         TestFixture tf;
 
         // Get a good reading from driver.
+        unsigned int tow = 200;
+        std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
+        std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
+        std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};  
         tf.set_read_return(1);
+        tf.set_gps_time(tow);
+        tf.set_pos_ecef(tow, pos, 4);
+        tf.set_vel_ecef(tow, vel);
+        tf.set_baseline_ecef(tow, baseline);
+        tf.set_baseline_flag(1);
         tf.execute();
 
         // Wait for about a second. The time since the last reading
         // should be greater than a second.
-        TimedControlTask<void>::wait_duration(1000000);
+        TimedControlTaskBase::wait_duration(1000000);
         tf.execute();
-        TEST_ASSERT_GREATER_THAN(1000000, tf.us_since_last_reading_fp->get());
+        unsigned int us_since_last_reading =  tf.us_since_last_reading_fp->get();
+        TEST_ASSERT_GREATER_OR_EQUAL(1000000, us_since_last_reading);
+        // The propagated time value should be increased by 1 second as well.
+        unsigned int gps_time = static_cast<unsigned long>(tf.propagated_time_fp->get());
+        TEST_ASSERT_EQUAL(us_since_last_reading + tow * 1000000, gps_time);
 
         // On the next execution, with good data, the time since the
         // last reading goes down to a few microseconds, since we just
         // called execute
         tf.execute();
-        const unsigned int us_since_last_reading = tf.us_since_last_reading_fp->get();
+        us_since_last_reading = tf.us_since_last_reading_fp->get();
         TEST_ASSERT_LESS_THAN(500, us_since_last_reading);
 
         // Feed a bad reading, call execute. The time since the last
         // good reading should increase.
         tf.set_read_return(3);
+        TimedControlTaskBase::wait_duration(10);
         tf.execute();
-        TEST_ASSERT_GREATER_THAN(us_since_last_reading, tf.us_since_last_reading_fp->get());
+        TEST_ASSERT_GREATER_OR_EQUAL(us_since_last_reading + 10, tf.us_since_last_reading_fp->get());
 
         // Feed a good reading, call execute. The time since the last
         // good reading should be small again.
