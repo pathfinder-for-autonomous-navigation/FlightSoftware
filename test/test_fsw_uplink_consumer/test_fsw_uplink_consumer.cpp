@@ -43,6 +43,7 @@ class TestFixture {
     
     // Create a TestFixture instance of QuakeManager with the following parameters
     TestFixture() : registry() {
+        srand(1);
         // Create dummy fields
         cycle_no_fp = registry.create_writable_field<unsigned int>("pan.cycle_no");
         adcs_mode_fp = registry.create_writable_field<unsigned char>("adcs.mode", 10);

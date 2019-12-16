@@ -49,8 +49,9 @@ size_t UplinkConsumer::get_field_length(size_t field_index)
     {
         // Get index from the bitstream
         bits_consumed += bs.nextN(index_size, reinterpret_cast<uint8_t*>(&field_index));
-        if (field_index-- == 0) // reached end of the packet
+        if (field_index == 0) // reached end of the packet
             return;
+        --field_index;
         printf(debug_severity::info, 
             "[UplinkConsumer update] Updating field: %u", field_index);
         // Get field length from the index
@@ -83,9 +84,9 @@ bool UplinkConsumer::validate_packet()
         // Get index from bitstream
         bits_consumed = bs.nextN(index_size, reinterpret_cast<uint8_t*>(&field_index));
 
-        if (field_index-- == 0) // reached end of the packet
+        if (field_index == 0) // reached end of the packet
             break;
-        
+        --field_index;
         // If we have already seen this field or if the number of bits consumed
         // to get the next index is not index_size
         if (is_field_updated[field_index] || bits_consumed != index_size)
