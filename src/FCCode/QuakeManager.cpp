@@ -1,6 +1,6 @@
 #include "QuakeManager.h"
 #include "QLocate.hpp"
-#define RADIO_TESTING
+// #define RADIO_TESTING
 /**
  * QuakeManager Implementation Info: 
  * 
@@ -135,7 +135,8 @@ bool QuakeManager::dispatch_write() {
 #endif
         // load the current 70 bytes of the buffer
        qct.set_downlink_msg(mo_buffer_copy + (packet_size*mo_idx), packet_size);
-       mo_idx = (mo_idx + 1) % ((max_snapshot_size + packet_size -1)/packet_size);
+       assert(max_snapshot_size/packet_size != 0);
+       mo_idx = (mo_idx + 1) % (max_snapshot_size/packet_size);
     }
 
     int err_code = qct.execute();
@@ -210,9 +211,8 @@ bool QuakeManager::dispatch_read() {
     // If we are done with SBDRB --> save message and load next message
     if (qct.get_current_state() == IDLE)
     {
-        // printf(debug_severity::info, 
-        //     "[Quake Info] SBDRB finished, transitioning to SBDWB");
-
+        printf(debug_severity::info, 
+            "[Quake SBDRB Message] message: %s", qct.get_MT_msg());
         radio_mt_ready_fp->set(true);
         transition_radio_state(radio_mode_t::write);
     }
