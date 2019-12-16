@@ -44,4 +44,3 @@ int main(void)
     UNITY_END();
     return 0;
 }
-

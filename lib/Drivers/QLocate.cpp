@@ -207,28 +207,16 @@ int QLocate::get_sbdrb()
     // Read the message size
     if (2 != port->readBytes(sbuf, 2)) return WRONG_LENGTH;
     size_t size =  (sbuf[0] << 8) | sbuf[1]; // highest order byte first
-#ifdef DEBUG_ENABLED
-    Serial.println("210. sbdrb > recieving message size= " + String(size));
-#endif
     memset(mt_message, 0, MAX_MSG_SIZE);
     // Read the message
     size_t actual = port->readBytes(mt_message, size);
     if (actual != size)
     {
-        Serial.println("215. message= " + String(mt_message));
-        Serial.println("216. actual" + String(actual));
         return UNEXPECTED_RESPONSE; // Quake::Message read
     }
-#ifdef DEBUG_ENABLED
-    Serial.println("217. sbdrb > read message= " + String(mt_message));
-#endif
     memset(sbuf, 0, 2);
     // Read the checksum
     if (2 != port->readBytes(sbuf, 2)) return UNEXPECTED_RESPONSE;
-#ifdef DEBUG_ENABLED
-    Serial.printf("222. Message: [%s]", mt_message);
-    Serial.flush();
-#endif
     short s = (sbuf[0] << 8) | sbuf[1];
     // Verify checksum
     if ( s != checksum(mt_message, size))
