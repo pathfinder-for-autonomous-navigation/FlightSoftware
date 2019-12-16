@@ -21,31 +21,22 @@ public:
     */
     void execute() override;
 
-    //Serializer and StateField for position
-    Serializer<d_vector_t> pos_sr;
+    // StateField for position, velocity, and baseline
     ReadableStateField<d_vector_t> pos_f;
-
-    //Serializer and StateField for velocity
-    Serializer<d_vector_t> vel_sr;
     ReadableStateField<d_vector_t> vel_f;
-
-    //Serializer and StateField for baseline
-    Serializer<d_vector_t> baseline_pos_sr;
     ReadableStateField<d_vector_t> baseline_pos_f;
 
-    //Serializer and StateField for currentState
-    Serializer<unsigned int> current_state_sr;
+    // Serializer and StateField for currentState and
+    // number of cycles since a good reading
     ReadableStateField<unsigned int> current_state_f;
+    ReadableStateField<unsigned int> since_good_cycles_f;
 
     //Serializer and StateField for time
     Serializer<gps_time_t> time_sr;
     ReadableStateField<gps_time_t> time_f;
 
-    // Micros # since last good Piksi reading, and
-    // the current propagated time from that last good
-    // reading
-    sys_time_t last_good_reading_time;
-    ReadableStateField<unsigned int> us_since_last_reading_f;
+    // System time of last good Piksi reading
+    InternalStateField<sys_time_t> last_good_reading_time_f;
 
 protected:
     //Internal Data Containers
@@ -63,9 +54,4 @@ protected:
     unsigned int vel_tow;
 
     unsigned int baseline_tow;
-
-private:
-    // the number of cycles since a successful / meaningful read operation
-    unsigned int since_good_cycles = 0;
-
 };
