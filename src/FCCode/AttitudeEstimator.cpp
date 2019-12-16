@@ -7,7 +7,7 @@ const gps_time_t AttitudeEstimator::pan_epoch(gnc::constant::init_gps_week_numbe
 
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
-    : TimedControlTask<void>(registry, offset),
+    : TimedControlTask<void>(registry, "adcs_estimator", offset),
     data(),
     state(),
     estimate(),

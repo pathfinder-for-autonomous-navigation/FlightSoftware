@@ -70,6 +70,11 @@ class MainControlLoop : public ControlTask<void> {
         
     #endif
 
+    /**
+     * @brief Total memory use, in bytes.
+     */
+    ReadableStateField<unsigned int> memory_use_f;
+
    public:
     /*
      * @brief Construct a new Main Control Loop Task object

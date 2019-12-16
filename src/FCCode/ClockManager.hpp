@@ -41,7 +41,6 @@ class ClockManager : public TimedControlTask<void> {
     /**
      * @brief Keeps track of the current control cycle count.
      */
-    Serializer<unsigned int> control_cycle_count_sr;
     ReadableStateField<unsigned int> control_cycle_count_f;
 };
 

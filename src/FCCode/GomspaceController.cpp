@@ -2,7 +2,7 @@
 
 GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
     Devices::Gomspace &_gs)
-    : TimedControlTask<void>(registry, offset), gs(_gs), 
+    : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
     vboost_sr(0,4000,9), 
     vboost1_f("gomspace.vboost.output1", vboost_sr),
     vboost2_f("gomspace.vboost.output2", vboost_sr),

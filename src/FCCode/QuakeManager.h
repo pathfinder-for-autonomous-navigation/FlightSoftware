@@ -60,11 +60,6 @@ class QuakeManager : public TimedControlTask<bool> {
     bool dispatch_manual();
 
    /**
-     * @brief Control cycle count, provided by ClockManager.
-     */
-    ReadableStateField<unsigned int>* control_cycle_count_fp;
-
-   /**
      * @brief Snapshot size in bytes, provided by DownlinkProducer. 
      */
     InternalStateField<size_t>* snapshot_size_fp;
