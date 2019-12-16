@@ -21,6 +21,9 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         add_readable_field(current_state_f);
         add_readable_field(time_f);
 
+        //register callbacks and begin the serial port
+        piksi.setup();
+
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_fix));
     }
 

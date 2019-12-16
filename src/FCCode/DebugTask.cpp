@@ -1,6 +1,6 @@
 #include "DebugTask.hpp"
 
-#ifdef HOOTL
+#ifdef FUNCTIONAL_TEST
 DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, offset),
       start_cycle_f("cycle.start", Serializer<bool>()) {
@@ -15,7 +15,7 @@ DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
 #endif
 
 void DebugTask::execute() {
-#ifdef HOOTL
+#ifdef FUNCTIONAL_TEST
   start_cycle_f.set(false);
   while (!start_cycle_f.get())
     process_commands(_registry);
