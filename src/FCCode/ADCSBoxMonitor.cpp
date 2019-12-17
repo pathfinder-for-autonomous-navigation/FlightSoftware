@@ -115,7 +115,6 @@ void ADCSBoxMonitor::execute(){
     rwa_speed_rd_f.set(rwa_speed_rd);
     rwa_torque_rd_f.set(rwa_torque_rd);
     ssa_mode_f.set(ssa_mode);
-    ssa_vec_f.set(ssa_vec);
 
     for(int i = 0; i<20; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);

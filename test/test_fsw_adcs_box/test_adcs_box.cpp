@@ -87,9 +87,6 @@ void test_task_initialization()
 void test_execute(){
     TestFixture tf;
 
-    //define nan
-    const float nan = std::numeric_limits<float>::quiet_NaN();
-
     //mocking sets to max output
     //see ADCS.cpp for mocking details
     std::array<float, 3> ref_rwa_max_speed = {rwa::max_speed_read, rwa::max_speed_read, rwa::max_speed_read};
@@ -141,9 +138,9 @@ void test_execute(){
     TEST_ASSERT_EQUAL(SSAMode::SSA_IN_PROGRESS, tf.ssa_mode_fp->get());
 
     //test ssa_vec is nan
-    TEST_ASSERT_EQUAL(nan, tf.ssa_vec_fp->get()[0]);
-    TEST_ASSERT_EQUAL(nan, tf.ssa_vec_fp->get()[1]);
-    TEST_ASSERT_EQUAL(nan, tf.ssa_vec_fp->get()[2]);
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[0]));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[1]));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[2]));
 
     for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
@@ -176,10 +173,9 @@ void test_execute(){
     TEST_ASSERT_EQUAL(SSAMode::SSA_FAILURE, tf.ssa_mode_fp->get());
     
     //test ssa_vec is nan
-    TEST_ASSERT_EQUAL(nan, tf.ssa_vec_fp->get()[0]);
-    TEST_ASSERT_EQUAL(nan, tf.ssa_vec_fp->get()[1]);
-    TEST_ASSERT_EQUAL(nan, tf.ssa_vec_fp->get()[2]);
-
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[0]));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[1]));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[2]));
 
     for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
