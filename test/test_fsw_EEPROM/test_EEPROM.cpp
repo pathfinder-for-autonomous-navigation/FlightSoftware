@@ -1,5 +1,6 @@
 #include "../StateFieldRegistryMock.hpp"
 #include "../../src/FCCode/EEPROMController.hpp"
+#include "../../src/FCCode/EEPROMController.cpp"
 #include <EEPROM.h>
 
 #include <unity.h>
@@ -16,16 +17,16 @@ class TestFixture {
     std::unique_ptr<EEPROMController> eeprom_controller;
 
     TestFixture() : registry() {
-        mission_mode_fp = registry.create_writable_field<bool>("pan.mode");
+        mission_mode_fp = registry.create_writable_field<unsigned char>("pan.mode");
         mission_mode_fp->set(1);
 
         is_deployed_fp = registry.create_readable_field<bool>("pan.deployed");
         is_deployed_fp->set(false);
 
-        sat_designation_fp = registry.create_writable_field<bool>("pan.sat_designation");
+        sat_designation_fp = registry.create_writable_field<unsigned char>("pan.sat_designation");
         sat_designation_fp->set(3);
 
-        control_cycle_count_fp = registry.create_readable_field<bool>("pan.cycle_no");
+        control_cycle_count_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
         control_cycle_count_fp->set(45);
 
         eeprom_controller = std::make_unique<EEPROMController>(registry, 0); 
@@ -65,7 +66,6 @@ int test_control_task() {
 int main() {
     return test_control_task();
 }
-
 #else
 
 #include <Arduino.h>
@@ -73,6 +73,12 @@ void setup() {
     delay(2000);
     Serial.begin(9600);
     test_control_task();
+    //im not getting anything on the serial monitor
+    Serial.println("hi");
+}
+
+void loop(){
+    
 }
 
 #endif
