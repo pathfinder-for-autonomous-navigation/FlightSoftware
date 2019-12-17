@@ -80,6 +80,9 @@ bool exceed_bounds(const float input, const float min, const float max){
 
 void ADCSBoxMonitor::execute(){
 
+    //define nan
+    const float nan = std::numeric_limits<float>::quiet_NaN();
+
     //create internal containers to read data
     f_vector_t rwa_speed_rd;
     f_vector_t rwa_torque_rd;
@@ -102,8 +105,12 @@ void ADCSBoxMonitor::execute(){
     adcs_system.get_ssa_mode(&ssa_mode);
     if(ssa_mode == SSAMode::SSA_COMPLETE){
         adcs_system.get_ssa_vector(&ssa_vec);
+        ssa_vec_f.set(ssa_vec);
     }
-
+    else{
+        ssa_vec_f.set({nan,nan,nan});
+    }
+    
     //set statefields from internal containers
     rwa_speed_rd_f.set(rwa_speed_rd);
     rwa_torque_rd_f.set(rwa_torque_rd);

@@ -32,7 +32,6 @@ public:
     static constexpr unsigned int num_sun_sensors = 20;
 
 protected:
-
     /**
     * @brief Inputs to get from ADCS box.
     */
