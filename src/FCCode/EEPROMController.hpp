@@ -24,8 +24,15 @@ class EEPROMController : public TimedControlTask<void> {
      */
     void execute() override;
 
+    /**
+     * @brief Sets the statefields to the values stored in the EEPROM 
+     */
     void readEEPROM();
 
+    /**
+     * @brief Writes the value of the statefields to the field's 
+     * respective address in EEPROM
+     */
     void writeEEPROM();
 
    protected:

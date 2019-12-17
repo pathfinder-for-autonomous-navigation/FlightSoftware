@@ -17,10 +17,12 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
 }
 
 void EEPROMController::execute() {
+  //if enough control cycles have passed, write the field values to EEPROM
   if(control_cycle_count_fp->get()%period==0){
     writeEEPROM();
   }
-  //if the satellite just restarted, read the value from EEPROM and set the statefield values appropriately
+  //if the satellite just restarted, read the value from EEPROM and set the 
+  //statefield values appropriately by calling readEEPROM()
 }
 
 void EEPROMController::readEEPROM(){
