@@ -37,29 +37,9 @@ void EEPROMController::readEEPROM(){
 
 void EEPROMController::updateEEPROM(){
   #ifndef DESKTOP
-  EEPROM.update(mission_mode_address, mission_mode_fp->get());
-  EEPROM.update(is_deployed_address, is_deployed_fp->get());
-  EEPROM.update(sat_designation_address, sat_designation_fp->get());
-  EEPROM.update(control_cycle_count_address, control_cycle_count_fp->get());
+  EEPROM.put(mission_mode_address, mission_mode_fp->get());
+  EEPROM.put(is_deployed_address, is_deployed_fp->get());
+  EEPROM.put(sat_designation_address, sat_designation_fp->get());
+  EEPROM.put(control_cycle_count_address, control_cycle_count_fp->get());
   #endif
-}
-
-unsigned int EEPROMController::get_period(){
-  return period;
-}
-
-unsigned int EEPROMController::get_mission_mode_address(){
-  return mission_mode_address;
-}
-
-unsigned int EEPROMController::get_is_deployed_address(){
-  return is_deployed_address;
-}
-
-unsigned int EEPROMController::get_sat_designation_address(){
-  return sat_designation_address;
-}
-
-unsigned int EEPROMController::get_control_cycle_count_address(){
-  return control_cycle_count_address;
 }

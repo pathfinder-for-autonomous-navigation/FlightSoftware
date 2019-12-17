@@ -47,10 +47,10 @@ void test_task_execute() {
     //should write the values to the EEPROM
     tf.eeprom_controller->execute();
     #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(1, EEPROM.read(tf.eeprom_controller->get_mission_mode_address));
-    TEST_ASSERT_EQUAL(false, EEPROM.read(tf.eeprom_controller->get_is_deployed_address));
-    TEST_ASSERT_EQUAL(3, EEPROM.read(tf.eeprom_controller->get_sat_designation_address));
-    TEST_ASSERT_EQUAL(45, EEPROM.read(tf.eeprom_controller->get_control_cycle_count_address));
+    TEST_ASSERT_EQUAL(1, EEPROM.read(tf.eeprom_controller->mission_mode_address));
+    TEST_ASSERT_EQUAL(false, EEPROM.read(tf.eeprom_controller->is_deployed_address));
+    TEST_ASSERT_EQUAL(3, EEPROM.read(tf.eeprom_controller->sat_designation_address));
+    TEST_ASSERT_EQUAL(45, EEPROM.read(tf.eeprom_controller->control_cycle_count_address));
     #endif
 }
 

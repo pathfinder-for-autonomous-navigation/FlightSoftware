@@ -35,53 +35,24 @@ class EEPROMController : public TimedControlTask<void> {
      */
     void updateEEPROM();
 
-    /**
-     * Returns the period of the EEPROM control task
-     */
-    unsigned int get_period();
-
-    /**
-     * Returns the address in the EEPROM in which the 
-     * mission mode value is stored
-     */
-    unsigned int get_mission_mode_address();
-
-    /**
-     * Returns the address in the EEPROM in which the 
-     * is deployed value is stored
-     */
-    unsigned int get_is_deployed_address();
-
-    /**
-     * Returns the address in the EEPROM in which the 
-     * sat designation value is stored
-     */
-    unsigned int get_sat_designation_address();
-
-    /**
-     * Returns the address in the EEPROM in which the 
-     * control cycle count value is stored
-     */
-    unsigned int get_control_cycle_count_address();
-
-   protected:
-
     //number of control cycles that must pass before the control task writes to EEPROM
     unsigned int period = 5;
 
-    //shared pointers set by mission manager and the respective locations of the EEPROM
-    //in which the field values will be stored
-    WritableStateField<unsigned char>* mission_mode_fp;
+    //the locations of the EEPROM in which the field values will be stored
     unsigned int mission_mode_address=0;
+    unsigned int is_deployed_address=5;
+    unsigned int sat_designation_address=10;
+    unsigned int control_cycle_count_address=15;
+
+   protected:
+    //shared pointers set by mission manager
+    WritableStateField<unsigned char>* mission_mode_fp;
 
     ReadableStateField<bool>* is_deployed_fp;
-    unsigned int is_deployed_address=5;
-
+    
     WritableStateField<unsigned char>* sat_designation_fp;
-    unsigned int sat_designation_address=10;
 
     ReadableStateField<unsigned int>* control_cycle_count_fp;
-    unsigned int control_cycle_count_address=15;
 
 };
 
