@@ -14,6 +14,8 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
 
   control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
   assert(control_cycle_count_fp);
+
+  readEEPROM();
 }
 
 void EEPROMController::execute() {
@@ -21,8 +23,6 @@ void EEPROMController::execute() {
   if(control_cycle_count_fp->get()%period==0){
     writeEEPROM();
   }
-  //if the satellite just restarted, read the value from EEPROM and set the 
-  //statefield values appropriately by calling readEEPROM()
 }
 
 void EEPROMController::readEEPROM(){
