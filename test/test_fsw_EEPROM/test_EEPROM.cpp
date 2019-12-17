@@ -46,10 +46,12 @@ void test_task_execute() {
     //the period is set to 5. At the 45th control cycle, the EEPROM
     //should write the values to the EEPROM
     tf.eeprom_controller->execute();
+    #ifndef DESKTOP
     TEST_ASSERT_EQUAL(1, EEPROM.read(tf.eeprom_controller->get_mission_mode_address));
     TEST_ASSERT_EQUAL(false, EEPROM.read(tf.eeprom_controller->get_is_deployed_address));
     TEST_ASSERT_EQUAL(3, EEPROM.read(tf.eeprom_controller->get_sat_designation_address));
     TEST_ASSERT_EQUAL(45, EEPROM.read(tf.eeprom_controller->get_control_cycle_count_address));
+    #endif
 }
 
 int test_control_task() {

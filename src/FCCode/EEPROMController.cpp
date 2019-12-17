@@ -22,22 +22,26 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
 void EEPROMController::execute() {
   //if enough control cycles have passed, write the field values to EEPROM
   if(control_cycle_count_fp->get()%period==0){
-    writeEEPROM();
+    updateEEPROM();
   }
 }
 
 void EEPROMController::readEEPROM(){
+  #ifndef DESKTOP
   mission_mode_fp->set(EEPROM.read(mission_mode_address));
   is_deployed_fp->set(EEPROM.read(is_deployed_address));
   sat_designation_fp->set(EEPROM.read(sat_designation_address));
   control_cycle_count_fp->set(EEPROM.read(control_cycle_count_address));
+  #endif
 }
 
-void EEPROMController::writeEEPROM(){
-  EEPROM.write(mission_mode_address, mission_mode_fp->get());
-  EEPROM.write(is_deployed_address, is_deployed_fp->get());
-  EEPROM.write(sat_designation_address, sat_designation_fp->get());
-  EEPROM.write(control_cycle_count_address, control_cycle_count_fp->get());
+void EEPROMController::updateEEPROM(){
+  #ifndef DESKTOP
+  EEPROM.update(mission_mode_address, mission_mode_fp->get());
+  EEPROM.update(is_deployed_address, is_deployed_fp->get());
+  EEPROM.update(sat_designation_address, sat_designation_fp->get());
+  EEPROM.update(control_cycle_count_address, control_cycle_count_fp->get());
+  #endif
 }
 
 unsigned int EEPROMController::get_period(){

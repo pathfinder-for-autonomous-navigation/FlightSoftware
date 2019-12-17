@@ -11,7 +11,7 @@ class EEPROMController : public TimedControlTask<void> {
    public:
 
     /**
-     * @brief Construct a new Docking Controller object
+     * @brief Construct a new EEPROM Controller object
      * 
      * @param registry 
      * @param offset
@@ -33,7 +33,7 @@ class EEPROMController : public TimedControlTask<void> {
      * @brief Writes the value of the statefields to the field's 
      * respective address in EEPROM
      */
-    void writeEEPROM();
+    void updateEEPROM();
 
     /**
      * Returns the period of the EEPROM control task
@@ -75,13 +75,13 @@ class EEPROMController : public TimedControlTask<void> {
     unsigned int mission_mode_address=0;
 
     ReadableStateField<bool>* is_deployed_fp;
-    unsigned int is_deployed_address=1;
+    unsigned int is_deployed_address=5;
 
     WritableStateField<unsigned char>* sat_designation_fp;
-    unsigned int sat_designation_address=2;
+    unsigned int sat_designation_address=10;
 
     ReadableStateField<unsigned int>* control_cycle_count_fp;
-    unsigned int control_cycle_count_address=3;
+    unsigned int control_cycle_count_address=15;
 
 };
 
