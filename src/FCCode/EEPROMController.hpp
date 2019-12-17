@@ -4,7 +4,7 @@
 #define EEPROM_CONTROLLER_HPP_
 
 #include "../../test/StateFieldRegistryMock.hpp"
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 #include <EEPROM.h>
 
 class EEPROMController : public TimedControlTask<void> {
@@ -34,6 +34,35 @@ class EEPROMController : public TimedControlTask<void> {
      * respective address in EEPROM
      */
     void writeEEPROM();
+
+    /**
+     * Returns the period of the EEPROM control task
+     */
+    unsigned int get_period();
+
+    /**
+     * Returns the address in the EEPROM in which the 
+     * mission mode value is stored
+     */
+    unsigned int get_mission_mode_address();
+
+    /**
+     * Returns the address in the EEPROM in which the 
+     * is deployed value is stored
+     */
+    unsigned int get_is_deployed_address();
+
+    /**
+     * Returns the address in the EEPROM in which the 
+     * sat designation value is stored
+     */
+    unsigned int get_sat_designation_address();
+
+    /**
+     * Returns the address in the EEPROM in which the 
+     * control cycle count value is stored
+     */
+    unsigned int get_control_cycle_count_address();
 
    protected:
 

@@ -2,7 +2,7 @@
 #include <EEPROM.h>
 
 EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, offset)
+    : TimedControlTask<void>(registry, "eeprom_ct", offset)
 {
   mission_mode_fp = find_writable_field<unsigned char>("pan.mode", __FILE__, __LINE__);
   assert(mission_mode_fp);
@@ -38,4 +38,24 @@ void EEPROMController::writeEEPROM(){
   EEPROM.write(is_deployed_address, is_deployed_fp->get());
   EEPROM.write(sat_designation_address, sat_designation_fp->get());
   EEPROM.write(control_cycle_count_address, control_cycle_count_fp->get());
+}
+
+unsigned int EEPROMController::get_period(){
+  return period;
+}
+
+unsigned int EEPROMController::get_mission_mode_address(){
+  return mission_mode_address;
+}
+
+unsigned int EEPROMController::get_is_deployed_address(){
+  return is_deployed_address;
+}
+
+unsigned int EEPROMController::get_sat_designation_address(){
+  return sat_designation_address;
+}
+
+unsigned int EEPROMController::get_control_cycle_count_address(){
+  return control_cycle_count_address;
 }
