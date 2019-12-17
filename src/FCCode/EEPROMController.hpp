@@ -24,19 +24,28 @@ class EEPROMController : public TimedControlTask<void> {
      */
     void execute() override;
 
+    void readEEPROM();
+
+    void writeEEPROM();
+
    protected:
 
     //number of control cycles that must pass before the control task writes to EEPROM
     unsigned int period = 5;
 
-    //shared pointers set by mission manager
+    //shared pointers set by mission manager and the respective locations of the EEPROM
+    //in which the field values will be stored
     WritableStateField<unsigned char>* mission_mode_fp;
+    unsigned int mission_mode_address=0;
 
     ReadableStateField<bool>* is_deployed_fp;
+    unsigned int is_deployed_address=1;
 
     WritableStateField<unsigned char>* sat_designation_fp;
+    unsigned int sat_designation_address=2;
 
     ReadableStateField<unsigned int>* control_cycle_count_fp;
+    unsigned int control_cycle_count_address=3;
 
 };
 
