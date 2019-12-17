@@ -69,7 +69,7 @@ void test_task_execute() {
     #endif
 
     // Now we pretend the satellite just rebooted. Everytime the satellite reboots, another 
-    // eeprom constructor is instantiated.
+    // eeprom control task is instantiated.
     TestFixture tf2;
 
     // Check if the new eeprom controller set the statefield values to the values that 
