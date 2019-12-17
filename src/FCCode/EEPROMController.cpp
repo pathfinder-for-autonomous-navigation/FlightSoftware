@@ -1,4 +1,5 @@
 #include "EEPROMController.hpp"
+#include <EEPROM.h>
 
 EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, offset)
