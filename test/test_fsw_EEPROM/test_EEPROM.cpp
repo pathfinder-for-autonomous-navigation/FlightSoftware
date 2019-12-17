@@ -19,6 +19,10 @@ class TestFixture {
     TestFixture() : registry() {
         mission_mode_fp = registry.create_writable_field<unsigned char>("pan.mode");
         mission_mode_fp->set(1);
+        #ifndef DESKTOP
+        //returns 1, as expected
+        Serial.println(mission_mode_fp->get());
+        #endif
 
         is_deployed_fp = registry.create_readable_field<bool>("pan.deployed");
         is_deployed_fp->set(false);
@@ -35,6 +39,11 @@ class TestFixture {
 
 void test_task_initialization() {
     TestFixture tf;
+
+    #ifndef DESKTOP
+    //returns 66, no idea why
+    Serial.println(tf.mission_mode_fp->get());
+    #endif
 
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
     TEST_ASSERT_EQUAL(false, tf.is_deployed_fp->get());
@@ -72,13 +81,15 @@ int main() {
 void setup() {
     delay(2000);
     Serial.begin(9600);
+    while (!Serial) {
+    ; // wait for serial port to connect.
+    }
     test_control_task();
-    //im not getting anything on the serial monitor
-    Serial.println("hi");
+    //Serial.println("hi!");
 }
 
 void loop(){
-    
+    //Serial.println("hello!");
 }
 
 #endif
