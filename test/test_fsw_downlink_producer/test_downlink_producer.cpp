@@ -25,9 +25,9 @@ struct TestFixture {
         foo1_fp->set(400);
 
         downlink_producer = std::make_unique<DownlinkProducer>(registry, 0, flow_data);
-        snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink_producer.mo_ptr");
+        snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink.ptr");
         snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>(
-                                    "downlink_producer.snap_size");
+                                    "downlink.snap_size");
     }
 };
 
