@@ -4,18 +4,24 @@
  * @brief Contains implementation for device interface to ADCS system.
  */
 
-#ifndef DESKTOP
 #include "ADCS.hpp"
 #include <adcs_constants.hpp>
 #include <adcs_registers.hpp>
 
+#include <cstring>
+
 using namespace Devices;
 
-ADCS::ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address)
-    : I2CDevice(name, i2c_wire, address) {}
+#ifndef DESKTOP
+ADCS::ADCS(i2c_t3 &i2c_wire, unsigned char address)
+    : I2CDevice("adcs", i2c_wire, address) {}
+#else
+ADCS::ADCS()
+    : I2CDevice("adcs", 0) {}
+#endif
 
 bool ADCS::i2c_ping() {
-    unsigned char temp;
+    unsigned char temp = 0;
     get_who_am_i(&temp); 
     return temp==WHO_AM_I_EXPECTED;
     }
@@ -158,15 +164,23 @@ void ADCS::set_imu_gyr_temp_desired(const float desired){
 void ADCS::get_who_am_i(unsigned char* who_am_i) {
     i2c_point_and_read(WHO_AM_I, who_am_i, 1);
 }
-void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd) {
+void ADCS::get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa_ramp_rd) {
     unsigned char readin[12];
+    std::memset(readin, 0, sizeof(readin));
+
+    #ifdef UNIT_TEST
+    for(int i = 0;i<12;i++){
+        readin[i] = 255;
+    }
+    #else
     i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
+    #endif
 
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1] << 8;
         unsigned short b = 0xFF & readin[2*i];
         unsigned short c = a | b;
-        (*rwa_momentum_rd)[i] = fp(c,rwa::min_momentum,rwa::max_momentum);
+        (*rwa_speed_rd)[i] = fp(c,rwa::min_speed_read,rwa::max_speed_read);
     }
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1+6] << 8;
@@ -174,11 +188,18 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* 
         unsigned short c = a | b;
         (*rwa_ramp_rd)[i] = fp(c,rwa::min_torque,rwa::max_torque);
     }
-
 }
 void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd){
     unsigned char readin[14];
+    std::memset(readin, 0, sizeof(readin));
+
+    #ifdef UNIT_TEST
+    for(int i = 0;i<14;i++){
+        readin[i] = 255;
+    }
+    #else
     i2c_point_and_read(IMU_MAG_READ, readin, 14);
+    #endif
 
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1] << 8;
@@ -197,12 +218,31 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
     unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
     *gyr_temp_rd = fp(c,imu::min_rd_temp,imu::max_rd_temp);
 }
+#ifdef UNIT_TEST
+void ADCS::set_mock_ssa_mode(const unsigned char ssa_mode) {
+    mock_ssa_mode = ssa_mode;
+}
+#endif
 void ADCS::get_ssa_mode(unsigned char* a) {
+    #ifdef UNIT_TEST
+    //acceleration control mode, mocking output
+    *a = mock_ssa_mode;
+    #else
     i2c_point_and_read(SSA_MODE, a, 1);
+    #endif
 }
 void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
     unsigned char readin[6];
+    std::memset(readin, 0, sizeof(readin));
+
+    #ifdef UNIT_TEST
+    for(int i = 0;i<6;i++){
+        readin[i] = 255;
+    }
+    #else
     i2c_point_and_read(SSA_SUN_VECTOR, readin,6);
+    #endif
+
     for(int i=0;i<3;i++){
         unsigned short c = (((unsigned short)readin[2*i+1]) << 8) | (0xFF & readin[2*i]);
 
@@ -212,7 +252,15 @@ void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
 }
 void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
     unsigned char temp[20];
+    std::memset(temp, 0, sizeof(temp));
+
+    #ifdef UNIT_TEST
+    for(int i = 0;i<20;i++){
+        temp[i] = 255;
+    }
+    #else
     i2c_point_and_read(SSA_VOLTAGE_READ,temp,20);
+    #endif
     
     for(int i = 0;i<20;i++){
         (*voltages)[i] = fp(temp[i], ssa::min_voltage_rd, ssa::max_voltage_rd);
@@ -220,4 +268,3 @@ void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
 }
 
 void ADCS::update_hat() {}
-#endif

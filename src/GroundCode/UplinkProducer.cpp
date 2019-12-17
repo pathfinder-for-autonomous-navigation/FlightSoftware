@@ -3,10 +3,11 @@
 #include <vector>
 #include <fstream>
 #include <json.hpp>
-#define UP_MAX_FILESIZE 0x1000
+#include <exception>
+#define UP_MAX_FILESIZE 
 
-UplinkProducer::UplinkProducer(StateFieldRegistry& r) : 
-    registry(r),
+UplinkProducer::UplinkProducer(StateFieldRegistry& r) :
+    UplinkConsumer(r, 0),
     fcp(registry, PAN::flow_data)
  {
     // Setup field_map
@@ -15,9 +16,6 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r) :
         auto w = registry.writable_fields[i];
         field_map[w->name().c_str()] = i;
     }
-    // Calculate the maximum number of bits needed to represent the indices
-    for (index_size = 1; (registry.writable_fields.size() + 1) / (1 << index_size) > 0; ++index_size)
-    {}
  }
 
  void UplinkProducer::create_from_json(UplinkPacket& up, const std::string& filename)
@@ -43,7 +41,7 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r) :
     {
         std::cout << "UplinkProducer create_from_json failed: " << e.what() << std::endl;
     }
-    catch (exception& e)
+    catch (std::exception& e)
     {
         std::cout << "Create Uplink from JSON failed: " << e.what() << std::endl;
     }
@@ -61,13 +59,6 @@ size_t UplinkProducer::add_entry( UplinkPacket& out, char* val, size_t index)
     return bits_written;
 }
 
-size_t UplinkProducer::get_field_length(size_t field_index)
-{
-    if (field_index >= registry.writable_fields.size())
-        return 0;
-    return registry.writable_fields.at(field_index)->get_bit_array().size();
-}
-
 void UplinkProducer::to_string(const UplinkPacket& up)
 {
     // print to STDOUT
@@ -75,7 +66,7 @@ void UplinkProducer::to_string(const UplinkPacket& up)
 
 void UplinkProducer::to_file(const UplinkPacket& up, const std::string& filename)
 {
-    // Verify
+    validate_packet();
     // Throw exception if verification fails
 
     // Write to file

@@ -7,19 +7,11 @@
 #include <map>
 #include <exception>
 
-
-/**
- * Uplink Packet Data Structure
- */
-struct UplinkPacket {
-  inline UplinkPacket(char* data, size_t data_size) : bs(data, data_size){}
-  bitstream bs;
-};
-
 /**
  * UplinkProducer provides operations on an UplinkPacket
+ * An UplinkProducer is stateless
  */
-class UplinkProducer {
+class UplinkProducer : public UplinkCommon{
   public:
 
     UplinkProducer(StateFieldRegistry& r);
@@ -31,8 +23,6 @@ class UplinkProducer {
     void create_from_json(UplinkPacket& up, const std::string& filename);
 
     size_t add_entry(UplinkPacket& up, char* val, size_t index);
-
-    size_t get_field_length(size_t field_index);
 
     /**
      * Prints the UplinkPacket in format:
@@ -46,10 +36,7 @@ class UplinkProducer {
     void to_file(const UplinkPacket& up, const std::string& filename);
 
   private:
-    StateFieldRegistry& registry;
     MainControlLoop fcp;
     // maps field names to indices
     std::map<std::string, size_t> field_map;
-    // maximum number of bits to represent a field
-    size_t index_size;
 };

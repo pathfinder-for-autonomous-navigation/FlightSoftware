@@ -11,9 +11,11 @@
 
 #ifdef DESKTOP
     #define PIKSI_INITIALIZATION piksi("piksi")
+    #define ADCS_INITIALIZATION adcs()
 #else
     #include <HardwareSerial.h>
     #define PIKSI_INITIALIZATION piksi("piksi", Serial4)
+    #define ADCS_INITIALIZATION adcs(Wire, Devices::ADCS::ADDRESS)
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
@@ -24,9 +26,12 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       debug_task(registry, debug_task_offset),
       PIKSI_INITIALIZATION,
       piksi_control_task(registry, piksi_control_task_offset, piksi),
+      ADCS_INITIALIZATION,
+      adcs_monitor(registry, adcs_monitor_offset, adcs),
       attitude_estimator(registry, attitude_estimator_offset),
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
+      uplink_consumer(registry, uplink_consumer_offset),
       mission_manager(registry, mission_manager_offset),
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys),
@@ -34,6 +39,15 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       quake_manager(registry, quake_manager_offset),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000))
 {
+    //setup I2C bus for Flight Controller
+    #ifndef DESKTOP
+    Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
+    #endif
+    
+    //setup I2C devices
+    adcs.setup();
+    gomspace.setup();
+
     #ifdef FUNCTIONAL_TEST
         add_readable_field(memory_use_f);
     #endif
@@ -55,6 +69,7 @@ void MainControlLoop::execute() {
     #endif
 
     piksi_control_task.execute_on_time();
+    gomspace_controller.execute_on_time();
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
     downlink_producer.execute_on_time();
