@@ -1,13 +1,12 @@
 #include "UplinkProducer.h"
 #include "../flow_data.hpp"
-#include <vector>
 #include <fstream>
 #include <json.hpp>
 #include <exception>
 #define UP_MAX_FILESIZE 
 
 UplinkProducer::UplinkProducer(StateFieldRegistry& r) :
-    UplinkConsumer(r, 0),
+    Uplink(r),
     fcp(registry, PAN::flow_data)
  {
     // Setup field_map
@@ -18,7 +17,7 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r) :
     }
  }
 
- void UplinkProducer::create_from_json(UplinkPacket& up, const std::string& filename)
+ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename)
  {    
     using json = nlohmann::json;
     try {
@@ -27,14 +26,15 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r) :
         fs >> j;
         fs.close();
 
-        up.bs.reset();
+        bs.reset();
 
         // Add each entry to the uplink packet
         for (auto& e : j.items())
         {
-            char* val = reinterpret_cast<char*>(e.value());
-            size_t index = field_map[e.key()];
-            add_entry(up, val, index);
+            std::cout << e.key() << " : " << e.value() << std::endl;
+            // char* val = reinterpret_cast<char*>(e.value());
+            // size_t index = field_map[e.key()];
+            // add_entry(bs, val, index);
         }
     } 
     catch(std::ifstream::failure e)
@@ -47,27 +47,32 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r) :
     }
  }
 
-size_t UplinkProducer::add_entry( UplinkPacket& out, char* val, size_t index)
+size_t UplinkProducer::add_entry( bitstream& bs, char* val, size_t index)
 {
     size_t bits_written = 0;
     size_t field_size = get_field_length(index);
     // Write the index
     ++index; // indices are offset by 1
-    bits_written += out.bs.editN(index_size, (uint8_t*)&index);
+    bits_written += bs.editN(index_size, (uint8_t*)&index);
     // Write the specified number of bits from val
-    bits_written += out.bs.editN(field_size, reinterpret_cast<uint8_t*>(val));
+    bits_written += bs.editN(field_size, reinterpret_cast<uint8_t*>(val));
     return bits_written;
 }
 
-void UplinkProducer::to_string(const UplinkPacket& up)
+void UplinkProducer::to_string(const bitstream& bs)
 {
     // print to STDOUT
 }
 
-void UplinkProducer::to_file(const UplinkPacket& up, const std::string& filename)
+void UplinkProducer::to_file(const bitstream& bs, const std::string& filename)
 {
-    validate_packet();
+    bool is_valid = _validate_packet(const_cast<bitstream&>(bs));
     // Throw exception if verification fails
+    if (!is_valid)
+    {
+        std::cout << "Uplink Producer: Packet you created is not valid" << std::endl;
+        return;
+    }
 
     // Write to file
 }

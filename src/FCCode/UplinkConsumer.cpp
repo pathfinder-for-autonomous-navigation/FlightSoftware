@@ -1,5 +1,6 @@
 #include "UplinkConsumer.h"
 #include <bitstream.h>
+
 UplinkConsumer::UplinkConsumer(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "uplink_ct", offset),
     Uplink(registry),
@@ -13,7 +14,6 @@ UplinkConsumer::UplinkConsumer(StateFieldRegistry& registry, unsigned int offset
     radio_mt_packet_len_f.set(0);
     radio_mt_packet_f.set(nullptr); // this must be set by QuakeManager
 }
-
 
 void UplinkConsumer::execute()
 {

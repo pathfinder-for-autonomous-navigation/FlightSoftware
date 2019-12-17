@@ -1,4 +1,5 @@
 
+#pragma once
 #include <bitstream.h>
 #include "ControlTask.hpp"
 
@@ -15,7 +16,6 @@ class Uplink {
      */
     size_t get_field_length(size_t field_index);
   
-
   /**
    * @brief Reference to registry so that we can update and read fields
    */
