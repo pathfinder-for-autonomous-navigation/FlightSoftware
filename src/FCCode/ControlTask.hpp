@@ -9,9 +9,9 @@
 #include <StateFieldRegistry.hpp>
 
 #ifdef DESKTOP
-    #include <iostream>
+#include <iostream>
 #else
-    #include <Arduino.h>
+#include <Arduino.h>
 #endif
 
 /**
@@ -47,37 +47,45 @@ class ControlTask : protected debug_console {
   protected:
     StateFieldRegistry& _registry;
 
+    void check_field_added(const bool added, const std::string& field_name) {
+        if(!added) {
+            #ifdef UNIT_TEST
+                #ifdef DESKTOP
+                    std::cout << "Field \"" << field_name
+                        << "\" is already in the registry." << std::endl;
+                #else
+                    Serial.printf("Field \"%s\" is already in the registry.",
+                        field_name.c_str());
+                #endif
+            #else
+                #ifdef FUNCTIONAL_TEST
+                printf(debug_severity::error, "Field \"%s\" is already in the registry.",
+                    field_name.c_str());
+                #endif
+            #endif
+            assert(false);
+        }
+    }
+
     template<typename U>
     void add_internal_field(InternalStateField<U>& field) {
         const bool added = _registry.add_internal_field(
             static_cast<InternalStateFieldBase*>(&field));
-        if(!added) {
-            printf(debug_severity::error, "Field %s is already in the registry.",
-                field.name().c_str());
-            assert(false);
-        }
+        check_field_added(added, field.name());
     }
 
     template<typename U>
     void add_readable_field(ReadableStateField<U>& field) {
         const bool added = _registry.add_readable_field(
             static_cast<ReadableStateFieldBase*>(&field));
-        if(!added) {
-            printf(debug_severity::error, "Field %s is already in the registry.",
-                field.name().c_str());
-            assert(false);
-        }
+        check_field_added(added, field.name());
     }
 
     template<typename U>
     void add_writable_field(WritableStateField<U>& field) {
         const bool added = _registry.add_writable_field(
             static_cast<WritableStateFieldBase*>(&field));
-        if(!added) {
-            printf(debug_severity::error, "Field %s is already in the registry.",
-                field.name().c_str());
-            assert(false);
-        }
+        check_field_added(added, field.name());
     }
 
     void check_field_exists(const StateFieldBase* ptr, const std::string& field_type,

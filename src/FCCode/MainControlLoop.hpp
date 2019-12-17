@@ -16,6 +16,7 @@
 #include "QuakeManager.h"
 #include "DockingController.hpp"
 #include "DownlinkProducer.hpp"
+#include "UplinkConsumer.h"
 
 #if (!defined(FUNCTIONAL_TEST) && !defined(FLIGHT))
 static_assert(false, "Need to define either the FUNCTIONAL_TEST or FLIGHT flags.");
@@ -40,6 +41,7 @@ class MainControlLoop : public ControlTask<void> {
     Devices::Gomspace gomspace;
     GomspaceController gomspace_controller;
 
+    UplinkConsumer uplink_consumer;
     MissionManager mission_manager;
 
     Devices::DockingSystem docksys;
@@ -49,11 +51,13 @@ class MainControlLoop : public ControlTask<void> {
 
     // Control cycle time offsets, in microseconds
     #ifdef FUNCTIONAL_TEST
+    // https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B04C55BBB-7AED-410B-AC43-67352393D6D5%7D&file=Flight%20Software%20Cycle.xlsx&action=default&mobileredirect=true&cid=e2b9bd89-7037-47bf-ad2a-fd8b25808939
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =  55000;
         static constexpr unsigned int adcs_monitor_offset        =  70500;
         static constexpr unsigned int attitude_estimator_offset  =  85500;
         static constexpr unsigned int gomspace_controller_offset = 106500;
+        static constexpr unsigned int uplink_consumer_offset     = 111500;
         static constexpr unsigned int mission_manager_offset     = 111600;
         static constexpr unsigned int docking_controller_offset  = 152400;
         static constexpr unsigned int downlink_producer_offset   = 153400;
@@ -68,6 +72,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int docking_controller_offset  = 103400;
         static constexpr unsigned int downlink_producer_offset   = 104400;
         static constexpr unsigned int quake_manager_offset       = 104500;
+        
     #endif
 
     /**
