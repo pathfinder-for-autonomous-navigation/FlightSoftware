@@ -68,6 +68,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int adcs_monitor_offset        =  20500;
         static constexpr unsigned int attitude_estimator_offset  =  35500;
         static constexpr unsigned int gomspace_controller_offset =  56500;
+        static constexpr unsigned int uplink_consumer_offset     =  61500;
         static constexpr unsigned int mission_manager_offset     =  61600;
         static constexpr unsigned int docking_controller_offset  = 103400;
         static constexpr unsigned int downlink_producer_offset   = 104400;
