@@ -20,6 +20,9 @@ public:
      */
     ADCSBoxMonitor(StateFieldRegistry &registry, unsigned int offset, Devices::ADCS &_adcs);
 
+    /** ADCS Driver. **/
+    Devices::ADCS& adcs_system;
+
     /**
     * @brief Gets inputs from the ADCS box and dumps them into the state
     * fields listed below.
@@ -29,8 +32,6 @@ public:
     static constexpr unsigned int num_sun_sensors = 20;
 
 protected:
-    /** ADCS Driver. **/
-    Devices::ADCS& adcs_system;
 
     /**
     * @brief Inputs to get from ADCS box.

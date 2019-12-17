@@ -65,6 +65,11 @@ class TestFixture {
             gyr_temp_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_temp_flag");
 
         }
+
+        //set of mocking methods
+        void set_mock_ssa_mode(const unsigned int mode){
+                adcs_box->adcs_system.set_mock_ssa_mode(mode);
+        }
 };
 
 //checks that all ref vector and actual vector are pretty much the same
@@ -90,6 +95,9 @@ void test_execute(){
     std::array<float, 3> ref_three_unit = {1,1,1};
     std::array<float, 3> ref_mag_vec = {imu::max_rd_mag, imu::max_rd_mag, imu::max_rd_mag};
     std::array<float, 3> ref_gyr_vec = {imu::max_rd_omega, imu::max_rd_omega, imu::max_rd_omega};
+
+    //set mock return to COMPLETE
+    tf.set_mock_ssa_mode(SSAMode::SSA_COMPLETE);
 
     //call box monitor control task, to pull values using driver
     tf.adcs_box->execute();

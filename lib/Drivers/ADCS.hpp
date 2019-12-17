@@ -9,13 +9,16 @@
 
 #include <I2CDevice.hpp>
 #include <array>
-
+#include <adcs_constants.hpp>
 namespace Devices {
 
 class ADCS : public I2CDevice {
    public:
     static constexpr unsigned int ADDRESS = 0x4E;
     static constexpr unsigned int WHO_AM_I_EXPECTED = 0x0F;
+    #ifdef UNIT_TEST
+    unsigned int mock_ssa_mode = SSAMode::SSA_IN_PROGRESS;
+    #endif
     /**
      * @brief quickly tests that the device is active and working on i2c
      * 
@@ -233,6 +236,15 @@ class ADCS : public I2CDevice {
      * @param ssa_mode Pointer to output current ssa mode value
      */
     void get_ssa_mode(unsigned char *ssa_mode);
+
+    #ifdef UNIT_TEST
+    /**
+     * @brief A MOCKING METHOD, Set the ssa mode 
+     * 
+     * @param ssa_mode 
+     */
+    void set_mock_ssa_mode(const unsigned char ssa_mode);
+    #endif
 
     /**
      * @brief Get the sun sensor array vector

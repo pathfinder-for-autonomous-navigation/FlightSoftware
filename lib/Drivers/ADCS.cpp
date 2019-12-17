@@ -168,7 +168,7 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa
     unsigned char readin[12];
     std::memset(readin, 0, sizeof(readin));
 
-    #if defined(DESKTOP) || defined(UNIT_TEST)
+    #ifdef UNIT_TEST
     for(int i = 0;i<12;i++){
         readin[i] = 255;
     }
@@ -193,7 +193,7 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
     unsigned char readin[14];
     std::memset(readin, 0, sizeof(readin));
 
-    #if defined(DESKTOP) || defined(UNIT_TEST)
+    #ifdef UNIT_TEST
     for(int i = 0;i<14;i++){
         readin[i] = 255;
     }
@@ -218,10 +218,15 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
     unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
     *gyr_temp_rd = fp(c,imu::min_rd_temp,imu::max_rd_temp);
 }
+#ifdef UNIT_TEST
+void ADCS::set_mock_ssa_mode(const unsigned char ssa_mode) {
+    mock_ssa_mode = ssa_mode;
+}
+#endif
 void ADCS::get_ssa_mode(unsigned char* a) {
-    #if defined(DESKTOP) || defined(UNIT_TEST)
+    #ifdef UNIT_TEST
     //acceleration control mode, mocking output
-    *a = SSAMode::SSA_COMPLETE;
+    *a = mock_ssa_mode;
     #else
     i2c_point_and_read(SSA_MODE, a, 1);
     #endif
@@ -230,7 +235,7 @@ void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
     unsigned char readin[6];
     std::memset(readin, 0, sizeof(readin));
 
-    #if defined(DESKTOP) || defined(UNIT_TEST)
+    #ifdef UNIT_TEST
     for(int i = 0;i<6;i++){
         readin[i] = 255;
     }
@@ -249,7 +254,7 @@ void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
     unsigned char temp[20];
     std::memset(temp, 0, sizeof(temp));
 
-    #if defined(DESKTOP) || defined(UNIT_TEST)
+    #ifdef UNIT_TEST
     for(int i = 0;i<20;i++){
         temp[i] = 255;
     }
