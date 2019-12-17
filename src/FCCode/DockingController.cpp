@@ -2,7 +2,7 @@
 
 DockingController::DockingController(StateFieldRegistry &registry, unsigned int offset,
     Devices::DockingSystem &_docksys)
-    : TimedControlTask<void>(registry, offset), docksys(_docksys), docked_sr(),
+    : TimedControlTask<void>(registry, "docking_ct", offset), docksys(_docksys), docked_sr(),
       docked_f("docksys.docked", docked_sr),
       dock_config_sr(),
       dock_config_f("docksys.dock_config", dock_config_sr),
@@ -14,7 +14,6 @@ DockingController::DockingController(StateFieldRegistry &registry, unsigned int 
   add_readable_field(is_turning_f);
 
   docking_config_cmd_fp = find_writable_field<bool>("docksys.config_cmd", __FILE__, __LINE__);
-  assert(docking_config_cmd_fp);
 }
 
 void DockingController::execute() {

@@ -15,7 +15,8 @@ class ClockManager : public TimedControlTask<void> {
     ClockManager(StateFieldRegistry& registry, const unsigned int control_cycle_size);
 
     /**
-     * @brief Increments the control cycle count. 
+     * @brief Increments the control cycle count and sets the control cycle
+     * start time.
      * 
      * Also ensures that the control cycle count can only be incremented 
      * at least control_cycle_size microseconds after the last execution
@@ -25,25 +26,12 @@ class ClockManager : public TimedControlTask<void> {
      */
     void execute() override;
 
-    /**
-     * @brief Returns the system time at which the current control cycle began.
-     * 
-     * @return sys_time_t 
-     */
-    sys_time_t get_control_cycle_start_time();
-
    private:
     /**
      * @brief If no control cycle has ended yet, this is set to false.
      * Otherwise true.
      */
     bool has_executed = false;
-
-    /**
-     * @brief Start time of the most recent control cycle that ended.
-     * If no control cycle has ended yet, then this value is undefined.
-     */
-    sys_time_t control_cycle_start_time;
 
     /**
      * @brief Duration of a control cycle.
@@ -53,7 +41,6 @@ class ClockManager : public TimedControlTask<void> {
     /**
      * @brief Keeps track of the current control cycle count.
      */
-    Serializer<unsigned int> control_cycle_count_sr;
     ReadableStateField<unsigned int> control_cycle_count_f;
 };
 

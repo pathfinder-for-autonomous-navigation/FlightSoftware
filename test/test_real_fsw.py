@@ -7,38 +7,58 @@ import json
 import os
 import time
 import serial
-import traceback
 import unittest
 
-class TestDummyFlightSoftwareBinary(unittest.TestCase):
+class TestFlightSoftwareBinary(unittest.TestCase):
     """
     Ensures that basic state field read-write functionality works as expected within
     Flight Software.
     """
 
-    binary_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../.pio/build/native/program")
+    binary_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+        "../.pio/build/native/program")
 
     def setUp(self):
         master_fd, slave_fd = pty.openpty()
-        self.dummy_fsw = subprocess.Popen([self.binary_dir], stdin=master_fd, stdout=master_fd)
+        self.fsw = subprocess.Popen([self.binary_dir], stdin=master_fd, stdout=master_fd)
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
-    def read_cycle_no(self):
+    def readCycleNumber(self):
+        # Helper method to read the cycle count.
+
         input = json.dumps({"field": "pan.cycle_no", "mode" : ord('r')}) + "\n"
         self.console.write(input.encode())
-        response = json.loads(self.console.readline().rstrip())
-        self.assertEqual(response['field'], "pan.cycle_no")
-        return int(response['val'])
+        time.sleep(0.200)
+        
+        while self.console.in_waiting > 0:
+            response = json.loads(self.console.readline().rstrip())
+            if 'field' in response.keys():
+                self.assertEqual(response['field'], "pan.cycle_no")
+                return int(response['val'])
+
+    def startNextCycle(self):
+        # Send a signal to start the next cycle, like the simulation would.
+
+        input = json.dumps({"field": "cycle.start", "mode" : ord('w'), "val" : "true"}) + "\n"
+        self.console.write(input.encode())
+        self.console.readline() # Throw away next line
 
     def testValidRead(self):
-        cycle_no = self.read_cycle_no()
-        self.assertGreaterEqual(cycle_no, 0)
-        time.sleep(0.5)
-        new_cycle_no = self.read_cycle_no()
-        self.assertGreater(new_cycle_no, cycle_no)
+        """Test that the cycle count increments on every control cycle."""
+
+        cycleNumber = self.readCycleNumber()
+        self.assertGreaterEqual(cycleNumber, 0)
+
+        self.startNextCycle()
+        newCycleNumber = self.readCycleNumber()
+        self.assertEqual(newCycleNumber, cycleNumber + 1)
+        
+        self.startNextCycle()
+        newCycleNumber = self.readCycleNumber()
+        self.assertEqual(newCycleNumber, cycleNumber + 2)
 
     def tearDown(self):
-        self.dummy_fsw.kill()
+        self.fsw.kill()
         self.console.close()
 
 if __name__ == '__main__':

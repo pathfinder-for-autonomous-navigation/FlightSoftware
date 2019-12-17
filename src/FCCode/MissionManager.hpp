@@ -1,7 +1,7 @@
 #ifndef MISSION_MANAGER_HPP_
 #define MISSION_MANAGER_HPP_
 
-#include <TimedControlTask.hpp>
+#include "TimedControlTask.hpp"
 
 #include "mission_mode_t.enum"
 #include "adcs_mode_t.enum"
@@ -45,10 +45,6 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<float>* adcs_min_stable_ang_rate_fp;
 
     // Fields that control overall mission state.
-    /**
-     * @brief Control cycle count, provided by ClockManager.
-     */
-    ReadableStateField<unsigned int>* control_cycle_count_fp;
     /**
      * @brief Current mission mode (see mission_mode_t.enum)
      */

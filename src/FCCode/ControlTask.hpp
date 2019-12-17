@@ -42,25 +42,44 @@ class ControlTask : protected debug_console {
     StateFieldRegistry& _registry;
 
     template<typename U>
-    bool add_internal_field(InternalStateField<U>& field) {
-        return _registry.add_internal_field(field.ptr());
+    void add_internal_field(InternalStateField<U>& field) {
+        const bool added = _registry.add_internal_field(
+            static_cast<InternalStateFieldBase*>(&field));
+        if(!added) {
+            printf(debug_severity::error, "Field %s is already in the registry.",
+                field.name().c_str());
+            assert(false);
+        }
     }
 
     template<typename U>
-    bool add_readable_field(ReadableStateField<U>& field) {
-        return _registry.add_readable_field(field.ptr());
+    void add_readable_field(ReadableStateField<U>& field) {
+        const bool added = _registry.add_readable_field(
+            static_cast<ReadableStateFieldBase*>(&field));
+        if(!added) {
+            printf(debug_severity::error, "Field %s is already in the registry.",
+                field.name().c_str());
+            assert(false);
+        }
     }
 
     template<typename U>
-    bool add_writable_field(WritableStateField<U>& field) {
-        return _registry.add_writable_field(field.ptr());
+    void add_writable_field(WritableStateField<U>& field) {
+        const bool added = _registry.add_writable_field(
+            static_cast<WritableStateFieldBase*>(&field));
+        if(!added) {
+            printf(debug_severity::error, "Field %s is already in the registry.",
+                field.name().c_str());
+            assert(false);
+        }
     }
 
     template<typename U>
     InternalStateField<U>* find_internal_field(const char* field, const char* file, const unsigned int line) {
         auto field_ptr = _registry.find_internal_field(field);
-        if (!field_ptr) { 
+        if (!field_ptr) {
             printf(debug_severity::error, "%s:%d: Internal field required is not present in state registry: %s\n", file, line, field);
+            assert(false);
         }
         return static_cast<InternalStateField<U>*>(field_ptr);
     }
@@ -70,6 +89,7 @@ class ControlTask : protected debug_console {
         auto field_ptr = _registry.find_readable_field(field);
         if (!field_ptr) { 
             printf(debug_severity::error, "%s:%d: Readable field required is not present in state registry: %s\n", file, line, field);
+            assert(false);
         }
         return static_cast<ReadableStateField<U>*>(field_ptr);
     }
@@ -79,6 +99,7 @@ class ControlTask : protected debug_console {
         auto field_ptr = _registry.find_writable_field(field);
         if (!field_ptr) { 
             printf(debug_severity::error, "%s:%d: Writable field required is not present in state registry: %s\n", file, line, field);
+            assert(false);
         }
         return static_cast<WritableStateField<U>*>(field_ptr);
     }

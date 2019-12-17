@@ -41,6 +41,7 @@
 typedef unsigned int i2c_stop;
 typedef unsigned int i2c_t3;
 #define I2C_STOP 0
+#define I2C_NOSTOP 0
 #else
 #include <i2c_t3.h>
 #endif
@@ -91,7 +92,7 @@ class I2CDevice : public Device {
     #ifndef DESKTOP
     I2CDevice(const std::string &name, i2c_t3 &wire, unsigned char addr, unsigned long timeout = 0);
     #else
-    I2CDevice(const std::string &name, unsigned char addr, unsigned long timeout = 0);
+    I2CDevice(const std::string &name, unsigned long timeout = 0);
     #endif
     /** @brief Returns true if an error has occurred since the last call to
      *         pop_errors and false otherwise. The recent error history variable
@@ -191,10 +192,12 @@ class I2CDevice : public Device {
     inline unsigned char i2c_peek();
 
    private:
-    /** Wire associated with this device **/
-    i2c_t3 &wire;
-    /** I2C address associated with this device **/
-    unsigned char const addr;
+    #ifndef DESKTOP
+        /** Wire associated with this device **/
+        i2c_t3 &wire;
+        /** I2C address associated with this device **/
+        unsigned char const addr;
+    #endif
     /** Timeout value associated with this device for wire calls **/
     unsigned long timeout;
     /** Keeps track of consecutive communication errors **/

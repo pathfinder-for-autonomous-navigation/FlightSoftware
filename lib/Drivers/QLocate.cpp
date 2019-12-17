@@ -5,6 +5,8 @@
 //  Created by Kyle Krol (kpk63@cornell.edu) on 3/04/18.
 //  Pathfinder for Autonomous Navigation
 //  Cornell University
+// 
+// Updated 12/16/2019
 //
 #include "QLocate.hpp"
 #ifndef DESKTOP
@@ -53,8 +55,6 @@ int QLocate::get_is_functional()
     return OK;
 }
 
-int const *QLocate::get_sbdix_response() { return this->sbdix_r; }
-
 int QLocate::query_config_1()
 {
 #ifndef DESKTOP
@@ -71,7 +71,8 @@ int QLocate::query_config_2()
     CHECK_PORT_AVAILABLE();
     port->clear(); // we don't care what is returned for factory reset
 #endif
-    // Disable flow control, disable DTR, disabl echo, set numeric rasponses, and
+    // Disable flow control, disable DTR, disable echo, 
+    // set numeric responses, and
     // disable "RING" alerts
     return sendCommand("AT&K0;&D0;E0;V0;+SBDMTA=0\r");
 }
@@ -168,7 +169,7 @@ int QLocate::get_sbdwb()
 int QLocate::parse_ints(char const *c, int *i)
 {
     int status = sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i + 1, i + 2, i + 3, i + 4, i + 5);
-    if (status == 6)
+    if (status == 6) 
         return OK;
     return UNEXPECTED_RESPONSE;
 }
@@ -186,7 +187,7 @@ int QLocate::get_sbdix()
     return OK;
 #else
     CHECK_PORT_AVAILABLE();
-    // Parse quake output
+    // Parse SBDIX output
     char buf[75] = {0};
     port->readBytesUntil('\n', buf, 74);
     return parse_ints(buf + 8, sbdix_r);
@@ -195,7 +196,6 @@ int QLocate::get_sbdix()
 
 int QLocate::query_sbdrb_1()
 {
-    // Request data
     return sendCommand("AT+SBDRB\r");
 }
 
@@ -203,38 +203,29 @@ int QLocate::get_sbdrb()
 {
 #ifndef DESKTOP
     CHECK_PORT_AVAILABLE();
-    short s = 0;
+    unsigned char sbuf[2] = {0, 0};
     // Read the message size
-    if (2 != port->readBytes((char *)&s, 2))
-        return WRONG_LENGTH;
-
-    size_t size = (s & 0xFF) << 8 | (s >> 8);
-#ifdef DEBUG_ENABLED
-    Serial.println("sbdrb > recieving message size= " + String(size));
-#endif
-    memset(message, 0, MAX_MSG_SIZE);
+    if (2 != port->readBytes(sbuf, 2)) return WRONG_LENGTH;
+    size_t size =  (sbuf[0] << 8) | sbuf[1]; // highest order byte first
+    memset(mt_message, 0, MAX_MSG_SIZE);
     // Read the message
-    if (size != port->readBytes(message, size))
+    size_t actual = port->readBytes(mt_message, size);
+    if (actual != size)
+    {
         return UNEXPECTED_RESPONSE; // Quake::Message read
+    }
+    memset(sbuf, 0, 2);
     // Read the checksum
-    s = 0;
-    if (2 != port->readBytes((char *)&s, 2))
-        return UNEXPECTED_RESPONSE;
-#ifdef DEBUG_ENABLED
-    Serial.printf("Message: [%s]", message);
-    Serial.flush();
-#endif
+    if (2 != port->readBytes(sbuf, 2)) return UNEXPECTED_RESPONSE;
+    short s = (sbuf[0] << 8) | sbuf[1];
     // Verify checksum
-    // Possibly just compare s != checksum(message, size)
-    if (((s & 0xFF) << 8 | (s >> 8)) != checksum(message, size))
+    if ( s != checksum(mt_message, size))
         return BAD_CHECKSUM;
 #endif
     return OK;
 }
 
 unsigned char QLocate::nr_pin() { return nr_pin_; }
-
-char *QLocate::get_message() { return message; }
 
 // Read the data at port and make sure it matches expected
 int QLocate::consume(String expected)
@@ -244,13 +235,11 @@ int QLocate::consume(String expected)
 #else
     // Return if nothing at the port
     CHECK_PORT_AVAILABLE();
-
-
     int expectLength = expected.length();
     char buf[expectLength + 1] = {0};
+
     // Read current data at port
     int len;
-
     len = port->readBytes(buf, expectLength);
 
 #ifdef DEBUG_ENABLED
