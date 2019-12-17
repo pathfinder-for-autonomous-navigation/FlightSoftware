@@ -25,7 +25,6 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     flag_sr(),
     rwa_speed_rd_flag("adcs_monitor.speed_rd_flag", flag_sr),
     rwa_torque_rd_flag("adcs_monitor.torque_rd_flag", flag_sr),
-    ssa_vec_flag("adcs_monitor.ssa_vec_flag", flag_sr),
     mag_vec_flag("adcs_monitor.mag_vec_flag", flag_sr),
     gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr)
@@ -57,7 +56,6 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         //add flag state fields
         add_readable_field(rwa_speed_rd_flag);
         add_readable_field(rwa_torque_rd_flag);
-        add_readable_field(ssa_vec_flag);
         add_readable_field(mag_vec_flag);
         add_readable_field(gyr_vec_flag);
         add_readable_field(gyr_temp_flag);
@@ -127,7 +125,6 @@ void ADCSBoxMonitor::execute(){
     //flags default to false, meaning there are no issues
     rwa_speed_rd_flag.set(false);
     rwa_torque_rd_flag.set(false);
-    ssa_vec_flag.set(false);
     mag_vec_flag.set(false);
     gyr_vec_flag.set(false);
     gyr_temp_flag.set(false);
@@ -139,8 +136,6 @@ void ADCSBoxMonitor::execute(){
         rwa_speed_rd_flag.set(true);
     if(exceed_bounds(rwa_torque_rd, rwa::min_torque, rwa::max_torque - 1))
         rwa_torque_rd_flag.set(true);
-    if(exceed_bounds(ssa_vec, -1, 1 - 1))
-        ssa_vec_flag.set(true);
     if(exceed_bounds(mag_vec, imu::min_rd_mag, imu::max_rd_mag - 1))
         mag_vec_flag.set(true);
     if(exceed_bounds(gyr_vec, imu::min_rd_omega, imu::max_rd_omega - 1))
