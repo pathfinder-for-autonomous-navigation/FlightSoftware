@@ -16,7 +16,15 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
   control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
   assert(control_cycle_count_fp);
 
-  readEEPROM();
+  // if we find stored information from previous control cycles when the control task 
+  // is initialized, then set all the statefields to those stored values
+  if (EEPROM.read(control_cycle_count_address)>0){
+    readEEPROM();
+  }
+  else{
+    // Otherwise, that means we have just started the satellite for the first time 
+    // and the EEPROM should be empty
+  }
 }
 
 void EEPROMController::execute() {

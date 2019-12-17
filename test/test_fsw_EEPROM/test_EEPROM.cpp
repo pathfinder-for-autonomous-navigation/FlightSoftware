@@ -19,10 +19,6 @@ class TestFixture {
     TestFixture() : registry() {
         mission_mode_fp = registry.create_writable_field<unsigned char>("pan.mode");
         mission_mode_fp->set(1);
-        #ifndef DESKTOP
-        //returns 1, as expected
-        Serial.println(mission_mode_fp->get());
-        #endif
 
         is_deployed_fp = registry.create_readable_field<bool>("pan.deployed");
         is_deployed_fp->set(false);
@@ -38,12 +34,14 @@ class TestFixture {
 };
 
 void test_task_initialization() {
-    TestFixture tf;
-
+    //Clear the EEPROM.
     #ifndef DESKTOP
-    //returns 66, no idea why
-    Serial.println(tf.mission_mode_fp->get());
+    for (int i = 0 ; i < EEPROM.length() ; i++) {
+        EEPROM.write(i, 0);
+    }
     #endif
+
+    TestFixture tf;
 
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
     TEST_ASSERT_EQUAL(false, tf.is_deployed_fp->get());
@@ -53,8 +51,8 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
-    //the period is set to 5. At the 45th control cycle, the EEPROM
-    //should write the values to the EEPROM
+    // The period is set to 5. At the 45th control cycle, the EEPROM
+    // should write the values to the EEPROM
     tf.eeprom_controller->execute();
     #ifndef DESKTOP
     TEST_ASSERT_EQUAL(1, EEPROM.read(tf.eeprom_controller->mission_mode_address));
@@ -62,6 +60,22 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(3, EEPROM.read(tf.eeprom_controller->sat_designation_address));
     TEST_ASSERT_EQUAL(45, EEPROM.read(tf.eeprom_controller->control_cycle_count_address));
     #endif
+
+    // Now we have information stored in the EEPROM. If we change the statefield values and 
+    // let another period pass, then we should store the new values in the EEPROM
+    tf.mission_mode_fp->set(30);
+    tf.is_deployed_fp->set(true);
+    tf.sat_designation_fp->set(1);
+    tf.control_cycle_count_fp->set(50);
+
+    tf.eeprom_controller->execute();
+    #ifndef DESKTOP
+    TEST_ASSERT_EQUAL(30, EEPROM.read(tf.eeprom_controller->mission_mode_address));
+    TEST_ASSERT_EQUAL(true, EEPROM.read(tf.eeprom_controller->is_deployed_address));
+    TEST_ASSERT_EQUAL(1, EEPROM.read(tf.eeprom_controller->sat_designation_address));
+    TEST_ASSERT_EQUAL(50, EEPROM.read(tf.eeprom_controller->control_cycle_count_address));
+    #endif
+
 }
 
 int test_control_task() {
