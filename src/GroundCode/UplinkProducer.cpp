@@ -22,16 +22,15 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r):
     }
  }
 
- void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename)
+void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename)
  {    
     using json = nlohmann::json;
-    try {
         json j;
         std::ifstream fs (filename);
         fs >> j;
         fs.close();
 
-        // Start writing at the beginning of bs
+        // Start writing at the beginning of the bitstream
         bs.reset();
         memset(bs.stream, 0, bs.max_len);
         
@@ -51,13 +50,13 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r):
             // Warning: auto val will not work because we need reinterpret_cast
             //  to reinterpret from an unsigned int
             uint64_t val = e.value();
+
+            uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
+            if (val > max_val)
+                throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
+
             add_entry(bs, reinterpret_cast<char*>(&val), field_index);
-        }
-    } 
-    catch (const std::exception& e)
-    {
-        std::cout << "[!Fail] UplinkProducer::create_from_json: " << e.what() << std::endl;
-    }
+        } 
 
     // Trim the padding off the byte stream so that validate passes
     bs.max_len = ((bs.byte_offset*8 + bs.bit_offset) + 7) / 8;
@@ -84,7 +83,7 @@ size_t UplinkProducer::add_entry( bitstream& bs, char* val, size_t index)
     return bits_written;
 }
 
-void UplinkProducer::to_string(bitstream& bs)
+void UplinkProducer::print_packet(bitstream& bs)
 {
     size_t packet_size = bs.max_len*8;
     std::vector<bool> bit_ar (packet_size, 0);
@@ -116,10 +115,7 @@ void UplinkProducer::to_file(const bitstream& bs, const std::string& filename)
     bool is_valid = _validate_packet(const_cast<bitstream&>(bs));
     // Throw exception if verification fails
     if (!is_valid)
-    {
-        std::cout << "Uplink Producer: Packet you created is not valid" << std::endl;
-        return;
-    }
+       throw std::runtime_error("Uplink Producer: Packet you created is not valid");
     // Write to file
     std::ofstream newFile (filename, std::ios::out | std::ios::binary);
     newFile.write(reinterpret_cast<const char*>(bs.stream), bs.max_len);
@@ -130,3 +126,21 @@ size_t UplinkProducer::get_max_possible_packet_size()
 {
     return max_possible_packet_size;
 }
+
+ bool UplinkProducer::create_sbd_from_json(const std::string& json_file, const std::string& dst_file)
+ {
+    try
+    {
+        size_t arr_size = get_max_possible_packet_size();
+        char tmp [arr_size];
+        bitstream bs(tmp, arr_size);
+        create_from_json(bs, json_file);
+        to_file(bs, dst_file);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "Failed to create sbd from json: " << e.what() << '\n';
+        return false;
+    }
+    return true;
+ }

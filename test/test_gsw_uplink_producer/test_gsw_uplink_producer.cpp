@@ -5,6 +5,8 @@
 #include <fstream>
 #include <json.hpp>
 
+#define TEST_ASSERT_THROW(x){try{x;TEST_ASSERT_TRUE(0);}catch(const std::exception& e){TEST_ASSERT_TRUE(1);}}
+#define TEST_ASSERT_NO_THROW(x){try{x;TEST_ASSERT_TRUE(1);}catch(const std::exception& e){TEST_ASSERT_TRUE(0);}}
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
@@ -38,32 +40,62 @@ class TestFixture {
     }
 };
 
+void test_task_initialization() {
+  TestFixture tf;
+}
 
+// Test that we can create files from json
 void test_create_from_json() {
     TestFixture tf;
     size_t arr_size = tf.uplink_producer->get_max_possible_packet_size();
     char tmp [arr_size];
     bitstream bs(tmp, arr_size);
-    tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_1.json");
-    tf.uplink_producer->to_string(bs);
+    TEST_ASSERT_NO_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_1.json"));
     tf.uplink_producer->_update_fields(bs);
     tf.check_json_registry("test/test_gsw_uplink_producer/test_1.json");
 }
 
+// Test that we can write valid packets to files
 void test_to_file()
 {
     TestFixture tf;
     size_t arr_size = tf.uplink_producer->get_max_possible_packet_size();
     char tmp [arr_size];
     bitstream bs(tmp, arr_size);
-    tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_1.json");
+    TEST_ASSERT_NO_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_1.json"));
     tf.uplink_producer->_update_fields(bs);
     const std::string& filename = std::string("test/test_gsw_uplink_producer/test1.sbd");
-    tf.uplink_producer->to_file(bs, filename);
+    TEST_ASSERT_NO_THROW(tf.uplink_producer->to_file(bs, filename));
 }
 
-void test_task_initialization() {
-  TestFixture tf;
+// Test that we get an runtime error when trying to save invalid packets
+void test_to_file_invalid()
+{
+    TestFixture tf;
+    size_t arr_size = tf.uplink_producer->get_max_possible_packet_size();
+    char tmp [arr_size];
+    bitstream bs(tmp, arr_size);
+    const std::string& filename = std::string("test/test_gsw_uplink_producer/test_invalid.sbd");
+    TEST_ASSERT_THROW( tf.uplink_producer->to_file(bs, filename));
+}
+
+// Test that creating SBD from json works
+void test_create_sbd_from_json()
+{
+    TestFixture tf;
+    const std::string& json_name = std::string("test/test_gsw_uplink_producer/test_2.json");
+    const std::string& filename = std::string("test/test_gsw_uplink_producer/test2.sbd");
+    TEST_ASSERT_TRUE(tf.uplink_producer->create_sbd_from_json(json_name, filename));
+}
+
+// Test that throwing exceptions when creating invalid stuff from json
+void test_invalid_values()
+{
+    TestFixture tf;
+    size_t arr_size = tf.uplink_producer->get_max_possible_packet_size();
+    char tmp [arr_size];
+    bitstream bs(tmp, arr_size);
+    TEST_ASSERT_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_3.json"));
 }
 
 
@@ -72,5 +104,8 @@ int main() {
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_create_from_json);
     RUN_TEST(test_to_file);
+    RUN_TEST(test_to_file_invalid);
+    RUN_TEST(test_create_sbd_from_json);
+    RUN_TEST(test_invalid_values);
     return UNITY_END();
 }
