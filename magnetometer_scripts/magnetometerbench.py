@@ -14,7 +14,7 @@ Import("env", "projenv")
 
 def after_upload(source, target, env):
     print("after_upload")
-    print("Waitning for teensy to start up")
+    print("Waiting for teensy to start up")
     testrates=([[0]*3,
                 [50,0,0],
                 [0,50,0],
@@ -42,6 +42,9 @@ def after_upload(source, target, env):
             print('\n\n Location: \n Awaiting input')
             temp= raw_input();
             f.write("Location: "+temp+"\n")
+            print('\n\n Satellite tested: \n Awaiting input')
+            temp= raw_input();
+            f.write("Satellite tested: "+temp+"\n")
             print('\n\n People who did the test: \n Awaiting input')
             temp= raw_input();
             f.write("People who did the test: "+temp+"\n")

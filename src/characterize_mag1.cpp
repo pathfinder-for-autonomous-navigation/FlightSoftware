@@ -112,5 +112,5 @@ void serialEvent() {
 
 void loop() {
   delay(10000);
-  //ping_gomspace();
+  ping_gomspace();
 }
