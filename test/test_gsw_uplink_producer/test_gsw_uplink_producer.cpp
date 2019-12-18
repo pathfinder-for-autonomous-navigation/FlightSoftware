@@ -50,6 +50,18 @@ void test_create_from_json() {
     tf.check_json_registry("test/test_gsw_uplink_producer/test_1.json");
 }
 
+void test_to_file()
+{
+    TestFixture tf;
+    size_t arr_size = tf.uplink_producer->get_max_possible_packet_size();
+    char tmp [arr_size];
+    bitstream bs(tmp, arr_size);
+    tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_1.json");
+    tf.uplink_producer->_update_fields(bs);
+    const std::string& filename = std::string("test/test_gsw_uplink_producer/test1.sbd");
+    tf.uplink_producer->to_file(bs, filename);
+}
+
 void test_task_initialization() {
   TestFixture tf;
 }
@@ -59,5 +71,6 @@ int main() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_create_from_json);
+    RUN_TEST(test_to_file);
     return UNITY_END();
 }

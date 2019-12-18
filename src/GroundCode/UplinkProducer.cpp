@@ -89,7 +89,7 @@ void UplinkProducer::to_string(bitstream& bs)
     size_t packet_size = bs.max_len*8;
     std::vector<bool> bit_ar (packet_size, 0);
     size_t field_index = 0, field_len = 0, bits_consumed = 0;
-    std::cout << "idx" << "\tsize" << "\tvalue" << std::endl;
+    std::cout << "idx" << "\twidth" << "\tvalue" << std::endl;
     while (bits_consumed < packet_size)
     {
         // Get index from the bitstream
@@ -120,8 +120,10 @@ void UplinkProducer::to_file(const bitstream& bs, const std::string& filename)
         std::cout << "Uplink Producer: Packet you created is not valid" << std::endl;
         return;
     }
-
     // Write to file
+    std::ofstream newFile (filename, std::ios::out | std::ios::binary);
+    newFile.write(reinterpret_cast<const char*>(bs.stream), bs.max_len);
+    newFile.close();
 }
 
 size_t UplinkProducer::get_max_possible_packet_size()

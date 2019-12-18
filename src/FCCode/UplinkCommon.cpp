@@ -8,8 +8,9 @@ Uplink::Uplink(StateFieldRegistry& r) : registry(r)
 
 bool Uplink::_validate_packet(bitstream& bs)
 {
+    // Start validation at beginning of bs
+    bs.reset();
     size_t packet_bytes = bs.max_len;
-  
     size_t field_index = 0, field_len = 0, bits_checked = 0, bits_consumed = 0;
     // Keep a bit map to prevent updating the same field twice
     std::vector<bool> is_field_updated(registry.writable_fields.size(), 0);
@@ -56,6 +57,7 @@ bool Uplink::_validate_packet(bitstream& bs)
 {
     size_t packet_size = bs.max_len*8;
     size_t field_index = 0, field_len = 0, bits_consumed = 0;
+    // Start updates at beginning of bs
     bs.reset();
     while (bits_consumed < packet_size)
     {
