@@ -15,7 +15,7 @@
 // Quake driver setup is initialized when QuakeController constructor is called
 QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) : 
     TimedControlTask<bool>(registry, "quake", offset),
-    radio_err_f("radio.err_ptr", Serializer<int>(-90, 10)),
+    radio_err_f("radio.err", Serializer<int>(-90, 10)),
     radio_mt_packet_f("uplink.ptr"),
     radio_mt_len_f("uplink.len"),
     radio_mode_f("radio.mode", Serializer<unsigned char>(5)),

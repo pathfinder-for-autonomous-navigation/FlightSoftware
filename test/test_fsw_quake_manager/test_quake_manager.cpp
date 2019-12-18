@@ -62,7 +62,7 @@ class TestFixture {
         quake_manager = std::make_unique<QuakeManager>(registry, 0);
         radio_mt_packet_fp = registry.find_internal_field_t<char*>("uplink.ptr");
         radio_mt_len_fp = registry.find_internal_field_t<size_t>("uplink.len");
-        radio_err_fp = registry.find_readable_field_t<int>("radio.err_ptr");
+        radio_err_fp = registry.find_readable_field_t<int>("radio.err");
 
         // Initialize internal fields
         if (qct_state != -1) // If qct_state == -1, then expect use the default initialization
