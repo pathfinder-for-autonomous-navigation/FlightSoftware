@@ -34,7 +34,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       uplink_consumer(registry, uplink_consumer_offset),
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys),
-      downlink_producer(registry, downlink_producer_offset, flow_data),
+      downlink_producer(registry, downlink_producer_offset),
       quake_manager(registry, quake_manager_offset),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       mission_manager(registry, mission_manager_offset) // This item is initialized last so it has access to all state fields
@@ -51,6 +51,9 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     #ifdef FUNCTIONAL_TEST
         add_readable_field(memory_use_f);
     #endif
+
+    // Since all telemetry fields have been added to the registry, initialize flows
+    downlink_producer.init_flows(flow_data);
 }
 
 void MainControlLoop::execute() {

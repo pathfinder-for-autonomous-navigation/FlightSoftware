@@ -3,17 +3,18 @@
 #include <set>
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
-    const unsigned int offset,
-    const std::vector<FlowData>& flow_data) : TimedControlTask<void>(r, "downlink_ct", offset),
-                                              snapshot_ptr_f("downlink.ptr"),
-                                              snapshot_size_bytes_f("downlink.snap_size")
+    const unsigned int offset) : TimedControlTask<void>(r, "downlink_ct", offset),
+                                 snapshot_ptr_f("downlink.ptr"),
+                                 snapshot_size_bytes_f("downlink.snap_size")
 {
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 
     // Add snapshot fields to the registry
     add_internal_field(snapshot_ptr_f);
     add_internal_field(snapshot_size_bytes_f);
+}
 
+void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
     // Create flow objects out of the flow data. Ensure that
     // no two flows have the same ID.
     std::set<unsigned char> ids;
@@ -24,7 +25,7 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
             printf(debug_severity::error, "Two flows share the same ID: %d", flow.id);
             assert(false);
         }
-        flows.emplace_back(r, flow, num_flows); 
+        flows.emplace_back(_registry, flow, num_flows); 
         if (flow.is_active) num_active_flows++;
     }
 
