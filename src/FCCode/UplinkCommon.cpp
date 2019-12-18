@@ -52,6 +52,37 @@ bool Uplink::_validate_packet(bitstream& bs)
     return (u8 != 0 || bits_consumed > 7) ? false : true;
 }
 
+ void Uplink::_update_fields(bitstream& bs)
+{
+    size_t packet_size = bs.max_len*8;
+    size_t field_index = 0, field_len = 0, bits_consumed = 0;
+    
+    while (bits_consumed < packet_size)
+    {
+        // Get index from the bitstream
+        bits_consumed += bs.nextN(index_size, reinterpret_cast<uint8_t*>(&field_index));
+        if (field_index == 0) // reached end of the packet
+            return;
+        --field_index;
+
+        // Get field length from the index
+        field_len = get_field_length(field_index);
+
+        auto field_p = registry.writable_fields[field_index];
+        const std::vector<bool>& _bit_arr = field_p->get_bit_array();
+        std::vector<bool>& field_bit_arr = const_cast<std::vector<bool>&>(_bit_arr);
+        
+        // Clear field's bit array
+        for (size_t i = 0; i < field_len; ++i)
+          field_bit_arr[i] = 0;
+
+        // Dump into bit_array
+        bits_consumed += bs.nextN(field_len, field_bit_arr);
+        field_p->set_bit_array(field_bit_arr);
+        field_p->deserialize();
+    }
+}
+
 size_t Uplink::get_field_length(size_t field_index)
 {
     if (field_index >= registry.writable_fields.size())

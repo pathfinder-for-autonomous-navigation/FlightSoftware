@@ -1,4 +1,8 @@
 {
-  "field1": 1,
-  "field2": 2
+  "adcs.mode": 499,
+  "adcs.cmd_attitude": 13,
+  "pan.mode": 44,
+  "adcs.min_stable_ang_rate": 21,
+  "docksys.config_cmd": 32,
+  "pan.sat_designation": 54
 }

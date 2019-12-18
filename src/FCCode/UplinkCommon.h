@@ -1,7 +1,7 @@
 
 #pragma once
 #include <bitstream.h>
-#include "ControlTask.hpp"
+#include <StateFieldRegistry.hpp>
 
 /**
  * Uplink provides operations on an Uplink Packet and is stateless
@@ -26,10 +26,18 @@ class Uplink {
    */
   size_t index_size;
 
+#ifndef DEBUG
   protected:
+#endif
   /**
    * Validates the packet
    */
   bool _validate_packet(bitstream& bs); 
+
+  /**
+   * Updates the fields of the registry with the uplink packet described by bs
+   * This function is here in order to sync producer and consumer
+   */
+  void _update_fields(bitstream& bs);
 
 };

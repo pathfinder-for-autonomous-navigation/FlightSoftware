@@ -36,8 +36,17 @@ class UplinkProducer : public Uplink{
      */
     void to_file(const bitstream& bs, const std::string& filename);
 
+    /**
+     * Return the maximum possible packet size
+     */
+    size_t get_max_possible_packet_size();
+#ifndef DEBUG
   private:
+#endif
     MainControlLoop fcp;
+
     // maps field names to indices
     std::map<std::string, size_t> field_map;
+
+    size_t max_possible_packet_size;
 };
