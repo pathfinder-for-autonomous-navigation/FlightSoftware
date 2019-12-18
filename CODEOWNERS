@@ -8,6 +8,7 @@
 
 # Fatima's owned files
 *(?i)(gomspace)* fatimayousuf
+*(?i)(dcdc)*     fatimayousuf
 *(?i)(eeprom)*   fatimayousuf
 *(?i)(docking)*  fatimayousuf
 *(?i)(gsw)*      fatimayousuf
@@ -16,6 +17,11 @@
 # Athena's owned files
 *(?i)(prop)*       athena255
 *(?i)(bitstream)*  athena255
+*(?i)(qlocate)*    athena255
+
+# Device groups
+Device*      athena255 kkrol27 shihaocao fatimayousuf tanishqaggarwal
+I2CDevice*   shihaocao fatimayousuf tanishqaggarwal
 
 # Telemetry files
 *(?i)(uplink)*   fatimayousuf athena255 tanishqaggarwal
