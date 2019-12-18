@@ -18,7 +18,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_err_f("radio.err_ptr", Serializer<int>()),
     radio_mt_packet_f("uplink.ptr"),
     radio_mt_len_f("uplink.len"),
-    radio_mode_f(radio_mode_t::config),
+    radio_mode_f("radio.mode", Serializer<unsigned char>(5)),
     qct(registry),
     mo_idx(0),
     unexpected_flag(false)
@@ -36,6 +36,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     qct.request_state(CONFIG);
     radio_mt_packet_f.set(qct.get_MT_msg());
     radio_mt_len_f.set(0);
+    radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::config));
 
     // Setup MO Buffers
     max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
@@ -50,9 +51,10 @@ QuakeManager::~QuakeManager()
 bool QuakeManager::execute() {
     // printf(debug_severity::info, "[Quake Info] Executing Quake Manager "
     //     "current radio_state %d, current control task state %d", 
-    //         static_cast<unsigned int>(radio_mode_f), 
+    //         radio_mode_f.get(), 
     //         qct.get_current_state());
-    switch(radio_mode_f){
+    const radio_mode_t radio_mode = static_cast<radio_mode_t>(radio_mode_f.get());
+    switch(radio_mode) {
         case radio_mode_t::config:
         return dispatch_config();
         case radio_mode_t::wait:
@@ -67,7 +69,7 @@ bool QuakeManager::execute() {
         return dispatch_manual();
         default:
             // printf(debug_severity::error, "Radio state not defined: %d", 
-            // static_cast<unsigned int>(radio_mode_f));
+            // radio_mode_f.get());
             return false;
     }
 }
@@ -227,7 +229,7 @@ bool QuakeManager::write_to_error(int err_code)
     printf(debug_severity::error, 
         "[Quake Error] Execution failed at radio state %d, quake control state "
         "%d, and fn_number %d with error code %d", 
-        static_cast<unsigned int> (radio_mode_f),
+        radio_mode_f.get(),
         qct.get_current_state(),
         qct.get_current_fn_number(), 
         (error));
@@ -241,7 +243,7 @@ bool QuakeManager::no_more_cycles(size_t max_cycles, radio_mode_t new_state)
     {
         printf(debug_severity::notice, 
             "[Quake Notice] Radio State %d has ran out of cycles.", 
-            static_cast<unsigned int> (radio_mode_f));
+            radio_mode_f.get());
         // Transition to new_state
         transition_radio_state(new_state);
         return true;
@@ -278,15 +280,15 @@ bool QuakeManager::transition_radio_state(radio_mode_t new_state)
             break;
         default:
         printf(debug_severity::error, "In transition_radio_state:: Radio state not defined: %d", 
-            static_cast<unsigned int>(radio_mode_f));
+            radio_mode_f.get());
     }
     // Update the last checkin cycle
     last_checkin_cycle = control_cycle_count;
-    radio_mode_f = new_state;
+    radio_mode_f.set(static_cast<unsigned int>(new_state));
 
     if ( !bOk ) // Sanity check
         printf(debug_severity::error, "Invalid state transition from %d to %d",
         qct.get_current_state(),
-        static_cast<unsigned int>(radio_mode_f));
+        radio_mode_f.get());
     return bOk;
 }

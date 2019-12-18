@@ -89,7 +89,7 @@ class QuakeManager : public TimedControlTask<bool> {
     /**
      * @brief Current radio mode (see radio_mode_t.enum), provided by no one
      **/
-    radio_mode_t radio_mode_f;
+    ReadableStateField<unsigned char> radio_mode_f;
   
   #ifdef DEBUG
 

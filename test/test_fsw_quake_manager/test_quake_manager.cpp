@@ -13,7 +13,7 @@
 
 // Check that radio state x matches the current radio state
 #define assert_radio_state(x) {\
-  TEST_ASSERT_EQUAL(x, tf.quake_manager->radio_mode_f);\
+  TEST_ASSERT_EQUAL(static_cast<unsigned int>(x), tf.quake_manager->radio_mode_f.get());\
 }
 
 // Check that x matches the current fn number
@@ -68,7 +68,7 @@ class TestFixture {
         if (qct_state != -1) // If qct_state == -1, then expect use the default initialization
         {
           quake_manager->dbg_get_qct().dbg_set_state(qct_state);
-          quake_manager->radio_mode_f = static_cast<radio_mode_t>(radio_mode); 
+          quake_manager->radio_mode_f.set(radio_mode); 
         }
     }
   // Make a step in the world
