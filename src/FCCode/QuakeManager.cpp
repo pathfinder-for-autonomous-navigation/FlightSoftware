@@ -15,23 +15,27 @@
 // Quake driver setup is initialized when QuakeController constructor is called
 QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) : 
     TimedControlTask<bool>(registry, "quake", offset),
+    radio_err_f("radio.err_ptr", Serializer<int>()),
+    radio_mt_packet_f("uplink.ptr"),
+    radio_mt_len_f("uplink.len"),
     radio_mode_f(radio_mode_t::config),
     qct(registry),
     mo_idx(0),
     unexpected_flag(false)
 { 
+    add_readable_field(radio_err_f);
+    add_internal_field(radio_mt_packet_f);
+    add_internal_field(radio_mt_len_f);
+
     // Retrieve fields from registry
     snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);
     radio_mo_packet_fp = find_internal_field<char*>("downlink.ptr", __FILE__, __LINE__);
-    radio_err_fp = find_readable_field<int>("downlink_producer.radio_err_ptr", __FILE__, __LINE__);
-    radio_mt_packet_fp = find_internal_field<char*>("uplink.ptr", __FILE__, __LINE__);
-    radio_mt_len_fp = find_internal_field<size_t>("uplink.len", __FILE__, __LINE__);
 
     // Initialize Quake Manager variables
     last_checkin_cycle = control_cycle_count;
     qct.request_state(CONFIG);
-    radio_mt_packet_fp->set(qct.get_MT_msg());
-    radio_mt_len_fp->set(0);
+    radio_mt_packet_f.set(qct.get_MT_msg());
+    radio_mt_len_f.set(0);
 
     // Setup MO Buffers
     max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
@@ -199,7 +203,7 @@ bool QuakeManager::dispatch_read() {
         printf(debug_severity::info, 
             "[Quake Info] SBDRB finished, transitioning to SBDWB");
 
-        radio_mt_len_fp->set(qct.get_MT_length());
+        radio_mt_len_f.set(qct.get_MT_length());
 
         transition_radio_state(radio_mode_t::write);
     }
@@ -218,7 +222,7 @@ bool QuakeManager::write_to_error(int err_code)
         return true;
 
     // Something unexpected definitely happened
-    radio_err_fp->set(err_code);
+    radio_err_f.set(err_code);
     unexpected_flag = true;
     printf(debug_severity::error, 
         "[Quake Error] Execution failed at radio state %d, quake control state "

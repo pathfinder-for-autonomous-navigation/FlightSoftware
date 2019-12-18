@@ -38,12 +38,14 @@ class TestFixture {
     StateFieldRegistryMock registry;
     // Input state fields to quake manager
     std::shared_ptr<InternalStateField<char*>> radio_mo_packet_fp;
-    std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
-    std::shared_ptr<InternalStateField<size_t>> radio_mt_len_fp;
-    std::shared_ptr<ReadableStateField<int>> radio_err_fp;
     std::shared_ptr<InternalStateField<size_t>> snapshot_size_fp;
-    // Quake has no output state fields since it is created after downlink producer
 
+    // Output state fields to quake manager
+    InternalStateField<char*>* radio_mt_packet_fp;
+    InternalStateField<size_t>* radio_mt_len_fp;
+    ReadableStateField<int>* radio_err_fp;
+
+    // Quake manager object
     std::unique_ptr<QuakeManager> quake_manager;
     
     // Create a TestFixture instance of QuakeManager with the following parameters
@@ -51,9 +53,6 @@ class TestFixture {
         // Create external field dependencies
         snapshot_size_fp = registry.create_internal_field<size_t>("downlink.snap_size");
         radio_mo_packet_fp = registry.create_internal_field<char*>("downlink.ptr");
-        radio_mt_packet_fp = registry.create_internal_field<char*>("uplink.ptr");
-        radio_mt_len_fp = registry.create_internal_field<size_t>("uplink.len");
-        radio_err_fp = registry.create_readable_field<int>("downlink_producer.radio_err_ptr", -90, 10);
         // Initialize external fields
         snapshot_size_fp->set(static_cast<int>(350));
         radio_mo_packet_fp->set(snap1);
@@ -61,7 +60,10 @@ class TestFixture {
 
         // Create Quake Manager instance
         quake_manager = std::make_unique<QuakeManager>(registry, 0);
-      
+        radio_mt_packet_fp = registry.find_internal_field_t<char*>("uplink.ptr");
+        radio_mt_len_fp = registry.find_internal_field_t<size_t>("uplink.len");
+        radio_err_fp = registry.find_readable_field_t<int>("radio.err_ptr");
+
         // Initialize internal fields
         if (qct_state != -1) // If qct_state == -1, then expect use the default initialization
         {

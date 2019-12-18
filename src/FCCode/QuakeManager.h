@@ -71,20 +71,20 @@ class QuakeManager : public TimedControlTask<bool> {
    */
     InternalStateField<char*>* radio_mo_packet_fp;
 
-  /**
-    * @brief Pointer to the uplink buffer, provided by UplinkProducer. 
-    **/ 
-   InternalStateField<char*>* radio_mt_packet_fp;
-
     /**
     * @brief Pointer to Quake Error field, provided by DownlinkProducer. 
     **/ 
-   ReadableStateField<int>* radio_err_fp;
+   ReadableStateField<int> radio_err_f;
+
+   /**
+    * @brief Pointer to the uplink buffer, provided by UplinkProducer. 
+    **/ 
+   InternalStateField<char*> radio_mt_packet_f;
 
    /**
     * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
     **/ 
-   InternalStateField<size_t>* radio_mt_len_fp; 
+   InternalStateField<size_t> radio_mt_len_f; 
 
     /**
      * @brief Current radio mode (see radio_mode_t.enum), provided by no one
