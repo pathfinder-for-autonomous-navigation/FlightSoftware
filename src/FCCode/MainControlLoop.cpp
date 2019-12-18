@@ -32,12 +32,12 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
       uplink_consumer(registry, uplink_consumer_offset),
-      mission_manager(registry, mission_manager_offset),
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys),
       downlink_producer(registry, downlink_producer_offset, flow_data),
       quake_manager(registry, quake_manager_offset),
-      memory_use_f("sys.memory_use", Serializer<unsigned int>(300000))
+      memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
+      mission_manager(registry, mission_manager_offset) // This item is initialized last so it has access to all state fields
 {
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP

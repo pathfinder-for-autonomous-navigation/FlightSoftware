@@ -42,7 +42,6 @@ class MainControlLoop : public ControlTask<void> {
     GomspaceController gomspace_controller;
 
     UplinkConsumer uplink_consumer;
-    MissionManager mission_manager;
 
     Devices::DockingSystem docksys;
     DockingController docking_controller;
@@ -80,6 +79,8 @@ class MainControlLoop : public ControlTask<void> {
      * @brief Total memory use, in bytes.
      */
     ReadableStateField<unsigned int> memory_use_f;
+
+    MissionManager mission_manager;
 
    public:
     /*
