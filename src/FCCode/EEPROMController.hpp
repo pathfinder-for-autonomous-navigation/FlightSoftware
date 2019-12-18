@@ -5,7 +5,6 @@
 
 #include "../../test/StateFieldRegistryMock.hpp"
 #include "TimedControlTask.hpp"
-#include <EEPROM.h>
 
 class EEPROMController : public TimedControlTask<void> {
    public:
@@ -34,6 +33,13 @@ class EEPROMController : public TimedControlTask<void> {
      * respective address in EEPROM
      */
     void updateEEPROM();
+
+    /**
+     * @brief Checks if the EEPROM is empty or not. The default value
+     * of the EEPROM is 0xFF, or 255 in decimal. Returns true if empty
+     * and false if values are stored in the EEPROM.
+     */
+    bool checkEmpty();
 
     //number of control cycles that must pass before the control task writes to EEPROM
     unsigned int period = 5;

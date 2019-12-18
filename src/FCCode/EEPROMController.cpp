@@ -18,7 +18,7 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
 
   // if we find stored information from previous control cycles when the control task 
   // is initialized, then set all the statefields to those stored values
-  if (EEPROM.read(control_cycle_count_address)>0){
+  if (!checkEmpty()){
     readEEPROM();
   }
   else{
@@ -49,5 +49,16 @@ void EEPROMController::updateEEPROM(){
   EEPROM.put(is_deployed_address, is_deployed_fp->get());
   EEPROM.put(sat_designation_address, sat_designation_fp->get());
   EEPROM.put(control_cycle_count_address, control_cycle_count_fp->get());
+  #endif
+}
+
+bool EEPROMController::checkEmpty(){
+  #ifndef DESKTOP
+  for (int i = 0 ; i < EEPROM.length() ; i++) {
+    if (EEPROM.read(i)!=255){
+      return false;
+    }
+  }
+  return true;
   #endif
 }

@@ -37,7 +37,7 @@ void test_task_initialization() {
     //Clear the EEPROM.
     #ifndef DESKTOP
     for (int i = 0 ; i < EEPROM.length() ; i++) {
-        EEPROM.write(i, 0);
+        EEPROM.write(i, 255);
     }
     #endif
 
