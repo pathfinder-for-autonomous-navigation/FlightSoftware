@@ -51,12 +51,12 @@ bool Uplink::_validate_packet(bitstream& bs)
     // if padding was not 0
     return (u8 != 0 || bits_consumed > 7) ? false : true;
 }
-
+#include <iostream>
  void Uplink::_update_fields(bitstream& bs)
 {
     size_t packet_size = bs.max_len*8;
     size_t field_index = 0, field_len = 0, bits_consumed = 0;
-    
+    bs.reset();
     while (bits_consumed < packet_size)
     {
         // Get index from the bitstream
@@ -67,7 +67,6 @@ bool Uplink::_validate_packet(bitstream& bs)
 
         // Get field length from the index
         field_len = get_field_length(field_index);
-
         auto field_p = registry.writable_fields[field_index];
         const std::vector<bool>& _bit_arr = field_p->get_bit_array();
         std::vector<bool>& field_bit_arr = const_cast<std::vector<bool>&>(_bit_arr);

@@ -29,7 +29,7 @@ class UplinkProducer : public Uplink{
      * Prints the UplinkPacket in format:
      * [Index][Data] (field name) (field size)
      */
-    void to_string(const bitstream& bs);
+    void to_string(bitstream& bs);
 
     /**
      * Verifies then saves the UplinkPacket in the file

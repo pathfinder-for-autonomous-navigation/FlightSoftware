@@ -31,8 +31,9 @@ class TestFixture {
 
           // Get the field's index in writable_fields
           size_t field_index = uplink_producer->field_map[key];
-          std::cout << "Checking key " << key << " at index " << field_index << std::endl;
-          TEST_ASSERT_EQUAL(e.value(), registry.writable_fields[field_index]);
+          // std::cout << "Checking " << key << " at index " << field_index << std::endl;
+          auto ef = registry.writable_fields[field_index]->get_bit_array().to_ulong();
+          TEST_ASSERT_EQUAL(e.value(), ef);
       }
     }
 };
@@ -44,6 +45,7 @@ void test_create_from_json() {
     char tmp [arr_size];
     bitstream bs(tmp, arr_size);
     tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_1.json");
+    tf.uplink_producer->to_string(bs);
     tf.uplink_producer->_update_fields(bs);
     tf.check_json_registry("test/test_gsw_uplink_producer/test_1.json");
 }
