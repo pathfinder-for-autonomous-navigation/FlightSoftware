@@ -26,6 +26,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     add_readable_field(radio_err_f);
     add_internal_field(radio_mt_packet_f);
     add_internal_field(radio_mt_len_f);
+    add_readable_field(radio_mode_f);
 
     // Retrieve fields from registry
     snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);

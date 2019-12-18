@@ -31,11 +31,11 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       attitude_estimator(registry, attitude_estimator_offset),
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
-      uplink_consumer(registry, uplink_consumer_offset),
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys),
       downlink_producer(registry, downlink_producer_offset),
       quake_manager(registry, quake_manager_offset),
+      uplink_consumer(registry, uplink_consumer_offset),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       mission_manager(registry, mission_manager_offset) // This item is initialized last so it has access to all state fields
 {

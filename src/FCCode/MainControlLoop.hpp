@@ -41,12 +41,11 @@ class MainControlLoop : public ControlTask<void> {
     Devices::Gomspace gomspace;
     GomspaceController gomspace_controller;
 
-    UplinkConsumer uplink_consumer;
-
     Devices::DockingSystem docksys;
     DockingController docking_controller;
     DownlinkProducer downlink_producer;
-    QuakeManager quake_manager;
+    QuakeManager quake_manager; // Needs downlink packet from Downlink Producer
+    UplinkConsumer uplink_consumer; // Needs uplink packet from Quake Manager
 
     // Control cycle time offsets, in microseconds
     #ifdef FUNCTIONAL_TEST
