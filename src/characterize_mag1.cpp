@@ -13,7 +13,7 @@ Devices::DCDC dcdc("dcdc");
 bool test_get_who_am_i(){
     unsigned char temp;
     adcs.get_who_am_i(&temp);
-    
+
     return Devices::ADCS::WHO_AM_I_EXPECTED == temp;
 }
 
@@ -41,7 +41,7 @@ void setup() {
   delay(1000);
   Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
   delay(1000);
-  adcs.i2c_set_timeout(100);
+  adcs.i2c_set_timeout(20);
   adcs.setup();
   delay(1000);
   adcs.set_mode(ADCSMode::ADCS_ACTIVE);
@@ -49,9 +49,9 @@ void setup() {
   adcs.set_mtr_cmd(magnetorquer_commanded_moment);
   adcs.set_rwa_mode(RWA_SPEED_CTRL,wheel_commanded_rate);
   Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
-  if (!test_get_who_am_i()){
-    Serial.println("ADCS box Transmission Failed!");
-  }
+  // if (!test_get_who_am_i()){
+  //   Serial.println("ADCS box Transmission Failed!");
+  // }
   digitalWrite(LED_BUILTIN, LOW);
   delay(1000);
   adcs.set_imu_mode(MAG1_CALIBRATE);
@@ -112,5 +112,5 @@ void serialEvent() {
 
 void loop() {
   delay(10000);
-  ping_gomspace();
+  //ping_gomspace();
 }

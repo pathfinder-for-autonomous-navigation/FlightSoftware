@@ -1,6 +1,9 @@
 """
-8 DEC 2019
-pyserial.py
+13 DEC 2019
+fcserial.py
+Nathan Zimmerberg (nhz2@cornell.edu)
+
+Some utility functions to test the magnetometers.
 """
 import time
 import serial
@@ -22,7 +25,7 @@ def getreading(ser):
     return [float(s) for s in line.split(b',')[:-1]]
 
 def writewheels(ser,rate):
-    """write rate, list of 3 floats to wheel speeds, (rad/s), to teensy connected to serialport ser."""
+    """write rate, list of 3 floats to wheel speeds, (rad/s), to teensy connected to open serialport ser."""
     ser.reset_input_buffer()
     ser.write(b'w %f %f %f\n'%tuple(rate))
 
@@ -41,21 +44,23 @@ def main(filename,testrates):
             # write csv header line
             headerline='reading time (s),magnetometer1 X (T),magnetometer1 Y (T),magnetometer1 Z (T),gyro X (rad/s),gyro Y (rad/s),gyro Z (rad/s),gyro temperature (C),wheel commanded rate X (rad/s),wheel commanded rate Y (rad/s),wheel commanded rate Z (rad/s), magrod commanded moment X (A*m^2),  magrod commanded moment Y (A*m^2),  magrod commanded moment Z (A*m^2)\n'
             f.write(headerline)
-            for testrate in testrates:
-                writewheels(ser, testrate)
-                #wait for teensy to acknowledge, ready for next message
-                time.sleep(0.1)# this prevents python from busy waiting.
-                ser.readline()
-                for i in range(100):#get 100 readings
-                    try:
-                        line=getreading(ser)
-                        if (len(line)):
+        for testrate in testrates:
+            writewheels(ser, testrate)
+            #wait for teensy to acknowledge, ready for next message
+            time.sleep(0.1)# this prevents python from busy waiting.
+            ser.readline()
+            for i in range(100):#get 100 readings
+                print("starting %d of 100"%i)
+                try:
+                    line=getreading(ser)
+                    if (len(line)):
+                        with open(filename,'a') as f:
                             writecsvline(f,line)
-                        #wait for teensy to acknowledge, ready for next message
-                        time.sleep(0.1)# this prevents python from busy waiting.
-                        ser.readline()
-                    except ValueError as e:
-                        pass
+                    #wait for teensy to acknowledge, ready for next message
+                    time.sleep(0.1)# this prevents python from busy waiting.
+                    ser.readline()
+                except ValueError as e:
+                    pass
 
 
 if __name__ == '__main__':
@@ -66,4 +71,4 @@ if __name__ == '__main__':
                 [200]*3,
                 [600]*3,
                 [0]*3])
-    main('test.csv',testrates)
+    main('test2.csv',testrates)
