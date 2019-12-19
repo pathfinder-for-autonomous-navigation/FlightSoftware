@@ -15,19 +15,24 @@ Import("env", "projenv")
 def after_upload(source, target, env):
     print("after_upload")
     print("Waiting for teensy to start up")
-    testrates=([[0]*3,
-                [50,0,0],
-                [0,50,0],
-                [0,0,50],
-                [0]*3])
     time.sleep(5)
+    print("Restart Satellite by pressing both deployment switches")
+    print('press enter when done')
+    raw_input()
+    time.sleep(5)
+    testrates=([[0]*3,
+                [10,0,0],
+                [0,10,0],
+                [0,0,10],
+                [0]*3])
+
     portname=fcserial.findteensy()
     if (not portname):
         print('no teensy found')
         return
 
     print('\n\n Where should the data be saved? (CSV filename): \n Awaiting input')
-    filename= raw_input();
+    filename= raw_input()
     with serial.Serial(portname, 4000000, timeout=10) as ser:
         with open(filename,'w') as f:
             # write csv header line

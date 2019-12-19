@@ -53,7 +53,7 @@ void setup() {
   // }
   digitalWrite(LED_BUILTIN, LOW);
   delay(1000);
-  adcs.set_imu_mode(MAG1_CALIBRATE);
+  adcs.set_imu_mode(MAG2);
   delay(1000);
   Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
 }

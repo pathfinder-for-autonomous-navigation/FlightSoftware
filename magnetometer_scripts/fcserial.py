@@ -27,6 +27,7 @@ def getreading(ser):
 def writewheels(ser,rate):
     """write rate, list of 3 floats to wheel speeds, (rad/s), to teensy connected to open serialport ser."""
     ser.reset_input_buffer()
+    print(b'w %f %f %f\n'%tuple(rate))
     ser.write(b'w %f %f %f\n'%tuple(rate))
 
 def writecsvline(csvfile,line):
