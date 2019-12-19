@@ -4,9 +4,9 @@
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     const unsigned int offset,
-    const std::vector<FlowData>& flow_data) : TimedControlTask<void>(r, offset),
-                                              snapshot_ptr_f("downlink_producer.mo_ptr"),
-                                              snapshot_size_bytes_f("downlink_producer.snap_size")
+    const std::vector<FlowData>& flow_data) : TimedControlTask<void>(r, "downlink_ct", offset),
+                                              snapshot_ptr_f("downlink.ptr"),
+                                              snapshot_size_bytes_f("downlink.snap_size")
 {
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 

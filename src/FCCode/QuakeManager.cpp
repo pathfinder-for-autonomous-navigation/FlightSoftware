@@ -15,25 +15,24 @@
 
 // Quake driver setup is initialized when QuakeController constructor is called
 QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) : 
-    TimedControlTask<bool>(registry, offset),
+    TimedControlTask<bool>(registry, "quake", offset),
     radio_mode_f(radio_mode_t::config),
     qct(registry),
     mo_idx(0),
     unexpected_flag(false)
 { 
     // Retrieve fields from registry
-    control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
-    snapshot_size_fp = find_internal_field<size_t>("downlink_producer.snap_size", __FILE__, __LINE__);
-    radio_mo_packet_fp = find_internal_field<char*>("downlink_producer.mo_ptr", __FILE__, __LINE__);
-    radio_mt_packet_fp = find_internal_field<char*>("uplink_consumer.mt_ptr", __FILE__, __LINE__);
+    snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);
+    radio_mo_packet_fp = find_internal_field<char*>("downlink.ptr", __FILE__, __LINE__);
     radio_err_fp = find_readable_field<int>("downlink_producer.radio_err_ptr", __FILE__, __LINE__);
-    radio_mt_ready_fp = find_internal_field<bool>("uplink_consumer.mt_ready", __FILE__, __LINE__);
+    radio_mt_packet_fp = find_internal_field<char*>("uplink.ptr", __FILE__, __LINE__);
+    radio_mt_len_fp = find_internal_field<size_t>("uplink.len", __FILE__, __LINE__);
 
     // Initialize Quake Manager variables
-    last_checkin_cycle = control_cycle_count_fp->get();
+    last_checkin_cycle = control_cycle_count;
     qct.request_state(CONFIG);
     radio_mt_packet_fp->set(qct.get_MT_msg());
-    radio_mt_ready_fp->set(false);
+    radio_mt_len_fp->set(0);
 
 #ifdef RADIO_TESTING
     max_snapshot_size = 24;
@@ -95,7 +94,7 @@ bool QuakeManager::dispatch_config() {
 
 bool QuakeManager::dispatch_wait() {
     // If we still have cycles, return true
-    if (control_cycle_count_fp->get() - last_checkin_cycle <= max_wait_cycles)
+    if (control_cycle_count - last_checkin_cycle <= max_wait_cycles)
         return true;
     // Transition to config to attempt to resolve unexpected errors
     if (unexpected_flag) 
@@ -212,8 +211,10 @@ bool QuakeManager::dispatch_read() {
     if (qct.get_current_state() == IDLE)
     {
         printf(debug_severity::info, 
-            "[Quake SBDRB Message] message: %s", qct.get_MT_msg());
-        radio_mt_ready_fp->set(true);
+            "[Quake Info] SBDRB finished, transitioning to SBDWB");
+
+        radio_mt_len_fp->set(qct.get_MT_length());
+
         transition_radio_state(radio_mode_t::write);
     }
     return write_to_error(err_code);
@@ -246,7 +247,7 @@ bool QuakeManager::write_to_error(int err_code)
 
 bool QuakeManager::no_more_cycles(size_t max_cycles, radio_mode_t new_state)
 {
-    if (control_cycle_count_fp->get() - last_checkin_cycle > max_cycles)
+    if (control_cycle_count - last_checkin_cycle > max_cycles)
     {
         printf(debug_severity::notice, 
             "[Quake Notice] Radio State %d has ran out of cycles.", 
@@ -290,7 +291,7 @@ bool QuakeManager::transition_radio_state(radio_mode_t new_state)
             static_cast<unsigned int>(radio_mode_f));
     }
     // Update the last checkin cycle
-    last_checkin_cycle = control_cycle_count_fp->get();
+    last_checkin_cycle = control_cycle_count;
     radio_mode_f = new_state;
 
     if ( !bOk ) // Sanity check

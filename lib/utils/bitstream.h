@@ -19,7 +19,6 @@
 #include <vector>
 #include <cstdint>
 #include <cstddef>
-using namespace std;
 
 #define bs_beg -1 // bit stream in the direction towards the beginning
 #define bs_end 1 // bit stream in the direction towards end of the stream
@@ -33,7 +32,7 @@ class bitstream{
   uint32_t bit_offset;
   
   /**
-   * The bit stream
+   * The bit stream is represented as an array of bytes (8-bit unsigned ints)
    */
   uint8_t* stream;
 
@@ -57,7 +56,9 @@ class bitstream{
 /**
  * @brief Constructs a bitstream from a bit_array
  * @param bit_array the bit array of the data
- * @param res A pointer to a mutable array that will back the bit_array
+ * @param res A pointer to a mutable array that will "back" the bit_array. This
+ * param must stay in scope during the lifetime of the bitstream and is necessary
+ * because bitstream does not allocate memory and bit_array.data() is unspecified
  */
   bitstream(const std::vector<bool>& bit_array, char* res);
 

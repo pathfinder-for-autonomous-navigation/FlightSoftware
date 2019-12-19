@@ -60,18 +60,15 @@ class QuakeManager : public TimedControlTask<bool> {
     bool dispatch_manual();
 
    /**
-     * @brief Control cycle count, provided by ClockManager.
-     */
-    ReadableStateField<unsigned int>* control_cycle_count_fp;
-
-   /**
      * @brief Snapshot size in bytes, provided by DownlinkProducer. 
      */
     InternalStateField<size_t>* snapshot_size_fp;
-
-   /**
-    * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
-    **/ 
+    
+  /**
+   * @brief Pointer to MT buffer ready field, provided by UplinkProducer.
+   * Quake sets this field whenever it writes a new message to its mt buffer.
+   * UplingProducer is responsible for checking this field and clearing it. 
+   */
     InternalStateField<char*>* radio_mo_packet_fp;
 
   /**
@@ -79,17 +76,15 @@ class QuakeManager : public TimedControlTask<bool> {
     **/ 
    InternalStateField<char*>* radio_mt_packet_fp;
 
-     /**
+    /**
     * @brief Pointer to Quake Error field, provided by DownlinkProducer. 
     **/ 
    ReadableStateField<int>* radio_err_fp;
 
-  /**
-   * @brief Pointer to MT buffer ready field, provided by UplinkProducer.
-   * Quake sets this field whenever it writes a new message to its mt buffer.
-   * UplingProducer is responsible for checking this field and clearing it. 
-   */
-   InternalStateField<bool>* radio_mt_ready_fp; 
+   /**
+    * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
+    **/ 
+   InternalStateField<size_t>* radio_mt_len_fp; 
 
     /**
      * @brief Current radio mode (see radio_mode_t.enum), provided by no one

@@ -1,5 +1,6 @@
 #include "../../src/FCCode/TimedControlTask.hpp"
 #include "../../src/FCCode/ClockManager.hpp"
+#include "../StateFieldRegistryMock.hpp"
 #include <unity.h>
 #ifdef DESKTOP
     #include <iostream>
@@ -12,8 +13,9 @@
  */
 class DummyTimedControlTask : public TimedControlTask<void> {
   public:
-    DummyTimedControlTask(StateFieldRegistry &registry, const unsigned int offset) :
-      TimedControlTask<void>(registry, offset) {}
+    DummyTimedControlTask(StateFieldRegistry &registry,
+        const std::string& name, const unsigned int offset) :
+      TimedControlTask<void>(registry, name, offset) {}
 
     int i = 0;
     void execute() {
@@ -23,7 +25,7 @@ class DummyTimedControlTask : public TimedControlTask<void> {
 
 class TestFixture {
   public:
-    StateFieldRegistry registry;
+    StateFieldRegistryMock registry;
     std::unique_ptr<ClockManager> clock_manager;
     std::unique_ptr<DummyTimedControlTask> dummy_task_1;
     std::unique_ptr<DummyTimedControlTask> dummy_task_2;
@@ -48,8 +50,18 @@ class TestFixture {
         clock_manager = std::make_unique<ClockManager>(registry, control_cycle_size);
 
         constexpr unsigned int allocated_starts[2] = {2001, 6001};
-        dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, allocated_starts[0]);
-        dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, allocated_starts[1]);
+        dummy_task_1 = std::make_unique<DummyTimedControlTask>(registry, "dummy1", allocated_starts[0]);
+        dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, "dummy2", allocated_starts[1]);
+
+        // Check that the statistics parameters are available.
+        auto num_lates_fp_1 = registry.find_readable_field_t<unsigned int>("timing.dummy1.num_lates");
+        auto num_lates_fp_2 = registry.find_readable_field_t<unsigned int>("timing.dummy2.num_lates");
+        auto avg_wait_fp_1 = registry.find_readable_field_t<float>("timing.dummy1.avg_wait");
+        auto avg_wait_fp_2 = registry.find_readable_field_t<float>("timing.dummy2.avg_wait");
+        assert(num_lates_fp_1);
+        assert(num_lates_fp_2);
+        assert(avg_wait_fp_1);
+        assert(avg_wait_fp_2);
     }
 
     /**

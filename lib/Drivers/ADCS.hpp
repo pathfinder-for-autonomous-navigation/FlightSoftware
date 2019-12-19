@@ -7,17 +7,18 @@
 #ifndef PAN_LIB_DRIVERS_ADCS_HPP_
 #define PAN_LIB_DRIVERS_ADCS_HPP_
 
-#ifndef DESKTOP
 #include <I2CDevice.hpp>
-#include <string>
 #include <array>
-
+#include <adcs_constants.hpp>
 namespace Devices {
 
 class ADCS : public I2CDevice {
    public:
     static constexpr unsigned int ADDRESS = 0x4E;
     static constexpr unsigned int WHO_AM_I_EXPECTED = 0x0F;
+    #ifdef UNIT_TEST
+    unsigned int mock_ssa_mode = SSAMode::SSA_IN_PROGRESS;
+    #endif
     /**
      * @brief quickly tests that the device is active and working on i2c
      * 
@@ -32,7 +33,11 @@ class ADCS : public I2CDevice {
      * @param i2c_wire The assoicated i2c wire
      * @param address The address on i2c bus
      */
-    ADCS(const std::string &name, i2c_t3 &i2c_wire, unsigned char address);
+    #ifndef DESKTOP
+    ADCS(i2c_t3 &i2c_wire, unsigned char address);
+    #else
+    ADCS();
+    #endif
 
     /**
      * @brief Sets the read pointer, writes len bytes into data
@@ -232,6 +237,15 @@ class ADCS : public I2CDevice {
      */
     void get_ssa_mode(unsigned char *ssa_mode);
 
+    #ifdef UNIT_TEST
+    /**
+     * @brief A MOCKING METHOD, Set the ssa mode 
+     * 
+     * @param ssa_mode 
+     */
+    void set_mock_ssa_mode(const unsigned char ssa_mode);
+    #endif
+
     /**
      * @brief Get the sun sensor array vector
      * 
@@ -276,5 +290,4 @@ class ADCS : public I2CDevice {
 };
 
 }  // namespace Devices
-#endif
 #endif
