@@ -175,7 +175,7 @@ public:
      * Contains the contents of the Mobile terminated (MT) message 
      * retreived from the last SBDRB session. 
      */
-    char mt_message[MAX_MSG_SIZE];
+    char mt_message[MAX_MSG_SIZE + 1];
 
 private:
 
