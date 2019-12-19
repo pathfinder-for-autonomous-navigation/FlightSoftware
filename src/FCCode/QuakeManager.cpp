@@ -1,6 +1,5 @@
 #include "QuakeManager.h"
 #include "QLocate.hpp"
-// #define RADIO_TESTING
 /**
  * QuakeManager Implementation Info: 
  * 
@@ -34,14 +33,9 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_mt_packet_fp->set(qct.get_MT_msg());
     radio_mt_len_fp->set(0);
 
-#ifdef RADIO_TESTING
-    max_snapshot_size = 24;
-    mo_buffer_copy = new char[max_snapshot_size];
-#else
     // Setup MO Buffers
     max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
     mo_buffer_copy = new char[max_snapshot_size];
-#endif
 }
 
 QuakeManager::~QuakeManager()
@@ -120,18 +114,10 @@ bool QuakeManager::dispatch_write() {
     if (qct.get_current_fn_number() == 0)
     {
         // If mo_idx is 0 --> copy current snapshot to local buf
-#ifdef RADIO_TESTING
-        std::string json_string = "{\"foo\": 4,\"number\": 123}";
-        if (mo_idx == 0) {
-            memset(mo_buffer_copy, 0, 24);
-            memcpy(mo_buffer_copy, json_string.c_str(), 24);
-        }
-#else
         if (mo_idx == 0) {
             memset(mo_buffer_copy, 0, max_snapshot_size);
             memcpy(mo_buffer_copy, radio_mo_packet_fp->get(), max_snapshot_size);
         }
-#endif
         // load the current 70 bytes of the buffer
        qct.set_downlink_msg(mo_buffer_copy + (packet_size*mo_idx), packet_size);
        assert(max_snapshot_size/packet_size != 0);
