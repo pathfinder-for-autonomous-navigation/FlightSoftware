@@ -41,13 +41,11 @@ class MainControlLoop : public ControlTask<void> {
     Devices::Gomspace gomspace;
     GomspaceController gomspace_controller;
 
-    UplinkConsumer uplink_consumer;
-    MissionManager mission_manager;
-
     Devices::DockingSystem docksys;
     DockingController docking_controller;
     DownlinkProducer downlink_producer;
-    QuakeManager quake_manager;
+    QuakeManager quake_manager; // Needs downlink packet from Downlink Producer
+    UplinkConsumer uplink_consumer; // Needs uplink packet from Quake Manager
 
     // Control cycle time offsets, in microseconds
     #ifdef FUNCTIONAL_TEST
@@ -80,6 +78,8 @@ class MainControlLoop : public ControlTask<void> {
      * @brief Total memory use, in bytes.
      */
     ReadableStateField<unsigned int> memory_use_f;
+
+    MissionManager mission_manager;
 
    public:
     /*

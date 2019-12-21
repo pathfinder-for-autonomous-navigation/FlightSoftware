@@ -44,6 +44,11 @@ class MissionManager : public TimedControlTask<void> {
      **/
     WritableStateField<float>* adcs_min_stable_ang_rate_fp;
 
+    /**
+     * @brief Radio's mode.
+     **/
+    ReadableStateField<unsigned char>* radio_mode_fp;
+
     // Fields that control overall mission state.
     /**
      * @brief Current mission mode (see mission_mode_t.enum)
