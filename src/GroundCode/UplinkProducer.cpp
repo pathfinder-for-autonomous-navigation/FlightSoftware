@@ -42,7 +42,7 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
             // Check whether the requested field exists
             std::string key = e.key();
             if (field_map.find(key) == field_map.end())
-                throw std::runtime_error("invalid key: field map key not found: " + key);
+                throw std::runtime_error("field map key not found: " + key);
 
             // Get the field's index in writable_fields
             size_t field_index = field_map[key];
@@ -50,18 +50,12 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
             // Warning: auto val will not work because we need reinterpret_cast
             //  to reinterpret from an unsigned int
             uint64_t val = e.value();
-            size_t field_len = get_field_length(field_index);
 
-            // Make sure that the value we got from the json makes sense (don't assign 8 to a 3 bit field)
-            uint64_t max_val = (1ul << field_len) - 1;
+            uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
             if (val > max_val)
-                throw std::runtime_error("invalid values: cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
+                throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
 
-            size_t bits_written = add_entry(bs, reinterpret_cast<char*>(&val), field_index);
-            
-            // Make sure we wrote the full entry
-            if (bits_written != field_len + index_size)
-                throw std::runtime_error("bitstream not large enough: wrote " + std::to_string(bits_written) + " but needed to write " + std::to_string(field_len + index_size));
+            add_entry(bs, reinterpret_cast<char*>(&val), field_index);
         } 
 
     // Trim the padding off the byte stream so that validate passes
@@ -118,8 +112,8 @@ void UplinkProducer::print_packet(bitstream& bs)
 
 void UplinkProducer::to_file(const bitstream& bs, const std::string& filename)
 {
-    // Check that bs is a valid packet
     bool is_valid = _validate_packet(const_cast<bitstream&>(bs));
+    // Throw exception if verification fails
     if (!is_valid)
        throw std::runtime_error("Uplink Producer: Packet you created is not valid");
     // Write to file

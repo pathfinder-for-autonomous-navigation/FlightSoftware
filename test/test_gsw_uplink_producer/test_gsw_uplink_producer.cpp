@@ -6,7 +6,7 @@
 #include <json.hpp>
 
 #define TEST_ASSERT_THROW(x){try{x;TEST_ASSERT_TRUE(0);}catch(const std::exception& e){TEST_ASSERT_TRUE(1);}}
-#define TEST_ASSERT_NO_THROW(x){try{x;TEST_ASSERT_TRUE(1);}catch(const std::exception& e){std::cout << e.what() << std::endl; TEST_ASSERT_TRUE(0);}}
+#define TEST_ASSERT_NO_THROW(x){try{x;TEST_ASSERT_TRUE(1);}catch(const std::exception& e){TEST_ASSERT_TRUE(0);}}
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
@@ -88,7 +88,7 @@ void test_create_sbd_from_json()
     TEST_ASSERT_TRUE(tf.uplink_producer->create_sbd_from_json(json_name, filename));
 }
 
-// Test throw exception for invalid json file values
+// Test that throwing exceptions when creating invalid stuff from json
 void test_invalid_values()
 {
     TestFixture tf;
@@ -98,38 +98,6 @@ void test_invalid_values()
     TEST_ASSERT_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_3.json"));
 }
 
-// Test throws exception for invalid keys
-void test_invalid_keys()
-{
-    TestFixture tf;
-    size_t arr_size = tf.uplink_producer->get_max_possible_packet_size();
-    char tmp [arr_size];
-    bitstream bs(tmp, arr_size);
-    TEST_ASSERT_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_4.json"));
-}
-
-// Test throws exception for invalid keys
-void test_bitstream_not_large_enough()
-{
-    TestFixture tf;
-    char tmp [4];
-    bitstream bs(tmp, 4);
-    TEST_ASSERT_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_2.json"));
-}
-
-// Test can recycle bitstream
-void test_discard_old_values()
-{
-    TestFixture tf;
-    size_t arr_size = tf.uplink_producer->get_max_possible_packet_size();
-    char tmp [arr_size];
-    bitstream bs(tmp, arr_size);
-    TEST_ASSERT_NO_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_1.json"));
-    tf.uplink_producer->_update_fields(bs);
-    TEST_ASSERT_NO_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_2.json"));
-    tf.uplink_producer->_update_fields(bs);
-    tf.check_json_registry("test/test_gsw_uplink_producer/test_2.json");
-}
 
 int main() {
     UNITY_BEGIN();
@@ -139,8 +107,5 @@ int main() {
     RUN_TEST(test_to_file_invalid);
     RUN_TEST(test_create_sbd_from_json);
     RUN_TEST(test_invalid_values);
-    RUN_TEST(test_invalid_keys);
-    RUN_TEST(test_bitstream_not_large_enough);
-    RUN_TEST(test_discard_old_values);
     return UNITY_END();
 }

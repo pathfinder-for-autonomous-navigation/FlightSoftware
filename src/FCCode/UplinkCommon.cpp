@@ -10,12 +10,11 @@ bool Uplink::_validate_packet(bitstream& bs)
 {
     // Start validation at beginning of bs
     bs.reset();
-
-    size_t packet_size = bs.max_len*8;
+    size_t packet_bytes = bs.max_len;
     size_t field_index = 0, field_len = 0, bits_checked = 0, bits_consumed = 0;
     // Keep a bit map to prevent updating the same field twice
     std::vector<bool> is_field_updated(registry.writable_fields.size(), 0);
-    while (bits_checked < packet_size)
+    while (bits_checked < 8*packet_bytes)
     {
         // Get index from bitstream
         bits_consumed = bs.nextN(index_size, reinterpret_cast<uint8_t*>(&field_index));
@@ -56,11 +55,10 @@ bool Uplink::_validate_packet(bitstream& bs)
 #include <iostream>
  void Uplink::_update_fields(bitstream& bs)
 {
-    // Start updates at beginning of bs
-    bs.reset();
-
     size_t packet_size = bs.max_len*8;
     size_t field_index = 0, field_len = 0, bits_consumed = 0;
+    // Start updates at beginning of bs
+    bs.reset();
     while (bits_consumed < packet_size)
     {
         // Get index from the bitstream
