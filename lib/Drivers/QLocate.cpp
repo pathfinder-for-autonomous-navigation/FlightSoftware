@@ -197,7 +197,7 @@ int QLocate::get_sbdrb()
     size_t actual = port->readBytes(mt_message, size);
 #ifdef DEBUG_ENABLED
     Serial.print("        > get_SBDRB=");
-    for (int i = 0; i < size; i++)
+    for (size_t i = 0; i < size; i++)
         Serial.print(mt_message[i], HEX);
     Serial.println("\n        > return=" + String(*mt_message));
 #endif
