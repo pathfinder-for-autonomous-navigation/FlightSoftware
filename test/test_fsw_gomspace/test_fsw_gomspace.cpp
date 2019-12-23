@@ -244,9 +244,7 @@ int test_control_task() {
 int main() {
     return test_control_task();
 }
-
 #else
-
 #include <Arduino.h>
 void setup() {
     delay(2000);
@@ -254,4 +252,5 @@ void setup() {
     test_control_task();
 }
 
+void loop() {}
 #endif
