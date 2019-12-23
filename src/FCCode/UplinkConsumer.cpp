@@ -1,20 +1,13 @@
 #include "UplinkConsumer.h"
 #include <bitstream.h>
-UplinkConsumer::UplinkConsumer(StateFieldRegistry& registry, unsigned int offset) :
-    TimedControlTask<void>(registry, "uplink_ct", offset),
-    radio_mt_packet_len_f("uplink.len"),
-    radio_mt_packet_f("uplink.ptr"),
-    registry(registry)
+UplinkConsumer::UplinkConsumer(StateFieldRegistry& _registry, unsigned int offset) :
+    TimedControlTask<void>(_registry, "uplink_ct", offset)
 {
-    add_internal_field(radio_mt_packet_f);
-    add_internal_field(radio_mt_packet_len_f);
-
-    // initialize fields
-    radio_mt_packet_len_f.set(0);
-    radio_mt_packet_f.set(nullptr); // this must be set by QuakeManager
+    radio_mt_packet_len_fp = find_internal_field<size_t>("uplink.len", __FILE__, __LINE__);
+    radio_mt_packet_fp = find_internal_field<char*>("uplink.ptr", __FILE__, __LINE__);
 
     // calcualte the maximum number of bits needed to represent the indices
-    for (index_size = 1; (registry.writable_fields.size() + 1) / (1 << index_size) > 0; ++index_size){}
+    for (index_size = 1; (_registry.writable_fields.size() + 1) / (1 << index_size) > 0; ++index_size){}
     printf(debug_severity::info, "[UplinkConsumer constructor] index_size: %u", index_size);
 }
 
@@ -22,27 +15,27 @@ UplinkConsumer::UplinkConsumer(StateFieldRegistry& registry, unsigned int offset
 void UplinkConsumer::execute()
 {
     // Return if mt buffer is NULL or mt packet length is 0
-    if ( !radio_mt_packet_len_f.get() || !radio_mt_packet_f.get())
+    if ( !radio_mt_packet_len_fp->get() || !radio_mt_packet_fp->get())
         return;
     
     if (validate_packet())
         update_fields();
 
     // clear len always to avoid reprocessing bad packets
-    radio_mt_packet_len_f.set(0);
+    radio_mt_packet_len_fp->set(0);
 }
 
 size_t UplinkConsumer::get_field_length(size_t field_index)
 {
-    if (field_index >= registry.writable_fields.size())
+    if (field_index >= _registry.writable_fields.size())
         return 0;
-    return registry.writable_fields.at(field_index)->get_bit_array().size();
+    return _registry.writable_fields.at(field_index)->get_bit_array().size();
 }
 
  void UplinkConsumer::update_fields()
 {
-    size_t packet_size = radio_mt_packet_len_f.get()*8;
-    bitstream bs (radio_mt_packet_f.get(),  packet_size);
+    size_t packet_size = radio_mt_packet_len_fp->get()*8;
+    bitstream bs (radio_mt_packet_fp->get(),  packet_size);
     size_t field_index = 0, field_len = 0, bits_consumed = 0;
     
     while (bits_consumed < packet_size)
@@ -57,7 +50,7 @@ size_t UplinkConsumer::get_field_length(size_t field_index)
         // Get field length from the index
         field_len = get_field_length(field_index);
 
-        auto field_p = registry.writable_fields[field_index];
+        auto field_p = _registry.writable_fields[field_index];
         const std::vector<bool>& _bit_arr = field_p->get_bit_array();
         std::vector<bool>& field_bit_arr = const_cast<std::vector<bool>&>(_bit_arr);
         // Clear field's bit array
@@ -73,13 +66,13 @@ size_t UplinkConsumer::get_field_length(size_t field_index)
 
 bool UplinkConsumer::validate_packet()
 {
-    size_t packet_bytes = radio_mt_packet_len_f.get();
-    bitstream bs (radio_mt_packet_f.get(), packet_bytes);
+    size_t packet_bytes = radio_mt_packet_len_fp->get();
+    bitstream bs (radio_mt_packet_fp->get(), packet_bytes);
     size_t field_index = 0, field_len = 0, bits_checked = 0, bits_consumed = 0;
     // Keep a bit map to prevent updating the same field twice
-    std::vector<bool> is_field_updated(registry.writable_fields.size(), 0);
+    std::vector<bool> is_field_updated(_registry.writable_fields.size(), 0);
  
-    while (bits_checked < 8*radio_mt_packet_len_f.get())
+    while (bits_checked < 8*radio_mt_packet_len_fp->get())
     {
         // Get index from bitstream
         bits_consumed = bs.nextN(index_size, reinterpret_cast<uint8_t*>(&field_index));

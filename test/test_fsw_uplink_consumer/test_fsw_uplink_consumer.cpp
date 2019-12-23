@@ -24,8 +24,8 @@ class TestFixture {
     StateFieldRegistryMock registry;
 
     std::unique_ptr<UplinkConsumer> uplink_consumer;
-    InternalStateField<size_t>* radio_mt_packet_len_fp;
-    InternalStateField<char*>* radio_mt_packet_fp;
+    std::shared_ptr<InternalStateField<size_t>> radio_mt_packet_len_fp;
+    std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
 
     std::shared_ptr<WritableStateField<unsigned int>> cycle_no_fp;
     std::shared_ptr<WritableStateField<unsigned char>> adcs_mode_fp;
@@ -53,10 +53,11 @@ class TestFixture {
         mission_mode_fp = registry.create_writable_field<unsigned char>("pan.mode");
         sat_designation_fp = registry.create_writable_field<unsigned char>("pan.sat_designation"); // should be 6 writable fields --> 3 bits 
 
+        radio_mt_packet_len_fp = registry.create_internal_field<size_t>("uplink.len");
+        radio_mt_packet_fp = registry.create_internal_field<char*>("uplink.ptr");
+
         // Initialize internal fields
         uplink_consumer = std::make_unique<UplinkConsumer>(registry, 0);
-        radio_mt_packet_len_fp = registry.find_internal_field_t<size_t>("uplink.len");
-        radio_mt_packet_fp = registry.find_internal_field_t<char*>("uplink.ptr");
 
         radio_mt_packet_fp->set(mt_buffer);
         field_map = std::map<std::string, size_t>();

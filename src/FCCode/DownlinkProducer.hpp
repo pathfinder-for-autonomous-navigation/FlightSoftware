@@ -33,8 +33,16 @@ class DownlinkProducer : public TimedControlTask<void> {
      *                  determines their initial priority.
      */
     DownlinkProducer(StateFieldRegistry& registry,
-                     const unsigned int offset,
-                     const std::vector<FlowData>& flow_data);
+                     const unsigned int offset);
+
+    /**
+     * @brief Initialize flows for the Downlink Producer. This function
+     * should be called in the main control loop after the instantiation of all
+     * state fields.
+     * 
+     * @param flow_data 
+     */
+    void init_flows(const std::vector<FlowData>& flow_data);
 
     /**
      * @brief Compute the size of the downlink snapshot.
