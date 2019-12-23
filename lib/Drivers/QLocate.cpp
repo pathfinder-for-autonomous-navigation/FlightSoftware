@@ -6,13 +6,11 @@
 //  Pathfinder for Autonomous Navigation
 //  Cornell University
 // 
-// Updated 12/16/2019
+// Updated 12/23/2019
 //
 #include "QLocate.hpp"
 #ifndef DESKTOP
 #include <Arduino.h>
-#endif
-#ifndef DESKTOP
 #define DEBUG_ENABLED
 #endif
 using namespace Devices;
@@ -49,27 +47,18 @@ int QLocate::query_is_functional_1()
 
 int QLocate::get_is_functional()
 {
-    int status = consume(F("0\r"));
-    if (status != OK)
-        return status;
-    return OK;
+    return consume(F("0\r"));
 }
 
 int QLocate::query_config_1()
 {
-#ifndef DESKTOP
-    // Config can run in any state
-    port->clear();
-#endif
     return sendCommand("AT&F0\r");
 }
 
 int QLocate::query_config_2()
 {
-
 #ifndef DESKTOP
     CHECK_PORT_AVAILABLE();
-    port->clear(); // we don't care what is returned for factory reset
 #endif
     // Disable flow control, disable DTR, disable echo, 
     // set numeric responses, and
@@ -80,10 +69,8 @@ int QLocate::query_config_2()
 int QLocate::query_config_3()
 {
     int status = consume(F("AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r"));
-    if (status != OK)
-        return status;
     // Clear QLocate MO and MT buffers
-    return sendCommand("AT+SBDD2\r");
+    return (status != OK) ? status : sendCommand("AT+SBDD2\r");
 }
 
 int QLocate::get_config()
@@ -98,8 +85,7 @@ int QLocate::query_sbdwb_1(int len)
         return WRONG_LENGTH;
 #ifndef DESKTOP
     port->clear();
-    if (port->printf("AT+SBDWB=%d\r", len) == 0)
-        return WRITE_FAIL;
+    return (port->printf("AT+SBDWB=%d\r", len) == 0) ? WRITE_FAIL : OK;
 #endif
     return OK;
 }
@@ -112,22 +98,15 @@ int QLocate::query_sbdwb_2(char const *c, int len)
 
     // Write binary data to QLocate
 #ifndef DESKTOP
-    if ((size_t)len != port->write(c, len))
+    if ( (size_t)len != port->write(c, len) )
         return WRITE_FAIL;
     short s = checksum(c, len);
-    if (port->write((char)(s >> 8)) != 1)
+    if ( port->write((char)(s >> 8)) != 1 )
         return WRITE_FAIL;
-    if (port->write((char)s) != 1)
+    if ( port->write((char)s) != 1 )
         return WRITE_FAIL;
     // WARNING: this method blocks
     port->flush();
-#endif
-#ifdef DEBUG_ENABLED
-    Serial.print("        > mes=");
-    for (int i = 0; i < len; i++)
-        Serial.print(c[i], HEX);
-    Serial.print((char)(s >> 8), HEX);
-    Serial.println((char)s, HEX);
 #endif
     return OK;
 }
@@ -137,17 +116,15 @@ int QLocate::get_sbdwb()
 #ifdef DESKTOP
     return OK;
 #else
-    // Process sbdwb response
-    char buf[6] = {0};
-    int len = 0;
     // If it is a timeout, then port will not be available anyway
     CHECK_PORT_AVAILABLE();
+    char buf[6];
+    memset(buf, 0, 6);
     // expect to read <sbdwb status>\r\n0\r
-    len = port->readBytes(buf, 5);
-
+    int len = port->readBytes(buf, 5);
 
 #ifdef DEBUG_ENABLED
-    Serial.print("        > res=");
+    Serial.print("        > get_SBDWB=");
     for (int i = 0; i < len; i++)
         Serial.print(buf[i], HEX);
     Serial.println("\n        > return=" + String(*buf));
@@ -158,7 +135,7 @@ int QLocate::get_sbdwb()
     if (len < 3)
         return UNKNOWN;
 
-    if (buf[1] != '\r' || buf[2] != '\n')
+    if (buf[1] != '\r' || buf[2] != '\n' || status > 3)
         return UNEXPECTED_RESPONSE;
 
     return status;
@@ -171,6 +148,9 @@ int QLocate::parse_ints(char const *c, int *i)
     int status = sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i + 1, i + 2, i + 3, i + 4, i + 5);
     if (status == 6) 
         return OK;
+#ifdef DEBUG_ENABLED
+    Serial.printf("parse_ints: unexpected response %d\n", status);
+#endif
     return UNEXPECTED_RESPONSE;
 }
 
@@ -188,8 +168,11 @@ int QLocate::get_sbdix()
 #else
     CHECK_PORT_AVAILABLE();
     // Parse SBDIX output
-    char buf[75] = {0};
+    char buf[75];
+    memset (buf, 0, 75);
     port->readBytesUntil('\n', buf, 74);
+    // Clear SBDIX buffer before writing to it
+    memset(sbdix_r, 0, 6*sizeof(int));
     return parse_ints(buf + 8, sbdix_r);
 #endif
 }
@@ -203,20 +186,32 @@ int QLocate::get_sbdrb()
 {
 #ifndef DESKTOP
     CHECK_PORT_AVAILABLE();
-    unsigned char sbuf[2] = {0, 0};
+    uint8_t sbuf[3];
+    memset(sbuf, 0, 3);
     // Read the message size
-    if (2 != port->readBytes(sbuf, 2)) return WRONG_LENGTH;
+    if (2 != port->readBytes(sbuf, 2)) 
+        return WRONG_LENGTH;
     size_t size =  (sbuf[0] << 8) | sbuf[1]; // highest order byte first
-    memset(mt_message, 0, MAX_MSG_SIZE);
     // Read the message
+    memset(mt_message, 0, MAX_MSG_SIZE);
     size_t actual = port->readBytes(mt_message, size);
+#ifdef DEBUG_ENABLED
+    Serial.print("        > get_SBDRB=");
+    for (int i = 0; i < size; i++)
+        Serial.print(mt_message[i], HEX);
+    Serial.println("\n        > return=" + String(*mt_message));
+#endif
     if (actual != size)
     {
-        return UNEXPECTED_RESPONSE; // Quake::Message read
+#ifdef DEBUG_ENABLED
+        Serial.printf("Expected msg size: %d, actual size: %d", size, actual);
+#endif
+        return UNEXPECTED_RESPONSE;
     }
-    memset(sbuf, 0, 2);
     // Read the checksum
-    if (2 != port->readBytes(sbuf, 2)) return UNEXPECTED_RESPONSE;
+    memset(sbuf, 0, 3);
+    if (2 != port->readBytes(sbuf, 2)) 
+        return UNEXPECTED_RESPONSE;
     short s = (sbuf[0] << 8) | sbuf[1];
     // Verify checksum
     if ( s != checksum(mt_message, size))
@@ -235,12 +230,13 @@ int QLocate::consume(String expected)
 #else
     // Return if nothing at the port
     CHECK_PORT_AVAILABLE();
+
     int expectLength = expected.length();
-    char buf[expectLength + 1] = {0};
+    char buf[expectLength + 1];
+    memset(buf, 0, expectLength+1);
 
     // Read current data at port
-    int len;
-    len = port->readBytes(buf, expectLength);
+    int len = port->readBytes(buf, expectLength);
 
 #ifdef DEBUG_ENABLED
     Serial.printf("Consumed[");
@@ -257,14 +253,17 @@ int QLocate::consume(String expected)
     Serial.flush();
 #endif
     port->clear();
-
     // Did not read enough bytes
     if (len != expectLength)
         return WRONG_LENGTH;
-
     // Data read does not match expected data
-    if (!expected.equals(String(buf)))
+    if ( ! expected.equals(String(buf)) )
+    {
+#ifdef DEBUG_ENABLED
+        Serial.printf("Consume expected: %s", expected);
+#endif
         return UNEXPECTED_RESPONSE;
+    }
     return OK;
 #endif
 }
@@ -274,12 +273,9 @@ int QLocate::sendCommand(const char *cmd)
 #ifdef DESKTOP
 return OK;
 #else
-    // The writer is responsible for clearing the read port
     port->clear();
     // port->print returns the number of characters printed
-    if (port->print(F(cmd)) != 0)
-        return OK;
-    return WRITE_FAIL;
+    return (port->print(F(cmd)) != 0) ? OK : WRITE_FAIL;
 #endif
 }
 
