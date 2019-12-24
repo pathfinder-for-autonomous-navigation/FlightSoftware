@@ -1,5 +1,7 @@
 #include "EEPROMController.hpp"
+#ifndef DESKTOP
 #include <EEPROM.h>
+#endif
 
 EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset, std::vector<std::string>& statefields)
     : TimedControlTask<void>(registry, "eeprom_ct", offset)
