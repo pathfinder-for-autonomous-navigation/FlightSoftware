@@ -14,8 +14,9 @@ class EEPROMController : public TimedControlTask<void> {
      * 
      * @param registry 
      * @param offset
+     * @param statefields
      */
-    EEPROMController(StateFieldRegistry& registry, unsigned int offset);
+    EEPROMController(StateFieldRegistry& registry, unsigned int offset, std::vector<std::string>& statefields);
 
     /**
      * @brief Writes to the EEPROM after a certain number of 
@@ -44,19 +45,11 @@ class EEPROMController : public TimedControlTask<void> {
     //number of control cycles that must pass before the control task writes to EEPROM
     unsigned int period = 5;
 
-    //the locations of the EEPROM in which the field values will be stored
-    unsigned int mission_mode_address=0;
-    unsigned int is_deployed_address=5;
-    unsigned int sat_designation_address=10;
-    unsigned int control_cycle_count_address=15;
+    //the locations in the EEPROM in which the field values will be stored
+    std::vector<int> addresses;
 
-   protected:
-    //shared pointers set by mission manager
-    WritableStateField<unsigned char>* mission_mode_fp;
-
-    ReadableStateField<bool>* is_deployed_fp;
-    
-    WritableStateField<unsigned char>* sat_designation_fp;
+    // Shared pointers to statefields that will be written to the EEPROM
+    std::vector<ReadableStateField<unsigned int>*> pointers;
 
     ReadableStateField<unsigned int>* control_cycle_count_fp;
 

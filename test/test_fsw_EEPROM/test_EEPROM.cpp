@@ -9,42 +9,50 @@ class TestFixture {
   public:
     StateFieldRegistryMock registry;
 
-    std::shared_ptr<WritableStateField<unsigned char>> mission_mode_fp;
-    std::shared_ptr<ReadableStateField<bool>> is_deployed_fp;
-    std::shared_ptr<WritableStateField<unsigned char>> sat_designation_fp;
+    std::vector<std::string> statefields = {"pan.mode", "pan.deployed", "pan.sat_designation", "pan.cycle_no"}; 
+
+    //Create the statefields that the EEPROM will eventually collect and store
+    std::shared_ptr<ReadableStateField<unsigned int>> mission_mode_fp;
+    std::shared_ptr<ReadableStateField<unsigned int>> is_deployed_fp;
+    std::shared_ptr<ReadableStateField<unsigned int>> sat_designation_fp;
     std::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
 
     std::unique_ptr<EEPROMController> eeprom_controller;
 
     TestFixture() : registry() {
-        mission_mode_fp = registry.create_writable_field<unsigned char>("pan.mode");
+        mission_mode_fp = registry.create_readable_field<unsigned int>("pan.mode");
         mission_mode_fp->set(1);
 
-        is_deployed_fp = registry.create_readable_field<bool>("pan.deployed");
-        is_deployed_fp->set(false);
+        is_deployed_fp = registry.create_readable_field<unsigned int>("pan.deployed");
+        is_deployed_fp->set(0);
 
-        sat_designation_fp = registry.create_writable_field<unsigned char>("pan.sat_designation");
+        sat_designation_fp = registry.create_readable_field<unsigned int>("pan.sat_designation");
         sat_designation_fp->set(3);
 
         control_cycle_count_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
         control_cycle_count_fp->set(45);
 
-        eeprom_controller = std::make_unique<EEPROMController>(registry, 0); 
+        eeprom_controller = std::make_unique<EEPROMController>(registry, 0, statefields); 
     }
 };
 
 void test_task_initialization() {
     //Clear the EEPROM.
     #ifndef DESKTOP
-    for (int i = 0 ; i < EEPROM.length() ; i++) {
+    for (unsigned int i = 0 ; i < EEPROM.length() ; i++) {
         EEPROM.write(i, 255);
     }
     #endif
 
     TestFixture tf;
 
+    for (unsigned int i = 0; i<tf.eeprom_controller->pointers.size(); i++){
+        // Expect 1 0 3 45
+        Serial.println(tf.eeprom_controller->pointers.at(i)->get());
+    }
+
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.is_deployed_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.is_deployed_fp->get());
     TEST_ASSERT_EQUAL(3, tf.sat_designation_fp->get());
     TEST_ASSERT_EQUAL(45, tf.control_cycle_count_fp->get());
 }
@@ -54,7 +62,7 @@ void test_task_execute() {
 
     // Let the statefields change over time
     tf.mission_mode_fp->set(2);
-    tf.is_deployed_fp->set(false);
+    tf.is_deployed_fp->set(0);
     tf.sat_designation_fp->set(2);
     tf.control_cycle_count_fp->set(50);
 
@@ -62,10 +70,10 @@ void test_task_execute() {
     // should write the values to the EEPROM
     tf.eeprom_controller->execute();
     #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(2, EEPROM.read(tf.eeprom_controller->mission_mode_address));
-    TEST_ASSERT_EQUAL(false, EEPROM.read(tf.eeprom_controller->is_deployed_address));
-    TEST_ASSERT_EQUAL(2, EEPROM.read(tf.eeprom_controller->sat_designation_address));
-    TEST_ASSERT_EQUAL(50, EEPROM.read(tf.eeprom_controller->control_cycle_count_address));
+    for (unsigned int i = 0; i<tf.eeprom_controller->addresses.size(); i++){
+        // Expect 2 0 2 50
+        Serial.println(EEPROM.read(tf.eeprom_controller->addresses.at(i)));
+    }
     #endif
 
     // Now we pretend the satellite just rebooted. Everytime the satellite reboots, another 
@@ -74,24 +82,24 @@ void test_task_execute() {
 
     // Check if the new eeprom controller set the statefield values to the values that 
     // were previously stored in the EEPROM
-    TEST_ASSERT_EQUAL(2, tf2.mission_mode_fp->get());
-    TEST_ASSERT_EQUAL(false, tf2.is_deployed_fp->get());
-    TEST_ASSERT_EQUAL(2, tf2.sat_designation_fp->get());
-    TEST_ASSERT_EQUAL(50, tf2.control_cycle_count_fp->get());
+    for (unsigned int i = 0; i<tf2.eeprom_controller->pointers.size(); i++){
+        // Expect 2 0 2 50
+        Serial.println(tf2.eeprom_controller->pointers.at(i)->get());
+    }
 
     // Now we let the statefield values change over time and let another period pass.
     tf2.mission_mode_fp->set(30);
-    tf2.is_deployed_fp->set(true);
+    tf2.is_deployed_fp->set(1);
     tf2.sat_designation_fp->set(1);
     tf2.control_cycle_count_fp->set(55);
 
     // Check if those values were written to the EEPROM
     tf2.eeprom_controller->execute();
     #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(30, EEPROM.read(tf2.eeprom_controller->mission_mode_address));
-    TEST_ASSERT_EQUAL(true, EEPROM.read(tf2.eeprom_controller->is_deployed_address));
-    TEST_ASSERT_EQUAL(1, EEPROM.read(tf2.eeprom_controller->sat_designation_address));
-    TEST_ASSERT_EQUAL(55, EEPROM.read(tf2.eeprom_controller->control_cycle_count_address));
+    for (unsigned int i = 0; i<tf2.eeprom_controller->addresses.size(); i++){
+        // Expect 30 1 1 55
+        Serial.println(EEPROM.read(tf2.eeprom_controller->addresses.at(i)));
+    }
     #endif
 
 }

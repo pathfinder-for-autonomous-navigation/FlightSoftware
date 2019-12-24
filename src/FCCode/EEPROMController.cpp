@@ -1,17 +1,19 @@
 #include "EEPROMController.hpp"
 #include <EEPROM.h>
 
-EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
+EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset, std::vector<std::string>& statefields)
     : TimedControlTask<void>(registry, "eeprom_ct", offset)
 {
-  mission_mode_fp = find_writable_field<unsigned char>("pan.mode", __FILE__, __LINE__);
-  assert(mission_mode_fp);
 
-  is_deployed_fp = find_readable_field<bool>("pan.deployed", __FILE__, __LINE__);
-  assert(is_deployed_fp);
-
-  sat_designation_fp = find_writable_field<unsigned char>("pan.sat_designation", __FILE__, __LINE__);
-  assert(sat_designation_fp);
+  for (size_t i = 0; i<statefields.size(); i++){
+    // copy the string name of the statefield into a char array
+    char field[statefields.at(i).length() + 1];
+    strcpy(field, statefields.at(i).c_str());
+    // get the pointer to that statefield and add it to the pointer array
+    pointers.push_back(find_readable_field<unsigned int>(field, __FILE__, __LINE__));
+    // add the address of the pointer to the address array
+    addresses.push_back(i*5);
+  }
 
   control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
   assert(control_cycle_count_fp);
@@ -36,19 +38,17 @@ void EEPROMController::execute() {
 
 void EEPROMController::readEEPROM(){
   #ifndef DESKTOP
-  mission_mode_fp->set(EEPROM.read(mission_mode_address));
-  is_deployed_fp->set(EEPROM.read(is_deployed_address));
-  sat_designation_fp->set(EEPROM.read(sat_designation_address));
-  control_cycle_count_fp->set(EEPROM.read(control_cycle_count_address));
+  for (unsigned int i = 0; i<pointers.size(); i++){
+    pointers.at(i)->set(EEPROM.read(addresses.at(i)));
+  }
   #endif
 }
 
 void EEPROMController::updateEEPROM(){
   #ifndef DESKTOP
-  EEPROM.put(mission_mode_address, mission_mode_fp->get());
-  EEPROM.put(is_deployed_address, is_deployed_fp->get());
-  EEPROM.put(sat_designation_address, sat_designation_fp->get());
-  EEPROM.put(control_cycle_count_address, control_cycle_count_fp->get());
+  for (unsigned int i = 0; i<pointers.size(); i++){
+    EEPROM.put(addresses.at(i), pointers.at(i)->get());
+  }
   #endif
 }
 
