@@ -63,4 +63,5 @@ bool EEPROMController::checkEmpty(){
   }
   return true;
   #endif
+  return false;
 }
