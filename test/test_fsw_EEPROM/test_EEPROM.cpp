@@ -46,9 +46,11 @@ void test_task_initialization() {
 
     TestFixture tf;
 
-    for (unsigned int i = 0; i<tf.eeprom_controller->pointers.size(); i++){
+    for (size_t i = 0; i<tf.eeprom_controller->pointers.size(); i++){
         // Expect 1 0 3 45
+        #ifndef DESKTOP
         Serial.println(tf.eeprom_controller->pointers.at(i)->get());
+        #endif
     }
 
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
@@ -70,7 +72,7 @@ void test_task_execute() {
     // should write the values to the EEPROM
     tf.eeprom_controller->execute();
     #ifndef DESKTOP
-    for (unsigned int i = 0; i<tf.eeprom_controller->addresses.size(); i++){
+    for (size_t i = 0; i<tf.eeprom_controller->addresses.size(); i++){
         // Expect 2 0 2 50
         Serial.println(EEPROM.read(tf.eeprom_controller->addresses.at(i)));
     }
