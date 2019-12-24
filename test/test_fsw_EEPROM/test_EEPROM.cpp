@@ -46,12 +46,12 @@ void test_task_initialization() {
 
     TestFixture tf;
 
+    #ifndef DESKTOP
     for (size_t i = 0; i<tf.eeprom_controller->pointers.size(); i++){
         // Expect 1 0 3 45
-        #ifndef DESKTOP
         Serial.println(tf.eeprom_controller->pointers.at(i)->get());
-        #endif
     }
+    #endif
 
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
     TEST_ASSERT_EQUAL(0, tf.is_deployed_fp->get());
@@ -84,10 +84,12 @@ void test_task_execute() {
 
     // Check if the new eeprom controller set the statefield values to the values that 
     // were previously stored in the EEPROM
+    #ifndef DESKTOP
     for (unsigned int i = 0; i<tf2.eeprom_controller->pointers.size(); i++){
         // Expect 2 0 2 50
         Serial.println(tf2.eeprom_controller->pointers.at(i)->get());
     }
+    #endif
 
     // Now we let the statefield values change over time and let another period pass.
     tf2.mission_mode_fp->set(30);
