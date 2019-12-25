@@ -137,7 +137,13 @@ int test_control_task() {
     return UNITY_END();
 }
 
-#ifndef DESKTOP
+#ifdef DESKTOP
+
+int main() {
+    return test_control_task();
+}
+
+#else
 
 #include <Arduino.h>
 void setup() {
