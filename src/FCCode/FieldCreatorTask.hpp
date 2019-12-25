@@ -11,7 +11,7 @@
 // eventually become zero.
 class FieldCreatorTask : public ControlTask<void> {
     public:
-      WritableStateField<unsigned int> adcs_mode_f;
+      WritableStateField<unsigned char> adcs_mode_f;
       WritableStateField<f_quat_t> adcs_cmd_attitude_f;
       ReadableStateField<float> adcs_ang_rate_f;
       WritableStateField<float> adcs_min_stable_ang_rate_f;
@@ -20,22 +20,18 @@ class FieldCreatorTask : public ControlTask<void> {
       ReadableStateField<f_vector_t> ssa_vec_rd_f;
       ReadableStateField<f_vector_t> mag_vec_f;
 
-      InternalStateField<char*> radio_mt_packet_f;
       ReadableStateField<signed int> radio_err_f;
-      InternalStateField<bool> radio_mt_ready_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
-        adcs_mode_f("adcs.mode", Serializer<unsigned int>(10)),
+        adcs_mode_f("adcs.mode", Serializer<unsigned char>(10)),
         adcs_cmd_attitude_f("adcs.cmd_attitude", Serializer<f_quat_t>()),
         adcs_ang_rate_f("adcs.ang_rate", Serializer<float>(0, 10, 4)),
         adcs_min_stable_ang_rate_f("adcs.min_stable_ang_rate", Serializer<float>(0, 10, 4)),
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
         ssa_vec_rd_f("adcs_box.sun_vec", Serializer<f_vector_t>(0,1,32*3)),
         mag_vec_f("adcs_box.mag_vec", Serializer<f_vector_t>(0,1,32*3)),
-        radio_mt_packet_f("uplink_consumer.mt_ptr"),
-        radio_err_f("downlink_producer.radio_err_ptr", Serializer<signed int>(-90, 10)),
-        radio_mt_ready_f("uplink_consumer.mt_ready")
+        radio_err_f("downlink_producer.radio_err_ptr", Serializer<signed int>(-90, 10))
       {
           // Create the fields!
 
@@ -53,9 +49,7 @@ class FieldCreatorTask : public ControlTask<void> {
           add_readable_field(mag_vec_f);
 
           // For QuakeManager
-          add_internal_field(radio_mt_packet_f);
           add_readable_field(radio_err_f);
-          add_internal_field(radio_mt_ready_f);
       }
 
       void execute() {

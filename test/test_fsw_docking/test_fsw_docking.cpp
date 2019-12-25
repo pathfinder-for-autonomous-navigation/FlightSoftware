@@ -89,4 +89,5 @@ void setup() {
     test_control_task();
 }
 
+void loop() {}
 #endif

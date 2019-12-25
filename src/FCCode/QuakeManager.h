@@ -63,33 +63,33 @@ class QuakeManager : public TimedControlTask<bool> {
      * @brief Snapshot size in bytes, provided by DownlinkProducer. 
      */
     InternalStateField<size_t>* snapshot_size_fp;
-
-   /**
-    * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
-    **/ 
-    InternalStateField<char*>* radio_mo_packet_fp;
-
-  /**
-    * @brief Pointer to the uplink buffer, provided by UplinkProducer. 
-    **/ 
-   InternalStateField<char*>* radio_mt_packet_fp;
-
-     /**
-    * @brief Pointer to Quake Error field, provided by DownlinkProducer. 
-    **/ 
-   ReadableStateField<int>* radio_err_fp;
-
+    
   /**
    * @brief Pointer to MT buffer ready field, provided by UplinkProducer.
    * Quake sets this field whenever it writes a new message to its mt buffer.
    * UplingProducer is responsible for checking this field and clearing it. 
    */
-   InternalStateField<bool>* radio_mt_ready_fp; 
+    InternalStateField<char*>* radio_mo_packet_fp;
+
+    /**
+    * @brief Pointer to Quake Error field, provided by DownlinkProducer. 
+    **/ 
+   ReadableStateField<int> radio_err_f;
+
+   /**
+    * @brief Pointer to the uplink buffer, provided by UplinkProducer. 
+    **/ 
+   InternalStateField<char*> radio_mt_packet_f;
+
+   /**
+    * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
+    **/ 
+   InternalStateField<size_t> radio_mt_len_f; 
 
     /**
      * @brief Current radio mode (see radio_mode_t.enum), provided by no one
      **/
-    radio_mode_t radio_mode_f;
+    ReadableStateField<unsigned char> radio_mode_f;
   
   #ifdef DEBUG
 

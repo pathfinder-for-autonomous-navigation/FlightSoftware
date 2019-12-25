@@ -29,8 +29,8 @@ struct TestFixture {
         assert(cycle_count_fp);
         cycle_count_fp->set(20);
 
-        snapshot_fp = reg.find_internal_field_t<char*>("downlink_producer.mo_ptr");
-        snapshot_size_bytes_fp = reg.find_internal_field_t<size_t>("downlink_producer.snap_size");
+        snapshot_fp = reg.find_internal_field_t<char*>("downlink.ptr");
+        snapshot_size_bytes_fp = reg.find_internal_field_t<size_t>("downlink.snap_size");
         assert(snapshot_fp);
         assert(snapshot_size_bytes_fp);
     }
@@ -69,13 +69,10 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(1, downlink["metadata"]["flow_ids"][0]);
 }
 
-int test_downlink_parser() {
+
+int main() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_task_execute);
     return UNITY_END();
-}
-
-int main() {
-    return test_downlink_parser();
 }

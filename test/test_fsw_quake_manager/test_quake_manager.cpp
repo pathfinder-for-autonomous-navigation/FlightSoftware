@@ -13,7 +13,7 @@
 
 // Check that radio state x matches the current radio state
 #define assert_radio_state(x) {\
-  TEST_ASSERT_EQUAL(x, tf.quake_manager->radio_mode_f);\
+  TEST_ASSERT_EQUAL(static_cast<unsigned int>(x), tf.quake_manager->radio_mode_f.get());\
 }
 
 // Check that x matches the current fn number
@@ -38,23 +38,21 @@ class TestFixture {
     StateFieldRegistryMock registry;
     // Input state fields to quake manager
     std::shared_ptr<InternalStateField<char*>> radio_mo_packet_fp;
-    std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
-    std::shared_ptr<InternalStateField<bool>> radio_mt_ready_fp;
-    std::shared_ptr<ReadableStateField<int>> radio_err_fp;
     std::shared_ptr<InternalStateField<size_t>> snapshot_size_fp;
-    // Quake has no output state fields since it is created after downlink producer
 
+    // Output state fields to quake manager
+    InternalStateField<char*>* radio_mt_packet_fp;
+    InternalStateField<size_t>* radio_mt_len_fp;
+    ReadableStateField<int>* radio_err_fp;
+
+    // Quake manager object
     std::unique_ptr<QuakeManager> quake_manager;
     
     // Create a TestFixture instance of QuakeManager with the following parameters
     TestFixture(unsigned int radio_mode, int qct_state) : registry() {
         // Create external field dependencies
-        snapshot_size_fp = registry.create_internal_field<size_t>("downlink_producer.snap_size");
-        radio_mo_packet_fp = registry.create_internal_field<char*>("downlink_producer.mo_ptr");
-        radio_mt_packet_fp = registry.create_internal_field<char*>("uplink_consumer.mt_ptr");
-        radio_err_fp = registry.create_readable_field<int>("downlink_producer.radio_err_ptr", -90, 10);
-        radio_mt_ready_fp = registry.create_internal_field<bool>("uplink_consumer.mt_ready");
-
+        snapshot_size_fp = registry.create_internal_field<size_t>("downlink.snap_size");
+        radio_mo_packet_fp = registry.create_internal_field<char*>("downlink.ptr");
         // Initialize external fields
         snapshot_size_fp->set(static_cast<int>(350));
         radio_mo_packet_fp->set(snap1);
@@ -62,12 +60,15 @@ class TestFixture {
 
         // Create Quake Manager instance
         quake_manager = std::make_unique<QuakeManager>(registry, 0);
-      
+        radio_mt_packet_fp = registry.find_internal_field_t<char*>("uplink.ptr");
+        radio_mt_len_fp = registry.find_internal_field_t<size_t>("uplink.len");
+        radio_err_fp = registry.find_readable_field_t<int>("radio.err");
+
         // Initialize internal fields
         if (qct_state != -1) // If qct_state == -1, then expect use the default initialization
         {
           quake_manager->dbg_get_qct().dbg_set_state(qct_state);
-          quake_manager->radio_mode_f = static_cast<radio_mode_t>(radio_mode); 
+          quake_manager->radio_mode_f.set(radio_mode); 
         }
     }
   // Make a step in the world
@@ -492,12 +493,12 @@ void test_mt_ready_set_after_sbdrb_success()
 {
     TestFixture tf(static_cast<unsigned int>(radio_mode_t::read), SBDRB);
     assert_radio_state(radio_mode_t::read);
-    TEST_ASSERT_FALSE(tf.radio_mt_ready_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.radio_mt_len_fp->get());
     tf.realSteps(1);
     assert_qct(SBDRB); 
     tf.realSteps(1);
     assert_qct(SBDWB); // Should transition to SBDWB after finishing SBDRB
-    TEST_ASSERT_TRUE(tf.radio_mt_ready_fp->get());
+    TEST_ASSERT_EQUAL(tf.quake_manager->dbg_get_qct().get_MT_length(), tf.radio_mt_len_fp->get());
 }
 
 void test_dispatch_manual()
