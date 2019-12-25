@@ -27,12 +27,12 @@ void AttitudeComputer::execute() {
     adcs_state_t adcs_state = static_cast<adcs_state_t>(adcs_state_f.get());
 
     const d_vector_t pos = pos_fp->get();
-    lin::Vector3f pos_normalized {(float) pos[0], (float) pos[1], (float) pos[2]};
+    lin::Vector3f pos_normalized = {(float) pos[0], (float) pos[1], (float) pos[2]};
     pos_normalized = pos_normalized / lin::norm(pos_normalized);
     const f_vector_t pos_normalized_vec = {pos_normalized(0), pos_normalized(1), pos_normalized(2)};
 
     const d_vector_t baseline_pos = baseline_pos_fp->get();
-    lin::Vector3f baseline_pos_normalized
+    lin::Vector3f baseline_pos_normalized =
         {(float) baseline_pos[0], (float) baseline_pos[1], (float) baseline_pos[2]};
     baseline_pos_normalized = baseline_pos_normalized / lin::norm(baseline_pos_normalized);
     const f_vector_t baseline_pos_normalized_vec =
@@ -59,7 +59,7 @@ void AttitudeComputer::execute() {
                 // maximizes the chances of getting one.
                 constexpr float nan = std::numeric_limits<float>::quiet_NaN();
 
-                adcs_vec1_current_f.set(pos_normalized_vec);
+                adcs_vec1_current_f.set(ssa_vec);
                 adcs_vec1_desired_f.set({1,0,0});
                 adcs_vec2_current_f.set({nan, nan, nan});
                 adcs_vec2_desired_f.set({nan, nan, nan});

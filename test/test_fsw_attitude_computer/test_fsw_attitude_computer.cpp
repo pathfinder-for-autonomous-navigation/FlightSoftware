@@ -17,7 +17,7 @@ class TestFixture {
     std::unique_ptr<AttitudeComputer> attitude_computer;
     
     // Output state fields
-    const WritableStateField<unsigned char>* adcs_state_fp;
+    WritableStateField<unsigned char>* adcs_state_fp;
     const WritableStateField<f_vector_t>* adcs_vec1_current_fp;
     const WritableStateField<f_vector_t>* adcs_vec1_desired_fp;
     const WritableStateField<f_vector_t>* adcs_vec2_current_fp;
@@ -44,9 +44,46 @@ void test_valid_initialization() {
     TestFixture tf;
 }
 
+void test_point_standby() {
+    TestFixture tf;
+    constexpr float nan = std::numeric_limits<float>::quiet_NaN();
+    
+    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_standby));
+    tf.time_fp->set(gps_time_t()); // is_set = false
+    tf.pos_fp->set({0,2,0});
+    tf.ssa_vec_fp->set({1,0,0});
+    tf.attitude_computer->execute();
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({1,0,0}).data(), tf.adcs_vec1_current_fp->get().data(), 3);
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 3);
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({nan,nan,nan}).data(), tf.adcs_vec2_current_fp->get().data(), 3);
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({nan,nan,nan}).data(), tf.adcs_vec2_desired_fp->get().data(), 3);
+
+    tf.time_fp->set(gps_time_t(10)); // is_set = true
+    tf.attitude_computer->execute();
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 3);
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 3);
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 3);
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,0,1}).data(), tf.adcs_vec2_desired_fp->get().data(), 3);
+}
+
+void test_point_docking() {
+    TestFixture tf;
+
+    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_docking));
+    tf.pos_fp->set({0,2,0});
+    tf.pos_baseline_fp->set({0,0,3});
+    tf.attitude_computer->execute();
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 3);
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 3);
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 3);
+    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,0,-1}).data(), tf.adcs_vec2_desired_fp->get().data(), 3);
+}
+
 int test_attitude_computer() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
+    RUN_TEST(test_point_standby);
+    RUN_TEST(test_point_docking);
     return UNITY_END();
 }
 
