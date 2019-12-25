@@ -1,5 +1,4 @@
 #include "EEPROMController.hpp"
-#include "TimedControlTask.cpp"
 #ifndef DESKTOP
 #include <EEPROM.h>
 #endif
