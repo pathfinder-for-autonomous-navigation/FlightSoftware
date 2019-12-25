@@ -1,6 +1,5 @@
 #include "../StateFieldRegistryMock.hpp"
 #include "../../src/FCCode/EEPROMController.hpp"
-#include "../../src/FCCode/EEPROMController.cpp"
 #ifndef DESKTOP
 #include <EEPROM.h>
 #endif
