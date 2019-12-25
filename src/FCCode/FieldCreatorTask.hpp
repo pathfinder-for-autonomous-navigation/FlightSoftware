@@ -16,6 +16,8 @@ class FieldCreatorTask : public ControlTask<void> {
       ReadableStateField<float> adcs_ang_rate_f;
       WritableStateField<float> adcs_min_stable_ang_rate_f;
 
+      WritableStateField<bool> docking_config_cmd_f;
+
       ReadableStateField<unsigned char> prop_mode_f;
       ReadableStateField<d_vector_t> propagated_baseline_pos_f;
 
@@ -25,6 +27,7 @@ class FieldCreatorTask : public ControlTask<void> {
         adcs_cmd_attitude_f("adcs.cmd_attitude", Serializer<f_quat_t>()),
         adcs_ang_rate_f("adcs.ang_rate", Serializer<float>(0, 10, 4)),
         adcs_min_stable_ang_rate_f("adcs.min_stable_ang_rate", Serializer<float>(0, 10, 4)),
+        docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
         prop_mode_f("prop.mode", Serializer<unsigned char>(1)),
         propagated_baseline_pos_f("orbit.baseline_pos", Serializer<d_vector_t>(0, 100000, 100))
       {
@@ -35,6 +38,9 @@ class FieldCreatorTask : public ControlTask<void> {
           add_writable_field(adcs_cmd_attitude_f);
           add_readable_field(adcs_ang_rate_f);
           add_writable_field(adcs_min_stable_ang_rate_f);
+
+          // For Docking Controller
+          add_writable_field(docking_config_cmd_f);
 
           // For propulsion controller
           add_readable_field(prop_mode_f);
