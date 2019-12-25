@@ -25,8 +25,8 @@ class TestFixture {
                 //create input statefields
                 piksi_time_fp = registry.create_readable_field<gps_time_t>("piksi.time");
                 pos_vec_ecef_fp = registry.create_readable_vector_field<double>("piksi.pos",0.0L,1000000.0L,64*3);
-                ssa_vec_rd_fp = registry.create_readable_vector_field<float>("adcs_box.sun_vec",-1.0,1.0,32*3),
-                mag_vec_fp = registry.create_readable_vector_field<float>("adcs_box.mag_vec",-16e-4,16e4,32*3),
+                ssa_vec_rd_fp = registry.create_readable_vector_field<float>("adcs_monitor.ssa_vec",-1.0,1.0,32*3),
+                mag_vec_fp = registry.create_readable_vector_field<float>("adcs_monitor.mag_vec",-16e-4,16e4,32*3),
 
                 attitude_estimator = std::make_unique<AttitudeEstimator>(registry, 0);  
 

@@ -29,6 +29,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       ADCS_INITIALIZATION,
       adcs_monitor(registry, adcs_monitor_offset, adcs),
       attitude_estimator(registry, attitude_estimator_offset),
+      attitude_computer(registry, attitude_computer_offset),
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
       docksys(),
@@ -75,6 +76,7 @@ void MainControlLoop::execute() {
     gomspace_controller.execute_on_time();
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
+    attitude_computer.execute_on_time();
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
