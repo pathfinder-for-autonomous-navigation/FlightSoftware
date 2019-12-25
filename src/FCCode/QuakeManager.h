@@ -1,7 +1,7 @@
 #pragma once
 #include "TimedControlTask.hpp"
 #include "QuakeControlTask.h"
-#include "radio_mode_t.enum"
+#include "radio_state_t.enum"
 
 /**
  * QuakeManager decides what commands should be sent to the Quake based on the
@@ -9,7 +9,7 @@
  * 
  * Dependencies: ClockManager, Downlink Provider
  * 
- * States: config, wait, transceive, read, write, manual
+ * States: config, wait, transceive, read, write.
  * 
  * All methods return true on success, false otherwise. 
  */ 
@@ -54,22 +54,18 @@ class QuakeManager : public TimedControlTask<bool> {
     * @brief writes a message to the MO buffer
     */
     bool dispatch_write();
-   /**
-    * @brief does nothing 
-    */
-    bool dispatch_manual();
 
    /**
      * @brief Snapshot size in bytes, provided by DownlinkProducer. 
      */
-    InternalStateField<size_t>* snapshot_size_fp;
+    const InternalStateField<size_t>* snapshot_size_fp;
     
   /**
    * @brief Pointer to MT buffer ready field, provided by UplinkProducer.
    * Quake sets this field whenever it writes a new message to its mt buffer.
    * UplingProducer is responsible for checking this field and clearing it. 
    */
-    InternalStateField<char*>* radio_mo_packet_fp;
+  const InternalStateField<char*>* radio_mo_packet_fp;
 
     /**
     * @brief Pointer to Quake Error field, provided by DownlinkProducer. 
@@ -86,10 +82,16 @@ class QuakeManager : public TimedControlTask<bool> {
     **/ 
    InternalStateField<size_t> radio_mt_len_f; 
 
-    /**
-     * @brief Current radio mode (see radio_mode_t.enum), provided by no one
-     **/
-    ReadableStateField<unsigned char> radio_mode_f;
+   /**
+    * @brief Current radio state and mode (see radio_state_t.enum and radio_mode_t.enum).
+    **/
+   InternalStateField<unsigned char> radio_state_f;
+   InternalStateField<unsigned char> radio_mode_f;
+
+   /**
+    * The last cycle for which we had comms
+    */
+   InternalStateField<unsigned int> last_checkin_cycle_f;
   
   #ifdef DEBUG
 
@@ -102,9 +104,9 @@ class QuakeManager : public TimedControlTask<bool> {
     return max_snapshot_size;
   }
 
-  unsigned int& dbg_get_last_checkin()
+  InternalStateField<unsigned int>& dbg_get_last_checkin()
   {
-    return last_checkin_cycle;
+    return last_checkin_cycle_f;
   }
 
   char* dbg_get_mo_buffer_copy()
@@ -122,7 +124,7 @@ class QuakeManager : public TimedControlTask<bool> {
     return unexpected_flag;
   }
 
-  bool dbg_transition_radio_state(radio_mode_t new_state)
+  bool dbg_transition_radio_state(radio_state_t new_state)
   {
     return transition_radio_state(new_state);
   }
@@ -147,7 +149,7 @@ class QuakeManager : public TimedControlTask<bool> {
      * printf a notice about the transition 
      * Return true if there are no more control cycles, false otherwise
      */
-    bool no_more_cycles(size_t max_cycles, radio_mode_t new_state);
+    bool no_more_cycles(size_t max_cycles, radio_state_t new_state);
 
     /**
      * Transition the radio into the new state
@@ -155,12 +157,8 @@ class QuakeManager : public TimedControlTask<bool> {
      * Precondition: new_state is one of the defined states
      * Postcondition: radio_state_f == new_state, last_checkin_cycle = now
      */ 
-    bool transition_radio_state(radio_mode_t new_state);
+    bool transition_radio_state(radio_state_t new_state);
 
-    /**
-     * The last cycle for which we had comms
-     */
-    unsigned int last_checkin_cycle;
     /**
      * Local copy of max_snapshot_size given by DownlinkProducer
      */
@@ -188,7 +186,7 @@ class QuakeManager : public TimedControlTask<bool> {
     bool unexpected_flag;
 
     /**
-     * Max cycles that each radio_mode state is allowed to waste before being 
+     * Max cycles that each radio_state state is allowed to waste before being 
      * transitioned. 
      */ 
     // TODO: these values are temporary. Experiments should be conducted
