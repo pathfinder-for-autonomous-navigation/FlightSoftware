@@ -4,7 +4,7 @@
 #include "TimedControlTask.hpp"
 
 #include "mission_mode_t.enum"
-#include "adcs_mode_t.enum"
+#include "adcs_state_t.enum"
 #include "satellite_designation_t.enum"
 
 class MissionManager : public TimedControlTask<void> {
@@ -30,7 +30,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Mode of ADCS system.
      **/
-    WritableStateField<unsigned char>* adcs_mode_fp;
+    WritableStateField<unsigned char>* adcs_state_fp;
     /**
      * @brief Currently commanded attitude of ADCS system.
      **/
