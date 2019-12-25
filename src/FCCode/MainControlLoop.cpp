@@ -35,8 +35,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       docking_controller(registry, docking_controller_offset, docksys),
       downlink_producer(registry, downlink_producer_offset),
       quake_manager(registry, quake_manager_offset),
-      eeprom_controller(registry, eeprom_controller_offset, statefields),
       uplink_consumer(registry, uplink_consumer_offset),
+      eeprom_controller(registry, eeprom_controller_offset, statefields),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       mission_manager(registry, mission_manager_offset) // This item is initialized last so it has access to all state fields
 {
