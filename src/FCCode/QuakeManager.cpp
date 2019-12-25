@@ -69,6 +69,7 @@ bool QuakeManager::execute() {
         case radio_mode_t::disabled:
             // Reset radio
             radio_state_f.set(static_cast<unsigned int>(radio_state_t::config));
+            qct.request_state(CONFIG);
             return true;
             break;
         case radio_mode_t::active:

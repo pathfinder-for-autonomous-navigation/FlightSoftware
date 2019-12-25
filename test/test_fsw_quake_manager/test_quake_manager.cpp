@@ -510,8 +510,33 @@ void test_mt_ready_set_after_sbdrb_success()
 }
 
 // Test mode-based behavior of Quake Manager
-void test_disabled() {
-   
+void test_modes() {
+   // Initialize QuakeManager correctly
+   TestFixture tf(static_cast<unsigned int>(radio_state_t::wait), -1);
+   assert_radio_state(radio_state_t::config);
+   assert_qct(CONFIG);
+
+   // Disable it
+   tf.radio_mode_fp->set(static_cast<unsigned char>(radio_mode_t::disabled));
+   tf.step();
+   TEST_ASSERT_EQUAL(tf.radio_mode_fp->get(),
+      static_cast<unsigned int>(radio_mode_t::disabled));
+   assert_radio_state(radio_state_t::config);
+   assert_qct(CONFIG);
+
+   // Trying to set radio state when radio is mode-disabled has no effect
+   tf.radio_state_fp->set(static_cast<unsigned char>(radio_state_t::transceive));
+   tf.step();
+   assert_radio_state(radio_state_t::config);
+   assert_qct(CONFIG);
+
+   // Re-enabling QuakeManager forces it into config
+   tf.radio_mode_fp->set(static_cast<unsigned char>(radio_mode_t::active));
+   tf.step();
+   TEST_ASSERT_EQUAL(tf.radio_mode_fp->get(),
+      static_cast<unsigned int>(radio_mode_t::active));
+   assert_radio_state(radio_state_t::config);
+   assert_qct(CONFIG);
 }
 
 int test_mission_manager() {
@@ -543,7 +568,7 @@ int test_mission_manager() {
     RUN_TEST(test_update_mo_load_new_snap);
     RUN_TEST(test_valid_initialization); 
     RUN_TEST(test_mt_ready_set_after_sbdrb_success);
-    RUN_TEST(test_disabled);
+    RUN_TEST(test_modes);
     return UNITY_END();
 }
 
