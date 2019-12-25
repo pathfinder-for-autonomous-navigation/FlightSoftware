@@ -19,6 +19,13 @@ class EEPROMController : public TimedControlTask<void> {
     EEPROMController(StateFieldRegistry& registry, unsigned int offset, std::vector<std::string>& statefields);
 
     /**
+     * @brief Gets the pointers to the statefields from the statefield
+     * registry. Sets the pointer values to those stored in the EEPROM
+     * if necessary.
+     */
+    void init(std::vector<std::string>& statefields);
+
+    /**
      * @brief Writes to the EEPROM after a certain number of 
      * control cycles given by the period.
      */

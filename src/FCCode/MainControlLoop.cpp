@@ -32,11 +32,14 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       docking_controller(registry, docking_controller_offset, docksys),
       downlink_producer(registry, downlink_producer_offset, flow_data),
       quake_manager(registry, quake_manager_offset),
+      eeprom_controller(registry, eeprom_controller_offset, statefields),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000))
 {
     #ifdef FUNCTIONAL_TEST
         add_readable_field(memory_use_f);
     #endif
+
+    eeprom_controller.init(statefields);
 }
 
 void MainControlLoop::execute() {
@@ -60,6 +63,7 @@ void MainControlLoop::execute() {
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
+    eeprom_controller.execute_on_time();
 }
 
 #ifdef GSW

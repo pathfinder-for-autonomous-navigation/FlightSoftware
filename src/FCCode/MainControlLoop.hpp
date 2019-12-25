@@ -15,6 +15,7 @@
 #include "QuakeManager.h"
 #include "DockingController.hpp"
 #include "DownlinkProducer.hpp"
+#include "EEPROMController.hpp"
 
 #if (!defined(FUNCTIONAL_TEST) && !defined(FLIGHT))
 static_assert(false, "Need to define either the FUNCTIONAL_TEST or FLIGHT flags.");
@@ -43,6 +44,9 @@ class MainControlLoop : public ControlTask<void> {
     DownlinkProducer downlink_producer;
     QuakeManager quake_manager;
 
+    std::vector<std::string>statefields;
+    EEPROMController eeprom_controller;
+
     // Control cycle time offsets, in microseconds
     #ifdef FUNCTIONAL_TEST
         static constexpr unsigned int debug_task_offset          =   5500;
@@ -53,6 +57,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int docking_controller_offset  = 152400;
         static constexpr unsigned int downlink_producer_offset   = 153400;
         static constexpr unsigned int quake_manager_offset       = 153500;
+        static constexpr unsigned int eeprom_controller_offset   = 153500;  // fix this later
     #else
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =   6000;
@@ -62,6 +67,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int docking_controller_offset  = 103400;
         static constexpr unsigned int downlink_producer_offset   = 104400;
         static constexpr unsigned int quake_manager_offset       = 104500;
+        static constexpr unsigned int eeprom_controller_offset   = 153500;
     #endif
 
     /**

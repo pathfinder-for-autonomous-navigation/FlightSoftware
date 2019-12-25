@@ -47,6 +47,7 @@ void test_task_initialization() {
     #endif
 
     TestFixture tf;
+    tf.eeprom_controller->init(tf.statefields);
 
     #ifndef DESKTOP
     TEST_ASSERT_EQUAL(1, tf.eeprom_controller->pointers.at(0)->get());
@@ -63,6 +64,7 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
+    tf.eeprom_controller->init(tf.statefields);
 
     // Let the statefields change over time
     TimedControlTaskBase::control_cycle_count=50;
@@ -84,6 +86,7 @@ void test_task_execute() {
     // Now we pretend the satellite just rebooted. Everytime the satellite reboots, another 
     // eeprom control task is instantiated.
     TestFixture tf2;
+    tf2.eeprom_controller->init(tf2.statefields);
 
     // Check if the new eeprom controller set the statefield values to the values that 
     // were previously stored in the EEPROM

@@ -7,7 +7,10 @@
 EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset, std::vector<std::string>& statefields)
     : TimedControlTask<void>(registry, "eeprom_ct", offset)
 {
+  
+}
 
+void EEPROMController::init(std::vector<std::string>& statefields){
   for (size_t i = 0; i<statefields.size(); i++){
     // copy the string name of the statefield into a char array
     char field[statefields.at(i).length() + 1];
