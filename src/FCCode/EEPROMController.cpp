@@ -1,4 +1,5 @@
 #include "EEPROMController.hpp"
+#include "TimedControlTask.cpp"
 #ifndef DESKTOP
 #include <EEPROM.h>
 #endif
@@ -17,13 +18,10 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
     addresses.push_back(i*5);
   }
 
-  control_cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
-  assert(control_cycle_count_fp);
-
   // if we find stored information from previous control cycles when the control task 
   // is initialized, then set all the statefields to those stored values
-  if (!checkEmpty()){
-    readEEPROM();
+  if (!check_empty()){
+    read_EEPROM();
   }
   else{
     // Otherwise, that means we have just started the satellite for the first time 
@@ -33,12 +31,12 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
 
 void EEPROMController::execute() {
   //if enough control cycles have passed, write the field values to EEPROM
-  if(control_cycle_count_fp->get()%period==0){
-    updateEEPROM();
+  if(control_cycle_count%period==0){
+    update_EEPROM();
   }
 }
 
-void EEPROMController::readEEPROM(){
+void EEPROMController::read_EEPROM(){
   #ifndef DESKTOP
   for (unsigned int i = 0; i<pointers.size(); i++){
     pointers.at(i)->set(EEPROM.read(addresses.at(i)));
@@ -46,7 +44,7 @@ void EEPROMController::readEEPROM(){
   #endif
 }
 
-void EEPROMController::updateEEPROM(){
+void EEPROMController::update_EEPROM(){
   #ifndef DESKTOP
   for (unsigned int i = 0; i<pointers.size(); i++){
     EEPROM.put(addresses.at(i), pointers.at(i)->get());
@@ -54,7 +52,7 @@ void EEPROMController::updateEEPROM(){
   #endif
 }
 
-bool EEPROMController::checkEmpty(){
+bool EEPROMController::check_empty(){
   #ifndef DESKTOP
   for (int i = 0 ; i < EEPROM.length() ; i++) {
     if (EEPROM.read(i)!=255){

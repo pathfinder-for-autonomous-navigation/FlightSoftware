@@ -27,20 +27,20 @@ class EEPROMController : public TimedControlTask<void> {
     /**
      * @brief Sets the statefields to the values stored in the EEPROM 
      */
-    void readEEPROM();
+    void read_EEPROM();
 
     /**
      * @brief Writes the value of the statefields to the field's 
      * respective address in EEPROM
      */
-    void updateEEPROM();
+    void update_EEPROM();
 
     /**
      * @brief Checks if the EEPROM is empty or not. The default value
      * of the EEPROM is 0xFF, or 255 in decimal. Returns true if empty
      * and false if values are stored in the EEPROM.
      */
-    bool checkEmpty();
+    bool check_empty();
 
     //number of control cycles that must pass before the control task writes to EEPROM
     unsigned int period = 5;
@@ -50,8 +50,6 @@ class EEPROMController : public TimedControlTask<void> {
 
     // Shared pointers to statefields that will be written to the EEPROM
     std::vector<ReadableStateField<unsigned int>*> pointers;
-
-    ReadableStateField<unsigned int>* control_cycle_count_fp;
 
 };
 

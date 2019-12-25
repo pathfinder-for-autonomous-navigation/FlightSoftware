@@ -49,10 +49,10 @@ void test_task_initialization() {
     TestFixture tf;
 
     #ifndef DESKTOP
-    for (size_t i = 0; i<tf.eeprom_controller->pointers.size(); i++){
-        // Expect 1 0 3 45
-        Serial.println(tf.eeprom_controller->pointers.at(i)->get());
-    }
+    TEST_ASSERT_EQUAL(1, tf.eeprom_controller->pointers.at(0)->get());
+    TEST_ASSERT_EQUAL(0, tf.eeprom_controller->pointers.at(1)->get());
+    TEST_ASSERT_EQUAL(3, tf.eeprom_controller->pointers.at(2)->get());
+    TEST_ASSERT_EQUAL(45, tf.eeprom_controller->pointers.at(3)->get());
     #endif
 
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
@@ -65,6 +65,7 @@ void test_task_execute() {
     TestFixture tf;
 
     // Let the statefields change over time
+    TimedControlTaskBase::control_cycle_count=50;
     tf.mission_mode_fp->set(2);
     tf.is_deployed_fp->set(0);
     tf.sat_designation_fp->set(2);
@@ -74,10 +75,10 @@ void test_task_execute() {
     // should write the values to the EEPROM
     tf.eeprom_controller->execute();
     #ifndef DESKTOP
-    for (size_t i = 0; i<tf.eeprom_controller->addresses.size(); i++){
-        // Expect 2 0 2 50
-        Serial.println(EEPROM.read(tf.eeprom_controller->addresses.at(i)));
-    }
+    TEST_ASSERT_EQUAL(2, EEPROM.read(tf.eeprom_controller->addresses.at(0)));
+    TEST_ASSERT_EQUAL(0, EEPROM.read(tf.eeprom_controller->addresses.at(1)));
+    TEST_ASSERT_EQUAL(2, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
+    TEST_ASSERT_EQUAL(50, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
     #endif
 
     // Now we pretend the satellite just rebooted. Everytime the satellite reboots, another 
@@ -87,13 +88,14 @@ void test_task_execute() {
     // Check if the new eeprom controller set the statefield values to the values that 
     // were previously stored in the EEPROM
     #ifndef DESKTOP
-    for (unsigned int i = 0; i<tf2.eeprom_controller->pointers.size(); i++){
-        // Expect 2 0 2 50
-        Serial.println(tf2.eeprom_controller->pointers.at(i)->get());
-    }
+    TEST_ASSERT_EQUAL(2, tf2.eeprom_controller->pointers.at(0)->get());
+    TEST_ASSERT_EQUAL(0, tf2.eeprom_controller->pointers.at(1)->get());
+    TEST_ASSERT_EQUAL(2, tf2.eeprom_controller->pointers.at(2)->get());
+    TEST_ASSERT_EQUAL(50, tf2.eeprom_controller->pointers.at(3)->get());
     #endif
 
     // Now we let the statefield values change over time and let another period pass.
+    TimedControlTaskBase::control_cycle_count=55;
     tf2.mission_mode_fp->set(30);
     tf2.is_deployed_fp->set(1);
     tf2.sat_designation_fp->set(1);
@@ -102,10 +104,26 @@ void test_task_execute() {
     // Check if those values were written to the EEPROM
     tf2.eeprom_controller->execute();
     #ifndef DESKTOP
-    for (unsigned int i = 0; i<tf2.eeprom_controller->addresses.size(); i++){
-        // Expect 30 1 1 55
-        Serial.println(EEPROM.read(tf2.eeprom_controller->addresses.at(i)));
-    }
+    TEST_ASSERT_EQUAL(30, EEPROM.read(tf2.eeprom_controller->addresses.at(0)));
+    TEST_ASSERT_EQUAL(1, EEPROM.read(tf2.eeprom_controller->addresses.at(1)));
+    TEST_ASSERT_EQUAL(1, EEPROM.read(tf2.eeprom_controller->addresses.at(2)));
+    TEST_ASSERT_EQUAL(55, EEPROM.read(tf2.eeprom_controller->addresses.at(3)));
+    #endif
+
+    // Now we let a few more control cycles pass, but not a whole period
+    TimedControlTaskBase::control_cycle_count=57;
+    tf2.mission_mode_fp->set(28);
+    tf2.is_deployed_fp->set(0);
+    tf2.sat_designation_fp->set(6);
+    tf2.control_cycle_count_fp->set(57);
+
+    // Check that these values are NOT written to the EEPROM
+    tf2.eeprom_controller->execute();
+    #ifndef DESKTOP
+    TEST_ASSERT_EQUAL(30, EEPROM.read(tf2.eeprom_controller->addresses.at(0)));
+    TEST_ASSERT_EQUAL(1, EEPROM.read(tf2.eeprom_controller->addresses.at(1)));
+    TEST_ASSERT_EQUAL(1, EEPROM.read(tf2.eeprom_controller->addresses.at(2)));
+    TEST_ASSERT_EQUAL(55, EEPROM.read(tf2.eeprom_controller->addresses.at(3)));
     #endif
 
 }
