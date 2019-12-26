@@ -17,6 +17,7 @@
 #include "QuakeManager.h"
 #include "DockingController.hpp"
 #include "DownlinkProducer.hpp"
+#include "EEPROMController.hpp"
 #include "UplinkConsumer.h"
 
 #if (!defined(FUNCTIONAL_TEST) && !defined(FLIGHT))
@@ -48,6 +49,9 @@ class MainControlLoop : public ControlTask<void> {
     QuakeManager quake_manager; // Needs downlink packet from Downlink Producer
     UplinkConsumer uplink_consumer; // Needs uplink packet from Quake Manager
 
+    std::vector<std::string>statefields;
+    EEPROMController eeprom_controller;
+
     // Control cycle time offsets, in microseconds
     #ifdef FUNCTIONAL_TEST
     // https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B04C55BBB-7AED-410B-AC43-67352393D6D5%7D&file=Flight%20Software%20Cycle.xlsx&action=default&mobileredirect=true&cid=e2b9bd89-7037-47bf-ad2a-fd8b25808939
@@ -62,6 +66,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int docking_controller_offset  = 152400;
         static constexpr unsigned int downlink_producer_offset   = 153400;
         static constexpr unsigned int quake_manager_offset       = 153500;
+        static constexpr unsigned int eeprom_controller_offset   = 153500;  // fix this later
     #else
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =   6000;
@@ -74,6 +79,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int docking_controller_offset  = 103400;
         static constexpr unsigned int downlink_producer_offset   = 104400;
         static constexpr unsigned int quake_manager_offset       = 104500;
+        static constexpr unsigned int eeprom_controller_offset   = 153500;
     #endif
 
     /**
