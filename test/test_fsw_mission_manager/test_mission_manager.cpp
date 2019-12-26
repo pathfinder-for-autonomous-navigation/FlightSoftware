@@ -24,7 +24,7 @@ class TestFixture {
     WritableStateField<unsigned char>* sat_designation_fp;
 
     TestFixture() : registry() {
-        adcs_mode_fp = registry.create_writable_field<unsigned char>("adcs.mode", 10);
+        adcs_mode_fp = registry.create_writable_field<unsigned char>("adcs.state", 10);
         adcs_cmd_attitude_fp = registry.create_writable_field<f_quat_t>("adcs.cmd_attitude");
         adcs_ang_rate_fp = registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
         adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
@@ -54,14 +54,14 @@ void test_dispatch_detumble() {
     tf.adcs_min_stable_ang_rate_fp->set(5);
     tf.mission_manager->execute();
     TEST_ASSERT_EQUAL(static_cast<unsigned int>(mission_mode_t::detumble), tf.mission_mode_fp->get());
-    TEST_ASSERT_EQUAL(static_cast<unsigned int>(adcs_mode_t::detumble), tf.adcs_mode_fp->get());
+    TEST_ASSERT_EQUAL(static_cast<unsigned int>(adcs_state_t::detumble), tf.adcs_mode_fp->get());
 
     // If satellite is no longer tumbling, spacecraft exits detumble mode and starts pointing in 
     // the expected direction.
     tf.adcs_ang_rate_fp->set(4);
     tf.mission_manager->execute();
     TEST_ASSERT_EQUAL(static_cast<unsigned int>(mission_mode_t::standby), tf.mission_mode_fp->get());
-    TEST_ASSERT_EQUAL(static_cast<unsigned int>(adcs_mode_t::point_standby), tf.adcs_mode_fp->get());
+    TEST_ASSERT_EQUAL(static_cast<unsigned int>(adcs_state_t::point_standby), tf.adcs_mode_fp->get());
     f_quat_t expected_cmd_attitude = {2,2,2,2};
     f_quat_t actual_cmd_attitude = tf.adcs_cmd_attitude_fp->get();
     for(size_t i = 0; i < 4; i++) TEST_ASSERT_DOUBLE_WITHIN(0.01, expected_cmd_attitude[i], actual_cmd_attitude[i]);
