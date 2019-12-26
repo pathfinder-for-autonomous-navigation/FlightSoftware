@@ -12,10 +12,8 @@
  * 
  * State Fields Provided: radio_mt_packet_fp, radio_mt_packet_len_fp
  * 
- * Notes: Since radio_mt_packet_f is a pointer to a buffer in QuakeManager,
- * if QuakeManager is destroyed/delete, this pointer will become invalid. 
- * QuakeManager must set radio_mt_packet_len_f to 0 before it dies. 
- * 
+ * !!!IMPORTANT!!!! Most call init_uplink(). I include an if index_size == 0 in 
+ * each function just in case
  * 
  * Protocol: A packet is parsed into a set of "requests". A request consists of
  * the index of a field in the registry and a new value to assign to that field. 

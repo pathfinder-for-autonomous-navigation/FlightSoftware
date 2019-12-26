@@ -24,12 +24,16 @@ void UplinkConsumer::execute()
 
  void UplinkConsumer::update_fields()
 {
+    if (index_size == 0)
+        init_uplink();
     bitstream bs (radio_mt_packet_fp->get(), radio_mt_packet_len_fp->get());
     _update_fields(bs);
 }
 
 bool UplinkConsumer::validate_packet()
 {
+    if (index_size == 0)
+        init_uplink();
     bitstream bs (radio_mt_packet_fp->get(), radio_mt_packet_len_fp->get());
     return _validate_packet(bs);
 }
