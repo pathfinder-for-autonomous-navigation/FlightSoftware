@@ -23,7 +23,7 @@ bool Fault::add_to_registry(StateFieldRegistry& r) {
 }
 
 void Fault::signal() {
-    if (cc > static_cast<unsigned int>(last_fault_time)) {
+    if (cc > static_cast<unsigned int>(last_fault_time) || cc == 0) {
         num_consecutive_faults++;
         last_fault_time = cc;
     }

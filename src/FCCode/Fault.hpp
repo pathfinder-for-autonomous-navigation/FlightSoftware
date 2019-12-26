@@ -53,8 +53,8 @@ class Fault : public ReadableStateField<bool> {
     using ReadableStateField<bool>::get;
 
     unsigned int& cc; // Control cycle count
-    long int last_fault_time = -1; // Last control cycle # that the fault condition
-                                   // occurred
+    unsigned int last_fault_time = 0; // Last control cycle # that the fault condition
+                                      // occurred
 
     unsigned int persistence; // Persistence threshold for fault signal
     unsigned int num_consecutive_faults = 0; // Number of consecutive fault condition
