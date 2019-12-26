@@ -28,7 +28,7 @@ class TestFixture {
     std::shared_ptr<InternalStateField<char*>> radio_mt_packet_fp;
 
     std::shared_ptr<WritableStateField<unsigned int>> cycle_no_fp;
-    std::shared_ptr<WritableStateField<unsigned char>> adcs_mode_fp;
+    std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
     std::shared_ptr<WritableStateField<f_quat_t>> adcs_cmd_attitude_fp;
     std::shared_ptr<ReadableStateField<float>> adcs_ang_rate_fp;
     std::shared_ptr<WritableStateField<float>> adcs_min_stable_ang_rate_fp;
@@ -46,11 +46,11 @@ class TestFixture {
         srand(1);
         // Create dummy fields
         cycle_no_fp = registry.create_writable_field<unsigned int>("pan.cycle_no");
-        adcs_mode_fp = registry.create_writable_field<unsigned char>("adcs.mode", 10);
+        adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 10);
         adcs_cmd_attitude_fp = registry.create_writable_field<f_quat_t>("adcs.cmd_attitude");
         adcs_ang_rate_fp = registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
         adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
-        mission_mode_fp = registry.create_writable_field<unsigned char>("pan.mode");
+        mission_mode_fp = registry.create_writable_field<unsigned char>("pan.state");
         sat_designation_fp = registry.create_writable_field<unsigned char>("pan.sat_designation"); // should be 6 writable fields --> 3 bits 
 
         radio_mt_packet_len_fp = registry.create_internal_field<size_t>("uplink.len");
@@ -121,7 +121,7 @@ void test_create_uplink()
     bitstream out(backer, 8);
 
     // Create the expected result
-    size_t idx = tf.field_map["adcs.mode"];
+    size_t idx = tf.field_map["adcs.state"];
     size_t packet_size = tf.uplink_consumer->index_size + tf.uplink_consumer->get_field_length(idx);
 
     std::vector<bool> expect(packet_size, 0);
@@ -132,7 +132,7 @@ void test_create_uplink()
     expect[4] = 1;
     expect[5] = 0;
     expect[6] = 1;
-    // Create an entry in output packet bitstream to update adcs.mode
+    // Create an entry in output packet bitstream to update adcs.state
     size_t bits_written = tf.create_uplink(out, data, idx);
     TEST_ASSERT_EQUAL(packet_size, bits_written);
     out.reset();
@@ -162,7 +162,7 @@ void test_create_uplink_other()
     bitstream out(backer, 8);
 
     // Create the expected result
-    size_t idx = tf.field_map["adcs.mode"];
+    size_t idx = tf.field_map["adcs.state"];
     size_t packet_size = tf.uplink_consumer->index_size + tf.uplink_consumer->get_field_length(idx);
 
     std::vector<bool> expect(packet_size, 0);
@@ -173,7 +173,7 @@ void test_create_uplink_other()
     expect[4] = 1;
     expect[5] = 0;
     expect[6] = 1;
-    // Create an entry in output packet bitstream to update adcs.mode
+    // Create an entry in output packet bitstream to update adcs.state
     size_t bits_written = tf.create_uplink(out, in, idx);
     TEST_ASSERT_EQUAL(packet_size, bits_written);
     out.reset();
@@ -211,7 +211,7 @@ void test_get_field_length()
     TEST_ASSERT_EQUAL(0, tf.uplink_consumer->get_field_length(tf.registry.writable_fields.size()));
 
     // If a valid idx is specified
-    size_t idx = tf.field_map["adcs.mode"];
+    size_t idx = tf.field_map["adcs.state"];
     // Then return the length of the bit array
     TEST_ASSERT_EQUAL(4, tf.uplink_consumer->get_field_length(idx));
 }
@@ -223,7 +223,7 @@ void test_update_field()
     // field size is 8, initial value is 0x88
     // 0001 0001
     // idx = 4
-    size_t idx = tf.field_map["pan.mode"]; 
+    size_t idx = tf.field_map["pan.state"]; 
 
     // idx = 3, initial value is 0x6, field len is 4
     // 0101
@@ -244,7 +244,7 @@ void test_update_field()
     bitstream bs_mo(tmp, packet_bytes);
     bitstream bs_in(fake_data, 8);
     
-    // Create uplink for pan.mode
+    // Create uplink for pan.state
     bits_written += tf.create_uplink(bs_mo, bs_in, idx); 
 
     // Check that bitstream is at the right bit offset
@@ -308,7 +308,7 @@ void test_update_writable_field()
     auto field2 = tf.registry.writable_fields[idx2];
 
     // idx3 1 field len 4 current val 5
-    size_t idx3 = tf.field_map["adcs.mode"];
+    size_t idx3 = tf.field_map["adcs.state"];
     auto field3 = tf.registry.writable_fields[idx3];
 
     size_t packet_size = field->get_bit_array().size() + field2->get_bit_array().size() + field3->get_bit_array().size() + 3*3;
@@ -360,7 +360,7 @@ void test_mixed_validity_updates()
     auto field2 = tf.registry.writable_fields[idx2];
     uint64_t old2 = field2->get_bit_array().to_ullong();
 
-    size_t idx3 = tf.field_map["adcs.mode"];
+    size_t idx3 = tf.field_map["adcs.state"];
     auto field3 = tf.registry.writable_fields[idx3];
     uint64_t old3 = field3->get_bit_array().to_ullong();
 
