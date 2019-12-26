@@ -5,6 +5,14 @@
 
 class Fault : public ReadableStateField<bool> {
   public:
+    /**
+     * @brief Construct a new latching fault.
+     * 
+     * @param name Name of base fault state field.
+     * @param _persistence Persistence threshold before signaling fault.
+     * @param control_cycle_count Reference to the control cycle count.
+     * @param default_setting Default setting of fault signal.
+     */
     Fault(const std::string& name,
           const size_t _persistence, unsigned int& control_cycle_count,
           const bool default_setting = false);
@@ -38,14 +46,19 @@ class Fault : public ReadableStateField<bool> {
     bool is_faulted() const;
 
   private:
+    // Make the get() and set() methods of the state field private,
+    // so that the user is forced to use the signal() and unsignal()
+    // methods instead.
     using ReadableStateField<bool>::set;
     using ReadableStateField<bool>::get;
 
-    unsigned int cc; // Control cycle count
-    long int last_fault_time = -1;
+    unsigned int& cc; // Control cycle count
+    long int last_fault_time = -1; // Last control cycle # that the fault condition
+                                   // occurred
 
-    unsigned int persistence;
-    unsigned int num_consecutive_faults = 0;
+    unsigned int persistence; // Persistence threshold for fault signal
+    unsigned int num_consecutive_faults = 0; // Number of consecutive fault condition
+                                             // occurrences at the current moment.
 
     /**
      * @brief State fields that can be set by the ground to suppress

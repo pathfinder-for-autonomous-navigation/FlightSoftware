@@ -14,39 +14,35 @@ void test_fault_normal_behavior() {
     Fault fault2("fault", 5, control_cycle_count, true);
     TEST_ASSERT(fault2.is_faulted());
 
-    // Test adding to registry
-    StateFieldRegistryMock r;
+    // Test that adding the fault to the registry works
+    StateFieldRegistry r;
     TEST_ASSERT(fault.add_to_registry(r));
-    TEST_ASSERT(r.find_readable_field_t<bool>("fault"));
-    TEST_ASSERT(r.find_writable_field_t<bool>("fault.override"));
-    TEST_ASSERT(r.find_writable_field_t<bool>("fault.suppress"));
+    TEST_ASSERT(r.find_readable_field("fault"));
+    TEST_ASSERT(r.find_writable_field("fault.override"));
+    TEST_ASSERT(r.find_writable_field("fault.suppress"));
 
-    // Test that fault is not signaled when signal condition happens under the persistence
-    for(int i = 0; i < 5; i++) {
-        fault.signal();
+    // Fault should not be signaled when signal condition happens under the persistence
+    for(int i = 0; i < 4; i++) {
+        control_cycle_count++; fault.signal();
         TEST_ASSERT_FALSE(fault.is_faulted());
-        control_cycle_count++;
     }
 
-    // Test that signaling the fault again has no effect if the control cycle count
-    // is not also incremented.
-    fault.signal();
-    TEST_ASSERT_FALSE(fault.is_faulted());
-
-    // Resetting the fault does not cause the fault to be signaled, but does cause
+    // Resetting the fault should not cause the fault to be signaled, but should cause
     // the num_conseuctive_faults to reset. Resultantly, incrementing the control
-    // cycle count and signaling does not cause the fault to be signaled.
+    // cycle count and signaling should not cause the fault to be signaled.
     fault.unsignal();
-    control_cycle_count++;
-    fault.signal();
+    control_cycle_count++; fault.signal();
     TEST_ASSERT_FALSE(fault.is_faulted());
 
     // Keep signaling the fault until we're just underneath the fault's persistence
     // threshold.
-    for(int i = 0; i < 4; i++, control_cycle_count++) fault.signal();
-    // Incrementing the control cycle count now causes the fault to be signaled.
+    for(int i = 0; i < 4; i++) { control_cycle_count++; fault.signal(); }
+    // Signaling the fault again should have no effect if the control cycle count
+    // is not also incremented.
     fault.signal();
-    control_cycle_count++;
+    TEST_ASSERT_FALSE(fault.is_faulted());
+    // Incrementing the control cycle count should now cause the fault to be signaled.
+    control_cycle_count++; fault.signal();
     TEST_ASSERT(fault.is_faulted());
 
     // Resetting the fault works.
@@ -65,16 +61,24 @@ void test_fault_overridden_behavior() {
     // The fault is signaled if overrided.
     override_fp->set(true);
     TEST_ASSERT(fault.is_faulted());
+    // Override is immune to the fault being unsignaled
+    fault.unsignal();
+    TEST_ASSERT(fault.is_faulted());
+
     override_fp->set(false);
 
-    // The fault is not signaled if suppressed.
+    // The fault should not be signaled if suppressed.
+    // We'll cause the fault to be signaled first, and then suppress it.
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
-    TEST_ASSERT(fault.is_faulted());
+    TEST_ASSERT(fault.is_faulted()); // Fault signaled
     suppress_fp->set(true);
     TEST_ASSERT_FALSE(fault.is_faulted());
+    // Fault should remain suppressed even when additional fault conditions are signaled
+    control_cycle_count++; fault.signal();
+    TEST_ASSERT_FALSE(fault.is_faulted());
 
-    // The fault is signaled if suppressed and overrided (overrides take precedence.)
+    // Fault should be signaled if suppressed and overrided (i.e. overrides take precedence.)
     fault.unsignal();
     override_fp->set(true);
     suppress_fp->set(true);
