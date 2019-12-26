@@ -6,8 +6,8 @@ Fault::Fault(const std::string& name,
     ReadableStateField<bool>(name, Serializer<bool>()),
     cc(control_cycle_count),
     persistence(_persistence),
-    suppress_f(name + std::string(".suppress"), Serializer<bool>()),
-    override_f(name + std::string(".override"), Serializer<bool>())
+    suppress_f(name + ".suppress", Serializer<bool>()),
+    override_f(name + ".override", Serializer<bool>())
 {
   set(default_setting);
   override_f.set(false);
