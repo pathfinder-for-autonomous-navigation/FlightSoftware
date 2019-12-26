@@ -2,6 +2,7 @@
 #include "../../src/FCCode/ClockManager.hpp"
 #include "../StateFieldRegistryMock.hpp"
 #include <unity.h>
+
 #ifdef DESKTOP
     #include <iostream>
 #else
@@ -54,14 +55,10 @@ class TestFixture {
         dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, "dummy2", allocated_starts[1]);
 
         // Check that the statistics parameters are available.
-        auto num_lates_fp_1 = registry.find_readable_field_t<unsigned int>("timing.dummy1.num_lates");
-        auto num_lates_fp_2 = registry.find_readable_field_t<unsigned int>("timing.dummy2.num_lates");
-        auto avg_wait_fp_1 = registry.find_readable_field_t<float>("timing.dummy1.avg_wait");
-        auto avg_wait_fp_2 = registry.find_readable_field_t<float>("timing.dummy2.avg_wait");
-        assert(num_lates_fp_1);
-        assert(num_lates_fp_2);
-        assert(avg_wait_fp_1);
-        assert(avg_wait_fp_2);
+        //auto num_lates_fp_1 = registry.find_readable_field_t<unsigned int>("timing.dummy1.num_lates");
+        //auto num_lates_fp_2 = registry.find_readable_field_t<unsigned int>("timing.dummy2.num_lates");
+        //auto avg_wait_fp_1 = registry.find_readable_field_t<float>("timing.dummy1.avg_wait");
+        //auto avg_wait_fp_2 = registry.find_readable_field_t<float>("timing.dummy2.avg_wait");
     }
 
     /**
@@ -141,7 +138,7 @@ void test_task_execute() {
     constexpr unsigned long expected_duration = TestFixture::control_cycle_ms * 1000 - 2000;
 
     // 4 ms drift over a period of 8 seconds (0.05% clock lag.) Pretty good!
-    TEST_ASSERT_UINT64_WITHIN(4000, expected_duration, t_delta);
+    TEST_ASSERT_LESS_OR_EQUAL(4000, t_delta - expected_duration);
 }
 
 int test_timed_control_task() {
