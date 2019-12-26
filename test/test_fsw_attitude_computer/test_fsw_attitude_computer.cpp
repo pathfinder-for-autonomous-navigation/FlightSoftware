@@ -40,7 +40,7 @@ class TestFixture {
         adcs_vec2_desired_fp = registry.find_writable_field_t<f_vector_t>("adcs.control.vec2.desired");
 
         // Set quaternion to non-rotating value
-        q_body_eci_fp->set({1,0,0,0});
+        q_body_eci_fp->set({0,0,0,1});
     }
 };
 
@@ -63,10 +63,9 @@ void test_point_standby() {
 
     tf.pos_fp->set({0,2,0});
     tf.attitude_computer->execute();
-    // TODO Test assertion 1 is incorrect here because of GNC rotate_frame instability. Fix when the issue is resolved.
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,-1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-1}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,1}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
 }
 
@@ -77,11 +76,10 @@ void test_point_docking() {
     tf.pos_fp->set({0,2,0});
     tf.pos_baseline_fp->set({0,0,3});
     tf.attitude_computer->execute();
-    // TODO Test assertions 1 and 3 are incorrect here because of GNC rotate_frame instability. Fix when the
-    // issue is resolved.
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,-1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
+
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-1}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-1}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
 }
 
