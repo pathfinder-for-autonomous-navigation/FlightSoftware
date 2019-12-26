@@ -34,9 +34,8 @@ class AttitudeComputer : public TimedControlTask<void> {
     const ReadableStateField<f_vector_t>* ssa_vec_fp;
 
     /**
-     * @brief Inputs required from Piksi for pointing.
+     * @brief Inputs required from orbit estimator for pointing.
      */
-    const ReadableStateField<gps_time_t>* time_fp;
     const ReadableStateField<d_vector_t>* pos_fp;
     const ReadableStateField<d_vector_t>* baseline_pos_fp;
 

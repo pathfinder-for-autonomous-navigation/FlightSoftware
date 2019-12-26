@@ -18,7 +18,6 @@ AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int of
     adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
     q_body_eci_fp = find_readable_field<f_quat_t>("attitude_estimator.q_body_eci", __FILE__, __LINE__);
     ssa_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec", __FILE__, __LINE__);
-    time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__);
     pos_fp = find_readable_field<d_vector_t>("orbit.pos", __FILE__, __LINE__);
     baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
 }
@@ -30,22 +29,39 @@ void AttitudeComputer::execute() {
     lin::Vector4f body_eci_quat = {q_body_eci[0], q_body_eci[1], q_body_eci[2], q_body_eci[3]};
 
     const d_vector_t pos_eci = pos_fp->get();
+    const bool posdata_is_set = !isnan(pos_eci[0]);
+
     lin::Vector3f r_hat_eci = {
         static_cast<float>(pos_eci[0]),
         static_cast<float>(pos_eci[1]),
         static_cast<float>(pos_eci[2])
     };
-    r_hat_eci = r_hat_eci / lin::norm(r_hat_eci);
+
     lin::Vector3f r_hat_body;
-    gnc::utl::rotate_frame(body_eci_quat, r_hat_eci, r_hat_body);
-    const f_vector_t r_hat_body_vec = {r_hat_body(0), r_hat_body(1), r_hat_body(2)};
+    f_vector_t r_hat_body_vec;
+    if (posdata_is_set) {
+        r_hat_eci = r_hat_eci / lin::norm(r_hat_eci);
+        gnc::utl::rotate_frame(body_eci_quat, r_hat_eci, r_hat_body);
+        r_hat_body_vec = {r_hat_body(0), r_hat_body(1), r_hat_body(2)};
+    }
 
     switch(adcs_state) {
         case adcs_state_t::point_standby: {
             const f_vector_t ssa_vec = ssa_vec_fp->get();
 
-            if (time_fp->get().is_set) {
-                // We've got a GPS reading, point in a direction that
+            if (!posdata_is_set) {
+                // We don't have a GPS reading. Point in the direction of the sun
+                // since that's the only vector we know reliably. It'll charge up
+                // our battery and we'll eventually have GPS coverage.
+                constexpr float nan = std::numeric_limits<float>::quiet_NaN();
+
+                adcs_vec1_current_f.set(ssa_vec);
+                adcs_vec1_desired_f.set({1,0,0});
+                adcs_vec2_current_f.set({nan, nan, nan});
+                adcs_vec2_desired_f.set({nan, nan, nan});
+            }
+            else {
+                // We've got a GPS reading. Point in a direction that
                 // maximizes comms and power.
                 const lin::Vector3f ssa_normalized = {ssa_vec[0], ssa_vec[1], ssa_vec[2]};
                 lin::Vector3f r_cross_ssa = lin::cross(r_hat_body, ssa_normalized);
@@ -56,17 +72,6 @@ void AttitudeComputer::execute() {
                 adcs_vec1_desired_f.set({1,0,0});
                 adcs_vec2_current_f.set(r_cross_ssa_vec);
                 adcs_vec2_desired_f.set({0,0,1});
-            }
-            else {
-                // We don't have a GPS reading. Point in the direction of the sun
-                // since that's the only vector we know reliably. It'll charge up
-                // our battery and we'll eventually have GPS coverage.
-                constexpr float nan = std::numeric_limits<float>::quiet_NaN();
-
-                adcs_vec1_current_f.set(ssa_vec);
-                adcs_vec1_desired_f.set({1,0,0});
-                adcs_vec2_current_f.set({nan, nan, nan});
-                adcs_vec2_desired_f.set({nan, nan, nan});
             }
         }
         break;
