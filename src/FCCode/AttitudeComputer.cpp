@@ -2,6 +2,7 @@
 #include "adcs_state_t.enum"
 #include <lin.hpp>
 #include <gnc_utilities.hpp>
+#include <cmath>
 
 AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_computer", offset),
@@ -29,7 +30,7 @@ void AttitudeComputer::execute() {
     lin::Vector4f body_eci_quat = {q_body_eci[0], q_body_eci[1], q_body_eci[2], q_body_eci[3]};
 
     const d_vector_t pos_eci = pos_fp->get();
-    const bool posdata_is_set = !isnan(pos_eci[0]);
+    const bool posdata_is_set = std::isfinite(pos_eci[0]);
 
     lin::Vector3f r_hat_eci = {
         static_cast<float>(pos_eci[0]),
