@@ -11,7 +11,6 @@ class TestFixture {
     StateFieldRegistryMock registry;
     // Input state fields to mission manager
     std::shared_ptr<WritableStateField<unsigned int>> cycle_no_fp;
-    std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
     std::shared_ptr<WritableStateField<f_quat_t>> adcs_cmd_attitude_fp;
     std::shared_ptr<ReadableStateField<float>> adcs_ang_rate_fp;
     std::shared_ptr<WritableStateField<float>> adcs_min_stable_ang_rate_fp;
@@ -20,11 +19,12 @@ class TestFixture {
 
     std::unique_ptr<MissionManager> mission_manager;
     // Output state fields from mission manager
+    WritableStateField<unsigned char>* adcs_state_fp;
     WritableStateField<unsigned char>* mission_mode_fp;
+    ReadableStateField<bool>* is_deployed_fp;
     WritableStateField<unsigned char>* sat_designation_fp;
 
     TestFixture() : registry() {
-        adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 10);
         adcs_cmd_attitude_fp = registry.create_writable_field<f_quat_t>("adcs.cmd_attitude");
         adcs_ang_rate_fp = registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
         adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
@@ -34,7 +34,9 @@ class TestFixture {
         mission_manager = std::make_unique<MissionManager>(registry, 0);
 
         mission_mode_fp = registry.find_writable_field_t<unsigned char>("pan.mode");
+        is_deployed_fp = registry.find_readable_field_t<bool>("pan.deployed");
         sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
+        adcs_state_fp = registry.find_writable_field_t<unsigned char>("adcs.state");
     }
 };
 
