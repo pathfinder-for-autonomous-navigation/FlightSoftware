@@ -5,8 +5,11 @@
 #include <map>
 
 /**
- * UplinkProducer provides operations on an UplinkPacket
- * An UplinkProducer is stateless
+ * UplinkProducer provides operations on a bitstream. A bitstream represents
+ * an uplink packet
+ * 
+ * Dependencies: Uplink
+ * 
  */
 class UplinkProducer : public Uplink{
   public:
@@ -40,7 +43,7 @@ class UplinkProducer : public Uplink{
     /**
      * Return the maximum possible packet size
      */
-    size_t get_max_possible_packet_size();
+    const size_t get_max_possible_packet_size();
 #ifndef DEBUG
   private:
 #endif

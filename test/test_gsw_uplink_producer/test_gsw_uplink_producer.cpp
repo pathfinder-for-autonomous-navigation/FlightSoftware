@@ -13,11 +13,13 @@ class TestFixture {
 
     std::unique_ptr<UplinkProducer> uplink_producer;
     
-    // Create a TestFixture instance of QuakeManager with the following parameters
+    // Create a TestFixture instance of UplinkProducer with the following parameters
     TestFixture() : registry() {
          uplink_producer = std::make_unique<UplinkProducer>(registry);
         // Create dummy fields
     }
+    // Checks that each of the witable fields specified in json file are set to the
+    // value specified in the json file
     void check_json_registry(const char* filename)
     {
       using json = nlohmann::json;
@@ -97,7 +99,6 @@ void test_invalid_values()
     bitstream bs(tmp, arr_size);
     TEST_ASSERT_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_3.json"));
 }
-
 
 int main() {
     UNITY_BEGIN();

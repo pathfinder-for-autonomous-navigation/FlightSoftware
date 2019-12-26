@@ -4,15 +4,14 @@
 #include <iostream>
 #include <json.hpp>
 #include <exception>
-#define UP_MAX_FILESIZE 
 
 UplinkProducer::UplinkProducer(StateFieldRegistry& r):
     Uplink(r),
     fcp(registry, PAN::flow_data)
  {
-     // This has to be recalculated because r is not yet initialized when uplink runs
-    for (index_size = 1; (registry.writable_fields.size() + 1) / (1 << index_size) > 0; ++index_size){}
     max_possible_packet_size = 0;
+    // initialize index_size
+    init_uplink();
     // Setup field_map
     for (size_t i = 0; i < registry.writable_fields.size(); ++i)
     {
@@ -47,10 +46,9 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
             // Get the field's index in writable_fields
             size_t field_index = field_map[key];
 
-            // Warning: auto val will not work because we need reinterpret_cast
-            //  to reinterpret from an unsigned int
+            // Make sure the value we want to set does not exceed the max possible
+            // value that the field can be set to
             uint64_t val = e.value();
-
             uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
             if (val > max_val)
                 throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
@@ -117,12 +115,12 @@ void UplinkProducer::to_file(const bitstream& bs, const std::string& filename)
     if (!is_valid)
        throw std::runtime_error("Uplink Producer: Packet you created is not valid");
     // Write to file
-    std::ofstream newFile (filename, std::ios::out | std::ios::binary);
-    newFile.write(reinterpret_cast<const char*>(bs.stream), bs.max_len);
-    newFile.close();
+    std::ofstream new_file (filename, std::ios::out | std::ios::binary);
+    new_file.write(reinterpret_cast<const char*>(bs.stream), bs.max_len);
+    new_file.close();
 }
 
-size_t UplinkProducer::get_max_possible_packet_size()
+const size_t UplinkProducer::get_max_possible_packet_size()
 {
     return max_possible_packet_size;
 }

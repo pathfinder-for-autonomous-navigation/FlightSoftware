@@ -7,7 +7,8 @@
  * QuakeManager to set radio_mt_packet_fp to point to its MT buffer and expects
  * QuakeManager to set radio_mt_packet_len_fp whenever a new uplink is received. 
  * 
- * Dependencies: QuakeManager, StateFieldRegistry (must have access to this)
+ * Dependencies: QuakeManager, StateFieldRegistry (must have access to this),
+ * Uplink
  * 
  * State Fields Provided: radio_mt_packet_fp, radio_mt_packet_len_fp
  * 

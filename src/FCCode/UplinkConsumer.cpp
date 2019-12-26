@@ -5,14 +5,12 @@ UplinkConsumer::UplinkConsumer(StateFieldRegistry& _registry, unsigned int offse
 {
     radio_mt_packet_len_fp = find_internal_field<size_t>("uplink.len", __FILE__, __LINE__);
     radio_mt_packet_fp = find_internal_field<char*>("uplink.ptr", __FILE__, __LINE__);
-
-    // calcualte the maximum number of bits needed to represent the indices
-    for (index_size = 1; (_registry.writable_fields.size() + 1) / (1 << index_size) > 0; ++index_size){}
-    printf(debug_severity::info, "[UplinkConsumer constructor] index_size: %u", index_size);
 }
 
 void UplinkConsumer::execute()
 {
+    if (index_size == 0)
+        init_uplink();
     // Return if mt buffer is NULL or mt packet length is 0
     if ( !radio_mt_packet_len_fp->get() || !radio_mt_packet_fp->get())
         return;
@@ -20,7 +18,7 @@ void UplinkConsumer::execute()
     if (validate_packet())
         update_fields();
 
-    // clear len always to avoid reprocessing bad packets
+    // clear len always
     radio_mt_packet_len_fp->set(0);
 }
 
