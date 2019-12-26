@@ -29,7 +29,6 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       ADCS_INITIALIZATION,
       adcs_monitor(registry, adcs_monitor_offset, adcs),
       attitude_estimator(registry, attitude_estimator_offset),
-      attitude_computer(registry, attitude_computer_offset),
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
       docksys(),
@@ -38,7 +37,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       quake_manager(registry, quake_manager_offset),
       uplink_consumer(registry, uplink_consumer_offset),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
-      mission_manager(registry, mission_manager_offset) // This item is initialized last so it has access to all state fields
+      mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
+      attitude_computer(registry, attitude_computer_offset) // This item needs "adcs.state" from mission manager.
 {
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP

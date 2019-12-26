@@ -35,7 +35,6 @@ class MainControlLoop : public ControlTask<void> {
     Devices::ADCS adcs;
     ADCSBoxMonitor adcs_monitor;
     AttitudeEstimator attitude_estimator;
-    AttitudeComputer attitude_computer;
 
     Devices::Gomspace::eps_hk_t hk;
     Devices::Gomspace::eps_config_t config; 
@@ -83,6 +82,8 @@ class MainControlLoop : public ControlTask<void> {
     ReadableStateField<unsigned int> memory_use_f;
 
     MissionManager mission_manager;
+
+    AttitudeComputer attitude_computer;
 
    public:
     /*
