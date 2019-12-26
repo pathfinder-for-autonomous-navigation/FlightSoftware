@@ -94,5 +94,5 @@ class UplinkConsumer : public TimedControlTask<void>, public Uplink {
   /**
     * @brief Pointer to the uplink buffer in QuakeManager
     **/ 
-   InternalStateField<char*>* radio_mt_packet_fp;
+  const InternalStateField<char*>* radio_mt_packet_fp;
 };
