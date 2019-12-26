@@ -213,6 +213,7 @@ class Piksi {
     virtual unsigned int get_iar();
 
     //set of mocking methods
+    // #ifdef UNIT_TEST
     #ifdef DESKTOP
     void set_gps_time(const unsigned int tow);
     void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position, const unsigned char nsats);
@@ -408,6 +409,7 @@ class Piksi {
     bool _user_data_update;
 
     //set read return mock
+    // #if defined(DESKTOP) || defined(UNIT_TEST) 
     #ifdef DESKTOP
     unsigned int _read_return;
     #endif
