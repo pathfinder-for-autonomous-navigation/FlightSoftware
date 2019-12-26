@@ -3,11 +3,14 @@
 #include "../src/FCCode/adcs_state_t.enum"
 
 #include <unity.h>
+#include "../custom_assertions.hpp"
 
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
     // Input state fields to attitude computer
+    std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
+    std::shared_ptr<ReadableStateField<f_quat_t>> q_body_eci_fp;
     std::shared_ptr<ReadableStateField<f_vector_t>> ssa_vec_fp;
     std::shared_ptr<ReadableStateField<gps_time_t>> time_fp;
     std::shared_ptr<ReadableStateField<d_vector_t>> pos_fp;
@@ -17,26 +20,29 @@ class TestFixture {
     std::unique_ptr<AttitudeComputer> attitude_computer;
     
     // Output state fields
-    WritableStateField<unsigned char>* adcs_state_fp;
     const WritableStateField<f_vector_t>* adcs_vec1_current_fp;
     const WritableStateField<f_vector_t>* adcs_vec1_desired_fp;
     const WritableStateField<f_vector_t>* adcs_vec2_current_fp;
     const WritableStateField<f_vector_t>* adcs_vec2_desired_fp;
 
     TestFixture() : registry() {
+        adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
+        q_body_eci_fp = registry.create_readable_field<f_quat_t>("attitude_estimator.q_body_eci");
         ssa_vec_fp = registry.create_readable_vector_field<float>("adcs_monitor.ssa_vec", 0, 1, 100);
         time_fp = registry.create_readable_field<gps_time_t>("piksi.time");
-        pos_fp = registry.create_readable_vector_field<double>("piksi.pos", 0, 100000, 100);
-        pos_baseline_fp = registry.create_readable_vector_field<double>("piksi.baseline_pos", 0, 100000, 100);
+        pos_fp = registry.create_readable_vector_field<double>("orbit.pos", 0, 100000, 100);
+        pos_baseline_fp = registry.create_readable_vector_field<double>("orbit.baseline_pos", 0, 100000, 100);
 
         attitude_computer = std::make_unique<AttitudeComputer>(registry, 0);
 
         // Check that attitude computer creates its expected fields
-        adcs_state_fp = registry.find_writable_field_t<unsigned char>("adcs.state");
         adcs_vec1_current_fp = registry.find_writable_field_t<f_vector_t>("adcs.control.vec1.current");
         adcs_vec1_desired_fp = registry.find_writable_field_t<f_vector_t>("adcs.control.vec1.desired");
         adcs_vec2_current_fp = registry.find_writable_field_t<f_vector_t>("adcs.control.vec2.current");
         adcs_vec2_desired_fp = registry.find_writable_field_t<f_vector_t>("adcs.control.vec2.desired");
+
+        // Set quaternion to non-rotating value
+        q_body_eci_fp->set({1,0,0,0});
     }
 };
 
@@ -48,22 +54,24 @@ void test_point_standby() {
     TestFixture tf;
     constexpr float nan = std::numeric_limits<float>::quiet_NaN();
     
+    // is_set = false
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_standby));
-    tf.time_fp->set(gps_time_t()); // is_set = false
+    tf.time_fp->set(gps_time_t());
     tf.pos_fp->set({0,2,0});
     tf.ssa_vec_fp->set({1,0,0});
     tf.attitude_computer->execute();
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({1,0,0}).data(), tf.adcs_vec1_current_fp->get().data(), 3);
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 3);
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({nan,nan,nan}).data(), tf.adcs_vec2_current_fp->get().data(), 3);
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({nan,nan,nan}).data(), tf.adcs_vec2_desired_fp->get().data(), 3);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({1,0,0}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({nan,nan,nan}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({nan,nan,nan}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
 
-    tf.time_fp->set(gps_time_t(10)); // is_set = true
+    // is_set = true
+    tf.time_fp->set(gps_time_t(10));
     tf.attitude_computer->execute();
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 3);
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 3);
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 3);
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,0,1}).data(), tf.adcs_vec2_desired_fp->get().data(), 3);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({0,1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({0,0,1}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
 }
 
 void test_point_docking() {
@@ -73,10 +81,10 @@ void test_point_docking() {
     tf.pos_fp->set({0,2,0});
     tf.pos_baseline_fp->set({0,0,3});
     tf.attitude_computer->execute();
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 3);
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 3);
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 3);
-    TEST_ASSERT_EQUAL_DOUBLE_ARRAY(d_vector_t({0,0,-1}).data(), tf.adcs_vec2_desired_fp->get().data(), 3);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({0,1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({0,0,-1}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
 }
 
 int test_attitude_computer() {

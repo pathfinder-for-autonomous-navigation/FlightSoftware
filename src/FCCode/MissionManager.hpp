@@ -30,7 +30,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Mode of ADCS system.
      **/
-    WritableStateField<unsigned char>* adcs_state_fp;
+    WritableStateField<unsigned char> adcs_state_f;
     /**
      * @brief Currently commanded attitude of ADCS system.
      **/

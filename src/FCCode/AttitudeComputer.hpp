@@ -23,8 +23,14 @@ class AttitudeComputer : public TimedControlTask<void> {
 
    protected:
     /**
+     * @brief Input required from mission manager.
+     */
+    const WritableStateField<unsigned char>* adcs_state_fp;
+
+    /**
      * @brief Inputs required from ADCS system for pointing.
      */
+    const ReadableStateField<f_quat_t>* q_body_eci_fp;
     const ReadableStateField<f_vector_t>* ssa_vec_fp;
 
     /**
@@ -37,7 +43,6 @@ class AttitudeComputer : public TimedControlTask<void> {
     /**
      * @brief Fields used in control of attitude.
      */
-    const WritableStateField<unsigned char> adcs_state_f;
     WritableStateField<f_vector_t> adcs_vec1_current_f;
     WritableStateField<f_vector_t> adcs_vec1_desired_f;
     WritableStateField<f_vector_t> adcs_vec2_current_f;

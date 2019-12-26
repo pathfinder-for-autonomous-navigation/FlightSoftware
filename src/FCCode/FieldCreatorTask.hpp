@@ -16,6 +16,9 @@ class FieldCreatorTask : public ControlTask<void> {
       WritableStateField<float> adcs_min_stable_ang_rate_f;
       WritableStateField<bool> docking_config_cmd_f;
 
+      ReadableStateField<d_vector_t> pos_f;
+      ReadableStateField<d_vector_t> pos_baseline_f;
+
       ReadableStateField<f_vector_t> ssa_vec_rd_f;
       ReadableStateField<f_vector_t> mag_vec_f;
 
@@ -27,6 +30,8 @@ class FieldCreatorTask : public ControlTask<void> {
         adcs_ang_rate_f("adcs.ang_rate", Serializer<float>(0, 10, 4)),
         adcs_min_stable_ang_rate_f("adcs.min_stable_ang_rate", Serializer<float>(0, 10, 4)),
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
+        pos_f("orbit.pos", Serializer<d_vector_t>(0,100000,100)),
+        pos_baseline_f("orbit.baseline_pos", Serializer<d_vector_t>(0,100000,100)),
         ssa_vec_rd_f("adcs_box.sun_vec", Serializer<f_vector_t>(0,1,32*3)),
         mag_vec_f("adcs_box.mag_vec", Serializer<f_vector_t>(0,1,32*3)),
         radio_err_f("downlink_producer.radio_err_ptr", Serializer<signed int>(-90, 10))
@@ -37,6 +42,10 @@ class FieldCreatorTask : public ControlTask<void> {
           add_writable_field(adcs_cmd_attitude_f);
           add_readable_field(adcs_ang_rate_f);
           add_writable_field(adcs_min_stable_ang_rate_f);
+
+          // For AttitudeComputer
+          add_readable_field(pos_f);
+          add_readable_field(pos_baseline_f);
 
           // For DockingController
           add_writable_field(docking_config_cmd_f);
