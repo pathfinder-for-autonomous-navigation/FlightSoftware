@@ -1,0 +1,10 @@
+#ifndef propulsion_mode_t_enum
+#define propulsion_mode_t_enum
+
+// prop.mode
+enum class propulsion_mode_t {
+    disabled,
+    active
+};
+
+#endif

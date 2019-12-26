@@ -2,17 +2,17 @@
 
 DockingController::DockingController(StateFieldRegistry &registry, unsigned int offset,
     Devices::DockingSystem &_docksys)
-    : TimedControlTask<void>(registry, "docking_ct", offset), docksys(_docksys), docked_sr(),
-      docked_f("docksys.docked", docked_sr),
-      dock_config_sr(),
-      dock_config_f("docksys.dock_config", dock_config_sr),
-      is_turning_sr(),
-      is_turning_f("docksys.is_turning", is_turning_sr)
+    : TimedControlTask<void>(registry, "docking_ct", offset), docksys(_docksys),
+      docked_f("docksys.docked", Serializer<bool>()),
+      dock_config_f("docksys.dock_config", Serializer<bool>()),
+      is_turning_f("docksys.is_turning", Serializer<bool>())
 {
   add_readable_field(docked_f);
   add_readable_field(dock_config_f);
   add_readable_field(is_turning_f);
+}
 
+void DockingController::init() {
   docking_config_cmd_fp = find_writable_field<bool>("docksys.config_cmd", __FILE__, __LINE__);
 }
 
