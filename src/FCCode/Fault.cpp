@@ -38,7 +38,13 @@ void Fault::unsignal() {
 }
 
 bool Fault::is_faulted() const {
-    if (override_f.get()) return true;
-    else if (suppress_f.get()) return false;
+    if (override_f.get()) {
+        num_consecutive_faults = 0;
+        return true;
+    }
+    else if (suppress_f.get()) {
+        num_consecutive_faults = 0;
+        return false;
+    }
     else return get();
 }
