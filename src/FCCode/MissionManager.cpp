@@ -49,7 +49,8 @@ void MissionManager::execute() {
     mission_state_t mode = static_cast<mission_state_t>(mission_state_f.get());
 
     if (mode != mission_state_t::startup) {
-        check_hardware_faults();
+        bool faulted = check_hardware_faults();
+        if (faulted) set(mission_state_t::safehold);
     }
 
     switch(mode) {
@@ -276,6 +277,7 @@ void MissionManager::dispatch_manual() {
     // Do nothing.
 }
 
+
 double MissionManager::distance_to_other_sat() const {
     const d_vector_t dr = propagated_baseline_pos_fp->get();
     lin::Vector3d dr_vec = {dr[0], dr[1], dr[2]};
@@ -283,7 +285,8 @@ double MissionManager::distance_to_other_sat() const {
 }
 
 bool MissionManager::too_long_since_last_comms() const {
-    return control_cycle_count - last_checkin_cycle_fp->get() > max_radio_silence_duration;
+    const unsigned int cycles_since_last_comms = control_cycle_count - last_checkin_cycle_fp->get();
+    return cycles_since_last_comms > max_radio_silence_duration;
 }
 
 void MissionManager::set(mission_state_t state) {
