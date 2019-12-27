@@ -8,13 +8,23 @@
 /**
  * Propulsion Controller
  * 
- * Two inner valves: x, y
- * Four outer valves: 0, 1, 2, 3
+ * Overview: 
+ * The propulsion system is comprised of an inner tank and an outer tank. The inner
+ * tank is initially full of fuel. The outer tank is initially empty. The inner 
+ * tank has two valves, {0, 1}, and the outer tank has four valves, {0, 1, 2, 3}. 
+ * 
+ * Functions:
+ * Pressurize - Open the inner valves to fill the outer tank with fuel
+ * Fire - Open the outer valves to propel the satellite in some direction by 
+ * releasing fuel from the outer tank
  * 
  * External Fields:
- *  fire_time_f - time at which we wish to fire outer valves
- *  delta_thrust_times_f - duration to open each outer valve at fire_time
+ * fire_time_f - Time at which we wish to fire (open the outer valves)
+ * delta_thrust_times_f - Duration to open each outer valve
  * 
+ * For states and faults, see propulsion_state_t.enum and propulsion_fault_t.enum
+ * 
+ * Notes: 
  * SIG_FIRE enabled only in the firing state
  * Check for faults/problems every control cycle
  * 
@@ -50,6 +60,9 @@ class PropController : public TimedControlTask<void> {
 #ifndef DEBUG
     protected:
 #endif
+    /**
+     * dispatch functions for transitioning states
+     */
     void dispatch_idle();
     void dispatch_pressurizing();
     void dispatch_firing();
@@ -69,9 +82,9 @@ class PropController : public TimedControlTask<void> {
     
     /**
      * Detects faults
-     * @return false if unrecoverable fault encountered; true otherwis
+     * @return false if unrecoverable fault encountered; true otherwise
      * Side Effect: 
-     *    May change the state to handling_fault and may change prop_fault_f
+     *    May change the state to handling_fault and may set prop_fault_f
      */
     bool detect_and_set_faults();
 
@@ -118,7 +131,7 @@ class PropController : public TimedControlTask<void> {
     void stop_filling();
 
     /**
-     * Return true if tank pressure >= firing thresh_hold
+     * Return true if tank pressure >= firing threshhold
      */
     bool done_pressurizing();
 

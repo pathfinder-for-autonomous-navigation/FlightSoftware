@@ -68,6 +68,11 @@ void PropController::dispatch_idle()
     prop_state_f.set(prop_state_t::pressurizing);
 }
 
+void PropController::reset_state_vars()
+{
+    memset(&state_vars, 0, sizeof(state_vars));
+}
+
 // ---------------------------------------------------------------------------
 // Pressurizing
 // ---------------------------------------------------------------------------
