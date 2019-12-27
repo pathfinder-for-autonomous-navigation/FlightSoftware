@@ -51,6 +51,7 @@ class TestFixture {
     void check(radio_mode_t mode) const;
     void check(sat_designation_t designation) const;
 
+    // Containers for enum possibilities
     static adcs_state_t adcs_states[8];
     static prop_mode_t prop_modes[2];
 

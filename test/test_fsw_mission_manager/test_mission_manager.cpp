@@ -1,9 +1,3 @@
-#include "../src/FCCode/mission_state_t.enum"
-#include "../src/FCCode/adcs_state_t.enum"
-#include "../src/FCCode/radio_mode_t.enum"
-#include "../src/FCCode/prop_mode_t.enum"
-#include "../src/FCCode/sat_designation_t.enum"
-
 #include <unity.h>
 #include "test_fixture.hpp"
 
@@ -166,7 +160,7 @@ void test_dispatch_standby() {
     }
 
     // Test that the ADCS state is fully ground-commandable, but that
-    // propulsion mode is not.
+    // propulsion mode is not. (Propulsion mode should always be active.)
     {
         TestFixture tf(mission_state_t::standby);
 
