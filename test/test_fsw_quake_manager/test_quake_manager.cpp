@@ -539,7 +539,7 @@ void test_modes() {
    assert_qct(CONFIG);
 }
 
-int test_mission_manager() {
+int test_quake_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_wait_unexpected); 
     RUN_TEST(test_config_unexpected); 
@@ -574,14 +574,14 @@ int test_mission_manager() {
 
 #ifdef DESKTOP
 int main() {
-    return test_mission_manager();
+    return test_quake_manager();
 }
 #else
 #include <Arduino.h>
 void setup() {
     delay(2000);
     Serial.begin(9600);
-    test_mission_manager();
+    test_quake_manager();
 }
 
 void loop() {}

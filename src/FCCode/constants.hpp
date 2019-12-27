@@ -13,7 +13,7 @@ namespace PAN {
         #else
             constexpr unsigned int control_cycle_time = 170000; 
         #endif
-    #elif FLIGHT
+    #elif defined(FLIGHT) || defined(UNIT_TEST)
         constexpr unsigned int control_cycle_time_ms = 120;
         constexpr unsigned int control_cycle_time_us = 120000;
         constexpr unsigned int control_cycle_time = 120000;

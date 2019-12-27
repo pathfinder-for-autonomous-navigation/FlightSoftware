@@ -2,17 +2,42 @@
 #define MISSION_MANAGER_HPP_
 
 #include "TimedControlTask.hpp"
-
-#include "mission_mode_t.enum"
-#include "adcs_state_t.enum"
-#include "satellite_designation_t.enum"
+#include "constants.hpp"
 
 class MissionManager : public TimedControlTask<void> {
    public:
     MissionManager(StateFieldRegistry& registry, unsigned int offset);
     void execute() override;
 
+    // Constants that drive state transitions.
+
+    static constexpr double close_approach_trigger_dist = 200; // in meters
+    static constexpr double docking_trigger_dist = 1; // in meters
+    /**
+     * @brief Number of control cycles to wait during the post-deployment
+     * do-nothing period.
+     */
+    #ifdef FLIGHT
+        static constexpr unsigned int deployment_wait = 15000; // ~30 mins
+    #else
+        static constexpr unsigned int deployment_wait = 10;
+    #endif
+    /**
+     * @brief Number of control cycles to wait before declaring "too long since comms".
+     */
+    #ifdef FLIGHT
+        static constexpr unsigned int max_radio_silence_duration = 
+            24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms; // 24 hours
+    #else
+        static constexpr unsigned int max_radio_silence_duration = 10;
+    #endif
+
    protected:
+    /**
+     * @brief Returns true if there are hardware faults on the spacecraft.
+     */
+    bool check_hardware_faults();
+
     void dispatch_startup();
     void dispatch_detumble();
     void dispatch_initialization_hold();
@@ -25,49 +50,63 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_paired();
     void dispatch_spacejunk();
     void dispatch_safehold();
+    void dispatch_manual();
+
+    // Fields required for control of prop subsystem.
+    ReadableStateField<unsigned char>* prop_mode_fp;
 
     // Fields required for control of ADCS subsystem.
     /**
      * @brief Mode of ADCS system.
      **/
-    WritableStateField<unsigned char>* adcs_mode_fp;
+    WritableStateField<unsigned char> adcs_state_f;
     /**
-     * @brief Currently commanded attitude of ADCS system.
+     * @brief Current angular velocity of ADCS system in the body frame.
      **/
-    WritableStateField<f_quat_t>* adcs_cmd_attitude_fp;
-    /**
-     * @brief Current angular rate of ADCS system in the body frame.
-     **/
-    ReadableStateField<float>* adcs_ang_rate_fp;
+    ReadableStateField<f_vector_t>* adcs_ang_vel_fp;
     /**
      * @brief Minimum angular rate of ADCS system that can be considered "stable".
      **/
     WritableStateField<float>* adcs_min_stable_ang_rate_fp;
 
+    // Fields provided by Piksi and orbital estimation subsystems
+    const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading mode
+    const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
+
+    // Information from docking subsystem
+    WritableStateField<bool> docking_config_cmd_f;
+    const ReadableStateField<bool>* docked_fp;
+
     /**
      * @brief Radio's mode.
      **/
     InternalStateField<unsigned char>* radio_mode_fp;
+    InternalStateField<unsigned int>* last_checkin_cycle_fp;
 
     // Fields that control overall mission state.
     /**
      * @brief Current mission mode (see mission_mode_t.enum)
      */
-    Serializer<unsigned char> mission_mode_sr;
-    WritableStateField<unsigned char> mission_mode_f;
+    WritableStateField<unsigned char> mission_state_f;
     /**
      * @brief True if the satellite has exited the deployment timing phase.
      */
-    Serializer<bool> is_deployed_sr;
     ReadableStateField<bool> is_deployed_f;
+    ReadableStateField<unsigned int> deployment_wait_elapsed_f;
+
     /**
      * @brief 2 if the satellite is the follower satellite. 1 if the
      * satellite is the leader satellite. 0 if the follower/leader designation
      * hasn't been made yet.
      */
-    Serializer<unsigned char> sat_designation_sr;
     WritableStateField<unsigned char> sat_designation_f;
-    
+
+   private:
+    /**
+     * @brief Computes magnitude of baseline position vector.
+     */
+    double distance_to_other_sat() const;
+    bool too_long_since_last_comms() const;
 };
 
 #endif

@@ -1,8 +1,8 @@
-#ifndef mission_mode_t_enum_
-#define mission_mode_t_enum_
+#ifndef mission_state_t_enum_
+#define mission_state_t_enum_
 
-// pan.mode
-enum class mission_mode_t {
+// pan.state
+enum class mission_state_t {
     startup,
     detumble,
     initialization_hold,
@@ -15,6 +15,8 @@ enum class mission_mode_t {
     paired,
     spacejunk,
     safehold,
+
+    manual
 };
 
 #endif
