@@ -4,6 +4,13 @@
 #include "TimedControlTask.hpp"
 #include "constants.hpp"
 
+#include "prop_mode_t.enum"
+#include "mission_state_t.enum"
+#include "adcs_state_t.enum"
+#include "radio_mode_t.enum"
+#include "prop_mode_t.enum"
+#include "sat_designation_t.enum"
+
 class MissionManager : public TimedControlTask<void> {
    public:
     MissionManager(StateFieldRegistry& registry, unsigned int offset);
@@ -50,6 +57,16 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_paired();
     void dispatch_spacejunk();
     void dispatch_safehold();
+
+    /**
+     * @brief Allow spacecraft to be commandeered completely by test software or
+     * the ground. This state should almost never be used by the ground.
+     * 
+     * The only additional control it provides beyond the standby mode is
+     * the ability to control attitude, which is a dangerous capability.
+     * If this capability is desired, a better way to use it would be via
+     * the Attitude Computer's point_manual mode.
+     */
     void dispatch_manual();
 
     // Fields required for control of prop subsystem.
@@ -107,6 +124,12 @@ class MissionManager : public TimedControlTask<void> {
      */
     double distance_to_other_sat() const;
     bool too_long_since_last_comms() const;
+
+    void set(mission_state_t state);
+    void set(adcs_state_t state);
+    void set(prop_mode_t mode);
+    void set(radio_mode_t mode);
+    void set(sat_designation_t designation);
 };
 
 #endif

@@ -1,0 +1,10 @@
+#ifndef prop_mode_t_enum
+#define prop_mode_t_enum
+
+// prop.mode
+enum class prop_mode_t {
+    disabled,
+    active
+};
+
+#endif

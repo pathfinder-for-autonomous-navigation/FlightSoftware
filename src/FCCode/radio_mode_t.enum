@@ -1,7 +1,7 @@
 #ifndef radio_mode_t_enum
 #define radio_mode_t_enum
 
-// prop.mode
+// radio.mode
 enum class radio_mode_t {
     disabled,
     active
