@@ -3,7 +3,7 @@
 
 #include <StateFieldRegistry.hpp>
 
-class Fault : public ReadableStateField<bool> {
+class Fault : public WritableStateField<bool> {
   public:
     /**
      * @brief Construct a new latching fault.
