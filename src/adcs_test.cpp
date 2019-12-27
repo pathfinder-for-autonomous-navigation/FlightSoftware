@@ -37,9 +37,9 @@ bool test_set_mode(){
     return true;
 }
 
-bool test_set_rwa_momentum_filter(){
+bool test_set_rwa_speed_filter(){
     //arbitrary test value
-    adcs.set_rwa_momentum_filter(0.77f);
+    adcs.set_rwa_speed_filter(0.77f);
     return true;
 }
 
@@ -172,15 +172,15 @@ bool test_set_rwa_mode(){
 
 bool test_get_rwa() {
     //arbitrary test values
-    std::array<float, 3> rwa_momentum_rd = {1.0f,1.0f,1.0f};
+    std::array<float, 3> rwa_speed_rd = {1.0f,1.0f,1.0f};
     std::array<float, 3> rwa_ramp_rd = {1.0f,1.0f,1.0f};;
 
-    std::array<float, 3> rwa_momentum_state = {0.004f, 0.005f, -0.006f}; // Momentum read
+    std::array<float, 3> rwa_speed_state = {0.004f, 0.005f, -0.006f}; // Speed read
     std::array<float, 3> rwa_ramp_state = {0.001f, 0.002f, -0.003f};
 
-    adcs.get_rwa(&rwa_momentum_rd, &rwa_ramp_rd);
+    adcs.get_rwa(&rwa_speed_rd, &rwa_ramp_rd);
 
-    return comp_float_arr(rwa_momentum_rd,rwa_momentum_state,0.0001f)
+    return comp_float_arr(rwa_speed_rd,rwa_speed_state,0.0001f)
      && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.0001f);
 }
 
@@ -206,7 +206,7 @@ bool test_everything(){
 
     test_set_mode() &&
     test_set_rwa_mode() &&
-    test_set_rwa_momentum_filter() &&
+    test_set_rwa_speed_filter() &&
     test_set_rwa_ramp_filter() &&
     test_set_mtr_mode() &&
     test_set_mtr_command() &&
@@ -239,7 +239,7 @@ void loop() {
     Serial.printf("set_rwa_mode: %d\n", test_set_rwa_mode());
 
     //works
-    Serial.printf("set_rwa_momentum_filter: %d\n", test_set_rwa_momentum_filter());
+    Serial.printf("set_rwa_speed_filter: %d\n", test_set_rwa_speed_filter());
 
     //works
     Serial.printf("set_ramp_filter: %d\n", test_set_rwa_ramp_filter());
