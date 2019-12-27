@@ -22,13 +22,14 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
     // Initialize these variables
-    const double nan = std::numeric_limits<double>::quiet_NaN();
-    adcs_ang_vel_fp->set({0,0,0});
+    const float nan_f = std::numeric_limits<float>::quiet_NaN();
+    const double nan_d = std::numeric_limits<double>::quiet_NaN();
+    adcs_ang_vel_fp->set({nan_f,nan_f,nan_f});
     adcs_min_stable_ang_rate_fp->set(0);
     radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::disabled));
     last_checkin_cycle_fp->set(0);
     prop_mode_fp->set(static_cast<unsigned int>(prop_mode_t::disabled));
-    propagated_baseline_pos_fp->set({nan,nan,nan});
+    propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     docked_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);

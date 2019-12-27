@@ -131,7 +131,7 @@ void MissionManager::dispatch_detumble() {
 
     // Detumble until satellite angular rate is below an allowable threshold
     const f_vector_t ang_vel = adcs_ang_vel_fp->get();
-    const lin::Vector3d ang_vel_vec {ang_vel[0], ang_vel[1], ang_vel[2]};
+    const lin::Vector3f ang_vel_vec {ang_vel[0], ang_vel[1], ang_vel[2]};
     const float ang_rate = lin::norm(ang_vel_vec);
     if (ang_rate <= adcs_min_stable_ang_rate_fp->get())
     {
