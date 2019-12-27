@@ -6,7 +6,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     unsigned int offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry, "adcs_monitor", offset),
     adcs_system(_adcs),
-    rwa_speed_rd_sr(rwa::min_momentum, rwa::max_momentum, 16*3), //referenced from I2C_Interface.doc
+    rwa_speed_rd_sr(rwa::min_speed_read, rwa::max_speed_read, 16*3), //referenced from I2C_Interface.doc
     rwa_speed_rd_f("adcs_monitor.rwa_speed_rd", rwa_speed_rd_sr),
     rwa_torque_rd_sr(rwa::min_torque, rwa::max_torque, 16*3), //referenced from I2C_Interface.doc
     rwa_torque_rd_f("adcs_monitor.rwa_torque_rd", rwa_torque_rd_sr),
