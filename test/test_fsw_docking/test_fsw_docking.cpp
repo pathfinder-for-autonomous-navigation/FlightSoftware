@@ -20,7 +20,8 @@ class TestFixture {
         docking_config_cmd_fp = registry.create_writable_field<bool>("docksys.config_cmd");
         docking_config_cmd_fp->set(false);
 
-        docking_controller = std::make_unique<DockingController>(registry, 0, docksys); 
+        docking_controller = std::make_unique<DockingController>(registry, 0, docksys);
+        docking_controller->init();
 
         docked_fp = registry.find_readable_field_t<bool>("docksys.docked");
         dock_config_fp = registry.find_readable_field_t<bool>("docksys.dock_config");
@@ -89,4 +90,5 @@ void setup() {
     test_control_task();
 }
 
+void loop() {}
 #endif

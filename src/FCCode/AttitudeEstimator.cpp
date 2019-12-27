@@ -18,8 +18,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     {
         piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
         pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
-        ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_box.sun_vec", __FILE__, __LINE__),
-        mag_vec_fp = find_readable_field<f_vector_t>("adcs_box.mag_vec", __FILE__, __LINE__),
+        ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec", __FILE__, __LINE__),
+        mag_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.mag_vec", __FILE__, __LINE__),
 
         //Add outputs
         add_readable_field(q_body_eci_f);

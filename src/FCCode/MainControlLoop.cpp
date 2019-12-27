@@ -36,9 +36,12 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       downlink_producer(registry, downlink_producer_offset),
       quake_manager(registry, quake_manager_offset),
       uplink_consumer(registry, uplink_consumer_offset),
+      eeprom_controller(registry, eeprom_controller_offset, statefields),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       mission_manager(registry, mission_manager_offset) // This item is initialized last so it has access to all state fields
 {
+    docking_controller.init();
+
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
@@ -52,6 +55,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
         add_readable_field(memory_use_f);
     #endif
 
+    eeprom_controller.init(statefields);
     // Since all telemetry fields have been added to the registry, initialize flows
     downlink_producer.init_flows(flow_data);
 }
@@ -78,6 +82,7 @@ void MainControlLoop::execute() {
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
+    eeprom_controller.execute_on_time();
 }
 
 #ifdef GSW

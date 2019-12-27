@@ -4,7 +4,7 @@
 #include "TimedControlTask.hpp"
 
 #include "mission_mode_t.enum"
-#include "adcs_mode_t.enum"
+#include "adcs_state_t.enum"
 #include "satellite_designation_t.enum"
 
 class MissionManager : public TimedControlTask<void> {
@@ -47,7 +47,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Radio's mode.
      **/
-    ReadableStateField<unsigned char>* radio_mode_fp;
+    InternalStateField<unsigned char>* radio_mode_fp;
 
     // Fields that control overall mission state.
     /**

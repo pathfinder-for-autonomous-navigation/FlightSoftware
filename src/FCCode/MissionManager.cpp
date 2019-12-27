@@ -13,12 +13,11 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_readable_field(is_deployed_f);
     add_writable_field(sat_designation_f);
 
-    adcs_mode_fp = find_writable_field<unsigned char>("adcs.mode", __FILE__, __LINE__);
+    adcs_mode_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
     adcs_cmd_attitude_fp = find_writable_field<f_quat_t>("adcs.cmd_attitude", __FILE__, __LINE__);
     adcs_ang_rate_fp = find_readable_field<float>("adcs.ang_rate", __FILE__, __LINE__);
     adcs_min_stable_ang_rate_fp = find_writable_field<float>("adcs.min_stable_ang_rate", __FILE__, __LINE__);
- 
-    radio_mode_fp = find_readable_field<unsigned char>("radio.mode", __FILE__, __LINE__);
+    radio_mode_fp = find_internal_field<unsigned char>("radio.mode", __FILE__, __LINE__);
 
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::startup));
     is_deployed_f.set(false);
@@ -78,11 +77,11 @@ void MissionManager::dispatch_startup() {
 
 void MissionManager::dispatch_detumble() {
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::detumble));
-    adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::detumble));
+    adcs_mode_fp->set(static_cast<unsigned int>(adcs_state_t::detumble));
     if (adcs_ang_rate_fp->get() <= adcs_min_stable_ang_rate_fp->get())
     {
         adcs_cmd_attitude_fp->set({2,2,2,2}); // TODO fix to a good value
-        adcs_mode_fp->set(static_cast<unsigned int>(adcs_mode_t::point_standby));
+        adcs_mode_fp->set(static_cast<unsigned int>(adcs_state_t::point_standby));
         mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::standby));
     }
 }
