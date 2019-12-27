@@ -57,8 +57,8 @@ class Fault : public ReadableStateField<bool> {
                                       // occurred
 
     unsigned int persistence; // Persistence threshold for fault signal
-    unsigned int num_consecutive_faults = 0; // Number of consecutive fault condition
-                                             // occurrences at the current moment.
+    mutable unsigned int num_consecutive_faults = 0; // Number of consecutive fault condition
+                                                     // occurrences at the current moment.
 
     /**
      * @brief State fields that can be set by the ground to suppress
