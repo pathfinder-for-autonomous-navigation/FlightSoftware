@@ -47,7 +47,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Radio's mode.
      **/
-    ReadableStateField<unsigned char>* radio_mode_fp;
+    InternalStateField<unsigned char>* radio_mode_fp;
 
     // Fields that control overall mission state.
     /**

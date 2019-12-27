@@ -132,7 +132,7 @@ void DownlinkProducer::execute() {
         add_bits_to_downlink_frame(flow_id_bits, snapshot_ptr, packet_offset,
             downlink_frame_offset);
 
-        for(auto const& field : flow.field_list) {
+        for(auto& field : flow.field_list) {
             field->serialize();
             const bit_array& field_bits = field->get_bit_array();
             add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
@@ -171,8 +171,8 @@ DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
 
     id_sr.serialize(flow_data.id);
 
-    for(auto const& field_name : flow_data.field_list) {
-        auto const field_ptr = r.find_readable_field(field_name);
+    for(std::string const& field_name : flow_data.field_list) {
+        ReadableStateFieldBase* field_ptr = r.find_readable_field(field_name);
         if(!field_ptr) {
             printf(debug_severity::error, 
                 "Field %s was not found in registry when constructing flows.",

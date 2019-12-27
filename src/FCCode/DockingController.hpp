@@ -21,6 +21,14 @@ class DockingController : public TimedControlTask<void> {
         Devices::DockingSystem &docksys);
 
     /**
+     * @brief The mission manager creates the docking command field after
+     * every control task has been constructed, so this function provides
+     * a way for the docking controller to bind to the docking command during
+     * main control loop construction.
+     */
+    void init();
+
+    /**
      * @brief Sets statefield variables and moves the motor to docking/undocking
      * configuration should mission manager request it.
      */
@@ -30,18 +38,15 @@ class DockingController : public TimedControlTask<void> {
     Devices::DockingSystem& docksys;
 
     //shared pointer set by mission manager - tells control task to dock or undock motor
-    WritableStateField<bool>* docking_config_cmd_fp;
+    const WritableStateField<bool>* docking_config_cmd_fp;
 
     //state field returns whether or not the spacecraft are docked with one another
-    Serializer<bool> docked_sr;
     ReadableStateField<bool> docked_f;
 
     //state field returns whether or not the motor is in the docking configuration
-    Serializer<bool> dock_config_sr;
     ReadableStateField<bool> dock_config_f;
 
     //state field returns whether or not the motor is turning/in the process of (un)docking
-    Serializer<bool> is_turning_sr;
     ReadableStateField<bool> is_turning_f;
 
 };

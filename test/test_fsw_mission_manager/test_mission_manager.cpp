@@ -15,7 +15,7 @@ class TestFixture {
     std::shared_ptr<ReadableStateField<float>> adcs_ang_rate_fp;
     std::shared_ptr<WritableStateField<float>> adcs_min_stable_ang_rate_fp;
     
-    std::shared_ptr<WritableStateField<unsigned char>> radio_mode_fp;
+    std::shared_ptr<InternalStateField<unsigned char>> radio_mode_fp;
 
     std::unique_ptr<MissionManager> mission_manager;
     // Output state fields from mission manager
@@ -29,7 +29,7 @@ class TestFixture {
         adcs_ang_rate_fp = registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
         adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
 
-        radio_mode_fp = registry.create_writable_field<unsigned char>("radio.mode", 5);
+        radio_mode_fp = registry.create_internal_field<unsigned char>("radio.mode");
 
         mission_manager = std::make_unique<MissionManager>(registry, 0);
 

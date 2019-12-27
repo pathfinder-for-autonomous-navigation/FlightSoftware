@@ -41,6 +41,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_computer(registry, attitude_computer_offset) // This item needs "adcs.state" from mission manager.
 {
+    docking_controller.init();
+
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
