@@ -83,11 +83,17 @@ void test_point_docking() {
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-1}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
 }
 
+void test_point_limited() {
+    // TODO implement
+}
+
 int test_attitude_computer() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
     RUN_TEST(test_point_standby);
     RUN_TEST(test_point_docking);
+    RUN_TEST(test_point_limited);
+    // We cannot test point_manual since there's nothing happening inside that state.
     return UNITY_END();
 }
 

@@ -96,7 +96,12 @@ void AttitudeComputer::execute() {
         }
         break;
         case adcs_state_t::limited: {
-            // ???
+            // Undefined behavior, as of now, while the GNC side of this controller
+            // is still being developed.
+        }
+        break;
+        case adcs_state_t::point_manual: {
+            // Allow ground to set the desired pointing vectors.
         }
         break;
         default:
