@@ -50,7 +50,7 @@ class TestFixture {
         adcs_cmd_attitude_fp = registry.create_writable_field<f_quat_t>("adcs.cmd_attitude");
         adcs_ang_rate_fp = registry.create_readable_field<float>("adcs.ang_rate", 0, 10, 4);
         adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>("adcs.min_stable_ang_rate", 0, 10, 4);
-        mission_mode_fp = registry.create_writable_field<unsigned char>("pan.mode");
+        mission_mode_fp = registry.create_writable_field<unsigned char>("pan.state");
         sat_designation_fp = registry.create_writable_field<unsigned char>("pan.sat_designation"); // should be 6 writable fields --> 3 bits 
 
         radio_mt_packet_len_fp = registry.create_internal_field<size_t>("uplink.len");
@@ -223,7 +223,7 @@ void test_update_field()
     // field size is 8, initial value is 0x88
     // 0001 0001
     // idx = 4
-    size_t idx = tf.field_map["pan.mode"]; 
+    size_t idx = tf.field_map["pan.state"]; 
 
     // idx = 3, initial value is 0x6, field len is 4
     // 0101
@@ -244,7 +244,7 @@ void test_update_field()
     bitstream bs_mo(tmp, packet_bytes);
     bitstream bs_in(fake_data, 8);
     
-    // Create uplink for pan.mode
+    // Create uplink for pan.state
     bits_written += tf.create_uplink(bs_mo, bs_in, idx); 
 
     // Check that bitstream is at the right bit offset

@@ -18,7 +18,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     adcs_cmd_attitude_fp = find_writable_field<f_quat_t>("adcs.cmd_attitude", __FILE__, __LINE__);
     adcs_ang_rate_fp = find_readable_field<float>("adcs.ang_rate", __FILE__, __LINE__);
     adcs_min_stable_ang_rate_fp = find_writable_field<float>("adcs.min_stable_ang_rate", __FILE__, __LINE__);
-    radio_mode_fp = find_readable_field<unsigned char>("radio.mode", __FILE__, __LINE__);
+    radio_mode_fp = find_internal_field<unsigned char>("radio.mode", __FILE__, __LINE__);
 
     mission_mode_f.set(static_cast<unsigned int>(mission_mode_t::startup));
     is_deployed_f.set(false);
