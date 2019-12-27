@@ -72,13 +72,13 @@ class ADCS : public I2CDevice {
     void set_rwa_mode(const unsigned char rwa_mode, const std::array<float,3>& rwa_cmd);
 
     /**
-     * @brief Set the reaction wheel assembly momentum read exponential filter constant 
+     * @brief Set the reaction wheel assembly speed read exponential filter constant 
      * 
-     * @param rwa_speed_flt momentum read exponential filter, a float from [0.0, 1.0].
+     * @param rwa_speed_flt speed read exponential filter, a float from [0.0, 1.0].
      * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0].
      * Defaults to 0xFF. 
      */
-    void set_rwa_momentum_filter(const float mom_filter);
+    void set_rwa_speed_filter(const float rwa_speed_filter);
 
     /**
      * @brief Set the reaction wheel assembly ramp filter
@@ -211,11 +211,11 @@ class ADCS : public I2CDevice {
     void get_who_am_i(unsigned char *who_am_i);
 
     /**
-     * @brief Get the reaction wheel assembly momentum and ramp readings
+     * @brief Get the reaction wheel assembly speed and ramp readings
      * 
-     * @param rwa_momentum_rd Pointer to output std::array of floats for momentum
-     * 3 unsigned shorts map to wheel angular momentums from 
-     * rwa::min_momentum to rwa::max_momentum in kg m^2 / s
+     * @param rwa_speed_rd Pointer to output std::array of floats for speeds
+     * 3 unsigned shorts map to wheel angular speeds from 
+     * rwa::min_speed to rwa::max_speed in radians / s
      * in the x, y, and z direction in the body frame. 
      * 
      * @param rwa_ramp_rd Pointer to output std::array of floats for ramp
@@ -223,7 +223,7 @@ class ADCS : public I2CDevice {
      * rwa::min_torque to rwa::max_torque in N m
      * in the x, y, and z direction in the body frame. 
      */
-    void get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd);
+    void get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa_ramp_rd);
 
     /**
      * @brief Get the sun sensor array mode

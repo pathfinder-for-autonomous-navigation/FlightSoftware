@@ -80,9 +80,9 @@ void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& 
     }
     i2c_write_to_subaddr(RWA_COMMAND,cmd,6);
 }
-void ADCS::set_rwa_momentum_filter(const float mom_filter){
+void ADCS::set_rwa_speed_filter(const float mom_filter){
     unsigned char comp = uc(mom_filter,0.0f,1.0f);
-    i2c_write_to_subaddr(RWA_MOMENTUM_FILTER, comp);
+    i2c_write_to_subaddr(RWA_SPEED_FILTER, comp);
 }
 void ADCS::set_ramp_filter(const float ramp_filter){
     unsigned char comp = uc(ramp_filter,0.0f,1.0f);
@@ -160,7 +160,19 @@ void ADCS::get_who_am_i(unsigned char* who_am_i) {
 }
 void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd) {
     unsigned char readin[12];
+<<<<<<< HEAD
     i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
+=======
+    std::memset(readin, 0, sizeof(readin));
+
+    #ifdef UNIT_TEST
+    for(int i = 0;i<12;i++){
+        readin[i] = 255;
+    }
+    #else
+    i2c_point_and_read(RWA_SPEED_RD, readin, 12);
+    #endif
+>>>>>>> 73dc1ab... implement momentun to speed changes (#124)
 
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1] << 8;
