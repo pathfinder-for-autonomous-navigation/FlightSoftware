@@ -241,6 +241,13 @@ void test_dispatch_manual() {
     tf.check(mission_state_t::manual);
 }
 
+void test_dispatch_undefined() {
+    TestFixture tf;
+    tf.mission_state_fp->set(14); // Undefined
+    tf.step();
+    tf.check(mission_state_t::safehold);
+}
+
 int test_mission_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
@@ -257,6 +264,7 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_spacejunk);
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_manual);
+    RUN_TEST(test_dispatch_undefined);
     return UNITY_END();
 }
 

@@ -96,7 +96,7 @@ void MissionManager::execute() {
             break;
         default:
             printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned int>(mode));
-            mission_state_f.set(static_cast<unsigned int>(mission_state_t::safehold));
+            set(mission_state_t::safehold);
             break;
     }
 }
