@@ -3,7 +3,7 @@
 Fault::Fault(const std::string& name,
       const size_t _persistence, unsigned int& control_cycle_count,
       const bool default_setting) :
-    ReadableStateField<bool>(name, Serializer<bool>()),
+    WritableStateField<bool>(name, Serializer<bool>()),
     cc(control_cycle_count),
     persistence(_persistence),
     suppress_f(name + ".suppress", Serializer<bool>()),
@@ -15,7 +15,7 @@ Fault::Fault(const std::string& name,
 }
 
 bool Fault::add_to_registry(StateFieldRegistry& r) {
-    if (!r.add_readable_field(static_cast<ReadableStateFieldBase*>(this))) return false;
+    if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(this))) return false;
     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&suppress_f))) return false;
     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&override_f))) return false;
     return true;

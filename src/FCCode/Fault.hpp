@@ -49,8 +49,8 @@ class Fault : public WritableStateField<bool> {
     // Make the get() and set() methods of the state field private,
     // so that the user is forced to use the signal() and unsignal()
     // methods instead.
-    using ReadableStateField<bool>::set;
-    using ReadableStateField<bool>::get;
+    using WritableStateField<bool>::set;
+    using WritableStateField<bool>::get;
 
     unsigned int& cc; // Control cycle count
     unsigned int last_fault_time = 0; // Last control cycle # that the fault condition
