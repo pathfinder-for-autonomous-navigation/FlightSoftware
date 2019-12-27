@@ -1,5 +1,6 @@
 #include "MissionManager.hpp"
 #include <lin.hpp>
+#include <cmath>
 
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
@@ -280,7 +281,7 @@ void MissionManager::dispatch_manual() {
 
 double MissionManager::distance_to_other_sat() const {
     const d_vector_t dr = propagated_baseline_pos_fp->get();
-    if (isnan(dr[0])) return dr[0];
+    if (std::isnan(dr[0])) return dr[0];
     lin::Vector3d dr_vec = {dr[0], dr[1], dr[2]};
     return lin::norm(dr_vec);
 }
