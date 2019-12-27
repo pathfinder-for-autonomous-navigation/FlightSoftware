@@ -33,7 +33,7 @@ public:
 
 protected:
     /**
-    * @brief Inputs to get from ADCS box.
+    * @brief Pointers to find
     */
 
     //! Speed reads off of the reaction wheels.
