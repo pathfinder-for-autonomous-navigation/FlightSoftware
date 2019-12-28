@@ -55,10 +55,16 @@ class TestFixture {
         dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, "dummy2", allocated_starts[1]);
 
         // Check that the statistics parameters are available.
-        //auto num_lates_fp_1 = registry.find_readable_field_t<unsigned int>("timing.dummy1.num_lates");
-        //auto num_lates_fp_2 = registry.find_readable_field_t<unsigned int>("timing.dummy2.num_lates");
-        //auto avg_wait_fp_1 = registry.find_readable_field_t<float>("timing.dummy1.avg_wait");
-        //auto avg_wait_fp_2 = registry.find_readable_field_t<float>("timing.dummy2.avg_wait");
+        auto num_lates_fp_1 = registry.find_readable_field_t<unsigned int>("timing.dummy1.num_lates");
+        auto num_lates_fp_2 = registry.find_readable_field_t<unsigned int>("timing.dummy2.num_lates");
+        auto avg_wait_fp_1 = registry.find_readable_field_t<float>("timing.dummy1.avg_wait");
+        auto avg_wait_fp_2 = registry.find_readable_field_t<float>("timing.dummy2.avg_wait");
+
+        // Assertions required to prevent "unused variable" errors.
+        if(!num_lates_fp_1) assert(false);
+        if(!num_lates_fp_2) assert(false);
+        if(!avg_wait_fp_1) assert(false);
+        if(!avg_wait_fp_2) assert(false);
     }
 
     /**
