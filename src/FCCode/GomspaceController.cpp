@@ -91,7 +91,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
     gs_reboot_cmd_sr(),
     gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
-    
+
     {
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
@@ -210,24 +210,49 @@ void GomspaceController::execute() {
 
     pptmode_f.set(gs.hk->pptmode);
 
-    // Set the gomspace outputs to the value of the statefield commands when appropriate; TODO 30 second delay
-    gs.set_single_output(1, output1_cmd_f.get(), 30);
-    gs.set_single_output(2, output2_cmd_f.get(), 30);
-    gs.set_single_output(3, output3_cmd_f.get(), 30);
-    gs.set_single_output(4, output4_cmd_f.get(), 30);
-    gs.set_single_output(5, output5_cmd_f.get(), 30);
+    // Set the gomspace outputs to the values of the statefield commands every 30 seconds
+    if (control_cycle_count%300==0){
+        set_outputs();
+    }
+}
 
-    gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
+void GomspaceController::set_outputs(){
+    // Set output channels
+    if (output1_f.get()!=output1_cmd_f.get()){
+        gs.set_single_output(1, output1_cmd_f.get());
+    }
+    if (output2_f.get()!=output2_cmd_f.get()){
+        gs.set_single_output(2, output2_cmd_f.get());
+    }
+    if (output3_f.get()!=output3_cmd_f.get()){
+        gs.set_single_output(3, output3_cmd_f.get());
+    }
+    if (output4_f.get()!=output4_cmd_f.get()){
+        gs.set_single_output(4, output4_cmd_f.get());
+    }
+    if (output5_f.get()!=output5_cmd_f.get()){
+        gs.set_single_output(5, output5_cmd_f.get());
+    }
 
-    gs.set_pv_auto(ppt_mode_cmd_f.get());
+    // Set power voltages
+    if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
+        gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
+    }
 
-    if (heater_cmd_f.get()==true) {
+    // Set PPT mode
+    if (pptmode_f.get()!=ppt_mode_cmd_f.get()){
+        gs.set_pv_auto(ppt_mode_cmd_f.get());
+    }
+
+    // Turn on/off the heater
+    if (heater_cmd_f.get()==true && gs.get_heater() == 0) {
         gs.turn_on_heater();
     }
-    else {
+    else if (heater_cmd_f.get()==false && gs.get_heater() == 1){
         gs.turn_off_heater();
     }
 
+    // Reset commands
     if (counter_reset_cmd_f.get()==true) {
         gs.reset_counters();
         counter_reset_cmd_f.set(false);
@@ -242,5 +267,4 @@ void GomspaceController::execute() {
         gs.hard_reset();
         gs_reset_cmd_f.set(false);
     }
-
 }
