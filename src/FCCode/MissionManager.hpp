@@ -51,6 +51,7 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_follower();
     void dispatch_follower_close_approach();
     void dispatch_standby();
+    void dispatch_leader();
     void dispatch_leader_close_approach();
     void dispatch_docking();
     void dispatch_docked();

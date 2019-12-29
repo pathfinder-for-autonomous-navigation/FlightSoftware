@@ -70,23 +70,28 @@ void TestFixture::set(sat_designation_t designation) {
 }
 
 void TestFixture::check(mission_state_t state) const {
-    TEST_ASSERT_EQUAL(static_cast<unsigned int>(state), mission_state_fp->get());
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(state), mission_state_fp->get(),
+        "For mission state.");
 }
 
 void TestFixture::check(adcs_state_t state) const {
-    TEST_ASSERT_EQUAL(static_cast<unsigned int>(state), adcs_state_fp->get());
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(state), adcs_state_fp->get(),
+        "For ADCS state.");
 }
 
 void TestFixture::check(prop_mode_t mode) const {
-    TEST_ASSERT_EQUAL(static_cast<unsigned int>(mode), prop_mode_fp->get());
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(mode), prop_mode_fp->get(),
+        "For propulsion mode.");
 }
 
 void TestFixture::check(radio_mode_t mode) const {
-    TEST_ASSERT_EQUAL(static_cast<unsigned int>(mode), radio_mode_fp->get());
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(mode), radio_mode_fp->get(),
+        "For radio mode.");
 }
 
 void TestFixture::check(sat_designation_t designation) const {
-    TEST_ASSERT_EQUAL(static_cast<unsigned int>(designation), sat_designation_fp->get());
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(designation), sat_designation_fp->get(),
+        "For satellite designation.");
 }
 
 // Ensures that no state except the given state can be achieved.

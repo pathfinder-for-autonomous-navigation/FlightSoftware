@@ -9,6 +9,7 @@ enum class mission_state_t {
     follower,
     follower_close_approach,
     standby,
+    leader,
     leader_close_approach,
     docking,
     docked,

@@ -57,7 +57,8 @@ void test_dispatch_initialization_hold() {
 }
 
 void test_dispatch_rendezvous_state(mission_state_t mission_state,
-    sat_designation_t sat_designation, adcs_state_t adcs_state, double trigger_distance,
+    sat_designation_t sat_designation, adcs_state_t adcs_state, 
+    prop_mode_t prop_mode, double trigger_distance,
     mission_state_t next_state)
 {
     /** Test initialization **/
@@ -67,7 +68,7 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state,
         tf.check(sat_designation);
         tf.check(mission_state);
         tf.check(adcs_state);
-        tf.check(prop_mode_t::active);
+        tf.check(prop_mode);
         tf.check(radio_mode_t::active);
     }
 
@@ -77,7 +78,7 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state,
     {
         TestFixture tf(mission_state);
         tf.assert_ground_uncommandability(adcs_state);
-        tf.assert_ground_uncommandability(prop_mode_t::active);
+        tf.assert_ground_uncommandability(prop_mode);
     }
 
     /** If distance is less than the trigger distance,
@@ -103,19 +104,25 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state,
 
 void test_dispatch_follower() {
     test_dispatch_rendezvous_state(mission_state_t::follower, sat_designation_t::follower,
-        adcs_state_t::point_standby, MissionManager::close_approach_trigger_dist,
+        adcs_state_t::point_standby, prop_mode_t::active, MissionManager::close_approach_trigger_dist,
         mission_state_t::follower_close_approach);
+}
+
+void test_dispatch_leader() {
+    test_dispatch_rendezvous_state(mission_state_t::leader, sat_designation_t::leader,
+        adcs_state_t::point_standby, prop_mode_t::disabled, MissionManager::close_approach_trigger_dist,
+        mission_state_t::leader_close_approach);
 }
 
 void test_dispatch_follower_close_approach() {
     test_dispatch_rendezvous_state(mission_state_t::follower_close_approach,
-        sat_designation_t::follower, adcs_state_t::point_docking,
+        sat_designation_t::follower, adcs_state_t::point_docking, prop_mode_t::active,
         MissionManager::docking_trigger_dist, mission_state_t::docking);
 }
 
 void test_dispatch_leader_close_approach() {
     test_dispatch_rendezvous_state(mission_state_t::leader_close_approach,
-        sat_designation_t::leader, adcs_state_t::point_docking,
+        sat_designation_t::leader, adcs_state_t::point_docking, prop_mode_t::active,
         MissionManager::docking_trigger_dist, mission_state_t::docking);
 }
 
@@ -154,9 +161,8 @@ void test_dispatch_standby() {
     {
         TestFixture tf(mission_state_t::standby);
         tf.set(sat_designation_t::leader);
-        tf.set_sat_distance(MissionManager::close_approach_trigger_dist - 0.01);
         tf.step();
-        tf.check(mission_state_t::leader_close_approach);
+        tf.check(mission_state_t::leader);
     }
 
     // Test that the ADCS state is fully ground-commandable, but that
@@ -257,6 +263,7 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_follower);
     RUN_TEST(test_dispatch_follower_close_approach);
     RUN_TEST(test_dispatch_standby);
+    RUN_TEST(test_dispatch_leader);
     RUN_TEST(test_dispatch_leader_close_approach);
     RUN_TEST(test_dispatch_docking);
     RUN_TEST(test_dispatch_docked);
