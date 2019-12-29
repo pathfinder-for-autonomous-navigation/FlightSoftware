@@ -207,7 +207,7 @@ void test_dispatch_docked() {
 void test_dispatch_paired() {
     TestFixture tf(mission_state_t::paired);
     tf.step();
-    tf.check(adcs_state_t::point_standby);
+    tf.check(adcs_state_t::set_paired_gains);
     tf.check(mission_state_t::standby);
     tf.check(sat_designation_t::undecided);
 }

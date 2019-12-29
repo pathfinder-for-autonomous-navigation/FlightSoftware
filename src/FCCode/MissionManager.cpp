@@ -4,7 +4,7 @@
 
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
-    adcs_state_f("adcs.state", Serializer<unsigned char>(8)),
+    adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
     mission_state_f("pan.state", Serializer<unsigned char>(13)),
     is_deployed_f("pan.deployed", Serializer<bool>()),
@@ -248,10 +248,7 @@ void MissionManager::dispatch_docked() {
 void MissionManager::dispatch_paired() {
     set(mission_state_t::paired);
     set(sat_designation_t::undecided);
-
-    // TODO initiate the modification of ADCS gains.
-    // We could also do that inside the subsystem controller.
-    set(adcs_state_t::point_standby);
+    set(adcs_state_t::set_paired_gains);
     set(mission_state_t::standby);
 }
 
