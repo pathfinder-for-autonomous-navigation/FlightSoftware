@@ -72,4 +72,4 @@ should be conditionally compiled with `ifdef UNIT_TEST`. The consideration of th
 interaction methods/behavior will be tested with psim testing.
                                              
 Take note to make sure that the actual unit test scripts are also conditionally compiled
-so tha they work in hootl and hitl testing.
+so that they work in hootl and hitl testing.
