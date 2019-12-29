@@ -1,19 +1,19 @@
 #pragma once
 #include "TimedControlTask.hpp"
+#include "UplinkCommon.h"
 
 /**
  * Uplink Consumer parses uplink packets received in its MT buffer. Expects
  * QuakeManager to set radio_mt_packet_fp to point to its MT buffer and expects
  * QuakeManager to set radio_mt_packet_len_fp whenever a new uplink is received. 
  * 
- * Dependencies: QuakeManager, StateFieldRegistry (must have access to this)
+ * Dependencies: QuakeManager, StateFieldRegistry (must have access to this),
+ * Uplink
  * 
  * State Fields Provided: radio_mt_packet_fp, radio_mt_packet_len_fp
  * 
- * Notes: Since radio_mt_packet_f is a pointer to a buffer in QuakeManager,
- * if QuakeManager is destroyed/delete, this pointer will become invalid. 
- * QuakeManager must set radio_mt_packet_len_f to 0 before it dies. 
- * 
+ * !!!IMPORTANT!!!! Most call init_uplink(). I include an if index_size == 0 in 
+ * each function just in case
  * 
  * Protocol: A packet is parsed into a set of "requests". A request consists of
  * the index of a field in the registry and a new value to assign to that field. 
@@ -41,7 +41,7 @@
  * 
  */ 
 
-class UplinkConsumer : public TimedControlTask<void> {
+class UplinkConsumer : public TimedControlTask<void>, public Uplink {
    public:
     
     /**
@@ -59,16 +59,10 @@ class UplinkConsumer : public TimedControlTask<void> {
      */
     void execute() override;
 #ifndef DEBUG
-    private:
+    protected:
 #else
     public:
 #endif
-
-    /**
-     * @brief Gets the size of the field indexed by field_index in registry.writable_fields
-     * @return returns the length of the field if field_index is valid and 0 for invalid
-     */
-    size_t get_field_length(size_t field_index);
 
     /**
      * @brief Applies all the updates specified by mt packet to writable fields
@@ -101,10 +95,4 @@ class UplinkConsumer : public TimedControlTask<void> {
     * @brief Pointer to the uplink buffer in QuakeManager
     **/ 
   const InternalStateField<char*>* radio_mt_packet_fp;
-
-  /**
-   * @brief The number of bits to represent an index
-   */
-  size_t index_size;
-
 };
