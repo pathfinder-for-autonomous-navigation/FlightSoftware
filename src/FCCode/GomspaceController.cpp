@@ -60,7 +60,38 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     battmode_f("gomspace.battmode", battmode_sr),
 
     pptmode_sr(1,2), 
-    pptmode_f("gomspace.pptmode", pptmode_sr)
+    pptmode_f("gomspace.pptmode", pptmode_sr),
+
+    output_cmd_sr(),
+    output1_cmd_f("gomspace.output1_cmd", output_cmd_sr),
+    output2_cmd_f("gomspace.output2_cmd", output_cmd_sr),
+    output3_cmd_f("gomspace.output3_cmd", output_cmd_sr),
+    output4_cmd_f("gomspace.output4_cmd", output_cmd_sr),
+    output5_cmd_f("gomspace.output5_cmd", output_cmd_sr),
+
+    pv_output_cmd_sr(0,4000,9),
+    pv1_output_cmd_f("gomspace.pv1_cmd", pv_output_cmd_sr),
+    pv2_output_cmd_f("gomspace.pv2_cmd", pv_output_cmd_sr),
+    pv3_output_cmd_f("gomspace.pv3_cmd", pv_output_cmd_sr),
+
+    ppt_mode_cmd_sr(1,2),
+    ppt_mode_cmd_f("gomspace.pptmode_cmd", ppt_mode_cmd_sr),
+
+    heater_cmd_sr(),
+    heater_cmd_f("gomspace.heater_cmd", heater_cmd_sr),
+
+    counter_reset_cmd_sr(),
+    counter_reset_cmd_f("gomspace.counter_reset_cmd", counter_reset_cmd_sr),
+
+    wdt_reset_cmd_sr(),
+    wdt_reset_cmd_f("gomspace.wdt_reset_cmd", wdt_reset_cmd_sr),
+
+    gs_reset_cmd_sr(),
+    gs_reset_cmd_f("gomspace.gs_reset_cmd", gs_reset_cmd_sr),
+
+    gs_reboot_cmd_sr(),
+    gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
+    
     {
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
@@ -106,11 +137,34 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_readable_field(battmode_f);
 
         add_readable_field(pptmode_f);
+
+        add_writable_field(output1_cmd_f);
+        add_writable_field(output2_cmd_f);
+        add_writable_field(output3_cmd_f);
+        add_writable_field(output4_cmd_f);
+        add_writable_field(output5_cmd_f);
+
+        add_writable_field(pv1_output_cmd_f);
+        add_writable_field(pv2_output_cmd_f);
+        add_writable_field(pv3_output_cmd_f);
+
+        add_writable_field(ppt_mode_cmd_f);
+
+        add_writable_field(heater_cmd_f);
+
+        add_writable_field(counter_reset_cmd_f);
+
+        add_writable_field(wdt_reset_cmd_f);
+
+        add_writable_field(gs_reset_cmd_f);
+
+        add_writable_field(gs_reboot_cmd_f);
      }
 
 void GomspaceController::execute() {
     //get hk data from struct in driver
     assert(gs.get_hk());
+
     //set statefields to respective data from hk struct 
     vboost1_f.set(gs.hk->vboost[0]);
     vboost2_f.set(gs.hk->vboost[1]);
@@ -138,7 +192,6 @@ void GomspaceController::execute() {
     output3_f.set(gs.hk->output[2]);
     output4_f.set(gs.hk->output[3]);
     output5_f.set(gs.hk->output[4]);
-    output6_f.set(gs.hk->output[5]);
 
     wdt_i2c_time_left_f.set(gs.hk->wdt_i2c_time_left);
 
@@ -156,4 +209,38 @@ void GomspaceController::execute() {
     battmode_f.set(gs.hk->battmode);
 
     pptmode_f.set(gs.hk->pptmode);
+
+    // Set the gomspace outputs to the value of the statefield commands when appropriate; TODO 30 second delay
+    gs.set_single_output(1, output1_cmd_f.get(), 30);
+    gs.set_single_output(2, output2_cmd_f.get(), 30);
+    gs.set_single_output(3, output3_cmd_f.get(), 30);
+    gs.set_single_output(4, output4_cmd_f.get(), 30);
+    gs.set_single_output(5, output5_cmd_f.get(), 30);
+
+    gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
+
+    gs.set_pv_auto(ppt_mode_cmd_f.get());
+
+    if (heater_cmd_f.get()==true) {
+        gs.turn_on_heater();
+    }
+    else {
+        gs.turn_off_heater();
+    }
+
+    if (counter_reset_cmd_f.get()==true) {
+        gs.reset_counters();
+        counter_reset_cmd_f.set(false);
+    }
+
+    if (wdt_reset_cmd_f.get()==true) {
+        gs.reset_wdt();
+        wdt_reset_cmd_f.set(false);
+    }
+
+    if (gs_reset_cmd_f.get()==true) {
+        gs.hard_reset();
+        gs_reset_cmd_f.set(false);
+    }
+
 }

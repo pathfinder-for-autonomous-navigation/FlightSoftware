@@ -86,6 +86,38 @@ class GomspaceController : public TimedControlTask<void> {
     Serializer<unsigned char> pptmode_sr;
     ReadableStateField<unsigned char> pptmode_f;
 
+    // Command statefields to control the Gomspace outputs. Will
+    // be set by various individual subsystems and the ground.
+    Serializer<unsigned char> output_cmd_sr;
+    WritableStateField<unsigned char> output1_cmd_f;
+    WritableStateField<unsigned char> output2_cmd_f;
+    WritableStateField<unsigned char> output3_cmd_f;
+    WritableStateField<unsigned char> output4_cmd_f;
+    WritableStateField<unsigned char> output5_cmd_f;
+
+    Serializer<unsigned int> pv_output_cmd_sr;
+    WritableStateField<unsigned int> pv1_output_cmd_f;
+    WritableStateField<unsigned int> pv2_output_cmd_f;
+    WritableStateField<unsigned int> pv3_output_cmd_f;
+
+    Serializer<unsigned char> ppt_mode_cmd_sr;
+    WritableStateField<unsigned char> ppt_mode_cmd_f;
+
+    Serializer<bool> heater_cmd_sr;
+    WritableStateField<bool> heater_cmd_f;
+
+    Serializer<bool> counter_reset_cmd_sr;
+    WritableStateField<bool> counter_reset_cmd_f;
+
+    Serializer<bool> wdt_reset_cmd_sr;
+    WritableStateField<bool> wdt_reset_cmd_f;
+
+    Serializer<bool> gs_reset_cmd_sr;
+    WritableStateField<bool> gs_reset_cmd_f;
+
+    Serializer<bool> gs_reboot_cmd_sr;
+    WritableStateField<bool> gs_reboot_cmd_f;
+
 };
 
 #endif
