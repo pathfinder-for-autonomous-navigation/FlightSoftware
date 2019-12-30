@@ -384,6 +384,17 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(wdt_csp_count2+1, tf.counter_wdt_csp2_fp->get());
     TEST_ASSERT_EQUAL(false, tf.wdt_reset_cmd_fp->get());
 
+    // Test the gomspace reboot command
+
+    // Current boot count
+    boot_count=tf.gs.hk->counter_boot;
+
+    // Set the gs reboot command to true
+    tf.gs_reboot_cmd_fp->set(true);
+    tf.gs_controller->execute();
+
+    TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
+
     // Test the gomspace hard reset command
 
     // Current boot count
@@ -395,16 +406,6 @@ void test_task_execute() {
 
     TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
 
-    // Test the gomspace reboot command
-
-    // Current boot count
-    boot_count=tf.gs.hk->counter_boot;
-
-    // Set the gs reboot command to true
-    tf.gs_reboot_cmd_fp->set(true);
-    tf.gs_controller->execute();
-
-    TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
     #endif
 }
 
