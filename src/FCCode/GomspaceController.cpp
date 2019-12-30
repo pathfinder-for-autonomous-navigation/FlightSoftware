@@ -165,6 +165,11 @@ void GomspaceController::execute() {
     //get hk data from struct in driver
     assert(gs.get_hk());
 
+    // Set the gomspace outputs to the values of the statefield commands every 30 seconds
+    if (control_cycle_count%300==0){
+        set_outputs();
+    }
+
     //set statefields to respective data from hk struct 
     vboost1_f.set(gs.hk->vboost[0]);
     vboost2_f.set(gs.hk->vboost[1]);
@@ -210,11 +215,6 @@ void GomspaceController::execute() {
     battmode_f.set(gs.hk->battmode);
 
     pptmode_f.set(gs.hk->pptmode);
-
-    // Set the gomspace outputs to the values of the statefield commands every 30 seconds
-    if (control_cycle_count%300==0){
-        set_outputs();
-    }
 }
 
 void GomspaceController::set_outputs(){
