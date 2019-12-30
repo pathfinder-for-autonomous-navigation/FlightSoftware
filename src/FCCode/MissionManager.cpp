@@ -1,6 +1,7 @@
 #include "MissionManager.hpp"
 #include <lin.hpp>
 #include <cmath>
+#include <adcs_constants.hpp>
 
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
@@ -19,7 +20,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_writable_field(sat_designation_f);
 
     adcs_ang_vel_fp = find_readable_field<f_vector_t>("attitude_estimator.w_body", __FILE__, __LINE__);
-    adcs_min_stable_ang_rate_fp = find_writable_field<float>("adcs.min_stable_ang_rate", __FILE__, __LINE__);
 
     radio_mode_fp = find_internal_field<unsigned char>("radio.mode", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
@@ -136,7 +136,8 @@ void MissionManager::dispatch_detumble() {
     const f_vector_t ang_vel = adcs_ang_vel_fp->get();
     const lin::Vector3f ang_vel_vec {ang_vel[0], ang_vel[1], ang_vel[2]};
     const float ang_rate = lin::norm(ang_vel_vec);
-    if (ang_rate <= adcs_min_stable_ang_rate_fp->get())
+    const float threshold = rwa::max_speed_read * 0.2;
+    if (ang_rate <= threshold)
     {
         set(adcs_state_t::point_standby);
         set(mission_state_t::standby);

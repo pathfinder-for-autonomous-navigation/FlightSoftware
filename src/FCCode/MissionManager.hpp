@@ -82,10 +82,6 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Current angular velocity of ADCS system in the body frame.
      **/
     ReadableStateField<f_vector_t>* adcs_ang_vel_fp;
-    /**
-     * @brief Minimum angular rate of ADCS system that can be considered "stable".
-     **/
-    WritableStateField<float>* adcs_min_stable_ang_rate_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
     const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading mode

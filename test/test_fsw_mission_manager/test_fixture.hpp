@@ -16,7 +16,6 @@ class TestFixture {
     StateFieldRegistryMock registry;
     // Input state fields to mission manager
     std::shared_ptr<ReadableStateField<f_vector_t>> adcs_ang_vel_fp;
-    std::shared_ptr<WritableStateField<float>> adcs_min_stable_ang_rate_fp;
     
     std::shared_ptr<InternalStateField<unsigned char>> radio_mode_fp;
     std::shared_ptr<InternalStateField<unsigned int>> last_checkin_cycle_fp;

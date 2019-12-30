@@ -1,5 +1,6 @@
 #include <unity.h>
 #include "test_fixture.hpp"
+#include <adcs_constants.hpp>
 
 void test_valid_initialization() {
     TestFixture tf;
@@ -27,10 +28,11 @@ void test_dispatch_startup() {
 
 void test_dispatch_detumble() {
     TestFixture tf(mission_state_t::detumble);
-    tf.adcs_min_stable_ang_rate_fp->set(5);
+
+    const float threshold = rwa::max_speed_read * 0.2;
 
     // Stays in detumble mode if satellite is tumbling
-    tf.set_ang_rate(6);
+    tf.set_ang_rate(threshold + 0.1);
     tf.step();
     tf.check(sat_designation_t::undecided);
     tf.check(mission_state_t::detumble);
@@ -40,7 +42,7 @@ void test_dispatch_detumble() {
 
     // If satellite is no longer tumbling, spacecraft exits detumble mode
     // and starts pointing in the expected direction.
-    tf.set_ang_rate(4);
+    tf.set_ang_rate(threshold - 0.1);
     tf.step();
     tf.check(adcs_state_t::point_standby);
     tf.check(mission_state_t::standby);

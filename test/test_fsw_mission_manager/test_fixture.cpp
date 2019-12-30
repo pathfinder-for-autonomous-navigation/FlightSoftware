@@ -6,8 +6,6 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
 {
     adcs_ang_vel_fp = registry.create_readable_vector_field<float>(
                         "attitude_estimator.w_body", 0, 10, 100);
-    adcs_min_stable_ang_rate_fp = registry.create_writable_field<float>(
-                        "adcs.min_stable_ang_rate", 0, 10, 4);
 
     radio_mode_fp = registry.create_internal_field<unsigned char>("radio.mode");
     last_checkin_cycle_fp = registry.create_internal_field<unsigned int>(
@@ -25,7 +23,6 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
     const double nan_d = std::numeric_limits<double>::quiet_NaN();
     adcs_ang_vel_fp->set({nan_f,nan_f,nan_f});
-    adcs_min_stable_ang_rate_fp->set(0);
     radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::disabled));
     last_checkin_cycle_fp->set(0);
     prop_mode_fp->set(static_cast<unsigned int>(prop_mode_t::disabled));
