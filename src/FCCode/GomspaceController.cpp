@@ -192,6 +192,7 @@ void GomspaceController::execute() {
     output3_f.set(gs.hk->output[2]);
     output4_f.set(gs.hk->output[3]);
     output5_f.set(gs.hk->output[4]);
+    output6_f.set(gs.hk->output[5]);
 
     wdt_i2c_time_left_f.set(gs.hk->wdt_i2c_time_left);
 

@@ -88,6 +88,28 @@ class TestFixture {
 
     ReadableStateField<unsigned char>* pptmode_fp;
 
+    WritableStateField<unsigned char>* output1_cmd_fp;
+    WritableStateField<unsigned char>* output2_cmd_fp;
+    WritableStateField<unsigned char>* output3_cmd_fp;
+    WritableStateField<unsigned char>* output4_cmd_fp;
+    WritableStateField<unsigned char>* output5_cmd_fp;
+
+    WritableStateField<unsigned int>* pv1_output_cmd_fp;
+    WritableStateField<unsigned int>* pv2_output_cmd_fp;
+    WritableStateField<unsigned int>* pv3_output_cmd_fp;
+
+    WritableStateField<unsigned char>* ppt_mode_cmd_fp;
+
+    WritableStateField<bool>* heater_cmd_fp;
+
+    WritableStateField<bool>* counter_reset_cmd_fp;
+
+    WritableStateField<bool>* wdt_reset_cmd_fp;
+
+    WritableStateField<bool>* gs_reset_cmd_fp;
+
+    WritableStateField<bool>* gs_reboot_cmd_fp;
+
     TestFixture() : registry(), gs(&hk, &config, &config2) {
         gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
 
@@ -130,12 +152,35 @@ class TestFixture {
         bootcause_fp = registry.find_readable_field_t<unsigned char>("gomspace.bootcause");
         battmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.battmode");
         pptmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.pptmode");
+
+        output1_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output1_cmd");
+        output2_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output2_cmd");
+        output3_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output3_cmd");
+        output4_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output4_cmd");
+        output5_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output5_cmd");
+
+        pv1_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv1_cmd");
+        pv2_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv2_cmd");
+        pv3_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv3_cmd");
+
+        ppt_mode_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.pptmode_cmd");
+
+        heater_cmd_fp = registry.find_writable_field_t<bool>("gomspace.heater_cmd");
+
+        counter_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.counter_reset_cmd");
+
+        wdt_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.wdt_reset_cmd");
+
+        gs_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reset_cmd");
+
+        gs_reboot_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reboot_cmd");
     }
 };
 
 void test_task_initialization() {
     TestFixture tf;
-    //check that it is initialized correctly. tests pass
+
+    // Check that the hk struct in the gomspace controller is initialized correctly.
     TEST_ASSERT_EQUAL(1, tf.gs.hk->vboost[0]);
     TEST_ASSERT_EQUAL(2, tf.gs.hk->vboost[1]);
     TEST_ASSERT_EQUAL(3, tf.gs.hk->vboost[2]);
@@ -180,10 +225,20 @@ void test_task_initialization() {
     TEST_ASSERT_EQUAL(63, tf.gs.hk->battmode);
     
     TEST_ASSERT_EQUAL(64, tf.gs.hk->pptmode);
+
+    // Check that the command statefields exist
+    TEST_ASSERT_NOT_NULL(tf.output1_cmd_fp);
+    TEST_ASSERT_NOT_NULL(tf.output2_cmd_fp);
+    TEST_ASSERT_NOT_NULL(tf.output3_cmd_fp);
+    TEST_ASSERT_NOT_NULL(tf.output4_cmd_fp);
+    TEST_ASSERT_NOT_NULL(tf.output5_cmd_fp);
 }
 
 void test_task_execute() {
     TestFixture tf;
+
+    // Set the control cycle count to 1 so that the control task won't change the Gomspace output values
+    TimedControlTaskBase::control_cycle_count=1;
     tf.gs_controller->execute();
 
     //check that the statefields are set to their respective value(s) in hk struct 
