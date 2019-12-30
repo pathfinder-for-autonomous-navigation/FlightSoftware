@@ -136,7 +136,7 @@ void MissionManager::dispatch_detumble() {
     const f_vector_t ang_vel = adcs_ang_vel_fp->get();
     const lin::Vector3f ang_vel_vec {ang_vel[0], ang_vel[1], ang_vel[2]};
     const float ang_rate = lin::norm(ang_vel_vec);
-    const float threshold = rwa::max_speed_read * 0.2;
+    const float threshold = rwa::max_speed_read * detumble_safety_factor;
     if (ang_rate <= threshold)
     {
         set(adcs_state_t::point_standby);

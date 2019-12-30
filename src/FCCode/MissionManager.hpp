@@ -17,6 +17,7 @@ class MissionManager : public TimedControlTask<void> {
     void execute() override;
 
     // Constants that drive state transitions.
+    static constexpr double detumble_safety_factor = 0.2;
 
     static constexpr double close_approach_trigger_dist = 200; // in meters
     static constexpr double docking_trigger_dist = 1; // in meters

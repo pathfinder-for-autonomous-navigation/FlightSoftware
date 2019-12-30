@@ -29,7 +29,7 @@ void test_dispatch_startup() {
 void test_dispatch_detumble() {
     TestFixture tf(mission_state_t::detumble);
 
-    const float threshold = rwa::max_speed_read * 0.2;
+    const float threshold = rwa::max_speed_read * MissionManager::detumble_safety_factor;
 
     // Stays in detumble mode if satellite is tumbling
     tf.set_ang_rate(threshold + 0.1);
