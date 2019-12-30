@@ -232,6 +232,22 @@ void test_task_initialization() {
     TEST_ASSERT_NOT_NULL(tf.output3_cmd_fp);
     TEST_ASSERT_NOT_NULL(tf.output4_cmd_fp);
     TEST_ASSERT_NOT_NULL(tf.output5_cmd_fp);
+
+    TEST_ASSERT_NOT_NULL(tf.pv1_output_cmd_fp);
+    TEST_ASSERT_NOT_NULL(tf.pv2_output_cmd_fp);
+    TEST_ASSERT_NOT_NULL(tf.pv3_output_cmd_fp);
+
+    TEST_ASSERT_NOT_NULL(tf.ppt_mode_cmd_fp);
+
+    TEST_ASSERT_NOT_NULL(tf.heater_cmd_fp);
+
+    TEST_ASSERT_NOT_NULL(tf.counter_reset_cmd_fp);
+
+    TEST_ASSERT_NOT_NULL(tf.wdt_reset_cmd_fp);
+
+    TEST_ASSERT_NOT_NULL(tf.gs_reset_cmd_fp);
+
+    TEST_ASSERT_NOT_NULL(tf.gs_reboot_cmd_fp);
 }
 
 void test_task_execute() {
