@@ -18,14 +18,10 @@ class FieldCreatorTask : public ControlTask<void> {
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
-        adcs_min_stable_ang_rate_f("adcs.min_stable_ang_rate", Serializer<float>(0, 10, 4)),
         prop_mode_f("prop.mode", Serializer<unsigned char>(1)),
         propagated_baseline_pos_f("orbit.baseline_pos", Serializer<d_vector_t>(0, 100000, 100))
       {
           // Create the fields!
-
-          // For MissionManager
-          add_writable_field(adcs_min_stable_ang_rate_f);
 
           // For propulsion controller
           add_readable_field(prop_mode_f);
