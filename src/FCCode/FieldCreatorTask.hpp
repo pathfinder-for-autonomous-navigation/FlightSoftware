@@ -11,8 +11,6 @@
 // eventually become zero.
 class FieldCreatorTask : public ControlTask<void> {
     public:
-      WritableStateField<float> adcs_min_stable_ang_rate_f;
-
       ReadableStateField<unsigned char> prop_mode_f;
       ReadableStateField<d_vector_t> propagated_baseline_pos_f;
 
