@@ -324,11 +324,12 @@ void test_task_execute() {
 
     // Let 30 seconds or 300 control cycles pass
     TimedControlTaskBase::control_cycle_count=3000;
+
+    #ifndef DESKTOP
     tf.gs_controller->execute();
 
     // The controller will set the gomspace outputs and 
     // write the new values to their respective statefields
-    #ifndef DESKTOP
     TEST_ASSERT_EQUAL(true, tf.output1_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output2_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output3_fp->get());
@@ -341,7 +342,6 @@ void test_task_execute() {
 
     TEST_ASSERT_EQUAL(1, tf.pptmode_fp->get());
     TEST_ASSERT_EQUAL(1, tf.gs.get_heater());
-    #endif
 
     // Test the reset commands one by one, starting with the counter reset command
 
@@ -358,59 +358,52 @@ void test_task_execute() {
     tf.gs_controller->execute();
 
     // The boot and WDT counters should reset
-    #ifndef DESKTOP
     TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
     TEST_ASSERT_EQUAL(wdt_i2c_count+1, tf.counter_wdt_i2c_fp->get());
     TEST_ASSERT_EQUAL(wdt_gnd_count+1, tf.counter_wdt_gnd_fp->get());
     TEST_ASSERT_EQUAL(wdt_csp_count1+1, tf.counter_wdt_csp1_fp->get());
     TEST_ASSERT_EQUAL(wdt_csp_count2+1, tf.counter_wdt_csp2_fp->get());
     TEST_ASSERT_EQUAL(false, tf.counter_reset_cmd_fp->get());
-    #endif
 
     // Test the WDT reset command
 
     // Current WDT counters
-    unsigned int wdt_i2c_count=tf.gs.hk->counter_wdt_i2c;
-    unsigned int wdt_gnd_count=tf.gs.hk->counter_wdt_gnd;
-    unsigned int wdt_csp_count1=tf.gs.hk->counter_wdt_csp[0];
-    unsigned int wdt_csp_count2=tf.gs.hk->counter_wdt_csp[1];
+    wdt_i2c_count=tf.gs.hk->counter_wdt_i2c;
+    wdt_gnd_count=tf.gs.hk->counter_wdt_gnd;
+    wdt_csp_count1=tf.gs.hk->counter_wdt_csp[0];
+    wdt_csp_count2=tf.gs.hk->counter_wdt_csp[1];
 
     // Set the wdt reset command to true
     tf.wdt_reset_cmd_fp->set(true);
     tf.gs_controller->execute();
 
     // The WDT counters should reset
-    #ifndef DESKTOP
     TEST_ASSERT_EQUAL(wdt_i2c_count+1, tf.counter_wdt_i2c_fp->get());
     TEST_ASSERT_EQUAL(wdt_gnd_count+1, tf.counter_wdt_gnd_fp->get());
     TEST_ASSERT_EQUAL(wdt_csp_count1+1, tf.counter_wdt_csp1_fp->get());
     TEST_ASSERT_EQUAL(wdt_csp_count2+1, tf.counter_wdt_csp2_fp->get());
     TEST_ASSERT_EQUAL(false, tf.wdt_reset_cmd_fp->get());
-    #endif
 
     // Test the gomspace hard reset command
 
     // Current boot count
-    unsigned int boot_count=tf.gs.hk->counter_boot;
+    boot_count=tf.gs.hk->counter_boot;
 
     // Set the gs reset command to true
     tf.gs_reset_cmd_fp->set(true);
     tf.gs_controller->execute();
 
-    #ifndef DESKTOP
     TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
-    #endif
 
     // Test the gomspace reboot command
 
     // Current boot count
-    unsigned int boot_count=tf.gs.hk->counter_boot;
+    boot_count=tf.gs.hk->counter_boot;
 
     // Set the gs reboot command to true
     tf.gs_reboot_cmd_fp->set(true);
     tf.gs_controller->execute();
 
-    #ifndef DESKTOP
     TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
     #endif
 }
