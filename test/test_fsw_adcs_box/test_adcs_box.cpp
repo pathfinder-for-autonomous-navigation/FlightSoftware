@@ -32,7 +32,12 @@ class TestFixture {
         Devices::ADCS adcs;
         
         // Create a TestFixture instance of AttitudeEstimator with pointers to statefields
+        // Compile conditionally for either hootl or hitl
+        #ifdef DESKTOP
         TestFixture() : registry(), adcs(){
+        #else
+        TestFixture() : registry(), adcs(Wire, Devices::ADCS::ADDRESS){
+        #endif
 
             adcs_box = std::make_unique<ADCSBoxMonitor>(registry, 0, adcs);  
 
