@@ -32,15 +32,14 @@ void AttitudeComputer::execute() {
     const d_vector_t pos_eci = pos_fp->get();
     const bool posdata_is_set = std::isfinite(pos_eci[0]);
 
-    lin::Vector3f r_hat_eci = {
-        static_cast<float>(pos_eci[0]),
-        static_cast<float>(pos_eci[1]),
-        static_cast<float>(pos_eci[2])
-    };
-
     lin::Vector3f r_hat_body;
     f_vector_t r_hat_body_vec;
     if (posdata_is_set) {
+        lin::Vector3f r_hat_eci = {
+            static_cast<float>(pos_eci[0]),
+            static_cast<float>(pos_eci[1]),
+            static_cast<float>(pos_eci[2])
+        };
         r_hat_eci = r_hat_eci / lin::norm(r_hat_eci);
         gnc::utl::rotate_frame(body_eci_quat, r_hat_eci, r_hat_body);
         r_hat_body_vec = {r_hat_body(0), r_hat_body(1), r_hat_body(2)};
