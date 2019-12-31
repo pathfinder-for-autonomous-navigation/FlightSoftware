@@ -2,6 +2,7 @@
 #define ATTITUDE_ESTIMATOR_HPP_
 
 #include <gnc_attitude_estimation.hpp>
+#include <lin.hpp>
 #include "TimedControlTask.hpp"
 
 /**
@@ -61,7 +62,7 @@ class AttitudeEstimator : public TimedControlTask<void> {
     ReadableStateField<f_quat_t> q_body_eci_f;
     Serializer<f_vector_t> w_body_sr;
     ReadableStateField<f_vector_t> w_body_f;
-
+    InternalStateField<lin::Vector3f> l_body_f;
 };
 
 #endif

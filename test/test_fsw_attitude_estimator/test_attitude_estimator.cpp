@@ -16,6 +16,7 @@ class TestFixture {
         // pointers to output statefields for easy access
         ReadableStateField<f_quat_t>* q_body_eci_fp;
         ReadableStateField<f_vector_t>* w_body_fp;
+        InternalStateField<lin::Vector3f>* l_body_fp;
 
         std::unique_ptr<AttitudeEstimator> attitude_estimator;
 
@@ -33,6 +34,7 @@ class TestFixture {
                 // initialize pointers to statefields
                 q_body_eci_fp = registry.find_readable_field_t<f_quat_t>("attitude_estimator.q_body_eci");
                 w_body_fp = registry.find_readable_field_t<f_vector_t>("attitude_estimator.w_body");
+                l_body_fp = registry.find_internal_field_t<lin::Vector3f>("attitude_estimator.l_body");
         }
 };
 
@@ -41,15 +43,10 @@ void test_task_initialization()
         TestFixture tf;
 }
 
-void test_execute(){
-
-}
-
 int test_control_task()
 {
         UNITY_BEGIN();
         RUN_TEST(test_task_initialization);
-        RUN_TEST(test_execute);
         return UNITY_END();
 }
 

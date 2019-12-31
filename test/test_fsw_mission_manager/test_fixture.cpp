@@ -4,8 +4,8 @@
 
 TestFixture::TestFixture(mission_state_t initial_state) : registry()
 {
-    adcs_ang_vel_fp = registry.create_readable_vector_field<float>(
-                        "attitude_estimator.w_body", 0, 10, 100);
+    adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
+                                "attitude_estimator.l_body");
 
     radio_mode_fp = registry.create_internal_field<unsigned char>("radio.mode");
     last_checkin_cycle_fp = registry.create_internal_field<unsigned int>(
@@ -22,7 +22,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
     const double nan_d = std::numeric_limits<double>::quiet_NaN();
-    adcs_ang_vel_fp->set({nan_f,nan_f,nan_f});
+    adcs_ang_momentum_fp->set({nan_f,nan_f,nan_f});
     radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::disabled));
     last_checkin_cycle_fp->set(0);
     prop_mode_fp->set(static_cast<unsigned int>(prop_mode_t::disabled));
@@ -129,7 +129,8 @@ void TestFixture::set_comms_blackout_period(int ccno) {
 
 // Set the angular rate of the spacecraft.
 void TestFixture::set_ang_rate(float rate) {
-    adcs_ang_vel_fp->set({rate, 0, 0});
+    adcs_ang_momentum_fp->set({rate, 0, 0}); // TODO will need to change this once the inertia tensor
+                                             // is added to GNC constants.
 }
 
 adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t::limited,

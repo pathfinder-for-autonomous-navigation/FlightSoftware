@@ -29,10 +29,12 @@ void test_dispatch_startup() {
 void test_dispatch_detumble() {
     TestFixture tf(mission_state_t::detumble);
 
-    const float threshold = rwa::max_speed_read * MissionManager::detumble_safety_factor;
+    const float threshold = rwa::max_speed_read * rwa::moment_of_inertia
+                                * MissionManager::detumble_safety_factor;
+    const float delta = threshold * 0.01;
 
     // Stays in detumble mode if satellite is tumbling
-    tf.set_ang_rate(threshold + 0.1);
+    tf.set_ang_rate(threshold + delta);
     tf.step();
     tf.check(sat_designation_t::undecided);
     tf.check(mission_state_t::detumble);
@@ -42,7 +44,7 @@ void test_dispatch_detumble() {
 
     // If satellite is no longer tumbling, spacecraft exits detumble mode
     // and starts pointing in the expected direction.
-    tf.set_ang_rate(threshold - 0.1);
+    tf.set_ang_rate(threshold - delta);
     tf.step();
     tf.check(adcs_state_t::point_standby);
     tf.check(mission_state_t::standby);

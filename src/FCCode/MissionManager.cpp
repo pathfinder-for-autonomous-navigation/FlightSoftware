@@ -19,7 +19,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
 
-    adcs_ang_vel_fp = find_readable_field<f_vector_t>("attitude_estimator.w_body", __FILE__, __LINE__);
+    adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.l_body", __FILE__, __LINE__);
 
     radio_mode_fp = find_internal_field<unsigned char>("radio.mode", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
@@ -133,11 +133,9 @@ void MissionManager::dispatch_detumble() {
     set(radio_mode_t::active);
 
     // Detumble until satellite angular rate is below an allowable threshold
-    const f_vector_t ang_vel = adcs_ang_vel_fp->get();
-    const lin::Vector3f ang_vel_vec {ang_vel[0], ang_vel[1], ang_vel[2]};
-    const float ang_rate = lin::norm(ang_vel_vec);
-    const float threshold = rwa::max_speed_read * detumble_safety_factor;
-    if (ang_rate <= threshold)
+    const float momentum = lin::norm(adcs_ang_momentum_fp->get());
+    const float threshold = rwa::max_speed_read * rwa::moment_of_inertia * detumble_safety_factor;
+    if (momentum <= threshold)
     {
         set(adcs_state_t::point_standby);
         set(mission_state_t::standby);

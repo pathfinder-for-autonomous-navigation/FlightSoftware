@@ -3,6 +3,7 @@
 
 #include "TimedControlTask.hpp"
 #include "constants.hpp"
+#include <lin.hpp>
 
 #include "prop_mode_t.enum"
 #include "mission_state_t.enum"
@@ -80,9 +81,9 @@ class MissionManager : public TimedControlTask<void> {
      **/
     WritableStateField<unsigned char> adcs_state_f;
     /**
-     * @brief Current angular velocity of ADCS system in the body frame.
+     * @brief Current angular momentum of ADCS system in the body frame.
      **/
-    ReadableStateField<f_vector_t>* adcs_ang_vel_fp;
+    InternalStateField<lin::Vector3f>* adcs_ang_momentum_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
     const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading mode
