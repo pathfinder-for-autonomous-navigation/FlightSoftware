@@ -19,6 +19,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
 
+    adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
     adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.l_body", __FILE__, __LINE__);
 
     radio_mode_fp = find_internal_field<unsigned char>("radio.mode", __FILE__, __LINE__);
@@ -196,11 +197,13 @@ void MissionManager::dispatch_standby() {
         static_cast<sat_designation_t>(sat_designation_f.get());
 
     if (sat_designation == sat_designation_t::follower) {
-        set(adcs_state_t::set_singlesat_gains);
+        adcs_paired_fp->set(false);
+        set(adcs_state_t::point_standby);
         set(mission_state_t::follower);
     }
     else if (sat_designation == sat_designation_t::leader) {
-        set(adcs_state_t::set_singlesat_gains);
+        adcs_paired_fp->set(false);
+        set(adcs_state_t::point_standby);
         set(mission_state_t::leader);
     }
     else {
@@ -230,7 +233,7 @@ void MissionManager::dispatch_leader_close_approach() {
     set(sat_designation_t::leader);
     set(mission_state_t::leader_close_approach);
     set(adcs_state_t::point_docking);
-    set(prop_mode_t::active);
+    set(prop_mode_t::disabled);
     set(radio_mode_t::active);
 
     if (too_long_since_last_comms()) {
@@ -269,7 +272,8 @@ void MissionManager::dispatch_docked() {
 void MissionManager::dispatch_paired() {
     set(mission_state_t::paired);
     set(sat_designation_t::undecided);
-    set(adcs_state_t::set_paired_gains);
+    adcs_paired_fp->set(true);
+    set(adcs_state_t::point_standby);
     set(mission_state_t::standby);
 }
 

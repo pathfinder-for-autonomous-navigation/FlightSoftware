@@ -15,7 +15,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     q_body_eci_f("attitude_estimator.q_body_eci", q_body_eci_sr),
     w_body_sr(-55, 55, 32*3),
     w_body_f("attitude_estimator.w_body", w_body_sr),
-    l_body_f("attitude_estimator.l_body")
+    l_body_f("attitude_estimator.l_body"),
+    adcs_paired_f("adcs.paired", Serializer<bool>())
     {
         piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
         pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
@@ -26,6 +27,10 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         add_readable_field(q_body_eci_f);
         add_readable_field(w_body_f);
         add_internal_field(l_body_f);
+        add_writable_field(adcs_paired_f);
+
+        // Initialize flags
+        adcs_paired_f.set(false);
     }
 
 void AttitudeEstimator::execute(){
@@ -60,10 +65,8 @@ void AttitudeEstimator::set_estimate(){
     w_body_f.set(w_temp);
 
     lin::Vector3f wvec = {w_temp[0], w_temp[1], w_temp[2]};
-    lin::Matrix3x3f inertia({
-        1.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 1.0f
-    });
-    l_body_f.set((inertia * wvec).eval());
+    lin::Vector3f result;
+    if (adcs_paired_f.get()) result = (gnc::constant::JB_docked_sats * wvec).eval();
+    else result = (gnc::constant::JB_single_sat * wvec).eval();
+    l_body_f.set(result);
 }

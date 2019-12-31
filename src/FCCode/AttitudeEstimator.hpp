@@ -63,6 +63,9 @@ class AttitudeEstimator : public TimedControlTask<void> {
     Serializer<f_vector_t> w_body_sr;
     ReadableStateField<f_vector_t> w_body_f;
     InternalStateField<lin::Vector3f> l_body_f;
+
+    // True if the "paired" ADCS gains are being used.
+    WritableStateField<bool> adcs_paired_f;
 };
 
 #endif

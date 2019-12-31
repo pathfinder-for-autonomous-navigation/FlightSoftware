@@ -10,9 +10,7 @@ enum class adcs_state_t {
     detumble,
     point_manual,
     point_standby,
-    point_docking,
-    set_paired_gains,
-    set_singlesat_gains
+    point_docking
 };
 
 #endif

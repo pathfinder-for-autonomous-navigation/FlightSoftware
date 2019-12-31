@@ -126,7 +126,7 @@ void test_dispatch_follower_close_approach() {
 
 void test_dispatch_leader_close_approach() {
     test_dispatch_rendezvous_state(mission_state_t::leader_close_approach,
-        sat_designation_t::leader, adcs_state_t::point_docking, prop_mode_t::active,
+        sat_designation_t::leader, adcs_state_t::point_docking, prop_mode_t::disabled,
         MissionManager::docking_trigger_dist, mission_state_t::docking);
 }
 
@@ -158,6 +158,7 @@ void test_dispatch_standby() {
         TestFixture tf(mission_state_t::standby);
         tf.set(sat_designation_t::follower);
         tf.step();
+        TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::follower);
     }
 
@@ -166,6 +167,7 @@ void test_dispatch_standby() {
         TestFixture tf(mission_state_t::standby);
         tf.set(sat_designation_t::leader);
         tf.step();
+        TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::leader);
     }
 
@@ -217,7 +219,8 @@ void test_dispatch_docked() {
 void test_dispatch_paired() {
     TestFixture tf(mission_state_t::paired);
     tf.step();
-    tf.check(adcs_state_t::set_paired_gains);
+    TEST_ASSERT(tf.adcs_paired_fp->get());
+    tf.check(adcs_state_t::point_standby);
     tf.check(mission_state_t::standby);
     tf.check(sat_designation_t::undecided);
 }
