@@ -5,7 +5,7 @@
 TestFixture::TestFixture(mission_state_t initial_state) : registry()
 {
     adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
-                                "attitude_estimator.l_body");
+                                "attitude_estimator.h_body");
     adcs_paired_fp = registry.create_writable_field<bool>("adcs.paired");
 
     radio_mode_fp = registry.create_internal_field<unsigned char>("radio.mode");

@@ -20,7 +20,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_writable_field(sat_designation_f);
 
     adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
-    adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.l_body", __FILE__, __LINE__);
+    adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);
 
     radio_mode_fp = find_internal_field<unsigned char>("radio.mode", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
