@@ -7,7 +7,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     TimedControlTask<void>(registry, "mission_ct", offset),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
-    mission_state_f("pan.state", Serializer<unsigned char>(14)),
+    mission_state_f("pan.state", Serializer<unsigned char>(11)),
     is_deployed_f("pan.deployed", Serializer<bool>()),
     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32)),
     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2))
@@ -68,17 +68,11 @@ void MissionManager::execute() {
         case mission_state_t::follower:
             dispatch_follower();
             break;
-        case mission_state_t::follower_close_approach:
-            dispatch_follower_close_approach();
-            break;
         case mission_state_t::standby:
             dispatch_standby();
             break;
         case mission_state_t::leader:
             dispatch_leader();
-            break;
-        case mission_state_t::leader_close_approach:
-            dispatch_leader_close_approach();
             break;
         case mission_state_t::docking:
             dispatch_docking();
@@ -156,23 +150,6 @@ void MissionManager::dispatch_initialization_hold() {
 void MissionManager::dispatch_follower() {
     set(sat_designation_t::follower);
     set(mission_state_t::follower);
-    set(adcs_state_t::point_standby);
-    set(prop_mode_t::active);
-    set(radio_mode_t::active);
-
-    if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        set(mission_state_t::standby);
-    }
-
-    if (distance_to_other_sat() < close_approach_trigger_dist) {
-        set(mission_state_t::follower_close_approach);
-    }
-}
-
-void MissionManager::dispatch_follower_close_approach() {
-    set(sat_designation_t::follower);
-    set(mission_state_t::follower_close_approach);
     set(adcs_state_t::point_docking);
     set(prop_mode_t::active);
     set(radio_mode_t::active);
@@ -214,24 +191,6 @@ void MissionManager::dispatch_standby() {
 void MissionManager::dispatch_leader() {
     set(sat_designation_t::leader);
     set(mission_state_t::leader);
-    set(adcs_state_t::point_standby);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::active);
-
-    if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        set(adcs_state_t::point_standby);
-        set(mission_state_t::standby);
-    }
-
-    if (distance_to_other_sat() < close_approach_trigger_dist) {
-        set(mission_state_t::leader_close_approach);
-    }
-}
-
-void MissionManager::dispatch_leader_close_approach() {
-    set(sat_designation_t::leader);
-    set(mission_state_t::leader_close_approach);
     set(adcs_state_t::point_docking);
     set(prop_mode_t::disabled);
     set(radio_mode_t::active);
