@@ -55,8 +55,31 @@ void AttitudeComputer::execute() {
                 // our battery and we'll eventually have GPS coverage.
                 constexpr float nan = std::numeric_limits<float>::quiet_NaN();
 
+                // Pick "closest" long edge to point towards the Sun
+                const f_vector_t long_edges[4] = {
+                    {sqrtf(2)/2, sqrtf(2)/2, 0},
+                    {sqrtf(2)/2, -sqrtf(2)/2, 0},
+                    {-sqrtf(2)/2, sqrtf(2)/2, 0},
+                    {-sqrtf(2)/2, -sqrtf(2)/2, 0},
+                };
+                size_t long_edge_choice = 0;
+                float min_rotation = 6.28; // Radians
+                for(size_t i = 0; i < 4; i++) {
+                    lin::Vector3f long_edge = {
+                        long_edges[i][0],
+                        long_edges[i][1],
+                        long_edges[i][2]
+                    };
+                    lin::Vector3f ssa_vector = {ssa_vec[0], ssa_vec[1], ssa_vec[2]};
+                    const float rotation_angle = acos(0.5 / (lin::dot(long_edge, ssa_vector)));
+                    if (rotation_angle < min_rotation) {
+                        min_rotation = rotation_angle;
+                        long_edge_choice = i;
+                    }
+                }
+
                 adcs_vec1_current_f.set(ssa_vec);
-                adcs_vec1_desired_f.set({1,0,0});
+                adcs_vec1_desired_f.set(long_edges[long_edge_choice]);
                 adcs_vec2_current_f.set({nan, nan, nan});
                 adcs_vec2_desired_f.set({nan, nan, nan});
             }
