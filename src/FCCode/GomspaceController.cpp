@@ -83,9 +83,6 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     counter_reset_cmd_sr(),
     counter_reset_cmd_f("gomspace.counter_reset_cmd", counter_reset_cmd_sr),
 
-    wdt_reset_cmd_sr(),
-    wdt_reset_cmd_f("gomspace.wdt_reset_cmd", wdt_reset_cmd_sr),
-
     gs_reset_cmd_sr(),
     gs_reset_cmd_f("gomspace.gs_reset_cmd", gs_reset_cmd_sr),
 
@@ -154,8 +151,6 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
         add_writable_field(counter_reset_cmd_f);
 
-        add_writable_field(wdt_reset_cmd_f);
-
         add_writable_field(gs_reset_cmd_f);
 
         add_writable_field(gs_reboot_cmd_f);
@@ -166,7 +161,7 @@ void GomspaceController::execute() {
     assert(gs.get_hk());
 
     // Set the gomspace outputs to the values of the statefield commands every 30 seconds
-    if (control_cycle_count%300==0){
+    if (control_cycle_count%period==0){
         set_outputs();
     }
 
@@ -257,11 +252,6 @@ void GomspaceController::set_outputs(){
     if (counter_reset_cmd_f.get()==true) {
         gs.reset_counters();
         counter_reset_cmd_f.set(false);
-    }
-
-    if (wdt_reset_cmd_f.get()==true) {
-        gs.reset_wdt();
-        wdt_reset_cmd_f.set(false);
     }
 
     if (gs_reset_cmd_f.get()==true) {

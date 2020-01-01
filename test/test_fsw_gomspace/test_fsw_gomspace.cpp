@@ -104,8 +104,6 @@ class TestFixture {
 
     WritableStateField<bool>* counter_reset_cmd_fp;
 
-    WritableStateField<bool>* wdt_reset_cmd_fp;
-
     WritableStateField<bool>* gs_reset_cmd_fp;
 
     WritableStateField<bool>* gs_reboot_cmd_fp;
@@ -169,8 +167,6 @@ class TestFixture {
 
         counter_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.counter_reset_cmd");
 
-        wdt_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.wdt_reset_cmd");
-
         gs_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reset_cmd");
 
         gs_reboot_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reboot_cmd");
@@ -225,29 +221,6 @@ void test_task_initialization() {
     TEST_ASSERT_EQUAL(63, tf.gs.hk->battmode);
     
     TEST_ASSERT_EQUAL(64, tf.gs.hk->pptmode);
-
-    // Check that the command statefields exist
-    TEST_ASSERT_NOT_NULL(tf.output1_cmd_fp);
-    TEST_ASSERT_NOT_NULL(tf.output2_cmd_fp);
-    TEST_ASSERT_NOT_NULL(tf.output3_cmd_fp);
-    TEST_ASSERT_NOT_NULL(tf.output4_cmd_fp);
-    TEST_ASSERT_NOT_NULL(tf.output5_cmd_fp);
-
-    TEST_ASSERT_NOT_NULL(tf.pv1_output_cmd_fp);
-    TEST_ASSERT_NOT_NULL(tf.pv2_output_cmd_fp);
-    TEST_ASSERT_NOT_NULL(tf.pv3_output_cmd_fp);
-
-    TEST_ASSERT_NOT_NULL(tf.ppt_mode_cmd_fp);
-
-    TEST_ASSERT_NOT_NULL(tf.heater_cmd_fp);
-
-    TEST_ASSERT_NOT_NULL(tf.counter_reset_cmd_fp);
-
-    TEST_ASSERT_NOT_NULL(tf.wdt_reset_cmd_fp);
-
-    TEST_ASSERT_NOT_NULL(tf.gs_reset_cmd_fp);
-
-    TEST_ASSERT_NOT_NULL(tf.gs_reboot_cmd_fp);
 }
 
 void test_task_execute() {
@@ -318,12 +291,11 @@ void test_task_execute() {
     tf.heater_cmd_fp->set(true);
 
     tf.counter_reset_cmd_fp->set(false);
-    tf.wdt_reset_cmd_fp->set(false);
     tf.gs_reset_cmd_fp->set(false);
     tf.gs_reboot_cmd_fp->set(false);
 
     // Let 30 seconds or 300 control cycles pass
-    TimedControlTaskBase::control_cycle_count=3000;
+    TimedControlTaskBase::control_cycle_count=300;
 
     #ifndef DESKTOP
     tf.gs_controller->execute();
@@ -364,25 +336,6 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(wdt_csp_count1+1, tf.counter_wdt_csp1_fp->get());
     TEST_ASSERT_EQUAL(wdt_csp_count2+1, tf.counter_wdt_csp2_fp->get());
     TEST_ASSERT_EQUAL(false, tf.counter_reset_cmd_fp->get());
-
-    // Test the WDT reset command
-
-    // Current WDT counters
-    wdt_i2c_count=tf.gs.hk->counter_wdt_i2c;
-    wdt_gnd_count=tf.gs.hk->counter_wdt_gnd;
-    wdt_csp_count1=tf.gs.hk->counter_wdt_csp[0];
-    wdt_csp_count2=tf.gs.hk->counter_wdt_csp[1];
-
-    // Set the wdt reset command to true
-    tf.wdt_reset_cmd_fp->set(true);
-    tf.gs_controller->execute();
-
-    // The WDT counters should reset
-    TEST_ASSERT_EQUAL(wdt_i2c_count+1, tf.counter_wdt_i2c_fp->get());
-    TEST_ASSERT_EQUAL(wdt_gnd_count+1, tf.counter_wdt_gnd_fp->get());
-    TEST_ASSERT_EQUAL(wdt_csp_count1+1, tf.counter_wdt_csp1_fp->get());
-    TEST_ASSERT_EQUAL(wdt_csp_count2+1, tf.counter_wdt_csp2_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.wdt_reset_cmd_fp->get());
 
     // Test the gomspace reboot command
 

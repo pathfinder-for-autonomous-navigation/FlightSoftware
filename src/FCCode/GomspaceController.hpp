@@ -91,6 +91,9 @@ class GomspaceController : public TimedControlTask<void> {
     Serializer<unsigned char> pptmode_sr;
     ReadableStateField<unsigned char> pptmode_f;
 
+    // The controller will set the outputs of the gomspace once a period (number of control cycles)
+    unsigned int period = 300;
+
     // Command statefields to control the Gomspace outputs. Will
     // be set by various individual subsystems and the ground.
     Serializer<bool> output_cmd_sr;
@@ -113,9 +116,6 @@ class GomspaceController : public TimedControlTask<void> {
 
     Serializer<bool> counter_reset_cmd_sr;
     WritableStateField<bool> counter_reset_cmd_f;
-
-    Serializer<bool> wdt_reset_cmd_sr;
-    WritableStateField<bool> wdt_reset_cmd_f;
 
     Serializer<bool> gs_reset_cmd_sr;
     WritableStateField<bool> gs_reset_cmd_f;
