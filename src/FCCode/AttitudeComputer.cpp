@@ -26,23 +26,23 @@ AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int of
 void AttitudeComputer::execute() {
     adcs_state_t adcs_state = static_cast<adcs_state_t>(adcs_state_fp->get());
 
-    const f_quat_t q_body_eci = q_body_eci_fp->get();
-    lin::Vector4f body_eci_quat = {q_body_eci[0], q_body_eci[1], q_body_eci[2], q_body_eci[3]};
+    const f_quat_t q_body_eci_arr = q_body_eci_fp->get();
+    lin::Vector4f q_body_eci = {q_body_eci_arr[0], q_body_eci_arr[1], q_body_eci_arr[2], q_body_eci_arr[3]};
 
-    const d_vector_t pos_eci = pos_fp->get();
-    const bool posdata_is_set = std::isfinite(pos_eci[0]);
+    const d_vector_t pos_eci_arr = pos_fp->get();
+    const bool posdata_is_set = std::isfinite(pos_eci_arr[0]);
 
     lin::Vector3f r_hat_body;
-    f_vector_t r_hat_body_vec;
+    f_vector_t r_hat_body_arr;
     if (posdata_is_set) {
         lin::Vector3f r_hat_eci = {
-            static_cast<float>(pos_eci[0]),
-            static_cast<float>(pos_eci[1]),
-            static_cast<float>(pos_eci[2])
+            static_cast<float>(pos_eci_arr[0]),
+            static_cast<float>(pos_eci_arr[1]),
+            static_cast<float>(pos_eci_arr[2])
         };
         r_hat_eci = r_hat_eci / lin::norm(r_hat_eci);
-        gnc::utl::rotate_frame(body_eci_quat, r_hat_eci, r_hat_body);
-        r_hat_body_vec = {r_hat_body(0), r_hat_body(1), r_hat_body(2)};
+        gnc::utl::rotate_frame(q_body_eci, r_hat_eci, r_hat_body);
+        r_hat_body_arr = {r_hat_body(0), r_hat_body(1), r_hat_body(2)};
     }
 
     switch(adcs_state) {
@@ -56,64 +56,65 @@ void AttitudeComputer::execute() {
                 constexpr float nan = std::numeric_limits<float>::quiet_NaN();
 
                 // Pick "closest" long edge to point towards the Sun
-                const f_vector_t long_edges[4] = {
+                const f_vector_t long_edges_arrs[4] = {
                     {sqrtf(2)/2, sqrtf(2)/2, 0},
                     {sqrtf(2)/2, -sqrtf(2)/2, 0},
                     {-sqrtf(2)/2, sqrtf(2)/2, 0},
                     {-sqrtf(2)/2, -sqrtf(2)/2, 0},
                 };
                 size_t long_edge_choice = 0;
-                float min_rotation = 6.28; // Radians
+                float min_projection = -2;
                 for(size_t i = 0; i < 4; i++) {
                     lin::Vector3f long_edge = {
-                        long_edges[i][0],
-                        long_edges[i][1],
-                        long_edges[i][2]
+                        long_edges_arrs[i][0],
+                        long_edges_arrs[i][1],
+                        long_edges_arrs[i][2]
                     };
                     lin::Vector3f ssa_vector = {ssa_vec[0], ssa_vec[1], ssa_vec[2]};
-                    const float rotation_angle = acos(0.5 / (lin::dot(long_edge, ssa_vector)));
-                    if (rotation_angle < min_rotation) {
-                        min_rotation = rotation_angle;
+                    const float projection = 1 / lin::dot(long_edge, ssa_vector);
+                    if (projection < min_projection) {
+                        min_projection = projection;
                         long_edge_choice = i;
                     }
                 }
 
                 adcs_vec1_current_f.set(ssa_vec);
-                adcs_vec1_desired_f.set(long_edges[long_edge_choice]);
+                adcs_vec1_desired_f.set(long_edges_arrs[long_edge_choice]);
                 adcs_vec2_current_f.set({nan, nan, nan});
                 adcs_vec2_desired_f.set({nan, nan, nan});
             }
             else {
                 // We've got a GPS reading. Point in a direction that
                 // maximizes comms and power.
-                const lin::Vector3f ssa_normalized = {ssa_vec[0], ssa_vec[1], ssa_vec[2]};
-                lin::Vector3f r_cross_ssa = lin::cross(r_hat_body, ssa_normalized);
-                r_cross_ssa = r_cross_ssa / lin::norm(r_cross_ssa);
-                const f_vector_t r_cross_ssa_vec = {r_cross_ssa(0), r_cross_ssa(1), r_cross_ssa(2)};
+                const lin::Vector3f ssa_body = {ssa_vec[0], ssa_vec[1], ssa_vec[2]};
+                lin::Vector3f r_cross_ssa_body = lin::cross(r_hat_body, ssa_body);
+                r_cross_ssa_body = r_cross_ssa_body / lin::norm(r_cross_ssa_body);
+                const f_vector_t r_cross_ssa_body_arr = {
+                    r_cross_ssa_body(0), r_cross_ssa_body(1), r_cross_ssa_body(2)};
 
-                adcs_vec1_current_f.set(r_hat_body_vec);
+                adcs_vec1_current_f.set(r_hat_body_arr);
                 adcs_vec1_desired_f.set({1,0,0});
-                adcs_vec2_current_f.set(r_cross_ssa_vec);
+                adcs_vec2_current_f.set(r_cross_ssa_body_arr);
                 adcs_vec2_desired_f.set({0,0,1});
             }
         }
         break;
         case adcs_state_t::point_docking: {
-            const d_vector_t baseline_pos = baseline_pos_fp->get();
-            lin::Vector3f sat2target_r_eci_hat = {
-                static_cast<float>(baseline_pos[0]),
-                static_cast<float>(baseline_pos[1]),
-                static_cast<float>(baseline_pos[2])
+            const d_vector_t baseline_pos_eci_arr = baseline_pos_fp->get();
+            lin::Vector3f baseline_pos_eci = {
+                static_cast<float>(baseline_pos_eci_arr[0]),
+                static_cast<float>(baseline_pos_eci_arr[1]),
+                static_cast<float>(baseline_pos_eci_arr[2])
             };
-            sat2target_r_eci_hat = sat2target_r_eci_hat / lin::norm(sat2target_r_eci_hat);
-            lin::Vector3f sat2target_r_body_hat;
-            gnc::utl::rotate_frame(body_eci_quat, sat2target_r_eci_hat, sat2target_r_body_hat);
-            const f_vector_t sat2target_r_body_hat_vec =
-                {sat2target_r_body_hat(0), sat2target_r_body_hat(1), sat2target_r_body_hat(2)};
+            baseline_pos_eci = baseline_pos_eci / lin::norm(baseline_pos_eci);
+            lin::Vector3f baseline_pos_body;
+            gnc::utl::rotate_frame(q_body_eci, baseline_pos_eci, baseline_pos_body);
+            const f_vector_t baseline_pos_body_arr =
+                {baseline_pos_body(0), baseline_pos_body(1), baseline_pos_body(2)};
 
-            adcs_vec1_current_f.set(r_hat_body_vec);
+            adcs_vec1_current_f.set(r_hat_body_arr);
             adcs_vec1_desired_f.set({1,0,0});
-            adcs_vec2_current_f.set(sat2target_r_body_hat_vec);
+            adcs_vec2_current_f.set(baseline_pos_body_arr);
             adcs_vec2_desired_f.set({0,0,-1});
         }
         break;
