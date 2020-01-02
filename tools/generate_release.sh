@@ -49,5 +49,5 @@ docker run -v "$(pwd)"/release:/release fsw \
 
 # Produce the telemetry report
 cd release
-chmod +x macOS_telem_info_generator
-./macOS_telem_info_generator telemetry_report.json
+chmod +x telem_info_generator_macOS
+./telem_info_generator_macOS telemetry_report.json
