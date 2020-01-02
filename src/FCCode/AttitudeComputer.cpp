@@ -88,8 +88,15 @@ void AttitudeComputer::execute() {
                 // maximizes comms and power.
                 lin::Vector3f r_cross_ssa_body = lin::cross(r_hat_body, ssa_vec);
                 r_cross_ssa_body = r_cross_ssa_body / lin::norm(r_cross_ssa_body);
-                const f_vector_t r_cross_ssa_body_arr = {
+
+                f_vector_t r_cross_ssa_body_arr;
+                if (lin::norm(r_cross_ssa_body) > alignment_threshold) {
+                    r_cross_ssa_body_arr = {
                     r_cross_ssa_body(0), r_cross_ssa_body(1), r_cross_ssa_body(2)};
+                }
+                else {
+                    r_cross_ssa_body_arr = {0,0,1}; // No secondary pointing goal.
+                }
 
                 adcs_vec1_current_f.set(r_hat_body_arr);
                 adcs_vec1_desired_f.set({1,0,0});

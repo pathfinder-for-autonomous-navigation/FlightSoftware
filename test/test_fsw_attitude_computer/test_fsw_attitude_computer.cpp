@@ -73,7 +73,8 @@ void test_point_standby() {
     tf.attitude_computer->execute();
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-sqrtf(2)/2,-sqrtf(2)/2,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
 
-    // Test pointing with GPS data
+    // Test pointing with GPS data: with and without a secondary pointing objective
+    // With secondary pointing objective
     tf.ssa_vec_fp->set({1,0,0});
     tf.pos_fp->set({0,2,0});
     tf.attitude_computer->execute();
@@ -81,6 +82,11 @@ void test_point_standby() {
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-1}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,1}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
+    // Without secondary pointing objective
+    tf.pos_fp->set({0,2,0});
+    tf.ssa_vec_fp->set({0,2 - 1e-5,0});
+    tf.attitude_computer->execute();
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
 }
 
 void test_point_docking() {

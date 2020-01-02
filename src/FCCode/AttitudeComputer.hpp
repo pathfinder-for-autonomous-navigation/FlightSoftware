@@ -46,6 +46,12 @@ class AttitudeComputer : public TimedControlTask<void> {
     WritableStateField<f_vector_t> adcs_vec1_desired_f;
     WritableStateField<f_vector_t> adcs_vec2_current_f;
     WritableStateField<f_vector_t> adcs_vec2_desired_f;
+
+    /**
+     * @brief Threshold at which the secondary pointing objective in 
+     * standby pointing with GPS data is ignored.
+     */
+    static constexpr float alignment_threshold = 0.01;
 };
 
 #endif
