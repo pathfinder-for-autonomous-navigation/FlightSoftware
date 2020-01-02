@@ -5,7 +5,13 @@
 
 Repository for all Teensy based flight code for Pathfinder for Autonomous Navigation.
 
-See the "Tools" directory to see how to run tests.
+## Running tests with Docker
+
+    docker build -t fsw .
+    docker run fsw ./tools/run_desktop_flight_tests.sh
+    docker run fsw ./tools/run_ground_tests.sh
+
+See the "Tools" directory to see how to run tests locally without Docker.
 
 Quake Manager
 ------------------------------------------------------------------------------
