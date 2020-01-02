@@ -37,15 +37,15 @@ cp .pio/build/telem_info_generator/program release/macOS_telem_info_generator
 
 # Create and copy Linux binaries
 docker build -t fsw .
-docker run -v release:/release fsw \
+docker run -v "$(pwd)"/release:/release fsw \
   pio run -e native \
   && pio run -e downlink_parser \
   && pio run -e uplink_producer \
   && pio run -e telem_info_generator \
-  && cp .pio/build/native/program               /release/linux-x86_64_hootl \
-  && cp .pio/build/downlink_parser/program      /release/linux-x86_64_downlink_parser \
-  && cp .pio/build/uplink_producer/program      /release/linux-x86_64_uplink_producer \
-  && cp .pio/build/telem_info_generator/program /release/linux-x86_64_telem_info_generator
+  && cp .pio/build/native/program               release/linux-x86_64_hootl \
+  && cp .pio/build/downlink_parser/program      release/linux-x86_64_downlink_parser \
+  && cp .pio/build/uplink_producer/program      release/linux-x86_64_uplink_producer \
+  && cp .pio/build/telem_info_generator/program release/linux-x86_64_telem_info_generator
 
 # Produce the telemetry report
 cd release
