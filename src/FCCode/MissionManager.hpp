@@ -21,7 +21,7 @@ class MissionManager : public TimedControlTask<void> {
     static constexpr double detumble_safety_factor = 0.2;
 
     static constexpr double close_approach_trigger_dist = 200; // in meters
-    static constexpr double docking_trigger_dist = 1; // in meters
+    static constexpr double docking_trigger_dist = 0.4; // in meters
     /**
      * @brief Number of control cycles to wait during the post-deployment
      * do-nothing period.
@@ -89,7 +89,7 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<bool>* adcs_paired_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
-    const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading mode
+    const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading state (fixed RTK, float RTK, SPP, or error state)
     const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
 
     // Information from docking subsystem
