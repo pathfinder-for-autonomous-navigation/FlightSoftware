@@ -47,7 +47,8 @@ void AttitudeComputer::execute() {
 
     switch(adcs_state) {
         case adcs_state_t::point_standby: {
-            const f_vector_t ssa_vec = ssa_vec_fp->get();
+            const f_vector_t ssa_vec_arr = ssa_vec_fp->get();
+            const lin::Vector3f ssa_vec = {ssa_vec_arr[0], ssa_vec_arr[1], ssa_vec_arr[2]};
 
             if (!posdata_is_set) {
                 // We don't have a GPS reading. Point in the direction of the sun
@@ -63,22 +64,21 @@ void AttitudeComputer::execute() {
                     {-sqrtf(2)/2, -sqrtf(2)/2, 0},
                 };
                 size_t long_edge_choice = 0;
-                float min_projection = -2;
+                float max_projection = -2; // Projection ranges from -1 to 1
                 for(size_t i = 0; i < 4; i++) {
                     lin::Vector3f long_edge = {
                         long_edges_arrs[i][0],
                         long_edges_arrs[i][1],
                         long_edges_arrs[i][2]
                     };
-                    lin::Vector3f ssa_vector = {ssa_vec[0], ssa_vec[1], ssa_vec[2]};
-                    const float projection = 1 / lin::dot(long_edge, ssa_vector);
-                    if (projection < min_projection) {
-                        min_projection = projection;
+                    const float projection = lin::dot(long_edge, ssa_vec);
+                    if (projection >= max_projection) {
+                        max_projection = projection;
                         long_edge_choice = i;
                     }
                 }
 
-                adcs_vec1_current_f.set(ssa_vec);
+                adcs_vec1_current_f.set(ssa_vec_arr);
                 adcs_vec1_desired_f.set(long_edges_arrs[long_edge_choice]);
                 adcs_vec2_current_f.set({nan, nan, nan});
                 adcs_vec2_desired_f.set({nan, nan, nan});
@@ -86,8 +86,7 @@ void AttitudeComputer::execute() {
             else {
                 // We've got a GPS reading. Point in a direction that
                 // maximizes comms and power.
-                const lin::Vector3f ssa_body = {ssa_vec[0], ssa_vec[1], ssa_vec[2]};
-                lin::Vector3f r_cross_ssa_body = lin::cross(r_hat_body, ssa_body);
+                lin::Vector3f r_cross_ssa_body = lin::cross(r_hat_body, ssa_vec);
                 r_cross_ssa_body = r_cross_ssa_body / lin::norm(r_cross_ssa_body);
                 const f_vector_t r_cross_ssa_body_arr = {
                     r_cross_ssa_body(0), r_cross_ssa_body(1), r_cross_ssa_body(2)};
