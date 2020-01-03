@@ -13,33 +13,42 @@ if ! [ -x "$(command -v platformio)" ]; then
 fi
 
 set -e
+rm -rf release
 mkdir -p release
 
+# Create and copy MacOS binaries
 platformio run -e native
 platformio run -e teensy35_hitl
 platformio run -e teensy36_hitl
 platformio run -e preflight
 platformio run -e flight
 platformio run -e downlink_parser
+platformio run -e uplink_producer
 platformio run -e telem_info_generator
 
-cp .pio/build/native/program release/macOS_hootl
-cp .pio/build/teensy35_hitl/firmware.hex release/teensy35_hitl.hex
-cp .pio/build/teensy36_hitl/firmware.hex release/teensy36_hitl.hex
-cp .pio/build/preflight/firmware.hex release/preflight.hex
-cp .pio/build/flight/firmware.hex release/flight.hex
-cp .pio/build/downlink_parser/program release/macOS_downlink_parser
-cp .pio/build/telem_info_generator/program release/macOS_telem_info_generator
+cp .pio/build/native/program               release/hootl_macOS
+cp .pio/build/teensy35_hitl/firmware.hex   release/teensy35_hitl.hex
+cp .pio/build/teensy36_hitl/firmware.hex   release/teensy36_hitl.hex
+cp .pio/build/preflight/firmware.hex       release/preflight.hex
+cp .pio/build/flight/firmware.hex          release/flight.hex
+cp .pio/build/downlink_parser/program      release/downlink_parser_macOS
+cp .pio/build/uplink_producer/program      release/uplink_producer_macOS
+cp .pio/build/telem_info_generator/program release/telem_info_generator_macOS
 
-docker build -t fswbase -f tools/Dockerfile.base .
-docker build -t release -f tools/Dockerfile.release .
-docker rm release
-docker create --name release release
-docker cp release:/FlightSoftware/.pio/build/native/program release/linux-x86_64_hootl
-docker cp release:/FlightSoftware/.pio/build/downlink_parser/program release/linux-x86_64_downlink_parser
-docker cp release:/FlightSoftware/.pio/build/telem_info_generator/program release/linux-x86_64_telem_info_generator
+# Create and copy Linux binaries
+rm -rf .pio
+docker build -t fsw .
+docker run -v "$(pwd)"/release:/release fsw /bin/sh -c \
+  "pio run -e native; \
+   pio run -e downlink_parser; \
+   pio run -e uplink_producer; \
+   pio run -e telem_info_generator; \
+   cp .pio/build/native/program               /release/hootl_linux-x86_64; \
+   cp .pio/build/downlink_parser/program      /release/downlink_parser_linux-x86_64; \
+   cp .pio/build/uplink_producer/program      /release/uplink_producer_linux-x86_64; \
+   cp .pio/build/telem_info_generator/program /release/telem_info_generator_linux-x86_64"
 
 # Produce the telemetry report
 cd release
-chmod +x macOS_telem_info_generator
-./macOS_telem_info_generator telemetry_report.json
+chmod +x telem_info_generator_macOS
+./telem_info_generator_macOS telemetry_report.json
