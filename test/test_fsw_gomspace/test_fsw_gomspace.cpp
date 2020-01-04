@@ -15,7 +15,7 @@ class TestFixture {
         9,
         10,
         {11,12,13,14,15,16},
-        {true, false, true, false, true, false, true, false},
+        {true, true, true, true, true, true, true, true},
         {25,26,27,28,29,30,31,32},
         {33,34,35,36,37,38,39,40},
         {41,42,43,44,45,46},
@@ -88,11 +88,7 @@ class TestFixture {
 
     ReadableStateField<unsigned char>* pptmode_fp;
 
-    WritableStateField<unsigned char>* output1_cmd_fp;
-    WritableStateField<unsigned char>* output2_cmd_fp;
-    WritableStateField<unsigned char>* output3_cmd_fp;
-    WritableStateField<unsigned char>* output4_cmd_fp;
-    WritableStateField<unsigned char>* output5_cmd_fp;
+    WritableStateField<unsigned char>* power_cycle_outputs_cmd_fp;
 
     WritableStateField<unsigned int>* pv1_output_cmd_fp;
     WritableStateField<unsigned int>* pv2_output_cmd_fp;
@@ -151,11 +147,7 @@ class TestFixture {
         battmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.battmode");
         pptmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.pptmode");
 
-        output1_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output1_cmd");
-        output2_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output2_cmd");
-        output3_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output3_cmd");
-        output4_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output4_cmd");
-        output5_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.output5_cmd");
+        power_cycle_outputs_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_outputs_cmd");
 
         pv1_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv1_cmd");
         pv2_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv2_cmd");
@@ -253,11 +245,11 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(16, tf.curout6_fp->get());
 
     TEST_ASSERT_EQUAL(true, tf.output1_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output2_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output2_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output3_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output4_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output4_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output5_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output6_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output6_fp->get());
 
     TEST_ASSERT_EQUAL(47, tf.wdt_i2c_time_left_fp->get());
 
@@ -277,17 +269,14 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(64, tf.pptmode_fp->get());
 
     // Initialize the command statefields
-    tf.output1_cmd_fp->set(true);
-    tf.output2_cmd_fp->set(true);
-    tf.output3_cmd_fp->set(true);
-    tf.output4_cmd_fp->set(true);
-    tf.output5_cmd_fp->set(true);
+    tf.power_cycle_outputs_cmd_fp->set(false);
 
     tf.pv1_output_cmd_fp->set(1000);
     tf.pv2_output_cmd_fp->set(2000);
     tf.pv3_output_cmd_fp->set(3000);
 
-    tf.ppt_mode_cmd_fp->set(1); // 0 is hardware default; 1 is maximum power point tracking
+    tf.ppt_mode_cmd_fp->set(2); // 1 is MPPT, the hardware default
+
     tf.heater_cmd_fp->set(true);
 
     tf.counter_reset_cmd_fp->set(false);
@@ -300,47 +289,54 @@ void test_task_execute() {
     #ifndef DESKTOP
     tf.gs_controller->execute();
 
-    // The controller will set the gomspace outputs and 
+    // The controller will set the gomspace outputs and
     // write the new values to their respective statefields
-    TEST_ASSERT_EQUAL(true, tf.output1_fp->get());
-    TEST_ASSERT_EQUAL(true, tf.output2_fp->get());
-    TEST_ASSERT_EQUAL(true, tf.output3_fp->get());
-    TEST_ASSERT_EQUAL(true, tf.output4_fp->get());
-    TEST_ASSERT_EQUAL(true, tf.output5_fp->get());
 
     TEST_ASSERT_EQUAL(1000, tf.vboost1_fp->get());
     TEST_ASSERT_EQUAL(2000, tf.vboost2_fp->get());
     TEST_ASSERT_EQUAL(3000, tf.vboost3_fp->get());
 
-    TEST_ASSERT_EQUAL(1, tf.pptmode_fp->get());
+    TEST_ASSERT_EQUAL(2, tf.pptmode_fp->get());
     TEST_ASSERT_EQUAL(1, tf.gs.get_heater());
 
-    // Test the reset commands one by one, starting with the counter reset command
+    // Test the reset commands one by one, starting with the power cycle outputs command
 
-    // Current boot count
-    unsigned int boot_count=tf.gs.hk->counter_boot;
-    // Current WDT counters
-    unsigned int wdt_i2c_count=tf.gs.hk->counter_wdt_i2c;
-    unsigned int wdt_gnd_count=tf.gs.hk->counter_wdt_gnd;
-    unsigned int wdt_csp_count1=tf.gs.hk->counter_wdt_csp[0];
-    unsigned int wdt_csp_count2=tf.gs.hk->counter_wdt_csp[1];
+    tf.power_cycle_outputs_cmd_fp->set(true);
 
-    // Set the counter reset command to true
+    tf.gs_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.output1_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output2_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output3_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output4_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output5_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output6_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.power_cycle_outputs_cmd_fp->get());
+
+    tf.gs_controller->execute();
+    TEST_ASSERT_EQUAL(true, tf.output1_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output2_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output3_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output4_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output5_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output6_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.power_cycle_outputs_cmd_fp->get());
+    
+    // Test the counter reset command
+    
     tf.counter_reset_cmd_fp->set(true);
     tf.gs_controller->execute();
 
-    // The boot and WDT counters should reset
-    TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
-    TEST_ASSERT_EQUAL(wdt_i2c_count+1, tf.counter_wdt_i2c_fp->get());
-    TEST_ASSERT_EQUAL(wdt_gnd_count+1, tf.counter_wdt_gnd_fp->get());
-    TEST_ASSERT_EQUAL(wdt_csp_count1+1, tf.counter_wdt_csp1_fp->get());
-    TEST_ASSERT_EQUAL(wdt_csp_count2+1, tf.counter_wdt_csp2_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.counter_boot_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.counter_wdt_i2c_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.counter_wdt_gnd_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.counter_wdt_csp1_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.counter_wdt_csp2_fp->get());
     TEST_ASSERT_EQUAL(false, tf.counter_reset_cmd_fp->get());
 
     // Test the gomspace reboot command
 
     // Current boot count
-    boot_count=tf.gs.hk->counter_boot;
+    unsigned int boot_count=tf.gs.hk->counter_boot;
 
     // Set the gs reboot command to true
     tf.gs_reboot_cmd_fp->set(true);
@@ -350,14 +346,10 @@ void test_task_execute() {
 
     // Test the gomspace hard reset command
 
-    // Current boot count
-    boot_count=tf.gs.hk->counter_boot;
-
-    // Set the gs reset command to true
     tf.gs_reset_cmd_fp->set(true);
     tf.gs_controller->execute();
 
-    TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
+    TEST_ASSERT_EQUAL(1, tf.pptmode_fp->get()); // 1 is the hardware default PPT mode
 
     #endif
 }
