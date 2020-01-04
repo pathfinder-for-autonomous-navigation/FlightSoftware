@@ -191,11 +191,11 @@ void test_task_initialization() {
     TEST_ASSERT_EQUAL(16, tf.gs.hk->curout[5]);
 
     TEST_ASSERT_EQUAL(true, tf.gs.hk->output[0]);
-    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[1]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[1]);
     TEST_ASSERT_EQUAL(true, tf.gs.hk->output[2]);
-    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[3]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[3]);
     TEST_ASSERT_EQUAL(true, tf.gs.hk->output[4]);
-    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[5]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[5]);
 
     TEST_ASSERT_EQUAL(47, tf.gs.hk->wdt_i2c_time_left);
 
