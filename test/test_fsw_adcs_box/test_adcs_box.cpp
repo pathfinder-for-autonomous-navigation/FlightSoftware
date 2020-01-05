@@ -144,7 +144,7 @@ void test_execute(){
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[1]));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[2]));
 
-    for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
+    for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
