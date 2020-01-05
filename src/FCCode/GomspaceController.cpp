@@ -262,4 +262,9 @@ void GomspaceController::set_outputs(){
         gs.hard_reset();
         gs_reset_cmd_f.set(false);
     }
+
+    if (gs_reboot_cmd_f.get()==true) {
+        gs.reboot();
+        gs_reboot_cmd_f.set(false);
+    }
 }
