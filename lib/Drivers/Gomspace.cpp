@@ -38,10 +38,7 @@ void Gomspace::reset() {
     I2CDevice::reset();
     reboot();
     
-    #ifdef DESKTOP
-    unsigned char mode=1;
-    hk->pptmode=mode;
-    #endif
+    
 }
 
 bool Gomspace::i2c_ping() { return ping(0xFF); }
@@ -458,6 +455,11 @@ bool Gomspace::hard_reset() {
     i2c_begin_transmission();
     i2c_write(command, 1);
     i2c_end_transmission(I2C_NOSTOP);
+
+    #ifdef DESKTOP
+    unsigned char mode=1;
+    hk->pptmode=mode;
+    #endif
 
     return _check_for_error(PORT_BYTE);
 }
