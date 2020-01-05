@@ -9,6 +9,7 @@
 #include <adcs_registers.hpp>
 
 #include <cstring>
+#include <bitset>
 
 using namespace Devices;
 
@@ -291,5 +292,20 @@ void ADCS::get_ssa_voltage(std::array<float, ssa::num_sun_sensors>* voltages){
 }
 
 void ADCS::get_havt(std::bitset<MAX_DEVICES>* havt_table){
-    
+    unsigned char temp[4];
+    std::memset(temp, 0, sizeof(temp));
+
+    #ifdef UNIT_TEST
+    for(int i = 0;i<ssa::num_sun_sensors;i++){
+        temp[i] = 255;
+    }
+    #else
+    //TODO REPLACE 88 DUMMY REGISTER VAL
+    i2c_point_and_read(88,temp, 4);
+    #endif
+
+    //reassemble unsigned int
+    encoded = 420;
+
+    *havt_table.set(encoded);
 }
