@@ -39,7 +39,8 @@ void Gomspace::reset() {
     reboot();
     
     #ifdef DESKTOP
-    hk->pptmode=1;
+    unsigned char mode=1;
+    hk->pptmode=mode;
     #endif
 }
 

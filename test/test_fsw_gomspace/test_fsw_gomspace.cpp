@@ -70,11 +70,6 @@ class TestFixture {
 
     ReadableStateField<unsigned int>* counter_wdt_i2c_fp;
 
-    ReadableStateField<unsigned int>* counter_wdt_gnd_fp;
-
-    ReadableStateField<unsigned int>* counter_wdt_csp1_fp;
-    ReadableStateField<unsigned int>* counter_wdt_csp2_fp;
-
     ReadableStateField<unsigned int>* counter_boot_fp;
 
     ReadableStateField<signed int>* temp1_fp;
@@ -275,7 +270,7 @@ void test_task_execute() {
     tf.pv2_output_cmd_fp->set(2000);
     tf.pv3_output_cmd_fp->set(3000);
 
-    tf.ppt_mode_cmd_fp->set(2); // 1 is MPPT, the hardware default
+    tf.ppt_mode_cmd_fp->set(0); // 1 is MPPT, the hardware default
 
     tf.heater_cmd_fp->set(true);
 
@@ -295,7 +290,7 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(2000, tf.vboost2_fp->get());
     TEST_ASSERT_EQUAL(3000, tf.vboost3_fp->get());
 
-    //TEST_ASSERT_EQUAL(2, tf.pptmode_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.pptmode_fp->get());
     TEST_ASSERT_EQUAL(1, tf.gs.get_heater());
 
     // Test the reset commands one by one, starting with the power cycle outputs command
