@@ -29,60 +29,8 @@ public:
     */
     void execute() override;
 
-    static constexpr unsigned int num_sun_sensors = 20;
-
 protected:
-    /**
-    * @brief Pointers to find
-    */
-
-    //! Speed reads off of the reaction wheels.
-    Serializer<f_vector_t> rwa_speed_rd_sr;
-    ReadableStateField<f_vector_t> rwa_speed_rd_f;
-
-    //! Torque reads off of the reaction wheels.
-    Serializer<f_vector_t> rwa_torque_rd_sr;
-    ReadableStateField<f_vector_t> rwa_torque_rd_f;
-
-    Serializer<int> ssa_mode_rd;
-    ReadableStateField<int> ssa_mode_f;
-
-    //! Vector to the sun in the body frame.
-    Serializer<f_vector_t> ssa_vec_sr;
-    ReadableStateField<f_vector_t> ssa_vec_f;
-
-    //! Raw voltages of the sun sensors.
-    Serializer<float> ssa_voltage_sr;
-    std::vector<ReadableStateField<float>> ssa_voltages_f;
-
-    //! Magnetic field vector in the body frame.
-    Serializer<f_vector_t> mag_vec_sr;
-    ReadableStateField<f_vector_t> mag_vec_f;
-
-    //! Angular rate vector in the body frame.
-    Serializer<f_vector_t> gyr_vec_sr;
-    ReadableStateField<f_vector_t> gyr_vec_f;
-
-    //! Temperature near the gyroscope.
-    Serializer<float> gyr_temp_sr;
-    ReadableStateField<float> gyr_temp_f;
-
-
-    /**
-    * @brief Bound flags.
-    * If the flag is true, that means it is outside the validity bounds.
-    */
-    Serializer<bool> flag_sr;
-    //! Is the reaction wheel speed read outside the validity bounds?
-    ReadableStateField<bool> rwa_speed_rd_flag;
-    //! Is the reaction wheel torque read outside the validity bounds?
-    ReadableStateField<bool> rwa_torque_rd_flag;
-    //! Is the magnetic field vector reading within the validity bounds?
-    ReadableStateField<bool> mag_vec_flag;
-    //! Is the gyroscope rate reading within the validity bounds?
-    ReadableStateField<bool> gyr_vec_flag;
-    //! Is the gyroscope temperature reading within the validity bounds?W
-    ReadableStateField<bool> gyr_temp_flag;
+   
 };
 
 #endif

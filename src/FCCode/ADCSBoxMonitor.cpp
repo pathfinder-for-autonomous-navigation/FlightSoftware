@@ -45,7 +45,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(ssa_mode_f);
         add_readable_field(ssa_vec_f);
 
-        for(unsigned int i = 0; i<num_sun_sensors; i++){
+        for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
             add_readable_field(ssa_voltages_f[i]);
         }
 
