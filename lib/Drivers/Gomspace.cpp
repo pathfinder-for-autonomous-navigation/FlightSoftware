@@ -288,6 +288,10 @@ bool Gomspace::set_pv_auto(unsigned char mode) {
     i2c_begin_transmission();
     i2c_write(command, 2);
     i2c_end_transmission(I2C_NOSTOP);
+    
+    #ifdef DESKTOP
+    hk->pptmode=mode;
+    #endif
 
     return _check_for_error(PORT_BYTE);
 }
