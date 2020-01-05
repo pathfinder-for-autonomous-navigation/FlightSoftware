@@ -37,8 +37,6 @@ bool Gomspace::setup() { return I2CDevice::setup(); }
 void Gomspace::reset() {
     I2CDevice::reset();
     reboot();
-    
-    
 }
 
 bool Gomspace::i2c_ping() { return ping(0xFF); }
