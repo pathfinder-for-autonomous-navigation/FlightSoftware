@@ -37,6 +37,10 @@ bool Gomspace::setup() { return I2CDevice::setup(); }
 void Gomspace::reset() {
     I2CDevice::reset();
     reboot();
+    
+    #ifdef DESKTOP
+    hk->pptmode=1;
+    #endif
 }
 
 bool Gomspace::i2c_ping() { return ping(0xFF); }
@@ -217,6 +221,13 @@ bool Gomspace::set_output(unsigned char output_byte) {
     i2c_write(command, 2);
     i2c_end_transmission(I2C_NOSTOP);
 
+    #ifdef DESKTOP
+    for (int i=0; i<8; i++){
+        hk->output[i]=output_byte;
+    }
+    return true;
+    #endif
+
     return _check_for_error(PORT_BYTE);
 }
 
@@ -259,6 +270,13 @@ bool Gomspace::set_pv_volt(unsigned short int voltage1, unsigned short int volta
     i2c_write(command, 7);
     i2c_end_transmission(I2C_NOSTOP);
 
+    #ifdef DESKTOP
+    hk->vboost[0]=voltage1;
+    hk->vboost[1]=voltage2;
+    hk->vboost[2]=voltage3;
+    return true;
+    #endif
+
     return _check_for_error(PORT_BYTE);
 }
 
@@ -298,6 +316,7 @@ bool Gomspace::_set_heater(bool mode) {
     else
         return true;
     #else
+    heater=mode;
     return true;
     #endif
 }
@@ -321,7 +340,7 @@ unsigned char Gomspace::get_heater() {
     // buffer[3] contains 0 or 1, indicating whether onboard heater is on.
     return buffer[3];
     #else
-    return 0;
+    return heater;
     #endif
 }
 
@@ -332,6 +351,14 @@ bool Gomspace::reset_counters() {
     i2c_begin_transmission();
     i2c_write(command, 2);
     i2c_end_transmission(I2C_NOSTOP);
+
+    #ifdef DESKTOP
+    hk->counter_wdt_i2c=0;
+    hk->counter_wdt_gnd=0;
+    hk->counter_wdt_csp[0]=0;
+    hk->counter_wdt_csp[1]=0;
+    return true;
+    #endif
 
     return _check_for_error(PORT_BYTE);
 }
@@ -531,6 +558,9 @@ void Gomspace::reboot() {
     i2c_write(command, 1);
     i2c_write(MAGIC, 4);
     i2c_end_transmission(I2C_STOP);
+    #ifdef DESKTOP
+    hk->counter_boot=hk->counter_boot+1;
+    #endif
 }
 
 bool Gomspace::_check_for_error(unsigned char port_byte) {

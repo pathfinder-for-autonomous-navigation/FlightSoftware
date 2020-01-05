@@ -286,7 +286,6 @@ void test_task_execute() {
     // Let 30 seconds or 300 control cycles pass
     TimedControlTaskBase::control_cycle_count=300;
 
-    #ifndef DESKTOP
     tf.gs_controller->execute();
 
     // The controller will set the gomspace outputs and
@@ -351,7 +350,6 @@ void test_task_execute() {
 
     TEST_ASSERT_EQUAL(1, tf.pptmode_fp->get()); // 1 is the hardware default PPT mode
 
-    #endif
 }
 
 int test_control_task() {
