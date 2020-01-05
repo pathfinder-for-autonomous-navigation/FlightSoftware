@@ -322,7 +322,12 @@ bool Gomspace::_set_heater(bool mode) {
     else
         return true;
     #else
-    heater=mode;
+    if (mode==true){
+        heater=1;
+    }
+    else{
+        heater=0;
+    }
     return true;
     #endif
 }

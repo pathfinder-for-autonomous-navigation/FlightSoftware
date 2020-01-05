@@ -249,7 +249,7 @@ class Gomspace : public I2CDevice {
     void _hk_wdt_endian_flip();
     void _hk_basic_endian_flip();
     #ifdef DESKTOP
-    bool heater;
+    unsigned char heater;
     #endif
 };
 }  // namespace Devices
