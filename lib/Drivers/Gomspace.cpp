@@ -358,6 +358,7 @@ bool Gomspace::reset_counters() {
     i2c_end_transmission(I2C_NOSTOP);
 
     #ifdef DESKTOP
+    hk->counter_boot=0;
     hk->counter_wdt_i2c=0;
     hk->counter_wdt_gnd=0;
     hk->counter_wdt_csp[0]=0;
