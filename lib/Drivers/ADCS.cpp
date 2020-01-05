@@ -250,19 +250,19 @@ void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
     }
 
 }
-void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
-    unsigned char temp[20];
+void ADCS::get_ssa_voltage(std::array<float, ssa::num_sun_sensors>* voltages){
+    unsigned char temp[ssa::num_sun_sensors];
     std::memset(temp, 0, sizeof(temp));
 
     #ifdef UNIT_TEST
-    for(int i = 0;i<20;i++){
+    for(int i = 0;i<ssa::num_sun_sensors;i++){
         temp[i] = 255;
     }
     #else
-    i2c_point_and_read(SSA_VOLTAGE_READ,temp,20);
+    i2c_point_and_read(SSA_VOLTAGE_READ,temp, ssa::num_sun_sensors);
     #endif
     
-    for(int i = 0;i<20;i++){
+    for(int i = 0;i<ssa::num_sun_sensors;i++){
         (*voltages)[i] = fp(temp[i], ssa::min_voltage_rd, ssa::max_voltage_rd);
     }
 }

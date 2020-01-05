@@ -87,7 +87,7 @@ void ADCSController::execute(){
     unsigned char ssa_mode = 0;
     f_vector_t ssa_vec;
 
-    std::array<float, 20> ssa_voltages;
+    std::array<float, ssa::num_sun_sensors> ssa_voltages;
     ssa_voltages.fill(0);
 
     f_vector_t mag_vec;
@@ -114,7 +114,7 @@ void ADCSController::execute(){
     rwa_torque_rd_f.set(rwa_torque_rd);
     ssa_mode_f.set(ssa_mode);
 
-    for(int i = 0; i<20; i++){
+    for(int i = 0; i<ssa::num_sun_sensors; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);
     }
 
