@@ -9,7 +9,6 @@
 #include <adcs_registers.hpp>
 
 #include <cstring>
-#include <bitset>
 
 using namespace Devices;
 
