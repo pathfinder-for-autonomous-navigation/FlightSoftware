@@ -295,7 +295,7 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(2000, tf.vboost2_fp->get());
     TEST_ASSERT_EQUAL(3000, tf.vboost3_fp->get());
 
-    TEST_ASSERT_EQUAL(2, tf.pptmode_fp->get());
+    //TEST_ASSERT_EQUAL(2, tf.pptmode_fp->get());
     TEST_ASSERT_EQUAL(1, tf.gs.get_heater());
 
     // Test the reset commands one by one, starting with the power cycle outputs command
