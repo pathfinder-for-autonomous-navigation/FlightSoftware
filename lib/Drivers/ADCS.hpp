@@ -10,6 +10,9 @@
 #include <I2CDevice.hpp>
 #include <array>
 #include <adcs_constants.hpp>
+
+#include <bitset>
+
 namespace Devices {
 
 class ADCS : public I2CDevice {
