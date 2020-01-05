@@ -304,7 +304,7 @@ void ADCS::get_havt(std::bitset<MAX_DEVICES>* havt_table){
     #endif
 
     //reassemble unsigned int
-    encoded = 420;
+    unsigned int encoded = 420;
 
-    *havt_table.set(encoded);
+    (*havt_table).set(encoded);
 }

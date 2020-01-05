@@ -32,7 +32,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         //fill vector of statefields
         //char buffer [3];
         char buffer[50];
-        for(unsigned int i = 0; i<num_sun_sensors;i++){
+        for(unsigned int i = 0; i<ssa::num_sun_sensors;i++){
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.ssa_voltage");
             sprintf(buffer + strlen(buffer), "%u", i);
