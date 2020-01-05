@@ -291,6 +291,7 @@ bool Gomspace::set_pv_auto(unsigned char mode) {
     
     #ifdef DESKTOP
     hk->pptmode=mode;
+    return true;
     #endif
 
     return _check_for_error(PORT_BYTE);
