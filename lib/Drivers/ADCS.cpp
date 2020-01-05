@@ -267,4 +267,6 @@ void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
     }
 }
 
-void ADCS::update_hat() {}
+void ADCS::get_havt(std::bitset<MAX_DEVICES>* havt_table){
+    
+}
