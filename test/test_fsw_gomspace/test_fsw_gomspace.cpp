@@ -327,9 +327,6 @@ void test_task_execute() {
 
     TEST_ASSERT_EQUAL(0, tf.counter_boot_fp->get());
     TEST_ASSERT_EQUAL(0, tf.counter_wdt_i2c_fp->get());
-    TEST_ASSERT_EQUAL(0, tf.counter_wdt_gnd_fp->get());
-    TEST_ASSERT_EQUAL(0, tf.counter_wdt_csp1_fp->get());
-    TEST_ASSERT_EQUAL(0, tf.counter_wdt_csp2_fp->get());
     TEST_ASSERT_EQUAL(false, tf.counter_reset_cmd_fp->get());
 
     // Test the gomspace reboot command
