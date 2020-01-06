@@ -49,7 +49,7 @@ class TestFixture {
             
             // fill vector of pointers to statefields
             char buffer[50];
-            for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
+            for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
                 std::memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"adcs_monitor.ssa_voltage");
                 sprintf(buffer + strlen(buffer), "%u", i);
@@ -110,7 +110,7 @@ void test_execute(){
     TEST_ASSERT_EQUAL(SSAMode::SSA_COMPLETE, tf.ssa_mode_fp->get());
     elements_same(ref_three_unit, tf.ssa_vec_fp->get());
 
-    for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
+    for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
@@ -178,7 +178,7 @@ void test_execute(){
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[1]));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[2]));
 
-    for(unsigned int i = 0; i<ADCSBoxMonitor::num_sun_sensors; i++){
+    for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
