@@ -121,7 +121,7 @@ void AttitudeComputer::execute() {
             adcs_vec1_current_f.set(r_hat_body_arr);
             adcs_vec1_desired_f.set({1,0,0});
             adcs_vec2_current_f.set(baseline_pos_body_arr);
-            adcs_vec2_desired_f.set({0,0,-1});
+            adcs_vec2_desired_f.set({0,0,1});
         }
         break;
         case adcs_state_t::limited: {
