@@ -9,6 +9,7 @@
 #include "PiksiControlTask.hpp"
 #include "ADCSBoxMonitor.hpp"
 #include "AttitudeEstimator.hpp"
+#include "AttitudeComputer.hpp"
 #include "GomspaceController.hpp"
 #include "DebugTask.hpp"
 #include "FieldCreatorTask.hpp"
@@ -61,6 +62,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int gomspace_controller_offset = 106500;
         static constexpr unsigned int uplink_consumer_offset     = 111500;
         static constexpr unsigned int mission_manager_offset     = 111600;
+        static constexpr unsigned int attitude_computer_offset   = 111700;
         static constexpr unsigned int docking_controller_offset  = 152400;
         static constexpr unsigned int downlink_producer_offset   = 153400;
         static constexpr unsigned int quake_manager_offset       = 153500;
@@ -73,11 +75,11 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int gomspace_controller_offset =  56500;
         static constexpr unsigned int uplink_consumer_offset     =  61500;
         static constexpr unsigned int mission_manager_offset     =  61600;
+        static constexpr unsigned int attitude_computer_offset   =  61700;
         static constexpr unsigned int docking_controller_offset  = 103400;
         static constexpr unsigned int downlink_producer_offset   = 104400;
         static constexpr unsigned int quake_manager_offset       = 104500;
         static constexpr unsigned int eeprom_controller_offset   = 153500;
-        
     #endif
 
     /**
@@ -86,6 +88,8 @@ class MainControlLoop : public ControlTask<void> {
     ReadableStateField<unsigned int> memory_use_f;
 
     MissionManager mission_manager;
+
+    AttitudeComputer attitude_computer;
 
    public:
     /*
