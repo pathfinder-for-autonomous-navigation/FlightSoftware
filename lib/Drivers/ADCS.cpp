@@ -295,16 +295,21 @@ void ADCS::get_havt(std::bitset<MAX_DEVICES>* havt_table){
     std::memset(temp, 0, sizeof(temp));
 
     #ifdef UNIT_TEST
-    for(int i = 0;i<ssa::num_sun_sensors;i++){
+    for(int i = 0;i<4;i++){
         temp[i] = 255;
     }
     #else
     //TODO REPLACE 88 DUMMY REGISTER VAL
-    i2c_point_and_read(88,temp, 4);
+    i2c_point_and_read(HAVT_READ,temp, 4);
     #endif
 
+    unsigned int encoded;
+    std::memset(encoded, 0, sizeof(encoded))
     //reassemble unsigned int
-    unsigned int encoded = 420;
+    unsigned int * encoded_ptr = (unsigned int *)(&encoded);
+    for (unsigned int i = 0; i < 4; i++){
+        ptr[i] = temp[i]
+    }
 
     (*havt_table).set(encoded);
 }
