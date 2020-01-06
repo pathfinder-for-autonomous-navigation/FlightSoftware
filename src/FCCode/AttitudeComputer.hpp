@@ -40,7 +40,8 @@ class AttitudeComputer : public TimedControlTask<void> {
     const ReadableStateField<d_vector_t>* baseline_pos_fp;
 
     /**
-     * @brief Fields used in control of attitude.
+     * @brief Fields used in control of attitude. These vectors are
+     * all in the body frame.
      */
     WritableStateField<f_vector_t> adcs_vec1_current_f;
     WritableStateField<f_vector_t> adcs_vec1_desired_f;

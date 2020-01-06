@@ -87,10 +87,10 @@ void AttitudeComputer::execute() {
                 // We've got a GPS reading. Point in a direction that
                 // maximizes comms and power.
                 lin::Vector3f r_cross_ssa_body = lin::cross(r_hat_body, ssa_vec);
-                r_cross_ssa_body = r_cross_ssa_body / lin::norm(r_cross_ssa_body);
 
                 f_vector_t r_cross_ssa_body_arr;
                 if (lin::norm(r_cross_ssa_body) > alignment_threshold) {
+                    r_cross_ssa_body = r_cross_ssa_body / lin::norm(r_cross_ssa_body);
                     r_cross_ssa_body_arr = {
                     r_cross_ssa_body(0), r_cross_ssa_body(1), r_cross_ssa_body(2)};
                 }
