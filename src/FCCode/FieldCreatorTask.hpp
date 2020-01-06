@@ -11,8 +11,16 @@
 // eventually become zero.
 class FieldCreatorTask : public ControlTask<void> {
     public:
+      WritableStateField<f_quat_t> adcs_cmd_attitude_f;
+      WritableStateField<float> adcs_ang_rate_f;
+      WritableStateField<float> adcs_min_stable_ang_rate_f;
+
+      ReadableStateField<d_vector_t> pos_f;
+      ReadableStateField<d_vector_t> pos_baseline_f;
+
+      WritableStateField<bool> docking_config_cmd_f;
+
       ReadableStateField<unsigned char> prop_mode_f;
-      ReadableStateField<d_vector_t> propagated_baseline_pos_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
@@ -23,9 +31,6 @@ class FieldCreatorTask : public ControlTask<void> {
 
           // For propulsion controller
           add_readable_field(prop_mode_f);
-
-          // For orbit estimator
-          add_readable_field(propagated_baseline_pos_f);
       }
 
       void execute() {
