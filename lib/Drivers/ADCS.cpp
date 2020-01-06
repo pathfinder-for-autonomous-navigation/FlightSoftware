@@ -304,11 +304,10 @@ void ADCS::get_havt(std::bitset<MAX_DEVICES>* havt_table){
     #endif
 
     unsigned int encoded;
-    std::memset(encoded, 0, sizeof(encoded))
     //reassemble unsigned int
     unsigned int * encoded_ptr = (unsigned int *)(&encoded);
     for (unsigned int i = 0; i < 4; i++){
-        ptr[i] = temp[i]
+        encoded_ptr[i] = temp[i];
     }
 
     (*havt_table).set(encoded);

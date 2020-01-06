@@ -4,7 +4,7 @@
 #include <array>
 #include <adcs_constants.hpp>
 
-Devices::ADCS adcs("adcs", Wire, Devices::ADCS::ADDRESS);
+Devices::ADCS adcs(Wire, Devices::ADCS::ADDRESS);
 int cnt;
 #ifndef UNIT_TEST
 void setup() {
