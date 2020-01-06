@@ -100,7 +100,7 @@ void test_point_docking() {
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,1,0}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({1,0,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,1}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-1}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,1}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
 }
 
 void test_point_limited() {
