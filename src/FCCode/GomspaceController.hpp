@@ -20,9 +20,14 @@ class GomspaceController : public TimedControlTask<void> {
         Devices::Gomspace &gs);
 
     /**
-     * @brief sets outputs from gomspace to statefields
+     * @brief Passes data from gomspace into statefields
      */
     void execute() override;
+
+    /**
+     * @brief Sets outputs from gomspace using statefield commands
+     */
+    void set_outputs();
 
    protected:
     Devices::Gomspace &gs;
@@ -85,6 +90,34 @@ class GomspaceController : public TimedControlTask<void> {
 
     Serializer<unsigned char> pptmode_sr;
     ReadableStateField<unsigned char> pptmode_f;
+
+    // The controller will set the outputs of the gomspace once a period (number of control cycles)
+    unsigned int period = 300;
+
+    // Command statefields to control the Gomspace outputs. Will
+    // be set by various individual subsystems and the ground.
+    Serializer<bool> power_cycle_outputs_cmd_sr;
+    WritableStateField<bool> power_cycle_outputs_cmd_f;
+
+    Serializer<unsigned int> pv_output_cmd_sr;
+    WritableStateField<unsigned int> pv1_output_cmd_f;
+    WritableStateField<unsigned int> pv2_output_cmd_f;
+    WritableStateField<unsigned int> pv3_output_cmd_f;
+
+    Serializer<unsigned char> ppt_mode_cmd_sr;
+    WritableStateField<unsigned char> ppt_mode_cmd_f;
+
+    Serializer<bool> heater_cmd_sr;
+    WritableStateField<bool> heater_cmd_f;
+
+    Serializer<bool> counter_reset_cmd_sr;
+    WritableStateField<bool> counter_reset_cmd_f;
+
+    Serializer<bool> gs_reset_cmd_sr;
+    WritableStateField<bool> gs_reset_cmd_f;
+
+    Serializer<bool> gs_reboot_cmd_sr;
+    WritableStateField<bool> gs_reboot_cmd_f;
 
 };
 
