@@ -115,6 +115,7 @@ void MissionManager::dispatch_startup() {
     // going into an initialization hold
     if (check_hardware_faults()) {
         set(mission_state_t::initialization_hold);
+        return;
     }
 
     // Step 3. If no hardware faults exist, go into detumble

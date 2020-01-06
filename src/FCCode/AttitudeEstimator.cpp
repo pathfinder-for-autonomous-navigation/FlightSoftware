@@ -38,7 +38,7 @@ void AttitudeEstimator::execute(){
 }
 
 void AttitudeEstimator::set_data(){
-    data.t = (double)(((unsigned long)(piksi_time_fp->get() - pan_epoch))/(1e9L));
+    data.t = ((unsigned long)(piksi_time_fp->get() - pan_epoch)) / 1.0e9;
 
     const d_vector_t r_ecef = pos_vec_ecef_fp->get();
     data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};

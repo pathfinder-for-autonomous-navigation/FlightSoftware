@@ -18,4 +18,7 @@ enum class mission_state_t {
     manual
 };
 
+// For information on states, check out
+// https://pan-software.readthedocs.io/en/latest/flight_software/mission_manager.html
+
 #endif
