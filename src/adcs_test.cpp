@@ -188,13 +188,13 @@ bool test_get_rwa() {
     std::array<float, 3> rwa_speed_rd = {1.0f,1.0f,1.0f};
     std::array<float, 3> rwa_ramp_rd = {1.0f,1.0f,1.0f};;
 
-    std::array<float, 3> rwa_speed_state = {0.004f, 0.005f, -0.006f}; // Speed read
+    std::array<float, 3> rwa_speed_state = {400.0f, -300.0f, 200.0f}; // Speed read
     std::array<float, 3> rwa_ramp_state = {0.001f, 0.002f, -0.003f};
 
     adcs.get_rwa(&rwa_speed_rd, &rwa_ramp_rd);
 
-    return comp_float_arr(rwa_speed_rd,rwa_speed_state,0.0001f)
-     && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.0001f);
+    return comp_float_arr(rwa_speed_rd,rwa_speed_state,0.1f)
+     && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.01f);
 }
 
 bool test_get_ssa_voltage(){
