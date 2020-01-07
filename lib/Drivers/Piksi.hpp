@@ -408,7 +408,7 @@ class Piksi {
     bool _user_data_update;
 
     //set read return mock
-    #ifdef UNIT_TEST
+    #if defined(UNIT_TEST) || defined(DESKTOP)
     unsigned int _read_return;
     #endif
 };

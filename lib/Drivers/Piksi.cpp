@@ -265,7 +265,7 @@ unsigned char Piksi::process_buffer_msg_len() {
 }
 
 unsigned char Piksi::read_all() {
-    #ifdef UNIT_TEST
+    #if defined(UNIT_TEST) || defined(DESKTOP)
     return _read_return;
     #else
     
