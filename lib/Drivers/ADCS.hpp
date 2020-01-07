@@ -309,6 +309,9 @@ class ADCS : public I2CDevice {
      * 2nd device is at havt_table.test(1);
      * 32nd device is at havt_table.test(31);
      * 
+     * The right index of a device can be found in the adcs_havt_devices.hpp register
+     * in CommonSoftware.
+     * 
      * If a bit of the bitset is high, that device's is_functional() returned true.
      * The mocked return will report a full set of 1's.
      * 
