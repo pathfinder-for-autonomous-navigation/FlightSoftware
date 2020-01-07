@@ -214,18 +214,13 @@ bool test_get_ssa_voltage(){
 
 bool test_get_havt(){
     std::bitset<32> temp(0);
-    std::bitset<32> reference(0xFFFF0000);
-    std::bitset<32> other(0);
-    other.set();
+    std::bitset<32> reference(0xF0F01F1F);
 
-    // Serial.printf("ref havt: %u\n", reference.to_ulong());
-    // Serial.printf("ref other: %u\n", other.to_ulong());
     Serial.printf("ref havt: %u\n", reference.to_ulong());
     adcs.get_havt(&temp);
     Serial.printf("read havt: %u\n", temp.to_ulong());
 
     return reference == temp;
-
 }
 
 bool test_everything(){
@@ -295,6 +290,7 @@ void loop() {
     //works;
     Serial.printf("set_imu_filters: %d\n", test_set_imu_filters());
     
+    //works
     Serial.printf("set_havt: %d\n", test_set_havt());
 
     //-----------------

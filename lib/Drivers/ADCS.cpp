@@ -189,7 +189,6 @@ void ADCS::set_havt(const std::bitset<MAX_DEVICES>& havt_table){
     }
 
     i2c_write_to_subaddr(HAVT_COMMAND, cmd, 4);
-
 }
 
 
@@ -314,12 +313,12 @@ void ADCS::get_havt(std::bitset<MAX_DEVICES>* havt_table){
         temp[i] = 255;
     }
     #else
-    //TODO REPLACE 88 DUMMY REGISTER VAL
     i2c_point_and_read(HAVT_READ,temp, 4);
     #endif
 
     unsigned int encoded;
-    //reassemble unsigned int
+    
+    //assemble chars into an int
     unsigned char * encoded_ptr = (unsigned char *)(&encoded);
     for (unsigned int i = 0; i < 4; i++){
         encoded_ptr[i] = temp[i];

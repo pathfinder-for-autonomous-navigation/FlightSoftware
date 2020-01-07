@@ -305,6 +305,8 @@ class ADCS : public I2CDevice {
     /**
      * @brief Get the adcs havt table bitset
      * 
+     * Access the state of the 1st device using havt_table.test(0);
+     * 
      * @param havt_table Pointer to the bitset that will be read into
      */
     void get_havt(std::bitset<MAX_DEVICES>* havt_table);
