@@ -177,6 +177,21 @@ void ADCS::set_imu_gyr_temp_desired(const float desired){
     i2c_write_to_subaddr(IMU_GYR_TEMP_DESIRED,cmd);
 }
 
+void ADCS::set_havt(const std::bitset<MAX_DEVICES>& havt_table){
+    unsigned char cmd[4];
+
+    unsigned int encoded = (unsigned int)havt_table.to_ulong();
+
+    //dissassemble unsigned int into 4 chars
+    unsigned char * encoded_ptr = (unsigned char *)(&encoded);
+    for (unsigned int i = 0; i < 4; i++){
+        cmd[i] = encoded_ptr[i];
+    }
+
+    i2c_write_to_subaddr(HAVT_COMMAND, cmd, 4);
+
+}
+
 
 void ADCS::get_who_am_i(unsigned char* who_am_i) {
     i2c_point_and_read(WHO_AM_I, who_am_i, 1);

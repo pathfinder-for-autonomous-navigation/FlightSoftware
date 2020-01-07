@@ -30,7 +30,6 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr)
     {
         //fill vector of statefields
-        //char buffer [3];
         char buffer[50];
         for(unsigned int i = 0; i<ssa::num_sun_sensors;i++){
             std::memset(buffer, 0, sizeof(buffer));

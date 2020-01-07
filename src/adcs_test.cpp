@@ -131,6 +131,16 @@ bool test_set_imu_mode(){
     return true;
 }
 
+bool test_set_havt(){
+
+    //replace with MAX devices
+    std::bitset<32> cmd(0x0F0F0F0F);
+
+    adcs.set_havt(cmd);
+
+    return true;
+}
+
 bool test_get_ssa_vector(){
 
     //arbitrary test values
@@ -285,6 +295,9 @@ void loop() {
     //works;
     Serial.printf("set_imu_filters: %d\n", test_set_imu_filters());
     
+    Serial.printf("set_havt: %d\n", test_set_havt());
+
+    //-----------------
 
     Serial.printf("get_who_am_i: %d\n", test_get_who_am_i());
 

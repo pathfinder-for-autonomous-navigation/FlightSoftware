@@ -223,7 +223,7 @@ class ADCS : public I2CDevice {
      * 
      * @param havt_table The commanded state of the ADCS HAVT table
      */
-    void set_havt(const std::bitset<MAX_DEVICES> havt_table);
+    void set_havt(const std::bitset<MAX_DEVICES>& havt_table);
     
     /**
      * @brief Get the who_am_i value
