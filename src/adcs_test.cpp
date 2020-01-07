@@ -3,11 +3,14 @@
 #include <ADCS.hpp>
 #include <array>
 #include <adcs_constants.hpp>
+#include <bitset>
 
 Devices::ADCS adcs(Wire, Devices::ADCS::ADDRESS);
 int cnt;
 #ifndef UNIT_TEST
 void setup() {
+    Serial.begin(9600);
+    while(!Serial);
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
     adcs.setup();
     cnt = 0;
@@ -199,6 +202,22 @@ bool test_get_ssa_voltage(){
 
 }
 
+bool test_get_havt(){
+    std::bitset<32> temp(0);
+    std::bitset<32> reference(0xFFFF0000);
+    std::bitset<32> other(0);
+    other.set();
+
+    // Serial.printf("ref havt: %u\n", reference.to_ulong());
+    // Serial.printf("ref other: %u\n", other.to_ulong());
+    Serial.printf("ref havt: %u\n", reference.to_ulong());
+    adcs.get_havt(&temp);
+    Serial.printf("read havt: %u\n", temp.to_ulong());
+
+    return reference == temp;
+
+}
+
 bool test_everything(){
     return 
     adcs.is_functional() &&
@@ -220,7 +239,8 @@ bool test_everything(){
     test_get_ssa_vector() &&
     test_get_ssa_voltage() &&
     test_get_rwa() &&
-    test_get_imu();
+    test_get_imu() &&
+    test_get_havt();
 }
 
 void loop() {
@@ -275,6 +295,8 @@ void loop() {
     Serial.printf("get_rwa: %d\n", test_get_rwa());
 
     Serial.printf("get_imu: %d\n", test_get_imu());
+
+    Serial.printf("get_havt: %d\n", test_get_havt());
 
     Serial.printf("TEST EVERYTHING: %d\n", test_everything());  
 
