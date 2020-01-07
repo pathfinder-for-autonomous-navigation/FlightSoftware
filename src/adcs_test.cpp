@@ -239,7 +239,8 @@ bool test_everything(){
     test_set_ssa_voltage_filter() &&
     test_set_imu_mode() &&
     test_set_imu_filters() &&
-
+    test_set_havt() &&
+    
     test_get_who_am_i() &&
     test_get_ssa_vector() &&
     test_get_ssa_voltage() &&
