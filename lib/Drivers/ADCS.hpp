@@ -306,6 +306,11 @@ class ADCS : public I2CDevice {
      * @brief Get the adcs havt table bitset
      * 
      * Access the state of the 1st device using havt_table.test(0);
+     * 2nd device is at havt_table.test(1);
+     * 32nd device is at havt_table.test(31);
+     * 
+     * If a bit of the bitset is high, that device's is_functional() returned true.
+     * The mocked return will report a full set of 1's.
      * 
      * @param havt_table Pointer to the bitset that will be read into
      */
