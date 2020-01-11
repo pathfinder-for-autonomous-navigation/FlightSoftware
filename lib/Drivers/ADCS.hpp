@@ -20,9 +20,6 @@ class ADCS : public I2CDevice {
     static constexpr unsigned int ADDRESS = 0x4E;
     static constexpr unsigned int WHO_AM_I_EXPECTED = 0x0F;
 
-    //TODO MOVE TO COMMON SOFTWARE? USED FOR BITSET CAPACITY
-    static constexpr unsigned int MAX_DEVICES = 32;
-
     #ifdef UNIT_TEST
     unsigned int mock_ssa_mode = SSAMode::SSA_IN_PROGRESS;
     #endif
@@ -223,7 +220,7 @@ class ADCS : public I2CDevice {
      * 
      * @param havt_table The commanded state of the ADCS HAVT table
      */
-    void set_havt(const std::bitset<MAX_DEVICES>& havt_table);
+    void set_havt(const std::bitset<havt::max_devices>& havt_table);
     
     /**
      * @brief Get the who_am_i value
@@ -317,7 +314,7 @@ class ADCS : public I2CDevice {
      * 
      * @param havt_table Pointer to the bitset that will be read into
      */
-    void get_havt(std::bitset<MAX_DEVICES>* havt_table);
+    void get_havt(std::bitset<havt::max_devices>* havt_table);
 };
 
 }  // namespace Devices

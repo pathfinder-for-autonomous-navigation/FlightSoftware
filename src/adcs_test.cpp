@@ -133,8 +133,7 @@ bool test_set_imu_mode(){
 
 bool test_set_havt(){
 
-    //replace with MAX devices
-    std::bitset<32> cmd(0x0F0F0F0F);
+    std::bitset<havt::max_devices> cmd(0x0F0F0F0F);
 
     adcs.set_havt(cmd);
 
@@ -213,8 +212,8 @@ bool test_get_ssa_voltage(){
 }
 
 bool test_get_havt(){
-    std::bitset<32> temp(0);
-    std::bitset<32> reference(0xF0F01F1F);
+    std::bitset<havt::max_devices> temp(0);
+    std::bitset<havt::max_devices> reference(0xF0F01F1F);
 
     Serial.printf("ref havt: %u\n", reference.to_ulong());
     adcs.get_havt(&temp);

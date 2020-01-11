@@ -177,7 +177,8 @@ void ADCS::set_imu_gyr_temp_desired(const float desired){
     i2c_write_to_subaddr(IMU_GYR_TEMP_DESIRED,cmd);
 }
 
-void ADCS::set_havt(const std::bitset<MAX_DEVICES>& havt_table){
+void ADCS::set_havt(const std::bitset<havt::max_devices>& havt_table){
+    //4 because 32/8 = 4
     unsigned char cmd[4];
 
     unsigned int encoded = (unsigned int)havt_table.to_ulong();
@@ -304,7 +305,8 @@ void ADCS::get_ssa_voltage(std::array<float, ssa::num_sun_sensors>* voltages){
     }
 }
 
-void ADCS::get_havt(std::bitset<MAX_DEVICES>* havt_table){
+void ADCS::get_havt(std::bitset<havt::max_devices>* havt_table){
+    //4 because 32/8 = 4
     unsigned char temp[4];
     std::memset(temp, 0, sizeof(temp));
 
@@ -324,5 +326,5 @@ void ADCS::get_havt(std::bitset<MAX_DEVICES>* havt_table){
         encoded_ptr[i] = temp[i];
     }
 
-    (*havt_table) = std::bitset<MAX_DEVICES>(encoded);
+    (*havt_table) = std::bitset<havt::max_devices>(encoded);
 }
