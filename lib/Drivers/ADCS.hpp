@@ -10,12 +10,16 @@
 #include <I2CDevice.hpp>
 #include <array>
 #include <adcs_constants.hpp>
+
+#include <bitset>
+
 namespace Devices {
 
 class ADCS : public I2CDevice {
    public:
     static constexpr unsigned int ADDRESS = 0x4E;
     static constexpr unsigned int WHO_AM_I_EXPECTED = 0x0F;
+
     #ifdef UNIT_TEST
     unsigned int mock_ssa_mode = SSAMode::SSA_IN_PROGRESS;
     #endif
@@ -207,6 +211,16 @@ class ADCS : public I2CDevice {
      * mapping from imu::min_eq_temp to imu::max_eq_temp degrees Celsius.  
      */
     void set_imu_gyr_temp_desired(const float desired);
+
+    /**
+     * @brief Sets the availability of ADCS devices.
+     * 
+     * Only call this method it is necessary to update the state of any ADCS devices.
+     * In nominal operation, this method should be untouched.
+     * 
+     * @param havt_table The commanded state of the ADCS HAVT table
+     */
+    void set_havt(const std::bitset<havt::max_devices>& havt_table);
     
     /**
      * @brief Get the who_am_i value
@@ -285,8 +299,22 @@ class ADCS : public I2CDevice {
      */
     void get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd);
     
-    /** **/
-    void update_hat();
+    /**
+     * @brief Get the adcs havt table bitset
+     * 
+     * Access the state of the 1st device using havt_table.test(0);
+     * 2nd device is at havt_table.test(1);
+     * 32nd device is at havt_table.test(31);
+     * 
+     * The right index of a device can be found in the adcs_havt_devices.hpp register
+     * in CommonSoftware.
+     * 
+     * If a bit of the bitset is high, that device's is_functional() returned true.
+     * The mocked return will report a full set of 1's.
+     * 
+     * @param havt_table Pointer to the bitset that will be read into
+     */
+    void get_havt(std::bitset<havt::max_devices>* havt_table);
 };
 
 }  // namespace Devices
