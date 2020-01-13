@@ -3,11 +3,14 @@
 #include <ADCS.hpp>
 #include <array>
 #include <adcs_constants.hpp>
+#include <bitset>
 
-Devices::ADCS adcs("adcs", Wire, Devices::ADCS::ADDRESS);
+Devices::ADCS adcs(Wire, Devices::ADCS::ADDRESS);
 int cnt;
 #ifndef UNIT_TEST
 void setup() {
+    Serial.begin(9600);
+    while(!Serial);
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
     adcs.setup();
     cnt = 0;
@@ -128,6 +131,15 @@ bool test_set_imu_mode(){
     return true;
 }
 
+bool test_set_havt(){
+
+    std::bitset<havt::max_devices> cmd(0x0F0F0F0F);
+
+    adcs.set_havt(cmd);
+
+    return true;
+}
+
 bool test_get_ssa_vector(){
 
     //arbitrary test values
@@ -175,13 +187,13 @@ bool test_get_rwa() {
     std::array<float, 3> rwa_speed_rd = {1.0f,1.0f,1.0f};
     std::array<float, 3> rwa_ramp_rd = {1.0f,1.0f,1.0f};;
 
-    std::array<float, 3> rwa_speed_state = {0.004f, 0.005f, -0.006f}; // Speed read
+    std::array<float, 3> rwa_speed_state = {400.0f, -300.0f, 200.0f}; // Speed read
     std::array<float, 3> rwa_ramp_state = {0.001f, 0.002f, -0.003f};
 
     adcs.get_rwa(&rwa_speed_rd, &rwa_ramp_rd);
 
-    return comp_float_arr(rwa_speed_rd,rwa_speed_state,0.0001f)
-     && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.0001f);
+    return comp_float_arr(rwa_speed_rd,rwa_speed_state,0.1f)
+     && comp_float_arr(rwa_ramp_rd,rwa_ramp_state,0.01f);
 }
 
 bool test_get_ssa_voltage(){
@@ -197,6 +209,17 @@ bool test_get_ssa_voltage(){
 
     return comp_float_arr(reference,temp,0.02f);
 
+}
+
+bool test_get_havt(){
+    std::bitset<havt::max_devices> temp(0);
+    std::bitset<havt::max_devices> reference(0xF0F01F1F);
+
+    Serial.printf("ref havt: %u\n", reference.to_ulong());
+    adcs.get_havt(&temp);
+    Serial.printf("read havt: %u\n", temp.to_ulong());
+
+    return reference == temp;
 }
 
 bool test_everything(){
@@ -215,12 +238,14 @@ bool test_everything(){
     test_set_ssa_voltage_filter() &&
     test_set_imu_mode() &&
     test_set_imu_filters() &&
-
+    test_set_havt() &&
+    
     test_get_who_am_i() &&
     test_get_ssa_vector() &&
     test_get_ssa_voltage() &&
     test_get_rwa() &&
-    test_get_imu();
+    test_get_imu() &&
+    test_get_havt();
 }
 
 void loop() {
@@ -265,6 +290,10 @@ void loop() {
     //works;
     Serial.printf("set_imu_filters: %d\n", test_set_imu_filters());
     
+    //works
+    Serial.printf("set_havt: %d\n", test_set_havt());
+
+    //-----------------
 
     Serial.printf("get_who_am_i: %d\n", test_get_who_am_i());
 
@@ -275,6 +304,8 @@ void loop() {
     Serial.printf("get_rwa: %d\n", test_get_rwa());
 
     Serial.printf("get_imu: %d\n", test_get_imu());
+
+    Serial.printf("get_havt: %d\n", test_get_havt());
 
     Serial.printf("TEST EVERYTHING: %d\n", test_everything());  
 
