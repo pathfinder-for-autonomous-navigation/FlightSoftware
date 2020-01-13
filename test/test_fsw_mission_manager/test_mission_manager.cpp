@@ -62,13 +62,6 @@ void test_dispatch_empty_states() {
         tf.check(mission_state_t::docked);
     }
 
-    // Spacejunk
-    {
-        TestFixture tf(mission_state_t::spacejunk);
-        tf.step();
-        tf.check(mission_state_t::spacejunk);
-    }
-
     // Manual
     {
         TestFixture tf(mission_state_t::manual);
@@ -160,13 +153,6 @@ void test_dispatch_docking() {
     tf.check(mission_state_t::docked);
 }
 
-
-void test_dispatch_paired() {
-    TestFixture tf(mission_state_t::paired);
-    tf.step();
-    TEST_ASSERT(tf.adcs_paired_fp->get());
-}
-
 void test_dispatch_safehold() {
     TestFixture tf(mission_state_t::safehold);
     // TODO
@@ -174,7 +160,7 @@ void test_dispatch_safehold() {
 
 void test_dispatch_undefined() {
     TestFixture tf;
-    tf.mission_state_fp->set(14); // Undefined
+    tf.mission_state_fp->set(100); // Undefined
     tf.step();
     tf.check(mission_state_t::safehold);
 }
@@ -189,7 +175,6 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_standby);
     RUN_TEST(test_dispatch_leader);
     RUN_TEST(test_dispatch_docking);
-    RUN_TEST(test_dispatch_paired);
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
     return UNITY_END();

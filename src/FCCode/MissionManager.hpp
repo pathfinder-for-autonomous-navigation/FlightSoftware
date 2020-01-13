@@ -58,8 +58,6 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_leader();
     void dispatch_docking();
     void dispatch_docked();
-    void dispatch_paired();
-    void dispatch_spacejunk();
     void dispatch_safehold();
 
     /**

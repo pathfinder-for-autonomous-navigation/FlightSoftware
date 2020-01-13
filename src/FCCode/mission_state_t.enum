@@ -11,10 +11,7 @@ enum class mission_state_t {
     leader,
     docking,
     docked,
-    paired,
-    spacejunk,
     safehold,
-
     manual
 };
 

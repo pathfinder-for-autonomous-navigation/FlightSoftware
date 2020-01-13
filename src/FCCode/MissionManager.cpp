@@ -7,7 +7,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     TimedControlTask<void>(registry, "mission_ct", offset),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
-    mission_state_f("pan.state", Serializer<unsigned char>(11)),
+    mission_state_f("pan.state", Serializer<unsigned char>(10)),
     is_deployed_f("pan.deployed", Serializer<bool>()),
     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32)),
     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2))
@@ -87,12 +87,6 @@ void MissionManager::execute() {
             break;
         case mission_state_t::docked:
             dispatch_docked();
-            break;
-        case mission_state_t::paired:
-            dispatch_paired();
-            break;
-        case mission_state_t::spacejunk:
-            dispatch_spacejunk();
             break;
         case mission_state_t::safehold:
             dispatch_safehold();
@@ -217,14 +211,6 @@ void MissionManager::dispatch_docking() {
 
 void MissionManager::dispatch_docked() {
     // Do nothing. Wait for a ground command to separate states.
-}
-
-void MissionManager::dispatch_paired() {
-    adcs_paired_fp->set(true);
-}
-
-void MissionManager::dispatch_spacejunk() {
-    // Wait for ground commands.
 }
 
 void MissionManager::dispatch_safehold() {
