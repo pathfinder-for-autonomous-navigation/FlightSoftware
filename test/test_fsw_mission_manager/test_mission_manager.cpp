@@ -26,27 +26,6 @@ void test_dispatch_startup() {
     tf.check(mission_state_t::detumble);
 }
 
-void test_dispatch_detumble() {
-    TestFixture tf(mission_state_t::detumble);
-    tf.set(adcs_state_t::detumble);
-
-    const float threshold = rwa::max_speed_read * rwa::moment_of_inertia
-                                * MissionManager::detumble_safety_factor;
-    const float delta = threshold * 0.01;
-
-    // Stays in detumble mode if satellite is tumbling
-    tf.set_ang_rate(threshold + delta);
-    tf.step();
-    tf.check(adcs_state_t::detumble);
-
-    // If satellite is no longer tumbling, spacecraft exits detumble mode
-    // and starts pointing in the expected direction.
-    tf.set_ang_rate(threshold - delta);
-    tf.step();
-    tf.check(adcs_state_t::point_standby);
-    tf.check(mission_state_t::standby);
-}
-
 void test_dispatch_empty_states() {
     // Initialization hold
     {
@@ -70,35 +49,25 @@ void test_dispatch_empty_states() {
     }
 }
 
-void test_dispatch_rendezvous_state(mission_state_t mission_state, prop_mode_t prop_mode)
-{
-    /** If distance is less than the trigger distance,
-        there should be a state transition to the next mission state. **/
-    {
-        TestFixture tf(mission_state);
-        tf.set_sat_distance(MissionManager::docking_trigger_dist - 0.01);
-        tf.step();
-        tf.check(mission_state_t::docking);
-    }
+void test_dispatch_detumble() {
+    TestFixture tf(mission_state_t::detumble);
+    tf.set(adcs_state_t::detumble);
 
-    /** If comms hasn't been available for too long, there should
-        be a state transition to standby.  **/
-    {
-        TestFixture tf(mission_state);
-        tf.set_comms_blackout_period(MissionManager::max_radio_silence_duration + 1);
-        tf.step();
-        tf.check(adcs_state_t::point_standby);
-        tf.check(mission_state_t::standby);
-        tf.check(sat_designation_t::undecided);
-    }
-}
+    const float threshold = rwa::max_speed_read * rwa::moment_of_inertia
+                                * MissionManager::detumble_safety_factor;
+    const float delta = threshold * 0.01;
 
-void test_dispatch_follower() {
-    test_dispatch_rendezvous_state(mission_state_t::follower, prop_mode_t::active);
-}
+    // Stays in detumble mode if satellite is tumbling
+    tf.set_ang_rate(threshold + delta);
+    tf.step();
+    tf.check(adcs_state_t::detumble);
 
-void test_dispatch_leader() {
-    test_dispatch_rendezvous_state(mission_state_t::leader, prop_mode_t::disabled);
+    // If satellite is no longer tumbling, spacecraft exits detumble mode
+    // and starts pointing in the expected direction.
+    tf.set_ang_rate(threshold - delta);
+    tf.step();
+    tf.check(adcs_state_t::point_standby);
+    tf.check(mission_state_t::standby);
 }
 
 void test_dispatch_standby() {
@@ -132,6 +101,37 @@ void test_dispatch_standby() {
         TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::leader);
     }
+}
+
+void test_dispatch_rendezvous_state(mission_state_t mission_state, prop_mode_t prop_mode)
+{
+    /** If distance is less than the trigger distance,
+        there should be a state transition to the next mission state. **/
+    {
+        TestFixture tf(mission_state);
+        tf.set_sat_distance(MissionManager::docking_trigger_dist - 0.01);
+        tf.step();
+        tf.check(mission_state_t::docking);
+    }
+
+    /** If comms hasn't been available for too long, there should
+        be a state transition to standby.  **/
+    {
+        TestFixture tf(mission_state);
+        tf.set_comms_blackout_period(MissionManager::max_radio_silence_duration + 1);
+        tf.step();
+        tf.check(adcs_state_t::point_standby);
+        tf.check(mission_state_t::standby);
+        tf.check(sat_designation_t::undecided);
+    }
+}
+
+void test_dispatch_follower() {
+    test_dispatch_rendezvous_state(mission_state_t::follower, prop_mode_t::active);
+}
+
+void test_dispatch_leader() {
+    test_dispatch_rendezvous_state(mission_state_t::leader, prop_mode_t::disabled);
 }
 
 void test_dispatch_docking() {
