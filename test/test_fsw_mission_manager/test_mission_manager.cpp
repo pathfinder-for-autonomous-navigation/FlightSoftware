@@ -28,6 +28,7 @@ void test_dispatch_startup() {
 
 void test_dispatch_detumble() {
     TestFixture tf(mission_state_t::detumble);
+    tf.set(adcs_state_t::detumble);
 
     const float threshold = rwa::max_speed_read * rwa::moment_of_inertia
                                 * MissionManager::detumble_safety_factor;
@@ -36,11 +37,7 @@ void test_dispatch_detumble() {
     // Stays in detumble mode if satellite is tumbling
     tf.set_ang_rate(threshold + delta);
     tf.step();
-    tf.check(sat_designation_t::undecided);
-    tf.check(mission_state_t::detumble);
     tf.check(adcs_state_t::detumble);
-    tf.check(prop_mode_t::disabled);
-    tf.check(radio_mode_t::active);
 
     // If satellite is no longer tumbling, spacecraft exits detumble mode
     // and starts pointing in the expected direction.
@@ -50,39 +47,38 @@ void test_dispatch_detumble() {
     tf.check(mission_state_t::standby);
 }
 
-void test_dispatch_initialization_hold() {
-    TestFixture tf(mission_state_t::initialization_hold);
-    tf.step();
-    tf.check(sat_designation_t::undecided);
-    tf.check(mission_state_t::initialization_hold);
-    tf.check(adcs_state_t::detumble);
-    tf.check(prop_mode_t::disabled);
-    tf.check(radio_mode_t::active);
+void test_dispatch_empty_states() {
+    // Initialization hold
+    {
+        TestFixture tf(mission_state_t::initialization_hold);
+        tf.step();
+        tf.check(mission_state_t::initialization_hold);
+    }
+
+    // Docked
+    {
+        TestFixture tf(mission_state_t::docked);
+        tf.step();
+        tf.check(mission_state_t::docked);
+    }
+
+    // Spacejunk
+    {
+        TestFixture tf(mission_state_t::spacejunk);
+        tf.step();
+        tf.check(mission_state_t::spacejunk);
+    }
+
+    // Manual
+    {
+        TestFixture tf(mission_state_t::manual);
+        tf.step();
+        tf.check(mission_state_t::manual);
+    }
 }
 
-void test_dispatch_rendezvous_state(mission_state_t mission_state,
-    sat_designation_t sat_designation, prop_mode_t prop_mode)
+void test_dispatch_rendezvous_state(mission_state_t mission_state, prop_mode_t prop_mode)
 {
-    /** Test initialization **/
-    {
-        TestFixture tf(mission_state);
-        tf.step();
-        tf.check(sat_designation);
-        tf.check(mission_state);
-        tf.check(adcs_state_t::point_docking);
-        tf.check(prop_mode);
-        tf.check(radio_mode_t::active);
-    }
-
-    /**
-     * Test ground uncommandability of ADCS and propulsion state.
-     */
-    {
-        TestFixture tf(mission_state);
-        tf.assert_ground_uncommandability(adcs_state_t::point_docking);
-        tf.assert_ground_uncommandability(prop_mode);
-    }
-
     /** If distance is less than the trigger distance,
         there should be a state transition to the next mission state. **/
     {
@@ -105,25 +101,14 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state,
 }
 
 void test_dispatch_follower() {
-    test_dispatch_rendezvous_state(mission_state_t::follower, sat_designation_t::follower,
-        prop_mode_t::active);
+    test_dispatch_rendezvous_state(mission_state_t::follower, prop_mode_t::active);
 }
 
 void test_dispatch_leader() {
-    test_dispatch_rendezvous_state(mission_state_t::leader, sat_designation_t::leader,
-        prop_mode_t::disabled);
+    test_dispatch_rendezvous_state(mission_state_t::leader, prop_mode_t::disabled);
 }
 
 void test_dispatch_standby() {
-    // Initialization test
-    {
-        TestFixture tf(mission_state_t::standby);
-        tf.step();
-        tf.check(mission_state_t::standby);
-        tf.check(prop_mode_t::active);
-        tf.check(radio_mode_t::active);
-    }
-    
     // The ground should be able to command the satellite into any
     // pointing mode from this point. We'll test point_standby,
     // point_manual, and detumble here.
@@ -131,7 +116,7 @@ void test_dispatch_standby() {
         TestFixture tf(mission_state_t::standby);
         tf.step();
         tf.check(adcs_state_t::startup);
-        
+
         tf.set(adcs_state_t::point_standby); tf.step(); tf.check(adcs_state_t::point_standby);
         tf.set(adcs_state_t::point_manual);  tf.step(); tf.check(adcs_state_t::point_manual);
         tf.set(adcs_state_t::detumble);      tf.step(); tf.check(adcs_state_t::detumble);
@@ -154,33 +139,20 @@ void test_dispatch_standby() {
         TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::leader);
     }
-
-    // Test that the ADCS state is fully ground-commandable, but that
-    // propulsion mode is not. (Propulsion mode should always be active.)
-    {
-        TestFixture tf(mission_state_t::standby);
-
-        for(adcs_state_t state : TestFixture::adcs_states) {
-            tf.set(state);
-            tf.step();
-            TEST_ASSERT_EQUAL(static_cast<unsigned int>(state), tf.adcs_state_fp->get());
-        }
-
-        tf.assert_ground_uncommandability(prop_mode_t::active);
-    }
 }
 
 void test_dispatch_docking() {
     TestFixture tf(mission_state_t::docking);
     tf.step();
-    tf.check(mission_state_t::docking);
-    tf.check(adcs_state_t::zero_torque);
-    tf.check(prop_mode_t::disabled);
-    tf.check(radio_mode_t::active);
-    tf.assert_ground_uncommandability(adcs_state_t::zero_torque);
-    tf.assert_ground_uncommandability(prop_mode_t::disabled);
 
+    // Docking command should be applied iff the docking configuration is
+    // not "docked".
+    tf.dock_config_fp->set(false);
+    tf.step();
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
+    tf.dock_config_fp->set(true);
+    tf.step();
+    TEST_ASSERT_FALSE(tf.docking_config_cmd_fp->get());
 
     // Pressing of the docking switch should cause state transition
     tf.docked_fp->set(true);
@@ -188,54 +160,16 @@ void test_dispatch_docking() {
     tf.check(mission_state_t::docked);
 }
 
-void test_dispatch_docked() {
-    TestFixture tf(mission_state_t::docked);
-    tf.step();
-    tf.check(mission_state_t::docked);
-    tf.check(adcs_state_t::zero_torque);
-    tf.check(prop_mode_t::disabled);
-    tf.check(radio_mode_t::active);
-    tf.check(sat_designation_t::undecided);
-    tf.assert_ground_uncommandability(adcs_state_t::zero_torque);
-    tf.assert_ground_uncommandability(prop_mode_t::disabled);
-}
 
 void test_dispatch_paired() {
     TestFixture tf(mission_state_t::paired);
     tf.step();
     TEST_ASSERT(tf.adcs_paired_fp->get());
-    tf.check(adcs_state_t::point_standby);
-    tf.check(mission_state_t::standby);
-    tf.check(sat_designation_t::undecided);
-}
-
-void test_dispatch_spacejunk() {
-    TestFixture tf(mission_state_t::spacejunk);
-    tf.step();
-    tf.check(mission_state_t::spacejunk);
-    tf.check(adcs_state_t::zero_L);
-    tf.check(prop_mode_t::disabled);
-    tf.check(radio_mode_t::active);
-    tf.check(sat_designation_t::undecided);
-    tf.assert_ground_uncommandability(adcs_state_t::zero_L);
-    tf.assert_ground_uncommandability(prop_mode_t::disabled);
 }
 
 void test_dispatch_safehold() {
     TestFixture tf(mission_state_t::safehold);
-    tf.step();
-    tf.check(mission_state_t::safehold);
-    tf.check(adcs_state_t::limited);
-    tf.check(prop_mode_t::disabled);
-    tf.check(radio_mode_t::active);
-    tf.assert_ground_uncommandability(adcs_state_t::limited);
-    tf.assert_ground_uncommandability(prop_mode_t::disabled);
-}
-
-void test_dispatch_manual() {
-    TestFixture tf(mission_state_t::manual);
-    tf.step();
-    tf.check(mission_state_t::manual);
+    // TODO
 }
 
 void test_dispatch_undefined() {
@@ -250,16 +184,13 @@ int test_mission_manager() {
     RUN_TEST(test_valid_initialization);
     RUN_TEST(test_dispatch_startup);
     RUN_TEST(test_dispatch_detumble);
-    RUN_TEST(test_dispatch_initialization_hold);
+    RUN_TEST(test_dispatch_empty_states);
     RUN_TEST(test_dispatch_follower);
     RUN_TEST(test_dispatch_standby);
     RUN_TEST(test_dispatch_leader);
     RUN_TEST(test_dispatch_docking);
-    RUN_TEST(test_dispatch_docked);
     RUN_TEST(test_dispatch_paired);
-    RUN_TEST(test_dispatch_spacejunk);
     RUN_TEST(test_dispatch_safehold);
-    RUN_TEST(test_dispatch_manual);
     RUN_TEST(test_dispatch_undefined);
     return UNITY_END();
 }

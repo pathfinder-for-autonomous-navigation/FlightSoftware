@@ -47,6 +47,9 @@ class MissionManager : public TimedControlTask<void> {
      */
     bool check_hardware_faults();
 
+    /**
+     * @brief Handles logic while within a state.
+     */
     void dispatch_startup();
     void dispatch_detumble();
     void dispatch_initialization_hold();
@@ -58,6 +61,13 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_paired();
     void dispatch_spacejunk();
     void dispatch_safehold();
+
+    /**
+     * @brief Handles state transitions that happen upon subsystem assertions.
+     */
+    void transition_to_state(mission_state_t mission_state,
+        adcs_state_t adcs_state,
+        prop_mode_t prop_mode);
 
     /**
      * @brief Allow spacecraft to be commandeered completely by test software or
@@ -95,6 +105,7 @@ class MissionManager : public TimedControlTask<void> {
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
     const ReadableStateField<bool>* docked_fp;
+    const ReadableStateField<bool>* dock_config_fp;
 
     /**
      * @brief Radio's mode.

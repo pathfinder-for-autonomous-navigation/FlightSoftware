@@ -31,12 +31,12 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
+    dock_config_fp = find_readable_field<bool>("docksys.dock_config", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
-    set(mission_state_t::startup);
-    set(adcs_state_t::startup);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::disabled);
+    transition_to_state(mission_state_t::startup,
+        adcs_state_t::startup,
+        prop_mode_t::disabled); // "Starting" transition
     is_deployed_f.set(false);
     deployment_wait_elapsed_f.set(0);
     sat_designation_f.set(0);
@@ -50,9 +50,17 @@ bool MissionManager::check_hardware_faults() {
 void MissionManager::execute() {
     mission_state_t mode = static_cast<mission_state_t>(mission_state_f.get());
 
-    if (mode != mission_state_t::startup) {
+    if (mode == mission_state_t::startup) {
+        set(radio_mode_t::disabled);
+    }
+    else {
+        set(radio_mode_t::active);
         bool faulted = check_hardware_faults();
-        if (faulted) set(mission_state_t::safehold);
+        if (faulted) {
+            transition_to_state(mission_state_t::safehold,
+                adcs_state_t::startup,
+                prop_mode_t::disabled);
+        }
     }
 
     switch(mode) {
@@ -100,11 +108,6 @@ void MissionManager::execute() {
 }
 
 void MissionManager::dispatch_startup() {
-    set(mission_state_t::startup);
-    set(adcs_state_t::startup);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::disabled);
-
     // Step 1. Wait for the deployment timer length.
     if (deployment_wait_elapsed_f.get() < deployment_wait) {
         deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
@@ -112,77 +115,66 @@ void MissionManager::dispatch_startup() {
     }
 
     // Step 2. Check for hardware faults that would necessitate
-    // going into an initialization hold
+    // going into an initialization hold. If faults exist, go into
+    // initialization hold, otherwise detumble.
     if (check_hardware_faults()) {
-        set(mission_state_t::initialization_hold);
-        return;
+        transition_to_state(mission_state_t::initialization_hold,
+            adcs_state_t::detumble,
+            prop_mode_t::disabled);
     }
-
-    // Step 3. If no hardware faults exist, go into detumble
-    set(mission_state_t::detumble);
+    else {
+        transition_to_state(mission_state_t::detumble,
+            adcs_state_t::detumble,
+            prop_mode_t::disabled);
+    }
 }
 
 void MissionManager::dispatch_detumble() {
-    set(mission_state_t::detumble);
-    set(adcs_state_t::detumble);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::active);
-
     // Detumble until satellite angular rate is below an allowable threshold
     const float momentum = lin::norm(adcs_ang_momentum_fp->get());
     const float threshold = rwa::max_speed_read * rwa::moment_of_inertia * detumble_safety_factor;
     if (momentum <= threshold)
     {
-        set(adcs_state_t::point_standby);
-        set(mission_state_t::standby);
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::point_standby,
+            prop_mode_t::active);
     }
 }
 
 void MissionManager::dispatch_initialization_hold() {
-    set(mission_state_t::initialization_hold);
-    set(adcs_state_t::detumble);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::active);
-
     // Stay in this state until ground commands fix the satellite and
     // command the satellite out of this state.
 }
 
 void MissionManager::dispatch_follower() {
-    set(sat_designation_t::follower);
-    set(mission_state_t::follower);
-    set(adcs_state_t::point_docking);
-    set(prop_mode_t::active);
-    set(radio_mode_t::active);
-
     if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        set(adcs_state_t::point_standby);
-        set(mission_state_t::standby);
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::point_standby,
+            prop_mode_t::active);
     }
 
     if (distance_to_other_sat() < docking_trigger_dist) {
-        set(mission_state_t::docking);
+        transition_to_state(mission_state_t::docking,
+            adcs_state_t::point_docking,
+            prop_mode_t::disabled);
     }
 }
 
 void MissionManager::dispatch_standby() {
-    set(mission_state_t::standby);
-    set(prop_mode_t::active); // Active in order to enable ground propulsion commands.
-    set(radio_mode_t::active);
-
     sat_designation_t const sat_designation =
         static_cast<sat_designation_t>(sat_designation_f.get());
 
     if (sat_designation == sat_designation_t::follower) {
         adcs_paired_fp->set(false);
-        set(adcs_state_t::point_standby);
-        set(mission_state_t::follower);
+        transition_to_state(mission_state_t::follower,
+            adcs_state_t::point_docking,
+            prop_mode_t::active);
     }
     else if (sat_designation == sat_designation_t::leader) {
         adcs_paired_fp->set(false);
-        set(adcs_state_t::point_standby);
-        set(mission_state_t::leader);
+        transition_to_state(mission_state_t::leader,
+            adcs_state_t::point_docking,
+            prop_mode_t::disabled);
     }
     else {
         // The mission hasn't started yet. Let the satellite subsystems do their thing.
@@ -190,69 +182,52 @@ void MissionManager::dispatch_standby() {
 }
 
 void MissionManager::dispatch_leader() {
-    set(sat_designation_t::leader);
-    set(mission_state_t::leader);
-    set(adcs_state_t::point_docking);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::active);
-
     if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        set(adcs_state_t::point_standby);
-        set(mission_state_t::standby);
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::point_standby,
+            prop_mode_t::active);
     }
 
     if (distance_to_other_sat() < docking_trigger_dist) {
-        set(mission_state_t::docking);
+        transition_to_state(mission_state_t::docking,
+            adcs_state_t::point_docking,
+            prop_mode_t::disabled);
     }
 }
 
 void MissionManager::dispatch_docking() {
-    set(mission_state_t::docking);
-    set(adcs_state_t::zero_torque);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::active);
+    // Docking command is applied iff the docking configuration is
+    // not "docked".
+    if (!dock_config_fp->get()) {
+        docking_config_cmd_f.set(true);
+    }
+    else {
+        docking_config_cmd_f.set(false);
+    }
 
-    docking_config_cmd_f.set(true);
     if (docked_fp->get()) {
-        set(mission_state_t::docked);
+        transition_to_state(mission_state_t::docked,
+            adcs_state_t::zero_torque,
+            prop_mode_t::disabled);
+
+        // Mission has ended, so remove "follower" and "leader" designations.
+        set(sat_designation_t::undecided);
     }
 }
 
 void MissionManager::dispatch_docked() {
-    set(mission_state_t::docked);
-    set(adcs_state_t::zero_torque);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::active);
-
-    // Mission has ended, so remove "follower" and "leader" designations.
-    set(sat_designation_t::undecided);
+    // Do nothing. Wait for a ground command to separate states.
 }
 
 void MissionManager::dispatch_paired() {
-    set(mission_state_t::paired);
-    set(sat_designation_t::undecided);
     adcs_paired_fp->set(true);
-    set(adcs_state_t::point_standby);
-    set(mission_state_t::standby);
 }
 
 void MissionManager::dispatch_spacejunk() {
-    set(mission_state_t::spacejunk);
-    set(adcs_state_t::zero_L);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::active);
-    set(sat_designation_t::undecided);
-
-    // Wait for ground commands; do nothing more.
+    // Wait for ground commands.
 }
 
 void MissionManager::dispatch_safehold() {
-    set(mission_state_t::safehold);
-    set(adcs_state_t::limited);
-    set(prop_mode_t::disabled);
-    set(radio_mode_t::active);
-
     // TODO auto-exits
 }
 
@@ -291,4 +266,13 @@ void MissionManager::set(radio_mode_t mode) {
 
 void MissionManager::set(sat_designation_t designation) {
     sat_designation_f.set(static_cast<unsigned int>(designation));
+}
+
+void MissionManager::transition_to_state(mission_state_t mission_state,
+        adcs_state_t adcs_state,
+        prop_mode_t prop_mode)
+{
+    set(mission_state);
+    set(adcs_state);
+    set(prop_mode);
 }
