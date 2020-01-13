@@ -64,36 +64,16 @@ void MissionManager::execute() {
     }
 
     switch(mode) {
-        case mission_state_t::startup:
-            dispatch_startup();
-            break;
-        case mission_state_t::detumble:
-            dispatch_detumble();
-            break;
-        case mission_state_t::initialization_hold:
-            dispatch_initialization_hold();
-            break;
-        case mission_state_t::follower:
-            dispatch_follower();
-            break;
-        case mission_state_t::standby:
-            dispatch_standby();
-            break;
-        case mission_state_t::leader:
-            dispatch_leader();
-            break;
-        case mission_state_t::docking:
-            dispatch_docking();
-            break;
-        case mission_state_t::docked:
-            dispatch_docked();
-            break;
-        case mission_state_t::safehold:
-            dispatch_safehold();
-            break;
-        case mission_state_t::manual:
-            dispatch_manual();
-            break;
+        case mission_state_t::startup:             dispatch_startup();             break;
+        case mission_state_t::detumble:            dispatch_detumble();            break;
+        case mission_state_t::initialization_hold: dispatch_initialization_hold(); break;
+        case mission_state_t::follower:            dispatch_follower();            break;
+        case mission_state_t::standby:             dispatch_standby();             break;
+        case mission_state_t::leader:              dispatch_leader();              break;
+        case mission_state_t::docking:             dispatch_docking();             break;
+        case mission_state_t::docked:              dispatch_docked();              break;
+        case mission_state_t::safehold:            dispatch_safehold();            break;
+        case mission_state_t::manual:              dispatch_manual();              break;
         default:
             printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned int>(mode));
             set(mission_state_t::safehold);
