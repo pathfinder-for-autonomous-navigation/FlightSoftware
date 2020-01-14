@@ -116,6 +116,10 @@ void TestFixture::assert_ground_uncommandability(prop_mode_t exception_mode) {
 // Step forward the state machine by 1 control cycle.
 void TestFixture::step() { mission_manager->execute(); }
 
+void TestFixture::set_ccno(unsigned int ccno) {
+    mission_manager->control_cycle_count = ccno;
+}
+
 // Create a hardware fault that necessitates a transition to safe hold or initialization hold.
 void TestFixture::set_hardware_fault(bool faulted) {
     // TODO
@@ -127,7 +131,9 @@ void TestFixture::set_sat_distance(double dist) { propagated_baseline_pos_fp->se
 // Set the # of control cycles that comms has not been established
 // with the ground.
 void TestFixture::set_comms_blackout_period(int ccno) {
-    last_checkin_cycle_fp->set(mission_manager->control_cycle_count - ccno);
+    const unsigned int control_cycle_count = mission_manager->control_cycle_count;
+    TEST_ASSERT_GREATER_OR_EQUAL(control_cycle_count, ccno);
+    last_checkin_cycle_fp->set(control_cycle_count - ccno);
 }
 
 // Set the angular rate of the spacecraft.

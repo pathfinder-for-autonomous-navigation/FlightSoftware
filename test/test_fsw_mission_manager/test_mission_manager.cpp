@@ -106,10 +106,13 @@ void test_dispatch_standby() {
 void test_dispatch_rendezvous_state(mission_state_t mission_state, prop_mode_t prop_mode)
 {
     /** If distance is less than the trigger distance,
-        there should be a state transition to the next mission state. **/
+        there should be a state transition to the next mission state.
+        This transition should happen irrespective of the comms timeout situation. **/
     {
         TestFixture tf(mission_state);
         tf.set_sat_distance(MissionManager::docking_trigger_dist - 0.01);
+        tf.set_ccno(MissionManager::max_radio_silence_duration + 1);
+        tf.set_comms_blackout_period(MissionManager::max_radio_silence_duration + 1);
         tf.step();
         tf.check(mission_state_t::docking);
     }
@@ -118,6 +121,7 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, prop_mode_t p
         be a state transition to standby.  **/
     {
         TestFixture tf(mission_state);
+        tf.set_ccno(MissionManager::max_radio_silence_duration + 1);
         tf.set_comms_blackout_period(MissionManager::max_radio_silence_duration + 1);
         tf.step();
         tf.check(adcs_state_t::point_standby);
