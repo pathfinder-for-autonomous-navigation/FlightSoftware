@@ -76,7 +76,7 @@ void MissionManager::execute() {
         case mission_state_t::manual:              dispatch_manual();              break;
         default:
             printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned int>(mode));
-            set(mission_state_t::safehold);
+            transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_mode_t::disabled);
             break;
     }
 }
@@ -122,6 +122,7 @@ void MissionManager::dispatch_initialization_hold() {
 
 void MissionManager::dispatch_follower() {
     if (too_long_since_last_comms()) {
+        set(sat_designation_t::undecided);
         transition_to_state(mission_state_t::standby,
             adcs_state_t::point_standby,
             prop_mode_t::active);
@@ -157,6 +158,7 @@ void MissionManager::dispatch_standby() {
 
 void MissionManager::dispatch_leader() {
     if (too_long_since_last_comms()) {
+        set(sat_designation_t::undecided);
         transition_to_state(mission_state_t::standby,
             adcs_state_t::point_standby,
             prop_mode_t::active);
