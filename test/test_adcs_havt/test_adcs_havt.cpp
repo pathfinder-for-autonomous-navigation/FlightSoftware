@@ -60,7 +60,7 @@ void test_read_table(){
 
 // disables then re-enables the RWs
 void test_cmd_table(){
-    //rt stands for read_table
+    // rt stands for read_table
     std::bitset<havt::max_devices> rt_read(0);
     std::bitset<havt::max_devices> rt_expected("00000000000000000000001110111000");
 
@@ -68,20 +68,20 @@ void test_cmd_table(){
 
     TEST_ASSERT_EQUAL_STRING(rt_expected.to_string().c_str(), rt_read.to_string().c_str());
 
-    //command table 1 - disable all the reaction wheels, but leave MTR's up
+    // command table 1 - disable all the reaction wheels, but leave MTR's up
     std::bitset<havt::max_devices> cmd_t1("00000000000000000000000000111000");
 
     adcs.set_havt(cmd_t1);
     
-    //ensure ADCSC has enough time to implement the commanded havt_table
+    // ensure ADCSC has enough time to implement the commanded havt_table
     delay(wait_for_ADCSC);
     adcs.get_havt(&rt_read);
 
-    //check that cmd_t1 was applied
+    // check that cmd_t1 was applied
     TEST_ASSERT_EQUAL_STRING(cmd_t1.to_string().c_str(), rt_read.to_string().c_str());
 
 
-    //NOW TEST RESET CAPABILITY
+    // NOW TEST RESET CAPABILITY
     std::bitset<havt::max_devices> cmd_t2("00000000000000000000001110111000");
     adcs.set_havt(cmd_t2);
     delay(wait_for_ADCSC);
