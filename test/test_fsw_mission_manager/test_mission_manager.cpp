@@ -142,14 +142,8 @@ void test_dispatch_docking() {
     TestFixture tf(mission_state_t::docking);
     tf.step();
 
-    // Docking command should be applied iff the docking configuration is
-    // not "docked".
-    tf.dock_config_fp->set(false);
-    tf.step();
+    // Docking motor command should be applied.
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
-    tf.dock_config_fp->set(true);
-    tf.step();
-    TEST_ASSERT_FALSE(tf.docking_config_cmd_fp->get());
 
     // Pressing of the docking switch should cause state transition
     tf.docked_fp->set(true);

@@ -19,7 +19,6 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
                                     "orbit.baseline_pos", 0, 100000, 100);
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
-    dock_config_fp = registry.create_readable_field<bool>("docksys.dock_config");
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -30,7 +29,6 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     prop_mode_fp->set(static_cast<unsigned int>(prop_mode_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     docked_fp->set(false);
-    dock_config_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);
 

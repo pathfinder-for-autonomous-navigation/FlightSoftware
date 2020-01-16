@@ -103,7 +103,6 @@ class MissionManager : public TimedControlTask<void> {
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
     const ReadableStateField<bool>* docked_fp;
-    const ReadableStateField<bool>* dock_config_fp;
 
     /**
      * @brief Radio's mode.

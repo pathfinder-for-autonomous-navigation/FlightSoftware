@@ -31,7 +31,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
-    dock_config_fp = find_readable_field<bool>("docksys.dock_config", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     transition_to_state(mission_state_t::startup,
@@ -172,14 +171,7 @@ void MissionManager::dispatch_leader() {
 }
 
 void MissionManager::dispatch_docking() {
-    // Docking command is applied iff the docking configuration is
-    // not "docked".
-    if (!dock_config_fp->get()) {
-        docking_config_cmd_f.set(true);
-    }
-    else {
-        docking_config_cmd_f.set(false);
-    }
+    docking_config_cmd_f.set(true);
 
     if (docked_fp->get()) {
         transition_to_state(mission_state_t::docked,
