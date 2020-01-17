@@ -3,12 +3,6 @@
 
 #include <adcs_constants.hpp>
 
-#ifndef isnan
-/* NaN is the only floating point value that does NOT equal itself.
- * Therefore if n != n, then it is NaN. */
-#define isnan(n) ((n != n) ? 1 : 0)
-#endif
-
 ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry, "adcs_controller", offset),
@@ -45,10 +39,6 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
     }
 
 void ADCSBoxController::execute(){
-
-    // define nan
-    const float nan = std::numeric_limits<float>::quiet_NaN();
-
     // set to passive/disabled if in startup
     // consider changing to writeable state_field in adcs box monitor
     if(adcs_state_fp->get() == static_cast<unsigned char>(adcs_state_t::startup))
@@ -65,7 +55,7 @@ void ADCSBoxController::execute(){
     adcs_system.set_mtr_cmd(mtr_cmd_fp->get());
     adcs_system.set_mtr_limit(mtr_limit_fp->get());
 
-    //if calculation is complete/failset the mode to in_progress to begin a new calc
+    //if calculation is complete/fail set the mode to in_progress to begin a new calc
     if(ssa_mode_fp->get() != SSAMode::SSA_IN_PROGRESS)
         adcs_system.set_ssa_mode(SSAMode::SSA_IN_PROGRESS);
     
