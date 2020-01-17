@@ -30,11 +30,6 @@ Devices::ADCS adcs(Wire, Devices::ADCS::ADDRESS);
 // tests have passed where this is 10, try increment higher if not passing
 constexpr static unsigned int wait_for_ADCSC = 10;
 
-// personal sanity check
-void test_trivial(){
-    TEST_ASSERT_TRUE(true);
-}
-
 // test to make sure you're connected correctly to i2c
 void test_get_who_am_i(){
     unsigned char temp;
@@ -101,7 +96,6 @@ int main(void) {
     delay(1000);
     setup_test();
     UNITY_BEGIN();
-    RUN_TEST(test_trivial);
     RUN_TEST(test_get_who_am_i);
     RUN_TEST(test_read_table);
     RUN_TEST(test_cmd_table);
