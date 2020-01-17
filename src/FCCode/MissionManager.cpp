@@ -121,17 +121,16 @@ void MissionManager::dispatch_initialization_hold() {
 }
 
 void MissionManager::dispatch_follower() {
-    if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        transition_to_state(mission_state_t::standby,
-            adcs_state_t::point_standby,
-            prop_mode_t::active);
-    }
-
     if (distance_to_other_sat() < docking_trigger_dist) {
         transition_to_state(mission_state_t::docking,
             adcs_state_t::point_docking,
             prop_mode_t::disabled);
+    }
+    else if (too_long_since_last_comms()) {
+        set(sat_designation_t::undecided);
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::point_standby,
+            prop_mode_t::active);
     }
 }
 
@@ -157,17 +156,16 @@ void MissionManager::dispatch_standby() {
 }
 
 void MissionManager::dispatch_leader() {
-    if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        transition_to_state(mission_state_t::standby,
-            adcs_state_t::point_standby,
-            prop_mode_t::active);
-    }
-
     if (distance_to_other_sat() < docking_trigger_dist) {
         transition_to_state(mission_state_t::docking,
             adcs_state_t::point_docking,
             prop_mode_t::disabled);
+    }
+    else if (too_long_since_last_comms()) {
+        set(sat_designation_t::undecided);
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::point_standby,
+            prop_mode_t::active);
     }
 }
 
