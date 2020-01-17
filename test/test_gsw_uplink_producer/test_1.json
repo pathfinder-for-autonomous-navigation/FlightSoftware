@@ -1,0 +1,8 @@
+{
+  "adcs.mode": 6,
+  "adcs.cmd_attitude": 1343443,
+  "pan.mode": 7,
+  "adcs.min_stable_ang_rate": 14,
+  "docksys.config_cmd": 1,
+  "pan.sat_designation": 3
+}

@@ -30,9 +30,8 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr)
     {
         //fill vector of statefields
-        //char buffer [3];
         char buffer[50];
-        for(unsigned int i = 0; i<num_sun_sensors;i++){
+        for(unsigned int i = 0; i<ssa::num_sun_sensors;i++){
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.ssa_voltage");
             sprintf(buffer + strlen(buffer), "%u", i);
@@ -45,7 +44,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(ssa_mode_f);
         add_readable_field(ssa_vec_f);
 
-        for(unsigned int i = 0; i<num_sun_sensors; i++){
+        for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
             add_readable_field(ssa_voltages_f[i]);
         }
 
@@ -87,7 +86,7 @@ void ADCSBoxMonitor::execute(){
     unsigned char ssa_mode = 0;
     f_vector_t ssa_vec;
 
-    std::array<float, 20> ssa_voltages;
+    std::array<float, ssa::num_sun_sensors> ssa_voltages;
     ssa_voltages.fill(0);
 
     f_vector_t mag_vec;
@@ -114,7 +113,7 @@ void ADCSBoxMonitor::execute(){
     rwa_torque_rd_f.set(rwa_torque_rd);
     ssa_mode_f.set(ssa_mode);
 
-    for(int i = 0; i<20; i++){
+    for(int i = 0; i<ssa::num_sun_sensors; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);
     }
 

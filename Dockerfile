@@ -12,3 +12,4 @@ RUN pio update
 RUN mkdir -p /FlightSoftware
 WORKDIR /FlightSoftware
 COPY . .
+RUN chmod +x tools/*

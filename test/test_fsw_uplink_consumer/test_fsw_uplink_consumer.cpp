@@ -70,6 +70,7 @@ class TestFixture {
             w->name();
             from_ull(w, rand()); // no seed so should be the same each time
         }
+        uplink_consumer->init_uplink();
     }
     /**
      * @param out The uplink packet as a bitstream

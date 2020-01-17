@@ -1,8 +1,0 @@
-# Creates a release of flight software for Linux
-
-FROM fswbase
-MAINTAINER Tanishq Aggarwal (ta335@cornell.edu)
-
-RUN pio run -e native
-RUN pio run -e downlink_parser
-# RUN pio run -e telem_info_generator

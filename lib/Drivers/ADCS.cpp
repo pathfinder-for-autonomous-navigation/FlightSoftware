@@ -1,6 +1,6 @@
 /** @file ADCS.hpp
- * @author Kyle Krol
- * @date 6 Feb 2018
+ * @author Kyle Krol, Shihao Cao
+ * @date Spring 2018, Fall 2019
  * @brief Contains implementation for device interface to ADCS system.
  */
 
@@ -67,10 +67,12 @@ inline signed short ss(float f, float min, float max) {
 void ADCS::set_mode(const unsigned char mode) {
     i2c_write_to_subaddr(ADCS_MODE, mode);
 }
+
 void ADCS::set_read_ptr(const unsigned char read_ptr){
     i2c_write_to_subaddr(READ_POINTER, read_ptr);
 
 }
+
 void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& rwa_cmd){
     i2c_write_to_subaddr(RWA_MODE, rwa_mode);
 
@@ -86,17 +88,21 @@ void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& 
     }
     i2c_write_to_subaddr(RWA_COMMAND,cmd,6);
 }
+
 void ADCS::set_rwa_speed_filter(const float mom_filter){
     unsigned char comp = uc(mom_filter,0.0f,1.0f);
     i2c_write_to_subaddr(RWA_SPEED_FILTER, comp);
 }
+
 void ADCS::set_ramp_filter(const float ramp_filter){
     unsigned char comp = uc(ramp_filter,0.0f,1.0f);
     i2c_write_to_subaddr(RWA_RAMP_FILTER, comp);
 }
+
 void ADCS::set_mtr_mode(const unsigned char mtr_mode){
     i2c_write_to_subaddr(MTR_MODE, mtr_mode);
 }
+
 void ADCS::set_mtr_cmd(const std::array<float, 3> &mtr_cmd){
     unsigned char cmd[6];
     for(int i = 0;i<3;i++){
@@ -106,6 +112,7 @@ void ADCS::set_mtr_cmd(const std::array<float, 3> &mtr_cmd){
     }
     i2c_write_to_subaddr(MTR_COMMAND,cmd,6);
 }
+
 void ADCS::set_mtr_limit(const float mtr_limit){
     unsigned char cmd[2];
     unsigned short comp = us(mtr_limit,mtr::min_moment,mtr::max_moment);
@@ -113,9 +120,11 @@ void ADCS::set_mtr_limit(const float mtr_limit){
     cmd[1] = comp >> 8; 
     i2c_write_to_subaddr(MTR_LIMIT, cmd, 2);
 }
+
 void ADCS::set_ssa_mode(const unsigned char ssa_mode) {
     i2c_write_to_subaddr(SSA_MODE, ssa_mode);
 }
+
 void ADCS::set_ssa_voltage_filter(const float voltage_filter) {
     unsigned char comp = uc(voltage_filter,0.0f,1.0f);
     i2c_write_to_subaddr(SSA_VOLTAGE_FILTER, comp);
@@ -124,46 +133,70 @@ void ADCS::set_ssa_voltage_filter(const float voltage_filter) {
 void ADCS::set_imu_mode(const unsigned char mode){
     i2c_write_to_subaddr(IMU_MODE, mode);
 }
+
 void ADCS::set_imu_mag_filter(const float mag_filter){
     unsigned char comp = uc(mag_filter,0.0f,1.0f);
     i2c_write_to_subaddr(IMU_MAG_FILTER, comp);
 }
+
 void ADCS::set_imu_gyr_filter(const float gyr_filter){
     unsigned char comp = uc(gyr_filter,0.0f,1.0f);
     i2c_write_to_subaddr(IMU_GYR_FILTER, comp);
 }
+
 void ADCS::set_imu_gyr_temp_filter(const float temp_filter){
     unsigned char comp = uc(temp_filter,0.0f,1.0f);
     i2c_write_to_subaddr(IMU_GYR_TEMP_FILTER, comp);
 }
+
 void float_decomp(const float input, unsigned char* temp){
     //turns the input float into 4 chars
     *(float*)(temp) = input;
 }
+
 void ADCS::set_imu_gyr_temp_kp(const float kp){
     unsigned char cmd[4];
     float_decomp(kp, cmd);
     i2c_write_to_subaddr(IMU_GYR_TEMP_KP,cmd,4);
 }
+
 void ADCS::set_imu_gyr_temp_ki(const float ki){
     unsigned char cmd[4];
     float_decomp(ki, cmd);
     i2c_write_to_subaddr(IMU_GYR_TEMP_KI,cmd,4);
 }
+
 void ADCS::set_imu_gyr_temp_kd(const float kd){
     unsigned char cmd[4];
     float_decomp(kd, cmd);
     i2c_write_to_subaddr(IMU_GYR_TEMP_KD,cmd,4);
 }
+
 void ADCS::set_imu_gyr_temp_desired(const float desired){
     unsigned char cmd = uc(desired,imu::min_eq_temp,imu::max_eq_temp);
     i2c_write_to_subaddr(IMU_GYR_TEMP_DESIRED,cmd);
+}
+
+void ADCS::set_havt(const std::bitset<havt::max_devices>& havt_table){
+    //4 because 32/8 = 4
+    unsigned char cmd[4];
+
+    unsigned int encoded = (unsigned int)havt_table.to_ulong();
+
+    //dissassemble unsigned int into 4 chars
+    unsigned char * encoded_ptr = (unsigned char *)(&encoded);
+    for (unsigned int i = 0; i < 4; i++){
+        cmd[i] = encoded_ptr[i];
+    }
+
+    i2c_write_to_subaddr(HAVT_COMMAND, cmd, 4);
 }
 
 
 void ADCS::get_who_am_i(unsigned char* who_am_i) {
     i2c_point_and_read(WHO_AM_I, who_am_i, 1);
 }
+
 void ADCS::get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa_ramp_rd) {
     unsigned char readin[12];
     std::memset(readin, 0, sizeof(readin));
@@ -189,6 +222,7 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa
         (*rwa_ramp_rd)[i] = fp(c,rwa::min_torque,rwa::max_torque);
     }
 }
+
 void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd){
     unsigned char readin[14];
     std::memset(readin, 0, sizeof(readin));
@@ -218,11 +252,13 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
     unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
     *gyr_temp_rd = fp(c,imu::min_rd_temp,imu::max_rd_temp);
 }
+
 #ifdef UNIT_TEST
 void ADCS::set_mock_ssa_mode(const unsigned char ssa_mode) {
     mock_ssa_mode = ssa_mode;
 }
 #endif
+
 void ADCS::get_ssa_mode(unsigned char* a) {
     #ifdef UNIT_TEST
     //acceleration control mode, mocking output
@@ -231,6 +267,7 @@ void ADCS::get_ssa_mode(unsigned char* a) {
     i2c_point_and_read(SSA_MODE, a, 1);
     #endif
 }
+
 void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
     unsigned char readin[6];
     std::memset(readin, 0, sizeof(readin));
@@ -250,21 +287,44 @@ void ADCS::get_ssa_vector(std::array<float, 3>* ssa_sun_vec) {
     }
 
 }
-void ADCS::get_ssa_voltage(std::array<float, 20>* voltages){
-    unsigned char temp[20];
+
+void ADCS::get_ssa_voltage(std::array<float, ssa::num_sun_sensors>* voltages){
+    unsigned char temp[ssa::num_sun_sensors];
     std::memset(temp, 0, sizeof(temp));
 
     #ifdef UNIT_TEST
-    for(int i = 0;i<20;i++){
+    for(int i = 0;i<ssa::num_sun_sensors;i++){
         temp[i] = 255;
     }
     #else
-    i2c_point_and_read(SSA_VOLTAGE_READ,temp,20);
+    i2c_point_and_read(SSA_VOLTAGE_READ,temp, ssa::num_sun_sensors);
     #endif
     
-    for(int i = 0;i<20;i++){
+    for(int i = 0;i<ssa::num_sun_sensors;i++){
         (*voltages)[i] = fp(temp[i], ssa::min_voltage_rd, ssa::max_voltage_rd);
     }
 }
 
-void ADCS::update_hat() {}
+void ADCS::get_havt(std::bitset<havt::max_devices>* havt_table){
+    //4 because 32/8 = 4
+    unsigned char temp[4];
+    std::memset(temp, 0, sizeof(temp));
+
+    #ifdef UNIT_TEST
+    for(int i = 0;i<4;i++){
+        temp[i] = 255;
+    }
+    #else
+    i2c_point_and_read(HAVT_READ,temp, 4);
+    #endif
+
+    unsigned int encoded;
+    
+    //assemble chars into an int
+    unsigned char * encoded_ptr = (unsigned char *)(&encoded);
+    for (unsigned int i = 0; i < 4; i++){
+        encoded_ptr[i] = temp[i];
+    }
+
+    (*havt_table) = std::bitset<havt::max_devices>(encoded);
+}
