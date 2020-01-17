@@ -34,7 +34,43 @@ protected:
     /**
     * @brief Commands to actuate on the ADCS Box
     */
-    ReadableStateField<bool>* adcs_mode_fp;
+   
+    const WritableStateField<unsigned char>* adcs_state_fp;
+
+    /**
+     * @brief RWA commands
+     * 
+     */
+    const WritableStateField<unsigned char>* rwa_mode_fp;
+    const WritableStateField<f_vector_t>* rwa_cmd_fp;
+    const WritableStateField<float>* rwa_speed_filter_fp;
+    const WritableStateField<float>* rwa_ramp_filter_fp;
+
+    /**
+     * @brief MTR commands
+     * 
+     */
+    const WritableStateField<unsigned char>* mtr_mode_fp;
+    const WritableStateField<f_vector_t>* mtr_cmd_fp;
+    const WritableStateField<float>* mtr_limit_fp;
+
+    //perhaps change box monitor to a writeable statefield
+    const WritableStateField<unsigned char>* ssa_mode_fp;
+
+    const WritableStateField<float>* ssa_voltage_filter_fp;
+
+    /**
+     * @brief IMU commands
+     * 
+     */
+    const WritableStateField<unsigned char>* imu_mode_fp;
+    const WritableStateField<float>* imu_mag_filter_fp;
+    const WritableStateField<float>* imu_gyr_filter_fp;
+    const WritableStateField<float>* imu_gyr_temp_filter_fp;
+    const WritableStateField<float>* imu_gyr_temp_kp;
+    const WritableStateField<float>* imu_gyr_temp_ki;
+    const WritableStateField<float>* imu_gyr_temp_kd;
+    const WritableStateField<float>* imu_gyr_temp_desired;
 };
 
 #endif
