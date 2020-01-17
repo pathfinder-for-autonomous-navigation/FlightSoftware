@@ -8,6 +8,7 @@
  * @brief Takes input command statefields and commands the ADCS Box.
  * 
  * Note this CT doesn't do any computing, just actuation
+ * This CT is inteded to only do hardware calls
  */
 class ADCSBoxController : public TimedControlTask<void>
 {
@@ -25,8 +26,7 @@ public:
     Devices::ADCS& adcs_system;
 
     /**
-    * @brief Gets inputs from the ADCS box and dumps them into the state
-    * fields listed below.
+    * @brief Given the command statefields, use the ADCS driver to execute
     */
     void execute() override;
 
@@ -34,11 +34,15 @@ protected:
     /**
     * @brief Commands to actuate on the ADCS Box
     */
-   
+
+    /**
+     * @brief Command to get from mission_manager
+     * 
+     */
     const WritableStateField<unsigned char>* adcs_state_fp;
 
     /**
-     * @brief RWA commands
+     * @brief RWA command fields
      * 
      */
     const WritableStateField<unsigned char>* rwa_mode_fp;
@@ -47,20 +51,22 @@ protected:
     const WritableStateField<float>* rwa_ramp_filter_fp;
 
     /**
-     * @brief MTR commands
+     * @brief MTR command fields
      * 
      */
     const WritableStateField<unsigned char>* mtr_mode_fp;
     const WritableStateField<f_vector_t>* mtr_cmd_fp;
     const WritableStateField<float>* mtr_limit_fp;
 
-    //perhaps change box monitor to a writeable statefield
+    /**
+     * @brief SSA command fields
+     * 
+     */
     const WritableStateField<unsigned char>* ssa_mode_fp;
-
     const WritableStateField<float>* ssa_voltage_filter_fp;
 
     /**
-     * @brief IMU commands
+     * @brief IMU command fields
      * 
      */
     const WritableStateField<unsigned char>* imu_mode_fp;
