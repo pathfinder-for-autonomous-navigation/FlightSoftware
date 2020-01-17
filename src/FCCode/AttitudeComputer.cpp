@@ -2,7 +2,10 @@
 #include "adcs_state_t.enum"
 #include <lin.hpp>
 #include <gnc_utilities.hpp>
+#include <gnc_constants.hpp>
 #include <cmath>
+
+constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
 
 AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_computer", offset),
@@ -54,7 +57,6 @@ void AttitudeComputer::execute() {
                 // We don't have a GPS reading. Point in the direction of the sun
                 // since that's the only vector we know reliably. It'll charge up
                 // our battery and we'll eventually have GPS coverage.
-                constexpr float nan = std::numeric_limits<float>::quiet_NaN();
 
                 // Pick "closest" long edge to point towards the Sun
                 const f_vector_t long_edges_arrs[4] = {
@@ -80,8 +82,8 @@ void AttitudeComputer::execute() {
 
                 adcs_vec1_current_f.set(ssa_vec_arr);
                 adcs_vec1_desired_f.set(long_edges_arrs[long_edge_choice]);
-                adcs_vec2_current_f.set({nan, nan, nan});
-                adcs_vec2_desired_f.set({nan, nan, nan});
+                adcs_vec2_current_f.set({nan_f, nan_f, nan_f});
+                adcs_vec2_desired_f.set({nan_f, nan_f, nan_f});
             }
             else {
                 // We've got a GPS reading. Point in a direction that
@@ -136,5 +138,19 @@ void AttitudeComputer::execute() {
         default:
         // Do nothing; there's no pointing strategy active.
         break;
+    }
+
+    // Set if we're in one- or two-pointing mode
+    const f_vector_t vec1_desired_arr = adcs_vec1_desired_f.get(); const f_vector_t vec2_desired_arr = adcs_vec2_desired_f.get();
+    const f_vector_t vec1_current_arr = adcs_vec1_current_f.get(); const f_vector_t vec2_current_arr = adcs_vec2_current_f.get();
+    lin::Vector3f vec1_desired = {vec1_desired_arr[0], vec1_desired_arr[1], vec1_desired_arr[2]};
+    lin::Vector3f vec2_desired = {vec2_desired_arr[0], vec2_desired_arr[1], vec2_desired_arr[2]};
+    lin::Vector3f vec1_current = {vec1_current_arr[0], vec1_current_arr[1], vec1_current_arr[2]};
+    lin::Vector3f vec2_current = {vec2_current_arr[0], vec2_current_arr[1], vec2_current_arr[2]};
+    if (isnan(vec2_desired_arr[0]) || isnan(vec2_current_arr[0]) ||
+        abs(lin::dot(vec1_current, vec2_current)) >= cosf(10.0f * gnc::constant::pi / 180.0f) ||
+        abs(lin::dot(vec1_desired, vec2_desired)) >= cosf(10.0f * gnc::constant::pi / 180.0f))
+    {
+        adcs_vec2_desired_f.set({nan_f, nan_f, nan_f});
     }
 }

@@ -3,7 +3,10 @@
 #include "../src/FCCode/adcs_state_t.enum"
 
 #include <unity.h>
+#include <gnc_constants.hpp>
 #include "../custom_assertions.hpp"
+
+constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
 
 class TestFixture {
   public:
@@ -20,9 +23,9 @@ class TestFixture {
     
     // Output state fields
     const WritableStateField<f_vector_t>* adcs_vec1_current_fp;
-    const WritableStateField<f_vector_t>* adcs_vec1_desired_fp;
+    WritableStateField<f_vector_t>* adcs_vec1_desired_fp;
     const WritableStateField<f_vector_t>* adcs_vec2_current_fp;
-    const WritableStateField<f_vector_t>* adcs_vec2_desired_fp;
+    WritableStateField<f_vector_t>* adcs_vec2_desired_fp;
 
     TestFixture() : registry() {
         adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
@@ -50,25 +53,27 @@ void test_valid_initialization() {
 
 void test_point_standby() {
     TestFixture tf;
-    constexpr float nan = std::numeric_limits<float>::quiet_NaN();
     
     // Test pointing without GPS
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_standby));
-    tf.pos_fp->set({nan, nan, nan});
+    tf.pos_fp->set({nan_f, nan_f, nan_f});
     tf.ssa_vec_fp->set({sqrtf(2)/2,sqrtf(2)/2,0});
     tf.attitude_computer->execute();
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({sqrtf(2)/2,sqrtf(2)/2,0}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({sqrtf(2)/2,sqrtf(2)/2,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan,nan,nan}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan,nan,nan}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f,nan_f,nan_f}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f,nan_f,nan_f}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
 
-    // Test long edge choice calculation
+    // Test long edge choice calculation for several choices of long edge
+    // Choice 1
     tf.ssa_vec_fp->set({sqrtf(2)/2,-sqrtf(2)/2,0});
     tf.attitude_computer->execute();
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({sqrtf(2)/2,-sqrtf(2)/2,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
+    // Choice 2
     tf.ssa_vec_fp->set({-sqrtf(2)/2,sqrtf(2)/2,0});
     tf.attitude_computer->execute();
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-sqrtf(2)/2,sqrtf(2)/2,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
+    // Choice 3
     tf.ssa_vec_fp->set({-sqrtf(2)/2,-sqrtf(2)/2,0});
     tf.attitude_computer->execute();
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-sqrtf(2)/2,-sqrtf(2)/2,0}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
@@ -107,6 +112,17 @@ void test_point_limited() {
     // TODO implement
 }
 
+// If the two desired vectors end up being within 10 degrees of each other, the
+// attitude computer should cancel the secondary pointing objective.
+void test_parallel_objectives() {
+    TestFixture tf;
+
+    tf.adcs_vec1_desired_fp->set({1,0,0});
+    tf.adcs_vec2_desired_fp->set({1.0f * cosf(8.0f * gnc::constant::pi / 180.0f), sinf(8.0f * gnc::constant::pi / 180.0f), 0}); // 8 degrees away
+    tf.attitude_computer->execute();
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
+}
+
 int test_attitude_computer() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
@@ -114,6 +130,7 @@ int test_attitude_computer() {
     RUN_TEST(test_point_docking);
     RUN_TEST(test_point_limited);
     // We cannot test point_manual since there's nothing happening inside that state.
+    RUN_TEST(test_parallel_objectives);
     return UNITY_END();
 }
 
