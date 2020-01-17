@@ -81,6 +81,8 @@ protected:
     ReadableStateField<bool> gyr_vec_flag;
     //! Is the gyroscope temperature reading within the validity bounds?W
     ReadableStateField<bool> gyr_temp_flag;
+
+    //ReadableStateField vector for devices?
 };
 
 #endif
