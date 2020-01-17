@@ -14,7 +14,6 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
     : TimedControlTask<void>(registry, "adcs_controller", offset),
     adcs_system(_adcs)
     {
-
         //find command statefields
         adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
@@ -57,15 +56,6 @@ void ADCSBoxController::execute(){
     else
         adcs_system.set_mode(ADCSMode::ADCS_ACTIVE);
 
-    // update ssa calc mode
-    // BLOCK O' CODE
-
-    // apply commands
-    // rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
-    // rwa_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
-    // rwa_speed_filter_fp = find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
-    // rwa_ramp_filter_fp = find_writable_field<float>("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
-
     //dump all commands straight in, ADCS deals with mode    
     adcs_system.set_rwa_mode(rwa_mode_fp->get(), rwa_cmd_fp->get());
     adcs_system.set_rwa_speed_filter(rwa_speed_filter_fp->get());
@@ -76,7 +66,7 @@ void ADCSBoxController::execute(){
     adcs_system.set_mtr_limit(mtr_limit_fp->get());
 
     //if calculation is complete/failset the mode to in_progress to begin a new calc
-    if(ssa_mode_fp->get() != SSAMode:;SSA_IN_PROGRESS)
+    if(ssa_mode_fp->get() != SSAMode::SSA_IN_PROGRESS)
         adcs_system.set_ssa_mode(SSAMode::SSA_IN_PROGRESS);
     
     adcs_system.set_ssa_voltage_filter(ssa_voltage_filter_fp->get());
@@ -89,14 +79,4 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_gyr_temp_ki(imu_gyr_temp_ki->get());
     adcs_system.set_imu_gyr_temp_kd(imu_gyr_temp_kd->get());
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired->get());
-    
-    imu_mode_fp = find_writable_field<unsigned char>("adcs_cmd.imu_mode", __FILE__, __LINE__);
-    imu_mag_filter_fp = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
-    imu_gyr_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
-    imu_gyr_temp_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
-    imu_gyr_temp_kp = find_writable_field<float>("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
-    imu_gyr_temp_ki = find_writable_field<float>("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
-    imu_gyr_temp_kd = find_writable_field<float>("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
-    imu_gyr_temp_desired = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
-
 }
