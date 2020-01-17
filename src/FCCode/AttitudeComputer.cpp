@@ -147,7 +147,7 @@ void AttitudeComputer::execute() {
     lin::Vector3f vec2_desired = {vec2_desired_arr[0], vec2_desired_arr[1], vec2_desired_arr[2]};
     lin::Vector3f vec1_current = {vec1_current_arr[0], vec1_current_arr[1], vec1_current_arr[2]};
     lin::Vector3f vec2_current = {vec2_current_arr[0], vec2_current_arr[1], vec2_current_arr[2]};
-    if (isnan(vec2_desired_arr[0]) || isnan(vec2_current_arr[0]) ||
+    if (std::isnan(vec2_desired_arr[0]) || std::isnan(vec2_current_arr[0]) ||
         abs(lin::dot(vec1_current, vec2_current)) >= cosf(10.0f * gnc::constant::pi / 180.0f) ||
         abs(lin::dot(vec1_desired, vec2_desired)) >= cosf(10.0f * gnc::constant::pi / 180.0f))
     {
