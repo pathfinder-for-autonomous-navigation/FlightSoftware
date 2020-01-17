@@ -24,6 +24,12 @@ AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int of
     ssa_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec", __FILE__, __LINE__);
     pos_fp = find_readable_field<d_vector_t>("orbit.pos", __FILE__, __LINE__);
     baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
+
+    // Initialize outputs to NaN values
+    adcs_vec1_current_f.set({nan_f, nan_f, nan_f});
+    adcs_vec2_current_f.set({nan_f, nan_f, nan_f});
+    adcs_vec1_desired_f.set({nan_f, nan_f, nan_f});
+    adcs_vec2_desired_f.set({nan_f, nan_f, nan_f});
 }
 
 void AttitudeComputer::execute() {
@@ -141,13 +147,15 @@ void AttitudeComputer::execute() {
     }
 
     // Set if we're in one- or two-pointing mode
-    const f_vector_t vec1_desired_arr = adcs_vec1_desired_f.get(); const f_vector_t vec2_desired_arr = adcs_vec2_desired_f.get();
-    const f_vector_t vec1_current_arr = adcs_vec1_current_f.get(); const f_vector_t vec2_current_arr = adcs_vec2_current_f.get();
-    lin::Vector3f vec1_desired = {vec1_desired_arr[0], vec1_desired_arr[1], vec1_desired_arr[2]};
-    lin::Vector3f vec2_desired = {vec2_desired_arr[0], vec2_desired_arr[1], vec2_desired_arr[2]};
+    const f_vector_t vec1_current_arr = adcs_vec1_current_f.get();
+    const f_vector_t vec2_current_arr = adcs_vec2_current_f.get();
+    const f_vector_t vec1_desired_arr = adcs_vec1_desired_f.get();
+    const f_vector_t vec2_desired_arr = adcs_vec2_desired_f.get();
     lin::Vector3f vec1_current = {vec1_current_arr[0], vec1_current_arr[1], vec1_current_arr[2]};
     lin::Vector3f vec2_current = {vec2_current_arr[0], vec2_current_arr[1], vec2_current_arr[2]};
-    if (std::isnan(vec2_desired_arr[0]) || std::isnan(vec2_current_arr[0]) ||
+    lin::Vector3f vec1_desired = {vec1_desired_arr[0], vec1_desired_arr[1], vec1_desired_arr[2]};
+    lin::Vector3f vec2_desired = {vec2_desired_arr[0], vec2_desired_arr[1], vec2_desired_arr[2]};
+    if (std::isnan(vec2_current_arr[0]) || std::isnan(vec2_desired_arr[0]) ||
         abs(lin::dot(vec1_current, vec2_current)) >= cosf(10.0f * gnc::constant::pi / 180.0f) ||
         abs(lin::dot(vec1_desired, vec2_desired)) >= cosf(10.0f * gnc::constant::pi / 180.0f))
     {

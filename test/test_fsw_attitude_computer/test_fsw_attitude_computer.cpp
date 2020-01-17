@@ -22,9 +22,9 @@ class TestFixture {
     std::unique_ptr<AttitudeComputer> attitude_computer;
     
     // Output state fields
-    const WritableStateField<f_vector_t>* adcs_vec1_current_fp;
+    WritableStateField<f_vector_t>* adcs_vec1_current_fp;
     WritableStateField<f_vector_t>* adcs_vec1_desired_fp;
-    const WritableStateField<f_vector_t>* adcs_vec2_current_fp;
+    WritableStateField<f_vector_t>* adcs_vec2_current_fp;
     WritableStateField<f_vector_t>* adcs_vec2_desired_fp;
 
     TestFixture() : registry() {
@@ -49,6 +49,11 @@ class TestFixture {
 
 void test_valid_initialization() {
     TestFixture tf;
+
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}).data(), tf.adcs_vec1_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}).data(), tf.adcs_vec2_current_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}).data(), tf.adcs_vec1_desired_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}).data(), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
 }
 
 void test_point_standby() {
@@ -115,12 +120,55 @@ void test_point_limited() {
 // If the two desired vectors end up being within 10 degrees of each other, the
 // attitude computer should cancel the secondary pointing objective.
 void test_parallel_objectives() {
-    TestFixture tf;
+    // Secondary pointing objective should be canceled if the second current vector is NaN
+    {
+        TestFixture tf;
+        tf.pos_fp->set({0,0,0}); // Set pos to be non-NaN so that vec2_desired cannot be NaN autonomously
+        tf.adcs_vec2_current_fp->set({nan_f, nan_f, nan_f}); // 8 degrees away
+        tf.attitude_computer->execute();
+        PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}),
+            tf.adcs_vec2_desired_fp->get().data(), 1e-10);
+    }
 
-    tf.adcs_vec1_desired_fp->set({1,0,0});
-    tf.adcs_vec2_desired_fp->set({1.0f * cosf(8.0f * gnc::constant::pi / 180.0f), sinf(8.0f * gnc::constant::pi / 180.0f), 0}); // 8 degrees away
-    tf.attitude_computer->execute();
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}), tf.adcs_vec2_desired_fp->get().data(), 1e-10);
+    // Secondary pointing objective should be canceled if the second desired vector is NaN
+    {
+        TestFixture tf;
+        tf.pos_fp->set({0,0,0});
+        tf.adcs_vec2_desired_fp->set({nan_f, nan_f, nan_f}); // 8 degrees away
+        tf.attitude_computer->execute();
+        PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}),
+            tf.adcs_vec2_desired_fp->get().data(), 1e-10);
+    }
+
+    // Secondary pointing objective should be canceled if the "current" vectors are within 10
+    // degrees of each other
+    {
+        TestFixture tf;
+        tf.pos_fp->set({0,0,0});
+        tf.adcs_vec1_current_fp->set({1,0,0});
+        tf.adcs_vec2_current_fp->set({
+            cosf(8.0f * gnc::constant::pi / 180.0f),
+            sinf(8.0f * gnc::constant::pi / 180.0f),
+            0}); // 8 degrees away
+        tf.attitude_computer->execute();
+        PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}),
+            tf.adcs_vec2_desired_fp->get().data(), 1e-10);
+    }
+
+    // Secondary pointing objective should be canceled if the desired vectors are within 10
+    // degrees of each other
+    {
+        TestFixture tf;
+        tf.pos_fp->set({0,0,0});
+        tf.adcs_vec1_desired_fp->set({1,0,0});
+        tf.adcs_vec2_desired_fp->set({
+            cosf(8.0f * gnc::constant::pi / 180.0f),
+            sinf(8.0f * gnc::constant::pi / 180.0f),
+            0}); // 8 degrees away
+        tf.attitude_computer->execute();
+        PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}),
+            tf.adcs_vec2_desired_fp->get().data(), 1e-10);
+    }
 }
 
 int test_attitude_computer() {
