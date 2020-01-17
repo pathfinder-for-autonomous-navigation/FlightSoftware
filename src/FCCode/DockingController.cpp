@@ -10,6 +10,11 @@ DockingController::DockingController(StateFieldRegistry &registry, unsigned int 
   add_readable_field(docked_f);
   add_readable_field(dock_config_f);
   add_readable_field(is_turning_f);
+
+  // Set default values
+  docked_f.set(false);
+  dock_config_f.set(true);
+  is_turning_f.set(false);
 }
 
 void DockingController::init() {

@@ -36,9 +36,10 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     transition_to_state(mission_state_t::startup,
         adcs_state_t::startup,
         prop_mode_t::disabled); // "Starting" transition
+    docking_config_cmd_f.set(true);
     is_deployed_f.set(false);
     deployment_wait_elapsed_f.set(0);
-    sat_designation_f.set(0);
+    set(sat_designation_t::undecided);
 }
 
 bool MissionManager::check_hardware_faults() {

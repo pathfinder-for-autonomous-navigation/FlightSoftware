@@ -4,6 +4,12 @@
 
 void test_valid_initialization() {
     TestFixture tf;
+
+    // Test initialized values
+    TEST_ASSERT(tf.docking_config_cmd_fp->get());
+    TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.deployment_wait_elapsed_fp->get());
+    tf.check(sat_designation_t::undecided);
 }
 
 void test_dispatch_startup() {
