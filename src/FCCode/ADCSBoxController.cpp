@@ -3,6 +3,12 @@
 
 #include <adcs_constants.hpp>
 
+#ifndef isnan
+/* NaN is the only floating point value that does NOT equal itself.
+ * Therefore if n != n, then it is NaN. */
+#define isnan(n) ((n != n) ? 1 : 0)
+#endif
+
 ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry, "adcs_controller", offset),
@@ -12,14 +18,20 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         //find command statefields
         adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
-        const WritableStateField<unsigned char>* mtr_mode_fp;
-        const WritableStateField<f_vector_t>* mtr_cmd_fp;
-        const WritableStateField<float>* mtr_limit_fp;
+        /**
+         * @brief RWA commands
+         * 
+         */
+        rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
+        rwa_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
+        rwa_speed_filter_fp = find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
+        rwa_ramp_filter_fp = find_writable_field<float>("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
 
-        //perhaps change box monitor to a writeable statefield
-        const WritableStateField<unsigned char>* ssa_mode_fp;
+        mtr_mode_fp = find_writable_field<unsigned char>("adcs_cmd.mtr_mode", __FILE__, __LINE__);
+        mtr_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
+        mtr_limit_fp = find_writable_field<float>("adcs_cmd.mtr_limit", __FILE__, __LINE__);
 
-        //consider changing
+        //consider changing ssa_mode in box monitor to writable to use same field
         ssa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.ssa_mode", __FILE__, __LINE__);
         ssa_voltage_filter_fp = find_writable_field<float>("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
 
@@ -35,15 +47,56 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
 
 void ADCSBoxController::execute(){
 
-    //define nan
+    // define nan
     const float nan = std::numeric_limits<float>::quiet_NaN();
 
-    if(adcs_state_fp->get() != adcs_state_t::startup){
-        //enable the adcs_box
-    }
+    // set to passive/disabled if in startup
+    // consider changing to writeable state_field in adcs box monitor
+    if(adcs_state_fp->get() == static_cast<unsigned char>(adcs_state_t::startup))
+        adcs_system.set_mode(ADCSMode::ADCS_PASSIVE);
     else
-        //disable adcs box
+        adcs_system.set_mode(ADCSMode::ADCS_ACTIVE);
 
-    //update ssa calc mode
+    // update ssa calc mode
+    // BLOCK O' CODE
+
+    // apply commands
+    // rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
+    // rwa_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
+    // rwa_speed_filter_fp = find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
+    // rwa_ramp_filter_fp = find_writable_field<float>("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
+
+    //dump all commands straight in, ADCS deals with mode    
+    adcs_system.set_rwa_mode(rwa_mode_fp->get(), rwa_cmd_fp->get());
+    adcs_system.set_rwa_speed_filter(rwa_speed_filter_fp->get());
+    adcs_system.set_ramp_filter(rwa_ramp_filter_fp->get());
+
+    adcs_system.set_mtr_mode(mtr_mode_fp->get());
+    adcs_system.set_mtr_cmd(mtr_cmd_fp->get());
+    adcs_system.set_mtr_limit(mtr_limit_fp->get());
+
+    //if calculation is complete/failset the mode to in_progress to begin a new calc
+    if(ssa_mode_fp->get() != SSAMode:;SSA_IN_PROGRESS)
+        adcs_system.set_ssa_mode(SSAMode::SSA_IN_PROGRESS);
+    
+    adcs_system.set_ssa_voltage_filter(ssa_voltage_filter_fp->get());
+
+    adcs_system.set_imu_mode(imu_mode_fp->get());
+    adcs_system.set_imu_mag_filter(imu_mag_filter_fp->get());
+    adcs_system.set_imu_gyr_filter(imu_gyr_filter_fp->get());
+    adcs_system.set_imu_gyr_temp_filter(imu_gyr_temp_filter_fp->get());
+    adcs_system.set_imu_gyr_temp_kp(imu_gyr_temp_kp->get());
+    adcs_system.set_imu_gyr_temp_ki(imu_gyr_temp_ki->get());
+    adcs_system.set_imu_gyr_temp_kd(imu_gyr_temp_kd->get());
+    adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired->get());
+    
+    imu_mode_fp = find_writable_field<unsigned char>("adcs_cmd.imu_mode", __FILE__, __LINE__);
+    imu_mag_filter_fp = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
+    imu_gyr_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
+    imu_gyr_temp_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
+    imu_gyr_temp_kp = find_writable_field<float>("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
+    imu_gyr_temp_ki = find_writable_field<float>("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
+    imu_gyr_temp_kd = find_writable_field<float>("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
+    imu_gyr_temp_desired = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
 
 }
