@@ -109,7 +109,7 @@ void test_dispatch_standby() {
     }
 }
 
-void test_dispatch_rendezvous_state(mission_state_t mission_state, prop_mode_t prop_mode)
+void test_dispatch_rendezvous_state(mission_state_t mission_state)
 {
     /** If distance is less than the trigger distance,
         there should be a state transition to the next mission state.
@@ -121,6 +121,9 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, prop_mode_t p
         tf.set_comms_blackout_period(MissionManager::max_radio_silence_duration + 1);
         tf.step();
         tf.check(mission_state_t::docking);
+        tf.check(prop_state_t::disabled);
+        tf.check(adcs_state_t::zero_torque);
+        tf.check(static_cast<sat_designation_t>(tf.sat_designation_fp->get()));
     }
 
     /** If comms hasn't been available for too long, there should
@@ -130,6 +133,7 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, prop_mode_t p
         tf.set_ccno(MissionManager::max_radio_silence_duration + 1);
         tf.set_comms_blackout_period(MissionManager::max_radio_silence_duration + 1);
         tf.step();
+        tf.check(prop_state_t::idle);
         tf.check(adcs_state_t::point_standby);
         tf.check(mission_state_t::standby);
         tf.check(sat_designation_t::undecided);
@@ -137,11 +141,11 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, prop_mode_t p
 }
 
 void test_dispatch_follower() {
-    test_dispatch_rendezvous_state(mission_state_t::follower, prop_mode_t::active);
+    test_dispatch_rendezvous_state(mission_state_t::follower);
 }
 
 void test_dispatch_leader() {
-    test_dispatch_rendezvous_state(mission_state_t::leader, prop_mode_t::disabled);
+    test_dispatch_rendezvous_state(mission_state_t::leader);
 }
 
 void test_dispatch_docking() {

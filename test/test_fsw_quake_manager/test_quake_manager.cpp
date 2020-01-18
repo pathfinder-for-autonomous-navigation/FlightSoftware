@@ -2,7 +2,7 @@
 #include "../StateFieldRegistryMock.hpp"
 #include "../../src/FCCode/QuakeManager.h"
 #include "../../src/FCCode/radio_state_t.enum"
-#include "../../src/FCCode/radio_mode_t.enum"
+#include "../../src/FCCode/radio_state_t.enum"
 
 #include <unity.h>
 
@@ -46,7 +46,7 @@ class TestFixture {
     InternalStateField<size_t>* radio_mt_len_fp;
     ReadableStateField<int>* radio_err_fp;
     InternalStateField<unsigned char>* radio_state_fp;
-    InternalStateField<unsigned char>* radio_mode_fp;
+    InternalStateField<unsigned char>* radio_state_fp;
     InternalStateField<unsigned int>* last_checkin_cycle_fp;
 
     // Quake manager object
@@ -68,7 +68,7 @@ class TestFixture {
         radio_mt_len_fp = registry.find_internal_field_t<size_t>("uplink.len");
         radio_err_fp = registry.find_readable_field_t<int>("radio.err");
         radio_state_fp = registry.find_internal_field_t<unsigned char>("radio.state");
-        radio_mode_fp = registry.find_internal_field_t<unsigned char>("radio.mode");
+        radio_state_fp = registry.find_internal_field_t<unsigned char>("radio.mode");
         last_checkin_cycle_fp = registry.find_internal_field_t<unsigned int>("radio.last_comms_ccno");
 
         // Initialize internal fields
@@ -76,7 +76,7 @@ class TestFixture {
         {
           quake_manager->dbg_get_qct().dbg_set_state(qct_state);
           radio_state_fp->set(radio_state);
-          radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::active));
+          radio_state_fp->set(static_cast<unsigned int>(radio_state_t::active));
         }
     }
   // Make a step in the world
@@ -517,10 +517,10 @@ void test_modes() {
    assert_qct(CONFIG);
 
    // Disable it
-   tf.radio_mode_fp->set(static_cast<unsigned char>(radio_mode_t::disabled));
+   tf.radio_state_fp->set(static_cast<unsigned char>(radio_state_t::disabled));
    tf.step();
-   TEST_ASSERT_EQUAL(tf.radio_mode_fp->get(),
-      static_cast<unsigned int>(radio_mode_t::disabled));
+   TEST_ASSERT_EQUAL(tf.radio_state_fp->get(),
+      static_cast<unsigned int>(radio_state_t::disabled));
    assert_radio_state(radio_state_t::config);
    assert_qct(CONFIG);
 
@@ -531,10 +531,10 @@ void test_modes() {
    assert_qct(CONFIG);
 
    // Re-enabling QuakeManager forces it into config
-   tf.radio_mode_fp->set(static_cast<unsigned char>(radio_mode_t::active));
+   tf.radio_state_fp->set(static_cast<unsigned char>(radio_state_t::active));
    tf.step();
-   TEST_ASSERT_EQUAL(tf.radio_mode_fp->get(),
-      static_cast<unsigned int>(radio_mode_t::active));
+   TEST_ASSERT_EQUAL(tf.radio_state_fp->get(),
+      static_cast<unsigned int>(radio_state_t::active));
    assert_radio_state(radio_state_t::config);
    assert_qct(CONFIG);
 }

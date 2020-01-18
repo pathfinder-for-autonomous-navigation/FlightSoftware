@@ -22,10 +22,10 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
     adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);
 
-    radio_mode_fp = find_internal_field<unsigned char>("radio.mode", __FILE__, __LINE__);
+    radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
 
-    prop_mode_fp = find_readable_field<unsigned char>("prop.mode", __FILE__, __LINE__);
+    prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
 
     piksi_mode_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
     propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
@@ -35,7 +35,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     // Initialize a bunch of variables
     transition_to_state(mission_state_t::startup,
         adcs_state_t::startup,
-        prop_mode_t::disabled); // "Starting" transition
+        prop_state_t::disabled); // "Starting" transition
     docking_config_cmd_f.set(true);
     is_deployed_f.set(false);
     deployment_wait_elapsed_f.set(0);
@@ -51,15 +51,14 @@ void MissionManager::execute() {
     mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
     if (state == mission_state_t::startup) {
-        set(radio_mode_t::disabled);
+        set(radio_state_t::disabled);
     }
     else {
-        set(radio_mode_t::active);
         bool faulted = check_hardware_faults();
         if (faulted) {
             transition_to_state(mission_state_t::safehold,
                 adcs_state_t::startup,
-                prop_mode_t::disabled);
+                prop_state_t::disabled);
         }
     }
 
@@ -67,8 +66,8 @@ void MissionManager::execute() {
         case mission_state_t::startup:             dispatch_startup();             break;
         case mission_state_t::detumble:            dispatch_detumble();            break;
         case mission_state_t::initialization_hold: dispatch_initialization_hold(); break;
-        case mission_state_t::follower:            dispatch_follower();            break;
         case mission_state_t::standby:             dispatch_standby();             break;
+        case mission_state_t::follower:            dispatch_follower();            break;
         case mission_state_t::leader:              dispatch_leader();              break;
         case mission_state_t::docking:             dispatch_docking();             break;
         case mission_state_t::docked:              dispatch_docked();              break;
@@ -76,7 +75,7 @@ void MissionManager::execute() {
         case mission_state_t::manual:              dispatch_manual();              break;
         default:
             printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
-            transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_mode_t::disabled);
+            transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
             break;
     }
 }
@@ -88,18 +87,19 @@ void MissionManager::dispatch_startup() {
         return;
     }
 
-    // Step 2. Check for hardware faults that would necessitate
+    // Step 2. Turn radio on, and check for hardware faults that would necessitate
     // going into an initialization hold. If faults exist, go into
     // initialization hold, otherwise detumble.
+    set(radio_state_t::wait);
     if (check_hardware_faults()) {
         transition_to_state(mission_state_t::initialization_hold,
             adcs_state_t::detumble,
-            prop_mode_t::disabled);
+            prop_state_t::disabled);
     }
     else {
         transition_to_state(mission_state_t::detumble,
             adcs_state_t::detumble,
-            prop_mode_t::disabled);
+            prop_state_t::disabled);
     }
 }
 
@@ -111,27 +111,13 @@ void MissionManager::dispatch_detumble() {
     {
         transition_to_state(mission_state_t::standby,
             adcs_state_t::point_standby,
-            prop_mode_t::active);
+            prop_state_t::idle);
     }
 }
 
 void MissionManager::dispatch_initialization_hold() {
     // Stay in this state until ground commands fix the satellite and
     // command the satellite out of this state.
-}
-
-void MissionManager::dispatch_follower() {
-    if (distance_to_other_sat() < docking_trigger_dist) {
-        transition_to_state(mission_state_t::docking,
-            adcs_state_t::point_docking,
-            prop_mode_t::disabled);
-    }
-    else if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        transition_to_state(mission_state_t::standby,
-            adcs_state_t::point_standby,
-            prop_mode_t::active);
-    }
 }
 
 void MissionManager::dispatch_standby() {
@@ -142,30 +128,44 @@ void MissionManager::dispatch_standby() {
         adcs_paired_fp->set(false);
         transition_to_state(mission_state_t::follower,
             adcs_state_t::point_docking,
-            prop_mode_t::active);
+            prop_state_t::idle);
     }
     else if (sat_designation == sat_designation_t::leader) {
         adcs_paired_fp->set(false);
         transition_to_state(mission_state_t::leader,
             adcs_state_t::point_docking,
-            prop_mode_t::disabled);
+            prop_state_t::disabled);
     }
     else {
         // The mission hasn't started yet. Let the satellite subsystems do their thing.
     }
 }
 
-void MissionManager::dispatch_leader() {
+void MissionManager::dispatch_follower() {
     if (distance_to_other_sat() < docking_trigger_dist) {
         transition_to_state(mission_state_t::docking,
-            adcs_state_t::point_docking,
-            prop_mode_t::disabled);
+            adcs_state_t::zero_torque,
+            prop_state_t::disabled);
     }
     else if (too_long_since_last_comms()) {
         set(sat_designation_t::undecided);
         transition_to_state(mission_state_t::standby,
             adcs_state_t::point_standby,
-            prop_mode_t::active);
+            prop_state_t::idle);
+    }
+}
+
+void MissionManager::dispatch_leader() {
+    if (distance_to_other_sat() < docking_trigger_dist) {
+        transition_to_state(mission_state_t::docking,
+            adcs_state_t::zero_torque,
+            prop_state_t::disabled);
+    }
+    else if (too_long_since_last_comms()) {
+        set(sat_designation_t::undecided);
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::point_standby,
+            prop_state_t::idle);
     }
 }
 
@@ -175,7 +175,7 @@ void MissionManager::dispatch_docking() {
     if (docked_fp->get()) {
         transition_to_state(mission_state_t::docked,
             adcs_state_t::zero_torque,
-            prop_mode_t::disabled);
+            prop_state_t::disabled);
 
         // Mission has ended, so remove "follower" and "leader" designations.
         set(sat_designation_t::undecided);
@@ -215,12 +215,12 @@ void MissionManager::set(adcs_state_t state) {
     adcs_state_f.set(static_cast<unsigned char>(state));
 }
 
-void MissionManager::set(prop_mode_t mode) {
-    prop_mode_fp->set(static_cast<unsigned char>(mode));
+void MissionManager::set(prop_state_t state) {
+    prop_state_fp->set(static_cast<unsigned char>(state));
 }
 
-void MissionManager::set(radio_mode_t mode) {
-    radio_mode_fp->set(static_cast<unsigned char>(mode));
+void MissionManager::set(radio_state_t state) {
+    radio_state_fp->set(static_cast<unsigned char>(state));
 }
 
 void MissionManager::set(sat_designation_t designation) {
@@ -229,7 +229,7 @@ void MissionManager::set(sat_designation_t designation) {
 
 void MissionManager::transition_to_state(mission_state_t mission_state,
         adcs_state_t adcs_state,
-        prop_mode_t prop_mode)
+        prop_state_t prop_mode)
 {
     set(mission_state);
     set(adcs_state);

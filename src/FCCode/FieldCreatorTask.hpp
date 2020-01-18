@@ -14,13 +14,13 @@ class FieldCreatorTask : public ControlTask<void> {
       ReadableStateField<d_vector_t> pos_f;
       ReadableStateField<d_vector_t> pos_baseline_f;
 
-      ReadableStateField<unsigned char> prop_mode_f;
+      ReadableStateField<unsigned char> prop_state_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
         pos_f("orbit.pos", Serializer<d_vector_t>(0, 100000, 100)),
         pos_baseline_f("orbit.baseline_pos", Serializer<d_vector_t>(0, 100000, 100)),
-        prop_mode_f("prop.mode", Serializer<unsigned char>(1))
+        prop_state_f("prop.state", Serializer<unsigned char>(1))
       {
           // Create the fields!
 
@@ -29,7 +29,7 @@ class FieldCreatorTask : public ControlTask<void> {
           add_readable_field(pos_baseline_f);
 
           // For propulsion controller
-          add_readable_field(prop_mode_f);
+          add_readable_field(prop_state_f);
       }
 
       void execute() {

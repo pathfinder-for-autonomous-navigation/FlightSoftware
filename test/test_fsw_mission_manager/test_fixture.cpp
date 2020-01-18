@@ -8,11 +8,11 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
                                 "attitude_estimator.h_body");
     adcs_paired_fp = registry.create_writable_field<bool>("adcs.paired");
 
-    radio_mode_fp = registry.create_internal_field<unsigned char>("radio.mode");
+    radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
     last_checkin_cycle_fp = registry.create_internal_field<unsigned int>(
                                 "radio.last_comms_ccno");
 
-    prop_mode_fp = registry.create_readable_field<unsigned char>("prop.mode", 2);
+    prop_state_fp = registry.create_readable_field<unsigned char>("prop.state", 2);
 
     piksi_mode_fp = registry.create_readable_field<unsigned char>("piksi.state", 4);
     propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
@@ -24,9 +24,9 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
     const double nan_d = std::numeric_limits<double>::quiet_NaN();
     adcs_ang_momentum_fp->set({nan_f,nan_f,nan_f});
-    radio_mode_fp->set(static_cast<unsigned char>(radio_mode_t::disabled));
+    radio_state_fp->set(static_cast<unsigned char>(radio_state_t::disabled));
     last_checkin_cycle_fp->set(0);
-    prop_mode_fp->set(static_cast<unsigned char>(prop_mode_t::disabled));
+    prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     docked_fp->set(false);
 
@@ -55,12 +55,12 @@ void TestFixture::set(adcs_state_t state) {
     adcs_state_fp->set(static_cast<unsigned char>(state));
 }
 
-void TestFixture::set(prop_mode_t mode) {
-    prop_mode_fp->set(static_cast<unsigned char>(mode));
+void TestFixture::set(prop_state_t state) {
+    prop_state_fp->set(static_cast<unsigned char>(state));
 }
 
-void TestFixture::set(radio_mode_t mode) {
-    radio_mode_fp->set(static_cast<unsigned char>(mode));
+void TestFixture::set(radio_state_t state) {
+    radio_state_fp->set(static_cast<unsigned char>(state));
 }
 
 void TestFixture::set(sat_designation_t designation) {
@@ -77,14 +77,14 @@ void TestFixture::check(adcs_state_t state) const {
         "For ADCS state.");
 }
 
-void TestFixture::check(prop_mode_t mode) const {
-    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(mode), prop_mode_fp->get(),
-        "For propulsion mode.");
+void TestFixture::check(prop_state_t state) const {
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(state), prop_state_fp->get(),
+        "For propulsion state.");
 }
 
-void TestFixture::check(radio_mode_t mode) const {
-    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(mode), radio_mode_fp->get(),
-        "For radio mode.");
+void TestFixture::check(radio_state_t state) const {
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(state), radio_state_fp->get(),
+        "For radio state.");
 }
 
 void TestFixture::check(sat_designation_t designation) const {
@@ -102,12 +102,12 @@ void TestFixture::assert_ground_uncommandability(adcs_state_t exception_state) {
     }
 }
 
-void TestFixture::assert_ground_uncommandability(prop_mode_t exception_mode) {
-    for(prop_mode_t mode_it : prop_modes) {
-        if (mode_it == exception_mode) continue;
-        set(mode_it);
+void TestFixture::assert_ground_uncommandability(prop_state_t exception_state) {
+    for(prop_state_t state_it : prop_states) {
+        if (state_it == exception_state) continue;
+        set(state_it);
         step();
-        TEST_ASSERT_NOT_EQUAL(static_cast<unsigned char>(mode_it), prop_mode_fp->get());
+        TEST_ASSERT_NOT_EQUAL(static_cast<unsigned char>(state_it), prop_state_fp->get());
     }
 }
 
@@ -144,4 +144,8 @@ adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t
         adcs_state_t::point_docking, adcs_state_t::point_manual, adcs_state_t::point_standby,
         adcs_state_t::startup, adcs_state_t::zero_L, adcs_state_t::zero_torque};
 
-prop_mode_t TestFixture::prop_modes[2] = {prop_mode_t::disabled, prop_mode_t::active};
+prop_state_t TestFixture::prop_states[6] = {prop_state_t::disabled, prop_state_t::idle,
+    prop_state_t::awaiting_pressurization,
+    prop_state_t::pressurizing,
+    prop_state_t::firing,
+    prop_state_t::venting};

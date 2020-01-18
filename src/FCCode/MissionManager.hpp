@@ -5,11 +5,10 @@
 #include "constants.hpp"
 #include <lin.hpp>
 
-#include "prop_mode_t.enum"
+#include "prop_state_t.enum"
 #include "mission_state_t.enum"
 #include "adcs_state_t.enum"
-#include "radio_mode_t.enum"
-#include "prop_mode_t.enum"
+#include "radio_state_t.enum"
 #include "sat_designation_t.enum"
 
 class MissionManager : public TimedControlTask<void> {
@@ -65,7 +64,7 @@ class MissionManager : public TimedControlTask<void> {
      */
     void transition_to_state(mission_state_t mission_state,
         adcs_state_t adcs_state,
-        prop_mode_t prop_mode);
+        prop_state_t prop_mode);
 
     /**
      * @brief Allow spacecraft to be commandeered completely by test software or
@@ -79,7 +78,7 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_manual();
 
     // Fields required for control of prop subsystem.
-    ReadableStateField<unsigned char>* prop_mode_fp;
+    ReadableStateField<unsigned char>* prop_state_fp;
 
     // Fields required for control of ADCS subsystem.
     /**
@@ -107,7 +106,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Radio's mode.
      **/
-    InternalStateField<unsigned char>* radio_mode_fp;
+    InternalStateField<unsigned char>* radio_state_fp;
     InternalStateField<unsigned int>* last_checkin_cycle_fp;
 
     // Fields that control overall mission state.
@@ -137,8 +136,8 @@ class MissionManager : public TimedControlTask<void> {
 
     void set(mission_state_t state);
     void set(adcs_state_t state);
-    void set(prop_mode_t mode);
-    void set(radio_mode_t mode);
+    void set(prop_state_t state);
+    void set(radio_state_t state);
     void set(sat_designation_t designation);
 };
 
