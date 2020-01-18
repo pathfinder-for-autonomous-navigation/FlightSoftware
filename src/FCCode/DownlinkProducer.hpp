@@ -5,6 +5,8 @@
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
+    static constexpr unsigned int num_bits_in_packet = 560;
+
     /**
      * @brief Flow data object, used in order to specify the
      * - The flow ID. Note: flow IDs must be greater than zero; a

@@ -52,8 +52,8 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
         }
 
         // Step 2: Remove header bits from the packet.
-        for(int i = frame_bits.size() / 560; i >= 0; i--) {
-            frame_bits.erase(frame_bits.begin() + i * 560);
+        for(int i = frame_bits.size() / DownlinkProducer::num_bits_in_packet; i >= 0; i--) {
+            frame_bits.erase(frame_bits.begin() + i * DownlinkProducer::num_bits_in_packet);
         }
 
         // Step 3: Process control cycle count
