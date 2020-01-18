@@ -23,6 +23,8 @@ class FieldCreatorTask : public ControlTask<void> {
       ReadableStateField<unsigned char> prop_mode_f;
 
       // begin fields necessary for adcs_box controller
+      const Serializer<float> filter_sr;
+
       const WritableStateField<unsigned char> rwa_mode_f;
       const WritableStateField<f_vector_t> rwa_speed_cmd_f;
       const WritableStateField<f_vector_t> rwa_torque_cmd_f;
@@ -48,26 +50,26 @@ class FieldCreatorTask : public ControlTask<void> {
       std::vector<WritableStateField<bool>> havt_cmd_table_vector_f;
       // end fields necessary for adcs_box controller
 
-      // rwa_mode_f = find_writable_field<unsigned char>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
-      // rwa_cmd_f = find_writable_field<f_vector_t>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
-      // rwa_speed_filter_f = find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
-      // rwa_ramp_filter_f = find_writable_field<float>("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
+      // rwa_mode_f("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
+      // rwa_cmd_f("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
+      // rwa_speed_filter_f("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
+      // rwa_ramp_filter_f("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
 
-      // mtr_mode_f = find_writable_field<unsigned char>("adcs_cmd.mtr_mode", __FILE__, __LINE__);
-      // mtr_cmd_f = find_writable_field<f_vector_t>("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
-      // mtr_limit_f = find_writable_field<float>("adcs_cmd.mtr_limit", __FILE__, __LINE__);
+      // mtr_mode_f("adcs_cmd.mtr_mode", __FILE__, __LINE__);
+      // mtr_cmd_f("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
+      // mtr_limit_f("adcs_cmd.mtr_limit", __FILE__, __LINE__);
 
-      // ssa_mode_f = find_writable_field<unsigned char>("adcs_cmd.ssa_mode", __FILE__, __LINE__);
-      // ssa_voltage_filter_f = find_writable_field<float>("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
+      // ssa_mode_f("adcs_cmd.ssa_mode", __FILE__, __LINE__);
+      // ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
 
-      // imu_mode_f = find_writable_field<unsigned char>("adcs_cmd.imu_mode", __FILE__, __LINE__);
-      // imu_mag_filter_f = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
-      // imu_gyr_filter_f = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
-      // imu_gyr_temp_filter_f = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
-      // imu_gyr_temp_kp_f = find_writable_field<float>("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
-      // imu_gyr_temp_ki_f = find_writable_field<float>("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
-      // imu_gyr_temp_kd_f = find_writable_field<float>("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
-      // imu_gyr_temp_desired_f = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
+      // imu_mode_f("adcs_cmd.imu_mode", __FILE__, __LINE__);
+      // imu_mag_filter_f("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
+      // imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
+      // imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
+      // imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
+      // imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
+      // imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
+      // imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
@@ -78,8 +80,29 @@ class FieldCreatorTask : public ControlTask<void> {
         pos_baseline_f("orbit.baseline_pos", Serializer<d_vector_t>(0,100000,100)),
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
         prop_mode_f("prop.mode", Serializer<unsigned char>(1)),
+        //eventually you can move all these into ADCSCommander.cpp
+        filter_sr(),
         rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
-        rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(rwa::min_speed_command,))
+        rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(rwa::min_speed_command,rwa::max_speed_command, 16*3)),
+        rwa_torque_cmd_f("adcs_cmd.rwa_torque_cmd", Serializer<f_vector_t>(rwa::min_torque, rwa::max_torque, 16*3)),
+        rwa_speed_filter_f("adcs_cmd.rwa_speed_filter", filter_sr),
+        rwa_ramp_filter_f("adcs_cmd.rwa_ramp_filter", filter_sr),
+        mtr_mode_f("adcs_cmd.mtr_mode", Serializer<unsigned char>(2)),
+        mtr_cmd_f("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
+        mtr_limit_f("adcs_cmd.mtr_limit", __FILE__, __LINE__);
+
+        ssa_mode_f("adcs_cmd.ssa_mode", __FILE__, __LINE__);
+        ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
+
+        imu_mode_f("adcs_cmd.imu_mode", __FILE__, __LINE__);
+        imu_mag_filter_f("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
+        imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
+        imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
+        imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
+        imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
+        imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
+        imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
+
         
       {
           // Create the fields!
