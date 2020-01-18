@@ -10,7 +10,9 @@
  * Hardware test for the Propulsion System
  */ 
 #define ASSERT_TRUE(x, msg){\
-UNITY_TEST_ASSERT(!x, __LINE__, msg);}
+UNITY_TEST_ASSERT(x, __LINE__, msg);}
+#define ASSERT_FALSE(x, msg){\
+UNITY_TEST_ASSERT(x, __LINE__, msg);}
 
 void check_all_valves_closed();
 void is_schedule_expected(const std::array<unsigned int, 4> &expected_schedule);
@@ -76,14 +78,16 @@ void test_enable()
     TEST_ASSERT_TRUE(prop_system.is_functional());
     set_firing_schedule(0, 0, 0, 0);
     prop_system.enable();
-    TEST_ASSERT_TRUE(prop_system.is_enabled);
+    ASSERT_TRUE(prop_system.is_enabled, "interval timer should be on");
     TEST_ASSERT_TRUE(prop_system.is_functional());
     check_all_valves_closed();
-    TEST_ASSERT_FALSE(prop_system.valve_start_locked_out);
+    ASSERT_FALSE(prop_system.valve_start_locked_out, 
+    "thrust valves should be locked");
     delay(6); // make sure the interrupt didn't turn on the valves
     // enable should not open any valves since schedule is 0
     check_all_valves_closed();
-    TEST_ASSERT_FALSE(prop_system.valve_start_locked_out);
+    ASSERT_FALSE(prop_system.valve_start_locked_out, 
+    "thrust valves should be locked since schedule is 0");
 }
 
 // should disable interval and turn off all thrust valves
@@ -91,7 +95,7 @@ void test_disable()
 {
     prop_system.disable();
     // TODO: how to check that intervaltimer is off
-    TEST_ASSERT_FALSE(prop_system.is_enabled);
+    ASSERT_FALSE(prop_system.is_enabled, "interval timer should be off");
     TEST_ASSERT_TRUE(prop_system.is_functional());
     // check that schedule is 0 and valves are all off
     is_schedule_expected(zero_schedule);
@@ -102,10 +106,10 @@ void test_disable()
 void test_set_tank_valve_state()
 {
     prop_system.set_tank_valve_state(0, 1); // open valve 0
-    ASSERT_TRUE(is_valve_open(0), "make sure valve 0 is opened");
+    ASSERT_TRUE(is_valve_open(0), "valve 0 should be open");
     delay(1000); // fire for 1 second
     prop_system.set_tank_valve_state(0, 0); // open valve 1
-    TEST_ASSERT_FALSE(is_valve_open(0)); // make sure it is closed
+    ASSERT_FALSE(is_valve_open(0), "valve 0 should be closed"); // make sure it is closed
 }
 
 void test_tank_lock()
@@ -126,7 +130,7 @@ void fire_tank_valve(size_t valve_pin)
 {
     if (valve_pin > 2)
     {
-        TEST_ASSERT_FALSE(1);
+        ASSERT_FALSE(1, "Tank Valve pins are indexed at 0 and 1");
     }
     while (prop_system.tank_valve_locked_out) // busy wait this for now
     {
@@ -157,11 +161,13 @@ void fill_tank()
     // Fire a maximum of 20 times for 1 s every 10s until we have threshold_presure
     for ( size_t i = 0; is_at_threshold_pressure() && i < 20; ++i)
     {
-        prop_system.set_tank_valve_state(0, 1);
+        prop_system.set_tank_valve_state(0, 1); // open tank
         delay(1000);
-        prop_system.set_tank_valve_state(0, 0);
+        prop_system.set_tank_valve_state(0, 0); // close tank
         delay(1000* 10); // fire every 10 seconds
     }
+    ASSERT_TRUE(prop_system.get_pressure() - prop_system.threshold_pressure > 0, 
+    "tank 2 pressure should be above threshold pressure")
 }
 
 bool is_at_threshold_pressure()
@@ -175,13 +181,17 @@ void reset_tank()
     check_all_valves_closed(); // make sure all outer valves are closed
     while (prop_system.get_pressure() > prop_system.pressure_delta) // arbitrary delta
         thrust();
-    TEST_ASSERT(prop_system.get_pressure() < prop_system.pressure_delta);
+    ASSERT_TRUE(prop_system.get_pressure() < prop_system.pressure_delta, 
+    "tank 2 pressure should be lower after firing");
 }
 
 void thrust()
 {
-    TEST_ASSERT_FALSE(prop_system.is_enabled);
+    ASSERT_FALSE(prop_system.is_enabled, 
+    "interval timer should not be on when we have not yet started thrust");
     static const std::array<unsigned int, 4> schedule = {4, 2, 3, 6};
+    ASSERT_FALSE(is_valve_open(0) || is_valve_open(1), 
+    "Both tank valves should be closed");
     prop_system.set_thrust_valve_schedule(schedule);
     prop_system.enable();
     delay(120); // outer valves have 120 seconds to finish thrust
@@ -223,7 +233,7 @@ void test_get_temp_inner()
     // temperature increases with pressure
     reset_tank();
     auto old_temp = prop_system.get_temp_inner();
-    
+
     fill_tank();
     ASSERT_TRUE( prop_system.get_temp_inner() < old_temp, 
     "new temp of tank 1 should be lower after filling");
@@ -240,7 +250,8 @@ void test_get_temp_outer()
     auto old_temp = prop_system.get_temp_outer();
     fill_tank();
     auto new_temp = prop_system.get_temp_outer();
-    ASSERT_TRUE(new_temp > old_temp, "new temp of tank 2 should be higher after filling");
+    ASSERT_TRUE(new_temp > old_temp, 
+    "new temp of tank 2 should be higher after filling");
     thrust();
 }
 
