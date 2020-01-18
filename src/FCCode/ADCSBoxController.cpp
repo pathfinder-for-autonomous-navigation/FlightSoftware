@@ -36,6 +36,9 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         imu_gyr_temp_ki = find_writable_field<float>("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
         imu_gyr_temp_kd = find_writable_field<float>("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
         imu_gyr_temp_desired = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
+    
+        
+        havt_cmd_table_vector_fp = 
     }
 
 void ADCSBoxController::execute(){

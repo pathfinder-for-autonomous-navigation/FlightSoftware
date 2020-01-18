@@ -77,6 +77,9 @@ protected:
     const WritableStateField<float>* imu_gyr_temp_ki;
     const WritableStateField<float>* imu_gyr_temp_kd;
     const WritableStateField<float>* imu_gyr_temp_desired;
+
+    std::vector<WritableStateField<float>*> havt_cmd_table_vector_fp;
+
 };
 
 #endif
