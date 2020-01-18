@@ -2,6 +2,7 @@
 #include "adcs_state_t.enum"
 
 #include <adcs_constants.hpp>
+#include <adcs_havt_devices.hpp>
 
 ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
@@ -32,13 +33,20 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         imu_mag_filter_fp = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
         imu_gyr_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
         imu_gyr_temp_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
-        imu_gyr_temp_kp = find_writable_field<float>("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
-        imu_gyr_temp_ki = find_writable_field<float>("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
-        imu_gyr_temp_kd = find_writable_field<float>("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
-        imu_gyr_temp_desired = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
+        imu_gyr_temp_kp_fp = find_writable_field<float>("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
+        imu_gyr_temp_ki_fp = find_writable_field<float>("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
+        imu_gyr_temp_kd_fp = find_writable_field<float>("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
+        imu_gyr_temp_desired_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
     
-        
-        havt_cmd_table_vector_fp = 
+        //fill vector of pointers to statefields for havt
+        char buffer[50];
+        for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++)
+        {
+            std::memset(buffer, 0, sizeof(buffer));
+            sprintf(buffer,"adcs_cmd.havt_device");
+            sprintf(buffer + strlen(buffer), "%u", idx);
+            havt_cmd_table_vector_fp.push_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+        }
     }
 
 void ADCSBoxController::execute(){
@@ -68,8 +76,16 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_mag_filter(imu_mag_filter_fp->get());
     adcs_system.set_imu_gyr_filter(imu_gyr_filter_fp->get());
     adcs_system.set_imu_gyr_temp_filter(imu_gyr_temp_filter_fp->get());
-    adcs_system.set_imu_gyr_temp_kp(imu_gyr_temp_kp->get());
-    adcs_system.set_imu_gyr_temp_ki(imu_gyr_temp_ki->get());
-    adcs_system.set_imu_gyr_temp_kd(imu_gyr_temp_kd->get());
-    adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired->get());
+    adcs_system.set_imu_gyr_temp_kp(imu_gyr_temp_kp_fp->get());
+    adcs_system.set_imu_gyr_temp_ki(imu_gyr_temp_ki_fp->get());
+    adcs_system.set_imu_gyr_temp_kd(imu_gyr_temp_kd_fp->get());
+    adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
+
+    // apply havt cmd table
+    std::bitset<havt::max_devices> temp_cmd_table(0);
+    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++)
+    {
+        temp_cmd_table.set(idx, havt_cmd_table_vector_fp[idx]->get());
+    }
+    adcs_system.set_havt(temp_cmd_table);
 }
