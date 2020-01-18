@@ -28,7 +28,8 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     rwa_torque_rd_flag("adcs_monitor.torque_rd_flag", flag_sr),
     mag_vec_flag("adcs_monitor.mag_vec_flag", flag_sr),
     gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
-    gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr)
+    gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr),
+    havt_bool_sr()
     {
         //fill vector of statefields for ssa
         char buffer[50];
@@ -45,7 +46,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.havt_device");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_table_vector.emplace_back(buffer, Serializer<bool>());
+            havt_table_vector.emplace_back(buffer, havt_bool_sr);
         }
         
         // add device availabilty to registry, and initialize value to 0
