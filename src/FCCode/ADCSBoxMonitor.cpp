@@ -48,10 +48,11 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
             havt_table_vector.push_back(ReadableStateField<bool>(buffer, Serializer<bool>()));
         }
         
-        // initialize ***ALL*** values to 0
-        for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < havt::max_devices; index_int++ )
+        // add device availabilty to registry, and initialize value to 0
+        for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
         {
-            havt_table_vector[index_int].set(0);
+            add_readable_field(havt_table_vector[index_int]);
+            havt_table_vector[index_int].set(false);
         }
 
         //actually add statefields to registry

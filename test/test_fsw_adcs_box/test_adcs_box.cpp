@@ -3,6 +3,7 @@
 #include <ADCS.hpp>
 #include "../../src/FCCode/ADCSBoxMonitor.hpp"
 #include "adcs_constants.hpp"
+#include "adcs_havt_devices.hpp"
 
 #include <unity.h>
 
@@ -83,7 +84,7 @@ class TestFixture {
 
         //set of mocking methods
         void set_mock_ssa_mode(const unsigned int mode){
-                adcs_box->adcs_system.set_mock_ssa_mode(mode);
+            adcs_box->adcs_system.set_mock_ssa_mode(mode);
         }
 };
 
@@ -231,7 +232,7 @@ int test_control_task()
         UNITY_BEGIN();
         RUN_TEST(test_task_initialization);
         RUN_TEST(test_execute);
-        RUN_TEST(test_execute_havt);
+        //RUN_TEST(test_execute_havt);
         return UNITY_END();
 }
 
