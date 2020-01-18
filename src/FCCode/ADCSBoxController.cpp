@@ -46,7 +46,6 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
 
 void ADCSBoxController::execute(){
     // set to passive/disabled if in startup
-    // consider changing to writeable state_field in adcs box monitor
     if(adcs_state_fp->get() == static_cast<unsigned char>(adcs_state_t::startup))
         adcs_system.set_mode(ADCSMode::ADCS_PASSIVE);
     else

@@ -32,10 +32,6 @@ public:
 
 protected:
     /**
-    * @brief Commands to actuate on the ADCS Box
-    */
-
-    /**
      * @brief Command to get from mission_manager
      * 
      */
@@ -78,6 +74,10 @@ protected:
     const WritableStateField<float>* imu_gyr_temp_kd_fp;
     const WritableStateField<float>* imu_gyr_temp_desired_fp;
 
+    /**
+     * @brief HAVT command table, a vector of pointers to bool state fields
+     * 
+     */
     std::vector<WritableStateField<bool>*> havt_cmd_table_vector_fp;
 
 };
