@@ -92,7 +92,7 @@ class MainControlLoop : public ControlTask<void> {
 
     MissionManager mission_manager;
 
-    AttitudeComputer attitude_computer;
+    AttitudeComputer attitude_computer; // needs adcs.state from MissionManager
 
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
 
