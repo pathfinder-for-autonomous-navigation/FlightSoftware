@@ -142,6 +142,8 @@ void MissionManager::dispatch_standby() {
 }
 
 void MissionManager::dispatch_follower() {
+    docking_config_cmd_f.set(true);
+
     if (distance_to_other_sat() < docking_trigger_dist) {
         transition_to_state(mission_state_t::docking,
             adcs_state_t::zero_torque,
@@ -156,6 +158,8 @@ void MissionManager::dispatch_follower() {
 }
 
 void MissionManager::dispatch_leader() {
+    docking_config_cmd_f.set(true);
+
     if (distance_to_other_sat() < docking_trigger_dist) {
         transition_to_state(mission_state_t::docking,
             adcs_state_t::zero_torque,

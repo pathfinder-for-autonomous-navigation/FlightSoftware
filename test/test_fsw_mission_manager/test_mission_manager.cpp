@@ -128,6 +128,9 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state)
         tf.check(prop_state_t::disabled);
         tf.check(adcs_state_t::zero_torque);
         tf.check(static_cast<sat_designation_t>(tf.sat_designation_fp->get()));
+
+        // Docking motor command should be applied.
+        TEST_ASSERT(tf.docking_config_cmd_fp->get());
     }
 
     /** If comms hasn't been available for too long, there should
