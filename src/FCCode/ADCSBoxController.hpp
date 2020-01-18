@@ -42,7 +42,8 @@ protected:
      * 
      */
     const WritableStateField<unsigned char>* rwa_mode_fp;
-    const WritableStateField<f_vector_t>* rwa_cmd_fp;
+    const WritableStateField<f_vector_t>* rwa_speed_cmd_fp;
+    const WritableStateField<f_vector_t>* rwa_torque_cmd_fp;
     const WritableStateField<float>* rwa_speed_filter_fp;
     const WritableStateField<float>* rwa_ramp_filter_fp;
 

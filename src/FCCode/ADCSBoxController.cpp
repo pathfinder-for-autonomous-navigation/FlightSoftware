@@ -12,8 +12,9 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         //find command statefields
         adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
-        rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
-        rwa_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
+        rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_mode", __FILE__, __LINE__);
+        rwa_speed_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_speed_cmd", __FILE__, __LINE__);
+        rwa_torque_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.torque_cmd", __FILE__, __LINE__);
         rwa_speed_filter_fp = find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
         rwa_ramp_filter_fp = find_writable_field<float>("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
 
@@ -51,8 +52,15 @@ void ADCSBoxController::execute(){
     else
         adcs_system.set_mode(ADCSMode::ADCS_ACTIVE);
 
-    //dump all commands straight in, ADCS deals with mode    
-    adcs_system.set_rwa_mode(rwa_mode_fp->get(), rwa_cmd_fp->get());
+    // dump all commands
+    if(rwa_mode_fp->get() == RWAMode::RWA_SPEED_CTRL)
+        adcs_system.set_rwa_mode(rwa_mode_fp->get(), rwa_speed_cmd_fp->get());
+    else if(rwa_mode_fp->get() == RWAMode::RWA_ACCEL_CTRL)
+        adcs_system.set_rwa_mode(rwa_mode_fp->get(), rwa_torque_cmd_fp->get());
+    else if(rwa_mode_fp->get() == RWAMode::RWA_DISABLED){
+        adcs_system.set_rwa_mode(rwa_mode_fp->get(), std::array<float, 3>{0,0,0});
+    }
+
     adcs_system.set_rwa_speed_filter(rwa_speed_filter_fp->get());
     adcs_system.set_ramp_filter(rwa_ramp_filter_fp->get());
 
