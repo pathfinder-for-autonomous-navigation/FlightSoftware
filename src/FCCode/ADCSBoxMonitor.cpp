@@ -1,6 +1,7 @@
 #include "ADCSBoxMonitor.hpp"
 
 #include <adcs_constants.hpp>
+#include <adcs_havt_devices.hpp>
 
 ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
@@ -36,6 +37,15 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
             sprintf(buffer,"adcs_monitor.ssa_voltage");
             sprintf(buffer + strlen(buffer), "%u", i);
             ssa_voltages_f.push_back(ReadableStateField<float>(buffer, ssa_voltage_sr));
+        }
+
+        char buffer[50];
+        for (unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+        {
+            std::memset(buffer, 0, sizeof(buffer));
+            sprintf(buffer,"adcs_monitor.havt_device");
+            sprintf(buffer + strlen(buffer), "%u", index_int);
+            havt_table_vector.push_back(ReadableStateField<bool>(buffer, Serializer<bool>()));
         }
 
         //actually add statefields to registry
@@ -113,8 +123,16 @@ void ADCSBoxMonitor::execute(){
     rwa_torque_rd_f.set(rwa_torque_rd);
     ssa_mode_f.set(ssa_mode);
 
-    for(int i = 0; i<ssa::num_sun_sensors; i++){
+    for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);
+    }
+
+    // set vector of device availability
+    std::bitset<havt::max_devices> havt_read(0);
+    adcs_system.get_havt(&havt_read);
+    for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+    {
+        havt_table_vector[index_int].set(havt_read.test(index_int));
     }
 
     mag_vec_f.set(mag_vec);
