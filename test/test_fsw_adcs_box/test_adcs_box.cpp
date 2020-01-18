@@ -102,6 +102,7 @@ void test_task_initialization()
     // verify all initialized to 0
     for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
     {
+        // 0 means device is disabled
         TEST_ASSERT_EQUAL(0, tf.havt_table_vector_fp[index_int]->get());
     }
 }
