@@ -32,7 +32,6 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     add_internal_field(radio_mt_packet_f);
     add_internal_field(radio_mt_len_f);
     add_internal_field(radio_state_f);
-    add_internal_field(radio_state_f);
     add_internal_field(last_checkin_cycle_f);
 
     // Retrieve fields from registry
