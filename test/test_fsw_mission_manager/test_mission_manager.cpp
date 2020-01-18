@@ -97,6 +97,8 @@ void test_dispatch_standby() {
         tf.step();
         TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::follower);
+        tf.check(sat_designation_t::follower);
+        tf.check(adcs_state_t::point_docking);
     }
 
     // Standby -> leader transition test
@@ -106,6 +108,8 @@ void test_dispatch_standby() {
         tf.step();
         TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::leader);
+        tf.check(sat_designation_t::leader);
+        tf.check(adcs_state_t::point_docking);
     }
 }
 
