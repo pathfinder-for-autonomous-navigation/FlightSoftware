@@ -30,7 +30,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr)
     {
-        //fill vector of statefields
+        //fill vector of statefields for ssa
         char buffer[50];
         for(unsigned int i = 0; i<ssa::num_sun_sensors;i++){
             std::memset(buffer, 0, sizeof(buffer));
@@ -39,6 +39,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
             ssa_voltages_f.push_back(ReadableStateField<float>(buffer, ssa_voltage_sr));
         }
 
+        //fill vector of statefields for havt
         char buffer[50];
         for (unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
         {
@@ -46,6 +47,12 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
             sprintf(buffer,"adcs_monitor.havt_device");
             sprintf(buffer + strlen(buffer), "%u", index_int);
             havt_table_vector.push_back(ReadableStateField<bool>(buffer, Serializer<bool>()));
+        }
+        
+        // initialize ***ALL*** values to 0
+        for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < havt::max_devices; index_int++ )
+        {
+            havt_table_vector[index_int].set(0);
         }
 
         //actually add statefields to registry

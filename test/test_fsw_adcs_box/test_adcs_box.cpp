@@ -20,6 +20,9 @@ class TestFixture {
         ReadableStateField<f_vector_t>* gyr_vec_fp;
         ReadableStateField<float>* gyr_temp_fp;
 
+        // vector of pointers to device availability
+        std::vector<ReadableStateField<bool>*> havt_table_vector_fp;
+
         // pointers to error flags
         ReadableStateField<bool>* rwa_speed_rd_flag_p;
         ReadableStateField<bool>* rwa_torque_rd_flag_p;
@@ -47,13 +50,23 @@ class TestFixture {
             ssa_mode_fp = registry.find_readable_field_t<int>("adcs_monitor.ssa_mode");
             ssa_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.ssa_vec");
             
-            // fill vector of pointers to statefields
+            // fill vector of pointers to statefields for ssa
             char buffer[50];
             for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
                 std::memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"adcs_monitor.ssa_voltage");
                 sprintf(buffer + strlen(buffer), "%u", i);
                 ssa_voltages_fp.push_back(registry.find_readable_field_t<float>(buffer));
+            }
+
+            //fill vector of pointers to statefields for havt
+            char buffer[50];
+            for (unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+            {
+                std::memset(buffer, 0, sizeof(buffer));
+                sprintf(buffer,"adcs_monitor.havt_device");
+                sprintf(buffer + strlen(buffer), "%u", index_int);
+                havt_table_vector_fp.push_back(registry.find_readable_field_t<bool>(buffer));
             }
 
             mag_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag_vec");
@@ -85,6 +98,12 @@ void elements_same(const std::array<float, 3> ref, const std::array<float, 3> ac
 void test_task_initialization()
 {
     TestFixture tf;
+
+    // verify all initialized to 0
+    for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < havt::max_devices; index_int++ )
+    {
+        TEST_ASSERT_EQUAL(0, tf.havt_table_vector_fp[index_int]->get());
+    }
 }
 
 void test_execute(){
@@ -196,11 +215,24 @@ void test_execute(){
     TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
 }
 
+void test_execute_havt(){
+    TestFixture tf;
+    tf.adcs_box->execute();
+
+    // mocking sets ALL 32 devices available (true), 
+    // but only check up to _LENGTH in this case
+    for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+    {
+        TEST_ASSERT_EQUAL(1, tf.havt_table_vector_fp[index_int]->get());
+    }
+}
+
 int test_control_task()
 {
         UNITY_BEGIN();
         RUN_TEST(test_task_initialization);
         RUN_TEST(test_execute);
+        RUN_TEST(test_execute_havt);
         return UNITY_END();
 }
 
