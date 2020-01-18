@@ -36,7 +36,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.ssa_voltage");
             sprintf(buffer + strlen(buffer), "%u", i);
-            ssa_voltages_f.push_back(ReadableStateField<float>(buffer, ssa_voltage_sr));
+            ssa_voltages_f.emplace_back(ReadableStateField<float>(buffer, ssa_voltage_sr));
         }
 
         //fill vector of statefields for havt
@@ -45,7 +45,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.havt_device");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_table_vector.push_back(ReadableStateField<bool>(buffer, Serializer<bool>()));
+            havt_table_vector.emplace_back(ReadableStateField<bool>(buffer, Serializer<bool>()));
         }
         
         // add device availabilty to registry, and initialize value to 0
