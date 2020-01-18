@@ -100,7 +100,7 @@ void test_task_initialization()
     TestFixture tf;
 
     // verify all initialized to 0
-    for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < havt::max_devices; index_int++ )
+    for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
     {
         TEST_ASSERT_EQUAL(0, tf.havt_table_vector_fp[index_int]->get());
     }
@@ -227,14 +227,9 @@ void test_execute_havt(){
     }
 }
 
-void test_trivial(){
-    TEST_ASSERT_TRUE(false);
-}
-
 int test_control_task()
 {
     UNITY_BEGIN();
-    RUN_TEST(test_trivial);
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_execute);
     RUN_TEST(test_execute_havt);
