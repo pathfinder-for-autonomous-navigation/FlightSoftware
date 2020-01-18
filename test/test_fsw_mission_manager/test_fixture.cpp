@@ -24,9 +24,9 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
     const double nan_d = std::numeric_limits<double>::quiet_NaN();
     adcs_ang_momentum_fp->set({nan_f,nan_f,nan_f});
-    radio_mode_fp->set(static_cast<unsigned int>(radio_mode_t::disabled));
+    radio_mode_fp->set(static_cast<unsigned char>(radio_mode_t::disabled));
     last_checkin_cycle_fp->set(0);
-    prop_mode_fp->set(static_cast<unsigned int>(prop_mode_t::disabled));
+    prop_mode_fp->set(static_cast<unsigned char>(prop_mode_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     docked_fp->set(false);
 
@@ -42,53 +42,53 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
 
     // Set initial state.
-    mission_state_fp->set(static_cast<unsigned int>(initial_state));
+    mission_state_fp->set(static_cast<unsigned char>(initial_state));
 }
 
 // Set and assert functions for various mission states.
 
 void TestFixture::set(mission_state_t state) {
-    mission_state_fp->set(static_cast<unsigned int>(state));
+    mission_state_fp->set(static_cast<unsigned char>(state));
 }
 
 void TestFixture::set(adcs_state_t state) {
-    adcs_state_fp->set(static_cast<unsigned int>(state));
+    adcs_state_fp->set(static_cast<unsigned char>(state));
 }
 
 void TestFixture::set(prop_mode_t mode) {
-    prop_mode_fp->set(static_cast<unsigned int>(mode));
+    prop_mode_fp->set(static_cast<unsigned char>(mode));
 }
 
 void TestFixture::set(radio_mode_t mode) {
-    radio_mode_fp->set(static_cast<unsigned int>(mode));
+    radio_mode_fp->set(static_cast<unsigned char>(mode));
 }
 
 void TestFixture::set(sat_designation_t designation) {
-    sat_designation_fp->set(static_cast<unsigned int>(designation));
+    sat_designation_fp->set(static_cast<unsigned char>(designation));
 }
 
 void TestFixture::check(mission_state_t state) const {
-    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(state), mission_state_fp->get(),
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(state), mission_state_fp->get(),
         "For mission state.");
 }
 
 void TestFixture::check(adcs_state_t state) const {
-    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(state), adcs_state_fp->get(),
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(state), adcs_state_fp->get(),
         "For ADCS state.");
 }
 
 void TestFixture::check(prop_mode_t mode) const {
-    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(mode), prop_mode_fp->get(),
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(mode), prop_mode_fp->get(),
         "For propulsion mode.");
 }
 
 void TestFixture::check(radio_mode_t mode) const {
-    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(mode), radio_mode_fp->get(),
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(mode), radio_mode_fp->get(),
         "For radio mode.");
 }
 
 void TestFixture::check(sat_designation_t designation) const {
-    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(designation), sat_designation_fp->get(),
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(designation), sat_designation_fp->get(),
         "For satellite designation.");
 }
 
@@ -98,7 +98,7 @@ void TestFixture::assert_ground_uncommandability(adcs_state_t exception_state) {
         if (state_it == exception_state) continue;
         set(state_it);
         step();
-        TEST_ASSERT_NOT_EQUAL(static_cast<unsigned int>(state_it), adcs_state_fp->get());
+        TEST_ASSERT_NOT_EQUAL(static_cast<unsigned char>(state_it), adcs_state_fp->get());
     }
 }
 
@@ -107,7 +107,7 @@ void TestFixture::assert_ground_uncommandability(prop_mode_t exception_mode) {
         if (mode_it == exception_mode) continue;
         set(mode_it);
         step();
-        TEST_ASSERT_NOT_EQUAL(static_cast<unsigned int>(mode_it), prop_mode_fp->get());
+        TEST_ASSERT_NOT_EQUAL(static_cast<unsigned char>(mode_it), prop_mode_fp->get());
     }
 }
 

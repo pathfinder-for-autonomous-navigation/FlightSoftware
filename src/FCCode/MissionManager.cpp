@@ -48,9 +48,9 @@ bool MissionManager::check_hardware_faults() {
 }
 
 void MissionManager::execute() {
-    mission_state_t mode = static_cast<mission_state_t>(mission_state_f.get());
+    mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
-    if (mode == mission_state_t::startup) {
+    if (state == mission_state_t::startup) {
         set(radio_mode_t::disabled);
     }
     else {
@@ -63,7 +63,7 @@ void MissionManager::execute() {
         }
     }
 
-    switch(mode) {
+    switch(state) {
         case mission_state_t::startup:             dispatch_startup();             break;
         case mission_state_t::detumble:            dispatch_detumble();            break;
         case mission_state_t::initialization_hold: dispatch_initialization_hold(); break;
@@ -75,7 +75,7 @@ void MissionManager::execute() {
         case mission_state_t::safehold:            dispatch_safehold();            break;
         case mission_state_t::manual:              dispatch_manual();              break;
         default:
-            printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned int>(mode));
+            printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
             transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_mode_t::disabled);
             break;
     }
@@ -208,23 +208,23 @@ bool MissionManager::too_long_since_last_comms() const {
 }
 
 void MissionManager::set(mission_state_t state) {
-    mission_state_f.set(static_cast<unsigned int>(state));
+    mission_state_f.set(static_cast<unsigned char>(state));
 }
 
 void MissionManager::set(adcs_state_t state) {
-    adcs_state_f.set(static_cast<unsigned int>(state));
+    adcs_state_f.set(static_cast<unsigned char>(state));
 }
 
 void MissionManager::set(prop_mode_t mode) {
-    prop_mode_fp->set(static_cast<unsigned int>(mode));
+    prop_mode_fp->set(static_cast<unsigned char>(mode));
 }
 
 void MissionManager::set(radio_mode_t mode) {
-    radio_mode_fp->set(static_cast<unsigned int>(mode));
+    radio_mode_fp->set(static_cast<unsigned char>(mode));
 }
 
 void MissionManager::set(sat_designation_t designation) {
-    sat_designation_f.set(static_cast<unsigned int>(designation));
+    sat_designation_f.set(static_cast<unsigned char>(designation));
 }
 
 void MissionManager::transition_to_state(mission_state_t mission_state,
