@@ -91,15 +91,13 @@ class FieldCreatorTask : public ControlTask<void> {
         mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(mtr::min_moment, mtr::max_moment, 16)),
         ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", filter_sr),
         imu_mode_f("adcs_cmd.imu_mode", Serializer<unsigned char>(4)),
-        imu_mag_filter_f("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
-        imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
-        imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
-        imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
-        imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
-        imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
-        imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
-
-        
+        imu_mag_filter_f("adcs_cmd.imu_mag_filter", filter_sr),
+        imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", filter_sr),
+        imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", filter_sr),
+        imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", filter_sr),
+        imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", filter_sr),
+        imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", filter_sr),
+        imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", filter_sr)
       {
           // Create the fields!
 
