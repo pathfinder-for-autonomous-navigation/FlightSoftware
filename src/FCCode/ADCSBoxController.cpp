@@ -12,10 +12,6 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         //find command statefields
         adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
-        /**
-         * @brief RWA commands
-         * 
-         */
         rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
         rwa_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
         rwa_speed_filter_fp = find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
@@ -25,7 +21,6 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         mtr_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
         mtr_limit_fp = find_writable_field<float>("adcs_cmd.mtr_limit", __FILE__, __LINE__);
 
-        //consider changing ssa_mode in box monitor to writable to use same field
         ssa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.ssa_mode", __FILE__, __LINE__);
         ssa_voltage_filter_fp = find_writable_field<float>("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
 
