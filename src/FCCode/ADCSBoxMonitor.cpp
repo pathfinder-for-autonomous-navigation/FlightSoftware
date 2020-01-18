@@ -32,7 +32,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     havt_bool_sr()
     {
         // reserve memory
-        ssa_voltages_f.reserve(20);
+        ssa_voltages_f.reserve(ssa::num_sun_sensors);
         // fill vector of statefields for ssa
         char buffer[50];
         for(unsigned int i = 0; i<ssa::num_sun_sensors;i++){
@@ -43,7 +43,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         }
 
         // reserve memory
-        havt_table_vector.reserve(20);
+        havt_table_vector.reserve(adcs_havt::Index::_LENGTH);
         // fill vector of statefields for havt
         for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
         {
