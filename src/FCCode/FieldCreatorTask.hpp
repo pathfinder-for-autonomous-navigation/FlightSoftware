@@ -22,6 +22,53 @@ class FieldCreatorTask : public ControlTask<void> {
 
       ReadableStateField<unsigned char> prop_mode_f;
 
+      // begin fields necessary for adcs_box controller
+      const WritableStateField<unsigned char> rwa_mode_fp;
+      const WritableStateField<f_vector_t> rwa_cmd_fp;
+      const WritableStateField<float> rwa_speed_filter_fp;
+      const WritableStateField<float> rwa_ramp_filter_fp;
+
+      const WritableStateField<unsigned char> mtr_mode_fp;
+      const WritableStateField<f_vector_t> mtr_cmd_fp;
+      const WritableStateField<float> mtr_limit_fp;
+
+      const WritableStateField<unsigned char> ssa_mode_fp;
+      const WritableStateField<float> ssa_voltage_filter_fp;
+
+      const WritableStateField<unsigned char> imu_mode_fp;
+      const WritableStateField<float> imu_mag_filter_fp;
+      const WritableStateField<float> imu_gyr_filter_fp;
+      const WritableStateField<float> imu_gyr_temp_filter_fp;
+      const WritableStateField<float> imu_gyr_temp_kp_fp;
+      const WritableStateField<float> imu_gyr_temp_ki_fp;
+      const WritableStateField<float> imu_gyr_temp_kd_fp;
+      const WritableStateField<float> imu_gyr_temp_desired_fp;
+
+      std::vector<WritableStateField<bool>> havt_cmd_table_vector_fp;
+      }
+      // end fields necessary for adcs_box controller
+
+      // rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
+      // rwa_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
+      // rwa_speed_filter_fp = find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
+      // rwa_ramp_filter_fp = find_writable_field<float>("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
+
+      // mtr_mode_fp = find_writable_field<unsigned char>("adcs_cmd.mtr_mode", __FILE__, __LINE__);
+      // mtr_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
+      // mtr_limit_fp = find_writable_field<float>("adcs_cmd.mtr_limit", __FILE__, __LINE__);
+
+      // ssa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.ssa_mode", __FILE__, __LINE__);
+      // ssa_voltage_filter_fp = find_writable_field<float>("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
+
+      // imu_mode_fp = find_writable_field<unsigned char>("adcs_cmd.imu_mode", __FILE__, __LINE__);
+      // imu_mag_filter_fp = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
+      // imu_gyr_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
+      // imu_gyr_temp_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
+      // imu_gyr_temp_kp_fp = find_writable_field<float>("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
+      // imu_gyr_temp_ki_fp = find_writable_field<float>("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
+      // imu_gyr_temp_kd_fp = find_writable_field<float>("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
+      // imu_gyr_temp_desired_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
+
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
         adcs_cmd_attitude_f("adcs.cmd_attitude", Serializer<f_quat_t>()),
@@ -31,6 +78,7 @@ class FieldCreatorTask : public ControlTask<void> {
         pos_baseline_f("orbit.baseline_pos", Serializer<d_vector_t>(0,100000,100)),
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
         prop_mode_f("prop.mode", Serializer<unsigned char>(1))
+        
       {
           // Create the fields!
 
