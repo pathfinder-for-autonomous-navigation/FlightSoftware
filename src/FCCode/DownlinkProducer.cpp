@@ -68,7 +68,8 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
                                        size_t& downlink_frame_offset)
 {
     const size_t field_size = field_bits.size();
-    const int field_overflow = (field_size + packet_offset) - num_bits_in_packet; // Number of bits in field that run past the packet end
+    const int field_overflow = (field_size + packet_offset)
+        - DownlinkProducer::num_bits_in_packet; // Number of bits in field that run past the packet end
 
     if(field_overflow <= 0) {
         // Contiguously write field to snapshot buffer
