@@ -41,6 +41,9 @@ class FieldCreatorTask : public ControlTask<void> {
       const WritableStateField<float> imu_mag_filter_f;
       const WritableStateField<float> imu_gyr_filter_f;
       const WritableStateField<float> imu_gyr_temp_filter_f;
+
+      const Serializer<float> k_sr;
+
       const WritableStateField<float> imu_gyr_temp_kp_f;
       const WritableStateField<float> imu_gyr_temp_ki_f;
       const WritableStateField<float> imu_gyr_temp_kd_f;
@@ -94,10 +97,11 @@ class FieldCreatorTask : public ControlTask<void> {
         imu_mag_filter_f("adcs_cmd.imu_mag_filter", filter_sr),
         imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", filter_sr),
         imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", filter_sr),
-        imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", filter_sr),
-        imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", filter_sr),
-        imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", filter_sr),
-        imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", filter_sr)
+        k_sr(std::numeric_limits<float>::min(), std::numeric_limits<float>::max(),16),
+        imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", k_sr),
+        imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", k_sr),
+        imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", k_sr),
+        imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", Serializer<float>(imu::min_eq_temp, imu::max_eq_temp, 8))
       {
           // Create the fields!
 
