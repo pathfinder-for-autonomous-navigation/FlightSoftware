@@ -50,7 +50,7 @@ size_t DownlinkProducer::compute_downlink_size(const bool compute_max) const {
     downlink_max_size_bits += 32; // Control cycle count on first packet
     // For each 70 bytes (560 bits), we need to add a header bit for each
     // downlink packet that's a 1 or a 0.
-    downlink_max_size_bits += (downlink_max_size_bits + 559) / 560;
+    downlink_max_size_bits += (downlink_max_size_bits + num_bits_in_packet - 1) / num_bits_in_packet;
 
     // Byte-align downlink packet
     const size_t downlink_max_size_bytes = (downlink_max_size_bits + 7) / 8;
@@ -68,8 +68,7 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
                                        size_t& downlink_frame_offset)
 {
     const size_t field_size = field_bits.size();
-    const int field_overflow = (field_size + packet_offset) - 560; // Number of bits in field that
-                                                                   // run past the packet end
+    const int field_overflow = (field_size + packet_offset) - num_bits_in_packet; // Number of bits in field that run past the packet end
 
     if(field_overflow <= 0) {
         // Contiguously write field to snapshot buffer
@@ -182,7 +181,7 @@ DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
         field_list.push_back(field_ptr);
     }
 
-    assert(get_packet_size() <= 560 - 1 - 32); // Flow should fit within one downlink packet
+    assert(get_packet_size() <= num_bits_in_packet - 1 - 32); // Flow should fit within one downlink packet
 }
 
 size_t DownlinkProducer::Flow::get_packet_size() const {
