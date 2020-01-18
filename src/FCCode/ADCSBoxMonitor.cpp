@@ -40,7 +40,6 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         }
 
         //fill vector of statefields for havt
-        char buffer[50];
         for (unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
         {
             std::memset(buffer, 0, sizeof(buffer));
