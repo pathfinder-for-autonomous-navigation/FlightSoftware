@@ -35,7 +35,6 @@ class FieldCreatorTask : public ControlTask<void> {
       const WritableStateField<f_vector_t> mtr_cmd_f;
       const WritableStateField<float> mtr_limit_f;
 
-      const WritableStateField<unsigned char> ssa_mode_f;
       const WritableStateField<float> ssa_voltage_filter_f;
 
       const WritableStateField<unsigned char> imu_mode_f;
@@ -81,20 +80,17 @@ class FieldCreatorTask : public ControlTask<void> {
         docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
         prop_mode_f("prop.mode", Serializer<unsigned char>(1)),
         //eventually you can move all these into ADCSCommander.cpp
-        filter_sr(),
+        filter_sr(0,1,8),
         rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
         rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(rwa::min_speed_command,rwa::max_speed_command, 16*3)),
         rwa_torque_cmd_f("adcs_cmd.rwa_torque_cmd", Serializer<f_vector_t>(rwa::min_torque, rwa::max_torque, 16*3)),
         rwa_speed_filter_f("adcs_cmd.rwa_speed_filter", filter_sr),
         rwa_ramp_filter_f("adcs_cmd.rwa_ramp_filter", filter_sr),
         mtr_mode_f("adcs_cmd.mtr_mode", Serializer<unsigned char>(2)),
-        mtr_cmd_f("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
-        mtr_limit_f("adcs_cmd.mtr_limit", __FILE__, __LINE__);
-
-        ssa_mode_f("adcs_cmd.ssa_mode", __FILE__, __LINE__);
-        ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
-
-        imu_mode_f("adcs_cmd.imu_mode", __FILE__, __LINE__);
+        mtr_cmd_f("adcs_cmd.mtr_cmd", Serializer<f_vector_t>(mtr::min_moment, mtr::max_moment, 16*3)),
+        mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(mtr::min_moment, mtr::max_moment, 16)),
+        ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", filter_sr),
+        imu_mode_f("adcs_cmd.imu_mode", Serializer<unsigned char>(4)),
         imu_mag_filter_f("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
         imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
         imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
