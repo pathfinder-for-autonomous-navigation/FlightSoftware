@@ -40,19 +40,19 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         }
 
         //fill vector of statefields for havt
-        for (unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+        for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
         {
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.havt_device");
-            sprintf(buffer + strlen(buffer), "%u", index_int);
+            sprintf(buffer + strlen(buffer), "%u", idx);
             havt_table_vector.push_back(ReadableStateField<bool>(buffer, Serializer<bool>()));
         }
         
         // add device availabilty to registry, and initialize value to 0
-        for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+        for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
         {
-            add_readable_field(havt_table_vector[index_int]);
-            havt_table_vector[index_int].set(false);
+            add_readable_field(havt_table_vector[idx]);
+            havt_table_vector[idx].set(false);
         }
 
         //actually add statefields to registry
@@ -137,9 +137,9 @@ void ADCSBoxMonitor::execute(){
     // set vector of device availability
     std::bitset<havt::max_devices> havt_read(0);
     adcs_system.get_havt(&havt_read);
-    for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
     {
-        havt_table_vector[index_int].set(havt_read.test(index_int));
+        havt_table_vector[idx].set(havt_read.test(idx));
     }
 
     mag_vec_f.set(mag_vec);

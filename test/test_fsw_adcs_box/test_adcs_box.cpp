@@ -61,11 +61,11 @@ class TestFixture {
             }
 
             //fill vector of pointers to statefields for havt
-            for (unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+            for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
             {
                 std::memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"adcs_monitor.havt_device");
-                sprintf(buffer + strlen(buffer), "%u", index_int);
+                sprintf(buffer + strlen(buffer), "%u", idx);
                 havt_table_vector_fp.push_back(registry.find_readable_field_t<bool>(buffer));
             }
 
@@ -100,10 +100,10 @@ void test_task_initialization()
     TestFixture tf;
 
     // verify all initialized to 0
-    for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
     {
         // 0 means device is disabled
-        TEST_ASSERT_EQUAL(0, tf.havt_table_vector_fp[index_int]->get());
+        TEST_ASSERT_EQUAL(0, tf.havt_table_vector_fp[idx]->get());
     }
 }
 
@@ -222,9 +222,9 @@ void test_execute_havt(){
 
     // mocking sets ALL 32 devices available (true), 
     // but only check up to _LENGTH in this case
-    for(unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
     {
-        TEST_ASSERT_EQUAL(true, tf.havt_table_vector_fp[index_int]->get());
+        TEST_ASSERT_EQUAL(true, tf.havt_table_vector_fp[idx]->get());
     }
 }
 
