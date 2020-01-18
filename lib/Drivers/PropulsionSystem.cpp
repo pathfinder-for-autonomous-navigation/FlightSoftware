@@ -43,6 +43,7 @@ bool PropulsionSystem::setup() {
 }
 
 void PropulsionSystem::disable() {
+    is_enabled = false;
 #ifdef DESKTOP
 // TODO
 #else
@@ -53,6 +54,7 @@ void PropulsionSystem::disable() {
 }
 
 void PropulsionSystem::enable() {
+    is_enabled = true;
 #ifdef DESKTOP
 // TODO
 #else
@@ -136,6 +138,7 @@ void PropulsionSystem::set_tank_valve_state(bool valve, bool state) {
 }
 
 void PropulsionSystem::thrust_valve_loop() {
+    noInterrupts(); // Must disable interrupts since this function is not interrupt safe
     for (unsigned char i = 2; i < 6; i++) {
         if (thrust_valve_schedule[i - 2] < thrust_valve_loop_interval_ms) {
             // Firing on valve i - 2 is complete
@@ -166,4 +169,5 @@ void PropulsionSystem::thrust_valve_loop() {
             thrust_valve_schedule[i - 2] -= thrust_valve_loop_interval_ms;
         }
     }
+    interrupts();
 }

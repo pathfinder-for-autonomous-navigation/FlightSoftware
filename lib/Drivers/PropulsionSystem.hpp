@@ -8,6 +8,7 @@
 #endif
 
 namespace Devices {
+
 /**
  * To use the class, update the firing schedule, and then call
  * execute_schedule().
@@ -17,7 +18,7 @@ namespace Devices {
  * sph.setup();
  * **/
 class PropulsionSystem : public Device {
-   public:
+    public:
     //! Specifies which valve # corresponds to which physical valve
     enum class valve_ids {
         intertank_main = 0,    // Main tank 1 to tank 2 valve
@@ -74,7 +75,16 @@ class PropulsionSystem : public Device {
      */
     void set_tank_valve_state(bool valve, bool state);
 
+    // Maxium values
+    static constexpr int max_temp_inner = 48;
+    static constexpr int max_temp_outer = 48;
+    static constexpr int threshold_pressure = 75; // TODO: random value
+    static constexpr float max_pressure = 100;
+    static constexpr float pressure_delta = 1.0f;
+
+#ifndef PROP_TEST
    private:
+#endif
     // A bunch of these variables are static so that the interval timer can call
     // a static function. Practically, this is OK because we only expect to
     // create the propulsion system object once.
@@ -88,6 +98,8 @@ class PropulsionSystem : public Device {
     //! Runs thrust_valve_loop every 3 ms. Initialized in setup().
     IntervalTimer thrust_valve_loop_timer;
     #endif
+
+    bool is_enabled;
 
     //! Loop interval in microseconds.
     static constexpr unsigned int thrust_valve_loop_interval_us = 3000;
@@ -110,6 +122,7 @@ class PropulsionSystem : public Device {
     static constexpr double low_gain_offset = 0.154615074342874;
     static constexpr double low_gain_slope = 0.099017990785657;
 };
+
 }  // namespace Devices
 
 #endif
