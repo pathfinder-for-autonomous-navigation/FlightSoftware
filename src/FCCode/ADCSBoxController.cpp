@@ -14,7 +14,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
 
         rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_mode", __FILE__, __LINE__);
         rwa_speed_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_speed_cmd", __FILE__, __LINE__);
-        rwa_torque_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.torque_cmd", __FILE__, __LINE__);
+        rwa_torque_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_torque_cmd", __FILE__, __LINE__);
         rwa_speed_filter_fp = find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
         rwa_ramp_filter_fp = find_writable_field<float>("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
 
