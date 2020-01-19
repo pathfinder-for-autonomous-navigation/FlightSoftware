@@ -342,6 +342,20 @@ void test_float_serializer() { test_float_or_double_serializer<float>(); }
  */
 void test_double_serializer() { test_float_or_double_serializer<double>(); }
 
+// shihao check sign new
+template<typename T>
+void test_sign(T expected, T actual){
+    //multiply arguments because sign memes
+    while(abs(actual) < 1){
+        actual = actual * 10.0f;
+    }
+
+    if(expected < 0)
+        TEST_ASSERT_LESS_THAN(0, actual);
+    else
+        TEST_ASSERT_GREATER_OR_EQUAL(0, actual);
+}
+
 /**
  * @brief Verify that the float vector serializer properly encapsulates float vectors of various
  * sizes.
@@ -406,7 +420,14 @@ void test_vec_serializer() {
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, x, y, z, result[0], result[1], result[2]);
         //TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
+
         std::cout << err_str << "\n";
+
+        // test_sign(x, result[0]); // to do macro
+        // test_sign(y, result[1]);
+        // test_sign(z, result[2]);
+
+        
     }
 
     // Test deserialization from a string

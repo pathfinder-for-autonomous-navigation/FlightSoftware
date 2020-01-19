@@ -328,7 +328,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         size_t magnitude_bitsize;
         if (N == 3) magnitude_bitsize = size - vec_min_sz;
         else magnitude_bitsize = quat_magnitude_sz;
-        magnitude_serializer = std::make_unique<Serializer<T>>(min, max, magnitude_bitsize);
+        magnitude_serializer = std::make_unique<Serializer<T>>(min, max, magnitude_bitsize); // sus not that need to edit Serializers in control tasks
 
         max_component.resize(2);
 
@@ -342,7 +342,9 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         for (size_t i = 0; i < N - 1; i++) {
             component_scaled_values[i].resize(component_sz);
             vector_element_serializers[i] = std::make_unique<Serializer<T>>(
-                0.0f, sqrtf(2.0f) / 2 , component_sz); // 0.0f, 1000.0f, component_sz); // lol wtf // sqrtf(2.0f) / 2
+                // 0.0f, sqrtf(2.0f) / 2 , component_sz); // 0.0f, 1000.0f, component_sz); // lol wtf // sqrtf(2.0f) / 2
+                -sqrtf(2.0f) / 2, sqrtf(2.0f) / 2 , component_sz); // 0.0f, 1000.0f, component_sz); // lol wtf // sqrtf(2.0f) / 2 // sus // new
+
         }
     }
 
@@ -453,8 +455,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             }
         }
 
-        // std::cout << "max ele: " << max_element_mag;
-        // std::cout << " " << max_component_idx << "\n";
+        std::cout << "max ele: " << max_element_mag;
+        std::cout << " " << max_component_idx << "\n";
         // max element works
 
         max_component.set_int(max_component_idx);
@@ -471,15 +473,24 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             }
         }
 
-        std::cout << "mag: " << mag << "\n";
+        // new
+        mag = sqrt(mag);
 
-        if(N == 3){ // THIS IF BLOCK IS NEW - SHIHAO
-            magnitude_serializer->serialize(mag);
-            std::copy(magnitude_serializer->get_bit_array().begin(), 
-                    magnitude_serializer->get_bit_array().end(),
-                    serialized_position);
-            std::advance(serialized_position, magnitude_serializer->bitsize());
-        }
+        std::cout << "mag: " << mag << "\n"; //this mag is mag squared, no longer
+
+        // if(N == 3){ // THIS IF BLOCK IS NEW - SHIHAO
+        //     magnitude_serializer->serialize(mag);
+        //     std::copy(magnitude_serializer->get_bit_array().begin(), 
+        //             magnitude_serializer->get_bit_array().end(),
+        //             serialized_position);
+        //     std::advance(serialized_position, magnitude_serializer->bitsize());
+        // }
+
+        magnitude_serializer->serialize(mag);
+        std::copy(magnitude_serializer->get_bit_array().begin(), 
+                magnitude_serializer->get_bit_array().end(),
+                serialized_position);
+        std::advance(serialized_position, magnitude_serializer->bitsize());
 
         // Store serialized non-maximal components
         size_t component_number = 0;
@@ -491,7 +502,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                 std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
                           vector_element_serializers[component_number]->get_bit_array().end(),
                           serialized_position);
-                std::advance(serialized_position, vector_element_serializers[component_number]->bitsize()+0); // any number in +- 10 does nothing why??
+                std::advance(serialized_position, vector_element_serializers[component_number]->bitsize()+0); // any number in +- 10 does nothing why?? // seems fine
                 component_number++;
             }
         }
@@ -525,23 +536,38 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     }
 
     void deserialize(std::array<T, N>* dest) const override {
-        std::cout << "deser: ";
+        std::cout << "deser mag: ";
         T magnitude = 0.0f;
         magnitude_serializer->deserialize(&magnitude);
 
         // this is just printing the upper bound of the magnitude of a component of the constructor
-        std::cout << magnitude << " ";
+        std::cout << magnitude << "\n";
         // not deserializing magnitude correctly for float vector
 
+        // old tanishq
+        // (*dest)[max_component_idx] = 1;
+        // int j = 0;  // Index of current component being processed
+        // for (size_t i = 0; i < N; i++) {
+        //     if (i != max_component_idx) {
+        //         vector_element_serializers[j]->deserialize(&(*dest)[i]);
+        //         j++;
+        //     }
+        // }
+        // (*dest)[max_component_idx] = sqrt((*dest)[max_component_idx]); // this line is sus
+        // (*dest)[max_component_idx] = 420.0; // this line is sus // recieved 840 at biggest magnitude
+        // (*dest)[max_component_idx] = sqrt((*dest)[max_component_idx]); // this line is sus
+
+        // new shihao code
         (*dest)[max_component_idx] = 1;
         int j = 0;  // Index of current component being processed
         for (size_t i = 0; i < N; i++) {
             if (i != max_component_idx) {
                 vector_element_serializers[j]->deserialize(&(*dest)[i]);
+                (*dest)[max_component_idx] -= (*dest)[i] * (*dest)[i]; // subtract off z^2/r^2 = 1 - x^2/r^2 ... // new
                 j++;
             }
         }
-        (*dest)[max_component_idx] = sqrt((*dest)[max_component_idx]); // this line is sus
+        (*dest)[max_component_idx] = sqrt((*dest)[max_component_idx]); // this line is sus // seems correct
 
         for (size_t i = 0; i < N; i++) (*dest)[i] *= magnitude;
     }
