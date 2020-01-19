@@ -79,7 +79,7 @@ protected:
      * @brief HAVT command table, a vector of pointers to bool state fields
      * 
      */
-    std::vector<WritableStateField<bool>*> havt_cmd_table_vector_fp;
+    std::vector<const WritableStateField<bool>*> havt_cmd_table_vector_fp;
 
 };
 
