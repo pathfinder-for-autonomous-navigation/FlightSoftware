@@ -57,7 +57,11 @@ matrix:
             - platformio update
         script:
             - cd ADCSSoftware
-            - platformio run
+            - platformio run -e leader
+            - platformio run -e leader_debug
+            - platformio run -e follower
+            - platformio run -e debug
+            - platformio run -e havt_debug
 
       #- name: "Run unit tests on Teensy"
         #script:
