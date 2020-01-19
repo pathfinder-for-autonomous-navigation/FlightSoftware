@@ -51,6 +51,24 @@ matrix:
         script:
             - ./tools/verify_teensy_builds.sh
       
+      - name: "Common Software Tests"
+        addons:
+          apt:
+            packages:
+            - cppcheck
+            - lcov
+            - valgrind
+        install:
+            - pip install -U platformio
+            - platformio update
+            - sudo gem install coveralls-lcov
+        script:
+            - cd CommonSoftware
+            - ./tools/run_desktop_tests.sh
+        after_success:
+            - ./tools/generate_coverage.sh
+            - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
+
       - name: "ADCS Software Tests"
         install:
             - pip install -U platformio
