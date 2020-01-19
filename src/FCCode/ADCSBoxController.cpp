@@ -38,7 +38,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++)
         {
             std::memset(buffer, 0, sizeof(buffer));
-            sprintf(buffer,"adcs_monitor.havt_device");
+            sprintf(buffer,"adcs_cmd.havt_device");
             sprintf(buffer + strlen(buffer), "%u", idx);
             havt_cmd_table_vector_fp.push_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
         }

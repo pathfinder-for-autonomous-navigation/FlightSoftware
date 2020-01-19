@@ -50,28 +50,6 @@ class FieldCreatorTask : public ControlTask<void> {
       WritableStateField<float> imu_gyr_temp_desired_f;
 
       std::vector<WritableStateField<bool>> havt_cmd_table_vector_f;
-      // end fields necessary for adcs_box controller
-
-      // rwa_mode_f("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
-      // rwa_cmd_f("adcs_cmd.rwa_cmd", __FILE__, __LINE__);
-      // rwa_speed_filter_f("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
-      // rwa_ramp_filter_f("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
-
-      // mtr_mode_f("adcs_cmd.mtr_mode", __FILE__, __LINE__);
-      // mtr_cmd_f("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
-      // mtr_limit_f("adcs_cmd.mtr_limit", __FILE__, __LINE__);
-
-      // ssa_mode_f("adcs_cmd.ssa_mode", __FILE__, __LINE__);
-      // ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
-
-      // imu_mode_f("adcs_cmd.imu_mode", __FILE__, __LINE__);
-      // imu_mag_filter_f("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
-      // imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
-      // imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
-      // imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
-      // imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
-      // imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
-      // imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
@@ -138,6 +116,18 @@ class FieldCreatorTask : public ControlTask<void> {
           add_writable_field(imu_gyr_temp_ki_f);
           add_writable_field(imu_gyr_temp_kd_f);
           add_writable_field(imu_gyr_temp_desired_f);
+
+          // reserve memory
+          havt_cmd_table_vector_f.reserve(adcs_havt::Index::_LENGTH);
+          // fill vector of statefields for cmd havt
+          for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+          {
+            std::memset(buffer, 0, sizeof(buffer));
+            sprintf(buffer,"adcs_cmd.havt_device");
+            sprintf(buffer + strlen(buffer), "%u", idx);
+            havt_table_vector.emplace_back(buffer, havt_bool_sr);
+            add_writable_field(havt_cmd_table_vector_f[idx]);
+          }
       }
 
       void execute() {
