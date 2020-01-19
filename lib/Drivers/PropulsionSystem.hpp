@@ -133,7 +133,7 @@ class PropulsionSystem : public Device {
     bool setup() override;
 
     /**
-     * @brief Shuts off all valves, clears tank2 schedule
+     * @brief Shuts off all valves, clears tank2 schedule, disables timer
      */
     void reset() override;
 
@@ -161,6 +161,8 @@ class PropulsionSystem : public Device {
      * is enabled
      */
     static void thrust_valve_loop();
+
+    static void pressurize_tank();
 
     static Tank1 tank1;
     static Tank2 tank2;

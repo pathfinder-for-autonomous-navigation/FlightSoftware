@@ -125,6 +125,8 @@ float Tank2::get_pressure() {
 /* Propulsion System implementation */
 
 void PropulsionSystem::reset() {
+    // TODO: should we allow reset() while the valves are opened?
+    disable();
     tank1.reset();
     tank2.reset();
     tank2.clear_schedule();
@@ -132,16 +134,20 @@ void PropulsionSystem::reset() {
 
 void PropulsionSystem::enable()
 {
-    is_enabled = true;
 #ifndef DESKTOP
+    noInterrupts();
     tank2.thrust_valve_loop_timer.begin(thrust_valve_loop, tank2.thrust_valve_loop_interval_us);
+    interrupts();
 #endif
+    is_enabled = true;
 }
 
 void PropulsionSystem::disable() {
     is_enabled = false;
 #ifndef DESKTOP
+    noInterrupts();
     tank2.thrust_valve_loop_timer.end();
+    interrupts();
 #endif
 }
 
@@ -157,35 +163,40 @@ bool PropulsionSystem::open_valve(Tank& tank, size_t valve_idx)
 {
     if (valve_idx >= tank.num_pins || !tank.valve_lock.is_free()) 
         return false;
-    // disable();
 #ifndef DESKTOP
-    delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
-    tank.valve_lock.procure(tank.valve_lock_duration);
-    digitalWrite(tank.valve_pins[valve_idx], HIGH);
+    noInterrupts();
+    {
+        // delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
+        tank.valve_lock.procure(tank.valve_lock_duration);
+        digitalWrite(tank.valve_pins[valve_idx], HIGH);
+        tank.is_valve_opened[valve_idx] = 1;
+    }
+    interrupts();
 #endif
-    // enable();
     tank.is_valve_opened[valve_idx] = 1;
     return true;
 }
 
 void PropulsionSystem::close_valve(Tank& tank, size_t valve_idx)
 {
-    // disable();
     if (valve_idx >= tank.num_pins)
         return;
     #ifndef DESKTOP
-        delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
+    noInterrupts();
+    {
+        // delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
         digitalWrite(tank.valve_pins[valve_idx], 0);
+        tank.is_valve_opened[valve_idx] = 0;
+    }
+    interrupts();
     #endif
-    tank.is_valve_opened[valve_idx] = 0;
-    // enable();
 }
 
 void PropulsionSystem::thrust_valve_loop() {
     noInterrupts(); // Must disable interrupts since this function is not interrupt safe
     for (unsigned char i = 0; i < tank2.num_pins; i++) {
+        // If a valve is scheduled to open for less than 3 ms, then ignore it
         if (tank2.schedule[i] < tank2.thrust_valve_loop_interval_ms) {
-            // Firing on valve i - 2 is complete
             close_valve(tank2, i);
             tank2.schedule[i] = 0;
             continue;
