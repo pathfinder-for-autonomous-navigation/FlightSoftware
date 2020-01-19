@@ -10,7 +10,7 @@ struct TestFixture {
     unsigned int control_cycle_count = 0;
     Event event;
 
-    char print_data[10];
+    static char print_data[10];
     static const char* print_fn(std::vector<ReadableStateFieldBase*>& data) {
         memset(print_data, 0, 10);
         ReadableStateField<bool>* datafield1_f = static_cast<ReadableStateField<bool>*>(data[0]);
@@ -25,6 +25,8 @@ struct TestFixture {
         event_data({&data1_f, &data2_f}),
         event("event", event_data, print_fn, control_cycle_count) {}
 };
+
+char TestFixture::print_data[10];
 
 void test_event() {
     TestFixture tf;
