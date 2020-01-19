@@ -25,29 +25,29 @@ class FieldCreatorTask : public ControlTask<void> {
       // begin fields necessary for adcs_box controller
       const Serializer<float> filter_sr;
 
-      const WritableStateField<unsigned char> rwa_mode_f;
-      const WritableStateField<f_vector_t> rwa_speed_cmd_f;
-      const WritableStateField<f_vector_t> rwa_torque_cmd_f;
-      const WritableStateField<float> rwa_speed_filter_f;
-      const WritableStateField<float> rwa_ramp_filter_f;
+      WritableStateField<unsigned char> rwa_mode_f;
+      WritableStateField<f_vector_t> rwa_speed_cmd_f;
+      WritableStateField<f_vector_t> rwa_torque_cmd_f;
+      WritableStateField<float> rwa_speed_filter_f;
+      WritableStateField<float> rwa_ramp_filter_f;
 
-      const WritableStateField<unsigned char> mtr_mode_f;
-      const WritableStateField<f_vector_t> mtr_cmd_f;
-      const WritableStateField<float> mtr_limit_f;
+      WritableStateField<unsigned char> mtr_mode_f;
+      WritableStateField<f_vector_t> mtr_cmd_f;
+      WritableStateField<float> mtr_limit_f;
 
-      const WritableStateField<float> ssa_voltage_filter_f;
+      WritableStateField<float> ssa_voltage_filter_f;
 
-      const WritableStateField<unsigned char> imu_mode_f;
-      const WritableStateField<float> imu_mag_filter_f;
-      const WritableStateField<float> imu_gyr_filter_f;
-      const WritableStateField<float> imu_gyr_temp_filter_f;
+      WritableStateField<unsigned char> imu_mode_f;
+      WritableStateField<float> imu_mag_filter_f;
+      WritableStateField<float> imu_gyr_filter_f;
+      WritableStateField<float> imu_gyr_temp_filter_f;
 
       const Serializer<float> k_sr;
 
-      const WritableStateField<float> imu_gyr_temp_kp_f;
-      const WritableStateField<float> imu_gyr_temp_ki_f;
-      const WritableStateField<float> imu_gyr_temp_kd_f;
-      const WritableStateField<float> imu_gyr_temp_desired_f;
+      WritableStateField<float> imu_gyr_temp_kp_f;
+      WritableStateField<float> imu_gyr_temp_ki_f;
+      WritableStateField<float> imu_gyr_temp_kd_f;
+      WritableStateField<float> imu_gyr_temp_desired_f;
 
       std::vector<WritableStateField<bool>> havt_cmd_table_vector_f;
       // end fields necessary for adcs_box controller
@@ -104,7 +104,7 @@ class FieldCreatorTask : public ControlTask<void> {
         imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", Serializer<float>(imu::min_eq_temp, imu::max_eq_temp, 8))
       {
           // Create the fields!
-
+          
           // For MissionManager
           add_writable_field(adcs_cmd_attitude_f);
           add_writable_field(adcs_ang_rate_f);
@@ -119,6 +119,25 @@ class FieldCreatorTask : public ControlTask<void> {
 
           // For propulsion controller
           add_readable_field(prop_mode_f);
+
+          // For ADCS Controller
+          add_writable_field(rwa_mode_f);
+          add_writable_field(rwa_speed_cmd_f);
+          add_writable_field(rwa_torque_cmd_f);
+          add_writable_field(rwa_speed_filter_f);
+          add_writable_field(rwa_ramp_filter_f);
+          add_writable_field(mtr_mode_f);
+          add_writable_field(mtr_cmd_f);
+          add_writable_field(mtr_limit_f);
+          add_writable_field(ssa_voltage_filter_f);
+          add_writable_field(imu_mode_f);
+          add_writable_field(imu_mag_filter_f);
+          add_writable_field(imu_gyr_filter_f);
+          add_writable_field(imu_gyr_temp_filter_f);
+          add_writable_field(imu_gyr_temp_kp_f);
+          add_writable_field(imu_gyr_temp_ki_f);
+          add_writable_field(imu_gyr_temp_kd_f);
+          add_writable_field(imu_gyr_temp_desired_f);
       }
 
       void execute() {
