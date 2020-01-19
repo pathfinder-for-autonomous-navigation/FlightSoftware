@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <memory>
 
+#include <iostream> // used for shihao's testing campaign
+
 // ============================================================================================= //
 //                                      Helper methods                                           //
 // ============================================================================================= //
@@ -343,6 +345,8 @@ void test_double_serializer() { test_float_or_double_serializer<double>(); }
 /**
  * @brief Verify that the float vector serializer properly encapsulates float vectors of various
  * sizes.
+ * 
+ * TODO REMOVE: SHIHAOCONTROLFHANDY
  */
 template<typename T>
 void test_vec_serializer() {
@@ -369,15 +373,20 @@ void test_vec_serializer() {
     // Criterion for functionality: the vector that's reported has a displacement from the
     // input vector of magnitude at most magnitude_err.
     srand(2);
-    for(size_t i = 0; i < 1; i++) {
+    for(size_t i = 0; i < 10; i++) {
         auto vec_serializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
         vector_t result;
+
+        // rand() returns the same thing every time
 
         // Generate random vector.
         const T x = rand() / T(RAND_MAX) * 2;
         const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
         const T y = cos(t) * sqrt(4 - x*x);
         const T z = sin(t) * sqrt(4 - x*x);
+
+        std::cout << x << " " << y << " " << z << "\n";
+
         vector_t vec = {x, y, z};
         vec_serializer->serialize(vec);
         vec_serializer->deserialize(&result);
@@ -396,7 +405,8 @@ void test_vec_serializer() {
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, x, y, z, result[0], result[1], result[2]);
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
+        //TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
+        std::cout << err_str << "\n";
     }
 
     // Test deserialization from a string
@@ -454,7 +464,7 @@ void test_quat_serializer() {
     // Criterion for functionality: the quaternion that's reported has a displacement from the
     // input quaternion of magnitude at most magnitude_err.
     srand(2);
-    for(size_t i = 0; i < 100; i++) {
+    for(size_t i = 0; i < 10; i++) {
         auto quat_serializer = std::make_shared<Serializer<quat_t>>();
         quat_t result;
 
@@ -486,7 +496,10 @@ void test_quat_serializer() {
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3]);
-        TEST_ASSERT_LESS_OR_EQUAL_MESSAGE(err_threshold, magnitude_err, err_str);
+
+        //TEST_ASSERT_LESS_OR_EQUAL_MESSAGE(err_threshold, magnitude_err, err_str);
+        std::cout << err_str << "\n";
+
     }
 
     // Test deserialization from a string

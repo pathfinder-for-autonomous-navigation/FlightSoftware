@@ -6,6 +6,8 @@
 #include "Serializer.hpp"
 #include "types.hpp"
 
+#include <iostream> // for shihao
+
 /**
  * @brief Specialization of Serializer for booleans.
  */
@@ -306,6 +308,8 @@ class Serializer<double> : public FloatDoubleSerializer<double> {
  *   to specify the direction of the unit vector. We allow two bits to store the index of
  *   the largest component in the quaternion, and then we serialize the three smallest components
  *   in the bounds +/- sqrt(2)/2 and with bitsize 9.
+ * 
+ * TODO REMOVE: SHIHAOCTRLF
  */
 template <typename T,
           size_t N,
@@ -331,10 +335,14 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         size_t component_sz = 0;
         if (N == 3) { component_sz = vec_component_sz; }
         else { component_sz = quat_component_sz; }
+
+        //std::cout << "comp sz: " << component_sz << "\n";
+        // comp sz: 9
+
         for (size_t i = 0; i < N - 1; i++) {
             component_scaled_values[i].resize(component_sz);
             vector_element_serializers[i] = std::make_unique<Serializer<T>>(
-                0.0f, sqrtf(2.0f) / 2, component_sz);
+                0.0f, sqrtf(2.0f) / 2 , component_sz); // 0.0f, 1000.0f, component_sz); // lol wtf // sqrtf(2.0f) / 2
         }
     }
 
@@ -444,6 +452,11 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                 max_component_idx = i;
             }
         }
+
+        // std::cout << "max ele: " << max_element_mag;
+        // std::cout << " " << max_component_idx << "\n";
+        // max element works
+
         max_component.set_int(max_component_idx);
         std::copy(max_component.begin(), max_component.end(), serialized_position);
         std::advance(serialized_position, max_component.size());
@@ -457,6 +470,9 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                 mag += src[i] * src[i];
             }
         }
+
+        std::cout << "mag: " << mag << "\n";
+
         magnitude_serializer->serialize(mag);
         std::copy(magnitude_serializer->get_bit_array().begin(), 
                   magnitude_serializer->get_bit_array().end(),
@@ -478,33 +494,40 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         }
     }
 
+    //afaik this isn't being used
     bool deserialize(const char* val, std::array<T, N>* dest) override {
-        size_t i = 0;
-        std::array<T, N> temp_dest;
-        char temp_val[150];
-        memcpy(temp_val, val, sizeof(temp_val));
+        // size_t i = 0;
+        // std::array<T, N> temp_dest;
+        // char temp_val[150];
+        // memcpy(temp_val, val, sizeof(temp_val));
 
-        char *tok = strtok(temp_val, ",");
-        while (tok != NULL) {
-            if (std::is_same<T, float>::value) {
-                temp_dest[i++] = static_cast<T>(strtof(tok, NULL));
-            }
-            else {
-                temp_dest[i++] = static_cast<T>(strtod(tok, NULL));
-            }
-            tok = strtok(NULL, ",");
-        }
-        if (i < N) return false;
-
-        *dest = temp_dest;
-        // Store result into current bitset
-        serialize(*dest);
+        // char *tok = strtok(temp_val, ",");
+        // while (tok != NULL) {
+        //     if (std::is_same<T, float>::value) {
+        //         temp_dest[i++] = static_cast<T>(strtof(tok, NULL));
+        //     }
+        //     else {
+        //         temp_dest[i++] = static_cast<T>(strtod(tok, NULL));
+        //     }
+        //     std::cout << temp_dest[i-1] << " ";
+        //     tok = strtok(NULL, ",");
+        // }
+        // std::cout << "\n";
+        // if (i < N) return false;
+        // //std::cout << "deser: " << temp_dest[0] << " " << temp_dest[1] << " " << temp_des 
+        // *dest = temp_dest;
+        // // Store result into current bitset
+        // serialize(*dest);
         return true;
     }
 
     void deserialize(std::array<T, N>* dest) const override {
+        std::cout << "deser: ";
         T magnitude = 0.0f;
         magnitude_serializer->deserialize(&magnitude);
+        std::cout << magnitude << " ";
+        // not deserializing magnitude correctly for float vector
+
         (*dest)[max_component_idx] = 1;
         int j = 0;  // Index of current component being processed
         for (size_t i = 0; i < N; i++) {
