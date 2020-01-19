@@ -50,6 +50,14 @@ matrix:
             - cppcheck
         script:
             - ./tools/verify_teensy_builds.sh
+      
+      - name: "ADCS Software Tests"
+        install:
+            - pip install -U platformio
+            - platformio update
+        script:
+            - cd ADCSSoftware
+            - platformio run
 
       #- name: "Run unit tests on Teensy"
         #script:
