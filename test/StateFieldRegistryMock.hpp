@@ -33,7 +33,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     InternalStateField<T>* find_internal_field_t(const std::string& name) {
-        auto ptr = static_cast<InternalStateField<T>*>(find_internal_field(name));
+        InternalStateField<T>* ptr = static_cast<InternalStateField<T>*>(find_internal_field(name));
         check_field_exists(ptr, name);
         return ptr;
     }
@@ -43,7 +43,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     ReadableStateField<T>* find_readable_field_t(const std::string& name) {
-        auto ptr = static_cast<ReadableStateField<T>*>(find_readable_field(name));
+        ReadableStateField<T>* ptr = static_cast<ReadableStateField<T>*>(find_readable_field(name));
         check_field_exists(ptr, name);
         return ptr;
     }
@@ -53,7 +53,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     WritableStateField<T>* find_writable_field_t(const std::string& name) {
-        auto ptr = static_cast<WritableStateField<T>*>(find_writable_field(name));
+        WritableStateField<T>* ptr = static_cast<WritableStateField<T>*>(find_writable_field(name));
         check_field_exists(ptr, name);
         return ptr;
     }
@@ -66,7 +66,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     template<typename T>
     std::shared_ptr<InternalStateField<T>> create_internal_field(const std::string& name) {
-        auto field_ptr = std::make_shared<InternalStateField<T>>(name);
+        std::shared_ptr<InternalStateField<T>> field_ptr =
+            std::make_shared<InternalStateField<T>>(name);
         add_internal_field(field_ptr.get());
         created_internal_fields.push_back(field_ptr);
         return field_ptr;
@@ -89,7 +90,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr;
-        auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
+        std::shared_ptr<ReadableStateField<T>> field_ptr =
+            std::make_shared<ReadableStateField<T>>(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -112,7 +114,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr;
-        auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);
+        std::shared_ptr<WritableStateField<T>> field_ptr =
+            std::make_shared<WritableStateField<T>>(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
@@ -142,7 +145,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(min, max, bitsize);
-        auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
+        std::shared_ptr<ReadableStateField<T>> field_ptr =
+            std::make_shared<ReadableStateField<T>>(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -172,7 +176,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(min, max, bitsize);
-        auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);
+        std::shared_ptr<WritableStateField<T>> field_ptr =
+            std::make_shared<WritableStateField<T>>(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
@@ -189,7 +194,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(min, max);
-        auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
+        std::shared_ptr<ReadableStateField<T>> field_ptr =
+            std::make_shared<ReadableStateField<T>>(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -206,7 +212,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(min, max);
-        auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);
+        std::shared_ptr<WritableStateField<T>> field_ptr =
+            std::make_shared<WritableStateField<T>>(name, field_sr);
         add_writable_field(field_ptr);
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
@@ -220,7 +227,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(max);
-        auto field_ptr = std::make_shared<ReadableStateField<T>>(name, field_sr);
+        std::shared_ptr<ReadableStateField<T>> field_ptr =
+            std::make_shared<ReadableStateField<T>>(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -234,7 +242,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<T> field_sr(max);
-        auto field_ptr = std::make_shared<WritableStateField<T>>(name, field_sr);
+        std::shared_ptr<WritableStateField<T>> field_ptr =
+            std::make_shared<WritableStateField<T>>(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
@@ -260,7 +269,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<std::array<T, 3>> field_sr(min, max, bitsize);
-        auto field_ptr = std::make_shared<ReadableStateField<std::array<T, 3>>>(name, field_sr);
+        std::shared_ptr<ReadableStateField<std::array<T,3>>> field_ptr =
+            std::make_shared<ReadableStateField<std::array<T, 3>>>(name, field_sr);
         add_readable_field(field_ptr.get());
         created_readable_fields.push_back(field_ptr);
         return field_ptr;
@@ -286,7 +296,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
             "Type argument for field creation with the given parameters was invalid.");
 
         Serializer<std::array<T, 3>> field_sr(min, max, bitsize);
-        auto field_ptr = std::make_shared<WritableStateField<std::array<T, 3>>>(name, field_sr);
+        std::shared_ptr<WritableStateField<std::array<T, 3>>> field_ptr =
+            std::make_shared<WritableStateField<std::array<T, 3>>>(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
