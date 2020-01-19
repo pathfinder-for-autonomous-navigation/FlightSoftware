@@ -87,12 +87,9 @@ struct TestFixtureEventStorage : public TestFixtureEvent {
 void test_event_storage() {
     TestFixtureEventStorage tf;
     // Three fields should have been created inside the state field registry.
-    tf.registry.check_field_exists(
-        tf.registry.find_readable_field_t<bool>("event.1"), "event.1");
-    tf.registry.check_field_exists(
-        tf.registry.find_readable_field_t<bool>("event.2"), "event.2");
-    tf.registry.check_field_exists(
-        tf.registry.find_readable_field_t<bool>("event.3"), "event.3");
+    tf.registry.find_readable_field("event.1");
+    tf.registry.find_readable_field("event.2");
+    tf.registry.find_readable_field("event.3");
 
     // Event storage should behave the same as an event.
     test_single_event(tf);
