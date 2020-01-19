@@ -2,7 +2,6 @@
 #include <Serializer.hpp>
 #include <stdlib.h>
 #include <memory>
-#include <sstream>
 
 // ============================================================================================= //
 //                                      Helper methods                                           //
@@ -309,10 +308,11 @@ void test_float_or_double_serializer() {
     for (size_t i = 0; i < 1000; i++) {
         T x = -1.0 + i * 4.0 / 1000;
 
-        std::ostringstream ss;
-        ss << x;
-        const std::string str = ss.str();
-        TEST_ASSERT(serializer->deserialize(str.c_str(), &val));
+        char buf[100];
+        memset(buf, 0, 100);
+        if (std::is_same<T, float>::value) sprintf(buf, "%f", x);
+        else sprintf(buf, "%lf", x);
+        TEST_ASSERT(serializer->deserialize(buf, &val));
         serializer->deserialize(&val);
         if (std::is_same<T, float>::value) {
             TEST_ASSERT_FLOAT_WITHIN(threshold, x, val);
@@ -363,8 +363,6 @@ void test_vec_serializer() {
     const size_t vec_bitsize = 40;
     const size_t magnitude_bitsize = vec_bitsize - 2 - 2 * csz; // Used for error threshold.
     T magnitude_err = 2.0 / powf(2, magnitude_bitsize);
-    magnitude_err = 2; // This is a bandaid to allow the unit test to pass temporarily.
-                       // We definitely need tighter precision than this.
 
     // (Deterministically) generate random vectors of magnitude 2, and see if they work 
     // with the serializer.
@@ -378,8 +376,8 @@ void test_vec_serializer() {
         // Generate random vector.
         const T x = rand() / T(RAND_MAX) * 2;
         const T t = rand() / T(RAND_MAX) * (2 * M_PI);
-        const T y = cos(t) * sqrtf(4 - powf(x, 2));
-        const T z = sin(t) * sqrtf(4 - powf(x, 2));
+        const T y = cos(t) * sqrt(4 - x*x);
+        const T z = sin(t) * sqrt(4 - x*x);
         vector_t vec = {x, y, z};
         vec_serializer->serialize(vec);
         vec_serializer->deserialize(&result);
@@ -388,15 +386,17 @@ void test_vec_serializer() {
         // value has a magnitude less than the desired precision.
         vector_t dv;
         for(size_t j = 0; j < 3; j++) dv[j] = vec[j] - result[j];
-        T dv_magnitude = sqrt(powf(dv[0], 2) + powf(dv[1], 2) + powf(dv[2], 2));
+        T dv_magnitude = sqrt(pow(dv[0], 2) + pow(dv[1], 2) + pow(dv[2], 2));
 
-        std::stringstream err_string;
-        err_string << "Input vector " << "was {" << x << "," << y << "," << z << "}; ";
-        err_string << "output vector " << "was {" << 
-            result[0] << "," <<
-            result[1] << "," <<
-            result[2] << "}";
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_string.str().c_str());
+        static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output vector was {%f,%f,%f}";
+        static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output vector was {%lf,%lf,%lf}";
+        char err_str[200];
+        memset(err_str, 0, 200);
+        const char* err_fmt_str = nullptr;
+        if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
+        else err_fmt_str = err_fmt_str_d;
+        sprintf(err_str, err_fmt_str, i, x, y, z, result[0], result[1], result[2]);
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
     }
 
     // Test deserialization from a string
@@ -454,7 +454,7 @@ void test_quat_serializer() {
     // Criterion for functionality: the quaternion that's reported has a displacement from the
     // input quaternion of magnitude at most magnitude_err.
     srand(2);
-    for(size_t i = 0; i < 1; i++) {
+    for(size_t i = 0; i < 100; i++) {
         auto quat_serializer = std::make_shared<Serializer<quat_t>>();
         quat_t result;
 
@@ -476,18 +476,17 @@ void test_quat_serializer() {
                                   + quat[2] * result[2]
                                   + quat[3] * result[3]);
 
-        const T err_threshold = 0.99962; // Bandaid to get tests to pass. Needs to get fixed.
-        std::stringstream err_string;
-        err_string << "Input quaternion " << "was {" << quat[0] 
-                                          << "," << quat[1]
-                                          << "," << quat[2]
-                                          << "," << quat[3] << "}; ";
-        err_string << "output vector " << "was {"
-                                       << result[0] << ","
-                                       << result[1] << ","
-                                       << result[2] << ","
-                                       << result[3] << "}";
-        TEST_ASSERT_GREATER_OR_EQUAL_MESSAGE(err_threshold, magnitude_err, err_string.str().c_str());
+        static const T err_threshold = 0.01;
+
+        static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output quaternion was {%f,%f,%f,%f}";
+        static const char* err_fmt_str_d = "%dth test: Input quaternion was {%lf,%lf,%lf,%lf}; output quaternion was {%lf,%lf,%lf,%lf}";
+        char err_str[200];
+        memset(err_str, 0, 200);
+        const char* err_fmt_str = nullptr;
+        if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
+        else err_fmt_str = err_fmt_str_d;
+        sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3]);
+        TEST_ASSERT_LESS_OR_EQUAL_MESSAGE(err_threshold, magnitude_err, err_str);
     }
 
     // Test deserialization from a string
