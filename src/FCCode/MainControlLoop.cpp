@@ -39,7 +39,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       eeprom_controller(registry, eeprom_controller_offset, statefields),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
-      attitude_computer(registry, attitude_computer_offset) // This item needs "adcs.state" from mission manager.
+      attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
+      adcs_box_controller(registry, adcs_box_controller_offset, adcs)
 {
     docking_controller.init();
 
@@ -78,9 +79,11 @@ void MainControlLoop::execute() {
 
     piksi_control_task.execute_on_time();
     gomspace_controller.execute_on_time();
+    adcs_monitor.execute_on_time();
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
     attitude_computer.execute_on_time();
+    adcs_box_controller.execute_on_time();
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
