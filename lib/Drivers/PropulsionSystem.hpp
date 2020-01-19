@@ -4,12 +4,20 @@
 #include <array>
 #include "../Devices/Device.hpp"
 #ifndef DESKTOP
+#include <Arduino.h>
 #include <IntervalTimer.h>
 #endif
 
 namespace Devices {
 
 /**
+ * PropulsionSystem.hpp
+ * Specifies the Driver for the propulsion system
+ * PropulsionSystem class defines the interface for the propulsion system
+ * It consists of a static Tank1 and Tank2 object.
+ * Static methods of PropulsionSystem such as open_valve and close_valve take
+ * a reference to either of these objects.
+ * 
  * To use the class, update the firing schedule, and then call
  * execute_schedule().
  * Example:
@@ -17,106 +25,92 @@ namespace Devices {
  * SpikeAndHold sph;
  * sph.setup();
  * **/
-class PropulsionSystem : public Device {
-    public:
-    //! Specifies which valve # corresponds to which physical valve
-    enum class valve_ids {
-        intertank_main = 0,    // Main tank 1 to tank 2 valve
-        intertank_backup = 1,  // Backup tank 1 to tank 2 valve
-        nozzle_1 = 2,          // Nozzle valve
-        nozzle_2 = 3,          // Nozzle valve
-        nozzle_3 = 4,          // Nozzle valve
-        nozzle_4 = 5           // Nozzle valve
-    };
+class TimedLock
+{
+public:
+    inline TimedLock() : end_time(0){}
 
-    //! Default mapping of physical GPIO pin #s (values) to logical pin #s
-    //! (indices).
-    static const std::array<unsigned char, 6> valve_pins;
-    static constexpr unsigned char pressure_sensor_low_pin = 20;
-    static constexpr unsigned char pressure_sensor_high_pin = 23;
-    static constexpr unsigned char temp_sensor_inner_pin = 21;
-    static constexpr unsigned char temp_sensor_outer_pin = 22;
+    inline TimedLock(uint32_t ms_duration) : 
+    end_time(millis() + ms_duration) {}
 
-    /** @brief Default constructor. **/
-    PropulsionSystem();
+    // No concept of owner
+    inline bool procure(uint32_t ms_duration)
+    {
+        if (millis() < end_time)
+        {
+            return false;
+        }
+        else
+        {
+            end_time = millis() + ms_duration;
+            return true;
+        }
+    }
+    // True if the lock is currently free
+    inline bool is_free()
+    {
+        return millis() > end_time;
+    }
+ private:   
+    uint32_t end_time;
+};
 
-    bool setup() override;
-    bool is_functional() override;
+class Tank {
+public:
+    Tank(size_t num_pins);
+
+    void setup();
 
     /**
-     * @brief Shuts off all valves and turns off the thrust valve loop timer.
+     * @brief Turns off all valves immediately
      */
-    void disable() override;
+    void reset();
 
-    /**
-     * @brief Turns on the thrust valve loop timer.
-     */
-    void enable();
+    int get_temp();
 
-    void reset() override;
+    // all pins indexed at 0
+    size_t num_pins;
+    // mandatory wait time between consecutive openings (in ms)
+    uint32_t valve_lock_duration;
+
+    uint8_t temp_sensor_pin;
+    // mapping of physical GPIO pin #s (values) to logical pin #s
+    uint8_t valve_pins[4];
+    // true if the valve is opened
+    bool is_valve_opened[4];
+    // maximum tolerated temperature of tank
+    const int max_tank_temp = 48;
+    // enforces the mandatory wait time when consescutively opening valves
+    TimedLock valve_lock;
+};
+
+class Tank1 : public Tank {
+public:
+    Tank1();
+};
+
+class Tank2 : public Tank {
+public:
+    Tank2();
+
+    void setup();
+
+    void clear_schedule();
+
+    void set_schedule(const std::array<unsigned int, 4> &setting);
 
     float get_pressure();
-    signed int get_temp_inner();
-    signed int get_temp_outer();
-
-    /** @brief Set the thrust valve schedule, as specified by the array.
-     * 
-     * Index i corresponds to nozzle i + 1.
-     **/
-    void set_thrust_valve_schedule(const std::array<unsigned int, 4> &setting);
-
-    /**
-     * @brief Set the tank valve state for the given tank valve.
-     * 
-     * @param valve 1 if the main tank valve should be set, 0 if the backup
-     *              should be set.
-     * @param state 1 if the valve should be open, 0 if the valve should be
-     *              closed.
-     */
-    void set_tank_valve_state(bool valve, bool state);
-
-    // Maxium values
-    static constexpr int max_temp_inner = 48;
-    static constexpr int max_temp_outer = 48;
-    static constexpr int threshold_pressure = 75; // TODO: random value
-    static constexpr float max_pressure = 100;
-    static constexpr float pressure_delta = 1.0f;
-
-#ifndef PROP_TEST
-   private:
-#endif
-    // A bunch of these variables are static so that the interval timer can call
-    // a static function. Practically, this is OK because we only expect to
-    // create the propulsion system object once.
-
-    //! If true, a thrust valve was opened on the current cycle
-    // of the thrust valve loop, so another valve (thrust or prop)
-    // should not be opened during the current cycle.
-    static volatile bool valve_start_locked_out;
-
-    // tank valves must fire once every 10 seconds
-    static volatile bool tank_valve_locked_out;
 
     #ifndef DESKTOP
     //! Runs thrust_valve_loop every 3 ms. Initialized in setup().
-    IntervalTimer thrust_valve_loop_timer;
+    static IntervalTimer thrust_valve_loop_timer;
     #endif
+    static volatile unsigned int schedule[4];
 
-    bool is_enabled;
-
-    //! Loop interval in microseconds.
-    static constexpr unsigned int thrust_valve_loop_interval_us = 3000;
-    //! Loop interval in milliseconds.
-    static constexpr unsigned int thrust_valve_loop_interval_ms =
-        thrust_valve_loop_interval_us / 1000;
-
-    //! Tracks if thrust valves are open.
-    static volatile bool is_valve_opened[4];
-
-    //! Thrust valve schedule, specified by flight software. Times are in
-    // milliseconds.
-    static volatile unsigned int thrust_valve_schedule[4];
-    static void thrust_valve_loop();
+    static constexpr int threshold_pressure = 25;
+    static constexpr int max_tank_pressure = 75;
+    static constexpr unsigned char pressure_sensor_low_pin = 20;
+    static constexpr unsigned char pressure_sensor_high_pin = 23;
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
@@ -124,6 +118,54 @@ class PropulsionSystem : public Device {
     static constexpr double high_gain_slope = 0.048713211537332;
     static constexpr double low_gain_offset = 0.154615074342874;
     static constexpr double low_gain_slope = 0.099017990785657;
+
+    //! Loop interval in microseconds.
+    static constexpr unsigned int thrust_valve_loop_interval_us = 3000;
+    //! Loop interval in milliseconds.
+    static constexpr unsigned int thrust_valve_loop_interval_ms =
+        thrust_valve_loop_interval_us / 1000;
+};
+
+class PropulsionSystem : public Device {
+    public:
+    PropulsionSystem();
+
+    bool setup() override;
+
+    /**
+     * @brief Shuts off all valves, clears tank2 schedule
+     */
+    void reset() override;
+
+    /**
+     * @brief turns on interrupts provided by the thurst_value_loop_timer
+     */
+    void enable();
+
+    /**
+     * @brief turns off interrupts (the thrust_value_loop_timer)
+     */
+    void disable() override;
+
+    bool is_functional() override;
+
+    /**
+     * @brief opens the valve specified by valve_idx in the specified tank
+     * */
+    static bool open_valve(Tank& tank, size_t valve_idx);
+
+    static void close_valve(Tank& tank, size_t valve_idx);
+
+    /**
+     * @brief the function that is ran when interrupts provided by IntervalTimer
+     * is enabled
+     */
+    static void thrust_valve_loop();
+
+    static Tank1 tank1;
+    static Tank2 tank2;
+    static volatile bool is_enabled;
+
 };
 
 }  // namespace Devices

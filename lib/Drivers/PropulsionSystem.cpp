@@ -11,66 +11,93 @@
 
 using namespace Devices;
 
-const std::array<unsigned char, 6>
-PropulsionSystem::valve_pins = {27, 28, 3, 4, 5, 6};
+/* Constructors */
 
-volatile bool
-PropulsionSystem::is_valve_opened[4] = {false, false, false, false};
+Tank::Tank(size_t _num_pins) :
+num_pins(_num_pins) {}
 
-volatile unsigned int
-PropulsionSystem::thrust_valve_schedule[4] = {0, 0, 0, 0};
+Tank1::Tank1() : Tank(2) {
+    valve_lock_duration = 10*1000;
+    valve_pins[0] = 27; // Main tank 1 to tank 2 valve
+    valve_pins[1] = 28; // Backup tank 1 to tank 2 valve
+    temp_sensor_pin = 21;
+}
 
-volatile bool PropulsionSystem::valve_start_locked_out = false;
+Tank2::Tank2() : Tank(4) {
+    valve_lock_duration = 3;
+    valve_pins[0] = 3; // Nozzle valve
+    valve_pins[1] = 4; // Nozzle valve
+    valve_pins[2] = 5; // Nozzle valve
+    valve_pins[3] = 6; // Nozzle valve
+    temp_sensor_pin = 22;
+}
+
+/** Initialize static variables */
 
 PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
+volatile bool PropulsionSystem::is_enabled = 0;
+Tank1 PropulsionSystem::tank1 = Tank1();
+Tank2 PropulsionSystem::tank2 = Tank2();
+
+volatile unsigned int Tank2::schedule[4] = {0, 0, 0, 0};
+IntervalTimer Tank2::thrust_valve_loop_timer = IntervalTimer();
+
+/* Setup */
 
 bool PropulsionSystem::setup() {
-#ifdef DESKTOP
-// TODO
-#else
-    for (unsigned char i = 0; i < 6; i++) {
-        pinMode(valve_pins[i], OUTPUT);
-    }
-
-    pinMode(pressure_sensor_low_pin, INPUT);
-    pinMode(pressure_sensor_high_pin, INPUT);
-    pinMode(temp_sensor_inner_pin, INPUT);
-    pinMode(temp_sensor_outer_pin, INPUT);
-
-    thrust_valve_loop_timer.begin(thrust_valve_loop, thrust_valve_loop_interval_us);
+#ifndef DESKTOP
+    tank1.setup();
+    tank2.setup();
 #endif
     return true;
 }
 
-void PropulsionSystem::disable() {
-    is_enabled = false;
-#ifdef DESKTOP
-// TODO
-#else
-    for (unsigned char i = 0; i < 4; i++) thrust_valve_schedule[i] = 0;
-    for (unsigned char i = 0; i < 6; i++) digitalWrite(valve_pins[i], LOW);
-    thrust_valve_loop_timer.end();
-#endif
+void Tank::setup()
+{
+    for (size_t i = 0; i < num_pins; ++i)
+        pinMode(valve_pins[i], OUTPUT);
+
+    pinMode(temp_sensor_pin, INPUT);
 }
 
-void PropulsionSystem::enable() {
-    is_enabled = true;
-#ifdef DESKTOP
-// TODO
-#else
-    thrust_valve_loop_timer.begin(thrust_valve_loop, thrust_valve_loop_interval_us);
-#endif
-}
-
-void PropulsionSystem::reset() {
-    disable();
+void Tank2::setup()
+{
+    Tank2::setup();
 #ifndef DESKTOP
-    delay(10);
+    pinMode(pressure_sensor_high_pin, INPUT);
+    pinMode(pressure_sensor_high_pin, INPUT);
 #endif
-    enable();
 }
 
-float PropulsionSystem::get_pressure() {
+/* Tank implementation */
+
+void Tank::reset()
+{
+    for (size_t i = 0; i < num_pins; ++i)
+    {
+        digitalWrite(valve_pins[i], LOW);
+    }
+}
+
+int Tank::get_temp()
+{
+    return analogRead(temp_sensor_pin);
+}
+
+/* Tank2 implementation */
+
+void Tank2::clear_schedule()
+{
+    set_schedule({0, 0, 0, 0});
+}
+
+void Tank2::set_schedule(const std::array<unsigned int, 4> &setting)
+{
+    for(size_t i = 0; i < num_pins; i++) 
+        schedule[i] = setting[i];
+}
+
+float Tank2::get_pressure() {
     static int low_gain_read = 0;
     static int high_gain_read = 0;
     static float pressure = 0;
@@ -95,19 +122,26 @@ float PropulsionSystem::get_pressure() {
     return pressure;
 }
 
-signed int PropulsionSystem::get_temp_inner() {
-#ifdef DESKTOP
-    return 0;
-#else
-    return 0; // TODO replace with analogRead
+/* Propulsion System implementation */
+
+void PropulsionSystem::reset() {
+    tank1.reset();
+    tank2.reset();
+    tank2.clear_schedule();
+}
+
+void PropulsionSystem::enable()
+{
+    is_enabled = true;
+#ifndef DESKTOP
+    tank2.thrust_valve_loop_timer.begin(thrust_valve_loop, tank2.thrust_valve_loop_interval_us);
 #endif
 }
 
-signed int PropulsionSystem::get_temp_outer() {
-#ifdef DESKTOP
-    return 0;
-#else
-    return 0; // TODO replace with analogRead
+void PropulsionSystem::disable() {
+    is_enabled = false;
+#ifndef DESKTOP
+    tank2.thrust_valve_loop_timer.end();
 #endif
 }
 
@@ -119,54 +153,50 @@ bool PropulsionSystem::is_functional() {
 #endif
 }
 
-void PropulsionSystem::set_thrust_valve_schedule(const std::array<unsigned int, 4> &setting) {
-    disable();
+bool PropulsionSystem::open_valve(Tank& tank, size_t valve_idx)
+{
+    if (valve_idx >= tank.num_pins || !tank.valve_lock.is_free()) 
+        return false;
+    // disable();
 #ifndef DESKTOP
     delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
+    tank.valve_lock.procure(tank.valve_lock_duration);
+    digitalWrite(tank.valve_pins[valve_idx], HIGH);
 #endif
-    for(size_t i = 0; i < 4; i++) thrust_valve_schedule[i] = setting[i];
-    enable();
+    // enable();
+    tank.is_valve_opened[valve_idx] = 1;
+    return true;
 }
 
-void PropulsionSystem::set_tank_valve_state(bool valve, bool state) {
-    disable();
-#ifndef DESKTOP
-    delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
-    digitalWrite(valve_pins[valve], state);
-#endif
-    enable();
+void PropulsionSystem::close_valve(Tank& tank, size_t valve_idx)
+{
+    // disable();
+    if (valve_idx >= tank.num_pins)
+        return;
+    #ifndef DESKTOP
+        delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
+        digitalWrite(tank.valve_pins[valve_idx], 0);
+    #endif
+    tank.is_valve_opened[valve_idx] = 0;
+    // enable();
 }
 
 void PropulsionSystem::thrust_valve_loop() {
     noInterrupts(); // Must disable interrupts since this function is not interrupt safe
-    for (unsigned char i = 2; i < 6; i++) {
-        if (thrust_valve_schedule[i - 2] < thrust_valve_loop_interval_ms) {
+    for (unsigned char i = 0; i < tank2.num_pins; i++) {
+        if (tank2.schedule[i] < tank2.thrust_valve_loop_interval_ms) {
             // Firing on valve i - 2 is complete
-            #ifndef DESKTOP
-            digitalWrite(valve_pins[i - 2], LOW);
-            #endif
-
-            thrust_valve_schedule[i - 2] = 0;
-            is_valve_opened[i] = false;
+            close_valve(tank2, i);
+            tank2.schedule[i] = 0;
             continue;
         }
-        else if (!is_valve_opened[i] && !valve_start_locked_out) {
+        else if (!tank2.is_valve_opened[i] && tank2.valve_lock.is_free()) {
             // Open valve and prevent other valves from opening at the same time
-            valve_start_locked_out = true;
-            #ifndef DESKTOP
-            digitalWrite(valve_pins[i - 2], HIGH);
-            #endif
-            is_valve_opened[i] = true;
+            open_valve(tank2, i);
         }
-        else if (valve_start_locked_out) {
-            // 2 ms have passed since the lockout happened, so it's safe to unlock
-            // the valves.
-            valve_start_locked_out = false;
-        }
-
-        if (is_valve_opened[i]) {
+        if (tank2.is_valve_opened[i]) {
             // Decrement the timer for the valve being open
-            thrust_valve_schedule[i - 2] -= thrust_valve_loop_interval_ms;
+            tank2.schedule[i] -= tank2.thrust_valve_loop_interval_ms;
         }
     }
     interrupts();

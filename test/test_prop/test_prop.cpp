@@ -1,9 +1,7 @@
 #include <unity.h>
 #define PROP_TEST
 #include <PropulsionSystem.hpp>
-#include "core_pins.h"
-#include "Arduino.h"
-#include "usb_serial.h"
+#include <Arduino.h>
 
 /**
  * test_prop.cpp
@@ -25,13 +23,13 @@ bool is_valve_open(size_t valve_pin);
 const std::array<unsigned int, 4> zero_schedule = {0, 0, 0, 0};
 
 Devices::PropulsionSystem prop_system;
-
+// -llibc -lc
 void set_firing_schedule(unsigned int a, unsigned int b, unsigned int c, unsigned int d)
 {
-    prop_system.thrust_valve_schedule[0] = a;
-    prop_system.thrust_valve_schedule[1] = b;
-    prop_system.thrust_valve_schedule[2] = c;
-    prop_system.thrust_valve_schedule[3] = d;
+    prop_system.tank2.schedule[0] = a;
+    prop_system.tank2.schedule[1] = b;
+    prop_system.tank2.schedule[2] = c;
+    prop_system.tank2.schedule[3] = d;
 }
 
 void test_initialization()
@@ -50,7 +48,7 @@ void test_initialization()
 void is_schedule_expected(const std::array<unsigned int, 4> &expected_schedule)
 {
     for (size_t i = 0; i < 4; ++i)
-        TEST_ASSERT_EQUAL(expected_schedule[i], prop_system.thrust_valve_schedule);
+        TEST_ASSERT_EQUAL(expected_schedule[i], prop_system.tank2.schedule[i]);
 }
 
 // Make sure all pins low
@@ -81,12 +79,12 @@ void test_enable()
     ASSERT_TRUE(prop_system.is_enabled, "interval timer should be on");
     TEST_ASSERT_TRUE(prop_system.is_functional());
     check_all_valves_closed();
-    ASSERT_FALSE(prop_system.valve_start_locked_out, 
+    ASSERT_FALSE(prop_system.tank2.valve_lock.is_free(), 
     "thrust valves should be locked");
     delay(6); // make sure the interrupt didn't turn on the valves
     // enable should not open any valves since schedule is 0
     check_all_valves_closed();
-    ASSERT_FALSE(prop_system.valve_start_locked_out, 
+    ASSERT_FALSE(prop_system.tank2.valve_lock.is_free(), 
     "thrust valves should be locked since schedule is 0");
 }
 
@@ -105,24 +103,24 @@ void test_disable()
 // test that we can open and close the tank valves
 void test_set_tank_valve_state()
 {
-    prop_system.set_tank_valve_state(0, 1); // open valve 0
+    prop_system.open_valve(prop_system.tank1, 0);
     ASSERT_TRUE(is_valve_open(0), "valve 0 should be open");
     delay(1000); // fire for 1 second
-    prop_system.set_tank_valve_state(0, 0); // open valve 1
+    prop_system.close_valve(prop_system.tank1, 0);
     ASSERT_FALSE(is_valve_open(0), "valve 0 should be closed"); // make sure it is closed
 }
 
 void test_tank_lock()
 {
-    prop_system.set_tank_valve_state(1, 1); // open valve
-    ASSERT_TRUE(prop_system.tank_valve_locked_out, "tank valves should be locked");
+    prop_system.open_valve(prop_system.tank1, 1);
+    ASSERT_TRUE(prop_system.tank2.valve_lock.is_free(), "tank valves should be locked");
     delay(1000);
-    prop_system.set_tank_valve_state(1, 0); // close valve
-    ASSERT_TRUE (prop_system.tank_valve_locked_out, "tank should still be locked");
+    prop_system.close_valve(prop_system.tank1, 1);
+    ASSERT_TRUE (prop_system.tank2.valve_lock.is_free(), "tank should still be locked");
     delay(1000* 5);
-    ASSERT_TRUE (prop_system.tank_valve_locked_out, "tank should still be locked");
+    ASSERT_TRUE (prop_system.tank2.valve_lock.is_free(), "tank should still be locked");
     delay(1000*5); 
-    ASSERT_TRUE (prop_system.tank_valve_locked_out, "tank should be unlocked");
+    ASSERT_TRUE (prop_system.tank2.valve_lock.is_free(), "tank should be unlocked");
 }
 
 // Open tank valve for 1 second and wait 10 s to make sure no one can fire
@@ -132,25 +130,23 @@ void fire_tank_valve(size_t valve_pin)
     {
         ASSERT_FALSE(1, "Tank Valve pins are indexed at 0 and 1");
     }
-    while (prop_system.tank_valve_locked_out) // busy wait this for now
-    {
+    while ( !prop_system.open_valve(prop_system.tank1, 1) ) 
         delay(140);
-    }
-    prop_system.set_tank_valve_state(valve_pin, 1); // open valve
+
     delay(1000);
-    prop_system.set_tank_valve_state(valve_pin, 0); // close valve
+    prop_system.close_valve(prop_system.tank1, 1);
 }
 
 // TODO: not sure how to test this
 void test_set_thrust_valve_schedule()
 {
     TEST_ASSERT_FALSE(prop_system.is_enabled);
-    if (prop_system.get_pressure() == 0)
+    if (prop_system.tank2.get_pressure() == 0)
     {
         fill_tank();
     }
     static const std::array<unsigned int, 4> schedule = {4, 2, 3, 4};
-    prop_system.set_thrust_valve_schedule(schedule);
+    prop_system.tank2.set_schedule(schedule);
     prop_system.enable();
     TEST_ASSERT_TRUE(is_valve_open(2) && is_valve_open(3) && is_valve_open(4) && is_valve_open(5))
 }
@@ -161,28 +157,28 @@ void fill_tank()
     // Fire a maximum of 20 times for 1 s every 10s until we have threshold_presure
     for ( size_t i = 0; is_at_threshold_pressure() && i < 20; ++i)
     {
-        prop_system.set_tank_valve_state(0, 1); // open tank
+        prop_system.open_valve(prop_system.tank1, 0);
         delay(1000);
-        prop_system.set_tank_valve_state(0, 0); // close tank
+        prop_system.close_valve(prop_system.tank1, 0);
         delay(1000* 10); // fire every 10 seconds
     }
-    ASSERT_TRUE(prop_system.get_pressure() - prop_system.threshold_pressure > 0, 
-    "tank 2 pressure should be above threshold pressure")
+    ASSERT_TRUE(is_at_threshold_pressure(), "tank 2 pressure should be above threshold pressure")
 }
 
 bool is_at_threshold_pressure()
 {
-    return abs(prop_system.get_pressure() - prop_system.threshold_pressure) > prop_system.pressure_delta;
+    return prop_system.tank2.get_pressure() > prop_system.tank2.threshold_pressure;
 }
 
 // Empty out the outer tank so that pressure is 0
 void reset_tank()
 {
+    // this is bad
     check_all_valves_closed(); // make sure all outer valves are closed
-    while (prop_system.get_pressure() > prop_system.pressure_delta) // arbitrary delta
+    while (prop_system.tank2.get_pressure() > 1.0f) // arbitrary delta
         thrust();
-    ASSERT_TRUE(prop_system.get_pressure() < prop_system.pressure_delta, 
-    "tank 2 pressure should be lower after firing");
+    // ASSERT_TRUE(prop_system.get_pressure() < prop_system.pressure_delta, 
+    // "tank 2 pressure should be empty");
 }
 
 void thrust()
@@ -192,7 +188,7 @@ void thrust()
     static const std::array<unsigned int, 4> schedule = {4, 2, 3, 6};
     ASSERT_FALSE(is_valve_open(0) || is_valve_open(1), 
     "Both tank valves should be closed");
-    prop_system.set_thrust_valve_schedule(schedule);
+    prop_system.tank2.set_schedule(schedule);
     prop_system.enable();
     delay(120); // outer valves have 120 seconds to finish thrust
     TEST_ASSERT_FALSE(prop_system.is_enabled);
@@ -203,56 +199,62 @@ void thrust()
 // Test that opening outer valves decrease pressure
 void test_get_pressure()
 {
-    auto old_pressure = prop_system.get_pressure();
-    prop_system.set_tank_valve_state(0, 1);
+    auto old_pressure = prop_system.tank2.get_pressure();
+    prop_system.open_valve(prop_system.tank1, 0);
     delay(1000); // 1 seconds
-    prop_system.set_tank_valve_state(0, 0);
-    ASSERT_TRUE(prop_system.get_pressure() > old_pressure, 
-    "new pressure of tank 2 should be higher after filling");
+    prop_system.close_valve(prop_system.tank1, 0);
+    ASSERT_TRUE(prop_system.tank2.get_pressure() > old_pressure, 
+    "pressure of tank 2 should be higher after filling");
 
-    old_pressure = prop_system.get_pressure();
+    old_pressure = prop_system.tank2.get_pressure();
     reset_tank();
-    ASSERT_TRUE(prop_system.get_pressure() < old_pressure,
-    "new pressure of tank 2 should be lower after firing");
+    ASSERT_TRUE(prop_system.tank2.get_pressure() < old_pressure,
+    "pressure of tank 2 should be lower after firing");
 }
 
 // Test that the backup valve can fill the tank to threshold value
 void test_backup_valve()
 {
-    auto old_pressure = prop_system.get_pressure();
-    prop_system.set_tank_valve_state(1, 1);
+    auto old_pressure = prop_system.tank2.get_pressure();
+    prop_system.open_valve(prop_system.tank1, 1);
     delay(1000);
-    prop_system.set_tank_valve_state(1, 0);
-    ASSERT_TRUE(prop_system.get_pressure() > old_pressure, 
-    "new pressure of tank 2 should be lower after firing");
+    ASSERT_TRUE(is_valve_open(1), "tank 1 valve 1 should be opened");
+    prop_system.close_valve(prop_system.tank1, 1);
+    ASSERT_TRUE(prop_system.tank2.get_pressure() > old_pressure, 
+    "pressure of tank 2 should be higher after filling");
     reset_tank();
+    ASSERT_TRUE(prop_system.tank2.get_pressure() < old_pressure,
+    "pressure of tank 2 should be lower after firing");
 }
 
 void test_get_temp_inner()
 {
     // temperature increases with pressure
     reset_tank();
-    auto old_temp = prop_system.get_temp_inner();
+    auto old_temp = prop_system.tank1.get_temp();
 
     fill_tank();
-    ASSERT_TRUE( prop_system.get_temp_inner() < old_temp, 
-    "new temp of tank 1 should be lower after filling");
+    ASSERT_TRUE( prop_system.tank1.get_temp() < old_temp, 
+    "temp of tank 1 should be lower after filling");
+    old_temp = prop_system.tank1.get_temp();
 
-    old_temp = prop_system.get_temp_inner();
     reset_tank();
-    ASSERT_TRUE( prop_system.get_temp_inner() > old_temp, 
-    "new temp of tank 1 should be the same after firing");
+    ASSERT_TRUE( prop_system.tank1.get_temp() > old_temp, 
+    "temp of tank 1 should be the same after firing");
 }
 
 void test_get_temp_outer()
 {
     reset_tank();
-    auto old_temp = prop_system.get_temp_outer();
+    auto old_temp = prop_system.tank2.get_temp();
     fill_tank();
-    auto new_temp = prop_system.get_temp_outer();
+    auto new_temp = prop_system.tank2.get_temp();
     ASSERT_TRUE(new_temp > old_temp, 
-    "new temp of tank 2 should be higher after filling");
+    "temp of tank 2 should be higher after filling");
+    old_temp = new_temp;
     thrust();
+    ASSERT_TRUE(prop_system.tank2.get_temp() < old_temp, 
+    "temp of tank 2 should be lower after firing");
 }
 
 void setup() {
@@ -265,11 +267,16 @@ void setup() {
     RUN_TEST(test_is_functional);
     RUN_TEST(test_set_tank_valve_state);
     RUN_TEST(test_set_thrust_valve_schedule);
-    RUN_TEST(test_disable);
     RUN_TEST(test_enable);
+    RUN_TEST(test_disable);
     RUN_TEST(test_get_pressure);
     RUN_TEST(test_backup_valve);
     RUN_TEST(test_get_temp_inner);
     RUN_TEST(test_get_temp_outer);
     UNITY_END();
+}
+
+void loop()
+{
+
 }
