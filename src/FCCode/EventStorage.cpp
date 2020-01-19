@@ -7,7 +7,7 @@ EventStorage::EventStorage(const std::string& name,
                  const unsigned int& _ccno)
 {
     sub_events.reserve(storage_size);
-    for(int i = 1; i <= storage_size; i++) {
+    for(size_t i = 1; i <= storage_size; i++) {
         sub_events.emplace_back(name + std::string(".") + std::to_string(i),
             _data_fields, _print_fn, _ccno);
     }
