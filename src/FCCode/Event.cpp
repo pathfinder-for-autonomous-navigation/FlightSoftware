@@ -2,7 +2,7 @@
 
 Event::Event(const std::string& name,
           std::vector<ReadableStateFieldBase*>& _data_fields,
-          const char* (*_print_fn)(std::vector<ReadableStateFieldBase*>&),
+          const char* (*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
           const unsigned int& _ccno) :
           StateField<bool>(name, true, false),
           data_fields(_data_fields),
@@ -50,7 +50,7 @@ void Event::signal() {
 }
 
 const char* Event::print() const {
-    return print_fn(data_fields);
+    return print_fn(ccno, data_fields);
 }
 
 void Event::deserialize() {}
