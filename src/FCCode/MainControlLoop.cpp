@@ -79,6 +79,7 @@ void MainControlLoop::execute() {
 
     piksi_control_task.execute_on_time();
     gomspace_controller.execute_on_time();
+    adcs_monitor.execute_on_time();
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
     attitude_computer.execute_on_time();
