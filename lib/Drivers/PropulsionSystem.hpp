@@ -162,8 +162,6 @@ class PropulsionSystem : public Device {
      */
     static void thrust_valve_loop();
 
-    static void pressurize_tank();
-
     static Tank1 tank1;
     static Tank2 tank2;
     static volatile bool is_enabled;

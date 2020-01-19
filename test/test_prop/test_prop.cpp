@@ -85,16 +85,12 @@ void test_enable()
     delay(6); // make sure the interrupt didn't turn on the valves
     // enable should not open any valves since schedule is 0
     check_all_valves_closed();
-    ASSERT_FALSE(prop_system.tank2.valve_lock.is_free(), 
-    "thrust valves should be locked since schedule is 0");
 }
 
 // should disable interval and turn off all thrust valves
 void test_disable()
 {
-    noInterrupts();
     prop_system.disable();
-    interrupts();
     // TODO: how to check that intervaltimer is off
     ASSERT_FALSE(prop_system.is_enabled, "interval timer should be off");
     TEST_ASSERT_TRUE(prop_system.is_functional());
@@ -175,6 +171,8 @@ void test_set_thrust_valve_schedule()
     prop_system.tank2.set_schedule(schedule);
     prop_system.enable();
     TEST_ASSERT_TRUE(is_valve_open(2) && is_valve_open(3) && is_valve_open(4) && is_valve_open(5))
+    delay(1000);
+    check_all_valves_closed();
 }
 
 // Fill tank to threshold value

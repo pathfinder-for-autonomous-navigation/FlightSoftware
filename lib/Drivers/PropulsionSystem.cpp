@@ -148,6 +148,7 @@ void PropulsionSystem::disable() {
     noInterrupts();
     tank2.thrust_valve_loop_timer.end();
     interrupts();
+    tank2.clear_schedule();
 #endif
 }
 
