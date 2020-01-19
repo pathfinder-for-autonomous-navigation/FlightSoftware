@@ -43,13 +43,43 @@ matrix:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-      - name: "Verify Teensy code compiles"
+      - name: "Verify Teensy code compiles for flight software"
         addons:
           apt:
             packages:
             - cppcheck
         script:
             - ./tools/verify_teensy_builds.sh
+      
+      - name: "Common Software Tests"
+        addons:
+          apt:
+            packages:
+            - cppcheck
+            - lcov
+            - valgrind
+        install:
+            - pip install -U platformio
+            - platformio update
+            - sudo gem install coveralls-lcov
+        script:
+            - cd CommonSoftware
+            - ./tools/run_desktop_tests.sh
+        after_success:
+            - ./tools/generate_coverage.sh
+            - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
+
+      - name: "ADCS Software Tests"
+        install:
+            - pip install -U platformio
+            - platformio update
+        script:
+            - cd ADCSSoftware
+            - platformio run -e leader
+            - platformio run -e leader_debug
+            - platformio run -e follower
+            - platformio run -e debug
+            - platformio run -e havt_debug
 
       #- name: "Run unit tests on Teensy"
         #script:
