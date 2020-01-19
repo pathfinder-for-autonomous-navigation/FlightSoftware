@@ -1,0 +1,33 @@
+sudo: false
+cache:
+    directories:
+        - "~/.platformio"
+
+language: python
+python: "3.7"
+install:
+    - pip install -U platformio
+    - platformio update
+
+matrix:
+    include:
+      - name: "Run desktop unit tests"
+        addons:
+          apt:
+            packages:
+            - cppcheck
+            - lcov
+            - valgrind
+        install:
+            - pip install -U platformio
+            - platformio update
+            - sudo gem install coveralls-lcov
+        script:
+            - ./tools/run_desktop_tests.sh
+        after_success:
+            - ./tools/generate_coverage.sh
+            - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
+
+      - name: "Compile and run unit tests on Teensy"
+        script:
+            - ./tools/run_teensy_tests.sh
