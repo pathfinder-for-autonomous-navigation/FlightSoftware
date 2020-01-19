@@ -3,6 +3,8 @@
 
 #include "ControlTask.hpp"
 
+#include <adcs_havt_devices.hpp> // needed for ADCSCommander fill-in
+
 // This class does the unpleasant task of creating state fields that
 // controllers expect to see but for which we haven't defined any
 // behavior yet.
@@ -49,6 +51,7 @@ class FieldCreatorTask : public ControlTask<void> {
       WritableStateField<float> imu_gyr_temp_kd_f;
       WritableStateField<float> imu_gyr_temp_desired_f;
 
+      Serializer<bool> havt_bool_sr;
       std::vector<WritableStateField<bool>> havt_cmd_table_vector_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
@@ -79,7 +82,8 @@ class FieldCreatorTask : public ControlTask<void> {
         imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", k_sr),
         imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", k_sr),
         imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", k_sr),
-        imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", Serializer<float>(imu::min_eq_temp, imu::max_eq_temp, 8))
+        imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", Serializer<float>(imu::min_eq_temp, imu::max_eq_temp, 8)),
+        havt_bool_sr()
       {
           // Create the fields!
           
@@ -120,12 +124,13 @@ class FieldCreatorTask : public ControlTask<void> {
           // reserve memory
           havt_cmd_table_vector_f.reserve(adcs_havt::Index::_LENGTH);
           // fill vector of statefields for cmd havt
+          char buffer[50];
           for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
           {
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_cmd.havt_device");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_table_vector.emplace_back(buffer, havt_bool_sr);
+            havt_cmd_table_vector_f.emplace_back(buffer, havt_bool_sr);
             add_writable_field(havt_cmd_table_vector_f[idx]);
           }
       }
