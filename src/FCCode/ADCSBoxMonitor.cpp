@@ -1,6 +1,7 @@
 #include "ADCSBoxMonitor.hpp"
 
 #include <adcs_constants.hpp>
+#include <adcs_havt_devices.hpp>
 
 ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
@@ -27,15 +28,36 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     rwa_torque_rd_flag("adcs_monitor.torque_rd_flag", flag_sr),
     mag_vec_flag("adcs_monitor.mag_vec_flag", flag_sr),
     gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
-    gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr)
+    gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr),
+    havt_bool_sr()
     {
-        //fill vector of statefields
+        // reserve memory
+        ssa_voltages_f.reserve(ssa::num_sun_sensors);
+        // fill vector of statefields for ssa
         char buffer[50];
         for(unsigned int i = 0; i<ssa::num_sun_sensors;i++){
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.ssa_voltage");
             sprintf(buffer + strlen(buffer), "%u", i);
-            ssa_voltages_f.push_back(ReadableStateField<float>(buffer, ssa_voltage_sr));
+            ssa_voltages_f.emplace_back(buffer, ssa_voltage_sr);
+        }
+
+        // reserve memory
+        havt_table_vector.reserve(adcs_havt::Index::_LENGTH);
+        // fill vector of statefields for havt
+        for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+        {
+            std::memset(buffer, 0, sizeof(buffer));
+            sprintf(buffer,"adcs_monitor.havt_device");
+            sprintf(buffer + strlen(buffer), "%u", idx);
+            havt_table_vector.emplace_back(buffer, havt_bool_sr);
+        }
+        
+        // add device availabilty to registry, and initialize value to 0
+        for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+        {
+            add_readable_field(havt_table_vector[idx]);
+            havt_table_vector[idx].set(false);
         }
 
         //actually add statefields to registry
@@ -113,8 +135,16 @@ void ADCSBoxMonitor::execute(){
     rwa_torque_rd_f.set(rwa_torque_rd);
     ssa_mode_f.set(ssa_mode);
 
-    for(int i = 0; i<ssa::num_sun_sensors; i++){
+    for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);
+    }
+
+    // set vector of device availability
+    std::bitset<havt::max_devices> havt_read(0);
+    adcs_system.get_havt(&havt_read);
+    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+    {
+        havt_table_vector[idx].set(havt_read.test(idx));
     }
 
     mag_vec_f.set(mag_vec);
