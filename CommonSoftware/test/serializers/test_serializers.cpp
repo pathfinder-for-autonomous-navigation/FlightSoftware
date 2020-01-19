@@ -375,7 +375,7 @@ void test_vec_serializer() {
 
         // Generate random vector.
         const T x = rand() / T(RAND_MAX) * 2;
-        const T t = rand() / T(RAND_MAX) * (2 * M_PI);
+        const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
         const T y = cos(t) * sqrt(4 - x*x);
         const T z = sin(t) * sqrt(4 - x*x);
         vector_t vec = {x, y, z};
@@ -459,8 +459,8 @@ void test_quat_serializer() {
         quat_t result;
 
         // Generate random quaternion.
-        const T t = rand() / T(RAND_MAX) * (2 * M_PI);
-        const T tt = rand() / T(RAND_MAX) * (2 * M_PI);
+        const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
+        const T tt = rand() / T(RAND_MAX) * (2 * 3.14159265);
         const T ux = rand() / T(RAND_MAX) * sin(tt/2);
         const T uy = cos(t) * sqrtf(1 - powf(ux, 2)) * sin(tt/2);
         const T uz = sin(t) * sqrtf(1 - powf(ux, 2)) * sin(tt/2);
