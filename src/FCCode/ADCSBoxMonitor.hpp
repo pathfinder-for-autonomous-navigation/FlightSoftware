@@ -81,6 +81,10 @@ protected:
     ReadableStateField<bool> gyr_vec_flag;
     //! Is the gyroscope temperature reading within the validity bounds?W
     ReadableStateField<bool> gyr_temp_flag;
+
+    //! vector for havt table, a 0/false means device disabled; 1/true is functional
+    std::vector<ReadableStateField<bool>> havt_table_vector;
+    Serializer<bool> havt_bool_sr;
 };
 
 #endif
