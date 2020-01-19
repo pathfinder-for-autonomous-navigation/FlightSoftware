@@ -473,22 +473,25 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         std::cout << "mag: " << mag << "\n";
 
-        magnitude_serializer->serialize(mag);
-        std::copy(magnitude_serializer->get_bit_array().begin(), 
-                  magnitude_serializer->get_bit_array().end(),
-                  serialized_position);
-        std::advance(serialized_position, magnitude_serializer->bitsize());
+        if(N == 3){ // THIS IF BLOCK IS NEW - SHIHAO
+            magnitude_serializer->serialize(mag);
+            std::copy(magnitude_serializer->get_bit_array().begin(), 
+                    magnitude_serializer->get_bit_array().end(),
+                    serialized_position);
+            std::advance(serialized_position, magnitude_serializer->bitsize());
+        }
 
         // Store serialized non-maximal components
         size_t component_number = 0;
         for (size_t i = 0; i < N; i++) {
             if (i != max_component_idx) {
                 T element_scaled = src[i] / mag;
+                // std::cout << "ele :" << element_scaled << " "; as far as i can tell this is good
                 vector_element_serializers[component_number]->serialize(element_scaled);
                 std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
                           vector_element_serializers[component_number]->get_bit_array().end(),
                           serialized_position);
-                std::advance(serialized_position, vector_element_serializers[component_number]->bitsize());
+                std::advance(serialized_position, vector_element_serializers[component_number]->bitsize()+0); // any number in +- 10 does nothing why??
                 component_number++;
             }
         }
@@ -525,6 +528,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         std::cout << "deser: ";
         T magnitude = 0.0f;
         magnitude_serializer->deserialize(&magnitude);
+
+        // this is just printing the upper bound of the magnitude of a component of the constructor
         std::cout << magnitude << " ";
         // not deserializing magnitude correctly for float vector
 
@@ -536,7 +541,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                 j++;
             }
         }
-        (*dest)[max_component_idx] = sqrt((*dest)[max_component_idx]);
+        (*dest)[max_component_idx] = sqrt((*dest)[max_component_idx]); // this line is sus
 
         for (size_t i = 0; i < N; i++) (*dest)[i] *= magnitude;
     }
