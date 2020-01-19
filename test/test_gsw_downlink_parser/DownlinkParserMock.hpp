@@ -1,7 +1,7 @@
 #ifndef DOWNLINK_PARSER_MOCK_HPP_
 #define DOWNLINK_PARSER_MOCK_HPP_
 
-#include "../../src/GroundCode/DownlinkParser.hpp"
+#include <fsw/GroundCode/DownlinkParser.hpp>
 
 #include <json.hpp>
 using json = nlohmann::json;

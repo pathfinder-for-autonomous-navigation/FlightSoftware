@@ -1,9 +1,12 @@
 #include "../StateFieldRegistryMock.hpp"
+
 #define DEBUG
-#include "../../src/FCCode/UplinkConsumer.h"
-#include<bitstream.h>
+#include <fsw/FCCode/UplinkConsumer.h>
+
+#include <bitstream.h>
 #include <unity.h>
 #include <map>
+
 using namespace std;
 
 // convert n to bits

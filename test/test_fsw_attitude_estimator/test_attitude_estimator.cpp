@@ -1,6 +1,7 @@
 #include "../StateFieldRegistryMock.hpp"
 
-#include "../../src/FCCode/AttitudeEstimator.hpp"
+#include <fsw/FCCode/AttitudeEstimator.hpp>
+
 #include <unity.h>
 
 class TestFixture {

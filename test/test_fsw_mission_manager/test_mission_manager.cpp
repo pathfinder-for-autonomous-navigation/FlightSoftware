@@ -1,9 +1,10 @@
 #include "../StateFieldRegistryMock.hpp"
+
+#include <fsw/FCCode/MissionManager.hpp>
+#include <fsw/FCCode/mission_mode_t.enum>
+
 #include <StateField.hpp>
 #include <Serializer.hpp>
-#include "../src/FCCode/MissionManager.hpp"
-#include "../src/FCCode/mission_mode_t.enum"
-
 #include <unity.h>
 
 class TestFixture {

@@ -1,5 +1,6 @@
-#include "../../src/FCCode/Fault.hpp"
 #include "../StateFieldRegistryMock.hpp"
+
+#include <fsw/FCCode/Fault.hpp>
 #include <unity.h>
 
 /**
