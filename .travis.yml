@@ -43,7 +43,7 @@ matrix:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-      - name: "Verify Teensy code compiles"
+      - name: "Verify Teensy code compiles for flight software"
         addons:
           apt:
             packages:
