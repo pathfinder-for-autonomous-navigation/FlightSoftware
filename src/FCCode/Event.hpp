@@ -9,10 +9,14 @@
  */
 class Event : public ReadableStateFieldBase, public StateField<bool> {
   public:
+    // Constructor.
     Event(const std::string& name,
           std::vector<ReadableStateFieldBase*>& _data_fields,
           const char* (*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
           const unsigned int& _ccno);
+
+    // Move constructor, required for EventStorage.
+    Event(Event&& other);
 
     // Functions that will be overridden from SerializableStateFieldBase
   protected:
@@ -28,6 +32,8 @@ class Event : public ReadableStateFieldBase, public StateField<bool> {
      * This function just calls serialize().
      */
     void signal();
+
+    virtual ~Event() {}
 
   private:
     std::vector<ReadableStateFieldBase*>& data_fields;

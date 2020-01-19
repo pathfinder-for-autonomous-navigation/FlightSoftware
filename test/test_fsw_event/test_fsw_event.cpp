@@ -1,8 +1,9 @@
 #include "../../src/FCCode/Event.hpp"
+#include "../../src/FCCode/EventStorage.hpp"
 #include "../StateFieldRegistryMock.hpp"
 #include <unity.h>
 
-struct TestFixture {
+struct TestFixtureEvent {
   public:
     ReadableStateField<bool> data1_f;
     ReadableStateField<bool> data2_f;
@@ -19,7 +20,7 @@ struct TestFixture {
         return print_data;
     }
 
-    TestFixture() :
+    TestFixtureEvent() :
         data1_f("data1", Serializer<bool>()),
         data2_f("data2", Serializer<bool>()),
         event_data({&data1_f, &data2_f}),
@@ -30,10 +31,9 @@ struct TestFixture {
     }
 };
 
-char TestFixture::print_data[40];
+char TestFixtureEvent::print_data[40];
 
-void test_event() {
-    TestFixture tf;
+void test_single_event(TestFixtureEvent& tf) {
     // Test bitsize
     TEST_ASSERT_EQUAL(32 + 2, tf.event.bitsize());
 
@@ -41,7 +41,7 @@ void test_event() {
     tf.control_cycle_count = 20;
     tf.data1_f.set(true);
     tf.data2_f.set(false);
-    
+
     // Verify that upon serialization, the values are written into the event's bitset in the way
     // that we would expect
     tf.event.signal();
@@ -63,10 +63,49 @@ void test_event() {
     TEST_ASSERT_EQUAL_STRING("E: time: 20, data: 0, 1", print_result);
 }
 
+void test_event() {
+    TestFixtureEvent tf;
+    test_single_event(tf);
+}
+
+struct TestFixtureEventStorage : public TestFixtureEvent {
+  public:
+    EventStorage event_storage;
+    StateFieldRegistryMock registry;
+
+    TestFixtureEventStorage() :
+        TestFixtureEvent(),
+        event_storage("event", 3, event_data, print_fn, control_cycle_count)
+    {
+        event_storage.add_event_to_registry(registry);
+    }
+  protected:
+    using TestFixtureEvent::event;
+};
+
+// Test that the event storage correctly manages pointers for event storage.
+void test_event_storage() {
+    TestFixtureEventStorage tf;
+    // Three fields should have been created inside the state field registry.
+    tf.registry.check_field_exists(
+        tf.registry.find_readable_field_t<bool>("event.1"), "event.1");
+    tf.registry.check_field_exists(
+        tf.registry.find_readable_field_t<bool>("event.2"), "event.2");
+    tf.registry.check_field_exists(
+        tf.registry.find_readable_field_t<bool>("event.3"), "event.3");
+
+    // Event storage should behave the same as an event.
+    test_single_event(tf);
+    test_single_event(tf);
+    test_single_event(tf);
+    test_single_event(tf);
+}
+
 #ifdef DESKTOP
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_event);
+    RUN_TEST(test_event_storage);
     return UNITY_END();
 }
 #else
@@ -76,6 +115,7 @@ void setup() {
     Serial.begin(9600);
     UNITY_BEGIN();
     RUN_TEST(test_event);
+    RUN_TEST(test_event_storage);
     UNITY_END();
 }
 

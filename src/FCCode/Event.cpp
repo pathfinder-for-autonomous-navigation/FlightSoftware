@@ -19,6 +19,12 @@ Event::Event(const std::string& name,
     }
 }
 
+Event::Event(Event&& other) :
+    StateField<bool>(other.name(), true, false),
+    data_fields(other.data_fields),
+    field_data(std::move(other.field_data)),
+    ccno(other.ccno) {}
+
 void Event::serialize() {
     unsigned int field_data_ptr = 0;
 
