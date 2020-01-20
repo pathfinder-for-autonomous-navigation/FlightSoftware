@@ -9,10 +9,10 @@ EventStorage::EventStorage(const std::string& name,
 {
     assert(storage_size < 100); // So that the suffixed event count doesn't have more than 2 digits
     sub_events.reserve(storage_size);
-    for(size_t i = 1; i <= storage_size; i++) {
+    for(unsigned char i = 1; i <= storage_size; i++) {
         char x[4];
         x[0] = '.';
-        itoa(i, x + 1, 10);
+        sprintf(x, ".%d", i);
         x[3] = 0;
         sub_events.emplace_back(name + std::string(x),
             _data_fields, _print_fn, _ccno);
