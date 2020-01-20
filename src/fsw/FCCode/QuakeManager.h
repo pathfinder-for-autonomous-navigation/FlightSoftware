@@ -83,10 +83,9 @@ class QuakeManager : public TimedControlTask<bool> {
    InternalStateField<size_t> radio_mt_len_f; 
 
    /**
-    * @brief Current radio state and mode (see radio_state_t.enum and radio_mode_t.enum).
+    * @brief Current radio state (see radio_state_t.enum).
     **/
    InternalStateField<unsigned char> radio_state_f;
-   InternalStateField<unsigned char> radio_mode_f;
 
    /**
     * The last cycle for which we had comms

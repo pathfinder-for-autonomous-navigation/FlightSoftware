@@ -26,7 +26,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         piksi.setup();
 
         // Set initial values
-        const double nan = std::numeric_limits<double>::quiet_NaN();
+        constexpr double nan = std::numeric_limits<double>::quiet_NaN();
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_fix));
         pos_f.set({nan, nan, nan});
         vel_f.set({nan, nan, nan});

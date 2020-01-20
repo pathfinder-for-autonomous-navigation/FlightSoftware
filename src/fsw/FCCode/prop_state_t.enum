@@ -1,8 +1,9 @@
-#ifndef propulsion_state_t_enum_
-#define propulsion_state_t_enum_
+#ifndef prop_state_t_enum_
+#define prop_state_t_enum_
 
 // prop.state
-enum class propulsion_state_t {
+enum class prop_state_t {
+    disabled,
     idle,
     awaiting_pressurization,
     pressurizing,
