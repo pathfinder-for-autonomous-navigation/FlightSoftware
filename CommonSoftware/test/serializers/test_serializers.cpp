@@ -381,7 +381,7 @@ void test_vec_serializer() {
     const size_t vec_bitsize = 40;
     const size_t magnitude_bitsize = vec_bitsize - 2 - 2 * csz; // Used for error threshold.
     T magnitude_err = 2.0 / powf(2, magnitude_bitsize);
-
+    std::cout << "ACCEPTABLE MAGN ERROR: " << magnitude_err << "\n";
     // (Deterministically) generate random vectors of magnitude 2, and see if they work 
     // with the serializer.
     // Criterion for functionality: the vector that's reported has a displacement from the
@@ -399,7 +399,7 @@ void test_vec_serializer() {
         const T y = cos(t) * sqrt(4 - x*x);
         const T z = sin(t) * sqrt(4 - x*x);
 
-        std::cout << x << " " << y << " " << z << "\n";
+        // std::cout << x << " " << y << " " << z << "\n";
 
         vector_t vec = {x, y, z};
         vec_serializer->serialize(vec);
@@ -419,7 +419,7 @@ void test_vec_serializer() {
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, x, y, z, result[0], result[1], result[2]);
-        //TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
 
         std::cout << err_str << "\n";
 

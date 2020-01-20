@@ -332,6 +332,9 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         max_component.resize(2);
 
+        // new 
+        sign_of_max_comp.resize(1);
+
         size_t component_sz = 0;
         if (N == 3) { component_sz = vec_component_sz; }
         else { component_sz = quat_component_sz; }
@@ -364,6 +367,9 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                 std::make_unique<Serializer<T>>(*other.vector_element_serializers[i]);
         }
         this->max_component = other.max_component;
+        // new
+        this->max_component_idx = other.max_component_idx;
+        this->sign_of_max_comp = other.sign_of_max_comp;
         this->component_scaled_values = other.component_scaled_values;
     }
 
@@ -393,6 +399,9 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     size_t max_component_idx = 0;
     bit_array max_component;
 
+    //new
+    bit_array sign_of_max_comp;
+
     /**
      * @brief Bit arrays that store the scaled-down representations of each vector component.
      */
@@ -401,8 +410,11 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     constexpr static size_t quat_magnitude_sz = (quat_sz - 3 * quat_component_sz);
     constexpr static size_t vec_min_sz = 2 + 2 * vec_component_sz;
 
-    constexpr static size_t print_size = 13 * N + (N - 1) + 1; // 13 characters per value in the array,
+    //constexpr static size_t print_size = 13 * N + (N - 1) + 1; // 13 characters per value in the array,
                                                                // N - 1 commas, 1 null character
+
+    constexpr static size_t print_size = 13 * N + (N - 1) + 1 + 1; // 13 characters per value in the array,
+                                                               // N - 1 commas, 1 for max comp sign? 1 null character,
 
     /**
      * @brief Construct a new Serializer object.
@@ -506,6 +518,12 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                 component_number++;
             }
         }
+
+        // new
+        if(src[max_component_idx] < 0)
+            sign_of_max_comp.set_int(1);
+        std::copy(sign_of_max_comp.begin(), sign_of_max_comp.end(), serialized_position);
+        std::advance(serialized_position, sign_of_max_comp.size());
     }
 
     //afaik this isn't being used
@@ -541,35 +559,33 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         magnitude_serializer->deserialize(&magnitude);
 
         // this is just printing the upper bound of the magnitude of a component of the constructor
-        std::cout << magnitude << "\n";
+        std::cout << magnitude;
         // not deserializing magnitude correctly for float vector
 
-        // old tanishq
-        // (*dest)[max_component_idx] = 1;
-        // int j = 0;  // Index of current component being processed
-        // for (size_t i = 0; i < N; i++) {
-        //     if (i != max_component_idx) {
-        //         vector_element_serializers[j]->deserialize(&(*dest)[i]);
-        //         j++;
-        //     }
-        // }
-        // (*dest)[max_component_idx] = sqrt((*dest)[max_component_idx]); // this line is sus
-        // (*dest)[max_component_idx] = 420.0; // this line is sus // recieved 840 at biggest magnitude
-        // (*dest)[max_component_idx] = sqrt((*dest)[max_component_idx]); // this line is sus
+        // new shihao code, if you just use max_component_idx, this will fail on IRL downlink
+        // local to deserialize variable
+        int deser_max_idx = max_component.to_uint();
 
-        // new shihao code
-        (*dest)[max_component_idx] = 1;
+        std::cout << "idx: " << deser_max_idx << "\n";
+        (*dest)[deser_max_idx] = 1.0f; // 1.0 or 1.0f?
         int j = 0;  // Index of current component being processed
         for (size_t i = 0; i < N; i++) {
-            if (i != max_component_idx) {
+            if (i != deser_max_idx) {
                 vector_element_serializers[j]->deserialize(&(*dest)[i]);
-                (*dest)[max_component_idx] -= (*dest)[i] * (*dest)[i]; // subtract off z^2/r^2 = 1 - x^2/r^2 ... // new
+                (*dest)[deser_max_idx] -= (*dest)[i] * (*dest)[i]; // subtract off; z^2/r^2 = 1 - x^2/r^2 ... // new
                 j++;
             }
         }
-        (*dest)[max_component_idx] = sqrt((*dest)[max_component_idx]); // this line is sus // seems correct
+        (*dest)[deser_max_idx] = sqrt((*dest)[deser_max_idx]); // this line is sus // seems correct
 
         for (size_t i = 0; i < N; i++) (*dest)[i] *= magnitude;
+
+        // new;
+        if(sign_of_max_comp.to_uint() == 1){
+            // (*dest)[deser_max_idx] *= -1;
+            (*dest)[deser_max_idx] *= -1;
+
+        }
     }
 
     const char* print(const std::array<T, N>& src) const override {
