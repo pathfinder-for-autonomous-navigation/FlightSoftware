@@ -1,6 +1,9 @@
 #ifndef PROPULSION_SYSTEM_HPP_
 #define PROPULSION_SYSTEM_HPP_
-
+/**
+ * PropulsionSystem.hpp
+ * Specifies the Driver for the propulsion system
+ */
 #include <array>
 #include "../Devices/Device.hpp"
 #ifndef DESKTOP
@@ -10,55 +13,204 @@
 
 namespace Devices {
 
+class TimedLock;
+class Tank;
+class Tank1;
+class Tank2;
 /**
- * PropulsionSystem.hpp
- * Specifies the Driver for the propulsion system
- * PropulsionSystem class defines the interface for the propulsion system
- * It consists of a static Tank1 and Tank2 object.
- * Static methods of PropulsionSystem such as open_valve and close_valve take
- * a reference to either of these objects.
+ * PropulsionSystem class defines the interface for the propulsion system.
  * 
- * To use the class, update the firing schedule, and then call
- * execute_schedule().
- * Example:
- *
- * SpikeAndHold sph;
- * sph.setup();
- * **/
+ * It consists of a static Tank1 and Tank2 data objects. 
+ * Only methods from PropulsionSystem may change the states of either Tank1 or Tank2. 
+ * 
+ * Tank1 valves are at index 0, 1
+ * Tank2 valves are at index 0, 1, 2, 3
+ * 
+ * Features:
+ * - OpenValve
+ * - CloseValve
+ * - SetSchedule
+ * 
+ * Dependencies: 
+ * SpikeAndHold must be enabled in order to use this system
+ * 
+ * Usage:
+ * - Use set_schedule to set a firing schedule for tank2. 
+ * - Use enable to turn on the schedule when we are close to the start_time.
+ * - Use disable to prematurely cancel the schedule.
+ * - Use clear_schedule to reset the schedule and start_time to 0.
+ * - Use is_tank2_ready to check if tank2 is scheduled to fire right now or in the future
+ * 
+ * Notes:
+ * Only tank2 has a schedule since only tank2 uses the IntervalTimer to fire
+ * 
+ **/
+class PropulsionSystem : public Device {
+public:
+    PropulsionSystem();
+
+    /**
+     * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
+     */
+    bool setup() override;
+
+    /**
+     * @brief Shuts off all valves, clears tank2 schedule, disables timer
+     */
+    void reset() override;
+
+    /**
+     * @brief Turns on interrupts provided by the thurst_value_loop_timer
+     * @return True if we tank2 is now set to fire at its current schedule.
+     * 
+     * tank2.start_time must be set to some time in the future
+     */
+    bool enable();
+
+    /**
+     * @brief Turns off interrupts (the thrust_value_loop_timer)
+     * 
+     */
+    void disable() override;
+
+    /**
+     * @brief True if Spike and Hold is enabled
+     */
+    bool is_functional() override;
+
+    /**
+     * @brief Sets the firing schedule for tank 2. Does not enable tank2 to
+     * fire. To do that, call enable()
+     * 
+     * PreCondition:
+     *  - start_time_us must not be more than 71 minutes into the future.
+     * Requires:
+     *  - Schedule is currently disabled
+     *  - start_time_us is some time in the future
+     *  - All valve1, ..., valve4 values less than 1000 (1 s)
+     * @return True if the requested schedule was successfully set
+     */
+    static bool set_schedule(
+        uint32_t valve1, 
+        uint32_t valve2, 
+        uint32_t valve3, 
+        uint32_t valve4, 
+        uint32_t start_time_us);
+
+    /**
+     * @brief clears the Tank2 schedule only if IntervalTimer is off
+     */
+    static bool clear_schedule();
+
+    /**
+     * @brief True if tank2 is firing right now or is scheduled to fire in the
+     * future
+     */
+    inline static bool is_tank2_ready()
+    {
+        return is_enabled;
+    }
+
+    /**
+     * @brief opens the valve specified by valve_idx in the specified tank
+     * */
+    static bool open_valve(Tank& tank, size_t valve_idx);
+
+    /**
+     * @brief closes the valve specified by valve_idx in the specified tank
+     */
+    static void close_valve(Tank& tank, size_t valve_idx);
+
+    static Tank1 tank1;
+    static Tank2 tank2;
+
+    private:
+    
+    /**
+     * @brief the function that is ran when interrupts provided by IntervalTimer
+     * is enabled
+     */
+    static void thrust_valve_loop();
+
+    /**
+     * @brief true if tank2's IntervalTimer is on (tank2 is scheduled to fire)
+     */
+    static volatile bool is_enabled;
+};
+
+/**
+ * 
+ * TimedLock is an "at least" lock with units in microseconds. 
+ * There is no concept of owner. Once procured, TimedLock remains locked until
+ * the end of the duration specified by the most recent procure. 
+ * 
+ */ 
 class TimedLock
 {
 public:
     inline TimedLock() : end_time(0){}
 
-    inline TimedLock(uint32_t ms_duration) : 
-    end_time(millis() + ms_duration) {}
+    inline TimedLock(uint32_t us_dration) : 
+    end_time(micros() + us_dration) {}
 
-    // No concept of owner
-    inline bool procure(uint32_t ms_duration)
+    /**
+     * Attempt to take the lock for us_duration
+     */
+    inline bool procure(uint32_t us_duration)
     {
-        if (millis() < end_time)
+        if (micros() < end_time)
         {
             return false;
         }
         else
         {
-            end_time = millis() + ms_duration;
+            end_time = micros() + us_duration;
             return true;
         }
     }
-    // True if the lock is currently free
+    /**
+     * Check the status of the lock
+     */
     inline bool is_free()
     {
-        return millis() > end_time;
+        return micros() > end_time;
     }
  private:   
     uint32_t end_time;
 };
 
+/**
+ * Tank represents a tank in the PropulsionSystem. Public methods of this class
+ * may not change its own internal state (side-effects)
+ * 
+ */
 class Tank {
 public:
     Tank(size_t num_pins);
 
+    /**
+     * @brief (Analog) reads the temperature sensor for this tank and 
+     * returns its value.
+     */
+    int get_temp();
+
+    /**
+     * @brief Returns true if the valve is open
+     * 
+     * (Digital) reads the pin for the specified valve and returns true
+     * if that pin is high
+     */
+    bool is_valve_open(size_t valve_idx);
+
+    /**
+     * @brief Returns true if the TimedLock for this tank is unlocked (free)
+     */
+    bool is_lock_free();
+
+    protected:
+    /**
+     * @brief Enables valve INPUT/OUTPUT on valve and sensor pins
+     */
     void setup();
 
     /**
@@ -66,38 +218,40 @@ public:
      */
     void reset();
 
-    int get_temp();
-
     // all pins indexed at 0
-    size_t num_pins;
+    size_t num_valves;
     // mandatory wait time between consecutive openings (in ms)
     uint32_t valve_lock_duration;
-
+    // pin number of the temperature sensor
     uint8_t temp_sensor_pin;
     // mapping of physical GPIO pin #s (values) to logical pin #s
     uint8_t valve_pins[4];
     // true if the valve is opened
     bool is_valve_opened[4];
-    // maximum tolerated temperature of tank
-    const int max_tank_temp = 48;
     // enforces the mandatory wait time when consescutively opening valves
     TimedLock valve_lock;
+    // maximum tolerated temperature of tank
+    const int max_tank_temp = 48;
+
+    friend class PropulsionSystem;
 };
 
+/**
+ * Tank1 represents the inner tank in the Propulsion System
+ */
 class Tank1 : public Tank {
 public:
     Tank1();
 };
 
+/**
+ * Tank2 reprsents the outer tank in the Propulsion System
+ */
 class Tank2 : public Tank {
 public:
     Tank2();
 
     void setup();
-
-    void clear_schedule();
-
-    void set_schedule(const std::array<unsigned int, 4> &setting);
 
     float get_pressure();
 
@@ -105,6 +259,7 @@ public:
     //! Runs thrust_valve_loop every 3 ms. Initialized in setup().
     static IntervalTimer thrust_valve_loop_timer;
     #endif
+    static uint32_t start_time;
     static volatile unsigned int schedule[4];
 
     static constexpr int threshold_pressure = 25;
@@ -124,48 +279,6 @@ public:
     //! Loop interval in milliseconds.
     static constexpr unsigned int thrust_valve_loop_interval_ms =
         thrust_valve_loop_interval_us / 1000;
-};
-
-class PropulsionSystem : public Device {
-    public:
-    PropulsionSystem();
-
-    bool setup() override;
-
-    /**
-     * @brief Shuts off all valves, clears tank2 schedule, disables timer
-     */
-    void reset() override;
-
-    /**
-     * @brief turns on interrupts provided by the thurst_value_loop_timer
-     */
-    void enable();
-
-    /**
-     * @brief turns off interrupts (the thrust_value_loop_timer)
-     */
-    void disable() override;
-
-    bool is_functional() override;
-
-    /**
-     * @brief opens the valve specified by valve_idx in the specified tank
-     * */
-    static bool open_valve(Tank& tank, size_t valve_idx);
-
-    static void close_valve(Tank& tank, size_t valve_idx);
-
-    /**
-     * @brief the function that is ran when interrupts provided by IntervalTimer
-     * is enabled
-     */
-    static void thrust_valve_loop();
-
-    static Tank1 tank1;
-    static Tank2 tank2;
-    static volatile bool is_enabled;
-
 };
 
 }  // namespace Devices

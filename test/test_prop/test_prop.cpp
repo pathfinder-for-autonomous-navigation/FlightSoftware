@@ -6,46 +6,41 @@
 /**
  * test_prop.cpp
  * Hardware test for the Propulsion System
+ * - Tests are split into Teensy only tests and the With Sensors tests
  */ 
-#define ASSERT_TRUE(x, msg){\
-UNITY_TEST_ASSERT(x, __LINE__, msg);}
-#define ASSERT_FALSE(x, msg){\
-UNITY_TEST_ASSERT(x, __LINE__, msg);}
+#define ASSERT_TRUE(x, msg){UNITY_TEST_ASSERT(x, __LINE__, msg);}
+#define ASSERT_FALSE(x, msg){UNITY_TEST_ASSERT(x, __LINE__, msg);}
 
+/**
+ * Helper Methods
+ */
 void check_all_valves_closed();
-void is_schedule_expected(const std::array<unsigned int, 4> &expected_schedule);
+void check_tank2_schedule(const std::array<unsigned int, 4> &expected_schedule);
 void reset_tank();
 void fill_tank(); 
 void thrust();
 bool is_at_threshold_pressure();
-bool is_valve_open(size_t valve_pin);
+void check_tank2_valve_status(bool a, bool b, bool c, bool d);
+void check_tank1_valve_status(bool a, bool b);
 
 const std::array<unsigned int, 4> zero_schedule = {0, 0, 0, 0};
 
 Devices::PropulsionSystem prop_system;
-// -llibc -lc
-void set_firing_schedule(unsigned int a, unsigned int b, unsigned int c, unsigned int d)
-{
-    prop_system.tank2.schedule[0] = a;
-    prop_system.tank2.schedule[1] = b;
-    prop_system.tank2.schedule[2] = c;
-    prop_system.tank2.schedule[3] = d;
-}
 
 void test_initialization()
 {
     // schedule should be initialized to 0
-    is_schedule_expected(zero_schedule);
+    check_tank2_schedule(zero_schedule);
     // all valves should be closed
     check_all_valves_closed();
     // there should be no interrupts at startup
-    TEST_ASSERT_FALSE(prop_system.is_enabled);
+    TEST_ASSERT_FALSE(prop_system.is_tank2_ready());
     // prop system should still be considered functional
     TEST_ASSERT_TRUE(prop_system.is_functional());
 }
 
 // Make sure that the current schedule matches the provided schedule
-void is_schedule_expected(const std::array<unsigned int, 4> &expected_schedule)
+void check_tank2_schedule(const std::array<unsigned int, 4> &expected_schedule)
 {
     for (size_t i = 0; i < 4; ++i)
         TEST_ASSERT_EQUAL(expected_schedule[i], prop_system.tank2.schedule[i]);
@@ -54,14 +49,24 @@ void is_schedule_expected(const std::array<unsigned int, 4> &expected_schedule)
 // Make sure all pins low
 void check_all_valves_closed()
 {
-    for (size_t i = 0; i < 6; ++i)
-        TEST_ASSERT_EQUAL(LOW, is_valve_open(i));
+    for (size_t i = 0; i < 2; ++i)
+        TEST_ASSERT_EQUAL(LOW, prop_system.tank1.is_valve_open(i));
+    for (size_t i = 0; i < 4; ++i)
+        TEST_ASSERT_EQUAL(LOW, prop_system.tank2.is_valve_open(i));
 }
 
-// True if specified valve is open
-bool is_valve_open(size_t valve_pin)
+void check_tank2_valve_status(bool a, bool b, bool c, bool d)
 {
-    return digitalRead(valve_pin);
+    TEST_ASSERT_EQUAL_MESSAGE(a, prop_system.tank2.is_valve_open(0), "tank2 valve 1");
+    TEST_ASSERT_EQUAL_MESSAGE(b, prop_system.tank2.is_valve_open(1), "tank2 valve 2");
+    TEST_ASSERT_EQUAL_MESSAGE(c, prop_system.tank2.is_valve_open(2), "tank2 valve 3");
+    TEST_ASSERT_EQUAL_MESSAGE(d, prop_system.tank2.is_valve_open(3), "tank2 valve 4");
+}
+
+void check_tank1_valve_status(bool a, bool b)
+{
+    TEST_ASSERT_EQUAL_MESSAGE(a, prop_system.tank1.is_valve_open(0), "tank1 valve 1");
+    TEST_ASSERT_EQUAL_MESSAGE(b, prop_system.tank1.is_valve_open(1), "tank1 valve 2");
 }
 
 void test_is_functional()
@@ -74,16 +79,18 @@ void test_enable()
 {
     // TODO: how to check that interval timer is on?
     TEST_ASSERT_TRUE(prop_system.is_functional());
-    set_firing_schedule(0, 0, 0, 0);
+    prop_system.set_schedule(0, 0, 0, 0, 0);
     prop_system.enable();
-    // is_enabled is only ever set by enable() or disable()
-    ASSERT_TRUE(prop_system.is_enabled, "interval timer should be on");
+    ASSERT_FALSE(prop_system.is_tank2_ready(), "interval timer should not be on bc bad start time");
+    prop_system.set_schedule(0, 0, 0, 0,micros() + 1000000 );
+    ASSERT_TRUE(prop_system.is_tank2_ready(), "interval timer should be on");
+    prop_system.enable();
     TEST_ASSERT_TRUE(prop_system.is_functional());
     check_all_valves_closed();
-    ASSERT_FALSE(prop_system.tank2.valve_lock.is_free(), 
+    // enable should not open any valves since schedule is 0
+    ASSERT_FALSE(prop_system.tank2.is_lock_free(), 
     "thrust valves should be locked");
     delay(6); // make sure the interrupt didn't turn on the valves
-    // enable should not open any valves since schedule is 0
     check_all_valves_closed();
 }
 
@@ -92,57 +99,66 @@ void test_disable()
 {
     prop_system.disable();
     // TODO: how to check that intervaltimer is off
-    ASSERT_FALSE(prop_system.is_enabled, "interval timer should be off");
+    ASSERT_FALSE(prop_system.is_tank2_ready(), "interval timer should be off");
     TEST_ASSERT_TRUE(prop_system.is_functional());
     // check that schedule is 0 and valves are all off
-    is_schedule_expected(zero_schedule);
+    check_tank2_schedule(zero_schedule);
     check_all_valves_closed();
 }
 
 void test_reset()
 {
-    set_firing_schedule(12, 1000, 40, 200);
+    prop_system.set_schedule(12, 1000, 40, 200, micros() + 1);
     // possibly dangerous
     prop_system.enable();
+    delay(4); // by now, valve 0 should be opened
+    check_tank2_valve_status(1, 0, 0, 0);
+    delay(20);
+    check_tank2_valve_status(0, 1, 1, 1);
     // reset stops the timer
     prop_system.reset();
     check_all_valves_closed();
-    is_schedule_expected(zero_schedule);
+    check_tank2_schedule(zero_schedule);
 }
 
 // test that we can open and close the tank valves
 void test_open_tank1_valve()
 {
     prop_system.open_valve(prop_system.tank1, 0);
-    ASSERT_TRUE(is_valve_open(0), "tank1 valve 0 should be open");
+    delay(100);
+    ASSERT_TRUE(prop_system.tank1.is_valve_open(0), "tank1 valve 0 should be open");
     delay(1000); // fire for 1 second
     prop_system.close_valve(prop_system.tank1, 0);
-    ASSERT_FALSE(is_valve_open(0), "tank1 valve 0 should be closed"); // make sure it is closed
+    ASSERT_FALSE(prop_system.tank1.is_valve_open(0), "tank1 valve 0 should be closed"); // make sure it is closed
 }
 
 void test_tank_lock()
 {
     prop_system.open_valve(prop_system.tank1, 1);
-    ASSERT_FALSE(prop_system.tank2.valve_lock.is_free(), "tank valves should be locked");
+    ASSERT_FALSE(prop_system.tank2.is_lock_free(), "tank valves should be locked");
     delay(1000);
     prop_system.close_valve(prop_system.tank1, 1);
-    ASSERT_FALSE (prop_system.tank2.valve_lock.is_free(), "tank should still be locked");
+    ASSERT_FALSE (prop_system.tank2.is_lock_free(), "tank should still be locked");
     delay(1000* 5);
-    ASSERT_FALSE (prop_system.tank2.valve_lock.is_free(), "tank should still be locked");
+    ASSERT_FALSE (prop_system.tank2.is_lock_free(), "tank should still be locked");
     delay(1000*5); 
-    ASSERT_TRUE (prop_system.tank2.valve_lock.is_free(), "tank should be unlocked");
+    ASSERT_TRUE (prop_system.tank2.is_lock_free(), "tank should be unlocked");
 }
 
 void test_tank1_enforce_lock()
 {
-    prop_system.open_valve(prop_system.tank1, 0);
-    ASSERT_FALSE(prop_system.open_valve(prop_system.tank2, 1), "Request to open tank1 valve 1 should be denied");
-    prop_system.close_valve(prop_system.tank1, 0);
-    ASSERT_FALSE(prop_system.open_valve(prop_system.tank2, 1), "Closing valve does not reset valve timer");
-    delay(1000*10);
-    ASSERT_TRUE(prop_system.open_valve(prop_system.tank2, 1), "Valve lock should be unlocked now");
     delay(1000);
-    prop_system.close_valve(prop_system.tank2, 1);
+    prop_system.open_valve(prop_system.tank1, 1);
+    prop_system.close_valve(prop_system.tank1, 1);
+    delay(3);
+    while(!prop_system.open_valve(prop_system.tank1, 2)){}
+    // ASSERT_FALSE(prop_system.open_valve(prop_system.tank1, 1), "Request to open tank1 valve 1 should be denied");
+    // prop_system.close_valve(prop_system.tank1, 0);
+    // ASSERT_FALSE(prop_system.open_valve(prop_system.tank1, 1), "Closing valve does not reset valve timer");
+    // delay(1000*10);
+    // ASSERT_TRUE(prop_system.open_valve(prop_system.tank1, 1), "Valve lock should be unlocked now");
+    // delay(1000);
+    // prop_system.close_valve(prop_system.tank1, 1);
 }
 
 // Open tank valve for 1 second and wait 10 s to make sure no one can fire
@@ -159,20 +175,52 @@ void fire_tank_valve(size_t valve_pin)
     prop_system.close_valve(prop_system.tank1, 1);
 }
 
-// TODO: not sure how to test this
-void test_set_thrust_valve_schedule()
+// Testing tank2 schedule
+void test_tank2_firing_schedule()
 {
-    TEST_ASSERT_FALSE(prop_system.is_enabled);
-    if (prop_system.tank2.get_pressure() == 0)
-    {
-        fill_tank();
-    }
-    static const std::array<unsigned int, 4> schedule = {4, 2, 3, 4};
-    prop_system.tank2.set_schedule(schedule);
+    TEST_ASSERT_FALSE(prop_system.is_tank2_ready());
+
+    // static const std::array<unsigned int, 4> schedule = {30, 40, 50, 60};
+    TEST_ASSERT_TRUE(prop_system.set_schedule(30, 40, 50, 60, micros() + 1*1000000));
+    // fire when its 3 seconds into the future
     prop_system.enable();
-    TEST_ASSERT_TRUE(is_valve_open(2) && is_valve_open(3) && is_valve_open(4) && is_valve_open(5))
-    delay(1000);
-    check_all_valves_closed();
+    TEST_ASSERT_TRUE(prop_system.is_tank2_ready());
+    // delayMicroseconds(1000000);
+    // check_tank2_valve_status(0, 0, 0, 0);
+    // delayMicroseconds(1000000);
+    // check_tank2_valve_status(0, 0, 0, 0);
+    // delayMicroseconds(997000);
+    // check_tank2_valve_status(0, 0, 0, 0);
+    // delayMicroseconds(3000);
+    // check_tank2_valve_status(1, 0, 0, 0);
+    // delayMicroseconds(3000);
+    // check_tank2_valve_status(1, 1, 0, 0);
+    // delayMicroseconds(3000);
+    // check_tank2_valve_status(1, 1, 1, 0);
+    // delayMicroseconds(3000);
+    // check_tank2_valve_status(1, 1, 1, 1);
+    // delayMicroseconds(200000);
+    // check_tank2_valve_status(0, 1, 1, 1);
+    // delayMicroseconds(100000);
+    // check_tank2_valve_status(0, 0, 1, 1);
+    // delayMicroseconds(100000);
+    // check_tank2_valve_status(0, 0, 0, 1);
+    // delayMicroseconds(500000);
+    // check_all_valves_closed();
+}
+
+void test_tank2_start_time()
+{
+    prop_system.reset();
+    // TEST_ASSERT_FALSE(prop_system.is_tank2_ready());
+    // static const std::array<unsigned int, 4> schedule = {30, 40, 50, 60};
+    prop_system.open_valve(prop_system.tank2, 3);
+    // delay(500);
+    // if (prop_system.tank2.is_lock_free())
+    //     prop_system.open_valve(prop_system.tank2, 3);
+    TEST_ASSERT_TRUE(prop_system.set_schedule(300 ,400, 500, 0, micros() + 500000))
+    while(!prop_system.enable()) {}
+    TEST_ASSERT_TRUE(prop_system.is_tank2_ready());
 }
 
 // Fill tank to threshold value
@@ -207,15 +255,15 @@ void reset_tank()
 
 void thrust()
 {
-    ASSERT_FALSE(prop_system.is_enabled, 
+    ASSERT_FALSE(prop_system.is_tank2_ready(), 
     "interval timer should not be on when we have not yet started thrust");
-    static const std::array<unsigned int, 4> schedule = {4, 2, 3, 6};
-    ASSERT_FALSE(is_valve_open(0) || is_valve_open(1), 
+    // static const std::array<unsigned int, 4> schedule = {4, 2, 3, 6};
+    ASSERT_FALSE(prop_system.tank1.is_valve_open(0) || prop_system.tank1.is_valve_open(1), 
     "Both tank valves should be closed");
-    prop_system.tank2.set_schedule(schedule);
+    prop_system.set_schedule(4, 2, 3, 6, micros() + 1);
     prop_system.enable();
     delay(120); // outer valves have 120 seconds to finish thrust
-    TEST_ASSERT_FALSE(prop_system.is_enabled);
+    TEST_ASSERT_FALSE(prop_system.is_tank2_ready());
     prop_system.disable();
 }
 
@@ -242,7 +290,7 @@ void test_backup_valve()
     auto old_pressure = prop_system.tank2.get_pressure();
     prop_system.open_valve(prop_system.tank1, 1);
     delay(1000);
-    ASSERT_TRUE(is_valve_open(1), "tank 1 valve 1 should be opened");
+    ASSERT_TRUE(prop_system.tank1.is_valve_open(1), "tank 1 valve 1 should be opened");
     prop_system.close_valve(prop_system.tank1, 1);
     ASSERT_TRUE(prop_system.tank2.get_pressure() > old_pressure, 
     "pressure of tank 2 should be higher after filling");
@@ -282,24 +330,26 @@ void test_get_temp_outer()
 }
 
 void setup() {
-    delay(5000);
     Serial.begin(9600);
     pinMode(13, OUTPUT);
+    while (!Serial)
+        ;
     prop_system.setup();
     UNITY_BEGIN();
-    RUN_TEST(test_initialization);
-    RUN_TEST(test_is_functional);
-    RUN_TEST(test_open_tank1_valve);
-    RUN_TEST(test_tank_lock);
-    RUN_TEST(test_tank1_enforce_lock);
-    RUN_TEST(test_set_thrust_valve_schedule);
-    RUN_TEST(test_enable);
-    RUN_TEST(test_disable);
-    RUN_TEST(test_reset);
-    RUN_TEST(test_get_pressure);
-    RUN_TEST(test_backup_valve);
-    RUN_TEST(test_get_temp_inner);
-    RUN_TEST(test_get_temp_outer);
+    // RUN_TEST(test_initialization);
+    // RUN_TEST(test_is_functional);
+    // RUN_TEST(test_open_tank1_valve);
+    // RUN_TEST(test_tank_lock);
+    // RUN_TEST(test_tank1_enforce_lock);
+    // RUN_TEST(test_tank2_firing_schedule);
+    RUN_TEST(test_tank2_start_time);
+    // RUN_TEST(test_enable);
+    // RUN_TEST(test_disable);
+    // RUN_TEST(test_reset);
+    // RUN_TEST(test_get_pressure);
+    // RUN_TEST(test_backup_valve);
+    // RUN_TEST(test_get_temp_inner);
+    // RUN_TEST(test_get_temp_outer);
     UNITY_END();
 }
 
