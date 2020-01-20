@@ -28,23 +28,22 @@
 #define DEBUG
 #endif
 
-#include <adcs_constants.hpp>
-
-#include <imu.hpp>
-#include <mtr.hpp>
-#include <rwa.hpp>
-#include <ssa.hpp>
-#include <havt.hpp>
-#include <state.hpp>
-#include <state_controller.hpp>
-#include <utl/debug.hpp>
+#include <adcs/imu.hpp>
+#include <adcs/mtr.hpp>
+#include <adcs/rwa.hpp>
+#include <adcs/ssa.hpp>
+#include <adcs/havt.hpp>
+#include <adcs/state.hpp>
+#include <adcs/state_controller.hpp>
+#include <adcs/utl/debug.hpp>
 
 #include <Arduino.h>
 #include <i2c_t3.h>
 #include <lin.hpp>
 
-#include <bitset>
+#include <adcs_constants.hpp>
 #include <adcs_havt_devices.hpp>
+#include <bitset>
 
 // TODO : Look into the proper initialization for the slave i2c bus and whether
 //        a clock frequency needs to be included

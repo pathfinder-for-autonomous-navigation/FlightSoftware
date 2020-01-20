@@ -41,6 +41,6 @@ inline signed short ss(float f, float min, float max);
 
 }  // namespace utl
 
-#include "inl/convert.inl"
+#include "convert.inl"
 
 #endif

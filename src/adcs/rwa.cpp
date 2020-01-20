@@ -16,10 +16,10 @@
 
 #include <adcs_constants.hpp>
 
-#include <rwa.hpp>
-#include <rwa_config.hpp>
-#include <utl/convert.hpp>
-#include <utl/debug.hpp>
+#include <adcs/rwa.hpp>
+#include <adcs/rwa_config.hpp>
+#include <adcs/utl/convert.hpp>
+#include <adcs/utl/debug.hpp>
 
 namespace rwa {
 

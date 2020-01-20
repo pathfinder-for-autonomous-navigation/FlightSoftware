@@ -1,6 +1,8 @@
-#include "../../src/FCCode/Event.hpp"
-#include "../../src/FCCode/EventStorage.hpp"
 #include "../StateFieldRegistryMock.hpp"
+
+#include <fsw/FCCode/Event.hpp>
+#include <fsw/FCCode/EventStorage.hpp>
+
 #include <unity.h>
 
 struct TestFixtureEvent {

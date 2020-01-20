@@ -1,4 +1,5 @@
-#include "../../src/FCCode/ControlTask.hpp"
+#include <fsw/FCCode/ControlTask.hpp>
+
 #include <unity.h>
 
 class DummyControlTask : public ControlTask<void> {

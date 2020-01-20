@@ -19,10 +19,10 @@
 #include <adcs_constants.hpp>
 #include <adcs_registers.hpp>
 
-#include <state.hpp>
-#include <state_controller.hpp>
-#include <utl/convert.hpp>
-#include <utl/debug.hpp>
+#include <adcs/state.hpp>
+#include <adcs/state_controller.hpp>
+#include <adcs/utl/convert.hpp>
+#include <adcs/utl/debug.hpp>
 
 #include <bitset>
 

@@ -54,17 +54,17 @@ matrix:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-      - name: "ADCS Software Tests"
-        install:
-            - pip install -U platformio
-            - platformio update
-        script:
-            - cd ADCSSoftware
-            - platformio run -e leader
-            - platformio run -e leader_debug
-            - platformio run -e follower
-            - platformio run -e debug
-            - platformio run -e havt_debug
+      # - name: "ADCS Software Tests"
+      #   install:
+      #       - pip install -U platformio
+      #       - platformio update
+      #   script:
+      #       - cd ADCSSoftware
+      #       - platformio run -e leader
+      #       - platformio run -e leader_debug
+      #       - platformio run -e follower
+      #       - platformio run -e debug
+      #       - platformio run -e havt_debug
 
       #- name: "Run unit tests on Teensy"
         #script:

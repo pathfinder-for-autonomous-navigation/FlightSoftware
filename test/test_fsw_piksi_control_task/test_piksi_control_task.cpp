@@ -1,10 +1,10 @@
 #include "../StateFieldRegistryMock.hpp"
 
-#include "../../src/FCCode/PiksiControlTask.hpp"
-#include <unity.h>
-#include <Piksi.hpp>
+#include <fsw/FCCode/PiksiControlTask.hpp>
+#include <fsw/FCCode/piksi_mode_t.enum>
 
-#include "../../src/FCCode/piksi_mode_t.enum"
+#include <Piksi.hpp>
+#include <unity.h>
 
 #define assert_piksi_mode(x) {\
     TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\

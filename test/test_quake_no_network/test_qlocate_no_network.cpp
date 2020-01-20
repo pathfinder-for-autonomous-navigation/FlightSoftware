@@ -1,10 +1,11 @@
-#include <unity.h>
-#include <string>
-#include <vector>
-#include "../lib/Drivers/QLocate.hpp"
 #include "../test_quake/quake_common.h"
 #include "core_pins.h"
 #include "usb_serial.h"
+
+#include <unity.h>
+#include <string>
+#include <vector>
+#include <QLocate.hpp>
 
 // name, port, pin number, timeout
 Devices::QLocate q("Test_Quake_No_Network", &Serial3, 
