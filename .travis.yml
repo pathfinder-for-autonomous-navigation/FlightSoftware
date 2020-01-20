@@ -11,7 +11,7 @@ install:
 
 matrix:
     include:
-      - name: "Desktop flight software tests"
+      - name: "Desktop flight software and ground software tests"
         addons:
           apt:
             packages:
@@ -23,21 +23,6 @@ matrix:
             - sudo gem install coveralls-lcov
         script:
             - ./tools/run_desktop_flight_tests.sh
-        after_success:
-            - ./tools/generate_coverage.sh
-            - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
-
-      - name: "Ground software tests"
-        addons:
-          apt:
-            packages:
-            - lcov
-            - valgrind
-        install:
-            - pip install -U platformio
-            - platformio update
-            - sudo gem install coveralls-lcov
-        script:
             - ./tools/run_ground_tests.sh
         after_success:
             - ./tools/generate_coverage.sh
@@ -69,17 +54,17 @@ matrix:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-      - name: "ADCS Software Tests"
-        install:
-            - pip install -U platformio
-            - platformio update
-        script:
-            - cd ADCSSoftware
-            - platformio run -e leader
-            - platformio run -e leader_debug
-            - platformio run -e follower
-            - platformio run -e debug
-            - platformio run -e havt_debug
+      # - name: "ADCS Software Tests"
+      #   install:
+      #       - pip install -U platformio
+      #       - platformio update
+      #   script:
+      #       - cd ADCSSoftware
+      #       - platformio run -e leader
+      #       - platformio run -e leader_debug
+      #       - platformio run -e follower
+      #       - platformio run -e debug
+      #       - platformio run -e havt_debug
 
       #- name: "Run unit tests on Teensy"
         #script:

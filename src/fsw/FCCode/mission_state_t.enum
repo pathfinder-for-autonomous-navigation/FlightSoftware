@@ -1,0 +1,21 @@
+#ifndef mission_state_t_enum_
+#define mission_state_t_enum_
+
+// pan.state
+enum class mission_state_t {
+    startup,
+    detumble,
+    initialization_hold,
+    follower,
+    standby,
+    leader,
+    docking,
+    docked,
+    safehold,
+    manual
+};
+
+// For information on states, check out
+// https://pan-software.readthedocs.io/en/latest/flight_software/mission_manager.html
+
+#endif
