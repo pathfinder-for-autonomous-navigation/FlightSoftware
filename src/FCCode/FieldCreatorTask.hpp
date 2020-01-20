@@ -13,16 +13,10 @@
 // eventually become zero.
 class FieldCreatorTask : public ControlTask<void> {
     public:
-      WritableStateField<f_quat_t> adcs_cmd_attitude_f;
-      WritableStateField<float> adcs_ang_rate_f;
-      WritableStateField<float> adcs_min_stable_ang_rate_f;
-
       ReadableStateField<d_vector_t> pos_f;
       ReadableStateField<d_vector_t> pos_baseline_f;
 
-      WritableStateField<bool> docking_config_cmd_f;
-
-      ReadableStateField<unsigned char> prop_mode_f;
+      ReadableStateField<unsigned char> prop_state_f;
 
       // begin fields necessary for adcs_box controller
       const Serializer<float> filter_sr;
@@ -56,13 +50,9 @@ class FieldCreatorTask : public ControlTask<void> {
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
-        adcs_cmd_attitude_f("adcs.cmd_attitude", Serializer<f_quat_t>()),
-        adcs_ang_rate_f("adcs.ang_rate", Serializer<float>(0, 10, 4)),
-        adcs_min_stable_ang_rate_f("adcs.min_stable_ang_rate", Serializer<float>(0, 10, 4)),
         pos_f("orbit.pos", Serializer<d_vector_t>(0,100000,100)),
         pos_baseline_f("orbit.baseline_pos", Serializer<d_vector_t>(0,100000,100)),
-        docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
-        prop_mode_f("prop.mode", Serializer<unsigned char>(1)),
+        prop_state_f("prop.state", Serializer<unsigned char>(1)),
         //eventually you can move all these into ADCSCommander.cpp
         filter_sr(0,1,8),
         rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
@@ -86,21 +76,13 @@ class FieldCreatorTask : public ControlTask<void> {
         havt_bool_sr()
       {
           // Create the fields!
-          
-          // For MissionManager
-          add_writable_field(adcs_cmd_attitude_f);
-          add_writable_field(adcs_ang_rate_f);
-          add_writable_field(adcs_min_stable_ang_rate_f);
 
           // For AttitudeComputer
           add_readable_field(pos_f);
           add_readable_field(pos_baseline_f);
 
-          // For DockingController
-          add_writable_field(docking_config_cmd_f);
-
           // For propulsion controller
-          add_readable_field(prop_mode_f);
+          add_readable_field(prop_state_f);
 
           // For ADCS Controller
           add_writable_field(rwa_mode_f);

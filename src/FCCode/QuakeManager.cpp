@@ -2,7 +2,7 @@
 #include "QLocate.hpp"
 
 #include "radio_state_t.enum"
-#include "radio_mode_t.enum"
+#include "radio_state_t.enum"
 
 /**
  * QuakeManager Implementation Info: 
@@ -23,7 +23,6 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_mt_packet_f("uplink.ptr"),
     radio_mt_len_f("uplink.len"),
     radio_state_f("radio.state"),
-    radio_mode_f("radio.mode"),
     last_checkin_cycle_f("radio.last_comms_ccno"), // Last communication control cycle #
     qct(registry),
     mo_idx(0),
@@ -33,7 +32,6 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     add_internal_field(radio_mt_packet_f);
     add_internal_field(radio_mt_len_f);
     add_internal_field(radio_state_f);
-    add_internal_field(radio_mode_f);
     add_internal_field(last_checkin_cycle_f);
 
     // Retrieve fields from registry
@@ -45,7 +43,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     qct.request_state(CONFIG);
     radio_mt_packet_f.set(qct.get_MT_msg());
     radio_mt_len_f.set(0);
-    radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::disabled));
+    radio_state_f.set(static_cast<unsigned int>(radio_state_t::disabled));
     radio_state_f.set(static_cast<unsigned int>(radio_state_t::config));
 
     // Setup MO Buffers
@@ -64,24 +62,10 @@ bool QuakeManager::execute() {
     //         radio_state_f.get(), 
     //         qct.get_current_state());
 
-    const radio_mode_t radio_mode = static_cast<radio_mode_t>(radio_mode_f.get());
-    switch(radio_mode) {
-        case radio_mode_t::disabled:
-            // Reset radio
-            radio_state_f.set(static_cast<unsigned int>(radio_state_t::config));
-            qct.request_state(CONFIG);
-            return true;
-            break;
-        case radio_mode_t::active:
-            // Continue on to loop below
-            break;
-        default:
-            printf(debug_severity::error, "Radio mode not defined: %d", 
-                radio_mode_f.get());
-    }
-
     const radio_state_t radio_state = static_cast<radio_state_t>(radio_state_f.get());
     switch(radio_state) {
+        case radio_state_t::disabled:
+        return true;
         case radio_state_t::config:
         return dispatch_config();
         case radio_state_t::wait:

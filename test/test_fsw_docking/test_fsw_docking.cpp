@@ -18,7 +18,6 @@ class TestFixture {
 
     TestFixture() : registry() {
         docking_config_cmd_fp = registry.create_writable_field<bool>("docksys.config_cmd");
-        docking_config_cmd_fp->set(false);
 
         docking_controller = std::make_unique<DockingController>(registry, 0, docksys);
         docking_controller->init();
@@ -27,9 +26,8 @@ class TestFixture {
         dock_config_fp = registry.find_readable_field_t<bool>("docksys.dock_config");
         is_turning_fp = registry.find_readable_field_t<bool>("docksys.is_turning");
 
-        docked_fp->set(false);
-        dock_config_fp->set(true);
-        is_turning_fp->set(false);
+        // Set initial values of external flags
+        docking_config_cmd_fp->set(false);
     }
 };
 
@@ -39,10 +37,10 @@ void test_task_initialization() {
     TEST_ASSERT_NOT_NULL(tf.dock_config_fp);
     TEST_ASSERT_NOT_NULL(tf.is_turning_fp);
 
-    TEST_ASSERT_EQUAL(false, tf.docking_config_cmd_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.docked_fp->get());
-    TEST_ASSERT_EQUAL(true, tf.dock_config_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.is_turning_fp->get());
+    TEST_ASSERT_FALSE(tf.docking_config_cmd_fp->get());
+    TEST_ASSERT_FALSE(tf.docked_fp->get());
+    TEST_ASSERT(tf.dock_config_fp->get());
+    TEST_ASSERT_FALSE(tf.is_turning_fp->get());
 }
 
 void test_task_execute() {

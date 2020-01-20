@@ -11,10 +11,10 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     data(),
     state(),
     estimate(),
-    q_body_eci_sr(),
-    q_body_eci_f("attitude_estimator.q_body_eci", q_body_eci_sr),
-    w_body_sr(-55, 55, 32*3),
-    w_body_f("attitude_estimator.w_body", w_body_sr)
+    q_body_eci_f("attitude_estimator.q_body_eci", Serializer<f_quat_t>()),
+    w_body_f("attitude_estimator.w_body", Serializer<f_vector_t>(-55, 55, 32*3)),
+    h_body_f("attitude_estimator.h_body"),
+    adcs_paired_f("adcs.paired", Serializer<bool>())
     {
         piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
         pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
@@ -24,6 +24,11 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         //Add outputs
         add_readable_field(q_body_eci_f);
         add_readable_field(w_body_f);
+        add_internal_field(h_body_f);
+        add_writable_field(adcs_paired_f);
+
+        // Initialize flags
+        adcs_paired_f.set(false);
     }
 
 void AttitudeEstimator::execute(){
@@ -33,7 +38,7 @@ void AttitudeEstimator::execute(){
 }
 
 void AttitudeEstimator::set_data(){
-    data.t = (double)(((unsigned long)(piksi_time_fp->get() - pan_epoch))/(1e9L));
+    data.t = ((unsigned long)(piksi_time_fp->get() - pan_epoch)) / 1.0e9;
 
     const d_vector_t r_ecef = pos_vec_ecef_fp->get();
     data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};
@@ -46,16 +51,20 @@ void AttitudeEstimator::set_data(){
 }
 
 void AttitudeEstimator::set_estimate(){
-    f_quat_t q_temp;
-    q_temp[0] = estimate.q_body_eci(0);
-    q_temp[1] = estimate.q_body_eci(1);
-    q_temp[2] = estimate.q_body_eci(2);
-    q_temp[3] = estimate.q_body_eci(3);
+    f_quat_t q_temp = {
+        estimate.q_body_eci(0),
+        estimate.q_body_eci(1),
+        estimate.q_body_eci(2),
+        estimate.q_body_eci(3)
+    };
     q_body_eci_f.set(q_temp);
 
-    f_vector_t w_temp;
-    w_temp[0] = estimate.w_body(0);
-    w_temp[1] = estimate.w_body(1);
-    w_temp[2] = estimate.w_body(2);  
+    f_vector_t w_temp = { estimate.w_body(0), estimate.w_body(1), estimate.w_body(2) };
     w_body_f.set(w_temp);
+
+    lin::Vector3f wvec = {w_temp[0], w_temp[1], w_temp[2]};
+    lin::Vector3f result;
+    if (adcs_paired_f.get()) result = gnc::constant::JB_docked_sats * wvec;
+    else result = gnc::constant::JB_single_sat * wvec;
+    h_body_f.set(result.eval());
 }
