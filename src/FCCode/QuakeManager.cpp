@@ -8,7 +8,6 @@
 #ifdef FUNCTIONAL_TEST
     #ifdef DESKTOP
         #include <iostream>
-        #include <iomanip>
         #include <sstream>
     #else
         #include <Arduino.h>
@@ -85,6 +84,7 @@ bool QuakeManager::execute() {
     if (dump_telemetry_f.get()) {
         dump_telemetry_f.set(false);
         char* snapshot = radio_mo_packet_fp->get();
+
         #ifdef DESKTOP
             std::cout << "{\"telem\":\"";
             for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
@@ -97,7 +97,7 @@ bool QuakeManager::execute() {
         #else
             Serial.print("{\"telem\":\"");
             for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
-                Serial.print("\x");
+                Serial.print("\\x");
                 Serial.print(snapshot[i], HEX);
             }
             Serial.print("\"}");
