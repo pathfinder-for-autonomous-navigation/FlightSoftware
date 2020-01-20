@@ -346,7 +346,7 @@ void test_double_serializer() { test_float_or_double_serializer<double>(); }
 template<typename T>
 void test_sign(T expected, T actual){
     //multiply arguments because sign memes
-    while(abs(actual) < 1){
+    while(std::abs(actual) < 1){
         actual = actual * 10.0f;
     }
 
@@ -419,14 +419,15 @@ void test_vec_serializer() {
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, x, y, z, result[0], result[1], result[2]);
+
         // TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
         TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.01, 0, dv_magnitude, err_str);
 
         std::cout << err_str << "\n";
 
-        // test_sign(x, result[0]); // to do macro
-        // test_sign(y, result[1]);
-        // test_sign(z, result[2]);
+        test_sign(x, result[0]); // to do macro
+        test_sign(y, result[1]);
+        test_sign(z, result[2]);
 
         
     }
@@ -469,6 +470,21 @@ void test_d_vec_serializer() {
     test_vec_serializer<double>();
 }
 
+template<typename T, typename quat_t_t>
+// normalizes a quat, new
+void norm(quat_t_t& input) {
+    T ip = 0.0;
+    for(int i = 0; i < 4; i++){
+        ip += input[i] * input[i];
+    }
+    T mag = std::sqrt(ip);
+    std::cout << "norm mag: " << mag << "\n";
+    for(int i = 0; i < 4; i++){
+        input[i] = input[i] / mag;
+    }
+    
+}
+
 template<typename T>
 void test_quat_serializer() {
     static_assert(std::is_same<T, float>::value || 
@@ -494,10 +510,15 @@ void test_quat_serializer() {
         const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
         const T tt = rand() / T(RAND_MAX) * (2 * 3.14159265);
         const T ux = rand() / T(RAND_MAX) * sin(tt/2);
-        const T uy = cos(t) * sqrtf(1 - powf(ux, 2)) * sin(tt/2);
-        const T uz = sin(t) * sqrtf(1 - powf(ux, 2)) * sin(tt/2);
-        const T s = cos(tt/2);
+        const T uy = std::cos(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
+        const T uz = std::sin(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
+        const T s = std::cos(tt/2);
         quat_t quat = {ux, uy, uz, s};
+
+        std::cout << "INPUT MAG: \n";
+        // norm<T, quat_t>(quat);
+
+
         quat_serializer->serialize(quat);
         quat_serializer->deserialize(&result);
 
@@ -522,6 +543,20 @@ void test_quat_serializer() {
         //TEST_ASSERT_LESS_OR_EQUAL_MESSAGE(err_threshold, magnitude_err, err_str);
         std::cout << err_str << "\n";
 
+        norm<T, quat_t>(quat);
+        norm<T, quat_t>(result);
+
+        // assume quat and result are normalized
+        T inner_product = 0.0;
+        for(int i = 0; i < 4; i++){
+            inner_product += quat[i] * result[i];
+        }
+        inner_product = std::abs(inner_product);
+        std::cout << "IP: " << inner_product << "\n";
+
+        T angle = std::acos(inner_product)*2;
+        angle = angle * 360.0 / (2 * 3.14159265);
+        std::cout << "ANGLE (DEG): " << angle << "\n";
     }
 
     // Test deserialization from a string

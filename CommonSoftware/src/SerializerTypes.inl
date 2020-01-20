@@ -367,10 +367,11 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                 std::make_unique<Serializer<T>>(*other.vector_element_serializers[i]);
         }
         this->max_component = other.max_component;
-        // new
-        this->max_component_idx = other.max_component_idx;
-        this->sign_of_max_comp = other.sign_of_max_comp;
         this->component_scaled_values = other.component_scaled_values;
+
+        // new
+        this->sign_of_max_comp = other.sign_of_max_comp;
+        // NOTE TO TANISHQ, PLEASE CHECK THAT THERE'S ENOUGH BITSZ STUFF IN PLACES
     }
 
   protected:
@@ -410,11 +411,11 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     constexpr static size_t quat_magnitude_sz = (quat_sz - 3 * quat_component_sz);
     constexpr static size_t vec_min_sz = 2 + 2 * vec_component_sz;
 
-    //constexpr static size_t print_size = 13 * N + (N - 1) + 1; // 13 characters per value in the array,
+    constexpr static size_t print_size = 13 * N + (N - 1) + 1; // 13 characters per value in the array,
                                                                // N - 1 commas, 1 null character
 
-    constexpr static size_t print_size = 13 * N + (N - 1) + 1 + 1; // 13 characters per value in the array,
-                                                               // N - 1 commas, 1 for max comp sign? 1 null character,
+    // constexpr static size_t print_size = 13 * N + (N - 1) + 1 + 1; // 13 characters per value in the array,
+    //                                                            // N - 1 commas, 1 for max comp sign? 1 null character, IS THIS EVEN NESSESARY?
 
     /**
      * @brief Construct a new Serializer object.
@@ -460,7 +461,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         std::array<T, N> v_mags;
         T max_element_mag = 0;
         for (size_t i = 0; i < N; i++) {
-            v_mags[i] = abs(src[i]);
+            v_mags[i] = std::abs(src[i]);
             if (max_element_mag < v_mags[i]) {
                 max_element_mag = v_mags[i];
                 max_component_idx = i;
@@ -507,11 +508,20 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             std::advance(serialized_position, magnitude_serializer->bitsize());
         }
 
+        bool flip_vals = false; // will only ever be true for N == 4 and max_comp being negative
+        if(N == 4 && src[max_component_idx] < 0)
+            flip_vals = true;
+
         // Store serialized non-maximal components
         size_t component_number = 0;
         for (size_t i = 0; i < N; i++) {
             if (i != max_component_idx) {
                 T element_scaled = src[i] / mag;
+                
+                // the negative of a quaternion is the same quaternion
+                if(flip_vals)
+                    element_scaled *= -1;
+
                 // std::cout << "ele :" << element_scaled << " "; as far as i can tell this is good
                 vector_element_serializers[component_number]->serialize(element_scaled);
                 std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
@@ -523,10 +533,12 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         }
 
         // new
-        if(src[max_component_idx] < 0)
-            sign_of_max_comp.set_int(1);
-        std::copy(sign_of_max_comp.begin(), sign_of_max_comp.end(), serialized_position);
-        std::advance(serialized_position, sign_of_max_comp.size());
+        if(N == 3){
+            if(src[max_component_idx] < 0)
+                sign_of_max_comp.set_int(1);
+            std::copy(sign_of_max_comp.begin(), sign_of_max_comp.end(), serialized_position);
+            std::advance(serialized_position, sign_of_max_comp.size());
+        }        
     }
 
     bool deserialize(const char* val, std::array<T, N>* dest) override {
@@ -584,10 +596,11 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         for (size_t i = 0; i < N; i++) (*dest)[i] *= magnitude;
 
         // new;
-        if(sign_of_max_comp.to_uint() == 1){
-            // (*dest)[deser_max_idx] *= -1;
-            (*dest)[deser_max_idx] *= -1;
-
+        if(N == 3){
+            if(sign_of_max_comp.to_uint() == 1){
+                // (*dest)[deser_max_idx] *= -1;
+                (*dest)[deser_max_idx] *= -1;
+            }
         }
     }
 
