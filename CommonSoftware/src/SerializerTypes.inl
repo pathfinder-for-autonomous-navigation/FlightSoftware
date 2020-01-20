@@ -498,11 +498,14 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         //     std::advance(serialized_position, magnitude_serializer->bitsize());
         // }
 
-        magnitude_serializer->serialize(mag);
-        std::copy(magnitude_serializer->get_bit_array().begin(), 
-                magnitude_serializer->get_bit_array().end(),
-                serialized_position);
-        std::advance(serialized_position, magnitude_serializer->bitsize());
+        //new if statement; only serialize if N == 3
+        if(N == 3){
+            magnitude_serializer->serialize(mag);
+            std::copy(magnitude_serializer->get_bit_array().begin(), 
+                    magnitude_serializer->get_bit_array().end(),
+                    serialized_position);
+            std::advance(serialized_position, magnitude_serializer->bitsize());
+        }
 
         // Store serialized non-maximal components
         size_t component_number = 0;
@@ -526,38 +529,38 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         std::advance(serialized_position, sign_of_max_comp.size());
     }
 
-    //afaik this isn't being used
     bool deserialize(const char* val, std::array<T, N>* dest) override {
-        // size_t i = 0;
-        // std::array<T, N> temp_dest;
-        // char temp_val[150];
-        // memcpy(temp_val, val, sizeof(temp_val));
+        size_t i = 0;
+        std::array<T, N> temp_dest;
+        char temp_val[150];
+        memcpy(temp_val, val, sizeof(temp_val));
 
-        // char *tok = strtok(temp_val, ",");
-        // while (tok != NULL) {
-        //     if (std::is_same<T, float>::value) {
-        //         temp_dest[i++] = static_cast<T>(strtof(tok, NULL));
-        //     }
-        //     else {
-        //         temp_dest[i++] = static_cast<T>(strtod(tok, NULL));
-        //     }
-        //     std::cout << temp_dest[i-1] << " ";
-        //     tok = strtok(NULL, ",");
-        // }
-        // std::cout << "\n";
-        // if (i < N) return false;
-        // //std::cout << "deser: " << temp_dest[0] << " " << temp_dest[1] << " " << temp_des 
-        // *dest = temp_dest;
-        // // Store result into current bitset
-        // serialize(*dest);
+        char *tok = strtok(temp_val, ",");
+        while (tok != NULL) {
+            if (std::is_same<T, float>::value) {
+                temp_dest[i++] = static_cast<T>(strtof(tok, NULL));
+            }
+            else {
+                temp_dest[i++] = static_cast<T>(strtod(tok, NULL));
+            }
+            std::cout << temp_dest[i-1] << " ";
+            tok = strtok(NULL, ",");
+        }
+        std::cout << "\n";
+        if (i < N) return false;
+        *dest = temp_dest;
+        serialize(*dest);
         return true;
     }
 
     void deserialize(std::array<T, N>* dest) const override {
         std::cout << "deser mag: ";
         T magnitude = 0.0f;
-        magnitude_serializer->deserialize(&magnitude);
-
+        if(N == 3)
+            magnitude_serializer->deserialize(&magnitude);
+        else
+            magnitude = 1.0f;
+        
         // this is just printing the upper bound of the magnitude of a component of the constructor
         std::cout << magnitude;
         // not deserializing magnitude correctly for float vector

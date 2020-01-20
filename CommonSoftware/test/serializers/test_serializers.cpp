@@ -419,7 +419,8 @@ void test_vec_serializer() {
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, x, y, z, result[0], result[1], result[2]);
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
+        // TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.01, 0, dv_magnitude, err_str);
 
         std::cout << err_str << "\n";
 
