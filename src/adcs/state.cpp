@@ -10,7 +10,7 @@
 // Cornell Univeristy
 //
 
-#include <state.hpp>
+#include <adcs/state.hpp>
 
 struct Registers volatile registers = {
   0x0F, // Who am I

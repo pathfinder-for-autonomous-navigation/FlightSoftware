@@ -1,4 +1,4 @@
-#include "Arduino.h"
+#include <Arduino.h>
 
 // This code is intended to be run with a 3.6 FC connected
 // over I2c to a 3.5 ADCSC with NO devices connected to it to
@@ -19,7 +19,7 @@
 // removes mocking from Driver
 // -UUNIT_TEST
 
-#include "../lib/Drivers/ADCS.hpp"
+#include <ADCS.hpp>
 #include <adcs_constants.hpp>
 
 Devices::ADCS adcs(Wire, Devices::ADCS::ADDRESS);

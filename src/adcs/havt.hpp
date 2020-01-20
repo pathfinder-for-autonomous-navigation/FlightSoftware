@@ -14,10 +14,9 @@
 #define PAN_ADCS_INCLUDE_HAVT_HPP_
 
 #include <Device.hpp> // for dev_ptrs
-
 #include <adcs_constants.hpp> // include necessary so that havt::max_device is defined
-
 #include <bitset>
+
 /** @namespace havt
  *  Holds functinoality to read the is_functional() from each device aboard the ADCS Box
  *  Also contains functionality to command resets and disables for each device */

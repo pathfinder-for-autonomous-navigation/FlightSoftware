@@ -1,5 +1,6 @@
 #include "../StateFieldRegistryMock.hpp"
-#include "../../src/FCCode/GomspaceController.hpp"
+
+#include <fsw/FCCode/GomspaceController.hpp>
 
 #include <unity.h>
 

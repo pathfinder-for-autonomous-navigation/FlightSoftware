@@ -1,9 +1,9 @@
 #include <unity.h>
 #include <string>
 #include <vector>
-#include "../lib/Drivers/QLocate.hpp"
+#include <QLocate.hpp>
 #include "core_pins.h"
-#include "Arduino.h"
+#include <Arduino.h>
 #include "quake_common.h"
 #include "usb_serial.h"
 

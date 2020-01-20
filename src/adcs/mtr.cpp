@@ -20,9 +20,9 @@
 
 #include <adcs_constants.hpp>
 
-#include <mtr.hpp>
-#include <mtr_config.hpp>
-#include <utl/debug.hpp>
+#include <adcs/mtr.hpp>
+#include <adcs/mtr_config.hpp>
+#include <adcs/utl/debug.hpp>
 
 #include <Arduino.h>
 #include <array>

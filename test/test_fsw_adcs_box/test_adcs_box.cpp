@@ -1,9 +1,10 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #include <ADCS.hpp>
-#include "../../src/FCCode/ADCSBoxMonitor.hpp"
-#include "adcs_constants.hpp"
-#include "adcs_havt_devices.hpp"
+#include <adcs_constants.hpp>
+#include <adcs_havt_devices.hpp>
+
+#include <fsw/FCCode/ADCSBoxMonitor.hpp>
 
 #include <unity.h>
 

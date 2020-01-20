@@ -1,6 +1,8 @@
-#include <StateFieldRegistry.hpp>
 #include "../StateFieldRegistryMock.hpp"
-#include "../../src/FCCode/DownlinkProducer.hpp"
+
+#include <fsw/FCCode/DownlinkProducer.hpp>
+
+#include <StateFieldRegistry.hpp>
 #include <unity.h>
 
 struct TestFixture {
