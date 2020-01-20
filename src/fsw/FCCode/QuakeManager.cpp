@@ -92,14 +92,14 @@ bool QuakeManager::execute() {
                 out << std::hex << std::setfill('0') << std::setw(2) << (0xFF & snapshot[i]);
                 std::cout << out.str();
             }
-            std::cout << "\"}";
+            std::cout << "\"}\n";
         #else
             Serial.print("{\"telem\":\"");
             for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
                 Serial.print("\\x");
                 Serial.print((0xFF & snapshot[i]), HEX);
             }
-            Serial.print("\"}");
+            Serial.print("\"}\n");
         #endif
     }
     #endif
