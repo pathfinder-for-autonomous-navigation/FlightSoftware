@@ -18,15 +18,13 @@
 #include <adcs_constants.hpp>
 #include <adcs_havt_devices.hpp>
 
-#include <havt.hpp>
-#include <state.hpp>
-
-#include <imu.hpp>
-#include <mtr.hpp>
-#include <rwa.hpp>
-#include <ssa.hpp>
-
-#include <utl/debug.hpp>
+#include <adcs/havt.hpp>
+#include <adcs/imu.hpp>
+#include <adcs/mtr.hpp>
+#include <adcs/rwa.hpp>
+#include <adcs/ssa.hpp>
+#include <adcs/state.hpp>
+#include <adcs/utl/debug.hpp>
 
 namespace havt {
 

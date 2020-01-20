@@ -1,11 +1,10 @@
 #define DEBUG
 #include "../StateFieldRegistryMock.hpp"
-#include "../../src/FCCode/QuakeManager.h"
-#include "../../src/FCCode/radio_state_t.enum"
-#include "../../src/FCCode/radio_state_t.enum"
+
+#include <fsw/FCCode/QuakeManager.h>
+#include <fsw/FCCode/radio_state_t.enum>
 
 #include <unity.h>
-
 
 // Check that state x matches the current state of the QuakeControlTask
 #define assert_qct(x) {\

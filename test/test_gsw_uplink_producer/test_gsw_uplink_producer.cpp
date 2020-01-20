@@ -1,6 +1,8 @@
 #include "../StateFieldRegistryMock.hpp"
+
 #define DEBUG
-#include "../../src/GroundCode/UplinkProducer.h"
+#include <fsw/GroundCode/UplinkProducer.h>
+
 #include <unity.h>
 #include <fstream>
 #include <json.hpp>

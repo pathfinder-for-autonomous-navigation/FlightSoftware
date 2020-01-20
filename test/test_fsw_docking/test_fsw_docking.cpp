@@ -1,5 +1,6 @@
 #include "../StateFieldRegistryMock.hpp"
-#include "../../src/FCCode/DockingController.hpp"
+
+#include <fsw/FCCode/DockingController.hpp>
 
 #include <unity.h>
 

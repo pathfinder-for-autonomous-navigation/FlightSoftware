@@ -10,7 +10,7 @@
 // Cornell Univeristy
 //
 
-#include "../convert.hpp"
+#include "convert.hpp"
 
 namespace utl {
 

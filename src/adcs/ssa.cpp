@@ -19,9 +19,9 @@
 
 #include <adcs_constants.hpp>
 
-#include <ssa.hpp>
-#include <ssa_config.hpp>
-#include <utl/debug.hpp>
+#include <adcs/ssa.hpp>
+#include <adcs/ssa_config.hpp>
+#include <adcs/utl/debug.hpp>
 
 namespace ssa {
 

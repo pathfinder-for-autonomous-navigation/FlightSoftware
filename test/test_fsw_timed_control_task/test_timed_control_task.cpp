@@ -1,6 +1,8 @@
-#include "../../src/FCCode/TimedControlTask.hpp"
-#include "../../src/FCCode/ClockManager.hpp"
 #include "../StateFieldRegistryMock.hpp"
+
+#include <fsw/FCCode/TimedControlTask.hpp>
+#include <fsw/FCCode/ClockManager.hpp>
+
 #include <unity.h>
 
 #ifdef DESKTOP

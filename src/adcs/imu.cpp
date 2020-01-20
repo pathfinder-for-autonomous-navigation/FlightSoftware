@@ -16,11 +16,11 @@
 
 #include <adcs_constants.hpp>
 
-#include <imu.hpp>
-#include <imu_calibration.hpp>
-#include <imu_config.hpp>
-#include <utl/convert.hpp>
-#include <utl/debug.hpp>
+#include <adcs/imu.hpp>
+#include <adcs/imu_calibration.hpp>
+#include <adcs/imu_config.hpp>
+#include <adcs/utl/convert.hpp>
+#include <adcs/utl/debug.hpp>
 
 namespace imu {
 
