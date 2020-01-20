@@ -85,18 +85,18 @@ bool QuakeManager::execute() {
         char* snapshot = radio_mo_packet_fp->get();
 
         #ifdef DESKTOP
-            std::cout << "{\"telem\":\"";
+            std::cout << "{\"t\":" << debug_console::_get_elapsed_time() << ",\"telem\":\"";
             for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
                 std::ostringstream out;
-                out << "\\x";
+                out << "\\\u0078";
                 out << std::hex << std::setfill('0') << std::setw(2) << (0xFF & snapshot[i]);
                 std::cout << out.str();
             }
             std::cout << "\"}\n";
         #else
-            Serial.print("{\"telem\":\"");
+            Serial.printf("{\"t\":%d,\"telem\":\"", debug_console::_get_elapsed_time());
             for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
-                Serial.print("\\x");
+                Serial.print("\\\u0078");
                 Serial.print((0xFF & snapshot[i]), HEX);
             }
             Serial.print("\"}\n");
