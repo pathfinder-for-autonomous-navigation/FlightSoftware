@@ -474,7 +474,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         }
 
         // new
-        mag = sqrt(mag);
+        mag = sqrt(mag); // from mag^2 to mag
 
         std::cout << "mag: " << mag << "\n"; //this mag is mag squared, no longer
 
