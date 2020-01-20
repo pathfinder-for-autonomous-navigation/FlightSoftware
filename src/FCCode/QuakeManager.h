@@ -96,7 +96,7 @@ class QuakeManager : public TimedControlTask<bool> {
    /**
     * @brief This flag can be used by the sim to dump telemetry over the USB line.
     */
-   WritableStateField<unsigned int> dump_telemetry_f;
+   WritableStateField<bool> dump_telemetry_f;
 
   #ifdef DEBUG
 

@@ -4,6 +4,17 @@
 #include "radio_state_t.enum"
 #include "radio_mode_t.enum"
 
+// Include I/O functions for telemetry dumping during functional testing.
+#ifdef FUNCTIONAL_TEST
+    #ifdef DESKTOP
+        #include <iostream>
+        #include <iomanip>
+        #include <sstream>
+    #else
+        #include <Arduino.h>
+    #endif
+#endif
+
 /**
  * QuakeManager Implementation Info: 
  * 
@@ -25,7 +36,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_state_f("radio.state"),
     radio_mode_f("radio.mode"),
     last_checkin_cycle_f("radio.last_comms_ccno"), // Last communication control cycle #
-    dump_telemetry_f("telem.dump"),
+    dump_telemetry_f("telem.dump", Serializer<bool>()),
     qct(registry),
     mo_idx(0),
     unexpected_flag(false)
@@ -73,13 +84,24 @@ bool QuakeManager::execute() {
     #ifdef FUNCTIONAL_TEST
     if (dump_telemetry_f.get()) {
         dump_telemetry_f.set(false);
-        Serial.print("{\"telem\":\"");
         char* snapshot = radio_mo_packet_fp->get();
-        for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
-            Serial.print("\x");
-            Serial.print(snapshot[i], HEX);
-        }
-        Serial.print("\"}");
+        #ifdef DESKTOP
+            std::cout << "{\"telem\":\"";
+            for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
+                std::ostringstream out;
+                out << "\\x";
+                out << std::hex << snapshot[i];
+                std::cout << out.str();
+            }
+            std::cout << "\"}";
+        #else
+            Serial.print("{\"telem\":\"");
+            for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
+                Serial.print("\x");
+                Serial.print(snapshot[i], HEX);
+            }
+            Serial.print("\"}");
+        #endif
     }
     #endif
 
