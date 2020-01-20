@@ -8,6 +8,7 @@
 #ifdef FUNCTIONAL_TEST
     #ifdef DESKTOP
         #include <iostream>
+        #include <iomanip>
         #include <sstream>
     #else
         #include <Arduino.h>
@@ -90,7 +91,7 @@ bool QuakeManager::execute() {
             for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
                 std::ostringstream out;
                 out << "\\x";
-                out << std::hex << snapshot[i];
+                out << std::hex << std::setfill('0') << std::setw(2) << (0xFF & snapshot[i]);
                 std::cout << out.str();
             }
             std::cout << "\"}";
@@ -98,7 +99,7 @@ bool QuakeManager::execute() {
             Serial.print("{\"telem\":\"");
             for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
                 Serial.print("\\x");
-                Serial.print(snapshot[i], HEX);
+                Serial.print((0xFF & snapshot[i]), HEX);
             }
             Serial.print("\"}");
         #endif
