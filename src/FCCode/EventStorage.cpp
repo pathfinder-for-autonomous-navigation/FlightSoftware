@@ -11,9 +11,9 @@ EventStorage::EventStorage(const std::string& name,
     sub_events.reserve(storage_size);
     for(unsigned char i = 1; i <= storage_size; i++) {
         char x[4];
+        memset(x, 0, 4);
         x[0] = '.';
         sprintf(x, ".%d", i);
-        x[3] = 0;
         sub_events.emplace_back(name + std::string(x),
             _data_fields, _print_fn, _ccno);
     }
