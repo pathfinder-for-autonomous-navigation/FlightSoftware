@@ -92,7 +92,12 @@ class QuakeManager : public TimedControlTask<bool> {
     * The last cycle for which we had comms
     */
    InternalStateField<unsigned int> last_checkin_cycle_f;
-  
+
+   /**
+    * @brief This flag can be used by the sim to dump telemetry over the USB line.
+    */
+   WritableStateField<unsigned int> dump_telemetry_f;
+
   #ifdef DEBUG
 
   QuakeControlTask& dbg_get_qct()

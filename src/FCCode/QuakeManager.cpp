@@ -25,6 +25,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_state_f("radio.state"),
     radio_mode_f("radio.mode"),
     last_checkin_cycle_f("radio.last_comms_ccno"), // Last communication control cycle #
+    dump_telemetry_f("telem.dump"),
     qct(registry),
     mo_idx(0),
     unexpected_flag(false)
@@ -35,6 +36,10 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     add_internal_field(radio_state_f);
     add_internal_field(radio_mode_f);
     add_internal_field(last_checkin_cycle_f);
+
+    #ifdef FUNCTIONAL_TEST
+    add_writable_field(dump_telemetry_f);
+    #endif
 
     // Retrieve fields from registry
     snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);
@@ -47,6 +52,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_mt_len_f.set(0);
     radio_mode_f.set(static_cast<unsigned int>(radio_mode_t::disabled));
     radio_state_f.set(static_cast<unsigned int>(radio_state_t::config));
+    dump_telemetry_f.set(false);
 
     // Setup MO Buffers
     max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
@@ -63,6 +69,19 @@ bool QuakeManager::execute() {
     //     "current radio_state %d, current control task state %d", 
     //         radio_state_f.get(), 
     //         qct.get_current_state());
+
+    #ifdef FUNCTIONAL_TEST
+    if (dump_telemetry_f.get()) {
+        dump_telemetry_f.set(false);
+        Serial.print("{\"telem\":\"");
+        char* snapshot = radio_mo_packet_fp->get();
+        for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
+            Serial.print("\x");
+            Serial.print(snapshot[i], HEX);
+        }
+        Serial.print("\"}");
+    }
+    #endif
 
     const radio_mode_t radio_mode = static_cast<radio_mode_t>(radio_mode_f.get());
     switch(radio_mode) {
