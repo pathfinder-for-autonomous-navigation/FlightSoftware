@@ -2,6 +2,7 @@
 #define ATTITUDE_ESTIMATOR_HPP_
 
 #include <gnc_attitude_estimation.hpp>
+#include <lin.hpp>
 #include "TimedControlTask.hpp"
 
 /**
@@ -57,11 +58,15 @@ class AttitudeEstimator : public TimedControlTask<void> {
     gnc::AttitudeEstimate estimate;
 
     //AttitudeEstimate
-    Serializer<f_quat_t> q_body_eci_sr;
+    // Quaternion that converts from the ECI frame to the body frame
     ReadableStateField<f_quat_t> q_body_eci_f;
-    Serializer<f_vector_t> w_body_sr;
+    // Angular velocity of spacecraft in body frame
     ReadableStateField<f_vector_t> w_body_f;
+    // Angular momentum of spacecraft in body frame
+    InternalStateField<lin::Vector3f> h_body_f;
 
+    // True if the "paired" ADCS gains are being used.
+    WritableStateField<bool> adcs_paired_f;
 };
 
 #endif
