@@ -59,7 +59,7 @@ bool Uplink::_validate_packet(bitstream& bs)
     // if padding was not 0
     return (u8 != 0 || bits_consumed > 7) ? false : true;
 }
-#include <iostream>
+
  void Uplink::_update_fields(bitstream& bs)
 {
     size_t packet_size = bs.max_len*8;
