@@ -4,7 +4,7 @@
 #include <memory>
 
 #include <iostream> // used for shihao's testing campaign
-
+#include <lin.hpp> // for cleaner inner products
 // ============================================================================================= //
 //                                      Helper methods                                           //
 // ============================================================================================= //
@@ -378,13 +378,17 @@ void test_vec_serializer() {
     if (std::is_same<T, float>::value) csz = SerializerConstants::fvcsz;
     else csz = SerializerConstants::dvcsz;
     const size_t vec_bitsize = 40;
-    const size_t magnitude_bitsize = vec_bitsize - 2 - 2 * csz; // Used for error threshold.
-    T magnitude_err = 2.0 / powf(2, magnitude_bitsize);
-    std::cout << "ACCEPTABLE MAGN ERROR: " << magnitude_err << "\n";
+
+    // OLD TANISHQ:
+
+    // const size_t magnitude_bitsize = vec_bitsize - 2 - 2 * csz; // Used for error threshold.
+    // T magnitude_err = 2.0 / powf(2, magnitude_bitsize);
+    // std::cout << "ACCEPTABLE MAGN ERROR: " << magnitude_err << "\n";
+
     // (Deterministically) generate random vectors of magnitude 2, and see if they work 
     // with the serializer.
-    // Criterion for functionality: the vector that's reported has a displacement from the
-    // input vector of magnitude at most magnitude_err.
+    // Criterion for functionality: vector is within 1 degree, and within 1% of magnitude
+
     srand(2);
     for(size_t i = 0; i < 10; i++) {
         auto vec_serializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
@@ -429,7 +433,6 @@ void test_vec_serializer() {
         test_sign(y, result[1]);
         test_sign(z, result[2]);
 
-        
     }
 
     // Test deserialization from a string
@@ -470,20 +473,53 @@ void test_d_vec_serializer() {
     test_vec_serializer<double>();
 }
 
-template<typename T, typename quat_t_t>
-// normalizes a quat, new
-void norm(quat_t_t& input) {
-    T ip = 0.0;
-    for(int i = 0; i < 4; i++){
-        ip += input[i] * input[i];
-    }
-    T mag = std::sqrt(ip);
-    std::cout << "norm mag: " << mag << "\n";
-    for(int i = 0; i < 4; i++){
-        input[i] = input[i] / mag;
-    }
+template <typename T, size_t N>
+// normalizes V with N elements, N == 3 or 4
+void norm(std::array<T, N>& src) {
+
+    lin::Vector<T, N> normd; // short for normalized; normd = normalized
+
+    if(N == 4)
+        normd = {src[0], src[1], src[2], src[3]};
+    else 
+        normd = {src[0], src[1], src[2]};
+
+    normd = normd / lin::norm(normd);
     
+    for(unsigned int i = 0; i<N; i++){
+        src[i] = normd(i);
+    }
+
+    return;
 }
+
+template <typename T, size_t N>
+T angle_between(std::array<T, N>& a, std::array<T, N>& b){
+    lin::Vector<T, N> lin_a;
+    lin::Vector<T, N> lin_b;
+
+    if(N == 4){
+        lin_a = {a[0], a[1], a[2], a[3]};
+        lin_b = {b[0], b[1], b[2], b[3]};
+    }
+    else{
+        lin_a = {a[0], a[1], a[2]};
+        lin_b = {b[0], b[1], b[2]};
+    }
+
+    T inner_product = lin::dot(lin_a, lin_b);
+
+    // to account for quat could be flipped
+    inner_product = std::abs(inner_product);
+
+    T angle = std::acos(inner_product)*2;
+    angle = angle * 360.0 / (2 * 3.14159265);
+
+    return angle;
+    //std::cout << "ANGLE (DEG): " << angle << "\n";
+}
+
+// template<typename T, typename float_t>
 
 template<typename T>
 void test_quat_serializer() {
@@ -541,22 +577,12 @@ void test_quat_serializer() {
         sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3]);
 
         //TEST_ASSERT_LESS_OR_EQUAL_MESSAGE(err_threshold, magnitude_err, err_str);
-        std::cout << err_str << "\n";
+        //std::cout << err_str << "\n";
 
-        norm<T, quat_t>(quat);
-        norm<T, quat_t>(result);
+        norm<T, 4>(quat);
+        norm<T, 4>(result);
 
-        // assume quat and result are normalized
-        T inner_product = 0.0;
-        for(int i = 0; i < 4; i++){
-            inner_product += quat[i] * result[i];
-        }
-        inner_product = std::abs(inner_product);
-        std::cout << "IP: " << inner_product << "\n";
-
-        T angle = std::acos(inner_product)*2;
-        angle = angle * 360.0 / (2 * 3.14159265);
-        std::cout << "ANGLE (DEG): " << angle << "\n";
+        std::cout << "ANGLE (DEG): " << angle_between<T, 4>(quat, result) << "\n";
     }
 
     // Test deserialization from a string
