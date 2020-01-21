@@ -16,8 +16,8 @@
 
 #define DEBUG
 
-#include <imu.hpp>
-#include <utl/debug.hpp>
+#include <adcs/imu.hpp>
+#include <adcs/utl/debug.hpp>
 
 #include <adcs_constants.hpp>
 #include <Arduino.h>

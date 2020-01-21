@@ -17,8 +17,8 @@
 
 #define DEBUG
 
-#include <rwa.hpp>
-#include <utl/debug.hpp>
+#include <adcs/rwa.hpp>
+#include <adcs/utl/debug.hpp>
 
 #include <adcs_constants.hpp>
 #include <Arduino.h>
