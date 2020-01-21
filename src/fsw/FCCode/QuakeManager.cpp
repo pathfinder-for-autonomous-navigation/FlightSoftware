@@ -88,7 +88,7 @@ bool QuakeManager::execute() {
             std::cout << "{\"t\":" << debug_console::_get_elapsed_time() << ",\"telem\":\"";
             for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
                 std::ostringstream out;
-                out << "\\\u0078";
+                out << "\\\\x";
                 out << std::hex << std::setfill('0') << std::setw(2) << (0xFF & snapshot[i]);
                 std::cout << out.str();
             }
@@ -96,7 +96,7 @@ bool QuakeManager::execute() {
         #else
             Serial.printf("{\"t\":%d,\"telem\":\"", debug_console::_get_elapsed_time());
             for(size_t i = 0; i < snapshot_size_fp->get(); i++) {
-                Serial.print("\\\u0078");
+                Serial.print("\\\\x");
                 Serial.print((0xFF & snapshot[i]), HEX);
             }
             Serial.print("\"}\n");
