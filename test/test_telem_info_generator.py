@@ -10,7 +10,7 @@ class TestTelemInfoGenerator(unittest.TestCase):
     """
 
     filepath = os.path.dirname(os.path.abspath(__file__))
-    binary_dir = os.path.join(filepath, "../.pio/build/telem_info_generator/program")
+    binary_dir = os.path.join(filepath, "../.pio/build/fsw_telem_info_generator/program")
 
     def testTelemInfoGeneratorRequiresOneArgument(self):
         """Tests that the telemetry info generator requires exactly one argument, the filename."""
