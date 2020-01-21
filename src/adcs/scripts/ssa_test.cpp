@@ -12,8 +12,8 @@
 
 #define DEBUG
 
-#include <ssa.hpp>
-#include <utl/debug.hpp>
+#include <adcs/ssa.hpp>
+#include <adcs/utl/debug.hpp>
 
 #include <Arduino.h>
 #include <i2c_t3.h>

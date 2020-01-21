@@ -1,5 +1,5 @@
 //
-// test/LSM6DSMTest.cpp
+// test/LSM6DSM_test.cpp
 // ADCS
 //
 // Contributors:
@@ -11,7 +11,7 @@
 //
 
 #define DEBUG
-#include <debug.hpp>
+#include <adcs/utl/debug.hpp>
 
 #include <i2c_t3.h>
 #include <Arduino.h>
