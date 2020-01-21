@@ -537,7 +537,7 @@ void test_quat_serializer() {
     // Criterion for functionality: the quaternion that's reported has a displacement from the
     // input quaternion of magnitude at most magnitude_err.
     srand(2);
-    for(size_t i = 0; i < 100; i++) {
+    for(size_t i = 0; i < 10; i++) {
         auto quat_serializer = std::make_shared<Serializer<quat_t>>();
         auto downlink_deserializer = std::make_shared<Serializer<quat_t>>();
 
@@ -574,6 +574,8 @@ void test_quat_serializer() {
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3], err_angle);
+
+        std::cout << err_str << "\n";
 
         TEST_ASSERT_TRUE_MESSAGE(err_angle < 1.0, err_str);
 
