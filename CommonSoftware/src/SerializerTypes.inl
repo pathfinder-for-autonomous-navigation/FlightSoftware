@@ -376,26 +376,6 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         // NOTE TO TANISHQ, PLEASE CHECK THAT THERE'S ENOUGH BITSZ STUFF IN PLACES
     }
 
-    // TODO DOCUMENTATION
-    void copy_minimal(const Serializer<std::array<T, N>>& other){
-        this->magnitude_min = other.magnitude_min;
-        this->magnitude_max = other.magnitude_max;
-        this->magnitude_serializer = std::make_unique<Serializer<T>>(*other.magnitude_serializer);
-        for(size_t i = 0; i < vector_element_serializers.size(); i++) {
-            this->vector_element_serializers[i] =
-                std::make_unique<Serializer<T>>(*other.vector_element_serializers[i]);
-        }
-
-        // maintain serializers, but don't copy the "data"
-        this->max_component = other.max_component;
-        this->component_scaled_values = other.component_scaled_values;
-        this->sign_of_max_comp = other.sign_of_max_comp;
-
-        // this->magnitude_serializer->serialize(0);
-        // this->component_scaled_values = other.component
-
-    }
-
   protected:
     /**
      * We need these variables, since we don't want to use the base-class provided vectors for
@@ -660,6 +640,17 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         //     // vector_element_serializers[i]->set_bit_array(new_bitarr);
         // }
+        
+        // if there's a magnitude serializer
+        if(N == 3){
+            std::vector<bool> bit_vec;
+            for(int i = 0; i<magnitude_serializer->bitsize(); i++){
+                bit_vec.push_back(this->serialized_val[poor_mans_pointer]);
+                poor_mans_pointer++;
+            }
+            bit_array new_bitarr(bit_vec);
+            magnitude_serializer->set_bit_array(new_bitarr);
+        }
 
         for(unsigned int i = 0; i<(N-1); i++){
             //unsigned int vec_size = vector_element_serializers[i]->bitsize();
