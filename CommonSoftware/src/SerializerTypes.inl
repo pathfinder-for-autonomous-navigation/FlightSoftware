@@ -521,7 +521,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         for (size_t i = 0; i < N; i++) {
             if (i != max_component_idx) {
                 T element_scaled = src_norm[i] / mag;
-                
+                // std::cout << "input: " << element_scaled << "\n";
                 // the negative of a quaternion is the same quaternion
                 // thus to indicate sign of the largest component, negate all other components
                 if(flip_vals)
@@ -529,14 +529,14 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
                 vector_element_serializers[component_number]->serialize(element_scaled);
 
-                for(int k = 0; k < vector_element_serializers[component_number]->bitsize(); k++){
-                    std::cout << vector_element_serializers[component_number]->get_bit_array()[k] << " ";
-                }
-                std::cout << " << ser \n";
+                // for(int k = 0; k < vector_element_serializers[component_number]->bitsize(); k++){
+                //     std::cout << vector_element_serializers[component_number]->get_bit_array()[k] << " ";
+                // }
+                // std::cout << " << ser \n";
 
-                T ser_deser = 0.0;
-                vector_element_serializers[component_number]->deserialize(&ser_deser);
-                std::cout << "ser_deser: " << ser_deser << "\n";
+                // T ser_deser = 0.0;
+                // vector_element_serializers[component_number]->deserialize(&ser_deser);
+                // std::cout << "ser_deser: " << ser_deser << "\n";
                 //vector_element_serializers
 
                 std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
@@ -604,7 +604,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     void deserialize(std::array<T, N>* dest) const override {
         //
         int poor_mans_pointer = 0;
-        std::cout <<"fuck\n";
+        // std::cout <<"fuck\n";
 
         //std::copy(serialized_val.begin(), serialized_val.begin() + max_component.size(), max_component.begin()) 
         //std::copy(the_start, the_start + max_component.size() - 1, max_component.begin());
@@ -624,7 +624,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             //max_component[i] = this->serialized_val[poor_mans_pointer];
             poor_mans_pointer++;
         }
-        std::cout << "FUCK: " << max_comp_bitset.to_ulong();
+        std::cout << "max comp: " << max_comp_bitset.to_ulong();
         //max_component.set_int(max_comp_bitset.to_ulong());
 
         // for(unsigned int i = 0; i<(N-1); i++){
@@ -669,11 +669,11 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
             bit_array new_bitarr(bit_vec);
             vector_element_serializers[i]->set_bit_array(new_bitarr);
-            std::cout << "bitsz: " << vector_element_serializers[i]->bitsize() << "\n";
-            for(int k = 0; k < vector_element_serializers[i]->bitsize(); k++){
-                std::cout << vector_element_serializers[i]->get_bit_array()[k] << " ";
-            }
-            std::cout << " << post pop \n";
+            // std::cout << "bitsz: " << vector_element_serializers[i]->bitsize() << "\n";
+            // for(int k = 0; k < vector_element_serializers[i]->bitsize(); k++){
+            //     std::cout << vector_element_serializers[i]->get_bit_array()[k] << " ";
+            // }
+            // std::cout << " << post pop \n";
         }
 
         // for(int i = 0; i<sign_of_max_comp.size(); i++){
@@ -716,7 +716,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         for (size_t i = 0; i < N; i++) {
             if (i != deser_max_idx) {
                 vector_element_serializers[j]->deserialize(&(*dest)[i]);
-                std::cout << "ele: " << (*dest)[i] << "\n";
+                // std::cout << "ele: " << (*dest)[i] << "\n";
                 (*dest)[deser_max_idx] -= (*dest)[i] * (*dest)[i]; // subtract off; z^2/r^2 = 1 - x^2/r^2 ... // new
                 j++;
             }
@@ -729,6 +729,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         if(N == 3){
             if(sign_of_max_comp.to_uint() == 1){
                 // (*dest)[deser_max_idx] *= -1;
+                std::cout << "MAX COMP NEG\n";
                 (*dest)[deser_max_idx] *= -1;
             }
         }

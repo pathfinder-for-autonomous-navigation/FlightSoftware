@@ -10,6 +10,64 @@
 // ============================================================================================= //
 
 /**
+ * @brief Normalizes a vector or quaternion
+ * 
+ */
+template <typename T, size_t N>
+void normalize(std::array<T, N>& src) {
+
+    lin::Vector<T, N> normd; // short for normalized; normd = normalized
+
+    if(N == 4)
+        normd = {src[0], src[1], src[2], src[3]};
+    else 
+        normd = {src[0], src[1], src[2]};
+
+    normd = normd / lin::norm(normd);
+    
+    for(unsigned int i = 0; i<N; i++){
+        src[i] = normd(i);
+    }
+
+    return;
+}
+
+/**
+ * @brief Returns the angle between two quaternions or vectors
+ * 
+ */
+template <typename T, size_t N>
+T angle_between(std::array<T, N>& a, std::array<T, N>& b){
+    lin::Vector<T, N> lin_a;
+    lin::Vector<T, N> lin_b;
+
+    if(N == 4){
+        lin_a = {a[0], a[1], a[2], a[3]};
+        lin_b = {b[0], b[1], b[2], b[3]};
+    }
+    else{
+        lin_a = {a[0], a[1], a[2]};
+        lin_b = {b[0], b[1], b[2]};
+    }
+
+    T inner_product = lin::dot(lin_a, lin_b);
+
+    
+    T angle;
+    if(N == 4){
+        // to account for quat could be flipped
+        inner_product = std::abs(inner_product);
+        angle = std::acos(inner_product)*2.0;
+    }
+    else
+        angle = std::acos(inner_product);
+
+    angle = angle * 360.0 / (2 * 3.14159265);
+
+    return angle;
+}
+
+/**
  * @brief Helper methods to test serialization and deserialization.
  *
  * @tparam T Type of serializer being tested
@@ -392,6 +450,9 @@ void test_vec_serializer() {
     srand(2);
     for(size_t i = 0; i < 10; i++) {
         auto vec_serializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
+        
+        //make the another serialier with same inputs
+        auto downlink_deserializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
         vector_t result;
 
         // rand() returns the same thing every time
@@ -406,7 +467,11 @@ void test_vec_serializer() {
 
         vector_t vec = {x, y, z};
         vec_serializer->serialize(vec);
-        vec_serializer->deserialize(&result);
+
+        // transfer bit array; analagous to reading in telemetry bit array
+        downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
+
+        downlink_deserializer->deserialize(&result);
 
         // Ensure the displacement vector of the serialized value and the retrieved
         // value has a magnitude less than the desired precision.
@@ -415,23 +480,33 @@ void test_vec_serializer() {
 
         T dv_magnitude = std::sqrt(pow(dv[0], 2) + pow(dv[1], 2) + pow(dv[2], 2));
 
-        static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output vector was {%f,%f,%f}";
-        static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output vector was {%lf,%lf,%lf}";
+        // normalize the input even though it should've already been normalized!
+        normalize<T, 3>(vec);
+        normalize<T, 3>(result);
+
+        T angle = angle_between(vec, result);
+
+        static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output vector was {%f,%f,%f}; angle: %f";
+        static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output vector was {%lf,%lf,%lf}; angle: %lf";
         char err_str[200];
         memset(err_str, 0, 200);
         const char* err_fmt_str = nullptr;
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
-        sprintf(err_str, err_fmt_str, i, x, y, z, result[0], result[1], result[2]);
+        // undo norm meme?
+        sprintf(err_str, err_fmt_str, i, x, y, z, result[0], result[1], result[2], angle);
 
+        
         // TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.01, 0, dv_magnitude, err_str);
+        // TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.01, 0, dv_magnitude, err_str);
 
-        std::cout << err_str << "\n";
+        // angle less than 1 degree
+        TEST_ASSERT_TRUE_MESSAGE(angle < 1.0, err_str);
+        //std::cout << err_str << "\n";
 
-        test_sign(x, result[0]); // to do macro
-        test_sign(y, result[1]);
-        test_sign(z, result[2]);
+        // test_sign(x, result[0]); // to do macro
+        // test_sign(y, result[1]);
+        // test_sign(z, result[2]);
 
     }
 
@@ -473,50 +548,7 @@ void test_d_vec_serializer() {
     test_vec_serializer<double>();
 }
 
-template <typename T, size_t N>
-// normalizes V with N elements, N == 3 or 4
-void normalize(std::array<T, N>& src) {
 
-    lin::Vector<T, N> normd; // short for normalized; normd = normalized
-
-    if(N == 4)
-        normd = {src[0], src[1], src[2], src[3]};
-    else 
-        normd = {src[0], src[1], src[2]};
-
-    normd = normd / lin::norm(normd);
-    
-    for(unsigned int i = 0; i<N; i++){
-        src[i] = normd(i);
-    }
-
-    return;
-}
-
-template <typename T, size_t N>
-T angle_between(std::array<T, N>& a, std::array<T, N>& b){
-    lin::Vector<T, N> lin_a;
-    lin::Vector<T, N> lin_b;
-
-    if(N == 4){
-        lin_a = {a[0], a[1], a[2], a[3]};
-        lin_b = {b[0], b[1], b[2], b[3]};
-    }
-    else{
-        lin_a = {a[0], a[1], a[2]};
-        lin_b = {b[0], b[1], b[2]};
-    }
-
-    T inner_product = lin::dot(lin_a, lin_b);
-
-    // to account for quat could be flipped
-    inner_product = std::abs(inner_product);
-
-    T angle = std::acos(inner_product)*2;
-    angle = angle * 360.0 / (2 * 3.14159265);
-
-    return angle;
-}
 
 // template<typename T, typename float_t>
 
@@ -575,7 +607,7 @@ void test_quat_serializer() {
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3], err_angle);
 
-        std::cout << err_str << "\n";
+        // std::cout << err_str << "\n";
 
         TEST_ASSERT_TRUE_MESSAGE(err_angle < 1.0, err_str);
 
