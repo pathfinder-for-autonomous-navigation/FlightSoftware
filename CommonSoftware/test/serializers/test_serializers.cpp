@@ -387,7 +387,7 @@ void test_vec_serializer() {
 
     // (Deterministically) generate random vectors of magnitude 2, and see if they work 
     // with the serializer.
-    // Criterion for functionality: vector is within 1 degree, and within 1% of magnitude
+    // Criterion for functionality: vector is within ??? degree, and within 1% of magnitude
 
     srand(2);
     for(size_t i = 0; i < 10; i++) {
@@ -475,7 +475,7 @@ void test_d_vec_serializer() {
 
 template <typename T, size_t N>
 // normalizes V with N elements, N == 3 or 4
-void norm(std::array<T, N>& src) {
+void normalize(std::array<T, N>& src) {
 
     lin::Vector<T, N> normd; // short for normalized; normd = normalized
 
@@ -516,7 +516,6 @@ T angle_between(std::array<T, N>& a, std::array<T, N>& b){
     angle = angle * 360.0 / (2 * 3.14159265);
 
     return angle;
-    //std::cout << "ANGLE (DEG): " << angle << "\n";
 }
 
 // template<typename T, typename float_t>
@@ -538,7 +537,7 @@ void test_quat_serializer() {
     // Criterion for functionality: the quaternion that's reported has a displacement from the
     // input quaternion of magnitude at most magnitude_err.
     srand(2);
-    for(size_t i = 0; i < 10; i++) {
+    for(size_t i = 0; i < 100; i++) {
         auto quat_serializer = std::make_shared<Serializer<quat_t>>();
         quat_t result;
 
@@ -550,39 +549,28 @@ void test_quat_serializer() {
         const T uz = std::sin(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
         const T s = std::cos(tt/2);
         quat_t quat = {ux, uy, uz, s};
+        // please not that quat is not normalized at this point
 
-        std::cout << "INPUT MAG: \n";
-        // norm<T, quat_t>(quat);
-
-
+        // serialize will normalize a quaternion argument
         quat_serializer->serialize(quat);
         quat_serializer->deserialize(&result);
 
-        // Compute the rotation distance between the input and output quaternions and
-        // verify that it's less than magnitude_err.
-        const T magnitude_err = std::abs(quat[0] * result[0] 
-                                  + quat[1] * result[1]
-                                  + quat[2] * result[2]
-                                  + quat[3] * result[3]);
+        // normalize the input even though it should've already been normalized!
+        normalize<T, 4>(quat);
+        normalize<T, 4>(result);
+        T err_angle = angle_between<T, 4>(quat, result);
 
-        static const T err_threshold = 0.01;
-
-        static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output quaternion was {%f,%f,%f,%f}";
-        static const char* err_fmt_str_d = "%dth test: Input quaternion was {%lf,%lf,%lf,%lf}; output quaternion was {%lf,%lf,%lf,%lf}";
+        static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output quaternion was {%f,%f,%f,%f}; angle: %f";
+        static const char* err_fmt_str_d = "%dth test: Input quaternion was {%lf,%lf,%lf,%lf}; output quaternion was {%lf,%lf,%lf,%lf}; angle: %lf";
         char err_str[200];
         memset(err_str, 0, 200);
         const char* err_fmt_str = nullptr;
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
-        sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3]);
+        sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3], err_angle);
 
-        //TEST_ASSERT_LESS_OR_EQUAL_MESSAGE(err_threshold, magnitude_err, err_str);
-        //std::cout << err_str << "\n";
+        TEST_ASSERT_TRUE_MESSAGE(err_angle < 1.0, err_str);
 
-        norm<T, 4>(quat);
-        norm<T, 4>(result);
-
-        std::cout << "ANGLE (DEG): " << angle_between<T, 4>(quat, result) << "\n";
     }
 
     // Test deserialization from a string
