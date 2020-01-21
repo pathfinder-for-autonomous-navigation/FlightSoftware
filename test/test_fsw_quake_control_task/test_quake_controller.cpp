@@ -1,5 +1,6 @@
+#include <fsw/FCCode/QuakeControlTask.h>
+
 #include <StateFieldRegistry.hpp>
-#include "../../src/FCCode/QuakeControlTask.h"
 #include <unity.h>
 
 using namespace Devices;

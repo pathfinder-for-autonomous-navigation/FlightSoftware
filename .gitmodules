@@ -1,0 +1,9 @@
+[submodule "lib/common/i2c_t3"]
+	path = lib/common/i2c_t3
+	url = https://github.com/nox771/i2c_t3.git
+[submodule "lib/common/ArduinoJson"]
+	path = lib/common/ArduinoJson
+	url = https://github.com/bblanchon/ArduinoJson.git
+[submodule "lib/common/psim"]
+	path = lib/common/psim
+	url = https://github.com/pathfinder-for-autonomous-navigation/psim.git

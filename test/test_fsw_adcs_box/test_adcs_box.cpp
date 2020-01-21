@@ -1,8 +1,10 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #include <ADCS.hpp>
-#include "../../src/FCCode/ADCSBoxMonitor.hpp"
-#include "adcs_constants.hpp"
+#include <adcs_constants.hpp>
+#include <adcs_havt_devices.hpp>
+
+#include <fsw/FCCode/ADCSBoxMonitor.hpp>
 
 #include <unity.h>
 
@@ -19,6 +21,9 @@ class TestFixture {
         ReadableStateField<f_vector_t>* mag_vec_fp;
         ReadableStateField<f_vector_t>* gyr_vec_fp;
         ReadableStateField<float>* gyr_temp_fp;
+
+        // vector of pointers to device availability
+        std::vector<ReadableStateField<bool>*> havt_table_vector_fp;
 
         // pointers to error flags
         ReadableStateField<bool>* rwa_speed_rd_flag_p;
@@ -47,13 +52,22 @@ class TestFixture {
             ssa_mode_fp = registry.find_readable_field_t<int>("adcs_monitor.ssa_mode");
             ssa_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.ssa_vec");
             
-            // fill vector of pointers to statefields
+            // fill vector of pointers to statefields for ssa
             char buffer[50];
             for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
                 std::memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"adcs_monitor.ssa_voltage");
                 sprintf(buffer + strlen(buffer), "%u", i);
                 ssa_voltages_fp.push_back(registry.find_readable_field_t<float>(buffer));
+            }
+
+            //fill vector of pointers to statefields for havt
+            for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+            {
+                std::memset(buffer, 0, sizeof(buffer));
+                sprintf(buffer,"adcs_monitor.havt_device");
+                sprintf(buffer + strlen(buffer), "%u", idx);
+                havt_table_vector_fp.push_back(registry.find_readable_field_t<bool>(buffer));
             }
 
             mag_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag_vec");
@@ -71,7 +85,7 @@ class TestFixture {
 
         //set of mocking methods
         void set_mock_ssa_mode(const unsigned int mode){
-                adcs_box->adcs_system.set_mock_ssa_mode(mode);
+            adcs_box->adcs_system.set_mock_ssa_mode(mode);
         }
 };
 
@@ -85,6 +99,13 @@ void elements_same(const std::array<float, 3> ref, const std::array<float, 3> ac
 void test_task_initialization()
 {
     TestFixture tf;
+
+    // verify all initialized to 0
+    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+    {
+        // 0 means device is disabled
+        TEST_ASSERT_EQUAL(0, tf.havt_table_vector_fp[idx]->get());
+    }
 }
 
 void test_execute(){
@@ -196,26 +217,39 @@ void test_execute(){
     TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
 }
 
+void test_execute_havt(){
+    TestFixture tf;
+    tf.adcs_box->execute();
+
+    // mocking sets ALL 32 devices available (true), 
+    // but only check up to _LENGTH in this case
+    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+    {
+        TEST_ASSERT_EQUAL(true, tf.havt_table_vector_fp[idx]->get());
+    }
+}
+
 int test_control_task()
 {
-        UNITY_BEGIN();
-        RUN_TEST(test_task_initialization);
-        RUN_TEST(test_execute);
-        return UNITY_END();
+    UNITY_BEGIN();
+    RUN_TEST(test_task_initialization);
+    RUN_TEST(test_execute);
+    RUN_TEST(test_execute_havt);
+    return UNITY_END();
 }
 
 #ifdef DESKTOP
 int main()
 {
-        return test_control_task();
+    return test_control_task();
 }
 #else
 #include <Arduino.h>
 void setup()
 {
-        delay(2000);
-        Serial.begin(9600);
-        test_control_task();
+    delay(2000);
+    Serial.begin(9600);
+    test_control_task();
 }
 
 void loop() {}

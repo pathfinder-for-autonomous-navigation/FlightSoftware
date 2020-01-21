@@ -1,5 +1,6 @@
-#include "../../src/FCCode/Fault.hpp"
 #include "../StateFieldRegistryMock.hpp"
+
+#include <fsw/FCCode/Fault.hpp>
 #include <unity.h>
 
 /**
@@ -98,7 +99,8 @@ void setup() {
     delay(2000);
     Serial.begin(9600);
     UNITY_BEGIN();
-    RUN_TEST(test_fault_behavior);
+    RUN_TEST(test_fault_normal_behavior);
+    RUN_TEST(test_fault_overridden_behavior);
     UNITY_END();
 }
 

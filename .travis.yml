@@ -11,7 +11,8 @@ install:
 
 matrix:
     include:
-      - name: "Desktop flight software tests"
+
+      - name: "Desktop flight software and ground software tests"
         addons:
           apt:
             packages:
@@ -23,14 +24,24 @@ matrix:
             - sudo gem install coveralls-lcov
         script:
             - ./tools/run_desktop_flight_tests.sh
+            - ./tools/run_ground_tests.sh
         after_success:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-      - name: "Ground software tests"
+      - name: "Verify Teensy code compiles for flight software"
         addons:
           apt:
             packages:
+            - cppcheck
+        script:
+            - ./tools/verify_teensy_builds.sh
+      
+      - name: "Common Software Tests"
+        addons:
+          apt:
+            packages:
+            - cppcheck
             - lcov
             - valgrind
         install:
@@ -38,18 +49,31 @@ matrix:
             - platformio update
             - sudo gem install coveralls-lcov
         script:
-            - ./tools/run_ground_tests.sh
+            - cd CommonSoftware
+            - ./tools/run_desktop_tests.sh
         after_success:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-      - name: "Verify Teensy code compiles"
-        addons:
-          apt:
-            packages:
-            - cppcheck
+      - name: "ADCS Software Tests"
+        install:
+            - pip install -U platformio
+            - platformio update
         script:
-            - ./tools/verify_teensy_builds.sh
+            - platformio run -e adcs_teensy35_flight_leader
+            - platformio run -e adcs_teensy35_flight_follower
+            - platformio run -e adcs_teensy35_flight_debug_leader
+            - platformio run -e adcs_teensy35_flight_debug_follower
+            - platformio run -e adcs_teensy35_script_smoke_test
+            - platformio run -e adcs_teensy35_script_imu_test
+            - platformio run -e adcs_teensy35_script_mtr_test
+            - platformio run -e adcs_teensy35_script_rwa_test
+            - platformio run -e adcs_teensy35_script_ssa_test
+            - platformio run -e adcs_teensy35_script_state_test
+            - platformio run -e adcs_teensy32_script_state_test
+            - platformio run -e adcs_teensy35_script_ADS1015_test
+            - platformio run -e adcs_teensy35_script_LSM6DSM_test
+            - platformio run -e adcs_teensy35_script_MMC34160PJ_test
 
       #- name: "Run unit tests on Teensy"
         #script:

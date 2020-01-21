@@ -1,9 +1,10 @@
 #include "../StateFieldRegistryMock.hpp"
-#include "../src/FCCode/AttitudeComputer.hpp"
-#include "../src/FCCode/adcs_state_t.enum"
+#include "../custom_assertions.hpp"
+
+#include <fsw/FCCode/AttitudeComputer.hpp>
+#include <fsw/FCCode/adcs_state_t.enum>
 
 #include <unity.h>
-#include "../custom_assertions.hpp"
 
 class TestFixture {
   public:
