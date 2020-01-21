@@ -539,6 +539,8 @@ void test_quat_serializer() {
     srand(2);
     for(size_t i = 0; i < 100; i++) {
         auto quat_serializer = std::make_shared<Serializer<quat_t>>();
+        auto downlink_deserializer = std::make_shared<Serializer<quat_t>>();
+
         quat_t result;
 
         // Generate random quaternion.
@@ -553,7 +555,11 @@ void test_quat_serializer() {
 
         // serialize will normalize a quaternion argument
         quat_serializer->serialize(quat);
-        quat_serializer->deserialize(&result);
+
+        //downlink_deserializer = quat_serializer;
+        downlink_deserializer->set_bit_array(quat_serializer->get_bit_array());
+
+        downlink_deserializer->deserialize(&result);
 
         // normalize the input even though it should've already been normalized!
         normalize<T, 4>(quat);

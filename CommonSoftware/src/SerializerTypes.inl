@@ -404,7 +404,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     /**
      * @brief Bit array that stores which element of the vector is maximal.
      */
-    size_t max_component_idx = 0;
+    // size_t max_component_idx = 0; not copied between serializers anyway, instead generate on the spot in serialize()
     bit_array max_component;
 
     //new
@@ -482,6 +482,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         // Get and store index of maximum-valued component
         std::array<T, N> v_mags;
         T max_element_mag = 0;
+        unsigned int max_component_idx;
         for (size_t i = 0; i < N; i++) {
             v_mags[i] = std::abs(src_norm[i]);
             if (max_element_mag < v_mags[i]) {
@@ -489,10 +490,6 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                 max_component_idx = i;
             }
         }
-
-        std::cout << "max ele: " << max_element_mag;
-        std::cout << " " << max_component_idx << "\n";
-        // max element works
 
         max_component.set_int(max_component_idx);
         std::copy(max_component.begin(), max_component.end(), serialized_position);
@@ -510,8 +507,6 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         // actually turns mag^2 to mag
         mag = std::sqrt(mag);
-
-        std::cout << "mag: " << mag << "\n"; //this mag is mag squared, no longer
 
         // only serialize the magnitude if N == 3
         if(N == 3){
@@ -580,22 +575,15 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     }
 
     void deserialize(std::array<T, N>* dest) const override {
-        std::cout << "deser mag: ";
         T magnitude = 0.0f;
         if(N == 3)
             magnitude_serializer->deserialize(&magnitude);
         else
             magnitude = 1.0f;
-        
-        // this is just printing the upper bound of the magnitude of a component of the constructor
-        std::cout << magnitude;
-        // not deserializing magnitude correctly for float vector
 
-        // new shihao code, if you just use max_component_idx, this will fail on IRL downlink
         // local to deserialize variable
         int deser_max_idx = max_component.to_uint();
 
-        std::cout << "idx: " << deser_max_idx << "\n";
         (*dest)[deser_max_idx] = 1.0f; // 1.0 or 1.0f?
         int j = 0;  // Index of current component being processed
         for (size_t i = 0; i < N; i++) {
