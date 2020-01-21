@@ -2,7 +2,18 @@
 #define PROPULSION_SYSTEM_HPP_
 /**
  * PropulsionSystem.hpp
- * Specifies the Driver for the propulsion system
+ * Specifies the Driver for the propulsion system, which consists of an inner tank
+ * and an (outer) thrust tank.
+ * 
+ * Features:
+ *  - opens and closes valves on both tanks
+ *  - reads temperature sensors on both tanks
+ *  - reads pressure sensor for Tank2
+ *  - enforces firing schedule for Tank2
+ *  - enforces mandatory wait time between opening valves on both tanks
+ * 
+ * Dependencies: 
+ *  - SpikeAndHold must be enabled in order to use this system
  */
 #include <array>
 #include "../Devices/Device.hpp"
@@ -18,18 +29,30 @@ class Tank;
 class Tank1;
 class Tank2;
 /**
- * PropulsionSystem class defines the interface for the propulsion system.
+ * PropulsionSystem class defines the interface for the propulsion system, which 
+ * consists of an inner tank, Tank1, and the (outer) thrust tank, Tank2. 
+ *
  * 
- * It consists of a static Tank1 and Tank2 data objects. 
- * Only methods from PropulsionSystem may change the states of either Tank1 or Tank2. 
+ * It consists of a static Tank1 (inner tank) and Tank2 (thrust tank) data objects. 
  * 
- * Tank1 valves are at index 0, 1
- * Tank2 valves are at index 0, 1, 2, 3
+ * Specifications:
+ * Tank1 valves are at numbered 0, 1
+ * Tank2 valves are at numbered 0, 1, 2, 3
+ * mandatory_wait_time is the duration of time after opening a valve before 
+ * we can open another valve. Tank1 is 3ms. Tank2 is 10*1000 ms
+ * 
+ * State Definitions:
+ * "enabled" means that the IntervalTimer for tank2 is on. This implies that:
+ *      - either tank2 is "scheduled (to fire)" 
+ *      - or tank2 has already fired
+ * "scheduled (to fire)" means that tank2 currently has a scheduled start time
+ * in the future
  * 
  * Dependencies: 
  * SpikeAndHold must be enabled in order to use this system
  * 
  * Usage:
+ * - Call setup to setup this device
  * - Use set_schedule to set a firing schedule for tank2. 
  * - Use enable to turn on the schedule when we are close to the start_time.
  * - Use disable to prematurely cancel the schedule.
@@ -38,8 +61,22 @@ class Tank2;
  * - Use is_firing to check if we are still executing the schedule
  * - Use disable to stop the timer when is_firing() returns false
  * 
- * Notes:
- * Only tank2 has a schedule since only tank2 uses the IntervalTimer to fire
+ * Implementation Notes and Warnings:
+ * The only public methods that can change the states in tank1 or tank2 are the
+ * methods in PropulsionSystem.
+ * 
+ * TimedLock enforces
+ *  - tank2 scheduled start time and the 
+ *  - tank1 10s mandatory wait time
+ * IntervalTimer (thrust_valve_loop_timer) enforces
+ *  - tank2 3ms mandatory wait time
+ *  - tank2 firing schedule
+ * 
+ * Only tank2 has a schedule since only tank2 uses the IntervalTimer to fire.
+ * 
+ * No mandatory wait time is enforced when opening valves from different tanks. For example,
+ * suppose we open a valve on tank1. Although we cannot open the other valve for another 10s,
+ * we can immediately open any valve on tank2.
  * 
  **/
 class PropulsionSystem : public Device {
@@ -48,14 +85,32 @@ public:
 
     /**
      * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
+     * @return True if successfully setup both tank1 and tank2 and all pins
      */
     bool setup() override;
 
     /**
-     * @brief Shuts off all valves immediately, 
-     * clears tank2 schedule, disables tank2 IntervalTimer
+     * @brief Resets all runtime (transient) values to their default values
+     * 
+     * EFFECTS:
+     *  - Shuts off all valves in both tank1 and tank2 immediately 
+     *  - Clears tank2 schedule 
+     *  - Disables tank2 IntervalTimer
+     *  - Unlocks both tank1 and tank2 locks
      */
     void reset() override;
+
+    /**
+     * @brief Turns on IntervalTimer thurst_value_loop_timer, causes an interrupt
+     * every 3 ms
+     * @return True if tank2 is now set to fire at time tank2.start_time.
+     * 
+     * EFFECTS:
+     *  - If timer has already been enabled, calls disable() and return false. 
+     * REQUIRE: 
+     *  - tank2.start_time must be set to set at least 2.9ms into the future
+     */
+    bool enable();
 
     /**
      * @brief Return true if start_time_us is at least 3001 us into the future
@@ -63,20 +118,12 @@ public:
     static bool is_start_time_ok(uint32_t start_time_us);
 
     /**
-     * @brief Turns on interrupts provided by the thurst_value_loop_timer
-     * @return True if we tank2 is now set to fire at its current schedule.
+     * @brief Turns off IntervalTimer (disables thrust_valve_loop_timer interrupts)
      * 
-     * If this is called when the system is already enabled, it will disable()
-     * and return false. 
-     * 
-     * tank2.start_time must be set to some time in the future
-     */
-    bool enable();
-
-    /**
-     * @brief Turns off interrupts (the thrust_value_loop_timer)
-     * 
-     * If this is called before tank2.start_time, it will also reset tank2 lock
+     * EFFECTS:
+     *  - Ends tank2 IntervalTimer
+     *  - Closes all tank2 valves
+     *  - If tank2.start_time is in the future, reset tank2 lock
      */
     void disable() override;
 
@@ -119,10 +166,11 @@ public:
     }
 
     /**
-     * @brief Return true if we are currently firing tank2 
-     * (at least one valve pin is HIGH AND interval timer is on)
+     * @brief This tells us if we are done firing since the thrust loop will set the schedule
+     * to 0
+     * @return True if schedule is zero AND timer is enabled.
      */
-    bool is_firing();
+    bool is_done_firing();
 
     /**
      * @brief opens the valve specified by valve_idx in the specified tank
@@ -250,7 +298,7 @@ public:
         return valve_lock.is_free();
     }
 
-// protected:
+protected:
     /**
      * @brief Enables valve INPUT/OUTPUT on valve and sensor pins
      */
@@ -263,7 +311,7 @@ public:
 
     size_t num_valves;
     // mandatory wait time between consecutive openings (in ms)
-    uint32_t valve_lock_duration;
+    uint32_t mandatory_wait_time;
     // pin number of the temperature sensor
     uint8_t temp_sensor_pin;
     // mapping of physical GPIO pin #s (values) to logical pin #s
@@ -299,7 +347,7 @@ public:
     float get_pressure();
 
     /**
-     * @brief Returns the current value of the schedule for the specified valve_num
+     * @brief Returns the current value of the schedule for the specified valve
      */
     unsigned int get_schedule_at(size_t valve_num);
 
@@ -311,6 +359,7 @@ private:
 
     static uint32_t start_time;
     static volatile unsigned int schedule[4];
+    
     static constexpr unsigned char pressure_sensor_low_pin = 20;
     static constexpr unsigned char pressure_sensor_high_pin = 23;
 

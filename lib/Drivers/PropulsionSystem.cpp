@@ -20,14 +20,14 @@ Tank::Tank(size_t _num_valves) :
 num_valves(_num_valves) {}
 
 Tank1::Tank1() : Tank(2) {
-    valve_lock_duration = 10*1000; // 10 seconds
+    mandatory_wait_time = 10*1000; // 10 seconds
     valve_pins[0] = 27; // Main tank 1 to tank 2 valve
     valve_pins[1] = 28; // Backup tank 1 to tank 2 valve
     temp_sensor_pin = 21;
 }
 
 Tank2::Tank2() : Tank(4) {
-    valve_lock_duration = 3; // 3 ms
+    mandatory_wait_time = 3; // 3 ms
     valve_pins[0] = 3; // Nozzle valve
     valve_pins[1] = 4; // Nozzle valve
     valve_pins[2] = 5; // Nozzle valve
@@ -134,15 +134,6 @@ void PropulsionSystem::reset() {
     interrupts();
 }
 
-bool PropulsionSystem::is_start_time_ok(uint32_t start_time_us)
-{
-    uint32_t diff = TimedLock::safe_subtract(start_time_us, micros());
-    // start_time must be at least 3000 us into the future
-    if (diff <= tank2.thrust_valve_loop_interval_us)
-        return false;
-    return true;
-}
-
 bool PropulsionSystem::enable()
 {
     if (is_enabled)
@@ -154,8 +145,6 @@ bool PropulsionSystem::enable()
     if ( !is_start_time_ok(tank2.start_time) )
         return false;
 
-
-
     // Unlock 2.9 ms from start time so as to not be one interrupt-cycle (3 ms) late
     if (tank2.valve_lock.procure(tank2.start_time - micros() - 100))
     {
@@ -165,12 +154,20 @@ bool PropulsionSystem::enable()
     return is_enabled;
 }
 
+bool PropulsionSystem::is_start_time_ok(uint32_t start_time_us)
+{
+    uint32_t diff = TimedLock::safe_subtract(start_time_us, micros());
+    // start_time must be at least 3000 us into the future
+    if (diff <= tank2.thrust_valve_loop_interval_us)
+        return false;
+    return true;
+}
+
 void PropulsionSystem::disable() {
     noInterrupts();
     tank2.thrust_valve_loop_timer.end();
     interrupts();
 
-    // Close all valves just in case
     tank2.close_all_valves();
     is_enabled = false;
 
@@ -216,16 +213,16 @@ bool PropulsionSystem::clear_schedule()
     return true;
 }
 
-bool PropulsionSystem::is_firing()
+bool PropulsionSystem::is_done_firing()
 {
     if (!is_enabled)
         return false;
-    int ret = 0;
-    // Since the thurst loop sets the schedule to 0, if the schedule is not 0,
-    // then it can be assumed that we are still firing
     for (size_t i = 0; i < 4; ++i)
-        ret += tank2.schedule[i];
-    return ret != 0;
+    {
+        if (tank2.schedule[i] != 0)
+            return false;
+    }
+    return true;
 }
 
 bool PropulsionSystem::open_valve(Tank& tank, size_t valve_idx)
@@ -234,7 +231,7 @@ bool PropulsionSystem::open_valve(Tank& tank, size_t valve_idx)
         return false;
     noInterrupts();
     {
-        if (tank.valve_lock.procure(tank.valve_lock_duration*1000 - 100))
+        if (tank.valve_lock.procure(tank.mandatory_wait_time*1000 - 100))
         {
             digitalWrite(tank.valve_pins[valve_idx], HIGH);
             tank.is_valve_opened[valve_idx] = 1;
@@ -270,7 +267,8 @@ void PropulsionSystem::thrust_valve_loop() {
             }
             continue;
         }
-        else if (tank2.valve_lock.is_free() && !tank2.is_valve_opened[i]) {
+        // lock will always be free since this timer interrupts on 3ms anyway
+        else if (!tank2.is_valve_opened[i]) {
             // Open valve and prevent other valves from opening at the same time
             // Serial.printf("Open vault %d\n", i);
             open_valve(tank2, i);
