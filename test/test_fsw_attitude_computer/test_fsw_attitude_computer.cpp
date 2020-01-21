@@ -148,8 +148,8 @@ void test_parallel_objectives() {
         tf.pos_fp->set({0,0,0});
         tf.adcs_vec1_current_fp->set({1,0,0});
         tf.adcs_vec2_current_fp->set({
-            cosf(8.0f * gnc::constant::pi / 180.0f),
-            sinf(8.0f * gnc::constant::pi / 180.0f),
+            std::cos(8.0f * gnc::constant::pi / 180.0f),
+            std::sin(8.0f * gnc::constant::pi / 180.0f),
             0}); // 8 degrees away
         tf.attitude_computer->execute();
         PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}),
@@ -163,8 +163,8 @@ void test_parallel_objectives() {
         tf.pos_fp->set({0,0,0});
         tf.adcs_vec1_desired_fp->set({1,0,0});
         tf.adcs_vec2_desired_fp->set({
-            cosf(8.0f * gnc::constant::pi / 180.0f),
-            sinf(8.0f * gnc::constant::pi / 180.0f),
+            std::cos(8.0f * gnc::constant::pi / 180.0f),
+            std::sin(8.0f * gnc::constant::pi / 180.0f),
             0}); // 8 degrees away
         tf.attitude_computer->execute();
         PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({nan_f, nan_f, nan_f}),
