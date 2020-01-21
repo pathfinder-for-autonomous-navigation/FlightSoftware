@@ -630,10 +630,23 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         //std::copy(the_start, the_start + max_component.size() - 1, max_component.begin());
         // std::copy(the_start, the_start, max_component.begin());
         // std::advance(the_start, max_component.size());
-        for(int i = 0; i<max_component.size(); i++){
-            max_component.modify_bit(max_component.to_uint(), i, this->serialized_val[poor_mans_pointer]);
+        // std::vector<bool> max_comp_vec;
+        // for(unsigned int i = 0; i<max_component.size(); i++){
+        //     max_comp_vec.push_back(this->serialized_val[poor_mans_pointer]);
+        //     //max_component[i] = this->serialized_val[poor_mans_pointer];
+        //     poor_mans_pointer++;
+        // }
+        // max_component.set(bit_array(max_comp_vec));
+
+        std::bitset<2> max_comp_bitset(0);
+        for(unsigned int i = 0; i<max_component.size(); i++){
+            max_comp_bitset[i] = this->serialized_val[poor_mans_pointer];
+            //max_component[i] = this->serialized_val[poor_mans_pointer];
             poor_mans_pointer++;
         }
+        std::cout << "FUCK: " << max_comp_bitset.to_ulong();
+        //max_component.set_int(max_comp_bitset.to_ulong());
+
         // for(unsigned int i = 0; i<(N-1); i++){
         //     auto new_bitarr = vector_element_serializers[i]->get_bit_array();
 
@@ -703,6 +716,9 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         // local to deserialize variable
         int deser_max_idx = max_component.to_uint();
+        
+        // FUCK
+        deser_max_idx = max_comp_bitset.to_ulong();
 
         (*dest)[deser_max_idx] = 1.0f; // 1.0 or 1.0f?
         int j = 0;  // Index of current component being processed
