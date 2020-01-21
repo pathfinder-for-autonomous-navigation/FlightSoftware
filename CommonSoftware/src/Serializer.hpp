@@ -12,6 +12,8 @@
 #include "GPSTime.hpp"
 #include "fixed_array.hpp"
 
+#include <iostream> // to do remove
+
 /**
  * @brief Set of constants defining fixed and minimum bitsizes for compressed
  * objects.
