@@ -553,6 +553,12 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                     std::cout << vector_element_serializers[component_number]->get_bit_array()[k] << " ";
                 }
                 std::cout << " << ser \n";
+
+                T ser_deser = 0.0;
+                vector_element_serializers[component_number]->deserialize(&ser_deser);
+                std::cout << "ser_deser: " << ser_deser << "\n";
+                //vector_element_serializers
+
                 std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
                           vector_element_serializers[component_number]->get_bit_array().end(),
                           serialized_position);
@@ -648,7 +654,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
             for(int j = 0; j < vector_element_serializers[i]->bitsize(); j++){
                 //vector_element_serializers[i].modify_bit(vector_element_serializers[i].to_uint(), j, this->serialized_val[poor_mans_pointer]);
-                std::cout << this->serialized_val[poor_mans_pointer] << " ";
+                // std::cout << this->serialized_val[poor_mans_pointer] << " ";
                 
                 bit_vec.push_back(static_cast<bool>(this->serialized_val[poor_mans_pointer]));
                 // std::cout << bit_vec[j] << " - ";
@@ -659,6 +665,11 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
             bit_array new_bitarr(bit_vec);
             vector_element_serializers[i]->set_bit_array(new_bitarr);
+            std::cout << "bitsz: " << vector_element_serializers[i]->bitsize() << "\n";
+            for(int k = 0; k < vector_element_serializers[i]->bitsize(); k++){
+                std::cout << vector_element_serializers[i]->get_bit_array()[k] << " ";
+            }
+            std::cout << " << post pop \n";
         }
 
         // for(int i = 0; i<sign_of_max_comp.size(); i++){
