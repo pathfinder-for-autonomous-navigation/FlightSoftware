@@ -238,10 +238,11 @@ void open_valve_tests()
 
 void test_reset()
 {
+    TEST_ASSERT_FALSE(prop_system.is_tank2_ready());
     ASSERT_TRUE(
         prop_system.open_valve(prop_system.tank1, 1),
         "First, open valve tank 1 valve to trigger 10 s mandatory wait");
-    TEST_ASSERT(TimedLock::safe_add(micros(), TO_MICRO(3069)));
+    TEST_ASSERT_TRUE(TimedLock::safe_add(micros(), TO_MICRO(3069)));
     ASSERT_TRUE(
         prop_system.set_schedule(999, 2, 400, 100, micros() + TO_MICRO(3069)),
         "Set the tank2 timer and schedule long firings");
@@ -250,7 +251,7 @@ void test_reset()
     while (!prop_system.tank2.is_valve_open(0)){}
     ASSERT_FALSE(prop_system.is_done_firing(), "tank2 is definitely firing now");
     prop_system.reset();
-    ASSERT_TRUE(prop_system.is_done_firing(), "no one should be firing");
+    ASSERT_FALSE(prop_system.is_done_firing(), "false since we didint finish firing");
     check_all_valves_closed();
     ASSERT_FALSE(prop_system.is_tank2_ready(), "tank2 timer should not be on");
     check_tank2_schedule(zero_schedule);
@@ -331,6 +332,7 @@ void test_tank2_start_time()
     TEST_ASSERT_TRUE(prop_system.set_schedule(300 ,400, 500, 0, micros() + 500000))
     while(!prop_system.enable()) {}
     TEST_ASSERT_TRUE(prop_system.is_tank2_ready());
+    prop_system.reset();
 }
 
 void setup() {
@@ -344,6 +346,7 @@ void setup() {
     RUN_TEST(test_initialization);
     RUN_TEST(test_is_start_time_ok);
     scheduling_tests();
+    RUN_TEST(test_reset);
     interval_timer_tests();
     open_valve_tests();
     RUN_TEST(test_open_tank1_valve);
@@ -351,7 +354,6 @@ void setup() {
     RUN_TEST(test_tank1_enforce_lock);
     RUN_TEST(test_tank2_firing_schedule);
     RUN_TEST(test_tank2_start_time);
-    RUN_TEST(test_reset);
 
     // test that prop disables itself when its done with the schedule
     UNITY_END();
