@@ -5,7 +5,13 @@
 
 Repository for all Teensy based flight code for Pathfinder for Autonomous Navigation.
 
-See the "Tools" directory to see how to run tests.
+## Running tests with Docker
+
+    docker build -t fsw .
+    docker run fsw ./tools/run_desktop_flight_tests.sh
+    docker run fsw ./tools/run_ground_tests.sh
+
+See the "Tools" directory to see how to run tests locally without Docker.
 
 Quake Manager
 ------------------------------------------------------------------------------
@@ -56,5 +62,20 @@ Obviously, reset the cycles_eaten whenever you're about to transition to a new c
   + state = SBDWB --> sbdwb.cycles_wasted++
   + state = IDLE  --> transition to Transceiving, state := SBDIX
 
+  Compiler Flags
+------------------------------------------------------------------------------
+
+Hardware interaction methods and constructors need to be conditionally compiled
+with `ifdef DESKTOP` so that for example I2C commands don't actually attepmt to interact
+with hardware, and that constructors do not ask for an I2C bus to initialize with.
+
+For PIO unit tests which are run with the `pio test -e <env_name>` command,
+the UNIT_TEST flag is automatically set.
+
+Mocking methods/behavior that allow a user to set the return of a hardware call, 
+should be conditionally compiled with `ifdef UNIT_TEST`. The consideration of the
+`DESKTOP` flag is not necessary because any unit-testing or testing of actual hardware
+interaction methods/behavior will be tested with psim testing.
                                              
-                                      
+Take note to make sure that the actual unit test scripts are also conditionally compiled
+so that they work in hootl and hitl testing.

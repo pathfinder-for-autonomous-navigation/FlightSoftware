@@ -1,3 +1,6 @@
+/**
+ * Implementation of PropulsionSystem.hpp
+ */
 #include "PropulsionSystem.hpp"
 #ifndef DESKTOP
 #include <Arduino.h>
@@ -11,77 +14,94 @@
 
 using namespace Devices;
 
-const std::array<unsigned char, 6>
-PropulsionSystem::valve_pins = {27, 28, 3, 4, 5, 6};
+/* Constructors */
 
-volatile bool
-PropulsionSystem::is_valve_opened[4] = {false, false, false, false};
+Tank::Tank(size_t _num_valves) :
+num_valves(_num_valves) {}
 
-volatile unsigned int
-PropulsionSystem::thrust_valve_schedule[4] = {0, 0, 0, 0};
+Tank1::Tank1() : Tank(2) {
+    mandatory_wait_time = 10*1000; // 10 seconds
+    valve_pins[0] = 27; // Main tank 1 to tank 2 valve
+    valve_pins[1] = 28; // Backup tank 1 to tank 2 valve
+    temp_sensor_pin = 21;
+}
 
-volatile bool PropulsionSystem::valve_start_locked_out = false;
+Tank2::Tank2() : Tank(4) {
+    mandatory_wait_time = 3; // 3 ms
+    valve_pins[0] = 3; // Nozzle valve
+    valve_pins[1] = 4; // Nozzle valve
+    valve_pins[2] = 5; // Nozzle valve
+    valve_pins[3] = 6; // Nozzle valve
+    temp_sensor_pin = 22;
+}
+
+/** Initialize static variables */
 
 PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
+volatile bool PropulsionSystem::is_enabled = 0;
+Tank1 PropulsionSystem::tank1 = Tank1();
+Tank2 PropulsionSystem::tank2 = Tank2();
+
+volatile unsigned int Tank2::schedule[4] = {0, 0, 0, 0};
+IntervalTimer Tank2::thrust_valve_loop_timer = IntervalTimer();
+uint32_t Tank2::start_time = 0;
+
+/* Setup */
 
 bool PropulsionSystem::setup() {
-#ifdef DESKTOP
-// TODO
-#else
-    for (unsigned char i = 0; i < 6; i++) {
-        pinMode(valve_pins[i], OUTPUT);
-    }
-
-    pinMode(pressure_sensor_low_pin, INPUT);
-    pinMode(pressure_sensor_high_pin, INPUT);
-    pinMode(temp_sensor_inner_pin, INPUT);
-    pinMode(temp_sensor_outer_pin, INPUT);
-
-    thrust_valve_loop_timer.begin(thrust_valve_loop, thrust_valve_loop_interval_us);
-#endif
+    tank1.setup();
+    tank2.setup();
     return true;
 }
 
-void PropulsionSystem::disable() {
-#ifdef DESKTOP
-// TODO
-#else
-    for (unsigned char i = 0; i < 4; i++) thrust_valve_schedule[i] = 0;
-    for (unsigned char i = 0; i < 6; i++) digitalWrite(valve_pins[i], LOW);
-    thrust_valve_loop_timer.end();
-#endif
+void Tank::setup()
+{
+    for (size_t i = 0; i < num_valves; ++i)
+        pinMode(valve_pins[i], OUTPUT);
+
+    pinMode(temp_sensor_pin, INPUT);
 }
 
-void PropulsionSystem::enable() {
-#ifdef DESKTOP
-// TODO
-#else
-    thrust_valve_loop_timer.begin(thrust_valve_loop, thrust_valve_loop_interval_us);
-#endif
+void Tank2::setup()
+{
+    Tank::setup();
+    pinMode(pressure_sensor_high_pin, INPUT);
+    pinMode(pressure_sensor_high_pin, INPUT);
 }
 
-void PropulsionSystem::reset() {
-    disable();
-#ifndef DESKTOP
-    delay(10);
-#endif
-    enable();
+/* Tank implementation */
+
+int Tank::get_temp()
+{
+    return analogRead(temp_sensor_pin);
 }
 
-float PropulsionSystem::get_pressure() {
+bool Tank::is_valve_open(size_t valve_idx)
+{
+    if (valve_idx >= num_valves)
+        return false;
+    return digitalRead(valve_pins[valve_idx]);
+}
+
+void Tank::close_all_valves()
+{
+    for (size_t i = 0; i < num_valves; ++i)
+    {
+        digitalWrite(valve_pins[i], LOW);
+        is_valve_opened[i] = 0;
+    }
+}
+
+/* Tank2 implementation */
+
+float Tank2::get_pressure() {
     static int low_gain_read = 0;
     static int high_gain_read = 0;
     static float pressure = 0;
-    // set the two pressure pins as inputs
-    
-#ifdef DESKTOP
-    low_gain_read = 2; // TODO fix
-    high_gain_read = 2;
-#else
+
     // analog read
     low_gain_read = analogRead(pressure_sensor_low_pin);
     high_gain_read = analogRead(pressure_sensor_high_pin);
-#endif
 
     // convert to pressure [psia]
     if (high_gain_read < 1000){
@@ -93,77 +113,172 @@ float PropulsionSystem::get_pressure() {
     return pressure;
 }
 
-signed int PropulsionSystem::get_temp_inner() {
-#ifdef DESKTOP
-    return 0;
-#else
-    return 0; // TODO replace with analogRead
-#endif
+unsigned int Tank2::get_schedule_at(size_t valve_num)
+{
+    if (valve_num >= num_valves)
+        return 0;
+    return schedule[valve_num];
 }
 
-signed int PropulsionSystem::get_temp_outer() {
-#ifdef DESKTOP
-    return 0;
-#else
-    return 0; // TODO replace with analogRead
-#endif
+/* Propulsion System implementation */
+
+void PropulsionSystem::reset() {
+    noInterrupts();
+    {    
+        disable();
+        tank1.close_all_valves();
+        tank1.valve_lock.end_time = 0;
+        tank2.valve_lock.end_time = 0;
+        clear_schedule();
+    }
+    interrupts();
+}
+
+bool PropulsionSystem::enable()
+{
+    if (is_enabled)
+    {
+        disable(); // If this happens, then there's a big problem
+        return false;
+    }
+
+    if ( !is_start_time_ok(tank2.start_time) )
+        return false;
+
+    // Unlock 2.9 ms from start time so as to not be one interrupt-cycle (3 ms) late
+    if (tank2.valve_lock.procure(tank2.start_time - micros() - 100))
+    {
+        tank2.thrust_valve_loop_timer.begin(thrust_valve_loop, tank2.thrust_valve_loop_interval_us);
+        is_enabled = true;
+    }
+    return is_enabled;
+}
+
+bool PropulsionSystem::is_start_time_ok(uint32_t start_time_us)
+{
+    uint32_t diff = TimedLock::safe_subtract(start_time_us, micros());
+    // start_time must be at least 3000 us into the future
+    if (diff <= tank2.thrust_valve_loop_interval_us)
+        return false;
+    return true;
+}
+
+void PropulsionSystem::disable() {
+    noInterrupts();
+    tank2.thrust_valve_loop_timer.end();
+    interrupts();
+
+    tank2.close_all_valves();
+    is_enabled = false;
+
+    // Release tank2 lock because tank2 did not get to fire
+    if (tank2.valve_lock.get_end_time() > micros())
+        tank2.valve_lock.end_time = 0;
 }
 
 bool PropulsionSystem::is_functional() { 
-#ifdef DESKTOP
-    return true;
-#else
     return digitalRead(DCDC::dcdc_sph_enable_pin);
-#endif
 }
 
-void PropulsionSystem::set_thrust_valve_schedule(const std::array<unsigned int, 4> &setting) {
-    disable();
-#ifndef DESKTOP
-    delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
-#endif
-    for(size_t i = 0; i < 4; i++) thrust_valve_schedule[i] = setting[i];
-    enable();
+bool PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t start_time_us)
+{
+
+    // Do not set the schedule when enabled
+    if (is_enabled)
+        return false;
+
+    // Scheduled firing must be at least 3000 ms in the future
+    if (!is_start_time_ok(start_time_us))
+        return false;
+
+    // Maximum allowed firing per valve is 1 second
+    if (a >= 1000 || b >= 1000 || c >= 1000 || d >= 1000)
+        return false;
+ 
+    tank2.start_time = start_time_us;
+
+    tank2.schedule[0] = a;
+    tank2.schedule[1] = b;
+    tank2.schedule[2] = c;
+    tank2.schedule[3] = d;
+    return true;
 }
 
-void PropulsionSystem::set_tank_valve_state(bool valve, bool state) {
-    disable();
-#ifndef DESKTOP
-    delayMicroseconds(10); // Wait for current cycle of the thrust valve loop to end
-    digitalWrite(valve_pins[valve], state);
-#endif
-    enable();
+bool PropulsionSystem::clear_schedule()
+{
+    if (is_enabled)
+        return false;
+    for (size_t i = 0; i < 4; ++i)
+        tank2.schedule[i] = 0;
+    return true;
+}
+
+bool PropulsionSystem::is_done_firing()
+{
+    if (!is_enabled)
+        return false;
+    for (size_t i = 0; i < 4; ++i)
+    {
+        if (tank2.schedule[i] != 0)
+            return false;
+    }
+    return true;
+}
+
+bool PropulsionSystem::open_valve(Tank& tank, size_t valve_idx)
+{
+    if (valve_idx >= tank.num_valves || !tank.valve_lock.is_free()) 
+        return false;
+    noInterrupts();
+    {
+        if (tank.valve_lock.procure(tank.mandatory_wait_time*1000 - 100))
+        {
+            digitalWrite(tank.valve_pins[valve_idx], HIGH);
+            tank.is_valve_opened[valve_idx] = 1;
+        }
+    }
+    interrupts();
+    return true;
+}
+
+void PropulsionSystem::close_valve(Tank& tank, size_t valve_idx)
+{
+    if (valve_idx >= tank.num_valves)
+        return;
+    noInterrupts();
+    {
+        digitalWrite(tank.valve_pins[valve_idx], 0);
+        tank.is_valve_opened[valve_idx] = 0;
+    }
+    interrupts();
 }
 
 void PropulsionSystem::thrust_valve_loop() {
-    for (unsigned char i = 2; i < 6; i++) {
-        if (thrust_valve_schedule[i - 2] < thrust_valve_loop_interval_ms) {
-            // Firing on valve i - 2 is complete
-            #ifndef DESKTOP
-            digitalWrite(valve_pins[i - 2], LOW);
-            #endif
-
-            thrust_valve_schedule[i - 2] = 0;
-            is_valve_opened[i] = false;
+    noInterrupts(); 
+    // Serial.printf("\nCurrent Time: %u\n",micros());
+    for (size_t i = 0; i < tank2.num_valves; ++i) {
+        // If a valve is scheduled to open for less than 3 ms, then ignore it
+        if (tank2.schedule[i] < tank2.thrust_valve_loop_interval_ms) {
+            if (tank2.is_valve_opened[i] || tank2.schedule[i])
+            {
+                // Serial.printf("Close vault %d\n", i);
+                tank2.schedule[i] = 0;
+                close_valve(tank2, i);
+            }
             continue;
         }
-        else if (!is_valve_opened[i] && !valve_start_locked_out) {
+        // lock will always be free since this timer interrupts on 3ms anyway
+        else if (!tank2.is_valve_opened[i]) {
             // Open valve and prevent other valves from opening at the same time
-            valve_start_locked_out = true;
-            #ifndef DESKTOP
-            digitalWrite(valve_pins[i - 2], HIGH);
-            #endif
-            is_valve_opened[i] = true;
+            // Serial.printf("Open vault %d\n", i);
+            open_valve(tank2, i);
         }
-        else if (valve_start_locked_out) {
-            // 2 ms have passed since the lockout happened, so it's safe to unlock
-            // the valves.
-            valve_start_locked_out = false;
-        }
-
-        if (is_valve_opened[i]) {
-            // Decrement the timer for the valve being open
-            thrust_valve_schedule[i - 2] -= thrust_valve_loop_interval_ms;
+        if (tank2.is_valve_opened[i]) {
+            // If the valve is open, then decrement 3 ms from its schedule
+            tank2.schedule[i] -= tank2.thrust_valve_loop_interval_ms;
+            // Serial.printf("Decrement vault %d to %d\n", i, tank2.schedule[i]);
         }
     }
+    interrupts();
 }
+

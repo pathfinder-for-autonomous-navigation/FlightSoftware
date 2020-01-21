@@ -15,7 +15,7 @@ class TestFixture {
         9,
         10,
         {11,12,13,14,15,16},
-        {true, false, true, false, true, false, true, false},
+        {true, true, true, true, true, true, true, true},
         {25,26,27,28,29,30,31,32},
         {33,34,35,36,37,38,39,40},
         {41,42,43,44,45,46},
@@ -70,11 +70,6 @@ class TestFixture {
 
     ReadableStateField<unsigned int>* counter_wdt_i2c_fp;
 
-    ReadableStateField<unsigned int>* counter_wdt_gnd_fp;
-
-    ReadableStateField<unsigned int>* counter_wdt_csp1_fp;
-    ReadableStateField<unsigned int>* counter_wdt_csp2_fp;
-
     ReadableStateField<unsigned int>* counter_boot_fp;
 
     ReadableStateField<signed int>* temp1_fp;
@@ -87,6 +82,22 @@ class TestFixture {
     ReadableStateField<unsigned char>* battmode_fp;
 
     ReadableStateField<unsigned char>* pptmode_fp;
+
+    WritableStateField<unsigned char>* power_cycle_outputs_cmd_fp;
+
+    WritableStateField<unsigned int>* pv1_output_cmd_fp;
+    WritableStateField<unsigned int>* pv2_output_cmd_fp;
+    WritableStateField<unsigned int>* pv3_output_cmd_fp;
+
+    WritableStateField<unsigned char>* ppt_mode_cmd_fp;
+
+    WritableStateField<bool>* heater_cmd_fp;
+
+    WritableStateField<bool>* counter_reset_cmd_fp;
+
+    WritableStateField<bool>* gs_reset_cmd_fp;
+
+    WritableStateField<bool>* gs_reboot_cmd_fp;
 
     TestFixture() : registry(), gs(&hk, &config, &config2) {
         gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
@@ -130,12 +141,29 @@ class TestFixture {
         bootcause_fp = registry.find_readable_field_t<unsigned char>("gomspace.bootcause");
         battmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.battmode");
         pptmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.pptmode");
+
+        power_cycle_outputs_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_outputs_cmd");
+
+        pv1_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv1_cmd");
+        pv2_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv2_cmd");
+        pv3_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv3_cmd");
+
+        ppt_mode_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.pptmode_cmd");
+
+        heater_cmd_fp = registry.find_writable_field_t<bool>("gomspace.heater_cmd");
+
+        counter_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.counter_reset_cmd");
+
+        gs_reset_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reset_cmd");
+
+        gs_reboot_cmd_fp = registry.find_writable_field_t<bool>("gomspace.gs_reboot_cmd");
     }
 };
 
 void test_task_initialization() {
     TestFixture tf;
-    //check that it is initialized correctly. tests pass
+
+    // Check that the hk struct in the gomspace controller is initialized correctly.
     TEST_ASSERT_EQUAL(1, tf.gs.hk->vboost[0]);
     TEST_ASSERT_EQUAL(2, tf.gs.hk->vboost[1]);
     TEST_ASSERT_EQUAL(3, tf.gs.hk->vboost[2]);
@@ -158,11 +186,11 @@ void test_task_initialization() {
     TEST_ASSERT_EQUAL(16, tf.gs.hk->curout[5]);
 
     TEST_ASSERT_EQUAL(true, tf.gs.hk->output[0]);
-    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[1]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[1]);
     TEST_ASSERT_EQUAL(true, tf.gs.hk->output[2]);
-    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[3]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[3]);
     TEST_ASSERT_EQUAL(true, tf.gs.hk->output[4]);
-    TEST_ASSERT_EQUAL(false, tf.gs.hk->output[5]);
+    TEST_ASSERT_EQUAL(true, tf.gs.hk->output[5]);
 
     TEST_ASSERT_EQUAL(47, tf.gs.hk->wdt_i2c_time_left);
 
@@ -184,6 +212,9 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
+
+    // Set the control cycle count to 1 so that the control task won't change the Gomspace output values
+    TimedControlTaskBase::control_cycle_count=1;
     tf.gs_controller->execute();
 
     //check that the statefields are set to their respective value(s) in hk struct 
@@ -209,11 +240,11 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(16, tf.curout6_fp->get());
 
     TEST_ASSERT_EQUAL(true, tf.output1_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output2_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output2_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output3_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output4_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output4_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output5_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output6_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output6_fp->get());
 
     TEST_ASSERT_EQUAL(47, tf.wdt_i2c_time_left_fp->get());
 
@@ -231,6 +262,86 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(63, tf.battmode_fp->get());
     
     TEST_ASSERT_EQUAL(64, tf.pptmode_fp->get());
+
+    // Initialize the command statefields
+    tf.power_cycle_outputs_cmd_fp->set(false);
+
+    tf.pv1_output_cmd_fp->set(1000);
+    tf.pv2_output_cmd_fp->set(2000);
+    tf.pv3_output_cmd_fp->set(3000);
+
+    tf.ppt_mode_cmd_fp->set(0); // 1 is MPPT, the hardware default
+
+    tf.heater_cmd_fp->set(true);
+
+    tf.counter_reset_cmd_fp->set(false);
+    tf.gs_reset_cmd_fp->set(false);
+    tf.gs_reboot_cmd_fp->set(false);
+
+    // Let 30 seconds or 300 control cycles pass
+    TimedControlTaskBase::control_cycle_count=300;
+
+    tf.gs_controller->execute();
+
+    // The controller will set the gomspace outputs and
+    // write the new values to their respective statefields
+
+    TEST_ASSERT_EQUAL(1000, tf.vboost1_fp->get());
+    TEST_ASSERT_EQUAL(2000, tf.vboost2_fp->get());
+    TEST_ASSERT_EQUAL(3000, tf.vboost3_fp->get());
+
+    TEST_ASSERT_EQUAL(0, tf.pptmode_fp->get());
+    TEST_ASSERT_EQUAL(1, tf.gs.get_heater());
+
+    // Test the reset commands one by one, starting with the power cycle outputs command
+
+    tf.power_cycle_outputs_cmd_fp->set(true);
+
+    tf.gs_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.output1_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output2_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output3_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output4_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output5_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.output6_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.power_cycle_outputs_cmd_fp->get());
+
+    tf.gs_controller->execute();
+    TEST_ASSERT_EQUAL(true, tf.output1_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output2_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output3_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output4_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output5_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output6_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.power_cycle_outputs_cmd_fp->get());
+    
+    // Test the counter reset command
+    
+    tf.counter_reset_cmd_fp->set(true);
+    tf.gs_controller->execute();
+
+    TEST_ASSERT_EQUAL(0, tf.counter_boot_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.counter_wdt_i2c_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.counter_reset_cmd_fp->get());
+
+    // Test the gomspace reboot command
+
+    // Current boot count
+    unsigned int boot_count=tf.gs.hk->counter_boot;
+
+    // Set the gs reboot command to true
+    tf.gs_reboot_cmd_fp->set(true);
+    tf.gs_controller->execute();
+
+    TEST_ASSERT_EQUAL(boot_count+1, tf.counter_boot_fp->get());
+
+    // Test the gomspace hard reset command
+
+    tf.gs_reset_cmd_fp->set(true);
+    tf.gs_controller->execute();
+
+    TEST_ASSERT_EQUAL(1, tf.pptmode_fp->get()); // 1 is the hardware default PPT mode
+
 }
 
 int test_control_task() {

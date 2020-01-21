@@ -2,7 +2,7 @@
 #define propulsion_mode_t_enum
 
 // prop.mode
-enum class propulsion_mode_t {
+enum class prop_mode_t {
     disabled,
     active
 };
