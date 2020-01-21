@@ -359,8 +359,7 @@ void test_sign(T expected, T actual){
 /**
  * @brief Verify that the float vector serializer properly encapsulates float vectors of various
  * sizes.
- * 
- * TODO REMOVE: SHIHAOCONTROLFHANDY
+ *
  */
 template<typename T>
 void test_vec_serializer() {
@@ -396,8 +395,8 @@ void test_vec_serializer() {
         // Generate random vector.
         const T x = rand() / T(RAND_MAX) * 2;
         const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
-        const T y = cos(t) * sqrt(4 - x*x);
-        const T z = sin(t) * sqrt(4 - x*x);
+        const T y = cos(t) * std::sqrt(4 - x*x);
+        const T z = sin(t) * std::sqrt(4 - x*x);
 
         // std::cout << x << " " << y << " " << z << "\n";
 
@@ -409,7 +408,8 @@ void test_vec_serializer() {
         // value has a magnitude less than the desired precision.
         vector_t dv;
         for(size_t j = 0; j < 3; j++) dv[j] = vec[j] - result[j];
-        T dv_magnitude = sqrt(pow(dv[0], 2) + pow(dv[1], 2) + pow(dv[2], 2));
+
+        T dv_magnitude = std::sqrt(pow(dv[0], 2) + pow(dv[1], 2) + pow(dv[2], 2));
 
         static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output vector was {%f,%f,%f}";
         static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output vector was {%lf,%lf,%lf}";

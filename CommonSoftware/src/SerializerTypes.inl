@@ -8,6 +8,13 @@
 
 #include <iostream> // for shihao
 
+#include <lin.hpp> // for norm
+// forgive me kyle i can't figure it out
+// #include "../../lib/common/psim/lin/include/core.hpp"
+// #include "../"
+//#include "../../../lib/common/psim/lin/include/core.hpp"
+
+
 /**
  * @brief Specialization of Serializer for booleans.
  */
@@ -457,11 +464,26 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     void serialize(const std::array<T, N>& src) override {
         bit_array::iterator serialized_position = this->serialized_val.begin();
 
+        lin::Vector<T, N> normd; // short for normalized; normd = normalized
+        std::array<T, N> src_norm(src);
+
+        // new block that normalizes src input into src_norm iff N == 4
+        // otherwise, when N == 3, src_norm is not normalized
+        if(N == 4) {
+            normd = {src[0], src[1], src[2], src[3]};
+        
+            normd = normd / lin::norm(normd);
+            
+            for(unsigned int i = 0; i<N; i++){
+                src_norm[i] = normd(i);
+            }
+        }
+        
         // Get and store index of maximum-valued component
         std::array<T, N> v_mags;
         T max_element_mag = 0;
         for (size_t i = 0; i < N; i++) {
-            v_mags[i] = std::abs(src[i]);
+            v_mags[i] = std::abs(src_norm[i]);
             if (max_element_mag < v_mags[i]) {
                 max_element_mag = v_mags[i];
                 max_component_idx = i;
@@ -482,24 +504,16 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             mag = 1.0f;
         else {
             for (size_t i = 0; i < 3; i++) {
-                mag += src[i] * src[i];
+                mag += src_norm[i] * src_norm[i];
             }
         }
 
-        // new
-        mag = sqrt(mag); // from mag^2 to mag
+        // actually turns mag^2 to mag
+        mag = std::sqrt(mag);
 
         std::cout << "mag: " << mag << "\n"; //this mag is mag squared, no longer
 
-        // if(N == 3){ // THIS IF BLOCK IS NEW - SHIHAO
-        //     magnitude_serializer->serialize(mag);
-        //     std::copy(magnitude_serializer->get_bit_array().begin(), 
-        //             magnitude_serializer->get_bit_array().end(),
-        //             serialized_position);
-        //     std::advance(serialized_position, magnitude_serializer->bitsize());
-        // }
-
-        //new if statement; only serialize if N == 3
+        // only serialize the magnitude if N == 3
         if(N == 3){
             magnitude_serializer->serialize(mag);
             std::copy(magnitude_serializer->get_bit_array().begin(), 
@@ -516,25 +530,25 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         size_t component_number = 0;
         for (size_t i = 0; i < N; i++) {
             if (i != max_component_idx) {
-                T element_scaled = src[i] / mag;
+                T element_scaled = src_norm[i] / mag;
                 
                 // the negative of a quaternion is the same quaternion
+                // thus to indicate sign of the largest component, negate all other components
                 if(flip_vals)
                     element_scaled *= -1;
 
-                // std::cout << "ele :" << element_scaled << " "; as far as i can tell this is good
                 vector_element_serializers[component_number]->serialize(element_scaled);
                 std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
                           vector_element_serializers[component_number]->get_bit_array().end(),
                           serialized_position);
-                std::advance(serialized_position, vector_element_serializers[component_number]->bitsize()+0); // any number in +- 10 does nothing why?? // seems fine
+                std::advance(serialized_position, vector_element_serializers[component_number]->bitsize());
                 component_number++;
             }
         }
 
-        // new
+        // if it's a vector, you must use an additional bit to determine the sign of the largest component
         if(N == 3){
-            if(src[max_component_idx] < 0)
+            if(src_norm[max_component_idx] < 0)
                 sign_of_max_comp.set_int(1);
             std::copy(sign_of_max_comp.begin(), sign_of_max_comp.end(), serialized_position);
             std::advance(serialized_position, sign_of_max_comp.size());
