@@ -1,6 +1,7 @@
 #include "DownlinkParserMock.hpp"
 #include <unity.h>
 #include <fstream>
+#include "../StateFieldRegistryMock.hpp"
 
 // Flow data for test
 struct TestFixture {
