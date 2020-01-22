@@ -464,8 +464,9 @@ void test_vec_serializer() {
         const T z = sin(t) * std::sqrt(4 - x*x);
 
         // std::cout << x << " " << y << " " << z << "\n";
+        vector_t original = {x, y, z};
+        vector_t vec(original);
 
-        vector_t vec = {x, y, z};
         vec_serializer->serialize(vec);
 
         // transfer bit array; analagous to reading in telemetry bit array
@@ -481,6 +482,8 @@ void test_vec_serializer() {
         T dv_magnitude = std::sqrt(pow(dv[0], 2) + pow(dv[1], 2) + pow(dv[2], 2));
 
         // normalize the input even though it should've already been normalized!
+        vector_t original_result(result);
+
         normalize<T, 3>(vec);
         normalize<T, 3>(result);
 
@@ -494,15 +497,15 @@ void test_vec_serializer() {
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
         // undo norm meme?
-        sprintf(err_str, err_fmt_str, i, x, y, z, result[0], result[1], result[2], angle);
+        sprintf(err_str, err_fmt_str, i, x, y, z, original_result[0], original_result[1], original_result[2], angle);
 
         
         // TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
         // TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.01, 0, dv_magnitude, err_str);
 
         // angle less than 1 degree
+        std::cout << err_str << "\n";
         TEST_ASSERT_TRUE_MESSAGE(angle < 1.0, err_str);
-        //std::cout << err_str << "\n";
 
         // test_sign(x, result[0]); // to do macro
         // test_sign(y, result[1]);
@@ -607,7 +610,7 @@ void test_quat_serializer() {
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3], err_angle);
 
-        // std::cout << err_str << "\n";
+         std::cout << err_str << "\n";
 
         TEST_ASSERT_TRUE_MESSAGE(err_angle < 1.0, err_str);
 

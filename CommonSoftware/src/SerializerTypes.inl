@@ -549,10 +549,15 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         // if it's a vector, you must use an additional bit to determine the sign of the largest component
         if(N == 3){
-            if(src_norm[max_component_idx] < 0)
+            if(src_norm[max_component_idx] < 0){
                 sign_of_max_comp.set_int(1);
+                std::cout << "ser high\n";
+            }
             std::copy(sign_of_max_comp.begin(), sign_of_max_comp.end(), serialized_position);
             std::advance(serialized_position, sign_of_max_comp.size());
+            std::cout << "serialize bit: " << sign_of_max_comp.to_uint() << "\n";
+            //std::cout << "ser pos: " << serialized_val[serialized_position-1] << "\n";
+            std::cout << "size of sign: " << sign_of_max_comp.size() << "\n";
         }        
     }
 
@@ -676,6 +681,21 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             // std::cout << " << post pop \n";
         }
 
+        bool sign_max_comp_bit = false;
+        
+        if (N == 3){
+            sign_max_comp_bit = this->serialized_val[poor_mans_pointer];
+            std::cout << "bits: " << this->serialized_val[poor_mans_pointer- 1] << "_" <<
+                this->serialized_val[poor_mans_pointer] << "_" <<
+                this->serialized_val[poor_mans_pointer + 1] << "_" <<
+                this->serialized_val[poor_mans_pointer + 2] << " bits \n";
+            if(sign_max_comp_bit)
+                std::cout << "HIGH\n";
+            poor_mans_pointer++;
+        }
+            //max_component[i] = this->serialized_val[poor_mans_pointer];
+        
+
         // for(int i = 0; i<sign_of_max_comp.size(); i++){
         //     sign_of_max_comp.modify_bit(sign_of_max_comp.to_uint(), i, this->serialized_val[poor_mans_pointer]);
         //     poor_mans_pointer++;
@@ -727,7 +747,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         // new;
         if(N == 3){
-            if(sign_of_max_comp.to_uint() == 1){
+            // use "local" var instead of bit_array
+            if(sign_max_comp_bit == 1){
                 // (*dest)[deser_max_idx] *= -1;
                 std::cout << "MAX COMP NEG\n";
                 (*dest)[deser_max_idx] *= -1;
@@ -759,6 +780,7 @@ namespace SerializerConstants {
     constexpr size_t fvcsz = 9; // Compressed size for a normalized component of a float-based vector
     constexpr size_t fqcsz = 9; // Compressed size for a normalized component of a float-based quaternion
 
+    // TODO FIX BITSIZE
     constexpr size_t min_fvsz = 2 + fvcsz * 2; // Minimum size for a float vector.
 }
 
