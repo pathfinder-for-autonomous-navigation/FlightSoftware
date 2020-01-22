@@ -5,7 +5,7 @@
  * takes precedence.
  */
 
-#include "FCCode/MainControlLoop.hpp"
+#include <fsw/FCCode/MainControlLoop.hpp>
 #include <StateFieldRegistry.hpp>
 #include "flow_data.hpp"
 
