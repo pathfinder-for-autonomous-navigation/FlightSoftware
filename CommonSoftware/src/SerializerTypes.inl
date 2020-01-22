@@ -128,7 +128,7 @@ class IntegerSerializer : public SerializerBase<T> {
 };
 
 /**
- * @brief Specialization of Serializer for unsigned characters.
+ * @brief Specialization of Serializer for signed characters.
  */
 template <>
 class Serializer<signed char> : public IntegerSerializer<signed char> {

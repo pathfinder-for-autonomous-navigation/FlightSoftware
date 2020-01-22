@@ -77,10 +77,13 @@ T angle_between(std::array<T, N>& a, std::array<T, N>& b){
  * compression, so some values are not equal to their output.)
  */
 template <typename T>
-void test_value(std::shared_ptr<Serializer<T>>& s, const T val, const T output) {
+void test_value(std::shared_ptr<Serializer<T>>& s,
+                std::shared_ptr<Serializer<T>>& d,
+                const T val, const T output) {
     T output_val;
     s->serialize(val);
-    s->deserialize(&output_val);
+    d->set_bit_array(s->get_bit_array());
+    d->deserialize(&output_val);
     TEST_ASSERT_EQUAL(output, output_val);
 }
 
@@ -89,7 +92,8 @@ void test_value(std::shared_ptr<Serializer<T>>& s, const T val, const T output) 
  * doubles.
  */
 template <typename T>
-void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, const T val, const T output,
+void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, 
+                                std::shared_ptr<Serializer<T>>& d, const T val, const T output,
                                 const T threshold = 0) {
     static_assert(std::is_same<T, float>::value || 
                   std::is_same<T, double>::value, 
@@ -97,7 +101,8 @@ void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, const T val, 
 
     T output_val;
     s->serialize(val);
-    s->deserialize(&output_val);
+    d->set_bit_array(s->get_bit_array());
+    d->deserialize(&output_val);
 
     if (std::is_same<T, float>::value) {
         TEST_ASSERT_FLOAT_WITHIN(threshold, output, output_val);
@@ -115,11 +120,13 @@ void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, const T val, 
  */
 void test_bool_serializer() {
     auto serializer = std::make_shared<Serializer<bool>>();
+    auto dl_deserializer = std::make_shared<Serializer<bool>>();
+
     bool dest_ptr;
 
     // Normal serialize and deserialize
-    test_value(serializer, true, true);
-    test_value(serializer, false, false);
+    test_value(serializer, dl_deserializer, true, true);
+    test_value(serializer, dl_deserializer, false, false);
 
     // String-based deserialize
     TEST_ASSERT(serializer->deserialize("true", &dest_ptr));
@@ -167,54 +174,78 @@ void test_uint_serializer() {
                   "To use this function, the value being tested must be a integer or character.");
 
     std::shared_ptr<Serializer<T>> serializer;
+    std::shared_ptr<Serializer<T>> dl_deserializer;
+
 
     /** Test edge-case initializations **/
     serializer.reset(new Serializer<T>(0, 0, 0));
-    test_value<T>(serializer, 0, 0);
-    test_value<T>(serializer, 1, 0);
+    dl_deserializer.reset(new Serializer<T>(0, 0, 0));
+
+    std::cout << "UINT 1\n";
+    test_value<T>(serializer, dl_deserializer,  0, 0);
+    std::cout << "UINT 2\n";
+
+    test_value<T>(serializer, dl_deserializer,  1, 0);
+    std::cout << "UINT 3\n";
+
     serializer.reset(new Serializer<T>(0, 1, 0));
-    test_value<T>(serializer, 0, 0);
-    test_value<T>(serializer, 1, 0);
+    dl_deserializer.reset(new Serializer<T>(0, 1, 0));
+
+    test_value<T>(serializer, dl_deserializer,  0, 0);
+    std::cout << "UINT 4\n";
+    test_value<T>(serializer, dl_deserializer,  1, 0);
     serializer.reset(new Serializer<T>(0, 1, 1));
-    test_value<T>(serializer, 0, 0);
-    test_value<T>(serializer, 1, 1);
+    dl_deserializer.reset(new Serializer<T>(0, 1, 1));
+    std::cout << "UINT 5\n";
+    test_value<T>(serializer, dl_deserializer,  0, 0);
+    std::cout << "UINT 6\n";
+    test_value<T>(serializer, dl_deserializer,  1, 1);
 
     serializer.reset(new Serializer<T>(10, 10, 10));
-    test_value<T>(serializer, 10, 10);
-    test_value<T>(serializer, 10, 10);
-    test_value<T>(serializer, 3, 10);
-    test_value<T>(serializer, 5, 10);
+    dl_deserializer.reset(new Serializer<T>(10, 10, 10));
+
+    test_value<T>(serializer, dl_deserializer,  10, 10);
+    test_value<T>(serializer, dl_deserializer,  10, 10);
+    test_value<T>(serializer, dl_deserializer,  3, 10);
+    test_value<T>(serializer, dl_deserializer,  5, 10);
 
     // Test a normal serializer that has min = 0 with more
     // than enough bitspace.
     serializer.reset(new Serializer<T>(0, 10, 10));
+    dl_deserializer.reset(new Serializer<T>(0, 10, 10));
+
     for (T i = 0; i <= 10; i++) {
-        test_value<T>(serializer, i, i);
+        test_value<T>(serializer, dl_deserializer,  i, i);
     }
     // Test beyond bounds
-    test_value<T>(serializer, 11, 10);
+    test_value<T>(serializer, dl_deserializer,  11, 10);
 
     // Test a normal serializer that starts at a nonzero value,
     // with more than enough bitspace
     serializer.reset(new Serializer<T>(3, 10, 10));
+    dl_deserializer.reset(new Serializer<T>(3, 10, 10));
+
     for (T i = 3; i <= 10; i++) {
-        test_value<T>(serializer, i, i);
+        test_value<T>(serializer, dl_deserializer,  i, i);
     }
     // Test beyond bounds
-    test_value<T>(serializer, 2, 3);
+    test_value<T>(serializer, dl_deserializer,  2, 3);
 
     // Test a normal serializer that starts at a zero value,
     // but with restricted bitspace
     serializer.reset(new Serializer<T>(0, 10, 3));
-    test_value<T>(serializer, 0, 0);
-    test_value<T>(serializer, 1, 0);
-    test_value<T>(serializer, 2, 2);
-    test_value<T>(serializer, 3, 2);
-    test_value<T>(serializer, 4, 4);
-    test_value<T>(serializer, 5, 4);
+    dl_deserializer.reset(new Serializer<T>(10, 10, 3));
+
+    test_value<T>(serializer, dl_deserializer,  0, 0);
+    test_value<T>(serializer, dl_deserializer,  1, 0);
+    test_value<T>(serializer, dl_deserializer,  2, 2);
+    test_value<T>(serializer, dl_deserializer,  3, 2);
+    test_value<T>(serializer, dl_deserializer,  4, 4);
+    test_value<T>(serializer, dl_deserializer,  5, 4);
 
     // Test string-based deserialization
     serializer.reset(new Serializer<T>(0, 10, 3));
+
     T val;
 
     TEST_ASSERT(serializer->deserialize("0", &val));
@@ -239,42 +270,60 @@ void test_sint_serializer() {
 
     // Test a serializer beyond its bounds, in the negative direction
     std::shared_ptr<Serializer<T>> serializer;
+    std::shared_ptr<Serializer<T>> dl_deserializer;
+
     serializer.reset(new Serializer<T>(0, 10, 10));
-    test_value<T>(serializer, -1, 0);
+    dl_deserializer.reset(new Serializer<T>(0, 10, 10));
+
+    test_value<T>(serializer, dl_deserializer,  -1, 0);
 
     // Test serializer signed-value edge-case initializations
     serializer.reset(new Serializer<T>(-1, 0, 0));
-    test_value<T>(serializer, 0, -1);
-    test_value<T>(serializer, -1, -1);
+    dl_deserializer.reset(new Serializer<T>(-1, 0, 0));
+
+    test_value<T>(serializer, dl_deserializer,  0, -1);
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
+
     serializer.reset(new Serializer<T>(-1, 0, 1));
-    test_value<T>(serializer, -1, -1);
-    test_value<T>(serializer, 0, 0);
+    dl_deserializer.reset(new Serializer<T>(-1, 0, 1));
+
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
+    test_value<T>(serializer, dl_deserializer,  0, 0);
 
     serializer.reset(new Serializer<T>(-10, -10, 10));
-    test_value<T>(serializer, -10, -10);
-    test_value<T>(serializer, 12, -10);
-    test_value<T>(serializer, 10, -10);
-    test_value<T>(serializer, 3, -10);
-    test_value<T>(serializer, 5, -10);
-    test_value<T>(serializer, -1, -10);
-    test_value<T>(serializer, -5, -10);
+    dl_deserializer.reset(new Serializer<T>(-10, -10, 10));
+
+    test_value<T>(serializer, dl_deserializer,  -10, -10);
+    test_value<T>(serializer, dl_deserializer,  12, -10);
+    test_value<T>(serializer, dl_deserializer,  10, -10);
+    test_value<T>(serializer, dl_deserializer,  3, -10);
+    test_value<T>(serializer, dl_deserializer,  5, -10);
+    test_value<T>(serializer, dl_deserializer,  -1, -10);
+    test_value<T>(serializer, dl_deserializer,  -5, -10);
 
     // Test serializer signed-value normal initializations
     serializer.reset(new Serializer<T>(-1, 10, 10));
-    test_value<T>(serializer, -1, -1);
+    dl_deserializer.reset(new Serializer<T>(-1, 10, 10));
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
+
     serializer.reset(new Serializer<T>(-1, 10, 1));
-    test_value<T>(serializer, -1, -1);
-    test_value<T>(serializer, 3, -1);
-    test_value<T>(serializer, 8, -1);
-    test_value<T>(serializer, 10, 10);
+    dl_deserializer.reset(new Serializer<T>(-1, 10, 1));
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
+    test_value<T>(serializer, dl_deserializer,  3, -1);
+    test_value<T>(serializer, dl_deserializer,  8, -1);
+    test_value<T>(serializer, dl_deserializer,  10, 10);
+    
     serializer.reset(new Serializer<T>(-3, -1, 10));
-    test_value<T>(serializer, -2, -2);
-    test_value<T>(serializer, -3, -3);
+    dl_deserializer.reset(new Serializer<T>(-3, -1, 10));
+    test_value<T>(serializer, dl_deserializer,  -2, -2);
+    test_value<T>(serializer, dl_deserializer,  -3, -3);
+
     serializer.reset(new Serializer<T>(-5, -1, 1));
-    test_value<T>(serializer, -5, -5);
-    test_value<T>(serializer, -4, -5);
-    test_value<T>(serializer, -2, -5);
-    test_value<T>(serializer, -1, -1);
+    dl_deserializer.reset(new Serializer<T>(-5, 1, 1));
+    test_value<T>(serializer, dl_deserializer,  -5, -5);
+    test_value<T>(serializer, dl_deserializer,  -4, -5);
+    test_value<T>(serializer, dl_deserializer,  -2, -5);
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
 
     // Test string-based deserialization
     serializer.reset(new Serializer<T>(-1, 10, 1));
@@ -333,15 +382,18 @@ void test_float_or_double_serializer() {
                   "To use this function, the value being tested must either be a float or a double.");
 
     std::shared_ptr<Serializer<T>> serializer;
+    std::shared_ptr<Serializer<T>> dl_deserializer;
     T threshold;
 
     // Test edge-case initializations
     // TODO
     serializer.reset(new Serializer<T>(0, 0, 5));
+    dl_deserializer.reset(new Serializer<T>(0, 0, 5));
+    
     threshold = 0;
-    test_value_float_or_double<T>(serializer, 0, 0, threshold);
-    test_value_float_or_double<T>(serializer, -1, 0, threshold);
-    test_value_float_or_double<T>(serializer, 2, 0, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  0, 0, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  -1, 0, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  2, 0, threshold);
 
     // Test normal initializations
     serializer.reset(new Serializer<T>(0, 3, 5));
@@ -349,19 +401,19 @@ void test_float_or_double_serializer() {
     for (size_t i = 0; i < 100; i++) {
         T x = i * 3.0 / 100;
 
-        test_value_float_or_double<T>(serializer, x, x, threshold);
+        test_value_float_or_double<T>(serializer, dl_deserializer,  x, x, threshold);
     }
-    test_value_float_or_double<T>(serializer, 4, 3, threshold);
-    test_value_float_or_double<T>(serializer, -1, 0, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  4, 3, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  -1, 0, threshold);
 
     serializer.reset(new Serializer<T>(-1, 3, 6));
     threshold = 4.0 / 63;
     for (size_t i = 0; i < 1000; i++) {
         T x = -1.0 + i * 4.0 / 1000;
-        test_value_float_or_double<T>(serializer, x, x, threshold);
+        test_value_float_or_double<T>(serializer, dl_deserializer,  x, x, threshold);
     }
-    test_value_float_or_double<T>(serializer, 4, 3, threshold);
-    test_value_float_or_double<T>(serializer, -2, -1, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  4, 3, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  -2, -1, threshold);
 
     // Test string-based deserialization
     T val;
@@ -399,20 +451,6 @@ void test_float_serializer() { test_float_or_double_serializer<float>(); }
  * Success criteria: same as float.
  */
 void test_double_serializer() { test_float_or_double_serializer<double>(); }
-
-// shihao check sign new
-template<typename T>
-void test_sign(T expected, T actual){
-    //multiply arguments because sign memes
-    while(std::abs(actual) < 1){
-        actual = actual * 10.0f;
-    }
-
-    if(expected < 0)
-        TEST_ASSERT_LESS_THAN(0, actual);
-    else
-        TEST_ASSERT_GREATER_OR_EQUAL(0, actual);
-}
 
 /**
  * @brief Verify that the float vector serializer properly encapsulates float vectors of various
