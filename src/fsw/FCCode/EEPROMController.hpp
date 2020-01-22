@@ -3,7 +3,7 @@
 #ifndef EEPROM_CONTROLLER_HPP_
 #define EEPROM_CONTROLLER_HPP_
 
-#include "../../../test/StateFieldRegistryMock.hpp"
+#include <StateFieldRegistry.hpp>
 #include "TimedControlTask.hpp"
 
 class EEPROMController : public TimedControlTask<void> {

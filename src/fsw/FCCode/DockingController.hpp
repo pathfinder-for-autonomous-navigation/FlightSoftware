@@ -3,7 +3,7 @@
 #ifndef DOCKING_CONTROLLER_HPP_
 #define DOCKING_CONTROLLER_HPP_
 
-#include "../../../test/StateFieldRegistryMock.hpp"
+#include <StateFieldRegistry.hpp>
 #include "TimedControlTask.hpp"
 #include <DockingSystem.hpp>
 
