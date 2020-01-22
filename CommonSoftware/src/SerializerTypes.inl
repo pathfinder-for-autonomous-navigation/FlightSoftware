@@ -328,7 +328,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
   private:
     void construct_vector_serializer(T min, T max, T size) {
         size_t magnitude_bitsize;
-        if (N == 3) magnitude_bitsize = size - vec_min_sz;
+        if (N == 3) magnitude_bitsize = size - vec_min_sz - 1;
         else magnitude_bitsize = quat_magnitude_sz;
         magnitude_serializer = std::make_unique<Serializer<T>>(min, max, magnitude_bitsize); // sus not that need to edit Serializers in control tasks
 
@@ -411,7 +411,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     std::array<bit_array, N - 1> component_scaled_values;
 
     constexpr static size_t quat_magnitude_sz = (quat_sz - 3 * quat_component_sz);
-    constexpr static size_t vec_min_sz = 2 + 2 * vec_component_sz;
+    constexpr static size_t vec_min_sz = 2 + 2 * vec_component_sz + 1; // + 1 for the sign serializer
 
     constexpr static size_t print_size = 13 * N + (N - 1) + 1; // 13 characters per value in the array,
                                                                // N - 1 commas, 1 null character
@@ -553,6 +553,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
                 sign_of_max_comp.set_int(1);
                 std::cout << "ser high\n";
             }
+            // std::cout << "ser pos: " << static_cast<int>(serialized_position);
             std::copy(sign_of_max_comp.begin(), sign_of_max_comp.end(), serialized_position);
             std::advance(serialized_position, sign_of_max_comp.size());
             std::cout << "serialize bit: " << sign_of_max_comp.to_uint() << "\n";
@@ -609,6 +610,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     void deserialize(std::array<T, N>* dest) const override {
         //
         int poor_mans_pointer = 0;
+
+        std::cout << "ser val bitsize: " << this->serialized_val.size() << "\n";
         // std::cout <<"fuck\n";
 
         //std::copy(serialized_val.begin(), serialized_val.begin() + max_component.size(), max_component.begin()) 
