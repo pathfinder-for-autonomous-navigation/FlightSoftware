@@ -416,9 +416,6 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     constexpr static size_t print_size = 13 * N + (N - 1) + 1; // 13 characters per value in the array,
                                                                // N - 1 commas, 1 null character
 
-    // constexpr static size_t print_size = 13 * N + (N - 1) + 1 + 1; // 13 characters per value in the array,
-    //                                                            // N - 1 commas, 1 for max comp sign? 1 null character, IS THIS EVEN NESSESARY?
-
     /**
      * @brief Construct a new Serializer object.
      *
