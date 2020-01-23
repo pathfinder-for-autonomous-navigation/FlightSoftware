@@ -568,7 +568,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         // read which component index is highest into a bitset for later use
         std::bitset<2> max_comp_bitset(0);
-        for(unsigned int i = 0; i<max_component.size(); i++){
+        for(size_t i = 0; i<max_component.size(); i++){
             max_comp_bitset[i] = this->serialized_val[poor_mans_pointer];
             //max_component[i] = this->serialized_val[poor_mans_pointer];
             poor_mans_pointer++;
@@ -577,7 +577,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         // if there's a magnitude serializer, save data into the member variable
         if(N == 3){
             std::vector<bool> bit_vec;
-            for(int i = 0; i<magnitude_serializer->bitsize(); i++){
+            for(size_t i = 0; i < magnitude_serializer->bitsize(); i++){
                 bit_vec.push_back(this->serialized_val[poor_mans_pointer]);
                 poor_mans_pointer++;
             }
@@ -590,7 +590,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             std::vector<bool> bit_vec;
 
             // loop through each bit belonging to the serializer
-            for(int j = 0; j < vector_element_serializers[i]->bitsize(); j++){       
+            for(size_t j = 0; j < vector_element_serializers[i]->bitsize(); j++){       
                 bit_vec.push_back(static_cast<bool>(this->serialized_val[poor_mans_pointer]));
                 poor_mans_pointer++;
             }

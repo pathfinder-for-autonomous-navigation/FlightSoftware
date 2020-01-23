@@ -9,7 +9,7 @@
 // ============================================================================================= //
 
 // number of vector tests to run
-constexpr static number_of_vec_test = 100;
+constexpr static int number_of_vec_test = 100;
 
 /**
  * @brief Normalizes a vector or quaternion
@@ -481,9 +481,10 @@ void test_vec_serializer() {
 
     // TODO write serialization initializations for edge cases.
 
-    size_t csz = 0;
-    if (std::is_same<T, float>::value) csz = SerializerConstants::fvcsz;
-    else csz = SerializerConstants::dvcsz;
+    // size_t csz = 0;
+    // if (std::is_same<T, float>::value) csz = SerializerConstants::fvcsz;
+    // else csz = SerializerConstants::dvcsz;
+    
     const size_t vec_bitsize = 40;
 
     // (Deterministically) generate random vectors of magnitude 2, and see if they work 
