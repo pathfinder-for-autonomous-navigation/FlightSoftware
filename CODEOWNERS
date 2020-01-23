@@ -3,7 +3,6 @@
 
 # Shihao's owned files
 *(?i)(adcs)*     shihaocao
-*(?i)(attitude)* shihaocao
 *(?i)(piksi)*    shihaocao
 
 # Fatima's owned files
@@ -22,6 +21,9 @@
 # Device groups
 Device*      athena255 kkrol27 shihaocao fatimayousuf tanishqaggarwal
 I2CDevice*   shihaocao fatimayousuf tanishqaggarwal
+
+# GNC groups
+*(?i)(attitude)*  nhz2 shihaocao tanishqaggarwal kkrol27
 
 # Telemetry files
 *(?i)(uplink)*   fatimayousuf athena255 tanishqaggarwal
