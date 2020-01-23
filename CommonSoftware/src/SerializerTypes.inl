@@ -328,21 +328,16 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
   private:
     void construct_vector_serializer(T min, T max, T size) {
         size_t magnitude_bitsize;
-        if (N == 3) magnitude_bitsize = size - vec_min_sz - 1;
+        if (N == 3) magnitude_bitsize = size - vec_min_sz;
         else magnitude_bitsize = quat_magnitude_sz;
         magnitude_serializer = std::make_unique<Serializer<T>>(min, max, magnitude_bitsize); // sus not that need to edit Serializers in control tasks
 
         max_component.resize(2);
-
-        // new 
         sign_of_max_comp.resize(1);
 
         size_t component_sz = 0;
         if (N == 3) { component_sz = vec_component_sz; }
         else { component_sz = quat_component_sz; }
-
-        //std::cout << "comp sz: " << component_sz << "\n";
-        // comp sz: 9
 
         for (size_t i = 0; i < N - 1; i++) {
             component_scaled_values[i].resize(component_sz);
@@ -370,10 +365,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         }
         this->max_component = other.max_component;
         this->component_scaled_values = other.component_scaled_values;
-
-        // new
         this->sign_of_max_comp = other.sign_of_max_comp;
-        // NOTE TO TANISHQ, PLEASE CHECK THAT THERE'S ENOUGH BITSZ STUFF IN PLACES
     }
 
   protected:
@@ -399,10 +391,13 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
     /**
      * @brief Bit array that stores which element of the vector is maximal.
      */
-    // size_t max_component_idx = 0; not copied between serializers anyway, instead generate on the spot in serialize()
     bit_array max_component;
 
-    //new
+    /**
+     * @brief Bit array that stores sign of max. component of a vector
+     * 
+     * Only has bitsize() == 1;
+     */
     bit_array sign_of_max_comp;
 
     /**

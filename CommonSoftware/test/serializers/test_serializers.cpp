@@ -25,11 +25,24 @@ void normalize(std::array<T, N>& src) {
 
     normd = normd / lin::norm(normd);
     
-    for(unsigned int i = 0; i<N; i++){
+    for(size_t i = 0; i<N; i++){
         src[i] = normd(i);
     }
 
     return;
+}
+
+/**
+ * @brief Returns the magnitude of a vector
+ * 
+ */
+template <typename T, size_t N>
+T magnitude_of(std::array<T, N>& src){
+    T sum = 0.0;
+    for(size_t i = 0; i<N; i++){
+        sum += src[i]*src[i];
+    }
+    return std::sqrt(sum);
 }
 
 /**
@@ -51,7 +64,6 @@ T angle_between(std::array<T, N>& a, std::array<T, N>& b){
     }
 
     T inner_product = lin::dot(lin_a, lin_b);
-
     
     T angle;
     if(N == 4){
@@ -518,28 +530,25 @@ void test_vec_serializer() {
 
         T angle = angle_between(vec, result);
 
-        static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output vector was {%f,%f,%f}; angle: %f";
-        static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output vector was {%lf,%lf,%lf}; angle: %lf";
+        T mag_err = std::abs(magnitude_of(original_result)/magnitude_of(original) - 1.0) ;
+
+        static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output vector was {%f,%f,%f}; angle: %f; mag_err: %f";
+        static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output vector was {%lf,%lf,%lf}; angle: %lf; mag_err: %lf";
         char err_str[200];
         memset(err_str, 0, 200);
         const char* err_fmt_str = nullptr;
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
-        // undo norm meme?
-        sprintf(err_str, err_fmt_str, i, x, y, z, original_result[0], original_result[1], original_result[2], angle);
+        sprintf(err_str, err_fmt_str, i, x, y, z, original_result[0], original_result[1], original_result[2], angle, mag_err);
 
-        
-        // TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_str);
-        // TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.01, 0, dv_magnitude, err_str);
+        // assert less than .01% magnitude error
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.001, 0, mag_err, err_str);
 
-        // angle less than 1 degree
-        std::cout << err_str << "\n";
-        TEST_ASSERT_TRUE_MESSAGE(angle < 1.0, err_str);
+        // assert angle has error < 0.5 degrees
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.5, 0, angle, err_str);
 
-        // test_sign(x, result[0]); // to do macro
-        // test_sign(y, result[1]);
-        // test_sign(z, result[2]);
-
+        // Note no need to check if there are any sign flips,
+        // angle_err < 0.5 deg if no sign flips, or if error is small (across an interval)
     }
 
     // Test deserialization from a string
@@ -579,10 +588,6 @@ void test_f_vec_serializer() {
 void test_d_vec_serializer() {
     test_vec_serializer<double>();
 }
-
-
-
-// template<typename T, typename float_t>
 
 template<typename T>
 void test_quat_serializer() {
