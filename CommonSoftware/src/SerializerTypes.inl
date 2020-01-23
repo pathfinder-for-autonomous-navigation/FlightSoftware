@@ -6,8 +6,6 @@
 #include "Serializer.hpp"
 #include "types.hpp"
 
-#include <iostream> // for shihao
-
 #include <lin.hpp> // for norm
 
 /**
@@ -280,7 +278,6 @@ class Serializer<float> : public FloatDoubleSerializer<float> {
     Serializer(float min, float max, float size)
         : FloatDoubleSerializer<float>(min, max, size) {}
 };
-
 
 /**
  * @brief Specialization of Serializer for doubles.
@@ -609,35 +606,36 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             poor_mans_pointer++;
         }    
 
-        T magnitude = 0.0f;
+        T magnitude = 0.0;
         if(N == 3)
             magnitude_serializer->deserialize(&magnitude);
         else
-            magnitude = 1.0f;
+            magnitude = 1.0;
 
         // completely bypass member bit_array max_component;
         int deser_max_idx = max_comp_bitset.to_ulong();
 
-        (*dest)[deser_max_idx] = 1.0f; // 1.0 or 1.0f?
+        (*dest)[deser_max_idx] = 1.0;
         int j = 0;  // Index of current component being processed
         for (size_t i = 0; i < N; i++) {
             if (i != deser_max_idx) {
                 vector_element_serializers[j]->deserialize(&(*dest)[i]);
-                // std::cout << "ele: " << (*dest)[i] << "\n";
-                (*dest)[deser_max_idx] -= (*dest)[i] * (*dest)[i]; // subtract off; z^2/r^2 = 1 - x^2/r^2 ... // new
+
+                // at this point in the code, (*dest)[i] contains x/r, y/r
+                // assuming z is largest magnitude
+
+                (*dest)[deser_max_idx] -= (*dest)[i] * (*dest)[i]; // subtract off; z^2/r^2 = 1 - x^2/r^2 ...
                 j++;
             }
         }
-        (*dest)[deser_max_idx] = sqrt((*dest)[deser_max_idx]); // this line is sus // seems correct
+        (*dest)[deser_max_idx] = sqrt((*dest)[deser_max_idx]);
 
+        // multiply by magnitude, only actually does anything for N == 3
         for (size_t i = 0; i < N; i++) (*dest)[i] *= magnitude;
 
-        // new;
+        // flip sign of max comp of vector if necessary
         if(N == 3){
-            // use "local" var instead of bit_array
             if(max_comp_is_negative == 1){
-                // (*dest)[deser_max_idx] *= -1;
-                std::cout << "MAX COMP NEG\n";
                 (*dest)[deser_max_idx] *= -1;
             }
         }
