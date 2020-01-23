@@ -311,7 +311,6 @@ class Serializer<double> : public FloatDoubleSerializer<double> {
  *   the largest component in the quaternion, and then we serialize the three smallest components
  *   in the bounds +/- sqrt(2)/2 and with bitsize 9.
  * 
- * TODO REMOVE: SHIHAOCTRLF
  */
 template <typename T,
           size_t N,
@@ -342,8 +341,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         for (size_t i = 0; i < N - 1; i++) {
             component_scaled_values[i].resize(component_sz);
             vector_element_serializers[i] = std::make_unique<Serializer<T>>(
-                // 0.0f, sqrtf(2.0f) / 2 , component_sz); // 0.0f, 1000.0f, component_sz); // lol wtf // sqrtf(2.0f) / 2
-                -sqrtf(2.0f) / 2, sqrtf(2.0f) / 2 , component_sz); // 0.0f, 1000.0f, component_sz); // lol wtf // sqrtf(2.0f) / 2 // sus // new
+                // components must be able to be negative, thus range from -sqrt(2)/2 to sqrt(2)/2
+                -sqrtf(2.0f) / 2, sqrtf(2.0f) / 2 , component_sz);
 
         }
     }
@@ -454,7 +453,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         lin::Vector<T, N> normd; // short for normalized; normd = normalized
         std::array<T, N> src_norm(src);
 
-        // new block that normalizes src input into src_norm iff N == 4
+        // src should already be normalized, but normalize again just in case
+        // this block of code normalizes iff N == 4
         // otherwise, when N == 3, src_norm is not normalized
         if(N == 4) {
             normd = {src[0], src[1], src[2], src[3]};
@@ -504,7 +504,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             std::advance(serialized_position, magnitude_serializer->bitsize());
         }
 
-        bool flip_vals = false; // will only ever be true for N == 4 and max_comp being negative
+        // will only ever be true for N == 4 and max_comp being negative
+        bool flip_vals = false;
         if(N == 4 && src[max_component_idx] < 0)
             flip_vals = true;
 
@@ -513,23 +514,13 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         for (size_t i = 0; i < N; i++) {
             if (i != max_component_idx) {
                 T element_scaled = src_norm[i] / mag;
-                // std::cout << "input: " << element_scaled << "\n";
+
                 // the negative of a quaternion is the same quaternion
                 // thus to indicate sign of the largest component, negate all other components
                 if(flip_vals)
                     element_scaled *= -1;
 
                 vector_element_serializers[component_number]->serialize(element_scaled);
-
-                // for(int k = 0; k < vector_element_serializers[component_number]->bitsize(); k++){
-                //     std::cout << vector_element_serializers[component_number]->get_bit_array()[k] << " ";
-                // }
-                // std::cout << " << ser \n";
-
-                // T ser_deser = 0.0;
-                // vector_element_serializers[component_number]->deserialize(&ser_deser);
-                // std::cout << "ser_deser: " << ser_deser << "\n";
-                //vector_element_serializers
 
                 std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
                           vector_element_serializers[component_number]->get_bit_array().end(),
@@ -539,18 +530,14 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             }
         }
 
-        // if it's a vector, you must use an additional bit to determine the sign of the largest component
+        // if it's a vector, you must use an additional bit 
+        // to determine the sign of the largest component
         if(N == 3){
             if(src_norm[max_component_idx] < 0){
                 sign_of_max_comp.set_int(1);
-                std::cout << "ser high\n";
             }
-            // std::cout << "ser pos: " << static_cast<int>(serialized_position);
             std::copy(sign_of_max_comp.begin(), sign_of_max_comp.end(), serialized_position);
             std::advance(serialized_position, sign_of_max_comp.size());
-            std::cout << "serialize bit: " << sign_of_max_comp.to_uint() << "\n";
-            //std::cout << "ser pos: " << serialized_val[serialized_position-1] << "\n";
-            std::cout << "size of sign: " << sign_of_max_comp.size() << "\n";
         }        
     }
 
