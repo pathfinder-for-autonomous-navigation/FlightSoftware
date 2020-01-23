@@ -578,70 +578,19 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         return true;
     }
 
-    void populate(){
-
-        //max_component.set_int(max_component_idx);
-        // std::copy(max_component.begin(), max_component.end(), serialized_position);
-        // std::advance(serialized_position, max_component.size());
-        // auto the_start = serialized_val.begin();
-        
-        // //std::copy(serialized_val.begin(), serialized_val.begin() + max_component.size(), max_component.begin()) 
-        // std::copy(the_start, the_start+max_component.size(), max_component.begin());
-        // std::advance(the_start, max_component.size());
-
-        // vector_element_serializers[component_number]->serialize(element_scaled);
-        // std::copy(vector_element_serializers[component_number]->get_bit_array().begin(),
-        //             vector_element_serializers[component_number]->get_bit_array().end(),
-        //             serialized_position);
-        // std::advance(serialized_position, vector_element_serializers[component_number]->bitsize());
-        // component_number++;
-        //for(int i = 0,)
-        return;
-    }
-
     void deserialize(std::array<T, N>* dest) const override {
-        //
-        int poor_mans_pointer = 0;
+        // a counter to keep track of the current serialized val index to process
+        unsigned int poor_mans_pointer = 0;
 
-        std::cout << "ser val bitsize: " << this->serialized_val.size() << "\n";
-        // std::cout <<"fuck\n";
-
-        //std::copy(serialized_val.begin(), serialized_val.begin() + max_component.size(), max_component.begin()) 
-        //std::copy(the_start, the_start + max_component.size() - 1, max_component.begin());
-        // std::copy(the_start, the_start, max_component.begin());
-        // std::advance(the_start, max_component.size());
-        // std::vector<bool> max_comp_vec;
-        // for(unsigned int i = 0; i<max_component.size(); i++){
-        //     max_comp_vec.push_back(this->serialized_val[poor_mans_pointer]);
-        //     //max_component[i] = this->serialized_val[poor_mans_pointer];
-        //     poor_mans_pointer++;
-        // }
-        // max_component.set(bit_array(max_comp_vec));
-
+        // read which component index is highest into a bitset for later use
         std::bitset<2> max_comp_bitset(0);
         for(unsigned int i = 0; i<max_component.size(); i++){
             max_comp_bitset[i] = this->serialized_val[poor_mans_pointer];
             //max_component[i] = this->serialized_val[poor_mans_pointer];
             poor_mans_pointer++;
         }
-        std::cout << "max comp: " << max_comp_bitset.to_ulong();
-        //max_component.set_int(max_comp_bitset.to_ulong());
-
-        // for(unsigned int i = 0; i<(N-1); i++){
-        //     auto new_bitarr = vector_element_serializers[i]->get_bit_array();
-
-        //     for(int j = 0; j < vector_element_serializers[i]->bitsize(); j++){
-        //         //vector_element_serializers[i].modify_bit(vector_element_serializers[i].to_uint(), j, this->serialized_val[poor_mans_pointer]);
-        //         new_bitarr.modify_bit(
-        //             new_bitarr.to_uint(), j, this->serialized_val[poor_mans_pointer]);
-
-        //         poor_mans_pointer++;
-        //     }
-
-        //     // vector_element_serializers[i]->set_bit_array(new_bitarr);
-        // }
         
-        // if there's a magnitude serializer
+        // if there's a magnitude serializer, save data into the member variable
         if(N == 3){
             std::vector<bool> bit_vec;
             for(int i = 0; i<magnitude_serializer->bitsize(); i++){
@@ -652,65 +601,26 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             magnitude_serializer->set_bit_array(new_bitarr);
         }
 
+        // loop through each serializer
         for(unsigned int i = 0; i<(N-1); i++){
-            //unsigned int vec_size = vector_element_serializers[i]->bitsize();
             std::vector<bool> bit_vec;
 
-            for(int j = 0; j < vector_element_serializers[i]->bitsize(); j++){
-                //vector_element_serializers[i].modify_bit(vector_element_serializers[i].to_uint(), j, this->serialized_val[poor_mans_pointer]);
-                // std::cout << this->serialized_val[poor_mans_pointer] << " ";
-                
+            // loop through each bit belonging to the serializer
+            for(int j = 0; j < vector_element_serializers[i]->bitsize(); j++){       
                 bit_vec.push_back(static_cast<bool>(this->serialized_val[poor_mans_pointer]));
-                // std::cout << bit_vec[j] << " - ";
                 poor_mans_pointer++;
             }
-            // std::cout << "\n";
-            //std::reverse(bit_vec.begin(),bit_vec.end());    // 9 8 7 6 5 4 3 2 1
 
             bit_array new_bitarr(bit_vec);
             vector_element_serializers[i]->set_bit_array(new_bitarr);
-            // std::cout << "bitsz: " << vector_element_serializers[i]->bitsize() << "\n";
-            // for(int k = 0; k < vector_element_serializers[i]->bitsize(); k++){
-            //     std::cout << vector_element_serializers[i]->get_bit_array()[k] << " ";
-            // }
-            // std::cout << " << post pop \n";
         }
 
-        bool sign_max_comp_bit = false;
-        
+        // set to true if N == 3 and max. comp is negative
+        bool max_comp_is_negative = false;
         if (N == 3){
-            sign_max_comp_bit = this->serialized_val[poor_mans_pointer];
-            std::cout << "bits: " << this->serialized_val[poor_mans_pointer- 1] << "_" <<
-                this->serialized_val[poor_mans_pointer] << "_" <<
-                this->serialized_val[poor_mans_pointer + 1] << "_" <<
-                this->serialized_val[poor_mans_pointer + 2] << " bits \n";
-            if(sign_max_comp_bit)
-                std::cout << "HIGH\n";
+            max_comp_is_negative = this->serialized_val[poor_mans_pointer];
             poor_mans_pointer++;
-        }
-            //max_component[i] = this->serialized_val[poor_mans_pointer];
-        
-
-        // for(int i = 0; i<sign_of_max_comp.size(); i++){
-        //     sign_of_max_comp.modify_bit(sign_of_max_comp.to_uint(), i, this->serialized_val[poor_mans_pointer]);
-        //     poor_mans_pointer++;
-        // }
-        // //std::copy(the_start, the_start)
-
-        // for(int i = 0; i<(N-1); i++){
-        //     std::copy(the_start, the_start + vector_element_serializers[i]->bitsize(), vector_element_serializers[i]->get_bit_array().begin());
-        //     std::advance(the_start, vector_element_serializers[i]->bitsize());
-
-        // }
-        // // std::copy(vector_element_serializers[o]->get_bit_array().begin(),
-        // //             vector_element_serializers[component_number]->get_bit_array().end(),
-        // //             serialized_position);
-        // // std::advance(serialized_position, vector_element_serializers[component_number]->bitsize());
-        // std::copy(the_start, the_start + sign_of_max_comp.size(), sign_of_max_comp.begin());
-        // std::advance(the_start, sign_of_max_comp.size());
-
-        // std::copy(sign_of_max_comp.begin(), sign_of_max_comp.end(), serialized_position);
-        // std::advance(serialized_position, sign_of_max_comp.size());
+        }    
 
         T magnitude = 0.0f;
         if(N == 3)
@@ -718,13 +628,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         else
             magnitude = 1.0f;
 
-        std::cout << "mag: " << magnitude << "\n";
-
-        // local to deserialize variable
-        int deser_max_idx = max_component.to_uint();
-        
-        // FUCK
-        deser_max_idx = max_comp_bitset.to_ulong();
+        // completely bypass member bit_array max_component;
+        int deser_max_idx = max_comp_bitset.to_ulong();
 
         (*dest)[deser_max_idx] = 1.0f; // 1.0 or 1.0f?
         int j = 0;  // Index of current component being processed
@@ -743,7 +648,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         // new;
         if(N == 3){
             // use "local" var instead of bit_array
-            if(sign_max_comp_bit == 1){
+            if(max_comp_is_negative == 1){
                 // (*dest)[deser_max_idx] *= -1;
                 std::cout << "MAX COMP NEG\n";
                 (*dest)[deser_max_idx] *= -1;
