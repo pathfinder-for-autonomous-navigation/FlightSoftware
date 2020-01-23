@@ -326,7 +326,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         size_t magnitude_bitsize;
         if (N == 3) magnitude_bitsize = size - vec_min_sz;
         else magnitude_bitsize = quat_magnitude_sz;
-        magnitude_serializer = std::make_unique<Serializer<T>>(min, max, magnitude_bitsize); // sus not that need to edit Serializers in control tasks
+        magnitude_serializer = std::make_unique<Serializer<T>>(min, max, magnitude_bitsize);
 
         max_component.resize(2);
         sign_of_max_comp.resize(1);
