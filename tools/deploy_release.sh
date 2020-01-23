@@ -14,7 +14,9 @@ if ! [ -x "$(command -v platformio)" ]; then
   exit 1
 fi
 
-#function deploy_firmware () {}
+function deploy_firmware () {
+    # TODO
+}
 
 function deploy_to_satellite () {
     full_satname = "{$1} satellite"
@@ -25,12 +27,12 @@ function deploy_to_satellite () {
     echo  "First we'll reset the $full_satname's computers to a safe initial state."
     input "1. Plug in the $full_satname's flight computer now. Press ENTER when plugged in."
     echo  "   Restoring $full_satname's flight computer to preflight configuration."
-    deploy_firmware "preflight_$1_fc"
+    deploy_firmware "fsw_preflight_$1"
     input "2. Unplug the $full_satname's flight computer. Press ENTER when complete."
     
     input "3. Plug in the $full_satname's ADCS computer now. Press ENTER when complete."
     echo "   Restoring $full_satname's ADCS computer to preflight configuration."
-    deploy_firmware "preflight_$1_adcs"
+    deploy_firmware "adcs_preflight_$1"
     input "4. Unplug the $full_satname's ADCS computer. Press ENTER when complete."
 
     input "5. Power on the $full_satname to allow the preflight reset code to run. A light will turn on to signal completion. Press ENTER when complete."
@@ -42,12 +44,12 @@ function deploy_to_satellite () {
     echo  "Now we'll load flight software on to the $full_satname's computers."
     input "7. Plug in the $full_satname's ADCS computer now. Press ENTER when plugged in."
     echo  "   Loading flight software to $full_satname's ADCS computer."
-    deploy_firmware "flight_$1_adcs"
+    deploy_firmware "adcs_flight_$1"
     input "8. Unplug the $full_satname's ADCS computer. Press ENTER when complete."
 
     input "9. Plug in the $full_satname's flight computer now. Press ENTER when plugged in."
     echo  "   Loading flight software to $full_satname's flight computer."
-    deploy_firmware "flight_$1_fc"
+    deploy_firmware "fsw_flight_$1"
     input "10. Unplug the $full_satname's flight computer. Press ENTER when complete."
 
 ### Complete! ###
@@ -85,3 +87,5 @@ rm -rf teensy_loader_cli/
 deploy_to_satellite "leader"
 deploy_to_satellite "follower"
 deploy_gsw
+
+rm loader

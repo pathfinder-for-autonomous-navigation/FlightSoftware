@@ -15,7 +15,7 @@ class TestDummyFlightSoftwareBinary(unittest.TestCase):
     """
 
     binary_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-        "../.pio/build/native_ci/program")
+        "../.pio/build/fsw_native_ci/program")
 
     def setUp(self):
         master_fd, slave_fd = pty.openpty()

@@ -12,8 +12,8 @@
 
 #define DEBUG
 
-#include <mtr.hpp>
-#include <utl/debug.hpp>
+#include <adcs/mtr.hpp>
+#include <adcs/utl/debug.hpp>
 
 #include <adcs_constants.hpp>
 #include <Arduino.h>

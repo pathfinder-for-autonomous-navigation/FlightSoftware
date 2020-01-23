@@ -4,7 +4,7 @@
 #include <json.hpp>
 #include <string>
 #include <StateFieldRegistry.hpp>
-#include "../FCCode/MainControlLoop.hpp"
+#include <fsw/FCCode/MainControlLoop.hpp>
 
 /**
  * @brief Generates a JSON file describing the minimum,

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../FCCode/MainControlLoop.hpp"
-#include "../FCCode/UplinkCommon.h"
+#include <fsw/FCCode/MainControlLoop.hpp>
+#include <fsw/FCCode/UplinkCommon.h>
 #include <map>
 
 /**

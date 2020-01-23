@@ -1,5 +1,5 @@
 //
-// test/ADS1015Test.cpp
+// test/ADS1015_test.cpp
 // ADCS
 //
 // Contributors:
@@ -14,18 +14,19 @@
 #include <Arduino.h>
 #include <ADS1015.hpp>
 
-// ADS Face 6 - P17
-ADS1015 adc(Wire2, ADS1015::ADDR::SSCL, 28, 1000000);
+ADS1015 adc;
 
 void setup() {
   delay(5000); // Wait before starting
 
-  pinMode(28, INPUT);
   Serial.begin(9600);
   Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
-  adc.set_gain(ADS1015::GAIN::ONE);
 
-  if (!adc.init()) {
+  // ADS Face 6 - P17
+  pinMode(28, INPUT);
+  adc.setup(&Wire2, ADS1015::ADDR::SSCL, 28, 1000000);
+  adc.set_gain(ADS1015::GAIN::ONE);
+  if (!adc.reset()) {
     Serial.println("Error");
     while (1);
   }
