@@ -1,7 +1,7 @@
 #ifndef GROUND_DOWNLINK_PARSER_HPP_
 #define GROUND_DOWNLINK_PARSER_HPP_
 
-#include "../FCCode/MainControlLoop.hpp"
+#include <fsw/FCCode/MainControlLoop.hpp>
 #include <vector>
 #include <string>
 
