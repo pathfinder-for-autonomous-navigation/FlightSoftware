@@ -479,10 +479,16 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             }
         }
 
-        max_component.set_int(max_component_idx);
-        std::copy(max_component.begin(), max_component.end(), serialized_position);
-        std::advance(serialized_position, max_component.size());
-
+        // can't use this because of "might not be initialized error"
+        // max_component.set_int(max_component_idx);
+        // std::copy(max_component.begin(), max_component.end(), serialized_position);
+        // std::advance(serialized_position, max_component.size());
+        
+        for(size_t i = 0; i<max_component.size(); i++){
+            std::copy(max_component.begin()+i, max_component.begin()+i+1, serialized_position);
+            std::advance(serialized_position, 1);
+        }
+        
         // Store serialized magnitude
         T mag = 0.0f;
         if (N == 4)
