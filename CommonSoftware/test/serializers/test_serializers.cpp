@@ -200,14 +200,22 @@ void test_uint_serializer() {
     test_value<T>(serializer, dl_deserializer,  0, 0);
     std::cout << "UINT 6\n";
     test_value<T>(serializer, dl_deserializer,  1, 1);
+    std::cout << "UINT 7\n";
 
     serializer.reset(new Serializer<T>(10, 10, 10));
     dl_deserializer.reset(new Serializer<T>(10, 10, 10));
 
     test_value<T>(serializer, dl_deserializer,  10, 10);
+    std::cout << "UINT 8\n";
+
     test_value<T>(serializer, dl_deserializer,  10, 10);
+    std::cout << "UINT 9\n";
+
     test_value<T>(serializer, dl_deserializer,  3, 10);
+    std::cout << "UINT 10\n";
+
     test_value<T>(serializer, dl_deserializer,  5, 10);
+    std::cout << "UINT 11\n";
 
     // Test a normal serializer that has min = 0 with more
     // than enough bitspace.
@@ -216,9 +224,12 @@ void test_uint_serializer() {
 
     for (T i = 0; i <= 10; i++) {
         test_value<T>(serializer, dl_deserializer,  i, i);
+        //std::cout << "UINT 12: " << i <<"\n";
+
     }
     // Test beyond bounds
     test_value<T>(serializer, dl_deserializer,  11, 10);
+    std::cout << "UINT 13\n";
 
     // Test a normal serializer that starts at a nonzero value,
     // with more than enough bitspace
@@ -230,19 +241,22 @@ void test_uint_serializer() {
     }
     // Test beyond bounds
     test_value<T>(serializer, dl_deserializer,  2, 3);
+    std::cout << "UINT 15\n";
 
     // Test a normal serializer that starts at a zero value,
     // but with restricted bitspace
     serializer.reset(new Serializer<T>(0, 10, 3));
-    dl_deserializer.reset(new Serializer<T>(10, 10, 3));
-
+    dl_deserializer.reset(new Serializer<T>(0, 10, 3));
+    std::cout << "culprit: \n";
     test_value<T>(serializer, dl_deserializer,  0, 0);
+    std::cout << "post 0: \n";
     test_value<T>(serializer, dl_deserializer,  1, 0);
     test_value<T>(serializer, dl_deserializer,  2, 2);
+    std::cout << "post 2: \n";
     test_value<T>(serializer, dl_deserializer,  3, 2);
     test_value<T>(serializer, dl_deserializer,  4, 4);
     test_value<T>(serializer, dl_deserializer,  5, 4);
-
+    std::cout << "lolwat\n";
     // Test string-based deserialization
     serializer.reset(new Serializer<T>(0, 10, 3));
 
@@ -319,7 +333,7 @@ void test_sint_serializer() {
     test_value<T>(serializer, dl_deserializer,  -3, -3);
 
     serializer.reset(new Serializer<T>(-5, -1, 1));
-    dl_deserializer.reset(new Serializer<T>(-5, 1, 1));
+    dl_deserializer.reset(new Serializer<T>(-5, -1, 1));
     test_value<T>(serializer, dl_deserializer,  -5, -5);
     test_value<T>(serializer, dl_deserializer,  -4, -5);
     test_value<T>(serializer, dl_deserializer,  -2, -5);
