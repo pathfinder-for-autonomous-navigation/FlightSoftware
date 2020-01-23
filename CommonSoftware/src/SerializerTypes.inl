@@ -470,7 +470,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         // Get and store index of maximum-valued component
         std::array<T, N> v_mags;
         T max_element_mag = 0;
-        unsigned int max_component_idx;
+        unsigned int max_component_idx = 0;
         for (size_t i = 0; i < N; i++) {
             v_mags[i] = std::abs(src_norm[i]);
             if (max_element_mag < v_mags[i]) {
@@ -479,15 +479,9 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             }
         }
 
-        // can't use this because of "might not be initialized error"
-        // max_component.set_int(max_component_idx);
-        // std::copy(max_component.begin(), max_component.end(), serialized_position);
-        // std::advance(serialized_position, max_component.size());
-        
-        for(size_t i = 0; i<max_component.size(); i++){
-            std::copy(max_component.begin()+i, max_component.begin()+i+1, serialized_position);
-            std::advance(serialized_position, 1);
-        }
+        max_component.set_int(max_component_idx);
+        std::copy(max_component.begin(), max_component.end(), serialized_position);
+        std::advance(serialized_position, max_component.size());
         
         // Store serialized magnitude
         T mag = 0.0f;
