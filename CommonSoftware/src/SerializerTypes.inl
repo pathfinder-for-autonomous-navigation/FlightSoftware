@@ -613,7 +613,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             magnitude = 1.0;
 
         // completely bypass member bit_array max_component;
-        int deser_max_idx = max_comp_bitset.to_ulong();
+        unsigned int deser_max_idx = max_comp_bitset.to_ulong();
 
         (*dest)[deser_max_idx] = 1.0;
         int j = 0;  // Index of current component being processed

@@ -3,11 +3,13 @@
 #include <stdlib.h>
 #include <memory>
 
-#include <iostream> // used for shihao's testing campaign
 #include <lin.hpp> // for cleaner inner products
 // ============================================================================================= //
 //                                      Helper methods                                           //
 // ============================================================================================= //
+
+// number of vector tests to run
+constexpr static number_of_vec_test = 100;
 
 /**
  * @brief Normalizes a vector or quaternion
@@ -489,7 +491,7 @@ void test_vec_serializer() {
     // Criterion for functionality: vector is within ??? degree, and within 1% of magnitude
 
     srand(2);
-    for(size_t i = 0; i < 10; i++) {
+    for(size_t i = 0; i < number_of_vec_test; i++) {
         auto vec_serializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
         
         //make the another serialier with same inputs
@@ -504,7 +506,6 @@ void test_vec_serializer() {
         const T y = cos(t) * std::sqrt(4 - x*x);
         const T z = sin(t) * std::sqrt(4 - x*x);
 
-        // std::cout << x << " " << y << " " << z << "\n";
         vector_t original = {x, y, z};
         vector_t vec(original);
 
@@ -514,13 +515,6 @@ void test_vec_serializer() {
         downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
 
         downlink_deserializer->deserialize(&result);
-
-        // Ensure the displacement vector of the serialized value and the retrieved
-        // value has a magnitude less than the desired precision.
-        vector_t dv;
-        for(size_t j = 0; j < 3; j++) dv[j] = vec[j] - result[j];
-
-        T dv_magnitude = std::sqrt(pow(dv[0], 2) + pow(dv[1], 2) + pow(dv[2], 2));
 
         // normalize the input even though it should've already been normalized!
         vector_t original_result(result);
@@ -541,7 +535,7 @@ void test_vec_serializer() {
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, x, y, z, original_result[0], original_result[1], original_result[2], angle, mag_err);
 
-        // assert less than .01% magnitude error
+        // assert less than .001% magnitude error
         TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.001, 0, mag_err, err_str);
 
         // assert angle has error < 0.5 degrees
@@ -599,14 +593,14 @@ void test_quat_serializer() {
                          f_quat_t,
                          d_quat_t>::type;
 
-    // TODO write serialization initializations for edge cases.
+    // TODO write serialization initializations for edge cases. // ?
 
     // (Deterministically) generate random quaternions, and see if they work 
     // with the serializer.
     // Criterion for functionality: the quaternion that's reported has a displacement from the
     // input quaternion of magnitude at most magnitude_err.
     srand(2);
-    for(size_t i = 0; i < 10; i++) {
+    for(size_t i = 0; i < number_of_vec_test; i++) {
         auto quat_serializer = std::make_shared<Serializer<quat_t>>();
         auto downlink_deserializer = std::make_shared<Serializer<quat_t>>();
 
@@ -620,9 +614,10 @@ void test_quat_serializer() {
         const T uz = std::sin(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
         const T s = std::cos(tt/2);
         quat_t quat = {ux, uy, uz, s};
-        // please not that quat is not normalized at this point
+        // please note that quat is not normalized at this point
 
-        // serialize will normalize a quaternion argument
+        // serialize will normalize a quaternion argument, but normalize now anyway
+        normalize<T, 4>(quat);
         quat_serializer->serialize(quat);
 
         //downlink_deserializer = quat_serializer;
@@ -630,10 +625,9 @@ void test_quat_serializer() {
 
         downlink_deserializer->deserialize(&result);
 
-        // normalize the input even though it should've already been normalized!
-        normalize<T, 4>(quat);
+        // normalize the result (though it should definitely be normalized, or atleast very close)
         normalize<T, 4>(result);
-        T err_angle = angle_between<T, 4>(quat, result);
+        T angle_err = angle_between<T, 4>(quat, result);
 
         static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output quaternion was {%f,%f,%f,%f}; angle: %f";
         static const char* err_fmt_str_d = "%dth test: Input quaternion was {%lf,%lf,%lf,%lf}; output quaternion was {%lf,%lf,%lf,%lf}; angle: %lf";
@@ -642,11 +636,9 @@ void test_quat_serializer() {
         const char* err_fmt_str = nullptr;
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
-        sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3], err_angle);
+        sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3], angle_err);
 
-         std::cout << err_str << "\n";
-
-        TEST_ASSERT_TRUE_MESSAGE(err_angle < 1.0, err_str);
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1.0, 0, angle_err, err_str);
 
     }
 
