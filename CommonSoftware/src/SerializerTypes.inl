@@ -552,10 +552,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             else {
                 temp_dest[i++] = static_cast<T>(strtod(tok, NULL));
             }
-            std::cout << temp_dest[i-1] << " ";
             tok = strtok(NULL, ",");
         }
-        std::cout << "\n";
         if (i < N) return false;
         *dest = temp_dest;
         serialize(*dest);
