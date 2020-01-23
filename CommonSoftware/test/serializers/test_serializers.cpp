@@ -411,6 +411,8 @@ void test_float_or_double_serializer() {
 
     // Test normal initializations
     serializer.reset(new Serializer<T>(0, 3, 5));
+    dl_deserializer.reset(new Serializer<T>(0, 3, 5));
+
     threshold = 3.0 / 31;
     for (size_t i = 0; i < 100; i++) {
         T x = i * 3.0 / 100;
@@ -421,6 +423,8 @@ void test_float_or_double_serializer() {
     test_value_float_or_double<T>(serializer, dl_deserializer,  -1, 0, threshold);
 
     serializer.reset(new Serializer<T>(-1, 3, 6));
+    dl_deserializer.reset(new Serializer<T>(-1, 3, 6));
+
     threshold = 4.0 / 63;
     for (size_t i = 0; i < 1000; i++) {
         T x = -1.0 + i * 4.0 / 1000;
