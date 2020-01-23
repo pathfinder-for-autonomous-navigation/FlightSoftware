@@ -329,6 +329,10 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         magnitude_serializer = std::make_unique<Serializer<T>>(min, max, magnitude_bitsize);
 
         max_component.resize(2);
+
+        //needs to be intialized or else compiler warning-error
+        max_component.set_int(0);
+
         sign_of_max_comp.resize(1);
 
         size_t component_sz = 0;
