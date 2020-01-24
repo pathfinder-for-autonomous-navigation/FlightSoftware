@@ -21,6 +21,8 @@
 
 #include <cmath>
 
+using namespace adcs;
+
 void setup() {
   DEBUG_init(9600);
   mtr::setup();

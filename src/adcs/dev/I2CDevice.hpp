@@ -1,6 +1,6 @@
 //
-// lib/Devices/I2CDevice.hpp
-// ADCS
+// src/adcs/dev/I2CDevice.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol         kpk63@cornell.edu
@@ -10,14 +10,12 @@
 // Cornell Univeristy
 //
 
-#ifndef ADCS_LIB_DEVICES_I2CDEVICE_HPP_
-#define ADCS_LIB_DEVICES_I2CDEVICE_HPP_
+#ifndef SRC_ADCS_DEV_I2CDEVICE_HPP_
+#define SRC_ADCS_DEV_I2CDEVICE_HPP_
 
 #include "Device.hpp"
-#include <i2c_t3.h>
 
-/** @addtogroup lib
- *  @{ */
+#include <i2c_t3.h>
 
 #ifndef DEV_I2C_ERROR_COUNT
 /** Specifies the number of consecutive failures that marks an \c I2CDevice as
@@ -31,7 +29,9 @@
 #define DEV_I2C_TIMEOUT 10000
 #endif
 
+namespace adcs {
 namespace dev {
+
 /** @class I2CDevice
  *  Defines a common interface and error tracking behavior for all peripherials
  *  communicating over I2C. The function calls are largely based on the i2c_t3
@@ -127,8 +127,7 @@ class I2CDevice : public Device {
   bool error_acc;
 };
 }  // namespace dev
-
-/** @} */
+}  // namespace adcs
 
 #include "I2CDevice.inl"
 

@@ -1,6 +1,6 @@
 //
-// src/havt.cpp
-// ADCS
+// src/adcs/havt.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -15,17 +15,20 @@
 #define DEBUG
 #endif
 
-#include <adcs_constants.hpp>
-#include <adcs_havt_devices.hpp>
+#include "havt.hpp"
+#include "havt_devices.hpp"
+#include "imu.hpp"
+#include "mtr.hpp"
+#include "rwa.hpp"
+#include "ssa.hpp"
+#include "state.hpp"
+#include "utl/debug.hpp"
 
-#include <adcs/havt.hpp>
-#include <adcs/imu.hpp>
-#include <adcs/mtr.hpp>
-#include <adcs/rwa.hpp>
-#include <adcs/ssa.hpp>
-#include <adcs/state.hpp>
-#include <adcs/utl/debug.hpp>
+// Sanity check
+static_assert(adcs::havt::Index::_LENGTH <= adcs::havt::max_devices,
+    "Too many devices registered to the HAVT");
 
+namespace adcs {
 namespace havt {
 
 // define internal_table, an easier representation of the read havt register
@@ -56,23 +59,23 @@ dev::Device* dev_ptrs[havt::max_devices] = {
 
 void update_read_table(){
   //Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
-  for (unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int < adcs_havt::Index::_LENGTH; index_int++ )
+  for (unsigned int index_int = Index::IMU_GYR; index_int < Index::_LENGTH; index_int++ )
   {
     internal_table.set(index_int, dev_ptrs[index_int]->is_functional());
   }
 
   // Set all extra bits of the internal table to 0, just in case radiation
-  for (unsigned int index_int = adcs_havt::Index::_LENGTH; index_int < havt::max_devices; index_int++)
+  for (unsigned int index_int = Index::_LENGTH; index_int < havt::max_devices; index_int++)
   {
     internal_table.set(index_int, 0);
   }
 }
 
-void cmd_device(adcs_havt::Index index, const bool cmd_bit){
+void cmd_device(Index index, const bool cmd_bit){
   DEBUG_print(String(index) + "," + String(cmd_bit) + " - ")
   
   // if statement prevents attempting commands with nonexistent devices
-  if(index<adcs_havt::Index::_LENGTH){
+  if(index<Index::_LENGTH){
     // command according to cmd_bit
     if(cmd_bit)
       dev_ptrs[index]->reset();
@@ -85,9 +88,9 @@ void cmd_device(adcs_havt::Index index, const bool cmd_bit){
 void execute_cmd_table(const std::bitset<havt::max_devices>& cmd_table){
 
   // Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
-  for (unsigned int index_int = adcs_havt::Index::IMU_GYR; index_int != adcs_havt::Index::_LENGTH; index_int++ )
+  for (unsigned int index_int = Index::IMU_GYR; index_int != Index::_LENGTH; index_int++ )
   {
-    adcs_havt::Index index = static_cast<adcs_havt::Index>(index_int);
+    Index index = static_cast<Index>(index_int);
 
     // if the internal table and the cmd_table are different, need to actuate according to cmd_table
     if(internal_table.test(index_int) != cmd_table.test(index_int)){  
@@ -99,3 +102,4 @@ void execute_cmd_table(const std::bitset<havt::max_devices>& cmd_table){
   return;
 }
 }  // namespace havt
+}  // namespace adcs

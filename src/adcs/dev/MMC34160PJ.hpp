@@ -1,6 +1,6 @@
 //
-// lib/MMC34160PJ/MMC34160PJ.hpp
-// ADCS
+// src/adcs/dev/MMC34160PJ.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -12,19 +12,19 @@
 
 // TODO : Calibrate function
 
-#ifndef PAN_ADCS_LIB_MMC34160PJ_MMC34160PJ_HPP_
-#define PAN_ADCS_LIB_MMC34160PJ_MMC34160PJ_HPP_
+#ifndef SRC_ADCS_DEV_MMC34160PJ_HPP_
+#define SRC_ADCS_DEV_MMC34160PJ_HPP_
 
-/** @addtogroup lib
- *  @} */
+#include "I2CDevice.hpp"
 
-#include <I2CDevice.hpp>
+namespace adcs {
+namespace dev {
 
 /** @class MMC34160PJ
  *  Driver operating the MMC34160PJ magnetometer in single shot mode with
  *  variable sample rate. There is also a calibration function to handle
  *  temperature/intrinsic bias. */
-class MMC34160PJ : public dev::I2CDevice {
+class MMC34160PJ : public I2CDevice {
  public:
   /** @enum REG
    *  Enumerates all possible register addresses for the magnetometer. */
@@ -110,7 +110,7 @@ class MMC34160PJ : public dev::I2CDevice {
   /** Magnetomter offset calibration value. */
   uint16_t offset[3];
 };
-
-/** @} */
+}  // namespace dev
+}  // namespace adcs
 
 #endif

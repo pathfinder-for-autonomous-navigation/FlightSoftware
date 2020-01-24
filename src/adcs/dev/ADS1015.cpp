@@ -12,15 +12,18 @@
 
 #include "ADS1015.hpp"
 
+namespace adcs {
+namespace dev {
+
 void ADS1015::setup(i2c_t3 *wire, uint8_t addr, unsigned int alert_pin, unsigned long timeout) {
-  this->dev::I2CDevice::setup(wire, addr, timeout);
+  this->I2CDevice::setup(wire, addr, timeout);
   this->set_sample_rate(SR::SPS_1600);
   this->set_gain(GAIN::TWO);
   this->alert_pin = alert_pin;
 }
 
 bool ADS1015::reset() {
-  this->dev::I2CDevice::reset();
+  this->I2CDevice::reset();
   while (this->is_functional()) {
     static uint8_t const thresh[6] = {0x02, 0x00, 0x00, 0x03, 0xFF, 0xFF};
     this->i2c_begin_transmission();
@@ -86,3 +89,5 @@ bool ADS1015::read(CHANNEL channel, int16_t &val) {
   this->start_read(channel);
   return this->end_read(val);
 }
+}  // namespace dev
+}  // namespace adcs

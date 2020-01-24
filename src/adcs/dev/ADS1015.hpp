@@ -1,6 +1,6 @@
 //
-// lib/ADS1015/ADS1015.hpp
-// ADCS
+// src/adcs/dev/ADS1015.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -13,17 +13,17 @@
 // TODO :
 // Test version 2_0 with the differential reads as well
 
-#ifndef ADCS_LIB_ADS1015_ADS1015_HPP_
-#define ADCS_LIB_ADS1015_ADS1015_HPP_
+#ifndef SRC_ADCS_DEV_ADS1015_HPP_
+#define SRC_ADCS_DEV_ADS1015_HPP_
 
-#include <I2CDevice.hpp>
+#include "I2CDevice.hpp"
 
-/** @addtogroup lib
- *  @{ */
+namespace adcs {
+namespace dev {
 
 /** @class ADS1015
  *  Single shot conversion driver for the ADS1015 using the alert/ready pin. */
-class ADS1015 : public dev::I2CDevice {
+class ADS1015 : public I2CDevice {
  public:
   /** @enum ADDR
    *  Possible address values for the ADS1015. */
@@ -116,7 +116,7 @@ class ADS1015 : public dev::I2CDevice {
   /** ADC gain value. */
   GAIN gain;
 };
-
-/** @} */
+}  // namespace dev
+}  // namespace adcs
 
 #endif

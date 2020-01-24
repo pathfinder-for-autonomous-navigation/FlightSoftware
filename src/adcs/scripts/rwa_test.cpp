@@ -25,6 +25,8 @@
 #include <i2c_t3.h>
 #include <lin.hpp>
 
+using namespace adcs;
+
 #define MAX_TORQUE rwa::max_torque
 #define SPEED_FLT 0.75f
 #define RAMP_FLT 0.75f

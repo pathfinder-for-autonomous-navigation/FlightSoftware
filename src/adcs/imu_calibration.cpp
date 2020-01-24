@@ -1,6 +1,6 @@
 //
-// src/imu_calibration.cpp
-// ADCS
+// src/adcs/imu_calibration.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -25,8 +25,9 @@
  * 
  */
 
-#include <adcs/imu_calibration.hpp>
+#include "imu_calibration.hpp"
 
+namespace adcs {
 namespace imu {
 
 // Commented out to avoid -Werror=unused-variable
@@ -93,3 +94,4 @@ void calibrate(lin::Vector3f &omega, float temp) {
   omega = transformation * omega + offset;
 }
 }  // namespace imu
+}  // namespace adcs

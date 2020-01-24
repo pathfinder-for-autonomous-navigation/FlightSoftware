@@ -1,6 +1,6 @@
 //
-// lib/MTR/MTR.hpp
-// ADCS
+// src/adcs/dev/Magnetorquer.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -10,18 +10,18 @@
 // Cornell Univeristy
 //
 
-#ifndef ADCS_LIB_MTR_MAGNETORQUER_HPP_
-#define ADCS_LIB_MTR_MAGNETORQUER_HPP_
+#ifndef SRC_ADCS_DEV_MAGNETORQUER_HPP_
+#define SRC_ADCS_DEV_MAGNETORQUER_HPP_
 
-/** @addtogroup lib
- *  @{ */
+#include "Device.hpp"
 
-#include <Device.hpp>
+namespace adcs {
+namespace dev {
 
 /** \class MTR
  *  Encapsulates the signed PWM actuation behavior of a magnetorquer and
  *  abstracts away the H-bridge. */
-class Magnetorquer : public dev::Device {
+class Magnetorquer : public Device {
  public:
   /** Sets the forward and backward pins associated with this magnetorquer. */
   void setup(unsigned int f_pin, unsigned int r_pin);
@@ -42,7 +42,7 @@ class Magnetorquer : public dev::Device {
   /** Reverse enable pin. */
   unsigned int r_pin;
 };
-
-/** @} */
+}  // namespace dev
+}  // namespace adcs
 
 #endif

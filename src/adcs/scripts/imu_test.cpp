@@ -20,7 +20,10 @@
 #include <adcs/utl/debug.hpp>
 
 #include <adcs_constants.hpp>
+
 #include <Arduino.h>
+
+using namespace adcs;
 
 void setup() {
   DEBUG_init(9600)

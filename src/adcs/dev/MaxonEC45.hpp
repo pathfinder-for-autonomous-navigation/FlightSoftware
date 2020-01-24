@@ -1,6 +1,6 @@
 //
-// lib/MaxonEC45/MaxonEC45.hpp
-// ADCS
+// src/adcs/dev/MaxonEC45.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol          kpk63@cornell.edu
@@ -10,16 +10,20 @@
 // Cornell Univeristy
 //
 
-#ifndef ADCS_LIB_MAXONEC45_HPP_
-#define ADCS_LIB_MAXONEC45_HPP_
+#ifndef SRC_ADCS_DEV_MAXONEC45_HPP_
+#define SRC_ADCS_DEV_MAXONEC45_HPP_
 
-#include <AD5254.hpp>
-#include <Device.hpp>
+#include "AD5254.hpp"
+#include "Device.hpp"
+
 #include <Servo.h>
+
+namespace adcs {
+namespace dev {
 
 /** @class MaxonEC45
  *  */
-class MaxonEC45 : public dev::Device {
+class MaxonEC45 : public Device {
  public:
   /** Sets up this mootor on the following clockwise enable, counterclockwise
    *  enable, speed servo pin, potentiometer, and potentiometer rdac channel. */
@@ -61,5 +65,7 @@ class MaxonEC45 : public dev::Device {
   /** Current acceleration ramp setting. */
   uint8_t axl_ramp;
 };
+}  // namespace dev
+}  // namespace adcs
 
 #endif

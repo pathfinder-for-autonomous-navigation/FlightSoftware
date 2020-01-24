@@ -1,6 +1,6 @@
 //
-// lib/Devices/Device.hpp
-// ADCS
+// src/adcs/dev/Device.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Tanishq Aggarwal  ta335@cornell.edu
@@ -11,13 +11,12 @@
 // Cornell Univeristy
 //
 
-#ifndef ADCS_LIB_DEVICES_DEVICE_HPP_
-#define ADCS_LIB_DEVICES_DEVICE_HPP_
+#ifndef SRC_ADCS_DEV_DEVICE_HPP_
+#define SRC_ADCS_DEV_DEVICE_HPP_
 
-/** @addtogroup lib 
- *  @{ */
-
+namespace adcs {
 namespace dev {
+
 /** @class Device
  *  Defines generic behavior all ADCS peripherials share. This includes a setup
  *  function, reset function, disable function, and an is functional check. */
@@ -43,7 +42,6 @@ class Device {
   bool functional;
 };
 }  // namespace dev
-
-/** @} */
+}  // namespace adcs
 
 #endif

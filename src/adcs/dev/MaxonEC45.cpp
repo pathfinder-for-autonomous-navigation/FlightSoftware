@@ -1,6 +1,6 @@
 //
-// lib/MaxonEC45/MaxonEC45.cpp
-// ADCS
+// src/adcs/dev/MaxonEC45.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol          kpk63@cornell.edu
@@ -11,7 +11,11 @@
 //
 
 #include "MaxonEC45.hpp"
+
 #include <Arduino.h>
+
+namespace adcs {
+namespace dev {
 
 void MaxonEC45::setup(unsigned int cw_pin, unsigned int ccw_pin, unsigned int speed_pin,
                       AD5254 *potentiometer, void (AD5254::*const set_r)(uint8_t)) {
@@ -23,7 +27,7 @@ void MaxonEC45::setup(unsigned int cw_pin, unsigned int ccw_pin, unsigned int sp
 }
 
 bool MaxonEC45::reset() {
-  this->dev::Device::reset();
+  this->Device::reset();
   this->set_axl_ramp(0);
   this->set_speed(1000);
   this->stop();
@@ -31,7 +35,7 @@ bool MaxonEC45::reset() {
 }
 
 void MaxonEC45::disable() {
-  this->dev::Device::disable();
+  this->Device::disable();
   this->set_axl_ramp(0);
   this->set_speed(1000);
   this->stop();
@@ -54,3 +58,5 @@ void MaxonEC45::stop() {
   digitalWrite(this->cw_pin, LOW);
   digitalWrite(this->ccw_pin, LOW);
 }
+}  // namespace dev
+}  // namespace adcs

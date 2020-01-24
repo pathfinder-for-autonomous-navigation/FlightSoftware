@@ -15,13 +15,16 @@
 // manipulation incorect.
 
 #define DEBUG
+
+#include <adcs/dev/MMC34160PJ.hpp>
 #include <adcs/utl/debug.hpp>
 
 #include <i2c_t3.h>
 #include <Arduino.h>
-#include <MMC34160PJ.hpp>
 
-MMC34160PJ mag;
+using namespace adcs;
+
+dev::MMC34160PJ mag;
 
 void setup() {
   DEBUG_init(9600)

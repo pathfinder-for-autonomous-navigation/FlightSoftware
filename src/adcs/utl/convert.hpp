@@ -1,6 +1,6 @@
 //
-// include/utl/convert.hpp
-// ADCS
+// src/adcs/utl/convert.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -10,9 +10,10 @@
 // Cornell Univeristy
 //
 
-#ifndef PAN_ADCS_UTL_CONVERT_HPP_
-#define PAN_ADCS_UTL_CONVERT_HPP_
+#ifndef SRC_ADCS_UTL_CONVERT_HPP_
+#define SRC_ADCS_UTL_CONVERT_HPP_
 
+namespace adcs {
 namespace utl {
 
 /** Converts a signed char to a floating point value. */
@@ -40,6 +41,7 @@ inline unsigned short us(float f, float min, float max);
 inline signed short ss(float f, float min, float max);
 
 }  // namespace utl
+}  // namespace adcs
 
 #include "convert.inl"
 

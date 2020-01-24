@@ -1,6 +1,6 @@
 //
-// lib/Devices/I2CDevice.inl
-// ADCS
+// src/adcs/dev/I2CDevice.inl
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol         kpk63@cornell.edu
@@ -12,6 +12,7 @@
 
 #include "I2CDevice.hpp"
 
+namespace adcs {
 namespace dev {
 
 inline bool I2CDevice::reset() {
@@ -37,7 +38,7 @@ inline bool I2CDevice::i2c_peek_errors() {
 inline bool I2CDevice::i2c_pop_errors() {
   if (this->i2c_peek_errors())
     if (++this->error_count >= DEV_I2C_ERROR_COUNT) 
-      this->dev::Device::disable(); //don't attempt further I2C comms
+      this->Device::disable(); //don't attempt further I2C comms
   bool temp = this->i2c_peek_errors();
   this->error_acc = 0;
   return temp;
@@ -97,3 +98,4 @@ inline void I2CDevice::i2c_read(T *data, unsigned int len) {
   this->error_acc = (this->error_acc || err);
 }
 }  // namespace dev
+}  // namespace adcs

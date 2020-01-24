@@ -18,6 +18,8 @@
 #include <Arduino.h>
 #include <i2c_t3.h>
 
+using namespace adcs;
+
 void setup() {
   DEBUG_init(9600)
   Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000);

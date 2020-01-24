@@ -1,6 +1,6 @@
 //
-// lib/LIS2MDLTR/LIS2MDLTR.hpp
-// ADCS
+// src/adcs/dev/LIS2MDLTR.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Anusha Choudhury ac978@cornell.edu
@@ -11,16 +11,19 @@
 // Cornell Univeristy
 //
 
-#ifndef PAN_ADCS_LIB_LIS2MDLTR_LIS2MDLTR_HPP_
-#define PAN_ADCS_LIB_LIS2MDLTR_LIS2MDLTR_HPP_
+#ifndef SRC_ADCS_DEV_LIS2MDLTR_HPP_
+#define SRC_ADCS_DEV_LIS2MDLTR_HPP_
 
-#include <I2CDevice.hpp>
+#include "I2CDevice.hpp"
+
+namespace adcs {
+namespace dev {
 
 /** @class LIS2MDLTR
  *  Driver operating the LIS2MDLTR magnetometer in continuous mode with variable
  *  sample rate. There is also a calibration function to handle
  *  temperature/intrinsic bias. */
-class LIS2MDLTR : public dev::I2CDevice {
+class LIS2MDLTR : public I2CDevice {
  public:
   /** @enum REG
    *  Possible addresses for the registers of the magnetometer. **/
@@ -117,5 +120,7 @@ class LIS2MDLTR : public dev::I2CDevice {
   /** Magnetic field sample rate. */
   uint8_t sample_rate;
 };
+}  // namespace dev
+}  // namespace adcs
 
 #endif

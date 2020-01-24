@@ -1,6 +1,6 @@
 //
-// include/ssa.cpp
-// ADCS
+// src/adcs/ssa.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -17,15 +17,15 @@
 #define DEBUG
 #endif
 
-#include <adcs_constants.hpp>
+#include "constants.hpp"
+#include "ssa.hpp"
+#include "ssa_config.hpp"
+#include "utl/debug.hpp"
 
-#include <adcs/ssa.hpp>
-#include <adcs/ssa_config.hpp>
-#include <adcs/utl/debug.hpp>
-
+namespace adcs {
 namespace ssa {
 
-ADS1015 adcs[5];
+dev::ADS1015 adcs[5];
 
 lin::Matrix<float, 5, 4> voltages = lin::zeros<float, 5, 4>();
 
@@ -44,15 +44,15 @@ void setup() {
   adcs[4].setup(adc6_wire, adc6_addr, adc6_alrt, adcx_timeout);
   // Set the ADCs' gain value and reset them
   for (auto &adc : adcs) {
-    adc.set_gain(ADS1015::GAIN::ONE);
+    adc.set_gain(dev::ADS1015::GAIN::ONE);
     adc.reset();
   }
 }
 
 // Allows iterations across ADC channels in a loop
-static ADS1015::CHANNEL const channels[4] = {
-  ADS1015::CHANNEL::SINGLE_0, ADS1015::CHANNEL::SINGLE_1,
-  ADS1015::CHANNEL::SINGLE_2, ADS1015::CHANNEL::SINGLE_3
+static dev::ADS1015::CHANNEL const channels[4] = {
+  dev::ADS1015::CHANNEL::SINGLE_0, dev::ADS1015::CHANNEL::SINGLE_1,
+  dev::ADS1015::CHANNEL::SINGLE_2, dev::ADS1015::CHANNEL::SINGLE_3
 };
 
 void update_sensors(float adc_flt) {
@@ -111,3 +111,4 @@ unsigned char calculate_sun_vector(lin::Vector3f &sun_vec) {
   return SSAMode::SSA_COMPLETE;
 }
 }  // namespace ssa
+}  // namespace adcs
