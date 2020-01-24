@@ -1,6 +1,6 @@
 //
-// test/mtr_test.cpp
-// ADCS
+// src/adcs/scripts/mtr_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -12,10 +12,10 @@
 
 #define DEBUG
 
+#include <adcs/constants.hpp>
 #include <adcs/mtr.hpp>
 #include <adcs/utl/debug.hpp>
 
-#include <adcs_constants.hpp>
 #include <Arduino.h>
 #include <lin.hpp>
 

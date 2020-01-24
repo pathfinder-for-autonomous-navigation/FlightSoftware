@@ -1,6 +1,6 @@
 //
-// test/MMC34160PJ_test.cpp
-// ADCS
+// src/adcs/scripts/MMC34160PJ_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu

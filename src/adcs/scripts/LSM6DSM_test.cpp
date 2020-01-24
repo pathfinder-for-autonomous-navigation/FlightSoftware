@@ -1,6 +1,6 @@
 //
-// test/LSM6DSM_test.cpp
-// ADCS
+// src/adcs/scripts/LSM6DSM_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu

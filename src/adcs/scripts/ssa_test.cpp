@@ -1,6 +1,6 @@
 //
-// test/ssa_test.cpp
-// ADCS
+// src/adcs/scripts/ssa_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu

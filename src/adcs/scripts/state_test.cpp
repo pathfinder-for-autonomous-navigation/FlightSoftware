@@ -1,6 +1,6 @@
 //
-// test/state_test.cpp
-// ADCS
+// src/adcs/scripts/state_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol         kpk63@cornell.edu
