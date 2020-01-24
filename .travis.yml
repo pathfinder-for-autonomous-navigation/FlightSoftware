@@ -12,7 +12,7 @@ install:
 matrix:
     include:
 
-      - name: "Desktop flight software and ground software tests"
+      - name: "Desktop flight software, common software, and ground software tests"
         addons:
           apt:
             packages:
@@ -23,6 +23,7 @@ matrix:
             - platformio update
             - sudo gem install coveralls-lcov
         script:
+            - ./tools/run_common_software_tests.sh
             - ./tools/run_desktop_flight_tests.sh
             - ./tools/run_ground_tests.sh
         after_success:

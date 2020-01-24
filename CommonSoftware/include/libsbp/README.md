@@ -1,1 +1,0 @@
-This is taken from [libsbp](https://github.com/swift-nav/libsbp) version 1.0.
