@@ -1,6 +1,6 @@
 //
-// lib/MTR/MTR.cpp
-// ADCS
+// src/adcs/dev/Magnetorquer.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -11,7 +11,11 @@
 //
 
 #include "Magnetorquer.hpp"
+
 #include <Arduino.h>
+
+namespace adcs {
+namespace dev {
 
 void Magnetorquer::setup(unsigned int f_pin, unsigned int r_pin) {
   this->f_pin = f_pin;
@@ -19,13 +23,13 @@ void Magnetorquer::setup(unsigned int f_pin, unsigned int r_pin) {
 }
 
 bool Magnetorquer::reset() {
-  this->dev::Device::reset();
+  this->Device::reset();
   this->actuate(0);
   return true;
 }
 
 void Magnetorquer::disable() {
-  this->dev::Device::disable();
+  this->Device::disable();
   this->actuate(0);
 }
 
@@ -38,3 +42,5 @@ void Magnetorquer::actuate(int signed_pwm) {
     analogWrite(r_pin, -signed_pwm);
   }
 }
+}  // namespace dev
+}  // namespace adcs

@@ -1,6 +1,6 @@
 //
-// include/state.hpp
-// ADCS
+// src/adcs/state.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -13,8 +13,10 @@
 // TODO : Initialize the PID controller values for the gyroscope heater
 // TODO : Complete HAVT array
 
-#ifndef PAN_ADCS_INCLUDE_STATE_HPP_
-#define PAN_ADCS_INCLUDE_STATE_HPP_
+#ifndef SRC_ADCS_STATE_HPP_
+#define SRC_ADCS_STATE_HPP_
+
+namespace adcs {
 
 /** \struct ReactionWheelRegisters
  *  State data structure for the reaction wheel assembly. All commands and reads
@@ -144,5 +146,7 @@ struct Registers {
 /** Overall state struct for the ADCS system. This struct will be edited by both
  *  the i2c interupt service routines and the main thread processes. */
 extern struct Registers volatile registers;
+
+}  // namespace adcs
 
 #endif

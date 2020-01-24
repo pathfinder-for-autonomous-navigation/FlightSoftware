@@ -1,6 +1,6 @@
 //
-// test/ssa_test.cpp
-// ADCS
+// src/adcs/scripts/ssa_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -17,6 +17,8 @@
 
 #include <Arduino.h>
 #include <i2c_t3.h>
+
+using namespace adcs;
 
 void setup() {
   DEBUG_init(9600)

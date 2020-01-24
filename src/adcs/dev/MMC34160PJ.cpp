@@ -1,6 +1,6 @@
 //
-// lib/MMC34160PJ/MMC34160PJ.cpp
-// ADCS
+// src/adcs/dev/MMC34160PJ.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -12,8 +12,11 @@
 
 #include "MMC34160PJ.hpp"
 
+namespace adcs {
+namespace dev {
+
 void MMC34160PJ::setup(i2c_t3 *wire, unsigned long timeout) {
-  this->dev::I2CDevice::setup(wire, 0x30, timeout);
+  this->I2CDevice::setup(wire, 0x30, timeout);
   this->sample_rate = MMC34160PJ::SR::HZ_50;
   this->offset[0] = 0x00;
   this->offset[1] = 0x00;
@@ -21,7 +24,7 @@ void MMC34160PJ::setup(i2c_t3 *wire, unsigned long timeout) {
 }
 
 bool MMC34160PJ::reset() {
-  this->dev::I2CDevice::reset();
+  this->I2CDevice::reset();
   while (this->is_functional()) {
     this->i2c_begin_transmission();
     this->i2c_write(MMC34160PJ::REG::INTERNAL_CONTROL_0);
@@ -37,7 +40,7 @@ void MMC34160PJ::disable() {
   this->i2c_write(MMC34160PJ::REG::INTERNAL_CONTROL_0);
   this->i2c_write(0x00); // Disable continous measurement mode
   this->i2c_end_transmission();
-  this->dev::I2CDevice::disable();
+  this->I2CDevice::disable();
 }
 
 void MMC34160PJ::calibrate() {
@@ -123,3 +126,5 @@ bool MMC34160PJ::single_read(uint16_t *array) {
   for (unsigned int i = 0; i < 3; i++) array[i] = this->b_vec[i];
   return true;
 }
+}  // namespace dev
+}  // namespace adcs

@@ -1,6 +1,6 @@
 //
-// test/imu_test.cpp
-// ADCS
+// src/adcs/scripts/smoke_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu

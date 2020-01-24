@@ -1,6 +1,6 @@
 //
-// lib/LIS2MDLTR/LIS2MDLTR.cpp
-// ADCS
+// src/adcs/dev/LIS2MDLTR.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Anusha Choudhury ac978@cornell.edu
@@ -13,12 +13,15 @@
 
 #include "LIS2MDLTR.hpp"
 
+namespace adcs {
+namespace dev {
+
 void LIS2MDLTR::setup(i2c_t3 *wire, unsigned long timeout) {
-  this->dev::I2CDevice::setup(wire, 0b0011110, timeout);
+  this->I2CDevice::setup(wire, 0b0011110, timeout);
 }
 
 bool LIS2MDLTR::reset() {
-  this->dev::I2CDevice::reset();
+  this->I2CDevice::reset();
   while (this->is_functional()) {
     this->i2c_begin_transmission();
     this->i2c_write(REG::CFG_A);
@@ -34,7 +37,7 @@ bool LIS2MDLTR::reset() {
 }
 
 void LIS2MDLTR::disable() {
-  this->dev::I2CDevice::disable();
+  this->I2CDevice::disable();
   this->i2c_begin_transmission();
   this->i2c_write(REG::CFG_A);
   this->i2c_write((uint8_t)(this->sample_rate | 0b11));
@@ -65,7 +68,8 @@ bool LIS2MDLTR::read() {
   this->b_vec[2] = (buffer[4] << 0) | (buffer[5] << 8);
   return true;
 }
-
+}  // namespace dev
+}  // namespace adcs
 
 // /*
 //     Magnetometer::Magnetometer(i2c_t3& wire,uint8_t addr,unsigned long timeout)

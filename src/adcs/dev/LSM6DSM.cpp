@@ -12,12 +12,15 @@
 
 #include "LSM6DSM.hpp"
 
+namespace adcs {
+namespace dev {
+
 void LSM6DSM::setup(i2c_t3 *wire, uint8_t addr, unsigned long timeout) {
-  this->dev::I2CDevice::setup(wire, addr, timeout);
+  this->I2CDevice::setup(wire, addr, timeout);
 }
 
 bool LSM6DSM::reset() {
-  this->dev::I2CDevice::reset();
+  this->I2CDevice::reset();
   while (this->is_functional()) {
     this->i2c_begin_transmission();
     this->i2c_write(REG::CTRL2_G);
@@ -30,7 +33,7 @@ bool LSM6DSM::reset() {
 }
 
 void LSM6DSM::disable() {
-  this->dev::I2CDevice::disable();
+  this->I2CDevice::disable();
   this->i2c_begin_transmission();
   this->i2c_write(REG::CTRL2_G);
   this->i2c_write(0x00); // 250 dps, Power down
@@ -63,3 +66,5 @@ bool LSM6DSM::read() {
   this->omega[2] = buffer[6] | (buffer[7] << 8);
   return true;  
 }
+}  // namespace dev
+}  // namespace adcs

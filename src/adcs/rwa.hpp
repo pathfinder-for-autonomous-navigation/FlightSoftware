@@ -1,6 +1,6 @@
 //
-// include/rwa/rwa.hpp
-// ADCS
+// src/adcs/rwa.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -10,26 +10,26 @@
 // Cornell Univeristy
 //
 
-#ifndef PAN_ADCS_INCLUDE_RWA_HPP_
-#define PAN_ADCS_INCLUDE_RWA_HPP_
+#ifndef SRC_ADCS_RWA_HPP_
+#define SRC_ADCS_RWA_HPP_
+
+#include "dev/AD5254.hpp"
+#include "dev/ADS1015.hpp"
+#include "dev/MaxonEC45.hpp"
 
 #include <lin.hpp>
-#include <AD5254.hpp>
-#include <ADS1015.hpp>
-#include <MaxonEC45.hpp>
 
-/** \namespace rwa
- *  Contains all functionality responsible for reaction wheel actuation. **/
+namespace adcs {
 namespace rwa {
 
 /** Potentiometer used to control the analog ramp inputs. **/
-extern AD5254 potentiometer;
+extern dev::AD5254 potentiometer;
 
 /** Reaction wheel motor drivers. **/
-extern MaxonEC45 wheels[3];
+extern dev::MaxonEC45 wheels[3];
 
 /** Analog to digital converters to read data from the motor drivers. **/
-extern ADS1015 adcs[3];
+extern dev::ADS1015 adcs[3];
 
 /** Wheel speed read by the controller. **/
 extern lin::Vector3f speed_rd;
@@ -39,20 +39,21 @@ extern lin::Vector3f ramp_rd;
 
 /** \fn setup
  *  Initializes all components involved in the reaction wheel system. **/
-extern void setup();
+void setup();
 
 /** \fn update_sensors
  *  \param[in] speed_flt
  *  \param[in] ramp_flt
  *   **/
-extern void update_sensors(float speed_flt, float ramp_flt);
+void update_sensors(float speed_flt, float ramp_flt);
 
 /** \fn control
  *  \param[in] rwa_mode
  *  \param[in] rwa_cmd
  *   */
-extern void control(unsigned char rwa_mode, lin::Vector3f rwa_cmd);
+void control(unsigned char rwa_mode, lin::Vector3f rwa_cmd);
 
 }  // namespace rwa
+}  // namespace adcs
 
 #endif

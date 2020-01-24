@@ -1,6 +1,6 @@
 //
-// lib/AD5254/AD5254.cpp
-// ADCS
+// src/adcs/dev/AD5254.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Nathan Zimmerberg  nhz2@cornell.edu
@@ -13,12 +13,15 @@
 
 #include "AD5254.hpp"
 
+namespace adcs {
+namespace dev {
+
 void AD5254::setup(i2c_t3 *wire, uint8_t addr, unsigned long timeout) {
-  this->dev::I2CDevice::setup(wire, addr, timeout);
+  this->I2CDevice::setup(wire, addr, timeout);
 }
 
 bool AD5254::reset() {
-  this->dev::I2CDevice::reset();
+  this->I2CDevice::reset();
   this->set_rdac0(AD5254_RDAC_DEFAULT);
   this->set_rdac1(AD5254_RDAC_DEFAULT);
   this->set_rdac2(AD5254_RDAC_DEFAULT);
@@ -53,3 +56,5 @@ bool AD5254::write_rdac() {
   this->start_write_rdac();
   return this->end_write_rdac();
 }
+}  // namespace dev
+}  // namespace adcs

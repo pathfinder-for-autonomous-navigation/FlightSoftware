@@ -1,6 +1,6 @@
 //
-// lib/AD5254/AD5254.hpp
-// ADCS
+// src/adcs/dev/AD5254.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Nathan Zimmerberg  nhz2@cornell.edu
@@ -11,13 +11,10 @@
 // Cornell Univeristy
 //
 
-#ifndef ADCS_LIB_AD5254_AD5254_HPP_
-#define ADCS_LIB_AD5254_AD5254_HPP_
+#ifndef SRC_ADCS_DEV_AD5254_HPP_
+#define SRC_ADCS_DEV_AD5254_HPP_
 
-#include <I2CDevice.hpp>
-
-/** @addtogroup lib
- *  @{ */
+#include "I2CDevice.hpp"
 
 #ifndef AD5254_RDAC_DEFAULT
 /** Specifies the defaul rdac value for the AD5254 potentiometer. Can be changed
@@ -25,9 +22,12 @@
 #define AD5254_RDAC_DEFAULT 0x00
 #endif
 
+namespace adcs {
+namespace dev {
+
 /** @class AD5254
  *  Simple driver to adjust potentiometer resistances of the AD5254. **/
-class AD5254 : public dev::I2CDevice {
+class AD5254 : public I2CDevice {
  public:
   /** @enum ADDR
    *  Possible addresses for the potentiometer. **/
@@ -76,7 +76,7 @@ class AD5254 : public dev::I2CDevice {
   /** Backing array for rdac settings. **/
   uint8_t rdac[4];
 };
-
-/** @} */
+}  // namespace dev
+}  // namespace adcs
 
 #endif

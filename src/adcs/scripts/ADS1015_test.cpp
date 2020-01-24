@@ -1,6 +1,6 @@
 //
-// test/ADS1015_test.cpp
-// ADCS
+// src/adcs/scripts/ADS1015_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -10,11 +10,14 @@
 // Cornell Univeristy
 //
 
-#include <i2c_t3.h>
-#include <Arduino.h>
-#include <ADS1015.hpp>
+#include <adcs/dev/ADS1015.hpp>
 
-ADS1015 adc;
+#include <Arduino.h>
+#include <i2c_t3.h>
+
+using namespace adcs;
+
+dev::ADS1015 adc;
 
 void setup() {
   delay(5000); // Wait before starting
@@ -24,8 +27,8 @@ void setup() {
 
   // ADS Face 6 - P17
   pinMode(28, INPUT);
-  adc.setup(&Wire2, ADS1015::ADDR::SSCL, 28, 1000000);
-  adc.set_gain(ADS1015::GAIN::ONE);
+  adc.setup(&Wire2, dev::ADS1015::ADDR::SSCL, 28, 1000000);
+  adc.set_gain(dev::ADS1015::GAIN::ONE);
   if (!adc.reset()) {
     Serial.println("Error");
     while (1);
@@ -34,9 +37,9 @@ void setup() {
 }
 
 // For new version ads1015_2_0
-static ADS1015::CHANNEL channels[4] = {
-    ADS1015::CHANNEL::SINGLE_0, ADS1015::CHANNEL::SINGLE_1,
-    ADS1015::CHANNEL::SINGLE_2, ADS1015::CHANNEL::SINGLE_3};
+static dev::ADS1015::CHANNEL channels[4] = {
+    dev::ADS1015::CHANNEL::SINGLE_0, dev::ADS1015::CHANNEL::SINGLE_1,
+    dev::ADS1015::CHANNEL::SINGLE_2, dev::ADS1015::CHANNEL::SINGLE_3};
 static int n = 0;
 
 void loop() {

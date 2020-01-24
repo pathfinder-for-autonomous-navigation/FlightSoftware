@@ -1,6 +1,6 @@
 //
-// test/rwa_test.cpp
-// ADCS
+// src/adcs/scripts/rwa_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -17,13 +17,15 @@
 
 #define DEBUG
 
+#include <adcs/constants.hpp>
 #include <adcs/rwa.hpp>
 #include <adcs/utl/debug.hpp>
 
-#include <adcs_constants.hpp>
 #include <Arduino.h>
 #include <i2c_t3.h>
 #include <lin.hpp>
+
+using namespace adcs;
 
 #define MAX_TORQUE rwa::max_torque
 #define SPEED_FLT 0.75f

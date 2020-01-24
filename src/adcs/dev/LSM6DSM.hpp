@@ -1,6 +1,6 @@
 //
-// lib/LSM6DSM/LSM6DSM.hpp
-// ADCS
+// src/adcs/dev/LSM6DSM.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -10,8 +10,8 @@
 // Cornell Univeristy
 //
 
-#ifndef ADCS_LIB_LSM6DSM_LSM6DSM_HPP_
-#define ADCS_LIB_LSM6DSM_LSM6DSM_HPP_
+#ifndef SRC_ADCS_DEV_LSM6DSM_HPP_
+#define SRC_ADCS_DEV_LSM6DSM_HPP_
 
 // TODO : make sure the driver resets setting upon failure
 // Checking data ready will be false until the gryo filter has settled
@@ -19,16 +19,16 @@
 
 // Outputs unsigned in the range of +/- 16 gauss
 
-/** @addtogroup lib 
- *  @{ */
+#include "I2CDevice.hpp"
 
-#include <I2CDevice.hpp>
+namespace adcs {
+namespace dev {
 
 /** @class LSM6DSM
  *  Driver to interface with the gyroscope portion of the LSM6DSM. This driver
  *  operates the IC with a sample rate of 52 Hz to match the on board
  *  temperature sensor. */
-class LSM6DSM : public dev::I2CDevice {
+class LSM6DSM : public I2CDevice {
  public:
   /** @enum ADDR
    *  Enumerates the possible slave addresses for the gyroscope. */
@@ -95,7 +95,7 @@ class LSM6DSM : public dev::I2CDevice {
   /** Gyroscope temperature value. */
   int16_t temp;
 };
-
-/** @} */
+}  // namespace dev
+}  // namespace adcs
 
 #endif

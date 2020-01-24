@@ -1,6 +1,6 @@
 //
-// include/rwa/rwa_config.hpp
-// ADCS
+// src/adcs/rwa_config.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol         kpk63@cornell.edu
@@ -12,20 +12,22 @@
 
 // TODO : Determine reaction wheel command transformation
 
-#ifndef PAN_ADCS_INCLUDE_RWA_CONFIG_HPP_
-#define PAN_ADCS_INCLUDE_RWA_CONFIG_HPP_
+#ifndef SRC_ADCS_RWA_CONFIG_HPP_
+#define SRC_ADCS_RWA_CONFIG_HPP_
 
-#include <AD5254.hpp>
-#include <ADS1015.hpp>
+#include "dev/AD5254.hpp"
+#include "dev/ADS1015.hpp"
+
 #include <i2c_t3.h>
 #include <lin.hpp>
 
+namespace adcs {
 namespace rwa {
 
 /** Wire for the potentiometer. */
 static i2c_t3 *const pot_wire = &Wire1;
 /** Address for the potentiomter. */
-static unsigned char const pot_addr = AD5254::ADDR::A01;
+static unsigned char const pot_addr = dev::AD5254::ADDR::A01;
 /** Timeout in microseconds for the potentiometer. */
 static unsigned long const pot_timeout = 10000;
 
@@ -51,19 +53,19 @@ static unsigned int const wheel2_speed_pin = 21;
 /** Wire for the zeroth wheel's ADC. */
 static i2c_t3 *const adc0_wire = &Wire1;
 /** Address for the zeroth wheel's ADC. */
-static unsigned int const adc0_addr = ADS1015::ADDR::GND;
+static unsigned int const adc0_addr = dev::ADS1015::ADDR::GND;
 /** Alert pin for the zeroth wheel's ADC. */
 static unsigned int const adc0_alrt = 11;
 /** Wire for the first wheel's ADC. */
 static i2c_t3 *const adc1_wire = &Wire1;
 /** Address for the first wheel's ADC. */
-static unsigned int const adc1_addr = ADS1015::ADDR::VDD;
+static unsigned int const adc1_addr = dev::ADS1015::ADDR::VDD;
 /** Alert pin for the first wheel's ADC. */
 static unsigned int const adc1_alrt = 12;
 /** Wire for the second wheel's ADC. */
 static i2c_t3 *const adc2_wire = &Wire1;
 /** Address for the second wheel's ADC. */
-static unsigned int const adc2_addr = ADS1015::ADDR::SSCL;
+static unsigned int const adc2_addr = dev::ADS1015::ADDR::SSCL;
 /** Alert pin for the second wheel's ADC. */
 static unsigned int const adc2_alrt = 16;
 /** Timeout value in microseconds for the wheel's ADCs. */
@@ -100,7 +102,7 @@ static lin::Matrix3x3f const rwa_to_body({
 static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
 #endif
 });
-
 }  // namespace rwa
+}  // namespace adcs
 
 #endif

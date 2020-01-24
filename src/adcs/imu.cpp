@@ -1,6 +1,6 @@
 //
-// src/imu.cpp
-// ADCS
+// src/adcs/imu.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -14,19 +14,19 @@
 #define DEBUG
 #endif
 
-#include <adcs_constants.hpp>
+#include "constants.hpp"
+#include "imu.hpp"
+#include "imu_calibration.hpp"
+#include "imu_config.hpp"
+#include "utl/convert.hpp"
+#include "utl/debug.hpp"
 
-#include <adcs/imu.hpp>
-#include <adcs/imu_calibration.hpp>
-#include <adcs/imu_config.hpp>
-#include <adcs/utl/convert.hpp>
-#include <adcs/utl/debug.hpp>
-
+namespace adcs {
 namespace imu {
 
-LIS2MDLTR mag1;
+dev::LIS2MDLTR mag1;
 
-MMC34160PJ mag2;
+dev::MMC34160PJ mag2;
 
 lin::Vector3f mag_rd({
   0.0f,
@@ -81,7 +81,7 @@ static unsigned char update_mag(unsigned char mode, float mag_flt) {
   return return_mode;
 }
 
-LSM6DSM gyr;
+dev::LSM6DSM gyr;
 
 lin::Vector3f gyr_rd({
   0.0f,
@@ -130,7 +130,7 @@ void setup() {
 
   // Setup and initialize the first magnetometer
   mag1.setup(mag1_wire, mag1_timeout);
-  mag1.set_sample_rate(LIS2MDLTR::SR::HZ_50);
+  mag1.set_sample_rate(dev::LIS2MDLTR::SR::HZ_50);
   mag1.reset();
 #ifdef DEBUG
   if (mag1.is_functional()) DEBUG_printlnF("#imu> Magnetometer 1 inititated")
@@ -139,7 +139,7 @@ void setup() {
 
   // Setup and initialize the second magnetometer
   mag2.setup(mag2_wire, mag2_timeout);
-  mag2.set_sample_rate(MMC34160PJ::SR::HZ_50);
+  mag2.set_sample_rate(dev::MMC34160PJ::SR::HZ_50);
   mag2.reset();
 #ifdef DEBUG
   if (mag2.is_functional()) DEBUG_printlnF("#imu> Magnetometer 2 inititated")
@@ -164,3 +164,4 @@ unsigned char update_sensors(unsigned char mode, float mag_flt, float gyr_flt,
   return update_mag(mode, mag_flt);
 }
 }  // namespace imu
+}  // namespace adcs
