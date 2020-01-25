@@ -1,7 +1,7 @@
 #include "MissionManager.hpp"
 #include <lin.hpp>
 #include <cmath>
-#include <adcs_constants.hpp>
+#include <adcs/adcs_constants.hpp>
 
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),

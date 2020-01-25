@@ -1,5 +1,5 @@
 #include <fsw/FCCode/DummyMainControlLoop.hpp>
-#include <StateFieldRegistry.hpp>
+#include <common/StateFieldRegistry.hpp>
 
 #ifndef UNIT_TEST
 int main() {

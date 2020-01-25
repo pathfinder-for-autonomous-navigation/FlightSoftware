@@ -1,7 +1,6 @@
 #include "QuakeManager.h"
-#include "QLocate.hpp"
+#include "Drivers/QLocate.hpp"
 
-#include "radio_state_t.enum"
 #include "radio_state_t.enum"
 
 /**

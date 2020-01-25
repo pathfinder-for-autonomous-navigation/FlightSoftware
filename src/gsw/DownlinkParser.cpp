@@ -1,5 +1,5 @@
 #include "DownlinkParser.hpp"
-#include <Serializer.hpp>
+#include <common/Serializer.hpp>
 #include <vector>
 #include <fstream>
 #include <json.hpp>
