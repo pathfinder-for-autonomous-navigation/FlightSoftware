@@ -150,7 +150,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
 void GomspaceController::execute() {
     //get hk data from struct in driver
-    assert(gs.get_hk());
+    // assert(gs.get_hk());
 
     // On the first control cycle, set the command statefields to the current values 
     // in the hk struct to prevent unwanted writes.

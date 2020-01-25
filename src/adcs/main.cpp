@@ -66,6 +66,9 @@ void setup() {
   mtr::setup();
   rwa::setup();
   ssa::setup();
+
+  DEBUG_printF("huzzah?")
+  delay(1000);
 }
 
 void update_havt() {
