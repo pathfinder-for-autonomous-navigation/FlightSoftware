@@ -51,7 +51,8 @@ using namespace adcs;
 //        a clock frequency needs to be included
 
 void setup() {
-  DEBUG_init(9600)
+  Serial.begin(9600);
+  //DEBUG_init(9600)
   // Initialize slave I2C bus with address 0x4E
   Wire.begin(I2C_SLAVE, 0x4E);
   Wire.onReceive(umb::on_i2c_recieve);
