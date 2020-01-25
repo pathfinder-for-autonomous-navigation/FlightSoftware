@@ -1,6 +1,6 @@
 //
-// src/rwa/rwa.cpp
-// ADCS
+// src/adcs/rwa.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -14,20 +14,20 @@
 #define DEBUG
 #endif
 
-#include <adcs_constants.hpp>
+#include "constants.hpp"
+#include "rwa.hpp"
+#include "rwa_config.hpp"
+#include "utl/convert.hpp"
+#include "utl/debug.hpp"
 
-#include <adcs/rwa.hpp>
-#include <adcs/rwa_config.hpp>
-#include <adcs/utl/convert.hpp>
-#include <adcs/utl/debug.hpp>
-
+namespace adcs {
 namespace rwa {
 
-MaxonEC45 wheels[3];
+dev::MaxonEC45 wheels[3];
 
-ADS1015 adcs[3];
+dev::ADS1015 adcs[3];
 
-AD5254 potentiometer;
+dev::AD5254 potentiometer;
 
 void setup() {
   // Setup and reset the potentiometer
@@ -43,7 +43,7 @@ void setup() {
   adcs[2].setup(adc2_wire, adc2_addr, adc2_alrt, adcx_timeout);
   // Reset the ADCs and set their gain to one
   for (auto &adc : adcs) {
-    adc.set_gain(ADS1015::GAIN::ONE);
+    adc.set_gain(dev::ADS1015::GAIN::ONE);
     adc.reset();
   }
   // Initiate reaction wheel pins to output
@@ -54,9 +54,9 @@ void setup() {
   pinMode(wheel2_cw_pin, OUTPUT);
   pinMode(wheel2_ccw_pin, OUTPUT);
   // Setup the wheels on the above pins
-  wheels[0].setup(wheel0_cw_pin, wheel0_ccw_pin, wheel0_speed_pin, &potentiometer, &AD5254::set_rdac0);
-  wheels[1].setup(wheel1_cw_pin, wheel1_ccw_pin, wheel1_speed_pin, &potentiometer, &AD5254::set_rdac1);
-  wheels[2].setup(wheel2_cw_pin, wheel2_ccw_pin, wheel2_speed_pin, &potentiometer, &AD5254::set_rdac2);
+  wheels[0].setup(wheel0_cw_pin, wheel0_ccw_pin, wheel0_speed_pin, &potentiometer, &dev::AD5254::set_rdac0);
+  wheels[1].setup(wheel1_cw_pin, wheel1_ccw_pin, wheel1_speed_pin, &potentiometer, &dev::AD5254::set_rdac1);
+  wheels[2].setup(wheel2_cw_pin, wheel2_ccw_pin, wheel2_speed_pin, &potentiometer, &dev::AD5254::set_rdac2);
   // Reset each wheel
   for (auto &wheel : wheels) wheel.reset();
 }
@@ -73,7 +73,7 @@ void update_sensors(float speed_flt, float ramp_flt) {
   // Initialize read for each enabled ADC
   for (unsigned int i = 0; i < 3; i++)
     if (adcs[i].is_functional())
-      adcs[i].start_read(ADS1015::CHANNEL::DIFFERENTIAL_0_1);
+      adcs[i].start_read(dev::ADS1015::CHANNEL::DIFFERENTIAL_0_1);
   // End read for each enabled ADC
   for (unsigned int i = 0; i < 3; i++)
     if (adcs[i].is_functional())
@@ -90,7 +90,7 @@ void update_sensors(float speed_flt, float ramp_flt) {
   // Begin read for each enabled ADC
   for (unsigned int i = 0; i < 3; i++)
     if (adcs[i].is_functional())
-      adcs[i].start_read(ADS1015::CHANNEL::SINGLE_2);
+      adcs[i].start_read(dev::ADS1015::CHANNEL::SINGLE_2);
   // End read for each enabled ADC
   for (unsigned int i = 0; i < 3; i++)
     if (adcs[i].is_functional())
@@ -154,3 +154,4 @@ void control(unsigned char rwa_mode, lin::Vector3f rwa_cmd) {
   }
 }
 }  // namespace rwa
+}  // namespace adcs

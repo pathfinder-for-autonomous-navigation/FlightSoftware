@@ -3,10 +3,10 @@
 
 #include <memory>
 #include <string>
-#include <debug_console.hpp>
-#include <Nameable.hpp>
-#include <StateFieldBase.hpp>
-#include <StateFieldRegistry.hpp>
+#include <common/debug_console.hpp>
+#include <common/Nameable.hpp>
+#include <common/StateFieldBase.hpp>
+#include <common/StateFieldRegistry.hpp>
 
 #ifdef DESKTOP
 #include <iostream>

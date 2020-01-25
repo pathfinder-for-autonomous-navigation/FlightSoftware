@@ -2,8 +2,8 @@
 #define MAIN_CONTROL_LOOP_TASK_HPP_
 
 #include "ControlTask.hpp"
-#include <StateField.hpp>
-#include <StateFieldRegistry.hpp>
+#include <common/StateField.hpp>
+#include <common/StateFieldRegistry.hpp>
 
 #include "ClockManager.hpp"
 #include "PiksiControlTask.hpp"

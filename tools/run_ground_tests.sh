@@ -3,13 +3,13 @@
 set -e # Exit on any error
 
 # Verify compilation and unit tests for CI environment
-platformio test -e downlink_parser_ci -v
+platformio test -e gsw_downlink_parser_ci -v
 
 # Check for memory mismanagement
-valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose .pio/build/downlink_parser_ci/program
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose .pio/build/gsw_downlink_parser_ci/program
 
 # Compile and run functional test for environments
-platformio run -e downlink_parser
+platformio run -e gsw_downlink_parser
 python -m unittest test.test_downlink_parser
 
 # Check that the telemetry info generator compiles, passes functional test, and Valgrind

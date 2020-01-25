@@ -1,6 +1,6 @@
 //
-// src/main.cpp
-// ADCS
+// src/adcs/main.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -28,22 +28,24 @@
 #define DEBUG
 #endif
 
-#include <adcs/imu.hpp>
-#include <adcs/mtr.hpp>
-#include <adcs/rwa.hpp>
-#include <adcs/ssa.hpp>
-#include <adcs/havt.hpp>
-#include <adcs/state.hpp>
-#include <adcs/state_controller.hpp>
-#include <adcs/utl/debug.hpp>
+#include "constants.hpp"
+#include "havt.hpp"
+#include "havt_devices.hpp"
+#include "imu.hpp"
+#include "mtr.hpp"
+#include "rwa.hpp"
+#include "ssa.hpp"
+#include "state.hpp"
+#include "state_controller.hpp"
+#include "utl/debug.hpp"
 
 #include <Arduino.h>
 #include <i2c_t3.h>
 #include <lin.hpp>
 
-#include <adcs_constants.hpp>
-#include <adcs_havt_devices.hpp>
 #include <bitset>
+
+using namespace adcs;
 
 // TODO : Look into the proper initialization for the slave i2c bus and whether
 //        a clock frequency needs to be included
@@ -184,7 +186,6 @@ void loop() {
   update_rwa();  DEBUG_printF(",")
   update_ssa();  DEBUG_printF(",")
   update_havt(); DEBUG_printF(",") //call update havt last so that resetting devices has a chance to take place before the next control cycle
-
 
   // Append state information to the end of the CSV line
   DEBUG_print(registers.mode)     DEBUG_printF(",")

@@ -4,7 +4,7 @@
 #define GOMSPACE_CONTROLLER_HPP_
 
 #include "TimedControlTask.hpp"
-#include <Gomspace.hpp>
+#include "Drivers/Gomspace.hpp"
 
 class GomspaceController : public TimedControlTask<void> {
    public:

@@ -1,8 +1,8 @@
 #include "ADCSBoxController.hpp"
 #include "adcs_state_t.enum"
 
-#include <adcs_constants.hpp>
-#include <adcs_havt_devices.hpp>
+#include <adcs/adcs_constants.hpp>
+#include <adcs/adcs_havt_devices.hpp>
 
 ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)

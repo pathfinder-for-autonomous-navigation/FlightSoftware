@@ -1,8 +1,8 @@
 #include "../StateFieldRegistryMock.hpp"
 
-#include <ADCS.hpp>
-#include <adcs_constants.hpp>
-#include <adcs_havt_devices.hpp>
+#include <fsw/FCCode/Drivers/ADCS.hpp>
+#include <adcs/adcs_constants.hpp>
+#include <adcs/adcs_havt_devices.hpp>
 
 #include <fsw/FCCode/ADCSBoxMonitor.hpp>
 

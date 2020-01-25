@@ -1,6 +1,6 @@
 //
-// include/imu_config.hpp
-// ADCS
+// src/adcs/imu_config.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol         kpk63@cornell.edu
@@ -12,19 +12,21 @@
 
 // TODO : Determine imu read transformations
 
-#ifndef ADCS_INCLUDE_IMU_CONFIG_HPP_
-#define ADCS_INCLUDE_IMU_CONFIG_HPP_
+#ifndef SRC_ADCS_IMU_CONFIG_HPP_
+#define SRC_ADCS_IMU_CONFIG_HPP_
+
+#include "dev/LSM6DSM.hpp"
 
 #include <i2c_t3.h>
 #include <lin.hpp>
-#include <LSM6DSM.hpp>
 
+namespace adcs {
 namespace imu {
 
 /** i2c bus the gyroscope communicate on. */
 static i2c_t3 *const gyr_wire = &Wire2;
 /** i2c address of the gyroscope. */
-static unsigned char const gyr_addr = LSM6DSM::ADDR::GND;
+static unsigned char const gyr_addr = dev::LSM6DSM::ADDR::GND;
 /** i2c timeout in microseconds used by the gyroscope. */
 static unsigned long const gyr_timeout = 10000;
 
@@ -93,7 +95,7 @@ static lin::Matrix3x3f const mag2_to_body(
 static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
 #endif
 );
-
 }  // namespace imu
+}  // namespace adcs
 
 #endif
