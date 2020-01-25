@@ -1,6 +1,6 @@
 //
-// include/imu_calibration.hpp
-// ADCS
+// src/adcs/imu_calibration.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol         kpk63@cornell.edu
@@ -12,11 +12,12 @@
 
 // TODO : Determine imu read transformations
 
-#ifndef ADCS_INCLUDE_IMU_CALIBRATION_HPP_
-#define ADCS_INCLUDE_IMU_CALIBRATION_HPP_
+#ifndef SRC_ADCS_IMU_CALIBRATION_HPP_
+#define SRC_ADCS_IMU_CALIBRATION_HPP_
 
 #include <lin.hpp>
 
+namespace adcs {
 namespace imu {
 
 /** @fn calibrate
@@ -24,8 +25,9 @@ namespace imu {
  *  @param[in] temp Temperature in celcius of the gyroscope.
  *  Transforms the omega vector in the body frame of the gyroscope to perform a
  *  calibration of the sensor. */
-extern void calibrate(lin::Vector3f &omega, float temp);
+void calibrate(lin::Vector3f &omega, float temp);
 
 }  // namespace imu
+}  // namespace adcs
 
 #endif
