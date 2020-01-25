@@ -1,5 +1,6 @@
 #include "UplinkConsumer.h"
-#include <bitstream.h>
+#include <common/bitstream.h>
+
 UplinkConsumer::UplinkConsumer(StateFieldRegistry& _registry, unsigned int offset) :
     TimedControlTask<void>(_registry, "uplink_ct", offset), Uplink(_registry)
 {

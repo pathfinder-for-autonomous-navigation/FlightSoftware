@@ -1,6 +1,6 @@
 
 #pragma once
-#include <bitstream.h>
+#include <common/bitstream.h>
 #include <common/StateFieldRegistry.hpp>
 
 /**

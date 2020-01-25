@@ -10,7 +10,7 @@
 #include <string>
 #include <cstring>
 #include "GPSTime.hpp"
-#include <fixed_array.hpp>
+#include "fixed_array.hpp"
 
 /**
  * @brief Set of constants defining fixed and minimum bitsizes for compressed
