@@ -1,6 +1,6 @@
 //
-// include/mtr/mtr.cpp
-// ADCS
+// src/adcs/mtr.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -18,18 +18,18 @@
 #define DEBUG
 #endif
 
-#include <adcs_constants.hpp>
-
-#include <adcs/mtr.hpp>
-#include <adcs/mtr_config.hpp>
-#include <adcs/utl/debug.hpp>
+#include "constants.hpp"
+#include "mtr.hpp"
+#include "mtr_config.hpp"
+#include "utl/debug.hpp"
 
 #include <Arduino.h>
 #include <array>
 
+namespace adcs {
 namespace mtr {
 
-Magnetorquer mtrs[3];
+dev::Magnetorquer mtrs[3];
 
 void setup() {
   // Set the PWM resolution and frequency
@@ -79,3 +79,4 @@ void actuate(unsigned char mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim) {
       + "," + String(pwm_value[0]) + "," + String(pwm_value[1]) + "," + String(pwm_value[2]))
 }
 }  // namespace mtr
+}  // namespace adcs

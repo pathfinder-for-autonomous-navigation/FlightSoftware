@@ -1,6 +1,6 @@
 //
-// include/utl/inl/convert.inl
-// ADCS
+// src/adcs/utl/convert.inl
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -12,6 +12,7 @@
 
 #include "convert.hpp"
 
+namespace adcs {
 namespace utl {
 
 inline float fp(signed char si, float min, float max) {
@@ -46,3 +47,4 @@ inline signed short ss(float f, float min, float max) {
   return (signed short)(65535.0f * (f - min) / (max - min) - 32768.0f);
 }
 }  // namespace utl
+}  // namespace adcs

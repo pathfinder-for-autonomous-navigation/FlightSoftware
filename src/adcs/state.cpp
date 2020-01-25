@@ -1,6 +1,6 @@
 //
-// src/state.cpp
-// ADCS
+// src/adcs/state.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -10,7 +10,9 @@
 // Cornell Univeristy
 //
 
-#include <adcs/state.hpp>
+#include "state.hpp"
+
+namespace adcs {
 
 struct Registers volatile registers = {
   0x0F, // Who am I
@@ -65,3 +67,4 @@ struct Registers volatile registers = {
     0, // Cmd flag
   }
 };
+}  // namespace adcs

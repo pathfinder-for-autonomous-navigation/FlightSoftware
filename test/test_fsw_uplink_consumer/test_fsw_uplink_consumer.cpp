@@ -3,7 +3,7 @@
 #define DEBUG
 #include <fsw/FCCode/UplinkConsumer.h>
 
-#include <bitstream.h>
+#include <common/bitstream.h>
 #include <unity.h>
 #include <map>
 

@@ -3,7 +3,7 @@
 #include <fsw/FCCode/PiksiControlTask.hpp>
 #include <fsw/FCCode/piksi_mode_t.enum>
 
-#include <Piksi.hpp>
+#include <fsw/FCCode/Drivers/Piksi.hpp>
 #include <unity.h>
 
 #define assert_piksi_mode(x) {\

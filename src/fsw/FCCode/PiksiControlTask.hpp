@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Piksi.hpp>
+#include "Drivers/Piksi.hpp"
 #include <string>
-#include <GPSTime.hpp>
+#include <common/GPSTime.hpp>
 
 #include "TimedControlTask.hpp"
 

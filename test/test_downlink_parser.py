@@ -12,7 +12,7 @@ class TestDownlinkParser(unittest.TestCase):
     """
 
     filepath = os.path.dirname(os.path.abspath(__file__))
-    binary_dir = os.path.join(filepath, "../.pio/build/downlink_parser/program")
+    binary_dir = os.path.join(filepath, "../.pio/build/gsw_downlink_parser/program")
 
     def setUp(self):
         master_fd, slave_fd = pty.openpty()

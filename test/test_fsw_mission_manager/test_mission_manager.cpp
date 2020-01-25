@@ -1,6 +1,6 @@
 #include <unity.h>
 #include "test_fixture.hpp"
-#include <adcs_constants.hpp>
+#include <adcs/adcs_constants.hpp>
 
 void test_valid_initialization() {
     TestFixture tf;

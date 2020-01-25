@@ -1,6 +1,6 @@
 //
-// include/debug.hpp
-// ADCS
+// src/adcs/utl/debug.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -10,8 +10,8 @@
 // Cornell Univeristy
 //
 
-#ifndef PAN_ADCS_INCLUDE_DEBUG_HPP_
-#define PAN_ADCS_INCLUDE_DEBUG_HPP_
+#ifndef SRC_ADCS_UTL_DEBUG_HPP_
+#define SRC_ADCS_UTL_DEBUG_HPP_
 
 #include <Arduino.h>
 
