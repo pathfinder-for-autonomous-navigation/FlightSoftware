@@ -25,9 +25,9 @@
 
 #ifdef DESKTOP
 uint32_t micros(void);
-#endif
-
+#else
 namespace Devices {
+#endif
 
 class TimedLock;
 class Tank;
@@ -91,7 +91,11 @@ class Tank2;
 #ifdef DESKTOP
     uint32_t micros(){ return 0; }
 #endif
+#ifndef DESKTOP
 class PropulsionSystem : public Device {
+#else
+class PropulsionSystem{
+#endif
 public:
     PropulsionSystem();
 
@@ -144,12 +148,20 @@ public:
      *  - Closes all tank2 valves
      *  - If tank2.start_time is in the future, reset tank2 lock
      */
+#ifndef DESKTOP
     void disable() override;
+#else
+    void disable();
+#endif
 
     /**
      * @brief True if Spike and Hold is enabled
      */
+#ifndef DESKTOP
     bool is_functional() override;
+#else
+    bool is_functional();
+#endif
 
     /**
      * @brief Sets the firing schedule for tank 2. Does not enable tank2 to
@@ -400,7 +412,7 @@ private:
 
     friend class PropulsionSystem;
 };
-
+#ifndef DESKTOP
 }  // namespace Devices
-
+#endif
 #endif

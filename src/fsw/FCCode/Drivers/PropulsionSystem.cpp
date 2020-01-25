@@ -9,9 +9,8 @@
 // #include <Arduino.h>
 #include "../Devices/Device.hpp"
 #include "DCDC.hpp"
-#endif
-
 using namespace Devices;
+#endif
 
 #ifdef DESKTOP
 static void interrupts(){}
@@ -19,6 +18,8 @@ void noInterrupts(){}
 uint8_t analogRead(uint8_t pin){return pin%2;}
 uint8_t digitalRead(uint8_t pin){return pin%2;}
 void digitalWrite(uint8_t pin, uint8_t val){}
+#define LOW 0
+#define HIGH 1
 #endif
 
 /* Constructors */
@@ -44,7 +45,11 @@ Tank2::Tank2() : Tank(4) {
 
 /** Initialize static variables */
 
+#ifndef DESKTOP
 PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
+#else
+PropulsionSystem::PropulsionSystem(){}
+#endif
 volatile bool PropulsionSystem::is_enabled = 0;
 Tank1 PropulsionSystem::tank1 = Tank1();
 Tank2 PropulsionSystem::tank2 = Tank2();
@@ -180,7 +185,9 @@ bool PropulsionSystem::is_start_time_ok(uint32_t start_time_us)
 
 void PropulsionSystem::disable() {
     noInterrupts();
+#ifndef DESKTOP
     tank2.thrust_valve_loop_timer.end();
+#endif
     interrupts();
 
     tank2.close_all_valves();
