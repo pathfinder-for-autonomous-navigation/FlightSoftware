@@ -32,38 +32,6 @@ class FieldCreatorTask : public ControlTask<void> {
 
           // For propulsion controller
           add_readable_field(prop_state_f);
-
-          // For ADCS Controller
-          add_writable_field(rwa_mode_f);
-          add_writable_field(rwa_speed_cmd_f);
-          add_writable_field(rwa_torque_cmd_f);
-          add_writable_field(rwa_speed_filter_f);
-          add_writable_field(rwa_ramp_filter_f);
-          add_writable_field(mtr_mode_f);
-          add_writable_field(mtr_cmd_f);
-          add_writable_field(mtr_limit_f);
-          add_writable_field(ssa_voltage_filter_f);
-          add_writable_field(imu_mode_f);
-          add_writable_field(imu_mag_filter_f);
-          add_writable_field(imu_gyr_filter_f);
-          add_writable_field(imu_gyr_temp_filter_f);
-          add_writable_field(imu_gyr_temp_kp_f);
-          add_writable_field(imu_gyr_temp_ki_f);
-          add_writable_field(imu_gyr_temp_kd_f);
-          add_writable_field(imu_gyr_temp_desired_f);
-
-          // reserve memory
-          havt_cmd_table_vector_f.reserve(adcs_havt::Index::_LENGTH);
-          // fill vector of statefields for cmd havt
-          char buffer[50];
-          for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
-          {
-            std::memset(buffer, 0, sizeof(buffer));
-            sprintf(buffer,"adcs_cmd.havt_device");
-            sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_cmd_table_vector_f.emplace_back(buffer, havt_bool_sr);
-            add_writable_field(havt_cmd_table_vector_f[idx]);
-          }
       }
 
       void execute() {

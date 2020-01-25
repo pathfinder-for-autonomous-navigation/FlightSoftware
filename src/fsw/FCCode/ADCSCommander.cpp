@@ -30,17 +30,41 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", Serializer<float>(imu::min_eq_temp, imu::max_eq_temp, 8)),
     havt_bool_sr()
 {
-    add_writable_field(adcs_vec1_current_f);
-    add_writable_field(adcs_vec1_desired_f);
-    add_writable_field(adcs_vec2_current_f);
-    add_writable_field(adcs_vec2_desired_f);
+    // For ADCS Controller
+    add_writable_field(rwa_mode_f);
+    add_writable_field(rwa_speed_cmd_f);
+    add_writable_field(rwa_torque_cmd_f);
+    add_writable_field(rwa_speed_filter_f);
+    add_writable_field(rwa_ramp_filter_f);
+    add_writable_field(mtr_mode_f);
+    add_writable_field(mtr_cmd_f);
+    add_writable_field(mtr_limit_f);
+    add_writable_field(ssa_voltage_filter_f);
+    add_writable_field(imu_mode_f);
+    add_writable_field(imu_mag_filter_f);
+    add_writable_field(imu_gyr_filter_f);
+    add_writable_field(imu_gyr_temp_filter_f);
+    add_writable_field(imu_gyr_temp_kp_f);
+    add_writable_field(imu_gyr_temp_ki_f);
+    add_writable_field(imu_gyr_temp_kd_f);
+    add_writable_field(imu_gyr_temp_desired_f);
 
+    // reserve memory
+    havt_cmd_table_vector_f.reserve(adcs_havt::Index::_LENGTH);
+    // fill vector of statefields for cmd havt
+    char buffer[50];
+    for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+    {
+    std::memset(buffer, 0, sizeof(buffer));
+    sprintf(buffer,"adcs_cmd.havt_device");
+    sprintf(buffer + strlen(buffer), "%u", idx);
+    havt_cmd_table_vector_f.emplace_back(buffer, havt_bool_sr);
+    add_writable_field(havt_cmd_table_vector_f[idx]);
+    }
+
+    // find adcs state, will be used evnetually?
     adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
-    q_body_eci_fp = find_readable_field<f_quat_t>("attitude_estimator.q_body_eci", __FILE__, __LINE__);
-    ssa_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec", __FILE__, __LINE__);
-    pos_fp = find_readable_field<d_vector_t>("orbit.pos", __FILE__, __LINE__);
-    baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
-
+    
     // Initialize outputs to NaN values
     adcs_vec1_current_f.set({nan_f, nan_f, nan_f});
     adcs_vec2_current_f.set({nan_f, nan_f, nan_f});
