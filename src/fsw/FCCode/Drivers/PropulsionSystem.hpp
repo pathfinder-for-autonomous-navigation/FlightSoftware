@@ -17,7 +17,7 @@
  */
 #include <array>
 #ifndef DESKTOP
-#include "../Devices/Device.hpp"
+#include <fsw/FCCode/Devices/Device.hpp>
 #include <Arduino.h>
 #include <IntervalTimer.h>
 #endif
