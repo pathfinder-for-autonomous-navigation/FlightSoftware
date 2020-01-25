@@ -7,6 +7,8 @@ ClockManager::ClockManager(StateFieldRegistry &registry,
     control_cycle_count_f("pan.cycle_no", Serializer<unsigned int>())
 {
     add_readable_field(control_cycle_count_f);
+
+    printf(debug_severity::debug, "End of ClockManager Constructor");
 }
 
 void ClockManager::execute() {
@@ -20,4 +22,5 @@ void ClockManager::execute() {
     TimedControlTaskBase::control_cycle_start_time = get_system_time();
     control_cycle_count++;
     control_cycle_count_f.set(control_cycle_count);
+    printf(debug_severity::debug, "ClockManager end execute.");
 }

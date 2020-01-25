@@ -127,7 +127,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
     ReadableStateField<float> avg_wait_f;
 
   public:
-    /**
+    /**Execute
      * @brief Execute this control task's task, but only if it's reached its
      * start time.
      * 
