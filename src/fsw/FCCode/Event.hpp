@@ -1,7 +1,7 @@
 #ifndef EVENT_HPP_
 #define EVENT_HPP_
 
-#include <StateField.hpp>
+#include <common/StateField.hpp>
 
 /**
  * @brief This is an extension of state field that provides the ability

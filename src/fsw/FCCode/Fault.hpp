@@ -1,7 +1,7 @@
 #ifndef FAULT_HPP_
 #define FAULT_HPP_
 
-#include <StateFieldRegistry.hpp>
+#include <common/StateFieldRegistry.hpp>
 
 class Fault : public WritableStateField<bool> {
   public:

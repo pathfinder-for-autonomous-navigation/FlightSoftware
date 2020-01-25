@@ -1,9 +1,10 @@
 //
-// src/state_controller.cpp
-// ADCS
+// src/adcs/state_controller.cpp
+// FlightSoftware
 //
 // Contributors:
-//   Kyle Krol  kpk63@cornell.edu
+//   Kyle Krol   kpk63@cornell.edu
+//   Shihao Cao  sfc72@cornell.edu
 //
 // Pathfinder for Autonomous Navigation
 // Space Systems Design Studio
@@ -16,16 +17,16 @@
 #define DEBUG
 #endif
 
-#include <adcs_constants.hpp>
-#include <adcs_registers.hpp>
-
-#include <adcs/state.hpp>
-#include <adcs/state_controller.hpp>
-#include <adcs/utl/convert.hpp>
-#include <adcs/utl/debug.hpp>
+#include "constants.hpp"
+#include "state.hpp"
+#include "state_controller.hpp"
+#include "state_registers.hpp"
+#include "utl/convert.hpp"
+#include "utl/debug.hpp"
 
 #include <bitset>
 
+namespace adcs {
 namespace umb {
 
 /** \fn endian_write
@@ -278,8 +279,8 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 1) break;
       registers.havt.cmd_table = endian_read<unsigned int>();
       registers.havt.cmd_flg = CMDFlag::UPDATED;
-            
-      #ifdef UMB_DEBUG
+
+      #ifdef DEBUG
       std::bitset<havt::max_devices>temp(registers.havt.cmd_table);
 
       //note 32 = havt::max_devices for clarity
@@ -406,9 +407,9 @@ void on_i2c_request() {
     case Register::HAVT_READ: {
       //table is stored as an unsigned int, so merely write out to i2c
       endian_write(registers.havt.read_table);
-      std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
 
       #ifdef DEBUG
+      std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
 
       //note 32 = havt::max_devices for clarity
       char buffer[33];
@@ -423,7 +424,6 @@ void on_i2c_request() {
       // You should see the below if nothing is connected, MTRs and WHEELS OK
       // REMEMBER DEVICE INDEX STEPS UP FROM RIGHT TO LEFT
       // Read Internal Table As: 00000000000000000000001110111000
-
       #endif
       break;
     }
@@ -434,3 +434,4 @@ void on_i2c_request() {
   }
 }
 }  // namespace umb
+}  // namespace adcs

@@ -1,6 +1,6 @@
 //
-// include/havt.hpp
-// ADCS
+// src/adcs/havt.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Shihao Cao  sfc72@cornell.edu
@@ -10,16 +10,15 @@
 // Cornell Univeristy
 //
 
-#ifndef PAN_ADCS_INCLUDE_HAVT_HPP_
-#define PAN_ADCS_INCLUDE_HAVT_HPP_
+#ifndef SRC_ADCS_HAVT_HPP_
+#define SRC_ADCS_HAVT_HPP_
 
-#include <Device.hpp> // for dev_ptrs
-#include <adcs_constants.hpp> // include necessary so that havt::max_device is defined
+#include "constants.hpp" // include necessary so that havt::max_device is defined
+#include "dev/Device.hpp" // for dev_ptrs
+
 #include <bitset>
 
-/** @namespace havt
- *  Holds functinoality to read the is_functional() from each device aboard the ADCS Box
- *  Also contains functionality to command resets and disables for each device */
+namespace adcs {
 namespace havt {
 
 /**
@@ -39,15 +38,16 @@ extern std::bitset<havt::max_devices> internal_table;
  * @brief Uses dev_ptrs to call is_functional() of each device and store into internal_table
  * 
  */
-extern void update_read_table();
+void update_read_table();
 
 /**
  * @brief Requests reset() or disable() if cmd_table differs with internal_table
  * 
  * Commands a reset() or disable() based on each specific device with a difference
  */
-extern void execute_cmd_table(const std::bitset<havt::max_devices>& cmd_table);
+void execute_cmd_table(const std::bitset<havt::max_devices>& cmd_table);
 
 }  // namespace havt
+}  // namespace adcs
 
 #endif

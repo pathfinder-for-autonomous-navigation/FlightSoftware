@@ -1,6 +1,6 @@
 //
-// test/imu_test.cpp
-// ADCS
+// src/adcs/scripts/imu_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -16,11 +16,13 @@
 
 #define DEBUG
 
+#include <adcs/constants.hpp>
 #include <adcs/imu.hpp>
 #include <adcs/utl/debug.hpp>
 
-#include <adcs_constants.hpp>
 #include <Arduino.h>
+
+using namespace adcs;
 
 void setup() {
   DEBUG_init(9600)

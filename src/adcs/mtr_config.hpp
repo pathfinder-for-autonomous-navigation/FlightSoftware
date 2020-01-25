@@ -1,6 +1,6 @@
 //
-// include/mtr/mtr_config.hpp
-// ADCS
+// src/adcs/mtr_config.hpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol         kpk63@cornell.edu
@@ -12,11 +12,12 @@
 
 // TODO : Determine magnetic torque rod command transformation
 
-#ifndef ADCS_INCLUDE_MTR_CONFIG_HPP_
-#define ADCS_INCLUDE_MTR_CONFIG_HPP_
+#ifndef SRC_ADCS_MTR_CONFIG_HPP_
+#define SRC_ADCS_MTR_CONFIG_HPP_
 
 #include <lin.hpp>
 
+namespace adcs {
 namespace mtr {
 
 /** Forward PWM pin for the zeroth magnetorquer. */
@@ -63,7 +64,7 @@ static lin::Matrix3x3f const mtr_to_body({
 static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
 #endif
 });
-
 }  // namespace mtr
+}  // namespace adcs
 
 #endif

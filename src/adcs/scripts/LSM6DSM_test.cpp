@@ -1,6 +1,6 @@
 //
-// test/LSM6DSM_test.cpp
-// ADCS
+// src/adcs/scripts/LSM6DSM_test.cpp
+// FlightSoftware
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
@@ -11,20 +11,23 @@
 //
 
 #define DEBUG
+
+#include <adcs/dev/LSM6DSM.hpp>
 #include <adcs/utl/debug.hpp>
 
-#include <i2c_t3.h>
 #include <Arduino.h>
-#include <LSM6DSM.hpp>
+#include <i2c_t3.h>
 
-LSM6DSM gyro;
+using namespace adcs;
+
+dev::LSM6DSM gyro;
 
 void setup() {
   DEBUG_init(9600)
   Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
   delay(5000); // Allow gyroscope to start up
 
-  gyro.setup(&Wire2, LSM6DSM::ADDR::GND, 10000);
+  gyro.setup(&Wire2, dev::LSM6DSM::ADDR::GND, 10000);
   if (gyro.reset()) {
     DEBUG_printlnF("Gyroscope initialized");
   } else {

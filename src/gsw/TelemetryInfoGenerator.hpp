@@ -3,7 +3,7 @@
 
 #include <json.hpp>
 #include <string>
-#include <StateFieldRegistry.hpp>
+#include <common/StateFieldRegistry.hpp>
 #include <fsw/FCCode/MainControlLoop.hpp>
 
 /**
