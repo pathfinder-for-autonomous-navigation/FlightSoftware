@@ -1,5 +1,4 @@
 #include "prop_common.h"
-
 extern Devices::PropulsionSystem prop_system;
 // Make sure all pins low
 void check_all_valves_closed()

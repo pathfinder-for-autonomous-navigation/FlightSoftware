@@ -36,7 +36,8 @@ class Tank2;
 /**
  * PropulsionSystem class defines the interface for the propulsion system, which 
  * consists of an inner tank, Tank1, and the (outer) thrust tank, Tank2. 
- *
+ * This driver provides functionality for opening and closing valves on both tanks,
+ * setting and enforcing the thrust schedule 
  * 
  * It consists of a static Tank1 (inner tank) and Tank2 (thrust tank) data objects. 
  * 
@@ -44,7 +45,7 @@ class Tank2;
  * Tank1 valves are at numbered 0, 1
  * Tank2 valves are at numbered 0, 1, 2, 3
  * mandatory_wait_time is the duration of time after opening a valve before 
- * we can open another valve. Tank1 is 3ms. Tank2 is 10*1000 ms
+ * we can open another valve. Tank1 10*1000 ms. Tank2 is 3ms
  * 
  * State Definitions:
  * "enabled" means that the IntervalTimer for tank2 is on. This implies that:
@@ -52,6 +53,9 @@ class Tank2;
  *      - or tank2 has already fired
  * "scheduled (to fire)" means that tank2 currently has a scheduled start time
  * in the future
+ * 
+ * "start time" refers to the time in micros at which tank2 will fire
+ * Prop controller is responsible for pressurizing tank1 before asking tank2 to fire
  * 
  * Dependencies: 
  * SpikeAndHold must be enabled in order to use this system
@@ -364,6 +368,9 @@ private:
 
     static uint32_t start_time;
     static volatile unsigned int schedule[4];
+    // The minimum duration to assign to a schedule
+    // Any value below this value will be ignored by tank2
+    static constexpr unsigned int min_firing_duration_ms = 10;
     
     static constexpr unsigned char pressure_sensor_low_pin = 20;
     static constexpr unsigned char pressure_sensor_high_pin = 23;

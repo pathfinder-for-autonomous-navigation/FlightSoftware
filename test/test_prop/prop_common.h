@@ -1,13 +1,11 @@
 
 #ifndef PROP_COMMON_H_
 #define PROP_COMMON_H_
-
 #include <unity.h>
-#include <PropulsionSystem.hpp>
 #include <Arduino.h>
+#include "../../src/fsw/FCCode/Drivers/PropulsionSystem.hpp"
 #define ASSERT_TRUE(x, msg){UNITY_TEST_ASSERT((x), __LINE__, msg);}
 #define ASSERT_FALSE(x, msg){UNITY_TEST_ASSERT((!x), __LINE__, msg);}
-
 /**
  * Helper Methods
  */

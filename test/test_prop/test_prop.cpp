@@ -11,6 +11,8 @@
 #define TO_MICRO(x) x*1000
 using namespace Devices;
 
+PropulsionSystem prop_system;
+
 /* TimedLock Tests */
 
 void test_timedlock_init()
@@ -56,8 +58,6 @@ void timed_lock_tests()
 }
 
 /* PropulsionSystem Tests */
-
-PropulsionSystem prop_system;
 
 void test_initialization()
 {
@@ -215,7 +215,7 @@ void test_open_both_valves()
 void test_ignore_short_schedules()
 {
     prop_system.reset();
-    TEST_ASSERT_TRUE(prop_system.set_schedule(12, 2, 40, 200, micros() + 3250));
+    TEST_ASSERT_TRUE(prop_system.set_schedule(12, 9, 40, 200, micros() + 3250));
     TEST_ASSERT_FALSE(prop_system.is_done_firing());
     TEST_ASSERT_TRUE(prop_system.enable());
     while (!prop_system.tank2.is_valve_open(0)){}

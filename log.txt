@@ -1,0 +1,12 @@
+Verbose mode can be enabled via `-v, --verbose` option
+Collected 32 items
+
+Processing test_prop in fsw_teensy36_test_propulsion environment
+--------------------------------------------------------------------------------
+Building...
+Uploading...
+Testing...
+If you don't see any output for the first 10 secs, please reset board (press reset button)
+
+
+Aborted!

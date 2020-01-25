@@ -2,15 +2,14 @@
  * Implementation of PropulsionSystem.hpp
  */
 #include "PropulsionSystem.hpp"
-#ifndef DESKTOP
-#include <Arduino.h>
-#endif
-
 #include <algorithm>
 #include <climits>
 #include <tuple>
+#ifndef DESKTOP
+#include <Arduino.h>
 #include "../Devices/Device.hpp"
 #include "DCDC.hpp"
+#endif
 
 using namespace Devices;
 
@@ -181,7 +180,8 @@ void PropulsionSystem::disable() {
 }
 
 bool PropulsionSystem::is_functional() { 
-    return digitalRead(DCDC::dcdc_sph_enable_pin);
+    // TODO: change this later maybe
+    return true;
 }
 
 bool PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_t d, uint32_t start_time_us)
@@ -201,10 +201,10 @@ bool PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_t
  
     tank2.start_time = start_time_us;
 
-    tank2.schedule[0] = a;
-    tank2.schedule[1] = b;
-    tank2.schedule[2] = c;
-    tank2.schedule[3] = d;
+    tank2.schedule[0] = (a >= tank2.min_firing_duration_ms) ? a : 0;
+    tank2.schedule[1] = (b >= tank2.min_firing_duration_ms) ? b : 0;
+    tank2.schedule[2] = (c >= tank2.min_firing_duration_ms) ? c : 0;
+    tank2.schedule[3] = (d >= tank2.min_firing_duration_ms) ? d : 0;
     return true;
 }
 
