@@ -95,7 +95,10 @@ void setup() {
 void loop() {
     unsigned int data_fetch_time = micros();
     unsigned int num_tries = 1;
-    while (!gs.get_hk()) { num_tries++; }
+    while (!gs.get_hk()) { 
+        num_tries++; 
+        Serial.println(num_tries);
+    }
     data_fetch_time = micros() - data_fetch_time;
     print_data(hk_data);
     Serial.printf("Time to fetch data: %d us\n", data_fetch_time);
