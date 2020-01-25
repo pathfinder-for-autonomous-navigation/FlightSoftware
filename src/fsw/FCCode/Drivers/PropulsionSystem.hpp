@@ -16,8 +16,8 @@
  *  - SpikeAndHold must be enabled in order to use this system
  */
 #include <array>
-#include "../Devices/Device.hpp"
 #ifndef DESKTOP
+#include "../Devices/Device.hpp"
 #include <Arduino.h>
 #include <IntervalTimer.h>
 #endif
@@ -88,6 +88,9 @@ class Tank2;
  * we can immediately open any valve on tank2.
  * 
  **/
+#ifdef DESKTOP
+    uint32_t micros(){ return 0; }
+#endif
 class PropulsionSystem : public Device {
 public:
     PropulsionSystem();
@@ -96,8 +99,11 @@ public:
      * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
      * @return True if successfully setup both tank1 and tank2 and all pins
      */
+#ifndef DESKTOP
     bool setup() override;
-
+#else
+    bool setup();
+#endif
     /**
      * @brief Resets all runtime (transient) values to their default values
      * 
@@ -107,7 +113,11 @@ public:
      *  - Disables tank2 IntervalTimer
      *  - Unlocks both tank1 and tank2 locks
      */
+#ifndef DESKTOP
     void reset() override;
+#else
+    void reset();
+#endif
 
     /**
      * @brief Turns on IntervalTimer thurst_value_loop_timer, causes an interrupt

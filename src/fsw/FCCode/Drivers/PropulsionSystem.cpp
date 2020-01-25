@@ -6,12 +6,20 @@
 #include <climits>
 #include <tuple>
 #ifndef DESKTOP
-#include <Arduino.h>
+// #include <Arduino.h>
 #include "../Devices/Device.hpp"
 #include "DCDC.hpp"
 #endif
 
 using namespace Devices;
+
+#ifdef DESKTOP
+static void interrupts(){}
+void noInterrupts(){}
+uint8_t analogRead(uint8_t pin){return pin%2;}
+uint8_t digitalRead(uint8_t pin){return pin%2;}
+void digitalWrite(uint8_t pin, uint8_t val){}
+#endif
 
 /* Constructors */
 
@@ -57,10 +65,12 @@ bool PropulsionSystem::setup() {
 
 void Tank::setup()
 {
+#ifndef DESKTOP
     for (size_t i = 0; i < num_valves; ++i)
         pinMode(valve_pins[i], OUTPUT);
 
     pinMode(temp_sensor_pin, INPUT);
+#endif
 }
 
 void Tank2::setup()
@@ -151,7 +161,9 @@ bool PropulsionSystem::enable()
     // Unlock 2.9 ms from start time so as to not be one interrupt-cycle (3 ms) late
     if (tank2.valve_lock.procure(tank2.start_time - micros() - 100))
     {
+#ifndef DESKTOP
         tank2.thrust_valve_loop_timer.begin(thrust_valve_loop, tank2.thrust_valve_loop_interval_us);
+#endif
         is_enabled = true;
     }
     return is_enabled;
