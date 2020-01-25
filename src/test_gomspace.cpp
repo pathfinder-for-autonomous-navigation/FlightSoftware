@@ -102,5 +102,5 @@ void loop() {
     Serial.printf("# tries to fetch data: %d\n", num_tries);
     Serial.println("--------------");
 
-    delay(100);
+    delay(1000);
 }
