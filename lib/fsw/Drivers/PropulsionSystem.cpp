@@ -43,7 +43,9 @@ Tank1 PropulsionSystem::tank1 = Tank1();
 Tank2 PropulsionSystem::tank2 = Tank2();
 
 volatile unsigned int Tank2::schedule[4] = {0, 0, 0, 0};
+#ifndef DESKTOP
 IntervalTimer Tank2::thrust_valve_loop_timer = IntervalTimer();
+#endif
 uint32_t Tank2::start_time = 0;
 
 /* Setup */
@@ -65,8 +67,10 @@ void Tank::setup()
 void Tank2::setup()
 {
     Tank::setup();
+#ifndef DESKTOP
     pinMode(pressure_sensor_high_pin, INPUT);
     pinMode(pressure_sensor_high_pin, INPUT);
+#endif
 }
 
 /* Tank implementation */

@@ -3,9 +3,9 @@
 // prop.fault
 enum class prop_fault_t {
     nofaults,
-    outer_temp,
-    inner_temp,
-    outer_pressure,
+    tank2_temp,
+    tank1_temp,
+    tank2_pressure,
     cannot_refill
 };
 

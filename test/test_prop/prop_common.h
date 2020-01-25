@@ -3,7 +3,7 @@
 #define PROP_COMMON_H_
 
 #include <unity.h>
-#include "../../lib/Drivers/PropulsionSystem.hpp"
+#include <PropulsionSystem.hpp>
 #include <Arduino.h>
 #define ASSERT_TRUE(x, msg){UNITY_TEST_ASSERT((x), __LINE__, msg);}
 #define ASSERT_FALSE(x, msg){UNITY_TEST_ASSERT((!x), __LINE__, msg);}
