@@ -1,7 +1,7 @@
 
 #pragma once
 #include <bitstream.h>
-#include <StateFieldRegistry.hpp>
+#include <common/StateFieldRegistry.hpp>
 
 /**
  * Uplink provides operations on an Uplink Packet and is stateless

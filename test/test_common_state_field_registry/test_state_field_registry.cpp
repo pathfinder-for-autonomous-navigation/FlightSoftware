@@ -1,4 +1,4 @@
-#include "../src/StateFieldRegistry.hpp"
+#include <StateFieldRegistry.hpp>
 
 #include <unity.h>
 

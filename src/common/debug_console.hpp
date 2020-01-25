@@ -10,7 +10,7 @@
     #include <chrono>
     #include <memory>
     #include <thread>
-    #include <concurrentqueue.h>
+    #include <common/concurrentqueue/concurrentqueue.h>
 #else
     #include <Arduino.h>
 #endif

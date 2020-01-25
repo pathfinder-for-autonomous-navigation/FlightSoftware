@@ -1,7 +1,7 @@
 #ifndef STATE_FIELD_REGISTRY_MOCK_HPP_
 #define STATE_FIELD_REGISTRY_MOCK_HPP_
 
-#include <StateFieldRegistry.hpp>
+#include <common/StateFieldRegistry.hpp>
 
 #ifdef DESKTOP
     #include <iostream>

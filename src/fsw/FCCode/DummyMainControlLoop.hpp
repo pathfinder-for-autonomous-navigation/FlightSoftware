@@ -3,8 +3,8 @@
 
 #include "ControlTask.hpp"
 #include "DebugTask.hpp"
-#include <StateField.hpp>
-#include <StateFieldRegistry.hpp>
+#include <common/StateField.hpp>
+#include <common/StateFieldRegistry.hpp>
 
 class DummyMainControlLoop : public ControlTask<void> {
    protected:
