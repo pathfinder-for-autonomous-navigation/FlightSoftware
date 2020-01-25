@@ -80,7 +80,7 @@ void print_data(Gomspace::eps_hk_t& hk_data) {
     //data type is unsigned char. May need to change reference code
     Serial.printf("Battery Mode: %d\n", hk_data.battmode);
     delay(10);
-    //data type is unsigned char. May need to change reference code
+    //data type is unsigned char. May need to change reference code hi
     Serial.printf("PPT Mode: %d\n", hk_data.pptmode);
 }
 
