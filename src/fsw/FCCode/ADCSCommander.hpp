@@ -25,6 +25,8 @@ class ADCSCommander : public TimedControlTask<void> {
     // eventually everything else necessary for generating commands
     // especially all the gnc stuff
 
+    const WritableStateField<unsigned char>* adcs_state_fp;
+
     // field pointer for adcs_montor device;
     std::vector<WritableStateField<bool>*> havt_read_table_vector_fp;
 
