@@ -3,7 +3,7 @@
 
 #include "ControlTask.hpp"
 
-#include <adcs_havt_devices.hpp> // needed for ADCSCommander fill-in
+#include <adcs/adcs_havt_devices.hpp> // needed for ADCSCommander fill-in
 
 // This class does the unpleasant task of creating state fields that
 // controllers expect to see but for which we haven't defined any

@@ -9,16 +9,16 @@
 #include <string>
 #endif
 
-#include <GPSTime.hpp>
+#include <common/GPSTime.hpp>
 #include <array>
-#include "../libsbp/logging.h"
-#include "../libsbp/navigation.h"
-#include "../libsbp/observation.h"
-#include "../libsbp/piksi.h"
-#include "../libsbp/sbp.h"
-#include "../libsbp/settings.h"
-#include "../libsbp/system.h"
-#include "../libsbp/user.h"
+#include <libsbp/logging.h>
+#include <libsbp/navigation.h>
+#include <libsbp/observation.h>
+#include <libsbp/piksi.h>
+#include <libsbp/sbp.h>
+#include <libsbp/settings.h>
+#include <libsbp/system.h>
+#include <libsbp/user.h>
 namespace Devices {
 /**
  * @brief Device class for interacting with the Piksi GPS system.

@@ -5,7 +5,7 @@
 
 #include <common/StateFieldRegistry.hpp>
 #include "TimedControlTask.hpp"
-#include <DockingSystem.hpp>
+#include "Drivers/DockingSystem.hpp"
 
 class DockingController : public TimedControlTask<void> {
    public:

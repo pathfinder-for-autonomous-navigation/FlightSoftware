@@ -1,7 +1,7 @@
 #ifndef ADCS_BOX_MONITOR_HPP_
 #define ADCS_BOX_MONITOR_HPP_
 
-#include <ADCS.hpp>
+#include "Drivers/ADCS.hpp"
 #include "TimedControlTask.hpp"
 
 /**

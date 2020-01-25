@@ -1,5 +1,5 @@
 #include <unity.h>
-#include <fixed_array.hpp>
+#include <common/fixed_array.hpp>
 #include <memory>
 
 void test_bitarray_constructors() {

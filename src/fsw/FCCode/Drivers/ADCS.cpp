@@ -5,8 +5,8 @@
  */
 
 #include "ADCS.hpp"
-#include <adcs_constants.hpp>
-#include <adcs_registers.hpp>
+#include <adcs/adcs_constants.hpp>
+#include <adcs/adcs_registers.hpp>
 
 #include <cstring>
 

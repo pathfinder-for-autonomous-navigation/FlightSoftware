@@ -7,9 +7,9 @@
 #ifndef PAN_LIB_DRIVERS_ADCS_HPP_
 #define PAN_LIB_DRIVERS_ADCS_HPP_
 
-#include <I2CDevice.hpp>
+#include "../Devices/I2CDevice.hpp"
 #include <array>
-#include <adcs_constants.hpp>
+#include <adcs/adcs_constants.hpp>
 
 #include <bitset>
 
