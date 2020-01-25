@@ -2,7 +2,7 @@
 
 #include <fsw/FCCode/DownlinkProducer.hpp>
 
-#include <StateFieldRegistry.hpp>
+#include <common/StateFieldRegistry.hpp>
 #include <unity.h>
 
 struct TestFixture {

@@ -6,7 +6,7 @@
  */
 
 #include <fsw/FCCode/MainControlLoop.hpp>
-#include <StateFieldRegistry.hpp>
+#include <common/StateFieldRegistry.hpp>
 #include "flow_data.hpp"
 
 #include <core_pins.h>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TimedControlTask.hpp"
-#include <QLocate.hpp>
+#include "Drivers/QLocate.hpp"
 
 /**
  * QLocate driver states
