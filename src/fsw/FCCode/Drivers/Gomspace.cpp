@@ -14,7 +14,7 @@ using namespace Devices;
 #ifdef DESKTOP
 #define I2C_INITIALIZATION I2CDevice("gomspace", 10000)
 #else
-#define I2C_INITIALIZATION I2CDevice("gomspace", Gomspace::wire, Gomspace::address, 1000)
+#define I2C_INITIALIZATION I2CDevice("gomspace", Gomspace::wire, Gomspace::address, 10000)
 #endif
 
 Gomspace::Gomspace(Gomspace::eps_hk_t *hk_data, Gomspace::eps_config_t *config_data,
