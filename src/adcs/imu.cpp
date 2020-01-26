@@ -141,6 +141,7 @@ void setup() {
   mag2.setup(mag2_wire, mag2_timeout);
   mag2.set_sample_rate(dev::MMC34160PJ::SR::HZ_50);
   mag2.reset();
+  mag2.calibrate();
 #ifdef DEBUG
   if (mag2.is_functional()) DEBUG_printlnF("#imu> Magnetometer 2 inititated")
   else DEBUG_printlnF("#imu> Magnetometer 2 initialization failed")
