@@ -23,10 +23,18 @@
 
 namespace adcs {
 namespace imu {
-// Attempt a read if ready and ensure it was succesful
-  if (!gyr.is_functional()) return;
-  if (!gyr.is_ready()) return;
-  if (!gyr.read()) return;r update_mag(unsigned char mode, float mag_flt) {
+  
+dev::LIS2MDLTR mag1;
+
+dev::MMC34160PJ mag2;
+
+lin::Vector3f mag_rd({
+  0.0f,
+  0.0f,
+  0.0f
+});
+
+static unsigned char update_mag(unsigned char mode, float mag_flt) {
   unsigned char return_mode = mode & 0b10;
   lin::Vector3f data;
 
@@ -140,10 +148,8 @@ void setup() {
   mag1.set_sample_rate(dev::LIS2MDLTR::SR::HZ_50);
   mag1.reset();
 
-      // Perform actuation
-      for (auto &wheel : wheels)
-        if (wheel.is_functional()) wheel.actuate();
-      potentiometer.write_rdac();
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+  if (!mag1.is_functional()) {
     LOG_ERROR_header
     LOG_ERROR_printlnF("Magnetometer1 initialization failed")
   }
