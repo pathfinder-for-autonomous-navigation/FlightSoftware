@@ -15,8 +15,10 @@
 #ifndef SRC_ADCS_DEV_MMC34160PJ_HPP_
 #define SRC_ADCS_DEV_MMC34160PJ_HPP_
 
-#include "I2CDevice.hpp"
 
+#include "I2CDevice.hpp"
+#include <algorithm>
+#include <array>
 namespace adcs {
 namespace dev {
 
@@ -60,18 +62,18 @@ class MMC34160PJ : public I2CDevice {
    *  for this device. */
   void setup(i2c_t3 *wire, unsigned long timeout = DEV_I2C_TIMEOUT);
   /** Places the device in continous measurement mode with the current sample
-   *  rate setting. If this is succesful then the device is marked as
+   *  rate setting. Also calibrates the device, takes about 300ms. If this is succesful then the device is marked as
    *  functional.
    *  @return True if the reset was succesful and false otherwise. */
   virtual bool reset() override;
   /** Attempts to disable continuous measurement mode. */
   virtual void disable() override;
   /** Calibrates the magnetometer and updates the offset parameter. This process
-   *  will take about 11 ms and should be done periodically to ensure accuracy.
+   *  will take about 300 ms and should be done periodically to ensure accuracy.
    *  The device will be marked as disabled and the \c reset function must be
    *  called to resume readings.
    *  @returns True if the calibration was succesful and false otherwise. */
-  void calibrate();
+  bool calibrate();
   /** @return True if a new read is complete and false otherwise. */
   bool is_ready();
   /** Reads in data from the most recently completed read. The data is stored
@@ -85,13 +87,13 @@ class MMC34160PJ : public I2CDevice {
   inline uint8_t get_sample_rate() const { return this->sample_rate; }
   /** @return Most recent magnetic field x component in the frame of the
    *  magnetometer. */
-  inline int16_t get_b_x() const { return this->b_vec[0]; }
+  inline int16_t get_b_x() const { return (int16_t)(((int32_t)this->b_vec[0]-(int32_t)offset[0])/2); }
   /** @return Most recent magnetic field y component in the frame of the
    *  magnetometer. */
-  inline int16_t get_b_y() const { return this->b_vec[1]; }
+  inline int16_t get_b_y() const { return (int16_t)(((int32_t)this->b_vec[1]-(int32_t)offset[1])/2); }
   /** @return Most recent magnetic field z component in the frame of the
    *  magnetometer. */
-  inline int16_t get_b_z() const { return this->b_vec[2]; }
+  inline int16_t get_b_z() const { return (int16_t)(((int32_t)this->b_vec[2]-(int32_t)offset[2])/2); }
 
  private: 
   /** @internal Fills the set/reset capacitor over the course of 50 ms. */
@@ -100,15 +102,15 @@ class MMC34160PJ : public I2CDevice {
   void set_operation();
   /** @internal Triggers the reset operation. */
   void reset_operation();
-  /** @internal Triggers a single shot read of the magnetometer.
+  /** @internal Blocking single shot read of the magnetometer, updates backing array.
    *  @return True if succesful and false otherwise. */
   bool single_read(uint16_t *array);
   /** Magnetic field backing vector. */
-  uint16_t b_vec[3];
+  uint16_t b_vec[3]={0};
   /** Magnetic field sample rate. */
-  uint8_t sample_rate;
+  SR sample_rate= HZ_50;
   /** Magnetomter offset calibration value. */
-  uint16_t offset[3];
+  uint16_t offset[3]={0};
 };
 }  // namespace dev
 }  // namespace adcs

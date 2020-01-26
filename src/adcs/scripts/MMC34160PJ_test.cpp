@@ -40,17 +40,21 @@ void setup() {
 }
 
 void loop() {
+  for (int i=0; i<10; i++){
+    while (!mag.is_ready())
+      if (!mag.is_functional()) while (1);
 
-  while (!mag.is_ready())
-    if (!mag.is_functional()) while (1);
-
-  if (mag.read()) {
-    DEBUG_println(String(mag.get_b_x()) + "," + String(mag.get_b_y()) + "," +
-        String(mag.get_b_z()))
-  } else {
-    DEBUG_printlnF("Error")
+    if (mag.read()) {
+      DEBUG_println(String(mag.get_b_x()) + "," + String(mag.get_b_y()) + "," +
+          String(mag.get_b_z()))
+    } else {
+      DEBUG_printlnF("Error")
+    }
+    delay(500);
   }
-
+  DEBUG_printlnF("calibration")
+  if(! mag.calibrate()) DEBUG_printlnF("Error calibrating");
   delay(2000);
+
   
 }
