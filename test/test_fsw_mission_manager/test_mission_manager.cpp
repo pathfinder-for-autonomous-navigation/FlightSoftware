@@ -18,15 +18,15 @@ void test_dispatch_startup() {
     // Startup should be the default initial state of the mission manager
     tf.check(mission_state_t::startup);
 
-    // For 10 executions, the mission manager should remain in the startup state
-    for(int i = 0; i < 10; i++) {
+    // For 100 executions, the mission manager should remain in the startup state
+    for(int i = 0; i < 100; i++) {
         tf.step();
         tf.check(mission_state_t::startup);
     }
 
     // TODO add hardware fault test.
 
-    // On the 11th execution, if there's no hardware fault, the mission manager
+    // On the 101st execution, if there's no hardware fault, the mission manager
     // should transition to the detumble state.
     tf.step();
     tf.check(mission_state_t::detumble);
