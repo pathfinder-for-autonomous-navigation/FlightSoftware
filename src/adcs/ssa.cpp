@@ -13,14 +13,14 @@
 // TODO : Fill in the sun sensor normal vectors
 // TODO : Consider pulling the algorithm from PSim
 
-#ifdef SSA_DEBUG
-#define DEBUG
+#ifdef MTR_NO_LOG
+#undef LOG_LEVEL
 #endif
 
 #include "constants.hpp"
 #include "ssa.hpp"
 #include "ssa_config.hpp"
-#include "utl/debug.hpp"
+#include "utl/logging.hpp"
 
 namespace adcs {
 namespace ssa {
@@ -30,23 +30,41 @@ dev::ADS1015 adcs[5];
 lin::Matrix<float, 5, 4> voltages = lin::zeros<float, 5, 4>();
 
 void setup() {
+  LOG_INFO_header
+  LOG_INFO_printlnF("Initializing the SSA module")
+
   // Configure alert pins for input
   pinMode(adc2_alrt, INPUT);
   pinMode(adc3_alrt, INPUT);
   pinMode(adc4_alrt, INPUT);
   pinMode(adc5_alrt, INPUT);
   pinMode(adc6_alrt, INPUT);
+
   // Setup the ADCs' pin configurations
   adcs[0].setup(adc2_wire, adc2_addr, adc2_alrt, adcx_timeout);
   adcs[1].setup(adc3_wire, adc3_addr, adc3_alrt, adcx_timeout);
   adcs[2].setup(adc4_wire, adc4_addr, adc4_alrt, adcx_timeout);
   adcs[3].setup(adc5_wire, adc5_addr, adc5_alrt, adcx_timeout);
   adcs[4].setup(adc6_wire, adc6_addr, adc6_alrt, adcx_timeout);
+
   // Set the ADCs' gain value and reset them
   for (auto &adc : adcs) {
     adc.set_gain(dev::ADS1015::GAIN::ONE);
     adc.reset();
   }
+
+  // Conditionally log failed initializations
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+  for (unsigned int i = 0; i < 5; i++) {
+    if (!adc[i].is_functional()) {
+      LOG_ERROR_header
+      LOG_ERROR_println("ADC" + String(i + 2) + " initialization failed")
+    }
+  }
+#endif
+
+  LOG_INFO_header
+  LOG_INFO_println("SSA module initialization complete")
 }
 
 // Allows iterations across ADC channels in a loop
@@ -58,11 +76,12 @@ static dev::ADS1015::CHANNEL const channels[4] = {
 void update_sensors(float adc_flt) {
   int16_t val;
   lin::Matrix<float, 5, 4> readings(voltages);
+
   for (unsigned int j = 0; j < 4; j++) {
     // Begin read on channels[j] for each enabled ADC
     for (unsigned int i = 0; i < 5; i++)
       if (adcs[i].is_functional()) adcs[i].start_read(channels[j]);
-      else readings(i, j) = 0.0f;
+    
     // End read on channels[j] and store the result
     for (unsigned int i = 0; i < 5; i++)
       if (adcs[i].is_functional())

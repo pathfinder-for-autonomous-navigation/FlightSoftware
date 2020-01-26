@@ -87,7 +87,7 @@ static void copy_to(T volatile const (&t_src)[N], T (&t_dst)[N]) {
 
 void on_i2c_recieve(unsigned int bytes) {
   LOG_INFO_header
-  LOG_INFO_println("Recieved " + String(bytes) + " over i2c")
+  LOG_INFO_println("Recieved " + String(bytes) + " over I2C")
 
   if (umb::wire->available() < 1) return;
   unsigned char address = endian_read<unsigned char>();
@@ -259,7 +259,9 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 1) break;
       registers.imu.gyr_temp_flt = utl::fp(endian_read<unsigned char>(), 0.0f, 1.0f);
 
-      DEBUG_printF("...imu.gyr_temp_flt set to ") DEBUG_println(registers.imu.gyr_temp_flt)
+      LOG_INFO_header
+      LOG_INFO_println("IMU_GYR_TEMP_FILTER set to " + String(registers.imu.gyr_temp_flt))
+
       break;
     }
 
@@ -267,21 +269,25 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 4) break;
       registers.imu.gyr_temp_p = endian_read<float>();
 
-      DEBUG_printF("...imu.gyr_temp_p set to ") DEBUG_println(registers.imu.gyr_temp_p)
+      LOG_INFO_header
+      LOG_INFO_println("IMU_GYR_TEMP_KP set to " + String(registers.imu.gyr_temp_p))
     }
 
     case Register::IMU_GYR_TEMP_KI: {
       if (umb::wire->available() < 4) break;
       registers.imu.gyr_temp_i = endian_read<float>();
-      
-      DEBUG_printF("...imu.gyr_temp_i set to ") DEBUG_println(registers.imu.gyr_temp_i)
+
+      LOG_INFO_header
+      LOG_INFO_println("IMU_GYR_TEMP_KI set to " + String(registers.imu.gyr_temp_i))
     }
 
     case Register::IMU_GYR_TEMP_KD: {
       if (umb::wire->available() < 4) break;
       registers.imu.gyr_temp_d = endian_read<float>();
 
-      DEBUG_printF("...imu.gyr_temp_d set to ") DEBUG_println(registers.imu.gyr_temp_d)
+      LOG_INFO_header
+      LOG_INFO_println("IMU_GYR_TEMP_KD set to " + String(registers.imu.gyr_temp_d))
+      
       break;
     }
 
@@ -289,7 +295,9 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 1) break;
       registers.imu.gyr_desired_temp = utl::fp(endian_read<unsigned char>(), imu::min_eq_temp, imu::max_eq_temp);
 
-      DEBUG_printF("...imu.gyr_desired_temp set to ") DEBUG_println(registers.imu.gyr_desired_temp)
+      LOG_INFO_header
+      LOG_INFO_println("IMU_GYR_TEMP_DESIRED set to " + String(registers.imu.gyr_desired_temp))
+
       break;
     }
 
@@ -298,7 +306,7 @@ void on_i2c_recieve(unsigned int bytes) {
       registers.havt.cmd_table = endian_read<unsigned int>();
       registers.havt.cmd_flg = CMDFlag::UPDATED;
 
-      #ifdef DEBUG
+#if LOG_LEVEL >= LOG_LEVEL_INFO
       std::bitset<havt::max_devices>temp(registers.havt.cmd_table);
 
       //note 32 = havt::max_devices for clarity
@@ -310,13 +318,18 @@ void on_i2c_recieve(unsigned int bytes) {
           buffer[i] = '0';
       }
       buffer[32] = '\0';
-      #endif
-      DEBUG_printF("...havt.table set to ") DEBUG_println(buffer)
-      
+
+      LOG_INFO_header
+      LOG_INFO_printF("HAVT_COMMAND set to ")
+      LOG_INFO_println(buffer);
+#endif
+
       break;
     }
     default: {
-      DEBUG_printlnF("...ERROR: Default case hit")
+      LOG_WARN_header
+      LOG_WARN_println("Invalid register written to over I2C: "
+          + String(address))
     }
   }
 }
@@ -324,7 +337,8 @@ void on_i2c_recieve(unsigned int bytes) {
 void on_i2c_request() {
   unsigned char address = registers.read_ptr;
 
-  DEBUG_printF("Request on address ") DEBUG_print(address) DEBUG_printlnF("...")
+  LOG_INFO_header
+  LOG_INFO_println("Read request over I2C at address " + String(address))
 
   switch (address) {
 
@@ -332,7 +346,9 @@ void on_i2c_request() {
       // Output constant who am I register as 0x0F
       endian_write(registers.who_am_i);
 
-      DEBUG_printF("...read who_am_i : ") DEBUG_println(registers.who_am_i)
+      LOG_INFO_header
+      LOG_INFO_println("WHO_AM_I read as " + String(registers.who_am_i))
+
       break;
     }
     
@@ -345,8 +361,9 @@ void on_i2c_request() {
         t[i] = utl::us(f[i], rwa::min_speed_read, rwa::max_speed_read);
       endian_write(t);
 
-      DEBUG_printF("...read rwa.momentum_rd : ") DEBUG_print(f[0]) DEBUG_printF(" ")
-      DEBUG_print(f[1]) DEBUG_printF(" ") DEBUG_println(f[2])
+      LOG_INFO_header
+      LOG_INFO_println("RWA_SPEED_RD read as " + String(f[0]) + " " + String(f[1])
+          + " " + String(f[2]))
 
       // Output reaction wheels ramp torques
       copy_to(registers.rwa.ramp_rd, f);
@@ -354,8 +371,10 @@ void on_i2c_request() {
         t[i] = utl::us(f[i], rwa::min_torque, rwa::max_torque);
       endian_write(t);
 
-      DEBUG_printF("...read rwa.ramp_rd : ") DEBUG_print(f[0]) DEBUG_printF(" ")
-      DEBUG_print(f[1]) DEBUG_printF(" ") DEBUG_println(f[2])
+      LOG_INFO_header
+      LOG_INFO_println("RWA_RAMP_RD read as " + String(f[0]) + " "
+          + String(f[1]) + " " + String(f[2]))
+
       break;
     }
 
@@ -363,7 +382,9 @@ void on_i2c_request() {
       // Output sun sensor mode
       endian_write(registers.ssa.mode);
 
-      DEBUG_printF("...read ssa.mode : ") DEBUG_println(registers.ssa.mode)
+      LOG_INFO_header
+      LOG_INFO_println("SSA_MODE read as " + String(registers.ssa.mode))
+
       break;
     }
 
@@ -376,8 +397,10 @@ void on_i2c_request() {
         t[i] = utl::us(f[i], -1.0f, 1.0f);
       endian_write(t);
 
-      DEBUG_printF("...read ssa.sun_vec_rd : ") DEBUG_print(f[0]) DEBUG_printF(" ")
-      DEBUG_print(f[1]) DEBUG_printF(" ") DEBUG_println(f[2])
+      LOG_INFO_header
+      LOG_INFO_println("SSA_SUN_VECTOR read as " + String(f[0]) + " "
+          + String(f[1]) + " " + String(f[2]))
+
       break;
     }
 
@@ -390,7 +413,10 @@ void on_i2c_request() {
         t[i] = utl::uc(f[i], ssa::min_voltage_rd, ssa::max_voltage_rd);
       endian_write(t);
 
-      DEBUG_printlnF("...read ssa.sun_vec_rd : <data omitted>")
+      LOG_INFO_header
+      LOG_INFO_println("SSA_VOLTAGE_READ read as " + String(f[0]) + " "
+          + String(f[1]) + " " + String(f[2]) + " ...")
+
       break;
     }
 
@@ -403,8 +429,9 @@ void on_i2c_request() {
         t[i] = utl::us(f[i], imu::min_rd_mag, imu::max_rd_mag);
       endian_write(t);
 
-      DEBUG_printF("...read imu.mag_rd : ") DEBUG_print(f[0]) DEBUG_printF(" ")
-      DEBUG_print(f[1]) DEBUG_printF(" ") DEBUG_println(f[2])
+      LOG_INFO_header
+      LOG_INFO_println("IMU_MAG_READ read as " + String(f[0]) + " "
+          + String(f[1]) + " " + String(f[2]))
 
       // Output gyroscope angular rate readings
       copy_to(registers.imu.gyr_rd, f);
@@ -412,13 +439,17 @@ void on_i2c_request() {
         t[i] = utl::us(f[i], imu::min_rd_omega, imu::max_rd_omega);
       endian_write(t);
 
-      DEBUG_printF("...read imu.gyr_rd : ") DEBUG_print(f[0]) DEBUG_printF(" ")
-      DEBUG_print(f[1]) DEBUG_printF(" ") DEBUG_println(f[2])
+      LOG_INFO_header
+      LOG_INFO_println("IMU_GYR_READ read as " + String(f[0]) + " "
+          + String(f[1]) + " " + String(f[2]))
 
       // Output gyroscope temperature
       endian_write(utl::us(registers.imu.gyr_temp_rd, imu::min_rd_temp, imu::max_rd_temp));
 
-      DEBUG_printF("...read imu.gyr_temp_rd : ") DEBUG_println(registers.imu.gyr_temp_rd)
+      LOG_INFO_header
+      LOG_INFO_println("IMU_GYR_TEMP_READ read as "
+          + String(registers.imu.gyr_temp_rd))
+
       break;
     }
 
@@ -426,7 +457,7 @@ void on_i2c_request() {
       //table is stored as an unsigned int, so merely write out to i2c
       endian_write(registers.havt.read_table);
 
-      #ifdef DEBUG
+#if LOG_LEVEL >= LOG_LEVEL_INFO
       std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
 
       //note 32 = havt::max_devices for clarity
@@ -438,16 +469,22 @@ void on_i2c_request() {
           buffer[i] = '0';
       }
       buffer[32] = '\0';
-      DEBUG_printF("...read havt: ") DEBUG_println(buffer)
+
+      LOG_INFO_header
+      LOG_INFO_printF("HAVT_READ read as ")
+      LOG_INFO_println(buffer)
       // You should see the below if nothing is connected, MTRs and WHEELS OK
       // REMEMBER DEVICE INDEX STEPS UP FROM RIGHT TO LEFT
       // Read Internal Table As: 00000000000000000000001110111000
-      #endif
+#endif
+
       break;
     }
 
     default: {
-      DEBUG_printlnF("...ERROR: Default case hit")
+      LOG_WARN_header
+      LOG_WARN_printlnF("Invalid address requested over I2C: "
+          + String(address))
     }
   }
 }
