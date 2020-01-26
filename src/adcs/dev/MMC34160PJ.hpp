@@ -87,13 +87,13 @@ class MMC34160PJ : public I2CDevice {
   inline uint8_t get_sample_rate() const { return this->sample_rate; }
   /** @return Most recent magnetic field x component in the frame of the
    *  magnetometer. */
-  inline int16_t get_b_x() const { return (int16_t)(((int32_t)this->b_vec[0]-(int32_t)offset[0])/2); }
+  inline int16_t get_b_x() const { return (int16_t)(-((int32_t)this->b_vec[0]-(int32_t)offset[0])/2); }
   /** @return Most recent magnetic field y component in the frame of the
    *  magnetometer. */
-  inline int16_t get_b_y() const { return (int16_t)(((int32_t)this->b_vec[1]-(int32_t)offset[1])/2); }
+  inline int16_t get_b_y() const { return (int16_t)(-((int32_t)this->b_vec[1]-(int32_t)offset[1])/2); }
   /** @return Most recent magnetic field z component in the frame of the
    *  magnetometer. */
-  inline int16_t get_b_z() const { return (int16_t)(((int32_t)this->b_vec[2]-(int32_t)offset[2])/2); }
+  inline int16_t get_b_z() const { return (int16_t)(-((int32_t)this->b_vec[2]-(int32_t)offset[2])/2); }
 
  private: 
   /** @internal Fills the set/reset capacitor over the course of 50 ms. */

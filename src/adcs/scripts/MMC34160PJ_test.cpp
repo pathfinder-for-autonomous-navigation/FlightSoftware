@@ -53,6 +53,7 @@ void loop() {
     delay(500);
   }
   DEBUG_printlnF("calibration")
+  delay(1000);
   if(! mag.calibrate()) DEBUG_printlnF("Error calibrating");
   delay(2000);
 
