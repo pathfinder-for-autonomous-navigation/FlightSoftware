@@ -224,15 +224,15 @@ void loop() {
     LOG_INFO_println("Heartbeat cycle count " + String(cycles))
 
     LOG_INFO_header
-    LOG_INFO_println("mode " + String(registers.mode))
+    LOG_INFO_println("mode     " + String(registers.mode))
     LOG_INFO_header
-    LOG_INFO_println("mode " + String(registers.imu.mode))
+    LOG_INFO_println("imu.mode " + String(registers.imu.mode))
     LOG_INFO_header
-    LOG_INFO_println("mode " + String(registers.mtr.mode))
+    LOG_INFO_println("mtr.mode " + String(registers.mtr.mode))
     LOG_INFO_header
-    LOG_INFO_println("mode " + String(registers.rwa.mode))
+    LOG_INFO_println("rwa.mode " + String(registers.rwa.mode))
     LOG_INFO_header
-    LOG_INFO_println("mode " + String(registers.ssa.mode))
+    LOG_INFO_println("ssa.mode " + String(registers.ssa.mode))
   }
 #endif
 }
