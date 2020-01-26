@@ -9,6 +9,7 @@ http://docs.platformio.org/en/latest/projectconf/advanced_scripting.html#project
 import fcserial
 import time
 import serial
+from builtins import input
 
 Import("env", "projenv")
 
@@ -18,7 +19,7 @@ def after_upload(source, target, env):
     time.sleep(5)
     print("Restart Satellite by pressing both deployment switches")
     print('press enter when done')
-    raw_input()
+    input()
     time.sleep(5)
     testrates=([[0]*3,
                 [10,0,0],
@@ -32,29 +33,29 @@ def after_upload(source, target, env):
         return
 
     print('\n\n Where should the data be saved? (CSV filename): \n Awaiting input')
-    filename= raw_input()
+    filename= input()
     with serial.Serial(portname, 4000000, timeout=10) as ser:
         with open(filename,'w') as f:
             # write csv header line
             f.write("Test Start: "+time.asctime()+"\n")
             f.write("Filename: "+filename+"\n")
             print('\n\n External temperature (Celsius): \n Awaiting input')
-            temp= raw_input();
+            temp= input();
             f.write("External temperature (Celsius): "+temp+"\n")
             print('\n\n External humidity (%): \n Awaiting input')
-            temp= raw_input();
+            temp= input();
             f.write("External humidity (%): "+temp+"\n")
             print('\n\n Location: \n Awaiting input')
-            temp= raw_input();
+            temp= input();
             f.write("Location: "+temp+"\n")
             print('\n\n Satellite tested: \n Awaiting input')
-            temp= raw_input();
+            temp= input();
             f.write("Satellite tested: "+temp+"\n")
             print('\n\n People who did the test: \n Awaiting input')
-            temp= raw_input();
+            temp= input();
             f.write("People who did the test: "+temp+"\n")
             print('\n\n Notes: \n Awaiting input')
-            temp= raw_input();
+            temp= input();
             f.write("Notes: "+temp+"\n")
             headerline='reading time (s),magnetometer1 X (T),magnetometer1 Y (T),magnetometer1 Z (T),gyro X (rad/s),gyro Y (rad/s),gyro Z (rad/s),gyro temperature (C),wheel commanded rate X (rad/s),wheel commanded rate Y (rad/s),wheel commanded rate Z (rad/s), magrod commanded moment X (A*m^2),  magrod commanded moment Y (A*m^2),  magrod commanded moment Z (A*m^2)\n'
             f.write(headerline)
