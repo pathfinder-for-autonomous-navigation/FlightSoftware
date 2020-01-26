@@ -14,10 +14,8 @@
 // May be worth checking the data sheet again and seeing if we have some bit
 // manipulation incorect.
 
-#define DEBUG
-
 #include <adcs/dev/MMC34160PJ.hpp>
-#include <adcs/utl/debug.hpp>
+#include <adcs/utl/logging.hpp>
 
 #include <i2c_t3.h>
 #include <Arduino.h>
@@ -27,7 +25,7 @@ using namespace adcs;
 dev::MMC34160PJ mag;
 
 void setup() {
-  DEBUG_init(9600)
+  LOG_init(9600)
   Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
 
   delay(5000); // Allow magnetometer to start up

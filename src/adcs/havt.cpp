@@ -11,8 +11,8 @@
 // Cornell Univeristy
 //
 
-#ifdef HAVT_DEBUG
-#define DEBUG
+#ifdef HAVT_LOG_LEVEL
+  #define LOG_LEVEL HAVT_LOG_LEVEL
 #endif
 
 #include "havt.hpp"
@@ -22,7 +22,7 @@
 #include "rwa.hpp"
 #include "ssa.hpp"
 #include "state.hpp"
-#include "utl/debug.hpp"
+#include "utl/logging.hpp"
 
 // Sanity check
 static_assert(adcs::havt::Index::_LENGTH <= adcs::havt::max_devices,
@@ -58,21 +58,27 @@ dev::Device* dev_ptrs[havt::max_devices] = {
 };
 
 void update_read_table(){
-  //Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
-  for (unsigned int index_int = Index::IMU_GYR; index_int < Index::_LENGTH; index_int++ )
-  {
-    internal_table.set(index_int, dev_ptrs[index_int]->is_functional());
-  }
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Updating HAVT table from sensors")
 
+  //Loop until you reach _LENGTH, yes this effectiv
+void update_read_table(){
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Updating HAVT table from sensors")
   // Set all extra bits of the internal table to 0, just in case radiation
   for (unsigned int index_int = Index::_LENGTH; index_int < havt::max_devices; index_int++)
   {
     internal_table.set(index_int, 0);
   }
+
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Complete")
 }
 
 void cmd_device(Index index, const bool cmd_bit){
-  DEBUG_print(String(index) + "," + String(cmd_bit) + " - ")
+  LOG_INFO_header
+  LOG_INFO_println("Commanding device " + String(index) + " to "
+      + String(cmd_bit))
   
   // if statement prevents attempting commands with nonexistent devices
   if(index<Index::_LENGTH){
@@ -85,7 +91,9 @@ void cmd_device(Index index, const bool cmd_bit){
   }
 }
 
-void execute_cmd_table(const std::bitset<havt::max_devices>& cmd_table){
+void execute_cmd_table(const std::bitset<havt::max_devices>& cmd_table) {
+  LOG_INFO_header
+  LOG_INFO_printlnF("Executing HAVT command table")
 
   // Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
   for (unsigned int index_int = Index::IMU_GYR; index_int != Index::_LENGTH; index_int++ )
@@ -98,8 +106,8 @@ void execute_cmd_table(const std::bitset<havt::max_devices>& cmd_table){
     }
   }
 
-  DEBUG_printlnF("")
-  return;
+  LOG_INFO_header
+  LOG_INFO_printlnF("Complete")
 }
 }  // namespace havt
 }  // namespace adcs

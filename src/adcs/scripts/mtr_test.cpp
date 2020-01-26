@@ -10,8 +10,6 @@
 // Cornell Univeristy
 //
 
-#define DEBUG
-
 #include <adcs/constants.hpp>
 #include <adcs/mtr.hpp>
 #include <adcs/utl/debug.hpp>

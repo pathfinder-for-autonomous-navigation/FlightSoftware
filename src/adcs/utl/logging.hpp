@@ -44,7 +44,7 @@
 #define LOG_ERROR_printF(x)   LOG_ERROR(LOG_SERIAL.print(F(x));)
 #define LOG_ERROR_println(x)  LOG_ERROR(LOG_SERIAL.println(x);)
 #define LOG_ERROR_printlnF(x) LOG_ERROR(LOG_SERIAL.println(F(x));)
-#define LOG_ERROR_header      LOG_WARN_printF("[log@adcs ERROR] $ ")
+#define LOG_ERROR_header      LOG_ERROR_printF("[log@adcs ERROR] $ ")
 
 #if LOG_LEVEL >= LOG_LEVEL_WARN
   #define LOG_WARN(x) x
@@ -68,7 +68,7 @@
 #define LOG_INFO_printF(x)   LOG_INFO(LOG_SERIAL.print(F(x));)
 #define LOG_INFO_println(x)  LOG_INFO(LOG_SERIAL.println(x);)
 #define LOG_INFO_printlnF(x) LOG_INFO(LOG_SERIAL.println(F(x));)
-#define LOG_INFO_header      LOG_WARN_printF("[log@adcs INFO ] $ ")
+#define LOG_INFO_header      LOG_INFO_printF("[log@adcs INFO ] $ ")
 
 #if LOG_LEVEL >= LOG_LEVEL_TRACE
   #define LOG_TRACE(x) x
@@ -80,6 +80,6 @@
 #define LOG_TRACE_printF(x)   LOG_TRACE(LOG_SERIAL.print(F(x));)
 #define LOG_TRACE_println(x)  LOG_TRACE(LOG_SERIAL.println(x);)
 #define LOG_TRACE_printlnF(x) LOG_TRACE(LOG_SERIAL.println(F(x));)
-#define LOG_TRACE_header      LOG_WARN_printF("[log@adcs TRACE] $ ")
+#define LOG_TRACE_header      LOG_TRACE_printF("[log@adcs TRACE] $ ")
 
 #endif

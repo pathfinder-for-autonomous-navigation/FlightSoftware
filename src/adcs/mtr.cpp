@@ -14,8 +14,8 @@
 // Determine the magnetic moment to PWM scaling factor.
 // Ensure pin assignments match with the body frame of the spacecraft
 
-#ifdef MTR_NO_LOG
-#undef LOG_LEVEL
+#ifdef MTR_LOG_LEVEL
+  #define LOG_LEVEL MTR_LOG_LEVEL
 #endif
 
 #include "constants.hpp"
@@ -60,8 +60,7 @@ void setup() {
 
 void actuate(unsigned char mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim) {
   LOG_TRACE_header
-  LOG_TRACE_println("Actuating MTRs to " + String(mtr_cmd(0)) + " "
-      + String(mtr_cmd(1)) + " " + String(mtr_cmd(2)))
+  LOG_TRACE_println("Actuating MTRs")
 
   // Account for calibration
   mtr_cmd = body_to_mtr * mtr_cmd;
@@ -99,6 +98,9 @@ void actuate(unsigned char mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim) {
 
   // Finally end the logging line
   LOG_TRACE_println()
+
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Complete")
 }
 }  // namespace mtr
 }  // namespace adcs
