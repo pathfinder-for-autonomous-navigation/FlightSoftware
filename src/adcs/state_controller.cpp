@@ -13,16 +13,12 @@
 
 // TODO : Update the HAVT table read once finalized
 
-#ifdef UMB_DEBUG
-#define DEBUG
-#endif
-
 #include "constants.hpp"
 #include "state.hpp"
 #include "state_controller.hpp"
 #include "state_registers.hpp"
 #include "utl/convert.hpp"
-#include "utl/debug.hpp"
+#include "utl/logging.hpp"
 
 #include <bitset>
 
@@ -90,7 +86,8 @@ static void copy_to(T volatile const (&t_src)[N], T (&t_dst)[N]) {
 }
 
 void on_i2c_recieve(unsigned int bytes) {
-  DEBUG_print(bytes) DEBUG_printF(" bytes recieved...")
+  LOG_INFO_header
+  LOG_INFO_println("Recieved " + String(bytes) + " over i2c")
 
   if (umb::wire->available() < 1) return;
   unsigned char address = endian_read<unsigned char>();
@@ -109,14 +106,17 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 1) break;
       registers.mode = endian_read<unsigned char>();
 
-      DEBUG_printF("...mode set to ") DEBUG_println(registers.mode)
+      LOG_INFO_header
+      LOG_INFO_println("ADCS_MODE set to " + String(registers.mode))
     }
 
     case Register::READ_POINTER: {
       if (umb::wire->available() < 1) break;
       registers.read_ptr = endian_read<unsigned char>();
 
-      DEBUG_printF("...read ptr set to ") DEBUG_println(registers.read_ptr)
+      LOG_INFO_header
+      LOG_INFO_println("READ_POINTER set to " + String(registers.read_ptr))
+
       break;
     }
 
@@ -124,7 +124,8 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 1) break;
       registers.rwa.mode = endian_read<unsigned char>();
 
-      DEBUG_printF("...rwa_mode set to ") DEBUG_println(registers.rwa.mode)
+      LOG_INFO_header
+      LOG_INFO_println("RWA_MODE set to " + String(registers.rwa.mode))
     }
 
     case Register::RWA_COMMAND: {
@@ -145,8 +146,10 @@ void on_i2c_recieve(unsigned int bytes) {
       copy_to(f, registers.rwa.cmd);
       registers.rwa.cmd_flg = CMDFlag::UPDATED;
 
-      DEBUG_printF("...rwa.cmd set to ") DEBUG_print(f[0]) DEBUG_printF(" ")
-      DEBUG_print(f[1]) DEBUG_printF(" ") DEBUG_println(f[2])
+      LOG_INFO_header
+      LOG_INFO_println("RWA_COMMAND set to " + String(f[0]) + " " +
+          String(f[1]) + " " + String(f[2]))
+
       break;      
     }
 
@@ -154,14 +157,17 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 1) break;
       registers.rwa.momentum_flt = utl::fp(endian_read<unsigned char>(), 0.0f, 1.0f);
 
-      DEBUG_printF("...rwa.momentum_flt set to ") DEBUG_println(registers.rwa.momentum_flt)
+      LOG_INFO_header
+      LOG_INFO_println("RWA_SPEED_FILTER set to " + String(registers.rwa.momentum_flt))
     }
 
     case Register::RWA_RAMP_FILTER: {
       if (umb::wire->available() < 1) break;
       registers.rwa.ramp_flt = utl::fp(endian_read<unsigned char>(), 0.0f, 1.0f);
 
-      DEBUG_printF("...rwa.ramp_flt set to ") DEBUG_println(registers.rwa.ramp_flt)
+      LOG_INFO_header
+      LOG_INFO_println("RWA_SPEED_FILTER set to " + String(registers.rwa.ramp_flt))
+
       break;
     }
 
@@ -169,7 +175,8 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 1) break;
       registers.mtr.mode = endian_read<unsigned char>();
 
-      DEBUG_printF("...mtr.mode set to ") DEBUG_println(registers.mtr.mode)
+      LOG_INFO_header
+      LOG_INFO_println("MTR_MODE set to " + String(registers.mtr.mode))
     }
 
     case Register::MTR_COMMAND: {
@@ -182,8 +189,9 @@ void on_i2c_recieve(unsigned int bytes) {
       copy_to(f, registers.mtr.cmd);
       registers.mtr.cmd_flg = CMDFlag::UPDATED;
 
-      DEBUG_printF("...mtr.cmd set to ") DEBUG_print(f[0]) DEBUG_printF(" ")
-      DEBUG_print(f[1]) DEBUG_printF(" ") DEBUG_println(f[2])
+      LOG_INFO_header
+      LOG_INFO_println("MTR_COMMAND set to " + String(f[0]) + " " + String(f[1])
+          + " " + String(f[2]))
     }
 
     case Register::MTR_LIMIT: {
@@ -192,7 +200,9 @@ void on_i2c_recieve(unsigned int bytes) {
       registers.mtr.moment_limit = utl::fp(endian_read<unsigned short>(), mtr::min_moment, mtr::max_moment);
       registers.mtr.cmd_flg = CMDFlag::UPDATED;
 
-      DEBUG_printF("...mtr.moment_limit set to ") DEBUG_println(registers.mtr.moment_limit)
+      LOG_INFO_header
+      LOG_INFO_println("MTR_LIMIT set to " + String(registers.mtr.moment_limit))
+
       break;
     }
 
@@ -203,15 +213,19 @@ void on_i2c_recieve(unsigned int bytes) {
         registers.ssa.mode = endian_read<unsigned char>();
       }
 
-      DEBUG_printF("...ssa.mode set to ") DEBUG_println(registers.ssa.mode)
+      LOG_INFO_header
+      LOG_INFO_println("SSA_MODE set to " + registers.ssa.mode)
+
       break;
     }
 
     case Register::SSA_VOLTAGE_FILTER: {
       if (umb::wire->available() < 1) break;
-      registers.ssa.voltage_flt = utl::fp(endian_read<unsigned char>(), 0.0f, 1.0f);\
+      registers.ssa.voltage_flt = utl::fp(endian_read<unsigned char>(), 0.0f, 1.0f);
 
-      DEBUG_printF("...ssa.voltage_flt set to ") DEBUG_println(registers.ssa.voltage_flt)
+      LOG_INFO_header
+      LOG_INFO_println("SSA_VOLTAGE_FILTER set to " + String(registers.ssa.voltage_flt))
+
       break;
     }
 
@@ -219,7 +233,9 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 1) break;
       registers.imu.mode = endian_read<unsigned char>();
 
-      DEBUG_printF("...imu.mode set to ") DEBUG_println(registers.imu.mode)
+      LOG_INFO_header
+      LOG_INFO_println("IMU_MODE set to " + String(registers.imu.mode))
+
       break;
     }
 
@@ -227,14 +243,16 @@ void on_i2c_recieve(unsigned int bytes) {
       if (umb::wire->available() < 1) break;
       registers.imu.mag_flt = utl::fp(endian_read<unsigned char>(), 0.0f, 1.0f);
 
-      DEBUG_printF("...imu.mag_flt set to ") DEBUG_println(registers.imu.mag_flt)
+      LOG_INFO_header
+      LOG_INFO_println("IMU_MAG_FILTER set to " + String(registers.imu.mag_flt))
     }
 
     case Register::IMU_GYR_FILTER: {
       if (umb::wire->available() < 1) break;
       registers.imu.gyr_flt = utl::fp(endian_read<unsigned char>(), 0.0f, 1.0f);
 
-      DEBUG_printF("...imu.gyr_flt set to ") DEBUG_println(registers.imu.gyr_flt)
+      LOG_INFO_header
+      LOG_INFO_println("IMU_GYR_FILTER set to " + String(registers.imu.gyr_flt))
     }
 
     case Register::IMU_GYR_TEMP_FILTER: {
