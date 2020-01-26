@@ -90,6 +90,14 @@ void setup() {
     while(!Serial);
 
     gs.setup();
+    // Comment out all of these except one to test specific functions
+    gs.set_pv_volt(200,300,400);
+    gs.set_pv_auto(0);
+    gs.turn_on_heater();
+    gs.turn_off_heater();
+    gs.reset();
+    gs.reboot();
+    gs.reset_counters();
 }
 
 void loop() {
