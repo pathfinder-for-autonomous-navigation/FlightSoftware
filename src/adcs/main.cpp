@@ -49,6 +49,10 @@ using namespace adcs;
 void setup() {
   LOG_init(9600)
 
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+  delay(5000);
+#endif
+
   LOG_INFO_header
   LOG_INFO_println("Logging interface initialized with logging level "
       + String(LOG_LEVEL))
