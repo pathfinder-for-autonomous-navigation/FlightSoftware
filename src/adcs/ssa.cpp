@@ -63,7 +63,7 @@ void setup() {
 #endif
 
   LOG_INFO_header
-  LOG_INFO_println("SSA module initialization complete")
+  LOG_INFO_println("Complete")
 }
 
 // Allows iterations across ADC channels in a loop
