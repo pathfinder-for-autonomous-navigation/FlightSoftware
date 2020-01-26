@@ -42,7 +42,7 @@ void MMC34160PJ::disable() {
 bool MMC34160PJ::calibrate() {
   uint16_t set_read[3];
   uint16_t reset_read[3];
-  std::array<std::array<int,3>, 3> offsets;
+  std::array<std::array<int,3>, 1> offsets;// average 1 offset
   for(auto& off: offsets){
     // Perform set operation and read
     this->fill_capacitor();
@@ -50,6 +50,7 @@ bool MMC34160PJ::calibrate() {
     this->set_operation();
     if (this->i2c_pop_errors()) return false;
     delay(1);
+    if (!this->single_read(set_read)) return false;//clear out old reading
     if (!this->single_read(set_read)) return false;
     if (this->i2c_pop_errors()) return false;
     // Perform the reset operation and read
