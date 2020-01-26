@@ -134,6 +134,7 @@ void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s,
  */
 void test_bool_serializer() {
     auto serializer = std::make_shared<Serializer<bool>>();
+    // dl is short for downlink
     auto dl_deserializer = std::make_shared<Serializer<bool>>();
 
     bool dest_ptr;
@@ -188,6 +189,7 @@ void test_uint_serializer() {
                   "To use this function, the value being tested must be a integer or character.");
 
     std::shared_ptr<Serializer<T>> serializer;
+    // dl is short for downlink
     std::shared_ptr<Serializer<T>> dl_deserializer;
 
 
@@ -277,6 +279,7 @@ void test_sint_serializer() {
 
     // Test a serializer beyond its bounds, in the negative direction
     std::shared_ptr<Serializer<T>> serializer;
+    // dl is short for downlink
     std::shared_ptr<Serializer<T>> dl_deserializer;
 
     serializer.reset(new Serializer<T>(0, 10, 10));
@@ -389,6 +392,7 @@ void test_float_or_double_serializer() {
                   "To use this function, the value being tested must either be a float or a double.");
 
     std::shared_ptr<Serializer<T>> serializer;
+    // dl is short for downlink
     std::shared_ptr<Serializer<T>> dl_deserializer;
     T threshold;
 
@@ -480,16 +484,12 @@ void test_vec_serializer() {
                          d_vector_t>::type;
 
     // TODO write serialization initializations for edge cases.
-
-    // size_t csz = 0;
-    // if (std::is_same<T, float>::value) csz = SerializerConstants::fvcsz;
-    // else csz = SerializerConstants::dvcsz;
     
     const size_t vec_bitsize = 40;
 
     // (Deterministically) generate random vectors of magnitude 2, and see if they work 
     // with the serializer.
-    // Criterion for functionality: vector is within ??? degree, and within 1% of magnitude
+    // Criterion for functionality: vector is within 0.5 degrees, and within 0.1% of magnitude
 
     srand(2);
     for(size_t i = 0; i < number_of_vec_test; i++) {
@@ -536,7 +536,7 @@ void test_vec_serializer() {
         else err_fmt_str = err_fmt_str_d;
         sprintf(err_str, err_fmt_str, i, x, y, z, original_result[0], original_result[1], original_result[2], angle, mag_err);
 
-        // assert less than .001% magnitude error
+        // assert less than .1% magnitude error
         TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.001, 0, mag_err, err_str);
 
         // assert angle has error < 0.5 degrees
