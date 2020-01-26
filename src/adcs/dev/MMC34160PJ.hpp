@@ -62,7 +62,7 @@ class MMC34160PJ : public I2CDevice {
    *  for this device. */
   void setup(i2c_t3 *wire, unsigned long timeout = DEV_I2C_TIMEOUT);
   /** Places the device in continous measurement mode with the current sample
-   *  rate setting. Also calibrates the device, takes about 300ms. If this is succesful then the device is marked as
+   *  rate setting. If this is succesful then the device is marked as
    *  functional.
    *  @return True if the reset was succesful and false otherwise. */
   virtual bool reset() override;

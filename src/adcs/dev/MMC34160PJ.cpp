@@ -22,7 +22,11 @@ void MMC34160PJ::setup(i2c_t3 *wire, unsigned long timeout) {
 bool MMC34160PJ::reset() {
   this->I2CDevice::reset();
   while (this->is_functional()) {
-    if(this->calibrate()) return true;
+    this->i2c_begin_transmission();
+    this->i2c_write(MMC34160PJ::REG::INTERNAL_CONTROL_0);
+    this->i2c_write(this->sample_rate | 0b10); // Sets the SR and cont. mode
+    this->i2c_end_transmission(I2C_NOSTOP);
+    if (!this->i2c_pop_errors()) return true;
   }
   return false;
 }

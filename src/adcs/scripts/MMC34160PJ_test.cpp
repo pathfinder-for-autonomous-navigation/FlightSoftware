@@ -37,6 +37,10 @@ void setup() {
     DEBUG_printlnF("Error")
     while (1);
   }
+  if (!mag.calibrate()) {
+    DEBUG_printlnF("Error")
+    while (1);
+  }
 }
 
 void loop() {
