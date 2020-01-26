@@ -91,9 +91,9 @@ void actuate(unsigned char mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim) {
     float cmd = (mtr_cmd(i) > mtr_lim ? mtr_lim : mtr_cmd(i));
     cmd = (mtr_cmd(i) < -mtr_lim ? -mtr_lim : mtr_cmd(i));
 
-    mtrs[i].actuate((int)(32768.0f * command / max_moment));
+    mtrs[i].actuate((int)(32768.0f * cmd / max_moment));
 
-    LOG_TRACE_print(" " + String((int)(32768.0f * command / max_moment)))
+    LOG_TRACE_print(" " + String((int)(32768.0f * cmd / max_moment)))
   }
 
   // Finally end the logging line

@@ -65,7 +65,7 @@ void setup() {
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
   for (unsigned int i = 0; i < 3; i++) {
-    if (!adc[i].is_functional()) {
+    if (!adcs[i].is_functional()) {
       LOG_ERROR_header
       LOG_ERROR_println("ADC" + String(i) + " initialization failed")
     }
@@ -121,25 +121,18 @@ void update_sensors(float speed_flt, float ramp_flt) {
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated speed reading " + String(readings(0)) + " "
-      + String(readings(1)) + " " + String(readings(2))
+      + String(readings(1)) + " " + String(readings(2)))
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated, filtered speed reading "
       + String(speed_rd(0)) + " " + String(speed_rd(1)) + " "
-      + String(speed_rd(2))
+      + String(speed_rd(2)))
 
   // Retain value on isolated error
   readings = ramp_rd;
 
   // Begin read for each enabled ADC
-  for (unsigned int i = 0; i < 3; i++)LOG_TRACE_header
-  LOG_TRACE_println("Updated ramp reading " + String(readings(0)) + " "
-      + String(readings(1)) + " " + String(readings(2))
-
-  LOG_TRACE_header
-  LOG_TRACE_println("Updated, filtered ramp reading "
-      + String(ramp_rd(0)) + " " + String(ramp_rd(1)) + " "
-      + String(ramp_rd(2))
+  for (unsigned int i = 0; i < 3; i++)
     if (adcs[i].is_functional())
       adcs[i].start_read(dev::ADS1015::CHANNEL::SINGLE_2);
 
@@ -154,12 +147,12 @@ void update_sensors(float speed_flt, float ramp_flt) {
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated ramp reading " + String(readings(0)) + " "
-      + String(readings(1)) + " " + String(readings(2))
+      + String(readings(1)) + " " + String(readings(2)))
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated, filtered ramp reading "
       + String(ramp_rd(0)) + " " + String(ramp_rd(1)) + " "
-      + String(ramp_rd(2))
+      + String(ramp_rd(2)))
 }
 
 void actuate(unsigned char rwa_mode, lin::Vector3f rwa_cmd) {

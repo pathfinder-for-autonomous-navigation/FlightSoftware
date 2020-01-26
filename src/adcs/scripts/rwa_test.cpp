@@ -15,11 +15,9 @@
  * output.
  * See plot/rwaPlot.py to interpret the CSV file. */
 
-#define DEBUG
-
 #include <adcs/constants.hpp>
 #include <adcs/rwa.hpp>
-#include <adcs/utl/debug.hpp>
+#include <adcs/utl/logging.hpp>
 
 #include <Arduino.h>
 #include <i2c_t3.h>
@@ -34,9 +32,9 @@ using namespace adcs;
 /** @fn take_data
  *  Takes reaction wheel data and prints out a timestamped CSV line. */
 void take_data() {
-  DEBUG_print(String(millis() - 10000) + ",")
+  LOG_INFO_print(String(millis() - 10000) + ",")
   rwa::update_sensors(SPEED_FLT, RAMP_FLT);
-  DEBUG_println()
+  LOG_INFO_println()
 }
 
 /** @fn single_component_test
@@ -74,7 +72,7 @@ void single_component_test(unsigned int wheel) {
 }
 
 void setup() {
-  DEBUG_init(9600)
+  DLOG_init(9600)
   Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000);
   delay(10000);
   rwa::setup();

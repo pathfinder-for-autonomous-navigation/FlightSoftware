@@ -61,10 +61,12 @@ void update_read_table(){
   LOG_TRACE_header
   LOG_TRACE_printlnF("Updating HAVT table from sensors")
 
-  //Loop until you reach _LENGTH, yes this effectiv
-void update_read_table(){
-  LOG_TRACE_header
-  LOG_TRACE_printlnF("Updating HAVT table from sensors")
+  //Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
+  for (unsigned int index_int = Index::IMU_GYR; index_int < Index::_LENGTH; index_int++ )
+  {
+    internal_table.set(index_int, dev_ptrs[index_int]->is_functional());
+  }
+
   // Set all extra bits of the internal table to 0, just in case radiation
   for (unsigned int index_int = Index::_LENGTH; index_int < havt::max_devices; index_int++)
   {

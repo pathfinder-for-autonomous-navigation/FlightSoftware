@@ -50,7 +50,7 @@ void setup() {
   LOG_init(9600)
 
   LOG_INFO_header
-  LOG_INFO_printlnF("Logging interface initialized with logging level "
+  LOG_INFO_println("Logging interface initialized with logging level "
       + String(LOG_LEVEL))
 
   // Initialize master I2C busses
@@ -168,7 +168,7 @@ void update_rwa() {
   rwa_cmd = {registers.rwa.cmd[0], registers.rwa.cmd[1], registers.rwa.cmd[2]};
   // Actuate if the copy was atomic
   if (registers.rwa.cmd_flg == CMDFlag::OUTDATED)
-    rwa::control(rwa_mode, rwa_cmd);
+    rwa::actuate(rwa_mode, rwa_cmd);
 
   // Update reaction wheel readings
   rwa::update_sensors(registers.rwa.momentum_flt, registers.rwa.ramp_flt); // TODO : Check if this is momentum of speed filter and refactor accordingly
@@ -204,7 +204,7 @@ void update_ssa() {
 }
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-static unsigned long long cycles = 0
+static unsigned long cycles = 0;
 #endif
 
 void loop() {
@@ -215,7 +215,7 @@ void loop() {
   update_havt();
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-  if (!(++cyles % 1000UL)) {
+  if (!(++cycles % 1000UL)) {
     LOG_INFO_header
     LOG_INFO_println("Heartbeat cycle count " + String(cycles))
 

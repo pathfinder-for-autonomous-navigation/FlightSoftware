@@ -48,7 +48,7 @@ void loop() {
       time_stamp = millis();
 
       LOG_INFO_header
-      LOG_INFO_println("Omega " + String(gyro.get_omegax()) + " "
+      LOG_INFO_println("Omega " + String(gyro.get_omega_x()) + " "
           + String(gyro.get_omega_y()) + " " + String(gyro.get_omega_z()))
 
       LOG_INFO_header

@@ -23,7 +23,7 @@
 
 namespace adcs {
 namespace imu {
-  
+
 dev::LIS2MDLTR mag1;
 
 dev::MMC34160PJ mag2;
@@ -80,11 +80,11 @@ static unsigned char update_mag(unsigned char mode, float mag_flt) {
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated magnetometer reading " + String(data(0)) + " "
-      + String(data(1)) + " " + String(data(2))
+      + String(data(1)) + " " + String(data(2)))
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated, filtered magnetometer reading "
-      + String(mag_rd(0)) + " " + String(mag_rd(1)) + " " + String(mag_rd(2))
+      + String(mag_rd(0)) + " " + String(mag_rd(1)) + " " + String(mag_rd(2)))
 
   return return_mode;
 }
@@ -126,11 +126,11 @@ static void update_gyr(float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated gyroscope reading " + String(data(0)) + " "
-      + String(data(1)) + " " + String(data(2))
+      + String(data(1)) + " " + String(data(2)))
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated, filtered gyroscope reading " + String(gyr_rd(0))
-      + " " + String(gyr_rd(1)) + " " + String(gyr_rd(2))
+      + " " + String(gyr_rd(1)) + " " + String(gyr_rd(2)))
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated gyroscope temperature reading "
@@ -143,7 +143,9 @@ static void update_gyr(float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
 
 void setup() {
   LOG_INFO_header
-  LOG_INFO_printlnF("Initializing the IMU module")gyr_temp_rd
+  LOG_INFO_printlnF("Initializing the IMU module")
+
+  // Setup and initialize the first magnetometer
   mag1.setup(mag1_wire, mag1_timeout);
   mag1.set_sample_rate(dev::LIS2MDLTR::SR::HZ_50);
   mag1.reset();
@@ -189,7 +191,7 @@ unsigned char update_sensors(unsigned char mode, float mag_flt, float gyr_flt,
   LOG_TRACE_printlnF("Updating IMU sensors")
 
   update_gyr(gyr_flt, gyr_temp_eq, gyr_temp_flt, gry_temp_k_p, gyr_temp_k_i,
-      gyr_temp_k_d); DEBUG_printF(",")
+      gyr_temp_k_d);
   unsigned char ret = update_mag(mode, mag_flt);
 
   LOG_TRACE_header

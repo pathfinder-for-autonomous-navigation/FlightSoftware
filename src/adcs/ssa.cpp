@@ -55,7 +55,7 @@ void setup() {
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
   for (unsigned int i = 0; i < 5; i++) {
-    if (!adc[i].is_functional()) {
+    if (!adcs[i].is_functional()) {
       LOG_ERROR_header
       LOG_ERROR_println("ADC" + String(i + 2) + " initialization failed")
     }

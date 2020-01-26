@@ -487,7 +487,7 @@ void on_i2c_request() {
 
     default: {
       LOG_WARN_header
-      LOG_WARN_printlnF("Invalid address requested over I2C: "
+      LOG_WARN_println("Invalid address requested over I2C: "
           + String(address))
     }
   }

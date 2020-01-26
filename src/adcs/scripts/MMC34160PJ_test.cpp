@@ -29,10 +29,10 @@ void setup() {
   Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
 
   delay(5000); // Allow magnetometer to start up
-  DEBUG_printlnF("Starting")
   mag.setup(&Wire2);
   if (!mag.reset()) {
-    DEBUG_printlnF("Error")
+    LOG_ERROR_header
+    LOG_ERROR_printlnF("Initialization failed")
     while (1);
   }
 }
@@ -43,12 +43,13 @@ void loop() {
     if (!mag.is_functional()) while (1);
 
   if (mag.read()) {
-    DEBUG_println(String(mag.get_b_x()) + "," + String(mag.get_b_y()) + "," +
+    LOG_INFO_header
+    LOG_INFO_println(String(mag.get_b_x()) + "," + String(mag.get_b_y()) + "," +
         String(mag.get_b_z()))
   } else {
-    DEBUG_printlnF("Error")
+    LOG_ERROR_header
+    LOG_ERROR_printlnF("Read error")
   }
 
   delay(2000);
-  
 }
