@@ -31,6 +31,9 @@ class GomspaceController : public TimedControlTask<void> {
 
    protected:
     Devices::Gomspace &gs;
+
+    Serializer<bool> get_hk_sr;
+    ReadableStateField<bool> get_hk_f;
     
     Serializer<unsigned int> vboost_sr;
     ReadableStateField<unsigned int> vboost1_f;

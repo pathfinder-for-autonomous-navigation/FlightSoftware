@@ -3,6 +3,9 @@
 GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
+    get_hk_sr(),
+    get_hk_f("gomspace.get_hk", get_hk_sr),
+
     vboost_sr(0,4000,9), 
     vboost1_f("gomspace.vboost.output1", vboost_sr),
     vboost2_f("gomspace.vboost.output2", vboost_sr),
@@ -86,6 +89,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
 
     {
+        add_readable_field(get_hk_f);
+        
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
         add_readable_field(vboost3_f);
@@ -149,8 +154,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
      }
 
 void GomspaceController::execute() {
-    //get hk data from struct in driver
-    gs.get_hk();
+    //Check that we can get hk data
+    get_hk_f.set(gs.get_hk());
 
     // On the first control cycle, set the command statefields to the current values 
     // in the hk struct to prevent unwanted writes.
