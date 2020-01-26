@@ -578,27 +578,25 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         
         // if there's a magnitude serializer, save data into the member variable
         if(N == 3){
-            std::vector<bool> bit_vec;
+            // use const_cast to circumvent get_bit_array returning a constant reference
+            bit_array& local_arr_ref = const_cast <bit_array&>(magnitude_serializer->get_bit_array());
             for(size_t i = 0; i < magnitude_serializer->bitsize(); i++){
-                bit_vec.push_back(this->serialized_val[poor_mans_pointer]);
+                local_arr_ref[i] = this->serialized_val[poor_mans_pointer];
                 poor_mans_pointer++;
             }
-            bit_array new_bitarr(bit_vec);
-            magnitude_serializer->set_bit_array(new_bitarr);
+            magnitude_serializer->set_bit_array(local_arr_ref);
         }
 
         // loop through each serializer
         for(unsigned int i = 0; i<(N-1); i++){
-            std::vector<bool> bit_vec;
-
+            bit_array& local_arr_ref = const_cast <bit_array&>(vector_element_serializers[i]->get_bit_array());
             // loop through each bit belonging to the serializer
             for(size_t j = 0; j < vector_element_serializers[i]->bitsize(); j++){       
-                bit_vec.push_back(static_cast<bool>(this->serialized_val[poor_mans_pointer]));
+                local_arr_ref[j] = this->serialized_val[poor_mans_pointer];
                 poor_mans_pointer++;
             }
 
-            bit_array new_bitarr(bit_vec);
-            vector_element_serializers[i]->set_bit_array(new_bitarr);
+            vector_element_serializers[i]->set_bit_array(local_arr_ref);
         }
 
         // set to true if N == 3 and max. comp is negative
