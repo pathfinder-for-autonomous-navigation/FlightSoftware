@@ -154,7 +154,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
 void GomspaceController::execute() {
     //Check that we can get hk data
-    if (gs.get_hk()){
+    if (!gs.get_hk()){
         get_hk_fault.signal();
     }
     else{
