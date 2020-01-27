@@ -566,23 +566,22 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
     void deserialize(std::array<T, N>* dest) const override {
         // a counter to keep track of the current serialized val index to process
-        unsigned int poor_mans_pointer = 0;
+        unsigned int idx_pointer = 0;
 
         // read which component index is highest into a bitset for later use
         std::bitset<2> max_comp_bitset(0);
         for(size_t i = 0; i<max_component.size(); i++){
-            max_comp_bitset[i] = this->serialized_val[poor_mans_pointer];
-            //max_component[i] = this->serialized_val[poor_mans_pointer];
-            poor_mans_pointer++;
+            max_comp_bitset[i] = this->serialized_val[idx_pointer];
+            //max_component[i] = this->serialized_val[idx_pointer];
+            idx_pointer++;
         }
         
         // if there's a magnitude serializer, save data into the member variable
         if(N == 3){
-            // use const_cast to circumvent get_bit_array returning a constant reference
             bit_array& local_arr_ref = const_cast <bit_array&>(magnitude_serializer->get_bit_array());
             for(size_t i = 0; i < magnitude_serializer->bitsize(); i++){
-                local_arr_ref[i] = this->serialized_val[poor_mans_pointer];
-                poor_mans_pointer++;
+                local_arr_ref[i] = this->serialized_val[idx_pointer];
+                idx_pointer++;
             }
             magnitude_serializer->set_bit_array(local_arr_ref);
         }
@@ -592,8 +591,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             bit_array& local_arr_ref = const_cast <bit_array&>(vector_element_serializers[i]->get_bit_array());
             // loop through each bit belonging to the serializer
             for(size_t j = 0; j < vector_element_serializers[i]->bitsize(); j++){       
-                local_arr_ref[j] = this->serialized_val[poor_mans_pointer];
-                poor_mans_pointer++;
+                local_arr_ref[j] = this->serialized_val[idx_pointer];
+                idx_pointer++;
             }
 
             vector_element_serializers[i]->set_bit_array(local_arr_ref);
@@ -602,8 +601,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         // set to true if N == 3 and max. comp is negative
         bool max_comp_is_negative = false;
         if (N == 3){
-            max_comp_is_negative = this->serialized_val[poor_mans_pointer];
-            poor_mans_pointer++;
+            max_comp_is_negative = this->serialized_val[idx_pointer];
+            idx_pointer++;
         }    
 
         T magnitude = 0.0;
