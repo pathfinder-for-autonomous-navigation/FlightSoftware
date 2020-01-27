@@ -178,10 +178,10 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     }
 #endif
 
-    constexpr size_t MAX_NUM_JSON_MSGS = 20;
+    constexpr size_t MAX_NUM_JSON_MSGS = 5;
 
     // Get all chunks of the buffer that are complete JSON messages. Read at
-    // most five messages from the buffer. (It's unlikely that more than 20 messages
+    // most five messages from the buffer. (It's unlikely that more than 5 messages
     // can fit within a 512 byte buffer)
     size_t json_msg_starts[MAX_NUM_JSON_MSGS] = {0};
     size_t num_json_msgs_found = 0;

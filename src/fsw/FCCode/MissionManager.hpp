@@ -28,7 +28,7 @@ class MissionManager : public TimedControlTask<void> {
     #ifdef FLIGHT
         static constexpr unsigned int deployment_wait = 15000; // ~30 mins
     #else
-        static constexpr unsigned int deployment_wait = 10;
+        static constexpr unsigned int deployment_wait = 100;
     #endif
     /**
      * @brief Number of control cycles to wait before declaring "too long since comms".
