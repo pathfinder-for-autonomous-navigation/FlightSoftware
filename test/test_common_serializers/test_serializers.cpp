@@ -12,39 +12,35 @@
 constexpr static int number_of_vec_test = 100;
 
 /**
+ * @brief Returns the magnitude of a vector
+ * 
+ */
+template <typename T, size_t N>
+T magnitude_of(std::array<T, N>& src){
+    lin::Vector<T, N> lin_vec;
+
+    if(N == 4)
+        lin_vec = {src[0], src[1], src[2], src[3]};
+    else 
+        lin_vec = {src[0], src[1], src[2]};
+    
+    return lin::norm(lin_vec);
+}
+
+/**
  * @brief Normalizes a vector or quaternion
  * 
  */
 template <typename T, size_t N>
 void normalize(std::array<T, N>& src) {
 
-    lin::Vector<T, N> normd; // short for normalized; normd = normalized
-
-    if(N == 4)
-        normd = {src[0], src[1], src[2], src[3]};
-    else 
-        normd = {src[0], src[1], src[2]};
-
-    normd = normd / lin::norm(normd);
+    T magnitude = magnitude_of(src);
     
     for(size_t i = 0; i<N; i++){
-        src[i] = normd(i);
+        src[i] = src[i] / magnitude;
     }
 
     return;
-}
-
-/**
- * @brief Returns the magnitude of a vector
- * 
- */
-template <typename T, size_t N>
-T magnitude_of(std::array<T, N>& src){
-    T sum = 0.0;
-    for(size_t i = 0; i<N; i++){
-        sum += src[i]*src[i];
-    }
-    return std::sqrt(sum);
 }
 
 /**
@@ -517,12 +513,12 @@ void test_vec_serializer() {
 
         downlink_deserializer->deserialize(&result);
 
-        // normalize the input even though it should've already been normalized!
+        // make a copy of the result
         vector_t original_result(result);
 
+        // normalize the vectors for angle calculation only
         normalize<T, 3>(vec);
         normalize<T, 3>(result);
-
         T angle = angle_between(vec, result);
 
         T mag_err = std::abs(magnitude_of(original_result)/magnitude_of(original) - 1.0) ;
