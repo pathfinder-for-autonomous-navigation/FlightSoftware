@@ -26,14 +26,14 @@ Tank::Tank(size_t _num_valves) :
 num_valves(_num_valves) {}
 
 Tank1::Tank1() : Tank(2) {
-    mandatory_wait_time = 10*1000; // 10 seconds
+    mandatory_wait_time_ms = 10*1000; // 10 seconds
     valve_pins[0] = 27; // Main tank 1 to tank 2 valve
     valve_pins[1] = 28; // Backup tank 1 to tank 2 valve
     temp_sensor_pin = 21;
 }
 
 Tank2::Tank2() : Tank(4) {
-    mandatory_wait_time = 3; // 3 ms
+    mandatory_wait_time_ms = 3; // 3 ms
     valve_pins[0] = 3; // Nozzle valve
     valve_pins[1] = 4; // Nozzle valve
     valve_pins[2] = 5; // Nozzle valve
@@ -252,7 +252,7 @@ bool PropulsionSystem::open_valve(Tank& tank, size_t valve_idx)
         return false;
     noInterrupts();
     {
-        if (tank.valve_lock.procure(tank.mandatory_wait_time*1000 - 100))
+        if (tank.valve_lock.procure(tank.mandatory_wait_time_ms*1000 - 100))
         {
             digitalWrite(tank.valve_pins[valve_idx], HIGH);
             tank.is_valve_opened[valve_idx] = 1;

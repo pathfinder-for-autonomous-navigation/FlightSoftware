@@ -124,7 +124,7 @@ public:
 #endif
 
     /**
-     * @brief Turns on IntervalTimer thurst_value_loop_timer, causes an interrupt
+     * @brief Turns on IntervalTimer thrust_value_loop_timer, causes an interrupt
      * every 3 ms
      * @return True if tank2 is now set to fire at time tank2.start_time.
      * 
@@ -201,7 +201,7 @@ public:
      * to 0
      * @return True if schedule is zero AND timer is enabled.
      */
-    bool is_done_firing();
+    bool is_done_firing() const;
 
     /**
      * @brief opens the valve specified by valve_idx in the specified tank
@@ -311,7 +311,7 @@ public:
      * @brief (Analog) reads the temperature sensor for this tank and 
      * returns its value.
      */
-    int get_temp();
+    int get_temp() const;
 
     /**
      * @brief Returns true if the valve is open
@@ -319,7 +319,7 @@ public:
      * (Digital) reads the pin for the specified valve and returns true
      * if that pin is HIGH
      */
-    bool is_valve_open(size_t valve_idx);
+    bool is_valve_open(size_t valve_idx) const;
 
     /**
      * @brief Returns true if the TimedLock for this tank is unlocked (free)
@@ -342,7 +342,7 @@ protected:
 
     size_t num_valves;
     // mandatory wait time between consecutive openings (in ms)
-    uint32_t mandatory_wait_time;
+    uint32_t mandatory_wait_time_ms;
     // pin number of the temperature sensor
     uint8_t temp_sensor_pin;
     // mapping of physical GPIO pin #s (values) to logical pin #s
@@ -375,12 +375,12 @@ public:
 
     void setup();
 
-    float get_pressure();
+    float get_pressure() const;
 
     /**
      * @brief Returns the current value of the schedule for the specified valve
      */
-    unsigned int get_schedule_at(size_t valve_num);
+    unsigned int get_schedule_at(size_t valve_num) const;
 
 private:
     #ifndef DESKTOP
