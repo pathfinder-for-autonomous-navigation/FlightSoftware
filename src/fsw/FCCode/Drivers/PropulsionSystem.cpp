@@ -87,12 +87,12 @@ void Tank2::setup()
 
 /* Tank implementation */
 
-int Tank::get_temp()
+int Tank::get_temp() const
 {
     return analogRead(temp_sensor_pin);
 }
 
-bool Tank::is_valve_open(size_t valve_idx)
+bool Tank::is_valve_open(size_t valve_idx) const
 {
     if (valve_idx >= num_valves)
         return false;
@@ -110,7 +110,7 @@ void Tank::close_all_valves()
 
 /* Tank2 implementation */
 
-float Tank2::get_pressure() {
+float Tank2::get_pressure() const {
     static int low_gain_read = 0;
     static int high_gain_read = 0;
     static float pressure = 0;
@@ -129,7 +129,7 @@ float Tank2::get_pressure() {
     return pressure;
 }
 
-unsigned int Tank2::get_schedule_at(size_t valve_num)
+unsigned int Tank2::get_schedule_at(size_t valve_num) const
 {
     if (valve_num >= num_valves)
         return 0;
@@ -234,7 +234,7 @@ bool PropulsionSystem::clear_schedule()
     return true;
 }
 
-bool PropulsionSystem::is_done_firing()
+bool PropulsionSystem::is_done_firing()const
 {
     if (!is_enabled)
         return false;
