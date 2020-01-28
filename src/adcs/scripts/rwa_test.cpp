@@ -21,10 +21,10 @@
 
 #include <Arduino.h>
 #include <i2c_t3.h>
-#include <lin.hpp>
 #ifdef abs
 #undef abs
 #endif
+#include <lin.hpp>
 
 using namespace adcs;
 
