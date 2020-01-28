@@ -5,10 +5,8 @@
 #include <algorithm>
 #include <climits>
 #include <tuple>
-#ifndef DESKTOP
 #include "DCDC.hpp"
 using namespace Devices;
-#endif
 
 #ifdef DESKTOP
 static void interrupts(){}
@@ -43,11 +41,7 @@ Tank2::Tank2() : Tank(4) {
 
 /** Initialize static variables */
 
-#ifndef DESKTOP
 PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
-#else
-PropulsionSystem::PropulsionSystem(){}
-#endif
 volatile bool PropulsionSystem::is_enabled = 0;
 Tank1 PropulsionSystem::tank1 = Tank1();
 Tank2 PropulsionSystem::tank2 = Tank2();

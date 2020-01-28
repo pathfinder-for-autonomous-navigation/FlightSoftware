@@ -16,8 +16,8 @@
  *  - SpikeAndHold must be enabled in order to use this system
  */
 #include <array>
-#ifndef DESKTOP
 #include <fsw/FCCode/Devices/Device.hpp>
+#ifndef DESKTOP
 #include <Arduino.h>
 #include <IntervalTimer.h>
 #endif
