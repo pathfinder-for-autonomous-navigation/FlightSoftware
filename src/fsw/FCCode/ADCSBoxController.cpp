@@ -1,8 +1,8 @@
 #include "ADCSBoxController.hpp"
 #include "adcs_state_t.enum"
 
-#include <adcs/adcs_constants.hpp>
-#include <adcs/adcs_havt_devices.hpp>
+#include <adcs/constants.hpp>
+#include <adcs/havt_devices.hpp>
 
 ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
@@ -35,7 +35,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
     
         //fill vector of pointers to statefields for havt
         char buffer[50];
-        for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++)
+        for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
         {
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_cmd.havt_device");
@@ -47,16 +47,16 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
 void ADCSBoxController::execute(){
     // set to passive/disabled if in startup
     if(adcs_state_fp->get() == static_cast<unsigned char>(adcs_state_t::startup))
-        adcs_system.set_mode(ADCSMode::ADCS_PASSIVE);
+        adcs_system.set_mode(adcs::ADCSMode::ADCS_PASSIVE);
     else
-        adcs_system.set_mode(ADCSMode::ADCS_ACTIVE);
+        adcs_system.set_mode(adcs::ADCSMode::ADCS_ACTIVE);
 
     // dump all commands
-    if(rwa_mode_fp->get() == RWAMode::RWA_SPEED_CTRL)
+    if(rwa_mode_fp->get() == adcs::RWAMode::RWA_SPEED_CTRL)
         adcs_system.set_rwa_mode(rwa_mode_fp->get(), rwa_speed_cmd_fp->get());
-    else if(rwa_mode_fp->get() == RWAMode::RWA_ACCEL_CTRL)
+    else if(rwa_mode_fp->get() == adcs::RWAMode::RWA_ACCEL_CTRL)
         adcs_system.set_rwa_mode(rwa_mode_fp->get(), rwa_torque_cmd_fp->get());
-    else if(rwa_mode_fp->get() == RWAMode::RWA_DISABLED){
+    else if(rwa_mode_fp->get() == adcs::RWAMode::RWA_DISABLED){
         adcs_system.set_rwa_mode(rwa_mode_fp->get(), std::array<float, 3>{0,0,0});
     }
 
@@ -68,8 +68,8 @@ void ADCSBoxController::execute(){
     adcs_system.set_mtr_limit(mtr_limit_fp->get());
 
     //if calculation is complete/fail set the mode to in_progress to begin a new calc
-    if(ssa_mode_fp->get() != SSAMode::SSA_IN_PROGRESS)
-        adcs_system.set_ssa_mode(SSAMode::SSA_IN_PROGRESS);
+    if(ssa_mode_fp->get() != adcs::SSAMode::SSA_IN_PROGRESS)
+        adcs_system.set_ssa_mode(adcs::SSAMode::SSA_IN_PROGRESS);
     
     adcs_system.set_ssa_voltage_filter(ssa_voltage_filter_fp->get());
 
@@ -83,8 +83,8 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
 
     // apply havt cmd table
-    std::bitset<havt::max_devices> temp_cmd_table(0);
-    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++)
+    std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
+    for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
         temp_cmd_table.set(idx, havt_cmd_table_vector_fp[idx]->get());
     }

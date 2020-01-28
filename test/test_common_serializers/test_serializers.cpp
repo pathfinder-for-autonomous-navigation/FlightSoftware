@@ -2,11 +2,80 @@
 #include <common/Serializer.hpp>
 #include <stdlib.h>
 #include <memory>
-#include <sstream>
 
+#include <lin.hpp> // for cleaner inner products
 // ============================================================================================= //
 //                                      Helper methods                                           //
 // ============================================================================================= //
+
+// number of vector tests to run
+constexpr static int number_of_vec_test = 100;
+
+/**
+ * @brief Returns the magnitude of a vector
+ * 
+ */
+template <typename T, size_t N>
+T magnitude_of(std::array<T, N>& src){
+    lin::Vector<T, N> lin_vec;
+
+    if(N == 4)
+        lin_vec = {src[0], src[1], src[2], src[3]};
+    else 
+        lin_vec = {src[0], src[1], src[2]};
+    
+    return lin::norm(lin_vec);
+}
+
+/**
+ * @brief Normalizes a vector or quaternion
+ * 
+ */
+template <typename T, size_t N>
+void normalize(std::array<T, N>& src) {
+
+    T magnitude = magnitude_of(src);
+    
+    for(size_t i = 0; i<N; i++){
+        src[i] = src[i] / magnitude;
+    }
+
+    return;
+}
+
+/**
+ * @brief Returns the angle between two quaternions or vectors
+ * 
+ */
+template <typename T, size_t N>
+T angle_between(std::array<T, N>& a, std::array<T, N>& b){
+    lin::Vector<T, N> lin_a;
+    lin::Vector<T, N> lin_b;
+
+    if(N == 4){
+        lin_a = {a[0], a[1], a[2], a[3]};
+        lin_b = {b[0], b[1], b[2], b[3]};
+    }
+    else{
+        lin_a = {a[0], a[1], a[2]};
+        lin_b = {b[0], b[1], b[2]};
+    }
+
+    T inner_product = lin::dot(lin_a, lin_b);
+    
+    T angle;
+    if(N == 4){
+        // to account for quat could be flipped
+        inner_product = std::abs(inner_product);
+        angle = std::acos(inner_product)*2.0;
+    }
+    else
+        angle = std::acos(inner_product);
+
+    angle = angle * 360.0 / (2 * 3.14159265);
+
+    return angle;
+}
 
 /**
  * @brief Helper methods to test serialization and deserialization.
@@ -18,10 +87,13 @@
  * compression, so some values are not equal to their output.)
  */
 template <typename T>
-void test_value(std::shared_ptr<Serializer<T>>& s, const T val, const T output) {
+void test_value(std::shared_ptr<Serializer<T>>& s,
+                std::shared_ptr<Serializer<T>>& d,
+                const T val, const T output) {
     T output_val;
     s->serialize(val);
-    s->deserialize(&output_val);
+    d->set_bit_array(s->get_bit_array());
+    d->deserialize(&output_val);
     TEST_ASSERT_EQUAL(output, output_val);
 }
 
@@ -30,7 +102,8 @@ void test_value(std::shared_ptr<Serializer<T>>& s, const T val, const T output) 
  * doubles.
  */
 template <typename T>
-void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, const T val, const T output,
+void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, 
+                                std::shared_ptr<Serializer<T>>& d, const T val, const T output,
                                 const T threshold = 0) {
     static_assert(std::is_same<T, float>::value || 
                   std::is_same<T, double>::value, 
@@ -38,7 +111,8 @@ void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, const T val, 
 
     T output_val;
     s->serialize(val);
-    s->deserialize(&output_val);
+    d->set_bit_array(s->get_bit_array());
+    d->deserialize(&output_val);
 
     if (std::is_same<T, float>::value) {
         TEST_ASSERT_FLOAT_WITHIN(threshold, output, output_val);
@@ -56,11 +130,14 @@ void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, const T val, 
  */
 void test_bool_serializer() {
     auto serializer = std::make_shared<Serializer<bool>>();
+    // dl is short for downlink
+    auto dl_deserializer = std::make_shared<Serializer<bool>>();
+
     bool dest_ptr;
 
     // Normal serialize and deserialize
-    test_value(serializer, true, true);
-    test_value(serializer, false, false);
+    test_value(serializer, dl_deserializer, true, true);
+    test_value(serializer, dl_deserializer, false, false);
 
     // String-based deserialize
     TEST_ASSERT(serializer->deserialize("true", &dest_ptr));
@@ -108,54 +185,72 @@ void test_uint_serializer() {
                   "To use this function, the value being tested must be a integer or character.");
 
     std::shared_ptr<Serializer<T>> serializer;
+    // dl is short for downlink
+    std::shared_ptr<Serializer<T>> dl_deserializer;
+
 
     /** Test edge-case initializations **/
     serializer.reset(new Serializer<T>(0, 0, 0));
-    test_value<T>(serializer, 0, 0);
-    test_value<T>(serializer, 1, 0);
+    dl_deserializer.reset(new Serializer<T>(0, 0, 0));
+
+    test_value<T>(serializer, dl_deserializer,  0, 0);
+    test_value<T>(serializer, dl_deserializer,  1, 0);
+
     serializer.reset(new Serializer<T>(0, 1, 0));
-    test_value<T>(serializer, 0, 0);
-    test_value<T>(serializer, 1, 0);
+    dl_deserializer.reset(new Serializer<T>(0, 1, 0));
+
+    test_value<T>(serializer, dl_deserializer,  0, 0);
+    test_value<T>(serializer, dl_deserializer,  1, 0);
+
     serializer.reset(new Serializer<T>(0, 1, 1));
-    test_value<T>(serializer, 0, 0);
-    test_value<T>(serializer, 1, 1);
+    dl_deserializer.reset(new Serializer<T>(0, 1, 1));
+    test_value<T>(serializer, dl_deserializer,  0, 0);
+    test_value<T>(serializer, dl_deserializer,  1, 1);
 
     serializer.reset(new Serializer<T>(10, 10, 10));
-    test_value<T>(serializer, 10, 10);
-    test_value<T>(serializer, 10, 10);
-    test_value<T>(serializer, 3, 10);
-    test_value<T>(serializer, 5, 10);
+    dl_deserializer.reset(new Serializer<T>(10, 10, 10));
+
+    test_value<T>(serializer, dl_deserializer,  10, 10);
+    test_value<T>(serializer, dl_deserializer,  10, 10);
+    test_value<T>(serializer, dl_deserializer,  3, 10);
+    test_value<T>(serializer, dl_deserializer,  5, 10);
 
     // Test a normal serializer that has min = 0 with more
     // than enough bitspace.
     serializer.reset(new Serializer<T>(0, 10, 10));
+    dl_deserializer.reset(new Serializer<T>(0, 10, 10));
+
     for (T i = 0; i <= 10; i++) {
-        test_value<T>(serializer, i, i);
+        test_value<T>(serializer, dl_deserializer,  i, i);
     }
     // Test beyond bounds
-    test_value<T>(serializer, 11, 10);
+    test_value<T>(serializer, dl_deserializer,  11, 10);
 
     // Test a normal serializer that starts at a nonzero value,
     // with more than enough bitspace
     serializer.reset(new Serializer<T>(3, 10, 10));
+    dl_deserializer.reset(new Serializer<T>(3, 10, 10));
+
     for (T i = 3; i <= 10; i++) {
-        test_value<T>(serializer, i, i);
+        test_value<T>(serializer, dl_deserializer,  i, i);
     }
     // Test beyond bounds
-    test_value<T>(serializer, 2, 3);
+    test_value<T>(serializer, dl_deserializer,  2, 3);
 
     // Test a normal serializer that starts at a zero value,
     // but with restricted bitspace
     serializer.reset(new Serializer<T>(0, 10, 3));
-    test_value<T>(serializer, 0, 0);
-    test_value<T>(serializer, 1, 0);
-    test_value<T>(serializer, 2, 2);
-    test_value<T>(serializer, 3, 2);
-    test_value<T>(serializer, 4, 4);
-    test_value<T>(serializer, 5, 4);
+    dl_deserializer.reset(new Serializer<T>(0, 10, 3));
+    test_value<T>(serializer, dl_deserializer,  0, 0);
+    test_value<T>(serializer, dl_deserializer,  1, 0);
+    test_value<T>(serializer, dl_deserializer,  2, 2);
+    test_value<T>(serializer, dl_deserializer,  3, 2);
+    test_value<T>(serializer, dl_deserializer,  4, 4);
+    test_value<T>(serializer, dl_deserializer,  5, 4);
 
     // Test string-based deserialization
     serializer.reset(new Serializer<T>(0, 10, 3));
+
     T val;
 
     TEST_ASSERT(serializer->deserialize("0", &val));
@@ -180,42 +275,61 @@ void test_sint_serializer() {
 
     // Test a serializer beyond its bounds, in the negative direction
     std::shared_ptr<Serializer<T>> serializer;
+    // dl is short for downlink
+    std::shared_ptr<Serializer<T>> dl_deserializer;
+
     serializer.reset(new Serializer<T>(0, 10, 10));
-    test_value<T>(serializer, -1, 0);
+    dl_deserializer.reset(new Serializer<T>(0, 10, 10));
+
+    test_value<T>(serializer, dl_deserializer,  -1, 0);
 
     // Test serializer signed-value edge-case initializations
     serializer.reset(new Serializer<T>(-1, 0, 0));
-    test_value<T>(serializer, 0, -1);
-    test_value<T>(serializer, -1, -1);
+    dl_deserializer.reset(new Serializer<T>(-1, 0, 0));
+
+    test_value<T>(serializer, dl_deserializer,  0, -1);
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
+
     serializer.reset(new Serializer<T>(-1, 0, 1));
-    test_value<T>(serializer, -1, -1);
-    test_value<T>(serializer, 0, 0);
+    dl_deserializer.reset(new Serializer<T>(-1, 0, 1));
+
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
+    test_value<T>(serializer, dl_deserializer,  0, 0);
 
     serializer.reset(new Serializer<T>(-10, -10, 10));
-    test_value<T>(serializer, -10, -10);
-    test_value<T>(serializer, 12, -10);
-    test_value<T>(serializer, 10, -10);
-    test_value<T>(serializer, 3, -10);
-    test_value<T>(serializer, 5, -10);
-    test_value<T>(serializer, -1, -10);
-    test_value<T>(serializer, -5, -10);
+    dl_deserializer.reset(new Serializer<T>(-10, -10, 10));
+
+    test_value<T>(serializer, dl_deserializer,  -10, -10);
+    test_value<T>(serializer, dl_deserializer,  12, -10);
+    test_value<T>(serializer, dl_deserializer,  10, -10);
+    test_value<T>(serializer, dl_deserializer,  3, -10);
+    test_value<T>(serializer, dl_deserializer,  5, -10);
+    test_value<T>(serializer, dl_deserializer,  -1, -10);
+    test_value<T>(serializer, dl_deserializer,  -5, -10);
 
     // Test serializer signed-value normal initializations
     serializer.reset(new Serializer<T>(-1, 10, 10));
-    test_value<T>(serializer, -1, -1);
+    dl_deserializer.reset(new Serializer<T>(-1, 10, 10));
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
+
     serializer.reset(new Serializer<T>(-1, 10, 1));
-    test_value<T>(serializer, -1, -1);
-    test_value<T>(serializer, 3, -1);
-    test_value<T>(serializer, 8, -1);
-    test_value<T>(serializer, 10, 10);
+    dl_deserializer.reset(new Serializer<T>(-1, 10, 1));
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
+    test_value<T>(serializer, dl_deserializer,  3, -1);
+    test_value<T>(serializer, dl_deserializer,  8, -1);
+    test_value<T>(serializer, dl_deserializer,  10, 10);
+    
     serializer.reset(new Serializer<T>(-3, -1, 10));
-    test_value<T>(serializer, -2, -2);
-    test_value<T>(serializer, -3, -3);
+    dl_deserializer.reset(new Serializer<T>(-3, -1, 10));
+    test_value<T>(serializer, dl_deserializer,  -2, -2);
+    test_value<T>(serializer, dl_deserializer,  -3, -3);
+
     serializer.reset(new Serializer<T>(-5, -1, 1));
-    test_value<T>(serializer, -5, -5);
-    test_value<T>(serializer, -4, -5);
-    test_value<T>(serializer, -2, -5);
-    test_value<T>(serializer, -1, -1);
+    dl_deserializer.reset(new Serializer<T>(-5, -1, 1));
+    test_value<T>(serializer, dl_deserializer,  -5, -5);
+    test_value<T>(serializer, dl_deserializer,  -4, -5);
+    test_value<T>(serializer, dl_deserializer,  -2, -5);
+    test_value<T>(serializer, dl_deserializer,  -1, -1);
 
     // Test string-based deserialization
     serializer.reset(new Serializer<T>(-1, 10, 1));
@@ -274,45 +388,54 @@ void test_float_or_double_serializer() {
                   "To use this function, the value being tested must either be a float or a double.");
 
     std::shared_ptr<Serializer<T>> serializer;
+    // dl is short for downlink
+    std::shared_ptr<Serializer<T>> dl_deserializer;
     T threshold;
 
     // Test edge-case initializations
     // TODO
     serializer.reset(new Serializer<T>(0, 0, 5));
+    dl_deserializer.reset(new Serializer<T>(0, 0, 5));
+    
     threshold = 0;
-    test_value_float_or_double<T>(serializer, 0, 0, threshold);
-    test_value_float_or_double<T>(serializer, -1, 0, threshold);
-    test_value_float_or_double<T>(serializer, 2, 0, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  0, 0, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  -1, 0, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  2, 0, threshold);
 
     // Test normal initializations
     serializer.reset(new Serializer<T>(0, 3, 5));
+    dl_deserializer.reset(new Serializer<T>(0, 3, 5));
+
     threshold = 3.0 / 31;
     for (size_t i = 0; i < 100; i++) {
         T x = i * 3.0 / 100;
 
-        test_value_float_or_double<T>(serializer, x, x, threshold);
+        test_value_float_or_double<T>(serializer, dl_deserializer,  x, x, threshold);
     }
-    test_value_float_or_double<T>(serializer, 4, 3, threshold);
-    test_value_float_or_double<T>(serializer, -1, 0, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  4, 3, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  -1, 0, threshold);
 
     serializer.reset(new Serializer<T>(-1, 3, 6));
+    dl_deserializer.reset(new Serializer<T>(-1, 3, 6));
+
     threshold = 4.0 / 63;
     for (size_t i = 0; i < 1000; i++) {
         T x = -1.0 + i * 4.0 / 1000;
-        test_value_float_or_double<T>(serializer, x, x, threshold);
+        test_value_float_or_double<T>(serializer, dl_deserializer,  x, x, threshold);
     }
-    test_value_float_or_double<T>(serializer, 4, 3, threshold);
-    test_value_float_or_double<T>(serializer, -2, -1, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  4, 3, threshold);
+    test_value_float_or_double<T>(serializer, dl_deserializer,  -2, -1, threshold);
 
     // Test string-based deserialization
     T val;
     for (size_t i = 0; i < 1000; i++) {
         T x = -1.0 + i * 4.0 / 1000;
 
-        std::ostringstream ss;
-        ss << x;
-        const std::string str = ss.str();
-        TEST_ASSERT(serializer->deserialize(str.c_str(), &val));
+        char buf[100];
+        memset(buf, 0, 100);
+        if (std::is_same<T, float>::value) sprintf(buf, "%f", x);
+        else sprintf(buf, "%lf", x);
+        TEST_ASSERT(serializer->deserialize(buf, &val));
         serializer->deserialize(&val);
         if (std::is_same<T, float>::value) {
             TEST_ASSERT_FLOAT_WITHIN(threshold, x, val);
@@ -343,6 +466,7 @@ void test_double_serializer() { test_float_or_double_serializer<double>(); }
 /**
  * @brief Verify that the float vector serializer properly encapsulates float vectors of various
  * sizes.
+ *
  */
 template<typename T>
 void test_vec_serializer() {
@@ -356,47 +480,66 @@ void test_vec_serializer() {
                          d_vector_t>::type;
 
     // TODO write serialization initializations for edge cases.
-
-    size_t csz = 0;
-    if (std::is_same<T, float>::value) csz = SerializerConstants::fvcsz;
-    else csz = SerializerConstants::dvcsz;
+    
     const size_t vec_bitsize = 40;
-    const size_t magnitude_bitsize = vec_bitsize - 2 - 2 * csz; // Used for error threshold.
-    T magnitude_err = 2.0 / powf(2, magnitude_bitsize);
-    magnitude_err = 2; // This is a bandaid to allow the unit test to pass temporarily.
-                       // We definitely need tighter precision than this.
 
     // (Deterministically) generate random vectors of magnitude 2, and see if they work 
     // with the serializer.
-    // Criterion for functionality: the vector that's reported has a displacement from the
-    // input vector of magnitude at most magnitude_err.
+    // Criterion for functionality: vector is within 0.5 degrees, and within 0.1% of magnitude
+
     srand(2);
-    for(size_t i = 0; i < 1; i++) {
+    for(size_t i = 0; i < number_of_vec_test; i++) {
         auto vec_serializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
+        
+        //make the another serialier with same inputs
+        auto downlink_deserializer = std::make_shared<Serializer<vector_t>>(0,2,vec_bitsize);
         vector_t result;
+
+        // rand() returns the same thing every time
 
         // Generate random vector.
         const T x = rand() / T(RAND_MAX) * 2;
-        const T t = rand() / T(RAND_MAX) * (2 * M_PI);
-        const T y = cos(t) * sqrtf(4 - powf(x, 2));
-        const T z = sin(t) * sqrtf(4 - powf(x, 2));
-        vector_t vec = {x, y, z};
+        const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
+        const T y = cos(t) * std::sqrt(4 - x*x);
+        const T z = sin(t) * std::sqrt(4 - x*x);
+
+        vector_t original = {x, y, z};
+        vector_t vec(original);
+
         vec_serializer->serialize(vec);
-        vec_serializer->deserialize(&result);
 
-        // Ensure the displacement vector of the serialized value and the retrieved
-        // value has a magnitude less than the desired precision.
-        vector_t dv;
-        for(size_t j = 0; j < 3; j++) dv[j] = vec[j] - result[j];
-        T dv_magnitude = sqrt(powf(dv[0], 2) + powf(dv[1], 2) + powf(dv[2], 2));
+        // transfer bit array; analagous to reading in telemetry bit array
+        downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
 
-        std::stringstream err_string;
-        err_string << "Input vector " << "was {" << x << "," << y << "," << z << "}; ";
-        err_string << "output vector " << "was {" << 
-            result[0] << "," <<
-            result[1] << "," <<
-            result[2] << "}";
-        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(magnitude_err, 0, dv_magnitude, err_string.str().c_str());
+        downlink_deserializer->deserialize(&result);
+
+        // make a copy of the result
+        vector_t original_result(result);
+
+        // normalize the vectors for angle calculation only
+        normalize<T, 3>(vec);
+        normalize<T, 3>(result);
+        T angle = angle_between(vec, result);
+
+        T mag_err = std::abs(magnitude_of(original_result)/magnitude_of(original) - 1.0) ;
+
+        static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output vector was {%f,%f,%f}; angle: %f; mag_err: %f";
+        static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output vector was {%lf,%lf,%lf}; angle: %lf; mag_err: %lf";
+        char err_str[200];
+        memset(err_str, 0, 200);
+        const char* err_fmt_str = nullptr;
+        if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
+        else err_fmt_str = err_fmt_str_d;
+        sprintf(err_str, err_fmt_str, i, x, y, z, original_result[0], original_result[1], original_result[2], angle, mag_err);
+
+        // assert less than .1% magnitude error
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.001, 0, mag_err, err_str);
+
+        // assert angle has error < 0.5 degrees
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.5, 0, angle, err_str);
+
+        // Note no need to check if there are any sign flips,
+        // angle_err < 0.5 deg if no sign flips, or if error is small (across an interval)
     }
 
     // Test deserialization from a string
@@ -447,47 +590,53 @@ void test_quat_serializer() {
                          f_quat_t,
                          d_quat_t>::type;
 
-    // TODO write serialization initializations for edge cases.
+    // TODO write serialization initializations for edge cases. // ?
 
     // (Deterministically) generate random quaternions, and see if they work 
     // with the serializer.
     // Criterion for functionality: the quaternion that's reported has a displacement from the
     // input quaternion of magnitude at most magnitude_err.
     srand(2);
-    for(size_t i = 0; i < 1; i++) {
+    for(size_t i = 0; i < number_of_vec_test; i++) {
         auto quat_serializer = std::make_shared<Serializer<quat_t>>();
+        auto downlink_deserializer = std::make_shared<Serializer<quat_t>>();
+
         quat_t result;
 
         // Generate random quaternion.
-        const T t = rand() / T(RAND_MAX) * (2 * M_PI);
-        const T tt = rand() / T(RAND_MAX) * (2 * M_PI);
+        const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
+        const T tt = rand() / T(RAND_MAX) * (2 * 3.14159265);
         const T ux = rand() / T(RAND_MAX) * sin(tt/2);
-        const T uy = cos(t) * sqrtf(1 - powf(ux, 2)) * sin(tt/2);
-        const T uz = sin(t) * sqrtf(1 - powf(ux, 2)) * sin(tt/2);
-        const T s = cos(tt/2);
+        const T uy = std::cos(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
+        const T uz = std::sin(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
+        const T s = std::cos(tt/2);
         quat_t quat = {ux, uy, uz, s};
+        // please note that quat is not normalized at this point
+
+        // serialize will normalize a quaternion argument, but normalize now anyway
+        normalize<T, 4>(quat);
         quat_serializer->serialize(quat);
-        quat_serializer->deserialize(&result);
 
-        // Compute the rotation distance between the input and output quaternions and
-        // verify that it's less than magnitude_err.
-        const T magnitude_err = std::abs(quat[0] * result[0] 
-                                  + quat[1] * result[1]
-                                  + quat[2] * result[2]
-                                  + quat[3] * result[3]);
+        //downlink_deserializer = quat_serializer;
+        downlink_deserializer->set_bit_array(quat_serializer->get_bit_array());
 
-        const T err_threshold = 0.99962; // Bandaid to get tests to pass. Needs to get fixed.
-        std::stringstream err_string;
-        err_string << "Input quaternion " << "was {" << quat[0] 
-                                          << "," << quat[1]
-                                          << "," << quat[2]
-                                          << "," << quat[3] << "}; ";
-        err_string << "output vector " << "was {"
-                                       << result[0] << ","
-                                       << result[1] << ","
-                                       << result[2] << ","
-                                       << result[3] << "}";
-        TEST_ASSERT_GREATER_OR_EQUAL_MESSAGE(err_threshold, magnitude_err, err_string.str().c_str());
+        downlink_deserializer->deserialize(&result);
+
+        // normalize the result (though it should definitely be normalized, or atleast very close)
+        normalize<T, 4>(result);
+        T angle_err = angle_between<T, 4>(quat, result);
+
+        static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output quaternion was {%f,%f,%f,%f}; angle: %f";
+        static const char* err_fmt_str_d = "%dth test: Input quaternion was {%lf,%lf,%lf,%lf}; output quaternion was {%lf,%lf,%lf,%lf}; angle: %lf";
+        char err_str[200];
+        memset(err_str, 0, 200);
+        const char* err_fmt_str = nullptr;
+        if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
+        else err_fmt_str = err_fmt_str_d;
+        sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3], angle_err);
+
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1.0, 0, angle_err, err_str);
+
     }
 
     // Test deserialization from a string

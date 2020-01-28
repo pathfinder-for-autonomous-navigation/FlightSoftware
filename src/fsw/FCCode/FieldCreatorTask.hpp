@@ -3,7 +3,7 @@
 
 #include "ControlTask.hpp"
 
-#include <adcs/adcs_havt_devices.hpp> // needed for ADCSCommander fill-in
+#include <adcs/havt_devices.hpp> // needed for ADCSCommander fill-in
 
 // This class does the unpleasant task of creating state fields that
 // controllers expect to see but for which we haven't defined any
@@ -56,13 +56,13 @@ class FieldCreatorTask : public ControlTask<void> {
         //eventually you can move all these into ADCSCommander.cpp
         filter_sr(0,1,8),
         rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
-        rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(rwa::min_speed_command,rwa::max_speed_command, 16*3)),
-        rwa_torque_cmd_f("adcs_cmd.rwa_torque_cmd", Serializer<f_vector_t>(rwa::min_torque, rwa::max_torque, 16*3)),
+        rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(adcs::rwa::min_speed_command,adcs::rwa::max_speed_command, 16*3)),
+        rwa_torque_cmd_f("adcs_cmd.rwa_torque_cmd", Serializer<f_vector_t>(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
         rwa_speed_filter_f("adcs_cmd.rwa_speed_filter", filter_sr),
         rwa_ramp_filter_f("adcs_cmd.rwa_ramp_filter", filter_sr),
         mtr_mode_f("adcs_cmd.mtr_mode", Serializer<unsigned char>(2)),
-        mtr_cmd_f("adcs_cmd.mtr_cmd", Serializer<f_vector_t>(mtr::min_moment, mtr::max_moment, 16*3)),
-        mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(mtr::min_moment, mtr::max_moment, 16)),
+        mtr_cmd_f("adcs_cmd.mtr_cmd", Serializer<f_vector_t>(adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
+        mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(adcs::mtr::min_moment, adcs::mtr::max_moment, 16)),
         ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", filter_sr),
         imu_mode_f("adcs_cmd.imu_mode", Serializer<unsigned char>(4)),
         imu_mag_filter_f("adcs_cmd.imu_mag_filter", filter_sr),
@@ -72,7 +72,7 @@ class FieldCreatorTask : public ControlTask<void> {
         imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", k_sr),
         imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", k_sr),
         imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", k_sr),
-        imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", Serializer<float>(imu::min_eq_temp, imu::max_eq_temp, 8)),
+        imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", Serializer<float>(adcs::imu::min_eq_temp, adcs::imu::max_eq_temp, 8)),
         havt_bool_sr()
       {
           // Create the fields!
@@ -104,10 +104,10 @@ class FieldCreatorTask : public ControlTask<void> {
           add_writable_field(imu_gyr_temp_desired_f);
 
           // reserve memory
-          havt_cmd_table_vector_f.reserve(adcs_havt::Index::_LENGTH);
+          havt_cmd_table_vector_f.reserve(adcs::havt::Index::_LENGTH);
           // fill vector of statefields for cmd havt
           char buffer[50];
-          for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+          for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
           {
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_cmd.havt_device");
