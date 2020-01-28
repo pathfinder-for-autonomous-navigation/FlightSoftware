@@ -161,6 +161,7 @@ void setup() {
   mag2.setup(mag2_wire, mag2_timeout);
   mag2.set_sample_rate(dev::MMC34160PJ::SR::HZ_50);
   mag2.reset();
+  mag2.calibrate();
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
   if (!mag2.is_functional()) {

@@ -19,6 +19,7 @@
 
 #include <i2c_t3.h>
 #include <Arduino.h>
+#undef abs
 
 using namespace adcs;
 
@@ -35,21 +36,35 @@ void setup() {
     LOG_ERROR_printlnF("Initialization failed")
     while (1);
   }
+  if (!mag.calibrate()) {
+    LOG_ERROR_header
+    LOG_ERROR_printlnF("Error")
+    while (1);
+  }
 }
 
 void loop() {
+  for (int i=0; i<10; i++){
+    while (!mag.is_ready()){
+      if (!mag.is_functional()) while (1);
+    }
 
-  while (!mag.is_ready())
-    if (!mag.is_functional()) while (1);
-
-  if (mag.read()) {
-    LOG_INFO_header
-    LOG_INFO_println(String(mag.get_b_x()) + "," + String(mag.get_b_y()) + "," +
-        String(mag.get_b_z()))
-  } else {
-    LOG_ERROR_header
-    LOG_ERROR_printlnF("Read error")
+    if (mag.read()) {
+      LOG_INFO_header
+      LOG_INFO_println(String(mag.get_b_x()) + "," + String(mag.get_b_y()) + "," +
+          String(mag.get_b_z()))
+    } else {
+      LOG_ERROR_header
+      LOG_ERROR_printlnF("Read error")
+    }
+    delay(500);
   }
-
-  delay(2000);
+  LOG_INFO_header
+  LOG_INFO_printlnF("calibration")
+  delay(1000);
+  if(! mag.calibrate()){
+    LOG_ERROR_header
+    LOG_ERROR_printlnF("calibration error")
+  }
+  delay(1000);
 }
