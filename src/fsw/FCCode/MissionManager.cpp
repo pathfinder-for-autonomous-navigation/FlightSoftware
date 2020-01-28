@@ -1,7 +1,7 @@
 #include "MissionManager.hpp"
 #include <lin.hpp>
 #include <cmath>
-#include <adcs/adcs_constants.hpp>
+#include <adcs/constants.hpp>
 
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
@@ -106,7 +106,7 @@ void MissionManager::dispatch_startup() {
 void MissionManager::dispatch_detumble() {
     // Detumble until satellite angular rate is below an allowable threshold
     const float momentum = lin::norm(adcs_ang_momentum_fp->get());
-    const float threshold = rwa::max_speed_read * rwa::moment_of_inertia * detumble_safety_factor;
+    const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor;
     if (momentum <= threshold)
     {
         transition_to_state(mission_state_t::standby,

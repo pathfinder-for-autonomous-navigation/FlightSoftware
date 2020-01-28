@@ -1,6 +1,7 @@
 #include <unity.h>
 #include "test_fixture.hpp"
-#include <adcs/adcs_constants.hpp>
+
+#include <adcs/constants.hpp>
 
 void test_valid_initialization() {
     TestFixture tf;
@@ -59,7 +60,7 @@ void test_dispatch_detumble() {
     TestFixture tf(mission_state_t::detumble);
     tf.set(adcs_state_t::detumble);
 
-    const float threshold = rwa::max_speed_read * rwa::moment_of_inertia
+    const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia
                                 * MissionManager::detumble_safety_factor;
     const float delta = threshold * 0.01;
 
