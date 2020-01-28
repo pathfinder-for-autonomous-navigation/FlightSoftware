@@ -24,6 +24,8 @@
 
 using namespace adcs;
 
+#define HANG while (1) delay(100);
+
 void setup() {
   // We want to initialize the serial port even if logging is off.
   LOG_SERIAL.begin(9600);
@@ -41,8 +43,7 @@ void setup() {
   rwa::setup();
 
   // Check all the required devices are functional
-  if(!imu::gyr.is_functional() ||
-     !imu::mag1.is_functional() ||
+  if(!imu::mag1.is_functional() ||
      !imu::mag2.is_functional() ||
      !rwa::adcs[0].is_functional() ||
      !rwa::adcs[1].is_functional() ||
@@ -53,7 +54,7 @@ void setup() {
      !rwa::potentiometer.is_functional()) {
     LOG_ERROR_header
     LOG_ERROR_printlnF("One or more of the required devices failed initialization.")
-    while (1);  // Cannot perform the test
+    HANG  // Cannot perform the test
   }
 
   // Wheel speeds the tests will be performed at
@@ -64,15 +65,41 @@ void setup() {
   // Loop over wheels speed and each wheel to perform the test.
   for (auto const &wheel_speed : wheel_speeds) {
 
-    rwa::actuate(RWAMode::RWA_SPEED_CTRL, lin::Vector3f({wheel_speed, 0.0f, 0.0f}));
+    // Wait for the wheels to ramp up to the desired speed
+    rwa::actuate(RWAMode::RWA_SPEED_CTRL, lin::Vector3f({wheel_speed, wheel_speed, wheel_speed}));
     delay(5000);
-    rwa::wheels[1].disable();
-    rwa::wheels[2].disable();
 
-    
+    // Sync up sensor reads
+    imu::mag1.read()
+    imu::mag2.read()
+    while (!imu::mag1.is_ready());
+    while (!imu::mag2.is_ready());
+    imu::mag1.read()
+    imu::mag2.read()
 
+    unsigned long const start = millis();
+    unsigned long const duration = 30000;
+    while (millis() - start < duration) {
+
+      // Read the first magnetometer
+      while (!imu::mag1.is_ready());
+      if (!imu::mag1.is_functional()) HANG
+      if (!imu::mag1.read()) HANG
+
+      // Collect timestamp for this round of data
+      // Both gyros read at 50 Hz so the timestamps offset from the actual data
+      // taken should be consistant
+      unsigned long const timestamp = millis();
+
+      // Read the second magnetometer
+      while (!imu::mag2.is_ready());
+      if (!imu::mag2.is_functional()) HANG
+      if (!imu::mag2.read()) HANG
+
+      // Print out and process data including wheel speed
+
+    }
   }
-
 }
 
 void loop() {
