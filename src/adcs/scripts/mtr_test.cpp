@@ -10,11 +10,9 @@
 // Cornell Univeristy
 //
 
-#define DEBUG
-
 #include <adcs/constants.hpp>
 #include <adcs/mtr.hpp>
-#include <adcs/utl/debug.hpp>
+#include <adcs/utl/logging.hpp>
 
 #include <Arduino.h>
 #include <lin.hpp>
@@ -24,7 +22,7 @@
 using namespace adcs;
 
 void setup() {
-  DEBUG_init(9600);
+  LOG_init(9600);
   mtr::setup();
 }
 

@@ -1,5 +1,5 @@
 /** @file ADCS.hpp
- * @author Kyle Krol
+ * @author Shihao Cao
  * @date 6 Feb 2018
  * @brief Contains definition for device interface to ADCS system.
  */
@@ -7,10 +7,10 @@
 #ifndef PAN_LIB_DRIVERS_ADCS_HPP_
 #define PAN_LIB_DRIVERS_ADCS_HPP_
 
-#include "../Devices/I2CDevice.hpp"
-#include <array>
-#include <adcs/adcs_constants.hpp>
+#include <adcs/constants.hpp>
+#include <fsw/FCCode/Devices/I2CDevice.hpp>
 
+#include <array>
 #include <bitset>
 
 namespace Devices {
@@ -21,7 +21,7 @@ class ADCS : public I2CDevice {
     static constexpr unsigned int WHO_AM_I_EXPECTED = 0x0F;
 
     #ifdef UNIT_TEST
-    unsigned int mock_ssa_mode = SSAMode::SSA_IN_PROGRESS;
+    unsigned int mock_ssa_mode = adcs::SSAMode::SSA_IN_PROGRESS;
     #endif
     /**
      * @brief quickly tests that the device is active and working on i2c
@@ -220,7 +220,7 @@ class ADCS : public I2CDevice {
      * 
      * @param havt_table The commanded state of the ADCS HAVT table
      */
-    void set_havt(const std::bitset<havt::max_devices>& havt_table);
+    void set_havt(const std::bitset<adcs::havt::max_devices>& havt_table);
     
     /**
      * @brief Get the who_am_i value
@@ -314,7 +314,7 @@ class ADCS : public I2CDevice {
      * 
      * @param havt_table Pointer to the bitset that will be read into
      */
-    void get_havt(std::bitset<havt::max_devices>* havt_table);
+    void get_havt(std::bitset<adcs::havt::max_devices>* havt_table);
 };
 
 }  // namespace Devices
