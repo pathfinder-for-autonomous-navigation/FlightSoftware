@@ -294,7 +294,7 @@ void ADCS::get_ssa_voltage(std::array<float, adcs::ssa::num_sun_sensors>* voltag
     std::memset(temp, 0, sizeof(temp));
 
     #ifdef UNIT_TEST
-    for(int i = 0;i<ssa::num_sun_sensors;i++){
+    for(int i = 0;i<adcs::ssa::num_sun_sensors;i++){
         temp[i] = 255;
     }
     #else

@@ -21,7 +21,7 @@ class ADCS : public I2CDevice {
     static constexpr unsigned int WHO_AM_I_EXPECTED = 0x0F;
 
     #ifdef UNIT_TEST
-    unsigned int mock_ssa_mode = SSAMode::SSA_IN_PROGRESS;
+    unsigned int mock_ssa_mode = adcs::SSAMode::SSA_IN_PROGRESS;
     #endif
     /**
      * @brief quickly tests that the device is active and working on i2c
