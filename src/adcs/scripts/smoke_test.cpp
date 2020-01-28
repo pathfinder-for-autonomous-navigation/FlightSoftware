@@ -10,17 +10,17 @@
 // Cornell Univeristy
 //
 
-#define DEBUG
+#define LOG_LEVEL 99
 
-#include <adcs/utl/debug.hpp>
+#include <adcs/utl/logging.hpp>
 
 #include <Arduino.h>
 
 void setup() {
-  DEBUG_init(9600)
+  LOG_init(9600)
 }
 
 void loop() {
   delay(2000);
-  DEBUG_printlnF("Still alive! :)")
+  LOG_TRACE_printlnF("Still alive! :)")
 }

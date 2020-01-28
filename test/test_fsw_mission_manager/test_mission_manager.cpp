@@ -1,6 +1,7 @@
 #include <unity.h>
 #include "test_fixture.hpp"
-#include <adcs/adcs_constants.hpp>
+
+#include <adcs/constants.hpp>
 
 void test_valid_initialization() {
     TestFixture tf;
@@ -18,15 +19,15 @@ void test_dispatch_startup() {
     // Startup should be the default initial state of the mission manager
     tf.check(mission_state_t::startup);
 
-    // For 10 executions, the mission manager should remain in the startup state
-    for(int i = 0; i < 10; i++) {
+    // For 100 executions, the mission manager should remain in the startup state
+    for(int i = 0; i < 100; i++) {
         tf.step();
         tf.check(mission_state_t::startup);
     }
 
     // TODO add hardware fault test.
 
-    // On the 11th execution, if there's no hardware fault, the mission manager
+    // On the 101st execution, if there's no hardware fault, the mission manager
     // should transition to the detumble state.
     tf.step();
     tf.check(mission_state_t::detumble);
@@ -59,7 +60,7 @@ void test_dispatch_detumble() {
     TestFixture tf(mission_state_t::detumble);
     tf.set(adcs_state_t::detumble);
 
-    const float threshold = rwa::max_speed_read * rwa::moment_of_inertia
+    const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia
                                 * MissionManager::detumble_safety_factor;
     const float delta = threshold * 0.01;
 

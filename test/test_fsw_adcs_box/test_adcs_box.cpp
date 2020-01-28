@@ -1,10 +1,9 @@
 #include "../StateFieldRegistryMock.hpp"
 
-#include <fsw/FCCode/Drivers/ADCS.hpp>
-#include <adcs/adcs_constants.hpp>
-#include <adcs/adcs_havt_devices.hpp>
-
+#include <adcs/constants.hpp>
+#include <adcs/havt_devices.hpp>
 #include <fsw/FCCode/ADCSBoxMonitor.hpp>
+#include <fsw/FCCode/Drivers/ADCS.hpp>
 
 #include <unity.h>
 
@@ -54,7 +53,7 @@ class TestFixture {
             
             // fill vector of pointers to statefields for ssa
             char buffer[50];
-            for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
+            for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
                 std::memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"adcs_monitor.ssa_voltage");
                 sprintf(buffer + strlen(buffer), "%u", i);
@@ -62,7 +61,7 @@ class TestFixture {
             }
 
             //fill vector of pointers to statefields for havt
-            for (unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+            for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
             {
                 std::memset(buffer, 0, sizeof(buffer));
                 sprintf(buffer,"adcs_monitor.havt_device");
@@ -101,7 +100,7 @@ void test_task_initialization()
     TestFixture tf;
 
     // verify all initialized to 0
-    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+    for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
     {
         // 0 means device is disabled
         TEST_ASSERT_EQUAL(0, tf.havt_table_vector_fp[idx]->get());
@@ -113,14 +112,14 @@ void test_execute(){
 
     //mocking sets to max output
     //see ADCS.cpp for mocking details
-    std::array<float, 3> ref_rwa_max_speed = {rwa::max_speed_read, rwa::max_speed_read, rwa::max_speed_read};
-    std::array<float, 3> ref_rwa_max_torque = {rwa::max_torque, rwa::max_torque, rwa::max_torque};
+    std::array<float, 3> ref_rwa_max_speed = {adcs::rwa::max_speed_read, adcs::rwa::max_speed_read, adcs::rwa::max_speed_read};
+    std::array<float, 3> ref_rwa_max_torque = {adcs::rwa::max_torque, adcs::rwa::max_torque, adcs::rwa::max_torque};
     std::array<float, 3> ref_three_unit = {1,1,1};
-    std::array<float, 3> ref_mag_vec = {imu::max_rd_mag, imu::max_rd_mag, imu::max_rd_mag};
-    std::array<float, 3> ref_gyr_vec = {imu::max_rd_omega, imu::max_rd_omega, imu::max_rd_omega};
+    std::array<float, 3> ref_mag_vec = {adcs::imu::max_rd_mag, adcs::imu::max_rd_mag, adcs::imu::max_rd_mag};
+    std::array<float, 3> ref_gyr_vec = {adcs::imu::max_rd_omega, adcs::imu::max_rd_omega, adcs::imu::max_rd_omega};
 
     //set mock return to COMPLETE
-    tf.set_mock_ssa_mode(SSAMode::SSA_COMPLETE);
+    tf.set_mock_ssa_mode(adcs::SSAMode::SSA_COMPLETE);
 
     //call box monitor control task, to pull values using driver
     tf.adcs_box->execute();
@@ -128,16 +127,16 @@ void test_execute(){
     //verify that the values are read into statefields correctly
     elements_same(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get());
     elements_same(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get());
-    TEST_ASSERT_EQUAL(SSAMode::SSA_COMPLETE, tf.ssa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_COMPLETE, tf.ssa_mode_fp->get());
     elements_same(ref_three_unit, tf.ssa_vec_fp->get());
 
-    for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
-        TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
+    for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
+        TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
     elements_same(ref_mag_vec,tf.mag_vec_fp->get());
     elements_same(ref_gyr_vec, tf.gyr_vec_fp->get());
-    TEST_ASSERT_EQUAL(imu::max_rd_temp, tf.gyr_temp_fp->get());
+    TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
     //verify that all flags are set to true
     //since temp bounds are all max - 1
@@ -150,7 +149,7 @@ void test_execute(){
 
     //TEST IN_PROGRESS
     //set mock return to IN_PROGRESS
-    tf.set_mock_ssa_mode(SSAMode::SSA_IN_PROGRESS);
+    tf.set_mock_ssa_mode(adcs::SSAMode::SSA_IN_PROGRESS);
 
     //call box monitor control task, to pull values using driver
     tf.adcs_box->execute();
@@ -158,20 +157,20 @@ void test_execute(){
     //verify that the values are read into statefields correctly
     elements_same(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get());
     elements_same(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get());
-    TEST_ASSERT_EQUAL(SSAMode::SSA_IN_PROGRESS, tf.ssa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_IN_PROGRESS, tf.ssa_mode_fp->get());
 
     //test ssa_vec is nan
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[0]));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[1]));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[2]));
 
-    for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
-        TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
+    for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
+        TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
     elements_same(ref_mag_vec,tf.mag_vec_fp->get());
     elements_same(ref_gyr_vec, tf.gyr_vec_fp->get());
-    TEST_ASSERT_EQUAL(imu::max_rd_temp, tf.gyr_temp_fp->get());
+    TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
     //verify that all flags are set to true
     //since temp bounds are all max - 1
@@ -184,7 +183,7 @@ void test_execute(){
 
     //TEST FAILURE
     //set mock return to FAILURE
-    tf.set_mock_ssa_mode(SSAMode::SSA_FAILURE);
+    tf.set_mock_ssa_mode(adcs::SSAMode::SSA_FAILURE);
 
     //call box monitor control task, to pull values using driver
     tf.adcs_box->execute();
@@ -192,20 +191,20 @@ void test_execute(){
     //verify that the values are read into statefields correctly
     elements_same(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get());
     elements_same(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get());
-    TEST_ASSERT_EQUAL(SSAMode::SSA_FAILURE, tf.ssa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_FAILURE, tf.ssa_mode_fp->get());
     
     //test ssa_vec is nan
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[0]));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[1]));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[2]));
 
-    for(unsigned int i = 0; i<ssa::num_sun_sensors; i++){
-        TEST_ASSERT_EQUAL(ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
+    for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
+        TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
     elements_same(ref_mag_vec,tf.mag_vec_fp->get());
     elements_same(ref_gyr_vec, tf.gyr_vec_fp->get());
-    TEST_ASSERT_EQUAL(imu::max_rd_temp, tf.gyr_temp_fp->get());
+    TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
     //verify that all flags are set to true
     //since temp bounds are all max - 1
@@ -223,7 +222,7 @@ void test_execute_havt(){
 
     // mocking sets ALL 32 devices available (true), 
     // but only check up to _LENGTH in this case
-    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++ )
+    for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
     {
         TEST_ASSERT_EQUAL(true, tf.havt_table_vector_fp[idx]->get());
     }

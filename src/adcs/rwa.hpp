@@ -51,7 +51,7 @@ void update_sensors(float speed_flt, float ramp_flt);
  *  \param[in] rwa_mode
  *  \param[in] rwa_cmd
  *   */
-void control(unsigned char rwa_mode, lin::Vector3f rwa_cmd);
+void actuate(unsigned char rwa_mode, lin::Vector3f rwa_cmd);
 
 }  // namespace rwa
 }  // namespace adcs
