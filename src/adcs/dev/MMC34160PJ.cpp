@@ -148,9 +148,10 @@ bool MMC34160PJ::single_read(uint16_t *array) {
   this->i2c_write(0x01);
   this->i2c_end_transmission();
   delay(10);
-  while (!this->is_ready())
+  while (!this->is_ready()){
     if (!this->is_functional()) return false;
     delay(5);
+  }
   if (!this->read()) return false;
   for (int i = 0; i < 3; i++) array[i] = this->b_vec[i];
   return true;
