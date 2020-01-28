@@ -89,6 +89,12 @@ void setup() {
     Serial.begin(9600);
     while(!Serial);
 
+    // Enable DCDCs as well for testing
+    pinMode(24, OUTPUT);
+    pinMode(25, OUTPUT);
+    digitalWrite(24, HIGH);
+    digitalWrite(25, HIGH);
+
     gs.setup();
 }
 
@@ -102,5 +108,5 @@ void loop() {
     Serial.printf("# tries to fetch data: %d\n", num_tries);
     Serial.println("--------------");
 
-    delay(100);
+    delay(2000);
 }
