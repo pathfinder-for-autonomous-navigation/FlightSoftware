@@ -8,6 +8,7 @@ enum class prop_state_t {
     pressurizing,
     firing,
     venting,
+    awaiting_pressurization,
     handling_fault // state where we handle faults
 };
 
