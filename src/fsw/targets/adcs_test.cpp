@@ -1,10 +1,17 @@
 #include <adcs/constants.hpp>
 #include <fsw/FCCode/Drivers/ADCS.hpp>
 
-#include <Arduino.h>
+
+#include <cmath>
+#include <cstdlib>
+#include <cstdlib>
 #include <array>
 #include <bitset>
+#include <Arduino.h>
 #include <i2c_t3.h>
+#ifdef abs
+#undef abs
+#endif
 
 Devices::ADCS adcs_d(Wire, Devices::ADCS::ADDRESS);
 int cnt;
@@ -21,14 +28,14 @@ template <class T, std::size_t N>
 bool comp_float_arr(std::array<T,N> a,std::array<T,N> b,float margin){
     bool ret = true;
     for(unsigned int i = 0;i<N;i++){
-        if(abs(a[i]-b[i])>margin)
+        if(std::abs(a[i]-b[i])>margin)
             ret = false;
     }
     return ret;
 }
 
 bool comp_float(float a,float b,float margin){
-    if(abs(a-b)>margin)
+    if(std::abs(a-b)>margin)
         return false;
     return true;
 }

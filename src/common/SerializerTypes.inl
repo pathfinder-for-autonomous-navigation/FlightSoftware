@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <cstring>
+#include <cmath>
 #include <cstdlib>
 #include <cassert>
 #include "GPSTime.hpp"

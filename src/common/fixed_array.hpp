@@ -5,6 +5,7 @@
 #include <array>
 #include <bitset>
 #include <cmath>
+#include <cstdlib>
 #include <vector>
 
 /**

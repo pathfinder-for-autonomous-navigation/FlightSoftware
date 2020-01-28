@@ -16,6 +16,9 @@
 #include "Device.hpp"
 
 #include <i2c_t3.h>
+#ifdef abs
+#undef abs
+#endif
 
 #ifndef DEV_I2C_ERROR_COUNT
 /** Specifies the number of consecutive failures that marks an \c I2CDevice as

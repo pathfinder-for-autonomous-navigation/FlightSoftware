@@ -15,9 +15,11 @@
 #include <adcs/utl/logging.hpp>
 
 #include <Arduino.h>
+#undef abs
 #include <lin.hpp>
 
 #include <cmath>
+#include <cstdlib>
 
 using namespace adcs;
 
@@ -30,7 +32,7 @@ float moment = 0.0f;
 float delta = mtr::max_moment / 15.0f;
 
 void loop() {
-  if (fabs(moment) >= mtr::max_moment) delta = -delta;
+  if (std::abs(moment) >= mtr::max_moment) delta = -delta;
   moment += delta;
   lin::Vector3f mtr_cmd({moment, moment, moment});
   mtr::actuate(MTRMode::MTR_ENABLED, mtr_cmd, 32768.0f);

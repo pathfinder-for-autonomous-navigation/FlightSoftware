@@ -17,6 +17,9 @@
 
 #include <Arduino.h>
 #include <i2c_t3.h>
+#ifdef abs
+#undef abs
+#endif
 
 using namespace adcs;
 

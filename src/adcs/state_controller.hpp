@@ -14,6 +14,9 @@
 #define SRC_ADCS_STATE_CONTROLLER_HPP_
 
 #include <i2c_t3.h>
+#ifdef abs
+#undef abs
+#endif
 
 namespace adcs {
 namespace umb {

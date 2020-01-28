@@ -18,6 +18,9 @@
 #include "dev/MMC34160PJ.hpp"
 
 #include <i2c_t3.h>
+#ifdef abs
+#undef abs
+#endif
 #include <lin.hpp>
 
 namespace adcs {

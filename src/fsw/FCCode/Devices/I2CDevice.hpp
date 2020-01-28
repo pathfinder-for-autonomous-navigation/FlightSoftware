@@ -44,6 +44,9 @@ typedef unsigned int i2c_t3;
 #define I2C_NOSTOP 0
 #else
 #include <i2c_t3.h>
+#ifdef abs
+#undef abs
+#endif
 #endif
 
 /** \namespace Devices **/
