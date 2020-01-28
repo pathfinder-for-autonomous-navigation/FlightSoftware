@@ -1,3 +1,12 @@
+"""
+28 JAN 2020
+src/adcs/characterization/wheel_speed_test.py
+
+Kyle Krol         (kpk63@cornell.edu)
+Nathan Zimmerberg (nhz2@cornell.edu)
+
+Some utility functions to test the magnetometers.
+"""
 
 import serial
 import sys
