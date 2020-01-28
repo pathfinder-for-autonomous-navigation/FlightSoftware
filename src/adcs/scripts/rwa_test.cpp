@@ -15,11 +15,9 @@
  * output.
  * See plot/rwaPlot.py to interpret the CSV file. */
 
-#define DEBUG
-
 #include <adcs/constants.hpp>
 #include <adcs/rwa.hpp>
-#include <adcs/utl/debug.hpp>
+#include <adcs/utl/logging.hpp>
 
 #include <Arduino.h>
 #include <i2c_t3.h>
@@ -34,9 +32,9 @@ using namespace adcs;
 /** @fn take_data
  *  Takes reaction wheel data and prints out a timestamped CSV line. */
 void take_data() {
-  DEBUG_print(String(millis() - 10000) + ",")
+  LOG_INFO_print(String(millis() - 10000) + ",")
   rwa::update_sensors(SPEED_FLT, RAMP_FLT);
-  DEBUG_println()
+  LOG_INFO_println()
 }
 
 /** @fn single_component_test
@@ -48,38 +46,38 @@ void single_component_test(unsigned int wheel) {
   lin::Vector3f torque = lin::zeros<float, 3, 1>();
   // Spin the wheel
   torque(wheel) = MAX_TORQUE;
-  rwa::control(RWAMode::RWA_ACCEL_CTRL, torque);
+  rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
   for (unsigned int i = 0; i < 150; i++) {
     take_data();
     delay(20);
   }
   // Spin wheel down through zero
   torque(wheel) = -MAX_TORQUE;
-  rwa::control(RWAMode::RWA_ACCEL_CTRL, torque);
+  rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
   for (unsigned int i = 0; i < 300; i++) {
     take_data();
     delay(20);
   }
   // Spin wheel back up
   torque(wheel) = MAX_TORQUE;
-  rwa::control(RWAMode::RWA_ACCEL_CTRL, torque);
+  rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
   for (unsigned int i = 0; i < 150; i++) {
     take_data();
     delay(20);
   }
   // Set back to zero torque
   torque(wheel) = 0.0f;
-  rwa::control(RWAMode::RWA_ACCEL_CTRL, torque);
+  rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
   rwa::wheels[wheel].disable();
 }
 
 void setup() {
-  DEBUG_init(9600)
+  LOG_init(9600)
   Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000);
   delay(10000);
   rwa::setup();
 
-  // rwa::control(RWAMode::RWA_ACCEL_CTRL, {255.0f, 255.0f, 255.0f});
+  // rwa::actuate(RWAMode::RWA_ACCEL_CTRL, {255.0f, 255.0f, 255.0f});
 
   /* Single component tests */
   for (auto &wheel : rwa::wheels) wheel.disable();
@@ -97,13 +95,13 @@ void setup() {
   for (unsigned int i = 0; i < 10; i++) {
     float component = ((float)(i + 1)) * MAX_TORQUE / 10.0f;
     lin::Vector3f torque({component, component, component});
-    rwa::control(RWAMode::RWA_ACCEL_CTRL, torque);
+    rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
     for (unsigned int j = 0; j < 25; j++) {
       take_data();
       delay(40);
     }
     torque = {-component, -component, -component};
-    rwa::control(RWAMode::RWA_ACCEL_CTRL, torque);
+    rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
     for (unsigned int j = 0; j < 25; j++) {
       take_data();
       delay(40);

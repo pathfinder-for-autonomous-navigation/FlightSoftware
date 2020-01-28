@@ -14,18 +14,16 @@
 // I suspect a floating point formatting issue with `String((float) x)` that
 // shows the magnetometers readings zero frequently
 
-#define DEBUG
-
 #include <adcs/constants.hpp>
 #include <adcs/imu.hpp>
-#include <adcs/utl/debug.hpp>
+#include <adcs/utl/logging.hpp>
 
 #include <Arduino.h>
 
 using namespace adcs;
 
 void setup() {
-  DEBUG_init(9600)
+  LOG_init(9600)
   Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000);
   Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
   delay(5000);
