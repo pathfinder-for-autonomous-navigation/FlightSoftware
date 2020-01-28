@@ -13,7 +13,7 @@
 #define DEBUG
 
 #include <adcs/ssa.hpp>
-#include <adcs/utl/debug.hpp>
+#include <adcs/utl/logging.hpp>
 
 #include <Arduino.h>
 #include <i2c_t3.h>
@@ -21,7 +21,7 @@
 using namespace adcs;
 
 void setup() {
-  DEBUG_init(9600)
+  LOG_init(9600)
   Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000);
   Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
   ssa::setup();
@@ -30,7 +30,9 @@ void setup() {
 void loop() {
   unsigned long time = millis();
   ssa::update_sensors(0.85f);
-  DEBUG_println()
-  DEBUG_println("ssa > update time = " + String(millis() - time))
+
+  LOG_INFO_header
+  LOG_INFO_println("total update time " + String(millis() - time))
+  LOG_INFO_println()
   delay(2000);
 }

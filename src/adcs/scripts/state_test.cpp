@@ -10,12 +10,8 @@
 // Cornell Univeristy
 //
 
-#ifdef UMB_DEBUG
-#define DEBUG
-#endif
-
 #include <adcs/state_controller.hpp>
-#include <adcs/utl/debug.hpp>
+#include <adcs/utl/logging.hpp>
 
 #include <Arduino.h>
 #include <i2c_t3.h>
@@ -23,7 +19,8 @@
 using namespace adcs;
 
 void setup() {
-  DEBUG_init(9600) DEBUG_printlnF("Debug initialized.")
+  LOG_init(9600)
+  LOG_INFO_println("Logging interface initialized")
 
   Wire.begin(I2C_SLAVE, 0x4E);
   Wire.onReceive(umb::on_i2c_recieve);
