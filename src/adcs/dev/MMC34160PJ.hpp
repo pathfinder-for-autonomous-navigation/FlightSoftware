@@ -17,7 +17,6 @@
 
 
 #include "I2CDevice.hpp"
-#include <algorithm>
 #include <array>
 namespace adcs {
 namespace dev {
