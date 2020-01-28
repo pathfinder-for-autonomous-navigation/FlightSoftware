@@ -42,46 +42,25 @@ void MMC34160PJ::disable() {
 bool MMC34160PJ::calibrate() {
   uint16_t set_read[3];
   uint16_t reset_read[3];
-  std::array<std::array<int,3>, 1> offsets;// average 1 offset
-  for(auto& off: offsets){
-    // Perform set operation and read
-    this->fill_capacitor();
-    if (this->i2c_pop_errors()) return false;
-    this->set_operation();
-    if (this->i2c_pop_errors()) return false;
-    delay(1);
-    if (!this->single_read(set_read)) return false;//clear out old reading
-    if (!this->single_read(set_read)) return false;
-    if (this->i2c_pop_errors()) return false;
-    // Perform the reset operation and read
-    this->fill_capacitor();
-    if (this->i2c_pop_errors()) return false;
-    this->reset_operation();
-    if (this->i2c_pop_errors()) return false;
-    delay(1);
-    if (!this->single_read(reset_read)) return false;
-    if (this->i2c_pop_errors()) return false;
-    for (int i = 0; i < 3; i++){
-      off[i] = ((uint16_t)(((int32_t)set_read[i] + (int32_t)reset_read[i] )/2));
-    }
-  }
-  //take median of offsets
+  // Perform set operation and read
+  this->fill_capacitor();
+  if (this->i2c_pop_errors()) return false;
+  this->set_operation();
+  if (this->i2c_pop_errors()) return false;
+  delay(1);
+  if (!this->single_read(set_read)) return false;//clear out old reading
+  if (!this->single_read(set_read)) return false;
+  if (this->i2c_pop_errors()) return false;
+  // Perform the reset operation and read
+  this->fill_capacitor();
+  if (this->i2c_pop_errors()) return false;
+  this->reset_operation();
+  if (this->i2c_pop_errors()) return false;
+  delay(1);
+  if (!this->single_read(reset_read)) return false;
+  if (this->i2c_pop_errors()) return false;
   for (int i = 0; i < 3; i++){
-      for(unsigned int j = 0; j < offsets.size(); j++){
-        int num_above=0;
-        int num_below=0;
-        int num_equal=0;
-        int val= offsets[j][i];
-        for(unsigned int k = 0; k < offsets.size(); k++){
-          if (offsets[k][i]>val) num_above++;
-          if (offsets[k][i]<val) num_below++;
-          if (offsets[k][i]==val) num_equal++;
-        }
-        if (std::abs(num_above-num_below)<=num_equal){
-          this->offset[i] = (uint16_t)val;
-          break;
-        }
-      }
+    this->offset[i] = ((uint16_t)(((int32_t)set_read[i] + (int32_t)reset_read[i] )/2));
   }
   //reset to continous mode
   this->i2c_begin_transmission();
