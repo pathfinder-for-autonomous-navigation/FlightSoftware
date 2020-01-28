@@ -25,10 +25,8 @@
 
 #ifdef DESKTOP
 uint32_t micros(void);
-#else
-namespace Devices {
 #endif
-
+namespace Devices {
 class TimedLock;
 class Tank;
 class Tank1;
@@ -144,7 +142,7 @@ public:
      * @brief True if Spike and Hold is enabled
      */
     bool is_functional() override;
-    
+
     /**
      * @brief Sets the firing schedule for tank 2. Does not enable tank2 to
      * fire. To do that, call enable()
@@ -394,7 +392,5 @@ private:
 
     friend class PropulsionSystem;
 };
-#ifndef DESKTOP
 }  // namespace Devices
-#endif
 #endif
