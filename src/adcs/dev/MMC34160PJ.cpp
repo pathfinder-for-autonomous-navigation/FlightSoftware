@@ -17,10 +17,6 @@ namespace dev {
 
 void MMC34160PJ::setup(i2c_t3 *wire, unsigned long timeout) {
   this->I2CDevice::setup(wire, 0x30, timeout);
-  this->sample_rate = MMC34160PJ::SR::HZ_50;
-  this->offset[0] = 0x00;
-  this->offset[1] = 0x00;
-  this->offset[2] = 0x00;
 }
 
 bool MMC34160PJ::reset() {
@@ -43,26 +39,36 @@ void MMC34160PJ::disable() {
   this->I2CDevice::disable();
 }
 
-void MMC34160PJ::calibrate() {
+bool MMC34160PJ::calibrate() {
   uint16_t set_read[3];
   uint16_t reset_read[3];
   // Perform set operation and read
   this->fill_capacitor();
+  if (this->i2c_pop_errors()) return false;
   this->set_operation();
+  if (this->i2c_pop_errors()) return false;
   delay(1);
-  if (this->single_read(set_read)) {
-    // Perform the reset operation and read
-    this->fill_capacitor();
-    this->reset_operation();
-    delay(1);
-    if (this->single_read(reset_read)) {
-      for (unsigned int i = 0; i < 3; i++)
-        this->offset[0] = (uint16_t) (
-            ( ((unsigned int) set_read[i]) - ((unsigned int) reset_read[i]) ) / 2
-                );
-    }
+  if (!this->single_read(set_read)) return false;//clear out old reading
+  if (!this->single_read(set_read)) return false;
+  if (this->i2c_pop_errors()) return false;
+  // Perform the reset operation and read
+  this->fill_capacitor();
+  if (this->i2c_pop_errors()) return false;
+  this->reset_operation();
+  if (this->i2c_pop_errors()) return false;
+  delay(1);
+  if (!this->single_read(reset_read)) return false;
+  if (this->i2c_pop_errors()) return false;
+  for (int i = 0; i < 3; i++){
+    this->offset[i] = ((uint16_t)(((int32_t)set_read[i] + (int32_t)reset_read[i] )/2));
   }
-  this->I2CDevice::disable();
+  //reset to continous mode
+  this->i2c_begin_transmission();
+  this->i2c_write(MMC34160PJ::REG::INTERNAL_CONTROL_0);
+  this->i2c_write(this->sample_rate | 0b10); // Sets the SR and cont. mode
+  this->i2c_end_transmission(I2C_NOSTOP);
+  if (this->i2c_pop_errors()) return false;
+  return true;
 }
 
 bool MMC34160PJ::is_ready() {
@@ -120,10 +126,13 @@ bool MMC34160PJ::single_read(uint16_t *array) {
   this->i2c_write(MMC34160PJ::REG::INTERNAL_CONTROL_0);
   this->i2c_write(0x01);
   this->i2c_end_transmission();
-  while (!this->is_ready())
+  delay(10);
+  while (!this->is_ready()){
     if (!this->is_functional()) return false;
+    delay(5);
+  }
   if (!this->read()) return false;
-  for (unsigned int i = 0; i < 3; i++) array[i] = this->b_vec[i];
+  for (int i = 0; i < 3; i++) array[i] = this->b_vec[i];
   return true;
 }
 }  // namespace dev
