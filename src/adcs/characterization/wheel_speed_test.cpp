@@ -58,7 +58,7 @@ void setup() {
   }
 
   // Wheel speeds the tests will be performed at
-  std::array<float> wheel_speeds = {
+  std::array<float, 6> wheel_speeds = {
     50.0f, 75.0f, 100.0f, 125.0f, 150.0f, 175.0f
   };
 
@@ -70,12 +70,12 @@ void setup() {
     delay(5000);
 
     // Sync up sensor reads
-    imu::mag1.read()
-    imu::mag2.read()
+    imu::mag1.read();
+    imu::mag2.read();
     while (!imu::mag1.is_ready());
     while (!imu::mag2.is_ready());
-    imu::mag1.read()
-    imu::mag2.read()
+    imu::mag1.read();
+    imu::mag2.read();
 
     unsigned long const start = millis();
     unsigned long const duration = 30000;
@@ -86,18 +86,34 @@ void setup() {
       if (!imu::mag1.is_functional()) HANG
       if (!imu::mag1.read()) HANG
 
-      // Collect timestamp for this round of data
-      // Both gyros read at 50 Hz so the timestamps offset from the actual data
-      // taken should be consistant
-      unsigned long const timestamp = millis();
-
       // Read the second magnetometer
       while (!imu::mag2.is_ready());
       if (!imu::mag2.is_functional()) HANG
       if (!imu::mag2.read()) HANG
 
-      // Print out and process data including wheel speed
+      // Initialize read for each enabled ADC
+      int16_t val;
+      lin::Vector3f speed_read;
+      for (unsigned int i = 0; i < 3; i++)
+        if (rwa::adcs[i].is_functional())
+          rwa::adcs[i].start_read(dev::ADS1015::CHANNEL::DIFFERENTIAL_0_1);
 
+      // End read for each enabled ADC
+      for (unsigned int i = 0; i < 3; i++)
+        if (rwa::adcs[i].is_functional())
+          if (rwa::adcs[i].end_read(val))
+            speed_read(i) = utl::fp(val, rwa::min_speed_read, rwa::max_speed_read);
+
+      LOG_SERIAL.printf("%d,", millis());
+      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag1.get_b_x(), imu::min_mag1_rd_mag, imu::max_mag1_rd_mag));
+      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag1.get_b_y(), imu::min_mag1_rd_mag, imu::max_mag1_rd_mag));
+      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag1.get_b_z(), imu::min_mag1_rd_mag, imu::max_mag1_rd_mag));
+      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag2.get_b_x(), imu::min_mag2_rd_mag, imu::max_mag2_rd_mag));
+      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag2.get_b_y(), imu::min_mag2_rd_mag, imu::max_mag2_rd_mag));
+      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag2.get_b_z(), imu::min_mag2_rd_mag, imu::max_mag2_rd_mag));
+      LOG_SERIAL.printf(".7e,", speed_read(0));
+      LOG_SERIAL.printf(".7e,", speed_read(1));
+      LOG_SERIAL.printf(".7e,", speed_read(2));
     }
   }
 }
