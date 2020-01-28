@@ -91,11 +91,9 @@ class Tank2;
 #ifdef DESKTOP
     uint32_t micros(){ return 0; }
 #endif
-#ifndef DESKTOP
+
 class PropulsionSystem : public Device {
-#else
-class PropulsionSystem {
-#endif
+
 public:
     PropulsionSystem();
 
@@ -103,11 +101,7 @@ public:
      * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
      * @return True if successfully setup both tank1 and tank2 and all pins
      */
-#ifndef DESKTOP
     bool setup() override;
-#else
-    bool setup();
-#endif
     /**
      * @brief Resets all runtime (transient) values to their default values
      * 
@@ -117,11 +111,7 @@ public:
      *  - Disables tank2 IntervalTimer
      *  - Unlocks both tank1 and tank2 locks
      */
-#ifndef DESKTOP
     void reset() override;
-#else
-    void reset();
-#endif
 
     /**
      * @brief Turns on IntervalTimer thrust_value_loop_timer, causes an interrupt
@@ -148,21 +138,13 @@ public:
      *  - Closes all tank2 valves
      *  - If tank2.start_time is in the future, reset tank2 lock
      */
-#ifndef DESKTOP
     void disable() override;
-#else
-    void disable();
-#endif
 
     /**
      * @brief True if Spike and Hold is enabled
      */
-#ifndef DESKTOP
     bool is_functional() override;
-#else
-    bool is_functional();
-#endif
-
+    
     /**
      * @brief Sets the firing schedule for tank 2. Does not enable tank2 to
      * fire. To do that, call enable()
