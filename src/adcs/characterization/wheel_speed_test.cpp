@@ -34,6 +34,10 @@ void setup() {
   LOG_INFO_println("Logging interface initialized with logging level "
       + String(LOG_LEVEL))
 
+  LOG_INFO_header
+  LOG_INFO_printlnF("Waiting for ten seconds before starting the test...")
+  delay(10000);
+
   // Initialize master I2C busses
   Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000);
   Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
@@ -78,7 +82,7 @@ void setup() {
     imu::mag2.read();
 
     unsigned long const start = millis();
-    unsigned long const duration = 30000;
+    unsigned long const duration = 10000;
     while (millis() - start < duration) {
 
       // Read the first magnetometer
@@ -105,17 +109,28 @@ void setup() {
             speed_read(i) = utl::fp(val, rwa::min_speed_read, rwa::max_speed_read);
 
       LOG_SERIAL.printf("%d,", millis());
-      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag1.get_b_x(), imu::min_mag1_rd_mag, imu::max_mag1_rd_mag));
-      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag1.get_b_y(), imu::min_mag1_rd_mag, imu::max_mag1_rd_mag));
-      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag1.get_b_z(), imu::min_mag1_rd_mag, imu::max_mag1_rd_mag));
-      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag2.get_b_x(), imu::min_mag2_rd_mag, imu::max_mag2_rd_mag));
-      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag2.get_b_y(), imu::min_mag2_rd_mag, imu::max_mag2_rd_mag));
-      LOG_SERIAL.printf(".7e,", utl::fp(imu::mag2.get_b_z(), imu::min_mag2_rd_mag, imu::max_mag2_rd_mag));
-      LOG_SERIAL.printf(".7e,", speed_read(0));
-      LOG_SERIAL.printf(".7e,", speed_read(1));
-      LOG_SERIAL.printf(".7e,", speed_read(2));
+      LOG_SERIAL.printf("%.7e,", utl::fp(imu::mag1.get_b_x(), imu::min_mag1_rd_mag, imu::max_mag1_rd_mag));
+      LOG_SERIAL.printf("%.7e,", utl::fp(imu::mag1.get_b_y(), imu::min_mag1_rd_mag, imu::max_mag1_rd_mag));
+      LOG_SERIAL.printf("%.7e,", utl::fp(imu::mag1.get_b_z(), imu::min_mag1_rd_mag, imu::max_mag1_rd_mag));
+      LOG_SERIAL.printf("%.7e,", utl::fp(imu::mag2.get_b_x(), imu::min_mag2_rd_mag, imu::max_mag2_rd_mag));
+      LOG_SERIAL.printf("%.7e,", utl::fp(imu::mag2.get_b_y(), imu::min_mag2_rd_mag, imu::max_mag2_rd_mag));
+      LOG_SERIAL.printf("%.7e,", utl::fp(imu::mag2.get_b_z(), imu::min_mag2_rd_mag, imu::max_mag2_rd_mag));
+      LOG_SERIAL.printf("%.7e,", speed_read(0));
+      LOG_SERIAL.printf("%.7e,", speed_read(1));
+      LOG_SERIAL.printf("%.7e,", speed_read(2));
+      LOG_SERIAL.println();
     }
   }
+
+  // Trigger the python script to stop taking data
+  LOG_SERIAL.println("#COMPLETE");
+
+  // Shut the wheels off
+  rwa::actuate(RWAMode::RWA_SPEED_CTRL, lin::zeros<lin::Vector3f>());
+  delay(5000); 
+  rwa::wheels[0].disable();
+  rwa::wheels[1].disable();
+  rwa::wheels[2].disable();
 }
 
 void loop() {
