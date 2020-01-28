@@ -71,9 +71,9 @@ void test_initialization()
 
 void test_is_start_time_ok()
 {
-    TEST_ASSERT_FALSE(prop_system.is_start_time_ok(micros() + 3000));
+    ASSERT_FALSE(prop_system.is_start_time_ok(micros() + 3000), "cannot request to start within 3 ms of current time");
     uint32_t start_time = TimedLock::safe_add(micros(), 3010);
-    TEST_ASSERT_TRUE(prop_system.is_start_time_ok(start_time));
+    ASSERT_TRUE(prop_system.is_start_time_ok(start_time), "ok to start 3.01 ms from current time");
 }
 
 /* Tank2 scheduling Tests */
@@ -81,7 +81,7 @@ void test_is_start_time_ok()
 void test_set_schedule_bad_start_time()
 {
     ASSERT_FALSE(prop_system.is_tank2_ready(), "sanity check");
-    ASSERT_FALSE(prop_system.set_schedule(2, 3, 4, 5, micros() + 3000), "should fail if start_time < now + 3ms");
+    ASSERT_FALSE(prop_system.set_schedule(2, 3, 4, 5, micros() + 3000), "should fail if start_time <= now + 3ms");
 }
 
 void test_set_schedule_bad_valve_times()

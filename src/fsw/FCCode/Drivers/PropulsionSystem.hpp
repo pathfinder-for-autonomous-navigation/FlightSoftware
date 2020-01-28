@@ -94,7 +94,7 @@ class Tank2;
 #ifndef DESKTOP
 class PropulsionSystem : public Device {
 #else
-class PropulsionSystem{
+class PropulsionSystem {
 #endif
 public:
     PropulsionSystem();

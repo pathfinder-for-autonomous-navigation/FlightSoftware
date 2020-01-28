@@ -191,8 +191,8 @@ void PropulsionSystem::disable() {
     tank2.close_all_valves();
     is_enabled = false;
 
-    // Release tank2 lock because tank2 did not get to fire
-    if (tank2.valve_lock.get_end_time() > micros())
+    // Release tank2 lock if tank2 had not started firing
+    if (tank2.start_time > micros())
         tank2.valve_lock.end_time = 0;
 }
 
@@ -208,7 +208,7 @@ bool PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_t
     if (is_enabled)
         return false;
 
-    // Scheduled firing must be at least 3000 ms in the future
+    // Scheduled firing must be at least 3000 us in the future
     if (!is_start_time_ok(start_time_us))
         return false;
 
@@ -234,7 +234,7 @@ bool PropulsionSystem::clear_schedule()
     return true;
 }
 
-bool PropulsionSystem::is_done_firing()const
+bool PropulsionSystem::is_done_firing() const
 {
     if (!is_enabled)
         return false;
