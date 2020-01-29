@@ -1,5 +1,6 @@
 #include "EventStorage.hpp"
 #include <string>
+#include <iostream>
 
 EventStorage::EventStorage(const std::string& name,
                  const unsigned int storage_size,
@@ -19,7 +20,7 @@ EventStorage::EventStorage(const std::string& name,
     }
 }
 
-void EventStorage::add_event_to_registry(StateFieldRegistry& registry) {
+void EventStorage::add_events_to_registry(StateFieldRegistry& registry) {
     for(Event& e : sub_events) {
         registry.add_readable_field(static_cast<ReadableStateFieldBase*>(&e));
     }
@@ -38,6 +39,7 @@ const char* EventStorage::print() const {
 }
 
 void EventStorage::signal() {
+    std::cout << event_ptr << std::endl;
     sub_events[event_ptr].signal();
     event_ptr++;
     if (event_ptr == sub_events.size()) event_ptr = 0;

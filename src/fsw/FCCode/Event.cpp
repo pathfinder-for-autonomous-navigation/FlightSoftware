@@ -59,6 +59,15 @@ const char* Event::print() const {
     return print_fn(ccno, data_fields);
 }
 
-void Event::deserialize() {}
+void Event::deserialize() {
+    
+}
+
+void Event::set_bit_array(const bit_array& arr) {
+    assert(arr.size() == field_data->size());
+    for(int i = 0; i < arr.size(); i++) {
+        (*field_data)[i] = arr[i];
+    }
+}
+
 bool Event::deserialize(const char *val) { return true; }
-void Event::set_bit_array(const bit_array& arr) {}

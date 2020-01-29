@@ -35,39 +35,43 @@ struct TestFixtureEvent {
 
 char TestFixtureEvent::print_data[40];
 
-void test_single_event(TestFixtureEvent& tf) {
+void test_single_event(TestFixtureEvent& tf, EventBase& event, unsigned int ccno) {
     // Test bitsize
     TEST_ASSERT_EQUAL(32 + 2, tf.event.bitsize());
 
     // Set values for test
-    tf.control_cycle_count = 20;
+    tf.control_cycle_count = ccno;
     tf.data1_f.set(true);
     tf.data2_f.set(false);
 
     // Verify that upon serialization, the values are written into the event's bitset in the way
     // that we would expect
-    tf.event.signal();
-    const bit_array& ba = tf.event.get_bit_array();
-    std::bitset<32> ccno;
-    for(int i = 0; i < 32; i++) ccno[i] = ba[i];
-    TEST_ASSERT_EQUAL(20, ccno.to_ulong());
+    event.signal();
+    bit_array& ba = const_cast<bit_array&>(event.get_bit_array());
+    TEST_ASSERT_EQUAL(ccno, ba.to_uint());
     TEST_ASSERT_EQUAL(true, ba[32]);
     TEST_ASSERT_EQUAL(false, ba[33]);
 
     // Test that changes in the event values are picked up
     tf.data1_f.set(false);
     tf.data2_f.set(true);
-    tf.event.signal();
+    event.signal();
+    ba = const_cast<bit_array&>(event.get_bit_array());
     TEST_ASSERT_EQUAL(false, ba[32]);
     TEST_ASSERT_EQUAL(true, ba[33]);
 
-    const char* print_result = tf.event.print();
-    TEST_ASSERT_EQUAL_STRING("E: time: 20, data: 0, 1", print_result);
+    // Test that the event is correctly printed when a print is requested.
+    const char* print_result = event.print();
+    const char* expected_fmt_string = "E: time: %d, data: 0, 1";
+    char expected_string[100];
+    memset(expected_string, 0, 100);
+    sprintf(expected_string, expected_fmt_string, ccno);
+    TEST_ASSERT_EQUAL_STRING(expected_string, print_result);
 }
 
 void test_event() {
     TestFixtureEvent tf;
-    test_single_event(tf);
+    test_single_event(tf, tf.event, 20);
 }
 
 struct TestFixtureEventStorage : public TestFixtureEvent {
@@ -75,11 +79,11 @@ struct TestFixtureEventStorage : public TestFixtureEvent {
     EventStorage event_storage;
     StateFieldRegistryMock registry;
 
-    TestFixtureEventStorage() :
+    TestFixtureEventStorage(unsigned int num_events) :
         TestFixtureEvent(),
-        event_storage("event", 3, event_data, print_fn, control_cycle_count)
+        event_storage("event", num_events, event_data, print_fn, control_cycle_count)
     {
-        event_storage.add_event_to_registry(registry);
+        event_storage.add_events_to_registry(registry);
     }
   protected:
     using TestFixtureEvent::event;
@@ -87,17 +91,19 @@ struct TestFixtureEventStorage : public TestFixtureEvent {
 
 // Test that the event storage correctly manages pointers for event storage.
 void test_event_storage() {
-    TestFixtureEventStorage tf;
-    // Three fields should have been created inside the state field registry.
+    TestFixtureEventStorage tf(99);
+    // Fields should have been created inside the state field registry.
     tf.registry.find_readable_field("event.1");
     tf.registry.find_readable_field("event.2");
     tf.registry.find_readable_field("event.3");
+    // Test that a field was added to the registry for every single sub-event.
+    TEST_ASSERT_EQUAL(99, tf.registry.readable_fields.size());
 
     // Event storage should behave the same as an event.
-    test_single_event(tf);
-    test_single_event(tf);
-    test_single_event(tf);
-    test_single_event(tf);
+    for(int i = 0; i < 200; i++) {
+        test_single_event(tf, tf.event_storage, i);
+        //TEST_ASSERT_EQUAL(i * 2, tf.event_storage.event_ptr);
+    }
 }
 
 #ifdef DESKTOP
