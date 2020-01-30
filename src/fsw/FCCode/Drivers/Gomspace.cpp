@@ -242,6 +242,11 @@ bool Gomspace::set_single_output(unsigned char channel, unsigned char value, sho
     i2c_write(command, 5);
     i2c_end_transmission(I2C_NOSTOP);
 
+    #ifdef DESKTOP
+    hk->output[channel]=output_byte;
+    return true;
+    #endif
+
     return _check_for_error(PORT_BYTE);
 }
 
