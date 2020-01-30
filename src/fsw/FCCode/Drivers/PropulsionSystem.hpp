@@ -35,9 +35,34 @@ class Tank2;
  * PropulsionSystem class defines the interface for the propulsion system, which 
  * consists of an inner tank, Tank1, and the (outer) thrust tank, Tank2. 
  * This driver provides functionality for opening and closing valves on both tanks,
- * setting and enforcing the thrust schedule 
+ * setting and enforcing the thrust schedule on Tank2
  * 
  * It consists of a static Tank1 (inner tank) and Tank2 (thrust tank) data objects. 
+ * These data objects are "models" and represents the state of the tanks (i.e. which 
+ * valves are open, the current tank pressure, the current temperature). 
+ * Models do not change their own states. 
+ * The "controller" is PropulsionSystem, which operates on the Tank models
+ * in order to change their states. 
+ * 
+ * Tank2 must fire within 3ms precision of the scheduled firing time. This is implemented
+ * using an interrupt (provided by IntervalTimer), which interrupts every 3 ms.
+ *  
+ * A schedule is a ordered list of four integers {0, 0, 0, 0} corresponding to the
+ * four valves on Tank2. A schedule is "zero" if and only if all four integers are 0. 
+ * It represents the duration for which we would like to open each valve. 
+ * 
+ * The start_time refers to time in microseconds at which we would like Tank2 to fire. 
+ * 
+ * We say that the PropulsionSystem is "scheduled to fire" when Tank2 has a non-zero
+ * schedule, a start_time in the future, and interrupts are enabled. Tank2 is
+ * "ready to fire" when it is "scheduled to fire" or is currently firing. 
+ * 
+ * Setting a schedule consists of specifying the start_time at which Tank2 should fire,
+ * and setting the schedule.
+ *  
+ * This driver does not automatically disable interrupts once Tank2 is done firing. 
+ * Therefore, we say that Tank2 is "done firing" when it has finished firing. 
+ * This is indicated when its schedule is set to 0 (although interrupts may still be on).
  * 
  * Specifications:
  * Tank1 valves are at numbered 0, 1
@@ -45,15 +70,9 @@ class Tank2;
  * mandatory_wait_time is the duration of time after opening a valve before 
  * we can open another valve. Tank1 10*1000 ms. Tank2 is 3ms
  * 
- * State Definitions:
- * "enabled" means that the IntervalTimer for tank2 is on. This implies that:
+ * "enabled" means that the IntervalTimer (interrupts) for tank2 is on. This implies that:
  *      - either tank2 is "scheduled (to fire)" 
  *      - or tank2 has already fired
- * "scheduled (to fire)" means that tank2 currently has a scheduled start time
- * in the future
- * 
- * "start time" refers to the time in micros at which tank2 will fire
- * Prop controller is responsible for pressurizing tank1 before asking tank2 to fire
  * 
  * Dependencies: 
  * SpikeAndHold must be enabled in order to use this system
@@ -61,16 +80,17 @@ class Tank2;
  * Usage:
  * - Call setup to setup this device
  * - Use set_schedule to set a firing schedule for tank2. 
- * - Use enable to turn on the schedule when we are close to the start_time.
+ * - Use enable to turn on interrupts for tank2 when we are close to the scheduled start_time
  * - Use disable to prematurely cancel the schedule.
  * - Use clear_schedule to reset the schedule and start_time to 0.
  * - Use is_tank2_ready to check if tank2 is scheduled to fire right now or in the future
- * - Use is_firing to check if we are still executing the schedule
+ * - Use is_done_firing to check if we are still executing the schedule
  * - Use disable to stop the timer when is_firing() returns false
  * 
  * Implementation Notes and Warnings:
  * The only public methods that can change the states in tank1 or tank2 are the
  * methods in PropulsionSystem.
+ * Prop controller is responsible for pressurizing tank1 before asking tank2 to fire
  * 
  * TimedLock enforces
  *  - tank2 scheduled start time and the 
@@ -218,6 +238,8 @@ private:
  * TimedLock is an "at least" lock with units in microseconds. 
  * There is no concept of owner. Once procured, TimedLock remains locked until
  * the end of the duration specified by the most recent procure. 
+ * In this sense, TimedLock is like a countdown timer, where the lock does not
+ * unlock until the timer reaches 0. 
  * 
  */ 
 class TimedLock

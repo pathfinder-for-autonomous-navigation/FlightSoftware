@@ -9,6 +9,10 @@
 using namespace Devices;
 
 #ifdef DESKTOP
+/**
+ * These functions and macros are defined in Arduino.h, which we cannot include
+ * in DESKTOP tests
+ */
 static void interrupts(){}
 void noInterrupts(){}
 uint8_t analogRead(uint8_t pin){return pin%2;}
@@ -75,7 +79,7 @@ void Tank2::setup()
     Tank::setup();
 #ifndef DESKTOP
     pinMode(pressure_sensor_high_pin, INPUT);
-    pinMode(pressure_sensor_high_pin, INPUT);
+    pinMode(pressure_sensor_low_pin, INPUT);
 #endif
 }
 
@@ -83,6 +87,7 @@ void Tank2::setup()
 
 int Tank::get_temp() const
 {
+    // TODO
     return analogRead(temp_sensor_pin);
 }
 
@@ -105,6 +110,7 @@ void Tank::close_all_valves()
 /* Tank2 implementation */
 
 float Tank2::get_pressure() const {
+    // TODO
     static int low_gain_read = 0;
     static int high_gain_read = 0;
     static float pressure = 0;
