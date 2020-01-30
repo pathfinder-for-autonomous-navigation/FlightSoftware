@@ -34,6 +34,7 @@ class GomspaceController : public TimedControlTask<void> {
     Devices::Gomspace &gs;
 
     Fault get_hk_fault;
+    Fault low_batt_fault;
     
     Serializer<unsigned int> vboost_sr;
     ReadableStateField<unsigned int> vboost1_f;

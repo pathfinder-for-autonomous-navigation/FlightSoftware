@@ -3,6 +3,7 @@
 GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
+    low_batt_fault("gomspace.low_batt", 1, control_cycle_count),
     get_hk_fault("gomspace.get_hk", 1, control_cycle_count),
 
     vboost_sr(0,4000,9), 
@@ -94,6 +95,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
     {
         get_hk_fault.add_to_registry(registry);
+        low_batt_fault.add_to_registry(registry);
         
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
@@ -169,6 +171,14 @@ void GomspaceController::execute() {
     }
     else{
         get_hk_fault.unsignal();
+    }
+
+    // Check that the battery voltage is above 7300 mV
+    if (gs.hk->vbatt<7300){
+        low_batt_fault.signal();
+    }
+    else{
+        low_batt_fault.unsignal();
     }
 
     // On the first control cycle, set the command statefields to the current values 
