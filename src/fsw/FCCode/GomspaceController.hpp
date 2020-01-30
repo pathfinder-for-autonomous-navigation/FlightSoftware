@@ -26,9 +26,9 @@ class GomspaceController : public TimedControlTask<void> {
     void execute() override;
 
     /**
-     * @brief Sets outputs from gomspace using statefield commands
+     * @brief Power cycles outputs from gomspace using statefield commands
      */
-    void set_outputs();
+    void power_cycle_outputs();
 
    protected:
     Devices::Gomspace &gs;
