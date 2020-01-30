@@ -18,8 +18,8 @@ class MissionManager : public TimedControlTask<void> {
 
     // Constants that drive state transitions.
     WritableStateField<double> detumble_safety_factor_f;
-    WritableStateField<double> close_approach_trigger_dist_f;
-    WritableStateField<double> docking_trigger_dist_f;
+    WritableStateField<double> close_approach_trigger_dist_f; // Meters
+    WritableStateField<double> docking_trigger_dist_f; // Meters
 
     /**
      * @brief Number of control cycles to wait during the post-deployment
