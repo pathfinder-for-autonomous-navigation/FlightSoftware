@@ -3,8 +3,8 @@
 GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
-    low_batt_fault("gomspace.low_batt", 1, control_cycle_count),
     get_hk_fault("gomspace.get_hk", 1, control_cycle_count),
+    low_batt_fault("gomspace.low_batt", 1, control_cycle_count),
 
     vboost_sr(0,4000,9), 
     vboost1_f("gomspace.vboost.output1", vboost_sr),
