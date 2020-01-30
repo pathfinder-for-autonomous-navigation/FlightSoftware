@@ -100,7 +100,12 @@ class GomspaceController : public TimedControlTask<void> {
     // Command statefields to control the Gomspace outputs. Will
     // be set by various individual subsystems and the ground.
     Serializer<bool> power_cycle_outputs_cmd_sr;
-    WritableStateField<bool> power_cycle_outputs_cmd_f;
+    WritableStateField<bool> power_cycle_output1_cmd_f;
+    WritableStateField<bool> power_cycle_output2_cmd_f;
+    WritableStateField<bool> power_cycle_output3_cmd_f;
+    WritableStateField<bool> power_cycle_output4_cmd_f;
+    WritableStateField<bool> power_cycle_output5_cmd_f;
+    WritableStateField<bool> power_cycle_output6_cmd_f;
 
     Serializer<unsigned int> pv_output_cmd_sr;
     WritableStateField<unsigned int> pv1_output_cmd_f;

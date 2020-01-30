@@ -65,7 +65,12 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     pptmode_f("gomspace.pptmode", pptmode_sr),
 
     power_cycle_outputs_cmd_sr(),
-    power_cycle_outputs_cmd_f("gomspace.power_cycle_outputs_cmd", power_cycle_outputs_cmd_sr),
+    power_cycle_output1_cmd_f("gomspace.power_cycle_output1_cmd", power_cycle_outputs_cmd_sr),
+    power_cycle_output2_cmd_f("gomspace.power_cycle_output2_cmd", power_cycle_outputs_cmd_sr),
+    power_cycle_output3_cmd_f("gomspace.power_cycle_output3_cmd", power_cycle_outputs_cmd_sr),
+    power_cycle_output4_cmd_f("gomspace.power_cycle_output4_cmd", power_cycle_outputs_cmd_sr),
+    power_cycle_output5_cmd_f("gomspace.power_cycle_output5_cmd", power_cycle_outputs_cmd_sr),
+    power_cycle_output6_cmd_f("gomspace.power_cycle_output6_cmd", power_cycle_outputs_cmd_sr),
 
     pv_output_cmd_sr(0,4000,9),
     pv1_output_cmd_f("gomspace.pv1_cmd", pv_output_cmd_sr),
@@ -135,7 +140,12 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
         add_readable_field(pptmode_f);
 
-        add_writable_field(power_cycle_outputs_cmd_f);
+        add_writable_field(power_cycle_output1_cmd_f);
+        add_writable_field(power_cycle_output2_cmd_f);
+        add_writable_field(power_cycle_output3_cmd_f);
+        add_writable_field(power_cycle_output4_cmd_f);
+        add_writable_field(power_cycle_output5_cmd_f);
+        add_writable_field(power_cycle_output6_cmd_f);
 
         add_writable_field(pv1_output_cmd_f);
         add_writable_field(pv2_output_cmd_f);
@@ -164,7 +174,12 @@ void GomspaceController::execute() {
     // On the first control cycle, set the command statefields to the current values 
     // in the hk struct to prevent unwanted writes.
     if (control_cycle_count==1){
-        power_cycle_outputs_cmd_f.set(false);
+        power_cycle_output1_cmd_f.set(false);
+        power_cycle_output2_cmd_f.set(false);
+        power_cycle_output3_cmd_f.set(false);
+        power_cycle_output4_cmd_f.set(false);
+        power_cycle_output5_cmd_f.set(false);
+        power_cycle_output6_cmd_f.set(false);
 
         pv1_output_cmd_f.set(gs.hk->vboost[0]);
         pv2_output_cmd_f.set(gs.hk->vboost[1]);
@@ -233,13 +248,63 @@ void GomspaceController::execute() {
 
 void GomspaceController::set_outputs(){
     // Power cycle output channels
-    if (power_cycle_outputs_cmd_f.get()){
+    if (power_cycle_output1_cmd_f.get()){
         if (output1_f.get()){
-            gs.set_output(0);
+            gs.set_single_output(0,0);
         }
         if (!output1_f.get()){
-            gs.set_output(1);
-            power_cycle_outputs_cmd_f.set(false);
+            gs.set_single_output(0,1);
+            power_cycle_output1_cmd_f.set(false);
+        }
+    }
+
+    if (power_cycle_output2_cmd_f.get()){
+        if (output2_f.get()){
+            gs.set_single_output(1,0);
+        }
+        if (!output2_f.get()){
+            gs.set_single_output(1,1);
+            power_cycle_output2_cmd_f.set(false);
+        }
+    }
+
+    if (power_cycle_output3_cmd_f.get()){
+        if (output3_f.get()){
+            gs.set_single_output(2,0);
+        }
+        if (!output3_f.get()){
+            gs.set_single_output(2,1);
+            power_cycle_output3_cmd_f.set(false);
+        }
+    }
+
+    if (power_cycle_output4_cmd_f.get()){
+        if (output4_f.get()){
+            gs.set_single_output(3,0);
+        }
+        if (!output4_f.get()){
+            gs.set_single_output(3,1);
+            power_cycle_output4_cmd_f.set(false);
+        }
+    }
+
+    if (power_cycle_output5_cmd_f.get()){
+        if (output5_f.get()){
+            gs.set_single_output(4,0);
+        }
+        if (!output1_f.get()){
+            gs.set_single_output(4,1);
+            power_cycle_output5_cmd_f.set(false);
+        }
+    }
+
+    if (power_cycle_output6_cmd_f.get()){
+        if (output6_f.get()){
+            gs.set_single_output(5,0);
+        }
+        if (!output6_f.get()){
+            gs.set_single_output(5,1);
+            power_cycle_output6_cmd_f.set(false);
         }
     }
 
