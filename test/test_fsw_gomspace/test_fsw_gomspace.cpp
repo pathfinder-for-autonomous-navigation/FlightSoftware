@@ -84,7 +84,12 @@ class TestFixture {
 
     ReadableStateField<unsigned char>* pptmode_fp;
 
-    WritableStateField<unsigned char>* power_cycle_outputs_cmd_fp;
+    WritableStateField<unsigned char>* power_cycle_output1_cmd_fp;
+    WritableStateField<unsigned char>* power_cycle_output2_cmd_fp;
+    WritableStateField<unsigned char>* power_cycle_output3_cmd_fp;
+    WritableStateField<unsigned char>* power_cycle_output4_cmd_fp;
+    WritableStateField<unsigned char>* power_cycle_output5_cmd_fp;
+    WritableStateField<unsigned char>* power_cycle_output6_cmd_fp;
 
     WritableStateField<unsigned int>* pv1_output_cmd_fp;
     WritableStateField<unsigned int>* pv2_output_cmd_fp;
@@ -143,7 +148,12 @@ class TestFixture {
         battmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.battmode");
         pptmode_fp = registry.find_readable_field_t<unsigned char>("gomspace.pptmode");
 
-        power_cycle_outputs_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_outputs_cmd");
+        power_cycle_output1_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output1_cmd");
+        power_cycle_output2_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output2_cmd");
+        power_cycle_output3_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output3_cmd");
+        power_cycle_output4_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output4_cmd");
+        power_cycle_output5_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output5_cmd");
+        power_cycle_output6_cmd_fp = registry.find_writable_field_t<unsigned char>("gomspace.power_cycle_output6_cmd");
 
         pv1_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv1_cmd");
         pv2_output_cmd_fp = registry.find_writable_field_t<unsigned int>("gomspace.pv2_cmd");
@@ -214,11 +224,11 @@ void test_task_initialization() {
 void test_task_execute() {
     TestFixture tf;
 
-    // Set the control cycle count to 1 so that the control task won't change the Gomspace output values
+    // Set the control cycle count to 1 so that the control task will initialize the Gomspace output values
     TimedControlTaskBase::control_cycle_count=1;
     tf.gs_controller->execute();
 
-    //check that the statefields are set to their respective value(s) in hk struct 
+    // Check that the statefields are set to their respective value(s) in hk struct 
     TEST_ASSERT_EQUAL(1, tf.vboost1_fp->get());
     TEST_ASSERT_EQUAL(2, tf.vboost2_fp->get());
     TEST_ASSERT_EQUAL(3, tf.vboost3_fp->get());
@@ -264,9 +274,27 @@ void test_task_execute() {
     
     TEST_ASSERT_EQUAL(64, tf.pptmode_fp->get());
 
-    // Initialize the command statefields
-    tf.power_cycle_outputs_cmd_fp->set(false);
+    // Verify that the command statefields were initialized on the first control cycle
+    TEST_ASSERT_EQUAL(false, tf.power_cycle_output1_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.power_cycle_output2_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.power_cycle_output3_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.power_cycle_output4_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.power_cycle_output5_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.power_cycle_output6_cmd_fp->get());
 
+    TEST_ASSERT_EQUAL(1, tf.pv1_output_cmd_fp->get());
+    TEST_ASSERT_EQUAL(2, tf.pv2_output_cmd_fp->get());
+    TEST_ASSERT_EQUAL(3, tf.pv3_output_cmd_fp->get());
+
+    TEST_ASSERT_EQUAL(64, tf.ppt_mode_cmd_fp->get());
+
+    TEST_ASSERT_EQUAL(0, tf.heater_cmd_fp->get());
+
+    TEST_ASSERT_EQUAL(false, tf.counter_reset_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.gs_reset_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.gs_reboot_cmd_fp->get());
+
+    // Set the command statefields for desktop tests
     tf.pv1_output_cmd_fp->set(1000);
     tf.pv2_output_cmd_fp->set(2000);
     tf.pv3_output_cmd_fp->set(3000);
@@ -296,16 +324,16 @@ void test_task_execute() {
 
     // Test the reset commands one by one, starting with the power cycle outputs command
 
-    tf.power_cycle_outputs_cmd_fp->set(true);
+    tf.power_cycle_output1_cmd_fp->set(true);
 
     tf.gs_controller->execute();
     TEST_ASSERT_EQUAL(false, tf.output1_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output2_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output3_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output4_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output5_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.output6_fp->get());
-    TEST_ASSERT_EQUAL(true, tf.power_cycle_outputs_cmd_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output2_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output3_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output4_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output5_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.output6_fp->get());
+    TEST_ASSERT_EQUAL(true, tf.power_cycle_output1_cmd_fp->get());
 
     tf.gs_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.output1_fp->get());
@@ -314,7 +342,7 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(true, tf.output4_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output5_fp->get());
     TEST_ASSERT_EQUAL(true, tf.output6_fp->get());
-    TEST_ASSERT_EQUAL(false, tf.power_cycle_outputs_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.power_cycle_output1_cmd_fp->get());
     
     // Test the counter reset command
     
