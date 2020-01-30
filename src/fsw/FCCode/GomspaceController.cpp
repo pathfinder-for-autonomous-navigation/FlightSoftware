@@ -6,6 +6,9 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     get_hk_fault("gomspace.get_hk", 1, control_cycle_count),
     low_batt_fault("gomspace.low_batt", 1, control_cycle_count),
 
+    batt_threshold_sr(5000,9000,10),
+    batt_threshold_f("gomspace.batt_threshold", batt_threshold_sr),
+
     vboost_sr(0,4000,9), 
     vboost1_f("gomspace.vboost.output1", vboost_sr),
     vboost2_f("gomspace.vboost.output2", vboost_sr),
@@ -96,6 +99,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     {
         get_hk_fault.add_to_registry(registry);
         low_batt_fault.add_to_registry(registry);
+
+        add_writable_field(batt_threshold_f);
         
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
@@ -173,8 +178,8 @@ void GomspaceController::execute() {
         get_hk_fault.unsignal();
     }
 
-    // Check that the battery voltage is above 7300 mV
-    if (gs.hk->vbatt<7300){
+    // Check that the battery voltage is above the threshold
+    if (gs.hk->vbatt<batt_threshold_f.get()){
         low_batt_fault.signal();
     }
     else{
