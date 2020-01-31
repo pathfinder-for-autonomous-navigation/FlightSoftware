@@ -20,7 +20,7 @@
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
         const std::vector<DownlinkProducer::FlowData>& flow_data,
-        std::vector<std::string>& statefields, const std::vector<unsigned int> periods)
+        std::vector<std::string>& statefields, const std::vector<unsigned int>& periods)
     : ControlTask<void>(registry),
       field_creator_task(registry),
       clock_manager(registry, PAN::control_cycle_time),
