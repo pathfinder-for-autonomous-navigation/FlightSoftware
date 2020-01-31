@@ -3,12 +3,13 @@
 #include <vector>
 #include <fstream>
 #include <json.hpp>
-#include "../eeprom_configs.hpp"
-#include "../eeprom_configs.cpp"
+
+const std::vector<std::string> dummy_statefields = {};
+const std::vector<unsigned int> dummy_periods = {};
 
 DownlinkParser::DownlinkParser(StateFieldRegistry& r,
                                const std::vector<DownlinkProducer::FlowData>& flow_data) :
-    fcp(r, flow_data, PAN::statefields, PAN::periods),
+    fcp(r, flow_data, dummy_statefields, dummy_periods),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
 std::string DownlinkParser::process_downlink_file(const std::string& filename) {
