@@ -4,6 +4,10 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
     get_hk_fault("gomspace.get_hk", 1, control_cycle_count),
+    low_batt_fault("gomspace.low_batt", 1, control_cycle_count),
+
+    batt_threshold_sr(5000,9000,10),
+    batt_threshold_f("gomspace.batt_threshold", batt_threshold_sr),
 
     vboost_sr(0,4000,9), 
     vboost1_f("gomspace.vboost.output1", vboost_sr),
@@ -94,6 +98,9 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
     {
         get_hk_fault.add_to_registry(registry);
+        low_batt_fault.add_to_registry(registry);
+
+        add_writable_field(batt_threshold_f);
         
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
@@ -171,6 +178,14 @@ void GomspaceController::execute() {
         get_hk_fault.unsignal();
     }
 
+    // Check that the battery voltage is above the threshold
+    if (gs.hk->vbatt<batt_threshold_f.get()){
+        low_batt_fault.signal();
+    }
+    else{
+        low_batt_fault.unsignal();
+    }
+
     // On the first control cycle, set the command statefields to the current values 
     // in the hk struct to prevent unwanted writes.
     if (control_cycle_count==1){
@@ -194,9 +209,43 @@ void GomspaceController::execute() {
         gs_reboot_cmd_f.set(false);
     }
 
-    // Set the gomspace outputs to the values of the statefield commands every period
-    else if (control_cycle_count%period==0){
-        set_outputs();
+    // Set the gomspace outputs to the values of the statefield commands around every 30 seconds
+    if (control_cycle_count%period==0){
+        power_cycle_outputs();
+    }
+
+    // Set power voltage command
+    if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
+        gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
+    }
+
+    // Set PPT mode command
+    if (pptmode_f.get()!=ppt_mode_cmd_f.get()){
+        gs.set_pv_auto(ppt_mode_cmd_f.get());
+    }
+
+    // Turn on/off the heater command
+    if (heater_cmd_f.get()==true && gs.get_heater() == 0) {
+        gs.turn_on_heater();
+    }
+    else if (heater_cmd_f.get()==false && gs.get_heater() == 1){
+        gs.turn_off_heater();
+    }
+
+    // Reset commands
+    if (counter_reset_cmd_f.get()==true) {
+        gs.reset_counters();
+        counter_reset_cmd_f.set(false);
+    }
+
+    if (gs_reset_cmd_f.get()==true) {
+        gs.hard_reset();
+        gs_reset_cmd_f.set(false);
+    }
+
+    if (gs_reboot_cmd_f.get()==true) {
+        gs.reboot();
+        gs_reboot_cmd_f.set(false);
     }
 
     //set statefields to respective data from hk struct 
@@ -246,7 +295,7 @@ void GomspaceController::execute() {
     pptmode_f.set(gs.hk->pptmode);
 }
 
-void GomspaceController::set_outputs(){
+void GomspaceController::power_cycle_outputs(){
     // Power cycle output channels
     if (power_cycle_output1_cmd_f.get()){
         if (output1_f.get()){
@@ -306,39 +355,5 @@ void GomspaceController::set_outputs(){
             gs.set_single_output(5,1);
             power_cycle_output6_cmd_f.set(false);
         }
-    }
-
-    // Set power voltages
-    if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
-        gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
-    }
-
-    // Set PPT mode
-    if (pptmode_f.get()!=ppt_mode_cmd_f.get()){
-        gs.set_pv_auto(ppt_mode_cmd_f.get());
-    }
-
-    // Turn on/off the heater
-    if (heater_cmd_f.get()==true && gs.get_heater() == 0) {
-        gs.turn_on_heater();
-    }
-    else if (heater_cmd_f.get()==false && gs.get_heater() == 1){
-        gs.turn_off_heater();
-    }
-
-    // Reset commands
-    if (counter_reset_cmd_f.get()==true) {
-        gs.reset_counters();
-        counter_reset_cmd_f.set(false);
-    }
-
-    if (gs_reset_cmd_f.get()==true) {
-        gs.hard_reset();
-        gs_reset_cmd_f.set(false);
-    }
-
-    if (gs_reboot_cmd_f.get()==true) {
-        gs.reboot();
-        gs_reboot_cmd_f.set(false);
     }
 }
