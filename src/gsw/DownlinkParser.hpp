@@ -37,9 +37,18 @@ class DownlinkParser {
 
     /**
      * @brief Downlink flow data.
-     * 
      */
     const std::vector<DownlinkProducer::Flow>& flow_data;
+
+    /**
+     * @brief Statefields stored in EEPROM. Used to instantiate main control loop
+     */
+    const std::vector<std::string>& statefields;
+
+    /**
+     * @brief Periods of statefields stored in EEPROM. Used to instantiate main control loop
+     */
+    const std::vector<unsigned int>& periods;
 
     /**
      * @brief Processes the most recent downlink packet.

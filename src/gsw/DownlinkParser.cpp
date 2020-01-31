@@ -6,7 +6,7 @@
 
 DownlinkParser::DownlinkParser(StateFieldRegistry& r,
                                const std::vector<DownlinkProducer::FlowData>& flow_data) :
-    fcp(r, flow_data),
+    fcp(r, flow_data, statefields, periods),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
 std::string DownlinkParser::process_downlink_file(const std::string& filename) {
