@@ -77,12 +77,13 @@ void test_task_execute() {
     TimedControlTaskBase::control_cycle_count=4;
 
     // At the 4th control cycle, the EEPROM should write the value of mission mode (period=2)
+    // All the other addresses should hold the default value, we haven't written anything there yet.
     tf.eeprom_controller->execute();
     #ifndef DESKTOP
     TEST_ASSERT_EQUAL(5, EEPROM.read(tf.eeprom_controller->addresses.at(0)));
-    TEST_ASSERT_EQUAL(2, EEPROM.read(tf.eeprom_controller->addresses.at(1)));
-    TEST_ASSERT_EQUAL(3, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
-    TEST_ASSERT_EQUAL(4, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
+    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(1)));
+    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
+    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
     #endif
 
     // At the 9th control cycle, the EEPROM should write the value of deployment mode (period=3)
@@ -91,8 +92,8 @@ void test_task_execute() {
     #ifndef DESKTOP
     TEST_ASSERT_EQUAL(5, EEPROM.read(tf.eeprom_controller->addresses.at(0)));
     TEST_ASSERT_EQUAL(6, EEPROM.read(tf.eeprom_controller->addresses.at(1)));
-    TEST_ASSERT_EQUAL(3, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
-    TEST_ASSERT_EQUAL(4, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
+    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
+    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
     #endif
 
     // At the 25th control cycle, the EEPROM should write the value of sat designation (period=5)
@@ -102,7 +103,7 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(5, EEPROM.read(tf.eeprom_controller->addresses.at(0)));
     TEST_ASSERT_EQUAL(6, EEPROM.read(tf.eeprom_controller->addresses.at(1)));
     TEST_ASSERT_EQUAL(7, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
-    TEST_ASSERT_EQUAL(4, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
+    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
     #endif
 
     // At the 49th control cycle, the EEPROM should write the value of cycle number (period=7)
@@ -187,7 +188,7 @@ void setup() {
     while (!Serial) {
     ; // wait for serial port to connect.
     }
-    test_control_task();
+    Serial.println(test_control_task());
 }
 
 void loop(){
