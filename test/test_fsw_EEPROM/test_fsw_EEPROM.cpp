@@ -35,7 +35,7 @@ class TestFixture {
         control_cycle_count_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
         control_cycle_count_fp->set(4);
 
-        eeprom_controller = std::make_unique<EEPROMController>(registry, 0, statefields); 
+        eeprom_controller = std::make_unique<EEPROMController>(registry, 0, statefields, periods); 
     }
 };
 
