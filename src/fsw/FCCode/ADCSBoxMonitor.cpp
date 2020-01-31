@@ -31,7 +31,12 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr),
     havt_bool_sr(),
     adcs_box_functional("adcs_monitor.functional", flag_sr),
-    adcs_functional_fault("adcs_monitor.functional_fault", 1, control_cycle_count)
+    // TODO: Change persistence to 0 for instant safehold?
+    adcs_functional_fault("adcs_monitor.functional_fault", 1, control_cycle_count),
+    wheel1_fault("adcs_monitor.wheel1_fault", 1, control_cycle_count),
+    wheel2_fault("adcs_monitor.wheel2_fault", 1, control_cycle_count),
+    wheel3_fault("adcs_monitor.wheel3_fault", 1, control_cycle_count),
+    wheel_pot_fault("adcs_monitor.wheel_pot_fault", 1, control_cycle_count)
     {
         // reserve memory
         ssa_voltages_f.reserve(adcs::ssa::num_sun_sensors);
@@ -44,22 +49,21 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
             ssa_voltages_f.emplace_back(buffer, ssa_voltage_sr);
         }
 
-        // reserve memory
-        havt_table_vector.reserve(adcs::havt::Index::_LENGTH);
+        havt_read_vector.reserve(adcs::havt::Index::_LENGTH);
         // fill vector of statefields for havt
         for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
         {
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.havt_device");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_table_vector.emplace_back(buffer, havt_bool_sr);
+            havt_read_vector.emplace_back(buffer, havt_bool_sr);
         }
         
         // add device availabilty to registry, and initialize value to 0
         for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
         {
-            add_readable_field(havt_table_vector[idx]);
-            havt_table_vector[idx].set(false);
+            add_readable_field(havt_read_vector[idx]);
+            havt_read_vector[idx].set(false);
         }
 
         //actually add statefields to registry
@@ -121,6 +125,8 @@ void ADCSBoxMonitor::execute(){
 
     //ask the driver to fill in values
     adcs_box_functional.set(adcs_system.is_functional());
+    if(!adcs_box_functional.get())
+        adcs_functional_fault.signal();
 
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
     adcs_system.get_ssa_voltage(&ssa_voltages);
@@ -150,7 +156,7 @@ void ADCSBoxMonitor::execute(){
     adcs_system.get_havt(&havt_read);
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
     {
-        havt_table_vector[idx].set(havt_read.test(idx));
+        havt_read_vector[idx].set(havt_read.test(idx));
     }
 
     mag_vec_f.set(mag_vec);

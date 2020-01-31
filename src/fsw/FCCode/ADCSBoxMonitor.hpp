@@ -83,12 +83,21 @@ protected:
     ReadableStateField<bool> gyr_temp_flag;
 
     //! vector for havt table, a 0/false means device disabled; 1/true is functional
-    std::vector<ReadableStateField<bool>> havt_table_vector;
+    std::vector<ReadableStateField<bool>> havt_read_vector;
     Serializer<bool> havt_bool_sr;
 
     //! Dedicated statefield for the is_functional() of the ADCSBox itself
     ReadableStateField<bool> adcs_box_functional;
+    
+    // Fault is signaled if adcs itself has no i2c response
     Fault adcs_functional_fault;
+
+    // Fault is signaled based off of HAVT
+    Fault wheel1_fault;
+    Fault wheel2_fault;
+    Fault wheel3_fault;
+    Fault wheel_pot_fault;
+
 };
 
 #endif
