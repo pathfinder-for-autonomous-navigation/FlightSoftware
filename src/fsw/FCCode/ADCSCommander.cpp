@@ -88,12 +88,12 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
     //defaults, TODO: DECIDE DEFAULTS
-    rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
+    rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
     rwa_speed_cmd_f.set({0,0,0});
     rwa_torque_cmd_f.set({0,0,0});
     rwa_speed_filter_f.set(1);
     rwa_ramp_filter_f.set(1);
-    mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
+    mtr_mode_f.set(adcs::MTRMode::MTR_DISABLED);
     mtr_cmd_f.set({0,0,0});
     mtr_limit_f.set(adcs::mtr::max_moment);
     ssa_voltage_filter_f.set(1);
