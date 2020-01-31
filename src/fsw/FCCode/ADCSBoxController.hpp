@@ -80,7 +80,7 @@ protected:
      * 
      */
     std::vector<const WritableStateField<bool>*> havt_cmd_table_vector_fp;
-
+    const ReadableStateField<bool>* havt_cmd_apply_fp;
 };
 
 #endif

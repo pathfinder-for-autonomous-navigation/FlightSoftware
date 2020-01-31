@@ -33,15 +33,19 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         imu_gyr_temp_kd_fp = find_writable_field<float>("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
         imu_gyr_temp_desired_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
     
+        
         //fill vector of pointers to statefields for havt
+        havt_cmd_table_vector_fp.reserve(adcs::havt::Index::_LENGTH);
         char buffer[50];
         for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
         {
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_cmd.havt_device");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_cmd_table_vector_fp.push_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+            havt_cmd_table_vector_fp.emplace_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
         }
+
+        havt_cmd_apply_fp = find_readable_field<bool>("adcs_cmd.havt_apply", __FILE__, __LINE__);
     }
 
 void ADCSBoxController::execute(){
@@ -82,11 +86,13 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_gyr_temp_kd(imu_gyr_temp_kd_fp->get());
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
 
-    // apply havt cmd table
-    std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
-    for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
-    {
-        temp_cmd_table.set(idx, havt_cmd_table_vector_fp[idx]->get());
+    // apply havt cmd table iff a fault response warrants it
+    if(havt_cmd_apply_fp->get()){
+        std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
+        for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
+        {
+            temp_cmd_table.set(idx, havt_cmd_table_vector_fp[idx]->get());
+        }
+        adcs_system.set_havt(temp_cmd_table);
     }
-    adcs_system.set_havt(temp_cmd_table);
 }

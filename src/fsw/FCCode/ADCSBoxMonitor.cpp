@@ -29,7 +29,9 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     mag_vec_flag("adcs_monitor.mag_vec_flag", flag_sr),
     gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr),
-    havt_bool_sr()
+    havt_bool_sr(),
+    adcs_box_functional("adcs_monitor.functional", flag_sr),
+    adcs_functional_fault("adcs_monitor.functional_fault", 1, control_cycle_count)
     {
         // reserve memory
         ssa_voltages_f.reserve(adcs::ssa::num_sun_sensors);
@@ -80,6 +82,8 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(mag_vec_flag);
         add_readable_field(gyr_vec_flag);
         add_readable_field(gyr_temp_flag);
+
+        add_readable_field(adcs_box_functional);
     }
 
 bool exceed_bounds(const std::array<float, 3>& input, const float min, const float max){
@@ -116,6 +120,8 @@ void ADCSBoxMonitor::execute(){
     float gyr_temp = 0.0;
 
     //ask the driver to fill in values
+    adcs_box_functional.set(adcs_system.is_functional());
+
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
     adcs_system.get_ssa_voltage(&ssa_voltages);
     adcs_system.get_imu(&mag_vec, &gyr_vec, &gyr_temp);
