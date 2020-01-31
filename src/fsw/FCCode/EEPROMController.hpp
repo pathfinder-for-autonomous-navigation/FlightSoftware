@@ -23,7 +23,7 @@ class EEPROMController : public TimedControlTask<void> {
      * registry. Sets the pointer values to those stored in the EEPROM
      * if necessary.
      */
-    void init(std::vector<std::string>& statefields, const std::vector<unsigned int>& periods);
+    void init(const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods);
 
     /**
      * @brief Writes to the EEPROM after a certain number of 
