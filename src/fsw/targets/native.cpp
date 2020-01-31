@@ -2,6 +2,7 @@
 #include <common/StateFieldRegistry.hpp>
 #include "flow_data.hpp"
 #include "eeprom_configs.hpp"
+#include "eeprom_configs.cpp"
 
 #ifndef UNIT_TEST
 int main() {
