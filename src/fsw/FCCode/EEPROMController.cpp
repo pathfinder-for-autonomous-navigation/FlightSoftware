@@ -9,7 +9,7 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
 
 }
 
-void EEPROMController::init(std::vector<std::string>& statefields, std::vector<unsigned int>& periods){
+void EEPROMController::init(std::vector<std::string>& statefields, const std::vector<unsigned int>& periods){
   for (size_t i = 0; i<statefields.size(); i++){
     // copy the string name of the statefield into a char array
     char field[statefields.at(i).length() + 1];

@@ -103,9 +103,11 @@ class MainControlLoop : public ControlTask<void> {
      * 
      * @param registry State field registry
      * @param flow_data Metadata for telemetry flows.
+     * @param statefields Statefields written to EEPROM
+     * @param periods Number of control cycles after which a statefield is written to EEPROM
      */
     MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data);
+        const std::vector<DownlinkProducer::FlowData>& flow_data, std::vector<std::string>& statefields, const std::vector<unsigned int>& periods);
 
     /**
      * @brief Processes state field commands present in the serial buffer.

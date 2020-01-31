@@ -35,7 +35,7 @@ class TestFixture {
         control_cycle_count_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
         control_cycle_count_fp->set(4);
 
-        eeprom_controller = std::make_unique<EEPROMController>(registry, 0, statefields, periods); 
+        eeprom_controller = std::make_unique<EEPROMController>(registry, 0); 
     }
 };
 
@@ -48,7 +48,7 @@ void test_task_initialization() {
     #endif
 
     TestFixture tf;
-    tf.eeprom_controller->init(tf.statefields);
+    tf.eeprom_controller->init(tf.statefields, tf.periods);
 
     #ifndef DESKTOP
     TEST_ASSERT_EQUAL(1, tf.eeprom_controller->pointers.at(0)->get());
@@ -65,7 +65,7 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
-    tf.eeprom_controller->init(tf.statefields);
+    tf.eeprom_controller->init(tf.statefields, tf.periods);
 
     // Set the statefields to new values.
     tf.mission_mode_fp->set(5);
@@ -119,7 +119,7 @@ void test_task_execute() {
     // Now we pretend the satellite just rebooted. Everytime the satellite reboots, another 
     // eeprom control task is instantiated.
     TestFixture tf2;
-    tf2.eeprom_controller->init(tf2.statefields);
+    tf2.eeprom_controller->init(tf2.statefields, tf2.periods);
 
     // Check if the new eeprom controller set the statefield values to the values that 
     // were previously stored in the EEPROM
