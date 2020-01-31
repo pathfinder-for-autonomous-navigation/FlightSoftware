@@ -59,7 +59,6 @@ class ADCSCommander : public TimedControlTask<void> {
 
     Serializer<bool> bool_sr;
     std::vector<WritableStateField<bool>> havt_cmd_table_vector_f;
-    std::vector<ReadableStateField<bool>*> havt_read_table_vector_fp;
 
     /**
      * @brief If this statefield is true, then the cmd_table is uploaded to ADCS

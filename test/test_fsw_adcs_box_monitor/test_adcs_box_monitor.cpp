@@ -35,7 +35,7 @@ class TestFixture {
 
         Devices::ADCS adcs;
         
-        // Create a TestFixture instance of AttitudeEstimator with pointers to statefields
+        // Create a TestFixture instance of ADCSBoxMonitor with pointers to statefields
         // Compile conditionally for either hootl or hitl
         #ifdef DESKTOP
         TestFixture() : registry(), adcs(){
