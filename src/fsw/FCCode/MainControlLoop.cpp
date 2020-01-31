@@ -36,7 +36,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       downlink_producer(registry, downlink_producer_offset),
       quake_manager(registry, quake_manager_offset),
       uplink_consumer(registry, uplink_consumer_offset),
-      eeprom_controller(registry, eeprom_controller_offset, statefields),
+      eeprom_controller(registry, eeprom_controller_offset, statefields, periods),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
