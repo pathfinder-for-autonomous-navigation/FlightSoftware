@@ -47,8 +47,6 @@ class TelemetryInfoGenerator {
     StateFieldRegistry r;
     MainControlLoop fcp;
     const std::vector<DownlinkProducer::FlowData>& flow_data;
-    const std::vector<std::string>& statefields={};
-    const std::vector<unsigned int>& periods={};
 };
 
 #endif
