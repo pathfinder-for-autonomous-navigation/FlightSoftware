@@ -3,14 +3,13 @@
 #include <EEPROM.h>
 #endif
 
-EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset, std::vector<std::string>& statefields, 
-std::vector<unsigned int>& periods)
+EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "eeprom_ct", offset)
 {
-  sf_periods=periods;
+
 }
 
-void EEPROMController::init(std::vector<std::string>& statefields){
+void EEPROMController::init(std::vector<std::string>& statefields, std::vector<unsigned int>& periods){
   for (size_t i = 0; i<statefields.size(); i++){
     // copy the string name of the statefield into a char array
     char field[statefields.at(i).length() + 1];
@@ -20,6 +19,8 @@ void EEPROMController::init(std::vector<std::string>& statefields){
     // add the address of the pointer to the address array
     addresses.push_back(i*5);
   }
+
+  sf_periods=periods;
 
   // if we find stored information from previous control cycles when the control task 
   // is initialized, then set all the statefields to those stored values
