@@ -5,6 +5,11 @@
 
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
+    detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 10)),
+    close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
+    docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
+    max_radio_silence_duration_f("max_radio_silence",
+        Serializer<unsigned int>(0, 2 * 24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms)),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
     mission_state_f("pan.state", Serializer<unsigned char>(10)),
@@ -12,6 +17,10 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32)),
     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2))
 {
+    add_writable_field(detumble_safety_factor_f);
+    add_writable_field(close_approach_trigger_dist_f);
+    add_writable_field(docking_trigger_dist_f);
+    add_writable_field(max_radio_silence_duration_f);
     add_writable_field(adcs_state_f);
     add_writable_field(docking_config_cmd_f);
     add_writable_field(mission_state_f);
@@ -33,6 +42,10 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
+    detumble_safety_factor_f.set(0.2);
+    close_approach_trigger_dist_f.set(100);
+    docking_trigger_dist_f.set(0.4);
+    max_radio_silence_duration_f.set(24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms);
     transition_to_state(mission_state_t::startup,
         adcs_state_t::startup,
         prop_state_t::disabled); // "Starting" transition
@@ -106,7 +119,7 @@ void MissionManager::dispatch_startup() {
 void MissionManager::dispatch_detumble() {
     // Detumble until satellite angular rate is below an allowable threshold
     const float momentum = lin::norm(adcs_ang_momentum_fp->get());
-    const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor;
+    const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor_f.get();
     if (momentum <= threshold)
     {
         transition_to_state(mission_state_t::standby,
@@ -144,7 +157,7 @@ void MissionManager::dispatch_standby() {
 void MissionManager::dispatch_follower() {
     docking_config_cmd_f.set(true);
 
-    if (distance_to_other_sat() < docking_trigger_dist) {
+    if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::docking,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
@@ -160,7 +173,7 @@ void MissionManager::dispatch_follower() {
 void MissionManager::dispatch_leader() {
     docking_config_cmd_f.set(true);
 
-    if (distance_to_other_sat() < docking_trigger_dist) {
+    if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::docking,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
@@ -208,7 +221,7 @@ double MissionManager::distance_to_other_sat() const {
 
 bool MissionManager::too_long_since_last_comms() const {
     const unsigned int cycles_since_last_comms = control_cycle_count - last_checkin_cycle_fp->get();
-    return cycles_since_last_comms > max_radio_silence_duration;
+    return cycles_since_last_comms > max_radio_silence_duration_f.get();
 }
 
 void MissionManager::set(mission_state_t state) {

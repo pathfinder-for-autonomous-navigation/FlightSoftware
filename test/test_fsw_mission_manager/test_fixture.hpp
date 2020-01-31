@@ -32,6 +32,10 @@ class TestFixture {
 
     std::unique_ptr<MissionManager> mission_manager;
     // Output state fields from mission manager
+    WritableStateField<double>* detumble_safety_factor_fp;
+    WritableStateField<double>* close_approach_trigger_dist_fp;
+    WritableStateField<double>* docking_trigger_dist_fp;
+    WritableStateField<unsigned int>* max_radio_silence_duration_fp;
     WritableStateField<unsigned char>* adcs_state_fp;
     WritableStateField<bool>* docking_config_cmd_fp;
     WritableStateField<unsigned char>* mission_state_fp;

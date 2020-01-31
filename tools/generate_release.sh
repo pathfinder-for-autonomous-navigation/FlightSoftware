@@ -27,12 +27,16 @@ platformio run -e fsw_preflight_leader
 platformio run -e fsw_preflight_follower
 platformio run -e fsw_flight_leader
 platformio run -e fsw_flight_follower
+platformio run -e adcs_teensy35_flight_leader
+platformio run -e adcs_teensy35_flight_follower
+platformio run -e adcs_teensy35_flight_debug_leader
+platformio run -e adcs_teensy35_flight_debug_follower
 platformio run -e gsw_downlink_parser
 platformio run -e gsw_uplink_producer
 platformio run -e gsw_telem_info_generator
 
-cp .pio/build/fsw_native_leader/program               release/hootl_leader_macOS
-cp .pio/build/fsw_native_follower/program             release/hootl_follower_macOS
+cp .pio/build/fsw_native_leader/program               release/fsw_hootl_leader_macOS
+cp .pio/build/fsw_native_follower/program             release/fsw_hootl_follower_macOS
 cp .pio/build/fsw_teensy35_hitl_leader/firmware.hex     release/fsw_teensy35_hitl_leader.hex
 cp .pio/build/fsw_teensy35_hitl_follower/firmware.hex   release/fsw_teensy35_hitl_follower.hex
 cp .pio/build/fsw_teensy36_hitl_leader/firmware.hex     release/fsw_teensy36_hitl_leader.hex
@@ -41,9 +45,13 @@ cp .pio/build/fsw_preflight_leader/firmware.hex         release/fsw_preflight_le
 cp .pio/build/fsw_preflight_follower/firmware.hex       release/fsw_preflight_follower.hex
 cp .pio/build/fsw_flight_leader/firmware.hex            release/fsw_flight_leader.hex
 cp .pio/build/fsw_flight_follower/firmware.hex          release/fsw_flight_follower.hex
+cp .pio/build/adcs_teensy35_flight_leader/firmware.hex            release/adcs_flight_leader.hex
+cp .pio/build/adcs_teensy35_flight_follower/firmware.hex          release/adcs_flight_follower.hex
+cp .pio/build/adcs_teensy35_flight_debug_leader/firmware.hex      release/adcs_debug_leader.hex
+cp .pio/build/adcs_teensy35_flight_debug_follower/firmware.hex    release/adcs_debug_follower.hex
 cp .pio/build/gsw_downlink_parser/program      release/downlink_parser_macOS
 cp .pio/build/gsw_uplink_producer/program      release/uplink_producer_macOS
-cp .pio/build/gsw_telem_info_generator/program   release/telem_info_generator_macOS
+cp .pio/build/gsw_telem_info_generator/program release/telem_info_generator_macOS
 
 # Create and copy Linux binaries
 rm -rf .pio
@@ -54,8 +62,8 @@ docker run -v "$(pwd)"/release:/release fsw /bin/sh -c \
    pio run -e gsw_downlink_parser; \
    pio run -e gsw_uplink_producer; \
    pio run -e gsw_telem_info_generator; \
-   cp .pio/build/fsw_native_leader/program                 /release/hootl_leader_linux-x86_64; \
-   cp .pio/build/fsw_native_follower/program               /release/hootl_follower_linux-x86_64; \
+   cp .pio/build/fsw_native_leader/program                 /release/fsw_hootl_leader_linux-x86_64; \
+   cp .pio/build/fsw_native_follower/program               /release/fsw_hootl_follower_linux-x86_64; \
    cp .pio/build/gsw_downlink_parser/program      /release/downlink_parser_linux-x86_64; \
    cp .pio/build/gsw_uplink_producer/program      /release/uplink_producer_linux-x86_64; \
    cp .pio/build/gsw_telem_info_generator/program /release/telem_info_generator_linux-x86_64"
