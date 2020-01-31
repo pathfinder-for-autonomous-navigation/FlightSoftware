@@ -50,8 +50,6 @@ class MainControlLoop : public ControlTask<void> {
     QuakeManager quake_manager; // Needs downlink packet from Downlink Producer
     UplinkConsumer uplink_consumer; // Needs uplink packet from Quake Manager
 
-    std::vector<std::string>statefields;
-    std::vector<unsigned int>periods;
     EEPROMController eeprom_controller;
 
     // Control cycle time offsets, in microseconds
