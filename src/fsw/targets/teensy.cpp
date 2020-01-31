@@ -9,7 +9,6 @@
 #include <common/StateFieldRegistry.hpp>
 #include "flow_data.hpp"
 #include "eeprom_configs.hpp"
-#include "eeprom_configs.cpp"
 
 #include <core_pins.h>
 #include <wiring.h>
