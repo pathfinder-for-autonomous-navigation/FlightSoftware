@@ -5,7 +5,7 @@
 
 TelemetryInfoGenerator::TelemetryInfoGenerator(
     const std::vector<DownlinkProducer::FlowData>& _flow_data) :
-        r(), fcp(r, _flow_data), flow_data(_flow_data) {}
+        r(), fcp(r, _flow_data, statefields, periods), flow_data(_flow_data) {}
 
 /************** Helper functions for telemetry info generation. ***********/
 using nlohmann::json;
