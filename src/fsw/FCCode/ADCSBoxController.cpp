@@ -86,7 +86,7 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_gyr_temp_kd(imu_gyr_temp_kd_fp->get());
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
 
-    // apply havt cmd table iff a fault response warrants it
+    // apply havt cmd table iff a fault response warrants it (ground set)
     if(havt_cmd_apply_fp->get()){
         std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
         for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)

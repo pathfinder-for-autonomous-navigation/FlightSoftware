@@ -56,6 +56,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     add_writable_field(imu_gyr_temp_ki_f);
     add_writable_field(imu_gyr_temp_kd_f);
     add_writable_field(imu_gyr_temp_desired_f);
+    add_writable_field(havt_cmd_apply_f);
 
     // reserve memory
     havt_cmd_table_vector_f.reserve(adcs::havt::Index::_LENGTH);
@@ -86,10 +87,6 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     // find adcs state
     adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
-    add_writable_field(havt_cmd_apply_f);
-    // default initialize to false
-    havt_cmd_apply_f.set(false);
-
     //defaults, TODO: DECIDE DEFAULTS
     rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
     rwa_speed_cmd_f.set({0,0,0});
@@ -107,7 +104,8 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_gyr_temp_kp_f.set(1);
     imu_gyr_temp_ki_f.set(1);
     imu_gyr_temp_kd_f.set(1);
-    imu_gyr_temp_desired_f.set(20);
+    imu_gyr_temp_desired_f.set(20); // 20 degrees C
+    havt_cmd_apply_f.set(false);
 }
 
 void ADCSCommander::execute() {
@@ -131,6 +129,8 @@ void ADCSCommander::execute() {
 void ADCSCommander::dispatch_startup(){
     // don't apply any commands
     // ADCSBoxController automatically sets ADCS to adcs::ADCSMode::ADCS_PASSIVE
+
+    // When MissionManager is in safehold, adcs_state = startup (here)
 }
 void ADCSCommander::dispatch_limited(){
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
@@ -159,7 +159,7 @@ void ADCSCommander::dispatch_zero_L(){
 }
 void ADCSCommander::dispatch_detumble(){
     // TODO: run calculations such that we detumble
-    
+
     rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
     rwa_speed_cmd_f.set({0,0,0});
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
