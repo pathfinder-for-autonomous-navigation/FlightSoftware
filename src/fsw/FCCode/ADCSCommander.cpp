@@ -89,17 +89,31 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     add_writable_field(havt_cmd_apply_f);
     // default initialize to false
     havt_cmd_apply_f.set(false);
+
+    //defaults, TODO: DECIDE DEFAULTS
+    rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
+    rwa_speed_cmd_f.set({0,0,0});
+    rwa_torque_cmd_f.set({0,0,0});
+    rwa_speed_filter_f.set(1);
+    rwa_ramp_filter_f.set(1);
+    mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
+    mtr_cmd_f.set({0,0,0});
+    mtr_limit_f.set(adcs::mtr::max_moment);
+    ssa_voltage_filter_f.set(1);
+    imu_mode_f.set(adcs::IMUMode::MAG1);
+    imu_mag_filter_f.set(1);
+    imu_gyr_filter_f.set(1);
+    imu_gyr_temp_filter_f.set(1);
+    imu_gyr_temp_kp_f.set(1);
+    imu_gyr_temp_ki_f.set(1);
+    imu_gyr_temp_kd_f.set(1);
+    imu_gyr_temp_desired_f.set(20);
 }
 
 void ADCSCommander::execute() {
-    
-    // controller automatically restarts ssa vector calculation, 
-    // no need to restart
-
     adcs_state_t state = static_cast<adcs_state_t>(adcs_state_fp->get());
-    // default
+
     switch(state) {
-        // apply cmds that do nothing
         case adcs_state_t::startup:             dispatch_startup();            break;
         case adcs_state_t::limited:             dispatch_limited();            break;
         case adcs_state_t::zero_torque:         dispatch_zero_torque();        break;
@@ -115,26 +129,59 @@ void ADCSCommander::execute() {
 }
 
 void ADCSCommander::dispatch_startup(){
-
+    // don't apply any commands
+    // ADCSBoxController automatically sets ADCS to adcs::ADCSMode::ADCS_PASSIVE
 }
 void ADCSCommander::dispatch_limited(){
-
+    rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
+    mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
+    // TODO: set to desired mag_moment for pointing strat
+    mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_zero_torque(){
+    // wheels -> constant speed
+    // MTRs -> 0,0,0
 
+    // TODO: Check with kyle, it seems like entering accel_ctrl will call set_speed(+-2000)
+    // And thus will impart a toruqe?
+    rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);
+    rwa_torque_cmd_f.set({0,0,0});
+    mtr_mode_f.set(adcs::MTRMode::MTR_DISABLED);
+    mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_zero_L(){
-
+    rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
+    rwa_speed_cmd_f.set({0,0,0});
+    mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
+    
+    //TODO: Run calculations to reduce spacecraft L to 0;
+    mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_detumble(){
-
+    // TODO: run calculations such that we detumble
+    
+    rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
+    rwa_speed_cmd_f.set({0,0,0});
+    mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
+    mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_manual(){
-
+    // do no calculations, let ground commands decide adcs commands
+    // modes and cmds will be set by ground
 }
 void ADCSCommander::dispatch_standby(){
+    // Point with only 1 strategy
 
+    rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
+    rwa_speed_cmd_f.set({0,0,0});
+    mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
+    mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_docking(){
-    
+    // Point with 2 strategies
+
+    rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
+    rwa_speed_cmd_f.set({0,0,0});
+    mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
+    mtr_cmd_f.set({0,0,0});
 }
