@@ -43,12 +43,12 @@ class DownlinkParser {
     /**
      * @brief Statefields stored in EEPROM. Used to instantiate main control loop
      */
-    const std::vector<std::string>& statefields;
+    const std::vector<std::string>& statefields={};
 
     /**
      * @brief Periods of statefields stored in EEPROM. Used to instantiate main control loop
      */
-    const std::vector<unsigned int>& periods;
+    const std::vector<unsigned int>& periods={};
 
     /**
      * @brief Processes the most recent downlink packet.
