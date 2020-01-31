@@ -61,24 +61,29 @@ class QuakeManager : public TimedControlTask<bool> {
     const InternalStateField<size_t>* snapshot_size_fp;
     
   /**
-   * @brief Pointer to MT buffer ready field, provided by UplinkProducer.
-   * Quake sets this field whenever it writes a new message to its mt buffer.
-   * UplingProducer is responsible for checking this field and clearing it. 
+   * @brief Pointer to downlink packet, provided by DownlinkProducer.
    */
   const InternalStateField<char*>* radio_mo_packet_fp;
 
+  /**
+   * @brief State machine constants that control how long the machine may
+   * be in the WAIT and TRANSCEIVE states.
+   */
+  WritableStateField<unsigned int> max_wait_cycles_f;
+  WritableStateField<unsigned int> max_transceive_cycles_f;
+
     /**
-    * @brief Pointer to Quake Error field, provided by DownlinkProducer. 
+    * @brief Quake Error field.
     **/ 
    ReadableStateField<int> radio_err_f;
 
    /**
-    * @brief Pointer to the uplink buffer, provided by UplinkProducer. 
+    * @brief Uplink buffer.
     **/ 
    InternalStateField<char*> radio_mt_packet_f;
 
    /**
-    * @brief Pointer to the snapshot to be downlinked in pieces of 70 B, provided by DownlinkProducer.
+    * @brief Uplink length.
     **/ 
    InternalStateField<size_t> radio_mt_len_f; 
 
@@ -196,11 +201,9 @@ class QuakeManager : public TimedControlTask<bool> {
     // TODO: these values are temporary. Experiments should be conducted
     // to figure out maximum cycles we are willing to wait. 
   public:
-    static constexpr unsigned int max_config_cycles = 30;
-    static constexpr unsigned int max_wait_cycles = 3000; 
-    static constexpr unsigned int max_transceive_cycles = 140;
-    static constexpr unsigned int max_write_cycles = 15;
-    static constexpr unsigned int max_read_cycles = 15;
+    static constexpr unsigned int max_config_cycles = 5;
+    static constexpr unsigned int max_write_cycles = 5;
+    static constexpr unsigned int max_read_cycles = 5;
 
     static constexpr size_t packet_size = 70;
 };
