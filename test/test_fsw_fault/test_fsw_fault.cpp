@@ -22,12 +22,7 @@ void test_fault_normal_behavior() {
     TEST_ASSERT(r.find_writable_field("fault.signal"));
     TEST_ASSERT(r.find_writable_field("fault.unsignal"));
 
-    TEST_ASSERT(fault2.add_to_registry(r));
-    TEST_ASSERT(r.find_readable_field("fault2"));
-    TEST_ASSERT(r.find_writable_field("fault2.override"));
-    TEST_ASSERT(r.find_writable_field("fault2.suppress"));
-    TEST_ASSERT(r.find_writable_field("fault2.signal"));
-    TEST_ASSERT(r.find_writable_field("fault2.unsignal"));
+    fault2.add_to_registry(r);
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field("fault"));
     Fault* fault2_fp = static_cast<Fault*>(r.find_writable_field("fault2"));
@@ -115,19 +110,17 @@ void test_process_commands(){
 
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
-    // num_consecutive_faults == 2 < persistence == 5
     TEST_ASSERT_EQUAL(2, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
     control_cycle_count++; fault.signal(); override_fp->set(true);
-    // num_consecutive_faults == 3 < persistence == 5,
-    // is faulted should be true since override_fp modifies the return of is fauled, 
+    // is_faulted should be true since override_fp modifies the return of is_faulted, 
     // but num_consecutive is not yet 0
     // remember, commands processed during signal() or unsignal()
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
     TEST_ASSERT_EQUAL(3, fault_fp->get_num_consecutive_signals());
 
-    // process the override, reset num_signals to 0,
+    // processing the override resets num_consecutive_signals to 0,
     control_cycle_count++; fault.signal();
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
     TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
@@ -145,7 +138,7 @@ void test_process_commands(){
     control_cycle_count++; fault.signal(); suppress_fp->set(true);
     TEST_ASSERT_EQUAL(4, fault_fp->get_num_consecutive_signals());
 
-    // observe the consecutive signals be reset to 0, after process
+    // processing the suppress resets num_consecutive_signals to 0
     control_cycle_count++; fault.signal();
     TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
@@ -160,13 +153,13 @@ void test_process_commands(){
     TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
-    // release suppression, since num_consecutive_signals was incrementing,
+    // release suppression; since num_consecutive_signals was incrementing during suppression,
     // fault automatically triggers on supression release
     control_cycle_count++; fault.signal(); suppress_fp->set(false);
     TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
 
-    // Everything is good now
+    // Return to normal operation, signaling condition is not met
     control_cycle_count++; fault.unsignal();
     TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
