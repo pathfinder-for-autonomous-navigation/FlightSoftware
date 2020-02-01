@@ -175,7 +175,7 @@ private:
     /**
      * @brief true if tank2's IntervalTimer is on (tank2 is scheduled to fire)
      */
-    static volatile bool is_interval_enabled;
+    static bool is_interval_enabled;
 
 };
 

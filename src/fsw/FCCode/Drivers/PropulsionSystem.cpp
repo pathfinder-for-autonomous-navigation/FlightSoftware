@@ -44,7 +44,7 @@ _Tank2::_Tank2() : Tank(4) {
 /** Initialize static variables */
 
 PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
-volatile bool PropulsionSystem::is_interval_enabled = 0;
+bool PropulsionSystem::is_interval_enabled = 0;
 
 volatile unsigned int _Tank2::schedule[4] = {0, 0, 0, 0};
 
