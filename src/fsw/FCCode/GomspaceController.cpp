@@ -101,10 +101,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         low_batt_fault.add_to_registry(registry);
 
         add_writable_field(batt_threshold_f);
-<<<<<<< HEAD
         batt_threshold_f.set(7300);
-=======
->>>>>>> 0f73f94a582d4993933f760612c42ef4387cd643
         
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
