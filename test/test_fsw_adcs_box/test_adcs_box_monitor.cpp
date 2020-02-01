@@ -32,7 +32,6 @@ class TestFixture {
         ReadableStateField<bool>* gyr_temp_flag_p;
 
         // fault pointers
-        // ReadableStateField<bool>* adcs_functional_fault_p;
         ReadableStateField<bool>* wheel1_adc_fault_p;
         ReadableStateField<bool>* wheel2_adc_fault_p;
         ReadableStateField<bool>* wheel3_adc_fault_p;
@@ -257,8 +256,6 @@ void test_execute_havt(){
     // a local bitset that is populated with data from the vector of bool statefields
     std::bitset<adcs::havt::max_devices> havt_read(0);
     tf.get_havt_as_table(&havt_read);
-
-    //TEST_ASSERT_TRUE(tf.havt_read_vector_fp[adcs::havt::IMU_GYR]->get());
 
     // check all 17 devices enabled
     TEST_ASSERT_EQUAL_STRING(all_18_functional.to_string().c_str(), havt_read.to_string().c_str());

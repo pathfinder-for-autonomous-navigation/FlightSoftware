@@ -85,9 +85,6 @@ protected:
     //! vector for havt table, a 0/false means device disabled; 1/true is functional
     std::vector<ReadableStateField<bool>> havt_read_vector;
     Serializer<bool> havt_bool_sr;
-    
-    // Fault is signaled if adcs itself has no i2c response
-    // Fault adcs_functional_fault;
 
     // Fault is signaled based off of HAVT
     Fault wheel1_adc_fault;
