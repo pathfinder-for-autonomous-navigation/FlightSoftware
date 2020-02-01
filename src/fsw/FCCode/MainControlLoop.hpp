@@ -51,7 +51,6 @@ class MainControlLoop : public ControlTask<void> {
     QuakeManager quake_manager; // Needs downlink packet from Downlink Producer
     UplinkConsumer uplink_consumer; // Needs uplink packet from Quake Manager
 
-    std::vector<std::string>statefields;
     EEPROMController eeprom_controller;
 
     // Control cycle time offsets, in microseconds
@@ -107,9 +106,11 @@ class MainControlLoop : public ControlTask<void> {
      * 
      * @param registry State field registry
      * @param flow_data Metadata for telemetry flows.
+     * @param statefields Statefields written to EEPROM
+     * @param periods Number of control cycles after which a statefield is written to EEPROM
      */
     MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data);
+        const std::vector<DownlinkProducer::FlowData>& flow_data, const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods);
 
     /**
      * @brief Processes state field commands present in the serial buffer.

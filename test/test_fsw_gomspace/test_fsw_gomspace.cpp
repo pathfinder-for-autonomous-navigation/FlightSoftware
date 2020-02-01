@@ -39,6 +39,8 @@ class TestFixture {
 
     std::unique_ptr<GomspaceController> gs_controller;
 
+    WritableStateField<unsigned int>* batt_threshold_fp;
+
     ReadableStateField<unsigned int>* vboost1_fp;
     ReadableStateField<unsigned int>* vboost2_fp;
     ReadableStateField<unsigned int>* vboost3_fp;
@@ -108,6 +110,8 @@ class TestFixture {
     TestFixture() : registry(), gs(&hk, &config, &config2) {
         gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
 
+        batt_threshold_fp = registry.find_writable_field_t<unsigned int>("gomspace.batt_threshold");
+
         vboost1_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output1");
         vboost2_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output2");
         vboost3_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output3");
@@ -173,6 +177,9 @@ class TestFixture {
 
 void test_task_initialization() {
     TestFixture tf;
+
+    // Check that the battery threshold is default initialized correctly
+    TEST_ASSERT_EQUAL(7300, tf.batt_threshold_fp->get());
 
     // Check that the hk struct in the gomspace controller is initialized correctly.
     TEST_ASSERT_EQUAL(1, tf.gs.hk->vboost[0]);
