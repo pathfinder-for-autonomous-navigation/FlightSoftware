@@ -19,10 +19,6 @@
 #ifndef DESKTOP
 #include <Arduino.h>
 #endif
-
-#ifdef DESKTOP
-uint32_t micros(void);
-#endif
 namespace Devices {
 class Tank;
 /**
