@@ -59,18 +59,25 @@ class Fault : public WritableStateField<bool> {
     unsigned int persistence; // Persistence threshold for fault signal
     mutable unsigned int num_consecutive_faults = 0; // Number of consecutive fault condition
                                                      // occurrences at the current moment.
-
+    
+    // Keeps track of the previous suppress or override state
     bool prev_suppress = false;
     bool prev_override = false;
 
     /**
-     * @brief State fields that can be set by the ground to suppress
-     * or forcibly signal the fault.
+     * @brief State fields that can be set by the ground to
+     * suppress, override, signal and unsignal the fault
      */
     WritableStateField<bool> suppress_f;
     WritableStateField<bool> override_f;
+    WritableStateField<bool> signal_f;
+    WritableStateField<bool> unsignal_f;
 
-    void consider_pulls();
+    /**
+     * @brief Resets consecutive faults to 0, whenever pulls transition from false to true
+     * Also calls signal() or unsignal() if signal_f or unsignal_f are true respectively
+     */
+    void process_commands();
 };
 
 #endif
