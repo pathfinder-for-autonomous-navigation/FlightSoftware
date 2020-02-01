@@ -228,6 +228,7 @@ void setup() {
     UNITY_BEGIN();
     RUN_TEST(test_fault_normal_behavior);
     RUN_TEST(test_fault_overridden_behavior);
+    RUN_TEST(test_process_commands);
     UNITY_END();
 }
 
