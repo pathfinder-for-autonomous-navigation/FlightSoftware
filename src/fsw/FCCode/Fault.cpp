@@ -6,8 +6,11 @@ Fault::Fault(const std::string& name,
     WritableStateField<bool>(name, Serializer<bool>()),
     cc(control_cycle_count),
     persistence(_persistence),
-    suppress_f(name + ".suppress", Serializer<bool>()),
-    override_f(name + ".override", Serializer<bool>())
+    fault_bool_sr(),
+    suppress_f(name + ".suppress", fault_bool_sr),
+    override_f(name + ".override", fault_bool_sr),
+    unsignal_f(name + ".unsignal", fault_bool_sr),
+    signal_f(name + ".signal", fault_bool_sr)
 {
   set(default_setting);
   override_f.set(false);

@@ -68,10 +68,11 @@ class Fault : public WritableStateField<bool> {
      * @brief State fields that can be set by the ground to
      * suppress, override, signal and unsignal the fault
      */
+    Serializer<bool> fault_bool_sr;
     WritableStateField<bool> suppress_f;
     WritableStateField<bool> override_f;
-    WritableStateField<bool> signal_f;
     WritableStateField<bool> unsignal_f;
+    WritableStateField<bool> signal_f;
 
     /**
      * @brief Resets consecutive faults to 0, whenever pulls transition from false to true
