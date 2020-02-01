@@ -16,14 +16,14 @@ class EEPROMController : public TimedControlTask<void> {
      * @param offset
      * @param statefields
      */
-    EEPROMController(StateFieldRegistry& registry, unsigned int offset, std::vector<std::string>& statefields);
+    EEPROMController(StateFieldRegistry& registry, unsigned int offset);
 
     /**
      * @brief Gets the pointers to the statefields from the statefield
      * registry. Sets the pointer values to those stored in the EEPROM
      * if necessary.
      */
-    void init(std::vector<std::string>& statefields);
+    void init(const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods);
 
     /**
      * @brief Writes to the EEPROM after a certain number of 
@@ -39,8 +39,10 @@ class EEPROMController : public TimedControlTask<void> {
     /**
      * @brief Writes the value of the statefields to the field's 
      * respective address in EEPROM
+     * @param position refers to the location of the statefield pointer, 
+     * its address in the EEPROM, and its period in their respective vectors
      */
-    void update_EEPROM();
+    void update_EEPROM(unsigned int position);
 
     /**
      * @brief Checks if the EEPROM is empty or not. The default value
@@ -49,14 +51,15 @@ class EEPROMController : public TimedControlTask<void> {
      */
     bool check_empty();
 
-    //number of control cycles that must pass before the control task writes to EEPROM
-    unsigned int period = 5;
-
     //the locations in the EEPROM in which the field values will be stored
     std::vector<int> addresses;
 
     // Shared pointers to statefields that will be written to the EEPROM
     std::vector<ReadableStateField<unsigned int>*> pointers;
+
+    // Number of control cycles that must pass before the control task writes the value 
+    // of a certain statefield to EEPROM
+    std::vector<unsigned int> sf_periods;
 
 };
 

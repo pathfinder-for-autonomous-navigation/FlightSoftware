@@ -24,7 +24,7 @@ class DockingSystem : public Devices::Device {
     //! Default pin for docking motor step.
     static constexpr unsigned char motor_step_pin = 39;
     //! Docking switch pin
-    static constexpr unsigned char switch_pin = 25;
+    static constexpr unsigned char switch_pin = 36;
 
     /**
      * @brief Construct a new Docking System object.

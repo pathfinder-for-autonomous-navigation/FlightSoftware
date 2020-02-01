@@ -17,10 +17,10 @@ class MissionManager : public TimedControlTask<void> {
     void execute() override;
 
     // Constants that drive state transitions.
-    static constexpr double detumble_safety_factor = 0.2;
+    WritableStateField<double> detumble_safety_factor_f;
+    WritableStateField<double> close_approach_trigger_dist_f; // Meters
+    WritableStateField<double> docking_trigger_dist_f; // Meters
 
-    static constexpr double close_approach_trigger_dist = 200; // in meters
-    static constexpr double docking_trigger_dist = 0.4; // in meters
     /**
      * @brief Number of control cycles to wait during the post-deployment
      * do-nothing period.
@@ -33,12 +33,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Number of control cycles to wait before declaring "too long since comms".
      */
-    #ifdef FLIGHT
-        static constexpr unsigned int max_radio_silence_duration = 
-            24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms; // 24 hours
-    #else
-        static constexpr unsigned int max_radio_silence_duration = 10;
-    #endif
+    WritableStateField<unsigned int> max_radio_silence_duration_f;
 
    protected:
     /**

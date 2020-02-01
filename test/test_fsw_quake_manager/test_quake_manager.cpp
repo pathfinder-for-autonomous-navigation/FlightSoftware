@@ -40,7 +40,9 @@ class TestFixture {
     std::shared_ptr<InternalStateField<char*>> radio_mo_packet_fp;
     std::shared_ptr<InternalStateField<size_t>> snapshot_size_fp;
 
-    // Output state fields to quake manager
+    // Output state fields from quake manager
+    WritableStateField<unsigned int>* max_wait_cycles_fp;
+    WritableStateField<unsigned int>* max_transceive_cycles_fp;
     InternalStateField<char*>* radio_mt_packet_fp;
     InternalStateField<size_t>* radio_mt_len_fp;
     ReadableStateField<int>* radio_err_fp;
@@ -62,6 +64,8 @@ class TestFixture {
 
         // Create Quake Manager instance
         quake_manager = std::make_unique<QuakeManager>(registry, 0);
+        max_wait_cycles_fp = registry.find_writable_field_t<unsigned int>("radio.max_wait");
+        max_transceive_cycles_fp = registry.find_writable_field_t<unsigned int>("radio.max_transceive");
         radio_mt_packet_fp = registry.find_internal_field_t<char*>("uplink.ptr");
         radio_mt_len_fp = registry.find_internal_field_t<size_t>("uplink.len");
         radio_err_fp = registry.find_readable_field_t<int>("radio.err");
@@ -99,7 +103,7 @@ void test_wait_unexpected()
   // If in WAIT and unexpected Flag is set
   tf.quake_manager->dbg_get_unexpected_flag() = true;
   // then expect execute all the wait cycles
-  tf.realSteps(tf.quake_manager->max_wait_cycles);
+  tf.realSteps(tf.max_wait_cycles_fp->get());
   assert_radio_state(radio_state_t::wait);
   TEST_ASSERT_TRUE(tf.quake_manager->dbg_get_unexpected_flag());
   // When wait finishes waiting
@@ -152,9 +156,9 @@ void test_wait_no_more_cycles()
 {
   // If in WAIT and there are no more cycles
   TestFixture tf(static_cast<unsigned int>(radio_state_t::wait), IDLE);
-  tf.step(tf.quake_manager->max_wait_cycles);
+  tf.step(tf.max_wait_cycles_fp->get());
   // then expect execute write on the next cycle
-  TEST_ASSERT_EQUAL(initCycles + tf.quake_manager->max_wait_cycles, TimedControlTaskBase::control_cycle_count);
+  TEST_ASSERT_EQUAL(initCycles + tf.max_wait_cycles_fp->get(), TimedControlTaskBase::control_cycle_count);
   tf.step();
   assert_qct(SBDWB);
   assert_fn_num(0);
@@ -167,8 +171,8 @@ void test_rwc_no_more_cycles(int qct_state, unsigned int radio_state)
   // If in CONFIG, WRITE, READ, TRANS and run out of cycles
   TestFixture tf(radio_state, qct_state);
   tf.quake_manager->dbg_get_unexpected_flag() = false;
-  TimedControlTaskBase::control_cycle_count += tf.quake_manager->max_transceive_cycles;
-  TEST_ASSERT_EQUAL(initCycles + tf.quake_manager->max_transceive_cycles, TimedControlTaskBase::control_cycle_count);
+  TimedControlTaskBase::control_cycle_count += tf.max_transceive_cycles_fp->get();
+  TEST_ASSERT_EQUAL(initCycles + tf.max_transceive_cycles_fp->get(), TimedControlTaskBase::control_cycle_count);
   tf.realSteps();
   tf.realSteps();
   // then expect transition to WAIT and SBDWB, CONFIG, SBDRB should set the error flag
@@ -263,7 +267,7 @@ void test_transceive_ok_no_network_timed_out()
 {
   // If in TRANS and complete trans but there is no network and out of cycles
   TestFixture tf(static_cast<unsigned int>(radio_state_t::transceive), SBDIX);
-  TimedControlTaskBase::control_cycle_count += tf.quake_manager->max_transceive_cycles - 1;
+  TimedControlTaskBase::control_cycle_count += tf.max_transceive_cycles_fp->get() - 1;
   tf.step(); // 0
   tf.quake_manager->dbg_get_qct().dbg_get_quake().sbdix_r[0] = 32;
   tf.step(); // 1
@@ -330,7 +334,7 @@ void test_oldcycles_do_not_change()
   tf.realSteps();
   TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->dbg_get_last_checkin().get());
   // Fake step until we are almost out of cycles
-  tf.realSteps(tf.quake_manager->max_wait_cycles - 1);
+  tf.realSteps(tf.max_wait_cycles_fp->get() - 1);
   // Make sure state is still in wait
   TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->dbg_get_last_checkin().get());
   // Take the last step
@@ -485,6 +489,11 @@ void test_valid_initialization()
 {
     // If QuakeManager has just been created
     TestFixture tf(static_cast<unsigned int>(radio_state_t::wait), -1);
+
+    // Expect the configured state machine waits to be correct
+    TEST_ASSERT_EQUAL(1, tf.max_wait_cycles_fp->get());
+    TEST_ASSERT_EQUAL(500, tf.max_transceive_cycles_fp->get());
+
     // then expect be in config state and unexpected_flag should be false
     assert_radio_state(radio_state_t::config);
     assert_qct(CONFIG);

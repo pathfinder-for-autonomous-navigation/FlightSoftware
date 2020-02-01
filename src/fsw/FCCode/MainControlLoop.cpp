@@ -19,7 +19,8 @@
 #endif
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data)
+        const std::vector<DownlinkProducer::FlowData>& flow_data,
+        const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods)
     : ControlTask<void>(registry),
       field_creator_task(registry),
       clock_manager(registry, PAN::control_cycle_time),
@@ -36,7 +37,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       downlink_producer(registry, downlink_producer_offset),
       quake_manager(registry, quake_manager_offset),
       uplink_consumer(registry, uplink_consumer_offset),
-      eeprom_controller(registry, eeprom_controller_offset, statefields),
+      eeprom_controller(registry, eeprom_controller_offset),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
@@ -57,7 +58,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
         add_readable_field(memory_use_f);
     #endif
 
-    eeprom_controller.init(statefields);
+    eeprom_controller.init(statefields, periods);
     // Since all telemetry fields have been added to the registry, initialize flows
     downlink_producer.init_flows(flow_data);
 }

@@ -29,6 +29,8 @@
 // Quake driver setup is initialized when QuakeController constructor is called
 QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) : 
     TimedControlTask<bool>(registry, "quake", offset),
+    max_wait_cycles_f("radio.max_wait", Serializer<unsigned int>(0, 24 * 60 * 60 * 1000 / 120)),
+    max_transceive_cycles_f("radio.max_transceive", Serializer<unsigned int>(0, 24 * 60 * 60 * 1000 / 120)),
     radio_err_f("radio.err", Serializer<int>(-90, 10)),
     radio_mt_packet_f("uplink.ptr"),
     radio_mt_len_f("uplink.len"),
@@ -39,6 +41,8 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     mo_idx(0),
     unexpected_flag(false)
 { 
+    add_writable_field(max_wait_cycles_f);
+    add_writable_field(max_transceive_cycles_f);
     add_readable_field(radio_err_f);
     add_internal_field(radio_mt_packet_f);
     add_internal_field(radio_mt_len_f);
@@ -54,6 +58,8 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_mo_packet_fp = find_internal_field<char*>("downlink.ptr", __FILE__, __LINE__);
 
     // Initialize Quake Manager variables
+    max_wait_cycles_f.set(1);
+    max_transceive_cycles_f.set(500);
     last_checkin_cycle_f.set(control_cycle_count);
     qct.request_state(CONFIG);
     radio_mt_packet_f.set(qct.get_MT_msg());
@@ -144,7 +150,7 @@ bool QuakeManager::dispatch_config() {
 
 bool QuakeManager::dispatch_wait() {
     // If we still have cycles, return true
-    if (control_cycle_count - last_checkin_cycle_f.get() <= max_wait_cycles)
+    if (control_cycle_count - last_checkin_cycle_f.get() <= max_wait_cycles_f.get())
         return true;
     // Transition to config to attempt to resolve unexpected errors
     if (unexpected_flag) 
@@ -199,7 +205,7 @@ bool QuakeManager::dispatch_transceive() {
     if (unexpected_flag) return transition_radio_state(radio_state_t::wait);
 
     // If we run out of cycles --> go back to waiting
-    if (no_more_cycles(max_transceive_cycles, radio_state_t::wait))
+    if (no_more_cycles(max_transceive_cycles_f.get(), radio_state_t::wait))
         return false;
 
     int err_code = qct.execute();
