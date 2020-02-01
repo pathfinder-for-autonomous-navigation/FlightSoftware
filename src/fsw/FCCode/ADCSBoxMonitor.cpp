@@ -32,10 +32,10 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     havt_bool_sr(),
     adcs_box_functional("adcs_monitor.functional", flag_sr),
     // TODO: Change persistence to 0 for instant safehold?
-    adcs_functional_fault("adcs_monitor.functional_fault", 1, control_cycle_count),
-    wheel1_fault("adcs_monitor.wheel1_fault", 1, control_cycle_count),
-    wheel2_fault("adcs_monitor.wheel2_fault", 1, control_cycle_count),
-    wheel3_fault("adcs_monitor.wheel3_fault", 1, control_cycle_count),
+    // adcs_functional_fault("adcs_monitor.functional_fault", 1, control_cycle_count),
+    wheel1_adc_fault("adcs_monitor.wheel1_fault", 1, control_cycle_count),
+    wheel2_adc_fault("adcs_monitor.wheel2_fault", 1, control_cycle_count),
+    wheel3_adc_fault("adcs_monitor.wheel3_fault", 1, control_cycle_count),
     wheel_pot_fault("adcs_monitor.wheel_pot_fault", 1, control_cycle_count)
     {
         // reserve memory
@@ -88,6 +88,13 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(gyr_temp_flag);
 
         add_readable_field(adcs_box_functional);
+
+        // add faults to registry
+        // adcs_functional_fault.add_to_registry(registry);
+        wheel1_adc_fault.add_to_registry(registry);
+        wheel2_adc_fault.add_to_registry(registry);
+        wheel3_adc_fault.add_to_registry(registry);
+        wheel_pot_fault.add_to_registry(registry);
     }
 
 bool exceed_bounds(const std::array<float, 3>& input, const float min, const float max){
@@ -124,9 +131,9 @@ void ADCSBoxMonitor::execute(){
     float gyr_temp = 0.0;
 
     //ask the driver to fill in values
-    adcs_box_functional.set(adcs_system.is_functional());
-    if(!adcs_box_functional.get())
-        adcs_functional_fault.signal();
+    // adcs_box_functional.set(adcs_system.is_functional());
+    // if(!adcs_box_functional.get())
+    //     adcs_functional_fault.signal();
 
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
     adcs_system.get_ssa_voltage(&ssa_voltages);
@@ -158,6 +165,15 @@ void ADCSBoxMonitor::execute(){
     {
         havt_read_vector[idx].set(havt_read.test(idx));
     }
+    
+    if(havt_read_vector[adcs::havt::Index::RWA_ADC1].get() == false)
+        wheel1_adc_fault.signal();
+    if(havt_read_vector[adcs::havt::Index::RWA_ADC2].get() == false)
+        wheel2_adc_fault.signal();
+    if(havt_read_vector[adcs::havt::Index::RWA_ADC3].get() == false)
+        wheel3_adc_fault.signal();
+    if(havt_read_vector[adcs::havt::Index::RWA_POT].get() == false)
+        wheel_pot_fault.signal();
 
     mag_vec_f.set(mag_vec);
     gyr_vec_f.set(gyr_vec);

@@ -90,14 +90,13 @@ protected:
     ReadableStateField<bool> adcs_box_functional;
     
     // Fault is signaled if adcs itself has no i2c response
-    Fault adcs_functional_fault;
+    // Fault adcs_functional_fault;
 
     // Fault is signaled based off of HAVT
-    Fault wheel1_fault;
-    Fault wheel2_fault;
-    Fault wheel3_fault;
+    Fault wheel1_adc_fault;
+    Fault wheel2_adc_fault;
+    Fault wheel3_adc_fault;
     Fault wheel_pot_fault;
-
 };
 
 #endif
