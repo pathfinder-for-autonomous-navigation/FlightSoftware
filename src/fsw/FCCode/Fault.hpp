@@ -54,11 +54,14 @@ class Fault : public WritableStateField<bool> {
     unsigned int get_num_consecutive_signals();
     #endif
   private:
+    #ifndef UNIT_TEST // Don't compile this for UNIT_TESTs to simulate a ground commanded one time trigger
+
     // Make the get() and set() methods of the state field private,
     // so that the user is forced to use the signal() and unsignal()
     // methods instead.
     using WritableStateField<bool>::set;
     using WritableStateField<bool>::get;
+    #endif
 
     unsigned int& cc; // Control cycle count
     unsigned int last_fault_time = 0; // Last control cycle # that the fault condition

@@ -25,7 +25,6 @@ bool Fault::add_to_registry(StateFieldRegistry& r) {
     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&suppress_f))) return false;
     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&override_f))) return false;
     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&unsignal_f))) return false;
-    if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&signal_f))) return false;
     return true;
 }
 

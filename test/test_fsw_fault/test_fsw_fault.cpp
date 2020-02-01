@@ -19,7 +19,6 @@ void test_fault_normal_behavior() {
     TEST_ASSERT(r.find_readable_field("fault"));
     TEST_ASSERT(r.find_writable_field("fault.override"));
     TEST_ASSERT(r.find_writable_field("fault.suppress"));
-    TEST_ASSERT(r.find_writable_field("fault.signal"));
     TEST_ASSERT(r.find_writable_field("fault.unsignal"));
 
     fault2.add_to_registry(r);
@@ -105,7 +104,6 @@ void test_process_commands(){
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
     WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
-    WritableStateField<bool>* signal_fp = r.find_writable_field_t<bool>("fault.signal");
     WritableStateField<bool>* unsignal_fp = r.find_writable_field_t<bool>("fault.unsignal");
 
     control_cycle_count++; fault.signal();
@@ -165,13 +163,8 @@ void test_process_commands(){
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
     // Command a trigger of the fault (will only last for 1 cycle),
-    // but only applied on the next cycle
-    control_cycle_count++; fault.unsignal(); signal_fp->set(true);
-    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
-    TEST_ASSERT_FALSE(fault_fp->is_faulted());
-
-    // application of signal_fp triggers the fault
-    control_cycle_count++; fault.unsignal();
+    // applied on current cycle
+    control_cycle_count++; fault.unsignal(); fault_fp->set(true); // simulated ground trigger command
     TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
 
