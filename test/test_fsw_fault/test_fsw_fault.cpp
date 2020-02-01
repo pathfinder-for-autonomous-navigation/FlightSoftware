@@ -11,7 +11,7 @@ void test_fault_normal_behavior() {
 
     // Test constructors
     Fault fault("fault", 5, control_cycle_count);
-    TEST_ASSERT_FALSE(fault.is_faulted());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
     Fault fault2("fault", 5, control_cycle_count, true);
     TEST_ASSERT(fault2.is_faulted());
 
@@ -25,7 +25,7 @@ void test_fault_normal_behavior() {
     // Fault should not be signaled when signal condition happens under the persistence
     for(int i = 0; i < 4; i++) {
         control_cycle_count++; fault.signal();
-        TEST_ASSERT_FALSE(fault.is_faulted());
+        TEST_ASSERT_FALSE(fault_fp->is_faulted());
     }
 
     // Resetting the fault should not cause the fault to be signaled, but should cause
@@ -33,7 +33,7 @@ void test_fault_normal_behavior() {
     // cycle count and signaling should not cause the fault to be signaled.
     fault.unsignal();
     control_cycle_count++; fault.signal();
-    TEST_ASSERT_FALSE(fault.is_faulted());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
     // Keep signaling the fault until we're just underneath the fault's persistence
     // threshold.
@@ -41,14 +41,14 @@ void test_fault_normal_behavior() {
     // Signaling the fault again should have no effect if the control cycle count
     // is not also incremented.
     fault.signal();
-    TEST_ASSERT_FALSE(fault.is_faulted());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
     // Incrementing the control cycle count should now cause the fault to be signaled.
     control_cycle_count++; fault.signal();
-    TEST_ASSERT(fault.is_faulted());
+    TEST_ASSERT(fault_fp->is_faulted());
 
     // Resetting the fault works.
     fault.unsignal();
-    TEST_ASSERT_FALSE(fault.is_faulted());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
 }
 
 void test_fault_overridden_behavior() {
@@ -56,15 +56,17 @@ void test_fault_overridden_behavior() {
     unsigned int control_cycle_count = 0;
     Fault fault("fault", 1, control_cycle_count);
     fault.add_to_registry(r);
+
+    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
     WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
 
     // The fault is signaled if overrided.
     override_fp->set(true);
-    TEST_ASSERT(fault.is_faulted());
+    TEST_ASSERT(fault_fp->is_faulted());
     // Override is immune to the fault being unsignaled
     fault.unsignal();
-    TEST_ASSERT(fault.is_faulted());
+    TEST_ASSERT(fault_fp->is_faulted());
 
     override_fp->set(false);
 
@@ -72,18 +74,18 @@ void test_fault_overridden_behavior() {
     // We'll cause the fault to be signaled first, and then suppress it.
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
-    TEST_ASSERT(fault.is_faulted()); // Fault signaled
+    TEST_ASSERT(fault_fp->is_faulted()); // Fault signaled
     suppress_fp->set(true);
-    TEST_ASSERT_FALSE(fault.is_faulted());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
     // Fault should remain suppressed even when additional fault conditions are signaled
     control_cycle_count++; fault.signal();
-    TEST_ASSERT_FALSE(fault.is_faulted());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
     // Fault should be signaled if suppressed and overrided (i.e. overrides take precedence.)
     fault.unsignal();
     override_fp->set(true);
     suppress_fp->set(true);
-    TEST_ASSERT(fault.is_faulted());
+    TEST_ASSERT(fault_fp->is_faulted());
 }
 
 #ifdef DESKTOP
