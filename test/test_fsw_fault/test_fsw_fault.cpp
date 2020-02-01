@@ -19,9 +19,14 @@ void test_fault_normal_behavior() {
     TEST_ASSERT(r.find_readable_field("fault"));
     TEST_ASSERT(r.find_writable_field("fault.override"));
     TEST_ASSERT(r.find_writable_field("fault.suppress"));
+    TEST_ASSERT(r.find_writable_field("fault.signal"));
+    TEST_ASSERT(r.find_writable_field("fault.unsignal"));
+
     TEST_ASSERT(r.find_readable_field("fault2"));
     TEST_ASSERT(r.find_writable_field("fault2.override"));
     TEST_ASSERT(r.find_writable_field("fault2.suppress"));
+    TEST_ASSERT(r.find_writable_field("fault2.signal"));
+    TEST_ASSERT(r.find_writable_field("fault2.unsignal"));
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field("fault"));
     Fault* fault2_fp = static_cast<Fault*>(r.find_writable_field("fault2"));
@@ -95,6 +100,49 @@ void test_fault_overridden_behavior() {
     TEST_ASSERT(fault_fp->is_faulted());
 }
 
+void test_process_command(){
+    StateFieldRegistryMock r;
+    unsigned int control_cycle_count = 0;
+    Fault fault("fault", 5, control_cycle_count);
+    fault.add_to_registry(r);
+
+    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
+    WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
+    WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
+    WritableStateField<bool>* signal_fp = r.find_writable_field_t<bool>("fault.signal");
+    WritableStateField<bool>* unsignal_fp = r.find_writable_field_t<bool>("fault.unsignal");
+
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    // num_consecutive_faults == 2 < persistence == 5
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
+
+    control_cycle_count++; override_fp->set(true); fault.signal();
+    // num_consecutive_faults == 3 < persistence == 5,
+    // is faulted should be true since override, num_consecutive == 0
+    TEST_ASSERT_TRUE(fault_fp->is_faulted());
+
+    control_cycle_count++; fault.signal(); override_fp->set(false);
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    TEST_ASSERT_EQUAL(3, fault_fp->get_num_consecutive_signals());
+
+    control_cycle_count++; fault.signal(); suppress_fp->set(true);
+    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
+
+    control_cycle_count++; fault.signal(); suppress_fp->set(false);
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    TEST_ASSERT_EQUAL(3, fault_fp->get_num_consecutive_signals());
+
+
+
+
+
+
+
+}
 #ifdef DESKTOP
 int main() {
     UNITY_BEGIN();
