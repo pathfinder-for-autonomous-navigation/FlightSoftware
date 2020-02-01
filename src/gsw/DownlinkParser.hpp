@@ -37,7 +37,6 @@ class DownlinkParser {
 
     /**
      * @brief Downlink flow data.
-     * 
      */
     const std::vector<DownlinkProducer::Flow>& flow_data;
 
