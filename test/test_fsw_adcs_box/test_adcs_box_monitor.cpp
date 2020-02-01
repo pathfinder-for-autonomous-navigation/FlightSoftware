@@ -88,10 +88,10 @@ class TestFixture {
 
             // find the faults fields
             // adcs_functional_fault_p = registry.find_readable_field_t<bool>("adcs_monitor.adcs_functional_fualt");
-            wheel1_adc_fault_p = static_cast<Fault*>(registry.find_readable_field_t<bool>("adcs_monitor.wheel1_fault"));
-            wheel2_adc_fault_p = static_cast<Fault*>(registry.find_readable_field_t<bool>("adcs_monitor.wheel2_fault"));
-            wheel3_adc_fault_p = static_cast<Fault*>(registry.find_readable_field_t<bool>("adcs_monitor.wheel3_fault"));
-            wheel_pot_fault_p = static_cast<Fault*>(registry.find_readable_field_t<bool>("adcs_monitor.wheel_pot_fault"));
+            wheel1_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel1_fault"));
+            wheel2_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel2_fault"));
+            wheel3_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel3_fault"));
+            wheel_pot_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel_pot_fault"));
         }
 
         // set of mocking methods
@@ -257,8 +257,26 @@ void test_execute_havt(){
     std::bitset<adcs::havt::max_devices> havt_read(0);
     tf.get_havt_as_table(&havt_read);
 
-    // check all 17 devices enabled
+    // check all 18 devices enabled
     TEST_ASSERT_EQUAL_STRING(all_18_functional.to_string().c_str(), havt_read.to_string().c_str());
+
+    std::bitset<adcs::havt::max_devices> every_other("00000000000000110101010101010101");
+    tf.set_mock_havt_read(every_other);
+    tf.adcs_box->execute();
+    tf.get_havt_as_table(&havt_read);
+    TEST_ASSERT_EQUAL_STRING(every_other.to_string().c_str(), havt_read.to_string().c_str());
+
+    std::bitset<adcs::havt::max_devices> all_dev_down("00000000000000000000000000000000");
+    tf.set_mock_havt_read(all_dev_down);
+    tf.adcs_box->execute();
+    tf.get_havt_as_table(&havt_read);
+    TEST_ASSERT_EQUAL_STRING(all_dev_down.to_string().c_str(), havt_read.to_string().c_str());
+}
+
+void test_execute_havt_faults() {
+    TestFixture tf;
+    std::bitset<adcs::havt::max_devices> havt_read(0);
+    std::bitset<adcs::havt::max_devices> all_18_functional("00000000000000111111111111111111");
 
     // mock havt where devices down, but no faults are triggered, SSA_ADC1,2,3,4 are down, 5 up
     std::bitset<adcs::havt::max_devices> some_down("00000000000000100001111111111111");
@@ -277,30 +295,30 @@ void test_execute_havt(){
     TEST_ASSERT_EQUAL_STRING(all_dev_down.to_string().c_str(), havt_read.to_string().c_str());
 
     // all faults should be false since persistence == 1
-    TEST_ASSERT_FALSE(tf.wheel1_adc_fault_p->get());
-    TEST_ASSERT_FALSE(tf.wheel2_adc_fault_p->get());
-    TEST_ASSERT_FALSE(tf.wheel3_adc_fault_p->get());
-    TEST_ASSERT_FALSE(tf.wheel_pot_fault_p->get());
+    TEST_ASSERT_FALSE(tf.wheel1_adc_fault_p->is_faulted());
+    TEST_ASSERT_FALSE(tf.wheel2_adc_fault_p->is_faulted());
+    TEST_ASSERT_FALSE(tf.wheel3_adc_fault_p->is_faulted());
+    TEST_ASSERT_FALSE(tf.wheel_pot_fault_p->is_faulted());
 
     // execute one more time, all faults should now be tripped
     tf.adcs_box->execute();
     tf.get_havt_as_table(&havt_read);
     TEST_ASSERT_EQUAL_STRING(all_dev_down.to_string().c_str(), havt_read.to_string().c_str());
     
-    TEST_ASSERT_TRUE(tf.wheel1_adc_fault_p->get());
-    TEST_ASSERT_TRUE(tf.wheel2_adc_fault_p->get());
-    TEST_ASSERT_TRUE(tf.wheel3_adc_fault_p->get());
-    TEST_ASSERT_TRUE(tf.wheel_pot_fault_p->get());
+    TEST_ASSERT_TRUE(tf.wheel1_adc_fault_p->is_faulted());
+    TEST_ASSERT_TRUE(tf.wheel2_adc_fault_p->is_faulted());
+    TEST_ASSERT_TRUE(tf.wheel3_adc_fault_p->is_faulted());
+    TEST_ASSERT_TRUE(tf.wheel_pot_fault_p->is_faulted());
 
     // report all devices good, check faults are unsignaled
     tf.set_mock_havt_read(all_18_functional);
     tf.adcs_box->execute();
     tf.get_havt_as_table(&havt_read);
     TEST_ASSERT_EQUAL_STRING(all_18_functional.to_string().c_str(), havt_read.to_string().c_str());
-    TEST_ASSERT_FALSE(tf.wheel1_adc_fault_p->get());
-    TEST_ASSERT_FALSE(tf.wheel2_adc_fault_p->get());
-    TEST_ASSERT_FALSE(tf.wheel3_adc_fault_p->get());
-    TEST_ASSERT_FALSE(tf.wheel_pot_fault_p->get());
+    TEST_ASSERT_FALSE(tf.wheel1_adc_fault_p->is_faulted());
+    TEST_ASSERT_FALSE(tf.wheel2_adc_fault_p->is_faulted());
+    TEST_ASSERT_FALSE(tf.wheel3_adc_fault_p->is_faulted());
+    TEST_ASSERT_FALSE(tf.wheel_pot_fault_p->is_faulted());
 }
 
 int test_control_task()
@@ -309,6 +327,7 @@ int test_control_task()
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_execute_ssa);
     RUN_TEST(test_execute_havt);
+    RUN_TEST(test_execute_havt_faults);
     return UNITY_END();
 }
 
