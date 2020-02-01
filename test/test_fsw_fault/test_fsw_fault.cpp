@@ -113,7 +113,6 @@ void test_process_commands(){
 
     control_cycle_count++; fault.signal(); override_fp->set(true);
     // is_faulted should be true since override_fp modifies the return of is_faulted, 
-    // but num_consecutive is not yet 0
     // remember, commands processed during signal() or unsignal()
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
     TEST_ASSERT_EQUAL(3, fault_fp->get_num_consecutive_signals());
@@ -223,7 +222,7 @@ void test_dynamic_persistence(){
     TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
-    // nominal satellite operation, and a command to change persistence to 3
+    // nominal satellite operation, and a command to change persistence to 1
     control_cycle_count++; fault.unsignal(); persistence_fp->set(1);
     TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
@@ -234,6 +233,7 @@ void test_dynamic_persistence(){
     TEST_ASSERT_EQUAL(2, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
 
+    // command an increase in persistence
     control_cycle_count++; fault.signal(); 
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
@@ -241,7 +241,7 @@ void test_dynamic_persistence(){
     TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
 
-    // if signals <= persistence, fault is released
+    // since signals <= persistence, fault is released
     control_cycle_count++; fault.signal();
     TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());

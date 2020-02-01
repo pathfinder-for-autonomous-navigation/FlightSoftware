@@ -10,7 +10,7 @@ Fault::Fault(const std::string& name,
     override_f(name + ".override", fault_bool_sr),
     unsignal_f(name + ".unsignal", fault_bool_sr),
     // 65536 = 2^16 -1
-    persist_sr(0, 65535, 16),
+    persist_sr(65535),
     persistence_f(name + ".persistence", persist_sr)
 {
   set(default_setting);
