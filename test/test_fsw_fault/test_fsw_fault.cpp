@@ -11,9 +11,7 @@ void test_fault_normal_behavior() {
 
     // Test constructors
     Fault fault("fault", 5, control_cycle_count);
-    TEST_ASSERT_FALSE(fault_fp->is_faulted());
-    Fault fault2("fault", 5, control_cycle_count, true);
-    TEST_ASSERT(fault2.is_faulted());
+    Fault fault2("fault2", 5, control_cycle_count, true);
 
     // Test that adding the fault to the registry works
     StateFieldRegistry r;
@@ -21,6 +19,15 @@ void test_fault_normal_behavior() {
     TEST_ASSERT(r.find_readable_field("fault"));
     TEST_ASSERT(r.find_writable_field("fault.override"));
     TEST_ASSERT(r.find_writable_field("fault.suppress"));
+    TEST_ASSERT(r.find_readable_field("fault2"));
+    TEST_ASSERT(r.find_writable_field("fault2.override"));
+    TEST_ASSERT(r.find_writable_field("fault2.suppress"));
+
+    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field("fault"));
+    Fault* fault2_fp = static_cast<Fault*>(r.find_writable_field("fault2"));
+
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
+    TEST_ASSERT(fault2_fp->is_faulted());
 
     // Fault should not be signaled when signal condition happens under the persistence
     for(int i = 0; i < 4; i++) {
