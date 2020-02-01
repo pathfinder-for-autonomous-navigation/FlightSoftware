@@ -87,8 +87,6 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(gyr_vec_flag);
         add_readable_field(gyr_temp_flag);
 
-        add_readable_field(adcs_box_functional);
-
         // add faults to registry
         // adcs_functional_fault.add_to_registry(registry);
         wheel1_adc_fault.add_to_registry(registry);
