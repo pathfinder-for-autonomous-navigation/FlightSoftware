@@ -32,10 +32,10 @@ class TestFixture {
         ReadableStateField<bool>* gyr_temp_flag_p;
 
         // fault pointers
-        ReadableStateField<bool>* wheel1_adc_fault_p;
-        ReadableStateField<bool>* wheel2_adc_fault_p;
-        ReadableStateField<bool>* wheel3_adc_fault_p;
-        ReadableStateField<bool>* wheel_pot_fault_p;
+        Fault* wheel1_adc_fault_p;
+        Fault* wheel2_adc_fault_p;
+        Fault* wheel3_adc_fault_p;
+        Fault* wheel_pot_fault_p;
 
         std::unique_ptr<ADCSBoxMonitor> adcs_box;
 
@@ -88,10 +88,10 @@ class TestFixture {
 
             // find the faults fields
             // adcs_functional_fault_p = registry.find_readable_field_t<bool>("adcs_monitor.adcs_functional_fualt");
-            wheel1_adc_fault_p = registry.find_readable_field_t<bool>("adcs_monitor.wheel1_fault");
-            wheel2_adc_fault_p = registry.find_readable_field_t<bool>("adcs_monitor.wheel2_fault");
-            wheel3_adc_fault_p = registry.find_readable_field_t<bool>("adcs_monitor.wheel3_fault");
-            wheel_pot_fault_p = registry.find_readable_field_t<bool>("adcs_monitor.wheel_pot_fault");
+            wheel1_adc_fault_p = static_cast<Fault*>(registry.find_readable_field_t<bool>("adcs_monitor.wheel1_fault"));
+            wheel2_adc_fault_p = static_cast<Fault*>(registry.find_readable_field_t<bool>("adcs_monitor.wheel2_fault"));
+            wheel3_adc_fault_p = static_cast<Fault*>(registry.find_readable_field_t<bool>("adcs_monitor.wheel3_fault"));
+            wheel_pot_fault_p = static_cast<Fault*>(registry.find_readable_field_t<bool>("adcs_monitor.wheel_pot_fault"));
         }
 
         // set of mocking methods

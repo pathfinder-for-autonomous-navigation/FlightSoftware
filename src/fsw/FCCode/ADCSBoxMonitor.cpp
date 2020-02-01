@@ -30,7 +30,6 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr),
     havt_bool_sr(),
-    // TODO: Change persistence to 0 for instant safehold?
     wheel1_adc_fault("adcs_monitor.wheel1_fault", 1, control_cycle_count),
     wheel2_adc_fault("adcs_monitor.wheel2_fault", 1, control_cycle_count),
     wheel3_adc_fault("adcs_monitor.wheel3_fault", 1, control_cycle_count),
