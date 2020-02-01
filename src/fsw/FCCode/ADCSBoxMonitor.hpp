@@ -3,6 +3,7 @@
 
 #include "Drivers/ADCS.hpp"
 #include "TimedControlTask.hpp"
+#include "Fault.hpp"
 
 /**
 * @brief Gets inputs from the ADCS box and dumps them into the state
@@ -65,7 +66,6 @@ protected:
     Serializer<float> gyr_temp_sr;
     ReadableStateField<float> gyr_temp_f;
 
-
     /**
     * @brief Bound flags.
     * If the flag is true, that means it is outside the validity bounds.
@@ -83,8 +83,14 @@ protected:
     ReadableStateField<bool> gyr_temp_flag;
 
     //! vector for havt table, a 0/false means device disabled; 1/true is functional
-    std::vector<ReadableStateField<bool>> havt_table_vector;
+    std::vector<ReadableStateField<bool>> havt_read_vector;
     Serializer<bool> havt_bool_sr;
+
+    // Fault is signaled based off of HAVT
+    Fault wheel1_adc_fault;
+    Fault wheel2_adc_fault;
+    Fault wheel3_adc_fault;
+    Fault wheel_pot_fault;
 };
 
 #endif
