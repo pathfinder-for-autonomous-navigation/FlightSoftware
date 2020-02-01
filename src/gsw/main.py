@@ -11,6 +11,7 @@ import os
 import email
 import time
 import logging
+import process_downlinks
 
 
 class read_iridium(object):
@@ -52,16 +53,28 @@ class read_iridium(object):
         self.run_email_thread = True
         self.check_email_thread.start()
 
+    def is_json(self):
+        '''
+        Returns whether or not an object is a valid JSON string
+        '''
+        try:
+            json_object = json.loads(myjson)
+        except ValueError as e:
+            return False
+        return True
+
     def process_downlink_packet(self, data):
         '''
         Converts the email attachment data into a 
         JSON object. This is because elasticsearch
-        only takes in JSON data. I will add to this
-        and organize the attachment contents more
-        once downlink producer is finished. 
+        only takes in JSON data.
         '''
-        data=json.loads(data)
-        data["time"]=str(datetime.now().isoformat())
+        if self.is_json(data):
+            data=json.loads(data)
+            data["time"]=str(datetime.now().isoformat())
+        else:
+            # Run downlink parser and return json
+
         return data
 
     def check_for_email(self):
