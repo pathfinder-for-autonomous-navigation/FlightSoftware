@@ -5,16 +5,19 @@ Fault::Fault(const std::string& name,
       const bool default_setting) :
     WritableStateField<bool>(name, Serializer<bool>()),
     cc(control_cycle_count),
-    persistence(_persistence),
     fault_bool_sr(),
     suppress_f(name + ".suppress", fault_bool_sr),
     override_f(name + ".override", fault_bool_sr),
     unsignal_f(name + ".unsignal", fault_bool_sr),
-    signal_f(name + ".signal", fault_bool_sr)
+    // 65536 = 2^16 -1
+    persist_sr(0, 65535, 16),
+    persistence_f(name + ".persistence", persist_sr)
 {
   set(default_setting);
   override_f.set(false);
   suppress_f.set(false);
+  unsignal_f.set(false);
+  persistence_f.set(_persistence);
 }
 
 bool Fault::add_to_registry(StateFieldRegistry& r) {
@@ -32,9 +35,11 @@ void Fault::signal() {
         last_fault_time = cc;
     }
 
-    if (num_consecutive_signals > persistence) {
+    if (num_consecutive_signals > persistence_f.get()) {
         set(true);
     }
+    else
+        set(false);
 
     process_commands();
 }
@@ -65,11 +70,6 @@ void Fault::process_commands(){
     prev_override = override_f.get();
     prev_suppress = suppress_f.get();
 
-    if(signal_f.get()){
-        signal_f.set(false);
-        // TODO: can also just be signal()
-        set(true);
-    }
     if(unsignal_f.get()){
         unsignal_f.set(false);
         unsignal();

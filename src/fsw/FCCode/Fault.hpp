@@ -64,7 +64,6 @@ class Fault : public WritableStateField<bool> {
     unsigned int last_fault_time = 0; // Last control cycle # that the fault condition
                                       // occurred
 
-    unsigned int persistence; // Persistence threshold for fault signal
     mutable unsigned int num_consecutive_signals = 0; // Number of consecutive signal condition
                                                      // occurrences at the current moment.
     
@@ -80,7 +79,9 @@ class Fault : public WritableStateField<bool> {
     WritableStateField<bool> suppress_f;
     WritableStateField<bool> override_f;
     WritableStateField<bool> unsignal_f;
-    WritableStateField<bool> signal_f;
+
+    Serializer<unsigned int> persist_sr;
+    WritableStateField<unsigned int> persistence_f;
 
     /**
      * @brief Resets consecutive faults to 0, whenever pulls transition from false to true

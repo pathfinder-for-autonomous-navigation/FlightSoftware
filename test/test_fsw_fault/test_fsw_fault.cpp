@@ -205,6 +205,65 @@ void test_process_commands(){
     TEST_ASSERT_EQUAL(1, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
 }
+
+void test_dynamic_persistence(){
+    StateFieldRegistryMock r;
+    unsigned int control_cycle_count = 0;
+    Fault fault("fault", 5, control_cycle_count);
+    fault.add_to_registry(r);
+
+    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
+    WritableStateField<bool>* persistence_fp = r.find_writable_field_t<bool>("fault.persistence");
+
+    // normal triggering of a fault
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
+    TEST_ASSERT_TRUE(fault_fp->is_faulted());
+
+    // return to nominal operation of satellite
+    control_cycle_count++; fault.unsignal();
+    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
+
+    // nominal satellite operation, and a command to change persistence to 3
+    control_cycle_count++; fault.unsignal(); persistence_fp->set(1);
+    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
+
+    // fault now triggers after 2 signals()
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    TEST_ASSERT_EQUAL(2, fault_fp->get_num_consecutive_signals());
+    TEST_ASSERT_TRUE(fault_fp->is_faulted());
+
+    control_cycle_count++; fault.signal(); 
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal(); persistence_fp->set(10);
+    TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
+    TEST_ASSERT_TRUE(fault_fp->is_faulted());
+
+    // if signals <= persistence, fault is released
+    control_cycle_count++; fault.signal();
+    TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
+
+    // edit persistence to below current num_consecutive_signals
+    control_cycle_count++; fault.signal(); persistence_fp->set(5);
+    TEST_ASSERT_EQUAL(8, fault_fp->get_num_consecutive_signals());
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
+
+    // the next call of signal() triggers fault due to lower persistence
+    control_cycle_count++; fault.signal(); persistence_fp->set(5);
+    TEST_ASSERT_EQUAL(9, fault_fp->get_num_consecutive_signals());
+    TEST_ASSERT_TRUE(fault_fp->is_faulted());
+}
+
 #ifdef DESKTOP
 int main() {
     UNITY_BEGIN();
