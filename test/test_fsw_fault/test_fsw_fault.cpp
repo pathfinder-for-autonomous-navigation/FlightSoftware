@@ -111,9 +111,8 @@ void test_process_commands(){
     TEST_ASSERT_EQUAL(2, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
+    // commanding an override modifies return of is_faulted in the current cycle
     control_cycle_count++; fault.signal(); override_fp->set(true);
-    // is_faulted should be true since override_fp modifies the return of is_faulted, 
-    // remember, commands processed during signal() or unsignal()
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
     TEST_ASSERT_EQUAL(3, fault_fp->get_num_consecutive_signals());
 
@@ -157,17 +156,6 @@ void test_process_commands(){
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
 
     // Return to normal operation, signaling condition is not met
-    control_cycle_count++; fault.unsignal();
-    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
-    TEST_ASSERT_FALSE(fault_fp->is_faulted());
-
-    // Command a trigger of the fault (will only last for 1 cycle),
-    // applied on current cycle
-    control_cycle_count++; fault.unsignal(); fault_fp->set(true); // simulated ground trigger command
-    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
-    TEST_ASSERT_TRUE(fault_fp->is_faulted());
-
-    // the next cycle, fault is released
     control_cycle_count++; fault.unsignal();
     TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());

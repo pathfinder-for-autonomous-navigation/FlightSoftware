@@ -1,8 +1,7 @@
 #include "Fault.hpp"
 
 Fault::Fault(const std::string& name,
-      const size_t _persistence, unsigned int& control_cycle_count,
-      const bool default_setting) :
+      const size_t _persistence, unsigned int& control_cycle_count) :
     WritableStateField<bool>(name, Serializer<bool>()),
     cc(control_cycle_count),
     fault_bool_sr(),
@@ -13,7 +12,7 @@ Fault::Fault(const std::string& name,
     persist_sr(65535),
     persistence_f(name + ".persistence", persist_sr)
 {
-  set(default_setting);
+  set(false);
   override_f.set(false);
   suppress_f.set(false);
   unsignal_f.set(false);
@@ -33,6 +32,14 @@ void Fault::signal() {
         num_consecutive_signals++;
         last_fault_time = cc;
     }
+}
+
+void Fault::unsignal() {
+    num_consecutive_signals = 0;
+}
+
+bool Fault::is_faulted() {
+    process_commands();
 
     if (num_consecutive_signals > persistence_f.get()) {
         set(true);
@@ -40,16 +47,6 @@ void Fault::signal() {
     else
         set(false);
 
-    process_commands();
-}
-
-void Fault::unsignal() {
-    set(false);
-    num_consecutive_signals = 0;
-    process_commands();
-}
-
-bool Fault::is_faulted() const {
     if (override_f.get()) {
         return true;
     }
@@ -71,7 +68,7 @@ void Fault::process_commands(){
 
     if(unsignal_f.get()){
         unsignal_f.set(false);
-        unsignal();
+        num_consecutive_signals = 0;
     }
 }
 
