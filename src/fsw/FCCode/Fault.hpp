@@ -45,6 +45,14 @@ class Fault : public WritableStateField<bool> {
      */
     bool is_faulted() const;
 
+    #ifdef UNIT_TEST
+    /**
+     * @brief a debug return that tells the current consecutive signals
+     * 
+     * @return unsigned int 
+     */
+    unsigned int get_num_consecutive_signals();
+    #endif
   private:
     // Make the get() and set() methods of the state field private,
     // so that the user is forced to use the signal() and unsignal()
@@ -57,7 +65,7 @@ class Fault : public WritableStateField<bool> {
                                       // occurred
 
     unsigned int persistence; // Persistence threshold for fault signal
-    mutable unsigned int num_consecutive_faults = 0; // Number of consecutive fault condition
+    mutable unsigned int num_consecutive_signals = 0; // Number of consecutive signal condition
                                                      // occurrences at the current moment.
     
     // Keeps track of the previous suppress or override state
