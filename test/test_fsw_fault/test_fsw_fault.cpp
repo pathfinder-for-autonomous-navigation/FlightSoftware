@@ -16,7 +16,7 @@ void test_fault_normal_behavior() {
     // Test that adding the fault to the registry works
     StateFieldRegistry r;
     TEST_ASSERT(fault.add_to_registry(r));
-    TEST_ASSERT(r.find_readable_field("fault"));
+    TEST_ASSERT(r.find_writable_field("fault"));
     TEST_ASSERT(r.find_writable_field("fault.override"));
     TEST_ASSERT(r.find_writable_field("fault.suppress"));
     TEST_ASSERT(r.find_writable_field("fault.unsignal"));
