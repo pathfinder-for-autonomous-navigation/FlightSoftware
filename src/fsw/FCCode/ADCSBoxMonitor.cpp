@@ -166,14 +166,17 @@ void ADCSBoxMonitor::execute(){
         havt_read_vector[idx].set(havt_read.test(idx));
     }
     
-    if(havt_read_vector[adcs::havt::Index::RWA_ADC1].get() == false)
-        wheel1_adc_fault.signal();
-    if(havt_read_vector[adcs::havt::Index::RWA_ADC2].get() == false)
-        wheel2_adc_fault.signal();
-    if(havt_read_vector[adcs::havt::Index::RWA_ADC3].get() == false)
-        wheel3_adc_fault.signal();
-    if(havt_read_vector[adcs::havt::Index::RWA_POT].get() == false)
-        wheel_pot_fault.signal();
+    if(havt_read_vector[adcs::havt::Index::RWA_ADC1].get() == false) wheel1_adc_fault.signal();
+    else wheel1_adc_fault.unsignal();
+
+    if(havt_read_vector[adcs::havt::Index::RWA_ADC2].get() == false) wheel2_adc_fault.signal();
+    else wheel2_adc_fault.unsignal();
+
+    if(havt_read_vector[adcs::havt::Index::RWA_ADC3].get() == false) wheel3_adc_fault.signal();
+    else wheel3_adc_fault.unsignal();
+
+    if(havt_read_vector[adcs::havt::Index::RWA_POT].get() == false) wheel_pot_fault.signal();
+    else wheel_pot_fault.unsignal();
 
     mag_vec_f.set(mag_vec);
     gyr_vec_f.set(gyr_vec);

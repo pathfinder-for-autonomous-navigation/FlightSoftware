@@ -294,6 +294,16 @@ void test_execute_havt(){
     TEST_ASSERT_TRUE(tf.wheel1_adc_fault_p->get());
     TEST_ASSERT_TRUE(tf.wheel1_adc_fault_p->get());
     TEST_ASSERT_TRUE(tf.wheel_pot_fault_p->get());
+
+    // report all devices good, check faults are unsignaled
+    tf.set_mock_havt_read(all_18_functional);
+    tf.adcs_box->execute();
+    tf.get_havt_as_table(&havt_read);
+    TEST_ASSERT_EQUAL_STRING(all_18_functional.to_string().c_str(), havt_read.to_string().c_str());
+    TEST_ASSERT_FALSE(tf.wheel1_adc_fault_p->get());
+    TEST_ASSERT_FALSE(tf.wheel1_adc_fault_p->get());
+    TEST_ASSERT_FALSE(tf.wheel1_adc_fault_p->get());
+    TEST_ASSERT_FALSE(tf.wheel_pot_fault_p->get());
 }
 
 int test_control_task()
