@@ -60,12 +60,17 @@ class Fault : public WritableStateField<bool> {
     mutable unsigned int num_consecutive_faults = 0; // Number of consecutive fault condition
                                                      // occurrences at the current moment.
 
+    bool prev_suppress = false;
+    bool prev_override = false;
+
     /**
      * @brief State fields that can be set by the ground to suppress
      * or forcibly signal the fault.
      */
     WritableStateField<bool> suppress_f;
     WritableStateField<bool> override_f;
+
+    void consider_pulls();
 };
 
 #endif

@@ -22,6 +22,8 @@ bool Fault::add_to_registry(StateFieldRegistry& r) {
 }
 
 void Fault::signal() {
+    consider_pulls();
+
     if (cc > static_cast<unsigned int>(last_fault_time) || cc == 0) {
         num_consecutive_faults++;
         last_fault_time = cc;
@@ -33,6 +35,7 @@ void Fault::signal() {
 }
 
 void Fault::unsignal() {
+    consider_pulls();
     set(false);
     num_consecutive_faults = 0;
 }
@@ -47,4 +50,16 @@ bool Fault::is_faulted() const {
         return false;
     }
     else return get();
+}
+
+void Fault::consider_pulls(){
+    // suppress_f was set to true from ground
+    if(prev_override == false && override_f.get()){
+        num_consecutive_faults = 0;
+    }
+    if(prev_suppress == false && suppress_f.get()){
+        num_consecutive_faults = 0;
+    }
+    prev_override = override_f.get();
+    prev_suppress = suppress_f.get();
 }
