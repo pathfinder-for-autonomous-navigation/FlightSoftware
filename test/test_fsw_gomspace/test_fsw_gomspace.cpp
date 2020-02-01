@@ -110,7 +110,7 @@ class TestFixture {
     TestFixture() : registry(), gs(&hk, &config, &config2) {
         gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
 
-        batt_threshold_fp = registry.find_writable_field<unsigned int>("gomspace.batt_threshold");
+        batt_threshold_fp = registry.find_writable_field_t<unsigned int>("gomspace.batt_threshold");
 
         vboost1_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output1");
         vboost2_fp = registry.find_readable_field_t<unsigned int>("gomspace.vboost.output2");
