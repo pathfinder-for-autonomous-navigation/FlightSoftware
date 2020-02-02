@@ -307,8 +307,8 @@ void on_i2c_recieve(unsigned int bytes) {
 
     case Register::HAVT_COMMAND_RESET: {
       if (umb::wire->available() < 1) break;
-      registers.havt.cmd_table = endian_read<unsigned int>();
-      registers.havt.cmd_flg = CMDFlag::UPDATED;
+      registers.havt.cmd_reset_table = endian_read<unsigned int>();
+      registers.havt.cmd_reset_flg = CMDFlag::UPDATED;
 
       #if LOG_LEVEL >= LOG_LEVEL_INFO
       std::bitset<havt::max_devices>temp(registers.havt.cmd_table);
@@ -332,8 +332,8 @@ void on_i2c_recieve(unsigned int bytes) {
     }
     case Register::HAVT_COMMAND_DISABLE: {
       if (umb::wire->available() < 1) break;
-      registers.havt.cmd_table = endian_read<unsigned int>();
-      registers.havt.cmd_flg = CMDFlag::UPDATED;
+      registers.havt.cmd_disable_table = endian_read<unsigned int>();
+      registers.havt.cmd_disable_flg = CMDFlag::UPDATED;
 
       #if LOG_LEVEL >= LOG_LEVEL_INFO
       std::bitset<havt::max_devices>temp(registers.havt.cmd_table);

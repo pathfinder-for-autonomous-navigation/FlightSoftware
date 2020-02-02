@@ -93,23 +93,43 @@ void cmd_device(Index index, const bool cmd_bit){
   }
 }
 
-void execute_cmd_table(const std::bitset<havt::max_devices>& cmd_table) {
+void execute_cmd_reset_table(const std::bitset<havt::max_devices>& cmd_table) {
   LOG_INFO_header
-  LOG_INFO_printlnF("Executing HAVT command table")
+  LOG_INFO_printlnF("Executing HAVT CMD RESET table")
 
   // Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
   for (unsigned int index_int = Index::IMU_GYR; index_int != Index::_LENGTH; index_int++ )
   {
     Index index = static_cast<Index>(index_int);
 
-    // if the internal table and the cmd_table are different, need to actuate according to cmd_table
-    if(internal_table.test(index_int) != cmd_table.test(index_int)){  
-      cmd_device(index, cmd_table.test(index_int));
+    // if cmd_reset_table has a bit high, reset that device
+    if(cmd_table[index_int]){  
+      cmd_device(index, 1);
     }
   }
 
   LOG_INFO_header
   LOG_INFO_printlnF("Complete")
 }
+
+void execute_cmd_disable_table(const std::bitset<havt::max_devices>& cmd_disable_table) {
+  LOG_INFO_header
+  LOG_INFO_printlnF("Executing HAVT CMD DISABLE table")
+
+  // Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
+  for (unsigned int index_int = Index::IMU_GYR; index_int != Index::_LENGTH; index_int++ )
+  {
+    Index index = static_cast<Index>(index_int);
+
+    // if cmd_disable_table has a bit high, disable that device
+    if(cmd_disable_table[index_int]){  
+      cmd_device(index, 0);
+    }
+  }
+
+  LOG_INFO_header
+  LOG_INFO_printlnF("Complete")
+}
+
 }  // namespace havt
 }  // namespace adcs

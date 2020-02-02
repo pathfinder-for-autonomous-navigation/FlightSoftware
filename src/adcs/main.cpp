@@ -104,20 +104,31 @@ void update_havt() {
   registers.havt.read_table = (unsigned int)havt::internal_table.to_ulong();
 
   //if no new command no need to actuate anything
-  if(registers.havt.cmd_flg == CMDFlag::OUTDATED) return;
-  //otherwise, actuate the cmd_table
+  if(registers.havt.cmd_reset_flg == CMDFlag::OUTDATED) return;
+  //otherwise, actuate the cmd_reset_table
 
   unsigned int command_int;
-  // Attempt atomic copy of the havt command table
-  registers.havt.cmd_flg = CMDFlag::OUTDATED;
-  command_int = registers.havt.cmd_table;
+  // Attempt atomic copy of the havt command reset
+  registers.havt.cmd_reset_flg = CMDFlag::OUTDATED;
+  command_int = registers.havt.cmd_reset_table;
 
   // Actuate if the copy was atomic
-  if (registers.havt.cmd_flg == CMDFlag::OUTDATED){
+  if (registers.havt.cmd_reset_flg == CMDFlag::OUTDATED){
     std::bitset<havt::max_devices> temp_command_table(command_int);
-    havt::execute_cmd_table(temp_command_table);
+    havt::execute_cmd_reset_table(temp_command_table);
   }
 
+  // ***  execute havt disable table logic ***
+  //if no new command no need to actuate anything
+  if(registers.havt.cmd_reset_flg == CMDFlag::OUTDATED) return;
+
+  //otherwise, actuate the cmd_disable_table
+  registers.havt.cmd_disable_flg = CMDFlag::OUTDATED;
+  command_int = registers.havt.cmd_disable_table;
+  if (registers.havt.cmd_disable_flg == CMDFlag::OUTDATED){
+    std::bitset<havt::max_devices> temp_command_table(command_int);
+    havt::execute_cmd_disable_table(temp_command_table);
+  }
 }
 
 void update_imu() {
