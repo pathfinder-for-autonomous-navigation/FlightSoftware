@@ -9,9 +9,8 @@
 void test_fault_normal_behavior() {
     unsigned int control_cycle_count = 0;
 
-    // Test constructors
+    // Test constructor
     Fault fault("fault", 5, control_cycle_count);
-    Fault fault2("fault2", 5, control_cycle_count, true);
 
     // Test that adding the fault to the registry works
     StateFieldRegistry r;
@@ -21,13 +20,9 @@ void test_fault_normal_behavior() {
     TEST_ASSERT(r.find_writable_field("fault.suppress"));
     TEST_ASSERT(r.find_writable_field("fault.unsignal"));
 
-    fault2.add_to_registry(r);
-
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field("fault"));
-    Fault* fault2_fp = static_cast<Fault*>(r.find_writable_field("fault2"));
 
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
-    TEST_ASSERT(fault2_fp->is_faulted());
 
     // Fault should not be signaled when signal condition happens under the persistence
     for(int i = 0; i < 4; i++) {
@@ -112,12 +107,8 @@ void test_process_commands(){
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
     // commanding an override modifies return of is_faulted in the current cycle
-    control_cycle_count++; fault.signal(); override_fp->set(true);
-    TEST_ASSERT_TRUE(fault_fp->is_faulted());
-    TEST_ASSERT_EQUAL(3, fault_fp->get_num_consecutive_signals());
-
     // processing the override resets num_consecutive_signals to 0,
-    control_cycle_count++; fault.signal();
+    control_cycle_count++; fault.signal(); override_fp->set(true);
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
     TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
 
@@ -131,13 +122,10 @@ void test_process_commands(){
     TEST_ASSERT_EQUAL(3, fault_fp->get_num_consecutive_signals());
 
     // suppress a fault to prevent fault behavior
-    control_cycle_count++; fault.signal(); suppress_fp->set(true);
-    TEST_ASSERT_EQUAL(4, fault_fp->get_num_consecutive_signals());
-
     // processing the suppress resets num_consecutive_signals to 0
-    control_cycle_count++; fault.signal();
-    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
+    control_cycle_count++; fault.signal(); suppress_fp->set(true);
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
 
     // fault tries to trip but doesn't change behavior due to supression
     control_cycle_count++; fault.signal();
@@ -146,19 +134,19 @@ void test_process_commands(){
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
-    TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
 
     // release suppression; since num_consecutive_signals was incrementing during suppression,
     // fault automatically triggers on supression release
     control_cycle_count++; fault.signal(); suppress_fp->set(false);
-    TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
 
     // Return to normal operation, signaling condition is not met
     control_cycle_count++; fault.unsignal();
-    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
 
     // build up 6 signals, cause a fault trigger
     control_cycle_count++; fault.signal();
@@ -167,23 +155,18 @@ void test_process_commands(){
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
+    TEST_ASSERT_TRUE(fault_fp->is_faulted());
     TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
-    TEST_ASSERT_TRUE(fault_fp->is_faulted());
 
-    // send an unsignal command
+    // send an unsignal command, even though we are in the signal condition
     control_cycle_count++; fault.signal(); unsignal_fp->set(true);
-    TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
-    TEST_ASSERT_TRUE(fault_fp->is_faulted());
-
-    // apply the unsignal, even though we are in the signal condition
-    control_cycle_count++; fault.signal();
-    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
 
     // begin accumulating signals as normal
     control_cycle_count++; fault.signal();
-    TEST_ASSERT_EQUAL(1, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(1, fault_fp->get_num_consecutive_signals());
 }
 
 void test_dynamic_persistence(){
@@ -193,7 +176,7 @@ void test_dynamic_persistence(){
     fault.add_to_registry(r);
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
-    WritableStateField<bool>* persistence_fp = r.find_writable_field_t<bool>("fault.persistence");
+    WritableStateField<unsigned int>* persistence_fp = r.find_writable_field_t<unsigned int>("fault.persistence");
 
     // normal triggering of a fault
     control_cycle_count++; fault.signal();
@@ -202,55 +185,51 @@ void test_dynamic_persistence(){
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
-    TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
 
     // return to nominal operation of satellite
     control_cycle_count++; fault.unsignal();
-    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
 
     // nominal satellite operation, and a command to change persistence to 1
     control_cycle_count++; fault.unsignal(); persistence_fp->set(1);
-    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(0, fault_fp->get_num_consecutive_signals());
 
     // fault now triggers after 2 signals()
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
-    TEST_ASSERT_EQUAL(2, fault_fp->get_num_consecutive_signals());
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
+    TEST_ASSERT_EQUAL(2, fault_fp->get_num_consecutive_signals());
 
     // command an increase in persistence
+    // since signals <= persistence, fault is released
     control_cycle_count++; fault.signal(); 
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal();
     control_cycle_count++; fault.signal(); persistence_fp->set(10);
+    TEST_ASSERT_FALSE(fault_fp->is_faulted());
     TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
-    TEST_ASSERT_TRUE(fault_fp->is_faulted());
 
-    // since signals <= persistence, fault is released
-    control_cycle_count++; fault.signal();
+    // edit persistence to lower it below current num_consecutive_signals
+    control_cycle_count++; fault.signal(); persistence_fp->set(5);
+    TEST_ASSERT_TRUE(fault_fp->is_faulted());
     TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
-    TEST_ASSERT_FALSE(fault_fp->is_faulted());
+}
 
-    // edit persistence to below current num_consecutive_signals
-    control_cycle_count++; fault.signal(); persistence_fp->set(5);
-    TEST_ASSERT_EQUAL(8, fault_fp->get_num_consecutive_signals());
-    TEST_ASSERT_FALSE(fault_fp->is_faulted());
-
-    // the next call of signal() triggers fault due to lower persistence
-    control_cycle_count++; fault.signal(); persistence_fp->set(5);
-    TEST_ASSERT_EQUAL(9, fault_fp->get_num_consecutive_signals());
-    TEST_ASSERT_TRUE(fault_fp->is_faulted());
+void test_control_task(){
+    RUN_TEST(test_fault_normal_behavior);
+    RUN_TEST(test_fault_overridden_behavior);
+    RUN_TEST(test_process_commands);
+    RUN_TEST(test_dynamic_persistence);
 }
 
 #ifdef DESKTOP
 int main() {
     UNITY_BEGIN();
-    RUN_TEST(test_fault_normal_behavior);
-    RUN_TEST(test_fault_overridden_behavior);
-    RUN_TEST(test_process_commands);
+    test_control_task();
     return UNITY_END();
 }
 #else
@@ -259,9 +238,7 @@ void setup() {
     delay(2000);
     Serial.begin(9600);
     UNITY_BEGIN();
-    RUN_TEST(test_fault_normal_behavior);
-    RUN_TEST(test_fault_overridden_behavior);
-    RUN_TEST(test_process_commands);
+    test_control_task();
     UNITY_END();
 }
 
