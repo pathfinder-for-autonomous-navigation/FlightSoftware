@@ -22,24 +22,23 @@ class Fault : public WritableStateField<bool> {
 
     /**
      * @brief Client-facing function to signal an occurrence of the
-     * fault-related condition.
+     * fault-related condition. Attempts to increment num_consecutive_signals by 1
      */
     void signal();
 
     /**
      * @brief Client-facing function to signal a non-occurrence of the
-     * fault-related condition. Resets the persistence of the fault.
+     * fault-related condition. Resets the num_consecutive_signals to 0
      */
     void unsignal();
 
     /**
-     * @brief If the fault-related condition has been persistent or if
-     * the fault is overridden by the ground, the fault is signaled.
-     * Otherwise, if the fault-related condition has not been persistent,
-     * or if the fault is suppressed by the ground, the fault is not signaled.
+     * @brief Calls process_commands, sets the fault true if num_consecutive_faults > persistence_f
+     * returns true or false if override or suppress are true respectivly,
+     * Otherwise, it returns the state of the fault itself.
      *
-     * @return true 
-     * @return false 
+     * @return true if: override is true, or num_consecutive_faults > persistence_f
+     * @return false if: suppress is true, or num_consecutive_faults < persistence_f 
      */
     bool is_faulted();
 
@@ -82,8 +81,8 @@ class Fault : public WritableStateField<bool> {
     WritableStateField<unsigned int> persistence_f;
 
     /**
-     * @brief Resets consecutive faults to 0, whenever pulls transition from false to true
-     * Also calls signal() or unsignal() if signal_f or unsignal_f are true respectively
+     * @brief Resets consecutive faults to 0, whenever pulls transition from false to true,
+     * or if unsignal_f is true.
      */
     void process_commands();
 };
