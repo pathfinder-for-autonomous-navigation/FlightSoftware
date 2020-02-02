@@ -214,6 +214,7 @@ void test_dynamic_persistence(){
     TEST_ASSERT_EQUAL(6, fault_fp->get_num_consecutive_signals());
 
     // edit persistence to lower it below current num_consecutive_signals
+    // instantly triggers due to previous accumulation
     control_cycle_count++; fault.signal(); persistence_fp->set(5);
     TEST_ASSERT_TRUE(fault_fp->is_faulted());
     TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
