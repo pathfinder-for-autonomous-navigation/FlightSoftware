@@ -11,7 +11,9 @@ import os
 import email
 import time
 import logging
-import process_downlinks
+import subprocess
+import pty
+import serial
 
 
 class read_iridium(object):
@@ -43,6 +45,13 @@ class read_iridium(object):
         #thread
         self.run_email_thread = False
 
+        #set up downlink parser
+        filepath = os.path.dirname(os.path.abspath(__file__))
+        binary_dir = os.path.join(filepath, "../.pio/build/gsw_downlink_parser/program")
+        master_fd, slave_fd = pty.openpty()
+        self.downlink_parser = subprocess.Popen([binary_dir], stdin=master_fd, stdout=master_fd)
+        self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
+
     def connect(self):
         '''
         Starts a thread which will continuously
@@ -63,18 +72,32 @@ class read_iridium(object):
             return False
         return True
 
-    def process_downlink_packet(self, data):
+    def process_downlink_packet(self, payload):
         '''
-        Converts the email attachment data into a 
+        Converts the email attachment payload into a 
         JSON object. This is because elasticsearch
-        only takes in JSON data.
+        only takes in JSON data. If the payload doesn't 
+        already contain a valid JSON string, then it runs 
+        DownlinkParser
         '''
-        if self.is_json(data):
-            data=json.loads(data)
+        attachmentContents=str(payload.decode('utf8').rstrip("\x00"))
+
+        if self.is_json(attachmentContents):
+            # If the attachment is a json string, then return the json
+            # as a python dictionary
+            data=json.loads(attachmentContents)
             data["time"]=str(datetime.now().isoformat())
         else:
             # Run downlink parser and return json
-
+            f=open("data.sbd", "wb")
+            f.write(payload)
+            f.close()
+            self.console.write(("data.sbd\n").encode())
+            data = self.console.readline().rstrip()
+            os.remove("data.sbd")
+            if data is not None:
+                data["time"]=str(datetime.now().isoformat())
+        
         return data
 
     def check_for_email(self):
@@ -173,9 +196,8 @@ class read_iridium(object):
                             # Check if there is an email attachment
                             if part.get_filename() is not None:
                                 # Get data from email attachment
-                                attachmentContents=part.get_payload(decode=True).decode('utf8')
-                                # TODO use downlink parser to process downlink attachments
-                                statefield_report=self.process_downlink_packet(str(attachmentContents.rstrip("\x00")))
+                                # attachmentContents=str(part.get_payload(decode=True).decode('utf8').rstrip("\x00"))
+                                statefield_report=self.process_downlink_packet(part.get_payload(decode=True))
                                 return statefield_report
                         
                     #if we have not recieved a downlink, return None
