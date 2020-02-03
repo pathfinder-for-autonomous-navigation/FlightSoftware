@@ -3,13 +3,13 @@
 #include <EEPROM.h>
 #endif
 
-EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset, std::vector<std::string>& statefields)
+EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "eeprom_ct", offset)
 {
-  
+
 }
 
-void EEPROMController::init(std::vector<std::string>& statefields){
+void EEPROMController::init(const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods){
   for (size_t i = 0; i<statefields.size(); i++){
     // copy the string name of the statefield into a char array
     char field[statefields.at(i).length() + 1];
@@ -19,6 +19,8 @@ void EEPROMController::init(std::vector<std::string>& statefields){
     // add the address of the pointer to the address array
     addresses.push_back(i*5);
   }
+
+  sf_periods=periods;
 
   // if we find stored information from previous control cycles when the control task 
   // is initialized, then set all the statefields to those stored values
@@ -33,8 +35,10 @@ void EEPROMController::init(std::vector<std::string>& statefields){
 
 void EEPROMController::execute() {
   //if enough control cycles have passed, write the field values to EEPROM
-  if(control_cycle_count%period==0){
-    update_EEPROM();
+  for (size_t i = 0; i<pointers.size(); i++) {
+    if(control_cycle_count%sf_periods.at(i)==0){
+      update_EEPROM(i);
+    }
   }
 }
 
@@ -46,11 +50,9 @@ void EEPROMController::read_EEPROM(){
   #endif
 }
 
-void EEPROMController::update_EEPROM(){
+void EEPROMController::update_EEPROM(unsigned int position){
   #ifndef DESKTOP
-  for (unsigned int i = 0; i<pointers.size(); i++){
-    EEPROM.put(addresses.at(i), pointers.at(i)->get());
-  }
+  EEPROM.put(addresses.at(position), pointers.at(position)->get());
   #endif
 }
 

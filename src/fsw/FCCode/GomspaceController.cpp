@@ -101,6 +101,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         low_batt_fault.add_to_registry(registry);
 
         add_writable_field(batt_threshold_f);
+        batt_threshold_f.set(7300);
         
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
@@ -341,7 +342,7 @@ void GomspaceController::power_cycle_outputs(){
         if (output5_f.get()){
             gs.set_single_output(4,0);
         }
-        if (!output1_f.get()){
+        if (!output5_f.get()){
             gs.set_single_output(4,1);
             power_cycle_output5_cmd_f.set(false);
         }

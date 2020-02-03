@@ -8,13 +8,14 @@
 #include <fsw/FCCode/MainControlLoop.hpp>
 #include <common/StateFieldRegistry.hpp>
 #include "flow_data.hpp"
+#include "eeprom_configs.hpp"
 
 #include <core_pins.h>
 #include <wiring.h>
 
 void pan_system_setup() {
     StateFieldRegistry registry;
-    MainControlLoop fcp(registry, PAN::flow_data);
+    MainControlLoop fcp(registry, PAN::flow_data, PAN::statefields, PAN::periods);
 
     while (true) {
         fcp.execute();

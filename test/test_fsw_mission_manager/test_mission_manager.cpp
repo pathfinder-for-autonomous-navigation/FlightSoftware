@@ -7,6 +7,11 @@ void test_valid_initialization() {
     TestFixture tf;
 
     // Test initialized values
+    TEST_ASSERT_EQUAL(0.2, tf.detumble_safety_factor_fp->get());
+    TEST_ASSERT_EQUAL(100, tf.close_approach_trigger_dist_fp->get());
+    TEST_ASSERT_EQUAL(0.4, tf.docking_trigger_dist_fp->get());
+    TEST_ASSERT_EQUAL(24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms,
+        tf.max_radio_silence_duration_fp->get());
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
     TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
     TEST_ASSERT_EQUAL(0, tf.deployment_wait_elapsed_fp->get());
@@ -61,7 +66,7 @@ void test_dispatch_detumble() {
     tf.set(adcs_state_t::detumble);
 
     const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia
-                                * MissionManager::detumble_safety_factor;
+                                * tf.detumble_safety_factor_fp->get();
     const float delta = threshold * 0.01;
 
     // Stays in detumble mode if satellite is tumbling
@@ -121,9 +126,9 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state)
         This transition should happen irrespective of the comms timeout situation. **/
     {
         TestFixture tf(mission_state);
-        tf.set_sat_distance(MissionManager::docking_trigger_dist - 0.01);
-        tf.set_ccno(MissionManager::max_radio_silence_duration + 1);
-        tf.set_comms_blackout_period(MissionManager::max_radio_silence_duration + 1);
+        tf.set_sat_distance(tf.docking_trigger_dist_fp->get() - 0.01);
+        tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
+        tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
         tf.step();
         tf.check(mission_state_t::docking);
         tf.check(prop_state_t::disabled);
@@ -138,8 +143,8 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state)
         be a state transition to standby.  **/
     {
         TestFixture tf(mission_state);
-        tf.set_ccno(MissionManager::max_radio_silence_duration + 1);
-        tf.set_comms_blackout_period(MissionManager::max_radio_silence_duration + 1);
+        tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
+        tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
         tf.step();
         tf.check(prop_state_t::idle);
         tf.check(adcs_state_t::point_standby);
