@@ -96,9 +96,7 @@ class read_iridium(object):
             if data is not None:
                 data=data["data"]
                 data["time"]=str(datetime.now().isoformat())
-            
-            os.remove("data.sbd")
-            
+        os.remove("data.sbd")
         return data
 
     def check_for_email(self):
@@ -112,7 +110,7 @@ class read_iridium(object):
         '''
         #look for all new emails from iridium
         self.mail.select('Inbox')
-        _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")', '(UNSEEN)')
+        _, data = self.mail.search(None, '(FROM "fy56@cornell.edu")', '(UNSEEN)') #sbdservice@sbd.iridium.com
         mail_ids = data[0]
         id_list = mail_ids.split()
 
