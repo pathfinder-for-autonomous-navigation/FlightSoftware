@@ -11,7 +11,7 @@ class TestFixture {
   public:
     StateFieldRegistryMock registry;
 
-    std::vector<std::string> statefields = {"pan.state", "pan.deployed", "pan.sat_designation", "pan.cycle_no"}; 
+    std::vector<std::string> statefields = {"pan.mode", "pan.deployed", "pan.sat_designation", "pan.cycle_no"}; 
     std::vector<unsigned int> periods = {2, 3, 5, 7};
 
     //Create the statefields that the EEPROM will eventually collect and store
@@ -23,7 +23,7 @@ class TestFixture {
     std::unique_ptr<EEPROMController> eeprom_controller;
 
     TestFixture() : registry() {
-        mission_mode_fp = registry.create_readable_field<unsigned int>("pan.state");
+        mission_mode_fp = registry.create_readable_field<unsigned int>("pan.mode");
         mission_mode_fp->set(1);
 
         is_deployed_fp = registry.create_readable_field<unsigned int>("pan.deployed");
