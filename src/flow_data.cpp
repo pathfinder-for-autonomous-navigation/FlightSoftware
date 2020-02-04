@@ -14,6 +14,7 @@ const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
         true,
         {
             "pan.state",
+            "pan.deployed",
             "pan.sat_designation"
         }
     },
