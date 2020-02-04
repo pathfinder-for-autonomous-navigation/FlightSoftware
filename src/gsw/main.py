@@ -83,7 +83,7 @@ class read_iridium(object):
         if self.is_json(payload):
             # If the attachment is a json string, then return the json
             # as a python dictionary
-            data=json.loads(attachmentContents)
+            data=json.loads(str(payload.decode('utf8').rstrip("\x00")))
             data["time"]=str(datetime.now().isoformat())
         else:
             # Run downlink parser and return json
@@ -96,7 +96,8 @@ class read_iridium(object):
             if data is not None:
                 data=data["data"]
                 data["time"]=str(datetime.now().isoformat())
-        os.remove("data.sbd")
+            os.remove("data.sbd")
+
         return data
 
     def check_for_email(self):
@@ -110,7 +111,7 @@ class read_iridium(object):
         '''
         #look for all new emails from iridium
         self.mail.select('Inbox')
-        _, data = self.mail.search(None, '(FROM "fy56@cornell.edu")', '(UNSEEN)') #sbdservice@sbd.iridium.com
+        _, data = self.mail.search(None, '(FROM "sbdservice@sbd.iridium.com")', '(UNSEEN)')
         mail_ids = data[0]
         id_list = mail_ids.split()
 
