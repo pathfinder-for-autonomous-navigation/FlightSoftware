@@ -121,9 +121,6 @@ void test_dispatch_standby() {
 
 void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_distance)
 {
-    const bool is_close_approach = 
-            (mission_state == mission_state_t::follower_close_approach) ||
-            (mission_state == mission_state_t::leader_close_approach);
 
     /** If distance is less than the trigger distance,
         there should be a state transition to the next mission state.
@@ -140,7 +137,13 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         tf.check(static_cast<sat_designation_t>(tf.sat_designation_fp->get()));
 
         // Docking motor command should be applied if we're in close approach.
-        if (is_close_approach) TEST_ASSERT(tf.docking_config_cmd_fp->get());
+        const bool in_close_approach = 
+            (mission_state == mission_state_t::follower_close_approach) ||
+            (mission_state == mission_state_t::leader_close_approach);
+
+        if (in_close_approach) {
+            TEST_ASSERT(tf.docking_config_cmd_fp->get());
+        }
     }
 
     /** If comms hasn't been available for too long,
@@ -158,10 +161,14 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
 }
 
 void test_rendezvous_states() {
-    test_dispatch_rendezvous_state(mission_state_t::follower);
-    test_dispatch_rendezvous_state(mission_state_t::leader);
-    test_dispatch_rendezvous_state(mission_state_t::follower_close_approach);
-    test_dispatch_rendezvous_state(mission_state_t::leader_close_approach);
+    TestFixture tf;
+    const double close_approach_trigger = tf.close_approach_trigger_dist_fp->get() - 0.01;
+    const double docking_trigger = tf.docking_trigger_dist_fp->get() - 0.01;
+
+    test_dispatch_rendezvous_state(mission_state_t::follower, close_approach_trigger);
+    test_dispatch_rendezvous_state(mission_state_t::leader, close_approach_trigger);
+    test_dispatch_rendezvous_state(mission_state_t::follower_close_approach, docking_trigger);
+    test_dispatch_rendezvous_state(mission_state_t::leader_close_approach, docking_trigger);
 }
 
 void test_dispatch_docking() {
