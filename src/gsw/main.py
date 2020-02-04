@@ -47,7 +47,7 @@ class read_iridium(object):
 
         #set up downlink parser
         filepath = os.path.dirname(os.path.abspath(__file__))
-        binary_dir = os.path.join(filepath, "../.pio/build/gsw_downlink_parser/program")
+        binary_dir = os.path.join(filepath, "../../.pio/build/gsw_downlink_parser/program")
         master_fd, slave_fd = pty.openpty()
         self.downlink_parser = subprocess.Popen([binary_dir], stdin=master_fd, stdout=master_fd)
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
@@ -62,12 +62,12 @@ class read_iridium(object):
         self.run_email_thread = True
         self.check_email_thread.start()
 
-    def is_json(self):
+    def is_json(self, payload):
         '''
         Returns whether or not an object is a valid JSON string
         '''
         try:
-            json_object = json.loads(myjson)
+            json_object = json.loads(str(payload.decode('utf8').rstrip("\x00")))
         except ValueError as e:
             return False
         return True
@@ -80,9 +80,7 @@ class read_iridium(object):
         already contain a valid JSON string, then it runs 
         DownlinkParser
         '''
-        attachmentContents=str(payload.decode('utf8').rstrip("\x00"))
-
-        if self.is_json(attachmentContents):
+        if self.is_json(payload):
             # If the attachment is a json string, then return the json
             # as a python dictionary
             data=json.loads(attachmentContents)
@@ -92,12 +90,15 @@ class read_iridium(object):
             f=open("data.sbd", "wb")
             f.write(payload)
             f.close()
+
             self.console.write(("data.sbd\n").encode())
-            data = self.console.readline().rstrip()
-            os.remove("data.sbd")
+            data = json.loads(self.console.readline().rstrip())
             if data is not None:
+                data=data["data"]
                 data["time"]=str(datetime.now().isoformat())
-        
+            
+            os.remove("data.sbd")
+            
         return data
 
     def check_for_email(self):
