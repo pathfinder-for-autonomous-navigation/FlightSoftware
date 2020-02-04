@@ -12,7 +12,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
         Serializer<unsigned int>(0, 2 * 24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms)),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
-    mission_state_f("pan.state", Serializer<unsigned char>(10)),
+    mission_state_f("pan.state", Serializer<unsigned char>(12)),
     is_deployed_f("pan.deployed", Serializer<bool>()),
     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32)),
     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2))
@@ -76,16 +76,18 @@ void MissionManager::execute() {
     }
 
     switch(state) {
-        case mission_state_t::startup:             dispatch_startup();             break;
-        case mission_state_t::detumble:            dispatch_detumble();            break;
-        case mission_state_t::initialization_hold: dispatch_initialization_hold(); break;
-        case mission_state_t::standby:             dispatch_standby();             break;
-        case mission_state_t::follower:            dispatch_follower();            break;
-        case mission_state_t::leader:              dispatch_leader();              break;
-        case mission_state_t::docking:             dispatch_docking();             break;
-        case mission_state_t::docked:              dispatch_docked();              break;
-        case mission_state_t::safehold:            dispatch_safehold();            break;
-        case mission_state_t::manual:              dispatch_manual();              break;
+        case mission_state_t::startup:                    dispatch_startup();                    break;
+        case mission_state_t::detumble:                   dispatch_detumble();                   break;
+        case mission_state_t::initialization_hold:        dispatch_initialization_hold();        break;
+        case mission_state_t::standby:                    dispatch_standby();                    break;
+        case mission_state_t::follower:                   dispatch_follower();                   break;
+        case mission_state_t::leader:                     dispatch_leader();                     break;
+        case mission_state_t::follower_close_approach:    dispatch_follower_close_approach();    break;
+        case mission_state_t::leader_close_approach:      dispatch_leader_close_approach();      break;
+        case mission_state_t::docking:                    dispatch_docking();                    break;
+        case mission_state_t::docked:                     dispatch_docked();                     break;
+        case mission_state_t::safehold:                   dispatch_safehold();                   break;
+        case mission_state_t::manual:                     dispatch_manual();                     break;
         default:
             printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
             transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
@@ -155,10 +157,8 @@ void MissionManager::dispatch_standby() {
 }
 
 void MissionManager::dispatch_follower() {
-    docking_config_cmd_f.set(true);
-
-    if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
-        transition_to_state(mission_state_t::docking,
+    if (distance_to_other_sat() < close_approach_trigger_dist_f.get()) {
+        transition_to_state(mission_state_t::follower_close_approach,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
     }
@@ -171,10 +171,8 @@ void MissionManager::dispatch_follower() {
 }
 
 void MissionManager::dispatch_leader() {
-    docking_config_cmd_f.set(true);
-
-    if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
-        transition_to_state(mission_state_t::docking,
+    if (distance_to_other_sat() < close_approach_trigger_dist_f.get()) {
+        transition_to_state(mission_state_t::leader_close_approach,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
     }
@@ -183,6 +181,26 @@ void MissionManager::dispatch_leader() {
         transition_to_state(mission_state_t::standby,
             adcs_state_t::point_standby,
             prop_state_t::idle);
+    }
+}
+
+void MissionManager::dispatch_follower_close_approach() {
+    docking_config_cmd_f.set(true);
+
+    if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
+        transition_to_state(mission_state_t::docking,
+            adcs_state_t::zero_torque,
+            prop_state_t::disabled);
+    }
+}
+
+void MissionManager::dispatch_leader_close_approach() {
+    docking_config_cmd_f.set(true);
+
+    if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
+        transition_to_state(mission_state_t::docking,
+            adcs_state_t::zero_torque,
+            prop_state_t::disabled);
     }
 }
 

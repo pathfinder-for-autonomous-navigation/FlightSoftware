@@ -47,9 +47,11 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_startup();
     void dispatch_detumble();
     void dispatch_initialization_hold();
-    void dispatch_follower();
     void dispatch_standby();
+    void dispatch_follower();
     void dispatch_leader();
+    void dispatch_follower_close_approach();
+    void dispatch_leader_close_approach();
     void dispatch_docking();
     void dispatch_docked();
     void dispatch_safehold();
