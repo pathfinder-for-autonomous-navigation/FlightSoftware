@@ -119,14 +119,18 @@ void test_dispatch_standby() {
     }
 }
 
-void test_dispatch_rendezvous_state(mission_state_t mission_state)
+void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_distance)
 {
+    const bool is_close_approach = 
+            (mission_state == mission_state_t::follower_close_approach) ||
+            (mission_state == mission_state_t::leader_close_approach);
+
     /** If distance is less than the trigger distance,
         there should be a state transition to the next mission state.
         This transition should happen irrespective of the comms timeout situation. **/
     {
         TestFixture tf(mission_state);
-        tf.set_sat_distance(tf.docking_trigger_dist_fp->get() - 0.01);
+        tf.set_sat_distance(sat_distance);
         tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
         tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
         tf.step();
@@ -135,12 +139,12 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state)
         tf.check(adcs_state_t::zero_torque);
         tf.check(static_cast<sat_designation_t>(tf.sat_designation_fp->get()));
 
-        // Docking motor command should be applied.
-        TEST_ASSERT(tf.docking_config_cmd_fp->get());
+        // Docking motor command should be applied if we're in close approach.
+        if (is_close_approach) TEST_ASSERT(tf.docking_config_cmd_fp->get());
     }
 
-    /** If comms hasn't been available for too long, there should
-        be a state transition to standby.  **/
+    /** If comms hasn't been available for too long,
+     *  there should be a state transition to standby.  **/
     {
         TestFixture tf(mission_state);
         tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
@@ -153,12 +157,11 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state)
     }
 }
 
-void test_dispatch_follower() {
+void test_rendezvous_states() {
     test_dispatch_rendezvous_state(mission_state_t::follower);
-}
-
-void test_dispatch_leader() {
     test_dispatch_rendezvous_state(mission_state_t::leader);
+    test_dispatch_rendezvous_state(mission_state_t::follower_close_approach);
+    test_dispatch_rendezvous_state(mission_state_t::leader_close_approach);
 }
 
 void test_dispatch_docking() {
@@ -192,9 +195,8 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_startup);
     RUN_TEST(test_dispatch_detumble);
     RUN_TEST(test_dispatch_empty_states);
-    RUN_TEST(test_dispatch_follower);
     RUN_TEST(test_dispatch_standby);
-    RUN_TEST(test_dispatch_leader);
+    RUN_TEST(test_rendezvous_states);
     RUN_TEST(test_dispatch_docking);
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
