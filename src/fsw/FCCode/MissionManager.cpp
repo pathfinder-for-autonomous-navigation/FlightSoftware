@@ -172,7 +172,8 @@ void MissionManager::dispatch_follower() {
 void MissionManager::dispatch_leader() {
     if (distance_to_other_sat() < close_approach_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::leader_close_approach,
-            adcs_state_t::point_docking);
+            adcs_state_t::point_docking,
+            prop_state_t::disabled);
     }
     else if (too_long_since_last_comms()) {
         set(sat_designation_t::undecided);

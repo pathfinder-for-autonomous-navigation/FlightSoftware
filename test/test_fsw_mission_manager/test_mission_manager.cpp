@@ -143,13 +143,14 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         else {
             if (mission_state == mission_state_t::follower) {
                 tf.check(mission_state_t::follower_close_approach);
+                tf.check(prop_state_t::idle);
             }
             else {
                 tf.check(mission_state_t::leader_close_approach);
+                tf.check(prop_state_t::disabled);
             }
 
             tf.check(adcs_state_t::point_docking);
-            tf.check(prop_state_t::idle);
         }
 
         tf.check(static_cast<sat_designation_t>(tf.sat_designation_fp->get()));
