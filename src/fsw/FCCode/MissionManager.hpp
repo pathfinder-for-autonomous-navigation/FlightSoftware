@@ -61,7 +61,9 @@ class MissionManager : public TimedControlTask<void> {
      */
     void transition_to_state(mission_state_t mission_state,
         adcs_state_t adcs_state,
-        prop_state_t prop_mode);
+        prop_state_t prop_state);
+    void transition_to_state(mission_state_t mission_state,
+        adcs_state_t adcs_state);
 
     /**
      * @brief Allow spacecraft to be commandeered completely by test software or

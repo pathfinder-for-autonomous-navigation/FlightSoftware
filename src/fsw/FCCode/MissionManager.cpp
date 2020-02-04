@@ -142,14 +142,14 @@ void MissionManager::dispatch_standby() {
     if (sat_designation == sat_designation_t::follower) {
         adcs_paired_fp->set(false);
         transition_to_state(mission_state_t::follower,
-            adcs_state_t::point_docking,
+            adcs_state_t::point_standby,
             prop_state_t::idle);
     }
     else if (sat_designation == sat_designation_t::leader) {
         adcs_paired_fp->set(false);
         transition_to_state(mission_state_t::leader,
-            adcs_state_t::point_docking,
-            prop_state_t::disabled);
+            adcs_state_t::point_standby,
+            prop_state_t::idle);
     }
     else {
         // The mission hasn't started yet. Let the satellite subsystems do their thing.
@@ -159,8 +159,7 @@ void MissionManager::dispatch_standby() {
 void MissionManager::dispatch_follower() {
     if (distance_to_other_sat() < close_approach_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::follower_close_approach,
-            adcs_state_t::zero_torque,
-            prop_state_t::disabled);
+            adcs_state_t::point_docking);
     }
     else if (too_long_since_last_comms()) {
         set(sat_designation_t::undecided);
@@ -173,8 +172,7 @@ void MissionManager::dispatch_follower() {
 void MissionManager::dispatch_leader() {
     if (distance_to_other_sat() < close_approach_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::leader_close_approach,
-            adcs_state_t::zero_torque,
-            prop_state_t::disabled);
+            adcs_state_t::point_docking);
     }
     else if (too_long_since_last_comms()) {
         set(sat_designation_t::undecided);
@@ -192,6 +190,12 @@ void MissionManager::dispatch_follower_close_approach() {
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
     }
+    else if (too_long_since_last_comms()) {
+        set(sat_designation_t::undecided);
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::point_standby,
+            prop_state_t::idle);
+    }
 }
 
 void MissionManager::dispatch_leader_close_approach() {
@@ -201,6 +205,12 @@ void MissionManager::dispatch_leader_close_approach() {
         transition_to_state(mission_state_t::docking,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
+    }
+    else if (too_long_since_last_comms()) {
+        set(sat_designation_t::undecided);
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::point_standby,
+            prop_state_t::idle);
     }
 }
 
@@ -263,10 +273,17 @@ void MissionManager::set(sat_designation_t designation) {
 }
 
 void MissionManager::transition_to_state(mission_state_t mission_state,
-        adcs_state_t adcs_state,
-        prop_state_t prop_mode)
+        adcs_state_t adcs_state)
 {
     set(mission_state);
     set(adcs_state);
-    set(prop_mode);
+}
+
+void MissionManager::transition_to_state(mission_state_t mission_state,
+        adcs_state_t adcs_state,
+        prop_state_t prop_state)
+{
+    set(mission_state);
+    set(adcs_state);
+    set(prop_state);
 }
