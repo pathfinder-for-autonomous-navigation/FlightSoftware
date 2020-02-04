@@ -196,7 +196,6 @@ class read_iridium(object):
                             # Check if there is an email attachment
                             if part.get_filename() is not None:
                                 # Get data from email attachment
-                                # attachmentContents=str(part.get_payload(decode=True).decode('utf8').rstrip("\x00"))
                                 statefield_report=self.process_downlink_packet(part.get_payload(decode=True))
                                 return statefield_report
                         
