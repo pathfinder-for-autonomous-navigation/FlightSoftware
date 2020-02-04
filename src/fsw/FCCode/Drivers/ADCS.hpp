@@ -22,6 +22,8 @@ class ADCS : public I2CDevice {
 
     #ifdef UNIT_TEST
     unsigned int mock_ssa_mode = adcs::SSAMode::SSA_IN_PROGRESS;
+    std::bitset<adcs::havt::max_devices> mock_havt_read;
+    bool adcs_functionality = true;
     #endif
     /**
      * @brief quickly tests that the device is active and working on i2c
@@ -251,15 +253,6 @@ class ADCS : public I2CDevice {
      */
     void get_ssa_mode(unsigned char *ssa_mode);
 
-    #ifdef UNIT_TEST
-    /**
-     * @brief A MOCKING METHOD, Set the ssa mode 
-     * 
-     * @param ssa_mode 
-     */
-    void set_mock_ssa_mode(const unsigned char ssa_mode);
-    #endif
-
     /**
      * @brief Get the sun sensor array vector
      * 
@@ -315,6 +308,28 @@ class ADCS : public I2CDevice {
      * @param havt_table Pointer to the bitset that will be read into
      */
     void get_havt(std::bitset<adcs::havt::max_devices>* havt_table);
+
+
+    #ifdef UNIT_TEST
+    /**
+     * @brief A mocking method that sets the returned bitset, 
+     * relevant for ADCSMonitor UnitTestings
+     */
+    void set_mock_havt_read(const std::bitset<adcs::havt::max_devices>& havt_input);
+
+    /**
+     * @brief A mocking method that sets the returned ssa mode 
+     * 
+     * @param ssa_mode 
+     */
+    void set_mock_ssa_mode(const unsigned char ssa_mode);
+
+    /**
+     * @brief A mocking method that sets the return of i2c_ping
+     * 
+     */
+    void set_mock_adcs_functional(const bool functional);
+    #endif
 };
 
 }  // namespace Devices
