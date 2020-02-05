@@ -107,7 +107,7 @@ class QuakeFaultHandler : public ControlTask<mission_state_t> {
      * @brief Helper functions for if-statements, to make them look cleaner.
      */
     bool less_than_one_day_since_successful_comms() const;
-    bool in_fault_state_for_more_than_time(const unsigned int time) const;
+    bool in_state_for_more_than_time(const unsigned int time) const;
     bool radio_is_disabled() const;
 };
 
@@ -126,6 +126,11 @@ class QuakeFaultHandlerMock {
       return state;
     }
     void set(mission_state_t s) {
+      const bool desired_state_is_valid = 
+          (s == mission_state_t::standby) 
+          || (s == mission_state_t::safehold)
+          || (s == mission_state_t::manual);
+      assert(desired_state_is_valid);
       state = s;
     }
   private:

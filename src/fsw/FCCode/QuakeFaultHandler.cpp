@@ -37,7 +37,7 @@ mission_state_t QuakeFaultHandler::dispatch_unfaulted() {
 }
 
 mission_state_t QuakeFaultHandler::dispatch_forced_standby() {
-    if (in_fault_state_for_more_than_time(PAN::one_day_ccno)) {
+    if (in_state_for_more_than_time(PAN::one_day_ccno)) {
         power_cycle_radio_fp->set(true);
         transition_to(fault_checker_state_t::powercycle_1);
         return mission_state_t::standby;
@@ -50,7 +50,7 @@ mission_state_t QuakeFaultHandler::dispatch_forced_standby() {
 }
 
 mission_state_t QuakeFaultHandler::dispatch_powercycle_1() {
-    if (in_fault_state_for_more_than_time(PAN::one_day_ccno / 3)) {
+    if (in_state_for_more_than_time(PAN::one_day_ccno / 3)) {
         power_cycle_radio_fp->set(true);
         transition_to(fault_checker_state_t::powercycle_2);
         return mission_state_t::standby;
@@ -63,7 +63,7 @@ mission_state_t QuakeFaultHandler::dispatch_powercycle_1() {
 }
 
 mission_state_t QuakeFaultHandler::dispatch_powercycle_2() {
-    if (in_fault_state_for_more_than_time(PAN::one_day_ccno / 3)) {
+    if (in_state_for_more_than_time(PAN::one_day_ccno / 3)) {
         power_cycle_radio_fp->set(true);
         transition_to(fault_checker_state_t::powercycle_3);
         return mission_state_t::standby;
@@ -76,7 +76,7 @@ mission_state_t QuakeFaultHandler::dispatch_powercycle_2() {
 }
 
 mission_state_t QuakeFaultHandler::dispatch_powercycle_3() {
-    if (in_fault_state_for_more_than_time(PAN::one_day_ccno / 3)) {
+    if (in_state_for_more_than_time(PAN::one_day_ccno / 3)) {
         transition_to(fault_checker_state_t::safehold);
         return mission_state_t::safehold;
     }
@@ -101,7 +101,7 @@ bool QuakeFaultHandler::less_than_one_day_since_successful_comms() const {
     return control_cycle_count - last_checkin_cycle_fp->get() < PAN::one_day_ccno;
 }
 
-bool QuakeFaultHandler::in_fault_state_for_more_than_time(const unsigned int time) const {
+bool QuakeFaultHandler::in_state_for_more_than_time(const unsigned int time) const {
     return control_cycle_count - cur_state_entry_ccno >= time;
 }
 
