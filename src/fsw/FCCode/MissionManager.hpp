@@ -20,6 +20,9 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<double> detumble_safety_factor_f;
     WritableStateField<double> close_approach_trigger_dist_f; // Meters
     WritableStateField<double> docking_trigger_dist_f; // Meters
+    static constexpr double initial_detumble_safety_factor = 0.2;
+    static constexpr double initial_close_approach_trigger_dist = 100;
+    static constexpr double initial_docking_trigger_dist = 0.4;
 
     /**
      * @brief Number of control cycles to wait during the post-deployment
@@ -34,6 +37,22 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Number of control cycles to wait before declaring "too long since comms".
      */
     WritableStateField<unsigned int> max_radio_silence_duration_f;
+
+    // These states respond to fault conditions.
+    static constexpr std::array<mission_state_t, 3> fault_responsive_states = {
+        mission_state_t::follower,
+        mission_state_t::leader,
+        mission_state_t::standby
+    };
+    // These states do not respond to fault conditions.
+    static constexpr std::array<mission_state_t, 6> fault_nonresponsive_states = {
+        mission_state_t::detumble,
+        mission_state_t::startup,
+        mission_state_t::manual,
+        mission_state_t::docking,
+        mission_state_t::docked,
+        mission_state_t::initialization_hold
+    };
 
    protected:
     /**

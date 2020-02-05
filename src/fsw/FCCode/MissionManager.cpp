@@ -3,6 +3,14 @@
 #include <cmath>
 #include <adcs/constants.hpp>
 
+// Declare static storage for constexpr variables
+const constexpr double MissionManager::initial_detumble_safety_factor;
+const constexpr double MissionManager::initial_close_approach_trigger_dist;
+const constexpr double MissionManager::initial_docking_trigger_dist;
+const constexpr unsigned int MissionManager::deployment_wait;
+const constexpr std::array<mission_state_t, 3> MissionManager::fault_responsive_states;
+const constexpr std::array<mission_state_t, 6> MissionManager::fault_nonresponsive_states;
+
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
     detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 10)),
@@ -48,9 +56,9 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     failed_pressurize_fp = find_readable_field<bool>("prop.failed_pressurize", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
-    detumble_safety_factor_f.set(0.2);
-    close_approach_trigger_dist_f.set(100);
-    docking_trigger_dist_f.set(0.4);
+    detumble_safety_factor_f.set(initial_detumble_safety_factor);
+    close_approach_trigger_dist_f.set(initial_close_approach_trigger_dist);
+    docking_trigger_dist_f.set(initial_docking_trigger_dist);
     max_radio_silence_duration_f.set(24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms);
     transition_to_state(mission_state_t::startup,
         adcs_state_t::startup,
@@ -69,20 +77,39 @@ bool MissionManager::check_adcs_hardware_faults() const {
 void MissionManager::execute() {
     mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
+    // Step 1. Disable radio if in startup.
     if (state == mission_state_t::startup) {
         set(radio_state_t::disabled);
     }
-    else if (state != mission_state_t::manual) {
+
+    // Step 2. Change state if faults exist.
+    bool is_fault_responsive_state = false;
+    for(mission_state_t fault_responsive_state : fault_responsive_states) {
+        if (state == fault_responsive_state) {
+            is_fault_responsive_state = true;
+            break;
+        }
+    }
+    if (is_fault_responsive_state) {
+        const bool prop_depressurized = failed_pressurize_fp->get();
         const bool power_faulted = low_batt_fault_fp->get();
         const bool adcs_faulted = check_adcs_hardware_faults();
 
-        if (power_faulted || adcs_faulted) {
+        if (prop_depressurized) {
+            transition_to_state(mission_state_t::standby,
+                adcs_state_t::point_standby,
+                prop_state_t::idle);
+            return;
+        }        
+        else if (power_faulted || adcs_faulted) {
             transition_to_state(mission_state_t::safehold,
                 adcs_state_t::startup,
                 prop_state_t::disabled);
+            return;
         }
     }
 
+    // Step 3. Handle state.
     switch(state) {
         case mission_state_t::startup:             dispatch_startup();             break;
         case mission_state_t::detumble:            dispatch_detumble();            break;

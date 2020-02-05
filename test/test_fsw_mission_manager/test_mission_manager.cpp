@@ -186,65 +186,70 @@ void test_dispatch_undefined() {
     tf.check(mission_state_t::safehold);
 }
 
-void test_adcs_and_power_faults() {
+#include <iostream>
+
+void test_power_prop_adcs_faults_responsive() {
     // Any single one of the power and ADCS fault flags
-    // should cause a transition to safehold.
-    {
-        TestFixture tf(mission_state_t::standby);
-        tf.low_batt_fault_fp->set(true);
-        tf.step();
-        tf.check(mission_state_t::safehold);
+    // should cause a transition to safehold if we're
+    // in one of the fault-responsive states (see MissionManager.hpp).
+    //
+    // Prop pressurization fault should cause a transition to standby.
+    //
+    for(mission_state_t state : MissionManager::fault_responsive_states) {
+        std::array<TestFixture, 5> tf_v {
+            TestFixture(state), TestFixture(state), TestFixture(state),
+            TestFixture(state), TestFixture(state)
+        };
+        tf_v[0].low_batt_fault_fp->set(true);
+        tf_v[1].wheel1_adc_fault_fp->set(true);
+        tf_v[2].wheel2_adc_fault_fp->set(true);
+        tf_v[3].wheel3_adc_fault_fp->set(true);
+        tf_v[4].wheel_pot_fault_fp->set(true);
+        for(TestFixture& tf : tf_v) {
+            tf.step();
+            tf.check(mission_state_t::safehold);
+        }
     }
-    {
-        TestFixture tf(mission_state_t::standby);
-        tf.wheel1_adc_fault_fp->set(true);
+    for(mission_state_t state : MissionManager::fault_responsive_states) {
+        TestFixture tf(state);
+        tf.failed_pressurize_fp->set(true);
         tf.step();
-        tf.check(mission_state_t::safehold);
+        tf.check(mission_state_t::standby);
     }
-    {
-        TestFixture tf(mission_state_t::standby);
-        tf.wheel2_adc_fault_fp->set(true);
-        tf.step();
-        tf.check(mission_state_t::safehold);
-    }
-    {
-        TestFixture tf(mission_state_t::standby);
-        tf.wheel3_adc_fault_fp->set(true);
-        tf.step();
-        tf.check(mission_state_t::safehold);
-    }
-    {
-        TestFixture tf(mission_state_t::standby);
-        tf.wheel_pot_fault_fp->set(true);
-        tf.step();
-        tf.check(mission_state_t::safehold);
-    }
+}
 
-    // They don't cause safehold if the mission
-    // is currently in startup (without having passed the
-    // deployment period) or manual.
+void test_power_prop_adcs_faults_nonresponsive() {
+    // The fault flags don't cause safehold if the mission
+    // is currently in one of the fault-nonresponsive states
+    // See MissionManager.hpp for a definition of these states.
 
-    // Startup
-    {
-        TestFixture tf(mission_state_t::startup);
-        tf.low_batt_fault_fp->set(true);
-        tf.step();
-        tf.check(mission_state_t::startup);
+    for(mission_state_t state : MissionManager::fault_nonresponsive_states) {
+        std::array<TestFixture, 5> tf_v {
+            TestFixture(state), TestFixture(state), TestFixture(state),
+            TestFixture(state), TestFixture(state)
+        };
+        tf_v[0].low_batt_fault_fp->set(true);
+        tf_v[1].wheel1_adc_fault_fp->set(true);
+        tf_v[2].wheel2_adc_fault_fp->set(true);
+        tf_v[3].wheel3_adc_fault_fp->set(true);
+        tf_v[4].wheel_pot_fault_fp->set(true);
+        for(TestFixture& tf : tf_v) {
+            tf.step();
+            tf.check(state);
+        }
     }
-    // Manual
-    {
-        TestFixture tf(mission_state_t::manual);
-        tf.low_batt_fault_fp->set(true);
+    for(mission_state_t state : MissionManager::fault_nonresponsive_states) {
+        TestFixture tf(state);
+        tf.failed_pressurize_fp->set(true);
         tf.step();
-        tf.check(mission_state_t::manual);
+        tf.check(state);
     }
+}
 
+void test_adcs_faults_inithold() {
     // ADCS flags should cause a transition to initialization
     // hold if the satellite is in startup past its
-    // deployment wait period. Low battery should not cause
-    // such a transition.
-    
-    // ADCS should cause it
+    // deployment wait period.
     {
         TestFixture tf(mission_state_t::startup);
         tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
@@ -252,14 +257,12 @@ void test_adcs_and_power_faults() {
         tf.step();
         tf.check(mission_state_t::initialization_hold);
     }
-
-    // Power should not cause it
     {
         TestFixture tf(mission_state_t::startup);
         tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
-        tf.low_batt_fault_fp->set(true);
+        tf.wheel_pot_fault_fp->set(true);
         tf.step();
-        tf.check(mission_state_t::detumble);
+        tf.check(mission_state_t::initialization_hold);
     }
 }
 
@@ -276,7 +279,9 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
 
-    RUN_TEST(test_adcs_and_power_faults);
+    RUN_TEST(test_power_prop_adcs_faults_responsive);
+    RUN_TEST(test_power_prop_adcs_faults_nonresponsive);
+    RUN_TEST(test_adcs_faults_inithold);
 
     return UNITY_END();
 }
