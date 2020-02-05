@@ -311,7 +311,7 @@ void on_i2c_recieve(unsigned int bytes) {
       registers.havt.cmd_reset_flg = CMDFlag::UPDATED;
 
       #if LOG_LEVEL >= LOG_LEVEL_INFO
-      std::bitset<havt::max_devices>temp(registers.havt.cmd_table);
+      std::bitset<havt::max_devices>temp(registers.havt.cmd_reset_table);
 
       //note 32 = havt::max_devices for clarity
       char buffer[33];
@@ -336,7 +336,7 @@ void on_i2c_recieve(unsigned int bytes) {
       registers.havt.cmd_disable_flg = CMDFlag::UPDATED;
 
       #if LOG_LEVEL >= LOG_LEVEL_INFO
-      std::bitset<havt::max_devices>temp(registers.havt.cmd_table);
+      std::bitset<havt::max_devices>temp(registers.havt.cmd_disable_table);
 
       //note 32 = havt::max_devices for clarity
       char buffer[33];
