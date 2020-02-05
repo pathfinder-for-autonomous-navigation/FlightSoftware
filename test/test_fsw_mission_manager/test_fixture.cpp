@@ -25,6 +25,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     wheel2_adc_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel2_fault");
     wheel3_adc_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel3_fault");
     wheel_pot_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel_pot_fault");
+    failed_pressurize_fp = registry.create_readable_field<bool>("prop.failed_pressurize");
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -40,6 +41,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     wheel2_adc_fault_fp->set(false);
     wheel3_adc_fault_fp->set(false);
     wheel_pot_fault_fp->set(false);
+    failed_pressurize_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);
 

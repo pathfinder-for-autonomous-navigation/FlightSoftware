@@ -105,6 +105,8 @@ class MissionManager : public TimedControlTask<void> {
     const ReadableStateField<bool>* wheel2_adc_fault_fp;
     const ReadableStateField<bool>* wheel3_adc_fault_fp;
     const ReadableStateField<bool>* wheel_pot_fault_fp;
+    // Flag for if propulsion failed to pressurize.
+    ReadableStateField<bool>* failed_pressurize_fp;
 
     /**
      * @brief Radio's mode.

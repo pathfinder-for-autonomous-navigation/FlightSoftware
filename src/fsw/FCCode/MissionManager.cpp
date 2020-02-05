@@ -46,6 +46,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     wheel2_adc_fault_fp = find_readable_field<bool>("adcs_monitor.wheel2_fault", __FILE__, __LINE__);
     wheel3_adc_fault_fp = find_readable_field<bool>("adcs_monitor.wheel3_fault", __FILE__, __LINE__);
     wheel_pot_fault_fp = find_readable_field<bool>("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__);
+    failed_pressurize_fp = find_readable_field<bool>("prop.failed_pressurize", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(0.2);

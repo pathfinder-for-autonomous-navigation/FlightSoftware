@@ -17,6 +17,7 @@ class FieldCreatorTask : public ControlTask<void> {
       ReadableStateField<d_vector_t> pos_baseline_f;
 
       ReadableStateField<unsigned char> prop_state_f;
+      ReadableStateField<bool> failed_pressurize_f;
 
       // begin fields necessary for adcs_box controller
       const Serializer<float> filter_sr;
@@ -53,7 +54,7 @@ class FieldCreatorTask : public ControlTask<void> {
         pos_f("orbit.pos", Serializer<d_vector_t>(0,100000,100)),
         pos_baseline_f("orbit.baseline_pos", Serializer<d_vector_t>(0,100000,100)),
         prop_state_f("prop.state", Serializer<unsigned char>(1)),
-        //eventually you can move all these into ADCSCommander.cpp
+        failed_pressurize_f("prop.failed_pressurize", Serializer<bool>()),        //eventually you can move all these into ADCSCommander.cpp
         filter_sr(0,1,8),
         rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
         rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(adcs::rwa::min_speed_command,adcs::rwa::max_speed_command, 16*3)),
@@ -83,6 +84,7 @@ class FieldCreatorTask : public ControlTask<void> {
 
           // For propulsion controller
           add_readable_field(prop_state_f);
+          add_readable_field(failed_pressurize_f);
 
           // For ADCS Controller
           add_writable_field(rwa_mode_f);
