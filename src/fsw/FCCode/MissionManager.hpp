@@ -2,7 +2,7 @@
 #define MISSION_MANAGER_HPP_
 
 #include "TimedControlTask.hpp"
-#include "QuakeFaultChecker.hpp"
+#include "QuakeFaultHandler.hpp"
 #include "constants.hpp"
 #include <lin.hpp>
 
@@ -73,9 +73,9 @@ class MissionManager : public TimedControlTask<void> {
      * a course of action to the mission manager.
      */
     #ifdef UNIT_TEST
-        QuakeFaultCheckerMock quake_fault_checker;
+        QuakeFaultHandlerMock quake_fault_checker;
     #else
-        QuakeFaultChecker quake_fault_checker;
+        QuakeFaultHandler quake_fault_checker;
     #endif
 
     /**
