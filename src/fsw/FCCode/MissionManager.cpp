@@ -39,6 +39,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     piksi_mode_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
     propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
 
+    reboot_fp = find_writable_field<bool>("gomspace.gs_reboot_cmd", __FILE__, __LINE__);
+
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
@@ -233,7 +235,8 @@ void MissionManager::dispatch_docked() {
 }
 
 void MissionManager::dispatch_safehold() {
-    // TODO auto-exits
+    if (control_cycle_count - safehold_begin_ccno >= PAN::one_day_ccno)
+        reboot_fp->set(true);
 }
 
 void MissionManager::dispatch_manual() {
@@ -254,6 +257,9 @@ bool MissionManager::too_long_since_last_comms() const {
 }
 
 void MissionManager::set(mission_state_t state) {
+    if (state == mission_state_t::safehold) {
+        safehold_begin_ccno = control_cycle_count;
+    }
     mission_state_f.set(static_cast<unsigned char>(state));
 }
 

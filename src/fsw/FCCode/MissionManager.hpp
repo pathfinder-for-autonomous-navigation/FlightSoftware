@@ -55,6 +55,8 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_docking();
     void dispatch_docked();
     void dispatch_safehold();
+    unsigned int safehold_begin_ccno = 0; // Control cycle # of the most recent
+                                          // transition to safe hold.
 
     /**
      * @brief Handles state transitions that happen upon subsystem assertions.
@@ -97,6 +99,9 @@ class MissionManager : public TimedControlTask<void> {
     // Fields provided by Piksi and orbital estimation subsystems
     const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading state (fixed RTK, float RTK, SPP, or error state)
     const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
+
+    // Field exposed by Gomspace for rebooting entire spacecraft.
+    WritableStateField<bool> reboot_fp;
 
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;

@@ -28,6 +28,8 @@ class TestFixture {
     std::shared_ptr<ReadableStateField<unsigned char>> piksi_mode_fp;
     std::shared_ptr<ReadableStateField<d_vector_t>> propagated_baseline_pos_fp;
 
+    std::shared_ptr<WritableStateField<bool>> reboot_fp;
+
     std::shared_ptr<ReadableStateField<bool>> docked_fp;
 
     std::unique_ptr<MissionManager> mission_manager;
