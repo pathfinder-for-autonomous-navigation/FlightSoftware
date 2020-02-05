@@ -39,7 +39,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Returns true if there are hardware faults on the spacecraft.
      */
-    bool check_hardware_faults();
+    bool check_adcs_hardware_faults();
 
     /**
      * @brief Handles logic while within a state.
@@ -95,7 +95,7 @@ class MissionManager : public TimedControlTask<void> {
     const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
 
     // True if the battery is below the threshold for safe hold.
-    const ReadableStateField<bool> low_batt_fault_fp;
+    const ReadableStateField<bool>* low_batt_fault_fp;
 
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;

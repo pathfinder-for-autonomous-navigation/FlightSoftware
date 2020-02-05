@@ -30,6 +30,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     last_checkin_cycle_fp->set(0);
     prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
+    low_batt_fault_fp->set(false);
     docked_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);

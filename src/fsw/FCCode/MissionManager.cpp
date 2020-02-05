@@ -57,7 +57,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     set(sat_designation_t::undecided);
 }
 
-bool MissionManager::check_hardware_faults() {
+bool MissionManager::check_adcs_hardware_faults() {
     return false;
     // TODO
 }
@@ -69,8 +69,9 @@ void MissionManager::execute() {
         set(radio_state_t::disabled);
     }
     else {
-        bool faulted = check_hardware_faults();
-        if (faulted) {
+        const bool power_faulted = low_batt_fault_fp->get();
+        bool adcs_faulted = check_adcs_hardware_faults();
+        if (power_faulted || adcs_faulted) {
             transition_to_state(mission_state_t::safehold,
                 adcs_state_t::startup,
                 prop_state_t::disabled);
@@ -106,7 +107,7 @@ void MissionManager::dispatch_startup() {
     // going into an initialization hold. If faults exist, go into
     // initialization hold, otherwise detumble.
     set(radio_state_t::wait);
-    if (check_hardware_faults()) {
+    if (check_adcs_hardware_faults()) {
         transition_to_state(mission_state_t::initialization_hold,
             adcs_state_t::detumble,
             prop_state_t::disabled);
