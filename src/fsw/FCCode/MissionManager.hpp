@@ -94,6 +94,9 @@ class MissionManager : public TimedControlTask<void> {
     const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading state (fixed RTK, float RTK, SPP, or error state)
     const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
 
+    // True if the battery is below the threshold for safe hold.
+    const ReadableStateField<bool> low_batt_fault_fp;
+
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
     const ReadableStateField<bool>* docked_fp;

@@ -39,6 +39,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     piksi_mode_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
     propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
 
+    low_batt_fault_fp = find_readable_field<bool>("gomspace.low_batt", __FILE__, __LINE__);
+
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
     // Initialize a bunch of variables

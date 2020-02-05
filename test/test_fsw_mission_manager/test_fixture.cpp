@@ -18,6 +18,8 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
 
+    low_batt_fault_fp = registry.create_readable_field<bool>("gomspace.low_batt");
+
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
     // Initialize these variables
