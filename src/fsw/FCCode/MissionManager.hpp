@@ -35,6 +35,8 @@ class MissionManager : public TimedControlTask<void> {
      */
     WritableStateField<unsigned int> max_radio_silence_duration_f;
 
+    void set(mission_state_t state);
+
    protected:
     /**
      * @brief Returns true if there are hardware faults on the spacecraft.
@@ -101,7 +103,7 @@ class MissionManager : public TimedControlTask<void> {
     const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
 
     // Field exposed by Gomspace for rebooting entire spacecraft.
-    WritableStateField<bool> reboot_fp;
+    WritableStateField<bool>* reboot_fp;
 
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
@@ -138,7 +140,6 @@ class MissionManager : public TimedControlTask<void> {
     double distance_to_other_sat() const;
     bool too_long_since_last_comms() const;
 
-    void set(mission_state_t state);
     void set(adcs_state_t state);
     void set(prop_state_t state);
     void set(radio_state_t state);

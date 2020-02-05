@@ -201,19 +201,21 @@ void test_dispatch_docking() {
 }
 
 void test_dispatch_safehold() {
+    static constexpr unsigned int one_day_ccno = 24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms;
+
     // Test that a satellite reboot is correctly triggered.
     {
         TestFixture tf(mission_state_t::safehold);
 
         // Below one day's worth of cycle counts, safe hold should
-        // trigger a satellite reboot.
-        tf.set_ccno(PAN::one_day_ccno - 1);
-        tf.execute();
+        // not trigger a satellite reboot.
+        tf.set_ccno(one_day_ccno - 1);
+        tf.step();
         TEST_ASSERT_FALSE(tf.reboot_fp->get());
 
         // Above a day's worth of cycle counts, safe hold should
         // trigger a satellite reboot.
-        tf.execute();
+        tf.step();
         TEST_ASSERT_TRUE(tf.reboot_fp->get());
     }
 
@@ -223,20 +225,20 @@ void test_dispatch_safehold() {
     // triggering a reboot.
     {
         TestFixture tf(mission_state_t::safehold);
-        tf.set_ccno(PAN::one_day_ccno - 1);
-        tf.execute();
+        tf.set_ccno(one_day_ccno - 1);
+        tf.step();
         TEST_ASSERT_FALSE(tf.reboot_fp->get());
 
         tf.set(mission_state_t::standby);
-        tf.execute();
+        tf.step();
         tf.set(mission_state_t::safehold);
-        tf.execute();
+        tf.step();
         TEST_ASSERT_FALSE(tf.reboot_fp->get());
 
-        tf.set_ccno(2*PAN::one_day_ccno - 1);
-        tf.execute();
+        tf.set_ccno(2*one_day_ccno);
+        tf.step();
         TEST_ASSERT_FALSE(tf.reboot_fp->get());
-        tf.execute();
+        tf.step();
         TEST_ASSERT_TRUE(tf.reboot_fp->get());
     }
 }

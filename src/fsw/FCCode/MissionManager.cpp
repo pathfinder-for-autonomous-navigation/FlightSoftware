@@ -235,7 +235,7 @@ void MissionManager::dispatch_docked() {
 }
 
 void MissionManager::dispatch_safehold() {
-    if (control_cycle_count - safehold_begin_ccno >= PAN::one_day_ccno)
+    if (control_cycle_count - safehold_begin_ccno >= 24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms)
         reboot_fp->set(true);
 }
 
