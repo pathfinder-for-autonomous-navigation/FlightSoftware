@@ -19,6 +19,7 @@ namespace PAN {
         constexpr unsigned int control_cycle_time = 120000;
     #endif
 
+    // Number of control cycles in one day.
     constexpr unsigned int one_day_ccno = 24 * 60 * 60 * 1000 / control_cycle_time_ms;
 }
 

@@ -2,6 +2,7 @@
 #define MISSION_MANAGER_HPP_
 
 #include "TimedControlTask.hpp"
+#include "QuakeFaultChecker.hpp"
 #include "constants.hpp"
 #include <lin.hpp>
 
@@ -63,9 +64,19 @@ class MissionManager : public TimedControlTask<void> {
 
    protected:
     /**
-     * @brief Returns true if there are hardware faults on the spacecraft.
+     * @brief Returns true if there are ADCS hardware faults.
      */
-    bool check_adcs_hardware_faults() const;
+    bool check_adcs_hardware_faults();
+
+    /**
+     * @brief State machine that tracks Quake SBDIX faults and recommends
+     * a course of action to the mission manager.
+     */
+    #ifdef UNIT_TEST
+        QuakeFaultCheckerMock quake_fault_checker;
+    #else
+        QuakeFaultChecker quake_fault_checker;
+    #endif
 
     /**
      * @brief Handles logic while within a state.

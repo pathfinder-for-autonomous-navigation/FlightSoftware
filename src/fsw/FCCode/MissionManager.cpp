@@ -18,7 +18,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
     max_radio_silence_duration_f("max_radio_silence",
-        Serializer<unsigned int>(2 * PAN::one_day_ccno)),
+        Serializer<unsigned int>(2 * PAN::one_day_ccno))
+    quake_fault_checker(registry),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
     mission_state_f("pan.state", Serializer<unsigned char>(12)),
@@ -78,14 +79,14 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     set(sat_designation_t::undecided);
 }
 
-bool MissionManager::check_adcs_hardware_faults() const {
+bool MissionManager::check_adcs_hardware_faults() {
     return wheel1_adc_fault_fp->is_faulted() || wheel2_adc_fault_fp->is_faulted()
             || wheel3_adc_fault_fp->is_faulted()
             || wheel_pot_fault_fp->is_faulted();
 }
 
 void MissionManager::execute() {
-    mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
+    const mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
     // Step 1. Disable radio if in startup.
     if (state == mission_state_t::startup) {
@@ -118,7 +119,29 @@ void MissionManager::execute() {
                 adcs_state_t::point_standby,
                 prop_state_t::idle);
             return;
-        } 
+        }
+    }
+
+    // Run the Quake fault state machine and act on its outputs.
+    if (state != mission_state_t::startup) {
+        const mission_state_t quake_recommended_state = quake_fault_checker.execute();
+        switch(quake_recommended_state) {
+            case mission_state_t::safehold:
+                transition_to_state(mission_state_t::safehold,
+                    adcs_state_t::startup,
+                    prop_state_t::disabled);
+                return;
+            break;
+            case mission_state_t::standby:
+                transition_to_state(mission_state_t::standby,
+                    adcs_state_t::point_standby,
+                    prop_state_t::idle);
+                return;
+            break;
+            default:
+                // Do nothing
+            break;
+        }
     }
 
     // Step 3. Handle state.
