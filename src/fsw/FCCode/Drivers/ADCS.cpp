@@ -178,11 +178,11 @@ void ADCS::set_imu_gyr_temp_desired(const float desired){
     i2c_write_to_subaddr(adcs::IMU_GYR_TEMP_DESIRED,cmd);
 }
 
-void ADCS::set_havt(const std::bitset<adcs::havt::max_devices>& havt_table){
+void ADCS::set_havt_reset(const std::bitset<adcs::havt::max_devices>& table){
     //4 because 32/8 = 4
     unsigned char cmd[4];
 
-    unsigned int encoded = (unsigned int)havt_table.to_ulong();
+    unsigned int encoded = (unsigned int)table.to_ulong();
 
     //dissassemble unsigned int into 4 chars
     unsigned char * encoded_ptr = (unsigned char *)(&encoded);
@@ -190,9 +190,23 @@ void ADCS::set_havt(const std::bitset<adcs::havt::max_devices>& havt_table){
         cmd[i] = encoded_ptr[i];
     }
 
-    i2c_write_to_subaddr(adcs::HAVT_COMMAND, cmd, 4);
+    i2c_write_to_subaddr(adcs::HAVT_COMMAND_RESET, cmd, 4);
 }
 
+void ADCS::set_havt_disable(const std::bitset<adcs::havt::max_devices>& table){
+    //4 because 32/8 = 4
+    unsigned char cmd[4];
+
+    unsigned int encoded = (unsigned int)table.to_ulong();
+
+    //dissassemble unsigned int into 4 chars
+    unsigned char * encoded_ptr = (unsigned char *)(&encoded);
+    for (unsigned int i = 0; i < 4; i++){
+        cmd[i] = encoded_ptr[i];
+    }
+
+    i2c_write_to_subaddr(adcs::HAVT_COMMAND_DISABLE, cmd, 4);
+}
 
 void ADCS::get_who_am_i(unsigned char* who_am_i) {
     i2c_point_and_read(adcs::WHO_AM_I, who_am_i, 1);
