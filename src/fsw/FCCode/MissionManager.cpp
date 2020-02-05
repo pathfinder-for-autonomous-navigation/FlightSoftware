@@ -76,7 +76,7 @@ void MissionManager::execute() {
         const bool power_faulted = low_batt_fault_fp->get();
         const bool adcs_faulted = check_adcs_hardware_faults();
 
-        else if (power_faulted || adcs_faulted) {
+        if (power_faulted || adcs_faulted) {
             transition_to_state(mission_state_t::safehold,
                 adcs_state_t::startup,
                 prop_state_t::disabled);
