@@ -19,7 +19,7 @@
 // removes mocking from Driver
 // -UUNIT_TEST
 
-#include <fsw/ADCS.hpp>
+#include <fsw/FCCode/Drivers/ADCS.hpp>
 #include <adcs/constants.hpp>
 
 Devices::ADCS adcs_d(Wire, Devices::ADCS::ADDRESS);
@@ -73,12 +73,12 @@ void test_cmd_table(){
     adcs_d.get_havt(&rt_read);
 
     // check that cmd_t1 was applied
-    std::bitset<adcs::havt::max_devices> mtrs_up("00000000000000000000000000111000")
+    std::bitset<adcs::havt::max_devices> mtrs_up("00000000000000000000000000111000");
     TEST_ASSERT_EQUAL_STRING(mtrs_up.to_string().c_str(), rt_read.to_string().c_str());
 
     // NOW TEST RESET CAPABILITY
     std::bitset<adcs::havt::max_devices> cmd_reset_rws("00000000000000000000001110111000");
-    adcs_d.set_havt(cmd_t2);
+    adcs_d.set_havt_reset(cmd_reset_rws);
     delay(wait_for_ADCSC);
     adcs_d.get_havt(&rt_read);
     std::bitset<adcs::havt::max_devices> rws_and_mtrs_up("00000000000000000000001110111000");
