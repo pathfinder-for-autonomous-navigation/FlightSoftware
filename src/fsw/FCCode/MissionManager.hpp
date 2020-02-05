@@ -40,9 +40,11 @@ class MissionManager : public TimedControlTask<void> {
     static constexpr unsigned int initial_max_radio_silence_duration = PAN::one_day_ccno;
 
     // These states respond to fault conditions.
-    static constexpr std::array<mission_state_t, 3> fault_responsive_states = {
+    static constexpr std::array<mission_state_t, 5> fault_responsive_states = {
         mission_state_t::follower,
         mission_state_t::leader,
+        mission_state_t::follower_close_approach,
+        mission_state_t::leader_close_approach,
         mission_state_t::standby
     };
     // These states do not respond to fault conditions.

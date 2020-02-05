@@ -9,7 +9,7 @@ const constexpr double MissionManager::initial_close_approach_trigger_dist;
 const constexpr double MissionManager::initial_docking_trigger_dist;
 const constexpr unsigned int MissionManager::initial_max_radio_silence_duration;
 const constexpr unsigned int MissionManager::deployment_wait;
-const constexpr std::array<mission_state_t, 3> MissionManager::fault_responsive_states;
+const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 6> MissionManager::fault_nonresponsive_states;
 
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
