@@ -72,7 +72,7 @@ void MissionManager::execute() {
     if (state == mission_state_t::startup) {
         set(radio_state_t::disabled);
     }
-    else {
+    else if (state != mission_state_t::manual) {
         const bool power_faulted = low_batt_fault_fp->get();
         const bool adcs_faulted = check_adcs_hardware_faults();
 

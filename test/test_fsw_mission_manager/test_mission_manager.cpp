@@ -186,6 +186,83 @@ void test_dispatch_undefined() {
     tf.check(mission_state_t::safehold);
 }
 
+void test_adcs_and_power_faults() {
+    // Any single one of the power and ADCS fault flags
+    // should cause a transition to safehold.
+    {
+        TestFixture tf(mission_state_t::standby);
+        tf.low_batt_fault_fp->set(true);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+    {
+        TestFixture tf(mission_state_t::standby);
+        tf.wheel1_adc_fault_fp->set(true);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+    {
+        TestFixture tf(mission_state_t::standby);
+        tf.wheel2_adc_fault_fp->set(true);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+    {
+        TestFixture tf(mission_state_t::standby);
+        tf.wheel3_adc_fault_fp->set(true);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+    {
+        TestFixture tf(mission_state_t::standby);
+        tf.wheel_pot_fault_fp->set(true);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+
+    // They don't cause safehold if the mission
+    // is currently in startup (without having passed the
+    // deployment period) or manual.
+
+    // Startup
+    {
+        TestFixture tf(mission_state_t::startup);
+        tf.low_batt_fault_fp->set(true);
+        tf.step();
+        tf.check(mission_state_t::startup);
+    }
+    // Manual
+    {
+        TestFixture tf(mission_state_t::manual);
+        tf.low_batt_fault_fp->set(true);
+        tf.step();
+        tf.check(mission_state_t::manual);
+    }
+
+    // ADCS flags should cause a transition to initialization
+    // hold if the satellite is in startup past its
+    // deployment wait period. Low battery should not cause
+    // such a transition.
+    
+    // ADCS should cause it
+    {
+        TestFixture tf(mission_state_t::startup);
+        tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
+        tf.wheel1_adc_fault_fp->set(true);
+        tf.step();
+        tf.check(mission_state_t::initialization_hold);
+    }
+
+    // Power should not cause it
+    {
+        TestFixture tf(mission_state_t::startup);
+        tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
+        tf.low_batt_fault_fp->set(true);
+        tf.step();
+        tf.check(mission_state_t::detumble);
+    }
+}
+
 int test_mission_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
@@ -198,6 +275,9 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_docking);
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
+
+    RUN_TEST(test_adcs_and_power_faults);
+
     return UNITY_END();
 }
 

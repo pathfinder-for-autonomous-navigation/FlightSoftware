@@ -77,8 +77,6 @@ class TestFixture {
     //// Setter methods for setting test conditions.
     // Set the control cycle count
     void set_ccno(unsigned int ccno);
-    // Create a hardware fault that necessitates a transition to safe hold or initialization hold.
-    void set_hardware_fault(bool faulted);
     // Set the distance between the two satellites.
     void set_sat_distance(double dist);
     // Set the # of control cycles that comms has not been established

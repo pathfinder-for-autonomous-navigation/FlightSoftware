@@ -134,11 +134,6 @@ void TestFixture::set_ccno(unsigned int ccno) {
     mission_manager->control_cycle_count = ccno;
 }
 
-// Create a hardware fault that necessitates a transition to safe hold or initialization hold.
-void TestFixture::set_hardware_fault(bool faulted) {
-    // TODO
-}
-
 // Set the distance between the two satellites.
 void TestFixture::set_sat_distance(double dist) { propagated_baseline_pos_fp->set({dist, 0, 0}); }
 
