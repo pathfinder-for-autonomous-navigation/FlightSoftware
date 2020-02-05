@@ -1,6 +1,6 @@
 #include <unity.h>
 #include "test_fixture.hpp"
-
+#include <fsw/FCCode/constants.hpp>
 #include <adcs/constants.hpp>
 
 void test_valid_initialization() {
@@ -10,7 +10,7 @@ void test_valid_initialization() {
     TEST_ASSERT_EQUAL(0.2, tf.detumble_safety_factor_fp->get());
     TEST_ASSERT_EQUAL(100, tf.close_approach_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(0.4, tf.docking_trigger_dist_fp->get());
-    TEST_ASSERT_EQUAL(24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms,
+    TEST_ASSERT_EQUAL(PAN::one_day_ccno,
         tf.max_radio_silence_duration_fp->get());
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
     TEST_ASSERT_FALSE(tf.is_deployed_fp->get());

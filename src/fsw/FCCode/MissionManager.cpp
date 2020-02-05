@@ -7,6 +7,7 @@
 const constexpr double MissionManager::initial_detumble_safety_factor;
 const constexpr double MissionManager::initial_close_approach_trigger_dist;
 const constexpr double MissionManager::initial_docking_trigger_dist;
+const constexpr unsigned int MissionManager::initial_max_radio_silence_duration;
 const constexpr unsigned int MissionManager::deployment_wait;
 const constexpr std::array<mission_state_t, 3> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 6> MissionManager::fault_nonresponsive_states;
@@ -17,7 +18,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
     max_radio_silence_duration_f("max_radio_silence",
-        Serializer<unsigned int>(0, 2 * 24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms)),
+        Serializer<unsigned int>(0, 2 * PAN::one_day_ccno)),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
     mission_state_f("pan.state", Serializer<unsigned char>(10)),
@@ -59,7 +60,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
     close_approach_trigger_dist_f.set(initial_close_approach_trigger_dist);
     docking_trigger_dist_f.set(initial_docking_trigger_dist);
-    max_radio_silence_duration_f.set(24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms);
+    max_radio_silence_duration_f.set(initial_max_radio_silence_duration);
     transition_to_state(mission_state_t::startup,
         adcs_state_t::startup,
         prop_state_t::disabled); // "Starting" transition

@@ -37,6 +37,7 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Number of control cycles to wait before declaring "too long since comms".
      */
     WritableStateField<unsigned int> max_radio_silence_duration_f;
+    static constexpr unsigned int initial_max_radio_silence_duration = PAN::one_day_ccno;
 
     // These states respond to fault conditions.
     static constexpr std::array<mission_state_t, 3> fault_responsive_states = {
