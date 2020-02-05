@@ -91,7 +91,6 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<bool>* adcs_paired_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
-    const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading state (fixed RTK, float RTK, SPP, or error state)
     const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
 
     // Information from docking subsystem

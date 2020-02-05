@@ -25,7 +25,6 @@ class TestFixture {
 
     std::shared_ptr<ReadableStateField<unsigned char>> prop_state_fp;
 
-    std::shared_ptr<ReadableStateField<unsigned char>> piksi_mode_fp;
     std::shared_ptr<ReadableStateField<d_vector_t>> propagated_baseline_pos_fp;
 
     std::shared_ptr<ReadableStateField<bool>> docked_fp;

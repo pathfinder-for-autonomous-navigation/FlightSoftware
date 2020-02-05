@@ -36,7 +36,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
 
-    piksi_mode_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
     propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
@@ -75,8 +74,9 @@ void MissionManager::execute() {
     }
     else {
         const bool power_faulted = low_batt_fault_fp->get();
-        bool adcs_faulted = check_adcs_hardware_faults();
-        if (power_faulted || adcs_faulted) {
+        const bool adcs_faulted = check_adcs_hardware_faults();
+
+        else if (power_faulted || adcs_faulted) {
             transition_to_state(mission_state_t::safehold,
                 adcs_state_t::startup,
                 prop_state_t::disabled);

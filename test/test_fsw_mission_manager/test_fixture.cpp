@@ -14,7 +14,6 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
 
     prop_state_fp = registry.create_readable_field<unsigned char>("prop.state", 2);
 
-    piksi_mode_fp = registry.create_readable_field<unsigned char>("piksi.state", 4);
     propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
 
