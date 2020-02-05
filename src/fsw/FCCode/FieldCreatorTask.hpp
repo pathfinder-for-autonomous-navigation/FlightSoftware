@@ -46,7 +46,8 @@ class FieldCreatorTask : public ControlTask<void> {
       WritableStateField<float> imu_gyr_temp_desired_f;
 
       Serializer<bool> havt_bool_sr;
-      std::vector<WritableStateField<bool>> havt_cmd_table_vector_f;
+      std::vector<WritableStateField<bool>> havt_cmd_reset_vector_f;
+      std::vector<WritableStateField<bool>> havt_cmd_disable_vector_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
@@ -104,16 +105,25 @@ class FieldCreatorTask : public ControlTask<void> {
           add_writable_field(imu_gyr_temp_desired_f);
 
           // reserve memory
-          havt_cmd_table_vector_f.reserve(adcs::havt::Index::_LENGTH);
+          havt_cmd_reset_vector_f.reserve(adcs::havt::Index::_LENGTH);
+          havt_cmd_disable_vector_f.reserve(adcs::havt::Index::_LENGTH);
           // fill vector of statefields for cmd havt
           char buffer[50];
           for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
           {
             std::memset(buffer, 0, sizeof(buffer));
-            sprintf(buffer,"adcs_cmd.havt_device");
+            sprintf(buffer,"adcs_cmd.reset_havt");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_cmd_table_vector_f.emplace_back(buffer, havt_bool_sr);
-            add_writable_field(havt_cmd_table_vector_f[idx]);
+            havt_cmd_reset_vector_f.emplace_back(buffer, havt_bool_sr);
+            add_writable_field(havt_cmd_reset_vector_f[idx]);
+          }
+          for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+          {
+            std::memset(buffer, 0, sizeof(buffer));
+            sprintf(buffer,"adcs_cmd.disable_havt");
+            sprintf(buffer + strlen(buffer), "%u", idx);
+            havt_cmd_disable_vector_f.emplace_back(buffer, havt_bool_sr);
+            add_writable_field(havt_cmd_disable_vector_f[idx]);
           }
       }
 

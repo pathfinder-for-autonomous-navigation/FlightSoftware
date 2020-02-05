@@ -19,7 +19,7 @@
 // removes mocking from Driver
 // -UUNIT_TEST
 
-#include <ADCS.hpp>
+#include <fsw/ADCS.hpp>
 #include <adcs/constants.hpp>
 
 Devices::ADCS adcs_d(Wire, Devices::ADCS::ADDRESS);
