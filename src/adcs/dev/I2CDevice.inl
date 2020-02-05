@@ -40,7 +40,7 @@ inline bool I2CDevice::i2c_pop_errors() {
     if (++this->error_count >= DEV_I2C_ERROR_COUNT) 
       this->Device::disable(); //don't attempt further I2C comms
   bool temp = this->i2c_peek_errors();
-  this->error_count = 0;
+  if (!temp) this->error_count = 0;
   this->error_acc = 0;
   return temp;
 }
