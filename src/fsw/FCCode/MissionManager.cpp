@@ -18,7 +18,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
     max_radio_silence_duration_f("max_radio_silence",
-        Serializer<unsigned int>(2 * PAN::one_day_ccno))
+        Serializer<unsigned int>(2 * PAN::one_day_ccno)),
     quake_fault_checker(registry),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),

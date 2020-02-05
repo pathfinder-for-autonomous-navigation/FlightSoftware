@@ -107,8 +107,7 @@ class QuakeFaultHandler : public ControlTask<mission_state_t> {
      * @brief Helper functions for if-statements, to make them look cleaner.
      */
     bool less_than_one_day_since_successful_comms() const;
-    bool in_fault_state_for_more_than_24_hours() const;
-    bool in_fault_state_for_more_than_8_hours() const;
+    bool in_fault_state_for_more_than_time(const unsigned int time) const;
     bool radio_is_disabled() const;
 };
 
