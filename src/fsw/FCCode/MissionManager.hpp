@@ -39,7 +39,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Returns true if there are hardware faults on the spacecraft.
      */
-    bool check_adcs_hardware_faults();
+    bool check_adcs_hardware_faults() const;
 
     /**
      * @brief Handles logic while within a state.
@@ -94,12 +94,17 @@ class MissionManager : public TimedControlTask<void> {
     const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading state (fixed RTK, float RTK, SPP, or error state)
     const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
 
-    // True if the battery is below the threshold for safe hold.
-    const ReadableStateField<bool>* low_batt_fault_fp;
-
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
     const ReadableStateField<bool>* docked_fp;
+
+    // True if the battery is below the threshold for safehold.
+    const ReadableStateField<bool>* low_batt_fault_fp;
+    // Fault flags for ADCS motor ADCs and potentiometer.
+    const ReadableStateField<bool>* wheel1_adc_fault_fp;
+    const ReadableStateField<bool>* wheel2_adc_fault_fp;
+    const ReadableStateField<bool>* wheel3_adc_fault_fp;
+    const ReadableStateField<bool>* wheel_pot_fault_fp;
 
     /**
      * @brief Radio's mode.

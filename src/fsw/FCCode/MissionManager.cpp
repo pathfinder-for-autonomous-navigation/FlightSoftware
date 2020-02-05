@@ -39,9 +39,13 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     piksi_mode_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
     propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
 
-    low_batt_fault_fp = find_readable_field<bool>("gomspace.low_batt", __FILE__, __LINE__);
-
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
+
+    low_batt_fault_fp = find_readable_field<bool>("gomspace.low_batt", __FILE__, __LINE__);
+    wheel1_adc_fault_fp = find_readable_field<bool>("adcs_monitor.wheel1_fault", __FILE__, __LINE__);
+    wheel2_adc_fault_fp = find_readable_field<bool>("adcs_monitor.wheel2_fault", __FILE__, __LINE__);
+    wheel3_adc_fault_fp = find_readable_field<bool>("adcs_monitor.wheel3_fault", __FILE__, __LINE__);
+    wheel_pot_fault_fp = find_readable_field<bool>("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(0.2);
@@ -57,9 +61,9 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     set(sat_designation_t::undecided);
 }
 
-bool MissionManager::check_adcs_hardware_faults() {
-    return false;
-    // TODO
+bool MissionManager::check_adcs_hardware_faults() const {
+    return wheel1_adc_fault_fp->get() || wheel2_adc_fault_fp->get() || wheel3_adc_fault_fp->get()
+            || wheel_pot_fault_fp->get();
 }
 
 void MissionManager::execute() {

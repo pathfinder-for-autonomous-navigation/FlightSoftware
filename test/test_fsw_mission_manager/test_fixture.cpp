@@ -18,9 +18,13 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
 
-    low_batt_fault_fp = registry.create_readable_field<bool>("gomspace.low_batt");
-
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
+
+    low_batt_fault_fp = registry.create_readable_field<bool>("gomspace.low_batt");
+    wheel1_adc_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel1_fault");
+    wheel2_adc_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel2_fault");
+    wheel3_adc_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel3_fault");
+    wheel_pot_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel_pot_fault");
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -30,8 +34,12 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     last_checkin_cycle_fp->set(0);
     prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
-    low_batt_fault_fp->set(false);
     docked_fp->set(false);
+    low_batt_fault_fp->set(false);
+    wheel1_adc_fault_fp->set(false);
+    wheel2_adc_fault_fp->set(false);
+    wheel3_adc_fault_fp->set(false);
+    wheel_pot_fault_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);
 
