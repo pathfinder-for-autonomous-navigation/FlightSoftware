@@ -64,24 +64,25 @@ void test_cmd_table(){
     TEST_ASSERT_EQUAL_STRING(rt_expected.to_string().c_str(), rt_read.to_string().c_str());
 
     // command table 1 - disable all the reaction wheels, but leave MTR's up
-    std::bitset<adcs::havt::max_devices> cmd_t1("00000000000000000000000000111000");
+    std::bitset<adcs::havt::max_devices> cmd_disable_rws("00000000000000000000001110000000");
 
-    adcs_d.set_havt(cmd_t1);
+    adcs_d.set_havt_disable(cmd_disable_rws);
     
     // ensure ADCSC has enough time to implement the commanded havt_table
     delay(wait_for_ADCSC);
     adcs_d.get_havt(&rt_read);
 
     // check that cmd_t1 was applied
-    TEST_ASSERT_EQUAL_STRING(cmd_t1.to_string().c_str(), rt_read.to_string().c_str());
-
+    std::bitset<adcs::havt::max_devices> mtrs_up("00000000000000000000000000111000")
+    TEST_ASSERT_EQUAL_STRING(mtrs_up.to_string().c_str(), rt_read.to_string().c_str());
 
     // NOW TEST RESET CAPABILITY
-    std::bitset<adcs::havt::max_devices> cmd_t2("00000000000000000000001110111000");
+    std::bitset<adcs::havt::max_devices> cmd_reset_rws("00000000000000000000001110111000");
     adcs_d.set_havt(cmd_t2);
     delay(wait_for_ADCSC);
     adcs_d.get_havt(&rt_read);
-    TEST_ASSERT_EQUAL_STRING(cmd_t2.to_string().c_str(), rt_read.to_string().c_str());
+    std::bitset<adcs::havt::max_devices> rws_and_mtrs_up("00000000000000000000001110111000");
+    TEST_ASSERT_EQUAL_STRING(rws_and_mtrs_up.to_string().c_str(), rt_read.to_string().c_str());
 }
 
 void setup_test() {
