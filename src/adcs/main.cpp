@@ -103,31 +103,28 @@ void update_havt() {
   //set register to the internal table.
   registers.havt.read_table = (unsigned int)havt::internal_table.to_ulong();
 
-  //if no new command no need to actuate anything
-  if(registers.havt.cmd_reset_flg == CMDFlag::OUTDATED) return;
-  //otherwise, actuate the cmd_reset_table
+  //if new command, actuate on reset_table
+  if(registers.havt.cmd_reset_flg == CMDFlag::UPDATED){
+    // Attempt atomic copy of the havt command reset
+    registers.havt.cmd_reset_flg = CMDFlag::OUTDATED;
+    unsigned int command_int = registers.havt.cmd_reset_table;
 
-  unsigned int command_int;
-  // Attempt atomic copy of the havt command reset
-  registers.havt.cmd_reset_flg = CMDFlag::OUTDATED;
-  command_int = registers.havt.cmd_reset_table;
-
-  // Actuate if the copy was atomic
-  if (registers.havt.cmd_reset_flg == CMDFlag::OUTDATED){
-    std::bitset<havt::max_devices> temp_command_table(command_int);
-    havt::execute_cmd_reset_table(temp_command_table);
+    // Actuate if the copy was atomic
+    if (registers.havt.cmd_reset_flg == CMDFlag::OUTDATED){
+      std::bitset<havt::max_devices> temp_command_table(command_int);
+      havt::execute_cmd_reset_table(temp_command_table);
+    }
   }
 
   // ***  execute havt disable table logic ***
-  //if no new command no need to actuate anything
-  if(registers.havt.cmd_reset_flg == CMDFlag::OUTDATED) return;
-
-  //otherwise, actuate the cmd_disable_table
-  registers.havt.cmd_disable_flg = CMDFlag::OUTDATED;
-  command_int = registers.havt.cmd_disable_table;
-  if (registers.havt.cmd_disable_flg == CMDFlag::OUTDATED){
-    std::bitset<havt::max_devices> temp_command_table(command_int);
-    havt::execute_cmd_disable_table(temp_command_table);
+  //if new command, execute distable table
+  if(registers.havt.cmd_disable_flg == CMDFlag::UPDATED){
+    registers.havt.cmd_disable_flg = CMDFlag::OUTDATED;
+    unsigned int command_int = registers.havt.cmd_disable_table;
+    if (registers.havt.cmd_disable_flg == CMDFlag::OUTDATED){
+      std::bitset<havt::max_devices> temp_command_table(command_int);
+      havt::execute_cmd_disable_table(temp_command_table);
+    }
   }
 }
 
@@ -230,7 +227,7 @@ void loop() {
   update_havt();
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-  if (!(++cycles % 1000UL)) {
+  if (!(++cycles % 100000UL)) {
     LOG_INFO_header
     LOG_INFO_println("Heartbeat cycle count " + String(cycles))
 
@@ -244,6 +241,20 @@ void loop() {
     LOG_INFO_println("rwa.mode " + String(registers.rwa.mode))
     LOG_INFO_header
     LOG_INFO_println("ssa.mode " + String(registers.ssa.mode))
+
+    std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
+    char buffer[33];
+    for(int i = 0; i<32; i++){
+      if(temp_bitset.test(31-i))
+        buffer[i] = '1';
+      else
+        buffer[i] = '0';
+    }
+    buffer[32] = '\0';
+
+    LOG_INFO_header
+    LOG_INFO_print("havt.read ")
+    LOG_INFO_println(buffer)
   }
 #endif
 }

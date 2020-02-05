@@ -77,7 +77,7 @@ void test_cmd_table(){
     TEST_ASSERT_EQUAL_STRING(mtrs_up.to_string().c_str(), rt_read.to_string().c_str());
 
     // NOW TEST RESET CAPABILITY
-    std::bitset<adcs::havt::max_devices> cmd_reset_rws("00000000000000000000001110111000");
+    std::bitset<adcs::havt::max_devices> cmd_reset_rws("00000000000000000000001110000000");
     adcs_d.set_havt_reset(cmd_reset_rws);
     delay(wait_for_ADCSC);
     adcs_d.get_havt(&rt_read);

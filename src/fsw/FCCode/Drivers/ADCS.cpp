@@ -324,6 +324,7 @@ void ADCS::get_havt(std::bitset<adcs::havt::max_devices>* havt_table){
     //4 because 32/8 = 4
     unsigned char temp[4];
     std::memset(temp, 0, sizeof(temp));
+    i2c_point_and_read(adcs::HAVT_READ,temp, 4);
 
     unsigned int encoded;
     
