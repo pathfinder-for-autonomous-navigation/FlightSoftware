@@ -116,7 +116,6 @@ void update_havt() {
     }
   }
 
-  // ***  execute havt disable table logic ***
   //if new command, execute distable table
   if(registers.havt.cmd_disable_flg == CMDFlag::UPDATED){
     registers.havt.cmd_disable_flg = CMDFlag::OUTDATED;
