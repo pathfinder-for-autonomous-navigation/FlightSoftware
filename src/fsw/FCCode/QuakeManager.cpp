@@ -70,7 +70,8 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
 
     // Setup MO Buffers
     max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
-    mo_buffer_copy = new char[max_snapshot_size];
+    mo_buffer_copy = new char[max_snapshot_size + 1];
+    memset(mo_buffer_copy, 0, max_snapshot_size+1);
 }
 
 QuakeManager::~QuakeManager()
@@ -177,7 +178,7 @@ bool QuakeManager::dispatch_write() {
     {
         // If mo_idx is 0 --> copy current snapshot to local buf
         if (mo_idx == 0) {
-            memset(mo_buffer_copy, 0, max_snapshot_size);
+            memset(mo_buffer_copy, 0, max_snapshot_size + 1);
             memcpy(mo_buffer_copy, radio_mo_packet_fp->get(), max_snapshot_size);
         }
         // load the current 70 bytes of the buffer
