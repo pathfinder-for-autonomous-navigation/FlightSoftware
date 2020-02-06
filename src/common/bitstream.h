@@ -26,6 +26,10 @@
 class bitstream{
 
   public:
+
+  static unsigned char modify_bit(unsigned char n, unsigned char p, bool b) {
+      return (n & ~(1 << p)) | ((b << p) & (1 << p));
+  }
   /**
    * The bit offset within the current byte
    */

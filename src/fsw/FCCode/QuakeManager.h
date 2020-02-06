@@ -29,7 +29,9 @@ class QuakeManager : public TimedControlTask<bool> {
     ~QuakeManager();
     bool execute() override;
 
-   // protected:
+#ifndef QUAKE_DEBUG
+protected:
+#endif
    /**
     * @brief attempts to execute a step in the CONFIG command sequence. This command
     * sequence is executed on startup and executed whenever the unexpected_flag 
