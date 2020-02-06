@@ -104,7 +104,7 @@ void test_dispatch_standby() {
         TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::follower);
         tf.check(sat_designation_t::follower);
-        tf.check(adcs_state_t::point_docking);
+        tf.check(adcs_state_t::point_standby);
     }
 
     // Standby -> leader transition test
@@ -115,32 +115,55 @@ void test_dispatch_standby() {
         TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::leader);
         tf.check(sat_designation_t::leader);
-        tf.check(adcs_state_t::point_docking);
+        tf.check(adcs_state_t::point_standby);
     }
 }
 
-void test_dispatch_rendezvous_state(mission_state_t mission_state)
+void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_distance)
 {
+    const bool in_close_approach = 
+        (mission_state == mission_state_t::follower_close_approach) ||
+        (mission_state == mission_state_t::leader_close_approach);
+
     /** If distance is less than the trigger distance,
         there should be a state transition to the next mission state.
         This transition should happen irrespective of the comms timeout situation. **/
     {
         TestFixture tf(mission_state);
-        tf.set_sat_distance(tf.docking_trigger_dist_fp->get() - 0.01);
+        tf.set(prop_state_t::idle);
+        tf.set_sat_distance(sat_distance);
         tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
         tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
         tf.step();
-        tf.check(mission_state_t::docking);
-        tf.check(prop_state_t::disabled);
-        tf.check(adcs_state_t::zero_torque);
+        if (in_close_approach) {
+            tf.check(mission_state_t::docking);
+            tf.check(adcs_state_t::zero_torque);
+            tf.check(prop_state_t::disabled);
+        }
+        else {
+            if (mission_state == mission_state_t::follower) {
+                tf.check(mission_state_t::follower_close_approach);
+                tf.check(prop_state_t::idle);
+            }
+            else {
+                tf.check(mission_state_t::leader_close_approach);
+                tf.check(prop_state_t::disabled);
+            }
+
+            tf.check(adcs_state_t::point_docking);
+        }
+
         tf.check(static_cast<sat_designation_t>(tf.sat_designation_fp->get()));
 
-        // Docking motor command should be applied.
-        TEST_ASSERT(tf.docking_config_cmd_fp->get());
+        // Docking motor command should be applied if we're in close approach
+
+        if (in_close_approach) {
+            TEST_ASSERT(tf.docking_config_cmd_fp->get());
+        }
     }
 
-    /** If comms hasn't been available for too long, there should
-        be a state transition to standby.  **/
+    /** If comms hasn't been available for too long, there should be a state
+     *  transition to standby.  **/
     {
         TestFixture tf(mission_state);
         tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
@@ -153,12 +176,15 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state)
     }
 }
 
-void test_dispatch_follower() {
-    test_dispatch_rendezvous_state(mission_state_t::follower);
-}
+void test_rendezvous_states() {
+    TestFixture tf;
+    const double close_approach_trigger = tf.close_approach_trigger_dist_fp->get() - 0.01;
+    const double docking_trigger = tf.docking_trigger_dist_fp->get() - 0.01;
 
-void test_dispatch_leader() {
-    test_dispatch_rendezvous_state(mission_state_t::leader);
+    test_dispatch_rendezvous_state(mission_state_t::follower, close_approach_trigger);
+    test_dispatch_rendezvous_state(mission_state_t::leader, close_approach_trigger);
+    test_dispatch_rendezvous_state(mission_state_t::follower_close_approach, docking_trigger);
+    test_dispatch_rendezvous_state(mission_state_t::leader_close_approach, docking_trigger);
 }
 
 void test_dispatch_docking() {
@@ -192,9 +218,8 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_startup);
     RUN_TEST(test_dispatch_detumble);
     RUN_TEST(test_dispatch_empty_states);
-    RUN_TEST(test_dispatch_follower);
     RUN_TEST(test_dispatch_standby);
-    RUN_TEST(test_dispatch_leader);
+    RUN_TEST(test_rendezvous_states);
     RUN_TEST(test_dispatch_docking);
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
