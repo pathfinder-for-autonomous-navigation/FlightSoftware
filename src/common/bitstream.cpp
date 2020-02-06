@@ -1,6 +1,5 @@
 #include "bitstream.h"
 #include <cstring>
-#include "fixed_array.hpp"
 
 bitstream::bitstream(char* input, uint32_t stream_size) :
   bit_offset(0),
@@ -42,7 +41,7 @@ size_t bitstream::next(size_t num_bits, uint8_t* u8)
   // Read until the next byte starts
   size_t amt = 8 - bit_offset;
   for (; bits_read < amt && bits_read < num_bits; val >>= 1, ++bits_read)
-    *u8 = bit_array::modify_bit(*u8, bits_read, val&1);
+    *u8 = modify_bit(*u8, bits_read, val&1);
 
   // See if there is a next byte to write
   if (byte_offset + 1 < max_len && bits_read < num_bits)
@@ -50,7 +49,7 @@ size_t bitstream::next(size_t num_bits, uint8_t* u8)
     val = *reinterpret_cast<uint8_t*>(stream + byte_offset + 1);
     // Read to the beginning of the next byte
     for (size_t i = 0; i < bit_offset && bits_read < num_bits; ++i, val >>= 1, ++bits_read)
-      *u8 = bit_array::modify_bit(*u8, bits_read, val&1);
+      *u8 = modify_bit(*u8, bits_read, val&1);
   }
   seekG(bits_read, bs_end);
   return bits_read;
@@ -144,7 +143,7 @@ size_t bitstream::edit(size_t num_bits, uint8_t* val)
   // Write until the next byte starts
   size_t amt = 8 - bit_offset;
   for (size_t i = 0; i < amt && bits_written < num_bits; ++i, u8 >>= 1, ++bits_written)
-    old = bit_array::modify_bit(old, bit_offset + i, u8&1);
+    old = modify_bit(old, bit_offset + i, u8&1);
   
   // Write the lower bits
   *reinterpret_cast<uint8_t*>(stream + byte_offset) = old;
@@ -156,7 +155,7 @@ size_t bitstream::edit(size_t num_bits, uint8_t* val)
     // Write to the beginning of the next byte
     for (size_t i = 0; i < bit_offset && bits_written < num_bits; ++i, u8 >>= 1, ++bits_written)
     {
-      old = bit_array::modify_bit(old, i, u8&1);
+      old = modify_bit(old, i, u8&1);
     }
     // Write the rest of the upper bits
     *reinterpret_cast<uint8_t*>(stream + byte_offset + 1) = old;

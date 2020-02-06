@@ -1,6 +1,6 @@
 #define DEBUG
 #include "../StateFieldRegistryMock.hpp"
-
+#define QUAKE_DEBUG
 #include <fsw/FCCode/QuakeManager.h>
 #include <fsw/FCCode/radio_state_t.enum>
 
