@@ -2,7 +2,6 @@
     "data" : {
         "pan.cycle_no"        : "0",
         "pan.state"            : "0",
-        "pan.deployed"        : "false",
         "pan.sat_designation" : "0",
         "docksys.docked"      : "false",
         "docksys.dock_config" : "false",
