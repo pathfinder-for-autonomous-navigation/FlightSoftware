@@ -73,7 +73,7 @@ void DCDC::disable_sph() {
     #ifndef DESKTOP
     digitalWrite(dcdc_sph_enable_pin, LOW);
     #else
-    sph=false;
+    sph=false; 
     #endif
 }
 
