@@ -23,29 +23,57 @@ bool DCDC::is_functional() {
 void DCDC::disable() {
     disable_adcs();
     disable_sph();
+    #ifdef DESKTOP
+    adcs=false;
+    sph=false;
+    #endif
 }
 
 void DCDC::enable_adcs() {
     #ifndef DESKTOP
     digitalWrite(dcdc_motor_enable_pin, HIGH);
+    #else
+    adcs=true;
+    #endif
+}
+
+bool DCDC::adcs_enabled() {
+    #ifndef DESKTOP
+    digitalRead(dcdc_sph_enable_pin);
+    #else
+    return adcs;
     #endif
 }
 
 void DCDC::enable_sph() {
     #ifndef DESKTOP
     digitalWrite(dcdc_sph_enable_pin, HIGH);
+    #else
+    sph=true;
+    #endif
+}
+
+bool DCDC::sph_enabled() {
+    #ifndef DESKTOP
+    digitalRead(dcdc_sph_enable_pin);
+    #else
+    return sph;
     #endif
 }
 
 void DCDC::disable_adcs() {
     #ifndef DESKTOP
     digitalWrite(dcdc_motor_enable_pin, LOW);
+    #else
+    adcs=false;
     #endif
 }
 
 void DCDC::disable_sph() {
     #ifndef DESKTOP
     digitalWrite(dcdc_sph_enable_pin, LOW);
+    #else
+    sph=false;
     #endif
 }
 

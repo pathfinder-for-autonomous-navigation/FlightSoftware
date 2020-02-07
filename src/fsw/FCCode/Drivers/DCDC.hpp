@@ -25,6 +25,12 @@ class DCDC : public Device {
     bool is_functional();
     void disable();
     void reset();
+
+    // Returns whether or not adcs is enabled. Default is false
+    bool adcs = false;
+
+    // Returns whether or not spike and hold is enabled. Default is false
+    bool sph = false;
 #else
     bool setup() override;
 
@@ -49,10 +55,20 @@ class DCDC : public Device {
     void enable_adcs();
 
     /**
+     * @brief Returns if ADCS is enabled.
+     **/
+    bool adcs_enabled();
+
+    /**
      * @brief Turn on the Spike and Hold, pressure sensor, and docking motor
      * DCDC by holding the enable pin high.
      **/
     void enable_sph();
+
+    /**
+     * @brief Returns if spike and hold is enabled.
+     **/
+    bool sph_enabled();
 
     /** 
      * @brief Turn off ADCS DCDC by holding the enable pin low.
