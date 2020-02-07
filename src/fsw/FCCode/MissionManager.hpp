@@ -49,8 +49,9 @@ class MissionManager : public TimedControlTask<void> {
         mission_state_t::standby
     };
     // These states do not respond to fault conditions.
-    static constexpr std::array<mission_state_t, 6> fault_nonresponsive_states = {
+    static constexpr std::array<mission_state_t, 7> fault_nonresponsive_states = {
         mission_state_t::detumble,
+        mission_state_t::safehold,
         mission_state_t::startup,
         mission_state_t::manual,
         mission_state_t::docking,
