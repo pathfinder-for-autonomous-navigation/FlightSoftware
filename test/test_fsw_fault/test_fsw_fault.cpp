@@ -15,12 +15,13 @@ void test_fault_normal_behavior() {
     // Test that adding the fault to the registry works
     StateFieldRegistry r;
     TEST_ASSERT(fault.add_to_registry(r));
+    TEST_ASSERT(r.find_fault("fault"));
     TEST_ASSERT(r.find_writable_field("fault"));
     TEST_ASSERT(r.find_writable_field("fault.override"));
     TEST_ASSERT(r.find_writable_field("fault.suppress"));
     TEST_ASSERT(r.find_writable_field("fault.unsignal"));
 
-    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field("fault"));
+    Fault* fault_fp = r.find_fault("fault");
 
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
@@ -59,7 +60,7 @@ void test_fault_overridden_behavior() {
     Fault fault("fault", 1, control_cycle_count);
     fault.add_to_registry(r);
 
-    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
+    Fault* fault_fp = r.find_fault("fault");
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
     WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
 
@@ -96,7 +97,7 @@ void test_process_commands(){
     Fault fault("fault", 5, control_cycle_count);
     fault.add_to_registry(r);
 
-    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
+    Fault* fault_fp = r.find_fault("fault");
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
     WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
     WritableStateField<bool>* unsignal_fp = r.find_writable_field_t<bool>("fault.unsignal");
@@ -175,7 +176,7 @@ void test_dynamic_persistence(){
     Fault fault("fault", 5, control_cycle_count);
     fault.add_to_registry(r);
 
-    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
+    Fault* fault_fp = r.find_fault("fault");
     WritableStateField<unsigned int>* persistence_fp = r.find_writable_field_t<unsigned int>("fault.persistence");
 
     // normal triggering of a fault

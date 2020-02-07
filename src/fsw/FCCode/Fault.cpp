@@ -20,6 +20,7 @@ Fault::Fault(const std::string& name,
 }
 
 bool Fault::add_to_registry(StateFieldRegistry& r) {
+    if (!r.add_fault(this)) return false;
     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(this))) return false;
     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&suppress_f))) return false;
     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&override_f))) return false;
