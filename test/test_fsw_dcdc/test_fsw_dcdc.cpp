@@ -41,6 +41,8 @@ void test_task_initialization() {
 
 void test_task_execute() {
     TestFixture tf;
+
+    // Test enabling/disabling the individual ADCS and SPH pins
     tf.adcs_dcdc_cmd_fp->set(true);
     tf.sph_dcdc_cmd_fp->set(true);
     tf.dcdc_controller->execute();
@@ -53,6 +55,7 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
 
+    // Test the disable command
     tf.adcs_dcdc_cmd_fp->set(true);
     tf.sph_dcdc_cmd_fp->set(true);
 
@@ -60,6 +63,60 @@ void test_task_execute() {
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+
+    // If one pin is truned off and the other is on, then disable()
+    // should still turn both pins off
+    tf.adcs_dcdc_cmd_fp->set(false);
+    tf.sph_dcdc_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
+
+    tf.disable_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+
+    tf.adcs_dcdc_cmd_fp->set(true);
+    tf.sph_dcdc_cmd_fp->set(false);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+
+    tf.disable_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+
+    // Test the reset command
+    tf.reset_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
+
+    // If one pin is off and the other is on, then reset() should turn on 
+    // both pins
+    tf.adcs_dcdc_cmd_fp->set(false);
+    tf.sph_dcdc_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
+
+    tf.reset_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
+
+    tf.adcs_dcdc_cmd_fp->set(true);
+    tf.sph_dcdc_cmd_fp->set(false);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+
+    tf.reset_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
 
 }
 

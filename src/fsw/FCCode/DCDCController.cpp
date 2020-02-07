@@ -15,7 +15,7 @@ DCDCController::DCDCController(StateFieldRegistry &registry, unsigned int offset
 
   // Set default values
   adcs_dcdc_cmd_f.set(dcdc.adcs_enabled());
-  adcs_dcdc_cmd_f.set(dcdc.adcs_enabled());
+  sph_dcdc_cmd_f.set(dcdc.sph_enabled());
   disable_cmd_f.set(false);
   reset_cmd_f.set(false);
 }
@@ -36,7 +36,7 @@ void DCDCController::execute() {
         dcdc.disable_sph();
     }
 
-    if (disable_cmd_f.get() && (dcdc.adcs_enabled() || dcdc.adcs_enabled())) {
+    if (disable_cmd_f.get() && (dcdc.adcs_enabled() || dcdc.sph_enabled())) {
         dcdc.disable();
         disable_cmd_f.set(false);
     }

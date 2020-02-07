@@ -37,7 +37,7 @@ void DCDC::enable_adcs() {
     #endif
 }
 
-bool DCDC::adcs_enabled() {
+const bool DCDC::adcs_enabled() {
     #ifndef DESKTOP
     return digitalRead(dcdc_sph_enable_pin);
     #else
@@ -53,7 +53,7 @@ void DCDC::enable_sph() {
     #endif
 }
 
-bool DCDC::sph_enabled() {
+const bool DCDC::sph_enabled() {
     #ifndef DESKTOP
     return digitalRead(dcdc_sph_enable_pin);
     #else
@@ -82,6 +82,11 @@ void DCDC::reset() {
     disable_adcs();
     disable_sph();
     delay(10);
+    enable_sph();
+    enable_adcs();
+    #else
+    disable_adcs();
+    disable_sph();
     enable_sph();
     enable_adcs();
     #endif
