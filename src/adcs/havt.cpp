@@ -93,7 +93,7 @@ void cmd_device(Index index, const bool cmd_bit){
   }
 }
 
-void execute_cmd_reset_table(const std::bitset<havt::max_devices>& cmd_table) {
+void execute_cmd_reset_table(const std::bitset<havt::max_devices>& cmd_reset_table) {
   LOG_INFO_header
   LOG_INFO_printlnF("Executing HAVT CMD RESET table")
 
@@ -103,7 +103,7 @@ void execute_cmd_reset_table(const std::bitset<havt::max_devices>& cmd_table) {
     Index index = static_cast<Index>(index_int);
 
     // if cmd_reset_table has a bit high, reset that device
-    if(cmd_table[index_int]){  
+    if(cmd_reset_table[index_int]){  
       cmd_device(index, 1);
     }
   }
