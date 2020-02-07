@@ -242,6 +242,26 @@ void test_power_prop_adcs_faults_responsive() {
         tf.step();
         tf.check(mission_state_t::standby);
     }
+
+    // If an ADCS/power fault happens and a prop fault also happens, the ADCS fault
+    // takes precedence in sending the satellite to standby.
+    //
+    // ADCS fault takes precedence over prop fault
+    {
+        TestFixture tf(mission_state_t::standby);
+        tf.wheel1_adc_fault_f.override();
+        tf.failed_pressurize_f.override();
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+    // Power fault takes precedence over prop fault
+    {
+        TestFixture tf(mission_state_t::standby);
+        tf.low_batt_fault_f.override();
+        tf.failed_pressurize_f.override();
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
 }
 
 void test_power_prop_adcs_faults_nonresponsive() {

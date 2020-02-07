@@ -103,18 +103,20 @@ void MissionManager::execute() {
         const bool power_faulted = low_batt_fault_fp->is_faulted();
         const bool adcs_faulted = check_adcs_hardware_faults();
 
-        if (prop_depressurized) {
-            transition_to_state(mission_state_t::standby,
-                adcs_state_t::point_standby,
-                prop_state_t::idle);
-            return;
-        }        
-        else if (power_faulted || adcs_faulted) {
+        // Note: faults that cause safehold should be checked before faults that
+        // merely cause a transition back to standby.
+        if (power_faulted || adcs_faulted) {
             transition_to_state(mission_state_t::safehold,
                 adcs_state_t::startup,
                 prop_state_t::disabled);
             return;
         }
+        else if (prop_depressurized) {
+            transition_to_state(mission_state_t::standby,
+                adcs_state_t::point_standby,
+                prop_state_t::idle);
+            return;
+        } 
     }
 
     // Step 3. Handle state.
