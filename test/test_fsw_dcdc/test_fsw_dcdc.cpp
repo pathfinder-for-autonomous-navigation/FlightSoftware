@@ -11,16 +11,16 @@ class TestFixture {
 
     std::unique_ptr<DCDCController> dcdc_controller;
 
-    WritableStateField<bool>* adcs_dcdc_cmd_fp;
-    WritableStateField<bool>* sph_dcdc_cmd_fp;
+    WritableStateField<bool>* ADCSMotorDCDC_fp;
+    WritableStateField<bool>* SpikeDockDCDC_fp;
     WritableStateField<bool>* disable_cmd_fp;
     WritableStateField<bool>* reset_cmd_fp;
 
     TestFixture() : registry(), dcdc("dcdc") {
         dcdc_controller = std::make_unique<DCDCController>(registry, 0, dcdc);
 
-        adcs_dcdc_cmd_fp = registry.find_writable_field_t<bool>("dcdc.adcs_cmd");
-        sph_dcdc_cmd_fp = registry.find_writable_field_t<bool>("dcdc.sph_cmd");
+        ADCSMotorDCDC_fp = registry.find_writable_field_t<bool>("dcdc.ADCSMotor");
+        SpikeDockDCDC_fp = registry.find_writable_field_t<bool>("dcdc.SpikeDock");
         disable_cmd_fp = registry.find_writable_field_t<bool>("dcdc.disable_cmd");
         reset_cmd_fp = registry.find_writable_field_t<bool>("dcdc.reset_cmd");
     }
@@ -28,13 +28,13 @@ class TestFixture {
 
 void test_task_initialization() {
     TestFixture tf;
-    TEST_ASSERT_NOT_NULL(tf.adcs_dcdc_cmd_fp);
-    TEST_ASSERT_NOT_NULL(tf.sph_dcdc_cmd_fp);
+    TEST_ASSERT_NOT_NULL(tf.ADCSMotorDCDC_fp);
+    TEST_ASSERT_NOT_NULL(tf.SpikeDockDCDC_fp);
     TEST_ASSERT_NOT_NULL(tf.disable_cmd_fp);
     TEST_ASSERT_NOT_NULL(tf.reset_cmd_fp);
 
-    TEST_ASSERT_FALSE(tf.adcs_dcdc_cmd_fp->get());
-    TEST_ASSERT_FALSE(tf.sph_dcdc_cmd_fp->get());
+    TEST_ASSERT_FALSE(tf.ADCSMotorDCDC_fp->get());
+    TEST_ASSERT_FALSE(tf.SpikeDockDCDC_fp->get());
     TEST_ASSERT_FALSE(tf.disable_cmd_fp->get());
     TEST_ASSERT_FALSE(tf.reset_cmd_fp->get());
 }
@@ -43,21 +43,21 @@ void test_task_execute() {
     TestFixture tf;
 
     // Test enabling/disabling the individual ADCS and SPH pins
-    tf.adcs_dcdc_cmd_fp->set(true);
-    tf.sph_dcdc_cmd_fp->set(true);
+    tf.ADCSMotorDCDC_fp->set(true);
+    tf.SpikeDockDCDC_fp->set(true);
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
 
-    tf.adcs_dcdc_cmd_fp->set(false);
-    tf.sph_dcdc_cmd_fp->set(false);
+    tf.ADCSMotorDCDC_fp->set(false);
+    tf.SpikeDockDCDC_fp->set(false);
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
 
     // Test the disable command
-    tf.adcs_dcdc_cmd_fp->set(true);
-    tf.sph_dcdc_cmd_fp->set(true);
+    tf.ADCSMotorDCDC_fp->set(true);
+    tf.SpikeDockDCDC_fp->set(true);
 
     tf.disable_cmd_fp->set(true);
     tf.dcdc_controller->execute();
@@ -66,8 +66,8 @@ void test_task_execute() {
 
     // If one pin is truned off and the other is on, then disable()
     // should still turn both pins off
-    tf.adcs_dcdc_cmd_fp->set(false);
-    tf.sph_dcdc_cmd_fp->set(true);
+    tf.ADCSMotorDCDC_fp->set(false);
+    tf.SpikeDockDCDC_fp->set(true);
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
@@ -77,8 +77,8 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
 
-    tf.adcs_dcdc_cmd_fp->set(true);
-    tf.sph_dcdc_cmd_fp->set(false);
+    tf.ADCSMotorDCDC_fp->set(true);
+    tf.SpikeDockDCDC_fp->set(false);
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
@@ -96,8 +96,8 @@ void test_task_execute() {
 
     // If one pin is off and the other is on, then reset() should turn on 
     // both pins
-    tf.adcs_dcdc_cmd_fp->set(false);
-    tf.sph_dcdc_cmd_fp->set(true);
+    tf.ADCSMotorDCDC_fp->set(false);
+    tf.SpikeDockDCDC_fp->set(true);
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
@@ -107,8 +107,8 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
 
-    tf.adcs_dcdc_cmd_fp->set(true);
-    tf.sph_dcdc_cmd_fp->set(false);
+    tf.ADCSMotorDCDC_fp->set(true);
+    tf.SpikeDockDCDC_fp->set(false);
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());

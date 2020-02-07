@@ -29,11 +29,11 @@ class DCDCController : public TimedControlTask<void> {
     Devices::DCDC &dcdc;
 
     //command statefield tells control task to enable/disable ADCS pin for DCDC
-    WritableStateField<bool> adcs_dcdc_cmd_f;
+    WritableStateField<bool> ADCSMotorDCDC_f;
 
     //command statefield tells control task to enable/disable SPH pin that 
     //controls the docking system for DCDC
-    WritableStateField<bool> sph_dcdc_cmd_f;
+    WritableStateField<bool> SpikeDockDCDC_f;
 
     //command statefield tells control task to enable/disable ADCS and SPH pins for DCDC
     WritableStateField<bool> disable_cmd_f;
