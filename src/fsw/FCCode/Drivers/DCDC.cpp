@@ -55,7 +55,7 @@ void DCDC::enable_sph() {
 
 bool DCDC::sph_enabled() {
     #ifndef DESKTOP
-    digitalRead(dcdc_sph_enable_pin);
+    return digitalRead(dcdc_sph_enable_pin);
     #else
     return sph;
     #endif
@@ -63,7 +63,7 @@ bool DCDC::sph_enabled() {
 
 void DCDC::disable_adcs() {
     #ifndef DESKTOP
-    digitalWrite(dcdc_motor_enable_pin, LOW);
+    return digitalWrite(dcdc_motor_enable_pin, LOW);
     #else
     adcs=false;
     #endif
