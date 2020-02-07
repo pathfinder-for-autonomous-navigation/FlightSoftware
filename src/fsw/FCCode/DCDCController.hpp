@@ -21,8 +21,7 @@ class DCDCController : public TimedControlTask<void> {
         Devices::DCDC &dcdc);
 
     /**
-     * @brief Sets statefield variables and moves the motor to docking/undocking
-     * configuration should mission manager request it.
+     * @brief Commands the ADCS and sph pins on the DCDC converter
      */
     void execute() override;
 

@@ -8,10 +8,10 @@ using namespace Devices;
 
 bool DCDC::setup() {
     #ifndef DESKTOP
-    pinMode(dcdc_motor_enable_pin, OUTPUT);
-    pinMode(dcdc_sph_enable_pin, OUTPUT);
-    digitalWrite(dcdc_motor_enable_pin, LOW);
-    digitalWrite(dcdc_sph_enable_pin, LOW);
+    pinMode(ADCSMotorDCDC_EN, OUTPUT);
+    pinMode(SpikeDockDCDC_EN, OUTPUT);
+    digitalWrite(ADCSMotorDCDC_EN, LOW);
+    digitalWrite(SpikeDockDCDC_EN, LOW);
     #endif
     return true;
 }
@@ -31,7 +31,7 @@ void DCDC::disable() {
 
 void DCDC::enable_adcs() {
     #ifndef DESKTOP
-    digitalWrite(dcdc_motor_enable_pin, HIGH);
+    digitalWrite(ADCSMotorDCDC_EN, HIGH);
     #else
     adcs=true;
     #endif
@@ -39,7 +39,7 @@ void DCDC::enable_adcs() {
 
 const bool DCDC::adcs_enabled() {
     #ifndef DESKTOP
-    return digitalRead(dcdc_sph_enable_pin);
+    return digitalRead(ADCSMotorDCDC_EN);
     #else
     return adcs;
     #endif
@@ -47,7 +47,7 @@ const bool DCDC::adcs_enabled() {
 
 void DCDC::enable_sph() {
     #ifndef DESKTOP
-    digitalWrite(dcdc_sph_enable_pin, HIGH);
+    digitalWrite(SpikeDockDCDC_EN, HIGH);
     #else
     sph=true;
     #endif
@@ -55,7 +55,7 @@ void DCDC::enable_sph() {
 
 const bool DCDC::sph_enabled() {
     #ifndef DESKTOP
-    return digitalRead(dcdc_sph_enable_pin);
+    return digitalRead(SpikeDockDCDC_EN);
     #else
     return sph;
     #endif
@@ -63,7 +63,7 @@ const bool DCDC::sph_enabled() {
 
 void DCDC::disable_adcs() {
     #ifndef DESKTOP
-    digitalWrite(dcdc_motor_enable_pin, LOW);
+    digitalWrite(ADCSMotorDCDC_EN, LOW);
     #else
     adcs=false;
     #endif
@@ -71,7 +71,7 @@ void DCDC::disable_adcs() {
 
 void DCDC::disable_sph() {
     #ifndef DESKTOP
-    digitalWrite(dcdc_sph_enable_pin, LOW);
+    digitalWrite(SpikeDockDCDC_EN, LOW);
     #else
     sph=false; 
     #endif

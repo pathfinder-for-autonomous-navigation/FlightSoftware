@@ -14,8 +14,8 @@ class DCDC : public Device {
 
    public:
     //! Default enable pin for the DCDCs.
-    static constexpr unsigned char dcdc_motor_enable_pin = 24;
-    static constexpr unsigned char dcdc_sph_enable_pin = 25;
+    static constexpr unsigned char ADCSMotorDCDC_EN = 24;
+    static constexpr unsigned char SpikeDockDCDC_EN = 25;
 
     /**
      * @brief Default constructor. **/
