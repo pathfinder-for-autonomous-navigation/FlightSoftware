@@ -24,7 +24,6 @@ class DCDC : public Device {
     bool setup();
     bool is_functional();
     void disable();
-    void reset();
 #else
     bool setup() override;
 
@@ -37,11 +36,6 @@ class DCDC : public Device {
      * @brief Disable both DCDCs.
      **/
     void disable() override;
-
-    /** 
-     * @brief Disables and then re-enables both DCDCs.
-     **/
-    void reset() override;
 #endif
     /**
      * @brief Turn on ADCS DCDC by holding the enable pin high.

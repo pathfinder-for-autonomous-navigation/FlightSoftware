@@ -42,8 +42,14 @@ void DCDCController::execute() {
     }
 
     if (reset_cmd_f.get()) {
-        dcdc.reset();
-        reset_cmd_f.set(false);
+        if (dcdc.adcs_enabled() || dcdc.sph_enabled()) {
+            dcdc.disable();
+        }
+        if (!dcdc.adcs_enabled() && !dcdc.sph_enabled()) {
+            dcdc.enable_adcs();
+            dcdc.enable_sph();
+            reset_cmd_f.set(false);
+        }
     }
 
 }

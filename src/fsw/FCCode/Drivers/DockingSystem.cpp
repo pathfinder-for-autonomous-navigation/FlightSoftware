@@ -33,7 +33,7 @@ bool DockingSystem::setup() {
 
 bool DockingSystem::is_functional() {
     #ifndef DESKTOP
-    return digitalRead(DCDC::dcdc_sph_enable_pin)
+    return digitalRead(DCDC::SpikeDockDCDC_EN)
         && digitalRead(motor_sleep_pin);
     #else
     return true;

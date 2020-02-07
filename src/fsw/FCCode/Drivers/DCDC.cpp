@@ -76,18 +76,3 @@ void DCDC::disable_sph() {
     sph=false; 
     #endif
 }
-
-void DCDC::reset() {
-    #ifndef DESKTOP
-    disable_adcs();
-    disable_sph();
-    delay(10);
-    enable_sph();
-    enable_adcs();
-    #else
-    disable_adcs();
-    disable_sph();
-    enable_sph(); 
-    enable_adcs();
-    #endif
-}
