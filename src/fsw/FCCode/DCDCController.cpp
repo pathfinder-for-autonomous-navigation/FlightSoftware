@@ -1,6 +1,6 @@
 #include "DCDCController.hpp"
 
-DockingController::DockingController(StateFieldRegistry &registry, unsigned int offset,
+DCDCController::DCDCController(StateFieldRegistry &registry, unsigned int offset,
     Devices::DCDC &_dcdc)
     : TimedControlTask<void>(registry, "dcdc_ct", offset), dcdc(_dcdc),
       adcs_dcdc_cmd_f("dcdc.adcs_cmd", Serializer<bool>()),
@@ -16,11 +16,11 @@ DockingController::DockingController(StateFieldRegistry &registry, unsigned int 
   // Set default values
   adcs_dcdc_cmd_f.set(dcdc.adcs_enabled());
   adcs_dcdc_cmd_f.set(dcdc.adcs_enabled());
-  disable_cmd_f.set(dcdc.adcs_enabled()==false && dcdc.adcs_enabled()==false);
+  disable_cmd_f.set(false);
   reset_cmd_f.set(false);
 }
 
-void DockingController::execute() {
+void DCDCController::execute() {
 
     if (adcs_dcdc_cmd_f.get() && !dcdc.adcs_enabled()) {
         dcdc.enable_adcs();
