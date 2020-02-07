@@ -88,10 +88,10 @@ class TestFixture {
 
             // find the faults fields
             // adcs_functional_fault_p = registry.find_readable_field_t<bool>("adcs_monitor.adcs_functional_fualt");
-            wheel1_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel1_fault"));
-            wheel2_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel2_fault"));
-            wheel3_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel3_fault"));
-            wheel_pot_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel_pot_fault"));
+            wheel1_adc_fault_p = registry.find_fault("adcs_monitor.wheel1_fault");
+            wheel2_adc_fault_p = registry.find_fault("adcs_monitor.wheel2_fault");
+            wheel3_adc_fault_p = registry.find_fault("adcs_monitor.wheel3_fault");
+            wheel_pot_fault_p = registry.find_fault("adcs_monitor.wheel_pot_fault");
         }
 
         // set of mocking methods
