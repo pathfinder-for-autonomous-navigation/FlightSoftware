@@ -220,11 +220,32 @@ void test_dynamic_persistence(){
     TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
 }
 
+// Test the override and suppress functions that only exist in a unit-test context.
+void test_testfunctions() {
+    StateFieldRegistryMock r;
+    unsigned int control_cycle_count = 0;
+    Fault fault("fault", 1, control_cycle_count);
+    fault.add_to_registry(r);
+    WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
+    WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
+
+    fault.override();
+    TEST_ASSERT_TRUE(override_fp->get());
+    fault.un_override();
+    TEST_ASSERT_FALSE(override_fp->get());
+
+    fault.suppress();
+    TEST_ASSERT_TRUE(suppress_fp->get());
+    fault.unsuppress();
+    TEST_ASSERT_FALSE(suppress_fp->get());
+}
+
 void test_control_task(){
     RUN_TEST(test_fault_normal_behavior);
     RUN_TEST(test_fault_overridden_behavior);
     RUN_TEST(test_process_commands);
     RUN_TEST(test_dynamic_persistence);
+    RUN_TEST(test_testfunctions);
 }
 
 #ifdef DESKTOP

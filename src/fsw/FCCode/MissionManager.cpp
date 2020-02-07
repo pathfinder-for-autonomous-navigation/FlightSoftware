@@ -49,12 +49,18 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
-    low_batt_fault_fp = find_readable_field<bool>("gomspace.low_batt", __FILE__, __LINE__);
-    wheel1_adc_fault_fp = find_readable_field<bool>("adcs_monitor.wheel1_fault", __FILE__, __LINE__);
-    wheel2_adc_fault_fp = find_readable_field<bool>("adcs_monitor.wheel2_fault", __FILE__, __LINE__);
-    wheel3_adc_fault_fp = find_readable_field<bool>("adcs_monitor.wheel3_fault", __FILE__, __LINE__);
-    wheel_pot_fault_fp = find_readable_field<bool>("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__);
-    failed_pressurize_fp = find_readable_field<bool>("prop.failed_pressurize", __FILE__, __LINE__);
+    low_batt_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("gomspace.low_batt", __FILE__, __LINE__));
+    wheel1_adc_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("adcs_monitor.wheel1_fault", __FILE__, __LINE__));
+    wheel2_adc_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("adcs_monitor.wheel2_fault", __FILE__, __LINE__));
+    wheel3_adc_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("adcs_monitor.wheel3_fault", __FILE__, __LINE__));
+    wheel_pot_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__));
+    failed_pressurize_fp = static_cast<Fault*>(
+            find_writable_field<bool>("prop.failed_pressurize", __FILE__, __LINE__));
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -71,8 +77,9 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 }
 
 bool MissionManager::check_adcs_hardware_faults() const {
-    return wheel1_adc_fault_fp->get() || wheel2_adc_fault_fp->get() || wheel3_adc_fault_fp->get()
-            || wheel_pot_fault_fp->get();
+    return wheel1_adc_fault_fp->is_faulted() || wheel2_adc_fault_fp->is_faulted()
+            || wheel3_adc_fault_fp->is_faulted()
+            || wheel_pot_fault_fp->is_faulted();
 }
 
 void MissionManager::execute() {
@@ -92,8 +99,8 @@ void MissionManager::execute() {
         }
     }
     if (is_fault_responsive_state) {
-        const bool prop_depressurized = failed_pressurize_fp->get();
-        const bool power_faulted = low_batt_fault_fp->get();
+        const bool prop_depressurized = failed_pressurize_fp->is_faulted();
+        const bool power_faulted = low_batt_fault_fp->is_faulted();
         const bool adcs_faulted = check_adcs_hardware_faults();
 
         if (prop_depressurized) {

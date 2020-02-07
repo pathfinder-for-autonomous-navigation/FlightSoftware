@@ -226,11 +226,11 @@ void test_power_prop_adcs_faults_responsive() {
             TestFixture(state), TestFixture(state), TestFixture(state),
             TestFixture(state), TestFixture(state)
         };
-        tf_v[0].low_batt_fault_fp->set(true);
-        tf_v[1].wheel1_adc_fault_fp->set(true);
-        tf_v[2].wheel2_adc_fault_fp->set(true);
-        tf_v[3].wheel3_adc_fault_fp->set(true);
-        tf_v[4].wheel_pot_fault_fp->set(true);
+        tf_v[0].low_batt_fault_f.override();
+        tf_v[1].wheel1_adc_fault_f.override();
+        tf_v[2].wheel2_adc_fault_f.override();
+        tf_v[3].wheel3_adc_fault_f.override();
+        tf_v[4].wheel_pot_fault_f.override();
         for(TestFixture& tf : tf_v) {
             tf.step();
             tf.check(mission_state_t::safehold);
@@ -238,7 +238,7 @@ void test_power_prop_adcs_faults_responsive() {
     }
     for(mission_state_t state : MissionManager::fault_responsive_states) {
         TestFixture tf(state);
-        tf.failed_pressurize_fp->set(true);
+        tf.failed_pressurize_f.override();
         tf.step();
         tf.check(mission_state_t::standby);
     }
@@ -254,11 +254,11 @@ void test_power_prop_adcs_faults_nonresponsive() {
             TestFixture(state), TestFixture(state), TestFixture(state),
             TestFixture(state), TestFixture(state)
         };
-        tf_v[0].low_batt_fault_fp->set(true);
-        tf_v[1].wheel1_adc_fault_fp->set(true);
-        tf_v[2].wheel2_adc_fault_fp->set(true);
-        tf_v[3].wheel3_adc_fault_fp->set(true);
-        tf_v[4].wheel_pot_fault_fp->set(true);
+        tf_v[0].low_batt_fault_f.override();
+        tf_v[1].wheel1_adc_fault_f.override();
+        tf_v[2].wheel2_adc_fault_f.override();
+        tf_v[3].wheel3_adc_fault_f.override();
+        tf_v[4].wheel_pot_fault_f.override();
         for(TestFixture& tf : tf_v) {
             tf.step();
             tf.check(state);
@@ -266,29 +266,27 @@ void test_power_prop_adcs_faults_nonresponsive() {
     }
     for(mission_state_t state : MissionManager::fault_nonresponsive_states) {
         TestFixture tf(state);
-        tf.failed_pressurize_fp->set(true);
+        tf.failed_pressurize_f.override();
         tf.step();
         tf.check(state);
     }
 }
 
 void test_adcs_faults_inithold() {
-    // ADCS flags should cause a transition to initialization
+    // Any ADCS fault should cause a transition to initialization
     // hold if the satellite is in startup past its
     // deployment wait period.
     {
-        TestFixture tf(mission_state_t::startup);
-        tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
-        tf.wheel1_adc_fault_fp->set(true);
-        tf.step();
-        tf.check(mission_state_t::initialization_hold);
-    }
-    {
-        TestFixture tf(mission_state_t::startup);
-        tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
-        tf.wheel_pot_fault_fp->set(true);
-        tf.step();
-        tf.check(mission_state_t::initialization_hold);
+        std::array<TestFixture, 4> tf_v;
+        tf_v[0].wheel1_adc_fault_f.override();
+        tf_v[1].wheel2_adc_fault_f.override();
+        tf_v[2].wheel3_adc_fault_f.override();
+        tf_v[3].wheel_pot_fault_f.override();
+        for(TestFixture& tf : tf_v) {
+            tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
+            tf.step();
+            tf.check(mission_state_t::initialization_hold);
+        }
     }
 }
 

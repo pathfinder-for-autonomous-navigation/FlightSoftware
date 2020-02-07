@@ -2,7 +2,13 @@
 #include <unity.h>
 #include <limits>
 
-TestFixture::TestFixture(mission_state_t initial_state) : registry()
+TestFixture::TestFixture(mission_state_t initial_state) : registry(),
+    low_batt_fault_f("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count),
+    wheel1_adc_fault_f("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count),
+    wheel2_adc_fault_f("adcs_monitor.wheel2_fault", 1, TimedControlTaskBase::control_cycle_count),
+    wheel3_adc_fault_f("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count),
+    wheel_pot_fault_f("adcs_monitor.wheel_pot_fault", 1, TimedControlTaskBase::control_cycle_count),
+    failed_pressurize_f("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count)
 {
     adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
                                 "attitude_estimator.h_body");
@@ -19,12 +25,12 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
-    low_batt_fault_fp = registry.create_readable_field<bool>("gomspace.low_batt");
-    wheel1_adc_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel1_fault");
-    wheel2_adc_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel2_fault");
-    wheel3_adc_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel3_fault");
-    wheel_pot_fault_fp = registry.create_readable_field<bool>("adcs_monitor.wheel_pot_fault");
-    failed_pressurize_fp = registry.create_readable_field<bool>("prop.failed_pressurize");
+    low_batt_fault_f.add_to_registry(registry);
+    wheel1_adc_fault_f.add_to_registry(registry);
+    wheel2_adc_fault_f.add_to_registry(registry);
+    wheel3_adc_fault_f.add_to_registry(registry);
+    wheel_pot_fault_f.add_to_registry(registry);
+    failed_pressurize_f.add_to_registry(registry);
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -35,12 +41,6 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     docked_fp->set(false);
-    low_batt_fault_fp->set(false);
-    wheel1_adc_fault_fp->set(false);
-    wheel2_adc_fault_fp->set(false);
-    wheel3_adc_fault_fp->set(false);
-    wheel_pot_fault_fp->set(false);
-    failed_pressurize_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);
 

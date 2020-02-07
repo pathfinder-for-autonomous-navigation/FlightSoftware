@@ -4,6 +4,7 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #include <fsw/FCCode/MissionManager.hpp>
+#include <fsw/FCCode/Fault.hpp>
 #include <fsw/FCCode/mission_state_t.enum>
 #include <fsw/FCCode/adcs_state_t.enum>
 #include <fsw/FCCode/radio_state_t.enum>
@@ -29,12 +30,12 @@ class TestFixture {
 
     std::shared_ptr<ReadableStateField<bool>> docked_fp;
 
-    std::shared_ptr<ReadableStateField<bool>> low_batt_fault_fp;
-    std::shared_ptr<ReadableStateField<bool>> wheel1_adc_fault_fp;
-    std::shared_ptr<ReadableStateField<bool>> wheel2_adc_fault_fp;
-    std::shared_ptr<ReadableStateField<bool>> wheel3_adc_fault_fp;
-    std::shared_ptr<ReadableStateField<bool>> wheel_pot_fault_fp;
-    std::shared_ptr<ReadableStateField<bool>> failed_pressurize_fp;
+    Fault low_batt_fault_f;
+    Fault wheel1_adc_fault_f;
+    Fault wheel2_adc_fault_f;
+    Fault wheel3_adc_fault_f;
+    Fault wheel_pot_fault_f;
+    Fault failed_pressurize_f;
 
     std::unique_ptr<MissionManager> mission_manager;
     // Output state fields from mission manager

@@ -5,6 +5,7 @@
 #include "constants.hpp"
 #include <lin.hpp>
 
+#include "Fault.hpp"
 #include "prop_state_t.enum"
 #include "mission_state_t.enum"
 #include "adcs_state_t.enum"
@@ -124,14 +125,14 @@ class MissionManager : public TimedControlTask<void> {
     const ReadableStateField<bool>* docked_fp;
 
     // True if the battery is below the threshold for safehold.
-    const ReadableStateField<bool>* low_batt_fault_fp;
+    Fault* low_batt_fault_fp;
     // Fault flags for ADCS motor ADCs and potentiometer.
-    const ReadableStateField<bool>* wheel1_adc_fault_fp;
-    const ReadableStateField<bool>* wheel2_adc_fault_fp;
-    const ReadableStateField<bool>* wheel3_adc_fault_fp;
-    const ReadableStateField<bool>* wheel_pot_fault_fp;
+    Fault* wheel1_adc_fault_fp;
+    Fault* wheel2_adc_fault_fp;
+    Fault* wheel3_adc_fault_fp;
+    Fault* wheel_pot_fault_fp;
     // Flag for if propulsion failed to pressurize.
-    ReadableStateField<bool>* failed_pressurize_fp;
+    Fault* failed_pressurize_fp;
 
     /**
      * @brief Radio's mode.
