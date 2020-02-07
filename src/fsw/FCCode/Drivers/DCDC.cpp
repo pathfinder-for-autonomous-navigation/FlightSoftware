@@ -87,7 +87,7 @@ void DCDC::reset() {
     #else
     disable_adcs();
     disable_sph();
-    enable_sph();
+    enable_sph(); 
     enable_adcs();
     #endif
 }
