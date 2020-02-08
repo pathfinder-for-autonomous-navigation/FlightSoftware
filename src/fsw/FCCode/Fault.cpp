@@ -39,6 +39,21 @@ void Fault::unsignal() {
     num_consecutive_signals = 0;
 }
 
+#ifdef UNIT_TEST
+void Fault::override() {
+    override_f.set(true);
+}
+void Fault::un_override() {
+    override_f.set(false);
+}
+void Fault::suppress() {
+    suppress_f.set(true);
+}
+void Fault::unsuppress() {
+    suppress_f.set(false);
+}
+#endif
+
 bool Fault::is_faulted() {
     process_commands();
 

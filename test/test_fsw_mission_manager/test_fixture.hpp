@@ -4,6 +4,7 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #include <fsw/FCCode/MissionManager.hpp>
+#include <fsw/FCCode/Fault.hpp>
 #include <fsw/FCCode/mission_state_t.enum>
 #include <fsw/FCCode/adcs_state_t.enum>
 #include <fsw/FCCode/radio_state_t.enum>
@@ -25,10 +26,18 @@ class TestFixture {
 
     std::shared_ptr<ReadableStateField<unsigned char>> prop_state_fp;
 
-    std::shared_ptr<ReadableStateField<unsigned char>> piksi_mode_fp;
     std::shared_ptr<ReadableStateField<d_vector_t>> propagated_baseline_pos_fp;
 
+    std::shared_ptr<WritableStateField<bool>> reboot_fp;
+
     std::shared_ptr<ReadableStateField<bool>> docked_fp;
+
+    Fault low_batt_fault_f;
+    Fault wheel1_adc_fault_f;
+    Fault wheel2_adc_fault_f;
+    Fault wheel3_adc_fault_f;
+    Fault wheel_pot_fault_f;
+    Fault failed_pressurize_f;
 
     std::unique_ptr<MissionManager> mission_manager;
     // Output state fields from mission manager
@@ -71,8 +80,6 @@ class TestFixture {
     //// Setter methods for setting test conditions.
     // Set the control cycle count
     void set_ccno(unsigned int ccno);
-    // Create a hardware fault that necessitates a transition to safe hold or initialization hold.
-    void set_hardware_fault(bool faulted);
     // Set the distance between the two satellites.
     void set_sat_distance(double dist);
     // Set the # of control cycles that comms has not been established

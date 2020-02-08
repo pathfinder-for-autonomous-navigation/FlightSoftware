@@ -6,7 +6,7 @@
 class Fault : public WritableStateField<bool> {
   public:
     /**
-     * @brief Construct a new latching fault.
+     * @brief Construct a new non-latching fault.
      * 
      * @param name Name of base fault state field.
      * @param _persistence Persistence threshold before signaling fault.
@@ -31,6 +31,18 @@ class Fault : public WritableStateField<bool> {
      * fault-related condition. Resets the num_consecutive_signals to 0
      */
     void unsignal();
+
+    /**
+     * @brief Client-facing functions to override or suppress the fault behavior.
+     * These exist for use in test fixtures to make it easy to signal or
+     * unsignal faults from a test perspective.
+     */
+  #ifdef UNIT_TEST
+    void override();
+    void un_override();
+    void suppress();
+    void unsuppress();
+  #endif
 
     /**
      * @brief Calls process_commands, sets the fault true if num_consecutive_faults > persistence_f
