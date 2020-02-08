@@ -41,6 +41,8 @@ class TestFixture {
     Fault failed_pressurize_f;
 
     std::unique_ptr<MissionManager> mission_manager;
+    QuakeFaultHandlerMock* quake_fault_handler = nullptr;
+
     // Output state fields from mission manager
     WritableStateField<double>* detumble_safety_factor_fp;
     WritableStateField<double>* close_approach_trigger_dist_fp;

@@ -48,6 +48,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
     docked_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);
+    quake_fault_handler = &(mission_manager->quake_fault_handler);
 
     // Check that mission manager creates its expected fields
     detumble_safety_factor_fp = registry.find_writable_field_t<double>("detumble_safety_factor");

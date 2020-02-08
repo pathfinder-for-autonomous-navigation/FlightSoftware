@@ -19,7 +19,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
     max_radio_silence_duration_f("max_radio_silence",
         Serializer<unsigned int>(2 * PAN::one_day_ccno)),
-    quake_fault_checker(registry),
+    quake_fault_handler(registry),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
     mission_state_f("pan.state", Serializer<unsigned char>(12)),
@@ -88,60 +88,12 @@ bool MissionManager::check_adcs_hardware_faults() {
 void MissionManager::execute() {
     const mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
-    // Step 1. Disable radio if in startup.
     if (state == mission_state_t::startup) {
         set(radio_state_t::disabled);
     }
-
-    // Step 2. Change state if faults exist.
-    bool is_fault_responsive_state = false;
-    for(mission_state_t fault_responsive_state : fault_responsive_states) {
-        if (state == fault_responsive_state) {
-            is_fault_responsive_state = true;
-            break;
-        }
-    }
-    if (is_fault_responsive_state) {
-        const bool prop_depressurized = failed_pressurize_fp->is_faulted();
-        const bool power_faulted = low_batt_fault_fp->is_faulted();
-        const bool adcs_faulted = check_adcs_hardware_faults();
-
-        // Note: faults that cause safehold should be checked before faults that
-        // merely cause a transition back to standby.
-        if (power_faulted || adcs_faulted) {
-            transition_to_state(mission_state_t::safehold,
-                adcs_state_t::startup,
-                prop_state_t::disabled);
-            return;
-        }
-        else if (prop_depressurized) {
-            transition_to_state(mission_state_t::standby,
-                adcs_state_t::point_standby,
-                prop_state_t::idle);
-            return;
-        }
-    }
-
-    // Run the Quake fault state machine and act on its outputs.
-    if (state != mission_state_t::startup) {
-        const mission_state_t quake_recommended_state = quake_fault_checker.execute();
-        switch(quake_recommended_state) {
-            case mission_state_t::safehold:
-                transition_to_state(mission_state_t::safehold,
-                    adcs_state_t::startup,
-                    prop_state_t::disabled);
-                return;
-            break;
-            case mission_state_t::standby:
-                transition_to_state(mission_state_t::standby,
-                    adcs_state_t::point_standby,
-                    prop_state_t::idle);
-                return;
-            break;
-            default:
-                // Do nothing
-            break;
-        }
+    else {
+        const bool fault_was_handled = handle_faults(state);
+        if (fault_was_handled) return;
     }
 
     // Step 3. Handle state.
@@ -163,6 +115,59 @@ void MissionManager::execute() {
             transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
             break;
     }
+}
+
+bool MissionManager::handle_faults(mission_state_t cur_state) {
+    // Check the Quake manager's recommended state.
+    const mission_state_t quake_recommended_state = quake_fault_handler.execute();
+
+    const bool quake_recommends_standby = quake_recommended_state == mission_state_t::standby;
+    const bool quake_recommends_safehold = quake_recommended_state == mission_state_t::safehold;
+
+    // Step 2. Change state based on the faults state.
+    bool is_fault_responsive_state = false;
+    for(mission_state_t fault_responsive_state : fault_responsive_states) {
+        if (cur_state == fault_responsive_state) {
+            is_fault_responsive_state = true;
+            break;
+        }
+    }
+    if (is_fault_responsive_state) {
+        const bool prop_depressurized = failed_pressurize_fp->is_faulted();
+        const bool power_faulted = low_batt_fault_fp->is_faulted();
+        const bool adcs_faulted = check_adcs_hardware_faults();
+
+        // Note: faults that cause safehold should be checked before faults that
+        // merely cause a transition back to standby.
+        if (power_faulted || adcs_faulted) {
+            transition_to_state(mission_state_t::safehold,
+                adcs_state_t::startup,
+                prop_state_t::disabled);
+            return true;
+        }
+        else if (prop_depressurized && !quake_recommends_safehold) {
+            transition_to_state(mission_state_t::standby,
+                adcs_state_t::point_standby,
+                prop_state_t::idle);
+            return true;
+        }
+    }
+
+    // Transition to the quake fault checker's recommended mission state.
+    if (quake_recommends_safehold) {
+        transition_to_state(mission_state_t::safehold,
+            adcs_state_t::startup,
+            prop_state_t::disabled);
+        return true;
+    }
+    else if (quake_recommends_standby) {
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::point_standby,
+            prop_state_t::idle);
+        return true;
+    }
+
+    return false;
 }
 
 void MissionManager::dispatch_startup() {

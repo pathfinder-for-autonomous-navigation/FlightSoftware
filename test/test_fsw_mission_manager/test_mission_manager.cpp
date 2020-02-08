@@ -345,6 +345,66 @@ void test_adcs_faults_inithold() {
     }
 }
 
+// Test that the Quake fault handler is correctly integrated into fault handling.
+void test_quake_fault_handler_integration() {
+    // Quake manager has no effect if the current mode is startup.
+    {
+        TestFixture tf(mission_state_t::startup);
+
+        tf.quake_fault_handler->set_output(mission_state_t::standby);
+        tf.step();
+        tf.check(mission_state_t::startup);
+
+        tf.quake_fault_handler->set_output(mission_state_t::safehold);
+        tf.step();
+        tf.check(mission_state_t::startup);
+
+        tf.quake_fault_handler->set_output(mission_state_t::manual);
+        tf.step();
+        tf.check(mission_state_t::startup);
+    }
+    
+    // Power/ADCS faults, which recommend safehold, should take precedence if
+    // the Quake manager doesn't recommend a state or if its recommended state
+    // is standby.
+    {
+        {
+            TestFixture tf(mission_state_t::follower);
+            tf.wheel1_adc_fault_f.override();
+            tf.quake_fault_handler->set_output(mission_state_t::manual);
+            tf.step();
+            tf.check(mission_state_t::safehold);
+        }
+        {
+            TestFixture tf(mission_state_t::follower);
+            tf.low_batt_fault_f.override();
+            tf.quake_fault_handler->set_output(mission_state_t::standby);
+            tf.step();
+            tf.check(mission_state_t::safehold);
+        }
+    }
+
+    // The Quake fault handler's recommendation to go to safehold should take precedence
+    // over the prop fault's recommendation to go to standby.
+    {
+        TestFixture tf(mission_state_t::follower);
+        tf.failed_pressurize_f.override();
+        tf.quake_fault_handler->set_output(mission_state_t::safehold);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+
+    // If the Quake fault handler does not recommend a state, the prop fault's
+    // recommendation to go to standby should take precedence.
+    {
+        TestFixture tf(mission_state_t::follower);
+        tf.failed_pressurize_f.override();
+        tf.quake_fault_handler->set_output(mission_state_t::manual);
+        tf.step();
+        tf.check(mission_state_t::standby);
+    }
+}
+
 int test_mission_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
@@ -360,6 +420,8 @@ int test_mission_manager() {
     RUN_TEST(test_power_prop_adcs_faults_responsive);
     RUN_TEST(test_power_prop_adcs_faults_nonresponsive);
     RUN_TEST(test_adcs_faults_inithold);
+
+    RUN_TEST(test_quake_fault_handler_integration);
 
     return UNITY_END();
 }

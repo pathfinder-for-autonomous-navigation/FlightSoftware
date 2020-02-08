@@ -1,5 +1,5 @@
-#ifndef QUAKE_FAULT_CHECKER_HPP_
-#define QUAKE_FAULT_CHECKER_HPP_
+#ifndef quake_fault_handler_HPP_
+#define quake_fault_handler_HPP_
 
 #include "TimedControlTask.hpp"
 #include "mission_state_t.enum"
@@ -120,18 +120,18 @@ class QuakeFaultHandlerMock {
     QuakeFaultHandlerMock(StateFieldRegistry& r) {}
 
     mission_state_t execute() {
-      return get();
+      return get_output();
     }
-    mission_state_t get() const {
+    mission_state_t get_output() const {
       return state;
     }
-    void set(mission_state_t s) {
+    void set_output(mission_state_t s) {
       const bool desired_state_is_valid = 
           (s == mission_state_t::standby) 
           || (s == mission_state_t::safehold)
           || (s == mission_state_t::manual);
-      assert(desired_state_is_valid);
-      state = s;
+      if(!desired_state_is_valid) assert(false);
+      else state = s;
     }
   private:
     mission_state_t state = mission_state_t::manual;
