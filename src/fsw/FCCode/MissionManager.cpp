@@ -3,13 +3,22 @@
 #include <cmath>
 #include <adcs/constants.hpp>
 
+// Declare static storage for constexpr variables
+const constexpr double MissionManager::initial_detumble_safety_factor;
+const constexpr double MissionManager::initial_close_approach_trigger_dist;
+const constexpr double MissionManager::initial_docking_trigger_dist;
+const constexpr unsigned int MissionManager::initial_max_radio_silence_duration;
+const constexpr unsigned int MissionManager::deployment_wait;
+const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
+const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
+
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
     detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 10)),
     close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
     max_radio_silence_duration_f("max_radio_silence",
-        Serializer<unsigned int>(0, 2 * 24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms)),
+        Serializer<unsigned int>(2 * PAN::one_day_ccno)),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
     mission_state_f("pan.state", Serializer<unsigned char>(12)),
@@ -36,16 +45,30 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
 
-    piksi_mode_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
     propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
+
+    reboot_fp = find_writable_field<bool>("gomspace.gs_reboot_cmd", __FILE__, __LINE__);
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
+    low_batt_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("gomspace.low_batt", __FILE__, __LINE__));
+    wheel1_adc_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("adcs_monitor.wheel1_fault", __FILE__, __LINE__));
+    wheel2_adc_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("adcs_monitor.wheel2_fault", __FILE__, __LINE__));
+    wheel3_adc_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("adcs_monitor.wheel3_fault", __FILE__, __LINE__));
+    wheel_pot_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__));
+    failed_pressurize_fp = static_cast<Fault*>(
+            find_writable_field<bool>("prop.failed_pressurize", __FILE__, __LINE__));
+
     // Initialize a bunch of variables
-    detumble_safety_factor_f.set(0.2);
-    close_approach_trigger_dist_f.set(100);
-    docking_trigger_dist_f.set(0.4);
-    max_radio_silence_duration_f.set(24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms);
+    detumble_safety_factor_f.set(initial_detumble_safety_factor);
+    close_approach_trigger_dist_f.set(initial_close_approach_trigger_dist);
+    docking_trigger_dist_f.set(initial_docking_trigger_dist);
+    max_radio_silence_duration_f.set(initial_max_radio_silence_duration);
     transition_to_state(mission_state_t::startup,
         adcs_state_t::startup,
         prop_state_t::disabled); // "Starting" transition
@@ -55,26 +78,50 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     set(sat_designation_t::undecided);
 }
 
-bool MissionManager::check_hardware_faults() {
-    return false;
-    // TODO
+bool MissionManager::check_adcs_hardware_faults() const {
+    return wheel1_adc_fault_fp->is_faulted() || wheel2_adc_fault_fp->is_faulted()
+            || wheel3_adc_fault_fp->is_faulted()
+            || wheel_pot_fault_fp->is_faulted();
 }
 
 void MissionManager::execute() {
     mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
+    // Step 1. Disable radio if in startup.
     if (state == mission_state_t::startup) {
         set(radio_state_t::disabled);
     }
-    else {
-        bool faulted = check_hardware_faults();
-        if (faulted) {
+
+    // Step 2. Change state if faults exist.
+    bool is_fault_responsive_state = false;
+    for(mission_state_t fault_responsive_state : fault_responsive_states) {
+        if (state == fault_responsive_state) {
+            is_fault_responsive_state = true;
+            break;
+        }
+    }
+    if (is_fault_responsive_state) {
+        const bool prop_depressurized = failed_pressurize_fp->is_faulted();
+        const bool power_faulted = low_batt_fault_fp->is_faulted();
+        const bool adcs_faulted = check_adcs_hardware_faults();
+
+        // Note: faults that cause safehold should be checked before faults that
+        // merely cause a transition back to standby.
+        if (power_faulted || adcs_faulted) {
             transition_to_state(mission_state_t::safehold,
                 adcs_state_t::startup,
                 prop_state_t::disabled);
+            return;
         }
+        else if (prop_depressurized) {
+            transition_to_state(mission_state_t::standby,
+                adcs_state_t::point_standby,
+                prop_state_t::idle);
+            return;
+        } 
     }
 
+    // Step 3. Handle state.
     switch(state) {
         case mission_state_t::startup:                    dispatch_startup();                    break;
         case mission_state_t::detumble:                   dispatch_detumble();                   break;
@@ -106,7 +153,7 @@ void MissionManager::dispatch_startup() {
     // going into an initialization hold. If faults exist, go into
     // initialization hold, otherwise detumble.
     set(radio_state_t::wait);
-    if (check_hardware_faults()) {
+    if (check_adcs_hardware_faults()) {
         transition_to_state(mission_state_t::initialization_hold,
             adcs_state_t::detumble,
             prop_state_t::disabled);
@@ -233,7 +280,8 @@ void MissionManager::dispatch_docked() {
 }
 
 void MissionManager::dispatch_safehold() {
-    // TODO auto-exits
+    if (control_cycle_count - safehold_begin_ccno >= PAN::one_day_ccno)
+        reboot_fp->set(true);
 }
 
 void MissionManager::dispatch_manual() {
@@ -254,6 +302,9 @@ bool MissionManager::too_long_since_last_comms() const {
 }
 
 void MissionManager::set(mission_state_t state) {
+    if (state == mission_state_t::safehold) {
+        safehold_begin_ccno = control_cycle_count;
+    }
     mission_state_f.set(static_cast<unsigned char>(state));
 }
 
