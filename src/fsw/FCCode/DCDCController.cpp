@@ -49,7 +49,7 @@ void DCDCController::execute() {
             ADCSMotorDCDC_f.set(false);
             SpikeDockDCDC_f.set(false);
         }
-        else if (!dcdc.adcs_enabled() && !dcdc.sph_enabled()) {
+        else {
             dcdc.enable_adcs();
             ADCSMotorDCDC_f.set(true);
             dcdc.enable_sph();
