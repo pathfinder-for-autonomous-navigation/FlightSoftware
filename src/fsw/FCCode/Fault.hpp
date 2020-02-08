@@ -6,7 +6,7 @@
 class Fault : public WritableStateField<bool> {
   public:
     /**
-     * @brief Construct a new latching fault.
+     * @brief Construct a new non-latching fault.
      * 
      * @param name Name of base fault state field.
      * @param _persistence Persistence threshold before signaling fault.
