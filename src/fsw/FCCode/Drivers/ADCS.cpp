@@ -25,7 +25,7 @@ bool ADCS::i2c_ping() {
     unsigned char temp = 0;
     get_who_am_i(&temp); 
     return temp==WHO_AM_I_EXPECTED;
-    }
+}
 
 template <typename T>
 void ADCS::i2c_point_and_read(unsigned char data_register, T* data, std::size_t len) {
@@ -254,12 +254,6 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
     *gyr_temp_rd = fp(c,adcs::imu::min_rd_temp,adcs::imu::max_rd_temp);
 }
 
-#ifdef UNIT_TEST
-void ADCS::set_mock_ssa_mode(const unsigned char ssa_mode) {
-    mock_ssa_mode = ssa_mode;
-}
-#endif
-
 void ADCS::get_ssa_mode(unsigned char* a) {
     #ifdef UNIT_TEST
     //acceleration control mode, mocking output
@@ -307,17 +301,15 @@ void ADCS::get_ssa_voltage(std::array<float, adcs::ssa::num_sun_sensors>* voltag
 }
 
 void ADCS::get_havt(std::bitset<adcs::havt::max_devices>* havt_table){
+    // mocking return
+    #ifdef UNIT_TEST
+    (*havt_table) = mock_havt_read;
+    return;
+    #endif
+    
     //4 because 32/8 = 4
     unsigned char temp[4];
     std::memset(temp, 0, sizeof(temp));
-
-    #ifdef UNIT_TEST
-    for(int i = 0;i<4;i++){
-        temp[i] = 255;
-    }
-    #else
-    i2c_point_and_read(adcs::HAVT_READ,temp, 4);
-    #endif
 
     unsigned int encoded;
     
@@ -329,3 +321,17 @@ void ADCS::get_havt(std::bitset<adcs::havt::max_devices>* havt_table){
 
     (*havt_table) = std::bitset<adcs::havt::max_devices>(encoded);
 }
+
+#ifdef UNIT_TEST
+void ADCS::set_mock_havt_read(const std::bitset<adcs::havt::max_devices>& havt_input){
+    mock_havt_read = havt_input;
+}
+
+void ADCS::set_mock_ssa_mode(const unsigned char ssa_mode) {
+    mock_ssa_mode = ssa_mode;
+}
+
+void ADCS::set_mock_adcs_functional(const bool functional) {
+    adcs_functionality = functional;
+}
+#endif

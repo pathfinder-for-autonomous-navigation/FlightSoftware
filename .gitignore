@@ -1,3 +1,7 @@
+# Confidential Information/Configs
+radio_keys.json
+server_keys.json
+
 test/output_export.cpp
 # OS Generated .DS_store files
 .DS_Store
