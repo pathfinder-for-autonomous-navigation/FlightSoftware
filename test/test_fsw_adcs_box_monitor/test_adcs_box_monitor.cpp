@@ -30,8 +30,10 @@ class TestFixture {
         ReadableStateField<bool>* mag_vec_flag_p;
         ReadableStateField<bool>* gyr_vec_flag_p;
         ReadableStateField<bool>* gyr_temp_flag_p;
+        ReadableStateField<bool>* adcs_functional_p;
 
         // fault pointers
+        Fault* adcs_functional_fault_p;
         Fault* wheel1_adc_fault_p;
         Fault* wheel2_adc_fault_p;
         Fault* wheel3_adc_fault_p;
@@ -85,9 +87,10 @@ class TestFixture {
             mag_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.mag_vec_flag");
             gyr_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_vec_flag");
             gyr_temp_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_temp_flag");
+            adcs_functional_p = registry.find_readable_field_t<bool>("adcs_monitor.functional");
 
             // find the faults fields
-            // adcs_functional_fault_p = registry.find_readable_field_t<bool>("adcs_monitor.adcs_functional_fualt");
+            adcs_functional_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.functional_fault"));
             wheel1_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel1_fault"));
             wheel2_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel2_fault"));
             wheel3_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel3_fault"));
