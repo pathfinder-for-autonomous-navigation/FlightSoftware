@@ -22,15 +22,22 @@ class ADCSCommander : public TimedControlTask<void> {
     void execute() override;
 
    protected:
+    // input fields
     // eventually everything else necessary for generating commands
     // especially all the gnc stuff
 
     const WritableStateField<unsigned char>* adcs_state_fp;
 
-    // field pointer for adcs_montor device;
-    std::vector<WritableStateField<bool>*> havt_read_table_vector_fp;
+    // field pointer for adcs_montor device
+    std::vector<const ReadableStateField<bool>*> havt_read_table_vector_fp;
 
-    // begin fields necessary for adcs_box controller
+    // outputs from AttitudeComputer as inputs
+    const WritableStateField<f_vector_t>* adcs_vec1_current_fp;
+    const WritableStateField<f_vector_t>* adcs_vec1_desired_fp;
+    const WritableStateField<f_vector_t>* adcs_vec2_current_fp;
+    const WritableStateField<f_vector_t>* adcs_vec2_desired_fp;
+
+    // begin output fields necessary for adcs_box controller
     const Serializer<float> filter_sr;
 
     WritableStateField<unsigned char> rwa_mode_f;
