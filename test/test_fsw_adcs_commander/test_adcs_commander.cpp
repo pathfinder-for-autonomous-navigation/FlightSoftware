@@ -13,7 +13,11 @@ class TestFixture {
 
         // Pointers to input statefields
         std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
-        std::vector<std::shared_ptr<WritableStateField<bool>>> havt_read_table_vector_fp;
+        // std::vector<std::shared_ptr<WritableStateField<bool>>> havt_read_table_vector_fp;
+        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec1_current_fp;
+        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec1_desired_fp;
+        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec2_current_fp;
+        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec2_desired_fp;
 
         // Pointers to output statefields
         WritableStateField<unsigned char>* rwa_mode_fp;
@@ -49,6 +53,21 @@ class TestFixture {
         // Create a TestFixture instance of ADCSCommander with pointers to statefields
         // Compile conditionally for either hootl or hitl
         TestFixture() : registry(){
+            adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
+
+            // create the havt read table
+            char buffer[50];
+            for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+            {
+                std::memset(buffer, 0, sizeof(buffer));
+                sprintf(buffer,"adcs_monitor.havt_device");
+                sprintf(buffer + strlen(buffer), "%u", idx);
+                registry.create_writable_field<bool>(buffer);
+            }
+            registry.create_writable_field<f_vector_t>("adcs.compute.vec1.current");
+            registry.create_writable_field<f_vector_t>("adcs.compute.vec1.desired");
+            registry.create_writable_field<f_vector_t>("adcs.compute.vec2.current");
+            registry.create_writable_field<f_vector_t>("adcs.compute.vec2.desired");
 
             adcs_cmder = std::make_unique<ADCSCommander>(registry, 0);  
 
@@ -72,7 +91,6 @@ class TestFixture {
             imu_gyr_temp_desired_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_desired");
 
             //fill vector of pointers to output statefields for havt
-            char buffer[50];
             for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
             {
                 std::memset(buffer, 0, sizeof(buffer));

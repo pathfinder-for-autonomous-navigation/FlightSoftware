@@ -72,6 +72,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
         add_writable_field(havt_cmd_table_vector_f[idx]);
 
         // havt_cmd_table_vector_f[idx].set(true);
+        // TODO: AFTER CMD UPDATE DEFAULT ALL COMMANDS TO FALSE;
     }
 
     havt_read_table_vector_fp.reserve(adcs::havt::Index::_LENGTH);
@@ -88,10 +89,10 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
     // find outputs from AttitudeComputer
-    adcs_vec1_current_fp = find_writable_field<f_vector_t>("adcs.control.vec1.current", __FILE__, __LINE__);
-    adcs_vec1_desired_fp = find_writable_field<f_vector_t>("adcs.control.vec1.desired", __FILE__, __LINE__);
-    adcs_vec2_current_fp = find_writable_field<f_vector_t>("adcs.control.vec2.current", __FILE__, __LINE__);
-    adcs_vec2_desired_fp = find_writable_field<f_vector_t>("adcs.control.vec2.desired", __FILE__, __LINE__);
+    adcs_vec1_current_fp = find_writable_field<f_vector_t>("adcs.compute.vec1.current", __FILE__, __LINE__);
+    adcs_vec1_desired_fp = find_writable_field<f_vector_t>("adcs.compute.vec1.desired", __FILE__, __LINE__);
+    adcs_vec2_current_fp = find_writable_field<f_vector_t>("adcs.compute.vec2.current", __FILE__, __LINE__);
+    adcs_vec2_desired_fp = find_writable_field<f_vector_t>("adcs.compute.vec2.desired", __FILE__, __LINE__);
 
     // defaults, TODO: DECIDE DEFAULTS
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
