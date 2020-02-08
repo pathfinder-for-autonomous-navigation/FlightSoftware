@@ -16,8 +16,8 @@ DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
 
 void DebugTask::execute() {
 #ifdef FUNCTIONAL_TEST
-  start_cycle_f.set(false);
-  while (!start_cycle_f.get())
+  // start_cycle_f.set(false);
+  // while (!start_cycle_f.get())
     process_commands(_registry);
 #endif
 }
