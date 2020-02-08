@@ -23,6 +23,8 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
     propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
 
+    reboot_fp = registry.create_writable_field<bool>("gomspace.gs_reboot_cmd");
+
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
     low_batt_fault_f.add_to_registry(registry);
@@ -40,6 +42,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
     last_checkin_cycle_fp->set(0);
     prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
+    reboot_fp->set(false);
     docked_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);
@@ -64,7 +67,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
 // Set and assert functions for various mission states.
 
 void TestFixture::set(mission_state_t state) {
-    mission_state_fp->set(static_cast<unsigned char>(state));
+    mission_manager->set(state);
 }
 
 void TestFixture::set(adcs_state_t state) {
@@ -128,7 +131,10 @@ void TestFixture::assert_ground_uncommandability(prop_state_t exception_state) {
 }
 
 // Step forward the state machine by 1 control cycle.
-void TestFixture::step() { mission_manager->execute(); }
+void TestFixture::step() {
+    mission_manager->execute();
+    mission_manager->control_cycle_count++;
+}
 
 void TestFixture::set_ccno(unsigned int ccno) {
     mission_manager->control_cycle_count = ccno;

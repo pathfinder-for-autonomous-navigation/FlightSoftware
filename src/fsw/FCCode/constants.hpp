@@ -19,7 +19,7 @@ namespace PAN {
         constexpr unsigned int control_cycle_time = 120000;
     #endif
 
-    constexpr unsigned int one_day_ccno = 24 * 60 * 60 * 1000 / PAN::control_cycle_time_ms;
+    constexpr unsigned int one_day_ccno = 24 * 60 * 60 * 1000 / control_cycle_time_ms;
 }
 
 #endif

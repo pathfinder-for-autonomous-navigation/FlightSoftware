@@ -59,6 +59,8 @@ class MissionManager : public TimedControlTask<void> {
         mission_state_t::initialization_hold
     };
 
+    void set(mission_state_t state);
+
    protected:
     /**
      * @brief Returns true if there are hardware faults on the spacecraft.
@@ -79,6 +81,8 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_docking();
     void dispatch_docked();
     void dispatch_safehold();
+    unsigned int safehold_begin_ccno = 0; // Control cycle # of the most recent
+                                          // transition to safe hold.
 
     /**
      * @brief Handles state transitions that happen upon subsystem assertions.
@@ -120,6 +124,9 @@ class MissionManager : public TimedControlTask<void> {
 
     // Fields provided by Piksi and orbital estimation subsystems
     const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
+
+    // Field exposed by Gomspace for rebooting entire spacecraft.
+    WritableStateField<bool>* reboot_fp;
 
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
@@ -166,7 +173,6 @@ class MissionManager : public TimedControlTask<void> {
     double distance_to_other_sat() const;
     bool too_long_since_last_comms() const;
 
-    void set(mission_state_t state);
     void set(adcs_state_t state);
     void set(prop_state_t state);
     void set(radio_state_t state);

@@ -18,7 +18,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
     max_radio_silence_duration_f("max_radio_silence",
-        Serializer<unsigned int>(0, 2 * PAN::one_day_ccno)),
+        Serializer<unsigned int>(2 * PAN::one_day_ccno)),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
     mission_state_f("pan.state", Serializer<unsigned char>(12)),
@@ -46,6 +46,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
 
     propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
+
+    reboot_fp = find_writable_field<bool>("gomspace.gs_reboot_cmd", __FILE__, __LINE__);
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
@@ -278,7 +280,8 @@ void MissionManager::dispatch_docked() {
 }
 
 void MissionManager::dispatch_safehold() {
-    // TODO auto-exits
+    if (control_cycle_count - safehold_begin_ccno >= PAN::one_day_ccno)
+        reboot_fp->set(true);
 }
 
 void MissionManager::dispatch_manual() {
@@ -299,6 +302,9 @@ bool MissionManager::too_long_since_last_comms() const {
 }
 
 void MissionManager::set(mission_state_t state) {
+    if (state == mission_state_t::safehold) {
+        safehold_begin_ccno = control_cycle_count;
+    }
     mission_state_f.set(static_cast<unsigned char>(state));
 }
 
