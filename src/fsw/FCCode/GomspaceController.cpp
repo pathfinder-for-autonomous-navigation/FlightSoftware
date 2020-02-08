@@ -342,7 +342,7 @@ void GomspaceController::power_cycle_outputs(){
         if (output5_f.get()){
             gs.set_single_output(4,0);
         }
-        if (!output1_f.get()){
+        if (!output5_f.get()){
             gs.set_single_output(4,1);
             power_cycle_output5_cmd_f.set(false);
         }
