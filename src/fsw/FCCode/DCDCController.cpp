@@ -44,10 +44,14 @@ void DCDCController::execute() {
     if (reset_cmd_f.get()) {
         if (dcdc.adcs_enabled() || dcdc.sph_enabled()) {
             dcdc.disable();
+            ADCSMotorDCDC_f.set(false);
+            SpikeDockDCDC_f.set(false);
         }
-        if (!dcdc.adcs_enabled() && !dcdc.sph_enabled()) {
+        else if (!dcdc.adcs_enabled() && !dcdc.sph_enabled()) {
             dcdc.enable_adcs();
+            ADCSMotorDCDC_f.set(true);
             dcdc.enable_sph();
+            SpikeDockDCDC_f.set(true);
             reset_cmd_f.set(false);
         }
     }

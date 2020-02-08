@@ -89,10 +89,22 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
 
     // Test the reset command
-    tf.reset_cmd_fp->set(true);
+    tf.ADCSMotorDCDC_fp->set(true);
+    tf.SpikeDockDCDC_fp->set(true);
     tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
+
+    tf.reset_cmd_fp->set(true);
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+    TEST_ASSERT_EQUAL(true, tf.reset_cmd_fp->get());
+
+    tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
+    TEST_ASSERT_EQUAL(false, tf.reset_cmd_fp->get());
 
     // If one pin is off and the other is on, then reset() should turn on 
     // both pins
@@ -104,8 +116,14 @@ void test_task_execute() {
 
     tf.reset_cmd_fp->set(true);
     tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+    TEST_ASSERT_EQUAL(true, tf.reset_cmd_fp->get());
+
+    tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
+    TEST_ASSERT_EQUAL(false, tf.reset_cmd_fp->get());
 
     tf.ADCSMotorDCDC_fp->set(true);
     tf.SpikeDockDCDC_fp->set(false);
@@ -115,8 +133,14 @@ void test_task_execute() {
 
     tf.reset_cmd_fp->set(true);
     tf.dcdc_controller->execute();
+    TEST_ASSERT_EQUAL(false, tf.dcdc.adcs_enabled());
+    TEST_ASSERT_EQUAL(false, tf.dcdc.sph_enabled());
+    TEST_ASSERT_EQUAL(true, tf.reset_cmd_fp->get());
+
+    tf.dcdc_controller->execute();
     TEST_ASSERT_EQUAL(true, tf.dcdc.adcs_enabled());
     TEST_ASSERT_EQUAL(true, tf.dcdc.sph_enabled());
+    TEST_ASSERT_EQUAL(false, tf.reset_cmd_fp->get());
 
 }
 
