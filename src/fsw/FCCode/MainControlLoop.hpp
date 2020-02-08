@@ -86,7 +86,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int docking_controller_offset  = 103400; // excel says 102400
         static constexpr unsigned int downlink_producer_offset   = 104400; // excel says 102900
         static constexpr unsigned int quake_manager_offset       = 104500;
-        static constexpr unsigned int dcdc_controller_offset   = 153500;  // fix this later
+        static constexpr unsigned int dcdc_controller_offset     = 153500; // fix this later
         static constexpr unsigned int eeprom_controller_offset   = 153500; // too high?
     #endif
 
