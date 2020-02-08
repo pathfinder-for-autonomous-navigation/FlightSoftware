@@ -37,6 +37,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       downlink_producer(registry, downlink_producer_offset),
       quake_manager(registry, quake_manager_offset),
       uplink_consumer(registry, uplink_consumer_offset),
+      dcdc("dcdc"),
+      dcdc_controller(registry, dcdc_controller_offset, dcdc),
       eeprom_controller(registry, eeprom_controller_offset),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
@@ -53,6 +55,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     //setup I2C devices
     adcs.setup();
     gomspace.setup();
+    dcdc.setup();
 
     #ifdef FUNCTIONAL_TEST
         add_readable_field(memory_use_f);
@@ -85,9 +88,10 @@ void MainControlLoop::execute() {
     mission_manager.execute_on_time();
     attitude_computer.execute_on_time();
     // adcs_box_controller.execute_on_time(); // Commented out since commander is needed for full functionality
-    downlink_producer.execute_on_time();
+    // downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
+    dcdc_controller.execute_on_time();
     eeprom_controller.execute_on_time();
 }
 
