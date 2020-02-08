@@ -18,7 +18,10 @@ mission_state_t QuakeFaultHandler::execute() {
         case fault_checker_state_t::powercycle_2:   return dispatch_powercycle_2(); break;
         case fault_checker_state_t::powercycle_3:   return dispatch_powercycle_3(); break;
         case fault_checker_state_t::safehold:       return dispatch_safehold(); break;
+        default:
+            return mission_state_t::manual;
     }
+    return mission_state_t::manual;
 }
 
 void QuakeFaultHandler::transition_to(fault_checker_state_t next_state) {
