@@ -55,15 +55,6 @@ class TestFixture {
         TestFixture() : registry(){
             adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
 
-            // create the havt read table
-            char buffer[50];
-            for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
-            {
-                std::memset(buffer, 0, sizeof(buffer));
-                sprintf(buffer,"adcs_monitor.havt_device");
-                sprintf(buffer + strlen(buffer), "%u", idx);
-                registry.create_readable_field<bool>(buffer);
-            }
             adcs_vec1_current_fp = registry.create_writable_vector_field<float>("adcs.compute.vec1.current", 0, 1, 100);
             adcs_vec1_desired_fp = registry.create_writable_vector_field<float>("adcs.compute.vec1.desired", 0, 1, 100);
             adcs_vec2_current_fp = registry.create_writable_vector_field<float>("adcs.compute.vec2.current", 0, 1, 100);
@@ -77,9 +68,9 @@ class TestFixture {
             rwa_torque_cmd_fp = registry.find_writable_field_t<f_vector_t>("adcs_cmd.rwa_torque_cmd");
             rwa_speed_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.rwa_speed_filter");
             rwa_ramp_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.rwa_ramp_filter");
-            mtr_mode_f = registry.find_writable_field_t<unsigned char>("adcs_cmd.mtr_mode_f");
-            mtr_cmd_f = registry.find_writable_field_t<f_vector_t>("adcs_cmd.mtr_cmd_f");
-            mtr_limit_f = registry.find_writable_field_t<float>("adcs_cmd.mtr_limit_f");
+            mtr_mode_f = registry.find_writable_field_t<unsigned char>("adcs_cmd.mtr_mode");
+            mtr_cmd_f = registry.find_writable_field_t<f_vector_t>("adcs_cmd.mtr_cmd");
+            mtr_limit_f = registry.find_writable_field_t<float>("adcs_cmd.mtr_limit");
             ssa_voltage_filter_f = registry.find_writable_field_t<float>("adcs_cmd.ssa_voltage_filter");
             imu_mode_f = registry.find_writable_field_t<unsigned char>("adcs_cmd.imu_mode");
             imu_mag_filter_f = registry.find_writable_field_t<float>("adcs_cmd.imu_mag_filter");
@@ -91,6 +82,7 @@ class TestFixture {
             imu_gyr_temp_desired_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_desired");
 
             //fill vector of pointers to output statefields for havt
+            char buffer[50];
             for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
             {
                 std::memset(buffer, 0, sizeof(buffer));

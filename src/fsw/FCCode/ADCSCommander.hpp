@@ -28,9 +28,6 @@ class ADCSCommander : public TimedControlTask<void> {
 
     const WritableStateField<unsigned char>* adcs_state_fp;
 
-    // field pointer for adcs_montor device
-    std::vector<const ReadableStateField<bool>*> havt_read_table_vector_fp;
-
     // outputs from AttitudeComputer as inputs
     const WritableStateField<f_vector_t>* adcs_vec1_current_fp;
     const WritableStateField<f_vector_t>* adcs_vec1_desired_fp;

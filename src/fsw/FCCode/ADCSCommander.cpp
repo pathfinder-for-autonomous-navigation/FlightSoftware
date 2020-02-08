@@ -31,9 +31,9 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", filter_sr),
     imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", filter_sr),
     k_sr(std::numeric_limits<float>::min(), std::numeric_limits<float>::max(),16),
-    imu_gyr_temp_kp_f("adcs_cmd.imu_temp_kp", k_sr),
-    imu_gyr_temp_ki_f("adcs_cmd.imu_temp_ki", k_sr),
-    imu_gyr_temp_kd_f("adcs_cmd.imu_temp_kd", k_sr),
+    imu_gyr_temp_kp_f("adcs_cmd.imu_gyr_temp_kp", k_sr),
+    imu_gyr_temp_ki_f("adcs_cmd.imu_gyr_temp_ki", k_sr),
+    imu_gyr_temp_kd_f("adcs_cmd.imu_gyr_temp_kd", k_sr),
     imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", Serializer<float>(adcs::imu::min_eq_temp, adcs::imu::max_eq_temp, 8)),
     bool_sr(),
     havt_cmd_apply_f("adcs_cmd.havt_apply", bool_sr)
@@ -73,16 +73,6 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
 
         // havt_cmd_table_vector_f[idx].set(true);
         // TODO: AFTER CMD UPDATE DEFAULT ALL COMMANDS TO FALSE;
-    }
-
-    havt_read_table_vector_fp.reserve(adcs::havt::Index::_LENGTH);
-    //fill vector of pointers to statefields of adcs_monitor.havt_device
-    for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
-    {
-        std::memset(buffer, 0, sizeof(buffer));
-        sprintf(buffer,"adcs_monitor.havt_device");
-        sprintf(buffer + strlen(buffer), "%u", idx);
-        havt_read_table_vector_fp.emplace_back(find_readable_field<bool>(buffer, __FILE__, __LINE__));
     }
 
     // find adcs state
