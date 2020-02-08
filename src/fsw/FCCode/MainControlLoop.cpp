@@ -60,7 +60,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
 
     eeprom_controller.init(statefields, periods);
     // Since all telemetry fields have been added to the registry, initialize flows
-    downlink_producer.init_flows(flow_data);
+    // downlink_producer.init_flows(flow_data);
 }
 
 void MainControlLoop::execute() {
@@ -85,7 +85,7 @@ void MainControlLoop::execute() {
     mission_manager.execute_on_time();
     attitude_computer.execute_on_time();
     // adcs_box_controller.execute_on_time(); // Commented out since commander is needed for full functionality
-    downlink_producer.execute_on_time();
+    // downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
     eeprom_controller.execute_on_time();
