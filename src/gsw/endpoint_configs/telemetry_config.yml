@@ -1,0 +1,25 @@
+summary: "Send telemetry data to the ElasticSearch server in field-value-time tuples"
+tags: 
+  - "Post Telemetry Data to ElasticSearch"
+description: "This is used for sending and indexing telemetry data to the ElasticSearch server. Note that this will not generate an iridium report"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+parameters:
+  - in: "body"
+    name: "data"
+    description: "Accepts a Field-Value Pair and an IMEI number"
+    required: true
+    schema:
+      type: "object"
+      properties:
+        field:
+          type: "string"
+          example: "control cycle count"
+        value:
+          type: "integer"
+          example: 6
+        imei:
+          type: "integer"
+          example: 123456789

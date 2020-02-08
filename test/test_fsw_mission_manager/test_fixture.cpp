@@ -2,7 +2,13 @@
 #include <unity.h>
 #include <limits>
 
-TestFixture::TestFixture(mission_state_t initial_state) : registry()
+TestFixture::TestFixture(mission_state_t initial_state) : registry(),
+    low_batt_fault_f("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count),
+    wheel1_adc_fault_f("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count),
+    wheel2_adc_fault_f("adcs_monitor.wheel2_fault", 1, TimedControlTaskBase::control_cycle_count),
+    wheel3_adc_fault_f("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count),
+    wheel_pot_fault_f("adcs_monitor.wheel_pot_fault", 1, TimedControlTaskBase::control_cycle_count),
+    failed_pressurize_f("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count)
 {
     adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
                                 "attitude_estimator.h_body");
@@ -14,13 +20,19 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
 
     prop_state_fp = registry.create_readable_field<unsigned char>("prop.state", 2);
 
-    piksi_mode_fp = registry.create_readable_field<unsigned char>("piksi.state", 4);
     propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
 
     reboot_fp = registry.create_writable_field<bool>("gomspace.gs_reboot_cmd");
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
+
+    low_batt_fault_f.add_to_registry(registry);
+    wheel1_adc_fault_f.add_to_registry(registry);
+    wheel2_adc_fault_f.add_to_registry(registry);
+    wheel3_adc_fault_f.add_to_registry(registry);
+    wheel_pot_fault_f.add_to_registry(registry);
+    failed_pressurize_f.add_to_registry(registry);
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -126,11 +138,6 @@ void TestFixture::step() {
 
 void TestFixture::set_ccno(unsigned int ccno) {
     mission_manager->control_cycle_count = ccno;
-}
-
-// Create a hardware fault that necessitates a transition to safe hold or initialization hold.
-void TestFixture::set_hardware_fault(bool faulted) {
-    // TODO
 }
 
 // Set the distance between the two satellites.
