@@ -11,7 +11,7 @@
 constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
 
 ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) :
-    TimedControlTask<void>(registry, "attitude_computer", offset),
+    TimedControlTask<void>(registry, "adcs_commander", offset),
     filter_sr(0,1,8),
     rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
     rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(
@@ -174,6 +174,7 @@ void ADCSCommander::dispatch_standby(){
 void ADCSCommander::dispatch_docking(){
     // Point with 2 strategies
     // TODO RUN CALCS
+
     rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);
     rwa_torque_cmd_f.set({0,0,0});
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
