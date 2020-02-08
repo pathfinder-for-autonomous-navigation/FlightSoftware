@@ -38,6 +38,8 @@ void DCDCController::execute() {
 
     if (disable_cmd_f.get() && (dcdc.adcs_enabled() || dcdc.sph_enabled())) {
         dcdc.disable();
+        ADCSMotorDCDC_f.set(false);
+        SpikeDockDCDC_f.set(false);
         disable_cmd_f.set(false);
     }
 
