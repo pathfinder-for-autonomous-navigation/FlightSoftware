@@ -64,13 +64,6 @@ class ADCSCommander : public TimedControlTask<void> {
     Serializer<bool> bool_sr;
     std::vector<WritableStateField<bool>> havt_cmd_table_vector_f;
 
-    /**
-     * @brief If this statefield is true, then the cmd_table is uploaded to ADCS
-     * 
-     * Statefield is set to true for autonomous HAVT response, or by ground command
-     */
-    WritableStateField<bool> havt_cmd_apply_f;
-
     /** Internal specific dispatch call to calculate commands */
     void dispatch_startup();    
     void dispatch_limited();    

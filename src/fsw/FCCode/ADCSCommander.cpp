@@ -34,9 +34,8 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_gyr_temp_kp_f("adcs_cmd.imu_gyr_temp_kp", k_sr),
     imu_gyr_temp_ki_f("adcs_cmd.imu_gyr_temp_ki", k_sr),
     imu_gyr_temp_kd_f("adcs_cmd.imu_gyr_temp_kd", k_sr),
-    imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", Serializer<float>(adcs::imu::min_eq_temp, adcs::imu::max_eq_temp, 8)),
-    bool_sr(),
-    havt_cmd_apply_f("adcs_cmd.havt_apply", bool_sr)
+    imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", 
+        Serializer<float>(adcs::imu::min_eq_temp, adcs::imu::max_eq_temp, 8))
 {
     // For ADCS Controller
     add_writable_field(rwa_mode_f);
@@ -56,7 +55,6 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     add_writable_field(imu_gyr_temp_ki_f);
     add_writable_field(imu_gyr_temp_kd_f);
     add_writable_field(imu_gyr_temp_desired_f);
-    add_writable_field(havt_cmd_apply_f);
 
     // reserve memory
     havt_cmd_table_vector_f.reserve(adcs::havt::Index::_LENGTH);
@@ -102,7 +100,6 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_gyr_temp_ki_f.set(1);
     imu_gyr_temp_kd_f.set(1);
     imu_gyr_temp_desired_f.set(20); // 20 degrees C
-    havt_cmd_apply_f.set(false);
 }
 
 void ADCSCommander::execute() {
