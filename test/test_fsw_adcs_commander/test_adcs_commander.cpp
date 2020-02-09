@@ -27,18 +27,18 @@ class TestFixture {
         WritableStateField<f_vector_t>* rwa_torque_cmd_fp;
         WritableStateField<float>* rwa_speed_filter_fp;
         WritableStateField<float>* rwa_ramp_filter_fp;
-        WritableStateField<unsigned char>* mtr_mode_f;
-        WritableStateField<f_vector_t>* mtr_cmd_f;
-        WritableStateField<float>* mtr_limit_f;
-        WritableStateField<float>* ssa_voltage_filter_f;
-        WritableStateField<unsigned char>* imu_mode_f;
-        WritableStateField<float>* imu_mag_filter_f;
-        WritableStateField<float>* imu_gyr_filter_f;
-        WritableStateField<float>* imu_gyr_temp_filter_f;
-        WritableStateField<float>* imu_gyr_temp_kp_f;
-        WritableStateField<float>* imu_gyr_temp_ki_f;
-        WritableStateField<float>* imu_gyr_temp_kd_f;
-        WritableStateField<float>* imu_gyr_temp_desired_f;
+        WritableStateField<unsigned char>* mtr_mode_fp;
+        WritableStateField<f_vector_t>* mtr_cmd_fp;
+        WritableStateField<float>* mtr_limit_fp;
+        WritableStateField<float>* ssa_voltage_filter_fp;
+        WritableStateField<unsigned char>* imu_mode_fp;
+        WritableStateField<float>* imu_mag_filter_fp;
+        WritableStateField<float>* imu_gyr_filter_fp;
+        WritableStateField<float>* imu_gyr_temp_filter_fp;
+        WritableStateField<float>* imu_gyr_temp_kp_fp;
+        WritableStateField<float>* imu_gyr_temp_ki_fp;
+        WritableStateField<float>* imu_gyr_temp_kd_fp;
+        WritableStateField<float>* imu_gyr_temp_desired_fp;
 
         std::vector<WritableStateField<bool>*> havt_cmd_reset_vector_fp;
         std::vector<WritableStateField<bool>*> havt_cmd_disable_vector_fp;
@@ -71,18 +71,18 @@ class TestFixture {
             rwa_torque_cmd_fp = registry.find_writable_field_t<f_vector_t>("adcs_cmd.rwa_torque_cmd");
             rwa_speed_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.rwa_speed_filter");
             rwa_ramp_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.rwa_ramp_filter");
-            mtr_mode_f = registry.find_writable_field_t<unsigned char>("adcs_cmd.mtr_mode");
-            mtr_cmd_f = registry.find_writable_field_t<f_vector_t>("adcs_cmd.mtr_cmd");
-            mtr_limit_f = registry.find_writable_field_t<float>("adcs_cmd.mtr_limit");
-            ssa_voltage_filter_f = registry.find_writable_field_t<float>("adcs_cmd.ssa_voltage_filter");
-            imu_mode_f = registry.find_writable_field_t<unsigned char>("adcs_cmd.imu_mode");
-            imu_mag_filter_f = registry.find_writable_field_t<float>("adcs_cmd.imu_mag_filter");
-            imu_gyr_filter_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_filter");
-            imu_gyr_temp_filter_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_filter");
-            imu_gyr_temp_kp_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_kp");
-            imu_gyr_temp_ki_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_ki");
-            imu_gyr_temp_kd_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_kd");
-            imu_gyr_temp_desired_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_desired");
+            mtr_mode_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.mtr_mode");
+            mtr_cmd_fp = registry.find_writable_field_t<f_vector_t>("adcs_cmd.mtr_cmd");
+            mtr_limit_fp = registry.find_writable_field_t<float>("adcs_cmd.mtr_limit");
+            ssa_voltage_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.ssa_voltage_filter");
+            imu_mode_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.imu_mode");
+            imu_mag_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_mag_filter");
+            imu_gyr_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_filter");
+            imu_gyr_temp_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_filter");
+            imu_gyr_temp_kp_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_kp");
+            imu_gyr_temp_ki_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_ki");
+            imu_gyr_temp_kd_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_kd");
+            imu_gyr_temp_desired_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_desired");
 
             havt_cmd_reset_vector_fp.reserve(adcs::havt::Index::_LENGTH);
             havt_cmd_disable_vector_fp.reserve(adcs::havt::Index::_LENGTH);
@@ -118,25 +118,25 @@ void test_task_initialization()
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(zeros, tf.rwa_torque_cmd_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.rwa_speed_filter_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.rwa_ramp_filter_fp->get(), 0);
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_DISABLED, tf.mtr_mode_f->get());
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(zeros, tf.mtr_cmd_f->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.mtr_limit_f->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.ssa_voltage_filter_f->get(), 0);
-    TEST_ASSERT_EQUAL(adcs::IMUMode::MAG1, tf.imu_mode_f->get());
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_mag_filter_f->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_filter_f->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_filter_f->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_kp_f->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_ki_f->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_kd_f->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(20, tf.imu_gyr_temp_desired_f->get(), 0);
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_DISABLED, tf.mtr_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(zeros, tf.mtr_cmd_fp->get(), 0);
+    TEST_ASSERT_FLOAT_WITHIN(1, tf.mtr_limit_fp->get(), 0);
+    TEST_ASSERT_FLOAT_WITHIN(1, tf.ssa_voltage_filter_fp->get(), 0);
+    TEST_ASSERT_EQUAL(adcs::IMUMode::MAG1, tf.imu_mode_fp->get());
+    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_mag_filter_fp->get(), 0);
+    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_filter_fp->get(), 0);
+    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_filter_fp->get(), 0);
+    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_kp_fp->get(), 0);
+    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_ki_fp->get(), 0);
+    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_kd_fp->get(), 0);
+    TEST_ASSERT_FLOAT_WITHIN(20, tf.imu_gyr_temp_desired_fp->get(), 0);
 
-    // verify all initialized to 0
+    // verify all initialized to false
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
     {
-        // 0 means device is disabled
-        // TODO EDIT DEF: 0 means don't apply and changes to HAVT table
-        TEST_ASSERT_EQUAL(0, tf.havt_cmd_table_vector_fp[idx]->get());
+        // false means do not apply any commands
+        TEST_ASSERT_EQUAL(false, tf.havt_cmd_reset_vector_fp[idx]->get());
+        TEST_ASSERT_EQUAL(false, tf.havt_cmd_disable_vector_fp[idx]->get());
     }
 }
 
@@ -152,22 +152,22 @@ void test_execute(){
     tf.set_adcs_state(adcs_state_t::limited);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_DISABLED, tf.rwa_mode_fp->get());
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
 
     tf.set_adcs_state(adcs_state_t::zero_torque);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_DISABLED, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_DISABLED, tf.mtr_mode_fp->get());
 
     tf.set_adcs_state(adcs_state_t::zero_L);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_SPEED_CTRL, tf.rwa_mode_fp->get());
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());    
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());    
 
     tf.set_adcs_state(adcs_state_t::detumble);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_DISABLED, tf.rwa_mode_fp->get());
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());     
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());     
 
     tf.set_adcs_state(adcs_state_t::point_manual);
     tf.adcs_cmder->execute();
@@ -176,12 +176,12 @@ void test_execute(){
     tf.set_adcs_state(adcs_state_t::point_standby);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
 
     tf.set_adcs_state(adcs_state_t::point_docking);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
 }
 
 int test_control_task()
