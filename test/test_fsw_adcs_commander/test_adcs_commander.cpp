@@ -43,14 +43,6 @@ class TestFixture {
         std::vector<WritableStateField<bool>*> havt_cmd_reset_vector_fp;
         std::vector<WritableStateField<bool>*> havt_cmd_disable_vector_fp;
 
-        /**
-         * @brief If this statefield is true, then the cmd_table is uploaded to ADCS
-         * 
-         * Statefield is set to true for autonomous HAVT response, or by ground command
-         */
-        // TODO PROBAABLY DELETE
-        WritableStateField<bool>* havt_cmd_apply_f;
-
         std::unique_ptr<ADCSCommander> adcs_cmder;
         
         // Create a TestFixture instance of ADCSCommander with pointers to statefields
