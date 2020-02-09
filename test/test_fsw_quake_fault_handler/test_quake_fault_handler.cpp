@@ -108,9 +108,15 @@ class TestFixture {
 void test_qfhmock() {
     StateFieldRegistryMock r;
     QuakeFaultHandlerMock qfh(r);
-    qfh.set_output(mission_state_t::follower);
-    TEST_ASSERT_EQUAL(mission_state_t::follower, qfh.get_output());
-    TEST_ASSERT_EQUAL(mission_state_t::follower, qfh.execute());
+    qfh.set_output(mission_state_t::standby);
+    TEST_ASSERT_EQUAL(mission_state_t::standby, qfh.get_output());
+    TEST_ASSERT_EQUAL(mission_state_t::standby, qfh.execute());
+
+    qfh.set_output(mission_state_t::safehold);
+    TEST_ASSERT_EQUAL(mission_state_t::safehold, qfh.execute());
+
+    qfh.set_output(mission_state_t::standby);
+    TEST_ASSERT_EQUAL(mission_state_t::standby, qfh.execute());
 }
 
 void test_qfh_initialization() { TestFixture tf; }
