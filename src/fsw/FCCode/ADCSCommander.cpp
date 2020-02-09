@@ -8,8 +8,6 @@
 #include <adcs/constants.hpp>
 #include <adcs/havt_devices.hpp>
 
-constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
-
 ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "adcs_commander", offset),
     filter_sr(0,1,8),
@@ -143,19 +141,19 @@ void ADCSCommander::dispatch_zero_torque(){
     // wheels -> constant speed
     // MTRs -> 0,0,0
 
-    // TODO: Check with kyle, it seems like entering accel_ctrl will call set_speed(+-2000)
-    // And thus will impart a toruqe?
     rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);
     mtr_mode_f.set(adcs::MTRMode::MTR_DISABLED);
 }
 void ADCSCommander::dispatch_zero_L(){
     // TODO: Run calculations to reduce spacecraft L to 0;
+
     rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
     // set speed to 0
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
 }
 void ADCSCommander::dispatch_detumble(){
     // TODO: run calculations such that we detumble
+
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
 }
@@ -164,15 +162,13 @@ void ADCSCommander::dispatch_manual(){
     // modes and cmds will be set by ground
 }
 void ADCSCommander::dispatch_standby(){
-    // Point with only 1 strategy
-    // TODO RUN CALCS
+    // TODO: RUN CALCS FOR 1 STRAT
 
     rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
 }
 void ADCSCommander::dispatch_docking(){
-    // Point with 2 strategies
-    // TODO RUN CALCS
+    // TODO: RUN CALCS FOR 2 STRAT
 
     rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);

@@ -4,7 +4,8 @@
 #include "TimedControlTask.hpp"
 
 /**
- * @brief Given a desired pointing target, and other objectives, generate ADCS commands to apply
+ * @brief Given a desired pointing target, and other objectives,
+ * generate ADCS commands to apply
  * 
  */
 class ADCSCommander : public TimedControlTask<void> {
@@ -23,9 +24,6 @@ class ADCSCommander : public TimedControlTask<void> {
 
    protected:
     // input fields
-    // eventually everything else necessary for generating commands
-    // especially all the gnc stuff
-
     const WritableStateField<unsigned char>* adcs_state_fp;
 
     // outputs from AttitudeComputer as inputs

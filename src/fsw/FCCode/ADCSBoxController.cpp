@@ -92,7 +92,6 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_gyr_temp_kd(imu_gyr_temp_kd_fp->get());
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
 
-    // TODO AFTER NEXT PR THIS WILL BE DOUBLED UP
     std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
