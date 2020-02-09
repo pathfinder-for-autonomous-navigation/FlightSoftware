@@ -42,7 +42,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_cmd.havt_reset");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_cmd_reset_vector_fp.push_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+            havt_cmd_reset_vector_fp.emplace_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
         }
         havt_cmd_disable_vector_fp.reserve(adcs::havt::Index::_LENGTH);
         for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
@@ -50,7 +50,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_cmd.havt_disable");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_cmd_disable_vector_fp.push_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+            havt_cmd_disable_vector_fp.emplace_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
         }
     }
 
