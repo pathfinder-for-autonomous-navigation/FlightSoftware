@@ -18,6 +18,7 @@
 #include "MissionManager.hpp"
 #include "QuakeManager.h"
 #include "DockingController.hpp"
+#include "DCDCController.hpp"
 #include "DownlinkProducer.hpp"
 #include "EEPROMController.hpp"
 #include "UplinkConsumer.h"
@@ -51,6 +52,9 @@ class MainControlLoop : public ControlTask<void> {
     QuakeManager quake_manager; // Needs downlink packet from Downlink Producer
     UplinkConsumer uplink_consumer; // Needs uplink packet from Quake Manager
 
+    Devices::DCDC dcdc;
+    DCDCController dcdc_controller;
+
     EEPROMController eeprom_controller;
 
     // Control cycle time offsets, in microseconds
@@ -69,7 +73,8 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int docking_controller_offset  = 152400;
         static constexpr unsigned int downlink_producer_offset   = 153400; // excel says 152900
         static constexpr unsigned int quake_manager_offset       = 153500;
-        static constexpr unsigned int eeprom_controller_offset   = 153600;  // fix this later
+        static constexpr unsigned int dcdc_controller_offset     = 153500;  // fix this later
+        static constexpr unsigned int eeprom_controller_offset   = 153500;  // fix this later
     #else
         static constexpr unsigned int debug_task_offset          =   5500;
         static constexpr unsigned int piksi_control_task_offset  =   6000;
@@ -84,6 +89,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int docking_controller_offset  = 103400; // excel says 102400
         static constexpr unsigned int downlink_producer_offset   = 104400; // excel says 102900
         static constexpr unsigned int quake_manager_offset       = 104500;
+        static constexpr unsigned int dcdc_controller_offset     = 153500; // fix this later
         static constexpr unsigned int eeprom_controller_offset   = 153500; // too high?
     #endif
 

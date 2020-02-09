@@ -35,14 +35,22 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
     
         
         //fill vector of pointers to statefields for havt
-        havt_cmd_table_vector_fp.reserve(adcs::havt::Index::_LENGTH);
+        havt_cmd_reset_vector_fp.reserve(adcs::havt::Index::_LENGTH);
         char buffer[50];
         for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
         {
             std::memset(buffer, 0, sizeof(buffer));
-            sprintf(buffer,"adcs_cmd.havt_device");
+            sprintf(buffer,"adcs_cmd.reset_havt");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_cmd_table_vector_fp.emplace_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+            havt_cmd_reset_vector_fp.push_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+        }
+        havt_cmd_disable_vector_fp.reserve(adcs::havt::Index::_LENGTH);
+        for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
+        {
+            std::memset(buffer, 0, sizeof(buffer));
+            sprintf(buffer,"adcs_cmd.disable_havt");
+            sprintf(buffer + strlen(buffer), "%u", idx);
+            havt_cmd_disable_vector_fp.push_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
         }
     }
 
@@ -88,7 +96,12 @@ void ADCSBoxController::execute(){
     std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
-        temp_cmd_table.set(idx, havt_cmd_table_vector_fp[idx]->get());
+        temp_cmd_table.set(idx, havt_cmd_reset_vector_fp[idx]->get());
     }
-    adcs_system.set_havt(temp_cmd_table);
+    adcs_system.set_havt_reset(temp_cmd_table);
+    for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
+    {
+        temp_cmd_table.set(idx, havt_cmd_disable_vector_fp[idx]->get());
+    }
+    adcs_system.set_havt_disable(temp_cmd_table);
 }

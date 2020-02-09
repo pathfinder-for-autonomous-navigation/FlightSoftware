@@ -57,20 +57,28 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     add_writable_field(imu_gyr_temp_desired_f);
 
     // reserve memory
-    havt_cmd_table_vector_f.reserve(adcs::havt::Index::_LENGTH);
+    havt_cmd_reset_vector_f.reserve(adcs::havt::Index::_LENGTH);
+    havt_cmd_disable_vector_f.reserve(adcs::havt::Index::_LENGTH);
 
     // fill vector of statefields for cmd havt
     char buffer[50];
     for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
     {
         std::memset(buffer, 0, sizeof(buffer));
-        sprintf(buffer,"adcs_cmd.havt_device");
+        sprintf(buffer,"adcs_cmd.havt_reset");
         sprintf(buffer + strlen(buffer), "%u", idx);
-        havt_cmd_table_vector_f.emplace_back(buffer, bool_sr);
-        add_writable_field(havt_cmd_table_vector_f[idx]);
-
-        // havt_cmd_table_vector_f[idx].set(true);
-        // TODO: AFTER CMD UPDATE DEFAULT ALL COMMANDS TO FALSE;
+        havt_cmd_reset_vector_f.emplace_back(buffer, bool_sr);
+        add_writable_field(havt_cmd_reset_vector_f[idx]);
+        havt_cmd_reset_vector_f[idx].set(false); // default commands to false (don't apply cmd)
+    }
+    for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+    {
+        std::memset(buffer, 0, sizeof(buffer));
+        sprintf(buffer,"adcs_cmd.havt_disable");
+        sprintf(buffer + strlen(buffer), "%u", idx);
+        havt_cmd_disable_vector_f.emplace_back(buffer, bool_sr);
+        add_writable_field(havt_cmd_disable_vector_f[idx]);
+        havt_cmd_disable_vector_f[idx].set(false); // default commands to false (don't apply cmd)
     }
 
     // find adcs state

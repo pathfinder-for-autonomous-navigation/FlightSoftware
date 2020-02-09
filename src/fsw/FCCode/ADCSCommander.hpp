@@ -62,7 +62,8 @@ class ADCSCommander : public TimedControlTask<void> {
     WritableStateField<float> imu_gyr_temp_desired_f;
 
     Serializer<bool> bool_sr;
-    std::vector<WritableStateField<bool>> havt_cmd_table_vector_f;
+    std::vector<WritableStateField<bool>> havt_cmd_reset_vector_f;
+    std::vector<WritableStateField<bool>> havt_cmd_disable_vector_f;
 
     /** Internal specific dispatch call to calculate commands */
     void dispatch_startup();    

@@ -41,11 +41,14 @@ extern std::bitset<havt::max_devices> internal_table;
 void update_read_table();
 
 /**
- * @brief Requests reset() or disable() if cmd_table differs with internal_table
- * 
- * Commands a reset() or disable() based on each specific device with a difference
+ * @brief Commands a reset() for a device if that bit is high
  */
-void execute_cmd_table(const std::bitset<havt::max_devices>& cmd_table);
+void execute_cmd_reset_table(const std::bitset<havt::max_devices>& cmd_reset_table);
+
+/**
+ * @brief Commands a disable() for a device if that bit is high
+ */
+void execute_cmd_disable_table(const std::bitset<havt::max_devices>& cmd_disable_table);
 
 }  // namespace havt
 }  // namespace adcs
