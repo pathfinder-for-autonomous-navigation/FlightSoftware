@@ -335,7 +335,7 @@ void test_adcs_faults_inithold() {
     // deployment wait period.
     {
         std::array<TestFixture, 5> tf_v;
-        tf_v[0].wheel1_adc_fault_f.override();
+        tf_v[0].adcs_functional_fault_f.override();
         tf_v[1].wheel1_adc_fault_f.override();
         tf_v[2].wheel2_adc_fault_f.override();
         tf_v[3].wheel3_adc_fault_f.override();
