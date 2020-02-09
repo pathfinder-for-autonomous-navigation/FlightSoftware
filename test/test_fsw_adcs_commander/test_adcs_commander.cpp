@@ -40,7 +40,8 @@ class TestFixture {
         WritableStateField<float>* imu_gyr_temp_kd_f;
         WritableStateField<float>* imu_gyr_temp_desired_f;
 
-        std::vector<WritableStateField<bool>*> havt_cmd_table_vector_fp;
+        std::vector<WritableStateField<bool>*> havt_cmd_reset_vector_fp;
+        std::vector<WritableStateField<bool>*> havt_cmd_disable_vector_fp;
 
         /**
          * @brief If this statefield is true, then the cmd_table is uploaded to ADCS
@@ -83,14 +84,23 @@ class TestFixture {
             imu_gyr_temp_kd_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_kd");
             imu_gyr_temp_desired_f = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_desired");
 
+            havt_cmd_reset_vector_fp.reserve(adcs::havt::Index::_LENGTH);
+            havt_cmd_disable_vector_fp.reserve(adcs::havt::Index::_LENGTH);
             //fill vector of pointers to output statefields for havt
             char buffer[50];
             for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
             {
                 std::memset(buffer, 0, sizeof(buffer));
-                sprintf(buffer,"adcs_cmd.havt_device");
+                sprintf(buffer,"adcs_cmd.havt_reset");
                 sprintf(buffer + strlen(buffer), "%u", idx);
-                havt_cmd_table_vector_fp.push_back(registry.find_writable_field_t<bool>(buffer));
+                havt_cmd_reset_vector_fp.emplace_back(registry.find_writable_field_t<bool>(buffer));
+            }
+            for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+            {
+                std::memset(buffer, 0, sizeof(buffer));
+                sprintf(buffer,"adcs_cmd.havt_disable");
+                sprintf(buffer + strlen(buffer), "%u", idx);
+                havt_cmd_disable_vector_fp.emplace_back(registry.find_writable_field_t<bool>(buffer));
             }
         }
         void set_adcs_state(adcs_state_t state){
@@ -142,24 +152,36 @@ void test_execute(){
     tf.set_adcs_state(adcs_state_t::limited);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_DISABLED, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());
 
     tf.set_adcs_state(adcs_state_t::zero_torque);
     tf.adcs_cmder->execute();
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_DISABLED, tf.rwa_mode_fp->get());
 
     tf.set_adcs_state(adcs_state_t::zero_L);
     tf.adcs_cmder->execute();
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_SPEED_CTRL, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());    
 
     tf.set_adcs_state(adcs_state_t::detumble);
     tf.adcs_cmder->execute();
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_DISABLED, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());     
 
     tf.set_adcs_state(adcs_state_t::point_manual);
     tf.adcs_cmder->execute();
+    // nothing to check, state machine is free
 
     tf.set_adcs_state(adcs_state_t::point_standby);
     tf.adcs_cmder->execute();
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());
 
     tf.set_adcs_state(adcs_state_t::point_docking);
     tf.adcs_cmder->execute();
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.rwa_mode_fp->get());
 }
 
 int test_control_task()

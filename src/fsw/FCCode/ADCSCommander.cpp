@@ -138,9 +138,6 @@ void ADCSCommander::dispatch_limited(){
 
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
-
-    // TODO CHANGE
-    mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_zero_torque(){
     // wheels -> constant speed
@@ -149,24 +146,18 @@ void ADCSCommander::dispatch_zero_torque(){
     // TODO: Check with kyle, it seems like entering accel_ctrl will call set_speed(+-2000)
     // And thus will impart a toruqe?
     rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);
-    rwa_torque_cmd_f.set({0,0,0});
     mtr_mode_f.set(adcs::MTRMode::MTR_DISABLED);
-    mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_zero_L(){
     // TODO: Run calculations to reduce spacecraft L to 0;
     rwa_mode_f.set(adcs::RWAMode::RWA_SPEED_CTRL);
-    rwa_speed_cmd_f.set({0,0,0});
+    // set speed to 0
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
-    mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_detumble(){
     // TODO: run calculations such that we detumble
-    rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);
-    rwa_torque_cmd_f.set({0,0,0});
+    rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
-    mtr_cmd_f.set({0,0,0});
-
 }
 void ADCSCommander::dispatch_manual(){
     // do no calculations, let ground commands decide adcs commands
@@ -177,16 +168,12 @@ void ADCSCommander::dispatch_standby(){
     // TODO RUN CALCS
 
     rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);
-    rwa_torque_cmd_f.set({0,0,0});
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
-    mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_docking(){
     // Point with 2 strategies
     // TODO RUN CALCS
 
     rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);
-    rwa_torque_cmd_f.set({0,0,0});
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
-    mtr_cmd_f.set({0,0,0});
 }
