@@ -130,6 +130,8 @@ void ADCSCommander::dispatch_limited(){
 
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
     mtr_mode_f.set(adcs::MTRMode::MTR_ENABLED);
+
+    // TODO CHANGE
     mtr_cmd_f.set({0,0,0});
 }
 void ADCSCommander::dispatch_zero_torque(){

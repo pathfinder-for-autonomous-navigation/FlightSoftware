@@ -7,6 +7,8 @@
 
 #include <unity.h>
 #include "../custom_assertions.hpp"
+
+#include <fsw/FCCode/adcs_state_t.enum>
 class TestFixture {
     public:
         StateFieldRegistryMock registry;
@@ -91,6 +93,9 @@ class TestFixture {
                 havt_cmd_table_vector_fp.push_back(registry.find_writable_field_t<bool>(buffer));
             }
         }
+        void set_adcs_state(adcs_state_t state){
+            adcs_state_fp->set(static_cast<unsigned char>(state));
+        }
 };
 
 void test_task_initialization()
@@ -128,8 +133,33 @@ void test_task_initialization()
 void test_execute(){
     TestFixture tf;
 
-    //set all the states and watch em go
-    //tf.adcs_state_fp->
+    // Expand the sections once each dispatch block does specific things
+
+    tf.set_adcs_state(adcs_state_t::startup);
+    tf.adcs_cmder->execute();
+    // in startup, execute() does nothing
+
+    tf.set_adcs_state(adcs_state_t::limited);
+    tf.adcs_cmder->execute();
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_DISABLED, tf.rwa_mode_fp->get());
+
+    tf.set_adcs_state(adcs_state_t::zero_torque);
+    tf.adcs_cmder->execute();
+
+    tf.set_adcs_state(adcs_state_t::zero_L);
+    tf.adcs_cmder->execute();
+
+    tf.set_adcs_state(adcs_state_t::detumble);
+    tf.adcs_cmder->execute();
+
+    tf.set_adcs_state(adcs_state_t::point_manual);
+    tf.adcs_cmder->execute();
+
+    tf.set_adcs_state(adcs_state_t::point_standby);
+    tf.adcs_cmder->execute();
+
+    tf.set_adcs_state(adcs_state_t::point_docking);
+    tf.adcs_cmder->execute();
 }
 
 int test_control_task()
