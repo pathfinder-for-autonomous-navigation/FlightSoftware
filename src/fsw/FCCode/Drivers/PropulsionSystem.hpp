@@ -77,11 +77,15 @@ class Tank;
  * Only tank2 has a schedule since only tank2 uses the IntervalTimer to fire.
  * 
  **/
-
-class PropulsionSystem : public Device {
-
+#define PropulsionSystem Devices::_PropulsionSystem::Instance()
+class _PropulsionSystem : public Device {
+    _PropulsionSystem();
 public:
-    PropulsionSystem();
+    inline static _PropulsionSystem& Instance()
+    {
+        static _PropulsionSystem Instance;
+        return Instance;
+    }
 
     /**
      * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
@@ -214,10 +218,10 @@ protected:
     // true if the valve is opened
     bool is_valve_opened[4];
 
-    friend class PropulsionSystem;
+    friend class _PropulsionSystem;
 };
 
-#define Tank1 _Tank1::Instance()
+#define Tank1 Devices::_Tank1::Instance()
 /**
  * Tank1 represents the inner tank in the Propulsion System
  * valve 0 - main intertank valve
@@ -233,7 +237,7 @@ public:
     }
 };
 
-#define Tank2 _Tank2::Instance()
+#define Tank2 Devices::_Tank2::Instance()
 /**
  * Tank2 reprsents the outer tank in the Propulsion System
  * Valve 0, 1, 2, 3 - four thrust valves
@@ -280,7 +284,7 @@ private:
     //! Loop interval in milliseconds.
     static constexpr unsigned int thrust_valve_loop_interval_ms = 3; 
 
-    friend class PropulsionSystem;
+    friend class _PropulsionSystem;
 };
 }  // namespace Devices
 #endif

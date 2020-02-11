@@ -1,7 +1,5 @@
 #include <fsw/FCCode/PropController.hpp>
 
-using namespace Devices;
-
 PropController::PropController(StateFieldRegistry& registry, unsigned int offset)
 : TimedControlTask<void>(registry, "prop", offset),
   prop_state_f("prop.state", Serializer<unsigned int>(6)),
@@ -88,7 +86,24 @@ void PropController::dispatch_firing()
 
 void PropController::dispatch_handling_fault()
 {
+  // TODO 
+}
 
+void PropController::_PropIdle::entry_protocol()
+{
+  // do nothing - maybe check for hardware faults?
+}
+
+prop_state_t PropController::_PropIdle::next_state()
+{
+  // check schedule
+
+  // if there is a feasible schedule then check time
+
+  // if it is time to pressurize then transition to pressurizing
+
+  // otherwise, stay in idle
+  return prop_state_t::idle;
 }
 
 void PropController::_Pressurizing::entry_protocol()
@@ -110,7 +125,7 @@ prop_state_t PropController::_Pressurizing::next_state()
 {
   if (is_at_threshold_pressure())
   {
-    prop_system.close_valve(Tank1, valve_num);
+    PropulsionSystem.close_valve(Tank1, valve_num);
     return prop_state_t::await_firing;
   }
   // Tank2 is not at threshold pressure
@@ -140,7 +155,7 @@ void PropController::_Pressurizing::handle_currently_pressurizing()
     // Assuming that this subtraction is always safe -- TODO: confirm this?
     if (control_cycle_count - cycle_start_time > cycle_duration_ms)
     {
-      prop_system.close_valve(Tank1, valve_num);
+      PropulsionSystem.close_valve(Tank1, valve_num);
     }
 }
 
@@ -156,15 +171,47 @@ void PropController::_Pressurizing::start_pressurize_cycle()
   // Increment the cycle count
   current_cycle++;
   // Open the valve
-  prop_system.open_valve(Tank1, valve_num);
+  PropulsionSystem.open_valve(Tank1, valve_num);
 }
 
-void PropController::_Pressurizing::exit_protocol()
+void PropController::_Firing::entry_protocol()
 {
-
+  // Initialize the IntervalTimer
+  PropulsionSystem.start_firing();
 }
 
-bool PropController::_Pressurizing::assert_state()
+prop_state_t PropController::_Firing::next_state()
 {
-  return false;
+  // Check the schedule to see if we are done
+  if (is_schedule_empty())
+    return prop_state_t::idle;
+  else
+    return prop_state_t::firing;
+}
+
+bool PropController::_Firing::is_schedule_empty()
+{
+  unsigned int remain = 0;
+  for (size_t i = 0; i < 4; ++i)
+    remain += Tank2.get_schedule_at(i);
+  return remain == 0;
+}
+
+void PropController::_Await_Firing::entry_protocol()
+{
+  // tank should be pressurized
+  // ther should be a schedule
+  // there should be a firing time
+  // if any of these are not true then throw fault
+}
+
+prop_state_t PropController::_Await_Firing::next_state()
+{
+  // if near firing time and schedule is valid, then switch to firing time
+  return prop_state_t::await_firing;
+}
+
+bool PropController::_Await_Firing::is_schedule_valid()
+{
+  return 0;
 }

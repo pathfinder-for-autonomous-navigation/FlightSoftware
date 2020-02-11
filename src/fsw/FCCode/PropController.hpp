@@ -61,7 +61,7 @@ class PropController : public TimedControlTask<void> {
   inline static bool is_at_threshold_pressure()
   {
     static constexpr float threshold_pressure = 25;
-    return Devices::Tank2.get_pressure() >= threshold_pressure;
+    return Tank2.get_pressure() >= threshold_pressure;
   }
 
   // return true if we can feasibly fire at the current schedule
@@ -73,35 +73,43 @@ class PropController : public TimedControlTask<void> {
   void handle_unexpected_state();
   void handle_bad_schedule();
 
-  static Devices::PropulsionSystem prop_system;
-
   // ------------------------------------------------------------------------
   // Propulsion States
   // ------------------------------------------------------------------------
-  // Abstraction of a prop state
+  // Abstraction of a prop state - everything is private
   class PropState
   {
-    public:
+    protected:
     // called when entering this state
     virtual void entry_protocol() = 0;
     // called when we have been in this state and want to determine
     // whether we should transition
     virtual prop_state_t next_state() = 0;
-    //called when leaving this state
-    virtual void exit_protocol() = 0;
-    // check that all the requirements of being in this state are met
-    virtual bool assert_state() = 0; 
+  };
+
+  #define PropIdle PropController::_PropIdle::Instance()
+  class _PropIdle : public PropState
+  {
+    private:
+    _PropIdle();
+    inline static _PropIdle & Instance()
+    {
+      static _PropIdle Instance;
+      return Instance;
+    }
+    void entry_protocol() override;
+    prop_state_t next_state() override;
   };
 
   // A pressurizing cycle is a 1 second duration in which an intertank valve is opened
   // A single pressurizing cycle will span multiple control cycles
   // If we have executed 20 consecutive pressurizing cycles and have not yet reached
   // threshold pressure, then this is a fault
-  #define Pressurizing _Pressurizing::Instance();
+  #define Pressurizing PropController::_Pressurizing::Instance()
   class _Pressurizing : public PropState
   {
+      private:
     _Pressurizing();
-    public:
     inline static _Pressurizing& Instance()
     {
         static _Pressurizing Instance;
@@ -109,8 +117,6 @@ class PropController : public TimedControlTask<void> {
     }
     void entry_protocol() override;
     prop_state_t next_state() override;
-    void exit_protocol() override;
-    bool assert_state() override;
     // maximum number pressurizing cycles allowed
     static unsigned int const max_cycles = 20;
     private:
@@ -130,6 +136,41 @@ class PropController : public TimedControlTask<void> {
     unsigned int cycle_start_time = 0;
   };
 
+  #define Firing PropController::_Firing::Instance()
+
+  class _Firing : public PropState
+  {
+    private:
+    _Firing();
+    inline static _Firing& Instance()
+    {
+        static _Firing Instance;
+        return Instance;
+    }
+    void entry_protocol() override;
+    prop_state_t next_state() override;
+    // Returns true if the entire schedule is all zeros
+    bool is_schedule_empty();
+  };
+
+  #define Await_Firing PropController::_Await_Firing::Instance()
+
+  class _Await_Firing : public PropState
+  {
+    private:
+    _Await_Firing();
+    inline static _Await_Firing& Instance()
+    {
+      static _Await_Firing Instance;
+      return Instance;
+    }
+    void entry_protocol() override;
+    prop_state_t next_state() override;
+    // returnt true if schedule and start time is feasible
+    static bool is_schedule_valid();
+  };
+
+  // pointer to the current prop state
   static PropState* prop_state;
 
 };
