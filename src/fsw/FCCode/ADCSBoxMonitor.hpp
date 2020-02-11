@@ -86,8 +86,9 @@ protected:
     std::vector<ReadableStateField<bool>> havt_read_vector;
     Serializer<bool> havt_bool_sr;
 
-    //! Fault is thrown if is_functional() for ADCS itself doesn't work
+    // RSF is named "adcs_monitor.functional", set to return of adcs_system.is_functional()
     ReadableStateField<bool> adcs_is_functional;
+    //! Fault is thrown if is_functional() for ADCS itself doesn't work
     Fault adcs_functional_fault;
 
     // Faults are signaled based off of HAVT

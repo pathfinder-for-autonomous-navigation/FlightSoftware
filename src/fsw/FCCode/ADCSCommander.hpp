@@ -23,7 +23,7 @@ class ADCSCommander : public TimedControlTask<void> {
     void execute() override;
 
    protected:
-    // input fields
+    // input fields, given by a casted adcs_state_t enum
     const WritableStateField<unsigned char>* adcs_state_fp;
 
     // outputs from AttitudeComputer as inputs
