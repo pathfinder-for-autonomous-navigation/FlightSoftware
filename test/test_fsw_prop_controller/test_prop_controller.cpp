@@ -174,7 +174,6 @@ void test_firing()
   // TODO: check state associated with firing
 }
 
-
 int test_prop_controller() {
     UNITY_BEGIN();
     RUN_TEST(test_initialization);

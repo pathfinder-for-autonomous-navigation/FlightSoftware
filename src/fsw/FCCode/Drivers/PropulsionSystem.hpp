@@ -77,9 +77,6 @@ class Tank;
  * Only tank2 has a schedule since only tank2 uses the IntervalTimer to fire.
  * 
  **/
-#ifdef DESKTOP
-    uint32_t micros(){ return 0; }
-#endif
 
 class PropulsionSystem : public Device {
 
