@@ -38,10 +38,10 @@ class TestFixture {
         attitude_computer = std::make_unique<AttitudeComputer>(registry, 0);
 
         // Check that attitude computer creates its expected fields
-        adcs_vec1_current_fp = registry.find_writable_field_t<f_vector_t>("adcs.control.vec1.current");
-        adcs_vec1_desired_fp = registry.find_writable_field_t<f_vector_t>("adcs.control.vec1.desired");
-        adcs_vec2_current_fp = registry.find_writable_field_t<f_vector_t>("adcs.control.vec2.current");
-        adcs_vec2_desired_fp = registry.find_writable_field_t<f_vector_t>("adcs.control.vec2.desired");
+        adcs_vec1_current_fp = registry.find_writable_field_t<f_vector_t>("adcs.compute.vec1.current");
+        adcs_vec1_desired_fp = registry.find_writable_field_t<f_vector_t>("adcs.compute.vec1.desired");
+        adcs_vec2_current_fp = registry.find_writable_field_t<f_vector_t>("adcs.compute.vec2.current");
+        adcs_vec2_desired_fp = registry.find_writable_field_t<f_vector_t>("adcs.compute.vec2.desired");
 
         // Set quaternion to non-rotating value
         q_body_eci_fp->set({0,0,0,1});

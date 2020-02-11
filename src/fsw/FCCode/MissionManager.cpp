@@ -53,6 +53,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     low_batt_fault_fp = static_cast<Fault*>(
             find_writable_field<bool>("gomspace.low_batt", __FILE__, __LINE__));
+    adcs_functional_fault_fp = static_cast<Fault*>(
+            find_writable_field<bool>("adcs_monitor.functional_fault", __FILE__, __LINE__));
     wheel1_adc_fault_fp = static_cast<Fault*>(
             find_writable_field<bool>("adcs_monitor.wheel1_fault", __FILE__, __LINE__));
     wheel2_adc_fault_fp = static_cast<Fault*>(
@@ -79,7 +81,9 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 }
 
 bool MissionManager::check_adcs_hardware_faults() const {
-    return wheel1_adc_fault_fp->is_faulted() || wheel2_adc_fault_fp->is_faulted()
+    return  adcs_functional_fault_fp->is_faulted()
+            || wheel1_adc_fault_fp->is_faulted() 
+            || wheel2_adc_fault_fp->is_faulted()
             || wheel3_adc_fault_fp->is_faulted()
             || wheel_pot_fault_fp->is_faulted();
 }

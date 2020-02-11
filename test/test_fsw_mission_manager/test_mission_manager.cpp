@@ -257,15 +257,16 @@ void test_power_prop_adcs_faults_responsive() {
     // Prop pressurization fault should cause a transition to standby.
     //
     for(mission_state_t state : MissionManager::fault_responsive_states) {
-        std::array<TestFixture, 5> tf_v {
+        std::array<TestFixture, 6> tf_v {
             TestFixture(state), TestFixture(state), TestFixture(state),
-            TestFixture(state), TestFixture(state)
+            TestFixture(state), TestFixture(state), TestFixture(state)
         };
         tf_v[0].low_batt_fault_f.override();
-        tf_v[1].wheel1_adc_fault_f.override();
-        tf_v[2].wheel2_adc_fault_f.override();
-        tf_v[3].wheel3_adc_fault_f.override();
-        tf_v[4].wheel_pot_fault_f.override();
+        tf_v[1].adcs_functional_fault_f.override();
+        tf_v[2].wheel1_adc_fault_f.override();
+        tf_v[3].wheel2_adc_fault_f.override();
+        tf_v[4].wheel3_adc_fault_f.override();
+        tf_v[5].wheel_pot_fault_f.override();
         for(TestFixture& tf : tf_v) {
             tf.step();
             tf.check(mission_state_t::safehold);
@@ -305,15 +306,16 @@ void test_power_prop_adcs_faults_nonresponsive() {
     // See MissionManager.hpp for a definition of these states.
 
     for(mission_state_t state : MissionManager::fault_nonresponsive_states) {
-        std::array<TestFixture, 5> tf_v {
+        std::array<TestFixture, 6> tf_v {
             TestFixture(state), TestFixture(state), TestFixture(state),
-            TestFixture(state), TestFixture(state)
+            TestFixture(state), TestFixture(state), TestFixture(state)
         };
         tf_v[0].low_batt_fault_f.override();
-        tf_v[1].wheel1_adc_fault_f.override();
-        tf_v[2].wheel2_adc_fault_f.override();
-        tf_v[3].wheel3_adc_fault_f.override();
-        tf_v[4].wheel_pot_fault_f.override();
+        tf_v[1].adcs_functional_fault_f.override();
+        tf_v[2].wheel1_adc_fault_f.override();
+        tf_v[3].wheel2_adc_fault_f.override();
+        tf_v[4].wheel3_adc_fault_f.override();
+        tf_v[5].wheel_pot_fault_f.override();
         for(TestFixture& tf : tf_v) {
             tf.step();
             tf.check(state);
@@ -332,11 +334,12 @@ void test_adcs_faults_inithold() {
     // hold if the satellite is in startup past its
     // deployment wait period.
     {
-        std::array<TestFixture, 4> tf_v;
-        tf_v[0].wheel1_adc_fault_f.override();
-        tf_v[1].wheel2_adc_fault_f.override();
-        tf_v[2].wheel3_adc_fault_f.override();
-        tf_v[3].wheel_pot_fault_f.override();
+        std::array<TestFixture, 5> tf_v;
+        tf_v[0].adcs_functional_fault_f.override();
+        tf_v[1].wheel1_adc_fault_f.override();
+        tf_v[2].wheel2_adc_fault_f.override();
+        tf_v[3].wheel3_adc_fault_f.override();
+        tf_v[4].wheel_pot_fault_f.override();
         for(TestFixture& tf : tf_v) {
             tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
             tf.step();
