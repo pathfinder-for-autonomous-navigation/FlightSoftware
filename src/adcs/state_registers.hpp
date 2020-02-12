@@ -20,7 +20,6 @@ namespace adcs {
  *  The below value should be the first and  */
 enum Register : unsigned char {
   WHO_AM_I,
-  ENDIANNESS,
   ADCS_MODE,
   READ_POINTER,
   RWA_MODE,
@@ -39,8 +38,10 @@ enum Register : unsigned char {
   SSA_VOLTAGE_FILTER,
   SSA_VOLTAGE_READ,
   SSA_VOLTAGE_THRESHOLD,
-  IMU_MODE,
-  IMU_MAG_READ,
+  IMU_MAG1_MODE,
+  IMU_MAG2_MODE,
+  IMU_MAG1_READ,
+  IMU_MAG2_READ,
   IMU_GYR_READ,
   IMU_GYR_TEMP_READ,
   IMU_MAG_FILTER,

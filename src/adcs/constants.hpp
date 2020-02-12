@@ -38,17 +38,13 @@ enum ADCSMode : unsigned char {
   ADCS_ACTIVE = 1
 };
 
-/** \enum IMUMode
- *  Outlines all modes of the IMU assembly. */
-enum IMUMode : unsigned char {
-  /** ADCS attempts to read the first magnetometer. */
-  MAG1 = 0,
-  /** ADCS attempts to read the second magnetometer. */
-  MAG2 = 1,
-  /** ADCS calibrates the first magnetometer and then reads in from then on. */
-  MAG1_CALIBRATE = 2,
-  /** ADCS calibrates the second magnetometer and then reads in from then on. */
-  MAG2_CALIBRATE = 3
+/** \enum IMUMAGMode
+ *  Outlines all modes of the IMU magnetometers. */
+enum IMUMAGMode : unsigned char {
+  /** Continue normal operation - i.e. no calibration. */
+  IMU_MAG_NORMAL = 0,
+  /** Calibrate the magnetometer. */
+  IMU_MAG_CALIBRATE = 1
 };
 
 /** \enum MTRMode
@@ -137,11 +133,6 @@ TRACKED_CONSTANT_SC(float, max_mag2_rd_mag, 0.0032f); // TODO : Check this
 /** Minimum magnetic field reading in Tesla that can be read from the second
  *  magnetometer. */
 TRACKED_CONSTANT_SC(float, min_mag2_rd_mag, -max_mag2_rd_mag);
-
-/** Maximum magnetic field reading in Tesla that can be read per component. */
-TRACKED_CONSTANT_SC(float, max_rd_mag, (max_mag1_rd_mag > max_mag2_rd_mag ? max_mag1_rd_mag : max_mag2_rd_mag));
-/** Minimum magnetic field reading in Tesla that can be read per component. */
-TRACKED_CONSTANT_SC(float, min_rd_mag, -max_rd_mag);
 
 }  // namespace imu
 
