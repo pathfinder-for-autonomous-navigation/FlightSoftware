@@ -26,67 +26,82 @@ namespace imu {
 
 dev::LIS2MDLTR mag1;
 
-dev::MMC34160PJ mag2;
-
-lin::Vector3f mag_rd({
+lin::Vector3f mag1_rd({
   0.0f,
   0.0f,
   0.0f
 });
 
-static unsigned char update_mag(unsigned char mode, float mag_flt) {
-  unsigned char return_mode = mode & 0b10;
+dev::MMC34160PJ mag2;
+
+lin::Vector3f mag2_rd({
+  0.0f,
+  0.0f,
+  0.0f
+});
+
+static void update_mag(unsigned char mag1_mode, unsigned char mag2_mode,
+    float mag_flt) {
   lin::Vector3f data;
 
-  // Switch on the current magnetometer in use
-  if ((mode & 0b11111101) != 0b1) {
-    // Calibrate the magnetometer if requested
-    // if (mag1.is_functional() && (mode & 0b10)) mag1.calibrate();
-    // TODO : Implement calibrate function    -->   ^^^^^
+  // Calibrate magnetometer one if requested
+  // if (mag1.is_functional() && (mag1_mode == IMUMAGMode::IMU_MAG_CALIBRATE))
+  //   mag1.calibrate();
+  // TODO :  ^^^^ --> Implement calibrate function
 
-    // Attempt a read if ready and ensure it was succesful
-    if (!mag1.is_functional()) return return_mode;
-    if (!mag1.is_ready()) return return_mode;
-    if (!mag1.read()) return return_mode;
+  // Attempt a read if ready and ensure it was succesful
+  if (!mag1.is_functional()) return;
+  if (!mag1.is_ready()) return;
+  if (!mag1.read()) return;
 
-    // Read in data and transform to the body frame
-    data = {
-      utl::fp(mag1.get_b_x(), min_mag1_rd_mag, max_mag1_rd_mag),
-      utl::fp(mag1.get_b_y(), min_mag1_rd_mag, max_mag1_rd_mag),
-      utl::fp(mag1.get_b_z(), min_mag1_rd_mag, max_mag1_rd_mag)
-    };
-    data = mag1_to_body * data;
-  }
-  else {
-    // Calibrate the magnetometer if requested
-    if (mag2.is_functional() && (mode & 0b10)) mag2.calibrate();
+  // Read in data and transform to the body frame
+  data = {
+    utl::fp(mag1.get_b_x(), min_mag1_rd_mag, max_mag1_rd_mag),
+    utl::fp(mag1.get_b_y(), min_mag1_rd_mag, max_mag1_rd_mag),
+    utl::fp(mag1.get_b_z(), min_mag1_rd_mag, max_mag1_rd_mag)
+  };
+  data = mag1_to_body * data;
 
-    // Attempt a read if ready and ensure it was succesful
-    if (!mag2.is_functional()) return return_mode;
-    if (!mag2.is_ready()) return return_mode;
-    if (!mag2.read()) return return_mode;
-
-    // Read in data and transform to the body frame
-    data = {
-      utl::fp(mag2.get_b_x(), min_mag2_rd_mag, max_mag2_rd_mag),
-      utl::fp(mag2.get_b_y(), min_mag2_rd_mag, max_mag2_rd_mag),
-      utl::fp(mag2.get_b_z(), min_mag2_rd_mag, max_mag2_rd_mag)
-    };
-    data = mag2_to_body * mag_rd;
-  }
-
-  // Update the filtered magnetic field reading
-  mag_rd = mag_rd + (data - mag_rd) * mag_flt;
+  // Update the filtered magnetic field reading for magnetometer one
+  mag1_rd = mag1_rd + (data - mag1_rd) * mag_flt;
 
   LOG_TRACE_header
-  LOG_TRACE_println("Updated magnetometer reading " + String(data(0)) + " "
+  LOG_TRACE_println("Updated magnetometer one reading " + String(data(0)) + " "
       + String(data(1)) + " " + String(data(2)))
 
   LOG_TRACE_header
-  LOG_TRACE_println("Updated, filtered magnetometer reading "
-      + String(mag_rd(0)) + " " + String(mag_rd(1)) + " " + String(mag_rd(2)))
+  LOG_TRACE_println("Updated, filtered magnetometer one reading "
+      + String(mag1_rd(0)) + " " + String(mag1_rd(1)) + " "
+      + String(mag1_rd(2)))
 
-  return return_mode;
+  // Calibrate magnetometer two if requested
+  if (mag2.is_functional() && (mag2_mode == IMUMAGMode::IMU_MAG_CALIBRATE))
+    mag2.calibrate();
+
+  // Attempt a read if ready and ensure it was succesful
+  if (!mag2.is_functional()) return;
+  if (!mag2.is_ready()) return;
+  if (!mag2.read()) return;
+
+  // Read in data and transform to the body frame
+  data = {
+    utl::fp(mag2.get_b_x(), min_mag2_rd_mag, max_mag2_rd_mag),
+    utl::fp(mag2.get_b_y(), min_mag2_rd_mag, max_mag2_rd_mag),
+    utl::fp(mag2.get_b_z(), min_mag2_rd_mag, max_mag2_rd_mag)
+  };
+  data = mag2_to_body * data;
+
+  // Update the filtered magnetic field reading for magnetometer two
+  mag2_rd = mag2_rd + (data - mag2_rd) * mag_flt;
+
+  LOG_TRACE_header
+  LOG_TRACE_println("Updated magnetometer two reading " + String(data(0)) + " "
+      + String(data(1)) + " " + String(data(2)))
+
+  LOG_TRACE_header
+  LOG_TRACE_println("Updated, filtered magnetometer two reading "
+      + String(mag2_rd(0)) + " " + String(mag2_rd(1)) + " "
+      + String(mag2_rd(2)))
 }
 
 dev::LSM6DSM gyr;
@@ -185,20 +200,18 @@ void setup() {
   LOG_INFO_printlnF("Complete")
 }
 
-unsigned char update_sensors(unsigned char mode, float mag_flt, float gyr_flt,
-    float gyr_temp_eq, float gyr_temp_flt, float gry_temp_k_p,
-    float gyr_temp_k_i, float gyr_temp_k_d) {
+void update_sensors(unsigned char mag1_mode, unsigned char mag2_mode,
+    float mag_flt, float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
+    float gry_temp_k_p, float gyr_temp_k_i, float gyr_temp_k_d) {
   LOG_TRACE_header
   LOG_TRACE_printlnF("Updating IMU sensors")
 
   update_gyr(gyr_flt, gyr_temp_eq, gyr_temp_flt, gry_temp_k_p, gyr_temp_k_i,
       gyr_temp_k_d);
-  unsigned char ret = update_mag(mode, mag_flt);
+  update_mag(mag1_mode, mag2_mode, mag_flt);
 
   LOG_TRACE_header
-  LOG_TRACE_println("Complete; returning IMU mode " + String(ret))
-
-  return ret;
+  LOG_TRACE_println("Complete")
 }
 }  // namespace imu
 }  // namespace adcs
