@@ -154,7 +154,7 @@ void update_imu() {
     registers.imu.gyr_rd[0] = imu::gyr_rd(0);
     registers.imu.gyr_rd[1] = imu::gyr_rd(1);
     registers.imu.gyr_rd[2] = imu::gyr_rd(2);
-  } // InterruptSafe
+  }
   registers.imu.mag1_mode = IMUMAGMode::IMU_MAG_NORMAL;
   registers.imu.mag2_mode = IMUMAGMode::IMU_MAG_NORMAL;
   registers.imu.gyr_temp_rd = imu::gyr_temp_rd;
