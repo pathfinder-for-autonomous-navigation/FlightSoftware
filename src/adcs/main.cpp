@@ -96,7 +96,8 @@ void setup() {
 }
 
 void update_havt() {
-
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Entering update HAVT")
   //update internal table
   havt::update_read_table();
 
@@ -125,9 +126,12 @@ void update_havt() {
       havt::execute_cmd_disable_table(temp_command_table);
     }
   }
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Complete")
 }
 
 void update_imu() {
+  LOG_TRACE_header
   // Update imu readings and copy into the proper registers
   registers.imu.mode = imu::update_sensors(registers.imu.mode,
       registers.imu.mag_flt, registers.imu.gyr_flt,
@@ -141,6 +145,9 @@ void update_imu() {
   registers.imu.mag_rd[0] = imu::mag_rd(0);
   registers.imu.mag_rd[1] = imu::mag_rd(1);
   registers.imu.mag_rd[2] = imu::mag_rd(2);
+
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Complete")
 }
 
 // TODO : Test that this controller works as expected
@@ -151,6 +158,7 @@ void update_imu() {
  *  magnetic torque rods are enabled, and the command vector was copied
  *  atomically. */
 void update_mtr() {
+  LOG_TRACE_header
   unsigned char mtr_mode;
   lin::Vector3f mtr_cmd;
 
@@ -163,6 +171,9 @@ void update_mtr() {
   // Actuate if the copy was atomic
   if (registers.mtr.cmd_flg == CMDFlag::OUTDATED)
     mtr::actuate(mtr_mode, mtr_cmd, registers.mtr.moment_limit);
+
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Complete")
 }
 
 /** \fn update_rwa 
@@ -189,6 +200,9 @@ void update_rwa() {
   registers.rwa.ramp_rd[0] = rwa::ramp_rd(0);
   registers.rwa.ramp_rd[1] = rwa::ramp_rd(1);
   registers.rwa.ramp_rd[2] = rwa::ramp_rd(2);
+
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Complete")
 }
 
 /** \fn update_ssa
@@ -196,6 +210,7 @@ void update_rwa() {
  *  requested. The sun vector calculation is triggered by the state struct. The
  *  state struct is updated on the completion of a sun vector calculation. */
 void update_ssa() {
+  LOG_TRACE_header
   lin::Vector3f ssa_sun_vec;
   unsigned char ssa_mode;
 
@@ -212,6 +227,8 @@ void update_ssa() {
     registers.ssa.sun_vec_rd[2] = ssa_sun_vec(2);
     registers.ssa.mode = ssa_mode;
   }
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Complete")
 }
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
