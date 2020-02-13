@@ -36,7 +36,7 @@ void setup() {
 
   LOG_INFO_header
   LOG_INFO_printlnF("Waiting for ten seconds before starting the test...")
-  delay(10000);
+  delay(15000);
 
   // Initialize master I2C busses
   Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000);
@@ -62,14 +62,16 @@ void setup() {
   }
 
   // Wheel speeds the tests will be performed at
-  std::array<float, 6> wheel_speeds = {
-    50.0f, 75.0f, 100.0f, 125.0f, 150.0f, 175.0f
+  std::array<float, 10> wheel_speeds = {
+    5.0f, 10.0f, 15.0f, 20.0f, 25.0f, 30.0f, 35.0f, 40.0f, 45.0f, 50.0f
   };
 
   // Loop over wheels speed and each wheel to perform the test.
   for (auto const &wheel_speed : wheel_speeds) {
 
     // Wait for the wheels to ramp up to the desired speed
+    rwa::wheels[0].disable();
+    rwa::wheels[1].disable();
     rwa::actuate(RWAMode::RWA_SPEED_CTRL, lin::Vector3f({wheel_speed, wheel_speed, wheel_speed}));
     delay(5000);
 

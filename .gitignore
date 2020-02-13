@@ -1,4 +1,5 @@
 test/output_export.cpp
+tmp
 # OS Generated .DS_store files
 .DS_Store
 .vscode
