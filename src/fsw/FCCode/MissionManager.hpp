@@ -68,39 +68,6 @@ class MissionManager : public TimedControlTask<void> {
 
    protected:
     /**
-     * @brief Returns true if there are ADCS hardware faults.
-     */
-    bool check_adcs_hardware_faults();
-    
-    /**
-     * @brief Cause mission state transitions based on the fault state of
-     * the spacecraft. This function is called in execute() right before
-     * the switch() statement which dispatches the state handler.
-     * 
-     * This function should not be called in the startup state (it is not safe
-     * to cause autonomous transitions in the startup state.)
-     * 
-     * @param cur_state 
-     * @return True if there is a fault that necessitated a state transition.
-     *         In order to ensure that there is at most one state transition
-     *         per call to execute(), the execute() function should exit immediately
-     *         if it receives this value.
-     * 
-     *         False if no faults required handling.
-     */
-    bool handle_faults(mission_state_t cur_state);
-
-    /**
-     * @brief State machine that tracks Quake SBDIX faults and recommends
-     * a course of action to the mission manager.
-     */
-    #ifdef UNIT_TEST
-        QuakeFaultHandlerMock quake_fault_handler;
-    #else
-        QuakeFaultHandler quake_fault_handler;
-    #endif
-
-    /**
      * @brief Handles logic while within a state.
      */
     void dispatch_startup();
