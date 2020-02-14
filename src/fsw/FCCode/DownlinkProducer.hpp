@@ -120,6 +120,12 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void swap_flow_priorities(unsigned char id1, unsigned char id2);
 
+    /**
+     * @brief Shift the priorities of the flows with the given IDs. Also swaps
+     * their active status.
+     */
+    void shift_flow_priorities(unsigned char id1, unsigned char id2);
+
   protected:
     /** @brief Pointer to cycle count. */
     ReadableStateField<unsigned int>* cycle_count_fp;
