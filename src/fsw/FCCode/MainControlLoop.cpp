@@ -64,7 +64,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
 
     eeprom_controller.init(statefields, periods);
     // Since all telemetry fields have been added to the registry, initialize flows
-    // downlink_producer.init_flows(flow_data);
+    downlink_producer.init_flows(flow_data);
 }
 
 void MainControlLoop::execute() {
