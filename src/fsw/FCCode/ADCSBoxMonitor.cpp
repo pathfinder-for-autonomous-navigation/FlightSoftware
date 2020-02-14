@@ -30,6 +30,8 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr),
     havt_bool_sr(),
+    adcs_is_functional("adcs_monitor.functional", flag_sr),
+    adcs_functional_fault("adcs_monitor.functional_fault", 1, control_cycle_count),
     wheel1_adc_fault("adcs_monitor.wheel1_fault", 1, control_cycle_count),
     wheel2_adc_fault("adcs_monitor.wheel2_fault", 1, control_cycle_count),
     wheel3_adc_fault("adcs_monitor.wheel3_fault", 1, control_cycle_count),
@@ -84,7 +86,9 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(gyr_vec_flag);
         add_readable_field(gyr_temp_flag);
 
+        add_readable_field(adcs_is_functional);
         // add faults to registry
+        adcs_functional_fault.add_to_registry(registry);
         wheel1_adc_fault.add_to_registry(registry);
         wheel2_adc_fault.add_to_registry(registry);
         wheel3_adc_fault.add_to_registry(registry);
@@ -125,9 +129,12 @@ void ADCSBoxMonitor::execute(){
     float gyr_temp = 0.0;
 
     //ask the driver to fill in values
-    // adcs_box_functional.set(adcs_system.is_functional());
-    // if(!adcs_box_functional.get())
-    //     adcs_functional_fault.signal();
+    adcs_is_functional.set(adcs_system.is_functional());
+    if(!adcs_is_functional.get())
+        adcs_functional_fault.signal();
+    else
+        adcs_functional_fault.unsignal();
+    
 
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
     adcs_system.get_ssa_voltage(&ssa_voltages);

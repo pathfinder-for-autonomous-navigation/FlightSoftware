@@ -4,6 +4,7 @@
 
 TestFixture::TestFixture(mission_state_t initial_state) : registry(),
     low_batt_fault_f("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count),
+    adcs_functional_fault_f("adcs_monitor.functional_fault", 1, TimedControlTaskBase::control_cycle_count),
     wheel1_adc_fault_f("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count),
     wheel2_adc_fault_f("adcs_monitor.wheel2_fault", 1, TimedControlTaskBase::control_cycle_count),
     wheel3_adc_fault_f("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count),
@@ -28,6 +29,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
     low_batt_fault_f.add_to_registry(registry);
+    adcs_functional_fault_f.add_to_registry(registry);
     wheel1_adc_fault_f.add_to_registry(registry);
     wheel2_adc_fault_f.add_to_registry(registry);
     wheel3_adc_fault_f.add_to_registry(registry);
