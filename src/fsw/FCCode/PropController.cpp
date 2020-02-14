@@ -18,6 +18,8 @@ PropController::PropController(StateFieldRegistry& registry, unsigned int offset
   add_writable_field(sched_valve4_f);
 }
 
+unsigned int PropController::_fire_cycle = 0;
+
 void PropController::execute()
 {
   switch( static_cast<prop_state_t>(prop_state_f.get()) )
@@ -89,9 +91,10 @@ void PropController::dispatch_handling_fault()
   // TODO 
 }
 
-void PropController::_PropIdle::entry_protocol()
+bool PropController::_PropIdle::entry_protocol()
 {
   // do nothing - maybe check for hardware faults?
+  return true;
 }
 
 prop_state_t PropController::_PropIdle::next_state()
@@ -106,13 +109,14 @@ prop_state_t PropController::_PropIdle::next_state()
   return prop_state_t::idle;
 }
 
-void PropController::_Pressurizing::entry_protocol()
+bool PropController::_Pressurizing::entry_protocol()
 {
   // Set which Tank1 valve to use (default: valve_num = 0)
   if (should_use_backup())
     valve_num = 1;
   // Reset the pressurizing cycles count to 0
   current_cycle = 0;
+  return true;
 }
 
 bool PropController::_Pressurizing::should_use_backup()
@@ -174,10 +178,11 @@ void PropController::_Pressurizing::start_pressurize_cycle()
   PropulsionSystem.open_valve(Tank1, valve_num);
 }
 
-void PropController::_Firing::entry_protocol()
+bool PropController::_Firing::entry_protocol()
 {
   // Initialize the IntervalTimer
   PropulsionSystem.start_firing();
+  return true;
 }
 
 prop_state_t PropController::_Firing::next_state()
@@ -197,21 +202,27 @@ bool PropController::_Firing::is_schedule_empty()
   return remain == 0;
 }
 
-void PropController::_Await_Firing::entry_protocol()
+bool PropController::_Await_Firing::entry_protocol()
 {
   // tank should be pressurized
-  // ther should be a schedule
+  if (!PropController::is_at_threshold_pressure())
+    return false;
+  // there should be a schedule
+
   // there should be a firing time
+
+  // we don't check for the correctness of this
+  
+  return true;
+
   // if any of these are not true then throw fault
 }
 
 prop_state_t PropController::_Await_Firing::next_state()
 {
-  // if near firing time and schedule is valid, then switch to firing time
+  // if we are within a control cycle of firing time then fire
+  if (is_time_to_fire())
+    return prop_state_t::firing;
+  
   return prop_state_t::await_firing;
-}
-
-bool PropController::_Await_Firing::is_schedule_valid()
-{
-  return 0;
 }

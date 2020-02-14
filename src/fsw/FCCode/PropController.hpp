@@ -17,6 +17,7 @@ class PropController : public TimedControlTask<void> {
   // Dangerous: prop_state_f can be changed at anytime by outside components
   WritableStateField<unsigned int>prop_state_f;
 
+  // the cycle at which we should fire
   WritableStateField<unsigned int>fire_cycle_f;
   WritableStateField<unsigned int>sched_valve1_f;
   WritableStateField<unsigned int>sched_valve2_f;
@@ -24,6 +25,8 @@ class PropController : public TimedControlTask<void> {
   WritableStateField<unsigned int>sched_valve4_f;
 
   private:
+  static unsigned int _fire_cycle;
+
   // ------------------------------------------------------------------------
   // State Handling Functions
   // ------------------------------------------------------------------------
@@ -64,9 +67,6 @@ class PropController : public TimedControlTask<void> {
     return Tank2.get_pressure() >= threshold_pressure;
   }
 
-  // return true if we can feasibly fire at the current schedule
-  bool is_schedule_good();
-
   // ------------------------------------------------------------------------
   // Fault Handling Functions
   // ------------------------------------------------------------------------
@@ -77,18 +77,22 @@ class PropController : public TimedControlTask<void> {
   // Propulsion States
   // ------------------------------------------------------------------------
   // Abstraction of a prop state - everything is private
-  class PropState
+  class PropState_t
   {
     protected:
-    // called when entering this state
-    virtual void entry_protocol() = 0;
+    // entry_protocol consists of any startup routines needed to set up the state
+    // it checks the current state of the propulsion system to make sure that
+    // preconditions of entering this state are met (for example, Await_Firing should only
+    // be entered if Tank2 is pressurized). It will return True if PropController
+    // has successfully entered this state
+    virtual bool entry_protocol() = 0;
     // called when we have been in this state and want to determine
     // whether we should transition
     virtual prop_state_t next_state() = 0;
   };
 
   #define PropIdle PropController::_PropIdle::Instance()
-  class _PropIdle : public PropState
+  class _PropIdle : public PropState_t
   {
     private:
     _PropIdle();
@@ -97,7 +101,9 @@ class PropController : public TimedControlTask<void> {
       static _PropIdle Instance;
       return Instance;
     }
-    void entry_protocol() override;
+    bool entry_protocol() override;
+
+    // next_state returns the transition of evaluating this current state
     prop_state_t next_state() override;
   };
 
@@ -106,7 +112,7 @@ class PropController : public TimedControlTask<void> {
   // If we have executed 20 consecutive pressurizing cycles and have not yet reached
   // threshold pressure, then this is a fault
   #define Pressurizing PropController::_Pressurizing::Instance()
-  class _Pressurizing : public PropState
+  class _Pressurizing : public PropState_t
   {
       private:
     _Pressurizing();
@@ -115,7 +121,7 @@ class PropController : public TimedControlTask<void> {
         static _Pressurizing Instance;
         return Instance;
     }
-    void entry_protocol() override;
+    bool entry_protocol() override;
     prop_state_t next_state() override;
     // maximum number pressurizing cycles allowed
     static unsigned int const max_cycles = 20;
@@ -138,7 +144,7 @@ class PropController : public TimedControlTask<void> {
 
   #define Firing PropController::_Firing::Instance()
 
-  class _Firing : public PropState
+  class _Firing : public PropState_t
   {
     private:
     _Firing();
@@ -147,7 +153,7 @@ class PropController : public TimedControlTask<void> {
         static _Firing Instance;
         return Instance;
     }
-    void entry_protocol() override;
+    bool entry_protocol() override;
     prop_state_t next_state() override;
     // Returns true if the entire schedule is all zeros
     bool is_schedule_empty();
@@ -155,7 +161,7 @@ class PropController : public TimedControlTask<void> {
 
   #define Await_Firing PropController::_Await_Firing::Instance()
 
-  class _Await_Firing : public PropState
+  class _Await_Firing : public PropState_t
   {
     private:
     _Await_Firing();
@@ -164,13 +170,17 @@ class PropController : public TimedControlTask<void> {
       static _Await_Firing Instance;
       return Instance;
     }
-    void entry_protocol() override;
+      // return true if it is time to fire
+    inline bool is_time_to_fire()
+    {
+      return control_cycle_count == _fire_cycle;
+    }
+
+    bool entry_protocol() override;
     prop_state_t next_state() override;
-    // returnt true if schedule and start time is feasible
-    static bool is_schedule_valid();
   };
 
   // pointer to the current prop state
-  static PropState* prop_state;
+  static PropState_t* prop_state;
 
 };
