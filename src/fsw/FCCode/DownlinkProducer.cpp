@@ -249,12 +249,12 @@ void DownlinkProducer::swap_flow_priorities(unsigned char id1, unsigned char id2
 void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id2) {
     if(id1 >= flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to swap with flow ID %d.", id1, id2);
+                                      "trying to shift with flow ID %d.", id1, id2);
         assert(false);
     }
     if(id2 >= flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to swap with flow ID %d.", id2, id1);
+                                      "trying to shift with flow ID %d.", id2, id1);
         assert(false);
     }
 
