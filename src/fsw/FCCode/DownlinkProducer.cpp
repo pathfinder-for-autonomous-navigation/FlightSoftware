@@ -263,7 +263,7 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
         unsigned char flow_id;
         flows[idx].id_sr.deserialize(&flow_id);
         if (flow_id == id1) {
-            idx1 = idx;
+            idx1 = idx; 
         }
         if (flow_id == id2) {
             idx2 = idx;
