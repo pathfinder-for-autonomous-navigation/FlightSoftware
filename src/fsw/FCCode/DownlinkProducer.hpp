@@ -115,12 +115,6 @@ class DownlinkProducer : public TimedControlTask<void> {
     void toggle_flow(unsigned char id);
 
     /**
-     * @brief Swap the priorities of the flows with the given IDs. Also swaps
-     * their active status.
-     */
-    void swap_flow_priorities(unsigned char id1, unsigned char id2);
-
-    /**
      * @brief Shift the priorities of the flows with the given IDs. Also swaps
      * their active status. 
      */
