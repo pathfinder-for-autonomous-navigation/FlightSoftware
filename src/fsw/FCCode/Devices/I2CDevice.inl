@@ -22,6 +22,7 @@ inline bool I2CDevice::i2c_pop_errors() {
 }
 
 inline bool I2CDevice::i2c_peek_errors() const { return this->recent_errors; }
+// inline bool I2CDevice::i2c_peek_errors() const { return false; }
 
 template <typename T>
 void I2CDevice::i2c_transmit_data(T const *data, std::size_t len, i2c_stop s) {
