@@ -243,7 +243,6 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
     bool temp = flows[idx1].is_active;
     flows[idx1].is_active = flows[idx2].is_active;
     flows[idx2].is_active = temp;
-
     flows.insert(flows.begin() + std::min(idx1, idx2), flows[std::max(idx1, idx2)]);
     flows.erase(flows.begin()+std::max(idx1,idx2)+1);
 }
