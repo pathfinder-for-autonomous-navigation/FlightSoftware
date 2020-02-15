@@ -1,5 +1,8 @@
 #include <fsw/FCCode/PropController.hpp>
-
+#ifdef DESKTOP
+#include <iostream>
+using namespace std;
+#endif
 PropController::PropController(StateFieldRegistry& registry, unsigned int offset)
 : TimedControlTask<void>(registry, "prop", offset),
     prop_state_f("prop.state", Serializer<unsigned int>(6)),
@@ -34,7 +37,6 @@ void PropController::execute()
     prop_state_t current_state = static_cast<prop_state_t>(prop_state_f.get());
     
     prop_state_t next_state = get_state(current_state).evaluate();
-
     if (next_state != current_state)
     {
         if ( get_state(next_state).can_enter() )
@@ -46,6 +48,9 @@ void PropController::execute()
             // TODO: 
         }
     }
+    // Decrement fire_cycle if it is not equal to 0
+    if (fire_cycle_f.get() != 0)
+        fire_cycle_f.set(fire_cycle_f.get() - 1);
 }
 
 PropState& PropController::get_state(prop_state_t state)
@@ -77,8 +82,12 @@ bool PropController::is_valid_schedule(unsigned int v1, unsigned int v2, unsigne
     return false;
   if (v1 > 1000 || v2 > 1000 || v3 > 1000 || v4 > 1000)
     return false;
-
   return true;
+}
+
+bool PropController::validate_schedule()
+{
+    return is_valid_schedule(sched_valve1_f.get(), sched_valve2_f.get(), sched_valve3_f.get(), sched_valve4_f.get(), fire_cycle_f.get());
 }
 
 void PropController::set_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now)
@@ -90,6 +99,7 @@ void PropController::set_schedule(unsigned int v1, unsigned int v2, unsigned int
   sched_valve3_f.set(v3);
   sched_valve4_f.set(v4);
   fire_cycle_f.set(ctrl_cycles_from_now);
+    // cout << "hit 106" << endl;
 }
 
 // ------------------------------------------------------------------------
@@ -121,9 +131,10 @@ bool PropState_Idle::can_enter()
 prop_state_t PropState_Idle::evaluate()
 {
     // check schedule
-
+    if ( controller->validate_schedule() )
+        return prop_state_t::pressurizing;
     // if there is a feasible schedule then check time
-
+    // TODO: 
     // if it is time to pressurize then transition to pressurizing
 
     // otherwise, stay in idle
