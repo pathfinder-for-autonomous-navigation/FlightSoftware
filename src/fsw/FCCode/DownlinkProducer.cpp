@@ -244,26 +244,44 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
     flows[idx1].is_active = flows[idx2].is_active;
     flows[idx2].is_active = temp;
 
-    std::vector<Flow> shifted_flows;
-    std::copy(flows.begin(), flows.begin()+std::min(idx1, idx2), shifted_flows);
-    // Shifting an element backwards
+    /**
+     * Shifting an element backwards. 
+     * I'll get rid of these comments after you approve this PR.
+     * 
+     * ABCDEFGHIJK ===> AEBCDFGHIJK
+     * shift_flow_priorities(E, B): move E to B's position
+     * idx1=4 idx2=1
+     * We really just want to rotate the subarray [idx1,idx2]
+     * A BCDE FGHIJK
+     * A BBCD FGHIJK temp=E
+     * A EBCD FGHIJK
+     * 
+     * */
     if (idx1>idx2) {
-        shifted_flows.push_back(flows[idx1]);
-        for (size_t i =idx2; i<flows.size(); i++) {
-            if (i!=idx1) {
-                shifted_flows.push_back(flows[i]);
-            }
+        Flow temp = flows[idx1];
+        for (size_t i = idx1; i > idx2; i--) {
+            flows[i]=flows[i-1];
         }
+        flows[idx2]=temp;
     }
-    // Shifting an element forwards
+    
+    /**
+     * Shifting an element forwards. 
+     * I'll get rid of these comments after you approve this PR.
+     * 
+     * ABCDEFGHIJK ===> ACDEBFGHIJK
+     * shift_flow_priorities(B, E) move B to E's position
+     * idx1=1 idx2=4
+     * We really just want to rotate the subarray [idx1,idx2], this time once to the left
+     * A BCDE FGHIJK
+     * A CDEE FGHIJK temp=B
+     * A CDEB FGHIJK
+     * */
     else if (idx2>idx1) {
-        for (size_t i =idx1+1; i<idx2; i++) {
-            shifted_flows.push_back(flows[i]);
+        Flow temp = flows[idx1];
+        for (size_t i=idx1; i<idx2; i++) {
+            flows[i]=flows[i+1];
         }
-        shifted_flows.push_back(flows[idx1]);
-        for (size_t i =idx2; i<flows.size(); i++) {
-            shifted_flows.push_back(flows[i]);
-        }
+        flows[idx2]=temp;
     }
-    flows=shifted_flows;
 }
