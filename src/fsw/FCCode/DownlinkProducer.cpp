@@ -243,11 +243,27 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
     bool temp = flows[idx1].is_active;
     flows[idx1].is_active = flows[idx2].is_active;
     flows[idx2].is_active = temp;
-    flows.insert(flows.begin() + idx2, flows[idx1]);
+
+    std::vector<Flow> shifted_flows;
+    std::copy(flows.begin(), flows.begin()+std::min(idx1, idx2), shifted_flows);
+    // Shifting an element backwards
     if (idx1>idx2) {
-        flows.erase(flows.begin()+idx1+1);
+        shifted_flows.push_back(flows[idx1]);
+        for (size_t i =idx2; i<flows.size(); i++) {
+            if (i!=idx1) {
+                shifted_flows.push_back(flows[i]);
+            }
+        }
     }
-    else {
-        flows.erase(flows.begin()+idx1+1);
+    // Shifting an element forwards
+    else if (idx2>idx1) {
+        for (size_t i =idx1+1; i<idx2; i++) {
+            shifted_flows.push_back(flows[i]);
+        }
+        shifted_flows.push_back(flows[idx1]);
+        for (size_t i =idx2; i<flows.size(); i++) {
+            shifted_flows.push_back(flows[i]);
+        }
     }
+    flows=shifted_flows;
 }
