@@ -76,19 +76,14 @@ PropState& PropController::get_state(prop_state_t state)
     //     return state_handling_fault;
     default:
         return state_disabled;
-  }
+    }
 }
 
 bool PropController::is_valid_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now)
 {
-  if (ctrl_cycles_from_now <= 
-        ( PropController::max_pressurizing_cycles + 1)
-        * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle )
-    return false;
-
-  if (v1 > 1000 || v2 > 1000 || v3 > 1000 || v4 > 1000)
-    return false;
-  return true;
+    if (v1 > 1000 || v2 > 1000 || v3 > 1000 || v4 > 1000)
+        return false;
+    return ctrl_cycles_from_now > 1;
 }
 
 bool PropController::validate_schedule()
@@ -98,13 +93,13 @@ bool PropController::validate_schedule()
 
 void PropController::set_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now)
 {
-  if ( !is_valid_schedule(v1, v2, v3, v4, ctrl_cycles_from_now) )
-    return;
-  sched_valve1_f.set(v1);
-  sched_valve2_f.set(v2);
-  sched_valve3_f.set(v3);
-  sched_valve4_f.set(v4);
-  fire_cycle_f.set(ctrl_cycles_from_now);
+    if ( !is_valid_schedule(v1, v2, v3, v4, ctrl_cycles_from_now) )
+        return;
+    sched_valve1_f.set(v1);
+    sched_valve2_f.set(v2);
+    sched_valve3_f.set(v3);
+    sched_valve4_f.set(v4);
+    fire_cycle_f.set(ctrl_cycles_from_now);
 }
 
 // ------------------------------------------------------------------------
@@ -185,9 +180,12 @@ prop_state_t PropState_Idle::evaluate()
 
 bool PropState_Idle::is_time_to_pressurize() const
 {
-    bool is_within_pressurizing_time = controller->fire_cycle_f.get() < num_cycles_within_firing_to_pressurize;
+    bool is_within_pressurizing_time = controller->fire_cycle_f.get() < num_cycles_within_firing_to_pressurize + PropState_Pressurizing::num_cycles_needed();
     bool is_schedule_valid = controller->validate_schedule();
-    return (is_within_pressurizing_time && is_schedule_valid);
+    bool has_enough_time = PropState_Pressurizing::can_pressurize_in_time();
+    if (has_enough_time && is_schedule_valid && is_within_pressurizing_time)
+        cout << "is time to pressurize " << endl;
+    return (is_within_pressurizing_time && is_schedule_valid && has_enough_time);
 }
 
 // ------------------------------------------------------------------------
@@ -207,6 +205,17 @@ bool PropState_Pressurizing::can_enter()
     // Reset timer to 0 (just in case)
     countdown.reset_timer();
     return true;
+}
+
+bool PropState_Pressurizing::can_pressurize_in_time()
+{
+    return controller->fire_cycle_f.get() >= num_cycles_needed();
+}
+
+unsigned int PropState_Pressurizing::num_cycles_needed()
+{
+    return ( PropController::max_pressurizing_cycles + 1 )
+    * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle;  
 }
 
 bool PropState_Pressurizing::should_use_backup()

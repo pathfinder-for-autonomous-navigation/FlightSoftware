@@ -55,7 +55,7 @@ public:
     // Return true if Tank2 is at threshold pressure
     inline static bool is_at_threshold_pressure()
     {
-#ifdef DESKTOP
+#ifdef PROP_TEST
         return true;
 #else
         return Tank2.get_pressure() >= threshold_firing_pressure;
@@ -148,11 +148,11 @@ public:
     PropState_Idle() : PropState(prop_state_t::idle) {}
     bool can_enter() override;
     prop_state_t evaluate() override;
-private:
-    bool is_time_to_pressurize() const;
     // start pressurizing when we are within this amount of control cycles of the time
     // at which we want to fire
     static constexpr unsigned int num_cycles_within_firing_to_pressurize = 50;
+private:
+    bool is_time_to_pressurize() const;
 };
 
 // A pressurizing cycle is a 1 second duration in which an intertank valve is opened
@@ -168,10 +168,15 @@ public:
     PropState_Pressurizing() : PropState(prop_state_t::pressurizing) {}
     bool can_enter() override;
     prop_state_t evaluate() override;
-    
+
+    // Return true if we have enough time to pressurize Tank2
+    static bool can_pressurize_in_time();
+    // Number of control cycles needed to pressurize Tank2
+    static unsigned int num_cycles_needed();
     static constexpr unsigned int firing_duration_ms = 1000;
     static constexpr unsigned int cooling_duration_ms = 10*1000;
-    static constexpr unsigned int ctrl_cycles_per_pressurizing_cycle = firing_duration_ms/PAN::control_cycle_time_ms;
+    static constexpr unsigned int ctrl_cycles_per_pressurizing_cycle = 
+    (firing_duration_ms + cooling_duration_ms)/PAN::control_cycle_time_ms;
 private:
     // Called when Tank1 valve is currently open
     void handle_valve_is_open();
