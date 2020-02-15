@@ -33,6 +33,13 @@ class TestFixture
         prop_controller->execute();
     }
 
+    // Step forward a number of control cycles equivalent to ms
+    inline void step_time(size_t num_ms)
+    {
+      size_t num_cc = num_ms/PAN::control_cycle_time_ms;
+      step(num_cc);
+    }
+
     inline void set_state(prop_state_t state)
     {
       prop_state_fp->set(static_cast<unsigned int>(state));
@@ -149,13 +156,36 @@ void test_pressurizing()
   //TODO: check the prop system states associated with pressurizing
 }
 
+void test_pressurize_late()
+{
+  TestFixture tf;
+  tf.set_state(prop_state_t::idle);
+  tf.prop_controller->set_schedule(430, 23, 122, 33, 1000);
+  // Don't start pressurizing until we are within like 50 cycles of firing time
+  tf.step();
+  tf.check_state(prop_state_t::idle);
+  tf.step(1000-50);
+  tf.check_state(prop_state_t::idle);
+  tf.step();
+  tf.check_state(prop_state_t::pressurizing);
+}
+
+void test_pressurize_fail()
+{
+  TestFixture tf;
+  tf.set_state(prop_state_t::idle);
+  tf.prop_controller->set_schedule(700, 200, 200, 800, 25);
+}
+
 void test_await_firing()
 {
   TestFixture tf;
   tf.set_state(prop_state_t::idle);
   tf.prop_controller->set_schedule(700, 200, 200, 800, 25);
   tf.step(20);
-  // we should be in await_firing for at least 25 - 20 cycles = 5
+  // we should be in await_firing for at least 20 pressurizing cycles
+  tf.step(10*1000);
+
   tf.check_state(prop_state_t::await_firing);
   tf.step(4);
   tf.check_state(prop_state_t::await_firing);
@@ -184,6 +214,8 @@ int test_prop_controller() {
     RUN_TEST(test_presurize_to_await_firing);
     RUN_TEST(test_firing_to_idle);
     RUN_TEST(test_pressurizing);
+    RUN_TEST(test_pressurize_late);
+    RUN_TEST(test_pressurize_fail);
     RUN_TEST(test_await_firing);
     RUN_TEST(test_firing);
     return UNITY_END();

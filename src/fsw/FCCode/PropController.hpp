@@ -2,7 +2,7 @@
 #include <fsw/FCCode/TimedControlTask.hpp>
 #include <fsw/FCCode/Drivers/PropulsionSystem.hpp>
 #include <fsw/FCCode/prop_state_t.enum>
-
+#include <vector>
 class PropState;
 class PropState_Disabled;
 class PropState_Idle;
@@ -38,27 +38,7 @@ public:
     WritableStateField<unsigned int>sched_valve4_f;
 
     bool is_valid_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now);
-
-    // ------------------------------------------------------------------------
-    // State Handling Functions
-    // ------------------------------------------------------------------------
-
-    // Prop is only willing to transition to idle
-    void dispatch_disabled();
-    // Prop is willing to start pressurizing
-    void dispatch_idle();
-    // Tank1 valves are open
-    void dispatch_pressurizing();
-    // Both Tank1 and Tank2 valves are open
-    void dispatch_venting();
-    // Tank2 valves are currently open
-    void dispatch_firing();
-    // Tank2 pressure must be at the threshold_pressure but has not yet fired
-    void dispatch_await_firing();
     
-    void dispatch_handling_fault();
-    
-
     // ------------------------------------------------------------------------
     // State Functions
     // ------------------------------------------------------------------------
@@ -75,7 +55,11 @@ public:
     // Return true if Tank2 is at threshold pressure
     inline static bool is_at_threshold_pressure()
     {
+#ifdef DESKTOP
+        return true;
+#else
         return Tank2.get_pressure() >= threshold_firing_pressure;
+#endif
     }
 
     inline bool check_current_state(prop_state_t expected)
@@ -104,11 +88,38 @@ private:
 
 };
 
+
+// ------------------------------------------------------------------------
+// CountdownTimer
+// ------------------------------------------------------------------------
+
+// This class is like a countdown timer on a bomb
+// It uses units of control cycles
+class CountdownTimer {
+public:
+    CountdownTimer();
+    bool is_timer_zero() const;
+    // Sets the timer (does not check whether the timer)
+    void set_timer_cc(size_t num_control_cycles);
+    // Converts num_ms into control_cycles (and rounds down)
+    void set_timer_ms(size_t num_ms);
+    void reset_timer();
+private:
+    // Number of cycles until this timer is free
+    size_t cycles_left = 0;
+
+    // Called by PropController to advance each timer in tick_list by one control cycle
+    static void tick(); 
+    // All instantiated timers are automatically added to this tick_list
+    static std::vector<CountdownTimer*> tick_list;
+    friend class PropController;
+};
+
 // ------------------------------------------------------------------------
 // Propulsion States
 // ------------------------------------------------------------------------
 
-// abstract PropState class
+// abstract class that represents a Propulsion System State
 class PropState
 {
 public:
@@ -137,34 +148,49 @@ public:
     PropState_Idle() : PropState(prop_state_t::idle) {}
     bool can_enter() override;
     prop_state_t evaluate() override;
+private:
+    bool is_time_to_pressurize() const;
+    // start pressurizing when we are within this amount of control cycles of the time
+    // at which we want to fire
+    static constexpr unsigned int num_cycles_within_firing_to_pressurize = 50;
 };
 
 // A pressurizing cycle is a 1 second duration in which an intertank valve is opened
 // A single pressurizing cycle will span multiple control cycles
 // If we have executed 20 consecutive pressurizing cycles and have not yet reached
 // threshold pressure, then this is a fault
+
+// [ cc1 ][ cc2 ][ cc3 ][ cc4 ][ cc5 ][ cc6 ][ cc7 ] <-- control cycles
+// [    pressurize cycle (1s) ][    cool off time (10s)                    ...]
 class PropState_Pressurizing : public PropState
 {
 public:
     PropState_Pressurizing() : PropState(prop_state_t::pressurizing) {}
     bool can_enter() override;
     prop_state_t evaluate() override;
-
+    
+    static constexpr unsigned int firing_duration_ms = 1000;
+    static constexpr unsigned int cooling_duration_ms = 10*1000;
+    static constexpr unsigned int ctrl_cycles_per_pressurizing_cycle = firing_duration_ms/PAN::control_cycle_time_ms;
 private:
-    // Called when prop is currently in a pressurizing cycle (i.e. valve is open)
-    void handle_currently_pressurizing();
-    // Called when prop has failed to reach threshod_pressure after maximum consecutive pressurizing cycles
+    // Called when Tank1 valve is currently open
+    void handle_valve_is_open();
+    // Called when Tank1 valve is currently closed
+    void handle_valve_is_close();
+    // Called when we have failed to reach threshod_pressure after maximum consecutive pressurizing cycles
     void handle_pressurize_failed();
+
     // Starts another pressurization cycle
     void start_pressurize_cycle();
     // Returns true if we should use the backup valve for pressurizing
     static bool should_use_backup();
-
-    // The number of pressurizing cycles we have executed since entering this state
-    unsigned int current_cycle = 0;
     // 1 if we are using the backup valve and 0 otherwise
     bool valve_num = 0;
-    unsigned int cycle_start_time = 0;
+    // Timer to time the 1s firing period and the 10s cooling period
+    CountdownTimer countdown;
+    // Number of pressurizing cycles since we last entered this state
+    // If this number is >= 20, then signal pressurize failure fault
+    unsigned int pressurizing_cycle_count;
 };
 
 

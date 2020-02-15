@@ -24,16 +24,19 @@ PropController::PropController(StateFieldRegistry& registry, unsigned int offset
 }
 
 PropController* PropState::controller = nullptr;
-PropState_Disabled PropController::state_disabled = PropState_Disabled();
-PropState_Idle PropController::state_idle = PropState_Idle();
-PropState_Pressurizing PropController::state_pressurizing = PropState_Pressurizing();
-PropState_AwaitFiring PropController::state_await_firing = PropState_AwaitFiring();
-PropState_Firing PropController::state_firing = PropState_Firing();
+PropState_Disabled PropController::state_disabled;
+PropState_Idle PropController::state_idle;
+PropState_Pressurizing PropController::state_pressurizing;
+PropState_AwaitFiring PropController::state_await_firing;
+PropState_Firing PropController::state_firing;
 // PropState_Venting PropController::state_venting = PropState_Venting();
 // PropState_HandlingFault PropController::state_handling_fault = PropState_HandlingFault();
 
 void PropController::execute()
 {
+    // first, tick all the countdown timers
+    CountdownTimer::tick();
+
     prop_state_t current_state = static_cast<prop_state_t>(prop_state_f.get());
     
     prop_state_t next_state = get_state(current_state).evaluate();
@@ -78,8 +81,11 @@ PropState& PropController::get_state(prop_state_t state)
 
 bool PropController::is_valid_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now)
 {
-  if (ctrl_cycles_from_now <= 20)
+  if (ctrl_cycles_from_now <= 
+        ( PropController::max_pressurizing_cycles + 1)
+        * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle )
     return false;
+
   if (v1 > 1000 || v2 > 1000 || v3 > 1000 || v4 > 1000)
     return false;
   return true;
@@ -99,7 +105,48 @@ void PropController::set_schedule(unsigned int v1, unsigned int v2, unsigned int
   sched_valve3_f.set(v3);
   sched_valve4_f.set(v4);
   fire_cycle_f.set(ctrl_cycles_from_now);
-    // cout << "hit 106" << endl;
+}
+
+// ------------------------------------------------------------------------
+// Countdown Timer
+// ------------------------------------------------------------------------
+
+std::vector<CountdownTimer*> CountdownTimer::tick_list;
+CountdownTimer::CountdownTimer()
+{
+    tick_list.push_back(this);
+}
+
+bool CountdownTimer::is_timer_zero() const
+{
+    return cycles_left == 0;
+}
+
+void CountdownTimer::set_timer_cc(size_t num_control_cycles)
+{
+    cycles_left = num_control_cycles;
+}
+
+void CountdownTimer::set_timer_ms(size_t num_ms)
+{
+    // convert from ms to control cycles
+    size_t num_cc = num_ms/PAN::control_cycle_time_ms;
+    cycles_left = num_cc;
+}
+
+void CountdownTimer::tick()
+{
+    // TODO: is there a better way to do this? This is kinda dangerous
+    for (CountdownTimer* c : tick_list)
+    {
+        if (c->cycles_left > 0)
+            --c->cycles_left;
+    }
+}
+
+void CountdownTimer::reset_timer()
+{
+    cycles_left = 0;
 }
 
 // ------------------------------------------------------------------------
@@ -130,15 +177,17 @@ bool PropState_Idle::can_enter()
 
 prop_state_t PropState_Idle::evaluate()
 {
-    // check schedule
-    if ( controller->validate_schedule() )
+    if ( is_time_to_pressurize() )
         return prop_state_t::pressurizing;
-    // if there is a feasible schedule then check time
-    // TODO: 
-    // if it is time to pressurize then transition to pressurizing
 
-    // otherwise, stay in idle
     return this_state;
+}
+
+bool PropState_Idle::is_time_to_pressurize() const
+{
+    bool is_within_pressurizing_time = controller->fire_cycle_f.get() < num_cycles_within_firing_to_pressurize;
+    bool is_schedule_valid = controller->validate_schedule();
+    return (is_within_pressurizing_time && is_schedule_valid);
 }
 
 // ------------------------------------------------------------------------
@@ -147,14 +196,16 @@ prop_state_t PropState_Idle::evaluate()
 
 bool PropState_Pressurizing::can_enter()
 {
-    // only allow entrance from prop_state::idle
+    // Only allow entrance from prop_state::idle
     if ( !controller->check_current_state(prop_state_t::idle) )
         return false;
     // Set which Tank1 valve to use (default: valve_num = 0)
-    if (should_use_backup())
+    if ( should_use_backup() )
         valve_num = 1;
     // Reset the pressurizing cycles count to 0
-    current_cycle = 0;
+    pressurizing_cycle_count = 0;
+    // Reset timer to 0 (just in case)
+    countdown.reset_timer();
     return true;
 }
 
@@ -166,40 +217,46 @@ bool PropState_Pressurizing::should_use_backup()
 
 prop_state_t PropState_Pressurizing::evaluate()
 {
+    // Case 1: Tank2 is at threshold pressure
     if (controller->is_at_threshold_pressure())
     {
         PropulsionSystem.close_valve(Tank1, valve_num);
         return prop_state_t::await_firing;
     }
-    // Tank2 is not at threshold pressure
-    if (Tank1.is_valve_open(valve_num))
-    { 
-        handle_currently_pressurizing();
-        return this_state;
-    }
-    // Tank is not at threshold pressure and is not opened
-    if (current_cycle > PropController::max_pressurizing_cycles)
-    {
-        handle_pressurize_failed();
-        return prop_state_t::handling_fault;
-    }
+    // Case 2: Tank2 is not at threshold pressure
+    
+    if ( Tank1.is_valve_open(valve_num) )
+        handle_valve_is_open();
     else
+        handle_valve_is_close();
+
+    return this_state;
+}
+
+void PropState_Pressurizing::handle_valve_is_open()
+{
+    // If 1 second has past since we opened the valve, then close the valve
+    if ( countdown.is_timer_zero() )
     {
-        start_pressurize_cycle();
-        return this_state;
+        PropulsionSystem.close_valve(Tank1, valve_num);
+        // Start cooldown timer
+        countdown.set_timer_ms(cooling_duration_ms);
     }
 }
 
-void PropState_Pressurizing::handle_currently_pressurizing()
+void PropState_Pressurizing::handle_valve_is_close()
 {
-    // check if 1s has passed and close valve if it has
-    // TODO: fix cycle_duration_ms
-    
-    // Assuming that this subtraction is always safe -- TODO: confirm this?
-    // if ()
-    // {
-    //     PropulsionSystem.close_valve(Tank1, valve_num);
-    // }
+    // If we have have pressurized for more than max_pressurizing_cycles
+    //      then signal fault
+    if ( pressurizing_cycle_count > PropController::max_pressurizing_cycles )
+    {
+        handle_pressurize_failed();
+    }
+    // If we are not on 10s cooldown, then start pressurizing again
+    else if( countdown.is_timer_zero() )
+    {
+        start_pressurize_cycle();
+    }
 }
 
 void PropState_Pressurizing::handle_pressurize_failed()
@@ -209,13 +266,11 @@ void PropState_Pressurizing::handle_pressurize_failed()
 
 void PropState_Pressurizing::start_pressurize_cycle()
 {
-    // TODO: 
-    // Make the start of this cycle
-    cycle_start_time = 0;
-    // Increment the cycle count
-    current_cycle++;
-    // Open the valve
+    pressurizing_cycle_count++;
+
+    // Open the valve and set the timer to 1 second
     PropulsionSystem.open_valve(Tank1, valve_num);
+    countdown.set_timer_ms(firing_duration_ms);
 }
 
 // ------------------------------------------------------------------------
