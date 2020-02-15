@@ -111,6 +111,7 @@ bool exceed_bounds(const float input, const float min, const float max){
 }
 
 void ADCSBoxMonitor::execute(){
+    // printf(debug_severity::debug, "ADCSMonitor.execute()\n");
 
     //define nan
     const float nan = std::numeric_limits<float>::quiet_NaN();
@@ -129,7 +130,8 @@ void ADCSBoxMonitor::execute(){
     float gyr_temp = 0.0;
 
     //ask the driver to fill in values
-    adcs_is_functional.set(adcs_system.is_functional());
+    // adcs_is_functional.set(adcs_system.is_functional());
+    adcs_is_functional.set(adcs_system.i2c_ping());
     if(!adcs_is_functional.get())
         adcs_functional_fault.signal();
     else
@@ -203,4 +205,5 @@ void ADCSBoxMonitor::execute(){
         gyr_vec_flag.set(true);
     if(exceed_bounds(gyr_temp, adcs::imu::min_rd_temp, adcs::imu::max_rd_temp - 1))
         gyr_temp_flag.set(true);
+    printf(debug_severity::debug, "ADCSMonitor.execute() COMPLETE\n");
 }
