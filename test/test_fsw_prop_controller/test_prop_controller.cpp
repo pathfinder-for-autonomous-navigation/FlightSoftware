@@ -40,15 +40,15 @@ class TestFixture
 
     inline void check_state(prop_state_t expected)
     {
-      TEST_ASSERT_EQUAL(prop_state_fp->get(), expected);
+      TEST_ASSERT_EQUAL(expected, prop_state_fp->get());
     }
 
     inline void check_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now)
     {
-      TEST_ASSERT_EQUAL(sched_valve1_fp->get(), v1);
-      TEST_ASSERT_EQUAL(sched_valve2_fp->get(), v2);
-      TEST_ASSERT_EQUAL(sched_valve3_fp->get(), v3);
-      TEST_ASSERT_EQUAL(sched_valve4_fp->get(), v4);
+      TEST_ASSERT_EQUAL(v1, sched_valve1_fp->get());
+      TEST_ASSERT_EQUAL(v2, sched_valve2_fp->get());
+      TEST_ASSERT_EQUAL(v3, sched_valve3_fp->get());
+      TEST_ASSERT_EQUAL(v4, sched_valve4_fp->get());
       TEST_ASSERT_EQUAL(fire_cycle_fp->get(), ctrl_cycles_from_now);
     }
 
@@ -67,6 +67,7 @@ void test_disable()
   tf.prop_controller->set_schedule(200, 300, 400,500, 21);
   // Firing time is set 5 control cycles from now but we should not fire since
   // state is still disabled
+  tf.check_state(prop_state_t::disabled);
   for (size_t i = 0; i < 22; ++i)
   {
     tf.step();
@@ -101,10 +102,10 @@ void test_idle_to_pressurize()
   }
   tf.prop_controller->set_schedule(200, 400, 12, 800, 21);
   tf.step();
-  // Schedule should be set and cycle_to_fire should be decremented
-  tf.check_schedule(200, 400, 12, 800, 20);
   // State should be pressurizing
   tf.check_state(prop_state_t::pressurizing);
+  // Schedule should be set and cycle_to_fire should be decremented
+  tf.check_schedule(200, 400, 12, 800, 20);
 }
 
 void test_presurize_to_await_firing()
