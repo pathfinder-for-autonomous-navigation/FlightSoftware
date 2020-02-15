@@ -253,16 +253,15 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
      * idx1=4 idx2=1
      * We really just want to rotate the subarray [idx1,idx2]
      * A BCDE FGHIJK
-     * A BBCD FGHIJK temp=E
+     * A BCED FGHIJK
+     * A BECD FGHIJK
      * A EBCD FGHIJK
      * 
      * */
     if (idx1>idx2) {
-        Flow temp = flows[idx1];
         for (size_t i = idx1; i > idx2; i--) {
-            flows[i]=flows[i-1];
+            std::swap(flows[i], flows[i-1]);
         }
-        flows[idx2]=temp;
     }
     
     /**
@@ -274,14 +273,13 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
      * idx1=1 idx2=4
      * We really just want to rotate the subarray [idx1,idx2], this time once to the left
      * A BCDE FGHIJK
-     * A CDEE FGHIJK temp=B
+     * A CBDE FGHIJK
+     * A CDBE FGHIJK
      * A CDEB FGHIJK
      * */
     else if (idx2>idx1) {
-        Flow temp = flows[idx1];
         for (size_t i=idx1; i<idx2; i++) {
-            flows[i]=flows[i+1];
+            std::swap(flows[i],flows[i+1]);
         }
-        flows[idx2]=temp;
     }
 }
