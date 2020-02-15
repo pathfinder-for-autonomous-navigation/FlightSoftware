@@ -243,7 +243,7 @@ void loop() {
   update_havt();
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-  if (!(++cycles % 100000UL)) {
+  if (!(++cycles % 1000UL)) {
     LOG_INFO_header
     LOG_INFO_println("Heartbeat cycle count " + String(cycles))
 

@@ -139,10 +139,8 @@ void ADCSBoxMonitor::execute(){
     else
         adcs_functional_fault.unsignal();
     
-
-    adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
-    adcs_system.get_ssa_voltage(&ssa_voltages);
-    adcs_system.get_imu(&mag_vec, &gyr_vec, &gyr_temp);
+    std::bitset<adcs::havt::max_devices> havt_read(0);
+    adcs_system.get_havt(&havt_read);
 
     //only update the ssa_vector if and only if the mode was COMPLETE
     adcs_system.get_ssa_mode(&ssa_mode);
@@ -153,6 +151,11 @@ void ADCSBoxMonitor::execute(){
     else{
         ssa_vec_f.set({nan,nan,nan});
     }
+
+    adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
+    adcs_system.get_ssa_voltage(&ssa_voltages);
+    adcs_system.get_imu(&mag_vec, &gyr_vec, &gyr_temp);
+    adcs_system.i2c_ping();
     
     //set statefields from internal containers
     rwa_speed_rd_f.set(rwa_speed_rd);
@@ -164,8 +167,6 @@ void ADCSBoxMonitor::execute(){
     }
 
     // set vector of device availability
-    std::bitset<adcs::havt::max_devices> havt_read(0);
-    adcs_system.get_havt(&havt_read);
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
     {
         havt_read_vector[idx].set(havt_read.test(idx));
