@@ -38,8 +38,15 @@ static unsigned char update_mag(unsigned char mode, float mag_flt) {
   unsigned char return_mode = mode & 0b10;
   lin::Vector3f data;
 
+  // // TODO KYLE PLEASE REMOVE THE BIT LOGIC HARD TO UNDERSTAND >__<
+  // LOG_INFO_header
+  // LOG_INFO_println("IMU MODE: " + String(return_mode) + " " + String(mode));
+  
   // Switch on the current magnetometer in use
   if ((mode & 0b11111101) != 0b1) {
+    // LOG_INFO_header
+    // LOG_INFO_printlnF("MODE 1")
+    
     // Calibrate the magnetometer if requested
     // if (mag1.is_functional() && (mode & 0b10)) mag1.calibrate();
     // TODO : Implement calibrate function    -->   ^^^^^
