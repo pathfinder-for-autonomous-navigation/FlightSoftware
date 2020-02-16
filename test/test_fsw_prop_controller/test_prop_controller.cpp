@@ -1,8 +1,7 @@
 #include <unity.h>
 #include <fsw/FCCode/PropController.hpp>
 #include "../StateFieldRegistryMock.hpp"
-#define PROP_TEST
-class TestFixture 
+class PropTestFixture 
 {
   public:
     StateFieldRegistryMock registry;
@@ -15,7 +14,7 @@ class TestFixture
     WritableStateField<unsigned int>* sched_valve3_fp;
     WritableStateField<unsigned int>* sched_valve4_fp;
 
-    TestFixture(prop_state_t initial_state = prop_state_t::disabled)
+    PropTestFixture(prop_state_t initial_state = prop_state_t::disabled)
     {
        prop_controller = std::make_unique<PropController>(registry, 0);
        prop_state_fp = registry.find_writable_field_t<unsigned int>("prop.state");
@@ -31,6 +30,18 @@ class TestFixture
     {
       for (size_t i = 0; i < num; ++i)
         prop_controller->execute();
+
+      if (PropulsionSystem.is_firing())
+      {
+        for (size_t i = 0; i < 4; ++i)
+        {
+          // decrement each schedule as if we were thrust valve loop
+          if (Tank2.schedule[i] > PAN::control_cycle_time_ms)
+            Tank2.schedule[i] -= PAN::control_cycle_time_ms;
+          else
+            Tank2.schedule[i] = 0;  
+        }
+      }
     }
 
     // Step forward a number of control cycles equivalent to ms
@@ -63,13 +74,13 @@ class TestFixture
 
 void test_initialization()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   tf.check_state(prop_state_t::disabled);
 }
 
 void test_disable()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   // Prop should remain in disabled state until manually set to some other state
   tf.prop_controller->set_schedule(200, 300, 400,500, 21);
   // Firing time is set 5 control cycles from now but we should not fire since
@@ -84,7 +95,7 @@ void test_disable()
 
 void test_illegal_schedule()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   tf.set_state(prop_state_t::idle);
   // Prop should ignore if requested firing time is less than 21 cycles into the future
   // since we will not have time to pressurize Tank1
@@ -99,7 +110,7 @@ void test_illegal_schedule()
 
 void test_idle_to_pressurize()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   // Prop may only switch to pressurizing state when in IDLE state
   tf.set_state(prop_state_t::idle);
   for (size_t i = 0; i < 5; ++i)
@@ -119,7 +130,7 @@ void test_idle_to_pressurize()
 
 void test_presurize_to_await_firing()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   tf.set_state(prop_state_t::idle);
   unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed();
   tf.prop_controller->set_schedule(200, 200, 200, 200, cycles_until_fire);
@@ -133,17 +144,21 @@ void test_presurize_to_await_firing()
 
 void test_firing_to_idle()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   tf.set_state(prop_state_t::idle);
-  tf.prop_controller->set_schedule(700, 200, 200, 800, 22);
-  tf.step(21);
+  unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed();
+  tf.prop_controller->set_schedule(700, 200, 200, 800, cycles_until_fire);
+  tf.step(cycles_until_fire);
   tf.check_state(prop_state_t::await_firing);
   // For 800/140 control cycles, we should be firing
-  for(size_t i = 0; i < 800/140; ++i)
+  unsigned int cycles_firing = (800/PAN::control_cycle_time_ms);
+  for(size_t i = 0; i < cycles_firing + 1; ++i)
   {
     tf.step();
+    // Check the schedule to see if we are done
     tf.check_state(prop_state_t::firing);
   }
+  tf.step();
   // On the next control cycle, we should be back to idle
   tf.check_state(prop_state_t::idle);
 }
@@ -151,7 +166,7 @@ void test_firing_to_idle()
 void test_pressurizing()
 {
   // Test that the prop system is in the state associated with pressurizing
-  TestFixture tf;
+  PropTestFixture tf;
   tf.set_state(prop_state_t::idle);
   unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed();
   tf.prop_controller->set_schedule(700, 200, 200, 800, cycles_until_fire);
@@ -162,14 +177,14 @@ void test_pressurizing()
 
 void test_pressurize_late()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   tf.set_state(prop_state_t::idle);
   unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed() + 2*PropState_Idle::num_cycles_within_firing_to_pressurize;
   tf.prop_controller->set_schedule(430, 23, 122, 33, cycles_until_fire);
   // Don't start pressurizing until we are within like 50 cycles of firing time
   tf.step();
   tf.check_state(prop_state_t::idle);
-  tf.step(2*PropState_Idle::num_cycles_within_firing_to_pressurize - 1);
+  tf.step(PropState_Idle::num_cycles_within_firing_to_pressurize);
   tf.check_state(prop_state_t::idle);
   tf.step();
   tf.check_state(prop_state_t::pressurizing);
@@ -177,7 +192,7 @@ void test_pressurize_late()
 
 void test_pressurize_fail()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   tf.set_state(prop_state_t::idle);
   tf.prop_controller->set_schedule(700, 200, 200, 800, 25);
   // TODO: test the condition where we pressurized more than 20 times
@@ -185,15 +200,13 @@ void test_pressurize_fail()
 
 void test_await_firing()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   tf.set_state(prop_state_t::idle);
-  tf.prop_controller->set_schedule(700, 200, 200, 800, 25);
-  tf.step(20);
-  // we should be in await_firing for at least 20 pressurizing cycles
-  tf.step(10*1000);
-
+  unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed() + 5;
+  tf.prop_controller->set_schedule(700, 200, 200, 800, cycles_until_fire);
+  tf.step(cycles_until_fire - 5);
   tf.check_state(prop_state_t::await_firing);
-  tf.step(4);
+  tf.step(5);
   tf.check_state(prop_state_t::await_firing);
 
   // TODO: check state associated with await_firing
@@ -203,10 +216,11 @@ void test_await_firing()
 
 void test_firing()
 {
-  TestFixture tf;
+  PropTestFixture tf;
   tf.set_state(prop_state_t::idle);
-  tf.prop_controller->set_schedule(700, 200, 200, 800, 25);
-  tf.step(25);
+  unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed() + 5;
+  tf.prop_controller->set_schedule(700, 200, 200, 800, cycles_until_fire);
+  tf.step(cycles_until_fire + 1);
   tf.check_state(prop_state_t::firing);
   // TODO: check state associated with firing
 }

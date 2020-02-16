@@ -53,14 +53,7 @@ public:
     }
 
     // Return true if Tank2 is at threshold pressure
-    inline static bool is_at_threshold_pressure()
-    {
-#ifdef PROP_TEST
-        return true;
-#else
-        return Tank2.get_pressure() >= threshold_firing_pressure;
-#endif
-    }
+    static bool is_at_threshold_pressure();
 
     inline bool check_current_state(prop_state_t expected)
     {

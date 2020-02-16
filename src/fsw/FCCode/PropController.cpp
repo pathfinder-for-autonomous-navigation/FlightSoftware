@@ -34,9 +34,6 @@ PropState_Firing PropController::state_firing;
 
 void PropController::execute()
 {
-    // first, tick all the countdown timers
-    CountdownTimer::tick();
-
     prop_state_t current_state = static_cast<prop_state_t>(prop_state_f.get());
     
     prop_state_t next_state = get_state(current_state).evaluate();
@@ -51,6 +48,8 @@ void PropController::execute()
             // TODO: 
         }
     }
+    // tick all the countdown timers
+    CountdownTimer::tick();
     // Decrement fire_cycle if it is not equal to 0
     if (fire_cycle_f.get() != 0)
         fire_cycle_f.set(fire_cycle_f.get() - 1);
@@ -100,6 +99,16 @@ void PropController::set_schedule(unsigned int v1, unsigned int v2, unsigned int
     sched_valve3_f.set(v3);
     sched_valve4_f.set(v4);
     fire_cycle_f.set(ctrl_cycles_from_now);
+    PropulsionSystem.set_schedule(v1, v2, v3, v4);
+}
+
+bool PropController::is_at_threshold_pressure()
+{
+#ifdef DESKTOP
+    return true;
+#else
+    return Tank2.get_pressure() >= threshold_firing_pressure;
+#endif
 }
 
 // ------------------------------------------------------------------------
@@ -164,8 +173,6 @@ prop_state_t PropState_Disabled::evaluate()
 
 bool PropState_Idle::can_enter()
 {
-    if( !controller->check_current_state(prop_state_t::disabled) )
-        return false;
      // TODO: can only enter IDLE if there are no hardware faults
     return true;
 }
@@ -183,8 +190,6 @@ bool PropState_Idle::is_time_to_pressurize() const
     bool is_within_pressurizing_time = controller->fire_cycle_f.get() < num_cycles_within_firing_to_pressurize + PropState_Pressurizing::num_cycles_needed();
     bool is_schedule_valid = controller->validate_schedule();
     bool has_enough_time = PropState_Pressurizing::can_pressurize_in_time();
-    if (has_enough_time && is_schedule_valid && is_within_pressurizing_time)
-        cout << "is time to pressurize " << endl;
     return (is_within_pressurizing_time && is_schedule_valid && has_enough_time);
 }
 
@@ -298,9 +303,10 @@ bool PropState_Firing::can_enter()
 
 prop_state_t PropState_Firing::evaluate()
 {
-    // Check the schedule to see if we are done
-    if (is_schedule_empty())
+    if ( is_schedule_empty() )
+    {
         return prop_state_t::idle;
+    }
     else
         return this_state;
 }
@@ -321,17 +327,14 @@ bool PropState_AwaitFiring::can_enter()
 {
     // only allow entrance from pressurizing or idle
     if ( !controller->check_current_state(prop_state_t::pressurizing) 
-            || !controller->check_current_state(prop_state_t::idle) )
+            && !controller->check_current_state(prop_state_t::idle) )
         return false;
-
     // tank should be pressurized
     if ( !PropController::is_at_threshold_pressure() )
         return false;
-
     // there should be a schedule and a firing time
     if ( !controller->validate_schedule() )
         return false;
-
     return true;
 }
 

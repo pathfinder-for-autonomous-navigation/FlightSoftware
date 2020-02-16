@@ -259,13 +259,14 @@ public:
      */
     unsigned int get_schedule_at(size_t valve_num) const;
 
+#ifndef DESKTOP
 private:
+#endif
     void setup();
     #ifndef DESKTOP
     //! When enabled, runs thrust_valve_loop every 3 ms
     static IntervalTimer thrust_valve_loop_timer;
     #endif
-
     static volatile unsigned int schedule[4];
     // The minimum duration to assign to a schedule
     // Any value below this value will be ignored by tank2
