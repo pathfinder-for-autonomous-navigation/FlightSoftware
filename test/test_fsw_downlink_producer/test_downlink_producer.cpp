@@ -343,7 +343,7 @@ void test_shift_priorities() {
             1, true, {"foo1"} 
         },
         {
-            2, true, {"foo1"} 
+            2, false, {"foo1"} 
         },
         {
             3, false, {"foo1"} 
@@ -359,18 +359,26 @@ void test_shift_priorities() {
         }
     };
     tf.init(flow_data);
+
+    std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
+    TEST_ASSERT_EQUAL(false, flows[1].is_active);
+    TEST_ASSERT_EQUAL(true, flows[4].is_active);
     
     // Test shifting backwards
     tf.downlink_producer->shift_flow_priorities(5,2);
 
     // Get the new flow vector and check that the flows have been reordered as desired
-    std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
+    flows=tf.downlink_producer->get_flows();
     std::vector<int> desired_ids={1,5,2,3,4,6};
     for (size_t i = 0; i<flows.size(); i++){
         unsigned char flow_id;
         flows[i].id_sr.deserialize(&flow_id);
         TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
     }
+
+    // Check that the priorities are swapped, too
+    TEST_ASSERT_EQUAL(false, flows[1].is_active);
+    TEST_ASSERT_EQUAL(true, flows[4].is_active);
 
     // Test shifting forwards
     tf.downlink_producer->shift_flow_priorities(1,2);
