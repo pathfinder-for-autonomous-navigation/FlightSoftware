@@ -50,8 +50,9 @@ enum Register : unsigned char {
   IMU_GYR_TEMP_KI,
   IMU_GYR_TEMP_KD,
   IMU_GYR_TEMP_DESIRED,
-  HAVT_COMMAND,
-  HAVT_READ
+  HAVT_READ,
+  HAVT_COMMAND_RESET,
+  HAVT_COMMAND_DISABLE
 };
 }  // namespace adcs
 

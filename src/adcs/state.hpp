@@ -111,12 +111,18 @@ struct HAVTRegisters {
   /** This table is updated with the most recent is_functional() for
    * each box aboard the ADCS Box. */
   unsigned int read_table;
-  /** An intermediate data structure that will specify the requested reset() and disable()
+  /** An intermediate data structure that will specify the requested reset()
    * for devices within the ADCS Box. */
-  unsigned int cmd_table;
+  unsigned int cmd_reset_table;
   /** This flag specifies if there is a new_flag, and is set to outdated
-   * once the cmd_table has been applied. */
-  unsigned char cmd_flg;
+   * once the cmd_reset_table has been applied. */
+  unsigned char cmd_reset_flg;
+  /** An intermediate data structure that will specify the requested disable()
+   * for devices within the ADCS Box. */
+  unsigned int cmd_disable_table;
+  /** This flag specifies if there is a new_flag, and is set to outdated
+   * once the cmd_disable_table has been applied. */
+  unsigned char cmd_disable_flg;
 };
 
 /** \struct Registers
