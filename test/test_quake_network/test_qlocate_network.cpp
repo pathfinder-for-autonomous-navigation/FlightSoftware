@@ -41,6 +41,8 @@ void test_sbdix_with_network(void)
 /* Tests that we can read messages from MT queue */
 void test_sbdrb_with_network(void)
 {
+    std::string testString("hello from PAN!");
+    run_sbdwb(testString);
     // SBDIX session
     TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdix_1());
     count_cycles(q.get_sbdix, "get_sbdix");
@@ -80,9 +82,12 @@ int main(void)
     pinMode(13, OUTPUT);
     q.setup();
     UNITY_BEGIN();
-    RUN_TEST(test_config); // force a config
-    RUN_TEST(test_sbdix_with_network);
-    RUN_TEST(test_sbdrb_with_network);
+    while(1)
+    {
+        RUN_TEST(test_config); // force a config
+        // RUN_TEST(test_sbdix_with_network);
+        RUN_TEST(test_sbdrb_with_network);
+    }
     UNITY_END();
     return 0;
 }

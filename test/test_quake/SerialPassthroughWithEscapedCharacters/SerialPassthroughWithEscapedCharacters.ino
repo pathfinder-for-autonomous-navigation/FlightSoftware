@@ -34,13 +34,14 @@ void loop() {
 
   if (Serial3.available()) {    
     char ch = Serial3.read();
-    if (ch == '\r') {
-      Serial.write("\\r") ;
-    }else
-    if (ch == '\n') {
-      Serial.write("\\n");
-    }else{
-         Serial.write(ch);   
-    }
+    Serial.write(ch);
+//    if (ch == '\r') {
+//      Serial.write("\\r") ;
+//    }else
+//    if (ch == '\n') {
+//      Serial.write("\\n");
+//    }else{
+//         Serial.write(ch);   
+//    }
   }
 }
