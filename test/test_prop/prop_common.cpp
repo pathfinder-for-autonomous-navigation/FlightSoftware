@@ -1,33 +1,19 @@
-#include "prop_common.h"
 
-using namespace Devices;
-// Make sure all pins low
-void check_all_valves_closed()
-{
-    for (size_t i = 0; i < 2; ++i)
-        TEST_ASSERT_EQUAL(LOW, Tank1.is_valve_open(i));
-    for (size_t i = 0; i < 4; ++i)
-        TEST_ASSERT_EQUAL(LOW, Tank2.is_valve_open(i));
-}
+#ifndef PROP_COMMON_H_
+#define PROP_COMMON_H_
+#include <unity.h>
+#include <Arduino.h>
+#include <fsw/FCCode/Drivers/PropulsionSystem.hpp>
+#define ASSERT_TRUE(x, msg){UNITY_TEST_ASSERT((x), __LINE__, msg);}
+#define ASSERT_FALSE(x, msg){UNITY_TEST_ASSERT((!x), __LINE__, msg);}
+/**
+ * Helper Methods
+ */
+void check_all_valves_closed();
+void check_tank2_schedule(const std::array<unsigned int, 4> &expected_schedule);
+void check_tank2_valve_status(bool a, bool b, bool c, bool d);
+void check_tank1_valve_status(bool a, bool b);
 
-// Make sure that the current schedule matches the provided schedule
-void check_tank2_schedule(const std::array<unsigned int, 4> &expected_schedule)
-{
-    for (size_t i = 0; i < 4; ++i)
-        TEST_ASSERT_EQUAL(expected_schedule[i], Tank2.get_schedule_at(i));
-}
+const std::array<unsigned int, 4> zero_schedule = {0, 0, 0, 0};
 
-
-void check_tank2_valve_status(bool a, bool b, bool c, bool d)
-{
-    TEST_ASSERT_EQUAL_MESSAGE(a, Tank2.is_valve_open(0), "tank2 valve 0");
-    TEST_ASSERT_EQUAL_MESSAGE(b, Tank2.is_valve_open(1), "tank2 valve 1");
-    TEST_ASSERT_EQUAL_MESSAGE(c, Tank2.is_valve_open(2), "tank2 valve 2");
-    TEST_ASSERT_EQUAL_MESSAGE(d, Tank2.is_valve_open(3), "tank2 valve 3");
-}
-
-void check_tank1_valve_status(bool a, bool b)
-{
-    TEST_ASSERT_EQUAL_MESSAGE(a, Tank1.is_valve_open(0), "tank1 valve 0");
-    TEST_ASSERT_EQUAL_MESSAGE(b, Tank1.is_valve_open(1), "tank1 valve 1");
-}
+#endif

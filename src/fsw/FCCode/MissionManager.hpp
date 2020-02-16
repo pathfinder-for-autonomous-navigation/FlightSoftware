@@ -5,6 +5,7 @@
 #include "constants.hpp"
 #include <lin.hpp>
 
+#include "Fault.hpp"
 #include "prop_state_t.enum"
 #include "mission_state_t.enum"
 #include "adcs_state_t.enum"
@@ -20,6 +21,9 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<double> detumble_safety_factor_f;
     WritableStateField<double> close_approach_trigger_dist_f; // Meters
     WritableStateField<double> docking_trigger_dist_f; // Meters
+    static constexpr double initial_detumble_safety_factor = 0.2;
+    static constexpr double initial_close_approach_trigger_dist = 100; // Meters
+    static constexpr double initial_docking_trigger_dist = 0.4; // Meters
 
     /**
      * @brief Number of control cycles to wait during the post-deployment
@@ -34,12 +38,34 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Number of control cycles to wait before declaring "too long since comms".
      */
     WritableStateField<unsigned int> max_radio_silence_duration_f;
+    static constexpr unsigned int initial_max_radio_silence_duration = PAN::one_day_ccno;
+
+    // These states respond to fault conditions.
+    static constexpr std::array<mission_state_t, 5> fault_responsive_states = {
+        mission_state_t::follower,
+        mission_state_t::leader,
+        mission_state_t::follower_close_approach,
+        mission_state_t::leader_close_approach,
+        mission_state_t::standby
+    };
+    // These states do not respond to fault conditions.
+    static constexpr std::array<mission_state_t, 7> fault_nonresponsive_states = {
+        mission_state_t::detumble,
+        mission_state_t::safehold,
+        mission_state_t::startup,
+        mission_state_t::manual,
+        mission_state_t::docking,
+        mission_state_t::docked,
+        mission_state_t::initialization_hold
+    };
+
+    void set(mission_state_t state);
 
    protected:
     /**
      * @brief Returns true if there are hardware faults on the spacecraft.
      */
-    bool check_hardware_faults();
+    bool check_adcs_hardware_faults() const;
 
     /**
      * @brief Handles logic while within a state.
@@ -47,19 +73,25 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_startup();
     void dispatch_detumble();
     void dispatch_initialization_hold();
-    void dispatch_follower();
     void dispatch_standby();
+    void dispatch_follower();
     void dispatch_leader();
+    void dispatch_follower_close_approach();
+    void dispatch_leader_close_approach();
     void dispatch_docking();
     void dispatch_docked();
     void dispatch_safehold();
+    unsigned int safehold_begin_ccno = 0; // Control cycle # of the most recent
+                                          // transition to safe hold.
 
     /**
      * @brief Handles state transitions that happen upon subsystem assertions.
      */
     void transition_to_state(mission_state_t mission_state,
         adcs_state_t adcs_state,
-        prop_state_t prop_mode);
+        prop_state_t prop_state);
+    void transition_to_state(mission_state_t mission_state,
+        adcs_state_t adcs_state);
 
     /**
      * @brief Allow spacecraft to be commandeered completely by test software or
@@ -91,12 +123,25 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<bool>* adcs_paired_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
-    const ReadableStateField<unsigned char>* piksi_mode_fp; // Piksi reading state (fixed RTK, float RTK, SPP, or error state)
     const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
+
+    // Field exposed by Gomspace for rebooting entire spacecraft.
+    WritableStateField<bool>* reboot_fp;
 
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
     const ReadableStateField<bool>* docked_fp;
+
+    // True if the battery is below the threshold for safehold.
+    Fault* low_batt_fault_fp;
+    // Fault flags for ADCS motor ADCs and potentiometer.
+    Fault* adcs_functional_fault_fp;
+    Fault* wheel1_adc_fault_fp;
+    Fault* wheel2_adc_fault_fp;
+    Fault* wheel3_adc_fault_fp;
+    Fault* wheel_pot_fault_fp;
+    // Flag for if propulsion failed to pressurize.
+    Fault* failed_pressurize_fp;
 
     /**
      * @brief Radio's mode.
@@ -129,7 +174,6 @@ class MissionManager : public TimedControlTask<void> {
     double distance_to_other_sat() const;
     bool too_long_since_last_comms() const;
 
-    void set(mission_state_t state);
     void set(adcs_state_t state);
     void set(prop_state_t state);
     void set(radio_state_t state);
