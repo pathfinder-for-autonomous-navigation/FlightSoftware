@@ -4,7 +4,6 @@
 
 #include <common/StateFieldRegistry.hpp>
 #include <unity.h>
-#include <iostream>
 
 struct TestFixture {
     StateFieldRegistryMock registry;
@@ -360,26 +359,29 @@ void test_shift_priorities() {
         }
     };
     tf.init(flow_data);
-    tf.downlink_producer->init_flows(flow_data);
+    
+    // Test shifting backwards
+    tf.downlink_producer->shift_flow_priorities(5,2);
 
-    std::cout<<"Before shifting anything. i just called init_flows()\n";    
+    // Get the new flow vector and check that the flows have been reordered as desired
     std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
-    for (size_t i=0; i<flows.size(); i++) {
+    std::vector<int> desired_ids={1,5,2,3,4,6};
+    for (size_t i = 0; i<flows.size(); i++){
         unsigned char flow_id;
         flows[i].id_sr.deserialize(&flow_id);
-        std::cout<<"Index: "<<i<<", FlowID: "<<(int)flow_id<<"\n";
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
     }
 
-    std::cout<<"\n\n";
-    std::cout<<"After calling shift_flow_priorities(5,2)\n";    
-    tf.downlink_producer->shift_flow_priorities(5,2);
-    std::cout<<"\n\n";
+    // Test shifting forwards
+    tf.downlink_producer->shift_flow_priorities(1,2);
 
+    // Get the new flow vector and check that the flows have been reordered as desired
     flows=tf.downlink_producer->get_flows();
-    for (size_t i=0; i<flows.size(); i++) {
+    desired_ids={5,2,1,3,4,6};
+    for (size_t i = 0; i<flows.size(); i++){
         unsigned char flow_id;
         flows[i].id_sr.deserialize(&flow_id);
-        std::cout<<"Index: "<<i<<", FlowID: "<<(int)flow_id<<"\n";
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
     }
 }
 

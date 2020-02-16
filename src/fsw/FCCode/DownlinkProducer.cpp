@@ -1,7 +1,6 @@
 #include "DownlinkProducer.hpp"
 #include <algorithm>
 #include <set>
-#include <iostream>
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     const unsigned int offset) : TimedControlTask<void>(r, "downlink_ct", offset),
@@ -240,9 +239,6 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
             idx2 = idx;
         }
     }
-
-    std::cout<<"Index1: "<<idx1<<"\n";
-    std::cout<<"Index2: "<<idx2<<"\n";
 
     bool temp = flows[idx1].is_active;
     flows[idx1].is_active = flows[idx2].is_active;
