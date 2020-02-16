@@ -244,39 +244,11 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
     flows[idx1].is_active = flows[idx2].is_active;
     flows[idx2].is_active = temp;
 
-    /**
-     * Shifting an element backwards. 
-     * I'll get rid of these comments after you approve this PR.
-     * 
-     * ABCDEFGHIJK ===> AEBCDFGHIJK
-     * shift_flow_priorities(E, B): move E to B's position
-     * idx1=4 idx2=1
-     * We really just want to rotate the subarray [idx1,idx2]
-     * A BCDE FGHIJK
-     * A BCED FGHIJK
-     * A BECD FGHIJK
-     * A EBCD FGHIJK
-     * 
-     * */
     if (idx1>idx2) {
         for (size_t i = idx1; i > idx2; i--) {
             std::swap(flows[i], flows[i-1]);
         }
     }
-    
-    /**
-     * Shifting an element forwards. 
-     * I'll get rid of these comments after you approve this PR.
-     * 
-     * ABCDEFGHIJK ===> ACDEBFGHIJK
-     * shift_flow_priorities(B, E) move B to E's position
-     * idx1=1 idx2=4
-     * We really just want to rotate the subarray [idx1,idx2], this time once to the left
-     * A BCDE FGHIJK
-     * A CBDE FGHIJK
-     * A CDBE FGHIJK
-     * A CDEB FGHIJK
-     * */
     else if (idx2>idx1) {
         for (size_t i = idx1; i < idx2; i++) {
             std::swap(flows[i],flows[i+1]);
