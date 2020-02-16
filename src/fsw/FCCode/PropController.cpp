@@ -1,8 +1,5 @@
 #include <fsw/FCCode/PropController.hpp>
-#ifdef DESKTOP
-#include <iostream>
-using namespace std;
-#endif
+
 PropController::PropController(StateFieldRegistry& registry, unsigned int offset)
 : TimedControlTask<void>(registry, "prop", offset),
     prop_state_f("prop.state", Serializer<unsigned int>(6)),
@@ -45,11 +42,12 @@ void PropController::execute()
         }
         else
         {
-            // TODO: 
+            // TODO: what to do if tried to enter a state and was not allowed?
         }
     }
-    // tick all the countdown timers
+    // Tick all the countdown timers
     CountdownTimer::tick();
+
     // Decrement fire_cycle if it is not equal to 0
     if (fire_cycle_f.get() != 0)
         fire_cycle_f.set(fire_cycle_f.get() - 1);
@@ -80,26 +78,12 @@ PropState& PropController::get_state(prop_state_t state)
 
 bool PropController::is_valid_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now)
 {
-    if (v1 > 1000 || v2 > 1000 || v3 > 1000 || v4 > 1000)
-        return false;
-    return ctrl_cycles_from_now > 1;
+    return ! (v1 > 1000 || v2 > 1000 || v3 > 1000 || v4 > 1000 || ctrl_cycles_from_now < 1);
 }
 
 bool PropController::validate_schedule()
 {
     return is_valid_schedule(sched_valve1_f.get(), sched_valve2_f.get(), sched_valve3_f.get(), sched_valve4_f.get(), fire_cycle_f.get());
-}
-
-void PropController::set_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now)
-{
-    if ( !is_valid_schedule(v1, v2, v3, v4, ctrl_cycles_from_now) )
-        return;
-    sched_valve1_f.set(v1);
-    sched_valve2_f.set(v2);
-    sched_valve3_f.set(v3);
-    sched_valve4_f.set(v4);
-    fire_cycle_f.set(ctrl_cycles_from_now);
-    PropulsionSystem.set_schedule(v1, v2, v3, v4);
 }
 
 bool PropController::is_at_threshold_pressure()
@@ -180,7 +164,9 @@ bool PropState_Idle::can_enter()
 prop_state_t PropState_Idle::evaluate()
 {
     if ( is_time_to_pressurize() )
+    {
         return prop_state_t::pressurizing;
+    }
 
     return this_state;
 }
@@ -220,7 +206,7 @@ bool PropState_Pressurizing::can_pressurize_in_time()
 unsigned int PropState_Pressurizing::num_cycles_needed()
 {
     return ( PropController::max_pressurizing_cycles + 1 )
-    * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle;  
+        * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle;  
 }
 
 bool PropState_Pressurizing::should_use_backup()
@@ -237,8 +223,8 @@ prop_state_t PropState_Pressurizing::evaluate()
         PropulsionSystem.close_valve(Tank1, valve_num);
         return prop_state_t::await_firing;
     }
+
     // Case 2: Tank2 is not at threshold pressure
-    
     if ( Tank1.is_valve_open(valve_num) )
         handle_valve_is_open();
     else
@@ -275,7 +261,7 @@ void PropState_Pressurizing::handle_valve_is_close()
 
 void PropState_Pressurizing::handle_pressurize_failed()
 {
-    // TODO need to set some sort of fault
+    // TODO: need to set some sort of fault
 }
 
 void PropState_Pressurizing::start_pressurize_cycle()
@@ -296,7 +282,7 @@ bool PropState_Firing::can_enter()
     // only allow entrance from prop_state::await_firing
     if ( !controller->check_current_state(prop_state_t::await_firing) )
         return false;
-    // Start the IntervalTimer
+
     PropulsionSystem.start_firing();
     return true;
 }
@@ -304,14 +290,12 @@ bool PropState_Firing::can_enter()
 prop_state_t PropState_Firing::evaluate()
 {
     if ( is_schedule_empty() )
-    {
         return prop_state_t::idle;
-    }
     else
         return this_state;
 }
 
-bool PropState_Firing::is_schedule_empty()
+bool PropState_Firing::is_schedule_empty() const
 {
     unsigned int remain = 0;
     for (size_t i = 0; i < 4; ++i)
@@ -340,14 +324,16 @@ bool PropState_AwaitFiring::can_enter()
 
 prop_state_t PropState_AwaitFiring::evaluate()
 {
-    // if we are within a control cycle of firing time then fire
     if ( is_time_to_fire() )
+    {
+        // Copy the schedule values from the registry into Tank2
+        controller->write_tank2_schedule();
         return prop_state_t::firing;
-    
+    }
     return this_state;
 }
 
-bool PropState_AwaitFiring::is_time_to_fire()
+bool PropState_AwaitFiring::is_time_to_fire() const
 {
     return controller->fire_cycle_f.get() == 0;
 }

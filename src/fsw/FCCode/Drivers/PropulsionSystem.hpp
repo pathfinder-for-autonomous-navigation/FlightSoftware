@@ -86,7 +86,7 @@ public:
         static _PropulsionSystem Instance;
         return Instance;
     }
-
+// private:
     /**
      * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
      * @return True if successfully setup both tank1 and tank2 and all pins
@@ -158,8 +158,6 @@ public:
     {
         return is_interval_enabled;
     }
-
-private:
     
     /**
      * @brief the function that is ran at each interrupt when the IntervalTimer
@@ -173,7 +171,7 @@ private:
      * @brief true if tank2's IntervalTimer is on (tank2 is scheduled to fire)
      */
     static bool is_interval_enabled;
-
+    friend class PropController;
 };
 
 /**
