@@ -120,6 +120,8 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     void shift_flow_priorities(unsigned char id1, unsigned char id2);
 
+    std::vector<Flow> get_flows();
+
   protected:
     /** @brief Pointer to cycle count. */
     ReadableStateField<unsigned int>* cycle_count_fp;

@@ -4,6 +4,7 @@
 
 #include <common/StateFieldRegistry.hpp>
 #include <unity.h>
+#include <iostream>
 
 struct TestFixture {
     StateFieldRegistryMock registry;
@@ -338,51 +339,48 @@ void test_downlink_changes() {
 void test_shift_priorities() {
     TestFixture tf;
 
-        std::vector<DownlinkProducer::FlowData> flow_data = {
-            {
-                1,
-                true,
-                {
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                } // Flow size 98 bits (96 + 2)
-            },
-            {
-                2,
-                true,
-                {
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                } // Flow size: 226 bits (224 + 2)
-            },
-            {
-                3,
-                true,
-                {
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                    "foo1", // 32 bits
-                } // Flow size: 226 bits (224 + 2)
-            }
-        };
-        tf.init(flow_data);
+    std::vector<DownlinkProducer::FlowData> flow_data = {
+        {
+            1, true, {"foo1"} 
+        },
+        {
+            2, true, {"foo1"} 
+        },
+        {
+            3, false, {"foo1"} 
+        },
+        {
+            4, true, {"foo1"} 
+        },
+        {
+            5, true, {"foo1"} 
+        },
+        {
+            6, false, {"foo1"} 
+        }
+    };
+    tf.init(flow_data);
+    tf.downlink_producer->init_flows(flow_data);
 
-        // ceil((1 + 32 + (98 + 226 + 226) + 1) / 8)
-        TEST_ASSERT_EQUAL(73, tf.snapshot_size_bytes_fp->get());
-        tf.downlink_producer->shift_flow_priorities(3,2);
+    std::cout<<"Before shifting anything. i just called init_flows()\n";    
+    std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
+    for (size_t i=0; i<flows.size(); i++) {
         unsigned char flow_id;
-        flow_data[1].id_sr.deserialize(&flow_id);
-        TEST_ASSERT_EQUAL(3, flow_id);
+        flows[i].id_sr.deserialize(&flow_id);
+        std::cout<<"Index: "<<i<<", FlowID: "<<(int)flow_id<<"\n";
+    }
+
+    std::cout<<"\n\n";
+    std::cout<<"After calling shift_flow_priorities(5,2)\n";    
+    tf.downlink_producer->shift_flow_priorities(5,2);
+    std::cout<<"\n\n";
+
+    flows=tf.downlink_producer->get_flows();
+    for (size_t i=0; i<flows.size(); i++) {
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        std::cout<<"Index: "<<i<<", FlowID: "<<(int)flow_id<<"\n";
+    }
 }
 
 int test_downlink_producer_task() {
@@ -393,6 +391,7 @@ int test_downlink_producer_task() {
     RUN_TEST(test_multiple_flows);
     RUN_TEST(test_some_flows_inactive);
     RUN_TEST(test_downlink_changes);
+    RUN_TEST(test_shift_priorities);
     return UNITY_END();
 }
 
