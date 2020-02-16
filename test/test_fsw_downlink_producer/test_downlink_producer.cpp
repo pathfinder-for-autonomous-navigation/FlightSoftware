@@ -335,6 +335,56 @@ void test_downlink_changes() {
     TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 9); // Downlink data changed
 }
 
+void test_shift_priorities() {
+    TestFixture tf;
+
+        std::vector<DownlinkProducer::FlowData> flow_data = {
+            {
+                1,
+                true,
+                {
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                } // Flow size 98 bits (96 + 2)
+            },
+            {
+                2,
+                true,
+                {
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                } // Flow size: 226 bits (224 + 2)
+            },
+            {
+                3,
+                true,
+                {
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                    "foo1", // 32 bits
+                } // Flow size: 226 bits (224 + 2)
+            }
+        };
+        tf.init(flow_data);
+
+        // ceil((1 + 32 + (98 + 226 + 226) + 1) / 8)
+        TEST_ASSERT_EQUAL(73, tf.snapshot_size_bytes_fp->get());
+        tf.downlink_producer->shift_flow_priorities(3,2);
+        unsigned char flow_id;
+        flow_data[1].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(3, flow_id);
+}
+
 int test_downlink_producer_task() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);

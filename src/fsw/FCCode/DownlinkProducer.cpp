@@ -278,7 +278,7 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
      * A CDEB FGHIJK
      * */
     else if (idx2>idx1) {
-        for (size_t i=idx1; i<idx2; i++) {
+        for (size_t i = idx1; i < idx2; i++) {
             std::swap(flows[i],flows[i+1]);
         }
     }
