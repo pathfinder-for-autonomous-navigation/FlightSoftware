@@ -153,7 +153,7 @@ DownlinkProducer::~DownlinkProducer() {
     delete[] snapshot;
 }
 
-#ifdef GSW
+#if defined GSW || defined DESKTOP
 const std::vector<DownlinkProducer::Flow>& DownlinkProducer::get_flows() const {
     return flows;
 }
@@ -254,8 +254,4 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
             std::swap(flows[i],flows[i+1]);
         }
     }
-}
-
-std::vector<DownlinkProducer::Flow> DownlinkProducer::get_flows() {
-    return flows;
 }

@@ -105,7 +105,7 @@ class DownlinkProducer : public TimedControlTask<void> {
         size_t get_packet_size() const;
     };
 
-    #ifdef GSW
+    #if defined GSW || defined DESKTOP
     const std::vector<Flow>& get_flows() const;
     #endif
 
@@ -119,8 +119,6 @@ class DownlinkProducer : public TimedControlTask<void> {
      * with id1 to the flow with id2's position. Also swaps their active status.
      */
     void shift_flow_priorities(unsigned char id1, unsigned char id2);
-
-    std::vector<Flow> get_flows();
 
   protected:
     /** @brief Pointer to cycle count. */
