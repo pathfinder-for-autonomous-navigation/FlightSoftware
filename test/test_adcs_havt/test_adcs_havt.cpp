@@ -19,10 +19,10 @@
 // removes mocking from Driver
 // -UUNIT_TEST
 
-#include <ADCS.hpp>
-#include <adcs_constants.hpp>
+#include <fsw/FCCode/Drivers/ADCS.hpp>
+#include <adcs/constants.hpp>
 
-Devices::ADCS adcs(Wire, Devices::ADCS::ADDRESS);
+Devices::ADCS adcs_d(Wire, Devices::ADCS::ADDRESS);
 
 #include <string>
 #include <unity.h>
@@ -33,7 +33,7 @@ constexpr static unsigned int wait_for_ADCSC = 10;
 // test to make sure you're connected correctly to i2c
 void test_get_who_am_i(){
     unsigned char temp;
-    adcs.get_who_am_i(&temp);
+    adcs_d.get_who_am_i(&temp);
     
     TEST_ASSERT_EQUAL(Devices::ADCS::WHO_AM_I_EXPECTED, temp);
 }
@@ -41,11 +41,11 @@ void test_get_who_am_i(){
 // initial test of read capability, will fail if not a clean boot
 // ex if there was a previous set_havt command that failed
 void test_read_table(){
-    std::bitset<havt::max_devices> read_table_read(0);
-    std::bitset<havt::max_devices> rt_expected("00000000000000000000001110111000");
+    std::bitset<adcs::havt::max_devices> read_table_read(0);
+    std::bitset<adcs::havt::max_devices> rt_expected("00000000000000000000001110111000");
 
     Serial.printf("ref havt: %u\n", rt_expected.to_ulong());
-    adcs.get_havt(&read_table_read);
+    adcs_d.get_havt(&read_table_read);
     Serial.printf("read havt: %u\n", read_table_read.to_ulong());
 
     //.to_string().c_str() turns a bitset into a string of 0 and 1 like
@@ -56,32 +56,33 @@ void test_read_table(){
 // disables then re-enables the RWs
 void test_cmd_table(){
     // rt stands for read_table
-    std::bitset<havt::max_devices> rt_read(0);
-    std::bitset<havt::max_devices> rt_expected("00000000000000000000001110111000");
+    std::bitset<adcs::havt::max_devices> rt_read(0);
+    std::bitset<adcs::havt::max_devices> rt_expected("00000000000000000000001110111000");
 
-    adcs.get_havt(&rt_read);
+    adcs_d.get_havt(&rt_read);
 
     TEST_ASSERT_EQUAL_STRING(rt_expected.to_string().c_str(), rt_read.to_string().c_str());
 
     // command table 1 - disable all the reaction wheels, but leave MTR's up
-    std::bitset<havt::max_devices> cmd_t1("00000000000000000000000000111000");
+    std::bitset<adcs::havt::max_devices> cmd_disable_rws("00000000000000000000001110000000");
 
-    adcs.set_havt(cmd_t1);
+    adcs_d.set_havt_disable(cmd_disable_rws);
     
     // ensure ADCSC has enough time to implement the commanded havt_table
     delay(wait_for_ADCSC);
-    adcs.get_havt(&rt_read);
+    adcs_d.get_havt(&rt_read);
 
     // check that cmd_t1 was applied
-    TEST_ASSERT_EQUAL_STRING(cmd_t1.to_string().c_str(), rt_read.to_string().c_str());
-
+    std::bitset<adcs::havt::max_devices> mtrs_up("00000000000000000000000000111000");
+    TEST_ASSERT_EQUAL_STRING(mtrs_up.to_string().c_str(), rt_read.to_string().c_str());
 
     // NOW TEST RESET CAPABILITY
-    std::bitset<havt::max_devices> cmd_t2("00000000000000000000001110111000");
-    adcs.set_havt(cmd_t2);
+    std::bitset<adcs::havt::max_devices> cmd_reset_rws("00000000000000000000001110000000");
+    adcs_d.set_havt_reset(cmd_reset_rws);
     delay(wait_for_ADCSC);
-    adcs.get_havt(&rt_read);
-    TEST_ASSERT_EQUAL_STRING(cmd_t2.to_string().c_str(), rt_read.to_string().c_str());
+    adcs_d.get_havt(&rt_read);
+    std::bitset<adcs::havt::max_devices> rws_and_mtrs_up("00000000000000000000001110111000");
+    TEST_ASSERT_EQUAL_STRING(rws_and_mtrs_up.to_string().c_str(), rt_read.to_string().c_str());
 }
 
 void setup_test() {
@@ -89,7 +90,7 @@ void setup_test() {
     while(!Serial)
         ;
     Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
-    adcs.setup();
+    adcs_d.setup();
 }
 
 int main(void) {

@@ -11,12 +11,14 @@
 #include "ADCSBoxController.hpp"
 #include "AttitudeEstimator.hpp"
 #include "AttitudeComputer.hpp"
+#include "ADCSCommander.hpp"
 #include "GomspaceController.hpp"
 #include "DebugTask.hpp"
 #include "FieldCreatorTask.hpp"
 #include "MissionManager.hpp"
 #include "QuakeManager.h"
 #include "DockingController.hpp"
+#include "DCDCController.hpp"
 #include "DownlinkProducer.hpp"
 #include "EEPROMController.hpp"
 #include "UplinkConsumer.h"
@@ -50,7 +52,9 @@ class MainControlLoop : public ControlTask<void> {
     QuakeManager quake_manager; // Needs downlink packet from Downlink Producer
     UplinkConsumer uplink_consumer; // Needs uplink packet from Quake Manager
 
-    std::vector<std::string>statefields;
+    Devices::DCDC dcdc;
+    DCDCController dcdc_controller;
+
     EEPROMController eeprom_controller;
 
     // Control cycle time offsets, in microseconds
@@ -64,10 +68,12 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int uplink_consumer_offset     = 111500;
         static constexpr unsigned int mission_manager_offset     = 111600;
         static constexpr unsigned int attitude_computer_offset   = 111700;
-        static constexpr unsigned int adcs_box_controller_offset = 147400;
+        static constexpr unsigned int adcs_commander_offset      = 147400;
+        static constexpr unsigned int adcs_box_controller_offset = 147900;
         static constexpr unsigned int docking_controller_offset  = 152400;
         static constexpr unsigned int downlink_producer_offset   = 153400; // excel says 152900
         static constexpr unsigned int quake_manager_offset       = 153500;
+        static constexpr unsigned int dcdc_controller_offset     = 153500;  // fix this later
         static constexpr unsigned int eeprom_controller_offset   = 153500;  // fix this later
     #else
         static constexpr unsigned int debug_task_offset          =   5500;
@@ -78,10 +84,12 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int uplink_consumer_offset     =  61500;
         static constexpr unsigned int mission_manager_offset     =  61600;
         static constexpr unsigned int attitude_computer_offset   =  61700;
-        static constexpr unsigned int adcs_box_controller_offset =  97400;
+        static constexpr unsigned int adcs_commander_offset      =  97400;
+        static constexpr unsigned int adcs_box_controller_offset =  97900;
         static constexpr unsigned int docking_controller_offset  = 103400; // excel says 102400
         static constexpr unsigned int downlink_producer_offset   = 104400; // excel says 102900
         static constexpr unsigned int quake_manager_offset       = 104500;
+        static constexpr unsigned int dcdc_controller_offset     = 153500; // fix this later
         static constexpr unsigned int eeprom_controller_offset   = 153500; // too high?
     #endif
 
@@ -94,6 +102,8 @@ class MainControlLoop : public ControlTask<void> {
 
     AttitudeComputer attitude_computer; // needs adcs.state from MissionManager
 
+    ADCSCommander adcs_commander; // will need inputs from computer
+
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
 
    public:
@@ -102,9 +112,11 @@ class MainControlLoop : public ControlTask<void> {
      * 
      * @param registry State field registry
      * @param flow_data Metadata for telemetry flows.
+     * @param statefields Statefields written to EEPROM
+     * @param periods Number of control cycles after which a statefield is written to EEPROM
      */
     MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data);
+        const std::vector<DownlinkProducer::FlowData>& flow_data, const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods);
 
     /**
      * @brief Processes state field commands present in the serial buffer.

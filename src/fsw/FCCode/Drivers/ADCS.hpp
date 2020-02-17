@@ -1,5 +1,5 @@
 /** @file ADCS.hpp
- * @author Kyle Krol
+ * @author Shihao Cao
  * @date 6 Feb 2018
  * @brief Contains definition for device interface to ADCS system.
  */
@@ -7,10 +7,10 @@
 #ifndef PAN_LIB_DRIVERS_ADCS_HPP_
 #define PAN_LIB_DRIVERS_ADCS_HPP_
 
-#include "../Devices/I2CDevice.hpp"
-#include <array>
-#include <adcs/adcs_constants.hpp>
+#include <adcs/constants.hpp>
+#include <fsw/FCCode/Devices/I2CDevice.hpp>
 
+#include <array>
 #include <bitset>
 
 namespace Devices {
@@ -21,7 +21,9 @@ class ADCS : public I2CDevice {
     static constexpr unsigned int WHO_AM_I_EXPECTED = 0x0F;
 
     #ifdef UNIT_TEST
-    unsigned int mock_ssa_mode = SSAMode::SSA_IN_PROGRESS;
+    unsigned int mock_ssa_mode = adcs::SSAMode::SSA_IN_PROGRESS;
+    std::bitset<adcs::havt::max_devices> mock_havt_read;
+    bool adcs_functionality = true;
     #endif
     /**
      * @brief quickly tests that the device is active and working on i2c
@@ -213,15 +215,22 @@ class ADCS : public I2CDevice {
     void set_imu_gyr_temp_desired(const float desired);
 
     /**
-     * @brief Sets the availability of ADCS devices.
+     * @brief Requests a reset for any adcs havt device with a bit high
      * 
-     * Only call this method it is necessary to update the state of any ADCS devices.
-     * In nominal operation, this method should be untouched.
+     * In nominal operation, this is a table of 0's
      * 
-     * @param havt_table The commanded state of the ADCS HAVT table
+     * @param table The commanded state of the ADCS HAVT reset table
      */
-    void set_havt(const std::bitset<havt::max_devices>& havt_table);
+    void set_havt_reset(const std::bitset<adcs::havt::max_devices>& table);
     
+    /**
+     * @brief Requests a disable for any adcs havt device with a bit high
+     * 
+     * In nominal operation, this is a table of 0's
+     * 
+     * @param table The commanded state of the ADCS HAVT disable table
+     */
+    void set_havt_disable(const std::bitset<adcs::havt::max_devices>& table);
     /**
      * @brief Get the who_am_i value
      * 
@@ -250,15 +259,6 @@ class ADCS : public I2CDevice {
      * @param ssa_mode Pointer to output current ssa mode value
      */
     void get_ssa_mode(unsigned char *ssa_mode);
-
-    #ifdef UNIT_TEST
-    /**
-     * @brief A MOCKING METHOD, Set the ssa mode 
-     * 
-     * @param ssa_mode 
-     */
-    void set_mock_ssa_mode(const unsigned char ssa_mode);
-    #endif
 
     /**
      * @brief Get the sun sensor array vector
@@ -314,7 +314,29 @@ class ADCS : public I2CDevice {
      * 
      * @param havt_table Pointer to the bitset that will be read into
      */
-    void get_havt(std::bitset<havt::max_devices>* havt_table);
+    void get_havt(std::bitset<adcs::havt::max_devices>* havt_table);
+
+
+    #ifdef UNIT_TEST
+    /**
+     * @brief A mocking method that sets the returned bitset, 
+     * relevant for ADCSMonitor UnitTestings
+     */
+    void set_mock_havt_read(const std::bitset<adcs::havt::max_devices>& havt_input);
+
+    /**
+     * @brief A mocking method that sets the returned ssa mode 
+     * 
+     * @param ssa_mode 
+     */
+    void set_mock_ssa_mode(const unsigned char ssa_mode);
+
+    /**
+     * @brief A mocking method that sets the return of i2c_ping
+     * 
+     */
+    void set_mock_adcs_functional(const bool functional);
+    #endif
 };
 
 }  // namespace Devices

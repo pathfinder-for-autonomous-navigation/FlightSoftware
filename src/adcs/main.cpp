@@ -24,10 +24,6 @@
 //   discard 3 samples at 52 Hz 
 //
 
-#ifdef MAIN_DEBUG
-#define DEBUG
-#endif
-
 #include "constants.hpp"
 #include "havt.hpp"
 #include "havt_devices.hpp"
@@ -37,7 +33,7 @@
 #include "ssa.hpp"
 #include "state.hpp"
 #include "state_controller.hpp"
-#include "utl/debug.hpp"
+#include "utl/logging.hpp"
 
 #include <Arduino.h>
 #include <i2c_t3.h>
@@ -51,21 +47,52 @@ using namespace adcs;
 //        a clock frequency needs to be included
 
 void setup() {
-  DEBUG_init(9600)
-  // Initialize slave I2C bus with address 0x4E
-  Wire.begin(I2C_SLAVE, 0x4E);
-  Wire.onReceive(umb::on_i2c_recieve);
-  Wire.onRequest(umb::on_i2c_request);
+  LOG_init(9600)
+
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+  delay(5000);
+#endif
+
+  LOG_INFO_header
+  LOG_INFO_println("Logging interface initialized with logging level "
+      + String(LOG_LEVEL))
+
   // Initialize master I2C busses
   Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000);
   Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
+
+  LOG_INFO_header
+  LOG_INFO_printlnF("Initialized sensor I2C busses")
+
+  LOG_INFO_header
+  LOG_INFO_printlnF("Pausing for 200 ms for sensors to initialize")
+
   // Wait for sensors to boot up
   delay(200);
-  // Initialize all subsystems
+
+  LOG_INFO_header
+  LOG_INFO_printlnF("Complete")
+
+  // Initialize all modules
   imu::setup();
   mtr::setup();
   rwa::setup();
   ssa::setup();
+
+  LOG_INFO_header
+  LOG_INFO_printlnF("Module initialization complete")
+
+  // Initialize slave I2C bus with address 0x4E
+  Wire.begin(I2C_SLAVE, 0x4E);
+  Wire.onReceive(umb::on_i2c_recieve);
+  Wire.onRequest(umb::on_i2c_request);
+
+  LOG_INFO_header
+  LOG_INFO_printlnF("Umbilical I2C interface initialized")
+
+  LOG_WARN_header
+  LOG_WARN_printlnF("Initialization process complete; entering main loop")
+
 }
 
 void update_havt() {
@@ -76,21 +103,28 @@ void update_havt() {
   //set register to the internal table.
   registers.havt.read_table = (unsigned int)havt::internal_table.to_ulong();
 
-  //if no new command no need to actuate anything
-  if(registers.havt.cmd_flg == CMDFlag::OUTDATED) return;
-  //otherwise, actuate the cmd_table
+  //if new command, actuate on reset_table
+  if(registers.havt.cmd_reset_flg == CMDFlag::UPDATED){
+    // Attempt atomic copy of the havt command reset
+    registers.havt.cmd_reset_flg = CMDFlag::OUTDATED;
+    unsigned int command_int = registers.havt.cmd_reset_table;
 
-  unsigned int command_int;
-  // Attempt atomic copy of the havt command table
-  registers.havt.cmd_flg = CMDFlag::OUTDATED;
-  command_int = registers.havt.cmd_table;
-
-  // Actuate if the copy was atomic
-  if (registers.havt.cmd_flg == CMDFlag::OUTDATED){
-    std::bitset<havt::max_devices> temp_command_table(command_int);
-    havt::execute_cmd_table(temp_command_table);
+    // Actuate if the copy was atomic
+    if (registers.havt.cmd_reset_flg == CMDFlag::OUTDATED){
+      std::bitset<havt::max_devices> temp_command_table(command_int);
+      havt::execute_cmd_reset_table(temp_command_table);
+    }
   }
 
+  //if new command, execute distable table
+  if(registers.havt.cmd_disable_flg == CMDFlag::UPDATED){
+    registers.havt.cmd_disable_flg = CMDFlag::OUTDATED;
+    unsigned int command_int = registers.havt.cmd_disable_table;
+    if (registers.havt.cmd_disable_flg == CMDFlag::OUTDATED){
+      std::bitset<havt::max_devices> temp_command_table(command_int);
+      havt::execute_cmd_disable_table(temp_command_table);
+    }
+  }
 }
 
 void update_imu() {
@@ -145,7 +179,7 @@ void update_rwa() {
   rwa_cmd = {registers.rwa.cmd[0], registers.rwa.cmd[1], registers.rwa.cmd[2]};
   // Actuate if the copy was atomic
   if (registers.rwa.cmd_flg == CMDFlag::OUTDATED)
-    rwa::control(rwa_mode, rwa_cmd);
+    rwa::actuate(rwa_mode, rwa_cmd);
 
   // Update reaction wheel readings
   rwa::update_sensors(registers.rwa.momentum_flt, registers.rwa.ramp_flt); // TODO : Check if this is momentum of speed filter and refactor accordingly
@@ -180,18 +214,46 @@ void update_ssa() {
   }
 }
 
-void loop() {
-  update_imu();  DEBUG_printF(",")
-  update_mtr();  DEBUG_printF(",")
-  update_rwa();  DEBUG_printF(",")
-  update_ssa();  DEBUG_printF(",")
-  update_havt(); DEBUG_printF(",") //call update havt last so that resetting devices has a chance to take place before the next control cycle
+#if LOG_LEVEL >= LOG_LEVEL_INFO
+static unsigned long cycles = 0;
+#endif
 
-  // Append state information to the end of the CSV line
-  DEBUG_print(registers.mode)     DEBUG_printF(",")
-  //TODO ADD HAVT DEBUG PRINT?
-  DEBUG_print(registers.imu.mode) DEBUG_printF(",")
-  DEBUG_print(registers.mtr.mode) DEBUG_printF(",")
-  DEBUG_print(registers.rwa.mode) DEBUG_printF(",")
-  DEBUG_print(registers.ssa.mode) DEBUG_println()
+void loop() {
+  update_imu();
+  update_mtr();
+  update_rwa();
+  update_ssa();
+  update_havt();
+
+#if LOG_LEVEL >= LOG_LEVEL_INFO
+  if (!(++cycles % 100000UL)) {
+    LOG_INFO_header
+    LOG_INFO_println("Heartbeat cycle count " + String(cycles))
+
+    LOG_INFO_header
+    LOG_INFO_println("mode     " + String(registers.mode))
+    LOG_INFO_header
+    LOG_INFO_println("imu.mode " + String(registers.imu.mode))
+    LOG_INFO_header
+    LOG_INFO_println("mtr.mode " + String(registers.mtr.mode))
+    LOG_INFO_header
+    LOG_INFO_println("rwa.mode " + String(registers.rwa.mode))
+    LOG_INFO_header
+    LOG_INFO_println("ssa.mode " + String(registers.ssa.mode))
+
+    std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
+    char buffer[33];
+    for(int i = 0; i<32; i++){
+      if(temp_bitset.test(31-i))
+        buffer[i] = '1';
+      else
+        buffer[i] = '0';
+    }
+    buffer[32] = '\0';
+
+    LOG_INFO_header
+    LOG_INFO_print("havt.read ")
+    LOG_INFO_println(buffer)
+  }
+#endif
 }

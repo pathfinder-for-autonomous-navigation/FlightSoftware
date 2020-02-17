@@ -6,7 +6,7 @@ cache:
 language: python
 python: "3.7"
 install:
-    - pip install -U platformio
+    - pip install -U platformio==4.2.0
     - platformio update
 
 matrix:
@@ -20,7 +20,7 @@ matrix:
             - valgrind
             - cppcheck
         install:
-            - pip install -U platformio
+            - pip install -U platformio==4.2.0
             - platformio update
             - sudo gem install coveralls-lcov
         script:
@@ -42,7 +42,7 @@ matrix:
 
       - name: "ADCS Software Tests"
         install:
-            - pip install -U platformio
+            - pip install -U platformio==4.2.0
             - platformio update
         script:
             - platformio run -e adcs_teensy35_flight_leader

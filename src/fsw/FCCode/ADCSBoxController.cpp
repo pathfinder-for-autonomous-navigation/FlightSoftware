@@ -1,8 +1,8 @@
 #include "ADCSBoxController.hpp"
 #include "adcs_state_t.enum"
 
-#include <adcs/adcs_constants.hpp>
-#include <adcs/adcs_havt_devices.hpp>
+#include <adcs/constants.hpp>
+#include <adcs/havt_devices.hpp>
 
 ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
@@ -28,35 +28,45 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         imu_mag_filter_fp = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
         imu_gyr_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
         imu_gyr_temp_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
-        imu_gyr_temp_kp_fp = find_writable_field<float>("adcs_cmd.imu_temp_kp", __FILE__, __LINE__);
-        imu_gyr_temp_ki_fp = find_writable_field<float>("adcs_cmd.imu_temp_ki", __FILE__, __LINE__);
-        imu_gyr_temp_kd_fp = find_writable_field<float>("adcs_cmd.imu_temp_kd", __FILE__, __LINE__);
+        imu_gyr_temp_kp_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_kp", __FILE__, __LINE__);
+        imu_gyr_temp_ki_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_ki", __FILE__, __LINE__);
+        imu_gyr_temp_kd_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_kd", __FILE__, __LINE__);
         imu_gyr_temp_desired_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
     
+        
         //fill vector of pointers to statefields for havt
+        havt_cmd_reset_vector_fp.reserve(adcs::havt::Index::_LENGTH);
         char buffer[50];
-        for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++)
+        for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
         {
             std::memset(buffer, 0, sizeof(buffer));
-            sprintf(buffer,"adcs_cmd.havt_device");
+            sprintf(buffer,"adcs_cmd.havt_reset");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_cmd_table_vector_fp.push_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+            havt_cmd_reset_vector_fp.emplace_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+        }
+        havt_cmd_disable_vector_fp.reserve(adcs::havt::Index::_LENGTH);
+        for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
+        {
+            std::memset(buffer, 0, sizeof(buffer));
+            sprintf(buffer,"adcs_cmd.havt_disable");
+            sprintf(buffer + strlen(buffer), "%u", idx);
+            havt_cmd_disable_vector_fp.emplace_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
         }
     }
 
 void ADCSBoxController::execute(){
     // set to passive/disabled if in startup
     if(adcs_state_fp->get() == static_cast<unsigned char>(adcs_state_t::startup))
-        adcs_system.set_mode(ADCSMode::ADCS_PASSIVE);
+        adcs_system.set_mode(adcs::ADCSMode::ADCS_PASSIVE);
     else
-        adcs_system.set_mode(ADCSMode::ADCS_ACTIVE);
+        adcs_system.set_mode(adcs::ADCSMode::ADCS_ACTIVE);
 
     // dump all commands
-    if(rwa_mode_fp->get() == RWAMode::RWA_SPEED_CTRL)
+    if(rwa_mode_fp->get() == adcs::RWAMode::RWA_SPEED_CTRL)
         adcs_system.set_rwa_mode(rwa_mode_fp->get(), rwa_speed_cmd_fp->get());
-    else if(rwa_mode_fp->get() == RWAMode::RWA_ACCEL_CTRL)
+    else if(rwa_mode_fp->get() == adcs::RWAMode::RWA_ACCEL_CTRL)
         adcs_system.set_rwa_mode(rwa_mode_fp->get(), rwa_torque_cmd_fp->get());
-    else if(rwa_mode_fp->get() == RWAMode::RWA_DISABLED){
+    else if(rwa_mode_fp->get() == adcs::RWAMode::RWA_DISABLED){
         adcs_system.set_rwa_mode(rwa_mode_fp->get(), std::array<float, 3>{0,0,0});
     }
 
@@ -68,8 +78,8 @@ void ADCSBoxController::execute(){
     adcs_system.set_mtr_limit(mtr_limit_fp->get());
 
     //if calculation is complete/fail set the mode to in_progress to begin a new calc
-    if(ssa_mode_fp->get() != SSAMode::SSA_IN_PROGRESS)
-        adcs_system.set_ssa_mode(SSAMode::SSA_IN_PROGRESS);
+    if(ssa_mode_fp->get() != adcs::SSAMode::SSA_IN_PROGRESS)
+        adcs_system.set_ssa_mode(adcs::SSAMode::SSA_IN_PROGRESS);
     
     adcs_system.set_ssa_voltage_filter(ssa_voltage_filter_fp->get());
 
@@ -82,11 +92,15 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_gyr_temp_kd(imu_gyr_temp_kd_fp->get());
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
 
-    // apply havt cmd table
-    std::bitset<havt::max_devices> temp_cmd_table(0);
-    for(unsigned int idx = adcs_havt::Index::IMU_GYR; idx < adcs_havt::Index::_LENGTH; idx++)
+    std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
+    for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
-        temp_cmd_table.set(idx, havt_cmd_table_vector_fp[idx]->get());
+        temp_cmd_table.set(idx, havt_cmd_reset_vector_fp[idx]->get());
     }
-    adcs_system.set_havt(temp_cmd_table);
+    adcs_system.set_havt_reset(temp_cmd_table);
+    for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
+    {
+        temp_cmd_table.set(idx, havt_cmd_disable_vector_fp[idx]->get());
+    }
+    adcs_system.set_havt_disable(temp_cmd_table);
 }
