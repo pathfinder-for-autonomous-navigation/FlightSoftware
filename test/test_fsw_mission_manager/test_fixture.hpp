@@ -34,6 +34,7 @@ class TestFixture {
     std::shared_ptr<ReadableStateField<bool>> docked_fp;
 
     Fault low_batt_fault_f;
+    Fault adcs_functional_fault_f;
     Fault wheel1_adc_fault_f;
     Fault wheel2_adc_fault_f;
     Fault wheel3_adc_fault_f;

@@ -305,13 +305,13 @@ void on_i2c_recieve(unsigned int bytes) {
       break;
     }
 
-    case Register::HAVT_COMMAND: {
+    case Register::HAVT_COMMAND_RESET: {
       if (umb::wire->available() < 1) break;
-      registers.havt.cmd_table = endian_read<unsigned int>();
-      registers.havt.cmd_flg = CMDFlag::UPDATED;
+      registers.havt.cmd_reset_table = endian_read<unsigned int>();
+      registers.havt.cmd_reset_flg = CMDFlag::UPDATED;
 
-#if LOG_LEVEL >= LOG_LEVEL_INFO
-      std::bitset<havt::max_devices>temp(registers.havt.cmd_table);
+      #if LOG_LEVEL >= LOG_LEVEL_INFO
+      std::bitset<havt::max_devices>temp(registers.havt.cmd_reset_table);
 
       //note 32 = havt::max_devices for clarity
       char buffer[33];
@@ -324,9 +324,34 @@ void on_i2c_recieve(unsigned int bytes) {
       buffer[32] = '\0';
 
       LOG_INFO_header
-      LOG_INFO_printF("HAVT_COMMAND set to ")
+      LOG_INFO_printF("HAVT_COMMAND_RESET set to ")
       LOG_INFO_println(buffer);
-#endif
+      #endif
+
+      break;
+    }
+    case Register::HAVT_COMMAND_DISABLE: {
+      if (umb::wire->available() < 1) break;
+      registers.havt.cmd_disable_table = endian_read<unsigned int>();
+      registers.havt.cmd_disable_flg = CMDFlag::UPDATED;
+
+      #if LOG_LEVEL >= LOG_LEVEL_INFO
+      std::bitset<havt::max_devices>temp(registers.havt.cmd_disable_table);
+
+      //note 32 = havt::max_devices for clarity
+      char buffer[33];
+      for(int i = 0; i<32; i++){
+        if(temp.test(31-i))
+          buffer[i] = '1';
+        else
+          buffer[i] = '0';
+      }
+      buffer[32] = '\0';
+
+      LOG_INFO_header
+      LOG_INFO_printF("HAVT_COMMAND_DISABLE set to ")
+      LOG_INFO_println(buffer);
+      #endif
 
       break;
     }

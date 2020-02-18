@@ -215,15 +215,22 @@ class ADCS : public I2CDevice {
     void set_imu_gyr_temp_desired(const float desired);
 
     /**
-     * @brief Sets the availability of ADCS devices.
+     * @brief Requests a reset for any adcs havt device with a bit high
      * 
-     * Only call this method it is necessary to update the state of any ADCS devices.
-     * In nominal operation, this method should be untouched.
+     * In nominal operation, this is a table of 0's
      * 
-     * @param havt_table The commanded state of the ADCS HAVT table
+     * @param table The commanded state of the ADCS HAVT reset table
      */
-    void set_havt(const std::bitset<adcs::havt::max_devices>& havt_table);
+    void set_havt_reset(const std::bitset<adcs::havt::max_devices>& table);
     
+    /**
+     * @brief Requests a disable for any adcs havt device with a bit high
+     * 
+     * In nominal operation, this is a table of 0's
+     * 
+     * @param table The commanded state of the ADCS HAVT disable table
+     */
+    void set_havt_disable(const std::bitset<adcs::havt::max_devices>& table);
     /**
      * @brief Get the who_am_i value
      * 

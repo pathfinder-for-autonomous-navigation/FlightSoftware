@@ -135,6 +135,7 @@ class MissionManager : public TimedControlTask<void> {
     // True if the battery is below the threshold for safehold.
     Fault* low_batt_fault_fp;
     // Fault flags for ADCS motor ADCs and potentiometer.
+    Fault* adcs_functional_fault_fp;
     Fault* wheel1_adc_fault_fp;
     Fault* wheel2_adc_fault_fp;
     Fault* wheel3_adc_fault_fp;
