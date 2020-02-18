@@ -80,14 +80,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     set(sat_designation_t::undecided);
 }
 
-bool MissionManager::check_adcs_hardware_faults() const {
-    return  adcs_functional_fault_fp->is_faulted()
-            || wheel1_adc_fault_fp->is_faulted() 
-            || wheel2_adc_fault_fp->is_faulted()
-            || wheel3_adc_fault_fp->is_faulted()
-            || wheel_pot_fault_fp->is_faulted();
-}
-
 void MissionManager::execute() {
     const mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
