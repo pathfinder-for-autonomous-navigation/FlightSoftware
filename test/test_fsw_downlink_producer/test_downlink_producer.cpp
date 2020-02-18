@@ -346,13 +346,13 @@ void test_shift_priorities() {
             2, false, {"foo1"} 
         },
         {
-            3, false, {"foo1"} 
+            3, true, {"foo1"} 
         },
         {
             4, true, {"foo1"} 
         },
         {
-            5, true, {"foo1"} 
+            5, false, {"foo1"} 
         },
         {
             6, false, {"foo1"} 
@@ -361,31 +361,33 @@ void test_shift_priorities() {
     tf.init(flow_data);
 
     std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
-    TEST_ASSERT_EQUAL(false, flows[1].is_active);
-    TEST_ASSERT_EQUAL(true, flows[4].is_active);
+    std::vector<int> initial_ids={1,2,3,4,5,6};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(initial_ids[i], flow_id);
+    }
+    TEST_ASSERT_EQUAL(true, flows[0].is_active);
+    TEST_ASSERT_EQUAL(false, flows[5].is_active);
     
     // Test shifting backwards
-    tf.downlink_producer->shift_flow_priorities(5,2);
+    tf.downlink_producer->shift_flow_priorities(6,1);
 
     // Get the new flow vector and check that the flows have been reordered as desired
     flows=tf.downlink_producer->get_flows();
-    std::vector<int> desired_ids={1,5,2,3,4,6};
+    std::vector<int> desired_ids={6,1,2,3,4,5};
     for (size_t i = 0; i<flows.size(); i++){
         unsigned char flow_id;
         flows[i].id_sr.deserialize(&flow_id);
         TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
     }
 
-    // Check that the priorities are swapped, too
-    TEST_ASSERT_EQUAL(false, flows[1].is_active);
-    TEST_ASSERT_EQUAL(true, flows[4].is_active);
-
     // Test shifting forwards
-    tf.downlink_producer->shift_flow_priorities(1,2);
+    tf.downlink_producer->shift_flow_priorities(6,5);
 
     // Get the new flow vector and check that the flows have been reordered as desired
     flows=tf.downlink_producer->get_flows();
-    desired_ids={5,2,1,3,4,6};
+    desired_ids={1,2,3,4,5,6};
     for (size_t i = 0; i<flows.size(); i++){
         unsigned char flow_id;
         flows[i].id_sr.deserialize(&flow_id);
