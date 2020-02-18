@@ -240,28 +240,18 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
         }
     }
 
+    bool temp = flows[idx1].is_active;
+    flows[idx1].is_active = flows[idx2].is_active;
+    flows[idx2].is_active = temp;
+
     if (idx1>idx2) {
         for (size_t i = idx1; i > idx2; i--) {
-            // Get id of flow at i and i-1
-            unsigned char flow_id1;
-            flows[i].id_sr.deserialize(&flow_id1);
-            unsigned char flow_id2;
-            flows[i-1].id_sr.deserialize(&flow_id2);
-            // Switch the ids
-            flows[i].id_sr.serialize(flow_id2);
-            flows[i-1].id_sr.serialize(flow_id1);
+            std::swap(flows[i], flows[i-1]);
         }
     }
     else if (idx2>idx1) {
         for (size_t i = idx1; i < idx2; i++) {
-            // Get id of flow at i and i+1
-            unsigned char flow_id1;
-            flows[i].id_sr.deserialize(&flow_id1);
-            unsigned char flow_id2;
-            flows[i+1].id_sr.deserialize(&flow_id2);
-            // Switch the ids
-            flows[i].id_sr.serialize(flow_id2);
-            flows[i+1].id_sr.serialize(flow_id1);
+            std::swap(flows[i],flows[i+1]);
         }
     }
 }
