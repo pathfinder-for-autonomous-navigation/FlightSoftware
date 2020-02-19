@@ -21,7 +21,7 @@ class TestFixture {
         radio_state_fp->set(static_cast<unsigned char>(radio_state_t::disabled));
     }
     void enable_radio() {
-        radio_state_fp->set(static_cast<unsigned char>(radio_state_t::wait));
+        radio_state_fp->set(static_cast<unsigned char>(radio_state_t::config));
     }
 
     TestFixture(fault_checker_state_t initial_state = fault_checker_state_t::unfaulted) {
@@ -118,8 +118,6 @@ void test_qfhmock() {
     qfh.set_output(mission_state_t::standby);
     TEST_ASSERT_EQUAL(mission_state_t::standby, qfh.execute());
 }
-
-void test_qfh_initialization() { TestFixture tf; }
 
 void test_qfh_transition() {
     // Open-box test.

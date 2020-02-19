@@ -6,8 +6,14 @@
 
 /**
  * @brief This state machine class implements a tiered fault system
- * for addressing comms failures. See Issue #20 on Flight Software
- * for a description of what exactly it's implementing.
+ * for addressing comms failures. The fault system is as follows:
+ * 
+ * If Quake radio fails to initiate a successful SBDIX in 24 hours:
+ * - Force the mission state to standby, wait 24 hours in that state.
+ *   This puts the satellite in an comms-maximizing attitude.
+ * - If we still don't have comms by then, power cycle the radio every 8 hours three times.
+ * - If we still don't have comms by then, go into safe hold, which after 24 hours
+ *   will reset the entire satellite.
  * 
  * NOTE: It's important that this machine does not override conditions
  * that have forced the satellite into safe hold, i.e. it should not
@@ -101,8 +107,6 @@ class QuakeFaultHandler : public ControlTask<mission_state_t> {
     const InternalStateField<unsigned int>* last_checkin_cycle_fp;
     WritableStateField<bool>* power_cycle_radio_fp;
 
-    const unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
-
     /**
      * @brief Helper functions for if-statements, to make them look cleaner.
      */
@@ -113,7 +117,9 @@ class QuakeFaultHandler : public ControlTask<mission_state_t> {
 
 /**
  * @brief Mocking class that can be used by Mission Manager's unit test to
- * inject Quake faults in a easily controllable way.
+ * have a simple way to emulate Quake fault behavior. It can use this class to
+ * declaratively set the Quake fault handler's recommended mission state to
+ * see if the mission manager responds appropriately.
  */
 class QuakeFaultHandlerMock {
   public:

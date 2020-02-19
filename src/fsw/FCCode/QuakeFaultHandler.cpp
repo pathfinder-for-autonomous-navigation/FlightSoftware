@@ -2,6 +2,8 @@
 #include "constants.hpp"
 #include "radio_state_t.enum"
 
+const unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
+
 QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry& r) : ControlTask<mission_state_t>(r) {
     radio_state_fp        = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__,
