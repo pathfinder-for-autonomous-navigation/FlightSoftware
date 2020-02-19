@@ -4,7 +4,6 @@
 #include <fsw/FCCode/radio_state_t.enum>
 
 using fault_checker_state_t = QuakeFaultHandler::fault_checker_state_t;
-unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
 unsigned int one_day_ccno = PAN::one_day_ccno;
 
 class TestFixture {
@@ -300,7 +299,6 @@ void test_qfh_safehold() {
 int test_mission_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_qfhmock);
-    RUN_TEST(test_qfh_initialization);
     RUN_TEST(test_qfh_unfaulted);
     RUN_TEST(test_qfh_forced_standby);
     RUN_TEST(test_qfh_powercycle_1);
