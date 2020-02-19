@@ -127,6 +127,6 @@ private:
   int currentState; // the state of the Quake
   int fnSeqNum;     // the sequence we are on
 
-  const char *MO_msg_p;   // the message to downlink
+  char *MO_msg_p;   // the message to downlink
   size_t MO_msg_len;      // length of the message to downlink
 };
