@@ -76,10 +76,11 @@ protected:
     const WritableStateField<float>* imu_gyr_temp_desired_fp;
 
     /**
-     * @brief HAVT command table, a vector of pointers to bool state fields
+     * @brief HAVT command tables, a vector of pointers to bool state fields
      * 
      */
-    std::vector<const WritableStateField<bool>*> havt_cmd_table_vector_fp;
+    std::vector<const WritableStateField<bool>*> havt_cmd_reset_vector_fp;
+    std::vector<const WritableStateField<bool>*> havt_cmd_disable_vector_fp;
 
 };
 

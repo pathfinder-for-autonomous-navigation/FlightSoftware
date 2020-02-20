@@ -29,15 +29,15 @@
 // Quake driver setup is initialized when QuakeController constructor is called
 QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) : 
     TimedControlTask<bool>(registry, "quake", offset),
-    max_wait_cycles_f("radio.max_wait", Serializer<unsigned int>(0, 24 * 60 * 60 * 1000 / 120)),
-    max_transceive_cycles_f("radio.max_transceive", Serializer<unsigned int>(0, 24 * 60 * 60 * 1000 / 120)),
+    max_wait_cycles_f("radio.max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
+    max_transceive_cycles_f("radio.max_transceive", Serializer<unsigned int>(PAN::one_day_ccno)),
     radio_err_f("radio.err", Serializer<int>(-90, 10)),
     radio_mt_packet_f("uplink.ptr"),
     radio_mt_len_f("uplink.len"),
     radio_state_f("radio.state"),
     last_checkin_cycle_f("radio.last_comms_ccno"), // Last communication control cycle #
     dump_telemetry_f("telem.dump", Serializer<bool>()),
-    qct(registry),
+    qct(),
     mo_idx(0),
     unexpected_flag(false)
 { 
