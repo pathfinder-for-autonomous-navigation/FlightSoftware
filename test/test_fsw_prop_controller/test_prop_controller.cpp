@@ -23,6 +23,7 @@ class PropTestFixture
        sched_valve2_fp = registry.find_writable_field_t<unsigned int>("prop.sched_valve2");
        sched_valve3_fp = registry.find_writable_field_t<unsigned int>("prop.sched_valve3");
        sched_valve4_fp = registry.find_writable_field_t<unsigned int>("prop.sched_valve4");
+       PropulsionSystem.reset();
     }
 
     inline void fixture_set_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now)
@@ -151,27 +152,6 @@ void test_presurize_to_await_firing()
   tf.check_state(prop_state_t::await_firing);
 }
 
-void test_firing_to_idle()
-{
-  PropTestFixture tf;
-  tf.set_state(prop_state_t::idle);
-  unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed();
-  tf.fixture_set_schedule(700, 200, 200, 800, cycles_until_fire);
-  tf.step(cycles_until_fire);
-  tf.check_state(prop_state_t::await_firing);
-  // For 800/140 control cycles, we should be firing
-  unsigned int cycles_firing = (800/PAN::control_cycle_time_ms);
-  for(size_t i = 0; i < cycles_firing + 1; ++i)
-  {
-    tf.step();
-    // Check the schedule to see if we are done
-    tf.check_state(prop_state_t::firing);
-  }
-  tf.step();
-  // On the next control cycle, we should be back to idle
-  tf.check_state(prop_state_t::idle);
-}
-
 void test_pressurizing()
 {
   // Test that the prop system is in the state associated with pressurizing
@@ -181,7 +161,7 @@ void test_pressurizing()
   tf.fixture_set_schedule(700, 200, 200, 800, cycles_until_fire);
   tf.step();
   tf.check_state(prop_state_t::pressurizing);
-  //TODO: check the prop system states associated with pressurizing
+  TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
 }
 
 void test_pressurize_late()
@@ -231,7 +211,38 @@ void test_firing()
   tf.fixture_set_schedule(700, 200, 200, 800, cycles_until_fire);
   tf.step(cycles_until_fire + 1);
   tf.check_state(prop_state_t::firing);
+  TEST_ASSERT_TRUE(PropulsionSystem.is_firing())
+  TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
+  TEST_ASSERT_TRUE(Tank2.is_valve_open(1));
+  TEST_ASSERT_TRUE(Tank2.is_valve_open(2));
+  TEST_ASSERT_TRUE(Tank2.is_valve_open(3));
+  tf.step();
+  // all valves should be opened
+  
   // TODO: check state associated with firing
+}
+
+void test_firing_to_idle()
+{
+  PropTestFixture tf;
+  tf.set_state(prop_state_t::idle);
+  unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed();
+  tf.fixture_set_schedule(700, 200, 200, 800, cycles_until_fire);
+  tf.step(cycles_until_fire);
+  tf.check_state(prop_state_t::await_firing);
+  // For 800/140 control cycles, we should be firing
+  unsigned int cycles_firing = (800/PAN::control_cycle_time_ms);
+  for(size_t i = 0; i < cycles_firing + 1; ++i)
+  {
+    tf.step();
+    // Check the schedule to see if we are done
+    tf.check_state(prop_state_t::firing);
+    TEST_ASSERT_TRUE(PropulsionSystem.is_firing())
+  }
+  tf.step();
+  // On the next control cycle, we should be back to idle
+  TEST_ASSERT_FALSE(PropulsionSystem.is_firing())
+  tf.check_state(prop_state_t::idle);
 }
 
 int test_prop_controller() {

@@ -209,6 +209,7 @@ private:
     // Number of pressurizing cycles since we last entered this state
     //  If this number is >= 20, then signal pressurize failure fault
     unsigned int pressurizing_cycle_count;
+    friend class PropController;
 };
 
 class PropState_Firing : public PropState

@@ -15,8 +15,8 @@ using namespace Devices;
  */
 static void interrupts(){}
 void noInterrupts(){}
-uint8_t analogRead(uint8_t pin){return pin%2;}
-uint8_t digitalRead(uint8_t pin){return pin%2;}
+uint8_t analogRead(uint8_t pin){return 0;}
+uint8_t digitalRead(uint8_t pin){return 0;}
 void digitalWrite(uint8_t pin, uint8_t val){}
 #define LOW 0
 #define HIGH 1
@@ -91,7 +91,11 @@ bool Tank::is_valve_open(size_t valve_idx) const
 {
     if (valve_idx >= num_valves)
         return false;
+#ifdef DESKTOP
+    return is_valve_opened[valve_idx];
+#else
     return digitalRead(valve_pins[valve_idx]);
+#endif
 }
 
 void Tank::close_all_valves()

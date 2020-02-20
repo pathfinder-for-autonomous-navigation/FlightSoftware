@@ -89,7 +89,7 @@ bool PropController::validate_schedule()
 bool PropController::is_at_threshold_pressure()
 {
 #ifdef DESKTOP
-    return true;
+    return (state_pressurizing.pressurizing_cycle_count == 15);
 #else
     return Tank2.get_pressure() >= threshold_firing_pressure;
 #endif
@@ -290,7 +290,10 @@ bool PropState_Firing::can_enter()
 prop_state_t PropState_Firing::evaluate()
 {
     if ( is_schedule_empty() )
-        return prop_state_t::idle;
+    {
+        PropulsionSystem.disable();
+        return prop_state_t::idle;   
+    }
     else
         return this_state;
 }
