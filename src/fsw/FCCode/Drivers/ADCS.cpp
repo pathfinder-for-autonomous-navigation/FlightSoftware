@@ -15,7 +15,7 @@ using namespace Devices;
 
 #ifndef DESKTOP
 ADCS::ADCS(i2c_t3 &i2c_wire, unsigned char address)
-    : I2CDevice("adcs", i2c_wire, address, 1000) {}
+    : I2CDevice("adcs", i2c_wire, address, 10000) {}
 #else
 ADCS::ADCS()
     : I2CDevice("adcs", 0) {}
