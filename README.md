@@ -12,7 +12,3 @@ Repository for all Teensy based flight code for Pathfinder for Autonomous Naviga
     docker run fsw ./tools/run_ground_tests.sh
 
 See the "Tools" directory to see how to run tests locally without Docker.
-
-## Working with ADCS Software
-
-Change-directory into the ADCS Software folder and work from there.
