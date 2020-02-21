@@ -26,5 +26,5 @@ See the "Tools" directory to see how to run tests locally without Docker.
      pio run -e fsw_teeny36_hitl_leader (for HITL testing with a Teensy 3.6)
      pio run -e fsw_flight_leader (for HITL testing with pure flight code)
 
-  ## Testing ADCS software
-     Check out `configs/adcs.ini` for a list of available environments.
+## Testing ADCS software
+    Check out `configs/adcs.ini` for a list of available environments.
