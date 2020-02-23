@@ -239,11 +239,7 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
             idx2 = idx;
         }
     }
-
-    bool temp = flows[idx1].is_active;
-    flows[idx1].is_active = flows[idx2].is_active;
-    flows[idx2].is_active = temp;
-
+    
     if (idx1>idx2) {
         for (size_t i = idx1; i > idx2; i--) {
             std::swap(flows[i], flows[i-1]);
