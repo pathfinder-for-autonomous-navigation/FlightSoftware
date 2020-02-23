@@ -103,6 +103,40 @@ class DownlinkProducer : public TimedControlTask<void> {
 
         //! Number of bits in the entire flow packet, including the flow ID.
         size_t get_packet_size() const;
+
+        /**
+        * @brief Copy constructor.
+        */
+        Flow(const Flow& other) {
+            *this = other;
+        }
+
+        /**
+        * @brief Copy assignment operator.
+        */
+        Flow& operator=(const Flow& rhs) {
+            is_active = rhs.is_active;
+            id_sr = std::move(rhs.id_sr);
+            field_list = rhs.field_list;
+            return *this;
+        }
+
+        /**
+        * @brief Move constructor.
+        */
+        Flow(Flow&& other) {
+            *this = other;
+        }
+
+        /**
+        * @brief Move assignment operator.
+        */
+        Flow& operator=(Flow&& rhs) {
+            is_active = rhs.is_active;
+            id_sr = std::move(rhs.id_sr);
+            field_list = rhs.field_list;
+            return *this;
+        }
     };
 
     #if defined GSW || defined DESKTOP
