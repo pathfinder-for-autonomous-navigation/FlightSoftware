@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <cassert>
 #include "GPSTime.hpp"
+#include "../fsw/FCCode/Fault.hpp"
+#include "../fsw/FCCode/Event.hpp"
 #include "Serializer.hpp"
 #include "types.hpp"
 
