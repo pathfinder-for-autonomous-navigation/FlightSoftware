@@ -1,22 +1,23 @@
 #include <fsw/FCCode/PropController.hpp>
 
-#ifdef DESKTOP
+#ifdef FEELS_BAD
 #include <iostream>
 #define DD(f_, ...) printf((f_), ##__VA_ARGS__)
-size_t g_fake_pressure_cycle_count = 15; // global
 #else
-#define DD(x)
+#define DD(f_, ...)
+#endif
+#ifdef DESKTOP
+size_t g_fake_pressure_cycle_count = 15; // global
 #endif
 
-PropController::PropController(StateFieldRegistry& registry, unsigned int offset)
-: TimedControlTask<void>(registry, "prop", offset),
-    prop_state_f("prop.state", Serializer<unsigned int>(6)),
-    fire_cycle_f("prop.fire_cycle", Serializer<unsigned int>(256)),
-    sched_valve1_f("prop.sched_valve1", Serializer<unsigned int>(999)),
-    sched_valve2_f("prop.sched_valve2", Serializer<unsigned int>(999)),
-    sched_valve3_f("prop.sched_valve3", Serializer<unsigned int>(999)),
-    sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999))
-{
+PropController::PropController(StateFieldRegistry &registry, unsigned int offset)
+        : TimedControlTask<void>(registry, "prop", offset),
+          prop_state_f("prop.state", Serializer<unsigned int>(6)),
+          fire_cycle_f("prop.fire_cycle", Serializer<unsigned int>(256)),
+          sched_valve1_f("prop.sched_valve1", Serializer<unsigned int>(999)),
+          sched_valve2_f("prop.sched_valve2", Serializer<unsigned int>(999)),
+          sched_valve3_f("prop.sched_valve3", Serializer<unsigned int>(999)),
+          sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999)) {
 
     add_writable_field(prop_state_f);
     add_writable_field(fire_cycle_f);
@@ -39,8 +40,6 @@ PropState_Firing PropController::state_firing;
 // PropState_HandlingFault PropController::state_handling_fault = PropState_HandlingFault();
 
 void PropController::execute() {
-    // Tick all the countdown timers
-    CountdownTimer::tick();
 
     // Decrement fire_cycle if it is not equal to 0
     if (fire_cycle_f.get() != 0)
@@ -101,6 +100,7 @@ bool PropController::validate_schedule() {
 
 bool PropController::is_at_threshold_pressure()
 {
+
 #ifdef DESKTOP
     // For testing purposes, say that we are at threshold pressure at pressurizing cycle fake_pressure_cycle_count
     return (state_pressurizing.pressurizing_cycle_count == g_fake_pressure_cycle_count);
@@ -113,12 +113,6 @@ bool PropController::is_at_threshold_pressure()
 // Countdown Timer
 // ------------------------------------------------------------------------
 
-std::vector<CountdownTimer*> CountdownTimer::tick_list;
-CountdownTimer::CountdownTimer()
-{
-    tick_list.push_back(this);
-}
-
 bool CountdownTimer::is_timer_zero() const
 {
     return cycles_left == 0;
@@ -129,21 +123,10 @@ void CountdownTimer::set_timer_cc(size_t num_control_cycles)
     cycles_left = num_control_cycles;
 }
 
-void CountdownTimer::set_timer_ms(size_t num_ms)
-{
-    // convert from ms to control cycles
-    size_t num_cc = num_ms/PAN::control_cycle_time_ms;
-    cycles_left = num_cc;
-}
+void CountdownTimer::tick() {
 
-void CountdownTimer::tick()
-{
-    // TODO: is there a better way to do this? This is kinda dangerous
-    for (CountdownTimer* c : tick_list)
-    {
-        if (c->cycles_left > 0)
-            --c->cycles_left;
-    }
+    if (cycles_left > 0)
+        --cycles_left;
 }
 
 void CountdownTimer::reset_timer()
@@ -239,9 +222,9 @@ bool PropState_Pressurizing::is_time_to_pressurize() {
 }
 
 unsigned int PropState_Pressurizing::num_cycles_needed() {
-    // Add 1 here because ctrl_cycles_per_pressurizing_cycle takes the floor of the division
-    return (PropController::max_pressurizing_cycles + 1)
-           * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle;
+    // 20 * firing + 19 * coolings
+    return PropController::max_pressurizing_cycles * PropState_Pressurizing::ctrl_cycles_per_firing_period +
+           (PropController::max_pressurizing_cycles - 1) * PropState_Pressurizing::ctrl_cycles_per_cooling_period;
 }
 
 void PropState_Pressurizing::enter() {
@@ -261,20 +244,18 @@ bool PropState_Pressurizing::should_use_backup()
     return false;
 }
 
-prop_state_t PropState_Pressurizing::evaluate()
-{
+prop_state_t PropState_Pressurizing::evaluate() {
+    // Tick the clock
+    countdown.tick();
     // Case 1: Tank2 is at threshold pressure
     if (controller->is_at_threshold_pressure()) {
         DD("\tTank2 is at threshold pressure!\n");
         PropulsionSystem.close_valve(Tank1, valve_num);
-        if ( controller->can_enter_state(prop_state_t::firing) )
-        {
-            return prop_state_t::firing;
-        }
-        else
-        {
-            DD("\tCan't enter firing state!\n");
+        if (controller->can_enter_state(prop_state_t::await_firing)) {
+            return prop_state_t::await_firing;
+        } else {
             // TODO: sure want to disable?
+            DD("\tproblem: entered disabled!\n");
             return prop_state_t::disabled;
         }
     }
@@ -296,10 +277,8 @@ prop_state_t PropState_Pressurizing::handle_valve_is_open()
     // If 1 second has past since we opened the valve, then close the valve
     if ( countdown.is_timer_zero() )
     {
-        DD("\tTimer is zero!\n");
         PropulsionSystem.close_valve(Tank1, valve_num);
-        // Start cooldown timer
-        countdown.set_timer_ms(cooling_duration_ms);
+        countdown.set_timer_cc(ctrl_cycles_per_cooling_period);
     }
     return this_state;
 }
@@ -308,10 +287,10 @@ prop_state_t PropState_Pressurizing::handle_valve_is_close()
 {
     // If we have have pressurized for more than max_pressurizing_cycles
     //      then signal fault
-    if (pressurizing_cycle_count > PropController::max_pressurizing_cycles) {
+    if (pressurizing_cycle_count >= PropController::max_pressurizing_cycles) {
         return handle_pressurize_failed();
     }
-    // If we are not on 10s cooldown, then start pressurizing again
+        // If we are not on 10s cooldown, then start pressurizing again
     else if (countdown.is_timer_zero()) {
         start_pressurize_cycle();
         return this_state;
@@ -327,13 +306,14 @@ prop_state_t PropState_Pressurizing::handle_pressurize_failed()
     return prop_state_t::disabled;
 }
 
-void PropState_Pressurizing::start_pressurize_cycle()
-{
+void PropState_Pressurizing::start_pressurize_cycle() {
     pressurizing_cycle_count++;
-    DD("\tStarting pressurizing cycle: %d!\n", pressurizing_cycle_count);
+    DD("\tStarting pressurizing cycle: %d.\n\t\t%d fire cycles left!\n", pressurizing_cycle_count,
+       controller->fire_cycle_f.get());
     // Open the valve and set the timer to 1 second
     PropulsionSystem.open_valve(Tank1, valve_num);
-    countdown.set_timer_ms(firing_duration_ms);
+    // Round normal
+    countdown.set_timer_cc(ctrl_cycles_per_firing_period);
 }
 
 // ------------------------------------------------------------------------
@@ -341,10 +321,9 @@ void PropState_Pressurizing::start_pressurize_cycle()
 // ------------------------------------------------------------------------
 
 bool PropState_Firing::can_enter() const {
-    bool was_pressurizing = controller->check_current_state(prop_state_t::pressurizing);
     bool was_await_firing = controller->check_current_state(prop_state_t::await_firing);
     bool is_time_to_fire = controller->fire_cycle_f.get() == 0;
-    return (was_pressurizing || was_await_firing) && is_time_to_fire;
+    return was_await_firing && is_time_to_fire;
 }
 
 void PropState_Firing::enter() {

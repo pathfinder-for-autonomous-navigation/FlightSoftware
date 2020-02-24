@@ -4,24 +4,22 @@
 #include <fsw/FCCode/prop_state_t.enum>
 #include <vector>
 
+/**
+ * Implementation Info:
+ * - millisecond to control cycle count conversions take the floor operator - change this by changing the constexprs
+ * - There is no going from Pressurizing directly to Firing
+ *
+ */
 
 // Forward declaration of PropState classes
 class PropState;
-
 class PropState_Disabled;
-
 class PropState_Idle;
-
 class PropState_AwaitPressurizing;
-
 class PropState_Pressurizing;
-
 class PropState_AwaitFiring;
-
 class PropState_Firing;
-
 class PropState_Venting;
-
 class PropState_HandlingFault;
 
 class PropController : public TimedControlTask<void> {
@@ -98,23 +96,17 @@ private:
 // It uses units of control cycles
 class CountdownTimer {
 public:
-    CountdownTimer();
     bool is_timer_zero() const;
     // Sets the timer (does not check whether the timer is free)
     void set_timer_cc(size_t num_control_cycles);
-    // Converts num_ms (milliseconds) into control_cycles (and rounds down)
-    void set_timer_ms(size_t num_ms);
+
     void reset_timer();
+
+    void tick();
 
 private:
     // Number of cycles until this timer is free
     size_t cycles_left = 0;
-
-    // Called by PropController to advance each timer in tick_list by one control cycle
-    static void tick(); 
-    // All instantiated timers are automatically added to this tick_list
-    static std::vector<CountdownTimer*> tick_list;
-    friend class PropController;
 };
 
 // ------------------------------------------------------------------------
@@ -214,16 +206,15 @@ public:
 
     prop_state_t evaluate() override;
 
-    static constexpr unsigned int firing_duration_ms = 1000;
-    static constexpr unsigned int cooling_duration_ms = 10 * 1000;
+    static constexpr unsigned int ctrl_cycles_per_firing_period = 1000 / PAN::control_cycle_time_ms;
+    static constexpr unsigned int ctrl_cycles_per_cooling_period = 10 * 1000 / PAN::control_cycle_time_ms;
 
     // Number of control cycles in 1 pressurizing cycle
-    //      cycle (1 + 10 = 11 seconds worth of control cycles)
-    static constexpr unsigned int ctrl_cycles_per_pressurizing_cycle =
-            (firing_duration_ms + cooling_duration_ms) / PAN::control_cycle_time_ms;
+    static constexpr unsigned int ctrl_cycles_per_pressurizing_cycle
+            = ctrl_cycles_per_firing_period + ctrl_cycles_per_cooling_period;
 
     // Number of control cycles needed to pressurize Tank2
-    //      (i.e. number of control cycles in 20 pressurizing cycles)
+    //  20 firings + 19 coolings (because of the fence rule)
     static unsigned int num_cycles_needed();
 
     // Return true if we should start pressurizing right now.
