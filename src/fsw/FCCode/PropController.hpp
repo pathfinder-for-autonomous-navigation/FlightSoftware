@@ -183,7 +183,7 @@ public:
 // NO ONE may change firing parameters once this state is entered. However, this state can be cancelled to go back to Idle
 class PropState_AwaitPressurizing : public PropState {
 public:
-    PropState_AwaitPressurizing() : PropState(prop_state_t::idle) {}
+    PropState_AwaitPressurizing() : PropState(prop_state_t::await_pressurizing) {}
 
     bool can_enter() const override;
 
@@ -191,25 +191,10 @@ public:
 
     prop_state_t evaluate() override;
 
-    // Number of control cycles needed to pressurize Tank2
-    //      (i.e. number of control cycles in 20 pressurizing cycles)
-    static unsigned int num_cycles_needed();
-
 private:
-
-    // Return true if we have enough time to pressurize Tank2
-    static bool can_pressurize_in_time();
-
-    // Set the timer for 20 pressurizing cycles away from firing time
-    // PreCond: We have already checked that we can feasibly pressurize in time
-    void set_time_until_pressurizing();
 
     // Copies the values in sched_valve1_f, sched_valve2_f, etc. into Tank2's schedule
     void write_tank2_schedule();
-
-    // timer to wait until transition to PropState_Pressurizing
-    CountdownTimer timer;
-
 };
 
 // A pressurizing cycle consists of a "firing" period and a "cooling period". 
@@ -237,13 +222,20 @@ public:
     static constexpr unsigned int ctrl_cycles_per_pressurizing_cycle =
             (firing_duration_ms + cooling_duration_ms) / PAN::control_cycle_time_ms;
 
+    // Number of control cycles needed to pressurize Tank2
+    //      (i.e. number of control cycles in 20 pressurizing cycles)
+    static unsigned int num_cycles_needed();
+
+    // Return true if we should start pressurizing right now.
+    static bool is_time_to_pressurize();
+
 private:
     // Called when Tank1 valve is currently open
-    void handle_valve_is_open();
+    prop_state_t handle_valve_is_open();
     // Called when Tank1 valve is currently closed
-    void handle_valve_is_close();
+    prop_state_t handle_valve_is_close();
     // Called when we have failed to reach threshold_pressure after maximum consecutive pressurizing cycles
-    void handle_pressurize_failed();
+    prop_state_t handle_pressurize_failed();
     // Starts another pressurization cycle
     void start_pressurize_cycle();
 
