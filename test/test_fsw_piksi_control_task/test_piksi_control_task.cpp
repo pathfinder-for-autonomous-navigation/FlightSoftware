@@ -28,6 +28,7 @@ class TestFixture {
         ReadableStateField<unsigned int>* fix_error_count_fp;
         InternalStateField<sys_time_t>* last_fix_time_fp;
         WritableStateField<bool>* data_mute_fp;
+        Fault* piksi_fault_fp;
 
         std::unique_ptr<PiksiControlTask> piksi_task;
 
@@ -56,6 +57,8 @@ class TestFixture {
                 fix_error_count_fp = registry.find_readable_field_t<unsigned int>("piksi.fix_error_count");
                 last_fix_time_fp = registry.find_internal_field_t<sys_time_t>("piksi.last_fix_time");
                 data_mute_fp = registry.find_writable_field_t<bool>("piksi.data_mute");
+
+                piksi_fault_fp = static_cast<Fault*>(registry.find_writable_field_t<bool>("piksi.fault"));
         }
 
         #undef PIKSI_INITIALIZATION
@@ -277,12 +280,9 @@ void test_dead(){
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
 
         //simulate that the piksi is not sending any data for 1000 control cycles.
-        //Make sure that the counter state fields are set correctl.
+        //Make sure that the counter state fields are set correct.
         tf.set_read_return(4);
         for(int i = 0;i<1000;i++) {
-                if (i % 100 == 0) {
-                        TEST_ASSERT_EQUAL(i, tf.fix_error_count_fp->get());
-                }
                 tf.execute();
                 TimedControlTaskBase::wait_duration(1);
         }
