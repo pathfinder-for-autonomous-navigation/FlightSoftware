@@ -2,6 +2,7 @@
 #define DOWNLINK_PRODUCER_HPP_
 
 #include "TimedControlTask.hpp"
+#include <iostream>
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
@@ -105,6 +106,18 @@ class DownlinkProducer : public TimedControlTask<void> {
         size_t get_packet_size() const;
 
         /**
+        * @brief Move assignment operator.
+        */
+        Flow& operator=(Flow&& rhs) {
+            is_active = std::move(rhs.is_active);
+            id_sr = std::move(rhs.id_sr);
+            for (size_t i = 0; i<rhs.field_list.size(); i++) {
+                field_list[i] = rhs.field_list[i];
+            }
+            return *this;
+        }
+
+        /**
         * @brief Copy constructor.
         */
         Flow(const Flow& other) {
@@ -115,23 +128,9 @@ class DownlinkProducer : public TimedControlTask<void> {
         * @brief Copy assignment operator.
         */
         Flow& operator=(const Flow& rhs) {
-            is_active = rhs.is_active;
-            id_sr = std::move(rhs.id_sr);
-            field_list = rhs.field_list;
-            return *this;
-        }
-
-        /**
-        * @brief Move constructor.
-        */
-        Flow(Flow&& other) {
-            *this = other;
-        }
-
-        /**
-        * @brief Move assignment operator.
-        */
-        Flow& operator=(Flow&& rhs) {
+            unsigned char flow_id;
+            rhs.id_sr.deserialize(&flow_id);
+            std::cout<<flow_id;
             is_active = rhs.is_active;
             id_sr = std::move(rhs.id_sr);
             field_list = rhs.field_list;
