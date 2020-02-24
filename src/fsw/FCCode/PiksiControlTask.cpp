@@ -14,7 +14,10 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
     fix_error_count_f("piksi.fix_error_count", Serializer<unsigned int>(1001)),
     time_f("piksi.time", Serializer<gps_time_t>()),
     last_fix_time_f("piksi.last_fix_time"),
-    data_mute_f("piksi.data_mute", Serializer<bool>())
+    bool_sr(),
+    data_mute_f("piksi.data_mute", bool_sr),
+    //if we haven't had a good reading in ~120 seconds the piksi is probably dead
+    piksi_fault("piksi.fault", 1000, control_cycle_count)
     {
         add_readable_field(pos_f);
         add_readable_field(vel_f);
@@ -56,18 +59,9 @@ void PiksiControlTask::execute()
     //3 means CRC error on serial
     //5 means timing error exceed
     if(read_out == 3|| read_out == 4|| read_out == 5)
-        fix_error_count_f.set(fix_error_count_f.get() + 1);
+        piksi_fault.signal();
     else {
-        fix_error_count_f.set(0);
-    }
-        
-    //if we haven't had a good reading in ~120 seconds the piksi is probably dead
-    //eventually replace with HAVT logic
-    if(fix_error_count_f.get() > DEAD_CYCLE_COUNT){
-        current_state_f.set(static_cast<unsigned int>(piksi_mode_t::dead));
-        //prevent roll over
-        fix_error_count_f.set(1001);
-        return;
+        piksi_fault.unsignal();
     }
 
     if(read_out == 5){
@@ -117,6 +111,7 @@ void PiksiControlTask::execute()
 
             current_state_f.set(static_cast<unsigned int>(piksi_mode_t::sync_error));
             nan_return();
+            piksi_fault.signal();
             return;
         }
 
@@ -124,6 +119,7 @@ void PiksiControlTask::execute()
         if(nsats < 4){
             current_state_f.set(static_cast<unsigned int>(piksi_mode_t::nsat_error));
             nan_return();
+            piksi_fault.signal();
             return;
         }
 
@@ -145,6 +141,7 @@ void PiksiControlTask::execute()
                 //baseline flag unexpected value
                 current_state_f.set(static_cast<unsigned int>(piksi_mode_t::data_error));
                 nan_return();
+                piksi_fault.signal();
                 return;
             }
         }
@@ -156,6 +153,8 @@ void PiksiControlTask::execute()
         if(read_out == 1){
             baseline_pos_f.set(baseline_pos);
         }
+        
+        piksi_fault.unsignal();
 
         // mute piksi
         if(data_mute_f.get() && radio_state_fp->get() == static_cast<unsigned int>(radio_state_t::transceive))
@@ -166,6 +165,7 @@ void PiksiControlTask::execute()
     else{
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::data_error));
         nan_return();
+        piksi_fault.signal();
         return;
     }
 }

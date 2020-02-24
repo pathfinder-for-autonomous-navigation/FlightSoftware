@@ -7,7 +7,7 @@
 #include "TimedControlTask.hpp"
 
 #include "piksi_mode_t.enum"
-
+#include "Fault.hpp"
 class PiksiControlTask : public TimedControlTask<void>
 {
 public:
@@ -50,11 +50,16 @@ public:
     // System time of last good Piksi reading
     InternalStateField<sys_time_t> last_fix_time_f;
 
+    Serializer<bool> bool_sr;
+
     // Pointer to the radio state
     const WritableStateField<unsigned char>* radio_state_fp;
     // Ground commandablefield that toggles whether or not 
     // piksi is muted if radio is broadcasting
     WritableStateField<bool> data_mute_f;
+
+    // fault is signaled whenever piksi has an error, including no_data
+    Fault piksi_fault;
 protected:
     //Internal Data Containers
     std::array<double, 3> pos;
