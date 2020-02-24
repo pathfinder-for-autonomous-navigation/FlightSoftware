@@ -23,72 +23,78 @@ PropController::PropController(StateFieldRegistry& registry, unsigned int offset
 PropController* PropState::controller = nullptr;
 PropState_Disabled PropController::state_disabled;
 PropState_Idle PropController::state_idle;
+PropState_AwaitPressurizing PropController::state_await_pressurizing;
 PropState_Pressurizing PropController::state_pressurizing;
 PropState_AwaitFiring PropController::state_await_firing;
 PropState_Firing PropController::state_firing;
 // PropState_Venting PropController::state_venting = PropState_Venting();
 // PropState_HandlingFault PropController::state_handling_fault = PropState_HandlingFault();
 
-void PropController::execute()
-{
-    prop_state_t current_state = static_cast<prop_state_t>(prop_state_f.get());
-    
-    prop_state_t next_state = get_state(current_state).evaluate();
-    if (next_state != current_state)
-    {
-        if ( get_state(next_state).can_enter() )
-        {
-            prop_state_f.set(static_cast<unsigned int>(next_state));
-        }
-        else
-        {
-            // TODO: what to do if tried to enter a state and was not allowed?
-        }
-    }
+void PropController::execute() {
     // Tick all the countdown timers
     CountdownTimer::tick();
 
     // Decrement fire_cycle if it is not equal to 0
     if (fire_cycle_f.get() != 0)
         fire_cycle_f.set(fire_cycle_f.get() - 1);
-}
 
-PropState& PropController::get_state(prop_state_t state)
-{
-  switch( state )
-  {
-    case prop_state_t::disabled:
-        return state_disabled;
-    case prop_state_t::idle:
-        return state_idle;
-    case prop_state_t::pressurizing:
-        return state_pressurizing;
-    case prop_state_t::await_firing:
-        return state_await_firing;
-    case prop_state_t::firing:
-        return state_firing;
-    // case prop_state_t::venting:
-    //     return state_venting;
-    // case prop_state_t::handling_fault:
-    //     return state_handling_fault;
-    default:
-        return state_disabled;
+    auto current_state = static_cast<prop_state_t>(prop_state_f.get());
+
+    prop_state_t next_state = get_state(current_state).evaluate();
+    if (next_state != current_state) {
+        // sanity check
+        if (get_state(next_state).can_enter()) {
+            prop_state_f.set(static_cast<unsigned int>(next_state));
+            get_state(next_state).enter();
+        } else {
+            // This should never happen, if it does, complain a lot.
+            // TODO: enter handling fault maybe?
+            prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
+        }
     }
 }
 
-bool PropController::is_valid_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4, unsigned int ctrl_cycles_from_now)
-{
-    return ! (v1 > 1000 || v2 > 1000 || v3 > 1000 || v4 > 1000 || ctrl_cycles_from_now < 1);
+bool PropController::can_enter_state(prop_state_t desired_state) const {
+    return get_state(desired_state).can_enter();
 }
 
-bool PropController::validate_schedule()
-{
-    return is_valid_schedule(sched_valve1_f.get(), sched_valve2_f.get(), sched_valve3_f.get(), sched_valve4_f.get(), fire_cycle_f.get());
+PropState &PropController::get_state(prop_state_t state) const {
+    switch (state) {
+        case prop_state_t::disabled:
+            return state_disabled;
+        case prop_state_t::idle:
+            return state_idle;
+        case prop_state_t::await_pressurizing:
+            return state_await_pressurizing;
+        case prop_state_t::pressurizing:
+            return state_pressurizing;
+        case prop_state_t::await_firing:
+            return state_await_firing;
+        case prop_state_t::firing:
+            return state_firing;
+            // case prop_state_t::venting:
+            //     return state_venting;
+            // case prop_state_t::handling_fault:
+            //     return state_handling_fault;
+        default:
+            return state_disabled;
+    }
+}
+
+bool PropController::is_valid_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4,
+                                       unsigned int ctrl_cycles_from_now) {
+    return (v1 < 1000 && v2 < 1000 && v3 < 1000 && v4 < 1000 && ctrl_cycles_from_now > 1);
+}
+
+bool PropController::validate_schedule() {
+    return is_valid_schedule(sched_valve1_f.get(), sched_valve2_f.get(), sched_valve3_f.get(), sched_valve4_f.get(),
+                             fire_cycle_f.get());
 }
 
 bool PropController::is_at_threshold_pressure()
 {
 #ifdef DESKTOP
+    // For testing purposes, say that we are at threshold pressure at pressurizing cycle 15
     return (state_pressurizing.pressurizing_cycle_count == 15);
 #else
     return Tank2.get_pressure() >= threshold_firing_pressure;
@@ -141,13 +147,16 @@ void CountdownTimer::reset_timer()
 // PropState Disabled
 // ------------------------------------------------------------------------
 
-bool PropState_Disabled::can_enter()
-{
+bool PropState_Disabled::can_enter() const {
     return true;
 }
 
-prop_state_t PropState_Disabled::evaluate()
-{
+void PropState_Disabled::enter() {}
+
+prop_state_t PropState_Disabled::evaluate() {
+    // Call disable here because we might have entered this due to some problem
+    if (PropulsionSystem.is_functional())
+        PropulsionSystem.disable();
     return this_state;
 }
 
@@ -155,58 +164,83 @@ prop_state_t PropState_Disabled::evaluate()
 // PropState Idle
 // ------------------------------------------------------------------------
 
-bool PropState_Idle::can_enter()
-{
-     // TODO: can only enter IDLE if there are no hardware faults
-    return true;
+bool PropState_Idle::can_enter() const {
+    // TODO: can only enter IDLE if there are no hardware faults
+    return PropulsionSystem.is_functional();
 }
 
-prop_state_t PropState_Idle::evaluate()
-{
-    if ( is_time_to_pressurize() )
-    {
-        return prop_state_t::pressurizing;
-    }
+void PropState_Idle::enter() {}
+
+prop_state_t PropState_Idle::evaluate() {
+    bool can_enter_await_pressurizing = controller->can_enter_state(prop_state_t::await_pressurizing);
+
+    if (can_enter_await_pressurizing)
+        return prop_state_t::await_pressurizing;
 
     return this_state;
 }
 
-bool PropState_Idle::is_time_to_pressurize() const
-{
-    bool is_within_pressurizing_time = controller->fire_cycle_f.get() < num_cycles_within_firing_to_pressurize + PropState_Pressurizing::num_cycles_needed();
+// ------------------------------------------------------------------------
+// PropState Await_Pressurizing
+// ------------------------------------------------------------------------
+
+bool PropState_AwaitPressurizing::can_enter() const {
+
+    bool was_idle = controller->check_current_state(prop_state_t::idle);
     bool is_schedule_valid = controller->validate_schedule();
-    bool has_enough_time = PropState_Pressurizing::can_pressurize_in_time();
-    return (is_within_pressurizing_time && is_schedule_valid && has_enough_time);
+    bool have_enough_time = can_pressurize_in_time();
+
+    return (was_idle && is_schedule_valid && have_enough_time);
+}
+
+bool PropState_AwaitPressurizing::can_pressurize_in_time() {
+    // > because we must have strictly more than the num_cycles_needed before firing time
+    return controller->fire_cycle_f.get() > num_cycles_needed();
+}
+
+unsigned int PropState_AwaitPressurizing::num_cycles_needed() {
+    // Add 1 here because ctrl_cycles_per_pressurizing_cycle takes the floor of the division
+    return (PropController::max_pressurizing_cycles + 1)
+           * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle;
+}
+
+void PropState_AwaitPressurizing::enter() {
+    set_time_until_pressurizing();
+}
+
+void PropState_AwaitPressurizing::set_time_until_pressurizing() {
+    // we need to set the timer for 20 pressurizing cycles from the firing time
+    timer.set_timer_cc(controller->fire_cycle_f.get() - num_cycles_needed());
+}
+
+prop_state_t PropState_AwaitPressurizing::evaluate() {
+    bool can_enter_pressurizing = controller->can_enter_state(prop_state_t::pressurizing);
+
+    if (timer.is_timer_zero() && can_enter_pressurizing)
+        return prop_state_t::pressurizing;
+
+    return this_state;
 }
 
 // ------------------------------------------------------------------------
-// PropState Pressurzing
+// PropState Pressurizing
 // ------------------------------------------------------------------------
 
-bool PropState_Pressurizing::can_enter()
-{
-    // Only allow entrance from prop_state::idle
-    if ( !controller->check_current_state(prop_state_t::idle) )
-        return false;
+bool PropState_Pressurizing::can_enter() const {
+    bool was_await_pressurizing = controller->check_current_state(prop_state_t::await_pressurizing);
+    bool enough_time = PropState_AwaitPressurizing::num_cycles_needed() < controller->fire_cycle_f.get();
+
+    return was_await_pressurizing && enough_time;
+}
+
+void PropState_Pressurizing::enter() {
     // Set which Tank1 valve to use (default: valve_num = 0)
-    if ( should_use_backup() )
+    if (should_use_backup())
         valve_num = 1;
     // Reset the pressurizing cycles count to 0
     pressurizing_cycle_count = 0;
     // Reset timer to 0 (just in case)
     countdown.reset_timer();
-    return true;
-}
-
-bool PropState_Pressurizing::can_pressurize_in_time()
-{
-    return controller->fire_cycle_f.get() >= num_cycles_needed();
-}
-
-unsigned int PropState_Pressurizing::num_cycles_needed()
-{
-    return ( PropController::max_pressurizing_cycles + 1 )
-        * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle;  
 }
 
 bool PropState_Pressurizing::should_use_backup()
@@ -218,8 +252,7 @@ bool PropState_Pressurizing::should_use_backup()
 prop_state_t PropState_Pressurizing::evaluate()
 {
     // Case 1: Tank2 is at threshold pressure
-    if (controller->is_at_threshold_pressure())
-    {
+    if (controller->is_at_threshold_pressure()) {
         PropulsionSystem.close_valve(Tank1, valve_num);
         return prop_state_t::await_firing;
     }
@@ -248,13 +281,11 @@ void PropState_Pressurizing::handle_valve_is_close()
 {
     // If we have have pressurized for more than max_pressurizing_cycles
     //      then signal fault
-    if ( pressurizing_cycle_count > PropController::max_pressurizing_cycles )
-    {
+    if (pressurizing_cycle_count > PropController::max_pressurizing_cycles) {
         handle_pressurize_failed();
     }
-    // If we are not on 10s cooldown, then start pressurizing again
-    else if( countdown.is_timer_zero() )
-    {
+        // If we are not on 10s cooldown, then start pressurizing again
+    else if (countdown.is_timer_zero()) {
         start_pressurize_cycle();
     }
 }
@@ -277,29 +308,27 @@ void PropState_Pressurizing::start_pressurize_cycle()
 // PropState Firing
 // ------------------------------------------------------------------------
 
-bool PropState_Firing::can_enter()
-{
+bool PropState_Firing::can_enter() const {
     // only allow entrance from prop_state::await_firing
-    if ( !controller->check_current_state(prop_state_t::await_firing) )
-        return false;
+    if (controller->check_current_state(prop_state_t::await_firing))
+        return true;
 
-    PropulsionSystem.start_firing();
-    return true;
+    return false;
 }
 
-prop_state_t PropState_Firing::evaluate()
-{
-    if ( is_schedule_empty() )
-    {
+void PropState_Firing::enter() {
+    PropulsionSystem.start_firing();
+}
+
+prop_state_t PropState_Firing::evaluate() {
+    if (is_schedule_empty()) {
         PropulsionSystem.disable();
-        return prop_state_t::idle;   
-    }
-    else
+        return prop_state_t::idle;
+    } else
         return this_state;
 }
 
-bool PropState_Firing::is_schedule_empty() const
-{
+bool PropState_Firing::is_schedule_empty() const {
     unsigned int remain = 0;
     for (size_t i = 0; i < 4; ++i)
         remain += Tank2.get_schedule_at(i);
@@ -310,25 +339,26 @@ bool PropState_Firing::is_schedule_empty() const
 // PropState Await Firing
 // ------------------------------------------------------------------------
 
-bool PropState_AwaitFiring::can_enter()
-{
+bool PropState_AwaitFiring::can_enter() const {
     // only allow entrance from pressurizing or idle
-    if ( !controller->check_current_state(prop_state_t::pressurizing) 
-            && !controller->check_current_state(prop_state_t::idle) )
+    if (!controller->check_current_state(prop_state_t::pressurizing)
+        && !controller->check_current_state(prop_state_t::idle))
         return false;
     // tank should be pressurized
-    if ( !PropController::is_at_threshold_pressure() )
+    if (!PropController::is_at_threshold_pressure())
         return false;
     // there should be a schedule and a firing time
-    if ( !controller->validate_schedule() )
+    if (!controller->validate_schedule())
         return false;
     return true;
 }
 
-prop_state_t PropState_AwaitFiring::evaluate()
-{
-    if ( is_time_to_fire() )
-    {
+void PropState_AwaitFiring::enter() {
+    // TODO: maybe should be fire_cycle time?
+}
+
+prop_state_t PropState_AwaitFiring::evaluate() {
+    if (is_time_to_fire()) {
         // Copy the schedule values from the registry into Tank2
         controller->write_tank2_schedule();
         return prop_state_t::firing;
@@ -336,7 +366,6 @@ prop_state_t PropState_AwaitFiring::evaluate()
     return this_state;
 }
 
-bool PropState_AwaitFiring::is_time_to_fire() const
-{
+bool PropState_AwaitFiring::is_time_to_fire() const {
     return controller->fire_cycle_f.get() == 0;
 }
