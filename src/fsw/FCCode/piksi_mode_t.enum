@@ -15,9 +15,6 @@ enum class piksi_mode_t {
   time_limit_error, // Exceeded 900 microseconds during process_buffer loop
   data_error, // Unexpected data, but otherwise good packet, ex weird flag
   no_data_error, // No bytes to read from the buffer
-
-  dead //Piksi not functional
-
 };
 
 #endif

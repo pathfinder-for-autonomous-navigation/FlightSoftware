@@ -283,18 +283,24 @@ void test_dead(){
         //Make sure that the counter state fields are set correct.
         tf.set_read_return(4);
         for(int i = 0;i<1000;i++) {
+                TimedControlTaskBase::control_cycle_count++;
                 tf.execute();
-                TimedControlTaskBase::wait_duration(1);
         }
-        const unsigned int delta_t = TimedControlTaskBase::duration_to_us(
-                TimedControlTaskBase::get_system_time()
-                - tf.last_fix_time_fp->get());
-        TEST_ASSERT_GREATER_OR_EQUAL(1000, delta_t);
+        assert_piksi_mode(piksi_mode_t::no_data_error);
+        TEST_ASSERT_FALSE(tf.piksi_fault_fp->is_faulted());
+
+        // one more execution to throw fault
+        TimedControlTaskBase::control_cycle_count++;
+        tf.execute();
+        TEST_ASSERT(tf.piksi_fault_fp->is_faulted());
         assert_piksi_mode(piksi_mode_t::no_data_error);
 
-        //one more execution to throw into DEAD mode
+        // one good execution releases the fault
+        tf.set_read_return(1);
+        TimedControlTaskBase::control_cycle_count++;
         tf.execute();
-        assert_piksi_mode(piksi_mode_t::dead);
+        assert_piksi_mode(piksi_mode_t::fixed_rtk);
+        TEST_ASSERT_FALSE(tf.piksi_fault_fp->is_faulted());
 }
 
 void test_data_mute(){
