@@ -359,10 +359,6 @@ void test_shift_priorities() {
         }
     };
     tf.init(flow_data);
-
-    TEST_ASSERT_EQUAL(true, std::is_move_assignable<DownlinkProducer::Flow>::value);
-    TEST_ASSERT_EQUAL(true, std::is_move_assignable<std::vector<DownlinkProducer::Flow>>::value);
-
     std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
     std::vector<int> initial_ids={1,2,3,4,5,6};
     for (size_t i = 0; i<flows.size(); i++){
