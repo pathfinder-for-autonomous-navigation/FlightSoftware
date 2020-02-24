@@ -63,6 +63,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     #endif
 
     eeprom_controller.init(statefields, periods);
+    piksi_control_task.init();
+    
     // Since all telemetry fields have been added to the registry, initialize flows
     downlink_producer.init_flows(flow_data);
 }

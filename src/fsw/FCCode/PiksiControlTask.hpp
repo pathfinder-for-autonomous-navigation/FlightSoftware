@@ -22,10 +22,16 @@ public:
     void execute() override;
 
     /**
-     * @brief In the case of a bad read from the piksi, set relevant outputs to NaN
+     * @brief In the case of a bad read from the piksi, set relevant outputs to NaN.
      * 
      */
     void nan_return();
+
+    /**
+     * @brief This is called from MCL to find the radio state after QM has be constructed.
+     * 
+     */
+    void init();
 
     // StateField for position, velocity, and baseline
     ReadableStateField<d_vector_t> pos_f;
@@ -44,6 +50,11 @@ public:
     // System time of last good Piksi reading
     InternalStateField<sys_time_t> last_fix_time_f;
 
+    // Pointer to the radio state
+    const WritableStateField<unsigned char>* radio_state_fp;
+    // Ground commandablefield that toggles whether or not 
+    // piksi is muted if radio is broadcasting
+    WritableStateField<bool> data_mute_f;
 protected:
     //Internal Data Containers
     std::array<double, 3> pos;
