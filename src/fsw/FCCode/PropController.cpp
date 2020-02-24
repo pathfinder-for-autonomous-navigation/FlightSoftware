@@ -4,7 +4,7 @@
 #include <iostream>
 #define DD(f_, ...) printf((f_), ##__VA_ARGS__)
 #else
-#define DD(f_, ...)
+#define DD(f_, ...) do{} while(0)
 #endif
 #ifdef DESKTOP
 size_t g_fake_pressure_cycle_count = 15; // global

@@ -1,4 +1,5 @@
 #pragma once
+
 #include <fsw/FCCode/TimedControlTask.hpp>
 #include <fsw/FCCode/Drivers/PropulsionSystem.hpp>
 #include <fsw/FCCode/prop_state_t.enum>
@@ -13,13 +14,21 @@
 
 // Forward declaration of PropState classes
 class PropState;
+
 class PropState_Disabled;
+
 class PropState_Idle;
+
 class PropState_AwaitPressurizing;
+
 class PropState_Pressurizing;
+
 class PropState_AwaitFiring;
+
 class PropState_Firing;
+
 class PropState_Venting;
+
 class PropState_HandlingFault;
 
 class PropController : public TimedControlTask<void> {
@@ -30,15 +39,16 @@ public:
     // Public Interface
     // ------------------------------------------------------------------------
     void execute() override;
+
     bool validate_schedule();
 
-    WritableStateField<unsigned int>prop_state_f;
+    WritableStateField<unsigned int> prop_state_f;
 
-    WritableStateField<unsigned int>fire_cycle_f;
-    WritableStateField<unsigned int>sched_valve1_f;
-    WritableStateField<unsigned int>sched_valve2_f;
-    WritableStateField<unsigned int>sched_valve3_f;
-    WritableStateField<unsigned int>sched_valve4_f;
+    WritableStateField<unsigned int> fire_cycle_f;
+    WritableStateField<unsigned int> sched_valve1_f;
+    WritableStateField<unsigned int> sched_valve2_f;
+    WritableStateField<unsigned int> sched_valve3_f;
+    WritableStateField<unsigned int> sched_valve4_f;
 
     // ------------------------------------------------------------------------
     // Helper Functions
@@ -51,8 +61,8 @@ public:
         return expected == static_cast<prop_state_t>(prop_state_f.get());
     }
 
-    bool is_valid_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4,
-                           unsigned int ctrl_cycles_from_now);
+    static bool is_valid_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4,
+                                  unsigned int ctrl_cycles_from_now);
 
     // Copies the schedule in the writable state fields into Tank2's schedule
     // Precond: schedule should be valid before calling this
@@ -97,6 +107,7 @@ private:
 class CountdownTimer {
 public:
     bool is_timer_zero() const;
+
     // Sets the timer (does not check whether the timer is free)
     void set_timer_cc(size_t num_control_cycles);
 
@@ -138,7 +149,8 @@ protected:
 
     // All instances of PropState will hold a reference to PropController in order
     // to call functions in PropController
-    static PropController* controller;
+    static PropController *controller;
+
     // The only purpose of declaring PropController a friend class is to allow it
     //      to set controller to itself
     friend class PropController;
@@ -165,10 +177,6 @@ public:
 
     prop_state_t evaluate() override;
 
-    // Start pressurizing when we are within this amount of control cycles of the time
-    //      at which we want to fire
-    static constexpr unsigned int num_cycles_within_firing_to_pressurize = 50;
-
 };
 
 // This is the state where we've received a (valid) request to fire.
@@ -183,10 +191,6 @@ public:
 
     prop_state_t evaluate() override;
 
-private:
-
-    // Copies the values in sched_valve1_f, sched_valve2_f, etc. into Tank2's schedule
-    void write_tank2_schedule();
 };
 
 // A pressurizing cycle consists of a "firing" period and a "cooling period". 
@@ -223,10 +227,13 @@ public:
 private:
     // Called when Tank1 valve is currently open
     prop_state_t handle_valve_is_open();
+
     // Called when Tank1 valve is currently closed
     prop_state_t handle_valve_is_close();
+
     // Called when we have failed to reach threshold_pressure after maximum consecutive pressurizing cycles
-    prop_state_t handle_pressurize_failed();
+    static prop_state_t handle_pressurize_failed();
+
     // Starts another pressurization cycle
     void start_pressurize_cycle();
 
@@ -240,6 +247,7 @@ private:
     // Number of pressurizing cycles since we last entered this state
     //  If this number is >= 20, then signal pressurize failure fault
     unsigned int pressurizing_cycle_count;
+
     friend class PropController;
 };
 
