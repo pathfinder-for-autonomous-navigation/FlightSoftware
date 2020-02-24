@@ -2,7 +2,6 @@
 #define DOWNLINK_PRODUCER_HPP_
 
 #include "TimedControlTask.hpp"
-#include <iostream>
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
