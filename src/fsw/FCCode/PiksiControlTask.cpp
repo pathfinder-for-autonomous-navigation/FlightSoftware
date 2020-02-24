@@ -28,6 +28,8 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         add_internal_field(last_fix_time_f);
         add_writable_field(data_mute_f);
 
+        piksi_fault.add_to_registry(registry);
+
         //register callbacks and begin the serial port
         piksi.setup();
 
