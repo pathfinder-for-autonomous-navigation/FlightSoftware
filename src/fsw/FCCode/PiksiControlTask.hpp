@@ -25,7 +25,7 @@ public:
      * @brief In the case of a bad read from the piksi, set relevant outputs to NaN.
      * 
      */
-    void nan_return();
+    void nan_set();
 
     /**
      * @brief This is called from MCL to find the radio state after QM has be constructed.

@@ -94,7 +94,7 @@ float mag_2(const std::array<double, 3> input){
         return (float)(input[0]*input[0] + input[1]*input[1] + input[2]*input[2]);
 }
 
-void check_nan_return(TestFixture &tf){
+void check_nan_set(TestFixture &tf){
     PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({nan_d, nan_d, nan_d}).data(), tf.pos_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({nan_d, nan_d, nan_d}).data(), tf.vel_fp->get().data(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({nan_d, nan_d, nan_d}).data(), tf.baseline_fp->get().data(), 1e-10);
@@ -111,7 +111,7 @@ void test_task_initialization()
     TestFixture tf;
     assert_piksi_mode(piksi_mode_t::no_fix);
     TEST_ASSERT_TRUE(tf.data_mute_fp->get());
-    check_nan_return(tf);
+    check_nan_set(tf);
 }
 
 void test_read_errors(){
@@ -121,25 +121,25 @@ void test_read_errors(){
         tf.set_read_return(3);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::crc_error);
-        check_nan_return(tf);
+        check_nan_set(tf);
 
         //read out == 4 means no bytes were in the buffer
         tf.set_read_return(4);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::no_data_error);
-        check_nan_return(tf);
+        check_nan_set(tf);
 
         //read out == 5 means we were processing bytes for more than 900 microseconds
         tf.set_read_return(5);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::time_limit_error);
-        check_nan_return(tf);
+        check_nan_set(tf);
 
         //not cataloged read_return value
         tf.set_read_return(7);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::data_error);
-        check_nan_return(tf);    
+        check_nan_set(tf);    
 }
 
 //normal errors that come up, but don't mean that the piksi has failed
@@ -200,7 +200,7 @@ void test_task_execute()
         tf.set_read_return(2);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::no_fix);
-        check_nan_return(tf);    
+        check_nan_set(tf);    
 
         //fixed RTK
         unsigned int tow = 200;
@@ -255,8 +255,8 @@ void test_task_execute()
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
 }
 
-//test to make sure the control task goes into dead mode if it happens
-void test_dead(){
+// test to make sure the piksi fault is throwable
+void test_fault(){
         TestFixture tf;
 
         std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
@@ -280,7 +280,7 @@ void test_dead(){
         TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
 
         //simulate that the piksi is not sending any data for 1000 control cycles.
-        //Make sure that the counter state fields are set correct.
+        //Make sure that the counter state fields are set correctly.
         tf.set_read_return(4);
         for(int i = 0;i<1000;i++) {
                 TimedControlTaskBase::control_cycle_count++;
@@ -326,7 +326,7 @@ void test_data_mute(){
     assert_piksi_mode(piksi_mode_t::fixed_rtk);
 
     // data is muted
-    check_nan_return(tf);
+    check_nan_set(tf);
 
     // relase piksi muting, data is fine even with radio in transceive
     tf.data_mute_fp->set(false);
@@ -344,7 +344,7 @@ int test_control_task()
         RUN_TEST(test_read_errors);
         RUN_TEST(test_normal_errors);
         RUN_TEST(test_task_execute);
-        RUN_TEST(test_dead);
+        RUN_TEST(test_fault);
         RUN_TEST(test_data_mute);
         return UNITY_END();
 }
