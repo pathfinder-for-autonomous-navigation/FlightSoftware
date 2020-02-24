@@ -53,7 +53,7 @@ public:
     Serializer<bool> bool_sr;
 
     // Pointer to the radio state
-    const WritableStateField<unsigned char>* radio_state_fp;
+    const InternalStateField<unsigned char>* radio_state_fp;
     // Ground commandablefield that toggles whether or not 
     // piksi is muted if radio is broadcasting
     WritableStateField<bool> data_mute_f;

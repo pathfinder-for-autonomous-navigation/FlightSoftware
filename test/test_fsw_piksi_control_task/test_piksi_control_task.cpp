@@ -42,7 +42,7 @@ class TestFixture {
 
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry(), PIKSI_INITIALIZATION {
-                radio_state_fp = registry.create_writable_field<unsigned char>("radio.state");
+                radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
 
                 // by default, set the state to something that does not interfere with piksi
                 radio_state_fp->set(static_cast<unsigned char>(radio_state_t::config));

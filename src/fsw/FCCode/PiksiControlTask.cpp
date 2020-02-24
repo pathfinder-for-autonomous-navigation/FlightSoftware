@@ -50,7 +50,7 @@ void PiksiControlTask::nan_return(){
 }
 
 void PiksiControlTask::init(){
-    radio_state_fp = find_writable_field<unsigned char>("radio.state", __FILE__, __LINE__);
+    radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
 }
 
 void PiksiControlTask::execute()

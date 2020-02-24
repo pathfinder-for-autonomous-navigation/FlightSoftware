@@ -61,9 +61,9 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     #ifdef FUNCTIONAL_TEST
         add_readable_field(memory_use_f);
     #endif
-
-    eeprom_controller.init(statefields, periods);
+    
     piksi_control_task.init();
+    eeprom_controller.init(statefields, periods);
     
     // Since all telemetry fields have been added to the registry, initialize flows
     downlink_producer.init_flows(flow_data);
