@@ -1,10 +1,13 @@
 #include "../StateFieldRegistryMock.hpp"
+#include "../custom_assertions.hpp"
 
 #include <fsw/FCCode/PiksiControlTask.hpp>
 #include <fsw/FCCode/piksi_mode_t.enum>
 
 #include <fsw/FCCode/Drivers/Piksi.hpp>
 #include <unity.h>
+
+constexpr float nan_d = std::numeric_limits<double>::quiet_NaN();
 
 #define assert_piksi_mode(x) {\
     TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\
@@ -80,10 +83,24 @@ float mag_2(const std::array<double, 3> input){
         return (float)(input[0]*input[0] + input[1]*input[1] + input[2]*input[2]);
 }
 
+void check_nan_return(TestFixture &tf){
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({nan_d, nan_d, nan_d}).data(), tf.pos_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({nan_d, nan_d, nan_d}).data(), tf.vel_fp->get().data(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(d_vector_t({nan_d, nan_d, nan_d}).data(), tf.baseline_fp->get().data(), 1e-10);
+
+    gps_time_t time = tf.time_fp->get();
+    TEST_ASSERT_EQUAL(false, time.is_set);
+    TEST_ASSERT_EQUAL(0, time.wn);
+    TEST_ASSERT_EQUAL(0, time.tow);
+    TEST_ASSERT_EQUAL(0, time.ns);
+}
+
 void test_task_initialization()
 {
-        TestFixture tf;
-        assert_piksi_mode(piksi_mode_t::no_fix);
+    TestFixture tf;
+    assert_piksi_mode(piksi_mode_t::no_fix);
+        
+    check_nan_return(tf);
 }
 
 void test_read_errors(){
@@ -93,22 +110,25 @@ void test_read_errors(){
         tf.set_read_return(3);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::crc_error);
+        check_nan_return(tf);
 
         //read out == 4 means no bytes were in the buffer
         tf.set_read_return(4);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::no_data_error);
+        check_nan_return(tf);
 
         //read out == 5 means we were processing bytes for more than 900 microseconds
         tf.set_read_return(5);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::time_limit_error);
+        check_nan_return(tf);
 
         //not cataloged read_return value
         tf.set_read_return(7);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::data_error);
-    
+        check_nan_return(tf);    
 }
 
 //normal errors that come up, but don't mean that the piksi has failed
@@ -169,6 +189,7 @@ void test_task_execute()
         tf.set_read_return(2);
         tf.execute();
         assert_piksi_mode(piksi_mode_t::no_fix);
+        check_nan_return(tf);    
 
         //fixed RTK
         unsigned int tow = 200;

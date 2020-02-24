@@ -26,12 +26,19 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         piksi.setup();
 
         // Set initial values
-        constexpr double nan = std::numeric_limits<double>::quiet_NaN();
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_fix));
-        pos_f.set({nan, nan, nan});
-        vel_f.set({nan, nan, nan});
-        baseline_pos_f.set({nan, nan, nan});
+        nan_return();
     }
+
+void PiksiControlTask::nan_return(){
+    constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+    pos_f.set({nan, nan, nan});
+    vel_f.set({nan, nan, nan});
+    baseline_pos_f.set({nan, nan, nan});
+
+    time = gps_time_t();
+    time_f.set(time);
+}
 
 void PiksiControlTask::execute()
 {
@@ -57,21 +64,25 @@ void PiksiControlTask::execute()
 
     if(read_out == 5){
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::time_limit_error));
+        nan_return();
         return;
     }
 
     else if(read_out == 4){
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_data_error));
+        nan_return();
         return;
     }
 
     else if(read_out == 3){
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::crc_error));
+        nan_return();
         return;
     }
 
     else if(read_out == 2){
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_fix));
+        nan_return();
         return;
     }
 
@@ -97,12 +108,14 @@ void PiksiControlTask::execute()
             //indicitave of getting only part of the next scream
 
             current_state_f.set(static_cast<unsigned int>(piksi_mode_t::sync_error));
+            nan_return();
             return;
         }
 
         int nsats = piksi.get_pos_ecef_nsats();
         if(nsats < 4){
             current_state_f.set(static_cast<unsigned int>(piksi_mode_t::nsat_error));
+            nan_return();
             return;
         }
 
@@ -123,6 +136,7 @@ void PiksiControlTask::execute()
             else{
                 //baseline flag unexpected value
                 current_state_f.set(static_cast<unsigned int>(piksi_mode_t::data_error));
+                nan_return();
                 return;
             }
         }
@@ -139,6 +153,7 @@ void PiksiControlTask::execute()
     //if read_out is unexpected value which it shouldn't do lol
     else{
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::data_error));
+        nan_return();
         return;
     }
 }

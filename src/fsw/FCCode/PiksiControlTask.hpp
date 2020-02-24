@@ -21,6 +21,12 @@ public:
     */
     void execute() override;
 
+    /**
+     * @brief In the case of a bad read from the piksi, set relevant outputs to NaN
+     * 
+     */
+    void nan_return();
+
     // StateField for position, velocity, and baseline
     ReadableStateField<d_vector_t> pos_f;
     ReadableStateField<d_vector_t> vel_f;
