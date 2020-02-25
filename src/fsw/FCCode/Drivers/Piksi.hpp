@@ -183,7 +183,7 @@ class Piksi {
      *  @return Status flags of GPS baseline position measurement. **/
     unsigned char get_baseline_ecef_flags();
 
-    /** @brief Gets satellite velocity in ECEF coordinates in meters per second.
+    /** @brief Gets satellite velocity in ECEF coordinates in ?????? TODO ?????.
      *  @param velocity A pointer to the std::array of doubles for velocity
      * **/
     virtual void get_vel_ecef(std::array<double, 3> *velocity);
