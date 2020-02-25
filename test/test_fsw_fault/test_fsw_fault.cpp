@@ -1,4 +1,5 @@
 #include "../StateFieldRegistryMock.hpp"
+#include "fsw/FCCode/ControlTask.hpp"
 
 #include <fsw/FCCode/Fault.hpp>
 #include <unity.h>
@@ -12,9 +13,9 @@ void test_fault_normal_behavior() {
     // Test constructor
     Fault fault("fault", 5, control_cycle_count);
 
-    // Test that adding the fault to the registry works
+    // Test that adding the fault to the registry works - move this to sf mock test file
     StateFieldRegistry r;
-    TEST_ASSERT(fault.add_to_registry(r));
+    TEST_ASSERT(add_fault(fault));
     TEST_ASSERT(r.find_writable_field("fault"));
     TEST_ASSERT(r.find_writable_field("fault.override"));
     TEST_ASSERT(r.find_writable_field("fault.suppress"));
@@ -57,7 +58,7 @@ void test_fault_overridden_behavior() {
     StateFieldRegistryMock r;
     unsigned int control_cycle_count = 0;
     Fault fault("fault", 1, control_cycle_count);
-    fault.add_to_registry(r);
+    add_fault(fault);
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
@@ -94,7 +95,7 @@ void test_process_commands(){
     StateFieldRegistryMock r;
     unsigned int control_cycle_count = 0;
     Fault fault("fault", 5, control_cycle_count);
-    fault.add_to_registry(r);
+    add_fault(fault);
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
@@ -173,7 +174,7 @@ void test_dynamic_persistence(){
     StateFieldRegistryMock r;
     unsigned int control_cycle_count = 0;
     Fault fault("fault", 5, control_cycle_count);
-    fault.add_to_registry(r);
+    add_fault(fault);
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
     WritableStateField<unsigned int>* persistence_fp = r.find_writable_field_t<unsigned int>("fault.persistence");
@@ -225,7 +226,7 @@ void test_testfunctions() {
     StateFieldRegistryMock r;
     unsigned int control_cycle_count = 0;
     Fault fault("fault", 1, control_cycle_count);
-    fault.add_to_registry(r);
+    add_fault(fault);
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
     WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
 

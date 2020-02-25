@@ -89,8 +89,7 @@ class ControlTask : protected debug_console {
     }
 
     void add_fault(Fault& fault) {
-        const bool added = _registry.add_fault(
-            static_cast<Fault*>(fault));
+        const bool added = _registry.add_fault(&fault);
         check_field_added(added, fault.name());
     }
 
@@ -139,7 +138,7 @@ class ControlTask : protected debug_console {
     Fault* find_fault(const char* fault, const char* file, const unsigned int line) {
         auto fault_ptr = _registry.find_fault(fault);
         check_field_exists(fault_ptr, "fault", fault);
-        return static_cast<Fault>(fault_ptr);
+        return *fault_ptr;
     }
 };
 

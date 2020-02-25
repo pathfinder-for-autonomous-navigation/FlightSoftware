@@ -62,6 +62,12 @@ bool StateFieldRegistry::add_writable_field(WritableStateFieldBase* field) {
 
 bool StateFieldRegistry::add_fault(Fault* fault) {
     if (find_fault(fault->name())) return false;
+    if (!add_writable_field(static_cast<WritableStateFieldBase*>(fault))) return false;
+    if (!add_writable_field(&fault->suppress_f)) return false;
+    if (!add_writable_field(&fault->override_f)) return false;
+    if (!add_writable_field(&fault->unsignal_f)) return false;
+    if (!add_writable_field(&fault->persistence_f)) return false;
+
     faults.push_back(fault);
     return true;
 }

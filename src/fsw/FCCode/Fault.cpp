@@ -20,16 +20,6 @@ Fault::Fault(const std::string& name,
   persistence_f.set(_persistence);
 }
 
-// implement something like this in statefieldregistry instead of fault class
-// bool Fault::add_to_registry(StateFieldRegistry& r) {
-//     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(this))) return false;
-//     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&suppress_f))) return false;
-//     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&override_f))) return false;
-//     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&unsignal_f))) return false;
-//     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&persistence_f))) return false;
-//     return true;
-// }
-
 void Fault::signal() {
     if (cc > static_cast<unsigned int>(last_fault_time) || cc == 0) {
         num_consecutive_signals++;

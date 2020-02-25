@@ -22,11 +22,6 @@ class Fault : public WritableStateField<bool> {
     const std::string &name() const override { return _name; }
 
     /**
-     * @brief Add fault-related flags to the registry.
-     */
-//    bool add_to_registry(StateFieldRegistry& r);
-
-    /**
      * @brief Client-facing function to signal an occurrence of the
      * fault-related condition. Attempts to increment num_consecutive_signals by 1
      */
@@ -68,7 +63,7 @@ class Fault : public WritableStateField<bool> {
      */
     unsigned int get_num_consecutive_signals();
     #endif
-  private:
+  //private:
     // Make the get() and set() methods of the state field private,
     // so that the user is forced to use the signal() and unsignal()
     // methods instead.
