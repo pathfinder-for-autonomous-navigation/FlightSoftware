@@ -152,8 +152,12 @@ void test_create_writable_vector_field_args() {
 void test_create_fault() {
     StateFieldRegistryMock registry;
 
-    registry.create_fault("foo", 1, 300);
+    registry.create_fault("foo", 1, 3);
     TEST_ASSERT_NOT_NULL(registry.find_fault("foo"));
+    TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.suppress"));
+    TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.override"));
+    TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.unsignal"));
+    TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.persistence"));
 }
 
 /**

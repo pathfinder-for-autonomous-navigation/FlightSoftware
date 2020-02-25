@@ -17,10 +17,16 @@ void test_fault_normal_behavior() {
     // Test that adding the fault to the registry works 
     StateFieldRegistry r;
     TEST_ASSERT(r.add_fault(&fault));
+    TEST_ASSERT_NOT_NULL(r.find_fault("fault"));
     TEST_ASSERT(r.find_writable_field("fault"));
     TEST_ASSERT(r.find_writable_field("fault.override"));
     TEST_ASSERT(r.find_writable_field("fault.suppress"));
     TEST_ASSERT(r.find_writable_field("fault.unsignal"));
+
+    // Registry shouldn't add a fault that already exists
+    TEST_ASSERT_FALSE(r.add_fault(&fault));
+    // Registry will return a null pointer if a fault doesn't exist in it
+    TEST_ASSERT_NULL(r.find_fault("fake_fault"));
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field("fault"));
 
