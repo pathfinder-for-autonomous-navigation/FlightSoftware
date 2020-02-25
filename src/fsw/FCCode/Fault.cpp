@@ -1,8 +1,10 @@
 #include "Fault.hpp"
 
 Fault::Fault(const std::string& name,
-      const size_t _persistence, unsigned int& control_cycle_count) :
+      const size_t _persistence, unsigned int& control_cycle_count) : 
+    FaultBase(), 
     WritableStateField<bool>(name, Serializer<bool>()),
+    _name(name),
     cc(control_cycle_count),
     fault_bool_sr(),
     suppress_f(name + ".suppress", fault_bool_sr),
@@ -19,6 +21,7 @@ Fault::Fault(const std::string& name,
   persistence_f.set(_persistence);
 }
 
+// implement something like this in statefieldregistry instead of fault class
 // bool Fault::add_to_registry(StateFieldRegistry& r) {
 //     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(this))) return false;
 //     if (!r.add_writable_field(static_cast<WritableStateFieldBase*>(&suppress_f))) return false;

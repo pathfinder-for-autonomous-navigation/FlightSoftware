@@ -35,7 +35,7 @@ class FieldCreatorTask : public ControlTask<void> {
 
           // For propulsion controller
           add_readable_field(prop_state_f);
-          failed_pressurize_f.add_to_registry(_registry);
+          //failed_pressurize_f.add_to_registry(_registry);
       }
 
       void execute() {

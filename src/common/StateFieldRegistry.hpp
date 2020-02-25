@@ -4,7 +4,6 @@
 #include <memory>
 #include <set>
 #include "StateField.hpp"
-#include "../fsw/FCCode/Event.hpp"
 #include "../fsw/FCCode/Fault.hpp"
 
 /**
@@ -18,8 +17,7 @@ public:
     std::vector<InternalStateFieldBase*> internal_fields;
     std::vector<ReadableStateFieldBase*> readable_fields;
     std::vector<WritableStateFieldBase*> writable_fields;
-    std::vector<Fault*> faults;
-    std::vector<Event*> events;
+    std::vector<FaultBase*> faults;
 
     StateFieldRegistry();
 
@@ -50,22 +48,13 @@ public:
     WritableStateFieldBase* find_writable_field(const std::string &name) const;
 
     /**
-     * @brief Find an event of a given name within the state registry and return a pointer
-     * to it.
-     *
-     * @param[in] name Name of event.
-     * @return Pointer to event, or null pointer if event doesn't exist.
-     */
-    Event* find_event(const std::string &name) const;
-
-    /**
      * @brief Find a fault of a given name within the state registry and return a pointer
      * to it.
      *
      * @param[in] name Name of fault.
      * @return Pointer to fault, or null pointer if field doesn't exist.
      */
-    Fault* find_fault(const std::string &name) const;
+    FaultBase* find_fault(const std::string &name) const;
 
     /**
      * @brief Adds a field to the registry.
@@ -90,20 +79,12 @@ public:
     bool add_writable_field(WritableStateFieldBase* field);
 
     /**
-     * @brief Marks a event as being uploadable by ground.
-     *
-     * @param r ControlTaskBase
-     * @param event Data event
-     */
-    bool add_event(Event* event);
-
-    /**
      * @brief Marks a fault as being uploadable by ground.
      *
      * @param r ControlTaskBase
      * @param fault Data fault
      */
-    bool add_fault(Fault* fault);
+    bool add_fault(FaultBase* fault);
 };
 
 #endif

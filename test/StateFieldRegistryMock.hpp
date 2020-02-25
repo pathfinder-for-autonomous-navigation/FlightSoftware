@@ -61,7 +61,6 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     /**
      * @brief Finds an fault of the given name.
      */
-    template<>
     Fault* find_fault_t(const std::string& name) {
         auto ptr = static_cast<Fault*>(find_fault(name));
         check_field_exists(ptr, name);
@@ -308,12 +307,12 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @param name Name of fault to create.
      * @return Pointer to fault that was created.
      */
-    std::shared_ptr<Fault> create_fault(const std::string& name, const int persistance, const int control_cycle_count)
+    std::shared_ptr<Fault> create_fault(const std::string& name, const size_t _persistance, unsigned int control_cycle_count)
     {
-        auto field_ptr = std::make_shared<Fault>(name, persistance, control_cycle_count);
-        add_fault(field_ptr.get());
-        created_faults.push_back(field_ptr);
-        return field_ptr;
+        auto fault_ptr = std::make_shared<Fault>(name, _persistance, control_cycle_count);
+        add_fault(fault_ptr.get());
+        created_faults.push_back(fault_ptr);
+        return fault_ptr;
     }
 
     /**
@@ -338,7 +337,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     std::vector<std::shared_ptr<InternalStateFieldBase>> created_internal_fields;
     std::vector<std::shared_ptr<ReadableStateFieldBase>> created_readable_fields;
     std::vector<std::shared_ptr<WritableStateFieldBase>> created_writable_fields;
-    std::vector<std::shared_ptr<Fault>> created_faults;
+    std::vector<std::shared_ptr<FaultBase>> created_faults;
 };
 
 #endif

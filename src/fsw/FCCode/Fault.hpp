@@ -1,9 +1,13 @@
 #ifndef FAULT_HPP_
 #define FAULT_HPP_
 
-#include <common/StateFieldRegistry.hpp>
+#include "FaultBase.hpp"
+#include "common/StateField.hpp"
 
-class Fault : public WritableStateField<bool> {
+class Fault : public virtual FaultBase, public WritableStateField<bool> {
+  protected:
+   const std::string _name;
+  
   public:
     /**
      * @brief Construct a new non-latching fault.
@@ -15,10 +19,12 @@ class Fault : public WritableStateField<bool> {
     Fault(const std::string& name,
           const size_t _persistence, unsigned int& control_cycle_count);
 
+    const std::string &name() const override { return _name; }
+
     /**
      * @brief Add fault-related flags to the registry.
      */
-    // bool add_to_registry(StateFieldRegistry& r);
+//    bool add_to_registry(StateFieldRegistry& r);
 
     /**
      * @brief Client-facing function to signal an occurrence of the

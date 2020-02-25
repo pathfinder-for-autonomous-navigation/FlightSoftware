@@ -88,11 +88,11 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
 
         add_readable_field(adcs_is_functional);
         // add faults to registry
-        adcs_functional_fault.add_to_registry(registry);
-        wheel1_adc_fault.add_to_registry(registry);
-        wheel2_adc_fault.add_to_registry(registry);
-        wheel3_adc_fault.add_to_registry(registry);
-        wheel_pot_fault.add_to_registry(registry);
+        // adcs_functional_fault.add_to_registry(registry);
+        // wheel1_adc_fault.add_to_registry(registry);
+        // wheel2_adc_fault.add_to_registry(registry);
+        // wheel3_adc_fault.add_to_registry(registry);
+        // wheel_pot_fault.add_to_registry(registry);
     }
 
 bool exceed_bounds(const std::array<float, 3>& input, const float min, const float max){

@@ -28,13 +28,13 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
-    low_batt_fault_f.add_to_registry(registry);
-    adcs_functional_fault_f.add_to_registry(registry);
-    wheel1_adc_fault_f.add_to_registry(registry);
-    wheel2_adc_fault_f.add_to_registry(registry);
-    wheel3_adc_fault_f.add_to_registry(registry);
-    wheel_pot_fault_f.add_to_registry(registry);
-    failed_pressurize_f.add_to_registry(registry);
+    // low_batt_fault_f.add_to_registry(registry);
+    // adcs_functional_fault_f.add_to_registry(registry);
+    // wheel1_adc_fault_f.add_to_registry(registry);
+    // wheel2_adc_fault_f.add_to_registry(registry);
+    // wheel3_adc_fault_f.add_to_registry(registry);
+    // wheel_pot_fault_f.add_to_registry(registry);
+    // failed_pressurize_f.add_to_registry(registry);
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
