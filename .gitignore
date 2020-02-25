@@ -159,3 +159,4 @@ build.log
 .idea/
 cmake*
 CMakeListsPrivate.txt
+CMakeLists.txt
