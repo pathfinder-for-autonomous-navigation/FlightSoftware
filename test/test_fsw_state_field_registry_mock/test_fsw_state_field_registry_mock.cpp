@@ -154,10 +154,6 @@ void test_create_fault() {
 
     registry.create_fault("foo", 1, 300);
     TEST_ASSERT_NOT_NULL(registry.find_fault("foo"));
-    TEST_ASSERT(registry.find_writable_field("fault"));
-    TEST_ASSERT(registry.find_writable_field("fault.override"));
-    TEST_ASSERT(registry.find_writable_field("fault.suppress"));
-    TEST_ASSERT(registry.find_writable_field("fault.unsignal"));
 }
 
 /**
