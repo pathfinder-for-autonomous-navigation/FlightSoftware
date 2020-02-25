@@ -32,6 +32,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
 
         // add deaf toggle
         add_writable_field(data_deaf_f);
+        // default deaf toggle true
+        data_deaf_f.set(true);
 
         // Initialize flags
         adcs_paired_f.set(false);
@@ -44,7 +46,8 @@ void AttitudeEstimator::execute(){
 }
 
 void AttitudeEstimator::set_data(){
-    if(data_deaf_f.get() && radio_state_fp->get() == static_cast<unsigned int>(radio_state_t::transceive)){
+    // if(data_deaf_f.get() && radio_state_fp->get() == static_cast<unsigned int>(radio_state_t::transceive)){
+    if(false) {
         constexpr double nan_d = std::numeric_limits<double>::quiet_NaN();
         data.t = nan_d;
         data.r_ecef = {nan_d, nan_d,nan_d};

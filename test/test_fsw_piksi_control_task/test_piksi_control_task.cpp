@@ -17,7 +17,6 @@ constexpr float nan_d = std::numeric_limits<double>::quiet_NaN();
 class TestFixture {
     public:
         StateFieldRegistryMock registry;
-        std::shared_ptr<WritableStateField<unsigned char>> radio_state_fp;
 
         // pointers to statefields for easy access
         ReadableStateField<int>* currentState_fp;
@@ -27,7 +26,6 @@ class TestFixture {
         ReadableStateField<gps_time_t>* time_fp;
         ReadableStateField<unsigned int>* fix_error_count_fp;
         InternalStateField<sys_time_t>* last_fix_time_fp;
-        WritableStateField<bool>* data_mute_fp;
         Fault* piksi_fault_fp;
 
         std::unique_ptr<PiksiControlTask> piksi_task;
@@ -42,10 +40,8 @@ class TestFixture {
 
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry(), PIKSI_INITIALIZATION {
-                radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
 
-                // by default, set the state to something that does not interfere with piksi
-                radio_state_fp->set(static_cast<unsigned char>(radio_state_t::config));
+
                 piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
                 piksi_task->init();
                 // initialize pointers to statefields      
@@ -56,7 +52,6 @@ class TestFixture {
                 time_fp = registry.find_readable_field_t<gps_time_t>("piksi.time");
                 fix_error_count_fp = registry.find_readable_field_t<unsigned int>("piksi.fix_error_count");
                 last_fix_time_fp = registry.find_internal_field_t<sys_time_t>("piksi.last_fix_time");
-                data_mute_fp = registry.find_writable_field_t<bool>("piksi.data_mute");
 
                 piksi_fault_fp = static_cast<Fault*>(registry.find_writable_field_t<bool>("piksi.fault"));
         }
@@ -110,7 +105,6 @@ void test_task_initialization()
 {
     TestFixture tf;
     assert_piksi_mode(piksi_mode_t::no_fix);
-    TEST_ASSERT_TRUE(tf.data_mute_fp->get());
     check_nan_set(tf);
 }
 
@@ -303,40 +297,6 @@ void test_fault(){
         TEST_ASSERT_FALSE(tf.piksi_fault_fp->is_faulted());
 }
 
-void test_data_mute(){
-    TestFixture tf;
-
-    std::array<double, 3> pos = {1000.0, 2000.0, 3000.0};
-    std::array<double, 3> vel = {4000.0, 5000.0, 6000.0};
-    std::array<double, 3> baseline = {7000.0, 8000.0, 9000.0};  
-
-    unsigned int tow = 200;
-    tf.set_read_return(1);
-    tf.set_gps_time(tow);
-    tf.set_pos_ecef(tow, pos, 4);
-    tf.set_vel_ecef(tow, vel);
-    tf.set_baseline_ecef(tow, baseline);
-    tf.set_baseline_flag(1);
-    
-    // set the quake mode from last cycle as transceive
-    tf.radio_state_fp->set(static_cast<unsigned char>(radio_state_t::transceive));
-
-    tf.execute();
-    // times should now agree, and be in baseline
-    assert_piksi_mode(piksi_mode_t::fixed_rtk);
-
-    // data is muted
-    check_nan_set(tf);
-
-    // relase piksi muting, data is fine even with radio in transceive
-    tf.data_mute_fp->set(false);
-    tf.execute();
-    assert_piksi_mode(piksi_mode_t::fixed_rtk);
-    TEST_ASSERT_TRUE(gps_time_t(0,200,0) == tf.time_fp->get());
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(pos),mag_2(tf.pos_fp->get()));
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(vel),mag_2(tf.vel_fp->get()));
-    TEST_ASSERT_FLOAT_WITHIN(0.1,mag_2(baseline),mag_2(tf.baseline_fp->get()));
-}
 int test_control_task()
 {
         UNITY_BEGIN();
@@ -345,7 +305,6 @@ int test_control_task()
         RUN_TEST(test_normal_errors);
         RUN_TEST(test_task_execute);
         RUN_TEST(test_fault);
-        RUN_TEST(test_data_mute);
         return UNITY_END();
 }
 
