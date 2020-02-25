@@ -52,32 +52,6 @@ void test_task_initialization()
     TestFixture tf;
 }
 
-void test_ouputs_is_not_nan(TestFixture &tf){
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[0]);
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[1]);
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[2]);
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[3]);
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[0]);
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[1]);
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[2]);
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(0));
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(1));
-    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(2));
-}
-
-void test_ouputs_is_nan(TestFixture &tf){
-    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[0]);
-    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[1]);
-    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[2]);
-    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[3]);
-    TEST_ASSERT_FLOAT_IS_NAN(tf.w_body_fp->get()[0]);
-    TEST_ASSERT_FLOAT_IS_NAN(tf.w_body_fp->get()[1]);
-    TEST_ASSERT_FLOAT_IS_NAN(tf.w_body_fp->get()[2]);
-    TEST_ASSERT_FLOAT_IS_NAN(tf.h_body_fp->get()(0));
-    TEST_ASSERT_FLOAT_IS_NAN(tf.h_body_fp->get()(1));
-    TEST_ASSERT_FLOAT_IS_NAN(tf.h_body_fp->get()(2));
-}
-
 void test_execute(){
     TestFixture tf;
 
@@ -92,30 +66,64 @@ void test_execute(){
         tf.attitude_estimator->execute();
     }
 
-    test_ouputs_is_not_nan(tf);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[3]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(0));
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(1));
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(2));
 }
 void test_data_deaf(){
     TestFixture tf;
 
-    tf.piksi_time_fp->set(gps_time_t(420,420,420));
+    tf.piksi_time_fp->set(gps_time_t(0,0,0));
     // assuming 500km orbit
     tf.pos_vec_ecef_fp->set({500000.0L,0.0L,0.0L});
-    tf.ssa_vec_rd_fp->set({1.0,1.0,1.0});
+    tf.ssa_vec_rd_fp->set({0.6,0.8,0.0});
     tf.mag_vec_fp->set({0.0001,0.0001,0.0001});
 
     // set radio to transceive
     tf.radio_state_fp->set(static_cast<unsigned char>(radio_state_t::transceive));  
 
-    tf.attitude_estimator->execute();
-
-    test_ouputs_is_nan(tf);
+    for(int i = 0; i < 100; i++){
+        tf.piksi_time_fp->set(gps_time_t(0,i*120,0));
+        tf.attitude_estimator->execute();
+    }
+    
+    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[3]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.w_body_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.w_body_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.w_body_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.h_body_fp->get()(0));
+    TEST_ASSERT_FLOAT_IS_NAN(tf.h_body_fp->get()(1));
+    TEST_ASSERT_FLOAT_IS_NAN(tf.h_body_fp->get()(2));
 
     // suppress deaf condition
     tf.data_deaf_fp->set(false);
-    tf.attitude_estimator->execute();
+    for(int i = 0; i < 100; i++){
+        tf.piksi_time_fp->set(gps_time_t(0,120*100+i*120,0));
+        tf.attitude_estimator->execute();
+    }
     
-    test_ouputs_is_not_nan();
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[3]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(0));
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(1));
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(2));
 }
+
 int test_control_task()
 {
     UNITY_BEGIN();
