@@ -63,7 +63,20 @@ class Fault : public WritableStateField<bool> {
      */
     unsigned int get_num_consecutive_signals();
     #endif
-  //private:
+
+    /**
+     * @brief State fields that can be set by the ground to
+     * suppress, override, signal and unsignal the fault
+     */
+    Serializer<bool> fault_bool_sr;
+    WritableStateField<bool> suppress_f;
+    WritableStateField<bool> override_f;
+    WritableStateField<bool> unsignal_f;
+
+    Serializer<unsigned int> persist_sr;
+    WritableStateField<unsigned int> persistence_f;
+    
+  private:
     // Make the get() and set() methods of the state field private,
     // so that the user is forced to use the signal() and unsignal()
     // methods instead.
@@ -80,18 +93,6 @@ class Fault : public WritableStateField<bool> {
     // Keeps track of the previous suppress or override state
     bool prev_suppress = false;
     bool prev_override = false;
-
-    /**
-     * @brief State fields that can be set by the ground to
-     * suppress, override, signal and unsignal the fault
-     */
-    Serializer<bool> fault_bool_sr;
-    WritableStateField<bool> suppress_f;
-    WritableStateField<bool> override_f;
-    WritableStateField<bool> unsignal_f;
-
-    Serializer<unsigned int> persist_sr;
-    WritableStateField<unsigned int> persistence_f;
 
     /**
      * @brief Resets consecutive faults to 0, whenever pulls transition from false to true,

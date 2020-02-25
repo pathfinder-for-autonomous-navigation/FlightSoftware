@@ -32,13 +32,13 @@ class TestFixture {
 
     std::shared_ptr<ReadableStateField<bool>> docked_fp;
 
-    Fault low_batt_fault_f;
-    Fault adcs_functional_fault_f;
-    Fault wheel1_adc_fault_f;
-    Fault wheel2_adc_fault_f;
-    Fault wheel3_adc_fault_f;
-    Fault wheel_pot_fault_f;
-    Fault failed_pressurize_f;
+    std::shared_ptr<Fault> low_batt_fault_fp;
+    std::shared_ptr<Fault> adcs_functional_fault_fp;
+    std::shared_ptr<Fault> wheel1_adc_fault_fp;
+    std::shared_ptr<Fault> wheel2_adc_fault_fp;
+    std::shared_ptr<Fault> wheel3_adc_fault_fp;
+    std::shared_ptr<Fault> wheel_pot_fault_fp;
+    std::shared_ptr<Fault> failed_pressurize_fp;
 
     std::unique_ptr<MissionManager> mission_manager;
     // Output state fields from mission manager

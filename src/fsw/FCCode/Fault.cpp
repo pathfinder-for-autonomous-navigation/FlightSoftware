@@ -4,14 +4,14 @@ Fault::Fault(const std::string& name,
       const size_t _persistence, unsigned int& control_cycle_count) : 
     WritableStateField<bool>(name, Serializer<bool>()),
     _name(name),
-    cc(control_cycle_count),
     fault_bool_sr(),
     suppress_f(name + ".suppress", fault_bool_sr),
     override_f(name + ".override", fault_bool_sr),
     unsignal_f(name + ".unsignal", fault_bool_sr),
     // 65536 = 2^16 -1
     persist_sr(65535),
-    persistence_f(name + ".persistence", persist_sr)
+    persistence_f(name + ".persistence", persist_sr),
+    cc(control_cycle_count)
 {
   set(false);
   override_f.set(false);
