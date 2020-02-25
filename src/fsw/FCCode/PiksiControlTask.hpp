@@ -27,12 +27,6 @@ public:
      */
     void nan_set();
 
-    /**
-     * @brief This is called from MCL to find the radio state after QM has be constructed.
-     * 
-     */
-    void init();
-
     // StateField for position, velocity, and baseline
     ReadableStateField<d_vector_t> pos_f;
     ReadableStateField<d_vector_t> vel_f;
@@ -51,12 +45,6 @@ public:
     InternalStateField<sys_time_t> last_fix_time_f;
 
     Serializer<bool> bool_sr;
-
-    // Pointer to the radio state
-    const InternalStateField<unsigned char>* radio_state_fp;
-    // Ground commandablefield that toggles whether or not 
-    // piksi is muted if radio is broadcasting
-    WritableStateField<bool> data_mute_f;
 
     // fault is signaled whenever piksi has an error, including no_data
     Fault piksi_fault;

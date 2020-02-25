@@ -15,7 +15,6 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
     time_f("piksi.time", Serializer<gps_time_t>()),
     last_fix_time_f("piksi.last_fix_time"),
     bool_sr(),
-    data_mute_f("piksi.data_mute", bool_sr),
     //if we haven't had a good reading in ~120 seconds the piksi is probably dead
     piksi_fault("piksi.fault", 1000, control_cycle_count)
     {
@@ -26,7 +25,6 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         add_readable_field(fix_error_count_f);
         add_readable_field(time_f);
         add_internal_field(last_fix_time_f);
-        add_writable_field(data_mute_f);
 
         piksi_fault.add_to_registry(registry);
 
@@ -34,7 +32,6 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         piksi.setup();
 
         // Set initial values
-        data_mute_f.set(true);
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_fix));
         nan_set();
     }
@@ -47,10 +44,6 @@ void PiksiControlTask::nan_set(){
 
     time = gps_time_t();
     time_f.set(time);
-}
-
-void PiksiControlTask::init(){
-    radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
 }
 
 void PiksiControlTask::execute()
@@ -157,10 +150,6 @@ void PiksiControlTask::execute()
         }
         
         piksi_fault.unsignal();
-
-        // mute piksi
-        if(data_mute_f.get() && radio_state_fp->get() == static_cast<unsigned int>(radio_state_t::transceive))
-            nan_set();
     }
 
     //if read_out is unexpected value which it shouldn't do lol

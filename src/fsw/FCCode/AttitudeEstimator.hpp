@@ -17,7 +17,13 @@ class AttitudeEstimator : public TimedControlTask<void> {
      * @param registry 
      */
     AttitudeEstimator(StateFieldRegistry& registry, unsigned int offset);
-
+    
+    /**
+     * @brief This is called from MCL to find the radio state after QM has be constructed.
+     * 
+     */
+    void init();
+    
     /**
      * @brief Using raw sensor inputs, determine the attitude and angular state
      * of the spacecraft.

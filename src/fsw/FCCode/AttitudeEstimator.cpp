@@ -39,6 +39,10 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         adcs_paired_f.set(false);
     }
 
+void AttitudeEstimator::init(){
+    radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
+}
+
 void AttitudeEstimator::execute(){
     set_data();
     gnc::estimate_attitude(state, data, estimate);
