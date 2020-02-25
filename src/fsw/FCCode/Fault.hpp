@@ -1,10 +1,10 @@
 #ifndef FAULT_HPP_
 #define FAULT_HPP_
 
-#include "FaultBase.hpp"
+//#include "FaultBase.hpp"
 #include "common/StateField.hpp"
 
-class Fault : public virtual FaultBase, public WritableStateField<bool> {
+class Fault : public WritableStateField<bool> {
   protected:
    const std::string _name;
   

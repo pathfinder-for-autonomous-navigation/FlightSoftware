@@ -2,9 +2,7 @@
 
 Fault::Fault(const std::string& name,
       const size_t _persistence, unsigned int& control_cycle_count) : 
-    FaultBase(), 
     WritableStateField<bool>(name, Serializer<bool>()),
-    _name(name),
     cc(control_cycle_count),
     fault_bool_sr(),
     suppress_f(name + ".suppress", fault_bool_sr),

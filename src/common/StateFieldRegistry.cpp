@@ -31,9 +31,9 @@ StateFieldRegistry::find_writable_field(const std::string &name) const {
     return nullptr;
 }
 
-FaultBase*
+Fault*
 StateFieldRegistry::find_fault(const std::string &name) const {
-    for (FaultBase* fault : faults) {
+    for (Fault* fault : faults) {
         if (name == fault->name()) return fault;
     }
 
@@ -59,7 +59,7 @@ bool StateFieldRegistry::add_writable_field(WritableStateFieldBase* field) {
     return true;
 }
 
-bool StateFieldRegistry::add_fault(FaultBase* fault) {
+bool StateFieldRegistry::add_fault(Fault* fault) {
     if (find_fault(fault->name())) return false;
     faults.push_back(fault);
     return true;

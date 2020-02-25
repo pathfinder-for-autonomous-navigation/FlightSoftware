@@ -17,7 +17,7 @@ public:
     std::vector<InternalStateFieldBase*> internal_fields;
     std::vector<ReadableStateFieldBase*> readable_fields;
     std::vector<WritableStateFieldBase*> writable_fields;
-    std::vector<FaultBase*> faults;
+    std::vector<Fault*> faults;
 
     StateFieldRegistry();
 
@@ -54,7 +54,7 @@ public:
      * @param[in] name Name of fault.
      * @return Pointer to fault, or null pointer if field doesn't exist.
      */
-    FaultBase* find_fault(const std::string &name) const;
+    Fault* find_fault(const std::string &name) const;
 
     /**
      * @brief Adds a field to the registry.
@@ -84,7 +84,7 @@ public:
      * @param r ControlTaskBase
      * @param fault Data fault
      */
-    bool add_fault(FaultBase* fault);
+    bool add_fault(Fault* fault);
 };
 
 #endif

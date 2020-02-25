@@ -337,7 +337,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     std::vector<std::shared_ptr<InternalStateFieldBase>> created_internal_fields;
     std::vector<std::shared_ptr<ReadableStateFieldBase>> created_readable_fields;
     std::vector<std::shared_ptr<WritableStateFieldBase>> created_writable_fields;
-    std::vector<std::shared_ptr<FaultBase>> created_faults;
+    std::vector<std::shared_ptr<Fault>> created_faults;
 };
 
 #endif
