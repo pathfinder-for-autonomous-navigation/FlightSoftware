@@ -52,27 +52,47 @@ void test_task_initialization()
     TestFixture tf;
 }
 
+void test_ouputs_is_not_nan(TestFixture &tf){
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.q_body_eci_fp->get()[3]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.w_body_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(0));
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(1));
+    TEST_ASSERT_FLOAT_IS_NOT_NAN(tf.h_body_fp->get()(2));
+}
+
+void test_ouputs_is_nan(TestFixture &tf){
+    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.q_body_eci_fp->get()[3]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.w_body_fp->get()[0]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.w_body_fp->get()[1]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.w_body_fp->get()[2]);
+    TEST_ASSERT_FLOAT_IS_NAN(tf.h_body_fp->get()(0));
+    TEST_ASSERT_FLOAT_IS_NAN(tf.h_body_fp->get()(1));
+    TEST_ASSERT_FLOAT_IS_NAN(tf.h_body_fp->get()(2));
+}
+
 void test_execute(){
     TestFixture tf;
 
-    tf.piksi_time_fp->set(gps_time_t(420,420,420));
+    tf.piksi_time_fp->set(gps_time_t(0,420,420));
     // assuming 500km orbit
     tf.pos_vec_ecef_fp->set({500000.0L,0.0L,0.0L});
-    tf.ssa_vec_rd_fp->set({1.0,1.0,1.0});
+    tf.ssa_vec_rd_fp->set({0.6,0.8,0.0});
     tf.mag_vec_fp->set({0.0001,0.0001,0.0001});
 
-    tf.attitude_estimator->execute();
+    for(int i = 0; i < 100; i++){
+        tf.piksi_time_fp->set(gps_time_t(0,420+i*120,420));
+        tf.attitude_estimator->execute();
+    }
 
-    TEST_ASSERT_FALSE(isnan(tf.q_body_eci_fp->get()[0]));
-    TEST_ASSERT_FALSE(isnan(tf.q_body_eci_fp->get()[1]));
-    TEST_ASSERT_FALSE(isnan(tf.q_body_eci_fp->get()[2]));
-    TEST_ASSERT_FALSE(isnan(tf.q_body_eci_fp->get()[3]));
-    TEST_ASSERT_FALSE(isnan(tf.w_body_fp->get()[0]));
-    TEST_ASSERT_FALSE(isnan(tf.w_body_fp->get()[1]));
-    TEST_ASSERT_FALSE(isnan(tf.w_body_fp->get()[2]));
-    TEST_ASSERT_FALSE(isnan(tf.h_body_fp->get()(0)));
-    TEST_ASSERT_FALSE(isnan(tf.h_body_fp->get()(1)));
-    TEST_ASSERT_FALSE(isnan(tf.h_body_fp->get()(2)));
+    test_ouputs_is_not_nan(tf);
 }
 void test_data_deaf(){
     TestFixture tf;
@@ -88,31 +108,13 @@ void test_data_deaf(){
 
     tf.attitude_estimator->execute();
 
-    TEST_ASSERT(isnan(tf.q_body_eci_fp->get()[0]));
-    TEST_ASSERT(isnan(tf.q_body_eci_fp->get()[1]));
-    TEST_ASSERT(isnan(tf.q_body_eci_fp->get()[2]));
-    TEST_ASSERT(isnan(tf.q_body_eci_fp->get()[3]));
-    TEST_ASSERT(isnan(tf.w_body_fp->get()[0]));
-    TEST_ASSERT(isnan(tf.w_body_fp->get()[1]));
-    TEST_ASSERT(isnan(tf.w_body_fp->get()[2]));
-    TEST_ASSERT(isnan(tf.h_body_fp->get()(0)));
-    TEST_ASSERT(isnan(tf.h_body_fp->get()(1)));
-    TEST_ASSERT(isnan(tf.h_body_fp->get()(2)));
+    test_ouputs_is_nan(tf);
 
     // suppress deaf condition
     tf.data_deaf_fp->set(false);
     tf.attitude_estimator->execute();
     
-    TEST_ASSERT_FALSE(isnan(tf.q_body_eci_fp->get()[0]));
-    TEST_ASSERT_FALSE(isnan(tf.q_body_eci_fp->get()[1]));
-    TEST_ASSERT_FALSE(isnan(tf.q_body_eci_fp->get()[2]));
-    TEST_ASSERT_FALSE(isnan(tf.q_body_eci_fp->get()[3]));
-    TEST_ASSERT_FALSE(isnan(tf.w_body_fp->get()[0]));
-    TEST_ASSERT_FALSE(isnan(tf.w_body_fp->get()[1]));
-    TEST_ASSERT_FALSE(isnan(tf.w_body_fp->get()[2]));
-    TEST_ASSERT_FALSE(isnan(tf.h_body_fp->get()(0)));
-    TEST_ASSERT_FALSE(isnan(tf.h_body_fp->get()(1)));
-    TEST_ASSERT_FALSE(isnan(tf.h_body_fp->get()(2)));
+    test_ouputs_is_not_nan();
 }
 int test_control_task()
 {
