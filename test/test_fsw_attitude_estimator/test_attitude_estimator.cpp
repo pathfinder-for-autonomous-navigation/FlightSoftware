@@ -46,10 +46,17 @@ void test_task_initialization()
         TestFixture tf;
 }
 
+void test_data_deaf(){
+        TestFixture tf;
+
+        tf.piksi_time_fp->set(gps_time_t(420,420,420));        
+}
+
 int test_control_task()
 {
         UNITY_BEGIN();
         RUN_TEST(test_task_initialization);
+        RUN_TEST(test_data_deaf);
         return UNITY_END();
 }
 

@@ -1,5 +1,6 @@
 #include "AttitudeEstimator.hpp"
 #include <gnc_constants.hpp>
+#include "radio_state_t.enum"
 
 const gps_time_t AttitudeEstimator::pan_epoch(gnc::constant::init_gps_week_number,
                                               gnc::constant::init_gps_time_of_week,
@@ -14,18 +15,23 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     q_body_eci_f("attitude_estimator.q_body_eci", Serializer<f_quat_t>()),
     w_body_f("attitude_estimator.w_body", Serializer<f_vector_t>(-55, 55, 32*3)),
     h_body_f("attitude_estimator.h_body"),
-    adcs_paired_f("adcs.paired", Serializer<bool>())
+    adcs_paired_f("adcs.paired", Serializer<bool>()),
+    data_deaf_f("attitude_estimator.deaf", Serializer<bool>())
     {
         piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
         pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
         ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec", __FILE__, __LINE__),
         mag_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.mag_vec", __FILE__, __LINE__),
+        radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__),
 
         //Add outputs
         add_readable_field(q_body_eci_f);
         add_readable_field(w_body_f);
         add_internal_field(h_body_f);
         add_writable_field(adcs_paired_f);
+
+        // add deaf toggle
+        add_writable_field(data_deaf_f);
 
         // Initialize flags
         adcs_paired_f.set(false);
@@ -38,16 +44,25 @@ void AttitudeEstimator::execute(){
 }
 
 void AttitudeEstimator::set_data(){
-    data.t = ((unsigned long)(piksi_time_fp->get() - pan_epoch)) / 1.0e9;
+    if(data_deaf_f.get() && radio_state_fp->get() == static_cast<unsigned int>(radio_state_t::transceive)){
+        constexpr double nan_d = std::numeric_limits<double>::quiet_NaN();
+        data.t = nan_d;
+        data.r_ecef = {nan_d, nan_d,nan_d};
+        data.b_body = {nan_d, nan_d, nan_d};
+        data.s_body = {nan_d, nan_d, nan_d};
+    }
+    else{
+        data.t = ((unsigned long)(piksi_time_fp->get() - pan_epoch)) / 1.0e9;
 
-    const d_vector_t r_ecef = pos_vec_ecef_fp->get();
-    data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};
-    
-    const f_vector_t mag_vec = mag_vec_fp->get();
-    data.b_body = {mag_vec[0], mag_vec[1], mag_vec[2]};
+        const d_vector_t r_ecef = pos_vec_ecef_fp->get();
+        data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};
+        
+        const f_vector_t mag_vec = mag_vec_fp->get();
+        data.b_body = {mag_vec[0], mag_vec[1], mag_vec[2]};
 
-    const f_vector_t f_vec = ssa_vec_rd_fp->get();
-    data.s_body = {f_vec[0], f_vec[1], f_vec[2]};
+        const f_vector_t f_vec = ssa_vec_rd_fp->get();
+        data.s_body = {f_vec[0], f_vec[1], f_vec[2]};
+    }
 }
 
 void AttitudeEstimator::set_estimate(){

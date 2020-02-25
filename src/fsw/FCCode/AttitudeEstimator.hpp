@@ -27,7 +27,8 @@ class AttitudeEstimator : public TimedControlTask<void> {
    protected:
 
     /**
-     * @brief Read data from field pointers and set the data object
+     * @brief Read data from field pointers and set the data object. 
+     * If quake is transcieving and deaf is active, data is set to nan.
      * 
      */
     void set_data();
@@ -67,6 +68,12 @@ class AttitudeEstimator : public TimedControlTask<void> {
 
     // True if the "paired" ADCS gains are being used.
     WritableStateField<bool> adcs_paired_f;
+
+    // Pointer to the radio state
+    const InternalStateField<unsigned char>* radio_state_fp;
+    // Ground commandablefield that toggles whether or not 
+    // AttitudeEstimator is deaf to piksi data during transcieve
+    WritableStateField<bool> data_deaf_f;
 };
 
 #endif

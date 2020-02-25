@@ -133,7 +133,7 @@ class Piksi {
     virtual void get_pos_ecef(std::array<double, 3> *position);
 
     /**
-     * @brief Get the Position in ECEF coordinates, and the time of week int
+     * @brief Get the Position in ECEF coordinates in meters, and the time of week int
      *
      * @param tow A pointer to the tow int
      * @param position A pointer to the std::array of doubles for the position
@@ -155,7 +155,7 @@ class Piksi {
     virtual unsigned char get_pos_ecef_flags();
 
     /**
-     * @brief Get the baseline ECEF coordinates
+     * @brief Get the baseline ECEF coordinates in millimeters
      * 
      * @param position A pointer to the std::array of doubles for the baseline position
      */
@@ -183,7 +183,7 @@ class Piksi {
      *  @return Status flags of GPS baseline position measurement. **/
     unsigned char get_baseline_ecef_flags();
 
-    /** @brief Gets satellite velocity in ECEF coordinates.
+    /** @brief Gets satellite velocity in ECEF coordinates in meters per second.
      *  @param velocity A pointer to the std::array of doubles for velocity
      * **/
     virtual void get_vel_ecef(std::array<double, 3> *velocity);
