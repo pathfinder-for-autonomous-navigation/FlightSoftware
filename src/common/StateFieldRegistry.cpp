@@ -1,4 +1,5 @@
 #include "StateFieldRegistry.hpp"
+#include <iostream>
 
 StateFieldRegistry::StateFieldRegistry() {}
 

@@ -2,6 +2,7 @@
 #define STATE_FIELD_REGISTRY_MOCK_HPP_
 
 #include <common/StateFieldRegistry.hpp>
+#include <iostream>
 
 #ifdef DESKTOP
     #include <iostream>

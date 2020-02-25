@@ -5,7 +5,7 @@
 
 #include "TimedControlTask.hpp"
 #include "Drivers/Gomspace.hpp"
-#include "Fault.hpp"
+//#include "Fault.hpp"
 
 class GomspaceController : public TimedControlTask<void> {
    public:

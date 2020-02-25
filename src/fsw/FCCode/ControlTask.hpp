@@ -88,6 +88,12 @@ class ControlTask : protected debug_console {
         check_field_added(added, field.name());
     }
 
+    void add_fault(Fault& fault) {
+        const bool added = _registry.add_fault(
+            static_cast<Fault*>(fault));
+        check_field_added(added, fault.name());
+    }
+
     void check_field_exists(const StateFieldBase* ptr, const std::string& field_type,
             const char* field_name) {
         if(!ptr) {
@@ -128,6 +134,12 @@ class ControlTask : protected debug_console {
         auto field_ptr = _registry.find_writable_field(field);
         check_field_exists(field_ptr, "writable", field);
         return static_cast<WritableStateField<U>*>(field_ptr);
+    }
+
+    Fault* find_fault(const char* fault, const char* file, const unsigned int line) {
+        auto fault_ptr = _registry.find_fault(fault);
+        check_field_exists(fault_ptr, "fault", fault);
+        return static_cast<Fault>(fault_ptr);
     }
 };
 

@@ -97,8 +97,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
 
     {
-        //get_hk_fault.add_to_registry(registry);
-        //low_batt_fault.add_to_registry(registry);
+        add_fault(get_hk_fault);
+        add_fault(low_batt_fault);
 
         add_writable_field(batt_threshold_f);
         batt_threshold_f.set(7300);
