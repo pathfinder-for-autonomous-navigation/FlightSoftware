@@ -8,6 +8,6 @@
 #include "Serializer.hpp"
 
 const std::vector<std::string> SerializerType::serializable_types = {
-    "bool", "f_quat", "f_vec", "d_quat", "d_vec", "gpstime", "int", "uint", "float", "double", "Event", "Fault"};
+    "bool", "f_quat", "f_vec", "d_quat", "d_vec", "gpstime", "int", "uint", "float", "double"};
 
 const gps_time_t Serializer<gps_time_t>::dummy_gpstime;

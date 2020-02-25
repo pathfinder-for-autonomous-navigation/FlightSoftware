@@ -10,8 +10,6 @@
 #include <string>
 #include <cstring>
 #include "GPSTime.hpp"
-#include "../fsw/FCCode/Fault.hpp"
-#include "../fsw/FCCode/Event.hpp"
 #include "fixed_array.hpp"
 
 /**

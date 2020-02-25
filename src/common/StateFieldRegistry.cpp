@@ -31,6 +31,15 @@ StateFieldRegistry::find_writable_field(const std::string &name) const {
     return nullptr;
 }
 
+Fault*
+StateFieldRegistry::find_fault(const std::string &name) const {
+    for (Fault* fault : faults) {
+        if (name == fault->name()) return fault;
+    }
+
+    return nullptr;
+}
+
 bool StateFieldRegistry::add_internal_field(InternalStateFieldBase* field) {
     if (find_internal_field(field->name())) return false;
     internal_fields.push_back(field);
@@ -47,5 +56,11 @@ bool StateFieldRegistry::add_writable_field(WritableStateFieldBase* field) {
     if (!add_readable_field(field)) return false;
     if (find_writable_field(field->name())) return false;
     writable_fields.push_back(field);
+    return true;
+}
+
+bool StateFieldRegistry::add_fault(Fault* fault) {
+    if (find_fault(fault->name())) return false;
+    faults.push_back(fault);
     return true;
 }

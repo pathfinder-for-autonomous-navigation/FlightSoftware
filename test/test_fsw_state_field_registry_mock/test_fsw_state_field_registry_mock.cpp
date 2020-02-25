@@ -149,6 +149,14 @@ void test_create_writable_vector_field_args() {
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo2"));
 }
 
+void test_create_fault() {
+    StateFieldRegistryMock registry;
+
+    registry.create_fault("foo", 1, 300);
+    TEST_ASSERT_NOT_NULL(registry.find_readable_field("foo"));
+    TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo"));
+}
+
 /**
  * @brief Test clearing the registry.
  */
@@ -181,6 +189,7 @@ int test_state_field_registry_mock() {
     RUN_TEST(test_create_writable_field_args);
     RUN_TEST(test_create_readable_vector_field_args);
     RUN_TEST(test_create_writable_vector_field_args);
+    RUN_TEST(test_create_fault);
     RUN_TEST(test_clear);
     return UNITY_END();
 }

@@ -18,7 +18,7 @@ class Fault : public WritableStateField<bool> {
     /**
      * @brief Add fault-related flags to the registry.
      */
-    bool add_to_registry(StateFieldRegistry& r);
+    // bool add_to_registry(StateFieldRegistry& r);
 
     /**
      * @brief Client-facing function to signal an occurrence of the
