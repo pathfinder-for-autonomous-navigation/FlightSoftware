@@ -1,15 +1,14 @@
-#include "../test_quake/quake_common.h"
+
 #include "core_pins.h"
 #include "usb_serial.h"
-
+#include <fsw/FCCode/Drivers/QLocate.hpp>
 #include <unity.h>
 #include <string>
 #include <vector>
-#include <QLocate.hpp>
+#include "../test_quake/quake_common.h"
 
 // name, port, pin number, timeout
-Devices::QLocate q("Test_Quake_With_Network", &Serial3, 
-    Devices::QLocate::DEFAULT_NR_PIN,
+Devices::QLocate q("Test_Quake_With_Network", &Serial3,
     Devices::QLocate::DEFAULT_TIMEOUT);
 
 void test_config(void) {

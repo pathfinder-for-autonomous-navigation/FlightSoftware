@@ -1,5 +1,5 @@
 #pragma once
-
+#define DEBUG_ENABLED
 using callback_fnptr = int (Devices::QLocate::*)();
 
 // Sbdix response structure

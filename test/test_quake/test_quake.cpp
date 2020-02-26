@@ -1,16 +1,14 @@
 #include <unity.h>
 #include <string>
 #include <vector>
-#include <QLocate.hpp>
+#include <fsw/FCCode/Drivers/QLocate.hpp>
 #include "core_pins.h"
 #include <Arduino.h>
 #include "quake_common.h"
 #include "usb_serial.h"
 
-// name, port, pin number, timeout
-Devices::QLocate q("Test_Quake", &Serial3, 
-    Devices::QLocate::DEFAULT_NR_PIN,
-    Devices::QLocate::DEFAULT_TIMEOUT);
+// name, port, timeout
+Devices::QLocate q("Test_Quake", &Serial3, Devices::QLocate::DEFAULT_TIMEOUT);
 
 /*! Tests the config function */
 void test_config(void) {

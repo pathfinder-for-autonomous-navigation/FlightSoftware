@@ -9,10 +9,9 @@
 
 #ifndef QLocate_hpp
 #define QLocate_hpp
-
+#include "../Devices/Device.hpp"
 #ifndef DESKTOP
 #include <HardwareSerial.h>
-#include "../Devices/Device.hpp"
 #else
 #include <iostream>
 #include <string>
@@ -66,15 +65,9 @@ static constexpr int WRONG_FN_ORDER = -70; // attempt to execute commands in the
  *  the 3 wire communication interface with no ring alerts. The following
  *  communications are supported: sbdrb, sbdix, and sbdwb.
  */
-#ifndef DESKTOP
 class QLocate : public Device
-#else
-class QLocate
-#endif
 {
 public:
-    /** Default pin # for network ready pin. **/
-    static constexpr unsigned char DEFAULT_NR_PIN = 35;
     /** Default timeout for serial communications on device. **/
     static constexpr unsigned int DEFAULT_TIMEOUT = 10;
     /** Maximum size of an MT or MO message **/ 
@@ -84,17 +77,14 @@ public:
      *  the serial port with begin(), it will be done in the constructor.
      */
 #ifndef DESKTOP
-    QLocate(const std::string &name, HardwareSerial *const port, unsigned char nr_pin, int timeout);
+    QLocate(const std::string &name, HardwareSerial *port, int timeout);
 #else 
     using String = std::string;
-    QLocate();
+    explicit QLocate(const std::string&);
 #endif
     /*! Sets up QLocate. Initializes state to IDLE */
-#ifndef DESKTOP
+
     bool setup() override;
-#else
-    bool setup();
-#endif
 
     /*! Sends an AT message to test comms. */
     int query_is_functional_1();
@@ -130,27 +120,27 @@ public:
      */
     /*! Request to load a message of size [len].
      * Returns WRONG_LENGTH if len > 340 */
-    virtual int query_sbdwb_1(int len);
+     int query_sbdwb_1(int len);
     /*! Loads the message into MO Buffer if READY is received. */
-    virtual int query_sbdwb_2(char const *c, int len);
+     int query_sbdwb_2(char const *c, int len);
     /*! Attempt to retrieve sbdwb status code returned from loading the message */
-    virtual int get_sbdwb();
+     int get_sbdwb();
 
     /*! Initilizes an SBDIX session with the quake.
      *  Returns a OK if the method was successful (driver was IDLE).
      */
-    virtual int query_sbdix_1();
+     int query_sbdix_1();
 
     /*! Reads the response to the previous SBDIX session.
      * Returns
      * PORT_UNAVAILABLE if no response has been received
      * OK if successfully received response and wrote to response array
      */
-    virtual int get_sbdix();
+     int get_sbdix();
 
     /*! Initializes SBDRB session.
      */
-    virtual int query_sbdrb_1();
+     int query_sbdrb_1();
 
     /*! Reads data from the MT buffer on the QLocate into message.
      * Returns
@@ -160,24 +150,30 @@ public:
      * UNEXPECTED_RESPONSE if message does not match message size
      * BAD_CHECKSUM for incorrect message checksum
      */
-    virtual int get_sbdrb();
-
-    /*! Returns pin # for Network Ready pin. */
-    unsigned char nr_pin();
+     int get_sbdrb();
 
     /**
-     * sbdix command response array of the following format: 
+     * sbdix command response array of the following format:
      * +SBDIX:<MO status>,<MOMSN>,<MT status>,<MTMSN>,<MT length>,<MT queued>
      * */
-    int sbdix_r[6];
+    int sbdix_r[6]{};
 
     /**
      * Contains the contents of the Mobile terminated (MT) message 
      * retreived from the last SBDRB session. 
      */
-    char mt_message[MAX_MSG_SIZE];
+    char mt_message[MAX_MSG_SIZE + 1]{};
 
 private:
+
+    /**
+     * Edge case where data is at port just when we are checking if data is at the port.
+     * In this case, we wait until the next control cycle to process the data. By then, we expect
+     * the data to be at the port. We will only wait once, so if this flag is already true, then we exit
+     */
+    bool did_wait_one_cycle = false;
+
+    bool should_wait_one_cycle();
 
     /*! Serial port designated to the QLocate */
 #ifndef DESKTOP
@@ -193,14 +189,11 @@ private:
      * UNEXPECTED_RESPONSE if an unexpected response is read
      * PORT_UNAVAILABLE if no response is read
      */
-    int consume(String expected);
+    int consume(const String& expected);
 
 
     /*! Returns a message checksum according to the Iridium requirements */
-    short checksum(char const *c, int len);
-
-    /*! Network ready pin (unused) */
-    unsigned char nr_pin_;
+    static uint16_t checksum(char const *c, size_t len);
 
     /** ! Parses the data returned from requesting SBD transfer (AT+SBDIX)
      * Example:
@@ -208,7 +201,7 @@ private:
      * This function would parse c into
      * i = {1, 2173, 1, 87, 429, 0};
      */
-    int parse_ints(char const *c, int *i);
+    static int parse_ints(char const *c, int *i);
 
     /**
      * Clears the read port and writes the string to the port
@@ -218,9 +211,7 @@ private:
     int sendCommand(const char *);
 
     /** Does nothing */
-#ifndef DESKTOP
     void disable() override;
-#endif
 };
 } 
 #endif
