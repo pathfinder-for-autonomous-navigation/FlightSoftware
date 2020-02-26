@@ -154,6 +154,7 @@ void test_create_fault() {
 
     registry.create_fault("foo", 1, 3);
     TEST_ASSERT_NOT_NULL(registry.find_fault("foo"));
+    TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.suppress"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.override"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.unsignal"));
@@ -179,7 +180,7 @@ void test_clear() {
     TEST_ASSERT_NOT_NULL(registry.find_fault("foo4"));
 
     registry.clear();
-    TEST_ASSERT_NULL(registry.find_internal_field("foo"));
+    TEST_ASSERT_NULL(registry.find_writable_field("foo"));
     TEST_ASSERT_NULL(registry.find_readable_field("foo2"));
     TEST_ASSERT_NULL(registry.find_readable_field("foo3"));
     TEST_ASSERT_NULL(registry.find_writable_field("foo3"));
