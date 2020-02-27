@@ -16,7 +16,7 @@ void test_fault_normal_behavior() {
 
     // Test that adding the fault to the registry works 
     StateFieldRegistry r;
-    TEST_ASSERT(r.add_fault(&fault));
+    TEST_ASSERT(r.add_fault(&fault)); 
     TEST_ASSERT_NOT_NULL(r.find_fault("fault"));
     TEST_ASSERT(r.find_writable_field("fault"));
     TEST_ASSERT(r.find_writable_field("fault.override"));
