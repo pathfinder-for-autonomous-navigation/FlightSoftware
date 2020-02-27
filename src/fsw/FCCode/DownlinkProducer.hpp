@@ -129,7 +129,6 @@ class DownlinkProducer : public TimedControlTask<void> {
         Flow& operator=(const Flow& rhs) {
             unsigned char flow_id;
             rhs.id_sr.deserialize(&flow_id);
-            std::cout<<flow_id;
             is_active = rhs.is_active;
             id_sr = std::move(rhs.id_sr);
             field_list = rhs.field_list;
