@@ -6,6 +6,8 @@
 using fault_checker_state_t = QuakeFaultHandler::fault_checker_state_t;
 unsigned int one_day_ccno = PAN::one_day_ccno;
 
+unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
+
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
@@ -32,7 +34,7 @@ class TestFixture {
         enable_radio();
         last_checkin_cycle_fp->set(0);
         radio_power_cycle_fp->set(false);
-        control_cycle_count = 0;
+        cc_count = 0;
 
         qfh = std::make_unique<QuakeFaultHandler>(registry);
         qfh->cur_state = initial_state;
@@ -67,7 +69,7 @@ class TestFixture {
         mission_state_t state = qfh->execute();
         TEST_ASSERT_EQUAL(state, expected_mission_state);
         TEST_ASSERT_EQUAL(expected_fault_state, qfh->cur_state);
-        control_cycle_count++;
+        cc_count++;
     }
 
     /**
@@ -92,11 +94,11 @@ class TestFixture {
      * @param state_duration in number of control cycles.
      */
     void check_state_returns_to_unfaulted_if_comms_recvd(const unsigned int state_duration) {
-        control_cycle_count = state_duration - 1;
+        cc_count = state_duration - 1;
         step_and_expect(mission_state_t::manual, fault_checker_state_t::unfaulted);
 
         // Cleanup
-        control_cycle_count = 0;
+        cc_count = 0;
     }
 };
 
@@ -140,13 +142,13 @@ void test_qfh_unfaulted() {
     {
         // Set initial conditions 
         TestFixture tf{fault_checker_state_t::unfaulted};
-        control_cycle_count = one_day_ccno;
+        cc_count = one_day_ccno;
         tf.set_cur_state_entry_ccno(one_day_ccno);
         
         // Disable radio within the "24 hour" period of this state.
         // Verify that the state machine goes back to "unfaulted".
         tf.disable_radio();
-        control_cycle_count = 2 * one_day_ccno - 1;
+        cc_count = 2 * one_day_ccno - 1;
         tf.step_and_expect(mission_state_t::manual, fault_checker_state_t::unfaulted);
     }
 
@@ -155,7 +157,7 @@ void test_qfh_unfaulted() {
     {
         TestFixture tf{fault_checker_state_t::unfaulted};
         tf.enable_radio();
-        control_cycle_count = one_day_ccno - 1;
+        cc_count = one_day_ccno - 1;
         tf.step_and_expect(mission_state_t::manual, fault_checker_state_t::unfaulted);
         tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::forced_standby);
     }
@@ -167,13 +169,13 @@ void test_qfh_forced_standby() {
     {
         TestFixture tf{fault_checker_state_t::forced_standby};
         tf.set_cur_state_entry_ccno(one_day_ccno);
-        control_cycle_count = 2 * one_day_ccno;
+        cc_count = 2 * one_day_ccno;
         tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::powercycle_1);
         tf.check_powercycled();
     }
     {
         // Cleanup
-        control_cycle_count = 0;
+        cc_count = 0;
     }
 
     // If the radio is disabled the state should return to unfaulted immediately.
@@ -196,13 +198,13 @@ void test_qfh_powercycle_1() {
     {
         TestFixture tf{fault_checker_state_t::powercycle_1};
         tf.set_cur_state_entry_ccno(one_day_ccno);
-        control_cycle_count = one_day_ccno + one_day_ccno / 3;
+        cc_count = one_day_ccno + one_day_ccno / 3;
         tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::powercycle_2);
         tf.check_powercycled();
     }
     {
         // Cleanup
-        control_cycle_count = 0;
+        cc_count = 0;
     }
 
 
@@ -220,13 +222,13 @@ void test_qfh_powercycle_2() {
     {
         TestFixture tf{fault_checker_state_t::powercycle_2};
         tf.set_cur_state_entry_ccno(one_day_ccno);
-        control_cycle_count = one_day_ccno + one_day_ccno / 3;
+        cc_count = one_day_ccno + one_day_ccno / 3;
         tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::powercycle_3);
         tf.check_powercycled();
     }
     {
         // Cleanup
-        control_cycle_count = 0;
+        cc_count = 0;
     }
 
     // If we've (recently) received comms within 8 hours since the state transition, the state
@@ -244,13 +246,13 @@ void test_qfh_powercycle_3() {
     {
         TestFixture tf{fault_checker_state_t::powercycle_3};
         tf.set_cur_state_entry_ccno(one_day_ccno);
-        control_cycle_count = one_day_ccno + one_day_ccno / 3;
+        cc_count = one_day_ccno + one_day_ccno / 3;
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
         tf.check_not_powercycled();
     }
     {
         // Cleanup
-        control_cycle_count = 0;
+        cc_count = 0;
     }
 
     // If we've (recently) received comms within 8 hours since the state transition, the state
@@ -279,12 +281,12 @@ void test_qfh_safehold() {
     {
         TestFixture tf{fault_checker_state_t::safehold};
         tf.set_cur_state_entry_ccno(one_day_ccno);
-        control_cycle_count = one_day_ccno;
+        cc_count = one_day_ccno;
 
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
-        control_cycle_count += one_day_ccno / 2;
+        cc_count += one_day_ccno / 2;
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
-        control_cycle_count += one_day_ccno / 2 - 1;
+        cc_count += one_day_ccno / 2 - 1;
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
@@ -292,7 +294,7 @@ void test_qfh_safehold() {
     }
     {
         // Cleanup
-        control_cycle_count = 0;
+        cc_count = 0;
     }
 }
 
