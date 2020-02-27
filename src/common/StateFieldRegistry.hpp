@@ -4,7 +4,6 @@
 #include <memory>
 #include <set>
 #include "StateField.hpp"
-//#include "../fsw/FCCode/Fault.hpp"
 #include "Fault.hpp"
 
 /**

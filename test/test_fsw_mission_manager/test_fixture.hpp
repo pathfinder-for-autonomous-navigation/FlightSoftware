@@ -4,7 +4,7 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #include <fsw/FCCode/MissionManager.hpp>
-#include <fsw/FCCode/Fault.hpp>
+#include <common/Fault.hpp>
 #include <fsw/FCCode/mission_state_t.enum>
 #include <fsw/FCCode/adcs_state_t.enum>
 #include <fsw/FCCode/radio_state_t.enum>
