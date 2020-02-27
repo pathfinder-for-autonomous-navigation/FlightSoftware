@@ -5,7 +5,7 @@
 #include "constants.hpp"
 #include <lin.hpp>
 
-#include "Fault.hpp"
+#include "common/Fault.hpp"
 #include "prop_state_t.enum"
 #include "mission_state_t.enum"
 #include "adcs_state_t.enum"

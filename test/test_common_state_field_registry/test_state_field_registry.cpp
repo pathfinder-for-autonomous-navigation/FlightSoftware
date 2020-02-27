@@ -1,4 +1,5 @@
 #include <common/StateFieldRegistry.hpp>
+#include <common/Fault.hpp>
 
 #include <unity.h>
 

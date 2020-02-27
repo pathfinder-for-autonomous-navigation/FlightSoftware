@@ -4,7 +4,8 @@
 #include <memory>
 #include <set>
 #include "StateField.hpp"
-#include "../fsw/FCCode/Fault.hpp"
+//#include "../fsw/FCCode/Fault.hpp"
+#include "Fault.hpp"
 
 /**
  * @brief Registry of state fields and which tasks have read/write access to

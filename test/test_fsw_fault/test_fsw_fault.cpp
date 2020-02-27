@@ -2,7 +2,8 @@
 #include <common/StateFieldRegistry.hpp>
 #include "fsw/FCCode/TimedControlTask.hpp"
 
-#include <fsw/FCCode/Fault.hpp>
+//#include <fsw/FCCode/Fault.hpp>
+#include <common/Fault.hpp>
 #include <unity.h>
 
 /**
