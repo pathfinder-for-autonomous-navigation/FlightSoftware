@@ -153,7 +153,7 @@ DownlinkProducer::~DownlinkProducer() {
     delete[] snapshot;
 }
 
-#ifdef GSW
+#if defined GSW || defined DESKTOP
 const std::vector<DownlinkProducer::Flow>& DownlinkProducer::get_flows() const {
     return flows;
 }
@@ -216,15 +216,15 @@ void DownlinkProducer::toggle_flow(unsigned char id) {
     }
 }
 
-void DownlinkProducer::swap_flow_priorities(unsigned char id1, unsigned char id2) {
-    if(id1 >= flows.size()) {
+void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id2) {
+    if(id1 > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to swap with flow ID %d.", id1, id2);
+                                      "trying to shift with flow ID %d.", id1, id2);
         assert(false);
     }
-    if(id2 >= flows.size()) {
+    if(id2 > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to swap with flow ID %d.", id2, id1);
+                                      "trying to shift with flow ID %d.", id2, id1);
         assert(false);
     }
 
@@ -239,9 +239,15 @@ void DownlinkProducer::swap_flow_priorities(unsigned char id1, unsigned char id2
             idx2 = idx;
         }
     }
-
-    bool temp = flows[idx1].is_active;
-    flows[idx1].is_active = flows[idx2].is_active;
-    flows[idx2].is_active = temp;
-    std::swap(flows[idx1], flows[idx2]);
+    
+    if (idx1>idx2) {
+        for (size_t i = idx1; i > idx2; i--) {
+            std::swap(flows[i], flows[i-1]);
+        }
+    }
+    else if (idx2>idx1) {
+        for (size_t i = idx1; i < idx2; i++) {
+            std::swap(flows[i],flows[i+1]);
+        }
+    }
 }
