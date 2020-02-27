@@ -335,6 +335,65 @@ void test_downlink_changes() {
     TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 9); // Downlink data changed
 }
 
+void test_shift_priorities() {
+    TestFixture tf;
+
+    std::vector<DownlinkProducer::FlowData> flow_data = {
+        {
+            1, true, {"foo1"} 
+        },
+        {
+            2, false, {"foo1"} 
+        },
+        {
+            3, true, {"foo1"} 
+        },
+        {
+            4, true, {"foo1"} 
+        },
+        {
+            5, false, {"foo1"} 
+        },
+        {
+            6, false, {"foo1"} 
+        }
+    };
+    tf.init(flow_data);
+    std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
+    std::vector<int> initial_ids={1,2,3,4,5,6};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(initial_ids[i], flow_id);
+    }
+    TEST_ASSERT_EQUAL(true, flows[0].is_active);
+    TEST_ASSERT_EQUAL(false, flows[5].is_active);
+    
+    // Test shifting backwards
+    tf.downlink_producer->shift_flow_priorities(6,1);
+
+    // Get the new flow vector and check that the flows have been reordered as desired
+    flows=tf.downlink_producer->get_flows();
+    std::vector<int> desired_ids={6,1,2,3,4,5};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+
+    // Test shifting forwards
+    tf.downlink_producer->shift_flow_priorities(6,5);
+
+    // Get the new flow vector and check that the flows have been reordered as desired
+    flows=tf.downlink_producer->get_flows();
+    desired_ids={1,2,3,4,5,6};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+}
+
 int test_downlink_producer_task() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
@@ -343,6 +402,7 @@ int test_downlink_producer_task() {
     RUN_TEST(test_multiple_flows);
     RUN_TEST(test_some_flows_inactive);
     RUN_TEST(test_downlink_changes);
+    RUN_TEST(test_shift_priorities);
     return UNITY_END();
 }
 
