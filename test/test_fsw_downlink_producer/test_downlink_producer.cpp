@@ -13,6 +13,7 @@ struct TestFixture {
     std::shared_ptr<ReadableStateField<unsigned int>> cycle_count_fp;
     InternalStateField<char*>* snapshot_ptr_fp;
     InternalStateField<size_t>* snapshot_size_bytes_fp;
+    WritableStateField<unsigned char>* toggle_flow_id_fp;
 
     TestFixture() : registry() {}
 
@@ -31,6 +32,7 @@ struct TestFixture {
         snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink.ptr");
         snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>(
                                     "downlink.snap_size");
+        toggle_flow_id_fp = registry.find_writable_field_t<unsigned char>("downlink.toggle_id");
     }
 };
 
@@ -74,6 +76,8 @@ void test_task_initialization() {
         tf.downlink_producer->execute();
         const char expected_output[5] = {'\x94', '\x00', '\x00', '\x00', '\x40'};
         TEST_ASSERT_EQUAL_MEMORY(expected_output, tf.snapshot_ptr_fp->get(), 5);
+
+        TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get());
     }
 }
 
@@ -394,6 +398,35 @@ void test_shift_priorities() {
     }
 }
 
+void test_toggle() {
+    TestFixture tf;
+
+    std::vector<DownlinkProducer::FlowData> flow_data = {
+        {
+            1, true, {"foo1"} 
+        }
+    };
+    tf.init(flow_data);
+
+    // Toggle the flow with id 1
+    tf.toggle_flow_id_fp->set(1);
+    tf.downlink_producer->execute();
+    std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
+
+    TEST_ASSERT_FALSE(flows[0].is_active);
+    TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get());
+
+    // Toggle the flow with id 1 again
+    tf.toggle_flow_id_fp->set(1);
+    tf.downlink_producer->execute();
+    flows=tf.downlink_producer->get_flows();
+
+    TEST_ASSERT_TRUE(flows[0].is_active);
+    TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get());
+
+    // Check that, if the toggle flow id command is 0, nothing changes
+}
+
 int test_downlink_producer_task() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
@@ -403,6 +436,7 @@ int test_downlink_producer_task() {
     RUN_TEST(test_some_flows_inactive);
     RUN_TEST(test_downlink_changes);
     RUN_TEST(test_shift_priorities);
+    RUN_TEST(test_toggle);
     return UNITY_END();
 }
 
