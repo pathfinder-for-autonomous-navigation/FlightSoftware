@@ -10,9 +10,15 @@ def convert_to_bytes(packet):
 	hex_str = "'\\x" + "', '\\x".join('{:02x}'.format(x) for x in packet_str) + "'"
 	return hex_str
 
+# Helper functions for creating packets
+def packet_header(cc_count):
+	return "1" + cc_count
+def flow(flow_id, flow_items):
+	return flow_id[::-1] + "".join(flow_items)
+
 print("-----------------------------------")
 print("Expected value for test_task_initialization")
-packet = "1" + int_20 + "1"
+packet = packet_header(int_20) + flow("1", [])
 print(packet)
 packet = convert_to_bytes(packet)
 print(packet)
@@ -21,7 +27,7 @@ print("-----------------------------------")
 
 print("-----------------------------------")
 print("Expected value for test_one_flow #1")
-packet = "1" + int_20 + "1" + int_400
+packet = packet_header(int_20) + flow("1", [int_400])
 print(packet)
 packet = convert_to_bytes(packet)
 print(packet)
@@ -29,7 +35,7 @@ print("Length: " + str(packet.count("\\x")))
 print("-----------------------------------")
 
 print("Expected value for test_one_flow #2")
-packet = "1" + int_20 + "1" + int_400 * 5
+packet = packet_header(int_20) + flow("1", [int_400] * 5)
 print(packet)
 packet = convert_to_bytes(packet)
 print(packet)
@@ -38,7 +44,7 @@ print("-----------------------------------")
 
 
 print("Expected value for test_multiple_flows #1")
-packet = "1" + int_20 + "01"[::-1] + int_400 + "10"[::-1] + int_400
+packet = packet_header(int_20) + flow("01", [int_400]) + flow("10", [int_400])
 print(packet)
 packet = convert_to_bytes(packet)
 print(packet)
@@ -46,7 +52,7 @@ print("Length: " + str(packet.count("\\x")))
 print("-----------------------------------")
 
 print("Expected value for test_multiple_flows #2")
-packet = "1" + int_20 + "01"[::-1] + int_400*3 + "10"[::-1] + int_400*7 + "11"[::-1] + int_400*7
+packet = packet_header(int_20) + flow("01", [int_400]*3) + flow("10", [int_400]*7) + flow("11", [int_400]*7)
 packet = packet[0:560] + "0" + packet[560:-1] # Add packet delimiter
 print(packet)
 packet = convert_to_bytes(packet)
@@ -55,7 +61,7 @@ print("Length: " + str(packet.count("\\x")))
 print("-----------------------------------")
 
 print("Expected value for test_some_flows_inactive")
-packet = "1" + int_20 + "01"[::-1] + int_400 + "10"[::-1] + int_400 # Add packet delimiter
+packet = packet_header(int_20) + flow("01", [int_400]) + flow("10", [int_400])
 print(packet)
 packet = convert_to_bytes(packet)
 print(packet)
@@ -65,19 +71,9 @@ print("-----------------------------------")
 int_800 = "00000000000000000000001100100000"[::-1]
 print("-----------------------------------")
 print("Expected value for test_downlink_change")
-packet = "1" + int_20 + "1" + int_800
+packet = packet_header(int_20) + flow("1", [int_800])
 print(packet)
 packet = convert_to_bytes(packet)
 print(packet)
 print("Length: " + str(packet.count("\\x")))
-print("-----------------------------------")
-
-int_0 = "0"*32
-print("-----------------------------------")
-print("Expected value for ground software functional testing")
-packet = "1" + int_0 + ("01"[::-1] + "0"*4 + "0" + "00") + ("10"[::-1] + "0" + "0" + "0")
-print(packet)
-packet = convert_to_bytes(packet)
-print(packet)
-print("Length: " + str(packet.count("0x")))
 print("-----------------------------------")
