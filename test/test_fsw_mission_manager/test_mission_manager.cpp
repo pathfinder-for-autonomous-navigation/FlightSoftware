@@ -261,12 +261,12 @@ void test_power_prop_adcs_faults_responsive() {
             TestFixture(state), TestFixture(state), TestFixture(state),
             TestFixture(state), TestFixture(state), TestFixture(state)
         };
-        tf_v[0].low_batt_fault_f.override();
-        tf_v[1].adcs_functional_fault_f.override();
-        tf_v[2].wheel1_adc_fault_f.override();
-        tf_v[3].wheel2_adc_fault_f.override();
-        tf_v[4].wheel3_adc_fault_f.override();
-        tf_v[5].wheel_pot_fault_f.override();
+        tf_v[0].low_batt_fault_fp->override();
+        tf_v[1].adcs_functional_fault_fp->override();
+        tf_v[2].wheel1_adc_fault_fp->override();
+        tf_v[3].wheel2_adc_fault_fp->override();
+        tf_v[4].wheel3_adc_fault_fp->override();
+        tf_v[5].wheel_pot_fault_fp->override();
         for(TestFixture& tf : tf_v) {
             tf.step();
             tf.check(mission_state_t::safehold);
@@ -274,7 +274,7 @@ void test_power_prop_adcs_faults_responsive() {
     }
     for(mission_state_t state : MissionManager::fault_responsive_states) {
         TestFixture tf(state);
-        tf.failed_pressurize_f.override();
+        tf.failed_pressurize_fp->override();
         tf.step();
         tf.check(mission_state_t::standby);
     }
@@ -285,16 +285,16 @@ void test_power_prop_adcs_faults_responsive() {
     // ADCS fault takes precedence over prop fault
     {
         TestFixture tf(mission_state_t::standby);
-        tf.wheel1_adc_fault_f.override();
-        tf.failed_pressurize_f.override();
+        tf.wheel1_adc_fault_fp->override();
+        tf.failed_pressurize_fp->override();
         tf.step();
         tf.check(mission_state_t::safehold);
     }
     // Power fault takes precedence over prop fault
     {
         TestFixture tf(mission_state_t::standby);
-        tf.low_batt_fault_f.override();
-        tf.failed_pressurize_f.override();
+        tf.low_batt_fault_fp->override();
+        tf.failed_pressurize_fp->override();
         tf.step();
         tf.check(mission_state_t::safehold);
     }
@@ -310,12 +310,12 @@ void test_power_prop_adcs_faults_nonresponsive() {
             TestFixture(state), TestFixture(state), TestFixture(state),
             TestFixture(state), TestFixture(state), TestFixture(state)
         };
-        tf_v[0].low_batt_fault_f.override();
-        tf_v[1].adcs_functional_fault_f.override();
-        tf_v[2].wheel1_adc_fault_f.override();
-        tf_v[3].wheel2_adc_fault_f.override();
-        tf_v[4].wheel3_adc_fault_f.override();
-        tf_v[5].wheel_pot_fault_f.override();
+        tf_v[0].low_batt_fault_fp->override();
+        tf_v[1].adcs_functional_fault_fp->override();
+        tf_v[2].wheel1_adc_fault_fp->override();
+        tf_v[3].wheel2_adc_fault_fp->override();
+        tf_v[4].wheel3_adc_fault_fp->override();
+        tf_v[5].wheel_pot_fault_fp->override();
         for(TestFixture& tf : tf_v) {
             tf.step();
             tf.check(state);
@@ -323,7 +323,7 @@ void test_power_prop_adcs_faults_nonresponsive() {
     }
     for(mission_state_t state : MissionManager::fault_nonresponsive_states) {
         TestFixture tf(state);
-        tf.failed_pressurize_f.override();
+        tf.failed_pressurize_fp->override();
         tf.step();
         tf.check(state);
     }
@@ -335,11 +335,11 @@ void test_adcs_faults_inithold() {
     // deployment wait period.
     {
         std::array<TestFixture, 5> tf_v;
-        tf_v[0].adcs_functional_fault_f.override();
-        tf_v[1].wheel1_adc_fault_f.override();
-        tf_v[2].wheel2_adc_fault_f.override();
-        tf_v[3].wheel3_adc_fault_f.override();
-        tf_v[4].wheel_pot_fault_f.override();
+        tf_v[0].adcs_functional_fault_fp->override();
+        tf_v[1].wheel1_adc_fault_fp->override();
+        tf_v[2].wheel2_adc_fault_fp->override();
+        tf_v[3].wheel3_adc_fault_fp->override();
+        tf_v[4].wheel_pot_fault_fp->override();
         for(TestFixture& tf : tf_v) {
             tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
             tf.step();
