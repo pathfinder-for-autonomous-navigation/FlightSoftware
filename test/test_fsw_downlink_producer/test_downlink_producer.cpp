@@ -427,14 +427,6 @@ void test_shift_statefield_cmd() {
     };
     tf.init(flow_data);
     std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
-    std::vector<int> initial_ids={1,2,3,4,5,6};
-    for (size_t i = 0; i<flows.size(); i++){
-        unsigned char flow_id;
-        flows[i].id_sr.deserialize(&flow_id);
-        TEST_ASSERT_EQUAL(initial_ids[i], flow_id);
-    }
-    TEST_ASSERT_EQUAL(true, flows[0].is_active);
-    TEST_ASSERT_EQUAL(false, flows[5].is_active);
     
     // Test shifting backwards by moving flow with id 6 to flow with 1's positions
     tf.shift_flows_id1_fp->set(6);
