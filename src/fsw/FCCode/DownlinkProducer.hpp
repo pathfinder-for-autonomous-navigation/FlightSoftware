@@ -168,6 +168,13 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
     unsigned int num_active_flows = 0;
     std::vector<Flow> flows;
+
+    /**
+     * @brief Fields used to shift flows. Moves the flow with id1 to the flow with 
+     * id2's position. Default is <0,0> (No flow can have an id of 0).
+     */
+     WritableStateField<unsigned char> shift_flows_id1_f;
+     WritableStateField<unsigned char> shift_flows_id2_f;
 };
 
 #endif

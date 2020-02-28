@@ -4,6 +4,7 @@
 
 #include <common/StateFieldRegistry.hpp>
 #include <unity.h>
+#include <iostream>
 
 struct TestFixture {
     StateFieldRegistryMock registry;
@@ -13,6 +14,8 @@ struct TestFixture {
     std::shared_ptr<ReadableStateField<unsigned int>> cycle_count_fp;
     InternalStateField<char*>* snapshot_ptr_fp;
     InternalStateField<size_t>* snapshot_size_bytes_fp;
+    WritableStateField<unsigned char>* shift_flows_id1_fp;
+    WritableStateField<unsigned char>* shift_flows_id2_fp;
 
     TestFixture() : registry() {}
 
@@ -31,6 +34,8 @@ struct TestFixture {
         snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink.ptr");
         snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>(
                                     "downlink.snap_size");
+        shift_flows_id1_fp = registry.find_writable_field_t<unsigned char>("downlink.shift_id1");
+        shift_flows_id2_fp = registry.find_writable_field_t<unsigned char>("downlink.shift_id2");
     }
 };
 
@@ -50,6 +55,9 @@ void test_task_initialization() {
 
         // ceil((1 + 32 + 0) / 8)
         TEST_ASSERT_EQUAL(5, tf.snapshot_size_bytes_fp->get());
+
+        TEST_ASSERT_EQUAL(0, tf.shift_flows_id1_fp->get());
+        TEST_ASSERT_EQUAL(0, tf.shift_flows_id2_fp->get());
     }
 
     {
@@ -394,6 +402,77 @@ void test_shift_priorities() {
     }
 }
 
+void test_shift_statefield_cmd() {
+    TestFixture tf;
+
+    std::vector<DownlinkProducer::FlowData> flow_data = {
+        {
+            1, true, {"foo1"} 
+        },
+        {
+            2, false, {"foo1"} 
+        },
+        {
+            3, true, {"foo1"} 
+        },
+        {
+            4, true, {"foo1"} 
+        },
+        {
+            5, false, {"foo1"} 
+        },
+        {
+            6, false, {"foo1"} 
+        }
+    };
+    tf.init(flow_data);
+    std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
+    std::vector<int> initial_ids={1,2,3,4,5,6};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(initial_ids[i], flow_id);
+    }
+    TEST_ASSERT_EQUAL(true, flows[0].is_active);
+    TEST_ASSERT_EQUAL(false, flows[5].is_active);
+    
+    // Test shifting backwards by moving flow with id 6 to flow with 1's positions
+    tf.shift_flows_id1_fp->set(6);
+    tf.shift_flows_id2_fp->set(1);
+    tf.downlink_producer->execute();
+
+    // Get the new flow vector and check that the flows have been reordered as desired
+    flows=tf.downlink_producer->get_flows();
+    std::vector<int> desired_ids={6,1,2,3,4,5};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+
+    // Check that the shift command statefields have reverted back to 0
+    TEST_ASSERT_EQUAL(0, tf.shift_flows_id1_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.shift_flows_id2_fp->get());
+
+    // Test shifting forwards by moving flow with id 6 to flow with 5's positions
+    tf.shift_flows_id1_fp->set(6);
+    tf.shift_flows_id2_fp->set(5);
+    tf.downlink_producer->execute();
+
+    // Get the new flow vector and check that the flows have been reordered as desired
+    flows=tf.downlink_producer->get_flows();
+    desired_ids={1,2,3,4,5,6};
+    for (size_t i = 0; i<flows.size(); i++){
+        unsigned char flow_id;
+        flows[i].id_sr.deserialize(&flow_id);
+        TEST_ASSERT_EQUAL(desired_ids[i], flow_id);
+    }
+
+    // Check that the shift command statefields have reverted back to 0
+    TEST_ASSERT_EQUAL(0, tf.shift_flows_id1_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.shift_flows_id2_fp->get());
+}
+
 int test_downlink_producer_task() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
@@ -403,6 +482,7 @@ int test_downlink_producer_task() {
     RUN_TEST(test_some_flows_inactive);
     RUN_TEST(test_downlink_changes);
     RUN_TEST(test_shift_priorities);
+    RUN_TEST(test_shift_statefield_cmd);
     return UNITY_END();
 }
 
