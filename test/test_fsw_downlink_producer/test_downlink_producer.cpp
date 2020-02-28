@@ -426,6 +426,7 @@ void test_toggle() {
 
     // Check that, if the toggle flow id command is 0, nothing changes
     tf.downlink_producer->execute();
+    flows=tf.downlink_producer->get_flows();
     TEST_ASSERT_TRUE(flows[0].is_active);
     TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get());
 }
