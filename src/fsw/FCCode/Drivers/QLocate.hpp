@@ -77,7 +77,7 @@ public:
      *  the serial port with begin(), it will be done in the constructor.
      */
 #ifndef DESKTOP
-    QLocate(const std::string &name, HardwareSerial *port, int timeout);
+    QLocate(const std::string &name, HardwareSerial *const port, int timeout);
 #else 
     using String = std::string;
     explicit QLocate(const std::string&);

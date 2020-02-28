@@ -109,7 +109,7 @@ bool QuakeManager::execute() {
     }
     #endif
 
-    const radio_state_t radio_state = static_cast<radio_state_t>(radio_state_f.get());
+    const auto radio_state = static_cast<radio_state_t>(radio_state_f.get());
     switch(radio_state) {
         case radio_state_t::disabled:
         return true;

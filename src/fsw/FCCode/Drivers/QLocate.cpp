@@ -109,9 +109,9 @@ int QLocate::query_sbdwb_2(char const *c, int len)
     if ( (size_t)len != port->write(c, len) )
         return WRITE_FAIL;
     uint16_t s = checksum(c, len);
-    if ( port->write((uint8_t)(s >> 8u)) != 1u )
+    if ( port->write((uint8_t)(s >> 8u)) != 1 )
         return WRITE_FAIL;
-    if ( port->write((char)s) != 1 )
+    if ( port->write((uint8_t)s) != 1 )
         return WRITE_FAIL;
     // WARNING: this method blocks
     port->flush();
