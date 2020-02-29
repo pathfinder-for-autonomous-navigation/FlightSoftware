@@ -39,6 +39,7 @@ void test_events() {
 
     // We shouldn't be able to find an event that doesn't exist
     TEST_ASSERT_FALSE(registry.find_event("fake_event"));
+}
 
 void test_faults() {
     StateFieldRegistry registry;
