@@ -4,7 +4,9 @@ Event::Event(const std::string& name,
           std::vector<ReadableStateFieldBase*>& _data_fields,
           const char* (*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
           const unsigned int& _ccno) :
+          
           StateField<bool>(name, true, false),
+          _name(name),
           data_fields(_data_fields),
           print_fn(_print_fn),
           ccno(_ccno)

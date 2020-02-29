@@ -31,6 +31,15 @@ StateFieldRegistry::find_writable_field(const std::string &name) const {
     return nullptr;
 }
 
+Event*
+StateFieldRegistry::find_event(const std::string &name) const {
+    for (Event* event : events) {
+        if (name == event->name()) return event;
+    }
+
+    return nullptr;
+}
+
 bool StateFieldRegistry::add_internal_field(InternalStateFieldBase* field) {
     if (find_internal_field(field->name())) return false;
     internal_fields.push_back(field);
@@ -47,5 +56,11 @@ bool StateFieldRegistry::add_writable_field(WritableStateFieldBase* field) {
     if (!add_readable_field(field)) return false;
     if (find_writable_field(field->name())) return false;
     writable_fields.push_back(field);
+    return true;
+}
+
+bool StateFieldRegistry::add_event(Event* event) {
+    if (find_event(event->name())) return false;
+    events.push_back(event);
     return true;
 }

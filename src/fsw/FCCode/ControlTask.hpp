@@ -88,6 +88,11 @@ class ControlTask : protected debug_console {
         check_field_added(added, field.name());
     }
 
+    void add_event(Event& event) {
+        const bool added = _registry.add_event(&event);
+        check_field_added(added, event.name());
+    }
+
     void check_field_exists(const StateFieldBase* ptr, const std::string& field_type,
             const char* field_name) {
         if(!ptr) {
@@ -128,6 +133,12 @@ class ControlTask : protected debug_console {
         auto field_ptr = _registry.find_writable_field(field);
         check_field_exists(field_ptr, "writable", field);
         return static_cast<WritableStateField<U>*>(field_ptr);
+    }
+
+    Event* find_event(const char* event, const char* file, const unsigned int line) {
+        auto event_ptr = _registry.find_event(event);
+        check_field_exists(event_ptr, "event", event);
+        return *event_ptr;
     }
 };
 
