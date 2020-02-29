@@ -59,6 +59,15 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     }
 
     /**
+     * @brief Finds an event of the given name.
+     */
+    Event* find_event_t(const std::string& name) {
+        auto ptr = static_cast<Event*>(find_event(name));
+        check_field_exists(ptr, name);
+        return ptr;
+    }
+    
+    /**
      * @brief Finds an fault of the given name.
      */
     Fault* find_fault_t(const std::string& name) {
@@ -302,6 +311,23 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     }
 
     /**
+     * @brief Create an event and add it to the registry.
+     * 
+     * @param name Name of event to create.
+     * @return Pointer to event that was created.
+     */
+    std::shared_ptr<Event> create_event(const std::string& name,
+          std::vector<ReadableStateFieldBase*>& data_fields,
+          const char* (*print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
+          const unsigned int ccno)
+    {
+        auto event_ptr = std::make_shared<Event>(name, data_fields, print_fn, ccno);
+        add_event(event_ptr.get());
+        created_events.push_back(event_ptr);
+        return event_ptr;
+    }
+
+    /**
      * @brief Create a fault and add it to the registry.
      * 
      * @param name Name of fault to create.
@@ -323,10 +349,13 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         readable_fields.clear();
         writable_fields.clear();
         faults.clear();
+        events.clear();
         created_internal_fields.clear();
         created_readable_fields.clear();
         created_writable_fields.clear();
+        created_events.clear();
         created_faults.clear();
+        created_events.clear();
     }
 
   private:
@@ -337,6 +366,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     std::vector<std::shared_ptr<InternalStateFieldBase>> created_internal_fields;
     std::vector<std::shared_ptr<ReadableStateFieldBase>> created_readable_fields;
     std::vector<std::shared_ptr<WritableStateFieldBase>> created_writable_fields;
+    std::vector<std::shared_ptr<Event>> created_events;
     std::vector<std::shared_ptr<Fault>> created_faults;
 };
 

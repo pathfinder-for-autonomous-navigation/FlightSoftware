@@ -1,6 +1,6 @@
 #include "../StateFieldRegistryMock.hpp"
 
-#include <fsw/FCCode/Event.hpp>
+#include <common/Event.hpp>
 
 #include <unity.h>
 
