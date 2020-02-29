@@ -223,7 +223,7 @@ void test_clear() {
     TEST_ASSERT_NULL(registry.find_readable_field("foo3"));
     TEST_ASSERT_NULL(registry.find_writable_field("foo3"));
     TEST_ASSERT_NULL(registry.find_fault("foo4"));
-    TEST_ASSERT_NULL(registry.find_event("foo4"));
+    TEST_ASSERT_NULL(registry.find_event("foo5"));
 }
 
 int test_state_field_registry_mock() {
