@@ -164,11 +164,6 @@ class DownlinkProducer : public TimedControlTask<void> {
     InternalStateField<size_t> snapshot_size_bytes_f;
 
     /**
-     * @brief Statefield used to toggle flow's active status. Default is 0 (no flow can have an id of 0)
-     */
-    WritableStateField<unsigned char> toggle_flow_id_f;
-
-    /**
      * @brief Actual flow data.
      */
     unsigned int num_active_flows = 0;
@@ -180,6 +175,11 @@ class DownlinkProducer : public TimedControlTask<void> {
      */
      WritableStateField<unsigned char> shift_flows_id1_f;
      WritableStateField<unsigned char> shift_flows_id2_f;
+
+    /**
+     * @brief Statefield used to toggle flow's active status. Default is 0 (no flow can have an id of 0)
+     */
+    WritableStateField<unsigned char> toggle_flow_id_f;
 };
 
 #endif
