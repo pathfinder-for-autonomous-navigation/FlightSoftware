@@ -4,6 +4,7 @@
 #include <memory>
 #include <set>
 #include "StateField.hpp"
+#include "Fault.hpp"
 
 /**
  * @brief Registry of state fields and which tasks have read/write access to
@@ -16,6 +17,7 @@ public:
     std::vector<InternalStateFieldBase*> internal_fields;
     std::vector<ReadableStateFieldBase*> readable_fields;
     std::vector<WritableStateFieldBase*> writable_fields;
+    std::vector<Fault*> faults;
 
     StateFieldRegistry();
 
@@ -46,6 +48,15 @@ public:
     WritableStateFieldBase* find_writable_field(const std::string &name) const;
 
     /**
+     * @brief Find a fault of a given name within the state registry and return a pointer
+     * to it.
+     *
+     * @param[in] name Name of fault.
+     * @return Pointer to fault, or null pointer if field doesn't exist.
+     */
+    Fault* find_fault(const std::string &name) const;
+
+    /**
      * @brief Adds a field to the registry.
      *
      * @param field State field
@@ -66,6 +77,14 @@ public:
      * @param field Data field
      */
     bool add_writable_field(WritableStateFieldBase* field);
+
+    /**
+     * @brief Marks a fault as being uploadable by ground.
+     *
+     * @param r ControlTaskBase
+     * @param fault Data fault
+     */
+    bool add_fault(Fault* fault);
 };
 
 #endif
