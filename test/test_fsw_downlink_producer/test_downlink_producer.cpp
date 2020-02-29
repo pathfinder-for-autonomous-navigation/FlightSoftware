@@ -16,6 +16,7 @@ struct TestFixture {
     InternalStateField<size_t>* snapshot_size_bytes_fp;
     WritableStateField<unsigned char>* shift_flows_id1_fp;
     WritableStateField<unsigned char>* shift_flows_id2_fp;
+    WritableStateField<unsigned char>* toggle_flow_id_fp;
 
     TestFixture() : registry() {}
 
@@ -36,6 +37,7 @@ struct TestFixture {
                                     "downlink.snap_size");
         shift_flows_id1_fp = registry.find_writable_field_t<unsigned char>("downlink.shift_id1");
         shift_flows_id2_fp = registry.find_writable_field_t<unsigned char>("downlink.shift_id2");
+        toggle_flow_id_fp = registry.find_writable_field_t<unsigned char>("downlink.toggle_id");
     }
 };
 
@@ -82,6 +84,8 @@ void test_task_initialization() {
         tf.downlink_producer->execute();
         const char expected_output[5] = {'\x94', '\x00', '\x00', '\x00', '\x40'};
         TEST_ASSERT_EQUAL_MEMORY(expected_output, tf.snapshot_ptr_fp->get(), 5);
+
+        TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get());
     }
 }
 
@@ -465,6 +469,39 @@ void test_shift_statefield_cmd() {
     TEST_ASSERT_EQUAL(0, tf.shift_flows_id2_fp->get());
 }
 
+void test_toggle() {
+    TestFixture tf;
+
+    std::vector<DownlinkProducer::FlowData> flow_data = {
+        {
+            1, true, {"foo1"} 
+        }
+    };
+    tf.init(flow_data);
+
+    // Toggle the flow with id 1
+    tf.toggle_flow_id_fp->set(1);
+    tf.downlink_producer->execute();
+    std::vector<DownlinkProducer::Flow> flows=tf.downlink_producer->get_flows();
+
+    TEST_ASSERT_FALSE(flows[0].is_active);
+    TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get());
+
+    // Toggle the flow with id 1 again
+    tf.toggle_flow_id_fp->set(1);
+    tf.downlink_producer->execute();
+    flows=tf.downlink_producer->get_flows();
+
+    TEST_ASSERT_TRUE(flows[0].is_active);
+    TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get());
+
+    // Check that, if the toggle flow id command is 0, nothing changes
+    tf.downlink_producer->execute();
+    flows=tf.downlink_producer->get_flows();
+    TEST_ASSERT_TRUE(flows[0].is_active);
+    TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get());
+}
+
 int test_downlink_producer_task() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
@@ -475,6 +512,7 @@ int test_downlink_producer_task() {
     RUN_TEST(test_downlink_changes);
     RUN_TEST(test_shift_priorities);
     RUN_TEST(test_shift_statefield_cmd);
+    RUN_TEST(test_toggle);
     return UNITY_END();
 }
 

@@ -8,6 +8,7 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
                                  snapshot_size_bytes_f("downlink.snap_size"),
                                  shift_flows_id1_f("downlink.shift_id1", Serializer<unsigned char>(0,10,1)),
                                  shift_flows_id2_f("downlink.shift_id2", Serializer<unsigned char>(0,10,1))
+                                 toggle_flow_id_f("downlink.toggle_id", Serializer<unsigned char>(0,10,1))
 {
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 
@@ -20,6 +21,10 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     add_writable_field(shift_flows_id2_f);
     shift_flows_id1_f.set(0);
     shift_flows_id2_f.set(0);
+
+    // Add toggle command statefield to registry and set it to default of 0
+    add_writable_field(toggle_flow_id_f);
+    toggle_flow_id_f.set(0);
 }
 
 void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
@@ -162,6 +167,11 @@ void DownlinkProducer::execute() {
         shift_flows_id1_f.set(0);
         shift_flows_id2_f.set(0);
     }
+
+    if (toggle_flow_id_f.get()>0) {
+        toggle_flow(toggle_flow_id_f.get());
+        toggle_flow_id_f.set(0);
+    }
 }
 
 DownlinkProducer::~DownlinkProducer() {
@@ -213,7 +223,7 @@ size_t DownlinkProducer::Flow::get_packet_size() const {
 }
 
 void DownlinkProducer::toggle_flow(unsigned char id) {
-    if(id >= flows.size()) {
+    if(id > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found.", id);
         assert(false);
     }
