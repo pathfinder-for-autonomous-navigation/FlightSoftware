@@ -1,13 +1,11 @@
 #include <fsw/FCCode/PropController.hpp>
 
-#ifdef FEELS_BAD
+#if defined(UNIT_TEST) && defined(DESKTOP)
 #include <iostream>
 #define DD(f_, ...) printf((f_), ##__VA_ARGS__)
+size_t g_fake_pressure_cycle_count = 15; // global
 #else
 #define DD(f_, ...) do{} while(0)
-#endif
-#ifdef DESKTOP
-size_t g_fake_pressure_cycle_count = 15; // global
 #endif
 
 PropController::PropController(StateFieldRegistry &registry, unsigned int offset)
