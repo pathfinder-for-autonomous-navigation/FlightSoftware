@@ -220,13 +220,15 @@ void update_ssa() {
 // #if LOG_LEVEL >= LOG_LEVEL_INFO
 static unsigned long cycles = 0;
 // #endif
-bool led_state = true;
+static unsigned long last_led_time = millis();
+static bool led_state = true;
 
 void loop() {
   
-  if(cycles % 100UL == 0){
+  if(millis() - last_led_time > 500){
     digitalWrite(13, led_state);
     led_state = !led_state;
+    last_led_time = millis();
   }
   
   // update_imu();
