@@ -210,10 +210,10 @@ prop_state_t PropState_AwaitPressurizing::evaluate() {
 bool PropState_Pressurizing::can_enter() const {
 
     bool was_await_pressurizing = controller->check_current_state(prop_state_t::await_pressurizing);
+    bool is_schedule_valid = controller->validate_schedule();
     // Allow from idle because sometimes we can immediately pressurize
     bool was_idle = controller->check_current_state(prop_state_t::idle);
-
-    return (was_await_pressurizing || was_idle) && is_time_to_pressurize();
+    return (was_await_pressurizing || was_idle) && is_time_to_pressurize() && is_schedule_valid;
 }
 
 bool PropState_Pressurizing::is_time_to_pressurize() {

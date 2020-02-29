@@ -57,12 +57,6 @@ public:
       }
     }
 
-    // Step forward a number of control cycles equivalent to ms
-    inline void step_time(size_t num_ms) {
-        size_t num_cc = num_ms / PAN::control_cycle_time_ms;
-        step(num_cc);
-    }
-
     inline void set_state(prop_state_t state) {
         prop_state_fp->set(static_cast<unsigned int>(state));
     }
@@ -80,8 +74,8 @@ public:
         TEST_ASSERT_EQUAL(fire_cycle_fp->get(), ctrl_cycles_from_now);
     }
 
-    // keep stepping until the state changes and return the number of steps it took
-    // return 0 if we've executed for max_cycles
+    // Keep stepping until the state changes (or until we have step max_cycles steps)
+    // Return the number of steps taken or return 6969696969 if there has been no state change after max_cycles steps
     inline size_t execute_until_state_change(size_t max_cycles=2*PropState_Pressurizing::num_cycles_needed()) {
         size_t num_steps = 0;
         unsigned int current_state = prop_state_fp->get();
@@ -100,21 +94,24 @@ void test_initialization()
   tf.check_state(prop_state_t::disabled);
 }
 
+// Test that PropController remains in the disabled state despite the existence of a valid schedule
 void test_disable()
 {
   PropTestFixture tf;
   // Prop should remain in disabled state until manually set to some other state
-  tf.fixture_set_schedule(200, 300, 400,500, 21);
+  tf.fixture_set_schedule(200, 300, 400,500, PropState_Pressurizing::num_cycles_needed() + 1);
   // Firing time is set 5 control cycles from now but we should not fire since
   // state is still disabled
   tf.check_state(prop_state_t::disabled);
-  for (size_t i = 0; i < 22; ++i)
+  for (size_t i = 0; i < PropState_Pressurizing::num_cycles_needed() ; ++i)
   {
     tf.step();
     tf.check_state(prop_state_t::disabled);
   }
 }
 
+// Test that Prop ignores a schedule with fewer than PropState_Pressurizing::num_cycles_needed() + 1 cycles
+// Test that Prop ignores a schedule if a value exceeds 999
 void test_illegal_schedule()
 {
   PropTestFixture tf;
@@ -122,20 +119,29 @@ void test_illegal_schedule()
   // Prop should ignore if requested firing time is less than 20 pressurizing cycles + 1 control cycle into the future
   tf.fixture_set_schedule(200, 400, 800, 100, PropState_Pressurizing::num_cycles_needed());
   tf.step();
-  // State should remain in idle
+  // State should remain in idle because fire cycle too soon
+  tf.check_state(prop_state_t::idle);
+  tf.fixture_set_schedule(200, 400, 800, 1000, PropState_Pressurizing::num_cycles_needed() + 1);
+  tf.step();
+  // State should remain in idle because valve 4 is scheduled for 1000
   tf.check_state(prop_state_t::idle);
 }
 
+// Test that a schedule with fire_cycle set to PropState_Pressurizing::num_cycles_needed() + 1 and all valve
+// schedules less than 1000 should be considered valid
+// Test that we should go directly into pressurizing (as oppose to await_pressurizing)
 void test_idle_to_pressurizing()
 {
     PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
-    tf.fixture_set_schedule(200, 400, 800, 100, PropState_Pressurizing::num_cycles_needed() + 1);
+    tf.fixture_set_schedule(200, 400, 800, 999, PropState_Pressurizing::num_cycles_needed() + 1);
     tf.step();
     // Go immediately into pressurizing
     tf.check_state(prop_state_t::pressurizing);
 }
 
+// Test that a schedule with fire_cycle set to PropState_Pressurizing::num_cycles_needed() + 2 will cause
+// Prop to enter await_pressurizing for 1 cycle before entering pressurizing
 void test_idle_to_await_pressurize()
 {
     PropTestFixture tf;
@@ -144,8 +150,12 @@ void test_idle_to_await_pressurize()
     tf.step();
     // Go into await_pressurizing because we have more than enough time
     tf.check_state(prop_state_t::await_pressurizing);
+    tf.step();
+    tf.check_state(prop_state_t::pressurizing);
 }
 
+// Test that Prop waits in await_pressurizing if a schedule is set with fire_cycle exceeding
+// PropState_Pressurizing::num_cycles_needed()
 void test_await_pressurize_to_pressurize()
 {
     PropTestFixture tf;
@@ -157,7 +167,26 @@ void test_await_pressurize_to_pressurize()
     tf.check_state(prop_state_t::pressurizing);
 }
 
-void test_pressurize_to_firing() {
+// Test that we pressurize for 19 cycles before transitioning to await_firing
+void test_pressurize_to_await_firing()
+{
+    PropTestFixture tf;
+    g_fake_pressure_cycle_count = 19; // finish 1 pressurizing cycle early
+    tf.set_state(prop_state_t::idle);
+    tf.fixture_set_schedule(200, 200, 200, 200, PropState_Pressurizing::num_cycles_needed() + 1);
+    tf.step();
+    tf.check_state(prop_state_t::pressurizing);
+    // Expect to execute 18 full pressurizing cycles before transitioning on the 19th
+    unsigned int expected_cycles =
+            (PropController::max_pressurizing_cycles - 2) * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle +
+            2;
+    TEST_ASSERT_EQUAL(expected_cycles, tf.execute_until_state_change());
+    tf.check_state(prop_state_t::await_firing);
+}
+
+// Test the case where we pressurize for the maximum 20 pressurizing cycles. Make sure that we still enter await_firing
+void test_pressurize_to_firing()
+{
     // There is no going from pressurizing into firing
     PropTestFixture tf;
     g_fake_pressure_cycle_count = 20;
@@ -181,23 +210,10 @@ void test_pressurize_to_firing() {
     tf.check_state(prop_state_t::firing);
 }
 
-void test_pressurize_to_await_firing() {
-    PropTestFixture tf;
-    g_fake_pressure_cycle_count = 19; // finish 1 pressurizing cycle early
-    tf.set_state(prop_state_t::idle);
-    tf.fixture_set_schedule(200, 200, 200, 200, PropState_Pressurizing::num_cycles_needed() + 1);
-    tf.step();
-    tf.check_state(prop_state_t::pressurizing);
-    // Same as above except we execute 18 pressurizing cylces
-    unsigned int expected_cycles =
-            (PropController::max_pressurizing_cycles - 2) * PropState_Pressurizing::ctrl_cycles_per_pressurizing_cycle +
-            2;
-    TEST_ASSERT_EQUAL(expected_cycles, tf.execute_until_state_change());
-    tf.check_state(prop_state_t::await_firing);
-}
-
-void test_pressurizing() {
-    // Test that the prop system is in the state associated with pressurizing
+// Test that when we are in pressurizing state, that Tank1 valve is opened and that Tank1 valve is closed when we
+// enter await_firing
+void test_pressurizing()
+{
     PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed() + 1;
@@ -211,7 +227,9 @@ void test_pressurizing() {
     tf.check_state(prop_state_t::await_firing);
 }
 
-void test_pressurize_fail() {
+// Test the failure case where we are unable to reach threshold pressurize  in 20 cycles
+void test_pressurize_fail()
+{
     PropTestFixture tf;
     g_fake_pressure_cycle_count = 21;
     tf.set_state(prop_state_t::idle);
@@ -225,7 +243,9 @@ void test_pressurize_fail() {
     tf.check_state(prop_state_t::disabled);
 }
 
-void test_await_firing() {
+// Test that when we are in await_firing, all valves are closed, the the schedule is valid
+void test_await_firing()
+{
     PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed() + 5;
@@ -234,16 +254,22 @@ void test_await_firing() {
     tf.execute_until_state_change(); // pressurizing
     tf.execute_until_state_change(); // await_firing
     tf.check_state(prop_state_t::await_firing);
-
-    // TODO: check state associated with await_firing
     // valves should be closed
+    TEST_ASSERT_FALSE(Tank1.is_valve_open(0));
+    TEST_ASSERT_FALSE(Tank2.is_valve_open(0));
+    TEST_ASSERT_FALSE(Tank2.is_valve_open(1));
+    TEST_ASSERT_FALSE(Tank2.is_valve_open(2));
+    TEST_ASSERT_FALSE(Tank2.is_valve_open(3));
     // schedule should be valid
     TEST_ASSERT_TRUE(tf.prop_controller->validate_schedule());
 }
 
-void test_firing() {
+// Test that PropulsionSystem is_firing() returns True iff we are in the firing state
+void test_firing()
+{
     PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
+    TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
     unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed() + 5;
     tf.fixture_set_schedule(700, 200, 200, 800, cycles_until_fire);
     tf.step(cycles_until_fire);
@@ -251,10 +277,14 @@ void test_firing() {
     TEST_ASSERT_TRUE(PropulsionSystem.is_firing())
     unsigned int expected_firing_cycles = (800 / PAN::control_cycle_time_ms) + 1; // roundup
     TEST_ASSERT_EQUAL(expected_firing_cycles, tf.execute_until_state_change());
+    TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
     // can't really check valve states unless we want to make a fake interval timer
 }
 
-void test_firing_to_idle() {
+// Test that if we order Prop to fire at PropState_Pressurizing::num_cycles_needed() + 1
+// then Prop is definitely firing after this amount of cycles
+void test_firing_to_idle()
+{
     PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     unsigned int cycles_until_fire = PropState_Pressurizing::num_cycles_needed() + 1;
@@ -264,6 +294,7 @@ void test_firing_to_idle() {
     tf.step(cycles_until_fire);
     tf.check_state(prop_state_t::firing);
 
+    // Test that PropulsionSystem is firing while we are in the firing state
     // 800 is the biggest value
     unsigned int cycles_firing = (800 / PAN::control_cycle_time_ms) + 1; // round up
     for (size_t i = 0; i < cycles_firing; ++i) {
@@ -276,7 +307,10 @@ void test_firing_to_idle() {
     tf.check_state(prop_state_t::idle);
 }
 
-int test_prop_controller() {
+int test_prop_controller()
+{
+    // generated the following with:
+    // cat test/test_fsw_prop_controller//test_prop_controller.cpp | grep "void test_" | sed 's/^void \(.*\)$/\1/' | sed 's/()/);/g'| sed -e 's/^/RUN_TEST(/'
     UNITY_BEGIN();
     RUN_TEST(test_initialization);
     RUN_TEST(test_disable);
@@ -284,13 +318,13 @@ int test_prop_controller() {
     RUN_TEST(test_idle_to_pressurizing);
     RUN_TEST(test_idle_to_await_pressurize);
     RUN_TEST(test_await_pressurize_to_pressurize);
-    RUN_TEST(test_pressurize_to_firing);
     RUN_TEST(test_pressurize_to_await_firing);
-    RUN_TEST(test_firing_to_idle);
+    RUN_TEST(test_pressurize_to_firing);
     RUN_TEST(test_pressurizing);
     RUN_TEST(test_pressurize_fail);
     RUN_TEST(test_await_firing);
     RUN_TEST(test_firing);
+    RUN_TEST(test_firing_to_idle);
     return UNITY_END();
 }
 
