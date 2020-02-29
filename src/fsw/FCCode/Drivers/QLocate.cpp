@@ -13,7 +13,7 @@
 #ifndef DESKTOP
 #include <Arduino.h>
 #endif
-#define DEBUG_ENABLED
+
 using namespace Devices;
 
 #define CHECK_PORT_AVAILABLE() \
@@ -188,7 +188,7 @@ int QLocate::get_sbdrb()
 {
 
     CHECK_PORT_AVAILABLE()
-    if ( should_wait_one_cycle() )
+    if ( should_wait() )
         return PORT_UNAVAILABLE;
 
     size_t msg_size = 256 * port->read() + port->read();
@@ -255,19 +255,21 @@ int QLocate::get_sbdrb()
 //    return OK;
 }
 
-bool QLocate::should_wait_one_cycle()
+bool QLocate::should_wait()
 {
-    did_wait_one_cycle = ~did_wait_one_cycle;
+    if ( port->available() == num_bytes_available_last_cycle )
+    {
+        num_bytes_available_last_cycle = 0;
+        return true;
+    }
+    num_bytes_available_last_cycle = port->available();
     // if we return true then that means we have not waited a cycle
-    return did_wait_one_cycle;
+    return false;
 }
 
 int QLocate::consume(const String& expected)
 {
     CHECK_PORT_AVAILABLE()
-    // Edge case where we get unlucky and data is coming in right as we're checking for availability
-    if ( should_wait_one_cycle() )
-        return PORT_UNAVAILABLE;
 
     size_t expected_len = expected.length();
     // Make sure that the number of bytes at port == number of bytes expected
