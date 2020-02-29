@@ -5,16 +5,19 @@ DockingController::DockingController(StateFieldRegistry &registry, unsigned int 
     : TimedControlTask<void>(registry, "docking_ct", offset), docksys(_docksys),
       docked_f("docksys.docked", Serializer<bool>()),
       dock_config_f("docksys.dock_config", Serializer<bool>()),
-      is_turning_f("docksys.is_turning", Serializer<bool>())
+      is_turning_f("docksys.is_turning", Serializer<bool>()),
+      enter_docking_cycle_f("docksys.enter_docking_ccno")
 {
   add_readable_field(docked_f);
   add_readable_field(dock_config_f);
   add_readable_field(is_turning_f);
+  add_internal_field(enter_docking_cycle_f);
 
   // Set default values
   docked_f.set(false);
   dock_config_f.set(true);
   is_turning_f.set(false);
+  enter_docking_cycle_f.set(control_cycle_count);
 }
 
 void DockingController::init() {
@@ -23,6 +26,7 @@ void DockingController::init() {
 
 void DockingController::execute() {
   //MOVE TO DOCKING CONFIGURATION
+  enter_docking_cycle_f.set(control_cycle_count);
   if (docking_config_cmd_fp->get()){
     if (!dock_config_f.get()) {
       //prevents execute() from repeating start dock and setting turning angle to 180

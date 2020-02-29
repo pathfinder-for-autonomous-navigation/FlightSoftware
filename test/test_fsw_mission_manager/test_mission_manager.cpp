@@ -11,6 +11,7 @@ void test_valid_initialization() {
     TEST_ASSERT_EQUAL(100, tf.close_approach_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(0.4, tf.docking_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.max_radio_silence_duration_fp->get());
+    //TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.docking_timeout_limit_fp->get());
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
     TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
     TEST_ASSERT_EQUAL(0, tf.deployment_wait_elapsed_fp->get());
@@ -197,6 +198,19 @@ void test_dispatch_docking() {
     tf.docked_fp->set(true);
     tf.step();
     tf.check(mission_state_t::docked);
+
+    TestFixture tf2(mission_state_t::docking);
+
+    // Check that the system is not docked
+    TEST_ASSERT_FALSE(tf2.docked_fp->get());
+
+    // Let a full day pass without docking
+    tf2.set_ccno(PAN::one_day_ccno);
+    tf2.step();
+    TEST_ASSERT_FALSE(tf2.docked_fp->get());
+
+    // Check that mission manager moves to standy
+    tf2.check(mission_state_t::standby);
 }
 
 void test_dispatch_safehold() {

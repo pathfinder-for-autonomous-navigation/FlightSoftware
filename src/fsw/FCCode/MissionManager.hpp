@@ -40,6 +40,12 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<unsigned int> max_radio_silence_duration_f;
     static constexpr unsigned int initial_max_radio_silence_duration = PAN::one_day_ccno;
 
+    /**
+     * @brief Number of control cycles to wait while in docking state before moving to standby
+     */
+    WritableStateField<unsigned int> docking_timeout_limit_f;
+    static constexpr unsigned int initial_docking_timeout_limit = PAN::one_day_ccno;
+
     // These states respond to fault conditions.
     static constexpr std::array<mission_state_t, 5> fault_responsive_states = {
         mission_state_t::follower,
@@ -131,6 +137,7 @@ class MissionManager : public TimedControlTask<void> {
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
     const ReadableStateField<bool>* docked_fp;
+    InternalStateField<unsigned int>* enter_docking_cycle_fp;
 
     // True if the battery is below the threshold for safehold.
     Fault* low_batt_fault_fp;
@@ -173,6 +180,7 @@ class MissionManager : public TimedControlTask<void> {
      */
     double distance_to_other_sat() const;
     bool too_long_since_last_comms() const;
+    bool too_long_in_docking() const;
 
     void set(adcs_state_t state);
     void set(prop_state_t state);

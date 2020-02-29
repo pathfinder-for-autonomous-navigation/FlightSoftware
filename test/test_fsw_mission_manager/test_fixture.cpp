@@ -20,6 +20,8 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
+    enter_docking_cycle_fp = registry.create_internal_field<unsigned int>("docksys.enter_docking_ccno");
+
     low_batt_fault_fp=registry.create_fault("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count);
     adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault", 1, TimedControlTaskBase::control_cycle_count);
     wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count);
@@ -34,6 +36,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     adcs_ang_momentum_fp->set({nan_f,nan_f,nan_f});
     radio_state_fp->set(static_cast<unsigned char>(radio_state_t::disabled));
     last_checkin_cycle_fp->set(0);
+    enter_docking_cycle_fp->set(mission_manager->control_cycle_count);
     prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     reboot_fp->set(false);
