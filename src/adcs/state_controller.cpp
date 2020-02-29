@@ -26,6 +26,8 @@
 
 #include <bitset>
 
+extern "C" char* sbrk(int incr);
+
 namespace adcs {
 namespace umb {
 
@@ -364,6 +366,11 @@ void on_i2c_recieve(unsigned int bytes) {
 }
 
 void on_i2c_request() {
+  char top;
+  unsigned int ram = &top - reinterpret_cast<char*>(sbrk(0));
+  LOG_INFO_header
+  LOG_INFO_println("RAM NUMBER: "+String(ram));
+  
   unsigned char address = registers.read_ptr;
 
   LOG_INFO_header

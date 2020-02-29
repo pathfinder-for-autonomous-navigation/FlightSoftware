@@ -41,6 +41,8 @@
 
 #include <bitset>
 
+extern "C" char* sbrk(int incr);
+
 using namespace adcs;
 
 // TODO : Look into the proper initialization for the slave i2c bus and whether
@@ -93,6 +95,7 @@ void setup() {
   LOG_WARN_header
   LOG_WARN_printlnF("Initialization process complete; entering main loop")
 
+  pinMode(13, OUTPUT);
 }
 
 void update_havt() {
@@ -214,19 +217,34 @@ void update_ssa() {
   }
 }
 
-#if LOG_LEVEL >= LOG_LEVEL_INFO
+// #if LOG_LEVEL >= LOG_LEVEL_INFO
 static unsigned long cycles = 0;
-#endif
+// #endif
+bool led_state = true;
 
 void loop() {
-  update_imu();
+  
+  if(cycles % 100UL == 0){
+    digitalWrite(13, led_state);
+    led_state = !led_state;
+  }
+  
+  // update_imu();
   update_mtr();
   update_rwa();
   update_ssa();
   update_havt();
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
+
+
   if (!(++cycles % 100000UL)) {
+
+    char top;
+    unsigned int ram = &top - reinterpret_cast<char*>(sbrk(0));
+    LOG_INFO_header
+    LOG_INFO_println("RAM NUMBER: "+String(ram));
+
     LOG_INFO_header
     LOG_INFO_println("Heartbeat cycle count " + String(cycles))
 
