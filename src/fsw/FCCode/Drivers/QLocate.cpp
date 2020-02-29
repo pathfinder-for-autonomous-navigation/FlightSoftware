@@ -13,15 +13,8 @@
 #ifndef DESKTOP
 #include <Arduino.h>
 #endif
+#define DEBUG_ENABLED
 using namespace Devices;
-
-#ifdef DEBUG_ENABLED
-#define qdebug_print(fmt, ...)\
-    do{Serial.printf(fmt, __VA_ARGS__);} while(0)
-#else
-#define qdebug_print(fmt, ...)\
-    do{} while(0)
-#endif
 
 #define CHECK_PORT_AVAILABLE() \
     if (!port->available()){    \
@@ -158,7 +151,7 @@ int QLocate::parse_ints(char const *c, int *i)
         return OK;
 
 #ifdef DEBUG_ENABLED
-    Serial.printf("parse_ints: unexpected response %d\n", status);
+    Serial.printf("parse_ints: unexpected response %d\n", res);
 #endif
     return UNEXPECTED_RESPONSE;
 }
@@ -280,7 +273,6 @@ int QLocate::consume(const String& expected)
     // Make sure that the number of bytes at port == number of bytes expected
     if ( (size_t)port->available() < expected_len )
     {
-        qdebug_print("consume failed with wrong length\n");
         return WRONG_LENGTH;
     }
     // If we have reached here, then we are certain that port->available() >= expected_len
@@ -289,12 +281,23 @@ int QLocate::consume(const String& expected)
     char rx_buf[expected_len + 1];
     port->readBytes(rx_buf, expected_len);
     rx_buf[expected_len] = 0;
-
+#ifdef DEBUG_ENABLED
+    Serial.printf("Consumed[");
+    for (size_t i = 0; i < expected_len; i++)
+    {
+        if (rx_buf[i] == '\r')
+            Serial.printf("\\r");
+        else if (rx_buf[i] == '\n')
+            Serial.printf("\\n");
+        else
+            Serial.printf("%c", rx_buf[i]);
+    }
+    Serial.printf("]\n");
+    Serial.flush();
+#endif
     // Compare rx_buf with expected
     if( ! strncmp(rx_buf, expected.c_str(), expected_len) )
         return OK;
-
-    qdebug_print("Consume expected %s but received %s\n",expected, rx_buf);
     return UNEXPECTED_RESPONSE;
 }
 
