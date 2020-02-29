@@ -2,7 +2,6 @@
 #include <lin.hpp>
 #include <cmath>
 #include <adcs/constants.hpp>
-#include <iostream>
 
 // Declare static storage for constexpr variables
 const constexpr double MissionManager::initial_detumble_safety_factor;
@@ -276,7 +275,6 @@ void MissionManager::dispatch_leader_close_approach() {
 void MissionManager::dispatch_docking() {
     docking_config_cmd_f.set(true);
 
-    std::cout<<"hi";
     if(too_long_in_docking() && !docked_fp->get()) {
         transition_to_state(mission_state_t::standby,
             adcs_state_t::startup,
