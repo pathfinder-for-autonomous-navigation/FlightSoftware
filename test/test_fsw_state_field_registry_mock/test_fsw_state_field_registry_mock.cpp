@@ -208,22 +208,12 @@ void test_clear() {
     registry.create_fault("foo4", 1, 300);
     TEST_ASSERT_NOT_NULL(registry.find_fault("foo4"));
 
-    registry.create_readable_field<signed int>("field1", -1, 10, 4);
-    registry.create_readable_field<signed int>("field2", -1, 10, 4);
-    ReadableStateFieldBase* data1_fp=registry.find_readable_field("field1");
-    ReadableStateFieldBase* data2_fp=registry.find_readable_field("field2");
-    std::vector<ReadableStateFieldBase*> event_data={data1_fp, data2_fp};
-    unsigned int control_cycle_count = 0;
-    
-    registry.create_event("foo5", event_data, print_fn, control_cycle_count);
-
     registry.clear();
     TEST_ASSERT_NULL(registry.find_writable_field("foo"));
     TEST_ASSERT_NULL(registry.find_readable_field("foo2"));
     TEST_ASSERT_NULL(registry.find_readable_field("foo3"));
     TEST_ASSERT_NULL(registry.find_writable_field("foo3"));
     TEST_ASSERT_NULL(registry.find_fault("foo4"));
-    TEST_ASSERT_NULL(registry.find_event("foo5"));
 }
 
 int test_state_field_registry_mock() {
