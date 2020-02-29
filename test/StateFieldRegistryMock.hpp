@@ -349,11 +349,13 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         readable_fields.clear();
         writable_fields.clear();
         faults.clear();
+        events.clear();
         created_internal_fields.clear();
         created_readable_fields.clear();
         created_writable_fields.clear();
         created_events.clear();
         created_faults.clear();
+        created_events.clear();
     }
 
   private:
