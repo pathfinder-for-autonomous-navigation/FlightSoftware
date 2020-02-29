@@ -8,6 +8,10 @@ void test_foo() {
     StateFieldRegistry registry;
 }
 
+/**
+ * @brief The print function is used to instantiate an event, which will be added to the
+ * registry in test_events()
+ */
 static const char* print_fn(const unsigned int ccno, std::vector<ReadableStateFieldBase*>& data) {
     static char print_data[40];
     memset(print_data, 0, 40);
@@ -29,6 +33,9 @@ void test_events() {
     ReadableStateFieldBase* data2_fp=registry.find_readable_field("field2");
     std::vector<ReadableStateFieldBase*> event_data={data1_fp, data2_fp};
     unsigned int control_cycle_count=1;
+
+    // Find event
+    TEST_ASSERT_NOT_NULL(registry.find_event("event"));
 
     // Add event to registry
     Event e("event", event_data, print_fn, control_cycle_count);

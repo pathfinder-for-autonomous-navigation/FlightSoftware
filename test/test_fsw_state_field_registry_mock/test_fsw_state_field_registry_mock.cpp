@@ -149,6 +149,10 @@ void test_create_writable_vector_field_args() {
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo2"));
 }
 
+/**
+ * @brief This print function will be used to instatiate an event, which will be added to the
+ * registry in test_create_event()
+ */
 static const char* print_fn(const unsigned int ccno, std::vector<ReadableStateFieldBase*>& data) {
     static char print_data[40];
     memset(print_data, 0, 40);
@@ -170,6 +174,7 @@ void test_create_event() {
     
     registry.create_event("event", event_data, print_fn, control_cycle_count);
     TEST_ASSERT_NOT_NULL(registry.find_event("event"));
+    TEST_ASSERT_NOT_NULL(registry.find_event_t("event"));
 }
 
 void test_create_fault() {
@@ -177,6 +182,7 @@ void test_create_fault() {
 
     registry.create_fault("foo", 1, 3);
     TEST_ASSERT_NOT_NULL(registry.find_fault("foo"));
+    TEST_ASSERT_NOT_NULL(registry.find_fault_t("foo"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.suppress"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.override"));
@@ -202,12 +208,22 @@ void test_clear() {
     registry.create_fault("foo4", 1, 300);
     TEST_ASSERT_NOT_NULL(registry.find_fault("foo4"));
 
+    registry.create_readable_field<signed int>("field1", -1, 10, 4);
+    registry.create_readable_field<signed int>("field2", -1, 10, 4);
+    ReadableStateFieldBase* data1_fp=registry.find_readable_field("field1");
+    ReadableStateFieldBase* data2_fp=registry.find_readable_field("field2");
+    std::vector<ReadableStateFieldBase*> event_data={data1_fp, data2_fp};
+    unsigned int control_cycle_count = 0;
+    
+    registry.create_event("foo5", event_data, print_fn, control_cycle_count);
+
     registry.clear();
     TEST_ASSERT_NULL(registry.find_writable_field("foo"));
     TEST_ASSERT_NULL(registry.find_readable_field("foo2"));
     TEST_ASSERT_NULL(registry.find_readable_field("foo3"));
     TEST_ASSERT_NULL(registry.find_writable_field("foo3"));
-    TEST_ASSERT_NULL(registry.find_writable_field("foo4"));
+    TEST_ASSERT_NULL(registry.find_fault("foo4"));
+    TEST_ASSERT_NULL(registry.find_event("foo4"));
 }
 
 int test_state_field_registry_mock() {
