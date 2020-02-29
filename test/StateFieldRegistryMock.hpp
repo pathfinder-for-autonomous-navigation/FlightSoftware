@@ -59,6 +59,15 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     }
 
     /**
+     * @brief Finds an fault of the given name.
+     */
+    Fault* find_fault_t(const std::string& name) {
+        auto ptr = static_cast<Fault*>(find_fault(name));
+        check_field_exists(ptr, name);
+        return ptr;
+    }
+
+    /**
      * @brief Create an internal state field.
      * 
      * @param name Name of field.
@@ -293,25 +302,42 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     }
 
     /**
+     * @brief Create a fault and add it to the registry.
+     * 
+     * @param name Name of fault to create.
+     * @return Pointer to fault that was created.
+     */
+    std::shared_ptr<Fault> create_fault(const std::string& name, const size_t _persistence, unsigned int control_cycle_count)
+    {
+        auto fault_ptr = std::make_shared<Fault>(name, _persistence, control_cycle_count);
+        add_fault(fault_ptr.get());
+        created_faults.push_back(fault_ptr);
+        return fault_ptr;
+    }
+
+    /**
      * @brief Empty the registry.
      */
     void clear() {
         internal_fields.clear();
         readable_fields.clear();
         writable_fields.clear();
+        faults.clear();
         created_internal_fields.clear();
         created_readable_fields.clear();
         created_writable_fields.clear();
+        created_faults.clear();
     }
 
   private:
-    // Store pointers to all of the state fields that have been created, in order
+    // Store pointers to all of the state fields, events, and faults that have been created, in order
     // to prevent segmentation faults due to shared pointers going out of scope before a
     // ControlTask has a chance to call find_readable_field().
     
     std::vector<std::shared_ptr<InternalStateFieldBase>> created_internal_fields;
     std::vector<std::shared_ptr<ReadableStateFieldBase>> created_readable_fields;
     std::vector<std::shared_ptr<WritableStateFieldBase>> created_writable_fields;
+    std::vector<std::shared_ptr<Fault>> created_faults;
 };
 
 #endif
