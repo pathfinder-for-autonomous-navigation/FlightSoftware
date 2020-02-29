@@ -6,6 +6,8 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     const unsigned int offset) : TimedControlTask<void>(r, "downlink_ct", offset),
                                  snapshot_ptr_f("downlink.ptr"),
                                  snapshot_size_bytes_f("downlink.snap_size"),
+                                 shift_flows_id1_f("downlink.shift_id1", Serializer<unsigned char>(0,10,1)),
+                                 shift_flows_id2_f("downlink.shift_id2", Serializer<unsigned char>(0,10,1)),
                                  toggle_flow_id_f("downlink.toggle_id", Serializer<unsigned char>(0,10,1))
 {
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
@@ -13,6 +15,12 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     // Add snapshot fields to the registry
     add_internal_field(snapshot_ptr_f);
     add_internal_field(snapshot_size_bytes_f);
+
+    // Add shift_flows statefield to registry and set it to default values
+    add_writable_field(shift_flows_id1_f);
+    add_writable_field(shift_flows_id2_f);
+    shift_flows_id1_f.set(0);
+    shift_flows_id2_f.set(0);
 
     // Add toggle command statefield to registry and set it to default of 0
     add_writable_field(toggle_flow_id_f);
@@ -151,6 +159,13 @@ void DownlinkProducer::execute() {
     for(int i = num_remaining_bits - 1; i >= 0; i--) {
         char& last_char = snapshot_ptr[(downlink_frame_offset / 8)];
         last_char = bit_array::modify_bit(last_char, i, 0);
+    }
+
+    // Shift flow priorities
+    if (shift_flows_id1_f.get()>0 && shift_flows_id2_f.get()>0) {
+        shift_flow_priorities(shift_flows_id1_f.get(), shift_flows_id2_f.get());
+        shift_flows_id1_f.set(0);
+        shift_flows_id2_f.set(0);
     }
 
     if (toggle_flow_id_f.get()>0) {
