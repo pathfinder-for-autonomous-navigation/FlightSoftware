@@ -34,12 +34,12 @@ void test_events() {
     std::vector<ReadableStateFieldBase*> event_data={data1_fp, data2_fp};
     unsigned int control_cycle_count=1;
 
-    // Find event
-    TEST_ASSERT_NOT_NULL(registry.find_event("event"));
-
     // Add event to registry
     Event e("event", event_data, print_fn, control_cycle_count);
     TEST_ASSERT_TRUE(registry.add_event(&e));
+    
+    // Find event
+    TEST_ASSERT_NOT_NULL(registry.find_event("event"));
 
     // We shouldn't be able to add an event that already exists
     TEST_ASSERT_FALSE(registry.add_event(&e));
