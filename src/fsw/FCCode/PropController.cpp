@@ -20,12 +20,12 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
           threshold_firing_pressure("prop.threshold_firing_pressure", Serializer<float>(10, 50, 4)),
           ctrl_cycles_per_filling_period("prop.ctrl_cycles_per_filling", Serializer<unsigned int>(50)),
           ctrl_cycles_per_cooling_period("prop.ctrl_cycles_per_cooling", Serializer<unsigned int>(50)),
-          tank1_valve("prop.tank1_valve", Serializer<unsigned int>(1)),
-          tank2_pressure("prop.tank2_pressure", Serializer<float>(0, 150, 4)),
-          tank2_temp("prop.tank2_temp", Serializer<float>(0, 50, 4)),
-          tank1_temp("prop.tank1_temp", Serializer<float>(0, 50, 4)),
+          tank1_valve("prop.tank1.valve_choice", Serializer<unsigned int>(1)),
+          tank2_pressure("prop.tank2.pressure", Serializer<float>(0, 150, 4)),
+          tank2_temp("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
+          tank1_temp("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
           // TODO: Why does Fault take a control_cycle_count reference?
-          pressurize_fail_fault_f("prop.pressurize_fail", 2, control_cycle_count)
+          pressurize_fail_fault_f("prop.pressurize_fail", 1, control_cycle_count)
           {
 
     add_writable_field(prop_state_f);
@@ -140,7 +140,7 @@ bool PropController::is_at_threshold_pressure()
     // For testing purposes, say that we are at threshold pressure at pressurizing cycle fake_pressure_cycle_count
     return (state_pressurizing.pressurizing_cycle_count == g_fake_pressure_cycle_count);
 #else
-    return Tank2.get_pressure() >= threshold_firing_pressure;
+    return tank2_pressure.get() >= threshold_firing_pressure.get();
 #endif
 }
 
@@ -354,7 +354,7 @@ void PropState_Pressurizing::start_pressurize_cycle() {
 bool PropState_AwaitFiring::can_enter() const {
     bool was_pressurizing = controller->check_current_state(prop_state_t::pressurizing);
 
-    return ( was_pressurizing && controller->validate_schedule() );
+    return ( was_pressurizing && controller->is_at_threshold_pressure()  && controller->validate_schedule() );
 }
 
 void PropState_AwaitFiring::enter() {
