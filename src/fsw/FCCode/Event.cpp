@@ -1,73 +1,106 @@
 #include "Event.hpp"
 
-Event::Event(const std::string& name,
-          std::vector<ReadableStateFieldBase*>& _data_fields,
-          const char* (*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
-          const unsigned int& _ccno) :
-          StateField<bool>(name, true, false),
-          data_fields(_data_fields),
-          print_fn(_print_fn),
-          ccno(_ccno)
+Event::Event(const std::string &name,
+             std::vector<ReadableStateFieldBase *> &_data_fields,
+             const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &),
+             const unsigned int &_ccno) : StateField<bool>(name, true, false),
+                                          data_fields(_data_fields),
+                                          print_fn(_print_fn),
+                                          ccno(_ccno)
 {
     unsigned int field_data_size_bits = 0;
-    for(const ReadableStateFieldBase* field : data_fields) {
+    for (const ReadableStateFieldBase *field : data_fields)
+    {
         field_data_size_bits += field->bitsize();
     }
     field_data.reset(new bit_array(32 + field_data_size_bits));
-    for(size_t i = 0; i < field_data->size(); i++) {
+    for (size_t i = 0; i < field_data->size(); i++)
+    {
         (*field_data)[i] = 0;
     }
 }
 
-Event::Event(Event&& other) :
-    StateField<bool>(other.name(), true, false),
-    data_fields(other.data_fields),
-    field_data(std::move(other.field_data)),
-    ccno(other.ccno) {}
+Event::Event(Event &&other) : StateField<bool>(other.name(), true, false),
+                              data_fields(other.data_fields),
+                              field_data(std::move(other.field_data)),
+                              ccno(other.ccno) {}
 
-void Event::serialize() {
+void Event::serialize()
+{
     unsigned int field_data_ptr = 0;
 
     std::bitset<32> ccno_serialized(ccno);
-    for(int i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; i++)
+    {
         (*field_data)[i] = ccno_serialized[i];
     }
     field_data_ptr += 32;
 
-    for(ReadableStateFieldBase* field : data_fields) {
-        const bit_array& field_bits = field->get_bit_array();
+    for (ReadableStateFieldBase *field : data_fields)
+    {
+        const bit_array &field_bits = field->get_bit_array();
         field->serialize();
-        for(size_t i = 0; i < field->bitsize(); i++, field_data_ptr++) {
+        for (size_t i = 0; i < field->bitsize(); i++, field_data_ptr++)
+        {
             (*field_data)[field_data_ptr] = field_bits[i];
         }
     }
 }
 
-size_t Event::bitsize() const {
+size_t Event::bitsize() const
+{
     return field_data->size();
 }
 
-const bit_array& Event::get_bit_array() const {
+const bit_array &Event::get_bit_array() const
+{
     return *field_data;
 }
 
-void Event::signal() {
+void Event::signal()
+{
     serialize();
 }
 
-const char* Event::print() const {
+const char *Event::print() const
+{
     return print_fn(ccno, data_fields);
 }
 
-void Event::deserialize() {
-    
+void Event::deserialize()
+{
+    unsigned int field_data_ptr = 0;
+    std::bitset<32> ccno_serialized;
+    for (int i = 0; i < 32; i++)
+    {
+        ccno_serialized[i] = (*field_data)[i];
+    }
+    field_data_ptr += 32;
+    //const unsigned int event_ccno = (int)(ccno_serialized.to_ulong());
+    //todo: how should ccno be saved?
+
+    for (ReadableStateFieldBase *field : data_fields)
+    {
+        bit_array field_bits;
+        for (int i = 0; i < field->bitsize(); i++, field_data_ptr++)
+        {
+            field_bits[i] = (*field_data)[field_data_ptr];
+        }
+        field->set_bit_array(field_bits);
+        field->deserialize();
+    }
 }
 
-void Event::set_bit_array(const bit_array& arr) {
+void Event::set_bit_array(const bit_array &arr)
+{
     assert(arr.size() == field_data->size());
-    for(int i = 0; i < arr.size(); i++) {
+    for (int i = 0; i < arr.size(); i++)
+    {
         (*field_data)[i] = arr[i];
     }
 }
 
-bool Event::deserialize(const char *val) { return true; }
+bool Event::deserialize(const char *val)
+{
+    return true;
+}

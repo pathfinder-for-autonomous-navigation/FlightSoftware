@@ -5,28 +5,29 @@
 
 #include <unity.h>
 
-struct TestFixtureEvent {
-  public:
+struct TestFixtureEvent
+{
+public:
     ReadableStateField<bool> data1_f;
     ReadableStateField<bool> data2_f;
-    std::vector<ReadableStateFieldBase*> event_data;
+    std::vector<ReadableStateFieldBase *> event_data;
     unsigned int control_cycle_count = 0;
     Event event;
 
     static char print_data[40];
-    static const char* print_fn(const unsigned int ccno, std::vector<ReadableStateFieldBase*>& data) {
+    static const char *print_fn(const unsigned int ccno, std::vector<ReadableStateFieldBase *> &data)
+    {
         memset(print_data, 0, 40);
-        ReadableStateField<bool>* datafield1_f = static_cast<ReadableStateField<bool>*>(data[0]);
-        ReadableStateField<bool>* datafield2_f = static_cast<ReadableStateField<bool>*>(data[1]);
-        sprintf((char*)print_data,  "E: time: %d, data: %d, %d", ccno, datafield1_f->get(), datafield2_f->get());
+        ReadableStateField<bool> *datafield1_f = static_cast<ReadableStateField<bool> *>(data[0]);
+        ReadableStateField<bool> *datafield2_f = static_cast<ReadableStateField<bool> *>(data[1]);
+        sprintf((char *)print_data, "E: time: %d, data: %d, %d", ccno, datafield1_f->get(), datafield2_f->get());
         return print_data;
     }
 
-    TestFixtureEvent() :
-        data1_f("data1", Serializer<bool>()),
-        data2_f("data2", Serializer<bool>()),
-        event_data({&data1_f, &data2_f}),
-        event("event", event_data, print_fn, control_cycle_count)
+    TestFixtureEvent() : data1_f("data1", Serializer<bool>()),
+                         data2_f("data2", Serializer<bool>()),
+                         event_data({&data1_f, &data2_f}),
+                         event("event", event_data, print_fn, control_cycle_count)
     {
         data1_f.set(false);
         data2_f.set(false);
@@ -35,7 +36,8 @@ struct TestFixtureEvent {
 
 char TestFixtureEvent::print_data[40];
 
-void test_single_event(TestFixtureEvent& tf, EventBase& event, unsigned int ccno) {
+void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno)
+{
     // Test bitsize
     TEST_ASSERT_EQUAL(32 + 2, tf.event.bitsize());
 
@@ -47,7 +49,7 @@ void test_single_event(TestFixtureEvent& tf, EventBase& event, unsigned int ccno
     // Verify that upon serialization, the values are written into the event's bitset in the way
     // that we would expect
     event.signal();
-    bit_array& ba = const_cast<bit_array&>(event.get_bit_array());
+    bit_array &ba = const_cast<bit_array &>(event.get_bit_array());
     TEST_ASSERT_EQUAL(ccno, ba.to_uint());
     TEST_ASSERT_EQUAL(true, ba[32]);
     TEST_ASSERT_EQUAL(false, ba[33]);
@@ -56,41 +58,44 @@ void test_single_event(TestFixtureEvent& tf, EventBase& event, unsigned int ccno
     tf.data1_f.set(false);
     tf.data2_f.set(true);
     event.signal();
-    ba = const_cast<bit_array&>(event.get_bit_array());
+    ba = const_cast<bit_array &>(event.get_bit_array());
     TEST_ASSERT_EQUAL(false, ba[32]);
     TEST_ASSERT_EQUAL(true, ba[33]);
 
     // Test that the event is correctly printed when a print is requested.
-    const char* print_result = event.print();
-    const char* expected_fmt_string = "E: time: %d, data: 0, 1";
+    const char *print_result = event.print();
+    const char *expected_fmt_string = "E: time: %d, data: 0, 1";
     char expected_string[100];
     memset(expected_string, 0, 100);
     sprintf(expected_string, expected_fmt_string, ccno);
     TEST_ASSERT_EQUAL_STRING(expected_string, print_result);
 }
 
-void test_event() {
+void test_event()
+{
     TestFixtureEvent tf;
     test_single_event(tf, tf.event, 20);
 }
 
-struct TestFixtureEventStorage : public TestFixtureEvent {
-  public:
+struct TestFixtureEventStorage : public TestFixtureEvent
+{
+public:
     EventStorage event_storage;
     StateFieldRegistryMock registry;
 
-    TestFixtureEventStorage(unsigned int num_events) :
-        TestFixtureEvent(),
-        event_storage("event", num_events, event_data, print_fn, control_cycle_count)
+    TestFixtureEventStorage(unsigned int num_events) : TestFixtureEvent(),
+                                                       event_storage("event", num_events, event_data, print_fn, control_cycle_count)
     {
         event_storage.add_events_to_registry(registry);
     }
-  protected:
+
+protected:
     using TestFixtureEvent::event;
 };
 
 // Test that the event storage correctly manages pointers for event storage.
-void test_event_storage() {
+void test_event_storage()
+{
     TestFixtureEventStorage tf(99);
     // Fields should have been created inside the state field registry.
     tf.registry.find_readable_field("event.1");
@@ -100,14 +105,16 @@ void test_event_storage() {
     TEST_ASSERT_EQUAL(99, tf.registry.readable_fields.size());
 
     // Event storage should behave the same as an event.
-    for(int i = 0; i < 200; i++) {
+    for (int i = 0; i < 200; i++)
+    {
         test_single_event(tf, tf.event_storage, i);
         //TEST_ASSERT_EQUAL(i * 2, tf.event_storage.event_ptr);
     }
 }
 
 #ifdef DESKTOP
-int main() {
+int main()
+{
     UNITY_BEGIN();
     RUN_TEST(test_event);
     RUN_TEST(test_event_storage);
@@ -115,7 +122,8 @@ int main() {
 }
 #else
 #include <Arduino.h>
-void setup() {
+void setup()
+{
     delay(2000);
     Serial.begin(9600);
     UNITY_BEGIN();
