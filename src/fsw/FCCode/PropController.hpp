@@ -3,8 +3,7 @@
 #include <fsw/FCCode/TimedControlTask.hpp>
 #include <fsw/FCCode/Drivers/PropulsionSystem.hpp>
 #include <fsw/FCCode/prop_state_t.enum>
-#include <vector>
-
+#include <fsw/FCCode/Fault.hpp>
 /**
  * Implementation Info:
  * - millisecond to control cycle count conversions take the floor operator - change this by changing the constexprs
@@ -44,15 +43,31 @@ public:
 
     WritableStateField<unsigned int> prop_state_f;
 
-    WritableStateField<unsigned int> fire_cycle_f;
+    WritableStateField<unsigned int> cycles_until_firing;
     WritableStateField<unsigned int> sched_valve1_f;
     WritableStateField<unsigned int> sched_valve2_f;
     WritableStateField<unsigned int> sched_valve3_f;
     WritableStateField<unsigned int> sched_valve4_f;
 
     // ------------------------------------------------------------------------
+    // Ground-Modifiable Constants
+    // ------------------------------------------------------------------------
+
+    WritableStateField<unsigned int> max_pressurizing_cycles;
+    WritableStateField<float> threshold_firing_pressure;
+    WritableStateField<unsigned int> ctrl_cycles_per_filling_period;
+    WritableStateField<unsigned int> ctrl_cycles_per_cooling_period;
+    WritableStateField<unsigned int> tank1_valve;
+
+    Fault PressurizeFailFault;
+
+    // ------------------------------------------------------------------------
     // Helper Functions
     // ------------------------------------------------------------------------
+
+    // Minimum of cycles needed to prepare for firing time - schedule cannot be set to any value lower than this
+    //  20 filling + 19 coolings (because of the fence rule) + 1
+    unsigned int min_cycles_needed() const;
 
     // Return true if Tank2 is at threshold pressure
     static bool is_at_threshold_pressure();
@@ -73,13 +88,6 @@ public:
 
     // Return True if we are allowed to enter the desired_state
     bool can_enter_state(prop_state_t desired_state) const;
-
-
-    // ------------------------------------------------------------------------
-    // Constants
-    // ------------------------------------------------------------------------
-    static constexpr unsigned int max_pressurizing_cycles = 20;
-    static constexpr float threshold_firing_pressure = 25;
 
 private:
     // Return the PropState associated with the given prop_state_t
@@ -193,7 +201,7 @@ public:
 
 };
 
-// A pressurizing cycle consists of a "firing" period and a "cooling period". 
+// A pressurizing cycle consists of a "filling" period and a "cooling period".
 //      The firing period is a 1 second duration in which an intertank valve is opened
 //      The cooling period is a 10 second duration in which no valve may be opened
 // If we have executed 20 consecutive pressurizing cycles and have not yet reached
@@ -210,20 +218,6 @@ public:
 
     prop_state_t evaluate() override;
 
-    static constexpr unsigned int ctrl_cycles_per_firing_period = 1000 / PAN::control_cycle_time_ms;
-    static constexpr unsigned int ctrl_cycles_per_cooling_period = 10 * 1000 / PAN::control_cycle_time_ms;
-
-    // Number of control cycles in 1 pressurizing cycle
-    static constexpr unsigned int ctrl_cycles_per_pressurizing_cycle
-            = ctrl_cycles_per_firing_period + ctrl_cycles_per_cooling_period;
-
-    // Number of control cycles needed to pressurize Tank2
-    //  20 firings + 19 coolings (because of the fence rule)
-    static unsigned int num_cycles_needed();
-
-    // Return true if we should start pressurizing right now.
-    static bool is_time_to_pressurize();
-
 private:
     // Called when Tank1 valve is currently open
     prop_state_t handle_valve_is_open();
@@ -238,7 +232,7 @@ private:
     void start_pressurize_cycle();
 
     // Returns true if we should use the backup valve for pressurizing
-    static bool should_use_backup();
+    bool should_use_backup();
 
     // 1 if we are using the backup valve and 0 otherwise
     bool valve_num = false;
