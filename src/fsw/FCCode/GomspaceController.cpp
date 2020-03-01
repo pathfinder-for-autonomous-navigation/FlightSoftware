@@ -68,6 +68,9 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     pptmode_sr(1,2), 
     pptmode_f("gomspace.pptmode", pptmode_sr),
 
+    heater_sr(),
+    heater_f("gomspace.heater", heater_sr),
+
     power_cycle_outputs_cmd_sr(),
     power_cycle_output1_cmd_f("gomspace.power_cycle_output1_cmd", power_cycle_outputs_cmd_sr),
     power_cycle_output2_cmd_f("gomspace.power_cycle_output2_cmd", power_cycle_outputs_cmd_sr),
@@ -147,6 +150,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_readable_field(battmode_f);
 
         add_readable_field(pptmode_f);
+
+        add_readable_field(heater_f);
 
         add_writable_field(power_cycle_output1_cmd_f);
         add_writable_field(power_cycle_output2_cmd_f);
@@ -294,6 +299,8 @@ void GomspaceController::execute() {
     battmode_f.set(gs.hk->battmode);
 
     pptmode_f.set(gs.hk->pptmode);
+
+    heater_f.set(gs.get_heater()==1);
 }
 
 void GomspaceController::power_cycle_outputs(){
