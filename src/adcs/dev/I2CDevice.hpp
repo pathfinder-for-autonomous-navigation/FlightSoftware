@@ -27,6 +27,7 @@
 /** Specifies the defaul I2C device timeout in microseconds. Can be changed by
  *  specifying this macro to the compiler. */
 #define DEV_I2C_TIMEOUT 10000
+// SHIHAO CHANGE
 #endif
 
 namespace adcs {

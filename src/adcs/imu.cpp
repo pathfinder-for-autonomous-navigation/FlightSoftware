@@ -9,7 +9,7 @@
 // Space Systems Design Studio
 // Cornell Univeristy
 //
-
+// #undef LOG_LEVEL
 #ifdef IMU_LOG_LEVEL
   #define LOG_LEVEL IMU_LOG_LEVEL
 #endif
@@ -20,6 +20,9 @@
 #include "imu_config.hpp"
 #include "utl/convert.hpp"
 #include "utl/logging.hpp"
+
+// #undef LOG_LEVEL
+// #define LOG_LEVEL 4
 
 namespace adcs {
 namespace imu {
@@ -39,7 +42,10 @@ static unsigned char update_mag(unsigned char mode, float mag_flt) {
   lin::Vector3f data;
 
   // Switch on the current magnetometer in use
-  if ((mode & 0b11111101) != 0b1) {
+  // if ((mode & 0b11111101) != 0b1) {
+  if(mode == MAG1){
+    // LOG_INFO_header
+    // LOG_INFO_printlnF("MAG1")
     // Calibrate the magnetometer if requested
     // if (mag1.is_functional() && (mode & 0b10)) mag1.calibrate();
     // TODO : Implement calibrate function    -->   ^^^^^
@@ -193,7 +199,12 @@ unsigned char update_sensors(unsigned char mode, float mag_flt, float gyr_flt,
 
   update_gyr(gyr_flt, gyr_temp_eq, gyr_temp_flt, gry_temp_k_p, gyr_temp_k_i,
       gyr_temp_k_d);
-  unsigned char ret = update_mag(mode, mag_flt);
+  LOG_TRACE_header
+  LOG_TRACE_printlnF("Updating MAG")
+  unsigned char ret;
+  ret = update_mag(mode, mag_flt);
+
+  //ret = mode;
 
   LOG_TRACE_header
   LOG_TRACE_println("Complete; returning IMU mode " + String(ret))

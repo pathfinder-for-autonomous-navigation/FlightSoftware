@@ -223,6 +223,13 @@ static unsigned long cycles = 0;
 static unsigned long last_led_time = millis();
 static bool led_state = true;
 
+/** \fn copy_to
+ *  Copies data into a volatile array from a nonvolatile array. */
+template <typename T, unsigned int N>
+static void copy_to(T const (&t_src)[N], T volatile (&t_dst)[N]) {
+  for (unsigned int i = 0; i < N; i++) t_dst[i] = t_src[i];
+}
+
 void loop() {
   
   if(millis() - last_led_time > 500){
@@ -231,7 +238,7 @@ void loop() {
     last_led_time = millis();
   }
   
-  // update_imu();
+  update_imu();
   update_mtr();
   update_rwa();
   update_ssa();
@@ -240,7 +247,7 @@ void loop() {
 #if LOG_LEVEL >= LOG_LEVEL_INFO
 
 
-  if (!(++cycles % 100000UL)) {
+  if (!(++cycles % 10000UL)) {
 
     char top;
     unsigned int ram = &top - reinterpret_cast<char*>(sbrk(0));
@@ -260,6 +267,14 @@ void loop() {
     LOG_INFO_println("rwa.mode " + String(registers.rwa.mode))
     LOG_INFO_header
     LOG_INFO_println("ssa.mode " + String(registers.ssa.mode))
+
+    float f[3];
+    copy_to(f, registers.rwa.cmd);
+    registers.rwa.cmd_flg = CMDFlag::UPDATED;
+
+    LOG_INFO_header
+    LOG_INFO_println("RWA_COMMAND set to " + String(f[0]) + " " +
+        String(f[1]) + " " + String(f[2]))
 
     std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
     char buffer[33];

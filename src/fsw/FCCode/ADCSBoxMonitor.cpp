@@ -129,10 +129,14 @@ void ADCSBoxMonitor::execute(){
     float gyr_temp = 0.0;
 
     //ask the driver to fill in values
-    adcs_is_functional.set(adcs_system.is_functional());
+    // adcs_is_functional.set(adcs_system.is_functional();
+    adcs_is_functional.set(adcs_system.i2c_ping());
+    // printf(debug_severity::debug, "ADCS Functional, Ping: %u, %u\n",adcs_system.is_functional(), adcs_system.i2c_ping());
+
     if(!adcs_is_functional.get())
         adcs_functional_fault.signal();
     else
+        // dont thing we should be unsignaling
         adcs_functional_fault.unsignal();
     
 
