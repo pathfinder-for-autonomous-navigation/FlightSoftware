@@ -35,11 +35,8 @@ public:
     PropController(StateFieldRegistry &registry, unsigned int offset);
 
     // ------------------------------------------------------------------------
-    // Public Interface
+    // Input Fields
     // ------------------------------------------------------------------------
-    void execute() override;
-
-    bool validate_schedule();
 
     WritableStateField<unsigned int> prop_state_f;
 
@@ -50,7 +47,7 @@ public:
     WritableStateField<unsigned int> sched_valve4_f;
 
     // ------------------------------------------------------------------------
-    // Ground-Modifiable Constants
+    // Ground-Modifiable Parameters
     // ------------------------------------------------------------------------
 
     WritableStateField<unsigned int> max_pressurizing_cycles;
@@ -59,11 +56,23 @@ public:
     WritableStateField<unsigned int> ctrl_cycles_per_cooling_period;
     WritableStateField<unsigned int> tank1_valve;
 
-    Fault PressurizeFailFault;
+    // ------------------------------------------------------------------------
+    // Output Fields
+    // ------------------------------------------------------------------------
+
+    ReadableStateField<float> tank2_pressure;
+    ReadableStateField<float> tank2_temp;
+    ReadableStateField<float> tank1_temp;
+
+    Fault pressurize_fail_fault_f;
 
     // ------------------------------------------------------------------------
-    // Helper Functions
+    // Public Interface
     // ------------------------------------------------------------------------
+
+    void execute() override;
+
+    bool validate_schedule();
 
     // Minimum of cycles needed to prepare for firing time - schedule cannot be set to any value lower than this
     //  20 filling + 19 coolings (because of the fence rule) + 1

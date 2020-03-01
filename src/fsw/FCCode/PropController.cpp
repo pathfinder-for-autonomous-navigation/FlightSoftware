@@ -21,8 +21,11 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
           ctrl_cycles_per_filling_period("prop.ctrl_cycles_per_filling", Serializer<unsigned int>(50)),
           ctrl_cycles_per_cooling_period("prop.ctrl_cycles_per_cooling", Serializer<unsigned int>(50)),
           tank1_valve("prop.tank1_valve", Serializer<unsigned int>(1)),
+          tank2_pressure("prop.tank2_pressure", Serializer<float>(0, 150, 4)),
+          tank2_temp("prop.tank2_temp", Serializer<float>(0, 50, 4)),
+          tank1_temp("prop.tank1_temp", Serializer<float>(0, 50, 4)),
           // TODO: Why does Fault take a control_cycle_count reference?
-          PressurizeFailFault("prop.pressurize_fail", 2, control_cycle_count)
+          pressurize_fail_fault_f("prop.pressurize_fail", 2, control_cycle_count)
           {
 
     add_writable_field(prop_state_f);
@@ -38,11 +41,19 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_writable_field(ctrl_cycles_per_cooling_period);
     add_writable_field(tank1_valve);
 
+    add_readable_field(tank2_pressure);
+    add_readable_field(tank2_temp);
+    add_readable_field(tank1_temp);
+
     max_pressurizing_cycles.set(20);
     threshold_firing_pressure.set(25.0f);
     ctrl_cycles_per_filling_period.set(1000 / PAN::control_cycle_time_ms);
     ctrl_cycles_per_cooling_period.set(10 * 1000 / PAN::control_cycle_time_ms);
     tank1_valve.set(0); // default use 0
+
+    tank2_pressure.set(Tank2.get_pressure());
+    tank2_temp.set(Tank2.get_temp());
+    tank1_temp.set(Tank1.get_temp());
 
     PropState::controller = this;
 }
@@ -58,6 +69,12 @@ PropState_Firing PropController::state_firing;
 // PropState_HandlingFault PropController::state_handling_fault = PropState_HandlingFault();
 
 void PropController::execute() {
+
+    // Read all the sensors
+
+    tank2_pressure.set(Tank2.get_pressure());
+    tank2_temp.set(Tank2.get_temp());
+    tank1_temp.set(Tank1.get_temp());
 
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() != 0)
@@ -316,7 +333,7 @@ prop_state_t PropState_Pressurizing::handle_valve_is_close()
 prop_state_t PropState_Pressurizing::handle_pressurize_failed()
 {
     DD("\tPressurize Failed!\n");
-    controller->PressurizeFailFault.signal();
+    controller->pressurize_fail_fault_f.signal();
     return prop_state_t::disabled;
 }
 
@@ -337,7 +354,7 @@ void PropState_Pressurizing::start_pressurize_cycle() {
 bool PropState_AwaitFiring::can_enter() const {
     bool was_pressurizing = controller->check_current_state(prop_state_t::pressurizing);
 
-    return ( was_pressurizing && PropController::is_at_threshold_pressure() && controller->validate_schedule() );
+    return ( was_pressurizing && controller->validate_schedule() );
 }
 
 void PropState_AwaitFiring::enter() {
