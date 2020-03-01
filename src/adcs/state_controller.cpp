@@ -16,7 +16,7 @@
 #ifdef UMB_LOG_LEVEL
   #define LOG_LEVEL UMB_LOG_LEVEL
 #endif
-// #undef LOG_LEVEL
+#undef LOG_LEVEL
 
 #include "constants.hpp"
 #include "state.hpp"

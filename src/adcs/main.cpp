@@ -60,8 +60,8 @@ void setup() {
       + String(LOG_LEVEL))
 
   // Initialize master I2C busses
-  Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000);
-  Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
+  Wire1.begin(I2C_MASTER, 0x00, I2C_PINS_37_38, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
+  Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
 
   LOG_INFO_header
   LOG_INFO_printlnF("Initialized sensor I2C busses")
@@ -270,7 +270,6 @@ void loop() {
 
     float f[3];
     copy_to(f, registers.rwa.cmd);
-    registers.rwa.cmd_flg = CMDFlag::UPDATED;
 
     LOG_INFO_header
     LOG_INFO_println("RWA_COMMAND set to " + String(f[0]) + " " +
