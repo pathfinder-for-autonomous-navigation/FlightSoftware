@@ -83,8 +83,13 @@ void _Tank2::setup()
 
 int Tank::get_temp() const
 {
-    // TODO
-    return analogRead(temp_sensor_pin);
+    // Get the resistance of the temperature sensor
+    int raw = analogRead(temp_sensor_pin);
+    float voltage = raw * 3.3f / 4096;
+    float resis = (voltage * 6200) / (3.3f - voltage);
+    
+    // Get the temperature, which is a regressive function of the temperature
+    return temp_a * resis * resis + temp_b * resis + temp_c;
 }
 
 bool Tank::is_valve_open(size_t valve_idx) const
@@ -106,7 +111,6 @@ void Tank::close_all_valves()
 /* Tank2 implementation */
 
 float _Tank2::get_pressure() const {
-    // TODO
     static int low_gain_read = 0;
     static int high_gain_read = 0;
     static float pressure = 0;
@@ -116,7 +120,7 @@ float _Tank2::get_pressure() const {
     high_gain_read = analogRead(pressure_sensor_high_pin);
 
     // convert to pressure [psia]
-    if (high_gain_read < 1000){
+    if (high_gain_read < amp_threshold){
         pressure = high_gain_slope*high_gain_read + high_gain_offset;
     } else {
         pressure = low_gain_slope*low_gain_read + low_gain_offset;
@@ -171,7 +175,7 @@ void PropulsionSystem::disable() {
 }
 
 bool PropulsionSystem::is_functional() { 
-    // TODO: change this later maybe
+    // This is a stub item since there's really nothing to assess.
     return true;
 }
 

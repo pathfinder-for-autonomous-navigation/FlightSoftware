@@ -217,6 +217,12 @@ protected:
     // true if the valve is opened
     bool is_valve_opened[4];
 
+    // Temperature sensor quadratic regression coefficients.
+    // https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B03403C8C-0D4E-4C55-9D01-5805E6D845CC%7D&file=SP102F1J%20REV%20A%20(R-T%20Table).xls&action=default&mobileredirect=true
+    static constexpr float temp_a = 1.0;
+    static constexpr float temp_b = 1.0;
+    static constexpr float temp_c = 1.0;
+
     friend class PropulsionSystem;
 };
 
@@ -274,11 +280,29 @@ private:
     static constexpr unsigned char pressure_sensor_high_pin = 23;
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
-    // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
-    static constexpr double high_gain_offset = -0.119001938553720;
-    static constexpr double high_gain_slope = 0.048713211537332;
-    static constexpr double low_gain_offset = 0.154615074342874;
-    static constexpr double low_gain_slope = 0.099017990785657;
+    static constexpr unsigned int amp_threshold = 1000; 
+        // Corresponds to 50 mV, the voltage value at which
+        // we should switch between low- and high-gain amplifiers.
+
+    #if defined(LEADER)
+        // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B74C501CE-BB98-40C6-A2B9-74A954B7CD0E%7D&file=PAN-TPS-002%20(Umbilical%20Pressure%20and%20Temperature%20Sensors).docx&action=default&mobileredirect=true&CT=1583021796396&OR=ItemsView
+        static constexpr double high_gain_offset = -0.119001938553720;
+        static constexpr double high_gain_slope = 0.048713211537332;
+        static constexpr double low_gain_offset = 0.154615074342874;
+        static constexpr double low_gain_slope = 0.099017990785657;
+    #elif defined(FOLLOWER)
+        // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B1351A3F1-33A4-459D-A730-F415DE84F9D0%7D&file=PAN-TPS-002%20(Umbilical%20Pressure%20and%20Temperature%20Sensors).docx&action=default&mobileredirect=true&CT=1583021779019&OR=ItemsView
+        static constexpr double high_gain_offset = -0.119001938553720;
+        static constexpr double high_gain_slope = 0.048713211537332;
+        static constexpr double low_gain_offset = 0.154615074342874;
+        static constexpr double low_gain_slope = 0.099017990785657;
+    #else
+        static constexpr double high_gain_offset = 0;
+        static constexpr double high_gain_slope = 0;
+        static constexpr double low_gain_offset = 0;
+        static constexpr double low_gain_slope = 0;
+        static_assert(false, "Must define either LEADER or FOLLOWER satellite.");
+    #endif
 
     //! Loop interval in milliseconds.
     static constexpr unsigned int thrust_valve_loop_interval_ms = 3; 
