@@ -712,7 +712,7 @@ class Serializer<std::array<float, N>> : public VectorSerializer<float, N,
             "Insufficient bitspace supplied to float vector serialize: %d",
             size);
 
-        pan_assert<std::length_error>(size > SerializerConstants::min_fvsz, static_cast<char*>(error_msg));
+        pan_assert<std::length_error>(size > SerializerConstants::min_fvsz, error_msg);
     }
 
     /**
@@ -761,7 +761,7 @@ class Serializer<std::array<double, N>> : public VectorSerializer<double, N,
             "Insufficient bitspace supplied to double vector serialize: %d",
             size);
 
-        pan_assert<std::length_error>(size > SerializerConstants::min_dvsz, static_cast<char*>(error_msg));
+        pan_assert<std::length_error>(size > SerializerConstants::min_dvsz, error_msg);
     }
 
     /**
