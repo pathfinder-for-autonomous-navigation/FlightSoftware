@@ -9,7 +9,6 @@
 #include <memory>
 #include <string>
 #include <cstring>
-#include "GPSTime.hpp"
 #include "fixed_array.hpp"
 
 /**

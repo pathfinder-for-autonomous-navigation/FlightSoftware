@@ -27,13 +27,10 @@ struct TestFixture {
         parser = std::make_unique<DownlinkParserMock>(reg, flow_data);
         producer = parser->get_downlink_producer();
         cycle_count_fp = reg.find_readable_field_t<unsigned int>("pan.cycle_no");
-        assert(cycle_count_fp);
         cycle_count_fp->set(20);
 
         snapshot_fp = reg.find_internal_field_t<char*>("downlink.ptr");
         snapshot_size_bytes_fp = reg.find_internal_field_t<size_t>("downlink.snap_size");
-        assert(snapshot_fp);
-        assert(snapshot_size_bytes_fp);
     }
 };
 
@@ -49,6 +46,9 @@ const std::vector<DownlinkProducer::FlowData> TestFixture::flow_data = {
 
 void test_task_initialization() {
     TestFixture tf;
+    TEST_ASSERT_NOT_NULL(tf.cycle_count_fp);
+    TEST_ASSERT_NOT_NULL(tf.snapshot_fp);
+    TEST_ASSERT_NOT_NULL(tf.snapshot_size_bytes_fp);
 }
 
 void test_task_execute() {

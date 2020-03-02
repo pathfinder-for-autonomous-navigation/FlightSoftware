@@ -23,7 +23,7 @@ class DCDCController : public TimedControlTask<void> {
     /**
      * @brief Commands the ADCS and sph pins on the DCDC converter
      */
-    void execute() override;
+    void execute() noexcept override;
 
    protected:
     Devices::DCDC &dcdc;

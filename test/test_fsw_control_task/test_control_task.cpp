@@ -6,7 +6,7 @@
 class DummyControlTask : public ControlTask<void> {
   public:
     DummyControlTask(StateFieldRegistry& registry) : ControlTask<void>(registry) {}
-    void execute() { 
+    void execute() noexcept { 
       DummyControlTask::x = 3;
     }
     int x = 2;

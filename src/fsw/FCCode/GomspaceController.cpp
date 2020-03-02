@@ -175,7 +175,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_writable_field(gs_reboot_cmd_f);
      }
 
-void GomspaceController::execute() {
+void GomspaceController::execute() noexcept {
     //Check that we can get hk data
     if (!gs.get_hk()){
         get_hk_fault.signal();

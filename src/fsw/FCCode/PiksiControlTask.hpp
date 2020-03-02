@@ -19,7 +19,7 @@ public:
     /** 
     * execute is overriden from TimedControlTask 
     */
-    void execute() override;
+    void execute() noexcept override;
 
     // StateField for position, velocity, and baseline
     ReadableStateField<d_vector_t> pos_f;

@@ -88,7 +88,7 @@ bool MissionManager::check_adcs_hardware_faults() const {
             || wheel_pot_fault_fp->is_faulted();
 }
 
-void MissionManager::execute() {
+void MissionManager::execute() noexcept {
     mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
     // Step 1. Disable radio if in startup.

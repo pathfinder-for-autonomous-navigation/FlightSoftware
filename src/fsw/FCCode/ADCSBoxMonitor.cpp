@@ -110,7 +110,7 @@ bool exceed_bounds(const float input, const float min, const float max){
     return false;
 }
 
-void ADCSBoxMonitor::execute(){
+void ADCSBoxMonitor::execute() noexcept {
 
     //define nan
     const float nan = std::numeric_limits<float>::quiet_NaN();

@@ -22,7 +22,7 @@ class GomspaceController : public TimedControlTask<void> {
     /**
      * @brief Passes data from gomspace into statefields
      */
-    void execute() override;
+    void execute() noexcept override;
 
     /**
      * @brief Power cycles outputs from gomspace using statefield commands

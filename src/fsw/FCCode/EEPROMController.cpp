@@ -9,7 +9,10 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
 
 }
 
-void EEPROMController::init(const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods){
+void EEPROMController::init(
+  const std::vector<std::string>& statefields, 
+  const std::vector<unsigned int>& periods)
+{
   for (size_t i = 0; i<statefields.size(); i++){
     // copy the string name of the statefield into a char array
     char field[statefields.at(i).length() + 1];
@@ -33,7 +36,7 @@ void EEPROMController::init(const std::vector<std::string>& statefields, const s
   }
 }
 
-void EEPROMController::execute() {
+void EEPROMController::execute() noexcept {
   //if enough control cycles have passed, write the field values to EEPROM
   for (size_t i = 0; i<pointers.size(); i++) {
     if(control_cycle_count%sf_periods.at(i)==0){

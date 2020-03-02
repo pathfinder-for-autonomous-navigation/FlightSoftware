@@ -8,7 +8,7 @@ UplinkConsumer::UplinkConsumer(StateFieldRegistry& _registry, unsigned int offse
     radio_mt_packet_fp = find_internal_field<char*>("uplink.ptr", __FILE__, __LINE__);
 }
 
-void UplinkConsumer::execute()
+void UplinkConsumer::execute() noexcept
 {
     if (index_size == 0)
         init_uplink();

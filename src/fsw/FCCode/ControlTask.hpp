@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <common/debug_console.hpp>
+#include <common/assertion.hpp>
 #include <common/Nameable.hpp>
 #include <common/StateFieldBase.hpp>
 #include <common/StateFieldRegistry.hpp>
@@ -25,17 +26,23 @@ template <typename T>
 class ControlTask : protected debug_console {
   public:
     /**
-     * @brief Construct a new Control ControlTaskBase object
+     * @brief Construct a new Control ControlTaskBase object.
+     * 
+     * The constructor may throw pan_asserts if state field initializations
+     * fail.
      *
      * @param name     Name of control ControlTaskBase
      * @param registry Pointer to state field registry
      */
-    ControlTask(StateFieldRegistry& registry) : _registry(registry) {}
+    ControlTask(StateFieldRegistry& registry) noexcept(false) : _registry(registry) {}
 
     /**
      * @brief Run main method of control ControlTaskBase.
+     * 
+     * The function is marked noexcept so that the control task's unit test
+     * can ensure the function cannot throw any pan_asserts.
      */
-    virtual T execute() = 0;
+    virtual T execute() noexcept = 0;
 
     /**
      * @brief Destroy the Control Task object
@@ -49,23 +56,12 @@ class ControlTask : protected debug_console {
 
   private:
     void check_field_added(const bool added, const std::string& field_name) {
-        if(!added) {
-            #ifdef UNIT_TEST
-                #ifdef DESKTOP
-                    std::cout << "Field \"" << field_name
-                        << "\" is already in the registry." << std::endl;
-                #else
-                    Serial.printf("Field \"%s\" is already in the registry.",
-                        field_name.c_str());
-                #endif
-            #else
-                #ifdef FUNCTIONAL_TEST
-                printf(debug_severity::error, "Field \"%s\" is already in the registry.",
-                    field_name.c_str());
-                #endif
-            #endif
-            assert(false);
-        }
+        char field_already_exists_msg[100];
+        sprintf(field_already_exists_msg,
+            "Field \"%s\" was already in the registry.",
+            field_name.c_str());
+
+        pan_assert<std::invalid_argument>(added, field_already_exists_msg);
     }
 
   #ifdef UNIT_TEST
@@ -109,23 +105,10 @@ class ControlTask : protected debug_console {
 
     void check_field_exists(const StateFieldBase* ptr, const std::string& field_type,
             const char* field_name) {
-        if(!ptr) {
-            #ifdef UNIT_TEST
-                #ifdef DESKTOP
-                    std::cout << field_type << " field \"" << field_name
-                        << "\" is not present in the registry." << std::endl;
-                #else
-                    Serial.printf("%s field \"%s\" is not present in the registry.",
-                        field_type.c_str(), field_name);
-                #endif
-            #else
-                #ifndef FLIGHT
-                printf(debug_severity::error, "%s field \"%s\" is not present in the registry.",
-                    field_type.c_str(), field_name);
-                #endif
-            #endif
-            assert(false);
-        }
+        char error_msg[50];
+        sprintf(error_msg, "%s field \"%s\" is not present in the registry.",
+            field_type.c_str(), field_name);
+        pan_assert<std::invalid_argument>(ptr != nullptr, error_msg);
     }
 
 

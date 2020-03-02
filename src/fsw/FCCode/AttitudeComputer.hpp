@@ -19,7 +19,7 @@ class AttitudeComputer : public TimedControlTask<void> {
     /**
      * @brief Determine control outputs for attitude computer.
      */
-    void execute() override;
+    void execute() noexcept override;
 
    protected:
     /**

@@ -14,7 +14,7 @@ DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
 }
 #endif
 
-void DebugTask::execute() {
+void DebugTask::execute() noexcept {
 #ifdef FUNCTIONAL_TEST
   start_cycle_f.set(false);
   while (!start_cycle_f.get())
@@ -22,7 +22,7 @@ void DebugTask::execute() {
 #endif
 }
 
-void DebugTask::init() {
+void DebugTask::init() noexcept {
  #ifndef GSW
     debug_console::init();
  #endif

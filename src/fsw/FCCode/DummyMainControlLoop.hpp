@@ -25,12 +25,12 @@ class DummyMainControlLoop : public ControlTask<void> {
     /**
      * @brief Initializes debug console.
      */
-    void init();
+    void init() noexcept;
 
     /**
      * @brief Processes state field commands present in the serial buffer.
      */
-    void execute() override;
+    void execute() noexcept override;
 };
 
 #endif

@@ -20,7 +20,7 @@ class ADCSCommander : public TimedControlTask<void> {
     /**
      * @brief Determine control outputs for the ADCSBoxController
      */
-    void execute() override;
+    void execute() noexcept override;
 
    protected:
     // input fields, given by a casted adcs_state_t enum

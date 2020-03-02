@@ -32,7 +32,7 @@ AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int of
     adcs_vec2_desired_f.set({nan_f, nan_f, nan_f});
 }
 
-void AttitudeComputer::execute() {
+void AttitudeComputer::execute() noexcept {
     adcs_state_t adcs_state = static_cast<adcs_state_t>(adcs_state_fp->get());
 
     const f_quat_t q_body_eci_arr = q_body_eci_fp->get();

@@ -5,6 +5,7 @@
 #include "GPSTime.hpp"
 #include "Serializer.hpp"
 #include "types.hpp"
+#include "assertion.hpp"
 
 #include <lin.hpp> // for norm
 
@@ -68,13 +69,23 @@ class IntegerSerializer : public SerializerBase<T> {
     IntegerSerializer(T min, T max, size_t compressed_size, size_t print_size)
         : SerializerBase<T>(min, max, std::min(compressed_size, 8*sizeof(T)), print_size)
     {
-        assert(min <= max);
+        char error_msg[100];
+        sprintf(error_msg,
+            "Invalid bounding arguments passed to integer serializer: %d, %d",
+            min, max);
+
+        pan_assert<std::invalid_argument>(min <= max, error_msg);
     }
 
     IntegerSerializer(T min, T max, size_t print_size)
         : SerializerBase<T>(min, max, log2i(max - min), print_size)
     {
-        assert(min <= max);
+        char error_msg[100];
+        sprintf(error_msg,
+            "Invalid bounding arguments passed to integer serializer: %d, %d",
+            min, max);
+
+        pan_assert<std::invalid_argument>(min <= max, error_msg);
     }
 
   public:
@@ -216,8 +227,18 @@ class FloatDoubleSerializer : public SerializerBase<T> {
     FloatDoubleSerializer(T min, T max, size_t compressed_size)
         : SerializerBase<T>(min, max, compressed_size, print_size)
     {
-        assert(min <= max);
-        if (min > max) this->_min = max;
+        char error_msg[100];
+
+        const char* error_fmt_string;
+        if (std::is_same<T, float>::value) {
+            error_fmt_string = static_cast<const char*>("Invalid bounding arguments passed to float serializer: %f, %f");
+        }
+        else {
+            error_fmt_string = static_cast<const char*>("Invalid bounding arguments passed to double serializer: %lf, %lf");
+        }
+
+        sprintf(error_msg, error_fmt_string, min, max);
+        pan_assert<std::invalid_argument>(min <= max, error_msg);
     }
 
   public:
@@ -686,7 +707,12 @@ class Serializer<std::array<float, N>> : public VectorSerializer<float, N,
                                      SerializerConstants::fvcsz,
                                      SerializerConstants::fqcsz>(min, max, size)
     {
-        assert(size > SerializerConstants::min_fvsz);
+        char error_msg[100];
+        sprintf(error_msg,
+            "Insufficient bitspace supplied to float vector serialize: %ld",
+            size);
+
+        pan_assert<std::length_error>(size > SerializerConstants::min_fvsz, static_cast<char*>(error_msg));
     }
 
     /**
@@ -725,12 +751,17 @@ class Serializer<std::array<double, N>> : public VectorSerializer<double, N,
      * @param max Maximum magnitude of vector.
      * @param size Minimum compressed bitsize of vector. Should be larger than the minimum vector size.
      */
-    Serializer<std::array<double, N>>(double min, double max, double size)
+    Serializer<std::array<double, N>>(double min, double max, size_t size)
         : VectorSerializer<double, N, SerializerConstants::dqsz,
                                       SerializerConstants::dvcsz,
                                       SerializerConstants::dqcsz>(min, max, size)
     {
-        assert(size > SerializerConstants::min_dvsz);
+        char error_msg[100];
+        sprintf(error_msg,
+            "Insufficient bitspace supplied to double vector serialize: %ld",
+            size);
+
+        pan_assert<std::length_error>(size > SerializerConstants::min_dvsz, static_cast<char*>(error_msg));
     }
 
     /**

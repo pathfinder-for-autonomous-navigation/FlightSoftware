@@ -24,7 +24,7 @@ class ClockManager : public TimedControlTask<void> {
      * cycle, it therefore ensures that the control cycle stays within its
      * bounded values.
      */
-    void execute() override;
+    void execute() noexcept override;
 
    private:
     /**

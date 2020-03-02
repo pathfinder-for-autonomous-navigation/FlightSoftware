@@ -38,7 +38,7 @@ class FieldCreatorTask : public ControlTask<void> {
           add_fault(failed_pressurize_f);
       }
 
-      void execute() {
+      void execute() noexcept {
           // Do nada
       }
 

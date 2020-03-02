@@ -22,7 +22,7 @@ class AttitudeEstimator : public TimedControlTask<void> {
      * @brief Using raw sensor inputs, determine the attitude and angular state
      * of the spacecraft.
      */
-    void execute() override;
+    void execute() noexcept override;
 
    protected:
 

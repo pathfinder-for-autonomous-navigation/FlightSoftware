@@ -15,7 +15,7 @@
 class MissionManager : public TimedControlTask<void> {
    public:
     MissionManager(StateFieldRegistry& registry, unsigned int offset);
-    void execute() override;
+    void execute() noexcept override;
 
     // Constants that drive state transitions.
     WritableStateField<double> detumble_safety_factor_f;

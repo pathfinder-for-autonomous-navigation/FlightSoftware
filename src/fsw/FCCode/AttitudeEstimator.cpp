@@ -31,7 +31,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         adcs_paired_f.set(false);
     }
 
-void AttitudeEstimator::execute(){
+void AttitudeEstimator::execute() noexcept {
     set_data();
     gnc::estimate_attitude(state, data, estimate);
     set_estimate();

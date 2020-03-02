@@ -42,6 +42,12 @@ class TestFixture {
         static constexpr unsigned int control_cycle_size = control_cycle_ms;
     #endif
 
+    // Pointers to produced statistical fields
+    ReadableStateField<unsigned int>* num_lates_fp_1;
+    ReadableStateField<unsigned int>* num_lates_fp_2;
+    ReadableStateField<float>* avg_wait_fp_1;
+    ReadableStateField<float>* avg_wait_fp_2;
+
     /**
      * @brief Construct a new Test Fixture.
      * 
@@ -57,16 +63,10 @@ class TestFixture {
         dummy_task_2 = std::make_unique<DummyTimedControlTask>(registry, "dummy2", allocated_starts[1]);
 
         // Check that the statistics parameters are available.
-        auto num_lates_fp_1 = registry.find_readable_field_t<unsigned int>("timing.dummy1.num_lates");
-        auto num_lates_fp_2 = registry.find_readable_field_t<unsigned int>("timing.dummy2.num_lates");
-        auto avg_wait_fp_1 = registry.find_readable_field_t<float>("timing.dummy1.avg_wait");
-        auto avg_wait_fp_2 = registry.find_readable_field_t<float>("timing.dummy2.avg_wait");
-
-        // Assertions required to prevent "unused variable" errors.
-        if(!num_lates_fp_1) assert(false);
-        if(!num_lates_fp_2) assert(false);
-        if(!avg_wait_fp_1) assert(false);
-        if(!avg_wait_fp_2) assert(false);
+        num_lates_fp_1 = registry.find_readable_field_t<unsigned int>("timing.dummy1.num_lates");
+        num_lates_fp_2 = registry.find_readable_field_t<unsigned int>("timing.dummy2.num_lates");
+        avg_wait_fp_1 = registry.find_readable_field_t<float>("timing.dummy1.avg_wait");
+        avg_wait_fp_2 = registry.find_readable_field_t<float>("timing.dummy2.avg_wait");
     }
 
     /**
@@ -108,6 +108,10 @@ constexpr unsigned int TestFixture::control_cycle_size;
 
 void test_task_initialization() {
     TestFixture tf;
+    TEST_ASSERT_NOT_NULL(tf.num_lates_fp_1);
+    TEST_ASSERT_NOT_NULL(tf.num_lates_fp_2);
+    TEST_ASSERT_NOT_NULL(tf.avg_wait_fp_1);
+    TEST_ASSERT_NOT_NULL(tf.avg_wait_fp_2);
 }
 
 void test_task_execute() {

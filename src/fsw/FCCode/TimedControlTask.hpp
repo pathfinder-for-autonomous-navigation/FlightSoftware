@@ -134,7 +134,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * @param control_cycle_start_time System time for the start of the control task.
      * @return T Value returned by execute().
      */
-    T execute_on_time() {
+    T execute_on_time() noexcept {
       sys_time_t earliest_start_time = 
         TimedControlTaskBase::control_cycle_start_time + offset;
       wait_until_time(earliest_start_time);

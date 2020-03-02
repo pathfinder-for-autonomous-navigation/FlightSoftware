@@ -11,10 +11,10 @@ DummyMainControlLoop::DummyMainControlLoop(StateFieldRegistry& registry)
     add_writable_field(writable_f);
 }
 
-void DummyMainControlLoop::execute() {
+void DummyMainControlLoop::execute() noexcept {
     debug_task.execute();
 }
 
-void DummyMainControlLoop::init() {
+void DummyMainControlLoop::init() noexcept {
     debug_task.init();
 }

@@ -67,7 +67,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     downlink_producer.init_flows(flow_data);
 }
 
-void MainControlLoop::execute() {
+void MainControlLoop::execute() noexcept {
     // Compute memory usage
     #ifdef DESKTOP
     memory_use_f.set(getCurrentRSS());

@@ -21,7 +21,7 @@ void DockingController::init() {
   docking_config_cmd_fp = find_writable_field<bool>("docksys.config_cmd", __FILE__, __LINE__);
 }
 
-void DockingController::execute() {
+void DockingController::execute() noexcept {
   //MOVE TO DOCKING CONFIGURATION
   if (docking_config_cmd_fp->get()){
     if (!dock_config_f.get()) {

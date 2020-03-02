@@ -9,7 +9,7 @@ ClockManager::ClockManager(StateFieldRegistry &registry,
     add_readable_field(control_cycle_count_f);
 }
 
-void ClockManager::execute() {
+void ClockManager::execute() noexcept {
     if (has_executed) {
         sys_time_t earliest_start_time =
             TimedControlTaskBase::control_cycle_start_time + control_cycle_size;

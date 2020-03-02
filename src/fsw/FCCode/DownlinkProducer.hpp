@@ -59,7 +59,7 @@ class DownlinkProducer : public TimedControlTask<void> {
      * @brief Produce flow packets as needed, and keep track of the next
      * most urgent downlink flow group based on the Quake manager's state.
      */
-    void execute() override;
+    void execute() noexcept override;
 
     /**
      * @brief Destructor; clears the memory allocated for the snapshot

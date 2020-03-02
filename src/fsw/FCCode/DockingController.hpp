@@ -32,7 +32,7 @@ class DockingController : public TimedControlTask<void> {
      * @brief Sets statefield variables and moves the motor to docking/undocking
      * configuration should mission manager request it.
      */
-    void execute() override;
+    void execute() noexcept override;
 
    protected:
     Devices::DockingSystem& docksys;

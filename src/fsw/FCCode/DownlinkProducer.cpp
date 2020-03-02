@@ -34,10 +34,10 @@ void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
     const size_t num_flows = flow_data.size();
     flows.reserve(num_flows);
     for (const FlowData& flow : flow_data) {
-        if (ids.find(flow.id) != ids.end()) {
-            printf(debug_severity::error, "Two flows share the same ID: %d", flow.id);
-            assert(false);
-        }
+        char conflicting_flows_msg[50];
+        sprintf(conflicting_flows_msg, "Two flows share the same ID: %d", flow.id);
+
+        pan_assert<std::invalid_argument>(ids.find(flow.id) == ids.end(), conflicting_flows_msg);
         flows.emplace_back(_registry, flow, num_flows); 
         if (flow.is_active) num_active_flows++;
     }
@@ -112,7 +112,7 @@ static void add_bits_to_downlink_frame(const bit_array& field_bits,
     }
 }
 
-void DownlinkProducer::execute() {
+void DownlinkProducer::execute() noexcept {
     // Set the snapshot size in order to let the Quake Manager know about
     // the size of the current downlink.
     snapshot_size_bytes_f.set(compute_downlink_size());
@@ -189,25 +189,34 @@ DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
                         const size_t num_flows) : id_sr(num_flows),
                                                   is_active(flow_data.is_active)
 {
-    if (flow_data.id > num_flows || flow_data.id == 0) {
-        printf(debug_severity::error, "Flow ID %d is invalid.", flow_data.id);
-        assert(false);
-    }
+    char invalid_id_msg[50];
+        sprintf(invalid_id_msg, "Flow ID is invalid: %d", flow_data.id);
+    pan_assert<std::length_error>(
+        flow_data.id <= num_flows && flow_data.id != 0, 
+        invalid_id_msg);
 
     id_sr.serialize(flow_data.id);
 
     for(std::string const& field_name : flow_data.field_list) {
         ReadableStateFieldBase* field_ptr = r.find_readable_field(field_name);
-        if(!field_ptr) {
-            printf(debug_severity::error, 
-                "Field %s was not found in registry when constructing flows.",
-                field_name.c_str());
-            assert(false);
-        }
+
+        char field_not_found_msg[100];
+        sprintf(
+            field_not_found_msg,
+            "Field %s was not found in registry when constructing flows.",
+            field_name.c_str());
+        pan_assert<std::invalid_argument>(field_ptr != nullptr, field_not_found_msg);
         field_list.push_back(field_ptr);
     }
 
-    assert(get_packet_size() <= num_bits_in_packet - 1 - 32); // Flow should fit within one downlink packet
+    char invalid_length_msg[100];
+    sprintf(
+        invalid_length_msg, 
+        "Flow %d does not fit within one downlink packet.",
+        flow_data.id);
+    pan_assert<std::length_error>(
+        get_packet_size() <= num_bits_in_packet - 1 - 32,
+        invalid_length_msg);
 }
 
 size_t DownlinkProducer::Flow::get_packet_size() const {
@@ -223,10 +232,12 @@ size_t DownlinkProducer::Flow::get_packet_size() const {
 }
 
 void DownlinkProducer::toggle_flow(unsigned char id) {
-    if(id > flows.size()) {
-        printf(debug_severity::error, "Flow with ID %d was not found.", id);
-        assert(false);
-    }
+    // TODO properly handle a runtime error.
+    //
+    // if(id > flows.size()) {
+    //     printf(debug_severity::error, "Flow with ID %d was not found.", id);
+    //     assert(false);
+    // }
 
     for(size_t idx = 0; idx < flows.size(); idx++) {
         unsigned char flow_id;
@@ -242,16 +253,12 @@ void DownlinkProducer::toggle_flow(unsigned char id) {
 }
 
 void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id2) {
-    if(id1 > flows.size()) {
-        printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to shift with flow ID %d.", id1, id2);
-        assert(false);
-    }
-    if(id2 > flows.size()) {
-        printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to shift with flow ID %d.", id2, id1);
-        assert(false);
-    }
+    // TODO properly handle a runtime error.
+    //
+    // pan_assert(id1 <= flows.size(), "Flow with ID %d was not found when "
+    //                                   "trying to shift with flow ID %d.", id1, id2);
+    // pan_assert(id2 <= flows.size(), "Flow with ID %d was not found when "
+    //                                   "trying to shift with flow ID %d.", id2, id1);
 
     size_t idx1 = 0, idx2 = 0;
     for(size_t idx = 0; idx < flows.size(); idx++) {

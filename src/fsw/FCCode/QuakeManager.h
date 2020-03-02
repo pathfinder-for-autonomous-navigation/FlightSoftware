@@ -27,7 +27,7 @@ class QuakeManager : public TimedControlTask<bool> {
    public:
     QuakeManager(StateFieldRegistry& registry, unsigned int offset);
     ~QuakeManager();
-    bool execute() override;
+    bool execute() noexcept override;
 
    // protected:
    /**

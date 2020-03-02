@@ -18,14 +18,10 @@ class StateFieldRegistryMock : public StateFieldRegistry {
     StateFieldRegistryMock() : StateFieldRegistry() {}
 
     void check_field_exists(StateFieldBase* ptr, const std::string& name) {
-        if (!ptr) {
-            #ifdef DESKTOP
-            std::cout << "Could not find field named \"" << name << "\" in registry." << std::endl;
-            #else
-            Serial.printf("Could not find field named \"%s\" in registry.", name.c_str());
-            #endif
-            assert(false);
-        }
+        char error_msg[100];
+        sprintf(error_msg, "Could not find field named \"%s\" in registry.",
+            name.c_str());
+        pan_assert<std::invalid_argument>(!ptr, error_msg);
     }
 
     /**

@@ -57,7 +57,7 @@ class UplinkConsumer : public TimedControlTask<void>, public Uplink {
      * UplinkConsumer will then check the packet, update the fields in the registry,
      * and reset radio_mt_packet_len_f.
      */
-    void execute() override;
+    void execute() noexcept override;
 #ifndef DEBUG
     protected:
 #else

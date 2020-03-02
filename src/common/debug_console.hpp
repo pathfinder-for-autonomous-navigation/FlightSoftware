@@ -161,17 +161,4 @@ class debug_console {
  */
 typedef debug_console::severity debug_severity;
 
-/**
- * @brief Asserts an error. This aborts the program if running on a computer and
- * does not if running on a Teensy. It prints a helpful error message in any case.
- * 
- * @param condition The condition to test for. If false, the errors are printed.
- * @param format Format string for error.
- * @param ... Format parameters.
- */
-#define assert_msg(condition, format, ...) \
-    assert(condition); \
-    debug_console::printf(debug_severity::error, format, __VA_ARGS__); \
-}
-
 #endif

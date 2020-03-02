@@ -29,7 +29,7 @@ class EEPROMController : public TimedControlTask<void> {
      * @brief Writes to the EEPROM after a certain number of 
      * control cycles given by the period.
      */
-    void execute() override;
+    void execute() noexcept override;
 
     /**
      * @brief Sets the statefields to the values stored in the EEPROM 

@@ -16,12 +16,12 @@ public:
    * @brief Runs the debug task (processes state field commands present in the
    * serial buffer.)
    */
-  void execute() override;
+  void execute() noexcept override;
 
   /**
    * @brief Initializes the debug console.
    */
-  void init();
+  void init() noexcept;
 
 #ifdef FUNCTIONAL_TEST
 protected:

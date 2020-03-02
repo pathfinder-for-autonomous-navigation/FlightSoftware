@@ -26,7 +26,7 @@ DCDCController::DCDCController(StateFieldRegistry &registry, unsigned int offset
   SpikeDockDCDC_f.set(dcdc.sph_enabled());
 }
 
-void DCDCController::execute() {
+void DCDCController::execute() noexcept {
 
     if (ADCSMotorDCDC_cmd_f.get() && !dcdc.adcs_enabled()) {
         dcdc.enable_adcs();

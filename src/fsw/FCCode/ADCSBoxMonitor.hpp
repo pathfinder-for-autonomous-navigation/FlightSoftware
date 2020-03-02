@@ -28,7 +28,7 @@ public:
     * @brief Gets inputs from the ADCS box and dumps them into the state
     * fields listed below.
     */
-    void execute() override;
+    void execute() noexcept override;
 
 protected:
     /**

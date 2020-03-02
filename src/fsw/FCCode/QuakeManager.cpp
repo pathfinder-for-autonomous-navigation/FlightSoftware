@@ -78,7 +78,7 @@ QuakeManager::~QuakeManager()
     delete[] mo_buffer_copy;
 }
 
-bool QuakeManager::execute() {
+bool QuakeManager::execute() noexcept {
     // printf(debug_severity::info, "[Quake Info] Executing Quake Manager "
     //     "current radio_state %d, current control task state %d", 
     //         radio_state_f.get(), 
@@ -182,7 +182,10 @@ bool QuakeManager::dispatch_write() {
         }
         // load the current 70 bytes of the buffer
        qct.set_downlink_msg(mo_buffer_copy + (packet_size*mo_idx), packet_size);
-       assert(max_snapshot_size/packet_size != 0);
+       
+       // TODO figure out dynamic error
+       //pan_assert<std::length_error>(max_snapshot_size/packet_size != 0,
+       //     "Available snapshot buffer should be at least as big as a packet.");
        mo_idx = (mo_idx + 1) % (max_snapshot_size/packet_size);
     }
 

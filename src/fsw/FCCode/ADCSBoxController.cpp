@@ -54,7 +54,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         }
     }
 
-void ADCSBoxController::execute(){
+void ADCSBoxController::execute() noexcept {
     // set to passive/disabled if in startup
     if(adcs_state_fp->get() == static_cast<unsigned char>(adcs_state_t::startup))
         adcs_system.set_mode(adcs::ADCSMode::ADCS_PASSIVE);

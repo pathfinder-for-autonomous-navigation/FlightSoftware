@@ -108,7 +108,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_gyr_temp_desired_f.set(20); // 20 degrees C
 }
 
-void ADCSCommander::execute() {
+void ADCSCommander::execute() noexcept {
     adcs_state_t state = static_cast<adcs_state_t>(adcs_state_fp->get());
 
     switch(state) {

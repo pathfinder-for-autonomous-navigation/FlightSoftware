@@ -124,7 +124,7 @@ class MainControlLoop : public ControlTask<void> {
     /**
      * @brief Processes state field commands present in the serial buffer.
      */
-    void execute() override;
+    void execute() noexcept override;
 
     #ifdef GSW
         /**

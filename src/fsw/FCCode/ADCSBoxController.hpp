@@ -28,7 +28,7 @@ public:
     /**
     * @brief Given the command statefields, use the ADCS driver to execute
     */
-    void execute() override;
+    void execute() noexcept override;
 
 protected:
     /**

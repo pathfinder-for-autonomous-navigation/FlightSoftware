@@ -33,7 +33,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         baseline_pos_f.set({nan, nan, nan});
     }
 
-void PiksiControlTask::execute()
+void PiksiControlTask::execute() noexcept
 {
     int read_out = piksi.read_all();
 
