@@ -226,6 +226,8 @@ protected:
     static constexpr double temp_a = -35126.92396;
     static constexpr double temp_exp = 0.005;
     static constexpr double temp_b = 35493.23411;
+    // For the full data see
+    // https://cornellprod-my.sharepoint.com/:x:/g/personal/saa243_cornell_edu/Edg-vGek6SBEoe0jhIUxmnIBPh84Y6g_Tro-SJWonhuVhA?e=EewWzU
 
     friend class _PropulsionSystem;
 };
@@ -290,6 +292,8 @@ private:
         // we should switch between low- and high-gain amplifiers.
 
     // Constants for the linear regression for computing tank pressure.
+    // The regressions were computed on the following spreadsheet:
+    // https://cornellprod-my.sharepoint.com/:x:/g/personal/saa243_cornell_edu/Edg-vGek6SBEoe0jhIUxmnIBPh84Y6g_Tro-SJWonhuVhA?e=EewWzU
     #if defined(LEADER)
         // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B74C501CE-BB98-40C6-A2B9-74A954B7CD0E%7D&file=PAN-TPS-002%20(Umbilical%20Pressure%20and%20Temperature%20Sensors).docx&action=default&mobileredirect=true&CT=1583021796396&OR=ItemsView
         static constexpr double high_gain_offset = -0.138539974953359;
