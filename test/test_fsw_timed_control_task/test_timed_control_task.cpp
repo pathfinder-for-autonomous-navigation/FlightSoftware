@@ -21,7 +21,7 @@ class DummyTimedControlTask : public TimedControlTask<void> {
       TimedControlTask<void>(registry, name, offset) {}
 
     int i = 0;
-    void execute() {
+    void execute() noexcept {
       i++;
     }
 };

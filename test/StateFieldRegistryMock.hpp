@@ -21,7 +21,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         char error_msg[100];
         sprintf(error_msg, "Could not find field named \"%s\" in registry.",
             name.c_str());
-        pan_assert<std::invalid_argument>(!ptr, error_msg);
+        pan_assert<std::invalid_argument>(ptr != nullptr, error_msg);
     }
 
     /**

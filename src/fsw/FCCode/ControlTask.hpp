@@ -105,12 +105,11 @@ class ControlTask : protected debug_console {
 
     void check_field_exists(const StateFieldBase* ptr, const std::string& field_type,
             const char* field_name) {
-        char error_msg[50];
-        sprintf(error_msg, "%s field \"%s\" is not present in the registry.",
+        char field_not_exists_msg[100];
+        sprintf(field_not_exists_msg, "%s field \"%s\" is not present in the registry.",
             field_type.c_str(), field_name);
-        pan_assert<std::invalid_argument>(ptr != nullptr, error_msg);
+        pan_assert<std::invalid_argument>(ptr != nullptr, field_not_exists_msg);
     }
-
 
   #ifdef UNIT_TEST
   public:

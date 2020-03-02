@@ -23,36 +23,19 @@
  * @param condition The condition to test for. If false, the errors are printed.
  * @param exception The std::exception containing the error message.
  */
-void pan_assert(bool condition, std::exception&& exception);
-
-/**
- * @brief Asserts a runtime error.
- * 
- * @tparam EXCEPTION Exception type.
- * @param condition If false, throw the error.
- * @param err String representing the error.
- */
-template<typename EXCEPTION>
-void pan_assert(bool condition, std::string& err) {
-    static_assert(std::is_base_of<std::exception, EXCEPTION>::value,
-        "Must provide an exception type as the template argument.");
-
-    pan_assert(condition, EXCEPTION(err));
-}
-
-/**
- * @brief Asserts a runtime error.
- * 
- * @tparam EXCEPTION Exception type.
- * @param condition If false, throw the error.
- * @param err String representing the error.
- */
 template<typename EXCEPTION>
 void pan_assert(bool condition, const char* err) {
     static_assert(std::is_base_of<std::exception, EXCEPTION>::value,
         "Must provide an exception type as the template argument.");
 
-    pan_assert(condition, EXCEPTION(err));
+    if (!(condition)) {
+        #if defined(UNIT_TEST)
+            throw EXCEPTION(err);
+        #elif defined(FUNCTIONAL_TEST)
+            debug_console::printf(debug_severity::error, exp.what());
+            assert(false);
+        #endif
+    }
 }
 
 #endif
