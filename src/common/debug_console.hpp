@@ -2,7 +2,6 @@
 #define DEBUG_CONSOLE_HPP_
 
 #include <map>
-#include <cassert>
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
 

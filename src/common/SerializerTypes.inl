@@ -702,14 +702,14 @@ class Serializer<std::array<float, N>> : public VectorSerializer<float, N,
      * @param max Maximum magnitude of vector.
      * @param size Minimum compressed bitsize of vector. Should be larger than the minimum vector size.
      */
-    Serializer<std::array<float, N>>(float min, float max, size_t size)
+    Serializer<std::array<float, N>>(float min, float max, unsigned int size)
         : VectorSerializer<float, N, SerializerConstants::fqsz,
                                      SerializerConstants::fvcsz,
                                      SerializerConstants::fqcsz>(min, max, size)
     {
         char error_msg[100];
         sprintf(error_msg,
-            "Insufficient bitspace supplied to float vector serialize: %ld",
+            "Insufficient bitspace supplied to float vector serialize: %d",
             size);
 
         pan_assert<std::length_error>(size > SerializerConstants::min_fvsz, static_cast<char*>(error_msg));
@@ -751,14 +751,14 @@ class Serializer<std::array<double, N>> : public VectorSerializer<double, N,
      * @param max Maximum magnitude of vector.
      * @param size Minimum compressed bitsize of vector. Should be larger than the minimum vector size.
      */
-    Serializer<std::array<double, N>>(double min, double max, size_t size)
+    Serializer<std::array<double, N>>(double min, double max, unsigned int size)
         : VectorSerializer<double, N, SerializerConstants::dqsz,
                                       SerializerConstants::dvcsz,
                                       SerializerConstants::dqcsz>(min, max, size)
     {
         char error_msg[100];
         sprintf(error_msg,
-            "Insufficient bitspace supplied to double vector serialize: %ld",
+            "Insufficient bitspace supplied to double vector serialize: %d",
             size);
 
         pan_assert<std::length_error>(size > SerializerConstants::min_dvsz, static_cast<char*>(error_msg));

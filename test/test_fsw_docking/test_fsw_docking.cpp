@@ -1,7 +1,5 @@
 #include "../StateFieldRegistryMock.hpp"
-
 #include <fsw/FCCode/DockingController.hpp>
-
 #include <unity.h>
 
 class TestFixture {

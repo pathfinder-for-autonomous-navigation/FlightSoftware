@@ -1,9 +1,12 @@
 #ifndef assertion_hpp_
 #define assertion_hpp_
 
-#include <string>
 #include <exception>
 #include <type_traits>
+
+#ifdef DESKTOP
+#include <iostream>
+#endif
 
 /**
  * @brief Asserts a runtime error.
@@ -32,7 +35,11 @@ void pan_assert(bool condition, const char* err) noexcept(false) {
         #if defined(UNIT_TEST)
             throw EXCEPTION(err);
         #elif defined(FUNCTIONAL_TEST)
-            debug_console::printf(debug_severity::error, err);
+            #ifdef DESKTOP
+                std::cout << "Error: " << err << std::endl;
+            #else
+                Serial.printf("Error: %s", err);
+            #endif
             assert(false);
         #endif
     }
