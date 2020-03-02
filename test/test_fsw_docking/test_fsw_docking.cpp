@@ -32,6 +32,20 @@ class TestFixture {
     }
 };
 
+void test_invalid_initialization_missing_cmd() {
+    try {
+        StateFieldRegistryMock registry;
+        Devices::DockingSystem docksys;
+        DockingController dc(registry, 0, docksys);
+        dc.init();
+    }
+    catch(std::logic_error& e) {
+        TEST_ASSERT_EQUAL_STRING(
+            "writable field \"docksys.config_cmd\" is not present in the registry.", 
+            e.what());
+    }
+}
+
 void test_task_initialization() {
     TestFixture tf;
     TEST_ASSERT_NOT_NULL(tf.docked_fp);
@@ -70,6 +84,7 @@ void test_task_execute() {
 
 int test_control_task() {
     UNITY_BEGIN();
+    RUN_TEST(test_invalid_initialization_missing_cmd);
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_task_execute);
     return UNITY_END();
