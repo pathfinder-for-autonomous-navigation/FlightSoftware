@@ -24,15 +24,15 @@
  * @param exception The std::exception containing the error message.
  */
 template<typename EXCEPTION>
-void pan_assert(bool condition, const char* err) {
-    static_assert(std::is_base_of<std::exception, EXCEPTION>::value,
-        "Must provide an exception type as the template argument.");
+void pan_assert(bool condition, const char* err) noexcept(false) {
+    static_assert(std::is_base_of<std::logic_error, EXCEPTION>::value,
+        "Must provide an logic_error exception type as the template argument.");
 
     if (!(condition)) {
         #if defined(UNIT_TEST)
             throw EXCEPTION(err);
         #elif defined(FUNCTIONAL_TEST)
-            debug_console::printf(debug_severity::error, exp.what());
+            debug_console::printf(debug_severity::error, err);
             assert(false);
         #endif
     }
