@@ -28,7 +28,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_mag_filter_f("adcs_cmd.imu_mag_filter", filter_sr),
     imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", filter_sr),
     imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", filter_sr),
-    k_sr(std::numeric_limits<float>::min(), std::numeric_limits<float>::max(),16),
+    k_sr(0,100,16),
     imu_gyr_temp_kp_f("adcs_cmd.imu_gyr_temp_kp", k_sr),
     imu_gyr_temp_ki_f("adcs_cmd.imu_gyr_temp_ki", k_sr),
     imu_gyr_temp_kd_f("adcs_cmd.imu_gyr_temp_kd", k_sr),
