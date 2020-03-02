@@ -216,11 +216,16 @@ protected:
     // true if the valve is opened
     bool is_valve_opened[4];
 
-    // Temperature sensor quadratic regression coefficients.
-    // https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B03403C8C-0D4E-4C55-9D01-5805E6D845CC%7D&file=SP102F1J%20REV%20A%20(R-T%20Table).xls&action=default&mobileredirect=true
-    static constexpr float temp_a = 1.0;
-    static constexpr float temp_b = 1.0;
-    static constexpr float temp_c = 1.0;
+    // Constants for the nonlinear regression for computing tank temperature.
+    // The regression is computed via the formula
+    //
+    // T = A * ln(R)^EXP + B
+    //
+    // where T is the temperature, R is the resistance of the temperature 
+    // sensor, and A, EXP, and B are the regression constants as listed below:
+    static constexpr double temp_a = -35126.92396;
+    static constexpr double temp_exp = 0.005;
+    static constexpr double temp_b = 35493.23411;
 
     friend class _PropulsionSystem;
 };
@@ -284,18 +289,19 @@ private:
         // Corresponds to 50 mV, the voltage value at which
         // we should switch between low- and high-gain amplifiers.
 
+    // Constants for the linear regression for computing tank pressure.
     #if defined(LEADER)
         // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B74C501CE-BB98-40C6-A2B9-74A954B7CD0E%7D&file=PAN-TPS-002%20(Umbilical%20Pressure%20and%20Temperature%20Sensors).docx&action=default&mobileredirect=true&CT=1583021796396&OR=ItemsView
-        static constexpr double high_gain_offset = -0.119001938553720;
-        static constexpr double high_gain_slope = 0.048713211537332;
-        static constexpr double low_gain_offset = 0.154615074342874;
-        static constexpr double low_gain_slope = 0.099017990785657;
+        static constexpr double high_gain_offset = -0.138539974953359;
+        static constexpr double high_gain_slope = 0.048285455017719;
+        static constexpr double low_gain_offset = 0.008416069224407;
+        static constexpr double low_gain_slope = 0.099084652547468;
     #elif defined(FOLLOWER)
         // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B1351A3F1-33A4-459D-A730-F415DE84F9D0%7D&file=PAN-TPS-002%20(Umbilical%20Pressure%20and%20Temperature%20Sensors).docx&action=default&mobileredirect=true&CT=1583021779019&OR=ItemsView
-        static constexpr double high_gain_offset = -0.119001938553720;
-        static constexpr double high_gain_slope = 0.048713211537332;
-        static constexpr double low_gain_offset = 0.154615074342874;
-        static constexpr double low_gain_slope = 0.099017990785657;
+        static constexpr double high_gain_offset = -0.062127065655240;
+        static constexpr double high_gain_slope = 0.048430664679468;
+        static constexpr double low_gain_offset = 0.154615074342849;
+        static constexpr double low_gain_slope = 0.099017990785658;
     #else
         static constexpr double high_gain_offset = 0;
         static constexpr double high_gain_slope = 0;
