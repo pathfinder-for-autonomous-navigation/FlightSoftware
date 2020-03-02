@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <climits>
 #include <tuple>
+#include <cmath>
 #include "DCDC.hpp"
 using namespace Devices;
 
@@ -117,8 +118,8 @@ void Tank::close_all_valves()
 /* Tank2 implementation */
 
 float _Tank2::get_pressure() const {
-    static int low_gain_read = 0;
-    static int high_gain_read = 0;
+    static unsigned int low_gain_read = 0;
+    static unsigned int high_gain_read = 0;
     static float pressure = 0;
 
     // analog read

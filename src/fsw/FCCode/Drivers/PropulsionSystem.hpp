@@ -294,13 +294,13 @@ private:
     // Constants for the linear regression for computing tank pressure.
     // The regressions were computed on the following spreadsheet:
     // https://cornellprod-my.sharepoint.com/:x:/g/personal/saa243_cornell_edu/Edg-vGek6SBEoe0jhIUxmnIBPh84Y6g_Tro-SJWonhuVhA?e=EewWzU
-    #if defined(LEADER)
+    #if defined(PAN_LEADER)
         // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B74C501CE-BB98-40C6-A2B9-74A954B7CD0E%7D&file=PAN-TPS-002%20(Umbilical%20Pressure%20and%20Temperature%20Sensors).docx&action=default&mobileredirect=true&CT=1583021796396&OR=ItemsView
         static constexpr double high_gain_offset = -0.138539974953359;
         static constexpr double high_gain_slope = 0.048285455017719;
         static constexpr double low_gain_offset = 0.008416069224407;
         static constexpr double low_gain_slope = 0.099084652547468;
-    #elif defined(FOLLOWER)
+    #elif defined(PAN_FOLLOWER)
         // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B1351A3F1-33A4-459D-A730-F415DE84F9D0%7D&file=PAN-TPS-002%20(Umbilical%20Pressure%20and%20Temperature%20Sensors).docx&action=default&mobileredirect=true&CT=1583021779019&OR=ItemsView
         static constexpr double high_gain_offset = -0.062127065655240;
         static constexpr double high_gain_slope = 0.048430664679468;
