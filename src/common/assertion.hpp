@@ -6,6 +6,9 @@
 
 #ifdef DESKTOP
 #include <iostream>
+#else
+#include <core_pins.h>
+#include <usb_serial.h>
 #endif
 
 /**
