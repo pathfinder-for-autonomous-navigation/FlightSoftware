@@ -19,7 +19,7 @@ public:
      * @param offset control task offset
      * @param _adcs the input adcs system
      */
-    ADCSBoxMonitor(StateFieldRegistry &registry, unsigned int offset, Devices::ADCS &_adcs);
+    ADCSBoxMonitor(StateFieldRegistry &registry, uint32_t offset, Devices::ADCS &_adcs);
 
     /** ADCS Driver. **/
     Devices::ADCS& adcs_system;
@@ -43,8 +43,8 @@ protected:
     Serializer<f_vector_t> rwa_torque_rd_sr;
     ReadableStateField<f_vector_t> rwa_torque_rd_f;
 
-    Serializer<int> ssa_mode_rd;
-    ReadableStateField<int> ssa_mode_f;
+    Serializer<uint32_t> ssa_mode_rd;
+    ReadableStateField<uint32_t> ssa_mode_f;
 
     //! Vector to the sun in the body frame.
     Serializer<f_vector_t> ssa_vec_sr;

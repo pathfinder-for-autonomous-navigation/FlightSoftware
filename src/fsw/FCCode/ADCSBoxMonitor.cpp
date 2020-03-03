@@ -4,7 +4,7 @@
 #include <adcs/havt_devices.hpp>
 
 ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry, 
-    unsigned int offset, Devices::ADCS &_adcs)
+    uint32_t offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry, "adcs_monitor", offset),
     adcs_system(_adcs),
     rwa_speed_rd_sr(adcs::rwa::min_speed_read, adcs::rwa::max_speed_read, 16*3), //referenced from I2C_Interface.doc
@@ -41,7 +41,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         ssa_voltages_f.reserve(adcs::ssa::num_sun_sensors);
         // fill vector of statefields for ssa
         char buffer[50];
-        for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors;i++){
+        for(uint8_t i = 0; i<adcs::ssa::num_sun_sensors;i++){
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.ssa_voltage");
             sprintf(buffer + strlen(buffer), "%u", i);
@@ -50,7 +50,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
 
         havt_read_vector.reserve(adcs::havt::Index::_LENGTH);
         // fill vector of statefields for havt
-        for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+        for (uint8_t idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
         {
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_monitor.havt_device");
@@ -59,7 +59,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         }
         
         // add device availabilty to registry, and initialize value to 0
-        for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+        for(uint8_t idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
         {
             add_readable_field(havt_read_vector[idx]);
             havt_read_vector[idx].set(false);
@@ -71,7 +71,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_readable_field(ssa_mode_f);
         add_readable_field(ssa_vec_f);
 
-        for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
+        for(uint8_t i = 0; i<adcs::ssa::num_sun_sensors; i++){
             add_readable_field(ssa_voltages_f[i]);
         }
 
@@ -95,8 +95,8 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         add_fault(wheel_pot_fault);
     }
 
-bool exceed_bounds(const std::array<float, 3>& input, const float min, const float max){
-    for(int i = 0; i<3; i++){
+bool exceed_bounds(const std::array<float, 3>& input, float min, float max){
+    for(uint8_t i = 0; i<3; i++){
         if(input[i] < min || input[i] > max){
             return true;
         }
@@ -104,7 +104,7 @@ bool exceed_bounds(const std::array<float, 3>& input, const float min, const flo
     return false;
 }
 
-bool exceed_bounds(const float input, const float min, const float max){
+bool exceed_bounds(float input, float min, float max){
     if(input < min || input > max)
         return true;
     return false;
@@ -118,7 +118,7 @@ void ADCSBoxMonitor::execute(){
     //create internal containers to read data
     f_vector_t rwa_speed_rd;
     f_vector_t rwa_torque_rd;
-    unsigned char ssa_mode = 0;
+    uint8_t ssa_mode = 0;
     f_vector_t ssa_vec;
 
     std::array<float, adcs::ssa::num_sun_sensors> ssa_voltages;
@@ -155,14 +155,14 @@ void ADCSBoxMonitor::execute(){
     rwa_torque_rd_f.set(rwa_torque_rd);
     ssa_mode_f.set(ssa_mode);
 
-    for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
+    for(uint8_t i = 0; i<adcs::ssa::num_sun_sensors; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);
     }
 
     // set vector of device availability
     std::bitset<adcs::havt::max_devices> havt_read(0);
     adcs_system.get_havt(&havt_read);
-    for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+    for(uint8_t idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
     {
         havt_read_vector[idx].set(havt_read.test(idx));
     }
