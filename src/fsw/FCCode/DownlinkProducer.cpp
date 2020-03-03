@@ -10,7 +10,7 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
                                  shift_flows_id2_f("downlink.shift_id2", Serializer<unsigned char>(0,10,1)),
                                  toggle_flow_id_f("downlink.toggle_id", Serializer<unsigned char>(0,10,1))
 {
-    cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
+    cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no");
 
     // Add snapshot fields to the registry
     add_internal_field(snapshot_ptr_f);
