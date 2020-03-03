@@ -35,6 +35,7 @@ struct gps_time_t {
         ns = (t - (wn * NANOSECONDS_IN_WEEK)) % 1000000;
     }
 
+    // cppcheck-suppress noExplicitConstructor
     gps_time_t(const msg_gps_time_t &t) {
         is_set = true;
         wn = t.wn;

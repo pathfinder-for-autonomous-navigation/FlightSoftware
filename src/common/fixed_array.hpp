@@ -56,6 +56,7 @@ class fixed_array_base : public std::vector<T> {
      * @tparam sz
      * @param set
      */
+    // cppcheck-suppress noExplicitConstructor
     fixed_array_base(const std::vector<T>& arr) : fixed_array_base<T>(arr.size()) {
         *this = arr;
     }
@@ -118,6 +119,7 @@ class fixed_array : public fixed_array_base<T> {
     explicit fixed_array() : fixed_array_base<T>() {}
     explicit fixed_array(const size_t size) : fixed_array_base<T>(size) {}
     fixed_array(const fixed_array<T>& arr) : fixed_array_base<T>(arr) {}
+    // cppcheck-suppress noExplicitConstructor
     fixed_array(const std::vector<T>& arr) : fixed_array_base<T>(arr) {}
 };
 
@@ -133,6 +135,7 @@ class fixed_array<bool> : public fixed_array_base<bool> {
     fixed_array() = default;
     explicit fixed_array(const size_t size) : fixed_array_base<bool>(size) {}
     fixed_array(const fixed_array<bool>& arr) = default;
+    // cppcheck-suppress noExplicitConstructor
     fixed_array(const std::vector<bool>& arr) : fixed_array_base<bool>(arr) {}
 
     /**

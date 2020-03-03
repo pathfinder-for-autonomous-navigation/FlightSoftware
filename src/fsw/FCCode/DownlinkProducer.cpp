@@ -1,16 +1,17 @@
 #include "DownlinkProducer.hpp"
 #include <algorithm>
+#include <numeric>
 #include <set>
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
-    const unsigned int offset) : TimedControlTask<void>(r, "downlink_ct", offset),
+    const uint32_t offset) : TimedControlTask<void>(r, "downlink_ct", offset),
                                  snapshot_ptr_f("downlink.ptr"),
                                  snapshot_size_bytes_f("downlink.snap_size"),
-                                 shift_flows_id1_f("downlink.shift_id1", Serializer<unsigned char>(0,10,1)),
-                                 shift_flows_id2_f("downlink.shift_id2", Serializer<unsigned char>(0,10,1)),
-                                 toggle_flow_id_f("downlink.toggle_id", Serializer<unsigned char>(0,10,1))
+                                 shift_flows_id1_f("downlink.shift_id1", Serializer<uint8_t>(0,10,1)),
+                                 shift_flows_id2_f("downlink.shift_id2", Serializer<uint8_t>(0,10,1)),
+                                 toggle_flow_id_f("downlink.toggle_id", Serializer<uint8_t>(0,10,1))
 {
-    cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no");
+    cycle_count_fp = find_readable_field<uint32_t>("pan.cycle_no");
 
     // Add snapshot fields to the registry
     add_internal_field(snapshot_ptr_f);
@@ -30,7 +31,7 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
 void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
     // Create flow objects out of the flow data. Ensure that
     // no two flows have the same ID.
-    std::set<unsigned char> ids;
+    std::set<uint8_t> ids;
     const size_t num_flows = flow_data.size();
     flows.reserve(num_flows);
     for (const FlowData& flow : flow_data) {
@@ -52,12 +53,12 @@ void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
 }
 
 size_t DownlinkProducer::compute_downlink_size(const bool compute_max) const {
-    size_t downlink_max_size_bits = 0;
-
-    for (const Flow& flow : flows) {
-        if (flow.is_active || compute_max)
-            downlink_max_size_bits += flow.get_packet_size();
-    }
+    size_t downlink_max_size_bits = std::accumulate(
+        flows.begin(), flows.end(), 0, 
+        [&](size_t s, const Flow& flow) {
+            if (flow.is_active || compute_max) return s + flow.get_packet_size();
+            else return s;
+        });
 
     // Compute additional bits in the downlink size due to header information.
     downlink_max_size_bits += 32; // Control cycle count on first packet
@@ -155,7 +156,7 @@ void DownlinkProducer::execute() {
 
     // If there are bits remaining in the last character of the downlink frame,
     // fill them with zeroes.
-    const unsigned int num_remaining_bits = 8 - (downlink_frame_offset % 8); 
+    const uint32_t num_remaining_bits = 8 - (downlink_frame_offset % 8); 
     for(int i = num_remaining_bits - 1; i >= 0; i--) {
         char& last_char = snapshot_ptr[(downlink_frame_offset / 8)];
         last_char = bit_array::modify_bit(last_char, i, 0);
@@ -215,21 +216,23 @@ size_t DownlinkProducer::Flow::get_packet_size() const {
     size_t packet_size = 0;
     packet_size += id_sr.bitsize();
 
-    for(auto const& field: field_list) {
-        packet_size += field->get_bit_array().size();
-    }
+    packet_size += std::accumulate(
+        field_list.begin(), field_list.end(), 0, 
+        [&](size_t s, const ReadableStateFieldBase* f) {
+            return s + f->bitsize();
+        });
 
     return packet_size;
 }
 
-void DownlinkProducer::toggle_flow(unsigned char id) {
+void DownlinkProducer::toggle_flow(uint8_t id) {
     if(id > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found.", id);
         assert(false);
     }
 
     for(size_t idx = 0; idx < flows.size(); idx++) {
-        unsigned char flow_id;
+        uint8_t flow_id;
         flows[idx].id_sr.deserialize(&flow_id);
         if (flow_id == id) {
             bool& is_active = flows[idx].is_active;
@@ -241,7 +244,7 @@ void DownlinkProducer::toggle_flow(unsigned char id) {
     }
 }
 
-void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id2) {
+void DownlinkProducer::shift_flow_priorities(uint8_t id1, uint8_t id2) {
     if(id1 > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
                                       "trying to shift with flow ID %d.", id1, id2);
@@ -255,7 +258,7 @@ void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id
 
     size_t idx1 = 0, idx2 = 0;
     for(size_t idx = 0; idx < flows.size(); idx++) {
-        unsigned char flow_id;
+        uint8_t flow_id;
         flows[idx].id_sr.deserialize(&flow_id);
         if (flow_id == id1) {
             idx1 = idx;

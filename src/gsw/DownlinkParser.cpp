@@ -55,7 +55,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
         }
 
         // Step 2: Remove header bits from the packet.
-        for(uint16_t i = frame_bits.size() / DownlinkProducer::num_bits_in_packet; i >= 0; i--) {
+        for(int32_t i = frame_bits.size() / DownlinkProducer::num_bits_in_packet; i >= 0; i--) {
             frame_bits.erase(frame_bits.begin() + i * DownlinkProducer::num_bits_in_packet);
         }
 

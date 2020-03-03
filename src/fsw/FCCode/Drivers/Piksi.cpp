@@ -206,7 +206,9 @@ bool Piksi::is_system_io_healthy() { return !(_heartbeat.flags & 0x0002); }
 bool Piksi::is_swiftnap_healthy() { return !(_heartbeat.flags & 0x0003); }
 bool Piksi::is_antenna_healthy() { return !(_heartbeat.flags & 0x0004); }
 
+// cppcheck-suppress unusedFunction
 float Piksi::get_uart_a_tx_throughput() { return _uart_state.uart_a.tx_throughput; }
+// cppcheck-suppress unusedFunction
 float Piksi::get_uart_a_rx_throughput() { return _uart_state.uart_a.rx_throughput; }
 // cppcheck-suppress unusedFunction
 uint16_t Piksi::get_uart_a_crc_error_count() {

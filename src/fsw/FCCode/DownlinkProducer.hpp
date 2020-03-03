@@ -5,7 +5,7 @@
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
-    static constexpr unsigned int num_bits_in_packet = 560;
+    static constexpr uint32_t num_bits_in_packet = 560;
 
     /**
      * @brief Flow data object, used in order to specify the
@@ -20,7 +20,7 @@ class DownlinkProducer : public TimedControlTask<void> {
      * contains a function to automatically generate a flow packet.
      */
     struct FlowData {
-        unsigned char id;
+        uint8_t id;
         bool is_active;
         std::vector<std::string> field_list;
     };
@@ -35,7 +35,7 @@ class DownlinkProducer : public TimedControlTask<void> {
      *                  determines their initial priority.
      */
     DownlinkProducer(StateFieldRegistry& registry,
-                     const unsigned int offset);
+                     const uint32_t offset);
 
     /**
      * @brief Initialize flows for the Downlink Producer. This function
@@ -93,7 +93,7 @@ class DownlinkProducer : public TimedControlTask<void> {
              const size_t num_flows);
 
         //! Flow ID #
-        Serializer<unsigned char> id_sr;
+        Serializer<uint8_t> id_sr;
 
         //! If this is an active flow
         bool is_active;
@@ -127,7 +127,7 @@ class DownlinkProducer : public TimedControlTask<void> {
         * @brief Copy assignment operator.
         */
         Flow& operator=(const Flow& rhs) {
-            unsigned char flow_id;
+            uint8_t flow_id;
             rhs.id_sr.deserialize(&flow_id);
             is_active = rhs.is_active;
             id_sr = std::move(rhs.id_sr);
@@ -143,17 +143,17 @@ class DownlinkProducer : public TimedControlTask<void> {
     /**
      * @brief Toggle a flow on or off.
      */
-    void toggle_flow(unsigned char id);
+    void toggle_flow(uint8_t id);
 
     /**
      * @brief Shift the priorities of the flows with the given IDs by moving the flow
      * with id1 to the flow with id2's position. Also swaps their active status.
      */
-    void shift_flow_priorities(unsigned char id1, unsigned char id2);
+    void shift_flow_priorities(uint8_t id1, uint8_t id2);
 
   protected:
     /** @brief Pointer to cycle count. */
-    ReadableStateField<unsigned int>* cycle_count_fp;
+    ReadableStateField<uint32_t>* cycle_count_fp;
 
     /**
      * @brief Fields used by the Quake manager to know from where to copy a downlink
@@ -166,20 +166,20 @@ class DownlinkProducer : public TimedControlTask<void> {
     /**
      * @brief Actual flow data.
      */
-    unsigned int num_active_flows = 0;
+    uint32_t num_active_flows = 0;
     std::vector<Flow> flows;
 
     /**
      * @brief Fields used to shift flows. Moves the flow with id1 to the flow with 
      * id2's position. Default is <0,0> (No flow can have an id of 0).
      */
-     WritableStateField<unsigned char> shift_flows_id1_f;
-     WritableStateField<unsigned char> shift_flows_id2_f;
+     WritableStateField<uint8_t> shift_flows_id1_f;
+     WritableStateField<uint8_t> shift_flows_id2_f;
 
     /**
      * @brief Statefield used to toggle flow's active status. Default is 0 (no flow can have an id of 0)
      */
-    WritableStateField<unsigned char> toggle_flow_id_f;
+    WritableStateField<uint8_t> toggle_flow_id_f;
 };
 
 #endif
