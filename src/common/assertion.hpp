@@ -40,10 +40,16 @@ void pan_assert(bool condition, const char* err) noexcept(false) {
         #elif defined(FUNCTIONAL_TEST)
             #ifdef DESKTOP
                 std::cout << "Error: " << err << std::endl;
+                assert(false);
             #else
                 Serial.printf("Error: %s", err);
+                while(true) {
+                    digitalWrite(13, HIGH);
+                    delay(500);
+                    digitalWrite(13, LOW);
+                    delay(500);
+                }
             #endif
-            assert(false);
         #endif
     }
 }
