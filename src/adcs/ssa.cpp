@@ -54,7 +54,7 @@ void setup() {
   }
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
-  for (unsigned int i = 0; i < 5; i++) {
+  for (uint32_t i = 0; i < 5; i++) {
     if (!adcs[i].is_functional()) {
       LOG_ERROR_header
       LOG_ERROR_println("ADC" + String(i + 2) + " initialization failed")
@@ -79,13 +79,13 @@ void update_sensors(float adc_flt) {
   LOG_TRACE_header
   LOG_TRACE_printlnF("Updating SSA sensors")
 
-  for (unsigned int j = 0; j < 4; j++) {
+  for (uint32_t j = 0; j < 4; j++) {
     // Begin read on channels[j] for each enabled ADC
-    for (unsigned int i = 0; i < 5; i++)
+    for (uint32_t i = 0; i < 5; i++)
       if (adcs[i].is_functional()) adcs[i].start_read(channels[j]);
     
     // End read on channels[j] and store the result
-    for (unsigned int i = 0; i < 5; i++)
+    for (uint32_t i = 0; i < 5; i++)
       if (adcs[i].is_functional())
         if (adcs[i].end_read(val))
           readings(i, j) = 4.096f * ((float)val) / 2048.0f;
@@ -97,16 +97,16 @@ void update_sensors(float adc_flt) {
 #if LOG_LEVEL >= LOG_LEVEL_TRACE
   LOG_TRACE_header
   LOG_TRACE_printlnF("SSA voltage readings matrix:")
-  for (unsigned int i = 0; i < voltages.rows(); i++) {
-    for (unsigned int j = 0; j < voltages.cols(); j++)
+  for (uint32_t i = 0; i < voltages.rows(); i++) {
+    for (uint32_t j = 0; j < voltages.cols(); j++)
       LOG_TRACE_print(" " + String(readings(i, j)))
     LOG_TRACE_println()
   }
 
   LOG_TRACE_header
   LOG_TRACE_printlnF("SSA filtered voltages matrix:")
-  for (unsigned int i = 0; i < voltages.rows(); i++) {
-    for (unsigned int j = 0; j < voltages.cols(); j++)
+  for (uint32_t i = 0; i < voltages.rows(); i++) {
+    for (uint32_t j = 0; j < voltages.cols(); j++)
       LOG_TRACE_print(" " + String(voltages(i, j)))
     LOG_TRACE_println()
   }
@@ -121,7 +121,7 @@ static lin::Vector<float, 0, 20> b;
 static lin::Matrix<float, 3, 3> R;
 static lin::Vector3f x;
 
-unsigned char calculate_sun_vector(lin::Vector3f &sun_vec) {
+uint8_t calculate_sun_vector(lin::Vector3f &sun_vec) {
   // Prepare least squares problem
   std::size_t j = 0;
   for (std::size_t i = 0; i < voltages.size(); i++) { // TODO : Only include is_functional ADCs

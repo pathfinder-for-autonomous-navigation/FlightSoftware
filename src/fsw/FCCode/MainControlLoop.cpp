@@ -30,7 +30,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       adcs_monitor(registry, adcs_monitor_offset, adcs),
       debug_task(registry, debug_task_offset),
       attitude_estimator(registry, attitude_estimator_offset),
-      gomspace(&hk, &config, &config2),
+      gs_hk(), gs_config(), gs_config2(),
+      gomspace(&gs_hk, &gs_config, &gs_config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
       docksys(),
       docking_controller(registry, docking_controller_offset, docksys),
@@ -40,7 +41,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       dcdc("dcdc"),
       dcdc_controller(registry, dcdc_controller_offset, dcdc),
       eeprom_controller(registry, eeprom_controller_offset),
-      memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
+      memory_use_f("sys.memory_use", Serializer<uint32_t>(300000)),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
       adcs_commander(registry, adcs_commander_offset), // needs inputs from attitude computer

@@ -58,7 +58,7 @@ void setup() {
   LOG_INFO_println("MTR module initialization complete")
 }
 
-void actuate(unsigned char mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim) {
+void actuate(uint8_t mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim) {
   LOG_TRACE_header
   LOG_TRACE_println("Actuating MTRs")
 
@@ -88,8 +88,7 @@ void actuate(unsigned char mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim) {
     }
 
     // Clamp the command
-    float cmd = (mtr_cmd(i) > mtr_lim ? mtr_lim : mtr_cmd(i));
-    cmd = (mtr_cmd(i) < -mtr_lim ? -mtr_lim : mtr_cmd(i));
+    const float cmd = (mtr_cmd(i) > mtr_lim ? mtr_lim : mtr_cmd(i));
 
     mtrs[i].actuate((int)(32768.0f * cmd / max_moment));
 

@@ -63,7 +63,7 @@ class LSM6DSM : public I2CDevice {
     OUTZ_H_G = 0x27
   };
   /** See the \c I2CDevice class for implementation details. */
-  void setup(i2c_t3 *wire, uint8_t addr, unsigned long timeout = DEV_I2C_TIMEOUT);
+  void setup(i2c_t3 *wire, uint8_t addr, uint64_t timeout = DEV_I2C_TIMEOUT);
   /** Reconfigures the gyroscope sample rate and mode settings.If this
    *  is succesful, the device is enabled.
    *  @return True if the reset was succesful and false otherwise. */
@@ -91,9 +91,9 @@ class LSM6DSM : public I2CDevice {
 
  private:
   /** Gyroscope angular momentum vector. */
-  int16_t omega[3];
+  int16_t omega[3] = {0,0,0};
   /** Gyroscope temperature value. */
-  int16_t temp;
+  int16_t temp = 0;
 };
 }  // namespace dev
 }  // namespace adcs

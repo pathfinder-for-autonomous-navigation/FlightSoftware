@@ -15,7 +15,7 @@
 namespace adcs {
 namespace dev {
 
-void MMC34160PJ::setup(i2c_t3 *wire, unsigned long timeout) {
+void MMC34160PJ::setup(i2c_t3 *wire, uint64_t timeout) {
   this->I2CDevice::setup(wire, 0x30, timeout);
 }
 

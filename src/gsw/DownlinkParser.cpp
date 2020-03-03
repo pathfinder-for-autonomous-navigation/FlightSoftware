@@ -5,7 +5,7 @@
 #include <json.hpp>
 
 const std::vector<std::string> dummy_statefields = {};
-const std::vector<unsigned int> dummy_periods = {};
+const std::vector<uint32_t> dummy_periods = {};
 
 DownlinkParser::DownlinkParser(StateFieldRegistry& r,
                                const std::vector<DownlinkProducer::FlowData>& flow_data) :
@@ -28,7 +28,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
 
     // If the first bit of the packet is a 1, it's the start of a new frame.
     // Otherwise the packet belongs to a previous frame.
-    const bool is_first_packet_in_frame = (static_cast<unsigned char>(packet[0]) >> 7) == 0b1;
+    const bool is_first_packet_in_frame = (static_cast<uint8_t>(packet[0]) >> 7) == 0b1;
     if (!is_first_packet_in_frame || most_recent_frame.size() == 0) {
         // The downlink frame isn't done coming down yet; add the
         // packet to the downlink frame that's currently being
@@ -49,19 +49,19 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
         std::vector<bool> frame_bits(frame_to_process.size() * 8);
         for(size_t i = 0; i < frame_to_process.size(); i++) {
             std::bitset<8> x(frame_to_process[i]);
-            for(int j = 0; j < 8; j++) {
+            for(uint8_t j = 0; j < 8; j++) {
                 frame_bits[i*8 + j] = x[7 - j];
             }
         }
 
         // Step 2: Remove header bits from the packet.
-        for(int i = frame_bits.size() / DownlinkProducer::num_bits_in_packet; i >= 0; i--) {
+        for(uint16_t i = frame_bits.size() / DownlinkProducer::num_bits_in_packet; i >= 0; i--) {
             frame_bits.erase(frame_bits.begin() + i * DownlinkProducer::num_bits_in_packet);
         }
 
         // Step 3: Process control cycle count
-        unsigned int cycle_count;
-        Serializer<unsigned int> cycle_count_sr;
+        uint32_t cycle_count;
+        Serializer<uint32_t> cycle_count_sr;
         const std::vector<bool> cycle_count_bits(frame_bits.begin(), frame_bits.begin() + 32);
         cycle_count_sr.set_bit_array(cycle_count_bits);
         cycle_count_sr.deserialize(&cycle_count);
@@ -76,9 +76,9 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
         // As flows are processed, their bits are removed from the frame.
         while(frame_bits.size() > 0) {
             // Step 4.1. Get flow ID and check if it's valid.
-            unsigned char flow_id;
+            uint8_t flow_id;
 
-            Serializer<unsigned char> flow_id_sr(flow_data.size());
+            Serializer<uint8_t> flow_id_sr(flow_data.size());
             if (flow_id_sr.bitsize() > frame_bits.size()) {
                 // The frame doesn't contain the full flow ID. Stop processing.
                 ret["metadata"]["error"] = "flow ID incomplete";
@@ -96,7 +96,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
             }
 
             // Check if flow has been repeated. This shouldn't be possible.
-            const std::vector<unsigned char> found_flow_ids = ret["metadata"]["flow_ids"];
+            const std::vector<uint8_t> found_flow_ids = ret["metadata"]["flow_ids"];
             if (std::find(found_flow_ids.begin(), found_flow_ids.end(), flow_id)
                     != found_flow_ids.end())
             {
@@ -112,7 +112,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
             // it exists there.
             const DownlinkProducer::Flow* flow = nullptr;
             for(const DownlinkProducer::Flow& f : flow_data) {
-                unsigned char found_flow_id;
+                uint8_t found_flow_id;
                 f.id_sr.deserialize(&found_flow_id);
                 if (flow_id == found_flow_id) {
                     flow = &f;
@@ -130,7 +130,7 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
             // to the downlink data.
             for(ReadableStateFieldBase* field : flow->field_list) {
                 const std::vector<bool>::iterator field_end_it =
-                    frame_bits.begin() + field->get_bit_array().size();
+                    frame_bits.begin() + field->bitsize();
 
                 const std::vector<bool> field_bits(frame_bits.begin(), field_end_it);
                 field->set_bit_array(field_bits);

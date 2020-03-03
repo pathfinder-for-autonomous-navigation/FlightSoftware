@@ -27,11 +27,11 @@
  */
 
 // Quake driver setup is initialized when QuakeController constructor is called
-QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) : 
+QuakeManager::QuakeManager(StateFieldRegistry &registry, uint32_t offset) : 
     TimedControlTask<bool>(registry, "quake", offset),
-    max_wait_cycles_f("radio.max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
-    max_transceive_cycles_f("radio.max_transceive", Serializer<unsigned int>(PAN::one_day_ccno)),
-    radio_err_f("radio.err", Serializer<int>(-90, 10)),
+    max_wait_cycles_f("radio.max_wait", Serializer<uint32_t>(PAN::one_day_ccno)),
+    max_transceive_cycles_f("radio.max_transceive", Serializer<uint32_t>(PAN::one_day_ccno)),
+    radio_err_f("radio.err", Serializer<int32_t>(-90, 10)),
     radio_mt_packet_f("uplink.ptr"),
     radio_mt_len_f("uplink.len"),
     radio_state_f("radio.state"),
@@ -54,8 +54,8 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     #endif
 
     // Retrieve fields from registry
-    snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);
-    radio_mo_packet_fp = find_internal_field<char*>("downlink.ptr", __FILE__, __LINE__);
+    snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size");
+    radio_mo_packet_fp = find_internal_field<char*>("downlink.ptr");
 
     // Initialize Quake Manager variables
     max_wait_cycles_f.set(1);
@@ -64,12 +64,12 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     qct.request_state(CONFIG);
     radio_mt_packet_f.set(qct.get_MT_msg());
     radio_mt_len_f.set(0);
-    radio_state_f.set(static_cast<unsigned int>(radio_state_t::disabled));
-    radio_state_f.set(static_cast<unsigned int>(radio_state_t::config));
+    radio_state_f.set(static_cast<uint32_t>(radio_state_t::disabled));
+    radio_state_f.set(static_cast<uint32_t>(radio_state_t::config));
     dump_telemetry_f.set(false);
 
     // Setup MO Buffers
-    max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
+    max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(PAN::packet_size));
     mo_buffer_copy = new char[max_snapshot_size];
 }
 
@@ -181,9 +181,9 @@ bool QuakeManager::dispatch_write() {
             memcpy(mo_buffer_copy, radio_mo_packet_fp->get(), max_snapshot_size);
         }
         // load the current 70 bytes of the buffer
-       qct.set_downlink_msg(mo_buffer_copy + (packet_size*mo_idx), packet_size);
-       assert(max_snapshot_size/packet_size != 0);
-       mo_idx = (mo_idx + 1) % (max_snapshot_size/packet_size);
+       qct.set_downlink_msg(mo_buffer_copy + (PAN::packet_size*mo_idx), PAN::packet_size);
+       assert(max_snapshot_size/PAN::packet_size != 0);
+       mo_idx = (mo_idx + 1) % (max_snapshot_size/PAN::packet_size);
     }
 
     int err_code = qct.execute();
@@ -306,7 +306,7 @@ bool QuakeManager::transition_radio_state(radio_state_t new_state)
 {
     // printf(debug_severity::info, 
     //     "[Quake Info] Transitioning from radio state %d to %d", 
-    //     static_cast<unsigned int> (radio_state_f),
+    //     static_cast<uint32_t> (radio_state_f),
     //     new_state);
     bool bOk = true;
     switch(new_state)
@@ -332,7 +332,7 @@ bool QuakeManager::transition_radio_state(radio_state_t new_state)
     }
     // Update the last checkin cycle
     last_checkin_cycle_f.set(control_cycle_count);
-    radio_state_f.set(static_cast<unsigned int>(new_state));
+    radio_state_f.set(static_cast<uint32_t>(new_state));
 
     if ( !bOk ) // Sanity check
         printf(debug_severity::error, "Invalid state transition from %d to %d",

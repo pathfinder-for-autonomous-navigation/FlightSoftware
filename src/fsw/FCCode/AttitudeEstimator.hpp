@@ -16,7 +16,7 @@ class AttitudeEstimator : public TimedControlTask<void> {
      * 
      * @param registry 
      */
-    AttitudeEstimator(StateFieldRegistry& registry, unsigned int offset);
+    AttitudeEstimator(StateFieldRegistry& registry, uint32_t offset);
 
     /**
      * @brief Using raw sensor inputs, determine the attitude and angular state

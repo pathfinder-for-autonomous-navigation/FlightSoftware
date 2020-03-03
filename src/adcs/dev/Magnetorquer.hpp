@@ -24,7 +24,7 @@ namespace dev {
 class Magnetorquer : public Device {
  public:
   /** Sets the forward and backward pins associated with this magnetorquer. */
-  void setup(unsigned int f_pin, unsigned int r_pin);
+  void setup(uint32_t f_pin, uint32_t r_pin);
   /** Sets the PWM value to zero and marks the magnetorquer as functional.
    *  @return True. */
   virtual bool reset() override;
@@ -38,9 +38,9 @@ class Magnetorquer : public Device {
 
  private:
   /** Forward enable pin. */
-  unsigned int f_pin;
+  uint32_t f_pin = 0;
   /** Reverse enable pin. */
-  unsigned int r_pin;
+  uint32_t r_pin = 0;
 };
 }  // namespace dev
 }  // namespace adcs

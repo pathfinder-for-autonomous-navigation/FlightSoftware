@@ -16,7 +16,7 @@
 namespace adcs {
 namespace dev {
 
-void LIS2MDLTR::setup(i2c_t3 *wire, unsigned long timeout) {
+void LIS2MDLTR::setup(i2c_t3 *wire, uint64_t timeout) {
   this->I2CDevice::setup(wire, 0b0011110, timeout);
 }
 
@@ -72,7 +72,7 @@ bool LIS2MDLTR::read() {
 }  // namespace adcs
 
 // /*
-//     Magnetometer::Magnetometer(i2c_t3& wire,uint8_t addr,unsigned long timeout)
+//     Magnetometer::Magnetometer(i2c_t3& wire,uint8_t addr,uint64_t timeout)
 //     :I2CDevice(wire,Magnetometer::ADDR,2000){
 //     }*/
     

@@ -26,19 +26,19 @@ namespace imu {
 /** i2c bus the gyroscope communicate on. */
 static i2c_t3 *const gyr_wire = &Wire2;
 /** i2c address of the gyroscope. */
-static unsigned char const gyr_addr = dev::LSM6DSM::ADDR::GND;
+static uint8_t const gyr_addr = dev::LSM6DSM::ADDR::GND;
 /** i2c timeout in microseconds used by the gyroscope. */
-static unsigned long const gyr_timeout = 10000;
+static uint64_t const gyr_timeout = 10000;
 
 /** i2c bus the first magnetometer communicate on. */
 static i2c_t3 *const mag1_wire = &Wire1;
 /** i2c timeout in microseconds used by the first magnetometer. */
-static unsigned long const mag1_timeout = 10000;
+static uint64_t const mag1_timeout = 10000;
 
 /** i2c bus the second magnetometer communicate on. */
 static i2c_t3 *const mag2_wire = &Wire2;
 /** i2c timout in microseconds used by the second magnetometer. */
-static unsigned long const mag2_timeout = mag1_timeout;
+static uint64_t const mag2_timeout = mag1_timeout;
 
 /** Transformation matrix from the gyroscope's coordinate system to the body
  *  frame of the spacecraft. */

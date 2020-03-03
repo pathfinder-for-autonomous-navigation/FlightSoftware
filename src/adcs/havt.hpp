@@ -28,7 +28,7 @@ namespace havt {
 extern dev::Device* dev_ptrs[havt::max_devices];
 
 /**
- * @brief internal_table is just a nicer object to work with than an unsigned int
+ * @brief internal_table is just a nicer object to work with than an uint32_t
  * 
  * It is intended store identical information as the read havt register at all times
  */

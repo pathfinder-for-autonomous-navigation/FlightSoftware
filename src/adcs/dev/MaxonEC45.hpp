@@ -24,10 +24,11 @@ namespace dev {
 /** @class MaxonEC45
  *  */
 class MaxonEC45 : public Device {
+  // TODO add constructor?
  public:
   /** Sets up this mootor on the following clockwise enable, counterclockwise
    *  enable, speed servo pin, potentiometer, and potentiometer rdac channel. */
-  void setup(unsigned int cw_pin, unsigned int ccw_pin, unsigned int speed_pin,
+  void setup(uint32_t cw_pin, uint32_t ccw_pin, uint32_t speed_pin,
              AD5254 *potentiometer, void (AD5254::*const set_r)(uint8_t));
   /** Sets the speed to zero, ramp to zero, disable the clockwise pin, and
    *  disables the counterclockwise pin then marks the device functional. 
@@ -51,19 +52,19 @@ class MaxonEC45 : public Device {
 
  private:
   /** Clockwise rotation enable pin. */
-  unsigned int cw_pin;
+  uint32_t cw_pin = 0;
   /** Counterclockwise rotation enable pin. */
-  unsigned int ccw_pin;
+  uint32_t ccw_pin = 0;
   /** Speed servo. */
   Servo servo;
   /** Potentiometer in control of the analog ramp. */
-  AD5254 *potentiometer;
+  AD5254 *potentiometer = nullptr;
   /** Analog ramp set function. */
   void (AD5254::*set_r)(uint8_t r);
   /** Current motor speed setting. */
-  int speed;
+  int speed = 0;
   /** Current acceleration ramp setting. */
-  uint8_t axl_ramp;
+  uint8_t axl_ramp = 0;
 };
 }  // namespace dev
 }  // namespace adcs

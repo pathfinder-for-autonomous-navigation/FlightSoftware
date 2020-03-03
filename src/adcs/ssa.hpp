@@ -50,7 +50,7 @@ void update_sensors(float adc_flt);
  *  return FAILURE instead of COMPLETE.
  *  @param[out] sun_vec Normalized vector in R3 is written to this reference.
  *  @return Sun sensor resulting mode - i.e. COMPLETE or FAILURE. */
-unsigned char calculate_sun_vector(lin::Vector3f &sun_vec);
+uint8_t calculate_sun_vector(lin::Vector3f &sun_vec);
 
 }  // namespace ssa
 }  // namespace adcs

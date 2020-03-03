@@ -3,14 +3,14 @@
 #include <cmath>
 
 PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry, 
-    unsigned int offset, Devices::Piksi &_piksi) 
+    uint32_t offset, Devices::Piksi &_piksi) 
     : TimedControlTask<void>(registry, "piksi", offset),
     piksi(_piksi),
     pos_f("piksi.pos", Serializer<d_vector_t>(0,100000,100)),
     vel_f("piksi.vel", Serializer<d_vector_t>(0,100000,100)),
     baseline_pos_f("piksi.baseline_pos", Serializer<d_vector_t>(0,100000,100)),
-    current_state_f("piksi.state", Serializer<unsigned int>(4)),
-    fix_error_count_f("piksi.fix_error_count", Serializer<unsigned int>(1001)),
+    current_state_f("piksi.state", Serializer<uint32_t>(4)),
+    fix_error_count_f("piksi.fix_error_count", Serializer<uint32_t>(1001)),
     time_f("piksi.time", Serializer<gps_time_t>()),
     last_fix_time_f("piksi.last_fix_time")
     {
@@ -27,7 +27,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
 
         // Set initial values
         constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-        current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_fix));
+        current_state_f.set(static_cast<uint32_t>(piksi_mode_t::no_fix));
         pos_f.set({nan, nan, nan});
         vel_f.set({nan, nan, nan});
         baseline_pos_f.set({nan, nan, nan});
@@ -49,29 +49,29 @@ void PiksiControlTask::execute()
     //if we haven't had a good reading in ~120 seconds the piksi is probably dead
     //eventually replace with HAVT logic
     if(fix_error_count_f.get() > DEAD_CYCLE_COUNT){
-        current_state_f.set(static_cast<unsigned int>(piksi_mode_t::dead));
+        current_state_f.set(static_cast<uint32_t>(piksi_mode_t::dead));
         //prevent roll over
         fix_error_count_f.set(1001);
         return;
     }
 
     if(read_out == 5){
-        current_state_f.set(static_cast<unsigned int>(piksi_mode_t::time_limit_error));
+        current_state_f.set(static_cast<uint32_t>(piksi_mode_t::time_limit_error));
         return;
     }
 
     else if(read_out == 4){
-        current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_data_error));
+        current_state_f.set(static_cast<uint32_t>(piksi_mode_t::no_data_error));
         return;
     }
 
     else if(read_out == 3){
-        current_state_f.set(static_cast<unsigned int>(piksi_mode_t::crc_error));
+        current_state_f.set(static_cast<uint32_t>(piksi_mode_t::crc_error));
         return;
     }
 
     else if(read_out == 2){
-        current_state_f.set(static_cast<unsigned int>(piksi_mode_t::no_fix));
+        current_state_f.set(static_cast<uint32_t>(piksi_mode_t::no_fix));
         return;
     }
 
@@ -96,33 +96,33 @@ void PiksiControlTask::execute()
             //error caused by times not matching up
             //indicitave of getting only part of the next scream
 
-            current_state_f.set(static_cast<unsigned int>(piksi_mode_t::sync_error));
+            current_state_f.set(static_cast<uint32_t>(piksi_mode_t::sync_error));
             return;
         }
 
         int nsats = piksi.get_pos_ecef_nsats();
         if(nsats < 4){
-            current_state_f.set(static_cast<unsigned int>(piksi_mode_t::nsat_error));
+            current_state_f.set(static_cast<uint32_t>(piksi_mode_t::nsat_error));
             return;
         }
 
         if(read_out == 0) {
-            current_state_f.set(static_cast<unsigned int>(piksi_mode_t::spp));
+            current_state_f.set(static_cast<uint32_t>(piksi_mode_t::spp));
             last_fix_time_f.set(get_system_time());
         }
         if(read_out == 1){
             int baseline_flag = piksi.get_baseline_ecef_flags();
             if(baseline_flag == 1){
-                current_state_f.set(static_cast<unsigned int>(piksi_mode_t::fixed_rtk));
+                current_state_f.set(static_cast<uint32_t>(piksi_mode_t::fixed_rtk));
                 last_fix_time_f.set(get_system_time());
             }
             else if(baseline_flag == 0){
-                current_state_f.set(static_cast<unsigned int>(piksi_mode_t::float_rtk));
+                current_state_f.set(static_cast<uint32_t>(piksi_mode_t::float_rtk));
                 last_fix_time_f.set(get_system_time());
             }
             else{
                 //baseline flag unexpected value
-                current_state_f.set(static_cast<unsigned int>(piksi_mode_t::data_error));
+                current_state_f.set(static_cast<uint32_t>(piksi_mode_t::data_error));
                 return;
             }
         }
@@ -138,7 +138,7 @@ void PiksiControlTask::execute()
 
     //if read_out is unexpected value which it shouldn't do lol
     else{
-        current_state_f.set(static_cast<unsigned int>(piksi_mode_t::data_error));
+        current_state_f.set(static_cast<uint32_t>(piksi_mode_t::data_error));
         return;
     }
 }

@@ -27,7 +27,7 @@ class ADS1015 : public I2CDevice {
  public:
   /** @enum ADDR
    *  Possible address values for the ADS1015. */
-  enum ADDR : unsigned char {
+  enum ADDR : uint8_t {
     GND = 0x48,
     VDD = 0x49,
     SSDA = 0x4A,
@@ -35,7 +35,7 @@ class ADS1015 : public I2CDevice {
   };
   /** @enum GAIN
    *   Possible gain values for the ADS1015. */
-  enum GAIN : unsigned short {
+  enum GAIN : uint16_t {
     /** Offers a full range input of =/- 6.144 V. */
     TWO_THIRDS = 0x0000,
     /** Offers a full range input of =/- 4.096 V. */
@@ -51,7 +51,7 @@ class ADS1015 : public I2CDevice {
   };
   /** @enum SR
    *  Possible sample rates for the ADS1015. */
-  enum SR : unsigned short {
+  enum SR : uint16_t {
     SPS_128 = 0x0000,
     SPS_250 = 0x0020,
     SPS_490 = 0x0040,
@@ -63,7 +63,7 @@ class ADS1015 : public I2CDevice {
   };
   /** @enum CHANNEL
    *  Possible read channels both single ended and differential. */
-  enum CHANNEL : unsigned short {
+  enum CHANNEL : uint16_t {
     DIFFERENTIAL_0_1 = 0x0000,
     DIFFERENTIAL_0_3 = 0x1000,
     DIFFERENTIAL_1_3 = 0x2000,
@@ -76,7 +76,7 @@ class ADS1015 : public I2CDevice {
   /** Establishes default settings and sets up the ADC on the given bus with the
    *  specified settings. See the \c I2CDevice class documentation for more
    *  details. */
-  void setup(i2c_t3 *wire, uint8_t addr, unsigned int alert_pin, unsigned long timeout = DEV_I2C_TIMEOUT);
+  void setup(i2c_t3 *wire, uint8_t addr, uint32_t alert_pin, uint64_t timeout = DEV_I2C_TIMEOUT);
   /** Configures the alert pin to signal when a conversion is complete. If this
    *  is succesful, the device is enabled.
    *  @return True if the reset is succesful and false otherwise. */
@@ -106,15 +106,15 @@ class ADS1015 : public I2CDevice {
 
  private:
   /** ADC conversion complete alert pin. */
-  unsigned int alert_pin;
+  uint32_t alert_pin = 0;
   /** Timestamp of the start of the most recent conversion. */
-  unsigned long timestamp;
+  uint64_t timestamp = 0;
   /** Sample timeout delay. */
-  unsigned int sample_delay;
+  uint32_t sample_delay = 0;
   /** ADC samples per second. */
-  SR sample_rate;
+  SR sample_rate = SPS_1600;
   /** ADC gain value. */
-  GAIN gain;
+  GAIN gain = TWO;
 };
 }  // namespace dev
 }  // namespace adcs

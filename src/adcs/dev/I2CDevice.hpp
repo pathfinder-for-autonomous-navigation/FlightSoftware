@@ -50,7 +50,7 @@ class I2CDevice : public Device {
   /** Initializes the device by setting it's I2C bus, address, and timeout
    *  values in microseconds. The device still needs to be reset before being
    *  used. */
-  void setup(i2c_t3 *wire, uint8_t addr, unsigned long timeout);
+  void setup(i2c_t3 *wire, uint8_t addr, uint64_t timeout);
   /** Specifies whether or not an error has occurred without resetting the error
    *  accumulator.
    *  @return True if an error has occurred and false otherwise. */
@@ -76,13 +76,13 @@ class I2CDevice : public Device {
    *  added to the error accumulator. 
    *  @param[in] len Number of bytes requested.
    *  @param[in] s End the transmission with a STOP or NOSTOP bit. */
-  inline void i2c_request_from(unsigned int len, i2c_stop s = I2C_STOP);
+  inline void i2c_request_from(uint32_t len, i2c_stop s = I2C_STOP);
   /** Inlined call to \c sendRequest from the i2c_t3 library. This is the
    *  non-blocking equivalent of \c i2c_request_from and requires a call to \c
    *  i2c_finish.
    *  @param[in] len Number of bytes requested.
    *  @param[in] s End the transmission with a STOP or NOSTOP bit. */
-  inline void i2c_send_request(unsigned int len, i2c_stop s = I2C_STOP);
+  inline void i2c_send_request(uint32_t len, i2c_stop s = I2C_STOP);
   /** Inlined call to \c done from the i2c_t3 library.
    *  @return False if a non-blocking I2C command is still running on this bus
    *          and true otherwise. */
@@ -101,7 +101,7 @@ class I2CDevice : public Device {
    *  @param[in] data Source array for outgoing data.
    *  @param[in] len Length of the array in terms of the type \c T. */
   template <typename T>
-  inline void i2c_write(T const *data, unsigned int len);
+  inline void i2c_write(T const *data, uint32_t len);
   /** Inlined call to \c readByte from the i2c_t3 library. Any errors are added
    *  to the error accumulator.
    *  @return Byte value read in over I2C. */
@@ -112,19 +112,19 @@ class I2CDevice : public Device {
    *  @param[out] data Destination array for incoming data.
    *  @param[in] len Length of the array in terms of the type \c T. */
   template <typename T>
-  inline void i2c_read(T *data, unsigned int len);
+  inline void i2c_read(T *data, uint32_t len);
 
  private:
   /** Pointer to the I2C bus this I2C device communicated on. */
-  i2c_t3 *wire;
+  i2c_t3 *wire = nullptr;
   /** Address for this I2C device. */
-  uint8_t addr;
+  uint8_t addr = 0;
   /** I2C timeout value for this I2C device in microseconds. */
-  unsigned long timeout;
+  uint64_t timeout = 0;
   /** Consecutive error counter. */
-  unsigned int error_count;
+  uint32_t error_count = 0;
   /** Error accumulator. */
-  bool error_acc;
+  bool error_acc = false;
 };
 }  // namespace dev
 }  // namespace adcs

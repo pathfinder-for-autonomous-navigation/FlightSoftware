@@ -11,9 +11,9 @@
 class PiksiControlTask : public TimedControlTask<void>
 {
 public:
-    static constexpr unsigned int DEAD_CYCLE_COUNT = 1000;
+    static constexpr uint32_t DEAD_CYCLE_COUNT = 1000;
 
-    PiksiControlTask(StateFieldRegistry &registry, unsigned int offset, Devices::Piksi &_piksi);
+    PiksiControlTask(StateFieldRegistry &registry, uint32_t offset, Devices::Piksi &_piksi);
     
     Devices::Piksi& piksi;
     /** 
@@ -28,8 +28,8 @@ public:
 
     // Serializer and StateField for currentState and
     // number of cycles since a good reading
-    ReadableStateField<unsigned int> current_state_f;
-    ReadableStateField<unsigned int> fix_error_count_f;
+    ReadableStateField<uint32_t> current_state_f;
+    ReadableStateField<uint32_t> fix_error_count_f;
 
     //Serializer and StateField for time
     Serializer<gps_time_t> time_sr;
@@ -44,14 +44,14 @@ protected:
     std::array<double, 3> vel;
     std::array<double, 3> baseline_pos;
 
-    msg_gps_time_t msg_time;
+    msg_gps_time_t msg_time {0,0,0,0};
     gps_time_t time;
 
-    unsigned int iar;
+    uint32_t iar = 0;
 
-    unsigned int pos_tow;
+    uint32_t pos_tow = 0;
 
-    unsigned int vel_tow;
+    uint32_t vel_tow = 0;
 
-    unsigned int baseline_tow;
+    uint32_t baseline_tow = 0;
 };

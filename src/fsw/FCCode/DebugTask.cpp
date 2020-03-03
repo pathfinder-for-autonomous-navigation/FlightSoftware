@@ -1,14 +1,14 @@
 #include "DebugTask.hpp"
 
 #ifdef FUNCTIONAL_TEST
-DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
+DebugTask::DebugTask(StateFieldRegistry &registry, uint32_t offset)
     : TimedControlTask<void>(registry, "debug", offset),
       start_cycle_f("cycle.start", Serializer<bool>()) {
   add_writable_field(start_cycle_f);
   init();
 }
 #else
-DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
+DebugTask::DebugTask(StateFieldRegistry &registry, uint32_t offset)
     : TimedControlTask<void>(registry, "debug", offset) {
   init();
 }

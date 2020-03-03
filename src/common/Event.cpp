@@ -1,19 +1,21 @@
 #include "Event.hpp"
+#include <numeric>
 
 Event::Event(const std::string& name,
           std::vector<ReadableStateFieldBase*>& _data_fields,
-          const char* (*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
-          const unsigned int& _ccno) :
+          const char* (*_print_fn)(const uint32_t, std::vector<ReadableStateFieldBase*>&),
+          const uint32_t& _ccno) :
           StateField<bool>(name, true, false),
-          _name(name),
           data_fields(_data_fields),
           print_fn(_print_fn),
           ccno(_ccno)
 {
-    unsigned int field_data_size_bits = 0;
-    for(const ReadableStateFieldBase* field : data_fields) {
-        field_data_size_bits += field->bitsize();
-    }
+    size_t field_data_size_bits = std::accumulate(
+        data_fields.begin(), 
+        data_fields.end(),
+        0,
+        [](size_t sz, ReadableStateFieldBase* f) { return sz + f->bitsize();} );
+
     field_data.reset(new bit_array(32 + field_data_size_bits));
     for(size_t i = 0; i < field_data->size(); i++) {
         (*field_data)[i] = 0;
@@ -21,7 +23,7 @@ Event::Event(const std::string& name,
 }
 
 void Event::serialize() {
-    unsigned int field_data_ptr = 0;
+    uint32_t field_data_ptr = 0;
 
     std::bitset<32> ccno_serialized(ccno);
     for(int i = 0; i < 32; i++) {

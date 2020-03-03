@@ -8,7 +8,7 @@
 #ifdef DESKTOP
 #include <thread>
 #include <chrono>
-#include <time.h>
+#include <ctime>
 #else
 #include <Arduino.h>
 #endif
@@ -20,16 +20,16 @@
  * - sys_time_t denotes an absolute time
  * - systime_duration_t denotes a unitless separation between two system times
  * 
- * On Teensies, these quantities are all unsigned ints representing microseconds. On
+ * On Teensies, these quantities are all uint32_ts representing microseconds. On
  * desktop platforms, the std::chrono library is used to provide meaning to each of
  * these two constructs. See below.
  */
 #ifdef DESKTOP
-typedef std::chrono::steady_clock::time_point sys_time_t;
-typedef std::chrono::steady_clock::duration systime_duration_t;
+using sys_time_t = std::chrono::steady_clock::time_point;
+using systime_duration_t = std::chrono::steady_clock::duration;
 #else
-typedef unsigned int sys_time_t;
-typedef unsigned int systime_duration_t;
+using sys_time_t = uint32_t;
+using systime_duration_t = uint32_t;
 #endif
 
 /**
@@ -45,7 +45,7 @@ class TimedControlTaskBase {
     
 
   public:
-    static unsigned int control_cycle_count;
+    static uint32_t control_cycle_count;
 
     /**
      * @brief Get the system time.
@@ -66,7 +66,7 @@ class TimedControlTaskBase {
      * @param delta 
      * @return systime_duration_t 
      */
-    static unsigned int duration_to_us(const systime_duration_t& delta) {
+    static uint32_t duration_to_us(const systime_duration_t& delta) {
       #ifdef DESKTOP
         return std::chrono::duration_cast<std::chrono::microseconds>(delta).count();
       #else
@@ -80,7 +80,7 @@ class TimedControlTaskBase {
      * @param delta 
      * @return systime_duration_t 
      */
-    static systime_duration_t us_to_duration(const unsigned int delta) {
+    static systime_duration_t us_to_duration(const uint32_t delta) {
       #ifdef DESKTOP
         return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::microseconds(delta));
       #else
@@ -88,7 +88,7 @@ class TimedControlTaskBase {
       #endif
     }
 
-    static void wait_duration(const unsigned int& delta_t) {
+    static void wait_duration(const uint32_t& delta_t) {
       const sys_time_t start = get_system_time();
       // Wait until execution time
       while(duration_to_us(get_system_time() - start) < delta_t) {
@@ -118,7 +118,7 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      * any time to wait.
      */
     std::string num_lates_field_name;
-    ReadableStateField<unsigned int> num_lates_f;
+    ReadableStateField<uint32_t> num_lates_f;
 
     /**
      * @brief Number of times a control task
@@ -150,11 +150,11 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      */
     void wait_until_time(const sys_time_t& time) {
       // Compute timing statistics and publish them to state fields
-      const signed int delta_t = (signed int) duration_to_us(time - get_system_time());
+      const int32_t delta_t = (int32_t) duration_to_us(time - get_system_time());
       if (delta_t <= 0) {
         num_lates_f.set(num_lates_f.get() + 1);
       }
-      const unsigned int wait_time = std::max(delta_t, 0);
+      const uint32_t wait_time = std::max(static_cast<unsigned int>(delta_t), static_cast<unsigned int>(0));
       const float new_avg_wait = ((avg_wait_f.get() * control_cycle_count) + wait_time) /
         (control_cycle_count + 1);
       avg_wait_f.set(new_avg_wait);
@@ -172,11 +172,11 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
      */
     TimedControlTask(StateFieldRegistry& registry,
                      const std::string& name,
-                     const unsigned int _offset) :
+                     const uint32_t _offset) :
         ControlTask<T>(registry),
         offset(us_to_duration(_offset + 1)),
         num_lates_field_name("timing." + name + ".num_lates"),
-        num_lates_f(num_lates_field_name, Serializer<unsigned int>()),
+        num_lates_f(num_lates_field_name, Serializer<uint32_t>()),
         avg_wait_field_name("timing." + name + ".avg_wait"),
         avg_wait_f(avg_wait_field_name, Serializer<float>(0,PAN::control_cycle_time_us,32))
     {

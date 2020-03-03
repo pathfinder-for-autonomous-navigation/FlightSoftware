@@ -1,52 +1,61 @@
 #include "StateFieldRegistry.hpp"
+#include <algorithm>
 
 StateFieldRegistry::StateFieldRegistry() {}
 
 InternalStateFieldBase*
 StateFieldRegistry::find_internal_field(const std::string &name) const {
-    for (InternalStateFieldBase* field : internal_fields) {
-        if (name == field->name()) {
-            return field;
-        }
-    }
+    auto it =
+        std::find_if(
+            internal_fields.begin(), internal_fields.end(), 
+            [&](InternalStateFieldBase* f) { return f->name() == name; });
 
-    return nullptr;
+    if (it != internal_fields.end()) return *it;
+    else return nullptr;
 }
 
 ReadableStateFieldBase*
 StateFieldRegistry::find_readable_field(const std::string &name) const {
-    for (ReadableStateFieldBase* field : readable_fields) {
-        if (name == field->name()) return field;
-    }
+    auto it =
+        std::find_if(
+            readable_fields.begin(), readable_fields.end(), 
+            [&](ReadableStateFieldBase* f) { return f->name() == name; });
 
-    return nullptr;
+    if (it != readable_fields.end()) return *it;
+    else return nullptr;
 }
 
 WritableStateFieldBase*
 StateFieldRegistry::find_writable_field(const std::string &name) const {
-    for (WritableStateFieldBase* field : writable_fields) {
-        if (name == field->name()) return field;
-    }
+    auto it =
+        std::find_if(
+            writable_fields.begin(), writable_fields.end(), 
+            [&](WritableStateFieldBase* f) { return f->name() == name; });
 
-    return nullptr;
+    if (it != writable_fields.end()) return *it;
+    else return nullptr;
 }
 
 Event*
 StateFieldRegistry::find_event(const std::string &name) const {
-    for (Event* event : events) {
-        if (name == event->name()) return event;
-    }
+    auto it =
+        std::find_if(
+            events.begin(), events.end(), 
+            [&](Event* e) { return e->name() == name; });
 
-    return nullptr;
+    if (it != events.end()) return *it;
+    else return nullptr;
 }
 
 Fault*
 StateFieldRegistry::find_fault(const std::string &name) const {
-    for (Fault* fault : faults) {
-        if (name == fault->name()) return fault;
-    }
+    auto it =
+        std::find_if(
+            faults.begin(), faults.end(), 
+            [&](Fault* f) { return f->name() == name; });
 
-    return nullptr;
+    if (it != faults.end()) return *it;
+    else return nullptr;
 }
 
 bool StateFieldRegistry::add_internal_field(InternalStateFieldBase* field) {

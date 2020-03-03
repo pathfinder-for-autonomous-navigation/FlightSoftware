@@ -64,7 +64,7 @@ void setup() {
   }
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
-  for (unsigned int i = 0; i < 3; i++) {
+  for (uint32_t i = 0; i < 3; i++) {
     if (!adcs[i].is_functional()) {
       LOG_ERROR_header
       LOG_ERROR_println("ADC" + String(i) + " initialization failed")
@@ -106,12 +106,12 @@ void update_sensors(float speed_flt, float ramp_flt) {
   readings = speed_rd;
 
   // Initialize read for each enabled ADC
-  for (unsigned int i = 0; i < 3; i++)
+  for (uint32_t i = 0; i < 3; i++)
     if (adcs[i].is_functional())
       adcs[i].start_read(dev::ADS1015::CHANNEL::DIFFERENTIAL_0_1);
 
   // End read for each enabled ADC
-  for (unsigned int i = 0; i < 3; i++)
+  for (uint32_t i = 0; i < 3; i++)
     if (adcs[i].is_functional())
       if (adcs[i].end_read(val))
         readings(i) = utl::fp(val, rwa::min_speed_read, rwa::max_speed_read);
@@ -132,12 +132,12 @@ void update_sensors(float speed_flt, float ramp_flt) {
   readings = ramp_rd;
 
   // Begin read for each enabled ADC
-  for (unsigned int i = 0; i < 3; i++)
+  for (uint32_t i = 0; i < 3; i++)
     if (adcs[i].is_functional())
       adcs[i].start_read(dev::ADS1015::CHANNEL::SINGLE_2);
 
   // End read for each enabled ADC
-  for (unsigned int i = 0; i < 3; i++)
+  for (uint32_t i = 0; i < 3; i++)
     if (adcs[i].is_functional())
       if (adcs[i].end_read(val))
         readings(i) = utl::fp(val, rwa::min_torque, rwa::max_torque);
@@ -155,7 +155,7 @@ void update_sensors(float speed_flt, float ramp_flt) {
       + String(ramp_rd(2)))
 }
 
-void actuate(unsigned char rwa_mode, lin::Vector3f rwa_cmd) {
+void actuate(uint8_t rwa_mode, lin::Vector3f rwa_cmd) {
   LOG_TRACE_header
   LOG_TRACE_printlnF("Actuatings reaction wheels")
 
@@ -174,7 +174,7 @@ void actuate(unsigned char rwa_mode, lin::Vector3f rwa_cmd) {
       if (!potentiometer.is_functional()) break;
 
       // Set wheel configurations
-      for (unsigned int i = 0; i < 3; i++) {
+      for (uint32_t i = 0; i < 3; i++) {
         if (rwa_cmd(i) >= 0) {
           wheels[i].set_speed(2000);
           wheels[i].set_axl_ramp(utl::uc(rwa_cmd(i), 0.0f, rwa::max_torque));
@@ -194,7 +194,7 @@ void actuate(unsigned char rwa_mode, lin::Vector3f rwa_cmd) {
 
     case RWAMode::RWA_SPEED_CTRL: {
       // Set wheel configurations
-      for (unsigned int i = 0; i < 3; i++) {
+      for (uint32_t i = 0; i < 3; i++) {
         if (wheels[i].is_functional()) {
           wheels[i].set_axl_ramp(255);
           wheels[i].set_speed((int)(1000.0f * rwa_cmd(i) / rwa::max_speed_command + 1000.0f));

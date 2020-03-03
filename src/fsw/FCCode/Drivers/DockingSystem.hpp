@@ -14,17 +14,17 @@ namespace Devices {
 class DockingSystem : public Devices::Device {
    public:
     //! Default pin for docking motor I1.
-    static constexpr unsigned char motor_i1_pin = 14;
+    static constexpr uint8_t motor_i1_pin = 14;
     //! Default pin for docking motor I2.
-    static constexpr unsigned char motor_i2_pin = 15;
+    static constexpr uint8_t motor_i2_pin = 15;
     //! Default pin for docking motor direction pin.
-    static constexpr unsigned char motor_direction_pin = 16;
+    static constexpr uint8_t motor_direction_pin = 16;
     //! Default pin for docking motor sleep pin.
-    static constexpr unsigned char motor_sleep_pin = 17;
+    static constexpr uint8_t motor_sleep_pin = 17;
     //! Default pin for docking motor step.
-    static constexpr unsigned char motor_step_pin = 39;
+    static constexpr uint8_t motor_step_pin = 39;
     //! Docking switch pin
-    static constexpr unsigned char switch_pin = 36;
+    static constexpr uint8_t switch_pin = 36;
 
     /**
      * @brief Construct a new Docking System object.
@@ -104,7 +104,7 @@ class DockingSystem : public Devices::Device {
     /**
      * @brief Returns number of steps left to turn.
      */
-    unsigned int get_steps() const;
+    uint32_t get_steps() const;
 
     #ifdef DESKTOP
     void set_dock(bool dock);
@@ -125,7 +125,7 @@ class DockingSystem : public Devices::Device {
     #endif
 
     //number of steps left to complete
-    unsigned int steps = 0;
+    uint32_t steps = 0;
 };
 }  // namespace Devices
 

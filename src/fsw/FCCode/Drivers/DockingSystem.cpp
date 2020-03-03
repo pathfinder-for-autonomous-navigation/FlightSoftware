@@ -111,7 +111,7 @@ void DockingSystem::set_turn_angle(float angle) {
     steps=angle/step_angle;
 }
 
-unsigned int DockingSystem::get_steps() const {
+uint32_t DockingSystem::get_steps() const {
     return steps;
 }
 

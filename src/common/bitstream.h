@@ -140,7 +140,7 @@ class bitstream{
  * @brief Attempts to consume a specified number of bits from the current position
  *  and returns them in u8
  * @param num_bits the number of bits to read. Maximum is 8
- * @param u8 a pointer to the unsigned int to write to
+ * @param u8 a pointer to the uint32_t to write to
  * @return 0 if num_bits > 8, else the number of bits read
  */
   size_t next(size_t num_bits, uint8_t* u8);
@@ -149,7 +149,7 @@ class bitstream{
  * @brief Writes a specified number of bits of the given unsigned byte to the
  * current position of the bitstream. The stream is "consumed", so bit_offset
  * and byte_offset will move to reflect the number of bits written
- * @param u8 8 bit unsigned int to write to the current position in the stream
+ * @param u8 8 bit uint32_t to write to the current position in the stream
  * @param num_bits the number of bits to write from u8
  * @return The number of bits written
  */
@@ -159,7 +159,7 @@ class bitstream{
 
 /**
  * @brief Special operators for reading at the current position of a bit stream.
- * Consumes 32, 16, or 8 bits of the bit stream into the specified unsigned int
+ * Consumes 32, 16, or 8 bits of the bit stream into the specified uint32_t
  */ 
 bitstream& operator >>(bitstream&, uint32_t&);
 bitstream& operator >>(bitstream&, uint16_t&);

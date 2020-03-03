@@ -20,7 +20,7 @@ void setup() {
 template <class T, std::size_t N>
 bool comp_float_arr(std::array<T,N> a,std::array<T,N> b,float margin){
     bool ret = true;
-    for(unsigned int i = 0;i<N;i++){
+    for(uint32_t i = 0;i<N;i++){
         if(abs(a[i]-b[i])>margin)
             ret = false;
     }
@@ -99,7 +99,7 @@ bool test_set_imu_filters(){
 }
 
 bool test_get_who_am_i(){
-    unsigned char temp;
+    uint8_t temp;
     adcs_d.get_who_am_i(&temp);
     
     return Devices::ADCS::WHO_AM_I_EXPECTED == temp;
@@ -108,7 +108,7 @@ bool test_get_who_am_i(){
 bool test_getset_ssa_mode(){
     //state.cpp default is 0
     adcs_d.set_ssa_mode(adcs::SSAMode::SSA_IN_PROGRESS);
-    unsigned char temp = 0;
+    uint8_t temp = 0;
     adcs_d.get_ssa_mode(&temp);
     return temp == adcs::SSAMode::SSA_IN_PROGRESS;
 

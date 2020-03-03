@@ -74,9 +74,9 @@ class QLocate
 {
 public:
     /** Default pin # for network ready pin. **/
-    static constexpr unsigned char DEFAULT_NR_PIN = 35;
+    static constexpr uint8_t DEFAULT_NR_PIN = 35;
     /** Default timeout for serial communications on device. **/
-    static constexpr unsigned int DEFAULT_TIMEOUT = 10;
+    static constexpr uint32_t DEFAULT_TIMEOUT = 10;
     /** Maximum size of an MT or MO message **/ 
     static constexpr int MAX_MSG_SIZE = 340;
 
@@ -84,10 +84,10 @@ public:
      *  the serial port with begin(), it will be done in the constructor.
      */
 #ifndef DESKTOP
-    QLocate(const std::string &name, HardwareSerial *const port, unsigned char nr_pin, int timeout);
+    QLocate(const std::string &name, HardwareSerial *const port, uint8_t nr_pin, int timeout);
 #else 
     using String = std::string;
-    QLocate();
+    QLocate() = default;
 #endif
     /*! Sets up QLocate. Initializes state to IDLE */
 #ifndef DESKTOP
@@ -130,27 +130,27 @@ public:
      */
     /*! Request to load a message of size [len].
      * Returns WRONG_LENGTH if len > 340 */
-    virtual int query_sbdwb_1(int len);
+    int query_sbdwb_1(int len);
     /*! Loads the message into MO Buffer if READY is received. */
-    virtual int query_sbdwb_2(char const *c, int len);
+    int query_sbdwb_2(char const *c, int len);
     /*! Attempt to retrieve sbdwb status code returned from loading the message */
-    virtual int get_sbdwb();
+    int get_sbdwb();
 
     /*! Initilizes an SBDIX session with the quake.
      *  Returns a OK if the method was successful (driver was IDLE).
      */
-    virtual int query_sbdix_1();
+    int query_sbdix_1();
 
     /*! Reads the response to the previous SBDIX session.
      * Returns
      * PORT_UNAVAILABLE if no response has been received
      * OK if successfully received response and wrote to response array
      */
-    virtual int get_sbdix();
+    int get_sbdix();
 
     /*! Initializes SBDRB session.
      */
-    virtual int query_sbdrb_1();
+    int query_sbdrb_1();
 
     /*! Reads data from the MT buffer on the QLocate into message.
      * Returns
@@ -160,22 +160,22 @@ public:
      * UNEXPECTED_RESPONSE if message does not match message size
      * BAD_CHECKSUM for incorrect message checksum
      */
-    virtual int get_sbdrb();
+    int get_sbdrb();
 
     /*! Returns pin # for Network Ready pin. */
-    unsigned char nr_pin();
+    uint8_t nr_pin();
 
     /**
      * sbdix command response array of the following format: 
      * +SBDIX:<MO status>,<MOMSN>,<MT status>,<MTMSN>,<MT length>,<MT queued>
      * */
-    int sbdix_r[6];
+    int sbdix_r[6] = {0,0,0,0,0,0};
 
     /**
      * Contains the contents of the Mobile terminated (MT) message 
      * retreived from the last SBDRB session. 
      */
-    char mt_message[MAX_MSG_SIZE];
+    char mt_message[MAX_MSG_SIZE] = {0};
 
 private:
 
@@ -197,10 +197,10 @@ private:
 
 
     /*! Returns a message checksum according to the Iridium requirements */
-    short checksum(char const *c, int len);
+    int16_t checksum(char const *c, int len);
 
     /*! Network ready pin (unused) */
-    unsigned char nr_pin_;
+    uint8_t nr_pin_;
 
     /** ! Parses the data returned from requesting SBD transfer (AT+SBDIX)
      * Example:
@@ -222,5 +222,5 @@ private:
     void disable() override;
 #endif
 };
-} 
+} // namespace Devices
 #endif

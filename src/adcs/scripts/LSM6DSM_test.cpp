@@ -37,7 +37,7 @@ void setup() {
   }
 }
 
-unsigned long time_stamp = 0;
+uint64_t time_stamp = 0;
 
 void loop() {
 

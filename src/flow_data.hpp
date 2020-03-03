@@ -5,6 +5,6 @@
 
 namespace PAN {
     extern const std::vector<DownlinkProducer::FlowData> flow_data;
-}
+} // namespace PAN
 
 #endif

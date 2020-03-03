@@ -17,7 +17,7 @@ class DCDCController : public TimedControlTask<void> {
      * @param offset
      * @param dcdc converter 
      */
-    DCDCController(StateFieldRegistry& registry, unsigned int offset,
+    DCDCController(StateFieldRegistry& registry, uint32_t offset,
         Devices::DCDC &dcdc);
 
     /**

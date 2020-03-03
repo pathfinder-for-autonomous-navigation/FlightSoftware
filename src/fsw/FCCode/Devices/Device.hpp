@@ -35,7 +35,7 @@ class Device : public Nameable {
     const std::string _name;
 
    public:
-    Device(const std::string& name) : _name(name) {}
+    explicit Device(const std::string& name) : _name(name) {}
 
     const std::string& name() const override { return _name; }
 

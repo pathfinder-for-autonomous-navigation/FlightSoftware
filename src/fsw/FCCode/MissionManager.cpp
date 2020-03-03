@@ -7,24 +7,24 @@
 const constexpr double MissionManager::initial_detumble_safety_factor;
 const constexpr double MissionManager::initial_close_approach_trigger_dist;
 const constexpr double MissionManager::initial_docking_trigger_dist;
-const constexpr unsigned int MissionManager::initial_max_radio_silence_duration;
-const constexpr unsigned int MissionManager::deployment_wait;
+const constexpr uint32_t MissionManager::initial_max_radio_silence_duration;
+const constexpr uint32_t MissionManager::deployment_wait;
 const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
 
-MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
+MissionManager::MissionManager(StateFieldRegistry& registry, uint32_t offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
     detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 10)),
     close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
     max_radio_silence_duration_f("max_radio_silence",
-        Serializer<unsigned int>(2 * PAN::one_day_ccno)),
-    adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
+        Serializer<uint32_t>(2 * PAN::one_day_ccno)),
+    adcs_state_f("adcs.state", Serializer<uint8_t>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
-    mission_state_f("pan.state", Serializer<unsigned char>(12)),
+    mission_state_f("pan.state", Serializer<uint8_t>(12)),
     is_deployed_f("pan.deployed", Serializer<bool>()),
-    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32)),
-    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2))
+    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<uint32_t>(0, 15000, 32)),
+    sat_designation_f("pan.sat_designation", Serializer<uint8_t>(2))
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -37,34 +37,34 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
 
-    adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
-    adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);
+    adcs_paired_fp = find_writable_field<bool>("adcs.paired");
+    adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body");
 
-    radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
-    last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
+    radio_state_fp = find_internal_field<uint8_t>("radio.state");
+    last_checkin_cycle_fp = find_internal_field<uint32_t>("radio.last_comms_ccno");
 
-    prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
+    prop_state_fp = find_readable_field<uint8_t>("prop.state");
 
-    propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
+    propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos");
 
-    reboot_fp = find_writable_field<bool>("gomspace.gs_reboot_cmd", __FILE__, __LINE__);
+    reboot_fp = find_writable_field<bool>("gomspace.gs_reboot_cmd");
 
-    docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
+    docked_fp = find_readable_field<bool>("docksys.docked");
 
     low_batt_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("gomspace.low_batt", __FILE__, __LINE__));
+            find_writable_field<bool>("gomspace.low_batt"));
     adcs_functional_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.functional_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.functional_fault"));
     wheel1_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel1_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel1_fault"));
     wheel2_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel2_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel2_fault"));
     wheel3_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel3_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel3_fault"));
     wheel_pot_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel_pot_fault"));
     failed_pressurize_fp = static_cast<Fault*>(
-            find_writable_field<bool>("prop.failed_pressurize", __FILE__, __LINE__));
+            find_writable_field<bool>("prop.failed_pressurize"));
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -96,36 +96,7 @@ void MissionManager::execute() {
         set(radio_state_t::disabled);
     }
 
-    // Step 2. Change state if faults exist.
-    bool is_fault_responsive_state = false;
-    for(mission_state_t fault_responsive_state : fault_responsive_states) {
-        if (state == fault_responsive_state) {
-            is_fault_responsive_state = true;
-            break;
-        }
-    }
-    if (is_fault_responsive_state) {
-        const bool prop_depressurized = failed_pressurize_fp->is_faulted();
-        const bool power_faulted = low_batt_fault_fp->is_faulted();
-        const bool adcs_faulted = check_adcs_hardware_faults();
-
-        // Note: faults that cause safehold should be checked before faults that
-        // merely cause a transition back to standby.
-        if (power_faulted || adcs_faulted) {
-            transition_to_state(mission_state_t::safehold,
-                adcs_state_t::startup,
-                prop_state_t::disabled);
-            return;
-        }
-        else if (prop_depressurized) {
-            transition_to_state(mission_state_t::standby,
-                adcs_state_t::point_standby,
-                prop_state_t::idle);
-            return;
-        } 
-    }
-
-    // Step 3. Handle state.
+    // Step 2. Handle state.
     switch(state) {
         case mission_state_t::startup:                    dispatch_startup();                    break;
         case mission_state_t::detumble:                   dispatch_detumble();                   break;
@@ -140,7 +111,7 @@ void MissionManager::execute() {
         case mission_state_t::safehold:                   dispatch_safehold();                   break;
         case mission_state_t::manual:                     dispatch_manual();                     break;
         default:
-            printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
+            printf(debug_severity::error, "Master state not defined: %d\n", static_cast<uint8_t>(state));
             transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
             break;
     }
@@ -301,7 +272,7 @@ double MissionManager::distance_to_other_sat() const {
 }
 
 bool MissionManager::too_long_since_last_comms() const {
-    const unsigned int cycles_since_last_comms = control_cycle_count - last_checkin_cycle_fp->get();
+    const uint32_t cycles_since_last_comms = control_cycle_count - last_checkin_cycle_fp->get();
     return cycles_since_last_comms > max_radio_silence_duration_f.get();
 }
 
@@ -309,23 +280,23 @@ void MissionManager::set(mission_state_t state) {
     if (state == mission_state_t::safehold) {
         safehold_begin_ccno = control_cycle_count;
     }
-    mission_state_f.set(static_cast<unsigned char>(state));
+    mission_state_f.set(static_cast<uint8_t>(state));
 }
 
 void MissionManager::set(adcs_state_t state) {
-    adcs_state_f.set(static_cast<unsigned char>(state));
+    adcs_state_f.set(static_cast<uint8_t>(state));
 }
 
 void MissionManager::set(prop_state_t state) {
-    prop_state_fp->set(static_cast<unsigned char>(state));
+    prop_state_fp->set(static_cast<uint8_t>(state));
 }
 
 void MissionManager::set(radio_state_t state) {
-    radio_state_fp->set(static_cast<unsigned char>(state));
+    radio_state_fp->set(static_cast<uint8_t>(state));
 }
 
 void MissionManager::set(sat_designation_t designation) {
-    sat_designation_f.set(static_cast<unsigned char>(designation));
+    sat_designation_f.set(static_cast<uint8_t>(designation));
 }
 
 void MissionManager::transition_to_state(mission_state_t mission_state,

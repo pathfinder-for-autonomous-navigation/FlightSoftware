@@ -14,7 +14,7 @@ class AttitudeComputer : public TimedControlTask<void> {
      * 
      * @param registry 
      */
-    AttitudeComputer(StateFieldRegistry& registry, unsigned int offset);
+    AttitudeComputer(StateFieldRegistry& registry, uint32_t offset);
 
     /**
      * @brief Determine control outputs for attitude computer.
@@ -25,7 +25,7 @@ class AttitudeComputer : public TimedControlTask<void> {
     /**
      * @brief Input required from mission manager.
      */
-    const WritableStateField<unsigned char>* adcs_state_fp;
+    const WritableStateField<uint8_t>* adcs_state_fp;
 
     /**
      * @brief Inputs required from ADCS system for pointing.

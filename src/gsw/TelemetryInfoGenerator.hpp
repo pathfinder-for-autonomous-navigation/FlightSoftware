@@ -16,7 +16,7 @@ class TelemetryInfoGenerator {
     /**
      * @brief Construct a new telemetry info generator
      */
-    TelemetryInfoGenerator(const std::vector<DownlinkProducer::FlowData>& _flow_data);
+    explicit TelemetryInfoGenerator(const std::vector<DownlinkProducer::FlowData>& _flow_data);
 
     /**
      * @brief Generates telemetry data in JSON format.

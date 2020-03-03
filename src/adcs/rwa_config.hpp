@@ -27,49 +27,49 @@ namespace rwa {
 /** Wire for the potentiometer. */
 static i2c_t3 *const pot_wire = &Wire1;
 /** Address for the potentiomter. */
-static unsigned char const pot_addr = dev::AD5254::ADDR::A01;
+static uint8_t const pot_addr = dev::AD5254::ADDR::A01;
 /** Timeout in microseconds for the potentiometer. */
-static unsigned long const pot_timeout = 10000;
+static uint64_t const pot_timeout = 10000;
 
 /** Clockwise enable pin for the zeroth wheel. */
-static unsigned int const wheel0_cw_pin = 26;
+static uint32_t const wheel0_cw_pin = 26;
 /** Counterclockwise enable pin for the zeroth wheel. */
-static unsigned int const wheel0_ccw_pin = 39;
+static uint32_t const wheel0_ccw_pin = 39;
 /** Speed servo pulse pin for the zeroth wheel. */
-static unsigned int const wheel0_speed_pin = 23;
+static uint32_t const wheel0_speed_pin = 23;
 /** Clockwise enable pin for the first wheel. */
-static unsigned int const wheel1_cw_pin = 10;
+static uint32_t const wheel1_cw_pin = 10;
 /** Counterclockwise enable pin for the first wheel. */
-static unsigned int const wheel1_ccw_pin = 25;
+static uint32_t const wheel1_ccw_pin = 25;
 /** Speed servo pulse pin for the first wheel. */
-static unsigned int const wheel1_speed_pin = 22;
+static uint32_t const wheel1_speed_pin = 22;
 /** Clockwise enable pin for the second wheel. */
-static unsigned int const wheel2_cw_pin = 9;
+static uint32_t const wheel2_cw_pin = 9;
 /** Counterclockwise enable pin for the second wheel. */
-static unsigned int const wheel2_ccw_pin = 24;
+static uint32_t const wheel2_ccw_pin = 24;
 /** Speed servo pulse pin for the second wheel. */
-static unsigned int const wheel2_speed_pin = 21;
+static uint32_t const wheel2_speed_pin = 21;
 
 /** Wire for the zeroth wheel's ADC. */
 static i2c_t3 *const adc0_wire = &Wire1;
 /** Address for the zeroth wheel's ADC. */
-static unsigned int const adc0_addr = dev::ADS1015::ADDR::GND;
+static uint32_t const adc0_addr = dev::ADS1015::ADDR::GND;
 /** Alert pin for the zeroth wheel's ADC. */
-static unsigned int const adc0_alrt = 11;
+static uint32_t const adc0_alrt = 11;
 /** Wire for the first wheel's ADC. */
 static i2c_t3 *const adc1_wire = &Wire1;
 /** Address for the first wheel's ADC. */
-static unsigned int const adc1_addr = dev::ADS1015::ADDR::VDD;
+static uint32_t const adc1_addr = dev::ADS1015::ADDR::VDD;
 /** Alert pin for the first wheel's ADC. */
-static unsigned int const adc1_alrt = 12;
+static uint32_t const adc1_alrt = 12;
 /** Wire for the second wheel's ADC. */
 static i2c_t3 *const adc2_wire = &Wire1;
 /** Address for the second wheel's ADC. */
-static unsigned int const adc2_addr = dev::ADS1015::ADDR::SSCL;
+static uint32_t const adc2_addr = dev::ADS1015::ADDR::SSCL;
 /** Alert pin for the second wheel's ADC. */
-static unsigned int const adc2_alrt = 16;
+static uint32_t const adc2_alrt = 16;
 /** Timeout value in microseconds for the wheel's ADCs. */
-static unsigned long const adcx_timeout = 10000;
+static uint64_t const adcx_timeout = 10000;
 
 /** Transforms a vector from the body frame into the commanding frame for the
  *  reaction wheels. */

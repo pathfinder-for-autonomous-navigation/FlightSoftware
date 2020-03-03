@@ -1,5 +1,6 @@
+#ifndef UPLINK_COMMON_H_
+#define UPLINK_COMMON_H_
 
-#pragma once
 #include <common/bitstream.h>
 #include <common/StateFieldRegistry.hpp>
 
@@ -9,7 +10,7 @@
  */
 class Uplink {
   public:
-  Uplink(StateFieldRegistry& r);
+  explicit Uplink(StateFieldRegistry& r);
 
   /**
    * registry is not assumed to be populated when this constructor is called
@@ -48,3 +49,5 @@ class Uplink {
   void _update_fields(bitstream& bs);
 
 };
+
+#endif

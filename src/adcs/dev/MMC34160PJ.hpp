@@ -58,7 +58,7 @@ class MMC34160PJ : public I2CDevice {
   };
   /** See the \c I2CDevice class for more details. The address defaults to 0x30
    *  for this device. */
-  void setup(i2c_t3 *wire, unsigned long timeout = DEV_I2C_TIMEOUT);
+  void setup(i2c_t3 *wire, uint64_t timeout = DEV_I2C_TIMEOUT);
   /** Places the device in continous measurement mode with the current sample
    *  rate setting. If this is succesful then the device is marked as
    *  functional.

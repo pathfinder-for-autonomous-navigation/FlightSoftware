@@ -1,6 +1,6 @@
 #include "DCDCController.hpp"
 
-DCDCController::DCDCController(StateFieldRegistry &registry, unsigned int offset,
+DCDCController::DCDCController(StateFieldRegistry &registry, uint32_t offset,
     Devices::DCDC &_dcdc)
     : TimedControlTask<void>(registry, "dcdc_ct", offset), dcdc(_dcdc),
       ADCSMotorDCDC_cmd_f("dcdc.ADCSMotor_cmd", Serializer<bool>()),

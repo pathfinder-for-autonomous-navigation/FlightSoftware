@@ -20,7 +20,7 @@ public:
      * @param offset control task offset
      * @param _adcs the input adcs system
      */
-    ADCSBoxController(StateFieldRegistry &registry, unsigned int offset, Devices::ADCS &_adcs);
+    ADCSBoxController(StateFieldRegistry &registry, uint32_t offset, Devices::ADCS &_adcs);
 
     /** ADCS Driver. **/
     Devices::ADCS& adcs_system;
@@ -35,45 +35,45 @@ protected:
      * @brief Command to get from mission_manager
      * 
      */
-    const WritableStateField<unsigned char>* adcs_state_fp;
+    const WritableStateField<uint8_t>* adcs_state_fp = nullptr;
 
     /**
      * @brief RWA command fields
      * 
      */
-    const WritableStateField<unsigned char>* rwa_mode_fp;
-    const WritableStateField<f_vector_t>* rwa_speed_cmd_fp;
-    const WritableStateField<f_vector_t>* rwa_torque_cmd_fp;
-    const WritableStateField<float>* rwa_speed_filter_fp;
-    const WritableStateField<float>* rwa_ramp_filter_fp;
+    const WritableStateField<uint8_t>* rwa_mode_fp = nullptr;
+    const WritableStateField<f_vector_t>* rwa_speed_cmd_fp = nullptr;
+    const WritableStateField<f_vector_t>* rwa_torque_cmd_fp = nullptr;
+    const WritableStateField<float>* rwa_speed_filter_fp = nullptr;
+    const WritableStateField<float>* rwa_ramp_filter_fp = nullptr;
 
     /**
      * @brief MTR command fields
      * 
      */
-    const WritableStateField<unsigned char>* mtr_mode_fp;
-    const WritableStateField<f_vector_t>* mtr_cmd_fp;
-    const WritableStateField<float>* mtr_limit_fp;
+    const WritableStateField<uint8_t>* mtr_mode_fp = nullptr;
+    const WritableStateField<f_vector_t>* mtr_cmd_fp = nullptr;
+    const WritableStateField<float>* mtr_limit_fp = nullptr;
 
     /**
      * @brief SSA command fields
      * 
      */
-    const WritableStateField<unsigned char>* ssa_mode_fp;
-    const WritableStateField<float>* ssa_voltage_filter_fp;
+    const WritableStateField<uint8_t>* ssa_mode_fp = nullptr;
+    const WritableStateField<float>* ssa_voltage_filter_fp = nullptr;
 
     /**
      * @brief IMU command fields
      * 
      */
-    const WritableStateField<unsigned char>* imu_mode_fp;
-    const WritableStateField<float>* imu_mag_filter_fp;
-    const WritableStateField<float>* imu_gyr_filter_fp;
-    const WritableStateField<float>* imu_gyr_temp_filter_fp;
-    const WritableStateField<float>* imu_gyr_temp_kp_fp;
-    const WritableStateField<float>* imu_gyr_temp_ki_fp;
-    const WritableStateField<float>* imu_gyr_temp_kd_fp;
-    const WritableStateField<float>* imu_gyr_temp_desired_fp;
+    const WritableStateField<uint8_t>* imu_mode_fp = nullptr;
+    const WritableStateField<float>* imu_mag_filter_fp = nullptr;
+    const WritableStateField<float>* imu_gyr_filter_fp = nullptr;
+    const WritableStateField<float>* imu_gyr_temp_filter_fp = nullptr;
+    const WritableStateField<float>* imu_gyr_temp_kp_fp = nullptr;
+    const WritableStateField<float>* imu_gyr_temp_ki_fp = nullptr;
+    const WritableStateField<float>* imu_gyr_temp_kd_fp = nullptr;
+    const WritableStateField<float>* imu_gyr_temp_desired_fp = nullptr;
 
     /**
      * @brief HAVT command tables, a vector of pointers to bool state fields

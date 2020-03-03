@@ -16,7 +16,7 @@ class Fault : public WritableStateField<bool> {
      * @param control_cycle_count Reference to the control cycle count.
      */
     Fault(const std::string& name,
-          const size_t _persistence, unsigned int& control_cycle_count);
+          const size_t _persistence, uint32_t& control_cycle_count);
 
     const std::string &name() const override { return _name; } 
 
@@ -58,9 +58,9 @@ class Fault : public WritableStateField<bool> {
     /**
      * @brief a debug return that tells the current consecutive signals
      * 
-     * @return unsigned int 
+     * @return uint32_t 
      */
-    unsigned int get_num_consecutive_signals();
+    uint32_t get_num_consecutive_signals();
     #endif
 
     /**
@@ -72,8 +72,8 @@ class Fault : public WritableStateField<bool> {
     WritableStateField<bool> override_f;
     WritableStateField<bool> unsignal_f;
 
-    Serializer<unsigned int> persist_sr;
-    WritableStateField<unsigned int> persistence_f;
+    Serializer<uint32_t> persist_sr;
+    WritableStateField<uint32_t> persistence_f;
     
   private:
     // Make the get() and set() methods of the state field private,
@@ -82,11 +82,11 @@ class Fault : public WritableStateField<bool> {
     using WritableStateField<bool>::set;
     using WritableStateField<bool>::get;
 
-    unsigned int& cc; // Control cycle count
-    unsigned int last_fault_time = 0; // Last control cycle # that the fault condition
+    uint32_t& cc; // Control cycle count
+    uint32_t last_fault_time = 0; // Last control cycle # that the fault condition
                                       // occurred
 
-    mutable unsigned int num_consecutive_signals = 0; // Number of consecutive signal condition
+    mutable uint32_t num_consecutive_signals = 0; // Number of consecutive signal condition
                                                      // occurrences at the current moment.
     
     // Keeps track of the previous suppress or override state

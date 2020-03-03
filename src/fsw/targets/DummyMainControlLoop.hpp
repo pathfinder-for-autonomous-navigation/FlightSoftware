@@ -1,8 +1,8 @@
 #ifndef DUMMY_MAIN_CONTROL_LOOP_TASK_HPP_
 #define DUMMY_MAIN_CONTROL_LOOP_TASK_HPP_
 
-#include "ControlTask.hpp"
-#include "DebugTask.hpp"
+#include <fsw/FCCode/ControlTask.hpp>
+#include <fsw/FCCode/DebugTask.hpp>
 #include <common/StateField.hpp>
 #include <common/StateFieldRegistry.hpp>
 
@@ -10,9 +10,9 @@ class DummyMainControlLoop : public ControlTask<void> {
    protected:
     DebugTask debug_task;
 
-    Serializer<unsigned int> value_sr;
-    ReadableStateField<unsigned int> readable_f;
-    WritableStateField<unsigned int> writable_f;
+    Serializer<uint32_t> value_sr;
+    ReadableStateField<uint32_t> readable_f;
+    WritableStateField<uint32_t> writable_f;
 
    public:
     /**
@@ -20,7 +20,7 @@ class DummyMainControlLoop : public ControlTask<void> {
      * 
      * @param registry State field registry
      */
-    DummyMainControlLoop(StateFieldRegistry& registry);
+    explicit DummyMainControlLoop(StateFieldRegistry& registry);
 
     /**
      * @brief Initializes debug console.

@@ -25,9 +25,14 @@
  */
 class QuakeManager : public TimedControlTask<bool> {
    public:
-    QuakeManager(StateFieldRegistry& registry, unsigned int offset);
+    QuakeManager(StateFieldRegistry& registry, uint32_t offset);
     ~QuakeManager();
+
     bool execute() override;
+
+    // Delete copy assignment and constructor (to please cppcheck)
+    QuakeManager(const QuakeManager& q) = delete;
+    QuakeManager& operator=(const QuakeManager& q) = delete;
 
    // protected:
    /**
@@ -69,13 +74,13 @@ class QuakeManager : public TimedControlTask<bool> {
    * @brief State machine constants that control how long the machine may
    * be in the WAIT and TRANSCEIVE states.
    */
-  WritableStateField<unsigned int> max_wait_cycles_f;
-  WritableStateField<unsigned int> max_transceive_cycles_f;
+  WritableStateField<uint32_t> max_wait_cycles_f;
+  WritableStateField<uint32_t> max_transceive_cycles_f;
 
     /**
     * @brief Quake Error field.
     **/ 
-   ReadableStateField<int> radio_err_f;
+   ReadableStateField<int32_t> radio_err_f;
 
    /**
     * @brief Uplink buffer.
@@ -85,17 +90,17 @@ class QuakeManager : public TimedControlTask<bool> {
    /**
     * @brief Uplink length.
     **/ 
-   InternalStateField<size_t> radio_mt_len_f; 
+   InternalStateField<uint32_t> radio_mt_len_f; 
 
    /**
     * @brief Current radio state (see radio_state_t.enum).
     **/
-   InternalStateField<unsigned char> radio_state_f;
+   InternalStateField<uint8_t> radio_state_f;
 
    /**
     * The last cycle for which we had comms
     */
-   InternalStateField<unsigned int> last_checkin_cycle_f;
+   InternalStateField<uint32_t> last_checkin_cycle_f;
 
    /**
     * @brief This flag can be used by the sim to dump telemetry over the USB line.
@@ -113,7 +118,7 @@ class QuakeManager : public TimedControlTask<bool> {
     return max_snapshot_size;
   }
 
-  InternalStateField<unsigned int>& dbg_get_last_checkin()
+  InternalStateField<uint32_t>& dbg_get_last_checkin()
   {
     return last_checkin_cycle_f;
   }
@@ -201,9 +206,7 @@ class QuakeManager : public TimedControlTask<bool> {
     // TODO: these values are temporary. Experiments should be conducted
     // to figure out maximum cycles we are willing to wait. 
   public:
-    static constexpr unsigned int max_config_cycles = 5;
-    static constexpr unsigned int max_write_cycles = 5;
-    static constexpr unsigned int max_read_cycles = 5;
-
-    static constexpr size_t packet_size = 70;
+    static constexpr uint32_t max_config_cycles = 5;
+    static constexpr uint32_t max_write_cycles = 5;
+    static constexpr uint32_t max_read_cycles = 5;
 };

@@ -14,7 +14,7 @@
 
 class MissionManager : public TimedControlTask<void> {
    public:
-    MissionManager(StateFieldRegistry& registry, unsigned int offset);
+    MissionManager(StateFieldRegistry& registry, uint32_t offset);
     void execute() override;
 
     // Constants that drive state transitions.
@@ -30,15 +30,15 @@ class MissionManager : public TimedControlTask<void> {
      * do-nothing period.
      */
     #ifdef FLIGHT
-        static constexpr unsigned int deployment_wait = 15000; // ~30 mins
+        static constexpr uint32_t deployment_wait = 15000; // ~30 mins
     #else
-        static constexpr unsigned int deployment_wait = 100;
+        static constexpr uint32_t deployment_wait = 100;
     #endif
     /**
      * @brief Number of control cycles to wait before declaring "too long since comms".
      */
-    WritableStateField<unsigned int> max_radio_silence_duration_f;
-    static constexpr unsigned int initial_max_radio_silence_duration = PAN::one_day_ccno;
+    WritableStateField<uint32_t> max_radio_silence_duration_f;
+    static constexpr uint32_t initial_max_radio_silence_duration = PAN::one_day_ccno;
 
     // These states respond to fault conditions.
     static constexpr std::array<mission_state_t, 5> fault_responsive_states = {
@@ -81,7 +81,7 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_docking();
     void dispatch_docked();
     void dispatch_safehold();
-    unsigned int safehold_begin_ccno = 0; // Control cycle # of the most recent
+    uint32_t safehold_begin_ccno = 0; // Control cycle # of the most recent
                                           // transition to safe hold.
 
     /**
@@ -105,13 +105,13 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_manual();
 
     // Fields required for control of prop subsystem.
-    ReadableStateField<unsigned char>* prop_state_fp;
+    ReadableStateField<uint8_t>* prop_state_fp;
 
     // Fields required for control of ADCS subsystem.
     /**
      * @brief Mode of ADCS system.
      **/
-    WritableStateField<unsigned char> adcs_state_f;
+    WritableStateField<uint8_t> adcs_state_f;
     /**
      * @brief Current angular momentum of ADCS system in the body frame.
      **/
@@ -146,26 +146,26 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Radio's mode.
      **/
-    InternalStateField<unsigned char>* radio_state_fp;
-    InternalStateField<unsigned int>* last_checkin_cycle_fp;
+    InternalStateField<uint8_t>* radio_state_fp;
+    InternalStateField<uint32_t>* last_checkin_cycle_fp;
 
     // Fields that control overall mission state.
     /**
      * @brief Current mission mode (see mission_mode_t.enum)
      */
-    WritableStateField<unsigned char> mission_state_f;
+    WritableStateField<uint8_t> mission_state_f;
     /**
      * @brief True if the satellite has exited the deployment timing phase.
      */
     ReadableStateField<bool> is_deployed_f;
-    ReadableStateField<unsigned int> deployment_wait_elapsed_f;
+    ReadableStateField<uint32_t> deployment_wait_elapsed_f;
 
     /**
      * @brief 2 if the satellite is the follower satellite. 1 if the
      * satellite is the leader satellite. 0 if the follower/leader designation
      * hasn't been made yet.
      */
-    WritableStateField<unsigned char> sat_designation_f;
+    WritableStateField<uint8_t> sat_designation_f;
 
    private:
     /**

@@ -16,11 +16,13 @@
 #ifndef SRC_ADCS_ADCS_CONSTANTS_HPP_
 #define SRC_ADCS_ADCS_CONSTANTS_HPP_
 
+#include <cstdint>
+
 namespace adcs {
 
 /** \enum Endianness
  *  Sets the endianness of the I2C transmissions. **/
-enum Endianness : unsigned char {
+enum Endianness : uint8_t {
   /** Sets the I2C messages to little-endian interpretation. **/
   LITTLE = 0,
   /** Sets the I2C messages to big-endian interpretation. **/
@@ -29,7 +31,7 @@ enum Endianness : unsigned char {
 
 /** \enum ADCSMode
  *  Enumeration of ADCS modes. **/
-enum ADCSMode : unsigned char {
+enum ADCSMode : uint8_t {
   /** Only passive sensor measurements are taken. **/
   ADCS_PASSIVE = 0,
   /** All ADCS peripherials are enabled. **/
@@ -38,7 +40,7 @@ enum ADCSMode : unsigned char {
 
 /** \enum IMUMode
  *  Outlines all modes of the IMU assembly. */
-enum IMUMode : unsigned char {
+enum IMUMode : uint8_t {
   /** ADCS attempts to read the first magnetometer. */
   MAG1 = 0,
   /** ADCS attempts to read the second magnetometer. */
@@ -51,7 +53,7 @@ enum IMUMode : unsigned char {
 
 /** \enum MTRMode
  *  Outlines all modes of the magnetic torque rods. */
-enum MTRMode : unsigned char {
+enum MTRMode : uint8_t {
   /** Disables the magnetic torque rods. */
   MTR_DISABLED = 0,
   /** Places the magnetic torque rods under normal operation. */
@@ -60,7 +62,7 @@ enum MTRMode : unsigned char {
 
 /** \enum RWAMode
  *  Outlines all modes of the reaction wheels. **/
-enum RWAMode : unsigned char {
+enum RWAMode : uint8_t {
   /** Disables the reaction wheels. */
   RWA_DISABLED = 0,
   /** Speed controlled mode. **/
@@ -71,7 +73,7 @@ enum RWAMode : unsigned char {
 
 /** \enum SSAMode
  *  Outlines all modes of the sun sensors. **/
-enum SSAMode : unsigned char {
+enum SSAMode : uint8_t {
   /** Conversion may have failed and the sun vector is not realiable. **/
   SSA_FAILURE = 0,
   /** Conversion to sun vector in progress. **/
@@ -82,7 +84,7 @@ enum SSAMode : unsigned char {
 
 /** \enum CMDFlag
  *  Outlines all possible actuation command modes. */
-enum CMDFlag : unsigned char {
+enum CMDFlag : uint8_t {
   /** No new actuation command is present. */
   OUTDATED = 0,
   /** A new actuation command is present. */
@@ -187,14 +189,14 @@ constexpr static float min_voltage_thresh = min_voltage_rd;
 /** Maximum SSA algorithm voltage threshold. */
 constexpr static float max_voltage_thresh = max_voltage_rd;
 /** Number of sun sensors */
-constexpr static unsigned char num_sun_sensors = 20;
+constexpr static uint8_t num_sun_sensors = 20;
 
 }  // namespace ssa
 
 namespace havt {
 
 /** Maximum number of devices in the HAVT table. Leave as 32, not meant to be adjusted */
-constexpr static unsigned char max_devices = 32;
+constexpr static uint8_t max_devices = 32;
 
 } // namespace havt
 }  // namespace adcs

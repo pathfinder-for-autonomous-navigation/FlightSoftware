@@ -28,7 +28,7 @@ void setup() {
 }
 
 void loop() {
-  unsigned long time = millis();
+  uint64_t time = millis();
   ssa::update_sensors(0.85f);
 
   LOG_INFO_header

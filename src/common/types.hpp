@@ -7,30 +7,30 @@
  * @brief Float-based vector.
  *
  */
-typedef std::array<float, 3> f_vector_t;
+using f_vector_t = std::array<float, 3>;
 
 /**
  * @brief Double-based vector.
  *
  */
-typedef std::array<double, 3> d_vector_t;
+using d_vector_t = std::array<double, 3>;
 
 /**
  * @brief Float-based quaternion.
  *
  */
-typedef std::array<float, 4> f_quat_t;
+using f_quat_t = std::array<float, 4>;
 
 /**
  * @brief Double-based quaternion.
  *
  */
-typedef std::array<double, 4> d_quat_t;
+using d_quat_t = std::array<double, 4>;
 
 /**
  * @brief Wrapper around integer for a temperature.
  *
  */
-typedef signed int temperature_t;
+using temperature_t = int32_t;
 
 #endif

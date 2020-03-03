@@ -12,7 +12,7 @@ class ClockManager : public TimedControlTask<void> {
      * @param control_cycle_size Control cycle time, in nanoseconds if on desktop,
      * and in microseconds if on Teensy.
      */
-    ClockManager(StateFieldRegistry& registry, const unsigned int control_cycle_size);
+    ClockManager(StateFieldRegistry& registry, const uint32_t control_cycle_size);
 
     /**
      * @brief Increments the control cycle count and sets the control cycle
@@ -41,7 +41,7 @@ class ClockManager : public TimedControlTask<void> {
     /**
      * @brief Keeps track of the current control cycle count.
      */
-    ReadableStateField<unsigned int> control_cycle_count_f;
+    ReadableStateField<uint32_t> control_cycle_count_f;
 };
 
 #endif

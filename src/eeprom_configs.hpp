@@ -6,6 +6,6 @@
 namespace PAN {
     extern const std::vector<std::string> statefields;
     extern const std::vector<unsigned int> periods;
-}
+} // namespace PAN
 
 #endif

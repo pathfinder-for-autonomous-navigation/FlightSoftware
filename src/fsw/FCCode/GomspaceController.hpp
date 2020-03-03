@@ -16,7 +16,7 @@ class GomspaceController : public TimedControlTask<void> {
      * @param offset
      * @param gs 
      */
-    GomspaceController(StateFieldRegistry& registry, unsigned int offset,
+    GomspaceController(StateFieldRegistry& registry, uint32_t offset,
         Devices::Gomspace &gs);
 
     /**
@@ -35,35 +35,35 @@ class GomspaceController : public TimedControlTask<void> {
     Fault get_hk_fault;
     Fault low_batt_fault;
 
-    Serializer<unsigned int> batt_threshold_sr;
-    WritableStateField<unsigned int> batt_threshold_f;
+    Serializer<uint32_t> batt_threshold_sr;
+    WritableStateField<uint32_t> batt_threshold_f;
     
-    Serializer<unsigned int> vboost_sr;
-    ReadableStateField<unsigned int> vboost1_f;
-    ReadableStateField<unsigned int> vboost2_f;
-    ReadableStateField<unsigned int> vboost3_f;
+    Serializer<uint32_t> vboost_sr;
+    ReadableStateField<uint32_t> vboost1_f;
+    ReadableStateField<uint32_t> vboost2_f;
+    ReadableStateField<uint32_t> vboost3_f;
 
-    Serializer<unsigned int> vbatt_sr;
-    ReadableStateField<unsigned int> vbatt_f;
+    Serializer<uint32_t> vbatt_sr;
+    ReadableStateField<uint32_t> vbatt_f;
 
-    Serializer<unsigned int> curin_sr;
-    ReadableStateField<unsigned int> curin1_f;
-    ReadableStateField<unsigned int> curin2_f;
-    ReadableStateField<unsigned int> curin3_f;
+    Serializer<uint32_t> curin_sr;
+    ReadableStateField<uint32_t> curin1_f;
+    ReadableStateField<uint32_t> curin2_f;
+    ReadableStateField<uint32_t> curin3_f;
 
-    Serializer<unsigned int> cursun_sr;
-    ReadableStateField<unsigned int> cursun_f;
+    Serializer<uint32_t> cursun_sr;
+    ReadableStateField<uint32_t> cursun_f;
 
-    Serializer<unsigned int> cursys_sr;
-    ReadableStateField<unsigned int> cursys_f;
+    Serializer<uint32_t> cursys_sr;
+    ReadableStateField<uint32_t> cursys_f;
 
-    Serializer<unsigned int> curout_sr;
-    ReadableStateField<unsigned int> curout1_f;
-    ReadableStateField<unsigned int> curout2_f;
-    ReadableStateField<unsigned int> curout3_f;
-    ReadableStateField<unsigned int> curout4_f;
-    ReadableStateField<unsigned int> curout5_f;
-    ReadableStateField<unsigned int> curout6_f;
+    Serializer<uint32_t> curout_sr;
+    ReadableStateField<uint32_t> curout1_f;
+    ReadableStateField<uint32_t> curout2_f;
+    ReadableStateField<uint32_t> curout3_f;
+    ReadableStateField<uint32_t> curout4_f;
+    ReadableStateField<uint32_t> curout5_f;
+    ReadableStateField<uint32_t> curout6_f;
 
     Serializer<bool> output_sr;
     ReadableStateField<bool> output1_f;
@@ -73,35 +73,35 @@ class GomspaceController : public TimedControlTask<void> {
     ReadableStateField<bool> output5_f;
     ReadableStateField<bool> output6_f;
 
-    Serializer<unsigned int> wdt_i2c_time_left_sr;
-    ReadableStateField<unsigned int> wdt_i2c_time_left_f;
+    Serializer<uint32_t> wdt_i2c_time_left_sr;
+    ReadableStateField<uint32_t> wdt_i2c_time_left_f;
 
-    Serializer<unsigned int> counter_wdt_i2c_sr;
-    ReadableStateField<unsigned int> counter_wdt_i2c_f;
+    Serializer<uint32_t> counter_wdt_i2c_sr;
+    ReadableStateField<uint32_t> counter_wdt_i2c_f;
 
-    Serializer<unsigned int> counter_boot_sr;
-    ReadableStateField<unsigned int> counter_boot_f;
+    Serializer<uint32_t> counter_boot_sr;
+    ReadableStateField<uint32_t> counter_boot_f;
 
-    Serializer<signed int> temp_sr;
-    ReadableStateField<signed int> temp1_f;
-    ReadableStateField<signed int> temp2_f;
-    ReadableStateField<signed int> temp3_f;
-    ReadableStateField<signed int> temp4_f;
+    Serializer<int32_t> temp_sr;
+    ReadableStateField<int32_t> temp1_f;
+    ReadableStateField<int32_t> temp2_f;
+    ReadableStateField<int32_t> temp3_f;
+    ReadableStateField<int32_t> temp4_f;
 
-    Serializer<unsigned char> bootcause_sr;
-    ReadableStateField<unsigned char> bootcause_f;
+    Serializer<uint8_t> bootcause_sr;
+    ReadableStateField<uint8_t> bootcause_f;
 
-    Serializer<unsigned char> battmode_sr;
-    ReadableStateField<unsigned char> battmode_f;
+    Serializer<uint8_t> battmode_sr;
+    ReadableStateField<uint8_t> battmode_f;
 
-    Serializer<unsigned char> pptmode_sr;
-    ReadableStateField<unsigned char> pptmode_f;
+    Serializer<uint8_t> pptmode_sr;
+    ReadableStateField<uint8_t> pptmode_f;
 
     Serializer<bool> heater_sr;
     ReadableStateField<bool> heater_f;
 
     // The controller will set the outputs of the gomspace once a period (number of control cycles)
-    unsigned int period = 300;
+    uint32_t period = 300;
 
     // Command statefields to control the Gomspace outputs. Will
     // be set by various individual subsystems and the ground.
@@ -113,13 +113,13 @@ class GomspaceController : public TimedControlTask<void> {
     WritableStateField<bool> power_cycle_output5_cmd_f;
     WritableStateField<bool> power_cycle_output6_cmd_f;
 
-    Serializer<unsigned int> pv_output_cmd_sr;
-    WritableStateField<unsigned int> pv1_output_cmd_f;
-    WritableStateField<unsigned int> pv2_output_cmd_f;
-    WritableStateField<unsigned int> pv3_output_cmd_f;
+    Serializer<uint32_t> pv_output_cmd_sr;
+    WritableStateField<uint32_t> pv1_output_cmd_f;
+    WritableStateField<uint32_t> pv2_output_cmd_f;
+    WritableStateField<uint32_t> pv3_output_cmd_f;
 
-    Serializer<unsigned char> ppt_mode_cmd_sr;
-    WritableStateField<unsigned char> ppt_mode_cmd_f;
+    Serializer<uint8_t> ppt_mode_cmd_sr;
+    WritableStateField<uint8_t> ppt_mode_cmd_f;
 
     Serializer<bool> heater_cmd_sr;
     WritableStateField<bool> heater_cmd_f;

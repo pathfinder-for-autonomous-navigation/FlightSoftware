@@ -15,10 +15,8 @@
 namespace adcs {
 namespace dev {
 
-void ADS1015::setup(i2c_t3 *wire, uint8_t addr, unsigned int alert_pin, unsigned long timeout) {
+void ADS1015::setup(i2c_t3 *wire, uint8_t addr, uint32_t alert_pin, uint64_t timeout) {
   this->I2CDevice::setup(wire, addr, timeout);
-  this->set_sample_rate(SR::SPS_1600);
-  this->set_gain(GAIN::TWO);
   this->alert_pin = alert_pin;
 }
 
@@ -38,7 +36,7 @@ bool ADS1015::reset() {
 }
 
 void ADS1015::set_sample_rate(SR sample_rate) {
-  static unsigned int const sample_rates[7] = {128,  250,  490, 920,
+  static uint32_t const sample_rates[7] = {128,  250,  490, 920,
                                                1600, 2400, 3300};
   this->sample_delay = (1000 / sample_rates[sample_rate >> 5]) + 2;
   this->sample_rate = sample_rate;
@@ -59,7 +57,7 @@ void ADS1015::start_read(CHANNEL channel) {
 
 bool ADS1015::end_read(int16_t &val) {
   // Wait for alert pin or conversion timeout
-  // unsigned long offset = 0;
+  // uint64_t offset = 0;
   // if (this->timestamp + (this->sample_delay << 7) < this->timestamp)
   //  offset = (this->sample_delay << 7);
   int read;

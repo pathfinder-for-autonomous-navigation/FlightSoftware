@@ -1,7 +1,7 @@
 #include "Fault.hpp"
 
 Fault::Fault(const std::string& name,
-      const size_t _persistence, unsigned int& control_cycle_count) : 
+      const size_t _persistence, uint32_t& control_cycle_count) : 
     WritableStateField<bool>(name, Serializer<bool>()),
     _name(name),
     fault_bool_sr(),
@@ -21,7 +21,7 @@ Fault::Fault(const std::string& name,
 }
 
 void Fault::signal() {
-    if (cc > static_cast<unsigned int>(last_fault_time) || cc == 0) {
+    if (cc > static_cast<uint32_t>(last_fault_time) || cc == 0) {
         num_consecutive_signals++;
         last_fault_time = cc;
     }
@@ -81,7 +81,7 @@ void Fault::process_commands(){
 }
 
 #ifdef UNIT_TEST
-unsigned int Fault::get_num_consecutive_signals(){
+uint32_t Fault::get_num_consecutive_signals(){
     return num_consecutive_signals;
 }
 #endif

@@ -6,7 +6,7 @@ const gps_time_t AttitudeEstimator::pan_epoch(gnc::constant::init_gps_week_numbe
                                               gnc::constant::init_gps_nanoseconds);
 
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
-    unsigned int offset) 
+    uint32_t offset) 
     : TimedControlTask<void>(registry, "adcs_estimator", offset),
     data(),
     state(),
@@ -16,10 +16,10 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     h_body_f("attitude_estimator.h_body"),
     adcs_paired_f("adcs.paired", Serializer<bool>())
     {
-        piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
-        pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
-        ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec", __FILE__, __LINE__),
-        mag_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.mag_vec", __FILE__, __LINE__),
+        piksi_time_fp = find_readable_field<gps_time_t>("piksi.time"),
+        pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos"),
+        ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec"),
+        mag_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.mag_vec"),
 
         //Add outputs
         add_readable_field(q_body_eci_f);
@@ -38,7 +38,7 @@ void AttitudeEstimator::execute(){
 }
 
 void AttitudeEstimator::set_data(){
-    data.t = ((unsigned long)(piksi_time_fp->get() - pan_epoch)) / 1.0e9;
+    data.t = ((uint64_t)(piksi_time_fp->get() - pan_epoch)) / 1.0e9;
 
     const d_vector_t r_ecef = pos_vec_ecef_fp->get();
     data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};

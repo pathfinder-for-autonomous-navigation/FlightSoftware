@@ -44,7 +44,7 @@ bool Piksi::setup() {
 
     // Register all necessary callbacks for data reads--specification provided in
     // sbp.c
-    unsigned char registration_successful = 0;
+    uint8_t registration_successful = 0;
     registration_successful |= sbp_register_callback(
         &_sbp_state, SBP_MSG_LOG, &Piksi::_log_callback, this, &Piksi::_log_callback_node);
     registration_successful |=
@@ -102,12 +102,12 @@ void Piksi::get_gps_time(msg_gps_time_t *time) {
     time->ns = _gps_time.ns;
 }
 
-unsigned int Piksi::get_dops_tow() { return _dops.tow; }
-unsigned short int Piksi::get_dops_geometric() { return _dops.gdop; }
-unsigned short int Piksi::get_dops_position() { return _dops.pdop; }
-unsigned short int Piksi::get_dops_time() { return _dops.tdop; }
-unsigned short int Piksi::get_dops_horizontal() { return _dops.hdop; }
-unsigned short int Piksi::get_dops_vertical() { return _dops.vdop; }
+uint32_t Piksi::get_dops_tow() { return _dops.tow; }
+uint16_t Piksi::get_dops_geometric() { return _dops.gdop; }
+uint16_t Piksi::get_dops_position() { return _dops.pdop; }
+uint16_t Piksi::get_dops_time() { return _dops.tdop; }
+uint16_t Piksi::get_dops_horizontal() { return _dops.hdop; }
+uint16_t Piksi::get_dops_vertical() { return _dops.vdop; }
 
 void Piksi::get_pos_ecef(std::array<double, 3> *position) {
     (*position)[0] = _pos_ecef.x;
@@ -115,15 +115,15 @@ void Piksi::get_pos_ecef(std::array<double, 3> *position) {
     (*position)[2] = _pos_ecef.z;
 }
 
-void Piksi::get_pos_ecef(unsigned int *tow, std::array<double, 3> *position) {
+void Piksi::get_pos_ecef(uint32_t *tow, std::array<double, 3> *position) {
     (*tow) = _pos_ecef.tow;
     (*position)[0] = _pos_ecef.x;
     (*position)[1] = _pos_ecef.y;
     (*position)[2] = _pos_ecef.z;
 }
 
-unsigned char Piksi::get_pos_ecef_nsats() { return _pos_ecef.n_sats; }
-unsigned char Piksi::get_pos_ecef_flags() { return _pos_ecef.flags % 8; }
+uint8_t Piksi::get_pos_ecef_nsats() { return _pos_ecef.n_sats; }
+uint8_t Piksi::get_pos_ecef_flags() { return _pos_ecef.flags % 8; }
 
 void Piksi::get_baseline_ecef(std::array<double, 3> *position) {
     (*position)[0] = _baseline_ecef.x;
@@ -131,15 +131,15 @@ void Piksi::get_baseline_ecef(std::array<double, 3> *position) {
     (*position)[2] = _baseline_ecef.z;
 }
 
-void Piksi::get_baseline_ecef(unsigned int *tow, std::array<double, 3> *position) {
+void Piksi::get_baseline_ecef(uint32_t *tow, std::array<double, 3> *position) {
     *tow = _baseline_ecef.tow;
     (*position)[0] = _baseline_ecef.x;
     (*position)[1] = _baseline_ecef.y;
     (*position)[2] = _baseline_ecef.z;
 }
 
-unsigned char Piksi::get_baseline_ecef_nsats() { return _baseline_ecef.n_sats; }
-unsigned char Piksi::get_baseline_ecef_flags() { return _baseline_ecef.flags; }
+uint8_t Piksi::get_baseline_ecef_nsats() { return _baseline_ecef.n_sats; }
+uint8_t Piksi::get_baseline_ecef_flags() { return _baseline_ecef.flags; }
 
 void Piksi::get_vel_ecef(std::array<double, 3> *velocity) {
     (*velocity)[0] = _vel_ecef.x;
@@ -147,7 +147,7 @@ void Piksi::get_vel_ecef(std::array<double, 3> *velocity) {
     (*velocity)[2] = _vel_ecef.z;
 }
 
-void Piksi::get_vel_ecef(unsigned int *tow, std::array<double, 3> *velocity) {
+void Piksi::get_vel_ecef(uint32_t *tow, std::array<double, 3> *velocity) {
     *tow = _vel_ecef.tow;
     (*velocity)[0] = _vel_ecef.x;
     (*velocity)[1] = _vel_ecef.y;
@@ -155,8 +155,8 @@ void Piksi::get_vel_ecef(unsigned int *tow, std::array<double, 3> *velocity) {
     
 }
 
-unsigned char Piksi::get_vel_ecef_nsats() { return _vel_ecef.n_sats; }
-unsigned char Piksi::get_vel_ecef_flags() { return _vel_ecef.flags; }
+uint8_t Piksi::get_vel_ecef_nsats() { return _vel_ecef.n_sats; }
+uint8_t Piksi::get_vel_ecef_flags() { return _vel_ecef.flags; }
 
 void Piksi::get_base_pos_ecef(std::array<double, 3> *position) {
     (*position)[0] = _pos_ecef.x;
@@ -165,41 +165,42 @@ void Piksi::get_base_pos_ecef(std::array<double, 3> *position) {
 }
 
 #ifdef DESKTOP
-void Piksi::set_gps_time(const unsigned int tow){
+void Piksi::set_gps_time(uint32_t tow){
     _gps_time.tow = tow;
 }
-void Piksi::set_pos_ecef(const unsigned int tow, const std::array<double,3>& position, const unsigned char nsats){
+void Piksi::set_pos_ecef(uint32_t tow, const std::array<double,3>& position, uint8_t nsats){
     _pos_ecef.tow = tow;
     _pos_ecef.x = position[0];
     _pos_ecef.y = position[1];
     _pos_ecef.z = position[2];
     _pos_ecef.n_sats = nsats;
 }
-void Piksi::set_vel_ecef(const unsigned int tow, const std::array<double,3>& velocity){
+void Piksi::set_vel_ecef(uint32_t tow, const std::array<double,3>& velocity){
     _vel_ecef.tow = tow;
     _vel_ecef.x = velocity[0];
     _vel_ecef.y = velocity[1];
     _vel_ecef.z = velocity[2];
 }
-void Piksi::set_baseline_ecef(const unsigned int tow, const std::array<double,3>& position){
+void Piksi::set_baseline_ecef(uint32_t tow, const std::array<double,3>& position){
     _baseline_ecef.tow = tow;
     _baseline_ecef.x = position[0];
     _baseline_ecef.y = position[1];
     _baseline_ecef.z = position[2];
 }
-void Piksi::set_baseline_flag(const unsigned char flag){
+void Piksi::set_baseline_flag(uint8_t flag){
     _baseline_ecef.flags = flag;
 }
-void Piksi::set_read_return(const unsigned int out){
+void Piksi::set_read_return(uint32_t out){
     _read_return = out;
 }
 #endif
 
-unsigned int Piksi::get_iar() { return _iar.num_hyps; }
+uint32_t Piksi::get_iar() { return _iar.num_hyps; }
 
+// cppcheck-suppress unusedFunction
 char *Piksi::get_settings_read_resp() { return _settings_read_resp.setting; }
 
-unsigned int Piksi::get_heartbeat() { return _heartbeat.flags; }
+uint32_t Piksi::get_heartbeat() { return _heartbeat.flags; }
 bool Piksi::is_system_healthy() { return !(_heartbeat.flags & 0x0001); }
 bool Piksi::is_system_io_healthy() { return !(_heartbeat.flags & 0x0002); }
 bool Piksi::is_swiftnap_healthy() { return !(_heartbeat.flags & 0x0003); }
@@ -207,56 +208,72 @@ bool Piksi::is_antenna_healthy() { return !(_heartbeat.flags & 0x0004); }
 
 float Piksi::get_uart_a_tx_throughput() { return _uart_state.uart_a.tx_throughput; }
 float Piksi::get_uart_a_rx_throughput() { return _uart_state.uart_a.rx_throughput; }
-unsigned short int Piksi::get_uart_a_crc_error_count() {
+// cppcheck-suppress unusedFunction
+uint16_t Piksi::get_uart_a_crc_error_count() {
     return _uart_state.uart_a.crc_error_count;
 }
-unsigned short int Piksi::get_uart_a_io_error_count() { return _uart_state.uart_a.io_error_count; }
-unsigned char Piksi::get_uart_a_tx_buffer_utilization() {
+// cppcheck-suppress unusedFunction
+uint16_t Piksi::get_uart_a_io_error_count() { return _uart_state.uart_a.io_error_count; }
+// cppcheck-suppress unusedFunction
+uint8_t Piksi::get_uart_a_tx_buffer_utilization() {
     return _uart_state.uart_a.tx_buffer_level;
 }
-unsigned char Piksi::get_uart_a_rx_buffer_utilization() {
+// cppcheck-suppress unusedFunction
+uint8_t Piksi::get_uart_a_rx_buffer_utilization() {
     return _uart_state.uart_a.rx_buffer_level;
 }
 
+// cppcheck-suppress unusedFunction
 float Piksi::get_uart_b_tx_throughput() { return _uart_state.uart_b.tx_throughput; }
+// cppcheck-suppress unusedFunction
 float Piksi::get_uart_b_rx_throughput() { return _uart_state.uart_b.rx_throughput; }
-unsigned short int Piksi::get_uart_b_crc_error_count() {
+// cppcheck-suppress unusedFunction
+uint16_t Piksi::get_uart_b_crc_error_count() {
     return _uart_state.uart_b.crc_error_count;
 }
-unsigned short int Piksi::get_uart_b_io_error_count() { return _uart_state.uart_b.io_error_count; }
-unsigned char Piksi::get_uart_b_tx_buffer_utilization() {
+// cppcheck-suppress unusedFunction
+uint16_t Piksi::get_uart_b_io_error_count() { return _uart_state.uart_b.io_error_count; }
+// cppcheck-suppress unusedFunction
+uint8_t Piksi::get_uart_b_tx_buffer_utilization() {
     return _uart_state.uart_b.tx_buffer_level;
 }
-unsigned char Piksi::get_uart_b_rx_buffer_utilization() {
+// cppcheck-suppress unusedFunction
+uint8_t Piksi::get_uart_b_rx_buffer_utilization() {
     return _uart_state.uart_b.rx_buffer_level;
 }
 
+// cppcheck-suppress unusedFunction
 char *Piksi::get_user_data() { return (char *)_user_data.contents; }
 
+// cppcheck-suppress unusedFunction
 void Piksi::settings_save() {
     sbp_send_message(&_sbp_state, SBP_MSG_SETTINGS_SAVE, SBP_SENDER_ID, 0, nullptr,
                      &Piksi::_uart_write);
 }
+
+// cppcheck-suppress unusedFunction
 void Piksi::settings_write(const msg_settings_write_t &settings) {
     sbp_send_message(&_sbp_state, SBP_MSG_SETTINGS_WRITE, SBP_SENDER_ID,
-                     sizeof(msg_settings_write_t), (unsigned char *)&settings, &Piksi::_uart_write);
+                     sizeof(msg_settings_write_t), (uint8_t *)&settings, &Piksi::_uart_write);
 }
 void Piksi::piksi_reset() {
     sbp_send_message(&_sbp_state, SBP_MSG_RESET, SBP_SENDER_ID, 0, nullptr, &Piksi::_uart_write);
 }
+
+// cppcheck-suppress unusedFunction
 void Piksi::send_user_data(const msg_user_data_t &data) {
     sbp_send_message(&_sbp_state, SBP_MSG_USER_DATA, SBP_SENDER_ID, sizeof(msg_user_data_t),
-                     (unsigned char *)&data, &Piksi::_uart_write);
+                     (uint8_t *)&data, &Piksi::_uart_write);
 }
 
-signed char Piksi::process_buffer() {
-    signed char status = ((signed char)sbp_process(&_sbp_state, Piksi::_uart_read));
+int8_t Piksi::process_buffer() {
+    int8_t status = ((int8_t)sbp_process(&_sbp_state, Piksi::_uart_read));
     return status;
 }
 
-unsigned char Piksi::process_buffer_msg_len() {
-    unsigned char pre = _sbp_state.msg_len;
-    signed char status = ((signed char)sbp_process(&_sbp_state, Piksi::_uart_read));
+uint8_t Piksi::process_buffer_msg_len() {
+    uint8_t pre = _sbp_state.msg_len;
+    int8_t status = ((int8_t)sbp_process(&_sbp_state, Piksi::_uart_read));
 
     if (status == SBP_OK_CALLBACK_EXECUTED || status == SBP_OK_CALLBACK_UNDEFINED)
         return pre;
@@ -264,7 +281,7 @@ unsigned char Piksi::process_buffer_msg_len() {
     return 0;
 }
 
-unsigned char Piksi::read_all() {
+uint8_t Piksi::read_all() {
   //  #if defined(UNIT_TEST) || defined(DESKTOP) 
     #ifdef DESKTOP
     return _read_return;
@@ -371,6 +388,7 @@ void Piksi::_insert_log_msg(u8 msg[]) {
     memcpy(_latest_log, msg, sizeof(msg_log_t));
     if (_logbook_size < _logbook_max_size) _logbook_size++;
 }
+// cppcheck-suppress unusedFunction
 void Piksi::dump_log(char *destination) {
     memcpy(destination, (char *)_logbook, _logbook_size * sizeof(msg_log_t));
 }

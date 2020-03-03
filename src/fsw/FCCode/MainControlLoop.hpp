@@ -42,9 +42,9 @@ class MainControlLoop : public ControlTask<void> {
 
     AttitudeEstimator attitude_estimator;
 
-    Devices::Gomspace::eps_hk_t hk;
-    Devices::Gomspace::eps_config_t config; 
-    Devices::Gomspace::eps_config2_t config2; 
+    Devices::Gomspace::eps_hk_t gs_hk;
+    Devices::Gomspace::eps_config_t gs_config; 
+    Devices::Gomspace::eps_config2_t gs_config2; 
     Devices::Gomspace gomspace;
     GomspaceController gomspace_controller;
 
@@ -63,43 +63,43 @@ class MainControlLoop : public ControlTask<void> {
     // Control cycle time offsets, in microseconds
     #ifdef FUNCTIONAL_TEST
     // https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B04C55BBB-7AED-410B-AC43-67352393D6D5%7D&file=Flight%20Software%20Cycle.xlsx&action=default&mobileredirect=true&cid=e2b9bd89-7037-47bf-ad2a-fd8b25808939
-        static constexpr unsigned int piksi_control_task_offset  =   5500;
-        static constexpr unsigned int adcs_monitor_offset        =   7500;
-        static constexpr unsigned int debug_task_offset          =  35500;
-        static constexpr unsigned int attitude_estimator_offset  =  85500;
-        static constexpr unsigned int gomspace_controller_offset = 106500;
-        static constexpr unsigned int uplink_consumer_offset     = 111500;
-        static constexpr unsigned int mission_manager_offset     = 111600;
-        static constexpr unsigned int attitude_computer_offset   = 111700;
-        static constexpr unsigned int adcs_commander_offset      = 147400;
-        static constexpr unsigned int adcs_box_controller_offset = 147900;
-        static constexpr unsigned int docking_controller_offset  = 152400;
-        static constexpr unsigned int downlink_producer_offset   = 153400; // excel says 152900
-        static constexpr unsigned int quake_manager_offset       = 153500;
-        static constexpr unsigned int dcdc_controller_offset     = 153500;  // fix this later
-        static constexpr unsigned int eeprom_controller_offset   = 153500;  // fix this later
+        static constexpr uint32_t piksi_control_task_offset  =   5500;
+        static constexpr uint32_t adcs_monitor_offset        =   7500;
+        static constexpr uint32_t debug_task_offset          =  35500;
+        static constexpr uint32_t attitude_estimator_offset  =  85500;
+        static constexpr uint32_t gomspace_controller_offset = 106500;
+        static constexpr uint32_t uplink_consumer_offset     = 111500;
+        static constexpr uint32_t mission_manager_offset     = 111600;
+        static constexpr uint32_t attitude_computer_offset   = 111700;
+        static constexpr uint32_t adcs_commander_offset      = 147400;
+        static constexpr uint32_t adcs_box_controller_offset = 147900;
+        static constexpr uint32_t docking_controller_offset  = 152400;
+        static constexpr uint32_t downlink_producer_offset   = 153400; // excel says 152900
+        static constexpr uint32_t quake_manager_offset       = 153500;
+        static constexpr uint32_t dcdc_controller_offset     = 153500;  // fix this later
+        static constexpr uint32_t eeprom_controller_offset   = 153500;  // fix this later
     #else
-        static constexpr unsigned int piksi_control_task_offset  =   5500;
-        static constexpr unsigned int adcs_monitor_offset        =   7500;
-        static constexpr unsigned int debug_task_offset          =  35000;
-        static constexpr unsigned int attitude_estimator_offset  =  35500;
-        static constexpr unsigned int gomspace_controller_offset =  56500;
-        static constexpr unsigned int uplink_consumer_offset     =  61500;
-        static constexpr unsigned int mission_manager_offset     =  61600;
-        static constexpr unsigned int attitude_computer_offset   =  61700;
-        static constexpr unsigned int adcs_commander_offset      =  97400;
-        static constexpr unsigned int adcs_box_controller_offset =  97900;
-        static constexpr unsigned int docking_controller_offset  = 103400; // excel says 102400
-        static constexpr unsigned int downlink_producer_offset   = 104400; // excel says 102900
-        static constexpr unsigned int quake_manager_offset       = 104500;
-        static constexpr unsigned int dcdc_controller_offset     = 153500; // fix this later
-        static constexpr unsigned int eeprom_controller_offset   = 153500; // too high?
+        static constexpr uint32_t piksi_control_task_offset  =   5500;
+        static constexpr uint32_t adcs_monitor_offset        =   7500;
+        static constexpr uint32_t debug_task_offset          =  35000;
+        static constexpr uint32_t attitude_estimator_offset  =  35500;
+        static constexpr uint32_t gomspace_controller_offset =  56500;
+        static constexpr uint32_t uplink_consumer_offset     =  61500;
+        static constexpr uint32_t mission_manager_offset     =  61600;
+        static constexpr uint32_t attitude_computer_offset   =  61700;
+        static constexpr uint32_t adcs_commander_offset      =  97400;
+        static constexpr uint32_t adcs_box_controller_offset =  97900;
+        static constexpr uint32_t docking_controller_offset  = 103400; // excel says 102400
+        static constexpr uint32_t downlink_producer_offset   = 104400; // excel says 102900
+        static constexpr uint32_t quake_manager_offset       = 104500;
+        static constexpr uint32_t dcdc_controller_offset     = 153500; // fix this later
+        static constexpr uint32_t eeprom_controller_offset   = 153500; // too high?
     #endif
 
     /**
      * @brief Total memory use, in bytes.
      */
-    ReadableStateField<unsigned int> memory_use_f;
+    ReadableStateField<uint32_t> memory_use_f;
 
     MissionManager mission_manager;
 
@@ -119,7 +119,9 @@ class MainControlLoop : public ControlTask<void> {
      * @param periods Number of control cycles after which a statefield is written to EEPROM
      */
     MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data, const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods);
+        const std::vector<DownlinkProducer::FlowData>& flow_data,
+        const std::vector<std::string>& statefields,
+        const std::vector<unsigned int>& periods);
 
     /**
      * @brief Processes state field commands present in the serial buffer.

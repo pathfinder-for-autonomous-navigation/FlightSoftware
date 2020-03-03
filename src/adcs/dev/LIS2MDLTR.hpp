@@ -61,7 +61,7 @@ class LIS2MDLTR : public I2CDevice {
   };
   /** See the \c I2CDevice class for more details. The address defaults to 0x30
    *  for this device. */
-  void setup(i2c_t3 *wire, unsigned long timeout = DEV_I2C_TIMEOUT);
+  void setup(i2c_t3 *wire, uint64_t timeout = DEV_I2C_TIMEOUT);
   /** Places the device in continous measurement mode with the current sample
    *  rate setting. If this is succesful then the device is marked as
    *  functional.
@@ -106,7 +106,7 @@ class LIS2MDLTR : public I2CDevice {
    **/
   //virtual void new_read_2();
   /**Constructor**/
-  // Magnetometer(i2c_t3 &wire, uint8_t ADDR, unsigned long timeout =0);
+  // Magnetometer(i2c_t3 &wire, uint8_t ADDR, uint64_t timeout =0);
   // Reads the average x component of the magnetic field in milliGauss
   //inline int16_t get_read_x() const {return this->rdata[0] + this->sdata[0];}
   // Reads the average y component of the magnetic field in milliGauss
@@ -116,9 +116,9 @@ class LIS2MDLTR : public I2CDevice {
 
  private:
   /** Magnetic field backing vector. */
-  uint16_t b_vec[3];
+  uint16_t b_vec[3] = {0,0,0};
   /** Magnetic field sample rate. */
-  uint8_t sample_rate;
+  uint8_t sample_rate = 0;
 };
 }  // namespace dev
 }  // namespace adcs

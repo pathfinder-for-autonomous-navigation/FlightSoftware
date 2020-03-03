@@ -23,7 +23,7 @@ static i2c_t3 *const wire = &Wire;
 
 /** \fn on_i2c_recieve
  *  i2c message recieved callback to handle data pushes to the state struct. */
-void on_i2c_recieve(unsigned int bytes);
+void on_i2c_recieve(uint32_t bytes);
 
 /** \fn on_i2c_request
  *  i2c message requested callback to handl data pulls from the state struct. */

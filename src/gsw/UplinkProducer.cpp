@@ -85,8 +85,7 @@ size_t UplinkProducer::add_entry( bitstream& bs, char* val, size_t index)
 void UplinkProducer::print_packet(bitstream& bs)
 {
     size_t packet_size = bs.max_len*8;
-    std::vector<bool> bit_ar (packet_size, 0);
-    size_t field_index = 0, field_len = 0, bits_consumed = 0;
+    size_t field_index = 0, bits_consumed = 0;
     std::cout << "idx" << "\twidth" << "\tvalue" << std::endl;
     while (bits_consumed < packet_size)
     {
@@ -97,7 +96,7 @@ void UplinkProducer::print_packet(bitstream& bs)
         
         --field_index;
         // Get field length from the index
-        field_len = get_field_length(field_index);
+        size_t field_len = get_field_length(field_index);
         auto field_p = registry.writable_fields[field_index];
         std::cout << field_index << "\t" <<field_len;
 

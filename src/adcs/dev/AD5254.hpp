@@ -39,7 +39,7 @@ class AD5254 : public I2CDevice {
   };
   /** Sets up the potentiometer on the specified bus with the given settings.
    *  See the \c I2CDevice class documentation for more details. */
-  void setup(i2c_t3 *wire, uint8_t addr, unsigned long timeout = DEV_I2C_TIMEOUT);
+  void setup(i2c_t3 *wire, uint8_t addr, uint64_t timeout = DEV_I2C_TIMEOUT);
   /** Sets the rdac values to their default value and if the communication is
    *  succesfull then the device is enabled.
    *  @return True if the reset was succesful and false otherwise. */
@@ -74,7 +74,7 @@ class AD5254 : public I2CDevice {
 
  private:
   /** Backing array for rdac settings. **/
-  uint8_t rdac[4];
+  uint8_t rdac[4] = {AD5254_RDAC_DEFAULT,AD5254_RDAC_DEFAULT,AD5254_RDAC_DEFAULT,AD5254_RDAC_DEFAULT};
 };
 }  // namespace dev
 }  // namespace adcs

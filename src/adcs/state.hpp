@@ -25,11 +25,11 @@ namespace adcs {
  *  axis. */
 struct ReactionWheelRegisters {
   /** Specifies the reaction wheel's operating mode. */
-  unsigned char mode;
+  uint8_t mode;
   /** Reaction wheel actuation command in the body frame of the spacecraft. */
   float cmd[3];
   /** Flag for a new actuation command. */
-  unsigned char cmd_flg;
+  uint8_t cmd_flg;
   /** Specifies the exponential filter contant for the angular momentum read. */
   float momentum_flt;
   /** Specifies the exponential filter constant for the analog ramp read. */
@@ -48,14 +48,14 @@ struct ReactionWheelRegisters {
  *  antiparallel tto one of the body frame axis. */
 struct MagnetorquerRegisters {
   /** Specifies the magnetic torque rod's operating mode. */
-  unsigned char mode;
+  uint8_t mode;
   /** Magnetic torque rod actutation command Am^2 in the body frame of the
    *  spacecraft. */
   float cmd[3];
   /** Magnetic moment limiter along each access. */
   float moment_limit;
   /** Flag for a new actuation command. */
-  unsigned char cmd_flg;
+  uint8_t cmd_flg;
 };
 
 /** \struct SunSensorRegisters
@@ -63,7 +63,7 @@ struct MagnetorquerRegisters {
  *  frame of the spacecraft. */
 struct SunSensorRegisters {
   /** Specifies the current mode for the sun sensor assembly. */
-  unsigned char mode;
+  uint8_t mode;
   /** Sun vector resulting from the previous sun vector calculation. The sun
    *  vector is given in the body frame of the spacecraft. */
   float sun_vec_rd[3];
@@ -79,7 +79,7 @@ struct SunSensorRegisters {
  *  the spacecraft. */
 struct IMURegisters {
   /** Specifies the current IMU mode - i.e. which magnetometer to talk to. */
-  unsigned char mode;
+  uint8_t mode;
   /** Current output for the magnetometer in units of Tesla in the body frame of
    *  the spacecraft. */
   float mag_rd[3];
@@ -110,19 +110,19 @@ struct IMURegisters {
 struct HAVTRegisters {
   /** This table is updated with the most recent is_functional() for
    * each box aboard the ADCS Box. */
-  unsigned int read_table;
+  uint32_t read_table;
   /** An intermediate data structure that will specify the requested reset()
    * for devices within the ADCS Box. */
-  unsigned int cmd_reset_table;
+  uint32_t cmd_reset_table;
   /** This flag specifies if there is a new_flag, and is set to outdated
    * once the cmd_reset_table has been applied. */
-  unsigned char cmd_reset_flg;
+  uint8_t cmd_reset_flg;
   /** An intermediate data structure that will specify the requested disable()
    * for devices within the ADCS Box. */
-  unsigned int cmd_disable_table;
+  uint32_t cmd_disable_table;
   /** This flag specifies if there is a new_flag, and is set to outdated
    * once the cmd_disable_table has been applied. */
-  unsigned char cmd_disable_flg;
+  uint8_t cmd_disable_flg;
 };
 
 /** \struct Registers
@@ -130,13 +130,13 @@ struct HAVTRegisters {
  *  state structs for more information. */
 struct Registers {
   /** Dummy who am I register for i2c initialization ping. */
-  unsigned char const who_am_i;
+  uint8_t const who_am_i;
   /** Specifies the i2c endianess setting the ADCS system will adhere to. */
-  unsigned char endianess;
+  uint8_t endianess;
   /** Specifies the overall mode of the ADCS system. */
-  unsigned char mode;
+  uint8_t mode;
   /** Specifies the register location the next read will originate from. */
-  unsigned char read_ptr;
+  uint8_t read_ptr;
   /** Reaction wheel state struct. */
   struct ReactionWheelRegisters rwa;
   /** Magnetorquer state struct. */

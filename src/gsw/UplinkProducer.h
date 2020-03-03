@@ -1,4 +1,5 @@
-#pragma once
+#ifndef UPLINK_PRODUCER_H_
+#define UPLINK_PRODUCER_H_
 
 #include <fsw/FCCode/MainControlLoop.hpp>
 #include <fsw/FCCode/UplinkCommon.h>
@@ -13,8 +14,7 @@
  */
 class UplinkProducer : public Uplink{
   public:
-
-    UplinkProducer(StateFieldRegistry& r);
+    explicit UplinkProducer(StateFieldRegistry& r);
 
     /**
      * Creates an UplinkPacket from given json file
@@ -63,3 +63,5 @@ class UplinkProducer : public Uplink{
     size_t max_possible_packet_size;
 
 };
+
+#endif

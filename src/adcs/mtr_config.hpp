@@ -21,17 +21,17 @@ namespace adcs {
 namespace mtr {
 
 /** Forward PWM pin for the zeroth magnetorquer. */
-static unsigned int const mtr0_f_pin = 7;
+static uint32_t const mtr0_f_pin = 7;
 /** Backward PWM pin for the zeroth magnetorquer. */
-static unsigned int const mtr0_r_pin = 8;
+static uint32_t const mtr0_r_pin = 8;
 /** Forward PWM pin for the first magnetorquer. */
-static unsigned int const mtr1_f_pin = 35;
+static uint32_t const mtr1_f_pin = 35;
 /** Backward PWM pin for the first magnetorquer. */
-static unsigned int const mtr1_r_pin = 36;
+static uint32_t const mtr1_r_pin = 36;
 /** Forward PWM pin for the second magnetorquer. */
-static unsigned int const mtr2_f_pin = 2;
+static uint32_t const mtr2_f_pin = 2;
 /** Backward PWM pin for the second magnetorquer. */
-static unsigned int const mtr2_r_pin = 14;
+static uint32_t const mtr2_r_pin = 14;
 
 /** Transforms a vector from the body frame into the commanding frame for the
  *  magnetic torque rods. */

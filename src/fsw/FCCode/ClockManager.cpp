@@ -1,10 +1,10 @@
 #include "ClockManager.hpp"
 
 ClockManager::ClockManager(StateFieldRegistry &registry,
-                           const unsigned int _control_cycle_size) :
+                           const uint32_t _control_cycle_size) :
     TimedControlTask<void>(registry, "clock_ct", 0),
     control_cycle_size(_control_cycle_size),
-    control_cycle_count_f("pan.cycle_no", Serializer<unsigned int>())
+    control_cycle_count_f("pan.cycle_no", Serializer<uint32_t>())
 {
     add_readable_field(control_cycle_count_f);
 }

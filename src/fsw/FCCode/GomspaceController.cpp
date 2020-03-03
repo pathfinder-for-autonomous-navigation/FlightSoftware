@@ -1,6 +1,6 @@
 #include "GomspaceController.hpp"
 
-GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
+GomspaceController::GomspaceController(StateFieldRegistry &registry, uint32_t offset,
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
     get_hk_fault("gomspace.get_hk", 1, control_cycle_count),

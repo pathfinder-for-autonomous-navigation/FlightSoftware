@@ -17,7 +17,7 @@ class DockingController : public TimedControlTask<void> {
      * @param offset
      * @param docksys 
      */
-    DockingController(StateFieldRegistry& registry, unsigned int offset,
+    DockingController(StateFieldRegistry& registry, uint32_t offset,
         Devices::DockingSystem &docksys);
 
     /**

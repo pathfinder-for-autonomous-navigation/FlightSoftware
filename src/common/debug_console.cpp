@@ -32,7 +32,7 @@ std::map<debug_console::state_cmd_mode, const char*> debug_console::state_cmd_mo
 
 bool debug_console::is_initialized = false;
 #ifndef DESKTOP
-unsigned int debug_console::_start_time = 0;
+uint32_t debug_console::_start_time = 0;
 #else
 std::chrono::steady_clock::time_point debug_console::_start_time =
     std::chrono::steady_clock::now();
@@ -40,14 +40,14 @@ std::chrono::steady_clock::time_point debug_console::_start_time =
 
 debug_console::debug_console() {}
 
-unsigned int debug_console::_get_elapsed_time() {
+uint32_t debug_console::_get_elapsed_time() {
 #ifdef DESKTOP
     std::chrono::milliseconds ms_since_start =
         std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::steady_clock::now() - _start_time);
     return ms_since_start.count();
 #else
-    unsigned int current_time = millis();
+    uint32_t current_time = millis();
     if (!Serial) {
         /** Reset the start time if Serial is unconnected. We
          * do this so that the logging utility on the computer
@@ -55,7 +55,7 @@ unsigned int debug_console::_get_elapsed_time() {
          */
         _start_time = current_time;
     }
-    unsigned int elapsed_time = current_time - _start_time;
+    uint32_t elapsed_time = current_time - _start_time;
     return elapsed_time;
 #endif
 }
@@ -143,8 +143,8 @@ void debug_console::print_state_field(const SerializableStateFieldBase& field) {
 }
 
 void debug_console::_print_error_state_field(const char* field_name,
-                                             const debug_console::state_cmd_mode mode,
-                                             const debug_console::state_field_error error_code) {
+                                             debug_console::state_cmd_mode mode,
+                                             debug_console::state_field_error error_code) {
 #ifdef DESKTOP
     DynamicJsonDocument doc(500);
 #else
@@ -218,11 +218,11 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
             continue;
         }
 
-        if (!msg_mode.is<unsigned char>()) {
+        if (!msg_mode.is<uint8_t>()) {
             _print_error_state_field(field_name, unspecified_mode, invalid_mode_not_char);
             continue;
         }
-        const unsigned char mode = msg_mode.as<unsigned char>();
+        const uint8_t mode = msg_mode.as<uint8_t>();
 
         // If data is ok, proceed with state field reading/writing
         switch (mode) {

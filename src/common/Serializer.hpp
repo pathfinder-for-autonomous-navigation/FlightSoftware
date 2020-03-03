@@ -73,7 +73,7 @@ class SerializerBase : public SerializerType {
         _max(max),
         serialized_val()
     {
-        if (static_cast<signed int>(compressed_size) < 0) return;
+        if (static_cast<int32_t>(compressed_size) < 0) return;
         serialized_val.resize(compressed_size);
 
         this->printed_val = new char[strlength];
@@ -107,14 +107,14 @@ class SerializerBase : public SerializerType {
     /**
      * @brief Move constructor.
      */
-    SerializerBase(SerializerBase&& other) {
+    SerializerBase(SerializerBase&& other) noexcept {
         *this = other;
     }
 
     /**
      * @brief Move assignment operator.
      */
-    SerializerBase& operator=(SerializerBase&& rhs) {
+    SerializerBase& operator=(SerializerBase&& rhs) noexcept {
         _min = rhs._min;
         _max = rhs._max;
         serialized_val.resize(rhs.serialized_val.size());

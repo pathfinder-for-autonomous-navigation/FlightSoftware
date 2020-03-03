@@ -14,16 +14,16 @@ class DCDC : public Device {
 
    public:
     //! Default enable pin for the DCDCs.
-    static constexpr unsigned char ADCSMotorDCDC_EN = 24;
-    static constexpr unsigned char SpikeDockDCDC_EN = 25;
+    static constexpr uint8_t ADCSMotorDCDC_EN = 24;
+    static constexpr uint8_t SpikeDockDCDC_EN = 25;
 
     /**
      * @brief Default constructor. **/
-    DCDC(const std::string &name) : Device(name){}
+    explicit DCDC(const std::string &name) : Device(name){}
 #ifdef DESKTOP
-    bool setup();
-    bool is_functional();
-    void disable();
+    bool setup() override;
+    bool is_functional() override;
+    void disable() override;
 #else
     bool setup() override;
 

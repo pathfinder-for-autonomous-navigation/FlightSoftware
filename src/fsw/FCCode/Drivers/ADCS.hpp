@@ -17,11 +17,11 @@ namespace Devices {
 
 class ADCS : public I2CDevice {
    public:
-    static constexpr unsigned int ADDRESS = 0x4E;
-    static constexpr unsigned int WHO_AM_I_EXPECTED = 0x0F;
+    static constexpr uint32_t ADDRESS = 0x4E;
+    static constexpr uint32_t WHO_AM_I_EXPECTED = 0x0F;
 
     #ifdef UNIT_TEST
-    unsigned int mock_ssa_mode = adcs::SSAMode::SSA_IN_PROGRESS;
+    uint32_t mock_ssa_mode = adcs::SSAMode::SSA_IN_PROGRESS;
     std::bitset<adcs::havt::max_devices> mock_havt_read;
     bool adcs_functionality = true;
     #endif
@@ -30,7 +30,7 @@ class ADCS : public I2CDevice {
      * 
      * @return returns true if get_who_am_i returns the expected value, else false
      */
-    virtual bool i2c_ping() override;
+    bool i2c_ping() override;
 
     /**
      * @brief Construct a new ADCS object
@@ -40,7 +40,7 @@ class ADCS : public I2CDevice {
      * @param address The address on i2c bus
      */
     #ifndef DESKTOP
-    ADCS(i2c_t3 &i2c_wire, unsigned char address);
+    ADCS(i2c_t3 &i2c_wire, uint8_t address);
     #else
     ADCS();
     #endif
@@ -53,7 +53,7 @@ class ADCS : public I2CDevice {
      * @param len The number of bytes to read
      */
     template <typename T>
-    void i2c_point_and_read(unsigned char data_register, T* data, std::size_t len);
+    void i2c_point_and_read(uint8_t data_register, T* data, std::size_t len);
 
     /**
      * @brief Set the mode of the ADCS controller
@@ -62,14 +62,14 @@ class ADCS : public I2CDevice {
      * 0x00–ADCS passive mode (default) 
      * 0x01–ADCS active mode 
      */
-    void set_mode(const unsigned char mode);
+    void set_mode(uint8_t mode);
 
     /**
      * @brief Set what address the the ADCS controller should read from
      * 
      * @param read_ptr address to read from
      */
-    void set_read_ptr(const unsigned char read_ptr);
+    void set_read_ptr(uint8_t read_ptr);
 
     /**
      * @brief Set the reaction wheel assembly mode
@@ -80,25 +80,25 @@ class ADCS : public I2CDevice {
      * When in speed control, limited by max speed
      * When in acceleration control, limited by max torque
      */
-    void set_rwa_mode(const unsigned char rwa_mode, const std::array<float,3>& rwa_cmd);
+    void set_rwa_mode(uint8_t rwa_mode, const std::array<float,3>& rwa_cmd);
 
     /**
      * @brief Set the reaction wheel assembly speed read exponential filter constant 
      * 
      * @param rwa_speed_flt speed read exponential filter, a float from [0.0, 1.0].
-     * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0].
+     * The float maps to an eight-bit uint32_teger mapping from [0.0, 1.0].
      * Defaults to 0xFF. 
      */
-    void set_rwa_speed_filter(const float rwa_speed_filter);
+    void set_rwa_speed_filter(float rwa_speed_filter);
 
     /**
      * @brief Set the reaction wheel assembly ramp filter
      * 
      * @param rwa_ramp_flt ramp read exponential filter, a float from [0.0, 1.0].
-     * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0].
+     * The float maps to an eight-bit uint32_teger mapping from [0.0, 1.0].
      * Defaults to 0xFF.   
      */
-    void set_ramp_filter(const float ramp_filter);
+    void set_ramp_filter(float ramp_filter);
 
     /**
      * @brief Set the magnetorquer command mode
@@ -107,12 +107,12 @@ class ADCS : public I2CDevice {
      * 0x00 – Disabled (default) 
      * 0x01 – Enabled 
      */
-    void set_mtr_mode(const unsigned char mtr_mode);
+    void set_mtr_mode(uint8_t mtr_mode);
 
     /**
      * @brief Set the magnetorquer command itself
      * 
-     * @param mtr_cmd Array of three floats, mapping to 16-bit unsigned integers 
+     * @param mtr_cmd Array of three floats, mapping to 16-bit uint32_tegers 
      * for the x axis, y axis, and z axis in the body frame respectively.
      * Each value maps to a magnetic moment command 
      * limited by maximum magnetic moment (and min)
@@ -123,10 +123,10 @@ class ADCS : public I2CDevice {
      * @brief Set the magnetorquer maximum moment limit
      * 
      * @param mtr_limit float representing the limit
-     * Float maps to a 16-bit unsigned integer 
+     * Float maps to a 16-bit uint32_teger 
      * limited by maximum magnetic moment (and min)
      */
-    void set_mtr_limit(const float mtr_limit);
+    void set_mtr_limit(float mtr_limit);
 
     /**
      * @brief Set the sun sensor array mode
@@ -136,16 +136,16 @@ class ADCS : public I2CDevice {
      * 0x01 – Starts a sun vector calculation 
      * 0x02 – Indicates success of a sun vector calculation 
      */
-    void set_ssa_mode(const unsigned char ssa_mode);
+    void set_ssa_mode(uint8_t ssa_mode);
 
     /**
      * @brief Set the sun sensor array voltage exponential filter
      * 
      * @param voltage_filter float representing voltage filter value from [0.0, 1.0]. 
-     * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0]. 
+     * The float maps to an eight-bit uint32_teger mapping from [0.0, 1.0]. 
      * Defaults to 0xFF. 
      */
-    void set_ssa_voltage_filter(const float voltage_filter);
+    void set_ssa_voltage_filter(float voltage_filter);
 
     /**
      * @brief Set the inertial measurement unit mode
@@ -155,64 +155,64 @@ class ADCS : public I2CDevice {
      * 0x01 – Use magnetometer two 
      * 0b1X – Calibrate the magnetometer in use (specified by the free bit) 
      */
-    void set_imu_mode(const unsigned char mode);
+    void set_imu_mode(uint8_t mode);
 
     /**
      * @brief Set the inertial mesaurement unit magnetometer exponential filter
      * 
      * @param mag_filter float representing imu filter from [0.0, 1.0].
-     * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0]. 
+     * The float maps to an eight-bit uint32_teger mapping from [0.0, 1.0]. 
      * Defaults to 0xFF. 
      */
-    void set_imu_mag_filter(const float mag_filter);
+    void set_imu_mag_filter(float mag_filter);
 
     /**
      * @brief Set the inertial measurement unit gyroscope exponential filter
      * 
      * @param gyr_filter float representing gyroscope filter from [0.0, 1.0].
-     * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0]. 
+     * The float maps to an eight-bit uint32_teger mapping from [0.0, 1.0]. 
      * Defaults to 0xFF. 
      */
-    void set_imu_gyr_filter(const float gyr_filter);
+    void set_imu_gyr_filter(float gyr_filter);
 
     /**
      * @brief Set the gyroscope temperature exponential filter constant 
      * 
      * @param temp_filter float representing temperature filter from [0.0, 1.0].
-     * The float maps to an eight-bit unsigned integer mapping from [0.0, 1.0]. 
+     * The float maps to an eight-bit uint32_teger mapping from [0.0, 1.0]. 
      * Defaults to 0xFF. 
      */
-    void set_imu_gyr_temp_filter(const float temp_filter);
+    void set_imu_gyr_temp_filter(float temp_filter);
 
     /**
      * @brief Sets the proportional gain on the gyroscope temperature controller.
      * 
      * @param kp proportional gain, full float is passed to ADCS over i2c
      */
-    void set_imu_gyr_temp_kp(const float kp);
+    void set_imu_gyr_temp_kp(float kp);
 
     /**
      * @brief Sets the integral gain on the gyroscope temperature controller
      * 
      * @param ki integral gain, full float is passed to ADCS over i2c
      */
-    void set_imu_gyr_temp_ki(const float ki);
+    void set_imu_gyr_temp_ki(float ki);
 
     /**
      * @brief Sets the derivative gain on the gyroscope temperature controller
      * 
      * @param kd derivative gain, full float is passed to ADCS over i2c
      */
-    void set_imu_gyr_temp_kd(const float kd);
+    void set_imu_gyr_temp_kd(float kd);
 
     /**
      * @brief Sets the desired gyroscope equilibrium temperature. 
      * 
      * @param desired a float from imu::min_eq_temp to imu::max_eq_temp
-     * The float maps to an eight-bit unsigned integer 
+     * The float maps to an eight-bit uint32_teger 
      * mapping from imu::min_eq_temp to imu::max_eq_temp degrees Celsius.  
      */
-    void set_imu_gyr_temp_desired(const float desired);
+    void set_imu_gyr_temp_desired(float desired);
 
     /**
      * @brief Requests a reset for any adcs havt device with a bit high
@@ -236,18 +236,18 @@ class ADCS : public I2CDevice {
      * 
      * @param who_am_i A output pointer where the read value is stored
      */
-    void get_who_am_i(unsigned char *who_am_i);
+    void get_who_am_i(uint8_t *who_am_i);
 
     /**
      * @brief Get the reaction wheel assembly speed and ramp readings
      * 
      * @param rwa_speed_rd Pointer to output std::array of floats for speeds
-     * 3 unsigned shorts map to wheel angular speeds from 
+     * 3 uint16_ts map to wheel angular speeds from 
      * rwa::min_speed to rwa::max_speed in radians / s
      * in the x, y, and z direction in the body frame. 
      * 
      * @param rwa_ramp_rd Pointer to output std::array of floats for ramp
-     * 3 unsigned shorts map to wheel torque commands from 
+     * 3 uint16_ts map to wheel torque commands from 
      * rwa::min_torque to rwa::max_torque in N m
      * in the x, y, and z direction in the body frame. 
      */
@@ -258,15 +258,15 @@ class ADCS : public I2CDevice {
      * 
      * @param ssa_mode Pointer to output current ssa mode value
      */
-    void get_ssa_mode(unsigned char *ssa_mode);
+    void get_ssa_mode(uint8_t *ssa_mode);
 
     /**
      * @brief Get the sun sensor array vector
      * 
      * @param ssa_sun_vec Pointer to output std::array of floats
-     * Three 16-bit unsigned integers that encode the unit vector 
+     * Three 16-bit uint32_tegers that encode the unit vector 
      * to the sun in the body frame of the spacecraft. 
-     * The 16-bit unsigned integers map [-1.0, 1.0] and are encoded into floats.
+     * The 16-bit uint32_tegers map [-1.0, 1.0] and are encoded into floats.
      */
     void get_ssa_vector(std::array<float, 3>* ssa_sun_vec);
 
@@ -274,7 +274,7 @@ class ADCS : public I2CDevice {
      * @brief Get the sun sensor array voltages
      * 
      * @param voltages Pointer to output std::array of floats of
-     * Consists of 20 eight-bit unsigned integers mapped to floats specifying 
+     * Consists of 20 eight-bit uint32_tegers mapped to floats specifying 
      * the voltage measurements at each photodiode on the range 
      * of ssa::min_voltage_rd to ssa::max_voltage_rd Volts
      */
@@ -284,17 +284,17 @@ class ADCS : public I2CDevice {
      * @brief Get the imu magnetoruqer, gyroscope and gyroscope temperature reading
      * 
      * @param mag_rd Pointer to output std::array of floats
-     * Three unsigned shorts encode the magnetic field measurement in the 
+     * Three uint16_ts encode the magnetic field measurement in the 
      * body frame of the spacecraft on the range 
      * imu::min_rd_mag to imu::max_rd_mag in Tesla
      * 
      * @param gyr_rd Pointer to output std::array of floats
-     * Three unsigned shorts encode the angular rate measurement in the 
+     * Three uint16_ts encode the angular rate measurement in the 
      * body frame of the spacecraft on the range 
      * imu::min_rd_omega to imu::max_rd_omega in radians per second
      *  
      * @param gyr_temp_rd Pointer to output float
-     * One unsigned short encodes the gyroscope temperature on 
+     * One uint16_t encodes the gyroscope temperature on 
      * the range imu::min_rd_temp imu::max_rd_temp Celcius
      */
     void get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd);
@@ -329,13 +329,13 @@ class ADCS : public I2CDevice {
      * 
      * @param ssa_mode 
      */
-    void set_mock_ssa_mode(const unsigned char ssa_mode);
+    void set_mock_ssa_mode(uint8_t ssa_mode);
 
     /**
      * @brief A mocking method that sets the return of i2c_ping
      * 
      */
-    void set_mock_adcs_functional(const bool functional);
+    void set_mock_adcs_functional(bool functional);
     #endif
 };
 

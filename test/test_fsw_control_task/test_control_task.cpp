@@ -47,17 +47,17 @@ void test_task_find() {
     auto internal_fp = registry.create_internal_field<bool>("field1");
     auto readable_fp = registry.create_readable_field<bool>("field2");
     auto writable_fp = registry.create_writable_field<bool>("field3");
-    TEST_ASSERT_NOT_NULL(task.find_internal_field<bool>("field1", __FILE__, __LINE__));
-    TEST_ASSERT_NOT_NULL(task.find_readable_field<bool>("field2", __FILE__, __LINE__));
-    TEST_ASSERT_NOT_NULL(task.find_writable_field<bool>("field3", __FILE__, __LINE__));
+    TEST_ASSERT_NOT_NULL(task.find_internal_field<bool>("field1"));
+    TEST_ASSERT_NOT_NULL(task.find_readable_field<bool>("field2"));
+    TEST_ASSERT_NOT_NULL(task.find_writable_field<bool>("field3"));
 
     // Finding a fault should work.
     registry.add_fault(&fault);
-    TEST_ASSERT_NOT_NULL(task.find_fault("fault", __FILE__, __LINE__));
+    TEST_ASSERT_NOT_NULL(task.find_fault("fault"));
 
     // Finding an event should work.
     registry.add_event(&event);
-    TEST_ASSERT_NOT_NULL(task.find_event("event", __FILE__, __LINE__));
+    TEST_ASSERT_NOT_NULL(task.find_event("event"));
 }
 
 void test_task_add() {

@@ -52,7 +52,7 @@ void setup();
  *  @return Updated IMU assembly mode.
  *  See the documentation on OneDrive for more details about how the system
  *  behaves according to the mode value. */
-unsigned char update_sensors(unsigned char mode, float mag_flt, float gyr_flt,
+uint8_t update_sensors(uint8_t mode, float mag_flt, float gyr_flt,
     float gyr_temp_eq, float gyr_temp_flt, float gry_temp_k_p,
     float gyr_temp_k_i, float gyr_temp_k_d);
 

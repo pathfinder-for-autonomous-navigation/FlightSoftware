@@ -1,4 +1,4 @@
-#include <fsw/FCCode/DummyMainControlLoop.hpp>
+#include "DummyMainControlLoop.hpp"
 #include <common/StateFieldRegistry.hpp>
 
 #ifndef UNIT_TEST

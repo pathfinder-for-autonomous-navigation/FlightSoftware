@@ -24,21 +24,19 @@ void digitalWrite(uint8_t pin, uint8_t val){}
 
 /* Constructors */
 
-Tank::Tank(size_t _num_valves) :
-num_valves(_num_valves) {}
+Tank::Tank(size_t _num_valves, uint8_t _temp_sensor_pin, uint8_t vp1, uint8_t vp2, uint8_t vp3, uint8_t vp4) :
+    num_valves(_num_valves),
+    temp_sensor_pin(_temp_sensor_pin),
+    valve_pins{vp1,vp2,vp3,vp4},
+    is_valve_opened{false,false,false,false} {}
 
-_Tank1::_Tank1() : Tank(2) {
-    valve_pins[0] = 27; // Main tank 1 to tank 2 valve
-    valve_pins[1] = 28; // Backup tank 1 to tank 2 valve
-    temp_sensor_pin = 21;
+_Tank1::_Tank1() : Tank(2, 21, 27,28) {
+    // Valve 0 (pin 27): Main tank 1 to tank 2 valve
+    // Valve 1 (pin 28): Backup tank 1 to tank 2 valve
 }
 
-_Tank2::_Tank2() : Tank(4) {
-    valve_pins[0] = 3; // Nozzle valve
-    valve_pins[1] = 4; // Nozzle valve
-    valve_pins[2] = 5; // Nozzle valve
-    valve_pins[3] = 6; // Nozzle valve
-    temp_sensor_pin = 22;
+_Tank2::_Tank2() : Tank(4, 22, 3,4,5,6) {
+    // Valves 0-3 (pins 3-6) are nozzle valves.
 }
 
 /** Initialize static variables */
@@ -46,7 +44,7 @@ _Tank2::_Tank2() : Tank(4) {
 PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
 bool PropulsionSystem::is_interval_enabled = 0;
 
-volatile unsigned int _Tank2::schedule[4] = {0, 0, 0, 0};
+volatile uint32_t _Tank2::schedule[4] = {0, 0, 0, 0};
 
 #ifndef DESKTOP
 IntervalTimer _Tank2::thrust_valve_loop_timer = IntervalTimer();
@@ -125,7 +123,7 @@ float _Tank2::get_pressure() const {
     return pressure;
 }
 
-unsigned int _Tank2::get_schedule_at(size_t valve_num) const
+uint32_t _Tank2::get_schedule_at(size_t valve_num) const
 {
     if (valve_num >= num_valves)
         return 0;

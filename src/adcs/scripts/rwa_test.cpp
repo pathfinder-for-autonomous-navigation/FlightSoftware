@@ -41,27 +41,27 @@ void take_data() {
  *  Performs a ramp up and down single component test on the specified reaction
  *  wheel.
  *  @param[in] wheel Wheel the test is performed on. */
-void single_component_test(unsigned int wheel) {
+void single_component_test(uint32_t wheel) {
   rwa::wheels[wheel].reset();
   lin::Vector3f torque = lin::zeros<float, 3, 1>();
   // Spin the wheel
   torque(wheel) = MAX_TORQUE;
   rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
-  for (unsigned int i = 0; i < 150; i++) {
+  for (uint32_t i = 0; i < 150; i++) {
     take_data();
     delay(20);
   }
   // Spin wheel down through zero
   torque(wheel) = -MAX_TORQUE;
   rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
-  for (unsigned int i = 0; i < 300; i++) {
+  for (uint32_t i = 0; i < 300; i++) {
     take_data();
     delay(20);
   }
   // Spin wheel back up
   torque(wheel) = MAX_TORQUE;
   rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
-  for (unsigned int i = 0; i < 150; i++) {
+  for (uint32_t i = 0; i < 150; i++) {
     take_data();
     delay(20);
   }
@@ -84,7 +84,7 @@ void setup() {
   single_component_test(0);
   single_component_test(1);
   single_component_test(2);
-  for (unsigned int i = 0; i < 10; i++) {
+  for (uint32_t i = 0; i < 10; i++) {
     take_data();
     delay(20);
   }
@@ -92,17 +92,17 @@ void setup() {
 
   /* Multicomponent tests */
   lin::Vector3f torque({MAX_TORQUE / 10.0f, MAX_TORQUE / 10.0f, MAX_TORQUE / 10.0f});
-  for (unsigned int i = 0; i < 10; i++) {
+  for (uint32_t i = 0; i < 10; i++) {
     float component = ((float)(i + 1)) * MAX_TORQUE / 10.0f;
     lin::Vector3f torque({component, component, component});
     rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
-    for (unsigned int j = 0; j < 25; j++) {
+    for (uint32_t j = 0; j < 25; j++) {
       take_data();
       delay(40);
     }
     torque = {-component, -component, -component};
     rwa::actuate(RWAMode::RWA_ACCEL_CTRL, torque);
-    for (unsigned int j = 0; j < 25; j++) {
+    for (uint32_t j = 0; j < 25; j++) {
       take_data();
       delay(40);
     }

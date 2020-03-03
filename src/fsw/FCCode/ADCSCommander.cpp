@@ -8,23 +8,23 @@
 #include <adcs/constants.hpp>
 #include <adcs/havt_devices.hpp>
 
-ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) :
+ADCSCommander::ADCSCommander(StateFieldRegistry& registry, uint32_t offset) :
     TimedControlTask<void>(registry, "adcs_commander", offset),
     filter_sr(0,1,8),
-    rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
+    rwa_mode_f("adcs_cmd.rwa_mode", Serializer<uint8_t>(2)),
     rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(
         adcs::rwa::min_speed_command, adcs::rwa::max_speed_command, 16*3)),
     rwa_torque_cmd_f("adcs_cmd.rwa_torque_cmd", Serializer<f_vector_t>(
         adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
     rwa_speed_filter_f("adcs_cmd.rwa_speed_filter", filter_sr),
     rwa_ramp_filter_f("adcs_cmd.rwa_ramp_filter", filter_sr),
-    mtr_mode_f("adcs_cmd.mtr_mode", Serializer<unsigned char>(2)),
+    mtr_mode_f("adcs_cmd.mtr_mode", Serializer<uint8_t>(2)),
     mtr_cmd_f("adcs_cmd.mtr_cmd", Serializer<f_vector_t>(
         adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
     mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(
         adcs::mtr::min_moment, adcs::mtr::max_moment, 16)),
     ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", filter_sr),
-    imu_mode_f("adcs_cmd.imu_mode", Serializer<unsigned char>(4)),
+    imu_mode_f("adcs_cmd.imu_mode", Serializer<uint8_t>(4)),
     imu_mag_filter_f("adcs_cmd.imu_mag_filter", filter_sr),
     imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", filter_sr),
     imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", filter_sr),
@@ -60,7 +60,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
 
     // fill vector of statefields for cmd havt
     char buffer[50];
-    for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+    for (uint32_t idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
     {
         std::memset(buffer, 0, sizeof(buffer));
         sprintf(buffer,"adcs_cmd.havt_reset");
@@ -69,7 +69,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
         add_writable_field(havt_cmd_reset_vector_f[idx]);
         havt_cmd_reset_vector_f[idx].set(false); // default commands to false (don't apply cmd)
     }
-    for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+    for (uint32_t idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
     {
         std::memset(buffer, 0, sizeof(buffer));
         sprintf(buffer,"adcs_cmd.havt_disable");
@@ -80,13 +80,13 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     }
 
     // find adcs state
-    adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
+    adcs_state_fp = find_writable_field<uint8_t>("adcs.state");
 
     // find outputs from AttitudeComputer
-    adcs_vec1_current_fp = find_writable_field<f_vector_t>("adcs.compute.vec1.current", __FILE__, __LINE__);
-    adcs_vec1_desired_fp = find_writable_field<f_vector_t>("adcs.compute.vec1.desired", __FILE__, __LINE__);
-    adcs_vec2_current_fp = find_writable_field<f_vector_t>("adcs.compute.vec2.current", __FILE__, __LINE__);
-    adcs_vec2_desired_fp = find_writable_field<f_vector_t>("adcs.compute.vec2.desired", __FILE__, __LINE__);
+    adcs_vec1_current_fp = find_writable_field<f_vector_t>("adcs.compute.vec1.current");
+    adcs_vec1_desired_fp = find_writable_field<f_vector_t>("adcs.compute.vec1.desired");
+    adcs_vec2_current_fp = find_writable_field<f_vector_t>("adcs.compute.vec2.current");
+    adcs_vec2_desired_fp = find_writable_field<f_vector_t>("adcs.compute.vec2.desired");
 
     // defaults, TODO: DECIDE DEFAULTS
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
@@ -121,7 +121,7 @@ void ADCSCommander::execute() {
         case adcs_state_t::point_standby:       dispatch_standby();            break;
         case adcs_state_t::point_docking:       dispatch_docking();            break;
         default:
-            printf(debug_severity::error, "ADCSstate not defined: %d\n", static_cast<unsigned char>(state));
+            printf(debug_severity::error, "ADCSstate not defined: %d\n", static_cast<uint8_t>(state));
             break;
     }
 }

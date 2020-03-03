@@ -22,9 +22,10 @@ using namespace Devices;
 /*! QLocate implementation */
 #ifdef DESKTOP
 using F = std::string;
-QLocate::QLocate() {}
-#else
-QLocate::QLocate(const std::string &name, HardwareSerial *const port, unsigned char nr_pin,
+#endif
+
+#ifndef DESKTOP
+QLocate::QLocate(const std::string &name, HardwareSerial *const port, uint8_t nr_pin,
                  int timeout)
     : Device(name), port(port), timeout(timeout), nr_pin_(nr_pin) {}
 #endif
@@ -100,7 +101,7 @@ int QLocate::query_sbdwb_2(char const *c, int len)
 #ifndef DESKTOP
     if ( (size_t)len != port->write(c, len) )
         return WRITE_FAIL;
-    short s = checksum(c, len);
+    int16_t s = checksum(c, len);
     if ( port->write((char)(s >> 8)) != 1 )
         return WRITE_FAIL;
     if ( port->write((char)s) != 1 )
@@ -212,7 +213,7 @@ int QLocate::get_sbdrb()
     memset(sbuf, 0, 3);
     if (2 != port->readBytes(sbuf, 2)) 
         return UNEXPECTED_RESPONSE;
-    short s = (sbuf[0] << 8) | sbuf[1];
+    int16_t s = (sbuf[0] << 8) | sbuf[1];
     // Verify checksum
     if ( s != checksum(mt_message, size))
         return BAD_CHECKSUM;
@@ -220,7 +221,7 @@ int QLocate::get_sbdrb()
     return OK;
 }
 
-unsigned char QLocate::nr_pin() { return nr_pin_; }
+uint8_t QLocate::nr_pin() { return nr_pin_; }
 
 // Read the data at port and make sure it matches expected
 int QLocate::consume(String expected)
@@ -280,9 +281,9 @@ return OK;
 }
 
 // Calculate checksum
-short QLocate::checksum(char const *c, int len)
+int16_t QLocate::checksum(char const *c, int len)
 {
-    short s = 0;
+    int16_t s = 0;
     char const *const cf = c + len;
     while (c < cf)
         s += *(c++);

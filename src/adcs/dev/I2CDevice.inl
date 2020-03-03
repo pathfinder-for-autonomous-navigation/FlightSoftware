@@ -24,7 +24,7 @@ inline bool I2CDevice::reset() {
 
 inline I2CDevice::I2CDevice() : Device() { }
 
-inline void I2CDevice::setup(i2c_t3 *wire, uint8_t addr, unsigned long timeout) {
+inline void I2CDevice::setup(i2c_t3 *wire, uint8_t addr, uint64_t timeout) {
   this->wire = wire;
   this->addr = addr;
   this->timeout = timeout;
@@ -58,12 +58,12 @@ inline void I2CDevice::i2c_send_transmission(i2c_stop s) {
   this->wire->sendTransmission(s);
 }
 
-inline void I2CDevice::i2c_request_from(unsigned int len, i2c_stop s) {
+inline void I2CDevice::i2c_request_from(uint32_t len, i2c_stop s) {
   bool err = (this->wire->requestFrom(this->addr, len, s, this->timeout) != len);
   this->error_acc = (this->error_acc || err);
 }
 
-inline void I2CDevice::i2c_send_request(unsigned int len, i2c_stop s) {
+inline void I2CDevice::i2c_send_request(uint32_t len, i2c_stop s) {
   this->wire->sendRequest(this->addr, len, s);
 }
 
@@ -82,7 +82,7 @@ inline void I2CDevice::i2c_write(uint8_t data) {
 }
 
 template <typename T>
-inline void I2CDevice::i2c_write(T const *data, unsigned int len) {
+inline void I2CDevice::i2c_write(T const *data, uint32_t len) {
   bool err = (this->wire->write((uint8_t *)data, len * sizeof(T)) != len * sizeof(T));
   this->error_acc = (this->error_acc || err);
 }
@@ -90,11 +90,11 @@ inline void I2CDevice::i2c_write(T const *data, unsigned int len) {
 inline uint8_t I2CDevice::i2c_read() {
   int val = this->wire->read();
   this->error_acc = (this->error_acc || (val == -1));
-  return (uint8_t) (*((unsigned int *) &val));
+  return (uint8_t) (*((uint32_t *) &val));
 }
 
 template <typename T>
-inline void I2CDevice::i2c_read(T *data, unsigned int len) {
+inline void I2CDevice::i2c_read(T *data, uint32_t len) {
   bool err = (this->wire->read((uint8_t *)data, len * sizeof(T)) != len * sizeof(T));
   this->error_acc = (this->error_acc || err);
 }

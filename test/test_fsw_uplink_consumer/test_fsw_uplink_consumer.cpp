@@ -12,8 +12,8 @@ using namespace std;
 // convert n to bits
 void from_ull(WritableStateFieldBase* w, uint64_t n)
 {
-    std::vector<bool> feels_bad (w->get_bit_array().size(), 0);
-    for (size_t i = 0; i < w->get_bit_array().size(); ++i)
+    std::vector<bool> feels_bad (w->bitsize(), 0);
+    for (size_t i = 0; i < w->bitsize(); ++i)
     {
         feels_bad[i] = n&1;
         n >>= 1;
@@ -315,7 +315,7 @@ void test_update_writable_field()
     size_t idx3 = tf.field_map["adcs.state"];
     auto field3 = tf.registry.writable_fields[idx3];
 
-    size_t packet_size = field->get_bit_array().size() + field2->get_bit_array().size() + field3->get_bit_array().size() + 3*3;
+    size_t packet_size = field->bitsize() + field2->bitsize() + field3->bitsize() + 3*3;
     size_t packet_bytes =(packet_size + 7)/8;
     
     // Create output bitstream
@@ -368,7 +368,7 @@ void test_mixed_validity_updates()
     auto field3 = tf.registry.writable_fields[idx3];
     uint64_t old3 = field3->get_bit_array().to_ullong();
 
-    size_t packet_size = field->get_bit_array().size() + field2->get_bit_array().size() + field3->get_bit_array().size() + 3*3;
+    size_t packet_size = field->bitsize() + field2->bitsize() + field3->bitsize() + 3*3;
 
     size_t packet_bytes =(packet_size + 7)/8;
     

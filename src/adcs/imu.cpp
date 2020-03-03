@@ -34,8 +34,8 @@ lin::Vector3f mag_rd({
   0.0f
 });
 
-static unsigned char update_mag(unsigned char mode, float mag_flt) {
-  unsigned char return_mode = mode & 0b10;
+static uint8_t update_mag(uint8_t mode, float mag_flt) {
+  uint8_t return_mode = mode & 0b10;
   lin::Vector3f data;
 
   // Switch on the current magnetometer in use
@@ -67,6 +67,7 @@ static unsigned char update_mag(unsigned char mode, float mag_flt) {
     if (!mag2.read()) return return_mode;
 
     // Read in data and transform to the body frame
+    // TODO is this an error? We immediately reassign the value.
     data = {
       utl::fp(mag2.get_b_x(), min_mag2_rd_mag, max_mag2_rd_mag),
       utl::fp(mag2.get_b_y(), min_mag2_rd_mag, max_mag2_rd_mag),
@@ -185,15 +186,15 @@ void setup() {
   LOG_INFO_printlnF("Complete")
 }
 
-unsigned char update_sensors(unsigned char mode, float mag_flt, float gyr_flt,
-    float gyr_temp_eq, float gyr_temp_flt, float gry_temp_k_p,
+uint8_t update_sensors(uint8_t mode, float mag_flt, float gyr_flt,
+    float gyr_temp_eq, float gyr_temp_flt, float gyr_temp_k_p,
     float gyr_temp_k_i, float gyr_temp_k_d) {
   LOG_TRACE_header
   LOG_TRACE_printlnF("Updating IMU sensors")
 
-  update_gyr(gyr_flt, gyr_temp_eq, gyr_temp_flt, gry_temp_k_p, gyr_temp_k_i,
+  update_gyr(gyr_flt, gyr_temp_eq, gyr_temp_flt, gyr_temp_k_p, gyr_temp_k_i,
       gyr_temp_k_d);
-  unsigned char ret = update_mag(mode, mag_flt);
+  uint8_t ret = update_mag(mode, mag_flt);
 
   LOG_TRACE_header
   LOG_TRACE_println("Complete; returning IMU mode " + String(ret))

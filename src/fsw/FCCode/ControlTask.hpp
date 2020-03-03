@@ -30,7 +30,7 @@ class ControlTask : protected debug_console {
      * @param name     Name of control ControlTaskBase
      * @param registry Pointer to state field registry
      */
-    ControlTask(StateFieldRegistry& registry) : _registry(registry) {}
+    explicit ControlTask(StateFieldRegistry& registry) : _registry(registry) {}
 
     /**
      * @brief Run main method of control ControlTaskBase.
@@ -136,33 +136,33 @@ class ControlTask : protected debug_console {
   #endif
 
     template<typename U>
-    InternalStateField<U>* find_internal_field(const char* field, const char* file, const unsigned int line) {
+    InternalStateField<U>* find_internal_field(const char* field) {
         InternalStateFieldBase* field_ptr = _registry.find_internal_field(field);
         check_field_exists(field_ptr, "internal", field);
         return static_cast<InternalStateField<U>*>(field_ptr);
     }
 
     template<typename U>
-    ReadableStateField<U>* find_readable_field(const char* field, const char* file, const unsigned int line) {
+    ReadableStateField<U>* find_readable_field(const char* field) {
         ReadableStateFieldBase* field_ptr = _registry.find_readable_field(field);
         check_field_exists(field_ptr, "readable", field);
         return static_cast<ReadableStateField<U>*>(field_ptr);
     }
 
     template<typename U>
-    WritableStateField<U>* find_writable_field(const char* field, const char* file, const unsigned int line) {
+    WritableStateField<U>* find_writable_field(const char* field) {
         WritableStateFieldBase* field_ptr = _registry.find_writable_field(field);
         check_field_exists(field_ptr, "writable", field);
         return static_cast<WritableStateField<U>*>(field_ptr);
     }
 
-    Event* find_event(const char* event, const char* file, const unsigned int line) {
+    Event* find_event(const char* event) {
         Event* event_ptr = _registry.find_event(event);
         check_field_exists(event_ptr, "event", event);
         return event_ptr;
     }
 
-    Fault* find_fault(const char* fault, const char* file, const unsigned int line) {
+    Fault* find_fault(const char* fault) {
         Fault* fault_ptr = _registry.find_fault(fault);
         check_field_exists(fault_ptr, "fault", fault);
         return fault_ptr;

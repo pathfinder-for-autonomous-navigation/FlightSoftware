@@ -1,5 +1,4 @@
 #include "DummyMainControlLoop.hpp"
-#include "DebugTask.hpp"
 
 DummyMainControlLoop::DummyMainControlLoop(StateFieldRegistry& registry)
     : ControlTask<void>(registry), debug_task(registry, 0), 

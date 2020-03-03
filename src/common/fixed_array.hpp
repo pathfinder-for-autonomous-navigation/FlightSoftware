@@ -130,9 +130,9 @@ class fixed_array<bool> : public fixed_array_base<bool> {
     /**
      * Same constructors as fixed_array_base, but made public.
      */
-    fixed_array() : fixed_array_base<bool>() {}
+    fixed_array() = default;
     explicit fixed_array(const size_t size) : fixed_array_base<bool>(size) {}
-    fixed_array(const fixed_array<bool>& arr) : fixed_array_base<bool>(arr) {}
+    fixed_array(const fixed_array<bool>& arr) = default;
     fixed_array(const std::vector<bool>& arr) : fixed_array_base<bool>(arr) {}
 
     /**
@@ -169,7 +169,7 @@ class fixed_array<bool> : public fixed_array_base<bool> {
      * @param val Value to initialize bitset to.
      * @return Whether or not it was possible to store the integer into this bitset.
      */
-    bool set_int(unsigned int val) {
+    bool set_int(uint32_t val) {
         size_t val_num_bits = 32;
         for (size_t i = 0; i < 32; i++) {
             if (pow(2, i) > val) {
@@ -196,21 +196,21 @@ class fixed_array<bool> : public fixed_array_base<bool> {
     /**
      * @brief Converts bitset to integer.
      *
-     * @return unsigned int
+     * @return uint32_t
      */
-    unsigned long to_uint() const { return static_cast<unsigned int>(to_ulong()); }
+    uint64_t to_uint() const { return static_cast<uint32_t>(to_ulong()); }
 
     /**
      * @brief Converts bitset to integer.
      *
-     * @return unsigned long
+     * @return uint64_t
      */
-    unsigned long to_ulong() const { return static_cast<unsigned long>(to_ullong()); }
+    uint64_t to_ulong() const { return static_cast<uint64_t>(to_ullong()); }
 
     /**
      * @brief Converts bitset to integer.
      *
-     * @return unsigned long
+     * @return uint128_t
      */
     unsigned long long to_ullong() const {
         unsigned long long val = 0;
@@ -227,7 +227,7 @@ class fixed_array<bool> : public fixed_array_base<bool> {
     // Modifies a bit in character 'n' at the position 'p' to the value 'b'
     // The position is zero-indexed.
     // https://www.geeksforgeeks.org/modify-bit-given-position/
-    static unsigned char modify_bit(unsigned char n, unsigned char p, bool b) {
+    static uint8_t modify_bit(uint8_t n, uint8_t p, bool b) {
         return (n & ~(1 << p)) | ((b << p) & (1 << p));
     }
 

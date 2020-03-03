@@ -16,7 +16,7 @@
 namespace adcs {
 namespace dev {
 
-void AD5254::setup(i2c_t3 *wire, uint8_t addr, unsigned long timeout) {
+void AD5254::setup(i2c_t3 *wire, uint8_t addr, uint64_t timeout) {
   this->I2CDevice::setup(wire, addr, timeout);
 }
 

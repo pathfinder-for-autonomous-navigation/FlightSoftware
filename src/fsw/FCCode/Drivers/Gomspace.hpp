@@ -14,7 +14,7 @@ class Gomspace : public I2CDevice {
     #ifndef DESKTOP
     static constexpr i2c_t3& wire = Wire; /**< I2C bus of Gomspace device **/
     #endif
-    static constexpr unsigned char address = 0x02; /**< I2C address of Gomspace device **/
+    static constexpr uint8_t address = 0x02; /**< I2C address of Gomspace device **/
     
 
     // TODO
@@ -35,96 +35,96 @@ class Gomspace : public I2CDevice {
 
     /**< "Housekeeping" data struct; contains Gomspace state information. */
     struct __attribute__((packed)) eps_hk_t {
-        unsigned short int vboost[3];            //! Voltage of boost converters [mV] [PV1,
+        uint16_t vboost[3];            //! Voltage of boost converters [mV] [PV1,
                                                  //! PV2, PV3] //! Voltage of battery [mV]
-        unsigned short int vbatt;                //! Voltage of battery [mV]
-        unsigned short int curin[3];             //! Current in [mA]
-        unsigned short int cursun;               //! Current from boost converters [mA]
-        unsigned short int cursys;               //! Current out of battery [mA]
-        unsigned short int reserved1;            //! Reserved for future use
-        unsigned short int curout[6];            //! Current out (switchable outputs) [mA]
-        unsigned char output[8];                 //! Status of outputs**
-        unsigned short int output_on_delta[8];   //! Time till power on** [s]
-        unsigned short int output_off_delta[8];  //! Time till power off** [s]
-        unsigned short int latchup[6];           //! Number of latch-ups
-        unsigned int wdt_i2c_time_left;          //! Time left on I2C wdt [s]
-        unsigned int wdt_gnd_time_left;          //! Time left on I2C wdt [s]
-        unsigned char wdt_csp_pings_left[2];     //! Pings left on CSP wdt
-        unsigned int counter_wdt_i2c;            //! Number of WDT I2C reboots
-        unsigned int counter_wdt_gnd;            //! Number of WDT GND reboots
-        unsigned int counter_wdt_csp[2];         //! Number of WDT CSP reboots
-        unsigned int counter_boot;               //! Number of EPS reboots
-        short int temp[6];        //! Temperatures [degC] [0 = TEMP1, TEMP2, TEMP3, TEMP4,
+        uint16_t vbatt;                //! Voltage of battery [mV]
+        uint16_t curin[3];             //! Current in [mA]
+        uint16_t cursun;               //! Current from boost converters [mA]
+        uint16_t cursys;               //! Current out of battery [mA]
+        uint16_t reserved1;            //! Reserved for future use
+        uint16_t curout[6];            //! Current out (switchable outputs) [mA]
+        uint8_t output[8];                 //! Status of outputs**
+        uint16_t output_on_delta[8];   //! Time till power on** [s]
+        uint16_t output_off_delta[8];  //! Time till power off** [s]
+        uint16_t latchup[6];           //! Number of latch-ups
+        uint32_t wdt_i2c_time_left;          //! Time left on I2C wdt [s]
+        uint32_t wdt_gnd_time_left;          //! Time left on I2C wdt [s]
+        uint8_t wdt_csp_pings_left[2];     //! Pings left on CSP wdt
+        uint32_t counter_wdt_i2c;            //! Number of WDT I2C reboots
+        uint32_t counter_wdt_gnd;            //! Number of WDT GND reboots
+        uint32_t counter_wdt_csp[2];         //! Number of WDT CSP reboots
+        uint32_t counter_boot;               //! Number of EPS reboots
+        int16_t temp[6];        //! Temperatures [degC] [0 = TEMP1, TEMP2, TEMP3, TEMP4,
                                   //! BP4a, BP4b]
-        unsigned char bootcause;  //! Cause of last EPS reset
-        unsigned char battmode;   //! Mode for battery [0 = initial, 1 = undervoltage,
+        uint8_t bootcause;  //! Cause of last EPS reset
+        uint8_t battmode;   //! Mode for battery [0 = initial, 1 = undervoltage,
                                   //! 2 = safemode, 3 = nominal, 4=full]
-        unsigned char pptmode;    //! Mode of PPT tracker [1=MPPT, 2=FIXED]
-        unsigned short int reserved2;
+        uint8_t pptmode;    //! Mode of PPT tracker [1=MPPT, 2=FIXED]
+        uint16_t reserved2;
     };
 
     struct __attribute__((packed)) eps_hk_vi_t {
-        unsigned short int vboost[3];  //! Voltage of boost converters [mV] [PV1, PV2, PV3]
-        unsigned short int vbatt;      //! Voltage of battery [mV]
-        unsigned short int curin[3];   //! Current in [mA]
-        unsigned short int cursun;     //! Current from boost converters [mA]
-        unsigned short int cursys;     //! Current out of battery [mA]
-        unsigned short int reserved1;  //! Reserved for future use
+        uint16_t vboost[3];  //! Voltage of boost converters [mV] [PV1, PV2, PV3]
+        uint16_t vbatt;      //! Voltage of battery [mV]
+        uint16_t curin[3];   //! Current in [mA]
+        uint16_t cursun;     //! Current from boost converters [mA]
+        uint16_t cursys;     //! Current out of battery [mA]
+        uint16_t reserved1;  //! Reserved for future use
     };
 
     struct __attribute__((packed)) eps_hk_out_t {
-        unsigned short int curout[6];            //! Current out (switchable outputs) [mA]
-        unsigned char output[8];                 //! Status of outputs**
-        unsigned short int output_on_delta[8];   //! Time till power on** [s]
-        unsigned short int output_off_delta[8];  //! Time till power off** [s]
-        unsigned short int latchup[6];           //! Number of latch-ups
+        uint16_t curout[6];            //! Current out (switchable outputs) [mA]
+        uint8_t output[8];                 //! Status of outputs**
+        uint16_t output_on_delta[8];   //! Time till power on** [s]
+        uint16_t output_off_delta[8];  //! Time till power off** [s]
+        uint16_t latchup[6];           //! Number of latch-ups
     };
 
     struct __attribute__((packed)) eps_hk_wdt_t {
-        unsigned int wdt_i2c_time_left;       //! Time left on I2C wdt [s]
-        unsigned int wdt_gnd_time_left;       //! Time left on I2C wdt [s]
-        unsigned char wdt_csp_pings_left[2];  //! Pings left on CSP wdt
-        unsigned int counter_wdt_i2c;         //! Number of WDT I2C reboots
-        unsigned int counter_wdt_gnd;         //! Number of WDT GND reboots
-        unsigned int counter_wdt_csp[2];      //! Number of WDT CSP reboots
+        uint32_t wdt_i2c_time_left;       //! Time left on I2C wdt [s]
+        uint32_t wdt_gnd_time_left;       //! Time left on I2C wdt [s]
+        uint8_t wdt_csp_pings_left[2];  //! Pings left on CSP wdt
+        uint32_t counter_wdt_i2c;         //! Number of WDT I2C reboots
+        uint32_t counter_wdt_gnd;         //! Number of WDT GND reboots
+        uint32_t counter_wdt_csp[2];      //! Number of WDT CSP reboots
     };
 
     struct __attribute__((packed)) eps_hk_basic_t {
-        unsigned int counter_boot;  //! Number of EPS reboots
-        short int temp[6];          //! Temperatures [degC] [0 = TEMP1, TEMP2, TEMP3, TEMP4,
+        uint32_t counter_boot;  //! Number of EPS reboots
+        int16_t temp[6];          //! Temperatures [degC] [0 = TEMP1, TEMP2, TEMP3, TEMP4,
                                     //! BATT0, BATT1]
-        unsigned char bootcause;    //! Cause of last EPS reset
-        unsigned char battmode;     //! Mode for battery [0 = initial, 1 = undervoltage,
+        uint8_t bootcause;    //! Cause of last EPS reset
+        uint8_t battmode;     //! Mode for battery [0 = initial, 1 = undervoltage,
                                     //! 2 = safemode, 3 = nominal, 4=full]
-        unsigned char pptmode;      //! Mode of PPT tracker [1=MPPT, 2=FIXED]
-        unsigned short int reserved2;
+        uint8_t pptmode;      //! Mode of PPT tracker [1=MPPT, 2=FIXED]
+        uint16_t reserved2;
     };
 
     /**< Config data struct; contains output/heater configurations and PPT
      * configuration. */
     struct __attribute__((packed)) eps_config_t {
-        unsigned char ppt_mode;                //! Mode for PPT [1 = AUTO, 2 = FIXED]
-        unsigned char battheater_mode;         //! Mode for battheater [0 = Manual, 1 = Auto]
-        signed char battheater_low;            //! Turn heater on at [degC]
-        signed char battheater_high;           //! Turn heater off at [degC]
-        unsigned char output_normal_value[8];  //! Nominal mode output value
-        unsigned char output_safe_value[8];    //! Safe mode output value
-        unsigned short int output_initial_on_delay[8];   //! Output switches: init
+        uint8_t ppt_mode;                //! Mode for PPT [1 = AUTO, 2 = FIXED]
+        uint8_t battheater_mode;         //! Mode for battheater [0 = Manual, 1 = Auto]
+        int8_t battheater_low;            //! Turn heater on at [degC]
+        int8_t battheater_high;           //! Turn heater off at [degC]
+        uint8_t output_normal_value[8];  //! Nominal mode output value
+        uint8_t output_safe_value[8];    //! Safe mode output value
+        uint16_t output_initial_on_delay[8];   //! Output switches: init
                                                          //! with these on delays [s]
-        unsigned short int output_initial_off_delay[8];  //! Output switches: init
+        uint16_t output_initial_off_delay[8];  //! Output switches: init
                                                          //! with these off delays
                                                          //! [s]
-        unsigned short int vboost[3];  //! Fixed PPT point for boost converters [mV]
+        uint16_t vboost[3];  //! Fixed PPT point for boost converters [mV]
     };
 
     /**< Config2 data struct; contains battery voltage level definitionss. */
     struct __attribute__((packed)) eps_config2_t {
-        unsigned short int batt_maxvoltage;
-        unsigned short int batt_safevoltage;
-        unsigned short int batt_criticalvoltage;
-        unsigned short int batt_normalvoltage;
-        unsigned int reserved1[2];
-        unsigned char reserved2[4];
+        uint16_t batt_maxvoltage;
+        uint16_t batt_safevoltage;
+        uint16_t batt_criticalvoltage;
+        uint16_t batt_normalvoltage;
+        uint32_t reserved1[2];
+        uint8_t reserved2[4];
     };
 
     /** @brief Constructs Gomspace interface on the specified wire and with the
@@ -159,25 +159,25 @@ class Gomspace : public I2CDevice {
 
     /** @brief Set output channels on or off.
      *  @param output_byte Output byte that masks channels. */
-    virtual bool set_output(unsigned char output_byte);
+    virtual bool set_output(uint8_t output_byte);
     /** @brief Set a single output on or off, with an optional time delay.
      *  @param channel Channel to set on or off. (See NanoPower documentation to
      * see how channel numbers correspond to outputs.)
      *  @param value Whether to set the channel on or off.
      *  @param time_delay Time delay for change, in seconds. */
-    virtual bool set_single_output(unsigned char channel, unsigned char value,
-                                   short int time_delay = 0);
+    virtual bool set_single_output(uint8_t channel, uint8_t value,
+                                   int16_t time_delay = 0);
 
     /** @brief Set voltage of photovoltaic inputs.
      * @param voltage1 Voltage of input 1, in mV.
      * @param voltage2 Voltage of input 2, in mV.
      * @param voltage3 Voltage of input 3, in mV. */
-    bool set_pv_volt(unsigned short int voltage1, unsigned short int voltage2,
-                     unsigned short int voltage3);
+    bool set_pv_volt(uint16_t voltage1, uint16_t voltage2,
+                     uint16_t voltage3);
     /** @brief Set power point mode (PPT).
      *  @param mode Which mode to use. See NanoPower documentation for available
      * modes. */
-    bool set_pv_auto(unsigned char mode);
+    bool set_pv_auto(uint8_t mode);
 
     /** @brief Turn on the onboard heater. */
     bool turn_on_heater();
@@ -186,7 +186,7 @@ class Gomspace : public I2CDevice {
     /** @brief Get heater status.
      *  @return 0 = onboard heater off, 1 = onboard heater is on, 2 = error
      * reading heater. */
-    unsigned char get_heater();
+    uint8_t get_heater();
 
     /** @brief Reset boot and WDT counters. */
     bool reset_counters();
@@ -216,7 +216,7 @@ class Gomspace : public I2CDevice {
      * back.
      *  @return True if the Gomspace replied with the same code, false otherwise.
      */
-    bool ping(unsigned char value);
+    bool ping(uint8_t value);
     /** @brief Reboot Gomspace. */
     void reboot();
 
@@ -240,7 +240,7 @@ class Gomspace : public I2CDevice {
    private:
     bool _set_heater(bool mode);
     // Reads in I2C data and determines if an error code was returned.
-    bool _check_for_error(unsigned char port_byte);
+    bool _check_for_error(uint8_t port_byte);
     // Commits changes to config2 to the permanent storage of the Gomspace.
     bool _config2_confirm();
     // Flips endianness of incoming data from I2C
@@ -249,7 +249,7 @@ class Gomspace : public I2CDevice {
     void _hk_wdt_endian_flip();
     void _hk_basic_endian_flip();
     #ifdef DESKTOP
-    unsigned char heater=0;
+    uint8_t heater=0;
     #endif
 };
 }  // namespace Devices

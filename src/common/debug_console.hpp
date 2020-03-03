@@ -90,7 +90,7 @@ class debug_console {
  * relative to ChibiOS's initialization time.
  */
 #ifndef DESKTOP
-    static unsigned int _start_time;
+    static uint32_t _start_time;
 #else
     static std::chrono::steady_clock::time_point _start_time;
 #endif
@@ -107,7 +107,7 @@ class debug_console {
      *
      * @return unsigned _get_elapsed_time
      */
-    static unsigned int _get_elapsed_time();
+    static uint32_t _get_elapsed_time();
 
     /**
      * @brief Prints a message in JSON format to the debug console.
@@ -127,8 +127,8 @@ class debug_console {
      * "write", or "unspecified"). This field is used by the console as part of its error message.
      * @param error The error associated with the computer's request.
      */
-    void _print_error_state_field(const char *field_name, const state_cmd_mode mode,
-                                  const state_field_error error);
+    static void _print_error_state_field(const char *field_name, state_cmd_mode mode,
+                                  state_field_error error);
 
 #ifdef DESKTOP
     /**

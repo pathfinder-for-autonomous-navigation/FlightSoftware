@@ -7,7 +7,7 @@
 
 constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
 
-AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int offset) :
+AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, uint32_t offset) :
     TimedControlTask<void>(registry, "attitude_computer", offset),
     adcs_vec1_current_f("adcs.compute.vec1.current", Serializer<f_vector_t>(0, 1, 100)),
     adcs_vec1_desired_f("adcs.compute.vec1.desired", Serializer<f_vector_t>(0, 1, 100)),
@@ -19,11 +19,11 @@ AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int of
     add_writable_field(adcs_vec2_current_f);
     add_writable_field(adcs_vec2_desired_f);
 
-    adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
-    q_body_eci_fp = find_readable_field<f_quat_t>("attitude_estimator.q_body_eci", __FILE__, __LINE__);
-    ssa_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec", __FILE__, __LINE__);
-    pos_fp = find_readable_field<d_vector_t>("orbit.pos", __FILE__, __LINE__);
-    baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
+    adcs_state_fp = find_writable_field<uint8_t>("adcs.state");
+    q_body_eci_fp = find_readable_field<f_quat_t>("attitude_estimator.q_body_eci");
+    ssa_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec");
+    pos_fp = find_readable_field<d_vector_t>("orbit.pos");
+    baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos");
 
     // Initialize outputs to NaN values
     adcs_vec1_current_f.set({nan_f, nan_f, nan_f});

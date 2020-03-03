@@ -182,7 +182,8 @@ private:
  */
 class Tank {
 public:
-    Tank(size_t num_pins);
+    Tank(size_t num_pins, uint8_t temp_sensor_pin,
+        uint8_t vp1, uint8_t vp2, uint8_t vp3=0, uint8_t vp4=0);
 
     /**
      * @brief (Analog) reads the temperature sensor for this tank and 
@@ -213,9 +214,9 @@ protected:
     // pin number of the temperature sensor
     uint8_t temp_sensor_pin;
     // mapping of physical GPIO pin #s (values) to logical pin #s
-    uint8_t valve_pins[4];
+    std::array<uint8_t, 4> valve_pins;
     // true if the valve is opened
-    bool is_valve_opened[4];
+    std::array<bool, 4> is_valve_opened;
 
     friend class PropulsionSystem;
 };
@@ -256,7 +257,7 @@ public:
     /**
      * @brief Returns the current value of the schedule for the specified valve
      */
-    unsigned int get_schedule_at(size_t valve_num) const;
+    uint32_t get_schedule_at(size_t valve_num) const;
 
 private:
     void setup();
@@ -265,13 +266,13 @@ private:
     static IntervalTimer thrust_valve_loop_timer;
     #endif
 
-    static volatile unsigned int schedule[4];
+    static volatile uint32_t schedule[4];
     // The minimum duration to assign to a schedule
     // Any value below this value will be ignored by tank2
-    static constexpr unsigned int min_firing_duration_ms = 10;
+    static constexpr uint32_t min_firing_duration_ms = 10;
     
-    static constexpr unsigned char pressure_sensor_low_pin = 20;
-    static constexpr unsigned char pressure_sensor_high_pin = 23;
+    static constexpr uint8_t pressure_sensor_low_pin = 20;
+    static constexpr uint8_t pressure_sensor_high_pin = 23;
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
@@ -281,7 +282,7 @@ private:
     static constexpr double low_gain_slope = 0.099017990785657;
 
     //! Loop interval in milliseconds.
-    static constexpr unsigned int thrust_valve_loop_interval_ms = 3; 
+    static constexpr uint32_t thrust_valve_loop_interval_ms = 3; 
 
     friend class PropulsionSystem;
 };

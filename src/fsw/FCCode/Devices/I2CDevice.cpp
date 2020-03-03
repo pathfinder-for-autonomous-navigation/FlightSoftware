@@ -32,10 +32,10 @@ void I2CDevice::disable() {
 }
 
 #ifdef DESKTOP
-    I2CDevice::I2CDevice(const std::string &name, unsigned long timeout)
+    I2CDevice::I2CDevice(const std::string &name, uint64_t timeout)
         : Device(name), timeout(timeout), error_count(0), recent_errors(false) {}
 #else
-    I2CDevice::I2CDevice(const std::string &name, i2c_t3 &wire, unsigned char addr,
-                        unsigned long timeout)
+    I2CDevice::I2CDevice(const std::string &name, i2c_t3 &wire, uint8_t addr,
+                        uint64_t timeout)
         : Device(name), wire(wire), addr(addr), timeout(timeout), error_count(0), recent_errors(false) {}
 #endif

@@ -30,10 +30,10 @@ class Piksi {
 #endif
    public:
     //! Baud rate of communication with Piksi.
-    static constexpr unsigned int BAUD_RATE = 115200;
+    static constexpr uint32_t BAUD_RATE = 115200;
     // Driver limit for max processing time of read_all()
     // Choose 900 us to large safety bound over average read time of 600 us
-    static constexpr unsigned int READ_ALL_LIMIT = 900;
+    static constexpr uint32_t READ_ALL_LIMIT = 900;
 
     /**
      * @brief Construct a new Piksi object
@@ -45,7 +45,7 @@ class Piksi {
     #else
     using String = std::string;
     //Piksi();
-    Piksi(const std::string &name);
+    explicit Piksi(const std::string &name);
     #endif
 
     // Standard device functions
@@ -66,7 +66,7 @@ class Piksi {
     /** @brief Runs read over UART buffer to process values sent by Piksi into
      * memory.
      *  @returns Whether or not any data was processed. Returns -2 if CRC_ERROR **/
-    virtual signed char process_buffer();
+    virtual int8_t process_buffer();
 
     /**
      * @brief Runs read over UART buffer to process values sent by Piksi using libsbp
@@ -77,7 +77,7 @@ class Piksi {
      * However message size is smaller than the actual number of bytes sent/seen in serial port.
      * Thus the sum of bytes in the serial port != sum of all process_buffer_msg_len() returns.
      */
-    virtual unsigned char process_buffer_msg_len();
+    virtual uint8_t process_buffer_msg_len();
 
     /**
      * @brief While bytes are in the buffer, process them.
@@ -95,7 +95,7 @@ class Piksi {
      * 4 if there were no bytes in the buffer
      * 5 if the process_buffer loop is unable to deal with all the bytes in READ_ALL_LIMIT microseconds
      */
-    virtual unsigned char read_all();
+    virtual uint8_t read_all();
 
     /** @brief Gets GPS time.
      *  @return msg_gps_time_t, a struct of time since epoch **/
@@ -103,27 +103,27 @@ class Piksi {
 
     /** @brief Gets Dilution of Precision timestamp.
      *  @return Time-of-week of dilution precision report, in milliseconds. **/
-    unsigned int get_dops_tow();
+    uint32_t get_dops_tow();
 
     /** @brief Gets Geometric Dilution of Precision.
      *  @return Geometric dilution of precision. **/
-    unsigned short int get_dops_geometric();
+    uint16_t get_dops_geometric();
 
     /** @brief Gets Position Dilution of Precision.
      *  @return Position dilution of precision. **/
-    unsigned short int get_dops_position();
+    uint16_t get_dops_position();
 
     /** @brief Gets Time Dilution of Precision.
      *  @return Time dilution of precision. **/
-    unsigned short int get_dops_time();
+    uint16_t get_dops_time();
 
     /** @brief Gets Horizontal Dilution of Precision.
      *  @return Horizontal dilution of precision. **/
-    unsigned short int get_dops_horizontal();
+    uint16_t get_dops_horizontal();
 
     /** @brief Gets Vertical Dilution of Precision.
      *  @return Vertical dilution of precision. **/
-    unsigned short int get_dops_vertical();
+    uint16_t get_dops_vertical();
 
     /**
      * @brief Get the position in ECEF coordinates
@@ -138,11 +138,11 @@ class Piksi {
      * @param tow A pointer to the tow int
      * @param position A pointer to the std::array of doubles for the position
      */
-    virtual void get_pos_ecef(unsigned int *tow, std::array<double, 3> *position);
+    virtual void get_pos_ecef(uint32_t *tow, std::array<double, 3> *position);
 
     /** @brief Get number of satellites used for determining GPS position.
      *  @return Number of satellites used for determining GPS position. **/
-    virtual unsigned char get_pos_ecef_nsats();
+    virtual uint8_t get_pos_ecef_nsats();
 
     /** @brief Get status flags of GPS position measurement.
      * returns 0 if SPP
@@ -152,7 +152,7 @@ class Piksi {
      * Modded by 8 to prevent spurious values
      * Let it be known that pos_ecef_flags seems unreliable, not used in PiksiControlTask
      *  @return Status flags of GPS position measurement. **/
-    virtual unsigned char get_pos_ecef_flags();
+    virtual uint8_t get_pos_ecef_flags();
 
     /**
      * @brief Get the baseline ECEF coordinates
@@ -167,13 +167,13 @@ class Piksi {
      * @param tow A pointer to the tow int
      * @param position A pointer to the std::array of doubles for the baseline position
      */
-    virtual void get_baseline_ecef(unsigned int *tow, std::array<double, 3> *position);
+    virtual void get_baseline_ecef(uint32_t *tow, std::array<double, 3> *position);
 
     /** @brief Get number of satellites used for determining GPS baseline
      * position.
      *  @return Number of satellites used for determining GPS baseline position.
      * **/
-    virtual unsigned char get_baseline_ecef_nsats();
+    virtual uint8_t get_baseline_ecef_nsats();
 
     /** @brief Get status flags of GPS baseline position measurement.
      * returns 1 if fixed RTK
@@ -181,7 +181,7 @@ class Piksi {
      * returns 0 if SPP
      * 
      *  @return Status flags of GPS baseline position measurement. **/
-    unsigned char get_baseline_ecef_flags();
+    uint8_t get_baseline_ecef_flags();
 
     /** @brief Gets satellite velocity in ECEF coordinates.
      *  @param velocity A pointer to the std::array of doubles for velocity
@@ -194,15 +194,15 @@ class Piksi {
      * @param int A pointer to the tow int
      * @param velocity A pointer to the std::array of doubles for velocity
      */
-    virtual void get_vel_ecef(unsigned int *tow, std::array<double, 3> *velocity);
+    virtual void get_vel_ecef(uint32_t *tow, std::array<double, 3> *velocity);
 
     /** @brief Get number of satellites used for determining GPS velocity.
      *  @return Number of satellites used for determining GPS velocity. **/
-    virtual unsigned char get_vel_ecef_nsats();
+    virtual uint8_t get_vel_ecef_nsats();
 
     /** @brief Get status flags of GPS velocity measurement.
      *  @return Status flags of GPS velocity measurement. **/
-    unsigned char get_vel_ecef_flags();
+    uint8_t get_vel_ecef_flags();
 
     /** @brief Gets base station position in ECEF coordinates.
      *  @param position A pointer to an std::array of doubles for storing the x,y,z coordinates of
@@ -210,17 +210,17 @@ class Piksi {
     virtual void get_base_pos_ecef(std::array<double, 3> *position);
 
     /** @brief Returns state of integer ambiguity resolution (IAR) process. **/
-    virtual unsigned int get_iar();
+    virtual uint32_t get_iar();
 
     //set of mocking methods
     // #ifdef UNIT_TEST
     #ifdef DESKTOP
-    void set_gps_time(const unsigned int tow);
-    void set_pos_ecef(const unsigned int tow, const std::array<double, 3>& position, const unsigned char nsats);
-    void set_vel_ecef(const unsigned int tow, const std::array<double, 3>& velocity);
-    void set_baseline_ecef(const unsigned int tow, const std::array<double, 3>& position);
-    void set_baseline_flag(const unsigned char flag);
-    void set_read_return(const unsigned int out);
+    void set_gps_time(uint32_t tow);
+    void set_pos_ecef(uint32_t tow, const std::array<double, 3>& position, uint8_t nsats);
+    void set_vel_ecef(uint32_t tow, const std::array<double, 3>& velocity);
+    void set_baseline_ecef(uint32_t tow, const std::array<double, 3>& position);
+    void set_baseline_flag(uint8_t flag);
+    void set_read_return(uint32_t out);
     #endif
 
     /** @brief Reads current settings in Piksi RAM.
@@ -229,7 +229,7 @@ class Piksi {
 
     /** @brief Reads status flags of Piksi (i.e. the "heartbeat").
      *  @return Status flags of Piksi, as a libsbp struct. **/
-    unsigned int get_heartbeat();
+    uint32_t get_heartbeat();
 
     /** @brief Reads "system health" bit of status flags of Piksi.
      *  @return Whether or not the system is healthy. **/
@@ -257,19 +257,19 @@ class Piksi {
 
     /** @brief Reads UART channel A CRC error count.
      *  @return UART A channel CRC error count. **/
-    unsigned short int get_uart_a_crc_error_count();
+    uint16_t get_uart_a_crc_error_count();
 
     /** @brief Reads UART channel A I/O error count.
      *  @return UART A channel I/O error count. **/
-    unsigned short int get_uart_a_io_error_count();
+    uint16_t get_uart_a_io_error_count();
 
     /** @brief Reads UART channel A transmission buffer utilization.
      *  @return UART A channel transmission buffer utilization. **/
-    unsigned char get_uart_a_tx_buffer_utilization();
+    uint8_t get_uart_a_tx_buffer_utilization();
 
     /** @brief Reads UART channel A reception buffer utilization.
      *  @return UART A channel reception buffer utilization. **/
-    unsigned char get_uart_a_rx_buffer_utilization();
+    uint8_t get_uart_a_rx_buffer_utilization();
 
     /** @brief Reads UART channel B transmission throughput.
      *  @return UART B channel transmission throughput. **/
@@ -281,19 +281,19 @@ class Piksi {
 
     /** @brief Reads UART channel B CRC error count.
      *  @return UART B channel CRC error count. **/
-    unsigned short int get_uart_b_crc_error_count();
+    uint16_t get_uart_b_crc_error_count();
 
     /** @brief Reads UART channel B I/O error count.
      *  @return UART B channel I/O error count. **/
-    unsigned short int get_uart_b_io_error_count();
+    uint16_t get_uart_b_io_error_count();
 
     /** @brief Reads UART channel B transmission buffer utilization.
      *  @return UART B channel transmission buffer utilization. **/
-    unsigned char get_uart_b_tx_buffer_utilization();
+    uint8_t get_uart_b_tx_buffer_utilization();
 
     /** @brief Reads UART channel B reception buffer utilization.
      *  @return UART B channel reception buffer utilization. **/
-    unsigned char get_uart_b_rx_buffer_utilization();
+    uint8_t get_uart_b_rx_buffer_utilization();
 
     /** @brief Reads user data payload.
      *  @return User data, as a string. **/
@@ -381,15 +381,15 @@ class Piksi {
     void _insert_log_msg(u8 msg[]);
 
     // Logging information.
-    static const unsigned char _logbook_max_size = 128;
-    unsigned char _logbook_size;            // How much of the logbook is currently being used.
+    static const uint8_t _logbook_max_size = 128;
+    uint8_t _logbook_size = 0;        // How much of the logbook is currently being used.
     msg_log_t _logbook[_logbook_max_size];  // Will contain latest log messages
-    msg_log_t *_latest_log;                 // Pointer to the latest log in the list
+    msg_log_t *_latest_log = &_logbook[0];  // Pointer to the latest log in the list
 
     // Piksi data containers.
-    msg_gps_time_t _gps_time = {};
-    msg_dops_t _dops;
-    msg_pos_ecef_t _pos_ecef;
+    msg_gps_time_t _gps_time {};
+    msg_dops_t _dops {};
+    msg_pos_ecef_t _pos_ecef {};
     msg_baseline_ecef_t _baseline_ecef;
     msg_vel_ecef_t _vel_ecef;
     msg_base_pos_ecef_t _base_pos_ecef;
@@ -411,9 +411,9 @@ class Piksi {
     //set read return mock
     // #if defined(DESKTOP) || defined(UNIT_TEST) 
     #ifdef DESKTOP
-    unsigned int _read_return;
+    uint32_t _read_return;
     #endif
 };
-}
+} // namespace Devices
 
 #endif

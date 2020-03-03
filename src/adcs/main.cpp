@@ -46,6 +46,7 @@ using namespace adcs;
 // TODO : Look into the proper initialization for the slave i2c bus and whether
 //        a clock frequency needs to be included
 
+// cppcheck-suppress unusedFunction
 void setup() {
   LOG_init(9600)
 
@@ -101,13 +102,13 @@ void update_havt() {
   havt::update_read_table();
 
   //set register to the internal table.
-  registers.havt.read_table = (unsigned int)havt::internal_table.to_ulong();
+  registers.havt.read_table = (uint32_t)havt::internal_table.to_ulong();
 
   //if new command, actuate on reset_table
   if(registers.havt.cmd_reset_flg == CMDFlag::UPDATED){
     // Attempt atomic copy of the havt command reset
     registers.havt.cmd_reset_flg = CMDFlag::OUTDATED;
-    unsigned int command_int = registers.havt.cmd_reset_table;
+    uint32_t command_int = registers.havt.cmd_reset_table;
 
     // Actuate if the copy was atomic
     if (registers.havt.cmd_reset_flg == CMDFlag::OUTDATED){
@@ -119,7 +120,7 @@ void update_havt() {
   //if new command, execute distable table
   if(registers.havt.cmd_disable_flg == CMDFlag::UPDATED){
     registers.havt.cmd_disable_flg = CMDFlag::OUTDATED;
-    unsigned int command_int = registers.havt.cmd_disable_table;
+    uint32_t command_int = registers.havt.cmd_disable_table;
     if (registers.havt.cmd_disable_flg == CMDFlag::OUTDATED){
       std::bitset<havt::max_devices> temp_command_table(command_int);
       havt::execute_cmd_disable_table(temp_command_table);
@@ -151,7 +152,7 @@ void update_imu() {
  *  magnetic torque rods are enabled, and the command vector was copied
  *  atomically. */
 void update_mtr() {
-  unsigned char mtr_mode;
+  uint8_t mtr_mode;
   lin::Vector3f mtr_cmd;
 
   // Check for valid ADCS mode and the current command is new
@@ -168,7 +169,7 @@ void update_mtr() {
 /** \fn update_rwa 
  *   */
 void update_rwa() {
-  unsigned char rwa_mode;
+  uint8_t rwa_mode;
   lin::Vector3f rwa_cmd;
 
   // Check for valid ADCS mode and the current command is new
@@ -197,16 +198,15 @@ void update_rwa() {
  *  state struct is updated on the completion of a sun vector calculation. */
 void update_ssa() {
   lin::Vector3f ssa_sun_vec;
-  unsigned char ssa_mode;
 
   // Update sun sensor readings
   ssa::update_sensors(registers.ssa.voltage_flt);
-  for (unsigned int i = 0; i < 20; i++)
+  for (uint32_t i = 0; i < 20; i++)
     registers.ssa.voltage_rd[i] = ssa::voltages(i);
 
   // Check if sun vector calculation is requested
   if (registers.ssa.mode == SSAMode::SSA_IN_PROGRESS) {
-    ssa_mode = ssa::calculate_sun_vector(ssa_sun_vec);
+    uint8_t ssa_mode = ssa::calculate_sun_vector(ssa_sun_vec);
     registers.ssa.sun_vec_rd[0] = ssa_sun_vec(0);
     registers.ssa.sun_vec_rd[1] = ssa_sun_vec(1);
     registers.ssa.sun_vec_rd[2] = ssa_sun_vec(2);
@@ -215,9 +215,10 @@ void update_ssa() {
 }
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-static unsigned long cycles = 0;
+static uint64_t cycles = 0;
 #endif
 
+// cppcheck-suppress unusedFunction
 void loop() {
   update_imu();
   update_mtr();

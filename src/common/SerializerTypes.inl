@@ -49,15 +49,15 @@ class Serializer<bool> : public SerializerBase<bool> {
  */
 template <typename T>
 class IntegerSerializer : public SerializerBase<T> {
-  static_assert(std::is_same<T, unsigned int>::value || 
-                std::is_same<T, signed int>::value ||
-                std::is_same<T, unsigned char>::value ||
-                std::is_same<T, signed char>::value,
+  static_assert(std::is_same<T, uint32_t>::value || 
+                std::is_same<T, int32_t>::value ||
+                std::is_same<T, uint8_t>::value ||
+                std::is_same<T, int8_t>::value,
                 "Must use integer or char type when constructing an integer serializer.");
 
   protected:
-    static constexpr unsigned int log2i(unsigned int n) {
-        unsigned int i = 0;
+    static constexpr uint32_t log2i(uint32_t n) {
+        uint32_t i = 0;
         while(n > 0) {
             n = n >> 1;
             i++;
@@ -78,11 +78,11 @@ class IntegerSerializer : public SerializerBase<T> {
     }
 
   public:
-    unsigned int _resolution() const {
-        unsigned int range = this->_max - this->_min;
-        const unsigned int num_bits = this->serialized_val.size();
+    uint32_t _resolution() const {
+        uint32_t range = this->_max - this->_min;
+        const uint32_t num_bits = this->serialized_val.size();
         
-        unsigned int num_intervals;
+        uint32_t num_intervals;
         if (num_bits < 32) num_intervals = (1 << num_bits) - 1;
         else num_intervals = 4294967295; // 2^32 - 1
         if (num_intervals == 0) return 0;  // No resolution available.
@@ -97,7 +97,7 @@ class IntegerSerializer : public SerializerBase<T> {
         if (src_copy > this->_max) src_copy = this->_max;
         if (src_copy < this->_min) src_copy = this->_min;
 
-        unsigned int resolution = _resolution();
+        uint32_t resolution = _resolution();
         if (resolution == 0)
             this->serialized_val.set_int(0);  // Prevent divide-by-zero error
         else
@@ -129,73 +129,73 @@ class IntegerSerializer : public SerializerBase<T> {
  * @brief Specialization of Serializer for signed characters.
  */
 template <>
-class Serializer<signed char> : public IntegerSerializer<signed char> {
+class Serializer<int8_t> : public IntegerSerializer<int8_t> {
   public:
     constexpr static size_t print_size = 5; // -2^3 - 1 has 4 characters. +1 for NULL
 
-    Serializer() : IntegerSerializer<signed char>(-128, 127, print_size) {}
+    Serializer() : IntegerSerializer<int8_t>(-128, 127, print_size) {}
 
-    Serializer(signed char min, signed char max, size_t compressed_size)
-        : IntegerSerializer<signed char>(min, max, compressed_size, print_size) {}
+    Serializer(int8_t min, int8_t max, size_t compressed_size)
+        : IntegerSerializer<int8_t>(min, max, compressed_size, print_size) {}
 
-    Serializer(signed char min, signed char max)
-        : IntegerSerializer<signed char>(min, max, print_size) {}
+    Serializer(int8_t min, int8_t max)
+        : IntegerSerializer<int8_t>(min, max, print_size) {}
 };
 
 /**
  * @brief Specialization of Serializer for unsigned characters.
  */
 template <>
-class Serializer<unsigned char> : public IntegerSerializer<unsigned char> {
+class Serializer<uint8_t> : public IntegerSerializer<uint8_t> {
   public:
     constexpr static size_t print_size = 4; // 2^8 - 1 has 10 characters. +1 for NULL
 
-    Serializer() : IntegerSerializer<unsigned char>(0, 255, print_size) {}
+    Serializer() : IntegerSerializer<uint8_t>(0, 255, print_size) {}
 
-    Serializer(unsigned char max) : IntegerSerializer<unsigned char>(0, max, print_size) {}
+    explicit Serializer(uint8_t max) : IntegerSerializer<uint8_t>(0, max, print_size) {}
 
-    Serializer(unsigned char min, unsigned char max, size_t compressed_size)
-        : IntegerSerializer<unsigned char>(min, max, compressed_size, print_size) {}
+    Serializer(uint8_t min, uint8_t max, size_t compressed_size)
+        : IntegerSerializer<uint8_t>(min, max, compressed_size, print_size) {}
 
-    Serializer(unsigned char min, unsigned char max)
-        : IntegerSerializer<unsigned char>(min, max, print_size) {}
+    Serializer(uint8_t min, uint8_t max)
+        : IntegerSerializer<uint8_t>(min, max, print_size) {}
 };
 
 /**
  * @brief Specialization of Serializer for unsigned integers.
  */
 template <>
-class Serializer<unsigned int> : public IntegerSerializer<unsigned int> {
+class Serializer<uint32_t> : public IntegerSerializer<uint32_t> {
   public:
     constexpr static size_t print_size = 11; // 2^32 - 1 has 10 characters. +1 for NULL
 
-    Serializer() : IntegerSerializer<unsigned int>(0, 4294967295, print_size) {}
+    Serializer() : IntegerSerializer<uint32_t>(0, 4294967295, print_size) {}
 
-    Serializer(unsigned int max) : IntegerSerializer<unsigned int>(0, max, print_size) {}
+    explicit Serializer(uint32_t max) : IntegerSerializer<uint32_t>(0, max, print_size) {}
 
-    Serializer(unsigned int min, unsigned int max, size_t compressed_size)
-        : IntegerSerializer<unsigned int>(min, max, compressed_size, print_size) {}
+    Serializer(uint32_t min, uint32_t max, size_t compressed_size)
+        : IntegerSerializer<uint32_t>(min, max, compressed_size, print_size) {}
 
-    Serializer(unsigned int min, unsigned int max)
-        : IntegerSerializer<unsigned int>(min, max, print_size) {}
+    Serializer(uint32_t min, uint32_t max)
+        : IntegerSerializer<uint32_t>(min, max, print_size) {}
 };
 
 /**
  * @brief Specialization of Serializer for signed integers.
  */
 template <>
-class Serializer<signed int> : public IntegerSerializer<signed int> {
+class Serializer<int32_t> : public IntegerSerializer<int32_t> {
   public:
     constexpr static size_t temp_sz = 30; // Size of a temperature field
     constexpr static size_t print_size = 12; // -2^31 - 1 has 11 characters. +1 for NULL
 
-    Serializer() : IntegerSerializer<signed int>(-2147483648, 2147483647, print_size) {}
+    Serializer() : IntegerSerializer<int32_t>(-2147483648, 2147483647, print_size) {}
 
-    Serializer(signed int min, signed int max, size_t compressed_size)
-        : IntegerSerializer<signed int>(min, max, compressed_size, print_size) {}
+    Serializer(int32_t min, int32_t max, size_t compressed_size)
+        : IntegerSerializer<int32_t>(min, max, compressed_size, print_size) {}
 
-    Serializer(signed int min, signed int max)
-        : IntegerSerializer<signed int>(min, max, print_size) {}
+    Serializer(int32_t min, int32_t max)
+        : IntegerSerializer<int32_t>(min, max, print_size) {}
 };
 
 /**
@@ -222,7 +222,7 @@ class FloatDoubleSerializer : public SerializerBase<T> {
 
   public:
     void serialize(const T& src) override {
-        const unsigned int num_intervals = (0b1 << this->serialized_val.size()) - 1;
+        const uint32_t num_intervals = (0b1 << this->serialized_val.size()) - 1;
 
         T src_copy = src;
         if (src_copy > this->_max) src_copy = this->_max;
@@ -231,7 +231,7 @@ class FloatDoubleSerializer : public SerializerBase<T> {
         T resolution = 0;
         if (num_intervals > 0) resolution = (this->_max - this->_min) / num_intervals;
 
-        const unsigned int result_int = static_cast<unsigned int>((src_copy - this->_min) / resolution);
+        const uint32_t result_int = static_cast<uint32_t>((src_copy - this->_min) / resolution);
         this->serialized_val.set_int(result_int);
     }
 
@@ -251,9 +251,9 @@ class FloatDoubleSerializer : public SerializerBase<T> {
     }
 
     void deserialize(T* dest) const override {
-        const unsigned int num_intervals = (0b1 << this->serialized_val.size()) - 1;
+        const uint32_t num_intervals = (0b1 << this->serialized_val.size()) - 1;
 
-        const unsigned int f_bits = this->serialized_val.to_uint();
+        const uint32_t f_bits = this->serialized_val.to_uint();
         T resolution;
         if (num_intervals > 0)
             resolution = (this->_max - this->_min) / num_intervals;
@@ -462,7 +462,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         
             normd = normd / lin::norm(normd);
             
-            for(unsigned int i = 0; i<N; i++){
+            for(uint32_t i = 0; i<N; i++){
                 src_norm[i] = normd(i);
             }
         }
@@ -470,7 +470,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         // Get and store index of maximum-valued component
         std::array<T, N> v_mags;
         T max_element_mag = 0;
-        unsigned int max_component_idx = 0;
+        uint32_t max_component_idx = 0;
         for (size_t i = 0; i < N; i++) {
             v_mags[i] = std::abs(src_norm[i]);
             if (max_element_mag < v_mags[i]) {
@@ -566,7 +566,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
     void deserialize(std::array<T, N>* dest) const override {
         // a counter to keep track of the current serialized val index to process
-        unsigned int idx_pointer = 0;
+        uint32_t idx_pointer = 0;
 
         // read which component index is highest into a bitset for later use
         std::bitset<2> max_comp_bitset(0);
@@ -587,7 +587,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         }
 
         // loop through each serializer
-        for(unsigned int i = 0; i<(N-1); i++){
+        for(uint32_t i = 0; i<(N-1); i++){
             bit_array& local_arr_ref = const_cast <bit_array&>(vector_element_serializers[i]->get_bit_array());
             // loop through each bit belonging to the serializer
             for(size_t j = 0; j < vector_element_serializers[i]->bitsize(); j++){       
@@ -602,7 +602,6 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         bool max_comp_is_negative = false;
         if (N == 3){
             max_comp_is_negative = this->serialized_val[idx_pointer];
-            idx_pointer++;
         }    
 
         T magnitude = 0.0;
@@ -612,7 +611,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
             magnitude = 1.0;
 
         // completely bypass member bit_array max_component;
-        unsigned int deser_max_idx = max_comp_bitset.to_ulong();
+        uint32_t deser_max_idx = max_comp_bitset.to_ulong();
 
         (*dest)[deser_max_idx] = 1.0;
         int j = 0;  // Index of current component being processed
@@ -766,7 +765,7 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
             return;
         }
         serialized_val[0] = true;
-        std::bitset<16> wn((unsigned short int)src.wn);
+        std::bitset<16> wn((uint16_t)src.wn);
         std::bitset<32> tow(src.tow);
         std::bitset<20> ns(src.ns);
         for (size_t i = 0; i < wn.size(); i++) serialized_val[i + 1] = wn[i];
@@ -776,7 +775,7 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
     }
 
     bool deserialize(const char* val, gps_time_t* dest) override {
-        size_t num_values_found = sscanf(val, "%hu,%d,%d", &(dest->wn),
+        size_t num_values_found = sscanf(val, "%hu,%u,%u", &(dest->wn),
                                          &(dest->tow), &(dest->ns));
         if (num_values_found != 3) return false;
 
@@ -798,13 +797,13 @@ class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
         for (size_t i = 0; i < 16; i++) wn.set(i, serialized_val[i + 1]);
         for (size_t i = 0; i < 32; i++) tow.set(i, serialized_val[wn.size() + i + 1]);
         for (size_t i = 0; i < 20; i++) ns.set(i, serialized_val[wn.size() + tow.size() + i + 1]);
-        dest->wn = (unsigned int)wn.to_ulong();
-        dest->tow = (unsigned int)tow.to_ulong();
-        dest->ns = (unsigned int)ns.to_ulong();
+        dest->wn = (uint32_t)wn.to_ulong();
+        dest->tow = (uint32_t)tow.to_ulong();
+        dest->ns = (uint32_t)ns.to_ulong();
     }
 
     const char* print(const gps_time_t& src) const override {
-        sprintf(this->printed_val, "%hu,%d,%d", src.wn, src.tow, src.ns);
+        sprintf(this->printed_val, "%hu,%u,%u", src.wn, src.tow, src.ns);
         return this->printed_val;
     }
 };

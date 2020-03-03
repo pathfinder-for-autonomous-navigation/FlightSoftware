@@ -10,7 +10,7 @@ public:
    *
    * @param registry
    */
-  DebugTask(StateFieldRegistry &registry, unsigned int offset);
+  DebugTask(StateFieldRegistry &registry, uint32_t offset);
 
   /**
    * @brief Runs the debug task (processes state field commands present in the

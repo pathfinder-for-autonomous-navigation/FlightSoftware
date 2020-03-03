@@ -31,7 +31,7 @@ void setup();
  *  Actuates the MTRs according to the mode, commanded vector, and magnetic
  *  moment limit. Note that if the mode is not enabled, the magnetic torque rods
  *  will not actuate. */
-void actuate(unsigned char mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim);
+void actuate(uint8_t mtr_mode, lin::Vector3f mtr_cmd, float mtr_lim);
 
 }  // namespace mtr
 }  // namespace adcs

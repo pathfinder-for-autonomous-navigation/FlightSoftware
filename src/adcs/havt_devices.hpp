@@ -19,7 +19,7 @@ namespace havt {
 /** @enum Index
  *  Enumerates the bitset address of the devices in the havt table
  *  The first value corresponds to bitset[0]  */
-enum Index : unsigned char {
+enum Index : uint8_t {
   IMU_GYR,
   IMU_MAG1,
   IMU_MAG2,

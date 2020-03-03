@@ -17,7 +17,7 @@
 namespace adcs {
 namespace dev {
 
-void Magnetorquer::setup(unsigned int f_pin, unsigned int r_pin) {
+void Magnetorquer::setup(uint32_t f_pin, uint32_t r_pin) {
   this->f_pin = f_pin;
   this->r_pin = r_pin;
 }

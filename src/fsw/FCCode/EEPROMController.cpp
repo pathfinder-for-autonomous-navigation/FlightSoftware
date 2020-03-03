@@ -3,19 +3,22 @@
 #include <EEPROM.h>
 #endif
 
-EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
+EEPROMController::EEPROMController(StateFieldRegistry &registry, uint32_t offset)
     : TimedControlTask<void>(registry, "eeprom_ct", offset)
 {
 
 }
 
-void EEPROMController::init(const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods){
+void EEPROMController::init(
+  const std::vector<std::string>& statefields,
+  const std::vector<unsigned int>& periods)
+{
   for (size_t i = 0; i<statefields.size(); i++){
     // copy the string name of the statefield into a char array
     char field[statefields.at(i).length() + 1];
     strcpy(field, statefields.at(i).c_str());
     // get the pointer to that statefield and add it to the pointer array
-    pointers.push_back(find_readable_field<unsigned int>(field, __FILE__, __LINE__));
+    pointers.push_back(find_readable_field<uint32_t>(field));
     // add the address of the pointer to the address array
     addresses.push_back(i*5);
   }
@@ -44,13 +47,13 @@ void EEPROMController::execute() {
 
 void EEPROMController::read_EEPROM(){
   #ifndef DESKTOP
-  for (unsigned int i = 0; i<pointers.size(); i++){
+  for (uint32_t i = 0; i<pointers.size(); i++){
     pointers.at(i)->set(EEPROM.read(addresses.at(i)));
   }
   #endif
 }
 
-void EEPROMController::update_EEPROM(unsigned int position){
+void EEPROMController::update_EEPROM(uint32_t position){
   #ifndef DESKTOP
   EEPROM.put(addresses.at(position), pointers.at(position)->get());
   #endif
@@ -58,7 +61,7 @@ void EEPROMController::update_EEPROM(unsigned int position){
 
 bool EEPROMController::check_empty(){
   #ifndef DESKTOP
-  for (int i = 0 ; i < EEPROM.length() ; i++) {
+  for (uint16_t i = 0 ; i < EEPROM.length() ; i++) {
     if (EEPROM.read(i)!=255){
       return false;
     }

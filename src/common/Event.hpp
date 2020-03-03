@@ -11,14 +11,13 @@ class Event : public ReadableStateFieldBase, public StateField<bool> {
   public:
     Event(const std::string& name,
           std::vector<ReadableStateFieldBase*>& _data_fields,
-          const char* (*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
-          const unsigned int& _ccno);
+          const char* (*_print_fn)(const uint32_t, std::vector<ReadableStateFieldBase*>&),
+          const uint32_t& _ccno);
         
     const std::string &name() const override { return _name; }
 
     // Functions that will be overridden from SerializableStateFieldBase
   protected:
-    const std::string _name;
     void serialize() override;
   public:
     size_t bitsize() const override;
@@ -35,9 +34,9 @@ class Event : public ReadableStateFieldBase, public StateField<bool> {
   private:
     std::vector<ReadableStateFieldBase*>& data_fields;
     std::unique_ptr<bit_array> field_data;
-    const char* (*print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&);
+    const char* (*print_fn)(const uint32_t, std::vector<ReadableStateFieldBase*>&);
 
-    const unsigned int& ccno; // Control cycle count
+    const uint32_t& ccno; // Control cycle count
 
     // The value of events should never be set via deserialize or set_bit_array(), so these
     // functions will have stub implementations.

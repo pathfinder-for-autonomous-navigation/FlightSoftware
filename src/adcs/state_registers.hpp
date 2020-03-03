@@ -18,7 +18,7 @@ namespace adcs {
 /** @enum Register
  *  Enumerates the 'addresses' of the registers defined in the Registers struct.
  *  The below value should be the first and  */
-enum Register : unsigned char {
+enum Register : uint8_t {
   WHO_AM_I,
   ENDIANNESS,
   ADCS_MODE,

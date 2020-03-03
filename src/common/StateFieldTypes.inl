@@ -16,7 +16,7 @@ class InternalStateFieldBase : virtual public StateFieldBase {};
 template <typename T>
 class InternalStateField : public StateField<T>, public InternalStateFieldBase {
   public:
-    InternalStateField(const std::string &name) : 
+    explicit InternalStateField(const std::string &name) : 
         StateField<T>(name, false, false) {}
 
     virtual ~InternalStateField() {}

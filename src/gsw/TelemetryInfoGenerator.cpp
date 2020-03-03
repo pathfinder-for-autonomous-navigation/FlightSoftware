@@ -4,7 +4,7 @@
 #include <array>
 
 const std::vector<std::string> dummy_statefields = {};
-const std::vector<unsigned int> dummy_periods = {};
+const std::vector<uint32_t> dummy_periods = {};
 
 TelemetryInfoGenerator::TelemetryInfoGenerator(
     const std::vector<DownlinkProducer::FlowData>& _flow_data) :
@@ -15,10 +15,10 @@ using nlohmann::json;
 
 template<typename T>
 std::string type_name() {
-    if      (std::is_same<unsigned int, T>::value) return "unsigned int";
-    else if (std::is_same<signed int, T>::value) return "signed int";
-    else if (std::is_same<unsigned char, T>::value) return "unsigned char";
-    else if (std::is_same<signed char, T>::value) return "signed char";
+    if      (std::is_same<uint32_t, T>::value) return "uint32_t";
+    else if (std::is_same<int32_t, T>::value) return "int32_t";
+    else if (std::is_same<uint8_t, T>::value) return "uint8_t";
+    else if (std::is_same<int8_t, T>::value) return "int8_t";
     else if (std::is_same<float, T>::value) return "float";
     else if (std::is_same<double, T>::value) return "double";
     else if (std::is_same<f_vector_t, T>::value) return "float vector";
@@ -91,10 +91,10 @@ json get_field_info(const StateFieldBaseType* field) {
     field_info["bitsize"] = field->bitsize();
 
     bool found_field_type = false;
-    found_field_type |= try_collect_field_info<StateFieldType, unsigned int, StateFieldBaseType>(field, field_info);
-    found_field_type |= try_collect_field_info<StateFieldType, signed int, StateFieldBaseType>(field, field_info);
-    found_field_type |= try_collect_field_info<StateFieldType, unsigned char, StateFieldBaseType>(field, field_info);
-    found_field_type |= try_collect_field_info<StateFieldType, signed char, StateFieldBaseType>(field, field_info);
+    found_field_type |= try_collect_field_info<StateFieldType, uint32_t, StateFieldBaseType>(field, field_info);
+    found_field_type |= try_collect_field_info<StateFieldType, int32_t, StateFieldBaseType>(field, field_info);
+    found_field_type |= try_collect_field_info<StateFieldType, uint8_t, StateFieldBaseType>(field, field_info);
+    found_field_type |= try_collect_field_info<StateFieldType, int8_t, StateFieldBaseType>(field, field_info);
     found_field_type |= try_collect_field_info<StateFieldType, float, StateFieldBaseType>(field, field_info);
     found_field_type |= try_collect_field_info<StateFieldType, double, StateFieldBaseType>(field, field_info);
     found_field_type |= try_collect_vector_field_info<StateFieldType, float, StateFieldBaseType>(field, field_info);

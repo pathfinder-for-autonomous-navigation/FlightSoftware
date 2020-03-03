@@ -46,9 +46,9 @@ void loop() {
   int16_t v[4];
   bool flag = true;
   // For new version ads1015_2_0
-  for (unsigned int i = 0; i < 4; i++) flag &= adc.read(channels[i], v[i]);
+  for (uint32_t i = 0; i < 4; i++) flag &= adc.read(channels[i], v[i]);
   // For old version ads1015_1_0
-  // for (unsigned int i = 0; i < 4; i++) flag &= adc.read(i, v[i]);
+  // for (uint32_t i = 0; i < 4; i++) flag &= adc.read(i, v[i]);
   if (flag)
     Serial.println(String(n++) + " : " + String(v[0]) + "," + String(v[1]) + "," + String(v[2]) +
                    "," + String(v[3]));

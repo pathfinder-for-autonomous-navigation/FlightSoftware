@@ -15,7 +15,7 @@ class ADCSCommander : public TimedControlTask<void> {
      * 
      * @param registry 
      */
-    ADCSCommander(StateFieldRegistry& registry, unsigned int offset);
+    ADCSCommander(StateFieldRegistry& registry, uint32_t offset);
 
     /**
      * @brief Determine control outputs for the ADCSBoxController
@@ -24,7 +24,7 @@ class ADCSCommander : public TimedControlTask<void> {
 
    protected:
     // input fields, given by a casted adcs_state_t enum
-    const WritableStateField<unsigned char>* adcs_state_fp;
+    const WritableStateField<uint8_t>* adcs_state_fp;
 
     // outputs from AttitudeComputer as inputs
     const WritableStateField<f_vector_t>* adcs_vec1_current_fp;
@@ -35,19 +35,19 @@ class ADCSCommander : public TimedControlTask<void> {
     // begin output fields necessary for adcs_box controller
     const Serializer<float> filter_sr;
 
-    WritableStateField<unsigned char> rwa_mode_f;
+    WritableStateField<uint8_t> rwa_mode_f;
     WritableStateField<f_vector_t> rwa_speed_cmd_f;
     WritableStateField<f_vector_t> rwa_torque_cmd_f;
     WritableStateField<float> rwa_speed_filter_f;
     WritableStateField<float> rwa_ramp_filter_f;
 
-    WritableStateField<unsigned char> mtr_mode_f;
+    WritableStateField<uint8_t> mtr_mode_f;
     WritableStateField<f_vector_t> mtr_cmd_f;
     WritableStateField<float> mtr_limit_f;
 
     WritableStateField<float> ssa_voltage_filter_f;
 
-    WritableStateField<unsigned char> imu_mode_f;
+    WritableStateField<uint8_t> imu_mode_f;
     WritableStateField<float> imu_mag_filter_f;
     WritableStateField<float> imu_gyr_filter_f;
     WritableStateField<float> imu_gyr_temp_filter_f;

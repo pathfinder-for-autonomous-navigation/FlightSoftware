@@ -62,13 +62,13 @@ void update_read_table(){
   LOG_TRACE_printlnF("Updating HAVT table from sensors")
 
   //Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
-  for (unsigned int index_int = Index::IMU_GYR; index_int < Index::_LENGTH; index_int++ )
+  for (uint32_t index_int = Index::IMU_GYR; index_int < Index::_LENGTH; index_int++ )
   {
     internal_table.set(index_int, dev_ptrs[index_int]->is_functional());
   }
 
   // Set all extra bits of the internal table to 0, just in case radiation
-  for (unsigned int index_int = Index::_LENGTH; index_int < havt::max_devices; index_int++)
+  for (uint32_t index_int = Index::_LENGTH; index_int < havt::max_devices; index_int++)
   {
     internal_table.set(index_int, 0);
   }
@@ -98,7 +98,7 @@ void execute_cmd_reset_table(const std::bitset<havt::max_devices>& cmd_reset_tab
   LOG_INFO_printlnF("Executing HAVT CMD RESET table")
 
   // Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
-  for (unsigned int index_int = Index::IMU_GYR; index_int != Index::_LENGTH; index_int++ )
+  for (uint32_t index_int = Index::IMU_GYR; index_int != Index::_LENGTH; index_int++ )
   {
     Index index = static_cast<Index>(index_int);
 
@@ -117,7 +117,7 @@ void execute_cmd_disable_table(const std::bitset<havt::max_devices>& cmd_disable
   LOG_INFO_printlnF("Executing HAVT CMD DISABLE table")
 
   // Loop until you reach _LENGTH, yes this effectively limits our max_devices to 31
-  for (unsigned int index_int = Index::IMU_GYR; index_int != Index::_LENGTH; index_int++ )
+  for (uint32_t index_int = Index::IMU_GYR; index_int != Index::_LENGTH; index_int++ )
   {
     Index index = static_cast<Index>(index_int);
 

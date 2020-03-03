@@ -17,8 +17,8 @@ int main(int argc, char** argv) {{
         std::cout << "Too many  arguments." << std::endl;
     }
 
-    char packet[70];
-    bitstream bs(packet, 70);
+    char packet[PAN::packet_size];
+    bitstream bs(packet, PAN::packet_size);
     producer.create_from_json(bs, std::string(argv[1]));
     producer.to_file(bs, std::string(argv[2]));
     return 0;

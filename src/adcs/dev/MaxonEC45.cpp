@@ -17,7 +17,7 @@
 namespace adcs {
 namespace dev {
 
-void MaxonEC45::setup(unsigned int cw_pin, unsigned int ccw_pin, unsigned int speed_pin,
+void MaxonEC45::setup(uint32_t cw_pin, uint32_t ccw_pin, uint32_t speed_pin,
                       AD5254 *potentiometer, void (AD5254::*const set_r)(uint8_t)) {
   this->cw_pin = cw_pin;
   this->ccw_pin = ccw_pin;

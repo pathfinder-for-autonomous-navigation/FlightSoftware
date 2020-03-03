@@ -1,6 +1,6 @@
 #include "DockingController.hpp"
 
-DockingController::DockingController(StateFieldRegistry &registry, unsigned int offset,
+DockingController::DockingController(StateFieldRegistry &registry, uint32_t offset,
     Devices::DockingSystem &_docksys)
     : TimedControlTask<void>(registry, "docking_ct", offset), docksys(_docksys),
       docked_f("docksys.docked", Serializer<bool>()),
@@ -18,7 +18,7 @@ DockingController::DockingController(StateFieldRegistry &registry, unsigned int 
 }
 
 void DockingController::init() {
-  docking_config_cmd_fp = find_writable_field<bool>("docksys.config_cmd", __FILE__, __LINE__);
+  docking_config_cmd_fp = find_writable_field<bool>("docksys.config_cmd");
 }
 
 void DockingController::execute() {

@@ -15,7 +15,7 @@
 namespace adcs {
 namespace dev {
 
-void LSM6DSM::setup(i2c_t3 *wire, uint8_t addr, unsigned long timeout) {
+void LSM6DSM::setup(i2c_t3 *wire, uint8_t addr, uint64_t timeout) {
   this->I2CDevice::setup(wire, addr, timeout);
 }
 
