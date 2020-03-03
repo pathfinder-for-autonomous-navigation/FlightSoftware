@@ -60,7 +60,7 @@ public:
    * Set the message that Quake should downlink.  */
   void set_downlink_msg(const char *, size_t);
 
-  char* const get_MT_msg()
+  char* get_MT_msg()
   {
     return quake.mt_message;
   }

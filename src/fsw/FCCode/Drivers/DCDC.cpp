@@ -37,7 +37,7 @@ void DCDC::enable_adcs() {
     #endif
 }
 
-const bool DCDC::adcs_enabled() {
+bool DCDC::adcs_enabled() {
     #ifndef DESKTOP
     return digitalRead(ADCSMotorDCDC_EN);
     #else
@@ -53,7 +53,7 @@ void DCDC::enable_sph() {
     #endif
 }
 
-const bool DCDC::sph_enabled() {
+bool DCDC::sph_enabled() {
     #ifndef DESKTOP
     return digitalRead(SpikeDockDCDC_EN);
     #else

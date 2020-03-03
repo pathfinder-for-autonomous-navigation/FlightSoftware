@@ -45,7 +45,7 @@ class DCDC : public Device {
     /**
      * @brief Returns if ADCS is enabled.
      **/
-    const bool adcs_enabled();
+    bool adcs_enabled();
 
     /**
      * @brief Turn on the Spike and Hold, pressure sensor, and docking motor
@@ -56,7 +56,7 @@ class DCDC : public Device {
     /**
      * @brief Returns if spike and hold is enabled.
      **/
-    const bool sph_enabled();
+    bool sph_enabled();
 
     /** 
      * @brief Turn off ADCS DCDC by holding the enable pin low.
