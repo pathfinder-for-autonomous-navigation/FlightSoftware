@@ -40,7 +40,7 @@ class TestTelemInfoGenerator(unittest.TestCase):
 
         with open("telem_output.json", "r") as f:
             telem_info = json.load(f)
-            self.assertEqual(telem_info["fields"]["pan.cycle_no"]["type"], "unsigned int")
+            self.assertEqual(telem_info["fields"]["pan.cycle_no"]["type"], "uint32_t")
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["flow_id"], "undefined")
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["min"], 0)
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["max"], 4294967295)

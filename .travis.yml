@@ -31,19 +31,12 @@ matrix:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info
 
-      - name: "Verify Teensy code compiles for flight software"
-        addons:
-          apt:
-            packages:
-            - cppcheck
-        script:
-            - ./tools/verify_teensy_builds.sh
-
-      - name: "ADCS Software Tests"
+      - name: "Verify Teensy code compiles for flight software, and ADCS software tests"
         install:
             - pip install -U platformio==4.2.0
             - platformio update
         script:
+            - ./tools/verify_teensy_builds.sh
             - platformio run -e adcs_teensy35_flight_leader
             - platformio run -e adcs_teensy35_flight_follower
             - platformio run -e adcs_teensy35_flight_debug_leader
