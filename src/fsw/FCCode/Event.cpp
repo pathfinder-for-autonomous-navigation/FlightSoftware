@@ -104,3 +104,7 @@ bool Event::deserialize(const char *val)
 {
     return true;
 }
+
+void Event::next_event()
+{
+}

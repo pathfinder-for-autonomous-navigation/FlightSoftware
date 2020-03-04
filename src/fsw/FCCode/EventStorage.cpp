@@ -54,8 +54,12 @@ void EventStorage::set_bit_array(const bit_array &arr)
 
 void EventStorage::signal()
 {
-    std::cout << event_ptr << std::endl;
+    //std::cout << event_ptr << std::endl;
     sub_events[event_ptr].signal();
+}
+
+void EventStorage::next_event()
+{
     event_ptr++;
     if (event_ptr == sub_events.size())
         event_ptr = 0;

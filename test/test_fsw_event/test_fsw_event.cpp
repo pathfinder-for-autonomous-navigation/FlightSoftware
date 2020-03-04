@@ -44,6 +44,10 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
     // Set values for test
     tf.control_cycle_count = ccno;
     tf.data1_f.set(true);
+
+    //std::cout << "first tf.data1_f " << tf.data1_f.get() << std::endl;
+    //std::cout << "first ba[32] " << ba[32] << std::endl;
+
     tf.data2_f.set(false);
 
     // Verify that upon serialization, the values are written into the event's bitset in the way
@@ -59,6 +63,7 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
     tf.data2_f.set(true);
     event.signal();
     ba = const_cast<bit_array &>(event.get_bit_array());
+    event.next_event();
     TEST_ASSERT_EQUAL(false, ba[32]);
     TEST_ASSERT_EQUAL(true, ba[33]);
 
@@ -107,6 +112,7 @@ void test_event_storage()
     // Event storage should behave the same as an event.
     for (int i = 0; i < 200; i++)
     {
+        //printf("%d\n", i);
         test_single_event(tf, tf.event_storage, i);
         //TEST_ASSERT_EQUAL(i * 2, tf.event_storage.event_ptr);
     }

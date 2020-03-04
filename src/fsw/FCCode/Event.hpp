@@ -49,6 +49,11 @@ public:
      * @return const char* The string.
      */
    virtual const char *print() const = 0;
+
+   /**
+    * moves to next event //TODO: better document
+    */
+   virtual void next_event() = 0;
 };
 
 /**
@@ -102,6 +107,8 @@ private:
    using StateField<bool>::get;
 
    void serialize() override;
+
+   void next_event() override;
 };
 
 #endif

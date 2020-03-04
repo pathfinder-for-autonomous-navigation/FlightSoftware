@@ -38,6 +38,7 @@ public:
   void deserialize() override;
   const char *print() const override;
   void signal() override;
+  void next_event() override;
 
 private:
   /**
