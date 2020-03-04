@@ -56,6 +56,11 @@ IntervalTimer _Tank2::thrust_valve_loop_timer = IntervalTimer();
 /* Setup */
 
 bool _PropulsionSystem::setup() {
+    // We set to a 10-bit resolution since the regression for the
+    // pressure sensor calculations was computed using a 10-bit Teensy
+    // ADC.
+    analogReadResolution(10);
+
     Tank1.setup();
     Tank2.setup();
     return true;

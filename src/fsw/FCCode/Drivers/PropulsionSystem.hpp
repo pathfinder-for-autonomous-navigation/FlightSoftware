@@ -287,9 +287,8 @@ private:
     static constexpr unsigned char pressure_sensor_high_pin = 23;
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
-    static constexpr unsigned int amp_threshold = 1000; 
-        // Corresponds to 50 mV, the voltage value at which
-        // we should switch between low- and high-gain amplifiers.
+    static constexpr unsigned int amp_threshold = 1000; // Corresponds to 50 mV, the voltage value at which
+                                                        // we should switch between low- and high-gain amplifiers.
 
     // Constants for the linear regression for computing tank pressure.
     // The regressions were computed on the following spreadsheet:
