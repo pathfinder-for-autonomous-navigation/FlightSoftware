@@ -1,6 +1,8 @@
 # Confidential Information/Configs
 radio_keys.json
 server_keys.json
+flask_keys.json
+logs/
 
 test/output_export.cpp
 # OS Generated .DS_store files
