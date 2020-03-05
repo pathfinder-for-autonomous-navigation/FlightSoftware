@@ -1,8 +1,10 @@
 #include <fsw/FCCode/PropController.hpp>
 
+#ifdef DESKTOP
+size_t g_fake_pressure_cycle_count = 15; // global
+#endif
 #if (defined(UNIT_TEST) && defined(DESKTOP))
 #define DD(f_, ...) printf((f_), ##__VA_ARGS__)
-size_t g_fake_pressure_cycle_count = 15; // global
 #else
 #define DD(f_, ...) do{} while(0)
 #endif
