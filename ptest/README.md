@@ -20,7 +20,7 @@ To install the Python MATLAB engine, you must:
 
  1. Install Python 3.6 - it's what we'll be using as it's the newest version
     officially supported by MATLAB.
- 2. Create and activate a virtualenv within this directory.
+ 2. Create and activate a virtualenv **within the root FlightSoftware directory**.
     - For Mac and Linux: `python3 -m virtualenv venv; source venv/bin/activate`
     - For Windows: `python -m virtualenv venv`, followed by `venv\Scripts\activate`.
  3. Install the requirements: `pip install -r requirements.txt`
