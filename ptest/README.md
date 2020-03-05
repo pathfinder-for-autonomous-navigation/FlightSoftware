@@ -14,6 +14,12 @@ supported by Python may include, but is not limited to:
 
  * Hardware/Sim interface for SHITLs.
 
+# Running unit tests
+
+From the root flight software folder, run
+
+    python -m pytest ptest
+
 # Installing
 
 To install the Python MATLAB engine, you must:

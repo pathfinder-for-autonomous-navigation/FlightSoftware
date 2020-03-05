@@ -1,4 +1,4 @@
-from ptest.data_consumers import Datastore, Logger
+from ..data_consumers import Datastore, Logger
 import os, json, tempfile, time, tinydb
 
 def test_datastore():
