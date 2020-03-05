@@ -5,7 +5,6 @@ class GPSTime(object):
     SECONDS_IN_WEEK = 7 * 24 * 60 * 60
     epoch_wn = 2045
 
-
     def __init__(self, wn, tow, ns):
         self.wn = wn
         self.tow = tow
