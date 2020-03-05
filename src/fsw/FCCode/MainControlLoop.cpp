@@ -28,6 +28,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       piksi_control_task(registry, piksi_control_task_offset, piksi),
       ADCS_INITIALIZATION,
       adcs_monitor(registry, adcs_monitor_offset, adcs),
+      prop_monitor(registry, prop_monitor_offset),
       debug_task(registry, debug_task_offset),
       attitude_estimator(registry, attitude_estimator_offset),
       gomspace(&hk, &config, &config2),
@@ -81,6 +82,7 @@ void MainControlLoop::execute() {
     piksi_control_task.execute_on_time();
     gomspace_controller.execute_on_time();
     adcs_monitor.execute_on_time();
+    prop_monitor.execute_on_time();
 
     #ifdef FUNCTIONAL_TEST
     debug_task.execute_on_time();

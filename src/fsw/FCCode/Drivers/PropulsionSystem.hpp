@@ -229,6 +229,11 @@ protected:
     // For the full data see
     // https://cornellprod-my.sharepoint.com/:x:/g/personal/saa243_cornell_edu/Edg-vGek6SBEoe0jhIUxmnIBPh84Y6g_Tro-SJWonhuVhA?e=EewWzU
 
+    // Minimum and maximum temperature values permitted by the regression.
+    // These values are used to "clamp" on voltage readings that are close to 0 or 3.3v.
+    static constexpr int temp_min = -55;
+    static constexpr int temp_max = 150;
+
     friend class _PropulsionSystem;
 };
 
@@ -270,7 +275,23 @@ public:
      */
     unsigned int get_schedule_at(size_t valve_num) const;
 
-#ifndef DESKTOP
+    // Constants for the linear regression for computing tank pressure.
+    // The regressions were computed on the following spreadsheet:
+    // https://cornellprod-my.sharepoint.com/:x:/g/personal/saa243_cornell_edu/Edg-vGek6SBEoe0jhIUxmnIBPh84Y6g_Tro-SJWonhuVhA?e=EewWzU
+    #if defined(PAN_LEADER)
+        static constexpr double high_gain_offset = -0.138539974953359;
+        static constexpr double high_gain_slope = 0.048285455017719;
+        static constexpr double low_gain_offset = 0.008416069224407;
+        static constexpr double low_gain_slope = 0.099084652547468;
+    #elif defined(PAN_FOLLOWER)
+        static constexpr double high_gain_offset = -0.062127065655240;
+        static constexpr double high_gain_slope = 0.048430664679468;
+        static constexpr double low_gain_offset = 0.154615074342849;
+        static constexpr double low_gain_slope = 0.099017990785658;
+    #else
+        static_assert(false, "Must define either LEADER or FOLLOWER satellite.");
+    #endif
+
 private:
 #endif
     void setup();
@@ -289,29 +310,6 @@ private:
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     static constexpr unsigned int amp_threshold = 1000; // Corresponds to 50 mV, the voltage value at which
                                                         // we should switch between low- and high-gain amplifiers.
-
-    // Constants for the linear regression for computing tank pressure.
-    // The regressions were computed on the following spreadsheet:
-    // https://cornellprod-my.sharepoint.com/:x:/g/personal/saa243_cornell_edu/Edg-vGek6SBEoe0jhIUxmnIBPh84Y6g_Tro-SJWonhuVhA?e=EewWzU
-    #if defined(PAN_LEADER)
-        // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B74C501CE-BB98-40C6-A2B9-74A954B7CD0E%7D&file=PAN-TPS-002%20(Umbilical%20Pressure%20and%20Temperature%20Sensors).docx&action=default&mobileredirect=true&CT=1583021796396&OR=ItemsView
-        static constexpr double high_gain_offset = -0.138539974953359;
-        static constexpr double high_gain_slope = 0.048285455017719;
-        static constexpr double low_gain_offset = 0.008416069224407;
-        static constexpr double low_gain_slope = 0.099084652547468;
-    #elif defined(PAN_FOLLOWER)
-        // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B1351A3F1-33A4-459D-A730-F415DE84F9D0%7D&file=PAN-TPS-002%20(Umbilical%20Pressure%20and%20Temperature%20Sensors).docx&action=default&mobileredirect=true&CT=1583021779019&OR=ItemsView
-        static constexpr double high_gain_offset = -0.062127065655240;
-        static constexpr double high_gain_slope = 0.048430664679468;
-        static constexpr double low_gain_offset = 0.154615074342849;
-        static constexpr double low_gain_slope = 0.099017990785658;
-    #else
-        static constexpr double high_gain_offset = 0;
-        static constexpr double high_gain_slope = 0;
-        static constexpr double low_gain_offset = 0;
-        static constexpr double low_gain_slope = 0;
-        static_assert(false, "Must define either LEADER or FOLLOWER satellite.");
-    #endif
 
     //! Loop interval in milliseconds.
     static constexpr unsigned int thrust_valve_loop_interval_ms = 3; 

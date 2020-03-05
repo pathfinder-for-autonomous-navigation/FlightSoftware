@@ -92,12 +92,16 @@ int Tank::get_temp() const
     // Get the resistance of the temperature sensor by
     // measuring a reference voltage and using the voltage
     // divider equation
-    int raw = analogRead(temp_sensor_pin);
-    double voltage = raw * 3.3 / 4096.0;
-    double resis = (voltage * 6200.0) / (3.3f - voltage);
+    unsigned int raw = analogRead(temp_sensor_pin); 
+    double voltage = raw * 3.3 / 1024.0;
+    if (std::abs(3.3 - voltage) < 1e-4) return temp_min;
+    double resis = (voltage * 6200.0) / (3.3 - voltage);
 
     // Get the value of the temperature using a linear regression.
-    return temp_a * std::pow(std::log(resis), temp_exp) + temp_b;
+    if (std::abs(resis) <= 1)
+        return temp_max;
+    else
+        return temp_a * std::pow(std::log(resis), temp_exp) + temp_b;
 }
 
 bool Tank::is_valve_open(size_t valve_idx) const
