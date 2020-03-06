@@ -199,8 +199,7 @@ void PropState_Disabled::enter()
 
 prop_state_t PropState_Disabled::evaluate() {
     // Call disable here because we might have entered this due to some problem
-    if (PropulsionSystem.is_functional())
-        PropulsionSystem.disable();
+    PropulsionSystem.disable();
     return this_state;
 }
 
@@ -280,7 +279,6 @@ void PropState_Pressurizing::enter() {
 
 bool PropState_Pressurizing::should_use_backup()
 {
-    // TODO: valve choice is determined by the ground, is this ok?
     return controller->tank1_valve.get();
 }
 

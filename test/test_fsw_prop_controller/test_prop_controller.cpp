@@ -20,7 +20,7 @@ public:
     {
        prop_controller = std::make_unique<PropController>(registry, 0);
        prop_state_fp = registry.find_writable_field_t<unsigned int>("prop.state");
-       cycles_until_firingp = registry.find_writable_field_t<unsigned int>("prop.fire_cycle");
+       cycles_until_firingp = registry.find_writable_field_t<unsigned int>("prop.cycles_until_firing");
        sched_valve1_fp = registry.find_writable_field_t<unsigned int>("prop.sched_valve1");
        sched_valve2_fp = registry.find_writable_field_t<unsigned int>("prop.sched_valve2");
        sched_valve3_fp = registry.find_writable_field_t<unsigned int>("prop.sched_valve3");
