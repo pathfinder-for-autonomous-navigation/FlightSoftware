@@ -17,6 +17,10 @@
   #define LOG_LEVEL UMB_LOG_LEVEL
 #endif
 
+#undef LOG_LEVEL
+#define LOG_LEVEL 0
+// ^ The above is a fix to prevent serial debug output during the i2c interrupt.
+
 #include "constants.hpp"
 #include "state.hpp"
 #include "state_controller.hpp"
