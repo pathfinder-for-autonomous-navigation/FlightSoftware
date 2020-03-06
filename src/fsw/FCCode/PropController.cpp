@@ -444,5 +444,6 @@ prop_state_t PropState_Manual::evaluate() {
     manual_eval(controller->sched_valve4_f, Tank1, 3);
     manual_eval(controller->sched_intertank1_f, Tank2, 0);
     manual_eval(controller->sched_intertank2_f, Tank2, 1);
+    return this_state;
 
 }
