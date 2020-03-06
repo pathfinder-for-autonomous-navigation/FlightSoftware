@@ -30,6 +30,8 @@ class PropState_Venting;
 
 class PropState_HandlingFault;
 
+class PropState_Manual;
+
 class PropController : public TimedControlTask<void> {
 public:
     PropController(StateFieldRegistry &registry, unsigned int offset);
@@ -45,6 +47,9 @@ public:
     WritableStateField<unsigned int> sched_valve2_f;
     WritableStateField<unsigned int> sched_valve3_f;
     WritableStateField<unsigned int> sched_valve4_f;
+
+    WritableStateField<unsigned int> sched_intertank1_f;
+    WritableStateField<unsigned int> sched_intertank2_f;
 
     // ------------------------------------------------------------------------
     // Ground-Modifiable Parameters
@@ -79,7 +84,7 @@ public:
     unsigned int min_cycles_needed() const;
 
     // Return true if Tank2 is at threshold pressure
-    static bool is_at_threshold_pressure(float threshold_firing_pressure);
+    bool is_at_threshold_pressure();
 
     inline bool check_current_state(prop_state_t expected) const {
         return expected == static_cast<prop_state_t>(prop_state_f.get());
@@ -113,6 +118,7 @@ private:
     static PropState_Firing state_firing;
     // static PropState_Venting state_venting;
     // static PropState_HandlingFault state_handling_fault;
+    static PropState_Manual state_manual;
 };
 
 // ------------------------------------------------------------------------
@@ -305,5 +311,13 @@ public:
 
     void enter() override;
 
+    prop_state_t evaluate() override;
+};
+
+class PropState_Manual : public PropState {
+public:
+    PropState_Manual() : PropState(prop_state_t::manual) {}
+    bool can_enter() const override;
+    void enter() override;
     prop_state_t evaluate() override;
 };

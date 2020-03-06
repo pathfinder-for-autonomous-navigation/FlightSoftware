@@ -17,6 +17,8 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
           sched_valve2_f("prop.sched_valve2", Serializer<unsigned int>(999)),
           sched_valve3_f("prop.sched_valve3", Serializer<unsigned int>(999)),
           sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999)),
+          sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(999*1000)),
+          sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(999*1000)),
           // TODO: verify these Serializer paramemters
           max_pressurizing_cycles("prop.max_pressurizing_cycles", Serializer<unsigned int>(50)),
           threshold_firing_pressure("prop.threshold_firing_pressure", Serializer<float>(10, 50, 4)),
@@ -69,6 +71,7 @@ PropState_AwaitFiring PropController::state_await_firing;
 PropState_Firing PropController::state_firing;
 // PropState_Venting PropController::state_venting = PropState_Venting();
 // PropState_HandlingFault PropController::state_handling_fault = PropState_HandlingFault();
+PropState_Manual PropController::state_manual;
 
 void PropController::execute() {
 
@@ -120,6 +123,8 @@ PropState &PropController::get_state(prop_state_t state) const {
             //     return state_venting;
             // case prop_state_t::handling_fault:
             //     return state_handling_fault;
+        case prop_state_t::manual:
+            return state_manual;
         default:
             return state_disabled;
     }
@@ -135,14 +140,14 @@ bool PropController::validate_schedule() {
                              cycles_until_firing.get());
 }
 
-bool PropController::is_at_threshold_pressure(float threshold_firing_pressure)
+bool PropController::is_at_threshold_pressure()
 {
 
 #ifdef DESKTOP
     // For testing purposes, say that we are at threshold pressure at pressurizing cycle fake_pressure_cycle_count
     return (state_pressurizing.pressurizing_cycle_count == g_fake_pressure_cycle_count);
 #else
-    return tank2_pressure.get() >= threshold_firing_pressure;
+    return tank2_pressure.get() >= threshold_firing_pressure.get();
 #endif
 }
 
@@ -281,7 +286,7 @@ prop_state_t PropState_Pressurizing::evaluate() {
     // Tick the clock
     countdown.tick();
     // Case 1: Tank2 is at threshold pressure
-    if (controller->is_at_threshold_pressure(controller->threshold_firing_pressure.get())) {
+    if (controller->is_at_threshold_pressure()) {
         DD("\tTank2 is at threshold pressure!\n");
         PropulsionSystem.close_valve(Tank1, valve_num);
         if (controller->can_enter_state(prop_state_t::await_firing)) {
@@ -356,7 +361,7 @@ void PropState_Pressurizing::start_pressurize_cycle() {
 bool PropState_AwaitFiring::can_enter() const {
     bool was_pressurizing = controller->check_current_state(prop_state_t::pressurizing);
 
-    return ( was_pressurizing && controller->is_at_threshold_pressure(controller->threshold_firing_pressure.get())  && controller->validate_schedule() );
+    return ( was_pressurizing && controller->is_at_threshold_pressure()  && controller->validate_schedule() );
 }
 
 void PropState_AwaitFiring::enter() {
@@ -404,4 +409,40 @@ bool PropState_Firing::is_schedule_empty() const {
     for (size_t i = 0; i < 4; ++i)
         remain += Tank2.get_schedule_at(i);
     return remain == 0;
+}
+
+// ------------------------------------------------------------------------
+// PropState Manual
+// ------------------------------------------------------------------------
+
+bool PropState_Manual::can_enter() const {
+    return true;
+}
+
+void PropState_Manual::enter() {
+    PropulsionSystem.reset();
+}
+
+void manual_eval(WritableStateField<unsigned int>& sched, Devices::Tank& tank, unsigned int valve_num)
+{
+    if (sched.get() > 0)
+    {
+        PropulsionSystem.open_valve(tank, valve_num);
+    } else
+    {
+        PropulsionSystem.close_valve(tank, valve_num);
+    }
+#ifndef DESKTOP
+    delayMicroseconds(3000);
+#endif
+}
+
+prop_state_t PropState_Manual::evaluate() {
+    manual_eval(controller->sched_valve1_f, Tank1, 0);
+    manual_eval(controller->sched_valve2_f, Tank1, 1);
+    manual_eval(controller->sched_valve3_f, Tank1, 2);
+    manual_eval(controller->sched_valve4_f, Tank1, 3);
+    manual_eval(controller->sched_intertank1_f, Tank2, 0);
+    manual_eval(controller->sched_intertank2_f, Tank2, 1);
+
 }
