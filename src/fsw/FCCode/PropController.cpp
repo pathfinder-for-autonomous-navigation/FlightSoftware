@@ -12,7 +12,7 @@ size_t g_fake_pressure_cycle_count = 15; // global
 PropController::PropController(StateFieldRegistry &registry, unsigned int offset)
         : TimedControlTask<void>(registry, "prop", offset),
           prop_state_f("prop.state", Serializer<unsigned int>(6)),
-          cycles_until_firing("prop.fire_cycle", Serializer<unsigned int>(256)),
+          cycles_until_firing("prop.cycles_until_firing", Serializer<unsigned int>(256)),
           sched_valve1_f("prop.sched_valve1", Serializer<unsigned int>(999)),
           sched_valve2_f("prop.sched_valve2", Serializer<unsigned int>(999)),
           sched_valve3_f("prop.sched_valve3", Serializer<unsigned int>(999)),
