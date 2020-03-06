@@ -275,19 +275,18 @@ void MissionManager::dispatch_leader_close_approach() {
 void MissionManager::dispatch_docking() {
     docking_config_cmd_f.set(true);
 
-    if(too_long_in_docking() && !docked_fp->get()) {
-        transition_to_state(mission_state_t::standby,
-            adcs_state_t::startup,
-            prop_state_t::disabled);
-    }
-
-    if (docked_fp->get()) {
+    if (!too_long_in_docking() && docked_fp->get()){
         transition_to_state(mission_state_t::docked,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
 
         // Mission has ended, so remove "follower" and "leader" designations.
         set(sat_designation_t::undecided);
+    }
+    else if(too_long_in_docking() && !docked_fp->get()) {
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::startup,
+            prop_state_t::disabled);
     }
 }
 

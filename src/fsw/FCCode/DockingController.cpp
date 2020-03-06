@@ -26,12 +26,12 @@ void DockingController::init() {
 
 void DockingController::execute() {
   //MOVE TO DOCKING CONFIGURATION
-  enter_docking_cycle_f.set(control_cycle_count);
   if (docking_config_cmd_fp->get()){
     if (!dock_config_f.get()) {
       //prevents execute() from repeating start dock and setting turning angle to 180
       if (!is_turning_f.get()){
         docksys.start_dock();
+        enter_docking_cycle_f.set(control_cycle_count);
         is_turning_f.set(true);
       }
       if (docksys.get_steps() > 0) {
