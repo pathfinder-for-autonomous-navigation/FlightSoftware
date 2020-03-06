@@ -38,6 +38,8 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_writable_field(sched_valve2_f);
     add_writable_field(sched_valve3_f);
     add_writable_field(sched_valve4_f);
+    add_writable_field(sched_intertank1_f);
+    add_writable_field(sched_intertank2_f);
 
     add_writable_field(max_pressurizing_cycles);
     add_writable_field(threshold_firing_pressure);
