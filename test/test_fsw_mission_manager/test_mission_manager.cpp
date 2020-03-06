@@ -200,17 +200,35 @@ void test_dispatch_docking() {
     tf.check(mission_state_t::docked);
 
     TestFixture tf2(mission_state_t::docking);
+    tf2.step();
 
     // Check that the system is not docked
     TEST_ASSERT_FALSE(tf2.docked_fp->get());
 
-    // Let a full day pass without docking
-    tf2.set_ccno(PAN::one_day_ccno);
+    // Let a half day pass
+    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno);
     tf2.step();
-    TEST_ASSERT_FALSE(tf2.docked_fp->get());
 
-    // Check that mission manager moves to standy
+    // Check that mission manager is still in a docking state
+    tf2.check(mission_state_t::docking);
+
+    // Let a full day pass
+    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno);
+    tf2.step();
+
+    // Check that mission manager moves to standby
     tf2.check(mission_state_t::standby);
+
+    // Even if a significant amount of time passes, mission managaer should still move to 
+    // docked when the switch is pressed
+    TestFixture tf3(mission_state_t::docking);
+    tf3.step();
+
+    tf3.docked_fp->set(true);
+    tf3.set_ccno(MissionManager::control_cycle_count+5*PAN::one_day_ccno);
+    tf3.step();
+
+    tf3.check(mission_state_t::docked);
 }
 
 void test_dispatch_safehold() {

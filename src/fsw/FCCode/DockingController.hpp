@@ -49,9 +49,6 @@ class DockingController : public TimedControlTask<void> {
     //state field returns whether or not the motor is turning/in the process of (un)docking
     ReadableStateField<bool> is_turning_f;
 
-    //The cycle in which we last enter docking
-    InternalStateField<unsigned int> enter_docking_cycle_f;
-
 };
 
 #endif

@@ -137,7 +137,7 @@ class MissionManager : public TimedControlTask<void> {
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
     const ReadableStateField<bool>* docked_fp;
-    InternalStateField<unsigned int>* enter_docking_cycle_fp;
+    InternalStateField<unsigned int> enter_docking_cycle_f;
 
     // True if the battery is below the threshold for safehold.
     Fault* low_batt_fault_fp;

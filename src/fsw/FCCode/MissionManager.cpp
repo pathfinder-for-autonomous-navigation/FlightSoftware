@@ -24,6 +24,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
         Serializer<unsigned int>(2 * PAN::one_day_ccno)),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
+    enter_docking_cycle_f("docksys.enter_docking"),
     mission_state_f("pan.state", Serializer<unsigned char>(12)),
     is_deployed_f("pan.deployed", Serializer<bool>()),
     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32)),
@@ -36,6 +37,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_writable_field(docking_timeout_limit_f);
     add_writable_field(adcs_state_f);
     add_writable_field(docking_config_cmd_f);
+    add_internal_field(enter_docking_cycle_f);
     add_writable_field(mission_state_f);
     add_readable_field(is_deployed_f);
     add_readable_field(deployment_wait_elapsed_f);
@@ -54,7 +56,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     reboot_fp = find_writable_field<bool>("gomspace.gs_reboot_cmd", __FILE__, __LINE__);
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
-    enter_docking_cycle_fp = find_internal_field<unsigned int>("docksys.enter_docking_ccno", __FILE__, __LINE__);
 
     low_batt_fault_fp = static_cast<Fault*>(
             find_writable_field<bool>("gomspace.low_batt", __FILE__, __LINE__));
@@ -81,6 +82,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
         adcs_state_t::startup,
         prop_state_t::disabled); // "Starting" transition
     docking_config_cmd_f.set(true);
+    enter_docking_cycle_f.set(0);
     is_deployed_f.set(false);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
@@ -274,8 +276,9 @@ void MissionManager::dispatch_leader_close_approach() {
 
 void MissionManager::dispatch_docking() {
     docking_config_cmd_f.set(true);
-
-    if (!too_long_in_docking() && docked_fp->get()){
+    if (enter_docking_cycle_f.get()==0) { enter_docking_cycle_f.set(control_cycle_count); }
+    if (docked_fp->get()){
+        enter_docking_cycle_f.set(0);
         transition_to_state(mission_state_t::docked,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
@@ -284,6 +287,7 @@ void MissionManager::dispatch_docking() {
         set(sat_designation_t::undecided);
     }
     else if(too_long_in_docking() && !docked_fp->get()) {
+        enter_docking_cycle_f.set(0);
         transition_to_state(mission_state_t::standby,
             adcs_state_t::startup,
             prop_state_t::disabled);
@@ -317,7 +321,7 @@ bool MissionManager::too_long_since_last_comms() const {
 }
 
 bool MissionManager::too_long_in_docking() const {
-    const unsigned int cycles_since_enter_docking = control_cycle_count - enter_docking_cycle_fp->get();
+    const unsigned int cycles_since_enter_docking = control_cycle_count - enter_docking_cycle_f.get();
     return cycles_since_enter_docking > docking_timeout_limit_f.get();
 }
 

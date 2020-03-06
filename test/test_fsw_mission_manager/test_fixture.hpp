@@ -31,7 +31,7 @@ class TestFixture {
     std::shared_ptr<WritableStateField<bool>> reboot_fp;
 
     std::shared_ptr<ReadableStateField<bool>> docked_fp;
-    std::shared_ptr<InternalStateField<unsigned int>> enter_docking_cycle_fp;
+    //std::shared_ptr<InternalStateField<unsigned int>> enter_docking_cycle_fp;
 
     std::shared_ptr<Fault> low_batt_fault_fp;
     std::shared_ptr<Fault> adcs_functional_fault_fp;
