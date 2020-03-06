@@ -50,12 +50,17 @@ To install the Python MATLAB engine, you must:
  7. Install MATLAB for this repository. With the venv activated from the FlightSoftware directory, run the following on macOS:
 
          cd /Applications/MATLAB_R2019b.app/extern/engines/python
-         python setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/python/venv"
+         python setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/venv"
+
+      or on Linux:
+
+         cd /PATH_TO_MATLAB/R2019b/extern/engines/python
+         python3 setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/venv"
 
       or on Windows:
 
          cd C:\Program Files\MATLAB\R2019b\extern\engines\python
-         python setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/python/venv"
+         python setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/venv"
 
 
 # Configuring Simulation
