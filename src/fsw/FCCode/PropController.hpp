@@ -79,7 +79,7 @@ public:
     unsigned int min_cycles_needed() const;
 
     // Return true if Tank2 is at threshold pressure
-    static bool is_at_threshold_pressure();
+    static bool is_at_threshold_pressure(float threshold_firing_pressure);
 
     inline bool check_current_state(prop_state_t expected) const {
         return expected == static_cast<prop_state_t>(prop_state_f.get());

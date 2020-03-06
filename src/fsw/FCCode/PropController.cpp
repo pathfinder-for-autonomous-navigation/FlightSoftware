@@ -135,14 +135,14 @@ bool PropController::validate_schedule() {
                              cycles_until_firing.get());
 }
 
-bool PropController::is_at_threshold_pressure()
+bool PropController::is_at_threshold_pressure(float threshold_firing_pressure)
 {
 
 #ifdef DESKTOP
     // For testing purposes, say that we are at threshold pressure at pressurizing cycle fake_pressure_cycle_count
     return (state_pressurizing.pressurizing_cycle_count == g_fake_pressure_cycle_count);
 #else
-    return tank2_pressure.get() >= threshold_firing_pressure.get();
+    return tank2_pressure.get() >= threshold_firing_pressure;
 #endif
 }
 
@@ -281,7 +281,7 @@ prop_state_t PropState_Pressurizing::evaluate() {
     // Tick the clock
     countdown.tick();
     // Case 1: Tank2 is at threshold pressure
-    if (controller->is_at_threshold_pressure()) {
+    if (controller->is_at_threshold_pressure(controller->threshold_firing_pressure.get())) {
         DD("\tTank2 is at threshold pressure!\n");
         PropulsionSystem.close_valve(Tank1, valve_num);
         if (controller->can_enter_state(prop_state_t::await_firing)) {
@@ -356,7 +356,7 @@ void PropState_Pressurizing::start_pressurize_cycle() {
 bool PropState_AwaitFiring::can_enter() const {
     bool was_pressurizing = controller->check_current_state(prop_state_t::pressurizing);
 
-    return ( was_pressurizing && controller->is_at_threshold_pressure()  && controller->validate_schedule() );
+    return ( was_pressurizing && controller->is_at_threshold_pressure(controller->threshold_firing_pressure.get())  && controller->validate_schedule() );
 }
 
 void PropState_AwaitFiring::enter() {
