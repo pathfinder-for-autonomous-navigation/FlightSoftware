@@ -1,0 +1,19 @@
+{
+    "seed": 2,
+    "sim_duration": 2000,
+    "single_sat_sim": true,
+    "devices": [
+        {
+            "name": "FlightController",
+            "run_mode": "teensy",
+            "port": "/dev/cu.usbmodem",
+            "baud_rate": 1152000
+        },
+        {
+            "name": "ADCSController",
+            "run_mode": "teensy",
+            "port": "/dev/cu.usbmodem",
+            "baud_rate": 1152000
+        }
+    ]
+}
