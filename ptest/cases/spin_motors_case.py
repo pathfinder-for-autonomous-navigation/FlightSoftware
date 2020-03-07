@@ -1,7 +1,7 @@
-# Empty test case. Gets cycle count purely for diagnostic purposes
-from .base import FlexibleCase
+# SpinMotorsCase. Gets satellite read to spin motors.
+from .base import SingleSatOnlyCase
 
-class SpinMotorsCase(FlexibleCase):
+class SpinMotorsCase(SingleSatOnlyCase):
     def setup_case_singlesat(self, simulation):
         simulation.flight_controller.write_state("pan.state", 11) # Mission State = Manual
         simulation.flight_controller.write_state("adcs.state", 5) # ADCS State = Manual
@@ -20,8 +20,3 @@ class SpinMotorsCase(FlexibleCase):
         simulation.cycle_no_follower = simulation.flight_controller_follower.read_state(
                                             "pan.cycle_no")
         simulation.cycle_no_leader = simulation.flight_controller_leader.read_state("pan.cycle_no")
-
-# class SpinMotorsCase(SpinMotorsCase):
-#     @property
-#     def run_sim(self):
-#         return True
