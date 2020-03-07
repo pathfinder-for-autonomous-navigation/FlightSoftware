@@ -4,12 +4,14 @@
 // prop.state
 enum class prop_state_t {
     disabled,
-    idle,
-    pressurizing,
-    firing,
-    venting,
-    awaiting_pressurization,
-    handling_fault // state where we handle faults
+    idle,           // no schedule has been set
+    await_pressurizing,
+    pressurizing,   // tank1 is pressurizing
+    venting,        // tank1 and tank2 both have their valves open
+    firing,         // tank2 is firing
+    await_firing,   // tank1 is pressurized
+    handling_fault,  // state where we handle faults
+    manual
 };
 
 #endif
