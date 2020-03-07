@@ -4,57 +4,56 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
 
     @property
     def adcs_cmd(self): 
-        return self.simulation.flight_controller.read_state("dcdc.ADCSMotor_cmd")
+        return self.sim.flight_controller.read_state("dcdc.ADCSMotor_cmd")
 
     @property
     def sph_cmd(self): 
-        return self.simulation.flight_controller.read_state("dcdc.SpikeDock_cmd")
+        return self.sim.flight_controller.read_state("dcdc.SpikeDock_cmd")
     
     @property
     def disable_cmd(self): 
-        return self.simulation.flight_controller.read_state("dcdc.disable_cmd")
+        return self.sim.flight_controller.read_state("dcdc.disable_cmd")
 
     @property
     def reset_cmd(self): 
-        return self.simulation.flight_controller.read_state("dcdc.reset_cmd")
+        return self.sim.flight_controller.read_state("dcdc.reset_cmd")
 
     @property
     def adcs_rd(self): 
-        return self.simulation.flight_controller.read_state("dcdc.ADCSMotor")
+        return self.sim.flight_controller.read_state("dcdc.ADCSMotor")
     
     @property
     def sph_rd(self): 
-        return self.simulation.flight_controller.read_state("dcdc.SpikeDock")
+        return self.sim.flight_controller.read_state("dcdc.SpikeDock")
 
     @adcs_cmd.setter 
     def adcs_cmd(self, value): 
         assert(value == "true" or value == "false")
-        self.simulation.flight_controller.write_state("dcdc.ADCSMotor_cmd", value)
+        self.sim.flight_controller.write_state("dcdc.ADCSMotor_cmd", value)
 
     @sph_cmd.setter 
     def sph_cmd(self, value): 
         assert(value == "true" or value == "false")
-        self.simulation.flight_controller.write_state("dcdc.SpikeDock_cmd", value)
+        self.sim.flight_controller.write_state("dcdc.SpikeDock_cmd", value)
 
     @disable_cmd.setter 
     def disable_cmd(self, value): 
         assert(value == "true" or value == "false")
-        self.simulation.flight_controller.write_state("dcdc.disable_cmd", value)
+        self.sim.flight_controller.write_state("dcdc.disable_cmd", value)
 
     @reset_cmd.setter 
     def reset_cmd(self, value): 
         assert(value == "true" or value == "false")
-        self.simulation.flight_controller.write_state("dcdc.reset_cmd", value)
+        self.sim.flight_controller.write_state("dcdc.reset_cmd", value)
 
-    def setup_case_singlesat(self, simulation):
-        self.simulation=simulation
-        self.simulation.flight_controller.write_state(
+    def setup_case_singlesat(self):
+        self.sim.flight_controller.write_state(
             "pan.state", 11)  # Manual state
         self.run_case_singlesat()
         print("DCDC cases finished.")
 
     def run_case_singlesat(self):
-        self.simulation.cycle_no = self.simulation.flight_controller.read_state("pan.cycle_no")
+        self.sim.cycle_no = self.sim.flight_controller.read_state("pan.cycle_no")
 
         if self.adcs_cmd==self.adcs_rd and self.sph_cmd==self.sph_rd and self.disable_cmd=="false" and self.reset_cmd=="false":
             print("Control task initialized correctly") 

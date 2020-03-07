@@ -4,7 +4,6 @@ Here you can find some template configurations. I recommend copy-pasting a templ
 
 ## Items
 - `seed` : Randomization seed for simulation.
-- `sim_duration` : Number of seconds to run the simulation. If this is set to zero, the simulation is never started.
 - `single_sat_sim`
   - If set to true, the MATLAB simulation expects there to be one device, `FlightController`, so that
     it can run a mission simulation on just one satellite.
