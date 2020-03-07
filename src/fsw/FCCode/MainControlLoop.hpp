@@ -39,8 +39,6 @@ class MainControlLoop : public ControlTask<void> {
     Devices::ADCS adcs;
     ADCSBoxMonitor adcs_monitor;
 
-    PropMonitor prop_monitor;
-
     DebugTask debug_task;
 
     AttitudeEstimator attitude_estimator;
@@ -68,7 +66,6 @@ class MainControlLoop : public ControlTask<void> {
     // https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B04C55BBB-7AED-410B-AC43-67352393D6D5%7D&file=Flight%20Software%20Cycle.xlsx&action=default&mobileredirect=true&cid=e2b9bd89-7037-47bf-ad2a-fd8b25808939
         static constexpr unsigned int piksi_control_task_offset  =   5500;
         static constexpr unsigned int adcs_monitor_offset        =   7500;
-        static constexpr unsigned int prop_monitor_offset        =  35500;
         static constexpr unsigned int debug_task_offset          =  36000;
         static constexpr unsigned int attitude_estimator_offset  =  85500;
         static constexpr unsigned int gomspace_controller_offset = 106500;
@@ -85,7 +82,6 @@ class MainControlLoop : public ControlTask<void> {
     #else
         static constexpr unsigned int piksi_control_task_offset  =   5500;
         static constexpr unsigned int adcs_monitor_offset        =   7500;
-        static constexpr unsigned int prop_monitor_offset        =  35500;
         static constexpr unsigned int debug_task_offset          =  36000;
         static constexpr unsigned int attitude_estimator_offset  =  36500;
         static constexpr unsigned int gomspace_controller_offset =  56500;
