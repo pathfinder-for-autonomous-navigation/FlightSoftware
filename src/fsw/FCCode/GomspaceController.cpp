@@ -215,44 +215,44 @@ void GomspaceController::execute() {
         gs_reboot_cmd_f.set(false);
     }
 
-    // Set the gomspace outputs to the values of the statefield commands around every 30 seconds
-    if (control_cycle_count%period==0){
-        power_cycle_outputs();
-    }
+    // // Set the gomspace outputs to the values of the statefield commands around every 30 seconds
+    // if (control_cycle_count%period==0){
+    //     power_cycle_outputs();
+    // }
 
-    // Set power voltage command
-    if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
-        gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
-    }
+    // // Set power voltage command
+    // if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
+    //     gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
+    // }
 
-    // Set PPT mode command
-    if (pptmode_f.get()!=ppt_mode_cmd_f.get()){
-        gs.set_pv_auto(ppt_mode_cmd_f.get());
-    }
+    // // Set PPT mode command
+    // if (pptmode_f.get()!=ppt_mode_cmd_f.get()){
+    //     gs.set_pv_auto(ppt_mode_cmd_f.get());
+    // }
 
-    // Turn on/off the heater command
-    if (heater_cmd_f.get()==true && gs.get_heater() == 0) {
-        gs.turn_on_heater();
-    }
-    else if (heater_cmd_f.get()==false && gs.get_heater() == 1){
-        gs.turn_off_heater();
-    }
+    // // Turn on/off the heater command
+    // if (heater_cmd_f.get()==true && gs.get_heater() == 0) {
+    //     gs.turn_on_heater();
+    // }
+    // else if (heater_cmd_f.get()==false && gs.get_heater() == 1){
+    //     gs.turn_off_heater();
+    // }
 
-    // Reset commands
-    if (counter_reset_cmd_f.get()==true) {
-        gs.reset_counters();
-        counter_reset_cmd_f.set(false);
-    }
+    // // Reset commands
+    // if (counter_reset_cmd_f.get()==true) {
+    //     gs.reset_counters();
+    //     counter_reset_cmd_f.set(false);
+    // }
 
-    if (gs_reset_cmd_f.get()==true) {
-        gs.hard_reset();
-        gs_reset_cmd_f.set(false);
-    }
+    // if (gs_reset_cmd_f.get()==true) {
+    //     gs.hard_reset();
+    //     gs_reset_cmd_f.set(false);
+    // }
 
-    if (gs_reboot_cmd_f.get()==true) {
-        gs.reboot();
-        gs_reboot_cmd_f.set(false);
-    }
+    // if (gs_reboot_cmd_f.get()==true) {
+    //     gs.reboot();
+    //     gs_reboot_cmd_f.set(false);
+    // }
 
     //set statefields to respective data from hk struct 
     vboost1_f.set(gs.hk->vboost[0]);

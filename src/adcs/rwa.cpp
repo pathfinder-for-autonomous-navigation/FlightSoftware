@@ -196,6 +196,8 @@ void actuate(unsigned char rwa_mode, lin::Vector3f rwa_cmd) {
       // Set wheel configurations
       for (unsigned int i = 0; i < 3; i++) {
         if (wheels[i].is_functional()) {
+          LOG_INFO_header
+          LOG_INFO_println("wheel act: " + String(rwa_cmd(i)))
           wheels[i].set_axl_ramp(255);
           wheels[i].set_speed((int)(1000.0f * rwa_cmd(i) / rwa::max_speed_command + 1000.0f));
         }
