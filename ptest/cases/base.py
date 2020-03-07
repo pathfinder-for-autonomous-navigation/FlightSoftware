@@ -47,11 +47,13 @@ class Case(object):
         self.prop_states = FSWEnum([
             "disabled",
             "idle",
+            "await_pressurizing",
             "pressurizing",
-            "firing",
             "venting",
-            "awaiting_pressurization",
-            "handling_fault"
+            "firing",
+            "await_firing",
+            "handling_fault",
+            "manual"
         ])
 
         self.adcs_states = FSWEnum([
