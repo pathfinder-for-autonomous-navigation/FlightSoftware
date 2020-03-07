@@ -15,6 +15,7 @@
 // Ensure pin assignments match with the body frame of the spacecraft
 
 #ifdef MTR_LOG_LEVEL
+  #undef LOG_LEVEL
   #define LOG_LEVEL MTR_LOG_LEVEL
 #endif
 
