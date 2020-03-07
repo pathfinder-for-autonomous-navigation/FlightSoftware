@@ -24,11 +24,11 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     : ControlTask<void>(registry),
       field_creator_task(registry),
       clock_manager(registry, PAN::control_cycle_time),
-      debug_task(registry, debug_task_offset),
       PIKSI_INITIALIZATION,
       piksi_control_task(registry, piksi_control_task_offset, piksi),
       ADCS_INITIALIZATION,
       adcs_monitor(registry, adcs_monitor_offset, adcs),
+      debug_task(registry, debug_task_offset),
       attitude_estimator(registry, attitude_estimator_offset),
       gomspace(&hk, &config, &config2),
       gomspace_controller(registry, gomspace_controller_offset, gomspace),
@@ -78,13 +78,14 @@ void MainControlLoop::execute() {
 
     clock_manager.execute();
 
+    piksi_control_task.execute_on_time();
+    gomspace_controller.execute_on_time();
+    adcs_monitor.execute_on_time();
+
     #ifdef FUNCTIONAL_TEST
     debug_task.execute_on_time();
     #endif
 
-    piksi_control_task.execute_on_time();
-    gomspace_controller.execute_on_time();
-    adcs_monitor.execute_on_time();
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
     attitude_computer.execute_on_time();

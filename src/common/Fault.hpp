@@ -1,9 +1,12 @@
 #ifndef FAULT_HPP_
 #define FAULT_HPP_
 
-#include <common/StateFieldRegistry.hpp>
+#include "common/StateField.hpp"
 
 class Fault : public WritableStateField<bool> {
+  protected:
+   const std::string _name;
+  
   public:
     /**
      * @brief Construct a new non-latching fault.
@@ -15,10 +18,7 @@ class Fault : public WritableStateField<bool> {
     Fault(const std::string& name,
           const size_t _persistence, unsigned int& control_cycle_count);
 
-    /**
-     * @brief Add fault-related flags to the registry.
-     */
-    bool add_to_registry(StateFieldRegistry& r);
+    const std::string &name() const override { return _name; } 
 
     /**
      * @brief Client-facing function to signal an occurrence of the
@@ -62,6 +62,19 @@ class Fault : public WritableStateField<bool> {
      */
     unsigned int get_num_consecutive_signals();
     #endif
+
+    /**
+     * @brief State fields that can be set by the ground to
+     * suppress, override, signal and unsignal the fault
+     */
+    Serializer<bool> fault_bool_sr;
+    WritableStateField<bool> suppress_f;
+    WritableStateField<bool> override_f;
+    WritableStateField<bool> unsignal_f;
+
+    Serializer<unsigned int> persist_sr;
+    WritableStateField<unsigned int> persistence_f;
+    
   private:
     // Make the get() and set() methods of the state field private,
     // so that the user is forced to use the signal() and unsignal()
@@ -79,18 +92,6 @@ class Fault : public WritableStateField<bool> {
     // Keeps track of the previous suppress or override state
     bool prev_suppress = false;
     bool prev_override = false;
-
-    /**
-     * @brief State fields that can be set by the ground to
-     * suppress, override, signal and unsignal the fault
-     */
-    Serializer<bool> fault_bool_sr;
-    WritableStateField<bool> suppress_f;
-    WritableStateField<bool> override_f;
-    WritableStateField<bool> unsignal_f;
-
-    Serializer<unsigned int> persist_sr;
-    WritableStateField<unsigned int> persistence_f;
 
     /**
      * @brief Resets consecutive faults to 0, whenever pulls transition from false to true,

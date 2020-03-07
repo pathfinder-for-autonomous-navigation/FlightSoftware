@@ -77,15 +77,16 @@ class Tank;
  * Only tank2 has a schedule since only tank2 uses the IntervalTimer to fire.
  * 
  **/
-#ifdef DESKTOP
-    uint32_t micros(){ return 0; }
-#endif
-
-class PropulsionSystem : public Device {
-
+#define PropulsionSystem Devices::_PropulsionSystem::Instance()
+class _PropulsionSystem : public Device {
+    _PropulsionSystem();
 public:
-    PropulsionSystem();
-
+    inline static _PropulsionSystem& Instance()
+    {
+        static _PropulsionSystem Instance;
+        return Instance;
+    }
+// private:
     /**
      * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
      * @return True if successfully setup both tank1 and tank2 and all pins
@@ -157,8 +158,6 @@ public:
     {
         return is_interval_enabled;
     }
-
-private:
     
     /**
      * @brief the function that is ran at each interrupt when the IntervalTimer
@@ -172,7 +171,7 @@ private:
      * @brief true if tank2's IntervalTimer is on (tank2 is scheduled to fire)
      */
     static bool is_interval_enabled;
-
+    friend class PropController;
 };
 
 /**
@@ -217,10 +216,10 @@ protected:
     // true if the valve is opened
     bool is_valve_opened[4];
 
-    friend class PropulsionSystem;
+    friend class _PropulsionSystem;
 };
 
-#define Tank1 _Tank1::Instance()
+#define Tank1 Devices::_Tank1::Instance()
 /**
  * Tank1 represents the inner tank in the Propulsion System
  * valve 0 - main intertank valve
@@ -236,7 +235,7 @@ public:
     }
 };
 
-#define Tank2 _Tank2::Instance()
+#define Tank2 Devices::_Tank2::Instance()
 /**
  * Tank2 reprsents the outer tank in the Propulsion System
  * Valve 0, 1, 2, 3 - four thrust valves
@@ -258,13 +257,14 @@ public:
      */
     unsigned int get_schedule_at(size_t valve_num) const;
 
+#ifndef DESKTOP
 private:
+#endif
     void setup();
     #ifndef DESKTOP
     //! When enabled, runs thrust_valve_loop every 3 ms
     static IntervalTimer thrust_valve_loop_timer;
     #endif
-
     static volatile unsigned int schedule[4];
     // The minimum duration to assign to a schedule
     // Any value below this value will be ignored by tank2
@@ -283,7 +283,7 @@ private:
     //! Loop interval in milliseconds.
     static constexpr unsigned int thrust_valve_loop_interval_ms = 3; 
 
-    friend class PropulsionSystem;
+    friend class _PropulsionSystem;
 };
 }  // namespace Devices
 #endif

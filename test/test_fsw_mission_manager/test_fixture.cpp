@@ -2,15 +2,7 @@
 #include <unity.h>
 #include <limits>
 
-TestFixture::TestFixture(mission_state_t initial_state) : registry(),
-    low_batt_fault_f("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count),
-    adcs_functional_fault_f("adcs_monitor.functional_fault", 1, TimedControlTaskBase::control_cycle_count),
-    wheel1_adc_fault_f("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count),
-    wheel2_adc_fault_f("adcs_monitor.wheel2_fault", 1, TimedControlTaskBase::control_cycle_count),
-    wheel3_adc_fault_f("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count),
-    wheel_pot_fault_f("adcs_monitor.wheel_pot_fault", 1, TimedControlTaskBase::control_cycle_count),
-    failed_pressurize_f("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count)
-{
+TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
                                 "attitude_estimator.h_body");
     adcs_paired_fp = registry.create_writable_field<bool>("adcs.paired");
@@ -28,13 +20,13 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
-    low_batt_fault_f.add_to_registry(registry);
-    adcs_functional_fault_f.add_to_registry(registry);
-    wheel1_adc_fault_f.add_to_registry(registry);
-    wheel2_adc_fault_f.add_to_registry(registry);
-    wheel3_adc_fault_f.add_to_registry(registry);
-    wheel_pot_fault_f.add_to_registry(registry);
-    failed_pressurize_f.add_to_registry(registry);
+    low_batt_fault_fp=registry.create_fault("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count);
+    adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel2_adc_fault_fp=registry.create_fault("adcs_monitor.wheel2_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1, TimedControlTaskBase::control_cycle_count);
+    failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count);
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -164,7 +156,7 @@ adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t
         adcs_state_t::startup, adcs_state_t::zero_L, adcs_state_t::zero_torque};
 
 prop_state_t TestFixture::prop_states[6] = {prop_state_t::disabled, prop_state_t::idle,
-    prop_state_t::awaiting_pressurization,
+    prop_state_t::await_firing,
     prop_state_t::pressurizing,
     prop_state_t::firing,
     prop_state_t::venting};
