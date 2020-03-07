@@ -93,14 +93,29 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
 
     std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
+    bool send_cmd_table = false;
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
-        temp_cmd_table.set(idx, havt_cmd_reset_vector_fp[idx]->get());
+        bool reset_get = havt_cmd_reset_vector_fp[idx]->get();
+        if(reset_get) {
+            temp_cmd_table.set(idx, reset_get);
+            send_cmd_table = true;
+        }
     }
-    adcs_system.set_havt_reset(temp_cmd_table);
+
+    if(send_cmd_table)
+        adcs_system.set_havt_reset(temp_cmd_table);
+
+    send_cmd_table = false;
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
-        temp_cmd_table.set(idx, havt_cmd_disable_vector_fp[idx]->get());
+        bool disable_get = havt_cmd_disable_vector_fp[idx]->get();
+        if(disable_get){
+            temp_cmd_table.set(idx, disable_get);
+            send_cmd_table = true;
+        }
     }
-    adcs_system.set_havt_disable(temp_cmd_table);
+    
+    if(send_cmd_table)
+        adcs_system.set_havt_disable(temp_cmd_table);
 }

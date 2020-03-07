@@ -20,7 +20,7 @@ class SpinMotorsCase(FlexibleCase):
                                             "pan.cycle_no")
         simulation.cycle_no_leader = simulation.flight_controller_leader.read_state("pan.cycle_no")
 
-class EmptySimCase(SpinMotorsCase):
-    @property
-    def run_sim(self):
-        return True
+# class SpinMotorsCase(SpinMotorsCase):
+#     @property
+#     def run_sim(self):
+#         return True

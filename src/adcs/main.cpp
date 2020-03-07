@@ -242,14 +242,21 @@ void loop() {
     LOG_INFO_println("ssa.mode " + String(registers.ssa.mode))
 
     std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
-    char buffer[33];
-    for(int i = 0; i<32; i++){
+    char buffer[34];
+    for(int i = 0; i<16; i++){
       if(temp_bitset.test(31-i))
         buffer[i] = '1';
       else
         buffer[i] = '0';
     }
-    buffer[32] = '\0';
+    buffer[16] = ' ';
+    for(int i = 16; i<32; i++){
+      if(temp_bitset.test(31-i))
+        buffer[i+1] = '1';
+      else
+        buffer[i+1] = '0';
+    }
+    buffer[33] = '\0';
 
     LOG_INFO_header
     LOG_INFO_print("havt.read ")

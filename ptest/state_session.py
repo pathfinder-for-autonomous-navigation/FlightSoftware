@@ -189,6 +189,20 @@ class StateSession(object):
         for field in fields:
             returned_vals.append(self._wait_for_state(field, timeout))
 
+        if returned_vals[0] is None:
+            return False
+
+        returned_vals = returned_vals[0].split(",")
+        returned_vals = [x for x in returned_vals if x is not ""]
+        
+        if (returned_vals[0].replace('.','')).isnumeric():
+            numeric_returned_vals = [float(x) for x in returned_vals]
+            if type(vals[0]) == str:
+                vals = vals[0]
+                vals = [float(x) for x in vals.split(",") if x is not '']
+
+            return numeric_returned_vals == vals
+
         return returned_vals == vals
 
     def write_multiple_states(self, fields, vals, timeout = None):
