@@ -1,11 +1,11 @@
 """
 28 JAN 2020
-src/adcs/characterization/wheel_speed_test.py
+src/adcs/characterization/recording.py
 
 Kyle Krol         (kpk63@cornell.edu)
 Nathan Zimmerberg (nhz2@cornell.edu)
 
-A utility function to record data from wheel speed sensor characterization
+A utility function to record data from sensor characterization
 tests. Note, this is written in python 2.7 to conform with platfomio.
 """
 
@@ -27,11 +27,11 @@ def main():
       with open(sys.argv[2], 'w') as ostream:
 
         # Read until complete is reached
-        line = istream.readline().rstrip()
+        line = istream.readline().decode('ascii').rstrip()
         while not line.startswith('#COMPLETE'):
             print(line, file=sys.stdout)
             print(line, file=ostream)
-            line = istream.readline().rstrip()
+            line = istream.readline().decode('ascii').rstrip()
 
     # Exit on success
     sys.exit(0)
