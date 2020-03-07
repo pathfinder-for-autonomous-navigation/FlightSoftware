@@ -216,6 +216,7 @@ void update_ssa() {
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
 static unsigned long cycles = 0;
+static unsigned long last_info_time = millis();
 #endif
 
 void loop() {
@@ -226,7 +227,11 @@ void loop() {
   update_havt();
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-  if (!(++cycles % 100000UL)) {
+  cycles++;
+
+  if (millis() - last_info_time > 1000) {
+    last_info_time = millis();
+
     LOG_INFO_header
     LOG_INFO_println("Heartbeat cycle count " + String(cycles))
 
