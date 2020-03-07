@@ -7,6 +7,7 @@ class SpinMotorsCase(FlexibleCase):
         simulation.flight_controller.write_state("adcs.state", 5) # ADCS State = Manual
         simulation.flight_controller.write_state("adcs_cmd.rwa_mode", 1) # Speed Control
         simulation.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", "0, 0, 0") # 0 speed to begin with
+        simulation.flight_controller.write_state("dcdc.ADCSMotor_cmd", "true")
 
     def setup_case_fullmission(self, simulation):
         simulation.flight_controller_follower.write_state("pan.state", 11) # Manual state
