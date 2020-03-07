@@ -195,7 +195,7 @@ class StateSession(object):
         returned_vals = returned_vals[0].split(",")
         returned_vals = [x for x in returned_vals if x is not ""]
         
-        if (returned_vals[0].replace('.','')).isnumeric():
+        if (returned_vals[0].replace('.','').replace('-','')).isnumeric():
             numeric_returned_vals = [float(x) for x in returned_vals]
             if type(vals[0]) == str:
                 vals = vals[0]
