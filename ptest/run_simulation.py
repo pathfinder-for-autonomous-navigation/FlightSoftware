@@ -196,7 +196,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     parser = ArgumentParser(description='''
-    Interactive console allows sending state commands to PAN Teensy devices, and parses console output 
+    Interactive console allows sending state commands to PAN Teensy devices, and parses console output
     from Teensies into human-readable, storable logging information.''')
 
     parser.add_argument('-t', '--testcase', action='store', help='Name of mission testcase, specified in cases/.',
@@ -269,39 +269,46 @@ if __name__ == '__main__':
                     "server" : os.environ.get("GSW_SERVER"),
                     "port" : os.environ.get("GSW_PORT")
                 }, flask_keys_config_file)
+        try: #try to open key files if they exist
+            with open(args.radio_conf) as radio_keys_config_file:
+                radio_keys_config = json.load(radio_keys_config_file)
 
-        with open(args.radio_conf) as radio_keys_config_file:
-            radio_keys_config = json.load(radio_keys_config_file)
-
-            radio_keys_schema = {
-                "email_username" : {"type" : "string"},
-                "email_password" : {"type" : "string"}
-            }
-            v = Validator(radio_keys_schema)
-            if not v.validate(radio_keys_config, radio_keys_schema):
-                print("Malformed radio keys file. The following errors were found. Exiting.")
-                print(v.errors)
-                sys.exit(1)
-
-        with open(args.ground_conf) as flask_keys_config_file:
-            flask_keys_config = json.load(flask_keys_config_file)
-
-            flask_keys_schema = {
-                "server": {
-                    "type": "string"
-                },
-                "port": {
-                    "type": "string"
+                radio_keys_schema = {
+                    "email_username" : {"type" : "string"},
+                    "email_password" : {"type" : "string"}
                 }
-            }
-            v = Validator(flask_keys_schema)
-            if not v.validate(flask_keys_config, flask_keys_schema):
-                print(
-                    "Malformed flask keys file. The following errors were found. Exiting."
-                )
-                print(v.errors)
-                sys.exit(1)
+                v = Validator(radio_keys_schema)
+                if not v.validate(radio_keys_config, radio_keys_schema):
+                    print("Malformed radio keys file. The following errors were found. Exiting.")
+                    print(v.errors)
+                    sys.exit(1)
+        except FileNotFoundError as err:
+            print("Warning:")
+            print(args.radio_conf+" key file not found")
+            radio_keys_config=None
+        try: #try to open key files if they exist
+            with open(args.ground_conf) as flask_keys_config_file:
+                flask_keys_config = json.load(flask_keys_config_file)
 
+                flask_keys_schema = {
+                    "server": {
+                        "type": "string"
+                    },
+                    "port": {
+                        "type": "string"
+                    }
+                }
+                v = Validator(flask_keys_schema)
+                if not v.validate(flask_keys_config, flask_keys_schema):
+                    print(
+                        "Malformed flask keys file. The following errors were found. Exiting."
+                    )
+                    print(v.errors)
+                    sys.exit(1)
+        except FileNotFoundError as err:
+            print("Warning:")
+            print(args.ground_conf+" key file not found")
+            flask_keys_config=None
     except json.JSONDecodeError:
         print("Could not load config file. Exiting.")
         sys.exit(1)
