@@ -3,6 +3,7 @@
 
 class GPSTime(object):
     SECONDS_IN_WEEK = 7 * 24 * 60 * 60
+    epoch_wn = 2045
 
     def __init__(self, wn, tow, ns):
         self.wn = wn
@@ -12,6 +13,8 @@ class GPSTime(object):
     def __init__(self, seconds):
         if isinstance(seconds, str):
             seconds = float(seconds)
+
+        seconds += self.epoch_wn * self.SECONDS_IN_WEEK
 
         self.wn  = int(seconds / self.SECONDS_IN_WEEK)
         self.tow = int((seconds - self.wn * self.SECONDS_IN_WEEK) * 1000)

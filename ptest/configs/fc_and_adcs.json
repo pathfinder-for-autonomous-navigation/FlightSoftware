@@ -1,6 +1,5 @@
 {
     "seed": 2,
-    "sim_duration": 2000,
     "single_sat_sim": true,
     "devices": [
         {

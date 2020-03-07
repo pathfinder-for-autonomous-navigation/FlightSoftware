@@ -160,3 +160,9 @@ html_coverage/
 # Temporary files created due to build logs overflowing
 build.txt
 build.log
+
+# Clion temporary files
+.idea/
+cmake*
+CMakeListsPrivate.txt
+CMakeLists.txt
