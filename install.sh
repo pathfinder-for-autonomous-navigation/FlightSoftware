@@ -7,7 +7,7 @@ matlab -batch '"'"pyversion $(pwd)/venv/bin/python"'"' -nodisplay -nojvm -nospla
 export PYTHONPATH=$(pwd)/venv
 if [ -d "$HOME/MATLAB/R2019b/extern/engines/python" ]
 then
-	cd /home/pan/MATLAB/R2019b/extern/engines/python
+	cd $HOME/MATLAB/R2019b/extern/engines/python
 else
 	cd /Applications/MATLAB_R2019b.app/extern/engines/python
 fi
