@@ -212,6 +212,13 @@ void test_dispatch_docking() {
     // Check that mission manager is still in a docking state
     tf2.check(mission_state_t::docking);
 
+    // Let a nearly a full day pass
+    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno-1);
+    tf2.step();
+
+    // Check that mission manager is still in a docking state
+    tf2.check(mission_state_t::docking);
+
     // Let a full day pass
     tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno);
     tf2.step();
