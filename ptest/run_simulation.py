@@ -19,7 +19,6 @@ class SimulationRun(object):
         self.testcase_name = testcase_name
 
         self.random_seed = config_data["seed"]
-        self.sim_duration = config_data["sim_duration"]
         self.single_sat_sim = config_data["single_sat_sim"]
 
         self.simulation_run_dir = os.path.join(data_dir, time.strftime("%Y%m%d-%H%M%S"))
@@ -132,15 +131,11 @@ class SimulationRun(object):
             self.stop_all(f"Nonexistent test case: {self.testcase_name}")
         print(f"Running mission testcase {self.testcase_name}.")
 
-        if self.sim_duration > 0:
-            if self.single_sat_sim:
-                self.sim = SingleSatSimulation(self.devices, self.random_seed, testcase())
-            else:
-                self.sim = Simulation(self.devices, self.random_seed)
-            self.sim.start(self.sim_duration)
+        if self.single_sat_sim:
+            self.sim = SingleSatSimulation(self.devices, self.random_seed, testcase())
         else:
-            self.sim = lambda: None # Create empty object
-            self.sim.running = False
+            self.sim = Simulation(self.devices, self.random_seed)
+        self.sim.start()
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt
@@ -223,7 +218,6 @@ if __name__ == '__main__':
 
             config_schema = {
                 "seed" : {"type" : "integer"},
-                "sim_duration" : {"type" : "float", "min" : 0},
                 "single_sat_sim" : {"type": "boolean"},
                 "devices" : {
                     "type" : "list",
@@ -232,9 +226,21 @@ if __name__ == '__main__':
                         "schema" : {
                             "name" : {"type" : "string"},
                             "run_mode" : {"type" : "string", "allowed" : ["native", "teensy"]},
-                            "binary_filepath" : {"type" : "string", "dependencies" : {"run_mode" : ["native"]}, "excludes" : ["port", "baud_rate"]},
-                            "port" : {"type" : "string", "dependencies" : {"run_mode" : ["teensy"]}, "excludes" : "binary_filepath"},
-                            "baud_rate" : {"type" : "integer", "dependencies" : {"run_mode" : ["teensy"]}, "excludes" : "binary_filepath"},
+                            "binary_filepath" : {
+                                "type" : "string", 
+                                "dependencies" : {"run_mode" : ["native"]}, 
+                                "excludes" : ["port", "baud_rate"]
+                            },
+                            "port" : {
+                                "type" : "string",
+                                "dependencies" : {"run_mode" : ["teensy"]},
+                                "excludes" : "binary_filepath"
+                            },
+                            "baud_rate" : {
+                                "type" : "integer",
+                                "dependencies" : {"run_mode" : ["teensy"]},
+                                "excludes" : "binary_filepath"
+                            },
                         }
                     }
                 },
