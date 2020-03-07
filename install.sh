@@ -5,7 +5,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 matlab -batch '"'"pyversion $(pwd)/venv/bin/python"'"' -nodisplay -nojvm -nosplash
 export PYTHONPATH=$(pwd)/venv
-if [ -d "/home/pan/MATLAB/R2019b/extern/engines/python" ]
+if [ -d "$HOME/MATLAB/R2019b/extern/engines/python" ]
 then
 	cd /home/pan/MATLAB/R2019b/extern/engines/python
 else
@@ -15,4 +15,3 @@ python setup.py install
 cd -
 git submodule update --init --recursive
 pio run -e fsw_native_leader
-
