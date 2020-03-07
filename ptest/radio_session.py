@@ -44,6 +44,8 @@ class RadioSession(object):
         # Data logging
         self.datastore = Datastore(device_name, simulation_run_dir)
         self.logger = Logger(device_name, simulation_run_dir)
+        self.datastore.start()
+        self.logger.start()
 
         #email
         self.username=radio_keys_config["email_username"]
@@ -69,9 +71,9 @@ class RadioSession(object):
         Uplink multiple state variables. Return success of write.
         Reads from the most recent Iridium Report whether or
         not RadioSession is able to send uplinks
-        '''
+     	'''
         assert len(fields) == len(vals)
-
+        '''
         headers = {
             'Accept': 'text/html',
         }
@@ -80,7 +82,7 @@ class RadioSession(object):
             "field" : "send-uplinks"
         }
 
-        response = requests.get('http://'+self.flask_server+':'+self.flask_port+'/search-es', params=payload, headers=headers)
+        response = requests.get('http://'+self.flask_server+':'+self.flask_port+'/search-es', params=payload, headers=headers)	'''
         self.logger.put("Send Uplinks: "+str(response.text))
 
         if response.text=="True":
@@ -88,20 +90,21 @@ class RadioSession(object):
             updated_fields={}
             for i in range(len(fields)):
                 updated_fields[fields[i]]=vals[i]
-
+            '''
             #connect to PAN email account
             yag = yagmail.SMTP(self.username, self.password)
-
+	    '''
             #create a JSON file with the updated statefields and send it to the iridium email
-            with open('uplink.json', 'w') as json_uplink:
+            with open('uplink.sbd', 'w') as json_uplink:
                 json.dump(updated_fields, json_uplink)
-            yag.send('sbdservice@sbd.iridium.com', self.imei, 'uplink.json')
-
+            os.system("go build spam.go; ./spam uplink.sbd")
+            '''
+	    yag.send('sbdservice@sbd.iridium.com', self.imei, 'uplink.json')
+	    '''
             return True
         else:
             self.logger.put("Wait for confirmation MTMSN")
             return False
-
     def write_state(self, field, val, timeout=None):
         '''
         Uplink one state variable. Return success of write.
