@@ -1,0 +1,26 @@
+{
+  "name": "openmct-tutorials",
+  "version": "0.0.1",
+  "description": "Tutorials for Open MCT",
+  "main": "example-server/server.js",
+  "scripts": {
+    "start": "node example-server/server.js",
+    "postinstall": "cd node_modules/openmct && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nasa/openmct-tutorial.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nasa/openmct-tutorial/issues"
+  },
+  "homepage": "https://github.com/nasa/openmct-tutorial#readme",
+  "dependencies": {
+    "express": "^4.14.1",
+    "express-ws": "^3.0.0",
+    "openmct": "nasa/openmct",
+    "ws": "^2.0.3"
+  }
+}
