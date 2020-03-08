@@ -1,0 +1,19 @@
+{
+    "seed" : 2,
+    "single_sat_sim": true,
+    "devices" : [
+        {
+            "name": "FlightController",
+            "run_mode": "teensy",
+            "port": "/dev/cu.usbmodem45146401",
+            "baud_rate": 1152000
+        }
+    ],
+    "radios": [
+        {
+            "connected_device": "FlightController",
+            "imei": "",
+            "connect": false
+        }
+    ]
+}

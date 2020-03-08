@@ -4,7 +4,7 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #include <fsw/FCCode/MissionManager.hpp>
-#include <fsw/FCCode/Fault.hpp>
+#include <common/Fault.hpp>
 #include <fsw/FCCode/mission_state_t.enum>
 #include <fsw/FCCode/adcs_state_t.enum>
 #include <fsw/FCCode/radio_state_t.enum>
@@ -31,14 +31,15 @@ class TestFixture {
     std::shared_ptr<WritableStateField<bool>> reboot_fp;
 
     std::shared_ptr<ReadableStateField<bool>> docked_fp;
+    //std::shared_ptr<InternalStateField<unsigned int>> enter_docking_cycle_fp;
 
-    Fault low_batt_fault_f;
-    Fault adcs_functional_fault_f;
-    Fault wheel1_adc_fault_f;
-    Fault wheel2_adc_fault_f;
-    Fault wheel3_adc_fault_f;
-    Fault wheel_pot_fault_f;
-    Fault failed_pressurize_f;
+    std::shared_ptr<Fault> low_batt_fault_fp;
+    std::shared_ptr<Fault> adcs_functional_fault_fp;
+    std::shared_ptr<Fault> wheel1_adc_fault_fp;
+    std::shared_ptr<Fault> wheel2_adc_fault_fp;
+    std::shared_ptr<Fault> wheel3_adc_fault_fp;
+    std::shared_ptr<Fault> wheel_pot_fault_fp;
+    std::shared_ptr<Fault> failed_pressurize_fp;
 
     std::unique_ptr<MissionManager> mission_manager;
     // Output state fields from mission manager
@@ -46,6 +47,7 @@ class TestFixture {
     WritableStateField<double>* close_approach_trigger_dist_fp;
     WritableStateField<double>* docking_trigger_dist_fp;
     WritableStateField<unsigned int>* max_radio_silence_duration_fp;
+    WritableStateField<unsigned int>* docking_timeout_limit_fp;
     WritableStateField<unsigned char>* adcs_state_fp;
     WritableStateField<bool>* docking_config_cmd_fp;
     WritableStateField<unsigned char>* mission_state_fp;
