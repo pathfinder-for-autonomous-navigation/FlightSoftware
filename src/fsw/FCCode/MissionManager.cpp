@@ -2,6 +2,7 @@
 #include <lin.hpp>
 #include <cmath>
 #include <adcs/constants.hpp>
+#include <common/constant_tracker.hpp>
 
 // Declare static storage for constexpr variables
 const constexpr double MissionManager::initial_detumble_safety_factor;

@@ -21,30 +21,30 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<double> detumble_safety_factor_f;
     WritableStateField<double> close_approach_trigger_dist_f; // Meters
     WritableStateField<double> docking_trigger_dist_f; // Meters
-    static constexpr double initial_detumble_safety_factor = 0.2;
-    static constexpr double initial_close_approach_trigger_dist = 100; // Meters
-    static constexpr double initial_docking_trigger_dist = 0.4; // Meters
+    TRACKED_CONSTANT(static constexpr double, initial_detumble_safety_factor, 0.2)
+    TRACKED_CONSTANT(static constexpr double, initial_close_approach_trigger_dist, 100) // Meters
+    TRACKED_CONSTANT(static constexpr double, initial_docking_trigger_dist, 0.4) // Meters
 
     /**
      * @brief Number of control cycles to wait during the post-deployment
      * do-nothing period.
      */
     #ifdef FLIGHT
-        static constexpr unsigned int deployment_wait = 15000; // ~30 mins
+        TRACKED_CONSTANT(static constexpr unsigned int, deployment_wait, 15000) // ~30 mins
     #else
-        static constexpr unsigned int deployment_wait = 100;
+        TRACKED_CONSTANT(static constexpr unsigned int, deployment_wait, 100)
     #endif
     /**
      * @brief Number of control cycles to wait before declaring "too long since comms".
      */
     WritableStateField<unsigned int> max_radio_silence_duration_f;
-    static constexpr unsigned int initial_max_radio_silence_duration = PAN::one_day_ccno;
+    TRACKED_CONSTANT(static constexpr unsigned int, initial_max_radio_silence_duration, PAN::one_day_ccno)
 
     /**
      * @brief Number of control cycles to wait while in docking state before moving to standby
      */
     WritableStateField<unsigned int> docking_timeout_limit_f;
-    static constexpr unsigned int initial_docking_timeout_limit = PAN::one_day_ccno;
+    TRACKED_CONSTANT(static constexpr unsigned int, initial_docking_timeout_limit, PAN::one_day_ccno)
 
     // These states respond to fault conditions.
     static constexpr std::array<mission_state_t, 5> fault_responsive_states = {

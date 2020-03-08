@@ -2,10 +2,11 @@
 #define DOWNLINK_PRODUCER_HPP_
 
 #include "TimedControlTask.hpp"
+#include <common/constant_tracker.hpp>
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
-    static constexpr unsigned int num_bits_in_packet = 560;
+    TRACKED_CONSTANT(static constexpr unsigned int, num_bits_in_packet, 560)
 
     /**
      * @brief Flow data object, used in order to specify the
