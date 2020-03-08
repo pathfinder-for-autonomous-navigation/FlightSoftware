@@ -25,6 +25,12 @@ If your update does not require significant testing, argue why, or if you're def
 ### Constants
 If your PR creates any constants, list them here and indicate whether or not you've added them to the recurring constants review.
 
+| Constant                 | Location             | Added to review?   |
+|--------------------------|----------------------|--------------------|
+|                          |                      | :white_check_mark: |
+|                          |                      | :x: : Why not?     |
+
+
 ### Documentation Evidence
 Post to ReadTheDocs, or
 - Argue that your inline documentation is sufficient.
