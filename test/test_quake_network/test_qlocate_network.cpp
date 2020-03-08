@@ -57,7 +57,7 @@ void test_sbdrb_with_network(void)
 
     // SBDRB session
     TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdrb_1());
-    count_cycles(q.get_sbdrb, "get_sbdrb", Devices::OK);
+    count_cycles(q.get_sbdrb, "get_sbdrb", MT_MSG_RECV);
     
     char *szMsg = q.mt_message;
 #ifdef DEBUG_ENABLED

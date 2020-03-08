@@ -52,7 +52,7 @@ int QLocate::get_is_functional()
 
 int QLocate::query_config_1()
 {
-    return sendCommand("AT&F0;+SBDREG\r");
+    return sendCommand("AT&F0\r");
 }
 
 int QLocate::query_config_2()
