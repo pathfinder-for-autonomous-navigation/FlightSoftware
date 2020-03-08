@@ -81,9 +81,6 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
             if (field_map.find(key) == field_map.end())
                 throw std::runtime_error("field map key not found: " + key);
 
-            // Get the field's index in writable_fields
-            size_t field_index = field_map[key];
-
             add_field_to_bitstream(bs, key, j);
         } 
 

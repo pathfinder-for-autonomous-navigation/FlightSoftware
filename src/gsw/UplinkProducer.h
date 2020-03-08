@@ -3,6 +3,7 @@
 #include <fsw/FCCode/MainControlLoop.hpp>
 #include <fsw/FCCode/UplinkCommon.h>
 #include <map>
+#include <json.hpp>
 
 /**
  * UplinkProducer provides operations on a bitstream. A bitstream represents
@@ -44,6 +45,20 @@ class UplinkProducer : public Uplink{
      * Return the maximum possible packet size
      */
     const size_t get_max_possible_packet_size();
+
+    /**
+     * Helper function for add_field_to_bitstream.
+     * Check that the field/key of a given type is in the statefield registry.
+     * If it is, add the value of the field/key to the bitstream
+     */
+    template<typename UnderlyingType>
+    bool try_add_field(bitstream bs, std::string key, nlohmann::json j);
+
+    /**
+     * Check that a field is in the registry. If it is, add the value to the bitstream.
+     */
+    bool add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j);
+
 #ifndef DEBUG
   private:
 #endif
@@ -53,7 +68,8 @@ class UplinkProducer : public Uplink{
      * @throw runtime_error if invalid index is specified
      * @return the number of bits written
      */ 
-    size_t add_entry(bitstream& bs, char* val, size_t index);
+    template<typename T>
+    size_t add_entry(bitstream& bs, T* val, size_t index);
 
     MainControlLoop fcp;
 

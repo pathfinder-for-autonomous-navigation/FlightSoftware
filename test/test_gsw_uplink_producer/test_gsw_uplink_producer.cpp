@@ -1,7 +1,7 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #define DEBUG
-#include <fsw/GroundCode/UplinkProducer.h>
+#include <gsw/UplinkProducer.h>
 
 #include <unity.h>
 #include <fstream>
