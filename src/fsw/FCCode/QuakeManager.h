@@ -203,8 +203,8 @@ class QuakeManager : public TimedControlTask<bool> {
     // to figure out maximum cycles we are willing to wait. 
   public:
     TRACKED_CONSTANT(static constexpr unsigned int, max_config_cycles, 5)
-    TRACKED_CONSTANT(static constexpr unsigned int max_write_cycles, 5)
-    TRACKED_CONSTANT(static constexpr unsigned int max_read_cycles, 5)
+    TRACKED_CONSTANT(static constexpr unsigned int, max_write_cycles, 5)
+    TRACKED_CONSTANT(static constexpr unsigned int, max_read_cycles, 5)
 
     TRACKED_CONSTANT(static constexpr size_t, packet_size, 70)
 };

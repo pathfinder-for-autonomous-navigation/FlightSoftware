@@ -17,6 +17,9 @@ for root, dirs, files in os.walk("src"):
                         "file" : path
                     })
 
+log = "Keep this file in version control so that changes to constants are well-known.\n\n"
 for const in consts:
-    print(f"Named constant \"{const['name']}\" of type \"{const['type']}\" and value" +
-        f" \"{const['val']}\" found in {const['file']}")
+    log += f"{const['file']}: \"{const['name']}\" = \"{const['val']}\"\n"
+
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../constants"), 'w') as f:
+    f.write(log)
