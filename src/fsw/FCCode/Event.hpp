@@ -49,11 +49,6 @@ public:
      * @return const char* The string.
      */
    virtual const char *print() const = 0;
-
-   /**
-    * moves to next event //TODO: better document
-    */
-   virtual void next_event() = 0;
 };
 
 /**
@@ -73,8 +68,7 @@ public:
      */
    Event(const std::string &name,
          std::vector<ReadableStateFieldBase *> &_data_fields,
-         const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &),
-         const unsigned int &_ccno);
+         const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &));
 
    /**
      * @brief Move constructor, required for EventStorage.
@@ -93,6 +87,8 @@ public:
    bool deserialize(const char *val) override;
    const char *print() const override;
 
+   static ReadableStateField<unsigned int> *ccno;
+
    virtual ~Event() {}
 
 private:
@@ -100,15 +96,11 @@ private:
    std::unique_ptr<bit_array> field_data;
    const char *(*print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &);
 
-   const unsigned int &ccno; // Control cycle count
-
    // Disable state field functions.
    using StateField<bool>::set;
    using StateField<bool>::get;
 
    void serialize() override;
-
-   void next_event() override;
 };
 
 #endif

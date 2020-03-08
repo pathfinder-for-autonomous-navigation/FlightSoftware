@@ -1,14 +1,16 @@
 #include "Event.hpp"
 
+ReadableStateField<unsigned int> *Event::ccno = nullptr;
+
 Event::Event(const std::string &name,
              std::vector<ReadableStateFieldBase *> &_data_fields,
-             const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &),
-             const unsigned int &_ccno) : StateField<bool>(name, true, false),
-                                          data_fields(_data_fields),
-                                          print_fn(_print_fn),
-                                          ccno(_ccno)
+             const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &))
+    : StateField<bool>(name, true, false),
+      data_fields(_data_fields),
+      print_fn(_print_fn)
 {
     unsigned int field_data_size_bits = 0;
+
     for (const ReadableStateFieldBase *field : data_fields)
     {
         field_data_size_bits += field->bitsize();
@@ -22,14 +24,16 @@ Event::Event(const std::string &name,
 
 Event::Event(Event &&other) : StateField<bool>(other.name(), true, false),
                               data_fields(other.data_fields),
-                              field_data(std::move(other.field_data)),
-                              ccno(other.ccno) {}
+                              field_data(std::move(other.field_data))
+{
+    ccno = other.ccno;
+}
 
 void Event::serialize()
 {
     unsigned int field_data_ptr = 0;
 
-    std::bitset<32> ccno_serialized(ccno);
+    std::bitset<32> ccno_serialized(ccno->get());
     for (int i = 0; i < 32; i++)
     {
         (*field_data)[i] = ccno_serialized[i];
@@ -64,7 +68,7 @@ void Event::signal()
 
 const char *Event::print() const
 {
-    return print_fn(ccno, data_fields);
+    return print_fn(ccno->get(), data_fields);
 }
 
 void Event::deserialize()
@@ -76,8 +80,8 @@ void Event::deserialize()
         ccno_serialized[i] = (*field_data)[i];
     }
     field_data_ptr += 32;
-    //const unsigned int event_ccno = (int)(ccno_serialized.to_ulong());
-    //todo: how should ccno be saved?
+    const unsigned int event_ccno = (int)(ccno_serialized.to_ulong());
+    ccno->set(event_ccno);
 
     for (ReadableStateFieldBase *field : data_fields)
     {
@@ -103,8 +107,4 @@ void Event::set_bit_array(const bit_array &arr)
 bool Event::deserialize(const char *val)
 {
     return true;
-}
-
-void Event::next_event()
-{
 }

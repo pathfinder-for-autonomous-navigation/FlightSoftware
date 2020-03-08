@@ -5,8 +5,7 @@
 EventStorage::EventStorage(const std::string &name,
                            const unsigned int storage_size,
                            std::vector<ReadableStateFieldBase *> &_data_fields,
-                           const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &),
-                           const unsigned int &_ccno)
+                           const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &))
 {
     assert(storage_size < 100); // So that the suffixed event count doesn't have more than 2 digits
     sub_events.reserve(storage_size);
@@ -17,7 +16,7 @@ EventStorage::EventStorage(const std::string &name,
         x[0] = '.';
         sprintf(x, ".%d", i);
         sub_events.emplace_back(name + std::string(x),
-                                _data_fields, _print_fn, _ccno);
+                                _data_fields, _print_fn);
     }
 }
 
@@ -46,20 +45,18 @@ const char *EventStorage::print() const
 
 void EventStorage::deserialize()
 {
+    sub_events[event_ptr].deserialize();
 }
 
 void EventStorage::set_bit_array(const bit_array &arr)
 {
+    sub_events[event_ptr].set_bit_array(arr);
 }
 
 void EventStorage::signal()
 {
     //std::cout << event_ptr << std::endl;
     sub_events[event_ptr].signal();
-}
-
-void EventStorage::next_event()
-{
     event_ptr++;
     if (event_ptr == sub_events.size())
         event_ptr = 0;

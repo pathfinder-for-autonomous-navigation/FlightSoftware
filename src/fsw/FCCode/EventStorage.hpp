@@ -20,8 +20,7 @@ public:
   EventStorage(const std::string &name,
                const unsigned int storage_size,
                std::vector<ReadableStateFieldBase *> &_data_fields,
-               const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &),
-               const unsigned int &_ccno);
+               const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &));
 
   /**
      * @brief Add all stored sub-events to the state field registry.
@@ -38,7 +37,6 @@ public:
   void deserialize() override;
   const char *print() const override;
   void signal() override;
-  void next_event() override;
 
 private:
   /**

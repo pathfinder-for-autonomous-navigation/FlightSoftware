@@ -2,9 +2,11 @@
 #define CLOCK_MANAGER_HPP_
 
 #include "TimedControlTask.hpp"
+#include "Event.hpp"
 
-class ClockManager : public TimedControlTask<void> {
-   public:
+class ClockManager : public TimedControlTask<void>
+{
+public:
     /**
      * @brief Construct a new Clock Manager
      * 
@@ -12,7 +14,7 @@ class ClockManager : public TimedControlTask<void> {
      * @param control_cycle_size Control cycle time, in nanoseconds if on desktop,
      * and in microseconds if on Teensy.
      */
-    ClockManager(StateFieldRegistry& registry, const unsigned int control_cycle_size);
+    ClockManager(StateFieldRegistry &registry, const unsigned int control_cycle_size);
 
     /**
      * @brief Increments the control cycle count and sets the control cycle
@@ -26,7 +28,7 @@ class ClockManager : public TimedControlTask<void> {
      */
     void execute() override;
 
-   private:
+private:
     /**
      * @brief If no control cycle has ended yet, this is set to false.
      * Otherwise true.
