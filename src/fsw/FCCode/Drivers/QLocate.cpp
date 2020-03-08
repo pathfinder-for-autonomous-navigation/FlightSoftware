@@ -169,10 +169,11 @@ int QLocate::get_sbdix()
     return OK;
 #else
     CHECK_PORT_AVAILABLE()
+    size_t msg_size = port->available();
+    char buf[msg_size+1];
     // Parse SBDIX output
-    char buf[75];
-    memset (buf, 0, 75);
-    port->readBytesUntil('\n', buf, 74);
+    port->readBytes(buf, msg_size);
+    buf[msg_size] = '\0';
     // Clear SBDIX buffer before writing to it
     memset(sbdix_r, 0, 6*sizeof(int));
     return parse_ints(buf + 8, sbdix_r);

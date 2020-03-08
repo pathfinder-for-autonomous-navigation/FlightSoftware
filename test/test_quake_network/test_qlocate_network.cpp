@@ -82,10 +82,9 @@ int main(void)
     UNITY_BEGIN();
     RUN_TEST(test_config); // force a config
     while(1){
-
         RUN_TEST(test_sbdix_with_network);
         RUN_TEST(test_sbdrb_with_network);
-    delay(100);
+        delay(100);
     }
     UNITY_END();
     return 0;
