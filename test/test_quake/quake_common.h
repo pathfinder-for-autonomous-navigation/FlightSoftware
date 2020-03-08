@@ -64,8 +64,7 @@ static const int DEFAULT_CTRL_CYCLE_LENGTH = 120;
  */
 #define run_sbdwb(msg)do{\
     delay(DEFAULT_CTRL_CYCLE_LENGTH);\
-    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_1(msg.length()));\
-    delay(DEFAULT_CTRL_CYCLE_LENGTH);\
-    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_2(msg.c_str(), msg.length()));\
+    count_cycles(q.query_sbdwb_1(msg.length()), "query_sbdwb_1");\
+    count_cycles(q.query_sbdwb_2(msg.c_str(), msg.length()), "query_sbdwb_2");\
     count_cycles(q.get_sbdwb, "get_sbdwb");\
 }while(0)
