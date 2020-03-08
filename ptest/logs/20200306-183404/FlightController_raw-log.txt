@@ -1,0 +1,88 @@
+[2020-03-06 18:34:04.554653] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-06 18:34:04.618487] Received: {"t":258019,"field":"pan.state","val":"11"}
+[2020-03-06 18:34:04.618815] Sent:     {"mode": 119, "field": "adcs.state", "val": "5"}
+[2020-03-06 18:34:04.788479] Received: {"t":258189,"field":"adcs.state","val":"5"}
+[2020-03-06 18:34:04.788783] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-03-06 18:34:04.958486] Received: {"t":258359,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-03-06 18:34:04.958871] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-03-06 18:34:05.129560] Received: {"t":258529,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:36:27.515908] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-06 18:36:27.593362] Received: {"t":400993,"field":"adcs_monitor.gyr_vec","val":"-0.018975,0.004727,0.044542,"}
+[2020-03-06 18:36:29.582714] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-06 18:36:29.633288] Received: {"t":403033,"field":"adcs_monitor.gyr_vec","val":"-0.028296,-0.509670,0.004328,"}
+[2020-03-06 18:36:38.604060] Sent:     {"mode": 114, "field": "adcs_cmd.rwa_speed_cmd"}
+[2020-03-06 18:36:38.644307] Received: {"t":412043,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:37:45.270865] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0,0,0"}
+[2020-03-06 18:37:45.286612] Received: {"t":478686,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:37:46.943049] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0,0,1"}
+[2020-03-06 18:37:46.987619] Received: {"t":480387,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,1.000000,"}
+[2020-03-06 18:37:50.525184] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0,"}
+[2020-03-06 18:37:50.556704] Received: {"t":483956,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:37:57.030400] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "\"0,"}
+[2020-03-06 18:37:57.186711] Received: {"t":490586,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:38:13.616490] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "\"0,0,0\""}
+[2020-03-06 18:38:13.677753] Received: {"t":507077,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:38:23.202937] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "1.0,0.0,0.0"}
+[2020-03-06 18:38:23.368792] Received: {"t":516768,"field":"adcs_cmd.rwa_speed_cmd","val":"1.000000,0.000000,0.000000,"}
+[2020-03-06 18:38:28.348567] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "\"1.0,0.0,0.0\""}
+[2020-03-06 18:38:28.468819] Received: {"t":521867,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:38:33.855936] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "{0,0,0}"}
+[2020-03-06 18:38:33.908843] Received: {"t":527308,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:39:43.315095] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_cmd_cmd", "val": "0"}
+[2020-03-06 18:39:43.440215] Received: {"t":596839,"field":"adcs_cmd.rwa_cmd_cmd","mode":"write","err":"invalid field name"}
+[2020-03-06 18:39:45.840727] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_cmd_cmd", "val": "0,0,0"}
+[2020-03-06 18:39:45.990226] Received: {"t":599389,"field":"adcs_cmd.rwa_cmd_cmd","mode":"write","err":"invalid field name"}
+[2020-03-06 18:39:52.863793] Sent:     {"mode": 114, "field": "adcs_cmd.gyr_vec"}
+[2020-03-06 18:39:52.961203] Received: {"t":606359,"field":"adcs_cmd.gyr_vec","mode":"read","err":"invalid field name"}
+[2020-03-06 18:39:58.671636] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-06 18:39:58.741207] Received: {"t":612140,"field":"adcs_monitor.gyr_vec","val":"-0.018443,0.005660,0.045074,"}
+[2020-03-06 18:40:01.686952] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_cmd_cmd", "val": "0,0,0"}
+[2020-03-06 18:40:01.801268] Received: {"t":615200,"field":"adcs_cmd.rwa_cmd_cmd","mode":"write","err":"invalid field name"}
+[2020-03-06 18:40:58.719099] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_cmd_cmd", "val": "0,0,0,"}
+[2020-03-06 18:40:58.753677] Received: {"t":672151,"field":"adcs_cmd.rwa_cmd_cmd","mode":"write","err":"invalid field name"}
+[2020-03-06 18:41:58.955232] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_cmd_cmd", "val": "\"0,0,0,\""}
+[2020-03-06 18:41:59.104846] Received: {"t":732503,"field":"adcs_cmd.rwa_cmd_cmd","mode":"write","err":"invalid field name"}
+[2020-03-06 18:42:26.671120] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_cmd_cmd", "val": "\"0.0,0.0,0.0,\""}
+[2020-03-06 18:42:26.815940] Received: {"t":760214,"field":"adcs_cmd.rwa_cmd_cmd","mode":"write","err":"invalid field name"}
+[2020-03-06 18:42:30.339115] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_cmd_cmd", "val": "0.0,0.0,0.0,"}
+[2020-03-06 18:42:30.385972] Received: {"t":763784,"field":"adcs_cmd.rwa_cmd_cmd","mode":"write","err":"invalid field name"}
+[2020-03-06 18:42:46.149533] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0.0,0.0,0.0,"}
+[2020-03-06 18:42:46.198029] Received: {"t":779596,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:42:53.148432] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0.0,0.0,0.0,"}
+[2020-03-06 18:42:53.168022] Received: {"t":786566,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:43:12.139573] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "\"0.0,0.0,0.0,\""}
+[2020-03-06 18:43:12.208137] Received: {"t":805606,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:43:22.914252] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "\"0.0,0.0,0.0,\""}
+[2020-03-06 18:43:23.089186] Received: {"t":816487,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:44:07.192741] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "{0.0,0.0,0.0,}"}
+[2020-03-06 18:44:07.290407] Received: {"t":860688,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:44:44.038185] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "{0.0,0.0,0.0,}"}
+[2020-03-06 18:44:44.181549] Received: {"t":897579,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:44:48.661769] Sent:     {"mode": 114, "field": "adcs_monitor.functional"}
+[2020-03-06 18:44:48.770557] Received: {"t":902168,"field":"adcs_monitor.functional","val":"true"}
+[2020-03-06 18:45:00.420657] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0.0,"}
+[2020-03-06 18:45:00.501718] Received: {"t":913899,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:45:08.370007] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0,"}
+[2020-03-06 18:45:08.491739] Received: {"t":921889,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:45:13.663504] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "\"0,"}
+[2020-03-06 18:45:13.761762] Received: {"t":927159,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:45:25.944530] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "\"0,"}
+[2020-03-06 18:45:26.002824] Received: {"t":939400,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:45:27.399588] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "\"0,"}
+[2020-03-06 18:45:27.532784] Received: {"t":940930,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:45:30.047090] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0,"}
+[2020-03-06 18:45:30.082840] Received: {"t":943480,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:45:32.024217] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0,"}
+[2020-03-06 18:45:32.122844] Received: {"t":945520,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:45:35.227398] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0,"}
+[2020-03-06 18:45:35.352854] Received: {"t":948750,"field":"adcs_cmd.rwa_speed_cmd","mode":"write","err":"field value was invalid"}
+[2020-03-06 18:47:10.583214] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0,0,0,"}
+[2020-03-06 18:47:10.726261] Received: {"t":1044123,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:47:26.954457] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0.0,0.0,0.0,"}
+[2020-03-06 18:47:27.047352] Received: {"t":1060444,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:48:09.372432] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0.0,0.0,0.0"}
+[2020-03-06 18:48:09.378521] Received: {"t":1102775,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:48:12.071691] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0.0,0.0,0.0,"}
+[2020-03-06 18:48:12.098566] Received: {"t":1105495,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 18:48:17.293691] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0.0,0.0,0.0,"}
+[2020-03-06 18:48:17.368596] Received: {"t":1110765,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}

@@ -1,0 +1,100 @@
+[2020-03-06 20:05:01.625092] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-06 20:05:01.658911] Received: {"t":129,"field":"pan.state","val":"11"}
+[2020-03-06 20:05:01.659213] Sent:     {"mode": 119, "field": "adcs.state", "val": "5"}
+[2020-03-06 20:05:01.827912] Received: {"t":298,"field":"adcs.state","val":"5"}
+[2020-03-06 20:05:01.828252] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-03-06 20:05:01.998923] Received: {"t":469,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-03-06 20:05:01.999283] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-03-06 20:05:02.031167] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-03-06 20:05:02.169982] Received: {"t":639,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 20:05:02.201039] Received: Consumed[0\r\n0\r]
+[2020-03-06 20:05:02.541081] Received: Consumed[READY\r\n]
+[2020-03-06 20:05:02.737235] Received:         > get_SBDWB=30DA30D
+[2020-03-06 20:05:02.737484] Received:         > return=0
+[2020-03-06 20:05:22.507768] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "1,1,1"}
+[2020-03-06 20:05:22.594202] Received: {"t":21063,"field":"adcs_cmd.rwa_speed_cmd","val":"1.000000,1.000000,1.000000,"}
+[2020-03-06 20:05:28.720005] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "3,3,3"}
+[2020-03-06 20:05:28.884326] Received: {"t":27354,"field":"adcs_cmd.rwa_speed_cmd","val":"3.000000,3.000000,3.000000,"}
+[2020-03-06 20:06:27.910687] Received: {"t":86380,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 2 has ran out of cycles."}
+[2020-03-06 20:06:29.270796] Received: {"t":87740,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 4 has ran out of cycles."}
+[2020-03-06 20:06:30.125937] Received: Consumed[0\r]
+[2020-03-06 20:06:30.130535] Received: {"t":88600,"svrty":"ERROR","msg":"[Quake Error] Execution failed at radio state 5, quake control state 4, and fn_number 2 with error "}
+[2020-03-06 20:06:30.966625] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-03-06 20:06:31.136424] Received: Consumed[0\r\n0\r]
+[2020-03-06 20:06:31.476430] Received: Consumed[READY\r\n]
+[2020-03-06 20:06:31.672534] Received:         > get_SBDWB=30DA30D
+[2020-03-06 20:06:31.672737] Received:         > return=0
+[2020-03-06 20:07:56.846266] Received: {"t":175314,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 2 has ran out of cycles."}
+[2020-03-06 20:07:58.206338] Received: {"t":176674,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 4 has ran out of cycles."}
+[2020-03-06 20:07:59.566230] Received: {"t":178034,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:08:00.411739] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-03-06 20:08:00.581724] Received: Consumed[0\r\n0\r]
+[2020-03-06 20:08:00.921553] Received: Consumed[READY\r\n]
+[2020-03-06 20:08:01.117053] Received:         > get_SBDWB=30DA30D
+[2020-03-06 20:08:01.117259] Received:         > return=0
+[2020-03-06 20:08:28.057177] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "100,100,100"}
+[2020-03-06 20:08:28.114406] Received: {"t":206582,"field":"adcs_cmd.rwa_speed_cmd","val":"100.000000,100.000000,100.000000,"}
+[2020-03-06 20:09:26.290753] Received: {"t":264758,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 2 has ran out of cycles."}
+[2020-03-06 20:09:26.872036] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0,0,0"}
+[2020-03-06 20:09:26.936721] Received: {"t":265403,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 20:09:27.650793] Received: {"t":266118,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 4 has ran out of cycles."}
+[2020-03-06 20:09:29.010801] Received: {"t":267478,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:09:30.035805] Received: Consumed[0\r]
+[2020-03-06 20:09:30.040525] Received: {"t":268508,"svrty":"ERROR","msg":"[Quake Error] Execution failed at radio state 5, quake control state 4, and fn_number 2 with error "}
+[2020-03-06 20:09:30.876779] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-03-06 20:09:31.046576] Received: Consumed[0\r\n0\r]
+[2020-03-06 20:09:31.386604] Received: Consumed[READY\r\n]
+[2020-03-06 20:09:31.582621] Received:         > get_SBDWB=30DA30D
+[2020-03-06 20:09:31.582780] Received:         > return=0
+[2020-03-06 20:10:56.756335] Received: {"t":355222,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 2 has ran out of cycles."}
+[2020-03-06 20:10:58.116431] Received: {"t":356582,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 4 has ran out of cycles."}
+[2020-03-06 20:10:59.476347] Received: {"t":357942,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:11:00.321897] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-03-06 20:11:00.491706] Received: Consumed[0\r\n0\r]
+[2020-03-06 20:11:00.831756] Received: Consumed[READY\r\n]
+[2020-03-06 20:11:01.028131] Received:         > get_SBDWB=30DA30D
+[2020-03-06 20:11:01.028302] Received:         > return=0
+[2020-03-06 20:12:26.201897] Received: {"t":444667,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 2 has ran out of cycles."}
+[2020-03-06 20:12:27.561837] Received: {"t":446027,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 4 has ran out of cycles."}
+[2020-03-06 20:12:27.842354] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "true"}
+[2020-03-06 20:12:27.865734] Received: {"t":446331,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2020-03-06 20:12:28.921831] Received: {"t":447387,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:30.116566] Received: Consumed[0\r]
+[2020-03-06 20:12:30.121515] Received: {"t":448587,"svrty":"ERROR","msg":"[Quake Error] Execution failed at radio state 5, quake control state 4, and fn_number 2 with error "}
+[2020-03-06 20:12:30.957120] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-03-06 20:12:31.126968] Received: Consumed[0\r\n0\r]
+[2020-03-06 20:12:31.466998] Received: Consumed[READY\r\n]
+[2020-03-06 20:12:31.662643] Received:         > get_SBDWB=30DA30D
+[2020-03-06 20:12:31.662797] Received:         > return=0
+[2020-03-06 20:12:32.177788] Received: parse_ints: unexpected response -1
+[2020-03-06 20:12:32.182924] Received: {"t":450648,"svrty":"ERROR","msg":"[Quake Error] Execution failed at radio state 2, quake control state 3, and fn_number 1 with error "}
+[2020-03-06 20:12:33.532870] Received: {"t":451998,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:34.892855] Received: {"t":453358,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:36.253922] Received: {"t":454718,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:37.613895] Received: {"t":456078,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:38.973868] Received: {"t":457439,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:40.333899] Received: {"t":458799,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:41.693918] Received: {"t":460159,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:43.053929] Received: {"t":461519,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:44.413929] Received: {"t":462879,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:45.467012] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-03-06 20:12:45.566819] Received: {"t":464032,"field":"gomspace.vbatt","val":"6633"}
+[2020-03-06 20:12:45.773950] Received: {"t":464239,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:47.133914] Received: {"t":465599,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:48.493953] Received: {"t":466959,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:49.853948] Received: {"t":468319,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:51.213963] Received: {"t":469679,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:52.573980] Received: {"t":471039,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:53.934001] Received: {"t":472399,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:55.294105] Received: {"t":473759,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:56.653992] Received: {"t":475119,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:58.014061] Received: {"t":476479,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:12:59.374066] Received: {"t":477839,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:13:00.734212] Received: {"t":479199,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:13:02.094957] Received: {"t":480559,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:13:03.454263] Received: {"t":481919,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:13:04.815177] Received: {"t":483279,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:13:06.175108] Received: {"t":484639,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:13:07.535133] Received: {"t":485999,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:13:08.895161] Received: {"t":487359,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 20:13:10.255163] Received: {"t":488719,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}

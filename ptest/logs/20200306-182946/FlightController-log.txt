@@ -1,0 +1,4 @@
+[2020-03-06 18:31:11.363089] (ERROR) Tried to write state value named "adcs_cmd.rwa_speed_cmd" but encountered an error: field value was invalid
+[2020-03-06 18:31:16.634089] (ERROR) Tried to write state value named "adcs_cmd.rwa_speed_cmd" but encountered an error: field value was invalid
+[2020-03-06 18:31:58.624089] (ERROR) Tried to write state value named "adcs_cmd.rwa_speed_cmd" but encountered an error: field value was invalid
+[2020-03-06 18:32:36.536089] (ERROR) Tried to write state value named "adcs_cmd.rwa_speed_cmd" but encountered an error: field value was invalid

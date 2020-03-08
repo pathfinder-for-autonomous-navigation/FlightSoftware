@@ -1,0 +1,14 @@
+[2020-03-06 19:27:43.920378] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-06 19:27:44.020772] Received: {"t":3477408,"field":"pan.state","val":"11"}
+[2020-03-06 19:27:44.021107] Sent:     {"mode": 119, "field": "adcs.state", "val": "5"}
+[2020-03-06 19:27:44.190762] Received: {"t":3477578,"field":"adcs.state","val":"5"}
+[2020-03-06 19:27:44.191104] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-03-06 19:27:44.360758] Received: {"t":3477748,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-03-06 19:27:44.372035] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-03-06 19:27:44.531852] Received: {"t":3477919,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 19:27:53.541798] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset0", "val": "true"}
+[2020-03-06 19:27:53.711843] Received: {"t":3487098,"field":"adcs_cmd.havt_reset0","val":"true"}
+[2020-03-06 19:27:56.765819] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset0", "val": "false"}
+[2020-03-06 19:27:56.771837] Received: {"t":3490158,"field":"adcs_cmd.havt_reset0","val":"false"}
+[2020-03-06 19:28:02.186526] Sent:     {"mode": 114, "field": "adcs_cmd.havt_reset0"}
+[2020-03-06 19:28:02.211880] Received: {"t":3495598,"field":"adcs_cmd.havt_reset0","val":"false"}

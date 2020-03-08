@@ -1,0 +1,18 @@
+[2020-03-06 21:20:43.842508] (NOTICE) [Quake Notice] Radio State 2 has ran out of cycles.
+[2020-03-06 21:20:12.574649] [RAW] b'Consumed[+SBDIX:]'
+[2020-03-06 21:20:12.579336] [RAW] b'Consume expected: `\x90\xff\x1f\x07{"t":87570,"svrty":"ERROR","msg":"[Quake Error] Execution failed at radio state 4, quake control state 1, and fn_number 1 with error "}'
+[2020-03-06 21:20:13.424839] [RAW] b'Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\\r0\\r]'
+[2020-03-06 21:20:13.594696] [RAW] b'Consumed[0\\r\\n0\\r]'
+[2020-03-06 21:20:13.934672] [RAW] b'Consumed[READY\\r\\n]'
+[2020-03-06 21:20:14.131090] [RAW] b'        > get_SBDWB=30DA30D'
+[2020-03-06 21:20:14.131202] [RAW] b'        > return=0'
+[2020-03-06 21:22:11.756508] (NOTICE) [Quake Notice] Radio State 2 has ran out of cycles.
+[2020-03-06 21:22:13.116508] (NOTICE) [Quake Notice] Radio State 4 has ran out of cycles.
+[2020-03-06 21:22:14.476508] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 21:21:42.879422] [RAW] b'Consumed[0\\r]'
+[2020-03-06 21:22:15.336508] (ERROR) [Quake Error] Execution failed at radio state 5, quake control state 4, and fn_number 2 with error 
+[2020-03-06 21:21:43.720174] [RAW] b'Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\\r0\\r]'
+[2020-03-06 21:21:43.889923] [RAW] b'Consumed[0\\r\\n0\\r]'
+[2020-03-06 21:21:44.229991] [RAW] b'Consumed[READY\\r\\n]'
+[2020-03-06 21:21:44.425472] [RAW] b'        > get_SBDWB=30DA30D'
+[2020-03-06 21:21:44.425584] [RAW] b'        > return=0'

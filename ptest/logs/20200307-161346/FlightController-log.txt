@@ -1,0 +1,5 @@
+[2020-03-07 16:19:14.604044] Received requested telemetry from spacecraft.
+\x90\x0\x0\x0\x5A\x28
+[2020-03-07 16:20:15.739044] Received requested telemetry from spacecraft.
+\xB0\x0\x0\x0\x5A\x28
+[2020-03-07 16:20:15.739044] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.

@@ -1,0 +1,47 @@
+[2020-03-07 16:13:46.623288] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-07 16:13:46.626993] Received: {"t":21923,"field":"pan.state","val":"11"}
+[2020-03-07 16:13:54.281744] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-07 16:13:54.286976] Received: {"t":29583,"field":"adcs_monitor.gyr_vec","val":"-0.019108,0.006458,0.044009,"}
+[2020-03-07 16:13:57.833885] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-07 16:13:57.838981] Received: {"t":33135,"field":"adcs_monitor.gyr_vec","val":"-0.019108,0.006458,0.044009,"}
+[2020-03-07 16:13:59.040436] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-07 16:13:59.044996] Received: {"t":34341,"field":"adcs_monitor.gyr_vec","val":"-0.019108,0.006458,0.044009,"}
+[2020-03-07 16:14:05.100042] Sent:     {"mode": 114, "field": "adcs_monitor.functional"}
+[2020-03-07 16:14:05.105027] Received: {"t":40401,"field":"adcs_monitor.functional","val":"true"}
+[2020-03-07 16:14:07.483465] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-07 16:14:07.488048] Received: {"t":42784,"field":"adcs_monitor.gyr_vec","val":"-0.019108,0.006458,0.044009,"}
+[2020-03-07 16:14:08.355922] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-07 16:14:08.361046] Received: {"t":43657,"field":"adcs_monitor.gyr_vec","val":"-0.019108,0.006458,0.044009,"}
+[2020-03-07 16:14:09.885479] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-07 16:14:09.890085] Received: {"t":45186,"field":"adcs_monitor.gyr_vec","val":"-0.019108,0.006458,0.044009,"}
+[2020-03-07 16:14:28.884850] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:14:28.889988] Received: {"t":64186,"field":"cycle.start","val":"true"}
+[2020-03-07 16:14:35.465286] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-03-07 16:14:35.470099] Received: {"t":70766,"field":"adcs_monitor.gyr_vec","val":"-0.019641,0.004993,0.043743,"}
+[2020-03-07 16:14:45.152506] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:14:45.157086] Received: {"t":80453,"field":"cycle.start","val":"true"}
+[2020-03-07 16:15:10.786096] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-03-07 16:15:10.791168] Received: {"t":106087,"field":"pan.cycle_no","val":"3"}
+[2020-03-07 16:18:32.679081] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:18:32.683774] Received: {"t":307979,"field":"cycle.start","val":"true"}
+[2020-03-07 16:18:35.966410] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-03-07 16:18:35.970770] Received: {"t":311267,"field":"pan.cycle_no","val":"4"}
+[2020-03-07 16:18:47.331192] Sent:     {"mode": 119, "field": "telem.dump", "val": "true"}
+[2020-03-07 16:18:47.335820] Received: {"t":322631,"field":"telem.dump","val":"true"}
+[2020-03-07 16:18:52.753191] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:18:52.760811] Received: {"t":328053,"field":"cycle.start","val":"true"}
+[2020-03-07 16:18:52.761146] Received: {"t":328056,"telem":"\\x90\\x0\\x0\\x0\\x5A\\x28"}
+[2020-03-07 16:19:24.306187] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-03-07 16:19:24.310923] Received: {"t":359606,"field":"pan.cycle_no","val":"5"}
+[2020-03-07 16:19:26.564586] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:19:26.569925] Received: {"t":361865,"field":"cycle.start","val":"true"}
+[2020-03-07 16:19:34.592965] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-03-07 16:19:34.597933] Received: {"t":369893,"field":"pan.cycle_no","val":"6"}
+[2020-03-07 16:19:40.901702] Sent:     {"mode": 119, "field": "telem.dump", "val": "true"}
+[2020-03-07 16:19:40.906954] Received: {"t":376202,"field":"telem.dump","val":"true"}
+[2020-03-07 16:19:45.951266] Sent:     {"mode": 114, "field": "telem.dump"}
+[2020-03-07 16:19:45.955961] Received: {"t":381251,"field":"telem.dump","val":"true"}
+[2020-03-07 16:19:53.888643] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:19:53.891464] Received: {"t":389189,"field":"cycle.start","val":"true"}
+[2020-03-07 16:19:53.891818] Received: {"t":389191,"telem":"\\xB0\\x0\\x0\\x0\\x5A\\x28"}
+[2020-03-07 16:19:53.896074] Received: {"t":389191,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}

@@ -1,0 +1,68 @@
+[2020-03-07 19:45:58.886610] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-07 19:45:58.930516] Received: {"t":119,"field":"pan.state","val":"11"}
+[2020-03-07 19:45:58.930840] Sent:     {"mode": 119, "field": "adcs.state", "val": "5"}
+[2020-03-07 19:45:58.935468] Received: {"t":124,"field":"adcs.state","val":"5"}
+[2020-03-07 19:45:58.935741] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-03-07 19:45:58.940489] Received: {"t":129,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-03-07 19:45:58.940758] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-03-07 19:45:58.946536] Received: {"t":135,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-07 19:45:58.946722] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "true"}
+[2020-03-07 19:45:58.951492] Received: {"t":140,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2020-03-07 19:45:58.951807] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-03-07 19:45:58.956430] Received: {"t":145,"field":"pan.cycle_no","val":"1"}
+[2020-03-07 19:46:21.805155] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:46:21.809774] Received: {"t":23002,"field":"piksi.state","val":"3"}
+[2020-03-07 19:46:25.526947] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:46:25.532166] Received: {"t":26725,"field":"piksi.state","val":"3"}
+[2020-03-07 19:46:28.104638] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:46:28.109711] Received: {"t":29303,"field":"cycle.start","val":"true"}
+[2020-03-07 19:46:29.090978] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:46:29.095536] Received: {"t":30289,"field":"piksi.state","val":"6"}
+[2020-03-07 19:46:30.031460] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:46:30.036336] Received: {"t":31230,"field":"cycle.start","val":"true"}
+[2020-03-07 19:46:30.583056] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:46:30.588245] Received: {"t":31782,"field":"cycle.start","val":"true"}
+[2020-03-07 19:46:31.463956] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:46:31.464200] Received: {"t":32658,"field":"piksi.state","val":"6"}
+[2020-03-07 19:46:32.145263] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:46:32.149961] Received: {"t":33344,"field":"cycle.start","val":"true"}
+[2020-03-07 19:46:32.700088] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:46:32.704936] Received: {"t":33899,"field":"cycle.start","val":"true"}
+[2020-03-07 19:46:33.782996] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:46:33.787710] Received: {"t":34982,"field":"piksi.state","val":"6"}
+[2020-03-07 19:46:34.573460] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:46:34.576289] Received: {"t":35773,"field":"cycle.start","val":"true"}
+[2020-03-07 19:46:34.580644] Received: {"t":35775,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-07 19:46:35.413598] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:46:35.418385] Received: {"t":36613,"field":"piksi.state","val":"6"}
+[2020-03-07 19:46:36.104160] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:46:36.104382] Received: {"t":37299,"field":"cycle.start","val":"true"}
+[2020-03-07 19:47:54.730222] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:47:54.735331] Received: {"t":115922,"field":"piksi.state","val":"6"}
+[2020-03-07 19:47:55.839982] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:47:55.844765] Received: {"t":117031,"field":"cycle.start","val":"true"}
+[2020-03-07 19:47:56.780732] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:47:56.785152] Received: {"t":117972,"field":"piksi.state","val":"3"}
+[2020-03-07 19:47:57.907408] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:47:57.907640] Received: {"t":119093,"field":"cycle.start","val":"true"}
+[2020-03-07 19:47:58.377842] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:47:58.382798] Received: {"t":119568,"field":"cycle.start","val":"true"}
+[2020-03-07 19:47:59.151448] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:47:59.156094] Received: {"t":120341,"field":"piksi.state","val":"6"}
+[2020-03-07 19:47:59.798558] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:47:59.803320] Received: {"t":120988,"field":"cycle.start","val":"true"}
+[2020-03-07 19:48:00.381884] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:48:00.386548] Received: {"t":121571,"field":"piksi.state","val":"6"}
+[2020-03-07 19:48:01.002319] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:48:01.006797] Received: {"t":122192,"field":"cycle.start","val":"true"}
+[2020-03-07 19:48:01.620844] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:48:01.626006] Received: {"t":122810,"field":"piksi.state","val":"6"}
+[2020-03-07 19:48:02.202589] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:48:02.207233] Received: {"t":123391,"field":"cycle.start","val":"true"}
+[2020-03-07 19:48:02.842322] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-03-07 19:48:02.842527] Received: {"t":124026,"field":"piksi.state","val":"6"}
+[2020-03-07 19:48:03.438696] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 19:48:03.441540] Received: {"t":124627,"field":"cycle.start","val":"true"}
+[2020-03-07 19:48:03.445755] Received: {"t":124630,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-07 19:53:07.282421] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-03-07 19:53:07.287332] Received: {"t":428457,"field":"piksi.pos","val":"   nan,   nan,   nan,"}

@@ -82,7 +82,7 @@ void ADCS::set_rwa_mode(const unsigned char rwa_mode,const std::array<float,3>& 
 }
 void ADCS::set_rwa_momentum_filter(const float mom_filter){
     unsigned char comp = uc(mom_filter,0.0f,1.0f);
-    i2c_write_to_subaddr(RWA_MOMENTUM_FILTER, comp);
+    i2c_write_to_subaddr(RWA_SPEED_FILTER, comp);
 }
 void ADCS::set_ramp_filter(const float ramp_filter){
     unsigned char comp = uc(ramp_filter,0.0f,1.0f);
@@ -160,13 +160,13 @@ void ADCS::get_who_am_i(unsigned char* who_am_i) {
 }
 void ADCS::get_rwa(std::array<float, 3>* rwa_momentum_rd, std::array<float, 3>* rwa_ramp_rd) {
     unsigned char readin[12];
-    i2c_point_and_read(RWA_MOMENTUM_RD, readin, 12);
+    i2c_point_and_read(RWA_SPEED_RD, readin, 12);
 
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1] << 8;
         unsigned short b = 0xFF & readin[2*i];
         unsigned short c = a | b;
-        (*rwa_momentum_rd)[i] = fp(c,rwa::min_momentum,rwa::max_momentum);
+        (*rwa_momentum_rd)[i] = fp(c,rwa::min_speed_read,rwa::max_speed_read);
     }
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1+6] << 8;

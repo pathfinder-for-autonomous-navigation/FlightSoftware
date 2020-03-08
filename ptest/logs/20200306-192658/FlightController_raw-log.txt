@@ -1,0 +1,12 @@
+[2020-03-06 19:26:58.277274] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-06 19:26:58.289583] Received: {"t":3431676,"field":"pan.state","val":"11"}
+[2020-03-06 19:26:58.322356] Sent:     {"mode": 119, "field": "adcs.state", "val": "5"}
+[2020-03-06 19:26:58.459583] Received: {"t":3431846,"field":"adcs.state","val":"5"}
+[2020-03-06 19:26:58.459962] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-03-06 19:26:58.629604] Received: {"t":3432016,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-03-06 19:26:58.633441] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-03-06 19:26:58.800906] Received: {"t":3432187,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 19:27:09.617335] Sent:     {"mode": 119, "field": "adcs_cmd.reset_havt0", "val": "true"}
+[2020-03-06 19:27:09.679768] Received: {"t":3443067,"field":"adcs_cmd.reset_havt0","mode":"write","err":"invalid field name"}
+[2020-03-06 19:27:11.841814] Sent:     {"mode": 119, "field": "adcs_cmd.reset_havt0", "val": "1"}
+[2020-03-06 19:27:11.889773] Received: {"t":3445277,"field":"adcs_cmd.reset_havt0","mode":"write","err":"invalid field name"}

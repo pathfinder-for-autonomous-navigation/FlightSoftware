@@ -1,0 +1,1 @@
+[2020-03-07 17:37:39.037096] (ERROR) Tried to write state value named "adcs_cmd.havt_disable0" but encountered an error: field value was invalid

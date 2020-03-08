@@ -1,0 +1,12 @@
+[2020-03-07 16:25:24.047535] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-07 16:25:24.047701] Received: {"t":75059,"field":"pan.state","val":"11"}
+[2020-03-07 16:25:25.831504] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:25:25.831678] Received: {"t":76844,"field":"cycle.start","val":"true"}
+[2020-03-07 16:25:26.522132] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:25:26.526800] Received: {"t":77538,"field":"cycle.start","val":"true"}
+[2020-03-07 16:25:33.380692] Sent:     {"mode": 119, "field": "telem.dump", "val": "true"}
+[2020-03-07 16:25:33.385732] Received: {"t":84397,"field":"telem.dump","val":"true"}
+[2020-03-07 16:26:15.730358] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:26:15.730568] Received: {"t":126744,"field":"cycle.start","val":"true"}
+[2020-03-07 16:26:15.730874] Received: {"t":126746,"telem":"\\xB0\\x0\\x0\\x0\\x5A\\x28"}
+[2020-03-07 16:26:15.734907] Received: {"t":126746,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}

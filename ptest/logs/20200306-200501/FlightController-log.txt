@@ -1,0 +1,100 @@
+[2020-03-06 20:05:02.031227] [RAW] b'Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\\r0\\r]'
+[2020-03-06 20:05:02.201112] [RAW] b'Consumed[0\\r\\n0\\r]'
+[2020-03-06 20:05:02.541132] [RAW] b'Consumed[READY\\r\\n]'
+[2020-03-06 20:05:02.737370] [RAW] b'        > get_SBDWB=30DA30D'
+[2020-03-06 20:05:02.737505] [RAW] b'        > return=0'
+[2020-03-06 20:06:27.890688] (NOTICE) [Quake Notice] Radio State 2 has ran out of cycles.
+[2020-03-06 20:06:29.250688] (NOTICE) [Quake Notice] Radio State 4 has ran out of cycles.
+[2020-03-06 20:06:30.126014] [RAW] b'Consumed[0\\r]'
+[2020-03-06 20:06:30.110688] (ERROR) [Quake Error] Execution failed at radio state 5, quake control state 4, and fn_number 2 with error 
+[2020-03-06 20:06:30.966698] [RAW] b'Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\\r0\\r]'
+[2020-03-06 20:06:31.136495] [RAW] b'Consumed[0\\r\\n0\\r]'
+[2020-03-06 20:06:31.476511] [RAW] b'Consumed[READY\\r\\n]'
+[2020-03-06 20:06:31.672609] [RAW] b'        > get_SBDWB=30DA30D'
+[2020-03-06 20:06:31.672762] [RAW] b'        > return=0'
+[2020-03-06 20:07:56.824688] (NOTICE) [Quake Notice] Radio State 2 has ran out of cycles.
+[2020-03-06 20:07:58.184688] (NOTICE) [Quake Notice] Radio State 4 has ran out of cycles.
+[2020-03-06 20:07:59.544688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:08:00.411810] [RAW] b'Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\\r0\\r]'
+[2020-03-06 20:08:00.581903] [RAW] b'Consumed[0\\r\\n0\\r]'
+[2020-03-06 20:08:00.921632] [RAW] b'Consumed[READY\\r\\n]'
+[2020-03-06 20:08:01.117123] [RAW] b'        > get_SBDWB=30DA30D'
+[2020-03-06 20:08:01.117292] [RAW] b'        > return=0'
+[2020-03-06 20:09:26.268688] (NOTICE) [Quake Notice] Radio State 2 has ran out of cycles.
+[2020-03-06 20:09:27.628688] (NOTICE) [Quake Notice] Radio State 4 has ran out of cycles.
+[2020-03-06 20:09:28.988688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:09:30.035879] [RAW] b'Consumed[0\\r]'
+[2020-03-06 20:09:30.018688] (ERROR) [Quake Error] Execution failed at radio state 5, quake control state 4, and fn_number 2 with error 
+[2020-03-06 20:09:30.876849] [RAW] b'Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\\r0\\r]'
+[2020-03-06 20:09:31.046636] [RAW] b'Consumed[0\\r\\n0\\r]'
+[2020-03-06 20:09:31.386671] [RAW] b'Consumed[READY\\r\\n]'
+[2020-03-06 20:09:31.582685] [RAW] b'        > get_SBDWB=30DA30D'
+[2020-03-06 20:09:31.582799] [RAW] b'        > return=0'
+[2020-03-06 20:10:56.732688] (NOTICE) [Quake Notice] Radio State 2 has ran out of cycles.
+[2020-03-06 20:10:58.092688] (NOTICE) [Quake Notice] Radio State 4 has ran out of cycles.
+[2020-03-06 20:10:59.452688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:11:00.321973] [RAW] b'Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\\r0\\r]'
+[2020-03-06 20:11:00.491788] [RAW] b'Consumed[0\\r\\n0\\r]'
+[2020-03-06 20:11:00.831830] [RAW] b'Consumed[READY\\r\\n]'
+[2020-03-06 20:11:01.028195] [RAW] b'        > get_SBDWB=30DA30D'
+[2020-03-06 20:11:01.028323] [RAW] b'        > return=0'
+[2020-03-06 20:12:26.177688] (NOTICE) [Quake Notice] Radio State 2 has ran out of cycles.
+[2020-03-06 20:12:27.537688] (NOTICE) [Quake Notice] Radio State 4 has ran out of cycles.
+[2020-03-06 20:12:28.897688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:30.116636] [RAW] b'Consumed[0\\r]'
+[2020-03-06 20:12:30.097688] (ERROR) [Quake Error] Execution failed at radio state 5, quake control state 4, and fn_number 2 with error 
+[2020-03-06 20:12:30.957178] [RAW] b'Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\\r0\\r]'
+[2020-03-06 20:12:31.127030] [RAW] b'Consumed[0\\r\\n0\\r]'
+[2020-03-06 20:12:31.467094] [RAW] b'Consumed[READY\\r\\n]'
+[2020-03-06 20:12:31.662706] [RAW] b'        > get_SBDWB=30DA30D'
+[2020-03-06 20:12:31.662815] [RAW] b'        > return=0'
+[2020-03-06 20:12:32.177846] [RAW] b'parse_ints: unexpected response -1'
+[2020-03-06 20:12:32.158688] (ERROR) [Quake Error] Execution failed at radio state 2, quake control state 3, and fn_number 1 with error 
+[2020-03-06 20:12:33.508688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:34.868688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:36.228688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:37.588688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:38.949688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:40.309688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:41.669688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:43.029688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:44.389688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:45.749688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:47.109688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:48.469688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:49.829688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:51.189688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:52.549688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:53.909688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:55.269688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:56.629688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:57.989688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:12:59.349688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:00.709688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:02.069688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:03.429688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:04.789688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:06.149688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:07.509688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:08.869688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:10.229688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:11.589688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:12.950688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:14.310688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:15.670688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:17.030688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:18.390688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:19.750688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:21.110688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:22.470688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:23.830688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:25.190688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:26.550688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:27.910688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:29.270688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:30.630688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:31.990688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:33.350688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:34.710688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:36.070688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.
+[2020-03-06 20:13:37.430688] (NOTICE) [Quake Notice] Radio State 5 has ran out of cycles.

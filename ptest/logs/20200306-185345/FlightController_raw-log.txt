@@ -1,0 +1,8 @@
+[2020-03-06 18:53:45.581019] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-06 18:53:45.649876] Received: {"t":1439045,"field":"pan.state","val":"11"}
+[2020-03-06 18:53:45.650174] Sent:     {"mode": 119, "field": "adcs.state", "val": "5"}
+[2020-03-06 18:53:45.819849] Received: {"t":1439215,"field":"adcs.state","val":"5"}
+[2020-03-06 18:53:45.820161] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-03-06 18:53:45.989846] Received: {"t":1439385,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-03-06 18:53:45.993607] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-03-06 18:53:46.159949] Received: {"t":1439556,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}

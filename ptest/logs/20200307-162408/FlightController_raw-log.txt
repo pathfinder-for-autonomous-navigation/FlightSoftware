@@ -1,0 +1,13 @@
+[2020-03-07 16:24:09.333753] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-07 16:24:09.338515] Received: {"t":350,"field":"pan.state","val":"11"}
+[2020-03-07 16:24:14.533728] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:24:14.538521] Received: {"t":5550,"field":"cycle.start","val":"true"}
+[2020-03-07 16:24:17.320815] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:24:17.325531] Received: {"t":8337,"field":"cycle.start","val":"true"}
+[2020-03-07 16:24:22.343407] Sent:     {"mode": 114, "field": "adcs_monitor.functional"}
+[2020-03-07 16:24:22.343620] Received: {"t":13355,"field":"adcs_monitor.functional","val":"true"}
+[2020-03-07 16:24:46.315523] Sent:     {"mode": 119, "field": "telem.dump", "val": "true"}
+[2020-03-07 16:24:46.320647] Received: {"t":37332,"field":"telem.dump","val":"true"}
+[2020-03-07 16:24:57.959648] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 16:24:57.966619] Received: {"t":48976,"field":"cycle.start","val":"true"}
+[2020-03-07 16:24:57.966957] Received: {"t":48978,"telem":"\\xE0\\x0\\x0\\x0\\x5A\\x28"}

@@ -1,0 +1,18 @@
+[2020-03-07 17:37:08.747938] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-07 17:37:08.752174] Received: {"t":121,"field":"pan.state","val":"11"}
+[2020-03-07 17:37:08.752401] Sent:     {"mode": 119, "field": "adcs.state", "val": "5"}
+[2020-03-07 17:37:08.757142] Received: {"t":126,"field":"adcs.state","val":"5"}
+[2020-03-07 17:37:08.757397] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-03-07 17:37:08.762941] Received: {"t":131,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-03-07 17:37:08.764153] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-03-07 17:37:08.770251] Received: {"t":138,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-07 17:37:08.771881] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "true"}
+[2020-03-07 17:37:08.776181] Received: {"t":145,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2020-03-07 17:37:08.779144] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-03-07 17:37:08.784183] Received: {"t":152,"field":"pan.cycle_no","val":"1"}
+[2020-03-07 17:37:39.056180] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable0", "val": "1"}
+[2020-03-07 17:37:39.056558] Received: {"t":30425,"field":"adcs_cmd.havt_disable0","mode":"write","err":"field value was invalid"}
+[2020-03-07 17:37:42.701213] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable0", "val": "true"}
+[2020-03-07 17:37:42.701511] Received: {"t":34069,"field":"adcs_cmd.havt_disable0","val":"true"}
+[2020-03-07 17:41:00.716955] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-03-07 17:41:00.722291] Received: {"t":232089,"field":"cycle.start","val":"true"}

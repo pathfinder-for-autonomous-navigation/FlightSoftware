@@ -1,0 +1,43 @@
+[2020-03-06 21:19:17.540929] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-03-06 21:19:17.630723] Received: {"t":32621,"field":"pan.state","val":"11"}
+[2020-03-06 21:19:17.631040] Sent:     {"mode": 119, "field": "adcs.state", "val": "5"}
+[2020-03-06 21:19:17.799755] Received: {"t":32791,"field":"adcs.state","val":"5"}
+[2020-03-06 21:19:17.800105] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-03-06 21:19:17.969791] Received: {"t":32961,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-03-06 21:19:17.970175] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-03-06 21:19:18.141854] Received: {"t":33132,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-03-06 21:19:18.142175] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "true"}
+[2020-03-06 21:19:18.310765] Received: {"t":33301,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2020-03-06 21:19:24.482970] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-03-06 21:19:24.600844] Received: {"t":39592,"field":"gomspace.vbatt","val":"7027"}
+[2020-03-06 21:19:34.099956] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor_cmd"}
+[2020-03-06 21:19:34.120967] Received: {"t":49112,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2020-03-06 21:20:11.389142] Received: {"t":86380,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 2 has ran out of cycles."}
+[2020-03-06 21:20:12.574581] Received: Consumed[+SBDIX:]
+[2020-03-06 21:20:13.424778] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-03-06 21:20:13.594628] Received: Consumed[0\r\n0\r]
+[2020-03-06 21:20:13.934609] Received: Consumed[READY\r\n]
+[2020-03-06 21:20:14.130992] Received:         > get_SBDWB=30DA30D
+[2020-03-06 21:20:14.131182] Received:         > return=0
+[2020-03-06 21:20:46.531782] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "10,10,10"}
+[2020-03-06 21:20:46.567378] Received: {"t":121557,"field":"adcs_cmd.rwa_speed_cmd","val":"10.000000,10.000000,10.000000,"}
+[2020-03-06 21:20:56.243527] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "100,100,100"}
+[2020-03-06 21:20:56.257393] Received: {"t":131247,"field":"adcs_cmd.rwa_speed_cmd","val":"100.000000,100.000000,100.000000,"}
+[2020-03-06 21:21:23.602167] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "1000,1000,1000"}
+[2020-03-06 21:21:23.628530] Received: {"t":158618,"field":"adcs_cmd.rwa_speed_cmd","val":"1000.000000,1000.000000,1000.000000,"}
+[2020-03-06 21:21:39.304632] Received: {"t":174294,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 2 has ran out of cycles."}
+[2020-03-06 21:21:40.664639] Received: {"t":175654,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 4 has ran out of cycles."}
+[2020-03-06 21:21:42.024624] Received: {"t":177014,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-03-06 21:21:42.879363] Received: Consumed[0\r]
+[2020-03-06 21:21:42.884473] Received: {"t":177874,"svrty":"ERROR","msg":"[Quake Error] Execution failed at radio state 5, quake control state 4, and fn_number 2 with error "}
+[2020-03-06 21:21:43.720105] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-03-06 21:21:43.889869] Received: Consumed[0\r\n0\r]
+[2020-03-06 21:21:44.229933] Received: Consumed[READY\r\n]
+[2020-03-06 21:21:44.425414] Received:         > get_SBDWB=30DA30D
+[2020-03-06 21:21:44.425565] Received:         > return=0
+[2020-03-06 21:22:08.693887] Sent:     {"mode": 114, "field": "dcdc.ADCSMotor"}
+[2020-03-06 21:22:08.700626] Received: {"t":203690,"field":"dcdc.ADCSMotor","val":"true"}
+[2020-03-06 21:22:18.368560] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "1000,1000,1000"}
+[2020-03-06 21:22:18.391832] Received: {"t":213381,"field":"adcs_cmd.rwa_speed_cmd","val":"1000.000000,1000.000000,1000.000000,"}
+[2020-03-06 21:22:25.869835] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "500,500,500"}
+[2020-03-06 21:22:26.042865] Received: {"t":221031,"field":"adcs_cmd.rwa_speed_cmd","val":"500.000000,500.000000,500.000000,"}

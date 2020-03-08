@@ -1,0 +1,2 @@
+[2020-03-07 16:24:57.947156] Received requested telemetry from spacecraft.
+\xE0\x0\x0\x0\x5A\x28
