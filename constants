@@ -2,9 +2,12 @@ Keep this file in version control so that changes to constants are well-known.
 
 src/fsw/FCCode/PiksiControlTask.hpp: "DEAD_CYCLE_COUNT" = "1000"
 src/fsw/FCCode/QuakeManager.h: "max_config_cycles" = "5"
+src/fsw/FCCode/QuakeManager.h: "max_write_cycles" = "5"
+src/fsw/FCCode/QuakeManager.h: "max_read_cycles" = "5"
 src/fsw/FCCode/QuakeManager.h: "packet_size" = "70"
 src/fsw/FCCode/DownlinkProducer.hpp: "num_bits_in_packet" = "560"
 src/fsw/FCCode/constants.hpp: "control_cycle_time_ms" = "170"
+src/fsw/FCCode/constants.hpp: "control_cycle_time_us" = "170000"
 src/fsw/FCCode/constants.hpp: "control_cycle_time" = "170000000"
 src/fsw/FCCode/constants.hpp: "control_cycle_time" = "170000"
 src/fsw/FCCode/constants.hpp: "control_cycle_time_ms" = "120"

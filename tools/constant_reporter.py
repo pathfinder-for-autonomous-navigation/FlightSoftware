@@ -21,5 +21,5 @@ log = "Keep this file in version control so that changes to constants are well-k
 for const in consts:
     log += f"{const['file']}: \"{const['name']}\" = \"{const['val']}\"\n"
 
-with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../constants"), 'w') as f:
+with open("constants", 'w') as f:
     f.write(log)
