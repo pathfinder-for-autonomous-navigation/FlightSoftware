@@ -13,9 +13,9 @@ Devices::QLocate q("Test_Quake_With_Network", &Serial3,
 
 void test_config(void) {
     TEST_ASSERT_EQUAL(Devices::OK, q.query_config_1());
-    count_cycles(q.query_config_2, "query_config_2");
-    count_cycles(q.query_config_3, "query_config_3");
-    count_cycles(q.get_config, "get_config");
+    count_cycles(q.query_config_2, "query_config_2", Devices::OK);
+    count_cycles(q.query_config_3, "query_config_3", Devices::OK);
+    count_cycles(q.get_config, "get_config", Devices::OK);
 }
 
 /**
@@ -29,7 +29,7 @@ void test_sbdix_with_network(void)
 
     // SBDIX session
     TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdix_1());
-    count_cycles(q.get_sbdix, "get_sbdix");
+    count_cycles(q.get_sbdix, "get_sbdix", Devices::OK);
 
     const int *_pRes = q.sbdix_r;
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
@@ -43,7 +43,7 @@ void test_sbdrb_with_network(void)
 {
     // SBDIX session
     TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdix_1());
-    count_cycles(q.get_sbdix, "get_sbdix");
+    count_cycles(q.get_sbdix, "get_sbdix", Devices::OK);
 
     const int *_pRes = q.sbdix_r;
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
@@ -57,7 +57,7 @@ void test_sbdrb_with_network(void)
 
     // SBDRB session
     TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdrb_1());
-    count_cycles(q.get_sbdrb, "get_sbdrb");
+    count_cycles(q.get_sbdrb, "get_sbdrb", Devices::OK);
     
     char *szMsg = q.mt_message;
 #ifdef DEBUG_ENABLED
