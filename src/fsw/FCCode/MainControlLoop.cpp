@@ -44,7 +44,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
       adcs_commander(registry, adcs_commander_offset), // needs inputs from attitude computer
-      adcs_box_controller(registry, adcs_box_controller_offset, adcs)
+      adcs_box_controller(registry, adcs_box_controller_offset, adcs),
+      prop_controller(registry, prop_controller_offset)
 {
     docking_controller.init();
 
@@ -81,7 +82,6 @@ void MainControlLoop::execute() {
     piksi_control_task.execute_on_time();
     gomspace_controller.execute_on_time();
     adcs_monitor.execute_on_time();
-    prop_monitor.execute_on_time();
 
     #ifdef FUNCTIONAL_TEST
     debug_task.execute_on_time();
@@ -92,6 +92,7 @@ void MainControlLoop::execute() {
     attitude_computer.execute_on_time();
     adcs_commander.execute_on_time();
     adcs_box_controller.execute_on_time();
+    prop_controller.execute_on_time();
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();

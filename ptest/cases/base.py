@@ -159,6 +159,9 @@ class SingleSatOnlyCase(Case):
         self.sim.flight_controller.write_state(string_state, state_value)
         return self.read_state(string_state)
 
+    def cycle(self):
+        self.sim.flight_controller.write_state("cycle.start", "true")
+
 class MissionCase(Case):
     """
     Base testcase for writing testcases that only work with a full mission simulation

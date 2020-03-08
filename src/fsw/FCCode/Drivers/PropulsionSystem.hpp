@@ -293,7 +293,6 @@ public:
     #endif
 
 private:
-#endif
     void setup();
     #ifndef DESKTOP
     //! When enabled, runs thrust_valve_loop every 3 ms
@@ -317,4 +316,5 @@ private:
     friend class _PropulsionSystem;
 };
 }  // namespace Devices
+
 #endif

@@ -59,7 +59,9 @@ bool _PropulsionSystem::setup() {
     // We set to a 10-bit resolution since the regression for the
     // pressure sensor calculations was computed using a 10-bit Teensy
     // ADC.
-    analogReadResolution(10);
+    #ifndef DESKTOP
+        analogReadResolution(10);
+    #endif
 
     Tank1.setup();
     Tank2.setup();
@@ -92,7 +94,7 @@ int Tank::get_temp() const
     // Get the resistance of the temperature sensor by
     // measuring a reference voltage and using the voltage
     // divider equation
-    unsigned int raw = analogRead(temp_sensor_pin); 
+    unsigned int raw = analogRead(temp_sensor_pin);
     double voltage = raw * 3.3 / 1024.0;
     if (std::abs(3.3 - voltage) < 1e-4) return temp_min;
     double resis = (voltage * 6200.0) / (3.3 - voltage);

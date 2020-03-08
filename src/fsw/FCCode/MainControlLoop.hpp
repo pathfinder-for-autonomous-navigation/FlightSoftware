@@ -22,7 +22,7 @@
 #include "DownlinkProducer.hpp"
 #include "EEPROMController.hpp"
 #include "UplinkConsumer.h"
-#include "PropMonitor.hpp"
+#include "PropController.hpp"
 
 #if (!defined(FUNCTIONAL_TEST) && !defined(FLIGHT))
 static_assert(false, "Need to define either the FUNCTIONAL_TEST or FLIGHT flags.");
@@ -74,6 +74,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int attitude_computer_offset   = 111700;
         static constexpr unsigned int adcs_commander_offset      = 147400;
         static constexpr unsigned int adcs_box_controller_offset = 147900;
+        static constexpr unsigned int prop_controller_offset     = 150000;
         static constexpr unsigned int docking_controller_offset  = 152400;
         static constexpr unsigned int downlink_producer_offset   = 153400; // excel says 152900
         static constexpr unsigned int quake_manager_offset       = 153500;
@@ -90,6 +91,7 @@ class MainControlLoop : public ControlTask<void> {
         static constexpr unsigned int attitude_computer_offset   =  61700;
         static constexpr unsigned int adcs_commander_offset      =  97400;
         static constexpr unsigned int adcs_box_controller_offset =  97900;
+        static constexpr unsigned int prop_controller_offset     = 100000;
         static constexpr unsigned int docking_controller_offset  = 103400; // excel says 102400
         static constexpr unsigned int downlink_producer_offset   = 104400; // excel says 102900
         static constexpr unsigned int quake_manager_offset       = 104500;
@@ -105,10 +107,10 @@ class MainControlLoop : public ControlTask<void> {
     MissionManager mission_manager;
 
     AttitudeComputer attitude_computer; // needs adcs.state from MissionManager
-
     ADCSCommander adcs_commander; // will need inputs from computer
-
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
+
+    PropController prop_controller;
 
    public:
     /*
