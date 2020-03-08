@@ -274,9 +274,10 @@ int QLocate::consume(const String& expected)
 
     size_t expected_len = expected.length();
     // Make sure that the number of bytes at port == number of bytes expected
-    if ( (size_t)port->available() < expected_len )
+
+    if ( should_wait() )
     {
-        return WRONG_LENGTH;
+        return PORT_UNAVAILABLE;
     }
     // If we have reached here, then we are certain that port->available() >= expected_len
 
