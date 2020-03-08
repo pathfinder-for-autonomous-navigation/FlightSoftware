@@ -6,6 +6,9 @@
 #include <json.hpp>
 #include <exception>
 
+#include <type_traits>
+#include <typeinfo>
+
 UplinkProducer::UplinkProducer(StateFieldRegistry& r):
     Uplink(r),
     fcp(registry, PAN::flow_data, PAN::statefields, PAN::periods)
@@ -21,6 +24,40 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r):
         max_possible_packet_size += index_size + w->bitsize();
     }
  }
+
+template<typename UnderlyingType>
+bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json j) {
+    // Get pointer to that field in the registry
+    const WritableStateField<UnderlyingType>* ptr = static_cast<WritableStateField<UnderlyingType>*>(registry.find_writable_field(key));
+    
+    // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the value of the key
+    if (!ptr) return false;
+    UnderlyingType val=j.value(key, NULL);
+
+    // Make sure the value we want to set does not exceed the max possible
+    // value that the field can be set to
+    size_t field_index=field_map[key];
+    uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
+    if (val > max_val) {
+        throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
+        return false;
+    }
+
+    // Add the updated value to the bitstream
+    add_entry<UnderlyingType>(bs, reinterpret_cast<UnderlyingType*>(&val), field_index);
+    return true;
+}
+
+bool UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j) {
+    bool found_field_type = false;
+    found_field_type |= try_add_field<unsigned int>(bs, key, j);
+    found_field_type |= try_add_field<signed int>(bs, key, j);
+    found_field_type |= try_add_field<unsigned char>(bs, key, j);
+    found_field_type |= try_add_field<signed char>(bs, key, j);
+    found_field_type |= try_add_field<float>(bs, key, j);
+    found_field_type |= try_add_field<double>(bs, key, j);
+    return found_field_type;
+}
 
 void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename)
  {    
@@ -47,14 +84,7 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
             // Get the field's index in writable_fields
             size_t field_index = field_map[key];
 
-            // Make sure the value we want to set does not exceed the max possible
-            // value that the field can be set to
-            uint64_t val = e.value();
-            uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
-            if (val > max_val)
-                throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
-
-            add_entry(bs, reinterpret_cast<char*>(&val), field_index);
+            add_field_to_bitstream(bs, key, j);
         } 
 
     // Trim the padding off the byte stream so that validate passes
@@ -63,7 +93,8 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
     bs.reset();
  }
 
-size_t UplinkProducer::add_entry( bitstream& bs, char* val, size_t index)
+template<typename T>
+size_t UplinkProducer::add_entry( bitstream& bs, T* val, size_t index)
 {
     size_t bits_written = 0;
     size_t field_size = get_field_length(index);
