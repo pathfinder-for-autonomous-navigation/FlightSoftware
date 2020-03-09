@@ -1,6 +1,7 @@
 #include "MainControlLoop.hpp"
 #include "DebugTask.hpp"
 #include "constants.hpp"
+#include <common/constant_tracker.hpp>
 
 // Include for calculating memory use.
 #ifdef DESKTOP
@@ -14,7 +15,8 @@
     #define ADCS_INITIALIZATION adcs()
 #else
     #include <HardwareSerial.h>
-    #define PIKSI_INITIALIZATION piksi("piksi", Serial4)
+    TRACKED_CONSTANT_S(HardwareSerial&, piksi_serial, Serial4);
+    #define PIKSI_INITIALIZATION piksi("piksi", piksi_serial)
     #define ADCS_INITIALIZATION adcs(Wire, Devices::ADCS::ADDRESS)
 #endif
 
@@ -50,7 +52,12 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
 
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP
-    Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_EXT, 400000, I2C_OP_MODE_IMM);
+    TRACKED_CONSTANT_SC(i2c_mode, i2c_mode_sel, I2C_MASTER);
+    TRACKED_CONSTANT_SC(i2c_pins, i2c_pin_nos, I2C_PINS_18_19);
+    TRACKED_CONSTANT_SC(i2c_pullup, i2c_pullups, I2C_PULLUP_EXT);
+    TRACKED_CONSTANT_SC(unsigned int, i2c_rate, 400000);
+    TRACKED_CONSTANT_SC(i2c_op_mode, i2c_op, I2C_OP_MODE_IMM);
+    Wire.begin(i2c_mode_sel, 0x00, i2c_pin_nos, i2c_pullups, i2c_rate, i2c_op);
     #endif
     
     //setup I2C devices

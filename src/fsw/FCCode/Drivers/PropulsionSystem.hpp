@@ -16,6 +16,7 @@
  */
 #include <array>
 #include <fsw/FCCode/Devices/Device.hpp>
+#include <common/constant_tracker.hpp>
 #ifndef DESKTOP
 #include <Arduino.h>
 #endif
@@ -268,20 +269,20 @@ private:
     static volatile unsigned int schedule[4];
     // The minimum duration to assign to a schedule
     // Any value below this value will be ignored by tank2
-    static constexpr unsigned int min_firing_duration_ms = 10;
-    
-    static constexpr unsigned char pressure_sensor_low_pin = 20;
-    static constexpr unsigned char pressure_sensor_high_pin = 23;
+    TRACKED_CONSTANT_SC(unsigned int, min_firing_duration_ms, 10);
+
+    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 20);
+    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
-    static constexpr double high_gain_offset = -0.119001938553720;
-    static constexpr double high_gain_slope = 0.048713211537332;
-    static constexpr double low_gain_offset = 0.154615074342874;
-    static constexpr double low_gain_slope = 0.099017990785657;
+    TRACKED_CONSTANT_SC(double, high_gain_offset, -0.119001938553720);
+    TRACKED_CONSTANT_SC(double, high_gain_slope, 0.048713211537332);
+    TRACKED_CONSTANT_SC(double, low_gain_offset, 0.154615074342874);
+    TRACKED_CONSTANT_SC(double, low_gain_slope, 0.099017990785657);
 
     //! Loop interval in milliseconds.
-    static constexpr unsigned int thrust_valve_loop_interval_ms = 3; 
+    TRACKED_CONSTANT_SC(unsigned int, thrust_valve_loop_interval_ms, 3);
 
     friend class _PropulsionSystem;
 };
