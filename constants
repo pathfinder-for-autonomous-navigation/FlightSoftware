@@ -1,10 +1,12 @@
 Keep this file in version control so that changes to constants are well-known.
 
+
 src/fsw/FCCode/PiksiControlTask.hpp: "DEAD_CYCLE_COUNT" = "1000"
 src/fsw/FCCode/QuakeManager.h: "max_config_cycles" = "5"
 src/fsw/FCCode/QuakeManager.h: "max_write_cycles" = "5"
 src/fsw/FCCode/QuakeManager.h: "max_read_cycles" = "5"
 src/fsw/FCCode/QuakeManager.h: "packet_size" = "70"
+src/fsw/FCCode/MainControlLoop.cpp: "piksi_serial" = "Serial4"
 src/fsw/FCCode/MainControlLoop.cpp: "i2c_option" = "I2C_MASTER"
 src/fsw/FCCode/MainControlLoop.cpp: "i2c_pins" = "I2C_PINS_18_19"
 src/fsw/FCCode/MainControlLoop.cpp: "i2c_pullups" = "I2C_PULLUP_EXT"
@@ -73,6 +75,7 @@ src/fsw/FCCode/Drivers/PropulsionSystem.hpp: "high_gain_slope" = "0.048713211537
 src/fsw/FCCode/Drivers/PropulsionSystem.hpp: "low_gain_offset" = "0.154615074342874"
 src/fsw/FCCode/Drivers/PropulsionSystem.hpp: "low_gain_slope" = "0.099017990785657"
 src/fsw/FCCode/Drivers/PropulsionSystem.hpp: "thrust_valve_loop_interval_ms" = "3"
+src/fsw/FCCode/Drivers/Gomspace.hpp: "wire" = "Wire"
 src/fsw/FCCode/Drivers/Gomspace.hpp: "address" = "0x02"
 src/fsw/FCCode/Drivers/Piksi.hpp: "BAUD_RATE" = "115200"
 src/fsw/FCCode/Drivers/Piksi.hpp: "READ_ALL_LIMIT" = "900"
