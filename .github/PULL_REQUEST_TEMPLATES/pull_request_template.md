@@ -16,9 +16,9 @@ Fixes #. (Optional; sometimes PRs don't have an associated ticket)
 - 
 
 ### Testing
-Such as your unit and functional testing. The testing should be at a level appropriate to demonstrate that your feature is sufficiently tested.
-Post a HITL log if the test could affect HITL (i.e. major changes to subsystem controllers or to mission manager).
-Post a HOOTL log if it helps support the claim that the master branch will remain unbroken.
+Describe your unit and functional testing. The testing should be at a level appropriate to demonstrate that your feature is sufficiently tested.
+
+If you've got HITL or HOOTL run logs, the logs should go under the "Pull Request HITL Logs" [folder](https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243%5Fcornell%5Fedu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2FPull%20Request%20HITL%20Testing%20Logs) on the OneDrive. Create a new subfolder with the # of this PR and put your items there. Note: the logs can be found after ptesting at `ptest/logs` (pick the appropriately dated folder for the log containing a successful run.)
 
 If your update does not require significant testing, argue why, or if you're deferring testing to another PR, create an issue ticket for the deferral and link it.
 
