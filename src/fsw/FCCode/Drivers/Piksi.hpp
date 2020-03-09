@@ -32,10 +32,10 @@ class Piksi {
 #endif
    public:
     //! Baud rate of communication with Piksi.
-    TRACKED_CONSTANT(static constexpr unsigned int, BAUD_RATE, 115200)
+    TRACKED_CONSTANT_SC(unsigned int, BAUD_RATE, 115200)
     // Driver limit for max processing time of read_all()
     // Choose 900 us to large safety bound over average read time of 600 us
-    TRACKED_CONSTANT(static constexpr unsigned int, READ_ALL_LIMIT, 900)
+    TRACKED_CONSTANT_SC(unsigned int, READ_ALL_LIMIT, 900)
 
     /**
      * @brief Construct a new Piksi object

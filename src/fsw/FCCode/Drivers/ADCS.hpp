@@ -18,8 +18,8 @@ namespace Devices {
 
 class ADCS : public I2CDevice {
    public:
-    TRACKED_CONSTANT(static constexpr unsigned int, ADDRESS, 0x4E)
-    TRACKED_CONSTANT(static constexpr unsigned int, WHO_AM_I_EXPECTED, 0x0F)
+    TRACKED_CONSTANT_SC(unsigned int, ADDRESS, 0x4E)
+    TRACKED_CONSTANT_SC(unsigned int, WHO_AM_I_EXPECTED, 0x0F)
 
     #ifdef UNIT_TEST
     unsigned int mock_ssa_mode = adcs::SSAMode::SSA_IN_PROGRESS;

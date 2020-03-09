@@ -1,6 +1,6 @@
 import os,re
 
-tracked_const_finder = r"TRACKED_CONSTANT\(\s*(?P<type>[\w\s]*\w)\s*,\s*(?P<id>[\w]+)\s*,\s*(?P<val>.*)\)"
+tracked_const_finder = r"TRACKED_CONSTANT_?S?C?\(\s*(?P<type>[\w\s]*\w)\s*,\s*(?P<id>[\w]+)\s*,\s*(?P<val>.*)\)"
 consts = []
 
 for root, dirs, files in os.walk("src"):
