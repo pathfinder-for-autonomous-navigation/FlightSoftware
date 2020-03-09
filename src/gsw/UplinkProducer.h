@@ -69,7 +69,7 @@ class UplinkProducer : public Uplink{
      * @return the number of bits written
      */ 
     template<typename T>
-    size_t add_entry(bitstream& bs, T* val, size_t index);
+    size_t add_entry(bitstream& bs, char* val, size_t index);
 
     MainControlLoop fcp;
 

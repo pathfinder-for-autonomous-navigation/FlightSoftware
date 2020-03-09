@@ -1,6 +1,6 @@
 {
   "adcs.state": 1,
   "pan.state": 13,
-  "docksys.config_cmd": 0,
+  "docksys.config_cmd": false,
   "pan.sat_designation": 2
 }
