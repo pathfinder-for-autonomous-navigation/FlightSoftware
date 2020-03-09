@@ -1,17 +1,16 @@
 import os,re
 
-tracked_const_finder = r"TRACKED_CONSTANT_?S?C?\(\s*(?P<type>[\w<>&:\s]*[\w<>&:])\s*,\s*(?P<id>[\w]+)\s*,\s*(?P<val>.*)\)"
 consts = []
 log = "Keep this file in version control so that changes to constants are well-known.\n\n"
 
 for root, dirs, files in os.walk("src"):
     for file in files:
         path = os.path.join(root, file)
-        if path.endswith((".cpp", ".hpp", ".c", ".h")):
+        if path.endswith((".cpp", ".hpp", ".c", ".h", ".inl")):
             with open(path, 'r') as f:
                 text = f.read()
                 found_decls = re.findall(r"TRACKED_CONSTANT", text)
-                found_consts = re.findall(tracked_const_finder, text)
+                found_consts = re.findall(r"TRACKED_CONSTANT_?S?C?\(\s*(?P<type>[\w<>&:\s]*[\w<>&:])\s*,\s*(?P<id>[\w]+)\s*,\s*(?P<val>.*)\)", text)
 
                 if len(found_consts) != len(found_decls):
                     log += f"{path}: regex error: only found {len(found_consts)} out of {len(found_decls)} tracked constant declarations.\n"
