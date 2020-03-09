@@ -52,12 +52,12 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
 
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP
-    TRACKED_CONSTANT_SC(unsigned int, i2c_option, I2C_MASTER);
-    TRACKED_CONSTANT_SC(unsigned int, i2c_pins, I2C_PINS_18_19);
-    TRACKED_CONSTANT_SC(unsigned int, i2c_pullups, I2C_PULLUP_EXT);
+    TRACKED_CONSTANT_SC(i2c_mode, i2c_mode_sel, I2C_MASTER);
+    TRACKED_CONSTANT_SC(i2c_pins, i2c_pin_nos, I2C_PINS_18_19);
+    TRACKED_CONSTANT_SC(i2c_pullup, i2c_pullups, I2C_PULLUP_EXT);
     TRACKED_CONSTANT_SC(unsigned int, i2c_rate, 400000);
-    TRACKED_CONSTANT_SC(unsigned int, i2c_mode, I2C_OP_MODE_IMM);
-    Wire.begin(i2c_option, 0x00, i2c_pins, i2c_pullups, i2c_rate, i2c_mode);
+    TRACKED_CONSTANT_SC(i2c_op_mode, i2c_op, I2C_OP_MODE_IMM);
+    Wire.begin(i2c_mode_sel, 0x00, i2c_pin_nos, i2c_pullups, i2c_rate, i2c_op);
     #endif
     
     //setup I2C devices
