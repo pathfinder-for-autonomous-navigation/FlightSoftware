@@ -1,6 +1,7 @@
 #include "Gomspace.hpp"
 #include "../Devices/I2CDevice.hpp"
 #include <cstring>
+#include <common/constant_tracker.hpp>
 
 // Builtins provided by GCC for endian flipping.
 
@@ -12,7 +13,8 @@
 using namespace Devices;
 
 #ifdef DESKTOP
-#define I2C_INITIALIZATION I2CDevice("gomspace", 10000)
+TRACKED_CONSTANT_SC(unsigned int, gomspace_timeout, 10000);
+#define I2C_INITIALIZATION I2CDevice("gomspace", gomspace_timeout)
 #else
 #define I2C_INITIALIZATION I2CDevice("gomspace", Gomspace::wire, Gomspace::address, 10000)
 #endif

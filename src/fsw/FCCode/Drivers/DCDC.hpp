@@ -15,8 +15,8 @@ class DCDC : public Device {
 
    public:
     //! Default enable pin for the DCDCs.
-    TRACKED_CONSTANT_SC(unsigned char, ADCSMotorDCDC_EN, 24)
-    TRACKED_CONSTANT_SC(unsigned char, SpikeDockDCDC_EN, 25)
+    TRACKED_CONSTANT_SC(unsigned char, ADCSMotorDCDC_EN, 24);
+    TRACKED_CONSTANT_SC(unsigned char, SpikeDockDCDC_EN, 25);
 
     /**
      * @brief Default constructor. **/

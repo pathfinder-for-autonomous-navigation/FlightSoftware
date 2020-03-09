@@ -53,7 +53,7 @@ class AttitudeComputer : public TimedControlTask<void> {
      * @brief Threshold at which the secondary pointing objective in 
      * standby pointing with GPS data is ignored.
      */
-    TRACKED_CONSTANT_SC(float, alignment_threshold, 0.01)
+    TRACKED_CONSTANT_SC(float, alignment_threshold, 0.01);
 };
 
 #endif

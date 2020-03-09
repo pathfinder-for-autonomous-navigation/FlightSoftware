@@ -6,7 +6,7 @@
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
-    TRACKED_CONSTANT_SC(unsigned int, num_bits_in_packet, 560)
+    TRACKED_CONSTANT_SC(unsigned int, num_bits_in_packet, 560);
 
     /**
      * @brief Flow data object, used in order to specify the

@@ -64,37 +64,37 @@ class MainControlLoop : public ControlTask<void> {
     // Control cycle time offsets, in microseconds
     // Defined in https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B04C55BBB-7AED-410B-AC43-67352393D6D5%7D&file=Flight%20Software%20Cycle.xlsx&action=default&mobileredirect=true&cid=e2b9bd89-7037-47bf-ad2a-fd8b25808939
     #ifdef FUNCTIONAL_TEST
-        TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  , 5500)
-        TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        , 7500)
-        TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          , 35500)
-        TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  , 85500)
-        TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset , 106500)
-        TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     , 111500)
-        TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     , 111600)
-        TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   , 111700)
-        TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      , 147400)
-        TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset , 147900)
-        TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 152400)
-        TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 153400) // excel says 152900
-        TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 153500)
-        TRACKED_CONSTANT_SC(unsigned int, dcdc_controller_offset     , 153500)  // fix this later
-        TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   , 153500)  // fix this later
+        TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  , 5500);
+        TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        , 7500);
+        TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          , 35500);
+        TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  , 85500);
+        TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset , 106500);
+        TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     , 111500);
+        TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     , 111600);
+        TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   , 111700);
+        TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      , 147400);
+        TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset , 147900);
+        TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 152400);
+        TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 153400); // excel says 152900
+        TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 153500);
+        TRACKED_CONSTANT_SC(unsigned int, dcdc_controller_offset     , 153500); // fix this later
+        TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   , 153500); // fix this later
     #else
-        TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  ,   5500)
-        TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        ,   7500)
-        TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          ,  35000)
-        TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  ,  35500)
-        TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset ,  56500)
-        TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     ,  61500)
-        TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     ,  61600)
-        TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   ,  61700)
-        TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      ,  97400)
-        TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset ,  97900)
-        TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 103400) // excel says 102400
-        TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 104400) // excel says 102900
-        TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 104500)
-        TRACKED_CONSTANT_SC(unsigned int, dcdc_controller_offset     , 153500) // fix this later
-        TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   , 153500) // too high?
+        TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  ,   5500);
+        TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        ,   7500);
+        TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          ,  35000);
+        TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  ,  35500);
+        TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset ,  56500);
+        TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     ,  61500);
+        TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     ,  61600);
+        TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   ,  61700);
+        TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      ,  97400);
+        TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset ,  97900);
+        TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 103400); // excel says 102400
+        TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 104400); // excel says 102900
+        TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 104500);
+        TRACKED_CONSTANT_SC(unsigned int, dcdc_controller_offset     , 153500); // fix this later
+        TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   , 153500); // too high?
     #endif
 
     /**
