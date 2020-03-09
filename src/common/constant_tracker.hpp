@@ -7,11 +7,11 @@
  * 
  * The macro requires a semicolon after its invocation.
  */
-#define TRACKED_CONSTANT(type, name, val) type name = val; static_assert(true, "")
+#define TRACKED_CONSTANT(type, name, ...) type name {__VA_ARGS__}; static_assert(true, "")
 
 // Convenience macros for static, static constexpr, and constexpr values.
-#define TRACKED_CONSTANT_S(type, name, val) static type name = val; static_assert(true, "")
-#define TRACKED_CONSTANT_C(type, name, val) constexpr type name = val; static_assert(true, "")
-#define TRACKED_CONSTANT_SC(type, name, val) static constexpr type name = val; static_assert(true, "")
+#define TRACKED_CONSTANT_S(type, name, ...) static type name {__VA_ARGS__}; static_assert(true, "")
+#define TRACKED_CONSTANT_C(type, name, ...) constexpr type name {__VA_ARGS__}; static_assert(true, "")
+#define TRACKED_CONSTANT_SC(type, name, ...) static constexpr type name {__VA_ARGS__}; static_assert(true, "")
 
 #endif
