@@ -164,7 +164,7 @@ void debug_console::_print_error_state_field(const char* field_name,
 }
 
 void debug_console::process_commands(const StateFieldRegistry& registry) {
-    constexpr size_t SERIAL_BUF_SIZE = 512;
+    TRACKED_CONSTANT_C(size_t, SERIAL_BUF_SIZE, 512);
     char buf[SERIAL_BUF_SIZE] = {0};
 
 #ifdef DESKTOP
@@ -178,7 +178,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     }
 #endif
 
-    constexpr size_t MAX_NUM_JSON_MSGS = 5;
+    TRACKED_CONSTANT_C(size_t, MAX_NUM_JSON_MSGS, 5);
 
     // Get all chunks of the buffer that are complete JSON messages. Read at
     // most five messages from the buffer. (It's unlikely that more than 5 messages

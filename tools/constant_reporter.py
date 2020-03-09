@@ -8,24 +8,31 @@ for root, dirs, files in os.walk("src"):
         path = os.path.join(root, file)
         if path.endswith((".cpp", ".hpp", ".c", ".h", ".inl")):
             with open(path, 'r') as f:
-                text = f.read()
-                found_decls = re.findall(r"TRACKED_CONSTANT", text)
-                found_consts = re.findall(r"TRACKED_CONSTANT_?S?C?\(\s*(?P<type>[\w<>&:\s]*[\w<>&:])\s*,\s*(?P<id>[\w]+)\s*,\s*(?P<val>.*)\)", text)
+                lines = f.readlines()
 
-                if len(found_consts) != len(found_decls):
-                    log += f"{path}: regex error: only found {len(found_consts)} out of {len(found_decls)} tracked constant declarations.\n"
+                for x in range(0, len(lines)):
+                    found_decls = re.findall(r"TRACKED_CONSTANT", lines[x])
+                    found_consts = re.findall(r"TRACKED_CONSTANT_?S?C?\(\s*(?P<type>[\w<>&:\s]*[\w<>&:])\s*,\s*(?P<id>[\w]+)\s*,\s*(?P<val>.*)\)", lines[x])
 
-                for const in found_consts:
-                    consts.append({
-                        "name" : const[1].strip(),
-                        "type" : const[0].strip(),
-                        "val" : const[2].strip(),
-                        "file" : path
-                    })
+                    if len(found_consts) != len(found_decls):
+                        log += f"{path}:{x+1}: error: regex could not process tracked constant declaration\n"
+                        log += f"    {lines[x]}"
+                        log += f"    ^\n"
+
+                    for const in found_consts:
+                        consts.append({
+                            "name" : const[1].strip(),
+                            "type" : const[0].strip(),
+                            "val" : const[2].strip(),
+                            "file" : path,
+                            "line" : x + 1,
+                        })
 
 log += "\n"
+log += "Found Constants\n"
+log += "---------------\n"
 for const in consts:
-    log += f"{const['file']}: \"{const['name']}\" = \"{const['val']}\"\n"
+    log += f"{const['file']}:{const['line']}: \"{const['name']}\" = \"{const['val']}\"\n"
 
 with open("constants", 'w') as f:
     f.write(log)

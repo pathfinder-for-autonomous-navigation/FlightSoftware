@@ -139,8 +139,7 @@ TRACKED_CONSTANT_SC(float, max_mag2_rd_mag, 0.0032f); // TODO : Check this
 TRACKED_CONSTANT_SC(float, min_mag2_rd_mag, -max_mag2_rd_mag);
 
 /** Maximum magnetic field reading in Tesla that can be read per component. */
-TRACKED_CONSTANT_SC(float, max_rd_mag,
-    (max_mag1_rd_mag > max_mag2_rd_mag ? max_mag1_rd_mag : max_mag2_rd_mag));
+TRACKED_CONSTANT_SC(float, max_rd_mag, (max_mag1_rd_mag > max_mag2_rd_mag ? max_mag1_rd_mag : max_mag2_rd_mag));
 /** Minimum magnetic field reading in Tesla that can be read per component. */
 TRACKED_CONSTANT_SC(float, min_rd_mag, -max_rd_mag);
 
