@@ -11,7 +11,6 @@ class FaultHandlerMachineMock : public FaultHandlerMachine {
     }
 
     void set(fault_response_t r) {
-        assert(!(r.recommend_safehold && r.recommend_standby));
         response = r;
     }
   private:

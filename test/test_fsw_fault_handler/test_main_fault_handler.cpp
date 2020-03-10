@@ -108,11 +108,11 @@ void test_main_fh_no_fault() {
     assert(tf.num_fault_handler_machines == 11);
 
     fault_response_t response = tf.step<11>({
-        no_fault_response, no_fault_response, no_fault_response,
-        no_fault_response, no_fault_response, no_fault_response,
-        no_fault_response, no_fault_response, no_fault_response
+        fault_response_t::none, fault_response_t::none, fault_response_t::none,
+        fault_response_t::none, fault_response_t::none, fault_response_t::none,
+        fault_response_t::none, fault_response_t::none, fault_response_t::none
     });
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(no_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::none, response);
 }
 
 /**
@@ -124,8 +124,9 @@ void test_main_fh_standby_fault() {
 
     // Produce all combinations of none/standby fault response recommendations.
     static constexpr std::array<fault_response_t, 2> allowed_responses 
-        {no_fault_response, standby_fault_response};
-    const auto combos = NthCartesianProduct<fault_response_t, 2, 11>::of(allowed_responses);
+        {fault_response_t::none, fault_response_t::standby};
+    const std::vector<std::array<fault_response_t, 11>> combos
+        = NthCartesianProduct<11>::of(allowed_responses);
 
     for(auto const & combo : combos) {
         // Verify that there is at least one fault machine
@@ -134,12 +135,12 @@ void test_main_fh_standby_fault() {
         const bool combo_valid = std::accumulate(
             combo.begin(), combo.end(), false, 
             [](bool valid, fault_response_t response) {
-                return valid || response == standby_fault_response;
+                return valid || response == fault_response_t::standby;
             });
         if (!combo_valid) return;
 
         fault_response_t response = tf.step(combo);
-        TEST_ASSERT_EQUAL_FAULT_RESPONSES(standby_fault_response, response);
+        TEST_ASSERT_EQUAL(fault_response_t::standby, response);
     }
 }
 
@@ -150,9 +151,10 @@ void test_main_fh_safehold_fault() {
 
     // Produce all combinations of none/standby/safehold fault response recommendations.
     static constexpr std::array<fault_response_t, 3> allowed_responses
-        {no_fault_response, standby_fault_response, safehold_fault_response};
-    const auto combos = NthCartesianProduct<fault_response_t, 3, 11>::of(allowed_responses);
-    
+        {fault_response_t::none, fault_response_t::standby, fault_response_t::safehold};
+    const std::vector<std::array<fault_response_t, 11>> combos 
+        = NthCartesianProduct<11>::of(allowed_responses);
+
     for(auto const & combo : combos) {
         // Verify that there is at least one fault machine in this combo
         // that will produce a recommendation for safehold. If there is not,
@@ -160,12 +162,12 @@ void test_main_fh_safehold_fault() {
         const bool combo_valid = std::accumulate(
             combo.begin(), combo.end(), false, 
             [](bool valid, fault_response_t response) {
-                return valid || response == safehold_fault_response;
+                return valid || response == fault_response_t::safehold;
             });
         if (!combo_valid) return;
 
         fault_response_t response = tf.step(combo);
-        TEST_ASSERT_EQUAL_FAULT_RESPONSES(safehold_fault_response, response);
+        TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
     }
 }
 
@@ -180,29 +182,29 @@ void test_main_fh_toggle_handling() {
     // This is a random combination that definitely causes a fault
     // recommendation to transition to safe hold.
     std::array<fault_response_t, 11> safehold_combo = {
-        safehold_fault_response, safehold_fault_response, 
-        no_fault_response, no_fault_response,
-        no_fault_response, no_fault_response,
-        standby_fault_response, safehold_fault_response,
-        no_fault_response
+        fault_response_t::safehold, fault_response_t::safehold, 
+        fault_response_t::none, fault_response_t::none,
+        fault_response_t::none, fault_response_t::none,
+        fault_response_t::standby, fault_response_t::safehold,
+        fault_response_t::none
     };
 
     // If some fault machines recommend safehold, the main fault handler
     // definitely recommends safehold.
     fault_response_t response = tf.step(safehold_combo);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(safehold_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
 
     // Now, we disable global fault handling, and observe that the
     // main fault handler recommends no mission state.
     tf.set_fault_handling(false);
     response = tf.step(safehold_combo);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(no_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::none, response);
 
     // If we re-enable global fault handling, we start receiving the
     // recommendation of safehold again.
     tf.set_fault_handling(true);
     response = tf.step(safehold_combo);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(safehold_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
 }
 
 void test_main_fault_handler() {

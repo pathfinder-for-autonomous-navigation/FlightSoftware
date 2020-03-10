@@ -60,18 +60,18 @@ void MainFaultHandler::init() {
 
 fault_response_t MainFaultHandler::execute() {
     // By default, or if the fault handling is globally disabled, recommend no action.
-    fault_response_t ret = no_fault_response;
+    fault_response_t ret = fault_response_t::none;
     if (!fault_handler_enabled_f.get()) return ret;
 
     for(std::unique_ptr<FaultHandlerMachine>& m : fault_handler_machines) {
         const fault_response_t response = m->execute();
 
-        if (response == no_fault_response) continue;
-        else if (response == safehold_fault_response) {
-            return safehold_fault_response;
+        if (response == fault_response_t::none) continue;
+        else if (response == fault_response_t::safehold) {
+            return fault_response_t::safehold;
         }
         else {
-            ret = standby_fault_response;
+            ret = fault_response_t::standby;
         }
     }
 

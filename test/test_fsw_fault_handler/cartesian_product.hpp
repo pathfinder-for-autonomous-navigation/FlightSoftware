@@ -2,6 +2,7 @@
 #define CARTESIAN_PRODUCT_HPP_
 
 #include <array>
+#include <vector>
 #include <cstddef>
 
 ///////////////////////////////////////////////////////////////////
@@ -25,48 +26,44 @@ constexpr size_t intpow() {
 // Generate the Nth Cartesian product of an array A with itself,
 // where the elements in A are of type T and X = |A|.
 //
-// Usage: A^N = NthCartesianProduct<T, |A|, N>::of(A);
+// Usage: A^N = NthCartesianProduct<N>::of(A);
 //
-template<typename T, size_t X, size_t N>
+template<size_t N>
 class NthCartesianProduct {
   public:
-    static std::array<std::array<T, N>, intpow<X, N>()>
+    template<typename T, size_t X>
+    static std::vector<std::array<T, N>>
     of(const std::array<T, X>& A)
     {
     	// Returned value
-    	std::array<std::array<T, N>, intpow<X, N>()> AtoN {};
-
-    	// Get result of subproblem
-	    auto AtoN_1 = NthCartesianProduct<T, X, N - 1>::of(A);
+    	std::vector<std::array<T, N>> AtoN(intpow<X, N>());
 
 	    // Get result of current problem
-	    for(size_t i = 0; i < AtoN_1.size(); i++) {
-	        for(size_t j = 0; j < X; j++) {
-	            for(size_t k = 0; k < N - 1; k++) {
-	                AtoN[i * X + j][k] = AtoN_1[i][k];
-	            }
-	            AtoN[i * X + j][N - 1] = A[j];
+        auto AtoNIt = AtoN.begin();
+	    for(const std::array<T,N-1>& An_1 : NthCartesianProduct<N-1>::of(A)) {
+	        for(size_t i = 0; i < X; i++, AtoNIt++) {
+                for(size_t j = 0; j < N - 1; j++) (*AtoNIt)[j] = An_1[j];
+                (*AtoNIt)[N-1] = A[i];
 	        }
 	    }
 
     	return AtoN;
     }
-};
 
-// Recursive base cases.
-template<typename T, size_t N>
-class NthCartesianProduct<T, 0, N> {
-  public:
-    static std::array<std::array<T, N>, intpow<0,N>()>
+    // Trivial case for X.
+    template<typename T>
+    static std::vector<std::array<T, N>>
     of(const std::array<T, 0>& A)
-    { 
-        return {};
+    {
+    	return {};
     }
 };
-template<typename T, size_t X>
-class NthCartesianProduct<T, X, 0> {
+
+template<>
+class NthCartesianProduct<0> {
   public:
-    static std::array<std::array<T, 0>, intpow<X,0>()>
+    template<typename T, size_t X>
+    static std::vector<std::array<T, 0>>
     of(const std::array<T, X>& A)
     {
         return {{}};

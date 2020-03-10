@@ -9,7 +9,7 @@ class PiksiFaultHandler : public FaultHandlerMachine {
   public:
     PiksiFaultHandler(StateFieldRegistry& r) : FaultHandlerMachine(r) {}
     fault_response_t execute() override {
-      return {false, false};
+      return fault_response_t::none;
     }
 };
 

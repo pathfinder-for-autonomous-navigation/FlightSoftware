@@ -48,15 +48,15 @@ void test_super_simple_fh_safehold() {
     fault_response_t response = tf.step(false);
     
     // When fault is unsignaled, the recommended fault response should be ignorable.
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(no_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::none, response);
 
     // Signal the fault. Now, the recommended fault response should be to go to safehold.
     tf.step(true); response = tf.step(true);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(safehold_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
     
     // Unsignal the fault. The fault response should be ignorable again.
     response = tf.step(false);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(no_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::none, response);
 }
 
 /**
@@ -69,15 +69,15 @@ void test_super_simple_fh_standby() {
     fault_response_t response = tf.step(false);
     
     // When fault is unsignaled, the recommended fault response should be ignorable.
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(no_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::none, response);
 
     // Signal the fault. Now, the recommended fault response should be to go to standby.
     tf.step(true); response = tf.step(true);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(standby_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::standby, response);
 
     // Unsignal the fault. The fault response should be ignorable again.
     response = tf.step(false);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(no_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::none, response);
 }
 
 /**
@@ -90,24 +90,24 @@ void test_super_simple_fh_active_states() {
 
     // Get the fault to be signaled. The recommended fault response should be to go to standby.
     tf.step(true); fault_response_t response = tf.step(true);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(standby_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::standby, response);
 
     // Move the mission state into a non-active state. The recommended fault response should
     // become "no response" even though the fault has remained signaled.
     tf.set(mission_state_t::startup);
     response = tf.step(true);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(no_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::none, response);
 
     // If we enter a non-active state with the fault being unsignaled, and then signal the
     // fault, the fault handler still suggests no response.
     tf.step(false); tf.step(true); response = tf.step(true);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(no_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::none, response);
 
     // Going back into an active state with the fault triggered causes the fault handler
     // to suggest the "go to standby" response. 
     tf.set(mission_state_t::follower);
     response = tf.step(true);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(standby_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::standby, response);
 
     // Suppose we start in a non-active state, and the fault is just about to be signaled.
     // If we transition to an active state, the fault will be triggered.
@@ -116,7 +116,7 @@ void test_super_simple_fh_active_states() {
     tf.step(true);
     tf.set(mission_state_t::follower);
     response = tf.step(true);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(standby_fault_response, response);
+    TEST_ASSERT_EQUAL(fault_response_t::standby, response);
 }
 
 void test_super_simple_fault_handlers() {

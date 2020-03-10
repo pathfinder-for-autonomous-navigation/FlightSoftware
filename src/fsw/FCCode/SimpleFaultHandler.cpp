@@ -14,17 +14,17 @@ SimpleFaultHandler::SimpleFaultHandler(StateFieldRegistry& r, Fault& f,
 fault_response_t SimpleFaultHandler::determine_recommended_state() const {
     const mission_state_t state = static_cast<mission_state_t>(mission_state_fp->get());
     if (std::find(active_states.begin(), active_states.end(), state) == active_states.end())
-        return no_fault_response;
+        return fault_response_t::none;
 
     if (fault.is_faulted()) {
         if (recommended_state == mission_state_t::standby) {
-            return standby_fault_response;
+            return fault_response_t::standby;
         }
         else {
-            return safehold_fault_response;
+            return fault_response_t::safehold;
         }
     }
-    else return no_fault_response;
+    else return fault_response_t::none;
 }
 
 const std::vector<std::vector<mission_state_t>> SimpleFaultHandler::active_state_lists {

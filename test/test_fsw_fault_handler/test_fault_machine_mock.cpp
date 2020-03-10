@@ -6,12 +6,12 @@ void test_fault_machine_mock() {
     StateFieldRegistryMock registry;
     FaultHandlerMachineMock fhmock(registry);
 
-    fhmock.set(no_fault_response);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(no_fault_response, fhmock.execute());
+    fhmock.set(fault_response_t::none);
+    TEST_ASSERT_EQUAL(fault_response_t::none, fhmock.execute());
 
-    fhmock.set(standby_fault_response);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(standby_fault_response, fhmock.execute());
+    fhmock.set(fault_response_t::standby);
+    TEST_ASSERT_EQUAL(fault_response_t::standby, fhmock.execute());
 
-    fhmock.set(safehold_fault_response);
-    TEST_ASSERT_EQUAL_FAULT_RESPONSES(safehold_fault_response, fhmock.execute());
+    fhmock.set(fault_response_t::safehold);
+    TEST_ASSERT_EQUAL(fault_response_t::safehold, fhmock.execute());
 }
