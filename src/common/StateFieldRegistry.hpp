@@ -4,6 +4,7 @@
 #include <memory>
 #include <set>
 #include "StateField.hpp"
+#include "Event.hpp"
 #include "Fault.hpp"
 
 /**
@@ -17,6 +18,7 @@ public:
     std::vector<InternalStateFieldBase*> internal_fields;
     std::vector<ReadableStateFieldBase*> readable_fields;
     std::vector<WritableStateFieldBase*> writable_fields;
+    std::vector<Event*> events;
     std::vector<Fault*> faults;
 
     StateFieldRegistry();
@@ -48,6 +50,15 @@ public:
     WritableStateFieldBase* find_writable_field(const std::string &name) const;
 
     /**
+     * @brief Find an event of a given name within the state registry and return a pointer
+     * to it.
+     *
+     * @param[in] name Name of event.
+     * @return Pointer to event, or null pointer if event doesn't exist.
+     */
+    Event* find_event(const std::string &name) const;
+
+    /**
      * @brief Find a fault of a given name within the state registry and return a pointer
      * to it.
      *
@@ -77,6 +88,13 @@ public:
      * @param field Data field
      */
     bool add_writable_field(WritableStateFieldBase* field);
+
+    /**
+     * @brief Marks an event as being uploadable by ground.
+     *
+     * @param event Data event
+     */
+    bool add_event(Event* event);
 
     /**
      * @brief Marks a fault as being uploadable by ground.

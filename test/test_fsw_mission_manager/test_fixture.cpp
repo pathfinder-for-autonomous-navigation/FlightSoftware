@@ -48,6 +48,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     close_approach_trigger_dist_fp = registry.find_writable_field_t<double>("trigger_dist.close_approach");
     docking_trigger_dist_fp = registry.find_writable_field_t<double>("trigger_dist.docking");
     max_radio_silence_duration_fp = registry.find_writable_field_t<unsigned int>("max_radio_silence");
+    docking_timeout_limit_fp = registry.find_writable_field_t<unsigned int>("docking_timeout_limit");
     adcs_state_fp = registry.find_writable_field_t<unsigned char>("adcs.state");
     docking_config_cmd_fp = registry.find_writable_field_t<bool>("docksys.config_cmd");
     mission_state_fp = registry.find_writable_field_t<unsigned char>("pan.state");
@@ -158,7 +159,7 @@ adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t
         adcs_state_t::startup, adcs_state_t::zero_L, adcs_state_t::zero_torque};
 
 prop_state_t TestFixture::prop_states[6] = {prop_state_t::disabled, prop_state_t::idle,
-    prop_state_t::awaiting_pressurization,
+    prop_state_t::await_firing,
     prop_state_t::pressurizing,
     prop_state_t::firing,
     prop_state_t::venting};
