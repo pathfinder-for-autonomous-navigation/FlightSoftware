@@ -185,14 +185,14 @@ class SimulationRun(object):
 
         sys.exit(1 if is_error else 0)
 
-if __name__ == '__main__':
+def main(args):
     if sys.version_info[0] != 3 or sys.version_info[1] < 6:
         print("Running this script requires Python 3.6 or above.")
         sys.exit(1)
 
     parser = ArgumentParser(description='''
     Interactive console allows sending state commands to PAN Teensy devices, and parses console output 
-    from Teensies into human-readable, storable logging information.''')
+    from Teensies into human-readable, storable logging information.''', prog="ptest runsim")
 
     parser.add_argument('-t', '--testcase', action='store', help='Name of mission testcase, specified in cases/.',
                         default = "EmptyCase")
@@ -210,7 +210,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--data-dir', action='store',
         help='''Directory for storing run data. Must be an absolute path. Default is logs/ relative to this script's location on disk.
                 For the current run, a subdirectory of DATA_DIR is created in which the actual data is stored.''', default=log_dir)
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     try:
         with open(args.conf, 'r') as config_file:

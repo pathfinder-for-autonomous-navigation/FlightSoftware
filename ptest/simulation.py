@@ -76,9 +76,11 @@ class Simulation(object):
     def configure_sim(self):
         self.eng = matlab.engine.start_matlab()
         path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../MATLAB")
+            os.path.dirname(os.path.abspath(__file__)), "../lib/common/psim/MATLAB")
         self.eng.addpath(path, nargout=0)
 
+        if not os.path.exists("geograv_wrapper.mexmaci64"):
+            self.eng.install(nargout=0)
         self.eng.config(nargout=0)
         self.eng.generate_mex_code(nargout=0)
         self.eng.eval("global const", nargout=0)
