@@ -1,22 +1,6 @@
-# psim Python Interface
-
-This folder will house all python code in this repository. Functionality to be
-supported by Python may include, but is not limited to:
-
- * Running a simulation in real time with one or two satellites.
- * Real time graphing utilities and other data visulation tools to be used in
-   conjunction with a real time simulation. To use this utility run
-
-       python -m ptest.plotter -d /path/to/data/file
-
-   after running the installation steps below. The `/path/to/data/file` needs to be
-   produced by the simulation.
-
- * Hardware/Sim interface for SHITLs.
-
 # Running unit tests
 
-From the root flight software folder, run
+From the **root flight software folder**, run
 
     python -m pytest ptest
 
