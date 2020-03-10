@@ -3,6 +3,7 @@
 
 #include "../StateFieldRegistryMock.hpp"
 
+#include <fsw/FCCode/FaultHandlerMachine.hpp>
 #include <fsw/FCCode/MissionManager.hpp>
 #include <common/Fault.hpp>
 #include <fsw/FCCode/mission_state_t.enum>
@@ -40,6 +41,7 @@ class TestFixture {
     std::shared_ptr<Fault> wheel3_adc_fault_fp;
     std::shared_ptr<Fault> wheel_pot_fault_fp;
     std::shared_ptr<Fault> failed_pressurize_fp;
+    std::shared_ptr<Fault> overpressured_fp;
 
     std::unique_ptr<MissionManager> mission_manager;
     // Output state fields from mission manager
@@ -58,6 +60,7 @@ class TestFixture {
     TestFixture(mission_state_t initial_state = mission_state_t::startup);
 
     // Set and assert functions for various mission states.
+    void set(fault_response_t response);
     void set(mission_state_t state);
     void set(adcs_state_t state);
     void set(prop_state_t state);

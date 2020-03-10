@@ -3,6 +3,7 @@
 #include <cmath>
 #include <adcs/constants.hpp>
 #include <common/constant_tracker.hpp>
+#include "SimpleFaultHandler.hpp"
 
 // Declare static storage for constexpr variables
 const constexpr double MissionManager::initial_detumble_safety_factor;
@@ -43,6 +44,10 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_readable_field(is_deployed_f);
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
+
+    main_fault_handler = std::make_unique<MainFaultHandler>(registry);
+    static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
+    SimpleFaultHandler::set_mission_state_ptr(&mission_state_f);
 
     adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
     adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);
@@ -89,14 +94,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     set(sat_designation_t::undecided);
 }
 
-bool MissionManager::check_adcs_hardware_faults() const {
-    return  adcs_functional_fault_fp->is_faulted()
-            || wheel1_adc_fault_fp->is_faulted() 
-            || wheel2_adc_fault_fp->is_faulted()
-            || wheel3_adc_fault_fp->is_faulted()
-            || wheel_pot_fault_fp->is_faulted();
-}
-
 void MissionManager::execute() {
     mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
@@ -106,32 +103,14 @@ void MissionManager::execute() {
     }
 
     // Step 2. Change state if faults exist.
-    bool is_fault_responsive_state = false;
-    for(mission_state_t fault_responsive_state : fault_responsive_states) {
-        if (state == fault_responsive_state) {
-            is_fault_responsive_state = true;
-            break;
-        }
+    const fault_response_t fault_response = main_fault_handler->execute();
+    if (fault_response == safehold_fault_response) {
+        transition_to_state(mission_state_t::safehold, adcs_state_t::zero_torque, prop_state_t::disabled);
+        return;
     }
-    if (is_fault_responsive_state) {
-        const bool prop_depressurized = failed_pressurize_fp->is_faulted();
-        const bool power_faulted = low_batt_fault_fp->is_faulted();
-        const bool adcs_faulted = check_adcs_hardware_faults();
-
-        // Note: faults that cause safehold should be checked before faults that
-        // merely cause a transition back to standby.
-        if (power_faulted || adcs_faulted) {
-            transition_to_state(mission_state_t::safehold,
-                adcs_state_t::startup,
-                prop_state_t::disabled);
-            return;
-        }
-        else if (prop_depressurized) {
-            transition_to_state(mission_state_t::standby,
-                adcs_state_t::point_standby,
-                prop_state_t::idle);
-            return;
-        } 
+    else if (fault_response == standby_fault_response) {
+        transition_to_state(mission_state_t::standby, adcs_state_t::point_standby, prop_state_t::idle);
+        return;
     }
 
     // Step 3. Handle state.
@@ -153,6 +132,14 @@ void MissionManager::execute() {
             transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
             break;
     }
+}
+
+bool MissionManager::check_adcs_hardware_faults() const {
+    return  adcs_functional_fault_fp->is_faulted()
+            || wheel1_adc_fault_fp->is_faulted() 
+            || wheel2_adc_fault_fp->is_faulted()
+            || wheel3_adc_fault_fp->is_faulted()
+            || wheel_pot_fault_fp->is_faulted();
 }
 
 void MissionManager::dispatch_startup() {

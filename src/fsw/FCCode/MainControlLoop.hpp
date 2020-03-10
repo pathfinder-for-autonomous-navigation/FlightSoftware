@@ -16,6 +16,7 @@
 #include "GomspaceController.hpp"
 #include "DebugTask.hpp"
 #include "FieldCreatorTask.hpp"
+#include "FaultHandlerMachine.hpp"
 #include "MissionManager.hpp"
 #include "QuakeManager.h"
 #include "DockingController.hpp"

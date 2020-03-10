@@ -6,6 +6,7 @@
 #include <lin.hpp>
 
 #include <common/Fault.hpp>
+#include "MainFaultHandler.hpp"
 #include "prop_state_t.enum"
 #include "mission_state_t.enum"
 #include "adcs_state_t.enum"
@@ -13,6 +14,10 @@
 #include "sat_designation_t.enum"
 
 class MissionManager : public TimedControlTask<void> {
+   #ifdef UNIT_TEST
+   friend class TestFixture;
+   #endif
+
    public:
     MissionManager(StateFieldRegistry& registry, unsigned int offset);
     void execute() override;
@@ -70,6 +75,11 @@ class MissionManager : public TimedControlTask<void> {
    protected:
     /**
      * @brief Returns true if there are hardware faults on the spacecraft.
+     * 
+     * This function is used in the startup state to determine whether the spacecraft
+     * should switch to the detumble or the initialization hold state, after completing
+     * its deployment wait.
+     * 
      */
     bool check_adcs_hardware_faults() const;
 
@@ -89,6 +99,9 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_safehold();
     unsigned int safehold_begin_ccno = 0; // Control cycle # of the most recent
                                           // transition to safe hold.
+
+    // Fault handler class.
+    std::unique_ptr<FaultHandlerMachine> main_fault_handler;
 
     /**
      * @brief Handles state transitions that happen upon subsystem assertions.
