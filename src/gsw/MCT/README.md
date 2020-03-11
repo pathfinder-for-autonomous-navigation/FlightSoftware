@@ -1,13 +1,32 @@
 # Mct-Mission-Control
 
 This Mission control API uses the visual elements of the openMCT data visualization program to display telemetry data for the two leader and follower satellites. Open MCT supports receiving telemetry by requesting data from a telemetry store, and by subscribing to real-time telemetry updates. 
-In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the 
+
+The openMCT web server is run using the **"npm start"** command in terminal after navigating to the /MCT directory.
+
+In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the openMCT display.
+![Object Tree](/images/object-tree.png)
+
+# Setting up a new Taxonomy or Telemetry point
+In this implementation a Taxonomy point is defined as an object that containts a collection of telemetry points. (ex. a spacecraft object) A new Taxonomy point is created using the *openmct.objects.addRoot( )* function, which takes a javascript object as a parameter. 
+
+This is modeled below with our satellite object with namespace 'sat.taxonomy' and a key 'spacecraft'.
+![addRoot function](/images/add-Root.png)
+
+A new Telemetry point is added after a Taxonomy point is added and serves as the child object to the root (the satellite). This object is added using the openmct.objects.addType( ) function which also takes a JS object as a parameter. 
+
+In the example below, we have a name and description field for the object and also a cssClass field which allows it to be displayed on the openmct visualization.
+![addType function](/images/add-Type.png)
+
+
 
 There are three main plugins that allow the program to analyze realtime and historical telemetry, as well as identify where to display each datum.
 
 # The Realtime Telemetry plugin
 (realtime-telemetry-plugin.js)
 This script containts two main functions:  RealtimeTelemetryPlugin( ) and subscribe( )
+It also instantiates a new WebSocket object ws.
+
 **The supportsSubscribe function maintains the precondition that any input is truly a telemetry object**
 
 RealtimeTelemetryPlugin( ) defines a new WebSocket object and then casts the incoming data into a JSON type that the openmct web service is able to analyze and graph visually.
@@ -30,5 +49,32 @@ get( ) takes the dictionary.json file as input and gets each identifier inside o
 
 load( ) is part of the composition provider which accepts a domain object and then provides identifiers for the children of that domain object. This creates the inheritance within the object tree and its individual telemetry points.
 
-The DictionaryPlugin( ) function defines the type "example-telemetry" and
+The DictionaryPlugin( ) function defines the type "sat-telemetry" and the root case, "sat-taxonomy" which represents the satellite. The "sat-telemetry" objects represent the specific telemetry points on the satellite.
+
+# The HTML Index File
+(index.html)
+This file combines all of the plugins together and runs them as scripts and is written in HTML.
+It also calls the openmct.install( ) function to instantiate the visual aspect of openMCT (ex. the clock, the three plugins mentioned above, and the node.js library)
+
+# Main method and Server-files
+
+The main method that is called when openMCT is started is **server.js** which is located in the server-files folder which also contains three server files that provide realtime and historical data collection. These are the history-server.js, realtime-server.js, and static-server.js files. 
+
+The main script, server.js, instantiates these files and calls them to start each respective server and subscribe to updates from the historical and realtime telemetry plugins.
+
+**realtime-server.js** contains two main functions, RealtimeServer( ) which takes the spacecraft as a parameter and notifySubscribers( ) which takes one point as a parameter and sends it to the WebSocket.
+notifySubscribers( ) is defined inside the RealtimeServer( ) function and converts the javascript object of a single telemetry point into a JSON string.
+
+
+
+**Spacecraft.js** represents a spacecraft object that is run when the main script is evoked in terminal.
+The spacecraft function contains 3 main fields, state, history, and listeners.
+The state field contains all of the telemetry objects contained by the spacecraft and is checked periodically for changes to generate telemetry.
+The history field contains telemetry data that is input from the generateTelemetry( ) function.
+The listener field is notified every time telemetry data is generated.
+
+The generateTelemetry( ) function is the most important method of spacecraft.js as it interacts with each field inside the spacecraft.js file and creates data for the openMCT server to then catch and display.
+![Telemetry function](/images/generate-telemetry.png)
+
+
 
