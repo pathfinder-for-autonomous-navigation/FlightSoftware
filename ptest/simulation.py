@@ -5,6 +5,7 @@
 
 import time, timeit
 import math
+import platform
 import threading
 import os
 if "CI" not in os.environ:
@@ -76,9 +77,14 @@ class Simulation(object):
     def configure_sim(self):
         self.eng = matlab.engine.start_matlab()
         path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../MATLAB")
+            os.path.dirname(os.path.abspath(__file__)), "../lib/common/psim/MATLAB")
         self.eng.addpath(path, nargout=0)
 
+        if ((platform.system() == 'Darwin' and not os.path.exists("geograv_wrapper.mexmaci64"))
+            or (platform.system() == 'Linux' and not os.path.exists("geograv_wrapper.mexa64"))
+            or (platform.system() == 'Windows' and not os.path.exists("geograv_wrapper.mexw64"))
+        ):
+            self.eng.install(nargout=0)
         self.eng.config(nargout=0)
         self.eng.generate_mex_code(nargout=0)
         self.eng.eval("global const", nargout=0)
