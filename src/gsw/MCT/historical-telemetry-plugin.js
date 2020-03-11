@@ -6,7 +6,7 @@ function HistoricalTelemetryPlugin() {
     return function install (openmct) {
         var provider = {
             supportsRequest: function (domainObject) {
-                return domainObject.type === 'example.telemetry';
+                return domainObject.type === 'sat.telemetry';
             },
             request: function (domainObject, options) {
                 var url = '/history/' +

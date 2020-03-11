@@ -22,11 +22,11 @@ var objectProvider = {
                 return {
                     identifier: identifier,
                     name: measurement.name,
-                    type: 'example.telemetry',
+                    type: 'sat.telemetry',
                     telemetry: {
                         values: measurement.values
                     },
-                    location: 'example.taxonomy:spacecraft'
+                    location: 'sat.taxonomy:spacecraft'
                 };
             }
         });
@@ -35,7 +35,7 @@ var objectProvider = {
 
 var compositionProvider = {
     appliesTo: function (domainObject) {
-        return domainObject.identifier.namespace === 'example.taxonomy' &&
+        return domainObject.identifier.namespace === 'sat.taxonomy' &&
                domainObject.type === 'folder';
     },
     load: function (domainObject) {
@@ -43,7 +43,7 @@ var compositionProvider = {
             .then(function (dictionary) {
                 return dictionary.measurements.map(function (m) {
                     return {
-                        namespace: 'example.taxonomy',
+                        namespace: 'sat.taxonomy',
                         key: m.key
                     };
                 });
@@ -54,17 +54,17 @@ var compositionProvider = {
 function DictionaryPlugin() {
     return function install(openmct) {
         openmct.objects.addRoot({
-            namespace: 'example.taxonomy',
+            namespace: 'sat.taxonomy',
             key: 'spacecraft'
         });
 
-        openmct.objects.addProvider('example.taxonomy', objectProvider);
+        openmct.objects.addProvider('sat.taxonomy', objectProvider);
 
         openmct.composition.addProvider(compositionProvider);
 
-        openmct.types.addType('example.telemetry', {
-            name: 'Example Telemetry Point',
-            description: 'Example telemetry point from our happy tutorial.',
+        openmct.types.addType('sat.telemetry', {
+            name: 'Satellite Telemetry Point',
+            description: 'Telemetry point on the satellite to send data',
             cssClass: 'icon-telemetry'
         });
     };
