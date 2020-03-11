@@ -54,6 +54,10 @@ bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json
         return false;
     }
 
+    if (val.is_boolean()) {
+        val = val? 1 : 0;
+    }
+
     // Add the updated value to the bitstream
     add_entry<UnderlyingType>(bs, reinterpret_cast<char*>(&val), field_index);
     return true;
