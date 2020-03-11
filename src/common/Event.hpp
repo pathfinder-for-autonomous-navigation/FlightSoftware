@@ -13,9 +13,12 @@ class Event : public ReadableStateFieldBase, public StateField<bool> {
           std::vector<ReadableStateFieldBase*>& _data_fields,
           const char* (*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
           const unsigned int& _ccno);
+        
+    const std::string &name() const override { return _name; }
 
     // Functions that will be overridden from SerializableStateFieldBase
   protected:
+    const std::string _name;
     void serialize() override;
   public:
     size_t bitsize() const override;

@@ -2,12 +2,14 @@
 #include <lin.hpp>
 #include <cmath>
 #include <adcs/constants.hpp>
+#include <common/constant_tracker.hpp>
 
 // Declare static storage for constexpr variables
 const constexpr double MissionManager::initial_detumble_safety_factor;
 const constexpr double MissionManager::initial_close_approach_trigger_dist;
 const constexpr double MissionManager::initial_docking_trigger_dist;
 const constexpr unsigned int MissionManager::initial_max_radio_silence_duration;
+const constexpr unsigned int MissionManager::initial_docking_timeout_limit;
 const constexpr unsigned int MissionManager::deployment_wait;
 const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_states;
 const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
@@ -19,8 +21,11 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
     max_radio_silence_duration_f("max_radio_silence",
         Serializer<unsigned int>(2 * PAN::one_day_ccno)),
+    docking_timeout_limit_f("docking_timeout_limit",
+        Serializer<unsigned int>(2 * PAN::one_day_ccno)),
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
+    enter_docking_cycle_f("docksys.enter_docking"),
     mission_state_f("pan.state", Serializer<unsigned char>(12)),
     is_deployed_f("pan.deployed", Serializer<bool>()),
     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32)),
@@ -30,8 +35,10 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_writable_field(close_approach_trigger_dist_f);
     add_writable_field(docking_trigger_dist_f);
     add_writable_field(max_radio_silence_duration_f);
+    add_writable_field(docking_timeout_limit_f);
     add_writable_field(adcs_state_f);
     add_writable_field(docking_config_cmd_f);
+    add_internal_field(enter_docking_cycle_f);
     add_writable_field(mission_state_f);
     add_readable_field(is_deployed_f);
     add_readable_field(deployment_wait_elapsed_f);
@@ -71,10 +78,12 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     close_approach_trigger_dist_f.set(initial_close_approach_trigger_dist);
     docking_trigger_dist_f.set(initial_docking_trigger_dist);
     max_radio_silence_duration_f.set(initial_max_radio_silence_duration);
+    docking_timeout_limit_f.set(initial_docking_timeout_limit);
     transition_to_state(mission_state_t::startup,
         adcs_state_t::startup,
         prop_state_t::disabled); // "Starting" transition
     docking_config_cmd_f.set(true);
+    enter_docking_cycle_f.set(0);
     is_deployed_f.set(false);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
@@ -268,14 +277,21 @@ void MissionManager::dispatch_leader_close_approach() {
 
 void MissionManager::dispatch_docking() {
     docking_config_cmd_f.set(true);
-
-    if (docked_fp->get()) {
+    if (enter_docking_cycle_f.get()==0) { enter_docking_cycle_f.set(control_cycle_count); }
+    if (docked_fp->get()){
+        enter_docking_cycle_f.set(0);
         transition_to_state(mission_state_t::docked,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
 
         // Mission has ended, so remove "follower" and "leader" designations.
         set(sat_designation_t::undecided);
+    }
+    else if(too_long_in_docking() && !docked_fp->get()) {
+        enter_docking_cycle_f.set(0);
+        transition_to_state(mission_state_t::standby,
+            adcs_state_t::startup,
+            prop_state_t::disabled);
     }
 }
 
@@ -303,6 +319,11 @@ double MissionManager::distance_to_other_sat() const {
 bool MissionManager::too_long_since_last_comms() const {
     const unsigned int cycles_since_last_comms = control_cycle_count - last_checkin_cycle_fp->get();
     return cycles_since_last_comms > max_radio_silence_duration_f.get();
+}
+
+bool MissionManager::too_long_in_docking() const {
+    const unsigned int cycles_since_enter_docking = control_cycle_count - enter_docking_cycle_f.get();
+    return cycles_since_enter_docking > docking_timeout_limit_f.get();
 }
 
 void MissionManager::set(mission_state_t state) {

@@ -11,6 +11,7 @@ void test_valid_initialization() {
     TEST_ASSERT_EQUAL(100, tf.close_approach_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(0.4, tf.docking_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.max_radio_silence_duration_fp->get());
+    TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.docking_timeout_limit_fp->get());
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
     TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
     TEST_ASSERT_EQUAL(0, tf.deployment_wait_elapsed_fp->get());
@@ -197,6 +198,44 @@ void test_dispatch_docking() {
     tf.docked_fp->set(true);
     tf.step();
     tf.check(mission_state_t::docked);
+
+    TestFixture tf2(mission_state_t::docking);
+    tf2.step();
+
+    // Check that the system is not docked
+    TEST_ASSERT_FALSE(tf2.docked_fp->get());
+
+    // Let a half day pass
+    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno);
+    tf2.step();
+
+    // Check that mission manager is still in a docking state
+    tf2.check(mission_state_t::docking);
+
+    // Let a nearly a full day pass
+    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno-1);
+    tf2.step();
+
+    // Check that mission manager is still in a docking state
+    tf2.check(mission_state_t::docking);
+
+    // Let a full day pass
+    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno);
+    tf2.step();
+
+    // Check that mission manager moves to standby
+    tf2.check(mission_state_t::standby);
+
+    // Even if a significant amount of time passes, mission managaer should still move to 
+    // docked when the switch is pressed
+    TestFixture tf3(mission_state_t::docking);
+    tf3.step();
+
+    tf3.docked_fp->set(true);
+    tf3.set_ccno(MissionManager::control_cycle_count+5*PAN::one_day_ccno);
+    tf3.step();
+
+    tf3.check(mission_state_t::docked);
 }
 
 void test_dispatch_safehold() {
@@ -261,12 +300,12 @@ void test_power_prop_adcs_faults_responsive() {
             TestFixture(state), TestFixture(state), TestFixture(state),
             TestFixture(state), TestFixture(state), TestFixture(state)
         };
-        tf_v[0].low_batt_fault_f.override();
-        tf_v[1].adcs_functional_fault_f.override();
-        tf_v[2].wheel1_adc_fault_f.override();
-        tf_v[3].wheel2_adc_fault_f.override();
-        tf_v[4].wheel3_adc_fault_f.override();
-        tf_v[5].wheel_pot_fault_f.override();
+        tf_v[0].low_batt_fault_fp->override();
+        tf_v[1].adcs_functional_fault_fp->override();
+        tf_v[2].wheel1_adc_fault_fp->override();
+        tf_v[3].wheel2_adc_fault_fp->override();
+        tf_v[4].wheel3_adc_fault_fp->override();
+        tf_v[5].wheel_pot_fault_fp->override();
         for(TestFixture& tf : tf_v) {
             tf.step();
             tf.check(mission_state_t::safehold);
@@ -274,7 +313,7 @@ void test_power_prop_adcs_faults_responsive() {
     }
     for(mission_state_t state : MissionManager::fault_responsive_states) {
         TestFixture tf(state);
-        tf.failed_pressurize_f.override();
+        tf.failed_pressurize_fp->override();
         tf.step();
         tf.check(mission_state_t::standby);
     }
@@ -285,16 +324,16 @@ void test_power_prop_adcs_faults_responsive() {
     // ADCS fault takes precedence over prop fault
     {
         TestFixture tf(mission_state_t::standby);
-        tf.wheel1_adc_fault_f.override();
-        tf.failed_pressurize_f.override();
+        tf.wheel1_adc_fault_fp->override();
+        tf.failed_pressurize_fp->override();
         tf.step();
         tf.check(mission_state_t::safehold);
     }
     // Power fault takes precedence over prop fault
     {
         TestFixture tf(mission_state_t::standby);
-        tf.low_batt_fault_f.override();
-        tf.failed_pressurize_f.override();
+        tf.low_batt_fault_fp->override();
+        tf.failed_pressurize_fp->override();
         tf.step();
         tf.check(mission_state_t::safehold);
     }
@@ -310,12 +349,12 @@ void test_power_prop_adcs_faults_nonresponsive() {
             TestFixture(state), TestFixture(state), TestFixture(state),
             TestFixture(state), TestFixture(state), TestFixture(state)
         };
-        tf_v[0].low_batt_fault_f.override();
-        tf_v[1].adcs_functional_fault_f.override();
-        tf_v[2].wheel1_adc_fault_f.override();
-        tf_v[3].wheel2_adc_fault_f.override();
-        tf_v[4].wheel3_adc_fault_f.override();
-        tf_v[5].wheel_pot_fault_f.override();
+        tf_v[0].low_batt_fault_fp->override();
+        tf_v[1].adcs_functional_fault_fp->override();
+        tf_v[2].wheel1_adc_fault_fp->override();
+        tf_v[3].wheel2_adc_fault_fp->override();
+        tf_v[4].wheel3_adc_fault_fp->override();
+        tf_v[5].wheel_pot_fault_fp->override();
         for(TestFixture& tf : tf_v) {
             tf.step();
             tf.check(state);
@@ -323,7 +362,7 @@ void test_power_prop_adcs_faults_nonresponsive() {
     }
     for(mission_state_t state : MissionManager::fault_nonresponsive_states) {
         TestFixture tf(state);
-        tf.failed_pressurize_f.override();
+        tf.failed_pressurize_fp->override();
         tf.step();
         tf.check(state);
     }
@@ -335,11 +374,11 @@ void test_adcs_faults_inithold() {
     // deployment wait period.
     {
         std::array<TestFixture, 5> tf_v;
-        tf_v[0].adcs_functional_fault_f.override();
-        tf_v[1].wheel1_adc_fault_f.override();
-        tf_v[2].wheel2_adc_fault_f.override();
-        tf_v[3].wheel3_adc_fault_f.override();
-        tf_v[4].wheel_pot_fault_f.override();
+        tf_v[0].adcs_functional_fault_fp->override();
+        tf_v[1].wheel1_adc_fault_fp->override();
+        tf_v[2].wheel2_adc_fault_fp->override();
+        tf_v[3].wheel3_adc_fault_fp->override();
+        tf_v[4].wheel_pot_fault_fp->override();
         for(TestFixture& tf : tf_v) {
             tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
             tf.step();

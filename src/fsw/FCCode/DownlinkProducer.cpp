@@ -5,13 +5,26 @@
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     const unsigned int offset) : TimedControlTask<void>(r, "downlink_ct", offset),
                                  snapshot_ptr_f("downlink.ptr"),
-                                 snapshot_size_bytes_f("downlink.snap_size")
+                                 snapshot_size_bytes_f("downlink.snap_size"),
+                                 shift_flows_id1_f("downlink.shift_id1", Serializer<unsigned char>(0,10,1)),
+                                 shift_flows_id2_f("downlink.shift_id2", Serializer<unsigned char>(0,10,1)),
+                                 toggle_flow_id_f("downlink.toggle_id", Serializer<unsigned char>(0,10,1))
 {
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 
     // Add snapshot fields to the registry
     add_internal_field(snapshot_ptr_f);
     add_internal_field(snapshot_size_bytes_f);
+
+    // Add shift_flows statefield to registry and set it to default values
+    add_writable_field(shift_flows_id1_f);
+    add_writable_field(shift_flows_id2_f);
+    shift_flows_id1_f.set(0);
+    shift_flows_id2_f.set(0);
+
+    // Add toggle command statefield to registry and set it to default of 0
+    add_writable_field(toggle_flow_id_f);
+    toggle_flow_id_f.set(0);
 }
 
 void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
@@ -147,13 +160,25 @@ void DownlinkProducer::execute() {
         char& last_char = snapshot_ptr[(downlink_frame_offset / 8)];
         last_char = bit_array::modify_bit(last_char, i, 0);
     }
+
+    // Shift flow priorities
+    if (shift_flows_id1_f.get()>0 && shift_flows_id2_f.get()>0) {
+        shift_flow_priorities(shift_flows_id1_f.get(), shift_flows_id2_f.get());
+        shift_flows_id1_f.set(0);
+        shift_flows_id2_f.set(0);
+    }
+
+    if (toggle_flow_id_f.get()>0) {
+        toggle_flow(toggle_flow_id_f.get());
+        toggle_flow_id_f.set(0);
+    }
 }
 
 DownlinkProducer::~DownlinkProducer() {
     delete[] snapshot;
 }
 
-#ifdef GSW
+#if defined GSW || defined DESKTOP
 const std::vector<DownlinkProducer::Flow>& DownlinkProducer::get_flows() const {
     return flows;
 }
@@ -198,7 +223,7 @@ size_t DownlinkProducer::Flow::get_packet_size() const {
 }
 
 void DownlinkProducer::toggle_flow(unsigned char id) {
-    if(id >= flows.size()) {
+    if(id > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found.", id);
         assert(false);
     }
@@ -216,15 +241,15 @@ void DownlinkProducer::toggle_flow(unsigned char id) {
     }
 }
 
-void DownlinkProducer::swap_flow_priorities(unsigned char id1, unsigned char id2) {
-    if(id1 >= flows.size()) {
+void DownlinkProducer::shift_flow_priorities(unsigned char id1, unsigned char id2) {
+    if(id1 > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to swap with flow ID %d.", id1, id2);
+                                      "trying to shift with flow ID %d.", id1, id2);
         assert(false);
     }
-    if(id2 >= flows.size()) {
+    if(id2 > flows.size()) {
         printf(debug_severity::error, "Flow with ID %d was not found when "
-                                      "trying to swap with flow ID %d.", id2, id1);
+                                      "trying to shift with flow ID %d.", id2, id1);
         assert(false);
     }
 
@@ -239,9 +264,15 @@ void DownlinkProducer::swap_flow_priorities(unsigned char id1, unsigned char id2
             idx2 = idx;
         }
     }
-
-    bool temp = flows[idx1].is_active;
-    flows[idx1].is_active = flows[idx2].is_active;
-    flows[idx2].is_active = temp;
-    std::swap(flows[idx1], flows[idx2]);
+    
+    if (idx1>idx2) {
+        for (size_t i = idx1; i > idx2; i--) {
+            std::swap(flows[i], flows[i-1]);
+        }
+    }
+    else if (idx2>idx1) {
+        for (size_t i = idx1; i < idx2; i++) {
+            std::swap(flows[i],flows[i+1]);
+        }
+    }
 }
