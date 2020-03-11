@@ -105,7 +105,7 @@ void ADCSBoxController::execute(){
             send_cmd_table = true;
 
             // clear the state field now that it's loaded into temp_cmd_table
-            havt_cmd_reset_vector_fp[idx]->set(false);
+            const_cast(havt_cmd_reset_vector_fp[idx])->set(false);
         }
     }
 
@@ -124,7 +124,7 @@ void ADCSBoxController::execute(){
             send_cmd_table = true;
 
             // clear the state field now that it's loaded into temp_cmd_table
-            havt_cmd_disable_vector_fp[idx]->set(false);
+            const_cast(havt_cmd_disable_vector_fp[idx])->set(false);
         }
     }
     
