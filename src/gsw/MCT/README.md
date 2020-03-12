@@ -11,7 +11,7 @@ In Open MCT everything is represented as a Domain Object, this includes sources 
 In this implementation a Taxonomy point is defined as an object that containts a collection of telemetry points. (ex. a spacecraft object) A new Taxonomy point is created using the *openmct.objects.addRoot( )* function, which takes a javascript object as a parameter. 
 
 This is modeled below with our satellite object with namespace 'sat.taxonomy' and a key 'spacecraft'.
-![addRoot function](/images/add-Root.png)
+![addRoot function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/add-Root.png)
 
 A new Telemetry point is added after a Taxonomy point is added and serves as the child object to the root (the satellite). This object is added using the openmct.objects.addType( ) function which also takes a JS object as a parameter. 
 
