@@ -5,7 +5,7 @@ This Mission control API uses the visual elements of the openMCT data visualizat
 The openMCT web server is run using the **"npm start"** command in terminal after navigating to the /MCT directory.
 
 In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the openMCT display.
-![Object Tree](/images/object-tree.png)
+![Object Tree](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/object-tree.png)
 
 # Setting up a new Taxonomy or Telemetry point
 In this implementation a Taxonomy point is defined as an object that containts a collection of telemetry points. (ex. a spacecraft object) A new Taxonomy point is created using the *openmct.objects.addRoot( )* function, which takes a javascript object as a parameter. 
@@ -16,7 +16,7 @@ This is modeled below with our satellite object with namespace 'sat.taxonomy' an
 A new Telemetry point is added after a Taxonomy point is added and serves as the child object to the root (the satellite). This object is added using the openmct.objects.addType( ) function which also takes a JS object as a parameter. 
 
 In the example below, we have a name and description field for the object and also a cssClass field which allows it to be displayed on the openmct visualization.
-![addType function](/images/add-Type.png)
+![addType function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/add-Type.png)
 
 
 
@@ -78,7 +78,7 @@ The history field contains telemetry data that is input from the generateTelemet
 The listener field is notified every time telemetry data is generated.
 
 The generateTelemetry( ) function is the most important method of spacecraft.js as it interacts with each field inside the spacecraft.js file and creates data for the openMCT server to then catch and display.
-![Telemetry function](/images/generate-telemetry.png)
+![Telemetry function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/generate-telemetry.png)
 This function takes a measurement of spacecraft state, stores it in history{ }, and notifies listeners[ ] using the *Spacecraft.prototype.notify* function. 
 
 
