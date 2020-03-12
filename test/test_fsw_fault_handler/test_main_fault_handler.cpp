@@ -137,7 +137,7 @@ void test_main_fh_standby_fault() {
             [](bool valid, fault_response_t response) {
                 return valid || response == fault_response_t::standby;
             });
-        if (!combo_valid) return;
+        if (!combo_valid) continue;
 
         fault_response_t response = tf.step(combo);
         TEST_ASSERT_EQUAL(fault_response_t::standby, response);
@@ -164,7 +164,7 @@ void test_main_fh_safehold_fault() {
             [](bool valid, fault_response_t response) {
                 return valid || response == fault_response_t::safehold;
             });
-        if (!combo_valid) return;
+        if (!combo_valid) continue;
 
         fault_response_t response = tf.step(combo);
         TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
