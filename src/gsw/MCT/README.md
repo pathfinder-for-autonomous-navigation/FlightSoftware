@@ -65,6 +65,10 @@ The main script, server.js, instantiates these files and calls them to start eac
 **realtime-server.js** contains two main functions, RealtimeServer( ) which takes the spacecraft as a parameter and notifySubscribers( ) which takes one point as a parameter and sends it to the WebSocket.
 notifySubscribers( ) is defined inside the RealtimeServer( ) function and converts the javascript object of a single telemetry point into a JSON string.
 
+**history-server.js** initiates a new router object and a response object. It uses the node.js module express to create a new Router( ) function. This router then pulls data from the spacecraft.js list history[ ] using the response function.
+
+**static-server.js** This script uses the Router( ) module's router.use( ) function to allow our application to handle static requests for data. This helps handle image data, for example, the CSS image data that is sent in with each telemetry point.
+
 
 
 **Spacecraft.js** represents a spacecraft object that is run when the main script is evoked in terminal.
@@ -75,6 +79,6 @@ The listener field is notified every time telemetry data is generated.
 
 The generateTelemetry( ) function is the most important method of spacecraft.js as it interacts with each field inside the spacecraft.js file and creates data for the openMCT server to then catch and display.
 ![Telemetry function](/images/generate-telemetry.png)
-
+This function takes a measurement of spacecraft state, stores it in history{ }, and notifies listeners[ ] using the *Spacecraft.prototype.notify* function. 
 
 
