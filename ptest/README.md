@@ -59,7 +59,7 @@ Change the port to the COM port Teensy is connected to
 
 Run the main script:
 
-    python -m ptest.run_simulation -c ptest/configs/fc_only_teensy.json
+    python -m ptest runsim -c ptest/configs/fc_only_teensy.json
 
 **Running with software only**
 
@@ -75,11 +75,11 @@ for the Flight Software. You can find these binaries [here](https://github.com/p
 
 2. Then, run the main script. On Windows you must run
 
-       python -m ptest.run_simulation -c ptest/configs/fc_only_teensy.json -t TESTCASENAME
+       python -m ptest runsim -c ptest/configs/fc_only_teensy.json -t TESTCASENAME
 
       since psim for Windows currently only supports connections to actual Teensy devices. On Mac you may run
 
-       python -m ptest.run_simulation -c ptest/configs/fc_only_native.json -t TESTCASENAME
+       python -m ptest runsim -c ptest/configs/fc_only_native.json -t TESTCASENAME
 
       To connect to a desktop binary. Recommended testcase names are `EmptySimCase` and `EmptyCase`.
 

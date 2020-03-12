@@ -27,12 +27,7 @@ The logs can be read via the ptest standalone plotter utility. See ptest/ for mo
 If your update does not require significant testing, argue why, or if you're deferring testing to another PR, create an issue ticket for the deferral and link it.
 
 ### Constants
-If your PR creates any constants, list them here and indicate whether or not you've added them to the recurring constants review.
-
-| Constant                 | Location             | Added to review?   |
-|--------------------------|----------------------|--------------------|
-|                          |                      | :white_check_mark: |
-|                          |                      | :x: : Why not?     |
+Describe any important diffs to the `constants` file in the root level of the repository. Ensure that any constants you added to the code successfully made it into the `constants` file. If not, wrap the missing constants with `TRACKED_CONSTANT` macros and fix `constants_reporter.py` if necessary.
 
 
 ### Documentation Evidence
