@@ -68,8 +68,7 @@ class UplinkProducer : public Uplink{
      * @throw runtime_error if invalid index is specified
      * @return the number of bits written
      */ 
-    template<typename T>
-    size_t add_entry(bitstream& bs, char* val, size_t index);
+    size_t add_entry(bitstream& bs, const bit_array& val, size_t index);
 
     MainControlLoop fcp;
 

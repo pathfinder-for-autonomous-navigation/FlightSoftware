@@ -25,7 +25,6 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r):
     }
  }
 
-template<typename T>
 uint64_t find_value(nlohmann::json j, std::string name) {
     for (auto& e : j.items()) {
         std::string key = e.key();
@@ -40,10 +39,11 @@ template<typename UnderlyingType>
 bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     WritableStateField<UnderlyingType>* ptr = dynamic_cast<WritableStateField<UnderlyingType>*>(registry.find_writable_field(key));
-    
     // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the value of the key
     if (!ptr) return false;
-    auto val = find_value<UnderlyingType>(j, key);
+    auto val = find_value(j, key);
+    ptr->set(val);
+    ptr->serialize();
 
     // Make sure the value we want to set does not exceed the max possible
     // value that the field can be set to
@@ -54,12 +54,8 @@ bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json
         return false;
     }
 
-    if (val.is_boolean()) {
-        val = val? 1 : 0;
-    }
-
     // Add the updated value to the bitstream
-    add_entry<UnderlyingType>(bs, reinterpret_cast<char*>(&val), field_index);
+    add_entry(bs, ptr->get_bit_array(), field_index);
     return true;
 }
 
@@ -71,6 +67,7 @@ bool UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohm
     found_field_type |= try_add_field<signed char>(bs, key, j);
     found_field_type |= try_add_field<float>(bs, key, j);
     found_field_type |= try_add_field<double>(bs, key, j);
+    found_field_type |= try_add_field<bool>(bs, key, j);
     return found_field_type;
 }
 
@@ -98,8 +95,6 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
                 throw std::runtime_error("field map key not found: " + key);
 
             //uint64_t val = e.value();
-            //std::cout<<val<<"\n";
-            //std::cout<<e.value()<<"\n";
 
             // Get the field's index in writable_fields
             //size_t field_index = field_map[key];
@@ -122,8 +117,7 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
     bs.reset();
  }
 
-template<typename T>
-size_t UplinkProducer::add_entry( bitstream& bs, char* val, size_t index)
+size_t UplinkProducer::add_entry(bitstream& bs, const bit_array& val, size_t index)
 {
     size_t bits_written = 0;
     size_t field_size = get_field_length(index);
@@ -136,8 +130,12 @@ size_t UplinkProducer::add_entry( bitstream& bs, char* val, size_t index)
     ++index;
     bits_written += bs.editN(index_size, (uint8_t*)&index);
 
-    // Write the specified number of    bits from val
-    bits_written += bs.editN(field_size, reinterpret_cast<uint8_t*>(val));
+    // Create a temporary bitstream from the bit array
+    char tmp [field_size];
+    bitstream bs_temp(tmp, field_size);
+
+    // Write bit array/bs_temp to the bitstream
+    bits_written += bs.editN(field_size, bs_temp);
    
     return bits_written;
 }
