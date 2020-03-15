@@ -3,6 +3,7 @@
 
 #include "TimedControlTask.hpp"
 #include "mission_state_t.enum"
+#include "qfh_state_t.enum"
 
 /**
  * @brief This state machine class implements a tiered fault system
@@ -48,29 +49,6 @@ class QuakeFaultHandler : public ControlTask<mission_state_t> {
      * no action when manual is returned.
      */
     mission_state_t execute();
-
-    /**
-     * @brief States of fault machine. Description:
-     * - Unfaulted: We've received comms in the last 24 hours
-     * - Forced standby: We haven't had comms in the past 24 hours so the
-     *   satellite is forced into standby mode to try to maximize comms.
-     * - Power cycle 1: Forced standby didn't work. So the entry into this
-     *   state causes a power cycle of the radio and waits 8 hours before
-     *   transitioning to...
-     * - Power cycle 2: Same behavior as power cycle 1.
-     * - Power cycle 3: Same behavior as power cycle 2.
-     * - Safe hold: Three power cycles didn't work, so we go to safe hold.
-     *   The satellite waits in safe hold for 24 hours by default, after which
-     *   the satellite is rebooted by high-level mission logic.
-     */
-    enum class fault_checker_state_t {
-        unfaulted,
-        forced_standby,
-        powercycle_1,
-        powercycle_2,
-        powercycle_3,
-        safehold
-    };
 
   protected:
 

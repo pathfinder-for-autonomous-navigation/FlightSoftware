@@ -49,9 +49,10 @@ mission_state_t QuakeFaultHandler::dispatch_forced_standby() {
     }
     else if (radio_is_disabled() || less_than_one_day_since_successful_comms()) {
         transition_to(fault_checker_state_t::unfaulted);
+        return mission_state_t::manual;
     }
 
-    return mission_state_t::manual;
+    return mission_state_t::standby;
 }
 
 mission_state_t QuakeFaultHandler::dispatch_powercycle_1() {
@@ -62,9 +63,10 @@ mission_state_t QuakeFaultHandler::dispatch_powercycle_1() {
     }
     else if (less_than_one_day_since_successful_comms()) {
         transition_to(fault_checker_state_t::unfaulted);
+        return mission_state_t::manual;
     }
 
-    return mission_state_t::manual;
+    return mission_state_t::standby;
 }
 
 mission_state_t QuakeFaultHandler::dispatch_powercycle_2() {
@@ -75,9 +77,10 @@ mission_state_t QuakeFaultHandler::dispatch_powercycle_2() {
     }
     else if (less_than_one_day_since_successful_comms()) {
         transition_to(fault_checker_state_t::unfaulted);
+        return mission_state_t::manual;
     }
 
-    return mission_state_t::manual;
+    return mission_state_t::standby;
 }
 
 mission_state_t QuakeFaultHandler::dispatch_powercycle_3() {
@@ -87,9 +90,10 @@ mission_state_t QuakeFaultHandler::dispatch_powercycle_3() {
     }
     else if (less_than_one_day_since_successful_comms()) {
         transition_to(fault_checker_state_t::unfaulted);
+        return mission_state_t::manual;
     }
 
-    return mission_state_t::manual;
+    return mission_state_t::standby;
 }
 
 mission_state_t QuakeFaultHandler::dispatch_safehold() {

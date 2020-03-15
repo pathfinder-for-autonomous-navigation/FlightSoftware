@@ -3,9 +3,7 @@
 #include <fsw/FCCode/QuakeFaultHandler.hpp>
 #include <fsw/FCCode/radio_state_t.enum>
 
-using fault_checker_state_t = QuakeFaultHandler::fault_checker_state_t;
 unsigned int one_day_ccno = PAN::one_day_ccno;
-
 unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
 
 class TestFixture {
@@ -166,16 +164,17 @@ void test_qfh_unfaulted() {
 void test_qfh_forced_standby() {
     // If it's been more than 24 hours since comms, the fault handler
     // should cause a power cycle and move to the powercycle_1 state.
+    //
+    // We'll first test that one cycle less of 24 hours of no comms doesn't
+    // cause a transition, and then cycling one more time causes a transition
+    // to powercycle_1.
     {
         TestFixture tf{fault_checker_state_t::forced_standby};
         tf.set_cur_state_entry_ccno(one_day_ccno);
-        cc_count = 2 * one_day_ccno;
+        cc_count = 2 * one_day_ccno - 1;
+        tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::forced_standby);
         tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::powercycle_1);
         tf.check_powercycled();
-    }
-    {
-        // Cleanup
-        cc_count = 0;
     }
 
     // If the radio is disabled the state should return to unfaulted immediately.
@@ -195,16 +194,23 @@ void test_qfh_forced_standby() {
 void test_qfh_powercycle_1() {
     // If it's been more than 8 hours since comms, the fault handler
     // should cause a power cycle and move to the powercycle_2 state.
+    //
+    // We'll first test that one cycle less of 8 hours of no comms doesn't
+    // cause a transition, and then cycling one more time causes a transition
+    // to powercycle_2.
     {
         TestFixture tf{fault_checker_state_t::powercycle_1};
         tf.set_cur_state_entry_ccno(one_day_ccno);
-        cc_count = one_day_ccno + one_day_ccno / 3;
+        cc_count = one_day_ccno + one_day_ccno / 3 - 1;
+        tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::powercycle_1);
         tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::powercycle_2);
         tf.check_powercycled();
     }
+
+    // If the radio is disabled the state should return to unfaulted immediately.
     {
-        // Cleanup
-        cc_count = 0;
+        TestFixture tf{fault_checker_state_t::forced_standby};
+        tf.check_state_returns_to_unfaulted_if_radio_disabled();
     }
 
 
@@ -219,16 +225,23 @@ void test_qfh_powercycle_1() {
 void test_qfh_powercycle_2() {
     // If it's been more than 8 hours since comms, the fault handler
     // should cause a power cycle and move to the powercycle_3 state.
+    //
+    // We'll first test that one cycle less of 8 hours of no comms doesn't
+    // cause a transition, and then cycling one more time causes a transition
+    // to powercycle_3.
     {
         TestFixture tf{fault_checker_state_t::powercycle_2};
         tf.set_cur_state_entry_ccno(one_day_ccno);
-        cc_count = one_day_ccno + one_day_ccno / 3;
+        cc_count = one_day_ccno + one_day_ccno / 3 - 1;
+        tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::powercycle_2);
         tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::powercycle_3);
         tf.check_powercycled();
     }
+
+    // If the radio is disabled the state should return to unfaulted immediately.
     {
-        // Cleanup
-        cc_count = 0;
+        TestFixture tf{fault_checker_state_t::forced_standby};
+        tf.check_state_returns_to_unfaulted_if_radio_disabled();
     }
 
     // If we've (recently) received comms within 8 hours since the state transition, the state
@@ -243,16 +256,23 @@ void test_qfh_powercycle_3() {
     // If it's been more than 8 hours since comms, the fault handler
     // should move to the safe hold state. There is no fourth power
     // cycle.
+    //
+    // We'll first test that one cycle less of 8 hours of no comms doesn't
+    // cause a transition, and then cycling one more time causes a transition
+    // to safehold.
     {
         TestFixture tf{fault_checker_state_t::powercycle_3};
         tf.set_cur_state_entry_ccno(one_day_ccno);
-        cc_count = one_day_ccno + one_day_ccno / 3;
+        cc_count = one_day_ccno + one_day_ccno / 3 - 1;
+        tf.step_and_expect(mission_state_t::manual, fault_checker_state_t::powercycle_3);
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
         tf.check_not_powercycled();
     }
+
+    // If the radio is disabled the state should return to unfaulted immediately.
     {
-        // Cleanup
-        cc_count = 0;
+        TestFixture tf{fault_checker_state_t::forced_standby};
+        tf.check_state_returns_to_unfaulted_if_radio_disabled();
     }
 
     // If we've (recently) received comms within 8 hours since the state transition, the state
@@ -291,10 +311,6 @@ void test_qfh_safehold() {
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
-    }
-    {
-        // Cleanup
-        cc_count = 0;
     }
 }
 
