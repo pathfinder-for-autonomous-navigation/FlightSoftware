@@ -1,5 +1,5 @@
-#include "../DownlinkParser.hpp"
-#include "../../flow_data.hpp"
+#include <gsw/parsers/src/DownlinkParser.hpp>
+#include <flow_data.hpp>
 #include <iostream>
 #include <chrono>
 #include <thread>
