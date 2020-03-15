@@ -264,7 +264,7 @@ void test_qfh_powercycle_3() {
         TestFixture tf{fault_checker_state_t::powercycle_3};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = one_day_ccno + one_day_ccno / 3 - 1;
-        tf.step_and_expect(mission_state_t::manual, fault_checker_state_t::powercycle_3);
+        tf.step_and_expect(mission_state_t::standby, fault_checker_state_t::powercycle_3);
         tf.step_and_expect(mission_state_t::safehold, fault_checker_state_t::safehold);
         tf.check_not_powercycled();
     }
