@@ -42,7 +42,7 @@ class ControlTask : protected debug_console {
      * 
      * We need to have this destructor to avoid compilation errors.
      */
-    virtual ~ControlTask() = 0;
+    virtual ~ControlTask() = default;
 
   protected:
     StateFieldRegistry& _registry;
@@ -169,7 +169,13 @@ class ControlTask : protected debug_console {
     }
 };
 
-template<typename T>
-ControlTask<T>::~ControlTask() {}
+/* Convenient macros to find fields, events, and faults. The field/event/fault
+ * argument will be automatically stringified so no need to include quotation
+ * marks. */
+#define FIND_INTERNAL_FIELD(type, field) find_internal_field<type>(#field, __FILE__, __LINE__)
+#define FIND_READABLE_FIELD(type, field) find_readable_field<type>(#field, __FILE__, __LINE__)
+#define FIND_WRITABLE_FIELD(type, field) find_writable_field<type>(#field, __FILE__, __LINE__)
+#define FIND_EVENT(event)                find_event(#event, __FILE__, __LINE__)
+#define FIND_FAULT(fault)                find_fault(#fault, __FILE__, __LINE__)
 
 #endif
