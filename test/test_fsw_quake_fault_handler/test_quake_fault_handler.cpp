@@ -35,8 +35,11 @@ class TestFixture {
         cc_count = 0;
 
         qfh = std::make_unique<QuakeFaultHandler>(registry);
-        qfh->cur_state = initial_state;
+        set(initial_state);
     }
+
+    void set(fault_checker_state_t state) { qfh->cur_state = state; }
+    void set(unsigned int state) { qfh->cur_state = static_cast<fault_checker_state_t>(state); }
 
     // Below are getter and setter methods for the test harness, listed in order of
     // increasing invasiveness/complexity.
@@ -296,6 +299,14 @@ void test_qfh_safehold() {
     }
 }
 
+// If the state value gets set to something undefined, it gets kicked back
+// to unfaulted and the recommended mission state is "manual."
+void test_qfh_undefined_state() {
+    TestFixture tf;
+    tf.set(100);
+    tf.step_and_expect(mission_state_t::manual, fault_checker_state_t::unfaulted);
+}
+
 int test_mission_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_qfh_unfaulted);
@@ -304,6 +315,7 @@ int test_mission_manager() {
     RUN_TEST(test_qfh_powercycle_2);
     RUN_TEST(test_qfh_powercycle_3);
     RUN_TEST(test_qfh_safehold);
+    RUN_TEST(test_qfh_undefined_state);
     return UNITY_END();
 }
 
