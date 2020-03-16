@@ -100,24 +100,6 @@ class TestFixture {
     }
 };
 
-/**
- * @brief Unit test the mocked fault checker utility so that we know
- * it'll work for Mission Manager.
- */
-void test_qfhmock() {
-    StateFieldRegistryMock r;
-    QuakeFaultHandlerMock qfh(r);
-    qfh.set_output(mission_state_t::standby);
-    TEST_ASSERT_EQUAL(mission_state_t::standby, qfh.get_output());
-    TEST_ASSERT_EQUAL(mission_state_t::standby, qfh.execute());
-
-    qfh.set_output(mission_state_t::safehold);
-    TEST_ASSERT_EQUAL(mission_state_t::safehold, qfh.execute());
-
-    qfh.set_output(mission_state_t::standby);
-    TEST_ASSERT_EQUAL(mission_state_t::standby, qfh.execute());
-}
-
 void test_qfh_transition() {
     // Open-box test.
     //
@@ -316,7 +298,6 @@ void test_qfh_safehold() {
 
 int test_mission_manager() {
     UNITY_BEGIN();
-    RUN_TEST(test_qfhmock);
     RUN_TEST(test_qfh_unfaulted);
     RUN_TEST(test_qfh_forced_standby);
     RUN_TEST(test_qfh_powercycle_1);

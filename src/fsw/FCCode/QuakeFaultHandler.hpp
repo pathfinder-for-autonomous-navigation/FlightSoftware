@@ -93,32 +93,4 @@ class QuakeFaultHandler : public ControlTask<mission_state_t> {
     bool radio_is_disabled() const;
 };
 
-/**
- * @brief Mocking class that can be used by Mission Manager's unit test to
- * have a simple way to emulate Quake fault behavior. It can use this class to
- * declaratively set the Quake fault handler's recommended mission state to
- * see if the mission manager responds appropriately.
- */
-class QuakeFaultHandlerMock {
-  public:
-    QuakeFaultHandlerMock(StateFieldRegistry& r) {}
-
-    mission_state_t execute() {
-      return get_output();
-    }
-    mission_state_t get_output() const {
-      return state;
-    }
-    void set_output(mission_state_t s) {
-      const bool desired_state_is_valid = 
-          (s == mission_state_t::standby) 
-          || (s == mission_state_t::safehold)
-          || (s == mission_state_t::manual);
-      if(!desired_state_is_valid) assert(false);
-      else state = s;
-    }
-  private:
-    mission_state_t state = mission_state_t::manual;
-};
-
 #endif
