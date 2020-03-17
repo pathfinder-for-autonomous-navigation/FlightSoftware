@@ -4,7 +4,8 @@
 #include "../StateFieldRegistryMock.hpp"
 
 // Flow data for test
-struct TestFixture {
+class TestFixture {
+  public:
     // Flight Software and Ground Software control classes
     StateFieldRegistryMock reg;
     std::unique_ptr<DownlinkParserMock> parser;
