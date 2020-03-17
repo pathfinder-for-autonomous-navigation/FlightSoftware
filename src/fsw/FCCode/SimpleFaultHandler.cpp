@@ -1,6 +1,6 @@
 #include "SimpleFaultHandler.hpp"
 
-SimpleFaultHandler::SimpleFaultHandler(StateFieldRegistry& r, Fault& f,
+SimpleFaultHandler::SimpleFaultHandler(StateFieldRegistry& r, Fault* f,
     const std::vector<mission_state_t>& _active_states,
     mission_state_t rs) :
         FaultHandlerMachine(r),
@@ -16,7 +16,7 @@ fault_response_t SimpleFaultHandler::determine_recommended_state() const {
     if (std::find(active_states.begin(), active_states.end(), state) == active_states.end())
         return fault_response_t::none;
 
-    if (fault.is_faulted()) {
+    if (fault->is_faulted()) {
         if (recommended_state == mission_state_t::standby) {
             return fault_response_t::standby;
         }
@@ -47,7 +47,7 @@ void SimpleFaultHandler::set_mission_state_ptr(WritableStateField<unsigned char>
 
 const WritableStateField<unsigned char>* SimpleFaultHandler::mission_state_fp = nullptr;
 
-SuperSimpleFaultHandler::SuperSimpleFaultHandler(StateFieldRegistry& r, Fault& f,
+SuperSimpleFaultHandler::SuperSimpleFaultHandler(StateFieldRegistry& r, Fault* f,
         const std::vector<mission_state_t>& _active_states,
         mission_state_t rs) : SimpleFaultHandler(r, f, _active_states, rs) {}
 

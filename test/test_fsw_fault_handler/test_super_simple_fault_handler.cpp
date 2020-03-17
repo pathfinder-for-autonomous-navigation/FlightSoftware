@@ -19,7 +19,7 @@ class TestFixtureSuperSimpleFH {
         fault_fp = registry.create_fault("fault", 1, cc);
 
         fault_handler = std::make_unique<SuperSimpleFaultHandler>(
-            registry, *fault_fp, active_states, recommended_state);
+            registry, fault_fp.get(), active_states, recommended_state);
 
         set(mission_state_t::follower); // Start in an active state for the fault handler.
     }

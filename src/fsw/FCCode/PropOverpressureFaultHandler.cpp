@@ -3,7 +3,7 @@
 PropOverpressureFaultHandler::PropOverpressureFaultHandler(StateFieldRegistry& r) :
     SimpleFaultHandler(
         r,
-        *(r.find_fault("prop.overpressured")),
+        r.find_fault("prop.overpressured"),
         SimpleFaultHandler::active_state_lists[1],
         mission_state_t::standby
     )

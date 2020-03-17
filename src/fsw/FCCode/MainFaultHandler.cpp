@@ -33,21 +33,21 @@ void MainFaultHandler::init() {
 
     for(Fault* fault : active_list_0_safehold_super_simple_faults) {
         fault_handler_machines.push_back(
-            std::make_unique<SuperSimpleFaultHandler>(_registry, *fault,
+            std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
                 SimpleFaultHandler::active_state_lists[0], mission_state_t::safehold)
         );
     }
 
     for(Fault* fault : active_list_1_safehold_super_simple_faults) {
         fault_handler_machines.push_back(
-            std::make_unique<SuperSimpleFaultHandler>(_registry, *fault,
+            std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
                 SimpleFaultHandler::active_state_lists[1], mission_state_t::safehold)
         );
     }
 
     for(Fault* fault : active_list_1_standby_super_simple_faults) {
         fault_handler_machines.push_back(
-            std::make_unique<SuperSimpleFaultHandler>(_registry, *fault,
+            std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
                 SimpleFaultHandler::active_state_lists[1], mission_state_t::standby)
         );
     }

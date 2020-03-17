@@ -18,7 +18,7 @@ class SimpleFaultHandler : public FaultHandlerMachine {
      *                      handler is "active" (able to produce fault response recommendations.)
      * @param rs Recommended state if fault is signaled.
      */
-    SimpleFaultHandler(StateFieldRegistry& r, Fault& f,
+    SimpleFaultHandler(StateFieldRegistry& r, Fault* f,
         const std::vector<mission_state_t>& _active_states,
         mission_state_t rs = mission_state_t::safehold);
 
@@ -48,7 +48,7 @@ class SimpleFaultHandler : public FaultHandlerMachine {
     fault_response_t determine_recommended_state() const;
 
     static const WritableStateField<unsigned char>* mission_state_fp;
-    Fault& fault;
+    Fault* fault;
 
   private:
     const std::vector<mission_state_t>& active_states;
@@ -57,7 +57,7 @@ class SimpleFaultHandler : public FaultHandlerMachine {
 
 class SuperSimpleFaultHandler : public SimpleFaultHandler {
   public:
-    SuperSimpleFaultHandler(StateFieldRegistry& r, Fault& f,
+    SuperSimpleFaultHandler(StateFieldRegistry& r, Fault* f,
           const std::vector<mission_state_t>& _active_states,
           mission_state_t rs = mission_state_t::safehold);
       
