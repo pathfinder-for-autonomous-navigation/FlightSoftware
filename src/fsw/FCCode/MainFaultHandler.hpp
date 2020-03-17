@@ -15,7 +15,7 @@ class MainFaultHandler : public FaultHandlerMachine {
      * 
      * @param r State field registry.
      */
-    MainFaultHandler(StateFieldRegistry& r);
+    explicit MainFaultHandler(StateFieldRegistry& r);
 
     /**
      * @brief Acquire state fields that hadn't already been added to the registry
