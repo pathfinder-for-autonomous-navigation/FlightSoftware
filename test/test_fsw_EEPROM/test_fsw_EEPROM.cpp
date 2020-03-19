@@ -1,18 +1,22 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #include <fsw/FCCode/EEPROMController.hpp>
-#ifndef DESKTOP
-#include <EEPROM.h>
-#endif
 
 #include <unity.h>
+
+#ifdef DESKTOP
+    #include <json.hpp>
+    #include <fstream>
+#else
+    #include <EEPROM.h>
+#endif
 
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
 
-    std::vector<std::string> statefields = {"pan.state", "pan.deployed", "pan.sat_designation", "pan.cycle_no"}; 
-    std::vector<unsigned int> periods = {2, 3, 5, 7};
+    std::vector<std::string> statefields {"pan.state", "pan.deployed", "pan.sat_designation", "pan.cycle_no"}; 
+    std::vector<unsigned int> periods {2, 3, 5, 7};
 
     //Create the statefields that the EEPROM will eventually collect and store
     std::shared_ptr<ReadableStateField<unsigned int>> mission_mode_fp;
@@ -22,7 +26,14 @@ class TestFixture {
 
     std::unique_ptr<EEPROMController> eeprom_controller;
 
-    TestFixture() : registry() {
+    /**
+     * @brief Construct a new Test Fixture.
+     * 
+     * @param clr If true, clears the EEPROM.
+     */
+    TestFixture(bool clr) : registry() {
+        if (clr) clear_data();
+
         mission_mode_fp = registry.create_readable_field<unsigned int>("pan.state");
         mission_mode_fp->set(1);
 
@@ -35,27 +46,80 @@ class TestFixture {
         control_cycle_count_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
         control_cycle_count_fp->set(4);
 
-        eeprom_controller = std::make_unique<EEPROMController>(registry, 0); 
+        eeprom_controller = std::make_unique<EEPROMController>(registry, 0);
+
+        // Initialize the controller
+        eeprom_controller->init(statefields, periods);
+    }
+
+    /**
+     * @brief Clear data from the EEPROM.
+     */
+    void clear_data() {
+        #ifdef DESKTOP
+            EEPROMController::data.clear();
+            save_data();
+        #else
+            for (unsigned int i = 0 ; i < EEPROM.length() ; i++) {
+                EEPROM.write(i, 255);
+            }
+        #endif
+    }
+
+    /**
+     * @brief Save data to the EEPROM. Only does anything in desktop mode.
+     */
+    void save_data() {
+        #ifdef DESKTOP
+            EEPROMController::save_data(0);
+        #endif
+    }
+
+    /**
+     * Get JSON data stored in the EEPROM data file. Desktop-only.
+     */
+    #ifdef DESKTOP
+    nlohmann::json read_EEPROM() {
+        eeprom_controller->read_EEPROM();
+        return EEPROMController::data;
+    }
+    #endif
+
+    /**
+     * @brief Reads data from EEPROM for the statefield at index idx.
+     * 
+     * @param idx 
+     * @return unsigned int 
+     */
+    unsigned int read(size_t idx) {
+        #ifdef DESKTOP
+            const std::string& field_name = eeprom_controller->pointers[idx]->name();
+            if (EEPROMController::data.find(field_name) != EEPROMController::data.end()) {
+                return EEPROMController::data[field_name];
+            }
+            else {
+                return 255;
+            }
+        #else
+            return EEPROM.read(eeprom_controller->addresses.at(idx));
+        #endif
+    }
+
+    /**
+     * @brief Gets pointer to statefield at index idx. 
+     */
+    ReadableStateField<unsigned int>* get_ptr(size_t idx) {
+        return eeprom_controller->pointers.at(idx);
     }
 };
 
 void test_task_initialization() {
-    //Clear the EEPROM.
-    #ifndef DESKTOP
-    for (unsigned int i = 0 ; i < EEPROM.length() ; i++) {
-        EEPROM.write(i, 255);
-    }
-    #endif
+    TestFixture tf(true);
 
-    TestFixture tf;
-    tf.eeprom_controller->init(tf.statefields, tf.periods);
-
-    #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(1, tf.eeprom_controller->pointers.at(0)->get());
-    TEST_ASSERT_EQUAL(2, tf.eeprom_controller->pointers.at(1)->get());
-    TEST_ASSERT_EQUAL(3, tf.eeprom_controller->pointers.at(2)->get());
-    TEST_ASSERT_EQUAL(4, tf.eeprom_controller->pointers.at(3)->get());
-    #endif
+    TEST_ASSERT_EQUAL(1, tf.get_ptr(0)->get());
+    TEST_ASSERT_EQUAL(2, tf.get_ptr(1)->get());
+    TEST_ASSERT_EQUAL(3, tf.get_ptr(2)->get());
+    TEST_ASSERT_EQUAL(4, tf.get_ptr(3)->get());
 
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
     TEST_ASSERT_EQUAL(2, tf.is_deployed_fp->get());
@@ -64,8 +128,7 @@ void test_task_initialization() {
 }
 
 void test_task_execute() {
-    TestFixture tf;
-    tf.eeprom_controller->init(tf.statefields, tf.periods);
+    TestFixture tf(true);
 
     // Set the statefields to new values.
     tf.mission_mode_fp->set(5);
@@ -79,56 +142,46 @@ void test_task_execute() {
     // At the 4th control cycle, the EEPROM should write the value of mission mode (period=2)
     // All the other addresses should hold the default value, we haven't written anything there yet.
     tf.eeprom_controller->execute();
-    #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(5, EEPROM.read(tf.eeprom_controller->addresses.at(0)));
-    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(1)));
-    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
-    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
-    #endif
+    TEST_ASSERT_EQUAL(5, tf.read(0));
+    TEST_ASSERT_EQUAL(255, tf.read(1));
+    TEST_ASSERT_EQUAL(255, tf.read(2));
+    TEST_ASSERT_EQUAL(255, tf.read(3));
 
     // At the 9th control cycle, the EEPROM should write the value of deployment mode (period=3)
     TimedControlTaskBase::control_cycle_count=9;
     tf.eeprom_controller->execute();
-    #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(5, EEPROM.read(tf.eeprom_controller->addresses.at(0)));
-    TEST_ASSERT_EQUAL(6, EEPROM.read(tf.eeprom_controller->addresses.at(1)));
-    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
-    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
-    #endif
+    TEST_ASSERT_EQUAL(5, tf.read(0));
+    TEST_ASSERT_EQUAL(6, tf.read(1));
+    TEST_ASSERT_EQUAL(255, tf.read(2));
+    TEST_ASSERT_EQUAL(255, tf.read(3));
 
     // At the 25th control cycle, the EEPROM should write the value of sat designation (period=5)
     TimedControlTaskBase::control_cycle_count=25;
     tf.eeprom_controller->execute();
-    #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(5, EEPROM.read(tf.eeprom_controller->addresses.at(0)));
-    TEST_ASSERT_EQUAL(6, EEPROM.read(tf.eeprom_controller->addresses.at(1)));
-    TEST_ASSERT_EQUAL(7, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
-    TEST_ASSERT_EQUAL(255, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
-    #endif
+    TEST_ASSERT_EQUAL(5, tf.read(0));
+    TEST_ASSERT_EQUAL(6, tf.read(1));
+    TEST_ASSERT_EQUAL(7, tf.read(2));
+    TEST_ASSERT_EQUAL(255, tf.read(3));
 
     // At the 49th control cycle, the EEPROM should write the value of cycle number (period=7)
     TimedControlTaskBase::control_cycle_count=49;
     tf.eeprom_controller->execute();
-    #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(5, EEPROM.read(tf.eeprom_controller->addresses.at(0)));
-    TEST_ASSERT_EQUAL(6, EEPROM.read(tf.eeprom_controller->addresses.at(1)));
-    TEST_ASSERT_EQUAL(7, EEPROM.read(tf.eeprom_controller->addresses.at(2)));
-    TEST_ASSERT_EQUAL(8, EEPROM.read(tf.eeprom_controller->addresses.at(3)));
-    #endif
+    TEST_ASSERT_EQUAL(5, tf.read(0));
+    TEST_ASSERT_EQUAL(6, tf.read(1));
+    TEST_ASSERT_EQUAL(7, tf.read(2));
+    TEST_ASSERT_EQUAL(8, tf.read(3));
 
     // Now we pretend the satellite just rebooted. Everytime the satellite reboots, another 
     // eeprom control task is instantiated.
-    TestFixture tf2;
-    tf2.eeprom_controller->init(tf2.statefields, tf2.periods);
+    tf.save_data();
+    TestFixture tf2(false);
 
     // Check if the new eeprom controller set the statefield values to the values that 
     // were previously stored in the EEPROM
-    #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(5, tf2.eeprom_controller->pointers.at(0)->get());
-    TEST_ASSERT_EQUAL(6, tf2.eeprom_controller->pointers.at(1)->get());
-    TEST_ASSERT_EQUAL(7, tf2.eeprom_controller->pointers.at(2)->get());
-    TEST_ASSERT_EQUAL(8, tf2.eeprom_controller->pointers.at(3)->get());
-    #endif
+    TEST_ASSERT_EQUAL(5, tf2.get_ptr(0)->get());
+    TEST_ASSERT_EQUAL(6, tf2.get_ptr(1)->get());
+    TEST_ASSERT_EQUAL(7, tf2.get_ptr(2)->get());
+    TEST_ASSERT_EQUAL(8, tf2.get_ptr(3)->get());
 
     // Let the statefield values change over time.
     tf2.mission_mode_fp->set(9);
@@ -141,12 +194,10 @@ void test_task_execute() {
 
     // Check if those values were written to the EEPROM
     tf2.eeprom_controller->execute();
-    #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(9, EEPROM.read(tf2.eeprom_controller->addresses.at(0)));
-    TEST_ASSERT_EQUAL(10, EEPROM.read(tf2.eeprom_controller->addresses.at(1)));
-    TEST_ASSERT_EQUAL(11, EEPROM.read(tf2.eeprom_controller->addresses.at(2)));
-    TEST_ASSERT_EQUAL(12, EEPROM.read(tf2.eeprom_controller->addresses.at(3)));
-    #endif
+    TEST_ASSERT_EQUAL(9, tf.read(0));
+    TEST_ASSERT_EQUAL(10, tf.read(1));
+    TEST_ASSERT_EQUAL(11, tf.read(2));
+    TEST_ASSERT_EQUAL(12, tf.read(3));
 
     // Now we let a few more control cycles pass, but not a whole period for any statefield (211 is a prime number)
     TimedControlTaskBase::control_cycle_count=211;
@@ -157,13 +208,10 @@ void test_task_execute() {
 
     // Check that these values are NOT written to the EEPROM
     tf2.eeprom_controller->execute();
-    #ifndef DESKTOP
-    TEST_ASSERT_EQUAL(9, EEPROM.read(tf2.eeprom_controller->addresses.at(0)));
-    TEST_ASSERT_EQUAL(10, EEPROM.read(tf2.eeprom_controller->addresses.at(1)));
-    TEST_ASSERT_EQUAL(11, EEPROM.read(tf2.eeprom_controller->addresses.at(2)));
-    TEST_ASSERT_EQUAL(12, EEPROM.read(tf2.eeprom_controller->addresses.at(3)));
-    #endif
-
+    TEST_ASSERT_EQUAL(9, tf.read(0));
+    TEST_ASSERT_EQUAL(10, tf.read(1));
+    TEST_ASSERT_EQUAL(11, tf.read(2));
+    TEST_ASSERT_EQUAL(12, tf.read(3));
 }
 
 int test_control_task() {
@@ -174,25 +222,16 @@ int test_control_task() {
 }
 
 #ifdef DESKTOP
-
-int main() {
-    return test_control_task();
-}
-
-#else
-
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    while (!Serial) {
-    ; // wait for serial port to connect.
+    int main() {
+        return test_control_task();
     }
-    Serial.println(test_control_task());
-}
+#else
+    #include <Arduino.h>
+    void setup() {
+        delay(10000);
+        Serial.begin(9600);
+        test_control_task();
+    }
 
-void loop(){
-    
-}
-
+    void loop(){}
 #endif
