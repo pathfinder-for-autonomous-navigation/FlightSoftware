@@ -66,9 +66,9 @@ class TestFixture {
      * @param expected_mission_state 
      * @param expected_fault_state 
      */
-    void step_and_expect(mission_state_t expected_mission_state, qfh_state_t expected_fault_state) {
-        mission_state_t state = qfh->execute();
-        TEST_ASSERT_EQUAL(state, expected_mission_state);
+    void step_and_expect(fault_response_t expected_response, qfh_state_t expected_fault_state) {
+        fault_response_t response = qfh->execute();
+        TEST_ASSERT_EQUAL(response, expected_response);
         TEST_ASSERT_EQUAL(expected_fault_state, qfh->cur_state);
         cc_count++;
     }
@@ -82,7 +82,7 @@ class TestFixture {
      */
     void check_state_returns_to_unfaulted_if_radio_disabled() {
         disable_radio();
-        step_and_expect(mission_state_t::manual, qfh_state_t::unfaulted);
+        step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
     }
 
     /**
@@ -96,7 +96,7 @@ class TestFixture {
      */
     void check_state_returns_to_unfaulted_if_comms_recvd(const unsigned int state_duration) {
         cc_count = state_duration - 1;
-        step_and_expect(mission_state_t::manual, qfh_state_t::unfaulted);
+        step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
 
         // Cleanup
         cc_count = 0;
@@ -110,9 +110,9 @@ void test_qfh_transition() {
     // at which the most recent state was entered into upon
     // a state transition.
     TestFixture tf{qfh_state_t::unfaulted};
-    tf.step_and_expect(mission_state_t::manual, qfh_state_t::unfaulted);
-    tf.step_and_expect(mission_state_t::manual, qfh_state_t::unfaulted);
-    tf.step_and_expect(mission_state_t::manual, qfh_state_t::unfaulted);
+    tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
+    tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
+    tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
     TEST_ASSERT_EQUAL(0, tf.get_cur_state_entry_ccno());
     tf.transition_to(qfh_state_t::forced_standby);
     TEST_ASSERT_EQUAL(3, tf.get_cur_state_entry_ccno());
@@ -132,7 +132,7 @@ void test_qfh_unfaulted() {
         // Verify that the state machine goes back to "unfaulted".
         tf.disable_radio();
         cc_count = 2 * one_day_ccno - 1;
-        tf.step_and_expect(mission_state_t::manual, qfh_state_t::unfaulted);
+        tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
     }
 
     // If the radio is enabled, ensure that there's a transition
@@ -141,8 +141,8 @@ void test_qfh_unfaulted() {
         TestFixture tf{qfh_state_t::unfaulted};
         tf.enable_radio();
         cc_count = one_day_ccno - 1;
-        tf.step_and_expect(mission_state_t::manual, qfh_state_t::unfaulted);
-        tf.step_and_expect(mission_state_t::standby, qfh_state_t::forced_standby);
+        tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
+        tf.step_and_expect(fault_response_t::standby, qfh_state_t::forced_standby);
     }
 }
 
@@ -157,8 +157,8 @@ void test_qfh_forced_standby() {
         TestFixture tf{qfh_state_t::forced_standby};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = 2 * one_day_ccno - 1;
-        tf.step_and_expect(mission_state_t::standby, qfh_state_t::forced_standby);
-        tf.step_and_expect(mission_state_t::standby, qfh_state_t::powercycle_1);
+        tf.step_and_expect(fault_response_t::standby, qfh_state_t::forced_standby);
+        tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_1);
         tf.check_powercycled();
     }
 
@@ -187,8 +187,8 @@ void test_qfh_powercycle_1() {
         TestFixture tf{qfh_state_t::powercycle_1};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = one_day_ccno + one_day_ccno / 3 - 1;
-        tf.step_and_expect(mission_state_t::standby, qfh_state_t::powercycle_1);
-        tf.step_and_expect(mission_state_t::standby, qfh_state_t::powercycle_2);
+        tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_1);
+        tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_2);
         tf.check_powercycled();
     }
 
@@ -218,8 +218,8 @@ void test_qfh_powercycle_2() {
         TestFixture tf{qfh_state_t::powercycle_2};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = one_day_ccno + one_day_ccno / 3 - 1;
-        tf.step_and_expect(mission_state_t::standby, qfh_state_t::powercycle_2);
-        tf.step_and_expect(mission_state_t::standby, qfh_state_t::powercycle_3);
+        tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_2);
+        tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_3);
         tf.check_powercycled();
     }
 
@@ -249,8 +249,8 @@ void test_qfh_powercycle_3() {
         TestFixture tf{qfh_state_t::powercycle_3};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = one_day_ccno + one_day_ccno / 3 - 1;
-        tf.step_and_expect(mission_state_t::standby, qfh_state_t::powercycle_3);
-        tf.step_and_expect(mission_state_t::safehold, qfh_state_t::safehold);
+        tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_3);
+        tf.step_and_expect(fault_response_t::safehold, qfh_state_t::safehold);
         tf.check_not_powercycled();
     }
 
@@ -288,14 +288,14 @@ void test_qfh_safehold() {
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = one_day_ccno;
 
-        tf.step_and_expect(mission_state_t::safehold, qfh_state_t::safehold);
+        tf.step_and_expect(fault_response_t::safehold, qfh_state_t::safehold);
         cc_count += one_day_ccno / 2;
-        tf.step_and_expect(mission_state_t::safehold, qfh_state_t::safehold);
+        tf.step_and_expect(fault_response_t::safehold, qfh_state_t::safehold);
         cc_count += one_day_ccno / 2 - 1;
-        tf.step_and_expect(mission_state_t::safehold, qfh_state_t::safehold);
-        tf.step_and_expect(mission_state_t::safehold, qfh_state_t::safehold);
-        tf.step_and_expect(mission_state_t::safehold, qfh_state_t::safehold);
-        tf.step_and_expect(mission_state_t::safehold, qfh_state_t::safehold);
+        tf.step_and_expect(fault_response_t::safehold, qfh_state_t::safehold);
+        tf.step_and_expect(fault_response_t::safehold, qfh_state_t::safehold);
+        tf.step_and_expect(fault_response_t::safehold, qfh_state_t::safehold);
+        tf.step_and_expect(fault_response_t::safehold, qfh_state_t::safehold);
     }
 }
 
@@ -304,7 +304,7 @@ void test_qfh_safehold() {
 void test_qfh_undefined_state() {
     TestFixture tf;
     tf.set(100);
-    tf.step_and_expect(mission_state_t::manual, qfh_state_t::unfaulted);
+    tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
 }
 
 int test_mission_manager() {

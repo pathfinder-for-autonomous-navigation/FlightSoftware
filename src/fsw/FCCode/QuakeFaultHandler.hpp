@@ -1,8 +1,7 @@
 #ifndef quake_fault_handler_HPP_
 #define quake_fault_handler_HPP_
 
-#include "TimedControlTask.hpp"
-#include "mission_state_t.enum"
+#include "FaultHandlerMachine.hpp"
 #include "qfh_state_t.enum"
 
 /**
@@ -25,7 +24,7 @@
  * 
  * TODO unit test the shit out of this mission manager behavior.
  */
-class QuakeFaultHandler : public ControlTask<mission_state_t> {
+class QuakeFaultHandler : public FaultHandlerMachine {
   public:
     #ifdef UNIT_TEST
     friend class TestFixture;
@@ -48,7 +47,7 @@ class QuakeFaultHandler : public ControlTask<mission_state_t> {
      * safe hold if this state machine requires it, but should take
      * no action when manual is returned.
      */
-    mission_state_t execute();
+    fault_response_t execute();
 
   protected:
 
@@ -57,12 +56,12 @@ class QuakeFaultHandler : public ControlTask<mission_state_t> {
      * 
      * @return mission_state_t 
      */
-    mission_state_t dispatch_unfaulted();
-    mission_state_t dispatch_forced_standby();
-    mission_state_t dispatch_powercycle_1();
-    mission_state_t dispatch_powercycle_2();
-    mission_state_t dispatch_powercycle_3();
-    mission_state_t dispatch_safehold();
+    fault_response_t dispatch_unfaulted();
+    fault_response_t dispatch_forced_standby();
+    fault_response_t dispatch_powercycle_1();
+    fault_response_t dispatch_powercycle_2();
+    fault_response_t dispatch_powercycle_3();
+    fault_response_t dispatch_safehold();
 
     /**
      * @brief Executes a clean transition between fault states.
