@@ -71,11 +71,11 @@ class QuakeFaultHandler : public ControlTask<mission_state_t> {
      * 
      * @param next_state Next state for transition.
      */
-    void transition_to(fault_checker_state_t next_state);
+    void transition_to(qfh_state_t next_state);
 
     // Current state of fault checker DFA, and the control cycle
     // count at which it entered this state.
-    fault_checker_state_t cur_state = fault_checker_state_t::unfaulted;
+    qfh_state_t cur_state = qfh_state_t::unfaulted;
     unsigned int cur_state_entry_ccno = 0;
 
     /**
