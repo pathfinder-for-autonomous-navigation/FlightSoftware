@@ -297,9 +297,7 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_docking);
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
-
     // TODO add fault handling tests
-
     return UNITY_END();
 }
 

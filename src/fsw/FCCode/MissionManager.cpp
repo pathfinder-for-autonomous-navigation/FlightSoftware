@@ -143,6 +143,8 @@ bool MissionManager::check_adcs_hardware_faults() const {
 }
 
 void MissionManager::dispatch_startup() {
+    set(radio_state_t::disabled);
+
     // Step 1. Wait for the deployment timer length.
     if (deployment_wait_elapsed_f.get() < deployment_wait) {
         deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
@@ -152,8 +154,8 @@ void MissionManager::dispatch_startup() {
     // Step 2. Turn radio on, and check for hardware faults that would necessitate
     // going into an initialization hold. If faults exist, go into
     // initialization hold, otherwise detumble.
-    set(radio_state_t::wait);
-    if (check_adcs_hardware_faults()) {
+    set(radio_state_t::config);
+    if (false) {
         transition_to_state(mission_state_t::initialization_hold,
             adcs_state_t::detumble,
             prop_state_t::disabled);

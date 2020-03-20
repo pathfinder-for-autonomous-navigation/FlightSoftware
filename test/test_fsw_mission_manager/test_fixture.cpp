@@ -18,6 +18,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
                                     "orbit.baseline_pos", 0, 100000, 100);
 
     reboot_fp = registry.create_writable_field<bool>("gomspace.gs_reboot_cmd");
+    power_cycle_radio_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
@@ -39,6 +40,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     reboot_fp->set(false);
+    power_cycle_radio_fp->set(false);
     docked_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);

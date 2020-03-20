@@ -2,6 +2,7 @@
 #define MISSION_MANAGER_HPP_
 
 #include "TimedControlTask.hpp"
+#include "QuakeFaultHandler.hpp"
 #include "constants.hpp"
 #include <lin.hpp>
 
@@ -15,7 +16,7 @@
 
 class MissionManager : public TimedControlTask<void> {
    #ifdef UNIT_TEST
-   friend class TestFixture;
+     friend class TestFixture;
    #endif
 
    public:
