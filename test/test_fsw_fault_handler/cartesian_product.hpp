@@ -11,14 +11,14 @@
 ///////////////////////////////////////////////////////////////////
 
 // Integer exponentiation.
-template<unsigned int A, int X>
-constexpr unsigned int intpow() {
+template<size_t A, int X>
+constexpr size_t intpow() {
     static_assert(X >= 0, "This function computes an integer-valued "
                          "exponentiation and requires a positive exponent"
                          "argument.");
     static_assert(A != 0 || X > 0, "0^0 is undefined.");
 
-    unsigned int result = 1;
+    size_t result = 1;
     for(int i = X; i > 0; i--) result *= A;
     return result;
 }
@@ -28,10 +28,10 @@ constexpr unsigned int intpow() {
 //
 // Usage: A^N = NthCartesianProduct<N>::of(A);
 //
-template<unsigned int N>
+template<size_t N>
 class NthCartesianProduct {
   public:
-    template<typename T, unsigned int X>
+    template<typename T, size_t X>
     static std::vector<std::array<T, N>>
     of(const std::array<T, X>& A)
     {
@@ -41,8 +41,8 @@ class NthCartesianProduct {
 	    // Get result of current problem
         auto AtoNIt = AtoN.begin();
 	    for(const std::array<T,N-1>& An_1 : NthCartesianProduct<N-1>::of(A)) {
-	        for(unsigned int i = 0; i < X; i++, AtoNIt++) {
-                for(unsigned int j = 0; j < N - 1; j++) (*AtoNIt)[j] = An_1[j];
+	        for(size_t i = 0; i < X; i++, AtoNIt++) {
+                for(size_t j = 0; j < N - 1; j++) (*AtoNIt)[j] = An_1[j];
                 (*AtoNIt)[N-1] = A[i];
 	        }
 	    }
@@ -62,7 +62,7 @@ class NthCartesianProduct {
 template<>
 class NthCartesianProduct<0> {
   public:
-    template<typename T, unsigned int X>
+    template<typename T, size_t X>
     static std::vector<std::array<T, 0>>
     of(const std::array<T, X>& A)
     {

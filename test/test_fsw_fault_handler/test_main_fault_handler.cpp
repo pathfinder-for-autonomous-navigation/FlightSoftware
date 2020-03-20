@@ -13,6 +13,9 @@ class TestFixtureMainFH {
 
   public:
     // Input state fields to fault handler
+    std::shared_ptr<InternalStateField<unsigned char>> radio_state_fp;
+    std::shared_ptr<InternalStateField<unsigned int>> radio_last_comms_ccno_fp;
+    std::shared_ptr<WritableStateField<bool>> quake_power_cycle_cmd_fp;
     std::shared_ptr<Fault> adcs_wheel1_adc_fault_fp;
     std::shared_ptr<Fault> adcs_wheel2_adc_fault_fp;
     std::shared_ptr<Fault> adcs_wheel3_adc_fault_fp;
@@ -26,6 +29,9 @@ class TestFixtureMainFH {
 
     TestFixtureMainFH() {
         // Prepare inputs for main fault handler
+        radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
+        radio_last_comms_ccno_fp = registry.create_internal_field<unsigned int>("radio.last_comms_ccno");
+        quake_power_cycle_cmd_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
         adcs_wheel1_adc_fault_fp = registry.create_fault("adcs_monitor.wheel1_fault", 1, cc);
         adcs_wheel2_adc_fault_fp = registry.create_fault("adcs_monitor.wheel2_fault", 1, cc);
         adcs_wheel3_adc_fault_fp = registry.create_fault("adcs_monitor.wheel3_fault", 1, cc);

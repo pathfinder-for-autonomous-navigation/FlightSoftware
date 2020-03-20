@@ -4,7 +4,7 @@
 
 const unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
 
-QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry& r) : ControlTask<mission_state_t>(r) {
+QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry& r) : FaultHandlerMachine(r) {
     radio_state_fp        = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__,
                                                                   __LINE__);
