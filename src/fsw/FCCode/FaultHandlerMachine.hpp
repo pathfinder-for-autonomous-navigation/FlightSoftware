@@ -7,10 +7,6 @@
 #include <common/Fault.hpp>
 
 /**
- * @brief Response structure for fault handler state machines.
- */
-
-/**
  * @brief Abstract class for fault handler state machines, which must
  * return a recommended mission state from their execute function.
  */
