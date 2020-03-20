@@ -30,14 +30,21 @@ fault_response_t SimpleFaultHandler::determine_recommended_state() const {
 const std::vector<std::vector<mission_state_t>> SimpleFaultHandler::active_state_lists {
     // List 0 is used by the Gomspace's low-battery fault
     {
-        mission_state_t::initialization_hold, mission_state_t::detumble,
-        mission_state_t::standby, mission_state_t::follower, mission_state_t::leader,
-        mission_state_t::follower_close_approach, mission_state_t::leader_close_approach
+        mission_state_t::initialization_hold,
+        mission_state_t::detumble,
+        mission_state_t::standby,
+        mission_state_t::follower,
+        mission_state_t::leader,
+        mission_state_t::follower_close_approach,
+        mission_state_t::leader_close_approach
     },
     // List 1 is used by the ADCS and propulsion faults
     {
-        mission_state_t::standby, mission_state_t::follower, mission_state_t::leader,
-        mission_state_t::follower_close_approach, mission_state_t::leader_close_approach
+        mission_state_t::standby,
+        mission_state_t::follower,
+        mission_state_t::leader,
+        mission_state_t::follower_close_approach,
+        mission_state_t::leader_close_approach
     }
 };
 
