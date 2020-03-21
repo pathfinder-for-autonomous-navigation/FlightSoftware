@@ -27,7 +27,6 @@ matrix:
             - ./tools/run_common_software_tests.sh
             - ./tools/run_desktop_flight_tests.sh
             - ./tools/run_ground_tests.sh
-            - ./tools/count_loc.sh
         after_success:
             - ./tools/generate_coverage.sh
             - coveralls-lcov --repo-token=${COVERALLS_TOKEN} coverage.info

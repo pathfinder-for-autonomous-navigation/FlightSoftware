@@ -24,10 +24,7 @@ Event::Event(const std::string &name,
 
 Event::Event(Event &&other) : StateField<bool>(other.name(), true, false),
                               data_fields(other.data_fields),
-                              field_data(std::move(other.field_data))
-{
-    ccno = other.ccno;
-}
+                              field_data(std::move(other.field_data)) {}
 
 void Event::serialize()
 {
@@ -85,6 +82,7 @@ void Event::deserialize()
 
     for (ReadableStateFieldBase *field : data_fields)
     {
+        //bit_array field_bits = const_cast<bit_array &>(field->get_bit_array());
         bit_array field_bits;
         for (int i = 0; i < field->bitsize(); i++, field_data_ptr++)
         {

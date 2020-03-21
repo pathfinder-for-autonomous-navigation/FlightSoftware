@@ -14,8 +14,8 @@ public:
     ReadableStateField<bool> data2_f;
     std::vector<ReadableStateFieldBase *> event_data;
     ReadableStateField<unsigned int> *control_cycle_count_ptr;
-    size_t *event_ptr;
     Event event;
+    size_t *event_ptr = nullptr;
 
     static char print_data[40];
     static const char *print_fn(const unsigned int ccno, std::vector<ReadableStateFieldBase *> &data)
@@ -37,7 +37,6 @@ public:
         data2_f.set(false);
         control_cycle_count_ptr = registry.create_readable_field<unsigned int>("pan.cycle_no").get();
         event.ccno = control_cycle_count_ptr;
-        event_ptr = NULL;
     }
 };
 
@@ -51,37 +50,57 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
     // Set values for test
     tf.control_cycle_count_ptr->set(ccno);
     tf.data1_f.set(true);
-
-    //std::cout << "first tf.data1_f " << tf.data1_f.get() << std::endl;
-    //std::cout << "first ba[32] " << ba[32] << std::endl;
-
     tf.data2_f.set(false);
+
+    //save pointer before signaling
+    size_t event_ptr_prev;
+    size_t event_ptr_curr;
 
     // Verify that upon serialization, the values are written into the event's bitset in the way
     // that we would expect
+    if (tf.event_ptr != nullptr)
+    {
+        event_ptr_prev = *tf.event_ptr;
+    }
     event.signal();
-    if (tf.event_ptr != NULL)
-        (*tf.event_ptr)--;
+    if (tf.event_ptr != nullptr)
+    {
+        event_ptr_curr = *tf.event_ptr;
+        *tf.event_ptr = event_ptr_prev;
+    }
     bit_array &ba = const_cast<bit_array &>(event.get_bit_array());
     TEST_ASSERT_EQUAL(ccno, ba.to_uint());
     TEST_ASSERT_EQUAL(true, ba[32]);
     TEST_ASSERT_EQUAL(false, ba[33]);
+    if (tf.event_ptr != nullptr)
+    {
+        *tf.event_ptr = event_ptr_curr;
+    }
 
     // Test that changes in the event values are picked up
     tf.data1_f.set(false);
     tf.data2_f.set(true);
+    if (tf.event_ptr != nullptr)
+    {
+        event_ptr_prev = *tf.event_ptr;
+    }
     event.signal();
-    if (tf.event_ptr != NULL)
-        (*tf.event_ptr)--;
+    if (tf.event_ptr != nullptr)
+    {
+        event_ptr_curr = *tf.event_ptr;
+        *tf.event_ptr = event_ptr_prev;
+    }
     ba = const_cast<bit_array &>(event.get_bit_array());
     TEST_ASSERT_EQUAL(false, ba[32]);
     TEST_ASSERT_EQUAL(true, ba[33]);
-
+    if (tf.event_ptr != nullptr)
+    {
+        *tf.event_ptr = event_ptr_curr;
+    }
     // Test that the event is correctly printed when a print is requested.
     const char *print_result = event.print();
     const char *expected_fmt_string = "E: time: %d, data: 0, 1";
     char expected_string[100];
-    memset(expected_string, 0, 100);
     sprintf(expected_string, expected_fmt_string, ccno);
     TEST_ASSERT_EQUAL_STRING(expected_string, print_result);
 }
@@ -123,9 +142,8 @@ void test_event_storage()
     // Event storage should behave the same as an event.
     for (int i = 0; i < 200; i++)
     {
-        //printf("%d\n", i);
+        TEST_ASSERT_EQUAL((2 * i) % 99, *tf.event_ptr); //event signaled twice per single event, storage size 99
         test_single_event(tf, tf.event_storage, i);
-        //TEST_ASSERT_EQUAL(i * 2, tf.event_storage.event_ptr);
     }
 }
 

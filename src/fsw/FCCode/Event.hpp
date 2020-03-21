@@ -10,45 +10,45 @@
 class EventBase
 {
 public:
-   /**
+  /**
      * @brief The signal method should be called to indicate
      * that the event is occurred. Definitions of this function
      * should pull data from the event's related state fields and store
      * them into the event's bitset.
      */
-   virtual void signal() = 0;
+  virtual void signal() = 0;
 
-   /**
+  /**
      * @brief Store the event's bitset into the event's fields' data
      * so that it can be retrieved by ground software for parsing.
      */
-   virtual void deserialize() = 0;
+  virtual void deserialize() = 0;
 
-   /**
+  /**
      * @brief Get bitsize of contained bitset.
      */
-   virtual size_t bitsize() const = 0;
+  virtual size_t bitsize() const = 0;
 
-   /**
+  /**
      * @brief Get the contained bitset.
      * 
      * @return const bit_array& 
      */
-   virtual const bit_array &get_bit_array() const = 0;
+  virtual const bit_array &get_bit_array() const = 0;
 
-   /**
+  /**
      * @brief Set the contained bitset.
      * 
      * @param arr 
      */
-   virtual void set_bit_array(const bit_array &arr) = 0;
+  virtual void set_bit_array(const bit_array &arr) = 0;
 
-   /**
+  /**
      * @brief Print event data to a string.
      * 
      * @return const char* The string.
      */
-   virtual const char *print() const = 0;
+  virtual const char *print() const = 0;
 };
 
 /**
@@ -58,7 +58,7 @@ public:
 class Event : public StateField<bool>, public ReadableStateFieldBase, public EventBase
 {
 public:
-   /**
+  /**
      * @brief Construct a new Event object
      * 
      * @param name Name of event.
@@ -66,41 +66,41 @@ public:
      * @param _print_fn Function for printing data about the event.
      * @param int Reference to control cycle count.
      */
-   Event(const std::string &name,
-         std::vector<ReadableStateFieldBase *> &_data_fields,
-         const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &));
+  Event(const std::string &name,
+        std::vector<ReadableStateFieldBase *> &_data_fields,
+        const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &));
 
-   /**
+  /**
      * @brief Move constructor, required for EventStorage.
      * 
      * @param other 
      */
-   Event(Event &&other);
+  Event(Event &&other);
 
 public:
-   // Functions from the EventBase interface.
-   void signal() override;
-   void deserialize() override;
-   size_t bitsize() const override;
-   const bit_array &get_bit_array() const override;
-   void set_bit_array(const bit_array &arr) override;
-   bool deserialize(const char *val) override;
-   const char *print() const override;
+  // Functions from the EventBase interface.
+  void signal() override;
+  void deserialize() override;
+  size_t bitsize() const override;
+  const bit_array &get_bit_array() const override;
+  void set_bit_array(const bit_array &arr) override;
+  bool deserialize(const char *val) override;
+  const char *print() const override;
 
-   static ReadableStateField<unsigned int> *ccno;
+  static ReadableStateField<unsigned int> *ccno;
 
-   virtual ~Event() {}
+  virtual ~Event() {}
 
 private:
-   std::vector<ReadableStateFieldBase *> &data_fields;
-   std::unique_ptr<bit_array> field_data;
-   const char *(*print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &);
+  std::vector<ReadableStateFieldBase *> &data_fields;
+  std::unique_ptr<bit_array> field_data;
+  const char *(*print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &);
 
-   // Disable state field functions.
-   using StateField<bool>::set;
-   using StateField<bool>::get;
+  // Disable state field functions.
+  using StateField<bool>::set;
+  using StateField<bool>::get;
 
-   void serialize() override;
+  void serialize() override;
 };
 
 #endif

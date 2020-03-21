@@ -1,6 +1,5 @@
 #include "EventStorage.hpp"
 #include <string>
-#include <iostream>
 
 EventStorage::EventStorage(const std::string &name,
                            const unsigned int storage_size,
@@ -55,7 +54,6 @@ void EventStorage::set_bit_array(const bit_array &arr)
 
 void EventStorage::signal()
 {
-    //std::cout << event_ptr << std::endl;
     sub_events[event_ptr].signal();
     event_ptr++;
     if (event_ptr == sub_events.size())
