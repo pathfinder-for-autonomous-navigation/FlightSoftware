@@ -1,19 +1,19 @@
 # Mct-Mission-Control
 
-This Mission control API uses the visual elements of the openMCT data visualization program to display telemetry data for the two leader and follower satellites. Open MCT supports receiving telemetry by requesting data from a telemetry store, and by subscribing to real-time telemetry updates. 
+This Mission control API uses the visual elements of the openMCT data visualization program to display telemetry data for the two leader and follower satellites. Open MCT supports receiving telemetry by requesting data from a telemetry store, and by subscribing to real-time telemetry updates.
 
-The openMCT web server is run using the **"npm start"** command in terminal after navigating to the /MCT directory.
+The openMCT web server is run using the **"npm start"** command in terminal after navigating to the /MCT directory and installing the node.js modules with **"npm install"**.
 
 In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the openMCT display.
 ![Object Tree](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/object-tree.png)
 
 # Setting up a new Taxonomy or Telemetry point
-In this implementation a Taxonomy point is defined as an object that containts a collection of telemetry points. (ex. a spacecraft object) A new Taxonomy point is created using the *openmct.objects.addRoot( )* function, which takes a javascript object as a parameter. 
+In this implementation a Taxonomy point is defined as an object that containts a collection of telemetry points. (ex. a spacecraft object) A new Taxonomy point is created using the *openmct.objects.addRoot( )* function, which takes a javascript object as a parameter.
 
 This is modeled below with our satellite object with namespace 'sat.taxonomy' and a key 'spacecraft'.
 ![addRoot function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/add-Root.png)
 
-A new Telemetry point is added after a Taxonomy point is added and serves as the child object to the root (the satellite). This object is added using the openmct.objects.addType( ) function which also takes a JS object as a parameter. 
+A new Telemetry point is added after a Taxonomy point is added and serves as the child object to the root (the satellite). This object is added using the openmct.objects.addType( ) function which also takes a JS object as a parameter.
 
 In the example below, we have a name and description field for the object and also a cssClass field which allows it to be displayed on the openmct visualization.
 ![addType function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/add-Type.png)
@@ -42,7 +42,7 @@ The request( ) function makes an HTTP request to a historical database and then 
 
 # The Dictionary Plugin
 (dictionary-plugin.js)
-This script analyzes the json file that holds the domain object for the satellite and the subobjects that describe each telemetry point of the satellite. 
+This script analyzes the json file that holds the domain object for the satellite and the subobjects that describe each telemetry point of the satellite.
 There are three main functions in this file, get( ), load( ), and  DictionaryPlugin( ).
 
 get( ) takes the dictionary.json file as input and gets each identifier inside of the satellite domain object and constructs a new child object for each attribute of the original parent object (the satellite).
@@ -58,7 +58,7 @@ It also calls the openmct.install( ) function to instantiate the visual aspect o
 
 # Main method and Server-files
 
-The main method that is called when openMCT is started is **server.js** which is located in the server-files folder which also contains three server files that provide realtime and historical data collection. These are the history-server.js, realtime-server.js, and static-server.js files. 
+The main method that is called when openMCT is started is **server.js** which is located in the server-files folder which also contains three server files that provide realtime and historical data collection. These are the history-server.js, realtime-server.js, and static-server.js files.
 
 The main script, server.js, instantiates these files and calls them to start each respective server and subscribe to updates from the historical and realtime telemetry plugins.
 
@@ -79,6 +79,4 @@ The listener field is notified every time telemetry data is generated.
 
 The generateTelemetry( ) function is the most important method of spacecraft.js as it interacts with each field inside the spacecraft.js file and creates data for the openMCT server to then catch and display.
 ![Telemetry function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/generate-telemetry.png)
-This function takes a measurement of spacecraft state, stores it in history{ }, and notifies listeners[ ] using the *Spacecraft.prototype.notify* function. 
-
-
+This function takes a measurement of spacecraft state, stores it in history{ }, and notifies listeners[ ] using the *Spacecraft.prototype.notify* function.
