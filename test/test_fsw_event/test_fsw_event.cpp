@@ -97,6 +97,7 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
     {
         *tf.event_ptr = event_ptr_curr;
     }
+
     // Test that the event is correctly printed when a print is requested.
     const char *print_result = event.print();
     const char *expected_fmt_string = "E: time: %d, data: 0, 1";

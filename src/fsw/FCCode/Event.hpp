@@ -18,11 +18,13 @@ public:
      */
   virtual void signal() = 0;
 
+#if defined(GSW) || defined(UNIT_TEST)
   /**
      * @brief Store the event's bitset into the event's fields' data
      * so that it can be retrieved by ground software for parsing.
      */
   virtual void deserialize() = 0;
+#endif
 
   /**
      * @brief Get bitsize of contained bitset.
@@ -36,6 +38,7 @@ public:
      */
   virtual const bit_array &get_bit_array() const = 0;
 
+#if defined(GSW) || defined(UNIT_TEST)
   /**
      * @brief Set the contained bitset.
      * 
@@ -49,6 +52,7 @@ public:
      * @return const char* The string.
      */
   virtual const char *print() const = 0;
+#endif
 };
 
 /**
