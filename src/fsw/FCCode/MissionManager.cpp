@@ -155,7 +155,7 @@ void MissionManager::dispatch_startup() {
     // going into an initialization hold. If faults exist, go into
     // initialization hold, otherwise detumble.
     set(radio_state_t::config);
-    if (false) {
+    if (check_adcs_hardware_faults()) {
         transition_to_state(mission_state_t::initialization_hold,
             adcs_state_t::detumble,
             prop_state_t::disabled);
