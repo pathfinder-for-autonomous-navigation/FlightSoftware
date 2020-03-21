@@ -23,7 +23,6 @@ void MainFaultHandler::init() {
         find_fault("adcs_monitor.wheel2_fault", __FILE__, __LINE__),
         find_fault("adcs_monitor.wheel3_fault", __FILE__, __LINE__),
         find_fault("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__),
-        find_fault("prop.failed_pressurize", __FILE__, __LINE__),
         find_fault("prop.overpressured", __FILE__, __LINE__)
     };
 
