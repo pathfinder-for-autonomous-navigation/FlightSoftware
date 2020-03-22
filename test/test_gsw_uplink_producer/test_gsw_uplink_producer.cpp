@@ -6,7 +6,6 @@
 #include <unity.h>
 #include <fstream>
 #include <json.hpp>
-#include <iostream>
 
 #define TEST_ASSERT_THROW(x){try{x;TEST_ASSERT_TRUE(0);}catch(const std::exception& e){TEST_ASSERT_TRUE(1);}}
 #define TEST_ASSERT_NO_THROW(x){try{x;TEST_ASSERT_TRUE(1);}catch(const std::exception& e){TEST_ASSERT_TRUE(0);}}
