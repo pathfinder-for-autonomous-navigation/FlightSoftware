@@ -45,7 +45,7 @@ bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json
     // value that the field can be set to
     size_t field_index=field_map[key];
     uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
-    if (val > max_val) {
+    if (static_cast<unsigned int>(val) > max_val) {
         throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
         return false;
     }
@@ -154,7 +154,7 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
         // Start writing at the beginning of the bitstream
         bs.reset();
         memset(bs.stream, 0, bs.max_len);
-        
+
         for (auto& e : j.items())
         {
             if (!bs.has_next())
