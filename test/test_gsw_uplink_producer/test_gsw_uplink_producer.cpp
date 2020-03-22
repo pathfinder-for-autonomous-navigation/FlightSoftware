@@ -54,7 +54,7 @@ void test_create_from_json() {
     size_t arr_size = tf.uplink_producer->get_max_possible_packet_size();
     char tmp [arr_size];
     bitstream bs(tmp, arr_size);
-    tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_1.json");
+    TEST_ASSERT_NO_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_1.json"));
     tf.uplink_producer->_update_fields(bs);
     tf.check_json_registry("test/test_gsw_uplink_producer/test_1.json");
 }
