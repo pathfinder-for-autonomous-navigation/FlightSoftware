@@ -6,9 +6,6 @@
 #include <json.hpp>
 #include <exception>
 
-#include <type_traits>
-#include <typeinfo>
-
 UplinkProducer::UplinkProducer(StateFieldRegistry& r):
     Uplink(r),
     fcp(registry, PAN::flow_data, PAN::statefields, PAN::periods)
@@ -30,7 +27,7 @@ UnderlyingType find_value(nlohmann::json j, std::string name) {
     for (auto& e : j.items()) {
         if (e.key() == name) return e.value();
     }
-    throw std::runtime_error("cannot find value of " + name + " in json object");
+    throw std::runtime_error("cannot find value of " + name + " in statefield registry");
 }
 
 template<typename UnderlyingType>
@@ -40,7 +37,7 @@ bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json
 
     // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the value of the key
     if (!ptr) return false;
-    auto val = find_value<uint64_t>(j, key);
+    uint64_t val = find_value<uint64_t>(j, key);
     ptr->set(val);
     ptr->serialize();
 
@@ -66,7 +63,7 @@ bool UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohman
 
     // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the values of the key
     if (!ptr) return false;
-    auto vals = find_value<std::array<uint64_t, 3>>(j, key);
+    std::array<uint64_t, 3> vals = find_value<std::array<uint64_t, 3>>(j, key);
     size_t field_index=field_map[key];
 
     ptr->set({static_cast<UnderlyingType>(vals.at(0)), static_cast<UnderlyingType>(vals.at(1)), static_cast<UnderlyingType>(vals.at(2))});
@@ -127,7 +124,7 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
         
         for (auto& e : j.items())
         {
-            if (!bs.has_next()) 
+            if (!bs.has_next())
                 throw std::runtime_error("bitstream is not large enough");
 
             // Check whether the requested field exists

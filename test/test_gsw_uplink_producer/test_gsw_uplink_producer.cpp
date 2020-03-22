@@ -1,7 +1,7 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #define DEBUG
-#include <gsw/UplinkProducer.h>
+#include <gsw/parsers/src/UplinkProducer.h>
 
 #include <unity.h>
 #include <fstream>
@@ -40,7 +40,7 @@ class TestFixture {
           size_t field_index = uplink_producer->field_map[key];
           // std::cout << "Checking " << key << " at index " << field_index << std::endl;
           auto ef = registry.writable_fields[field_index]->get_bit_array().to_ulong();
-          TEST_ASSERT_EQUAL(e.value(), ef); 
+          TEST_ASSERT_EQUAL(e.value(), ef);
       }
     }
 };

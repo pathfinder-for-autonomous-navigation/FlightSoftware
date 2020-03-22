@@ -56,7 +56,7 @@ class UplinkProducer : public Uplink{
 
     /**
      * Helper function for add_field_to_bitstream.
-     * Check that the field/key of a given type is in the statefield registry.
+     * Check that the vector statefield of a given type is in the statefield registry.
      * If it is, add the value of the field/key to the bitstream
      */
     template<typename UnderlyingType>
@@ -64,7 +64,7 @@ class UplinkProducer : public Uplink{
 
     /**
      * Helper function for add_field_to_bitstream.
-     * Check that the field/key of a given type is in the statefield registry.
+     * Check that the quaternion statefield of a given type is in the statefield registry.
      * If it is, add the value of the field/key to the bitstream
      */
     template<typename UnderlyingType>
