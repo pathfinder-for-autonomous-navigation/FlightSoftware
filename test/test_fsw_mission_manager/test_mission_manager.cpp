@@ -11,6 +11,7 @@ void test_valid_initialization() {
     TEST_ASSERT_EQUAL(100, tf.close_approach_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(0.4, tf.docking_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.max_radio_silence_duration_fp->get());
+    TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.docking_timeout_limit_fp->get());
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
     TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
     TEST_ASSERT_EQUAL(0, tf.deployment_wait_elapsed_fp->get());
@@ -197,6 +198,44 @@ void test_dispatch_docking() {
     tf.docked_fp->set(true);
     tf.step();
     tf.check(mission_state_t::docked);
+
+    TestFixture tf2(mission_state_t::docking);
+    tf2.step();
+
+    // Check that the system is not docked
+    TEST_ASSERT_FALSE(tf2.docked_fp->get());
+
+    // Let a half day pass
+    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno);
+    tf2.step();
+
+    // Check that mission manager is still in a docking state
+    tf2.check(mission_state_t::docking);
+
+    // Let a nearly a full day pass
+    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno-1);
+    tf2.step();
+
+    // Check that mission manager is still in a docking state
+    tf2.check(mission_state_t::docking);
+
+    // Let a full day pass
+    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno);
+    tf2.step();
+
+    // Check that mission manager moves to standby
+    tf2.check(mission_state_t::standby);
+
+    // Even if a significant amount of time passes, mission managaer should still move to 
+    // docked when the switch is pressed
+    TestFixture tf3(mission_state_t::docking);
+    tf3.step();
+
+    tf3.docked_fp->set(true);
+    tf3.set_ccno(MissionManager::control_cycle_count+5*PAN::one_day_ccno);
+    tf3.step();
+
+    tf3.check(mission_state_t::docked);
 }
 
 void test_dispatch_safehold() {
@@ -247,107 +286,6 @@ void test_dispatch_undefined() {
     tf.check(mission_state_t::safehold);
 }
 
-#include <iostream>
-
-void test_power_prop_adcs_faults_responsive() {
-    // Any single one of the power and ADCS fault flags
-    // should cause a transition to safehold if we're
-    // in one of the fault-responsive states (see MissionManager.hpp).
-    //
-    // Prop pressurization fault should cause a transition to standby.
-    //
-    for(mission_state_t state : MissionManager::fault_responsive_states) {
-        std::array<TestFixture, 6> tf_v {
-            TestFixture(state), TestFixture(state), TestFixture(state),
-            TestFixture(state), TestFixture(state), TestFixture(state)
-        };
-        tf_v[0].low_batt_fault_fp->override();
-        tf_v[1].adcs_functional_fault_fp->override();
-        tf_v[2].wheel1_adc_fault_fp->override();
-        tf_v[3].wheel2_adc_fault_fp->override();
-        tf_v[4].wheel3_adc_fault_fp->override();
-        tf_v[5].wheel_pot_fault_fp->override();
-        for(TestFixture& tf : tf_v) {
-            tf.step();
-            tf.check(mission_state_t::safehold);
-        }
-    }
-    for(mission_state_t state : MissionManager::fault_responsive_states) {
-        TestFixture tf(state);
-        tf.failed_pressurize_fp->override();
-        tf.step();
-        tf.check(mission_state_t::standby);
-    }
-
-    // If an ADCS/power fault happens and a prop fault also happens, the ADCS fault
-    // takes precedence in sending the satellite to standby.
-    //
-    // ADCS fault takes precedence over prop fault
-    {
-        TestFixture tf(mission_state_t::standby);
-        tf.wheel1_adc_fault_fp->override();
-        tf.failed_pressurize_fp->override();
-        tf.step();
-        tf.check(mission_state_t::safehold);
-    }
-    // Power fault takes precedence over prop fault
-    {
-        TestFixture tf(mission_state_t::standby);
-        tf.low_batt_fault_fp->override();
-        tf.failed_pressurize_fp->override();
-        tf.step();
-        tf.check(mission_state_t::safehold);
-    }
-}
-
-void test_power_prop_adcs_faults_nonresponsive() {
-    // The fault flags don't cause safehold if the mission
-    // is currently in one of the fault-nonresponsive states
-    // See MissionManager.hpp for a definition of these states.
-
-    for(mission_state_t state : MissionManager::fault_nonresponsive_states) {
-        std::array<TestFixture, 6> tf_v {
-            TestFixture(state), TestFixture(state), TestFixture(state),
-            TestFixture(state), TestFixture(state), TestFixture(state)
-        };
-        tf_v[0].low_batt_fault_fp->override();
-        tf_v[1].adcs_functional_fault_fp->override();
-        tf_v[2].wheel1_adc_fault_fp->override();
-        tf_v[3].wheel2_adc_fault_fp->override();
-        tf_v[4].wheel3_adc_fault_fp->override();
-        tf_v[5].wheel_pot_fault_fp->override();
-        for(TestFixture& tf : tf_v) {
-            tf.step();
-            tf.check(state);
-        }
-    }
-    for(mission_state_t state : MissionManager::fault_nonresponsive_states) {
-        TestFixture tf(state);
-        tf.failed_pressurize_fp->override();
-        tf.step();
-        tf.check(state);
-    }
-}
-
-void test_adcs_faults_inithold() {
-    // Any ADCS fault should cause a transition to initialization
-    // hold if the satellite is in startup past its
-    // deployment wait period.
-    {
-        std::array<TestFixture, 5> tf_v;
-        tf_v[0].adcs_functional_fault_fp->override();
-        tf_v[1].wheel1_adc_fault_fp->override();
-        tf_v[2].wheel2_adc_fault_fp->override();
-        tf_v[3].wheel3_adc_fault_fp->override();
-        tf_v[4].wheel_pot_fault_fp->override();
-        for(TestFixture& tf : tf_v) {
-            tf.deployment_wait_elapsed_fp->set(MissionManager::deployment_wait);
-            tf.step();
-            tf.check(mission_state_t::initialization_hold);
-        }
-    }
-}
-
 int test_mission_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
@@ -359,10 +297,6 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_docking);
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
-
-    RUN_TEST(test_power_prop_adcs_faults_responsive);
-    RUN_TEST(test_power_prop_adcs_faults_nonresponsive);
-    RUN_TEST(test_adcs_faults_inithold);
 
     return UNITY_END();
 }

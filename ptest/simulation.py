@@ -5,6 +5,7 @@
 
 import time, timeit
 import math
+import platform
 import threading
 import os
 if "CI" not in os.environ:
@@ -40,12 +41,12 @@ class Simulation(object):
         self.flight_controller_leader = self.devices['FlightControllerLeader']
         self.flight_controller_follower = self.devices['FlightControllerFollower']
 
-    def start(self, duration):
+    def start(self):
         '''
         Start the MATLAB simulation. This function is blocking until the simulation begins.
         '''
 
-        self.sim_duration = duration
+        self.sim_duration = self.testcase.sim_duration
         self.sim_time = 0
         self.sim_thread = threading.Thread(name="Python-MATLAB Simulation Interface",
                                            target=self.run)
@@ -53,7 +54,7 @@ class Simulation(object):
         self.add_to_log("Running testcase initialization...")
         self.testcase.setup_case(self)
 
-        if self.testcase.run_sim:
+        if self.testcase.sim_duration > 0:
             self.add_to_log("Configuring simulation (please be patient)...")
             start_time = timeit.default_timer()
             self.running = True
@@ -65,6 +66,8 @@ class Simulation(object):
             self.sim_thread.start()
         else:
             self.add_to_log("Not running simulation since the testcase doesn't require it.")
+            self.running = False
+            self.testcase.run_case()
 
     def add_to_log(self, msg):
         if self.print_log:
@@ -77,15 +80,20 @@ class Simulation(object):
             os.path.dirname(os.path.abspath(__file__)), "../lib/common/psim/MATLAB")
         self.eng.addpath(path, nargout=0)
 
+        if ((platform.system() == 'Darwin' and not os.path.exists("geograv_wrapper.mexmaci64"))
+            or (platform.system() == 'Linux' and not os.path.exists("geograv_wrapper.mexa64"))
+            or (platform.system() == 'Windows' and not os.path.exists("geograv_wrapper.mexw64"))
+        ):
+            self.eng.install(nargout=0)
         self.eng.config(nargout=0)
         self.eng.generate_mex_code(nargout=0)
         self.eng.eval("global const", nargout=0)
 
-        self.main_state = self.eng.initialize_main_state(self.seed, 'detumbled', nargout=1)
-        self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states('detumbled', nargout=2)
+        self.main_state = self.eng.initialize_main_state(self.seed, self.testcase.sim_initial_state, nargout=1)
+        self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.testcase.sim_initial_state, nargout=2)
         self.main_state_trajectory = []
 
-        self.eng.workspace['const']['dt'] = 120e6  # Control cycle time = 120 ms = 120e6 ns
+        self.eng.workspace['const']['dt'] = 170e6  # Control cycle time in HOOTL/HITL = 170 ms = 170e6 ns
         self.dt = self.eng.workspace['const']['dt'] * 1e-9  # 120 ms
 
     def run(self):
@@ -93,7 +101,10 @@ class Simulation(object):
         Runs the simulation for the time interval specified in start().
         """
 
-        num_steps = int(self.sim_duration / self.dt)
+        if self.sim_duration != float("inf"):
+            num_steps = int(self.sim_duration / self.dt) 
+        else:
+            num_steps = float("inf")
         sample_rate = int(10.0 / self.dt) # Sample once every ten seconds
         step = 0
 
@@ -118,7 +129,7 @@ class Simulation(object):
             # Step 3.2. Send inputs, read outputs from Flight Computer
             self.interact_fc()
             # Step 3.3. Allow test case to do its own meddling with the flight computer.
-            self.testcase.run_case(self)
+            self.testcase.run_case()
 
             # Step 5. Command actuators in simulation
             self.main_state = main_state_promise.result()
@@ -156,8 +167,7 @@ class Simulation(object):
         """Write the inputs required for ADCS state estimation."""
 
         # Convert mission time to GPS time
-        current_gps_time = GPSTime(sensor_readings["time"])
-        current_gps_time.wn += int(self.eng.workspace['const']['INITGPS_WN'])
+        current_gps_time = GPSTime(self.sim_time)
 
         # Clean up sensor readings to be in a format usable by Flight Software
         position_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["position_ecef"]])

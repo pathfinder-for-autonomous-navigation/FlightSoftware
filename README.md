@@ -35,7 +35,7 @@ The binaries end up in `.pio/build`.
 
 Install `ptest` via the guide in the README in [ptest](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/tree/master/ptest), and then run from this directory, and with a virtual environment activated:
 
-      python -m ptest.run_simulation -c CONFIGFILE -t TESTCASE
+      python -m ptest runsim -c CONFIGFILE -t TESTCASE
 
 ## Testing ADCS software
 

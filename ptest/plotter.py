@@ -141,7 +141,7 @@ class PlotterClient(cmd.Cmd):
         """Exits the plotter."""
         sys.exit(0)
 
-if __name__ == "__main__":
+def main(args):
     if sys.version_info[0] != 3 or sys.version_info[1] < 6:
         print("Running this script requires Python 3.6 or above.")
         sys.exit(1)
@@ -155,7 +155,7 @@ if __name__ == "__main__":
         '''Location of data telemetry file, relative to the current working directory.''',
         required=True)
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     try:
         fp = open(args.data, "r")

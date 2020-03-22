@@ -29,8 +29,10 @@ class TestFixture {
     std::shared_ptr<ReadableStateField<d_vector_t>> propagated_baseline_pos_fp;
 
     std::shared_ptr<WritableStateField<bool>> reboot_fp;
+    std::shared_ptr<WritableStateField<bool>> power_cycle_radio_fp;
 
     std::shared_ptr<ReadableStateField<bool>> docked_fp;
+    //std::shared_ptr<InternalStateField<unsigned int>> enter_docking_cycle_fp;
 
     std::shared_ptr<Fault> low_batt_fault_fp;
     std::shared_ptr<Fault> adcs_functional_fault_fp;
@@ -41,11 +43,13 @@ class TestFixture {
     std::shared_ptr<Fault> failed_pressurize_fp;
 
     std::unique_ptr<MissionManager> mission_manager;
+
     // Output state fields from mission manager
     WritableStateField<double>* detumble_safety_factor_fp;
     WritableStateField<double>* close_approach_trigger_dist_fp;
     WritableStateField<double>* docking_trigger_dist_fp;
     WritableStateField<unsigned int>* max_radio_silence_duration_fp;
+    WritableStateField<unsigned int>* docking_timeout_limit_fp;
     WritableStateField<unsigned char>* adcs_state_fp;
     WritableStateField<bool>* docking_config_cmd_fp;
     WritableStateField<unsigned char>* mission_state_fp;
