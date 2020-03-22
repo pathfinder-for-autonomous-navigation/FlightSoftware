@@ -39,8 +39,13 @@ class TestFixture {
           // Get the field's index in writable_fields
           size_t field_index = uplink_producer->field_map[key];
           // std::cout << "Checking " << key << " at index " << field_index << std::endl;
-          auto ef = registry.writable_fields[field_index]->get_bit_array().to_ulong();
-          TEST_ASSERT_EQUAL(e.value(), ef);
+          if (key=="adcs.compute.vec1.desired") {
+              WritableStateField<f_vector_t>* ptr = dynamic_cast<WritableStateField<f_vector_t>*>(registry.find_writable_field(key));
+          } else {
+              auto ef = registry.writable_fields[field_index]->get_bit_array().to_ulong();
+              TEST_ASSERT_EQUAL(e.value(), ef);
+          }
+          
       }
     }
 };

@@ -25,12 +25,10 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r):
     }
  }
 
-uint64_t find_value(nlohmann::json j, std::string name) {
+template<typename UnderlyingType>
+UnderlyingType find_value(nlohmann::json j, std::string name) {
     for (auto& e : j.items()) {
-        std::string key = e.key();
-        if (key == name) {
-            return e.value();
-        }
+        if (e.key() == name) return e.value();
     }
     throw std::runtime_error("cannot find value of " + name + " in json object");
 }
@@ -39,9 +37,10 @@ template<typename UnderlyingType>
 bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     WritableStateField<UnderlyingType>* ptr = dynamic_cast<WritableStateField<UnderlyingType>*>(registry.find_writable_field(key));
+
     // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the value of the key
     if (!ptr) return false;
-    auto val = find_value(j, key);
+    auto val = find_value<uint64_t>(j, key);
     ptr->set(val);
     ptr->serialize();
 
@@ -59,6 +58,35 @@ bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json
     return true;
 }
 
+template<typename UnderlyingType>
+bool UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohmann::json j) {
+    // Get pointer to that field in the registry
+    using UnderlyingVectorType = std::array<UnderlyingType, 3>;
+    WritableStateField<UnderlyingVectorType>* ptr = dynamic_cast<WritableStateField<UnderlyingVectorType>*>(registry.find_writable_field(key));
+
+    // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the values of the key
+    if (!ptr) return false;
+    auto vals = find_value<std::array<uint64_t, 3>>(j, key);
+    size_t field_index=field_map[key];
+
+    ptr->set({static_cast<UnderlyingType>(vals.at(0)), static_cast<UnderlyingType>(vals.at(1)), static_cast<UnderlyingType>(vals.at(2))});
+    ptr->serialize();
+
+    // Make sure the value we want to set does not exceed the max possible
+    // value that the field can be set to
+    for (auto val : vals) {
+        uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
+        if (val > max_val) {
+            throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
+            return false;
+        }
+    }
+
+    // Add the updated value to the bitstream
+    add_entry(bs, ptr->get_bit_array(), field_index);
+    return true;
+}
+
 bool UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j) {
     bool found_field_type = false;
     found_field_type |= try_add_field<unsigned int>(bs, key, j);
@@ -68,6 +96,8 @@ bool UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohm
     found_field_type |= try_add_field<float>(bs, key, j);
     found_field_type |= try_add_field<double>(bs, key, j);
     found_field_type |= try_add_field<bool>(bs, key, j);
+    found_field_type |= try_add_vector_field<float>(bs, key, j);
+    found_field_type |= try_add_vector_field<double>(bs, key, j);
     return found_field_type;
 }
 
@@ -85,7 +115,6 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
         
         for (auto& e : j.items())
         {
-            // why does this error happen?
             if (!bs.has_next()) 
                 throw std::runtime_error("bitstream is not large enough");
 
@@ -93,20 +122,6 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
             std::string key = e.key();
             if (field_map.find(key) == field_map.end())
                 throw std::runtime_error("field map key not found: " + key);
-
-            //uint64_t val = e.value();
-
-            // Get the field's index in writable_fields
-            //size_t field_index = field_map[key];
-
-            // Make sure the value we want to set does not exceed the max possible
-            // value that the field can be set to
-            // uint64_t val = e.value();
-            // uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
-            // if (val > max_val)
-            //     throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
-
-            // add_entry(bs, reinterpret_cast<char*>(&val), field_index);
 
             add_field_to_bitstream(bs, key, j);
         } 
