@@ -97,12 +97,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 void MissionManager::execute() {
     mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
-    // Step 1. Disable radio if in startup.
-    if (state == mission_state_t::startup) {
-        set(radio_state_t::disabled);
-    }
-
-    // Step 2. Change state if faults exist.
+    // Step 1. Change state if faults exist.
     const fault_response_t fault_response = main_fault_handler->execute();
     if (fault_response == fault_response_t::safehold) {
         transition_to_state(mission_state_t::safehold, adcs_state_t::zero_torque, prop_state_t::disabled);
@@ -113,7 +108,7 @@ void MissionManager::execute() {
         return;
     }
 
-    // Step 3. Handle state.
+    // Step 2. Handle state.
     switch(state) {
         case mission_state_t::startup:                    dispatch_startup();                    break;
         case mission_state_t::detumble:                   dispatch_detumble();                   break;
