@@ -1,6 +1,3 @@
-// REMOVE BEFORE FLIGHT "RESET" CODE
-// Resets satellite to original configuration prior to flight.
-
 #include <Arduino.h>
 
 #ifndef UNIT_TEST
