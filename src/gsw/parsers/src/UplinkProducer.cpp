@@ -30,7 +30,8 @@ bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json
     // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the value of the key
     if (!ptr) return false;
     UnderlyingType val = j[key];
-    
+
+    // Check that the value specified in the JSON file is within that serializer bounds of the statefield
     UnderlyingType min = ptr->get_serializer_min();
     UnderlyingType max = ptr->get_serializer_max();
     if (val<min || val>max) 
@@ -64,6 +65,12 @@ bool UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohman
     if (!ptr) return false;
     UnderlyingVectorType vals = j[key];
 
+    UnderlyingType min = ptr->get_serializer_min()[0];
+    UnderlyingType max = ptr->get_serializer_max()[0];
+    unsigned int vector_mag = sqrt(pow(vals[0], 2) + pow(vals[1], 2) + pow(vals[2], 2));
+    if (vector_mag>max || vector_mag<min) throw std::runtime_error("Magnitude of vector must be in range [" + 
+        std::to_string(min) + "," + std::to_string(max) + "]");
+
     ptr->set(vals);
     ptr->serialize();
 
@@ -84,12 +91,33 @@ bool UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohmann:
     // If the quaternion statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the values of the key
     if (!ptr) return false;
 
+    // Check that the magnitude of the values in the JSON file is less than or equal to 1
     std::array<UnderlyingType, 4> vals = j[key];
     unsigned int quat_mag = sqrt(pow(vals[0], 2) + pow(vals[1], 2) + pow(vals[2], 2) + pow(vals[3], 2));
     if (quat_mag>1) throw std::runtime_error("Magnitude of quaternion must be in range [0,1]");
 
     // Set the statefield pointer to the new values.
     ptr->set(vals);
+    ptr->serialize();
+
+    // Add the updated value to the bitstream
+    size_t field_index=field_map[key];
+    add_entry(bs, ptr->get_bit_array(), field_index);
+    return true;
+}
+
+bool UplinkProducer::try_add_gps_time(bitstream bs, std::string key, nlohmann::json j) {
+    // Get pointer to that field in the registry
+    WritableStateField<gps_time_t>* ptr = dynamic_cast<WritableStateField<gps_time_t>*>(registry.find_writable_field(key));
+
+    // If the time statefield doesn't exist in the registry, return false. Otherwise, get the values of the key
+    if (!ptr) return false;
+    unsigned short wn = j[key][0];
+    unsigned int tow = j[key][1];
+    unsigned long ns = j[key][2];
+
+    // Set the statefield pointer to the new time.
+    ptr->set(gps_time_t(wn,tow,ns));
     ptr->serialize();
 
     // Add the updated value to the bitstream
@@ -111,6 +139,7 @@ bool UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohm
     found_field_type |= try_add_vector_field<double>(bs, key, j);
     found_field_type |= try_add_quat_field<float, f_quat_t>(bs, key, j);
     found_field_type |= try_add_quat_field<double, d_quat_t>(bs, key, j);
+    found_field_type |= try_add_gps_time(bs, key, j);
     return found_field_type;
 }
 
@@ -125,7 +154,6 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
         // Start writing at the beginning of the bitstream
         bs.reset();
         memset(bs.stream, 0, bs.max_len);
-        
         for (auto& e : j.items())
         {
             if (!bs.has_next())

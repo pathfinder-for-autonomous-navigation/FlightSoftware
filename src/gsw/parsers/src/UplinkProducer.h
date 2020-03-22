@@ -71,6 +71,13 @@ class UplinkProducer : public Uplink{
     bool try_add_quat_field(bitstream bs, std::string key, nlohmann::json j);
 
     /**
+     * Helper function for add_field_to_bitstream.
+     * Check that the time statefield of a given type is in the statefield registry.
+     * If it is, add the value of the field/key to the bitstream
+     */
+    bool try_add_gps_time(bitstream bs, std::string key, nlohmann::json j);
+
+    /**
      * Check that a field is in the registry. If it is, add the value to the bitstream.
      */
     bool add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j);
