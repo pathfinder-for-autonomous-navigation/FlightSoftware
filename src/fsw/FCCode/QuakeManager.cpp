@@ -37,7 +37,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_state_f("radio.state"),
     last_checkin_cycle_f("radio.last_comms_ccno"), // Last communication control cycle #
     dump_telemetry_f("telem.dump", Serializer<bool>()),
-    qct(),
+    qct(registry),
     mo_idx(0),
     unexpected_flag(false)
 { 

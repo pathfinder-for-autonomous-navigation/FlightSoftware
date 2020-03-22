@@ -1,5 +1,5 @@
-#include <gsw/parsers/src/TelemetryInfoGenerator.hpp>
-#include <flow_data.hpp>
+#include "../TelemetryInfoGenerator.hpp"
+#include "../../flow_data.hpp"
 #include <iostream>
 #include <fstream>
 

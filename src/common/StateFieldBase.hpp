@@ -11,8 +11,6 @@ class StateFieldBase : public Nameable {
    protected:
     virtual bool is_readable() const = 0;
     virtual bool is_writable() const = 0;
-   public:
-    virtual ~StateFieldBase() {};
 };
 
 #endif

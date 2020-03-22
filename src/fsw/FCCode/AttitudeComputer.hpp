@@ -2,7 +2,6 @@
 #define ATTITUDE_COMPUTER_HPP_
 
 #include "TimedControlTask.hpp"
-#include <common/constant_tracker.hpp>
 
 /**
  * @brief Using raw sensor inputs, determine the attitude and angular state
@@ -53,7 +52,7 @@ class AttitudeComputer : public TimedControlTask<void> {
      * @brief Threshold at which the secondary pointing objective in 
      * standby pointing with GPS data is ignored.
      */
-    TRACKED_CONSTANT_SC(float, alignment_threshold, 0.01);
+    static constexpr float alignment_threshold = 0.01;
 };
 
 #endif

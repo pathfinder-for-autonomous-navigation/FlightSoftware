@@ -3,7 +3,7 @@
 
 #include "Drivers/ADCS.hpp"
 #include "TimedControlTask.hpp"
-#include <common/Fault.hpp>
+#include "Fault.hpp"
 
 /**
 * @brief Gets inputs from the ADCS box and dumps them into the state

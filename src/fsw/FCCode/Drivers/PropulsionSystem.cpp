@@ -15,8 +15,8 @@ using namespace Devices;
  */
 static void interrupts(){}
 void noInterrupts(){}
-uint8_t analogRead(uint8_t pin){return 0;}
-uint8_t digitalRead(uint8_t pin){return 0;}
+uint8_t analogRead(uint8_t pin){return pin%2;}
+uint8_t digitalRead(uint8_t pin){return pin%2;}
 void digitalWrite(uint8_t pin, uint8_t val){}
 #define LOW 0
 #define HIGH 1
@@ -43,8 +43,8 @@ _Tank2::_Tank2() : Tank(4) {
 
 /** Initialize static variables */
 
-_PropulsionSystem::_PropulsionSystem() : Device("propulsion") {}
-bool _PropulsionSystem::is_interval_enabled = 0;
+PropulsionSystem::PropulsionSystem() : Device("propulsion") {}
+bool PropulsionSystem::is_interval_enabled = 0;
 
 volatile unsigned int _Tank2::schedule[4] = {0, 0, 0, 0};
 
@@ -54,7 +54,7 @@ IntervalTimer _Tank2::thrust_valve_loop_timer = IntervalTimer();
 
 /* Setup */
 
-bool _PropulsionSystem::setup() {
+bool PropulsionSystem::setup() {
     Tank1.setup();
     Tank2.setup();
     return true;
@@ -91,11 +91,7 @@ bool Tank::is_valve_open(size_t valve_idx) const
 {
     if (valve_idx >= num_valves)
         return false;
-#ifdef DESKTOP
-    return is_valve_opened[valve_idx];
-#else
     return digitalRead(valve_pins[valve_idx]);
-#endif
 }
 
 void Tank::close_all_valves()
@@ -138,7 +134,7 @@ unsigned int _Tank2::get_schedule_at(size_t valve_num) const
 
 /* Propulsion System implementation */
 
-void _PropulsionSystem::reset() {
+void PropulsionSystem::reset() {
     noInterrupts();
     {    
         disable();
@@ -148,7 +144,7 @@ void _PropulsionSystem::reset() {
     interrupts();
 }
 
-bool _PropulsionSystem::start_firing()
+bool PropulsionSystem::start_firing()
 {
     if (is_interval_enabled)
     {
@@ -162,7 +158,7 @@ bool _PropulsionSystem::start_firing()
     return is_interval_enabled;
 }
 
-void _PropulsionSystem::disable() {
+void PropulsionSystem::disable() {
     noInterrupts();
 #ifndef DESKTOP
     Tank2.thrust_valve_loop_timer.end();
@@ -174,12 +170,12 @@ void _PropulsionSystem::disable() {
 
 }
 
-bool _PropulsionSystem::is_functional() { 
+bool PropulsionSystem::is_functional() { 
     // TODO: change this later maybe
     return true;
 }
 
-bool _PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_t d)
+bool PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_t d)
 {
 
     // Do not set the schedule when enabled
@@ -197,7 +193,7 @@ bool _PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_
     return true;
 }
 
-bool _PropulsionSystem::clear_schedule()
+bool PropulsionSystem::clear_schedule()
 {
     if (is_interval_enabled)
         return false;
@@ -207,7 +203,7 @@ bool _PropulsionSystem::clear_schedule()
 }
 
 
-bool _PropulsionSystem::open_valve(Tank& tank, size_t valve_idx)
+bool PropulsionSystem::open_valve(Tank& tank, size_t valve_idx)
 {
     if (valve_idx >= tank.num_valves ) 
         return false;
@@ -220,7 +216,7 @@ bool _PropulsionSystem::open_valve(Tank& tank, size_t valve_idx)
     return true;
 }
 
-void _PropulsionSystem::close_valve(Tank& tank, size_t valve_idx)
+void PropulsionSystem::close_valve(Tank& tank, size_t valve_idx)
 {
     if (valve_idx >= tank.num_valves)
         return;
@@ -232,7 +228,7 @@ void _PropulsionSystem::close_valve(Tank& tank, size_t valve_idx)
     interrupts();
 }
 
-void _PropulsionSystem::thrust_valve_loop() {
+void PropulsionSystem::thrust_valve_loop() {
     noInterrupts(); 
     bool did_open_valve = 0;
     // Serial.printf("\nCurrent Time: %u\n",micros());

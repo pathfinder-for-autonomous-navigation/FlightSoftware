@@ -16,7 +16,6 @@
  */
 #include <array>
 #include <fsw/FCCode/Devices/Device.hpp>
-#include <common/constant_tracker.hpp>
 #ifndef DESKTOP
 #include <Arduino.h>
 #endif
@@ -78,16 +77,15 @@ class Tank;
  * Only tank2 has a schedule since only tank2 uses the IntervalTimer to fire.
  * 
  **/
-#define PropulsionSystem Devices::_PropulsionSystem::Instance()
-class _PropulsionSystem : public Device {
-    _PropulsionSystem();
+#ifdef DESKTOP
+    uint32_t micros(){ return 0; }
+#endif
+
+class PropulsionSystem : public Device {
+
 public:
-    inline static _PropulsionSystem& Instance()
-    {
-        static _PropulsionSystem Instance;
-        return Instance;
-    }
-// private:
+    PropulsionSystem();
+
     /**
      * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
      * @return True if successfully setup both tank1 and tank2 and all pins
@@ -159,6 +157,8 @@ public:
     {
         return is_interval_enabled;
     }
+
+private:
     
     /**
      * @brief the function that is ran at each interrupt when the IntervalTimer
@@ -172,7 +172,7 @@ public:
      * @brief true if tank2's IntervalTimer is on (tank2 is scheduled to fire)
      */
     static bool is_interval_enabled;
-    friend class PropController;
+
 };
 
 /**
@@ -217,10 +217,10 @@ protected:
     // true if the valve is opened
     bool is_valve_opened[4];
 
-    friend class _PropulsionSystem;
+    friend class PropulsionSystem;
 };
 
-#define Tank1 Devices::_Tank1::Instance()
+#define Tank1 _Tank1::Instance()
 /**
  * Tank1 represents the inner tank in the Propulsion System
  * valve 0 - main intertank valve
@@ -236,7 +236,7 @@ public:
     }
 };
 
-#define Tank2 Devices::_Tank2::Instance()
+#define Tank2 _Tank2::Instance()
 /**
  * Tank2 reprsents the outer tank in the Propulsion System
  * Valve 0, 1, 2, 3 - four thrust valves
@@ -258,33 +258,32 @@ public:
      */
     unsigned int get_schedule_at(size_t valve_num) const;
 
-#ifndef DESKTOP
 private:
-#endif
     void setup();
     #ifndef DESKTOP
     //! When enabled, runs thrust_valve_loop every 3 ms
     static IntervalTimer thrust_valve_loop_timer;
     #endif
+
     static volatile unsigned int schedule[4];
     // The minimum duration to assign to a schedule
     // Any value below this value will be ignored by tank2
-    TRACKED_CONSTANT_SC(unsigned int, min_firing_duration_ms, 10);
-
-    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 20);
-    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
+    static constexpr unsigned int min_firing_duration_ms = 10;
+    
+    static constexpr unsigned char pressure_sensor_low_pin = 20;
+    static constexpr unsigned char pressure_sensor_high_pin = 23;
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
-    TRACKED_CONSTANT_SC(double, high_gain_offset, -0.119001938553720);
-    TRACKED_CONSTANT_SC(double, high_gain_slope, 0.048713211537332);
-    TRACKED_CONSTANT_SC(double, low_gain_offset, 0.154615074342874);
-    TRACKED_CONSTANT_SC(double, low_gain_slope, 0.099017990785657);
+    static constexpr double high_gain_offset = -0.119001938553720;
+    static constexpr double high_gain_slope = 0.048713211537332;
+    static constexpr double low_gain_offset = 0.154615074342874;
+    static constexpr double low_gain_slope = 0.099017990785657;
 
     //! Loop interval in milliseconds.
-    TRACKED_CONSTANT_SC(unsigned int, thrust_valve_loop_interval_ms, 3);
+    static constexpr unsigned int thrust_valve_loop_interval_ms = 3; 
 
-    friend class _PropulsionSystem;
+    friend class PropulsionSystem;
 };
 }  // namespace Devices
 #endif

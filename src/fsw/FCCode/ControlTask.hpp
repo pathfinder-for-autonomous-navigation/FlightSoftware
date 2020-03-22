@@ -42,12 +42,11 @@ class ControlTask : protected debug_console {
      * 
      * We need to have this destructor to avoid compilation errors.
      */
-    virtual ~ControlTask() = default;
+    virtual ~ControlTask() = 0;
 
   protected:
     StateFieldRegistry& _registry;
 
-  private:
     void check_field_added(const bool added, const std::string& field_name) {
         if(!added) {
             #ifdef UNIT_TEST
@@ -67,12 +66,6 @@ class ControlTask : protected debug_console {
             assert(false);
         }
     }
-
-  #ifdef UNIT_TEST
-  public:
-  #else
-  protected:
-  #endif
 
     template<typename U>
     void add_internal_field(InternalStateField<U>& field) {
@@ -95,18 +88,6 @@ class ControlTask : protected debug_console {
         check_field_added(added, field.name());
     }
 
-    void add_event(Event& event) {
-        const bool added = _registry.add_event(&event);
-        check_field_added(added, event.name());
-    }
-
-    void add_fault(Fault& fault) {
-        const bool added = _registry.add_fault(&fault);
-        check_field_added(added, fault.name());
-    }
-
-  private:
-
     void check_field_exists(const StateFieldBase* ptr, const std::string& field_type,
             const char* field_name) {
         if(!ptr) {
@@ -128,54 +109,29 @@ class ControlTask : protected debug_console {
         }
     }
 
-
-  #ifdef UNIT_TEST
-  public:
-  #else
-  protected:
-  #endif
-
     template<typename U>
     InternalStateField<U>* find_internal_field(const char* field, const char* file, const unsigned int line) {
-        InternalStateFieldBase* field_ptr = _registry.find_internal_field(field);
+        auto field_ptr = _registry.find_internal_field(field);
         check_field_exists(field_ptr, "internal", field);
         return static_cast<InternalStateField<U>*>(field_ptr);
     }
 
     template<typename U>
     ReadableStateField<U>* find_readable_field(const char* field, const char* file, const unsigned int line) {
-        ReadableStateFieldBase* field_ptr = _registry.find_readable_field(field);
+        auto field_ptr = _registry.find_readable_field(field);
         check_field_exists(field_ptr, "readable", field);
         return static_cast<ReadableStateField<U>*>(field_ptr);
     }
 
     template<typename U>
     WritableStateField<U>* find_writable_field(const char* field, const char* file, const unsigned int line) {
-        WritableStateFieldBase* field_ptr = _registry.find_writable_field(field);
+        auto field_ptr = _registry.find_writable_field(field);
         check_field_exists(field_ptr, "writable", field);
         return static_cast<WritableStateField<U>*>(field_ptr);
     }
-
-    Event* find_event(const char* event, const char* file, const unsigned int line) {
-        Event* event_ptr = _registry.find_event(event);
-        check_field_exists(event_ptr, "event", event);
-        return event_ptr;
-    }
-
-    Fault* find_fault(const char* fault, const char* file, const unsigned int line) {
-        Fault* fault_ptr = _registry.find_fault(fault);
-        check_field_exists(fault_ptr, "fault", fault);
-        return fault_ptr;
-    }
 };
 
-/* Convenient macros to find fields, events, and faults. The field/event/fault
- * argument will be automatically stringified so no need to include quotation
- * marks. */
-#define FIND_INTERNAL_FIELD(type, field) find_internal_field<type>(#field, __FILE__, __LINE__)
-#define FIND_READABLE_FIELD(type, field) find_readable_field<type>(#field, __FILE__, __LINE__)
-#define FIND_WRITABLE_FIELD(type, field) find_writable_field<type>(#field, __FILE__, __LINE__)
-#define FIND_EVENT(event)                find_event(#event, __FILE__, __LINE__)
-#define FIND_FAULT(fault)                find_fault(#fault, __FILE__, __LINE__)
+template<typename T>
+ControlTask<T>::~ControlTask() {}
 
 #endif

@@ -16,8 +16,6 @@
 #ifndef SRC_ADCS_ADCS_CONSTANTS_HPP_
 #define SRC_ADCS_ADCS_CONSTANTS_HPP_
 
-#include <common/constant_tracker.hpp>
-
 namespace adcs {
 
 /** \enum Endianness
@@ -95,62 +93,63 @@ namespace imu {
 
 /** Highest temperature in degrees celcius the gyroscope's equilibrium
  *  temperature can be set to. */
-TRACKED_CONSTANT_SC(float, max_eq_temp, 85.0f);
+constexpr static float max_eq_temp = 85.0f;
 /** Lowest termperature in degrees celcius the gyroscope's equilibrium
  * temperature can be set to. */
-TRACKED_CONSTANT_SC(float, min_eq_temp, -40.0f);
+constexpr static float min_eq_temp = -40.0f;
 /** Maximum temperature reading in degress celcius that can be output by the
  *  gyroscope. */
 #if defined(PAN_LEADER)
-TRACKED_CONSTANT_SC(float, max_rd_temp, 25.0f + 128.0f); // TODO : Calibrate
+constexpr static float max_rd_temp = 25.0f + 128.0f;  // TODO : Calibrate
 #elif defined(PAN_FOLLOWER)
-TRACKED_CONSTANT_SC(float, max_rd_temp, 25.0f + 128.0f); // TODO : Calibrate
+constexpr static float max_rd_temp = 25.0f + 128.0f;  // TODO : Calibrate
 #else
 static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
 #endif
 /** Minimum temperature reading in degrees celcius that can be output by the
  *  gyroscope. */
 #if defined(PAN_LEADER)
-TRACKED_CONSTANT_SC(float, min_rd_temp, 25.0f - 128.0f); // TODO : Calibrate
+constexpr static float min_rd_temp = 25.0f - 128.0f;  // TODO : Calibrate
 #elif defined(PAN_FOLLOWER)
-TRACKED_CONSTANT_SC(float, min_rd_temp, 25.0f - 128.0f); // TODO : Calibrate
+constexpr static float min_rd_temp = 25.0f - 128.0f;  // TODO : Calibrate
 #else
 static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
 #endif
 /** Maximum angular rate in radians per second that can be read from the
  *  gyroscope. */
-TRACKED_CONSTANT_SC(float, max_rd_omega, 125.0f * 0.03490658504f); // 2 * pi / 180
+constexpr static float max_rd_omega = 125.0f * 0.03490658504f; // 2 * pi / 180
 /** Minimum angular rate in radians per second that can be read from the
  *  gyroscope. */
-TRACKED_CONSTANT_SC(float, min_rd_omega, -max_rd_omega);
+constexpr static float min_rd_omega = -max_rd_omega;
 
 /** Maximum magnetic field reading in Tesla that can be read from the first
  *  magnetometer. */
-TRACKED_CONSTANT_SC(float, max_mag1_rd_mag, 0.0050f); // TODO : Check this
+constexpr static float max_mag1_rd_mag = 0.0050f; // TODO : Check this
 /** Minimum magnetic field reading in Tesla that can be read from the first
  *  magnetometer. */
-TRACKED_CONSTANT_SC(float, min_mag1_rd_mag, -max_mag1_rd_mag);
+constexpr static float min_mag1_rd_mag = -max_mag1_rd_mag;
 
 /** Maximum magnetic field reading in Tesla that can be read from the second
  *  magnetometer. */
-TRACKED_CONSTANT_SC(float, max_mag2_rd_mag, 0.0032f); // TODO : Check this
+constexpr static float max_mag2_rd_mag = 0.0032f; // TODO : Check this
 /** Minimum magnetic field reading in Tesla that can be read from the second
  *  magnetometer. */
-TRACKED_CONSTANT_SC(float, min_mag2_rd_mag, -max_mag2_rd_mag);
+constexpr static float min_mag2_rd_mag = -max_mag2_rd_mag;
 
 /** Maximum magnetic field reading in Tesla that can be read per component. */
-TRACKED_CONSTANT_SC(float, max_rd_mag, (max_mag1_rd_mag > max_mag2_rd_mag ? max_mag1_rd_mag : max_mag2_rd_mag));
+constexpr static float max_rd_mag =
+    (max_mag1_rd_mag > max_mag2_rd_mag ? max_mag1_rd_mag : max_mag2_rd_mag);
 /** Minimum magnetic field reading in Tesla that can be read per component. */
-TRACKED_CONSTANT_SC(float, min_rd_mag, -max_rd_mag);
+constexpr static float min_rd_mag = -max_rd_mag;
 
 }  // namespace imu
 
 namespace mtr {
 
 /** Maximum moment available from the magnetic torque rods. */
-TRACKED_CONSTANT_SC(float, max_moment, 0.113337f / 2.0f); // Assumes one mtr not two
+constexpr static float max_moment = 0.113337f / 2.0f; // Assumes one mtr not two
 /** Minimum moment available from the magnetic toque rods. */
-TRACKED_CONSTANT_SC(float, min_moment, -max_moment);
+constexpr static float min_moment = -max_moment;
 
 }  // namespace mtr
 
@@ -160,42 +159,42 @@ namespace rwa {
  * to 310.1852 rad s^-2 and the moment of inertia is 1.35e-5 kg m^2. */
 
 /** Moment of interia of a reaction wheel. */
-TRACKED_CONSTANT_SC(float, moment_of_inertia, 0.0000135f);
+constexpr static float moment_of_inertia = 0.0000135f;
 /** Maximum torque available from the reaction wheels. */
-TRACKED_CONSTANT_SC(float, max_torque, 310.1852f * moment_of_inertia);
+constexpr static float max_torque = 310.1852f * moment_of_inertia;
 /** Minimum torque available from the reaction wheels. */
-TRACKED_CONSTANT_SC(float, min_torque, -max_torque);
+constexpr static float min_torque = -max_torque;
 /** Maximum speed read from the reaction wheels. */
-TRACKED_CONSTANT_SC(float, max_speed_read, 1047.20f);
+constexpr static float max_speed_read = 1047.20f;
 /** Minimum speed read from the reaction wheels. */
-TRACKED_CONSTANT_SC(float, min_speed_read, -max_speed_read);
+constexpr static float min_speed_read = -max_speed_read;
 
 /** Maximum speed read from the reaction wheels. */
-TRACKED_CONSTANT_SC(float, max_speed_command, 680.678f);
+constexpr static float max_speed_command = 680.678f;
 /** Minimum speed command to the reaction wheels. */
-TRACKED_CONSTANT_SC(float, min_speed_command, -max_speed_command);
+constexpr static float min_speed_command = -max_speed_command;
 
 }  // namespace rwa
 
 namespace ssa {
 
 /** Minimum voltage that can be read from a sun sensor. */
-TRACKED_CONSTANT_SC(float, min_voltage_rd, 0.0f);
+constexpr static float min_voltage_rd = 0.0f;
 /** Maximum voltage that can be read from a sun sensor. */
-TRACKED_CONSTANT_SC(float, max_voltage_rd, 3.3f);
+constexpr static float max_voltage_rd = 3.3f;
 /** Minimum SSA algorithm voltage threshold. */
-TRACKED_CONSTANT_SC(float, min_voltage_thresh, min_voltage_rd);
+constexpr static float min_voltage_thresh = min_voltage_rd;
 /** Maximum SSA algorithm voltage threshold. */
-TRACKED_CONSTANT_SC(float, max_voltage_thresh, max_voltage_rd);
+constexpr static float max_voltage_thresh = max_voltage_rd;
 /** Number of sun sensors */
-TRACKED_CONSTANT_SC(unsigned char, num_sun_sensors, 20);
+constexpr static unsigned char num_sun_sensors = 20;
 
 }  // namespace ssa
 
 namespace havt {
 
 /** Maximum number of devices in the HAVT table. Leave as 32, not meant to be adjusted */
-TRACKED_CONSTANT_SC(unsigned char, max_devices, 32);
+constexpr static unsigned char max_devices = 32;
 
 } // namespace havt
 }  // namespace adcs

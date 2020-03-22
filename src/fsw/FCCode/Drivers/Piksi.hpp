@@ -19,8 +19,6 @@
 #include <libsbp/settings.h>
 #include <libsbp/system.h>
 #include <libsbp/user.h>
-#include <common/constant_tracker.hpp>
-
 namespace Devices {
 /**
  * @brief Device class for interacting with the Piksi GPS system.
@@ -32,10 +30,10 @@ class Piksi {
 #endif
    public:
     //! Baud rate of communication with Piksi.
-    TRACKED_CONSTANT_SC(unsigned int, BAUD_RATE, 115200);
+    static constexpr unsigned int BAUD_RATE = 115200;
     // Driver limit for max processing time of read_all()
     // Choose 900 us to large safety bound over average read time of 600 us
-    TRACKED_CONSTANT_SC(unsigned int, READ_ALL_LIMIT, 900);
+    static constexpr unsigned int READ_ALL_LIMIT = 900;
 
     /**
      * @brief Construct a new Piksi object

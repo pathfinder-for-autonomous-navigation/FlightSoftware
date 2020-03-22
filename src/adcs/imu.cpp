@@ -11,7 +11,6 @@
 //
 
 #ifdef IMU_LOG_LEVEL
-  #undef LOG_LEVEL
   #define LOG_LEVEL IMU_LOG_LEVEL
 #endif
 

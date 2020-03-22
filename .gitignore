@@ -1,12 +1,6 @@
 # Confidential Information/Configs
 radio_keys.json
 server_keys.json
-flask_keys.json
-
-# PTest Temporary Files
-logs/
-geograv_wrapper.mexmaci64
-geomag_wrapper.mexmaci64
 
 test/output_export.cpp
 # OS Generated .DS_store files
@@ -160,9 +154,3 @@ html_coverage/
 # Temporary files created due to build logs overflowing
 build.txt
 build.log
-
-# Clion temporary files
-.idea/
-cmake*
-CMakeListsPrivate.txt
-CMakeLists.txt

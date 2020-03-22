@@ -14,7 +14,6 @@
 // TODO : Update the HAVT table read once finalized
 
 #ifdef UMB_LOG_LEVEL
-  #undef LOG_LEVEL
   #define LOG_LEVEL UMB_LOG_LEVEL
 #endif
 

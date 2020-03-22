@@ -36,7 +36,6 @@ enum Index : unsigned char {
   SSA_ADC1,
   SSA_ADC2,
   SSA_ADC3,
-  
   SSA_ADC4,
   SSA_ADC5,
   //GYRO_HEATER, <- uncomment when device is added

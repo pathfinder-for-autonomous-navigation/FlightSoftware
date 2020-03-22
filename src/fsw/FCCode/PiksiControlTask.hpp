@@ -3,7 +3,6 @@
 #include "Drivers/Piksi.hpp"
 #include <string>
 #include <common/GPSTime.hpp>
-#include <common/constant_tracker.hpp>
 
 #include "TimedControlTask.hpp"
 
@@ -12,7 +11,7 @@
 class PiksiControlTask : public TimedControlTask<void>
 {
 public:
-    TRACKED_CONSTANT_SC(unsigned int, DEAD_CYCLE_COUNT, 1000);
+    static constexpr unsigned int DEAD_CYCLE_COUNT = 1000;
 
     PiksiControlTask(StateFieldRegistry &registry, unsigned int offset, Devices::Piksi &_piksi);
     

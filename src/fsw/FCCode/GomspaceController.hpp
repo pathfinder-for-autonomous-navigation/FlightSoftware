@@ -5,6 +5,7 @@
 
 #include "TimedControlTask.hpp"
 #include "Drivers/Gomspace.hpp"
+#include "Fault.hpp"
 
 class GomspaceController : public TimedControlTask<void> {
    public:
@@ -96,9 +97,6 @@ class GomspaceController : public TimedControlTask<void> {
 
     Serializer<unsigned char> pptmode_sr;
     ReadableStateField<unsigned char> pptmode_f;
-
-    Serializer<bool> heater_sr;
-    ReadableStateField<bool> heater_f;
 
     // The controller will set the outputs of the gomspace once a period (number of control cycles)
     unsigned int period = 300;

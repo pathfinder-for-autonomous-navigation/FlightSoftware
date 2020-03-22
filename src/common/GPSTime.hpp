@@ -2,9 +2,8 @@
 #define GPSTIME_HPP_
 
 #include <libsbp/navigation.h>
-#include "constant_tracker.hpp"
 
-TRACKED_CONSTANT_SC(unsigned long, NANOSECONDS_IN_WEEK, 7 * 24 * 60 * 60 * static_cast<unsigned long>(1000000000));
+static constexpr unsigned long NANOSECONDS_IN_WEEK = 7 * 24 * 60 * 60 * (unsigned long) (1000000000);
 
 struct gps_time_t {
     unsigned short wn;

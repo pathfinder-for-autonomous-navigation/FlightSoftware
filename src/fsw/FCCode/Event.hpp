@@ -74,10 +74,7 @@ public:
         std::vector<ReadableStateFieldBase *> &_data_fields,
         const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &));
 
-  
-
-     
-     /**
+  /**
      * @brief Move constructor, required for EventStorage.
      * 
      * @param other 

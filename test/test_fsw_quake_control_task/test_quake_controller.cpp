@@ -20,7 +20,7 @@ void exec_check(QuakeControlTask& task, int expectedState, int expectedFnNum)
 void test_task_initialization()
 {
   StateFieldRegistry registry;
-  QuakeControlTask task;
+  QuakeControlTask task(registry);
   // Check that things are initialized correctly
   exec_check(task, IDLE, 0);
 }
@@ -29,7 +29,7 @@ void test_task_initialization()
 void test_request_state()
 {
   StateFieldRegistry registry;
-  QuakeControlTask task;
+  QuakeControlTask task(registry);
   TEST_ASSERT_EQUAL(true, task.request_state(SBDIX));
   exec_check(task, SBDIX, 1);
 }
@@ -38,7 +38,7 @@ void test_request_state()
 void test_config_can_interrupt()
 {
   StateFieldRegistry registry;
-  QuakeControlTask task;
+  QuakeControlTask task(registry);
   task.set_downlink_msg("Blah", 4);
   TEST_ASSERT_EQUAL(true, task.request_state(SBDWB));
   exec_check(task, SBDWB, 1);
@@ -52,7 +52,7 @@ void test_config_can_interrupt()
 void test_idle_can_interrupt()
 {
   StateFieldRegistry registry;
-  QuakeControlTask task;
+  QuakeControlTask task(registry);
   TEST_ASSERT_EQUAL(true, task.request_state(SBDIX));
   exec_check(task, SBDIX, 1);
 
@@ -64,7 +64,7 @@ void test_idle_can_interrupt()
 void test_call_exec_when_idle()
 {
   StateFieldRegistry registry;
-  QuakeControlTask task;
+  QuakeControlTask task(registry);
   exec_check(task, IDLE, 0);
   exec_check(task, IDLE, 0);
   exec_check(task, IDLE, 0);
@@ -74,7 +74,7 @@ void test_call_exec_when_idle()
 void test_sbdwb_fail()
 {
   StateFieldRegistry registry;
-  QuakeControlTask task;
+  QuakeControlTask task(registry);
   TEST_ASSERT_EQUAL(true, task.request_state(SBDWB));
   TEST_ASSERT_EQUAL(Devices::WRONG_LENGTH, task.execute());
   TEST_ASSERT_EQUAL(IDLE, task.get_current_state());
@@ -85,7 +85,7 @@ void test_sbdwb_fail()
 void test_sbdwb()
 {
   StateFieldRegistry registry;
-  QuakeControlTask task;
+  QuakeControlTask task(registry);
   task.set_downlink_msg("hello", 5);
   exec_check(task, IDLE, 0);
 
@@ -99,7 +99,7 @@ void test_sbdwb()
 void test_sbdrb()
 {
   StateFieldRegistry registry;
-  QuakeControlTask task;
+  QuakeControlTask task(registry);
   TEST_ASSERT_EQUAL(true, task.request_state(SBDRB));
   exec_check(task, SBDRB, 1); 
   exec_check(task, IDLE, 0);
@@ -109,7 +109,7 @@ void test_sbdrb()
 void test_sbdix()
 {
   StateFieldRegistry registry;
-  QuakeControlTask task;
+  QuakeControlTask task(registry);
   TEST_ASSERT_EQUAL(true, task.request_state(SBDIX));
   exec_check(task, SBDIX, 1); 
   exec_check(task, IDLE, 0);
@@ -118,7 +118,8 @@ void test_sbdix()
 // Test that CONFIG completes in two cycles
 void test_config()
 {
-  QuakeControlTask task;
+  StateFieldRegistry registry;
+  QuakeControlTask task(registry);
   TEST_ASSERT_EQUAL(true, task.request_state(CONFIG));
   exec_check(task, CONFIG, 1); 
   exec_check(task, CONFIG, 2); 
@@ -129,7 +130,8 @@ void test_config()
 // Check that changing state is not ok and does not change the fn number or state
 void test_sbdwb_noint()
 {
-  QuakeControlTask task;
+  StateFieldRegistry registry;
+  QuakeControlTask task(registry);
   TEST_ASSERT_EQUAL(true, task.request_state(CONFIG));
   exec_check(task, CONFIG, 1);
   TEST_ASSERT_EQUAL(CONFIG, task.get_current_state());

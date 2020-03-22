@@ -88,11 +88,11 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
 
         add_readable_field(adcs_is_functional);
         // add faults to registry
-        add_fault(adcs_functional_fault);
-        add_fault(wheel1_adc_fault);
-        add_fault(wheel2_adc_fault);
-        add_fault(wheel3_adc_fault);
-        add_fault(wheel_pot_fault);
+        adcs_functional_fault.add_to_registry(registry);
+        wheel1_adc_fault.add_to_registry(registry);
+        wheel2_adc_fault.add_to_registry(registry);
+        wheel3_adc_fault.add_to_registry(registry);
+        wheel_pot_fault.add_to_registry(registry);
     }
 
 bool exceed_bounds(const std::array<float, 3>& input, const float min, const float max){
@@ -129,8 +129,7 @@ void ADCSBoxMonitor::execute(){
     float gyr_temp = 0.0;
 
     //ask the driver to fill in values
-    adcs_is_functional.set(adcs_system.i2c_ping());
-    
+    adcs_is_functional.set(adcs_system.is_functional());
     if(!adcs_is_functional.get())
         adcs_functional_fault.signal();
     else

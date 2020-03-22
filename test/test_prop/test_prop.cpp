@@ -11,7 +11,7 @@
 using namespace Devices;
 
 #define TO_MICRO(x) x*1000
-
+PropulsionSystem prop_system;
 
 /* PropulsionSystem Tests */
 
@@ -22,7 +22,7 @@ void test_initialization()
     // all valves should be closed
     check_all_valves_closed();
     // there should be no interrupts at startup
-    TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
+    TEST_ASSERT_FALSE(prop_system.is_firing());
 }
 
 
@@ -30,15 +30,15 @@ void test_initialization()
 
 void test_set_schedule_bad_valve_times()
 {
-    ASSERT_FALSE(PropulsionSystem.is_firing(), "sanity");
-    ASSERT_FALSE(PropulsionSystem.set_schedule(2, 3, 1000, 5), "should fail to set 1 second schedule");
+    ASSERT_FALSE(prop_system.is_firing(), "sanity");
+    ASSERT_FALSE(prop_system.set_schedule(2, 3, 1000, 5), "should fail to set 1 second schedule");
 }
 
 void test_set_schedule_good()
 {
-    ASSERT_FALSE(PropulsionSystem.is_firing(), "sanity");
-    ASSERT_TRUE(PropulsionSystem.set_schedule(2, 3, 999, 5), "this should work");
-    ASSERT_FALSE(PropulsionSystem.is_firing(), "should be false because didnt call enable");
+    ASSERT_FALSE(prop_system.is_firing(), "sanity");
+    ASSERT_TRUE(prop_system.set_schedule(2, 3, 999, 5), "this should work");
+    ASSERT_FALSE(prop_system.is_firing(), "should be false because didnt call enable");
 }
 
 void scheduling_tests()
@@ -50,58 +50,58 @@ void scheduling_tests()
 /* Tank2 enable tests */
 void test_enable_success()
 {
-    ASSERT_FALSE(PropulsionSystem.is_firing(), "sanity check");  
-    TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(2, 3, 999, 5));
+    ASSERT_FALSE(prop_system.is_firing(), "sanity check");  
+    TEST_ASSERT_TRUE(prop_system.set_schedule(2, 3, 999, 5));
 
-    ASSERT_TRUE(PropulsionSystem.start_firing(), "enable should be ok");
-    ASSERT_TRUE(PropulsionSystem.is_firing(), "tank2 should be firing right now");
-    PropulsionSystem.disable();
+    ASSERT_TRUE(prop_system.start_firing(), "enable should be ok");
+    ASSERT_TRUE(prop_system.is_firing(), "tank2 should be firing right now");
+    prop_system.disable();
 }
 
 void test_disable()
 {
-    TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(2, 3, 999, 5));
-    TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
-    ASSERT_TRUE(PropulsionSystem.is_firing(), "tank2 should be enabled");
+    TEST_ASSERT_TRUE(prop_system.set_schedule(2, 3, 999, 5));
+    TEST_ASSERT_TRUE(prop_system.start_firing());
+    ASSERT_TRUE(prop_system.is_firing(), "tank2 should be enabled");
 
-    TEST_ASSERT_TRUE(PropulsionSystem.is_firing());
-    PropulsionSystem.disable();
-    TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
+    TEST_ASSERT_TRUE(prop_system.is_firing());
+    prop_system.disable();
+    TEST_ASSERT_FALSE(prop_system.is_firing());
 }
 
 void test_restart_firing()
 {
-    PropulsionSystem.reset();
-    TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(2, 3, 999, 5));
-    TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
-    TEST_ASSERT_TRUE(PropulsionSystem.is_firing());
+    prop_system.reset();
+    TEST_ASSERT_TRUE(prop_system.set_schedule(2, 3, 999, 5));
+    TEST_ASSERT_TRUE(prop_system.start_firing());
+    TEST_ASSERT_TRUE(prop_system.is_firing());
 
-    PropulsionSystem.disable();
-    TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
-    ASSERT_TRUE(PropulsionSystem.start_firing(), "test that we can restart the schedule");
-    ASSERT_TRUE(PropulsionSystem.is_firing(), "should be allowed to enable it since there is still time");
-    TEST_ASSERT_TRUE(PropulsionSystem.is_firing());
+    prop_system.disable();
+    TEST_ASSERT_FALSE(prop_system.is_firing());
+    ASSERT_TRUE(prop_system.start_firing(), "test that we can restart the schedule");
+    ASSERT_TRUE(prop_system.is_firing(), "should be allowed to enable it since there is still time");
+    TEST_ASSERT_TRUE(prop_system.is_firing());
 
-    PropulsionSystem.disable();
-    PropulsionSystem.clear_schedule();
+    prop_system.disable();
+    prop_system.clear_schedule();
 }
 
 void test_disable_while_firing()
 {
-    TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(42, 42, 42, 42));
-    TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
+    TEST_ASSERT_TRUE(prop_system.set_schedule(42, 42, 42, 42));
+    TEST_ASSERT_TRUE(prop_system.start_firing());
     delay(1);
-    PropulsionSystem.disable();
-    TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
+    prop_system.disable();
+    TEST_ASSERT_FALSE(prop_system.is_firing());
 }
 
 void test_cannot_clear_schedule_when_enabled()
 {
-    TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(42, 42, 42, 42));
-    TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
-    TEST_ASSERT_FALSE(PropulsionSystem.clear_schedule());
-    PropulsionSystem.disable();
-    TEST_ASSERT_TRUE(PropulsionSystem.clear_schedule());
+    TEST_ASSERT_TRUE(prop_system.set_schedule(42, 42, 42, 42));
+    TEST_ASSERT_TRUE(prop_system.start_firing());
+    TEST_ASSERT_FALSE(prop_system.clear_schedule());
+    prop_system.disable();
+    TEST_ASSERT_TRUE(prop_system.clear_schedule());
 }
 
 void interval_timer_tests()
@@ -115,38 +115,38 @@ void interval_timer_tests()
 
 void test_open_tank1_valve()
 {
-    PropulsionSystem.reset();
-    PropulsionSystem.open_valve(Tank1, 0);
+    prop_system.reset();
+    prop_system.open_valve(Tank1, 0);
     delay(100);
     ASSERT_TRUE(Tank1.is_valve_open(0), "tank1 valve 0 should be open");
     delay(1000); // fire for 1 second
-    PropulsionSystem.close_valve(Tank1, 0);
+    prop_system.close_valve(Tank1, 0);
     ASSERT_FALSE(Tank1.is_valve_open(0), "tank1 valve 0 should be closed"); // make sure it is closed
 }
 
 void test_open_both_valves()
 {
-    PropulsionSystem.reset();
-    TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(12, 999, 40, 200));
-    TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
+    prop_system.reset();
+    TEST_ASSERT_TRUE(prop_system.set_schedule(12, 999, 40, 200));
+    TEST_ASSERT_TRUE(prop_system.start_firing());
     while (!Tank2.is_valve_open(0)){}
     check_tank2_valve_status(1, 0, 0, 0);
-    ASSERT_TRUE(PropulsionSystem.open_valve(Tank1, 0), "We should be able to open tank1 valves when firing tank2, without messing up the schedule");
+    ASSERT_TRUE(prop_system.open_valve(Tank1, 0), "We should be able to open tank1 valves when firing tank2, without messing up the schedule");
     delayMicroseconds(TO_MICRO(3)); // Checking that opening valve from tank1 does not mess up schedule
     check_tank2_valve_status(1, 1, 0, 0);
     delayMicroseconds(TO_MICRO(6));
     check_tank2_valve_status(1, 1, 1, 1);
-    PropulsionSystem.close_valve(Tank1, 0);
+    prop_system.close_valve(Tank1, 0);
     delayMicroseconds(TO_MICRO(3));
     check_tank2_valve_status(0, 1, 1, 1);
-    PropulsionSystem.reset();
+    prop_system.reset();
     check_all_valves_closed();
 }
 void test_ignore_short_schedules()
 {
-    PropulsionSystem.reset();
-    TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(12, 9, 40, 200));
-    TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
+    prop_system.reset();
+    TEST_ASSERT_TRUE(prop_system.set_schedule(12, 9, 40, 200));
+    TEST_ASSERT_TRUE(prop_system.start_firing());
     while (!Tank2.is_valve_open(0)){}
     check_tank2_valve_status(1, 0, 0, 0);  
     delayMicroseconds(TO_MICRO(3)); 
@@ -154,7 +154,7 @@ void test_ignore_short_schedules()
     check_tank2_valve_status(1, 0, 1, 0);
     delayMicroseconds(TO_MICRO(3));
     check_tank2_valve_status(1, 0, 1, 1);
-    PropulsionSystem.disable();
+    prop_system.disable();
     check_all_valves_closed();
 }
 
@@ -167,19 +167,19 @@ void open_valve_tests()
 
 void test_reset()
 {
-    TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
+    TEST_ASSERT_FALSE(prop_system.is_firing());
     ASSERT_TRUE(
-        PropulsionSystem.open_valve(Tank1, 1),
+        prop_system.open_valve(Tank1, 1),
         "open tank1 valve");
     ASSERT_TRUE(
-        PropulsionSystem.set_schedule(999, 2, 400, 100),
+        prop_system.set_schedule(999, 2, 400, 100),
         "Should be allowed to set tank2 schedule");
-    TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
+    TEST_ASSERT_TRUE(prop_system.start_firing());
     // Wait for tank2 schedule to start
     while (!Tank2.is_valve_open(0)){}
-    PropulsionSystem.reset();
+    prop_system.reset();
     check_all_valves_closed();
-    ASSERT_FALSE(PropulsionSystem.is_firing(), "tank2 should not be firing");
+    ASSERT_FALSE(prop_system.is_firing(), "tank2 should not be firing");
     check_tank2_schedule(zero_schedule);
 }
 
@@ -188,15 +188,15 @@ void test_reset()
 // Verified with oscilliscope
 void test_tank2_firing_schedule()
 {
-    PropulsionSystem.reset();
-    TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
+    prop_system.reset();
+    TEST_ASSERT_FALSE(prop_system.is_firing());
 
     TEST_ASSERT_TRUE(
-        PropulsionSystem.set_schedule(300, 400, 500, 600)
+        prop_system.set_schedule(300, 400, 500, 600)
     );
     // fire when its 3 seconds into the future
-    PropulsionSystem.start_firing();
-    TEST_ASSERT_TRUE(PropulsionSystem.is_firing());
+    prop_system.start_firing();
+    TEST_ASSERT_TRUE(prop_system.is_firing());
     // Not sure how fast instructions run, so just wait for the first one
     while (!Tank2.is_valve_open(0)){}
     check_tank2_valve_status(1, 0, 0, 0);
@@ -222,7 +222,7 @@ void setup() {
     pinMode(13, OUTPUT);
     while (!Serial)
         ;
-    PropulsionSystem.setup();
+    prop_system.setup();
     UNITY_BEGIN();
     RUN_TEST(test_initialization);
     scheduling_tests();

@@ -2,7 +2,7 @@
 #define FIELD_CREATOR_TASK_HPP_
 
 #include "ControlTask.hpp"
-#include <common/Fault.hpp>
+#include "Fault.hpp"
 
 #include <adcs/havt_devices.hpp> // needed for ADCSCommander fill-in
 
@@ -35,7 +35,7 @@ class FieldCreatorTask : public ControlTask<void> {
 
           // For propulsion controller
           add_readable_field(prop_state_f);
-          add_fault(failed_pressurize_f);
+          failed_pressurize_f.add_to_registry(_registry);
       }
 
       void execute() {

@@ -1,0 +1,31 @@
+# Tanishq is default owner of non-owned files
+* tanishqaggarwal
+
+# Shihao's owned files
+*(?i)(adcs)*     shihaocao
+*(?i)(piksi)*    shihaocao
+
+# Fatima's owned files
+*(?i)(gomspace)* fatimayousuf
+*(?i)(dcdc)*     fatimayousuf
+*(?i)(eeprom)*   fatimayousuf
+*(?i)(docking)*  fatimayousuf
+*(?i)(gsw)*      fatimayousuf
+*(?i)(ground)*   fatimayousuf
+
+# Athena's owned files
+*(?i)(prop)*       athena255
+*(?i)(bitstream)*  athena255
+*(?i)(qlocate)*    athena255
+
+# Device groups
+Device*      athena255 kkrol27 shihaocao fatimayousuf tanishqaggarwal
+I2CDevice*   shihaocao fatimayousuf tanishqaggarwal
+
+# GNC groups
+*(?i)(attitude)*  nhz2 shihaocao tanishqaggarwal kkrol27
+
+# Telemetry files
+*(?i)(uplink)*   fatimayousuf athena255 tanishqaggarwal
+*(?i)(downlink)* fatimayousuf athena255 tanishqaggarwal
+*(?i)(quake)*    fatimayousuf athena255 tanishqaggarwal

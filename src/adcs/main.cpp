@@ -216,7 +216,6 @@ void update_ssa() {
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
 static unsigned long cycles = 0;
-static unsigned long last_info_time = millis();
 #endif
 
 void loop() {
@@ -227,11 +226,7 @@ void loop() {
   update_havt();
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-  cycles++;
-
-  if (millis() - last_info_time > 1000) {
-    last_info_time = millis();
-
+  if (!(++cycles % 100000UL)) {
     LOG_INFO_header
     LOG_INFO_println("Heartbeat cycle count " + String(cycles))
 
@@ -247,21 +242,14 @@ void loop() {
     LOG_INFO_println("ssa.mode " + String(registers.ssa.mode))
 
     std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
-    char buffer[34];
-    for(int i = 0; i<16; i++){
+    char buffer[33];
+    for(int i = 0; i<32; i++){
       if(temp_bitset.test(31-i))
         buffer[i] = '1';
       else
         buffer[i] = '0';
     }
-    buffer[16] = ' ';
-    for(int i = 16; i<32; i++){
-      if(temp_bitset.test(31-i))
-        buffer[i+1] = '1';
-      else
-        buffer[i+1] = '0';
-    }
-    buffer[33] = '\0';
+    buffer[32] = '\0';
 
     LOG_INFO_header
     LOG_INFO_print("havt.read ")

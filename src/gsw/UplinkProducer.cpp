@@ -1,6 +1,6 @@
 #include "UplinkProducer.h"
-#include <flow_data.hpp>
-#include <eeprom_configs.hpp>
+#include "../flow_data.hpp"
+#include "../eeprom_configs.hpp"
 #include <fstream>
 #include <iostream>
 #include <json.hpp>
