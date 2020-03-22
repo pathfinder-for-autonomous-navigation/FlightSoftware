@@ -2,6 +2,7 @@
 #define MISSION_MANAGER_HPP_
 
 #include "TimedControlTask.hpp"
+#include "QuakeFaultHandler.hpp"
 #include "constants.hpp"
 #include <lin.hpp>
 
@@ -13,6 +14,10 @@
 #include "sat_designation_t.enum"
 
 class MissionManager : public TimedControlTask<void> {
+  #ifdef UNIT_TEST
+    friend class TestFixture;
+  #endif
+
    public:
     MissionManager(StateFieldRegistry& registry, unsigned int offset);
     void execute() override;
@@ -68,11 +73,6 @@ class MissionManager : public TimedControlTask<void> {
     void set(mission_state_t state);
 
    protected:
-    /**
-     * @brief Returns true if there are hardware faults on the spacecraft.
-     */
-    bool check_adcs_hardware_faults() const;
-
     /**
      * @brief Handles logic while within a state.
      */

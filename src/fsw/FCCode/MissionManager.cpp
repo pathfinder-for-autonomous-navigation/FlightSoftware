@@ -89,50 +89,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     set(sat_designation_t::undecided);
 }
 
-bool MissionManager::check_adcs_hardware_faults() const {
-    return  adcs_functional_fault_fp->is_faulted()
-            || wheel1_adc_fault_fp->is_faulted() 
-            || wheel2_adc_fault_fp->is_faulted()
-            || wheel3_adc_fault_fp->is_faulted()
-            || wheel_pot_fault_fp->is_faulted();
-}
-
 void MissionManager::execute() {
-    mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
-
-    // Step 1. Disable radio if in startup.
-    if (state == mission_state_t::startup) {
-        set(radio_state_t::disabled);
-    }
-
-    // Step 2. Change state if faults exist.
-    bool is_fault_responsive_state = false;
-    for(mission_state_t fault_responsive_state : fault_responsive_states) {
-        if (state == fault_responsive_state) {
-            is_fault_responsive_state = true;
-            break;
-        }
-    }
-    if (is_fault_responsive_state) {
-        const bool prop_depressurized = failed_pressurize_fp->is_faulted();
-        const bool power_faulted = low_batt_fault_fp->is_faulted();
-        const bool adcs_faulted = check_adcs_hardware_faults();
-
-        // Note: faults that cause safehold should be checked before faults that
-        // merely cause a transition back to standby.
-        if (power_faulted || adcs_faulted) {
-            transition_to_state(mission_state_t::safehold,
-                adcs_state_t::startup,
-                prop_state_t::disabled);
-            return;
-        }
-        else if (prop_depressurized) {
-            transition_to_state(mission_state_t::standby,
-                adcs_state_t::point_standby,
-                prop_state_t::idle);
-            return;
-        } 
-    }
+    const mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
     // Step 3. Handle state.
     switch(state) {
@@ -156,6 +114,8 @@ void MissionManager::execute() {
 }
 
 void MissionManager::dispatch_startup() {
+    set(radio_state_t::disabled);
+
     // Step 1. Wait for the deployment timer length.
     if (deployment_wait_elapsed_f.get() < deployment_wait) {
         deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
@@ -165,8 +125,8 @@ void MissionManager::dispatch_startup() {
     // Step 2. Turn radio on, and check for hardware faults that would necessitate
     // going into an initialization hold. If faults exist, go into
     // initialization hold, otherwise detumble.
-    set(radio_state_t::wait);
-    if (check_adcs_hardware_faults()) {
+    set(radio_state_t::config);
+    if (false) {
         transition_to_state(mission_state_t::initialization_hold,
             adcs_state_t::detumble,
             prop_state_t::disabled);
