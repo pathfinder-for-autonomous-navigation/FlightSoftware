@@ -8,14 +8,16 @@
 
 #include <adcs/constants.hpp>
 #include <adcs/state_registers.hpp>
+#include <common/constant_tracker.hpp>
 
 #include <cstring>
 
 using namespace Devices;
 
 #ifndef DESKTOP
+TRACKED_CONSTANT_SC(unsigned int, adcs_i2c_timeout, 1000);
 ADCS::ADCS(i2c_t3 &i2c_wire, unsigned char address)
-    : I2CDevice("adcs", i2c_wire, address, 1000) {}
+    : I2CDevice("adcs", i2c_wire, address, adcs_i2c_timeout) {}
 #else
 ADCS::ADCS()
     : I2CDevice("adcs", 0) {}

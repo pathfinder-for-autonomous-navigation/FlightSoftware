@@ -2,15 +2,7 @@
 #include <unity.h>
 #include <limits>
 
-TestFixture::TestFixture(mission_state_t initial_state) : registry(),
-    low_batt_fault_f("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count),
-    adcs_functional_fault_f("adcs_monitor.functional_fault", 1, TimedControlTaskBase::control_cycle_count),
-    wheel1_adc_fault_f("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count),
-    wheel2_adc_fault_f("adcs_monitor.wheel2_fault", 1, TimedControlTaskBase::control_cycle_count),
-    wheel3_adc_fault_f("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count),
-    wheel_pot_fault_f("adcs_monitor.wheel_pot_fault", 1, TimedControlTaskBase::control_cycle_count),
-    failed_pressurize_f("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count)
-{
+TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
                                 "attitude_estimator.h_body");
     adcs_paired_fp = registry.create_writable_field<bool>("adcs.paired");
@@ -25,16 +17,17 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
                                     "orbit.baseline_pos", 0, 100000, 100);
 
     reboot_fp = registry.create_writable_field<bool>("gomspace.gs_reboot_cmd");
+    power_cycle_radio_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
-    low_batt_fault_f.add_to_registry(registry);
-    adcs_functional_fault_f.add_to_registry(registry);
-    wheel1_adc_fault_f.add_to_registry(registry);
-    wheel2_adc_fault_f.add_to_registry(registry);
-    wheel3_adc_fault_f.add_to_registry(registry);
-    wheel_pot_fault_f.add_to_registry(registry);
-    failed_pressurize_f.add_to_registry(registry);
+    low_batt_fault_fp=registry.create_fault("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count);
+    adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel2_adc_fault_fp=registry.create_fault("adcs_monitor.wheel2_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1, TimedControlTaskBase::control_cycle_count);
+    failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count);
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -45,6 +38,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
     prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     reboot_fp->set(false);
+    power_cycle_radio_fp->set(false);
     docked_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);
@@ -54,6 +48,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry(),
     close_approach_trigger_dist_fp = registry.find_writable_field_t<double>("trigger_dist.close_approach");
     docking_trigger_dist_fp = registry.find_writable_field_t<double>("trigger_dist.docking");
     max_radio_silence_duration_fp = registry.find_writable_field_t<unsigned int>("max_radio_silence");
+    docking_timeout_limit_fp = registry.find_writable_field_t<unsigned int>("docking_timeout_limit");
     adcs_state_fp = registry.find_writable_field_t<unsigned char>("adcs.state");
     docking_config_cmd_fp = registry.find_writable_field_t<bool>("docksys.config_cmd");
     mission_state_fp = registry.find_writable_field_t<unsigned char>("pan.state");
@@ -164,7 +159,7 @@ adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t
         adcs_state_t::startup, adcs_state_t::zero_L, adcs_state_t::zero_torque};
 
 prop_state_t TestFixture::prop_states[6] = {prop_state_t::disabled, prop_state_t::idle,
-    prop_state_t::awaiting_pressurization,
+    prop_state_t::await_firing,
     prop_state_t::pressurizing,
     prop_state_t::firing,
     prop_state_t::venting};

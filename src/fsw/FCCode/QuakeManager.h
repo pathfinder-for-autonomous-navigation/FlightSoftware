@@ -2,6 +2,7 @@
 #include "TimedControlTask.hpp"
 #include "QuakeControlTask.h"
 #include "radio_state_t.enum"
+#include <common/constant_tracker.hpp>
 
 /**
  * QuakeManager decides what commands should be sent to the Quake based on the
@@ -201,9 +202,9 @@ class QuakeManager : public TimedControlTask<bool> {
     // TODO: these values are temporary. Experiments should be conducted
     // to figure out maximum cycles we are willing to wait. 
   public:
-    static constexpr unsigned int max_config_cycles = 5;
-    static constexpr unsigned int max_write_cycles = 5;
-    static constexpr unsigned int max_read_cycles = 5;
+    TRACKED_CONSTANT_SC(unsigned int, max_config_cycles, 5);
+    TRACKED_CONSTANT_SC(unsigned int, max_write_cycles, 5);
+    TRACKED_CONSTANT_SC(unsigned int, max_read_cycles, 5);
 
-    static constexpr size_t packet_size = 70;
+    TRACKED_CONSTANT_SC(size_t, packet_size, 70);
 };

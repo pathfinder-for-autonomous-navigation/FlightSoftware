@@ -12,6 +12,7 @@
 //
 
 #ifdef HAVT_LOG_LEVEL
+  #undef LOG_LEVEL
   #define LOG_LEVEL HAVT_LOG_LEVEL
 #endif
 
