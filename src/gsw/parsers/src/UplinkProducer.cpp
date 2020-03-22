@@ -23,21 +23,20 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r):
  }
 
 template<typename UnderlyingType>
-UnderlyingType find_value(nlohmann::json j, std::string name) {
-    for (auto& e : j.items()) {
-        if (e.key() == name) return e.value();
-    }
-    throw std::runtime_error("cannot find value of " + name + " in statefield registry");
-}
-
-template<typename UnderlyingType>
 bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     WritableStateField<UnderlyingType>* ptr = dynamic_cast<WritableStateField<UnderlyingType>*>(registry.find_writable_field(key));
 
     // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the value of the key
     if (!ptr) return false;
-    uint64_t val = find_value<uint64_t>(j, key);
+    UnderlyingType val = j[key];
+    
+    UnderlyingType min = ptr->get_serializer_min();
+    UnderlyingType max = ptr->get_serializer_max();
+    if (val<min || val>max) 
+        throw std::runtime_error("Must set statefield: " + key + " to value within serializer bounds. Min: " +
+        std::to_string(min) + " Max: "+std::to_string(max));
+
     ptr->set(val);
     ptr->serialize();
 
@@ -63,33 +62,38 @@ bool UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohman
 
     // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the values of the key
     if (!ptr) return false;
-    std::array<uint64_t, 3> vals = find_value<std::array<uint64_t, 3>>(j, key);
-    size_t field_index=field_map[key];
+    UnderlyingVectorType vals = j[key];
 
-    ptr->set({static_cast<UnderlyingType>(vals.at(0)), static_cast<UnderlyingType>(vals.at(1)), static_cast<UnderlyingType>(vals.at(2))});
+    ptr->set(vals);
     ptr->serialize();
 
     // Add the updated value to the bitstream
+    size_t field_index=field_map[key];
     add_entry(bs, ptr->get_bit_array(), field_index);
     return true;
 }
 
-template<typename UnderlyingType>
+template<typename UnderlyingType, typename UnderlyingQuatType>
 bool UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
-    WritableStateField<UnderlyingType>* ptr = dynamic_cast<WritableStateField<UnderlyingType>*>(registry.find_writable_field(key));
+    static_assert((std::is_same<UnderlyingType, double>::value && std::is_same<UnderlyingQuatType, d_quat_t>::value)
+                  || (std::is_same<UnderlyingType, float>::value && std::is_same<UnderlyingQuatType, f_quat_t>::value),
+        "Can't collect vector field info for a vector of non-float or non-double type.");
+    WritableStateField<UnderlyingQuatType>* ptr = dynamic_cast<WritableStateField<UnderlyingQuatType>*>(registry.find_writable_field(key));
 
-    // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the values of the key
+    // If the quaternion statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the values of the key
     if (!ptr) return false;
-    auto vals = find_value<std::array<uint64_t, 3>>(j, key);
-    size_t field_index=field_map[key];
 
-    // Set the statefield pointer to the new values. Floats will be implicitly casted to doubles for d_quat_t
-    ptr->set({static_cast<float>(vals.at(0)), static_cast<float>(vals.at(1)), 
-        static_cast<float>(vals.at(2)), static_cast<float>(vals.at(3))});
+    std::array<UnderlyingType, 4> vals = j[key];
+    unsigned int quat_mag = sqrt(pow(vals[0], 2) + pow(vals[1], 2) + pow(vals[2], 2) + pow(vals[3], 2));
+    if (quat_mag>1) throw std::runtime_error("Magnitude of quaternion must be in range [0,1]");
+
+    // Set the statefield pointer to the new values.
+    ptr->set(vals);
     ptr->serialize();
 
     // Add the updated value to the bitstream
+    size_t field_index=field_map[key];
     add_entry(bs, ptr->get_bit_array(), field_index);
     return true;
 }
@@ -105,8 +109,8 @@ bool UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohm
     found_field_type |= try_add_field<bool>(bs, key, j);
     found_field_type |= try_add_vector_field<float>(bs, key, j);
     found_field_type |= try_add_vector_field<double>(bs, key, j);
-    found_field_type |= try_add_quat_field<f_quat_t>(bs, key, j);
-    found_field_type |= try_add_quat_field<d_quat_t>(bs, key, j);
+    found_field_type |= try_add_quat_field<float, f_quat_t>(bs, key, j);
+    found_field_type |= try_add_quat_field<double, d_quat_t>(bs, key, j);
     return found_field_type;
 }
 
