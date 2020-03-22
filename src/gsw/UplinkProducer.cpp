@@ -72,15 +72,25 @@ bool UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohman
     ptr->set({static_cast<UnderlyingType>(vals.at(0)), static_cast<UnderlyingType>(vals.at(1)), static_cast<UnderlyingType>(vals.at(2))});
     ptr->serialize();
 
-    // Make sure the value we want to set does not exceed the max possible
-    // value that the field can be set to
-    for (auto val : vals) {
-        uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
-        if (val > max_val) {
-            throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
-            return false;
-        }
-    }
+    // Add the updated value to the bitstream
+    add_entry(bs, ptr->get_bit_array(), field_index);
+    return true;
+}
+
+template<typename UnderlyingType>
+bool UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohmann::json j) {
+    // Get pointer to that field in the registry
+    WritableStateField<UnderlyingType>* ptr = dynamic_cast<WritableStateField<UnderlyingType>*>(registry.find_writable_field(key));
+
+    // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the values of the key
+    if (!ptr) return false;
+    auto vals = find_value<std::array<uint64_t, 3>>(j, key);
+    size_t field_index=field_map[key];
+
+    // Set the statefield pointer to the new values. Floats will be implicitly casted to doubles for d_quat_t
+    ptr->set({static_cast<float>(vals.at(0)), static_cast<float>(vals.at(1)), 
+        static_cast<float>(vals.at(2)), static_cast<float>(vals.at(3))});
+    ptr->serialize();
 
     // Add the updated value to the bitstream
     add_entry(bs, ptr->get_bit_array(), field_index);
@@ -98,6 +108,8 @@ bool UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohm
     found_field_type |= try_add_field<bool>(bs, key, j);
     found_field_type |= try_add_vector_field<float>(bs, key, j);
     found_field_type |= try_add_vector_field<double>(bs, key, j);
+    found_field_type |= try_add_quat_field<f_quat_t>(bs, key, j);
+    found_field_type |= try_add_quat_field<d_quat_t>(bs, key, j);
     return found_field_type;
 }
 

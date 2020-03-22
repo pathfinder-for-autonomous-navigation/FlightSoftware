@@ -63,6 +63,14 @@ class UplinkProducer : public Uplink{
     bool try_add_vector_field(bitstream bs, std::string key, nlohmann::json j);
 
     /**
+     * Helper function for add_field_to_bitstream.
+     * Check that the field/key of a given type is in the statefield registry.
+     * If it is, add the value of the field/key to the bitstream
+     */
+    template<typename UnderlyingType>
+    bool try_add_quat_field(bitstream bs, std::string key, nlohmann::json j);
+
+    /**
      * Check that a field is in the registry. If it is, add the value to the bitstream.
      */
     bool add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j);
