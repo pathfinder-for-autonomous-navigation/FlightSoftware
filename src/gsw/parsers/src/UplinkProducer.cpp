@@ -154,7 +154,7 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
         // Start writing at the beginning of the bitstream
         bs.reset();
         memset(bs.stream, 0, bs.max_len);
-
+        
         for (auto& e : j.items())
         {
             if (!bs.has_next())
