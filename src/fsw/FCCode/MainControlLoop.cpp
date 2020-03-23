@@ -41,11 +41,11 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       dcdc_controller(registry, dcdc_controller_offset, dcdc),
       eeprom_controller(registry, eeprom_controller_offset),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
+      prop_controller(registry, prop_controller_offset),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
       adcs_commander(registry, adcs_commander_offset), // needs inputs from attitude computer
-      adcs_box_controller(registry, adcs_box_controller_offset, adcs),
-      prop_controller(registry, prop_controller_offset)
+      adcs_box_controller(registry, adcs_box_controller_offset, adcs)
 {
     docking_controller.init();
 

@@ -104,13 +104,12 @@ class MainControlLoop : public ControlTask<void> {
      */
     ReadableStateField<unsigned int> memory_use_f;
 
+    PropController prop_controller;
     MissionManager mission_manager;
 
     AttitudeComputer attitude_computer; // needs adcs.state from MissionManager
     ADCSCommander adcs_commander; // will need inputs from computer
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
-
-    PropController prop_controller;
 
    public:
     /*
