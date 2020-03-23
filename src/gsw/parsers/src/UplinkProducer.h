@@ -67,7 +67,7 @@ class UplinkProducer : public Uplink{
      * Check that the quaternion statefield of a given type is in the statefield registry.
      * If it is, add the value of the field/key to the bitstream
      */
-    template<typename UnderlyingType, typename UnderlyingQuatType>
+    template<typename UnderlyingType>
     bool try_add_quat_field(bitstream bs, std::string key, nlohmann::json j);
 
     /**
