@@ -72,6 +72,25 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
     TEST_ASSERT_EQUAL(ccno, ba.to_uint());
     TEST_ASSERT_EQUAL(true, ba[32]);
     TEST_ASSERT_EQUAL(false, ba[33]);
+
+    //test deserialization for Event class
+    Event *e = dynamic_cast<Event *>(&event);
+    if (e)
+    {
+        //change originally set data fields
+        tf.control_cycle_count_ptr->set(ccno + 1);
+        tf.data1_f.set(false);
+        tf.data2_f.set(false);
+        TEST_ASSERT_EQUAL(tf.data1_f.get(), false);
+        TEST_ASSERT_EQUAL(tf.data2_f.get(), false);
+        //should write back original true, false
+        event.deserialize();
+        TEST_ASSERT_EQUAL(e->ccno->get(), ccno);
+        TEST_ASSERT_EQUAL(tf.data1_f.get(), true);
+        TEST_ASSERT_EQUAL(tf.data2_f.get(), false);
+        std::cout << "tested event deserialization" << std::endl;
+    }
+
     if (tf.event_ptr != nullptr)
     {
         *tf.event_ptr = event_ptr_curr;

@@ -82,7 +82,7 @@ void Event::deserialize()
 
     for (ReadableStateFieldBase *field : data_fields)
     {
-        bit_array field_bits = const_cast<bit_array &>(field->get_bit_array());
+        bit_array &field_bits = const_cast<bit_array &>(field->get_bit_array());
         for (int i = 0; i < field->bitsize(); i++, field_data_ptr++)
         {
             field_bits[i] = (*field_data)[field_data_ptr];
