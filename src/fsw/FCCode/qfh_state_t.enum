@@ -15,7 +15,7 @@
   *   The satellite waits in safe hold for 24 hours by default, after which
   *   the satellite is rebooted by high-level mission logic.
   */
-enum class fault_checker_state_t {
+enum class qfh_state_t {
     unfaulted,
     forced_standby,
     powercycle_1,

@@ -3,6 +3,7 @@
 #include <cmath>
 #include <adcs/constants.hpp>
 #include <common/constant_tracker.hpp>
+#include "SimpleFaultHandler.hpp"
 
 // Declare static storage for constexpr variables
 const constexpr double MissionManager::initial_detumble_safety_factor;
@@ -43,6 +44,10 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_readable_field(is_deployed_f);
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
+
+    main_fault_handler = std::make_unique<MainFaultHandler>(registry);
+    static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
+    SimpleFaultHandler::set_mission_state_ptr(&mission_state_f);
 
     adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
     adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);
@@ -90,9 +95,24 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 }
 
 void MissionManager::execute() {
-    const mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
+    mission_state_t state = static_cast<mission_state_t>(mission_state_f.get());
 
-    // Step 3. Handle state.
+    // Step 1. Change state if faults exist.
+    const fault_response_t fault_response = main_fault_handler->execute();
+    if (fault_response == fault_response_t::safehold &&
+        state != mission_state_t::safehold)
+    {
+        transition_to_state(mission_state_t::safehold, adcs_state_t::zero_torque, prop_state_t::disabled);
+        return;
+    }
+    else if (fault_response == fault_response_t::standby &&
+             state != mission_state_t::safehold && state != mission_state_t::standby) 
+    {
+        transition_to_state(mission_state_t::standby, adcs_state_t::point_standby, prop_state_t::idle);
+        return;
+    }
+
+    // Step 2. Handle state.
     switch(state) {
         case mission_state_t::startup:                    dispatch_startup();                    break;
         case mission_state_t::detumble:                   dispatch_detumble();                   break;
@@ -113,6 +133,14 @@ void MissionManager::execute() {
     }
 }
 
+bool MissionManager::check_adcs_hardware_faults() const {
+    return  adcs_functional_fault_fp->is_faulted()
+            || wheel1_adc_fault_fp->is_faulted() 
+            || wheel2_adc_fault_fp->is_faulted()
+            || wheel3_adc_fault_fp->is_faulted()
+            || wheel_pot_fault_fp->is_faulted();
+}
+
 void MissionManager::dispatch_startup() {
     set(radio_state_t::disabled);
 
@@ -126,7 +154,7 @@ void MissionManager::dispatch_startup() {
     // going into an initialization hold. If faults exist, go into
     // initialization hold, otherwise detumble.
     set(radio_state_t::config);
-    if (false) {
+    if (check_adcs_hardware_faults()) {
         transition_to_state(mission_state_t::initialization_hold,
             adcs_state_t::detumble,
             prop_state_t::disabled);

@@ -16,7 +16,7 @@ class Fault : public WritableStateField<bool> {
      * @param control_cycle_count Reference to the control cycle count.
      */
     Fault(const std::string& name,
-          const size_t _persistence, unsigned int& control_cycle_count);
+          const size_t _persistence, const unsigned int& control_cycle_count);
 
     const std::string &name() const override { return _name; } 
 
@@ -82,7 +82,7 @@ class Fault : public WritableStateField<bool> {
     using WritableStateField<bool>::set;
     using WritableStateField<bool>::get;
 
-    unsigned int& cc; // Control cycle count
+    const unsigned int& cc; // Control cycle count
     unsigned int last_fault_time = 0; // Last control cycle # that the fault condition
                                       // occurred
 

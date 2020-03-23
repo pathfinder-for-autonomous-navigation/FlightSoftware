@@ -1,7 +1,7 @@
 #include "Fault.hpp"
 
 Fault::Fault(const std::string& name,
-      const size_t _persistence, unsigned int& control_cycle_count) : 
+      const size_t _persistence, const unsigned int& control_cycle_count) : 
     WritableStateField<bool>(name, Serializer<bool>()),
     _name(name),
     fault_bool_sr(),
