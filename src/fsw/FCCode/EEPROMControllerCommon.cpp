@@ -1,13 +1,4 @@
 #include "EEPROMController.hpp"
-#ifndef DESKTOP
-#include <EEPROM.h>
-#endif
-
-EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, "eeprom_ct", offset)
-{
-
-}
 
 void EEPROMController::init(const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods){
   for (size_t i = 0; i<statefields.size(); i++){
@@ -40,30 +31,4 @@ void EEPROMController::execute() {
       update_EEPROM(i);
     }
   }
-}
-
-void EEPROMController::read_EEPROM(){
-  #ifndef DESKTOP
-  for (unsigned int i = 0; i<pointers.size(); i++){
-    pointers.at(i)->set(EEPROM.read(addresses.at(i)));
-  }
-  #endif
-}
-
-void EEPROMController::update_EEPROM(unsigned int position){
-  #ifndef DESKTOP
-  EEPROM.put(addresses.at(position), pointers.at(position)->get());
-  #endif
-}
-
-bool EEPROMController::check_empty(){
-  #ifndef DESKTOP
-  for (int i = 0 ; i < EEPROM.length() ; i++) {
-    if (EEPROM.read(i)!=255){
-      return false;
-    }
-  }
-  return true;
-  #endif
-  return false;
 }

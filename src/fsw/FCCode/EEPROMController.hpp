@@ -5,10 +5,16 @@
 
 #include <common/StateFieldRegistry.hpp>
 #include "TimedControlTask.hpp"
+#ifdef DESKTOP
+    #include <json.hpp>
+#endif
 
 class EEPROMController : public TimedControlTask<void> {
-   public:
+   #ifdef UNIT_TEST
+    friend class TestFixture;
+   #endif
 
+   public:
     /**
      * @brief Construct a new EEPROM Controller object
      * 
@@ -51,6 +57,7 @@ class EEPROMController : public TimedControlTask<void> {
      */
     bool check_empty();
 
+  protected:
     //the locations in the EEPROM in which the field values will be stored
     std::vector<int> addresses;
 
@@ -61,6 +68,14 @@ class EEPROMController : public TimedControlTask<void> {
     // of a certain statefield to EEPROM
     std::vector<unsigned int> sf_periods;
 
+    #ifdef DESKTOP
+        // Store EEPROM data in JSON so that it can be written to a file.
+        static nlohmann::json data;
+        // Saves EEPROM data to file if FSW program quits.
+        static void save_data(int signal);
+        // Get EEPROM data in file and store it in "data".
+        static void get_file_data();
+    #endif
 };
 
 #endif
