@@ -5,7 +5,6 @@
 var Spacecraft = require('./spacecraft');
 var RealtimeServer = require('./realtime-server');
 var HistoryServer = require('./history-server');
-var StaticServer = require('./static-server');
 
 var expressWs = require('express-ws');
 var express = require('express');
@@ -16,12 +15,11 @@ expressWs(app);
 var spacecraft = new Spacecraft();
 var realtimeServer = new RealtimeServer(spacecraft);
 var historyServer = new HistoryServer(spacecraft);
-var staticServer = new StaticServer();
 
 app.use('/realtime', realtimeServer);
 app.use('/history', historyServer);
-app.use('/', staticServer);
-app.use('/scripts', express.static(__dirname + '/node_modules/openmct/dist/'));
+app.use('/openmct', express.static('node_modules/openmct/dist/'));
+app.use('/', express.static("public"));
 
 var port = process.env.PORT || 8080
 

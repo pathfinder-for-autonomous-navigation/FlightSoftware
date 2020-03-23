@@ -3,8 +3,8 @@
 <head>
     <title>Open MCT Tutorials</title>
     <!--<script src="node_modules/openmct/dist/openmct.js"></script>-->
-    <script src="/scripts/openmct.js"></script>
-    <script src="lib/http.js"></script>
+    <script src="/openmct/openmct.js"></script>
+    <script src="http.js"></script>
     <script src="dictionary-plugin.js"></script>
     <script src="historical-telemetry-plugin.js"></script>
     <script src="realtime-telemetry-plugin.js"></script>
@@ -12,7 +12,7 @@
 </head>
 <body>
     <script>
-        openmct.setAssetPath('node_modules/openmct/dist');
+        openmct.setAssetPath('openmct');
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.UTCTimeSystem());
