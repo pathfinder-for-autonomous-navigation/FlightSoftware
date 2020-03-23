@@ -85,7 +85,7 @@ bool UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohmann:
     // Get pointer to that field in the registry
     static_assert((std::is_same<UnderlyingType, double>::value && std::is_same<UnderlyingQuatType, d_quat_t>::value)
                   || (std::is_same<UnderlyingType, float>::value && std::is_same<UnderlyingQuatType, f_quat_t>::value),
-        "Can't collect vector field info for a vector of non-float or non-double type.");
+        "Can't collect quaternion field info for a vector of non-float or non-double type.");
     WritableStateField<UnderlyingQuatType>* ptr = dynamic_cast<WritableStateField<UnderlyingQuatType>*>(registry.find_writable_field(key));
 
     // If the quaternion statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the values of the key
