@@ -2,7 +2,7 @@
 #define CLOCK_MANAGER_HPP_
 
 #include "TimedControlTask.hpp"
-#include "Event.hpp"
+#include <common/Event.hpp>
 
 class ClockManager : public TimedControlTask<void>
 {

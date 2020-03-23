@@ -1,5 +1,5 @@
 #include "ClockManager.hpp"
-#include "Event.hpp"
+#include <common/Event.hpp>
 
 ClockManager::ClockManager(StateFieldRegistry &registry,
                            const unsigned int _control_cycle_size) : TimedControlTask<void>(registry, "clock_ct", 0),
