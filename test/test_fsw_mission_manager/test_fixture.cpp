@@ -1,4 +1,5 @@
 #include "test_fixture.hpp"
+#include "../FaultHandlerMachineMock.hpp"
 #include <unity.h>
 #include <limits>
 
@@ -28,6 +29,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count);
     wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1, TimedControlTaskBase::control_cycle_count);
     failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count);
+    overpressured_fp=registry.create_fault("prop.overpressured", 1, TimedControlTaskBase::control_cycle_count);
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -57,11 +59,19 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
                                     "pan.deployment.elapsed");
     sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
 
+    // Replace fault handler with a mock.
+    mission_manager->main_fault_handler = std::make_unique<FaultHandlerMachineMock>(registry);
+
     // Set initial state.
     mission_state_fp->set(static_cast<unsigned char>(initial_state));
 }
 
 // Set and assert functions for various mission states.
+
+void TestFixture::set(fault_response_t response) {
+    static_cast<FaultHandlerMachineMock*>(
+        mission_manager->main_fault_handler.get())->set(response);
+}
 
 void TestFixture::set(mission_state_t state) {
     mission_manager->set(state);
