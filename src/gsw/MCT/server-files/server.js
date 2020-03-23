@@ -8,7 +8,9 @@ var HistoryServer = require('./history-server');
 var StaticServer = require('./static-server');
 
 var expressWs = require('express-ws');
+var express = require('express');
 var app = require('express')();
+
 expressWs(app);
 
 var spacecraft = new Spacecraft();
@@ -18,8 +20,8 @@ var staticServer = new StaticServer();
 
 app.use('/realtime', realtimeServer);
 app.use('/history', historyServer);
-//app.use('/', staticServer);
-app.use('/scripts', staticServer);
+app.use('/', staticServer);
+app.use('/scripts', express.static(__dirname + '/node_modules/openmct/dist/'));
 
 var port = process.env.PORT || 8080
 
