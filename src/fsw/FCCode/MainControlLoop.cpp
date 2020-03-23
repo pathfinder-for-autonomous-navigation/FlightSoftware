@@ -102,8 +102,13 @@ void MainControlLoop::execute() {
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
     dcdc_controller.execute_on_time();
-    // eeprom_controller.execute_on_time(); 
-    // Commented to save EEPROM Cycles
+    
+    #ifdef DESKTOP
+        eeprom_controller.execute_on_time();
+    #else
+        // eeprom_controller.execute_on_time();
+        // Commented to save EEPROM Cycles
+    #endif
 }
 
 #ifdef GSW
