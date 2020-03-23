@@ -52,7 +52,7 @@ class UplinkProducer : public Uplink{
      * If it is, add the value of the field/key to the bitstream
      */
     template<typename UnderlyingType>
-    bool try_add_field(bitstream bs, std::string key, nlohmann::json j);
+    size_t try_add_field(bitstream bs, std::string key, nlohmann::json j);
 
     /**
      * Helper function for add_field_to_bitstream.
@@ -60,7 +60,7 @@ class UplinkProducer : public Uplink{
      * If it is, add the value of the field/key to the bitstream
      */
     template<typename UnderlyingType>
-    bool try_add_vector_field(bitstream bs, std::string key, nlohmann::json j);
+    size_t try_add_vector_field(bitstream bs, std::string key, nlohmann::json j);
 
     /**
      * Helper function for add_field_to_bitstream.
@@ -68,19 +68,20 @@ class UplinkProducer : public Uplink{
      * If it is, add the value of the field/key to the bitstream
      */
     template<typename UnderlyingType>
-    bool try_add_quat_field(bitstream bs, std::string key, nlohmann::json j);
+    size_t try_add_quat_field(bitstream bs, std::string key, nlohmann::json j);
 
     /**
      * Helper function for add_field_to_bitstream.
      * Check that the time statefield of a given type is in the statefield registry.
      * If it is, add the value of the field/key to the bitstream
      */
-    bool try_add_gps_time(bitstream bs, std::string key, nlohmann::json j);
+    size_t try_add_gps_time(bitstream bs, std::string key, nlohmann::json j);
 
     /**
      * Check that a field is in the registry. If it is, add the value to the bitstream.
+     * @return number of bits written if successful
      */
-    bool add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j);
+    size_t add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j);
 
 #ifndef DEBUG
   private:

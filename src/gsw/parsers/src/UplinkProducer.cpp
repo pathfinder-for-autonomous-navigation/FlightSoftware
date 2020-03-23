@@ -23,12 +23,12 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r):
  }
 
 template<typename UnderlyingType>
-bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json j) {
+size_t UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     WritableStateField<UnderlyingType>* ptr = dynamic_cast<WritableStateField<UnderlyingType>*>(registry.find_writable_field(key));
 
-    // If the statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the value of the key
-    if (!ptr) return false;
+    // If the statefield of the given underlying type doesn't exist in the registry, return 0 bits written. Otherwise, get the value of the key
+    if (!ptr) return 0;
     UnderlyingType val = j[key];
 
     // Check that the value specified in the JSON file is within that serializer bounds of the statefield
@@ -51,18 +51,17 @@ bool UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json
     ptr->serialize();
 
     // Add the updated value to the bitstream
-    add_entry(bs, ptr->get_bit_array(), field_index);
-    return true;
+    return add_entry(bs, ptr->get_bit_array(), field_index);
 }
 
 template<typename UnderlyingType>
-bool UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohmann::json j) {
+size_t UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     using UnderlyingVectorType = std::array<UnderlyingType, 3>;
     WritableStateField<UnderlyingVectorType>* ptr = dynamic_cast<WritableStateField<UnderlyingVectorType>*>(registry.find_writable_field(key));
 
-    // If the statefield of the given underlying type doesn't exist in the registry, return false.
-    if (!ptr) return false;
+    // If the statefield of the given underlying type doesn't exist in the registry, return 0 bits written.
+    if (!ptr) return 0;
     UnderlyingVectorType vals = j[key];
 
     // Check that the magnitude of the values in the JSON file is within the statefield's serializer bounds
@@ -77,20 +76,19 @@ bool UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohman
 
     // Add the updated value to the bitstream
     size_t field_index=field_map[key];
-    add_entry(bs, ptr->get_bit_array(), field_index);
-    return true;
+    return add_entry(bs, ptr->get_bit_array(), field_index);
 }
 
 template<typename UnderlyingType>
-bool UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohmann::json j) {
+size_t UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     static_assert(std::is_same<UnderlyingType, double>::value || std::is_same<UnderlyingType, float>::value,
         "Can't collect quaternion field info for a vector of non-float or non-double type.");
     using UnderlyingQuatType = std::array<UnderlyingType, 4>;
     WritableStateField<UnderlyingQuatType>* ptr = dynamic_cast<WritableStateField<UnderlyingQuatType>*>(registry.find_writable_field(key));
 
-    // If the quaternion statefield of the given underlying type doesn't exist in the registry, return false. Otherwise, get the values of the key
-    if (!ptr) return false;
+    // If the quaternion statefield of the given underlying type doesn't exist in the registry, return 0 bits written. Otherwise, get the values of the key
+    if (!ptr) return 0;
     std::array<UnderlyingType, 4> vals = j[key];
 
     // Check that the magnitude of the values in the JSON file is 1 ± some margin of error
@@ -104,16 +102,15 @@ bool UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohmann:
 
     // Add the updated value to the bitstream
     size_t field_index=field_map[key];
-    add_entry(bs, ptr->get_bit_array(), field_index);
-    return true;
+    return add_entry(bs, ptr->get_bit_array(), field_index);
 }
 
-bool UplinkProducer::try_add_gps_time(bitstream bs, std::string key, nlohmann::json j) {
+size_t UplinkProducer::try_add_gps_time(bitstream bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     WritableStateField<gps_time_t>* ptr = dynamic_cast<WritableStateField<gps_time_t>*>(registry.find_writable_field(key));
 
-    // If the time statefield doesn't exist in the registry, return false. Otherwise, get the values of the key
-    if (!ptr) return false;
+    // If the time statefield doesn't exist in the registry, return 0 bits written. Otherwise, get the values of the key
+    if (!ptr) return 0;
     unsigned short wn = j[key][0];
     unsigned int tow = j[key][1];
     unsigned long ns = j[key][2];
@@ -124,25 +121,24 @@ bool UplinkProducer::try_add_gps_time(bitstream bs, std::string key, nlohmann::j
 
     // Add the updated value to the bitstream
     size_t field_index=field_map[key];
-    add_entry(bs, ptr->get_bit_array(), field_index);
-    return true;
+    return add_entry(bs, ptr->get_bit_array(), field_index);
 }
 
-bool UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j) {
-    bool found_field_type = false;
-    found_field_type |= try_add_field<unsigned int>(bs, key, j);
-    found_field_type |= try_add_field<signed int>(bs, key, j);
-    found_field_type |= try_add_field<unsigned char>(bs, key, j);
-    found_field_type |= try_add_field<signed char>(bs, key, j);
-    found_field_type |= try_add_field<float>(bs, key, j);
-    found_field_type |= try_add_field<double>(bs, key, j);
-    found_field_type |= try_add_field<bool>(bs, key, j);
-    found_field_type |= try_add_vector_field<float>(bs, key, j);
-    found_field_type |= try_add_vector_field<double>(bs, key, j);
-    found_field_type |= try_add_quat_field<float>(bs, key, j);
-    found_field_type |= try_add_quat_field<double>(bs, key, j);
-    found_field_type |= try_add_gps_time(bs, key, j);
-    return found_field_type;
+size_t UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j) {
+    size_t bits_written = 0;
+    bits_written |= try_add_field<unsigned int>(bs, key, j);
+    bits_written |= try_add_field<signed int>(bs, key, j);
+    bits_written |= try_add_field<unsigned char>(bs, key, j);
+    bits_written |= try_add_field<signed char>(bs, key, j);
+    bits_written |= try_add_field<float>(bs, key, j);
+    bits_written |= try_add_field<double>(bs, key, j);
+    bits_written |= try_add_field<bool>(bs, key, j);
+    bits_written |= try_add_vector_field<float>(bs, key, j);
+    bits_written |= try_add_vector_field<double>(bs, key, j);
+    bits_written |= try_add_quat_field<float>(bs, key, j);
+    bits_written |= try_add_quat_field<double>(bs, key, j);
+    bits_written |= try_add_gps_time(bs, key, j);
+    return bits_written;
 }
 
 void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename)
@@ -167,7 +163,10 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
             if (field_map.find(key) == field_map.end())
                 throw std::runtime_error("field map key not found: " + key);
 
-            add_field_to_bitstream(bs, key, j);
+            size_t bits_written = add_field_to_bitstream(bs, key, j);
+
+            if (bits_written == 0) 
+                throw std::runtime_error("Unable to find write " + key + " to bitstream.");
         } 
 
     // Trim the padding off the byte stream so that validate passes
