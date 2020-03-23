@@ -18,7 +18,8 @@ var staticServer = new StaticServer();
 
 app.use('/realtime', realtimeServer);
 app.use('/history', historyServer);
-app.use('/', staticServer);
+//app.use('/', staticServer);
+app.use('/scripts', staticServer);
 
 var port = process.env.PORT || 8080
 
