@@ -1,6 +1,7 @@
 #include "Gomspace.hpp"
 #include "../Devices/I2CDevice.hpp"
 #include <cstring>
+#include <common/constant_tracker.hpp>
 
 // Builtins provided by GCC for endian flipping.
 
@@ -11,10 +12,11 @@
 
 using namespace Devices;
 
+TRACKED_CONSTANT_SC(unsigned int, gomspace_timeout, 10000);
 #ifdef DESKTOP
-#define I2C_INITIALIZATION I2CDevice("gomspace", 10000)
+#define I2C_INITIALIZATION I2CDevice("gomspace", gomspace_timeout)
 #else
-#define I2C_INITIALIZATION I2CDevice("gomspace", Gomspace::wire, Gomspace::address, 10000)
+#define I2C_INITIALIZATION I2CDevice("gomspace", Gomspace::wire, Gomspace::address, gomspace_timeout)
 #endif
 
 Gomspace::Gomspace(Gomspace::eps_hk_t *hk_data, Gomspace::eps_config_t *config_data,
@@ -241,6 +243,11 @@ bool Gomspace::set_single_output(unsigned char channel, unsigned char value, sho
     i2c_begin_transmission();
     i2c_write(command, 5);
     i2c_end_transmission(I2C_NOSTOP);
+
+    #ifdef DESKTOP
+    hk->output[channel]=value;
+    return true;
+    #endif
 
     return _check_for_error(PORT_BYTE);
 }

@@ -1,0 +1,18 @@
+{
+    "seed" : 2,
+    "single_sat_sim" : true,
+    "devices" : [
+        {
+            "name": "FlightController",
+            "run_mode" : "native",
+            "binary_filepath" : "/Users/tanishqaggarwal/Documents/pan/repositories/FlightSoftware/.pio/build/fsw_native_leader/program"
+        }
+    ],
+    "radios" : [
+        {
+            "connected_device" : "FlightController",
+            "imei" : "",
+            "connect": false
+        }
+    ]
+}

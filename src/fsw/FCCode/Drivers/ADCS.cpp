@@ -8,14 +8,16 @@
 
 #include <adcs/constants.hpp>
 #include <adcs/state_registers.hpp>
+#include <common/constant_tracker.hpp>
 
 #include <cstring>
 
 using namespace Devices;
 
 #ifndef DESKTOP
+TRACKED_CONSTANT_SC(unsigned int, adcs_i2c_timeout, 1000);
 ADCS::ADCS(i2c_t3 &i2c_wire, unsigned char address)
-    : I2CDevice("adcs", i2c_wire, address, 1000) {}
+    : I2CDevice("adcs", i2c_wire, address, adcs_i2c_timeout) {}
 #else
 ADCS::ADCS()
     : I2CDevice("adcs", 0) {}
@@ -25,7 +27,7 @@ bool ADCS::i2c_ping() {
     unsigned char temp = 0;
     get_who_am_i(&temp); 
     return temp==WHO_AM_I_EXPECTED;
-    }
+}
 
 template <typename T>
 void ADCS::i2c_point_and_read(unsigned char data_register, T* data, std::size_t len) {
@@ -178,11 +180,11 @@ void ADCS::set_imu_gyr_temp_desired(const float desired){
     i2c_write_to_subaddr(adcs::IMU_GYR_TEMP_DESIRED,cmd);
 }
 
-void ADCS::set_havt(const std::bitset<adcs::havt::max_devices>& havt_table){
+void ADCS::set_havt_reset(const std::bitset<adcs::havt::max_devices>& table){
     //4 because 32/8 = 4
     unsigned char cmd[4];
 
-    unsigned int encoded = (unsigned int)havt_table.to_ulong();
+    unsigned int encoded = (unsigned int)table.to_ulong();
 
     //dissassemble unsigned int into 4 chars
     unsigned char * encoded_ptr = (unsigned char *)(&encoded);
@@ -190,9 +192,23 @@ void ADCS::set_havt(const std::bitset<adcs::havt::max_devices>& havt_table){
         cmd[i] = encoded_ptr[i];
     }
 
-    i2c_write_to_subaddr(adcs::HAVT_COMMAND, cmd, 4);
+    i2c_write_to_subaddr(adcs::HAVT_COMMAND_RESET, cmd, 4);
 }
 
+void ADCS::set_havt_disable(const std::bitset<adcs::havt::max_devices>& table){
+    //4 because 32/8 = 4
+    unsigned char cmd[4];
+
+    unsigned int encoded = (unsigned int)table.to_ulong();
+
+    //dissassemble unsigned int into 4 chars
+    unsigned char * encoded_ptr = (unsigned char *)(&encoded);
+    for (unsigned int i = 0; i < 4; i++){
+        cmd[i] = encoded_ptr[i];
+    }
+
+    i2c_write_to_subaddr(adcs::HAVT_COMMAND_DISABLE, cmd, 4);
+}
 
 void ADCS::get_who_am_i(unsigned char* who_am_i) {
     i2c_point_and_read(adcs::WHO_AM_I, who_am_i, 1);
@@ -254,12 +270,6 @@ void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float
     *gyr_temp_rd = fp(c,adcs::imu::min_rd_temp,adcs::imu::max_rd_temp);
 }
 
-#ifdef UNIT_TEST
-void ADCS::set_mock_ssa_mode(const unsigned char ssa_mode) {
-    mock_ssa_mode = ssa_mode;
-}
-#endif
-
 void ADCS::get_ssa_mode(unsigned char* a) {
     #ifdef UNIT_TEST
     //acceleration control mode, mocking output
@@ -307,17 +317,16 @@ void ADCS::get_ssa_voltage(std::array<float, adcs::ssa::num_sun_sensors>* voltag
 }
 
 void ADCS::get_havt(std::bitset<adcs::havt::max_devices>* havt_table){
+    // mocking return
+    #ifdef UNIT_TEST
+    (*havt_table) = mock_havt_read;
+    return;
+    #endif
+    
     //4 because 32/8 = 4
     unsigned char temp[4];
     std::memset(temp, 0, sizeof(temp));
-
-    #ifdef UNIT_TEST
-    for(int i = 0;i<4;i++){
-        temp[i] = 255;
-    }
-    #else
     i2c_point_and_read(adcs::HAVT_READ,temp, 4);
-    #endif
 
     unsigned int encoded;
     
@@ -329,3 +338,17 @@ void ADCS::get_havt(std::bitset<adcs::havt::max_devices>* havt_table){
 
     (*havt_table) = std::bitset<adcs::havt::max_devices>(encoded);
 }
+
+#ifdef UNIT_TEST
+void ADCS::set_mock_havt_read(const std::bitset<adcs::havt::max_devices>& havt_input){
+    mock_havt_read = havt_input;
+}
+
+void ADCS::set_mock_ssa_mode(const unsigned char ssa_mode) {
+    mock_ssa_mode = ssa_mode;
+}
+
+void ADCS::set_mock_adcs_functional(const bool functional) {
+    adcs_functionality = functional;
+}
+#endif

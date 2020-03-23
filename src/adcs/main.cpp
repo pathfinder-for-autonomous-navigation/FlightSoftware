@@ -103,21 +103,28 @@ void update_havt() {
   //set register to the internal table.
   registers.havt.read_table = (unsigned int)havt::internal_table.to_ulong();
 
-  //if no new command no need to actuate anything
-  if(registers.havt.cmd_flg == CMDFlag::OUTDATED) return;
-  //otherwise, actuate the cmd_table
+  //if new command, actuate on reset_table
+  if(registers.havt.cmd_reset_flg == CMDFlag::UPDATED){
+    // Attempt atomic copy of the havt command reset
+    registers.havt.cmd_reset_flg = CMDFlag::OUTDATED;
+    unsigned int command_int = registers.havt.cmd_reset_table;
 
-  unsigned int command_int;
-  // Attempt atomic copy of the havt command table
-  registers.havt.cmd_flg = CMDFlag::OUTDATED;
-  command_int = registers.havt.cmd_table;
-
-  // Actuate if the copy was atomic
-  if (registers.havt.cmd_flg == CMDFlag::OUTDATED){
-    std::bitset<havt::max_devices> temp_command_table(command_int);
-    havt::execute_cmd_table(temp_command_table);
+    // Actuate if the copy was atomic
+    if (registers.havt.cmd_reset_flg == CMDFlag::OUTDATED){
+      std::bitset<havt::max_devices> temp_command_table(command_int);
+      havt::execute_cmd_reset_table(temp_command_table);
+    }
   }
 
+  //if new command, execute distable table
+  if(registers.havt.cmd_disable_flg == CMDFlag::UPDATED){
+    registers.havt.cmd_disable_flg = CMDFlag::OUTDATED;
+    unsigned int command_int = registers.havt.cmd_disable_table;
+    if (registers.havt.cmd_disable_flg == CMDFlag::OUTDATED){
+      std::bitset<havt::max_devices> temp_command_table(command_int);
+      havt::execute_cmd_disable_table(temp_command_table);
+    }
+  }
 }
 
 void update_imu() {
@@ -209,6 +216,7 @@ void update_ssa() {
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
 static unsigned long cycles = 0;
+static unsigned long last_info_time = millis();
 #endif
 
 void loop() {
@@ -219,7 +227,11 @@ void loop() {
   update_havt();
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-  if (!(++cycles % 1000UL)) {
+  cycles++;
+
+  if (millis() - last_info_time > 1000) {
+    last_info_time = millis();
+
     LOG_INFO_header
     LOG_INFO_println("Heartbeat cycle count " + String(cycles))
 
@@ -233,6 +245,27 @@ void loop() {
     LOG_INFO_println("rwa.mode " + String(registers.rwa.mode))
     LOG_INFO_header
     LOG_INFO_println("ssa.mode " + String(registers.ssa.mode))
+
+    std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
+    char buffer[34];
+    for(int i = 0; i<16; i++){
+      if(temp_bitset.test(31-i))
+        buffer[i] = '1';
+      else
+        buffer[i] = '0';
+    }
+    buffer[16] = ' ';
+    for(int i = 16; i<32; i++){
+      if(temp_bitset.test(31-i))
+        buffer[i+1] = '1';
+      else
+        buffer[i+1] = '0';
+    }
+    buffer[33] = '\0';
+
+    LOG_INFO_header
+    LOG_INFO_print("havt.read ")
+    LOG_INFO_println(buffer)
   }
 #endif
 }

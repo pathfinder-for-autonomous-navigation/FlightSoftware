@@ -1,6 +1,4 @@
 #pragma once
-
-#include "TimedControlTask.hpp"
 #include "Drivers/QLocate.hpp"
 
 /**
@@ -17,12 +15,11 @@ static constexpr int SBDIX = 3;         // SBDIX operation
 static constexpr int CONFIG = 4;        // Config operation
 static constexpr int IS_FUNCTIONAL = 5; // Is_Functional operation
 
-class QuakeControlTask : public ControlTask<int>
+class QuakeControlTask 
 {
 public:
   #ifndef DESKTOP
-  QuakeControlTask(StateFieldRegistry &registry) :
-      ControlTask<int>(registry),
+  QuakeControlTask() :
       quake("Quake", &Serial3,Devices::QLocate::DEFAULT_NR_PIN, Devices::QLocate::DEFAULT_TIMEOUT),
       currentState(IDLE),
       fnSeqNum(0),
@@ -31,8 +28,7 @@ public:
         quake.setup();
       }
   #else
-  QuakeControlTask(StateFieldRegistry &registry) : 
-      ControlTask<int>(registry),
+  QuakeControlTask() : 
       quake(),
       currentState(IDLE),
       fnSeqNum(0),

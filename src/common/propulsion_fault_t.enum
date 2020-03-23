@@ -1,0 +1,11 @@
+#pragma once
+
+// prop.fault
+enum class prop_fault_t {
+    nofaults,
+    tank2_temp,
+    tank1_temp,
+    tank2_pressure,
+    cannot_refill
+};
+

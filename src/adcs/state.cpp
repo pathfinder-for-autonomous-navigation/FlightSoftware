@@ -63,8 +63,10 @@ struct Registers volatile registers = {
   // HAVT Registers
   {
     0xF0F01F1F, // Read register
-    0, // Cmd register
-    0, // Cmd flag
+    0, // cmd reset register
+    0, // cmd reset flag
+    0, // cmd disable register
+    0, // cmd disable flag
   }
 };
 }  // namespace adcs

@@ -3,6 +3,7 @@
 
 #include "../Devices/Device.hpp"
 #include <cmath>
+#include <common/constant_tracker.hpp>
 
 namespace Devices {
 /**
@@ -14,17 +15,17 @@ namespace Devices {
 class DockingSystem : public Devices::Device {
    public:
     //! Default pin for docking motor I1.
-    static constexpr unsigned char motor_i1_pin = 14;
+    TRACKED_CONSTANT_SC(unsigned char, motor_i1_pin, 14);
     //! Default pin for docking motor I2.
-    static constexpr unsigned char motor_i2_pin = 15;
+    TRACKED_CONSTANT_SC(unsigned char, motor_i2_pin, 15);
     //! Default pin for docking motor direction pin.
-    static constexpr unsigned char motor_direction_pin = 16;
+    TRACKED_CONSTANT_SC(unsigned char, motor_direction_pin, 16);
     //! Default pin for docking motor sleep pin.
-    static constexpr unsigned char motor_sleep_pin = 17;
+    TRACKED_CONSTANT_SC(unsigned char, motor_sleep_pin, 17);
     //! Default pin for docking motor step.
-    static constexpr unsigned char motor_step_pin = 39;
+    TRACKED_CONSTANT_SC(unsigned char, motor_step_pin, 39);
     //! Docking switch pin
-    static constexpr unsigned char switch_pin = 25;
+    TRACKED_CONSTANT_SC(unsigned char, switch_pin, 36);
 
     /**
      * @brief Construct a new Docking System object.

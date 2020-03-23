@@ -2,6 +2,7 @@
 #define DCDC_HPP_
 
 #include "../Devices/Device.hpp"
+#include <common/constant_tracker.hpp>
 
 namespace Devices {
 /**
@@ -14,8 +15,8 @@ class DCDC : public Device {
 
    public:
     //! Default enable pin for the DCDCs.
-    static constexpr unsigned char dcdc_motor_enable_pin = 24;
-    static constexpr unsigned char dcdc_sph_enable_pin = 25;
+    TRACKED_CONSTANT_SC(unsigned char, ADCSMotorDCDC_EN, 24);
+    TRACKED_CONSTANT_SC(unsigned char, SpikeDockDCDC_EN, 25);
 
     /**
      * @brief Default constructor. **/
@@ -24,7 +25,6 @@ class DCDC : public Device {
     bool setup();
     bool is_functional();
     void disable();
-    void reset();
 #else
     bool setup() override;
 
@@ -37,11 +37,6 @@ class DCDC : public Device {
      * @brief Disable both DCDCs.
      **/
     void disable() override;
-
-    /** 
-     * @brief Disables and then re-enables both DCDCs.
-     **/
-    void reset() override;
 #endif
     /**
      * @brief Turn on ADCS DCDC by holding the enable pin high.
@@ -49,10 +44,20 @@ class DCDC : public Device {
     void enable_adcs();
 
     /**
+     * @brief Returns if ADCS is enabled.
+     **/
+    const bool adcs_enabled();
+
+    /**
      * @brief Turn on the Spike and Hold, pressure sensor, and docking motor
      * DCDC by holding the enable pin high.
      **/
     void enable_sph();
+
+    /**
+     * @brief Returns if spike and hold is enabled.
+     **/
+    const bool sph_enabled();
 
     /** 
      * @brief Turn off ADCS DCDC by holding the enable pin low.
@@ -64,6 +69,16 @@ class DCDC : public Device {
      * DCDC by holding the enable pin low.
      **/
     void disable_sph();
+
+   protected:
+    #ifdef DESKTOP
+    // Returns whether or not adcs is enabled. Default is false
+    bool adcs = false;
+
+    // Returns whether or not spike and hold is enabled. Default is false
+    bool sph = false;
+    #endif
+
 };
 }  // namespace Devices
 

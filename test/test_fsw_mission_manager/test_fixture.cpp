@@ -1,9 +1,9 @@
 #include "test_fixture.hpp"
+#include "../FaultHandlerMachineMock.hpp"
 #include <unity.h>
 #include <limits>
 
-TestFixture::TestFixture(mission_state_t initial_state) : registry()
-{
+TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
                                 "attitude_estimator.h_body");
     adcs_paired_fp = registry.create_writable_field<bool>("adcs.paired");
@@ -14,11 +14,22 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
 
     prop_state_fp = registry.create_readable_field<unsigned char>("prop.state", 2);
 
-    piksi_mode_fp = registry.create_readable_field<unsigned char>("piksi.state", 4);
     propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
 
+    reboot_fp = registry.create_writable_field<bool>("gomspace.gs_reboot_cmd");
+    power_cycle_radio_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
+
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
+
+    low_batt_fault_fp=registry.create_fault("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count);
+    adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel2_adc_fault_fp=registry.create_fault("adcs_monitor.wheel2_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count);
+    wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1, TimedControlTaskBase::control_cycle_count);
+    failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count);
+    overpressured_fp=registry.create_fault("prop.overpressured", 1, TimedControlTaskBase::control_cycle_count);
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -28,11 +39,18 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     last_checkin_cycle_fp->set(0);
     prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
+    reboot_fp->set(false);
+    power_cycle_radio_fp->set(false);
     docked_fp->set(false);
 
     mission_manager = std::make_unique<MissionManager>(registry, 0);
 
     // Check that mission manager creates its expected fields
+    detumble_safety_factor_fp = registry.find_writable_field_t<double>("detumble_safety_factor");
+    close_approach_trigger_dist_fp = registry.find_writable_field_t<double>("trigger_dist.close_approach");
+    docking_trigger_dist_fp = registry.find_writable_field_t<double>("trigger_dist.docking");
+    max_radio_silence_duration_fp = registry.find_writable_field_t<unsigned int>("max_radio_silence");
+    docking_timeout_limit_fp = registry.find_writable_field_t<unsigned int>("docking_timeout_limit");
     adcs_state_fp = registry.find_writable_field_t<unsigned char>("adcs.state");
     docking_config_cmd_fp = registry.find_writable_field_t<bool>("docksys.config_cmd");
     mission_state_fp = registry.find_writable_field_t<unsigned char>("pan.state");
@@ -41,14 +59,22 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
                                     "pan.deployment.elapsed");
     sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
 
+    // Replace fault handler with a mock.
+    mission_manager->main_fault_handler = std::make_unique<FaultHandlerMachineMock>(registry);
+
     // Set initial state.
     mission_state_fp->set(static_cast<unsigned char>(initial_state));
 }
 
 // Set and assert functions for various mission states.
 
+void TestFixture::set(fault_response_t response) {
+    static_cast<FaultHandlerMachineMock*>(
+        mission_manager->main_fault_handler.get())->set(response);
+}
+
 void TestFixture::set(mission_state_t state) {
-    mission_state_fp->set(static_cast<unsigned char>(state));
+    mission_manager->set(state);
 }
 
 void TestFixture::set(adcs_state_t state) {
@@ -112,15 +138,13 @@ void TestFixture::assert_ground_uncommandability(prop_state_t exception_state) {
 }
 
 // Step forward the state machine by 1 control cycle.
-void TestFixture::step() { mission_manager->execute(); }
+void TestFixture::step() {
+    mission_manager->execute();
+    mission_manager->control_cycle_count++;
+}
 
 void TestFixture::set_ccno(unsigned int ccno) {
     mission_manager->control_cycle_count = ccno;
-}
-
-// Create a hardware fault that necessitates a transition to safe hold or initialization hold.
-void TestFixture::set_hardware_fault(bool faulted) {
-    // TODO
 }
 
 // Set the distance between the two satellites.
@@ -145,7 +169,7 @@ adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t
         adcs_state_t::startup, adcs_state_t::zero_L, adcs_state_t::zero_torque};
 
 prop_state_t TestFixture::prop_states[6] = {prop_state_t::disabled, prop_state_t::idle,
-    prop_state_t::awaiting_pressurization,
+    prop_state_t::await_firing,
     prop_state_t::pressurizing,
     prop_state_t::firing,
     prop_state_t::venting};
