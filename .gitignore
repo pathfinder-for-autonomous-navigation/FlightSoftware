@@ -9,6 +9,7 @@ geograv_wrapper.mexmaci64
 geomag_wrapper.mexmaci64
 
 test/output_export.cpp
+tmp
 # OS Generated .DS_store files
 .DS_Store
 .vscode
