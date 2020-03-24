@@ -18,7 +18,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt-get install lcov valgrind cppcheck
+        sudo apt-get install lcov
         sudo gem install coveralls-lcov
         python -m pip install --upgrade pip
         pip install -r requirements.txt
