@@ -38,4 +38,4 @@ jobs:
         ./tools/verify_teensy_builds.sh
 
     - name: Verify ADCS Teensy builds
-        ./tools/verify_adcs_builds.sh
+      run: ./tools/verify_adcs_builds.sh
