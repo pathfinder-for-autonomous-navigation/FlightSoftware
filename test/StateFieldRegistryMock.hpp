@@ -333,7 +333,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @param name Name of fault to create.
      * @return Pointer to fault that was created.
      */
-    std::shared_ptr<Fault> create_fault(const std::string& name, const size_t _persistence, unsigned int control_cycle_count)
+    std::shared_ptr<Fault> create_fault(const std::string& name, const size_t _persistence, const unsigned int& control_cycle_count)
     {
         auto fault_ptr = std::make_shared<Fault>(name, _persistence, control_cycle_count);
         add_fault(fault_ptr.get());

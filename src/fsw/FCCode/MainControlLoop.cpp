@@ -72,6 +72,11 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     eeprom_controller.init(statefields, periods);
     // Since all telemetry fields have been added to the registry, initialize flows
     downlink_producer.init_flows(flow_data);
+
+    // Temporarily disable fault handling until it's better tested
+    WritableStateField<bool>* fault_handler_enabled_fp =
+        find_writable_field<bool>("fault_handler.enabled", __FILE__, __LINE__);
+    fault_handler_enabled_fp->set(false);
 }
 
 void MainControlLoop::execute() {
@@ -102,8 +107,13 @@ void MainControlLoop::execute() {
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
     dcdc_controller.execute_on_time();
-    // eeprom_controller.execute_on_time(); 
-    // Commented to save EEPROM Cycles
+    
+    #ifdef DESKTOP
+        eeprom_controller.execute_on_time();
+    #else
+        // eeprom_controller.execute_on_time();
+        // Commented to save EEPROM Cycles
+    #endif
 }
 
 #ifdef GSW
