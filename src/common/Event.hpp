@@ -94,13 +94,10 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
       void signal() override;
       size_t bitsize() const override;
       const bit_array &get_bit_array() const override;
-
-      //#if defined(GSW) || defined(UNIT_TEST)
       void deserialize() override;
       void set_bit_array(const bit_array &arr) override;
       bool deserialize(const char *val) override;
       const char *print() const override;
-      //#endif
 
    static ReadableStateField<unsigned int> *ccno;
 
