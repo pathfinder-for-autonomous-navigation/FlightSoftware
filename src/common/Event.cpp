@@ -54,7 +54,7 @@ void Event::signal() {
     serialize();
 }
 
-#if defined(GSW) || defined(UNIT_TEST)
+//#if defined(GSW) || defined(UNIT_TEST)
 
 const char* Event::print() const {
     return print_fn(ccno->get(), data_fields);
@@ -94,6 +94,6 @@ void Event::set_bit_array(const bit_array &arr)
 
 bool Event::deserialize(const char *val) { return true; }
 
-#endif
+//#endif
 
 

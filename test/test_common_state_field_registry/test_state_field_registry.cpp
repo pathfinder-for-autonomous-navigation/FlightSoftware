@@ -35,7 +35,7 @@ void test_events() {
     unsigned int control_cycle_count=1;
 
     // Add event to registry
-    Event e("event", event_data, print_fn, control_cycle_count);
+    Event e("event", event_data, print_fn);
     TEST_ASSERT_TRUE(registry.add_event(&e));
     
     // Find event
