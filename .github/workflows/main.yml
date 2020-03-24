@@ -21,7 +21,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Desktop flight software, common software, and ground software tests
-      run:
+      run: |
         apt install lcov python3 python3-pip
         pip3 install -U platformio==4.2.0
         platformio update
