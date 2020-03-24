@@ -33,9 +33,14 @@ public:
   // to provide the same interface as a single event.
   size_t bitsize() const override;
   const bit_array &get_bit_array() const override;
+
+  #if defined(GSW) || defined(UNIT_TEST)
   void set_bit_array(const bit_array &arr) override;
   void deserialize() override;
   const char *print() const override;
+  bool deserialize(const char *val) override;
+ #endif
+
   void signal() override;
 
 private:

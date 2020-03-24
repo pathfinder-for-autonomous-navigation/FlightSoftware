@@ -18,13 +18,6 @@ public:
      */
   virtual void signal() = 0;
 
-#if defined(GSW) || defined(UNIT_TEST)
-  /**
-     * @brief Store the event's bitset into the event's fields' data
-     * so that it can be retrieved by ground software for parsing.
-     */
-  virtual void deserialize() = 0;
-#endif
 
   /**
      * @brief Get bitsize of contained bitset.
@@ -39,6 +32,17 @@ public:
   virtual const bit_array &get_bit_array() const = 0;
 
 #if defined(GSW) || defined(UNIT_TEST)
+   /**
+       * @brief Store the event's bitset into the event's fields' data
+       * so that it can be retrieved by ground software for parsing.
+       */
+   virtual void deserialize() = 0;
+
+   /**
+    * 
+    */
+   virtual bool deserialize(const char *val) = 0;
+
   /**
      * @brief Set the contained bitset.
      * 
@@ -88,12 +92,15 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
   public:
     // Functions from the EventBase interface.
       void signal() override;
-      void deserialize() override;
       size_t bitsize() const override;
       const bit_array &get_bit_array() const override;
+
+      //#if defined(GSW) || defined(UNIT_TEST)
+      void deserialize() override;
       void set_bit_array(const bit_array &arr) override;
       bool deserialize(const char *val) override;
       const char *print() const override;
+      //#endif
 
    static ReadableStateField<unsigned int> *ccno;
 

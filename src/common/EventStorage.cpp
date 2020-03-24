@@ -37,20 +37,26 @@ const bit_array &EventStorage::get_bit_array() const
     return sub_events[event_ptr].get_bit_array();
 }
 
-const char *EventStorage::print() const
+#if defined(GSW) || defined(UNIT_TEST)
+
+const char *EventStorage::print() const 
 {
     return sub_events[event_ptr].print();
 }
 
-void EventStorage::deserialize()
+void EventStorage::deserialize() 
 {
     sub_events[event_ptr].deserialize();
 }
 
-void EventStorage::set_bit_array(const bit_array &arr)
+void EventStorage::set_bit_array(const bit_array &arr)  
 {
     sub_events[event_ptr].set_bit_array(arr);
 }
+
+bool EventStorage::deserialize(const char *val) { return true; }
+
+#endif
 
 void EventStorage::signal()
 {

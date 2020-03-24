@@ -54,6 +54,8 @@ void Event::signal() {
     serialize();
 }
 
+#if defined(GSW) || defined(UNIT_TEST)
+
 const char* Event::print() const {
     return print_fn(ccno->get(), data_fields);
 }
@@ -73,7 +75,7 @@ void Event::deserialize()
     for (ReadableStateFieldBase *field : data_fields)
     {
         bit_array &field_bits = const_cast<bit_array &>(field->get_bit_array());
-        for (int i = 0; i < field->bitsize(); i++, field_data_ptr++)
+        for (uint i = 0; i < field->bitsize(); i++, field_data_ptr++)
         {
             field_bits[i] = (*field_data)[field_data_ptr];
         }
@@ -84,11 +86,14 @@ void Event::deserialize()
 void Event::set_bit_array(const bit_array &arr)
 {
     assert(arr.size() == field_data->size());
-    for (int i = 0; i < arr.size(); i++)
+    for (uint i = 0; i < arr.size(); i++)
     {
         (*field_data)[i] = arr[i];
     }
 }
 
 bool Event::deserialize(const char *val) { return true; }
+
+#endif
+
 
