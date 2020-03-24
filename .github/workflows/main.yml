@@ -19,15 +19,23 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-
-    - name: Desktop flight software, common software, and ground software tests
+    
+    - name: Install dependencies
       run: |
-        sudo apt-get install lcov python3 python3-pip
-        pip3 install -U platformio==4.2.0
-        platformio update
+        sudo apt-get install lcov
         sudo gem install coveralls-lcov
-        ./tools/run_common_software_tests.sh
-        ./tools/run_desktop_flight_tests.sh
-        ./tools/run_ground_tests.sh
-        ./tools/verify_teensy_builds.sh
-        ./tools/generate_coverage.sh
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        platformio update
+
+    - name: Desktop flight software tests
+      run: ./tools/run_desktop_flight_tests.sh
+    
+    - name: Common software tests
+      run: ./tools/run_common_software_tests.sh
+      
+    - name: Ground software tests
+      run: ./tools/run_ground_tests.sh
+        
+    - name: Verify FSW Teensy builds
+      run: ./tools/verify_teensy_builds.sh
