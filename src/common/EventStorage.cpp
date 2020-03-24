@@ -23,7 +23,7 @@ void EventStorage::add_events_to_registry(StateFieldRegistry &registry)
 {
     for (Event &e : sub_events)
     {
-        registry.add_readable_field(static_cast<ReadableStateFieldBase *>(&e));
+        registry.add_event(&e);
     }
 }
 
@@ -48,13 +48,6 @@ void EventStorage::deserialize()
 {
     sub_events[event_ptr].deserialize();
 }
-
-void EventStorage::set_bit_array(const bit_array &arr)  
-{
-    sub_events[event_ptr].set_bit_array(arr);
-}
-
-bool EventStorage::deserialize(const char *val) { return true; }
 
 #endif
 

@@ -147,11 +147,11 @@ void test_event_storage()
 {
     TestFixtureEventStorage tf(99);
     // Fields should have been created inside the state field registry.
-    tf.registry.find_readable_field("event.1");
-    tf.registry.find_readable_field("event.2");
-    tf.registry.find_readable_field("event.3");
+    tf.registry.find_event("event.1");
+    tf.registry.find_event("event.2");
+    tf.registry.find_event("event.3");
     // Test that a field was added to the registry for every single sub-event.
-    TEST_ASSERT_EQUAL(99, tf.registry.readable_fields.size());
+    TEST_ASSERT_EQUAL(99, tf.registry.events.size());
 
     // Event storage should behave the same as an event.
     for (int i = 0; i < 200; i++)

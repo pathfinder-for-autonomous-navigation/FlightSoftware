@@ -38,24 +38,13 @@ public:
        */
    virtual void deserialize() = 0;
 
-   /**
-    * 
-    */
-   virtual bool deserialize(const char *val) = 0;
-
-  /**
-     * @brief Set the contained bitset.
-     * 
-     * @param arr 
-     */
-  virtual void set_bit_array(const bit_array &arr) = 0;
-
   /**
      * @brief Print event data to a string.
      * 
      * @return const char* The string.
      */
   virtual const char *print() const = 0;
+
 #endif
 };
 
@@ -107,12 +96,6 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
     std::vector<ReadableStateFieldBase*>& data_fields;
     std::unique_ptr<bit_array> field_data;
     const char* (*print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&);
-
-   //  // The value of events should never be set via deserialize or set_bit_array(), so these
-   //  // functions will have stub implementations.
-   //  void deserialize() override;
-   //  bool deserialize(const char *val) override;
-   //  void set_bit_array(const bit_array& arr) override;
 
     // Disable state field functions.
     using StateField<bool>::set;
