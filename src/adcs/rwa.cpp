@@ -14,6 +14,7 @@
 //  - transform sensor readings in to the body frame
 
 #ifdef RWA_LOG_LEVEL
+  #undef LOG_LEVEL
   #define LOG_LEVEL RWA_LOG_LEVEL
 #endif
 

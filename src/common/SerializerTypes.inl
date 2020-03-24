@@ -5,6 +5,7 @@
 #include "GPSTime.hpp"
 #include "Serializer.hpp"
 #include "types.hpp"
+#include "constant_tracker.hpp"
 
 #include <lin.hpp> // for norm
 
@@ -14,8 +15,8 @@
 template <>
 class Serializer<bool> : public SerializerBase<bool> {
   public:
-    constexpr static size_t bool_sz = 1;
-    constexpr static size_t print_sz = 6; // "false" has length 5. +1 for null terminator
+    TRACKED_CONSTANT_SC(size_t, bool_sz, 1);
+    TRACKED_CONSTANT_SC(size_t, print_sz, 6); // "false" has length 5. +1 for null terminator
 
     Serializer() : SerializerBase<bool>(false, true, 1, print_sz) {}
 
@@ -131,7 +132,7 @@ class IntegerSerializer : public SerializerBase<T> {
 template <>
 class Serializer<signed char> : public IntegerSerializer<signed char> {
   public:
-    constexpr static size_t print_size = 5; // -2^3 - 1 has 4 characters. +1 for NULL
+    TRACKED_CONSTANT_SC(size_t, print_size, 5); // -2^3 - 1 has 4 characters. +1 for NULL
 
     Serializer() : IntegerSerializer<signed char>(-128, 127, print_size) {}
 
@@ -148,7 +149,7 @@ class Serializer<signed char> : public IntegerSerializer<signed char> {
 template <>
 class Serializer<unsigned char> : public IntegerSerializer<unsigned char> {
   public:
-    constexpr static size_t print_size = 4; // 2^8 - 1 has 10 characters. +1 for NULL
+    TRACKED_CONSTANT_SC(size_t, print_size, 4); // 2^8 - 1 has 10 characters. +1 for NULL
 
     Serializer() : IntegerSerializer<unsigned char>(0, 255, print_size) {}
 
@@ -167,7 +168,7 @@ class Serializer<unsigned char> : public IntegerSerializer<unsigned char> {
 template <>
 class Serializer<unsigned int> : public IntegerSerializer<unsigned int> {
   public:
-    constexpr static size_t print_size = 11; // 2^32 - 1 has 10 characters. +1 for NULL
+    TRACKED_CONSTANT_SC(size_t, print_size, 11); // 2^32 - 1 has 10 characters. +1 for NULL
 
     Serializer() : IntegerSerializer<unsigned int>(0, 4294967295, print_size) {}
 
@@ -186,8 +187,8 @@ class Serializer<unsigned int> : public IntegerSerializer<unsigned int> {
 template <>
 class Serializer<signed int> : public IntegerSerializer<signed int> {
   public:
-    constexpr static size_t temp_sz = 30; // Size of a temperature field
-    constexpr static size_t print_size = 12; // -2^31 - 1 has 11 characters. +1 for NULL
+    TRACKED_CONSTANT_SC(size_t, temp_sz, 30); // Size of a temperature field
+    TRACKED_CONSTANT_SC(size_t, print_size, 12); // -2^31 - 1 has 11 characters. +1 for NULL
 
     Serializer() : IntegerSerializer<signed int>(-2147483648, 2147483647, print_size) {}
 
@@ -211,7 +212,7 @@ class FloatDoubleSerializer : public SerializerBase<T> {
     template<typename U, size_t N, size_t qsz, size_t vcsz, size_t qcsz>
     friend class VectorSerializer;
 
-    constexpr static size_t print_size = 14; // 6 digits before and after the decimal point, and a NULL character.
+    TRACKED_CONSTANT_SC(size_t, print_size, 14); // 6 digits before and after the decimal point, and a NULL character.
 
     FloatDoubleSerializer(T min, T max, size_t compressed_size)
         : SerializerBase<T>(min, max, compressed_size, print_size)
@@ -405,11 +406,11 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
      */
     std::array<bit_array, N - 1> component_scaled_values;
 
-    constexpr static size_t quat_magnitude_sz = (quat_sz - 3 * quat_component_sz);
-    constexpr static size_t vec_min_sz = 2 + 2 * vec_component_sz + 1; // + 1 for the sign serializer
+    TRACKED_CONSTANT_SC(size_t, quat_magnitude_sz, (quat_sz - 3 * quat_component_sz));
+    TRACKED_CONSTANT_SC(size_t, vec_min_sz, 2 + 2 * vec_component_sz + 1); // + 1 for the sign serializer
 
-    constexpr static size_t print_size = 13 * N + (N - 1) + 1; // 13 characters per value in the array,
-                                                               // N - 1 commas, 1 null character
+    TRACKED_CONSTANT_SC(size_t, print_size, 13 * N + (N - 1) + 1); // 13 characters per value in the array,
+                                                                   // N - 1 commas, 1 null character
 
     /**
      * @brief Construct a new Serializer object.
@@ -660,12 +661,12 @@ namespace SerializerConstants {
     /**
      * @brief Specialization of Serializer for float vectors and quaternions.
      */
-    constexpr size_t fqsz = 29; // Compressed size for a float-based quaternion
-    constexpr size_t fvcsz = 9; // Compressed size for a normalized component of a float-based vector
-    constexpr size_t fqcsz = 9; // Compressed size for a normalized component of a float-based quaternion
+    TRACKED_CONSTANT_SC(size_t, fqsz, 29); // Compressed size for a float-based quaternion
+    TRACKED_CONSTANT_SC(size_t, fvcsz, 9); // Compressed size for a normalized component of a float-based vector
+    TRACKED_CONSTANT_SC(size_t, fqcsz, 9); // Compressed size for a normalized component of a float-based quaternion
 
     // TODO FIX BITSIZE
-    constexpr size_t min_fvsz = 2 + fvcsz * 2; // Minimum size for a float vector.
+    TRACKED_CONSTANT_SC(size_t, min_fvsz, 2 + fvcsz * 2); // Minimum size for a float vector.
 }
 
 template <size_t N>
@@ -705,11 +706,11 @@ namespace SerializerConstants {
     /**
      * @brief Specialization of Serializer for double vectors and quaternions.
      */
-    constexpr size_t dqsz = 29; // Compressed size for a double-based quaternion
-    constexpr size_t dvcsz = 9; // Compressed size for a normalized component of a double-based vector
-    constexpr size_t dqcsz = 9; // Compressed size for a normalized component of a double-based quaternion
+    TRACKED_CONSTANT_SC(size_t, dqsz, 29); // Compressed size for a double-based quaternion
+    TRACKED_CONSTANT_SC(size_t, dvcsz, 9); // Compressed size for a normalized component of a double-based vector
+    TRACKED_CONSTANT_SC(size_t, dqcsz, 9); // Compressed size for a normalized component of a double-based quaternion
 
-    constexpr size_t min_dvsz = 2 + dvcsz * 2; // Minimum size for a double vector.
+    TRACKED_CONSTANT_SC(size_t, min_dvsz, 2 + dvcsz * 2); // Minimum size for a double vector.
 }
 
 template <size_t N>
@@ -751,10 +752,10 @@ class Serializer<std::array<double, N>> : public VectorSerializer<double, N,
 template <>
 class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
   public:
-    constexpr static size_t gps_time_sz = 68;
+    TRACKED_CONSTANT_SC(size_t, gps_time_sz, 68);
     static const gps_time_t dummy_gpstime;
 
-    constexpr static size_t print_size = 25; // wn: 5, tow: 10, ns: 7, 2 commas, 1 NULL character. 
+    TRACKED_CONSTANT_SC(size_t, print_size, 25); // wn: 5, tow: 10, ns: 7, 2 commas, 1 NULL character. 
 
     Serializer()
         : SerializerBase<gps_time_t>(dummy_gpstime, dummy_gpstime, gps_time_sz, print_size)

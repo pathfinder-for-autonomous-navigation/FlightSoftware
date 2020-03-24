@@ -2,10 +2,12 @@
 #define MISSION_MANAGER_HPP_
 
 #include "TimedControlTask.hpp"
+#include "QuakeFaultHandler.hpp"
 #include "constants.hpp"
 #include <lin.hpp>
 
-#include "Fault.hpp"
+#include <common/Fault.hpp>
+#include "MainFaultHandler.hpp"
 #include "prop_state_t.enum"
 #include "mission_state_t.enum"
 #include "adcs_state_t.enum"
@@ -13,6 +15,10 @@
 #include "sat_designation_t.enum"
 
 class MissionManager : public TimedControlTask<void> {
+   #ifdef UNIT_TEST
+     friend class TestFixture;
+   #endif
+
    public:
     MissionManager(StateFieldRegistry& registry, unsigned int offset);
     void execute() override;
@@ -21,24 +27,30 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<double> detumble_safety_factor_f;
     WritableStateField<double> close_approach_trigger_dist_f; // Meters
     WritableStateField<double> docking_trigger_dist_f; // Meters
-    static constexpr double initial_detumble_safety_factor = 0.2;
-    static constexpr double initial_close_approach_trigger_dist = 100; // Meters
-    static constexpr double initial_docking_trigger_dist = 0.4; // Meters
+    TRACKED_CONSTANT_SC(double, initial_detumble_safety_factor, 0.2);
+    TRACKED_CONSTANT_SC(double, initial_close_approach_trigger_dist, 100); // Meters
+    TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4); // Meters
 
     /**
      * @brief Number of control cycles to wait during the post-deployment
      * do-nothing period.
      */
     #ifdef FLIGHT
-        static constexpr unsigned int deployment_wait = 15000; // ~30 mins
+        TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
     #else
-        static constexpr unsigned int deployment_wait = 100;
+        TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 100);
     #endif
     /**
      * @brief Number of control cycles to wait before declaring "too long since comms".
      */
     WritableStateField<unsigned int> max_radio_silence_duration_f;
-    static constexpr unsigned int initial_max_radio_silence_duration = PAN::one_day_ccno;
+    TRACKED_CONSTANT_SC(unsigned int, initial_max_radio_silence_duration, PAN::one_day_ccno);
+
+    /**
+     * @brief Number of control cycles to wait while in docking state before moving to standby
+     */
+    WritableStateField<unsigned int> docking_timeout_limit_f;
+    TRACKED_CONSTANT_SC(unsigned int, initial_docking_timeout_limit, PAN::one_day_ccno);
 
     // These states respond to fault conditions.
     static constexpr std::array<mission_state_t, 5> fault_responsive_states = {
@@ -64,6 +76,11 @@ class MissionManager : public TimedControlTask<void> {
    protected:
     /**
      * @brief Returns true if there are hardware faults on the spacecraft.
+     * 
+     * This function is used in the startup state to determine whether the spacecraft
+     * should switch to the detumble or the initialization hold state, after completing
+     * its deployment wait.
+     * 
      */
     bool check_adcs_hardware_faults() const;
 
@@ -83,6 +100,9 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_safehold();
     unsigned int safehold_begin_ccno = 0; // Control cycle # of the most recent
                                           // transition to safe hold.
+
+    // Fault handler class.
+    std::unique_ptr<FaultHandlerMachine> main_fault_handler;
 
     /**
      * @brief Handles state transitions that happen upon subsystem assertions.
@@ -131,6 +151,7 @@ class MissionManager : public TimedControlTask<void> {
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
     const ReadableStateField<bool>* docked_fp;
+    InternalStateField<unsigned int> enter_docking_cycle_f;
 
     // True if the battery is below the threshold for safehold.
     Fault* low_batt_fault_fp;
@@ -173,6 +194,7 @@ class MissionManager : public TimedControlTask<void> {
      */
     double distance_to_other_sat() const;
     bool too_long_since_last_comms() const;
+    bool too_long_in_docking() const;
 
     void set(adcs_state_t state);
     void set(prop_state_t state);
