@@ -6,7 +6,7 @@ EventStorage::EventStorage(const std::string &name,
                            std::vector<ReadableStateFieldBase *> &_data_fields,
                            const char *(*_print_fn)(const unsigned int, std::vector<ReadableStateFieldBase *> &))
 {
-    assert(storage_size < 100); // So that the suffixed event count doesn't have more than 2 digits
+    assert(storage_size < 100 && storage_size >= 0); // So that the suffixed event count doesn't have more than 2 digits
     sub_events.reserve(storage_size);
     for (unsigned char i = 1; i <= storage_size; i++)
     {
