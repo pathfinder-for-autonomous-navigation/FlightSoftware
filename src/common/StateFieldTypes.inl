@@ -34,6 +34,11 @@ class SerializableStateFieldBase : virtual public StateFieldBase {
     virtual size_t bitsize() const = 0;
     virtual const bit_array& get_bit_array() const = 0;
     virtual void set_bit_array(const bit_array& arr) = 0;
+
+    virtual bool is_eeprom_saved() const = 0;
+    virtual unsigned int eeprom_save_period() const = 0;
+    virtual unsigned int get_eeprom_repr() const = 0;
+    virtual void set_from_eeprom(unsigned int val) = 0;
 };
 
 /**
@@ -47,11 +52,88 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
    protected:
     Serializer<T> _serializer;
 
+    static constexpr bool is_eeprom_saveable() {
+      return std::is_same<T, unsigned int>::value
+       || std::is_same<T, signed int>::value
+       || std::is_same<T, unsigned char>::value
+       || std::is_same<T, signed char>::value
+       || std::is_same<T, bool>::value;
+    }
+
    public:
+    /**
+     * @brief Construct a non EEPROM-saveable serializable state field.
+     */
     SerializableStateField(const std::string &name, const bool ground_writable,
                            const Serializer<T> &s)
         : StateField<T>(name, true, ground_writable),
-          _serializer(s) {}
+          _serializer(s),
+          __is_eeprom_saved(false),
+          __eeprom_save_period(0) {}
+
+    /**
+     * @brief Construct an EEPROM-saveable serializable state field. The constructor
+     * is only available when the class's template type is EEPROM-saveable.
+     */
+    SerializableStateField(const std::string &name, const bool ground_writable,
+                           const Serializer<T> &s, unsigned int _eeprom_save_period)
+        : StateField<T>(name, true, ground_writable),
+          _serializer(s),
+          __is_eeprom_saved(true),
+          __eeprom_save_period(_eeprom_save_period) {
+      static_assert(is_eeprom_saveable(),
+        "Cannot use this state field constructor for a non EEPROM-saveable type.");
+    }
+
+    /**
+     * @brief Returns if the state field is EEPROM-saveable.
+     */
+    bool is_eeprom_saved() const override { return __is_eeprom_saved; }
+
+    /**
+     * @brief Returns the period, in control cycles, at which the
+     * state field is saved to the EEPROM.
+     */
+    unsigned int eeprom_save_period() const override { return __eeprom_save_period; }
+
+    /**
+     * @brief Gets a representation of the state field's value that can be
+     * stored in EEPROM.
+     * 
+     * @return unsigned int 
+     */
+    unsigned int get_eeprom_repr() const override
+    {
+      static_assert(is_eeprom_saveable(),
+        "Cannot use this function for a non EEPROM-saveable type.");
+
+      return static_cast<unsigned int>(this->_val);
+    }
+
+    /**
+     * @brief Sets the value of the state field from a retrieved
+     * value in the EEPROM.
+     * 
+     * @param val 
+     */
+    void set_from_eeprom(unsigned int val) override
+    {
+      static_assert(is_eeprom_saveable(),
+        "Cannot use this function for a non EEPROM-saveable type.");
+
+      if ((std::is_same<T, unsigned char>::value
+           || std::is_same<T, signed char>::value) && val > 255)
+      {
+        // TODO add error reporting
+        return;
+      }
+      else if (std::is_same<T, bool>::value && val > 1) 
+      {
+        // TODO add error reporting
+        return;
+      }
+      this->_val = static_cast<T>(val);
+    }
 
     /**
      * @brief Get the minimum and maximum bounds on the serializer.
@@ -91,6 +173,10 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
     const char *print() const override { return _serializer.print(this->_val); }
 
     virtual ~SerializableStateField() {}
+
+  private:
+    bool __is_eeprom_saved;
+    unsigned int __eeprom_save_period;
 };
 
 /**
@@ -110,6 +196,9 @@ class ReadableStateField : public SerializableStateField<T>, public ReadableStat
   public:
     ReadableStateField(const std::string &name, const Serializer<T> &s)
         : SerializableStateField<T>(name, false, s) {}
+
+    ReadableStateField(const std::string &name, const Serializer<T> &s, unsigned int eeprom_save_period)
+        : SerializableStateField<T>(name, false, s, eeprom_save_period) {}
 
     /**
      * @brief Dummy function used by RTTI in telemetry information generation.
@@ -134,6 +223,9 @@ class WritableStateField : public SerializableStateField<T>, public WritableStat
   public:
     WritableStateField(const std::string &name, const Serializer<T> &s)
         : SerializableStateField<T>(name, true, s) {}
+
+    WritableStateField(const std::string &name, const Serializer<T> &s, unsigned int eeprom_save_period)
+        : SerializableStateField<T>(name, false, s, eeprom_save_period) {}
 
     /**
      * @brief Dummy function used by RTTI in telemetry information generation.

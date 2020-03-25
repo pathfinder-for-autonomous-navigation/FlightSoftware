@@ -14,10 +14,11 @@
  * multimap.
  */
 class StateFieldRegistry {
-public:
+  public:
     std::vector<InternalStateFieldBase*> internal_fields;
     std::vector<ReadableStateFieldBase*> readable_fields;
     std::vector<WritableStateFieldBase*> writable_fields;
+    std::vector<ReadableStateFieldBase*> eeprom_saved_fields;
     std::vector<Event*> events;
     std::vector<Fault*> faults;
 
@@ -41,13 +42,23 @@ public:
     ReadableStateFieldBase* find_readable_field(const std::string &name) const;
 
     /**
-     * @brief Find a writable field of a given name within the state registry and return a pointer
-     * to it.
+     * @brief Find a writable field of a given name within the state registry
+     * and return a pointer to it.
      *
      * @param[in] name Name of state field.
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
     WritableStateFieldBase* find_writable_field(const std::string &name) const;
+
+
+    /**
+     * @brief Find an EEPROM-saveable field of a given name within the state registry
+     * and return a pointer to it.
+     *
+     * @param[in] name Name of state field.
+     * @return Pointer to field, or null pointer if field doesn't exist.
+     */
+    SerializableStateFieldBase* find_eeprom_saved_field(const std::string &name) const;
 
     /**
      * @brief Find an event of a given name within the state registry and return a pointer
@@ -88,6 +99,21 @@ public:
      * @param field Data field
      */
     bool add_writable_field(WritableStateFieldBase* field);
+
+        /**
+     * @brief Marks a field as being downloadable by ground and EEPROM-saveable.
+     *
+     * @param field State field
+     */
+    bool add_readable_eeprom_saved_field(ReadableStateFieldBase* field);
+
+    /**
+     * @brief Marks a field as being uploadable by ground and EEPROM-saveable.
+     *
+     * @param r ControlTaskBase
+     * @param field Data field
+     */
+    bool add_writable_eeprom_saved_field(WritableStateFieldBase* field);
 
     /**
      * @brief Marks an event as being uploadable by ground.

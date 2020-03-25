@@ -95,6 +95,20 @@ class ControlTask : protected debug_console {
         check_field_added(added, field.name());
     }
 
+    template<typename U>
+    void add_readable_eeprom_saved_field(ReadableStateField<U>& field) {
+        const bool added = _registry.add_readable_eeprom_saved_field(
+            static_cast<ReadableStateFieldBase*>(&field));
+        check_field_added(added, field.name());
+    }
+
+    template<typename U>
+    void add_writable_eeprom_saved_field(WritableStateField<U>& field) {
+        const bool added = _registry.add_writable_eeprom_saved_field(
+            static_cast<WritableStateFieldBase*>(&field));
+        check_field_added(added, field.name());
+    }
+
     void add_event(Event& event) {
         const bool added = _registry.add_event(&event);
         check_field_added(added, event.name());
