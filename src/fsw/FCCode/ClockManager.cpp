@@ -1,4 +1,5 @@
 #include "ClockManager.hpp"
+#include <common/Event.hpp>
 
 ClockManager::ClockManager(StateFieldRegistry &registry,
                            const unsigned int _control_cycle_size) :
@@ -7,6 +8,7 @@ ClockManager::ClockManager(StateFieldRegistry &registry,
     control_cycle_count_f("pan.cycle_no", Serializer<unsigned int>())
 {
     add_readable_field(control_cycle_count_f);
+    Event::ccno = &control_cycle_count_f;
 }
 
 void ClockManager::execute() {
