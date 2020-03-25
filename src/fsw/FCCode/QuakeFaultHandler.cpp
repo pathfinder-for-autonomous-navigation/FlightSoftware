@@ -4,7 +4,7 @@
 
 const unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
 
-QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry& r) : ControlTask<mission_state_t>(r) {
+QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry& r) : FaultHandlerMachine(r) {
     radio_state_fp        = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__,
                                                                   __LINE__);
@@ -12,98 +12,98 @@ QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry& r) : ControlTask<missio
                                                           __LINE__);
 }
 
-mission_state_t QuakeFaultHandler::execute() {
+fault_response_t QuakeFaultHandler::execute() {
     switch(cur_state) {
-        case fault_checker_state_t::unfaulted:      return dispatch_unfaulted(); break;
-        case fault_checker_state_t::forced_standby: return dispatch_forced_standby(); break;
-        case fault_checker_state_t::powercycle_1:   return dispatch_powercycle_1(); break;
-        case fault_checker_state_t::powercycle_2:   return dispatch_powercycle_2(); break;
-        case fault_checker_state_t::powercycle_3:   return dispatch_powercycle_3(); break;
-        case fault_checker_state_t::safehold:       return dispatch_safehold(); break;
+        case qfh_state_t::unfaulted:      return dispatch_unfaulted(); break;
+        case qfh_state_t::forced_standby: return dispatch_forced_standby(); break;
+        case qfh_state_t::powercycle_1:   return dispatch_powercycle_1(); break;
+        case qfh_state_t::powercycle_2:   return dispatch_powercycle_2(); break;
+        case qfh_state_t::powercycle_3:   return dispatch_powercycle_3(); break;
+        case qfh_state_t::safehold:       return dispatch_safehold(); break;
         default:
-            cur_state = fault_checker_state_t::unfaulted;
-            return mission_state_t::manual;
+            cur_state = qfh_state_t::unfaulted;
+            return fault_response_t::none;
     }
-    return mission_state_t::manual;
+    return fault_response_t::none;
 }
 
-void QuakeFaultHandler::transition_to(fault_checker_state_t next_state) {
+void QuakeFaultHandler::transition_to(qfh_state_t next_state) {
     cur_state = next_state;
     cur_state_entry_ccno = control_cycle_count;
 }
 
-mission_state_t QuakeFaultHandler::dispatch_unfaulted() {
+fault_response_t QuakeFaultHandler::dispatch_unfaulted() {
     if (!radio_is_disabled() && !less_than_one_day_since_successful_comms()) {
-        transition_to(fault_checker_state_t::forced_standby);
-        return mission_state_t::standby;
+        transition_to(qfh_state_t::forced_standby);
+        return fault_response_t::standby;
     }
     else {
-        return mission_state_t::manual;
+        return fault_response_t::none;
     }
 }
 
-mission_state_t QuakeFaultHandler::dispatch_forced_standby() {
+fault_response_t QuakeFaultHandler::dispatch_forced_standby() {
     if (in_state_for_more_than_time(PAN::one_day_ccno)) {
         power_cycle_radio_fp->set(true);
-        transition_to(fault_checker_state_t::powercycle_1);
-        return mission_state_t::standby;
+        transition_to(qfh_state_t::powercycle_1);
+        return fault_response_t::standby;
     }
     else if (radio_is_disabled() || less_than_one_day_since_successful_comms()) {
-        transition_to(fault_checker_state_t::unfaulted);
-        return mission_state_t::manual;
+        transition_to(qfh_state_t::unfaulted);
+        return fault_response_t::none;
     }
 
-    return mission_state_t::standby;
+    return fault_response_t::standby;
 }
 
-mission_state_t QuakeFaultHandler::dispatch_powercycle_1() {
+fault_response_t QuakeFaultHandler::dispatch_powercycle_1() {
     if (in_state_for_more_than_time(PAN::one_day_ccno / 3)) {
         power_cycle_radio_fp->set(true);
-        transition_to(fault_checker_state_t::powercycle_2);
-        return mission_state_t::standby;
+        transition_to(qfh_state_t::powercycle_2);
+        return fault_response_t::standby;
     }
     else if (less_than_one_day_since_successful_comms()) {
-        transition_to(fault_checker_state_t::unfaulted);
-        return mission_state_t::manual;
+        transition_to(qfh_state_t::unfaulted);
+        return fault_response_t::none;
     }
 
-    return mission_state_t::standby;
+    return fault_response_t::standby;
 }
 
-mission_state_t QuakeFaultHandler::dispatch_powercycle_2() {
+fault_response_t QuakeFaultHandler::dispatch_powercycle_2() {
     if (in_state_for_more_than_time(PAN::one_day_ccno / 3)) {
         power_cycle_radio_fp->set(true);
-        transition_to(fault_checker_state_t::powercycle_3);
-        return mission_state_t::standby;
+        transition_to(qfh_state_t::powercycle_3);
+        return fault_response_t::standby;
     }
     else if (less_than_one_day_since_successful_comms()) {
-        transition_to(fault_checker_state_t::unfaulted);
-        return mission_state_t::manual;
+        transition_to(qfh_state_t::unfaulted);
+        return fault_response_t::none;
     }
 
-    return mission_state_t::standby;
+    return fault_response_t::standby;
 }
 
-mission_state_t QuakeFaultHandler::dispatch_powercycle_3() {
+fault_response_t QuakeFaultHandler::dispatch_powercycle_3() {
     if (in_state_for_more_than_time(PAN::one_day_ccno / 3)) {
-        transition_to(fault_checker_state_t::safehold);
-        return mission_state_t::safehold;
+        transition_to(qfh_state_t::safehold);
+        return fault_response_t::safehold;
     }
     else if (less_than_one_day_since_successful_comms()) {
-        transition_to(fault_checker_state_t::unfaulted);
-        return mission_state_t::manual;
+        transition_to(qfh_state_t::unfaulted);
+        return fault_response_t::none;
     }
 
-    return mission_state_t::standby;
+    return fault_response_t::standby;
 }
 
-mission_state_t QuakeFaultHandler::dispatch_safehold() {
+fault_response_t QuakeFaultHandler::dispatch_safehold() {
     if (radio_is_disabled() || less_than_one_day_since_successful_comms()) {
-        transition_to(fault_checker_state_t::unfaulted);
-        return mission_state_t::manual;
+        transition_to(qfh_state_t::unfaulted);
+        return fault_response_t::none;
     }
     else {
-        return mission_state_t::safehold;
+        return fault_response_t::safehold;
     }
 }
 

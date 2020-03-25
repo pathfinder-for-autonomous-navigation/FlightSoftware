@@ -119,7 +119,7 @@ static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
 #endif
 /** Maximum angular rate in radians per second that can be read from the
  *  gyroscope. */
-TRACKED_CONSTANT_SC(float, max_rd_omega, 125.0f * 0.03490658504f); // 2 * pi / 180
+TRACKED_CONSTANT_SC(float, max_rd_omega, 125.0f * 0.01745329251f); // pi / 180
 /** Minimum angular rate in radians per second that can be read from the
  *  gyroscope. */
 TRACKED_CONSTANT_SC(float, min_rd_omega, -max_rd_omega);
