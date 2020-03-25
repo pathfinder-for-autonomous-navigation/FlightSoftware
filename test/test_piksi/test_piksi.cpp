@@ -6,7 +6,7 @@
 
 #define PIKSI_READ_ALLOTED 650
 #define SAFETY 250
-#define RUNS 2000
+#define RUNS 20
 //good readings rely on small control cycles
 #define CONTROL_CYCLE 120
 
@@ -219,7 +219,7 @@ void test_baseline() {
     Serial.printf("PAST: %u, CURR: %u\n", baseline_past, baseline_tow);
 }
 bool verify_iar() {
-    // experimentally during sim, iar should == 0
+    // experimentally during sim, iar gshould == 0
     bool ret = iar == 0;
 
     if (!ret) {

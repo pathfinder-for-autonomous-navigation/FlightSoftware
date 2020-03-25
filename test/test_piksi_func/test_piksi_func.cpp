@@ -471,18 +471,18 @@ int main(void) {
     //piksi.read_all();
     //Serial.printf("OUT: %u\n", piksi.read_buffer_exp());
 
-    std::array<int, 12> order_out = {7,7,7,7,7,7,7,7,7,7,7,7};
-    int st = micros();
-    piksi.read_all_order(&order_out);
-    int et = micros();
-    Serial.printf("TIME: %d\n",et-st);
-    for(int i = 0; i < 12; i++){
-        Serial.printf("%d\n",order_out[i]);
-    }
-    Serial.println("***********");
+    // std::array<int, 12> order_out = {7,7,7,7,7,7,7,7,7,7,7,7};
+    // int st = micros();
+    // piksi.read_all_order(&order_out);
+    // int et = micros();
+    // Serial.printf("TIME: %d\n",et-st);
+    // for(int i = 0; i < 12; i++){
+    //     Serial.printf("%d\n",order_out[i]);
+    // }
+    // Serial.println("***********");
 
-    get_data();
-    print_all();
+    // get_data();
+    // print_all();
 
     // while(keeprun){
     //     int exec_ret = piksi.read_buffer_exp();
