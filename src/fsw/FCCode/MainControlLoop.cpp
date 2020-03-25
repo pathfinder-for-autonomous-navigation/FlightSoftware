@@ -25,7 +25,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
         const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods)
     : ControlTask<void>(registry),
       field_creator_task(registry),
-      clock_manager(registry, PAN::control_cycle_time),
+      clock_manager(registry, 120000),
       PIKSI_INITIALIZATION,
       piksi_control_task(registry, piksi_control_task_offset, piksi),
       ADCS_INITIALIZATION,
@@ -91,22 +91,22 @@ void MainControlLoop::execute() {
     clock_manager.execute();
 
     piksi_control_task.execute_on_time();
-    gomspace_controller.execute_on_time();
-    adcs_monitor.execute_on_time();
+    // gomspace_controller.execute_on_time();
+    // adcs_monitor.execute_on_time();
 
     #ifdef FUNCTIONAL_TEST
     debug_task.execute_on_time();
     #endif
 
-    attitude_estimator.execute_on_time();
-    mission_manager.execute_on_time();
-    attitude_computer.execute_on_time();
-    adcs_commander.execute_on_time();
-    adcs_box_controller.execute_on_time();
-    downlink_producer.execute_on_time();
-    quake_manager.execute_on_time();
-    docking_controller.execute_on_time();
-    dcdc_controller.execute_on_time();
+    // attitude_estimator.execute_on_time();
+    // mission_manager.execute_on_time();
+    // attitude_computer.execute_on_time();
+    // adcs_commander.execute_on_time();
+    // adcs_box_controller.execute_on_time();
+    // downlink_producer.execute_on_time();
+    // quake_manager.execute_on_time();
+    // docking_controller.execute_on_time();
+    // dcdc_controller.execute_on_time();
     
     #ifdef DESKTOP
         eeprom_controller.execute_on_time();

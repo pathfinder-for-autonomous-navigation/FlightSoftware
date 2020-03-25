@@ -6,7 +6,7 @@
 
 #define PIKSI_READ_ALLOTED 650
 #define SAFETY 250
-#define RUNS 20
+#define RUNS 200
 //good readings rely on small control cycles
 #define CONTROL_CYCLE 120
 

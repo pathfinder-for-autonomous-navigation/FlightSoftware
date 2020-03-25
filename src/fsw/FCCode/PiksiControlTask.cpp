@@ -46,6 +46,8 @@ void PiksiControlTask::execute()
         fix_error_count_f.set(0);
     }
         
+    // printf(debug_severity::info, "[Quake Info] Piksi Fix Error Count: %u", fix_error_count_f.get());
+
     //if we haven't had a good reading in ~120 seconds the piksi is probably dead
     //eventually replace with HAVT logic
     if(fix_error_count_f.get() > DEAD_CYCLE_COUNT){

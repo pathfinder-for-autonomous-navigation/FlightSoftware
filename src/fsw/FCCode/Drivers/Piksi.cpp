@@ -282,7 +282,7 @@ unsigned char Piksi::read_all() {
         while(bytes_available() && (micros() - initial_time < READ_ALL_LIMIT)){
             //call process_buffer() to process data, and check if crc_error happened
             if(process_buffer() < 0)
-                crc_error = true;
+                crc_error = false;
         }
 
         //ensure that if the while loop terminated because of exceeding the READ_ALL_LIMIT

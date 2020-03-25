@@ -35,7 +35,7 @@ class Piksi {
     TRACKED_CONSTANT_SC(unsigned int, BAUD_RATE, 115200);
     // Driver limit for max processing time of read_all()
     // Choose 900 us to large safety bound over average read time of 600 us
-    TRACKED_CONSTANT_SC(unsigned int, READ_ALL_LIMIT, 900);
+    TRACKED_CONSTANT_SC(unsigned int, READ_ALL_LIMIT, 1500);
 
     /**
      * @brief Construct a new Piksi object
