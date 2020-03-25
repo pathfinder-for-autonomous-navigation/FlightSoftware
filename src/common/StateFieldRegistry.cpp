@@ -66,6 +66,10 @@ bool StateFieldRegistry::add_internal_field(InternalStateFieldBase* field) {
 
 bool StateFieldRegistry::add_readable_field(ReadableStateFieldBase* field) {
     if (find_readable_field(field->name())) return false;
+    if (field->is_eeprom_saved()) {
+        if (find_eeprom_saved_field(field->name())) return false;
+        else eeprom_saved_fields.push_back(field);
+    }
     readable_fields.push_back(field);
     return true;
 }
@@ -74,20 +78,6 @@ bool StateFieldRegistry::add_writable_field(WritableStateFieldBase* field) {
     if (!add_readable_field(field)) return false;
     if (find_writable_field(field->name())) return false;
     writable_fields.push_back(field);
-    return true;
-}
-
-bool StateFieldRegistry::add_readable_eeprom_saved_field(ReadableStateFieldBase* field)
-{
-    if (!add_readable_field(field)) return false;
-    eeprom_saved_fields.push_back(field);
-    return true;
-}
-
-bool StateFieldRegistry::add_writable_eeprom_saved_field(WritableStateFieldBase* field)
-{
-    if (!add_writable_field(field)) return false;
-    eeprom_saved_fields.push_back(field);
     return true;
 }
 

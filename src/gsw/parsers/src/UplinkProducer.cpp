@@ -1,6 +1,5 @@
 #include "UplinkProducer.h"
 #include <flow_data.hpp>
-#include <eeprom_configs.hpp>
 #include <fstream>
 #include <iostream>
 #include <json.hpp>
@@ -8,7 +7,7 @@
 
 UplinkProducer::UplinkProducer(StateFieldRegistry& r):
     Uplink(r),
-    fcp(registry, PAN::flow_data, PAN::statefields, PAN::periods)
+    fcp(registry, PAN::flow_data)
  {
     max_possible_packet_size = 0;
     // initialize index_size

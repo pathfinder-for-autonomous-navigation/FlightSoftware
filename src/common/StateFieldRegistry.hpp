@@ -100,21 +100,6 @@ class StateFieldRegistry {
      */
     bool add_writable_field(WritableStateFieldBase* field);
 
-        /**
-     * @brief Marks a field as being downloadable by ground and EEPROM-saveable.
-     *
-     * @param field State field
-     */
-    bool add_readable_eeprom_saved_field(ReadableStateFieldBase* field);
-
-    /**
-     * @brief Marks a field as being uploadable by ground and EEPROM-saveable.
-     *
-     * @param r ControlTaskBase
-     * @param field Data field
-     */
-    bool add_writable_eeprom_saved_field(WritableStateFieldBase* field);
-
     /**
      * @brief Marks an event as being uploadable by ground.
      *
