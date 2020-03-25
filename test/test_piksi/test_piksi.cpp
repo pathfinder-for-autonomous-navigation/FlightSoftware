@@ -8,7 +8,7 @@
 #define SAFETY 250
 #define RUNS 200
 //good readings rely on small control cycles
-#define CONTROL_CYCLE 120
+#define CONTROL_CYCLE 170
 
 Devices::Piksi piksi("piksi", Serial4);
 int setup_start_time;
