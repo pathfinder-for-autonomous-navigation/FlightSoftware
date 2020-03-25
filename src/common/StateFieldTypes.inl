@@ -102,13 +102,21 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * 
      * @return unsigned int 
      */
-    unsigned int get_eeprom_repr() const override
+    template<class Q = unsigned int>
+    typename std::enable_if<is_eeprom_saveable(), Q>::type
+    _get_eeprom_repr() const
     {
-      static_assert(is_eeprom_saveable(),
-        "Cannot use this function for a non EEPROM-saveable type.");
-
       return static_cast<unsigned int>(this->_val);
     }
+
+    template<class Q = unsigned int>
+    typename std::enable_if<!is_eeprom_saveable(), Q>::type
+    _get_eeprom_repr() const
+    {
+      return 0;
+    }
+
+    unsigned int get_eeprom_repr() const override { return _get_eeprom_repr(); }
 
     /**
      * @brief Sets the value of the state field from a retrieved
@@ -116,11 +124,10 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * 
      * @param val 
      */
-    void set_from_eeprom(unsigned int val) override
+    template<class Q = void>
+    typename std::enable_if<is_eeprom_saveable(), Q>::type
+    _set_from_eeprom(unsigned int val)
     {
-      static_assert(is_eeprom_saveable(),
-        "Cannot use this function for a non EEPROM-saveable type.");
-
       if ((std::is_same<T, unsigned char>::value
            || std::is_same<T, signed char>::value) && val > 255)
       {
@@ -134,6 +141,12 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
       }
       this->_val = static_cast<T>(val);
     }
+
+    template<class Q = void>
+    typename std::enable_if<!is_eeprom_saveable(), Q>::type
+    _set_from_eeprom(unsigned int val) {}
+
+    void set_from_eeprom(unsigned int val) override { _set_from_eeprom(val); }
 
     /**
      * @brief Get the minimum and maximum bounds on the serializer.
