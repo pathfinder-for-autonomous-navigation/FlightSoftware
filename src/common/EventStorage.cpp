@@ -13,7 +13,7 @@ EventStorage::EventStorage(const std::string &name,
         char x[4];
         memset(x, 0, 4);
         x[0] = '.';
-        sprintf(x, ".%d", i);
+        sprintf(x, ".%d", i % 100);
         sub_events.emplace_back(name + std::string(x),
                                 _data_fields, _print_fn);
     }
