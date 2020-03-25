@@ -19,13 +19,15 @@ class FieldCreatorTask : public ControlTask<void> {
 
       ReadableStateField<unsigned char> prop_state_f;
       Fault failed_pressurize_f;
+      Fault overpressured_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
         pos_f("orbit.pos", Serializer<d_vector_t>(0,100000,100)),
         pos_baseline_f("orbit.baseline_pos", Serializer<d_vector_t>(0,100000,100)),
         prop_state_f("prop.state", Serializer<unsigned char>(1)),
-        failed_pressurize_f("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count)
+        failed_pressurize_f("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count),
+        overpressured_f("prop.overpressured", 1, TimedControlTaskBase::control_cycle_count)
       {
           // Create the fields!
 
@@ -36,6 +38,7 @@ class FieldCreatorTask : public ControlTask<void> {
           // For propulsion controller
           add_readable_field(prop_state_f);
           add_fault(failed_pressurize_f);
+          add_fault(overpressured_f);
       }
 
       void execute() {

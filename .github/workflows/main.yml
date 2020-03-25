@@ -1,0 +1,41 @@
+name: Flight Software Regression Tests
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+    - uses: actions/setup-python@v1
+      with:
+        python-version: '3.6'
+        architecture: 'x64'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install lcov
+        sudo gem install coveralls-lcov
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        platformio update
+
+    - name: Desktop flight software tests
+      run: ./tools/run_desktop_flight_tests.sh
+
+    - name: Common software tests
+      run: ./tools/run_common_software_tests.sh
+
+    - name: Ground software tests
+      run: ./tools/run_ground_tests.sh
+
+    - name: Verify FSW Teensy builds
+      run: |
+        ./tools/verify_teensy_builds.sh
+
+    - name: Verify ADCS Teensy builds
+      run: ./tools/verify_adcs_builds.sh
