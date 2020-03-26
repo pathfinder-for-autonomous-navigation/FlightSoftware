@@ -2,7 +2,6 @@
 #include <unity.h>
 #include <fstream>
 #include "../StateFieldRegistryMock.hpp"
-#include <iostream>
 
 // This print function is used to instantiate an event. The event will be used for testing reading
 // and parsing events sent in downlinks.
