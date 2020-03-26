@@ -10,6 +10,7 @@ const std::vector<unsigned int> dummy_periods = {};
 DownlinkParser::DownlinkParser(StateFieldRegistry& r,
                                const std::vector<DownlinkProducer::FlowData>& flow_data) :
     fcp(r, flow_data, dummy_statefields, dummy_periods),
+    registry(r),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
 std::string DownlinkParser::process_downlink_file(const std::string& filename) {
@@ -143,8 +144,8 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
              * }
              */
             for(ReadableStateFieldBase* field : flow->field_list) {
-                if (field->name().find("event") != std::string::npos) {
-                    Event* event = dynamic_cast<Event*>(field);
+                Event* event = registry.find_event(field->name());
+                if (event) {
                     const std::vector<bool>::iterator event_end_it =
                         frame_bits.begin() + event->get_bit_array().size();
                     
