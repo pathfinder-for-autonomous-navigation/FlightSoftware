@@ -4,6 +4,8 @@
 #include "../StateFieldRegistryMock.hpp"
 #include <iostream>
 
+// This print function is used to instantiate an event. The event will be used for testing reading
+// and parsing events sent in downlinks.
 static const char* print_fn(const unsigned int ccno, std::vector<ReadableStateFieldBase*>& data) {
     static char print_data[40];
     memset(print_data, 0, 40);
@@ -52,6 +54,8 @@ class TestFixture {
         assert(cycle_count_fp);
         cycle_count_fp->set(20);
 
+        event.signal();
+
         snapshot_fp = reg.find_internal_field_t<char*>("downlink.ptr");
         snapshot_size_bytes_fp = reg.find_internal_field_t<size_t>("downlink.snap_size");
         assert(snapshot_fp);
@@ -83,8 +87,12 @@ void test_task_execute() {
     // Test that data is OK
     const unsigned int cycle_no = std::stoi(downlink["data"]["pan.cycle_no"].get<std::string>());
     const unsigned int foo1 = std::stoi(downlink["data"]["foo1"].get<std::string>());
+    const unsigned int event_ccno = downlink["data"]["event"]["control_cycle_number"];
+    std::string data1 = downlink["data"]["event"]["field_data"]["data1"];
     TEST_ASSERT_EQUAL(tf.cycle_count_fp->get(), cycle_no);
     TEST_ASSERT_EQUAL(tf.foo1_fp->get(), foo1);
+    TEST_ASSERT_EQUAL(tf.cycle_count_fp->get(), event_ccno);
+    TEST_ASSERT_TRUE(data1=="false");
 
     // Test that metadata is OK
     TEST_ASSERT_EQUAL(tf.cycle_count_fp->get(), downlink["metadata"]["cycle_no"]);

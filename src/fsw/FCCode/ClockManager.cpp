@@ -8,7 +8,7 @@ ClockManager::ClockManager(StateFieldRegistry &registry,
     control_cycle_count_f("pan.cycle_no", Serializer<unsigned int>())
 {
     add_readable_field(control_cycle_count_f);
-    Event::ccno = &control_cycle_count_f;
+    Event::ccno_fp = &control_cycle_count_f;
 }
 
 void ClockManager::execute() {

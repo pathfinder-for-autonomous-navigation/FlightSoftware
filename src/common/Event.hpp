@@ -73,11 +73,14 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
     Event(Event &&other);
 
     const std::string &name() const override { return _name; }
+    const std::vector<ReadableStateFieldBase*> &_data_fields() { return data_fields; }
 
     // Functions that will be overridden from SerializableStateFieldBase
   protected:
     const std::string _name;
     void serialize() override;
+    // control cycle at which the event was last signalled
+    unsigned int ccno;
   public:
     // Functions from the EventBase interface.
       void signal() override;
@@ -88,7 +91,8 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
       bool deserialize(const char *val) override;
       const char *print() const override;
 
-   static ReadableStateField<unsigned int> *ccno;
+   static ReadableStateField<unsigned int> *ccno_fp;
+  unsigned int &_ccno() { return ccno; }
 
     virtual ~Event() {}
 
