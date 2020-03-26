@@ -276,23 +276,6 @@ public:
      */
     unsigned int get_schedule_at(size_t valve_num) const;
 
-    // Constants for the linear regression for computing tank pressure.
-    // The regressions were computed on the following spreadsheet:
-    // https://cornellprod-my.sharepoint.com/:x:/g/personal/saa243_cornell_edu/Edg-vGek6SBEoe0jhIUxmnIBPh84Y6g_Tro-SJWonhuVhA?e=EewWzU
-    #if defined(PAN_LEADER)
-        static constexpr double high_gain_offset = -0.138539974953359;
-        static constexpr double high_gain_slope = 0.048285455017719;
-        static constexpr double low_gain_offset = 0.008416069224407;
-        static constexpr double low_gain_slope = 0.099084652547468;
-    #elif defined(PAN_FOLLOWER)
-        static constexpr double high_gain_offset = -0.062127065655240;
-        static constexpr double high_gain_slope = 0.048430664679468;
-        static constexpr double low_gain_offset = 0.154615074342849;
-        static constexpr double low_gain_slope = 0.099017990785658;
-    #else
-        static_assert(false, "Must define either LEADER or FOLLOWER satellite.");
-    #endif
-
 private:
     void setup();
     #ifndef DESKTOP

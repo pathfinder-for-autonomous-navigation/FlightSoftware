@@ -24,7 +24,8 @@ class FieldCreatorTask : public ControlTask<void> {
         ControlTask<void>(r),
         pos_f("orbit.pos", Serializer<d_vector_t>(0,100000,100)),
         pos_baseline_f("orbit.baseline_pos", Serializer<d_vector_t>(0,100000,100)),
-        failed_pressurize_f("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count)
+        failed_pressurize_f("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count),
+        overpressured_f("prop.overpressured", 1, TimedControlTaskBase::control_cycle_count)
       {
           // Create the fields!
 
