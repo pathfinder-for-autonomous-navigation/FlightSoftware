@@ -43,8 +43,7 @@ protected:
     Serializer<f_vector_t> rwa_torque_rd_sr;
     ReadableStateField<f_vector_t> rwa_torque_rd_f;
 
-    Serializer<int> ssa_mode_rd;
-    ReadableStateField<int> ssa_mode_f;
+    WritableStateField<unsigned char> ssa_mode_f;
 
     //! Vector to the sun in the body frame.
     Serializer<f_vector_t> ssa_vec_sr;

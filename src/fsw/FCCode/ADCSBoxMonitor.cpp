@@ -11,8 +11,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     rwa_speed_rd_f("adcs_monitor.rwa_speed_rd", rwa_speed_rd_sr),
     rwa_torque_rd_sr(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3), //referenced from I2C_Interface.doc
     rwa_torque_rd_f("adcs_monitor.rwa_torque_rd", rwa_torque_rd_sr),
-    ssa_mode_rd(0,2,2), //referenced from Interface.doc
-    ssa_mode_f("adcs_monitor.ssa_mode", ssa_mode_rd),
+    ssa_mode_f("adcs_monitor.ssa_mode", Serializer<unsigned char>(2)),
     ssa_vec_sr(-1,1,16*3), //referenced from I2C_Interface.doc
     ssa_vec_f("adcs_monitor.ssa_vec", ssa_vec_sr),
     ssa_voltage_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8),
@@ -68,7 +67,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         //actually add statefields to registry
         add_readable_field(rwa_speed_rd_f);
         add_readable_field(rwa_torque_rd_f);
-        add_readable_field(ssa_mode_f);
+        add_writable_field(ssa_mode_f);
         add_readable_field(ssa_vec_f);
 
         for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
