@@ -36,6 +36,12 @@ class DownlinkParser {
     MainControlLoop fcp;
 
     /**
+     * @brief Statefield registry used to initialize main control loop and
+     * check if events/fields exist in registry
+     */
+    StateFieldRegistry registry;
+
+    /**
      * @brief Downlink flow data.
      */
     const std::vector<DownlinkProducer::Flow>& flow_data;
