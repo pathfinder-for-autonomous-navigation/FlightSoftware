@@ -1,6 +1,6 @@
 #include "Event.hpp"
 
-ReadableStateField<unsigned int> *Event::ccno_fp = nullptr;
+ReadableStateField<unsigned int> *Event::ccno = nullptr;
 
 Event::Event(const std::string& name,
           std::vector<ReadableStateFieldBase*>& _data_fields,
@@ -27,7 +27,7 @@ Event::Event(Event &&other) : StateField<bool>(other.name(), true, false),
 void Event::serialize() {
     unsigned int field_data_ptr = 0;
 
-    std::bitset<32> ccno_serialized(ccno_fp->get());
+    std::bitset<32> ccno_serialized(ccno->get());
     for(int i = 0; i < 32; i++) {
         (*field_data)[i] = ccno_serialized[i];
     }
@@ -51,12 +51,11 @@ const bit_array& Event::get_bit_array() const {
 }
 
 void Event::signal() {
-    ccno = ccno_fp->get();
     serialize();
 }
 
 const char* Event::print() const {
-    return print_fn(ccno_fp->get(), data_fields);
+    return print_fn(ccno->get(), data_fields);
 }
 
 void Event::deserialize() 
@@ -69,7 +68,7 @@ void Event::deserialize()
     }
     field_data_ptr += 32;
     const unsigned int event_ccno = (int)(ccno_serialized.to_ulong());
-    ccno=event_ccno;
+    ccno->set(event_ccno);
 
     for (ReadableStateFieldBase *field : data_fields)
     {
