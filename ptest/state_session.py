@@ -5,6 +5,7 @@ import threading
 import json
 import traceback
 import queue
+import os
 
 from .data_consumers import Datastore, Logger
 
@@ -37,6 +38,7 @@ class StateSession(object):
         self.datastore = Datastore(device_name, simulation_run_dir)
         self.logger = Logger(device_name, simulation_run_dir)
         self.raw_logger = Logger(device_name + "_raw", simulation_run_dir)
+        self.telem_save_dir = simulation_run_dir
 
         # Simulation
         self.overriden_variables = set()
@@ -101,6 +103,12 @@ class StateSession(object):
                     logline += data['telem']
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
+                    #log data to a timestamped file
+                    binary_telem_bytes = ["{0:08b}".format(int(s, 16)) for s in data['telem'].replace("\\", " 0").split()]
+                    binary_telem_str = "".join(binary_telem_bytes)
+                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].txt"), "w")
+                    telem_file.write(binary_telem_str)
+                    telem_file.close()
                 else:
                     if 'err' in data:
                         # The log line represents an error in retrieving or writing state data that
