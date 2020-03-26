@@ -15,13 +15,10 @@ class TestFixture {
   public:
     StateFieldRegistryMock registry;
 
-    std::vector<std::string> statefields {"pan.state", "pan.deployed", "pan.sat_designation", "pan.cycle_no"}; 
-    std::vector<unsigned int> periods {2, 3, 5, 7};
-
     //Create the statefields that the EEPROM will eventually collect and store
-    std::shared_ptr<ReadableStateField<unsigned int>> mission_mode_fp;
-    std::shared_ptr<ReadableStateField<unsigned int>> is_deployed_fp;
-    std::shared_ptr<ReadableStateField<unsigned int>> sat_designation_fp;
+    std::shared_ptr<ReadableStateField<unsigned char>> mission_mode_fp;
+    std::shared_ptr<ReadableStateField<bool>> is_deployed_fp;
+    std::shared_ptr<ReadableStateField<unsigned char>> sat_designation_fp;
     std::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
 
     std::unique_ptr<EEPROMController> eeprom_controller;
@@ -34,22 +31,22 @@ class TestFixture {
     TestFixture(bool clr) : registry() {
         if (clr) clear_data();
 
-        mission_mode_fp = registry.create_readable_field<unsigned int>("pan.state");
+        mission_mode_fp = registry.create_readable_field<unsigned char, 2>("pan.state");
         mission_mode_fp->set(1);
 
-        is_deployed_fp = registry.create_readable_field<unsigned int>("pan.deployed");
-        is_deployed_fp->set(2);
+        is_deployed_fp = registry.create_readable_field<bool, 3>("pan.deployed");
+        is_deployed_fp->set(false);
 
-        sat_designation_fp = registry.create_readable_field<unsigned int>("pan.sat_designation");
+        sat_designation_fp = registry.create_readable_field<unsigned char, 5>("pan.sat_designation");
         sat_designation_fp->set(3);
 
-        control_cycle_count_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
+        control_cycle_count_fp = registry.create_readable_field<unsigned int, 7>("pan.cycle_no");
         control_cycle_count_fp->set(4);
 
         eeprom_controller = std::make_unique<EEPROMController>(registry, 0);
 
         // Initialize the controller
-        eeprom_controller->init(statefields, periods);
+        eeprom_controller->init();
     }
 
     /**
@@ -93,7 +90,7 @@ class TestFixture {
      */
     unsigned int read(size_t idx) {
         #ifdef DESKTOP
-            const std::string& field_name = eeprom_controller->pointers[idx]->name();
+            const std::string& field_name = registry.eeprom_saved_fields[idx]->name();
             if (EEPROMController::data.find(field_name) != EEPROMController::data.end()) {
                 return EEPROMController::data[field_name];
             }
@@ -101,28 +98,31 @@ class TestFixture {
                 return 255;
             }
         #else
-            return EEPROM.read(eeprom_controller->addresses.at(idx));
+            return EEPROM.read(eeprom_controller->addresses[idx]);
         #endif
     }
 
     /**
      * @brief Gets pointer to statefield at index idx. 
      */
-    ReadableStateField<unsigned int>* get_ptr(size_t idx) {
-        return eeprom_controller->pointers.at(idx);
+    template<typename T>
+    ReadableStateField<T>* get_ptr(size_t idx) {
+        static_assert(SerializableStateField<T>::is_eeprom_saveable(),
+            "Cannot return a pointer to a non-EEPROM saveable field.");
+        return static_cast<ReadableStateField<T>*>(registry.eeprom_saved_fields[idx]);
     }
 };
 
 void test_task_initialization() {
     TestFixture tf(true);
 
-    TEST_ASSERT_EQUAL(1, tf.get_ptr(0)->get());
-    TEST_ASSERT_EQUAL(2, tf.get_ptr(1)->get());
-    TEST_ASSERT_EQUAL(3, tf.get_ptr(2)->get());
-    TEST_ASSERT_EQUAL(4, tf.get_ptr(3)->get());
+    TEST_ASSERT_EQUAL(1, tf.get_ptr<unsigned char>(0)->get());
+    TEST_ASSERT_FALSE(tf.get_ptr<bool>(1)->get());
+    TEST_ASSERT_EQUAL(3, tf.get_ptr<unsigned char>(2)->get());
+    TEST_ASSERT_EQUAL(4, tf.get_ptr<unsigned int>(3)->get());
 
     TEST_ASSERT_EQUAL(1, tf.mission_mode_fp->get());
-    TEST_ASSERT_EQUAL(2, tf.is_deployed_fp->get());
+    TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
     TEST_ASSERT_EQUAL(3, tf.sat_designation_fp->get());
     TEST_ASSERT_EQUAL(4, tf.control_cycle_count_fp->get());
 }
@@ -132,7 +132,7 @@ void test_task_execute() {
 
     // Set the statefields to new values.
     tf.mission_mode_fp->set(5);
-    tf.is_deployed_fp->set(6);
+    tf.is_deployed_fp->set(true);
     tf.sat_designation_fp->set(7);
     tf.control_cycle_count_fp->set(8);
 
@@ -151,7 +151,7 @@ void test_task_execute() {
     TimedControlTaskBase::control_cycle_count=9;
     tf.eeprom_controller->execute();
     TEST_ASSERT_EQUAL(5, tf.read(0));
-    TEST_ASSERT_EQUAL(6, tf.read(1));
+    TEST_ASSERT_EQUAL(1, tf.read(1));
     TEST_ASSERT_EQUAL(255, tf.read(2));
     TEST_ASSERT_EQUAL(255, tf.read(3));
 
@@ -159,7 +159,7 @@ void test_task_execute() {
     TimedControlTaskBase::control_cycle_count=25;
     tf.eeprom_controller->execute();
     TEST_ASSERT_EQUAL(5, tf.read(0));
-    TEST_ASSERT_EQUAL(6, tf.read(1));
+    TEST_ASSERT_EQUAL(1, tf.read(1));
     TEST_ASSERT_EQUAL(7, tf.read(2));
     TEST_ASSERT_EQUAL(255, tf.read(3));
 
@@ -167,7 +167,7 @@ void test_task_execute() {
     TimedControlTaskBase::control_cycle_count=49;
     tf.eeprom_controller->execute();
     TEST_ASSERT_EQUAL(5, tf.read(0));
-    TEST_ASSERT_EQUAL(6, tf.read(1));
+    TEST_ASSERT_EQUAL(1, tf.read(1));
     TEST_ASSERT_EQUAL(7, tf.read(2));
     TEST_ASSERT_EQUAL(8, tf.read(3));
 
@@ -178,14 +178,14 @@ void test_task_execute() {
 
     // Check if the new eeprom controller set the statefield values to the values that 
     // were previously stored in the EEPROM
-    TEST_ASSERT_EQUAL(5, tf2.get_ptr(0)->get());
-    TEST_ASSERT_EQUAL(6, tf2.get_ptr(1)->get());
-    TEST_ASSERT_EQUAL(7, tf2.get_ptr(2)->get());
-    TEST_ASSERT_EQUAL(8, tf2.get_ptr(3)->get());
+    TEST_ASSERT_EQUAL(5, tf2.get_ptr<unsigned char>(0)->get());
+    TEST_ASSERT_TRUE(tf2.get_ptr<bool>(1)->get());
+    TEST_ASSERT_EQUAL(7, tf2.get_ptr<unsigned char>(2)->get());
+    TEST_ASSERT_EQUAL(8, tf2.get_ptr<unsigned int>(3)->get());
 
     // Let the statefield values change over time.
     tf2.mission_mode_fp->set(9);
-    tf2.is_deployed_fp->set(10);
+    tf2.is_deployed_fp->set(false);
     tf2.sat_designation_fp->set(11);
     tf2.control_cycle_count_fp->set(12);
 
@@ -195,21 +195,21 @@ void test_task_execute() {
     // Check if those values were written to the EEPROM
     tf2.eeprom_controller->execute();
     TEST_ASSERT_EQUAL(9, tf.read(0));
-    TEST_ASSERT_EQUAL(10, tf.read(1));
+    TEST_ASSERT_EQUAL(0, tf.read(1));
     TEST_ASSERT_EQUAL(11, tf.read(2));
     TEST_ASSERT_EQUAL(12, tf.read(3));
 
     // Now we let a few more control cycles pass, but not a whole period for any statefield (211 is a prime number)
     TimedControlTaskBase::control_cycle_count=211;
     tf2.mission_mode_fp->set(13);
-    tf2.is_deployed_fp->set(14);
+    tf2.is_deployed_fp->set(true);
     tf2.sat_designation_fp->set(15);
     tf2.control_cycle_count_fp->set(16);
 
     // Check that these values are NOT written to the EEPROM
     tf2.eeprom_controller->execute();
     TEST_ASSERT_EQUAL(9, tf.read(0));
-    TEST_ASSERT_EQUAL(10, tf.read(1));
+    TEST_ASSERT_EQUAL(0, tf.read(1));
     TEST_ASSERT_EQUAL(11, tf.read(2));
     TEST_ASSERT_EQUAL(12, tf.read(3));
 }

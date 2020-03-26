@@ -149,6 +149,40 @@ void test_create_writable_vector_field_args() {
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo2"));
 }
 
+void test_create_readable_eeprom_saved_field() {
+    StateFieldRegistryMock registry;
+    auto ptr = registry.create_readable_field<unsigned int>("foo");
+    TEST_ASSERT_FALSE(ptr->is_eeprom_saved());
+    TEST_ASSERT_EQUAL(0, ptr->eeprom_save_period());
+
+    ptr = registry.create_readable_field<unsigned int, 4>("foo");
+    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    TEST_ASSERT_EQUAL(4, ptr->eeprom_save_period());
+    ptr = registry.create_readable_field<unsigned int, 4>("foo", 2);
+    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    ptr = registry.create_readable_field<unsigned int, 4>("foo", 2, 3);
+    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    ptr = registry.create_readable_field<unsigned int, 4>("foo", 2, 3, 5);
+    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+}
+
+void test_create_writable_eeprom_saved_field() {
+    StateFieldRegistryMock registry;
+    auto ptr = registry.create_writable_field<unsigned int>("foo");
+    TEST_ASSERT_FALSE(ptr->is_eeprom_saved());
+    TEST_ASSERT_EQUAL(0, ptr->eeprom_save_period());
+
+    ptr = registry.create_writable_field<unsigned int, 4>("foo");
+    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    TEST_ASSERT_EQUAL(4, ptr->eeprom_save_period());
+    ptr = registry.create_writable_field<unsigned int, 4>("foo", 2);
+    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    ptr = registry.create_writable_field<unsigned int, 4>("foo", 2, 3);
+    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    ptr = registry.create_writable_field<unsigned int, 4>("foo", 2, 3, 5);
+    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+}
+
 /**
  * @brief This print function will be used to instatiate an event, which will be added to the
  * registry in test_create_event()
@@ -231,6 +265,8 @@ int test_state_field_registry_mock() {
     RUN_TEST(test_create_writable_field_noargs);
     RUN_TEST(test_create_readable_field_args);
     RUN_TEST(test_create_writable_field_args);
+    RUN_TEST(test_create_readable_eeprom_saved_field);
+    RUN_TEST(test_create_writable_eeprom_saved_field);
     RUN_TEST(test_create_readable_vector_field_args);
     RUN_TEST(test_create_writable_vector_field_args);
     RUN_TEST(test_create_event);

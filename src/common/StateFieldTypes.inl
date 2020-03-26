@@ -52,14 +52,6 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
    protected:
     Serializer<T> _serializer;
 
-    static constexpr bool is_eeprom_saveable() {
-      return std::is_same<T, unsigned int>::value
-       || std::is_same<T, signed int>::value
-       || std::is_same<T, unsigned char>::value
-       || std::is_same<T, signed char>::value
-       || std::is_same<T, bool>::value;
-    }
-
    public:
     /**
      * @brief Construct a non EEPROM-saveable serializable state field.
@@ -71,6 +63,14 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
           __is_eeprom_saved(false),
           __eeprom_save_period(0) {}
 
+    static constexpr bool is_eeprom_saveable() {
+      return std::is_same<T, unsigned int>::value
+       || std::is_same<T, signed int>::value
+       || std::is_same<T, unsigned char>::value
+       || std::is_same<T, signed char>::value
+       || std::is_same<T, bool>::value;
+    }
+
     /**
      * @brief Construct an EEPROM-saveable serializable state field. The constructor
      * is only available when the class's template type is EEPROM-saveable.
@@ -80,9 +80,11 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
         : StateField<T>(name, true, ground_writable),
           _serializer(s),
           __is_eeprom_saved(true),
-          __eeprom_save_period(_eeprom_save_period) {
+          __eeprom_save_period(_eeprom_save_period)
+    {
       static_assert(is_eeprom_saveable(),
         "Cannot use this state field constructor for a non EEPROM-saveable type.");
+      assert(__eeprom_save_period != 0);
     }
 
     /**
