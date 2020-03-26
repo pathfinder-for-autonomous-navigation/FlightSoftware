@@ -160,7 +160,7 @@ void TestFixture::set_comms_blackout_period(int ccno) {
 
 // Set the angular rate of the spacecraft.
 void TestFixture::set_ang_rate(float rate) {
-    adcs_ang_momentum_fp->set({rate, 0, 0}); // TODO will need to change this once the inertia tensor
+    adcs_ang_momentum_fp->set({rate, 0.0f, 0.0f}); // TODO will need to change this once the inertia tensor
                                              // is added to GNC constants.
 }
 
