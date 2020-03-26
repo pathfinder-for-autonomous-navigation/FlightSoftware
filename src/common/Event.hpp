@@ -90,6 +90,7 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
       const char *print() const override;
 
    static ReadableStateField<unsigned int> *ccno;
+
     virtual ~Event() {}
 
   private:

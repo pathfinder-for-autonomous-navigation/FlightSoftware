@@ -3,7 +3,6 @@
 #include <vector>
 #include <fstream>
 #include <json.hpp>
-#include <iostream>
 
 const std::vector<std::string> dummy_statefields = {};
 const std::vector<unsigned int> dummy_periods = {};

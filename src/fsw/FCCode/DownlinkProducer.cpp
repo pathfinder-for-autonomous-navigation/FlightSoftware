@@ -148,7 +148,7 @@ void DownlinkProducer::execute() {
         for(auto& field : flow.field_list) {
             if (field->name().find("event") != std::string::npos) {
                 Event* event = dynamic_cast<Event*>(field);
-                // Event should be serialized when it is signalled
+                // Event should be serialized when it is signaled
                 const bit_array& event_bits = event->get_bit_array();
                 add_bits_to_downlink_frame(event_bits, snapshot_ptr, packet_offset,
                     downlink_frame_offset);
