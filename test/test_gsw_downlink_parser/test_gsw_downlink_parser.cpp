@@ -2,6 +2,15 @@
 #include <unity.h>
 #include <fstream>
 #include "../StateFieldRegistryMock.hpp"
+#include <iostream>
+
+static const char* print_fn(const unsigned int ccno, std::vector<ReadableStateFieldBase*>& data) {
+    static char print_data[40];
+    memset(print_data, 0, 40);
+    ReadableStateField<bool>* datafield_f = static_cast<ReadableStateField<bool>*>(data[0]);
+    sprintf((char*)print_data,  "E: time: %d, data: %d", ccno, datafield_f->get());
+    return print_data;
+}
 
 // Flow data for test
 class TestFixture {
@@ -16,14 +25,26 @@ class TestFixture {
     // Flow field inputs
     std::shared_ptr<ReadableStateField<unsigned int>> foo1_fp;
 
+    // Flow event input
+    ReadableStateField<bool> data1_f;
+    std::vector<ReadableStateFieldBase*> event_data;
+    Event event;
+
     // Parsing outputs
     InternalStateField<char*>* snapshot_fp;
     InternalStateField<size_t>* snapshot_size_bytes_fp;
 
-    TestFixture() : reg() {
+    TestFixture() : reg(),
+        data1_f("data1", Serializer<bool>()),
+        event_data({&data1_f}),
+        event("event", event_data, print_fn)
+    {
         // Generate fields required in the flow data
         foo1_fp = reg.create_readable_field<unsigned int>("foo1");
         foo1_fp->set(400);
+
+        data1_f.set(false);
+        reg.add_event(&event);
 
         parser = std::make_unique<DownlinkParserMock>(reg, flow_data);
         producer = parser->get_downlink_producer();
@@ -43,7 +64,8 @@ const std::vector<DownlinkProducer::FlowData> TestFixture::flow_data = {
         1,
         true,
         {
-            "foo1"
+            "foo1",
+            "event"
         }
     }
 };
