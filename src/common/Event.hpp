@@ -73,6 +73,7 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
     Event(Event &&other);
 
     const std::string &name() const override { return _name; }
+    const std::vector<ReadableStateFieldBase*> &_data_fields() { return data_fields; }
 
     // Functions that will be overridden from SerializableStateFieldBase
   protected:
