@@ -14,6 +14,7 @@
 // TODO : Consider pulling the algorithm from PSim
 
 #ifdef SSA_LOG_LEVEL
+  #undef LOG_LEVEL
   #define LOG_LEVEL SSA_LOG_LEVEL
 #endif
 

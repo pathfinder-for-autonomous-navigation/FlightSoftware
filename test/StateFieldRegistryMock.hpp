@@ -321,7 +321,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
           const char* (*print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
           const unsigned int ccno)
     {
-        auto event_ptr = std::make_shared<Event>(name, data_fields, print_fn, ccno);
+        auto event_ptr = std::make_shared<Event>(name, data_fields, print_fn);
         add_event(event_ptr.get());
         created_events.push_back(event_ptr);
         return event_ptr;
@@ -333,7 +333,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @param name Name of fault to create.
      * @return Pointer to fault that was created.
      */
-    std::shared_ptr<Fault> create_fault(const std::string& name, const size_t _persistence, unsigned int control_cycle_count)
+    std::shared_ptr<Fault> create_fault(const std::string& name, const size_t _persistence, const unsigned int& control_cycle_count)
     {
         auto fault_ptr = std::make_shared<Fault>(name, _persistence, control_cycle_count);
         add_fault(fault_ptr.get());

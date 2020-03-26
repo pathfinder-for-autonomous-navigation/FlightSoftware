@@ -51,11 +51,17 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_readable_field(tank2_temp);
     add_readable_field(tank1_temp);
 
-    max_pressurizing_cycles.set(20);
-    threshold_firing_pressure.set(25.0f);
-    ctrl_cycles_per_filling_period.set(1000 / PAN::control_cycle_time_ms);
-    ctrl_cycles_per_cooling_period.set(10 * 1000 / PAN::control_cycle_time_ms);
-    tank1_valve.set(0); // default use 0
+    TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
+    TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_filling_period_ic, 1000 / PAN::control_cycle_time_ms);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_cooling_period_ic, 10 * 1000 / PAN::control_cycle_time_ms);
+    TRACKED_CONSTANT(unsigned int, tank1_valve_choice_ic, 0);
+    
+    max_pressurizing_cycles.set(max_pressurizing_cycles_ic);
+    threshold_firing_pressure.set(threshold_firing_pressure_ic);
+    ctrl_cycles_per_filling_period.set(ctrl_cycles_per_filling_period_ic);
+    ctrl_cycles_per_cooling_period.set(ctrl_cycles_per_cooling_period_ic);
+    tank1_valve.set(tank1_valve_choice_ic); // default use 0
 
     tank2_pressure.set(Tank2.get_pressure());
     tank2_temp.set(Tank2.get_temp());

@@ -1,5 +1,5 @@
-#include "../UplinkProducer.h"
-#include "../../flow_data.hpp"
+#include <gsw/parsers/src/UplinkProducer.h>
+#include <flow_data.hpp>
 #include <iostream>
 
 #ifndef UNIT_TEST

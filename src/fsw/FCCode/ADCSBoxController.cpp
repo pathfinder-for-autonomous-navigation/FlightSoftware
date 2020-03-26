@@ -93,14 +93,43 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
 
     std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
+
+    // send_cmd_table is true iff there is a non zero bit in the reset_vector or disable_vector
+    bool send_cmd_table = false;
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
-        temp_cmd_table.set(idx, havt_cmd_reset_vector_fp[idx]->get());
+        // the bit is high if there is a command to reset the device at [idx]
+        bool reset_get = havt_cmd_reset_vector_fp[idx]->get();
+        if(reset_get) {
+            temp_cmd_table.set(idx, reset_get);
+            send_cmd_table = true;
+
+            // clear the state field now that it's loaded into temp_cmd_table
+            const_cast<WritableStateField<bool>*>(havt_cmd_reset_vector_fp[idx])->set(false);
+        }
     }
-    adcs_system.set_havt_reset(temp_cmd_table);
+
+    // dispatch the i2c call to send the reset table 
+    // iff there was a non-zero bit in the reset table
+    if(send_cmd_table)
+        adcs_system.set_havt_reset(temp_cmd_table);
+
+    send_cmd_table = false;
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
-        temp_cmd_table.set(idx, havt_cmd_disable_vector_fp[idx]->get());
+        // the bit is high if there is a command to disable the device at [idx]
+        bool disable_get = havt_cmd_disable_vector_fp[idx]->get();
+        if(disable_get){
+            temp_cmd_table.set(idx, disable_get);
+            send_cmd_table = true;
+
+            // clear the state field now that it's loaded into temp_cmd_table
+            const_cast<WritableStateField<bool>*>(havt_cmd_disable_vector_fp[idx])->set(false);
+        }
     }
-    adcs_system.set_havt_disable(temp_cmd_table);
+    
+    // dispatch the i2c call to send the disable table 
+    // iff there was a non-zero bit in the disable table
+    if(send_cmd_table)
+        adcs_system.set_havt_disable(temp_cmd_table);
 }

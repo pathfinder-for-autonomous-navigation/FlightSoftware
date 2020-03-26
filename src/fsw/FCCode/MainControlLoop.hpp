@@ -4,6 +4,7 @@
 #include "ControlTask.hpp"
 #include <common/StateField.hpp>
 #include <common/StateFieldRegistry.hpp>
+#include <common/constant_tracker.hpp>
 
 #include "ClockManager.hpp"
 #include "PiksiControlTask.hpp"
@@ -15,6 +16,7 @@
 #include "GomspaceController.hpp"
 #include "DebugTask.hpp"
 #include "FieldCreatorTask.hpp"
+#include "FaultHandlerMachine.hpp"
 #include "MissionManager.hpp"
 #include "QuakeManager.h"
 #include "DockingController.hpp"
@@ -62,7 +64,9 @@ class MainControlLoop : public ControlTask<void> {
     EEPROMController eeprom_controller;
 
     // Control cycle time offsets, in microseconds
+    // Defined in https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B04C55BBB-7AED-410B-AC43-67352393D6D5%7D&file=Flight%20Software%20Cycle.xlsx&action=default&mobileredirect=true&cid=e2b9bd89-7037-47bf-ad2a-fd8b25808939
     #ifdef FUNCTIONAL_TEST
+
     // https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B04C55BBB-7AED-410B-AC43-67352393D6D5%7D&file=Flight%20Software%20Cycle.xlsx&action=default&mobileredirect=true&cid=e2b9bd89-7037-47bf-ad2a-fd8b25808939
         static constexpr unsigned int piksi_control_task_offset  =   5500;
         static constexpr unsigned int adcs_monitor_offset        =   7500;

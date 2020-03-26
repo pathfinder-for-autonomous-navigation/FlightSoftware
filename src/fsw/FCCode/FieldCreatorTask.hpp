@@ -18,6 +18,7 @@ class FieldCreatorTask : public ControlTask<void> {
       ReadableStateField<d_vector_t> pos_baseline_f;
 
       Fault failed_pressurize_f;
+      Fault overpressured_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
@@ -33,6 +34,7 @@ class FieldCreatorTask : public ControlTask<void> {
 
           // For propulsion controller
           add_fault(failed_pressurize_f);
+          add_fault(overpressured_f);
       }
 
       void execute() {
