@@ -54,6 +54,7 @@ class TestFixture {
         cycle_count_fp->set(20);
 
         event.signal();
+        cycle_count_fp->set(40);
 
         snapshot_fp = reg.find_internal_field_t<char*>("downlink.ptr");
         snapshot_size_bytes_fp = reg.find_internal_field_t<size_t>("downlink.snap_size");
@@ -90,7 +91,7 @@ void test_task_execute() {
     std::string data1 = downlink["data"]["event"]["field_data"]["data1"];
     TEST_ASSERT_EQUAL(tf.cycle_count_fp->get(), cycle_no);
     TEST_ASSERT_EQUAL(tf.foo1_fp->get(), foo1);
-    TEST_ASSERT_EQUAL(tf.cycle_count_fp->get(), event_ccno);
+    TEST_ASSERT_EQUAL(20, event_ccno);
     TEST_ASSERT_TRUE(data1=="false");
 
     // Test that metadata is OK
