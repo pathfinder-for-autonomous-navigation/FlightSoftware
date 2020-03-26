@@ -1,7 +1,7 @@
 from .base import SingleSatOnlyCase
 import time
 
-class PropCheckoutCase(SingleSatOnlyCase):
+class PropStateMachineCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
         self.sim.flight_controller.write_state(
             "pan.state", self.mission_states.get_by_name("manual"))
