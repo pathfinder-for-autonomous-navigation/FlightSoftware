@@ -152,9 +152,10 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
                     event->set_bit_array(event_bits);
                     unsigned int current_ccno = ClockManager::control_cycle_count;
                     event->deserialize();
+                    unsigned int event_ccno = event->ccno->get();
                     ClockManager::control_cycle_count = current_ccno;
 
-                    ret["data"][event->name()]["control_cycle_number"] = event->ccno->get();
+                    ret["data"][event->name()]["control_cycle_number"] = event_ccno;
                     for (ReadableStateFieldBase* data_field: event->_data_fields()) {
                         ret["data"][event->name()]["field_data"][data_field->name()] = std::string(data_field->print());
                     }
