@@ -230,13 +230,13 @@ class StateSession(object):
         Currently, the supported types are integers, doubles, integer vectors,
         double vectors, and booleans.
         '''
-        if type(val) is not list:
+        if type(val) not in (tuple, list):
             if type(val) is bool:
                 return 'true' if val else 'false'
             else:
                 return str(val)
         else:
-            string = ''
+            val_str = ''
             for _val in val:
                 val_str += self._val_to_str(_val) + ', '
             return val_str[:len(val_str) - 2]

@@ -21,25 +21,39 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
     @property
     def rwa_speed_cmd(self):
+        print("RWA SPEED CMD GETTER CALLED\n")
         return self.sim.flight_controller.read_state("adcs_cmd.rwa_speed_cmd")
     
     @property
     def rwa_torque_cmd(self):
         return self.sim.flight_controller.read_state("adcs_cmd.rwa_torque_cmd")
 
+    @property
+    def rwa_mode_cmd(self):
+        print("MODE GETTER\n")
+        return self.sim.flight_controller.read_state("adcs_cmd.rwa_mode")
+
     @rwa_speed_cmd.setter
     def rwa_speed_cmd(self, rwa_list):
-        assert( len(rwa_list) == 3 and type(rwa_list[0]) == float)
-        rwa_list = [str(x) for x in rwa_list]
-        rwa_list = ', '.join(rwa_list)
-        self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd",rwa_list)
+        # assert( len(rwa_list) == 3 and type(rwa_list[0]) == float)
+        # rwa_list = [str(x) for x in rwa_list]
+        # rwa_list = ', '.join(rwa_list)
+        # self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd",rwa_list)
+        self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", *rwa_list)
 
     @rwa_torque_cmd.setter
-    def rwa_torque_cmd(self, torque_list):
-        assert( len(rwa_list) == 3 and type(rwa_list[0]) == float)
-        rwa_list = [str(x) for x in rwa_list]
-        rwa_list = ', '.join(rwa_list)
-        self.sim.flight_controller.write_state("adcs_cmd.rwa_torque_cmd",rwa_list)
+    def rwa_torque_cmd(self, rwa_list):
+    
+        # assert( len(rwa_list) == 3 and type(rwa_list[0]) == float)
+        # rwa_list = [str(x) for x in rwa_list]
+        # rwa_list = ', '.join(rwa_list)
+        # self.sim.flight_controller.write_state("adcs_cmd.rwa_torque_cmd",rwa_list)
+        
+        self.sim.flight_controller.write_state("adcs_cmd.rwa_torque_cmd", *rwa_list)
+
+    @rwa_mode_cmd.setter
+    def rwa_mode_cmd(self, val):
+        self.sim.flight_controller.write_state("adcs_cmd.rwa_mode", val)
 
     def setup_case_singlesat(self):
         self.havt_length = 18 # _LENGTH in havt_devices.hpp
@@ -47,7 +61,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.sim.flight_controller.write_state("pan.state", 11) # Mission State = Manual
         self.sim.flight_controller.write_state("adcs.state", 5) # ADCS State = Manual
         self.sim.flight_controller.write_state("adcs_cmd.rwa_mode", 1) # Speed Control
-        self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", "0, 0, 0") # 0 speed to begin with
+        self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", 0.0,0.0,0.0) # 0 speed to begin with
         self.sim.flight_controller.write_state("dcdc.ADCSMotor_cmd", "true")
 
     """Steps the FC forward by one step"""
@@ -58,11 +72,12 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         binary_list = [1 if x else 0 for x in self.havt_read]
 
         string_of_binary_list = [str(x) for x in binary_list]
+        
+        # Reverse the list so it prints as it does in ADCSSoftware
+        string_of_binary_list.reverse()
+
         list_of_list = [string_of_binary_list[4*i:(4*i)+4] for i in range((int)(self.havt_length/4)+1)]
         final = [x + [" "] for x in list_of_list]
-
-        # Reverse the list so it prints as it does in ADCSSoftware
-        final.reverse()
 
         final_string = ''.join([''.join(x) for x in final])
         print("HAVT Read: "+str(final_string))
@@ -83,6 +98,15 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.rwa_speed_cmd = one_thou
 
         print(self.rwa_speed_cmd)
+        self.rwa_speed_cmd = (400,500,600)
+        print(self.rwa_speed_cmd)
+        self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", 400,400,500)
+        print(self.rwa_speed_cmd)
 
-        if(self.rwa_speed_cmd == one_thou):
-            print("SUCCESS")
+        self.print_havt_read()
+        self.sim.flight_controller.write_state("adcs_cmd.havt_disable0", True)
+        self.step()
+        self.print_havt_read()
+
+        self.rwa_mode_cmd = 2
+        print(self.rwa_mode_cmd)
