@@ -2,6 +2,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cassert>
+#include <lin.hpp>
 #include "GPSTime.hpp"
 #include "Serializer.hpp"
 #include "types.hpp"
@@ -204,8 +205,7 @@ class Serializer<signed int> : public IntegerSerializer<signed int> {
  */
 template <typename T>
 class FloatDoubleSerializer : public SerializerBase<T> {
-  static_assert(std::is_same<T, float>::value || 
-                std::is_same<T, double>::value,
+  static_assert(std::is_floating_point<T>::value,
                 "Must use double or float type when constructing a float-double serializer.");
 
   protected:
@@ -317,7 +317,7 @@ template <typename T,
           size_t quat_component_sz>
 class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
-  static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value,
+  static_assert(std::is_floating_point<T>::value,
       "Vector serializers can only be constructed for floats or doubles.");
   static_assert(N == 3 || N == 4,
       "Serializers for float arrays can only be used for arrays of size 3 or 4.");
@@ -743,6 +743,38 @@ class Serializer<std::array<double, N>> : public VectorSerializer<double, N,
                                             SerializerConstants::dqcsz>()
     {
         static_assert(N == 4, "A default constructor can only be used for a quaternion.");
+    }
+};
+
+template<typename T, size_t N>
+class Serializer<lin::Vector<T, N>> : protected Serializer<std::array<T, N>> {
+  static_assert(N == 3 || N == 4, "Serializers are only defined for 3- or 4-element tuples.");
+  static_assert(std::is_floating_point<T>::value, "Serializers are only defined for float or double-valued tuples.");
+  
+  public:
+    void serialize(const lin::Vector<T, N>& src) override {
+        std::array<T, N> src_cpy;
+        for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
+        serialize(src_cpy);
+    }
+
+    bool deserialize(const char* val, lin::Vector<T, N>* dest) override {
+        std::array<T, N> dest_cpy;
+        bool ret = deserialize(val, &dest_cpy);
+        if (!ret) return false;
+        for(unsigned int i = 0; i < N; i++) (*dest)[i] = dest_cpy(i);
+    }
+
+    void deserialize(lin::Vector<T, N>* dest) const override {
+        std::array<T, N> dest_cpy;
+        deserialize(&dest_cpy);
+        for(unsigned int i = 0; i < N; i++) (*dest)[i] = dest_cpy(i);
+    }
+
+    const char* print(const lin::Vector<T, N>& src) const override {
+        std::array<T, N> src_cpy;
+        for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
+        return print(src_cpy);
     }
 };
 

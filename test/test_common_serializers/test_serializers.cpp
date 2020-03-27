@@ -105,8 +105,7 @@ template <typename T>
 void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, 
                                 std::shared_ptr<Serializer<T>>& d, const T val, const T output,
                                 const T threshold = 0) {
-    static_assert(std::is_same<T, float>::value || 
-                  std::is_same<T, double>::value, 
+    static_assert(std::is_floating_point<T>::value, 
                   "To use this function, the value being tested must either be a float or a double.");
 
     T output_val;
@@ -383,8 +382,7 @@ void test_signed_char_serializer() {
 
 template <typename T>
 void test_float_or_double_serializer() {
-    static_assert(std::is_same<T, float>::value || 
-                  std::is_same<T, double>::value, 
+    static_assert(std::is_floating_point<T>::value, 
                   "To use this function, the value being tested must either be a float or a double.");
 
     std::shared_ptr<Serializer<T>> serializer;
@@ -470,8 +468,7 @@ void test_double_serializer() { test_float_or_double_serializer<double>(); }
  */
 template<typename T>
 void test_vec_serializer() {
-    static_assert(std::is_same<T, float>::value || 
-                  std::is_same<T, double>::value, 
+    static_assert(std::is_floating_point<T>::value, 
                   "To use this function, the value being tested must either be a float vector or a"
                   " double vector.");
 
@@ -582,8 +579,7 @@ void test_d_vec_serializer() {
 
 template<typename T>
 void test_quat_serializer() {
-    static_assert(std::is_same<T, float>::value || 
-                  std::is_same<T, double>::value, 
+    static_assert(std::is_floating_point<T>::value, 
                   "To use this function, the value being tested must either be a float quaternion or a double quaternion.");
 
     using quat_t = typename std::conditional<std::is_same<T, float>::value,
@@ -721,6 +717,7 @@ void test_serializers() {
     RUN_TEST(test_d_vec_serializer);
     RUN_TEST(test_f_quat_serializer);
     RUN_TEST(test_d_quat_serializer);
+    // TODO add lin vector serializer.
     RUN_TEST(test_gpstime_serializer);
     UNITY_END();
 }

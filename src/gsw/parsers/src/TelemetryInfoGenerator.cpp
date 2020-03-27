@@ -50,8 +50,7 @@ template<template<typename> class StateFieldType,
          typename UnderlyingType,
          class StateFieldBaseType>
 bool try_collect_vector_field_info(const StateFieldBaseType* field, json& field_info) {
-    static_assert(std::is_same<UnderlyingType, double>::value 
-                  || std::is_same<UnderlyingType, float>::value,
+    static_assert(std::is_floating_point<UnderlyingType>::value,
         "Can't collect vector field info for a vector of non-float or non-double type.");
     
     using UnderlyingVectorType = std::array<UnderlyingType, 3>;
