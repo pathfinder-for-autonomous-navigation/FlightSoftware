@@ -13,16 +13,14 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
     @property
     def havt_read(self):
-        self.havt_length = 18 # _LENGTH in havt_devices.hpp
         read_list = [False for x in range(self.havt_length)]
         for x in range(self.havt_length):
-            read_list = self.sim.flight_controller.read_state("adcs_monitor.havt_device"+str(x))
-        read_list = [True if x is true else False for x in read_list]
+            read_list[x] = self.sim.flight_controller.read_state("adcs_monitor.havt_device"+str(x))
+        read_list = [True if x == "true" else False for x in read_list]
         return read_list
 
     def setup_case_singlesat(self):
         self.havt_length = 18 # _LENGTH in havt_devices.hpp
-        self.havt_device = [False for x in range(self.havt_length)]
 
         self.sim.flight_controller.write_state("pan.state", 11) # Mission State = Manual
         self.sim.flight_controller.write_state("adcs.state", 5) # ADCS State = Manual
@@ -34,8 +32,22 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
     def step(self):
         self.sim.flight_controller.write_state("cycle.start", "true")
 
+    def print_havt_read(self):
+        binary_list = [1 if x else 0 for x in self.havt_read]
+
+        string_of_binary_list = [str(x) for x in binary_list]
+        list_of_list = [string_of_binary_list[4*i:(4*i)+4] for i in range((int)(self.havt_length/4)+1)]
+        final = [x + [" "] for x in list_of_list]
+
+        # Reverse the list so it prints as it does in ADCSSoftware
+        final.reverse()
+
+        final_string = ''.join([''.join(x) for x in final])
+        print("HAVT Read: "+str(final_string))
+
     def run_case_singlesat(self):
         print("Cycle Number: "+str(self.cycle_no))
         print("ADCS Functional: "+str(type(self.adcs_func)))
         self.step()
         print("Cycle Number: "+str(self.cycle_no))
+        self.print_havt_read()
