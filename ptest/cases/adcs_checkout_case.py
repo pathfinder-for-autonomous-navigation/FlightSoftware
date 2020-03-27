@@ -19,6 +19,28 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         read_list = [True if x == "true" else False for x in read_list]
         return read_list
 
+    @property
+    def rwa_speed_cmd(self):
+        return self.sim.flight_controller.read_state("adcs_cmd.rwa_speed_cmd")
+    
+    @property
+    def rwa_torque_cmd(self):
+        return self.sim.flight_controller.read_state("adcs_cmd.rwa_torque_cmd")
+
+    @rwa_speed_cmd.setter
+    def rwa_speed_cmd(self, rwa_list):
+        assert( len(rwa_list) == 3 and type(rwa_list[0]) == float)
+        rwa_list = [str(x) for x in rwa_list]
+        rwa_list = ', '.join(rwa_list)
+        self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd",rwa_list)
+
+    @rwa_torque_cmd.setter
+    def rwa_torque_cmd(self, torque_list):
+        assert( len(rwa_list) == 3 and type(rwa_list[0]) == float)
+        rwa_list = [str(x) for x in rwa_list]
+        rwa_list = ', '.join(rwa_list)
+        self.sim.flight_controller.write_state("adcs_cmd.rwa_torque_cmd",rwa_list)
+
     def setup_case_singlesat(self):
         self.havt_length = 18 # _LENGTH in havt_devices.hpp
 
@@ -46,8 +68,21 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         print("HAVT Read: "+str(final_string))
 
     def run_case_singlesat(self):
+        self.step()
+
         print("Cycle Number: "+str(self.cycle_no))
         print("ADCS Functional: "+str(type(self.adcs_func)))
-        self.step()
         print("Cycle Number: "+str(self.cycle_no))
         self.print_havt_read()
+
+        for x in range(self.havt_length):
+            if not self.havt_read[x]:
+                print("Device #"+str(x)+": Not Functional")
+                
+        one_thou = [1000.0,1000.0,1000.0]
+        self.rwa_speed_cmd = one_thou
+
+        print(self.rwa_speed_cmd)
+
+        if(self.rwa_speed_cmd == one_thou):
+            print("SUCCESS")
