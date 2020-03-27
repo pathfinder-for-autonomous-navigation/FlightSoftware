@@ -102,6 +102,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
                       std::is_same<T, gps_time_t>::value ||
                       std::is_same<T, f_quat_t>::value ||
                       std::is_same<T, d_quat_t>::value ||
+                      std::is_same<T, lin::Vector4f>::value ||
+                      std::is_same<T, lin::Vector4d>::value ||
                       std::is_same<T, unsigned int>::value ||
                       std::is_same<T, unsigned char>::value,
             "Type argument for field creation with the given parameters was invalid.");
@@ -125,6 +127,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
                       std::is_same<T, gps_time_t>::value ||
                       std::is_same<T, f_quat_t>::value ||
                       std::is_same<T, d_quat_t>::value ||
+                      std::is_same<T, lin::Vector4f>::value ||
+                      std::is_same<T, lin::Vector4d>::value ||
                       std::is_same<T, unsigned int>::value ||
                       std::is_same<T, unsigned char>::value,
             "Type argument for field creation with the given parameters was invalid.");
