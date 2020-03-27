@@ -15,7 +15,7 @@ class TestFixture {
         ReadableStateField<f_vector_t>* rwa_speed_rd_fp;
         ReadableStateField<f_vector_t>* rwa_torque_rd_fp;
         ReadableStateField<int>* ssa_mode_fp;
-        ReadableStateField<f_vector_t>* ssa_vec_fp;
+        ReadableStateField<lin::Vector3f>* ssa_vec_fp;
         std::vector<ReadableStateField<float>*> ssa_voltages_fp;
         ReadableStateField<f_vector_t>* mag_vec_fp;
         ReadableStateField<f_vector_t>* gyr_vec_fp;
@@ -57,7 +57,7 @@ class TestFixture {
             rwa_speed_rd_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.rwa_speed_rd");
             rwa_torque_rd_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.rwa_torque_rd");
             ssa_mode_fp = registry.find_readable_field_t<int>("adcs_monitor.ssa_mode");
-            ssa_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.ssa_vec");
+            ssa_vec_fp = registry.find_readable_field_t<lin::Vector3f>("adcs_monitor.ssa_vec");
             
             // fill vector of pointers to statefields for ssa
             char buffer[50];

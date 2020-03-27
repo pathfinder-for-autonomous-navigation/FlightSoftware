@@ -18,7 +18,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     {
         piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
         pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
-        ssa_vec_rd_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec", __FILE__, __LINE__),
+        ssa_vec_rd_fp = find_readable_field<lin::Vector3f>("adcs_monitor.ssa_vec", __FILE__, __LINE__),
         mag_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.mag_vec", __FILE__, __LINE__),
 
         //Add outputs
@@ -46,8 +46,7 @@ void AttitudeEstimator::set_data(){
     const f_vector_t mag_vec = mag_vec_fp->get();
     data.b_body = {mag_vec[0], mag_vec[1], mag_vec[2]};
 
-    const f_vector_t f_vec = ssa_vec_rd_fp->get();
-    data.s_body = {f_vec[0], f_vec[1], f_vec[2]};
+    data.s_body = ssa_vec_rd_fp->get();
 }
 
 void AttitudeEstimator::set_estimate(){

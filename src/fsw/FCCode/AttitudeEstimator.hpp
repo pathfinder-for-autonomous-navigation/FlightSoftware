@@ -48,7 +48,7 @@ class AttitudeEstimator : public TimedControlTask<void> {
     //! Position of this satellite, Vector of doubles
     const ReadableStateField<d_vector_t>* pos_vec_ecef_fp;
     //! Sun vector of this satellite, in the body frame.
-    const ReadableStateField<f_vector_t>* ssa_vec_rd_fp;
+    const ReadableStateField<lin::Vector3f>* ssa_vec_rd_fp;
     //! Magnetic field vector of this satellite in the body frame.
     const ReadableStateField<f_vector_t>* mag_vec_fp;
 
