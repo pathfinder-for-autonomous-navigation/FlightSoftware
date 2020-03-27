@@ -10,6 +10,7 @@ const std::vector<unsigned int> dummy_periods = {};
 DownlinkParser::DownlinkParser(StateFieldRegistry& r,
                                const std::vector<DownlinkProducer::FlowData>& flow_data) :
     fcp(r, flow_data, dummy_statefields, dummy_periods),
+    registry(r),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
 std::string DownlinkParser::process_downlink_file(const std::string& filename) {
@@ -126,17 +127,53 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
                 return ret.dump();
             }
 
-            // Step 4.2. Process the items in the flow, and add the items
-            // to the downlink data.
+            /**
+             * Step 4.2. Process the items in the flow, and add the items
+             * to the downlink data.
+             * Field information will be stored like so: 
+             * "data": {
+             *      "event_name": {
+             *          "control_cycle_number": event control cycle number,
+             *          "field_data": {
+             *              "field1_name": field1 value,
+             *              "field2_name": field2 value,
+             *              "field3_name": field3 value
+             *          }
+             *      },
+             *      "readable_field_name": readable field value
+             * }
+             */
             for(ReadableStateFieldBase* field : flow->field_list) {
-                const std::vector<bool>::iterator field_end_it =
-                    frame_bits.begin() + field->get_bit_array().size();
+                Event* event = registry.find_event(field->name());
+                if (event) {
+                    const std::vector<bool>::iterator event_end_it =
+                        frame_bits.begin() + event->get_bit_array().size();
+                    
+                    const std::vector<bool> event_bits(frame_bits.begin(), event_end_it);
+                    event->set_bit_array(event_bits);
+                    
+                    unsigned int current_ccno = event->ccno->get();
+                    event->deserialize();
+                    unsigned int event_ccno = event->ccno->get();
+                    event->ccno->set(current_ccno);
 
-                const std::vector<bool> field_bits(frame_bits.begin(), field_end_it);
-                field->set_bit_array(field_bits);
-                field->deserialize();
-                ret["data"][field->name()] = std::string(field->print());
-                frame_bits.erase(frame_bits.begin(), field_end_it);
+                    ret["data"][event->name()]["control_cycle_number"] = event_ccno;
+                    for (ReadableStateFieldBase* data_field: event->_data_fields()) {
+                        ret["data"][event->name()]["field_data"][data_field->name()] = std::string(data_field->print());
+                    }
+                    frame_bits.erase(frame_bits.begin(), event_end_it);
+                }
+                else {
+                    const std::vector<bool>::iterator field_end_it =
+                        frame_bits.begin() + field->get_bit_array().size();
+
+                    const std::vector<bool> field_bits(frame_bits.begin(), field_end_it);
+                    field->set_bit_array(field_bits);
+                    field->deserialize();
+
+                    ret["data"][field->name()] = std::string(field->print());
+                    frame_bits.erase(frame_bits.begin(), field_end_it);
+                }
             }
         }
     }
