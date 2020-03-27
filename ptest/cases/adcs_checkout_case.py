@@ -102,6 +102,12 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         print(self.rwa_speed_cmd)
         self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", 400,400,500)
         print(self.rwa_speed_cmd)
+        self.rwa_mode_cmd = [250,260.0,300.00000]
+        print(self.rwa_speed_cmd) # TODO NEED ASSERT GUARDS
+        print(self.rwa_mode_cmd)
+
+        self.rwa_speed_cmd = [250,260.0,300.00000]
+        print(self.rwa_speed_cmd)
 
         self.print_havt_read()
         self.sim.flight_controller.write_state("adcs_cmd.havt_disable0", True)
