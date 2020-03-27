@@ -12,7 +12,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     state(),
     estimate(),
     q_body_eci_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
-    w_body_f("attitude_estimator.w_body", Serializer<f_vector_t>(-55, 55, 32*3)),
+    w_body_f("attitude_estimator.w_body", Serializer<lin::Vector3f>(-55, 55, 32*3)),
     h_body_f("attitude_estimator.h_body"),
     adcs_paired_f("adcs.paired", Serializer<bool>())
     {
@@ -42,7 +42,7 @@ void AttitudeEstimator::set_data(){
 
     const d_vector_t r_ecef = pos_vec_ecef_fp->get();
     data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};
-    
+
     const f_vector_t mag_vec = mag_vec_fp->get();
     data.b_body = {mag_vec[0], mag_vec[1], mag_vec[2]};
 
@@ -58,12 +58,10 @@ void AttitudeEstimator::set_estimate(){
         estimate.q_body_eci(3)
     });
 
-    f_vector_t w_temp = { estimate.w_body(0), estimate.w_body(1), estimate.w_body(2) };
-    w_body_f.set(w_temp);
+    w_body_f.set(estimate.w_body);
 
-    lin::Vector3f wvec = {w_temp[0], w_temp[1], w_temp[2]};
     lin::Vector3f result;
-    if (adcs_paired_f.get()) result = gnc::constant::JB_docked_sats * wvec;
-    else result = gnc::constant::JB_single_sat * wvec;
+    if (adcs_paired_f.get()) result = gnc::constant::JB_docked_sats * estimate.w_body;
+    else result = gnc::constant::JB_single_sat * estimate.w_body;
     h_body_f.set(result.eval());
 }

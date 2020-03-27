@@ -14,7 +14,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
 
     prop_state_fp = registry.create_readable_field<unsigned char>("prop.state", 2);
 
-    propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
+    propagated_baseline_pos_fp = registry.create_readable_lin_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
 
     reboot_fp = registry.create_writable_field<bool>("gomspace.gs_reboot_cmd");

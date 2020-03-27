@@ -17,7 +17,7 @@ class TestFixture {
     std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_fp;
     std::shared_ptr<ReadableStateField<f_vector_t>> ssa_vec_fp;
     std::shared_ptr<ReadableStateField<d_vector_t>> pos_fp;
-    std::shared_ptr<ReadableStateField<d_vector_t>> pos_baseline_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_baseline_fp;
 
     // Attitude computer
     std::unique_ptr<AttitudeComputer> attitude_computer;
@@ -33,7 +33,7 @@ class TestFixture {
         q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
         ssa_vec_fp = registry.create_readable_vector_field<float>("adcs_monitor.ssa_vec", 0, 1, 100);
         pos_fp = registry.create_readable_vector_field<double>("orbit.pos", 0, 100000, 100);
-        pos_baseline_fp = registry.create_readable_vector_field<double>("orbit.baseline_pos", 0, 100000, 100);
+        pos_baseline_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 100000, 100);
 
         attitude_computer = std::make_unique<AttitudeComputer>(registry, 0);
 

@@ -38,7 +38,7 @@ class AttitudeComputer : public TimedControlTask<void> {
      * @brief Inputs required from orbit estimator for pointing.
      */
     const ReadableStateField<d_vector_t>* pos_fp;
-    const ReadableStateField<d_vector_t>* baseline_pos_fp;
+    const ReadableStateField<lin::Vector3d>* baseline_pos_fp;
 
     /**
      * @brief Fields used in control of attitude. These vectors are

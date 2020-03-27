@@ -23,7 +23,7 @@ AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int of
     q_body_eci_fp = find_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci", __FILE__, __LINE__);
     ssa_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.ssa_vec", __FILE__, __LINE__);
     pos_fp = find_readable_field<d_vector_t>("orbit.pos", __FILE__, __LINE__);
-    baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
+    baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
 
     // Initialize outputs to NaN values
     adcs_vec1_current_f.set({nan_f, nan_f, nan_f});
@@ -113,12 +113,7 @@ void AttitudeComputer::execute() {
         }
         break;
         case adcs_state_t::point_docking: {
-            const d_vector_t baseline_pos_eci_arr = baseline_pos_fp->get();
-            lin::Vector3f baseline_pos_eci = {
-                static_cast<float>(baseline_pos_eci_arr[0]),
-                static_cast<float>(baseline_pos_eci_arr[1]),
-                static_cast<float>(baseline_pos_eci_arr[2])
-            };
+            lin::Vector3f baseline_pos_eci = baseline_pos_fp->get();
             baseline_pos_eci = baseline_pos_eci / lin::norm(baseline_pos_eci);
             lin::Vector3f baseline_pos_body;
             gnc::utl::rotate_frame(q_body_eci, baseline_pos_eci, baseline_pos_body);
