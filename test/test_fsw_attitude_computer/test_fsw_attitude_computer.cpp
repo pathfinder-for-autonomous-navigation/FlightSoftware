@@ -14,7 +14,7 @@ class TestFixture {
     StateFieldRegistryMock registry;
     // Input state fields to attitude computer
     std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
-    std::shared_ptr<ReadableStateField<f_quat_t>> q_body_eci_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_fp;
     std::shared_ptr<ReadableStateField<f_vector_t>> ssa_vec_fp;
     std::shared_ptr<ReadableStateField<d_vector_t>> pos_fp;
     std::shared_ptr<ReadableStateField<d_vector_t>> pos_baseline_fp;
@@ -30,7 +30,7 @@ class TestFixture {
 
     TestFixture() : registry() {
         adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
-        q_body_eci_fp = registry.create_readable_field<f_quat_t>("attitude_estimator.q_body_eci");
+        q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
         ssa_vec_fp = registry.create_readable_vector_field<float>("adcs_monitor.ssa_vec", 0, 1, 100);
         pos_fp = registry.create_readable_vector_field<double>("orbit.pos", 0, 100000, 100);
         pos_baseline_fp = registry.create_readable_vector_field<double>("orbit.baseline_pos", 0, 100000, 100);

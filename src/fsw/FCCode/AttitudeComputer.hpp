@@ -31,7 +31,7 @@ class AttitudeComputer : public TimedControlTask<void> {
     /**
      * @brief Inputs required from ADCS system for pointing.
      */
-    const ReadableStateField<f_quat_t>* q_body_eci_fp;
+    const ReadableStateField<lin::Vector4f>* q_body_eci_fp;
     const ReadableStateField<f_vector_t>* ssa_vec_fp;
 
     /**

@@ -11,7 +11,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     data(),
     state(),
     estimate(),
-    q_body_eci_f("attitude_estimator.q_body_eci", Serializer<f_quat_t>()),
+    q_body_eci_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
     w_body_f("attitude_estimator.w_body", Serializer<f_vector_t>(-55, 55, 32*3)),
     h_body_f("attitude_estimator.h_body"),
     adcs_paired_f("adcs.paired", Serializer<bool>())
@@ -51,13 +51,12 @@ void AttitudeEstimator::set_data(){
 }
 
 void AttitudeEstimator::set_estimate(){
-    f_quat_t q_temp = {
+    q_body_eci_f.set({
         estimate.q_body_eci(0),
         estimate.q_body_eci(1),
         estimate.q_body_eci(2),
         estimate.q_body_eci(3)
-    };
-    q_body_eci_f.set(q_temp);
+    });
 
     f_vector_t w_temp = { estimate.w_body(0), estimate.w_body(1), estimate.w_body(2) };
     w_body_f.set(w_temp);

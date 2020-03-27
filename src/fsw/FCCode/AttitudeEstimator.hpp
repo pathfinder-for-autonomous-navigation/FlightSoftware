@@ -59,7 +59,7 @@ class AttitudeEstimator : public TimedControlTask<void> {
 
     //AttitudeEstimate
     // Quaternion that converts from the ECI frame to the body frame
-    ReadableStateField<f_quat_t> q_body_eci_f;
+    ReadableStateField<lin::Vector4f> q_body_eci_f;
     // Angular velocity of spacecraft in body frame
     ReadableStateField<f_vector_t> w_body_f;
     // Angular momentum of spacecraft in body frame

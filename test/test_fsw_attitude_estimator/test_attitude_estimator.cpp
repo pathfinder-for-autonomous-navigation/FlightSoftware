@@ -15,7 +15,7 @@ class TestFixture {
         std::shared_ptr<ReadableStateField<f_vector_t>> mag_vec_fp;
 
         // pointers to output statefields for easy access
-        ReadableStateField<f_quat_t>* q_body_eci_fp;
+        ReadableStateField<lin::Vector4f>* q_body_eci_fp;
         ReadableStateField<f_vector_t>* w_body_fp;
         InternalStateField<lin::Vector3f>* h_body_fp;
         WritableStateField<bool>* adcs_paired_fp;
@@ -34,7 +34,7 @@ class TestFixture {
                 attitude_estimator = std::make_unique<AttitudeEstimator>(registry, 0);  
 
                 // initialize pointers to statefields
-                q_body_eci_fp = registry.find_readable_field_t<f_quat_t>("attitude_estimator.q_body_eci");
+                q_body_eci_fp = registry.find_readable_field_t<lin::Vector4f>("attitude_estimator.q_body_eci");
                 w_body_fp = registry.find_readable_field_t<f_vector_t>("attitude_estimator.w_body");
                 h_body_fp = registry.find_internal_field_t<lin::Vector3f>("attitude_estimator.h_body");
                 adcs_paired_fp = registry.find_writable_field_t<bool>("adcs.paired");
