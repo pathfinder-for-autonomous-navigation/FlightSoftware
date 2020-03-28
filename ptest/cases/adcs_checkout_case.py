@@ -117,14 +117,14 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.rwa_mode_cmd = 2
         print(self.rwa_mode_cmd)
 
-        print(self.sim.flight_controller.read_bool("adcs_cmd.havt_disable0", timeout = 4))
+        print(self.sim.flight_controller.smart_read("adcs_cmd.havt_disable0", timeout = 4))
 
-        print(self.sim.flight_controller.read_int("adcs_cmd.rwa_mode", timeout = 4))
+        print(self.sim.flight_controller.smart_read("adcs_cmd.rwa_mode", timeout = 4))
 
-        print(self.sim.flight_controller.read_float_list("adcs_monitor.gyr_vec", timeout = 4))
+        print(self.sim.flight_controller.smart_read("adcs_monitor.gyr_vec", timeout = 4))
 
-        print(self.sim.flight_controller.read_float("adcs_monitor.gyr_temp"))
+        print(self.sim.flight_controller.smart_read("adcs_monitor.gyr_temp"))
 
         # print(self.sim.flight_controller.read_int("adcs_monitor.gyr_temp"))
 
-        print(self.sim.flight_controller.read_bool("adcs_monitor.gyr_temp"))
+        print(self.sim.flight_controller.smart_read("adcs_monitor.gyr_temp"))

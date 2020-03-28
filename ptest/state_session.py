@@ -157,63 +157,40 @@ class StateSession(object):
 
         return self._wait_for_state(field)
 
-    def read_bool(self, field, **kwargs):
+    def str_to_val(self, field):
         '''
-        Reads a bool state field.
+        Automatically detects floats, ints and bools
 
-        Returns True, False or None
+        Returns a float, int or bool
         '''
-        ret = self.read_state(field, kwargs.get('timeout'))
-        if ret is None:
-            return ret
-        elif ret == 'true':
+        if '.' in field:
+            return float(field)
+        elif field == 'true':
             return True
-        elif ret == 'false':
+        elif field == 'false':
             return False
         else:
-            assert False, f"Expected bool state field, got {ret} instead."
-            return None
+            return int(field)
 
-    def read_int(self, field, **kwargs):
+    def smart_read(self, field, **kwargs):
         '''
-        Reads an integer or unsigned integer state field.
+        TODO DOCUMENTATION
+        '''
 
-        Returns an integer or None.
-        '''
         ret = self.read_state(field, kwargs.get('timeout'))
         if ret is None:
             return ret
-        else:
-            assert ('.' not in ret), "Expected int state field, got float instead. Try read_float()"
-            assert (ret not in ('true', 'false')), "Expected int state field, got bool instead. Try read_bool()"
-            return int(ret)
 
-    def read_float_list(self, field, **kwargs):
-        '''
-        Reads a float list state field.
+        # begin type inference
 
-        Returns a list of floats, or None
-        '''
-        ret = self.read_state(field, kwargs.get('timeout'))
-        if ret is None:
-            return ret
-        else:
+        if ',' in ret:
+            # ret is a list
             list_of_strings = ret.split(',')
             list_of_strings = [x for x in list_of_strings if x is not '']
-            list_of_floats = [float(x) for x in list_of_strings]
-            return list_of_floats
-
-    def read_float(self, field, **kwargs):
-        '''
-        Reads a float state field.
-
-        Returns a float or None
-        '''
-        ret = self.read_state(field, kwargs.get('timeout'))
-        if ret is None:
-            return ret
+            list_of_vals = [self.str_to_val(x) for x in list_of_strings]
+            return list_of_vals
         else:
-            return float(ret)
+            return self.str_to_val(ret)
 
     def _write_state_basic(self, fields, vals, timeout = None):
         '''
