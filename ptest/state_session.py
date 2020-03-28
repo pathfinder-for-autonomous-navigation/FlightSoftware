@@ -157,6 +157,20 @@ class StateSession(object):
 
         return self._wait_for_state(field)
 
+    def read_bool(self, field, **kwargs):
+        '''
+        Reads a bool statefield.
+
+        Returns True, False or None
+        '''
+        ret = self.read_state(field, kwargs.get('timeout'))
+        if ret is None:
+            return ret
+        else if ret == 'true'
+            return True
+        else
+            return False
+
     def _write_state_basic(self, fields, vals, timeout = None):
         '''
         Write multiple state fields to the device at once.

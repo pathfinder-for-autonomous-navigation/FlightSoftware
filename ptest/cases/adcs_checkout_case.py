@@ -116,3 +116,5 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.rwa_mode_cmd = 2
         print(self.rwa_mode_cmd)
+
+        print(self.sim.flight_controller.read_bool("adcs_cmd.havt_disable0", timeout = 4))
