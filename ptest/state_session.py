@@ -244,7 +244,7 @@ class StateSession(object):
         Currently, the supported types are integers, doubles, integer vectors,
         double vectors, and booleans.
         '''
-        if type(val) is not (list, tuple):
+        if type(val) not in (list, tuple):
             if type(val) is bool:
                 return 'true' if val else 'false'
             else:
@@ -263,7 +263,7 @@ class StateSession(object):
         then verify that the state was actually set. Do not write the state if the variable is being overriden
         by the user. (This is a function that sim should exclusively use.)
         '''
-        return self.write_multiple_states(field, self._val_to_str(args), kwargs.get('timeout'))
+        return self.write_multiple_states([field], [self._val_to_str(args)], kwargs.get('timeout'))
 
     def override_state(self, field, *args, **kwargs):
         '''
