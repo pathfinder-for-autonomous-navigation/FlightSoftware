@@ -166,9 +166,9 @@ class StateSession(object):
         ret = self.read_state(field, kwargs.get('timeout'))
         if ret is None:
             return ret
-        else if ret == 'true'
+        elif ret == 'true':
             return True
-        else
+        else:
             return False
 
     def _write_state_basic(self, fields, vals, timeout = None):
