@@ -4,6 +4,16 @@ from .base import SingleSatOnlyCase
 class ADCSCheckoutCase(SingleSatOnlyCase):
 
     @property
+    def mission_mode(self):
+        return self.sim.flight_controller.smart_read("pan.state")
+
+    @mission_mode.setter
+    def mission_mode(self, state):
+        print(f"Mission mode set to: {state}")
+        assert isinstance(state, int), f"Expected int, got {state} instead."
+        self.sim.flight_controller.write_state("pan.state", state)
+
+    @property
     def adcs_func(self):
         return self.sim.flight_controller.smart_read("adcs_monitor.functional")
     
@@ -34,20 +44,12 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
     @rwa_speed_cmd.setter
     def rwa_speed_cmd(self, rwa_list):
-        # assert( len(rwa_list) == 3 and type(rwa_list[0]) == float)
-        # rwa_list = [str(x) for x in rwa_list]
-        # rwa_list = ', '.join(rwa_list)
-        # self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd",rwa_list)
+        assert( len(rwa_list) == 3)
         self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", *rwa_list)
 
     @rwa_torque_cmd.setter
     def rwa_torque_cmd(self, rwa_list):
-    
-        # assert( len(rwa_list) == 3 and type(rwa_list[0]) == float)
-        # rwa_list = [str(x) for x in rwa_list]
-        # rwa_list = ', '.join(rwa_list)
-        # self.sim.flight_controller.write_state("adcs_cmd.rwa_torque_cmd",rwa_list)
-        
+        assert( len(rwa_list) == 3)        
         self.sim.flight_controller.write_state("adcs_cmd.rwa_torque_cmd", *rwa_list)
 
     @rwa_mode_cmd.setter
@@ -56,12 +58,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
     def setup_case_singlesat(self):
         self.havt_length = 18 # _LENGTH in havt_devices.hpp
-
-        self.sim.flight_controller.write_state("pan.state", 11) # Mission State = Manual
-        self.sim.flight_controller.write_state("adcs.state", 5) # ADCS State = Manual
-        self.sim.flight_controller.write_state("adcs_cmd.rwa_mode", 1) # Speed Control
-        self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", 0.0,0.0,0.0) # 0 speed to begin with
-        self.sim.flight_controller.write_state("dcdc.ADCSMotor_cmd", "true")
 
     """Steps the FC forward by one step"""
     def step(self):
@@ -84,6 +80,16 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
         self.step()
 
+        self.sim.flight_controller.write_state("pan.state", 11) # Mission State = Manual
+        self.mission_mode = 11
+        assert(self.mission_mode == 11)
+
+        self.sim.flight_controller.write_state("adcs.state", 5) # ADCS State = Manual
+        self.sim.flight_controller.write_state("adcs_cmd.rwa_mode", 1) # Speed Control
+        self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", 0.0,0.0,0.0) # 0 speed to begin with
+        self.sim.flight_controller.write_state("dcdc.ADCSMotor_cmd", "true")
+
+
         print("Cycle Number: "+str(self.cycle_no))
         print("ADCS Functional: "+str(type(self.adcs_func)))
         print("Cycle Number: "+str(self.cycle_no))
@@ -96,8 +102,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         one_thou = [1000.0,1000.0,1000.0]
         self.rwa_speed_cmd = one_thou
 
-        print(self.rwa_speed_cmd)
-        self.rwa_speed_cmd = (400,500,600)
         print(self.rwa_speed_cmd)
         self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", 400,400,500)
         print(self.rwa_speed_cmd)
