@@ -159,7 +159,7 @@ class StateSession(object):
 
     def read_bool(self, field, **kwargs):
         '''
-        Reads a bool statefield.
+        Reads a bool state field.
 
         Returns True, False or None
         '''
@@ -168,8 +168,52 @@ class StateSession(object):
             return ret
         elif ret == 'true':
             return True
-        else:
+        elif ret == 'false':
             return False
+        else:
+            assert False, f"Expected bool state field, got {ret} instead."
+            return None
+
+    def read_int(self, field, **kwargs):
+        '''
+        Reads an integer or unsigned integer state field.
+
+        Returns an integer or None.
+        '''
+        ret = self.read_state(field, kwargs.get('timeout'))
+        if ret is None:
+            return ret
+        else:
+            assert ('.' not in ret), "Expected int state field, got float instead. Try read_float()"
+            assert (ret not in ('true', 'false')), "Expected int state field, got bool instead. Try read_bool()"
+            return int(ret)
+
+    def read_float_list(self, field, **kwargs):
+        '''
+        Reads a float list state field.
+
+        Returns a list of floats, or None
+        '''
+        ret = self.read_state(field, kwargs.get('timeout'))
+        if ret is None:
+            return ret
+        else:
+            list_of_strings = ret.split(',')
+            list_of_strings = [x for x in list_of_strings if x is not '']
+            list_of_floats = [float(x) for x in list_of_strings]
+            return list_of_floats
+
+    def read_float(self, field, **kwargs):
+        '''
+        Reads a float state field.
+
+        Returns a float or None
+        '''
+        ret = self.read_state(field, kwargs.get('timeout'))
+        if ret is None:
+            return ret
+        else:
+            return float(ret)
 
     def _write_state_basic(self, fields, vals, timeout = None):
         '''
