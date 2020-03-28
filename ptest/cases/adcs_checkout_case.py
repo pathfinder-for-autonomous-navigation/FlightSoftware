@@ -5,33 +5,32 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
     @property
     def adcs_func(self):
-        return self.sim.flight_controller.read_state("adcs_monitor.functional")
+        return self.sim.flight_controller.smart_read("adcs_monitor.functional")
     
     @property
     def cycle_no(self):
-        return self.sim.flight_controller.read_state("pan.cycle_no")
+        return self.sim.flight_controller.smart_read("pan.cycle_no")
 
     @property
     def havt_read(self):
         read_list = [False for x in range(self.havt_length)]
         for x in range(self.havt_length):
-            read_list[x] = self.sim.flight_controller.read_state("adcs_monitor.havt_device"+str(x))
-        read_list = [True if x == "true" else False for x in read_list]
+            read_list[x] = self.sim.flight_controller.smart_read("adcs_monitor.havt_device"+str(x))
         return read_list
 
     @property
     def rwa_speed_cmd(self):
         print("RWA SPEED CMD GETTER CALLED\n")
-        return self.sim.flight_controller.read_state("adcs_cmd.rwa_speed_cmd")
+        return self.sim.flight_controller.smart_read("adcs_cmd.rwa_speed_cmd")
     
     @property
     def rwa_torque_cmd(self):
-        return self.sim.flight_controller.read_state("adcs_cmd.rwa_torque_cmd")
+        return self.sim.flight_controller.smart_read("adcs_cmd.rwa_torque_cmd")
 
     @property
     def rwa_mode_cmd(self):
         print("MODE GETTER\n")
-        return self.sim.flight_controller.read_state("adcs_cmd.rwa_mode")
+        return self.sim.flight_controller.smart_read("adcs_cmd.rwa_mode")
 
     @rwa_speed_cmd.setter
     def rwa_speed_cmd(self, rwa_list):
