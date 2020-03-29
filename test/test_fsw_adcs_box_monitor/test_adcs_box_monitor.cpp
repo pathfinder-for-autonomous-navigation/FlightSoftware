@@ -113,11 +113,24 @@ class TestFixture {
         }
 };
 
+lin::Vector<float, 3> to_linvector(const std::array<float, 3>& src) {
+    lin::Vector<float, 3> src_cpy;
+    for(unsigned int i = 0; i < 3; i++) src_cpy(i) = src[i];
+    return src_cpy;
+}
+
 //checks that all ref vector and actual vector are pretty much the same
 void elements_same(const std::array<float, 3> ref, const std::array<float, 3> actual){
     TEST_ASSERT_FLOAT_WITHIN(0.001, ref[0], actual[0]);
     TEST_ASSERT_FLOAT_WITHIN(0.001, ref[1], actual[1]);
     TEST_ASSERT_FLOAT_WITHIN(0.001, ref[2], actual[2]);
+}
+
+//checks that all ref vector and actual vector are pretty much the same
+void elements_same(const lin::Vector<float, 3> ref, const lin::Vector<float, 3> actual){
+    TEST_ASSERT_FLOAT_WITHIN(0.001, ref(0), actual(0));
+    TEST_ASSERT_FLOAT_WITHIN(0.001, ref(1), actual(1));
+    TEST_ASSERT_FLOAT_WITHIN(0.001, ref(2), actual(2));
 }
 
 void test_task_initialization()
@@ -157,7 +170,7 @@ void test_execute_ssa(){
     elements_same(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get());
     elements_same(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get());
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_COMPLETE, tf.ssa_mode_fp->get());
-    elements_same(ref_three_unit, tf.ssa_vec_fp->get());
+    elements_same(to_linvector(ref_three_unit), tf.ssa_vec_fp->get());
 
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
@@ -189,9 +202,9 @@ void test_execute_ssa(){
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_IN_PROGRESS, tf.ssa_mode_fp->get());
 
     //test ssa_vec is nan
-    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[0]));
-    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[1]));
-    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[2]));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(0)));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(1)));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(2)));
 
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
@@ -223,9 +236,9 @@ void test_execute_ssa(){
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_FAILURE, tf.ssa_mode_fp->get());
     
     //test ssa_vec is nan
-    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[0]));
-    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[1]));
-    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()[2]));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(0)));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(1)));
+    TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(2)));
 
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
