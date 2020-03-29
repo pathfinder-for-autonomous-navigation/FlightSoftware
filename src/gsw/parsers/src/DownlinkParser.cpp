@@ -4,12 +4,9 @@
 #include <fstream>
 #include <json.hpp>
 
-const std::vector<std::string> dummy_statefields = {};
-const std::vector<unsigned int> dummy_periods = {};
-
 DownlinkParser::DownlinkParser(StateFieldRegistry& r,
                                const std::vector<DownlinkProducer::FlowData>& flow_data) :
-    fcp(r, flow_data, dummy_statefields, dummy_periods),
+    fcp(r, flow_data),
     registry(r),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
