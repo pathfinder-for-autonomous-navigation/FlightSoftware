@@ -7,6 +7,10 @@ import traceback
 import queue
 import yagmail
 import requests
+import subprocess
+import glob
+import os
+import pty
 
 from .data_consumers import Datastore, Logger
 
@@ -23,7 +27,7 @@ class RadioSession(object):
     '''
 
 
-    def __init__(self, device_name, imei, simulation_run_dir, radio_keys_config, flask_keys_config):
+    def __init__(self, device_name, imei, simulation_run_dir, radio_keys_config, flask_keys_config, downlink_parser_filepath):
         '''
         Initializes state session with the Quake radio.
 
@@ -48,6 +52,12 @@ class RadioSession(object):
         #email
         self.username=radio_keys_config["email_username"]
         self.password=radio_keys_config["email_password"]
+
+        #start downlink parser
+        master_fd, slave_fd = pty.openpty()
+        self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
+        self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
+        self.telem_save_dir = simulation_run_dir
 
     def read_state(self, field, timeout=None):
         '''
@@ -107,6 +117,13 @@ class RadioSession(object):
         Uplink one state variable. Return success of write.
         '''
         return self.write_multiple_states([field], [val], timeout)
+
+    def parsetelem(self):
+        #get newest file
+        telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
+        newest_telem_file = max(telem_files, key=os.path.basename)
+        telem_json = self.console.write((newest_telem_file).encode())
+        return json.dumps(telem_json)
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''

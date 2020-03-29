@@ -104,10 +104,11 @@ class StateSession(object):
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                     #log data to a timestamped file
-                    binary_telem_bytes = ["{0:08b}".format(int(s, 16)) for s in data['telem'].replace("\\", " 0").split()]
-                    binary_telem_str = "".join(binary_telem_bytes)
-                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].txt"), "w")
-                    telem_file.write(binary_telem_str)
+                    telem_bytes = data['telem'].split(r'\x')
+                    telem_bytes.remove("")
+                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].txt"), "wb")
+                    for byte in telem_bytes:
+                        telem_file.write(int(byte, 16).to_bytes(1, byteorder='big'))
                     telem_file.close()
                 else:
                     if 'err' in data:
