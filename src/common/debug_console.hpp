@@ -5,6 +5,8 @@
 #include <cassert>
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
+#include <ArduinoJson.h>
+#include <gsw/parsers/src/UplinkProducer.h>
 
 #ifdef DESKTOP
     #include <chrono>
@@ -74,6 +76,11 @@ class debug_console {
      * computer to read/write to state fields.
      */
     void process_commands(const StateFieldRegistry &registry);
+
+    /**
+     * @brief Accepts a (time, telem) tuple and converts it into an uplink packet
+     */
+    void uplink_commands(const StateFieldRegistry &registry, unsigned int time, JsonVariant telem);
 
     /**
      * @brief Helper method to write state fields to the console. State fields might

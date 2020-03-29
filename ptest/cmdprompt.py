@@ -196,6 +196,24 @@ class StateCmdPrompt(Cmd):
         '''
         plotter = PlotterClient(self.cmded_device.datastore.db)
         plotter.do_plot(args)
+    
+    def do_uplink(self, args):
+        args = args.split()
+
+        if len(args) == 0:
+            print('Need to specify a state field to set')
+            return
+        elif len(args) % 2 != 0:
+            print("Need to specify a value for every state field to set")
+            return
+
+        fields = [args[x] for x in range(0, len(args), 2)]
+        vals = [args[x] for x in range(1, len(args), 2)]
+
+        start_time = timeit.default_timer()
+        uplink_succeeded = self.cmded_device.uplink(fields, vals)
+        elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
+
 
     def do_quit(self, args):
         '''

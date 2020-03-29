@@ -260,12 +260,62 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
                 print_state_field(*field_ptr);
 
-            } break;
+            } 
+            case 'u': {
+                Serial.printf("hi!");
+                JsonVariant field_val = msgs[i]["val"];
+                if (field_val.isNull()) {
+                    _print_error_state_field(field_name, write_mode, missing_field_val);
+                    break;
+                }
+
+                // We allow writing to readable state fields in the debug console, so
+                // that input values can be simmed.
+                ReadableStateFieldBase* field_ptr = registry.find_readable_field(field_name);
+                if (!field_ptr) {
+                    _print_error_state_field(field_name, write_mode, invalid_field_name);
+                    break;
+                }
+
+                JsonVariant uplink_packet;
+                uplink_packet[field] = field_val;
+
+                ReadableStateField<unsigned int>* cycle_count_fp = static_cast<WritableStateField<unsigned int>*>(registry.find_readable_field("pan.cycle_no"));
+                unsigned int ccno = cycle_count_fp->get();
+
+                uplink_commands(registry, ccno, uplink_packet);
+            }break;
             default: {
                 _print_error_state_field(field_name, read_mode, invalid_mode);
             }
         }
     }
+}
+
+void debug_console::uplink_commands(const StateFieldRegistry &registry, unsigned int time, JsonVariant telem) {
+    //telem["pan.cycle_no"] = time;
+
+    // Write the telemetry into a JSON file
+    std::ofstream o("telem.json");
+    o << std::setw(4) << telem << std::endl;
+
+    // Create an uplink packet using the JSON file
+    size_t arr_size = UplinkProducer::get_max_possible_packet_size();
+    char tmp [arr_size];
+    bitstream bs(tmp, arr_size);
+    UplinkProducer::create_from_json(bs, "telem.json");
+
+    std::remove("telem.json"); // delete file
+
+    // Add the uplink packet to the radio mt buffer so that it can be processed  on the next control cycle
+    
+    InternalStateField<char*>* radio_mt_packet_fp = static_cast<InternalStateField<char*>*>(registry.find_internal_field("uplink.ptr"));
+    InternalStateField<size_t>* radio_mt_len_fp = static_cast<InternalStateField<size_t>*>(registry.find_internal_field("uplink.len"));
+    radio_mt_packet_fp->set(tmp);
+    radio_mt_len_fp->set(bs.max_len);
+    
+    WritableStateField<bool>* load_telem_fp = static_cast<WritableStateField<bool>*>(registry.find_writable_field("telem.load"));
+    load_telem_fp->set(true);
 }
 
 #ifdef DESKTOP
