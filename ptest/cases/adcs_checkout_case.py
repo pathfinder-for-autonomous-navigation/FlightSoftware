@@ -1,6 +1,11 @@
 # ADCSCheckoutCase. Verifies the functionality of the ADCS.
 from .base import SingleSatOnlyCase
+import math
 
+def mag_of(vals):
+    assert(isinstance(vals, list))
+    return math.sqrt(sum([x*x for x in vals]))
+    
 class ADCSCheckoutCase(SingleSatOnlyCase):
 
     def rs(self, name):
@@ -197,7 +202,39 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         assert(initial_up_devices == self.havt_read), "Disable Reset Cycle Failed, New HAVT Table does not match initial table cache"
 
         print("Reset-Disable Success. All initially functional devices remain functional.")
-
+        
         # BEGIN SENSOR CHECKOUT
+        self.print_header("Begin Sensor Checkout")
+        # expect each sensor value to change from cycle to cycle, given user is jostling the test bed.
+
+        # TODO make section compatible with 2x imu active
+        self.print_header("Begin MAG Checkout")
+        
+        self.print_rs("adcs_cmd.imu_mode")
+
+        imu_modes = ["MAG1 active", "MAG2 active", "MAG1 calibrate", "MAG2 calibrate"]
+        print(f"IMU Mode: {4}")
+        
+        # perform 10 readings.
+        list_of_mag_rds = [self.rs("adcs_monitor.mag_vec") for i in range(10)]
+
+        # for each reading check, magnitude bounds
+        # earth's mag field is between 25 to 65 microteslas - Wikipedia
+        print("Mag readings: ")
+        for i in range(10):
+            self.step()
+            mag = mag_of(list_of_mag_rds[i])
+            print(f"{list_of_mag_rds[i]}, mag: {mag}")
+            # assert(25e-6 < mag and mag < 65e-6), "Mag reading out of expected (earth) bounds."
+
+        # TODO SOFT ASSERT
+        
+        self.print_rs("adcs_monitor.gyr_vec")
+        self.print_rs("adcs_monitor.mag_vec")
+        self.print_rs("adcs_monitor.gyr_temp")
+        self.step()
+        self.print_rs("adcs_monitor.gyr_vec")
+        self.print_rs("adcs_monitor.mag_vec")
+        self.print_rs("adcs_monitor.gyr_temp")
 
         self.print_header("ADCS Checkout Case Complete")

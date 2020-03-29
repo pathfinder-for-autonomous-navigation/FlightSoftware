@@ -174,9 +174,12 @@ class StateSession(object):
 
     def smart_read(self, field, **kwargs):
         '''
-        TODO DOCUMENTATION
-        '''
+        Turns a string state field read into the actual desired vals.
 
+        Returns list of vals, or the val itself. Vals can be bools, ints, or floats.
+        Raises NameError if no state field was found.
+        '''
+        
         ret = self.read_state(field, kwargs.get('timeout'))
         if ret is None:
             raise NameError(f"State field: {name} not found.")
