@@ -22,11 +22,11 @@ lin::Vector<T, N> to_linvec(const std::array<T, N>& src) {
  * @brief Returns the magnitude of a vector
  */
 template <typename T, size_t N>
-T magnitude_of(lin::Vector<T, N>& src){
+T magnitude_of(const lin::Vector<T, N>& src){
     return lin::norm(src);
 }
 template <typename T, size_t N>
-T magnitude_of(std::array<T, N>& src){
+T magnitude_of(const std::array<T, N>& src){
     return magnitude_of(to_linvec(src));
 }
 
