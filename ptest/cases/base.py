@@ -101,6 +101,23 @@ class Case(object):
             "dead"
         ])
         
+        self.rwa_modes = FSWEnum([
+            "RWA_DISABLED",
+            "RWA_SPEED_CTRL",
+            "RWA_ACCEL_CTRL"
+        ])
+
+        self.imu_modes = FSWEnum([
+            "MAG1",
+            "MAG2",
+            "MAG1_CALIBRATE",
+            "MAG2_CALIBRATE"
+        ])
+
+        self.mtr_modes = FSWEnum([
+            "MTR_ENABLED",
+            "MTR_DISABLED"
+        ])
         self.havt_length = 18
         
         # copied from havt_devices.hpp

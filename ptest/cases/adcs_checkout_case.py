@@ -7,6 +7,13 @@ def mag_of(vals):
     return math.sqrt(sum([x*x for x in vals]))
 
 def sum_of_differentials(lists_of_vals):
+    '''
+    Given a list of list of vals, return the sum of all the differentials from one list to the next.
+
+    Returns a val.
+
+    Ex: sum_of_differentials([[1,1,1],[1,2,3],[1,2,2]]) evaluates to 4
+    '''
     total_diff = [0 for x in lists_of_vals[0]]
     for i in range(len(lists_of_vals) - 1):
         diff = [abs(lists_of_vals[i][j] - lists_of_vals[i+1][j]) for j in range(len(lists_of_vals[i]))]
@@ -59,9 +66,9 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_rs("adcs_monitor.functional")
         assert(self.rs("adcs_monitor.functional")), f"ADCSC Not Functional"
 
-        self.ws("pan.state", 11)
-        self.ws("adcs.state", 5)
-        self.ws("adcs_cmd.rwa_mode", 1)
+        self.ws("pan.state", self.mission_states.get_by_name("manual"))
+        self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
+        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
         self.ws("dcdc.ADCSMotor_cmd", True)
 
@@ -139,8 +146,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             
             self.print_rs("adcs_cmd.imu_mode")
             imu_mode = self.rs("adcs_cmd.imu_mode")
-            imu_modes = ["MAG1 active", "MAG2 active", "MAG1 calibrate", "MAG2 calibrate"]
-            print(f"IMU Mode: {imu_modes[imu_mode]}")
+            print(f"IMU Mode: {self.imu_modes.get_by_num(imu_mode)}")
             
             # perform 10 readings.
             list_of_mag_rds = []
