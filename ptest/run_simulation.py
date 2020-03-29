@@ -56,8 +56,10 @@ class SimulationRun(object):
             try:
                 self.sim.start()
             except TestCaseFailure as failure:
-                traceback.print_exc()
-                print()
+                tb = traceback.format_exc()
+                self.sim.testcase.logger.put(tb)
+                time.sleep(1) # Allow time for the exception to be handled by the logger.
+                self.sim.testcase.logger.stop()
                 self.stop_all("Exiting due to testcase failure.")
             self.stop_all("Exiting since user requested non-interactive execution.", is_error=False)
 
@@ -147,7 +149,7 @@ class SimulationRun(object):
         print(f"Running mission testcase {self.testcase_name}.")
 
         if self.single_sat_sim:
-            self.sim = SingleSatSimulation(self.is_interactive, self.devices, self.random_seed, testcase())
+            self.sim = SingleSatSimulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
         else:
             self.sim = Simulation(self.is_interactive, self.devices, self.random_seed)
 

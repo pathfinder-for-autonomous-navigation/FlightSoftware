@@ -25,7 +25,7 @@ class DataConsumer(object):
             except queue.Empty:
                 pass
 
-            time.sleep(1.0) # Sleep 1 second
+            time.sleep(0.5) # Sleep 0.5 seconds
 
     def start(self):
         """ Start data consumer thread. """
@@ -40,7 +40,10 @@ class DataConsumer(object):
     def stop(self):
         """ Stop data consumer thread. """
         self.running = False
-        self.consumer_thread.join()
+        try:
+            self.consumer_thread.join()
+        except AttributeError:
+            pass
         self.save()
 
     def put(self, item):
@@ -71,12 +74,14 @@ class Datastore(DataConsumer):
         self.db.close()
 
 class Logger(DataConsumer):
-    def __init__(self, device_name, data_dir):
+    def __init__(self, device_name, data_dir, print=False):
         super().__init__(device_name, data_dir)
         self.log = ""
         filename = f"{self.device_name}-log.txt"
         filepath = os.path.join(self.data_dir, filename)
         self.logfile = open(filepath, "w")
+
+        self.print = print
 
         # Used for determining whether or not to save data to file
         self.line_counter = 0
@@ -96,6 +101,8 @@ class Logger(DataConsumer):
         os.fsync(self.logfile.fileno())
 
     def put(self, logline, add_time = True):
+        if self.print:
+            print(logline)
         if add_time:
             logline = f"[{datetime.datetime.now()}] " + str(logline.rstrip())
         self.queue.put(logline)
