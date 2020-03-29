@@ -50,59 +50,12 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             print(f"$ SOFT ASSERTION ERROR: {args[0]}")
             print()
 
-    # @property
-    # def mission_mode(self):
-    #     return self.sim.flight_controller.smart_read("pan.state")
-
-
-    # @mission_mode.setter
-    # def mission_mode(self, state):
-    #     print(f"Mission mode set to: {state}")
-    #     assert isinstance(state, int), f"Expected int, got {state} instead."
-    #     self.sim.flight_controller.write_state("pan.state", state)
-
-    # @property
-    # def adcs_func(self):
-    #     return self.sim.flight_controller.smart_read("adcs_monitor.functional")
-    
-    # @property
-    # def cycle_no(self):
-    #     return self.sim.flight_controller.smart_read("pan.cycle_no")
-
     @property
     def havt_read(self):
         read_list = [False for x in range(self.havt_length)]
         for x in range(self.havt_length):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
-
-    # @property
-    # def rwa_speed_cmd(self):
-    #     print("RWA SPEED CMD GETTER CALLED\n")
-    #     return self.sim.flight_controller.smart_read("adcs_cmd.rwa_speed_cmd")
-    
-    # @property
-    # def rwa_torque_cmd(self):
-    #     return self.sim.flight_controller.smart_read("adcs_cmd.rwa_torque_cmd")
-
-    # @property
-    # def rwa_mode_cmd(self):
-    #     print("MODE GETTER\n")
-    #     return self.sim.flight_controller.smart_read("adcs_cmd.rwa_mode")
-
-    # @rwa_speed_cmd.setter
-    # def rwa_speed_cmd(self, rwa_list):
-    #     assert( len(rwa_list) == 3)
-    #     self.sim.flight_controller.write_state("adcs_cmd.rwa_speed_cmd", *rwa_list)
-
-    # @rwa_torque_cmd.setter
-    # def rwa_torque_cmd(self, rwa_list):
-    #     assert( len(rwa_list) == 3)        
-    #     self.sim.flight_controller.write_state("adcs_cmd.rwa_torque_cmd", *rwa_list)
-
-    # @rwa_mode_cmd.setter
-    # def rwa_mode_cmd(self, val):
-    #     self.sim.flight_controller.write_state("adcs_cmd.rwa_mode", val)
 
     def setup_case_singlesat(self):
         self.havt_length = 18 # _LENGTH in havt_devices.hpp
@@ -279,12 +232,13 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             print("GYR readings: ")
             for i in range(10):
                 mag = mag_of(list_of_gyr_rds[i])
-                print(f"{list_of_mag_rds[i]}, mag: {mag}")
-                self.soft_assert((0 < mag and mag < 10),
+                print(f"{list_of_gyr_rds[i]}, mag: {mag}")
+                # 3.8 ~= sqrt((125 * 0.017)^2 * 3)
+                self.soft_assert((0 < mag and mag < 3.8),
                     "Gyr reading out of expected bounds.")
 
             # check readings changed over time
-            self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
+            self.soft_assert(sum_of_differentials(list_of_gyr_rds) > 0,
                 "Gyr readings did not vary across readings.")
 
             self.print_header("GYR CHECKOUT COMPLETE")
