@@ -5,7 +5,14 @@ import math
 def mag_of(vals):
     assert(isinstance(vals, list))
     return math.sqrt(sum([x*x for x in vals]))
-    
+
+def sum_of_differentials(lists_of_vals):
+    total_diff = [0 for x in lists_of_vals[0]]
+    for i in range(len(lists_of_vals) - 1):
+        diff = [abs(lists_of_vals[i][j] - lists_of_vals[i+1][j]) for j in range(len(lists_of_vals[i]))]
+        total_diff = [diff[x] + total_diff[x] for x in range(len(total_diff))]
+
+    return sum(total_diff)
 class ADCSCheckoutCase(SingleSatOnlyCase):
 
     def rs(self, name):
@@ -25,6 +32,23 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         print()
         print(title)
         print()
+
+    def soft_assert(self, condition, *args):
+        '''
+        Soft assert prints a fail message if the condition is False
+        
+        If specificied with a fail message, then a pass message, 
+        it will also print a pass message if condition is True.
+        '''
+        if condition: 
+            if len(args) == 1:
+                pass
+            else:
+                print(args[1])
+        else: 
+            print()
+            print(f"$ SOFT ASSERTION ERROR: {args[0]}")
+            print()
 
     # @property
     # def mission_mode(self):
@@ -191,7 +215,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         print("Post disabling all devices:")
         self.print_havt_read()
-        assert([0 for x in range(self.havt_length)] == self.havt_read), "Disabling all devices failed"
+        self.soft_assert(([0 for x in range(self.havt_length)] == self.havt_read), 
+            "Disabling all devices failed")
 
         # reset all devices
         for x in range(self.havt_length):
@@ -199,7 +224,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.step()
         print("Post resetting all devices:")
         self.print_havt_read()
-        assert(initial_up_devices == self.havt_read), "Disable Reset Cycle Failed, New HAVT Table does not match initial table cache"
+        self.soft_assert((initial_up_devices == self.havt_read), 
+            "Disable Reset Cycle Failed, New HAVT Table does not match initial table cache")
 
         print("Reset-Disable Success. All initially functional devices remain functional.")
         
@@ -211,30 +237,27 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_header("Begin MAG Checkout")
         
         self.print_rs("adcs_cmd.imu_mode")
-
+        imu_mode = self.rs("adcs_cmd.imu_mode")
         imu_modes = ["MAG1 active", "MAG2 active", "MAG1 calibrate", "MAG2 calibrate"]
-        print(f"IMU Mode: {4}")
+        print(f"IMU Mode: {imu_modes[imu_mode]}")
         
         # perform 10 readings.
-        list_of_mag_rds = [self.rs("adcs_monitor.mag_vec") for i in range(10)]
+        list_of_mag_rds = []
+        for i in range(10):
+            self.step()
+            list_of_mag_rds += [self.rs("adcs_monitor.mag_vec")]
 
         # for each reading check, magnitude bounds
         # earth's mag field is between 25 to 65 microteslas - Wikipedia
         print("Mag readings: ")
         for i in range(10):
-            self.step()
             mag = mag_of(list_of_mag_rds[i])
             print(f"{list_of_mag_rds[i]}, mag: {mag}")
-            # assert(25e-6 < mag and mag < 65e-6), "Mag reading out of expected (earth) bounds."
+            self.soft_assert((25e-6 < mag and mag < 65e-6),
+                "Mag reading out of expected (earth) bounds.")
 
-        # TODO SOFT ASSERT
-        
-        self.print_rs("adcs_monitor.gyr_vec")
-        self.print_rs("adcs_monitor.mag_vec")
-        self.print_rs("adcs_monitor.gyr_temp")
-        self.step()
-        self.print_rs("adcs_monitor.gyr_vec")
-        self.print_rs("adcs_monitor.mag_vec")
-        self.print_rs("adcs_monitor.gyr_temp")
+        # check readings changed over time
+        self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
+            "Mag readings did not vary across readings.")
 
-        self.print_header("ADCS Checkout Case Complete")
+        self.print_header("MAG CHECKOUT COMPLETE")
