@@ -153,6 +153,28 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.print_header("Finished Initialization")
 
+        print("Initial HAVT Table:")
+        self.print_havt_read()
+
+        # Note IMUGYR on left
+        # Just FC and ADCSC
+        barebones_hitl = "000111011100" + "000000"
+
+        # FC + ADCSC + MAG1 + MAG2 + GYR
+        minimal_hitl   = "111111011100" + "000000"
+            
+        # I forgot what it actually is, will update on next PR
+        edu_sat        = "110111011100" + "000000"
+
+        test_beds = {barebones_hitl:"BAREBONES HITL", minimal_hitl:"MINIMAL HITL", edu_sat:"EDU SAT"}
+
+        binary_string_havt_read = ''.join(["1" if x else "0" for x in self.havt_read])
+
+        if(binary_string_havt_read not in test_beds):
+            self.print_header("UN-RECOGNIZED HITL TEST BED. MAKE SURE HAVT_READ IS AS EXPECTED!")
+        else:
+            self.print_header(f"HAVT TABLE MATCHES WITH: {test_beds[binary_string_havt_read]}")
+            
         # cache the initially functional devices
         initial_up_devices = self.havt_read
 
@@ -175,5 +197,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         assert(initial_up_devices == self.havt_read), "Disable Reset Cycle Failed, New HAVT Table does not match initial table cache"
 
         print("Reset-Disable Success. All initially functional devices remain functional.")
+
+        # BEGIN SENSOR CHECKOUT
 
         self.print_header("ADCS Checkout Case Complete")
