@@ -1,8 +1,11 @@
-name: Flight Software Regression Tests
+name: Flight Software Regression Unit Tests
 
 on:
   pull_request:
     branches: [ master ]
+
+env:
+  CI: true
 
 jobs:
   build:
