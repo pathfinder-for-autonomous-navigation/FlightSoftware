@@ -66,8 +66,7 @@ bool StateFieldRegistry::add_internal_field(InternalStateFieldBase* field) {
 
 bool StateFieldRegistry::add_readable_field(ReadableStateFieldBase* field) {
     if (find_readable_field(field->name())) return false;
-    if (field->is_eeprom_saved()) {
-        assert(field->eeprom_save_period() != 0);
+    if (field->eeprom_save_period() > 0) {
         if (find_eeprom_saved_field(field->name())) return false;
         else eeprom_saved_fields.push_back(field);
     }

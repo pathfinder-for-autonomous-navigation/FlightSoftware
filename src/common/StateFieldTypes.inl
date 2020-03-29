@@ -35,7 +35,6 @@ class SerializableStateFieldBase : virtual public StateFieldBase {
     virtual const bit_array& get_bit_array() const = 0;
     virtual void set_bit_array(const bit_array& arr) = 0;
 
-    virtual bool is_eeprom_saved() const = 0;
     virtual unsigned int eeprom_save_period() const = 0;
     virtual unsigned int get_eeprom_repr() const = 0;
     virtual void set_from_eeprom(unsigned int val) = 0;
@@ -60,7 +59,6 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
                            const Serializer<T> &s)
         : StateField<T>(name, true, ground_writable),
           _serializer(s),
-          __is_eeprom_saved(false),
           __eeprom_save_period(0) {}
 
     static constexpr bool is_eeprom_saveable() {
@@ -79,18 +77,12 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
                            const Serializer<T> &s, unsigned int _eeprom_save_period)
         : StateField<T>(name, true, ground_writable),
           _serializer(s),
-          __is_eeprom_saved(true),
           __eeprom_save_period(_eeprom_save_period)
     {
       static_assert(is_eeprom_saveable(),
         "Cannot use this state field constructor for a non EEPROM-saveable type.");
       assert(__eeprom_save_period != 0);
     }
-
-    /**
-     * @brief Returns if the state field is EEPROM-saveable.
-     */
-    bool is_eeprom_saved() const override { return __is_eeprom_saved; }
 
     /**
      * @brief Returns the period, in control cycles, at which the
@@ -190,7 +182,6 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
     virtual ~SerializableStateField() {}
 
   private:
-    bool __is_eeprom_saved;
     unsigned int __eeprom_save_period;
 };
 

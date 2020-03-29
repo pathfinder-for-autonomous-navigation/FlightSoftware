@@ -140,6 +140,7 @@ json TelemetryInfoGenerator::generate_telemetry_info() {
         const std::string& field_name = rf->name();
         if (ret["fields"].find(field_name) != ret["fields"].end()) continue;
         ret["fields"][field_name] = get_readable_field_info(rf);
+        ret["fields"][field_name]["eeprom_save_period"] = rf->eeprom_save_period();
     }
 
     // Get flow data

@@ -92,7 +92,6 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
       // Functions from the SerializableStateField interface. These are
       // going to receive stub implementations since events should not
       // be EEPROM-saveable.
-      bool is_eeprom_saved() const override;
       unsigned int eeprom_save_period() const override;
       unsigned int get_eeprom_repr() const override;
       void set_from_eeprom(unsigned int val) override;

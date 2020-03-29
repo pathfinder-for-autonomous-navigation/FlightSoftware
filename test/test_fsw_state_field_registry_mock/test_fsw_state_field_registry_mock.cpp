@@ -152,57 +152,53 @@ void test_create_writable_vector_field_args() {
 void test_create_readable_eeprom_saved_field() {
     StateFieldRegistryMock registry;
     auto ptr = registry.create_readable_field<unsigned int>("foo");
-    TEST_ASSERT_FALSE(ptr->is_eeprom_saved());
     TEST_ASSERT_EQUAL(0, ptr->eeprom_save_period());
 
     // Test creating fields of all possible numbers of parameters
     ptr = registry.create_readable_field<unsigned int, 4>("foo");
-    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
     TEST_ASSERT_EQUAL(4, ptr->eeprom_save_period());
     ptr = registry.create_readable_field<unsigned int, 4>("foo", 2);
-    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    TEST_ASSERT_GREATER_THAN(0, ptr->eeprom_save_period());
     ptr = registry.create_readable_field<unsigned int, 4>("foo", 2, 3);
-    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    TEST_ASSERT_GREATER_THAN(0, ptr->eeprom_save_period());
     ptr = registry.create_readable_field<unsigned int, 4>("foo", 2, 3, 5);
-    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    TEST_ASSERT_GREATER_THAN(0, ptr->eeprom_save_period());
 
     // Test creating fields of all EEPROM-saveable kinds
     auto ptr2 = registry.create_readable_field<signed int, 4>("foo", -2, 2, 5);
     auto ptr3 = registry.create_readable_field<unsigned char, 4>("foo");
     auto ptr4 = registry.create_readable_field<signed char, 4>("foo", -2, 2, 5);
     auto ptr5 = registry.create_readable_field<bool, 4>("foo");
-    TEST_ASSERT_TRUE(ptr2->is_eeprom_saved());
-    TEST_ASSERT_TRUE(ptr3->is_eeprom_saved());
-    TEST_ASSERT_TRUE(ptr4->is_eeprom_saved());
-    TEST_ASSERT_TRUE(ptr5->is_eeprom_saved());
+    TEST_ASSERT_GREATER_THAN(0, ptr2->eeprom_save_period());
+    TEST_ASSERT_GREATER_THAN(0, ptr3->eeprom_save_period());
+    TEST_ASSERT_GREATER_THAN(0, ptr4->eeprom_save_period());
+    TEST_ASSERT_GREATER_THAN(0, ptr5->eeprom_save_period());
 }
 
 void test_create_writable_eeprom_saved_field() {
     StateFieldRegistryMock registry;
     auto ptr = registry.create_writable_field<unsigned int>("foo");
-    TEST_ASSERT_FALSE(ptr->is_eeprom_saved());
     TEST_ASSERT_EQUAL(0, ptr->eeprom_save_period());
 
     // Test creating fields of all possible numbers of parameters
     ptr = registry.create_writable_field<unsigned int, 4>("foo");
-    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
     TEST_ASSERT_EQUAL(4, ptr->eeprom_save_period());
     ptr = registry.create_writable_field<unsigned int, 4>("foo", 2);
-    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    TEST_ASSERT_GREATER_THAN(0, ptr->eeprom_save_period());
     ptr = registry.create_writable_field<unsigned int, 4>("foo", 2, 3);
-    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    TEST_ASSERT_GREATER_THAN(0, ptr->eeprom_save_period());
     ptr = registry.create_writable_field<unsigned int, 4>("foo", 2, 3, 5);
-    TEST_ASSERT_TRUE(ptr->is_eeprom_saved());
+    TEST_ASSERT_GREATER_THAN(0, ptr->eeprom_save_period());
 
     // Test creating fields of all EEPROM-saveable kinds
     auto ptr2 = registry.create_writable_field<signed int, 4>("foo", -2, 2, 5);
     auto ptr3 = registry.create_writable_field<unsigned char, 4>("foo");
     auto ptr4 = registry.create_writable_field<signed char, 4>("foo", -2, 2, 5);
     auto ptr5 = registry.create_writable_field<bool, 4>("foo");
-    TEST_ASSERT_TRUE(ptr2->is_eeprom_saved());
-    TEST_ASSERT_TRUE(ptr3->is_eeprom_saved());
-    TEST_ASSERT_TRUE(ptr4->is_eeprom_saved());
-    TEST_ASSERT_TRUE(ptr5->is_eeprom_saved());
+    TEST_ASSERT_GREATER_THAN(0, ptr2->eeprom_save_period());
+    TEST_ASSERT_GREATER_THAN(0, ptr3->eeprom_save_period());
+    TEST_ASSERT_GREATER_THAN(0, ptr4->eeprom_save_period());
+    TEST_ASSERT_GREATER_THAN(0, ptr5->eeprom_save_period());
 }
 
 /**
