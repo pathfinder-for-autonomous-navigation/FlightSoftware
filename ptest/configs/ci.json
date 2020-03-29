@@ -1,19 +1,18 @@
 {
     "seed" : 2,
-    "sim_duration" : 0,
     "single_sat_sim" : true,
     "devices" : [
         {
             "name": "FlightController",
             "run_mode": "native",
-            "binary_filepath": "linux-x86_64_hootl"
+            "binary_filepath": ".pio/build/fsw_native_leader/program"
         }
     ],
     "radios" : [
         {
             "connected_device": "FlightController",
             "imei": "",
-            "connect": true
+            "connect": false
         }
     ]
 }
