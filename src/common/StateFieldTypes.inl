@@ -100,7 +100,17 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
     typename std::enable_if<is_eeprom_saveable(), Q>::type
     _get_eeprom_repr() const
     {
-      return static_cast<unsigned int>(this->_val);
+      if (std::is_same<T, unsigned int>::value
+        || std::is_same<T, signed int>::value
+        || std::is_same<T, bool>::value)
+      {
+        return static_cast<unsigned int>(this->_val);
+      }
+      else if (std::is_same<T, unsigned char>::value
+        || std::is_same<T, signed char>::value)
+      {
+        return static_cast<unsigned int>(static_cast<unsigned char>(this->_val));
+      }
     }
 
     template<class Q = unsigned int>
@@ -125,14 +135,15 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
       if ((std::is_same<T, unsigned char>::value
            || std::is_same<T, signed char>::value) && val > 255)
       {
-        // TODO add error reporting
+        // The EEPROM value is corrupted. Don't set from EEPROM.
         return;
       }
       else if (std::is_same<T, bool>::value && val > 1) 
       {
-        // TODO add error reporting
+        // The EEPROM value is corrupted. Don't set from EEPROM.
         return;
       }
+
       this->_val = static_cast<T>(val);
     }
 
