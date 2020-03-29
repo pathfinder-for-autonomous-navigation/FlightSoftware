@@ -53,10 +53,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # Needed so that ADCSMonitor updates its values
         self.cycle()
 
-        self.print_rs("adcs_monitor.functional")
-        if not self.rs("adcs_monitor.functional"):
-            raise TestCaseFailure(f"ADCSC Not Functional")
-
         self.ws("pan.state", self.mission_states.get_by_name("manual"))
         self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
         self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
@@ -83,6 +79,9 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_havt_read()
 
         # Note IMUGYR on left
+        # FC only
+        fc_only_hitl    = "000000000000" + "000000"
+
         # Just FC and ADCSC
         barebones_hitl = "000111011100" + "000000"
 
@@ -92,7 +91,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # I forgot what it actually is, will update on next PR, after testing with EDU SAT
         edu_sat        = "110111011100" + "000000"
 
-        test_beds = {barebones_hitl:"BAREBONES HITL", minimal_hitl:"MINIMAL HITL", edu_sat:"EDU SAT"}
+        test_beds = {fc_only_hitl:"FC ONLY HITL",barebones_hitl:"BAREBONES HITL", minimal_hitl:"MINIMAL HITL", edu_sat:"EDU SAT"}
 
         binary_string_havt_read = ''.join(["1" if x else "0" for x in self.havt_read])
 
@@ -181,7 +180,15 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
     def run_case_singlesat(self):
         
+        self.print_rs("adcs_monitor.functional")
+
+        # havt_checkout() can still run when adcs_monitor not functional, expect havt_table to be full of 0's
         self.havt_checkout()
+
+        if not self.rs("adcs_monitor.functional"):
+            self.logger.put("ADCSC NOT FUNCTIONAL. FINISHING HERE FOR CI - HOOTL CASE")
+            self.finish()
+            return
 
         # BEGIN SENSOR CHECKOUT
         self.print_header("Begin Sensor Checkout")
