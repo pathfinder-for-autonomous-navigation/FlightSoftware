@@ -175,6 +175,49 @@ class Case(object):
 
     def run_case(self):
         raise NotImplementedError
+            
+    def finish(self):
+        if not self.finished:
+            if not self.sim.is_interactive:
+                self.sim.running = False
+            self.logger.put("[TESTCASE] Finished testcase.")
+            self.finished = True
+            time.sleep(1)
+            self.logger.stop()
+
+class SingleSatOnlyCase(Case):
+    """
+    Base testcase for writing testcases that only work with a single-satellite mission.
+    """
+
+    @property
+    def single_sat_compatible(self):
+        return True
+
+    def _setup_case(self):
+        if self.sim.is_single_sat_sim:
+            self.setup_case_singlesat()
+        else:
+            raise NotImplementedError
+
+    def run_case(self):
+        if not self.sim.is_single_sat_sim:
+            raise Exception(f"Testcase {__class__.__name__} only works for a single-satellite simulation.")
+        self.run_case_singlesat()
+
+    def run_case_singlesat(self):
+        raise NotImplementedError
+
+    def cycle(self):
+        ''' 
+        Steps the FC forward by one CC
+
+        Asserts the FC did indeed step forward by one CC
+        '''
+        init = self.rs("pan.cycle_no")
+        self.sim.flight_controller.write_state('cycle.start', 'true')
+        if self.rs("pan.cycle_no") != init + 1:
+            raise TestCaseFailure(f"FC did not step forward by one cycle")
 
     def rs(self, name):
         '''
@@ -182,7 +225,7 @@ class Case(object):
 
         Checks that the name is indeed a string.
         '''
-        assert(isinstance(name, str)), "State field name was not a string."
+        assert(type(name) is str), "State field name was not a string."
         ret = self.sim.flight_controller.smart_read(name)
         return ret
 
@@ -221,41 +264,6 @@ class Case(object):
             print()
             print(f"$ SOFT ASSERTION ERROR: {args[0]}")
             print()
-            
-    def finish(self):
-        if not self.finished:
-            if not self.sim.is_interactive:
-                self.sim.running = False
-            self.logger.put("[TESTCASE] Finished testcase.")
-            self.finished = True
-            time.sleep(1)
-            self.logger.stop()
-
-class SingleSatOnlyCase(Case):
-    """
-    Base testcase for writing testcases that only work with a single-satellite mission.
-    """
-
-    @property
-    def single_sat_compatible(self):
-        return True
-
-    def _setup_case(self):
-        if self.sim.is_single_sat_sim:
-            self.setup_case_singlesat()
-        else:
-            raise NotImplementedError
-
-    def run_case(self):
-        if not self.sim.is_single_sat_sim:
-            raise Exception(f"Testcase {__class__.__name__} only works for a single-satellite simulation.")
-        self.run_case_singlesat()
-
-    def run_case_singlesat(self):
-        raise NotImplementedError
-
-    def cycle(self):
-        self.sim.flight_controller.write_state('cycle.start', 'true')
 
 class MissionCase(Case):
     """

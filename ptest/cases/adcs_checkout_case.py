@@ -1,9 +1,13 @@
 # ADCSCheckoutCase. Verifies the functionality of the ADCS.
-from .base import SingleSatOnlyCase
+from .base import SingleSatOnlyCase, TestCaseFailure
 import math
 
 def mag_of(vals):
-    assert(isinstance(vals, list))
+    '''
+    Returns the magnitude of a list of vals 
+    by taking the square root of the sum of the square of the components.
+    '''
+    assert(type(vals) is list)
     return math.sqrt(sum([x*x for x in vals]))
 
 def sum_of_differentials(lists_of_vals):
@@ -29,16 +33,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
 
-    def step(self):
-        ''' 
-        Steps the FC forward by one CC
-
-        Asserts the FC did indeed step forward by one CC
-        '''
-        init = self.rs("pan.cycle_no")
-        self.sim.flight_controller.write_state("cycle.start", "true")
-        assert(self.rs("pan.cycle_no") == init + 1), f"FC did not step forward by one cycle"
-
     def print_havt_read(self):
         binary_list = [1 if x else 0 for x in self.havt_read]
 
@@ -61,7 +55,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_header("Begin ADCS Checkout Case")
 
         # Needed so that ADCSMonitor updates its values
-        self.step()
+        self.cycle()
 
         self.print_rs("adcs_monitor.functional")
         assert(self.rs("adcs_monitor.functional")), f"ADCSC Not Functional"
@@ -77,7 +71,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.ws(f"adcs_cmd.havt_reset{x}", True)
 
         # adcs_controller should have applied commands.
-        self.step()
+        self.cycle()
 
         self.print_havt_read()
 
@@ -108,7 +102,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.print_header("UN-RECOGNIZED HITL TEST BED. MAKE SURE HAVT_READ IS AS EXPECTED!")
         else:
             self.print_header(f"HAVT TABLE MATCHES WITH: {test_beds[binary_string_havt_read]}")
-            
+
         # cache the initially functional devices
         initial_up_devices = self.havt_read
 
@@ -116,7 +110,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         for x in range(self.havt_length):
             self.ws(f"adcs_cmd.havt_disable{x}", True)
 
-        self.step()
+        self.cycle()
 
         print("Post disabling all devices:")
         self.print_havt_read()
@@ -126,7 +120,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # reset all devices
         for x in range(self.havt_length):
             self.ws(f"adcs_cmd.havt_reset{x}", True)
-        self.step()
+        self.cycle()
         print("Post resetting all devices:")
         self.print_havt_read()
         self.soft_assert((initial_up_devices == self.havt_read), 
@@ -151,7 +145,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             # perform 10 readings.
             list_of_mag_rds = []
             for i in range(10):
-                self.step()
+                self.cycle()
                 list_of_mag_rds += [self.rs("adcs_monitor.mag_vec")]
 
             # for each reading check, magnitude bounds
@@ -176,7 +170,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             # perform 10 readings.
             list_of_gyr_rds = []
             for i in range(10):
-                self.step()
+                self.cycle()
                 list_of_gyr_rds += [self.rs("adcs_monitor.gyr_vec")]
 
             # for each reading check, magnitude bounds
