@@ -1,12 +1,13 @@
 #!/usr/local/bin/python3
 
 from argparse import ArgumentParser
+from .cases.base import TestCaseFailure
 from .configs.schemas import *
 from .state_session import StateSession
 from .radio_session import RadioSession
 from .cmdprompt import StateCmdPrompt
 from .simulation import Simulation, SingleSatSimulation
-import json, sys, os, tempfile, time, threading, signal
+import json, sys, os, tempfile, time, threading, signal, traceback
 
 try:
     import pty, subprocess
@@ -49,8 +50,15 @@ class SimulationRun(object):
         self.set_up_sim()
 
         if self.is_interactive:
+            self.sim.start()
             self.set_up_cmd_prompt()
         else:
+            try:
+                self.sim.start()
+            except TestCaseFailure as failure:
+                traceback.print_exc()
+                print()
+                self.stop_all("Exiting due to testcase failure.")
             self.stop_all("Exiting since user requested non-interactive execution.", is_error=False)
 
     def set_up_devices(self):
@@ -139,10 +147,9 @@ class SimulationRun(object):
         print(f"Running mission testcase {self.testcase_name}.")
 
         if self.single_sat_sim:
-            self.sim = SingleSatSimulation(self.devices, self.random_seed, testcase())
+            self.sim = SingleSatSimulation(self.is_interactive, self.devices, self.random_seed, testcase())
         else:
-            self.sim = Simulation(self.devices, self.random_seed)
-        self.sim.start()
+            self.sim = Simulation(self.is_interactive, self.devices, self.random_seed)
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt

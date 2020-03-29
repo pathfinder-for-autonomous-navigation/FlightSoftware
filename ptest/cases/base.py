@@ -29,6 +29,8 @@ class Case(object):
     """
 
     def __init__(self):
+        self._finished = False
+
         self.mission_states = FSWEnum([
             "startup",
             "detumble",
@@ -108,6 +110,15 @@ class Case(object):
     def single_sat_compatible(self):
         raise NotImplementedError
 
+    @property
+    def finished(self):
+        return self._finished
+    
+    @finished.setter
+    def finished(self, finished):
+        assert type(finished) is bool
+        self._finished = finished
+
     def setup_case(self, simulation):
         self.sim = simulation
         self._setup_case()
@@ -117,6 +128,13 @@ class Case(object):
 
     def run_case(self):
         raise NotImplementedError
+
+    def finish(self):
+        if not self.finished:
+            if not self.sim.is_interactive:
+                self.sim.running = False
+            print("[TESTCASE] Finished testcase.")
+            self.finished = True
 
 class SingleSatOnlyCase(Case):
     """
@@ -142,7 +160,8 @@ class SingleSatOnlyCase(Case):
     def run_case_singlesat(self):
         raise NotImplementedError
 
-
+    def cycle(self):
+        self.sim.flight_controller.write_state('cycle.start', 'true')
 
 class MissionCase(Case):
     """

@@ -74,12 +74,7 @@ class DeploymentToStandby(SingleSatOnlyCase):
                     raise TestCaseFailure("Satellite failed to exit detumble.")
 
         elif self.test_stage == 'standby':
-            print("[TESTCASE] Finished test case.")
-            self.test_stage = 'finished'
-
-        elif self.test_stage == 'finished':
-            # Stand by and do nothing.
-            pass
+            self.finish()
 
         else:
             raise TestCaseFailure("Invalid test case stage: {self.test_stage}.")

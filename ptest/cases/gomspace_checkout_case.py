@@ -7,9 +7,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
 
     def setup_case_singlesat(self):
         self.sim.flight_controller.write_state(
-            "pan.state", 9)  # Manual state
-        self.run_case_singlesat()
-        print("Gomspace cases finished.")
+            "pan.state", self.mission_states.get_by_name("manual"))
 
     def str_to_bool(self, str):
         if str == "true":
@@ -156,3 +154,5 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             "gomspace.gs_reboot_cmd", not gs_reboot_cmd))
         if gs_reboot_cmd == gs_reboot_cmd_updated:
             print("Could not update gs_reboot")
+
+        self.finish()

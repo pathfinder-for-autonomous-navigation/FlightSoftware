@@ -25,5 +25,5 @@ class CICase(SingleSatOnlyCase):
         self.sim.cycle_no = int(self.sim.flight_controller.read_state("pan.cycle_no"))
         if self.sim.cycle_no != 2:
             raise TestCaseFailure(f"Cycle number was incorrect: expected {2} got {self.sim.cycle_no}.")
-
-        print("[TESTCASE] Passed testcase.")
+        
+        self.finish()

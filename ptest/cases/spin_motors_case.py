@@ -11,3 +11,4 @@ class SpinMotorsCase(SingleSatOnlyCase):
 
     def run_case_singlesat(self):
         self.cycle_no = self.sim.flight_controller.read_state("pan.cycle_no")
+        self.finish()

@@ -123,3 +123,5 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
             print("Unable to disable pins")
             print("ADCS Motor pin: "+self.adcs_rd)
             print("Spike and Hold pin: "+self.sph_rd)
+
+        self.finish()
