@@ -27,13 +27,13 @@ jobs:
         pio run -e fsw_native_leader
 
     - name: CI Checkout Case and Empty case
-      run:
-        - python -m ptest runsim -c ptest/configs/fc_only_native.json -t CICase -ni
-        - python -m ptest runsim -c ptest/configs/fc_only_native.json -t EmptyCase -ni
+      run: |
+        python -m ptest runsim -c ptest/configs/fc_only_native.json -t CICase -ni
+        python -m ptest runsim -c ptest/configs/fc_only_native.json -t EmptyCase -ni
 
     - name: Hardware Checkout Cases
-      run:
-        - python -m ptest runsim -c ptest/configs/fc_only_native.json -t DCDCCheckoutCase -ni
-        - python -m ptest runsim -c ptest/configs/fc_only_native.json -t GomspaceCheckoutCase -ni
-        - python -m ptest runsim -c ptest/configs/fc_only_native.json -t SpinMotorsCase -ni
+      run: |
+        python -m ptest runsim -c ptest/configs/fc_only_native.json -t DCDCCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/fc_only_native.json -t GomspaceCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/fc_only_native.json -t SpinMotorsCase -ni
 
