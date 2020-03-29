@@ -1,4 +1,5 @@
 from ..data_consumers import Logger
+import time
 
 # Base classes for writing testcases.
 class TestCaseFailure(Exception):
@@ -141,6 +142,7 @@ class Case(object):
                 self.sim.running = False
             self.logger.put("[TESTCASE] Finished testcase.")
             self.finished = True
+            time.sleep(1)
             self.logger.stop()
 
 class SingleSatOnlyCase(Case):

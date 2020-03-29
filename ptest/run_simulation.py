@@ -22,7 +22,7 @@ class SimulationRun(object):
         self.random_seed = config_data["seed"]
         self.single_sat_sim = config_data["single_sat_sim"]
 
-        self.simulation_run_dir = os.path.join(data_dir, time.strftime("%Y%m%d-%H%M%S"))
+        self.simulation_run_dir = os.path.join(data_dir, testcase_name + "_" + time.strftime("%Y%m%d-%H%M%S"))
         # Create directory for run data
         os.makedirs(self.simulation_run_dir, exist_ok=True)
 
