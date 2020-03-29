@@ -45,6 +45,7 @@ class TestTelemInfoGenerator(unittest.TestCase):
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["min"], 0)
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["max"], 4294967295)
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["bitsize"], 32)
+            self.assertEqual(telem_info["fields"]["pan.cycle_no"]["eeprom_save_period"], 0)
 
             self.assertEqual(telem_info["flows"][0]["id"], 1)
             self.assertEqual(telem_info["flows"][0]["priority"], 0)
