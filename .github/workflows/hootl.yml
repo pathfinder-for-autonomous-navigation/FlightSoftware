@@ -36,4 +36,5 @@ jobs:
         python -m ptest runsim -c ptest/configs/ci.json -t DCDCCheckoutCase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t GomspaceCheckoutCase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t SpinMotorsCase -ni
+        python -m ptest runsum -c ptest/configs/ci.json -t ADCSCheckoutCase -ni
 
