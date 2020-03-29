@@ -130,14 +130,19 @@ json TelemetryInfoGenerator::generate_telemetry_info() {
     for(const WritableStateFieldBase* wf : r.writable_fields) {
         const std::string& field_name = wf->name();
         if (ret["fields"].find(field_name) != ret["fields"].end()) continue;
-        ret["fields"][field_name] = get_writable_field_info(wf);;
+        ret["fields"][field_name] = get_writable_field_info(wf);
+
+        if (wf->eeprom_save_period() > 0)
+            ret["eeprom_saved_fields"][field_name] = wf->eeprom_save_period();
     }
 
     for(const ReadableStateFieldBase* rf : r.readable_fields) {
         const std::string& field_name = rf->name();
         if (ret["fields"].find(field_name) != ret["fields"].end()) continue;
         ret["fields"][field_name] = get_readable_field_info(rf);
-        ret["fields"][field_name]["eeprom_save_period"] = rf->eeprom_save_period();
+        
+        if (rf->eeprom_save_period() > 0)
+            ret["eeprom_saved_fields"][field_name] = rf->eeprom_save_period();
     }
 
     // Get flow data
