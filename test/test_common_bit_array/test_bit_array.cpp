@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
 #else
 #include <Arduino.h>
 void setup() {
-    delay(2000);
+    delay(10000);
     Serial.begin(9600);
     test_bit_array();
 }
