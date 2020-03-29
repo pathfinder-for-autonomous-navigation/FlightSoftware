@@ -1,3 +1,6 @@
+from ..data_consumers import Logger
+import time
+
 # Base classes for writing testcases.
 class TestCaseFailure(Exception):
     """Raise in case of test case failure."""
@@ -28,7 +31,9 @@ class Case(object):
     Base class for all HITL/HOOTL testcases.
     """
 
-    def __init__(self):
+    def __init__(self, data_dir):
+        self._finished = False
+
         self.mission_states = FSWEnum([
             "startup",
             "detumble",
@@ -96,6 +101,8 @@ class Case(object):
             "dead"
         ])
 
+        self.logger = Logger("testcase", data_dir, print=True)
+
     @property
     def sim_duration(self):
         return 0
@@ -108,8 +115,19 @@ class Case(object):
     def single_sat_compatible(self):
         raise NotImplementedError
 
+    @property
+    def finished(self):
+        return self._finished
+    
+    @finished.setter
+    def finished(self, finished):
+        assert type(finished) is bool
+        self._finished = finished
+
     def setup_case(self, simulation):
         self.sim = simulation
+        self.logger.start()
+        self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()
 
     def _setup_case(self):
@@ -117,6 +135,15 @@ class Case(object):
 
     def run_case(self):
         raise NotImplementedError
+
+    def finish(self):
+        if not self.finished:
+            if not self.sim.is_interactive:
+                self.sim.running = False
+            self.logger.put("[TESTCASE] Finished testcase.")
+            self.finished = True
+            time.sleep(1)
+            self.logger.stop()
 
 class SingleSatOnlyCase(Case):
     """
@@ -127,8 +154,7 @@ class SingleSatOnlyCase(Case):
     def single_sat_compatible(self):
         return True
 
-    def setup_case(self, simulation):
-        self.sim = simulation
+    def _setup_case(self):
         if self.sim.is_single_sat_sim:
             self.setup_case_singlesat()
         else:
@@ -142,7 +168,8 @@ class SingleSatOnlyCase(Case):
     def run_case_singlesat(self):
         raise NotImplementedError
 
-
+    def cycle(self):
+        self.sim.flight_controller.write_state('cycle.start', 'true')
 
 class MissionCase(Case):
     """
