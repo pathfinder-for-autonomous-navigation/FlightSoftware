@@ -22,9 +22,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
 
-    def setup_case_singlesat(self):
-        self.havt_length = 18 # _LENGTH in havt_devices.hpp
-
     def step(self):
         ''' 
         Steps the FC forward by one CC

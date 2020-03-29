@@ -96,6 +96,8 @@ class Case(object):
             "dead"
         ])
         
+        self.havt_length = 18
+        
         # copied from havt_devices.hpp
         self.havt_devices = FSWEnum([
         "IMU_GYR",
