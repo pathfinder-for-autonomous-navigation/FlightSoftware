@@ -11,6 +11,3 @@ python -m unittest test.test_dummy_fsw
 
 platformio run -e fsw_native_leader
 python -m unittest test.test_real_fsw
-
-export CI
-python -m ptest runsim -c ptest/configs/fc_only_native.json -t CICase -ni
