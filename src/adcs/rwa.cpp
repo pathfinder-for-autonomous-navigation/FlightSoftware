@@ -148,7 +148,12 @@ void update_sensors(float speed_flt, float ramp_flt) {
   for (unsigned int i = 0; i < 3; i++)
     if (adcs[i].is_functional())
       if (adcs[i].end_read(val))
-        readings(i) = utl::fp(val, rwa::min_torque, rwa::max_torque);
+        readings(i) = readings(i) = 4.096f * ((float)val) / 2048.0f;
+        // ^^ Only converting to a voltage here
+        
+  // Go from voltage to torque reading
+  readings = (max_torque - min_torque) * readings / 3.3f +
+      min_torque * lin::ones<lin::Vector3f>();
 
   // Filter the results
   ramp_rd = ramp_rd + speed_flt * (readings - ramp_rd);
