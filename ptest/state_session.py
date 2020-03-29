@@ -101,10 +101,10 @@ class StateSession(object):
                     logline += data['telem']
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
-                elif 'packet' in data:
-                    logline = "found an uplink packet.\n"
-                    print("\n" + logline)
-                    self.logger.put(logline, add_time = False)
+                # elif 'packet' in data:
+                #     logline = "found an uplink packet.\n"
+                #     print("\n" + logline)
+                #     self.logger.put(logline, add_time = False)
                 else:
                     if 'err' in data:
                         # The log line represents an error in retrieving or writing state data that
@@ -255,61 +255,61 @@ class StateSession(object):
         '''
         return self.write_multiple_states([field], [self._val_to_str(args)], kwargs.get('timeout'))
     
-    def uplink(self, fields, vals, timeout=None):
-        if not self.running_logger: return
+    # def uplink(self, fields, vals, timeout=None):
+    #     if not self.running_logger: return
 
-        # Filter out fields that are being overridden by the user
-        field_val_pairs = [
-            field_val_pair for field_val_pair in zip(fields, vals)
-            if field_val_pair[0] not in self.overriden_variables
-        ]
-        fields, vals = zip(*field_val_pairs)
+    #     # Filter out fields that are being overridden by the user
+    #     field_val_pairs = [
+    #         field_val_pair for field_val_pair in zip(fields, vals)
+    #         if field_val_pair[0] not in self.overriden_variables
+    #     ]
+    #     fields, vals = zip(*field_val_pairs)
 
-        fields = list(fields)
-        vals = list(vals)
+    #     fields = list(fields)
+    #     vals = list(vals)
 
-        assert len(fields) == len(vals)
-        assert len(fields) <= 20, "Flight Software can't handle more than 20 state field uplinks at a time"
+    #     assert len(fields) == len(vals)
+    #     assert len(fields) <= 20, "Flight Software can't handle more than 20 state field uplinks at a time"
 
-        json_cmds = ""
-        for field, val in zip(fields, vals):
-            json_cmd = {
-                'mode': ord('u'),
-                'field': str(field),
-                'val': str(val)
-            }
-            json_cmd = json.dumps(json_cmd) + "\n"
-            json_cmds += json_cmd
+    #     json_cmds = ""
+    #     for field, val in zip(fields, vals):
+    #         json_cmd = {
+    #             'mode': ord('u'),
+    #             'field': str(field),
+    #             'val': str(val)
+    #         }
+    #         json_cmd = json.dumps(json_cmd) + "\n"
+    #         json_cmds += json_cmd
 
-        if len(json_cmds) >= 512:
-            print("Error: Flight Software can't handle input buffers >= 512 bytes.")
-            return False
+    #     if len(json_cmds) >= 512:
+    #         print("Error: Flight Software can't handle input buffers >= 512 bytes.")
+    #         return False
 
-        self.device_write_lock.acquire()
-        self.console.write(json_cmds.encode())
-        self.device_write_lock.release()
-        self.raw_logger.put("Sent:     " + json_cmds)
+    #     self.device_write_lock.acquire()
+    #     self.console.write(json_cmds.encode())
+    #     self.device_write_lock.release()
+    #     self.raw_logger.put("Sent:     " + json_cmds)
 
-        # returned_vals = []
-        # for field in fields:
-        #     returned_vals.append(self._wait_for_state(field, timeout))
+    #     # returned_vals = []
+    #     # for field in fields:
+    #     #     returned_vals.append(self._wait_for_state(field, timeout))
 
-        # if returned_vals[0] is None:
-        #     return False
+    #     # if returned_vals[0] is None:
+    #     #     return False
 
-        # returned_vals = returned_vals[0].split(",")
-        # returned_vals = [x for x in returned_vals if x is not ""]
+    #     # returned_vals = returned_vals[0].split(",")
+    #     # returned_vals = [x for x in returned_vals if x is not ""]
         
-        # if (returned_vals[0].replace('.','').replace('-','')).isnumeric():
-        #     numeric_returned_vals = [float(x) for x in returned_vals]
-        #     if type(vals[0]) == str:
-        #         vals = vals[0]
-        #         vals = [float(x) for x in vals.split(",") if x is not '']
+    #     # if (returned_vals[0].replace('.','').replace('-','')).isnumeric():
+    #     #     numeric_returned_vals = [float(x) for x in returned_vals]
+    #     #     if type(vals[0]) == str:
+    #     #         vals = vals[0]
+    #     #         vals = [float(x) for x in vals.split(",") if x is not '']
 
-        #     return numeric_returned_vals == vals
+    #     #     return numeric_returned_vals == vals
 
-        # return returned_vals == vals
-        return True
+    #     # return returned_vals == vals
+    #     return True
 
     def override_state(self, field, *args, **kwargs):
         '''

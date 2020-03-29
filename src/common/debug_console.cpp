@@ -262,17 +262,17 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
             } break;
             case 'u': {
-                // JsonVariant field_val = msgs[i]["val"];
-                // if (field_val.isNull()) {
-                //     _print_error_state_field(field_name, write_mode, missing_field_val);
-                //     break;
-                // }
+                JsonVariant field_val = msgs[i]["val"];
+                if (field_val.isNull()) {
+                    _print_error_state_field(field_name, write_mode, missing_field_val);
+                    break;
+                }
 
-                // ReadableStateFieldBase* field_ptr = registry.find_readable_field(field_name);
-                // if (!field_ptr) {
-                //     _print_error_state_field(field_name, write_mode, invalid_field_name);
-                //     break;
-                // }
+                ReadableStateFieldBase* field_ptr = registry.find_readable_field(field_name);
+                if (!field_ptr) {
+                    _print_error_state_field(field_name, write_mode, invalid_field_name);
+                    break;
+                }
 
                 // JsonVariant uplink_packet_json;
                 // uplink_packet_json[field] = field_val;
@@ -280,16 +280,6 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
                 WritableStateField<bool>* load_telem_fp = static_cast<WritableStateField<bool>*>(registry.find_writable_field("telem.load"));
                 load_telem_fp->set(true);
-
-                ReadableStateFieldBase* field_ptr = 
-                    registry.find_readable_field(field_name);
-                if (!field_ptr) {
-                    _print_error_state_field(field_name, read_mode, invalid_field_name);
-                    break;
-                } else {
-                    print_state_field(*field_ptr);
-                }
-                
             } break;
             default: {
                 _print_error_state_field(field_name, read_mode, invalid_mode);
