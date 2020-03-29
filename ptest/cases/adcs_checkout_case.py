@@ -233,31 +233,62 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_header("Begin Sensor Checkout")
         # expect each sensor value to change from cycle to cycle, given user is jostling the test bed.
 
-        # TODO make section compatible with 2x imu active
-        self.print_header("Begin MAG Checkout")
-        
-        self.print_rs("adcs_cmd.imu_mode")
-        imu_mode = self.rs("adcs_cmd.imu_mode")
-        imu_modes = ["MAG1 active", "MAG2 active", "MAG1 calibrate", "MAG2 calibrate"]
-        print(f"IMU Mode: {imu_modes[imu_mode]}")
-        
-        # perform 10 readings.
-        list_of_mag_rds = []
-        for i in range(10):
-            self.step()
-            list_of_mag_rds += [self.rs("adcs_monitor.mag_vec")]
+        # If either mag1 or mag2 are up, run a check on it.
+        if self.rs("adcs_monitor.havt_device1") or self.rs("adcs_monitor.havt_device2"):
 
-        # for each reading check, magnitude bounds
-        # earth's mag field is between 25 to 65 microteslas - Wikipedia
-        print("Mag readings: ")
-        for i in range(10):
-            mag = mag_of(list_of_mag_rds[i])
-            print(f"{list_of_mag_rds[i]}, mag: {mag}")
-            self.soft_assert((25e-6 < mag and mag < 65e-6),
-                "Mag reading out of expected (earth) bounds.")
+            # TODO make section compatible with 2x imu active
+            self.print_header("Begin MAG Checkout")
+            
+            self.print_rs("adcs_cmd.imu_mode")
+            imu_mode = self.rs("adcs_cmd.imu_mode")
+            imu_modes = ["MAG1 active", "MAG2 active", "MAG1 calibrate", "MAG2 calibrate"]
+            print(f"IMU Mode: {imu_modes[imu_mode]}")
+            
+            # perform 10 readings.
+            list_of_mag_rds = []
+            for i in range(10):
+                self.step()
+                list_of_mag_rds += [self.rs("adcs_monitor.mag_vec")]
 
-        # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
-            "Mag readings did not vary across readings.")
+            # for each reading check, magnitude bounds
+            # earth's mag field is between 25 to 65 microteslas - Wikipedia
+            print("Mag readings: ")
+            for i in range(10):
+                mag = mag_of(list_of_mag_rds[i])
+                print(f"{list_of_mag_rds[i]}, mag: {mag}")
+                self.soft_assert((25e-6 < mag and mag < 65e-6),
+                    "Mag reading out of expected (earth) bounds.")
 
-        self.print_header("MAG CHECKOUT COMPLETE")
+            # check readings changed over time
+            self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
+                "Mag readings did not vary across readings.")
+
+            self.print_header("MAG CHECKOUT COMPLETE")
+
+        if self.rs("adcs_monitor.havt_device0"):
+            self.print_header("Begin GYR Checkout")
+            
+            # perform 10 readings.
+            list_of_gyr_rds = []
+            for i in range(10):
+                self.step()
+                list_of_gyr_rds += [self.rs("adcs_monitor.gyr_vec")]
+
+            # for each reading check, magnitude bounds
+            # expected rotation???
+            print("GYR readings: ")
+            for i in range(10):
+                mag = mag_of(list_of_gyr_rds[i])
+                print(f"{list_of_mag_rds[i]}, mag: {mag}")
+                self.soft_assert((0 < mag and mag < 10),
+                    "Gyr reading out of expected bounds.")
+
+            # check readings changed over time
+            self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
+                "Gyr readings did not vary across readings.")
+
+            self.print_header("GYR CHECKOUT COMPLETE")
+
+        # TODO FURTHER CHECKOUTS
+
+        self.print_header("ADCS CHECKOUT COMPLETE")
