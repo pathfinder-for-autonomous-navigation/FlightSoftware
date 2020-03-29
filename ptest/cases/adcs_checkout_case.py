@@ -45,27 +45,27 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         final = [x + [" "] for x in list_of_list]
 
         final_string = ''.join([''.join(x) for x in final])
-        print("HAVT Read: "+str(final_string))
+        self.logger.put("HAVT Read: "+str(final_string))
 
     def setup_case_singlesat(self):
-        pass
-
-    def run_case_singlesat(self):
-
         self.print_header("Begin ADCS Checkout Case")
 
         # Needed so that ADCSMonitor updates its values
         self.cycle()
 
         self.print_rs("adcs_monitor.functional")
-        assert(self.rs("adcs_monitor.functional")), f"ADCSC Not Functional"
+        if not self.rs("adcs_monitor.functional"):
+            raise TestCaseFailure(f"ADCSC Not Functional")
 
         self.ws("pan.state", self.mission_states.get_by_name("manual"))
         self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
         self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
         self.ws("dcdc.ADCSMotor_cmd", True)
+    
+        self.print_header("Finished Initialization")
 
+    def havt_checkout(self):
         # reset all devices in case last ptest case left an "unclean state"
         for x in range(self.havt_length):
             self.ws(f"adcs_cmd.havt_reset{x}", True)
@@ -77,11 +77,9 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         for x in range(self.havt_length):
             if not self.havt_read[x]:
-                print(f"Device #{x}, {self.havt_devices.get_by_num(x)} is not functional")
+                self.logger.put(f"Device #{x}, {self.havt_devices.get_by_num(x)} is not functional")
 
-        self.print_header("Finished Initialization")
-
-        print("Initial HAVT Table:")
+        self.logger.put("Initial HAVT Table:")
         self.print_havt_read()
 
         # Note IMUGYR on left
@@ -112,7 +110,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.cycle()
 
-        print("Post disabling all devices:")
+        self.logger.put("Post disabling all devices:")
         self.print_havt_read()
         self.soft_assert(([0 for x in range(self.havt_length)] == self.havt_read), 
             "Disabling all devices failed")
@@ -121,73 +119,82 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         for x in range(self.havt_length):
             self.ws(f"adcs_cmd.havt_reset{x}", True)
         self.cycle()
-        print("Post resetting all devices:")
+        self.logger.put("Post resetting all devices:")
         self.print_havt_read()
         self.soft_assert((initial_up_devices == self.havt_read), 
-            "Disable Reset Cycle Failed, New HAVT Table does not match initial table cache")
+            "Disable Reset Cycle Failed, New HAVT Table does not match initial table cache",
+            "Reset-Disable Success. All initially functional devices remain functional.")
 
-        print("Reset-Disable Success. All initially functional devices remain functional.")
+    def mag_checkout(self):
+        # TODO make section compatible with 2x imu active (LATER)
+        self.print_header("Begin MAG Checkout")
         
+        self.print_rs("adcs_cmd.imu_mode")
+        imu_mode = self.rs("adcs_cmd.imu_mode")
+        self.logger.put(f"IMU Mode: {self.imu_modes.get_by_num(imu_mode)}")
+        
+        # perform 10 readings.
+        list_of_mag_rds = []
+        for i in range(10):
+            self.cycle()
+            list_of_mag_rds += [self.rs("adcs_monitor.mag_vec")]
+
+        # for each reading check, magnitude bounds
+        # earth's mag field is between 25 to 65 microteslas - Wikipedia
+        self.logger.put("Mag readings: ")
+        for i in range(10):
+            mag = mag_of(list_of_mag_rds[i])
+            self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
+            self.soft_assert((25e-6 < mag and mag < 65e-6),
+                "Mag reading out of expected (earth) bounds.")
+
+        # check readings changed over time
+        self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
+            "Mag readings did not vary across readings.")
+
+        self.print_header("MAG CHECKOUT COMPLETE")
+
+    def gyr_checkout(self):
+        self.print_header("Begin GYR Checkout")
+            
+        # perform 10 readings.
+        list_of_gyr_rds = []
+        for i in range(10):
+            self.cycle()
+            list_of_gyr_rds += [self.rs("adcs_monitor.gyr_vec")]
+
+        # for each reading check, magnitude bounds
+        # expected rotation???
+        self.logger.put("GYR readings: ")
+        for i in range(10):
+            mag = mag_of(list_of_gyr_rds[i])
+            self.logger.put(f"{list_of_gyr_rds[i]}, mag: {mag}")
+            # 3.8 ~= sqrt((125 * 0.017)^2 * 3)
+            self.soft_assert((0 < mag and mag < 3.8),
+                "Gyr reading out of expected bounds.")
+
+        # check readings changed over time
+        self.soft_assert(sum_of_differentials(list_of_gyr_rds) > 0,
+            "Gyr readings did not vary across readings.")
+
+        self.print_header("GYR CHECKOUT COMPLETE")
+
+    def run_case_singlesat(self):
+        
+        self.havt_checkout()
+
         # BEGIN SENSOR CHECKOUT
         self.print_header("Begin Sensor Checkout")
         # expect each sensor value to change from cycle to cycle, given user is jostling the test bed.
 
         # If either mag1 or mag2 are up, run a check on it.
         if self.rs("adcs_monitor.havt_device1") or self.rs("adcs_monitor.havt_device2"):
-
-            # TODO make section compatible with 2x imu active (LATER)
-            self.print_header("Begin MAG Checkout")
-            
-            self.print_rs("adcs_cmd.imu_mode")
-            imu_mode = self.rs("adcs_cmd.imu_mode")
-            print(f"IMU Mode: {self.imu_modes.get_by_num(imu_mode)}")
-            
-            # perform 10 readings.
-            list_of_mag_rds = []
-            for i in range(10):
-                self.cycle()
-                list_of_mag_rds += [self.rs("adcs_monitor.mag_vec")]
-
-            # for each reading check, magnitude bounds
-            # earth's mag field is between 25 to 65 microteslas - Wikipedia
-            print("Mag readings: ")
-            for i in range(10):
-                mag = mag_of(list_of_mag_rds[i])
-                print(f"{list_of_mag_rds[i]}, mag: {mag}")
-                self.soft_assert((25e-6 < mag and mag < 65e-6),
-                    "Mag reading out of expected (earth) bounds.")
-
-            # check readings changed over time
-            self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
-                "Mag readings did not vary across readings.")
-
-            self.print_header("MAG CHECKOUT COMPLETE")
+            self.mag_checkout()
 
         # Run checks on GYR if GYR is up.
         if self.rs("adcs_monitor.havt_device0"):
-            self.print_header("Begin GYR Checkout")
-            
-            # perform 10 readings.
-            list_of_gyr_rds = []
-            for i in range(10):
-                self.cycle()
-                list_of_gyr_rds += [self.rs("adcs_monitor.gyr_vec")]
+            self.gyr_checkout()
 
-            # for each reading check, magnitude bounds
-            # expected rotation???
-            print("GYR readings: ")
-            for i in range(10):
-                mag = mag_of(list_of_gyr_rds[i])
-                print(f"{list_of_gyr_rds[i]}, mag: {mag}")
-                # 3.8 ~= sqrt((125 * 0.017)^2 * 3)
-                self.soft_assert((0 < mag and mag < 3.8),
-                    "Gyr reading out of expected bounds.")
-
-            # check readings changed over time
-            self.soft_assert(sum_of_differentials(list_of_gyr_rds) > 0,
-                "Gyr readings did not vary across readings.")
-
-            self.print_header("GYR CHECKOUT COMPLETE")
 
         # TODO FURTHER CHECKOUTS
 

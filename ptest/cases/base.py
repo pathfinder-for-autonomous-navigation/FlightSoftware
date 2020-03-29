@@ -233,7 +233,7 @@ class SingleSatOnlyCase(Case):
         '''
         Reads a statefield, and also prints it.
         '''
-        print(f"{name} is {self.rs(name)}")
+        self.logger.put(f"{name} is {self.rs(name)}")
     
     def ws(self, name, val):
         '''
@@ -244,9 +244,7 @@ class SingleSatOnlyCase(Case):
         assert(read_val == val), f"Write state not applied, expected: {val}, got {read_val} instead"
 
     def print_header(self, title):
-        print()
-        print(title)
-        print()
+        self.logger.put("\n"+title+"\n")
 
     def soft_assert(self, condition, *args):
         '''
@@ -259,11 +257,9 @@ class SingleSatOnlyCase(Case):
             if len(args) == 1:
                 pass
             else:
-                print(args[1])
+                self.logger.put(args[1])
         else: 
-            print()
-            print(f"$ SOFT ASSERTION ERROR: {args[0]}")
-            print()
+            self.logger.put(f"\n$ SOFT ASSERTION ERROR: {args[0]}\n")
 
 class MissionCase(Case):
     """
