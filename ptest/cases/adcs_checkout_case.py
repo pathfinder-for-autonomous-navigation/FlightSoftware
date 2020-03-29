@@ -46,6 +46,9 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         final_string = ''.join([''.join(x) for x in final])
         print("HAVT Read: "+str(final_string))
 
+    def setup_case_singlesat(self):
+        pass
+
     def run_case_singlesat(self):
 
         self.print_header("Begin ADCS Checkout Case")
@@ -189,3 +192,4 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # TODO FURTHER CHECKOUTS
 
         self.print_header("ADCS CHECKOUT COMPLETE")
+        self.finish()
