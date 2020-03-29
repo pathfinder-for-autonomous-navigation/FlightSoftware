@@ -101,6 +101,10 @@ class StateSession(object):
                     logline += data['telem']
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
+                elif 'packet' in data:
+                    logline = "found an uplink packet.\n"
+                    print("\n" + logline)
+                    self.logger.put(logline, add_time = False)
                 else:
                     if 'err' in data:
                         # The log line represents an error in retrieving or writing state data that
@@ -261,9 +265,9 @@ class StateSession(object):
         ]
         fields, vals = zip(*field_val_pairs)
 
-        field = list(fields)
+        fields = list(fields)
         vals = list(vals)
-        
+
         assert len(fields) == len(vals)
         assert len(fields) <= 20, "Flight Software can't handle more than 20 state field uplinks at a time"
 

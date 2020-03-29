@@ -112,21 +112,11 @@ bool QuakeManager::execute() {
     }
     if (load_telemetry_f.get()) {
         load_telemetry_f.set(false);
-        char* packet = radio_mt_packet_f.get();
+        //char* packet = radio_mt_packet_f.get();
         #ifdef DESKTOP
-            if(packet){
-                std::cout << "found a packet";
-            }
-            else{
-                std::cout << "didn't find a packet";
-            }
+            std::cout << "found a packet";
         #else
-            if(packet){
-                Serial.printf("found a packet");
-            }
-            else {
-                Serial.printf("didn't find a packet");
-            }
+            Serial.printf("found a packet");
         #endif
     }
     #endif
