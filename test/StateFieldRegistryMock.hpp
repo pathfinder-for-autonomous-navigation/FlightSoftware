@@ -260,7 +260,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<T> field_sr(min, max);
         auto field_ptr = __field_creator<T, eeprom_save_period>::create_writable_field(name, field_sr);
-        add_writable_field(field_ptr);
+        add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
     }
