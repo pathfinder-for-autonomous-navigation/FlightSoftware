@@ -15,41 +15,6 @@ def sum_of_differentials(lists_of_vals):
     return sum(total_diff)
 class ADCSCheckoutCase(SingleSatOnlyCase):
 
-    def rs(self, name):
-        assert(isinstance(name, str)), "State field name was not a string."
-        ret = self.sim.flight_controller.smart_read(name)
-        return ret
-
-    def print_rs(self, name):
-        print(f"{name} is {self.rs(name)}")
-    
-    def ws(self, name, val):
-        self.sim.flight_controller.write_state(name, val)
-        read_return = self.rs(name)
-        assert(read_return == val), f"Write state not applied, expected: {val}, got {read_return} instead"
-
-    def print_header(self, title):
-        print()
-        print(title)
-        print()
-
-    def soft_assert(self, condition, *args):
-        '''
-        Soft assert prints a fail message if the condition is False
-        
-        If specificied with a fail message, then a pass message, 
-        it will also print a pass message if condition is True.
-        '''
-        if condition: 
-            if len(args) == 1:
-                pass
-            else:
-                print(args[1])
-        else: 
-            print()
-            print(f"$ SOFT ASSERTION ERROR: {args[0]}")
-            print()
-
     @property
     def havt_read(self):
         read_list = [False for x in range(self.havt_length)]
@@ -59,26 +24,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
     def setup_case_singlesat(self):
         self.havt_length = 18 # _LENGTH in havt_devices.hpp
-
-        # copied from havt_devices.hpp
-        self.havt_devices = ["IMU_GYR",
-        "IMU_MAG1",
-        "IMU_MAG2",
-        "MTR1",
-        "MTR2",
-        "MTR3",
-        "RWA_POT",
-        "RWA_WHEEL1",
-        "RWA_WHEEL2",
-        "RWA_WHEEL3",
-        "RWA_ADC1",
-        "RWA_ADC2",
-        "RWA_ADC3",
-        "SSA_ADC1",
-        "SSA_ADC2",
-        "SSA_ADC3",
-        "SSA_ADC4",
-        "SSA_ADC5"]
 
     def step(self):
         ''' 
@@ -131,7 +76,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         for x in range(self.havt_length):
             if not self.havt_read[x]:
-                print(f"Device #{x}, {self.havt_devices[x]} is not functional")
+                print(f"Device #{x}, {self.havt_devices.get_by_num(x)} is not functional")
 
         self.print_header("Finished Initialization")
 
@@ -145,7 +90,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # FC + ADCSC + MAG1 + MAG2 + GYR
         minimal_hitl   = "111111011100" + "000000"
             
-        # I forgot what it actually is, will update on next PR
+        # I forgot what it actually is, will update on next PR, after testing with EDU SAT
         edu_sat        = "110111011100" + "000000"
 
         test_beds = {barebones_hitl:"BAREBONES HITL", minimal_hitl:"MINIMAL HITL", edu_sat:"EDU SAT"}
@@ -189,7 +134,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # If either mag1 or mag2 are up, run a check on it.
         if self.rs("adcs_monitor.havt_device1") or self.rs("adcs_monitor.havt_device2"):
 
-            # TODO make section compatible with 2x imu active
+            # TODO make section compatible with 2x imu active (LATER)
             self.print_header("Begin MAG Checkout")
             
             self.print_rs("adcs_cmd.imu_mode")
@@ -218,6 +163,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
             self.print_header("MAG CHECKOUT COMPLETE")
 
+        # Run checks on GYR if GYR is up.
         if self.rs("adcs_monitor.havt_device0"):
             self.print_header("Begin GYR Checkout")
             

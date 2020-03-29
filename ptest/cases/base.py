@@ -95,6 +95,27 @@ class Case(object):
             "no_data_error",
             "dead"
         ])
+        
+        # copied from havt_devices.hpp
+        self.havt_devices = FSWEnum([
+        "IMU_GYR",
+        "IMU_MAG1",
+        "IMU_MAG2",
+        "MTR1",
+        "MTR2",
+        "MTR3",
+        "RWA_POT",
+        "RWA_WHEEL1",
+        "RWA_WHEEL2",
+        "RWA_WHEEL3",
+        "RWA_ADC1",
+        "RWA_ADC2",
+        "RWA_ADC3",
+        "SSA_ADC1",
+        "SSA_ADC2",
+        "SSA_ADC3",
+        "SSA_ADC4",
+        "SSA_ADC5"])
 
     @property
     def sim_duration(self):
@@ -117,6 +138,52 @@ class Case(object):
 
     def run_case(self):
         raise NotImplementedError
+
+    def rs(self, name):
+        '''
+        Reads a state field (with type inference from smart_read()).
+
+        Checks that the name is indeed a string.
+        '''
+        assert(isinstance(name, str)), "State field name was not a string."
+        ret = self.sim.flight_controller.smart_read(name)
+        return ret
+
+    def print_rs(self, name):
+        '''
+        Reads a statefield, and also prints it.
+        '''
+        print(f"{name} is {self.rs(name)}")
+    
+    def ws(self, name, val):
+        '''
+        Writes a state, and also confirms that the read command matches the applied state.
+        '''
+        self.sim.flight_controller.write_state(name, val)
+        read_val = self.rs(name)
+        assert(read_val == val), f"Write state not applied, expected: {val}, got {read_val} instead"
+
+    def print_header(self, title):
+        print()
+        print(title)
+        print()
+
+    def soft_assert(self, condition, *args):
+        '''
+        Soft assert prints a fail message if the condition is False
+        
+        If specificied with a fail message, then a pass message, 
+        it will also print a pass message if condition is True.
+        '''
+        if condition: 
+            if len(args) == 1:
+                pass
+            else:
+                print(args[1])
+        else: 
+            print()
+            print(f"$ SOFT ASSERTION ERROR: {args[0]}")
+            print()
 
 class SingleSatOnlyCase(Case):
     """

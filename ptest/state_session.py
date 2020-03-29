@@ -182,7 +182,7 @@ class StateSession(object):
         
         ret = self.read_state(field, kwargs.get('timeout'))
         if ret is None:
-            raise NameError(f"State field: {name} not found.")
+            raise NameError(f"State field: {field} not found.")
 
         # begin type inference
 
