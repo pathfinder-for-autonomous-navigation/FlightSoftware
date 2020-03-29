@@ -249,7 +249,7 @@ class StateSession(object):
         then verify that the state was actually set. Do not write the state if the variable is being overriden
         by the user. (This is a function that sim should exclusively use.)
         '''
-        return self.write_multiple_states([field], [val], timeout)
+        return self.write_multiple_states([field], [self._val_to_str(args)], kwargs.get('timeout'))
     
     def uplink(self, fields, vals, timeout=None):
         if not self.running_logger: return
@@ -271,10 +271,10 @@ class StateSession(object):
             print("Error: Flight Software can't handle input buffers >= 512 bytes.")
             return False
 
-        # self.device_write_lock.acquire()
-        # self.console.write(json_cmds.encode())
-        # self.device_write_lock.release()
-        # self.raw_logger.put("Sent:     " + json_cmds)
+        self.device_write_lock.acquire()
+        self.console.write(json_cmds.encode())
+        self.device_write_lock.release()
+        self.raw_logger.put("Sent:     " + json_cmds)
 
         # returned_vals = []
         # for field in fields:
