@@ -122,8 +122,12 @@ class RadioSession(object):
         #get newest file
         telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
         newest_telem_file = max(telem_files, key=os.path.basename)
-        telem_json = self.console.write((newest_telem_file).encode())
-        return json.dumps(telem_json)
+        self.console.write((newest_telem_file+"\n").encode())
+        telem_json_data = json.loads(self.console.readline().rstrip())
+        if telem_json_data is not None:
+                print("not None")
+                telem_json_data = telem_json_data["data"]
+        return telem_json_data
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''
@@ -136,3 +140,4 @@ class RadioSession(object):
         self.datastore.stop()
         self.logger.stop()
         self.running_logger = False
+        self.console.close()
