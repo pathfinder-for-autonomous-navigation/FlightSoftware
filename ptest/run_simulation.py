@@ -1,12 +1,12 @@
 #!/usr/local/bin/python3
 
 from argparse import ArgumentParser
-from cerberus import Validator
+from .configs.schemas import *
 from .state_session import StateSession
 from .radio_session import RadioSession
 from .cmdprompt import StateCmdPrompt
 from .simulation import Simulation, SingleSatSimulation
-import json, sys, os, tempfile, time, threading
+import json, sys, os, tempfile, time, threading, signal
 
 try:
     import pty, subprocess
@@ -15,7 +15,7 @@ except ImportError:
     pass
 
 class SimulationRun(object):
-    def __init__(self, config_data, testcase_name, data_dir, radio_keys_config, flask_keys_config):
+    def __init__(self, config_data, testcase_name, data_dir, radio_keys_config, flask_keys_config, is_interactive):
         self.testcase_name = testcase_name
 
         self.random_seed = config_data["seed"]
@@ -29,6 +29,8 @@ class SimulationRun(object):
         self.radios_config = config_data["radios"]
         self.radio_keys_config = radio_keys_config
         self.flask_keys_config = flask_keys_config
+
+        self.is_interactive = is_interactive
 
         self.devices = {}
         self.radios = {}
@@ -45,10 +47,11 @@ class SimulationRun(object):
         self.set_up_devices()
         self.set_up_radios()
         self.set_up_sim()
-        self.set_up_cmd_prompt()
 
-        if "CI" in os.environ:
-            self.stop_all("Exiting in CI environment.", is_error=False)
+        if self.is_interactive:
+            self.set_up_cmd_prompt()
+        else:
+            self.stop_all("Exiting since user requested non-interactive execution.", is_error=False)
 
     def set_up_devices(self):
         # Set up test table by connecting to each device specified in the config.
@@ -123,6 +126,10 @@ class SimulationRun(object):
                 self.radios[radio_name] = radio_session
 
     def set_up_sim(self):
+        """
+        Starts up the test case and the MATLAB simulation if it is required by the testcase.
+        """
+
         _ = __import__("ptest.cases")
         testcases = getattr(_, "cases")
         try:
@@ -206,6 +213,10 @@ def main(args):
     parser.add_argument('-gc', '--ground-conf', action='store', help='JSON file listing ground software server and port.',
                         default = "ptest/configs/flask_keys.json")
 
+    parser.add_argument('-ni', '--no-interactive', dest='interactive', action='store_false', help='If provided, disables the interactive console.')
+    parser.add_argument('-i', '--interactive', dest='interactive', action='store_true', help='If provided, enables the interactive console.')
+    parser.set_defaults(interactive=True)
+
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
     parser.add_argument('-d', '--data-dir', action='store',
         help='''Directory for storing run data. Must be an absolute path. Default is logs/ relative to this script's location on disk.
@@ -215,98 +226,26 @@ def main(args):
     try:
         with open(args.conf, 'r') as config_file:
             config_data = json.load(config_file)
-
-            config_schema = {
-                "seed" : {"type" : "integer"},
-                "single_sat_sim" : {"type": "boolean"},
-                "devices" : {
-                    "type" : "list",
-                    "schema" : {
-                        "type" : "dict",
-                        "schema" : {
-                            "name" : {"type" : "string"},
-                            "run_mode" : {"type" : "string", "allowed" : ["native", "teensy"]},
-                            "binary_filepath" : {
-                                "type" : "string", 
-                                "dependencies" : {"run_mode" : ["native"]}, 
-                                "excludes" : ["port", "baud_rate"]
-                            },
-                            "port" : {
-                                "type" : "string",
-                                "dependencies" : {"run_mode" : ["teensy"]},
-                                "excludes" : "binary_filepath"
-                            },
-                            "baud_rate" : {
-                                "type" : "integer",
-                                "dependencies" : {"run_mode" : ["teensy"]},
-                                "excludes" : "binary_filepath"
-                            },
-                        }
-                    }
-                },
-                "radios" : {
-                    "type" : "list",
-                    "schema" : {
-                        "type" : "dict",
-                        "schema" : {
-                            "connected_device" : {"type" : "string"},
-                            "imei" : {"type" : "string"},
-                            "connect" : {"type" : "boolean"}
-                        }
-                    }
-                }
-            }
-
-            v = Validator(config_schema)
-            if not v.validate(config_data, config_schema):
-                print("Malformed config file. The following errors were found. Exiting.")
-                print(v.errors)
-                sys.exit(1)
+            validate_config(config_data, config_schema)
 
         if "CI" in os.environ:
-            with open(args.radio_conf, "w") as radio_keys_config_file:
-                json.dump({
-                    "email_username" : os.environ.get("IRIDIUM_EMAIL_USERNAME"),
-                    "email_password" : os.environ.get("IRIDIUM_EMAIL_PASSWORD"),
-                }, radio_keys_config_file)
-
-            with open(args.ground_conf, "w") as flask_keys_config_file:
-                json.dump({
-                    "server" : os.environ.get("GSW_SERVER"),
-                    "port" : os.environ.get("GSW_PORT")
-                }, flask_keys_config_file)
-
-        with open(args.radio_conf) as radio_keys_config_file:
-            radio_keys_config = json.load(radio_keys_config_file)
-
-            radio_keys_schema = {
-                "email_username" : {"type" : "string"},
-                "email_password" : {"type" : "string"}
+            radio_keys_config = {
+                "email_username" : os.environ.get("IRIDIUM_EMAIL_USERNAME"),
+                "email_password" : os.environ.get("IRIDIUM_EMAIL_PASSWORD"),
             }
-            v = Validator(radio_keys_schema)
-            if not v.validate(radio_keys_config, radio_keys_schema):
-                print("Malformed radio keys file. The following errors were found. Exiting.")
-                print(v.errors)
-                sys.exit(1)
 
-        with open(args.ground_conf) as flask_keys_config_file:
-            flask_keys_config = json.load(flask_keys_config_file)
-
-            flask_keys_schema = {
-                "server": {
-                    "type": "string"
-                },
-                "port": {
-                    "type": "string"
-                }
+            flask_keys_config = {
+                "server" : os.environ.get("GSW_SERVER"),
+                "port" : os.environ.get("GSW_PORT")
             }
-            v = Validator(flask_keys_schema)
-            if not v.validate(flask_keys_config, flask_keys_schema):
-                print(
-                    "Malformed flask keys file. The following errors were found. Exiting."
-                )
-                print(v.errors)
-                sys.exit(1)
+        else:
+            with open(args.radio_conf) as radio_keys_config_file:
+                radio_keys_config = json.load(radio_keys_config_file)
+                validate_config(radio_keys_config, radio_keys_schema)
+
+            with open(args.ground_conf) as flask_keys_config_file:
+                flask_keys_config = json.load(flask_keys_config_file)
+                validate_config(flask_keys_config, flask_keys_schema)
 
     except json.JSONDecodeError:
         print("Could not load config file. Exiting.")
@@ -315,5 +254,5 @@ def main(args):
         print("Malformed config file. Exiting.")
         sys.exit(1)
 
-    simulation_run = SimulationRun(config_data, args.testcase, args.data_dir, radio_keys_config, flask_keys_config)
+    simulation_run = SimulationRun(config_data, args.testcase, args.data_dir, radio_keys_config, flask_keys_config, args.interactive)
     simulation_run.start()
