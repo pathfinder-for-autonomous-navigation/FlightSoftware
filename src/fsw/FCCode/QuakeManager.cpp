@@ -117,9 +117,15 @@ bool QuakeManager::execute() {
             if(packet){
                 std::cout << "found a packet";
             }
+            else{
+                std::cout << "didn't find a packet";
+            }
         #else
             if(packet){
                 Serial.printf("found a packet");
+            }
+            else {
+                Serial.printf("didn't find a packet");
             }
         #endif
     }

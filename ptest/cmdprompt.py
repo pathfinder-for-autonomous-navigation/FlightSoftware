@@ -198,6 +198,9 @@ class StateCmdPrompt(Cmd):
         plotter.do_plot(args)
     
     def do_uplink(self, args):
+        '''
+        Uplink fields
+        '''
         args = args.split()
 
         if len(args) == 0:
@@ -213,6 +216,9 @@ class StateCmdPrompt(Cmd):
         start_time = timeit.default_timer()
         uplink_succeeded = self.cmded_device.uplink(fields, vals)
         elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
+
+        uplink_succeeded = "Succeeded" if uplink_succeeded else "Failed"
+        print(f"{uplink_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
 
     def do_quit(self, args):

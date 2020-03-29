@@ -254,6 +254,16 @@ class StateSession(object):
     def uplink(self, fields, vals, timeout=None):
         if not self.running_logger: return
 
+        # Filter out fields that are being overridden by the user
+        field_val_pairs = [
+            field_val_pair for field_val_pair in zip(fields, vals)
+            if field_val_pair[0] not in self.overriden_variables
+        ]
+        fields, vals = zip(*field_val_pairs)
+
+        field = list(fields)
+        vals = list(vals)
+        
         assert len(fields) == len(vals)
         assert len(fields) <= 20, "Flight Software can't handle more than 20 state field uplinks at a time"
 
