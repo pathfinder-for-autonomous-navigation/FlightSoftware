@@ -1,8 +1,8 @@
-# ADCSCheckoutCase. Verifies the functionality of the ADCS.
+# PiksiCheckoutCase. Checks the functionality of the Piksi
 from .base import SingleSatOnlyCase, TestCaseFailure
 import math
     
-class ADCSCheckoutCase(SingleSatOnlyCase):
+class PiksiCheckoutCase(SingleSatOnlyCase):
 
     @property
     def havt_read(self):
@@ -11,20 +11,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
 
-    def print_havt_read(self):
-        binary_list = [1 if x else 0 for x in self.havt_read]
-
-        string_of_binary_list = [str(x) for x in binary_list]
-        
-        # Reverse the list so it prints as it does in ADCSSoftware
-        string_of_binary_list.reverse()
-
-        list_of_list = [string_of_binary_list[4*i:(4*i)+4] for i in range((int)(self.havt_length/4)+1)]
-        final = [x + [" "] for x in list_of_list]
-
-        final_string = ''.join([''.join(x) for x in final])
-        self.logger.put("HAVT Read: "+str(final_string))
-
     def setup_case_singlesat(self):
         self.print_header("Begin ADCS Checkout Case")
 
@@ -32,10 +18,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.cycle()
 
         self.ws("pan.state", self.mission_states.get_by_name("manual"))
-        self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
-        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
-        self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
-        self.ws("dcdc.ADCSMotor_cmd", True)
     
         self.print_header("Finished Initialization")
 
@@ -120,13 +102,13 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # earth's mag field is between 25 to 65 microteslas - Wikipedia
         self.logger.put("Mag readings: ")
         for i in range(10):
-            mag = self.mag_of(list_of_mag_rds[i])
+            mag = mag_of(list_of_mag_rds[i])
             self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
             self.soft_assert((25e-6 < mag and mag < 65e-6),
                 "Mag reading out of expected (earth) bounds.")
 
         # check readings changed over time
-        self.soft_assert(self.sum_of_differentials(list_of_mag_rds) > 0,
+        self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
             "Mag readings did not vary across readings.")
 
         self.print_header("MAG CHECKOUT COMPLETE")
@@ -143,7 +125,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # for each reading check, magnitude bounds
         self.logger.put("GYR readings: ")
         for i in range(10):
-            mag = self.mag_of(list_of_gyr_rds[i])
+            mag = mag_of(list_of_gyr_rds[i])
             self.logger.put(f"{list_of_gyr_rds[i]}, mag: {mag}")
             # 3.8 is approximately the maximum possible magnitude GYR reading.
             # 125 * 0.017 = max_rd_omega
@@ -152,7 +134,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
                 "Gyr reading out of expected bounds.")
 
         # check readings changed over time
-        self.soft_assert(self.sum_of_differentials(list_of_gyr_rds) > 0,
+        self.soft_assert(sum_of_differentials(list_of_gyr_rds) > 0,
             "Gyr readings did not vary across readings.")
 
         self.print_header("GYR CHECKOUT COMPLETE")
