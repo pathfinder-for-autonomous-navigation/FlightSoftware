@@ -71,6 +71,10 @@ void DockingSystem::set_step_angle(float angle) {
     step_angle = angle;
 }
 
+void DockingSystem::set_step_delay(int delay) {
+    step_delay = delay;
+}
+
 void DockingSystem::set_direction(bool set_clockwise) {
     #ifndef DESKTOP
     if (set_clockwise) {
@@ -105,6 +109,10 @@ void DockingSystem::step_motor() {
 
 float DockingSystem::get_step_angle() const {
     return step_angle;
+}
+
+int DockingSystem::get_step_delay() const {
+    return step_delay;
 }
 
 void DockingSystem::set_turn_angle(float angle) {
