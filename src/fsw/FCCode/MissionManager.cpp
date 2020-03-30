@@ -27,10 +27,10 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
     enter_docking_cycle_f("docksys.enter_docking"),
-    mission_state_f("pan.state", Serializer<unsigned char>(12)),
-    is_deployed_f("pan.deployed", Serializer<bool>()),
-    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32)),
-    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2))
+    mission_state_f("pan.state", Serializer<unsigned char>(12), 10),
+    is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
+    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32), 500),
+    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100)
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -57,7 +57,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
 
-    propagated_baseline_pos_fp = find_readable_field<d_vector_t>("orbit.baseline_pos", __FILE__, __LINE__);
+    propagated_baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
 
     reboot_fp = find_writable_field<bool>("gomspace.gs_reboot_cmd", __FILE__, __LINE__);
 
@@ -298,10 +298,9 @@ void MissionManager::dispatch_manual() {
 
 
 double MissionManager::distance_to_other_sat() const {
-    const d_vector_t dr = propagated_baseline_pos_fp->get();
-    if (std::isnan(dr[0])) return dr[0];
-    lin::Vector3d dr_vec = {dr[0], dr[1], dr[2]};
-    return lin::norm(dr_vec);
+    const lin::Vector3d dr = propagated_baseline_pos_fp->get();
+    if (std::isnan(dr(0))) return dr(0);
+    else return lin::norm(dr);
 }
 
 bool MissionManager::too_long_since_last_comms() const {
