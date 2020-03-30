@@ -1,6 +1,7 @@
 from .base import SingleSatOnlyCase
 import time
 
+# pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
 class PropStateMachineCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
@@ -172,13 +173,16 @@ class PropStateMachineCase(SingleSatOnlyCase):
 
     # Step the state machine (maximum of max_cycles) until prop.state changes
     # Return the number of cycles
-    def cycle_until_change(self, max_cycles=1204):
+    def cycle_until_change(self, verbose=False, max_cycles=1204):
         old_state = self.state
         for i in range(max_cycles):
             if self.state != old_state:
                 return str(i)
             else:
                 self.cycle()
+                if verbose == True:
+                    print("Executing Cycle #: " + str(i))
+                    self.print_object()
         return str(-1)
             
     def test_disabled_to_idle(self):
@@ -198,7 +202,6 @@ class PropStateMachineCase(SingleSatOnlyCase):
         self.sched_valve4 = 400
         self.cycles_until_firing = 1204
         self.cycle()
-        self.print_object()
         assert self.state == str(self.prop_states.get_by_name("await_pressurizing")), "[TESTCASE] failed: state != await_pressurizing" 
         
     
@@ -212,13 +215,15 @@ class PropStateMachineCase(SingleSatOnlyCase):
     def test_pressurize_to_await_firing(self):
         print("[TESTCASE] test_pressurize_to_await_firing")
         assert self.state == str(self.prop_states.get_by_name("pressurizing")), "[TESTCASE] failed: state != pressurizing"
-        print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change()}")
+        # Verbose is True since we probably want to watch the pressure rise
+        print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change(True)}")
         assert self.state == str(self.prop_states.get_by_name("await_firing")), "[TESTCASE] failed: state != await_firing"
         return
     
     def test_await_firing_to_firing(self):
         print("[TESTCASE] test_await_firing_to_firing")
         assert self.state == str(self.prop_states.get_by_name("await_firing")), "[TESTCASE] failed: state != await_firing"
+        # Expect to be here for a long time
         print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change()}")
         assert self.state == str(self.prop_states.get_by_name("firing")), "[TESTCASE] failed: state != firing"
         return
@@ -226,7 +231,8 @@ class PropStateMachineCase(SingleSatOnlyCase):
     def test_firing_to_idle(self):
         print("[TESTCASE] test_firing_to_idle")
         assert self.state == str(self.prop_states.get_by_name("firing")), "[TESTCASE] failed: state != firing"
-        print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change()}")
+        # Verbse is True since we want to watch the pressure schedule decrease
+        print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change(True)}")
         assert self.state == str(self.prop_states.get_by_name("idle")), "[TESTCASE] failed: state != idle"
         return
 
