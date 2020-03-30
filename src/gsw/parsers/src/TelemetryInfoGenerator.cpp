@@ -72,7 +72,7 @@ bool try_collect_unbounded_field_info(const StateFieldBaseType* field, json& fie
     static_assert(std::is_same<UnderlyingType, gps_time_t>::value
                   || std::is_same<UnderlyingType, bool>::value
                   || std::is_same<UnderlyingType, d_quat_t>::value
-                  || std::is_same<UnderlyingType, f_quat_t>::value,
+                  || std::is_same<UnderlyingType, f_quat_t>::value
                   || std::is_same<UnderlyingType, lin::Vector4d>::value
                   || std::is_same<UnderlyingType, lin::Vector4f>::value,
         "Can't collect unbounded field info for a non-bool, non-GPS time, or non-quaternion type.");
