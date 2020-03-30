@@ -126,18 +126,18 @@ size_t UplinkProducer::try_add_gps_time(bitstream bs, std::string key, nlohmann:
 
 size_t UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j) {
     size_t bits_written = 0;
-    bits_written |= try_add_field<unsigned int>(bs, key, j);
-    bits_written |= try_add_field<signed int>(bs, key, j);
-    bits_written |= try_add_field<unsigned char>(bs, key, j);
-    bits_written |= try_add_field<signed char>(bs, key, j);
-    bits_written |= try_add_field<float>(bs, key, j);
-    bits_written |= try_add_field<double>(bs, key, j);
-    bits_written |= try_add_field<bool>(bs, key, j);
-    bits_written |= try_add_vector_field<float>(bs, key, j);
-    bits_written |= try_add_vector_field<double>(bs, key, j);
-    bits_written |= try_add_quat_field<float>(bs, key, j);
-    bits_written |= try_add_quat_field<double>(bs, key, j);
-    bits_written |= try_add_gps_time(bs, key, j);
+    bits_written += try_add_field<unsigned int>(bs, key, j);
+    bits_written += try_add_field<signed int>(bs, key, j);
+    bits_written += try_add_field<unsigned char>(bs, key, j);
+    bits_written += try_add_field<signed char>(bs, key, j);
+    bits_written += try_add_field<float>(bs, key, j);
+    bits_written += try_add_field<double>(bs, key, j);
+    bits_written += try_add_field<bool>(bs, key, j);
+    bits_written += try_add_vector_field<float>(bs, key, j);
+    bits_written += try_add_vector_field<double>(bs, key, j);
+    bits_written += try_add_quat_field<float>(bs, key, j);
+    bits_written += try_add_quat_field<double>(bs, key, j);
+    bits_written += try_add_gps_time(bs, key, j);
     return bits_written;
 }
 
