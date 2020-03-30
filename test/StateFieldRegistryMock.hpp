@@ -136,6 +136,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
                       std::is_same<T, gps_time_t>::value ||
                       std::is_same<T, f_quat_t>::value ||
                       std::is_same<T, d_quat_t>::value ||
+                      std::is_same<T, lin::Vector4f>::value ||
+                      std::is_same<T, lin::Vector4d>::value ||
                       std::is_same<T, unsigned int>::value ||
                       std::is_same<T, unsigned char>::value,
             "Type argument for field creation with the given parameters was invalid.");
@@ -160,6 +162,8 @@ class StateFieldRegistryMock : public StateFieldRegistry {
                       std::is_same<T, gps_time_t>::value ||
                       std::is_same<T, f_quat_t>::value ||
                       std::is_same<T, d_quat_t>::value ||
+                      std::is_same<T, lin::Vector4f>::value ||
+                      std::is_same<T, lin::Vector4d>::value ||
                       std::is_same<T, unsigned int>::value ||
                       std::is_same<T, unsigned char>::value,
             "Type argument for field creation with the given parameters was invalid.");
@@ -319,6 +323,21 @@ class StateFieldRegistryMock : public StateFieldRegistry {
         return field_ptr;
     }
 
+    template<typename T>
+    std::shared_ptr<ReadableStateField<lin::Vector<T,3>>> create_readable_lin_vector_field(const std::string& name,
+        T min, T max, size_t bitsize)
+    {
+        static_assert(std::is_same<T, float>::value ||
+                      std::is_same<T, double>::value,
+            "Type argument for field creation with the given parameters was invalid.");
+
+        Serializer<lin::Vector<T, 3>> field_sr(min, max, bitsize);
+        auto field_ptr = std::make_shared<ReadableStateField<lin::Vector<T, 3>>>(name, field_sr);
+        add_readable_field(field_ptr.get());
+        created_readable_fields.push_back(field_ptr);
+        return field_ptr;
+    }
+
     /**
      * @brief Create a writable field for a float- or double-vector and add it to
      * the registry.
@@ -340,6 +359,21 @@ class StateFieldRegistryMock : public StateFieldRegistry {
 
         Serializer<std::array<T, 3>> field_sr(min, max, bitsize);
         auto field_ptr = __field_creator<std::array<T, 3>, 0>::create_writable_field(name, field_sr);
+        add_writable_field(field_ptr.get());
+        created_writable_fields.push_back(field_ptr);
+        return field_ptr;
+    }
+
+    template<typename T>
+    std::shared_ptr<WritableStateField<lin::Vector<T, 3>>> create_writable_lin_vector_field(const std::string& name,
+        T min, T max, size_t bitsize)
+    {
+        static_assert(std::is_same<T, float>::value ||
+                      std::is_same<T, double>::value,
+            "Type argument for field creation with the given parameters was invalid.");
+
+        Serializer<lin::Vector<T, 3>> field_sr(min, max, bitsize);
+        auto field_ptr = std::make_shared<WritableStateField<lin::Vector<T, 3>>>(name, field_sr);
         add_writable_field(field_ptr.get());
         created_writable_fields.push_back(field_ptr);
         return field_ptr;
