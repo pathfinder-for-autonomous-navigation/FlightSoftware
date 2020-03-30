@@ -45,6 +45,7 @@ class TestFixture {
         foo1_fp->set(400);
 
         data1_f.set(false);
+        reg.add_readable_field(static_cast<ReadableStateFieldBase*>(&data1_f));
         reg.add_event(&event);
 
         parser = std::make_unique<DownlinkParserMock>(reg, flow_data);
@@ -55,6 +56,7 @@ class TestFixture {
 
         event.signal();
         cycle_count_fp->set(40);
+        data1_f.set(true);
 
         snapshot_fp = reg.find_internal_field_t<char*>("downlink.ptr");
         snapshot_size_bytes_fp = reg.find_internal_field_t<size_t>("downlink.snap_size");
@@ -93,6 +95,7 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(tf.foo1_fp->get(), foo1);
     TEST_ASSERT_EQUAL(20, event_ccno);
     TEST_ASSERT_TRUE(data1=="false");
+    TEST_ASSERT_TRUE(tf.data1_f.get());
 
     // Test that metadata is OK
     TEST_ASSERT_EQUAL(tf.cycle_count_fp->get(), downlink["metadata"]["cycle_no"]);
