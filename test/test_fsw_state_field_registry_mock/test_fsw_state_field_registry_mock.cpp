@@ -170,9 +170,7 @@ void test_create_event() {
     ReadableStateFieldBase* data2_fp=registry.find_readable_field("field2");
     std::vector<ReadableStateFieldBase*> event_data={data1_fp, data2_fp};
 
-    unsigned int control_cycle_count = 0;
-    
-    registry.create_event("event", event_data, print_fn, control_cycle_count);
+    registry.create_event("event", event_data, print_fn);
     TEST_ASSERT_NOT_NULL(registry.find_event("event"));
     TEST_ASSERT_NOT_NULL(registry.find_event_t("event"));
 }
@@ -213,9 +211,8 @@ void test_clear() {
     ReadableStateFieldBase* data1_fp=registry.find_readable_field("field1");
     ReadableStateFieldBase* data2_fp=registry.find_readable_field("field2");
     std::vector<ReadableStateFieldBase*> event_data={data1_fp, data2_fp};
-    unsigned int control_cycle_count = 0;
     
-    registry.create_event("foo5", event_data, print_fn, control_cycle_count);
+    registry.create_event("foo5", event_data, print_fn);
 
     registry.clear();
     TEST_ASSERT_NULL(registry.find_writable_field("foo"));

@@ -318,10 +318,9 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      */
     std::shared_ptr<Event> create_event(const std::string& name,
           std::vector<ReadableStateFieldBase*>& data_fields,
-          const char* (*print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&),
-          const unsigned int ccno)
+          const char* (*print_fn)(const unsigned int, std::vector<ReadableStateFieldBase*>&))
     {
-        auto event_ptr = std::make_shared<Event>(name, data_fields, print_fn, ccno);
+        auto event_ptr = std::make_shared<Event>(name, data_fields, print_fn);
         add_event(event_ptr.get());
         created_events.push_back(event_ptr);
         return event_ptr;
