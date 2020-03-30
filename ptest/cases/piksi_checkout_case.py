@@ -18,15 +18,24 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
         self.print_header("Begin Piksi Checkout Case")
 
-        self.determined_mode = "None"
-        # Needed so that PiksiControLTask updates its values
-        self.cycle()
+        self.determined_mode = self.piksi_modes.get_by_name("no_fix")
+
+        # Needed so that PiksiControlTask updates its values
+        for i in range(5):
+            self.cycle()
 
         self.ws("pan.state", self.mission_states.get_by_name("manual"))
 
     def determine_mode(self):
-        raise NotImplementedError
+        '''
+        Determines the probable simulation or actual state of the Piksi
 
+        Returns a Piksi Mode
+        '''
+        '''
+        perform 10 readings,
+        return the most common lol
+        '''
     def fixed_rtk_checkout(self):
         raise NotImplementedError
 
