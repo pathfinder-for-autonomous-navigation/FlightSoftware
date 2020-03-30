@@ -36,6 +36,8 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         perform 10 readings,
         return the most common lol
         '''
+        raise NotImplementedError
+    
     def fixed_rtk_checkout(self):
         raise NotImplementedError
 
