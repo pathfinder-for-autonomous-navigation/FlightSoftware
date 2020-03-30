@@ -129,7 +129,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
      * @param val 
      */
     template<class Q = void>
-    typename std::enable_if<is_eeprom_saveable(), Q>::type
+    typename std::enable_if_t<is_eeprom_saveable(), Q>
     _set_from_eeprom(unsigned int val)
     {
       if ((std::is_same<T, unsigned char>::value
@@ -148,7 +148,7 @@ class SerializableStateField : public StateField<T>, virtual public Serializable
     }
 
     template<class Q = void>
-    typename std::enable_if<!is_eeprom_saveable(), Q>::type
+    typename std::enable_if_t<!is_eeprom_saveable(), Q>
     _set_from_eeprom(unsigned int val) {}
 
     void set_from_eeprom(unsigned int val) override { _set_from_eeprom(val); }
