@@ -274,9 +274,10 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     break;
                 }
 
-                // JsonVariant uplink_packet_json;
-                // uplink_packet_json[field] = field_val;
-                // std::string uplink_packet = uplink_packet_json.dump(); 
+                // Write the telemetry into a JSON object and pass it into an internal statefield
+                // std::string uplink = "{\""+field.as<std::string>()+"\":\""+field_val.as<std::string>()+"\"}";
+                // InternalStateField<std::string> telem_f("uplink.telem");
+                // registry.add_internal_field(static_cast<InternalStateFieldBase*>(telem_f));
 
                 WritableStateField<bool>* load_telem_fp = static_cast<WritableStateField<bool>*>(registry.find_writable_field("telem.load"));
                 load_telem_fp->set(true);
@@ -287,6 +288,8 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
         }
     }
 }
+
+void create_uplink_packet() {}
 
 // void debug_console::uplink_commands(const StateFieldRegistry &registry, unsigned int time, JsonVariant telem) {
 //     //telem["pan.cycle_no"] = time;
