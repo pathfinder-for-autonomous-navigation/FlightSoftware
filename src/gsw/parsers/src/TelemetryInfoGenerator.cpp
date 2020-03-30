@@ -50,8 +50,7 @@ template<template<typename> class StateFieldType,
          typename UnderlyingType,
          class StateFieldBaseType>
 bool try_collect_vector_field_info(const StateFieldBaseType* field, json& field_info) {
-    static_assert(std::is_same<UnderlyingType, double>::value 
-                  || std::is_same<UnderlyingType, float>::value,
+    static_assert(std::is_floating_point<UnderlyingType>::value,
         "Can't collect vector field info for a vector of non-float or non-double type.");
     
     using UnderlyingVectorType = std::array<UnderlyingType, 3>;
@@ -73,7 +72,9 @@ bool try_collect_unbounded_field_info(const StateFieldBaseType* field, json& fie
     static_assert(std::is_same<UnderlyingType, gps_time_t>::value
                   || std::is_same<UnderlyingType, bool>::value
                   || std::is_same<UnderlyingType, d_quat_t>::value
-                  || std::is_same<UnderlyingType, f_quat_t>::value,
+                  || std::is_same<UnderlyingType, f_quat_t>::value
+                  || std::is_same<UnderlyingType, lin::Vector4d>::value
+                  || std::is_same<UnderlyingType, lin::Vector4f>::value,
         "Can't collect unbounded field info for a non-bool, non-GPS time, or non-quaternion type.");
 
     const StateFieldType<UnderlyingType>* ptr = dynamic_cast<const StateFieldType<UnderlyingType>*>(field);
