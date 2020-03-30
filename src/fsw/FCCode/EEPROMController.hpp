@@ -55,6 +55,9 @@ class EEPROMController : public TimedControlTask<void> {
      */
     bool check_empty();
 
+    // Number of addresses available in EEPROM.
+    TRACKED_CONSTANT_SC(unsigned int, eeprom_size, 4096);
+
   protected:
     //the locations in the EEPROM in which the field values will be stored
     std::vector<int> addresses;

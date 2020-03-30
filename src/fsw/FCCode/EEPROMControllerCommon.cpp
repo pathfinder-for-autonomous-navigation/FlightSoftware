@@ -1,6 +1,8 @@
 #include "EEPROMController.hpp"
 
 void EEPROMController::init() {
+  assert(_registry.eeprom_saved_fields.size() <= eeprom_size / 5);
+
   for (size_t i = 0; i<_registry.eeprom_saved_fields.size(); i++){
     // add the address of the pointer to the address array
     addresses.push_back(i*5);
