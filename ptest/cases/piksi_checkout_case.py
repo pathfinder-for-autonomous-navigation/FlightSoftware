@@ -11,160 +11,63 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
 
-    def setup_case_singlesat(self):
-        self.print_header("Begin ADCS Checkout Case")
+    def print_piksi_state(self):
+        st = self.rs("piksi.state")
+        self.logger.put(f"Piksi state is: {self.piksi_modes.get_by_num(st)}")
 
-        # Needed so that ADCSMonitor updates its values
+    def setup_case_singlesat(self):
+        self.print_header("Begin Piksi Checkout Case")
+
+        self.determined_mode = "None"
+        # Needed so that PiksiControLTask updates its values
         self.cycle()
 
         self.ws("pan.state", self.mission_states.get_by_name("manual"))
-    
-        self.print_header("Finished Initialization")
 
-    def havt_checkout(self):
-        # reset all devices in case last ptest case left an "unclean state"
-        for x in range(self.havt_length):
-            self.ws(f"adcs_cmd.havt_reset{x}", True)
+    def determine_mode(self):
+        raise NotImplementedError
 
-        # adcs_controller should have applied commands.
-        self.cycle()
+    def fixed_rtk_checkout(self):
+        raise NotImplementedError
 
-        self.print_havt_read()
+    def float_rtk_checkout(self):
+        raise NotImplementedError
 
-        for x in range(self.havt_length):
-            if not self.havt_read[x]:
-                self.logger.put(f"Device #{x}, {self.havt_devices.get_by_num(x)} is not functional")
+    def spp_checkout(self):
+        raise NotImplementedError
 
-        self.logger.put("Initial HAVT Table:")
-        self.print_havt_read()
-
-        # Note IMUGYR on left
-        # FC only
-        fc_only_hitl    = "000000000000" + "000000"
-
-        # Just FC and ADCSC
-        barebones_hitl = "000111011100" + "000000"
-
-        # FC + ADCSC + MAG1 + MAG2 + GYR
-        minimal_hitl   = "111111011100" + "000000"
-            
-        # I forgot what it actually is, will update on next PR, after testing with EDU SAT
-        edu_sat        = "110111011100" + "000000"
-
-        test_beds = {fc_only_hitl:"FC ONLY HITL",barebones_hitl:"BAREBONES HITL", minimal_hitl:"MINIMAL HITL", edu_sat:"EDU SAT"}
-
-        binary_string_havt_read = ''.join(["1" if x else "0" for x in self.havt_read])
-
-        if(binary_string_havt_read not in test_beds):
-            self.print_header("UN-RECOGNIZED HITL TEST BED. MAKE SURE HAVT_READ IS AS EXPECTED!")
-        else:
-            self.print_header(f"HAVT TABLE MATCHES WITH: {test_beds[binary_string_havt_read]}")
-
-        # cache the initially functional devices
-        initial_up_devices = self.havt_read
-
-        # disable all devices
-        for x in range(self.havt_length):
-            self.ws(f"adcs_cmd.havt_disable{x}", True)
-
-        self.cycle()
-
-        self.logger.put("Post disabling all devices:")
-        self.print_havt_read()
-        self.soft_assert(all([x == 0 for x in self.havt_read]), 
-            "Disabling all devices failed")
-
-        # reset all devices
-        for x in range(self.havt_length):
-            self.ws(f"adcs_cmd.havt_reset{x}", True)
-        self.cycle()
-        self.logger.put("Post resetting all devices:")
-        self.print_havt_read()
-        self.soft_assert((initial_up_devices == self.havt_read), 
-            "Disable Reset Cycle Failed, New HAVT Table does not match initial table cache",
-            "Reset-Disable Success. All initially functional devices remain functional.")
-
-    def mag_checkout(self):
-        # TODO make section compatible with 2x imu active (LATER)
-        self.print_header("Begin MAG Checkout")
-        
-        self.print_rs("adcs_cmd.imu_mode")
-        imu_mode = self.rs("adcs_cmd.imu_mode")
-        self.logger.put(f"IMU Mode: {self.imu_modes.get_by_num(imu_mode)}")
-        
-        # perform 10 readings.
-        list_of_mag_rds = []
-        for i in range(10):
-            self.cycle()
-            list_of_mag_rds += [self.rs("adcs_monitor.mag_vec")]
-
-        # for each reading check, magnitude bounds
-        # earth's mag field is between 25 to 65 microteslas - Wikipedia
-        self.logger.put("Mag readings: ")
-        for i in range(10):
-            mag = mag_of(list_of_mag_rds[i])
-            self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
-            self.soft_assert((25e-6 < mag and mag < 65e-6),
-                "Mag reading out of expected (earth) bounds.")
-
-        # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
-            "Mag readings did not vary across readings.")
-
-        self.print_header("MAG CHECKOUT COMPLETE")
-
-    def gyr_checkout(self):
-        self.print_header("Begin GYR Checkout")
-            
-        # perform 10 readings.
-        list_of_gyr_rds = []
-        for i in range(10):
-            self.cycle()
-            list_of_gyr_rds += [self.rs("adcs_monitor.gyr_vec")]
-
-        # for each reading check, magnitude bounds
-        self.logger.put("GYR readings: ")
-        for i in range(10):
-            mag = mag_of(list_of_gyr_rds[i])
-            self.logger.put(f"{list_of_gyr_rds[i]}, mag: {mag}")
-            # 3.8 is approximately the maximum possible magnitude GYR reading.
-            # 125 * 0.017 = max_rd_omega
-            # 3.8 ~= sqrt((125 * 0.017)^2 * 3)
-            self.soft_assert((0 < mag and mag < 3.8),
-                "Gyr reading out of expected bounds.")
-
-        # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_gyr_rds) > 0,
-            "Gyr readings did not vary across readings.")
-
-        self.print_header("GYR CHECKOUT COMPLETE")
+    def no_fix_checkout(self):
+        raise NotImplementedError
 
     def run_case_singlesat(self):
         
-        self.print_rs("adcs_monitor.functional")
+        self.print_rs("piksi.state")
 
-        # havt_checkout() can still run when adcs_monitor not functional, expect havt_table to be full of 0's
-        self.havt_checkout()
+        for i in range(10):
+            self.cycle()
+            self.print_piksi_state()
 
-        if not self.rs("adcs_monitor.functional"):
-            self.logger.put("ADCSC NOT FUNCTIONAL. FINISHING HERE FOR CI - HOOTL CASE")
-            self.finish()
-            return
+        list_of_pos_rds = []
+        for i in range(10):
+            self.cycle()
+            pos = self.rs("piksi.pos")
+            mag = self.mag_of(pos)
+            list_of_pos_rds += [pos] 
+            
+            # TODO FIND EXPECTED BOUNDS
+            self.soft_assert((0 < mag and mag < 1e8),
+                "Piksi position reading out of expected bounds.")
 
-        # BEGIN SENSOR CHECKOUT
-        self.print_header("Begin Sensor Checkout")
-        # expect each sensor value to change from cycle to cycle, given user is jostling the test bed.
+        # check readings changed over time
+        self.soft_assert(self.sum_of_differentials(list_of_pos_rds) > 0,
+            "Piksi position readings did not vary across readings.")
 
-        # If either mag1 or mag2 are up, run a check on it.
-        if self.rs("adcs_monitor.havt_device1") or self.rs("adcs_monitor.havt_device2"):
-            self.mag_checkout()
-
-        # Run checks on GYR if GYR is up.
-        if self.rs("adcs_monitor.havt_device0"):
-            self.gyr_checkout()
-
+        for i in range(10):
+            self.cycle()
+            self.print_piksi_state()
+            self.print_rs("piksi.pos")
 
         # TODO FURTHER CHECKOUTS
 
-        self.print_header("ADCS CHECKOUT COMPLETE")
+        self.print_header("PIKSI CHECKOUT COMPLETE")
         self.finish()
