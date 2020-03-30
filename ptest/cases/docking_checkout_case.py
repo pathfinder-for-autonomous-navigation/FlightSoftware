@@ -23,6 +23,7 @@ class DockingCheckoutCase(SingleSatOnlyCase):
         return self.read_state(string_state)
 
     def undock(self):
+      self.logger.put("Starting to undock.")
       docking_config_cmd = self.write_state("docksys.config_cmd", "false")
       docked = self.read_state("docksys.docked")
       is_turning = self.read_state("docksys.is_turning")
@@ -35,6 +36,7 @@ class DockingCheckoutCase(SingleSatOnlyCase):
         self.logger.put("Undocking attempt unsuccessful")
 
     def dock(self):
+      self.logger.put("Starting to dock.")
       docking_config_cmd = self.write_state("docksys.config_cmd", "true")
       docked = self.read_state("docksys.docked")
       is_turning = self.read_state("docksys.is_turning")
