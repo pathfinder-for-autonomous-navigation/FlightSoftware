@@ -93,4 +93,6 @@ void Event::set_bit_array(const bit_array &arr)
 bool Event::deserialize(const char *val) { return true; }
 
 
-
+unsigned int Event::eeprom_save_period() const { return 0; }
+unsigned int Event::get_eeprom_repr() const { return 0; }
+void Event::set_from_eeprom(unsigned int val) { }

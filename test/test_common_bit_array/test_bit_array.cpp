@@ -32,29 +32,29 @@ void test_bitarray_set_int() {
 
     // Set a "normal" integer value.
     TEST_ASSERT(arr.set_int(6));
-    TEST_ASSERT_EQUAL(0, arr.at(0));
-    TEST_ASSERT_EQUAL(1, arr.at(1));
-    TEST_ASSERT_EQUAL(1, arr.at(2));
+    TEST_ASSERT_EQUAL(0, arr[0]);
+    TEST_ASSERT_EQUAL(1, arr[1]);
+    TEST_ASSERT_EQUAL(1, arr[2]);
 
     // Set to zero
     TEST_ASSERT(arr.set_int(0));
-    TEST_ASSERT_EQUAL(0, arr.at(0));
-    TEST_ASSERT_EQUAL(0, arr.at(1));
-    TEST_ASSERT_EQUAL(0, arr.at(2));
+    TEST_ASSERT_EQUAL(0, arr[0]);
+    TEST_ASSERT_EQUAL(0, arr[1]);
+    TEST_ASSERT_EQUAL(0, arr[2]);
 
     // Set at the max.
     TEST_ASSERT(arr.set_int(7));
-    TEST_ASSERT_EQUAL(1, arr.at(0));
-    TEST_ASSERT_EQUAL(1, arr.at(1));
-    TEST_ASSERT_EQUAL(1, arr.at(2));
+    TEST_ASSERT_EQUAL(1, arr[0]);
+    TEST_ASSERT_EQUAL(1, arr[1]);
+    TEST_ASSERT_EQUAL(1, arr[2]);
     
     arr.set_int(0);
     // Try to set a value beyond the bounds of what can be stored.
     // The same value as the previous one should be kept.
     TEST_ASSERT_FALSE(arr.set_int(8));
-    TEST_ASSERT_EQUAL(0, arr.at(0));
-    TEST_ASSERT_EQUAL(0, arr.at(1));
-    TEST_ASSERT_EQUAL(0, arr.at(2));
+    TEST_ASSERT_EQUAL(0, arr[0]);
+    TEST_ASSERT_EQUAL(0, arr[1]);
+    TEST_ASSERT_EQUAL(0, arr[2]);
 }
 
 void test_bitarray_convert_to_integer() {
@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
 #else
 #include <Arduino.h>
 void setup() {
-    delay(2000);
+    delay(10000);
     Serial.begin(9600);
     test_bit_array();
 }

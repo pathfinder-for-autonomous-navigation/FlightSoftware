@@ -54,6 +54,7 @@ class TestTelemInfoGenerator(unittest.TestCase):
             self.assertEqual(telem_info["flows"][0]["active"], True)
             self.assertEqual(telem_info["flows"][0]["fields"][0], "pan.state")
 
+            self.assertIn("pan.state", telem_info["eeprom_saved_fields"])
         # Clean up
         os.remove("telem_output.json")
 
