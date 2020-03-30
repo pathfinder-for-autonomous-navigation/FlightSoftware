@@ -124,6 +124,8 @@ class RadioSession(object):
         newest_telem_file = max(telem_files, key=os.path.basename)
         self.console.write((newest_telem_file+"\n").encode())
         telem_json_data = json.loads(self.console.readline().rstrip())
+        self.console.write((newest_telem_file+"\n").encode()) #twice to push response from downlinker parser
+        telem_json_data = json.loads(self.console.readline().rstrip())
         if telem_json_data is not None:
                 telem_json_data = telem_json_data["data"]
         return telem_json_data
