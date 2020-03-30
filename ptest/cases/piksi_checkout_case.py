@@ -36,8 +36,13 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         perform 10 readings,
         return the most common lol
         '''
-        raise NotImplementedError
-    
+        readings = []
+        for i in range(20):
+            self.cycle()
+            readings += [self.rs("piksi.state")]
+            
+
+
     def fixed_rtk_checkout(self):
         raise NotImplementedError
 
