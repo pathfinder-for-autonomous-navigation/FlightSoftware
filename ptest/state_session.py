@@ -106,7 +106,7 @@ class StateSession(object):
                     #log data to a timestamped file
                     telem_bytes = data['telem'].split(r'\x')
                     telem_bytes.remove("")
-                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].sbd"), "wb")
+                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].txt"), "wb")
                     for byte in telem_bytes:
                         telem_file.write(int(byte, 16).to_bytes(1, byteorder='big'))
                     telem_file.close()
