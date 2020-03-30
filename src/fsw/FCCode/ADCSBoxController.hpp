@@ -59,7 +59,7 @@ protected:
      * @brief SSA command fields
      * 
      */
-    const WritableStateField<unsigned char>* ssa_mode_fp;
+    const ReadableStateField<int>* ssa_mode_fp;
     const WritableStateField<float>* ssa_voltage_filter_fp;
 
     /**

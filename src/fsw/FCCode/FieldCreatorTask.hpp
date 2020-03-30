@@ -14,8 +14,8 @@
 // eventually become zero.
 class FieldCreatorTask : public ControlTask<void> {
     public:
-      ReadableStateField<d_vector_t> pos_f;
-      ReadableStateField<d_vector_t> pos_baseline_f;
+      ReadableStateField<lin::Vector3d> pos_f;
+      ReadableStateField<lin::Vector3d> pos_baseline_f;
 
       ReadableStateField<unsigned char> prop_state_f;
       Fault failed_pressurize_f;
@@ -23,8 +23,8 @@ class FieldCreatorTask : public ControlTask<void> {
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
-        pos_f("orbit.pos", Serializer<d_vector_t>(0,100000,100)),
-        pos_baseline_f("orbit.baseline_pos", Serializer<d_vector_t>(0,100000,100)),
+        pos_f("orbit.pos", Serializer<lin::Vector3d>(0,100000,100)),
+        pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,100000,100)),
         prop_state_f("prop.state", Serializer<unsigned char>(1)),
         failed_pressurize_f("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count),
         overpressured_f("prop.overpressured", 1, TimedControlTaskBase::control_cycle_count)

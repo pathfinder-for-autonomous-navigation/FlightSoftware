@@ -1,6 +1,5 @@
 #include "UplinkProducer.h"
 #include <flow_data.hpp>
-#include <eeprom_configs.hpp>
 #include <fstream>
 #include <iostream>
 #include <json.hpp>
@@ -8,7 +7,7 @@
 
 UplinkProducer::UplinkProducer(StateFieldRegistry& r):
     Uplink(r),
-    fcp(registry, PAN::flow_data, PAN::statefields, PAN::periods)
+    fcp(registry, PAN::flow_data)
  {
     max_possible_packet_size = 0;
     // initialize index_size
@@ -21,6 +20,125 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r):
         max_possible_packet_size += index_size + w->bitsize();
     }
  }
+
+template<typename UnderlyingType>
+size_t UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json j) {
+    // Get pointer to that field in the registry
+    WritableStateField<UnderlyingType>* ptr = dynamic_cast<WritableStateField<UnderlyingType>*>(registry.find_writable_field(key));
+
+    // If the statefield of the given underlying type doesn't exist in the registry, return 0 bits written. Otherwise, get the value of the key
+    if (!ptr) return 0;
+    UnderlyingType val = j[key];
+
+    // Check that the value specified in the JSON file is within that serializer bounds of the statefield
+    UnderlyingType min = ptr->get_serializer_min();
+    UnderlyingType max = ptr->get_serializer_max();
+    if (val<min || val>max) 
+        throw std::runtime_error("Must set statefield: " + key + " to value within serializer bounds. Min: " +
+        std::to_string(min) + " Max: "+std::to_string(max));
+
+    // Make sure the value we want to set does not exceed the max possible
+    // value that the field can be set to
+    size_t field_index=field_map[key];
+    uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
+    if (static_cast<unsigned int>(val) > max_val) {
+        throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
+        return false;
+    }
+
+    ptr->set(val);
+    ptr->serialize();
+
+    // Add the updated value to the bitstream
+    return add_entry(bs, ptr->get_bit_array(), field_index);
+}
+
+template<typename UnderlyingType>
+size_t UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohmann::json j) {
+    // Get pointer to that field in the registry
+    using UnderlyingVectorType = std::array<UnderlyingType, 3>;
+    WritableStateField<UnderlyingVectorType>* ptr = dynamic_cast<WritableStateField<UnderlyingVectorType>*>(registry.find_writable_field(key));
+
+    // If the statefield of the given underlying type doesn't exist in the registry, return 0 bits written.
+    if (!ptr) return 0;
+    UnderlyingVectorType vals = j[key];
+
+    // Check that the magnitude of the values in the JSON file is within the statefield's serializer bounds
+    UnderlyingType min = ptr->get_serializer_min()[0];
+    UnderlyingType max = ptr->get_serializer_max()[0];
+    UnderlyingType vector_mag = sqrt(pow(vals[0], 2) + pow(vals[1], 2) + pow(vals[2], 2));
+    if (vector_mag>max || vector_mag<min) throw std::runtime_error("Magnitude of vector must be in range [" + 
+        std::to_string(min) + "," + std::to_string(max) + "]");
+
+    ptr->set(vals);
+    ptr->serialize();
+
+    // Add the updated value to the bitstream
+    size_t field_index=field_map[key];
+    return add_entry(bs, ptr->get_bit_array(), field_index);
+}
+
+template<typename UnderlyingType>
+size_t UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohmann::json j) {
+    // Get pointer to that field in the registry
+    static_assert(std::is_same<UnderlyingType, double>::value || std::is_same<UnderlyingType, float>::value,
+        "Can't collect quaternion field info for a vector of non-float or non-double type.");
+    using UnderlyingQuatType = std::array<UnderlyingType, 4>;
+    WritableStateField<UnderlyingQuatType>* ptr = dynamic_cast<WritableStateField<UnderlyingQuatType>*>(registry.find_writable_field(key));
+
+    // If the quaternion statefield of the given underlying type doesn't exist in the registry, return 0 bits written. Otherwise, get the values of the key
+    if (!ptr) return 0;
+    std::array<UnderlyingType, 4> vals = j[key];
+
+    // Check that the magnitude of the values in the JSON file is 1 ± some margin of error
+    UnderlyingType quat_mag = std::sqrt(std::pow(vals[0], 2) + std::pow(vals[1], 2) + std::pow(vals[2], 2) + std::pow(vals[3], 2));
+    UnderlyingType error = 1e-10;
+    if (std::abs(quat_mag-1)>error) throw std::runtime_error("Magnitude of quaternion must be 1");
+
+    // Set the statefield pointer to the new values.
+    ptr->set(vals);
+    ptr->serialize();
+
+    // Add the updated value to the bitstream
+    size_t field_index=field_map[key];
+    return add_entry(bs, ptr->get_bit_array(), field_index);
+}
+
+size_t UplinkProducer::try_add_gps_time(bitstream bs, std::string key, nlohmann::json j) {
+    // Get pointer to that field in the registry
+    WritableStateField<gps_time_t>* ptr = dynamic_cast<WritableStateField<gps_time_t>*>(registry.find_writable_field(key));
+
+    // If the time statefield doesn't exist in the registry, return 0 bits written. Otherwise, get the values of the key
+    if (!ptr) return 0;
+    unsigned short wn = j[key][0];
+    unsigned int tow = j[key][1];
+    unsigned long ns = j[key][2];
+
+    // Set the statefield pointer to the new time.
+    ptr->set(gps_time_t(wn,tow,ns));
+    ptr->serialize();
+
+    // Add the updated value to the bitstream
+    size_t field_index=field_map[key];
+    return add_entry(bs, ptr->get_bit_array(), field_index);
+}
+
+size_t UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j) {
+    size_t bits_written = 0;
+    bits_written += try_add_field<unsigned int>(bs, key, j);
+    bits_written += try_add_field<signed int>(bs, key, j);
+    bits_written += try_add_field<unsigned char>(bs, key, j);
+    bits_written += try_add_field<signed char>(bs, key, j);
+    bits_written += try_add_field<float>(bs, key, j);
+    bits_written += try_add_field<double>(bs, key, j);
+    bits_written += try_add_field<bool>(bs, key, j);
+    bits_written += try_add_vector_field<float>(bs, key, j);
+    bits_written += try_add_vector_field<double>(bs, key, j);
+    bits_written += try_add_quat_field<float>(bs, key, j);
+    bits_written += try_add_quat_field<double>(bs, key, j);
+    bits_written += try_add_gps_time(bs, key, j);
+    return bits_written;
+}
 
 void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename)
  {    
@@ -44,17 +162,10 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
             if (field_map.find(key) == field_map.end())
                 throw std::runtime_error("field map key not found: " + key);
 
-            // Get the field's index in writable_fields
-            size_t field_index = field_map[key];
+            size_t bits_written = add_field_to_bitstream(bs, key, j);
 
-            // Make sure the value we want to set does not exceed the max possible
-            // value that the field can be set to
-            uint64_t val = e.value();
-            uint64_t max_val = (1ul << (get_field_length(field_index) + 1)) - 1;
-            if (val > max_val)
-                throw std::runtime_error("cannot assign " + std::to_string(val) + " to field " + key + ". max value: " + std::to_string(max_val));
-
-            add_entry(bs, reinterpret_cast<char*>(&val), field_index);
+            if (bits_written == 0) 
+                throw std::runtime_error("Unable to find write " + key + " to bitstream.");
         } 
 
     // Trim the padding off the byte stream so that validate passes
@@ -63,7 +174,7 @@ void UplinkProducer::create_from_json(bitstream& bs, const std::string& filename
     bs.reset();
  }
 
-size_t UplinkProducer::add_entry( bitstream& bs, char* val, size_t index)
+size_t UplinkProducer::add_entry(bitstream& bs, const bit_array& val, size_t index)
 {
     size_t bits_written = 0;
     size_t field_size = get_field_length(index);
@@ -76,8 +187,12 @@ size_t UplinkProducer::add_entry( bitstream& bs, char* val, size_t index)
     ++index;
     bits_written += bs.editN(index_size, (uint8_t*)&index);
 
-    // Write the specified number of    bits from val
-    bits_written += bs.editN(field_size, reinterpret_cast<uint8_t*>(val));
+    // Create a temporary bitstream from the bit array
+    char tmp [field_size];
+    bitstream bs_temp(tmp, field_size);
+
+    // Write bit array/bs_temp to the bitstream
+    bits_written += bs.editN(field_size, bs_temp);
    
     return bits_written;
 }

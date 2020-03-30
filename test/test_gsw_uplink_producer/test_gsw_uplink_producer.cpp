@@ -1,7 +1,7 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #define DEBUG
-#include <fsw/GroundCode/UplinkProducer.h>
+#include <gsw/parsers/src/UplinkProducer.h>
 
 #include <unity.h>
 #include <fstream>
@@ -20,7 +20,7 @@ class TestFixture {
          uplink_producer = std::make_unique<UplinkProducer>(registry);
         // Create dummy fields
     }
-    // Checks that each of the witable fields specified in json file are set to the
+    // Checks that each of the writable fields specified in json file are set to the
     // value specified in the json file
     void check_json_registry(const char* filename)
     {
