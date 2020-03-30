@@ -121,7 +121,10 @@ class RadioSession(object):
     def parsetelem(self):
         #get newest file
         telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
-        newest_telem_file = max(telem_files, key=os.path.basename)
+        try:
+            newest_telem_file = max(telem_files, key=os.path.basename)
+        except ValueError:
+            return "No telemetry to parse."
         self.console.write((newest_telem_file+"\n").encode())
         telem_json_data = json.loads(self.console.readline().rstrip())
         self.console.write((newest_telem_file+"\n").encode()) #twice to push response from downlinker parser
