@@ -24,6 +24,7 @@ def sum_of_differentials(lists_of_vals):
         total_diff = [diff[x] + total_diff[x] for x in range(len(total_diff))]
 
     return sum(total_diff)
+    
 class ADCSCheckoutCase(SingleSatOnlyCase):
 
     @property
@@ -111,7 +112,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.logger.put("Post disabling all devices:")
         self.print_havt_read()
-        self.soft_assert(([0 for x in range(self.havt_length)] == self.havt_read), 
+        self.soft_assert(all([x == 0 for x in self.havt_read]), 
             "Disabling all devices failed")
 
         # reset all devices
@@ -163,11 +164,12 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             list_of_gyr_rds += [self.rs("adcs_monitor.gyr_vec")]
 
         # for each reading check, magnitude bounds
-        # expected rotation???
         self.logger.put("GYR readings: ")
         for i in range(10):
             mag = mag_of(list_of_gyr_rds[i])
             self.logger.put(f"{list_of_gyr_rds[i]}, mag: {mag}")
+            # 3.8 is approximately the maximum possible magnitude GYR reading.
+            # 125 * 0.017 = max_rd_omega
             # 3.8 ~= sqrt((125 * 0.017)^2 * 3)
             self.soft_assert((0 < mag and mag < 3.8),
                 "Gyr reading out of expected bounds.")
