@@ -129,11 +129,11 @@ class ControlTask : protected debug_console {
         }
     }
 
-    template<class C>
-    void check_templated_field_exists(const StateFieldBase* ptr,
-            const std::string& field_type, const char* field_name) {
+    template<class C, class D>
+    void check_templated_field_exists(const C* ptr, const std::string& field_type,
+            const char* field_name) {
         check_field_exists(ptr, field_type, field_name);
-        if (!DYNAMIC_CAST(const C*, ptr)) {
+        if (!DYNAMIC_CAST(const D*, ptr)) {
             #ifdef UNIT_TEST
                 #ifdef DESKTOP
                     std::cout << field_type << " field \"" << field_name
@@ -161,21 +161,21 @@ class ControlTask : protected debug_console {
     template<typename U>
     InternalStateField<U>* find_internal_field(const char* field, const char* file, const unsigned int line) {
         InternalStateFieldBase* field_ptr = _registry.find_internal_field(field);
-        check_templated_field_exists<InternalStateField<U>>(field_ptr, "internal", field);
+        check_templated_field_exists<InternalStateFieldBase, InternalStateField<U>>(field_ptr, "internal", field);
         return DYNAMIC_CAST(InternalStateField<U>*, field_ptr);
     }
 
     template<typename U>
     ReadableStateField<U>* find_readable_field(const char* field, const char* file, const unsigned int line) {
         ReadableStateFieldBase* field_ptr = _registry.find_readable_field(field);
-        check_templated_field_exists<ReadableStateField<U>>(field_ptr, "readable", field);
+        check_templated_field_exists<ReadableStateFieldBase, ReadableStateField<U>>(field_ptr, "readable", field);
         return DYNAMIC_CAST(ReadableStateField<U>*, field_ptr);
     }
 
     template<typename U>
     WritableStateField<U>* find_writable_field(const char* field, const char* file, const unsigned int line) {
         WritableStateFieldBase* field_ptr = _registry.find_writable_field(field);
-        check_templated_field_exists<WritableStateField<U>>(field_ptr, "writable", field);
+        check_templated_field_exists<WritableStateFieldBase, WritableStateField<U>>(field_ptr, "writable", field);
         return DYNAMIC_CAST(WritableStateField<U>*, field_ptr);
     }
 
