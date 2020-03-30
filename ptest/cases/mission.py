@@ -42,20 +42,20 @@ class DeploymentToStandby(SingleSatOnlyCase):
         satellite_state, true_elapsed = self.query_fc()
 
         if self.test_stage == 'startup':
-            print("")
-            print("[TESTCASE] Entering startup state.")
+            self.logger.put("")
+            self.logger.put("[TESTCASE] Entering startup state.")
 
             if not satellite_state == "startup":
                 raise TestCaseFailure(f"Satellite was not in state {self.test_stage}.")
             self.test_stage = 'deployment_hold'
-            print("[TESTCASE] Waiting for the deployment period to be over.")
+            self.logger.put("[TESTCASE] Waiting for the deployment period to be over.")
 
         elif self.test_stage == 'deployment_hold':
             self.elapsed_deployment += 1
 
             if self.elapsed_deployment == self.deployment_hold_length:
                 if satellite_state == "detumble":
-                    print("[TESTCASE] Deployment period is over. Entering detumble state.")
+                    self.logger.put("[TESTCASE] Deployment period is over. Entering detumble state.")
                     self.num_detumble_cycles = 0
                     self.test_stage = 'detumble_wait'
                 elif satellite_state == "initialization_hold":
@@ -68,18 +68,13 @@ class DeploymentToStandby(SingleSatOnlyCase):
             self.num_detumble_cycles += 1
             if self.num_detumble_cycles >= self.max_detumble_cycles or satellite_state == "standby":
                 if satellite_state == "standby":
-                    print("[TESTCASE] Successfully detumbled. Now in standby state.")
+                    self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
                     self.test_stage = 'standby'
                 else:
                     raise TestCaseFailure("Satellite failed to exit detumble.")
 
         elif self.test_stage == 'standby':
-            print("[TESTCASE] Finished test case.")
-            self.test_stage = 'finished'
-
-        elif self.test_stage == 'finished':
-            # Stand by and do nothing.
-            pass
+            self.finish()
 
         else:
             raise TestCaseFailure("Invalid test case stage: {self.test_stage}.")
