@@ -1,26 +1,18 @@
 #include <gsw/parsers/src/UplinkProducer.h>
 #include <flow_data.hpp>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 #ifndef UNIT_TEST
-int main(int argc, char** argv) {{
+int main() {
     StateFieldRegistry reg;
     UplinkProducer producer(reg);
-
-    if (argc < 2) {
-        std::cout << "You must specify an input JSON file." << std::endl;
+    std::string filename;
+    while(true) {
+        std::getline(std::cin, filename);
+        producer.create_sbd_from_json(filename, "uplink.sbd");
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
-    else if (argc < 3) {
-        std::cout << "You must specify an output filename." << std::endl;
-    }
-    else if (argc > 3) {
-        std::cout << "Too many  arguments." << std::endl;
-    }
-
-    char packet[70];
-    bitstream bs(packet, 70);
-    producer.create_from_json(bs, std::string(argv[1]));
-    producer.to_file(bs, std::string(argv[2]));
-    return 0;
-}}
+}
 #endif

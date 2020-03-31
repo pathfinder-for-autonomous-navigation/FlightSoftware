@@ -274,11 +274,6 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     break;
                 }
 
-                // Write the telemetry into a JSON object and pass it into an internal statefield
-                // std::string uplink = "{\""+field.as<std::string>()+"\":\""+field_val.as<std::string>()+"\"}";
-                // InternalStateField<std::string> telem_f("uplink.telem");
-                // registry.add_internal_field(static_cast<InternalStateFieldBase*>(telem_f));
-
                 WritableStateField<bool>* load_telem_fp = static_cast<WritableStateField<bool>*>(registry.find_writable_field("telem.load"));
                 load_telem_fp->set(true);
             } break;
@@ -288,34 +283,6 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
         }
     }
 }
-
-void create_uplink_packet() {}
-
-// void debug_console::uplink_commands(const StateFieldRegistry &registry, unsigned int time, JsonVariant telem) {
-//     //telem["pan.cycle_no"] = time;
-
-//     // Write the telemetry into a JSON file
-//     std::ofstream o("telem.json");
-//     o << std::setw(4) << telem << std::endl;
-
-//     // Create an uplink packet using the JSON file
-//     size_t arr_size = UplinkProducer::get_max_possible_packet_size();
-//     char tmp [arr_size];
-//     bitstream bs(tmp, arr_size);
-//     UplinkProducer::create_from_json(bs, "telem.json");
-
-//     std::remove("telem.json"); // delete file
-
-//     // Add the uplink packet to the radio mt buffer so that it can be processed  on the next control cycle
-    
-//     InternalStateField<char*>* radio_mt_packet_fp = static_cast<InternalStateField<char*>*>(registry.find_internal_field("uplink.ptr"));
-//     InternalStateField<size_t>* radio_mt_len_fp = static_cast<InternalStateField<size_t>*>(registry.find_internal_field("uplink.len"));
-//     radio_mt_packet_fp->set(tmp);
-//     radio_mt_len_fp->set(bs.max_len);
-    
-//     WritableStateField<bool>* load_telem_fp = static_cast<WritableStateField<bool>*>(registry.find_writable_field("telem.load"));
-//     load_telem_fp->set(true);
-// }
 
 #ifdef DESKTOP
 void debug_console::_reader() {

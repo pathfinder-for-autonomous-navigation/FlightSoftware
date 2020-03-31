@@ -5,6 +5,9 @@ import threading
 import json
 import traceback
 import queue
+import os
+import pty
+import subprocess
 
 from .data_consumers import Datastore, Logger
 
@@ -40,6 +43,13 @@ class StateSession(object):
 
         # Simulation
         self.overriden_variables = set()
+
+        # Open a subprocess to Uplink Producer
+        filepath = os.path.dirname(os.path.abspath(__file__))
+        binary_dir = os.path.join(filepath, "../.pio/build/gsw_uplink_producer/program")
+        master_fd, slave_fd = pty.openpty()
+        self.uplink_producer = subprocess.Popen([binary_dir], stdin=master_fd, stdout=master_fd)
+        self.uplink_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
     def connect(self, console_port, baud_rate):
         '''
@@ -264,51 +274,35 @@ class StateSession(object):
             if field_val_pair[0] not in self.overriden_variables
         ]
         fields, vals = zip(*field_val_pairs)
-
-        fields = list(fields)
-        vals = list(vals)
+        fields, vals = list(fields), list(vals)
 
         assert len(fields) == len(vals)
         assert len(fields) <= 20, "Flight Software can't handle more than 20 state field uplinks at a time"
 
-        json_cmds = ""
+        # Create a JSON file with all the fields and values
+        telem_json={}
         for field, val in zip(fields, vals):
-            json_cmd = {
-                'mode': ord('u'),
-                'field': str(field),
-                'val': str(val)
-            }
-            json_cmd = json.dumps(json_cmd) + "\n"
-            json_cmds += json_cmd
+            telem_json[field]=int(val)
+        with open('telem.json', 'w') as telem_file:
+            json.dump(telem_json, telem_file)
 
-        if len(json_cmds) >= 512:
+        # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
+        # holding the uplink packet. Stuck here - not working
+        self.uplink_console.write(("telem.json\n").encode())
+
+        json_cmd = {
+            'mode': ord('u')
+        }
+        json_cmd = json.dumps(json_cmd) + "\n"
+
+        if len(json_cmd) >= 512:
             print("Error: Flight Software can't handle input buffers >= 512 bytes.")
             return False
 
         self.device_write_lock.acquire()
-        self.console.write(json_cmds.encode())
+        self.console.write(json_cmd.encode())
         self.device_write_lock.release()
-        self.raw_logger.put("Sent:     " + json_cmds)
-
-        # returned_vals = []
-        # for field in fields:
-        #     returned_vals.append(self._wait_for_state(field, timeout))
-
-        # if returned_vals[0] is None:
-        #     return False
-
-        # returned_vals = returned_vals[0].split(",")
-        # returned_vals = [x for x in returned_vals if x is not ""]
-        
-        # if (returned_vals[0].replace('.','').replace('-','')).isnumeric():
-        #     numeric_returned_vals = [float(x) for x in returned_vals]
-        #     if type(vals[0]) == str:
-        #         vals = vals[0]
-        #         vals = [float(x) for x in vals.split(",") if x is not '']
-
-        #     return numeric_returned_vals == vals
-
-        # return returned_vals == vals
+        self.raw_logger.put("Sent:     " + json_cmd)
         return True
 
     def override_state(self, field, *args, **kwargs):

@@ -77,11 +77,6 @@ class debug_console {
     void process_commands(const StateFieldRegistry &registry);
 
     /**
-     * @brief Represents an uplink as a json string. Used to send uplinks over USB
-     */
-    InternalStateField<std::string> telem;
-
-    /**
      * @brief Helper method to write state fields to the console. State fields might
      * be written to the console if they were requested by the computer or if they're
      * "always-on" debugging telemetry.
