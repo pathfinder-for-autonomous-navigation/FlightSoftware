@@ -62,6 +62,7 @@ public:
 
   char* const get_MT_msg()
   {
+    #ifdef
     return quake.mt_message;
   }
 

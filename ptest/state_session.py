@@ -274,8 +274,9 @@ class StateSession(object):
             if field_val_pair[0] not in self.overriden_variables
         ]
         fields, vals = zip(*field_val_pairs)
-        fields, vals = list(fields), list(vals)
 
+        # Check that the field-val pairs can be processed
+        fields, vals = list(fields), list(vals)
         assert len(fields) == len(vals)
         assert len(fields) <= 20, "Flight Software can't handle more than 20 state field uplinks at a time"
 
@@ -287,9 +288,11 @@ class StateSession(object):
             json.dump(telem_json, telem_file)
 
         # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
-        # holding the uplink packet. Stuck here - not working
+        # holding the uplink packet.
         self.uplink_console.write(("telem.json\n").encode())
+        os.remove("telem.json") # remove the json file
 
+        # Send a command to the console to start processing the uplink sbd file
         json_cmd = {
             'mode': ord('u')
         }

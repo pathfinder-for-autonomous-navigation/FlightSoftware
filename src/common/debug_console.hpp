@@ -5,7 +5,7 @@
 #include <cassert>
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
-#include <ArduinoJson.h>
+#include <fsw/FCCode/Drivers/QLocate.hpp>
 
 #ifdef DESKTOP
     #include <chrono>

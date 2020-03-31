@@ -274,6 +274,8 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     break;
                 }
 
+                // Move the uplink file to the MT buffer
+                
                 WritableStateField<bool>* load_telem_fp = static_cast<WritableStateField<bool>*>(registry.find_writable_field("telem.load"));
                 load_telem_fp->set(true);
             } break;
