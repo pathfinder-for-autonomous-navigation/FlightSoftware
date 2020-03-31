@@ -101,7 +101,7 @@ void DockingSystem::start_undock() {
 void DockingSystem::step_motor() {
     #ifndef DESKTOP
     digitalWrite(motor_step_pin, LOW);
-    delayMicroseconds(1000);
+    delayMicroseconds(step_delay);
     digitalWrite(motor_step_pin, HIGH);
     #endif
     steps=steps-1;
