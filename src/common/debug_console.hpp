@@ -5,7 +5,6 @@
 #include <cassert>
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
-#include <fsw/FCCode/Drivers/QLocate.hpp>
 
 #ifdef DESKTOP
     #include <chrono>
