@@ -19,6 +19,18 @@ void UplinkConsumer::execute()
     if (validate_packet())
         update_fields();
 
+    #ifdef FUNCTIONAL_TEST
+        #ifdef DESKTOP
+        std::cout << "{\"t\":" << debug_console::_get_elapsed_time() << ",\"packet\":\"";
+        std::cout << "found a packet in consumer";
+        std::cout << "\"}\n";
+        #else
+        Serial.printf("{\"t\":%d,\"packet\":\"", debug_console::_get_elapsed_time());
+        Serial.printf("found a packet in consumer");
+        Serial.print("\"}\n");
+        #endif
+    #endif
+
     // clear len always
     radio_mt_packet_len_fp->set(0);
 }

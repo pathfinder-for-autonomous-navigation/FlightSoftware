@@ -110,18 +110,6 @@ bool QuakeManager::execute() {
             Serial.print("\"}\n");
         #endif
     }
-    if (load_telemetry_f.get()) {
-        load_telemetry_f.set(false);
-        #ifdef DESKTOP
-            std::cout << "{\"t\":" << debug_console::_get_elapsed_time() << ",\"packet\":\"";
-            std::cout << "found a packet";
-            std::cout << "\"}\n";
-        #else
-            Serial.printf("{\"t\":%d,\"packet\":\"", debug_console::_get_elapsed_time());
-            Serial.printf("found a packet");
-            Serial.print("\"}\n");
-        #endif
-    }
     #endif
 
     const radio_state_t radio_state = static_cast<radio_state_t>(radio_state_f.get());

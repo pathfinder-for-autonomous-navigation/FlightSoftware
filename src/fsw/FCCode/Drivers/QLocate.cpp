@@ -9,6 +9,8 @@
 // Updated 12/23/2019
 //
 #include "QLocate.hpp"
+#include <fstream>
+#include <iostream>
 #ifndef DESKTOP
 #include <Arduino.h>
 #define DEBUG_ENABLED
@@ -184,6 +186,33 @@ int QLocate::query_sbdrb_1()
 
 int QLocate::get_sbdrb()
 {
+#ifdef FUNCTIONAL_TEST
+    memset(mt_message, 0, MAX_MSG_SIZE);
+
+    // Get uplink packet and length of file if it exists
+    std::ifstream fs("uplink.sbd");
+    if (fs) {
+        std::cout<<"yay found it!";
+    //     fs.seekg(0, std::ios::end);
+    //     size_t length = fs.tellg();
+    //     fs.seekg(0, std::ios::beg);
+
+    //     // don't overflow the buffer!
+    //     if (length > MAX_MSG_SIZE)
+    //     {
+    //     length = MAX_MSG_SIZE;
+    //     }
+
+    //     //read the file into the buffer
+    //     fs.read(mt_message, length);
+    //     fs.close();
+
+    //     // Record length of packet
+    //     sbdix_r[4] = length;
+
+    //     return OK;
+    }
+#endif
 #ifndef DESKTOP
     CHECK_PORT_AVAILABLE();
     uint8_t sbuf[3];
