@@ -290,7 +290,8 @@ class StateSession(object):
         # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
         # holding the uplink packet.
         self.uplink_console.write(("telem.json\n").encode())
-        os.remove("telem.json") # remove the json file
+        self.uplink_console.write(("uplink.sbd\n").encode())
+        #os.remove("telem.json") # remove the json file
 
         # Send a command to the console to start processing the uplink sbd file
         json_cmd = {
