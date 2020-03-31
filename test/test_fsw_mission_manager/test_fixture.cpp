@@ -14,7 +14,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
 
     prop_state_fp = registry.create_readable_field<unsigned char>("prop.state", 2);
 
-    propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
+    propagated_baseline_pos_fp = registry.create_readable_lin_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
 
     reboot_fp = registry.create_writable_field<bool>("gomspace.gs_reboot_cmd");
@@ -148,7 +148,11 @@ void TestFixture::set_ccno(unsigned int ccno) {
 }
 
 // Set the distance between the two satellites.
-void TestFixture::set_sat_distance(double dist) { propagated_baseline_pos_fp->set({dist, 0, 0}); }
+void TestFixture::set_sat_distance(double dist) {
+    lin::Vector3d temp;
+    temp(0) = dist; temp(1) = 0; temp(2) = 0;
+    propagated_baseline_pos_fp->set(temp);
+}
 
 // Set the # of control cycles that comms has not been established
 // with the ground.

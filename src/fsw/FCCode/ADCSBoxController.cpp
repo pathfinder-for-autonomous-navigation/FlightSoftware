@@ -22,6 +22,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         mtr_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
         mtr_limit_fp = find_writable_field<float>("adcs_cmd.mtr_limit", __FILE__, __LINE__);
 
+        ssa_mode_fp = find_readable_field<int>("adcs_monitor.ssa_mode", __FILE__, __LINE__);
         ssa_voltage_filter_fp = find_writable_field<float>("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
 
         imu_mode_fp = find_writable_field<unsigned char>("adcs_cmd.imu_mode", __FILE__, __LINE__);

@@ -3,6 +3,7 @@
 #include <fsw/FCCode/MainControlLoop.hpp>
 #include <fsw/FCCode/UplinkCommon.h>
 #include <map>
+#include <json.hpp>
 
 /**
  * UplinkProducer provides operations on a bitstream. A bitstream represents
@@ -44,6 +45,44 @@ class UplinkProducer : public Uplink{
      * Return the maximum possible packet size
      */
     const size_t get_max_possible_packet_size();
+
+    /**
+     * Helper function for add_field_to_bitstream.
+     * Check that the field/key of a given type is in the statefield registry.
+     * If it is, add the value of the field/key to the bitstream
+     */
+    template<typename UnderlyingType>
+    size_t try_add_field(bitstream bs, std::string key, nlohmann::json j);
+
+    /**
+     * Helper function for add_field_to_bitstream.
+     * Check that the vector statefield of a given type is in the statefield registry.
+     * If it is, add the value of the field/key to the bitstream
+     */
+    template<typename UnderlyingType>
+    size_t try_add_vector_field(bitstream bs, std::string key, nlohmann::json j);
+
+    /**
+     * Helper function for add_field_to_bitstream.
+     * Check that the quaternion statefield of a given type is in the statefield registry.
+     * If it is, add the value of the field/key to the bitstream
+     */
+    template<typename UnderlyingType>
+    size_t try_add_quat_field(bitstream bs, std::string key, nlohmann::json j);
+
+    /**
+     * Helper function for add_field_to_bitstream.
+     * Check that the time statefield of a given type is in the statefield registry.
+     * If it is, add the value of the field/key to the bitstream
+     */
+    size_t try_add_gps_time(bitstream bs, std::string key, nlohmann::json j);
+
+    /**
+     * Check that a field is in the registry. If it is, add the value to the bitstream.
+     * @return number of bits written if successful
+     */
+    size_t add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j);
+
 #ifndef DEBUG
   private:
 #endif
@@ -53,7 +92,7 @@ class UplinkProducer : public Uplink{
      * @throw runtime_error if invalid index is specified
      * @return the number of bits written
      */ 
-    size_t add_entry(bitstream& bs, char* val, size_t index);
+    size_t add_entry(bitstream& bs, const bit_array& val, size_t index);
 
     MainControlLoop fcp;
 
