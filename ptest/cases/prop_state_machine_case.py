@@ -3,6 +3,7 @@ import time
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
+min_num_cycles = 1202
 class PropStateMachineCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
         self.sim.flight_controller.write_state(
@@ -149,7 +150,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
         self.write_state("prop.pressurize_fail", str(val))
 
     def print_object(self):
-        print(f"[TESTCASE] state: {self.state}")
+        print(f"[TESTCASE] state: { self.prop_states.get_by_num(int(self.state))}")
         print(f"[TESTCASE] cycles_until_firing: {self.cycles_until_firing}")
         print(f"[TESTCASE] sched_valve1: {self.sched_valve1}")
         print(f"[TESTCASE] sched_valve2: {self.sched_valve2}")
@@ -173,7 +174,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
 
     # Step the state machine (maximum of max_cycles) until prop.state changes
     # Return the number of cycles
-    def cycle_until_change(self, verbose=False, max_cycles=1204):
+    def cycle_until_change(self, verbose=False, max_cycles=min_num_cycles):
         old_state = self.state
         for i in range(max_cycles):
             if self.state != old_state:
@@ -200,7 +201,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
         self.sched_valve2 = 700
         self.sched_valve3 = 800
         self.sched_valve4 = 400
-        self.cycles_until_firing = 1204
+        self.cycles_until_firing = min_num_cycles + 2
         self.cycle()
         assert self.state == str(self.prop_states.get_by_name("await_pressurizing")), "[TESTCASE] failed: state != await_pressurizing" 
         
@@ -230,6 +231,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
     
     def test_firing_to_idle(self):
         print("[TESTCASE] test_firing_to_idle")
+        print("[TESTCASE] Expect this test case to fail on native platforms")
         assert self.state == str(self.prop_states.get_by_name("firing")), "[TESTCASE] failed: state != firing"
         # Verbse is True since we want to watch the pressure schedule decrease
         print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change(True)}")
