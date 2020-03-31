@@ -39,7 +39,8 @@ class DockingCheckoutCase(SingleSatOnlyCase):
       while dock_config:
         self.cycle()
         dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
-        self.log_docking_states()
+        if int(self.read_state("pan.cycle_no"))%100 == 0 or not dock_config:
+          self.log_docking_states()
       self.logger.put("Successfully finished undocking config command\n")
 
     def dock(self):
@@ -52,8 +53,8 @@ class DockingCheckoutCase(SingleSatOnlyCase):
       while not dock_config:
         self.cycle()
         dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
-        self.log_docking_states()
-           
+        if int(self.read_state("pan.cycle_no"))%100 == 0 or dock_config:
+          self.log_docking_states()
       self.logger.put("Successfully finished docking command\n")
 
     def run_case_singlesat(self):

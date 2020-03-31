@@ -20,7 +20,7 @@ bool DockingSystem::setup() {
 
         // set current limit (I2 low, I1 93.8% duty cycle)
         digitalWrite(motor_i2_pin, LOW);
-        analogWrite(motor_i1_pin, 239);
+        analogWrite(motor_i1_pin, 239); //why is this so different from the arduino script (3645 or 3809) ?
 
         // SLEEP pins is set low to enable sleep
         digitalWrite(motor_sleep_pin, LOW);
