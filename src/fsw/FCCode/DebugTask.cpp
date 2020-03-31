@@ -3,8 +3,8 @@
 #ifdef FUNCTIONAL_TEST
 DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "debug", offset),
-      start_cycle_f("cycle.start", Serializer<bool>(),
-      auto_cycle_f("cycle.auto", Serializer<bool>())) {
+      start_cycle_f("cycle.start", Serializer<bool>()),
+      auto_cycle_f("cycle.auto", Serializer<bool>()) {
   add_writable_field(start_cycle_f);
   add_writable_field(auto_cycle_f);
   init();
