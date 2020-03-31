@@ -48,7 +48,7 @@ class AttitudeEstimator : public TimedControlTask<void> {
     //! Position of this satellite, Vector of doubles
     const ReadableStateField<d_vector_t>* pos_vec_ecef_fp;
     //! Sun vector of this satellite, in the body frame.
-    const ReadableStateField<f_vector_t>* ssa_vec_rd_fp;
+    const ReadableStateField<lin::Vector3f>* ssa_vec_rd_fp;
     //! Magnetic field vector of this satellite in the body frame.
     const ReadableStateField<f_vector_t>* mag_vec_fp;
 
@@ -59,9 +59,9 @@ class AttitudeEstimator : public TimedControlTask<void> {
 
     //AttitudeEstimate
     // Quaternion that converts from the ECI frame to the body frame
-    ReadableStateField<f_quat_t> q_body_eci_f;
+    ReadableStateField<lin::Vector4f> q_body_eci_f;
     // Angular velocity of spacecraft in body frame
-    ReadableStateField<f_vector_t> w_body_f;
+    ReadableStateField<lin::Vector3f> w_body_f;
     // Angular momentum of spacecraft in body frame
     InternalStateField<lin::Vector3f> h_body_f;
 

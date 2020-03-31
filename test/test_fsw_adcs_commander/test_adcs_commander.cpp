@@ -16,10 +16,10 @@ class TestFixture {
         // Pointers to input statefields
         std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
         // std::vector<std::shared_ptr<WritableStateField<bool>>> havt_read_table_vector_fp;
-        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec1_current_fp;
-        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec1_desired_fp;
-        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec2_current_fp;
-        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec2_desired_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec1_current_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec1_desired_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec2_current_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec2_desired_fp;
 
         // Pointers to output statefields
         WritableStateField<unsigned char>* rwa_mode_fp;
@@ -50,10 +50,10 @@ class TestFixture {
         TestFixture() : registry(){
             adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
 
-            adcs_vec1_current_fp = registry.create_writable_vector_field<float>("adcs.compute.vec1.current", 0, 1, 100);
-            adcs_vec1_desired_fp = registry.create_writable_vector_field<float>("adcs.compute.vec1.desired", 0, 1, 100);
-            adcs_vec2_current_fp = registry.create_writable_vector_field<float>("adcs.compute.vec2.current", 0, 1, 100);
-            adcs_vec2_desired_fp = registry.create_writable_vector_field<float>("adcs.compute.vec2.desired", 0, 1, 100);
+            adcs_vec1_current_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec1.current", 0, 1, 100);
+            adcs_vec1_desired_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec1.desired", 0, 1, 100);
+            adcs_vec2_current_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec2.current", 0, 1, 100);
+            adcs_vec2_desired_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec2.desired", 0, 1, 100);
 
             adcs_cmder = std::make_unique<ADCSCommander>(registry, 0);  
 
