@@ -22,44 +22,43 @@ class DockingCheckoutCase(SingleSatOnlyCase):
         self.sim.flight_controller.write_state(string_state, state_value)
         return self.read_state(string_state)
 
+    def log_docking_states(self):
+      self.logger.put("Cycle: " + self.read_state("pan.cycle_no") 
+                      + "\tdock_config: " + self.read_state("docksys.dock_config") 
+                      + "\tturning: " + self.read_state("docksys.is_turning") 
+                      + "\tdocked: " + self.read_state("docksys.docked") 
+                      + "\tdock_cmd: " + self.read_state("docksys.config_cmd"))
+
     def undock(self):
-      self.logger.put("Starting to undock.")
-      docking_config_cmd = self.write_state("docksys.config_cmd", "false")
+      #send command to go into undocked configuration
+      docking_config_cmd = self.write_state("docksys.config_cmd", "false")     
+      self.logger.put("\nStarting to undock.")
       dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
+      self.log_docking_states()
+      #wait for undocking to finish
       while dock_config:
-        self.write_state("cycle.start", "true")
-        cycle_no = int(self.read_state("pan.cycle_no"))
-        self.write_state("pan.cycle_no", cycle_no + 1)
-        self.logger.put(str(cycle_no))
-        dock_config = self.read_state("docksys.dock_config")
-        self.logger.put("dock_config: " + dock_config + "\tturning: " + self.read_state("docksys.is_turning") + "\tdocked: " + self.read_state("docksys.docked") + "\tdockcmd: " + self.read_state("docksys.config_cmd"))
-      if(not dock_config):
-        self.logger.put("Successfully finished undocking config command")
-      else:  
-        self.logger.put("Undocking attempt unsuccessful")
+        self.cycle()
+        dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
+        self.log_docking_states()
+      self.logger.put("Successfully finished undocking config command\n")
 
     def dock(self):
-      self.logger.put("Starting to dock.")
+      #send command to go into docked configuration
       docking_config_cmd = self.write_state("docksys.config_cmd", "true")
+      self.logger.put("\nStarting to dock.")
       dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
+      self.log_docking_states()     
+      #wait for docking to finish
       while not dock_config:
-        self.write_state("cycle.start", "true")
-        cycle_no = int(self.read_state("pan.cycle_no"))
-        self.write_state("pan.cycle_no", cycle_no + 1)
-        self.logger.put(str(cycle_no))
-        dock_config = self.read_state("docksys.dock_config")
-        self.logger.put("dock_config: " + dock_config + "\tturning: " + self.read_state("docksys.is_turning") + "\tdocked: " + self.read_state("docksys.docked") + "\tdockcmd: " + self.read_state("docksys.config_cmd"))
-      if(dock_config):
-        self.logger.put("Successfully finished docking command")
-      else:  
-        self.logger.put("Docking attempt unsuccessful")
+        self.cycle()
+        dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
+        self.log_docking_states()
+           
+      self.logger.put("Successfully finished docking command\n")
 
     def run_case_singlesat(self):
-        self.sim.cycle_no = self.sim.flight_controller.read_state(
-            "pan.cycle_no")
-        self.sim.flight_controller.write_state("adcs.state", 5) # ADCS State = Manual
-        self.write_state("dcdc.SpikeDock_cmd", "true")
-        self.write_state("dcdc.ADCSMotor_cmd", "true")
+        self.sim.cycle_no = self.read_state("pan.cycle_no")
+
         # initially, docksys is in the docking configuration but not docked, not turning 
         # and is docking. 
         assert(self.str_to_bool(self.read_state("docksys.dock_config")))
@@ -68,20 +67,22 @@ class DockingCheckoutCase(SingleSatOnlyCase):
         assert(self.str_to_bool(self.read_state("docksys.config_cmd")))
 
         # read and check initial speed is what we expect
-        assert(abs( float(self.read_state("docksys.step_angle")) - 0.032 ) < 0.0001)
+        assert(abs( float(self.read_state("docksys.step_angle")) - 0.032 ) < 0.0001) # will take 180/.032 = 5625 cycles to complete
         assert(int(self.read_state("docksys.step_delay")) == 4000)
 
-        #test switch config to undock (rotate 180)
-        self.undock()
-        # tell the system to go to docking config 
-        self.dock()
+
+        self.logger.put("\nTesting docking and undocking with initial step angle of 0.032 and step delay of 4000. \nDocking and Undocking should take 5625 cycles.\n")
+        self.undock()   #test switch config to undock (rotate 180)
+        self.dock()     # tell the system to go to docking config 
+
 
         # write different step angle and delay and repeat docking cycle
         # testing data shows step angle is around 180/5000 = 0.036, but 
         # we do not have the theoretical value and it may change with different
         # loading conditions.
-        self.write_state("docksys.step_angle", "0.036") #initial is .032
-        self.write_state("docksys.step_delay", "2000") #initial is 4000
+        self.logger.put("\nChanging step angle from 0.032 to 0.036 and step delay from 4000 to 2000. \nDocking and Undocking should take 5000 cycles.\n")
+        self.write_state("docksys.step_angle", "0.036") 
+        self.write_state("docksys.step_delay", "2000") 
 
         self.undock()
         self.dock()
