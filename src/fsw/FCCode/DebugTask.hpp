@@ -31,8 +31,7 @@ protected:
    */
   WritableStateField<bool> start_cycle_f;
   /**
-   * @brief If this state field is true, Debug task will not wait for start_cycle_f
-   * to be true before calling process commands and moving on.
+   * @brief If this state field is true, DebugTask will call process_commands() once, then move on.
    * 
    */
   WritableStateField<bool> auto_cycle_f;
