@@ -23,7 +23,7 @@ UplinkProducer::UplinkProducer(StateFieldRegistry& r):
  }
 
 template<typename UnderlyingType>
-size_t UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::json j) {
+size_t UplinkProducer::try_add_field(bitstream &bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     WritableStateField<UnderlyingType>* ptr = dynamic_cast<WritableStateField<UnderlyingType>*>(registry.find_writable_field(key));
 
@@ -55,7 +55,7 @@ size_t UplinkProducer::try_add_field(bitstream bs, std::string key, nlohmann::js
 }
 
 template<typename UnderlyingType>
-size_t UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohmann::json j) {
+size_t UplinkProducer::try_add_vector_field(bitstream& bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     using UnderlyingVectorType = std::array<UnderlyingType, 3>;
     WritableStateField<UnderlyingVectorType>* ptr = dynamic_cast<WritableStateField<UnderlyingVectorType>*>(registry.find_writable_field(key));
@@ -80,7 +80,7 @@ size_t UplinkProducer::try_add_vector_field(bitstream bs, std::string key, nlohm
 }
 
 template<typename UnderlyingType>
-size_t UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohmann::json j) {
+size_t UplinkProducer::try_add_quat_field(bitstream& bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     static_assert(std::is_same<UnderlyingType, double>::value || std::is_same<UnderlyingType, float>::value,
         "Can't collect quaternion field info for a vector of non-float or non-double type.");
@@ -105,7 +105,7 @@ size_t UplinkProducer::try_add_quat_field(bitstream bs, std::string key, nlohman
     return add_entry(bs, ptr->get_bit_array(), field_index);
 }
 
-size_t UplinkProducer::try_add_gps_time(bitstream bs, std::string key, nlohmann::json j) {
+size_t UplinkProducer::try_add_gps_time(bitstream& bs, std::string key, nlohmann::json j) {
     // Get pointer to that field in the registry
     WritableStateField<gps_time_t>* ptr = dynamic_cast<WritableStateField<gps_time_t>*>(registry.find_writable_field(key));
 
@@ -124,7 +124,7 @@ size_t UplinkProducer::try_add_gps_time(bitstream bs, std::string key, nlohmann:
     return add_entry(bs, ptr->get_bit_array(), field_index);
 }
 
-size_t UplinkProducer::add_field_to_bitstream(bitstream bs, std::string key, nlohmann::json j) {
+size_t UplinkProducer::add_field_to_bitstream(bitstream& bs, std::string key, nlohmann::json j) {
     size_t bits_written = 0;
     bits_written += try_add_field<unsigned int>(bs, key, j);
     bits_written += try_add_field<signed int>(bs, key, j);
@@ -190,7 +190,7 @@ size_t UplinkProducer::add_entry(bitstream& bs, const bit_array& val, size_t ind
 
     // Create a temporary bitstream from the bit array
     char tmp [field_size];
-    bitstream bs_temp(tmp, field_size);
+    bitstream bs_temp(val, tmp);
 
     // Write bit array/bs_temp to the bitstream
     bits_written += bs.editN(field_size, bs_temp);
