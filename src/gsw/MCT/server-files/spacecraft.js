@@ -34,11 +34,6 @@ axios.post('http://localhost:5000/telemetry', {
   field: "telemetry",
   imei: 123,
   value: 15
-
-})
-.then((res) => {
-  console.log(`statusCode: ${res.statusCode}`)
-  console.log(res)
 })
 .catch((error) => {
   console.error(error)
