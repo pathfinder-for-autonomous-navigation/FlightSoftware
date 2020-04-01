@@ -27,6 +27,32 @@
                     }
                 }
             ]
+        },
+        {
+            "name": "Incoming Telemetry",
+            "key": "incoming",
+            "values": [
+                {
+                    "key": "value",
+                    "name": "Value",
+                    "units": "Meters",
+                    "format": "float",
+                    "min": 0,
+                    "max": 100,
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
         }
     ]
 }

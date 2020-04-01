@@ -1,14 +1,16 @@
 /*
  Spacecraft.js simulates a small spacecraft generating telemetry.
 */
-const url = require('url');
-var request = require('request');
-
 
 function Spacecraft() {
     this.state = {
-        "batt.lvl": 77,
-        "incoming": 0
+        "prop.fuel": 77,
+        "prop.thrusters": "OFF",
+        "comms.recd": 0,
+        "comms.sent": 0,
+        "pwr.temp": 245,
+        "pwr.c": 8.15,
+        "pwr.v": 30
     };
     this.history = {};
     this.listeners = [];
@@ -20,25 +22,33 @@ function Spacecraft() {
         this.updateState();
         this.generateTelemetry();
     }.bind(this), 1000);
-    console.log("Spacecraft Launched")
+
+    console.log("Example spacecraft launched!");
+    console.log("Press Enter to toggle thruster state.");
+
     process.stdin.on('data', function () {
-          this.generateTelemetry();
+        this.state['prop.thrusters'] =
+            (this.state['prop.thrusters'] === "OFF") ? "ON" : "OFF";
+        this.state['comms.recd'] += 32;
+        console.log("Thrusters " + this.state["prop.thrusters"]);
+        this.generateTelemetry();
     }.bind(this));
 };
-var value = "0";
 
 Spacecraft.prototype.updateState = function () {
-
-  const myurl = url.parse('http://localhost:5000/search-es');
-  var propertiesObject = { index:'statefield_report_123', field:'telemetry' };
-  request({url:myurl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
-    if(err) { console.log(err); return; }
-    console.log("Get response: " + response.statusCode);
-    value = body;
-  });
-
-  this.state["incoming"] = parseInt(value,10);
-  this.state["batt.lvl"] = Math.max(0,this.state["batt.lvl"] - 1);
+    this.state["prop.fuel"] = Math.max(
+        0,
+        this.state["prop.fuel"] -
+            (this.state["prop.thrusters"] === "ON" ? 0.5 : 0)
+    );
+    this.state["pwr.temp"] = this.state["pwr.temp"] * 0.985
+        + Math.random() * 0.25 + Math.sin(Date.now());
+    if (this.state["prop.thrusters"] === "ON") {
+        this.state["pwr.c"] = 8.15;
+    } else {
+        this.state["pwr.c"] = this.state["pwr.c"] * 0.985;
+    }
+    this.state["pwr.v"] = 30 + Math.pow(Math.random(), 3);
 };
 
 /**
@@ -51,6 +61,7 @@ Spacecraft.prototype.generateTelemetry = function () {
         var state = { timestamp: timestamp, value: this.state[id], id: id};
         this.notify(state);
         this.history[id].push(state);
+        this.state["comms.sent"] += JSON.stringify(state).length;
     }, this);
 };
 
