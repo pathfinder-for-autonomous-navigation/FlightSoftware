@@ -3,6 +3,8 @@
 */
 const url = require('url');
 var request = require('request');
+const axios = require('axios')
+
 
 
 function Spacecraft() {
@@ -27,8 +29,23 @@ function Spacecraft() {
 };
 var value = "0";
 
-Spacecraft.prototype.updateState = function () {
+//Posts example telemetry to demonstrate elasticsearch integration
+axios.post('http://localhost:5000/telemetry', {
+  field: "telemetry",
+  imei: 123,
+  value: 15
 
+})
+.then((res) => {
+  console.log(`statusCode: ${res.statusCode}`)
+  console.log(res)
+})
+.catch((error) => {
+  console.error(error)
+})
+
+Spacecraft.prototype.updateState = function () {
+//HTTP gets the example telemetry and sets spacecraft state to the value
   const myurl = url.parse('http://localhost:5000/search-es');
   var propertiesObject = { index:'statefield_report_123', field:'telemetry' };
   request({url:myurl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
