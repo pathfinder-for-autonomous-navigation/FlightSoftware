@@ -291,23 +291,11 @@ class StateSession(object):
         # holding the uplink packet.
         self.uplink_console.write(("telem.json\n").encode())
         self.uplink_console.write(("uplink.sbd\n").encode())
-        #os.remove("telem.json") # remove the json file
+        
+        os.remove("telem.json") # remove the json file
+        self.raw_logger.put("Uplink:     " + json.dumps(telem_json))
 
-        # Send a command to the console to start processing the uplink sbd file
-        json_cmd = {
-            'mode': ord('u')
-        }
-        json_cmd = json.dumps(json_cmd) + "\n"
-
-        if len(json_cmd) >= 512:
-            print("Error: Flight Software can't handle input buffers >= 512 bytes.")
-            return False
-
-        self.device_write_lock.acquire()
-        self.console.write(json_cmd.encode())
-        self.device_write_lock.release()
-        self.raw_logger.put("Sent:     " + json_cmd)
-        return True
+        return os.path.exists("uplink.sbd")
 
     def override_state(self, field, *args, **kwargs):
         '''
