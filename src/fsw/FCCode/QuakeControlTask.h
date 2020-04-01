@@ -1,8 +1,5 @@
 #pragma once
 #include "Drivers/QLocate.hpp"
-#ifdef FUNCTIONAL_TEST
-#include <fstream>
-#endif
 
 /**
  * QLocate driver states
@@ -65,18 +62,6 @@ public:
 
   char* const get_MT_msg()
   { 
-    #ifdef FUNCTIONAL_TEST
-    // std::ifstream fs("uplink.sbd", std::ios::in | std::ios::binary);
-    // if (fs.is_open()) { 
-    //   fs.seekg (0, fs.end);
-    //   int length = fs.tellg();
-    //   fs.seekg (0, fs.beg);
-    //   // Read the file into the buffer
-    //   fs.read(quake.mt_message, length);
-    // }
-    // fs.close();
-    // Delete uplink file
-    #endif
     return quake.mt_message;
   }
 

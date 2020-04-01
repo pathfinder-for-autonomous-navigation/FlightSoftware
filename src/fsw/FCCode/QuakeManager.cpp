@@ -37,7 +37,6 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_state_f("radio.state"),
     last_checkin_cycle_f("radio.last_comms_ccno"), // Last communication control cycle #
     dump_telemetry_f("telem.dump", Serializer<bool>()),
-    load_telemetry_f("telem.load", Serializer<bool>()),
     qct(),
     mo_idx(0),
     unexpected_flag(false)
@@ -52,7 +51,6 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
 
     #ifdef FUNCTIONAL_TEST
     add_writable_field(dump_telemetry_f);
-    add_writable_field(load_telemetry_f);
     #endif
 
     // Retrieve fields from registry
@@ -69,7 +67,6 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     radio_state_f.set(static_cast<unsigned int>(radio_state_t::disabled));
     radio_state_f.set(static_cast<unsigned int>(radio_state_t::config));
     dump_telemetry_f.set(false);
-    load_telemetry_f.set(false);
 
     // Setup MO Buffers
     max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));

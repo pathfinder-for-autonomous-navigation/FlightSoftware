@@ -1,5 +1,4 @@
 #include "UplinkCommon.h"
-#include <iostream>
 
 Uplink::Uplink(StateFieldRegistry& r) : registry(r), index_size(0)
 {

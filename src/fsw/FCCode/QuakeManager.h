@@ -103,11 +103,6 @@ class QuakeManager : public TimedControlTask<bool> {
     */
    WritableStateField<bool> dump_telemetry_f;
 
-   /**
-    * @brief This flag can be used by the sim to load telemetry over the USB line.
-    */
-   WritableStateField<bool> load_telemetry_f;
-
   #ifdef DEBUG
 
   QuakeControlTask& dbg_get_qct()
