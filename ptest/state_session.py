@@ -111,8 +111,11 @@ class StateSession(object):
                     logline += data['telem']
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
-                elif 'packet' in data:
-                    logline = f"found an uplink packet."
+                elif 'uplink packet length' in data:
+                    print("uplink:" + str(data["uplink packet"]))
+                    print("uplink length: "+str(data["uplink packet length"]))
+                elif 'note' in data:
+                    logline = data['telem']
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                 else:
@@ -290,14 +293,42 @@ class StateSession(object):
         # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
         # holding the uplink packet.
         self.uplink_console.write(("telem.json\n").encode())
-        self.uplink_console.write(("new-uplink.sbd\n").encode())
+        self.uplink_console.write(("uplink.sbd\n").encode())
+        succeeded = os.path.exists("uplink.sbd")
         
         self.raw_logger.put("Uplink:   " + json.dumps(telem_json))
 
-        time.sleep(0.5);
-        os.remove("telem.json") # remove the json file
+        # Get the uplink packet from the uplink file
+        file = open("uplink.sbd", "rb")
+        uplink_packet = file.read()
+        uplink_packet_length = len(uplink_packet)
+        file.close() 
+        uplink_packet = str(''.join(r'\x'+hex(byte)[2:] for byte in uplink_packet)) #get the hex representation of the packet bytes
 
-        return os.path.exists("new-uplink.sbd")
+        # Remove the json and sbd file
+        time.sleep(0.5);
+        os.remove("telem.json") 
+        os.remove("uplink.sbd")
+
+        # Send a command to the console to process the uplink packet
+        json_cmd = {
+            'mode': ord('u'),
+            'field': 'pan.state',
+            'val': uplink_packet,
+            'length': uplink_packet_length
+        }
+        json_cmd = json.dumps(json_cmd) + "\n"
+
+        if len(json_cmd) >= 512:
+            print("Error: Flight Software can't handle input buffers >= 512 bytes.")
+            return False
+
+        self.device_write_lock.acquire()
+        self.console.write(json_cmd.encode())
+        self.device_write_lock.release()
+        self.raw_logger.put("Sent:     " + json_cmd)
+
+        return succeeded
 
     def override_state(self, field, *args, **kwargs):
         '''

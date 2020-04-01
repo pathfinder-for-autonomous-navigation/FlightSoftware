@@ -2,6 +2,7 @@
 #include <ArduinoJson.h>
 #include <array>
 #include <cstdarg>
+#include <common/bitstream.h>
 
 #ifdef DESKTOP
     #include <iostream>
@@ -268,14 +269,39 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     break;
                 }
 
-                ReadableStateFieldBase* field_ptr = registry.find_readable_field(field_name);
-                if (!field_ptr) {
-                    _print_error_state_field(field_name, write_mode, invalid_field_name);
-                    break;
-                }
+                // Get the internal fields that hold the mt message and its length
+                InternalStateField<char*>* radio_mt_packet_fp = static_cast<InternalStateField<char*>*>(registry.find_internal_field("uplink.ptr"));
+                InternalStateField<size_t>* radio_mt_packet_len_fp = static_cast<InternalStateField<size_t>*>(registry.find_internal_field("uplink.len"));
+                
+                // Get the uplink packet and packet length from the device
+                size_t uplink_packet_len = msgs[i]["length"];
+                char* uplink_packet = (char*) msgs[i]["val"];
 
-                WritableStateField<bool>* load_telem_fp = static_cast<WritableStateField<bool>*>(registry.find_writable_field("telem.load"));
-                load_telem_fp->set(true);
+                // Put the uplink packet into a bitstream
+                char data[uplink_packet_len];
+                memcpy(data, uplink_packet, uplink_packet_len);
+                bitstream uplink(data, uplink_packet_len);
+
+                // Copy the values into the corresponding statefields
+                memcpy(radio_mt_packet_fp->get(), data, uplink_packet_len);
+                radio_mt_packet_len_fp->set(uplink_packet_len);
+
+                #ifdef DESKTOP
+                    DynamicJsonDocument doc(500);
+                #else
+                    StaticJsonDocument<200> doc;
+                #endif
+                    doc["t"] = _get_elapsed_time();
+                    doc["uplink packet"] = uplink_packet;
+                    doc["uplink packet length"] = radio_mt_packet_len_fp->get();
+                #ifdef DESKTOP
+                    serializeJson(doc, std::cout);
+                    std::cout << std::endl << std::flush;
+                #else
+                    serializeJson(doc, Serial);
+                    Serial.println();
+                #endif
+
             } break;
             default: {
                 _print_error_state_field(field_name, read_mode, invalid_mode);
