@@ -290,12 +290,14 @@ class StateSession(object):
         # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
         # holding the uplink packet.
         self.uplink_console.write(("telem.json\n").encode())
-        self.uplink_console.write(("uplink.sbd\n").encode())
+        self.uplink_console.write(("new_uplink.sbd\n").encode())
         
-        os.remove("telem.json") # remove the json file
         self.raw_logger.put("Uplink:     " + json.dumps(telem_json))
 
-        return os.path.exists("uplink.sbd")
+        time.sleep(0.5);
+        os.remove("telem.json") # remove the json file
+
+        return os.path.exists("new_uplink.sbd")
 
     def override_state(self, field, *args, **kwargs):
         '''
