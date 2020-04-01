@@ -95,6 +95,6 @@ size_t Uplink::get_field_length(size_t field_index)
 {
     if (field_index >= registry.writable_fields.size())
         return 0;
-    return registry.writable_fields.at(field_index)->get_bit_array().size();
+    return registry.writable_fields[field_index]->get_bit_array().size();
 }
 

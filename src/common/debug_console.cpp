@@ -67,7 +67,7 @@ void debug_console::_print_json_msg(severity s, const char* msg) {
     StaticJsonDocument<500> doc;
 #endif
     doc["t"] = _get_elapsed_time();
-    doc["svrty"] = severity_strs.at(s);
+    doc["svrty"] = severity_strs[s];
     doc["msg"] = msg;
 
 #ifdef DESKTOP
@@ -152,8 +152,8 @@ void debug_console::_print_error_state_field(const char* field_name,
 #endif
     doc["t"] = _get_elapsed_time();
     doc["field"] = field_name;
-    doc["mode"] = state_cmd_mode_strs.at(mode);
-    doc["err"] = state_field_error_strs.at(error_code);
+    doc["mode"] = state_cmd_mode_strs[mode];
+    doc["err"] = state_field_error_strs[error_code];
 #ifdef DESKTOP
     serializeJson(doc, std::cout);
     std::cout << std::endl << std::flush;
