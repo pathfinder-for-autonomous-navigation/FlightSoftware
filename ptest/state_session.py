@@ -114,10 +114,7 @@ class StateSession(object):
                 elif 'uplink packet length' in data:
                     print("uplink:" + str(data["uplink packet"]))
                     print("uplink length: "+str(data["uplink packet length"]))
-                elif 'note' in data:
-                    logline = data['telem']
-                    print("\n" + logline)
-                    self.logger.put(logline, add_time = False)
+                    print("valid packet?: "+str(data["valid packet?"]))
                 else:
                     if 'err' in data:
                         # The log line represents an error in retrieving or writing state data that
@@ -294,6 +291,7 @@ class StateSession(object):
         # holding the uplink packet.
         self.uplink_console.write(("telem.json\n").encode())
         self.uplink_console.write(("uplink.sbd\n").encode())
+        time.sleep(0.5); # it takes some time for the uplink packet to be created
         succeeded = os.path.exists("uplink.sbd")
         
         self.raw_logger.put("Uplink:   " + json.dumps(telem_json))
@@ -304,11 +302,6 @@ class StateSession(object):
         uplink_packet_length = len(uplink_packet)
         file.close() 
         uplink_packet = str(''.join(r'\x'+hex(byte)[2:] for byte in uplink_packet)) #get the hex representation of the packet bytes
-
-        # Remove the json and sbd file
-        time.sleep(0.5);
-        os.remove("telem.json") 
-        os.remove("uplink.sbd")
 
         # Send a command to the console to process the uplink packet
         json_cmd = {
@@ -327,6 +320,10 @@ class StateSession(object):
         self.console.write(json_cmd.encode())
         self.device_write_lock.release()
         self.raw_logger.put("Sent:     " + json_cmd)
+
+        # Remove the json and sbd file
+        os.remove("telem.json") 
+        os.remove("uplink.sbd")
 
         return succeeded
 

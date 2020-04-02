@@ -286,6 +286,10 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 memcpy(radio_mt_packet_fp->get(), data, uplink_packet_len);
                 radio_mt_packet_len_fp->set(uplink_packet_len);
 
+                // Check that the packet is valid
+                Uplink u(const_cast<StateFieldRegistry&>(registry));
+                bool validity = u._validate_packet(uplink);
+
                 #ifdef DESKTOP
                     DynamicJsonDocument doc(500);
                 #else
@@ -293,7 +297,8 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 #endif
                     doc["t"] = _get_elapsed_time();
                     doc["uplink packet"] = uplink_packet;
-                    doc["uplink packet length"] = radio_mt_packet_len_fp->get();
+                    doc["uplink packet length"] = uplink_packet_len;
+                    doc["valid packet?"] = validity;
                 #ifdef DESKTOP
                     serializeJson(doc, std::cout);
                     std::cout << std::endl << std::flush;

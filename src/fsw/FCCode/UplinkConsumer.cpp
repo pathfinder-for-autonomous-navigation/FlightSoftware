@@ -17,7 +17,6 @@ void UplinkConsumer::execute()
         return;
     
     if (validate_packet())
-        Serial.printf("{\"t\":%d,\"note\":\"we made it!\"}", debug_console::_get_elapsed_time());
         update_fields();
 
     // clear len always

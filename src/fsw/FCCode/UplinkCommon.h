@@ -34,7 +34,7 @@ class Uplink {
   size_t index_size;
 
 #ifndef DEBUG
-  protected:
+  //protected:
 #endif
   /**
    * Validates the packet

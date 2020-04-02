@@ -5,6 +5,7 @@
 #include <cassert>
 #include "StateField.hpp"
 #include "StateFieldRegistry.hpp"
+#include "fsw/FCCode/UplinkCommon.h"
 
 #ifdef DESKTOP
     #include <chrono>
