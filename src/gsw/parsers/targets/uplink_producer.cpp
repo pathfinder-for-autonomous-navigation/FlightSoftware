@@ -21,8 +21,16 @@ int main() {
         if (fs) {
             char packet[70];
             bitstream bs(packet, 70);
-            producer.create_from_json(bs, json_filename);
-            producer.to_file(bs, uplink_packet_filename);
+            try {
+                producer.create_from_json(bs, json_filename);
+                producer.to_file(bs, uplink_packet_filename);
+                std::cout << "{\"status\":\"success\"}";
+            }
+            catch (const std::exception& e) {
+                std::cout << "{\"error\":\"";
+                std::cout << e.what();
+                std::cout << "\"}";
+            }
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(500));

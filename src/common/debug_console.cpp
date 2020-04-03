@@ -3,7 +3,6 @@
 #include <array>
 #include <cstdarg>
 #include <common/bitstream.h>
-#include <typeinfo>
 
 #ifdef DESKTOP
     #include <iostream>
@@ -274,8 +273,10 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 InternalStateField<char*>* radio_mt_packet_fp = static_cast<InternalStateField<char*>*>(registry.find_internal_field("uplink.ptr"));
                 InternalStateField<size_t>* radio_mt_packet_len_fp = static_cast<InternalStateField<size_t>*>(registry.find_internal_field("uplink.len"));
                 
+                //#ifdef FUNCTIONAL_TEST
                 // Get the uplink packet and packet length from the device
                 size_t uplink_packet_len = msgs[i]["length"];
+                JsonVariant packet = msgs[i]["val"]; // store the value of the packet for later
                 std::string uplink_packet = msgs[i]["val"];
                 uplink_packet=uplink_packet+"\\x"; // Adding '\x' at the end allows us to parse the uplink string
 
@@ -313,9 +314,12 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 Uplink u(const_cast<StateFieldRegistry&>(registry));
                 u.init_uplink();
                 bool valid_packet = u._validate_packet(uplink);
-                // Move the uplink bitstream into the MT buffer so that it can be processed on
-                // the next cycle by Uplink Consumer.
                 if (valid_packet) {
+                    // Clear the MT buffer
+                    size_t size = sizeof(radio_mt_packet_fp->get());
+                    memset(radio_mt_packet_fp->get(), 0, size);
+                    // Move the uplink bitstream into the MT buffer so that it can be processed on
+                    // the next cycle by Uplink Consumer.
                     memcpy(radio_mt_packet_fp->get(), data, uplink_packet_len);
                     radio_mt_packet_len_fp->set(uplink_packet_len);
                 }
@@ -326,9 +330,9 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     StaticJsonDocument<200> doc;
                 #endif
                     doc["t"] = _get_elapsed_time();
-                    doc["uplink packet"] = "\x4c\xe3\x74"[2];
+                    doc["uplink packet"] = packet;
                     doc["uplink packet length"] = uplink_packet_len;
-                    doc["valid packet?"] = validity;
+                    doc["packet validity"] = valid_packet;
                 #ifdef DESKTOP
                     serializeJson(doc, std::cout);
                     std::cout << std::endl << std::flush;

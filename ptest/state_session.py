@@ -111,10 +111,14 @@ class StateSession(object):
                     logline += data['telem']
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
-                elif 'uplink packet length' in data:
-                    print("uplink:" + str(data["uplink packet"]))
-                    print("uplink length: "+str(data["uplink packet length"]))
-                    print("valid packet?: "+str(data["valid packet?"]))
+                elif 'uplink packet' in data:
+                    if (data['packet validity']):
+                        logline = f"[{data['time']}] Successfuly sent telemetry to spacecraft.\n"
+                    else:
+                        logline = f"[{data['time']}] Failed to send telemetry to spacecraft.\n"
+                    logline += str(data['uplink packet'])
+                    print("\n" + logline)
+                    self.logger.put(logline, add_time = False)
                 else:
                     if 'err' in data:
                         # The log line represents an error in retrieving or writing state data that
@@ -292,38 +296,51 @@ class StateSession(object):
         self.uplink_console.write(("telem.json\n").encode())
         self.uplink_console.write(("uplink.sbd\n").encode())
         time.sleep(0.5); # it takes some time for the uplink packet to be created
-        succeeded = os.path.exists("uplink.sbd")
+        response = json.loads(self.uplink_console.readline().rstrip())
+
+        # Check that the uplink was successfully create
+        uplink_created = 'error' not in response
+        if not uplink_created:
+            logline = "Error:    "+response['error']
+            self.raw_logger.put(logline)
+
+        succeeded = os.path.exists("uplink.sbd") and uplink_created
+        if succeeded: 
+            self.raw_logger.put("Uplink:   " + json.dumps(telem_json))
+
+            # Get the uplink packet from the uplink sbd file
+            file = open("uplink.sbd", "rb")
+            uplink_packet = file.read()
+            uplink_packet_length = len(uplink_packet)
+            file.close() 
+            uplink_packet = str(''.join(r'\x'+hex(byte)[2:] for byte in uplink_packet)) #get the hex representation of the packet bytes
+
+            # Send a command to the console to process the uplink packet
+            json_cmd = {
+                'mode': ord('u'),
+                'field': 'pan.state',
+                'val': uplink_packet,
+                'length': uplink_packet_length
+            }
+            json_cmd = json.dumps(json_cmd) + "\n"
+
+            if len(json_cmd) >= 512:
+                print("Error: Flight Software can't handle input buffers >= 512 bytes.")
+                return False
+
+            self.device_write_lock.acquire()
+            self.console.write(json_cmd.encode())
+            self.device_write_lock.release()
+            self.raw_logger.put("Sent:     " + json_cmd)
+
+        else:
+            self.raw_logger.put("Failed:   " + json.dumps(telem_json))
         
-        self.raw_logger.put("Uplink:   " + json.dumps(telem_json))
-
-        # Get the uplink packet from the uplink file
-        file = open("uplink.sbd", "rb")
-        uplink_packet = file.read()
-        uplink_packet_length = len(uplink_packet)
-        file.close() 
-        uplink_packet = str(''.join(r'\x'+hex(byte)[2:] for byte in uplink_packet)) #get the hex representation of the packet bytes
-
-        # Send a command to the console to process the uplink packet
-        json_cmd = {
-            'mode': ord('u'),
-            'field': 'pan.state',
-            'val': uplink_packet,
-            'length': uplink_packet_length
-        }
-        json_cmd = json.dumps(json_cmd) + "\n"
-
-        if len(json_cmd) >= 512:
-            print("Error: Flight Software can't handle input buffers >= 512 bytes.")
-            return False
-
-        self.device_write_lock.acquire()
-        self.console.write(json_cmd.encode())
-        self.device_write_lock.release()
-        self.raw_logger.put("Sent:     " + json_cmd)
-
         # Remove the json and sbd file
-        os.remove("telem.json") 
-        os.remove("uplink.sbd")
+        if os.path.exists("uplink.sbd"):
+            os.remove("uplink.sbd") 
+        if os.path.exists("telem.json"):
+            os.remove("telem.json") 
 
         return succeeded
 
