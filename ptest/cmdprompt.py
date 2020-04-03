@@ -215,6 +215,7 @@ class StateCmdPrompt(Cmd):
 
         start_time = timeit.default_timer()
         uplink_succeeded = self.cmded_device.uplink(fields, vals)
+        uplink_succeeded &= self.cmded_device.write_state("cycle.start", "true")
         elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
 
         uplink_succeeded = "Succeeded" if uplink_succeeded else "Failed"
