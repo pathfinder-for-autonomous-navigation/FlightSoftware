@@ -96,9 +96,9 @@ void MainControlLoop::execute() {
 
     #ifdef FUNCTIONAL_TEST
     debug_task.execute_on_time();
-    uplink_consumer.execute_on_time();
     #endif
 
+    uplink_consumer.execute_on_time();
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
     attitude_computer.execute_on_time();

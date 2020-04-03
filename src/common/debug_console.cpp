@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdarg>
 #include <common/bitstream.h>
+#include <typeinfo>
 
 #ifdef DESKTOP
     #include <iostream>
@@ -275,20 +276,49 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 
                 // Get the uplink packet and packet length from the device
                 size_t uplink_packet_len = msgs[i]["length"];
-                char* uplink_packet = (char*) msgs[i]["val"];
+                std::string uplink_packet = msgs[i]["val"];
+                uplink_packet=uplink_packet+"\\x"; // Adding '\x' at the end allows us to parse the uplink string
 
-                // Put the uplink packet into a bitstream
+                // The data array holds the decimal values of the hex string. For example,
+                // if the uplink contains "\x4c", the data array will hold 67. 
                 char data[uplink_packet_len];
-                memcpy(data, uplink_packet, uplink_packet_len);
+
+                // Parse the uplink string. Split the string using "\x" as a delimiter
+                std::string delimiter = "\\x";
+                size_t pos = 0; // position of the delimiter in the uplink string
+                size_t i=0; // position in the data array
+                std::string token; // hex value in uplink string
+                while ( i<uplink_packet_len && (pos = uplink_packet.find(delimiter)) != std::string::npos) {
+
+                    if (pos != 0) {
+                        // Get the hex string (i.e '4c')
+                        token = uplink_packet.substr(0, pos);
+
+                        // Copy the token into a char array
+                        char hex_str[token.size()+1];
+                        strcpy(hex_str, token.c_str());
+
+                        // Get the decimal value of the token/hex string and add it to data array
+                        data[i] = (char) strtol (hex_str, NULL, 16);
+                        i=i+1;
+                    }
+
+                    // Erase the part of the string we just processed
+                    uplink_packet.erase(0, pos + delimiter.length());
+                }
+
                 bitstream uplink(data, uplink_packet_len);
-
-                // Copy the values into the corresponding statefields
-                memcpy(radio_mt_packet_fp->get(), data, uplink_packet_len);
-                radio_mt_packet_len_fp->set(uplink_packet_len);
-
+                
                 // Check that the packet is valid
                 Uplink u(const_cast<StateFieldRegistry&>(registry));
-                bool validity = u._validate_packet(uplink);
+                u.init_uplink();
+                bool valid_packet = u._validate_packet(uplink);
+                // Move the uplink bitstream into the MT buffer so that it can be processed on
+                // the next cycle by Uplink Consumer.
+                if (valid_packet) {
+                    memcpy(radio_mt_packet_fp->get(), data, uplink_packet_len);
+                    radio_mt_packet_len_fp->set(uplink_packet_len);
+                }
 
                 #ifdef DESKTOP
                     DynamicJsonDocument doc(500);
@@ -296,7 +326,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     StaticJsonDocument<200> doc;
                 #endif
                     doc["t"] = _get_elapsed_time();
-                    doc["uplink packet"] = uplink_packet;
+                    doc["uplink packet"] = "\x4c\xe3\x74"[2];
                     doc["uplink packet length"] = uplink_packet_len;
                     doc["valid packet?"] = validity;
                 #ifdef DESKTOP
