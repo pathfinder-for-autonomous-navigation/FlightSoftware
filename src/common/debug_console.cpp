@@ -273,7 +273,6 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 InternalStateField<char*>* radio_mt_packet_fp = static_cast<InternalStateField<char*>*>(registry.find_internal_field("uplink.ptr"));
                 InternalStateField<size_t>* radio_mt_packet_len_fp = static_cast<InternalStateField<size_t>*>(registry.find_internal_field("uplink.len"));
                 
-                //#ifdef FUNCTIONAL_TEST
                 // Get the uplink packet and packet length from the device
                 size_t uplink_packet_len = msgs[i]["length"];
                 JsonVariant packet = msgs[i]["val"]; // store the value of the packet for later
