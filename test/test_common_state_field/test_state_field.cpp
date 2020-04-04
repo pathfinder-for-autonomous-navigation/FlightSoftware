@@ -78,11 +78,97 @@ void test_writable_state_field() {
     test_serializable_state_field(&wsf);
 }
 
+void test_eeprom_save_period() {
+    WritableStateField<bool> sf1("field", Serializer<bool>());
+    TEST_ASSERT_EQUAL(0, sf1.eeprom_save_period());
+
+    WritableStateField<bool> sf2("field", Serializer<bool>(), 2);
+    TEST_ASSERT_EQUAL(2, sf2.eeprom_save_period());
+}
+
+void test_get_set_eeprom() {
+    WritableStateField<bool> bool_sf("field", Serializer<bool>(), 2);
+    bool_sf.set(false);
+    TEST_ASSERT_EQUAL(0, bool_sf.get_eeprom_repr());
+    bool_sf.set(true);
+    TEST_ASSERT_EQUAL(1, bool_sf.get_eeprom_repr());
+    bool_sf.set_from_eeprom(0);
+    TEST_ASSERT_FALSE(bool_sf.get());
+    bool_sf.set_from_eeprom(1);
+    TEST_ASSERT_TRUE(bool_sf.get());
+
+    WritableStateField<signed char> schar_sf("field", Serializer<signed char>(), 2);
+    schar_sf.set(0);
+    TEST_ASSERT_EQUAL(0, schar_sf.get_eeprom_repr());
+    schar_sf.set(127);
+    TEST_ASSERT_EQUAL(127, schar_sf.get_eeprom_repr());
+    schar_sf.set(-1);
+    TEST_ASSERT_EQUAL(255, schar_sf.get_eeprom_repr());
+    schar_sf.set(-128);
+    TEST_ASSERT_EQUAL(128, schar_sf.get_eeprom_repr());
+    schar_sf.set_from_eeprom(0);
+    TEST_ASSERT_EQUAL(0, schar_sf.get());
+    schar_sf.set_from_eeprom(127);
+    TEST_ASSERT_EQUAL(127, schar_sf.get());
+    schar_sf.set_from_eeprom(255);
+    TEST_ASSERT_EQUAL(-1, schar_sf.get());
+    schar_sf.set_from_eeprom(128);
+    TEST_ASSERT_EQUAL(-128, schar_sf.get());
+
+    WritableStateField<unsigned char> uchar_sf("field", Serializer<unsigned char>(), 2);
+    uchar_sf.set(0);
+    TEST_ASSERT_EQUAL(0, uchar_sf.get_eeprom_repr());
+    uchar_sf.set(127);
+    TEST_ASSERT_EQUAL(127, uchar_sf.get_eeprom_repr());
+    uchar_sf.set(255);
+    TEST_ASSERT_EQUAL(255, uchar_sf.get_eeprom_repr());
+    uchar_sf.set_from_eeprom(0);
+    TEST_ASSERT_EQUAL(0, uchar_sf.get());
+    uchar_sf.set_from_eeprom(127);
+    TEST_ASSERT_EQUAL(127, uchar_sf.get());
+    uchar_sf.set_from_eeprom(255);
+    TEST_ASSERT_EQUAL(255, uchar_sf.get());
+
+    WritableStateField<signed int> sint_sf("field", Serializer<signed int>(), 2);
+    sint_sf.set(0);
+    TEST_ASSERT_EQUAL(0, sint_sf.get_eeprom_repr());
+    sint_sf.set(2147483647);
+    TEST_ASSERT_EQUAL(2147483647, sint_sf.get_eeprom_repr());
+    sint_sf.set(-1);
+    TEST_ASSERT_EQUAL(4294967295, sint_sf.get_eeprom_repr());
+    sint_sf.set(-2147483648);
+    TEST_ASSERT_EQUAL(2147483648, sint_sf.get_eeprom_repr());
+    sint_sf.set_from_eeprom(0);
+    TEST_ASSERT_EQUAL(0, sint_sf.get());
+    sint_sf.set_from_eeprom(2147483647);
+    TEST_ASSERT_EQUAL(2147483647, sint_sf.get());
+    sint_sf.set_from_eeprom(4294967295);
+    TEST_ASSERT_EQUAL(-1, sint_sf.get());
+    sint_sf.set_from_eeprom(2147483648);
+    TEST_ASSERT_EQUAL(-2147483648, sint_sf.get());
+
+    WritableStateField<unsigned int> uint_sf("field", Serializer<unsigned int>(), 2);
+    uint_sf.set(0);
+    TEST_ASSERT_EQUAL(0, uint_sf.get_eeprom_repr());
+    uint_sf.set(2147483647);
+    TEST_ASSERT_EQUAL(2147483647, uint_sf.get_eeprom_repr());
+    uint_sf.set(4294967295);
+    TEST_ASSERT_EQUAL(4294967295, uint_sf.get_eeprom_repr());
+    uint_sf.set_from_eeprom(0);
+    TEST_ASSERT_EQUAL(0, uint_sf.get());
+    uint_sf.set_from_eeprom(2147483647);
+    TEST_ASSERT_EQUAL(2147483647, uint_sf.get());
+    uint_sf.set_from_eeprom(4294967295);
+    TEST_ASSERT_EQUAL(4294967295, uint_sf.get());
+}
+
 void test_state_field() {
     UNITY_BEGIN();
     RUN_TEST(test_internal_state_field);
     RUN_TEST(test_readable_state_field);
     RUN_TEST(test_writable_state_field);
+    RUN_TEST(test_eeprom_save_period);
+    RUN_TEST(test_get_set_eeprom);
     UNITY_END();
 }
 
@@ -94,7 +180,7 @@ int main(int argc, char *argv[]) {
 #else
 #include <Arduino.h>
 void setup() {
-    delay(2000);
+    delay(10000);
     Serial.begin(9600);
     test_state_field();
 }

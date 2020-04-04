@@ -80,7 +80,7 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
     const std::string _name;
     void serialize() override;
   public:
-    // Functions from the EventBase interface.
+      // Functions from the EventBase interface.
       void signal() override;
       size_t bitsize() const override;
       const bit_array &get_bit_array() const override;
@@ -88,6 +88,13 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
       void set_bit_array(const bit_array &arr) override;
       bool deserialize(const char *val) override;
       const char *print() const override;
+
+      // Functions from the SerializableStateField interface. These are
+      // going to receive stub implementations since events should not
+      // be EEPROM-saveable.
+      unsigned int eeprom_save_period() const override;
+      unsigned int get_eeprom_repr() const override;
+      void set_from_eeprom(unsigned int val) override;
 
    static ReadableStateField<unsigned int> *ccno;
 
