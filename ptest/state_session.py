@@ -112,8 +112,8 @@ class StateSession(object):
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                 elif 'uplink packet' in data:
-                    if (data['packet validity']):
-                        logline = f"[{data['time']}] Successfuly sent telemetry to spacecraft.\n"
+                    if data['packet validity'] and data['uplink packet']:
+                        logline = f"[{data['time']}] Successfully sent telemetry to spacecraft.\n"
                     else:
                         logline = f"[{data['time']}] Failed to send telemetry to spacecraft.\n"
                     logline += str(data['uplink packet'])
@@ -268,6 +268,26 @@ class StateSession(object):
         by the user. (This is a function that sim should exclusively use.)
         '''
         return self.write_multiple_states([field], [self._val_to_str(args)], kwargs.get('timeout'))
+
+    def get_val(self, val):
+        '''
+        Recives string representation of a value and returns the value as a bool, int, or float
+        If the value can't be determined, returns -1;
+        "true" --> true (bool)
+        "5" --> 5 (int)
+        "0.05" --> 0.05 (float)
+        "dchkjdda" --> None
+        '''
+        try:
+            f=float(val)
+            i=int(f)
+            if f!=i: 
+                return f
+            return i
+        except:
+            if val == "true": return True
+            if val == "false": return False
+        return None
     
     def uplink(self, fields, vals, timeout=None):
         if not self.running_logger: return
@@ -287,7 +307,12 @@ class StateSession(object):
         # Create a JSON file with all the fields and values
         telem_json={}
         for field, val in zip(fields, vals):
-            telem_json[field]=int(val)
+            val = self.get_val(val)
+            if val is not None:
+                telem_json[field]=val
+            else:
+                logline = f"Error:    Unable to add {field}: {val} to uplink JSON file"
+                return False
         with open('telem.json', 'w') as telem_file:
             json.dump(telem_json, telem_file)
 
@@ -299,13 +324,12 @@ class StateSession(object):
         response = json.loads(self.uplink_console.readline().rstrip())
 
         # Check that the uplink was successfully create
-        uplink_created = 'error' not in response
-        if not uplink_created:
+        if 'error' in response:
             logline = "Error:    "+response['error']
             self.raw_logger.put(logline)
+            return False
 
-        succeeded = os.path.exists("uplink.sbd") and uplink_created
-        if succeeded: 
+        if os.path.exists("uplink.sbd"): 
             self.raw_logger.put("Uplink:   " + json.dumps(telem_json))
 
             # Get the uplink packet from the uplink sbd file
@@ -333,16 +357,16 @@ class StateSession(object):
             self.device_write_lock.release()
             self.raw_logger.put("Sent:     " + json_cmd)
 
-        else:
-            self.raw_logger.put("Failed:   " + json.dumps(telem_json))
-        
-        # Remove the json and sbd file
-        if os.path.exists("uplink.sbd"):
+            # Remove the json and sbd file
             os.remove("uplink.sbd") 
-        if os.path.exists("telem.json"):
             os.remove("telem.json") 
 
-        return succeeded
+            return True
+
+        else:
+            self.raw_logger.put("Failed:   " + json.dumps(telem_json))
+            os.remove("telem.json") 
+            return False
 
     def override_state(self, field, *args, **kwargs):
         '''

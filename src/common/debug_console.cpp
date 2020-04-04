@@ -263,12 +263,6 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
             } break;
             case 'u': {
-                JsonVariant field_val = msgs[i]["val"];
-                if (field_val.isNull()) {
-                    _print_error_state_field(field_name, write_mode, missing_field_val);
-                    break;
-                }
-
                 // Get the internal fields that hold the mt message and its length
                 InternalStateField<char*>* radio_mt_packet_fp = static_cast<InternalStateField<char*>*>(registry.find_internal_field("uplink.ptr"));
                 InternalStateField<size_t>* radio_mt_packet_len_fp = static_cast<InternalStateField<size_t>*>(registry.find_internal_field("uplink.len"));
