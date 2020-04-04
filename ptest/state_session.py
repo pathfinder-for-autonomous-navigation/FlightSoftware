@@ -114,9 +114,9 @@ class StateSession(object):
                 elif 'uplink packet' in data:
                     if data['packet validity'] and data['uplink packet']:
                         logline = f"[{data['time']}] Successfully sent telemetry to spacecraft.\n"
+                        logline += str(data['uplink packet'])
                     else:
-                        logline = f"[{data['time']}] Failed to send telemetry to spacecraft.\n"
-                    logline += str(data['uplink packet'])
+                        logline = f"[{data['time']}] Failed to send telemetry to spacecraft."
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                 else:
