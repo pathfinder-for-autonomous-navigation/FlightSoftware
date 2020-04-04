@@ -7,7 +7,9 @@ platformio test -e gsw_downlink_parser_ci -v
 
 # Compile and run functional test for environments
 platformio run -e gsw_downlink_parser
+platformio run -e gsw_uplink_producer
 python -m unittest test.test_downlink_parser
+python -m unittest test.test_uplink_producer
 
 # Check that the telemetry info generator compiles, passes functional test, and Valgrind
 platformio run -e gsw_telem_info_generator
