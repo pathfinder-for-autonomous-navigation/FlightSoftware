@@ -55,7 +55,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
 
-    prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
+    prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
 
     propagated_baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
 

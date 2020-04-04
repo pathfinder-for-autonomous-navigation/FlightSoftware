@@ -125,7 +125,7 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_manual();
 
     // Fields required for control of prop subsystem.
-    ReadableStateField<unsigned char>* prop_state_fp;
+    WritableStateField<unsigned int>* prop_state_fp;
 
     // Fields required for control of ADCS subsystem.
     /**
