@@ -40,8 +40,10 @@ SOFTWARE.
 #include "GGM05S.hpp"
 #include "GPSTime.hpp"
 
-TRACKED_CONSTANT(constexpr geograv::Coeff<40>, PANGRAVITYMODEL, GGM05S);
-
+#ifndef PANGRAVORDER //compiler flag to set the Gravity model order
+#define PANGRAVORDER 40
+#endif
+TRACKED_CONSTANT(constexpr geograv::Coeff<PANGRAVORDER>, PANGRAVITYMODEL, static_cast<geograv::Coeff<PANGRAVORDER>>(GGM05S));
 
 //std::numeric_limits<double>::quiet_NaN()
 TRACKED_CONSTANT(const lin::Vector3d, LINNAN3d, {NAN,NAN,NAN});
@@ -127,7 +129,7 @@ class Orbit {
 
 
     /** Helper method to call gravity function mks units in ECEF.*/
-    static void calc_geograv(const lin::Vector3d& r_ecef, lin::Vector3d& g_ecef, double& potential) const{
+    static void calc_geograv(const lin::Vector3d& r_ecef, lin::Vector3d& g_ecef, double& potential) {
         geograv::Vector in;
         geograv::Vector g;
         in.x= r_ecef(0);
@@ -179,7 +181,7 @@ class Orbit {
      */
     double specificenergy(const lin::Vector3d& earth_rate_ecef){
         if (valid()){
-            double potential
+            double potential;
             lin::Vector3d junk;
             calc_geograv(recef(),junk,potential);
             lin::Vector3d v_ecef0= lin::cross(earth_rate_ecef,recef())+vecef();

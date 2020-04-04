@@ -348,7 +348,7 @@ const real_t eps= std::numeric_limits<real_t>::epsilon() *
     J2 and J0(point mass) terms are calculated in double precision, while the higher order terms are calculated in single precision.
  */
 template<int NMAX>
-inline real_t GeoGrav(Vector position_itrs, Vector& acceleration, const Coeff<NMAX>& c,bool add_pointmass_gravity){
+inline double GeoGrav(Vector position_itrs, Vector& acceleration, const Coeff<NMAX>& c,bool add_pointmass_gravity){
     int N= NMAX;
     int M= NMAX;
     double a= c.earth_radius;
