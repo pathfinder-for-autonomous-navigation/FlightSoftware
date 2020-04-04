@@ -1,12 +1,15 @@
-name: Flight Software Regression Tests
+name: Flight Software Regression Unit Tests
 
 on:
   pull_request:
     branches: [ master ]
 
+env:
+  CI: true
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
       with:

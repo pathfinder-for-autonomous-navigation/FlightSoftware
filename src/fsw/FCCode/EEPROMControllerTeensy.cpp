@@ -8,13 +8,13 @@ EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int of
 {}
 
 void EEPROMController::read_EEPROM(){
-  for (unsigned int i = 0; i<pointers.size(); i++){
-    pointers.at(i)->set(EEPROM.read(addresses.at(i)));
+  for (unsigned int i = 0; i<_registry.eeprom_saved_fields.size(); i++){
+    _registry.eeprom_saved_fields[i]->set_from_eeprom(EEPROM.read(addresses[i]));
   }
 }
 
 void EEPROMController::update_EEPROM(unsigned int position){
-  EEPROM.put(addresses.at(position), pointers.at(position)->get());
+  EEPROM.put(addresses[position], _registry.eeprom_saved_fields[position]->get_eeprom_repr());
 }
 
 bool EEPROMController::check_empty(){
