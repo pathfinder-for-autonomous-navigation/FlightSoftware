@@ -168,6 +168,13 @@ class SingleSatOnlyCase(Case):
     def run_case_singlesat(self):
         raise NotImplementedError
 
+    def read_state(self, string_state):
+        return self.sim.flight_controller.read_state(string_state)
+
+    def write_state(self, string_state, state_value):
+        self.sim.flight_controller.write_state(string_state, state_value)
+        return self.read_state(string_state)
+
     def cycle(self):
         self.sim.flight_controller.write_state('cycle.start', 'true')
 
