@@ -33,9 +33,6 @@ class Uplink {
    */
   size_t index_size;
 
-#if !defined(DEBUG) && !defined(FUNCTIONAL_TEST)
-  protected:
-#endif
   /**
    * Validates the packet
    */

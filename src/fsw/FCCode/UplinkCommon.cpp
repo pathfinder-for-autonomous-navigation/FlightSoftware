@@ -29,7 +29,7 @@ bool Uplink::_validate_packet(bitstream& bs)
 
         if (field_index == 0) // reached end of the packet
             break;
-        #ifdef FUNCTIONAL_TEST
+        #if defined FUNCTIONAL_TEST && !defined DESKTOP
         field_index+=1;
         #else
         --field_index;
@@ -76,7 +76,7 @@ void Uplink::_update_fields(bitstream& bs)
         bits_consumed += bs.nextN(index_size, reinterpret_cast<uint8_t*>(&field_index));
         if (field_index == 0) // reached end of the packet
             return;
-        #ifdef FUNCTIONAL_TEST
+        #if defined FUNCTIONAL_TEST && !defined DESKTOP
         field_index+=1;
         #else
         --field_index;
