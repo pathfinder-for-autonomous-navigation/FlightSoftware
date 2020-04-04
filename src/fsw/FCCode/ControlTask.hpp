@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <string>
+#include <common/casts.hpp>
 #include <common/debug_console.hpp>
 #include <common/Nameable.hpp>
 #include <common/StateFieldBase.hpp>
@@ -128,6 +129,28 @@ class ControlTask : protected debug_console {
         }
     }
 
+    template<class C, class D>
+    void check_templated_field_exists(const C* ptr, const std::string& field_type,
+            const char* field_name) {
+        check_field_exists(ptr, field_type, field_name);
+        if (!DYNAMIC_CAST(const D*, ptr)) {
+            #ifdef UNIT_TEST
+                #ifdef DESKTOP
+                    std::cout << field_type << " field \"" << field_name
+                            << "\" was casted to the wrong type." << std::endl;
+                #else
+                    Serial.printf("%s field \"%s\" was casted to the wrong type.",
+                            field_type.c_str(), field_name);
+                #endif
+            #else
+                #ifndef FLIGHT
+                printf(debug_severity::error, "%s field \"%s\" was casted to the wrong type.",
+                        field_type.c_str(), field_name);
+                #endif
+            #endif
+            assert(false);
+        }
+    }
 
   #ifdef UNIT_TEST
   public:
@@ -138,22 +161,22 @@ class ControlTask : protected debug_console {
     template<typename U>
     InternalStateField<U>* find_internal_field(const char* field, const char* file, const unsigned int line) {
         InternalStateFieldBase* field_ptr = _registry.find_internal_field(field);
-        check_field_exists(field_ptr, "internal", field);
-        return static_cast<InternalStateField<U>*>(field_ptr);
+        check_templated_field_exists<InternalStateFieldBase, InternalStateField<U>>(field_ptr, "internal", field);
+        return DYNAMIC_CAST(InternalStateField<U>*, field_ptr);
     }
 
     template<typename U>
     ReadableStateField<U>* find_readable_field(const char* field, const char* file, const unsigned int line) {
         ReadableStateFieldBase* field_ptr = _registry.find_readable_field(field);
-        check_field_exists(field_ptr, "readable", field);
-        return static_cast<ReadableStateField<U>*>(field_ptr);
+        check_templated_field_exists<ReadableStateFieldBase, ReadableStateField<U>>(field_ptr, "readable", field);
+        return DYNAMIC_CAST(ReadableStateField<U>*, field_ptr);
     }
 
     template<typename U>
     WritableStateField<U>* find_writable_field(const char* field, const char* file, const unsigned int line) {
         WritableStateFieldBase* field_ptr = _registry.find_writable_field(field);
-        check_field_exists(field_ptr, "writable", field);
-        return static_cast<WritableStateField<U>*>(field_ptr);
+        check_templated_field_exists<WritableStateFieldBase, WritableStateField<U>>(field_ptr, "writable", field);
+        return DYNAMIC_CAST(WritableStateField<U>*, field_ptr);
     }
 
     Event* find_event(const char* event, const char* file, const unsigned int line) {
