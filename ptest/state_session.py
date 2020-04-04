@@ -272,7 +272,7 @@ class StateSession(object):
     def get_val(self, val):
         '''
         Recives string representation of a value and returns the value as a bool, int, or float
-        If the value can't be determined, returns -1;
+        If the value can't be determined, returns None;
         "true" --> true (bool)
         "5" --> 5 (int)
         "0.05" --> 0.05 (float)
