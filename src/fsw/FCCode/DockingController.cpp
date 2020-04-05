@@ -32,7 +32,7 @@ void DockingController::execute() {
   //update writable fields
   docksys.set_step_angle(docking_step_angle_f.get());
 
-  if (docking_config_cmd_fp->get() ^ dock_config_f.get()) {
+  if (docking_config_cmd_fp->get() != dock_config_f.get()) {
     //prevents execute() from repeating start dock and setting turning angle to 180
     if (!is_turning_f.get()){
       docksys.start_halfturn();
