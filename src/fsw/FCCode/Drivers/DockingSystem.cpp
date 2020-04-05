@@ -8,6 +8,8 @@ using namespace Devices;
 
 volatile unsigned int DockingSystem::steps = 0;
 
+IntervalTimer timer;
+
 DockingSystem::DockingSystem()
     : Device("docking_system") {}
 
@@ -88,7 +90,7 @@ void DockingSystem::cancel() {
 
 volatile bool motor_on = false;
 void DockingSystem::step_motor() {
-  if (steps >= 1) {
+    if (steps >= 1) {
         if (motor_on) {
             #ifndef DESKTOP
             digitalWrite(motor_step_pin, LOW);
@@ -102,7 +104,7 @@ void DockingSystem::step_motor() {
             steps=steps-1;
             motor_on = true;
         }
-  }
+    }
 }
 
 float DockingSystem::get_step_angle() const {
