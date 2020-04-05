@@ -269,36 +269,35 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 
                 // Get the uplink packet and packet length from the device
                 size_t uplink_packet_len = msgs[i]["length"];
-                JsonVariant packet = msgs[i]["val"]; // store the value of the packet for later
-                std::string uplink_packet = msgs[i]["val"];
-                uplink_packet=uplink_packet+"\\x"; // Adding '\x' at the end allows us to parse the uplink string
+                JsonVariant packet = msgs[i]["val"]; 
+
+                // Get the uplink packet as a char array for parsing. 
+                // Add "\x" to the end to allow us to parse the uplink string
+                char uplink_packet [strlen(msgs[i]["val"]) + strlen("\\x")]; 
+                strcpy(uplink_packet, msgs[i]["val"]);
+                strcat(uplink_packet, "\\x");
 
                 // The data array holds the decimal values of the hex string. For example,
                 // if the uplink contains "\x4c", the data array will hold 67. 
                 char data[uplink_packet_len];
 
                 // Parse the uplink string. Split the string using "\x" as a delimiter
-                std::string delimiter = "\\x";
-                size_t pos = 0; // position of the delimiter in the uplink string
-                size_t i=0; // position in the data array
-                std::string token; // hex value in uplink string
-                while ( i<uplink_packet_len && (pos = uplink_packet.find(delimiter)) != std::string::npos) {
-
-                    if (pos != 0) {
-                        // Get the hex string (i.e '4c')
-                        token = uplink_packet.substr(0, pos);
-
-                        // Copy the token into a char array
-                        char hex_str[token.size()+1];
-                        strcpy(hex_str, token.c_str());
-
-                        // Get the decimal value of the token/hex string and add it to data array
-                        data[i] = (char) strtol (hex_str, NULL, 16);
-                        i=i+1;
+                char* delimiter = (char*) "\\";
+                char* pos = strstr(uplink_packet, delimiter); // pointer to the the uplink string, starts at beginning
+                char token[uplink_packet_len]; // hex value in uplink string
+                for (i=0; i<uplink_packet_len; i++) {
+                    // Get the hex string (i.e "4c") and put it in the token char array
+                    pos+=2;
+                    memset(token, 0, uplink_packet_len); // Clear the token array
+                    size_t idx = 0;
+                    while (pos[0] != '\\') {
+                        token[idx] = pos[0];
+                        idx=idx+1;
+                        pos+=1;
                     }
 
-                    // Erase the part of the string we just processed
-                    uplink_packet.erase(0, pos + delimiter.length());
+                    // Get the decimal value of the token/hex string and add it to data array
+                    data[i] = (char) strtol ((char*)token, NULL, 16);
                 }
 
                 bitstream uplink(data, uplink_packet_len);
