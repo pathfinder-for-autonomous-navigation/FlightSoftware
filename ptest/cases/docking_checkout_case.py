@@ -28,7 +28,8 @@ class DockingCheckoutCase(SingleSatOnlyCase):
                       + "\tturning: " + self.read_state("docksys.is_turning") 
                       + "\tdocked: " + self.read_state("docksys.docked") 
                       + "\tdock_cmd: " + self.read_state("docksys.config_cmd")
-                      + "\tbattery: " + self.read_state("gomspace.vbatt")
+                      + "\tbattery_voltage: " + self.read_state("gomspace.vbatt")
+                      + "\tbattery_current : " + self.read_state("gomspace.cursys"))
 
     def undock(self):
       #send command to go into undocked configuration
