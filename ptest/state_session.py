@@ -46,7 +46,7 @@ class StateSession(object):
 
         # Open a subprocess to Uplink Producer
         filepath = os.path.dirname(os.path.abspath(__file__))
-        binary_dir = os.path.join(filepath, "../.pio/build/gsw_uplink_producer/program")
+        binary_dir = os.path.join(filepath, "../.pio/build/gsw_uplink_producer_console/program")
         master_fd, slave_fd = pty.openpty()
         self.uplink_producer = subprocess.Popen([binary_dir], stdin=master_fd, stdout=master_fd)
         self.uplink_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)

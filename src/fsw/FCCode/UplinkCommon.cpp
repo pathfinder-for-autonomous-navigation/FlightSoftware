@@ -29,11 +29,7 @@ bool Uplink::_validate_packet(bitstream& bs)
 
         if (field_index == 0) // reached end of the packet
             break;
-        #if defined FUNCTIONAL_TEST && !defined DESKTOP
-        field_index+=2;
-        #else
         --field_index;
-        #endif
         // Check if index is within writable_fields and get its length if it is      
         field_len = get_field_length(field_index);
         if (field_len == 0) 
@@ -76,11 +72,7 @@ void Uplink::_update_fields(bitstream& bs)
         bits_consumed += bs.nextN(index_size, reinterpret_cast<uint8_t*>(&field_index));
         if (field_index == 0) // reached end of the packet
             return;
-        #if defined FUNCTIONAL_TEST && !defined DESKTOP
-        field_index+=2;
-        #else
         --field_index;
-        #endif
 
         // Get field length from the index
         field_len = get_field_length(field_index);
