@@ -66,6 +66,7 @@ class DockingCheckoutCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
         self.sim.cycle_no = self.read_state("pan.cycle_no")
         self.write_state("dcdc.SpikeDock_cmd", "true")
+        assert(self.read_state("dcdc.SpikeDock_cmd") =="true")
 
         # initially, docksys is in the docking configuration but not docked, not turning 
         # and is docking. 
