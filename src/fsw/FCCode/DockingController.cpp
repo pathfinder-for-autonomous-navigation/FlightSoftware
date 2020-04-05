@@ -23,6 +23,8 @@ DockingController::DockingController(StateFieldRegistry &registry, unsigned int 
 
   docking_step_delay_f.set(4000);
   docking_step_angle_f.set(0.032f);
+
+  docksys.setup();
 }
 
 void DockingController::init() {
