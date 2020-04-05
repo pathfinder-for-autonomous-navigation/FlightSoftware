@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdarg>
 #include <common/bitstream.h>
+#include "fsw/FCCode/UplinkCommon.cpp"
 
 #ifdef DESKTOP
     #include <iostream>
