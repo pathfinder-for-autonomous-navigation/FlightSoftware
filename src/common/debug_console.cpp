@@ -3,7 +3,6 @@
 #include <array>
 #include <cstdarg>
 #include <common/bitstream.h>
-#include "fsw/FCCode/UplinkCommon.cpp"
 
 #ifdef DESKTOP
     #include <iostream>
@@ -304,19 +303,14 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
                 bitstream uplink(data, uplink_packet_len);
                 
-                // Check that the packet is valid
-                Uplink u(const_cast<StateFieldRegistry&>(registry));
-                u.init_uplink();
-                bool valid_packet = u._validate_packet(uplink);
-                if (valid_packet) {
-                    // Clear the MT buffer
-                    size_t size = sizeof(radio_mt_packet_fp->get());
-                    memset(radio_mt_packet_fp->get(), 0, size);
-                    // Move the uplink bitstream into the MT buffer so that it can be processed on
-                    // the next cycle by Uplink Consumer.
-                    memcpy(radio_mt_packet_fp->get(), data, uplink_packet_len);
-                    radio_mt_packet_len_fp->set(uplink_packet_len);
-                }
+                // Clear the MT buffer
+                size_t size = sizeof(radio_mt_packet_fp->get());
+                memset(radio_mt_packet_fp->get(), 0, size);
+
+                // Move the uplink bitstream into the MT buffer so that it can be processed on
+                // the next cycle by Uplink Consumer.
+                memcpy(radio_mt_packet_fp->get(), data, uplink_packet_len);
+                radio_mt_packet_len_fp->set(uplink_packet_len);
 
                 #ifdef DESKTOP
                     DynamicJsonDocument doc(500);
@@ -324,9 +318,8 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     StaticJsonDocument<200> doc;
                 #endif
                     doc["t"] = _get_elapsed_time();
-                    doc["uplink packet"] = packet;
-                    doc["uplink packet length"] = uplink_packet_len;
-                    doc["packet validity"] = valid_packet;
+                    doc["uplink"] = packet;
+                    doc["len"] = uplink_packet_len;
                 #ifdef DESKTOP
                     serializeJson(doc, std::cout);
                     std::cout << std::endl << std::flush;
