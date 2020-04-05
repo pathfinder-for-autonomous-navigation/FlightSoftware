@@ -31,9 +31,10 @@ class DockingCheckoutCase(SingleSatOnlyCase):
 
     def undock(self):
       #send command to go into undocked configuration
-      docking_config_cmd = self.write_state("docksys.config_cmd", "false")     
+      self.write_state("docksys.config_cmd", "false")     
       self.logger.put("\nStarting to undock.")
       dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
+      start_cycle = int(self.read_state("pan.cycle_no"))
       self.log_docking_states()
       #wait for undocking to finish
       while dock_config:
@@ -41,13 +42,15 @@ class DockingCheckoutCase(SingleSatOnlyCase):
         dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
         if int(self.read_state("pan.cycle_no"))%1000 == 0 or not dock_config:
           self.log_docking_states()
-      self.logger.put("Successfully finished undocking config command\n")
+      cycles_taken = int(self.read_state("pan.cycle_no")) - start_cycle
+      self.logger.put("Successfully finished undocking config command in " + str(cycles_taken) + " cycles\n")
 
     def dock(self):
       #send command to go into docked configuration
-      docking_config_cmd = self.write_state("docksys.config_cmd", "true")
+      self.write_state("docksys.config_cmd", "true")
       self.logger.put("\nStarting to dock.")
       dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
+      start_cycle = int(self.read_state("pan.cycle_no"))
       self.log_docking_states()     
       #wait for docking to finish
       while not dock_config:
@@ -55,7 +58,8 @@ class DockingCheckoutCase(SingleSatOnlyCase):
         dock_config = self.str_to_bool(self.read_state("docksys.dock_config"))
         if int(self.read_state("pan.cycle_no"))%1000 == 0 or dock_config:
           self.log_docking_states()
-      self.logger.put("Successfully finished docking command\n")
+      cycles_taken = int(self.read_state("pan.cycle_no")) - start_cycle
+      self.logger.put("Successfully finished docking config command in " + str(cycles_taken) + " cycles\n")
 
     def run_case_singlesat(self):
         self.sim.cycle_no = self.read_state("pan.cycle_no")

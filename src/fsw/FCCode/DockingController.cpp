@@ -4,7 +4,7 @@ DockingController::DockingController(StateFieldRegistry &registry, unsigned int 
     Devices::DockingSystem &_docksys)
     : TimedControlTask<void>(registry, "docking_ct", offset), docksys(_docksys),
       docking_step_angle_f("docksys.step_angle", Serializer<float>(0, 180, 16)),
-      docking_step_delay_f("docksys.step_delay", Serializer<int>()),
+      docking_step_delay_f("docksys.step_delay", Serializer<unsigned int>()),
       docked_f("docksys.docked", Serializer<bool>()),
       dock_config_f("docksys.dock_config", Serializer<bool>()),
       is_turning_f("docksys.is_turning", Serializer<bool>())

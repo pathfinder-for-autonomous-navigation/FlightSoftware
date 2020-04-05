@@ -20,7 +20,7 @@ bool DockingSystem::setup() {
 
         // set current limit (I2 low, I1 93.8% duty cycle)
         digitalWrite(motor_i2_pin, LOW);
-        analogWrite(motor_i1_pin, 239); //why is this so different from the arduino script (3645 or 3809) ?
+        analogWrite(motor_i1_pin, 239); 
 
         // SLEEP pins is set low to enable sleep
         digitalWrite(motor_sleep_pin, LOW);
@@ -71,7 +71,7 @@ void DockingSystem::set_step_angle(float angle) {
     step_angle = angle;
 }
 
-void DockingSystem::set_step_delay(int delay) {
+void DockingSystem::set_step_delay(unsigned int delay) {
     step_delay = delay;
 }
 
@@ -111,7 +111,7 @@ float DockingSystem::get_step_angle() const {
     return step_angle;
 }
 
-int DockingSystem::get_step_delay() const {
+unsigned int DockingSystem::get_step_delay() const {
     return step_delay;
 }
 
