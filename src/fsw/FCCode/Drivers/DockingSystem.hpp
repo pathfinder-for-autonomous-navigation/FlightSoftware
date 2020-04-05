@@ -128,7 +128,7 @@ class DockingSystem : public Devices::Device {
     #endif
 
     //number of steps left to complete
-    static unsigned int steps;
+    static volatile unsigned int steps;
 
     #ifndef DESKTOP
     IntervalTimer timer;

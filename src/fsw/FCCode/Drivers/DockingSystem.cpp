@@ -6,7 +6,7 @@
 
 using namespace Devices;
 
-unsigned int DockingSystem::steps = 0;
+volatile unsigned int DockingSystem::steps = 0;
 
 DockingSystem::DockingSystem()
     : Device("docking_system") {}
@@ -87,12 +87,14 @@ void DockingSystem::cancel() {
 }
 
 void DockingSystem::step_motor() {
-  #ifndef DESKTOP
-    digitalWrite(motor_step_pin, LOW);
-    delayMicroseconds(step_delay);
-    digitalWrite(motor_step_pin, HIGH);
-  #endif
+  if (steps >= 1) {
+    #ifndef DESKTOP
+        digitalWrite(motor_step_pin, LOW);
+        delayMicroseconds(step_delay);
+        digitalWrite(motor_step_pin, HIGH);
+    #endif
     steps=steps-1;
+  }
 }
 
 float DockingSystem::get_step_angle() const {
