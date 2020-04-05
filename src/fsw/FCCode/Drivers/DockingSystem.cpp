@@ -68,7 +68,7 @@ bool DockingSystem::check_docked() const {
 }
 
 void DockingSystem::set_step_angle(float angle) {
-    step_angle = angle;
+    step_angle = (angle*M_PI)/180.0f;
 }
 
 void DockingSystem::set_step_delay(unsigned int delay) {
