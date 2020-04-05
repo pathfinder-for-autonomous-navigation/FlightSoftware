@@ -5,6 +5,10 @@
 #include <cmath>
 #include <common/constant_tracker.hpp>
 
+#ifndef DESKTOP
+#include <Arduino.h>
+#endif
+
 namespace Devices {
 /**
  * @brief Logical interface to docking motor.
@@ -54,27 +58,20 @@ class DockingSystem : public Devices::Device {
      */
     void step_motor(float angle);
 
-    /**
-     * @brief Set the direction of the motor turning.
-     * 
-     * @param clockwise True if we want to turn the motor clockwise.
-     */
-    void set_direction(bool clockwise);
-
     /** 
-     * @brief Put the docking motor into the "docked" turning configuration.
+     * @brief Turn the motor shaft by 180 degrees.
      **/
-    void start_dock();
-
-    /** 
-     * @brief Put the docking motor into the "undocked" turning configuration.
-     **/
-    void start_undock();
+    void start_halfturn();
 
     /**
      * @brief Manually step motor by one step.
      */
-    void step_motor();
+    static void step_motor();
+
+    /**
+     * @brief Cancel stepping of motor.
+     */
+    void cancel();
 
     /**
      * @brief Return current step angle.
@@ -82,13 +79,6 @@ class DockingSystem : public Devices::Device {
      * @param angle in degrees.
      */
     float get_step_angle() const;
-
-    /**
-     * @brief Return current step delay.
-     * 
-     * @param delay in microseconds.
-     */
-    unsigned int get_step_delay() const;
 
     /**
      * @brief Check state of docking switch.
@@ -103,13 +93,6 @@ class DockingSystem : public Devices::Device {
      * @param parameter
      */
     void set_step_angle(float angle);
-
-    /**
-     * @brief Adjust step delay for docking motor.
-     * 
-     * @param delay
-     */
-    void set_step_delay(unsigned int delay);
 
     /**
      * @brief Set number of steps left to turn.
@@ -132,7 +115,7 @@ class DockingSystem : public Devices::Device {
     // -> step_angle = 180/5625 = 0.032 deg/step 
     float step_angle = (0.032*M_PI)/180.0f;
     // Sets the delay between steps (in microseconds), which affects the speed and torque
-    unsigned int step_delay = 4000;
+    TRACKED_CONSTANT_SC(unsigned int, step_delay, 4000);
 
     // Status of motor sleep pin (and therefore of overall docking motor.)
     #ifndef DESKTOP
@@ -145,7 +128,11 @@ class DockingSystem : public Devices::Device {
     #endif
 
     //number of steps left to complete
-    unsigned int steps = 0;
+    static unsigned int steps;
+
+    #ifndef DESKTOP
+    IntervalTimer timer;
+    #endif
 };
 }  // namespace Devices
 

@@ -43,7 +43,6 @@ class DockingController : public TimedControlTask<void> {
     //fields for step angle and step delay to change the speed/torque of the motor and how long it will turn
     //values written to be taken from testing data
     WritableStateField<float> docking_step_angle_f;
-    WritableStateField<unsigned int> docking_step_delay_f;
 
     //state field returns whether or not the spacecraft are docked with one another
     ReadableStateField<bool> docked_f;
