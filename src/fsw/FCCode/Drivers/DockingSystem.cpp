@@ -86,14 +86,22 @@ void DockingSystem::cancel() {
     #endif
 }
 
+volatile bool motor_on = false;
 void DockingSystem::step_motor() {
   if (steps >= 1) {
-    #ifndef DESKTOP
-        digitalWrite(motor_step_pin, LOW);
-        delayMicroseconds(step_delay);
-        digitalWrite(motor_step_pin, HIGH);
-    #endif
-    steps=steps-1;
+        if (motor_on) {
+            #ifndef DESKTOP
+            digitalWrite(motor_step_pin, LOW);
+            #endif
+            motor_on = false;
+        }
+        else {
+            #ifndef DESKTOP
+            digitalWrite(motor_step_pin, HIGH);
+            #endif
+            steps=steps-1;
+            motor_on = true;
+        }
   }
 }
 
