@@ -19,9 +19,25 @@
     } \
 }
 
-#define PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(expected, actual, delta)  PAN_TEST_ASSERT_EQUAL_DOUBLE_ARR(expected, actual, delta, 3)
-#define PAN_TEST_ASSERT_EQUAL_DOUBLE_QUAT(expected, actual, delta) PAN_TEST_ASSERT_EQUAL_DOUBLE_ARR(expected, actual, delta, 4)
 #define PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(expected, actual, delta)   PAN_TEST_ASSERT_EQUAL_FLOAT_ARR(expected, actual, delta, 3)
 #define PAN_TEST_ASSERT_EQUAL_FLOAT_QUAT(expected, actual, delta)  PAN_TEST_ASSERT_EQUAL_FLOAT_ARR(expected, actual, delta, 4)
+#define PAN_TEST_ASSERT_EQUAL_DOUBLE_VEC(expected, actual, delta)  PAN_TEST_ASSERT_EQUAL_DOUBLE_ARR(expected, actual, delta, 3)
+#define PAN_TEST_ASSERT_EQUAL_DOUBLE_QUAT(expected, actual, delta) PAN_TEST_ASSERT_EQUAL_DOUBLE_ARR(expected, actual, delta, 4)
+
+#define PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(expected, actual, delta) { \
+    char err_str[25]; \
+    for(size_t i = 0; i < 3; i++) { \
+        sprintf(err_str, "Fail on element %d", (int) i); \
+        TEST_ASSERT_FLOAT_WITHIN_MESSAGE(delta, expected(i), actual(i), err_str); \
+    } \
+}
+
+#define PAN_TEST_ASSERT_EQUAL_DOUBLE_LIN_VEC(expected, actual, delta) { \
+    char err_str[25]; \
+    for(size_t i = 0; i < 3; i++) { \
+        sprintf(err_str, "Fail on element %d", (int) i); \
+        TEST_ASSERT_DOUBLE_WITHIN_MESSAGE(delta, expected(i), actual(i), err_str); \
+    } \
+}
 
 #endif
