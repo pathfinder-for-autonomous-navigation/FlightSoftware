@@ -16,5 +16,5 @@
             "connect": false
         }
     ],
-    "downlink_parser_filepath": "/home/pan/.git/FlightSoftware/.pio/build/gsw_downlink_parser"
+    "downlink_parser_filepath": ".pio/build/gsw_downlink_parser"
 }
