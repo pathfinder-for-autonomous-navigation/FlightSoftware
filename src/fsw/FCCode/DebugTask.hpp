@@ -30,6 +30,11 @@ protected:
    * with the simulation.
    */
   WritableStateField<bool> start_cycle_f;
+  /**
+   * @brief If this state field is true, DebugTask will call process_commands() once, then move on.
+   * 
+   */
+  WritableStateField<bool> auto_cycle_f;
 #endif
 };
 
