@@ -55,10 +55,14 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.cycle()
 
         self.ws("pan.state", self.mission_states.get_by_name("manual"))
+        self.ws("dcdc.ADCSMotor_cmd", True)
+
+        # Necessary so that motor commands are pre-empted by ADCS DCDC being on
+        self.cycle()
+
         self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
         self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
-        self.ws("dcdc.ADCSMotor_cmd", True)
     
         self.print_header("Finished Initialization")
 

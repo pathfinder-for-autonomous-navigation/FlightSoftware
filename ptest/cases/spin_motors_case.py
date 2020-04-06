@@ -1,4 +1,4 @@
-# SpinMotorsCase. Gets satellite read to spin motors.
+# SpinMotorsCase. Spins the satellite wheels. Verified working - 04/06 for PR #335
 from .base import SingleSatOnlyCase
 import time
 
