@@ -77,9 +77,8 @@ void Uplink::_update_fields(bitstream& bs)
         // Get field length from the index
         field_len = get_field_length(field_index);
         auto field_p = registry.writable_fields[field_index];
-        const std::vector<bool>& _bit_arr = field_p->get_bit_array();
-        std::vector<bool>& field_bit_arr = const_cast<std::vector<bool>&>(_bit_arr);
-        
+        bit_array& field_bit_arr = field_p->get_bit_array();
+
         // Clear field's bit array
         for (size_t i = 0; i < field_len; ++i)
           field_bit_arr[i] = 0;

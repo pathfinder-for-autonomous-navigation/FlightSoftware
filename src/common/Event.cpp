@@ -46,7 +46,7 @@ size_t Event::bitsize() const {
     return field_data->size();
 }
 
-const bit_array& Event::get_bit_array() const {
+bit_array& Event::get_bit_array() {
     return *field_data;
 }
 
@@ -72,7 +72,7 @@ void Event::deserialize()
 
     for (ReadableStateFieldBase *field : data_fields)
     {
-        bit_array &field_bits = const_cast<bit_array &>(field->get_bit_array());
+        bit_array &field_bits = field->get_bit_array();
         for (unsigned int i = 0; i < field->bitsize(); i++, field_data_ptr++)
         {
             field_bits[i] = (*field_data)[field_data_ptr];

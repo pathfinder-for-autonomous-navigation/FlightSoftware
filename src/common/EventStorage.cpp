@@ -32,7 +32,7 @@ size_t EventStorage::bitsize() const
     return sub_events[event_ptr].bitsize();
 }
 
-const bit_array &EventStorage::get_bit_array() const
+bit_array &EventStorage::get_bit_array()
 {
     return sub_events[event_ptr].get_bit_array();
 }

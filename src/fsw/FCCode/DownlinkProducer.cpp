@@ -135,7 +135,7 @@ void DownlinkProducer::execute() {
     add_bits_to_downlink_frame(cycle_count_bits, snapshot_ptr, packet_offset,
             downlink_frame_offset);
 
-    for(auto const& flow : flows) {
+    for(auto& flow : flows) {
         if (!flow.is_active) continue;
 
         // Add a flow field one at a time to the snapshot, taking

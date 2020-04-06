@@ -29,7 +29,7 @@ public:
      * 
      * @return const bit_array& 
      */
-  virtual const bit_array &get_bit_array() const = 0;
+  virtual bit_array &get_bit_array() = 0;
 
 #if defined(GSW) || defined(UNIT_TEST)
    /**
@@ -83,7 +83,7 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
       // Functions from the EventBase interface.
       void signal() override;
       size_t bitsize() const override;
-      const bit_array &get_bit_array() const override;
+      bit_array &get_bit_array() override;
       void deserialize() override;
       void set_bit_array(const bit_array &arr) override;
       bool deserialize(const char *val) override;

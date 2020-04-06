@@ -32,7 +32,7 @@ public:
   // The event storage uses the event it currently points to
   // to provide the same interface as a single event.
   size_t bitsize() const override;
-  const bit_array &get_bit_array() const override;
+  bit_array &get_bit_array() override;
 
   #if defined(GSW) || defined(UNIT_TEST)
   void deserialize() override;
