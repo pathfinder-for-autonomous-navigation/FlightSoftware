@@ -7,6 +7,24 @@
 #include <gnc_constants.hpp>
 #include <common/GPSTime.hpp>
 
+
+//UTILITY MACROS
+char errormessage[1000];
+
+#define TEST_ASSERT_LIN_3VECT_WITHIN(delta, expected, actual) do {\
+            if (!(lin::norm(expected-actual)<=delta)){ \
+                TEST_MESSAGE("TEST_ASSERT_LIN_VECT_WITHIN Failed:");\
+                sprintf(errormessage, "    expected " #expected " is %.16e, %.16e, %.16e",expected(0),expected(1),expected(2));\
+                TEST_MESSAGE(errormessage);\
+                sprintf(errormessage, "    actual " #actual " is %.16e, %.16e, %.16e",actual(0),actual(1),actual(2));\
+                TEST_MESSAGE(errormessage);\
+                sprintf(errormessage, "    expected-actual: %.16e, %.16e, %.16e",expected(0)-actual(0),expected(1)-actual(1),expected(2)-actual(2));\
+                TEST_MESSAGE(errormessage);\
+                TEST_FAIL();\
+            }\
+           } while(0) 
+
+
 // grace data
 // time,xpos,ypos,zpos,xposerr,yposerr,zposerr,xvel,yvel,zvel,xvelerr,yvelerr,zvelerr
 // 623246400 D E -6522019.833240811 2067829.846415895 776905.9724453629 0.0009578283838282736 0.0006236271904723294 0.0006257082914522712 941.0211143841228 85.66662333729801 7552.870253470936 1.921071421308773e-06 1.457922754459223e-06 2.147748285029321e-06
@@ -85,9 +103,9 @@ void test_calc_geograv() {
     double ps[numtests]= {NAN};
     for (int i=0; i< numtests; i++){
         Orbit::calc_geograv(rs[i],gs[i],ps[i]);
-        TEST_ASSERT_FLOAT_WITHIN(1E-6, g_trues[i](0), gs[i](0));
-        TEST_ASSERT_FLOAT_WITHIN(1E-6, g_trues[i](1), gs[i](1));
-        TEST_ASSERT_FLOAT_WITHIN(1E-6, g_trues[i](2), gs[i](2));
+        TEST_ASSERT_DOUBLE_WITHIN(1E-6, g_trues[i](0), gs[i](0));
+        TEST_ASSERT_DOUBLE_WITHIN(1E-6, g_trues[i](1), gs[i](1));
+        TEST_ASSERT_DOUBLE_WITHIN(1E-6, g_trues[i](2), gs[i](2));
         //finite diff check
         lin::Vector3d delta_rs[4]= {
             {10.0,0.0,0.0},
@@ -101,7 +119,7 @@ void test_calc_geograv() {
             double predicted_deltap= lin::dot(delta_rs[j],gs[i]);
             Orbit::calc_geograv(rs[i]+delta_rs[j],junk,p_at_delta);
             double real_deltap= p_at_delta- ps[i];
-            TEST_ASSERT_FLOAT_WITHIN(1E-3, real_deltap, predicted_deltap);
+            TEST_ASSERT_DOUBLE_WITHIN(1E-3, real_deltap, predicted_deltap);
         }
     }
 }
@@ -124,12 +142,39 @@ void test_specificenergy() {
     TEST_ASSERT_TRUE(y2.valid());
     double e2= y2.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
 
-    TEST_ASSERT_FLOAT_WITHIN(10, e2, e1);
+    TEST_ASSERT_DOUBLE_WITHIN(10, e2, e1);
 
     //Test invalid orbit returns NAN
     Orbit x;
     TEST_ASSERT_FALSE(x.valid());
     TEST_ASSERT_TRUE(isnan(x.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z})));
+}
+
+void test_shortupdate() {
+    //valid orbit from grace
+    lin::Vector3d r1 {-6522019.833240811L, 2067829.846415895L, 776905.9724453629L};
+    lin::Vector3d v1 {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
+    uint64_t t1= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
+    Orbit y1(t1,r1,v1);
+    TEST_ASSERT_TRUE(y1.valid());
+
+    //623246500 D E -6388456.55330517 2062929.296577276 1525892.564091281 0.0009730537727755604 0.0006308360706885164 0.0006414402851363097 1726.923087560988 -185.5049475128178 7411.544615026139 1.906279023699492e-06 1.419033598283502e-06 2.088561789107221e-06  00000000
+    //grace orbit 100 seconds later
+    lin::Vector3d r2 {-6388456.55330517L, 2062929.296577276L, 1525892.564091281L};
+    lin::Vector3d v2 {1726.923087560988L, -185.5049475128178L, 7411.544615026139L};
+    uint64_t t2= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
+    Orbit y2(t2,r2,v2);
+    TEST_ASSERT_TRUE(y2.valid());
+    
+    double junk;
+    for(int i=0; i<1000;i++){
+        y1.shortupdate(100'000'000,{0.0,0.0,gnc::constant::earth_rate_ecef_z},junk);
+    }
+    lin::Vector3d vfinal = y1.vecef();
+    //lin::Vector3d rfinal = y1.recef();
+    TEST_ASSERT_LIN_3VECT_WITHIN(1E-5, vfinal, v2);
+
+    
 }
 
 int test_orbit() {
@@ -138,6 +183,7 @@ int test_orbit() {
     RUN_TEST(test_applydeltav);
     RUN_TEST(test_calc_geograv);
     RUN_TEST(test_specificenergy);
+    RUN_TEST(test_shortupdate);
     return UNITY_END();
 }
 

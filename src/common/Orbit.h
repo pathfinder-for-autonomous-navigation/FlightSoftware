@@ -243,6 +243,7 @@ class Orbit {
        and f is the shortupdate function.
      */
     static void _jacobian_helper(const lin::Vector3d& r_half ,const  double& dt, lin::Matrix<double, 6, 6>& jac){
+        double mu= PANGRAVITYMODEL.earth_gravity_constant;
         double x_half= r_half(1);
         double y_half= r_half(1);
         double z_half= r_half(2);
@@ -262,7 +263,7 @@ class Orbit {
         double sqrtx103= x10*sqrtx10;
         double x11 = mu/(sqrtx103);
         double x12 = -dt*x11;
-        double x13 = (3.0/2.0)*dt;
+        //double x13 = (3.0/2.0)*dt;
         double x14 = (3.0/2.0)*x0;
         double x15 = -3*x_half - x14*x6;
         double x16 = mu/(sqrtx103*x10);
@@ -409,8 +410,8 @@ class Orbit {
         //convert to ECEF0
         lin::Vector3d g_ecef0= lin::transpose(dcm_ecefhalf_ecef0)*g_ecef + mu*orb_r/(a*a*a);
         // step 3b kick velocity
-        relhalf_v= rel_v + g_ecef0*dt*0.5;
-        halfstepke= lin::fro(relhalf_v+lin::cross(omega,orb_r))*0.5;
+        lin::Vector3d relhalf_v= rel_v + g_ecef0*dt*0.5;
+        double halfstepke= lin::fro(relhalf_v+lin::cross(omega,orb_r))*0.5;
         rel_v= rel_v + g_ecef0*dt;
         // step 4 drift
         rel_r= rel_r+rel_v*dt*0.5;
@@ -458,7 +459,7 @@ class Orbit {
         }
         lin::Vector3d r_half_ecef0;
         double dt= double(dt_ns)*1E-9L;
-        _shortupdate_helper(dt,earth_rate_ecef, lin::Vector3d& r_half_ecef0, specificenergy);
+        _shortupdate_helper(dt,earth_rate_ecef, r_half_ecef0, specificenergy);
         _jacobian_helper(r_half_ecef0 ,dt, jac); 
     }
 
@@ -479,7 +480,7 @@ class Orbit {
         }
         lin::Vector3d r_half_ecef0;
         double dt= double(dt_ns)*1E-9L;
-        _shortupdate_helper(dt,earth_rate_ecef, lin::Vector3d& r_half_ecef0, specificenergy);
+        _shortupdate_helper(dt,earth_rate_ecef, r_half_ecef0, specificenergy);
     }
     
 
