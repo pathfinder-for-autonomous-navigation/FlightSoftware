@@ -106,11 +106,38 @@ void test_calc_geograv() {
     }
 }
 
+void test_specificenergy() {
+    //valid orbit from grace
+    lin::Vector3d r1 {-6522019.833240811L, 2067829.846415895L, 776905.9724453629L};
+    lin::Vector3d v1 {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
+    uint64_t t1= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
+    Orbit y1(t1,r1,v1);
+    TEST_ASSERT_TRUE(y1.valid());
+    double e1= y1.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
+
+    //623246500 D E -6388456.55330517 2062929.296577276 1525892.564091281 0.0009730537727755604 0.0006308360706885164 0.0006414402851363097 1726.923087560988 -185.5049475128178 7411.544615026139 1.906279023699492e-06 1.419033598283502e-06 2.088561789107221e-06  00000000
+    //grace orbit 100 seconds later
+    lin::Vector3d r2 {-6388456.55330517L, 2062929.296577276L, 1525892.564091281L};
+    lin::Vector3d v2 {1726.923087560988L, -185.5049475128178L, 7411.544615026139L};
+    uint64_t t2= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
+    Orbit y2(t2,r2,v2);
+    TEST_ASSERT_TRUE(y2.valid());
+    double e2= y2.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
+
+    TEST_ASSERT_FLOAT_WITHIN(10, e2, e1);
+
+    //Test invalid orbit returns NAN
+    Orbit x;
+    TEST_ASSERT_FALSE(x.valid());
+    TEST_ASSERT_TRUE(isnan(x.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z})));
+}
+
 int test_orbit() {
     UNITY_BEGIN();
     RUN_TEST(test_basic_constructors);
     RUN_TEST(test_applydeltav);
     RUN_TEST(test_calc_geograv);
+    RUN_TEST(test_specificenergy);
     return UNITY_END();
 }
 
