@@ -28,8 +28,8 @@ in order to run unit tests selectively.
 Here are some possible options:
 
     pio run -e fsw_native_leader                 (for HOOTL testing)
-    pio run -e fsw_teeny35_hitl_leader -t upload (for HITL testing with a Teensy 3.5)
-    pio run -e fsw_teeny36_hitl_leader -t upload (for HITL testing with a Teensy 3.6)
+    pio run -e fsw_teensy35_hitl_leader -t upload (for HITL testing with a Teensy 3.5)
+    pio run -e fsw_teensy36_hitl_leader -t upload (for HITL testing with a Teensy 3.6)
     pio run -e fsw_flight_leader -t upload       (for HITL testing with pure flight code)
 
 The binaries end up in `.pio/build`.
