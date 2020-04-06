@@ -410,6 +410,7 @@ class StateSession(object):
         self.running_logger = False
         self.check_msgs_thread.join()
         self.console.close()
+        self.uplink_console.close()
 
         self.datastore.stop()
         self.logger.stop()

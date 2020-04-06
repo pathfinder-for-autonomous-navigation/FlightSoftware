@@ -271,10 +271,10 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 size_t uplink_packet_len = msgs[i]["length"];
                 JsonVariant packet = msgs[i]["val"]; 
 
-                // Get the uplink packet as a char array for parsing. 
+                // Get the uplink packet as a char pointer. 
                 // Add "\x" to the end to allow us to parse the uplink string
-                char uplink_packet [strlen(msgs[i]["val"]) + strlen("\\x")]; 
-                strcpy(uplink_packet, msgs[i]["val"]);
+                char* uplink_packet = (char *) malloc(1 + strlen(packet)+ strlen("\\x"));
+                strcpy(uplink_packet, packet);
                 strcat(uplink_packet, "\\x");
 
                 // The data array holds the decimal values of the hex string. For example,
@@ -282,21 +282,17 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 char data[uplink_packet_len];
 
                 // Parse the uplink string. Split the string using "\x" as a delimiter
-                char* delimiter = (char*) "\\";
-                char* pos = strstr(uplink_packet, delimiter); // pointer to the the uplink string, starts at beginning
-                char token[uplink_packet_len]; // hex value in uplink string
+                // Token holds a single hex value in uplink string; can't possibly be bigger than uplink_packet_len
+                char token[uplink_packet_len]; 
                 for (i=0; i<uplink_packet_len; i++) {
                     // Get the hex string (i.e "4c") and put it in the token char array
-                    pos+=2;
+                    uplink_packet+=2;
                     memset(token, 0, uplink_packet_len); // Clear the token array
-                    size_t idx = 0;
-                    while (pos[0] != '\\') {
-                        token[idx] = pos[0];
-                        idx=idx+1;
-                        pos+=1;
+                    for (size_t idx = 0; uplink_packet[0] != '\\'; idx++, uplink_packet++) {
+                        token[idx] = uplink_packet[0];
                     }
 
-                    // Get the decimal value of the token/hex string and add it to data array
+                    // Get the decimal value of the token/hex string (i.e 67) and add it to data array
                     data[i] = (char) strtol ((char*)token, NULL, 16);
                 }
 
