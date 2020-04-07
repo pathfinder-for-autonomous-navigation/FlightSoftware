@@ -56,10 +56,10 @@ TRACKED_CONSTANT(const double, MINORBITRADIUS, 6378.0E3L);
 class Orbit {
   public:
     /** Position of the sat (m).*/
-    lin::Vector3d _recef{lin::nans<lin::Vector3d>()};
+    lin::Vector3d _recef= lin::nans<lin::Vector3d>();
 
     /** Velocity of the sat (m/s).*/
-    lin::Vector3d _vecef{lin::nans<lin::Vector3d>()};
+    lin::Vector3d _vecef= lin::nans<lin::Vector3d>();
 
     /** Time since gps epoch (ns).*/
     uint64_t _ns_gps_time{0};
