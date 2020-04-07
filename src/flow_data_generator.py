@@ -20,11 +20,11 @@ class FlowListParser(object):
     def parse(self):
         data = []
         for row_data in self.data_list:
-            if row_data[1] not in ["true", "false"]:
+            if row_data[1].lower() not in ["true", "false"]:
                 # This is just an annotation/comment row, ignore it.
                 continue
 
-            reformatted_row_data = [len(data) + 1, row_data[1], row_data[2:]] # Flow ID, flow active/inactive, flow fields
+            reformatted_row_data = [len(data) + 1, row_data[1].lower(), [item for item in row_data[2:] if item != ""]] # Flow ID, flow active/inactive, flow fields
             parsed_row = str(reformatted_row_data).replace("[", "{").replace("]", "}").replace("'", "\"")
             data.append(parsed_row)
 
@@ -35,11 +35,10 @@ end = \
 };
 """
 
-if __name__ == "__main__":
-    with open("src/flow_data.cpp", "w") as output_f:
-        output_f.write(preamble)
+with open("src/flow_data.cpp", "w") as output_f:
+    output_f.write(preamble)
 
-        parsed_flow_list = FlowListParser("src/flow_data.csv").parse()
-        output_f.write(parsed_flow_list)
+    parsed_flow_list = FlowListParser("src/flow_data.csv").parse()
+    output_f.write(parsed_flow_list)
 
-        output_f.write(end)
+    output_f.write(end)
