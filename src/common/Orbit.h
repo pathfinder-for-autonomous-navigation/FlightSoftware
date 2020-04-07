@@ -475,7 +475,7 @@ class Orbit {
      * grav calls: 1 if Orbit valid, 0 if Orbit invalid
      * @param[in] dt_ns (in the range [-2E8,2E8]): Time step (ns).
      * @param[in] earth_rate_ecef: The earth's angular rate in ecef frame (rad/s). 
-     * @param[out] specificenergy: Specific energy of the Orbit (J/kg).
+     * @param[out] specificenergy: Specific energy of the Orbit at the half step (J/kg).
      */
     void shortupdate(int32_t dt_ns,const lin::Vector3d& earth_rate_ecef, double& specificenergy){
         if (!valid()){
