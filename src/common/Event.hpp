@@ -84,6 +84,7 @@ class Event : public ReadableStateFieldBase, public StateField<bool>, public Eve
       void signal() override;
       size_t bitsize() const override;
       const bit_array &get_bit_array() const override;
+      bit_array &get_bit_array() override;
       void deserialize() override;
       void set_bit_array(const bit_array &arr) override;
       bool deserialize(const char *val) override;

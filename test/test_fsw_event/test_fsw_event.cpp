@@ -66,7 +66,7 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
         event_ptr_curr = *tf.event_ptr;
         *tf.event_ptr = event_ptr_prev;
     }
-    bit_array &ba = const_cast<bit_array &>(event.get_bit_array());
+    bit_array &ba = event.get_bit_array();
     TEST_ASSERT_EQUAL(ccno, ba.to_uint());
     TEST_ASSERT_EQUAL(true, ba[32]);
     TEST_ASSERT_EQUAL(false, ba[33]);
@@ -103,7 +103,7 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
         event_ptr_curr = *tf.event_ptr;
         *tf.event_ptr = event_ptr_prev;
     }
-    ba = const_cast<bit_array &>(event.get_bit_array());
+    ba = event.get_bit_array();
     TEST_ASSERT_EQUAL(false, ba[32]);
     TEST_ASSERT_EQUAL(true, ba[33]);
     if (tf.event_ptr != nullptr)
