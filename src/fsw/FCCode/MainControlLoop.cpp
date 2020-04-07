@@ -97,6 +97,7 @@ void MainControlLoop::execute() {
     debug_task.execute_on_time();
     #endif
 
+    uplink_consumer.execute_on_time();
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
     dcdc_controller.execute_on_time();
