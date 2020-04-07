@@ -359,7 +359,7 @@ class StateSession(object):
         self.uplink_console.write((str(filename)+"\n").encode())
         response = json.loads(self.uplink_console.readline().rstrip())
 
-        # Check that the uplink was successfully create
+        # Check that the uplink was successfully created
         if 'error' in response:
             logline = "Failed:   " + json.dumps(telem_json) + "\n"
             logline += "Error:    "+response['error']

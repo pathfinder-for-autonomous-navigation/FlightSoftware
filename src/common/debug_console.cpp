@@ -282,7 +282,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 char data[uplink_packet_len];
 
                 // Parse the uplink packet; convert it from a hex string to an array of integers.
-                // Token holds a single hex value in uplink string; can't possibly be bigger than the length of the packet.
+                // Token holds a single hex value in uplink string; can't possibly be longer than the string length of the packet.
                 char token[strlen(packet)]; 
                 for (i=0; i<uplink_packet_len; i++) {
                     // Get the hex string (i.e "4c") and put it in the token char array
@@ -295,14 +295,12 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                     // Get the decimal value of the token/hex string (i.e 67) and add it to data array
                     data[i] = (char) strtol ((char*)token, NULL, 16);
                 }
-
-                bitstream uplink(data, uplink_packet_len);
                 
                 // Clear the MT buffer
                 size_t size = sizeof(radio_mt_packet_fp->get());
                 memset(radio_mt_packet_fp->get(), 0, size);
 
-                // Move the uplink bitstream into the MT buffer so that it can be processed on
+                // Move the uplink data into the MT buffer so that it can be processed on
                 // the next cycle by Uplink Consumer.
                 memcpy(radio_mt_packet_fp->get(), data, uplink_packet_len);
                 radio_mt_packet_len_fp->set(uplink_packet_len);
