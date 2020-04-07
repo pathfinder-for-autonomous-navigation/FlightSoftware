@@ -1,5 +1,5 @@
 #include <unity.h>
-#include<stdio.h>
+#include <stdio.h>
 #include <common/Orbit.h>
 #include <cstdint>
 #include <limits>
@@ -9,20 +9,36 @@
 
 
 //UTILITY MACROS
+/**
+ * Printing function
+ * */
+template<typename T>
+void printtensor(T x){
+    int n= x.rows();
+    int m= x.cols();
+    for (int i=0; i<n; i++){
+        char linemessage[256];
+        char *point= linemessage;
+        for (int j=0; j<m; j++){
+	            point+= sprintf(point,"%.10e, ",x(i,j));
+	    }
+        TEST_MESSAGE(linemessage);
+    }
+}
 
 #define TEST_ASSERT_LIN_3VECT_WITHIN(delta, expected, actual) do {\
             if (!(lin::norm(expected-actual)<=delta)){ \
                 char errormessage[256];\
                 TEST_MESSAGE("TEST_ASSERT_LIN_VECT_WITHIN Failed:");\
-                sprintf(errormessage, "    expected " #expected " is %.16e, %.16e, %.16e",expected(0),expected(1),expected(2));\
+                sprintf(errormessage, "    expected " #expected " is %.10e, %.10e, %.10e",expected(0),expected(1),expected(2));\
                 TEST_MESSAGE(errormessage);\
-                sprintf(errormessage, "    actual " #actual " is %.16e, %.16e, %.16e",actual(0),actual(1),actual(2));\
+                sprintf(errormessage, "    actual " #actual " is %.10e, %.10e, %.10e",actual(0),actual(1),actual(2));\
                 TEST_MESSAGE(errormessage);\
-                sprintf(errormessage, "    expected-actual: %.16e, %.16e, %.16e",expected(0)-actual(0),expected(1)-actual(1),expected(2)-actual(2));\
+                sprintf(errormessage, "    expected-actual: %.10e, %.10e, %.10e",expected(0)-actual(0),expected(1)-actual(1),expected(2)-actual(2));\
                 TEST_MESSAGE(errormessage);\
-                sprintf(errormessage, "    norm(expected-actual): %.16e",lin::norm(expected-actual));\
+                sprintf(errormessage, "    norm(expected-actual): %.10e",lin::norm(expected-actual));\
                 TEST_MESSAGE(errormessage);\
-                sprintf(errormessage, "    max error: %.16e",delta);\
+                sprintf(errormessage, "    max error: %.10e",delta);\
                 TEST_MESSAGE(errormessage);\
                 TEST_FAIL();\
             }\
@@ -227,21 +243,29 @@ void test_shortupdate() {
     //lin::rands<lin::Matrixd<0, 3, 5, 3>>(4, 3, rand);
     lin::internal::RandomsGenerator const rand(0);
     y1= ystart;
-    y1.shortupdate(200'000'000,{0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4},junk);
+    lin::Matrix<double, 6, 6> jac;
+    y1.shortupdate(200'000'000,{0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4},junk,jac);
+    TEST_MESSAGE("Jacobian");
+    printtensor(jac);
     for(int i=0; i<5;i++){
-        lin::Matrix<double, 6, 6> jac;
-        lin::Vectord<6> initialdelta= lin::rands<lin::Vectord<6>>(6, rand);
-        lin::Vector3d deltar= lin::ref<3>(initialdelta, 0);
-        lin::Vector3d deltav= lin::ref<3>(initialdelta, 3);
+        lin::Vectord<6> initialdelta= lin::rands<lin::Vectord<6>>(6, 1, rand);
+        initialdelta= initialdelta-lin::consts<lin::Vectord<6>>(0.5,6,1);
+        initialdelta= initialdelta*0.2;
+        lin::Vector3d deltar= lin::ref<3, 1>(initialdelta, 0, 0);
+        lin::Vector3d deltav= lin::ref<3, 1>(initialdelta, 3, 0);
         Orbit y_diff(ystart.nsgpstime(),ystart.recef()+deltar,ystart.vecef()+deltav);
-        y_diff.shortupdate(200'000'000,{0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4},junk,jac);
+        y_diff.shortupdate(200'000'000,{0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4},junk);
         lin::Vector3d finaldr= y_diff.recef()-y1.recef();
         lin::Vector3d finaldv= y_diff.vecef()-y1.vecef();
         lin::Vectord<6> finaldelta;
-        lin::ref<3>(finaldelta, 0)= finaldr;
-        lin::ref<3>(finaldelta, 3)= finaldv;
-        //lin::Matrix<double, 6, 1> expecteddelta= jac*initialdelta;
-        //TEST_ASSERT_FLOAT_WITHIN(1E-6, 0.0, lin::fro(expecteddelta-finaldelta));
+        lin::ref<3, 1>(finaldelta, 0, 0)= finaldr;
+        lin::ref<3, 1>(finaldelta, 3, 0)= finaldv;
+        lin::Vectord<6> expecteddelta= jac*initialdelta;
+        TEST_MESSAGE("Initial delta");
+        printtensor(initialdelta);
+        TEST_MESSAGE("Final delta");
+        printtensor(finaldelta);
+        TEST_ASSERT_FLOAT_WITHIN(1E-9, 0.0, lin::norm(expecteddelta-finaldelta));
     }
 }
 

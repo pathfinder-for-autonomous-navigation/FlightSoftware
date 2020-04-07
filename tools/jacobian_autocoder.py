@@ -34,12 +34,20 @@ r_ecef= r.to_matrix(ECEF1)
 # sp.ccode(r_ecef[0].diff(x0))
 #sp.ccode(optimize(expand_opt(r_ecef[0].diff(x0)), optims_c99))
 outputs= [r_ecef[0],r_ecef[1],r_ecef[2],v_ecef[0],v_ecef[1],v_ecef[2]]
-inputs= [x0,y0,z0,vz0,vy0,vz0]
+inputs= [x0,y0,z0,vx0,vy0,vz0]
 #sp.cse((r_ecef[0].diff(x0),r_ecef[1].diff(x0),r_ecef[2].diff(x0))
-expressions=[]
+expressions=[];
 for outp in outputs:
     for inp in inputs:
-        expressions.append(outp.diff(inp))
+        expression= outp.diff(inp)
+        expression= expression.subs([(x0+dt/2*(vx0-w*y0),xh),(y0+dt/2*(vy0+w*x0),yh),(z0+dt/2*vz0,zh)])
+        expression= expression.subs(- 3*dt*(vx0 - w*y0)/2 - 3*x0,-3*xh)
+        expression= expression.subs(- 3*dt*(vy0 + w*x0)/2 - 3*y0,-3*yh)
+        expression= expression.subs(-3*dt*vz0/2 - 3*z0,-3*zh)
+        expression= sp.collect(expression,vx0)
+        
+        #print(expression)
+        expressions.append(expression)
 cseofmatrix=sp.cse(expressions)
 
 def csetupletocline(t,real_type):
