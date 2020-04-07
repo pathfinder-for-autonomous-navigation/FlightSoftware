@@ -1,3 +1,7 @@
+# Nathan Zimmerberg (nhz2@cornell.edu)
+# 7 APR 2020
+# A simple script to help get the jacobian of an Orbit update, see Orbit.h
+
 import sympy as sp
 from sympy.vector import CoordSys3D, express
 from sympy.codegen.rewriting import optimize, optims_c99
@@ -31,11 +35,8 @@ v_E= v_I - earth_rate.cross(r);
 v_ecef= v_E.to_matrix(ECEF1)
 r_ecef= r.to_matrix(ECEF1)
 
-# sp.ccode(r_ecef[0].diff(x0))
-#sp.ccode(optimize(expand_opt(r_ecef[0].diff(x0)), optims_c99))
 outputs= [r_ecef[0],r_ecef[1],r_ecef[2],v_ecef[0],v_ecef[1],v_ecef[2]]
 inputs= [x0,y0,z0,vx0,vy0,vz0]
-#sp.cse((r_ecef[0].diff(x0),r_ecef[1].diff(x0),r_ecef[2].diff(x0))
 expressions=[];
 for outp in outputs:
     for inp in inputs:
@@ -45,8 +46,6 @@ for outp in outputs:
         expression= expression.subs(- 3*dt*(vy0 + w*x0)/2 - 3*y0,-3*yh)
         expression= expression.subs(-3*dt*vz0/2 - 3*z0,-3*zh)
         expression= sp.collect(expression,vx0)
-        
-        #print(expression)
         expressions.append(expression)
 cseofmatrix=sp.cse(expressions)
 

@@ -229,7 +229,7 @@ class Orbit {
     }
 
     /** Get the jacobian of a shortupdate.
-     * This is partially auto code from sympy
+     * This is partially auto code from sympy in tools/jacobian_autocoder.py
      * 
      * The jacobian is calculated assuming point mass earth and constant earth rate of:
      *  w= 1.0e-04L * 0.729211585530000L rad/s in ecef z direction.
@@ -488,12 +488,5 @@ class Orbit {
         double dt= double(dt_ns)*1E-9L;
         _shortupdate_helper(dt,earth_rate_ecef, r_half_ecef0, specificenergy);
     }
-    
-
-
-
-
-
-
 
 };
