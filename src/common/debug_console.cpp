@@ -2,7 +2,6 @@
 #include <ArduinoJson.h>
 #include <array>
 #include <cstdarg>
-#include <common/bitstream.h>
 
 #ifdef DESKTOP
     #include <iostream>
