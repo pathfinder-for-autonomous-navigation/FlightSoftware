@@ -5,6 +5,7 @@ import threading
 import json
 import traceback
 import queue
+import os
 
 from .data_consumers import Datastore, Logger
 
@@ -37,6 +38,7 @@ class StateSession(object):
         self.datastore = Datastore(device_name, simulation_run_dir)
         self.logger = Logger(device_name, simulation_run_dir)
         self.raw_logger = Logger(device_name + "_raw", simulation_run_dir)
+        self.telem_save_dir = simulation_run_dir
 
         # Simulation
         self.overriden_variables = set()
@@ -101,6 +103,13 @@ class StateSession(object):
                     logline += data['telem']
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
+                    #log data to a timestamped file
+                    telem_bytes = data['telem'].split(r'\x')
+                    telem_bytes.remove("")
+                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].txt"), "wb")
+                    for byte in telem_bytes:
+                        telem_file.write(int(byte, 16).to_bytes(1, byteorder='big'))
+                    telem_file.close()
                 else:
                     if 'err' in data:
                         # The log line represents an error in retrieving or writing state data that
@@ -156,6 +165,44 @@ class StateSession(object):
         self.raw_logger.put("Sent:     " + json_cmd.rstrip())
 
         return self._wait_for_state(field)
+
+    def str_to_val(self, field):
+        '''
+        Automatically detects floats, ints and bools
+
+        Returns a float, int or bool
+        '''
+        if '.' in field:
+            return float(field)
+        elif field == 'true':
+            return True
+        elif field == 'false':
+            return False
+        else:
+            return int(field)
+
+    def smart_read(self, field, **kwargs):
+        '''
+        Turns a string state field read into the actual desired vals.
+
+        Returns list of vals, or the val itself. Vals can be bools, ints, or floats.
+        Raises NameError if no state field was found.
+        '''
+        
+        ret = self.read_state(field, kwargs.get('timeout'))
+        if ret is None:
+            raise NameError(f"State field: {field} not found.")
+
+        # begin type inference
+
+        if ',' in ret:
+            # ret is a list
+            list_of_strings = ret.split(',')
+            list_of_strings = [x for x in list_of_strings if x is not '']
+            list_of_vals = [self.str_to_val(x) for x in list_of_strings]
+            return list_of_vals
+        else:
+            return self.str_to_val(ret)
 
     def _write_state_basic(self, fields, vals, timeout = None):
         '''
