@@ -281,9 +281,9 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 // if the uplink contains "\x4c", the data array will hold 67. 
                 char data[uplink_packet_len];
 
-                // Parse the uplink string. Split the string using "\x" as a delimiter
-                // Token holds a single hex value in uplink string; can't possibly be bigger than uplink_packet_len
-                char token[uplink_packet_len]; 
+                // Parse the uplink packet; convert it from a hex string to an array of integers.
+                // Token holds a single hex value in uplink string; can't possibly be bigger than the length of the packet.
+                char token[strlen(packet)]; 
                 for (i=0; i<uplink_packet_len; i++) {
                     // Get the hex string (i.e "4c") and put it in the token char array
                     uplink_packet+=2;
