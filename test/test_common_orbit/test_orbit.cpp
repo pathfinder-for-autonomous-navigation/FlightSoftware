@@ -1,24 +1,28 @@
 #include <unity.h>
-#define PANGRAVORDER 40
+#include<stdio.h>
 #include <common/Orbit.h>
 #include <cstdint>
 #include <limits>
-#include <lin/core.hpp>
+#include <lin.hpp>
 #include <gnc_constants.hpp>
 #include <common/GPSTime.hpp>
 
 
 //UTILITY MACROS
-char errormessage[1000];
 
 #define TEST_ASSERT_LIN_3VECT_WITHIN(delta, expected, actual) do {\
             if (!(lin::norm(expected-actual)<=delta)){ \
+                char errormessage[256];\
                 TEST_MESSAGE("TEST_ASSERT_LIN_VECT_WITHIN Failed:");\
                 sprintf(errormessage, "    expected " #expected " is %.16e, %.16e, %.16e",expected(0),expected(1),expected(2));\
                 TEST_MESSAGE(errormessage);\
                 sprintf(errormessage, "    actual " #actual " is %.16e, %.16e, %.16e",actual(0),actual(1),actual(2));\
                 TEST_MESSAGE(errormessage);\
                 sprintf(errormessage, "    expected-actual: %.16e, %.16e, %.16e",expected(0)-actual(0),expected(1)-actual(1),expected(2)-actual(2));\
+                TEST_MESSAGE(errormessage);\
+                sprintf(errormessage, "    norm(expected-actual): %.16e",lin::norm(expected-actual));\
+                TEST_MESSAGE(errormessage);\
+                sprintf(errormessage, "    max error: %.16e",delta);\
                 TEST_MESSAGE(errormessage);\
                 TEST_FAIL();\
             }\
@@ -103,9 +107,7 @@ void test_calc_geograv() {
     double ps[numtests]= {NAN};
     for (int i=0; i< numtests; i++){
         Orbit::calc_geograv(rs[i],gs[i],ps[i]);
-        TEST_ASSERT_DOUBLE_WITHIN(1E-6, g_trues[i](0), gs[i](0));
-        TEST_ASSERT_DOUBLE_WITHIN(1E-6, g_trues[i](1), gs[i](1));
-        TEST_ASSERT_DOUBLE_WITHIN(1E-6, g_trues[i](2), gs[i](2));
+        TEST_ASSERT_LIN_3VECT_WITHIN(1E-6, (g_trues[i]), (gs[i]));
         //finite diff check
         lin::Vector3d delta_rs[4]= {
             {10.0,0.0,0.0},
@@ -119,7 +121,7 @@ void test_calc_geograv() {
             double predicted_deltap= lin::dot(delta_rs[j],gs[i]);
             Orbit::calc_geograv(rs[i]+delta_rs[j],junk,p_at_delta);
             double real_deltap= p_at_delta- ps[i];
-            TEST_ASSERT_DOUBLE_WITHIN(1E-3, real_deltap, predicted_deltap);
+            TEST_ASSERT_FLOAT_WITHIN(1E-3, real_deltap, predicted_deltap);
         }
     }
 }
@@ -142,12 +144,12 @@ void test_specificenergy() {
     TEST_ASSERT_TRUE(y2.valid());
     double e2= y2.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
 
-    TEST_ASSERT_DOUBLE_WITHIN(10, e2, e1);
+    TEST_ASSERT_FLOAT_WITHIN(10, e2, e1);
 
     //Test invalid orbit returns NAN
     Orbit x;
     TEST_ASSERT_FALSE(x.valid());
-    TEST_ASSERT_TRUE(isnan(x.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z})));
+    TEST_ASSERT_FLOAT_IS_NAN(x.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z}));
 }
 
 void test_shortupdate() {
@@ -156,6 +158,7 @@ void test_shortupdate() {
     lin::Vector3d v1 {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
     uint64_t t1= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
     Orbit y1(t1,r1,v1);
+    Orbit ystart= y1;
     TEST_ASSERT_TRUE(y1.valid());
 
     //623246500 D E -6388456.55330517 2062929.296577276 1525892.564091281 0.0009730537727755604 0.0006308360706885164 0.0006414402851363097 1726.923087560988 -185.5049475128178 7411.544615026139 1.906279023699492e-06 1.419033598283502e-06 2.088561789107221e-06  00000000
@@ -166,15 +169,80 @@ void test_shortupdate() {
     Orbit y2(t2,r2,v2);
     TEST_ASSERT_TRUE(y2.valid());
     
+    // 0.1 dt 100 sec test vs grace data
     double junk;
     for(int i=0; i<1000;i++){
         y1.shortupdate(100'000'000,{0.0,0.0,gnc::constant::earth_rate_ecef_z},junk);
     }
     lin::Vector3d vfinal = y1.vecef();
+    lin::Vector3d rfinal = y1.recef();
     //lin::Vector3d rfinal = y1.recef();
-    TEST_ASSERT_LIN_3VECT_WITHIN(1E-5, vfinal, v2);
-
+    TEST_ASSERT_TRUE(y1.nsgpstime()==t1+100'000'000'000LL);
+    TEST_ASSERT_LIN_3VECT_WITHIN(2E-4, vfinal, v2);
+    TEST_ASSERT_LIN_3VECT_WITHIN(1E-2, rfinal, r2);
     
+    // 0.2 dt 100 sec test vs grace data
+    y1= ystart;
+    for(int i=0; i<500;i++){
+        y1.shortupdate(200'000'000,{0.0,0.0,gnc::constant::earth_rate_ecef_z},junk);
+    }
+    vfinal = y1.vecef();
+    rfinal = y1.recef();
+    TEST_ASSERT_TRUE(y1.valid());
+    TEST_ASSERT_TRUE(y1.nsgpstime()==t1+100'000'000'000LL);
+    TEST_ASSERT_LIN_3VECT_WITHIN(2E-4, vfinal, v2);
+    TEST_ASSERT_LIN_3VECT_WITHIN(1E-2, rfinal, r2);
+
+    //623260100 D E 1579190.147083268 -6066459.613667888 2785708.976728437 0.0005172311946209459 0.0008808523576941407 0.0006434386278678982 480.8261476296949 -3083.977113497177 -6969.470748202005 1.390617103867044e-06 1.919262957467571e-06 1.936534489542342e-06  00000000
+    //grace orbit 623260100-623246400 = 13700 seconds later.
+    lin::Vector3d r3 {1579190.147083268L, -6066459.613667888L, 2785708.976728437L};
+    lin::Vector3d v3 {480.8261476296949L, -3083.977113497177L, -6969.470748202005L};
+    uint64_t t3= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
+    Orbit y3(t3,r3,v3);
+    TEST_ASSERT_TRUE(y3.valid());
+    // 0.2 dt 13700 sec test vs grace data
+    y1= ystart;
+    for(int i=0; i<(13700*5);i++){
+        y1.shortupdate(200'000'000,{0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4},junk);
+    }
+    vfinal = y1.vecef();
+    rfinal = y1.recef();
+    TEST_ASSERT_TRUE(y1.valid());
+    TEST_ASSERT_TRUE(y1.nsgpstime()==t1+13700'000'000'000LL);
+    TEST_ASSERT_LIN_3VECT_WITHIN(1E-1, vfinal, v3);
+    TEST_ASSERT_LIN_3VECT_WITHIN(20.0, rfinal, r3);
+
+    // test reversibility of propagator
+    for(int i=0; i<(13700*5);i++){
+        y1.shortupdate(-200'000'000,{0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4},junk);
+    }
+    vfinal = y1.vecef();
+    rfinal = y1.recef();
+    TEST_ASSERT_TRUE(y1.valid());
+    TEST_ASSERT_TRUE(y1.nsgpstime()==t1);
+    TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-5, vfinal, v1);
+    TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-2, rfinal, r1);
+
+    // test jacobians with finite difference
+    //lin::rands<lin::Matrixd<0, 3, 5, 3>>(4, 3, rand);
+    lin::internal::RandomsGenerator const rand(0);
+    y1= ystart;
+    y1.shortupdate(200'000'000,{0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4},junk);
+    for(int i=0; i<5;i++){
+        lin::Matrix<double, 6, 6> jac;
+        lin::Vectord<6> initialdelta= lin::rands<lin::Vectord<6>>(6, rand);
+        lin::Vector3d deltar= lin::ref<3>(initialdelta, 0);
+        lin::Vector3d deltav= lin::ref<3>(initialdelta, 3);
+        Orbit y_diff(ystart.nsgpstime(),ystart.recef()+deltar,ystart.vecef()+deltav);
+        y_diff.shortupdate(200'000'000,{0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4},junk,jac);
+        lin::Vector3d finaldr= y_diff.recef()-y1.recef();
+        lin::Vector3d finaldv= y_diff.vecef()-y1.vecef();
+        lin::Vectord<6> finaldelta;
+        lin::ref<3>(finaldelta, 0)= finaldr;
+        lin::ref<3>(finaldelta, 3)= finaldv;
+        //lin::Matrix<double, 6, 1> expecteddelta= jac*initialdelta;
+        //TEST_ASSERT_FLOAT_WITHIN(1E-6, 0.0, lin::fro(expecteddelta-finaldelta));
+    }
 }
 
 int test_orbit() {

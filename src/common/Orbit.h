@@ -446,7 +446,7 @@ class Orbit {
        and f is the shortupdate function.
      * @param[out] specificenergy: Specific energy of the Orbit at the half step (J/kg).
      */
-    void shortupdate(const uint64_t& dt_ns,const lin::Vector3d& earth_rate_ecef, lin::Matrix<double, 6, 6>& jac, double& specificenergy){
+    void shortupdate(int32_t dt_ns,const lin::Vector3d& earth_rate_ecef, double& specificenergy, lin::Matrix<double, 6, 6>& jac){
         if (!valid()){
             jac={NAN,NAN,NAN,NAN,NAN,NAN,
                  NAN,NAN,NAN,NAN,NAN,NAN,
@@ -457,6 +457,8 @@ class Orbit {
             specificenergy= NAN;
             return;
         }
+        assert(dt_ns<=200'000'000L && dt_ns>=-200'000'000L);
+        _ns_gps_time+= dt_ns;
         lin::Vector3d r_half_ecef0;
         double dt= double(dt_ns)*1E-9L;
         _shortupdate_helper(dt,earth_rate_ecef, r_half_ecef0, specificenergy);
@@ -473,11 +475,13 @@ class Orbit {
      * @param[in] earth_rate_ecef: The earth's angular rate in ecef frame (rad/s). 
      * @param[out] specificenergy: Specific energy of the Orbit (J/kg).
      */
-    void shortupdate(const uint64_t& dt_ns,const lin::Vector3d& earth_rate_ecef, double& specificenergy){
+    void shortupdate(int32_t dt_ns,const lin::Vector3d& earth_rate_ecef, double& specificenergy){
         if (!valid()){
             specificenergy= NAN;
             return;
         }
+        assert(dt_ns<=200'000'000 && dt_ns>=-200'000'000);
+        _ns_gps_time+= dt_ns;
         lin::Vector3d r_half_ecef0;
         double dt= double(dt_ns)*1E-9L;
         _shortupdate_helper(dt,earth_rate_ecef, r_half_ecef0, specificenergy);
