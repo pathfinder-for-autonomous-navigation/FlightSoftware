@@ -166,6 +166,44 @@ class StateSession(object):
 
         return self._wait_for_state(field)
 
+    def str_to_val(self, field):
+        '''
+        Automatically detects floats, ints and bools
+
+        Returns a float, int or bool
+        '''
+        if '.' in field:
+            return float(field)
+        elif field == 'true':
+            return True
+        elif field == 'false':
+            return False
+        else:
+            return int(field)
+
+    def smart_read(self, field, **kwargs):
+        '''
+        Turns a string state field read into the actual desired vals.
+
+        Returns list of vals, or the val itself. Vals can be bools, ints, or floats.
+        Raises NameError if no state field was found.
+        '''
+        
+        ret = self.read_state(field, kwargs.get('timeout'))
+        if ret is None:
+            raise NameError(f"State field: {field} not found.")
+
+        # begin type inference
+
+        if ',' in ret:
+            # ret is a list
+            list_of_strings = ret.split(',')
+            list_of_strings = [x for x in list_of_strings if x is not '']
+            list_of_vals = [self.str_to_val(x) for x in list_of_strings]
+            return list_of_vals
+        else:
+            return self.str_to_val(ret)
+
     def _write_state_basic(self, fields, vals, timeout = None):
         '''
         Write multiple state fields to the device at once.
