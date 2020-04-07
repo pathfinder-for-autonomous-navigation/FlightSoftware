@@ -9,6 +9,7 @@ from sympy.codegen.rewriting import create_expand_pow_optimization
 from sympy.codegen.ast import Assignment
 mu,t,w,e1,e2,e3,dt= sp.symbols('mu t w e1 e2 e3 dt')
 x0,y0,z0,vx0,vy0,vz0= sp.symbols('x y z v_x v_y v_z')
+xh,yh,zh= sp.symbols('x_h y_h z_h')
 sp.init_printing(use_unicode=True)
 #position and velocity
 #intial frame
