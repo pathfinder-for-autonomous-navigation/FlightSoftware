@@ -4,6 +4,7 @@ from cerberus import Validator
 config_schema = {
     "seed" : {"type" : "integer"},
     "single_sat_sim" : {"type": "boolean"},
+    "downlink_parser_filepath" : {"type": "string"},
     "devices" : {
         "type" : "list",
         "schema" : {

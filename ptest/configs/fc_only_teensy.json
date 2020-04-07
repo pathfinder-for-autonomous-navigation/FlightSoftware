@@ -15,5 +15,6 @@
             "imei": "",
             "connect": false
         }
-    ]
+    ],
+    "downlink_parser_filepath": ".pio/build/gsw_downlink_parser"
 }
