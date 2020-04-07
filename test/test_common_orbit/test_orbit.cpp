@@ -9,6 +9,15 @@
 
 
 //UTILITY MACROS
+
+//0 or 1 that can't be calculated at compile time.
+#ifdef DESKTOP
+#define notcompiletime (rand()%2)
+#else
+#include <Arduino.h>
+#define notcompiletime (millis()%2)
+#endif
+
 /**
  * Lin Tensor Printing function
  * */
@@ -206,7 +215,8 @@ void test_specificenergy() {
 void test_shortupdate() {
     lin::Vector3d earth_rate_ecef= {0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4};
     //valid orbit from grace
-    lin::Vector3d r1 {-6522019.833240811L, 2067829.846415895L, 776905.9724453629L};
+    lin::Vector3d r1 {-6522019.833240811L+(notcompiletime*1E-10), 2067829.846415895L, 776905.9724453629L};
+    //+(notcompiletime*1E-10) prevents the compiler from optimizing stuff  away on teensy
     lin::Vector3d v1 {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
     uint64_t t1= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
     Orbit y1(t1,r1,v1);
@@ -215,7 +225,7 @@ void test_shortupdate() {
 
     //623246500 D E -6388456.55330517 2062929.296577276 1525892.564091281 0.0009730537727755604 0.0006308360706885164 0.0006414402851363097 1726.923087560988 -185.5049475128178 7411.544615026139 1.906279023699492e-06 1.419033598283502e-06 2.088561789107221e-06  00000000
     //grace orbit 100 seconds later
-    lin::Vector3d r2 {-6388456.55330517L, 2062929.296577276L, 1525892.564091281L};
+    lin::Vector3d r2 {-6388456.55330517L+(notcompiletime*1E-10), 2062929.296577276L, 1525892.564091281L};
     lin::Vector3d v2 {1726.923087560988L, -185.5049475128178L, 7411.544615026139L};
     uint64_t t2= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
     Orbit y2(t2,r2,v2);
@@ -247,7 +257,7 @@ void test_shortupdate() {
 
     //623260100 D E 1579190.147083268 -6066459.613667888 2785708.976728437 0.0005172311946209459 0.0008808523576941407 0.0006434386278678982 480.8261476296949 -3083.977113497177 -6969.470748202005 1.390617103867044e-06 1.919262957467571e-06 1.936534489542342e-06  00000000
     //grace orbit 623260100-623246400 = 13700 seconds later.
-    lin::Vector3d r3 {1579190.147083268L, -6066459.613667888L, 2785708.976728437L};
+    lin::Vector3d r3 {1579190.147083268L+(notcompiletime*1E-10), -6066459.613667888L, 2785708.976728437L};
     lin::Vector3d v3 {480.8261476296949L, -3083.977113497177L, -6969.470748202005L};
     uint64_t t3= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
     Orbit y3(t3,r3,v3);
@@ -287,7 +297,7 @@ void test_shortupdate() {
     TEST_ASSERT_TRUE(y1.valid());
     //TEST_MESSAGE("Jacobian");
     //printtensor(jac);
-    for(int i=0; i<5;i++){
+    for(int i=0; i<10;i++){
         lin::Vectord<6> initialdelta= lin::rands<lin::Vectord<6>>(6, 1, rand);
         initialdelta= initialdelta-lin::consts<lin::Vectord<6>>(0.5,6,1);
         initialdelta= initialdelta*0.2;
@@ -305,7 +315,7 @@ void test_shortupdate() {
         //printtensor(initialdelta);
         //TEST_MESSAGE("Final delta");
         //printtensor(finaldelta);
-        TEST_ASSERT_FLOAT_WITHIN(1E-9, 0.0, lin::norm(expecteddelta-finaldelta));
+        TEST_ASSERT_FLOAT_WITHIN(5E-9, 0.0, lin::norm(expecteddelta-finaldelta));
     }
 
     y1= ystart;
@@ -317,7 +327,7 @@ void test_shortupdate() {
     TEST_ASSERT_FLOAT_WITHIN(1.0E-15,(1.0- detjac),0);
     //TEST_MESSAGE("Jacobian");
     //printtensor(jac);
-    for(int i=0; i<5;i++){
+    for(int i=0; i<10;i++){
         lin::Vectord<6> initialdelta= lin::rands<lin::Vectord<6>>(6, 1, rand);
         initialdelta= initialdelta-lin::consts<lin::Vectord<6>>(0.5,6,1);
         initialdelta= initialdelta*0.2;
