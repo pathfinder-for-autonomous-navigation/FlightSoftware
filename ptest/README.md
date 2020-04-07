@@ -20,16 +20,19 @@ To install the Python MATLAB engine, you must:
  6. Set MATLAB's `pyversion` variable to link with the newly installed Python 3.6.
     You set and check the Python interpretter used by MATLAB by entering
     something like the following in MATLAB's terminal. Replace `PATH_TO_FLIGHT_SOFTWARE` with 
-    the absolute path to this repository. For windows, use `PATH_TO_FLIGHT_SOFTWARE/python/venv/Scripts/python`.
+    the absolute path to this repository. For windows, use `PATH_TO_FLIGHT_SOFTWARE/venv/Scripts/python`.
+    For Mac and Linux, use: `PATH_TO_FLIGHT_SOFTWARE/venv/bin/python`.
 
-        >> pyversion PATH_TO_FLIGHT_SOFTWARE/python/venv/bin/python3
-        >> pyversion
+    Example Linux Output (Matlab Terminal):
 
-            version: '3.6'
-            executable: '/Users/tanishqaggarwal/Documents/pan/repositories/psim/python/venv/bin/python3'
-            library: ''
-            home: '/Users/tanishqaggarwal/Documents/pan/repositories/psim/python/venv/bin/..'
-            isloaded: 0
+         >> pyversion '/home/shihao/Code/PAN/FlightSoftware/venv/bin/python'
+         >> pyversion
+
+               version: '3.6'
+            executable: '/home/shihao/Code/PAN/FlightSoftware/venv/bin/python'
+               library: 'libpython3.6m.so.1.0'
+                  home: '/home/shihao/Code/PAN/FlightSoftware/venv'
+               isloaded: 0
 
  7. Install MATLAB for this repository. With the venv activated from the FlightSoftware directory, run the following on macOS:
 

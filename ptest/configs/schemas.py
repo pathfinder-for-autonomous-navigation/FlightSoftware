@@ -5,6 +5,7 @@ config_schema = {
     "seed" : {"type" : "integer"},
     "single_sat_sim" : {"type": "boolean"},
     "uplink_producer_filepath" : {"type": "string"},
+    "downlink_parser_filepath" : {"type": "string"},
     "devices" : {
         "type" : "list",
         "schema" : {

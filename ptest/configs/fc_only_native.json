@@ -2,18 +2,19 @@
     "seed" : 2,
     "single_sat_sim" : true,
     "uplink_producer_filepath": "/Users/fatimayousuf/Desktop/repositories/FlightSoftware/.pio/build/gsw_uplink_producer_console/program",
+    "downlink_parser_filepath" : "./.pio/build/gsw_downlink_parser/program",
     "devices" : [
         {
             "name": "FlightController",
             "run_mode" : "native",
-            "binary_filepath" : "/Users/tanishqaggarwal/Documents/pan/repositories/FlightSoftware/.pio/build/fsw_native_leader/program"
+            "binary_filepath" : "./.pio/build/fsw_native_leader/program"
         }
     ],
     "radios" : [
         {
             "connected_device" : "FlightController",
             "imei" : "",
-            "connect": false
+            "connect": true
         }
     ]
 }
