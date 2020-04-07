@@ -137,7 +137,7 @@ void test_calc_geograv() {
             double predicted_deltap= lin::dot(delta_rs[j],gs[i]);
             Orbit::calc_geograv(rs[i]+delta_rs[j],junk,p_at_delta);
             double real_deltap= p_at_delta- ps[i];
-            TEST_ASSERT_FLOAT_WITHIN(1E-3, real_deltap, predicted_deltap);
+            TEST_ASSERT_FLOAT_WITHIN(1E-3, 0.0, (real_deltap-predicted_deltap));
         }
     }
 }
@@ -160,7 +160,7 @@ void test_specificenergy() {
     TEST_ASSERT_TRUE(y2.valid());
     double e2= y2.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
 
-    TEST_ASSERT_FLOAT_WITHIN(10, e2, e1);
+    TEST_ASSERT_FLOAT_WITHIN(10.0, 0.0,(e2-e1));
 
     //Test invalid orbit returns NAN
     Orbit x;
@@ -269,26 +269,74 @@ void test_shortupdate() {
         TEST_ASSERT_FLOAT_WITHIN(1E-9, 0.0, lin::norm(expecteddelta-finaldelta));
     }
 
-    //test jacobian update doesn't change update
-    // y1= ystart;
-    // double espjacup;
-    // y1.shortupdate(200'000'000,earth_rate_ecef,espjacup,jac);
-    // Orbit yjacup= y1;
-    // y1= ystart;
-    // double espnojacup;
-    // y1.shortupdate(200'000'000,earth_rate_ecef,espnojacup);
-    // Orbit ynojacup= y1;
-    // TEST_ASSERT_EQUAL_MEMORY (&espjacup, &espnojacup, sizeof(double));
-    // TEST_ASSERT_EQUAL_MEMORY (&yjacup, &ynojacup, sizeof(Orbit));
-
-    //Test specificenergy
     y1= ystart;
-    double energy_start= ystart.specificenergy(earth_rate_ecef);
+    y1.shortupdate(-200'000'000,earth_rate_ecef,junk,jac);
+    TEST_ASSERT_TRUE(y1.valid());
+    //TEST_MESSAGE("Jacobian");
+    //printtensor(jac);
+    for(int i=0; i<5;i++){
+        lin::Vectord<6> initialdelta= lin::rands<lin::Vectord<6>>(6, 1, rand);
+        initialdelta= initialdelta-lin::consts<lin::Vectord<6>>(0.5,6,1);
+        initialdelta= initialdelta*0.2;
+        lin::Vector3d deltar= lin::ref<3, 1>(initialdelta, 0, 0);
+        lin::Vector3d deltav= lin::ref<3, 1>(initialdelta, 3, 0);
+        Orbit y_diff(ystart.nsgpstime(),ystart.recef()+deltar,ystart.vecef()+deltav);
+        y_diff.shortupdate(-200'000'000,earth_rate_ecef,junk);
+        lin::Vector3d finaldr= y_diff.recef()-y1.recef();
+        lin::Vector3d finaldv= y_diff.vecef()-y1.vecef();
+        lin::Vectord<6> finaldelta;
+        lin::ref<3, 1>(finaldelta, 0, 0)= finaldr;
+        lin::ref<3, 1>(finaldelta, 3, 0)= finaldv;
+        lin::Vectord<6> expecteddelta= jac*initialdelta;
+        //TEST_MESSAGE("Initial delta");
+        //printtensor(initialdelta);
+        //TEST_MESSAGE("Final delta");
+        //printtensor(finaldelta);
+        TEST_ASSERT_FLOAT_WITHIN(5E-9, 0.0, lin::norm(expecteddelta-finaldelta));
+    }
+
+    //test jacobian update doesn't change update
+    y1= ystart;
+    double espjacup;
+    y1.shortupdate(200'000'000,earth_rate_ecef,espjacup,jac);
+    Orbit yjacup= y1;
+    y1= ystart;
+    double espnojacup;
+    y1.shortupdate(200'000'000,earth_rate_ecef,espnojacup);
+    Orbit ynojacup= y1;
+    TEST_ASSERT_EQUAL_MEMORY (&espjacup, &espnojacup, sizeof(double));
+    TEST_ASSERT_EQUAL_MEMORY (&yjacup, &ynojacup, sizeof(Orbit));
+
+    //Test specificenergy forward update
+    y1= ystart;
+    double energy_start= y1.specificenergy(earth_rate_ecef);
     double energy_mid;
     y1.shortupdate(200'000'000,earth_rate_ecef,energy_mid);
     double energy_end= y1.specificenergy(earth_rate_ecef);
-    TEST_ASSERT_FLOAT_WITHIN(1E-16, 1.0, 0.0);
-    TEST_ASSERT_FLOAT_WITHIN(1E-16, energy_end, energy_mid+1.0);
+    TEST_ASSERT_FLOAT_WITHIN(1E-2,0.0,(energy_start-energy_mid));
+    TEST_ASSERT_FLOAT_WITHIN(1E-2,0.0,(energy_end-energy_mid));
+    //backward update
+    energy_start= y1.specificenergy(earth_rate_ecef);
+    y1.shortupdate(-200'000'000,earth_rate_ecef,energy_mid);
+    energy_end= y1.specificenergy(earth_rate_ecef);
+    TEST_ASSERT_FLOAT_WITHIN(1E-2,0.0,(energy_start-energy_mid));
+    TEST_ASSERT_FLOAT_WITHIN(1E-2,0.0,(energy_end-energy_mid));
+
+    //test invalid orbit update gives NAN outputs
+    Orbit invalidorbit;
+    TEST_ASSERT_FALSE(invalidorbit.valid());
+    double invalidenergy=0.0;
+    invalidorbit.shortupdate(200'000'000,earth_rate_ecef,invalidenergy);
+    TEST_ASSERT_FALSE(invalidorbit.valid());
+    TEST_ASSERT_FLOAT_IS_NAN(invalidenergy);
+    invalidorbit.shortupdate(200'000'000,earth_rate_ecef,invalidenergy,jac);
+    TEST_ASSERT_FALSE(invalidorbit.valid());
+    for (int i=0; i<6; i++){
+        for (int j=0; j<6; j++){
+	        TEST_ASSERT_FLOAT_IS_NAN(jac(i,j));
+	    }
+    }
+
 
 }
 
