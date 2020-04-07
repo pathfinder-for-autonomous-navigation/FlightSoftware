@@ -28,13 +28,13 @@ jobs:
 
     - name: CI Checkout Case and Empty case
       run: |
-        pio run -e gsw_uplink_producer_console
+        pio run -e gsw_uplink_producer
         python -m ptest runsim -c ptest/configs/ci.json -t CICase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t EmptyCase -ni
 
     - name: Hardware Checkout Cases
       run: |
-        pio run -e gsw_uplink_producer_console
+        pio run -e gsw_uplink_producer
         python -m ptest runsim -c ptest/configs/ci.json -t DCDCCheckoutCase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t GomspaceCheckoutCase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t SpinMotorsCase -ni

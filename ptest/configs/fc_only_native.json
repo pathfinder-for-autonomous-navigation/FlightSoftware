@@ -1,7 +1,7 @@
 {
     "seed" : 2,
     "single_sat_sim" : true,
-    "uplink_producer_filepath": "/Users/fatimayousuf/Desktop/repositories/FlightSoftware/.pio/build/gsw_uplink_producer_console/program",
+    "uplink_producer_filepath": "/Users/fatimayousuf/Desktop/repositories/FlightSoftware/.pio/build/gsw_uplink_producer/program",
     "downlink_parser_filepath" : "./.pio/build/gsw_downlink_parser/program",
     "devices" : [
         {
