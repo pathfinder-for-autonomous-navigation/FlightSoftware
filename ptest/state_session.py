@@ -23,7 +23,7 @@ class StateSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, simulation_run_dir):
+    def __init__(self, device_name, simulation_run_dir, uplink_producer_filepath):
         '''
         Initializes state session with a device.
 
@@ -45,10 +45,8 @@ class StateSession(object):
         self.overriden_variables = set()
 
         # Open a subprocess to Uplink Producer
-        filepath = os.path.dirname(os.path.abspath(__file__))
-        binary_dir = os.path.join(filepath, "../.pio/build/gsw_uplink_producer_console/program")
         master_fd, slave_fd = pty.openpty()
-        self.uplink_producer = subprocess.Popen([binary_dir], stdin=master_fd, stdout=master_fd)
+        self.uplink_producer = subprocess.Popen([uplink_producer_filepath], stdin=master_fd, stdout=master_fd)
         self.uplink_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
     def connect(self, console_port, baud_rate):
