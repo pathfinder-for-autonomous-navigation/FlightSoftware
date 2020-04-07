@@ -40,9 +40,8 @@ SOFTWARE.
 #include "GGM05S.hpp"
 #include "GPSTime.hpp"
 
-#ifndef PANGRAVORDER //compiler flag to set the Gravity model order
-#define PANGRAVORDER 40
-#endif
+
+TRACKED_CONSTANT(constexpr static int, PANGRAVORDER,40);
 TRACKED_CONSTANT(constexpr geograv::Coeff<PANGRAVORDER>, PANGRAVITYMODEL, static_cast<geograv::Coeff<PANGRAVORDER>>(GGM05S));
 
 //std::numeric_limits<double>::quiet_NaN()
