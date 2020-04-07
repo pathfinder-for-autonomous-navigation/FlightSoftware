@@ -34,6 +34,7 @@ SOFTWARE.
 #include <cstdint>
 #include <limits>
 #include <lin/core.hpp>
+#include <lin/generators.hpp>
 #include "constant_tracker.hpp"
 
 #include "geograv.hpp"
@@ -43,9 +44,6 @@ SOFTWARE.
 
 TRACKED_CONSTANT(constexpr static int, PANGRAVORDER,40);
 TRACKED_CONSTANT(constexpr geograv::Coeff<PANGRAVORDER>, PANGRAVITYMODEL, static_cast<geograv::Coeff<PANGRAVORDER>>(GGM05S));
-
-//std::numeric_limits<double>::quiet_NaN()
-TRACKED_CONSTANT(const lin::Vector3d, LINNAN3d, {NAN,NAN,NAN});
 
 TRACKED_CONSTANT(const double, MAXORBITRADIUS, 6378.0E3L+1000.0E3);
 
@@ -58,10 +56,10 @@ TRACKED_CONSTANT(const double, MINORBITRADIUS, 6378.0E3L);
 class Orbit {
   public:
     /** Position of the sat (m).*/
-    lin::Vector3d _recef{LINNAN3d};
+    lin::Vector3d _recef{lin::nans<lin::Vector3d>()};
 
     /** Velocity of the sat (m/s).*/
-    lin::Vector3d _vecef{LINNAN3d};
+    lin::Vector3d _vecef{lin::nans<lin::Vector3d>()};
 
     /** Time since gps epoch (ns).*/
     uint64_t _ns_gps_time{0};
@@ -123,8 +121,8 @@ class Orbit {
             _valid= true;
         } else {
             _valid= false;
-            _recef= LINNAN3d;
-            _vecef= LINNAN3d;
+            _recef= lin::nans<lin::Vector3d>();
+            _vecef= lin::nans<lin::Vector3d>();
             _ns_gps_time= 0;
         }
     }
@@ -196,7 +194,7 @@ class Orbit {
             return 0.5L*lin::fro(v_ecef0) - potential;
         }
         else{
-            return NAN;
+            return std::numeric_limits<double>::quiet_NaN();
         }
     }
 
@@ -448,13 +446,8 @@ class Orbit {
      */
     void shortupdate(int32_t dt_ns,const lin::Vector3d& earth_rate_ecef, double& specificenergy, lin::Matrix<double, 6, 6>& jac){
         if (!valid()){
-            jac={NAN,NAN,NAN,NAN,NAN,NAN,
-                 NAN,NAN,NAN,NAN,NAN,NAN,
-                 NAN,NAN,NAN,NAN,NAN,NAN,
-                 NAN,NAN,NAN,NAN,NAN,NAN,
-                 NAN,NAN,NAN,NAN,NAN,NAN,
-                 NAN,NAN,NAN,NAN,NAN,NAN};
-            specificenergy= NAN;
+            jac= lin::nans<lin::Matrix<double, 6, 6>>();
+            specificenergy= std::numeric_limits<double>::quiet_NaN();
             return;
         }
         assert(dt_ns<=200'000'000L && dt_ns>=-200'000'000L);
@@ -478,7 +471,7 @@ class Orbit {
      */
     void shortupdate(int32_t dt_ns,const lin::Vector3d& earth_rate_ecef, double& specificenergy){
         if (!valid()){
-            specificenergy= NAN;
+            specificenergy= std::numeric_limits<double>::quiet_NaN();
             return;
         }
         assert(dt_ns<=200'000'000 && dt_ns>=-200'000'000);

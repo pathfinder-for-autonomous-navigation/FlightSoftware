@@ -163,8 +163,8 @@ void test_calc_geograv() {
         {-6.092479080716284, -3.933150994208532, -4.284247589652169},
         {-5.273243501305509, -5.864689616987217, 2.842381806608654}
     };
-    lin::Vector3d gs[numtests]= {{NAN,NAN,NAN}};
-    double ps[numtests]= {NAN};
+    lin::Vector3d gs[numtests]= {lin::nans<lin::Vector3d>()};
+    double ps[numtests]= {std::numeric_limits<double>::quiet_NaN()};
     for (int i=0; i< numtests; i++){
         Orbit::calc_geograv(rs[i],gs[i],ps[i]);
         TEST_ASSERT_LIN_3VECT_WITHIN(1E-6, (g_trues[i]), (gs[i]));
@@ -176,7 +176,7 @@ void test_calc_geograv() {
             {-10.0,0.4,-.043}
         };
         for (int j=0; j<4; j++){
-            double p_at_delta= {NAN};
+            double p_at_delta= {std::numeric_limits<double>::quiet_NaN()};
             lin::Vector3d junk;
             double predicted_deltap= lin::dot(delta_rs[j],gs[i]);
             Orbit::calc_geograv(rs[i]+delta_rs[j],junk,p_at_delta);
