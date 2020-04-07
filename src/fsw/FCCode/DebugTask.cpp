@@ -1,6 +1,5 @@
 #include "DebugTask.hpp"
 
-#ifdef FUNCTIONAL_TEST
 DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "debug", offset),
       start_cycle_f("cycle.start", Serializer<bool>()),
@@ -10,12 +9,6 @@ DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
   auto_cycle_f.set(false);
   init();
 }
-#else
-DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
-    : TimedControlTask<void>(registry, "debug", offset) {
-  init();
-}
-#endif
 
 void DebugTask::execute() {
 #ifdef FUNCTIONAL_TEST
