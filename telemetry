@@ -938,6 +938,18 @@
             "type": "lin float vector",
             "writable": false
         },
+        "cycle.auto": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "cycle.start": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "dcdc.ADCSMotor": {
             "bitsize": 1,
             "flow_id": 20,
@@ -1652,6 +1664,12 @@
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
+            "writable": true
+        },
+        "telem.dump": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
             "writable": true
         },
         "timing.adcs_commander.avg_wait": {
