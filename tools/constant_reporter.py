@@ -31,8 +31,13 @@ for root, dirs, files in os.walk("src"):
 log += "\n"
 log += "Found Constants\n"
 log += "---------------\n"
+constloglines=[]
 for const in consts:
-    log += f"{const['file']}:{const['line']}: \"{const['name']}\" = \"{const['val']}\"\n"
+    constloglines.append(f"{const['file']}:{const['line']}: \"{const['name']}\" = \"{const['val']}\"\n")
+#alphabatize lines to prevent rows from unexpectedly swapping.
+constloglines=sorted(constloglines)
+for constline in constloglines:
+    log += constline
 
 with open("constants", 'w') as f:
     f.write(log)
