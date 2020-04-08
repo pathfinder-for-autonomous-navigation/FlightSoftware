@@ -95,6 +95,13 @@ class DockingSystem : public Devices::Device {
     void set_step_angle(float angle);
 
     /**
+     * @brief Adjust step delay for docking motor.
+     * 
+     * @param parameter
+     */
+    void set_step_delay(unsigned int delay);
+
+    /**
      * @brief Set number of steps left to turn.
      */
     void set_turn_angle(float angle);
@@ -113,9 +120,9 @@ class DockingSystem : public Devices::Device {
     // In testing with a load, a step_delay = 4000 took about 22.5 seconds to 
     // turn 180 degrees, so there were 22.5/4000E-6 = 5625 steps taken 
     // -> step_angle = 180/5625 = 0.032 deg/step 
-    float step_angle = 0.032;
+    TRACKED_CONSTANT(float, step_angle, 0.032);
     // Sets the delay between steps (in microseconds), which affects the speed and torque
-    TRACKED_CONSTANT_SC(unsigned int, step_delay, 4000);
+    TRACKED_CONSTANT(unsigned int, step_delay, 4000);
 
     // Status of motor sleep pin (and therefore of overall docking motor.)
     #ifndef DESKTOP

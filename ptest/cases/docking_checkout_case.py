@@ -77,6 +77,7 @@ class DockingCheckoutCase(SingleSatOnlyCase):
 
         # read and check initial speed is what we expect
         assert(abs( float(self.read_state("docksys.step_angle")) - 0.032 ) < 0.0001) # will take 180/.032 = 5625 cycles to complete
+        assert(int(self.read_state("docksys.step_delay")) == 4000)
 
 
         self.logger.put("\nTesting docking and undocking with initial step angle of 0.032 and step delay of 4000. \nDocking and Undocking should take 5625 cycles.\n")
@@ -89,7 +90,8 @@ class DockingCheckoutCase(SingleSatOnlyCase):
         # we do not have the theoretical value and it may change with different
         # loading conditions.
         self.logger.put("\nChanging step angle from 0.032 to 0.036 and step delay from 4000 to 2000. \nDocking and Undocking should take 5000 cycles.\n")
-        self.write_state("docksys.step_angle", "0.036")
+        self.write_state("docksys.step_angle", "0.036") 
+        self.write_state("docksys.step_delay", "2000") 
 
         self.undock()
         self.dock()

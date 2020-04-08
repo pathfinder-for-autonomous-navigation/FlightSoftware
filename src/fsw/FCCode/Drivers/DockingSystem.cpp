@@ -75,6 +75,10 @@ void DockingSystem::set_step_angle(float angle) {
     step_angle = angle;
 }
 
+void DockingSystem::set_step_delay(unsigned int delay) {
+    step_delay = delay;
+}
+
 void DockingSystem::start_halfturn() {
     set_turn_angle(180.0f);
     #ifndef DESKTOP
