@@ -221,7 +221,7 @@ void GomspaceController::execute() {
         power_cycle_outputs();
     }
 
-    if(pptmode_f.get() == 2){ // 1 is fixed ppt tracking
+    if(pptmode_f.get() == 2){ // 2 is fixed ppt
         // Set power voltage command
         if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
             gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
