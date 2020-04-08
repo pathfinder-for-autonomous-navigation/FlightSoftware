@@ -100,6 +100,46 @@ class Case(object):
             "no_data_error",
             "dead"
         ])
+        
+        self.rwa_modes = FSWEnum([
+            "RWA_DISABLED",
+            "RWA_SPEED_CTRL",
+            "RWA_ACCEL_CTRL"
+        ])
+
+        self.imu_modes = FSWEnum([
+            "MAG1",
+            "MAG2",
+            "MAG1_CALIBRATE",
+            "MAG2_CALIBRATE"
+        ])
+
+        self.mtr_modes = FSWEnum([
+            "MTR_ENABLED",
+            "MTR_DISABLED"
+        ])
+        self.havt_length = 18
+        
+        # copied from havt_devices.hpp
+        self.havt_devices = FSWEnum([
+        "IMU_GYR",
+        "IMU_MAG1",
+        "IMU_MAG2",
+        "MTR1",
+        "MTR2",
+        "MTR3",
+        "RWA_POT",
+        "RWA_WHEEL1",
+        "RWA_WHEEL2",
+        "RWA_WHEEL3",
+        "RWA_ADC1",
+        "RWA_ADC2",
+        "RWA_ADC3",
+        "SSA_ADC1",
+        "SSA_ADC2",
+        "SSA_ADC3",
+        "SSA_ADC4",
+        "SSA_ADC5"])
 
         self.logger = Logger("testcase", data_dir, print=True)
 
@@ -135,7 +175,7 @@ class Case(object):
 
     def run_case(self):
         raise NotImplementedError
-
+            
     def finish(self):
         if not self.finished:
             if not self.sim.is_interactive:
@@ -169,7 +209,57 @@ class SingleSatOnlyCase(Case):
         raise NotImplementedError
 
     def cycle(self):
+        ''' 
+        Steps the FC forward by one CC
+
+        Asserts the FC did indeed step forward by one CC
+        '''
+        init = self.rs("pan.cycle_no")
         self.sim.flight_controller.write_state('cycle.start', 'true')
+        if self.rs("pan.cycle_no") != init + 1:
+            raise TestCaseFailure(f"FC did not step forward by one cycle")
+
+    def rs(self, name):
+        '''
+        Reads a state field (with type inference from smart_read()).
+
+        Checks that the name is indeed a string.
+        '''
+        assert(type(name) is str), "State field name was not a string."
+        ret = self.sim.flight_controller.smart_read(name)
+        return ret
+
+    def print_rs(self, name):
+        '''
+        Reads a statefield, and also prints it.
+        '''
+        self.logger.put(f"{name} is {self.rs(name)}")
+    
+    def ws(self, name, val):
+        '''
+        Writes a state, and also confirms that the read command matches the applied state.
+        '''
+        self.sim.flight_controller.write_state(name, val)
+        read_val = self.rs(name)
+        assert(read_val == val), f"Write state not applied, expected: {val}, got {read_val} instead"
+
+    def print_header(self, title):
+        self.logger.put("\n"+title+"\n")
+
+    def soft_assert(self, condition, *args):
+        '''
+        Soft assert prints a fail message if the condition is False
+        
+        If specificied with a fail message, then a pass message, 
+        it will also print a pass message if condition is True.
+        '''
+        if condition: 
+            if len(args) == 1:
+                pass
+            else:
+                self.logger.put(args[1])
+        else: 
+            self.logger.put(f"\n$ SOFT ASSERTION ERROR: {args[0]}\n")
 
 class MissionCase(Case):
     """
