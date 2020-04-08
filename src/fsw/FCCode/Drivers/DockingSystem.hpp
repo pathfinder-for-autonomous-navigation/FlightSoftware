@@ -113,7 +113,7 @@ class DockingSystem : public Devices::Device {
     // In testing with a load, a step_delay = 4000 took about 22.5 seconds to 
     // turn 180 degrees, so there were 22.5/4000E-6 = 5625 steps taken 
     // -> step_angle = 180/5625 = 0.032 deg/step 
-    float step_angle = (0.032*M_PI)/180.0f;
+    float step_angle = 0.032;
     // Sets the delay between steps (in microseconds), which affects the speed and torque
     TRACKED_CONSTANT_SC(unsigned int, step_delay, 4000);
 

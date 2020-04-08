@@ -72,7 +72,7 @@ bool DockingSystem::check_docked() const {
 }
 
 void DockingSystem::set_step_angle(float angle) {
-    step_angle = (angle*M_PI)/180.0f;
+    step_angle = angle;
 }
 
 void DockingSystem::start_halfturn() {
