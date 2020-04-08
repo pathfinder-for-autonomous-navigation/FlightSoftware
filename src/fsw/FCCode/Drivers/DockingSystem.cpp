@@ -28,8 +28,6 @@ bool DockingSystem::setup() {
 
         // SLEEP pins is set low to enable sleep
         digitalWrite(motor_sleep_pin, LOW);
-
-        enable();
     #endif
 
     return true;
@@ -81,12 +79,14 @@ void DockingSystem::set_step_delay(unsigned int delay) {
 
 void DockingSystem::start_halfturn() {
     set_turn_angle(180.0f);
+    enable();
     #ifndef DESKTOP
     timer.begin(step_motor, step_delay);
     #endif
 }
 
 void DockingSystem::cancel() {
+    disable();
     #ifndef DESKTOP
     timer.end();
     #endif

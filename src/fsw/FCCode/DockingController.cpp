@@ -50,7 +50,7 @@ void DockingController::execute() {
     #endif
 
     if (docksys.get_steps() == 0) {
-	dock_config_f.set(!dock_config_f.get());
+	    dock_config_f.set(!dock_config_f.get());
       docksys.cancel();
       is_turning_f.set(false);
     }
