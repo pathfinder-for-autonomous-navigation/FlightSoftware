@@ -8,7 +8,9 @@ using namespace Devices;
 
 volatile unsigned int DockingSystem::steps = 0;
 
+#ifndef DESKTOP
 IntervalTimer timer;
+#endif
 
 DockingSystem::DockingSystem()
     : Device("docking_system") {}
