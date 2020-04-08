@@ -35,11 +35,10 @@ SOFTWARE.
 #include <limits>
 #include <lin/core.hpp>
 #include <lin/generators.hpp>
-#include "constant_tracker.hpp"
+#include <common/constant_tracker.hpp>
 
 #include "geograv.hpp"
 #include "GGM05S.hpp"
-#include "GPSTime.hpp"
 
 
 TRACKED_CONSTANT(constexpr static int, PANGRAVORDER,40);
