@@ -29,6 +29,7 @@ class TestFixtureMainFH {
 
     TestFixtureMainFH() {
         cc = 0;
+        Fault::cc = &cc;
 
         // Prepare inputs for main fault handler
         radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");

@@ -13,6 +13,7 @@ class TestFixtureSuperSimpleFH {
 
     TestFixtureSuperSimpleFH(mission_state_t recommended_state) : registry() {
         TimedControlTaskBase::control_cycle_count = 0;
+        Fault::cc = &TimedControlTaskBase::control_cycle_count;
 
         mission_state_fp = registry.create_writable_field<unsigned char>("pan.state", 12);
         SimpleFaultHandler::set_mission_state_ptr(mission_state_fp.get());
