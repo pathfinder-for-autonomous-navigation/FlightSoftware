@@ -223,7 +223,13 @@ DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
         }
     }
 
-    assert(get_packet_size() <= num_bits_in_packet - 1 - 32); // Flow should fit within one downlink packet
+    const bool flow_too_large = get_packet_size() <= num_bits_in_packet - 1 - 32;
+    if (flow_too_large) {
+        printf(debug_severity::error, 
+            "Flow %d is too large, with a size of %d bits.",
+            flow_data.id, get_packet_size());
+        assert(false);
+    }
 }
 
 size_t DownlinkProducer::Flow::get_packet_size() const {
