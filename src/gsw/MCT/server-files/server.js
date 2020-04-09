@@ -2,6 +2,7 @@
  * Basic implementation of a history and realtime server.
  */
 
+var DummySpacecraft = require('./dummy_spacecraft');
 var Spacecraft = require('./spacecraft');
 var RealtimeServer = require('./realtime-server');
 var HistoryServer = require('./history-server');
@@ -13,7 +14,12 @@ var app = require('express')();
 
 expressWs(app);
 
-var spacecraft = new Spacecraft();
+if (process.argv[2] == "test") {
+    var spacecraft = new DummySpacecraft();
+}
+else {
+    var spacecraft = new Spacecraft();
+}
 var realtimeServer = new RealtimeServer(spacecraft);
 var historyServer = new HistoryServer(spacecraft);
 
