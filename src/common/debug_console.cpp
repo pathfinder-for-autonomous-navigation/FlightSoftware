@@ -89,12 +89,8 @@ void debug_console::init() {
         Serial.begin(115200);
         pinMode(13, OUTPUT);
 
-        Serial.println("Waiting for serial console.");
-        while (!Serial)
-            ;
         _start_time = millis();
 #endif
-
         is_initialized = true;
     }
 }

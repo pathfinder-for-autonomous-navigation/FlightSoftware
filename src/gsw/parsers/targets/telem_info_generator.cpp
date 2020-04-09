@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     const nlohmann::json info = gen.generate_telemetry_info();
     
     std::ofstream output_file(filename);
-    output_file << info;
+    output_file << info.dump(4);
     output_file.close();
     return 0;
 }
