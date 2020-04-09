@@ -177,20 +177,10 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
 void GomspaceController::execute() {
     //Check that we can get hk data
-    if (!gs.get_hk()){
-        get_hk_fault.signal();
-    }
-    else{
-        get_hk_fault.unsignal();
-    }
+    get_hk_fault.evaluate(!gs.get_hk());
 
     // Check that the battery voltage is above the threshold
-    if (gs.hk->vbatt<batt_threshold_f.get()){
-        low_batt_fault.signal();
-    }
-    else{
-        low_batt_fault.unsignal();
-    }
+    low_batt_fault.evaluate(gs.hk->vbatt < batt_threshold_f.get());
 
     // On the first control cycle, set the command statefields to the current values 
     // in the hk struct to prevent unwanted writes.

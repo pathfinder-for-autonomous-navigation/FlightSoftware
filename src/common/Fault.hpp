@@ -20,6 +20,13 @@ class Fault : public WritableStateField<bool> {
     const std::string &name() const override { return _name; } 
 
     /**
+     * @brief Calls signal if flag is true and unsignal if flag is false.
+     * 
+     * @param flag 
+     */
+    void evaluate(bool flag);
+
+    /**
      * @brief Client-facing function to signal an occurrence of the
      * fault-related condition. Attempts to increment num_consecutive_signals by 1
      */

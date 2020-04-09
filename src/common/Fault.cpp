@@ -20,6 +20,11 @@ Fault::Fault(const std::string& name, const size_t _persistence) :
   persistence_f.set(_persistence);
 }
 
+void Fault::evaluate(bool flag) {
+    if (flag) signal();
+    else unsignal();
+}
+
 void Fault::signal() {
     if (*cc > static_cast<unsigned int>(last_fault_time) || *cc == 0) {
         num_consecutive_signals++;
