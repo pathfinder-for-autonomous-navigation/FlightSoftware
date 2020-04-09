@@ -26,6 +26,7 @@ class FlowListParser(object):
 
             reformatted_row_data = [len(data) + 1, row_data[1].lower(), [item for item in row_data[2:] if item != ""]] # Flow ID, flow active/inactive, flow fields
             parsed_row = str(reformatted_row_data).replace("[", "{").replace("]", "}").replace("'", "\"")
+            parsed_row = parsed_row.replace("\"true\"", "true").replace("\"false\"", "false")
             data.append(parsed_row)
 
         return ",\n".join(data)
