@@ -18,10 +18,14 @@ std::string type_name() {
     else if (std::is_same<signed char, T>::value) return "signed char";
     else if (std::is_same<float, T>::value) return "float";
     else if (std::is_same<double, T>::value) return "double";
-    else if (std::is_same<f_vector_t, T>::value) return "float vector";
-    else if (std::is_same<d_vector_t, T>::value) return "double vector";
-    else if (std::is_same<f_quat_t, T>::value) return "float quaternion";
-    else if (std::is_same<d_quat_t, T>::value) return "double quaternion";
+    else if (std::is_same<f_vector_t, T>::value) return "std float vector";
+    else if (std::is_same<lin::Vector3f, T>::value) return "lin float vector";
+    else if (std::is_same<d_vector_t, T>::value) return "std double vector";
+    else if (std::is_same<lin::Vector3d, T>::value) return "lin double vector";
+    else if (std::is_same<f_quat_t, T>::value) return "std float quaternion";
+    else if (std::is_same<lin::Vector4f, T>::value) return "lin float quaternion";
+    else if (std::is_same<d_quat_t, T>::value) return "std double quaternion";
+    else if (std::is_same<lin::Vector4d, T>::value) return "lin double quaternion";
     else if (std::is_same<bool, T>::value) return "bool";
     else if (std::is_same<gps_time_t, T>::value) return "gps_time_t";
     else {
@@ -50,15 +54,25 @@ bool try_collect_vector_field_info(const StateFieldBaseType* field, json& field_
     static_assert(std::is_floating_point<UnderlyingType>::value,
         "Can't collect vector field info for a vector of non-float or non-double type.");
     
-    using UnderlyingVectorType = std::array<UnderlyingType, 3>;
+    using UnderlyingArrayVectorType = std::array<UnderlyingType, 3>;
+    using UnderlyingLinVectorType = lin::Vector<UnderlyingType, 3>;
 
-    const StateFieldType<UnderlyingVectorType>* ptr =
-        dynamic_cast<const StateFieldType<UnderlyingVectorType>*>(field);
-    if (!ptr) return false;
+    const StateFieldType<UnderlyingArrayVectorType>* ptr1 =
+        dynamic_cast<const StateFieldType<UnderlyingArrayVectorType>*>(field);
+    const StateFieldType<UnderlyingLinVectorType>* ptr2 =
+        dynamic_cast<const StateFieldType<UnderlyingLinVectorType>*>(field);
+    if (ptr1) {
+        field_info["type"] = type_name<UnderlyingArrayVectorType>();
+        field_info["min"] = ptr1->get_serializer_min()[0];
+        field_info["max"] = ptr1->get_serializer_max()[0];
+    }
+    else if (ptr2) {
+        field_info["type"] = type_name<UnderlyingLinVectorType>();
+        field_info["min"] = ptr2->get_serializer_min()(0);
+        field_info["max"] = ptr2->get_serializer_max()(0);
+    }
+    else return false;
 
-    field_info["type"] = type_name<UnderlyingVectorType>();
-    field_info["min"] = ptr->get_serializer_min()[0];
-    field_info["max"] = ptr->get_serializer_max()[0];
     return true;
 }
 
@@ -78,8 +92,6 @@ bool try_collect_unbounded_field_info(const StateFieldBaseType* field, json& fie
     if (!ptr) return false;
 
     field_info["type"] = type_name<UnderlyingType>();
-    field_info["min"] = "N/A";
-    field_info["max"] = "N/A";
     return true;
 }
 
@@ -100,7 +112,9 @@ json get_field_info(const StateFieldBaseType* field) {
     found_field_type |= try_collect_unbounded_field_info<StateFieldType, bool, StateFieldBaseType>(field, field_info);
     found_field_type |= try_collect_unbounded_field_info<StateFieldType, gps_time_t, StateFieldBaseType>(field, field_info);
     found_field_type |= try_collect_unbounded_field_info<StateFieldType, f_quat_t, StateFieldBaseType>(field, field_info);
+    found_field_type |= try_collect_unbounded_field_info<StateFieldType, lin::Vector4f, StateFieldBaseType>(field, field_info);
     found_field_type |= try_collect_unbounded_field_info<StateFieldType, d_quat_t, StateFieldBaseType>(field, field_info);
+    found_field_type |= try_collect_unbounded_field_info<StateFieldType, lin::Vector4d, StateFieldBaseType>(field, field_info);
     
     if(!found_field_type) {
         std::cout << "Could not find field type for field: " << field->name() << std::endl;
