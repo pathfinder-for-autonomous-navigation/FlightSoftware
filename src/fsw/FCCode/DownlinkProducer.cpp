@@ -223,7 +223,7 @@ DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
         }
     }
 
-    const bool flow_too_large = get_packet_size() <= num_bits_in_packet - 1 - 32;
+    const bool flow_too_large = get_packet_size() > num_bits_in_packet - 1 - 32;
     if (flow_too_large) {
         printf(debug_severity::error, 
             "Flow %d is too large, with a size of %d bits.",
