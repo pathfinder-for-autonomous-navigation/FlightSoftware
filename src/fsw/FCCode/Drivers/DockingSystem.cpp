@@ -6,6 +6,12 @@
 
 using namespace Devices;
 
+volatile unsigned int DockingSystem::steps = 0;
+
+#ifndef DESKTOP
+IntervalTimer timer;
+#endif
+
 DockingSystem::DockingSystem()
     : Device("docking_system") {}
 
@@ -20,12 +26,10 @@ bool DockingSystem::setup() {
 
         // set current limit (I2 low, I1 93.8% duty cycle)
         digitalWrite(motor_i2_pin, LOW);
-        analogWrite(motor_i1_pin, 239);
+        analogWrite(motor_i1_pin, 239); 
 
         // SLEEP pins is set low to enable sleep
         digitalWrite(motor_sleep_pin, LOW);
-
-        enable();
     #endif
 
     return true;
@@ -71,36 +75,42 @@ void DockingSystem::set_step_angle(float angle) {
     step_angle = angle;
 }
 
-void DockingSystem::set_direction(bool set_clockwise) {
-    #ifndef DESKTOP
-    if (set_clockwise) {
-        digitalWrite(motor_direction_pin, LOW);
-    }
-    else {
-        digitalWrite(motor_direction_pin, HIGH);
-    }
-    #endif
+void DockingSystem::set_step_delay(unsigned int delay) {
+    step_delay = delay;
 }
 
-void DockingSystem::start_dock() {
-    const bool clockwise_direction = true;
-    set_direction(clockwise_direction);
+void DockingSystem::start_halfturn() {
     set_turn_angle(180.0f);
-}
-
-void DockingSystem::start_undock() {
-    const bool clockwise_direction = false;
-    set_direction(clockwise_direction);
-    set_turn_angle(180);
-}
-
-void DockingSystem::step_motor() {
+    enable();
     #ifndef DESKTOP
-    digitalWrite(motor_step_pin, LOW);
-    delayMicroseconds(1000);
-    digitalWrite(motor_step_pin, HIGH);
+    timer.begin(step_motor, step_delay);
     #endif
-    steps=steps-1;
+}
+
+void DockingSystem::cancel() {
+    disable();
+    #ifndef DESKTOP
+    timer.end();
+    #endif
+}
+
+volatile bool motor_on = false;
+void DockingSystem::step_motor() {
+    if (steps >= 1) {
+        if (motor_on) {
+            #ifndef DESKTOP
+            digitalWrite(motor_step_pin, LOW);
+            #endif
+            motor_on = false;
+        }
+        else {
+            #ifndef DESKTOP
+            digitalWrite(motor_step_pin, HIGH);
+            #endif
+            steps=steps-1;
+            motor_on = true;
+        }
+    }
 }
 
 float DockingSystem::get_step_angle() const {

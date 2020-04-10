@@ -23,7 +23,6 @@ public:
    */
   void init();
 
-#ifdef FUNCTIONAL_TEST
 protected:
   /**
    * @brief Flag used by the simulation to keep flight software cycles in sync
@@ -35,7 +34,6 @@ protected:
    * 
    */
   WritableStateField<bool> auto_cycle_f;
-#endif
 };
 
 #endif

@@ -29,6 +29,10 @@ If your update does not require significant testing, argue why, or if you're def
 ### Constants
 Describe any important diffs to the `constants` file in the root level of the repository. Ensure that any constants you added to the code successfully made it into the `constants` file. If not, wrap the missing constants with `TRACKED_CONSTANT` macros and fix `constants_reporter.py` if necessary.
 
+### Telemetry
+Describe any important diffs to the `telemetry` file in the root level of the repository. Ensure that any telemetry you added to the code successfully made it into the `telemetry` file.
+
+Also, take the opportunity to add the telemetry into the appropriate flows in src/flow_data.csv.
 
 ### Documentation Evidence
 Post to ReadTheDocs, or

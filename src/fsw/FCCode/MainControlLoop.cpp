@@ -98,8 +98,10 @@ void MainControlLoop::execute() {
     debug_task.execute_on_time();
     #endif
 
+    uplink_consumer.execute_on_time();
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
+    dcdc_controller.execute_on_time();
     attitude_computer.execute_on_time();
     adcs_commander.execute_on_time();
     adcs_box_controller.execute_on_time();
@@ -107,7 +109,6 @@ void MainControlLoop::execute() {
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();
-    dcdc_controller.execute_on_time();
     
     #ifdef DESKTOP
         eeprom_controller.execute_on_time();

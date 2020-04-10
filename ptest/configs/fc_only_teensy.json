@@ -5,7 +5,7 @@
         {
             "name": "FlightController",
             "run_mode": "teensy",
-            "port": "/dev/ttyACM0",
+            "port": "/dev/tty.usbmodem47347901",
             "baud_rate": 1152000
         }
     ],
@@ -15,5 +15,7 @@
             "imei": "",
             "connect": false
         }
-    ]
+    ],
+    "uplink_producer_filepath": "./.pio/build/gsw_uplink_producer/program",
+    "downlink_parser_filepath": ".pio/build/gsw_downlink_parser"
 }
