@@ -217,24 +217,6 @@ protected:
     // true if the valve is opened
     bool is_valve_opened[4];
 
-    // Constants for the nonlinear regression for computing tank temperature.
-    // The regression is computed via the formula
-    //
-    // T = A * ln(R)^EXP + B
-    //
-    // where T is the temperature, R is the resistance of the temperature 
-    // sensor, and A, EXP, and B are the regression constants as listed below:
-    static constexpr double temp_a = -35126.92396;
-    static constexpr double temp_exp = 0.005;
-    static constexpr double temp_b = 35493.23411;
-    // For the full data see
-    // https://cornellprod-my.sharepoint.com/:x:/g/personal/saa243_cornell_edu/Edg-vGek6SBEoe0jhIUxmnIBPh84Y6g_Tro-SJWonhuVhA?e=EewWzU
-
-    // Minimum and maximum temperature values permitted by the regression.
-    // These values are used to "clamp" on voltage readings that are close to 0 or 3.3v.
-    static constexpr int temp_min = -55;
-    static constexpr int temp_max = 150;
-
     friend class _PropulsionSystem;
 };
 
@@ -276,7 +258,9 @@ public:
      */
     unsigned int get_schedule_at(size_t valve_num) const;
 
+#ifndef DESKTOP
 private:
+#endif
     void setup();
     #ifndef DESKTOP
     //! When enabled, runs thrust_valve_loop every 3 ms
@@ -291,16 +275,11 @@ private:
     TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
-
-    static constexpr unsigned int amp_threshold = 1000; // Corresponds to 50 mV, the voltage value at which
-                                                        // we should switch between low- and high-gain amplifiers.
-
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
     TRACKED_CONSTANT_SC(double, high_gain_offset, -0.119001938553720);
     TRACKED_CONSTANT_SC(double, high_gain_slope, 0.048713211537332);
     TRACKED_CONSTANT_SC(double, low_gain_offset, 0.154615074342874);
     TRACKED_CONSTANT_SC(double, low_gain_slope, 0.099017990785657);
-
 
     //! Loop interval in milliseconds.
     TRACKED_CONSTANT_SC(unsigned int, thrust_valve_loop_interval_ms, 3);
@@ -308,5 +287,4 @@ private:
     friend class _PropulsionSystem;
 };
 }  // namespace Devices
-
 #endif
