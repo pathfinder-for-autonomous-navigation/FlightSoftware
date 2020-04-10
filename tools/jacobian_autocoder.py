@@ -1,6 +1,8 @@
 # Nathan Zimmerberg (nhz2@cornell.edu)
 # 7 APR 2020
 # A simple script to help get the jacobian of an Orbit update, see Orbit.h
+# This script prints out a bunch of lines of C code, from sympy 
+#  The output will get copied and modified and put into Orbit.h _jacobian_helper method
 
 import sympy as sp
 from sympy.vector import CoordSys3D, express
