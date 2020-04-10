@@ -1,11 +1,12 @@
 {
   "name": "PAN-MissionControl",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Mission Control API using openMCT",
   "main": "server-files/server.js",
   "scripts": {
     "start": "node server-files/server.js",
-    "postinstall": "cd node_modules/openmct && npm install"
+    "postinstall": "cd node_modules/openmct && npm install",
+    "test": "node server-files/server.js test"
   },
   "repository": {
     "type": "git",
@@ -13,9 +14,12 @@
   },
   "author": "Kirin Kambon and Tanishq Aggarwal",
   "dependencies": {
+    "axios": "^0.19.2",
     "express": "^4.14.1",
     "express-ws": "^3.0.0",
-    "openmct" : "https://github.com/nasa/openmct.git",
+    "openmct": "https://github.com/nasa/openmct.git",
+    "request": "^2.88.2",
+    "test": ">=0.0.5",
     "ws": "^3.3.1"
   }
 }
