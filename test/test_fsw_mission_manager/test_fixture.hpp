@@ -25,7 +25,7 @@ class TestFixture {
     std::shared_ptr<InternalStateField<unsigned char>> radio_state_fp;
     std::shared_ptr<InternalStateField<unsigned int>> last_checkin_cycle_fp;
 
-    std::shared_ptr<ReadableStateField<unsigned char>> prop_state_fp;
+    std::shared_ptr<WritableStateField<unsigned int>> prop_state_fp;
 
     std::shared_ptr<ReadableStateField<lin::Vector3d>> propagated_baseline_pos_fp;
 
