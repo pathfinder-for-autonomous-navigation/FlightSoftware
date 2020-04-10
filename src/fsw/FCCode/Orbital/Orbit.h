@@ -68,7 +68,7 @@ class Orbit {
      * earth orbit, and has a reasonable time stamp (within 20 years of pan epoch).
      * The validity check should not reject 
      * gps readings due to reasonable noise of:
-     * TODO add max expected gps error
+     * TODO add max expected gps error see issue #372
      *
      * Low earth orbit is a Orbit that stays between MINORBITRADIUS and MAXORBITRADIUS.
      */
@@ -100,7 +100,7 @@ class Orbit {
      * earth orbit, and has a reasonable time stamp (within 20 years of pan epoch).
      * The validity check should not reject 
      * gps readings due to reasonable noise of:
-     * TODO add max expected gps error
+     * TODO add max expected gps error see issue #372
      *
      * Low earth orbit is a Orbit that stays between MINORBITRADIUS and MAXORBITRADIUS.
      * grav calls: 0 */
@@ -114,7 +114,7 @@ class Orbit {
      * grav calls: 0 */
     void _check_validity(){
         double r2= lin::fro(_recef);
-        //TODO add checks for time and velocity
+        //TODO add checks for time and velocity see issue #372
         //note if position is NAN, these checks will be false.
         if (r2<MAXORBITRADIUS*MAXORBITRADIUS && r2>MINORBITRADIUS*MINORBITRADIUS){
             _valid= true;
