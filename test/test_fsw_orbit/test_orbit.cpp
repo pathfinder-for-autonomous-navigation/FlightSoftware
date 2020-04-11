@@ -7,6 +7,7 @@
 #include <lin.hpp>
 #include <gnc_constants.hpp>
 #include <common/GPSTime.hpp>
+#include <GRACEORBITS.hpp>
 
 
 //UTILITY MACROS
