@@ -20,23 +20,6 @@
 #endif
 
 /**
- * Lin Tensor Printing function
- * */
-template<typename T>
-void printtensor(T x){
-    int n= x.rows();
-    int m= x.cols();
-    for (int i=0; i<n; i++){
-        char linemessage[256];
-        char *point= linemessage;
-        for (int j=0; j<m; j++){
-	            point+= sprintf(point,"%.10e, ",x(i,j));
-	    }
-        TEST_MESSAGE(linemessage);
-    }
-}
-
-/**
  * Recursive Lin Tensor determinant function.
  * */
 template<typename T, int MR>
@@ -152,7 +135,7 @@ void test_calc_geograv() {
     double ps[numtests]= {std::numeric_limits<double>::quiet_NaN()};
     for (int i=0; i< numtests; i++){
         Orbit::calc_geograv(rs[i],gs[i],ps[i]);
-        TEST_ASSERT_LIN_3VECT_WITHIN(1E-6, (g_trues[i]), (gs[i]));
+        PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1E-6, (g_trues[i]), (gs[i]));
         //finite diff check
         lin::Vector3d delta_rs[4]= {
             {10.0,0.0,0.0},
@@ -225,8 +208,8 @@ void test_shortupdate() {
     lin::Vector3d rfinal = y1.recef();
     //lin::Vector3d rfinal = y1.recef();
     TEST_ASSERT_TRUE(y1.nsgpstime()==t1+100'000'000'000LL);
-    TEST_ASSERT_LIN_3VECT_WITHIN(2E-4, vfinal, v2);
-    TEST_ASSERT_LIN_3VECT_WITHIN(1E-2, rfinal, r2);
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(2E-4, vfinal, v2);
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1E-2, rfinal, r2);
     
     // 0.2 dt 100 sec test vs grace data
     y1= ystart;
@@ -237,8 +220,8 @@ void test_shortupdate() {
     rfinal = y1.recef();
     TEST_ASSERT_TRUE(y1.valid());
     TEST_ASSERT_TRUE(y1.nsgpstime()==t1+100'000'000'000LL);
-    TEST_ASSERT_LIN_3VECT_WITHIN(2E-4, vfinal, v2);
-    TEST_ASSERT_LIN_3VECT_WITHIN(1E-2, rfinal, r2);
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(2E-4, vfinal, v2);
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1E-2, rfinal, r2);
 
     //623260100 D E 1579190.147083268 -6066459.613667888 2785708.976728437 0.0005172311946209459 0.0008808523576941407 0.0006434386278678982 480.8261476296949 -3083.977113497177 -6969.470748202005 1.390617103867044e-06 1.919262957467571e-06 1.936534489542342e-06  00000000
     //grace orbit 623260100-623246400 = 13700 seconds later.
@@ -256,8 +239,8 @@ void test_shortupdate() {
     rfinal = y1.recef();
     TEST_ASSERT_TRUE(y1.valid());
     TEST_ASSERT_TRUE(y1.nsgpstime()==t1+13700'000'000'000LL);
-    TEST_ASSERT_LIN_3VECT_WITHIN(1E-1, vfinal, v3);
-    TEST_ASSERT_LIN_3VECT_WITHIN(20.0, rfinal, r3);
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1E-1, vfinal, v3);
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(20.0, rfinal, r3);
 
     // test reversibility of propagator
     for(int i=0; i<(13700*5);i++){
@@ -267,8 +250,8 @@ void test_shortupdate() {
     rfinal = y1.recef();
     TEST_ASSERT_TRUE(y1.valid());
     TEST_ASSERT_TRUE(y1.nsgpstime()==t1);
-    TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-5, vfinal, v1);
-    TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-2, rfinal, r1);
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-5, vfinal, v1);
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-2, rfinal, r1);
 
     // test jacobians with finite difference
     lin::internal::RandomsGenerator const rand(0);

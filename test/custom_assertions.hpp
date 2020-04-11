@@ -40,7 +40,29 @@
     } \
 }
 
-#define TEST_ASSERT_LIN_3VECT_WITHIN(delta, expected, actual) do {\
+
+/**
+ * Lin Tensor Printing function
+ * */
+template<typename T>
+inline void printtensor(T x){
+    int n= x.rows();
+    int m= x.cols();
+    for (int i=0; i<n; i++){
+        char linemessage[256];
+        char *point= linemessage;
+        for (int j=0; j<m; j++){
+	            point+= sprintf(point,"%.10e, ",x(i,j));
+	    }
+        TEST_MESSAGE(linemessage);
+    }
+}
+
+
+/** 
+ * Asserts (lin::norm(expected-actual)<=delta) and prints debug info on failure
+ */
+#define PAN_TEST_ASSERT_LIN_3VECT_WITHIN(delta, expected, actual) do {\
             if (!(lin::norm(expected-actual)<=delta)){ \
                 char errormessage[256];\
                 TEST_MESSAGE("TEST_ASSERT_LIN_3VECT_WITHIN Failed:");\
