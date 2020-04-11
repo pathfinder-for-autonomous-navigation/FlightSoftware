@@ -4,6 +4,10 @@ consts = []
 log = "Keep this file in version control so that changes to constants are well-known.\n\n"
 
 for root, dirs, files in os.walk("src"):
+    #alphabatize to prevent rows from unexpectedly swapping.
+    #see https://stackoverflow.com/questions/6670029/can-i-force-python3s-os-walk-to-visit-directories-in-alphabetical-order-how
+    dirs.sort()
+    files.sort()
     for file in files:
         path = os.path.join(root, file)
         if path.endswith((".cpp", ".hpp", ".c", ".h", ".inl")):

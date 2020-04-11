@@ -2,6 +2,8 @@
 
 This Mission control API uses the visual elements of the openMCT data visualization program to display telemetry data for the two leader and follower satellites. Open MCT supports receiving telemetry by requesting data from a telemetry store, and by subscribing to real-time telemetry updates.
 
+#Note: openMCT is not supported on Windows OS
+
 The openMCT web server is run using the **"npm start"** command in terminal after navigating to the /MCT directory and installing the node.js modules with **"npm install"**.
 
 In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the openMCT display.

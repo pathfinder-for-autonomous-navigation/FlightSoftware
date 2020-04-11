@@ -146,10 +146,19 @@ void DownlinkProducer::execute() {
             downlink_frame_offset);
 
         for(auto& field : flow.field_list) {
-            field->serialize();
-            const bit_array& field_bits = field->get_bit_array();
-            add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
-                downlink_frame_offset);
+            Event* event = _registry.find_event(field->name());
+            if (event) {
+                // Event should be serialized when it is signaled
+                const bit_array& event_bits = event->get_bit_array();
+                add_bits_to_downlink_frame(event_bits, snapshot_ptr, packet_offset,
+                    downlink_frame_offset);
+            }
+            else{
+                field->serialize();
+                const bit_array& field_bits = field->get_bit_array();
+                add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
+                    downlink_frame_offset);
+            }
         }
     }
 
@@ -198,16 +207,29 @@ DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
 
     for(std::string const& field_name : flow_data.field_list) {
         ReadableStateFieldBase* field_ptr = r.find_readable_field(field_name);
-        if(!field_ptr) {
+        Event* event_ptr = r.find_event(field_name);
+        if (event_ptr && !field_ptr) {
+            ReadableStateFieldBase* casted_event_ptr = dynamic_cast<ReadableStateFieldBase*>(event_ptr);
+            field_list.push_back(casted_event_ptr);
+        }
+        else if (field_ptr && !event_ptr){
+            field_list.push_back(field_ptr);
+        }
+        else {
             printf(debug_severity::error, 
                 "Field %s was not found in registry when constructing flows.",
                 field_name.c_str());
             assert(false);
         }
-        field_list.push_back(field_ptr);
     }
 
-    assert(get_packet_size() <= num_bits_in_packet - 1 - 32); // Flow should fit within one downlink packet
+    const bool flow_too_large = get_packet_size() > num_bits_in_packet - 1 - 32;
+    if (flow_too_large) {
+        printf(debug_severity::error, 
+            "Flow %d is too large, with a size of %d bits.",
+            flow_data.id, get_packet_size());
+        assert(false);
+    }
 }
 
 size_t DownlinkProducer::Flow::get_packet_size() const {

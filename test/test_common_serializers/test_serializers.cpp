@@ -11,20 +11,23 @@
 // number of vector tests to run
 constexpr static int number_of_vec_test = 100;
 
+template<typename T, size_t N>
+lin::Vector<T, N> to_linvec(const std::array<T, N>& src) {
+    lin::Vector<T, N> temp;
+    for(unsigned int i = 0; i < N; i++) temp(i) = src[i];
+    return temp;
+}
+
 /**
  * @brief Returns the magnitude of a vector
- * 
  */
 template <typename T, size_t N>
-T magnitude_of(std::array<T, N>& src){
-    lin::Vector<T, N> lin_vec;
-
-    if(N == 4)
-        lin_vec = {src[0], src[1], src[2], src[3]};
-    else 
-        lin_vec = {src[0], src[1], src[2]};
-    
-    return lin::norm(lin_vec);
+T magnitude_of(const lin::Vector<T, N>& src){
+    return lin::norm(src);
+}
+template <typename T, size_t N>
+T magnitude_of(const std::array<T, N>& src){
+    return magnitude_of(to_linvec(src));
 }
 
 /**
@@ -33,20 +36,42 @@ T magnitude_of(std::array<T, N>& src){
  */
 template <typename T, size_t N>
 void normalize(std::array<T, N>& src) {
-
     T magnitude = magnitude_of(src);
-    
     for(size_t i = 0; i<N; i++){
         src[i] = src[i] / magnitude;
     }
-
+    return;
+}
+template <typename T, size_t N>
+void normalize(lin::Vector<T, N>& src) {
+    T magnitude = magnitude_of(src);
+    src = src / magnitude;
     return;
 }
 
 /**
- * @brief Returns the angle between two quaternions or vectors
- * 
+ * @brief Returns the angle between two quaternions or vectors, in degrees.
  */
+template <typename T, size_t N>
+T angle_between(lin::Vector<T, N>& a, lin::Vector<T, N>& b)
+{
+    static_assert(N == 3 || N == 4, "Can only compute angle between vectors and quaternions.");
+
+    T inner_product = lin::dot(a, b);
+    
+    T angle;
+    if(N == 4) {
+        // to account for quat could be flipped
+        inner_product = std::abs(inner_product);
+        angle = std::acos(inner_product)*2.0;
+    }
+    else
+        angle = std::acos(inner_product);
+
+    angle = angle * 360.0 / (2 * 3.14159265);
+
+    return angle;
+}
 template <typename T, size_t N>
 T angle_between(std::array<T, N>& a, std::array<T, N>& b){
     lin::Vector<T, N> lin_a;
@@ -61,20 +86,21 @@ T angle_between(std::array<T, N>& a, std::array<T, N>& b){
         lin_b = {b[0], b[1], b[2]};
     }
 
-    T inner_product = lin::dot(lin_a, lin_b);
-    
-    T angle;
-    if(N == 4){
-        // to account for quat could be flipped
-        inner_product = std::abs(inner_product);
-        angle = std::acos(inner_product)*2.0;
-    }
-    else
-        angle = std::acos(inner_product);
+    return angle_between<T, N>(lin_a, lin_b);
+}
 
-    angle = angle * 360.0 / (2 * 3.14159265);
-
-    return angle;
+/**
+ * @brief Convert lin::Vector object to std::array.
+ */
+template<typename T, size_t N>
+std::array<T, N> to_stdarray(const lin::Vector<T, N>& arr) {
+    std::array<T, N> temp;
+    for(unsigned int i = 0; i < N; i++) temp[i] = arr(i);
+    return temp;
+}
+template<typename T, size_t N>
+std::array<T, N> to_stdarray(const std::array<T, N>& arr) {
+    return arr;
 }
 
 /**
@@ -105,8 +131,7 @@ template <typename T>
 void test_value_float_or_double(std::shared_ptr<Serializer<T>>& s, 
                                 std::shared_ptr<Serializer<T>>& d, const T val, const T output,
                                 const T threshold = 0) {
-    static_assert(std::is_same<T, float>::value || 
-                  std::is_same<T, double>::value, 
+    static_assert(std::is_floating_point<T>::value, 
                   "To use this function, the value being tested must either be a float or a double.");
 
     T output_val;
@@ -383,8 +408,7 @@ void test_signed_char_serializer() {
 
 template <typename T>
 void test_float_or_double_serializer() {
-    static_assert(std::is_same<T, float>::value || 
-                  std::is_same<T, double>::value, 
+    static_assert(std::is_floating_point<T>::value, 
                   "To use this function, the value being tested must either be a float or a double.");
 
     std::shared_ptr<Serializer<T>> serializer;
@@ -468,16 +492,11 @@ void test_double_serializer() { test_float_or_double_serializer<double>(); }
  * sizes.
  *
  */
-template<typename T>
+template<typename T, typename vector_t>
 void test_vec_serializer() {
-    static_assert(std::is_same<T, float>::value || 
-                  std::is_same<T, double>::value, 
+    static_assert(std::is_floating_point<T>::value, 
                   "To use this function, the value being tested must either be a float vector or a"
                   " double vector.");
-
-    using vector_t = typename std::conditional<std::is_same<T, float>::value,
-                         f_vector_t,
-                         d_vector_t>::type;
 
     // TODO write serialization initializations for edge cases.
     
@@ -503,34 +522,34 @@ void test_vec_serializer() {
         const T y = cos(t) * std::sqrt(4 - x*x);
         const T z = sin(t) * std::sqrt(4 - x*x);
 
-        vector_t original = {x, y, z};
-        vector_t vec(original);
+        vector_t vec({x, y, z});
 
         vec_serializer->serialize(vec);
 
         // transfer bit array; analagous to reading in telemetry bit array
         downlink_deserializer->set_bit_array(vec_serializer->get_bit_array());
-
         downlink_deserializer->deserialize(&result);
-
-        // make a copy of the result
-        vector_t original_result(result);
 
         // normalize the vectors for angle calculation only
         normalize<T, 3>(vec);
         normalize<T, 3>(result);
         T angle = angle_between(vec, result);
 
-        T mag_err = std::abs(magnitude_of(original_result)/magnitude_of(original) - 1.0) ;
+        T mag_err = std::abs(magnitude_of(result)/magnitude_of(vec) - 1.0) ;
 
-        static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output vector was {%f,%f,%f}; angle: %f; mag_err: %f";
-        static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output vector was {%lf,%lf,%lf}; angle: %lf; mag_err: %lf";
+        static const char* err_fmt_str_f = "%dth test: Input vector was {%f,%f,%f}; output"
+            "vector was {%f,%f,%f}; angle: %f; mag_err: %f";
+        static const char* err_fmt_str_d = "%dth test: Input vector was {%lf,%lf,%lf}; output"
+            "vector was {%lf,%lf,%lf}; angle: %lf; mag_err: %lf";
         char err_str[200];
         memset(err_str, 0, 200);
         const char* err_fmt_str = nullptr;
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
-        sprintf(err_str, err_fmt_str, i, x, y, z, original_result[0], original_result[1], original_result[2], angle, mag_err);
+
+        std::array<T, 3> result_arr = to_stdarray(result);
+        sprintf(err_str, err_fmt_str, i, x, y, z, result_arr[0], result_arr[1],
+            result_arr[2], angle, mag_err);
 
         // assert less than .1% magnitude error
         TEST_ASSERT_FLOAT_WITHIN_MESSAGE(0.001, 0, mag_err, err_str);
@@ -548,15 +567,16 @@ void test_vec_serializer() {
     TEST_ASSERT_FALSE(serializer->deserialize("0.200000,0.500000", &result));
     TEST_ASSERT(serializer->deserialize("3.141592654,0.300000,0.500000", &result));
 
+    std::array<T, 3> result_arr = to_stdarray(result);
     if (std::is_same<T, float>::value) {
-        TEST_ASSERT_EQUAL_FLOAT(3.141592654, result[0]);
-        TEST_ASSERT_EQUAL_FLOAT(0.3, result[1]);
-        TEST_ASSERT_EQUAL_FLOAT(0.5, result[2]);
+        TEST_ASSERT_EQUAL_FLOAT(3.141592654, result_arr[0]);
+        TEST_ASSERT_EQUAL_FLOAT(0.3, result_arr[1]);
+        TEST_ASSERT_EQUAL_FLOAT(0.5, result_arr[2]);
     }
     else {
-        TEST_ASSERT_EQUAL_DOUBLE(3.141592654, result[0]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.3, result[1]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.5, result[2]);
+        TEST_ASSERT_EQUAL_DOUBLE(3.141592654, result_arr[0]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.3, result_arr[1]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.5, result_arr[2]);
     }
 
     // Test printing
@@ -569,7 +589,8 @@ void test_vec_serializer() {
  * sizes.
  */
 void test_f_vec_serializer() {
-    test_vec_serializer<float>();
+    test_vec_serializer<float, f_vector_t>();
+    //test_vec_serializer<float, lin::Vector3f>();
 }
 
 /**
@@ -577,18 +598,15 @@ void test_f_vec_serializer() {
  * sizes.
  */
 void test_d_vec_serializer() {
-    test_vec_serializer<double>();
+    test_vec_serializer<double, d_vector_t>();
+    //test_vec_serializer<double, lin::Vector3d>();
 }
 
-template<typename T>
+template<typename T, typename quat_t>
 void test_quat_serializer() {
-    static_assert(std::is_same<T, float>::value || 
-                  std::is_same<T, double>::value, 
-                  "To use this function, the value being tested must either be a float quaternion or a double quaternion.");
-
-    using quat_t = typename std::conditional<std::is_same<T, float>::value,
-                         f_quat_t,
-                         d_quat_t>::type;
+    static_assert(std::is_floating_point<T>::value, 
+                  "To use this function, the value being tested must either be a float quaternion "
+                  "or a double quaternion.");
 
     // TODO write serialization initializations for edge cases. // ?
 
@@ -626,14 +644,20 @@ void test_quat_serializer() {
         normalize<T, 4>(result);
         T angle_err = angle_between<T, 4>(quat, result);
 
-        static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output quaternion was {%f,%f,%f,%f}; angle: %f";
-        static const char* err_fmt_str_d = "%dth test: Input quaternion was {%lf,%lf,%lf,%lf}; output quaternion was {%lf,%lf,%lf,%lf}; angle: %lf";
+        static const char* err_fmt_str_f = "%dth test: Input quaternion was {%f,%f,%f,%f}; output"
+            " quaternion was {%f,%f,%f,%f}; angle: %f";
+        static const char* err_fmt_str_d = "%dth test: Input quaternion was {%lf,%lf,%lf,%lf};"
+            " output quaternion was {%lf,%lf,%lf,%lf}; angle: %lf";
         char err_str[200];
         memset(err_str, 0, 200);
         const char* err_fmt_str = nullptr;
         if (std::is_same<T, float>::value) err_fmt_str = err_fmt_str_f;
         else err_fmt_str = err_fmt_str_d;
-        sprintf(err_str, err_fmt_str, i, quat[0], quat[1], quat[2], quat[3], result[0], result[1], result[2], result[3], angle_err);
+
+        std::array<T, 4> quat_arr = to_stdarray(quat);
+        std::array<T, 4> result_arr = to_stdarray(result);
+        sprintf(err_str, err_fmt_str, i, quat_arr[0], quat_arr[1], quat_arr[2], quat_arr[3],
+            result_arr[0], result_arr[1], result_arr[2], result_arr[3], angle_err);
 
         TEST_ASSERT_FLOAT_WITHIN_MESSAGE(1.0, 0, angle_err, err_str);
 
@@ -644,17 +668,19 @@ void test_quat_serializer() {
     quat_t result;
     TEST_ASSERT_FALSE(serializer->deserialize("0.200000,0.300000,0.500000", &result));
     TEST_ASSERT(serializer->deserialize("0.200000,0.100000,0.300000,0.500000", &result));
+
+    std::array<T, 4> result_arr = to_stdarray(result);
     if (std::is_same<T, float>::value) {
-        TEST_ASSERT_EQUAL_FLOAT(0.2, result[0]);
-        TEST_ASSERT_EQUAL_FLOAT(0.1, result[1]);
-        TEST_ASSERT_EQUAL_FLOAT(0.3, result[2]);
-        TEST_ASSERT_EQUAL_FLOAT(0.5, result[3]);
+        TEST_ASSERT_EQUAL_FLOAT(0.2, result_arr[0]);
+        TEST_ASSERT_EQUAL_FLOAT(0.1, result_arr[1]);
+        TEST_ASSERT_EQUAL_FLOAT(0.3, result_arr[2]);
+        TEST_ASSERT_EQUAL_FLOAT(0.5, result_arr[3]);
     }
     else {
-        TEST_ASSERT_EQUAL_DOUBLE(0.2, result[0]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.1, result[1]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.3, result[2]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.5, result[3]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.2, result_arr[0]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.1, result_arr[1]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.3, result_arr[2]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.5, result_arr[3]);
     }
 
     // Test printing
@@ -667,7 +693,8 @@ void test_quat_serializer() {
  * various sizes.
  */
 void test_f_quat_serializer() {
-    test_quat_serializer<float>();
+    test_quat_serializer<float, f_quat_t>();
+    //test_quat_serializer<float, lin::Vector4f>();
 }
 
 /**
@@ -675,7 +702,8 @@ void test_f_quat_serializer() {
  * of various sizes.
  */
 void test_d_quat_serializer() {
-    test_quat_serializer<double>();
+    test_quat_serializer<double, d_quat_t>();
+    //test_quat_serializer<double, lin::Vector4d>();
 }
 
 /**
@@ -733,7 +761,7 @@ int main(int argc, char* argv[]) {
 #else
 #include <Arduino.h>
 void setup() {
-    delay(2000);
+    delay(10000);
     Serial.begin(9600);
     test_serializers();
 }
