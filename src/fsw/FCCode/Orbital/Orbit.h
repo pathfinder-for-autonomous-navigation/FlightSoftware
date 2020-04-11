@@ -23,19 +23,21 @@ SOFTWARE.
 */
 
 /**
- * \file geograv.hpp
+ * \file Orbit.h
  * \author Nathan Zimmerberg
- * \date 31 Mar 2020
- * \brief a class to handle most of the logic related to storing, serializing, propagating, and checking validity of an orbit.
+ * \date 10 APR 2020
+ * \brief A class to handle most of the logic related to storing, serializing, propagating, and checking validity of an orbit.
  */
 
 #pragma once
 
 #include <cstdint>
+#include <cmath>
 #include <limits>
 #include <lin/core.hpp>
 #include <lin/generators.hpp>
 #include <common/constant_tracker.hpp>
+#include "JacobianHelpers/jacobian_autocoded.h"
 
 #include "geograv.hpp"
 #include "GGM05S.hpp"
@@ -83,6 +85,7 @@ class Orbit {
 
     /** Return position of the sat (m).
      * The Orbit must be not propagating.
+     * 
      * grav calls: 0 */
     lin::Vector3d recef() const{
         return _recef;
@@ -90,6 +93,7 @@ class Orbit {
 
     /** Return velocity of the sat (m/s).
      * The Orbit must be not propagating.
+     * 
      * grav calls: 0 */
     lin::Vector3d vecef() const{
         return _vecef;
@@ -103,14 +107,17 @@ class Orbit {
      * TODO add max expected gps error see issue #372
      *
      * Low earth orbit is a Orbit that stays between MINORBITRADIUS and MAXORBITRADIUS.
+     * 
      * grav calls: 0 */
     bool valid() const{
         return _valid;
     }
-
+    
+  private:
     /** 
      * Helper function calculate if the Orbit is valid, see valid().
-     * If the orbit is invalid set the orbit to the default values
+     * If the orbit is invalid set the orbit to the default values.
+     * 
      * grav calls: 0 */
     void _check_validity(){
         double r2= lin::fro(_recef);
@@ -126,8 +133,9 @@ class Orbit {
         }
     }
 
-
+  public:
     /** Gravity function in International Terrestrial Reference System coordinates.
+     * 
      * grav calls: 1
      * @param[in] r_ecef(Above the surface of earth): The location where the gravity is calculated, units m.
      * @param[out] g_ecef: Acceleration due to gravity, units m/s^2. 
@@ -154,10 +162,11 @@ class Orbit {
     /**
      * Construct Orbit from time, position, and velocity.
      * Orbit self may be invalid if the inputs are bad, see valid().
+     * 
      * grav calls: 0
-     * @param[in] ns_gps_time(): time since gps epoch (ns).
-     * @param[in] r_ecef(): position of the center of mass of the sat (m).
-     * @param[in] v_ecef(): velocity of the sat (m/s).
+     * @param[in] ns_gps_time: time since gps epoch (ns).
+     * @param[in] r_ecef: position of the center of mass of the sat (m).
+     * @param[in] v_ecef: velocity of the sat (m/s).
      */
     Orbit(const uint64_t& ns_gps_time,const lin::Vector3d& r_ecef,const lin::Vector3d& v_ecef): 
         _recef(r_ecef),
@@ -169,8 +178,9 @@ class Orbit {
     /**
      * Apply a deltav to the Orbit.
      * The Orbit must be not propagating.
+     * 
      * grav calls: 0
-     * @param[in] deltav_ecef(): The change in velocity in ecef frame (m/s). 
+     * @param[in] deltav_ecef: The change in velocity in ecef frame (m/s). 
      */
     void applydeltav(const lin::Vector3d& deltav_ecef){
         _vecef= _vecef+deltav_ecef;
@@ -181,8 +191,9 @@ class Orbit {
      * Return the specific energy of the Orbit (J/kg).
      * The Orbit must be not propagating.
      * If the Orbit is invalid this returns NAN
+     * 
      * grav calls: 1 if Orbit valid, 0 if Orbit invalid
-     * @param[in] earth_rate_ecef(): The earth's angular rate in ecef frame (rad/s). 
+     * @param[in] earth_rate_ecef: The earth's angular rate in ecef frame (rad/s). 
      */
     double specificenergy(const lin::Vector3d& earth_rate_ecef) const{
         if (valid()){
@@ -199,9 +210,14 @@ class Orbit {
 
     /************* PROPAGATION ******************/
 
-    /** Return the dcm to rotate from initial ecef to ecef dt seconds latter.
+  public:
+    /** Gets the dcm to rotate from initial ecef to ecef dt seconds latter.
      * Use equation 2.110 from Markley, Crassidis, Fundamentals of Spacecraft Attitude Determination and Control.
+     * 
      * grav calls: 0
+     * @param[in] earth_rate_ecef: The earth's angular rate in ecef frame (rad/s). 
+     * @param[in] dt: Change in time (s). 
+     * @param[out] A_EI: DCM to rotate from initial ecef to ecef dt seconds latter.
      */ 
     static void relative_earth_dcm_helper(const lin::Vector3d& earth_rate_ecef, const double& dt, lin::Matrix<double, 3, 3>&  A_EI){
         double earth_omega= lin::norm(earth_rate_ecef);
@@ -224,11 +240,13 @@ class Orbit {
         A_EI(2,2)= c+(1-c)*e3*e3;
     }
 
+  private:
     /** Get the jacobian of a shortupdate.
-     * This is partially auto code from sympy in tools/jacobian_autocoder.py
+     * This is partially auto code from sympy in JacobianHelpers/jacobian_autocoder.py
      * 
      * The jacobian is calculated assuming point mass earth and constant earth rate of:
      *  w= 1.0e-04L * 0.729211585530000L rad/s in ecef z direction.
+     * 
      * grav calls: 0
      * @param[in] r_half: The sats position in ecef0 at the half step (m).
      * @param[in] dt: Time step used (s). 
@@ -236,136 +254,24 @@ class Orbit {
      * The jacobian of y=f(x) where x and y are vectors
            [r_ecef;
             v_ecef;] in m and m/s.
-       and f is the shortupdate function.
+       and f is the Orbit::shortupdate() function.
      */
     static void _jacobian_helper(const lin::Vector3d& r_half, const  double& dt, lin::Matrix<double, 6, 6>& jac){
         double mu= PANGRAVITYMODEL.earth_gravity_constant;
         double x_h= r_half(0);
         double y_h= r_half(1);
         double z_h= r_half(2);
-        // double x= r(0);
-        // double y= r(1);
-        // double z= r(2);
-        // double v_x= v(0);
-        // double v_y= v(1);
-        // double v_z= v(3);
         double w= 1.0e-04L * 0.729211585530000L; //earths angular rate in z
-        double x0 = dt*w;
-        double x1 = std::cos(x0);
-        double x2 = x_h*x_h;
-        double x3 = y_h*y_h;
-        double x4 = z_h*z_h;
-        double x5 = x2 + x3 + x4;
-        double x5sqrt= std::sqrt(x5);
-        double x5sqrt3= x5*x5sqrt;
-        double x6 = mu/x5sqrt3;
-        double x7 = -dt*x6;
-        double x8 = 3*x_h;
-        double x9 = (3.0/2.0)*x0;
-        double x10 = -x8 - x9*y_h;
-        double x11 = mu/(x5*x5sqrt3);
-        double x12 = dt*x11;
-        double x13 = x10*x12;
-        double x14 = -x13*x_h + x7;
-        double x15 = (1.0/2.0)*dt;
-        double x16 = x14*x15 + 1;
-        double x17 = std::sin(x0);
-        double x18 = (1.0/2.0)*x0;
-        double x19 = dt*dt;
-        double x20 = (1.0/2.0)*x19;
-        double x21 = x20*x6;
-        double x22 = w*x21;
-        double x23 = w - x13*y_h - x22;
-        double x24 = x15*x23;
-        double x25 = x18 + x24;
-        double x26 = 3*y_h;
-        double x27 = -x26 + x9*x_h;
-        double x28 = x12*x27;
-        double x29 = -x28*y_h + x7;
-        double x30 = x15*x29;
-        double x31 = x30 + 1;
-        double x32 = -x18;
-        double x33 = -w + x22 - x28*x_h;
-        double x34 = x15*x33 + x32;
-        double x35 = (3.0/2.0)*x11*x19;
-        double x36 = x35*x_h;
-        double x37 = x36*z_h;
-        double x38 = x35*y_h*z_h;
-        double x39 = dt*dt*dt;
-        double x40 = (3.0/4.0)*x11*x39*x_h*y_h;
-        double x41 = x17*x40;
-        double x42 = -x21 + 1;
-        double x43 = x2*x35 + x42;
-        double x44 = x15*x43 + x15;
-        double x45 = x1*x40;
-        double x46 = x3*x35 + x42;
-        double x47 = x15*x46;
-        double x48 = x15 + x47;
-        double x49 = x11*z_h;
-        double x50 = (3.0/4.0)*x39*x49;
-        double x51 = x50*x_h;
-        double x52 = x50*y_h;
-        double x53 = x20*x49;
-        double x54 = 3*x12*x4 + x7;
-        double x55 = x35*x4 + x42;
-        double x56 = -w*x16 + x23;
-        double x57 = -w*(-x24 + x32) + x14;
-        double x58 = -w*(-x30 - 1) + x33;
-        double x59 = -w*x34 + x29;
-        double x60 = x12*z_h;
-        double x61 = -w*x37 + x26*x60;
-        double x62 = w*x38 + x60*x8;
-        double x63 = w*x40;
-        double x64 = x43 + x63;
-        double x65 = x36*y_h;
-        double x66 = -w*x44 + x65;
-        double x67 = x46 - x63;
-        double x68 = -w*(-x15 - x47) + x65;
-        double x69 = -w*x51 + x38;
-        double x70 = w*x52 + x37;
-        jac(0,0)= x1*x16 + x17*x25;
-        jac(0,1)= x1*x34 + x17*x31;
-        jac(0,2)= x1*x37 + x17*x38;
-        jac(0,3)= x1*x44 + x41;
-        jac(0,4)= x17*x48 + x45;
-        jac(0,5)= x1*x51 + x17*x52;
-        jac(1,0)= x1*x25 - x16*x17;
-        jac(1,1)= x1*x31 - x17*x34;
-        jac(1,2)= x1*x38 - x17*x37;
-        jac(1,3)= -x17*x44 + x45;
-        jac(1,4)= x1*x48 - x41;
-        jac(1,5)= x1*x52 - x17*x51;
-        jac(2,0)= -x10*x53;
-        jac(2,1)= -x27*x53;
-        jac(2,2)= x15*x54 + 1;
-        jac(2,3)= x51;
-        jac(2,4)= x52;
-        jac(2,5)= x15*x55 + x15;
-        jac(3,0)= x1*x57 + x17*x56;
-        jac(3,1)= x1*x58 + x17*x59;
-        jac(3,2)= x1*x62 + x17*x61;
-        jac(3,3)= x1*x64 + x17*x66;
-        jac(3,4)= x1*x68 + x17*x67;
-        jac(3,5)= x1*x70 + x17*x69;
-        jac(4,0)= x1*x56 - x17*x57;
-        jac(4,1)= x1*x59 - x17*x58;
-        jac(4,2)= x1*x61 - x17*x62;
-        jac(4,3)= x1*x66 - x17*x64;
-        jac(4,4)= x1*x67 - x17*x68;
-        jac(4,5)= x1*x69 - x17*x70;
-        jac(5,0)= -x13*z_h;
-        jac(5,1)= -x28*z_h;
-        jac(5,2)= x54;
-        jac(5,3)= x37;
-        jac(5,4)= x38;
-        jac(5,5)= x55;
+        jacobian_autocoded(x_h,y_h,z_h,w,mu,dt,jac);
     }
 
+  private:
     /**
      * Helper to do a short update of the orbit.
      * The orbit propigator is designed for nearly circular low earth orbit, and
      * ignores all forces except constant gravity from earth.
      * The Orbit must be not propagating and valid.
+     * 
      * grav calls: 1
      * @param[in] dt (in the range [-0.2,0.2]): Time step (s).
      * @param[in] earth_rate_ecef: The earth's angular rate in ecef frame (rad/s). 
@@ -425,7 +331,7 @@ class Orbit {
         _vecef= _vecef-lin::cross(earth_rate_ecef,_recef);
         specificenergy= halfstepke - potential;
     }
-
+  public:
     /**
      * Do a short update of the orbit.
      * The orbit propigator is designed for nearly circular low earth orbit, and
@@ -433,6 +339,7 @@ class Orbit {
      * The jacobians are calculated assuming point mass earth and constant earth rate of:
      *  w= 1.0e-04L * 0.729211585530000L rad/s in ecef z direction.
      * The Orbit must be not propagating.
+     * 
      * grav calls: 1 if Orbit valid, 0 if Orbit invalid
      * @param[in] dt_ns (in the range [-2E8,2E8]): Time step (ns).
      * @param[in] earth_rate_ecef: The earth's angular rate in ecef frame (rad/s). 
@@ -457,12 +364,13 @@ class Orbit {
         _shortupdate_helper(dt,earth_rate_ecef, r_half_ecef0, specificenergy);
         _jacobian_helper(r_half_ecef0 ,dt, jac); 
     }
-
+  public:
     /**
      * Do a short update of the orbit.
      * The orbit propigator is designed for nearly circular low earth orbit, and
      * ignores all forces except constant gravity from earth.
      * The Orbit must be not propagating.
+     * 
      * grav calls: 1 if Orbit valid, 0 if Orbit invalid
      * @param[in] dt_ns (in the range [-2E8,2E8]): Time step (ns).
      * @param[in] earth_rate_ecef: The earth's angular rate in ecef frame (rad/s). 
