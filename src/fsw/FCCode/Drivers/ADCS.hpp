@@ -284,7 +284,7 @@ class ADCS : public I2CDevice {
     /**
      * @brief Get the imu magnetoruqer, gyroscope and gyroscope temperature reading
      * 
-     * @param mag_rd Pointer to output std::array of floats
+     * @param mag1_rd Pointer to output std::array of floats
      * Three unsigned shorts encode the magnetic field measurement in the 
      * body frame of the spacecraft on the range 
      * imu::min_rd_mag to imu::max_rd_mag in Tesla
@@ -298,7 +298,7 @@ class ADCS : public I2CDevice {
      * One unsigned short encodes the gyroscope temperature on 
      * the range imu::min_rd_temp imu::max_rd_temp Celcius
      */
-    void get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd);
+    void get_imu(std::array<float,3>* mag1_rd, std::array<float,3>* mag2_rd, std::array<float,3>* gyr_rd,float* gyr_temp_rd);
     
     /**
      * @brief Get the adcs havt table bitset

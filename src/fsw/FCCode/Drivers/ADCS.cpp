@@ -240,34 +240,41 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa
     }
 }
 
-void ADCS::get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd){
-    unsigned char readin[14];
+void ADCS::get_imu(std::array<float,3>* mag1_rd, std::array<float,3>* mag2_rd, std::array<float,3>* gyr_rd,float* gyr_temp_rd){
+    unsigned char readin[18]; // 6+6+6+2
     std::memset(readin, 0, sizeof(readin));
 
     #ifdef UNIT_TEST
-    for(int i = 0;i<14;i++){
+    for(int i = 0;i<18;i++){
         readin[i] = 255;
     }
     #else
-    i2c_point_and_read(adcs::IMU_MAG_READ, readin, 14);
+    i2c_point_and_read(adcs::IMU_MAG_READ, readin, 18);
     #endif
 
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1] << 8;
         unsigned short b = 0xFF & readin[2*i];
         unsigned short c = a | b;        
-        (*mag_rd)[i] = fp(c,adcs::imu::min_rd_mag,adcs::imu::max_rd_mag);
+        (*mag1_rd)[i] = fp(c,adcs::imu::min_mag1_rd_mag,adcs::imu::max_mag1_rd_mag);
     }
 
     for(int i=0;i<3;i++){
         unsigned short a = readin[2*i+1+6] << 8;
         unsigned short b = 0xFF & readin[2*i+6];
+        unsigned short c = a | b;        
+        (*mag1_rd)[i] = fp(c,adcs::imu::min_mag2_rd_mag,adcs::imu::max_mag2_rd_mag);
+    }
+
+    for(int i=0;i<3;i++){
+        unsigned short a = readin[2*i+1+12] << 8;
+        unsigned short b = 0xFF & readin[2*i+12];
         unsigned short c = a | b;
         (*gyr_rd)[i] = fp(c,adcs::imu::min_rd_omega,adcs::imu::max_rd_omega);
     } 
 
-    unsigned short c = (((unsigned short)readin[13]) << 8) | (0xFF & readin[12]);
-    *gyr_temp_rd = fp(c,adcs::imu::min_rd_temp,adcs::imu::max_rd_temp);
+    unsigned short c = (((unsigned short)readin[17]) << 8) | (0xFF & readin[16]);
+    *gyr_temp_rd = fp(c,adcs::imu::min_rd_temp, adcs::imu::max_rd_temp);
 }
 
 void ADCS::get_ssa_mode(unsigned char* a) {
