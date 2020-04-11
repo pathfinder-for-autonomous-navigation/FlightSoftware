@@ -78,6 +78,7 @@ class Orbit {
 
     /** Returns time since gps epoch (ns).
      * The Orbit must be not propagating.
+     * 
      * grav calls: 0 */
     uint64_t nsgpstime() const{
         return _ns_gps_time;
@@ -155,6 +156,7 @@ class Orbit {
     
     /**
      * Construct invalid Orbit.
+     * 
      * grav calls: 0
      */
     Orbit(){}
