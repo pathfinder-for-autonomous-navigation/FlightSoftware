@@ -1586,6 +1586,30 @@
             "type": "std double vector",
             "writable": false
         },
+        "prop.ctrl_cycles_per_cooling": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.ctrl_cycles_per_filling": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.cycles_until_firing": {
+            "bitsize": 9,
+            "flow_id": "undefined",
+            "max": 256,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
         "prop.failed_pressurize": {
             "bitsize": 1,
             "flow_id": 5,
@@ -1616,6 +1640,14 @@
             "bitsize": 1,
             "flow_id": 5,
             "type": "bool",
+            "writable": true
+        },
+        "prop.max_pressurizing_cycles": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
             "writable": true
         },
         "prop.overpressured": {
@@ -1650,13 +1682,101 @@
             "type": "bool",
             "writable": true
         },
+        "prop.sched_intertank1": {
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 999000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_intertank2": {
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 999000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_valve1": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 999,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_valve2": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 999,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_valve3": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 999,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_valve4": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 999,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
         "prop.state": {
-            "bitsize": 1,
+            "bitsize": 3,
             "flow_id": 5,
+            "max": 6,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.tank1.temp": {
+            "bitsize": 4,
+            "flow_id": "undefined",
+            "max": 200.0,
+            "min": -200.0,
+            "type": "float",
+            "writable": false
+        },
+        "prop.tank1.valve_choice": {
+            "bitsize": 1,
+            "flow_id": "undefined",
             "max": 1,
             "min": 0,
-            "type": "unsigned char",
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.tank2.pressure": {
+            "bitsize": 4,
+            "flow_id": "undefined",
+            "max": 150.0,
+            "min": 0.0,
+            "type": "float",
             "writable": false
+        },
+        "prop.tank2.temp": {
+            "bitsize": 4,
+            "flow_id": "undefined",
+            "max": 200.0,
+            "min": -200.0,
+            "type": "float",
+            "writable": false
+        },
+        "prop.threshold_firing_pressure": {
+            "bitsize": 4,
+            "flow_id": "undefined",
+            "max": 50.0,
+            "min": 10.0,
+            "type": "float",
+            "writable": true
         },
         "radio.err": {
             "bitsize": 7,
@@ -1907,6 +2027,22 @@
         "timing.piksi.num_lates": {
             "bitsize": 32,
             "flow_id": 32,
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
+        "timing.prop.avg_wait": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 120000.0,
+            "min": 0.0,
+            "type": "float",
+            "writable": false
+        },
+        "timing.prop.num_lates": {
+            "bitsize": 32,
+            "flow_id": "undefined",
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
