@@ -137,7 +137,7 @@ class Orbit {
     /** Gravity function in International Terrestrial Reference System coordinates.
      * 
      * grav calls: 1
-     * @param[in] r_ecef(Above the surface of earth): The location where the gravity is calculated, units m.
+     * @param[in] r_ecef (Above the surface of earth): The location where the gravity is calculated, units m.
      * @param[out] g_ecef: Acceleration due to gravity, units m/s^2. 
      * @param[out] potential: Gravity potential, the acceleration is the gradient of this (J/kg).
      */
