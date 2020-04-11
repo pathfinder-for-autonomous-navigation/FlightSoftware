@@ -1,4 +1,5 @@
 #include <unity.h>
+#include "../custom_assertions.hpp"
 #include <stdio.h>
 #include <fsw/FCCode/Orbital/Orbit.h>
 #include <cstdint>
@@ -70,23 +71,7 @@ T det(const lin::Matrix<T, 0, 0, MR, MR>& x){
     return result;
 }
 
-#define TEST_ASSERT_LIN_3VECT_WITHIN(delta, expected, actual) do {\
-            if (!(lin::norm(expected-actual)<=delta)){ \
-                char errormessage[256];\
-                TEST_MESSAGE("TEST_ASSERT_LIN_VECT_WITHIN Failed:");\
-                sprintf(errormessage, "    expected " #expected " is %.10e, %.10e, %.10e",expected(0),expected(1),expected(2));\
-                TEST_MESSAGE(errormessage);\
-                sprintf(errormessage, "    actual " #actual " is %.10e, %.10e, %.10e",actual(0),actual(1),actual(2));\
-                TEST_MESSAGE(errormessage);\
-                sprintf(errormessage, "    expected-actual: %.10e, %.10e, %.10e",expected(0)-actual(0),expected(1)-actual(1),expected(2)-actual(2));\
-                TEST_MESSAGE(errormessage);\
-                sprintf(errormessage, "    norm(expected-actual): %.10e",lin::norm(expected-actual));\
-                TEST_MESSAGE(errormessage);\
-                sprintf(errormessage, "    max error: %.10e",delta);\
-                TEST_MESSAGE(errormessage);\
-                TEST_FAIL();\
-            }\
-           } while(0) 
+
 
 
 // grace data
