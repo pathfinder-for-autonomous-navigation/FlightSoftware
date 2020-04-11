@@ -26,7 +26,7 @@ SOFTWARE.
  * \file jacobian_autocoded.hpp
  * \author Nathan Zimmerberg
  * \date 10 APR 2020
- * \brief Helper function used in Orbit.
+ * \brief Helper function to get the jacobian of in Orbit::shortupdate().
  * \details  Partially auto code from sympy in jacobian_autocoder.py
  */
 
@@ -35,7 +35,7 @@ SOFTWARE.
 #include <lin/core.hpp>
 #include <cmath>
 
-/** Get the jacobian of a Orbit::shortupdate().
+/** Helper function to get the jacobian of in Orbit::shortupdate().
  * This is partially auto code from sympy in JacobianHelpers/jacobian_autocoder.py
  * 
  * The jacobian is calculated assuming point mass earth and constant earth rate of:
