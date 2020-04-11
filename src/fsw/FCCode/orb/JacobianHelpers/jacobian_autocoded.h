@@ -35,6 +35,9 @@ SOFTWARE.
 #include <lin/core.hpp>
 #include <cmath>
 
+namespace orb
+{
+
 /** Helper function to get the jacobian of in Orbit::shortupdate().
  * This is partially auto code from sympy in JacobianHelpers/jacobian_autocoder.py
  * 
@@ -164,4 +167,5 @@ inline void jacobian_autocoded(const double& x_h, const double& y_h, const doubl
         jac(5,3)= x37;
         jac(5,4)= x38;
         jac(5,5)= x55;
+}
 }

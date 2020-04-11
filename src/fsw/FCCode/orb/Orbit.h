@@ -42,6 +42,8 @@ SOFTWARE.
 #include "geograv.hpp"
 #include "GGM05S.hpp"
 
+namespace orb
+{
 
 TRACKED_CONSTANT(constexpr static int, PANGRAVORDER,40);
 TRACKED_CONSTANT(constexpr geograv::Coeff<PANGRAVORDER>, PANGRAVITYMODEL, static_cast<geograv::Coeff<PANGRAVORDER>>(GGM05S));
@@ -391,3 +393,4 @@ class Orbit {
     }
 
 };
+}
