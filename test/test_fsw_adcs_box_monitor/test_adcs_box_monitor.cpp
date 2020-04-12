@@ -6,6 +6,7 @@
 #include <fsw/FCCode/Drivers/ADCS.hpp>
 
 #include <unity.h>
+#include "../custom_assertions.hpp"
 
 class TestFixture {
     public:
@@ -123,20 +124,6 @@ lin::Vector<float, 3> to_linvector(const std::array<float, 3>& src) {
     return src_cpy;
 }
 
-//checks that all ref vector and actual vector are pretty much the same
-void elements_same(const std::array<float, 3> ref, const std::array<float, 3> actual){
-    TEST_ASSERT_FLOAT_WITHIN(0.001, ref[0], actual[0]);
-    TEST_ASSERT_FLOAT_WITHIN(0.001, ref[1], actual[1]);
-    TEST_ASSERT_FLOAT_WITHIN(0.001, ref[2], actual[2]);
-}
-
-//checks that all ref vector and actual vector are pretty much the same
-void elements_same(const lin::Vector<float, 3> ref, const lin::Vector<float, 3> actual){
-    TEST_ASSERT_FLOAT_WITHIN(0.001, ref(0), actual(0));
-    TEST_ASSERT_FLOAT_WITHIN(0.001, ref(1), actual(1));
-    TEST_ASSERT_FLOAT_WITHIN(0.001, ref(2), actual(2));
-}
-
 void test_task_initialization()
 {
     TestFixture tf;
@@ -158,11 +145,12 @@ void test_execute_ssa(){
 
     //mocking sets to max output
     //see ADCS.cpp for mocking details
-    std::array<float, 3> ref_rwa_max_speed = {adcs::rwa::max_speed_read, adcs::rwa::max_speed_read, adcs::rwa::max_speed_read};
-    std::array<float, 3> ref_rwa_max_torque = {adcs::rwa::max_torque, adcs::rwa::max_torque, adcs::rwa::max_torque};
-    std::array<float, 3> ref_three_unit = {1,1,1};
-    std::array<float, 3> ref_mag_vec = {adcs::imu::max_rd_mag, adcs::imu::max_rd_mag, adcs::imu::max_rd_mag};
-    std::array<float, 3> ref_gyr_vec = {adcs::imu::max_rd_omega, adcs::imu::max_rd_omega, adcs::imu::max_rd_omega};
+    f_vector_t ref_rwa_max_speed = {adcs::rwa::max_speed_read, adcs::rwa::max_speed_read, adcs::rwa::max_speed_read};
+    f_vector_t ref_rwa_max_torque = {adcs::rwa::max_torque, adcs::rwa::max_torque, adcs::rwa::max_torque};
+    f_vector_t ref_three_unit = {1,1,1};
+    f_vector_t ref_mag1_vec = {adcs::imu::max_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, adcs::imu::max_mag1_rd_mag};
+    f_vector_t ref_mag2_vec = {adcs::imu::max_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, adcs::imu::max_mag2_rd_mag};
+    f_vector_t ref_gyr_vec = {adcs::imu::max_rd_omega, adcs::imu::max_rd_omega, adcs::imu::max_rd_omega};
 
     //set mock return to COMPLETE
     tf.set_mock_ssa_mode(adcs::SSAMode::SSA_COMPLETE);
@@ -171,17 +159,18 @@ void test_execute_ssa(){
     tf.adcs_box->execute();
 
     //verify that the values are read into statefields correctly
-    elements_same(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get());
-    elements_same(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_COMPLETE, tf.ssa_mode_fp->get());
-    elements_same(to_linvector(ref_three_unit), tf.ssa_vec_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(to_linvector(ref_three_unit), tf.ssa_vec_fp->get(), 0);
 
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
-    elements_same(ref_mag_vec,tf.mag_vec_fp->get());
-    elements_same(ref_gyr_vec, tf.gyr_vec_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag1_vec,tf.mag1_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag2_vec,tf.mag2_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
     //verify that all flags are set to true
@@ -189,7 +178,8 @@ void test_execute_ssa(){
     //mocking using max output sets all flags to true
     TEST_ASSERT_TRUE(tf.rwa_speed_rd_flag_p->get());
     TEST_ASSERT_TRUE(tf.rwa_torque_rd_flag_p->get());
-    TEST_ASSERT_TRUE(tf.mag_vec_flag_p->get());
+    TEST_ASSERT_TRUE(tf.mag1_vec_flag_p->get());
+    TEST_ASSERT_TRUE(tf.mag2_vec_flag_p->get());
     TEST_ASSERT_TRUE(tf.gyr_vec_flag_p->get());
     TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
 
@@ -201,21 +191,24 @@ void test_execute_ssa(){
     tf.adcs_box->execute();
 
     //verify that the values are read into statefields correctly
-    elements_same(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get());
-    elements_same(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_IN_PROGRESS, tf.ssa_mode_fp->get());
-
+    
     //test ssa_vec is nan
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(0)));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(1)));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(2)));
 
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(to_linvector(ref_three_unit), tf.ssa_vec_fp->get(), 0);
+
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
-    elements_same(ref_mag_vec,tf.mag_vec_fp->get());
-    elements_same(ref_gyr_vec, tf.gyr_vec_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag1_vec,tf.mag1_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag2_vec,tf.mag2_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
     //verify that all flags are set to true
@@ -223,9 +216,11 @@ void test_execute_ssa(){
     //mocking using max output sets all flags to true
     TEST_ASSERT_TRUE(tf.rwa_speed_rd_flag_p->get());
     TEST_ASSERT_TRUE(tf.rwa_torque_rd_flag_p->get());
-    TEST_ASSERT_TRUE(tf.mag_vec_flag_p->get());
+    TEST_ASSERT_TRUE(tf.mag1_vec_flag_p->get());
+    TEST_ASSERT_TRUE(tf.mag2_vec_flag_p->get());
     TEST_ASSERT_TRUE(tf.gyr_vec_flag_p->get());
     TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
+
 
     //TEST FAILURE
     //set mock return to FAILURE
@@ -235,8 +230,8 @@ void test_execute_ssa(){
     tf.adcs_box->execute();
 
     //verify that the values are read into statefields correctly
-    elements_same(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get());
-    elements_same(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_FAILURE, tf.ssa_mode_fp->get());
     
     //test ssa_vec is nan
@@ -248,8 +243,9 @@ void test_execute_ssa(){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
-    elements_same(ref_mag_vec,tf.mag_vec_fp->get());
-    elements_same(ref_gyr_vec, tf.gyr_vec_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag1_vec,tf.mag1_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag2_vec,tf.mag2_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
     //verify that all flags are set to true
@@ -257,7 +253,8 @@ void test_execute_ssa(){
     //mocking using max output sets all flags to true
     TEST_ASSERT_TRUE(tf.rwa_speed_rd_flag_p->get());
     TEST_ASSERT_TRUE(tf.rwa_torque_rd_flag_p->get());
-    TEST_ASSERT_TRUE(tf.mag_vec_flag_p->get());
+    TEST_ASSERT_TRUE(tf.mag1_vec_flag_p->get());
+    TEST_ASSERT_TRUE(tf.mag2_vec_flag_p->get());
     TEST_ASSERT_TRUE(tf.gyr_vec_flag_p->get());
     TEST_ASSERT_TRUE(tf.gyr_temp_flag_p->get());
 }
