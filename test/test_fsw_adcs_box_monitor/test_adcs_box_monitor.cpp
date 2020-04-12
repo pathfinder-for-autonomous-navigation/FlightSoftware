@@ -162,14 +162,15 @@ void test_execute_ssa(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_COMPLETE, tf.ssa_mode_fp->get());
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(to_linvector(ref_three_unit), tf.ssa_vec_fp->get(), 0);
+    f_vector_t from_lin = {tf.ssa_vec_fp->get()(0), tf.ssa_vec_fp->get()(1), tf.ssa_vec_fp->get()(2)};
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_three_unit, from_lin, 0);
 
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag1_vec,tf.mag1_vec_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag2_vec,tf.mag2_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag1_vec, tf.mag1_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag2_vec, tf.mag2_vec_fp->get(), 0);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
@@ -199,8 +200,6 @@ void test_execute_ssa(){
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(0)));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(1)));
     TEST_ASSERT(isnan(tf.ssa_vec_fp->get()(2)));
-
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(to_linvector(ref_three_unit), tf.ssa_vec_fp->get(), 0);
 
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());

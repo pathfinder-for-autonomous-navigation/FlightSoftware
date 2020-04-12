@@ -267,7 +267,7 @@ void ADCS::get_imu(std::array<float,3>* mag1_rd, std::array<float,3>* mag2_rd, s
         unsigned short a = readin[2*i+1+6] << 8;
         unsigned short b = 0xFF & readin[2*i+6];
         unsigned short c = a | b;        
-        (*mag1_rd)[i] = fp(c,adcs::imu::min_mag2_rd_mag,adcs::imu::max_mag2_rd_mag);
+        (*mag2_rd)[i] = fp(c,adcs::imu::min_mag2_rd_mag,adcs::imu::max_mag2_rd_mag);
     }
 
     for(int i=0;i<3;i++){

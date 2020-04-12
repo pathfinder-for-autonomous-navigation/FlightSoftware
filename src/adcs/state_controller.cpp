@@ -457,7 +457,7 @@ void on_i2c_request() {
       break;
     }
 
-    case Register::IMU_MAG1_READ: {
+    case Register::IMU_MAG_READ: {
       float f[3];
       unsigned short t[3];
 
