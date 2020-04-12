@@ -7,7 +7,7 @@
 #include <lin.hpp>
 #include <gnc_constants.hpp>
 #include <common/GPSTime.hpp>
-#include <GRACEORBITS.hpp>
+#include <fsw/FCCode/orb/GRACEORBITS.hpp>
 
 
 //UTILITY MACROS
@@ -20,8 +20,18 @@
 #define notcompiletime (millis()%2)
 #endif
 
-/**
- * Function that returns the start GRACE Orbit
+#define GRACEORBIT(n) ({ constexpr lin::Vector3d _r = {GRACEPOS[n][0],GRACEPOS[n][1],GRACEPOS[n][2]};\
+ constexpr lin::Vector3d _v = {GRACEVEL[n][0],GRACEVEL[n][1],GRACEVEL[n][2]};\
+ constexpr uint64_t _t= GRACEGPSTIMENS[n];\
+  (t_start,rstart,vstart); })
+
+
+//UTILITY CONSTANTS
+constexpr lin::Vector3d rstart= {GRACEPOS[0][0],GRACEPOS[0][1],GRACEPOS[0][2]};
+constexpr lin::Vector3d vstart= {GRACEVEL[0][0],GRACEVEL[0][1],GRACEVEL[0][2]};
+constexpr uint64_t tstart= GRACEGPSTIMENS[0];
+const static orb::Orbit startorb(GRACEORBIT(0));
+const static orb::Orbit orb100s(tstart,rstart,vstart);
 
 
 
@@ -73,13 +83,8 @@ void test_basic_constructors() {
     orb::Orbit x;
     TEST_ASSERT_FALSE(x.valid());
 
-    //test valid orbit
-    lin::Vector3d r {-6522019.833240811L, 2067829.846415895L, 776905.9724453629L};
-    lin::Vector3d v {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
-    uint64_t t= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y(t,r,v);
-    TEST_ASSERT_TRUE(y.valid());
-    x=y;
+    TEST_ASSERT_TRUE(startorb.valid());
+    x= startorb;
     TEST_ASSERT_TRUE(x.valid());
 
     //test invalid orbit
@@ -100,15 +105,12 @@ void test_basic_constructors() {
 
 void test_applydeltav() {
     //valid orbit
-    lin::Vector3d r {-6522019.833240811L, 2067829.846415895L, 776905.9724453629L};
-    lin::Vector3d v {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
-    uint64_t t= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y(t,r,v);
+    orb::Orbit y=startorb;
     TEST_ASSERT_TRUE(y.valid());
     y.applydeltav({1,2,3});
-    TEST_ASSERT_TRUE(y.vecef()(0)==942.0211143841228 );
-    TEST_ASSERT_TRUE(y.vecef()(1)==87.66662333729801 );
-    TEST_ASSERT_TRUE(y.vecef()(2)==7555.870253470936 );
+    TEST_ASSERT_TRUE(y.vecef()(0)==(startorb.vecef())(0)+1 );
+    TEST_ASSERT_TRUE(y.vecef()(1)==(startorb.vecef())(1)+2 );
+    TEST_ASSERT_TRUE(y.vecef()(2)==(startorb.vecef())(2)+3 );
     //TODO add more valid checks for applying dv that make the orbit invalid.
 }
 
@@ -163,24 +165,9 @@ void test_calc_geograv() {
 }
 
 void test_specificenergy() {
-    // grace data
-    // time,xpos,ypos,zpos,xposerr,yposerr,zposerr,xvel,yvel,zvel,xvelerr,yvelerr,zvelerr
-    // 623246400 D E -6522019.833240811 2067829.846415895 776905.9724453629 0.0009578283838282736 0.0006236271904723294 0.0006257082914522712 941.0211143841228 85.66662333729801 7552.870253470936 1.921071421308773e-06 1.457922754459223e-06 2.147748285029321e-06
-    lin::Vector3d r1 {-6522019.833240811L, 2067829.846415895L, 776905.9724453629L};
-    lin::Vector3d v1 {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
-    uint64_t t1= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y1(t1,r1,v1);
-    TEST_ASSERT_TRUE(y1.valid());
-    double e1= y1.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
-
-    //623246500 D E -6388456.55330517 2062929.296577276 1525892.564091281 0.0009730537727755604 0.0006308360706885164 0.0006414402851363097 1726.923087560988 -185.5049475128178 7411.544615026139 1.906279023699492e-06 1.419033598283502e-06 2.088561789107221e-06
-    //grace orbit 100 seconds later
-    lin::Vector3d r2 {-6388456.55330517L, 2062929.296577276L, 1525892.564091281L};
-    lin::Vector3d v2 {1726.923087560988L, -185.5049475128178L, 7411.544615026139L};
-    uint64_t t2= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y2(t2,r2,v2);
-    TEST_ASSERT_TRUE(y2.valid());
-    double e2= y2.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
+    double e1= startorb.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
+    TEST_ASSERT_TRUE(orb100s.valid());
+    double e2= orb100s.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
 
     TEST_ASSERT_FLOAT_WITHIN(10.0, 0.0,(e2-e1));
 
@@ -283,7 +270,7 @@ void test_shortupdate() {
         initialdelta= initialdelta*0.2;
         lin::Vector3d deltar= lin::ref<3, 1>(initialdelta, 0, 0);
         lin::Vector3d deltav= lin::ref<3, 1>(initialdelta, 3, 0);
-        Orbit y_diff(ystart.nsgpstime(),ystart.recef()+deltar,ystart.vecef()+deltav);
+        orb::Orbit y_diff(ystart.nsgpstime(),ystart.recef()+deltar,ystart.vecef()+deltav);
         y_diff.shortupdate(200'000'000,earth_rate_ecef,junk);
         lin::Vector3d finaldr= y_diff.recef()-y1.recef();
         lin::Vector3d finaldv= y_diff.vecef()-y1.vecef();
@@ -338,7 +325,7 @@ void test_shortupdate() {
     y1.shortupdate(200'000'000,earth_rate_ecef,espnojacup);
     orb::Orbit ynojacup= y1;
     TEST_ASSERT_EQUAL_MEMORY (&espjacup, &espnojacup, sizeof(double));
-    TEST_ASSERT_EQUAL_MEMORY (&yjacup, &ynojacup, sizeof(Orbit));
+    TEST_ASSERT_EQUAL_MEMORY (&yjacup, &ynojacup, sizeof(orb::Orbit));
 
     //Test specificenergy forward update
     y1= ystart;
