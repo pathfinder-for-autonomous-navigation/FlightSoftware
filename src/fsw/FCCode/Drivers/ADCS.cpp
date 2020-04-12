@@ -245,15 +245,15 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa
 }
 
 void ADCS::get_imu(std::array<float,3>* mag1_rd, std::array<float,3>* mag2_rd, std::array<float,3>* gyr_rd,float* gyr_temp_rd){
-    unsigned char readin[18]; // 6+6+6+2
+    unsigned char readin[20]; // 6+6+6+2
     std::memset(readin, 0, sizeof(readin));
 
     #ifdef UNIT_TEST
-    for(int i = 0;i<18;i++){
+    for(int i = 0;i<20;i++){
         readin[i] = 255;
     }
     #else
-    i2c_point_and_read(adcs::IMU_MAG_READ, readin, 18);
+    i2c_point_and_read(adcs::IMU_MAG_READ, readin, 20);
     #endif
 
     for(int i=0;i<3;i++){
@@ -277,7 +277,7 @@ void ADCS::get_imu(std::array<float,3>* mag1_rd, std::array<float,3>* mag2_rd, s
         (*gyr_rd)[i] = fp(c,adcs::imu::min_rd_omega,adcs::imu::max_rd_omega);
     } 
 
-    unsigned short c = (((unsigned short)readin[17]) << 8) | (0xFF & readin[16]);
+    unsigned short c = (((unsigned short)readin[19]) << 8) | (0xFF & readin[18]);
     *gyr_temp_rd = fp(c,adcs::imu::min_rd_temp, adcs::imu::max_rd_temp);
 }
 
