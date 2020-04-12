@@ -3,6 +3,7 @@
 
 #include "FaultHandlerMachine.hpp"
 #include "piksi_fh_state_t.enum"
+#include "piksi_mode_t.enum"
 
 class PiksiFaultHandler : public FaultHandlerMachine {
   public:

@@ -22,7 +22,12 @@ fault_response_t PiksiFaultHandler::execute() {
 }
 
 fault_response_t PiksiFaultHandler::dispatch_unfaulted() {
-
+    if (piksi_state_fp->get() == piksi_mode_t::dead) {
+        return fault_response_t::standby;
+    }
+    else {
+        return fault_response_t::none;
+    }
 }
 
 fault_response_t PiksiFaultHandler::dispatch_no_cdgps() {
