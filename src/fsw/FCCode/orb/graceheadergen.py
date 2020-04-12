@@ -7,6 +7,13 @@
 import requests
 import gzip
 
+def graceline2Orbit(graceline):
+    """Returns a string that will construct a Orbit from a bytes line of grace data."""
+    l= graceline.decode('utf-8').split(' ')
+    print(l)
+    gpstimens= (int(l[0])+630763200)*1000000000 #This conversion might get leap seconds wrong due to GRACE FO bad documentation.
+    return "orb::Orbit(%dULL,{%sL,%sL,%sL},{%sL,%sL,%sL})"%(gpstimens,l[3],l[4],l[5],l[9],l[10],l[11])
+
 def downloaddata(year,month,day,sat):
     """ Returns a list of bytes of the data from gracefo on year,month,day.
         sat is either "C" or "D" """
@@ -29,33 +36,17 @@ def main(headerfilename, year, month, day,sat):
     gracefo on year,month,day.
         sat is either "C" or "D" 
 
-    The data is three arrays
-    constexpr uint64_t GRACEGPSTIMENS[]
-    constexpr double GRACEPOS[][3]
-    constexpr double GRACEVEL[][3]
+    The coefficents are fully-normalized.
+    indexing is by ((2*maxdegree-m+1)*m)/2+n
     Args:
         infilename(filename): the .COF file that contains the
             spherical harmonic coefficents, download this from http://www2.csr.utexas.edu/grace/gravity/
         headerfilename(string ending in .hpp or .h): the c++ header file."""
     data= downloaddata(year,month,day,sat)
-    outstr = '#pragma once\n#include <cstdint>\n//file generated from GRACE FO sat %s on %d-%s-%s, by graceheadergen.py\n'%(sat,year,str(month).zfill(2),str(day).zfill(2))
-    #GRACEGPSTIMENS
-    outstr += '\nconstexpr uint64_t GRACEGPSTIMENS[]={'
+    outstr = '#pragma once\n#include "Orbit.h"\n//file generated from GRACE FO sat %s on %d-%s-%s, by graceheadergen.py\n'%(sat,year,str(month).zfill(2),str(day).zfill(2))
+    outstr += '\nconstexpr orb::Orbit GRACEORBITS[]={'
     for line in data:
-        l= line.decode('utf-8').split(' ')
-        outstr+= str((int(l[0])+630763200)*1000000000)+','
-    outstr= outstr[:-1]+'};'
-    #GRACEPOS
-    outstr += '\nconstexpr double GRACEPOS[][3]={'
-    for line in data:
-        l= line.decode('utf-8').split(' ')
-        outstr+= '{%sL,%sL,%sL}'%(l[3],l[4],l[5])+','
-    outstr= outstr[:-1]+'};'
-    #GRACEVEL
-    outstr += '\nconstexpr double GRACEVEL[][3]={'
-    for line in data:
-        l= line.decode('utf-8').split(' ')
-        outstr+= '{%sL,%sL,%sL}'%(l[9],l[10],l[11])+','
+        outstr+= graceline2Orbit(line)+','
     outstr= outstr[:-1]+'};'
     with open(headerfilename,'w') as f:
         f.write(outstr)
