@@ -44,15 +44,11 @@ void AttitudeEstimator::set_data(){
     const d_vector_t r_ecef = pos_vec_ecef_fp->get();
     data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};
 
-    // TEMPORARY CODE: KYLE PLEASE FIX, WHAT IF ONE IS NAN?
     const f_vector_t mag1_vec = mag1_vec_fp->get();
     const f_vector_t mag2_vec = mag2_vec_fp->get();
 
-    data.b_body = {
-        (mag1_vec[0]+mag2_vec[0])/2.0f,
-        (mag1_vec[1]+mag2_vec[1])/2.0f,
-        (mag1_vec[2]+mag2_vec[2])/2.0f
-    };
+    // TODO: LOGIC TO DECIDE IF WE WANT MAG1 or MAG2 data
+    data.b_body = {mag1_vec[0], mag1_vec[1], mag1_vec[2]};
 
     data.s_body = ssa_vec_rd_fp->get();
 }
