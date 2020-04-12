@@ -45,7 +45,7 @@ void AttitudeEstimator::set_data(){
     data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};
 
     const f_vector_t mag1_vec = mag1_vec_fp->get();
-    const f_vector_t mag2_vec = mag2_vec_fp->get();
+    // const f_vector_t mag2_vec = mag2_vec_fp->get();
 
     // TODO: LOGIC TO DECIDE IF WE WANT MAG1 or MAG2 data
     data.b_body = {mag1_vec[0], mag1_vec[1], mag1_vec[2]};
