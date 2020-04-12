@@ -149,7 +149,7 @@ class ADCS : public I2CDevice {
     void set_ssa_voltage_filter(const float voltage_filter);
 
     /**
-     * @brief Set the magnetometer mode for MAG 2
+     * @brief Set the magnetometer mode for MAG 1
      * 
      * @param char representing the magnetometer mode
      * IMU_MAG_NORMAL, or IMU_MAG_CALIBRATE
@@ -295,7 +295,7 @@ class ADCS : public I2CDevice {
      * body frame of the spacecraft on the range 
      * imu::min_mag1_rd_mag to imu::max_mag1_rd_mag in Tesla
      * 
-     * @param mag1_rd Pointer to output std::array of floats for MAG2
+     * @param mag2_rd Pointer to output std::array of floats for MAG2
      * Three unsigned shorts encode the magnetic field measurement in the 
      * body frame of the spacecraft on the range 
      * imu::min_mag2_rd_mag to imu::max_mag2_rd_mag in Tesla

@@ -253,7 +253,7 @@ void ADCS::get_imu(std::array<float,3>* mag1_rd, std::array<float,3>* mag2_rd, s
         readin[i] = 255;
     }
     #else
-    i2c_point_and_read(adcs::IMU_MAG_READ, readin, 20);
+    i2c_point_and_read(adcs::IMU_READ, readin, 20);
     #endif
 
     for(int i=0;i<3;i++){
