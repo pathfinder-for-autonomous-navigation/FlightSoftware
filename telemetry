@@ -324,12 +324,9 @@
             "type": "float",
             "writable": true
         },
-        "adcs_cmd.imu_mode": {
-            "flow_id": 23
-        },
         "adcs_cmd.mag1_mode": {
             "bitsize": 1,
-            "flow_id": "undefined",
+            "flow_id": 23,
             "max": 1,
             "min": 0,
             "type": "unsigned char",
@@ -337,7 +334,7 @@
         },
         "adcs_cmd.mag2_mode": {
             "bitsize": 1,
-            "flow_id": "undefined",
+            "flow_id": 23,
             "max": 1,
             "min": 0,
             "type": "unsigned char",
@@ -2310,7 +2307,8 @@
                 "adcs_cmd.imu_gyr_temp_ki",
                 "adcs_cmd.imu_gyr_temp_kp",
                 "adcs_cmd.imu_mag_filter",
-                "adcs_cmd.imu_mode",
+                "adcs_cmd.mag1_mode",
+                "adcs_cmd.mag2_mode",
                 "adcs_cmd.mtr_limit",
                 "adcs_cmd.mtr_mode",
                 "adcs_cmd.rwa_mode",
