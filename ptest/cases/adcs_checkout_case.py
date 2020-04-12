@@ -129,23 +129,26 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             "Disable Reset Cycle Failed, New HAVT Table does not match initial table cache",
             "Reset-Disable Success. All initially functional devices remain functional.")
 
-    def mag_checkout(self):
-        # TODO make section compatible with 2x imu active (LATER)
-        self.print_header("Begin MAG Checkout")
+    def mag_checkout(self, mag_num):
+        '''
+        Run a checkout case on a given magnetometer
+        '''
+        assert(mag_num in [1, 2])
+        self.print_header(f"Begin MAG{mag_num} Checkout")
         
-        self.print_rs("adcs_cmd.imu_mode")
-        imu_mode = self.rs("adcs_cmd.imu_mode")
+        self.print_rs(f"adcs_cmd.mag{mag_num}_mode")
+        imu_mode = self.rs(f"adcs_cmd.mag{mag_num}_mode")
         self.logger.put(f"IMU Mode: {self.imu_modes.get_by_num(imu_mode)}")
         
         # perform 10 readings.
         list_of_mag_rds = []
         for i in range(10):
             self.cycle()
-            list_of_mag_rds += [self.rs("adcs_monitor.mag_vec")]
+            list_of_mag_rds += [self.rs(f"adcs_monitor.mag{mag_num}_vec")]
 
         # for each reading check, magnitude bounds
         # earth's mag field is between 25 to 65 microteslas - Wikipedia
-        self.logger.put("Mag readings: ")
+        self.logger.put(f"Mag{mag_num} readings: ")
         for i in range(10):
             mag = mag_of(list_of_mag_rds[i])
             self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
@@ -201,8 +204,10 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # expect each sensor value to change from cycle to cycle, given user is jostling the test bed.
 
         # If either mag1 or mag2 are up, run a check on it.
-        if self.rs("adcs_monitor.havt_device1") or self.rs("adcs_monitor.havt_device2"):
-            self.mag_checkout()
+        if self.rs("adcs_monitor.havt_device1"):
+            self.mag_checkout(1)
+        if self.rs("adcs_monitor.havt_device2"):
+            self.mag_checkout(2)
 
         # Run checks on GYR if GYR is up.
         if self.rs("adcs_monitor.havt_device0"):
