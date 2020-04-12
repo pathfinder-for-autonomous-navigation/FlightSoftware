@@ -149,14 +149,20 @@ class ADCS : public I2CDevice {
     void set_ssa_voltage_filter(const float voltage_filter);
 
     /**
-     * @brief Set the inertial measurement unit mode
+     * @brief Set the magnetometer mode for MAG 2
      * 
-     * @param char represnting the imu mode
-     * 0x00 – Use magnetometer one (default) 
-     * 0x01 – Use magnetometer two 
-     * 0b1X – Calibrate the magnetometer in use (specified by the free bit) 
+     * @param char representing the magnetometer mode
+     * IMU_MAG_NORMAL, or IMU_MAG_CALIBRATE
      */
-    void set_imu_mode(const unsigned char mode);
+    void set_mag1_mode(const unsigned char mode);
+
+    /**
+     * @brief Set the magnetometer mode for MAG 2
+     * 
+     * @param char representing the magnetometer mode
+     * IMU_MAG_NORMAL, or IMU_MAG_CALIBRATE
+     */
+    void set_mag2_mode(const unsigned char mode);
 
     /**
      * @brief Set the inertial mesaurement unit magnetometer exponential filter

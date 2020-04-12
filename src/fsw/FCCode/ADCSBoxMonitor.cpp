@@ -17,8 +17,10 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     ssa_vec_f("adcs_monitor.ssa_vec", ssa_vec_sr),
     ssa_voltage_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8),
     ssa_voltages_f(),
-    mag_vec_sr(adcs::imu::min_rd_mag, adcs::imu::max_rd_mag, 16*3), //referenced from I2C_Interface.doc
-    mag_vec_f("adcs_monitor.mag_vec", mag_vec_sr),
+    mag1_vec_sr(adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, 16*3), //referenced from I2C_Interface.doc
+    mag1_vec_f("adcs_monitor.mag1_vec", mag1_vec_sr),
+    mag2_vec_sr(adcs::imu::min_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, 16*3), //referenced from I2C_Interface.doc
+    mag2_vec_f("adcs_monitor.mag2_vec", mag2_vec_sr),
     gyr_vec_sr(adcs::imu::min_rd_omega, adcs::imu::max_rd_omega, 16*3), //referenced from I2C_Interface.doc
     gyr_vec_f("adcs_monitor.gyr_vec", gyr_vec_sr),
     gyr_temp_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 16), //referenced from I2C_Interface.doc
@@ -26,7 +28,8 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     flag_sr(),
     rwa_speed_rd_flag("adcs_monitor.speed_rd_flag", flag_sr),
     rwa_torque_rd_flag("adcs_monitor.torque_rd_flag", flag_sr),
-    mag_vec_flag("adcs_monitor.mag_vec_flag", flag_sr),
+    mag1_vec_flag("adcs_monitor.mag1_vec_flag", flag_sr),
+    mag2_vec_flag("adcs_monitor.mag2_vec_flag", flag_sr),
     gyr_vec_flag("adcs_monitor.gyr_vec_flag", flag_sr),
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr),
     havt_bool_sr(),
@@ -75,14 +78,16 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
             add_readable_field(ssa_voltages_f[i]);
         }
 
-        add_readable_field(mag_vec_f);
+        add_readable_field(mag1_vec_f);
+        add_readable_field(mag2_vec_f);
         add_readable_field(gyr_vec_f);
         add_readable_field(gyr_temp_f);
 
         //add flag state fields
         add_readable_field(rwa_speed_rd_flag);
         add_readable_field(rwa_torque_rd_flag);
-        add_readable_field(mag_vec_flag);
+        add_readable_field(mag1_vec_flag);
+        add_readable_field(mag2_vec_flag);
         add_readable_field(gyr_vec_flag);
         add_readable_field(gyr_temp_flag);
 
@@ -124,7 +129,8 @@ void ADCSBoxMonitor::execute(){
     std::array<float, adcs::ssa::num_sun_sensors> ssa_voltages;
     ssa_voltages.fill(0);
 
-    f_vector_t mag_vec;
+    f_vector_t mag1_vec;
+    f_vector_t mag2_vec;
     f_vector_t gyr_vec;
     float gyr_temp = 0.0;
 
@@ -139,7 +145,7 @@ void ADCSBoxMonitor::execute(){
 
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
     adcs_system.get_ssa_voltage(&ssa_voltages);
-    adcs_system.get_imu(&mag_vec, &gyr_vec, &gyr_temp);
+    adcs_system.get_imu(&mag1_vec, &mag2_vec, &gyr_vec, &gyr_temp);
 
     //only update the ssa_vector if and only if the mode was COMPLETE
     adcs_system.get_ssa_mode(&ssa_mode);
@@ -181,14 +187,16 @@ void ADCSBoxMonitor::execute(){
     if(havt_read_vector[adcs::havt::Index::RWA_POT].get() == false) wheel_pot_fault.signal();
     else wheel_pot_fault.unsignal();
 
-    mag_vec_f.set(mag_vec);
+    mag1_vec_f.set(mag1_vec);
+    mag2_vec_f.set(mag2_vec);
     gyr_vec_f.set(gyr_vec);
     gyr_temp_f.set(gyr_temp);
 
     //flags default to false, meaning there are no issues
     rwa_speed_rd_flag.set(false);
     rwa_torque_rd_flag.set(false);
-    mag_vec_flag.set(false);
+    mag1_vec_flag.set(false);
+    mag2_vec_flag.set(false);
     gyr_vec_flag.set(false);
     gyr_temp_flag.set(false);
 
@@ -199,8 +207,10 @@ void ADCSBoxMonitor::execute(){
         rwa_speed_rd_flag.set(true);
     if(exceed_bounds(rwa_torque_rd, adcs::rwa::min_torque, adcs::rwa::max_torque - 1))
         rwa_torque_rd_flag.set(true);
-    if(exceed_bounds(mag_vec, adcs::imu::min_rd_mag, adcs::imu::max_rd_mag - 1))
-        mag_vec_flag.set(true);
+    if(exceed_bounds(mag1_vec, adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag - 1))
+        mag1_vec_flag.set(true);
+    if(exceed_bounds(mag2_vec, adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag - 1))
+        mag2_vec_flag.set(true);
     if(exceed_bounds(gyr_vec, adcs::imu::min_rd_omega, adcs::imu::max_rd_omega - 1))
         gyr_vec_flag.set(true);
     if(exceed_bounds(gyr_temp, adcs::imu::min_rd_temp, adcs::imu::max_rd_temp - 1))

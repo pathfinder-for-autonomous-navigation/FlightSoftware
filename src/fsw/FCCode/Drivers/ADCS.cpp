@@ -133,8 +133,12 @@ void ADCS::set_ssa_voltage_filter(const float voltage_filter) {
     i2c_write_to_subaddr(adcs::SSA_VOLTAGE_FILTER, comp);
 }
 
-void ADCS::set_imu_mode(const unsigned char mode){
-    i2c_write_to_subaddr(adcs::IMU_MODE, mode);
+void ADCS::set_mag1_mode(const unsigned char mode){
+    i2c_write_to_subaddr(adcs::IMU_MAG1_MODE, mode);
+}
+
+void ADCS::set_mag2_mode(const unsigned char mode){
+    i2c_write_to_subaddr(adcs::IMU_MAG2_MODE, mode);
 }
 
 void ADCS::set_imu_mag_filter(const float mag_filter){

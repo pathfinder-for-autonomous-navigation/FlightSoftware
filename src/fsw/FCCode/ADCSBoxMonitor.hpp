@@ -54,9 +54,13 @@ protected:
     Serializer<float> ssa_voltage_sr;
     std::vector<ReadableStateField<float>> ssa_voltages_f;
 
-    //! Magnetic field vector in the body frame.
-    Serializer<f_vector_t> mag_vec_sr;
-    ReadableStateField<f_vector_t> mag_vec_f;
+    //! Magnetic field vector in the body frame of MAG1.
+    Serializer<f_vector_t> mag1_vec_sr;
+    ReadableStateField<f_vector_t> mag1_vec_f;
+
+    //! Magnetic field vector in the body frame of MAG2.
+    Serializer<f_vector_t> mag2_vec_sr;
+    ReadableStateField<f_vector_t> mag2_vec_f;
 
     //! Angular rate vector in the body frame.
     Serializer<f_vector_t> gyr_vec_sr;
@@ -76,7 +80,9 @@ protected:
     //! Is the reaction wheel torque read outside the validity bounds?
     ReadableStateField<bool> rwa_torque_rd_flag;
     //! Is the magnetic field vector reading within the validity bounds?
-    ReadableStateField<bool> mag_vec_flag;
+    ReadableStateField<bool> mag1_vec_flag;
+    //! Is the magnetic field vector reading within the validity bounds?
+    ReadableStateField<bool> mag2_vec_flag;
     //! Is the gyroscope rate reading within the validity bounds?
     ReadableStateField<bool> gyr_vec_flag;
     //! Is the gyroscope temperature reading within the validity bounds?W
