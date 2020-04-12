@@ -19,9 +19,6 @@
 #define notcompiletime (millis()%2)
 #endif
 
-/**
- * Function that returns the start GRACE Orbit
-
 
 
 
@@ -61,24 +58,25 @@ T det(const lin::Matrix<T, 0, 0, MR, MR>& x){
     return result;
 }
 
+//grace orbit initial
+const orb::Orbit gracestart(uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK,{-6522019.833240811L, 2067829.846415895L, 776905.9724453629L},{941.0211143841228L, 85.66662333729801L, 7552.870253470936L});
 
+//grace orbit 100 seconds later
+const orb::Orbit grace100s(uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK+100'000'000'000ULL,{-6388456.55330517L, 2062929.296577276L, 1525892.564091281L},{1726.923087560988L, -185.5049475128178L, 7411.544615026139L});
 
+//grace orbit 13700 seconds later
+const orb::Orbit grace13700s(uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK+13700'000'000'000ULL,{1579190.147083268L, -6066459.613667888L, 2785708.976728437L},{480.8261476296949L, -3083.977113497177L, -6969.470748202005L});
 
-// grace data
-// time,xpos,ypos,zpos,xposerr,yposerr,zposerr,xvel,yvel,zvel,xvelerr,yvelerr,zvelerr
-// 623246400 D E -6522019.833240811 2067829.846415895 776905.9724453629 0.0009578283838282736 0.0006236271904723294 0.0006257082914522712 941.0211143841228 85.66662333729801 7552.870253470936 1.921071421308773e-06 1.457922754459223e-06 2.147748285029321e-06
+//earth rate in ecef (rad/s)
+lin::Vector3d earth_rate_ecef= {0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4};
 
 void test_basic_constructors() {
     orb::Orbit x;
     TEST_ASSERT_FALSE(x.valid());
 
     //test valid orbit
-    lin::Vector3d r {-6522019.833240811L, 2067829.846415895L, 776905.9724453629L};
-    lin::Vector3d v {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
-    uint64_t t= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y(t,r,v);
-    TEST_ASSERT_TRUE(y.valid());
-    x=y;
+    TEST_ASSERT_TRUE(gracestart.valid());
+    x=gracestart;
     TEST_ASSERT_TRUE(x.valid());
 
     //test invalid orbit
@@ -99,10 +97,7 @@ void test_basic_constructors() {
 
 void test_applydeltav() {
     //valid orbit
-    lin::Vector3d r {-6522019.833240811L, 2067829.846415895L, 776905.9724453629L};
-    lin::Vector3d v {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
-    uint64_t t= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y(t,r,v);
+    orb::Orbit y= gracestart;
     TEST_ASSERT_TRUE(y.valid());
     y.applydeltav({1,2,3});
     TEST_ASSERT_TRUE(y.vecef()(0)==942.0211143841228 );
@@ -162,22 +157,10 @@ void test_calc_geograv() {
 }
 
 void test_specificenergy() {
-    // grace data
-    // time,xpos,ypos,zpos,xposerr,yposerr,zposerr,xvel,yvel,zvel,xvelerr,yvelerr,zvelerr
-    // 623246400 D E -6522019.833240811 2067829.846415895 776905.9724453629 0.0009578283838282736 0.0006236271904723294 0.0006257082914522712 941.0211143841228 85.66662333729801 7552.870253470936 1.921071421308773e-06 1.457922754459223e-06 2.147748285029321e-06
-    lin::Vector3d r1 {-6522019.833240811L, 2067829.846415895L, 776905.9724453629L};
-    lin::Vector3d v1 {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
-    uint64_t t1= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y1(t1,r1,v1);
+    orb::Orbit y1=gracestart;
     TEST_ASSERT_TRUE(y1.valid());
     double e1= y1.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
-
-    //623246500 D E -6388456.55330517 2062929.296577276 1525892.564091281 0.0009730537727755604 0.0006308360706885164 0.0006414402851363097 1726.923087560988 -185.5049475128178 7411.544615026139 1.906279023699492e-06 1.419033598283502e-06 2.088561789107221e-06
-    //grace orbit 100 seconds later
-    lin::Vector3d r2 {-6388456.55330517L, 2062929.296577276L, 1525892.564091281L};
-    lin::Vector3d v2 {1726.923087560988L, -185.5049475128178L, 7411.544615026139L};
-    uint64_t t2= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y2(t2,r2,v2);
+    orb::Orbit y2=grace100s;
     TEST_ASSERT_TRUE(y2.valid());
     double e2= y2.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z});
 
@@ -189,187 +172,170 @@ void test_specificenergy() {
     TEST_ASSERT_FLOAT_IS_NAN(x.specificenergy({0.0,0.0,gnc::constant::earth_rate_ecef_z}));
 }
 
-void test_shortupdate() {
-    /************* GRACE Orbit data ****************/
-    lin::Vector3d earth_rate_ecef= {0.000000707063506E-4,-0.000001060595259E-4,0.729211585530000E-4};
-    //valid orbit from grace
-    lin::Vector3d r1 {-6522019.833240811L+(notcompiletime*1E-10), 2067829.846415895L, 776905.9724453629L};
-    //+(notcompiletime*1E-10) prevents the compiler from optimizing stuff  away on teensy
-    lin::Vector3d v1 {941.0211143841228L, 85.66662333729801L, 7552.870253470936L};
-    uint64_t t1= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y1(t1,r1,v1);
-    orb::Orbit ystart= y1;
-    TEST_ASSERT_TRUE(y1.valid());
-
-    //623246500 D E -6388456.55330517 2062929.296577276 1525892.564091281 0.0009730537727755604 0.0006308360706885164 0.0006414402851363097 1726.923087560988 -185.5049475128178 7411.544615026139 1.906279023699492e-06 1.419033598283502e-06 2.088561789107221e-06  00000000
-    //grace orbit 100 seconds later
-    lin::Vector3d r2 {-6388456.55330517L+(notcompiletime*1E-10), 2062929.296577276L, 1525892.564091281L};
-    lin::Vector3d v2 {1726.923087560988L, -185.5049475128178L, 7411.544615026139L};
-    uint64_t t2= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y2(t2,r2,v2);
-    TEST_ASSERT_TRUE(y2.valid());
-    
-
-    // 0.1 dt 100 sec test vs grace data
+/**
+ * 0.1s and 0.2s time step 100s update test vs grace data
+ */
+void test_shortupdate_a(){
     double junk;
-    for(int i=0; i<1000;i++){
-        y1.shortupdate(100'000'000,earth_rate_ecef,junk);
+    //time steps to test
+    int timesteps[2] = {100'000'000,200'000'000};
+    for(int j=0; j<2; j++){
+        orb::Orbit y=gracestart;
+        for(int i=0; i<(100'000'000'000LL/timesteps[j]);i++){
+            y.shortupdate(timesteps[j],earth_rate_ecef,junk);
+        }
+        TEST_ASSERT_TRUE(y.valid());
+        TEST_ASSERT_TRUE(y.nsgpstime()==gracestart.nsgpstime()+100'000'000'000LL);
+        PAN_TEST_ASSERT_LIN_3VECT_WITHIN(2E-4, y.vecef(), grace100s.vecef());
+        PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1E-2, y.recef(), grace100s.recef());
     }
-    lin::Vector3d vfinal = y1.vecef();
-    lin::Vector3d rfinal = y1.recef();
-    //lin::Vector3d rfinal = y1.recef();
-    TEST_ASSERT_TRUE(y1.nsgpstime()==t1+100'000'000'000LL);
-    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(2E-4, vfinal, v2);
-    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1E-2, rfinal, r2);
-    
-    // 0.2 dt 100 sec test vs grace data
-    y1= ystart;
-    for(int i=0; i<500;i++){
-        y1.shortupdate(200'000'000,earth_rate_ecef,junk);
-    }
-    vfinal = y1.vecef();
-    rfinal = y1.recef();
-    TEST_ASSERT_TRUE(y1.valid());
-    TEST_ASSERT_TRUE(y1.nsgpstime()==t1+100'000'000'000LL);
-    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(2E-4, vfinal, v2);
-    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1E-2, rfinal, r2);
+}
 
-    //623260100 D E 1579190.147083268 -6066459.613667888 2785708.976728437 0.0005172311946209459 0.0008808523576941407 0.0006434386278678982 480.8261476296949 -3083.977113497177 -6969.470748202005 1.390617103867044e-06 1.919262957467571e-06 1.936534489542342e-06  00000000
-    //grace orbit 623260100-623246400 = 13700 seconds later.
-    lin::Vector3d r3 {1579190.147083268L+(notcompiletime*1E-10), -6066459.613667888L, 2785708.976728437L};
-    lin::Vector3d v3 {480.8261476296949L, -3083.977113497177L, -6969.470748202005L};
-    uint64_t t3= uint64_t(gnc::constant::init_gps_week_number)*NANOSECONDS_IN_WEEK;
-    orb::Orbit y3(t3,r3,v3);
-    TEST_ASSERT_TRUE(y3.valid());
-    // 0.2 dt 13700 sec test vs grace data
-    y1= ystart;
+/**
+ * 0.2s time step 13700s update test vs grace data
+ * This also does the reverse update with -0.2s time step to check reverability
+ */
+void test_shortupdate_b(){
+    orb::Orbit y= gracestart;
+    //force not compile time
+    y.applydeltav({0.0,(notcompiletime*1E-10),0.0});
+    TEST_ASSERT_TRUE(y.valid());
+    double junk;
     for(int i=0; i<(13700*5);i++){
-        y1.shortupdate(200'000'000,earth_rate_ecef,junk);
+        y.shortupdate(200'000'000,earth_rate_ecef,junk);
     }
-    vfinal = y1.vecef();
-    rfinal = y1.recef();
-    TEST_ASSERT_TRUE(y1.valid());
-    TEST_ASSERT_TRUE(y1.nsgpstime()==t1+13700'000'000'000LL);
-    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1E-1, vfinal, v3);
-    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(20.0, rfinal, r3);
+    TEST_ASSERT_TRUE(y.valid());
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1E-1, y.vecef(), grace13700s.vecef());
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(20.0, y.recef(), grace13700s.recef());
 
     // test reversibility of propagator
     for(int i=0; i<(13700*5);i++){
-        y1.shortupdate(-200'000'000,earth_rate_ecef,junk);
+        y.shortupdate(-200'000'000,earth_rate_ecef,junk);
     }
-    vfinal = y1.vecef();
-    rfinal = y1.recef();
-    TEST_ASSERT_TRUE(y1.valid());
-    TEST_ASSERT_TRUE(y1.nsgpstime()==t1);
-    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-5, vfinal, v1);
-    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-2, rfinal, r1);
+    TEST_ASSERT_TRUE(y.valid());
+    TEST_ASSERT_TRUE(y.nsgpstime()==gracestart.nsgpstime());
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-5, y.vecef(), gracestart.vecef());
+    PAN_TEST_ASSERT_LIN_3VECT_WITHIN(1.0E-2, y.recef(), gracestart.recef());
+}
 
-    // test jacobians with finite difference
+/**
+ * Test jacobians with finite difference and test jacobian has determinant 1
+ */
+void test_shortupdate_c(){
     lin::internal::RandomsGenerator const rand(0);
-    y1= ystart;
+    int timesteps[4] = {100'000'000,200'000'000,-100'000'000,-200'000'000};
+    for(int j=0; j<4; j++){
+        orb::Orbit y= gracestart;
+        double junk;
+        lin::Matrix<double, 6, 6> jac;
+        y.shortupdate(timesteps[j],earth_rate_ecef,junk,jac);
+        TEST_ASSERT_TRUE(y.valid());
+        lin::Matrix<double,0,0,6,6> jacref= lin::ref<0, 0, 6, 6> (jac, 0, 0, 6, 6);
+        double detjac=det<double,6>(jacref);
+        //test jacobian has determinant 1
+        TEST_ASSERT_FLOAT_WITHIN(1.0E-15,(1.0- detjac),0);
+        //TEST_MESSAGE("Jacobian");
+        //printtensor(jac);
+        for(int i=0; i<10;i++){
+            lin::Vectord<6> initialdelta= lin::rands<lin::Vectord<6>>(6, 1, rand);
+            initialdelta= initialdelta-lin::consts<lin::Vectord<6>>(0.5,6,1);
+            initialdelta= initialdelta*0.2;
+            //initialdelta is now a uniform random vector +-0.1
+            lin::Vector3d deltar= lin::ref<3, 1>(initialdelta, 0, 0);
+            lin::Vector3d deltav= lin::ref<3, 1>(initialdelta, 3, 0);
+            orb::Orbit y_diff(gracestart.nsgpstime(),gracestart.recef()+deltar,gracestart.vecef()+deltav);
+            TEST_ASSERT_TRUE(y_diff.valid());
+            y_diff.shortupdate(timesteps[j],earth_rate_ecef,junk);
+            TEST_ASSERT_TRUE(y_diff.valid());
+            lin::Vector3d finaldr= y_diff.recef()-y.recef();
+            lin::Vector3d finaldv= y_diff.vecef()-y.vecef();
+            lin::Vectord<6> finaldelta;
+            lin::ref<3, 1>(finaldelta, 0, 0)= finaldr;
+            lin::ref<3, 1>(finaldelta, 3, 0)= finaldv;
+            lin::Vectord<6> expecteddelta= jac*initialdelta;
+            //TEST_MESSAGE("Initial delta");
+            //printtensor(initialdelta);
+            //TEST_MESSAGE("Final delta");
+            //printtensor(finaldelta);
+            TEST_ASSERT_FLOAT_WITHIN(5E-9, 0.0, lin::norm(expecteddelta-finaldelta));
+        }
+    }
+}
+
+/**
+ * test zero time step doesn't effect orbit.
+ */
+void test_shortupdate_d() {
+    orb::Orbit y= gracestart;
+    double estart= gracestart.specificenergy(earth_rate_ecef);
+    //do the update with zero time step
+    double e;
+    y.shortupdate(0,earth_rate_ecef,e);
+    //test memory equal
+    TEST_ASSERT_EQUAL_MEMORY (&e, &estart, sizeof(double));
+    TEST_ASSERT_EQUAL_MEMORY (&y, &gracestart, sizeof(orb::Orbit));
+}
+
+/**
+ * test jacobian output doesn't have any side effects.
+ */
+void test_shortupdate_e() {
+    orb::Orbit y= gracestart;
     lin::Matrix<double, 6, 6> jac;
-    y1.shortupdate(200'000'000,earth_rate_ecef,junk,jac);
-    lin::Matrix<double,0,0,6,6> jacref= lin::ref<0, 0, 6, 6> (jac, 0, 0, 6, 6);
-    double detjac=det<double,6>(jacref);
-    //test jacobian has determinant 1
-    TEST_ASSERT_FLOAT_WITHIN(1.0E-15,(1.0- detjac),0);
-    TEST_ASSERT_TRUE(y1.valid());
-    //TEST_MESSAGE("Jacobian");
-    //printtensor(jac);
-    for(int i=0; i<10;i++){
-        lin::Vectord<6> initialdelta= lin::rands<lin::Vectord<6>>(6, 1, rand);
-        initialdelta= initialdelta-lin::consts<lin::Vectord<6>>(0.5,6,1);
-        initialdelta= initialdelta*0.2;
-        lin::Vector3d deltar= lin::ref<3, 1>(initialdelta, 0, 0);
-        lin::Vector3d deltav= lin::ref<3, 1>(initialdelta, 3, 0);
-        Orbit y_diff(ystart.nsgpstime(),ystart.recef()+deltar,ystart.vecef()+deltav);
-        y_diff.shortupdate(200'000'000,earth_rate_ecef,junk);
-        lin::Vector3d finaldr= y_diff.recef()-y1.recef();
-        lin::Vector3d finaldv= y_diff.vecef()-y1.vecef();
-        lin::Vectord<6> finaldelta;
-        lin::ref<3, 1>(finaldelta, 0, 0)= finaldr;
-        lin::ref<3, 1>(finaldelta, 3, 0)= finaldv;
-        lin::Vectord<6> expecteddelta= jac*initialdelta;
-        //TEST_MESSAGE("Initial delta");
-        //printtensor(initialdelta);
-        //TEST_MESSAGE("Final delta");
-        //printtensor(finaldelta);
-        TEST_ASSERT_FLOAT_WITHIN(5E-9, 0.0, lin::norm(expecteddelta-finaldelta));
-    }
-
-    y1= ystart;
-    y1.shortupdate(-200'000'000,earth_rate_ecef,junk,jac);
-    TEST_ASSERT_TRUE(y1.valid());
-    jacref= lin::ref<0, 0, 6, 6> (jac, 0, 0, 6, 6);
-    detjac=det<double,6>(jacref);
-    //test jacobian has determinant 1
-    TEST_ASSERT_FLOAT_WITHIN(1.0E-15,(1.0- detjac),0);
-    //TEST_MESSAGE("Jacobian");
-    //printtensor(jac);
-    for(int i=0; i<10;i++){
-        lin::Vectord<6> initialdelta= lin::rands<lin::Vectord<6>>(6, 1, rand);
-        initialdelta= initialdelta-lin::consts<lin::Vectord<6>>(0.5,6,1);
-        initialdelta= initialdelta*0.2;
-        lin::Vector3d deltar= lin::ref<3, 1>(initialdelta, 0, 0);
-        lin::Vector3d deltav= lin::ref<3, 1>(initialdelta, 3, 0);
-        orb::Orbit y_diff(ystart.nsgpstime(),ystart.recef()+deltar,ystart.vecef()+deltav);
-        y_diff.shortupdate(-200'000'000,earth_rate_ecef,junk);
-        lin::Vector3d finaldr= y_diff.recef()-y1.recef();
-        lin::Vector3d finaldv= y_diff.vecef()-y1.vecef();
-        lin::Vectord<6> finaldelta;
-        lin::ref<3, 1>(finaldelta, 0, 0)= finaldr;
-        lin::ref<3, 1>(finaldelta, 3, 0)= finaldv;
-        lin::Vectord<6> expecteddelta= jac*initialdelta;
-        //TEST_MESSAGE("Initial delta");
-        //printtensor(initialdelta);
-        //TEST_MESSAGE("Final delta");
-        //printtensor(finaldelta);
-        TEST_ASSERT_FLOAT_WITHIN(5E-9, 0.0, lin::norm(expecteddelta-finaldelta));
-    }
-
-    //test jacobian update doesn't change update
-    y1= ystart;
+    //do the update with jacobian output
     double espjacup;
-    y1.shortupdate(200'000'000,earth_rate_ecef,espjacup,jac);
-    orb::Orbit yjacup= y1;
-    y1= ystart;
+    y.shortupdate(200'000'000,earth_rate_ecef,espjacup,jac);
+    orb::Orbit yjacup= y;
+    //do the update without jacobian output
+    y= gracestart;
     double espnojacup;
-    y1.shortupdate(200'000'000,earth_rate_ecef,espnojacup);
-    orb::Orbit ynojacup= y1;
+    y.shortupdate(200'000'000,earth_rate_ecef,espnojacup);
+    orb::Orbit ynojacup= y;
+    //test memory equal
     TEST_ASSERT_EQUAL_MEMORY (&espjacup, &espnojacup, sizeof(double));
-    TEST_ASSERT_EQUAL_MEMORY (&yjacup, &ynojacup, sizeof(Orbit));
+    TEST_ASSERT_EQUAL_MEMORY (&yjacup, &ynojacup, sizeof(orb::Orbit));
+}
 
-    //Test specificenergy forward update
-    y1= ystart;
-    double energy_start= y1.specificenergy(earth_rate_ecef);
+/**
+ * Test specificenergy output in shortupdate
+ */
+void test_shortupdate_f() {
+    orb::Orbit y= gracestart;
+    double energy_start= y.specificenergy(earth_rate_ecef);
     double energy_mid;
-    y1.shortupdate(200'000'000,earth_rate_ecef,energy_mid);
-    double energy_end= y1.specificenergy(earth_rate_ecef);
+    y.shortupdate(200'000'000,earth_rate_ecef,energy_mid);
+    double energy_end= y.specificenergy(earth_rate_ecef);
     TEST_ASSERT_FLOAT_WITHIN(1E-2,0.0,(energy_start-energy_mid));
     TEST_ASSERT_FLOAT_WITHIN(1E-2,0.0,(energy_end-energy_mid));
     //backward update
-    energy_start= y1.specificenergy(earth_rate_ecef);
-    y1.shortupdate(-200'000'000,earth_rate_ecef,energy_mid);
-    energy_end= y1.specificenergy(earth_rate_ecef);
+    energy_start= y.specificenergy(earth_rate_ecef);
+    y.shortupdate(-200'000'000,earth_rate_ecef,energy_mid);
+    energy_end= y.specificenergy(earth_rate_ecef);
     TEST_ASSERT_FLOAT_WITHIN(1E-2,0.0,(energy_start-energy_mid));
     TEST_ASSERT_FLOAT_WITHIN(1E-2,0.0,(energy_end-energy_mid));
+}
 
+/**
+ * Test invalid orbit update gives NAN outputs
+ */
+void test_shortupdate_g() {
     //test invalid orbit update gives NAN outputs
     orb::Orbit invalidorbit;
     TEST_ASSERT_FALSE(invalidorbit.valid());
-    double invalidenergy=0.0;
+    double invalidenergy= 0.0;
     invalidorbit.shortupdate(200'000'000,earth_rate_ecef,invalidenergy);
     TEST_ASSERT_FALSE(invalidorbit.valid());
     TEST_ASSERT_FLOAT_IS_NAN(invalidenergy);
+    invalidenergy= 0.0;
+    lin::Matrix<double, 6, 6> jac= lin::zeros<lin::Matrix<double, 6, 6>>();
     invalidorbit.shortupdate(200'000'000,earth_rate_ecef,invalidenergy,jac);
     TEST_ASSERT_FALSE(invalidorbit.valid());
+    TEST_ASSERT_FLOAT_IS_NAN(invalidenergy);
     for (int i=0; i<6; i++){
         for (int j=0; j<6; j++){
 	        TEST_ASSERT_FLOAT_IS_NAN(jac(i,j));
 	    }
     }
-
-
 }
 
 int test_orbit() {
@@ -378,7 +344,13 @@ int test_orbit() {
     RUN_TEST(test_applydeltav);
     RUN_TEST(test_calc_geograv);
     RUN_TEST(test_specificenergy);
-    RUN_TEST(test_shortupdate);
+    RUN_TEST(test_shortupdate_a);
+    RUN_TEST(test_shortupdate_b);
+    RUN_TEST(test_shortupdate_c);
+    RUN_TEST(test_shortupdate_d);
+    RUN_TEST(test_shortupdate_e);
+    RUN_TEST(test_shortupdate_f);
+    RUN_TEST(test_shortupdate_g);
     return UNITY_END();
 }
 

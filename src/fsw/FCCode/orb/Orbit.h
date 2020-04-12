@@ -116,7 +116,6 @@ class Orbit {
         return _valid;
     }
     
-  private:
     /** 
      * Helper function calculate if the Orbit is valid, see valid().
      * If the orbit is invalid set the orbit to the default values.
@@ -136,7 +135,6 @@ class Orbit {
         }
     }
 
-  public:
     /** Gravity function in International Terrestrial Reference System coordinates.
      * 
      * grav calls: 1
@@ -214,7 +212,6 @@ class Orbit {
 
     /************* PROPAGATION ******************/
 
-  public:
     /** Gets the dcm to rotate from initial ecef to ecef dt seconds latter.
      * Use equation 2.110 from Markley, Crassidis, Fundamentals of Spacecraft Attitude Determination and Control.
      * 
@@ -244,7 +241,6 @@ class Orbit {
         A_EI(2,2)= c+(1-c)*e3*e3;
     }
 
-  private:
     /** Get the jacobian of a shortupdate.
      * This is partially auto code from sympy in JacobianHelpers/jacobian_autocoder.py
      * 
@@ -269,7 +265,6 @@ class Orbit {
         jacobian_autocoded(x_h,y_h,z_h,w,mu,dt,jac);
     }
 
-  private:
     /**
      * Helper to do a short update of the orbit.
      * The orbit propigator is designed for nearly circular low earth orbit, and
@@ -335,7 +330,7 @@ class Orbit {
         _vecef= _vecef-lin::cross(earth_rate_ecef,_recef);
         specificenergy= halfstepke - potential;
     }
-  public:
+
     /**
      * Do a short update of the orbit.
      * The orbit propigator is designed for nearly circular low earth orbit, and
@@ -368,7 +363,7 @@ class Orbit {
         _shortupdate_helper(dt,earth_rate_ecef, r_half_ecef0, specificenergy);
         _jacobian_helper(r_half_ecef0 ,dt, jac); 
     }
-  public:
+
     /**
      * Do a short update of the orbit.
      * The orbit propigator is designed for nearly circular low earth orbit, and
