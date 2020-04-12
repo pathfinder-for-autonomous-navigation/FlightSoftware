@@ -17,7 +17,8 @@ class TestFixture {
         ReadableStateField<unsigned char>* ssa_mode_fp;
         ReadableStateField<lin::Vector3f>* ssa_vec_fp;
         std::vector<ReadableStateField<float>*> ssa_voltages_fp;
-        ReadableStateField<f_vector_t>* mag_vec_fp;
+        ReadableStateField<f_vector_t>* mag1_vec_fp;
+        ReadableStateField<f_vector_t>* mag2_vec_fp;
         ReadableStateField<f_vector_t>* gyr_vec_fp;
         ReadableStateField<float>* gyr_temp_fp;
 
@@ -27,7 +28,8 @@ class TestFixture {
         // pointers to error flags
         ReadableStateField<bool>* rwa_speed_rd_flag_p;
         ReadableStateField<bool>* rwa_torque_rd_flag_p;
-        ReadableStateField<bool>* mag_vec_flag_p;
+        ReadableStateField<bool>* mag1_vec_flag_p;
+        ReadableStateField<bool>* mag2_vec_flag_p;
         ReadableStateField<bool>* gyr_vec_flag_p;
         ReadableStateField<bool>* gyr_temp_flag_p;
         ReadableStateField<bool>* adcs_functional_p;
@@ -77,14 +79,16 @@ class TestFixture {
                 havt_read_vector_fp.push_back(registry.find_readable_field_t<bool>(buffer));
             }
 
-            mag_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag_vec");
+            mag1_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag1_vec");
+            mag2_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag2_vec"); 
             gyr_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.gyr_vec");
             gyr_temp_fp = registry.find_readable_field_t<float>("adcs_monitor.gyr_temp");
 
             //find flag state fields
             rwa_speed_rd_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.speed_rd_flag");
             rwa_torque_rd_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.torque_rd_flag");
-            mag_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.mag_vec_flag");
+            mag1_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.mag1_vec_flag");
+            mag2_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.mag2_vec_flag");
             gyr_vec_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_vec_flag");
             gyr_temp_flag_p = registry.find_readable_field_t<bool>("adcs_monitor.gyr_temp_flag");
             adcs_functional_p = registry.find_readable_field_t<bool>("adcs_monitor.functional");
