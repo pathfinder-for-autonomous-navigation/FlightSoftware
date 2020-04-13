@@ -619,7 +619,7 @@
             "flow_id": 3,
             "max": 2,
             "min": 0,
-            "type": "signed int",
+            "type": "unsigned char",
             "writable": false
         },
         "adcs_monitor.ssa_vec": {
