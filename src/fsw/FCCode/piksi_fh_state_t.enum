@@ -4,7 +4,9 @@
 /**
   * @brief States of Piksi fault machine. Description:
   * - Unfaulted: Piksi has been recieving valid readings
-  * - Dead: Piksi hasn't recieved data in a while (~120 seconds)
+  * - Check CDGPS: If we are in a close approach state, check if
+  *   we have recently gotten any readings and transition to
+  *   the appropriate state.
   * - No CDGPS: If the satellite has entered a close approach state 
   *   but has't recieved CDGPS readings in X time (X is a 
   *   ground-configurable wait initially set to 3 hours).
@@ -16,6 +18,7 @@
 
 enum class piksi_fh_state_t {
   unfaulted,
+  check_cdgps,
   no_cdgps,
   cdgps_delay
 };

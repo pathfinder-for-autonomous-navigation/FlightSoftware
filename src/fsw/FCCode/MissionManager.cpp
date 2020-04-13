@@ -30,7 +30,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     mission_state_f("pan.state", Serializer<unsigned char>(12), 10),
     is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32), 500),
-    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100)
+    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100),
+    enter_close_approach_time_f("pan.enter_close_approach_time")
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -44,6 +45,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_readable_field(is_deployed_f);
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
+    add_internal_field(enter_close_approach_time_f);
 
     main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
@@ -233,6 +235,7 @@ void MissionManager::dispatch_leader() {
 
 void MissionManager::dispatch_follower_close_approach() {
     docking_config_cmd_f.set(true);
+    enter_close_approach_time_f.set(get_system_time());
 
     if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::docking,
@@ -249,6 +252,7 @@ void MissionManager::dispatch_follower_close_approach() {
 
 void MissionManager::dispatch_leader_close_approach() {
     docking_config_cmd_f.set(true);
+    enter_close_approach_time_f.set(get_system_time());
 
     if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::docking,

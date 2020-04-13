@@ -29,6 +29,7 @@ class PiksiFaultHandler : public FaultHandlerMachine {
      * @return mission_state_t 
      */
     fault_response_t dispatch_unfaulted();
+    fault_response_t dispatch_check_cdgps();
     fault_response_t no_cdgps();
     fault_response_t cdgps_delay();
 
@@ -52,7 +53,7 @@ class PiksiFaultHandler : public FaultHandlerMachine {
     InternalStateField<sys_time_t>* last_fix_time_fp;
 
     // Last fix time since entering close approach
-    sys_time_t close_appr_fix_time;
+    InternalStateField<sys_time_t>* enter_close_appr_time_fp;
 
 };
 
