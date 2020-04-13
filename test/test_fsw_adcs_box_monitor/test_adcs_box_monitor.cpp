@@ -13,14 +13,14 @@ class TestFixture {
         StateFieldRegistryMock registry;
 
         // pointers to output statefields for easy access
-        ReadableStateField<f_vector_t>* rwa_speed_rd_fp;
-        ReadableStateField<f_vector_t>* rwa_torque_rd_fp;
+        ReadableStateField<lin::Vector3f>* rwa_speed_rd_fp;
+        ReadableStateField<lin::Vector3f>* rwa_torque_rd_fp;
         ReadableStateField<unsigned char>* ssa_mode_fp;
         ReadableStateField<lin::Vector3f>* ssa_vec_fp;
         std::vector<ReadableStateField<float>*> ssa_voltages_fp;
-        ReadableStateField<f_vector_t>* mag1_vec_fp;
-        ReadableStateField<f_vector_t>* mag2_vec_fp;
-        ReadableStateField<f_vector_t>* gyr_vec_fp;
+        ReadableStateField<lin::Vector3f>* mag1_vec_fp;
+        ReadableStateField<lin::Vector3f>* mag2_vec_fp;
+        ReadableStateField<lin::Vector3f>* gyr_vec_fp;
         ReadableStateField<float>* gyr_temp_fp;
 
         // vector of pointers to device availability
@@ -57,8 +57,8 @@ class TestFixture {
             adcs_box = std::make_unique<ADCSBoxMonitor>(registry, 0, adcs);  
 
             // initialize pointers to statefields
-            rwa_speed_rd_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.rwa_speed_rd");
-            rwa_torque_rd_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.rwa_torque_rd");
+            rwa_speed_rd_fp = registry.find_readable_field_t<lin::Vector3f>("adcs_monitor.rwa_speed_rd");
+            rwa_torque_rd_fp = registry.find_readable_field_t<lin::Vector3f>("adcs_monitor.rwa_torque_rd");
             ssa_mode_fp = registry.find_readable_field_t<unsigned char>("adcs_monitor.ssa_mode");
             ssa_vec_fp = registry.find_readable_field_t<lin::Vector3f>("adcs_monitor.ssa_vec");
             
@@ -80,9 +80,9 @@ class TestFixture {
                 havt_read_vector_fp.push_back(registry.find_readable_field_t<bool>(buffer));
             }
 
-            mag1_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag1_vec");
-            mag2_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.mag2_vec"); 
-            gyr_vec_fp = registry.find_readable_field_t<f_vector_t>("adcs_monitor.gyr_vec");
+            mag1_vec_fp = registry.find_readable_field_t<lin::Vector3f>("adcs_monitor.mag1_vec");
+            mag2_vec_fp = registry.find_readable_field_t<lin::Vector3f>("adcs_monitor.mag2_vec"); 
+            gyr_vec_fp = registry.find_readable_field_t<lin::Vector3f>("adcs_monitor.gyr_vec");
             gyr_temp_fp = registry.find_readable_field_t<float>("adcs_monitor.gyr_temp");
 
             //find flag state fields
@@ -145,12 +145,12 @@ void test_execute_ssa(){
 
     //mocking sets to max output
     //see ADCS.cpp for mocking details
-    f_vector_t ref_rwa_max_speed = {adcs::rwa::max_speed_read, adcs::rwa::max_speed_read, adcs::rwa::max_speed_read};
-    f_vector_t ref_rwa_max_torque = {adcs::rwa::max_torque, adcs::rwa::max_torque, adcs::rwa::max_torque};
-    f_vector_t ref_three_unit = {1,1,1};
-    f_vector_t ref_mag1_vec = {adcs::imu::max_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, adcs::imu::max_mag1_rd_mag};
-    f_vector_t ref_mag2_vec = {adcs::imu::max_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, adcs::imu::max_mag2_rd_mag};
-    f_vector_t ref_gyr_vec = {adcs::imu::max_rd_omega, adcs::imu::max_rd_omega, adcs::imu::max_rd_omega};
+    lin::Vector3f ref_rwa_max_speed = {adcs::rwa::max_speed_read, adcs::rwa::max_speed_read, adcs::rwa::max_speed_read};
+    lin::Vector3f ref_rwa_max_torque = {adcs::rwa::max_torque, adcs::rwa::max_torque, adcs::rwa::max_torque};
+    lin::Vector3f ref_three_unit = {1,1,1};
+    lin::Vector3f ref_mag1_vec = {adcs::imu::max_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, adcs::imu::max_mag1_rd_mag};
+    lin::Vector3f ref_mag2_vec = {adcs::imu::max_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, adcs::imu::max_mag2_rd_mag};
+    lin::Vector3f ref_gyr_vec = {adcs::imu::max_rd_omega, adcs::imu::max_rd_omega, adcs::imu::max_rd_omega};
 
     //set mock return to COMPLETE
     tf.set_mock_ssa_mode(adcs::SSAMode::SSA_COMPLETE);
@@ -162,7 +162,7 @@ void test_execute_ssa(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_COMPLETE, tf.ssa_mode_fp->get());
-    f_vector_t from_lin = {tf.ssa_vec_fp->get()(0), tf.ssa_vec_fp->get()(1), tf.ssa_vec_fp->get()(2)};
+    // f_vector_t from_lin = {tf.ssa_vec_fp->get()(0), tf.ssa_vec_fp->get()(1), tf.ssa_vec_fp->get()(2)};
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_three_unit, from_lin, 0);
 
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
