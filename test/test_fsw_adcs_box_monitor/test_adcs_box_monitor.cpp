@@ -159,19 +159,18 @@ void test_execute_ssa(){
     tf.adcs_box->execute();
 
     //verify that the values are read into statefields correctly
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_COMPLETE, tf.ssa_mode_fp->get());
-    // f_vector_t from_lin = {tf.ssa_vec_fp->get()(0), tf.ssa_vec_fp->get()(1), tf.ssa_vec_fp->get()(2)};
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_three_unit, from_lin, 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_three_unit, tf.ssa_vec_fp->get(), 0);
 
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag1_vec, tf.mag1_vec_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag2_vec, tf.mag2_vec_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_mag1_vec, tf.mag1_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_mag2_vec, tf.mag2_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
     //verify that all flags are set to true
@@ -192,8 +191,8 @@ void test_execute_ssa(){
     tf.adcs_box->execute();
 
     //verify that the values are read into statefields correctly
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_IN_PROGRESS, tf.ssa_mode_fp->get());
     
     //test ssa_vec is nan
@@ -205,9 +204,9 @@ void test_execute_ssa(){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag1_vec,tf.mag1_vec_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag2_vec,tf.mag2_vec_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_mag1_vec,tf.mag1_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_mag2_vec,tf.mag2_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
     //verify that all flags are set to true
@@ -229,8 +228,8 @@ void test_execute_ssa(){
     tf.adcs_box->execute();
 
     //verify that the values are read into statefields correctly
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_FAILURE, tf.ssa_mode_fp->get());
     
     //test ssa_vec is nan
@@ -242,9 +241,9 @@ void test_execute_ssa(){
         TEST_ASSERT_EQUAL(adcs::ssa::max_voltage_rd,tf.ssa_voltages_fp[i]->get());
     }
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag1_vec,tf.mag1_vec_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_mag2_vec,tf.mag2_vec_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_mag1_vec,tf.mag1_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_mag2_vec,tf.mag2_vec_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_gyr_vec, tf.gyr_vec_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::imu::max_rd_temp, tf.gyr_temp_fp->get());
 
     //verify that all flags are set to true
