@@ -36,12 +36,12 @@ protected:
     */
 
     //! Speed reads off of the reaction wheels.
-    Serializer<f_vector_t> rwa_speed_rd_sr;
-    ReadableStateField<f_vector_t> rwa_speed_rd_f;
+    Serializer<lin::Vector3f> rwa_speed_rd_sr;
+    ReadableStateField<lin::Vector3f> rwa_speed_rd_f;
 
     //! Torque reads off of the reaction wheels.
-    Serializer<f_vector_t> rwa_torque_rd_sr;
-    ReadableStateField<f_vector_t> rwa_torque_rd_f;
+    Serializer<lin::Vector3f> rwa_torque_rd_sr;
+    ReadableStateField<lin::Vector3f> rwa_torque_rd_f;
 
     Serializer<unsigned char> ssa_mode_rd;
     ReadableStateField<unsigned char> ssa_mode_f;
@@ -55,16 +55,16 @@ protected:
     std::vector<ReadableStateField<float>> ssa_voltages_f;
 
     //! Magnetic field vector in the body frame of MAG1.
-    Serializer<f_vector_t> mag1_vec_sr;
-    ReadableStateField<f_vector_t> mag1_vec_f;
+    Serializer<lin::Vector3f> mag1_vec_sr;
+    ReadableStateField<lin::Vector3f> mag1_vec_f;
 
     //! Magnetic field vector in the body frame of MAG2.
-    Serializer<f_vector_t> mag2_vec_sr;
-    ReadableStateField<f_vector_t> mag2_vec_f;
+    Serializer<lin::Vector3f> mag2_vec_sr;
+    ReadableStateField<lin::Vector3f> mag2_vec_f;
 
     //! Angular rate vector in the body frame.
-    Serializer<f_vector_t> gyr_vec_sr;
-    ReadableStateField<f_vector_t> gyr_vec_f;
+    Serializer<lin::Vector3f> gyr_vec_sr;
+    ReadableStateField<lin::Vector3f> gyr_vec_f;
 
     //! Temperature near the gyroscope.
     Serializer<float> gyr_temp_sr;

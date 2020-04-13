@@ -115,6 +115,14 @@ bool exceed_bounds(const float input, const float min, const float max){
     return false;
 }
 
+// TODO: WOULD BE A NICE FEATURE IN LIN.hpp
+template<size_t N>
+lin::Vector<float, N> to_linvector(const std::array<float, N>& src) {
+    lin::Vector<float, N> src_cpy;
+    for(unsigned int i = 0; i < 3; i++) src_cpy(i) = src[i];
+    return src_cpy;
+}
+
 void ADCSBoxMonitor::execute(){
 
     //define nan
@@ -159,8 +167,8 @@ void ADCSBoxMonitor::execute(){
     }
     
     //set statefields from internal containers
-    rwa_speed_rd_f.set(rwa_speed_rd);
-    rwa_torque_rd_f.set(rwa_torque_rd);
+    rwa_speed_rd_f.set(to_linvector(rwa_speed_rd));
+    rwa_torque_rd_f.set(to_linvector(rwa_torque_rd));
     ssa_mode_f.set(ssa_mode);
 
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
@@ -187,9 +195,9 @@ void ADCSBoxMonitor::execute(){
     if(havt_read_vector[adcs::havt::Index::RWA_POT].get() == false) wheel_pot_fault.signal();
     else wheel_pot_fault.unsignal();
 
-    mag1_vec_f.set(mag1_vec);
-    mag2_vec_f.set(mag2_vec);
-    gyr_vec_f.set(gyr_vec);
+    mag1_vec_f.set(to_linvector(mag1_vec));
+    mag2_vec_f.set(to_linvector(mag2_vec));
+    gyr_vec_f.set(to_linvector(gyr_vec));
     gyr_temp_f.set(gyr_temp);
 
     //flags default to false, meaning there are no issues
