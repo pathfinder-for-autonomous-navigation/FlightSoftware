@@ -153,13 +153,21 @@ class RadioSession(object):
     
     def dbtelem(self):
         jsonObj = self.parsetelem()
+        if not isinstance(jsonObj, dict):
+            print(jsonObj)
+            return False
+        failed = False
+        print(jsonObj)
         for field in jsonObj:
             value = jsonObj[field]
             data=json.dumps({
             field: value,
             "time": str(datetime.now().isoformat())
             })
-            self.es.index(index='statefield_report_'+str(self.imei), doc_type='report', body=data)
+            res = self.es.index(index='statefield_report_'+str(self.imei), doc_type='report', body=data)
+            if not res['result'] == 'created':
+                failed = True
+        return not failed 
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''
