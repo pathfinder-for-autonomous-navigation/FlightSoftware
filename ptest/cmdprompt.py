@@ -165,7 +165,7 @@ class StateCmdPrompt(Cmd):
         '''
         args = args.split()
         if len(args) != 0:
-            print('parsetelem takes no args')
+            print('dbtelem takes no args')
             return
         else:
             start_time = timeit.default_timer()
