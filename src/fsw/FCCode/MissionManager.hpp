@@ -191,7 +191,7 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief The last cycle at which we enter the close approach state
      */
-    InternalStateField<unsigned int> enter_close_approach_time_f;
+    InternalStateField<unsigned int> enter_close_approach_ccno_f;
 
    private:
     /**
