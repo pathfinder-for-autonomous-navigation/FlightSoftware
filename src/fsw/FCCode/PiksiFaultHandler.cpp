@@ -1,8 +1,6 @@
 #include "PiksiFaultHandler.hpp"
 #include "constants.hpp"
 
-const unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
-
 PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r) 
     : FaultHandlerMachine(r), 
     no_cdgps_max_wait_f("piksi_fh.no_cdpgs_max_wait", Serializer<unsigned int>(0,10e10, 10e10)),
