@@ -117,9 +117,9 @@ bool exceed_bounds(const float input, const float min, const float max){
 
 // TODO: WOULD BE A NICE FEATURE IN LIN.hpp
 template<size_t N>
-lin::Vector<float, N> to_linvector(const std::array<float, N>& src) {
+static lin::Vector<float, N> to_linvector(const std::array<float, N>& src) {
     lin::Vector<float, N> src_cpy;
-    for(unsigned int i = 0; i < 3; i++) src_cpy(i) = src[i];
+    for(unsigned int i = 0; i < N; i++) src_cpy(i) = src[i];
     return src_cpy;
 }
 
