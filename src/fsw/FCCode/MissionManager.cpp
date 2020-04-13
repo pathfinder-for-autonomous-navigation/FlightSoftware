@@ -235,7 +235,7 @@ void MissionManager::dispatch_leader() {
 
 void MissionManager::dispatch_follower_close_approach() {
     docking_config_cmd_f.set(true);
-    enter_close_approach_time_f.set(get_system_time());
+    enter_close_approach_time_f.set(control_cycle_count);
 
     if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::docking,
@@ -252,7 +252,7 @@ void MissionManager::dispatch_follower_close_approach() {
 
 void MissionManager::dispatch_leader_close_approach() {
     docking_config_cmd_f.set(true);
-    enter_close_approach_time_f.set(get_system_time());
+    enter_close_approach_time_f.set(control_cycle_count);
 
     if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::docking,

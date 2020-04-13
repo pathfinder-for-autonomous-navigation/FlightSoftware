@@ -189,9 +189,9 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<unsigned char> sat_designation_f;
 
     /**
-     * @brief The last time at which we enter the close approach state
+     * @brief The last cycle at which we enter the close approach state
      */
-    InternalStateField<sys_time_t> enter_close_approach_time_f;
+    InternalStateField<unsigned int> enter_close_approach_time_f;
 
    private:
     /**

@@ -9,14 +9,14 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r)
         add_writable_field(no_cdgps_max_wait_f);
         add_writable_field(cdgps_delay_max_wait_f);
 
-        // Initialize to 24 hours (8.64e10 micros)
-        no_cdgps_max_wait_f.set(8.64e10);
-        // Initialize to 3 hours (1.08e+10 micros)
-        cdgps_delay_max_wait_f.set(1.08e+10);
+        // Initialize to 24 hours
+        no_cdgps_max_wait_f.set(PAN::one_day_ccno);
+        // Initialize to 3 hours
+        cdgps_delay_max_wait_f.set(PAN::one_day_ccno/8);
 
         piksi_state_fp = find_readable_field<unsigned int>("piksi.state", __FILE__, __LINE__);
         mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
-        last_fix_time_fp  = find_internal_field<sys_time_t>("piksi.last_fix_time", __FILE__, __LINE__);
+        last_fix_time_ccno_fp  = find_internal_field<sys_time_t>("piksi.last_fix_time_ccno", __FILE__, __LINE__);
     }
 
 fault_response_t PiksiFaultHandler::execute() {
@@ -33,9 +33,9 @@ fault_response_t PiksiFaultHandler::execute() {
 }
 
 fault_response_t PiksiFaultHandler::check_cdgps() {
-    sys_time_t close_appr_time = enter_close_appr_time_fp->get();
-    sys_time_t last_fix_time = last_fix_time_fp->get();
-    systime_duration_t duration = TimedControlTaskBase::us_to_duration(close_appr_time-last_fix_time);
+    unsigned int close_appr_time = enter_close_appr_time_fp->get();
+    unsigned int last_fix_time = last_fix_time_ccno_fp->get();
+    unsigned int duration = std::abs(close_appr_time-last_fix_time);
 
     if (close_appr_time > last_fix_time && duration > no_cdgps_max_wait_f.get()) {
         return fault_response_t::standby;
