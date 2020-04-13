@@ -324,10 +324,18 @@
             "type": "float",
             "writable": true
         },
-        "adcs_cmd.imu_mode": {
-            "bitsize": 3,
+        "adcs_cmd.mag1_mode": {
+            "bitsize": 1,
             "flow_id": 23,
-            "max": 4,
+            "max": 1,
+            "min": 0,
+            "type": "unsigned char",
+            "writable": true
+        },
+        "adcs_cmd.mag2_mode": {
+            "bitsize": 1,
+            "flow_id": 23,
+            "max": 1,
             "min": 0,
             "type": "unsigned char",
             "writable": true
@@ -457,11 +465,11 @@
             "writable": false
         },
         "adcs_monitor.gyr_vec": {
-            "bitsize": 48,
+            "bitsize": 0,
             "flow_id": 24,
             "max": 2.181661605834961,
             "min": -2.181661605834961,
-            "type": "std float vector",
+            "type": "lin float vector",
             "writable": false
         },
         "adcs_monitor.gyr_vec_flag": {
@@ -578,34 +586,48 @@
             "type": "bool",
             "writable": false
         },
-        "adcs_monitor.mag_vec": {
-            "bitsize": 48,
+        "adcs_monitor.mag1_vec": {
+            "bitsize": 0,
             "flow_id": 24,
             "max": 0.004999999888241291,
             "min": -0.004999999888241291,
-            "type": "std float vector",
+            "type": "lin float vector",
             "writable": false
         },
-        "adcs_monitor.mag_vec_flag": {
+        "adcs_monitor.mag1_vec_flag": {
+            "bitsize": 1,
+            "flow_id": 18,
+            "type": "bool",
+            "writable": false
+        },
+        "adcs_monitor.mag2_vec": {
+            "bitsize": 0,
+            "flow_id": 24,
+            "max": 0.0031999999191612005,
+            "min": -0.0031999999191612005,
+            "type": "lin float vector",
+            "writable": false
+        },
+        "adcs_monitor.mag2_vec_flag": {
             "bitsize": 1,
             "flow_id": 18,
             "type": "bool",
             "writable": false
         },
         "adcs_monitor.rwa_speed_rd": {
-            "bitsize": 48,
+            "bitsize": 0,
             "flow_id": 7,
             "max": 1047.199951171875,
             "min": -1047.199951171875,
-            "type": "std float vector",
+            "type": "lin float vector",
             "writable": false
         },
         "adcs_monitor.rwa_torque_rd": {
-            "bitsize": 48,
+            "bitsize": 0,
             "flow_id": 7,
             "max": 0.004187500569969416,
             "min": -0.004187500569969416,
-            "type": "std float vector",
+            "type": "lin float vector",
             "writable": false
         },
         "adcs_monitor.speed_rd_flag": {
@@ -2208,7 +2230,8 @@
             "active": true,
             "fields": [
                 "adcs_monitor.gyr_vec_flag",
-                "adcs_monitor.mag_vec_flag",
+                "adcs_monitor.mag1_vec_flag",
+                "adcs_monitor.mag2_vec_flag",
                 "adcs_monitor.speed_rd_flag",
                 "adcs_monitor.torque_rd_flag"
             ],
@@ -2284,7 +2307,8 @@
                 "adcs_cmd.imu_gyr_temp_ki",
                 "adcs_cmd.imu_gyr_temp_kp",
                 "adcs_cmd.imu_mag_filter",
-                "adcs_cmd.imu_mode",
+                "adcs_cmd.mag1_mode",
+                "adcs_cmd.mag2_mode",
                 "adcs_cmd.mtr_limit",
                 "adcs_cmd.mtr_mode",
                 "adcs_cmd.rwa_mode",
@@ -2300,7 +2324,8 @@
             "fields": [
                 "adcs_monitor.gyr_temp",
                 "adcs_monitor.gyr_vec",
-                "adcs_monitor.mag_vec",
+                "adcs_monitor.mag1_vec",
+                "adcs_monitor.mag2_vec",
                 "adcs_monitor.ssa_vec",
                 "adcs_monitor.gyr_temp_flag"
             ],

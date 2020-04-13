@@ -47,7 +47,9 @@ class ADCSCommander : public TimedControlTask<void> {
 
     WritableStateField<float> ssa_voltage_filter_f;
 
-    WritableStateField<unsigned char> imu_mode_f;
+    WritableStateField<unsigned char> mag1_mode_f;
+    WritableStateField<unsigned char> mag2_mode_f;
+
     WritableStateField<float> imu_mag_filter_f;
     WritableStateField<float> imu_gyr_filter_f;
     WritableStateField<float> imu_gyr_temp_filter_f;
