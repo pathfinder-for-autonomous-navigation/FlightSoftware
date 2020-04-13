@@ -138,7 +138,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         
         self.print_rs(f"adcs_cmd.mag{mag_num}_mode")
         imu_mode = self.rs(f"adcs_cmd.mag{mag_num}_mode")
-        self.logger.put(f"IMU Mode: {self.imu_modes.get_by_num(imu_mode)}")
+        self.logger.put(f"MAG{mag_num} Mode: {self.imu_modes.get_by_num(imu_mode)}")
         
         # perform 10 readings.
         list_of_mag_rds = []
@@ -148,40 +148,49 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         # for each reading check, magnitude bounds
         # earth's mag field is between 25 to 65 microteslas - Wikipedia
-        self.logger.put(f"Mag{mag_num} readings: ")
+        self.logger.put(f"MAG{mag_num} readings: ")
         for i in range(10):
             mag = mag_of(list_of_mag_rds[i])
             self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
             self.soft_assert((25e-6 < mag and mag < 65e-6),
-                "Mag reading out of expected (earth) bounds.")
+                f"MAG{mag_num} reading out of expected (earth) bounds.")
 
         # check readings changed over time
         self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
-            "Mag readings did not vary across readings.")
+            f"MAG{mag_num} readings did not vary across readings.")
 
-        self.print_header("MAG CHECKOUT COMPLETE")
+        self.print_header(f"MAG{mag_num} CHECKOUT COMPLETE")
 
     def mag_independence_checkout(self):
         '''
         Run checks to make one mag work when the other of them is non functional
         '''
+
+        self.print_header("MAG INDEPENDENCE CHECKOUT COMPLETE")
+
         # Disable MAG1
         self.ws("adcs_cmd.havt_disable1", True)
         self.cycle()
+        self.logger.put("MAG1 DISABLED")
         self.mag_checkout(2)
 
         # Renable MAG1
         self.ws("adcs_cmd.havt_reset1", True)
         self.cycle()
+        self.logger.put("MAG1 RESET")
 
         # Disable MAG2
         self.ws("adcs_cmd.havt_disable2", True)
         self.cycle()
+        self.logger.put("MAG2 DISABLED")
         self.mag_checkout(1)        
 
         # Renable MAG2
         self.ws("adcs_cmd.havt_reset2", True)
         self.cycle()
+        self.logger.put("MAG2 RESET")
+
+        self.print_header("MAG INDEPENDENCE CHECKOUT COMPLETE")
 
     def gyr_checkout(self):
         self.print_header("Begin GYR Checkout")
