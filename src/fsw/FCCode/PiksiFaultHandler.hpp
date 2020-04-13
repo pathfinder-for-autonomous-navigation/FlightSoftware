@@ -41,11 +41,12 @@ class PiksiFaultHandler : public FaultHandlerMachine {
     // Statefields used by the fault handler to determine response.
     ReadableStateField<unsigned int>* piksi_state_fp;
     WritableStateField<unsigned char>* mission_state_fp;
-    // Statefield for X time
-    systime_duration_t x = 8.64e10;
-    // Statefield for Y time
-    systime_duration_t y = 1.08e+10;
     InternalStateField<sys_time_t>* last_fix_time_fp;
+
+    // Statefield for X time
+    WritableStateField<unsigned int> no_cdgps_max_wait_f;
+    // Statefield for Y time
+    WritableStateField<unsigned int> cdgps_delay_max_wait_f;
 
     // Last fix time since entering close approach
     InternalStateField<sys_time_t>* enter_close_appr_time_fp;
