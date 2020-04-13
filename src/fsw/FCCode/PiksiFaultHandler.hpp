@@ -2,7 +2,6 @@
 #define PIKSI_FAULT_HANDLER_HPP_
 
 #include "FaultHandlerMachine.hpp"
-#include "piksi_fh_state_t.enum"
 #include "piksi_mode_t.enum"
 
 class PiksiFaultHandler : public FaultHandlerMachine {
@@ -24,32 +23,28 @@ class PiksiFaultHandler : public FaultHandlerMachine {
   protected:
 
     /**
-     * @brief Dispatch functions for the fault handler state machine.
+     * @brief Check if we have recently gotten any GPS readings 
+     * and transition to the standby if: 
+     *  - The satellite has entered a close approach state but 
+     *    has't recieved CDGPS readings in X time (X is a 
+     *    ground-configurable wait initially set to 3 hours).
+     *  - The satellite had previously recieved CDGPS 
+     *    readings during close approach, but then is still in 
+     *    a close approach and hasn't received CDGPS in the 
+     *    last Y hours (Y is a ground-configurable wait initially 
+     *    set to 3 hours).
      * 
      * @return mission_state_t 
      */
-    fault_response_t dispatch_unfaulted();
-    fault_response_t dispatch_check_cdgps();
-    fault_response_t no_cdgps();
-    fault_response_t cdgps_delay();
-
-    /**
-     * @brief Executes a transition between fault states.
-     * @param next_state Next state for transition.
-     */
-    void transition_to(qfh_state_t next_state);
-
-    // Current state of fault checker DFA, and the control cycle
-    // count at which it entered this state.
-    piksi_fh_state_t current_state = piksi_fh_state_t::unfaulted;
-    unsigned int current_state_entry_ccno = 0;
-
+    fault_response_t check_cdgps();
 
     // Statefields used by the fault handler to determine response.
     ReadableStateField<unsigned int>* piksi_state_fp;
     WritableStateField<unsigned char>* mission_state_fp;
     // Statefield for X time
+    systime_duration_t x = 8.64e10;
     // Statefield for Y time
+    systime_duration_t y = 1.08e+10;
     InternalStateField<sys_time_t>* last_fix_time_fp;
 
     // Last fix time since entering close approach
