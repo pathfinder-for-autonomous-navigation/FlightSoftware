@@ -1,5 +1,6 @@
 import time
 import datetime
+from datetime import datetime
 import serial
 import threading
 import json
@@ -11,6 +12,8 @@ import subprocess
 import glob
 import os
 import pty
+from elasticsearch import Elasticsearch
+
 
 from .data_consumers import Datastore, Logger
 
@@ -58,6 +61,23 @@ class RadioSession(object):
         self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
         self.telem_save_dir = simulation_run_dir
+
+        # Get keys for connecting to email account and elasticsearch server
+        try:
+            with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../ptest/configs/radio_keys.json')))as radio_keys_config_file:
+                radio_keys_config = json.load(radio_keys_config_file)
+            with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../ptest/configs/server_keys.json')))as server_keys_config_file:
+                server_keys_config = json.load(server_keys_config_file)
+        except json.JSONDecodeError:
+            print("Could not load config files. Exiting.")
+            sys.exit(1)
+        except KeyError:
+            print("Malformed config file. Exiting.")
+            sys.exit(1)
+        # Open a connection to elasticsearch
+        es_server = server_keys_config["server"]
+        es_port = server_keys_config["port"]
+        self.es = Elasticsearch([{'host':es_server,'port':es_port}])
 
     def read_state(self, field, timeout=None):
         '''
@@ -130,6 +150,16 @@ class RadioSession(object):
         if telem_json_data is not None:
                 telem_json_data = telem_json_data["data"]
         return telem_json_data
+    
+    def dbtelem(self):
+        jsonObj = self.parsetelem()
+        for field in jsonObj:
+            value = jsonObj[field]
+            data=json.dumps({
+            field: value,
+            "time": str(datetime.now().isoformat())
+            })
+            self.es.index(index='statefield_report_'+str(self.imei), doc_type='report', body=data)
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''

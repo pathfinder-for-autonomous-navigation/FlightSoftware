@@ -410,7 +410,7 @@
             "type": "bool",
             "writable": false
         },
-        "adcs_monitor.functional_fault": {
+        "adcs_monitor.functional_fault_base": {
             "bitsize": 1,
             "flow_id": 13,
             "type": "bool",
@@ -796,7 +796,7 @@
             "type": "bool",
             "writable": false
         },
-        "adcs_monitor.wheel1_fault": {
+        "adcs_monitor.wheel1_fault_base": {
             "bitsize": 1,
             "flow_id": 4,
             "type": "bool",
@@ -828,7 +828,7 @@
             "type": "bool",
             "writable": true
         },
-        "adcs_monitor.wheel2_fault": {
+        "adcs_monitor.wheel2_fault_base": {
             "bitsize": 1,
             "flow_id": 4,
             "type": "bool",
@@ -860,7 +860,7 @@
             "type": "bool",
             "writable": true
         },
-        "adcs_monitor.wheel3_fault": {
+        "adcs_monitor.wheel3_fault_base": {
             "bitsize": 1,
             "flow_id": 4,
             "type": "bool",
@@ -892,7 +892,7 @@
             "type": "bool",
             "writable": true
         },
-        "adcs_monitor.wheel_pot_fault": {
+        "adcs_monitor.wheel_pot_fault_base": {
             "bitsize": 1,
             "flow_id": 4,
             "type": "bool",
@@ -1206,7 +1206,7 @@
             "type": "unsigned int",
             "writable": false
         },
-        "gomspace.get_hk": {
+        "gomspace.get_hk_base": {
             "bitsize": 1,
             "flow_id": 6,
             "type": "bool",
@@ -1262,7 +1262,7 @@
             "type": "bool",
             "writable": true
         },
-        "gomspace.low_batt": {
+        "gomspace.low_batt_base": {
             "bitsize": 1,
             "flow_id": 6,
             "type": "bool",
@@ -1586,7 +1586,7 @@
             "type": "std double vector",
             "writable": false
         },
-        "prop.failed_pressurize": {
+        "prop.failed_pressurize_base": {
             "bitsize": 1,
             "flow_id": 5,
             "type": "bool",
@@ -1618,7 +1618,7 @@
             "type": "bool",
             "writable": true
         },
-        "prop.overpressured": {
+        "prop.overpressured_base": {
             "bitsize": 1,
             "flow_id": 5,
             "type": "bool",
@@ -1995,22 +1995,22 @@
         {
             "active": true,
             "fields": [
-                "adcs_monitor.wheel1_fault",
+                "adcs_monitor.wheel1_fault_base",
                 "adcs_monitor.wheel1_fault.override",
                 "adcs_monitor.wheel1_fault.persistence",
                 "adcs_monitor.wheel1_fault.suppress",
                 "adcs_monitor.wheel1_fault.unsignal",
-                "adcs_monitor.wheel2_fault",
+                "adcs_monitor.wheel2_fault_base",
                 "adcs_monitor.wheel2_fault.override",
                 "adcs_monitor.wheel2_fault.persistence",
                 "adcs_monitor.wheel2_fault.suppress",
                 "adcs_monitor.wheel2_fault.unsignal",
-                "adcs_monitor.wheel3_fault",
+                "adcs_monitor.wheel3_fault_base",
                 "adcs_monitor.wheel3_fault.override",
                 "adcs_monitor.wheel3_fault.persistence",
                 "adcs_monitor.wheel3_fault.suppress",
                 "adcs_monitor.wheel3_fault.unsignal",
-                "adcs_monitor.wheel_pot_fault",
+                "adcs_monitor.wheel_pot_fault_base",
                 "adcs_monitor.wheel_pot_fault.override",
                 "adcs_monitor.wheel_pot_fault.persistence",
                 "adcs_monitor.wheel_pot_fault.suppress",
@@ -2023,12 +2023,12 @@
             "active": true,
             "fields": [
                 "prop.state",
-                "prop.overpressured",
+                "prop.overpressured_base",
                 "prop.overpressured.override",
                 "prop.overpressured.persistence",
                 "prop.overpressured.suppress",
                 "prop.overpressured.unsignal",
-                "prop.failed_pressurize",
+                "prop.failed_pressurize_base",
                 "prop.failed_pressurize.override",
                 "prop.failed_pressurize.persistence",
                 "prop.failed_pressurize.suppress",
@@ -2041,12 +2041,12 @@
             "active": true,
             "fields": [
                 "gomspace.batt_threshold",
-                "gomspace.low_batt",
+                "gomspace.low_batt_base",
                 "gomspace.low_batt.override",
                 "gomspace.low_batt.persistence",
                 "gomspace.low_batt.suppress",
                 "gomspace.low_batt.unsignal",
-                "gomspace.get_hk",
+                "gomspace.get_hk_base",
                 "gomspace.get_hk.override",
                 "gomspace.get_hk.persistence",
                 "gomspace.get_hk.suppress",
@@ -2141,7 +2141,7 @@
                 "adcs.state",
                 "adcs.paired",
                 "adcs_monitor.functional",
-                "adcs_monitor.functional_fault",
+                "adcs_monitor.functional_fault_base",
                 "adcs_monitor.functional_fault.override",
                 "adcs_monitor.functional_fault.persistence",
                 "adcs_monitor.functional_fault.suppress",

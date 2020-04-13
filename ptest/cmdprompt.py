@@ -148,6 +148,17 @@ class StateCmdPrompt(Cmd):
         write_succeeded = "Succeeded" if write_succeeded else "Failed"
         print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
     
+    def do_dbtelem(self, args):
+        '''
+        Store Telemetry in Database
+        '''
+        args = args.split()
+        if len(args) != 0:
+            print('parsetelem takes no args')
+            return
+        else:
+            self.devices['FlightControllerRadio'].dbtelem()
+    
     def do_parsetelem(self, args):
         '''
         Parse a telelmetry file using DowlinkParser.

@@ -15,19 +15,19 @@ MainFaultHandler::MainFaultHandler(StateFieldRegistry& r) :
 void MainFaultHandler::init() {
     // Populate inputs (and retrieve pointer for some outputs)
     std::vector<Fault*> active_list_0_safehold_super_simple_faults {
-        find_fault("gomspace.low_batt", __FILE__, __LINE__),
+        find_fault("gomspace.low_batt_base", __FILE__, __LINE__),
     };
 
     std::vector<Fault*> active_list_1_safehold_super_simple_faults {
-        find_fault("adcs_monitor.wheel1_fault", __FILE__, __LINE__),
-        find_fault("adcs_monitor.wheel2_fault", __FILE__, __LINE__),
-        find_fault("adcs_monitor.wheel3_fault", __FILE__, __LINE__),
-        find_fault("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__),
-        find_fault("prop.overpressured", __FILE__, __LINE__)
+        find_fault("adcs_monitor.wheel1_fault_base", __FILE__, __LINE__),
+        find_fault("adcs_monitor.wheel2_fault_base", __FILE__, __LINE__),
+        find_fault("adcs_monitor.wheel3_fault_base", __FILE__, __LINE__),
+        find_fault("adcs_monitor.wheel_pot_fault_base", __FILE__, __LINE__),
+        find_fault("prop.overpressured_base", __FILE__, __LINE__)
     };
 
     std::vector<Fault*> active_list_1_standby_super_simple_faults {
-        find_fault("prop.failed_pressurize", __FILE__, __LINE__),
+        find_fault("prop.failed_pressurize_base", __FILE__, __LINE__),
     };
 
     for(Fault* fault : active_list_0_safehold_super_simple_faults) {
