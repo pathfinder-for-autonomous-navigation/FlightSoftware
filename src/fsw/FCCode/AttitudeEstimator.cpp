@@ -19,8 +19,8 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
         pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
         ssa_vec_rd_fp = find_readable_field<lin::Vector3f>("adcs_monitor.ssa_vec", __FILE__, __LINE__),
-        mag1_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.mag1_vec", __FILE__, __LINE__),
-        mag2_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.mag2_vec", __FILE__, __LINE__),
+        mag1_vec_fp = find_readable_field<lin::Vector3f>("adcs_monitor.mag1_vec", __FILE__, __LINE__),
+        mag2_vec_fp = find_readable_field<lin::Vector3f>("adcs_monitor.mag2_vec", __FILE__, __LINE__),
 
         //Add outputs
         add_readable_field(q_body_eci_f);
@@ -44,11 +44,10 @@ void AttitudeEstimator::set_data(){
     const d_vector_t r_ecef = pos_vec_ecef_fp->get();
     data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};
 
-    const f_vector_t mag1_vec = mag1_vec_fp->get();
-    // const f_vector_t mag2_vec = mag2_vec_fp->get();
+    // const lin::Vector3f mag2_vec = mag2_vec_fp->get();
 
     // TODO: LOGIC TO DECIDE IF WE WANT MAG1 or MAG2 data
-    data.b_body = {mag1_vec[0], mag1_vec[1], mag1_vec[2]};
+    data.b_body = mag1_vec_fp->get();
 
     data.s_body = ssa_vec_rd_fp->get();
 }
