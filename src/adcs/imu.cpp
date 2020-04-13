@@ -41,8 +41,7 @@ lin::Vector3f mag2_rd({
   0.0f
 });
 
-static void update_mag(unsigned char mag1_mode, unsigned char mag2_mode,
-    float mag_flt) {
+static void update_mag1(unsigned char mag1_mode, float mag_flt) {
   lin::Vector3f data;
 
   // Calibrate magnetometer one if requested
@@ -74,6 +73,10 @@ static void update_mag(unsigned char mag1_mode, unsigned char mag2_mode,
   LOG_TRACE_println("Updated, filtered magnetometer one reading "
       + String(mag1_rd(0)) + " " + String(mag1_rd(1)) + " "
       + String(mag1_rd(2)))
+}
+
+static void update_mag2(unsigned char mag2_mode, float mag_flt) {
+  lin::Vector3f data;
 
   // Calibrate magnetometer two if requested
   if (mag2.is_functional() && (mag2_mode == IMUMAGMode::IMU_MAG_CALIBRATE))
@@ -209,7 +212,8 @@ void update_sensors(unsigned char mag1_mode, unsigned char mag2_mode,
 
   update_gyr(gyr_flt, gyr_temp_eq, gyr_temp_flt, gry_temp_k_p, gyr_temp_k_i,
       gyr_temp_k_d);
-  update_mag(mag1_mode, mag2_mode, mag_flt);
+  update_mag1(mag1_mode, mag_flt);
+  update_mag2(mag2_mode, mag_flt);
 
   LOG_TRACE_header
   LOG_TRACE_println("Complete")

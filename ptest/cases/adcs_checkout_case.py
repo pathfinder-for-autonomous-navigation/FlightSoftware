@@ -161,6 +161,28 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.print_header("MAG CHECKOUT COMPLETE")
 
+    def mag_independence_checkout(self):
+        '''
+        Run checks to make one mag work when the other of them is non functional
+        '''
+        # Disable MAG1
+        self.ws("adcs_cmd.havt_disable1", True)
+        self.cycle()
+        self.mag_checkout(2)
+
+        # Renable MAG1
+        self.ws("adcs_cmd.havt_reset1", True)
+        self.cycle()
+
+        # Disable MAG2
+        self.ws("adcs_cmd.havt_disable2", True)
+        self.cycle()
+        self.mag_checkout(1)        
+
+        # Renable MAG2
+        self.ws("adcs_cmd.havt_reset2", True)
+        self.cycle()
+
     def gyr_checkout(self):
         self.print_header("Begin GYR Checkout")
             
@@ -208,6 +230,10 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.mag_checkout(1)
         if self.rs("adcs_monitor.havt_device2"):
             self.mag_checkout(2)
+
+        # Check Mag Independence
+        if self.rs("adcs_monitor.havt_device1") and self.rs("adcs_monitor.havt_device2"):        
+            self.mag_independence_checkout()
 
         # Run checks on GYR if GYR is up.
         if self.rs("adcs_monitor.havt_device0"):
