@@ -11,9 +11,9 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r)
         add_writable_field(cdgps_delay_max_wait_f);
 
         // Initialize to 24 hours
-        no_cdgps_max_wait_f.set(DEFAULT_NO_CDGPS_MAX_WAIT);
+        no_cdgps_max_wait_f.set(default_no_cdgps_max_wait);
         // Initialize to 3 hours
-        cdgps_delay_max_wait_f.set(DEFAULT_CDGPS_DELAY_MAX_WAIT);
+        cdgps_delay_max_wait_f.set(default_cdgps_delay_max_wait);
 
         piksi_state_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
         mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
