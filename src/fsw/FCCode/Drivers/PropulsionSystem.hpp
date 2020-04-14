@@ -216,6 +216,19 @@ protected:
     // true if the valve is opened
     bool is_valve_opened[4];
 
+    // These constants are from the nonlinear regression for computing tank temperature
+    // T = A * ln(R)^EXP + B
+    // T is temperature, R is resistance
+    TRACKED_CONSTANT(double, temp_a, -35126.92396);
+    TRACKED_CONSTANT(double, temp_exp, 0.005);
+    TRACKED_CONSTANT(double, temp_b, 35493.23411);
+
+    // Minimum and maximum temperature constants permitted by the regression
+    // These values are used to clamp voltage readings close to 0 and 3.3 V
+    TRACKED_CONSTANT(int, tank_temp_min, -55);
+    TRACKED_CONSTANT(int, tank_temp_max, 150);
+
+
     friend class _PropulsionSystem;
 };
 
@@ -270,15 +283,7 @@ public:
     TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 20);
     TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
 
-#ifndef DESKTOP
-private:
-#endif
     void setup();
-    #ifndef DESKTOP
-    //! When enabled, runs thrust_valve_loop every 3 ms
-    static IntervalTimer thrust_valve_loop_timer;
-    #endif
-    static volatile unsigned int schedule[4];
     // The minimum duration to assign to a schedule
     // Any value below this value will be ignored by tank2
     TRACKED_CONSTANT_SC(unsigned int, min_firing_duration_ms, 10);
@@ -289,9 +294,19 @@ private:
     TRACKED_CONSTANT_SC(double, high_gain_slope, 0.048713211537332);
     TRACKED_CONSTANT_SC(double, low_gain_offset, 0.154615074342874);
     TRACKED_CONSTANT_SC(double, low_gain_slope, 0.099017990785657);
+    // Corresponds to 50 mV - the voltage at which we switch from low to high gain amplifiers
+    TRACKED_CONSTANT_SC(unsigned int, amp_threshold, 1000);
 
     //! Loop interval in milliseconds.
     TRACKED_CONSTANT_SC(unsigned int, thrust_valve_loop_interval_ms, 3);
+
+
+private:
+#ifndef DESKTOP
+        //! When enabled, runs thrust_valve_loop every 3 ms
+    static IntervalTimer thrust_valve_loop_timer;
+#endif
+    static volatile unsigned int schedule[4];
 
     friend class _PropulsionSystem;
 };

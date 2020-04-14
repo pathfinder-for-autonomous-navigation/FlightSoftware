@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <climits>
 #include <tuple>
+#include <cmath>
 #include "DCDC.hpp"
 using namespace Devices;
 
@@ -58,6 +59,11 @@ IntervalTimer _Tank2::thrust_valve_loop_timer = IntervalTimer();
 bool _PropulsionSystem::setup() {
     Tank1.setup();
     Tank2.setup();
+#ifndef DESKTOP
+    // Set 10-bit resolution since the regression for the pressure sensor
+    // calculations was computed using a 10-bit Teensy
+    analogReadAveraging(10);
+#endif
     return true;
 }
 
@@ -84,8 +90,20 @@ void _Tank2::setup()
 
 int Tank::get_temp() const
 {
-    // TODO
-    return analogRead(temp_sensor_pin);
+    // Get the resistance of the temp sensor by measuring
+    // a reference voltage and using the voltage divider equation
+    unsigned int raw = analogRead(temp_sensor_pin);
+    double voltage = raw * 3.3 / 1024.0;
+    if (std::abs(3.3 - voltage) < 1e-4)
+        return tank_temp_min;
+
+    double resist = (voltage * 6200.0) / (3.3 - voltage);
+
+    // Get the value of the temperature using a linear regression
+    if (std::abs(resist) <= 1)
+        return tank_temp_max;
+    else
+        return temp_a * std::pow(std::log(resist), temp_exp) + temp_b;
 }
 
 bool Tank::is_valve_open(size_t valve_idx) const
@@ -112,8 +130,8 @@ void Tank::close_all_valves()
 
 float _Tank2::get_pressure() const {
     // TODO
-    static int low_gain_read = 0;
-    static int high_gain_read = 0;
+    static unsigned int low_gain_read = 0;
+    static unsigned int high_gain_read = 0;
     static float pressure = 0;
 
     // analog read
@@ -121,7 +139,7 @@ float _Tank2::get_pressure() const {
     high_gain_read = analogRead(pressure_sensor_high_pin);
 
     // convert to pressure [psia]
-    if (high_gain_read < 1000){
+    if (high_gain_read < amp_threshold){
         pressure = high_gain_slope*high_gain_read + high_gain_offset;
     } else {
         pressure = low_gain_slope*low_gain_read + low_gain_offset;
