@@ -1,5 +1,6 @@
 #include "PiksiFaultHandler.hpp"
 #include "constants.hpp"
+#include <iostream>
 
 PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r) 
     : FaultHandlerMachine(r), 
@@ -17,7 +18,7 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r)
         piksi_state_fp = find_readable_field<unsigned int>("piksi.state", __FILE__, __LINE__);
         mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
         last_fix_time_ccno_fp  = find_internal_field<unsigned int>("piksi.last_fix_time_ccno", __FILE__, __LINE__);
-        enter_close_appr_time_fp = find_internal_field<unsigned int>("pan.enter_close_appr_ccno_fp", __FILE__, __LINE__);
+        enter_close_appr_time_fp = find_internal_field<unsigned int>("pan.enter_close_approach_ccno", __FILE__, __LINE__);
     }
 
 fault_response_t PiksiFaultHandler::execute() {
@@ -39,12 +40,11 @@ fault_response_t PiksiFaultHandler::execute() {
 fault_response_t PiksiFaultHandler::check_cdgps() {
     unsigned int close_appr_time = enter_close_appr_time_fp->get();
     unsigned int last_fix_time = last_fix_time_ccno_fp->get();
-    unsigned int duration = close_appr_time-last_fix_time;
-
+    unsigned int duration = TimedControlTaskBase::control_cycle_count-last_fix_time;
     if (close_appr_time > last_fix_time && duration > no_cdgps_max_wait_f.get()) {
         return fault_response_t::standby;
     }
-    else if (close_appr_time < last_fix_time && duration*-1 > cdgps_delay_max_wait_f.get()) {
+    else if (close_appr_time < last_fix_time && duration > cdgps_delay_max_wait_f.get()) {
         return fault_response_t::standby;
     }
     return fault_response_t::none;
