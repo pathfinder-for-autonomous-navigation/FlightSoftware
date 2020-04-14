@@ -76,8 +76,17 @@ class Tank;
  *  - tank2 firing schedule
  * 
  * Only tank2 has a schedule since only tank2 uses the IntervalTimer to fire.
+ *
+ * ------
+ *
+ * To mock the sensors values, assigned
+ * - fake_tank1_temp_sensor_read to the desire value of Tank1.analogRead(temp_sensor_pin)
+ * - fake_tank2_temp_sensor_read to the desire value of Tank2.analogRead(temp_sensor_pin)
+ * - fake_tank2_pressure_low_read to the desire value of Tank2.analogRead(pressure_sensor_low_pin)
+ * - fake_tank2_pressure_high_read to the desired value of Tank2.analogRead(pressure_sensor_high_pin)
  * 
  **/
+
 #define PropulsionSystem Devices::_PropulsionSystem::Instance()
 class _PropulsionSystem : public Device {
     _PropulsionSystem();
@@ -228,6 +237,10 @@ public:
     TRACKED_CONSTANT(int, tank_temp_min, -55);
     TRACKED_CONSTANT(int, tank_temp_max, 150);
 
+#ifdef DESKTOP
+    unsigned int* p_fake_temp_read;
+#endif
+
 
     friend class _PropulsionSystem;
 };
@@ -249,6 +262,10 @@ public:
     TRACKED_CONSTANT_SC(uint8_t, valve_primary_pin, 27);
     TRACKED_CONSTANT_SC(uint8_t, valve_backup_pin, 28);
     TRACKED_CONSTANT_SC(uint8_t, tank1_temp_sensor_pin, 21);
+#ifdef DESKTOP
+    // for mocking readings
+    unsigned int fake_tank1_temp_sensor_read = 0;
+#endif
 };
 
 #define Tank2 Devices::_Tank2::Instance()
@@ -280,6 +297,13 @@ public:
 
     TRACKED_CONSTANT_SC(uint8_t, tank2_temp_sensor_pin, 22);
 
+#ifdef DESKTOP
+    // for mocking readings
+    unsigned int fake_tank2_temp_sensor_read = 0;
+    unsigned int fake_tank2_pressure_low_read = 0;
+    unsigned int fake_tank2_pressure_high_read = 0 ;
+#endif
+
     TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 20);
     TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
 
@@ -301,8 +325,8 @@ public:
     TRACKED_CONSTANT_SC(unsigned int, thrust_valve_loop_interval_ms, 3);
 
 
-private:
 #ifndef DESKTOP
+    private:
         //! When enabled, runs thrust_valve_loop every 3 ms
     static IntervalTimer thrust_valve_loop_timer;
 #endif

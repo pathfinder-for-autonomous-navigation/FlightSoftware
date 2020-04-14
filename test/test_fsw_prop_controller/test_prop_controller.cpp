@@ -1,5 +1,6 @@
 #include <unity.h>
 
+#include <fsw/FCCode/Drivers/PropulsionSystem.hpp>
 #include <fsw/FCCode/PropController.hpp>
 #include "../StateFieldRegistryMock.hpp"
 extern size_t g_fake_pressure_cycle_count;
@@ -313,6 +314,30 @@ void test_firing_to_idle()
     tf.check_state(prop_state_t::idle);
 }
 
+void test_temp_sensor_logic()
+{
+    Tank1.fake_tank1_temp_sensor_read = 1;
+    for (unsigned int i = 0; i < 1023; i++)
+    {
+        Tank1.fake_tank1_temp_sensor_read = i;
+        std::printf("Tank1 temp read %u --> %d\n", i, Tank1.get_temp());
+    }
+}
+
+void test_pressure_sensor_logic()
+{
+    for (unsigned int low = 0; low < 1023; low++)
+    {
+        Tank2.fake_tank2_pressure_low_read = low;
+        for (unsigned int high = 0; high < 1023; high++)
+        {
+            Tank2.fake_tank2_pressure_high_read = high;
+            std::printf("Tank2 pressure high %u, low %u --> %f\n", high, low, Tank2.get_pressure());
+        }
+        std::printf("\n");
+    }
+}
+
 int test_prop_controller()
 {
     // generated the following with:
@@ -331,6 +356,8 @@ int test_prop_controller()
     RUN_TEST(test_await_firing);
     RUN_TEST(test_firing);
     RUN_TEST(test_firing_to_idle);
+    RUN_TEST(test_temp_sensor_logic);
+    RUN_TEST(test_pressure_sensor_logic);
     return UNITY_END();
 }
 

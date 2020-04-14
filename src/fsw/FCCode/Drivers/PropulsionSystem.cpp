@@ -14,10 +14,6 @@ using namespace Devices;
  * These functions and macros are defined in Arduino.h, which we cannot include
  * in DESKTOP tests
  */
-unsigned int g_fake_raw_temp_analog = 0; // fake value for the raw value of a temperature analog read
-unsigned int g_fake_low_gain_read = 0; // fake value for low gain read
-unsigned int g_fake_high_gain_read = 0; // fake value for high gain read
-
 static void interrupts(){}
 void noInterrupts(){}
 uint8_t analogRead(uint8_t pin){return 0;}
@@ -36,6 +32,9 @@ _Tank1::_Tank1() : Tank() {
     valve_pins[0] = valve_primary_pin; // Main tank 1 to tank 2 valve
     valve_pins[1] = valve_backup_pin; // Backup tank 1 to tank 2 valve
     temp_sensor_pin = tank1_temp_sensor_pin;
+#ifdef DESKTOP
+    p_fake_temp_read = &fake_tank1_temp_sensor_read;
+#endif
 }
 
 _Tank2::_Tank2() : Tank() {
@@ -45,6 +44,9 @@ _Tank2::_Tank2() : Tank() {
     valve_pins[2] = valve3_pin; // Nozzle valve
     valve_pins[3] = valve4_pin; // Nozzle valve
     temp_sensor_pin = tank2_temp_sensor_pin;
+#ifdef DESKTOP
+    p_fake_temp_read = &fake_tank2_temp_sensor_read;
+#endif
 }
 
 /** Initialize static variables */
@@ -98,7 +100,7 @@ int Tank::get_temp() const
     // a reference voltage and using the voltage divider equation
 #ifdef DESKTOP
     // fake raw input for temperature sensor pin
-    unsigned int raw = g_fake_raw_temp_analog;
+    unsigned int raw = *p_fake_temp_read;
 #else
     unsigned int raw = analogRead(temp_sensor_pin);
 #endif
@@ -144,8 +146,8 @@ float _Tank2::get_pressure() const {
 
     // analog read
 #ifdef DESKTOP
-    low_gain_read = g_fake_low_gain_read;
-    high_gain_read = g_fake_high_gain_read;
+    low_gain_read = fake_tank2_pressure_low_read;
+    high_gain_read = fake_tank2_pressure_high_read;
 #else
     low_gain_read = analogRead(pressure_sensor_low_pin);
     high_gain_read = analogRead(pressure_sensor_high_pin);
