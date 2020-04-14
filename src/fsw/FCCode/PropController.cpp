@@ -29,7 +29,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
           tank2_temp("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
           tank1_temp("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
           // TODO: Why does Fault take a control_cycle_count reference?
-          pressurize_fail_fault_f("prop.pressurize_fail", 1, control_cycle_count)
+          pressurize_fail_fault_f("prop.pressurize_fail", 1)
           {
 
     add_writable_field(prop_state_f);

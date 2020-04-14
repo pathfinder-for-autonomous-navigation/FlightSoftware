@@ -7,7 +7,7 @@
 
 class TestFixtureMainFH {
   protected:
-    unsigned int cc = 0; // Control cycle count
+    unsigned int& cc = TimedControlTaskBase::control_cycle_count;
     StateFieldRegistryMock registry;
     std::unique_ptr<MainFaultHandler> fault_handler;
 
@@ -28,17 +28,20 @@ class TestFixtureMainFH {
     size_t num_fault_handler_machines = 0;
 
     TestFixtureMainFH() {
+        cc = 0;
+        Fault::cc = &cc;
+
         // Prepare inputs for main fault handler
         radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
         radio_last_comms_ccno_fp = registry.create_internal_field<unsigned int>("radio.last_comms_ccno");
         quake_power_cycle_cmd_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
-        adcs_wheel1_adc_fault_fp = registry.create_fault("adcs_monitor.wheel1_fault", 1, cc);
-        adcs_wheel2_adc_fault_fp = registry.create_fault("adcs_monitor.wheel2_fault", 1, cc);
-        adcs_wheel3_adc_fault_fp = registry.create_fault("adcs_monitor.wheel3_fault", 1, cc);
-        adcs_wheel_pot_fault_fp = registry.create_fault("adcs_monitor.wheel_pot_fault", 1, cc);
-        low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1, cc);
-        prop_failed_pressurize_fault_fp = registry.create_fault("prop.failed_pressurize", 1, cc);
-        prop_overpressure_fault_fp = registry.create_fault("prop.overpressured", 1, cc);
+        adcs_wheel1_adc_fault_fp = registry.create_fault("adcs_monitor.wheel1_fault", 1);
+        adcs_wheel2_adc_fault_fp = registry.create_fault("adcs_monitor.wheel2_fault", 1);
+        adcs_wheel3_adc_fault_fp = registry.create_fault("adcs_monitor.wheel3_fault", 1);
+        adcs_wheel_pot_fault_fp = registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
+        low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
+        prop_failed_pressurize_fault_fp = registry.create_fault("prop.failed_pressurize", 1);
+        prop_overpressure_fault_fp = registry.create_fault("prop.overpressured", 1);
 
         // Construct main fault handler and capture its outputs
         fault_handler = std::make_unique<MainFaultHandler>(registry);
