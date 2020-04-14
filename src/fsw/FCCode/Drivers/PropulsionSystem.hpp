@@ -197,7 +197,7 @@ public:
      */
     bool is_valve_open(size_t valve_idx) const;
 
-protected:
+//protected: // yes, this is bad
     /**
      * @brief Enables valve INPUT/OUTPUT on valve and sensor pins
      */

@@ -14,6 +14,10 @@ using namespace Devices;
  * These functions and macros are defined in Arduino.h, which we cannot include
  * in DESKTOP tests
  */
+unsigned int g_fake_raw_temp_analog = 0; // fake value for the raw value of a temperature analog read
+unsigned int g_fake_low_gain_read = 0; // fake value for low gain read
+unsigned int g_fake_high_gain_read = 0; // fake value for high gain read
+
 static void interrupts(){}
 void noInterrupts(){}
 uint8_t analogRead(uint8_t pin){return 0;}
@@ -92,7 +96,12 @@ int Tank::get_temp() const
 {
     // Get the resistance of the temp sensor by measuring
     // a reference voltage and using the voltage divider equation
+#ifdef DESKTOP
+    // fake raw input for temperature sensor pin
+    unsigned int raw = g_fake_raw_temp_analog;
+#else
     unsigned int raw = analogRead(temp_sensor_pin);
+#endif
     double voltage = raw * 3.3 / 1024.0;
     if (std::abs(3.3 - voltage) < 1e-4)
         return tank_temp_min;
@@ -129,14 +138,18 @@ void Tank::close_all_valves()
 /* Tank2 implementation */
 
 float _Tank2::get_pressure() const {
-    // TODO
     static unsigned int low_gain_read = 0;
     static unsigned int high_gain_read = 0;
     static float pressure = 0;
 
     // analog read
+#ifdef DESKTOP
+    low_gain_read = g_fake_low_gain_read;
+    high_gain_read = g_fake_high_gain_read;
+#else
     low_gain_read = analogRead(pressure_sensor_low_pin);
     high_gain_read = analogRead(pressure_sensor_high_pin);
+#endif
 
     // convert to pressure [psia]
     if (high_gain_read < amp_threshold){
