@@ -50,10 +50,6 @@ const bit_array& Event::get_bit_array() const {
     return *field_data;
 }
 
-bit_array& Event::get_bit_array() {
-    return *field_data;
-}
-
 void Event::signal() {
     serialize();
 }
