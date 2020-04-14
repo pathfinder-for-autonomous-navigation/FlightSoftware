@@ -235,7 +235,6 @@ void MissionManager::dispatch_leader() {
 
 void MissionManager::dispatch_follower_close_approach() {
     docking_config_cmd_f.set(true);
-    enter_close_approach_ccno_f.set(control_cycle_count);
 
     if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::docking,
@@ -252,7 +251,6 @@ void MissionManager::dispatch_follower_close_approach() {
 
 void MissionManager::dispatch_leader_close_approach() {
     docking_config_cmd_f.set(true);
-    enter_close_approach_ccno_f.set(control_cycle_count);
 
     if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
         transition_to_state(mission_state_t::docking,
@@ -320,6 +318,9 @@ bool MissionManager::too_long_in_docking() const {
 void MissionManager::set(mission_state_t state) {
     if (state == mission_state_t::safehold) {
         safehold_begin_ccno = control_cycle_count;
+    }
+    if (state == mission_state_t::leader_close_approach || state == mission_state_t::follower_close_approach) {
+        enter_close_approach_ccno_f.set(control_cycle_count);
     }
     mission_state_f.set(static_cast<unsigned char>(state));
 }

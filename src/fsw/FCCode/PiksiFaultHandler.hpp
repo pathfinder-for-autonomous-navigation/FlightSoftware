@@ -4,6 +4,9 @@
 #include "FaultHandlerMachine.hpp"
 #include "piksi_mode_t.enum"
 
+TRACKED_CONSTANT_SC(unsigned int, DEFAULT_NO_CDGPS_MAX_WAIT, PAN::one_day_ccno);
+TRACKED_CONSTANT_SC(unsigned int, DEFAULT_CDGPS_DELAY_MAX_WAIT, PAN::one_day_ccno/8);
+
 class PiksiFaultHandler : public FaultHandlerMachine {
   public:
 
@@ -39,7 +42,7 @@ class PiksiFaultHandler : public FaultHandlerMachine {
     fault_response_t check_cdgps();
 
     // Statefields used by the fault handler to determine response.
-    ReadableStateField<unsigned int>* piksi_state_fp;
+    ReadableStateField<unsigned char>* piksi_state_fp;
     WritableStateField<unsigned char>* mission_state_fp;
     InternalStateField<unsigned int>* last_fix_ccno_fp;
     InternalStateField<unsigned int>* enter_close_appr_time_fp;

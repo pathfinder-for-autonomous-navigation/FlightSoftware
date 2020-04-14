@@ -12,7 +12,7 @@ class TestFixture {
     StateFieldRegistryMock registry;
 
     // Fields used to create fault handler
-    std::shared_ptr<ReadableStateField<unsigned int>> piksi_state_fp;
+    std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
     std::shared_ptr<WritableStateField<unsigned char>> mission_state_fp;
     std::shared_ptr<InternalStateField<unsigned int>> last_fix_ccno_fp;
     std::shared_ptr<InternalStateField<unsigned int>> enter_close_appr_ccno_fp;
@@ -31,7 +31,7 @@ class TestFixture {
     }
 
     TestFixture() : registry() {
-        piksi_state_fp = registry.create_readable_field<unsigned int>("piksi.state");
+        piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
         mission_state_fp = registry.create_writable_field<unsigned char>("pan.state");
         last_fix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_fix_ccno");
         enter_close_appr_ccno_fp = registry.create_internal_field<unsigned int>("pan.enter_close_approach_ccno");

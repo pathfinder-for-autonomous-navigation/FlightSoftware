@@ -38,7 +38,7 @@ class TestFixture {
                 piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
 
                 // initialize pointers to statefields      
-                currentState_fp = registry.find_readable_field_t<int>("piksi.state");
+                currentState_fp = registry.find_readable_field_t<char>("piksi.state");
                 pos_fp = registry.find_readable_field_t<d_vector_t>("piksi.pos");
                 vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");

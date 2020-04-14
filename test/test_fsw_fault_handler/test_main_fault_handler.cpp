@@ -23,7 +23,7 @@ class TestFixtureMainFH {
     std::shared_ptr<Fault> low_batt_fault_fp;
     std::shared_ptr<Fault> prop_failed_pressurize_fault_fp;
     std::shared_ptr<Fault> prop_overpressure_fault_fp;
-    std::shared_ptr<ReadableStateField<unsigned int>> piksi_state_fp;
+    std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
     std::shared_ptr<WritableStateField<unsigned char>> mission_state_fp;
     std::shared_ptr<InternalStateField<unsigned int>> last_fix_ccno_fp;
     std::shared_ptr<InternalStateField<unsigned int>> enter_close_appr_ccno_fp;
@@ -46,7 +46,7 @@ class TestFixtureMainFH {
         low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
         prop_failed_pressurize_fault_fp = registry.create_fault("prop.failed_pressurize", 1);
         prop_overpressure_fault_fp = registry.create_fault("prop.overpressured", 1);
-        piksi_state_fp = registry.create_readable_field<unsigned int>("piksi.state");
+        piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
         mission_state_fp = registry.create_writable_field<unsigned char>("pan.state");
         last_fix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_fix_ccno");
         enter_close_appr_ccno_fp = registry.create_internal_field<unsigned int>("pan.enter_close_approach_ccno");

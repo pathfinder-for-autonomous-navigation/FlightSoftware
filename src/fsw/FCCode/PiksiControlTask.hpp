@@ -29,7 +29,7 @@ public:
 
     // Serializer and StateField for currentState and
     // number of cycles since a good reading
-    ReadableStateField<unsigned int> current_state_f;
+    ReadableStateField<unsigned char> current_state_f;
     ReadableStateField<unsigned int> fix_error_count_f;
 
     //Serializer and StateField for time

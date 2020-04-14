@@ -11,11 +11,11 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r)
         add_writable_field(cdgps_delay_max_wait_f);
 
         // Initialize to 24 hours
-        no_cdgps_max_wait_f.set(PAN::one_day_ccno);
+        no_cdgps_max_wait_f.set(DEFAULT_NO_CDGPS_MAX_WAIT);
         // Initialize to 3 hours
-        cdgps_delay_max_wait_f.set(PAN::one_day_ccno/8);
+        cdgps_delay_max_wait_f.set(DEFAULT_CDGPS_DELAY_MAX_WAIT);
 
-        piksi_state_fp = find_readable_field<unsigned int>("piksi.state", __FILE__, __LINE__);
+        piksi_state_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
         mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
         last_fix_ccno_fp  = find_internal_field<unsigned int>("piksi.last_fix_ccno", __FILE__, __LINE__);
         enter_close_appr_time_fp = find_internal_field<unsigned int>("pan.enter_close_approach_ccno", __FILE__, __LINE__);
@@ -44,14 +44,14 @@ fault_response_t PiksiFaultHandler::check_cdgps() {
 
     // Recommend moving to standby if we haven't recieved any readings in X time since 
     // moving to close approach state
-    if (close_appr_time > last_fix_time && duration > no_cdgps_max_wait_f.get()) {
+    if (close_appr_time >= last_fix_time && duration > no_cdgps_max_wait_f.get()) {
         return fault_response_t::standby;
     }
     
     // If we have recieved CDGPS readings since entering close approach state,
     // then recommend moving to standby if we haven't recieved any more readings 
     // in Y time since the last reading in close approach
-    if (last_fix_time > close_appr_time && duration > cdgps_delay_max_wait_f.get()) {
+    if (last_fix_time >= close_appr_time && duration > cdgps_delay_max_wait_f.get()) {
         return fault_response_t::standby;
     }
 
