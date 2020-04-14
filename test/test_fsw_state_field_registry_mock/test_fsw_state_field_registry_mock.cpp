@@ -230,7 +230,7 @@ void test_create_event() {
 void test_create_fault() {
     StateFieldRegistryMock registry;
 
-    registry.create_fault("foo", 1, 3);
+    registry.create_fault("foo", 1);
     TEST_ASSERT_NOT_NULL(registry.find_fault("foo"));
     TEST_ASSERT_NOT_NULL(registry.find_fault_t("foo"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo"));
@@ -255,7 +255,7 @@ void test_clear() {
     registry.create_internal_field<unsigned int>("foo3");
     TEST_ASSERT_NOT_NULL(registry.find_internal_field("foo3"));
 
-    registry.create_fault("foo4", 1, 300);
+    registry.create_fault("foo4", 1);
     TEST_ASSERT_NOT_NULL(registry.find_fault("foo4"));
 
     registry.create_readable_field<signed int>("field1", -1, 10, 4);
