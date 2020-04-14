@@ -49,8 +49,9 @@ class AttitudeEstimator : public TimedControlTask<void> {
     const ReadableStateField<d_vector_t>* pos_vec_ecef_fp;
     //! Sun vector of this satellite, in the body frame.
     const ReadableStateField<lin::Vector3f>* ssa_vec_rd_fp;
-    //! Magnetic field vector of this satellite in the body frame.
-    const ReadableStateField<f_vector_t>* mag_vec_fp;
+    //! Magnetic field vectors of this satellite in the body frame.
+    const ReadableStateField<lin::Vector3f>* mag1_vec_fp;
+    const ReadableStateField<lin::Vector3f>* mag2_vec_fp;
 
     //kyle's gnc structs
     gnc::AttitudeEstimatorData data;

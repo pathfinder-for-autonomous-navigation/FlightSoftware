@@ -33,7 +33,8 @@ void setup() {
 void loop() {
   delay(1000);
   imu::update_sensors(
-      IMUMode::MAG2,  // IMU mode
+      IMUMAGMode::IMU_MAG_NORMAL,  // MAG1 mode
+      IMUMAGMode::IMU_MAG_NORMAL,  // MAG2 mode
       0.9f,           // MAG filter
       0.9f,           // GYR filter
       30.0f,          // GYR temp equilibrium

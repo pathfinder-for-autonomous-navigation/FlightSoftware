@@ -26,12 +26,16 @@ namespace imu {
 /** Magnetometer number one device. */
 extern dev::LIS2MDLTR mag1;
 
+/** Current magnetic field reading in Tesla in the body frame of the
+ *  spacecraft from magnetomter one. */
+extern lin::Vector3f mag1_rd;
+
 /** Magnetometer number two device. */
 extern dev::MMC34160PJ mag2;
 
 /** Current magnetic field reading in Tesla in the body frame of the
- *  spacecraft. */
-extern lin::Vector3f mag_rd;
+ *  spacecraft from magnetomter two. */
+extern lin::Vector3f mag2_rd;
 
 /** Gyroscope device. */
 extern dev::LSM6DSM gyr;
@@ -52,9 +56,9 @@ void setup();
  *  @return Updated IMU assembly mode.
  *  See the documentation on OneDrive for more details about how the system
  *  behaves according to the mode value. */
-unsigned char update_sensors(unsigned char mode, float mag_flt, float gyr_flt,
-    float gyr_temp_eq, float gyr_temp_flt, float gry_temp_k_p,
-    float gyr_temp_k_i, float gyr_temp_k_d);
+void update_sensors(unsigned char mag1_mode, unsigned char mag2_mode,
+    float mag_flt, float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
+    float gry_temp_k_p, float gyr_temp_k_i, float gyr_temp_k_d);
 
 }  // namespace imu
 }  // namespace adcs
