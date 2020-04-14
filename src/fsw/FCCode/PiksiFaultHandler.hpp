@@ -41,7 +41,7 @@ class PiksiFaultHandler : public FaultHandlerMachine {
     // Statefields used by the fault handler to determine response.
     ReadableStateField<unsigned int>* piksi_state_fp;
     WritableStateField<unsigned char>* mission_state_fp;
-    InternalStateField<unsigned int>* last_fix_time_ccno_fp;
+    InternalStateField<unsigned int>* last_fix_ccno_fp;
     InternalStateField<unsigned int>* enter_close_appr_time_fp;
 
     // Statefield for X time

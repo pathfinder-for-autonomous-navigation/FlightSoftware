@@ -17,7 +17,7 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r)
 
         piksi_state_fp = find_readable_field<unsigned int>("piksi.state", __FILE__, __LINE__);
         mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
-        last_fix_time_ccno_fp  = find_internal_field<unsigned int>("piksi.last_fix_time_ccno", __FILE__, __LINE__);
+        last_fix_ccno_fp  = find_internal_field<unsigned int>("piksi.last_fix_ccno", __FILE__, __LINE__);
         enter_close_appr_time_fp = find_internal_field<unsigned int>("pan.enter_close_approach_ccno", __FILE__, __LINE__);
     }
 
@@ -39,7 +39,7 @@ fault_response_t PiksiFaultHandler::execute() {
 
 fault_response_t PiksiFaultHandler::check_cdgps() {
     unsigned int close_appr_time = enter_close_appr_time_fp->get();
-    unsigned int last_fix_time = last_fix_time_ccno_fp->get();
+    unsigned int last_fix_time = last_fix_ccno_fp->get();
     unsigned int duration = TimedControlTaskBase::control_cycle_count-std::max(close_appr_time ,last_fix_time);
 
     // Recommend moving to standby if we haven't recieved any readings in X time since 

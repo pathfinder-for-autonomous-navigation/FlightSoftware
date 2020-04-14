@@ -40,7 +40,7 @@ public:
     InternalStateField<sys_time_t> last_fix_time_f;
 
     // Control cycle of last good Piksi reading
-    InternalStateField<unsigned int> last_fix_time_ccno_f;
+    InternalStateField<unsigned int> last_fix_ccno_f;
 
 protected:
     //Internal Data Containers

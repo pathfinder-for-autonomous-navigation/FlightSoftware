@@ -25,22 +25,12 @@ void ClockManager::execute() {
     control_cycle_count_f.set(control_cycle_count);
 }
 
-static sys_time_t ClockManager::cycle_to_systime(const unsigned int ccno) {
-    // Get the amount of time that has passed since starting the clock in microseconds
-    #ifdef DESKTOP
-    systime_duration_t duration = 
-        std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::microseconds(ccno*control_cycle_size));
-    #else
-    systime_duration_t duration = ccno*control_cycle_size;
-    #endif
-    
-    return initial_start_cycling_time+duration;
+unsigned int ClockManager::systime_to_cycle(sys_time_t time) {
+    systime_duration_t duration = time - initial_start_cycling_time;
+    return duration/control_cycle_size;
 }
 
-/**
- * @brief Convert a system time to the control cycle number
- */
-static unsigned int ClockManager::systime_to_cycle(const sys_time_t time) {
-    systime_duration_t duration = us_to_duration(time - initial_start_cycling_time);
-    return duration/control_cycle_size;
+sys_time_t ClockManager::cycle_to_systime(unsigned int ccno) {
+    systime_duration_t duration = ccno * control_cycle_size;
+    return initial_start_cycling_time+duration;
 }
