@@ -24,7 +24,8 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(
         adcs::mtr::min_moment, adcs::mtr::max_moment, 16)),
     ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", filter_sr),
-    imu_mode_f("adcs_cmd.imu_mode", Serializer<unsigned char>(4)),
+    mag1_mode_f("adcs_cmd.mag1_mode", Serializer<unsigned char>(1)),
+    mag2_mode_f("adcs_cmd.mag2_mode", Serializer<unsigned char>(1)),
     imu_mag_filter_f("adcs_cmd.imu_mag_filter", filter_sr),
     imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", filter_sr),
     imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", filter_sr),
@@ -45,7 +46,8 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     add_writable_field(mtr_cmd_f);
     add_writable_field(mtr_limit_f);
     add_writable_field(ssa_voltage_filter_f);
-    add_writable_field(imu_mode_f);
+    add_writable_field(mag1_mode_f);
+    add_writable_field(mag2_mode_f);
     add_writable_field(imu_mag_filter_f);
     add_writable_field(imu_gyr_filter_f);
     add_writable_field(imu_gyr_temp_filter_f);
@@ -98,7 +100,8 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     mtr_cmd_f.set({0,0,0});
     mtr_limit_f.set(adcs::mtr::max_moment);
     ssa_voltage_filter_f.set(1);
-    imu_mode_f.set(adcs::IMUMode::MAG1);
+    mag1_mode_f.set(adcs::IMU_MAG_NORMAL);
+    mag2_mode_f.set(adcs::IMU_MAG_NORMAL);
     imu_mag_filter_f.set(1);
     imu_gyr_filter_f.set(1);
     imu_gyr_temp_filter_f.set(1);
