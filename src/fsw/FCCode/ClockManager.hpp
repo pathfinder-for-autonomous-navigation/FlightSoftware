@@ -27,6 +27,16 @@ class ClockManager : public TimedControlTask<void> {
      */
     void execute() override;
 
+    /**
+     * @brief Convert a control cycle number to the system time
+     */
+    static sys_time_t cycle_to_systime(unsigned int ccno);
+
+    /**
+     * @brief Convert a system time to the control cycle number
+     */
+    static unsigned int systime_to_cycle(sys_time_t time);
+
    private:
     /**
      * @brief If no control cycle has ended yet, this is set to false.
@@ -43,6 +53,11 @@ class ClockManager : public TimedControlTask<void> {
      * @brief Keeps track of the current control cycle count.
      */
     ReadableStateField<unsigned int> control_cycle_count_f;
+
+    /**
+     * @brief The time at which we started cycling.
+     */
+    static sys_time_t initial_start_cycling_time;
 };
 
 #endif
