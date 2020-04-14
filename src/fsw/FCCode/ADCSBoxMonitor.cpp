@@ -34,11 +34,11 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_temp_flag("adcs_monitor.gyr_temp_flag", flag_sr),
     havt_bool_sr(),
     adcs_is_functional("adcs_monitor.functional", flag_sr),
-    adcs_functional_fault("adcs_monitor.functional_fault", 1, control_cycle_count),
-    wheel1_adc_fault("adcs_monitor.wheel1_fault", 1, control_cycle_count),
-    wheel2_adc_fault("adcs_monitor.wheel2_fault", 1, control_cycle_count),
-    wheel3_adc_fault("adcs_monitor.wheel3_fault", 1, control_cycle_count),
-    wheel_pot_fault("adcs_monitor.wheel_pot_fault", 1, control_cycle_count)
+    adcs_functional_fault("adcs_monitor.functional_fault", 1),
+    wheel1_adc_fault("adcs_monitor.wheel1_fault", 1),
+    wheel2_adc_fault("adcs_monitor.wheel2_fault", 1),
+    wheel3_adc_fault("adcs_monitor.wheel3_fault", 1),
+    wheel_pot_fault("adcs_monitor.wheel_pot_fault", 1)
     {
         // reserve memory
         ssa_voltages_f.reserve(adcs::ssa::num_sun_sensors);
@@ -145,10 +145,7 @@ void ADCSBoxMonitor::execute(){
     //ask the driver to fill in values
     adcs_is_functional.set(adcs_system.i2c_ping());
     
-    if(!adcs_is_functional.get())
-        adcs_functional_fault.signal();
-    else
-        adcs_functional_fault.unsignal();
+    adcs_functional_fault.evaluate(!adcs_is_functional.get());
     
 
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
@@ -182,17 +179,10 @@ void ADCSBoxMonitor::execute(){
         havt_read_vector[idx].set(havt_read.test(idx));
     }
     
-    if(havt_read_vector[adcs::havt::Index::RWA_ADC1].get() == false) wheel1_adc_fault.signal();
-    else wheel1_adc_fault.unsignal();
-
-    if(havt_read_vector[adcs::havt::Index::RWA_ADC2].get() == false) wheel2_adc_fault.signal();
-    else wheel2_adc_fault.unsignal();
-
-    if(havt_read_vector[adcs::havt::Index::RWA_ADC3].get() == false) wheel3_adc_fault.signal();
-    else wheel3_adc_fault.unsignal();
-
-    if(havt_read_vector[adcs::havt::Index::RWA_POT].get() == false) wheel_pot_fault.signal();
-    else wheel_pot_fault.unsignal();
+    wheel1_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC1].get() == false);
+    wheel2_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC2].get() == false);
+    wheel3_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC3].get() == false);
+    wheel_pot_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_POT].get() == false);
 
     mag1_vec_f.set(to_linvector(mag1_vec));
     mag2_vec_f.set(to_linvector(mag2_vec));

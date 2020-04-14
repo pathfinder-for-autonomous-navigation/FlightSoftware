@@ -51,9 +51,10 @@ class TestFixture {
         #ifdef DESKTOP
         TestFixture() : registry(), adcs(){
         #else
-        TestFixture() : registry(), adcs(Wire, Devices::ADCS::ADDRESS){
+        TestFixture() : registry(), adcs(Wire, Devices::ADCS::ADDRESS) 
+        {
         #endif
-
+            Fault::cc = &TimedControlTaskBase::control_cycle_count;
             adcs_box = std::make_unique<ADCSBoxMonitor>(registry, 0, adcs);  
 
             // initialize pointers to statefields
