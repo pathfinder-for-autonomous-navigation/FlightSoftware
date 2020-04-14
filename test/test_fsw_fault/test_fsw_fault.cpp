@@ -5,14 +5,18 @@
 #include <common/Fault.hpp>
 #include <unity.h>
 
+
+unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
+
 /**
  * @brief Test normal behavior of fault without overrides or supressings.
  */
 void test_fault_normal_behavior() {
-    unsigned int control_cycle_count = 0;
+    Fault::cc = &control_cycle_count;
+    control_cycle_count = 0;
 
     // Test constructor
-    Fault fault("fault", 5, control_cycle_count);
+    Fault fault("fault", 5);
 
     // Test that adding the fault to the registry works 
     StateFieldRegistry r;
@@ -63,8 +67,9 @@ void test_fault_normal_behavior() {
 
 void test_fault_overridden_behavior() {
     StateFieldRegistryMock r;
-    unsigned int control_cycle_count = 0;
-    Fault fault("fault", 1, control_cycle_count);
+    Fault::cc = &control_cycle_count;
+    control_cycle_count = 0;
+    Fault fault("fault", 1);
     r.add_fault(&fault);
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
@@ -100,8 +105,9 @@ void test_fault_overridden_behavior() {
 
 void test_process_commands(){
     StateFieldRegistryMock r;
-    unsigned int control_cycle_count = 0;
-    Fault fault("fault", 5, control_cycle_count);
+    Fault::cc = &control_cycle_count;
+    control_cycle_count = 0;
+    Fault fault("fault", 5);
     r.add_fault(&fault);
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
@@ -179,8 +185,9 @@ void test_process_commands(){
 
 void test_dynamic_persistence(){
     StateFieldRegistryMock r;
-    unsigned int control_cycle_count = 0;
-    Fault fault("fault", 5, control_cycle_count);
+    Fault::cc = &control_cycle_count;
+    control_cycle_count = 0;
+    Fault fault("fault", 5);
     r.add_fault(&fault);
 
     Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
@@ -228,11 +235,24 @@ void test_dynamic_persistence(){
     TEST_ASSERT_EQUAL(7, fault_fp->get_num_consecutive_signals());
 }
 
+// Test "evaluate", which calls signal if its argument is true and unsignal otherwise.
+void test_evaluate() {
+    Fault::cc = &control_cycle_count;
+    control_cycle_count = 0;
+    Fault fault("fault", 1);
+
+    fault.evaluate(true);
+    fault.evaluate(true);
+    TEST_ASSERT_TRUE(fault.is_faulted());
+
+    fault.evaluate(false);
+    TEST_ASSERT_FALSE(fault.is_faulted());
+}
+
 // Test the override and suppress functions that only exist in a unit-test context.
 void test_testfunctions() {
     StateFieldRegistryMock r;
-    unsigned int control_cycle_count = 0;
-    Fault fault("fault", 1, control_cycle_count);
+    Fault fault("fault", 1);
     r.add_fault(&fault);
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
     WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
@@ -253,6 +273,7 @@ void test_control_task(){
     RUN_TEST(test_fault_overridden_behavior);
     RUN_TEST(test_process_commands);
     RUN_TEST(test_dynamic_persistence);
+    RUN_TEST(test_evaluate);
     RUN_TEST(test_testfunctions);
 }
 

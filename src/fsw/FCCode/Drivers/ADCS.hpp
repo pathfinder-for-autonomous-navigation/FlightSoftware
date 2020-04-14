@@ -149,14 +149,20 @@ class ADCS : public I2CDevice {
     void set_ssa_voltage_filter(const float voltage_filter);
 
     /**
-     * @brief Set the inertial measurement unit mode
+     * @brief Set the magnetometer mode for MAG 1
      * 
-     * @param char represnting the imu mode
-     * 0x00 – Use magnetometer one (default) 
-     * 0x01 – Use magnetometer two 
-     * 0b1X – Calibrate the magnetometer in use (specified by the free bit) 
+     * @param char representing the magnetometer mode
+     * IMU_MAG_NORMAL, or IMU_MAG_CALIBRATE
      */
-    void set_imu_mode(const unsigned char mode);
+    void set_mag1_mode(const unsigned char mode);
+
+    /**
+     * @brief Set the magnetometer mode for MAG 2
+     * 
+     * @param char representing the magnetometer mode
+     * IMU_MAG_NORMAL, or IMU_MAG_CALIBRATE
+     */
+    void set_mag2_mode(const unsigned char mode);
 
     /**
      * @brief Set the inertial mesaurement unit magnetometer exponential filter
@@ -284,10 +290,15 @@ class ADCS : public I2CDevice {
     /**
      * @brief Get the imu magnetoruqer, gyroscope and gyroscope temperature reading
      * 
-     * @param mag_rd Pointer to output std::array of floats
+     * @param mag1_rd Pointer to output std::array of floats for MAG1
      * Three unsigned shorts encode the magnetic field measurement in the 
      * body frame of the spacecraft on the range 
-     * imu::min_rd_mag to imu::max_rd_mag in Tesla
+     * imu::min_mag1_rd_mag to imu::max_mag1_rd_mag in Tesla
+     * 
+     * @param mag2_rd Pointer to output std::array of floats for MAG2
+     * Three unsigned shorts encode the magnetic field measurement in the 
+     * body frame of the spacecraft on the range 
+     * imu::min_mag2_rd_mag to imu::max_mag2_rd_mag in Tesla
      * 
      * @param gyr_rd Pointer to output std::array of floats
      * Three unsigned shorts encode the angular rate measurement in the 
@@ -298,7 +309,10 @@ class ADCS : public I2CDevice {
      * One unsigned short encodes the gyroscope temperature on 
      * the range imu::min_rd_temp imu::max_rd_temp Celcius
      */
-    void get_imu(std::array<float,3>* mag_rd,std::array<float,3>* gyr_rd,float* gyr_temp_rd);
+    void get_imu(std::array<float,3>* mag1_rd, 
+                 std::array<float,3>* mag2_rd, 
+                 std::array<float,3>* gyr_rd,
+                 float* gyr_temp_rd);
     
     /**
      * @brief Get the adcs havt table bitset
