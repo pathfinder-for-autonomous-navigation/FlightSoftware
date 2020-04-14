@@ -15,7 +15,7 @@ class TestFixture {
         StateFieldRegistryMock registry;
 
         // pointers to statefields for easy access
-        ReadableStateField<int>* currentState_fp;
+        ReadableStateField<char>* currentState_fp;
         ReadableStateField<d_vector_t>* pos_fp;
         ReadableStateField<d_vector_t>* vel_fp;
         ReadableStateField<d_vector_t>* baseline_fp;
