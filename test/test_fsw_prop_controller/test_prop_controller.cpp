@@ -314,18 +314,24 @@ void test_firing_to_idle()
     tf.check_state(prop_state_t::idle);
 }
 
+// These two tests are manually checked, so the for loop is conditionally compiled
+// in order to not lag everything
+
 void test_temp_sensor_logic()
 {
     Tank1.fake_tank1_temp_sensor_read = 1;
+#ifdef _PRINT_SENSORS
     for (unsigned int i = 0; i < 1023; i++)
     {
         Tank1.fake_tank1_temp_sensor_read = i;
         std::printf("Tank1 temp read %u --> %d\n", i, Tank1.get_temp());
     }
+#endif
 }
 
 void test_pressure_sensor_logic()
 {
+#ifdef _PRINT_SENSORS
     for (unsigned int low = 0; low < 1023; low++)
     {
         Tank2.fake_tank2_pressure_low_read = low;
@@ -336,6 +342,7 @@ void test_pressure_sensor_logic()
         }
         std::printf("\n");
     }
+#endif
 }
 
 int test_prop_controller()
