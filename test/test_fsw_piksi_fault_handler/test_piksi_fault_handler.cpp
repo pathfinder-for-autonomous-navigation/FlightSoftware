@@ -11,11 +11,13 @@ class TestFixture {
   public:
     StateFieldRegistryMock registry;
 
+    // Field used to create fault handler
     std::shared_ptr<ReadableStateField<unsigned int>> piksi_state_fp;
     std::shared_ptr<WritableStateField<unsigned char>> mission_state_fp;
     std::shared_ptr<InternalStateField<unsigned int>> last_fix_time_ccno_fp;
     std::shared_ptr<InternalStateField<unsigned int>> enter_close_appr_ccno_fp;
 
+    // Fields created by the fault handler
     WritableStateField<unsigned int>* no_cdgps_max_wait_fp;
     WritableStateField<unsigned int>* cdgps_delay_max_wait_fp;
 
@@ -78,28 +80,27 @@ void test_dead_piksi() {
 void test_no_cdgps() {
     TestFixture tf;
 
-    // The maximum time to wait for a gps reading after entering close approach.
+    // The maximum time to wait for a GPS reading after entering close approach.
     // Default value is 24 hours.
     unsigned int no_gps_max_wait = tf.no_cdgps_max_wait_fp->get();
 
     // Get a GPS reading in manual state
     tf.last_fix_time_ccno_fp->set(cc_count);
 
-    // Wait a control cycle and move to the close approach state
-    cc_count+=1;
+    // Wait a few control cycles and move to the close approach state
+    cc_count+=30;
     tf.set_mission_state(mission_state_t::leader_close_approach);
     tf.enter_close_appr_ccno_fp->set(cc_count);
 
-    // Let a the maximum wait time pass since the last GPS reading
-    // 24 hrs is the default maximum wait time
-    cc_count = no_gps_max_wait;
+    // Let a the maximum wait time pass since the moving to close approach
+    cc_count += no_gps_max_wait;
 
     // Check that no fault response is returned by the fault handler
     fault_response_t response = tf.pfh->execute();
     TEST_ASSERT_EQUAL(fault_response_t::none, response);
 
-    // Let a little more than the maximumm wait time pass since the last fix GPS reading
-    cc_count = no_gps_max_wait+1;
+    // Let a little more than the maximum wait time pass since moving to close approach
+    cc_count += 1;
 
     // Check that the fault handler recommends moving to standby
     response = tf.pfh->execute();
@@ -128,7 +129,7 @@ void test_cdgps_delay() {
     fault_response_t response = tf.pfh->execute();
     TEST_ASSERT_EQUAL(fault_response_t::none, response);
 
-    // Let a little more than 3 hours pass since the last GPS reading
+    // Let a little more than the maximum wait time pass since the last GPS reading
     cc_count += 1;
 
     // Check that the fault handler recommends moving to standby

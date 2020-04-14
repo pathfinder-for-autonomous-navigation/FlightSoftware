@@ -40,12 +40,20 @@ fault_response_t PiksiFaultHandler::execute() {
 fault_response_t PiksiFaultHandler::check_cdgps() {
     unsigned int close_appr_time = enter_close_appr_time_fp->get();
     unsigned int last_fix_time = last_fix_time_ccno_fp->get();
-    unsigned int duration = TimedControlTaskBase::control_cycle_count-last_fix_time;
+    unsigned int duration = TimedControlTaskBase::control_cycle_count-std::max(close_appr_time ,last_fix_time);
+
+    // Recommend moving to standby if we haven't recieved any readings in X time since 
+    // moving to close approach state
     if (close_appr_time > last_fix_time && duration > no_cdgps_max_wait_f.get()) {
         return fault_response_t::standby;
     }
-    else if (close_appr_time < last_fix_time && duration > cdgps_delay_max_wait_f.get()) {
+    
+    // If we have recieved CDGPS readings since entering close approach state,
+    // then recommend moving to standby if we haven't recieved any more readings 
+    // in Y time since the last reading in close approach
+    if (last_fix_time > close_appr_time && duration > cdgps_delay_max_wait_f.get()) {
         return fault_response_t::standby;
     }
+
     return fault_response_t::none;
 }

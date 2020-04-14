@@ -27,7 +27,7 @@ class PiksiFaultHandler : public FaultHandlerMachine {
      * and transition to the standby if: 
      *  - The satellite has entered a close approach state but 
      *    has't recieved CDGPS readings in X time (X is a 
-     *    ground-configurable wait initially set to 3 hours).
+     *    ground-configurable wait initially set to 24 hours).
      *  - The satellite had previously recieved CDGPS 
      *    readings during close approach, but then is still in 
      *    a close approach and hasn't received CDGPS in the 
