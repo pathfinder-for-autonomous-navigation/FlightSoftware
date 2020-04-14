@@ -24,21 +24,22 @@ void digitalWrite(uint8_t pin, uint8_t val){}
 
 /* Constructors */
 
-Tank::Tank(size_t _num_valves) :
-num_valves(_num_valves) {}
+Tank::Tank() {}
 
-_Tank1::_Tank1() : Tank(2) {
-    valve_pins[0] = 27; // Main tank 1 to tank 2 valve
-    valve_pins[1] = 28; // Backup tank 1 to tank 2 valve
-    temp_sensor_pin = 21;
+_Tank1::_Tank1() : Tank() {
+    num_valves = 2;
+    valve_pins[0] = valve_primary_pin; // Main tank 1 to tank 2 valve
+    valve_pins[1] = valve_backup_pin; // Backup tank 1 to tank 2 valve
+    temp_sensor_pin = tank1_temp_sensor_pin;
 }
 
-_Tank2::_Tank2() : Tank(4) {
-    valve_pins[0] = 3; // Nozzle valve
-    valve_pins[1] = 4; // Nozzle valve
-    valve_pins[2] = 5; // Nozzle valve
-    valve_pins[3] = 6; // Nozzle valve
-    temp_sensor_pin = 22;
+_Tank2::_Tank2() : Tank() {
+    num_valves = 4;
+    valve_pins[0] = valve1_pin; // Nozzle valve
+    valve_pins[1] = valve2_pin; // Nozzle valve
+    valve_pins[2] = valve3_pin; // Nozzle valve
+    valve_pins[3] = valve4_pin; // Nozzle valve
+    temp_sensor_pin = tank2_temp_sensor_pin;
 }
 
 /** Initialize static variables */
@@ -175,8 +176,7 @@ void _PropulsionSystem::disable() {
 }
 
 bool _PropulsionSystem::is_functional() { 
-    // TODO: change this later maybe
-    return true;
+    return digitalRead(DCDC::SpikeDockDCDC_EN) == HIGH;
 }
 
 bool _PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_t d)
@@ -226,7 +226,7 @@ void _PropulsionSystem::close_valve(Tank& tank, size_t valve_idx)
         return;
     noInterrupts();
     {
-        digitalWrite(tank.valve_pins[valve_idx], 0);
+        digitalWrite(tank.valve_pins[valve_idx], LOW);
         tank.is_valve_opened[valve_idx] = 0;
     }
     interrupts();
