@@ -9,8 +9,8 @@ ClockManager::ClockManager(StateFieldRegistry &registry,
 {
     add_readable_field(control_cycle_count_f);
     Event::ccno = &control_cycle_count_f;
-    initial_start_cycling_time = get_system_time();
     Fault::cc = &TimedControlTaskBase::control_cycle_count;
+    initial_start_cycling_time = get_system_time();
 }
 
 void ClockManager::execute() {
