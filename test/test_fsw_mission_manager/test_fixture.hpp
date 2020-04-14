@@ -44,6 +44,9 @@ class TestFixture {
     std::shared_ptr<Fault> failed_pressurize_fp;
     std::shared_ptr<Fault> overpressured_fp;
 
+    std::shared_ptr<ReadableStateField<unsigned int>> piksi_state_fp;
+    std::shared_ptr<InternalStateField<unsigned int>> last_fix_ccno_fp;
+
     std::unique_ptr<MissionManager> mission_manager;
 
     // Output state fields from mission manager
