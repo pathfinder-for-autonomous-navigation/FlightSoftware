@@ -5,15 +5,19 @@
 PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r) 
     : FaultHandlerMachine(r), 
     no_cdgps_max_wait_f("piksi_fh.no_cdpgs_max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
-    cdgps_delay_max_wait_f("piksi_fh.cdpgs_delay_max_wait", Serializer<unsigned int>(PAN::one_day_ccno))
+    cdgps_delay_max_wait_f("piksi_fh.cdpgs_delay_max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
+    fault_handler_enabled_f("piksi_fh.enabled", Serializer<bool>())
     {
         add_writable_field(no_cdgps_max_wait_f);
         add_writable_field(cdgps_delay_max_wait_f);
+        add_writable_field(fault_handler_enabled_f);
 
         // Initialize to 24 hours
         no_cdgps_max_wait_f.set(default_no_cdgps_max_wait);
         // Initialize to 3 hours
         cdgps_delay_max_wait_f.set(default_cdgps_delay_max_wait);
+        // Default enable to true
+        fault_handler_enabled_f.set(true);
 
         piksi_state_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
         mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
@@ -22,6 +26,8 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r)
     }
 
 fault_response_t PiksiFaultHandler::execute() {
+    if (!fault_handler_enabled_f.get()) return fault_response_t::none;
+
     piksi_mode_t piksi_state = static_cast<piksi_mode_t>(piksi_state_fp->get());
     mission_state_t mission_state = static_cast<mission_state_t>(mission_state_fp->get());
 

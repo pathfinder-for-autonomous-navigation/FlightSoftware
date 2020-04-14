@@ -1616,6 +1616,12 @@
             "type": "unsigned int",
             "writable": true
         },
+        "piksi_fh.enabled": {
+            "bitsize": 1,
+            "flow_id": 36,
+            "type": "bool",
+            "writable": true
+        },
         "piksi_fh.no_cdpgs_max_wait": {
             "bitsize": 20,
             "flow_id": 36,
@@ -2542,7 +2548,8 @@
             "active": false,
             "fields": [
                 "piksi_fh.no_cdpgs_max_wait",
-                "piksi_fh.cdpgs_delay_max_wait"
+                "piksi_fh.cdpgs_delay_max_wait",
+                "piksi_fh.enabled"
             ],
             "id": 36,
             "priority": 35

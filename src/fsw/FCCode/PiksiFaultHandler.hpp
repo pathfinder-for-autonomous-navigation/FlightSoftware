@@ -51,6 +51,8 @@ class PiksiFaultHandler : public FaultHandlerMachine {
     WritableStateField<unsigned int> no_cdgps_max_wait_f;
     // Statefield for Y time
     WritableStateField<unsigned int> cdgps_delay_max_wait_f;
+    // Flag that can be used by HOOTL/HITL to disable/enable fault handling
+    WritableStateField<bool> fault_handler_enabled_f;
 
 };
 
