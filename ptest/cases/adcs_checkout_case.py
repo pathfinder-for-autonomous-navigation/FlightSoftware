@@ -1,6 +1,7 @@
 # ADCSCheckoutCase. Verifies the functionality of the ADCS.
 from .base import SingleSatOnlyCase, TestCaseFailure
 import math
+import time
 
 def mag_of(vals):
     '''
@@ -25,6 +26,11 @@ def sum_of_differentials(lists_of_vals):
 
     return sum(total_diff)
     
+def list_of_avgs(lists_of_vals):
+    sum_of_each = [sum(x) for x in lists_of_vals]
+    len_of_each = len(lists_of_vals[0])
+    return [sum_of_each[i]/len_of_each for y in lists_of_vals]    
+
 class ADCSCheckoutCase(SingleSatOnlyCase):
 
     @property
@@ -33,6 +39,15 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         for x in range(self.havt_length):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
+
+    def assert_vec_within(self, expected, actual, delta):
+        assert(len(expected) == len(actual))
+        length = len(expected)
+
+        for i in range(length):
+            self.soft_assert(abs(expected[i]-actual[i]) < delta, 
+                f"Element #{i}, Expected {expected[i]}, got {actual[i]}. Diff exceed delta of {delta}.")
+
 
     def print_havt_read(self):
         binary_list = [1 if x else 0 for x in self.havt_read]
@@ -227,6 +242,34 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.ws("adcs_cmd.rwa_speed_cmd", [10, 10, 10])
         self.print_rs("adcs_monitor.rwa_speed_rd")
+
+        # perform 10 readings.
+        list_of_pot_rds = []
+        for i in range(10):
+            list_of_pot_rds += [self.rs("adcs_monitor.rwa_speed_rd")]
+
+        # check readings changed over time
+        self.soft_assert(sum_of_differentials(list_of_pot_rds) > 0,
+            "Pot readings did not vary across readings.")        
+
+        reading = self.rs("adcs_monitor.rwa_speed_rd")
+        self.assert_vec_within([10, 10, 10], reading, 10)
+
+        wheel_speed_tests = [
+            [50,50,50],
+            [100,200,300],
+            [500,500,500],
+            [680,680,680], 
+            [-1000,-100,-10]
+        ]
+
+        for cmd_array in wheel_speed_tests:
+            self.ws("adcs_cmd.rwa_speed_cmd", cmd_array)
+            time.sleep(.1)
+            reading = self.rs("adcs_monitor.rwa_speed_rd")
+            self.assert_vec_within(cmd_array, reading, 10)
+
+        self.ws("cycle.auto", False)
         self.print_header("WHEEL CHECKOUT COMPLETE")
 
     def run_case_singlesat(self):
@@ -260,8 +303,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.gyr_checkout()
             
         rwa_pot_num = self.havt_devices.get_by_name("RWA_POT")
-        if self.rs(f"adcs_monitor.havt_device{rwa_pot_num}"):
-            self.wheel_checkout()
+        # if self.rs(f"adcs_monitor.havt_device{rwa_pot_num}"):
+        self.wheel_checkout()
 
         # TODO FURTHER CHECKOUTS
 
