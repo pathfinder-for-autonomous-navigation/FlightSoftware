@@ -241,11 +241,13 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.ws("cycle.auto", True)
 
         self.ws("adcs_cmd.rwa_speed_cmd", [10, 10, 10])
+        time.sleep(.2)
         self.print_rs("adcs_monitor.rwa_speed_rd")
 
         # perform 10 readings.
         list_of_pot_rds = []
         for i in range(10):
+            self.print_rs("pan.cycle_no")
             list_of_pot_rds += [self.rs("adcs_monitor.rwa_speed_rd")]
 
         # check readings changed over time
@@ -265,9 +267,10 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         for cmd_array in wheel_speed_tests:
             self.ws("adcs_cmd.rwa_speed_cmd", cmd_array)
-            time.sleep(.1)
+            time.sleep(1)
             reading = self.rs("adcs_monitor.rwa_speed_rd")
             self.assert_vec_within(cmd_array, reading, 10)
+            time.sleep(1)
 
         self.ws("cycle.auto", False)
         self.print_header("WHEEL CHECKOUT COMPLETE")
