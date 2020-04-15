@@ -260,15 +260,17 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         wheel_speed_tests = [
             [50,50,50],
             [100,200,300],
-            [500,500,500],
-            [680,680,680], 
-            [-1000,-100,-10]
+            [100,50,10]
+            # [500,500,500],
+            # [680,680,680], 
+            # [-1000,-100,-10]
         ]
 
         for cmd_array in wheel_speed_tests:
+            self.print_rs("gomspace.vbatt")
             self.ws("adcs_cmd.rwa_speed_cmd", cmd_array)
             time.sleep(1)
-            reading = self.rs("adcs_monitor.rwa_speed_rd")
+            reading = self.print_rs("adcs_monitor.rwa_speed_rd")
             self.assert_vec_within(cmd_array, reading, 10)
             time.sleep(1)
 
