@@ -7,6 +7,7 @@ from cmd import Cmd
 import timeit
 import tinydb
 from .plotter import PlotterClient
+from . radio_session import RadioSession
 
 class StateCmdPrompt(Cmd):
     '''
@@ -157,7 +158,14 @@ class StateCmdPrompt(Cmd):
             print('parsetelem takes no args')
             return
         else:
-            print(self.devices['FlightControllerRadio'].parsetelem())
+            if isinstance( self.cmded_device, RadioSession):
+                start_time = timeit.default_timer()
+                print(self.cmded_device.parsetelem())
+                elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
+
+                print(f"\t\t\t\t\t\t(Completed in {elapsed_time} us)")
+            else:
+                print("Current commanded device is not a RadioSession.")
 
     def do_dbtelem(self, args):
         '''
@@ -168,12 +176,16 @@ class StateCmdPrompt(Cmd):
             print('dbtelem takes no args')
             return
         else:
-            start_time = timeit.default_timer()
-            successful_upload = self.devices['FlightControllerRadio'].dbtelem()
-            elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
+            if isinstance( self.cmded_device, RadioSession):
+                start_time = timeit.default_timer()
+                successful_upload = self.cmded_device.dbtelem()
+                elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
 
-            write_succeeded = "Succeeded" if successful_upload else "Failed"
-            print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+                write_succeeded = "Succeeded" if successful_upload else "Failed"
+                print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+            else:
+                print("Current commanded device is not a RadioSession.")
+            
 
     def do_wms(self, args):
         '''

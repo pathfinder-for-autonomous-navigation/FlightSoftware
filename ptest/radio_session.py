@@ -62,10 +62,8 @@ class RadioSession(object):
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
         self.telem_save_dir = simulation_run_dir
 
-        # Get keys for connecting to email account and elasticsearch server
+        # Get keys for connecting to elasticsearch server
         try:
-            with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../ptest/configs/radio_keys.json')))as radio_keys_config_file:
-                radio_keys_config = json.load(radio_keys_config_file)
             with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../ptest/configs/server_keys.json')))as server_keys_config_file:
                 server_keys_config = json.load(server_keys_config_file)
         except json.JSONDecodeError:
@@ -157,7 +155,6 @@ class RadioSession(object):
             print(jsonObj)
             return False
         failed = False
-        print(jsonObj)
         for field in jsonObj:
             value = jsonObj[field]
             data=json.dumps({
