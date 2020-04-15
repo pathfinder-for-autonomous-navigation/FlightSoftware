@@ -216,10 +216,10 @@ void GomspaceController::execute() {
             gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
         }
     }
-    
+
     // Set PPT mode command
     if (pptmode_f.get()!=ppt_mode_cmd_f.get()){
-        gs.set_pv_auto(ppt_mode_cmd_f.get());
+        gs.set_ppt_mode(ppt_mode_cmd_f.get());
     }
 
     // Turn on/off the heater command
@@ -246,7 +246,7 @@ void GomspaceController::execute() {
         gs_reboot_cmd_f.set(false);
     }
 
-    //set statefields to respective data from hk struct 
+    //set data-in statefields to respective data from hk struct 
     vboost1_f.set(gs.hk->vboost[0]);
     vboost2_f.set(gs.hk->vboost[1]);
     vboost3_f.set(gs.hk->vboost[2]);
