@@ -225,7 +225,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.ws("cycle.auto", True)
 
-        self.ws("adcs_cmd.rwa_")
+        self.ws("adcs_cmd.rwa_speed_cmd", [10, 10, 10])
+        self.print_rs("adcs_monitor.rwa_speed_rd")
         self.print_header("WHEEL CHECKOUT COMPLETE")
 
     def run_case_singlesat(self):
