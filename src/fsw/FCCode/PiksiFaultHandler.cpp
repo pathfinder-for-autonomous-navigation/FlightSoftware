@@ -2,6 +2,10 @@
 #include "constants.hpp"
 #include <iostream>
 
+// Declare static storage for constexpr variables
+const constexpr unsigned int PiksiFaultHandler::default_no_cdgps_max_wait;
+const constexpr unsigned int PiksiFaultHandler::default_cdgps_delay_max_wait;
+
 PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r) 
     : FaultHandlerMachine(r), 
     no_cdgps_max_wait_f("piksi_fh.no_cdpgs_max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
@@ -57,7 +61,7 @@ fault_response_t PiksiFaultHandler::check_cdgps() {
     // If we have recieved CDGPS readings since entering close approach state,
     // then recommend moving to standby if we haven't recieved any more readings 
     // in Y time since the last reading in close approach
-    if (last_fix_time >= close_appr_time && duration > cdgps_delay_max_wait_f.get()) {
+    if (last_fix_time > close_appr_time && duration > cdgps_delay_max_wait_f.get()) {
         return fault_response_t::standby;
     }
 

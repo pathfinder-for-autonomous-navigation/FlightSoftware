@@ -4,11 +4,11 @@
 #include "FaultHandlerMachine.hpp"
 #include "piksi_mode_t.enum"
 
-TRACKED_CONSTANT_SC(unsigned int, default_no_cdgps_max_wait, PAN::one_day_ccno);
-TRACKED_CONSTANT_SC(unsigned int, default_cdgps_delay_max_wait, PAN::one_day_ccno/8);
-
 class PiksiFaultHandler : public FaultHandlerMachine {
   public:
+    //! Default maximum wait times
+    TRACKED_CONSTANT_SC(unsigned int, default_no_cdgps_max_wait, PAN::one_day_ccno);
+    TRACKED_CONSTANT_SC(unsigned int, default_cdgps_delay_max_wait, PAN::one_day_ccno/8);
 
     /**
      * @brief Construct a new Piksi Fault Handler.
