@@ -341,7 +341,7 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(2, tf.vboost2_fp->get());
     TEST_ASSERT_EQUAL(3, tf.vboost3_fp->get());
 
-    tf.ppt_mode_cmd_fp->set(2); // 1 is MPPT
+    tf.ppt_mode_cmd_fp->set(2); // 2 is Fixed PPT
     tf.gs_controller->execute();
     
     tf.gs_controller->execute(); // a second execute is required to 
