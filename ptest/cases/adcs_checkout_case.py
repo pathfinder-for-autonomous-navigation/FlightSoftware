@@ -218,6 +218,15 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.print_header("GYR CHECKOUT COMPLETE")
 
+    def wheel_checkout(self):
+        self.print_header("BEGIN WHEEL CHECKOUT")
+        
+        self.logger.put("Checking RWA POT functionality:")
+
+        self.ws("cycle.auto", True)
+        
+        self.print_header("WHEEL CHECKOUT COMPLETE")
+
     def run_case_singlesat(self):
         
         self.print_rs("adcs_monitor.functional")
@@ -247,7 +256,10 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # Run checks on GYR if GYR is up.
         if self.rs("adcs_monitor.havt_device0"):
             self.gyr_checkout()
-
+            
+        rwa_pot_num = self.havt_devices.get_by_name("RWA_POT")
+        if self.rs(f"adcs_monitor.havt_device{rwa_pot_num}"):
+            self.wheel_checkout()
 
         # TODO FURTHER CHECKOUTS
 
