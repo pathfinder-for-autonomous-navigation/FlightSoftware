@@ -210,11 +210,13 @@ void GomspaceController::execute() {
         power_cycle_outputs();
     }
 
-    // Set power voltage command
-    if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
-        gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
+    if(pptmode_f.get() == 2){ // 2 is fixed ppt
+        // Set power voltage command
+        if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
+            gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
+        }
     }
-
+    
     // Set PPT mode command
     if (pptmode_f.get()!=ppt_mode_cmd_f.get()){
         gs.set_pv_auto(ppt_mode_cmd_f.get());
