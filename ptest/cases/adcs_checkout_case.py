@@ -224,7 +224,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.logger.put("Checking RWA POT functionality:")
 
         self.ws("cycle.auto", True)
-        
+
+        self.ws("adcs_cmd.rwa_")
         self.print_header("WHEEL CHECKOUT COMPLETE")
 
     def run_case_singlesat(self):
