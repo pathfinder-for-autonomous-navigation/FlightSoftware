@@ -87,6 +87,7 @@ public:
         static _PropulsionSystem Instance;
         return Instance;
     }
+// private:
     /**
      * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
      * @return True if successfully setup both tank1 and tank2 and all pins
@@ -181,7 +182,7 @@ public:
  */
 class Tank {
 public:
-    Tank();
+    Tank(size_t num_pins);
 
     /**
      * @brief (Analog) reads the temperature sensor for this tank and 
@@ -233,9 +234,6 @@ public:
         static _Tank1 Instance;
         return  Instance;
     }
-    TRACKED_CONSTANT_SC(uint8_t, valve_primary_pin, 27);
-    TRACKED_CONSTANT_SC(uint8_t, valve_backup_pin, 28);
-    TRACKED_CONSTANT_SC(uint8_t, tank1_temp_sensor_pin, 21);
 };
 
 #define Tank2 Devices::_Tank2::Instance()
@@ -260,16 +258,6 @@ public:
      */
     unsigned int get_schedule_at(size_t valve_num) const;
 
-    TRACKED_CONSTANT_SC(uint8_t, valve1_pin, 3);
-    TRACKED_CONSTANT_SC(uint8_t, valve2_pin, 4);
-    TRACKED_CONSTANT_SC(uint8_t, valve3_pin, 5);
-    TRACKED_CONSTANT_SC(uint8_t, valve4_pin, 6);
-
-    TRACKED_CONSTANT_SC(uint8_t, tank2_temp_sensor_pin, 22);
-
-    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 20);
-    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
-
 #ifndef DESKTOP
 private:
 #endif
@@ -282,6 +270,9 @@ private:
     // The minimum duration to assign to a schedule
     // Any value below this value will be ignored by tank2
     TRACKED_CONSTANT_SC(unsigned int, min_firing_duration_ms, 10);
+
+    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 20);
+    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
