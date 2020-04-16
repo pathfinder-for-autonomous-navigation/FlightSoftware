@@ -1587,9 +1587,9 @@
             "writable": false
         },
         "piksi.state": {
-            "bitsize": 3,
+            "bitsize": 4,
             "flow_id": 19,
-            "max": 4,
+            "max": 10,
             "min": 0,
             "type": "unsigned char",
             "writable": false
