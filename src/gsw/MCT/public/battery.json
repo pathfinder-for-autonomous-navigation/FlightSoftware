@@ -1,1514 +1,1467 @@
 {
-    "name": "Battery",
-    "key": "gomspace",
-    "measurements": [
-        {
-          "name": "Battery Threshold",
-          "key": "gomspace.batt_threshold",
-          "values": [
-            {
-                "key": "value",
-                "name": "Threshold value",
-                "bitsize": 10,
-                "flow_id": 26,
-                "max": 9000,
-                "min": 5000,
-                "type": "unsigned int",
-                "writable": true,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "utc",
-                "source": "timestamp",
-                "name": "Timestamp",
-                "format": "utc",
-                "hints": {
-                    "domain": 1
-                }
-            }
-          ]
-
-        },
-        {
-          "name": "Mode for battery",
-          "key": "gomspace.battmode",
-          "values": [
-            {
-                "key": "value",
-                "name": "[0 = initial, 1 = undervoltage,2 = safemode, 3 = nominal, 4=full]",
-                "bitsize": 3,
-                "flow_id": 11,
-                "max": 4,
-                "min": 0,
-                "type": "unsigned char",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "utc",
-                "source": "timestamp",
-                "name": "Timestamp",
-                "format": "utc",
-                "hints": {
-                    "domain": 1
-                }
-            }
-          ]
-
-        },
-        {
-          "name": "Cause of Last EPS reset",
-          "key": "gomspace.bootcause",
-          "values": [
-            {
-            "key": "value",
-            "name": "Cause",
-            "bitsize": 4,
-            "flow_id": 11,
-            "max": 8,
-            "min": 0,
-            "type": "unsigned char",
-            "writable": false,
-            "hints": {
-                "range": 1
-            }
-          },
-          {
-              "key": "utc",
-              "source": "timestamp",
-              "name": "Timestamp",
-              "format": "utc",
-              "hints": {
-                  "domain": 1
-              }
-          }
-          ]
-
-        },
-        {
-          "name": "Number of EPS reboots",
-          "key": "gomspace.counter_boot",
-          "values": [
-            {
-                "key": "value",
-                "name": "number of reboots",
-                "bitsize": 32,
-                "flow_id": 11,
-                "max": 4294967295,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "utc",
-                "source": "timestamp",
-                "name": "Timestamp",
-                "format": "utc",
-                "hints": {
-                    "domain": 1
-                }
-            }
-          ]
-
-        },
-        {
-          "name": "Number of WDT I2C reboots",
-          "key": "gomspace.counter_wdt_i2c",
-          "values": [
-            {
-                "key": "value",
-                "name": "number of reboots",
-                "bitsize": 32,
-                "flow_id": 29,
-                "max": 4294967295,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "utc",
-                "source": "timestamp",
-                "name": "Timestamp",
-                "format": "utc",
-                "hints": {
-                    "domain": 1
-                }
-            }
-          ]
-
-        },
-        {
-          "name": "Current In",
-          "key": "gomspace.curin",
-          "values": [
-            {
-                "key": "output1",
-                "name": "current in for output 1",
-                "bitsize": 10,
-                "flow_id": 9,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "output2",
-                "name": "current in for output 2",
-                "bitsize": 10,
-                "flow_id": 9,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "output3",
-                "name": "current in for output 3",
-                "bitsize": 10,
-                "flow_id": 9,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "utc",
-                "source": "timestamp",
-                "name": "Timestamp",
-                "format": "utc",
-                "hints": {
-                    "domain": 1
-                }
-            }
-          ]
-
-        },
-        {
-          "name": "Current Out",
-          "key": "gomspace.curouy",
-          "values": [
-            {
-                "key": "output1",
-                "name": "current out for output 1",
-                "bitsize": 10,
-                "flow_id": 10,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "output2",
-                "name": "current out for output 2",
-                "bitsize": 10,
-                "flow_id": 10,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "output3",
-                "name": "current out for output 3",
-                "bitsize": 10,
-                "flow_id": 10,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "output4",
-                "name": "current out for output 4",
-                "bitsize": 10,
-                "flow_id": 10,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "output5",
-                "name": "current out for output 5",
-                "bitsize": 10,
-                "flow_id": 10,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "output6",
-                "name": "current out for output 6",
-                "bitsize": 10,
-                "flow_id": 10,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "utc",
-                "source": "timestamp",
-                "name": "Timestamp",
-                "format": "utc",
-                "hints": {
-                    "domain": 1
-                }
-            }
-          ]
-
-        },
-        {
-          "name": "Current from Boost Converters",
-          "key": "gomspace.cursun",
-          "values": [
-            {
-                "key": "value",
-                "name": "current",
-                "bitsize": 10,
-                "flow_id": 9,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "utc",
-                "source": "timestamp",
-                "name": "Timestamp",
-                "format": "utc",
-                "hints": {
-                    "domain": 1
-                }
-            }
-          ]
-
-        },
-
-        {
-          "name": "Current out of Battery",
-          "key": "gomspace.cursys",
-          "values": [
-            {
-                "key": "value",
-                "name": "current",
-                "bitsize": 10,
-                "flow_id": 9,
-                "max": 10,
-                "min": 0,
-                "type": "unsigned int",
-                "writable": false,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "utc",
-                "source": "timestamp",
-                "name": "Timestamp",
-                "format": "utc",
-                "hints": {
-                    "domain": 1
-                }
-            }
-          ]
-
-        },
-
-
-
-        {
-            "name": "Booster Voltage",
-            "key": "gomspace.vboost",
-            "values": [
-                {
-                    "key": "value_1",
-                    "name": "Value for booster 1",
-                    "units": "Millivolts",
-                    "format": "float",
-                    "min": 0,
-                    "max": 100,
-                    "hints": {
-                        "range": 1
-                    }
-                },
-                {
-                    "key": "value_2",
-                    "name": "Value for booster 2",
-                    "units": "Millivolts",
-                    "format": "float",
-                    "min": 0,
-                    "max": 100,
-                    "hints": {
-                        "range": 1
-                    }
-                },
-                {
-                    "key": "value_3",
-                    "name": "Value for booster 3",
-                    "units": "Millivolts",
-                    "format": "float",
-                    "min": 0,
-                    "max": 100,
-                    "hints": {
-                        "range": 1
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ]
-
-      },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.get_hk"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 6,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.gs_reboot_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 30,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.gs_reset_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 30,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.heater"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 28,
-                 "type": "bool",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.heater_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 30,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.low_batt"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 6,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.low_batt.override"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 6,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.low_batt.persistence"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 16,
-                 "flow_id": 6,
-                 "max": 65535,
-                 "min": 0,
-                 "type": "unsigned int",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.low_batt.suppress"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 6,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.low_batt.unsignal"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 6,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.output.output1"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 10,
-                 "type": "bool",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.output.output2"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 10,
-                 "type": "bool",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.output.output3"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 10,
-                 "type": "bool",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.output.output4"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 10,
-                 "type": "bool",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.output.output5"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 10,
-                 "type": "bool",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.output.output6"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 10,
-                 "type": "bool",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.power_cycle_output1_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 12,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.power_cycle_output2_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 12,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.power_cycle_output3_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 12,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.power_cycle_output4_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 12,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.power_cycle_output5_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 12,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.power_cycle_output6_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 12,
-                 "type": "bool",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.pptmode"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 11,
-                 "max": 2,
-                 "min": 1,
-                 "type": "unsigned char",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.pptmode_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 1,
-                 "flow_id": 30,
-                 "max": 2,
-                 "min": 1,
-                 "type": "unsigned char",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.pv1_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 9,
-                 "flow_id": 30,
-                 "max": 4000,
-                 "min": 0,
-                 "type": "unsigned int",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.pv2_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 9,
-                 "flow_id": 30,
-                 "max": 4000,
-                 "min": 0,
-                 "type": "unsigned int",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.pv3_cmd"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 9,
-                 "flow_id": 30,
-                 "max": 4000,
-                 "min": 0,
-                 "type": "unsigned int",
-                 "writable": true,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.temp.output1"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 8,
-                 "flow_id": 11,
-                 "max": 125,
-                 "min": -40,
-                 "type": "signed int",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.temp.output2"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 8,
-                 "flow_id": 11,
-                 "max": 125,
-                 "min": -40,
-                 "type": "signed int",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.temp.output3"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 8,
-                 "flow_id": 11,
-                 "max": 125,
-                 "min": -40,
-                 "type": "signed int",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.temp.output4"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 8,
-                 "flow_id": 11,
-                 "max": 125,
-                 "min": -40,
-                 "type": "signed int",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.vbatt"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 10,
-                 "flow_id": 9,
-                 "max": 9000,
-                 "min": 5000,
-                 "type": "unsigned int",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.vboost.output1"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 9,
-                 "flow_id": 9,
-                 "max": 4000,
-                 "min": 0,
-                 "type": "unsigned int",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.vboost.output2"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 9,
-                 "flow_id": 9,
-                 "max": 4000,
-                 "min": 0,
-                 "type": "unsigned int",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "<enter name>",
-           "key": "gomspace.vboost.output3"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "<enter name>",
-
-                 "bitsize": 9,
-                 "flow_id": 9,
-                 "max": 4000,
-                 "min": 0,
-                 "type": "unsigned int",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-         {
-           "name": "Time left on I2C wdt",
-           "key": "gomspace.wdt_i2c_time_left"",
-           "values": [
-             {
-                 "key": "value",
-                 "name": "Time",
-
-                 "bitsize": 10,
-                 "flow_id": 29,
-                 "max": 1000,
-                 "min": 0,
-                 "type": "unsigned int",
-                 "writable": false,
-                 "hints": {
-                 "range": 1
-                 }
-             },
-             {
-                 "key": "utc",
-                 "source": "timestamp",
-                 "name": "Timestamp",
-                 "format": "utc",
-                 "hints": {
-                         "domain": 1
-                     }
-             }
-         ]
-
-        },
-
-
-        {
-          "name": "Battery Voltage",
-          "key": "gomspace.voltage",
-          "values": [
-            {
-                "key": "value",
-                "name": "Voltage of battery",
-                "units": "Millivolts",
-                "format": "float",
-                "min": 0,
-                "max": 100,
-                "hints": {
-                    "range": 1
-                }
-            },
-            {
-                "key": "utc",
-                "source": "timestamp",
-                "name": "Timestamp",
-                "format": "utc",
-                "hints": {
-                    "domain": 1
-                }
-            }
-          ]
-
-        }
-    ]
+	"name": "Battery",
+	"key": "gomspace",
+	"measurements": [{
+			"name": "Battery Threshold",
+			"key": "gomspace.batt_threshold",
+			"values": [{
+					"key": "value",
+					"name": "Threshold value",
+					"bitsize": 10,
+					"flow_id": 26,
+					"max": 9000,
+					"min": 5000,
+					"type": "unsigned int",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+		{
+			"name": "Mode for battery",
+			"key": "gomspace.battmode",
+			"values": [{
+					"key": "value",
+					"name": "[0 = initial, 1 = undervoltage,2 = safemode, 3 = nominal, 4=full]",
+					"bitsize": 3,
+					"flow_id": 11,
+					"max": 4,
+					"min": 0,
+					"type": "unsigned char",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+		{
+			"name": "Cause of Last EPS reset",
+			"key": "gomspace.bootcause",
+			"values": [{
+					"key": "value",
+					"name": "Cause",
+					"bitsize": 4,
+					"flow_id": 11,
+					"max": 8,
+					"min": 0,
+					"type": "unsigned char",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+		{
+			"name": "Number of EPS reboots",
+			"key": "gomspace.counter_boot",
+			"values": [{
+					"key": "value",
+					"name": "number of reboots",
+					"bitsize": 32,
+					"flow_id": 11,
+					"max": 4294967295,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+		{
+			"name": "Number of WDT I2C reboots",
+			"key": "gomspace.counter_wdt_i2c",
+			"values": [{
+					"key": "value",
+					"name": "number of reboots",
+					"bitsize": 32,
+					"flow_id": 29,
+					"max": 4294967295,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+		{
+			"name": "Current In",
+			"key": "gomspace.curin",
+			"values": [{
+					"key": "output1",
+					"name": "current in for output 1",
+					"bitsize": 10,
+					"flow_id": 9,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "output2",
+					"name": "current in for output 2",
+					"bitsize": 10,
+					"flow_id": 9,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "output3",
+					"name": "current in for output 3",
+					"bitsize": 10,
+					"flow_id": 9,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+		{
+			"name": "Current Out",
+			"key": "gomspace.curouy",
+			"values": [{
+					"key": "output1",
+					"name": "current out for output 1",
+					"bitsize": 10,
+					"flow_id": 10,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "output2",
+					"name": "current out for output 2",
+					"bitsize": 10,
+					"flow_id": 10,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "output3",
+					"name": "current out for output 3",
+					"bitsize": 10,
+					"flow_id": 10,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "output4",
+					"name": "current out for output 4",
+					"bitsize": 10,
+					"flow_id": 10,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "output5",
+					"name": "current out for output 5",
+					"bitsize": 10,
+					"flow_id": 10,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "output6",
+					"name": "current out for output 6",
+					"bitsize": 10,
+					"flow_id": 10,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+		{
+			"name": "Current from Boost Converters",
+			"key": "gomspace.cursun",
+			"values": [{
+					"key": "value",
+					"name": "current",
+					"bitsize": 10,
+					"flow_id": 9,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "Current out of Battery",
+			"key": "gomspace.cursys",
+			"values": [{
+					"key": "value",
+					"name": "current",
+					"bitsize": 10,
+					"flow_id": 9,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+
+
+		{
+			"name": "Booster Voltage",
+			"key": "gomspace.vboost",
+			"values": [{
+					"key": "value_1",
+					"name": "Value for booster 1",
+					"units": "Millivolts",
+					"format": "float",
+					"min": 0,
+					"max": 100,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "value_2",
+					"name": "Value for booster 2",
+					"units": "Millivolts",
+					"format": "float",
+					"min": 0,
+					"max": 100,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "value_3",
+					"name": "Value for booster 3",
+					"units": "Millivolts",
+					"format": "float",
+					"min": 0,
+					"max": 100,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.get_hk",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 6,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.gs_reboot_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 30,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.gs_reset_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 30,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.heater",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 28,
+					"type": "bool",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.heater_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 30,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.low_batt",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 6,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.low_batt.override",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 6,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.low_batt.persistence",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 16,
+					"flow_id": 6,
+					"max": 65535,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.low_batt.suppress",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 6,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.low_batt.unsignal",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 6,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.output.output1",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 10,
+					"type": "bool",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.output.output2",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 10,
+					"type": "bool",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.output.output3",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 10,
+					"type": "bool",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.output.output4",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 10,
+					"type": "bool",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.output.output5",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 10,
+					"type": "bool",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.output.output6",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 10,
+					"type": "bool",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.power_cycle_output1_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 12,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.power_cycle_output2_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 12,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.power_cycle_output3_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 12,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.power_cycle_output4_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 12,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.power_cycle_output5_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 12,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.power_cycle_output6_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 12,
+					"type": "bool",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.pptmode",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 11,
+					"max": 2,
+					"min": 1,
+					"type": "unsigned char",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.pptmode_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 1,
+					"flow_id": 30,
+					"max": 2,
+					"min": 1,
+					"type": "unsigned char",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.pv1_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 9,
+					"flow_id": 30,
+					"max": 4000,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.pv2_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 9,
+					"flow_id": 30,
+					"max": 4000,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.pv3_cmd",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 9,
+					"flow_id": 30,
+					"max": 4000,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": true,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.temp.output1",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 8,
+					"flow_id": 11,
+					"max": 125,
+					"min": -40,
+					"type": "signed int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.temp.output2",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 8,
+					"flow_id": 11,
+					"max": 125,
+					"min": -40,
+					"type": "signed int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.temp.output3",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 8,
+					"flow_id": 11,
+					"max": 125,
+					"min": -40,
+					"type": "signed int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.temp.output4",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 8,
+					"flow_id": 11,
+					"max": 125,
+					"min": -40,
+					"type": "signed int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.vbatt",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 10,
+					"flow_id": 9,
+					"max": 9000,
+					"min": 5000,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.vboost.output1",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 9,
+					"flow_id": 9,
+					"max": 4000,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.vboost.output2",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 9,
+					"flow_id": 9,
+					"max": 4000,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "<enter name>",
+			"key": "gomspace.vboost.output3",
+			"values": [{
+					"key": "value",
+					"name": "<enter name>",
+
+					"bitsize": 9,
+					"flow_id": 9,
+					"max": 4000,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+		{
+			"name": "Time left on I2C wdt",
+			"key": "gomspace.wdt_i2c_time_left",
+			"values": [{
+					"key": "value",
+					"name": "Time",
+
+					"bitsize": 10,
+					"flow_id": 29,
+					"max": 1000,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": false,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		},
+
+
+
+		{
+			"name": "Battery Voltage",
+			"key": "gomspace.voltage",
+			"values": [{
+					"key": "value",
+					"name": "Voltage of battery",
+					"units": "Millivolts",
+					"format": "float",
+					"min": 0,
+					"max": 100,
+					"hints": {
+						"range": 1
+					}
+				},
+				{
+					"key": "utc",
+					"source": "timestamp",
+					"name": "Timestamp",
+					"format": "utc",
+					"hints": {
+						"domain": 1
+					}
+				}
+			]
+
+		}
+	]
 }
