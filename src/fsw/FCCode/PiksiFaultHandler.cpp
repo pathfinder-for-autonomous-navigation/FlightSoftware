@@ -25,7 +25,7 @@ PiksiFaultHandler::PiksiFaultHandler(StateFieldRegistry& r)
 
         piksi_state_fp = find_readable_field<unsigned char>("piksi.state", __FILE__, __LINE__);
         mission_state_fp = find_writable_field<unsigned char>("pan.state", __FILE__, __LINE__);
-        last_fix_ccno_fp  = find_internal_field<unsigned int>("piksi.last_fix_ccno", __FILE__, __LINE__);
+        last_fix_ccno_fp  = find_internal_field<unsigned int>("piksi.last_rtkfix_ccno", __FILE__, __LINE__);
         enter_close_appr_time_fp = find_internal_field<unsigned int>("pan.enter_close_approach_ccno", __FILE__, __LINE__);
     }
 

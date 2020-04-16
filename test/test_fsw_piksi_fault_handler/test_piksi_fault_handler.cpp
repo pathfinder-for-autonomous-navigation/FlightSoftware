@@ -34,7 +34,7 @@ class TestFixture {
     TestFixture() : registry() {
         piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
         mission_state_fp = registry.create_writable_field<unsigned char>("pan.state");
-        last_fix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_fix_ccno");
+        last_fix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
         enter_close_appr_ccno_fp = registry.create_internal_field<unsigned int>("pan.enter_close_approach_ccno");
 
         // Set initial conditions
