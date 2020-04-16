@@ -258,9 +258,9 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.assert_vec_within([10, 10, 10], reading, 10)
 
         wheel_speed_tests = [
-            [50,50,50],
-            [100,200,300],
-            [100,50,10]
+            [20,40,50],
+            # [100,200,300],
+            # [100,50,10]
             # [500,500,500],
             # [680,680,680], 
             # [-1000,-100,-10]
@@ -271,8 +271,29 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.ws("adcs_cmd.rwa_speed_cmd", cmd_array)
             time.sleep(1)
             reading = self.print_rs("adcs_monitor.rwa_speed_rd")
+            self.assert_vec_within(cmd_array, reading, 1)
+            time.sleep(1)
+
+        torque_tests = [
+            [0.01, 0, 0],
+            [0, 0.01, 0],
+            [0, 0, 0.01],
+        ]
+
+        self.ws("adcs_cmd.rwa_mode", rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
+
+        for cmd_array in wheel_speed_tests:
+            self.print_rs("gomspace.vbatt")
+            self.ws("adcs_cmd.rwa_torque_cmd", cmd_array)
+            time.sleep(1)
+            reading = self.print_rs("adcs_monitor.rwa_torque_rd")
             self.assert_vec_within(cmd_array, reading, 10)
             time.sleep(1)
+
+        self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
+        time.sleep(1)
+        self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
+        self.ws("adcs_cmd.rwa_mode", rwa_modes.get_by_name("RWA_SPEED_CTRL"))
 
         self.ws("cycle.auto", False)
         self.print_header("WHEEL CHECKOUT COMPLETE")
