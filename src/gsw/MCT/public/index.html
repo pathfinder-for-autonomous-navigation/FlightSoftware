@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Open MCT Tutorials</title>
+    <script src="/openmct/openmct.js"></script>
+    <script src="http.js"></script>
+    <script src="jquery-3.2.1.min.js"></script>
+    <script src="dictionary-plugin.js"></script>
+    <script src="battery-plugin.js"></script>
+    <script src="historical-telemetry-plugin.js"></script>
+    <script src="realtime-telemetry-plugin.js"></script>
+
+</head>
+<body>
+    <script>
+        openmct.setAssetPath('openmct');
+        openmct.install(openmct.plugins.LocalStorage());
+        openmct.install(openmct.plugins.MyItems());
+        openmct.install(openmct.plugins.UTCTimeSystem());
+        openmct.time.clock('local', {start: -15 * 60 * 1000, end: 0});
+        openmct.time.timeSystem('utc');
+        openmct.install(openmct.plugins.Espresso());
+        openmct.install(BatteryPlugin());
+        openmct.install(DictionaryPlugin());
+        openmct.install(HistoricalTelemetryPlugin());
+        openmct.install(RealtimeTelemetryPlugin());
+        openmct.install(openmct.plugins.URLIndicator({
+            url: 'http://localhost:8080',
+            iconClass: 'check',
+            interval: 10000,
+            label: 'Localhost'
+          })
+          );
+
+
+        openmct.start();
+    </script>
+</body>
+</html>
