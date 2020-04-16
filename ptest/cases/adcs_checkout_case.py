@@ -284,9 +284,11 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             [0, 0, 0.0001],
         ]
 
+        self.print_header("TORQUE TESTS: ")
+
         self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
 
-        for cmd_array in wheel_speed_tests:
+        for cmd_array in torque_tests:
             self.print_rs("gomspace.vbatt")
             self.ws("adcs_cmd.rwa_torque_cmd", cmd_array)
             time.sleep(1)
