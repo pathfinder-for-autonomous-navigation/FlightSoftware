@@ -274,10 +274,11 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.assert_vec_within(cmd_array, reading, 1)
             time.sleep(1)
 
+        one_tenthou = 0.0001
         torque_tests = [
-            [0.01, 0, 0],
-            [0, 0.01, 0],
-            [0, 0, 0.01],
+            [0.0001, 0, 0],
+            [0, 0.0001, 0],
+            [0, 0, 0.0001],
         ]
 
         self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
