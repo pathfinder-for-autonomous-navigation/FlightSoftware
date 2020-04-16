@@ -5,7 +5,8 @@
   "main": "server-files/server.js",
   "scripts": {
     "start": "node server-files/server.js",
-    "postinstall": "cd node_modules/openmct && npm install"
+    "postinstall": "cd node_modules/openmct && npm install",
+    "test":  "node server-files/server.js test"
   },
   "repository": {
     "type": "git",
