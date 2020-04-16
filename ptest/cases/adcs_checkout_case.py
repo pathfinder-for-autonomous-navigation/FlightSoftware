@@ -280,7 +280,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             [0, 0, 0.01],
         ]
 
-        self.ws("adcs_cmd.rwa_mode", rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
+        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
 
         for cmd_array in wheel_speed_tests:
             self.print_rs("gomspace.vbatt")
@@ -293,9 +293,10 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
         time.sleep(1)
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
-        self.ws("adcs_cmd.rwa_mode", rwa_modes.get_by_name("RWA_SPEED_CTRL"))
+        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
 
         self.ws("cycle.auto", False)
+
         self.print_header("WHEEL CHECKOUT COMPLETE")
 
     def run_case_singlesat(self):
