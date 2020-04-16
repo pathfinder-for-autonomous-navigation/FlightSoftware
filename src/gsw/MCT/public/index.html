@@ -24,10 +24,10 @@
         openmct.install(HistoricalTelemetryPlugin());
         openmct.install(RealtimeTelemetryPlugin());
         openmct.install(openmct.plugins.URLIndicator({
-            url: 'http://localhost:8080',
+            url: 'http://localhost:5000',
             iconClass: 'check',
             interval: 10000,
-            label: 'Localhost'
+            label: 'Flask Server'
           })
           );
 
