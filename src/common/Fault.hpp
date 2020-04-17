@@ -15,10 +15,16 @@ class Fault : public WritableStateField<bool> {
      * @param _persistence Persistence threshold before signaling fault.
      * @param control_cycle_count Reference to the control cycle count.
      */
-    Fault(const std::string& name,
-          const size_t _persistence, const unsigned int& control_cycle_count);
+    Fault(const std::string& name, const size_t _persistence);
 
     const std::string &name() const override { return _name; } 
+
+    /**
+     * @brief Calls signal if flag is true and unsignal if flag is false.
+     * 
+     * @param flag 
+     */
+    void evaluate(bool flag);
 
     /**
      * @brief Client-facing function to signal an occurrence of the
@@ -75,14 +81,14 @@ class Fault : public WritableStateField<bool> {
     Serializer<unsigned int> persist_sr;
     WritableStateField<unsigned int> persistence_f;
     
+    static const unsigned int* cc; // Control cycle count
+
   private:
     // Make the get() and set() methods of the state field private,
     // so that the user is forced to use the signal() and unsignal()
     // methods instead.
     using WritableStateField<bool>::set;
     using WritableStateField<bool>::get;
-
-    const unsigned int& cc; // Control cycle count
     unsigned int last_fault_time = 0; // Last control cycle # that the fault condition
                                       // occurred
 

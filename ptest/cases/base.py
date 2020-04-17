@@ -108,10 +108,8 @@ class Case(object):
         ])
 
         self.imu_modes = FSWEnum([
-            "MAG1",
-            "MAG2",
-            "MAG1_CALIBRATE",
-            "MAG2_CALIBRATE"
+            "IMU_MAG_NORMAL",
+            "IMU_MAG_CALIBRATE"
         ])
 
         self.mtr_modes = FSWEnum([

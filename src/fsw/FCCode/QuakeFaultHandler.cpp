@@ -2,7 +2,7 @@
 #include "constants.hpp"
 #include "radio_state_t.enum"
 
-const unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
+const unsigned int& cccount = TimedControlTaskBase::control_cycle_count;
 
 QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry& r) : FaultHandlerMachine(r) {
     radio_state_fp        = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
@@ -29,7 +29,7 @@ fault_response_t QuakeFaultHandler::execute() {
 
 void QuakeFaultHandler::transition_to(qfh_state_t next_state) {
     cur_state = next_state;
-    cur_state_entry_ccno = control_cycle_count;
+    cur_state_entry_ccno = cccount;
 }
 
 fault_response_t QuakeFaultHandler::dispatch_unfaulted() {
@@ -108,11 +108,11 @@ fault_response_t QuakeFaultHandler::dispatch_safehold() {
 }
 
 bool QuakeFaultHandler::less_than_one_day_since_successful_comms() const {
-    return control_cycle_count - last_checkin_cycle_fp->get() < PAN::one_day_ccno;
+    return cccount - last_checkin_cycle_fp->get() < PAN::one_day_ccno;
 }
 
 bool QuakeFaultHandler::in_state_for_more_than_time(const unsigned int time) const {
-    return control_cycle_count - cur_state_entry_ccno >= time;
+    return cccount - cur_state_entry_ccno >= time;
 }
 
 bool QuakeFaultHandler::radio_is_disabled() const {
