@@ -36,7 +36,10 @@ int main(void)
     delay(5000);
     Serial.begin(9600);
     pinMode(13, OUTPUT);
+    while (!Serial)
+        ;
     q.setup();
+    Serial.printf("Qlocate No Network Test\n");
     UNITY_BEGIN();
     RUN_TEST(test_sbdix_no_network);
     UNITY_END();

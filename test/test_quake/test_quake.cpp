@@ -89,6 +89,7 @@ int main(void) {
     while (!Serial)
         ;
     q.setup();
+    Serial.printf("Qlocate Hardware Test\n");
     UNITY_BEGIN();
     RUN_TEST(test_config);
     RUN_TEST(test_isFunctional);

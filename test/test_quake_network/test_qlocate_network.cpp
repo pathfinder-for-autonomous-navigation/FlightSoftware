@@ -75,10 +75,13 @@ void test_sbdrb_with_network(void)
 // TODO: need a way to get messages
 int main(void)
 {
-    while(!Serial);
+    delay(5000);
     Serial.begin(9600);
     pinMode(13, OUTPUT);
+    while (!Serial)
+        ;
     q.setup();
+    Serial.printf("Qlocate Network Test\n");
     UNITY_BEGIN();
     RUN_TEST(test_config); // force a config
     RUN_TEST(test_sbdix_with_network);
