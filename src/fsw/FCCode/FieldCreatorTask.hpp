@@ -16,7 +16,7 @@ class FieldCreatorTask : public ControlTask<void> {
     public:
       ReadableStateField<lin::Vector3d> pos_f;
       ReadableStateField<lin::Vector3d> pos_baseline_f;
-      WritableStateField<unsigned int> prop_state_f;
+      WritableStateField<unsigned char> prop_state_f;
       Fault failed_pressurize_f;
       Fault overpressured_f;
 
