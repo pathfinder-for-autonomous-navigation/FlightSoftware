@@ -4,7 +4,7 @@
 size_t g_fake_pressure_cycle_count = 15; // global
 #endif
 #if (defined(UNIT_TEST) && defined(DESKTOP))
-#define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
+#define DD(f_, ...) printf((f_), ##__VA_ARGS__)
 #else
 #define DD(f_, ...) do{} while(0)
 #endif
@@ -97,7 +97,6 @@ void PropController::execute() {
 
     prop_state_t next_state = get_state(current_state).evaluate();
     if (next_state != current_state) {
-        DD("New state: %u\n", static_cast<unsigned int>(next_state));
         // sanity check
         if (get_state(next_state).can_enter()) {
             prop_state_f.set(static_cast<unsigned int>(next_state));
@@ -105,7 +104,6 @@ void PropController::execute() {
         } else {
             // This should never happen, if it does, complain a lot.
             // TODO: enter handling fault maybe?
-            DD("Could not enter state!!\n");
             prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
         }
     }
@@ -217,11 +215,7 @@ prop_state_t PropState_Disabled::evaluate() {
 
 bool PropState_Idle::can_enter() const {
     // TODO: can only enter IDLE if there are no hardware faults
-#ifndef DESKTOP
     return PropulsionSystem.is_functional();
-#else
-    return true;
-#endif
 }
 
 void PropState_Idle::enter() {
@@ -409,15 +403,11 @@ void PropState_Firing::enter() {
 }
 
 prop_state_t PropState_Firing::evaluate() {
-    DD("==> PropState_Firing is evaluating\n");
     if (is_schedule_empty()) {
         PropulsionSystem.disable();
-        DD("==> schedule is now empty\n");
         return prop_state_t::idle;
     } else
-    {
         return this_state;
-    }
 }
 
 bool PropState_Firing::is_schedule_empty() const {
