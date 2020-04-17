@@ -13,9 +13,9 @@ Devices::QLocate q("Test_Quake", &Serial3, Devices::QLocate::DEFAULT_TIMEOUT);
 /*! Tests the config function */
 void test_config(void) {
     TEST_ASSERT_EQUAL(Devices::OK, q.query_config_1());
-    count_cycles(q.query_config_2, "query_config_2");
-    count_cycles(q.query_config_3, "query_config_3");
-    count_cycles(q.get_config, "get_config");
+    count_cycles(q.query_config_2, "query_config_2", Devices::OK);
+    count_cycles(q.query_config_3, "query_config_3", Devices::OK);
+    count_cycles(q.get_config, "get_config", Devices::OK);
 }
 
 /*! Tests SBDWB (loading a message onto the MO queue of the Quake) */

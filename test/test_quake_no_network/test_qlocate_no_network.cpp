@@ -18,7 +18,7 @@ void test_sbdix_no_network(void)
     TEST_ASSERT_EQUAL(0, q.query_sbdix_1()); // Expect 0
 
     // Port should be unavailable at this point
-    count_cycles(q.get_sbdix, "get_sbdix");
+    count_cycles(q.get_sbdix, "get_sbdix", Devices::OK);
 
     const int *_pRes = q.sbdix_r;
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
