@@ -66,6 +66,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
         self.print_header("Begin ADCS Checkout Case")
 
+        self.ws("cycle.auto", False)
+
         # Needed so that ADCSMonitor updates its values
         self.cycle()
 
@@ -247,9 +249,11 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # perform 10 readings.
         list_of_pot_rds = []
         for i in range(10):
-            self.print_rs("pan.cycle_no")
-            list_of_pot_rds += [self.rs("adcs_monitor.rwa_speed_rd")]
-
+            cn = self.rs("pan.cycle_no")
+            reading = [self.rs("adcs_monitor.rwa_speed_rd")]
+            list_of_pot_rds += reading
+            self.logger.put(f"Cycle No: {cn}, Speed Vec: {reading}")
+            
         # check readings changed over time
         self.soft_assert(sum_of_differentials(list_of_pot_rds) > 0,
             "Pot readings did not vary across readings.")        
@@ -277,11 +281,15 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
         time.sleep(1)
 
-        one_tenthou = 0.0001
+        torque_max = 0.00418
+        x = 0.0001
         torque_tests = [
-            [0.0001, 0, 0],
-            [0, 0.0001, 0],
-            [0, 0, 0.0001],
+            [x, 0, 0],
+            [0, x, 0],
+            [0, 0, x],
+            [-x, 0, 0],
+            [0, -x, 0],
+            [0, 0, -x],
         ]
 
         self.print_header("TORQUE TESTS: ")
@@ -289,21 +297,53 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
 
         for cmd_array in torque_tests:
+
             self.print_rs("gomspace.vbatt")
-            self.ws("adcs_cmd.rwa_torque_cmd", cmd_array)
+            self.print_ws("adcs_cmd.rwa_torque_cmd", cmd_array)
             time.sleep(1)
             reading = self.print_rs("adcs_monitor.rwa_torque_rd")
-            self.assert_vec_within(cmd_array, reading, 10)
+            self.assert_vec_within(cmd_array, reading, 1)
+            self.logger.put("")
             time.sleep(1)
 
         self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
         time.sleep(1)
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
         self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
+        time.sleep(1)
+
+        self.print_header("TIMING TESTS: ")
+
+        for i in range(10):
+            self.print_rs("pan.cycle_no")
+
+        self.logger.put("SECOND SET: ")
+
+        for i in range(10):
+            self.print_rs("pan.cycle_no")
+            self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
+
+        self.logger.put("THIRD SET: ")
+
+        for i in range(10):
+            self.print_rs("pan.cycle_no")
+            self.print_rs("adcs_monitor.gyr_vec")
 
         self.ws("cycle.auto", False)
 
         self.print_header("WHEEL CHECKOUT COMPLETE")
+
+    def ssa_checkout(self):
+        list_of_voltages = []
+        for i in range(10):
+            voltages = []
+            for i in range(1,21):
+                reading = self.print_rs(f"adcs_monitor.ssa_voltage{i}")
+                voltages += reading
+            list_of_voltages += voltages
+        # check readings changed over time
+        self.soft_assert(sum_of_differentials(list_of_voltages) > 0,
+            "SSA voltage readings did not vary across readings.") 
 
     def run_case_singlesat(self):
         
@@ -338,6 +378,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         rwa_pot_num = self.havt_devices.get_by_name("RWA_POT")
         # if self.rs(f"adcs_monitor.havt_device{rwa_pot_num}"):
         self.wheel_checkout()
+
+        self.ssa_checkout()
 
         # TODO FURTHER CHECKOUTS
 
