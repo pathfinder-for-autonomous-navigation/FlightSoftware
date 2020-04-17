@@ -165,7 +165,7 @@ build.txt
 build.log
 
 # Clion temporary files
-.idea/*
+.idea/
 cmake*
 CMakeListsPrivate.txt
 CMakeLists.txt
