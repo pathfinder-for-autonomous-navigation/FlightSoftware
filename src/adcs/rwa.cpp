@@ -152,8 +152,7 @@ void update_sensors(float speed_flt, float ramp_flt) {
         // ^^ Only converting to a voltage here
         
   // Go from voltage to torque reading
-  readings = max_torque * readings / 3.3f +
-      min_torque * lin::ones<lin::Vector3f>();
+  readings = rwa::max_ramp_rd * readings / 3.3f + rwa::min_ramp_rd * lin::ones<lin::Vector3f>();
 
   // Filter the results
   ramp_rd = ramp_rd + speed_flt * (readings - ramp_rd);
