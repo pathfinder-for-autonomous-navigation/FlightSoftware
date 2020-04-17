@@ -18,6 +18,8 @@ public:
 
     PropTestFixture(prop_state_t initial_state = prop_state_t::disabled)
     {
+       Fault::cc = &TimedControlTaskBase::control_cycle_count;
+
        prop_controller = std::make_unique<PropController>(registry, 0);
        prop_state_fp = registry.find_writable_field_t<unsigned int>("prop.state");
        cycles_until_firingp = registry.find_writable_field_t<unsigned int>("prop.cycles_until_firing");

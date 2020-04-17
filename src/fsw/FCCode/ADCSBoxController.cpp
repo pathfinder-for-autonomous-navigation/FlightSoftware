@@ -22,10 +22,11 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         mtr_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
         mtr_limit_fp = find_writable_field<float>("adcs_cmd.mtr_limit", __FILE__, __LINE__);
 
-        ssa_mode_fp = find_readable_field<int>("adcs_monitor.ssa_mode", __FILE__, __LINE__);
+        ssa_mode_fp = find_readable_field<unsigned char>("adcs_monitor.ssa_mode", __FILE__, __LINE__);
         ssa_voltage_filter_fp = find_writable_field<float>("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
 
-        imu_mode_fp = find_writable_field<unsigned char>("adcs_cmd.imu_mode", __FILE__, __LINE__);
+        mag1_mode_fp = find_writable_field<unsigned char>("adcs_cmd.mag1_mode", __FILE__, __LINE__);
+        mag2_mode_fp = find_writable_field<unsigned char>("adcs_cmd.mag2_mode", __FILE__, __LINE__);
         imu_mag_filter_fp = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
         imu_gyr_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
         imu_gyr_temp_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
@@ -84,7 +85,8 @@ void ADCSBoxController::execute(){
     
     adcs_system.set_ssa_voltage_filter(ssa_voltage_filter_fp->get());
 
-    adcs_system.set_imu_mode(imu_mode_fp->get());
+    adcs_system.set_mag1_mode(mag1_mode_fp->get());
+    adcs_system.set_mag2_mode(mag2_mode_fp->get());
     adcs_system.set_imu_mag_filter(imu_mag_filter_fp->get());
     adcs_system.set_imu_gyr_filter(imu_gyr_filter_fp->get());
     adcs_system.set_imu_gyr_temp_filter(imu_gyr_temp_filter_fp->get());
@@ -106,7 +108,7 @@ void ADCSBoxController::execute(){
             send_cmd_table = true;
 
             // clear the state field now that it's loaded into temp_cmd_table
-            const_cast<WritableStateField<bool>*>(havt_cmd_reset_vector_fp[idx])->set(false);
+            havt_cmd_reset_vector_fp[idx]->set(false);
         }
     }
 
@@ -125,7 +127,7 @@ void ADCSBoxController::execute(){
             send_cmd_table = true;
 
             // clear the state field now that it's loaded into temp_cmd_table
-            const_cast<WritableStateField<bool>*>(havt_cmd_disable_vector_fp[idx])->set(false);
+            havt_cmd_disable_vector_fp[idx]->set(false);
         }
     }
     

@@ -33,6 +33,10 @@ class SerializableStateFieldBase : virtual public StateFieldBase {
     virtual const char *print() const = 0;
     virtual size_t bitsize() const = 0;
     virtual const bit_array& get_bit_array() const = 0;
+    bit_array& get_bit_array() { 
+      const auto* x = this;
+      return const_cast<bit_array&>(x->get_bit_array());
+    }
     virtual void set_bit_array(const bit_array& arr) = 0;
 
     virtual unsigned int eeprom_save_period() const = 0;
