@@ -350,7 +350,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             for i in range(0, 20):
                 reading = self.print_rs(f"adcs_monitor.ssa_voltage{i}")
                 voltages += [reading]
-            list_of_voltages += voltages
+            list_of_voltages += [voltages]
         # check readings changed over time
         self.soft_assert(sum_of_differentials(list_of_voltages) > 0,
             "SSA voltage readings did not vary across readings.") 
