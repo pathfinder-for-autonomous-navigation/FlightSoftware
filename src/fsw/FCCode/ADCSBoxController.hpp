@@ -66,7 +66,8 @@ protected:
      * @brief IMU command fields
      * 
      */
-    const WritableStateField<unsigned char>* imu_mode_fp;
+    const WritableStateField<unsigned char>* mag1_mode_fp;
+    const WritableStateField<unsigned char>* mag2_mode_fp;
     const WritableStateField<float>* imu_mag_filter_fp;
     const WritableStateField<float>* imu_gyr_filter_fp;
     const WritableStateField<float>* imu_gyr_temp_filter_fp;
@@ -79,8 +80,8 @@ protected:
      * @brief HAVT command tables, a vector of pointers to bool state fields
      * 
      */
-    std::vector<const WritableStateField<bool>*> havt_cmd_reset_vector_fp;
-    std::vector<const WritableStateField<bool>*> havt_cmd_disable_vector_fp;
+    std::vector<WritableStateField<bool>*> havt_cmd_reset_vector_fp;
+    std::vector<WritableStateField<bool>*> havt_cmd_disable_vector_fp;
 
 };
 

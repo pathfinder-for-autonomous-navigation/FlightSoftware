@@ -50,9 +50,8 @@ void test_events() {
 void test_faults() {
     StateFieldRegistry registry;
 
-    // Add fault to registry
-    unsigned int control_cycle_count=1;
-    Fault f("fault", 1, control_cycle_count);
+    // Add fault to registr
+    Fault f("fault", 1);
     TEST_ASSERT_TRUE(registry.add_fault(&f));
 
     // Check that the fault and its writable fields were added to the registry
