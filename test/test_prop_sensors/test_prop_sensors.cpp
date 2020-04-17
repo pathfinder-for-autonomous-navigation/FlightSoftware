@@ -41,6 +41,12 @@ void setup() {
     while (!Serial)
         ;
     PropulsionSystem.setup();
+    if (!PropulsionSystem.is_functional())
+    {
+	Serial.printf("DCDC is not on. Turning it on now\n");
+	pinMode(25, OUTPUT);
+	digitalWrite(25, HIGH);
+    }
     UNITY_BEGIN();
     RUN_TEST(test_setup);
     RUN_TEST(test_temp_tank1);
@@ -51,5 +57,6 @@ void setup() {
 
 void loop()
 {
-
 }
+
+
