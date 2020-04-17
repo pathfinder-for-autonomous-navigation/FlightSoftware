@@ -124,9 +124,15 @@ json get_field_info(const StateFieldBaseType* field) {
     return field_info;
 }
 
-json get_writable_field_info(const WritableStateFieldBase* field) {
+json get_writable_field_info(const WritableStateFieldBase* field, const StateFieldRegistry& r) {
     json field_info = get_field_info<WritableStateField, WritableStateFieldBase>(field);
     field_info["writable"] = true;
+    field_info["index"] = std::distance(
+        r.writable_fields.begin(),
+        std::find(r.writable_fields.begin(), 
+            r.writable_fields.end(), 
+            field)
+        ) + 1;
     return field_info;
 }
 
@@ -145,7 +151,7 @@ json TelemetryInfoGenerator::generate_telemetry_info() {
     for(const WritableStateFieldBase* wf : r.writable_fields) {
         const std::string& field_name = wf->name();
         if (ret["fields"].find(field_name) != ret["fields"].end()) continue;
-        ret["fields"][field_name] = get_writable_field_info(wf);
+        ret["fields"][field_name] = get_writable_field_info(wf, r);
 
         if (wf->eeprom_save_period() > 0)
             ret["eeprom_saved_fields"][field_name] = wf->eeprom_save_period();
