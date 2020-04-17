@@ -403,7 +403,7 @@ void on_i2c_request() {
       // Output reaction wheels ramp torques
       copy_to(registers.rwa.ramp_rd, f);
       for (unsigned int i = 0; i < 3; i++)
-        t[i] = utl::us(f[i], rwa::min_torque, rwa::max_torque);
+        t[i] = utl::us(f[i], 0, rwa::max_torque);
       endian_write(t);
 
       LOG_INFO_header
