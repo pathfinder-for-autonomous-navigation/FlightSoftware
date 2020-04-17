@@ -240,7 +240,7 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa
         unsigned short a = readin[2*i+1+6] << 8;
         unsigned short b = 0xFF & readin[2*i+6];
         unsigned short c = a | b;
-        (*rwa_ramp_rd)[i] = fp(c,0 ,adcs::rwa::max_torque);
+        (*rwa_ramp_rd)[i] = fp(c,adcs::rwa::min_ramp_rd, adcs::rwa::max_ramp_rd);
     }
 }
 
