@@ -14,10 +14,11 @@
  * multimap.
  */
 class StateFieldRegistry {
-public:
+  public:
     std::vector<InternalStateFieldBase*> internal_fields;
     std::vector<ReadableStateFieldBase*> readable_fields;
     std::vector<WritableStateFieldBase*> writable_fields;
+    std::vector<ReadableStateFieldBase*> eeprom_saved_fields;
     std::vector<Event*> events;
     std::vector<Fault*> faults;
 
@@ -41,13 +42,23 @@ public:
     ReadableStateFieldBase* find_readable_field(const std::string &name) const;
 
     /**
-     * @brief Find a writable field of a given name within the state registry and return a pointer
-     * to it.
+     * @brief Find a writable field of a given name within the state registry
+     * and return a pointer to it.
      *
      * @param[in] name Name of state field.
      * @return Pointer to field, or null pointer if field doesn't exist.
      */
     WritableStateFieldBase* find_writable_field(const std::string &name) const;
+
+
+    /**
+     * @brief Find an EEPROM-saveable field of a given name within the state registry
+     * and return a pointer to it.
+     *
+     * @param[in] name Name of state field.
+     * @return Pointer to field, or null pointer if field doesn't exist.
+     */
+    SerializableStateFieldBase* find_eeprom_saved_field(const std::string &name) const;
 
     /**
      * @brief Find an event of a given name within the state registry and return a pointer

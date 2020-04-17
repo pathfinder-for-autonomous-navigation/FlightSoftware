@@ -34,10 +34,10 @@ const char* event_print_fn(const unsigned int cc_count,
     static const char* x = "";
     return x;
 }
-static unsigned int cc_count = 0;
+
 static std::vector<ReadableStateFieldBase*> event_fields_list {};
-static Event event("event", event_fields_list, event_print_fn, cc_count);
-static Fault fault("fault", 1, cc_count);
+static Event event("event", event_fields_list, event_print_fn);
+static Fault fault("fault", 1);
 
 void test_task_find() {
     StateFieldRegistryMock registry;

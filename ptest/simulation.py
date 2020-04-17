@@ -5,6 +5,7 @@
 
 import time, timeit
 import math
+import platform
 import threading
 import os
 if "CI" not in os.environ:
@@ -18,7 +19,7 @@ class Simulation(object):
     """
     Full mission simulation, including both spacecraft.
     """
-    def __init__(self, devices, seed, testcase, print_log=True):
+    def __init__(self, is_interactive, devices, seed, testcase, print_log=True):
         """
         Initializes self
 
@@ -28,6 +29,7 @@ class Simulation(object):
             print_log: If true, prints logging messages to the console rather than
                        just to a file.
         """
+        self.is_interactive = is_interactive
         self.devices = devices
         self.seed = seed
         self.testcase = testcase
@@ -47,8 +49,6 @@ class Simulation(object):
 
         self.sim_duration = self.testcase.sim_duration
         self.sim_time = 0
-        self.sim_thread = threading.Thread(name="Python-MATLAB Simulation Interface",
-                                           target=self.run)
 
         self.add_to_log("Running testcase initialization...")
         self.testcase.setup_case(self)
@@ -62,7 +62,12 @@ class Simulation(object):
             self.add_to_log("Configuring simulation took %0.2fs." % elapsed_time)
 
             self.add_to_log("Starting simulation loop...")
-            self.sim_thread.start()
+            if self.is_interactive:
+                self.sim_thread = threading.Thread(name="Python-MATLAB Simulation Interface",
+                                            target=self.run)
+                self.sim_thread.start()
+            else:
+                self.run()
         else:
             self.add_to_log("Not running simulation since the testcase doesn't require it.")
             self.running = False
@@ -76,9 +81,14 @@ class Simulation(object):
     def configure_sim(self):
         self.eng = matlab.engine.start_matlab()
         path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../MATLAB")
+            os.path.dirname(os.path.abspath(__file__)), "../lib/common/psim/MATLAB")
         self.eng.addpath(path, nargout=0)
 
+        if ((platform.system() == 'Darwin' and not os.path.exists("geograv_wrapper.mexmaci64"))
+            or (platform.system() == 'Linux' and not os.path.exists("geograv_wrapper.mexa64"))
+            or (platform.system() == 'Windows' and not os.path.exists("geograv_wrapper.mexw64"))
+        ):
+            self.eng.install(nargout=0)
         self.eng.config(nargout=0)
         self.eng.generate_mex_code(nargout=0)
         self.eng.eval("global const", nargout=0)
@@ -189,9 +199,6 @@ class Simulation(object):
         """
         Stops a run of the simulation and saves run data to disk.
         """
-        self.running = False
-        self.sim_thread.join()
-
         with open(data_dir + "/simulation_data_main.txt", "w") as fp:
             json.dump(self.main_state_trajectory, fp)
 
@@ -202,8 +209,8 @@ class SingleSatSimulation(Simulation):
     """
     Mission simulation with only a single spacecraft.
     """
-    def __init__(self, devices, seed, testcase, print_log=True):
-        super().__init__(devices, seed, testcase, print_log)
+    def __init__(self, is_interactive, devices, seed, testcase, print_log=True):
+        super().__init__(is_interactive, devices, seed, testcase, print_log)
         self.is_single_sat_sim = True
 
     def setup_flight_controller(self):

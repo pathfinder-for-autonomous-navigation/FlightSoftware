@@ -5,10 +5,16 @@
 
 #include <common/StateFieldRegistry.hpp>
 #include "TimedControlTask.hpp"
+#ifdef DESKTOP
+    #include <json.hpp>
+#endif
 
 class EEPROMController : public TimedControlTask<void> {
-   public:
+   #ifdef UNIT_TEST
+    friend class TestFixture;
+   #endif
 
+   public:
     /**
      * @brief Construct a new EEPROM Controller object
      * 
@@ -19,11 +25,9 @@ class EEPROMController : public TimedControlTask<void> {
     EEPROMController(StateFieldRegistry& registry, unsigned int offset);
 
     /**
-     * @brief Gets the pointers to the statefields from the statefield
-     * registry. Sets the pointer values to those stored in the EEPROM
-     * if necessary.
+     * @brief Sets up addresses for the set of EEPROM-saved fields.
      */
-    void init(const std::vector<std::string>& statefields, const std::vector<unsigned int>& periods);
+    void init();
 
     /**
      * @brief Writes to the EEPROM after a certain number of 
@@ -51,16 +55,21 @@ class EEPROMController : public TimedControlTask<void> {
      */
     bool check_empty();
 
+    // Number of addresses available in EEPROM.
+    TRACKED_CONSTANT_SC(unsigned int, eeprom_size, 4096);
+
+  protected:
     //the locations in the EEPROM in which the field values will be stored
     std::vector<int> addresses;
 
-    // Shared pointers to statefields that will be written to the EEPROM
-    std::vector<ReadableStateField<unsigned int>*> pointers;
-
-    // Number of control cycles that must pass before the control task writes the value 
-    // of a certain statefield to EEPROM
-    std::vector<unsigned int> sf_periods;
-
+    #ifdef DESKTOP
+        // Store EEPROM data in JSON so that it can be written to a file.
+        static nlohmann::json data;
+        // Saves EEPROM data to file if FSW program quits.
+        static void save_data(int signal);
+        // Get EEPROM data in file and store it in "data".
+        static void get_file_data();
+    #endif
 };
 
 #endif

@@ -32,10 +32,9 @@ void test_events() {
     ReadableStateFieldBase* data1_fp=registry.find_readable_field("field1");
     ReadableStateFieldBase* data2_fp=registry.find_readable_field("field2");
     std::vector<ReadableStateFieldBase*> event_data={data1_fp, data2_fp};
-    unsigned int control_cycle_count=1;
 
     // Add event to registry
-    Event e("event", event_data, print_fn, control_cycle_count);
+    Event e("event", event_data, print_fn);
     TEST_ASSERT_TRUE(registry.add_event(&e));
     
     // Find event
@@ -51,9 +50,8 @@ void test_events() {
 void test_faults() {
     StateFieldRegistry registry;
 
-    // Add fault to registry
-    unsigned int control_cycle_count=1;
-    Fault f("fault", 1, control_cycle_count);
+    // Add fault to registr
+    Fault f("fault", 1);
     TEST_ASSERT_TRUE(registry.add_fault(&f));
 
     // Check that the fault and its writable fields were added to the registry
@@ -87,7 +85,7 @@ int main(int argc, char *argv[]) {
 #else
 #include <Arduino.h>
 void setup() {
-    delay(2000);
+    delay(10000);
     Serial.begin(9600);
     test_state_field_registry();
 }

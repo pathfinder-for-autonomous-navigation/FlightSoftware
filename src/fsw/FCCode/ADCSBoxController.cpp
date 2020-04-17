@@ -22,9 +22,11 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         mtr_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
         mtr_limit_fp = find_writable_field<float>("adcs_cmd.mtr_limit", __FILE__, __LINE__);
 
+        ssa_mode_fp = find_readable_field<unsigned char>("adcs_monitor.ssa_mode", __FILE__, __LINE__);
         ssa_voltage_filter_fp = find_writable_field<float>("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
 
-        imu_mode_fp = find_writable_field<unsigned char>("adcs_cmd.imu_mode", __FILE__, __LINE__);
+        mag1_mode_fp = find_writable_field<unsigned char>("adcs_cmd.mag1_mode", __FILE__, __LINE__);
+        mag2_mode_fp = find_writable_field<unsigned char>("adcs_cmd.mag2_mode", __FILE__, __LINE__);
         imu_mag_filter_fp = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
         imu_gyr_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
         imu_gyr_temp_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
@@ -83,7 +85,8 @@ void ADCSBoxController::execute(){
     
     adcs_system.set_ssa_voltage_filter(ssa_voltage_filter_fp->get());
 
-    adcs_system.set_imu_mode(imu_mode_fp->get());
+    adcs_system.set_mag1_mode(mag1_mode_fp->get());
+    adcs_system.set_mag2_mode(mag2_mode_fp->get());
     adcs_system.set_imu_mag_filter(imu_mag_filter_fp->get());
     adcs_system.set_imu_gyr_filter(imu_gyr_filter_fp->get());
     adcs_system.set_imu_gyr_temp_filter(imu_gyr_temp_filter_fp->get());
@@ -93,14 +96,43 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
 
     std::bitset<adcs::havt::max_devices> temp_cmd_table(0);
+
+    // send_cmd_table is true iff there is a non zero bit in the reset_vector or disable_vector
+    bool send_cmd_table = false;
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
-        temp_cmd_table.set(idx, havt_cmd_reset_vector_fp[idx]->get());
+        // the bit is high if there is a command to reset the device at [idx]
+        bool reset_get = havt_cmd_reset_vector_fp[idx]->get();
+        if(reset_get) {
+            temp_cmd_table.set(idx, reset_get);
+            send_cmd_table = true;
+
+            // clear the state field now that it's loaded into temp_cmd_table
+            havt_cmd_reset_vector_fp[idx]->set(false);
+        }
     }
-    adcs_system.set_havt_reset(temp_cmd_table);
+
+    // dispatch the i2c call to send the reset table 
+    // iff there was a non-zero bit in the reset table
+    if(send_cmd_table)
+        adcs_system.set_havt_reset(temp_cmd_table);
+
+    send_cmd_table = false;
     for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
     {
-        temp_cmd_table.set(idx, havt_cmd_disable_vector_fp[idx]->get());
+        // the bit is high if there is a command to disable the device at [idx]
+        bool disable_get = havt_cmd_disable_vector_fp[idx]->get();
+        if(disable_get){
+            temp_cmd_table.set(idx, disable_get);
+            send_cmd_table = true;
+
+            // clear the state field now that it's loaded into temp_cmd_table
+            havt_cmd_disable_vector_fp[idx]->set(false);
+        }
     }
-    adcs_system.set_havt_disable(temp_cmd_table);
+    
+    // dispatch the i2c call to send the disable table 
+    // iff there was a non-zero bit in the disable table
+    if(send_cmd_table)
+        adcs_system.set_havt_disable(temp_cmd_table);
 }

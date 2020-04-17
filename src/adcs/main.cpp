@@ -46,6 +46,14 @@ using namespace adcs;
 // TODO : Look into the proper initialization for the slave i2c bus and whether
 //        a clock frequency needs to be included
 
+/** @class InterruptSafe
+ *  Simple RAII based mechanism to protect critical code. */
+class InterruptSafe {
+ public:
+  InterruptSafe() { noInterrupts(); }
+  ~InterruptSafe() { interrupts(); }
+};
+
 void setup() {
   LOG_init(9600)
 
@@ -129,18 +137,27 @@ void update_havt() {
 
 void update_imu() {
   // Update imu readings and copy into the proper registers
-  registers.imu.mode = imu::update_sensors(registers.imu.mode,
-      registers.imu.mag_flt, registers.imu.gyr_flt,
+  imu::update_sensors(registers.imu.mag1_mode,
+      registers.imu.mag2_mode, registers.imu.mag_flt, registers.imu.gyr_flt,
       registers.imu.gyr_desired_temp, registers.imu.gyr_temp_flt,
       registers.imu.gyr_temp_p, registers.imu.gyr_temp_i,
       registers.imu.gyr_temp_d);
-  registers.imu.gyr_rd[0] = imu::gyr_rd(0);
-  registers.imu.gyr_rd[1] = imu::gyr_rd(1);
-  registers.imu.gyr_rd[2] = imu::gyr_rd(2);
+
+  // Copy results into the global registers
+  { InterruptSafe safe;
+    registers.imu.mag1_rd[0] = imu::mag1_rd(0);
+    registers.imu.mag1_rd[1] = imu::mag1_rd(1);
+    registers.imu.mag1_rd[2] = imu::mag1_rd(2);
+    registers.imu.mag2_rd[0] = imu::mag2_rd(0);
+    registers.imu.mag2_rd[1] = imu::mag2_rd(1);
+    registers.imu.mag2_rd[2] = imu::mag2_rd(2);
+    registers.imu.gyr_rd[0] = imu::gyr_rd(0);
+    registers.imu.gyr_rd[1] = imu::gyr_rd(1);
+    registers.imu.gyr_rd[2] = imu::gyr_rd(2);
+  }
+  registers.imu.mag1_mode = IMUMAGMode::IMU_MAG_NORMAL;
+  registers.imu.mag2_mode = IMUMAGMode::IMU_MAG_NORMAL;
   registers.imu.gyr_temp_rd = imu::gyr_temp_rd;
-  registers.imu.mag_rd[0] = imu::mag_rd(0);
-  registers.imu.mag_rd[1] = imu::mag_rd(1);
-  registers.imu.mag_rd[2] = imu::mag_rd(2);
 }
 
 // TODO : Test that this controller works as expected
@@ -182,13 +199,17 @@ void update_rwa() {
     rwa::actuate(rwa_mode, rwa_cmd);
 
   // Update reaction wheel readings
-  rwa::update_sensors(registers.rwa.momentum_flt, registers.rwa.ramp_flt); // TODO : Check if this is momentum of speed filter and refactor accordingly
-  registers.rwa.momentum_rd[0] = rwa::speed_rd(0);
-  registers.rwa.momentum_rd[1] = rwa::speed_rd(1);
-  registers.rwa.momentum_rd[2] = rwa::speed_rd(2);
-  registers.rwa.ramp_rd[0] = rwa::ramp_rd(0);
-  registers.rwa.ramp_rd[1] = rwa::ramp_rd(1);
-  registers.rwa.ramp_rd[2] = rwa::ramp_rd(2);
+  rwa::update_sensors(registers.rwa.momentum_flt, registers.rwa.ramp_flt);
+
+  // Copy results into the global registers
+  { InterruptSafe safe;
+    registers.rwa.momentum_rd[0] = rwa::speed_rd(0);
+    registers.rwa.momentum_rd[1] = rwa::speed_rd(1);
+    registers.rwa.momentum_rd[2] = rwa::speed_rd(2);
+    registers.rwa.ramp_rd[0] = rwa::ramp_rd(0);
+    registers.rwa.ramp_rd[1] = rwa::ramp_rd(1);
+    registers.rwa.ramp_rd[2] = rwa::ramp_rd(2);
+  }
 }
 
 /** \fn update_ssa
@@ -207,15 +228,18 @@ void update_ssa() {
   // Check if sun vector calculation is requested
   if (registers.ssa.mode == SSAMode::SSA_IN_PROGRESS) {
     ssa_mode = ssa::calculate_sun_vector(ssa_sun_vec);
-    registers.ssa.sun_vec_rd[0] = ssa_sun_vec(0);
-    registers.ssa.sun_vec_rd[1] = ssa_sun_vec(1);
-    registers.ssa.sun_vec_rd[2] = ssa_sun_vec(2);
-    registers.ssa.mode = ssa_mode;
+    { InterruptSafe safe;
+      registers.ssa.sun_vec_rd[0] = ssa_sun_vec(0);
+      registers.ssa.sun_vec_rd[1] = ssa_sun_vec(1);
+      registers.ssa.sun_vec_rd[2] = ssa_sun_vec(2);
+      registers.ssa.mode = ssa_mode;
+    }
   }
 }
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
 static unsigned long cycles = 0;
+static unsigned long last_info_time = millis();
 #endif
 
 void loop() {
@@ -226,14 +250,16 @@ void loop() {
   update_havt();
 
 #if LOG_LEVEL >= LOG_LEVEL_INFO
-  if (!(++cycles % 100000UL)) {
+  cycles++;
+
+  if (millis() - last_info_time > 1000) {
+    last_info_time = millis();
+
     LOG_INFO_header
     LOG_INFO_println("Heartbeat cycle count " + String(cycles))
 
     LOG_INFO_header
     LOG_INFO_println("mode     " + String(registers.mode))
-    LOG_INFO_header
-    LOG_INFO_println("imu.mode " + String(registers.imu.mode))
     LOG_INFO_header
     LOG_INFO_println("mtr.mode " + String(registers.mtr.mode))
     LOG_INFO_header
@@ -242,14 +268,21 @@ void loop() {
     LOG_INFO_println("ssa.mode " + String(registers.ssa.mode))
 
     std::bitset<havt::max_devices> temp_bitset(registers.havt.read_table);
-    char buffer[33];
-    for(int i = 0; i<32; i++){
+    char buffer[34];
+    for(int i = 0; i<16; i++){
       if(temp_bitset.test(31-i))
         buffer[i] = '1';
       else
         buffer[i] = '0';
     }
-    buffer[32] = '\0';
+    buffer[16] = ' ';
+    for(int i = 16; i<32; i++){
+      if(temp_bitset.test(31-i))
+        buffer[i+1] = '1';
+      else
+        buffer[i+1] = '0';
+    }
+    buffer[33] = '\0';
 
     LOG_INFO_header
     LOG_INFO_print("havt.read ")

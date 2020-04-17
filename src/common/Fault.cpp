@@ -1,7 +1,8 @@
 #include "Fault.hpp"
 
-Fault::Fault(const std::string& name,
-      const size_t _persistence, unsigned int& control_cycle_count) : 
+const unsigned int* Fault::cc = nullptr;
+ 
+Fault::Fault(const std::string& name, const size_t _persistence) : 
     WritableStateField<bool>(name, Serializer<bool>()),
     _name(name),
     fault_bool_sr(),
@@ -10,8 +11,7 @@ Fault::Fault(const std::string& name,
     unsignal_f(name + ".unsignal", fault_bool_sr),
     // 65536 = 2^16 -1
     persist_sr(65535),
-    persistence_f(name + ".persistence", persist_sr),
-    cc(control_cycle_count)
+    persistence_f(name + ".persistence", persist_sr)
 {
   set(false);
   override_f.set(false);
@@ -20,10 +20,15 @@ Fault::Fault(const std::string& name,
   persistence_f.set(_persistence);
 }
 
+void Fault::evaluate(bool flag) {
+    if (flag) signal();
+    else unsignal();
+}
+
 void Fault::signal() {
-    if (cc > static_cast<unsigned int>(last_fault_time) || cc == 0) {
+    if (*cc > static_cast<unsigned int>(last_fault_time) || *cc == 0) {
         num_consecutive_signals++;
-        last_fault_time = cc;
+        last_fault_time = *cc;
     }
 }
 

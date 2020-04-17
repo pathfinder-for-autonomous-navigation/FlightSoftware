@@ -7,8 +7,11 @@ flask_keys.json
 logs/
 geograv_wrapper.mexmaci64
 geomag_wrapper.mexmaci64
+geograv_wrapper.mexa64
+geomag_wrapper.mexa64
 
 test/output_export.cpp
+tmp
 # OS Generated .DS_store files
 .DS_Store
 .vscode
@@ -166,3 +169,6 @@ build.log
 cmake*
 CMakeListsPrivate.txt
 CMakeLists.txt
+
+# Temporary EEPROM file created by HOOTL
+eeprom.json

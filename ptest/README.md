@@ -1,22 +1,6 @@
-# psim Python Interface
-
-This folder will house all python code in this repository. Functionality to be
-supported by Python may include, but is not limited to:
-
- * Running a simulation in real time with one or two satellites.
- * Real time graphing utilities and other data visulation tools to be used in
-   conjunction with a real time simulation. To use this utility run
-
-       python -m ptest.plotter -d /path/to/data/file
-
-   after running the installation steps below. The `/path/to/data/file` needs to be
-   produced by the simulation.
-
- * Hardware/Sim interface for SHITLs.
-
 # Running unit tests
 
-From the root flight software folder, run
+From the **root flight software folder**, run
 
     python -m pytest ptest
 
@@ -36,26 +20,34 @@ To install the Python MATLAB engine, you must:
  6. Set MATLAB's `pyversion` variable to link with the newly installed Python 3.6.
     You set and check the Python interpretter used by MATLAB by entering
     something like the following in MATLAB's terminal. Replace `PATH_TO_FLIGHT_SOFTWARE` with 
-    the absolute path to this repository. For windows, use `PATH_TO_FLIGHT_SOFTWARE/python/venv/Scripts/python`.
+    the absolute path to this repository. For windows, use `PATH_TO_FLIGHT_SOFTWARE/venv/Scripts/python`.
+    For Mac and Linux, use: `PATH_TO_FLIGHT_SOFTWARE/venv/bin/python`.
 
-        >> pyversion PATH_TO_FLIGHT_SOFTWARE/python/venv/bin/python3
-        >> pyversion
+    Example Linux Output (Matlab Terminal):
 
-            version: '3.6'
-            executable: '/Users/tanishqaggarwal/Documents/pan/repositories/psim/python/venv/bin/python3'
-            library: ''
-            home: '/Users/tanishqaggarwal/Documents/pan/repositories/psim/python/venv/bin/..'
-            isloaded: 0
+         >> pyversion '/home/shihao/Code/PAN/FlightSoftware/venv/bin/python'
+         >> pyversion
+
+               version: '3.6'
+            executable: '/home/shihao/Code/PAN/FlightSoftware/venv/bin/python'
+               library: 'libpython3.6m.so.1.0'
+                  home: '/home/shihao/Code/PAN/FlightSoftware/venv'
+               isloaded: 0
 
  7. Install MATLAB for this repository. With the venv activated from the FlightSoftware directory, run the following on macOS:
 
          cd /Applications/MATLAB_R2019b.app/extern/engines/python
-         python setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/python/venv"
+         python setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/venv"
+
+      or on Linux:
+
+         cd /PATH_TO_MATLAB/R2019b/extern/engines/python
+         python3 setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/venv"
 
       or on Windows:
 
          cd C:\Program Files\MATLAB\R2019b\extern\engines\python
-         python setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/python/venv"
+         python setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/venv"
 
 
 # Configuring Simulation
@@ -70,7 +62,7 @@ Change the port to the COM port Teensy is connected to
 
 Run the main script:
 
-    python -m ptest.run_simulation -c ptest/configs/fc_only_teensy.json
+    python -m ptest runsim -c ptest/configs/fc_only_teensy.json
 
 **Running with software only**
 
@@ -86,11 +78,11 @@ for the Flight Software. You can find these binaries [here](https://github.com/p
 
 2. Then, run the main script. On Windows you must run
 
-       python -m ptest.run_simulation -c ptest/configs/fc_only_teensy.json -t TESTCASENAME
+       python -m ptest runsim -c ptest/configs/fc_only_teensy.json -t TESTCASENAME
 
       since psim for Windows currently only supports connections to actual Teensy devices. On Mac you may run
 
-       python -m ptest.run_simulation -c ptest/configs/fc_only_native.json -t TESTCASENAME
+       python -m ptest runsim -c ptest/configs/fc_only_native.json -t TESTCASENAME
 
       To connect to a desktop binary. Recommended testcase names are `EmptySimCase` and `EmptyCase`.
 

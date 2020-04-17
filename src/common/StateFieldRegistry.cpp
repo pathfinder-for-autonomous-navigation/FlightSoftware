@@ -31,6 +31,15 @@ StateFieldRegistry::find_writable_field(const std::string &name) const {
     return nullptr;
 }
 
+SerializableStateFieldBase*
+StateFieldRegistry::find_eeprom_saved_field(const std::string &name) const {
+    for (ReadableStateFieldBase* field : eeprom_saved_fields) {
+        if (name == field->name()) return field;
+    }
+
+    return nullptr;
+}
+
 Event*
 StateFieldRegistry::find_event(const std::string &name) const {
     for (Event* event : events) {
@@ -57,6 +66,10 @@ bool StateFieldRegistry::add_internal_field(InternalStateFieldBase* field) {
 
 bool StateFieldRegistry::add_readable_field(ReadableStateFieldBase* field) {
     if (find_readable_field(field->name())) return false;
+    if (field->eeprom_save_period() > 0) {
+        if (find_eeprom_saved_field(field->name())) return false;
+        else eeprom_saved_fields.push_back(field);
+    }
     readable_fields.push_back(field);
     return true;
 }

@@ -23,14 +23,17 @@ public:
    */
   void init();
 
-#ifdef FUNCTIONAL_TEST
 protected:
   /**
    * @brief Flag used by the simulation to keep flight software cycles in sync
    * with the simulation.
    */
   WritableStateField<bool> start_cycle_f;
-#endif
+  /**
+   * @brief If this state field is true, DebugTask will call process_commands() once, then move on.
+   * 
+   */
+  WritableStateField<bool> auto_cycle_f;
 };
 
 #endif

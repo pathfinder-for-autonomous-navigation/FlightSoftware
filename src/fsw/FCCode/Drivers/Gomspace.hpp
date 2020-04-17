@@ -1,5 +1,6 @@
 #include <string>
 #include "../Devices/I2CDevice.hpp"
+#include <common/constant_tracker.hpp>
 
 #ifndef GOMSPACE_HPP_
 #define GOMSPACE_HPP_
@@ -12,10 +13,9 @@ namespace Devices {
 class Gomspace : public I2CDevice {
    public:
     #ifndef DESKTOP
-    static constexpr i2c_t3& wire = Wire; /**< I2C bus of Gomspace device **/
+    TRACKED_CONSTANT_SC(i2c_t3&, wire, Wire); /**< I2C bus of Gomspace device **/
     #endif
-    static constexpr unsigned char address = 0x02; /**< I2C address of Gomspace device **/
-    
+    TRACKED_CONSTANT_SC(unsigned char, address, 0x02); /**< I2C address of Gomspace device **/
 
     // TODO
     //! Gomspace voltage level designations

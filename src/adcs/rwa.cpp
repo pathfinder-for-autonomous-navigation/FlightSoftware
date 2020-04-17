@@ -14,6 +14,7 @@
 //  - transform sensor readings in to the body frame
 
 #ifdef RWA_LOG_LEVEL
+  #undef LOG_LEVEL
   #define LOG_LEVEL RWA_LOG_LEVEL
 #endif
 
@@ -22,6 +23,8 @@
 #include "rwa_config.hpp"
 #include "utl/convert.hpp"
 #include "utl/logging.hpp"
+
+#include <lin/generators/constants.hpp>
 
 namespace adcs {
 namespace rwa {
@@ -114,7 +117,12 @@ void update_sensors(float speed_flt, float ramp_flt) {
   for (unsigned int i = 0; i < 3; i++)
     if (adcs[i].is_functional())
       if (adcs[i].end_read(val))
-        readings(i) = utl::fp(val, rwa::min_speed_read, rwa::max_speed_read);
+        readings(i) = 4.096f * ((float)val) / 2048.0f;
+        // ^^ Only converting to a voltage here
+
+  // Go from voltage to speed reading
+  readings = (max_speed_read - min_speed_read) * readings / 3.3f +
+      min_speed_read * lin::ones<lin::Vector3f>();
 
   // Filter the results
   speed_rd = speed_rd + speed_flt * (readings - speed_rd);
@@ -140,7 +148,12 @@ void update_sensors(float speed_flt, float ramp_flt) {
   for (unsigned int i = 0; i < 3; i++)
     if (adcs[i].is_functional())
       if (adcs[i].end_read(val))
-        readings(i) = utl::fp(val, rwa::min_torque, rwa::max_torque);
+        readings(i) = 4.096f * ((float)val) / 2048.0f;
+        // ^^ Only converting to a voltage here
+        
+  // Go from voltage to torque reading
+  readings = (max_torque - min_torque) * readings / 3.3f +
+      min_torque * lin::ones<lin::Vector3f>();
 
   // Filter the results
   ramp_rd = ramp_rd + speed_flt * (readings - ramp_rd);

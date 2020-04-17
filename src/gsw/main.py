@@ -265,9 +265,9 @@ class read_iridium(object):
 
 # Get keys for connecting to email account and elasticsearch server
 try:
-    with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'configs/radio_keys.json')))as radio_keys_config_file:
+    with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../ptest/configs/radio_keys.json')))as radio_keys_config_file:
         radio_keys_config = json.load(radio_keys_config_file)
-    with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'configs/server_keys.json')))as server_keys_config_file:
+    with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../ptest/configs/server_keys.json')))as server_keys_config_file:
         server_keys_config = json.load(server_keys_config_file)
 except json.JSONDecodeError:
     print("Could not load config files. Exiting.")

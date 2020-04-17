@@ -3,6 +3,11 @@
 
 #include "../Devices/Device.hpp"
 #include <cmath>
+#include <common/constant_tracker.hpp>
+
+#ifndef DESKTOP
+#include <Arduino.h>
+#endif
 
 namespace Devices {
 /**
@@ -14,17 +19,17 @@ namespace Devices {
 class DockingSystem : public Devices::Device {
    public:
     //! Default pin for docking motor I1.
-    static constexpr unsigned char motor_i1_pin = 14;
+    TRACKED_CONSTANT_SC(unsigned char, motor_i1_pin, 14);
     //! Default pin for docking motor I2.
-    static constexpr unsigned char motor_i2_pin = 15;
+    TRACKED_CONSTANT_SC(unsigned char, motor_i2_pin, 15);
     //! Default pin for docking motor direction pin.
-    static constexpr unsigned char motor_direction_pin = 16;
+    TRACKED_CONSTANT_SC(unsigned char, motor_direction_pin, 16);
     //! Default pin for docking motor sleep pin.
-    static constexpr unsigned char motor_sleep_pin = 17;
+    TRACKED_CONSTANT_SC(unsigned char, motor_sleep_pin, 17);
     //! Default pin for docking motor step.
-    static constexpr unsigned char motor_step_pin = 39;
+    TRACKED_CONSTANT_SC(unsigned char, motor_step_pin, 39);
     //! Docking switch pin
-    static constexpr unsigned char switch_pin = 36;
+    TRACKED_CONSTANT_SC(unsigned char, switch_pin, 36);
 
     /**
      * @brief Construct a new Docking System object.
@@ -53,27 +58,20 @@ class DockingSystem : public Devices::Device {
      */
     void step_motor(float angle);
 
-    /**
-     * @brief Set the direction of the motor turning.
-     * 
-     * @param clockwise True if we want to turn the motor clockwise.
-     */
-    void set_direction(bool clockwise);
-
     /** 
-     * @brief Put the docking motor into the "docked" turning configuration.
+     * @brief Turn the motor shaft by 180 degrees.
      **/
-    void start_dock();
-
-    /** 
-     * @brief Put the docking motor into the "undocked" turning configuration.
-     **/
-    void start_undock();
+    void start_halfturn();
 
     /**
      * @brief Manually step motor by one step.
      */
-    void step_motor();
+    static void step_motor();
+
+    /**
+     * @brief Cancel stepping of motor.
+     */
+    void cancel();
 
     /**
      * @brief Return current step angle.
@@ -97,6 +95,13 @@ class DockingSystem : public Devices::Device {
     void set_step_angle(float angle);
 
     /**
+     * @brief Adjust step delay for docking motor.
+     * 
+     * @param parameter
+     */
+    void set_step_delay(unsigned int delay);
+
+    /**
      * @brief Set number of steps left to turn.
      */
     void set_turn_angle(float angle);
@@ -112,7 +117,12 @@ class DockingSystem : public Devices::Device {
 
    private:
     // Sets how many degrees the motor turns in one step.
-    float step_angle = (15.0f*M_PI)/180.0f;
+    // In testing with a load, a step_delay = 4000 took about 22.5 seconds to 
+    // turn 180 degrees, so there were 22.5/4000E-6 = 5625 steps taken 
+    // -> step_angle = 180/5625 = 0.032 deg/step 
+    TRACKED_CONSTANT(float, step_angle, 0.032);
+    // Sets the delay between steps (in microseconds), which affects the speed and torque
+    TRACKED_CONSTANT(unsigned int, step_delay, 4000);
 
     // Status of motor sleep pin (and therefore of overall docking motor.)
     #ifndef DESKTOP
@@ -125,7 +135,7 @@ class DockingSystem : public Devices::Device {
     #endif
 
     //number of steps left to complete
-    unsigned int steps = 0;
+    static volatile unsigned int steps;
 };
 }  // namespace Devices
 

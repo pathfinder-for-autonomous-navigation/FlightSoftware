@@ -4,7 +4,7 @@
 size_t g_fake_pressure_cycle_count = 15; // global
 #endif
 #if (defined(UNIT_TEST) && defined(DESKTOP))
-#define DD(f_, ...) printf((f_), ##__VA_ARGS__)
+#define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
 #else
 #define DD(f_, ...) do{} while(0)
 #endif
@@ -29,7 +29,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
           tank2_temp("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
           tank1_temp("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
           // TODO: Why does Fault take a control_cycle_count reference?
-          pressurize_fail_fault_f("prop.pressurize_fail", 1, control_cycle_count)
+          pressurize_fail_fault_f("prop.pressurize_fail", 1)
           {
 
     add_writable_field(prop_state_f);
@@ -51,11 +51,17 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_readable_field(tank2_temp);
     add_readable_field(tank1_temp);
 
-    max_pressurizing_cycles.set(20);
-    threshold_firing_pressure.set(25.0f);
-    ctrl_cycles_per_filling_period.set(1000 / PAN::control_cycle_time_ms);
-    ctrl_cycles_per_cooling_period.set(10 * 1000 / PAN::control_cycle_time_ms);
-    tank1_valve.set(0); // default use 0
+    TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
+    TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_filling_period_ic, 1000 / PAN::control_cycle_time_ms);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_cooling_period_ic, 10 * 1000 / PAN::control_cycle_time_ms);
+    TRACKED_CONSTANT(unsigned int, tank1_valve_choice_ic, 0);
+    
+    max_pressurizing_cycles.set(max_pressurizing_cycles_ic);
+    threshold_firing_pressure.set(threshold_firing_pressure_ic);
+    ctrl_cycles_per_filling_period.set(ctrl_cycles_per_filling_period_ic);
+    ctrl_cycles_per_cooling_period.set(ctrl_cycles_per_cooling_period_ic);
+    tank1_valve.set(tank1_valve_choice_ic); // default use 0
 
     tank2_pressure.set(Tank2.get_pressure());
     tank2_temp.set(Tank2.get_temp());
@@ -91,6 +97,7 @@ void PropController::execute() {
 
     prop_state_t next_state = get_state(current_state).evaluate();
     if (next_state != current_state) {
+        DD("New state: %u\n", static_cast<unsigned int>(next_state));
         // sanity check
         if (get_state(next_state).can_enter()) {
             prop_state_f.set(static_cast<unsigned int>(next_state));
@@ -98,6 +105,7 @@ void PropController::execute() {
         } else {
             // This should never happen, if it does, complain a lot.
             // TODO: enter handling fault maybe?
+            DD("Could not enter state!!\n");
             prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
         }
     }
@@ -209,7 +217,11 @@ prop_state_t PropState_Disabled::evaluate() {
 
 bool PropState_Idle::can_enter() const {
     // TODO: can only enter IDLE if there are no hardware faults
+#ifndef DESKTOP
     return PropulsionSystem.is_functional();
+#else
+    return true;
+#endif
 }
 
 void PropState_Idle::enter() {
@@ -397,11 +409,15 @@ void PropState_Firing::enter() {
 }
 
 prop_state_t PropState_Firing::evaluate() {
+    DD("==> PropState_Firing is evaluating\n");
     if (is_schedule_empty()) {
         PropulsionSystem.disable();
+        DD("==> schedule is now empty\n");
         return prop_state_t::idle;
     } else
+    {
         return this_state;
+    }
 }
 
 bool PropState_Firing::is_schedule_empty() const {
