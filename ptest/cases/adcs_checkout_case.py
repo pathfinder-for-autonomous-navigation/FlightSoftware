@@ -344,7 +344,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         list_of_voltages = []
         for i in range(10):
             voltages = []
-            for i in range(1,21):
+            for i in range(0, 20):
                 reading = self.print_rs(f"adcs_monitor.ssa_voltage{i}")
                 voltages += [reading]
             list_of_voltages += voltages
@@ -388,6 +388,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.ssa_checkout()
 
+        self.print_rs("gomspace.vbatt")
         # TODO FURTHER CHECKOUTS
 
         self.print_header("ADCS CHECKOUT COMPLETE")
