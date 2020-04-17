@@ -230,7 +230,7 @@ void test_execute_ssa(){
 
     //verify that the values are read into statefields correctly
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_rwa_max_speed, tf.rwa_speed_rd_fp->get(), 0);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_rwa_max_torque, tf.rwa_torque_rd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(ref_rwa_max_ramp_rd, tf.rwa_torque_rd_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::SSAMode::SSA_FAILURE, tf.ssa_mode_fp->get());
     
     //test ssa_vec is nan
