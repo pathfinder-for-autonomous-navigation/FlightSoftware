@@ -579,8 +579,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         }
         
         // if there's a magnitude serializer, save data into the member variable
-        if(N == 3){
-            bit_array& local_arr_ref = const_cast <bit_array&>(magnitude_serializer->get_bit_array());
+        if(N == 3) {
+            bit_array& local_arr_ref = magnitude_serializer->get_bit_array();
             for(size_t i = 0; i < magnitude_serializer->bitsize(); i++){
                 local_arr_ref[i] = this->serialized_val[idx_pointer];
                 idx_pointer++;
@@ -590,7 +590,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         // loop through each serializer
         for(unsigned int i = 0; i<(N-1); i++){
-            bit_array& local_arr_ref = const_cast <bit_array&>(vector_element_serializers[i]->get_bit_array());
+            bit_array& local_arr_ref = vector_element_serializers[i]->get_bit_array();
             // loop through each bit belonging to the serializer
             for(size_t j = 0; j < vector_element_serializers[i]->bitsize(); j++){       
                 local_arr_ref[j] = this->serialized_val[idx_pointer];
