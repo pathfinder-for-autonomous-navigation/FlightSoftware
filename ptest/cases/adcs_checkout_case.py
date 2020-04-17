@@ -283,6 +283,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         torque_max = 0.00418
         x = 0.0001
+        y = 0.002
         torque_tests = [
             [x, 0, 0],
             [0, x, 0],
@@ -290,6 +291,12 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             [-x, 0, 0],
             [0, -x, 0],
             [0, 0, -x],
+            [y, 0, 0],
+            [0, y, 0],
+            [0, 0, y],
+            [-y, 0, 0],
+            [0, -y, 0],
+            [0, 0, -y],
         ]
 
         self.print_header("TORQUE TESTS: ")
@@ -339,7 +346,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             voltages = []
             for i in range(1,21):
                 reading = self.print_rs(f"adcs_monitor.ssa_voltage{i}")
-                voltages += reading
+                voltages += [reading]
             list_of_voltages += voltages
         # check readings changed over time
         self.soft_assert(sum_of_differentials(list_of_voltages) > 0,
