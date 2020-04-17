@@ -224,9 +224,9 @@ void UplinkProducer::print_packet(bitstream& bs)
     }
 }
 
-void UplinkProducer::to_file(const bitstream& bs, const std::string& filename)
+void UplinkProducer::to_file(bitstream& bs, const std::string& filename)
 {
-    bool is_valid = _validate_packet(const_cast<bitstream&>(bs));
+    bool is_valid = _validate_packet(bs);
     // Throw exception if verification fails
     if (!is_valid)
        throw std::runtime_error("Uplink Producer: Packet you created is not valid");
