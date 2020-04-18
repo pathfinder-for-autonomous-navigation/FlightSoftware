@@ -1587,11 +1587,11 @@
             "writable": false
         },
         "piksi.state": {
-            "bitsize": 3,
+            "bitsize": 4,
             "flow_id": 19,
-            "max": 4,
+            "max": 10,
             "min": 0,
-            "type": "unsigned int",
+            "type": "unsigned char",
             "writable": false
         },
         "piksi.time": {
@@ -1607,6 +1607,28 @@
             "min": 0.0,
             "type": "std double vector",
             "writable": false
+        },
+        "piksi_fh.cdpgs_delay_max_wait": {
+            "bitsize": 20,
+            "flow_id": 36,
+            "max": 720000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "piksi_fh.enabled": {
+            "bitsize": 1,
+            "flow_id": 36,
+            "type": "bool",
+            "writable": true
+        },
+        "piksi_fh.no_cdpgs_max_wait": {
+            "bitsize": 20,
+            "flow_id": 36,
+            "max": 720000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
         },
         "prop.failed_pressurize": {
             "bitsize": 1,
@@ -2521,6 +2543,16 @@
             ],
             "id": 35,
             "priority": 34
+        },
+        {
+            "active": false,
+            "fields": [
+                "piksi_fh.no_cdpgs_max_wait",
+                "piksi_fh.cdpgs_delay_max_wait",
+                "piksi_fh.enabled"
+            ],
+            "id": 36,
+            "priority": 35
         }
     ]
 }
