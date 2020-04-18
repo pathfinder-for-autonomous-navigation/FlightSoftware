@@ -1,6 +1,5 @@
 #include "PiksiFaultHandler.hpp"
 #include "constants.hpp"
-#include <iostream>
 
 // Declare static storage for constexpr variables
 const constexpr unsigned int PiksiFaultHandler::default_no_cdgps_max_wait;

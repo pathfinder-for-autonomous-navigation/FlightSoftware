@@ -3,7 +3,6 @@
 #include <fsw/FCCode/PiksiFaultHandler.hpp>
 #include <fsw/FCCode/piksi_mode_t.enum>
 #include <fsw/FCCode/mission_state_t.enum>
-#include <iostream>
 
 unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
 
