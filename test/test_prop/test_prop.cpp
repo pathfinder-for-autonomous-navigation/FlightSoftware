@@ -321,6 +321,7 @@ void setup() {
     RUN_TEST(test_is_functional);
     scheduling_tests();
     RUN_TEST(test_reset);
+    // Multiple is_functional are here to make sure DCDC is not shutting down due to low power
     TEST_ASSERT_TRUE(PropulsionSystem.is_functional());
     interval_timer_tests();
     TEST_ASSERT_TRUE(PropulsionSystem.is_functional());

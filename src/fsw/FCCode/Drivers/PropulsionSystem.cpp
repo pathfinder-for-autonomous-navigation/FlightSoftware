@@ -69,7 +69,7 @@ bool _PropulsionSystem::setup() {
 #ifndef DESKTOP
     // Set 10-bit resolution since the regression for the pressure sensor
     // calculations was computed using a 10-bit Teensy
-    analogReadAveraging(10);
+    analogReadResolution(10);
 #endif
     return true;
 }

@@ -80,9 +80,9 @@ class Tank;
  * ------
  *
  * To mock the sensors values, assigned
- * - fake_tank1_temp_sensor_read to the desire value of Tank1.analogRead(temp_sensor_pin)
- * - fake_tank2_temp_sensor_read to the desire value of Tank2.analogRead(temp_sensor_pin)
- * - fake_tank2_pressure_low_read to the desire value of Tank2.analogRead(pressure_sensor_low_pin)
+ * - fake_tank1_temp_sensor_read to the desired value of Tank1.analogRead(temp_sensor_pin)
+ * - fake_tank2_temp_sensor_read to the desired value of Tank2.analogRead(temp_sensor_pin)
+ * - fake_tank2_pressure_low_read to the desired value of Tank2.analogRead(pressure_sensor_low_pin)
  * - fake_tank2_pressure_high_read to the desired value of Tank2.analogRead(pressure_sensor_high_pin)
  * 
  **/
@@ -206,7 +206,6 @@ public:
      */
     bool is_valve_open(size_t valve_idx) const;
 
-//protected: // yes, this is bad
     /**
      * @brief Enables valve INPUT/OUTPUT on valve and sensor pins
      */
@@ -228,14 +227,14 @@ public:
     // These constants are from the nonlinear regression for computing tank temperature
     // T = A * ln(R)^EXP + B
     // T is temperature, R is resistance
-    TRACKED_CONSTANT(double, temp_a, -35126.92396);
-    TRACKED_CONSTANT(double, temp_exp, 0.005);
-    TRACKED_CONSTANT(double, temp_b, 35493.23411);
+    TRACKED_CONSTANT_SC(double, temp_a, -35126.92396);
+    TRACKED_CONSTANT_SC(double, temp_exp, 0.005);
+    TRACKED_CONSTANT_SC(double, temp_b, 35493.23411);
 
     // Minimum and maximum temperature constants permitted by the regression
     // These values are used to clamp voltage readings close to 0 and 3.3 V
-    TRACKED_CONSTANT(int, tank_temp_min, -55);
-    TRACKED_CONSTANT(int, tank_temp_max, 150);
+    TRACKED_CONSTANT_SC(int, tank_temp_min, -55);
+    TRACKED_CONSTANT_SC(int, tank_temp_max, 150);
 
 #ifdef DESKTOP
     unsigned int* p_fake_temp_read;

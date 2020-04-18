@@ -319,7 +319,6 @@ void test_firing_to_idle()
 
 void test_temp_sensor_logic()
 {
-    Tank1.fake_tank1_temp_sensor_read = 1;
 #ifdef _PRINT_SENSORS
     for (unsigned int i = 0; i < 1023; i++)
     {
