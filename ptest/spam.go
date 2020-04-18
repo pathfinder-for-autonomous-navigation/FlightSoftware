@@ -26,6 +26,12 @@ import (
 // and subsequent execution of the program will not prompt you for authorization code again
 // until the token expires.
 
+func usage() {
+    fmt.Println("./spam mymessage.sbd")
+    fmt.Println("./spam mymessage.sbd [IMEI number]")
+    os.Exit(-1)
+}
+
 // getClient uses a Context and Config to retrieve a Token
 // then generate a Client. It returns the generated Client.
 func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
@@ -231,6 +237,16 @@ func createMessageWithAttachment(from string, to string, subject string, content
 }
 
 func main() {
+
+    if len(os.Args) < 2 {
+        usage()
+    }
+
+    imei := "300234030627990"
+    if len(os.Args == 3) {
+        imei = os.Args[2]
+    }
+
 	ctx := context.Background()
 
 	// process the credential file
@@ -264,7 +280,7 @@ func main() {
 	//user := "me"
 	//sendMessage(gmailClientService, user, message)
 
-	messageWithAttachment := createMessageWithAttachment("pan.ssds.qlocate@gmail.com", "data@sbd.iridium.com", "300234030627990", msgContent, "./", os.Args[1])
+	messageWithAttachment := createMessageWithAttachment("pan.ssds.qlocate@gmail.com", "data@sbd.iridium.com", imei, msgContent, "./", os.Args[1])
 
 	// send out our message
 	user := "pan.ssds.qlocate@gmail.com"
