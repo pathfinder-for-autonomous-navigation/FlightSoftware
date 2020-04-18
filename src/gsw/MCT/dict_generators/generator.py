@@ -28,7 +28,7 @@ if __name__ == "__main__":
     }
 
     with open(args.telemetry, 'r') as f:
-        telem_data = {k: v for k, v in json.load(f)["fields"].items() if k.startswith('gomspace.')}
+        telem_data = {k: v for k, v in json.load(f)["fields"].items() if k.startswith(subsystem_data["filter"])}
 
         for key in telem_data:
             key_data.setdefault(key, {})

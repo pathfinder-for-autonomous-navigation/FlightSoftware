@@ -1,6 +1,7 @@
 {
     "name" : "Battery",
     "key" : "gomspace",
+    "filter" : "gomspace.",
     "keys": {
         "gomspace.vbatt": {
             "name": "Battery Level",
