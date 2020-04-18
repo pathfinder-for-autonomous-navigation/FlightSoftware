@@ -184,6 +184,7 @@ class SerializerBase : public SerializerType {
      * @return const bit_array& Reference to internal bit array.
      */
     const bit_array& get_bit_array() const { return serialized_val; }
+    bit_array& get_bit_array() { return serialized_val; }
 
     /**
      * @brief Return size of bit array held by this serializer.
