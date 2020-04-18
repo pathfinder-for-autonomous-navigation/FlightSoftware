@@ -4,7 +4,7 @@ const unsigned int* Fault::cc = nullptr;
  
 Fault::Fault(const std::string& name, const size_t _persistence) : 
     WritableStateField<bool>(name, Serializer<bool>()),
-    _name(name),
+    _name(name + ".base"),
     fault_bool_sr(),
     suppress_f(name + ".suppress", fault_bool_sr),
     override_f(name + ".override", fault_bool_sr),

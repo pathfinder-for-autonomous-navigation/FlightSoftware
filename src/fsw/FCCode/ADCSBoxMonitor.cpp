@@ -35,11 +35,11 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     havt_bool_sr(),
     adcs_is_functional("adcs_monitor.functional", flag_sr),
 
-    adcs_functional_fault("adcs_monitor.functional_fault_base", 1),
-    wheel1_adc_fault("adcs_monitor.wheel1_fault_base", 1),
-    wheel2_adc_fault("adcs_monitor.wheel2_fault_base", 1),
-    wheel3_adc_fault("adcs_monitor.wheel3_fault_base", 1),
-    wheel_pot_fault("adcs_monitor.wheel_pot_fault_base", 1)
+    adcs_functional_fault("adcs_monitor.functional_fault", 1),
+    wheel1_adc_fault("adcs_monitor.wheel1_fault", 1),
+    wheel2_adc_fault("adcs_monitor.wheel2_fault", 1),
+    wheel3_adc_fault("adcs_monitor.wheel3_fault", 1),
+    wheel_pot_fault("adcs_monitor.wheel_pot_fault", 1)
     {
         // reserve memory
         ssa_voltages_f.reserve(adcs::ssa::num_sun_sensors);

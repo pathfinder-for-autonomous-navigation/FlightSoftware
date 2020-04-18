@@ -4,8 +4,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
 
-    get_hk_fault("gomspace.get_hk_base", 1),
-    low_batt_fault("gomspace.low_batt_base", 1),
+    get_hk_fault("gomspace.get_hk", 1),
+    low_batt_fault("gomspace.low_batt", 1),
 
     batt_threshold_sr(5000,9000,10),
     batt_threshold_f("gomspace.batt_threshold", batt_threshold_sr),

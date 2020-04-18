@@ -23,14 +23,14 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
 
-    low_batt_fault_fp=registry.create_fault("gomspace.low_batt_base", 1);
-    adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault_base", 1);
-    wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault_base", 1);
-    wheel2_adc_fault_fp=registry.create_fault("adcs_monitor.wheel2_fault_base", 1);
-    wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault_base", 1);
-    wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault_base", 1);
-    failed_pressurize_fp=registry.create_fault("prop.failed_pressurize_base", 1);
-    overpressured_fp=registry.create_fault("prop.overpressured_base", 1);
+    low_batt_fault_fp=registry.create_fault("gomspace.low_batt", 1);
+    adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault", 1);
+    wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault", 1);
+    wheel2_adc_fault_fp=registry.create_fault("adcs_monitor.wheel2_fault", 1);
+    wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault", 1);
+    wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
+    failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1);
+    overpressured_fp=registry.create_fault("prop.overpressured", 1);
 
 
     // Initialize these variables
