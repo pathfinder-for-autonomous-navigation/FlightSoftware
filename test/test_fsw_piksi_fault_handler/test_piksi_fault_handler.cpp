@@ -14,7 +14,7 @@ class TestFixture {
     // Fields used to create fault handler
     std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
     std::shared_ptr<WritableStateField<unsigned char>> mission_state_fp;
-    std::shared_ptr<InternalStateField<unsigned int>> last_fix_ccno_fp;
+    std::shared_ptr<InternalStateField<unsigned int>> last_rtkfix_ccno_fp;
     std::shared_ptr<InternalStateField<unsigned int>> enter_close_appr_ccno_fp;
 
     // Fields created by the fault handler
@@ -34,7 +34,7 @@ class TestFixture {
     TestFixture() : registry() {
         piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
         mission_state_fp = registry.create_writable_field<unsigned char>("pan.state");
-        last_fix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
+        last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
         enter_close_appr_ccno_fp = registry.create_internal_field<unsigned int>("pan.enter_close_approach_ccno");
 
         // Set initial conditions
@@ -58,7 +58,7 @@ void test_task_initialization() {
     TestFixture tf;
     TEST_ASSERT_NOT_NULL(tf.piksi_state_fp);
     TEST_ASSERT_NOT_NULL(tf.mission_state_fp);
-    TEST_ASSERT_NOT_NULL(tf.last_fix_ccno_fp);
+    TEST_ASSERT_NOT_NULL(tf.last_rtkfix_ccno_fp);
     TEST_ASSERT_NOT_NULL(tf.enter_close_appr_ccno_fp);
     TEST_ASSERT_NOT_NULL(tf.no_cdgps_max_wait_fp);
     TEST_ASSERT_NOT_NULL(tf.cdgps_delay_max_wait_fp);
@@ -102,7 +102,7 @@ void test_no_cdgps() {
     unsigned int no_gps_max_wait = tf.no_cdgps_max_wait_fp->get();
 
     // Get a GPS reading in manual state
-    tf.last_fix_ccno_fp->set(cc_count);
+    tf.last_rtkfix_ccno_fp->set(cc_count);
 
     // Wait a few control cycles and move to the close approach state
     cc_count+=30;
@@ -138,7 +138,7 @@ void test_no_cdgps_2() {
     unsigned int no_gps_max_wait = tf.no_cdgps_max_wait_fp->get();
 
     // Get a GPS reading in manual state
-    tf.last_fix_ccno_fp->set(cc_count);
+    tf.last_rtkfix_ccno_fp->set(cc_count);
 
     // Move to the close approach state
     tf.set_mission_state(mission_state_t::leader_close_approach);
@@ -177,7 +177,7 @@ void test_cdgps_delay() {
 
     // Wait a few control cycles and get a GPS reading
     cc_count = 10;
-    tf.last_fix_ccno_fp->set(cc_count);
+    tf.last_rtkfix_ccno_fp->set(cc_count);
 
     // Let the maximum wait time pass since the last GPS reading
     cc_count += gps_delay_max_wait;
@@ -215,7 +215,7 @@ void test_disable() {
 
     // Wait a few control cycles and get a GPS reading
     cc_count = 10;
-    tf.last_fix_ccno_fp->set(cc_count);
+    tf.last_rtkfix_ccno_fp->set(cc_count);
 
     // Let a little more than the maximum wait time pass since the last GPS reading
     cc_count += gps_delay_max_wait+1;
