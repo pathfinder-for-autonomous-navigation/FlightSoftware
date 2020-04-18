@@ -243,7 +243,7 @@ func main() {
     }
 
     imei := "300234030627990"
-    if len(os.Args == 3) {
+    if len(os.Args) == 3 {
         imei = os.Args[2]
     }
 
