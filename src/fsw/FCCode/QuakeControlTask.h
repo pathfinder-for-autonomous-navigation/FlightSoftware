@@ -22,7 +22,7 @@ public:
         quake.setup();
       }
   #else
-  QuakeControlTask() : 
+  QuakeControlTask() :
       quake("Quake"),
       fnSeqNum(0),
       MO_msg_p(nullptr),
@@ -41,7 +41,7 @@ public:
    * Set the message that Quake should downlink.  */
   void set_downlink_msg(char *, size_t);
 
-  char* get_MT_msg()
+  char* const get_MT_msg()
   {
     return quake.mt_message;
   }
@@ -98,7 +98,7 @@ private:
 
   int fnSeqNum;     // the sequence we are on
 
-  char *MO_msg_p;   // data to which MO_msg_p points is not constant
+  char *MO_msg_p;
   size_t MO_msg_len; // length of the message to downlink (should always be packet_size)
 
   friend class QuakeManager;

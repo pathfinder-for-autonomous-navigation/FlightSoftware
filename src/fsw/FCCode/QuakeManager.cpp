@@ -67,8 +67,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
 
     // Setup MO Buffers
     max_snapshot_size = std::max(snapshot_size_fp->get() + 1, static_cast<size_t>(packet_size));
-    mo_buffer_copy = new char[max_snapshot_size];
-    memset(mo_buffer_copy, 0, max_snapshot_size);
+    mo_buffer_copy = new char[max_snapshot_size] ();
 }
 
 QuakeManager::~QuakeManager()
@@ -229,7 +228,7 @@ void QuakeManager::copy_next_packet()
 
 void QuakeManager::copy_next_snapshot()
 {
-    memset(mo_buffer_copy, 0, max_snapshot_size);
+    memset(mo_buffer_copy, 0, sizeof(*mo_buffer_copy) * max_snapshot_size);
     memcpy(mo_buffer_copy, radio_mo_packet_fp->get(), max_snapshot_size);
 }
 
@@ -350,7 +349,7 @@ void QuakeManager::handle_err(int err_code)
 
 bool QuakeManager::no_more_cycles(size_t max_cycles)
 {
-    return control_cycle_count - cycle_of_entry >= max_cycles;
+    return control_cycle_count - cycle_of_entry > max_cycles;
 }
 
 void QuakeManager::transition_radio_state(radio_state_t new_state)
