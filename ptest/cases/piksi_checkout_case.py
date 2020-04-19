@@ -36,12 +36,19 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         perform 10 readings,
         return the most common lol
         '''
+
+        self.log.put(self.piksi_modes.arr)
+
+        readings_dict = {x:0 for x in self.piksi_modes.arr}
+
         readings = []
         for i in range(20):
             self.cycle()
+            reading = self.rs("piksi.state")
             readings += [self.rs("piksi.state")]
-            
+            readings_dict[reading] += 1
 
+        #if dead is the most common/throw a soft assertion error
 
     def fixed_rtk_checkout(self):
         raise NotImplementedError
