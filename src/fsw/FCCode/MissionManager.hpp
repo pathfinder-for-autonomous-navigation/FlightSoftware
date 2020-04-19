@@ -143,7 +143,7 @@ class MissionManager : public TimedControlTask<void> {
     WritableStateField<bool>* adcs_paired_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
-    const ReadableStateField<d_vector_t>* propagated_baseline_pos_fp; // Propagated baseline position
+    const ReadableStateField<lin::Vector3d>* propagated_baseline_pos_fp; // Propagated baseline position
 
     // Field exposed by Gomspace for rebooting entire spacecraft.
     WritableStateField<bool>* reboot_fp;
@@ -187,6 +187,11 @@ class MissionManager : public TimedControlTask<void> {
      * hasn't been made yet.
      */
     WritableStateField<unsigned char> sat_designation_f;
+
+    /**
+     * @brief The cycle at which we enter the close approach state
+     */
+    InternalStateField<unsigned int> enter_close_approach_ccno_f;
 
    private:
     /**

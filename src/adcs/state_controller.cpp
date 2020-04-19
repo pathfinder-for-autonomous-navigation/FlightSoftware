@@ -32,20 +32,22 @@ namespace umb {
 
 /** \fn endian_write
  *  Writes a data type out over the slave i2c bus according to the current state
- *  endianness variables. */
+ *  endianness variables.
+ * 
+ *  NOTE: The endianess option was removed from ADCS software; this function is
+ *  artifact of that original design choice. */
 template <typename T>
 static void endian_write(T t) {
   unsigned char *ptr = (unsigned char *)(&t);
-  // if (registers.endianess == Endianness::BIG)
-  //   for (unsigned int i = sizeof(T) - 1; i >= 0; i--) umb::wire->write(ptr[i]);
-  // else
-  // ^^^ Endianess option was removed
     for (unsigned int i = 0; i < sizeof(T); i++) umb::wire->write(ptr[i]);
 }
 
 /** \fn endian_write
  *  Writes a data array out over the slave i2c bus according to the current
- *  state endianness variable. */
+ *  state endianness variable.
+ * 
+ *  NOTE: The endianess option was removed from ADCS software; this function is
+ *  artifact of that original design choice. */
 template <typename T, unsigned int N>
 static void endian_write(T const (&t_arr)[N]) {
   for (unsigned int i = 0; i < N; i++) endian_write(t_arr[i]);
@@ -54,15 +56,14 @@ static void endian_write(T const (&t_arr)[N]) {
 /** \fn endian_read
  *  Reads a data type in from the slave i2c bus according to the current state
  *  endianness variables. It is assumed the RX buffer contains a sufficient
- *  amount of incoming bytes. */
+ *  amount of incoming bytes.
+ * 
+ *  NOTE: The endianess option was removed from ADCS software; this function is
+ *  artifact of that original design choice. */
 template <typename T>
 static T endian_read() {
   T t;
   unsigned char *ptr = (unsigned char *)(&t);
-  // if (registers.endianess == Endianness::BIG)
-  //   for (unsigned int i = sizeof(T) - 1; i >= 0; i--) ptr[i] = umb::wire->read();
-  // else
-  // ^^^ Endianess option was removed
     for (unsigned int i = 0; i < sizeof(T); i++) ptr[i] = umb::wire->read();
   return t;
 }
@@ -70,7 +71,10 @@ static T endian_read() {
 /** \fn endian_read
  *  Reads a data array in over the slave i2c bus according to the current state
  *  endianness variables. It is assumed the RX buffer contains a sufficient
- *  amount of incoming bytes. */
+ *  amount of incoming bytes.
+ * 
+ *  NOTE: The endianess option was removed from ADCS software; this function is
+ *  artifact of that original design choice. */
 template <typename T, unsigned int N>
 static void endian_read(T (&t_arr)[N]) {
   for (unsigned int i = 0; i < N; i++) t_arr[i] = endian_read<T>();
@@ -98,14 +102,6 @@ void on_i2c_recieve(unsigned int bytes) {
   unsigned char address = endian_read<unsigned char>();
 
   switch (address) {
-
-    // case Register::ENDIANNESS: {
-    //   if (umb::wire->available() < 1) break;
-    //   registers.endianess = endian_read<unsigned char>();
-
-    //   DEBUG_printF("...endianess set to ") DEBUG_println(registers.endianess)
-    // }
-    // ^^^ Endianess option was removed
 
     case Register::ADCS_MODE: {
       if (umb::wire->available() < 1) break;
@@ -234,12 +230,20 @@ void on_i2c_recieve(unsigned int bytes) {
       break;
     }
 
-    case Register::IMU_MODE: {
+    case Register::IMU_MAG1_MODE: {
       if (umb::wire->available() < 1) break;
-      registers.imu.mode = endian_read<unsigned char>();
+      registers.imu.mag1_mode = endian_read<unsigned char>();
 
       LOG_INFO_header
-      LOG_INFO_println("IMU_MODE set to " + String(registers.imu.mode))
+      LOG_INFO_println("IMU_MAG1_MODE set to " + String(registers.imu.mag1_mode));
+    }
+
+    case Register::IMU_MAG2_MODE: {
+      if (umb::wire->available() < 1) break;
+      registers.imu.mag2_mode = endian_read<unsigned char>();
+
+      LOG_INFO_header
+      LOG_INFO_println("IMU_MAG2_MODE set to " + String(registers.imu.mag2_mode));
 
       break;
     }
@@ -385,6 +389,7 @@ void on_i2c_request() {
     case Register::RWA_SPEED_RD: {
       float f[3];
       unsigned short t[3];
+
       // Ouput reaction wheel angular momentum
       copy_to(registers.rwa.momentum_rd, f);
       for (unsigned int i = 0; i < 3; i++)
@@ -421,6 +426,7 @@ void on_i2c_request() {
     case Register::SSA_SUN_VECTOR: {
       float f[3];
       unsigned short t[3];
+
       // Output calculated sun vector
       copy_to(registers.ssa.sun_vec_rd, f);
       for (unsigned int i = 0; i < 3; i++)
@@ -437,6 +443,7 @@ void on_i2c_request() {
     case Register::SSA_VOLTAGE_READ: {
       float f[20];
       unsigned char t[20];
+
       // Output sun sensor voltage measurements
       copy_to(registers.ssa.voltage_rd, f);
       for (unsigned int i = 0; i < 20; i++)
@@ -450,17 +457,28 @@ void on_i2c_request() {
       break;
     }
 
-    case Register::IMU_MAG_READ: {
+    case Register::IMU_READ: {
       float f[3];
       unsigned short t[3];
-      // Output magnetic field readings
-      copy_to(registers.imu.mag_rd, f);
+
+      // Output magnetic field readings from magnetometer one
+      copy_to(registers.imu.mag1_rd, f);
       for (unsigned int i = 0; i < 3; i++)
-        t[i] = utl::us(f[i], imu::min_rd_mag, imu::max_rd_mag);
+        t[i] = utl::us(f[i], imu::min_mag1_rd_mag, imu::max_mag1_rd_mag);
       endian_write(t);
 
       LOG_INFO_header
-      LOG_INFO_println("IMU_MAG_READ read as " + String(f[0]) + " "
+      LOG_INFO_println("IMU_MAG1_READ read as " + String(f[0]) + " "
+          + String(f[1]) + " " + String(f[2]))
+
+      // Output magnetic field readings from magnetometer two
+      copy_to(registers.imu.mag2_rd, f);
+      for (unsigned int i = 0; i < 3; i++)
+        t[i] = utl::us(f[i], imu::min_mag2_rd_mag, imu::max_mag2_rd_mag);
+      endian_write(t);
+
+      LOG_INFO_header
+      LOG_INFO_println("IMU_MAG2_READ read as " + String(f[0]) + " "
           + String(f[1]) + " " + String(f[2]))
 
       // Output gyroscope angular rate readings

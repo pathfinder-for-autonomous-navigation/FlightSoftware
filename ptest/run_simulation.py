@@ -30,6 +30,8 @@ class SimulationRun(object):
         self.radios_config = config_data["radios"]
         self.radio_keys_config = radio_keys_config
         self.flask_keys_config = flask_keys_config
+        self.uplink_producer_filepath = config_data["uplink_producer_filepath"]
+        self.downlink_parser_filepath = config_data["downlink_parser_filepath"]
 
         self.is_interactive = is_interactive
 
@@ -102,7 +104,7 @@ class SimulationRun(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = StateSession(device_name, self.simulation_run_dir)
+            device_session = StateSession(device_name, self.simulation_run_dir, self.uplink_producer_filepath)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
@@ -132,7 +134,7 @@ class SimulationRun(object):
 
             if radio['connect']:
                 radio_data_name = radio_connected_device + "_radio"
-                radio_session = RadioSession(radio_name, imei, self.simulation_run_dir, self.radio_keys_config, self.flask_keys_config)
+                radio_session = RadioSession(radio_name, imei, self.simulation_run_dir, self.radio_keys_config, self.flask_keys_config, self.downlink_parser_filepath)
                 self.radios[radio_name] = radio_session
 
     def set_up_sim(self):

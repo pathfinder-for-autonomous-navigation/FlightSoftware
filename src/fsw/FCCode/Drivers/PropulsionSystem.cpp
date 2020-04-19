@@ -1,10 +1,12 @@
 /**
  * Implementation of PropulsionSystem.hpp
+ * Changed date april 17 2020
  */
 #include "PropulsionSystem.hpp"
 #include <algorithm>
 #include <climits>
 #include <tuple>
+#include <cmath>
 #include "DCDC.hpp"
 using namespace Devices;
 
@@ -24,21 +26,28 @@ void digitalWrite(uint8_t pin, uint8_t val){}
 
 /* Constructors */
 
-Tank::Tank(size_t _num_valves) :
-num_valves(_num_valves) {}
+Tank::Tank() {}
 
-_Tank1::_Tank1() : Tank(2) {
-    valve_pins[0] = 27; // Main tank 1 to tank 2 valve
-    valve_pins[1] = 28; // Backup tank 1 to tank 2 valve
-    temp_sensor_pin = 21;
+_Tank1::_Tank1() : Tank() {
+    num_valves = 2;
+    valve_pins[0] = valve_primary_pin; // Main tank 1 to tank 2 valve
+    valve_pins[1] = valve_backup_pin; // Backup tank 1 to tank 2 valve
+    temp_sensor_pin = tank1_temp_sensor_pin;
+#ifdef DESKTOP
+    p_fake_temp_read = &fake_tank1_temp_sensor_read;
+#endif
 }
 
-_Tank2::_Tank2() : Tank(4) {
-    valve_pins[0] = 3; // Nozzle valve
-    valve_pins[1] = 4; // Nozzle valve
-    valve_pins[2] = 5; // Nozzle valve
-    valve_pins[3] = 6; // Nozzle valve
-    temp_sensor_pin = 22;
+_Tank2::_Tank2() : Tank() {
+    num_valves = 4;
+    valve_pins[0] = valve1_pin; // Nozzle valve
+    valve_pins[1] = valve2_pin; // Nozzle valve
+    valve_pins[2] = valve3_pin; // Nozzle valve
+    valve_pins[3] = valve4_pin; // Nozzle valve
+    temp_sensor_pin = tank2_temp_sensor_pin;
+#ifdef DESKTOP
+    p_fake_temp_read = &fake_tank2_temp_sensor_read;
+#endif
 }
 
 /** Initialize static variables */
@@ -57,6 +66,11 @@ IntervalTimer _Tank2::thrust_valve_loop_timer = IntervalTimer();
 bool _PropulsionSystem::setup() {
     Tank1.setup();
     Tank2.setup();
+#ifndef DESKTOP
+    // Set 10-bit resolution since the regression for the pressure sensor
+    // calculations was computed using a 10-bit Teensy
+    analogReadResolution(10);
+#endif
     return true;
 }
 
@@ -83,8 +97,25 @@ void _Tank2::setup()
 
 int Tank::get_temp() const
 {
-    // TODO
-    return analogRead(temp_sensor_pin);
+    // Get the resistance of the temp sensor by measuring
+    // a reference voltage and using the voltage divider equation
+#ifdef DESKTOP
+    // fake raw input for temperature sensor pin
+    unsigned int raw = *p_fake_temp_read;
+#else
+    unsigned int raw = analogRead(temp_sensor_pin);
+#endif
+    double voltage = raw * 3.3 / 1024.0;
+    if (std::abs(3.3 - voltage) < 1e-4)
+        return tank_temp_min;
+
+    double resist = (voltage * 6200.0) / (3.3 - voltage);
+
+    // Get the value of the temperature using a linear regression
+    if (std::abs(resist) <= 1)
+        return tank_temp_max;
+    else
+        return temp_a * std::pow(std::log(resist), temp_exp) + temp_b;
 }
 
 bool Tank::is_valve_open(size_t valve_idx) const
@@ -110,17 +141,21 @@ void Tank::close_all_valves()
 /* Tank2 implementation */
 
 float _Tank2::get_pressure() const {
-    // TODO
-    static int low_gain_read = 0;
-    static int high_gain_read = 0;
+    static unsigned int low_gain_read = 0;
+    static unsigned int high_gain_read = 0;
     static float pressure = 0;
 
     // analog read
+#ifdef DESKTOP
+    low_gain_read = fake_tank2_pressure_low_read;
+    high_gain_read = fake_tank2_pressure_high_read;
+#else
     low_gain_read = analogRead(pressure_sensor_low_pin);
     high_gain_read = analogRead(pressure_sensor_high_pin);
+#endif
 
     // convert to pressure [psia]
-    if (high_gain_read < 1000){
+    if (high_gain_read < amp_threshold){
         pressure = high_gain_slope*high_gain_read + high_gain_offset;
     } else {
         pressure = low_gain_slope*low_gain_read + low_gain_offset;
@@ -175,8 +210,7 @@ void _PropulsionSystem::disable() {
 }
 
 bool _PropulsionSystem::is_functional() { 
-    // TODO: change this later maybe
-    return true;
+    return digitalRead(DCDC::SpikeDockDCDC_EN) == HIGH;
 }
 
 bool _PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_t d)
@@ -226,7 +260,7 @@ void _PropulsionSystem::close_valve(Tank& tank, size_t valve_idx)
         return;
     noInterrupts();
     {
-        digitalWrite(tank.valve_pins[valve_idx], 0);
+        digitalWrite(tank.valve_pins[valve_idx], LOW);
         tank.is_valve_opened[valve_idx] = 0;
     }
     interrupts();

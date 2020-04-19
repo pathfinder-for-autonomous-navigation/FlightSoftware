@@ -16,10 +16,10 @@ class TestFixture {
         // Pointers to input statefields
         std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
         // std::vector<std::shared_ptr<WritableStateField<bool>>> havt_read_table_vector_fp;
-        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec1_current_fp;
-        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec1_desired_fp;
-        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec2_current_fp;
-        std::shared_ptr<WritableStateField<f_vector_t>> adcs_vec2_desired_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec1_current_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec1_desired_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec2_current_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec2_desired_fp;
 
         // Pointers to output statefields
         WritableStateField<unsigned char>* rwa_mode_fp;
@@ -31,7 +31,8 @@ class TestFixture {
         WritableStateField<f_vector_t>* mtr_cmd_fp;
         WritableStateField<float>* mtr_limit_fp;
         WritableStateField<float>* ssa_voltage_filter_fp;
-        WritableStateField<unsigned char>* imu_mode_fp;
+        WritableStateField<unsigned char>* mag1_mode_fp;
+        WritableStateField<unsigned char>* mag2_mode_fp;
         WritableStateField<float>* imu_mag_filter_fp;
         WritableStateField<float>* imu_gyr_filter_fp;
         WritableStateField<float>* imu_gyr_temp_filter_fp;
@@ -50,10 +51,10 @@ class TestFixture {
         TestFixture() : registry(){
             adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
 
-            adcs_vec1_current_fp = registry.create_writable_vector_field<float>("adcs.compute.vec1.current", 0, 1, 100);
-            adcs_vec1_desired_fp = registry.create_writable_vector_field<float>("adcs.compute.vec1.desired", 0, 1, 100);
-            adcs_vec2_current_fp = registry.create_writable_vector_field<float>("adcs.compute.vec2.current", 0, 1, 100);
-            adcs_vec2_desired_fp = registry.create_writable_vector_field<float>("adcs.compute.vec2.desired", 0, 1, 100);
+            adcs_vec1_current_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec1.current", 0, 1, 100);
+            adcs_vec1_desired_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec1.desired", 0, 1, 100);
+            adcs_vec2_current_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec2.current", 0, 1, 100);
+            adcs_vec2_desired_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec2.desired", 0, 1, 100);
 
             adcs_cmder = std::make_unique<ADCSCommander>(registry, 0);  
 
@@ -67,7 +68,8 @@ class TestFixture {
             mtr_cmd_fp = registry.find_writable_field_t<f_vector_t>("adcs_cmd.mtr_cmd");
             mtr_limit_fp = registry.find_writable_field_t<float>("adcs_cmd.mtr_limit");
             ssa_voltage_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.ssa_voltage_filter");
-            imu_mode_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.imu_mode");
+            mag1_mode_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.mag1_mode");
+            mag2_mode_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.mag2_mode");
             imu_mag_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_mag_filter");
             imu_gyr_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_filter");
             imu_gyr_temp_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_filter");
@@ -114,7 +116,8 @@ void test_task_initialization()
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(zeros, tf.mtr_cmd_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.mtr_limit_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.ssa_voltage_filter_fp->get(), 0);
-    TEST_ASSERT_EQUAL(adcs::IMUMode::MAG1, tf.imu_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::IMU_MAG_NORMAL, tf.mag1_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::IMU_MAG_NORMAL, tf.mag2_mode_fp->get());
     TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_mag_filter_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_filter_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_filter_fp->get(), 0);

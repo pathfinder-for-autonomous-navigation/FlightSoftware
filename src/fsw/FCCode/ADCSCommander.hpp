@@ -27,10 +27,10 @@ class ADCSCommander : public TimedControlTask<void> {
     const WritableStateField<unsigned char>* adcs_state_fp;
 
     // outputs from AttitudeComputer as inputs
-    const WritableStateField<f_vector_t>* adcs_vec1_current_fp;
-    const WritableStateField<f_vector_t>* adcs_vec1_desired_fp;
-    const WritableStateField<f_vector_t>* adcs_vec2_current_fp;
-    const WritableStateField<f_vector_t>* adcs_vec2_desired_fp;
+    const WritableStateField<lin::Vector3f>* adcs_vec1_current_fp;
+    const WritableStateField<lin::Vector3f>* adcs_vec1_desired_fp;
+    const WritableStateField<lin::Vector3f>* adcs_vec2_current_fp;
+    const WritableStateField<lin::Vector3f>* adcs_vec2_desired_fp;
 
     // begin output fields necessary for adcs_box controller
     const Serializer<float> filter_sr;
@@ -47,7 +47,9 @@ class ADCSCommander : public TimedControlTask<void> {
 
     WritableStateField<float> ssa_voltage_filter_f;
 
-    WritableStateField<unsigned char> imu_mode_f;
+    WritableStateField<unsigned char> mag1_mode_f;
+    WritableStateField<unsigned char> mag2_mode_f;
+
     WritableStateField<float> imu_mag_filter_f;
     WritableStateField<float> imu_gyr_filter_f;
     WritableStateField<float> imu_gyr_temp_filter_f;

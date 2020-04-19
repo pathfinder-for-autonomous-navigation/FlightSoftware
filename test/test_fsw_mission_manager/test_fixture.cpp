@@ -14,7 +14,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
 
     prop_state_fp = registry.create_readable_field<unsigned char>("prop.state", 2);
 
-    propagated_baseline_pos_fp = registry.create_readable_vector_field<double>(
+    propagated_baseline_pos_fp = registry.create_readable_lin_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
 
     reboot_fp = registry.create_writable_field<bool>("gomspace.gs_reboot_cmd");
@@ -22,14 +22,17 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
-    low_batt_fault_fp=registry.create_fault("gomspace.low_batt", 1, TimedControlTaskBase::control_cycle_count);
-    adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault", 1, TimedControlTaskBase::control_cycle_count);
-    wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault", 1, TimedControlTaskBase::control_cycle_count);
-    wheel2_adc_fault_fp=registry.create_fault("adcs_monitor.wheel2_fault", 1, TimedControlTaskBase::control_cycle_count);
-    wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault", 1, TimedControlTaskBase::control_cycle_count);
-    wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1, TimedControlTaskBase::control_cycle_count);
-    failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1, TimedControlTaskBase::control_cycle_count);
-    overpressured_fp=registry.create_fault("prop.overpressured", 1, TimedControlTaskBase::control_cycle_count);
+    low_batt_fault_fp=registry.create_fault("gomspace.low_batt", 1);
+    adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault", 1);
+    wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault", 1);
+    wheel2_adc_fault_fp=registry.create_fault("adcs_monitor.wheel2_fault", 1);
+    wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault", 1);
+    wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
+    failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1);
+    overpressured_fp=registry.create_fault("prop.overpressured", 1);
+
+    piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
+    last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
@@ -148,7 +151,11 @@ void TestFixture::set_ccno(unsigned int ccno) {
 }
 
 // Set the distance between the two satellites.
-void TestFixture::set_sat_distance(double dist) { propagated_baseline_pos_fp->set({dist, 0, 0}); }
+void TestFixture::set_sat_distance(double dist) {
+    lin::Vector3d temp;
+    temp(0) = dist; temp(1) = 0; temp(2) = 0;
+    propagated_baseline_pos_fp->set(temp);
+}
 
 // Set the # of control cycles that comms has not been established
 // with the ground.

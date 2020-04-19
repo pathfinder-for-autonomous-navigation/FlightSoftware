@@ -5,6 +5,9 @@ import threading
 import json
 import traceback
 import queue
+import os
+import pty
+import subprocess
 
 from .data_consumers import Datastore, Logger
 
@@ -20,7 +23,7 @@ class StateSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, simulation_run_dir):
+    def __init__(self, device_name, simulation_run_dir, uplink_producer_filepath):
         '''
         Initializes state session with a device.
 
@@ -37,9 +40,15 @@ class StateSession(object):
         self.datastore = Datastore(device_name, simulation_run_dir)
         self.logger = Logger(device_name, simulation_run_dir)
         self.raw_logger = Logger(device_name + "_raw", simulation_run_dir)
+        self.telem_save_dir = simulation_run_dir
 
         # Simulation
         self.overriden_variables = set()
+
+        # Open a subprocess to Uplink Producer
+        master_fd, slave_fd = pty.openpty()
+        self.uplink_producer = subprocess.Popen([uplink_producer_filepath], stdin=master_fd, stdout=master_fd)
+        self.uplink_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
     def connect(self, console_port, baud_rate):
         '''
@@ -99,6 +108,21 @@ class StateSession(object):
                 elif 'telem' in data:
                     logline = f"[{data['time']}] Received requested telemetry from spacecraft.\n"
                     logline += data['telem']
+                    print("\n" + logline)
+                    self.logger.put(logline, add_time = False)
+                    #log data to a timestamped file
+                    telem_bytes = data['telem'].split(r'\x')
+                    telem_bytes.remove("")
+                    telem_file = open(os.path.join(self.telem_save_dir ,f"telem[{data['time']}].txt"), "wb")
+                    for byte in telem_bytes:
+                        telem_file.write(int(byte, 16).to_bytes(1, byteorder='big'))
+                    telem_file.close()
+                elif 'uplink' in data:
+                    if data['uplink'] and data['len']:
+                        logline = f"[{data['time']}] Successfully sent telemetry to FlightSoftware.\n"
+                        logline += str(data['uplink'])
+                    else:
+                        logline = f"[{data['time']}] Failed to send telemetry to FlightSoftware."
                     print("\n" + logline)
                     self.logger.put(logline, add_time = False)
                 else:
@@ -289,6 +313,119 @@ class StateSession(object):
         '''
         return self.write_multiple_states([field], [self._val_to_str(args)], kwargs.get('timeout'))
 
+    def get_val(self, val):
+        '''
+        Recives string representation of a value and returns the value as a bool, int, or float
+        If the value can't be determined, returns None;
+        "true" --> true (bool)
+        "5" --> 5 (int)
+        "0.05" --> 0.05 (float)
+        "dchkjdda" --> None
+        '''
+        try:
+            f=float(val)
+            i=int(f)
+            if f!=i: 
+                return f
+            return i
+        except:
+            if val == "true": return True
+            if val == "false": return False
+        return None
+    
+    def create_uplink(self, fields, vals, filename):
+        '''
+        Puts fields and values in a JSON document and sends the JSON 
+        object to the uplink producer console. This results in the creation
+        of an SBD file with the given filename holding an uplink packet
+        '''
+        # Create a JSON file with all the fields and values
+        telem_json={}
+        for field, val in zip(fields, vals):
+            value = self.get_val(val)
+            if value is not None:
+                telem_json[field]=value
+            else:
+                logline = "Failed:   " + json.dumps(telem_json) + "\n"
+                logline += f"Error:    Unable to add {field}: {val} to uplink JSON file"
+                self.raw_logger.put(logline)
+                return False
+        with open('telem.json', 'w') as telem_file:
+            json.dump(telem_json, telem_file)
+
+        # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
+        # holding the uplink packet.
+        self.uplink_console.write(("telem.json\n").encode())
+        self.uplink_console.write((str(filename)+"\n").encode())
+        response = json.loads(self.uplink_console.readline().rstrip())
+
+        # Check that the uplink was successfully created
+        if 'error' in response:
+            logline = "Failed:   " + json.dumps(telem_json) + "\n"
+            logline += "Error:    "+response['error']
+            self.raw_logger.put(logline)
+            return False
+
+        self.raw_logger.put("Uplink:   " + json.dumps(telem_json))
+        return True
+
+    def send_uplink(self, filename):
+        '''
+        Gets the uplink packet from the given file. Sends the hex 
+        representation of the packet and the length of the packet
+        to the console to be processed by FlightSoftware
+        '''
+        # Get the uplink packet from the uplink sbd file
+        try:
+            file = open(filename, "rb")
+        except:
+            logline = f"Error:    File {filename} doesn't exist"
+            self.raw_logger.put(logline)
+            return False
+
+        uplink_packet = file.read()
+        uplink_packet_length = len(uplink_packet)
+        file.close() 
+        uplink_packet = str(''.join(r'\x'+hex(byte)[2:] for byte in uplink_packet)) #get the hex representation of the packet bytes
+
+        # Send a command to the console to process the uplink packet
+        json_cmd = {
+            'mode': ord('u'),
+            'field': 'pan.state',
+            'val': uplink_packet,
+            'length': uplink_packet_length
+        }
+        json_cmd = json.dumps(json_cmd) + "\n"
+
+        self.device_write_lock.acquire()
+        self.console.write(json_cmd.encode())
+        self.device_write_lock.release()
+        self.raw_logger.put("Sent:     " + json_cmd)
+
+        return True
+    
+    def uplink(self, fields, vals, timeout=None):
+        if not self.running_logger: return
+
+        # Filter out fields that are being overridden by the user
+        field_val_pairs = [
+            field_val_pair for field_val_pair in zip(fields, vals)
+            if field_val_pair[0] not in self.overriden_variables
+        ]
+        fields, vals = zip(*field_val_pairs)
+
+        success = self.create_uplink(fields, vals, "uplink.sbd")
+
+        # If the uplink packet exists, send it to the FlightSoftware console
+        if success and os.path.exists("uplink.sbd"): 
+            success &= self.send_uplink("uplink.sbd")
+            os.remove("uplink.sbd") 
+            os.remove("telem.json") 
+            return success
+        else: 
+            if os.path.exists("telem.json"): os.remove("telem.json") 
+            return False
+
     def override_state(self, field, *args, **kwargs):
         '''
         Override state and check write operation with feedback.
@@ -317,6 +454,7 @@ class StateSession(object):
         self.running_logger = False
         self.check_msgs_thread.join()
         self.console.close()
+        self.uplink_console.close()
 
         self.datastore.stop()
         self.logger.stop()

@@ -76,8 +76,17 @@ class Tank;
  *  - tank2 firing schedule
  * 
  * Only tank2 has a schedule since only tank2 uses the IntervalTimer to fire.
+ *
+ * ------
+ *
+ * To mock the sensors values, assigned
+ * - fake_tank1_temp_sensor_read to the desired value of Tank1.analogRead(temp_sensor_pin)
+ * - fake_tank2_temp_sensor_read to the desired value of Tank2.analogRead(temp_sensor_pin)
+ * - fake_tank2_pressure_low_read to the desired value of Tank2.analogRead(pressure_sensor_low_pin)
+ * - fake_tank2_pressure_high_read to the desired value of Tank2.analogRead(pressure_sensor_high_pin)
  * 
  **/
+
 #define PropulsionSystem Devices::_PropulsionSystem::Instance()
 class _PropulsionSystem : public Device {
     _PropulsionSystem();
@@ -87,7 +96,6 @@ public:
         static _PropulsionSystem Instance;
         return Instance;
     }
-// private:
     /**
      * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
      * @return True if successfully setup both tank1 and tank2 and all pins
@@ -182,7 +190,7 @@ public:
  */
 class Tank {
 public:
-    Tank(size_t num_pins);
+    Tank();
 
     /**
      * @brief (Analog) reads the temperature sensor for this tank and 
@@ -198,7 +206,6 @@ public:
      */
     bool is_valve_open(size_t valve_idx) const;
 
-protected:
     /**
      * @brief Enables valve INPUT/OUTPUT on valve and sensor pins
      */
@@ -217,6 +224,23 @@ protected:
     // true if the valve is opened
     bool is_valve_opened[4];
 
+    // These constants are from the nonlinear regression for computing tank temperature
+    // T = A * ln(R)^EXP + B
+    // T is temperature, R is resistance
+    TRACKED_CONSTANT_SC(double, temp_a, -35126.92396);
+    TRACKED_CONSTANT_SC(double, temp_exp, 0.005);
+    TRACKED_CONSTANT_SC(double, temp_b, 35493.23411);
+
+    // Minimum and maximum temperature constants permitted by the regression
+    // These values are used to clamp voltage readings close to 0 and 3.3 V
+    TRACKED_CONSTANT_SC(int, tank_temp_min, -55);
+    TRACKED_CONSTANT_SC(int, tank_temp_max, 150);
+
+#ifdef DESKTOP
+    unsigned int* p_fake_temp_read;
+#endif
+
+
     friend class _PropulsionSystem;
 };
 
@@ -234,6 +258,13 @@ public:
         static _Tank1 Instance;
         return  Instance;
     }
+    TRACKED_CONSTANT_SC(uint8_t, valve_primary_pin, 27);
+    TRACKED_CONSTANT_SC(uint8_t, valve_backup_pin, 28);
+    TRACKED_CONSTANT_SC(uint8_t, tank1_temp_sensor_pin, 21);
+#ifdef DESKTOP
+    // for mocking readings
+    unsigned int fake_tank1_temp_sensor_read = 0;
+#endif
 };
 
 #define Tank2 Devices::_Tank2::Instance()
@@ -258,21 +289,27 @@ public:
      */
     unsigned int get_schedule_at(size_t valve_num) const;
 
-#ifndef DESKTOP
-private:
+    TRACKED_CONSTANT_SC(uint8_t, valve1_pin, 3);
+    TRACKED_CONSTANT_SC(uint8_t, valve2_pin, 4);
+    TRACKED_CONSTANT_SC(uint8_t, valve3_pin, 5);
+    TRACKED_CONSTANT_SC(uint8_t, valve4_pin, 6);
+
+    TRACKED_CONSTANT_SC(uint8_t, tank2_temp_sensor_pin, 22);
+
+#ifdef DESKTOP
+    // for mocking readings
+    unsigned int fake_tank2_temp_sensor_read = 0;
+    unsigned int fake_tank2_pressure_low_read = 0;
+    unsigned int fake_tank2_pressure_high_read = 0 ;
 #endif
-    void setup();
-    #ifndef DESKTOP
-    //! When enabled, runs thrust_valve_loop every 3 ms
-    static IntervalTimer thrust_valve_loop_timer;
-    #endif
-    static volatile unsigned int schedule[4];
-    // The minimum duration to assign to a schedule
-    // Any value below this value will be ignored by tank2
-    TRACKED_CONSTANT_SC(unsigned int, min_firing_duration_ms, 10);
 
     TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 20);
     TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
+
+    void setup();
+    // The minimum duration to assign to a schedule
+    // Any value below this value will be ignored by tank2
+    TRACKED_CONSTANT_SC(unsigned int, min_firing_duration_ms, 10);
 
     // Pressure sensor offsets and slopes from PAN-TPS-002 test data
     // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
@@ -280,9 +317,19 @@ private:
     TRACKED_CONSTANT_SC(double, high_gain_slope, 0.048713211537332);
     TRACKED_CONSTANT_SC(double, low_gain_offset, 0.154615074342874);
     TRACKED_CONSTANT_SC(double, low_gain_slope, 0.099017990785657);
+    // Corresponds to 50 mV - the voltage at which we switch from low to high gain amplifiers
+    TRACKED_CONSTANT_SC(unsigned int, amp_threshold, 1000);
 
     //! Loop interval in milliseconds.
     TRACKED_CONSTANT_SC(unsigned int, thrust_valve_loop_interval_ms, 3);
+
+
+#ifndef DESKTOP
+    private:
+        //! When enabled, runs thrust_valve_loop every 3 ms
+    static IntervalTimer thrust_valve_loop_timer;
+#endif
+    static volatile unsigned int schedule[4];
 
     friend class _PropulsionSystem;
 };
