@@ -9,6 +9,7 @@ using namespace Devices;
  * Helper function, executes task and checks that the state after execution
  * is [expectedState] at fnNum [expectedFnNum]
  */
+ /*
 void exec_check(QuakeControlTask& task, int expectedState, int expectedFnNum)
 {
   TEST_ASSERT_EQUAL(Devices::OK, task.execute());
@@ -156,11 +157,11 @@ int test_control_task()
   RUN_TEST(test_task_execute);
   return UNITY_END();
 }
-
+*/
 #ifdef DESKTOP
 int main()
 {
-  return test_control_task();
+//  return test_control_task();
 }
 #else
 #include <Arduino.h>
@@ -168,7 +169,7 @@ void setup()
 {
   delay(2000);
   Serial.begin(9600);
-  test_control_task();
+//  test_control_task();
 }
 
 void loop() {}

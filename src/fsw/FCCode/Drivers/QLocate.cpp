@@ -185,9 +185,8 @@ int QLocate::query_sbdrb_1()
     return sendCommand("AT+SBDRB\r");
 }
 
-int QLocate::get_sbdrb()
-{
-
+int QLocate::get_sbdrb() {
+#ifndef DESKTOP
     CHECK_PORT_AVAILABLE()
     if ( should_wait() )
         return PORT_UNAVAILABLE;
@@ -212,7 +211,10 @@ int QLocate::get_sbdrb()
         return OK;
 
     return BAD_CHECKSUM;
-
+#else
+    return OK;
+#endif
+}
 
 //#ifndef DESKTOP
 //    CHECK_PORT_AVAILABLE()
@@ -254,10 +256,11 @@ int QLocate::get_sbdrb()
 //        return BAD_CHECKSUM;
 //#endif
 //    return OK;
-}
+//}
 
 bool QLocate::should_wait()
 {
+#ifndef DESKTOP
     if ( port->available() == num_bytes_available_last_cycle )
     {
         num_bytes_available_last_cycle = 0;
@@ -265,11 +268,13 @@ bool QLocate::should_wait()
     }
     num_bytes_available_last_cycle = port->available();
     // if we return true then that means we have not waited a cycle
+#endif
     return false;
 }
 
 int QLocate::consume(const String& expected)
 {
+#ifndef DESKTOP
     CHECK_PORT_AVAILABLE()
 
     size_t expected_len = expected.length();
@@ -285,6 +290,7 @@ int QLocate::consume(const String& expected)
     char rx_buf[expected_len + 1];
     port->readBytes(rx_buf, expected_len);
     rx_buf[expected_len] = 0;
+
 #ifdef DEBUG_ENABLED
     Serial.printf("Consumed[");
     for (size_t i = 0; i < expected_len; i++)
@@ -300,9 +306,13 @@ int QLocate::consume(const String& expected)
     Serial.flush();
 #endif
     // Compare rx_buf with expected
-    if( ! strncmp(rx_buf, expected.c_str(), expected_len) )
+    if( ! std::strncmp(rx_buf, expected.c_str(), expected_len) )
         return OK;
-    return UNEXPECTED_RESPONSE;
+    return CONSUME_FAIL;
+
+#else
+    return OK;
+#endif
 }
 
 // Read the data at port and make sure it matches expected

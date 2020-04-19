@@ -2,69 +2,44 @@
 
 using namespace Devices;
 
-void QuakeControlTask::set_downlink_msg(const char *_szMsg, size_t _len)
+void QuakeControlTask::set_downlink_msg(char *_szMsg, size_t _len)
 {
   MO_msg_p = _szMsg;
   MO_msg_len = _len;
 }
 
-int QuakeControlTask::get_current_state() const
-{
-  return currentState;
-}
-
-size_t QuakeControlTask::get_current_fn_number() const
+size_t QuakeControlTask::get_fn_num() const
 {
   return fnSeqNum;
 }
 
-bool QuakeControlTask::request_state(int requested_state)
-{
-  if (requested_state == CONFIG || requested_state == IDLE)
-    currentState = requested_state;
-  else if (currentState == IDLE)
-    currentState = requested_state;
-  else
-    return false;
-  fnSeqNum = 0;
-  return true;
-}
-
-int QuakeControlTask::execute()
+int QuakeControlTask::execute(radio_state_t state)
 {
   // TODO: allow any state to ignore state and call CONFIG, remember to reset fnSeqNum
   int result = false;
-  switch (currentState)
+  switch (state)
   {
-  case SBDWB:
+  case radio_state_t::write:
     result = dispatch_sbdwb();
     break;
-  case SBDRB:
+  case radio_state_t::read:
     result = dispatch_sbdrb();
     break;
-  case SBDIX:
+  case radio_state_t::transceive:
     result = dispatch_sbdix();
     break;
-  case CONFIG:
+  case radio_state_t::config:
     result = dispatch_config();
-    break;
-  case IS_FUNCTIONAL:
-    result = dispatch_is_functional();
-    break;
-  case IDLE:
     break;
   default:
     fnSeqNum = 0;
   }
-  // Reset currentState to idle if fnSeqNum == 0 since that means we executed the last function
-  if (fnSeqNum == 0)
-    currentState = IDLE;
   return result;
 }
 
 int QuakeControlTask::dispatch_sbdwb()
 {
-  int errCode = -1;
+  int errCode;
   switch (fnSeqNum)
   {
   case 0:
@@ -86,7 +61,7 @@ int QuakeControlTask::dispatch_sbdwb()
 
 int QuakeControlTask::dispatch_sbdrb()
 {
-  int errCode = -1;
+  int errCode;
   switch (fnSeqNum)
   {
   case 0:
@@ -105,7 +80,7 @@ int QuakeControlTask::dispatch_sbdrb()
 
 int QuakeControlTask::dispatch_sbdix()
 {
-  int errCode = -1;
+  int errCode;
   switch (fnSeqNum)
   {
   case 0:
@@ -124,7 +99,7 @@ int QuakeControlTask::dispatch_sbdix()
 
 int QuakeControlTask::dispatch_config()
 {
-  int errCode = -1;
+  int errCode;
   switch (fnSeqNum)
   {
   case 0:
@@ -144,24 +119,5 @@ int QuakeControlTask::dispatch_config()
   }
   if (errCode == OK)
     fnSeqNum = (fnSeqNum + 1) % 4;
-  return errCode;
-}
-
-int QuakeControlTask::dispatch_is_functional()
-{
-  int errCode = -1;
-  switch (fnSeqNum)
-  {
-  case 0:
-    errCode = quake.query_is_functional_1();
-    break;
-  case 1:
-    errCode = quake.get_is_functional();
-    break;
-  default:
-    return WRONG_FN_ORDER;
-  }
-  if (errCode == OK)
-    fnSeqNum = (fnSeqNum + 1) % 2;
   return errCode;
 }

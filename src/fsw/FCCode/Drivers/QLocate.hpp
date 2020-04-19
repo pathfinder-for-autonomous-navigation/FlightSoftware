@@ -31,8 +31,8 @@ static constexpr int TIMEOUT = 1;               // response not received before 
 static constexpr int BAD_CHECKSUM = 2;          // checksum doesn't match ISU calculated checksum
 static constexpr int WRONG_LENGTH = 3;          // message size differs from expected message size
 static constexpr int UNEXPECTED_RESPONSE = -20; // actual response does not match expected response
+static constexpr int CONSUME_FAIL = -40;         // only consume can return this
 static constexpr int WRITE_FAIL = -30;          // failed to send command (write command to output port)
-static constexpr int WRONG_STATE = -40;         // driver is not in the expected state
 static constexpr int PORT_UNAVAILABLE =
     -50; // attempt to read port that is not available (no data available)
 static constexpr int UNKNOWN = -60;        // unknown errror
@@ -186,7 +186,7 @@ private:
      * the length of [expected]. 
      * Returns:
      * OK if the expected response is read
-     * UNEXPECTED_RESPONSE if an unexpected response is read
+     * CONSUME_FAIL if an unexpected response is read
      * PORT_UNAVAILABLE if no response is read
      */
     int consume(const String& expected);

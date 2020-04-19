@@ -24,11 +24,11 @@
  * Essentially points mo_buffer_copy + mo_idx*packet_size to the next
  * 70 blocks of data that should be downlinked. 
  */
-class QuakeManager : public TimedControlTask<bool> {
+class QuakeManager : public TimedControlTask<void> {
    public:
     QuakeManager(StateFieldRegistry& registry, unsigned int offset);
     ~QuakeManager();
-    bool execute() override;
+    void execute() override;
 
    // protected:
    /**
@@ -36,25 +36,46 @@ class QuakeManager : public TimedControlTask<bool> {
     * sequence is executed on startup and executed whenever the unexpected_flag 
     * is set
     */
-    bool dispatch_config();
+    void dispatch_config();
    /**
     * @brief unconditionally waits the full amount of its allocated cycles
     * If the unexpected_flag is set, transitions to config instead of 
     * transition to wait write
     */
-    bool dispatch_wait();
+   void dispatch_wait();
    /**
     * @brief attempts an SBD connection with Iridium.
     */
-    bool dispatch_transceive();
+   void dispatch_transceive();
+
+   void dispatch_disabled();
    /**
     * @brief reads an MT message from the MT buffer
     */
-    bool dispatch_read();
+   void dispatch_read();
    /**
     * @brief writes a message to the MO buffer
     */
-    bool dispatch_write();
+    void dispatch_write();
+
+    /**
+     * Handle case where SBDIX reports no comms
+     */
+    void handle_no_comms();
+
+    /**
+     * Handle case where SBDIX reports that we have comms but no msg from the ground
+     */
+    void handle_comms_no_msg();
+
+    /**
+     * Handle case where SBDIX reports that we have comms and we have msg from the ground
+     */
+    void handle_comms_msg();
+
+    void copy_next_packet();
+
+    void copy_next_snapshot();
 
    /**
      * @brief Snapshot size in bytes, provided by DownlinkProducer. 
@@ -119,6 +140,11 @@ class QuakeManager : public TimedControlTask<bool> {
     return last_checkin_cycle_f;
   }
 
+  int dbg_get_cycle_of_entry()
+  {
+      return cycle_of_entry;
+  }
+
   char* dbg_get_mo_buffer_copy()
   {
     return mo_buffer_copy;
@@ -136,38 +162,60 @@ class QuakeManager : public TimedControlTask<bool> {
 
   bool dbg_transition_radio_state(radio_state_t new_state)
   {
-    return transition_radio_state(new_state);
+     transition_radio_state(new_state);
+     return true;
   }
 
   #endif
 
   private:
     QuakeControlTask qct;
-    /**
-     * Returns true if err_code either OK or PORT_UNAVAILABLE.
-     * Otherwise: 
-     *  Write error to radio_err_fp,
-     *  print a debug msg, 
-     *  sets the unexpected_flag
-     *  transition to wait
-     */
-    bool write_to_error(int err_code);
 
     /**
-     * If the current state has no more cycles left, 
-     * then transition the radio to the requested state,
-     * printf a notice about the transition 
-     * Return true if there are no more control cycles, false otherwise
+     * True if fnSeqNum = 0 and cycle_of_entry = 0 or 1
+     * @return true if we just entered this current state
      */
-    bool no_more_cycles(size_t max_cycles, radio_state_t new_state);
+    bool has_just_entered();
+
+    /**
+     * True if fnSeqNum = 0 and cycle_of_entry > 1
+     * @return
+     */
+    bool has_finished();
+
+    /**
+     * If the current state has no more cycles left, then return true, else false
+     */
+    bool no_more_cycles(size_t max_cycles);
 
     /**
      * Transition the radio into the new state
-     * update last_checkin_cycle to current cycle
+     * update cycle_of_entry to current cycle
      * Precondition: new_state is one of the defined states
-     * Postcondition: radio_state_f == new_state, last_checkin_cycle = now
+     * Postcondition: radio_state_f == new_state
      */ 
-    bool transition_radio_state(radio_state_t new_state);
+    void transition_radio_state(radio_state_t new_state);
+
+    /**
+     *
+     * Sets the unexpected_flag to true
+     * Writes the error code to radio_err_f
+     * Transitions the state to radio_state_t::wait
+     * @param err_code
+     */
+    void handle_err(int err_code);
+
+    /**
+     * Returns True if err_code is actually an error (i.e. not Devices::OK and not PORT_UNAVAILABLE)
+     * @param err_code
+     * @return
+     */
+    bool is_actual_error(int err_code);
+
+    /**
+     * The control cycle at which we transitioned to the current state
+     */
+    unsigned int cycle_of_entry;
 
     /**
      * Local copy of max_snapshot_size given by DownlinkProducer
