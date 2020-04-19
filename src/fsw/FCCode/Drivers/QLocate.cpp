@@ -10,6 +10,7 @@
 // Refactored on 1/25/2020
 //
 #include "QLocate.hpp"
+#include <cstring>
 #ifndef DESKTOP
 #include <Arduino.h>
 #endif
@@ -306,7 +307,7 @@ int QLocate::consume(const String& expected)
     Serial.flush();
 #endif
     // Compare rx_buf with expected
-    if( ! std::strncmp(rx_buf, expected.c_str(), expected_len) )
+    if( ! strncmp(rx_buf, expected.c_str(), expected_len) )
         return OK;
     return CONSUME_FAIL;
 
