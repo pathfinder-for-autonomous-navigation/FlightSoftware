@@ -12,7 +12,9 @@
  * 
  * States: config, wait, transceive, read, write.
  * 
- * All methods return true on success, false otherwise. 
+ * All methods return true on success, false otherwise.
+ *
+ * Refactored on 4/19/20
  */ 
 
 /**
@@ -48,6 +50,9 @@ class QuakeManager : public TimedControlTask<void> {
     */
    void dispatch_transceive();
 
+   /**
+    * @brief exists in order to allow smooth transition from disabeld to config
+    */
    void dispatch_disabled();
    /**
     * @brief reads an MT message from the MT buffer
