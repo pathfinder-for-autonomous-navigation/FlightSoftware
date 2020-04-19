@@ -21,7 +21,7 @@ if __name__ == "__main__":
     key_data = subsystem_data["keys"]
     group_data = subsystem_data["groups"]
 
-    battery_dict = {
+    subsystem_dict = {
         "name": subsystem_data["name"],
         "key" : subsystem_data["key"],
         "measurements": {}
@@ -47,13 +47,13 @@ if __name__ == "__main__":
             if "group" in key_data[key]:
                 group = key_data[key]["group"]
                 group_name = group_data[group]["name"]
-                group_expanded = battery_dict["measurements"].setdefault(group, {
+                group_expanded = subsystem_dict["measurements"].setdefault(group, {
                     "key" : group,
                     "name" : group_name,
                     "values" : []
                 })
                 group_expanded["values"].append(val)
-                battery_dict["measurements"][group] = group_expanded
+                subsystem_dict["measurements"][group] = group_expanded
 
         for key in key_data:
             if "group" in key_data[key]: continue
@@ -68,11 +68,11 @@ if __name__ == "__main__":
                     "values" : [key_val]
                 }
             }
-            battery_dict["measurements"].update(measurement)
+            subsystem_dict["measurements"].update(measurement)
 
     measurements = []
-    for measurement in battery_dict["measurements"]:
-        data = battery_dict["measurements"][measurement]
+    for measurement in subsystem_dict["measurements"]:
+        data = subsystem_dict["measurements"][measurement]
         time_value = {
             "key": "utc",
             "source": "timestamp",
@@ -85,7 +85,7 @@ if __name__ == "__main__":
         data["values"].append(time_value)
         data["key"] = measurement
         measurements.append(data)
-    battery_dict["measurements"] = measurements
+    subsystem_dict["measurements"] = measurements
 
     with open(args.output, "w") as f:
-        json.dump(battery_dict, f, indent=4)
+        json.dump(subsystem_dict, f, indent=4)
