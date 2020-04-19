@@ -47,8 +47,9 @@ if __name__ == "__main__":
             if "group" in key_data[key]:
                 group = key_data[key]["group"]
                 group_name = group_data[group]["name"]
-                group_expanded = battery_dict["measurements"].setdefault(group_name, {
+                group_expanded = battery_dict["measurements"].setdefault(group, {
                     "key" : group,
+                    "name" : group_name,
                     "values" : []
                 })
                 group_expanded["values"].append(val)
