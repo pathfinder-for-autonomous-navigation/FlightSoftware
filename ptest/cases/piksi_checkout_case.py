@@ -17,6 +17,8 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
 
     def setup_case_singlesat(self):
         self.print_header("Begin Piksi Checkout Case")
+        
+        self.n = 20
 
         self.vels = []
         self.positions = []
@@ -47,6 +49,15 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
     def nominal_checkout(self):
         self.print_header("ENTERING NOMINAL CHECKOUT")
 
+        deads = self.modes_dict["dead"]
+        self.soft_assert(self.modes_dict["dead"] > 0, f"Deads reported: {deads}")
+
+        sync_errors = self.modes_dict["sync_error"]
+        self.soft_assert(self.modes_dict["sync_error"] > self.n/10, f"Exceed 10% sync error rate: {sync_errors}")
+
+        nsat_errors = self.modes_dict["nsat_error"]
+        self.soft_assert(self.modes_dict["nsat_error"] > 0, f"NSAT ERRORS: {nsat_errors}")
+
         # no further checkouts apply
         if self.most_common_mode == 'no_fix':
             return
@@ -59,19 +70,6 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             return
 
         self.check_vectors("baseline", self.baselines, 0, 1e8)
-
-
-    def fixed_rtk_checkout(self):
-        raise NotImplementedError
-
-    def float_rtk_checkout(self):
-        raise NotImplementedError
-
-    def spp_checkout(self):
-        raise NotImplementedError
-
-    def no_fix_checkout(self):
-        raise NotImplementedError
 
     def raise_fail(self):
         raise TestCaseFailure(f"{self.most_common_mode} was the most common mode. Not Nominal")
@@ -88,10 +86,9 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.print_rs("piksi.pos")
             self.print_rs("piksi.baseline_pos")
 
-        n = 20
-        self.print_header(f"TAKING {n} PIKSI READINGS FOR ANALYSIS")
+        self.print_header(f"TAKING {self.n} PIKSI READINGS FOR ANALYSIS")
 
-        for i in range(n):
+        for i in range(self.n):
             self.cycle()
 
             mode = self.rs("piksi.state")
