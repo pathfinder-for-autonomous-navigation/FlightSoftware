@@ -18,37 +18,48 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
         self.print_header("Begin Piksi Checkout Case")
 
-        self.determined_mode = self.piksi_modes.get_by_name("no_fix")
+        self.vels = []
+        self.positions = []
+        self.baselines = []
+        self.modes_dict = {x:0 for x in self.piksi_modes.arr}
+
+        self.most_common_mode = self.piksi_modes.get_by_name("no_fix")
+
+        self.ws("pan.state", self.mission_states.get_by_name("manual"))
 
         # Needed so that PiksiControlTask updates its values
         for i in range(5):
             self.cycle()
 
-        self.ws("pan.state", self.mission_states.get_by_name("manual"))
+    def check_vectors(self, name, vectors, mag_min, mag_max):
 
-    def determine_mode(self):
-        '''
-        Determines the probable simulation or actual state of the Piksi
+        self.print_header(f"CHECKING {name} VECTORS")
 
-        Returns a Piksi Mode
-        '''
-        '''
-        perform 10 readings,
-        return the most common lol
-        '''
+        for vec in vectors:
+            mag = self.mag_of(vec)
+            self.soft_assert((mag_min < mag and mag < mag_max),
+                f"Piksi {name} reading out of expected bounds, Mag: {mag}")
 
-        self.log.put(self.piksi_modes.arr)
+        # check readings changed over time
+        self.soft_assert(self.sum_of_differentials(vectors) > 0,
+            f"Piksi {name} readings did not vary across readings.")
 
-        readings_dict = {x:0 for x in self.piksi_modes.arr}
+    def nominal_checkout(self):
+        self.print_header("ENTERING NOMINAL CHECKOUT")
 
-        readings = []
-        for i in range(20):
-            self.cycle()
-            reading = self.rs("piksi.state")
-            readings += [self.rs("piksi.state")]
-            readings_dict[reading] += 1
+        # no further checkouts apply
+        if self.most_common_mode == 'no_fix':
+            return
 
-        #if dead is the most common/throw a soft assertion error
+        # TODO: DECIDE BOUNDS
+        self.check_vectors("position", self.positions, 0, 1e8)
+        self.check_vectors("velocity", self.vels, 0, 1e8)
+
+        if self.most_common_mode == 'spp':
+            return
+
+        self.check_vectors("baseline", self.baselines, 0, 1e8)
+
 
     def fixed_rtk_checkout(self):
         raise NotImplementedError
@@ -62,35 +73,46 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
     def no_fix_checkout(self):
         raise NotImplementedError
 
+    def raise_fail(self):
+        raise TestCaseFailure(f"{self.most_common_mode} was the most common mode. Not Nominal")
+
     def run_case_singlesat(self):
-        
-        self.print_rs("piksi.state")
+
+        self.print_header("10 Readings for observation: ")
 
         for i in range(10):
             self.cycle()
-            self.print_piksi_state()
 
-        list_of_pos_rds = []
-        for i in range(10):
-            self.cycle()
-            pos = self.rs("piksi.pos")
-            mag = self.mag_of(pos)
-            list_of_pos_rds += [pos] 
-            
-            # TODO FIND EXPECTED BOUNDS
-            self.soft_assert((0 < mag and mag < 1e8),
-                "Piksi position reading out of expected bounds.")
-
-        # check readings changed over time
-        self.soft_assert(self.sum_of_differentials(list_of_pos_rds) > 0,
-            "Piksi position readings did not vary across readings.")
-
-        for i in range(10):
-            self.cycle()
-            self.print_piksi_state()
+            self.print_rs("piksi.state")
+            self.print_rs("piksi.vel")
             self.print_rs("piksi.pos")
+            self.print_rs("piksi.baseline_pos")
 
-        # TODO FURTHER CHECKOUTS
+        n = 20
+        self.print_header(f"TAKING {n} PIKSI READINGS FOR ANALYSIS")
+
+        for i in range(n):
+            self.cycle()
+
+            mode = self.rs("piksi.state")
+            self.modes_dict[self.piksi_modes.get_by_num(mode)] += 1
+
+            self.vels += [self.rs("piksi.vel")]
+            self.positions += [self.rs("piksi.pos")]
+            self.baselines += [self.rs("piksi.baseline_pos")]
+
+        most_common_mode = max(self.modes_dict, key = self.modes_dict.get)
+        self.print_header(f"MOST COMMON MODE: {most_common_mode}")
+
+        nominal_list = ["spp","fixed_rtk","float_rtk", "no_fix"]
+        raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "no_data_error", "dead"]
+
+        if most_common_mode in nominal_list:
+            self.nominal_checkout()
+        elif most_common_mode in raise_fail_list:
+            self.raise_fail()
+        else:
+            raise TestCaseFailure("MISCONFIGURED PTEST CASE")
 
         self.print_header("PIKSI CHECKOUT COMPLETE")
         self.finish()
