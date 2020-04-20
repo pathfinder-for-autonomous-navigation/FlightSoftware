@@ -29,6 +29,7 @@ class AttitudeController : public TimedControlTask<void> {
    protected:
     // Inputs from the adcs box monitor
     ReadableStateField<lin::Vector3f> const *const b_body_rd_fp;
+    ReadableStateField<lin::Vector3f> const *const w_wheels_rd_fp;
 
     // Inputs from the attitude estimator
     ReadableStateField<lin::Vector3f> const *const b_body_est_fp;

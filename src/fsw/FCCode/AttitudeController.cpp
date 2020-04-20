@@ -56,7 +56,6 @@ void AttitudeController::execute() {
         case adcs_state_t::limited:
             calculate_detumble_controller();
             break;
-
         /* */
         case adcs_state_t::point_standby:
         case adcs_state_t::point_docking:
@@ -64,7 +63,6 @@ void AttitudeController::execute() {
         case adcs_state_t::point_manual:
             calculate_pointing_controller();
             break;
-
         /* */
         case adcs_state_t::startup:
         case adcs_state_t::zero_torque:
@@ -92,8 +90,10 @@ void AttitudeController::default_all() {
 }
 
 void AttitudeController::calculate_detumble_controller() {
+    m_body_cmd_f.set(lin::zeros<lin::Vector3f>());
+
     // Default all inputs to NaNs and set appropriate fields
-    detumbler_data = gnc::DetumbleControllerData();
+    detumbler_data = DetumbleControllerData();
     detumbler_data.b_body = b_body_rd_fp->get();
 
     // Call the controller and write results to appropriate state fields
@@ -130,7 +130,13 @@ void AttitudeController::calculate_pointing_objectives() {
         utl::rotate_frame(q_body_ecef, v);
         utl::dcm(DCM_hill_body, r, v);     // Calculate our dcm
 
+        lin::Vector3f dr = pos_baseline_ecef_fp->get(); // dr = dr_ecef
+
         // Ensure we have a valid relative position
+        if (lin::all(lin::isfinite(dr_body))) {
+            dr_body = dr;                            // dr_body = dr_ecef
+            utl::rotate_frame(q_body_ecef, dr_body);
+        }
     }
 
     switch (static_cast<adcs_state_t>(adcs_state_fp->get())) {
@@ -139,26 +145,41 @@ void AttitudeController::calculate_pointing_objectives() {
          * and have the docking face pointing normal to our orbit. */
         case adcs_state_t::point_standy:
             // Ensure we have a DCM and time
-            if (lin::any(!lin::isfinite(DCM_hill_body))) return;
-
+            if (lin::any(!lin::isfinite(DCM_hill_body)))
+                return;
             pointer_vec1_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
             pointer_vec2_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
-            pointer_vec1_desired_f.set(lin::ref_col(DCM_hill_body, 0)); // r_hat
+            pointer_vec1_desired_f.set(lin::ref_col(DCM_hill_body, 1)); // v_hat
             pointer_vec2_desired_f.set(lin::ref_col(DCM_hill_body, 2)); // n_hat
             break;
-
         /* Here we simply want to point the docking face towards the other
          * satellte and then try to keep GPS for RTK purposes. */
         case adcs_state_t::point_docking: {
-            // TODO
+            if (lin::any(!lin::isfinite(DCM_hill_body)) || lin::any(!lin::isfinite(dr_body)))
+                return;
+            pointer_vec1_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
+            pointer_vec2_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
+            pointer_vec1_desired_f.set(dr_body / lin::norm(dr_body));   // dr_hat
+            pointer_vec2_desired_f.set(lin::ref_col(DCM_hill_body, 2)); // n_hat
             break;
         }
-
+        /* In other adcs states, we won't specify a pointing strategy. */
         default:
             break;
     }
 }
 
 void AttitudeController::calculate_pointing_controller() {
+    // Default all inputs to NaNs and set appropriate fields
+    pointer_data = PointingControllerData();
+    pointer_data.primary_desired   = pointer_vec1_desired_f.get();
+    pointer_data.primary_current   = pointer_vec1_current_f.get();
+    pointer_data.secondary_desired = pointer_vec2_desired_f.get();
+    pointer_data.secondary_current = pointer_vec2_current_f.get();
+    pointer_data.w_wheels          = w_wheels_rd_fp->get();
+    pointer_data.w_sat             = w_body_est_fp->get();
+    pointer_data.b                 = b_body_est_fp->get();
 
+    // Call the controller and write results to appropriate state fields
+    control_pointing(pointer_state, pointer_data, pointer_actuation);
 }
