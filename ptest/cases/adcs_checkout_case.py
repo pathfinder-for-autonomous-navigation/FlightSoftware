@@ -32,12 +32,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.cycle()
 
         self.ws("pan.state", self.mission_states.get_by_name("manual"))
-<<<<<<< HEAD
-        self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
-        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
-        self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
-        self.ws("dcdc.ADCSMotor_cmd", True)
-=======
         self.ws("dcdc.ADCSMotor_cmd", True)
 
         # Necessary so that motor commands are pre-empted by ADCS DCDC being on
@@ -46,7 +40,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
         self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
->>>>>>> master
     
         self.print_header("Finished Initialization")
 
@@ -77,13 +70,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # FC + ADCSC + MAG1 + MAG2 + GYR
         minimal_hitl   = "111111011100" + "000000"
             
-<<<<<<< HEAD
-        # I forgot what it actually is, will update on next PR, after testing with EDU SAT
-        edu_sat        = "110111011100" + "000000"
-=======
         # ONLY MAG 2 IS DOWN ON EDU SAT as of 04/06/2020
         edu_sat        = "1101111111111" + "11111"
->>>>>>> master
 
         test_beds = {fc_only_hitl:"FC ONLY HITL",barebones_hitl:"BAREBONES HITL", minimal_hitl:"MINIMAL HITL", edu_sat:"EDU SAT"}
 
@@ -118,15 +106,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             "Disable Reset Cycle Failed, New HAVT Table does not match initial table cache",
             "Reset-Disable Success. All initially functional devices remain functional.")
 
-<<<<<<< HEAD
-    def mag_checkout(self):
-        # TODO make section compatible with 2x imu active (LATER)
-        self.print_header("Begin MAG Checkout")
-        
-        self.print_rs("adcs_cmd.imu_mode")
-        imu_mode = self.rs("adcs_cmd.imu_mode")
-        self.logger.put(f"IMU Mode: {self.imu_modes.get_by_num(imu_mode)}")
-=======
     def mag_checkout(self, mag_num):
         '''
         Run a checkout case on a given magnetometer
@@ -137,43 +116,24 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_rs(f"adcs_cmd.mag{mag_num}_mode")
         imu_mode = self.rs(f"adcs_cmd.mag{mag_num}_mode")
         self.logger.put(f"MAG{mag_num} Mode: {self.imu_modes.get_by_num(imu_mode)}")
->>>>>>> master
         
         # perform 10 readings.
         list_of_mag_rds = []
         for i in range(10):
             self.cycle()
-<<<<<<< HEAD
-            list_of_mag_rds += [self.rs("adcs_monitor.mag_vec")]
-
-        # for each reading check, magnitude bounds
-        # earth's mag field is between 25 to 65 microteslas - Wikipedia
-        self.logger.put("Mag readings: ")
-        for i in range(10):
-            mag = self.mag_of(list_of_mag_rds[i])
-            self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
-            self.soft_assert((25e-6 < mag and mag < 65e-6),
-                "Mag reading out of expected (earth) bounds.")
-
-        # check readings changed over time
-        self.soft_assert(self.sum_of_differentials(list_of_mag_rds) > 0,
-            "Mag readings did not vary across readings.")
-
-        self.print_header("MAG CHECKOUT COMPLETE")
-=======
             list_of_mag_rds += [self.rs(f"adcs_monitor.mag{mag_num}_vec")]
 
         # for each reading check, magnitude bounds
         # earth's mag field is between 25 to 65 microteslas - Wikipedia
         self.logger.put(f"MAG{mag_num} readings: ")
         for i in range(10):
-            mag = mag_of(list_of_mag_rds[i])
+            mag = self.mag_of(list_of_mag_rds[i])
             self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
             self.soft_assert((25e-6 < mag and mag < 65e-6),
                 f"MAG{mag_num} reading out of expected (earth) bounds.")
 
         # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
+        self.soft_assert(self.sum_of_differentials(list_of_mag_rds) > 0,
             f"MAG{mag_num} readings did not vary across readings.")
 
         self.print_header(f"MAG{mag_num} CHECKOUT COMPLETE")
@@ -208,7 +168,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.logger.put("MAG2 RESET")
 
         self.print_header("MAG INDEPENDENCE CHECKOUT COMPLETE")
->>>>>>> master
 
     def gyr_checkout(self):
         self.print_header("Begin GYR Checkout")
@@ -222,11 +181,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # for each reading check, magnitude bounds
         self.logger.put("GYR readings: ")
         for i in range(10):
-<<<<<<< HEAD
             mag = self.mag_of(list_of_gyr_rds[i])
-=======
-            mag = mag_of(list_of_gyr_rds[i])
->>>>>>> master
             self.logger.put(f"{list_of_gyr_rds[i]}, mag: {mag}")
             # 3.8 is approximately the maximum possible magnitude GYR reading.
             # 125 * 0.017 = max_rd_omega
@@ -235,11 +190,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
                 "Gyr reading out of expected bounds.")
 
         # check readings changed over time
-<<<<<<< HEAD
         self.soft_assert(self.sum_of_differentials(list_of_gyr_rds) > 0,
-=======
-        self.soft_assert(sum_of_differentials(list_of_gyr_rds) > 0,
->>>>>>> master
             "Gyr readings did not vary across readings.")
 
         self.print_header("GYR CHECKOUT COMPLETE")
@@ -261,10 +212,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # expect each sensor value to change from cycle to cycle, given user is jostling the test bed.
 
         # If either mag1 or mag2 are up, run a check on it.
-<<<<<<< HEAD
-        if self.rs("adcs_monitor.havt_device1") or self.rs("adcs_monitor.havt_device2"):
-            self.mag_checkout()
-=======
         if self.rs("adcs_monitor.havt_device1"):
             self.mag_checkout(1)
         if self.rs("adcs_monitor.havt_device2"):
@@ -273,7 +220,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # Check Mag Independence
         if self.rs("adcs_monitor.havt_device1") and self.rs("adcs_monitor.havt_device2"):        
             self.mag_independence_checkout()
->>>>>>> master
 
         # Run checks on GYR if GYR is up.
         if self.rs("adcs_monitor.havt_device0"):
