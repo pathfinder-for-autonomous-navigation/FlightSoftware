@@ -27,7 +27,7 @@ import (
 // until the token expires.
 
 func usage() {
-    fmt.Println("./spam mymessage.sbd [IMEI number]")
+    fmt.Println("./send_upink mymessage.sbd [IMEI number]")
     os.Exit(-1)
 }
 
