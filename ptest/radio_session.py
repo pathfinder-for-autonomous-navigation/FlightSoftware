@@ -29,7 +29,9 @@ class RadioSession(object):
     '''
 
 
-    def __init__(self, device_name, imei, port, simulation_run_dir, tlm_config, downlink_parser_filepath):
+    def __init__(self, device_name, imei, port, send_queue_duration,
+                    send_lockout_duration, simulation_run_dir,
+                    tlm_config, downlink_parser_filepath):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -46,6 +48,12 @@ class RadioSession(object):
             print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
         except:
             print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
+
+        self.send_queue_duration = send_queue_duration
+        self.send_lockout_duration = send_lockout_duration
+        if send_lockout_duration > send_queue_duration:
+            # TODO shift this logic down into write_state.
+            print("Error: send_lockout_duration is greater than send_queue_duration.")
 
         #Flask server connection
         self.flask_server=tlm_config["webservice"]["server"]

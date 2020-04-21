@@ -41,7 +41,9 @@ ptest_config_schema = {
                 "connected_device" : {"type" : "string", "required" : True},
                 "imei" : {"type" : "string", "required" : True},
                 "connect" : {"type" : "boolean", "required" : True},
-                "http_port" : {"type" : "integer", "required" : True}
+                "http_port" : {"type" : "integer", "required" : True},
+                "send_queue_duration" : {"type" : "integer", "required" : True},
+                "send_lockout_duration" : {"type" : "integer", "required" : True},
             }
         },
         "required" : True
