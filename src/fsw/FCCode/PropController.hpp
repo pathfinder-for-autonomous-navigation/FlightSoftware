@@ -69,13 +69,25 @@ public:
     ReadableStateField<float> tank2_temp;
     ReadableStateField<float> tank1_temp;
 
-    Fault pressurize_fail_fault_f;
+    Fault pressurize_fail_fault_f; // underpressurized
+    Fault overpressure_fault_f; // overpressurized
+    Fault tank2_temp_high_fault_f;
+    Fault tank1_temp_high_fault_f;
 
     // ------------------------------------------------------------------------
     // Public Interface
     // ------------------------------------------------------------------------
 
+    // Reads PropulsionSystem sensor values and saves them in state fields.
+    // If there are hardware faults, signal those faults.
+    // If any fault is faulted, then set our current state to handling_fault.
+    // Evaluate the current state to get the next state
+    // If the next state differs from the current state, update our current state and then call the state's entry() method
     void execute() override;
+
+    // Checks the sensor values of Tank1 and Tank2.
+    // Signals the fault and returns true if any hardware fault is detected
+    void check_faults();
 
     bool validate_schedule();
 
@@ -85,6 +97,18 @@ public:
 
     // Return true if Tank2 is at threshold pressure
     bool is_at_threshold_pressure();
+
+    inline bool is_tank2_overpressured() const{
+        return tank2_pressure.get() >= max_safe_pressure;
+    }
+
+    inline bool is_tank1_temp_high() const{
+        return tank1_temp.get() >= max_safe_temp;
+    }
+
+    inline bool is_tank2_temp_high() const {
+        return tank2_temp.get() >= max_safe_temp;
+    }
 
     inline bool check_current_state(prop_state_t expected) const {
         return expected == static_cast<prop_state_t>(prop_state_f.get());
@@ -103,7 +127,11 @@ public:
     // Return True if we are allowed to enter the desired_state
     bool can_enter_state(prop_state_t desired_state) const;
 
+    TRACKED_CONSTANT(float, max_safe_pressure, 75.0f); // TODO: is this right?
+    TRACKED_CONSTANT(int, max_safe_temp, 100); // TODO: is this right?
+
 private:
+
     // Return the PropState associated with the given prop_state_t
     PropState &get_state(prop_state_t) const;
 
@@ -117,7 +145,7 @@ private:
     static PropState_AwaitFiring state_await_firing;
     static PropState_Firing state_firing;
     // static PropState_Venting state_venting;
-    // static PropState_HandlingFault state_handling_fault;
+    static PropState_HandlingFault state_handling_fault;
     static PropState_Manual state_manual;
 };
 
@@ -179,6 +207,8 @@ protected:
     friend class PropController;
 };
 
+// In this state, Prop ignores all firing requests and hardware faults
+// Prop will still read the PropulsionSystem sensors and update the state fields corresponding to those sensors
 class PropState_Disabled : public PropState {
 public:
     PropState_Disabled() : PropState(prop_state_t::disabled) {}
@@ -241,7 +271,9 @@ private:
     prop_state_t handle_valve_is_close();
 
     // Called when we have failed to reach threshold_pressure after maximum consecutive pressurizing cycles
-    static prop_state_t handle_pressurize_failed();
+    // First, signal pressurize_fail_fault_f. Then evaluate whether this fault has been suppressed by the ground.
+    // If it has been suppressed, then continue to pressurize. Otherwise, set Prop to disable
+    prop_state_t handle_pressurize_failed();
 
     // Starts another pressurization cycle
     void start_pressurize_cycle();
@@ -312,6 +344,11 @@ public:
     void enter() override;
 
     prop_state_t evaluate() override;
+
+private:
+    void handle_pressure_too_high();
+    void handle_tank1_temp_too_high();
+    void handle_tank2_temp_too_high();
 };
 
 class PropState_Manual : public PropState {
