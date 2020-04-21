@@ -18,6 +18,8 @@ I recommend copy-pasting a template from this folder to somewhere else on your d
   - `imei` IMEI # of the radio. This is used to tell Iridium which radio we're trying to collect/send data from/to.
   - `connect` If false, no attempt is made to establish the radio connection. This option exists so that the simulation can be run separately from radio testing.
 - `tlm`: Information for connecting to the Iridium email account and the telemetry service.
+  - `email_username`: Iridium email account.
+  - `email_password`: Password for the Iridium email account.
   - `webservice` : Server and port information for connecting to the telemetry webservice.
     - `server`
     - `port`
