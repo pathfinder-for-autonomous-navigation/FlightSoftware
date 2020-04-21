@@ -13,8 +13,6 @@ import os
 import pty
 from elasticsearch import Elasticsearch
 
-from multiprocessing import Process
-
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_radio_session_endpoint
 
@@ -39,15 +37,6 @@ class RadioSession(object):
         # Device connection
         self.device_name = device_name
         self.imei=imei
-        self.port=port
-        self.flask_app=create_radio_session_endpoint(self)
-
-        try:
-            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
-            self.http_thread.start()
-            print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
-        except:
-            print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
 
         #Flask server connection
         self.flask_server=tlm_config["webservice"]["server"]

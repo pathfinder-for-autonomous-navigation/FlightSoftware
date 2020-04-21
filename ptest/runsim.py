@@ -138,7 +138,14 @@ class PTest(object):
 
             if radio['connect']:
                 radio_data_name = radio_connected_device + "_radio"
-                radio_session = RadioSession(radio_name, imei, radio["http_port"], self.simulation_run_dir, self.tlm_config, self.downlink_parser_filepath)
+                radio_session = RadioSession(radio_name,
+                    imei,
+                    radio["http_port"],
+                    radio["send_queue_duration"],
+                    radio["send_lockout_duration"],
+                    self.simulation_run_dir,
+                    self.tlm_config,
+                    self.downlink_parser_filepath)
                 self.radios[radio_name] = radio_session
 
     def set_up_sim(self):
