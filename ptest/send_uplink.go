@@ -113,53 +113,6 @@ func sendMessage(service *gmail.Service, userID string, message gmail.Message) {
 
 }
 
-func createMessage(from string, to string, subject string, content string) gmail.Message {
-
-	var message gmail.Message
-
-	messageBody := []byte("From: " + from + "\r\n" +
-		"To: " + to + "\r\n" +
-		"Subject: " + subject + "\r\n\r\n" +
-		content)
-
-	// see https://godoc.org/google.golang.org/api/gmail/v1#Message on .Raw
-	message.Raw = base64.StdEncoding.EncodeToString(messageBody)
-
-	return message
-}
-
-func chunkSplit(body string, limit int, end string) string {
-
-	var charSlice []rune
-
-	// push characters to slice
-	for _, char := range body {
-		charSlice = append(charSlice, char)
-	}
-
-	var result string = ""
-
-	for len(charSlice) >= 1 {
-		// convert slice/array back to string
-		// but insert end at specified limit
-
-		result = result + string(charSlice[:limit]) + end
-		// discard the elements that were copied over to result
-		charSlice = charSlice[limit:]
-
-		// change the limit
-		// to cater for the last few words in
-		//
-		if len(charSlice) < limit {
-			limit = len(charSlice)
-		}
-
-	}
-
-	return result
-
-}
-
 func randStr(strSize int, randType string) string {
 
 	var dictionary string
@@ -196,8 +149,6 @@ func createMessageWithAttachment(from string, to string, subject string, content
 		log.Fatalf("Unable to read file for attachment: %v", err)
 	}
 
-	// fileMIMEType := http.DetectContentType(fileBytes)
-
 	// https://www.socketloop.com/tutorials/golang-encode-image-to-base64-example
 	fileData := base64.StdEncoding.EncodeToString(fileBytes)
 
@@ -208,23 +159,17 @@ func createMessageWithAttachment(from string, to string, subject string, content
 		"To: " + to + "\n" +
 		"From: " + from + "\n" +
 		"subject: " + subject + "\n\n" +
-
 		"--" + boundary + "\n" +
 		"Content-Type: multipart/alternative; boundary=" + boundary + " \n" + "\n\n" +
-
 		"--" + boundary + "\n" +
-
 		"Content-Type:  text/html; charset=" + string('"') + "UTF-8" + string('"') + "\n" +
 		content + "\n\n" +
-
 		"--" + boundary + "\n" +
-
 		"Content-Type: application/octet-stream; name=" + string('"') + fileName + string('"') + " \n" +
 		"MIME-Version: 1.0\n" +
 		"Content-Transfer-Encoding: base64\n" +
 		"Content-Disposition: attachment; filename=" + string('"') + fileName + string('"') + " \n\n" +
 		fileData + "\n" +
-		//	chunkSplit(fileData, 76, "\n") +
 		"--" + boundary + "--")
 
 	// see https://godoc.org/google.golang.org/api/gmail/v1#Message on .Raw
@@ -233,6 +178,11 @@ func createMessageWithAttachment(from string, to string, subject string, content
 	message.Raw = base64.URLEncoding.EncodeToString(messageBody)
 
 	return message
+}
+
+type RadioKeys struct {
+	Email_username string
+	Email_password string
 }
 
 func main() {
@@ -245,6 +195,12 @@ func main() {
 
 	ctx := context.Background()
 
+	// Get email username
+	radioKeyJson, err := ioutil.ReadFile("configs/radio_keys.json")
+	var radioKeys RadioKeys
+	json.Unmarshal([]byte(radioKeyJson), &radioKeys)
+	user := radioKeys.Email_username
+
 	// process the credential file
 	credential, err := ioutil.ReadFile("configs/credentials.json")
 	if err != nil {
@@ -253,7 +209,6 @@ func main() {
 
 	// Use GmailSendScope for this example.
 	// See the rest at https://godoc.org/google.golang.org/api/gmail/v1#pkg-constants
-
 	config, err := google.ConfigFromJSON(credential, gmail.GmailSendScope)
 	if err != nil {
 		log.Fatalf("Unable to parse client secret file to config: %v", err)
@@ -270,16 +225,9 @@ func main() {
 	// create message without attachment
 	msgContent := `<div dir="ltr"><br></div>`
 
-	//message := createMessage("from@gmail.com", "to@gmail.com", "Email from GMail API", msgContent)
+	messageWithAttachment := createMessageWithAttachment(user, "data@sbd.iridium.com", imei, msgContent, "./", os.Args[1])
 
 	// send out our message
-	//user := "me"
-	//sendMessage(gmailClientService, user, message)
-
-	messageWithAttachment := createMessageWithAttachment("pan.ssds.qlocate@gmail.com", "data@sbd.iridium.com", imei, msgContent, "./", os.Args[1])
-
-	// send out our message
-	user := "pan.ssds.qlocate@gmail.com"
 	sendMessage(gmailClientService, user, messageWithAttachment)
 
 }
