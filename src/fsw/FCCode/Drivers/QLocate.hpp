@@ -26,23 +26,24 @@
 
 namespace Devices {
 
+    enum radio_status_t {
 /*! RETURN values:
  * All methods return one of the following return codes.
  * Nonzero codes indicate failure. 
  * Codes 0 - 3 is consistent with SBDWB codes
  * */
-    static constexpr int OK = 0;                    // command was succesfully executed, expected response received
-    static constexpr int TIMEOUT = 1;               // response not received before timeout
-    static constexpr int BAD_CHECKSUM = 2;          // checksum doesn't match ISU calculated checksum
-    static constexpr int WRONG_LENGTH = 3;          // message size differs from expected message size
-    static constexpr int UNEXPECTED_RESPONSE = -20; // actual response does not match expected response
-    static constexpr int CONSUME_FAIL = -40;         // only consume can return this
-    static constexpr int WRITE_FAIL = -30;          // failed to send command (write command to output port)
-    static constexpr int PORT_UNAVAILABLE =
-            -50; // attempt to read port that is not available (no data available)
-    static constexpr int UNKNOWN = -60;        // unknown errror
-    static constexpr int WRONG_FN_ORDER = -70; // attempt to execute commands in the wrong order (unexpected order)
-    // Ex: calling query_config_2() without calling query_config_1()
+        OK,                     // command was succesfully executed, expected response received
+        TIMEOUT,                // response not received before timeout
+        BAD_CHECKSUM,           // checksum doesn't match ISU calculated checksum
+        WRONG_LENGTH,           // message size differs from expected message size
+        UNEXPECTED_RESPONSE,    // actual response does not match expected response
+        CONSUME_FAIL,           // only consume can return this
+        WRITE_FAIL,             // failed to send command (write command to output port)
+        PORT_UNAVAILABLE,       // attempt to read port that is not available (no data available)
+        UNKNOWN,                // unknown errror
+        WRONG_FN_ORDER,         // attempt to execute commands in the wrong order (unexpected order)
+        // Ex: calling query_config_2() without calling query_config_1()
+    };
 
 /**
  * Functions are formated as follows:
