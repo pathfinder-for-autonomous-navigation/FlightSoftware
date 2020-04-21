@@ -105,7 +105,7 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = StateSession(device_name, self.simulation_run_dir, self.uplink_producer_filepath)
+            device_session = StateSession(device_name, device["http_port"], self.simulation_run_dir, self.uplink_producer_filepath)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
@@ -138,7 +138,7 @@ class PTest(object):
 
             if radio['connect']:
                 radio_data_name = radio_connected_device + "_radio"
-                radio_session = RadioSession(radio_name, imei, self.simulation_run_dir, self.tlm_config, self.downlink_parser_filepath)
+                radio_session = RadioSession(radio_name, imei, radio["http_port"], self.simulation_run_dir, self.tlm_config, self.downlink_parser_filepath)
                 self.radios[radio_name] = radio_session
 
     def set_up_sim(self):
@@ -182,7 +182,8 @@ class PTest(object):
 
         print("Stopping binary monitor thread...")
         time.sleep(1.0)
-        self.binary_monitor_thread.join()
+        if hasattr(self, "binary_monitor_thread"):
+            self.binary_monitor_thread.join()
 
         print("Stopping simulation (please be patient)...")
         try:
