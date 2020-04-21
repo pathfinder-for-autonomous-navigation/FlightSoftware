@@ -7,6 +7,7 @@
 #ifdef FUNCTIONAL_TEST
     #ifdef DESKTOP
         #include <iostream>
+        #include <sstream>
         #include <iomanip>
     #else
         #include <Arduino.h>

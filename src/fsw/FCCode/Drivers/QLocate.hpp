@@ -187,12 +187,14 @@ namespace Devices {
 
     private:
 
+#ifndef DESKTOP
         /**
          * Edge case where data is at port just when we are checking if data is at the port.
          * In this case, we wait until the next control cycle to process the data. By then, we expect
          * the data to be at the port. We will only wait once, so if this flag is already true, then we exit
          */
         int num_bytes_available_last_cycle = 0;
+#endif
 
         /**
          * Returns true if num_bytes_available_last_cycle == port->available()

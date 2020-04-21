@@ -5,7 +5,6 @@ import threading
 import json
 import traceback
 import queue
-import yagmail
 import requests
 import subprocess
 import glob
@@ -82,8 +81,9 @@ class RadioSession(object):
         Reads from the most recent Iridium Report whether or
         not RadioSession is able to send uplinks
      	'''
+
         assert len(fields) == len(vals)
-        '''
+
         headers = {
             'Accept': 'text/html',
         }
@@ -92,25 +92,22 @@ class RadioSession(object):
             "field" : "send-uplinks"
         }
 
-        response = requests.get('http://'+self.flask_server+':'+self.flask_port+'/search-es', params=payload, headers=headers)	'''
-        self.logger.put("Send Uplinks: "+str(response.text))
+        tlm_service_active = self.flask_server != ""
+        if tlm_service_active:
+            response = requests.get(
+                'http://'+self.flask_server+':'+self.flask_port+'/search-es',
+                    params=payload, headers=headers)
 
-        if response.text=="True":
+        if not tlm_service_active or response.text=="True":
             #create dictionary object with new fields and vals
             updated_fields={}
             for i in range(len(fields)):
                 updated_fields[fields[i]]=vals[i]
-            '''
-            #connect to PAN email account
-            yag = yagmail.SMTP(self.username, self.password)
-	    '''
+
             #create a JSON file with the updated statefields and send it to the iridium email
             with open('uplink.sbd', 'w') as json_uplink:
                 json.dump(updated_fields, json_uplink)
-            os.system("go build spam.go; ./spam uplink.sbd")
-            '''
-	    yag.send('sbdservice@sbd.iridium.com', self.imei, 'uplink.json')
-	    '''
+            os.system("./ptest/send_uplink uplink.sbd")
             return True
         else:
             self.logger.put("Wait for confirmation MTMSN")
