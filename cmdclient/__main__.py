@@ -8,10 +8,19 @@ class CmdClient(Cmd):
     def __init__(self, config):
         self.config = config
 
+        self.intro = "Beginning command client.\nType \"help\" for a list of commands.\n" \
+                    "Remember to choose a device to command before you start commanding."
+        self.prompt = '> '
+
+        Cmd.__init__(self)
+
     def do_sc(self, args):
         """
         Switches which device is currently being commanded.
         """
+        if len(args) < 1:
+            print("Need to specify a computer to switch to.")
+            return
 
         comp = args[0]
         if comp not in self.config:
@@ -63,12 +72,9 @@ def main():
         config = json.load(config_file)
 
     config_schema = {
-        "type" : "dict",
-        "schema" : {
-            "server" : {"type" : "string", "required" : True},
-            "port" : {"type" : "integer", "required" : True},
-            "type" : {"type" : "string", "allowed" : ["StateSession", "RadioSession"], "required" : True},
-        }
+        "server" : {"type" : "string", "required" : True},
+        "port" : {"type" : "integer", "required" : True},
+        "type" : {"type" : "string", "allowed" : ["StateSession", "RadioSession"], "required" : True},
     }
     
     v = Validator(config_schema)
@@ -82,7 +88,8 @@ def main():
     cmd_client = CmdClient(config)
 
     try:
-        cmd_client.cmdloop()
+        while True:
+            cmd_client.cmdloop()
     except KeyboardInterrupt:
         print("Exiting due to keyboard interrupt.")
         sys.exit(0)
