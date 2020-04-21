@@ -12,12 +12,26 @@ class CmdClient(Cmd):
                     "Remember to choose a device to command before you start commanding."
         self.prompt = '> '
 
+        self.cmded_device = list(config.keys())[0]
         Cmd.__init__(self)
+
+    def do_lc(self, args):
+        """
+        List available devices to connect to.
+        """
+        print("Available devices: " + str([key for key in self.config]))
+
+    def do_cc(self, args):
+        """
+        Check the device we are currently connected to.
+        """
+        print("Currently connected device: " + self.cmded_device)
 
     def do_sc(self, args):
         """
         Switches which device is currently being commanded.
         """
+        args = args.split()
         if len(args) < 1:
             print("Need to specify a computer to switch to.")
             return
@@ -25,7 +39,10 @@ class CmdClient(Cmd):
         comp = args[0]
         if comp not in self.config:
             print(f"Failed: a connection for {comp} is not configured.")
-    
+        else:
+            self.cmded_device = comp
+            print(f"Switched to commanding {comp}")
+
     def do_list(self, args):
         """
         Lists the elements in the queued uplink for the current device, or, returns None if
