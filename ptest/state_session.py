@@ -26,11 +26,6 @@ class StateSession(object):
     def __init__(self, device_name, simulation_run_dir, uplink_producer_filepath):
         '''
         Initializes state session with a device.
-
-        Args:
-        device_name: Name of device being connected to
-        datastore: Datastore to which telemetry data will be published
-        logger: Logger to which log lines should be committed
         '''
 
         # Device connection

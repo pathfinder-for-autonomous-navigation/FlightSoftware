@@ -16,5 +16,17 @@
             "imei": "",
             "connect": false
         }
-    ]
+    ],
+    "tlm": {
+        "email_username" : "",
+        "email_password" : "",
+        "webservice": {
+            "server": "",
+            "port": ""
+        },
+        "elasticsearch": {
+            "server": "",
+            "port": ""
+        }
+    }
 }
