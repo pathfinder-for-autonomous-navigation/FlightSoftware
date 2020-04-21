@@ -7,7 +7,7 @@ from .state_session import StateSession
 from .radio_session import RadioSession
 from .cmdprompt import StateCmdPrompt
 from .simulation import Simulation, SingleSatSimulation
-import json, sys, os, tempfile, time, threading, signal, traceback, socket
+import json, sys, os, tempfile, time, threading, signal, traceback
 
 try:
     import pty, subprocess
