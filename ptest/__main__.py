@@ -1,4 +1,4 @@
-from . import run_simulation as runsim
+from . import runsim as runsim
 from . import plotter as plot
 
 import sys

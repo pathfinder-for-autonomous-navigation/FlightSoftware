@@ -16,5 +16,15 @@
             "imei": "",
             "connect": false
         }
-    ]
+    ],
+    "tlm": {
+        "webservice": {
+            "server": "",
+            "port": ""
+        },
+        "elasticsearch": {
+            "server": "",
+            "port": ""
+        }
+    }
 }
