@@ -111,7 +111,7 @@ class PTest(object):
             if device_session.connect(device["port"], device["baud_rate"]):
                 self.devices[device_name] = device_session
             else:
-                self.stop_all("A required device is disconnected.")
+                self.stop_all(f"Unable to set up StateSession for {device_name}.")
 
         self.binary_monitor_thread = threading.Thread(
             name="Binary Monitor", target=self.binary_monitor)

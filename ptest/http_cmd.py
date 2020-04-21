@@ -28,32 +28,36 @@ swagger_config={
             "model_filter":lambda tag:True
         }
     ],
-    "static_url_path": "/flassger_static",
+    "static_url_path": "/flasgger_static",
     "swagger_ui":True,
     "specs_route":"/swagger/"
 }
 
-def create_radio_session_endpoint():
+def create_radio_session_endpoint(radio_session):
     app = Flask(__name__)
+    app.logger.disabled = True
+    app.config["state_session"] = radio_session
+
     app.config["SWAGGER"]={"title": "PAN Radio Session Command Endpioint", "uiversion": 2}
     swagger=Swagger(app, config=swagger_config)
 
     @app.route("/request", methods=["GET"])
-    @swag_from("endpoint_configs/common/request.yml")
+    @swag_from("endpoint_configs/radio_session/request.yml")
     def request():
         return "Hello world!"
 
     return app
 
-def create_state_session_endpoint():
+def create_state_session_endpoint(state_session):
     app = Flask(__name__)
     app.logger.disabled = True
+    app.config["state_session"] = state_session
 
     app.config["SWAGGER"]={"title": "PAN State Session Command Endpioint", "uiversion": 2}
     swagger=Swagger(app, config=swagger_config)
 
     @app.route("/request", methods=["GET"])
-    @swag_from("endpoint_configs/common/request.yml")
+    @swag_from("endpoint_configs/state_session/request.yml")
     def request():
         return "Hello world!"
 
