@@ -65,9 +65,9 @@ public:
     // Output Fields
     // ------------------------------------------------------------------------
 
-    ReadableStateField<float> tank2_pressure;
-    ReadableStateField<float> tank2_temp;
-    ReadableStateField<float> tank1_temp;
+    ReadableStateField<float> tank2_pressure_f;
+    ReadableStateField<float> tank2_temp_f;
+    ReadableStateField<float> tank1_temp_f;
 
     Fault pressurize_fail_fault_f; // underpressurized
     Fault overpressure_fault_f; // overpressurized
@@ -99,15 +99,15 @@ public:
     bool is_at_threshold_pressure();
 
     inline bool is_tank2_overpressured() const{
-        return tank2_pressure.get() >= max_safe_pressure;
+        return tank2_pressure_f.get() >= max_safe_pressure;
     }
 
     inline bool is_tank1_temp_high() const{
-        return tank1_temp.get() >= max_safe_temp;
+        return tank1_temp_f.get() >= max_safe_temp;
     }
 
     inline bool is_tank2_temp_high() const {
-        return tank2_temp.get() >= max_safe_temp;
+        return tank2_temp_f.get() >= max_safe_temp;
     }
 
     inline bool check_current_state(prop_state_t expected) const {
@@ -127,8 +127,8 @@ public:
     // Return True if we are allowed to enter the desired_state
     bool can_enter_state(prop_state_t desired_state) const;
 
-    TRACKED_CONSTANT(float, max_safe_pressure, 75.0f); // TODO: is this right?
-    TRACKED_CONSTANT(int, max_safe_temp, 100); // TODO: is this right?
+    TRACKED_CONSTANT_SC(float, max_safe_pressure, 75.0f); // TODO: is this right?
+    TRACKED_CONSTANT_SC(float, max_safe_temp, 100); // TODO: is this right?
 
 private:
 
@@ -345,10 +345,6 @@ public:
 
     prop_state_t evaluate() override;
 
-private:
-    void handle_pressure_too_high();
-    void handle_tank1_temp_too_high();
-    void handle_tank2_temp_too_high();
 };
 
 class PropState_Manual : public PropState {

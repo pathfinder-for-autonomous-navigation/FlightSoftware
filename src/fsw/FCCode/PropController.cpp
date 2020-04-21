@@ -19,20 +19,21 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
           sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999)),
           sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(999 * 1000)),
           sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(999 * 1000)),
-        // TODO: verify these Serializer paramemters
+
           max_pressurizing_cycles("prop.max_pressurizing_cycles", Serializer<unsigned int>(50)),
           threshold_firing_pressure("prop.threshold_firing_pressure", Serializer<float>(10, 50, 4)),
           ctrl_cycles_per_filling_period("prop.ctrl_cycles_per_filling", Serializer<unsigned int>(50)),
           ctrl_cycles_per_cooling_period("prop.ctrl_cycles_per_cooling", Serializer<unsigned int>(50)),
           tank1_valve("prop.tank1.valve_choice", Serializer<unsigned int>(1)),
-          tank2_pressure("prop.tank2.pressure", Serializer<float>(0, 150, 4)),
-          tank2_temp("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
-          tank1_temp("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
-        // TODO: Why does Fault take a control_cycle_count reference?
-          pressurize_fail_fault_f("prop.pressurize_fail", 1),
-          overpressure_fault_f("prop.overpressured", 1),
-          tank2_temp_high_fault_f("prop.tank2_temp_high", 1),
-          tank1_temp_high_fault_f("prop.tank1_temp_high", 1) {
+
+          tank2_pressure_f("prop.tank2.pressure", Serializer<float>(0, 150, 4)),
+          tank2_temp_f("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
+          tank1_temp_f("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
+
+          pressurize_fail_fault_f("prop.pressurize_fail", 3),
+          overpressure_fault_f("prop.overpressured", 3),
+          tank2_temp_high_fault_f("prop.tank2_temp_high", 3),
+          tank1_temp_high_fault_f("prop.tank1_temp_high", 3) {
 
     add_writable_field(prop_state_f);
     add_writable_field(cycles_until_firing);
@@ -49,9 +50,15 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_writable_field(ctrl_cycles_per_cooling_period);
     add_writable_field(tank1_valve);
 
-    add_readable_field(tank2_pressure);
-    add_readable_field(tank2_temp);
-    add_readable_field(tank1_temp);
+    add_readable_field(tank2_pressure_f);
+    add_readable_field(tank2_temp_f);
+    add_readable_field(tank1_temp_f);
+
+    add_fault(pressurize_fail_fault_f);
+    add_fault(overpressure_fault_f);
+    add_fault(tank2_temp_high_fault_f);
+    add_fault(tank1_temp_high_fault_f);
+
 
     TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
     TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
@@ -65,9 +72,9 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     ctrl_cycles_per_cooling_period.set(ctrl_cycles_per_cooling_period_ic);
     tank1_valve.set(tank1_valve_choice_ic); // default use 0
 
-    tank2_pressure.set(Tank2.get_pressure());
-    tank2_temp.set(Tank2.get_temp());
-    tank1_temp.set(Tank1.get_temp());
+    tank2_pressure_f.set(Tank2.get_pressure());
+    tank2_temp_f.set(Tank2.get_temp());
+    tank1_temp_f.set(Tank1.get_temp());
 
     PropState::controller = this;
 }
@@ -86,9 +93,9 @@ PropState_Manual PropController::state_manual;
 void PropController::execute() {
 
     // Read all the sensors
-    tank2_pressure.set(Tank2.get_pressure());
-    tank2_temp.set(Tank2.get_temp());
-    tank1_temp.set(Tank1.get_temp());
+    tank2_pressure_f.set(Tank2.get_pressure());
+    tank2_temp_f.set(Tank2.get_temp());
+    tank1_temp_f.set(Tank1.get_temp());
 
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
@@ -356,7 +363,7 @@ prop_state_t PropState_Pressurizing::handle_valve_is_close() {
     if (pressurizing_cycle_count >= controller->max_pressurizing_cycles.get()) {
         return handle_pressurize_failed();
     }
-        // If we are not on 10s cooldown, then start pressurizing again
+    // If we are not on 10s cooldown, then start pressurizing again
     else if (countdown.is_timer_zero()) {
         start_pressurize_cycle();
         return this_state;
@@ -370,8 +377,8 @@ prop_state_t PropState_Pressurizing::handle_pressurize_failed() {
     controller->pressurize_fail_fault_f.signal();
     // TODO: If the ground tells us to ignore this fault, we can perhaps continue trying to pressurize
     if (controller->pressurize_fail_fault_f.is_faulted()) {
-        // Go to disable until the ground tells us what to do
-        return prop_state_t::disabled;
+        // Go to handling_fault
+        return prop_state_t::handling_fault;
     }
     // TODO: This is arbitrary. Give it back half the cycles and continue in this state
     pressurizing_cycle_count = controller->max_pressurizing_cycles.get() / 2;
@@ -460,56 +467,26 @@ bool PropState_HandlingFault::can_enter() const {
 
     // Return true if any of the faults are actually faulted. This allows us to ignore bad sensors if the ground
     // decides to suppress/override certain faults
-    return controller->overpressure_fault_f.is_faulted()
-           || controller->tank2_temp_high_fault_f.is_faulted()
-           || controller->tank1_temp_high_fault_f.is_faulted();
+    return
+            controller->pressurize_fail_fault_f.is_faulted()
+            || controller->overpressure_fault_f.is_faulted()
+            || controller->tank2_temp_high_fault_f.is_faulted()
+            || controller->tank1_temp_high_fault_f.is_faulted();
 }
 
 void PropState_HandlingFault::enter() {
     DD("==> entered PropState_HandlingFault\n");
-    // Does nothing. We never call this because no state returns HandlingFault from evaluate()
 }
 
 prop_state_t PropState_HandlingFault::evaluate() {
     DD("==> PropState_HandlingFault is handling faults\n");
-    // Decide whether to handle a fault based on the decision of the Faults
-    unsigned int num_faults = 0;
-    if (controller->overpressure_fault_f.is_faulted()) {
-        handle_pressure_too_high();
-        ++num_faults;
-    }
-    if (controller->tank2_temp_high_fault_f.is_faulted()) {
-        handle_tank2_temp_too_high();
-        ++num_faults;
-    }
-    if (controller->tank1_temp_high_fault_f.is_faulted()) {
-        handle_tank1_temp_too_high();
-        ++num_faults;
-    }
+    // If faults are still signaled, then stay in HandlingFault
+    if (can_enter())
+        return this_state;
 
-    // If there are no more faults, then return the state to idle
-    if (num_faults == 0)
-        return prop_state_t::idle;
-
-    return this_state;
+    // Otherwise, return to idle
+    return prop_state_t::idle;
 }
-
-void PropState_HandlingFault::handle_pressure_too_high() {
-    DD("==> Handling Pressure Too High\n");
-    // If this is no longer a problem, then unsignal the fault
-    // Check using the actual
-
-    // TODO: I believe that it may be necessary to keep signalling to fault
-}
-
-void PropState_HandlingFault::handle_tank1_temp_too_high() {
-    DD("==> Handling Tank1 Temp Too High\n");
-}
-
-void PropState_HandlingFault::handle_tank2_temp_too_high() {
-    DD("==> Handling Tank2 Temp Too High\n");
-}
-
 
 // ------------------------------------------------------------------------
 // PropState Manual
