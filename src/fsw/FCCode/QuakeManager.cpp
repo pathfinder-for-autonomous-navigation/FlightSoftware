@@ -4,7 +4,7 @@
 #include "radio_state_t.enum"
 
 // Include I/O functions for telemetry dumping during functional testing.
-#ifdef FUNCTIONAL_TEST
+#ifndef FLIGHT
     #ifdef DESKTOP
         #include <iostream>
         #include <iomanip>
@@ -81,7 +81,7 @@ bool QuakeManager::execute() {
     //         radio_state_f.get(), 
     //         qct.get_current_state());
 
-    #ifdef FUNCTIONAL_TEST
+    #ifndef FLIGHT
     if (dump_telemetry_f.get()) {
         dump_telemetry_f.set(false);
         char* snapshot = radio_mo_packet_fp->get();
