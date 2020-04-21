@@ -23,3 +23,16 @@ class EmptySimCase(EmptyCase):
     @property
     def sim_duration(self):
         return float("inf")
+
+class NothingCase(FlexibleCase):
+    def setup_case_singlesat(self):
+        pass
+
+    def setup_case_fullmission(self):
+        pass
+
+    def run_case_singlesat(self):
+        self.finish()
+
+    def run_case_fullmission(self):
+        self.finish()
