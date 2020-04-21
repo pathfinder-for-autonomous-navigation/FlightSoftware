@@ -142,18 +142,6 @@ int QLocate::get_sbdwb() {
 #endif
 }
 
-// Parses the result buffer of sbdix into sbdix_r
-int QLocate::parse_ints(char const *c, int *i) {
-    int res = sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i + 1, i + 2, i + 3, i + 4, i + 5);
-    if (res == 6)
-        return OK;
-
-#ifdef DEBUG_ENABLED
-    Serial.printf("parse_ints: unexpected response %d\n", res);
-#endif
-    return UNEXPECTED_RESPONSE;
-}
-
 int QLocate::query_sbdix_1() {
     // Clear SBDIX buffer before writing to it
     memset(sbdix_r, 0, 6*sizeof(int));
@@ -167,11 +155,31 @@ int QLocate::get_sbdix() {
     return OK;
 #else
     CHECK_PORT_AVAILABLE()
-    char buf[75]{};
+    size_t msg_size = port->available();
+    // min message length is 26 excluding the final 0\r
+    if (msg_size < 26)
+        return PORT_UNAVAILABLE;
+    if (msg_size >= 128) // 128 is more than enough
+        return UNEXPECTED_RESPONSE;
+
+    char buf[128]{};
     // Parse SBDIX output
-    port->readBytesUntil('\n', buf, 74);
+    port->readBytes(buf, msg_size);
     return parse_ints(buf + 8, sbdix_r);
 #endif
+}
+
+// Parses the result buffer of sbdix into sbdix_r
+// Example Response "+SBDIX: 3, 8, 2, 0, 0, 0\r\n0\r"
+int QLocate::parse_ints(char const *c, int *i) {
+    int res = sscanf(c, "%d, %d, %d, %d, %d, %d\r", i, i + 1, i + 2, i + 3, i + 4, i + 5);
+    if (res == 6)
+        return OK;
+
+#ifdef DEBUG_ENABLED
+    Serial.printf("parse_ints: unexpected response %d\n", res);
+#endif
+    return UNEXPECTED_RESPONSE;
 }
 
 int QLocate::query_sbdrb_1() {
