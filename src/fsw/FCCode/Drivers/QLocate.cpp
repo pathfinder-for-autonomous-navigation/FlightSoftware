@@ -167,11 +167,9 @@ int QLocate::get_sbdix() {
     return OK;
 #else
     CHECK_PORT_AVAILABLE()
-    size_t msg_size = port->available();
-    char buf[msg_size + 1];
+    char buf[75]{};
     // Parse SBDIX output
-    port->readBytes(buf, msg_size);
-    buf[msg_size] = '\0';
+    port->readBytesUntil('\n', buf, 74);
     return parse_ints(buf + 8, sbdix_r);
 #endif
 }

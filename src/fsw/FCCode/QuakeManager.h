@@ -196,13 +196,13 @@ private:
      * True if fnSeqNum = 0 and cycle_of_entry = 0 or 1
      * @return true if we just entered this current state
      */
-    bool has_just_entered();
+    bool has_just_entered() const;
 
     /**
      * True if fnSeqNum = 0 and cycle_of_entry > 1
      * @return
      */
-    bool has_finished();
+    bool has_finished() const;
 
     /**
      * If the current state has no more cycles left, then return true, else false

@@ -27,7 +27,6 @@ import (
 // until the token expires.
 
 func usage() {
-    fmt.Println("./spam mymessage.sbd")
     fmt.Println("./spam mymessage.sbd [IMEI number]")
     os.Exit(-1)
 }
@@ -238,14 +237,11 @@ func createMessageWithAttachment(from string, to string, subject string, content
 
 func main() {
 
-    if len(os.Args) < 2 {
+    if len(os.Args) != 3 {
         usage()
     }
 
-    imei := "300234030627990"
-    if len(os.Args) == 3 {
-        imei = os.Args[2]
-    }
+    imei := os.Args[2]
 
 	ctx := context.Background()
 

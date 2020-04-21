@@ -357,8 +357,10 @@ void test_write_load_message()
     tf.step();
 }
 
-// Test that when MO is set to a new snapshot, SBDWB will still finish sending
-// the old snapshot
+// Test that QuakeManager makes a copy of the snapshot.
+// The MO pointer will be updated every cycle to point to a new snapshot. However, we want to finish writing
+// our current snapshot before writing a new one. This test updates radio_mo_packet_fp to point to a different string
+// and checks that despite the update, QuakeManager will continue writing the original snapshot.
 void test_update_mo_same_snap()
 {
     // If SBDWB has written the first piece of the snapshot
@@ -451,8 +453,9 @@ void test_update_mo_load_new_snap()
 
 void test_same_snap_after_sbdix_recovers()
 {
-    // If we write half a packet and then we fail, but then we get comms again, then we should finish writing the packet
-    // that we failed on, and then go on to write the next packet from the SAME snapshot
+    // If we succesfully transmitted part of a snapshot, but then we failed to transmit the next packet in the same snapshot,
+    // we should stay in the same transieve state and retry transmitting that packet until we run out of cycles. 
+    // If we manage to successfulyl transmit that packet, then we should go on to write the next packet from the SAME snapshot
     TestFixture tf(static_cast<unsigned int>(radio_state_t::write));
     tf.execUntilChange(); // write AAA
     tf.execUntilChange(); // transcieve A
@@ -519,7 +522,7 @@ void test_valid_initialization()
     // If QuakeManager has just been created in disabled mode
     TestFixture tf(static_cast<unsigned int>(radio_state_t::disabled));
 
-    // Waiting for someone to put us into config
+    // Simulate waiting for someone (MissionManager) to put us into config
     tf.realSteps(100000);
 
     tf.radio_state_fp->set(static_cast<unsigned char>(radio_state_t::config));
@@ -555,7 +558,7 @@ void test_sbdrb()
     memset(tf.quake_manager->dbg_get_qct().dbg_get_quake().mt_message, 'A', 15);
     tf.quake_manager->dbg_get_qct().dbg_get_quake().mt_message[14] = 'B'; // set 15th byte to B
     tf.realSteps();
-    // make sure that the 20th byte pointed to by radio_mt_packet_f is B
+    // make sure that the 15 byte pointed to by radio_mt_packet_f is B
     TEST_ASSERT_EQUAL('B', tf.quake_manager->radio_mt_packet_f.get()[14]);
     // make sure that the 16th byte is null
     TEST_ASSERT_EQUAL('\0', tf.quake_manager->radio_mt_packet_f.get()[15]);

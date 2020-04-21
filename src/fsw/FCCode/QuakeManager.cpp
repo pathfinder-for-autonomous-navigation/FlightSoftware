@@ -157,7 +157,7 @@ void QuakeManager::dispatch_config() {
     }
 }
 
-bool QuakeManager::has_finished()
+bool QuakeManager::has_finished() const
 {
     return qct.get_fn_num() == 0 && control_cycle_count - cycle_of_entry > 1;
 }
@@ -213,7 +213,7 @@ void QuakeManager::dispatch_write() {
 }
 
 
-bool QuakeManager::has_just_entered()
+bool QuakeManager::has_just_entered() const
 {
     return qct.get_fn_num() == 0 && control_cycle_count - cycle_of_entry <= 1;
 }
