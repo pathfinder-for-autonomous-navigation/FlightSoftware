@@ -2,17 +2,17 @@ import sys
 from cerberus import Validator
 
 ptest_config_schema = {
-    "seed" : {"type" : "integer"},
-    "single_sat_sim" : {"type": "boolean"},
-    "uplink_producer_filepath" : {"type": "string"},
-    "downlink_parser_filepath" : {"type": "string"},
+    "seed" : {"type" : "integer", "required" : True},
+    "single_sat_sim" : {"type": "boolean", "required" : True},
+    "uplink_producer_filepath" : {"type": "string", "required" : True},
+    "downlink_parser_filepath" : {"type": "string", "required" : True},
     "devices" : {
         "type" : "list",
         "schema" : {
             "type" : "dict",
             "schema" : {
-                "name" : {"type" : "string"},
-                "run_mode" : {"type" : "string", "allowed" : ["native", "teensy"]},
+                "name" : {"type" : "string", "required" : True},
+                "run_mode" : {"type" : "string", "allowed" : ["native", "teensy"], "required" : True},
                 "binary_filepath" : {
                     "type" : "string", 
                     "dependencies" : {"run_mode" : ["native"]}, 
@@ -28,40 +28,43 @@ ptest_config_schema = {
                     "dependencies" : {"run_mode" : ["teensy"]},
                     "excludes" : "binary_filepath"
                 },
-                "port" : {"type" : "string"}
+                "http_port" : {"type" : "integer", "required" : True}
             }
-        }
+        },
+        "required" : True
     },
     "radios" : {
         "type" : "list",
         "schema" : {
             "type" : "dict",
             "schema" : {
-                "connected_device" : {"type" : "string"},
-                "imei" : {"type" : "string"},
-                "connect" : {"type" : "boolean"},
-                "port" : {"type" : "string"}
+                "connected_device" : {"type" : "string", "required" : True},
+                "imei" : {"type" : "string", "required" : True},
+                "connect" : {"type" : "boolean", "required" : True},
+                "http_port" : {"type" : "integer", "required" : True}
             }
         },
+        "required" : True
     },
     "tlm" : {
         "type" : "dict",
         "schema" : {
-            "email_username" : {"type" : "string"},
-            "email_password" : {"type" : "string"},
+            "email_username" : {"type" : "string", "required" : True},
+            "email_password" : {"type" : "string", "required" : True},
             "webservice" : {
                 "type" : "dict",
                 "schema": {
-                    "server": { "type": "string" },
-                    "port": { "type": "string" }
+                    "server": { "type": "string" , "required" : True},
+                    "port": { "type": "integer" , "required" : True}
                 }
             },
             "elasticsearch" : {
                 "type" : "dict",
                 "schema": {
-                    "server": { "type": "string" },
-                    "port": { "type": "string" }
-                }
+                    "server": { "type": "string" , "required" : True},
+                    "port": { "type": "integer" , "required" : True}
+                },
+                "required" : True
             }
         }
     }
