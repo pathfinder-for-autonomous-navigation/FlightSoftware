@@ -36,7 +36,7 @@ swagger_config={
 def create_radio_session_endpoint(radio_session):
     app = Flask(__name__)
     app.logger.disabled = True
-    app.config["state_session"] = radio_session
+    app.config["radio_session"] = radio_session
 
     app.config["SWAGGER"]={"title": "PAN Radio Session Command Endpioint", "uiversion": 2}
     swagger=Swagger(app, config=swagger_config)
