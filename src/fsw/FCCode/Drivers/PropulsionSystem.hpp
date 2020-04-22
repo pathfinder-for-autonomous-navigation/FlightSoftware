@@ -303,8 +303,8 @@ public:
     unsigned int fake_tank2_pressure_high_read = 312 ;  // 14.7 psi
 #endif
 
-    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 20);
-    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
+    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 23);
+    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 20);
 
     void setup();
     // The minimum duration to assign to a schedule
