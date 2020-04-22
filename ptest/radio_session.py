@@ -30,14 +30,9 @@ class RadioSession(object):
     '''
 
 
-    def __init__(self, device_name, imei, simulation_run_dir, radio_keys_config, flask_keys_config, downlink_parser_filepath):
+    def __init__(self, device_name, port, imei, simulation_run_dir, tlm_config, downlink_parser_filepath):
         '''
         Initializes state session with the Quake radio.
-
-        Args:
-        device_name: Name of device being connected to
-        datastore: Datastore to which telemetry data will be published
-        logger: Logger to which log lines should be committed
         '''
 
         # Device connection
@@ -45,16 +40,12 @@ class RadioSession(object):
         self.imei=imei
 
         #Flask server connection
-        self.flask_server=flask_keys_config["server"]
-        self.flask_port=flask_keys_config["port"]
-
-        # Data logging
-        self.datastore = Datastore(device_name, simulation_run_dir)
-        self.logger = Logger(device_name, simulation_run_dir)
+        self.flask_server=tlm_config["server"]
+        self.flask_port=tlm_config["port"]
 
         #email
-        self.username=radio_keys_config["email_username"]
-        self.password=radio_keys_config["email_password"]
+        self.username=tlm_config["email_username"]
+        self.password=tlm_config["email_password"]
 
         #start downlink parser
         master_fd, slave_fd = pty.openpty()
@@ -109,7 +100,6 @@ class RadioSession(object):
         }
 
         response = requests.get('http://'+self.flask_server+':'+self.flask_port+'/search-es', params=payload, headers=headers)
-        self.logger.put("Send Uplinks: "+str(response.text))
 
         if response.text=="True":
             #create dictionary object with new fields and vals
@@ -127,7 +117,6 @@ class RadioSession(object):
 
             return True
         else:
-            self.logger.put("Wait for confirmation MTMSN")
             return False
 
     def write_state(self, field, val, timeout=None):
@@ -174,7 +163,4 @@ class RadioSession(object):
         )
 
         # End threads if there was actually a connection to the radio
-        self.datastore.stop()
-        self.logger.stop()
-        self.running_logger = False
         self.console.close()

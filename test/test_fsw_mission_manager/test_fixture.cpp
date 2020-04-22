@@ -32,6 +32,8 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1);
     overpressured_fp=registry.create_fault("prop.overpressured", 1);
 
+    piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
+    last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
