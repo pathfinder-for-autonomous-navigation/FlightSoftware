@@ -56,19 +56,24 @@ public:
         return (num_steps < max_cycles) ? num_steps : 6969696969;
     }
 
-
+    // Exit loop and stop scheduling prop firings. Standby
     void simulate_underpressured()
     {
+        Tank2.fake_tank2_pressure_high_read = 10; // 0.36
+        Tank2.fake_tank2_pressure_low_read = 80; // doesn't really matter
 
     }
+    // Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
     void simulate_overpressured()
     {
 
     }
+    // Open 2 tank-to-tank valves for 10 1-second bursts separated by 1 second
     void simulate_tank1_high()
     {
 
     }
+    // Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
     void simulate_tank2_high()
     {
 

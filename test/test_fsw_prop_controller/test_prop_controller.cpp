@@ -361,19 +361,30 @@ void test_temp_sensor_logic()
 void test_pressure_sensor_logic()
 {
 #ifdef _PRINT_SENSORS
-    for (unsigned int low = 0; low < 1023; low++)
+    // analogRead range for high gain: 20 - 1018
+    // analogRead range for low gain 12 - 1011
+    unsigned int thresh = Tank2.amp_threshold;
+    unsigned int high_read_min = 20;
+    unsigned int high_read_max = 1018;
+    unsigned int low_read_min = 12;
+    unsigned int low_read_max = 1011;
+
+    for (unsigned int high = high_read_min; high < high_read_max; high++)
     {
-        Tank2.fake_tank2_pressure_low_read = low;
-        for (unsigned int high = 0; high < 1023; high++)
-        {
-            Tank2.fake_tank2_pressure_high_read = high;
-            std::printf("Tank2 pressure high %u, low %u --> %f\n", high, low, Tank2.get_pressure());
+        Tank2.fake_tank2_pressure_high_read = high;
+        if (high > thresh)
+            for (unsigned int low = low_read_min; low < low_read_max; low++)
+            {
+                Tank2.fake_tank2_pressure_low_read = low;
+                std::printf("Tank2 pressure: high ignored (>%d), low %u --> %f\n", thresh, low, Tank2.get_pressure());
+            }
+        else {
+            Tank2.fake_tank2_pressure_low_read = 0;
+            std::printf("Tank2 pressure: high %u, low ignored --> %f\n", high, Tank2.get_pressure());
         }
-        std::printf("\n");
     }
 #endif
 }
-
 int test_prop_controller()
 {
     // generated the following with:

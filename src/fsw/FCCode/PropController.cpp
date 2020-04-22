@@ -62,7 +62,6 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_fault(tank2_temp_high_fault_f);
     add_fault(tank1_temp_high_fault_f);
 
-
     TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
     TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
     TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_filling_period_ic, 1000 / PAN::control_cycle_time_ms);
@@ -234,7 +233,6 @@ void CountdownTimer::set_timer_cc(size_t num_control_cycles)
 
 void CountdownTimer::tick()
 {
-
     if ( cycles_left > 0 )
         --cycles_left;
 }
@@ -335,7 +333,6 @@ prop_state_t PropState_AwaitPressurizing::evaluate()
 
 bool PropState_Pressurizing::can_enter() const
 {
-
     bool was_await_pressurizing = controller->check_current_state(prop_state_t::await_pressurizing);
     bool is_schedule_valid = controller->validate_schedule();
     // Allow from idle because sometimes we can immediately pressurize
@@ -384,7 +381,6 @@ prop_state_t PropState_Pressurizing::evaluate()
             return prop_state_t::disabled;
         }
     }
-
     // Case 2: Tank2 is not at threshold pressure
     if ( Tank1.is_valve_open(valve_num))
     {
@@ -393,7 +389,6 @@ prop_state_t PropState_Pressurizing::evaluate()
     {
         return handle_valve_is_close();
     }
-
 }
 
 prop_state_t PropState_Pressurizing::handle_valve_is_open()
@@ -420,7 +415,6 @@ prop_state_t PropState_Pressurizing::handle_valve_is_close()
         DD("\t==> No more cycles left. Going to idle\n");
         return prop_state_t::idle;
     }
-
     // If we have have pressurized for more than max_pressurizing_cycles
     //      then signal fault
     if ( pressurizing_cycle_count >= controller->max_pressurizing_cycles.get())
@@ -471,7 +465,6 @@ void PropState_Pressurizing::start_pressurize_cycle()
 bool PropState_AwaitFiring::can_enter() const
 {
     bool was_pressurizing = controller->check_current_state(prop_state_t::pressurizing);
-
     return ( was_pressurizing && controller->is_at_threshold_pressure() && controller->validate_schedule());
 }
 
@@ -626,5 +619,4 @@ prop_state_t PropState_Manual::evaluate()
     manual_eval(controller->sched_intertank1_f, Tank2, 0);
     manual_eval(controller->sched_intertank2_f, Tank2, 1);
     return this_state;
-
 }

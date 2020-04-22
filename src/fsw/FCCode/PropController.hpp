@@ -133,8 +133,8 @@ public:
     // Return True if we are allowed to enter the desired_state
     bool can_enter_state(prop_state_t desired_state) const;
 
-    TRACKED_CONSTANT_SC(float, max_safe_pressure, 75.0f); // TODO: is this right?
-    TRACKED_CONSTANT_SC(float, max_safe_temp, 175); // TODO: is this right?
+    TRACKED_CONSTANT_SC(float, max_safe_pressure, 50); // TODO: is this right?
+    TRACKED_CONSTANT_SC(float, max_safe_temp, 48); // 48 C
 
 private:
 
