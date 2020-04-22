@@ -30,8 +30,10 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
           tank2_temp_f("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
           tank1_temp_f("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
 
-          pressurize_fail_fault_f("prop.pressurize_fail", 3),
-          overpressure_fault_f("prop.overpressured", 3),
+          // We must trust the pressure sensor.
+          pressurize_fail_fault_f("prop.pressurize_fail", 0),
+          overpressure_fault_f("prop.overpressured", 0),
+
           tank2_temp_high_fault_f("prop.tank2_temp_high", 3),
           tank1_temp_high_fault_f("prop.tank1_temp_high", 3) {
 
@@ -132,12 +134,15 @@ void PropController::execute() {
 void PropController::check_faults() {
     if (is_tank2_overpressured()) {
         overpressure_fault_f.signal();
+        DD("Overpressured detected\n");
     }
     if (is_tank2_temp_high()) {
         tank2_temp_high_fault_f.signal();
+        DD("Tank2 Temp High detected: %d\n", Tank2.get_temp());
     }
     if (is_tank1_temp_high()) {
         tank1_temp_high_fault_f.signal();
+        DD("Tank1 Temp High detected: %d\n", Tank1.get_temp());
     }
 }
 
@@ -191,9 +196,9 @@ bool PropController::is_at_threshold_pressure() {
 }
 
 unsigned int PropController::min_cycles_needed() const {
-    // 20 * fillings + 19 * coolings
+    // 20 * fillings + 19 * coolings + 1
     return max_pressurizing_cycles.get() * ctrl_cycles_per_filling_period.get() +
-           (max_pressurizing_cycles.get() - 1) * ctrl_cycles_per_cooling_period.get();
+           (max_pressurizing_cycles.get() - 1) * ctrl_cycles_per_cooling_period.get() + 1;
 }
 
 // ------------------------------------------------------------------------
@@ -304,8 +309,11 @@ bool PropState_Pressurizing::can_enter() const {
     bool is_schedule_valid = controller->validate_schedule();
     // Allow from idle because sometimes we can immediately pressurize
     bool was_idle = controller->check_current_state(prop_state_t::idle);
-    bool is_time_to_pressurize = controller->cycles_until_firing.get() == controller->min_cycles_needed() - 1;
-    return (was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid;
+    // It is time to pressurize when we have fewer than twice the min_cycles_needed
+    bool is_time_to_pressurize = controller->cycles_until_firing.get() < 2*controller->min_cycles_needed();
+    bool must_immediately_pressurize = controller->cycles_until_firing.get() == controller->min_cycles_needed() - 1;
+
+    return ((was_await_pressurizing && is_time_to_pressurize) || (was_idle && must_immediately_pressurize) ) && is_schedule_valid;
 }
 
 void PropState_Pressurizing::enter() {
@@ -358,6 +366,17 @@ prop_state_t PropState_Pressurizing::handle_valve_is_open() {
 }
 
 prop_state_t PropState_Pressurizing::handle_valve_is_close() {
+    // If we are here, then we are not at threshold pressure.
+
+    // At minimum, we need two more cycles:
+    //  1. open valve this cycle (2)
+    //  2. check threshold next cycle and go to await_firing (1)
+    //  3. from wait_firing enter firing (0)
+    if (controller->cycles_until_firing.get() < 2) {
+        DD("\t==> No more cycles left. Going to idle\n");
+        return prop_state_t::idle;
+    }
+
     // If we have have pressurized for more than max_pressurizing_cycles
     //      then signal fault
     if (pressurizing_cycle_count >= controller->max_pressurizing_cycles.get()) {
@@ -375,19 +394,20 @@ prop_state_t PropState_Pressurizing::handle_valve_is_close() {
 prop_state_t PropState_Pressurizing::handle_pressurize_failed() {
     DD("\tPressurize Failed!\n");
     controller->pressurize_fail_fault_f.signal();
-    // TODO: If the ground tells us to ignore this fault, we can perhaps continue trying to pressurize
+
     if (controller->pressurize_fail_fault_f.is_faulted()) {
         // Go to handling_fault
         return prop_state_t::handling_fault;
     }
-    // TODO: This is arbitrary. Give it back half the cycles and continue in this state
-    pressurizing_cycle_count = controller->max_pressurizing_cycles.get() / 2;
+    // If the fault is suppressed,
+    // then we remain in this state and continue trying to pressurize until we run out of time
+    pressurizing_cycle_count = 0;
     return this_state;
 }
 
 void PropState_Pressurizing::start_pressurize_cycle() {
     pressurizing_cycle_count++;
-    DD("\tStarting pressurizing cycle: %d.\n\t\t%d fire cycles left!\n", pressurizing_cycle_count,
+    DD("\tStarting pressurizing cycle: %d.\n\t\t%d cycles until firing!\n", pressurizing_cycle_count,
        controller->cycles_until_firing.get());
     // Open the valve and set the timer to 1 second
     PropulsionSystem.open_valve(Tank1, valve_num);
@@ -464,14 +484,13 @@ bool PropState_HandlingFault::can_enter() const {
     // If the current state is disabled, then we must remain in disabled
     if (controller->check_current_state(prop_state_t::disabled))
         return false;
-
     // Return true if any of the faults are actually faulted. This allows us to ignore bad sensors if the ground
     // decides to suppress/override certain faults
     return
-            controller->pressurize_fail_fault_f.is_faulted()
+            (controller->pressurize_fail_fault_f.is_faulted()
             || controller->overpressure_fault_f.is_faulted()
             || controller->tank2_temp_high_fault_f.is_faulted()
-            || controller->tank1_temp_high_fault_f.is_faulted();
+            || controller->tank1_temp_high_fault_f.is_faulted());
 }
 
 void PropState_HandlingFault::enter() {
@@ -481,12 +500,29 @@ void PropState_HandlingFault::enter() {
 prop_state_t PropState_HandlingFault::evaluate() {
     DD("==> PropState_HandlingFault is handling faults\n");
     // If faults are still signaled, then stay in HandlingFault
-    if (can_enter())
+    if (can_enter()){
+        DD("==> can enter PropState_HandlingFault");
         return this_state;
+    }
 
     // Otherwise, return to idle
     return prop_state_t::idle;
 }
+
+void PropState_HandlingFault::handle_pressure_too_high() {
+    DD("==> Handling Pressure Too High\n");
+    // If this is no longer a problem, then unsignal the fault
+    // Check using the actual
+}
+
+void PropState_HandlingFault::handle_tank1_temp_too_high() {
+    DD("==> Handling Tank1 Temp Too High\n");
+}
+
+void PropState_HandlingFault::handle_tank2_temp_too_high() {
+    DD("==> Handling Tank2 Temp Too High\n");
+}
+
 
 // ------------------------------------------------------------------------
 // PropState Manual

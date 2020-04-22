@@ -25,6 +25,38 @@ public:
         pfh = std::make_unique<PropFaultHandler>(registry);
     }
 
+    // Step forward the state machine by num control cycle.
+    inline void step(size_t num=1)
+    {
+        for (size_t i = 0; i < num; ++i)
+            pc->execute();
+
+        if (PropulsionSystem.is_firing())
+        {
+            for (size_t i = 0; i < 4; ++i)
+            {
+                // decrement each schedule as if we were thrust valve loop
+                if (Tank2.schedule[i] > PAN::control_cycle_time_ms)
+                    Tank2.schedule[i] -= PAN::control_cycle_time_ms;
+                else
+                    Tank2.schedule[i] = 0;
+            }
+        }
+    }
+
+    // Keep stepping until the state changes (or until we have step max_cycles steps)
+    // Return the number of steps taken or return 6969696969 if there has been no state change after max_cycles steps
+    inline size_t execute_until_state_change(size_t max_cycles=2*2048) {
+        size_t num_steps = 0;
+        unsigned int current_state = prop_state_fp->get();
+        while (current_state == prop_state_fp->get() && num_steps < max_cycles) {
+            ++num_steps;
+            step();
+        }
+        return (num_steps < max_cycles) ? num_steps : 6969696969;
+    }
+
+
     void simulate_underpressured()
     {
 
@@ -130,11 +162,11 @@ void test_tank2_temp_high_response(){
     tf.simulate_tank2_high();
 }
 
-void test_tank1temphigh_undepressured_response(){
+void test_tank2temphigh_undepressured_response(){
     TestFixture tf;
-    // Test that when multiple fault events occur, we prioritize faults
+    // Test that when multiple fault events occur, we will always trust pressure over temperature
     tf.simulate_underpressured();
-    tf.simulate_tank1_high();
+    tf.simulate_tank2_high();
 }
 
 void run_fault_response_tests(){
@@ -142,7 +174,7 @@ void run_fault_response_tests(){
     RUN_TEST(test_overpressured_response);
     RUN_TEST(test_tank1_temp_high_response);
     RUN_TEST(test_tank2_temp_high_response);
-    RUN_TEST(test_tank1temphigh_undepressured_response);
+    RUN_TEST(test_tank2temphigh_undepressured_response);
 }
 
 // When we conflicting faults are signalled

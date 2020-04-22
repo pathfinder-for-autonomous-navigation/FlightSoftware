@@ -32,19 +32,3 @@ fault_response_t PropFaultHandler::execute() {
         return fault_response_t::none;
 
 }
-
-void PropFaultHandler::handle_pressure_too_high() {
-    DD("==> Handling Pressure Too High\n");
-    // If this is no longer a problem, then unsignal the fault
-    // Check using the actual
-
-    // TODO: I believe that it may be necessary to keep signalling to fault
-}
-
-void PropFaultHandler::handle_tank1_temp_too_high() {
-    DD("==> Handling Tank1 Temp Too High\n");
-}
-
-void PropFaultHandler::handle_tank2_temp_too_high() {
-    DD("==> Handling Tank2 Temp Too High\n");
-}

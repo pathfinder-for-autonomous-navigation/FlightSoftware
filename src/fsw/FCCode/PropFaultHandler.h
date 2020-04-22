@@ -17,10 +17,6 @@ public:
 
 private:
 
-    void handle_pressure_too_high();
-    void handle_tank1_temp_too_high();
-    void handle_tank2_temp_too_high();
-
     WritableStateField<unsigned int>* prop_state_fp;
 
     ReadableStateField<float>* tank2_pressure_fp;

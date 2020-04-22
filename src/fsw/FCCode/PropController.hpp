@@ -128,7 +128,7 @@ public:
     bool can_enter_state(prop_state_t desired_state) const;
 
     TRACKED_CONSTANT_SC(float, max_safe_pressure, 75.0f); // TODO: is this right?
-    TRACKED_CONSTANT_SC(float, max_safe_temp, 100); // TODO: is this right?
+    TRACKED_CONSTANT_SC(float, max_safe_temp, 175); // TODO: is this right?
 
 private:
 
@@ -147,6 +147,7 @@ private:
     // static PropState_Venting state_venting;
     static PropState_HandlingFault state_handling_fault;
     static PropState_Manual state_manual;
+
 };
 
 // ------------------------------------------------------------------------
@@ -272,7 +273,7 @@ private:
 
     // Called when we have failed to reach threshold_pressure after maximum consecutive pressurizing cycles
     // First, signal pressurize_fail_fault_f. Then evaluate whether this fault has been suppressed by the ground.
-    // If it has been suppressed, then continue to pressurize. Otherwise, set Prop to disable
+    // If it has been suppressed, then continue to pressurize. Otherwise, set Prop to handling_fault
     prop_state_t handle_pressurize_failed();
 
     // Starts another pressurization cycle
@@ -345,6 +346,9 @@ public:
 
     prop_state_t evaluate() override;
 
+    void handle_pressure_too_high();
+    void handle_tank1_temp_too_high();
+    void handle_tank2_temp_too_high();
 };
 
 class PropState_Manual : public PropState {
