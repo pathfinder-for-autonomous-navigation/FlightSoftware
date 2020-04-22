@@ -162,7 +162,7 @@ class MissionManager : public TimedControlTask<void> {
     Fault* wheel3_adc_fault_fp;
     Fault* wheel_pot_fault_fp;
     // Flag for if propulsion failed to pressurize.
-    Fault* failed_pressurize_fp;
+    Fault* pressurize_fail_fp;
 
     /**
      * @brief Radio's mode.
