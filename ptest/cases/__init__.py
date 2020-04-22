@@ -5,4 +5,5 @@ from .docking_checkout_case import DockingCheckoutCase
 from .dcdc_checkout_case import DCDCCheckoutCase
 from .spin_motors_case import SpinMotorsCase
 from .adcs_checkout_case import ADCSCheckoutCase
+from .deployment_to_init_hold_case import DeploymentToInitHoldCheckoutCase
 from .ci_case import CICase
