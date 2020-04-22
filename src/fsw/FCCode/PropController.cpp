@@ -206,7 +206,7 @@ bool PropController::is_at_threshold_pressure()
     // For testing purposes, say that we are at threshold pressure at pressurizing cycle fake_pressure_cycle_count
     return ( state_pressurizing.pressurizing_cycle_count == g_fake_pressure_cycle_count );
 #else
-    return tank2_pressure.get() >= threshold_firing_pressure.get();
+    return tank2_pressure_f.get() >= threshold_firing_pressure.get();
 #endif
 }
 
