@@ -1,8 +1,5 @@
 #include <fsw/FCCode/PropController.hpp>
 
-#ifdef DESKTOP
-size_t g_fake_pressure_cycle_count = 15; // global
-#endif
 #if ( defined(UNIT_TEST) && defined(DESKTOP))
 #define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
 #else
@@ -38,6 +35,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
           tank1_temp_high_fault_f("prop.tank1_temp_high", 3)
 {
 
+    PropulsionSystem.setup();
     add_writable_field(prop_state_f);
     add_writable_field(cycles_until_firing);
     add_writable_field(sched_valve1_f);
@@ -94,23 +92,13 @@ PropState_Manual PropController::state_manual;
 
 void PropController::execute()
 {
-
-    // Read all the sensors
-    tank2_pressure_f.set(Tank2.get_pressure());
-    tank2_temp_f.set(Tank2.get_temp());
-    tank1_temp_f.set(Tank1.get_temp());
-
     // Decrement fire_cycle if it is not equal to 0
     if ( cycles_until_firing.get() > 0 )
         cycles_until_firing.set(cycles_until_firing.get() - 1);
 
-    // Check the sensors for faults and signal those faults (if any)
-    check_faults();
-
     // We can only enter Handling_Fault if at least one Fault is faulted.
     if ( state_handling_fault.can_enter())
     {
-        DD("Setting current_state to handling_fault");
         prop_state_f.set(static_cast<unsigned int>(prop_state_t::handling_fault));
     }
 
@@ -134,6 +122,15 @@ void PropController::execute()
             prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
         }
     }
+
+    // Read all the sensors -- we check sensors here instead of earlier in order
+    // to spoof sensor readings during HITL tests. 
+    tank2_pressure_f.set(Tank2.get_pressure());
+    tank2_temp_f.set(Tank2.get_temp());
+    tank1_temp_f.set(Tank1.get_temp());
+
+    // Check the sensors for faults and signal those faults (if any)
+    check_faults();
 }
 
 void PropController::check_faults()
@@ -201,20 +198,16 @@ bool PropController::validate_schedule()
 
 bool PropController::is_at_threshold_pressure()
 {
-
-#ifdef DESKTOP
-    // For testing purposes, say that we are at threshold pressure at pressurizing cycle fake_pressure_cycle_count
-    return ( state_pressurizing.pressurizing_cycle_count == g_fake_pressure_cycle_count );
-#else
     return tank2_pressure_f.get() >= threshold_firing_pressure.get();
-#endif
 }
 
 unsigned int PropController::min_cycles_needed() const
 {
-    // 20 * fillings + 19 * coolings + 1
-    return max_pressurizing_cycles.get() * ctrl_cycles_per_filling_period.get() +
-           ( max_pressurizing_cycles.get() - 1 ) * ctrl_cycles_per_cooling_period.get() + 1;
+    // 20 * fillings + 20 * coolings + 1
+    // Instead of 19 coolings, we allow 20 because it may take time for the
+    // pressure to stabilize
+    return max_pressurizing_cycles.get() * 
+        ( ctrl_cycles_per_filling_period.get() + ctrl_cycles_per_cooling_period.get() ) + 4;
 }
 
 // ------------------------------------------------------------------------
@@ -377,7 +370,7 @@ prop_state_t PropState_Pressurizing::evaluate()
         } else
         {
             // TODO: sure want to disable?
-            DD("\tproblem: entered disabled!\n");
+            DD("\tproblem: entered disabled (%u cycles until firing)!\n", controller->cycles_until_firing.get());
             return prop_state_t::disabled;
         }
     }
@@ -419,7 +412,9 @@ prop_state_t PropState_Pressurizing::handle_valve_is_close()
     //      then signal fault
     if ( pressurizing_cycle_count >= controller->max_pressurizing_cycles.get())
     {
-        return handle_pressurize_failed();
+        // Pressurize_failed event happens at the end of the 20th cooling cycle
+        if (countdown.is_timer_zero())
+            return handle_pressurize_failed();
     }
         // If we are not on 10s cooldown, then start pressurizing again
     else if ( countdown.is_timer_zero())
@@ -435,7 +430,6 @@ prop_state_t PropState_Pressurizing::handle_pressurize_failed()
 {
     DD("\tPressurize Failed!\n");
     controller->pressurize_fail_fault_f.signal();
-
     if ( controller->pressurize_fail_fault_f.is_faulted())
     {
         // Go to handling_fault
@@ -553,11 +547,9 @@ void PropState_HandlingFault::enter()
 
 prop_state_t PropState_HandlingFault::evaluate()
 {
-    DD("==> PropState_HandlingFault is handling faults\n");
     // If faults are still signaled, then stay in HandlingFault
     if ( can_enter())
     {
-        DD("==> can enter PropState_HandlingFault");
         return this_state;
     }
     // Otherwise, return to idle

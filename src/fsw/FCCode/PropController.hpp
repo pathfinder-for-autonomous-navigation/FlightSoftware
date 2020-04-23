@@ -133,7 +133,9 @@ public:
     // Return True if we are allowed to enter the desired_state
     bool can_enter_state(prop_state_t desired_state) const;
 
-    TRACKED_CONSTANT_SC(float, max_safe_pressure, 50); // TODO: is this right?
+
+    // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B10E398A9-3D68-44F8-BE1B-E4FA5DBECBC8%7D&file=Recurring%20Constants%20Review.xlsx&action=default&mobileredirect=true&cid=912c7e7e-8046-4d9c-9ee9-13a59d46f5a6
+    TRACKED_CONSTANT_SC(float, max_safe_pressure, 75); // 75 psi
     TRACKED_CONSTANT_SC(float, max_safe_temp, 48); // 48 C
 
 private:

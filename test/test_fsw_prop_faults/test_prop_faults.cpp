@@ -2,88 +2,10 @@
 // Created by athena on 4/21/20.
 //
 
-#include <unity.h>
-#include "../StateFieldRegistryMock.hpp"
-#include <fsw/FCCode/PropController.hpp>
-#include <fsw/FCCode/PropFaultHandler.h>
-#include <fsw/FCCode/prop_state_t.enum>
-
+#include "../test_fsw_prop_controller/prop_shared.h"
 unsigned int one_day_ccno = PAN::one_day_ccno;
 unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
 
-class TestFixture {
-public:
-    StateFieldRegistryMock registry;
-
-    std::shared_ptr<WritableStateField<unsigned int>> prop_state_fp;
-
-    std::unique_ptr<PropController> pc;
-    std::unique_ptr<PropFaultHandler> pfh;
-
-    TestFixture() {
-        pc = std::make_unique<PropController>(registry, 0);
-        pfh = std::make_unique<PropFaultHandler>(registry);
-    }
-
-    // Step forward the state machine by num control cycle.
-    inline void step(size_t num=1)
-    {
-        for (size_t i = 0; i < num; ++i)
-            pc->execute();
-
-        if (PropulsionSystem.is_firing())
-        {
-            for (size_t i = 0; i < 4; ++i)
-            {
-                // decrement each schedule as if we were thrust valve loop
-                if (Tank2.schedule[i] > PAN::control_cycle_time_ms)
-                    Tank2.schedule[i] -= PAN::control_cycle_time_ms;
-                else
-                    Tank2.schedule[i] = 0;
-            }
-        }
-    }
-
-    // Keep stepping until the state changes (or until we have step max_cycles steps)
-    // Return the number of steps taken or return 6969696969 if there has been no state change after max_cycles steps
-    inline size_t execute_until_state_change(size_t max_cycles=2*2048) {
-        size_t num_steps = 0;
-        unsigned int current_state = prop_state_fp->get();
-        while (current_state == prop_state_fp->get() && num_steps < max_cycles) {
-            ++num_steps;
-            step();
-        }
-        return (num_steps < max_cycles) ? num_steps : 6969696969;
-    }
-
-    // Exit loop and stop scheduling prop firings. Standby
-    void simulate_underpressured()
-    {
-        Tank2.fake_tank2_pressure_high_read = 10; // 0.36
-        Tank2.fake_tank2_pressure_low_read = 80; // doesn't really matter
-
-    }
-    // Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
-    void simulate_overpressured()
-    {
-
-    }
-    // Open 2 tank-to-tank valves for 10 1-second bursts separated by 1 second
-    void simulate_tank1_high()
-    {
-
-    }
-    // Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
-    void simulate_tank2_high()
-    {
-
-    }
-
-    ~TestFixture(){
-        // Reset the prop between tests
-        PropulsionSystem.reset();
-    }
-};
 
 void test_respsect_disable_mode() {
     // If faults are signalled, but we are in disable, then we should not be handling faults are detecting faults
@@ -93,9 +15,12 @@ void test_underpressured_detect() {
     TestFixture tf;
     tf.simulate_underpressured();
 
-    TEST_ASSERT_TRUE(tf.pc->pressurize_fail_fault_f.is_faulted());
+    assert_fault_state(true, pressurize_fail_fault_f);
+    check_state(prop_state_t::disabled);
+    // Further executions of PropFaultHandler should still suggest standby response
     TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
 }
+
 void test_overpressured_detect() {
     TestFixture tf;
     tf.simulate_overpressured();
