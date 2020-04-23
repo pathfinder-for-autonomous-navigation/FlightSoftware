@@ -87,6 +87,11 @@ class PTest(object):
                 try:
                     master_fd, slave_fd = pty.openpty()
                     binary_filepath = device['binary_filepath']
+
+                    if not os.path.exists(binary_filepath):
+                        print("Compiling flight software binaries.")
+                        os.system("pio run -e fsw_native_leader > /dev/null")
+
                     binary_process = subprocess.Popen(binary_filepath, stdout=master_fd, stderr=master_fd, stdin=master_fd)
                     self.binaries.append({
                         "device_name" : device["name"],
