@@ -32,6 +32,25 @@ inline void simulate_pressure_rising()
     // Starting at ambient 305, expect to reach pressurized state at 520-305 = 215 cycles
     Tank2.fake_tank2_pressure_high_read++;
 }
+// Expected response: Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
+inline void simulate_overpressured()
+{
+    // Spoof an overpressured event
+    Tank2.fake_tank2_pressure_high_read = 1000; // values above 1000 are ignored
+    Tank2.fake_tank2_pressure_low_read = 853;   // 84.527626 psi
+}
+// Expected response: Open 2 tank-to-tank valves for 10 1-second bursts separated by 1 second
+inline void simulate_tank1_high()
+{
+    // Spoof a tank1 high event
+    Tank1.fake_tank1_temp_sensor_read = 35;  // 69 C 
+}
+
+// Expected response: Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
+inline void simulate_tank2_high()
+{
+    Tank2.fake_tank2_temp_sensor_read = 35;  // 69 C
+}
 
 class TestFixture {
 public:
@@ -138,21 +157,5 @@ public:
         step(pc->min_cycles_needed());
     }
 
-    // Expected response: Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
-    inline void simulate_overpressured()
-    {
-        Tank2.fake_tank2_pressure_high_read = 1000; // values above 1000 are ignored
-        Tank2.fake_tank2_pressure_low_read = 853;   // 84.527626 psi
-    }
-    // Expected response: Open 2 tank-to-tank valves for 10 1-second bursts separated by 1 second
-    inline void simulate_tank1_high()
-    {
-        Tank1.fake_tank1_temp_sensor_read = 35;  // 69 C 
-    }
-    // Expected response: Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
-    inline void simulate_tank2_high()
-    {
-        Tank2.fake_tank2_temp_sensor_read = 35;  // 69 C
-    }
 };
 

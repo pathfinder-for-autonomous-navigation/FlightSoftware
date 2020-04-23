@@ -31,8 +31,8 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
           pressurize_fail_fault_f("prop.pressurize_fail", 0),
           overpressure_fault_f("prop.overpressured", 0),
 
-          tank2_temp_high_fault_f("prop.tank2_temp_high", 3),
-          tank1_temp_high_fault_f("prop.tank1_temp_high", 3)
+          tank2_temp_high_fault_f("prop.tank2_temp_high", 0),
+          tank1_temp_high_fault_f("prop.tank1_temp_high", 0)
 {
 
     PropulsionSystem.setup();
@@ -399,11 +399,7 @@ prop_state_t PropState_Pressurizing::handle_valve_is_close()
 {
     // If we are here, then we are not at threshold pressure.
 
-    // At minimum, we need two more cycles:
-    //  1. open valve this cycle (2)
-    //  2. check threshold next cycle and go to await_firing (1)
-    //  3. from wait_firing enter firing (0)
-    if ( controller->cycles_until_firing.get() < 2 )
+    if ( !controller->validate_schedule() )
     {
         DD("\t==> No more cycles left. Going to idle\n");
         return prop_state_t::idle;
