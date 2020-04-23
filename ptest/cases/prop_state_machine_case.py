@@ -178,9 +178,12 @@ class PropStateMachineCase(SingleSatOnlyCase):
         self.print_object()
         for i in range(max_cycles):
             if self.state == str(self.prop_states.get_by_name("pressurizing")):
-                if i > 100:
-                    self.sim.flight_controller.write_state("prop.tank2.pressure","26")
+                if i > 100: # If we are pressurizing and we've pressurized for 100 cycles, then pretend we made it
+                    self.tank2_pressure(26)
 
+            if self.state == str(self.prop_states.get_by_name("await_firing")):
+                # If we are in await_firing, then pretend it's time to fire soon
+                self.cycles_until_firing(5)
             if self.state != old_state:
                 return str(i)
             else:
