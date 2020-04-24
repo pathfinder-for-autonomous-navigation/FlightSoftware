@@ -15,8 +15,8 @@ except ImportError:
     # The current OS is Windows, and pty doesn't exist
     pass
 
-class SimulationRun(object):
-    def __init__(self, config_data, testcase_name, data_dir, radio_keys_config, flask_keys_config, is_interactive):
+class PTest(object):
+    def __init__(self, config_data, testcase_name, data_dir, is_interactive):
         self.testcase_name = testcase_name
 
         self.random_seed = config_data["seed"]
@@ -28,8 +28,7 @@ class SimulationRun(object):
 
         self.device_config = config_data["devices"]
         self.radios_config = config_data["radios"]
-        self.radio_keys_config = radio_keys_config
-        self.flask_keys_config = flask_keys_config
+        self.tlm_config = config_data["tlm"]
         self.uplink_producer_filepath = config_data["uplink_producer_filepath"]
         self.downlink_parser_filepath = config_data["downlink_parser_filepath"]
 
@@ -88,9 +87,11 @@ class SimulationRun(object):
                 try:
                     master_fd, slave_fd = pty.openpty()
                     binary_filepath = device['binary_filepath']
-                    if "CI" in os.environ:
-                        cwd = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
-                        binary_filepath = os.path.join(cwd, binary_filepath)
+
+                    if not os.path.exists(binary_filepath):
+                        print("Compiling flight software binaries.")
+                        os.system("pio run -e fsw_native_leader > /dev/null")
+
                     binary_process = subprocess.Popen(binary_filepath, stdout=master_fd, stderr=master_fd, stdin=master_fd)
                     self.binaries.append({
                         "device_name" : device["name"],
@@ -134,7 +135,7 @@ class SimulationRun(object):
 
             if radio['connect']:
                 radio_data_name = radio_connected_device + "_radio"
-                radio_session = RadioSession(radio_name, imei, self.simulation_run_dir, self.radio_keys_config, self.flask_keys_config, self.downlink_parser_filepath)
+                radio_session = RadioSession(radio_name, imei, self.simulation_run_dir, self.tlm_config, self.downlink_parser_filepath)
                 self.radios[radio_name] = radio_session
 
     def set_up_sim(self):
@@ -215,14 +216,7 @@ def main(args):
     parser.add_argument('-t', '--testcase', action='store', help='Name of mission testcase, specified in cases/.',
                         default = "EmptyCase")
 
-    parser.add_argument('-c', '--conf', action='store', help='JSON file listing serial ports and Teensy computer names.',
-                        default = "ptest/configs/ci.json")
-
-    parser.add_argument('-rc', '--radio-conf', action='store', help='JSON file listing Iridium radio email username and password.',
-                        default = "ptest/configs/radio_keys.json")
-
-    parser.add_argument('-gc', '--ground-conf', action='store', help='JSON file listing ground software server and port.',
-                        default = "ptest/configs/flask_keys.json")
+    parser.add_argument('-c', '--conf', action='store', help='JSON file listing serial ports and Teensy computer names.', required=True)
 
     parser.add_argument('-ni', '--no-interactive', dest='interactive', action='store_false', help='If provided, disables the interactive console.')
     parser.add_argument('-i', '--interactive', dest='interactive', action='store_true', help='If provided, enables the interactive console.')
@@ -237,26 +231,7 @@ def main(args):
     try:
         with open(args.conf, 'r') as config_file:
             config_data = json.load(config_file)
-            validate_config(config_data, config_schema)
-
-        if "CI" in os.environ:
-            radio_keys_config = {
-                "email_username" : os.environ.get("IRIDIUM_EMAIL_USERNAME"),
-                "email_password" : os.environ.get("IRIDIUM_EMAIL_PASSWORD"),
-            }
-
-            flask_keys_config = {
-                "server" : os.environ.get("GSW_SERVER"),
-                "port" : os.environ.get("GSW_PORT")
-            }
-        else:
-            with open(args.radio_conf) as radio_keys_config_file:
-                radio_keys_config = json.load(radio_keys_config_file)
-                validate_config(radio_keys_config, radio_keys_schema)
-
-            with open(args.ground_conf) as flask_keys_config_file:
-                flask_keys_config = json.load(flask_keys_config_file)
-                validate_config(flask_keys_config, flask_keys_schema)
+            validate_config(config_data, ptest_config_schema)
 
     except json.JSONDecodeError:
         print("Could not load config file. Exiting.")
@@ -265,5 +240,5 @@ def main(args):
         print("Malformed config file. Exiting.")
         sys.exit(1)
 
-    simulation_run = SimulationRun(config_data, args.testcase, args.data_dir, radio_keys_config, flask_keys_config, args.interactive)
-    simulation_run.start()
+    test = PTest(config_data, args.testcase, args.data_dir, args.interactive)
+    test.start()
