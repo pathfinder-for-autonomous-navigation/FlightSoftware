@@ -30,7 +30,7 @@ class RadioSession(object):
     '''
 
 
-    def __init__(self, device_name, port, imei, simulation_run_dir, tlm_config, downlink_parser_filepath):
+    def __init__(self, device_name, imei, simulation_run_dir, tlm_config, downlink_parser_filepath):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -40,8 +40,8 @@ class RadioSession(object):
         self.imei=imei
 
         #Flask server connection
-        self.flask_server=tlm_config["server"]
-        self.flask_port=tlm_config["port"]
+        self.flask_server=tlm_config["webservice"]["server"]
+        self.flask_port=tlm_config["webservice"]["port"]
 
         #email
         self.username=tlm_config["email_username"]
@@ -53,20 +53,8 @@ class RadioSession(object):
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
         self.telem_save_dir = simulation_run_dir
 
-        # Get keys for connecting to elasticsearch server
-        try:
-            with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../ptest/configs/server_keys.json')))as server_keys_config_file:
-                server_keys_config = json.load(server_keys_config_file)
-        except json.JSONDecodeError:
-            print("Could not load config files. Exiting.")
-            sys.exit(1)
-        except KeyError:
-            print("Malformed config file. Exiting.")
-            sys.exit(1)
         # Open a connection to elasticsearch
-        es_server = server_keys_config["server"]
-        es_port = server_keys_config["port"]
-        self.es = Elasticsearch([{'host':es_server,'port':es_port}])
+        self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
 
     def read_state(self, field, timeout=None):
         '''
