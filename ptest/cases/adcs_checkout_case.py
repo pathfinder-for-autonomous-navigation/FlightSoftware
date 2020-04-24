@@ -311,7 +311,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             time.sleep(1)
             reading = self.print_rs("adcs_monitor.rwa_torque_rd")
             self.print_rs("adcs_monitor.rwa_speed_rd")
-            self.assert_vec_within(cmd_array, reading, 1)
+            self.assert_vec_within(cmd_array, reading, .1)
             self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
             self.logger.put("")
             time.sleep(1)
