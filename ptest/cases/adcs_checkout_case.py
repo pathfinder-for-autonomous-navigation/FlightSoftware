@@ -264,7 +264,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         wheel_speed_tests = [
             [20,40,50],
             [100,200,300],
-            [100,50,10]
+            [100,50,10],
             [500,500,500],
             [680,680,680], 
             [-1000,-100,-10]
