@@ -61,11 +61,6 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         for _ in range(100):
             self.cycle()
         
-        # Run all the test cases
-        self.run_case_singlesat()
-
-        self.logger.put("Deployment to Initialization Hold testcase finished.")
-
     def run_case_singlesat(self):
         self.run_case_all_functional()
         self.run_case_adcs_failure()
@@ -73,10 +68,10 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.run_case_wheel2_failure()
         self.run_case_wheel3_failure()
         self.run_case_wheelpot_failure()
-        self.reset_faults()
+        self.unsignal_faults()
         self.finish()
 
-    def reset_faults(self):
+    def unsignal_faults(self):
         self.adcs_is_functional = "true"
         self.wheel1_is_functional = "true"
         self.wheel2_is_functional = "true"
@@ -85,7 +80,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
 
     def run_case_all_functional(self):
-        self.reset_faults() # Unsignal all faults
+        self.unsignal_faults()
         self.mission_mode = 0  # Startup state
 
         # Should transition to detumble if ADCS motors are functional
@@ -98,8 +93,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_adcs_failure(self):
-        #Unsignal faults
-        self.reset_faults()
+        self.unsignal_faults()
 
         # Set the ADCS to be disfunctional
         self.adcs_is_functional = "false" # Will signal adcs.functional fault
@@ -108,7 +102,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.wheel3_is_functional = "true"
         self.wheelpot_is_functional = "true"
         self.cycle()
-        #self.cycle()
+        self.cycle()
 
         self.mission_mode = 0  # Startup state
 
@@ -122,8 +116,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_wheel1_failure(self):
-        #Unsignal faults
-        self.reset_faults()
+        self.unsignal_faults()
 
         # Set wheel 1 to be disfunctional
         self.adcs_is_functional = "true"
@@ -146,8 +139,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_wheel2_failure(self):
-        #Unsignal faults
-        self.reset_faults()
+        self.unsignal_faults()
 
         # Set wheel 2 to be disfunctional
         self.adcs_is_functional = "true"
@@ -170,8 +162,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_wheel3_failure(self):
-        #Unsignal faults
-        self.reset_faults()
+        self.unsignal_faults()
 
         # Set wheel 3 to be disfunctional
         self.adcs_is_functional = "true"
@@ -194,8 +185,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_wheelpot_failure(self):
-        #Unsignal faults
-        self.reset_faults()
+        self.unsignal_faults()
 
         # Set POT to be disfunctional
         self.adcs_is_functional = "true"
