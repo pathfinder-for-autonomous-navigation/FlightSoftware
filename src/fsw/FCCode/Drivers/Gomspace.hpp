@@ -175,9 +175,11 @@ class Gomspace : public I2CDevice {
     bool set_pv_volt(unsigned short int voltage1, unsigned short int voltage2,
                      unsigned short int voltage3);
     /** @brief Set power point mode (PPT).
-     *  @param mode Which mode to use. See NanoPower documentation for available
-     * modes. */
-    bool set_pv_auto(unsigned char mode);
+     *  @param mode Which mode to use.
+     *  0 for hardware default
+     *  1 for Maximum PPT (Auto)
+     *  2 for Fixed PPT */
+    bool set_ppt_mode(unsigned char mode);
 
     /** @brief Turn on the onboard heater. */
     bool turn_on_heater();
