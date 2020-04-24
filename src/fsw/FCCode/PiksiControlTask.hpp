@@ -29,7 +29,7 @@ public:
 
     // Serializer and StateField for currentState and
     // number of cycles since a good reading
-    ReadableStateField<unsigned int> current_state_f;
+    ReadableStateField<unsigned char> current_state_f;
     ReadableStateField<unsigned int> fix_error_count_f;
 
     //Serializer and StateField for time
@@ -38,6 +38,9 @@ public:
 
     // System time of last good Piksi reading
     InternalStateField<sys_time_t> last_fix_time_f;
+
+    // Control cycle of last good Piksi reading
+    InternalStateField<unsigned int> last_rtkfix_ccno_f;
 
 protected:
     //Internal Data Containers
