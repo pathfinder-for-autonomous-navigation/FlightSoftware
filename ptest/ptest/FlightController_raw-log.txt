@@ -1,0 +1,2025 @@
+[2020-04-24 19:21:17.918419] Sent:     {"mode": 119, "field": "cycle.auto", "val": "false"}
+[2020-04-24 19:21:17.922210] Received: {"t":0,"field":"cycle.auto","val":"false"}
+[2020-04-24 19:21:17.922521] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:17.927110] Received: {"t":0,"field":"pan.cycle_no","val":"1"}
+[2020-04-24 19:21:17.927345] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:17.932114] Received: {"t":5,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:17.932310] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:17.932631] Received: {"t":5,"svrty":"ERROR","msg":"Master state not defined: 101\n"}
+[2020-04-24 19:21:18.058129] Received: {"t":131,"field":"pan.cycle_no","val":"2"}
+[2020-04-24 19:21:18.058412] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-04-24 19:21:18.063093] Received: {"t":136,"field":"pan.state","val":"11"}
+[2020-04-24 19:21:18.063312] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "true"}
+[2020-04-24 19:21:18.068145] Received: {"t":141,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2020-04-24 19:21:18.068348] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:18.073101] Received: {"t":146,"field":"pan.cycle_no","val":"2"}
+[2020-04-24 19:21:18.073310] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:18.078110] Received: {"t":151,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:18.078298] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:18.229160] Received: {"t":301,"field":"pan.cycle_no","val":"3"}
+[2020-04-24 19:21:18.229442] Sent:     {"mode": 119, "field": "adcs.state", "val": "5"}
+[2020-04-24 19:21:18.234138] Received: {"t":307,"field":"adcs.state","val":"5"}
+[2020-04-24 19:21:18.234398] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-04-24 19:21:18.239169] Received: {"t":312,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-04-24 19:21:18.239446] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:21:18.245272] Received: {"t":317,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:21:18.245618] Sent:     {"mode": 114, "field": "adcs_monitor.functional"}
+[2020-04-24 19:21:18.250230] Received: {"t":323,"field":"adcs_monitor.functional","val":"true"}
+[2020-04-24 19:21:18.250527] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset0", "val": "true"}
+[2020-04-24 19:21:18.255188] Received: {"t":328,"field":"adcs_cmd.havt_reset0","val":"true"}
+[2020-04-24 19:21:18.255438] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset1", "val": "true"}
+[2020-04-24 19:21:18.260189] Received: {"t":333,"field":"adcs_cmd.havt_reset1","val":"true"}
+[2020-04-24 19:21:18.260430] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset2", "val": "true"}
+[2020-04-24 19:21:18.265190] Received: {"t":338,"field":"adcs_cmd.havt_reset2","val":"true"}
+[2020-04-24 19:21:18.265425] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset3", "val": "true"}
+[2020-04-24 19:21:18.270188] Received: {"t":343,"field":"adcs_cmd.havt_reset3","val":"true"}
+[2020-04-24 19:21:18.270426] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset4", "val": "true"}
+[2020-04-24 19:21:18.275188] Received: {"t":348,"field":"adcs_cmd.havt_reset4","val":"true"}
+[2020-04-24 19:21:18.275434] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset5", "val": "true"}
+[2020-04-24 19:21:18.280188] Received: {"t":353,"field":"adcs_cmd.havt_reset5","val":"true"}
+[2020-04-24 19:21:18.280423] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset6", "val": "true"}
+[2020-04-24 19:21:18.285192] Received: {"t":358,"field":"adcs_cmd.havt_reset6","val":"true"}
+[2020-04-24 19:21:18.285436] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset7", "val": "true"}
+[2020-04-24 19:21:18.290189] Received: {"t":363,"field":"adcs_cmd.havt_reset7","val":"true"}
+[2020-04-24 19:21:18.290428] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset8", "val": "true"}
+[2020-04-24 19:21:18.295190] Received: {"t":368,"field":"adcs_cmd.havt_reset8","val":"true"}
+[2020-04-24 19:21:18.295424] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset9", "val": "true"}
+[2020-04-24 19:21:18.300186] Received: {"t":373,"field":"adcs_cmd.havt_reset9","val":"true"}
+[2020-04-24 19:21:18.300418] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset10", "val": "true"}
+[2020-04-24 19:21:18.305189] Received: {"t":378,"field":"adcs_cmd.havt_reset10","val":"true"}
+[2020-04-24 19:21:18.305450] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset11", "val": "true"}
+[2020-04-24 19:21:18.310196] Received: {"t":383,"field":"adcs_cmd.havt_reset11","val":"true"}
+[2020-04-24 19:21:18.310424] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset12", "val": "true"}
+[2020-04-24 19:21:18.315191] Received: {"t":388,"field":"adcs_cmd.havt_reset12","val":"true"}
+[2020-04-24 19:21:18.315408] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset13", "val": "true"}
+[2020-04-24 19:21:18.320200] Received: {"t":393,"field":"adcs_cmd.havt_reset13","val":"true"}
+[2020-04-24 19:21:18.320485] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset14", "val": "true"}
+[2020-04-24 19:21:18.325169] Received: {"t":398,"field":"adcs_cmd.havt_reset14","val":"true"}
+[2020-04-24 19:21:18.325400] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset15", "val": "true"}
+[2020-04-24 19:21:18.330199] Received: {"t":403,"field":"adcs_cmd.havt_reset15","val":"true"}
+[2020-04-24 19:21:18.330419] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset16", "val": "true"}
+[2020-04-24 19:21:18.335188] Received: {"t":408,"field":"adcs_cmd.havt_reset16","val":"true"}
+[2020-04-24 19:21:18.335399] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset17", "val": "true"}
+[2020-04-24 19:21:18.340189] Received: {"t":413,"field":"adcs_cmd.havt_reset17","val":"true"}
+[2020-04-24 19:21:18.340378] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:18.345130] Received: {"t":418,"field":"pan.cycle_no","val":"3"}
+[2020-04-24 19:21:18.345332] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:18.350118] Received: {"t":423,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:18.350830] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:18.355965] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-04-24 19:21:18.479150] Received: {"t":552,"field":"pan.cycle_no","val":"4"}
+[2020-04-24 19:21:18.479394] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:18.484222] Received: {"t":557,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:18.484418] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:18.489205] Received: {"t":562,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:18.489403] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:18.494225] Received: {"t":567,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:18.494416] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:18.499204] Received: {"t":572,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:18.499410] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:18.504216] Received: {"t":577,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:18.504445] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:18.509215] Received: {"t":582,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:18.509410] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:18.514213] Received: {"t":587,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:18.514403] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:18.519204] Received: {"t":592,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:18.519396] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:18.524214] Received: {"t":597,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:18.524412] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:18.529204] Received: {"t":602,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:18.529401] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:18.534216] Received: {"t":607,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:18.534423] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:18.539208] Received: {"t":612,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:18.539399] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:18.544223] Received: {"t":617,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:18.544428] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:18.549230] Received: {"t":622,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:18.549445] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:18.554220] Received: {"t":627,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:18.559220] Received: {"t":632,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:18.564190] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:18.564357] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:18.569256] Received: {"t":642,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:18.569485] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:18.574247] Received: {"t":647,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:18.574533] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:18.579242] Received: {"t":652,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:18.579444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:18.584255] Received: {"t":657,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:18.584452] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:18.589244] Received: {"t":662,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:18.589443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:18.594255] Received: {"t":667,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:18.594558] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:18.599185] Received: {"t":672,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:18.600791] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:18.604260] Received: {"t":677,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:18.604458] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:18.609241] Received: {"t":682,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:18.609436] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:18.614250] Received: {"t":687,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:18.614444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:18.619247] Received: {"t":692,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:18.619773] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:18.624255] Received: {"t":697,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:18.624467] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:18.629242] Received: {"t":702,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:18.629440] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:18.634255] Received: {"t":707,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:18.634448] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:18.639248] Received: {"t":712,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:18.639446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:18.644257] Received: {"t":717,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:18.644462] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:18.649247] Received: {"t":722,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:18.649446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:18.654257] Received: {"t":727,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:18.654444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:18.659245] Received: {"t":732,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:18.659443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:18.664256] Received: {"t":737,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:18.664450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:18.669241] Received: {"t":742,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:18.669438] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:18.674252] Received: {"t":747,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:18.674455] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:18.679246] Received: {"t":752,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:18.679438] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:18.684249] Received: {"t":757,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:18.684441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:18.689237] Received: {"t":762,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:18.689440] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:18.694252] Received: {"t":767,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:18.694480] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:18.699244] Received: {"t":772,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:18.699437] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:18.704249] Received: {"t":777,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:18.704442] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:18.709237] Received: {"t":782,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:18.709456] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:18.714248] Received: {"t":787,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:18.714448] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:18.719246] Received: {"t":792,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:18.719447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:18.724254] Received: {"t":797,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:18.724448] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:18.729244] Received: {"t":802,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:18.729460] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:18.734255] Received: {"t":807,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:18.734476] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:18.739246] Received: {"t":812,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:18.739439] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:18.744251] Received: {"t":817,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:18.757463] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:18.759253] Received: {"t":832,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:18.759452] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:18.764255] Received: {"t":837,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:18.764455] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:18.769239] Received: {"t":842,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:18.769431] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:18.774248] Received: {"t":847,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:18.774441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:18.779247] Received: {"t":852,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:18.779446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:18.784250] Received: {"t":857,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:18.784442] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:18.789239] Received: {"t":862,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:18.789429] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:18.794253] Received: {"t":867,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:18.794493] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:18.799238] Received: {"t":872,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:18.799425] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:18.804236] Received: {"t":877,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:18.804430] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:18.809234] Received: {"t":882,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:18.809417] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:18.814271] Received: {"t":887,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:18.814456] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:18.819240] Received: {"t":892,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:18.819425] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:18.824247] Received: {"t":897,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:18.824421] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:18.829238] Received: {"t":902,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:18.829422] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:18.834244] Received: {"t":907,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:18.834421] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:18.839238] Received: {"t":912,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:18.844260] Received: {"t":917,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:18.844981] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:18.845147] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:18.850244] Received: {"t":922,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:18.850490] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:18.855223] Received: {"t":928,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:18.855504] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:18.860225] Received: {"t":933,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:18.860506] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:18.865245] Received: {"t":938,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:18.865446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:18.870255] Received: {"t":943,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:18.870517] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:18.875210] Received: {"t":948,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:18.875446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:18.880207] Received: {"t":953,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:18.880443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:18.885207] Received: {"t":958,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:18.885440] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:18.890296] Received: {"t":963,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:18.890518] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:18.895207] Received: {"t":968,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:18.895437] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:18.900208] Received: {"t":973,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:18.900420] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:18.905210] Received: {"t":978,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:18.905390] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:18.910184] Received: {"t":983,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:18.910336] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:18.921017] Received: {"t":988,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:18.921241] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:18.926221] Received: {"t":999,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:18.926451] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:18.931224] Received: {"t":1004,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:18.931444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:18.936214] Received: {"t":1009,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:18.936407] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:18.941226] Received: {"t":1014,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:18.941462] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:18.946217] Received: {"t":1019,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:18.946430] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:18.951227] Received: {"t":1024,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:18.951464] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:18.956212] Received: {"t":1029,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:18.956427] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:18.961213] Received: {"t":1034,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:18.961425] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:18.966217] Received: {"t":1039,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:18.966427] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:18.971215] Received: {"t":1044,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:18.971443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:18.976214] Received: {"t":1049,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:18.976440] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:18.981212] Received: {"t":1054,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:18.981441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:18.986211] Received: {"t":1059,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:18.986446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:18.991213] Received: {"t":1064,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:18.991423] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:18.996214] Received: {"t":1069,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:18.996446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.001213] Received: {"t":1074,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.001426] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.006216] Received: {"t":1079,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.006456] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.011219] Received: {"t":1084,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.011472] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.016218] Received: {"t":1089,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.016453] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.021221] Received: {"t":1094,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.021448] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.026216] Received: {"t":1099,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.026450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.031221] Received: {"t":1104,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.031450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.036510] Received: {"t":1109,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.037232] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.042268] Received: {"t":1114,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.042568] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.047218] Received: {"t":1120,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.047409] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.052210] Received: {"t":1125,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.052378] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.057217] Received: {"t":1130,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.057401] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.062219] Received: {"t":1135,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.062387] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.067220] Received: {"t":1140,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.067390] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.072218] Received: {"t":1145,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.072401] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.077217] Received: {"t":1150,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.077403] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.082451] Received: {"t":1155,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.082665] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.087250] Received: {"t":1160,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.087952] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.092254] Received: {"t":1165,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.092468] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.097244] Received: {"t":1170,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.097462] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.102294] Received: {"t":1175,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.102514] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.107240] Received: {"t":1180,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.107460] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.112244] Received: {"t":1185,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.119650] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.121243] Received: {"t":1193,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.121468] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.126235] Received: {"t":1199,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.126456] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.131245] Received: {"t":1204,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.131451] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.136214] Received: {"t":1209,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.136422] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.141209] Received: {"t":1214,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.141419] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.146210] Received: {"t":1219,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.146414] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.151242] Received: {"t":1224,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.151444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.156235] Received: {"t":1229,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.156441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.161236] Received: {"t":1234,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.161443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.166236] Received: {"t":1239,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.166440] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.171236] Received: {"t":1244,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.171453] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.176235] Received: {"t":1249,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.176443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.181236] Received: {"t":1254,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.181438] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.186236] Received: {"t":1259,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.186440] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.191242] Received: {"t":1264,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.191455] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.196241] Received: {"t":1269,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.196455] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.201240] Received: {"t":1274,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.201446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.206241] Received: {"t":1279,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.206445] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.211245] Received: {"t":1284,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.211474] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.216240] Received: {"t":1289,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.216443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.221240] Received: {"t":1294,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.221449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.226241] Received: {"t":1299,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.226445] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.231236] Received: {"t":1304,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.231441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.236240] Received: {"t":1309,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.236442] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.241242] Received: {"t":1314,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.241453] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.246238] Received: {"t":1319,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.246443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.251237] Received: {"t":1324,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.251444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.256237] Received: {"t":1329,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.256455] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.261240] Received: {"t":1334,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.261451] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.266235] Received: {"t":1339,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.266437] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.271243] Received: {"t":1344,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.271447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.276240] Received: {"t":1349,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.276468] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.281244] Received: {"t":1354,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.281457] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.286248] Received: {"t":1359,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.286456] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.291242] Received: {"t":1364,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.291445] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.296241] Received: {"t":1369,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.296444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.301241] Received: {"t":1374,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.301466] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.306242] Received: {"t":1379,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.306450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.311241] Received: {"t":1384,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.311456] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.316244] Received: {"t":1389,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.316449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.321238] Received: {"t":1394,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.321442] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.326216] Received: {"t":1399,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.326409] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.331240] Received: {"t":1404,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.331444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.336239] Received: {"t":1409,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.336454] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.341264] Received: {"t":1414,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.341488] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.346239] Received: {"t":1419,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.346441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.351237] Received: {"t":1424,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.351447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.356241] Received: {"t":1429,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.356463] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.361238] Received: {"t":1434,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.361453] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.366239] Received: {"t":1439,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.366447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.371244] Received: {"t":1444,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.371450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.376245] Received: {"t":1449,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.376460] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.381246] Received: {"t":1454,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.381457] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.386242] Received: {"t":1459,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.386444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.391243] Received: {"t":1464,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.391461] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.396243] Received: {"t":1469,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.396451] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.401241] Received: {"t":1474,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.414334] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.419243] Received: {"t":1492,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.419450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.435722] Received: {"t":1497,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.435994] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.441250] Received: {"t":1513,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.441498] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.446289] Received: {"t":1519,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.446528] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.451250] Received: {"t":1524,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.451505] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.456244] Received: {"t":1529,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.456465] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.461235] Received: {"t":1534,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.461468] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.466232] Received: {"t":1539,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.466464] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.471231] Received: {"t":1544,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.471446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.476232] Received: {"t":1549,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.476438] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.481236] Received: {"t":1554,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.481451] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.486239] Received: {"t":1559,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.486449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.491238] Received: {"t":1564,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.491443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.496236] Received: {"t":1569,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.496445] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.501236] Received: {"t":1574,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.501442] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.506239] Received: {"t":1579,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.506457] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.511243] Received: {"t":1584,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.511449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.516238] Received: {"t":1589,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.516446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.521237] Received: {"t":1594,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.521449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.526233] Received: {"t":1599,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.526450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.531232] Received: {"t":1604,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.531438] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.536236] Received: {"t":1609,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.536449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.541235] Received: {"t":1614,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.541437] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.546232] Received: {"t":1619,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.546438] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.551233] Received: {"t":1624,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.551443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.556237] Received: {"t":1629,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.556450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.561234] Received: {"t":1634,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.561438] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.566233] Received: {"t":1639,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.566437] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.571253] Received: {"t":1644,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.576218] Received: {"t":1649,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.583210] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.583428] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.588258] Received: {"t":1661,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.588535] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.593229] Received: {"t":1666,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.595377] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.598218] Received: {"t":1671,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.598448] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.603216] Received: {"t":1676,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.603441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.608250] Received: {"t":1681,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.608478] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.613284] Received: {"t":1686,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.613520] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.618205] Received: {"t":1691,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.622956] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.623242] Received: {"t":1696,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.623422] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.628210] Received: {"t":1701,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.628434] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.633214] Received: {"t":1706,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.633430] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.638209] Received: {"t":1711,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.645958] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.646249] Received: {"t":1718,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.646435] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.651211] Received: {"t":1724,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.651452] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.656217] Received: {"t":1729,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.656454] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.661250] Received: {"t":1734,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.661487] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.666242] Received: {"t":1739,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.666468] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.671245] Received: {"t":1744,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.671425] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.676252] Received: {"t":1749,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.677458] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.681254] Received: {"t":1754,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.685982] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.686263] Received: {"t":1759,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.690794] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.694219] Received: {"t":1766,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.694448] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.699216] Received: {"t":1772,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.699462] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.704235] Received: {"t":1777,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.704464] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.709220] Received: {"t":1782,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.709454] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.714222] Received: {"t":1787,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.714452] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.719216] Received: {"t":1792,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.719449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.724242] Received: {"t":1797,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.724476] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.729218] Received: {"t":1802,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.729447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.734241] Received: {"t":1807,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.734476] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.739519] Received: {"t":1812,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.739823] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.745490] Received: {"t":1817,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.745854] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.751224] Received: {"t":1823,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.751480] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.756212] Received: {"t":1829,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.756452] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.761209] Received: {"t":1834,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.761433] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.766213] Received: {"t":1839,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.767465] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.771215] Received: {"t":1844,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.771434] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.776216] Received: {"t":1849,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.776450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.781216] Received: {"t":1854,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.785973] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.786257] Received: {"t":1859,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.790959] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.791300] Received: {"t":1864,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.791531] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.796222] Received: {"t":1869,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.800801] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.801221] Received: {"t":1874,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.803186] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.808247] Received: {"t":1880,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.808469] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.813216] Received: {"t":1886,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.813442] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.818187] Received: {"t":1891,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.820213] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.825220] Received: {"t":1897,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.825466] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.830221] Received: {"t":1903,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.830468] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.835249] Received: {"t":1908,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.835466] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.840201] Received: {"t":1913,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.842162] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.845195] Received: {"t":1918,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.846625] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.850211] Received: {"t":1923,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.850445] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.855211] Received: {"t":1928,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.855474] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.860209] Received: {"t":1933,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.860505] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.865290] Received: {"t":1938,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.865633] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.870194] Received: {"t":1943,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.875970] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.876258] Received: {"t":1948,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.880795] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.882219] Received: {"t":1955,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.882462] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.887218] Received: {"t":1960,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.887444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:19.892218] Received: {"t":1965,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:19.892430] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:19.897217] Received: {"t":1970,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:19.897430] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:19.902217] Received: {"t":1975,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:19.902449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:19.907212] Received: {"t":1980,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:19.907442] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:19.912217] Received: {"t":1985,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:19.912451] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:19.917219] Received: {"t":1990,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:19.917442] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:19.922213] Received: {"t":1995,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:19.922425] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:19.927212] Received: {"t":2000,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:19.927437] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:19.932212] Received: {"t":2005,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:19.932441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:19.959279] Received: {"t":2010,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:19.959495] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:19.964190] Received: {"t":2037,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:19.964416] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:19.969216] Received: {"t":2042,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:19.969462] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:19.974227] Received: {"t":2047,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:19.974456] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:19.979221] Received: {"t":2052,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:19.979443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:19.984220] Received: {"t":2057,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:19.984468] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:19.989216] Received: {"t":2062,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:19.989430] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:19.994221] Received: {"t":2067,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:19.994449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:19.999217] Received: {"t":2072,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:19.999455] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:20.004219] Received: {"t":2077,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:20.004447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:20.009216] Received: {"t":2082,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:20.009444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:20.014218] Received: {"t":2087,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:20.014463] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:20.019215] Received: {"t":2092,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:20.019428] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:20.024213] Received: {"t":2097,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:20.024423] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:20.029218] Received: {"t":2102,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:20.029443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:20.034213] Received: {"t":2107,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:20.034444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:20.039216] Received: {"t":2112,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:20.039452] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:20.044215] Received: {"t":2117,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:20.044428] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:20.049210] Received: {"t":2122,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:20.049441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:20.054241] Received: {"t":2127,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:20.054474] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:20.059216] Received: {"t":2132,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:20.059449] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:20.064233] Received: {"t":2137,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:20.064450] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:20.069233] Received: {"t":2142,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:20.069447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:20.074220] Received: {"t":2147,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:20.074447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:20.079215] Received: {"t":2152,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:20.079417] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:20.084218] Received: {"t":2157,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:20.084429] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:20.089215] Received: {"t":2162,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:20.089427] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:20.094236] Received: {"t":2167,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:20.094458] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:20.099214] Received: {"t":2172,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:20.099417] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:20.104222] Received: {"t":2177,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:20.104444] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:20.109203] Received: {"t":2182,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:20.109396] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:20.114212] Received: {"t":2187,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:20.114419] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:20.119214] Received: {"t":2192,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:20.119421] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:20.124214] Received: {"t":2197,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:20.124420] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:20.129210] Received: {"t":2202,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:20.129417] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:20.134256] Received: {"t":2207,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:20.134468] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:20.139205] Received: {"t":2212,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:20.139413] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:20.144240] Received: {"t":2217,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:20.144448] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:20.149209] Received: {"t":2222,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:20.149416] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:20.154220] Received: {"t":2227,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:20.154424] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:20.159218] Received: {"t":2232,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:20.159436] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:20.164216] Received: {"t":2237,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:20.164428] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:20.169217] Received: {"t":2242,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:20.169432] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:20.174216] Received: {"t":2247,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:20.174422] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:20.179223] Received: {"t":2252,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:20.179452] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:20.184227] Received: {"t":2257,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:20.184446] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:20.189214] Received: {"t":2262,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:20.189420] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:20.194221] Received: {"t":2267,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:20.194464] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:20.199211] Received: {"t":2272,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:20.199421] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:20.204215] Received: {"t":2277,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:20.204424] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:20.209215] Received: {"t":2282,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:20.209443] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:20.214220] Received: {"t":2287,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:20.214427] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:20.219211] Received: {"t":2292,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:20.219414] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:20.224214] Received: {"t":2297,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:20.224419] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:20.229240] Received: {"t":2302,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:20.229501] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:20.234241] Received: {"t":2307,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:20.234451] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:20.239209] Received: {"t":2312,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:20.239420] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:20.244241] Received: {"t":2317,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:20.244447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:20.249214] Received: {"t":2322,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:20.249421] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:20.254245] Received: {"t":2327,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:20.254466] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:20.259214] Received: {"t":2332,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:20.259425] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:20.264223] Received: {"t":2337,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:20.264445] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:20.269216] Received: {"t":2342,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:20.269420] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:20.274228] Received: {"t":2347,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:20.274432] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:20.279213] Received: {"t":2352,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:20.279417] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:20.284246] Received: {"t":2357,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:20.284476] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:20.289210] Received: {"t":2362,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:20.289452] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:20.294213] Received: {"t":2367,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:20.294423] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:20.299214] Received: {"t":2372,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:20.299427] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:20.304216] Received: {"t":2377,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:20.304441] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:20.309211] Received: {"t":2382,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:20.309426] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:20.314214] Received: {"t":2387,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:20.314418] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:20.319210] Received: {"t":2392,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:20.319436] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:20.324213] Received: {"t":2397,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:20.324425] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:20.329210] Received: {"t":2402,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:20.329415] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:20.334244] Received: {"t":2407,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:20.334465] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:20.339215] Received: {"t":2412,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:20.339420] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:20.344224] Received: {"t":2417,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:20.344457] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:20.349221] Received: {"t":2422,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:20.349458] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:20.354231] Received: {"t":2427,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:20.354504] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:20.359223] Received: {"t":2432,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:20.362332] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:20.364265] Received: {"t":2437,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:20.369981] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:20.370307] Received: {"t":2443,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:20.378974] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:20.379273] Received: {"t":2452,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:20.389374] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:20.394203] Received: {"t":2466,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:20.415570] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:20.420654] Received: {"t":2493,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:20.427231] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:20.429193] Received: {"t":2502,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:20.459650] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:20.487588] Received: {"t":2535,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:20.508982] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:20.509274] Received: {"t":2582,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:20.527577] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:20.532216] Received: {"t":2605,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:20.558982] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:20.559269] Received: {"t":2632,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:20.559797] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:20.564489] Received: {"t":2637,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:20.575977] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:20.576309] Received: {"t":2648,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:20.580981] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:20.581271] Received: {"t":2654,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:20.588982] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:20.589278] Received: {"t":2661,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:20.598221] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:20.599211] Received: {"t":2672,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:20.603947] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:20.604292] Received: {"t":2677,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:20.612999] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:20.613301] Received: {"t":2685,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:20.618949] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:20.619245] Received: {"t":2692,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:20.624952] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:20.625252] Received: {"t":2698,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:20.637927] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:20.639198] Received: {"t":2711,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:20.685953] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:20.686249] Received: {"t":2758,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:20.695937] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:20.696233] Received: {"t":2768,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:20.715948] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:20.716242] Received: {"t":2788,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:20.720990] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:20.726191] Received: {"t":2798,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:20.726385] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:20.731181] Received: {"t":2804,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:20.731372] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:20.736183] Received: {"t":2809,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:20.736376] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:20.741183] Received: {"t":2814,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:20.741371] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:20.746182] Received: {"t":2819,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:20.746369] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:20.751183] Received: {"t":2824,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:20.757555] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:20.762183] Received: {"t":2835,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:20.764136] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:20.767182] Received: {"t":2840,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:20.767372] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:20.772187] Received: {"t":2845,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:20.772392] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:20.777186] Received: {"t":2850,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:20.780794] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:20.782188] Received: {"t":2855,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:20.782375] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:20.787185] Received: {"t":2860,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:20.787375] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:20.792188] Received: {"t":2865,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:20.792376] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:20.797187] Received: {"t":2870,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:20.797387] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:20.802186] Received: {"t":2875,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:20.802387] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:20.807190] Received: {"t":2880,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:20.807399] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable0", "val": "true"}
+[2020-04-24 19:21:20.812165] Received: {"t":2885,"field":"adcs_cmd.havt_disable0","val":"true"}
+[2020-04-24 19:21:20.812370] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable1", "val": "true"}
+[2020-04-24 19:21:20.817166] Received: {"t":2890,"field":"adcs_cmd.havt_disable1","val":"true"}
+[2020-04-24 19:21:20.817393] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable2", "val": "true"}
+[2020-04-24 19:21:20.822167] Received: {"t":2895,"field":"adcs_cmd.havt_disable2","val":"true"}
+[2020-04-24 19:21:20.822361] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable3", "val": "true"}
+[2020-04-24 19:21:20.827194] Received: {"t":2900,"field":"adcs_cmd.havt_disable3","val":"true"}
+[2020-04-24 19:21:20.827399] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable4", "val": "true"}
+[2020-04-24 19:21:20.832172] Received: {"t":2905,"field":"adcs_cmd.havt_disable4","val":"true"}
+[2020-04-24 19:21:20.832385] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable5", "val": "true"}
+[2020-04-24 19:21:20.837168] Received: {"t":2910,"field":"adcs_cmd.havt_disable5","val":"true"}
+[2020-04-24 19:21:20.837373] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable6", "val": "true"}
+[2020-04-24 19:21:20.842177] Received: {"t":2915,"field":"adcs_cmd.havt_disable6","val":"true"}
+[2020-04-24 19:21:20.842418] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable7", "val": "true"}
+[2020-04-24 19:21:20.847197] Received: {"t":2920,"field":"adcs_cmd.havt_disable7","val":"true"}
+[2020-04-24 19:21:20.847407] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable8", "val": "true"}
+[2020-04-24 19:21:20.852197] Received: {"t":2925,"field":"adcs_cmd.havt_disable8","val":"true"}
+[2020-04-24 19:21:20.852444] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable9", "val": "true"}
+[2020-04-24 19:21:20.857201] Received: {"t":2930,"field":"adcs_cmd.havt_disable9","val":"true"}
+[2020-04-24 19:21:20.857415] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable10", "val": "true"}
+[2020-04-24 19:21:20.862201] Received: {"t":2935,"field":"adcs_cmd.havt_disable10","val":"true"}
+[2020-04-24 19:21:20.862451] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable11", "val": "true"}
+[2020-04-24 19:21:20.867201] Received: {"t":2940,"field":"adcs_cmd.havt_disable11","val":"true"}
+[2020-04-24 19:21:20.867413] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable12", "val": "true"}
+[2020-04-24 19:21:20.872201] Received: {"t":2945,"field":"adcs_cmd.havt_disable12","val":"true"}
+[2020-04-24 19:21:20.872429] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable13", "val": "true"}
+[2020-04-24 19:21:20.877198] Received: {"t":2950,"field":"adcs_cmd.havt_disable13","val":"true"}
+[2020-04-24 19:21:20.881965] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable14", "val": "true"}
+[2020-04-24 19:21:20.882239] Received: {"t":2955,"field":"adcs_cmd.havt_disable14","val":"true"}
+[2020-04-24 19:21:20.882469] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable15", "val": "true"}
+[2020-04-24 19:21:20.887200] Received: {"t":2960,"field":"adcs_cmd.havt_disable15","val":"true"}
+[2020-04-24 19:21:20.887416] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable16", "val": "true"}
+[2020-04-24 19:21:20.892199] Received: {"t":2965,"field":"adcs_cmd.havt_disable16","val":"true"}
+[2020-04-24 19:21:20.892426] Sent:     {"mode": 119, "field": "adcs_cmd.havt_disable17", "val": "true"}
+[2020-04-24 19:21:20.897201] Received: {"t":2970,"field":"adcs_cmd.havt_disable17","val":"true"}
+[2020-04-24 19:21:20.897375] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:20.902135] Received: {"t":2975,"field":"pan.cycle_no","val":"4"}
+[2020-04-24 19:21:20.902345] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:20.907143] Received: {"t":2980,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:20.907348] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:20.912787] Received: Consumed[0\r\n0\r]
+[2020-04-24 19:21:21.036180] Received: {"t":3108,"field":"pan.cycle_no","val":"5"}
+[2020-04-24 19:21:21.037149] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:21.041297] Received: {"t":3114,"field":"adcs_monitor.havt_device0","val":"false"}
+[2020-04-24 19:21:21.041494] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:21.046228] Received: {"t":3119,"field":"adcs_monitor.havt_device1","val":"false"}
+[2020-04-24 19:21:21.046404] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:21.051216] Received: {"t":3124,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:21.051357] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:21.056212] Received: {"t":3129,"field":"adcs_monitor.havt_device3","val":"false"}
+[2020-04-24 19:21:21.056363] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:21.061191] Received: {"t":3134,"field":"adcs_monitor.havt_device4","val":"false"}
+[2020-04-24 19:21:21.061432] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:21.066196] Received: {"t":3139,"field":"adcs_monitor.havt_device5","val":"false"}
+[2020-04-24 19:21:21.066349] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:21.071224] Received: {"t":3144,"field":"adcs_monitor.havt_device6","val":"false"}
+[2020-04-24 19:21:21.071384] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:21.076225] Received: {"t":3149,"field":"adcs_monitor.havt_device7","val":"false"}
+[2020-04-24 19:21:21.076386] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:21.081215] Received: {"t":3154,"field":"adcs_monitor.havt_device8","val":"false"}
+[2020-04-24 19:21:21.081347] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:21.086215] Received: {"t":3159,"field":"adcs_monitor.havt_device9","val":"false"}
+[2020-04-24 19:21:21.086344] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:21.091444] Received: {"t":3164,"field":"adcs_monitor.havt_device10","val":"false"}
+[2020-04-24 19:21:21.091731] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:21.096225] Received: {"t":3169,"field":"adcs_monitor.havt_device11","val":"false"}
+[2020-04-24 19:21:21.096383] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:21.101218] Received: {"t":3174,"field":"adcs_monitor.havt_device12","val":"false"}
+[2020-04-24 19:21:21.101347] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:21.106220] Received: {"t":3179,"field":"adcs_monitor.havt_device13","val":"false"}
+[2020-04-24 19:21:21.106355] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:21.111221] Received: {"t":3184,"field":"adcs_monitor.havt_device14","val":"false"}
+[2020-04-24 19:21:21.111350] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:21.116199] Received: {"t":3189,"field":"adcs_monitor.havt_device15","val":"false"}
+[2020-04-24 19:21:21.116331] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:21.121218] Received: {"t":3194,"field":"adcs_monitor.havt_device16","val":"false"}
+[2020-04-24 19:21:21.121358] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:21.126223] Received: {"t":3199,"field":"adcs_monitor.havt_device17","val":"false"}
+[2020-04-24 19:21:21.126447] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:21.131216] Received: {"t":3204,"field":"adcs_monitor.havt_device0","val":"false"}
+[2020-04-24 19:21:21.131346] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:21.136218] Received: {"t":3209,"field":"adcs_monitor.havt_device1","val":"false"}
+[2020-04-24 19:21:21.136346] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:21.141213] Received: {"t":3214,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:21.141342] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:21.146215] Received: {"t":3219,"field":"adcs_monitor.havt_device3","val":"false"}
+[2020-04-24 19:21:21.146348] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:21.151217] Received: {"t":3224,"field":"adcs_monitor.havt_device4","val":"false"}
+[2020-04-24 19:21:21.151352] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:21.156222] Received: {"t":3229,"field":"adcs_monitor.havt_device5","val":"false"}
+[2020-04-24 19:21:21.156354] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:21.161216] Received: {"t":3234,"field":"adcs_monitor.havt_device6","val":"false"}
+[2020-04-24 19:21:21.161345] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:21.166215] Received: {"t":3239,"field":"adcs_monitor.havt_device7","val":"false"}
+[2020-04-24 19:21:21.166342] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:21.171217] Received: {"t":3244,"field":"adcs_monitor.havt_device8","val":"false"}
+[2020-04-24 19:21:21.171348] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:21.176221] Received: {"t":3249,"field":"adcs_monitor.havt_device9","val":"false"}
+[2020-04-24 19:21:21.176356] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:21.181225] Received: {"t":3254,"field":"adcs_monitor.havt_device10","val":"false"}
+[2020-04-24 19:21:21.181357] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:21.186225] Received: {"t":3259,"field":"adcs_monitor.havt_device11","val":"false"}
+[2020-04-24 19:21:21.186355] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:21.191226] Received: {"t":3264,"field":"adcs_monitor.havt_device12","val":"false"}
+[2020-04-24 19:21:21.191355] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:21.196221] Received: {"t":3269,"field":"adcs_monitor.havt_device13","val":"false"}
+[2020-04-24 19:21:21.196349] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:21.201221] Received: {"t":3274,"field":"adcs_monitor.havt_device14","val":"false"}
+[2020-04-24 19:21:21.201351] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:21.206222] Received: {"t":3279,"field":"adcs_monitor.havt_device15","val":"false"}
+[2020-04-24 19:21:21.206348] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:21.211222] Received: {"t":3284,"field":"adcs_monitor.havt_device16","val":"false"}
+[2020-04-24 19:21:21.211351] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:21.216223] Received: {"t":3289,"field":"adcs_monitor.havt_device17","val":"false"}
+[2020-04-24 19:21:21.216376] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset0", "val": "true"}
+[2020-04-24 19:21:21.221188] Received: {"t":3294,"field":"adcs_cmd.havt_reset0","val":"true"}
+[2020-04-24 19:21:21.221340] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset1", "val": "true"}
+[2020-04-24 19:21:21.226186] Received: {"t":3299,"field":"adcs_cmd.havt_reset1","val":"true"}
+[2020-04-24 19:21:21.226339] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset2", "val": "true"}
+[2020-04-24 19:21:21.231191] Received: {"t":3304,"field":"adcs_cmd.havt_reset2","val":"true"}
+[2020-04-24 19:21:21.231336] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset3", "val": "true"}
+[2020-04-24 19:21:21.236185] Received: {"t":3309,"field":"adcs_cmd.havt_reset3","val":"true"}
+[2020-04-24 19:21:21.236336] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset4", "val": "true"}
+[2020-04-24 19:21:21.241188] Received: {"t":3314,"field":"adcs_cmd.havt_reset4","val":"true"}
+[2020-04-24 19:21:21.241345] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset5", "val": "true"}
+[2020-04-24 19:21:21.246188] Received: {"t":3319,"field":"adcs_cmd.havt_reset5","val":"true"}
+[2020-04-24 19:21:21.246346] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset6", "val": "true"}
+[2020-04-24 19:21:21.251185] Received: {"t":3324,"field":"adcs_cmd.havt_reset6","val":"true"}
+[2020-04-24 19:21:21.251338] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset7", "val": "true"}
+[2020-04-24 19:21:21.256187] Received: {"t":3329,"field":"adcs_cmd.havt_reset7","val":"true"}
+[2020-04-24 19:21:21.256333] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset8", "val": "true"}
+[2020-04-24 19:21:21.261190] Received: {"t":3334,"field":"adcs_cmd.havt_reset8","val":"true"}
+[2020-04-24 19:21:21.261364] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset9", "val": "true"}
+[2020-04-24 19:21:21.266190] Received: {"t":3339,"field":"adcs_cmd.havt_reset9","val":"true"}
+[2020-04-24 19:21:21.266431] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset10", "val": "true"}
+[2020-04-24 19:21:21.271193] Received: {"t":3344,"field":"adcs_cmd.havt_reset10","val":"true"}
+[2020-04-24 19:21:21.272243] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset11", "val": "true"}
+[2020-04-24 19:21:21.276195] Received: {"t":3349,"field":"adcs_cmd.havt_reset11","val":"true"}
+[2020-04-24 19:21:21.276376] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset12", "val": "true"}
+[2020-04-24 19:21:21.281191] Received: {"t":3354,"field":"adcs_cmd.havt_reset12","val":"true"}
+[2020-04-24 19:21:21.281383] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset13", "val": "true"}
+[2020-04-24 19:21:21.286192] Received: {"t":3359,"field":"adcs_cmd.havt_reset13","val":"true"}
+[2020-04-24 19:21:21.286385] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset14", "val": "true"}
+[2020-04-24 19:21:21.291189] Received: {"t":3364,"field":"adcs_cmd.havt_reset14","val":"true"}
+[2020-04-24 19:21:21.291378] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset15", "val": "true"}
+[2020-04-24 19:21:21.296189] Received: {"t":3369,"field":"adcs_cmd.havt_reset15","val":"true"}
+[2020-04-24 19:21:21.296396] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset16", "val": "true"}
+[2020-04-24 19:21:21.301189] Received: {"t":3374,"field":"adcs_cmd.havt_reset16","val":"true"}
+[2020-04-24 19:21:21.301396] Sent:     {"mode": 119, "field": "adcs_cmd.havt_reset17", "val": "true"}
+[2020-04-24 19:21:21.306188] Received: {"t":3379,"field":"adcs_cmd.havt_reset17","val":"true"}
+[2020-04-24 19:21:21.306362] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:21.311135] Received: {"t":3384,"field":"pan.cycle_no","val":"5"}
+[2020-04-24 19:21:21.311315] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:21.316143] Received: {"t":3389,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:21.316318] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:21.444137] Received: {"t":3517,"field":"pan.cycle_no","val":"6"}
+[2020-04-24 19:21:21.444370] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:21.449220] Received: {"t":3522,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:21.449421] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:21.454259] Received: {"t":3527,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:21.454490] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:21.459248] Received: {"t":3532,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:21.459479] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:21.464248] Received: {"t":3537,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:21.464485] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:21.469245] Received: {"t":3542,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:21.469479] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:21.474258] Received: {"t":3547,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:21.474483] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:21.479238] Received: {"t":3552,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:21.479462] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:21.484256] Received: {"t":3557,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:21.484474] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:21.489235] Received: {"t":3562,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:21.489457] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:21.494261] Received: {"t":3567,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:21.494464] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:21.499248] Received: {"t":3572,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:21.499476] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:21.504256] Received: {"t":3577,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:21.504473] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:21.509252] Received: {"t":3582,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:21.509477] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:21.557125] Received: {"t":3587,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:21.557411] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:21.562266] Received: {"t":3635,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:21.562508] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:21.567263] Received: {"t":3640,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:21.567496] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:21.572258] Received: {"t":3645,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:21.572491] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:21.577249] Received: {"t":3650,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:21.577524] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:21.582216] Received: {"t":3655,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:21.582419] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:21.587240] Received: {"t":3660,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:21.587457] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:21.592218] Received: {"t":3665,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:21.597458] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device3"}
+[2020-04-24 19:21:21.602250] Received: {"t":3675,"field":"adcs_monitor.havt_device3","val":"true"}
+[2020-04-24 19:21:21.602475] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device4"}
+[2020-04-24 19:21:21.607220] Received: {"t":3680,"field":"adcs_monitor.havt_device4","val":"true"}
+[2020-04-24 19:21:21.607409] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device5"}
+[2020-04-24 19:21:21.612218] Received: {"t":3685,"field":"adcs_monitor.havt_device5","val":"true"}
+[2020-04-24 19:21:21.612403] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device6"}
+[2020-04-24 19:21:21.617256] Received: {"t":3690,"field":"adcs_monitor.havt_device6","val":"true"}
+[2020-04-24 19:21:21.617499] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device7"}
+[2020-04-24 19:21:21.622217] Received: {"t":3695,"field":"adcs_monitor.havt_device7","val":"true"}
+[2020-04-24 19:21:21.622455] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device8"}
+[2020-04-24 19:21:21.627216] Received: {"t":3700,"field":"adcs_monitor.havt_device8","val":"true"}
+[2020-04-24 19:21:21.627432] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device9"}
+[2020-04-24 19:21:21.632378] Received: {"t":3705,"field":"adcs_monitor.havt_device9","val":"true"}
+[2020-04-24 19:21:21.632623] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device10"}
+[2020-04-24 19:21:21.637223] Received: {"t":3710,"field":"adcs_monitor.havt_device10","val":"true"}
+[2020-04-24 19:21:21.637429] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device11"}
+[2020-04-24 19:21:21.642199] Received: {"t":3715,"field":"adcs_monitor.havt_device11","val":"true"}
+[2020-04-24 19:21:21.642363] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device12"}
+[2020-04-24 19:21:21.647248] Received: {"t":3720,"field":"adcs_monitor.havt_device12","val":"true"}
+[2020-04-24 19:21:21.652000] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device13"}
+[2020-04-24 19:21:21.652282] Received: {"t":3725,"field":"adcs_monitor.havt_device13","val":"true"}
+[2020-04-24 19:21:21.656997] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device14"}
+[2020-04-24 19:21:21.657275] Received: {"t":3730,"field":"adcs_monitor.havt_device14","val":"true"}
+[2020-04-24 19:21:21.666008] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device15"}
+[2020-04-24 19:21:21.666286] Received: {"t":3738,"field":"adcs_monitor.havt_device15","val":"true"}
+[2020-04-24 19:21:21.667465] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device16"}
+[2020-04-24 19:21:21.671227] Received: {"t":3744,"field":"adcs_monitor.havt_device16","val":"true"}
+[2020-04-24 19:21:21.671415] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device17"}
+[2020-04-24 19:21:21.676227] Received: {"t":3749,"field":"adcs_monitor.havt_device17","val":"true"}
+[2020-04-24 19:21:21.676517] Sent:     {"mode": 114, "field": "adcs_monitor.functional"}
+[2020-04-24 19:21:21.681216] Received: {"t":3754,"field":"adcs_monitor.functional","val":"true"}
+[2020-04-24 19:21:21.681590] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:21.686250] Received: {"t":3759,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:21.686515] Sent:     {"mode": 114, "field": "adcs_cmd.mag1_mode"}
+[2020-04-24 19:21:21.691170] Received: {"t":3764,"field":"adcs_cmd.mag1_mode","val":"0"}
+[2020-04-24 19:21:21.691409] Sent:     {"mode": 114, "field": "adcs_cmd.mag1_mode"}
+[2020-04-24 19:21:21.696162] Received: {"t":3769,"field":"adcs_cmd.mag1_mode","val":"0"}
+[2020-04-24 19:21:21.696382] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:21.701135] Received: {"t":3774,"field":"pan.cycle_no","val":"6"}
+[2020-04-24 19:21:21.701607] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:21.706175] Received: {"t":3779,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:21.707769] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:21.710763] Received: Consumed[READY\r\n]
+[2020-04-24 19:21:21.871147] Received: {"t":3944,"field":"pan.cycle_no","val":"7"}
+[2020-04-24 19:21:21.871369] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:21.876267] Received: {"t":3949,"field":"adcs_monitor.mag1_vec","val":"-0.000015,0.000009,0.000047,"}
+[2020-04-24 19:21:21.876473] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:21.881135] Received: {"t":3954,"field":"pan.cycle_no","val":"7"}
+[2020-04-24 19:21:21.881347] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:21.886144] Received: {"t":3959,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:21.886339] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:21.914070] Received:         > get_SBDWB=30DA30D
+[2020-04-24 19:21:21.914184] Received:         > return=0
+[2020-04-24 19:21:22.041141] Received: {"t":4114,"field":"pan.cycle_no","val":"8"}
+[2020-04-24 19:21:22.041358] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:22.046263] Received: {"t":4119,"field":"adcs_monitor.mag1_vec","val":"-0.000013,0.000009,0.000047,"}
+[2020-04-24 19:21:22.046439] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.051137] Received: {"t":4124,"field":"pan.cycle_no","val":"8"}
+[2020-04-24 19:21:22.051348] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:22.056150] Received: {"t":4129,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:22.056351] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.212176] Received: {"t":4285,"field":"pan.cycle_no","val":"9"}
+[2020-04-24 19:21:22.212428] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:22.217300] Received: {"t":4290,"field":"adcs_monitor.mag1_vec","val":"-0.000013,0.000008,0.000043,"}
+[2020-04-24 19:21:22.217520] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.222136] Received: {"t":4295,"field":"pan.cycle_no","val":"9"}
+[2020-04-24 19:21:22.223736] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:22.227139] Received: {"t":4300,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:22.227315] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.381146] Received: {"t":4454,"field":"pan.cycle_no","val":"10"}
+[2020-04-24 19:21:22.381367] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:22.386263] Received: {"t":4459,"field":"adcs_monitor.mag1_vec","val":"-0.000013,0.000009,0.000040,"}
+[2020-04-24 19:21:22.386469] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.391144] Received: {"t":4464,"field":"pan.cycle_no","val":"10"}
+[2020-04-24 19:21:22.391365] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:22.396146] Received: {"t":4469,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:22.396345] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.551150] Received: {"t":4624,"field":"pan.cycle_no","val":"11"}
+[2020-04-24 19:21:22.551379] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:22.556266] Received: {"t":4629,"field":"adcs_monitor.mag1_vec","val":"-0.000014,0.000008,0.000034,"}
+[2020-04-24 19:21:22.556464] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.561218] Received: {"t":4634,"field":"pan.cycle_no","val":"11"}
+[2020-04-24 19:21:22.561432] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:22.566173] Received: {"t":4639,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:22.566369] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.721163] Received: {"t":4794,"field":"pan.cycle_no","val":"12"}
+[2020-04-24 19:21:22.721431] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:22.726269] Received: {"t":4799,"field":"adcs_monitor.mag1_vec","val":"-0.000015,0.000008,0.000030,"}
+[2020-04-24 19:21:22.726504] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.731151] Received: {"t":4804,"field":"pan.cycle_no","val":"12"}
+[2020-04-24 19:21:22.731379] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:22.736145] Received: {"t":4809,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:22.736351] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.891146] Received: {"t":4964,"field":"pan.cycle_no","val":"13"}
+[2020-04-24 19:21:22.891356] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:22.896267] Received: {"t":4969,"field":"adcs_monitor.mag1_vec","val":"-0.000016,0.000008,0.000024,"}
+[2020-04-24 19:21:22.896476] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:22.901142] Received: {"t":4974,"field":"pan.cycle_no","val":"13"}
+[2020-04-24 19:21:22.901359] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:22.906146] Received: {"t":4979,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:22.906345] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.062151] Received: {"t":5134,"field":"pan.cycle_no","val":"14"}
+[2020-04-24 19:21:23.062367] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:23.067266] Received: {"t":5140,"field":"adcs_monitor.mag1_vec","val":"-0.000018,0.000007,0.000019,"}
+[2020-04-24 19:21:23.067471] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.072143] Received: {"t":5145,"field":"pan.cycle_no","val":"14"}
+[2020-04-24 19:21:23.072362] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:23.077147] Received: {"t":5150,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:23.077342] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.231149] Received: {"t":5304,"field":"pan.cycle_no","val":"15"}
+[2020-04-24 19:21:23.231386] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:23.236270] Received: {"t":5309,"field":"adcs_monitor.mag1_vec","val":"-0.000026,0.000009,0.000005,"}
+[2020-04-24 19:21:23.236507] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.241149] Received: {"t":5314,"field":"pan.cycle_no","val":"15"}
+[2020-04-24 19:21:23.241384] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:23.246145] Received: {"t":5319,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:23.246351] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.401174] Received: {"t":5474,"field":"pan.cycle_no","val":"16"}
+[2020-04-24 19:21:23.401399] Sent:     {"mode": 114, "field": "adcs_monitor.mag1_vec"}
+[2020-04-24 19:21:23.406290] Received: {"t":5479,"field":"adcs_monitor.mag1_vec","val":"-0.000028,0.000010,0.000001,"}
+[2020-04-24 19:21:23.419587] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:23.424267] Received: {"t":5497,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:23.424473] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device1"}
+[2020-04-24 19:21:23.429239] Received: {"t":5502,"field":"adcs_monitor.havt_device1","val":"true"}
+[2020-04-24 19:21:23.429459] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device2"}
+[2020-04-24 19:21:23.434246] Received: {"t":5507,"field":"adcs_monitor.havt_device2","val":"false"}
+[2020-04-24 19:21:23.434466] Sent:     {"mode": 114, "field": "adcs_monitor.havt_device0"}
+[2020-04-24 19:21:23.439239] Received: {"t":5512,"field":"adcs_monitor.havt_device0","val":"true"}
+[2020-04-24 19:21:23.439507] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.444170] Received: {"t":5517,"field":"pan.cycle_no","val":"16"}
+[2020-04-24 19:21:23.444381] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:23.449201] Received: {"t":5522,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:23.449399] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.577178] Received: {"t":5650,"field":"pan.cycle_no","val":"17"}
+[2020-04-24 19:21:23.577390] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:23.582291] Received: {"t":5655,"field":"adcs_monitor.gyr_vec","val":"0.027864,-0.027730,-0.012683,"}
+[2020-04-24 19:21:23.582490] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.587170] Received: {"t":5660,"field":"pan.cycle_no","val":"17"}
+[2020-04-24 19:21:23.587390] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:23.592174] Received: {"t":5665,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:23.592370] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.747185] Received: {"t":5820,"field":"pan.cycle_no","val":"18"}
+[2020-04-24 19:21:23.747430] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:23.752296] Received: {"t":5825,"field":"adcs_monitor.gyr_vec","val":"0.027730,-0.027464,-0.012617,"}
+[2020-04-24 19:21:23.752539] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.757176] Received: {"t":5830,"field":"pan.cycle_no","val":"18"}
+[2020-04-24 19:21:23.757401] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:23.762179] Received: {"t":5835,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:23.762402] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.917172] Received: {"t":5990,"field":"pan.cycle_no","val":"19"}
+[2020-04-24 19:21:23.917387] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:23.922290] Received: {"t":5995,"field":"adcs_monitor.gyr_vec","val":"0.028263,-0.026932,-0.013083,"}
+[2020-04-24 19:21:23.922493] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:23.927166] Received: {"t":6000,"field":"pan.cycle_no","val":"19"}
+[2020-04-24 19:21:23.927381] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:23.932176] Received: {"t":6005,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:23.932375] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.087168] Received: {"t":6160,"field":"pan.cycle_no","val":"20"}
+[2020-04-24 19:21:24.087379] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:24.092289] Received: {"t":6165,"field":"adcs_monitor.gyr_vec","val":"0.028663,-0.026865,-0.012284,"}
+[2020-04-24 19:21:24.092498] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.097171] Received: {"t":6170,"field":"pan.cycle_no","val":"20"}
+[2020-04-24 19:21:24.097458] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:24.102172] Received: {"t":6175,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:24.102373] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.257178] Received: {"t":6330,"field":"pan.cycle_no","val":"21"}
+[2020-04-24 19:21:24.257410] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:24.262299] Received: {"t":6335,"field":"adcs_monitor.gyr_vec","val":"0.028596,-0.027065,-0.012550,"}
+[2020-04-24 19:21:24.262532] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.267178] Received: {"t":6340,"field":"pan.cycle_no","val":"21"}
+[2020-04-24 19:21:24.267433] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:24.272178] Received: {"t":6345,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:24.272391] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.427178] Received: {"t":6500,"field":"pan.cycle_no","val":"22"}
+[2020-04-24 19:21:24.427398] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:24.432290] Received: {"t":6505,"field":"adcs_monitor.gyr_vec","val":"0.028263,-0.027131,-0.012351,"}
+[2020-04-24 19:21:24.432504] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.437171] Received: {"t":6510,"field":"pan.cycle_no","val":"22"}
+[2020-04-24 19:21:24.437392] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:24.442174] Received: {"t":6515,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:24.442371] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.597170] Received: {"t":6670,"field":"pan.cycle_no","val":"23"}
+[2020-04-24 19:21:24.597373] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:24.602296] Received: {"t":6675,"field":"adcs_monitor.gyr_vec","val":"0.028529,-0.027398,-0.012550,"}
+[2020-04-24 19:21:24.602500] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.607169] Received: {"t":6680,"field":"pan.cycle_no","val":"23"}
+[2020-04-24 19:21:24.607379] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:24.612172] Received: {"t":6685,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:24.612375] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.767216] Received: {"t":6840,"field":"pan.cycle_no","val":"24"}
+[2020-04-24 19:21:24.767462] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:24.772305] Received: {"t":6845,"field":"adcs_monitor.gyr_vec","val":"0.027531,-0.027065,-0.012683,"}
+[2020-04-24 19:21:24.772537] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.777187] Received: {"t":6850,"field":"pan.cycle_no","val":"24"}
+[2020-04-24 19:21:24.777427] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:24.782171] Received: {"t":6855,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:24.782377] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.937151] Received: {"t":7010,"field":"pan.cycle_no","val":"25"}
+[2020-04-24 19:21:24.940789] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:24.942267] Received: {"t":7015,"field":"adcs_monitor.gyr_vec","val":"0.028263,-0.026665,-0.012683,"}
+[2020-04-24 19:21:24.942469] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:24.947143] Received: {"t":7020,"field":"pan.cycle_no","val":"25"}
+[2020-04-24 19:21:24.947361] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 19:21:24.952148] Received: {"t":7025,"field":"cycle.start","val":"true"}
+[2020-04-24 19:21:24.952343] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:25.107224] Received: {"t":7180,"field":"pan.cycle_no","val":"26"}
+[2020-04-24 19:21:25.107458] Sent:     {"mode": 114, "field": "adcs_monitor.gyr_vec"}
+[2020-04-24 19:21:25.112272] Received: {"t":7185,"field":"adcs_monitor.gyr_vec","val":"0.027797,-0.027065,-0.012550,"}
+[2020-04-24 19:21:25.146153] Sent:     {"mode": 119, "field": "cycle.auto", "val": "true"}
+[2020-04-24 19:21:25.147381] Received: {"t":7218,"field":"cycle.auto","val":"true"}
+[2020-04-24 19:21:25.147662] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "10, 10, 10"}
+[2020-04-24 19:21:25.279290] Received: {"t":7351,"field":"adcs_cmd.rwa_speed_cmd","val":"10.000000,10.000000,10.000000,"}
+[2020-04-24 19:21:25.479770] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:25.617315] Received: {"t":7690,"field":"adcs_monitor.rwa_speed_rd","val":"7.590210,8.868530,7.590210,"}
+[2020-04-24 19:21:25.617621] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:25.787175] Received: {"t":7860,"field":"pan.cycle_no","val":"30"}
+[2020-04-24 19:21:25.787391] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:25.958311] Received: {"t":8030,"field":"adcs_monitor.rwa_speed_rd","val":"8.868530,7.590210,7.590210,"}
+[2020-04-24 19:21:25.958554] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:26.127172] Received: {"t":8200,"field":"pan.cycle_no","val":"32"}
+[2020-04-24 19:21:26.127388] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:26.298313] Received: {"t":8370,"field":"adcs_monitor.rwa_speed_rd","val":"8.868530,7.590210,7.590210,"}
+[2020-04-24 19:21:26.298568] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:26.467176] Received: {"t":8540,"field":"pan.cycle_no","val":"34"}
+[2020-04-24 19:21:26.467404] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:26.638310] Received: {"t":8710,"field":"adcs_monitor.rwa_speed_rd","val":"8.868530,8.868530,8.868530,"}
+[2020-04-24 19:21:26.638575] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:26.808175] Received: {"t":8880,"field":"pan.cycle_no","val":"36"}
+[2020-04-24 19:21:26.808389] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:26.978308] Received: {"t":9050,"field":"adcs_monitor.rwa_speed_rd","val":"8.868530,7.590210,8.868530,"}
+[2020-04-24 19:21:26.978566] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:27.147174] Received: {"t":9220,"field":"pan.cycle_no","val":"38"}
+[2020-04-24 19:21:27.147383] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:27.318318] Received: {"t":9390,"field":"adcs_monitor.rwa_speed_rd","val":"8.868530,7.590210,7.590210,"}
+[2020-04-24 19:21:27.318577] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:27.487174] Received: {"t":9560,"field":"pan.cycle_no","val":"40"}
+[2020-04-24 19:21:27.487383] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:27.658996] Received: {"t":9730,"field":"adcs_monitor.rwa_speed_rd","val":"8.868530,7.590210,7.590210,"}
+[2020-04-24 19:21:27.659260] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:27.827177] Received: {"t":9900,"field":"pan.cycle_no","val":"42"}
+[2020-04-24 19:21:27.827377] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:27.998324] Received: {"t":10070,"field":"adcs_monitor.rwa_speed_rd","val":"7.590210,10.146851,8.868530,"}
+[2020-04-24 19:21:27.998584] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:28.167192] Received: {"t":10240,"field":"pan.cycle_no","val":"44"}
+[2020-04-24 19:21:28.167440] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:28.338325] Received: {"t":10410,"field":"adcs_monitor.rwa_speed_rd","val":"7.590210,7.590210,7.590210,"}
+[2020-04-24 19:21:28.338629] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:28.508185] Received: {"t":10580,"field":"pan.cycle_no","val":"46"}
+[2020-04-24 19:21:28.520991] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:28.678322] Received: {"t":10750,"field":"adcs_monitor.rwa_speed_rd","val":"10.146851,7.590210,8.868530,"}
+[2020-04-24 19:21:28.678592] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 19:21:28.847181] Received: {"t":10920,"field":"pan.cycle_no","val":"48"}
+[2020-04-24 19:21:28.847407] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:29.018314] Received: {"t":11090,"field":"adcs_monitor.rwa_speed_rd","val":"8.868530,8.868530,7.590210,"}
+[2020-04-24 19:21:29.018606] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:29.188327] Received: {"t":11260,"field":"adcs_monitor.rwa_speed_rd","val":"10.146851,8.868530,8.868530,"}
+[2020-04-24 19:21:29.188569] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:21:29.358203] Received: {"t":11430,"field":"gomspace.vbatt","val":"7541"}
+[2020-04-24 19:21:29.363366] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "20, 40, 50"}
+[2020-04-24 19:21:29.529321] Received: {"t":11601,"field":"adcs_cmd.rwa_speed_cmd","val":"20.000000,40.000000,50.000000,"}
+[2020-04-24 19:21:34.534607] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:34.628341] Received: {"t":16700,"field":"adcs_monitor.rwa_speed_rd","val":"19.031250,39.324951,49.487671,"}
+[2020-04-24 19:21:35.629652] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:21:35.648208] Received: {"t":17720,"field":"gomspace.vbatt","val":"7522"}
+[2020-04-24 19:21:35.657453] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "100, 200, 300"}
+[2020-04-24 19:21:35.819337] Received: {"t":17891,"field":"adcs_cmd.rwa_speed_cmd","val":"100.000000,200.000000,300.000000,"}
+[2020-04-24 19:21:40.824613] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:40.918296] Received: {"t":22990,"field":"adcs_monitor.rwa_speed_rd","val":"98.991455,197.998901,298.284546,"}
+[2020-04-24 19:21:41.919644] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:21:41.938182] Received: {"t":24010,"field":"gomspace.vbatt","val":"7447"}
+[2020-04-24 19:21:41.938563] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "-100, 100, -40"}
+[2020-04-24 19:21:42.109322] Received: {"t":24181,"field":"adcs_cmd.rwa_speed_cmd","val":"-100.000000,100.000000,-40.000000,"}
+[2020-04-24 19:21:47.114602] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:47.208321] Received: {"t":29281,"field":"adcs_monitor.rwa_speed_rd","val":"-0.015991,97.713135,-0.015991,"}
+[2020-04-24 19:21:48.223662] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:21:48.398188] Received: {"t":30471,"field":"gomspace.vbatt","val":"7522"}
+[2020-04-24 19:21:48.398509] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "100, 50, 10"}
+[2020-04-24 19:21:48.569304] Received: {"t":30642,"field":"adcs_cmd.rwa_speed_cmd","val":"100.000000,50.000000,10.000000,"}
+[2020-04-24 19:21:53.574564] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:21:53.669321] Received: {"t":35741,"field":"adcs_monitor.rwa_speed_rd","val":"98.991455,49.487671,8.868530,"}
+[2020-04-24 19:21:54.688617] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:21:54.858187] Received: {"t":36931,"field":"gomspace.vbatt","val":"7503"}
+[2020-04-24 19:21:54.858503] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "500, 500, 500"}
+[2020-04-24 19:21:55.030314] Received: {"t":37102,"field":"adcs_cmd.rwa_speed_cmd","val":"500.000000,500.000000,500.000000,"}
+[2020-04-24 19:22:00.034326] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:00.129342] Received: {"t":42201,"field":"adcs_monitor.rwa_speed_rd","val":"501.380859,497.577759,500.102417,"}
+[2020-04-24 19:22:01.130732] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:01.149187] Received: {"t":43221,"field":"gomspace.vbatt","val":"7181"}
+[2020-04-24 19:22:01.149522] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "680, 680, 680"}
+[2020-04-24 19:22:01.320317] Received: {"t":43393,"field":"adcs_cmd.rwa_speed_cmd","val":"680.000000,680.000000,680.000000,"}
+[2020-04-24 19:22:06.370789] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:06.419309] Received: {"t":48491,"field":"adcs_monitor.rwa_speed_rd","val":"667.660889,657.498047,660.022705,"}
+[2020-04-24 19:22:07.435321] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:07.609161] Received: {"t":49682,"field":"gomspace.vbatt","val":"7052"}
+[2020-04-24 19:22:07.615784] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "-680, -680, -680"}
+[2020-04-24 19:22:07.780309] Received: {"t":49852,"field":"adcs_cmd.rwa_speed_cmd","val":"-680.000000,-680.000000,-680.000000,"}
+[2020-04-24 19:22:12.785565] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:12.879293] Received: {"t":54951,"field":"adcs_monitor.rwa_speed_rd","val":"-1.294312,-0.015991,-0.015991,"}
+[2020-04-24 19:22:13.908651] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:14.070270] Received: {"t":56142,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:15.071604] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "2"}
+[2020-04-24 19:22:15.089193] Received: {"t":57162,"field":"adcs_cmd.rwa_mode","val":"2"}
+[2020-04-24 19:22:15.089386] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:15.259194] Received: {"t":57332,"field":"gomspace.vbatt","val":"7513"}
+[2020-04-24 19:22:15.259451] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:15.429317] Received: {"t":57502,"field":"adcs_monitor.rwa_speed_rd","val":"-1.294312,-0.015991,-0.015991,"}
+[2020-04-24 19:22:15.429644] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0.0001, 0, 0"}
+[2020-04-24 19:22:15.601301] Received: {"t":57673,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000100,0.000000,0.000000,"}
+[2020-04-24 19:22:16.602542] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:16.619317] Received: {"t":58692,"field":"adcs_monitor.rwa_torque_rd","val":"0.000124,0.000028,0.000028,"}
+[2020-04-24 19:22:16.619557] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:16.789329] Received: {"t":58862,"field":"adcs_monitor.rwa_speed_rd","val":"7.590210,-0.015991,-0.015991,"}
+[2020-04-24 19:22:16.789586] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:16.960297] Received: {"t":59032,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:17.961564] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:17.979194] Received: {"t":60052,"field":"gomspace.vbatt","val":"7513"}
+[2020-04-24 19:22:17.979433] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:18.149321] Received: {"t":60222,"field":"adcs_monitor.rwa_speed_rd","val":"7.590210,-0.015991,-0.015991,"}
+[2020-04-24 19:22:18.149629] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0.0001, 0"}
+[2020-04-24 19:22:18.320294] Received: {"t":60393,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000100,0.000000,"}
+[2020-04-24 19:22:19.321564] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:19.339322] Received: {"t":61412,"field":"adcs_monitor.rwa_torque_rd","val":"0.000028,0.000124,0.000028,"}
+[2020-04-24 19:22:19.339605] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:19.509309] Received: {"t":61582,"field":"adcs_monitor.rwa_speed_rd","val":"7.590210,6.343750,-0.015991,"}
+[2020-04-24 19:22:19.509565] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:19.680301] Received: {"t":61753,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:20.681557] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:20.699191] Received: {"t":62772,"field":"gomspace.vbatt","val":"7513"}
+[2020-04-24 19:22:20.699460] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:20.869316] Received: {"t":62942,"field":"adcs_monitor.rwa_speed_rd","val":"7.590210,6.343750,-1.294312,"}
+[2020-04-24 19:22:20.869634] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0.0001"}
+[2020-04-24 19:22:21.041321] Received: {"t":63113,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000100,"}
+[2020-04-24 19:22:22.042571] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:22.059320] Received: {"t":64132,"field":"adcs_monitor.rwa_torque_rd","val":"0.000025,0.000028,0.000124,"}
+[2020-04-24 19:22:22.059572] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:22.230307] Received: {"t":64302,"field":"adcs_monitor.rwa_speed_rd","val":"8.868530,8.868530,7.590210,"}
+[2020-04-24 19:22:22.230562] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:22.400300] Received: {"t":64473,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:23.401558] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:23.419199] Received: {"t":65492,"field":"gomspace.vbatt","val":"7503"}
+[2020-04-24 19:22:23.419452] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:23.590310] Received: {"t":65662,"field":"adcs_monitor.rwa_speed_rd","val":"7.590210,8.868530,7.590210,"}
+[2020-04-24 19:22:23.590615] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "-0.0001, 0, 0"}
+[2020-04-24 19:22:23.768564] Received: {"t":65833,"field":"adcs_cmd.rwa_torque_cmd","val":"-0.000100,0.000000,0.000000,"}
+[2020-04-24 19:22:24.770025] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:24.780342] Received: {"t":66852,"field":"adcs_monitor.rwa_torque_rd","val":"0.000124,0.000028,0.000028,"}
+[2020-04-24 19:22:24.800782] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:24.950320] Received: {"t":67022,"field":"adcs_monitor.rwa_speed_rd","val":"-0.015991,8.868530,7.590210,"}
+[2020-04-24 19:22:24.950576] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:25.120302] Received: {"t":67193,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:26.121568] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:26.140202] Received: {"t":68212,"field":"gomspace.vbatt","val":"7485"}
+[2020-04-24 19:22:26.140453] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:26.310324] Received: {"t":68382,"field":"adcs_monitor.rwa_speed_rd","val":"-3.819092,8.868530,7.590210,"}
+[2020-04-24 19:22:26.310634] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, -0.0001, 0"}
+[2020-04-24 19:22:26.481311] Received: {"t":68553,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,-0.000100,0.000000,"}
+[2020-04-24 19:22:27.482547] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:27.500329] Received: {"t":69572,"field":"adcs_monitor.rwa_torque_rd","val":"0.000025,0.000124,0.000028,"}
+[2020-04-24 19:22:27.500593] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:27.670320] Received: {"t":69742,"field":"adcs_monitor.rwa_speed_rd","val":"-1.294312,1.262329,8.868530,"}
+[2020-04-24 19:22:27.670575] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:27.840313] Received: {"t":69913,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:28.841599] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:28.859204] Received: {"t":70932,"field":"gomspace.vbatt","val":"7513"}
+[2020-04-24 19:22:28.859443] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:29.030328] Received: {"t":71102,"field":"adcs_monitor.rwa_speed_rd","val":"-2.540649,-0.015991,8.868530,"}
+[2020-04-24 19:22:29.030647] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, -0.0001"}
+[2020-04-24 19:22:29.201315] Received: {"t":71273,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,-0.000100,"}
+[2020-04-24 19:22:30.202563] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:30.220331] Received: {"t":72292,"field":"adcs_monitor.rwa_torque_rd","val":"0.000025,0.000028,0.000124,"}
+[2020-04-24 19:22:30.220585] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:30.390327] Received: {"t":72462,"field":"adcs_monitor.rwa_speed_rd","val":"-2.540649,-0.015991,1.262329,"}
+[2020-04-24 19:22:30.390582] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:30.561304] Received: {"t":72633,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:31.562550] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:31.580204] Received: {"t":73652,"field":"gomspace.vbatt","val":"7513"}
+[2020-04-24 19:22:31.580470] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:31.750335] Received: {"t":73822,"field":"adcs_monitor.rwa_speed_rd","val":"-3.819092,-1.294312,-0.015991,"}
+[2020-04-24 19:22:31.750646] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0.002, 0, 0"}
+[2020-04-24 19:22:31.921309] Received: {"t":73993,"field":"adcs_cmd.rwa_torque_cmd","val":"0.002000,0.000000,0.000000,"}
+[2020-04-24 19:22:32.922549] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:32.940326] Received: {"t":75012,"field":"adcs_monitor.rwa_torque_rd","val":"0.001921,0.000028,0.000028,"}
+[2020-04-24 19:22:32.940565] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:33.111339] Received: {"t":75183,"field":"adcs_monitor.rwa_speed_rd","val":"137.085938,-0.015991,-0.015991,"}
+[2020-04-24 19:22:33.111594] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:33.281307] Received: {"t":75353,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:34.282589] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:34.300209] Received: {"t":76372,"field":"gomspace.vbatt","val":"7494"}
+[2020-04-24 19:22:34.300483] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:34.470366] Received: {"t":76542,"field":"adcs_monitor.rwa_speed_rd","val":"187.836060,-0.015991,-0.015991,"}
+[2020-04-24 19:22:34.470828] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0.002, 0"}
+[2020-04-24 19:22:34.641311] Received: {"t":76713,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.002000,0.000000,"}
+[2020-04-24 19:22:35.642614] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:35.660326] Received: {"t":77732,"field":"adcs_monitor.rwa_torque_rd","val":"0.000025,0.001921,0.000028,"}
+[2020-04-24 19:22:35.660619] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:35.830341] Received: {"t":77902,"field":"adcs_monitor.rwa_speed_rd","val":"187.836060,139.610596,-0.015991,"}
+[2020-04-24 19:22:35.830660] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:36.001303] Received: {"t":78073,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:37.006268] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:37.020202] Received: {"t":79092,"field":"gomspace.vbatt","val":"7456"}
+[2020-04-24 19:22:37.024214] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:37.190339] Received: {"t":79262,"field":"adcs_monitor.rwa_speed_rd","val":"187.836060,189.114502,-0.015991,"}
+[2020-04-24 19:22:37.207447] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0.002"}
+[2020-04-24 19:22:37.361305] Received: {"t":79433,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.002000,"}
+[2020-04-24 19:22:38.362562] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:38.380332] Received: {"t":80452,"field":"adcs_monitor.rwa_torque_rd","val":"0.000028,0.000028,0.001921,"}
+[2020-04-24 19:22:38.380604] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:38.550341] Received: {"t":80622,"field":"adcs_monitor.rwa_speed_rd","val":"186.589600,190.392822,142.135498,"}
+[2020-04-24 19:22:38.550641] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:38.721307] Received: {"t":80793,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:39.722582] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:39.740198] Received: {"t":81813,"field":"gomspace.vbatt","val":"7422"}
+[2020-04-24 19:22:39.740495] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:39.910345] Received: {"t":81982,"field":"adcs_monitor.rwa_speed_rd","val":"186.589600,190.392822,189.114502,"}
+[2020-04-24 19:22:39.910735] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "-0.002, 0, 0"}
+[2020-04-24 19:22:40.081335] Received: {"t":82153,"field":"adcs_cmd.rwa_torque_cmd","val":"-0.002000,0.000000,0.000000,"}
+[2020-04-24 19:22:41.082614] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:41.100321] Received: {"t":83172,"field":"adcs_monitor.rwa_torque_rd","val":"0.001921,0.000025,0.000028,"}
+[2020-04-24 19:22:41.100589] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:41.270339] Received: {"t":83342,"field":"adcs_monitor.rwa_speed_rd","val":"44.406250,190.392822,190.392822,"}
+[2020-04-24 19:22:41.270636] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:41.441301] Received: {"t":83513,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:42.442619] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:42.460208] Received: {"t":84532,"field":"gomspace.vbatt","val":"7456"}
+[2020-04-24 19:22:42.460502] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:42.630337] Received: {"t":84703,"field":"adcs_monitor.rwa_speed_rd","val":"-6.375732,189.114502,190.392822,"}
+[2020-04-24 19:22:42.630679] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, -0.002, 0"}
+[2020-04-24 19:22:42.801315] Received: {"t":84873,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,-0.002000,0.000000,"}
+[2020-04-24 19:22:43.802592] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:43.820328] Received: {"t":85892,"field":"adcs_monitor.rwa_torque_rd","val":"0.000025,0.001921,0.000028,"}
+[2020-04-24 19:22:43.820585] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:43.990333] Received: {"t":86062,"field":"adcs_monitor.rwa_speed_rd","val":"-5.097412,46.963013,189.114502,"}
+[2020-04-24 19:22:43.990634] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:44.161305] Received: {"t":86233,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:45.164206] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:45.180200] Received: {"t":87252,"field":"gomspace.vbatt","val":"7475"}
+[2020-04-24 19:22:45.180447] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:45.350332] Received: {"t":87422,"field":"adcs_monitor.rwa_speed_rd","val":"-5.097412,-1.294312,190.392822,"}
+[2020-04-24 19:22:45.350718] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, -0.002"}
+[2020-04-24 19:22:45.522307] Received: {"t":87594,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,-0.002000,"}
+[2020-04-24 19:22:46.523558] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:46.540321] Received: {"t":88612,"field":"adcs_monitor.rwa_torque_rd","val":"0.000028,0.000028,0.001921,"}
+[2020-04-24 19:22:46.540592] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:46.710303] Received: {"t":88783,"field":"adcs_monitor.rwa_speed_rd","val":"-6.375732,-2.540649,45.684692,"}
+[2020-04-24 19:22:46.710592] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:46.881274] Received: {"t":88953,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:47.094340] Received: {"t":89166,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 2 has ran out of cycles."}
+[2020-04-24 19:22:47.882571] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:47.900172] Received: {"t":89973,"field":"gomspace.vbatt","val":"7494"}
+[2020-04-24 19:22:47.900446] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:48.070297] Received: {"t":90143,"field":"adcs_monitor.rwa_speed_rd","val":"-6.375732,-1.294312,-2.540649,"}
+[2020-04-24 19:22:48.070607] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0.00418, 0, 0"}
+[2020-04-24 19:22:48.241278] Received: {"t":90314,"field":"adcs_cmd.rwa_torque_cmd","val":"0.004180,0.000000,0.000000,"}
+[2020-04-24 19:22:48.454316] Received: {"t":90526,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 4 has ran out of cycles."}
+[2020-04-24 19:22:49.242548] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:49.261294] Received: {"t":91333,"field":"adcs_monitor.rwa_torque_rd","val":"0.004132,0.000028,0.000028,"}
+[2020-04-24 19:22:49.261560] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:49.430304] Received: {"t":91503,"field":"adcs_monitor.rwa_speed_rd","val":"302.087646,-2.540649,-1.294312,"}
+[2020-04-24 19:22:49.430578] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:49.601272] Received: {"t":91673,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:49.814316] Received: {"t":91886,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-04-24 19:22:50.628651] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:50.790186] Received: {"t":92863,"field":"gomspace.vbatt","val":"7438"}
+[2020-04-24 19:22:50.790490] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:50.961349] Received: {"t":93033,"field":"adcs_monitor.rwa_speed_rd","val":"409.979492,-2.540649,-2.540649,"}
+[2020-04-24 19:22:50.961799] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0.00418, 0"}
+[2020-04-24 19:22:51.132297] Received: {"t":93204,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.004180,0.000000,"}
+[2020-04-24 19:22:51.174319] Received: {"t":93246,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-04-24 19:22:52.133613] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:52.151339] Received: {"t":94223,"field":"adcs_monitor.rwa_torque_rd","val":"0.000025,0.004132,0.000028,"}
+[2020-04-24 19:22:52.151625] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:52.321354] Received: {"t":94393,"field":"adcs_monitor.rwa_speed_rd","val":"407.454834,303.365967,-2.540649,"}
+[2020-04-24 19:22:52.321643] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:52.491316] Received: {"t":94564,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:52.534342] Received: {"t":94606,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-04-24 19:22:53.509955] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:53.510218] Received: {"t":95583,"field":"gomspace.vbatt","val":"7356"}
+[2020-04-24 19:22:53.510463] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:53.681357] Received: {"t":95753,"field":"adcs_monitor.rwa_speed_rd","val":"406.176514,411.257812,-2.540649,"}
+[2020-04-24 19:22:53.687446] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0.00418"}
+[2020-04-24 19:22:53.853187] Received: {"t":95924,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.004180,"}
+[2020-04-24 19:22:53.894375] Received: {"t":95966,"svrty":"NOTICE","msg":"[Quake Notice] Radio State 5 has ran out of cycles."}
+[2020-04-24 19:22:54.740160] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-04-24 19:22:54.854445] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:54.871323] Received: {"t":96943,"field":"adcs_monitor.rwa_torque_rd","val":"0.000025,0.000028,0.004132,"}
+[2020-04-24 19:22:54.871578] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:54.909823] Received: Consumed[0\r\n0\r]
+[2020-04-24 19:22:55.041344] Received: {"t":97113,"field":"adcs_monitor.rwa_speed_rd","val":"407.454834,411.257812,308.447388,"}
+[2020-04-24 19:22:55.041658] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:55.211311] Received: {"t":97284,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:55.249579] Received: Consumed[READY\r\n]
+[2020-04-24 19:22:55.454109] Received:         > get_SBDWB=30DA30D
+[2020-04-24 19:22:55.454224] Received:         > return=0
+[2020-04-24 19:22:56.212571] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:56.260204] Received: {"t":98332,"field":"gomspace.vbatt","val":"7265"}
+[2020-04-24 19:22:56.270780] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:56.430348] Received: {"t":98503,"field":"adcs_monitor.rwa_speed_rd","val":"406.176514,411.257812,411.257812,"}
+[2020-04-24 19:22:56.430749] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "-0.00418, 0, 0"}
+[2020-04-24 19:22:56.601314] Received: {"t":98674,"field":"adcs_cmd.rwa_torque_cmd","val":"-0.004180,0.000000,0.000000,"}
+[2020-04-24 19:22:57.602575] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:22:57.620333] Received: {"t":99692,"field":"adcs_monitor.rwa_torque_rd","val":"0.004132,0.000028,0.000028,"}
+[2020-04-24 19:22:57.620561] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:57.790349] Received: {"t":99862,"field":"adcs_monitor.rwa_speed_rd","val":"96.466675,411.257812,411.257812,"}
+[2020-04-24 19:22:57.790644] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:22:57.961323] Received: {"t":100033,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:22:58.962654] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:22:58.980220] Received: {"t":101053,"field":"gomspace.vbatt","val":"7319"}
+[2020-04-24 19:22:58.980491] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:22:59.150386] Received: {"t":101223,"field":"adcs_monitor.rwa_speed_rd","val":"-11.425171,409.979492,412.504150,"}
+[2020-04-24 19:22:59.150742] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, -0.00418, 0"}
+[2020-04-24 19:22:59.322331] Received: {"t":101394,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,-0.004180,0.000000,"}
+[2020-04-24 19:23:00.323710] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:23:00.340380] Received: {"t":102413,"field":"adcs_monitor.rwa_torque_rd","val":"0.000025,0.004132,0.000028,"}
+[2020-04-24 19:23:00.340690] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:23:00.510394] Received: {"t":102583,"field":"adcs_monitor.rwa_speed_rd","val":"-11.425171,100.269775,412.504150,"}
+[2020-04-24 19:23:00.510729] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:23:00.681354] Received: {"t":102753,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:23:01.682672] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:23:01.700253] Received: {"t":103773,"field":"gomspace.vbatt","val":"7412"}
+[2020-04-24 19:23:01.700480] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:23:01.871406] Received: {"t":103943,"field":"adcs_monitor.rwa_speed_rd","val":"-10.178711,-3.819092,411.257812,"}
+[2020-04-24 19:23:01.871794] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, -0.00418"}
+[2020-04-24 19:23:02.041336] Received: {"t":104114,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,-0.004180,"}
+[2020-04-24 19:23:03.042628] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:23:03.061342] Received: {"t":105133,"field":"adcs_monitor.rwa_torque_rd","val":"0.000025,0.000025,0.004132,"}
+[2020-04-24 19:23:03.061610] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:23:03.231354] Received: {"t":105303,"field":"adcs_monitor.rwa_speed_rd","val":"-12.703491,-3.819092,98.991455,"}
+[2020-04-24 19:23:03.231650] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:23:03.402853] Received: {"t":105473,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:23:04.404159] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:23:04.420250] Received: {"t":106493,"field":"gomspace.vbatt","val":"7475"}
+[2020-04-24 19:23:04.420514] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:23:04.591355] Received: {"t":106663,"field":"adcs_monitor.rwa_speed_rd","val":"-13.981812,-3.819092,-6.375732,"}
+[2020-04-24 19:23:04.591690] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0.002, 0.002, 0.002"}
+[2020-04-24 19:23:04.762325] Received: {"t":106834,"field":"adcs_cmd.rwa_torque_cmd","val":"0.002000,0.002000,0.002000,"}
+[2020-04-24 19:23:05.763591] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:23:05.781345] Received: {"t":107853,"field":"adcs_monitor.rwa_torque_rd","val":"0.001921,0.001921,0.001921,"}
+[2020-04-24 19:23:05.781591] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:23:05.951399] Received: {"t":108023,"field":"adcs_monitor.rwa_speed_rd","val":"128.201538,137.085938,137.085938,"}
+[2020-04-24 19:23:05.951720] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:23:06.121358] Received: {"t":108193,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:23:07.122677] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:23:07.141252] Received: {"t":109213,"field":"gomspace.vbatt","val":"7394"}
+[2020-04-24 19:23:07.141506] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:23:07.311394] Received: {"t":109383,"field":"adcs_monitor.rwa_speed_rd","val":"180.229858,185.311279,186.589600,"}
+[2020-04-24 19:23:07.311820] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "-0.002, -0.002, -0.002"}
+[2020-04-24 19:23:07.483906] Received: {"t":109554,"field":"adcs_cmd.rwa_torque_cmd","val":"-0.002000,-0.002000,-0.002000,"}
+[2020-04-24 19:23:08.485235] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_torque_rd"}
+[2020-04-24 19:23:08.501380] Received: {"t":110573,"field":"adcs_monitor.rwa_torque_rd","val":"0.001921,0.001921,0.001921,"}
+[2020-04-24 19:23:08.501694] Sent:     {"mode": 114, "field": "adcs_monitor.rwa_speed_rd"}
+[2020-04-24 19:23:08.671375] Received: {"t":110743,"field":"adcs_monitor.rwa_speed_rd","val":"38.078613,45.684692,44.406250,"}
+[2020-04-24 19:23:08.671710] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:23:08.841351] Received: {"t":110914,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:23:09.842699] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_torque_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:23:09.861356] Received: {"t":111934,"field":"adcs_cmd.rwa_torque_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:23:10.862673] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-04-24 19:23:10.881347] Received: {"t":112954,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-04-24 19:23:10.881613] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-04-24 19:23:11.051244] Received: {"t":113123,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-04-24 19:23:12.053665] Sent:     {"mode": 119, "field": "cycle.auto", "val": "false"}
+[2020-04-24 19:23:12.071244] Received: {"t":114143,"field":"cycle.auto","val":"false"}
+[2020-04-24 19:23:12.071567] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:12.241875] Received: {"t":114313,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:12.246001] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:12.247212] Received: {"t":114319,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:12.247414] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:12.252240] Received: {"t":114324,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:12.252500] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:12.257269] Received: {"t":114329,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:12.257493] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:12.262278] Received: {"t":114334,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:12.262490] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:12.267293] Received: {"t":114339,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:12.267527] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:12.272265] Received: {"t":114344,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:12.272500] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:12.277293] Received: {"t":114349,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:12.277527] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:12.282271] Received: {"t":114354,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:12.286960] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:12.287270] Received: {"t":114359,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:12.291977] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:12.292282] Received: {"t":114364,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:12.296961] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:12.297275] Received: {"t":114369,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:12.297536] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:12.302273] Received: {"t":114374,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:12.302503] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:12.307268] Received: {"t":114379,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:12.307507] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:12.312274] Received: {"t":114384,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:12.312508] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:12.317273] Received: {"t":114389,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:12.317514] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:12.322278] Received: {"t":114394,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:12.322512] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:12.327274] Received: {"t":114399,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:12.327511] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:12.332276] Received: {"t":114404,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:12.332513] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:12.337272] Received: {"t":114409,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:12.337508] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:12.342275] Received: {"t":114414,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:12.342520] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:12.347270] Received: {"t":114419,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:12.347492] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:12.352270] Received: {"t":114424,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:12.359020] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:12.359308] Received: {"t":114431,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:12.361007] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:12.366274] Received: {"t":114438,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:12.375999] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:12.376293] Received: {"t":114448,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:12.391997] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:12.392295] Received: {"t":114464,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:12.399000] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:12.399296] Received: {"t":114471,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:12.408997] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:12.409293] Received: {"t":114481,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:12.424112] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:12.426267] Received: {"t":114498,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:12.426505] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:12.431275] Received: {"t":114503,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:12.431512] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:12.436278] Received: {"t":114508,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:12.436520] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:12.441280] Received: {"t":114513,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:12.441519] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:12.446274] Received: {"t":114518,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:12.446508] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:12.451273] Received: {"t":114523,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:12.451513] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:12.456274] Received: {"t":114528,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:12.456521] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:12.461276] Received: {"t":114533,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:12.461519] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:12.466275] Received: {"t":114538,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:12.466511] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:12.471274] Received: {"t":114543,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:12.471525] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:12.476273] Received: {"t":114548,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:12.476510] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:12.481269] Received: {"t":114553,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:12.481504] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:12.486268] Received: {"t":114558,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:12.486527] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:12.491275] Received: {"t":114563,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:12.491520] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:12.496269] Received: {"t":114568,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:12.496514] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:12.501270] Received: {"t":114573,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:12.501508] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:12.506268] Received: {"t":114578,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:12.506516] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:12.511269] Received: {"t":114583,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:12.511505] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:12.516269] Received: {"t":114588,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:12.516510] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:12.556244] Received: {"t":114593,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:12.556557] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:12.561250] Received: {"t":114633,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:12.561543] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:12.566252] Received: {"t":114638,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:12.566551] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:12.571244] Received: {"t":114643,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:12.571520] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:12.576243] Received: {"t":114648,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:12.576500] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:12.581242] Received: {"t":114653,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:12.581554] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:12.586245] Received: {"t":114658,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:12.586512] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:12.591249] Received: {"t":114663,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:12.595969] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:12.596272] Received: {"t":114668,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:12.596900] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:12.601242] Received: {"t":114673,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:12.601502] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:12.606244] Received: {"t":114678,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:12.606508] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:12.611352] Received: {"t":114683,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:12.611594] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:12.616265] Received: {"t":114688,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:12.616493] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:12.621273] Received: {"t":114693,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:12.621509] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:12.626275] Received: {"t":114698,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:12.626511] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:12.631272] Received: {"t":114703,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:12.631507] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:12.636273] Received: {"t":114708,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:12.641014] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:12.641312] Received: {"t":114713,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:12.649009] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:12.649303] Received: {"t":114721,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:12.650781] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:12.654271] Received: {"t":114726,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:12.654501] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:12.659303] Received: {"t":114731,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:12.660786] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:12.664266] Received: {"t":114737,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:12.664484] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:12.669271] Received: {"t":114741,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:12.671518] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:12.674357] Received: {"t":114746,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:12.674597] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:12.679282] Received: {"t":114751,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:12.679539] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:12.684288] Received: {"t":114756,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:12.684544] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:12.689278] Received: {"t":114761,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:12.689528] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:12.694285] Received: {"t":114766,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:12.700000] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:12.700312] Received: {"t":114773,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:12.704433] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:12.706272] Received: {"t":114778,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:12.706507] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:12.711275] Received: {"t":114783,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:12.711516] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:12.716274] Received: {"t":114788,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:12.721000] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:12.721299] Received: {"t":114793,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:12.726000] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:12.726295] Received: {"t":114798,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:12.737456] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:12.739271] Received: {"t":114811,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:12.739501] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:12.744271] Received: {"t":114816,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:12.744516] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:12.749270] Received: {"t":114821,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:12.749512] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:12.754277] Received: {"t":114826,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:12.754515] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:12.759272] Received: {"t":114831,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:12.759528] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:12.764283] Received: {"t":114836,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:12.764534] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:12.769271] Received: {"t":114841,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:12.769505] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:12.774290] Received: {"t":114846,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:12.774535] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:12.779274] Received: {"t":114851,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:12.779539] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:12.784283] Received: {"t":114856,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:12.784531] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:12.789279] Received: {"t":114861,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:12.789519] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:12.794272] Received: {"t":114866,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:12.794523] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:12.799280] Received: {"t":114871,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:12.799536] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:12.804458] Received: {"t":114876,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:12.804718] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:12.809275] Received: {"t":114882,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:12.809526] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:12.814281] Received: {"t":114886,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:12.814577] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:12.819277] Received: {"t":114891,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:12.819536] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:12.824285] Received: {"t":114896,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:12.824530] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:12.829271] Received: {"t":114901,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:12.829511] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:12.834288] Received: {"t":114906,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:12.834532] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:12.839269] Received: {"t":114911,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:12.839517] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:12.844311] Received: {"t":114916,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:12.844557] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:12.849269] Received: {"t":114921,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:12.849506] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:12.854275] Received: {"t":114926,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:12.854518] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:12.859272] Received: {"t":114931,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:12.859511] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:12.864271] Received: {"t":114936,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:12.864511] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:12.869269] Received: {"t":114941,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:12.869517] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:12.874271] Received: {"t":114946,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:12.874509] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:12.879268] Received: {"t":114951,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:12.879531] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:12.884279] Received: {"t":114956,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:12.884519] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:12.889273] Received: {"t":114961,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:12.889519] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:12.894277] Received: {"t":114966,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:12.894513] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:12.899272] Received: {"t":114971,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:12.899521] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:12.904276] Received: {"t":114976,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:12.904518] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:12.909276] Received: {"t":114981,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:12.909521] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:12.914283] Received: {"t":114986,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:12.914527] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:12.919274] Received: {"t":114991,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:12.919518] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:12.924282] Received: {"t":114996,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:12.924533] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:12.929269] Received: {"t":115001,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:12.929512] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:12.934273] Received: {"t":115006,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:12.934514] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:12.939275] Received: {"t":115011,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:12.939522] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:12.944274] Received: {"t":115016,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:12.944519] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:12.949270] Received: {"t":115021,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:12.949504] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:12.954268] Received: {"t":115026,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:12.954506] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:12.959269] Received: {"t":115031,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:12.959515] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:12.964272] Received: {"t":115036,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:12.964529] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:12.969273] Received: {"t":115041,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:12.969516] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:12.974274] Received: {"t":115046,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:12.974533] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:12.979275] Received: {"t":115051,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:12.979504] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:12.984278] Received: {"t":115056,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:12.984515] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:12.989281] Received: {"t":115061,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:12.989526] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:12.994280] Received: {"t":115066,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:12.994514] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:12.999281] Received: {"t":115071,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:12.999518] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:13.004281] Received: {"t":115076,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:13.004512] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:13.009277] Received: {"t":115081,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:13.009519] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:13.014282] Received: {"t":115086,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:13.014522] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:13.019281] Received: {"t":115091,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:13.019519] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:13.024289] Received: {"t":115096,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:13.024546] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:13.029270] Received: {"t":115101,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:13.029528] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:13.034279] Received: {"t":115106,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:13.034515] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:13.039266] Received: {"t":115111,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:13.039510] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:13.044275] Received: {"t":115116,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:13.044533] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:13.049270] Received: {"t":115121,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:13.049527] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:13.054276] Received: {"t":115126,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:13.054525] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:13.160233] Received: {"t":115131,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:13.160509] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:13.165286] Received: {"t":115237,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:13.165587] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:13.170271] Received: {"t":115242,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:13.170530] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:13.175266] Received: {"t":115247,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:13.175503] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:13.180266] Received: {"t":115252,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:13.180496] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:13.185267] Received: {"t":115257,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:13.185507] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:13.190268] Received: {"t":115262,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:13.190499] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:13.195265] Received: {"t":115267,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:13.195508] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:13.200264] Received: {"t":115272,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:13.200494] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:13.205467] Received: {"t":115277,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:13.205709] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:13.210264] Received: {"t":115283,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:13.210500] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:13.215269] Received: {"t":115287,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:13.215516] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:13.220279] Received: {"t":115292,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:13.220512] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:13.225269] Received: {"t":115297,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:13.225521] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:13.230269] Received: {"t":115302,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:13.230507] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:13.235260] Received: {"t":115307,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:13.235500] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:13.240261] Received: {"t":115312,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:13.240496] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:13.245265] Received: {"t":115317,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:13.245501] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:13.250268] Received: {"t":115322,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:13.250501] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:13.255269] Received: {"t":115327,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:13.255514] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:13.260268] Received: {"t":115332,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:13.260503] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:13.265268] Received: {"t":115337,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:13.265504] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:13.270267] Received: {"t":115342,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:13.270500] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:13.275272] Received: {"t":115347,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:13.275510] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:13.280267] Received: {"t":115352,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:13.280498] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:13.285271] Received: {"t":115357,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:13.285509] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:13.290267] Received: {"t":115362,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:13.290526] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:13.295277] Received: {"t":115367,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:13.295519] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:13.300270] Received: {"t":115372,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:13.300487] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:13.305276] Received: {"t":115377,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:13.305511] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:13.310277] Received: {"t":115382,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:13.310516] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:13.315275] Received: {"t":115387,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:13.315525] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:13.320275] Received: {"t":115392,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:13.320517] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:13.325282] Received: {"t":115397,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:13.325522] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage0"}
+[2020-04-24 19:23:13.330277] Received: {"t":115402,"field":"adcs_monitor.ssa_voltage0","val":"0.000000"}
+[2020-04-24 19:23:13.330520] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage1"}
+[2020-04-24 19:23:13.335268] Received: {"t":115407,"field":"adcs_monitor.ssa_voltage1","val":"0.000000"}
+[2020-04-24 19:23:13.335503] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage2"}
+[2020-04-24 19:23:13.340270] Received: {"t":115412,"field":"adcs_monitor.ssa_voltage2","val":"0.000000"}
+[2020-04-24 19:23:13.340507] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage3"}
+[2020-04-24 19:23:13.345270] Received: {"t":115417,"field":"adcs_monitor.ssa_voltage3","val":"0.000000"}
+[2020-04-24 19:23:13.345503] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage4"}
+[2020-04-24 19:23:13.350267] Received: {"t":115422,"field":"adcs_monitor.ssa_voltage4","val":"0.000000"}
+[2020-04-24 19:23:13.350499] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage5"}
+[2020-04-24 19:23:13.355264] Received: {"t":115427,"field":"adcs_monitor.ssa_voltage5","val":"0.000000"}
+[2020-04-24 19:23:13.355503] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage6"}
+[2020-04-24 19:23:13.360276] Received: {"t":115432,"field":"adcs_monitor.ssa_voltage6","val":"0.000000"}
+[2020-04-24 19:23:13.360520] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage7"}
+[2020-04-24 19:23:13.365275] Received: {"t":115437,"field":"adcs_monitor.ssa_voltage7","val":"0.000000"}
+[2020-04-24 19:23:13.365510] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage8"}
+[2020-04-24 19:23:13.370271] Received: {"t":115442,"field":"adcs_monitor.ssa_voltage8","val":"0.000000"}
+[2020-04-24 19:23:13.370513] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage9"}
+[2020-04-24 19:23:13.375269] Received: {"t":115447,"field":"adcs_monitor.ssa_voltage9","val":"0.000000"}
+[2020-04-24 19:23:13.375509] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage10"}
+[2020-04-24 19:23:13.380278] Received: {"t":115452,"field":"adcs_monitor.ssa_voltage10","val":"0.000000"}
+[2020-04-24 19:23:13.380516] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage11"}
+[2020-04-24 19:23:13.385274] Received: {"t":115457,"field":"adcs_monitor.ssa_voltage11","val":"0.000000"}
+[2020-04-24 19:23:13.385525] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage12"}
+[2020-04-24 19:23:13.390271] Received: {"t":115462,"field":"adcs_monitor.ssa_voltage12","val":"0.000000"}
+[2020-04-24 19:23:13.390507] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage13"}
+[2020-04-24 19:23:13.395275] Received: {"t":115467,"field":"adcs_monitor.ssa_voltage13","val":"0.000000"}
+[2020-04-24 19:23:13.395518] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage14"}
+[2020-04-24 19:23:13.400271] Received: {"t":115472,"field":"adcs_monitor.ssa_voltage14","val":"0.000000"}
+[2020-04-24 19:23:13.400506] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage15"}
+[2020-04-24 19:23:13.405274] Received: {"t":115477,"field":"adcs_monitor.ssa_voltage15","val":"0.000000"}
+[2020-04-24 19:23:13.405513] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage16"}
+[2020-04-24 19:23:13.410273] Received: {"t":115482,"field":"adcs_monitor.ssa_voltage16","val":"0.000000"}
+[2020-04-24 19:23:13.410517] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage17"}
+[2020-04-24 19:23:13.415273] Received: {"t":115487,"field":"adcs_monitor.ssa_voltage17","val":"0.000000"}
+[2020-04-24 19:23:13.415531] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage18"}
+[2020-04-24 19:23:13.420276] Received: {"t":115492,"field":"adcs_monitor.ssa_voltage18","val":"0.000000"}
+[2020-04-24 19:23:13.420514] Sent:     {"mode": 114, "field": "adcs_monitor.ssa_voltage19"}
+[2020-04-24 19:23:13.425279] Received: {"t":115497,"field":"adcs_monitor.ssa_voltage19","val":"0.000000"}
+[2020-04-24 19:23:13.425608] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-04-24 19:23:13.430239] Received: {"t":115502,"field":"gomspace.vbatt","val":"7513"}

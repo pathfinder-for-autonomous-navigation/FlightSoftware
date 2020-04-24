@@ -1,0 +1,475 @@
+[2020-04-24 19:21:17.914479] [TESTCASE] Starting testcase.
+[2020-04-24 19:21:17.917532] 
+Begin ADCS Checkout Case
+[2020-04-24 19:21:18.245388] 
+Finished Initialization
+[2020-04-24 19:21:18.250315] adcs_monitor.functional is True
+[2020-04-24 19:21:18.574392] HAVT Read: 1111 1111 1111 1110 11
+[2020-04-24 19:21:18.855346] Device #2, IMU_MAG2 is not functional
+[2020-04-24 19:21:20.284326] Initial HAVT Table:
+[2020-04-24 19:21:20.389018] HAVT Read: 1111 1111 1111 1110 11
+[2020-04-24 19:21:20.690915] 
+HAVT TABLE MATCHES WITH: EDU SAT
+[2020-04-24 19:21:21.036316] Post disabling all devices:
+[2020-04-24 19:21:21.126304] HAVT Read: 0000 0000 0000 0000 00
+[2020-04-24 19:21:21.444223] Post resetting all devices:
+[2020-04-24 19:21:21.577355] HAVT Read: 1111 1111 1111 1110 11
+[2020-04-24 19:21:21.676329] Reset-Disable Success. All initially functional devices remain functional.
+[2020-04-24 19:21:21.681361] 
+Begin Sensor Checkout
+[2020-04-24 19:21:21.686346] 
+Begin MAG1 Checkout
+[2020-04-24 19:21:21.691258] adcs_cmd.mag1_mode is 0
+[2020-04-24 19:21:21.696247] MAG1 Mode: IMU_MAG_NORMAL
+[2020-04-24 19:21:23.406387] MAG1 readings:
+[2020-04-24 19:21:23.406481] [-1.5e-05, 9e-06, 4.7e-05], mag: 5.014977567247933e-05
+[2020-04-24 19:21:23.406539] [-1.3e-05, 9e-06, 4.7e-05], mag: 4.958830507286975e-05
+[2020-04-24 19:21:23.407459] [-1.3e-05, 8e-06, 4.3e-05], mag: 4.562893818619934e-05
+[2020-04-24 19:21:23.407508] [-1.3e-05, 9e-06, 4e-05], mag: 4.301162633521314e-05
+[2020-04-24 19:21:23.407561] [-1.4e-05, 8e-06, 3.4e-05], mag: 3.762977544445356e-05
+[2020-04-24 19:21:23.407613] [-1.5e-05, 8e-06, 3e-05], mag: 3.448187929913333e-05
+[2020-04-24 19:21:23.418904] [-1.6e-05, 8e-06, 2.4e-05], mag: 2.9933259094191532e-05
+[2020-04-24 19:21:23.418972] [-1.8e-05, 7e-06, 1.9e-05], mag: 2.7092434368288135e-05
+[2020-04-24 19:21:23.419266] [-2.6e-05, 9e-06, 5e-06], mag: 2.7964262908219126e-05
+[2020-04-24 19:21:23.419301] [-2.8e-05, 1e-05, 1e-06], mag: 2.9748949561287036e-05
+[2020-04-24 19:21:23.419379] 
+MAG1 CHECKOUT COMPLETE
+[2020-04-24 19:21:23.439320] 
+Begin GYR Checkout
+[2020-04-24 19:21:25.112351] GYR readings:
+[2020-04-24 19:21:25.112436] [0.027864, -0.02773, -0.012683], mag: 0.04130634194648565
+[2020-04-24 19:21:25.114118] [0.02773, -0.027464, -0.012617], mag: 0.04101722668586944
+[2020-04-24 19:21:25.115228] [0.028263, -0.026932, -0.013083], mag: 0.04117395635592966
+[2020-04-24 19:21:25.115325] [0.028663, -0.026865, -0.012284], mag: 0.041160569116570775
+[2020-04-24 19:21:25.120300] [0.028596, -0.027065, -0.01255], mag: 0.0413249070295385
+[2020-04-24 19:21:25.120371] [0.028263, -0.027131, -0.012351], mag: 0.04107840711371365
+[2020-04-24 19:21:25.120486] [0.028529, -0.027398, -0.01255], mag: 0.041497671561185216
+[2020-04-24 19:21:25.123510] [0.027531, -0.027065, -0.012683], mag: 0.04063654359071401
+[2020-04-24 19:21:25.123566] [0.028263, -0.026665, -0.012683], mag: 0.04087392668927222
+[2020-04-24 19:21:25.123629] [0.027797, -0.027065, -0.01255], mag: 0.040776095129376966
+[2020-04-24 19:21:25.124134] 
+GYR CHECKOUT COMPLETE
+[2020-04-24 19:21:25.140841] 
+BEGIN WHEEL CHECKOUT
+[2020-04-24 19:21:25.140905] Checking RWA POT functionality:
+[2020-04-24 19:21:25.617420] adcs_monitor.rwa_speed_rd is [7.59021, 8.86853, 7.59021]
+[2020-04-24 19:21:25.958398] Cycle No: 30, Speed Vec: [[8.86853, 7.59021, 7.59021]]
+[2020-04-24 19:21:26.298405] Cycle No: 32, Speed Vec: [[8.86853, 7.59021, 7.59021]]
+[2020-04-24 19:21:26.638407] Cycle No: 34, Speed Vec: [[8.86853, 8.86853, 8.86853]]
+[2020-04-24 19:21:26.978397] Cycle No: 36, Speed Vec: [[8.86853, 7.59021, 8.86853]]
+[2020-04-24 19:21:27.318403] Cycle No: 38, Speed Vec: [[8.86853, 7.59021, 7.59021]]
+[2020-04-24 19:21:27.659088] Cycle No: 40, Speed Vec: [[8.86853, 7.59021, 7.59021]]
+[2020-04-24 19:21:27.998423] Cycle No: 42, Speed Vec: [[7.59021, 10.146851, 8.86853]]
+[2020-04-24 19:21:28.338446] Cycle No: 44, Speed Vec: [[7.59021, 7.59021, 7.59021]]
+[2020-04-24 19:21:28.678427] Cycle No: 46, Speed Vec: [[10.146851, 7.59021, 8.86853]]
+[2020-04-24 19:21:29.018411] Cycle No: 48, Speed Vec: [[8.86853, 8.86853, 7.59021]]
+[2020-04-24 19:21:29.358286] gomspace.vbatt is 7541
+[2020-04-24 19:21:29.358316] ADCS_CMD TARGET SPEED:
+[2020-04-24 19:21:29.358338] adcs_cmd.rwa_speed_cmd set to: [20, 40, 50]
+[2020-04-24 19:21:34.628441] adcs_monitor.rwa_speed_rd is [19.03125, 39.324951, 49.487671]
+[2020-04-24 19:21:35.648293] gomspace.vbatt is 7522
+[2020-04-24 19:21:35.648320] ADCS_CMD TARGET SPEED:
+[2020-04-24 19:21:35.648343] adcs_cmd.rwa_speed_cmd set to: [100, 200, 300]
+[2020-04-24 19:21:40.918440] adcs_monitor.rwa_speed_rd is [98.991455, 197.998901, 298.284546]
+[2020-04-24 19:21:40.918466] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 100, got 98.991455. Diff exceed delta of 1.
+[2020-04-24 19:21:40.918479] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 200, got 197.998901. Diff exceed delta of 1.
+[2020-04-24 19:21:40.918488] 
+$ SOFT ASSERTION ERROR: Element #2, Expected 300, got 298.284546. Diff exceed delta of 1.
+[2020-04-24 19:21:41.938277] gomspace.vbatt is 7447
+[2020-04-24 19:21:41.938301] ADCS_CMD TARGET SPEED:
+[2020-04-24 19:21:41.938369] adcs_cmd.rwa_speed_cmd set to: [-100, 100, -40]
+[2020-04-24 19:21:47.208446] adcs_monitor.rwa_speed_rd is [-0.015991, 97.713135, -0.015991]
+[2020-04-24 19:21:47.222278] 
+$ SOFT ASSERTION ERROR: Element #0, Expected -100, got -0.015991. Diff exceed delta of 1.
+[2020-04-24 19:21:47.222415] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 100, got 97.713135. Diff exceed delta of 1.
+[2020-04-24 19:21:47.222488] 
+$ SOFT ASSERTION ERROR: Element #2, Expected -40, got -0.015991. Diff exceed delta of 1.
+[2020-04-24 19:21:48.398277] gomspace.vbatt is 7522
+[2020-04-24 19:21:48.398306] ADCS_CMD TARGET SPEED:
+[2020-04-24 19:21:48.398335] adcs_cmd.rwa_speed_cmd set to: [100, 50, 10]
+[2020-04-24 19:21:53.669440] adcs_monitor.rwa_speed_rd is [98.991455, 49.487671, 8.86853]
+[2020-04-24 19:21:53.671483] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 100, got 98.991455. Diff exceed delta of 1.
+[2020-04-24 19:21:53.687447] 
+$ SOFT ASSERTION ERROR: Element #2, Expected 10, got 8.86853. Diff exceed delta of 1.
+[2020-04-24 19:21:54.858282] gomspace.vbatt is 7503
+[2020-04-24 19:21:54.858308] ADCS_CMD TARGET SPEED:
+[2020-04-24 19:21:54.858329] adcs_cmd.rwa_speed_cmd set to: [500, 500, 500]
+[2020-04-24 19:22:00.129474] adcs_monitor.rwa_speed_rd is [501.380859, 497.577759, 500.102417]
+[2020-04-24 19:22:00.129519] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 500, got 501.380859. Diff exceed delta of 1.
+[2020-04-24 19:22:00.129559] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 500, got 497.577759. Diff exceed delta of 1.
+[2020-04-24 19:22:01.149286] gomspace.vbatt is 7181
+[2020-04-24 19:22:01.149313] ADCS_CMD TARGET SPEED:
+[2020-04-24 19:22:01.149336] adcs_cmd.rwa_speed_cmd set to: [680, 680, 680]
+[2020-04-24 19:22:06.419434] adcs_monitor.rwa_speed_rd is [667.660889, 657.498047, 660.022705]
+[2020-04-24 19:22:06.420833] 
+$ SOFT ASSERTION ERROR: Element #0, Expected 680, got 667.660889. Diff exceed delta of 1.
+[2020-04-24 19:22:06.430781] 
+$ SOFT ASSERTION ERROR: Element #1, Expected 680, got 657.498047. Diff exceed delta of 1.
+[2020-04-24 19:22:06.434124] 
+$ SOFT ASSERTION ERROR: Element #2, Expected 680, got 660.022705. Diff exceed delta of 1.
+[2020-04-24 19:22:07.609269] gomspace.vbatt is 7052
+[2020-04-24 19:22:07.614113] ADCS_CMD TARGET SPEED:
+[2020-04-24 19:22:07.615605] adcs_cmd.rwa_speed_cmd set to: [-680, -680, -680]
+[2020-04-24 19:22:12.879402] adcs_monitor.rwa_speed_rd is [-1.294312, -0.015991, -0.015991]
+[2020-04-24 19:22:12.890780] 
+$ SOFT ASSERTION ERROR: Element #0, Expected -680, got -1.294312. Diff exceed delta of 1.
+[2020-04-24 19:22:12.897446] 
+$ SOFT ASSERTION ERROR: Element #1, Expected -680, got -0.015991. Diff exceed delta of 1.
+[2020-04-24 19:22:12.907450] 
+$ SOFT ASSERTION ERROR: Element #2, Expected -680, got -0.015991. Diff exceed delta of 1.
+[2020-04-24 19:22:15.071413] 
+TORQUE TESTS:
+[2020-04-24 19:22:15.259280] gomspace.vbatt is 7513
+[2020-04-24 19:22:15.429412] adcs_monitor.rwa_speed_rd is [-1.294312, -0.015991, -0.015991]
+[2020-04-24 19:22:15.429439] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:15.429462] adcs_cmd.rwa_torque_cmd set to: [0.0001, 0, 0]
+[2020-04-24 19:22:16.619407] adcs_monitor.rwa_torque_rd is [0.000124, 2.8e-05, 2.8e-05]
+[2020-04-24 19:22:16.789418] adcs_monitor.rwa_speed_rd is [7.59021, -0.015991, -0.015991]
+[2020-04-24 19:22:16.960386] 
+[2020-04-24 19:22:17.979282] gomspace.vbatt is 7513
+[2020-04-24 19:22:18.149410] adcs_monitor.rwa_speed_rd is [7.59021, -0.015991, -0.015991]
+[2020-04-24 19:22:18.149438] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:18.149461] adcs_cmd.rwa_torque_cmd set to: [0, 0.0001, 0]
+[2020-04-24 19:22:19.339449] adcs_monitor.rwa_torque_rd is [2.8e-05, 0.000124, 2.8e-05]
+[2020-04-24 19:22:19.509396] adcs_monitor.rwa_speed_rd is [7.59021, 6.34375, -0.015991]
+[2020-04-24 19:22:19.680390] 
+[2020-04-24 19:22:20.699289] gomspace.vbatt is 7513
+[2020-04-24 19:22:20.869404] adcs_monitor.rwa_speed_rd is [7.59021, 6.34375, -1.294312]
+[2020-04-24 19:22:20.869431] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:20.869457] adcs_cmd.rwa_torque_cmd set to: [0, 0, 0.0001]
+[2020-04-24 19:22:22.059420] adcs_monitor.rwa_torque_rd is [2.5e-05, 2.8e-05, 0.000124]
+[2020-04-24 19:22:22.230394] adcs_monitor.rwa_speed_rd is [8.86853, 8.86853, 7.59021]
+[2020-04-24 19:22:22.400385] 
+[2020-04-24 19:22:23.419299] gomspace.vbatt is 7503
+[2020-04-24 19:22:23.590407] adcs_monitor.rwa_speed_rd is [7.59021, 8.86853, 7.59021]
+[2020-04-24 19:22:23.590434] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:23.590456] adcs_cmd.rwa_torque_cmd set to: [-0.0001, 0, 0]
+[2020-04-24 19:22:24.790779] adcs_monitor.rwa_torque_rd is [0.000124, 2.8e-05, 2.8e-05]
+[2020-04-24 19:22:24.950409] adcs_monitor.rwa_speed_rd is [-0.015991, 8.86853, 7.59021]
+[2020-04-24 19:22:25.120406] 
+[2020-04-24 19:22:26.140296] gomspace.vbatt is 7485
+[2020-04-24 19:22:26.310411] adcs_monitor.rwa_speed_rd is [-3.819092, 8.86853, 7.59021]
+[2020-04-24 19:22:26.310435] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:26.310460] adcs_cmd.rwa_torque_cmd set to: [0, -0.0001, 0]
+[2020-04-24 19:22:27.500426] adcs_monitor.rwa_torque_rd is [2.5e-05, 0.000124, 2.8e-05]
+[2020-04-24 19:22:27.670405] adcs_monitor.rwa_speed_rd is [-1.294312, 1.262329, 8.86853]
+[2020-04-24 19:22:27.840428] 
+[2020-04-24 19:22:28.859293] gomspace.vbatt is 7513
+[2020-04-24 19:22:29.030415] adcs_monitor.rwa_speed_rd is [-2.540649, -0.015991, 8.86853]
+[2020-04-24 19:22:29.030440] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:29.030464] adcs_cmd.rwa_torque_cmd set to: [0, 0, -0.0001]
+[2020-04-24 19:22:30.220427] adcs_monitor.rwa_torque_rd is [2.5e-05, 2.8e-05, 0.000124]
+[2020-04-24 19:22:30.390413] adcs_monitor.rwa_speed_rd is [-2.540649, -0.015991, 1.262329]
+[2020-04-24 19:22:30.561388] 
+[2020-04-24 19:22:31.580304] gomspace.vbatt is 7513
+[2020-04-24 19:22:31.750423] adcs_monitor.rwa_speed_rd is [-3.819092, -1.294312, -0.015991]
+[2020-04-24 19:22:31.750447] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:31.750470] adcs_cmd.rwa_torque_cmd set to: [0.002, 0, 0]
+[2020-04-24 19:22:32.940417] adcs_monitor.rwa_torque_rd is [0.001921, 2.8e-05, 2.8e-05]
+[2020-04-24 19:22:33.111427] adcs_monitor.rwa_speed_rd is [137.085938, -0.015991, -0.015991]
+[2020-04-24 19:22:33.281389] 
+[2020-04-24 19:22:34.300313] gomspace.vbatt is 7494
+[2020-04-24 19:22:34.470516] adcs_monitor.rwa_speed_rd is [187.83606, -0.015991, -0.015991]
+[2020-04-24 19:22:34.470590] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:34.470623] adcs_cmd.rwa_torque_cmd set to: [0, 0.002, 0]
+[2020-04-24 19:22:35.660444] adcs_monitor.rwa_torque_rd is [2.5e-05, 0.001921, 2.8e-05]
+[2020-04-24 19:22:35.830442] adcs_monitor.rwa_speed_rd is [187.83606, 139.610596, -0.015991]
+[2020-04-24 19:22:36.001409] 
+[2020-04-24 19:22:37.024111] gomspace.vbatt is 7456
+[2020-04-24 19:22:37.190453] adcs_monitor.rwa_speed_rd is [187.83606, 189.114502, -0.015991]
+[2020-04-24 19:22:37.200777] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:37.200860] adcs_cmd.rwa_torque_cmd set to: [0, 0, 0.002]
+[2020-04-24 19:22:38.380439] adcs_monitor.rwa_torque_rd is [2.8e-05, 2.8e-05, 0.001921]
+[2020-04-24 19:22:38.550439] adcs_monitor.rwa_speed_rd is [186.5896, 190.392822, 142.135498]
+[2020-04-24 19:22:38.721406] 
+[2020-04-24 19:22:39.740315] gomspace.vbatt is 7422
+[2020-04-24 19:22:39.910443] adcs_monitor.rwa_speed_rd is [186.5896, 190.392822, 189.114502]
+[2020-04-24 19:22:39.910467] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:39.910502] adcs_cmd.rwa_torque_cmd set to: [-0.002, 0, 0]
+[2020-04-24 19:22:41.100415] adcs_monitor.rwa_torque_rd is [0.001921, 2.5e-05, 2.8e-05]
+[2020-04-24 19:22:41.270435] adcs_monitor.rwa_speed_rd is [44.40625, 190.392822, 190.392822]
+[2020-04-24 19:22:41.441406] 
+[2020-04-24 19:22:42.460321] gomspace.vbatt is 7456
+[2020-04-24 19:22:42.630432] adcs_monitor.rwa_speed_rd is [-6.375732, 189.114502, 190.392822]
+[2020-04-24 19:22:42.630486] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:42.630538] adcs_cmd.rwa_torque_cmd set to: [0, -0.002, 0]
+[2020-04-24 19:22:43.820427] adcs_monitor.rwa_torque_rd is [2.5e-05, 0.001921, 2.8e-05]
+[2020-04-24 19:22:43.990417] adcs_monitor.rwa_speed_rd is [-5.097412, 46.963013, 189.114502]
+[2020-04-24 19:22:44.161416] 
+[2020-04-24 19:22:45.180284] gomspace.vbatt is 7475
+[2020-04-24 19:22:45.350423] adcs_monitor.rwa_speed_rd is [-5.097412, -1.294312, 190.392822]
+[2020-04-24 19:22:45.350447] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:45.350482] adcs_cmd.rwa_torque_cmd set to: [0, 0, -0.002]
+[2020-04-24 19:22:46.540431] adcs_monitor.rwa_torque_rd is [2.8e-05, 2.8e-05, 0.001921]
+[2020-04-24 19:22:46.710417] adcs_monitor.rwa_speed_rd is [-6.375732, -2.540649, 45.684692]
+[2020-04-24 19:22:46.881385] 
+[2020-04-24 19:22:47.900285] gomspace.vbatt is 7494
+[2020-04-24 19:22:48.070404] adcs_monitor.rwa_speed_rd is [-6.375732, -1.294312, -2.540649]
+[2020-04-24 19:22:48.070441] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:48.070473] adcs_cmd.rwa_torque_cmd set to: [0.00418, 0, 0]
+[2020-04-24 19:22:49.261403] adcs_monitor.rwa_torque_rd is [0.004132, 2.8e-05, 2.8e-05]
+[2020-04-24 19:22:49.430406] adcs_monitor.rwa_speed_rd is [302.087646, -2.540649, -1.294312]
+[2020-04-24 19:22:49.627444] 
+[2020-04-24 19:22:50.790315] gomspace.vbatt is 7438
+[2020-04-24 19:22:50.961522] adcs_monitor.rwa_speed_rd is [409.979492, -2.540649, -2.540649]
+[2020-04-24 19:22:50.961562] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:50.961619] adcs_cmd.rwa_torque_cmd set to: [0, 0.00418, 0]
+[2020-04-24 19:22:52.151456] adcs_monitor.rwa_torque_rd is [2.5e-05, 0.004132, 2.8e-05]
+[2020-04-24 19:22:52.321462] adcs_monitor.rwa_speed_rd is [407.454834, 303.365967, -2.540649]
+[2020-04-24 19:22:52.491416] 
+[2020-04-24 19:22:53.510308] gomspace.vbatt is 7356
+[2020-04-24 19:22:53.681476] adcs_monitor.rwa_speed_rd is [406.176514, 411.257812, -2.540649]
+[2020-04-24 19:22:53.681519] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:53.681571] adcs_cmd.rwa_torque_cmd set to: [0, 0, 0.00418]
+[2020-04-24 19:22:54.871415] adcs_monitor.rwa_torque_rd is [2.5e-05, 2.8e-05, 0.004132]
+[2020-04-24 19:22:55.041440] adcs_monitor.rwa_speed_rd is [407.454834, 411.257812, 308.447388]
+[2020-04-24 19:22:55.211408] 
+[2020-04-24 19:22:56.264110] gomspace.vbatt is 7265
+[2020-04-24 19:22:56.430441] adcs_monitor.rwa_speed_rd is [406.176514, 411.257812, 411.257812]
+[2020-04-24 19:22:56.430469] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:56.430517] adcs_cmd.rwa_torque_cmd set to: [-0.00418, 0, 0]
+[2020-04-24 19:22:57.620428] adcs_monitor.rwa_torque_rd is [0.004132, 2.8e-05, 2.8e-05]
+[2020-04-24 19:22:57.790446] adcs_monitor.rwa_speed_rd is [96.466675, 411.257812, 411.257812]
+[2020-04-24 19:22:57.961445] 
+[2020-04-24 19:22:58.980323] gomspace.vbatt is 7319
+[2020-04-24 19:22:59.150537] adcs_monitor.rwa_speed_rd is [-11.425171, 409.979492, 412.50415]
+[2020-04-24 19:22:59.150554] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:22:59.150566] adcs_cmd.rwa_torque_cmd set to: [0, -0.00418, 0]
+[2020-04-24 19:23:00.340497] adcs_monitor.rwa_torque_rd is [2.5e-05, 0.004132, 2.8e-05]
+[2020-04-24 19:23:00.510498] adcs_monitor.rwa_speed_rd is [-11.425171, 100.269775, 412.50415]
+[2020-04-24 19:23:00.681459] 
+[2020-04-24 19:23:01.700342] gomspace.vbatt is 7412
+[2020-04-24 19:23:01.871539] adcs_monitor.rwa_speed_rd is [-10.178711, -3.819092, 411.257812]
+[2020-04-24 19:23:01.871565] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:23:01.871590] adcs_cmd.rwa_torque_cmd set to: [0, 0, -0.00418]
+[2020-04-24 19:23:03.061440] adcs_monitor.rwa_torque_rd is [2.5e-05, 2.5e-05, 0.004132]
+[2020-04-24 19:23:03.231448] adcs_monitor.rwa_speed_rd is [-12.703491, -3.819092, 98.991455]
+[2020-04-24 19:23:03.402951] 
+[2020-04-24 19:23:04.420349] gomspace.vbatt is 7475
+[2020-04-24 19:23:04.591443] adcs_monitor.rwa_speed_rd is [-13.981812, -3.819092, -6.375732]
+[2020-04-24 19:23:04.591466] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:23:04.591491] adcs_cmd.rwa_torque_cmd set to: [0.002, 0.002, 0.002]
+[2020-04-24 19:23:05.781437] adcs_monitor.rwa_torque_rd is [0.001921, 0.001921, 0.001921]
+[2020-04-24 19:23:05.951488] adcs_monitor.rwa_speed_rd is [128.201538, 137.085938, 137.085938]
+[2020-04-24 19:23:06.121458] 
+[2020-04-24 19:23:07.141354] gomspace.vbatt is 7394
+[2020-04-24 19:23:07.311489] adcs_monitor.rwa_speed_rd is [180.229858, 185.311279, 186.5896]
+[2020-04-24 19:23:07.311515] ADCS_CMD TARGET TORQUE:
+[2020-04-24 19:23:07.311585] adcs_cmd.rwa_torque_cmd set to: [-0.002, -0.002, -0.002]
+[2020-04-24 19:23:08.501505] adcs_monitor.rwa_torque_rd is [0.001921, 0.001921, 0.001921]
+[2020-04-24 19:23:08.671464] adcs_monitor.rwa_speed_rd is [38.078613, 45.684692, 44.40625]
+[2020-04-24 19:23:08.841458] 
+[2020-04-24 19:23:12.071362] 
+WHEEL CHECKOUT COMPLETE
+[2020-04-24 19:23:12.242057] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:12.247297] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:12.252325] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:12.257326] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:12.262337] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:12.267368] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:12.272340] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:12.277369] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:12.282356] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:12.287471] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:12.292369] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:12.297347] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:12.302348] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:12.307343] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:12.312350] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:12.317348] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:12.322354] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:12.327348] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:12.332352] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:12.337344] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:12.342348] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:12.347351] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:12.354119] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:12.360829] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:12.370782] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:12.387441] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:12.393893] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:12.404112] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:12.420774] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:12.426344] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:12.431349] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:12.436357] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:12.441355] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:12.446347] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:12.451348] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:12.456355] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:12.461357] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:12.466347] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:12.471362] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:12.476346] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:12.481341] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:12.486359] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:12.491357] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:12.496346] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:12.501349] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:12.506348] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:12.511342] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:12.516348] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:12.556342] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:12.561341] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:12.566360] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:12.571331] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:12.576328] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:12.581359] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:12.586321] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:12.591323] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:12.596337] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:12.601317] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:12.606318] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:12.611437] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:12.616339] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:12.621350] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:12.626349] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:12.631348] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:12.636409] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:12.644109] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:12.649364] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:12.654346] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:12.659439] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:12.664330] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:12.669341] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:12.674439] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:12.679372] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:12.684374] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:12.689354] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:12.695625] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:12.700774] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:12.706347] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:12.711349] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:12.716354] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:12.721361] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:12.734117] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:12.739347] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:12.744353] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:12.749346] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:12.754353] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:12.759353] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:12.764371] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:12.769344] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:12.774365] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:12.779363] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:12.784368] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:12.789350] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:12.794354] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:12.799360] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:12.804553] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:12.809357] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:12.814389] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:12.819361] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:12.824361] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:12.829346] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:12.834363] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:12.839349] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:12.844395] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:12.849343] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:12.854350] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:12.859345] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:12.864344] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:12.869353] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:12.874346] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:12.879356] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:12.884351] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:12.889353] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:12.894350] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:12.899352] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:12.904349] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:12.909350] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:12.914362] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:12.919348] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:12.924366] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:12.929350] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:12.934348] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:12.939351] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:12.944355] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:12.949341] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:12.954342] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:12.959349] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:12.964351] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:12.969346] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:12.974362] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:12.979348] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:12.984350] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:12.989359] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:12.994353] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:12.999356] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:13.004354] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:13.009352] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:13.014356] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:13.019353] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:13.024376] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:13.029359] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:13.034354] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:13.039339] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:13.044361] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:13.049361] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:13.054355] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:13.160336] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:13.165387] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:13.170368] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:13.175343] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:13.180341] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:13.185350] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:13.190342] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:13.195344] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:13.200338] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:13.205543] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:13.210339] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:13.215358] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:13.220352] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:13.225341] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:13.230341] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:13.235333] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:13.240333] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:13.245342] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:13.250340] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:13.255351] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:13.260339] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:13.265342] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:13.270340] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:13.275350] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:13.280338] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:13.285343] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:13.290347] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:13.295352] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:13.300350] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:13.305349] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:13.310352] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:13.315350] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:13.320350] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:13.325356] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:13.330351] adcs_monitor.ssa_voltage0 is 0.0
+[2020-04-24 19:23:13.335341] adcs_monitor.ssa_voltage1 is 0.0
+[2020-04-24 19:23:13.340344] adcs_monitor.ssa_voltage2 is 0.0
+[2020-04-24 19:23:13.345343] adcs_monitor.ssa_voltage3 is 0.0
+[2020-04-24 19:23:13.350342] adcs_monitor.ssa_voltage4 is 0.0
+[2020-04-24 19:23:13.355340] adcs_monitor.ssa_voltage5 is 0.0
+[2020-04-24 19:23:13.360350] adcs_monitor.ssa_voltage6 is 0.0
+[2020-04-24 19:23:13.365348] adcs_monitor.ssa_voltage7 is 0.0
+[2020-04-24 19:23:13.370350] adcs_monitor.ssa_voltage8 is 0.0
+[2020-04-24 19:23:13.375341] adcs_monitor.ssa_voltage9 is 0.0
+[2020-04-24 19:23:13.380352] adcs_monitor.ssa_voltage10 is 0.0
+[2020-04-24 19:23:13.385354] adcs_monitor.ssa_voltage11 is 0.0
+[2020-04-24 19:23:13.390347] adcs_monitor.ssa_voltage12 is 0.0
+[2020-04-24 19:23:13.395349] adcs_monitor.ssa_voltage13 is 0.0
+[2020-04-24 19:23:13.400343] adcs_monitor.ssa_voltage14 is 0.0
+[2020-04-24 19:23:13.405351] adcs_monitor.ssa_voltage15 is 0.0
+[2020-04-24 19:23:13.410349] adcs_monitor.ssa_voltage16 is 0.0
+[2020-04-24 19:23:13.415358] adcs_monitor.ssa_voltage17 is 0.0
+[2020-04-24 19:23:13.420350] adcs_monitor.ssa_voltage18 is 0.0
+[2020-04-24 19:23:13.425354] adcs_monitor.ssa_voltage19 is 0.0
+[2020-04-24 19:23:13.425453] 
+$ SOFT ASSERTION ERROR: SSA voltage readings did not vary across readings.
+[2020-04-24 19:23:13.430317] gomspace.vbatt is 7513
+[2020-04-24 19:23:13.430349] 
+ADCS CHECKOUT COMPLETE
+[2020-04-24 19:23:13.430380] [TESTCASE] Finished testcase.
