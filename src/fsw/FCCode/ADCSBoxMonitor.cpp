@@ -143,7 +143,7 @@ void ADCSBoxMonitor::execute(){
     float gyr_temp = 0.0;
 
     //ask the driver to fill in values
-    adcs_is_functional.set(adcs_system.i2c_ping());
+    // adcs_is_functional.set(adcs_system.i2c_ping());
     
     adcs_functional_fault.evaluate(!adcs_is_functional.get());
     
@@ -172,12 +172,12 @@ void ADCSBoxMonitor::execute(){
     }
 
     // set vector of device availability
-    std::bitset<adcs::havt::max_devices> havt_read(0);
-    adcs_system.get_havt(&havt_read);
-    for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
-    {
-        havt_read_vector[idx].set(havt_read.test(idx));
-    }
+    // std::bitset<adcs::havt::max_devices> havt_read(0);
+    // adcs_system.get_havt(&havt_read);
+    // for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
+    // {
+    //     havt_read_vector[idx].set(havt_read.test(idx));
+    // }
     
     wheel1_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC1].get() == false);
     wheel2_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC2].get() == false);
