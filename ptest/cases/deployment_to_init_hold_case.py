@@ -57,7 +57,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
 
     def setup_case_singlesat(self):
         # Move to startup and wait the full deployment length
-        self.mission_mode = 0
+        self.mission_mode = self.get_mission_mode("startup")
         for _ in range(100):
             self.cycle()
         
@@ -73,7 +73,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
 
     def run_case_all_functional(self):
         self.unsignal_faults()
-        self.mission_mode = 0  # Startup state
+        self.mission_mode = self.get_mission_mode("startup")
 
         # Should transition to detumble if ADCS motors are functional
         self.logger.put("Case 1: ADCS motors are all functional")
@@ -91,7 +91,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = 0  # Startup state
+        self.mission_mode = self.get_mission_mode("startup")
 
         # Satellite should move to initialization hold
         self.logger.put("Case 2: ADCS is not functional")
@@ -106,7 +106,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = 0  # Startup state
+        self.mission_mode = self.get_mission_mode("startup")
 
         # Satellite should move to initialization hold
         self.logger.put("Case 3: Wheel 1 is not functional")
@@ -121,7 +121,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = 0  # Startup state
+        self.mission_mode = self.get_mission_mode("startup")
 
         # Satellite should move to initialization hold
         self.logger.put("Case 4: Wheel 2 is not functional")
@@ -136,7 +136,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = 0  # Startup state
+        self.mission_mode = self.get_mission_mode("startup")
 
         # Satellite should move to initialization hold
         self.logger.put("Case 5: Wheel 3 is not functional")
@@ -151,7 +151,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = 0  # Startup state
+        self.mission_mode = self.get_mission_mode("startup")
 
         # Satellite should move to initialization hold
         self.logger.put("Case 6: POT is not functional")
