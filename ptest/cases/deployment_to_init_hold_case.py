@@ -69,7 +69,6 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.finish()
 
     def reset_faults(self):
-        self.mission_mode = 11
         self.adcs_is_functional = "true"
         self.wheel1_is_functional = "true"
         self.wheel2_is_functional = "true"
