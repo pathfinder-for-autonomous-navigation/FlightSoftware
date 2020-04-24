@@ -1,0 +1,1579 @@
+[2020-04-24 20:44:27.300158] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-04-24 20:44:27.304979] Received: {"t":0,"field":"pan.state","val":"11"}
+[2020-04-24 20:44:27.305290] Sent:     {"mode": 114, "field": "pan.state"}
+[2020-04-24 20:44:27.310073] Received: {"t":0,"field":"pan.state","val":"11"}
+[2020-04-24 20:44:27.310381] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:27.315066] Received: {"t":0,"field":"pan.cycle_no","val":"1"}
+[2020-04-24 20:44:27.315484] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:27.320137] Received: {"t":5,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:27.320581] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:27.445958] Received: {"t":131,"field":"pan.cycle_no","val":"2"}
+[2020-04-24 20:44:27.446212] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:27.450928] Received: {"t":136,"field":"pan.cycle_no","val":"2"}
+[2020-04-24 20:44:27.451176] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:27.455934] Received: {"t":141,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:27.456098] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:27.616973] Received: {"t":302,"field":"pan.cycle_no","val":"3"}
+[2020-04-24 20:44:27.617226] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:27.621947] Received: {"t":307,"field":"pan.cycle_no","val":"3"}
+[2020-04-24 20:44:27.622172] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:27.626961] Received: {"t":312,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:27.627165] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:27.656130] Received: Consumed[AT&K0;&D0;E0;V0;+SBDMTA=0\r0\r]
+[2020-04-24 20:44:27.786948] Received: {"t":472,"field":"pan.cycle_no","val":"4"}
+[2020-04-24 20:44:27.787224] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:27.791916] Received: {"t":477,"field":"pan.cycle_no","val":"4"}
+[2020-04-24 20:44:27.792128] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:27.796924] Received: {"t":482,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:27.798571] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:27.825422] Received: Consumed[0\r\n0\r]
+[2020-04-24 20:44:27.956959] Received: {"t":642,"field":"pan.cycle_no","val":"5"}
+[2020-04-24 20:44:27.957239] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:27.962344] Received: {"t":647,"field":"pan.cycle_no","val":"5"}
+[2020-04-24 20:44:27.962573] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:27.968009] Received: {"t":653,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:27.973663] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.126985] Received: {"t":812,"field":"pan.cycle_no","val":"6"}
+[2020-04-24 20:44:28.138766] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.138998] Received: {"t":824,"field":"pan.cycle_no","val":"6"}
+[2020-04-24 20:44:28.154779] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:28.155017] Received: {"t":841,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:28.165535] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.165597] Received: Consumed[READY\r\n]
+[2020-04-24 20:44:28.325971] Received: {"t":1011,"field":"pan.cycle_no","val":"7"}
+[2020-04-24 20:44:28.330784] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:28.331065] Received: {"t":1016,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:28.331301] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:28.336039] Received: {"t":1021,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.340767] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:28.341063] Received: {"t":1026,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.345753] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:28.346068] Received: {"t":1031,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.350307] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.350949] Received: {"t":1036,"field":"pan.cycle_no","val":"7"}
+[2020-04-24 20:44:28.351197] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:28.355961] Received: {"t":1041,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:28.356196] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.368877] Received:         > get_SBDWB=30DA30D
+[2020-04-24 20:44:28.368999] Received:         > return=0
+[2020-04-24 20:44:28.495980] Received: {"t":1182,"field":"pan.cycle_no","val":"8"}
+[2020-04-24 20:44:28.496259] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:28.500944] Received: {"t":1186,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:28.501161] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:28.506036] Received: {"t":1191,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.506965] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:28.511032] Received: {"t":1196,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.515738] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:28.516068] Received: {"t":1201,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.516298] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.521005] Received: {"t":1206,"field":"pan.cycle_no","val":"8"}
+[2020-04-24 20:44:28.522408] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:28.525987] Received: {"t":1211,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:28.526272] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.665982] Received: {"t":1351,"field":"pan.cycle_no","val":"9"}
+[2020-04-24 20:44:28.666251] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:28.670946] Received: {"t":1356,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:28.671638] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:28.676097] Received: {"t":1362,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.676493] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:28.681036] Received: {"t":1366,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.681310] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:28.686035] Received: {"t":1371,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.686351] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.690950] Received: {"t":1376,"field":"pan.cycle_no","val":"9"}
+[2020-04-24 20:44:28.691193] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:28.695956] Received: {"t":1381,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:28.703624] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.835984] Received: {"t":1521,"field":"pan.cycle_no","val":"10"}
+[2020-04-24 20:44:28.836271] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:28.840957] Received: {"t":1526,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:28.841255] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:28.846102] Received: {"t":1531,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.846419] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:28.851002] Received: {"t":1536,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.851266] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:28.856048] Received: {"t":1541,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:28.856983] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:28.861987] Received: {"t":1547,"field":"pan.cycle_no","val":"10"}
+[2020-04-24 20:44:28.862228] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:28.866972] Received: {"t":1552,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:28.873665] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.005946] Received: {"t":1692,"field":"pan.cycle_no","val":"11"}
+[2020-04-24 20:44:29.010175] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:29.014947] Received: {"t":1700,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:29.019780] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:29.020070] Received: {"t":1705,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.020768] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:29.025035] Received: {"t":1710,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.029474] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:29.030040] Received: {"t":1715,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.034779] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.034991] Received: {"t":1720,"field":"pan.cycle_no","val":"11"}
+[2020-04-24 20:44:29.036973] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:29.039954] Received: {"t":1725,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:29.040171] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.175986] Received: {"t":1861,"field":"pan.cycle_no","val":"12"}
+[2020-04-24 20:44:29.176254] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:29.180942] Received: {"t":1866,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:29.181199] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:29.186033] Received: {"t":1871,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.186258] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:29.191033] Received: {"t":1876,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.193843] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:29.199039] Received: {"t":1884,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.199298] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.203951] Received: {"t":1889,"field":"pan.cycle_no","val":"12"}
+[2020-04-24 20:44:29.204166] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:29.208953] Received: {"t":1894,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:29.220477] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.345979] Received: {"t":2032,"field":"pan.cycle_no","val":"13"}
+[2020-04-24 20:44:29.346222] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:29.350923] Received: {"t":2036,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:29.352045] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:29.356037] Received: {"t":2041,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.357058] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:29.361028] Received: {"t":2046,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.361280] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:29.366035] Received: {"t":2051,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.366612] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.371952] Received: {"t":2057,"field":"pan.cycle_no","val":"13"}
+[2020-04-24 20:44:29.372127] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:29.376962] Received: {"t":2062,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:29.377167] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.515972] Received: {"t":2202,"field":"pan.cycle_no","val":"14"}
+[2020-04-24 20:44:29.516217] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:29.520919] Received: {"t":2206,"field":"piksi.state","val":"6"}
+[2020-04-24 20:44:29.521172] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:29.526078] Received: {"t":2211,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.526419] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:29.531055] Received: {"t":2216,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.531340] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:29.536044] Received: {"t":2221,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.536311] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.540992] Received: {"t":2226,"field":"pan.cycle_no","val":"14"}
+[2020-04-24 20:44:29.541221] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:29.546036] Received: {"t":2231,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:29.546262] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.685958] Received: {"t":2372,"field":"pan.cycle_no","val":"15"}
+[2020-04-24 20:44:29.686163] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:29.690939] Received: {"t":2376,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:29.691178] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:29.696040] Received: {"t":2381,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.696300] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:29.701035] Received: {"t":2386,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.705711] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:29.706033] Received: {"t":2391,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.706244] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.710946] Received: {"t":2396,"field":"pan.cycle_no","val":"15"}
+[2020-04-24 20:44:29.711144] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:29.715951] Received: {"t":2401,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:29.716145] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.856001] Received: {"t":2542,"field":"pan.cycle_no","val":"16"}
+[2020-04-24 20:44:29.856261] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:29.860972] Received: {"t":2546,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:29.861240] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:29.866054] Received: {"t":2551,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.870785] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:29.871075] Received: {"t":2556,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.871281] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:29.876055] Received: {"t":2561,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:29.876607] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:29.880981] Received: {"t":2566,"field":"pan.cycle_no","val":"16"}
+[2020-04-24 20:44:29.881210] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:29.885985] Received: {"t":2571,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:29.887126] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.026019] Received: {"t":2712,"field":"pan.cycle_no","val":"17"}
+[2020-04-24 20:44:30.033840] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:30.038977] Received: {"t":2724,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:30.039201] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:30.044065] Received: {"t":2729,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.044299] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:30.049063] Received: {"t":2734,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.053742] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:30.054105] Received: {"t":2739,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.054330] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.058986] Received: {"t":2744,"field":"pan.cycle_no","val":"17"}
+[2020-04-24 20:44:30.059236] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:30.063988] Received: {"t":2749,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:30.064206] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.197008] Received: {"t":2882,"field":"pan.cycle_no","val":"18"}
+[2020-04-24 20:44:30.204770] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:30.204987] Received: {"t":2891,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:30.205160] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:30.210060] Received: {"t":2895,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.210269] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:30.215053] Received: {"t":2900,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.215253] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:30.220043] Received: {"t":2905,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.220407] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.224983] Received: {"t":2910,"field":"pan.cycle_no","val":"18"}
+[2020-04-24 20:44:30.225215] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:30.229984] Received: {"t":2915,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:30.230189] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.366020] Received: {"t":3052,"field":"pan.cycle_no","val":"19"}
+[2020-04-24 20:44:30.366319] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:30.370982] Received: {"t":3056,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:30.371236] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:30.376057] Received: {"t":3061,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.376267] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:30.381055] Received: {"t":3066,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.381269] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:30.386027] Received: {"t":3071,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.386209] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.390978] Received: {"t":3076,"field":"pan.cycle_no","val":"19"}
+[2020-04-24 20:44:30.391190] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:30.395983] Received: {"t":3081,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:30.410290] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.536085] Received: {"t":3222,"field":"pan.cycle_no","val":"20"}
+[2020-04-24 20:44:30.536439] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:30.540971] Received: {"t":3226,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:30.541175] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:30.546060] Received: {"t":3231,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.546264] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:30.551056] Received: {"t":3236,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.551277] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:30.556055] Received: {"t":3241,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.556254] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.560981] Received: {"t":3246,"field":"pan.cycle_no","val":"20"}
+[2020-04-24 20:44:30.561203] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:30.565955] Received: {"t":3251,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:30.566155] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.705999] Received: {"t":3392,"field":"pan.cycle_no","val":"21"}
+[2020-04-24 20:44:30.706244] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:30.710970] Received: {"t":3396,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:30.711174] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:30.716058] Received: {"t":3401,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.716256] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:30.721092] Received: {"t":3406,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.721269] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:30.726061] Received: {"t":3411,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.726284] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.730978] Received: {"t":3416,"field":"pan.cycle_no","val":"21"}
+[2020-04-24 20:44:30.731192] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:30.735983] Received: {"t":3421,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:30.736180] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.875981] Received: {"t":3562,"field":"pan.cycle_no","val":"22"}
+[2020-04-24 20:44:30.876194] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:30.880970] Received: {"t":3566,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:30.881164] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:30.886054] Received: {"t":3571,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.886267] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:30.891063] Received: {"t":3576,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.891272] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:30.896054] Received: {"t":3581,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:30.896256] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:30.900978] Received: {"t":3586,"field":"pan.cycle_no","val":"22"}
+[2020-04-24 20:44:30.910456] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:30.914983] Received: {"t":3601,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:30.915196] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.046995] Received: {"t":3732,"field":"pan.cycle_no","val":"23"}
+[2020-04-24 20:44:31.047257] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:31.051947] Received: {"t":3737,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:31.052149] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:31.057034] Received: {"t":3742,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.057245] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:31.062028] Received: {"t":3747,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.062245] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:31.067065] Received: {"t":3752,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.067269] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.071953] Received: {"t":3757,"field":"pan.cycle_no","val":"23"}
+[2020-04-24 20:44:31.072176] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:31.076975] Received: {"t":3762,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:31.077187] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.215956] Received: {"t":3902,"field":"pan.cycle_no","val":"24"}
+[2020-04-24 20:44:31.216172] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:31.220942] Received: {"t":3906,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:31.221128] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:31.226033] Received: {"t":3911,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.226211] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:31.231029] Received: {"t":3916,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.231204] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:31.236028] Received: {"t":3921,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.236201] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.240952] Received: {"t":3926,"field":"pan.cycle_no","val":"24"}
+[2020-04-24 20:44:31.241138] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:31.245955] Received: {"t":3931,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:31.246129] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.385958] Received: {"t":4072,"field":"pan.cycle_no","val":"25"}
+[2020-04-24 20:44:31.386134] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:31.390942] Received: {"t":4076,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:31.391111] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:31.396080] Received: {"t":4081,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.396256] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:31.401033] Received: {"t":4086,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.401207] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:31.406030] Received: {"t":4091,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.406209] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.410952] Received: {"t":4096,"field":"pan.cycle_no","val":"25"}
+[2020-04-24 20:44:31.411136] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:31.415955] Received: {"t":4101,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:31.416129] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.556009] Received: {"t":4242,"field":"pan.cycle_no","val":"26"}
+[2020-04-24 20:44:31.556241] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:31.560971] Received: {"t":4246,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:31.561152] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:31.566060] Received: {"t":4251,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.566234] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:31.571057] Received: {"t":4256,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.571234] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:31.576056] Received: {"t":4261,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.576239] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.580977] Received: {"t":4266,"field":"pan.cycle_no","val":"26"}
+[2020-04-24 20:44:31.581174] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:31.585983] Received: {"t":4271,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:31.586175] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.725994] Received: {"t":4412,"field":"pan.cycle_no","val":"27"}
+[2020-04-24 20:44:31.726199] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:31.730972] Received: {"t":4416,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:31.731148] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:31.736058] Received: {"t":4421,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.736236] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:31.741062] Received: {"t":4426,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.741242] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:31.746063] Received: {"t":4431,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.746233] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.750983] Received: {"t":4436,"field":"pan.cycle_no","val":"27"}
+[2020-04-24 20:44:31.751172] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:31.755987] Received: {"t":4441,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:31.756157] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.896991] Received: {"t":4582,"field":"pan.cycle_no","val":"28"}
+[2020-04-24 20:44:31.897195] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:31.901975] Received: {"t":4587,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:31.902180] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:31.907065] Received: {"t":4592,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.907257] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:31.912056] Received: {"t":4597,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.912257] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:31.917054] Received: {"t":4602,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:31.917230] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:31.921981] Received: {"t":4607,"field":"pan.cycle_no","val":"28"}
+[2020-04-24 20:44:31.922167] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:31.926990] Received: {"t":4612,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:31.927176] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.065981] Received: {"t":4752,"field":"pan.cycle_no","val":"29"}
+[2020-04-24 20:44:32.066158] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:32.070970] Received: {"t":4756,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:32.071145] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:32.076056] Received: {"t":4761,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.076235] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:32.081055] Received: {"t":4766,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.081243] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:32.086055] Received: {"t":4771,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.086238] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.090977] Received: {"t":4776,"field":"pan.cycle_no","val":"29"}
+[2020-04-24 20:44:32.091167] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:32.095987] Received: {"t":4781,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:32.096157] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.236005] Received: {"t":4922,"field":"pan.cycle_no","val":"30"}
+[2020-04-24 20:44:32.236261] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:32.240975] Received: {"t":4926,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:32.241151] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:32.246058] Received: {"t":4931,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.246245] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:32.251054] Received: {"t":4936,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.251243] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:32.256063] Received: {"t":4941,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.256963] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.260982] Received: {"t":4946,"field":"pan.cycle_no","val":"30"}
+[2020-04-24 20:44:32.261167] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:32.265987] Received: {"t":4951,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:32.266155] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.405989] Received: {"t":5092,"field":"pan.cycle_no","val":"31"}
+[2020-04-24 20:44:32.410408] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:32.414973] Received: {"t":5101,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:32.415182] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:32.420063] Received: {"t":5105,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.420226] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:32.425060] Received: {"t":5110,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.425238] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:32.430060] Received: {"t":5115,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.430229] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.434978] Received: {"t":5120,"field":"pan.cycle_no","val":"31"}
+[2020-04-24 20:44:32.435172] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:32.439954] Received: {"t":5125,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:32.440293] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.575961] Received: {"t":5262,"field":"pan.cycle_no","val":"32"}
+[2020-04-24 20:44:32.576186] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:32.580944] Received: {"t":5266,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:32.581123] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:32.586028] Received: {"t":5271,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.586201] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:32.591034] Received: {"t":5276,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.591220] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:32.596029] Received: {"t":5281,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.596201] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.600953] Received: {"t":5286,"field":"pan.cycle_no","val":"32"}
+[2020-04-24 20:44:32.601150] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:32.605957] Received: {"t":5291,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:32.606136] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.747047] Received: {"t":5432,"field":"pan.cycle_no","val":"33"}
+[2020-04-24 20:44:32.747314] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:32.751942] Received: {"t":5437,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:32.752092] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:32.757033] Received: {"t":5442,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.757231] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:32.762029] Received: {"t":5447,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.762222] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:32.767060] Received: {"t":5452,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.767232] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.771951] Received: {"t":5457,"field":"pan.cycle_no","val":"33"}
+[2020-04-24 20:44:32.772137] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:32.776972] Received: {"t":5462,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:32.777153] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.915964] Received: {"t":5601,"field":"pan.cycle_no","val":"34"}
+[2020-04-24 20:44:32.916171] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:32.920955] Received: {"t":5606,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:32.921147] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:32.926043] Received: {"t":5611,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.926242] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:32.931033] Received: {"t":5616,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.931215] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:32.936028] Received: {"t":5621,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:32.940725] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:32.940961] Received: {"t":5626,"field":"pan.cycle_no","val":"34"}
+[2020-04-24 20:44:32.941131] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:32.945955] Received: {"t":5631,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:32.946129] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.086004] Received: {"t":5771,"field":"pan.cycle_no","val":"35"}
+[2020-04-24 20:44:33.086223] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:33.090981] Received: {"t":5776,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:33.091200] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:33.096067] Received: {"t":5781,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.096291] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:33.101067] Received: {"t":5786,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.101271] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:33.106064] Received: {"t":5791,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.106255] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.110976] Received: {"t":5796,"field":"pan.cycle_no","val":"35"}
+[2020-04-24 20:44:33.111161] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:33.115982] Received: {"t":5801,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:33.116164] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.255988] Received: {"t":5941,"field":"pan.cycle_no","val":"36"}
+[2020-04-24 20:44:33.256168] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:33.260976] Received: {"t":5946,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:33.261160] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:33.266063] Received: {"t":5951,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.266239] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:33.271065] Received: {"t":5956,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.271257] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:33.276063] Received: {"t":5961,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.276243] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.280977] Received: {"t":5966,"field":"pan.cycle_no","val":"36"}
+[2020-04-24 20:44:33.281175] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:33.285992] Received: {"t":5971,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:33.286174] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.426016] Received: {"t":6112,"field":"pan.cycle_no","val":"37"}
+[2020-04-24 20:44:33.426268] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:33.430980] Received: {"t":6116,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:33.431197] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:33.436061] Received: {"t":6121,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.436267] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:33.441071] Received: {"t":6126,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.441269] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:33.446062] Received: {"t":6131,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.446249] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.450987] Received: {"t":6136,"field":"pan.cycle_no","val":"37"}
+[2020-04-24 20:44:33.451198] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:33.455985] Received: {"t":6141,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:33.456160] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.596991] Received: {"t":6282,"field":"pan.cycle_no","val":"38"}
+[2020-04-24 20:44:33.597165] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:33.601976] Received: {"t":6287,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:33.602194] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:33.607061] Received: {"t":6292,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.607261] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:33.612029] Received: {"t":6297,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.618734] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:33.619058] Received: {"t":6304,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.619245] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.623984] Received: {"t":6309,"field":"pan.cycle_no","val":"38"}
+[2020-04-24 20:44:33.624181] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:33.628987] Received: {"t":6314,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:33.629178] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.765992] Received: {"t":6452,"field":"pan.cycle_no","val":"39"}
+[2020-04-24 20:44:33.766167] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:33.770982] Received: {"t":6456,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:33.771174] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:33.776063] Received: {"t":6461,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.776241] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:33.781067] Received: {"t":6466,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.785700] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:33.786044] Received: {"t":6471,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.786221] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.791024] Received: {"t":6476,"field":"pan.cycle_no","val":"39"}
+[2020-04-24 20:44:33.791228] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:33.795992] Received: {"t":6481,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:33.796176] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.937209] Received: {"t":6622,"field":"pan.cycle_no","val":"40"}
+[2020-04-24 20:44:33.937507] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:33.942137] Received: {"t":6628,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:33.942379] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:33.947165] Received: {"t":6632,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.947378] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:33.952060] Received: {"t":6637,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.953052] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:33.957106] Received: {"t":6642,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:33.957327] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:33.961978] Received: {"t":6647,"field":"pan.cycle_no","val":"40"}
+[2020-04-24 20:44:33.965179] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:33.967006] Received: {"t":6652,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:33.970293] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.106090] Received: {"t":6792,"field":"pan.cycle_no","val":"41"}
+[2020-04-24 20:44:34.106375] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:34.110980] Received: {"t":6796,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:34.111198] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:34.116060] Received: {"t":6801,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.116292] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:34.121056] Received: {"t":6806,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.121247] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:34.126072] Received: {"t":6811,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.138796] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.139142] Received: {"t":6824,"field":"pan.cycle_no","val":"41"}
+[2020-04-24 20:44:34.140294] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:34.144018] Received: {"t":6829,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:34.144239] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.276012] Received: {"t":6962,"field":"pan.cycle_no","val":"42"}
+[2020-04-24 20:44:34.276278] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:34.280975] Received: {"t":6966,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:34.281193] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:34.286059] Received: {"t":6971,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.286282] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:34.291062] Received: {"t":6976,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.291268] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:34.296055] Received: {"t":6981,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.296256] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.300981] Received: {"t":6986,"field":"pan.cycle_no","val":"42"}
+[2020-04-24 20:44:34.301208] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:34.305984] Received: {"t":6991,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:34.306195] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.446993] Received: {"t":7132,"field":"pan.cycle_no","val":"43"}
+[2020-04-24 20:44:34.447230] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:34.451980] Received: {"t":7137,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:34.452254] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:34.457078] Received: {"t":7142,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.457311] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:34.462056] Received: {"t":7147,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.462265] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:34.467068] Received: {"t":7152,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.467288] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.471984] Received: {"t":7157,"field":"pan.cycle_no","val":"43"}
+[2020-04-24 20:44:34.472213] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:34.477006] Received: {"t":7162,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:34.477234] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.616017] Received: {"t":7302,"field":"pan.cycle_no","val":"44"}
+[2020-04-24 20:44:34.616302] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:34.620979] Received: {"t":7306,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:34.621216] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:34.626063] Received: {"t":7311,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.626288] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:34.631054] Received: {"t":7316,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.631276] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:34.636068] Received: {"t":7321,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.639520] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.640987] Received: {"t":7326,"field":"pan.cycle_no","val":"44"}
+[2020-04-24 20:44:34.641214] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:34.645990] Received: {"t":7331,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:34.646201] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.787068] Received: {"t":7472,"field":"pan.cycle_no","val":"45"}
+[2020-04-24 20:44:34.787306] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:34.791973] Received: {"t":7477,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:34.792181] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:34.797065] Received: {"t":7482,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.797271] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:34.802058] Received: {"t":7487,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.802269] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:34.807048] Received: {"t":7492,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.807266] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.812020] Received: {"t":7497,"field":"pan.cycle_no","val":"45"}
+[2020-04-24 20:44:34.812254] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:34.817004] Received: {"t":7502,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:34.817218] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.955992] Received: {"t":7642,"field":"pan.cycle_no","val":"46"}
+[2020-04-24 20:44:34.956232] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:34.960980] Received: {"t":7646,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:34.961216] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:34.966071] Received: {"t":7651,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.966295] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:34.971059] Received: {"t":7656,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.971269] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:34.976059] Received: {"t":7661,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:34.976274] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:34.980987] Received: {"t":7666,"field":"pan.cycle_no","val":"46"}
+[2020-04-24 20:44:34.981220] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:34.985989] Received: {"t":7671,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:34.986205] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.127054] Received: {"t":7812,"field":"pan.cycle_no","val":"47"}
+[2020-04-24 20:44:35.127325] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:35.131989] Received: {"t":7817,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:35.132203] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:35.137288] Received: {"t":7822,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.137565] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:35.142084] Received: {"t":7828,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.142403] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:35.147135] Received: {"t":7832,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.147352] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.151992] Received: {"t":7837,"field":"pan.cycle_no","val":"47"}
+[2020-04-24 20:44:35.152300] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:35.156990] Received: {"t":7842,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:35.157211] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.296995] Received: {"t":7982,"field":"pan.cycle_no","val":"48"}
+[2020-04-24 20:44:35.297222] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:35.301972] Received: {"t":7987,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:35.302178] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:35.307065] Received: {"t":7992,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.307277] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:35.312064] Received: {"t":7997,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.312284] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:35.317089] Received: {"t":8002,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.317312] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.321985] Received: {"t":8007,"field":"pan.cycle_no","val":"48"}
+[2020-04-24 20:44:35.323832] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:35.328990] Received: {"t":8014,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:35.329196] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.466991] Received: {"t":8152,"field":"pan.cycle_no","val":"49"}
+[2020-04-24 20:44:35.467224] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:35.471980] Received: {"t":8157,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:35.472212] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:35.477068] Received: {"t":8162,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.477279] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:35.482060] Received: {"t":8167,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.482274] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:35.487057] Received: {"t":8172,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.487258] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.491986] Received: {"t":8177,"field":"pan.cycle_no","val":"49"}
+[2020-04-24 20:44:35.492235] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:35.497000] Received: {"t":8182,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:35.497213] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.636991] Received: {"t":8322,"field":"pan.cycle_no","val":"50"}
+[2020-04-24 20:44:35.637196] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:35.641972] Received: {"t":8327,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:35.642183] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:35.647069] Received: {"t":8332,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.647276] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:35.652055] Received: {"t":8337,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.652288] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:35.657069] Received: {"t":8342,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.657278] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.661980] Received: {"t":8347,"field":"pan.cycle_no","val":"50"}
+[2020-04-24 20:44:35.662198] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:35.666995] Received: {"t":8352,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:35.667209] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.807056] Received: {"t":8492,"field":"pan.cycle_no","val":"51"}
+[2020-04-24 20:44:35.807323] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:35.811978] Received: {"t":8497,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:35.812196] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:35.817079] Received: {"t":8502,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.817292] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:35.822062] Received: {"t":8507,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.822267] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:35.827069] Received: {"t":8512,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.831810] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.832033] Received: {"t":8517,"field":"pan.cycle_no","val":"51"}
+[2020-04-24 20:44:35.832280] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:35.836996] Received: {"t":8522,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:35.837240] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:35.976999] Received: {"t":8662,"field":"pan.cycle_no","val":"52"}
+[2020-04-24 20:44:35.977235] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:35.981979] Received: {"t":8667,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:35.982213] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:35.987068] Received: {"t":8672,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.987289] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:35.992057] Received: {"t":8677,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.992266] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:35.997059] Received: {"t":8682,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:35.997261] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.001977] Received: {"t":8687,"field":"pan.cycle_no","val":"52"}
+[2020-04-24 20:44:36.002196] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:36.006988] Received: {"t":8692,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:36.007187] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.147020] Received: {"t":8832,"field":"pan.cycle_no","val":"53"}
+[2020-04-24 20:44:36.147236] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:36.151972] Received: {"t":8837,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:36.152186] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:36.157075] Received: {"t":8842,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.157334] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:36.162066] Received: {"t":8847,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.162284] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:36.167066] Received: {"t":8852,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.167269] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.171984] Received: {"t":8857,"field":"pan.cycle_no","val":"53"}
+[2020-04-24 20:44:36.172222] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:36.177000] Received: {"t":8862,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:36.177191] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.317016] Received: {"t":9002,"field":"pan.cycle_no","val":"54"}
+[2020-04-24 20:44:36.317205] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:36.322150] Received: {"t":9007,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:36.322484] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:36.327086] Received: {"t":9012,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.327320] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:36.332064] Received: {"t":9017,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.332280] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:36.337171] Received: {"t":9022,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.337463] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.341951] Received: {"t":9027,"field":"pan.cycle_no","val":"54"}
+[2020-04-24 20:44:36.342197] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:36.347051] Received: {"t":9032,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:36.347270] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.486999] Received: {"t":9172,"field":"pan.cycle_no","val":"55"}
+[2020-04-24 20:44:36.487240] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:36.491980] Received: {"t":9177,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:36.492217] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:36.497066] Received: {"t":9182,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.501814] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:36.502098] Received: {"t":9187,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.503623] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:36.507065] Received: {"t":9192,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.507280] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.511979] Received: {"t":9197,"field":"pan.cycle_no","val":"55"}
+[2020-04-24 20:44:36.512194] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:36.516992] Received: {"t":9202,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:36.517202] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.656991] Received: {"t":9342,"field":"pan.cycle_no","val":"56"}
+[2020-04-24 20:44:36.657199] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:36.661974] Received: {"t":9347,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:36.662181] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:36.667072] Received: {"t":9352,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.667274] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:36.672033] Received: {"t":9357,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.672218] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:36.677037] Received: {"t":9362,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.677243] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.681940] Received: {"t":9367,"field":"pan.cycle_no","val":"56"}
+[2020-04-24 20:44:36.682156] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:36.686965] Received: {"t":9372,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:36.687176] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.826988] Received: {"t":9512,"field":"pan.cycle_no","val":"57"}
+[2020-04-24 20:44:36.827227] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:36.831948] Received: {"t":9517,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:36.832159] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:36.837035] Received: {"t":9522,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.837245] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:36.842030] Received: {"t":9527,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.842232] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:36.847041] Received: {"t":9532,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:36.847257] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.851954] Received: {"t":9537,"field":"pan.cycle_no","val":"57"}
+[2020-04-24 20:44:36.852168] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:36.856963] Received: {"t":9542,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:36.857188] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:36.996995] Received: {"t":9682,"field":"pan.cycle_no","val":"58"}
+[2020-04-24 20:44:36.997295] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:37.001952] Received: {"t":9687,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:37.002193] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:37.007043] Received: {"t":9692,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.007276] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:37.012034] Received: {"t":9697,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.012289] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:37.017043] Received: {"t":9702,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.017251] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.021955] Received: {"t":9707,"field":"pan.cycle_no","val":"58"}
+[2020-04-24 20:44:37.022176] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:37.026989] Received: {"t":9712,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:37.027226] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.166960] Received: {"t":9852,"field":"pan.cycle_no","val":"59"}
+[2020-04-24 20:44:37.167171] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:37.171948] Received: {"t":9857,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:37.172145] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:37.177038] Received: {"t":9862,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.177243] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:37.182029] Received: {"t":9867,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.182243] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:37.187032] Received: {"t":9872,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.187231] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.191960] Received: {"t":9877,"field":"pan.cycle_no","val":"59"}
+[2020-04-24 20:44:37.192184] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:37.196981] Received: {"t":9882,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:37.197133] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.336966] Received: {"t":10022,"field":"pan.cycle_no","val":"60"}
+[2020-04-24 20:44:37.337172] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:37.341950] Received: {"t":10027,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:37.342156] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:37.347075] Received: {"t":10032,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.347290] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:37.352035] Received: {"t":10037,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.352244] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:37.357050] Received: {"t":10042,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.357285] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.361960] Received: {"t":10047,"field":"pan.cycle_no","val":"60"}
+[2020-04-24 20:44:37.362171] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:37.366967] Received: {"t":10052,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:37.367165] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.506971] Received: {"t":10192,"field":"pan.cycle_no","val":"61"}
+[2020-04-24 20:44:37.507207] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:37.511954] Received: {"t":10197,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:37.512201] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:37.517071] Received: {"t":10202,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.517301] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:37.522195] Received: {"t":10207,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.522467] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:37.527116] Received: {"t":10213,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.527366] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.531964] Received: {"t":10217,"field":"pan.cycle_no","val":"61"}
+[2020-04-24 20:44:37.532211] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:37.537071] Received: {"t":10222,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:37.537360] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.676989] Received: {"t":10362,"field":"pan.cycle_no","val":"62"}
+[2020-04-24 20:44:37.677251] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:37.681953] Received: {"t":10367,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:37.682157] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:37.687043] Received: {"t":10372,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.687254] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:37.692034] Received: {"t":10377,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.692249] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:37.697043] Received: {"t":10382,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.697261] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.701960] Received: {"t":10387,"field":"pan.cycle_no","val":"62"}
+[2020-04-24 20:44:37.702191] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:37.706976] Received: {"t":10392,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:37.707191] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.846967] Received: {"t":10532,"field":"pan.cycle_no","val":"63"}
+[2020-04-24 20:44:37.847171] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:37.851954] Received: {"t":10537,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:37.852152] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:37.857041] Received: {"t":10542,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.857238] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:37.862036] Received: {"t":10547,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.862240] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:37.867040] Received: {"t":10552,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:37.867243] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:37.871957] Received: {"t":10557,"field":"pan.cycle_no","val":"63"}
+[2020-04-24 20:44:37.872191] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:37.876964] Received: {"t":10562,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:37.877175] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.016998] Received: {"t":10702,"field":"pan.cycle_no","val":"64"}
+[2020-04-24 20:44:38.017230] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:38.021960] Received: {"t":10707,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:38.022219] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:38.027070] Received: {"t":10712,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.027314] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:38.032048] Received: {"t":10717,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.032288] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:38.037073] Received: {"t":10722,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.037291] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.041959] Received: {"t":10727,"field":"pan.cycle_no","val":"64"}
+[2020-04-24 20:44:38.042181] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:38.046968] Received: {"t":10732,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:38.047207] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.187001] Received: {"t":10872,"field":"pan.cycle_no","val":"65"}
+[2020-04-24 20:44:38.187263] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:38.191951] Received: {"t":10877,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:38.192167] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:38.197039] Received: {"t":10882,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.197264] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:38.202036] Received: {"t":10887,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.202253] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:38.207048] Received: {"t":10892,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.207294] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.211963] Received: {"t":10897,"field":"pan.cycle_no","val":"65"}
+[2020-04-24 20:44:38.216775] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:38.217010] Received: {"t":10902,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:38.217243] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.356968] Received: {"t":11042,"field":"pan.cycle_no","val":"66"}
+[2020-04-24 20:44:38.357172] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:38.361952] Received: {"t":11047,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:38.362153] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:38.367042] Received: {"t":11052,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.367247] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:38.372037] Received: {"t":11057,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.372248] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:38.377044] Received: {"t":11062,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.377259] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.381960] Received: {"t":11067,"field":"pan.cycle_no","val":"66"}
+[2020-04-24 20:44:38.382141] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:38.386977] Received: {"t":11072,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:38.387209] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.526999] Received: {"t":11212,"field":"pan.cycle_no","val":"67"}
+[2020-04-24 20:44:38.527244] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:38.531959] Received: {"t":11217,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:38.532189] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:38.537053] Received: {"t":11222,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.537287] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:38.542043] Received: {"t":11227,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.542278] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:38.547073] Received: {"t":11232,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.547293] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.551959] Received: {"t":11237,"field":"pan.cycle_no","val":"67"}
+[2020-04-24 20:44:38.552175] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:38.556974] Received: {"t":11242,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:38.557181] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.696984] Received: {"t":11382,"field":"pan.cycle_no","val":"68"}
+[2020-04-24 20:44:38.697219] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:38.701951] Received: {"t":11387,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:38.702155] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:38.707045] Received: {"t":11392,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.707251] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:38.712038] Received: {"t":11397,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.712254] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:38.717070] Received: {"t":11402,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.717280] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.722071] Received: {"t":11407,"field":"pan.cycle_no","val":"68"}
+[2020-04-24 20:44:38.722388] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:38.727009] Received: {"t":11412,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:38.727253] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.866994] Received: {"t":11552,"field":"pan.cycle_no","val":"69"}
+[2020-04-24 20:44:38.867257] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:38.871953] Received: {"t":11557,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:38.872157] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:38.877041] Received: {"t":11562,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.877260] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:38.882039] Received: {"t":11567,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.882250] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:38.887037] Received: {"t":11572,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:38.887251] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:38.891959] Received: {"t":11577,"field":"pan.cycle_no","val":"69"}
+[2020-04-24 20:44:38.892176] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:38.897071] Received: {"t":11582,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:38.897273] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.037002] Received: {"t":11722,"field":"pan.cycle_no","val":"70"}
+[2020-04-24 20:44:39.037251] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:39.041955] Received: {"t":11727,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:39.042187] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:39.047052] Received: {"t":11732,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.047284] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:39.052047] Received: {"t":11737,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.052264] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:39.057038] Received: {"t":11742,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.057247] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.061956] Received: {"t":11747,"field":"pan.cycle_no","val":"70"}
+[2020-04-24 20:44:39.062168] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:39.066962] Received: {"t":11752,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:39.067133] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.206995] Received: {"t":11892,"field":"pan.cycle_no","val":"71"}
+[2020-04-24 20:44:39.207210] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:39.211978] Received: {"t":11897,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:39.212189] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:39.217068] Received: {"t":11902,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.217239] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:39.222062] Received: {"t":11907,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.222264] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:39.227067] Received: {"t":11912,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.227270] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.231984] Received: {"t":11917,"field":"pan.cycle_no","val":"71"}
+[2020-04-24 20:44:39.232195] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:39.236993] Received: {"t":11922,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:39.237205] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.377026] Received: {"t":12062,"field":"pan.cycle_no","val":"72"}
+[2020-04-24 20:44:39.377269] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:39.381977] Received: {"t":12067,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:39.382196] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:39.387102] Received: {"t":12072,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.387335] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:39.392064] Received: {"t":12077,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.392271] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:39.397067] Received: {"t":12082,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.397274] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.401993] Received: {"t":12087,"field":"pan.cycle_no","val":"72"}
+[2020-04-24 20:44:39.402223] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:39.406997] Received: {"t":12092,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:39.407207] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.547028] Received: {"t":12232,"field":"pan.cycle_no","val":"73"}
+[2020-04-24 20:44:39.547268] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:39.551980] Received: {"t":12237,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:39.552220] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:39.557084] Received: {"t":12242,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.557315] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:39.562069] Received: {"t":12247,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.562293] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:39.567074] Received: {"t":12252,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.567288] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.571988] Received: {"t":12257,"field":"pan.cycle_no","val":"73"}
+[2020-04-24 20:44:39.572212] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:39.576995] Received: {"t":12262,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:39.577196] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.716992] Received: {"t":12402,"field":"pan.cycle_no","val":"74"}
+[2020-04-24 20:44:39.717201] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:39.721974] Received: {"t":12407,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:39.722213] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:39.727065] Received: {"t":12412,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.727262] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:39.732065] Received: {"t":12417,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.732270] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:39.737093] Received: {"t":12422,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.737295] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.741989] Received: {"t":12427,"field":"pan.cycle_no","val":"74"}
+[2020-04-24 20:44:39.742201] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:39.747023] Received: {"t":12432,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:39.747221] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.886991] Received: {"t":12572,"field":"pan.cycle_no","val":"75"}
+[2020-04-24 20:44:39.887217] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:39.891977] Received: {"t":12577,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:39.892176] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:39.897071] Received: {"t":12582,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.897286] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:39.902065] Received: {"t":12587,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.902288] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:39.907068] Received: {"t":12592,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:39.907270] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:39.911985] Received: {"t":12597,"field":"pan.cycle_no","val":"75"}
+[2020-04-24 20:44:39.912227] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:39.916993] Received: {"t":12602,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:39.917191] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.057015] Received: {"t":12742,"field":"pan.cycle_no","val":"76"}
+[2020-04-24 20:44:40.057286] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:40.061992] Received: {"t":12747,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:40.062244] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:40.067103] Received: {"t":12752,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.067346] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:40.072074] Received: {"t":12757,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.072293] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:40.077065] Received: {"t":12762,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.077270] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.081990] Received: {"t":12767,"field":"pan.cycle_no","val":"76"}
+[2020-04-24 20:44:40.082206] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:40.086994] Received: {"t":12772,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:40.087194] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.226992] Received: {"t":12912,"field":"pan.cycle_no","val":"77"}
+[2020-04-24 20:44:40.227208] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:40.231976] Received: {"t":12917,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:40.232182] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:40.237075] Received: {"t":12922,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.237287] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:40.242065] Received: {"t":12927,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.242280] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:40.247100] Received: {"t":12932,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.247312] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.251988] Received: {"t":12937,"field":"pan.cycle_no","val":"77"}
+[2020-04-24 20:44:40.252205] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:40.256995] Received: {"t":12942,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:40.257207] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.396996] Received: {"t":13082,"field":"pan.cycle_no","val":"78"}
+[2020-04-24 20:44:40.397200] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:40.401977] Received: {"t":13087,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:40.402177] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:40.407067] Received: {"t":13092,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.407277] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:40.412063] Received: {"t":13097,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.412280] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:40.417071] Received: {"t":13102,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.417284] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.421988] Received: {"t":13107,"field":"pan.cycle_no","val":"78"}
+[2020-04-24 20:44:40.422199] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:40.427009] Received: {"t":13112,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:40.427217] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.567105] Received: {"t":13252,"field":"pan.cycle_no","val":"79"}
+[2020-04-24 20:44:40.567396] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:40.571987] Received: {"t":13257,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:40.572225] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:40.577077] Received: {"t":13262,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.577311] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:40.582069] Received: {"t":13267,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.582298] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:40.587068] Received: {"t":13272,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.587279] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.591984] Received: {"t":13277,"field":"pan.cycle_no","val":"79"}
+[2020-04-24 20:44:40.592179] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:40.596998] Received: {"t":13282,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:40.597190] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.736994] Received: {"t":13422,"field":"pan.cycle_no","val":"80"}
+[2020-04-24 20:44:40.737246] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:40.741978] Received: {"t":13427,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:40.742173] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:40.747072] Received: {"t":13432,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.747285] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:40.752066] Received: {"t":13437,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.752282] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:40.757093] Received: {"t":13442,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.757297] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.761985] Received: {"t":13447,"field":"pan.cycle_no","val":"80"}
+[2020-04-24 20:44:40.762206] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:40.767019] Received: {"t":13452,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:40.767242] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.906993] Received: {"t":13592,"field":"pan.cycle_no","val":"81"}
+[2020-04-24 20:44:40.907209] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:40.911977] Received: {"t":13597,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:40.912177] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:40.917065] Received: {"t":13602,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.917264] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:40.922060] Received: {"t":13607,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.922268] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:40.927070] Received: {"t":13612,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:40.927283] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:40.931986] Received: {"t":13617,"field":"pan.cycle_no","val":"81"}
+[2020-04-24 20:44:40.932206] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:40.937002] Received: {"t":13622,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:40.937205] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.077006] Received: {"t":13762,"field":"pan.cycle_no","val":"82"}
+[2020-04-24 20:44:41.077238] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:41.081984] Received: {"t":13767,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:41.082213] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:41.087072] Received: {"t":13772,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.087310] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:41.092068] Received: {"t":13777,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.092289] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:41.097097] Received: {"t":13782,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.097301] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.101982] Received: {"t":13787,"field":"pan.cycle_no","val":"82"}
+[2020-04-24 20:44:41.102205] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:41.106995] Received: {"t":13792,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:41.107225] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.247013] Received: {"t":13932,"field":"pan.cycle_no","val":"83"}
+[2020-04-24 20:44:41.247324] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:41.251953] Received: {"t":13937,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:41.252169] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:41.257046] Received: {"t":13942,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.257251] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:41.262037] Received: {"t":13947,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.262245] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:41.267067] Received: {"t":13952,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.267273] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.271956] Received: {"t":13957,"field":"pan.cycle_no","val":"83"}
+[2020-04-24 20:44:41.272178] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:41.276966] Received: {"t":13962,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:41.277184] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.416966] Received: {"t":14102,"field":"pan.cycle_no","val":"84"}
+[2020-04-24 20:44:41.417168] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:41.421951] Received: {"t":14107,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:41.422121] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:41.427051] Received: {"t":14112,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.427268] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:41.432037] Received: {"t":14117,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.432243] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:41.437039] Received: {"t":14122,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.437241] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.441959] Received: {"t":14127,"field":"pan.cycle_no","val":"84"}
+[2020-04-24 20:44:41.442171] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:41.446966] Received: {"t":14132,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:41.447164] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.586976] Received: {"t":14272,"field":"pan.cycle_no","val":"85"}
+[2020-04-24 20:44:41.587218] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:41.591958] Received: {"t":14277,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:41.592191] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:41.597075] Received: {"t":14282,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.597303] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:41.602046] Received: {"t":14287,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.602290] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:41.607040] Received: {"t":14292,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.607255] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.611961] Received: {"t":14297,"field":"pan.cycle_no","val":"85"}
+[2020-04-24 20:44:41.612175] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:41.616969] Received: {"t":14302,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:41.617172] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.757018] Received: {"t":14442,"field":"pan.cycle_no","val":"86"}
+[2020-04-24 20:44:41.757285] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:41.761955] Received: {"t":14447,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:41.762165] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:41.767067] Received: {"t":14452,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.767300] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:41.772042] Received: {"t":14457,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.772249] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:41.777048] Received: {"t":14462,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.777268] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.781962] Received: {"t":14467,"field":"pan.cycle_no","val":"86"}
+[2020-04-24 20:44:41.782181] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:41.787004] Received: {"t":14472,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:41.787224] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.926968] Received: {"t":14612,"field":"pan.cycle_no","val":"87"}
+[2020-04-24 20:44:41.927177] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:41.931952] Received: {"t":14617,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:41.936778] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:41.937087] Received: {"t":14622,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.937297] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:41.942041] Received: {"t":14627,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.942246] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:41.947068] Received: {"t":14632,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:41.947282] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:41.951959] Received: {"t":14637,"field":"pan.cycle_no","val":"87"}
+[2020-04-24 20:44:41.952178] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:41.956969] Received: {"t":14642,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:41.957172] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.096998] Received: {"t":14782,"field":"pan.cycle_no","val":"88"}
+[2020-04-24 20:44:42.097257] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:42.101962] Received: {"t":14787,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:42.110434] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:42.115045] Received: {"t":14800,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.115284] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:42.120048] Received: {"t":14805,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.120276] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:42.125036] Received: {"t":14810,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.125247] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.129958] Received: {"t":14815,"field":"pan.cycle_no","val":"88"}
+[2020-04-24 20:44:42.130194] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:42.134965] Received: {"t":14820,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:42.135178] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.266985] Received: {"t":14952,"field":"pan.cycle_no","val":"89"}
+[2020-04-24 20:44:42.267198] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:42.271951] Received: {"t":14957,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:42.272150] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:42.277042] Received: {"t":14962,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.277257] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:42.282037] Received: {"t":14967,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.282241] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:42.287041] Received: {"t":14972,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.287214] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.291964] Received: {"t":14977,"field":"pan.cycle_no","val":"89"}
+[2020-04-24 20:44:42.296767] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:42.297006] Received: {"t":14982,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:42.297214] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.436990] Received: {"t":15122,"field":"pan.cycle_no","val":"90"}
+[2020-04-24 20:44:42.437240] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:42.441950] Received: {"t":15127,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:42.442158] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:42.447072] Received: {"t":15132,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.447277] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:42.452038] Received: {"t":15137,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.452242] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:42.457044] Received: {"t":15142,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.457252] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.461964] Received: {"t":15147,"field":"pan.cycle_no","val":"90"}
+[2020-04-24 20:44:42.462188] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:42.466991] Received: {"t":15152,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:42.467215] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.606972] Received: {"t":15292,"field":"pan.cycle_no","val":"91"}
+[2020-04-24 20:44:42.607207] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:42.611960] Received: {"t":15297,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:42.612192] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:42.617047] Received: {"t":15302,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.617266] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:42.622033] Received: {"t":15307,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.622239] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:42.627035] Received: {"t":15312,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.627248] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.631956] Received: {"t":15317,"field":"pan.cycle_no","val":"91"}
+[2020-04-24 20:44:42.632170] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:42.636965] Received: {"t":15322,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:42.637162] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.777001] Received: {"t":15462,"field":"pan.cycle_no","val":"92"}
+[2020-04-24 20:44:42.777226] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:42.781954] Received: {"t":15467,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:42.782178] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:42.787034] Received: {"t":15472,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.787232] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:42.792039] Received: {"t":15477,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.792262] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:42.797043] Received: {"t":15482,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.797242] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.801958] Received: {"t":15487,"field":"pan.cycle_no","val":"92"}
+[2020-04-24 20:44:42.802167] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:42.806966] Received: {"t":15492,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:42.807169] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.947012] Received: {"t":15632,"field":"pan.cycle_no","val":"93"}
+[2020-04-24 20:44:42.955768] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:42.955988] Received: {"t":15641,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:42.960777] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:42.961065] Received: {"t":15647,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.981780] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:42.982067] Received: {"t":15667,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.986959] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:42.989049] Received: {"t":15674,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:42.989273] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:42.993964] Received: {"t":15679,"field":"pan.cycle_no","val":"93"}
+[2020-04-24 20:44:42.994151] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:42.998967] Received: {"t":15684,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:42.999153] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.126975] Received: {"t":15813,"field":"pan.cycle_no","val":"94"}
+[2020-04-24 20:44:43.127208] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:43.131959] Received: {"t":15817,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:43.132194] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:43.137043] Received: {"t":15822,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.137274] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:43.142047] Received: {"t":15827,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.142264] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:43.147038] Received: {"t":15832,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.147242] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.151959] Received: {"t":15837,"field":"pan.cycle_no","val":"94"}
+[2020-04-24 20:44:43.152173] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:43.156967] Received: {"t":15842,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:43.157170] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.296969] Received: {"t":15982,"field":"pan.cycle_no","val":"95"}
+[2020-04-24 20:44:43.297188] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:43.301951] Received: {"t":15987,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:43.302159] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:43.307041] Received: {"t":15992,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.307245] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:43.312038] Received: {"t":15997,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.312244] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:43.317067] Received: {"t":16002,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.317303] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.321987] Received: {"t":16007,"field":"pan.cycle_no","val":"95"}
+[2020-04-24 20:44:43.322206] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:43.326970] Received: {"t":16012,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:43.327171] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.467013] Received: {"t":16152,"field":"pan.cycle_no","val":"96"}
+[2020-04-24 20:44:43.467228] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:43.471980] Received: {"t":16157,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:43.472179] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:43.477073] Received: {"t":16162,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.477278] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:43.482066] Received: {"t":16167,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.482279] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:43.487096] Received: {"t":16172,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.487301] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.491990] Received: {"t":16177,"field":"pan.cycle_no","val":"96"}
+[2020-04-24 20:44:43.492203] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:43.496998] Received: {"t":16182,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:43.497194] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.637018] Received: {"t":16322,"field":"pan.cycle_no","val":"97"}
+[2020-04-24 20:44:43.637287] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:43.641986] Received: {"t":16327,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:43.642222] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:43.647085] Received: {"t":16332,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.647308] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:43.652068] Received: {"t":16337,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.652280] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:43.657079] Received: {"t":16342,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.657287] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.661993] Received: {"t":16347,"field":"pan.cycle_no","val":"97"}
+[2020-04-24 20:44:43.662227] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:43.666997] Received: {"t":16352,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:43.667212] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.807012] Received: {"t":16492,"field":"pan.cycle_no","val":"98"}
+[2020-04-24 20:44:43.807238] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:43.811979] Received: {"t":16497,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:43.812211] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:43.817079] Received: {"t":16502,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.817290] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:43.822068] Received: {"t":16507,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.822275] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:43.827068] Received: {"t":16512,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.827272] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.831992] Received: {"t":16517,"field":"pan.cycle_no","val":"98"}
+[2020-04-24 20:44:43.832207] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:43.837001] Received: {"t":16522,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:43.837208] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:43.976998] Received: {"t":16662,"field":"pan.cycle_no","val":"99"}
+[2020-04-24 20:44:43.977207] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:43.981982] Received: {"t":16667,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:43.982191] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:43.987068] Received: {"t":16672,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.987287] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:43.992064] Received: {"t":16677,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.992266] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:43.997069] Received: {"t":16682,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:43.997269] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.001992] Received: {"t":16687,"field":"pan.cycle_no","val":"99"}
+[2020-04-24 20:44:44.002206] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:44.006997] Received: {"t":16692,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:44.007210] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.147069] Received: {"t":16832,"field":"pan.cycle_no","val":"100"}
+[2020-04-24 20:44:44.147367] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:44.151993] Received: {"t":16837,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:44.152236] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:44.157086] Received: {"t":16842,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.157323] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:44.162075] Received: {"t":16847,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.162305] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:44.167102] Received: {"t":16852,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.167310] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.171995] Received: {"t":16857,"field":"pan.cycle_no","val":"100"}
+[2020-04-24 20:44:44.172212] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:44.177000] Received: {"t":16862,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:44.177205] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.317006] Received: {"t":17003,"field":"pan.cycle_no","val":"101"}
+[2020-04-24 20:44:44.317236] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:44.321980] Received: {"t":17007,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:44.322184] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:44.327074] Received: {"t":17012,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.327275] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:44.332068] Received: {"t":17017,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.332280] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:44.337069] Received: {"t":17022,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.337267] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.341992] Received: {"t":17027,"field":"pan.cycle_no","val":"101"}
+[2020-04-24 20:44:44.342205] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:44.347023] Received: {"t":17032,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:44.347232] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.486999] Received: {"t":17172,"field":"pan.cycle_no","val":"102"}
+[2020-04-24 20:44:44.487209] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:44.491980] Received: {"t":17177,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:44.492179] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:44.497071] Received: {"t":17182,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.497291] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:44.502063] Received: {"t":17187,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.502285] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:44.507117] Received: {"t":17192,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.507319] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.511993] Received: {"t":17197,"field":"pan.cycle_no","val":"102"}
+[2020-04-24 20:44:44.512206] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:44.516996] Received: {"t":17202,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:44.517195] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.657010] Received: {"t":17342,"field":"pan.cycle_no","val":"103"}
+[2020-04-24 20:44:44.657240] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:44.661988] Received: {"t":17347,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:44.662223] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:44.667122] Received: {"t":17352,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.667352] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:44.672080] Received: {"t":17357,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.672297] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:44.677067] Received: {"t":17362,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.677278] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.681991] Received: {"t":17367,"field":"pan.cycle_no","val":"103"}
+[2020-04-24 20:44:44.682208] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:44.686993] Received: {"t":17372,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:44.687195] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.827049] Received: {"t":17512,"field":"pan.cycle_no","val":"104"}
+[2020-04-24 20:44:44.827309] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:44.831981] Received: {"t":17517,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:44.832202] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:44.837069] Received: {"t":17522,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.837280] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:44.842068] Received: {"t":17527,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.842280] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:44.847095] Received: {"t":17532,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:44.847297] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.851993] Received: {"t":17537,"field":"pan.cycle_no","val":"104"}
+[2020-04-24 20:44:44.852217] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:44.856997] Received: {"t":17542,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:44.857198] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:44.997003] Received: {"t":17682,"field":"pan.cycle_no","val":"105"}
+[2020-04-24 20:44:44.997211] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:45.001984] Received: {"t":17687,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:45.002193] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:45.007069] Received: {"t":17692,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.007277] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:45.012065] Received: {"t":17697,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.012272] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:45.017097] Received: {"t":17702,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.017297] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.021994] Received: {"t":17707,"field":"pan.cycle_no","val":"105"}
+[2020-04-24 20:44:45.022209] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:45.026996] Received: {"t":17712,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:45.027210] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.168023] Received: {"t":17853,"field":"pan.cycle_no","val":"106"}
+[2020-04-24 20:44:45.168295] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:45.172990] Received: {"t":17858,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:45.173223] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:45.178079] Received: {"t":17863,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.178320] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:45.183069] Received: {"t":17868,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.183286] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:45.188063] Received: {"t":17873,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.188272] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.192989] Received: {"t":17878,"field":"pan.cycle_no","val":"106"}
+[2020-04-24 20:44:45.193207] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:45.197990] Received: {"t":17883,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:45.198216] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.337049] Received: {"t":18022,"field":"pan.cycle_no","val":"107"}
+[2020-04-24 20:44:45.337298] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:45.342078] Received: {"t":18027,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:45.342334] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:45.347101] Received: {"t":18032,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.347364] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:45.352073] Received: {"t":18037,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.352327] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:45.357119] Received: {"t":18042,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.357340] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.361992] Received: {"t":18047,"field":"pan.cycle_no","val":"107"}
+[2020-04-24 20:44:45.362211] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:45.367004] Received: {"t":18052,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:45.367209] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.507001] Received: {"t":18192,"field":"pan.cycle_no","val":"108"}
+[2020-04-24 20:44:45.507206] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:45.511979] Received: {"t":18197,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:45.512190] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:45.517070] Received: {"t":18202,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.517279] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:45.522071] Received: {"t":18207,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.522290] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:45.527071] Received: {"t":18212,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.527271] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.532000] Received: {"t":18217,"field":"pan.cycle_no","val":"108"}
+[2020-04-24 20:44:45.532215] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:45.536999] Received: {"t":18222,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:45.537200] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.677007] Received: {"t":18362,"field":"pan.cycle_no","val":"109"}
+[2020-04-24 20:44:45.677274] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:45.681986] Received: {"t":18367,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:45.682233] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:45.687087] Received: {"t":18372,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.687325] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:45.692075] Received: {"t":18377,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.692297] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:45.697076] Received: {"t":18382,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.697297] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.701995] Received: {"t":18387,"field":"pan.cycle_no","val":"109"}
+[2020-04-24 20:44:45.702210] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:45.706996] Received: {"t":18392,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:45.707203] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.847001] Received: {"t":18532,"field":"pan.cycle_no","val":"110"}
+[2020-04-24 20:44:45.847224] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:45.851981] Received: {"t":18537,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:45.852198] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:45.857070] Received: {"t":18542,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.857271] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:45.862067] Received: {"t":18547,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.862278] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:45.867104] Received: {"t":18552,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:45.867318] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:45.871994] Received: {"t":18557,"field":"pan.cycle_no","val":"110"}
+[2020-04-24 20:44:45.872216] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:45.877008] Received: {"t":18562,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:45.877208] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.018025] Received: {"t":18703,"field":"pan.cycle_no","val":"111"}
+[2020-04-24 20:44:46.018288] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:46.022982] Received: {"t":18708,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:46.023193] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:46.028067] Received: {"t":18713,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.028287] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:46.033064] Received: {"t":18718,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.033278] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:46.038066] Received: {"t":18723,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.038267] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.042998] Received: {"t":18728,"field":"pan.cycle_no","val":"111"}
+[2020-04-24 20:44:46.043211] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:46.047991] Received: {"t":18733,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:46.048195] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.187009] Received: {"t":18872,"field":"pan.cycle_no","val":"112"}
+[2020-04-24 20:44:46.187247] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:46.191995] Received: {"t":18877,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:46.192235] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:46.197080] Received: {"t":18882,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.197319] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:46.202077] Received: {"t":18887,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.202302] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:46.207068] Received: {"t":18892,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.207270] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.211995] Received: {"t":18897,"field":"pan.cycle_no","val":"112"}
+[2020-04-24 20:44:46.212219] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:46.216994] Received: {"t":18902,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:46.217200] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.357003] Received: {"t":19042,"field":"pan.cycle_no","val":"113"}
+[2020-04-24 20:44:46.357247] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:46.361981] Received: {"t":19047,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:46.362183] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:46.367068] Received: {"t":19052,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.367273] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:46.372066] Received: {"t":19057,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.372274] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:46.377074] Received: {"t":19062,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.377275] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.381996] Received: {"t":19067,"field":"pan.cycle_no","val":"113"}
+[2020-04-24 20:44:46.382215] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:46.387000] Received: {"t":19072,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:46.387202] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.527046] Received: {"t":19213,"field":"pan.cycle_no","val":"114"}
+[2020-04-24 20:44:46.527309] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:46.531985] Received: {"t":19217,"field":"piksi.state","val":"3"}
+[2020-04-24 20:44:46.533817] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:46.538090] Received: {"t":19223,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.540429] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:46.543135] Received: {"t":19228,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.546959] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:46.548077] Received: {"t":19233,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.552813] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.553052] Received: {"t":19239,"field":"pan.cycle_no","val":"114"}
+[2020-04-24 20:44:46.557824] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:46.558063] Received: {"t":19243,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:46.560602] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.699339] Received: {"t":19383,"field":"pan.cycle_no","val":"115"}
+[2020-04-24 20:44:46.699586] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:46.704000] Received: {"t":19390,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:46.704258] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:46.709077] Received: {"t":19394,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.709322] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:46.714079] Received: {"t":19399,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.714306] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:46.719064] Received: {"t":19404,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.719265] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.723990] Received: {"t":19409,"field":"pan.cycle_no","val":"115"}
+[2020-04-24 20:44:46.724205] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-04-24 20:44:46.728990] Received: {"t":19414,"field":"cycle.start","val":"true"}
+[2020-04-24 20:44:46.729187] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-04-24 20:44:46.867997] Received: {"t":19553,"field":"pan.cycle_no","val":"116"}
+[2020-04-24 20:44:46.868198] Sent:     {"mode": 114, "field": "piksi.state"}
+[2020-04-24 20:44:46.872980] Received: {"t":19558,"field":"piksi.state","val":"9"}
+[2020-04-24 20:44:46.873177] Sent:     {"mode": 114, "field": "piksi.vel"}
+[2020-04-24 20:44:46.878069] Received: {"t":19563,"field":"piksi.vel","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.878279] Sent:     {"mode": 114, "field": "piksi.pos"}
+[2020-04-24 20:44:46.883066] Received: {"t":19568,"field":"piksi.pos","val":"   nan,   nan,   nan,"}
+[2020-04-24 20:44:46.883270] Sent:     {"mode": 114, "field": "piksi.baseline_pos"}
+[2020-04-24 20:44:46.888068] Received: {"t":19573,"field":"piksi.baseline_pos","val":"   nan,   nan,   nan,"}
