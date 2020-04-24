@@ -156,7 +156,6 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         # Satellite should move to initialization hold
         self.logger.put("Case 6: POT is not functional")
         self.cycle()
-        self.cycle()
         self.check_moved_to_init_hold()
 
     ######## Helper Functions ###########
