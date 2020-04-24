@@ -56,7 +56,14 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.sim.flight_controller.write_state("adcs_monitor.havt_device6", value)
 
     def setup_case_singlesat(self):
+        # Move to startup and wait the full deployment length
+        self.mission_mode = 0
+        for _ in range(100):
+            self.cycle()
+        
+        # Run all the test cases
         self.run_case_singlesat()
+
         self.logger.put("Deployment to Initialization Hold testcase finished.")
 
     def run_case_singlesat(self):
@@ -66,10 +73,10 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.run_case_wheel2_failure()
         self.run_case_wheel3_failure()
         self.run_case_wheelpot_failure()
+        self.reset_faults()
         self.finish()
 
     def reset_faults(self):
-        self.mission_mode = 11
         self.adcs_is_functional = "true"
         self.wheel1_is_functional = "true"
         self.wheel2_is_functional = "true"
@@ -101,7 +108,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.wheel3_is_functional = "true"
         self.wheelpot_is_functional = "true"
         self.cycle()
-        self.cycle()
+        #self.cycle()
 
         self.mission_mode = 0  # Startup state
 
