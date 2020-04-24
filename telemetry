@@ -7,7 +7,7 @@
     },
     "fields": {
         "adcs.compute.vec1.current": {
-            "bitsize": 0,
+            "bitsize": 100,
             "flow_id": 14,
             "max": 1.0,
             "min": 0.0,
@@ -15,7 +15,7 @@
             "writable": true
         },
         "adcs.compute.vec1.desired": {
-            "bitsize": 0,
+            "bitsize": 100,
             "flow_id": 14,
             "max": 1.0,
             "min": 0.0,
@@ -23,7 +23,7 @@
             "writable": true
         },
         "adcs.compute.vec2.current": {
-            "bitsize": 0,
+            "bitsize": 100,
             "flow_id": 14,
             "max": 1.0,
             "min": 0.0,
@@ -31,7 +31,7 @@
             "writable": true
         },
         "adcs.compute.vec2.desired": {
-            "bitsize": 0,
+            "bitsize": 100,
             "flow_id": 14,
             "max": 1.0,
             "min": 0.0,
@@ -465,7 +465,7 @@
             "writable": false
         },
         "adcs_monitor.gyr_vec": {
-            "bitsize": 0,
+            "bitsize": 48,
             "flow_id": 24,
             "max": 2.181661605834961,
             "min": -2.181661605834961,
@@ -587,7 +587,7 @@
             "writable": false
         },
         "adcs_monitor.mag1_vec": {
-            "bitsize": 0,
+            "bitsize": 48,
             "flow_id": 24,
             "max": 0.004999999888241291,
             "min": -0.004999999888241291,
@@ -601,7 +601,7 @@
             "writable": false
         },
         "adcs_monitor.mag2_vec": {
-            "bitsize": 0,
+            "bitsize": 48,
             "flow_id": 24,
             "max": 0.0031999999191612005,
             "min": -0.0031999999191612005,
@@ -615,7 +615,7 @@
             "writable": false
         },
         "adcs_monitor.rwa_speed_rd": {
-            "bitsize": 0,
+            "bitsize": 48,
             "flow_id": 7,
             "max": 1047.199951171875,
             "min": -1047.199951171875,
@@ -623,7 +623,7 @@
             "writable": false
         },
         "adcs_monitor.rwa_torque_rd": {
-            "bitsize": 0,
+            "bitsize": 48,
             "flow_id": 7,
             "max": 0.004187500569969416,
             "min": -0.004187500569969416,
@@ -645,7 +645,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_vec": {
-            "bitsize": 0,
+            "bitsize": 48,
             "flow_id": 24,
             "max": 1.0,
             "min": -1.0,
@@ -947,13 +947,13 @@
             "writable": true
         },
         "attitude_estimator.q_body_eci": {
-            "bitsize": 0,
+            "bitsize": 29,
             "flow_id": 3,
             "type": "lin float quaternion",
             "writable": false
         },
         "attitude_estimator.w_body": {
-            "bitsize": 0,
+            "bitsize": 96,
             "flow_id": 3,
             "max": 55.0,
             "min": -55.0,
@@ -1509,7 +1509,7 @@
             "writable": true
         },
         "orbit.baseline_pos": {
-            "bitsize": 0,
+            "bitsize": 100,
             "flow_id": 2,
             "max": 100000.0,
             "min": 0.0,
@@ -1517,7 +1517,7 @@
             "writable": false
         },
         "orbit.pos": {
-            "bitsize": 0,
+            "bitsize": 100,
             "flow_id": 2,
             "max": 100000.0,
             "min": 0.0,
@@ -1587,11 +1587,11 @@
             "writable": false
         },
         "piksi.state": {
-            "bitsize": 3,
+            "bitsize": 4,
             "flow_id": 19,
-            "max": 4,
+            "max": 10,
             "min": 0,
-            "type": "unsigned int",
+            "type": "unsigned char",
             "writable": false
         },
         "piksi.time": {
@@ -1607,6 +1607,28 @@
             "min": 0.0,
             "type": "std double vector",
             "writable": false
+        },
+        "piksi_fh.cdpgs_delay_max_wait": {
+            "bitsize": 20,
+            "flow_id": 36,
+            "max": 720000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "piksi_fh.enabled": {
+            "bitsize": 1,
+            "flow_id": 36,
+            "type": "bool",
+            "writable": true
+        },
+        "piksi_fh.no_cdpgs_max_wait": {
+            "bitsize": 20,
+            "flow_id": 36,
+            "max": 720000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
         },
         "prop.failed_pressurize": {
             "bitsize": 1,
@@ -1703,6 +1725,14 @@
             "min": 0,
             "type": "unsigned int",
             "writable": true
+        },
+        "sys.memory_use": {
+            "bitsize": 19,
+            "flow_id": "undefined",
+            "max": 300000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
         },
         "telem.dump": {
             "bitsize": 1,
@@ -2521,6 +2551,16 @@
             ],
             "id": 35,
             "priority": 34
+        },
+        {
+            "active": false,
+            "fields": [
+                "piksi_fh.no_cdpgs_max_wait",
+                "piksi_fh.cdpgs_delay_max_wait",
+                "piksi_fh.enabled"
+            ],
+            "id": 36,
+            "priority": 35
         }
     ]
 }

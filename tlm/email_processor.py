@@ -1,25 +1,18 @@
-from flask import Flask, request, jsonify
-from flasgger import Swagger
-from flasgger.utils import swag_from
-from elasticsearch import Elasticsearch
 from datetime import datetime
 import threading
 import json
 import imaplib
-import base64
 import os
 import email
 import time
-import logging
 import subprocess
 import pty
 import serial
 
-
-class read_iridium(object):
-    def __init__(self, radio_keys_config, elastic_search):
+class IridiumEmailProcessor(object):
+    def __init__(self, radio_keys_config, elasticsearch, downlink_parser_path):
         # Connection to elasticsearch
-        self.es=elastic_search
+        self.es=elasticsearch
 
         #pan email
         self.username=radio_keys_config["email_username"]
@@ -46,10 +39,8 @@ class read_iridium(object):
         self.run_email_thread = False
 
         #set up downlink parser
-        filepath = os.path.dirname(os.path.abspath(__file__))
-        binary_dir = os.path.join(filepath, "../../.pio/build/gsw_downlink_parser/program")
         master_fd, slave_fd = pty.openpty()
-        self.downlink_parser = subprocess.Popen([binary_dir], stdin=master_fd, stdout=master_fd)
+        self.downlink_parser = subprocess.Popen([downlink_parser_path], stdin=master_fd, stdout=master_fd)
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
     def connect(self):
@@ -234,7 +225,7 @@ class read_iridium(object):
 
         while self.run_email_thread==True:
             #get the most recent statefield report
-            sf_report=readIr.check_for_email()
+            sf_report=self.check_for_email()
 
             if sf_report is not None:
                 # Print the statefield report recieved
@@ -262,105 +253,3 @@ class read_iridium(object):
         '''
         self.run_email_thread=False
         self.check_email_thread.join()
-
-# Get keys for connecting to email account and elasticsearch server
-try:
-    with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../ptest/configs/radio_keys.json')))as radio_keys_config_file:
-        radio_keys_config = json.load(radio_keys_config_file)
-    with open(os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../ptest/configs/server_keys.json')))as server_keys_config_file:
-        server_keys_config = json.load(server_keys_config_file)
-except json.JSONDecodeError:
-    print("Could not load config files. Exiting.")
-    sys.exit(1)
-except KeyError:
-    print("Malformed config file. Exiting.")
-    sys.exit(1)
-
-
-# Open a connection to elasticsearch
-es_server = server_keys_config["server"]
-es_port = server_keys_config["port"]
-es = Elasticsearch([{'host':es_server,'port':es_port}])
-
-# Create a read_iridium object
-readIr = read_iridium(radio_keys_config, es)
-# Start checking emails and posting reports
-readIr.connect()
-
-app = Flask(__name__)
-app.config["SWAGGER"]={"title": "PAN Ground Software", "uiversion": 2}
-
-# Set up the SwaggerUI API
-swagger_config={
-    "headers":[],
-    "specs":[
-        {
-            "endpoint":"apispec_1",
-            "route":"/apispec_1.json",
-            "rule_filter":lambda rule:True,
-            "model_filter":lambda tag:True
-        }
-    ],
-    "static_url_path": "/flassger_static",
-    "swagger_ui":True,
-    "specs_route":"/swagger/"
-}
-swagger=Swagger(app, config=swagger_config)
-
-# Endpoint for indexing data in elasticsearch
-# Mostly for testing purposes. We don't use this to actually index data in elasticsearch
-@app.route("/telemetry", methods=["POST"])
-@swag_from("endpoint_configs/telemetry_config.yml")
-def index_sf_report():
-    sf_report=request.get_json()
-    imei=sf_report["imei"]
-    data=json.dumps({
-        sf_report["field"]: sf_report["value"],
-        "time": str(datetime.now().isoformat())
-    })
-
-    #index statefield report in elasticsearch
-    sf_res = es.index(index='statefield_report_'+str(imei), doc_type='report', body=data)
-    res={
-        "Report Status": sf_res['result'],
-        "Report": json.loads(data),
-        "Index": 'statefield_report_'+str(imei)
-    }
-    return res
-
-# Endpoint for getting data from ElasticSearch
-@app.route("/search-es", methods=["GET"])
-@swag_from("endpoint_configs/search_es_config.yml")
-def search_es():
-    index = request.args.get('index')
-    field = str(request.args.get('field'))
-
-    # Get the most recent document in the given index which has a given statefield in it
-    search_object={
-        'query': {
-            'exists': {
-                'field': field
-            }
-        },
-        "sort": [
-            {
-                "time": {
-                    "order": "desc"
-                }
-            }
-        ],
-        "size": 1
-    }
-    # Get the value of that field from the document
-    if es.indices.exists(index=index):
-        res = es.search(index=index, body=json.dumps(search_object))
-        if len(res["hits"]["hits"])!=0:
-            most_recent_field=res["hits"]["hits"][0]["_source"][field]
-            return str(most_recent_field)
-        else:
-            return f"Unable to find field: {field} in index: {index}"
-    else:
-        return f"Unable to find index: {index}"
-
-if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0')

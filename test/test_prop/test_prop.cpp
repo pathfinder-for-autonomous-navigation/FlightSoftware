@@ -12,8 +12,80 @@ using namespace Devices;
 
 #define TO_MICRO(x) x*1000
 
+// Forward declaration of helper functions
+bool is_output(uint8_t pin);
+bool is_low(uint8_t pin);
+bool is_high (uint8_t pin);
 
 /* PropulsionSystem Tests */
+
+// Assuming that digitalRead() behaves as expected on both INPUT and OUTPUT pins
+
+// valves
+uint8_t const p1 = 3;
+uint8_t const p2 = 4;
+uint8_t const p3 = 5;
+uint8_t const p4 = 6;
+uint8_t const p5 = 27; 
+uint8_t const p6 = 28;
+
+// DCDC enable
+uint8_t const dcdc = 25;
+
+void test_setup()
+{
+    // Valve pins should all be set to OUTPUT
+    TEST_ASSERT_TRUE(is_output(p1));
+    TEST_ASSERT_TRUE(is_output(p2));
+    TEST_ASSERT_TRUE(is_output(p3));
+    TEST_ASSERT_TRUE(is_output(p4));
+    TEST_ASSERT_TRUE(is_output(p5));
+    TEST_ASSERT_TRUE(is_output(p6));
+
+    // Valve pins should be all LOW
+    TEST_ASSERT_TRUE(is_low(p1));
+    TEST_ASSERT_TRUE(is_low(p2));
+    TEST_ASSERT_TRUE(is_low(p3));
+    TEST_ASSERT_TRUE(is_low(p4));
+    TEST_ASSERT_TRUE(is_low(p5));
+    TEST_ASSERT_TRUE(is_low(p6));
+}
+
+// A pin is an OUTPUT pin if I can digitalWrite HIGH and digitalWrite LOW to it.
+bool is_output(uint8_t pin)
+{
+    int saved_val = digitalRead(pin); // Save the current value
+
+    digitalWrite(pin, HIGH);
+    bool can_write_high = is_high(pin);
+    digitalWrite(pin, LOW);
+    bool can_write_low = is_low(pin);
+
+    digitalWrite(pin, saved_val); // Restore saved value
+
+    return can_write_high && can_write_low;
+}
+
+bool is_low(uint8_t pin)
+{
+    return digitalRead(pin) == LOW;
+}
+
+bool is_high (uint8_t pin)
+{
+    return digitalRead(pin) == HIGH;
+}
+
+// is_functional should return true iff DCDC is OUTPUT and DCDC is HIGH
+void test_is_functional()
+{
+    TEST_ASSERT_FALSE(PropulsionSystem.is_functional());
+    pinMode(dcdc, OUTPUT);
+    TEST_ASSERT_FALSE(PropulsionSystem.is_functional());
+    digitalWrite(dcdc, HIGH);
+    TEST_ASSERT_TRUE(PropulsionSystem.is_functional());
+}
+
 
 void test_initialization()
 {
@@ -55,6 +127,9 @@ void test_enable_success()
 
     ASSERT_TRUE(PropulsionSystem.start_firing(), "enable should be ok");
     ASSERT_TRUE(PropulsionSystem.is_firing(), "tank2 should be firing right now");
+    delay(10);
+    ASSERT_TRUE(is_high(Tank2.valve3_pin), "Valve3 pin should be HIGH");
+
     PropulsionSystem.disable();
 }
 
@@ -80,7 +155,8 @@ void test_restart_firing()
     TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
     ASSERT_TRUE(PropulsionSystem.start_firing(), "test that we can restart the schedule");
     ASSERT_TRUE(PropulsionSystem.is_firing(), "should be allowed to enable it since there is still time");
-    TEST_ASSERT_TRUE(PropulsionSystem.is_firing());
+    delay(10);
+    ASSERT_TRUE(is_high(Tank2.valve3_pin), "Valve 3 should be firing right now");
 
     PropulsionSystem.disable();
     PropulsionSystem.clear_schedule();
@@ -90,6 +166,11 @@ void test_disable_while_firing()
 {
     TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(42, 42, 42, 42));
     TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
+    delay(12); // After 12 ms, all tank2 valves should be firing
+    TEST_ASSERT_TRUE(is_high(Tank2.valve1_pin));
+    TEST_ASSERT_TRUE(is_high(Tank2.valve2_pin));
+    TEST_ASSERT_TRUE(is_high(Tank2.valve3_pin));
+    TEST_ASSERT_TRUE(is_high(Tank2.valve4_pin));
     delay(1);
     PropulsionSystem.disable();
     TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
@@ -99,8 +180,19 @@ void test_cannot_clear_schedule_when_enabled()
 {
     TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(42, 42, 42, 42));
     TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
+    delay(12);
     TEST_ASSERT_FALSE(PropulsionSystem.clear_schedule());
+    // All tank2 valves should still be firing
+    TEST_ASSERT_TRUE(is_high(Tank2.valve1_pin));
+    TEST_ASSERT_TRUE(is_high(Tank2.valve2_pin));
+    TEST_ASSERT_TRUE(is_high(Tank2.valve3_pin));
+    TEST_ASSERT_TRUE(is_high(Tank2.valve4_pin));
     PropulsionSystem.disable();
+    // All tank2 valves should now be closed
+    TEST_ASSERT_TRUE(is_low(Tank2.valve1_pin));
+    TEST_ASSERT_TRUE(is_low(Tank2.valve2_pin));
+    TEST_ASSERT_TRUE(is_low(Tank2.valve3_pin));
+    TEST_ASSERT_TRUE(is_low(Tank2.valve4_pin));
     TEST_ASSERT_TRUE(PropulsionSystem.clear_schedule());
 }
 
@@ -225,12 +317,20 @@ void setup() {
     PropulsionSystem.setup();
     UNITY_BEGIN();
     RUN_TEST(test_initialization);
+    RUN_TEST(test_setup);
+    RUN_TEST(test_is_functional);
     scheduling_tests();
     RUN_TEST(test_reset);
+    // Multiple is_functional are here to make sure DCDC is not shutting down due to low power
+    TEST_ASSERT_TRUE(PropulsionSystem.is_functional());
     interval_timer_tests();
+    TEST_ASSERT_TRUE(PropulsionSystem.is_functional());
     open_valve_tests();
+    TEST_ASSERT_TRUE(PropulsionSystem.is_functional());
     RUN_TEST(test_open_tank1_valve);
+    TEST_ASSERT_TRUE(PropulsionSystem.is_functional());
     RUN_TEST(test_tank2_firing_schedule);
+    TEST_ASSERT_TRUE(PropulsionSystem.is_functional());
     UNITY_END();
 }
 

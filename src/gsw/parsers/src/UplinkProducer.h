@@ -33,7 +33,7 @@ class UplinkProducer : public Uplink{
      * Verifies then saves the UplinkPacket in the file
      * @throw runtime_error if bitstream is not a valid uplink packet
      */
-    void to_file(const bitstream& bs, const std::string& filename);
+    void to_file(bitstream& bs, const std::string& filename);
 
     /**
      * Creates an SBD file directly from a json file
