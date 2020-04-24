@@ -11,7 +11,7 @@ DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
 }
 
 void DebugTask::execute() {
-#ifdef FUNCTIONAL_TEST
+#ifndef FLIGHT
   start_cycle_f.set(false);
   if(auto_cycle_f.get()){
     process_commands(_registry);

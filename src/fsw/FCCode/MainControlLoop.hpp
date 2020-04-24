@@ -25,10 +25,6 @@
 #include "EEPROMController.hpp"
 #include "UplinkConsumer.h"
 
-#if (!defined(FUNCTIONAL_TEST) && !defined(FLIGHT))
-static_assert(false, "Need to define either the FUNCTIONAL_TEST or FLIGHT flags.");
-#endif
-
 class MainControlLoop : public ControlTask<void> {
    protected:
     FieldCreatorTask field_creator_task;
@@ -63,10 +59,10 @@ class MainControlLoop : public ControlTask<void> {
     EEPROMController eeprom_controller;
 
     // Control cycle time offsets, in microseconds
-    #ifdef FUNCTIONAL_TEST
-        TRACKED_CONSTANT_SC(unsigned int, test_offset, 50000);
-    #else
+    #ifdef FLIGHT
         TRACKED_CONSTANT_SC(unsigned int, test_offset, 0);
+    #else
+        TRACKED_CONSTANT_SC(unsigned int, test_offset, 50000);
     #endif
 
     TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   ,   1000);
