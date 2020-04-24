@@ -62,26 +62,27 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
         self.run_case_all_functional()
         self.run_case_adcs_failure()
-        # self.run_case_wheel1_failure()
-        # self.run_case_wheel2_failure()
-        # self.run_case_wheel3_failure()
-        # self.run_case_wheelpot_failure()
+        self.run_case_wheel1_failure()
+        self.run_case_wheel2_failure()
+        self.run_case_wheel3_failure()
+        self.run_case_wheelpot_failure()
         self.finish()
 
-    def run_case_all_functional(self):
-        # ADCS devices are all functional by default
+    def reset_faults(self):
+        self.mission_mode = 11
         self.adcs_is_functional = "true"
         self.wheel1_is_functional = "true"
         self.wheel2_is_functional = "true"
         self.wheel3_is_functional = "true"
         self.wheelpot_is_functional = "true"
+        self.cycle()
 
-        self.mission_mode = 11 # I don't know why adding this line helps it pass
+    def run_case_all_functional(self):
+        self.reset_faults() # Unsignal all faults
         self.mission_mode = 0  # Startup state
 
         # Should transition to detumble if ADCS motors are functional
-        self.logger.put("Test case 1: ADCS motors are all functional")
-        self.cycle()
+        self.logger.put("Case 1: ADCS motors are all functional")
         self.cycle()
         if (self.mission_mode != "1"):
             self.logger.put("Failed: Satellite did not move to detumble")
@@ -90,23 +91,22 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_adcs_failure(self):
-        self.cycle()
-        self.cycle()
-        # ADCS devices are all functional by default
-        self.adcs_is_functional = "false"
+        #Unsignal faults
+        self.reset_faults()
+
+        # Set the ADCS to be disfunctional
+        self.adcs_is_functional = "false" # Will signal adcs.functional fault
         self.wheel1_is_functional = "true"
         self.wheel2_is_functional = "true"
         self.wheel3_is_functional = "true"
         self.wheelpot_is_functional = "true"
-
-        self.mission_mode = 11
         self.cycle()
+        self.cycle()
+
         self.mission_mode = 0  # Startup state
 
-        # ADCS is not functional. This should trigger the adcs functional fault
-        # and cause the satellite to move to initialization hold
-        self.logger.put("Test case 2: ADCS is not functional")
-        self.cycle()
+        # Satellite should move to initialization hold
+        self.logger.put("Case 2: ADCS is not functional")
         self.cycle()
         if (self.mission_mode != "2"):
             self.logger.put("Failed: Satellite did not move to initialization hold")
@@ -115,18 +115,22 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_wheel1_failure(self):
-        # ADCS devices are all functional by default
+        #Unsignal faults
+        self.reset_faults()
+
+        # Set wheel 1 to be disfunctional
         self.adcs_is_functional = "true"
-        self.wheel1_is_functional = "false"
+        self.wheel1_is_functional = "false" # will signal adcs_monitor.wheel1_fault
         self.wheel2_is_functional = "true"
         self.wheel3_is_functional = "true"
         self.wheelpot_is_functional = "true"
+        self.cycle()
+        self.cycle()
+
         self.mission_mode = 0  # Startup state
 
-        # ADCS is not functional. This should trigger the adcs functional fault
-        # and cause the satellite to move to initialization hold
-        self.logger.put("Test case 3: Wheel 1 is not functional")
-        self.cycle()
+        # Satellite should move to initialization hold
+        self.logger.put("Case 3: Wheel 1 is not functional")
         self.cycle()
         if (self.mission_mode != "2"):
             self.logger.put("Failed: Satellite did not move to initialization hold")
@@ -135,18 +139,22 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_wheel2_failure(self):
-        # ADCS devices are all functional by default
+        #Unsignal faults
+        self.reset_faults()
+
+        # Set wheel 2 to be disfunctional
         self.adcs_is_functional = "true"
         self.wheel1_is_functional = "true"
-        self.wheel2_is_functional = "false"
+        self.wheel2_is_functional = "false" # will signal adcs_monitor.wheel2_fault
         self.wheel3_is_functional = "true"
         self.wheelpot_is_functional = "true"
+        self.cycle()
+        self.cycle()
+
         self.mission_mode = 0  # Startup state
 
-        # ADCS is not functional. This should trigger the adcs functional fault
-        # and cause the satellite to move to initialization hold
-        self.logger.put("Test case 4: ADCS Wheel 2 is not functional")
-        self.cycle()
+        # Satellite should move to initialization hold
+        self.logger.put("Case 4: Wheel 2 is not functional")
         self.cycle()
         if (self.mission_mode != "2"):
             self.logger.put("Failed: Satellite did not move to initialization hold")
@@ -155,18 +163,22 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_wheel3_failure(self):
-        # ADCS devices are all functional by default
+        #Unsignal faults
+        self.reset_faults()
+
+        # Set wheel 3 to be disfunctional
         self.adcs_is_functional = "true"
         self.wheel1_is_functional = "true"
         self.wheel2_is_functional = "true"
-        self.wheel3_is_functional = "false"
+        self.wheel3_is_functional = "false" # will signal adcs_monitor.wheel3_fault
         self.wheelpot_is_functional = "true"
+        self.cycle()
+        self.cycle()
+
         self.mission_mode = 0  # Startup state
 
-        # ADCS is not functional. This should trigger the adcs functional fault
-        # and cause the satellite to move to initialization hold
-        self.logger.put("Test case 5: ADCS Wheel 3 is not functional")
-        self.cycle()
+        # Satellite should move to initialization hold
+        self.logger.put("Case 5: Wheel 3 is not functional")
         self.cycle()
         if (self.mission_mode != "2"):
             self.logger.put("Failed: Satellite did not move to initialization hold")
@@ -175,17 +187,22 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def run_case_wheelpot_failure(self):
-        # ADCS devices are all functional by default
+        #Unsignal faults
+        self.reset_faults()
+
+        # Set POT to be disfunctional
         self.adcs_is_functional = "true"
         self.wheel1_is_functional = "true"
         self.wheel2_is_functional = "true"
         self.wheel3_is_functional = "true"
-        self.wheelpot_is_functional = "false"
+        self.wheelpot_is_functional = "false" # will signal adcs_monitor.wheel_pot_fault
+        self.cycle()
+        self.cycle()
+
         self.mission_mode = 0  # Startup state
 
-        # ADCS is not functional. This should trigger the adcs functional fault
-        # and cause the satellite to move to initialization hold
-        self.logger.put("Test case 2: ADCS is not functional")
+        # Satellite should move to initialization hold
+        self.logger.put("Case 6: POT is not functional")
         self.cycle()
         self.cycle()
         if (self.mission_mode != "2"):
