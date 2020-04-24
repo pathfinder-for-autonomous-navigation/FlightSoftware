@@ -310,7 +310,7 @@ void test_execute_havt_faults() {
     tf.get_havt_as_table(&havt_read);
     TEST_ASSERT_EQUAL_STRING(all_dev_down.to_string().c_str(), havt_read.to_string().c_str());
 
-    // // all faults should be false since persistence == 1
+    // all faults should be false since persistence == 1
     TEST_ASSERT_FALSE(tf.wheel1_adc_fault_p->is_faulted());
     TEST_ASSERT_FALSE(tf.wheel2_adc_fault_p->is_faulted());
     TEST_ASSERT_FALSE(tf.wheel3_adc_fault_p->is_faulted());

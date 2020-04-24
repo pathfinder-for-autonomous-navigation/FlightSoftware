@@ -142,6 +142,8 @@ void ADCSBoxMonitor::execute(){
     f_vector_t gyr_vec;
     float gyr_temp = 0.0;
     
+    // Determine whether a fault has occurred. Evaluating faults before reading from the adcs
+    // system allows us to test fault responses in ptest.
     adcs_functional_fault.evaluate(!adcs_is_functional.get());
 
     //ask the driver to fill in values
@@ -170,6 +172,8 @@ void ADCSBoxMonitor::execute(){
         ssa_voltages_f[i].set(ssa_voltages[i]);
     }
     
+    // Determine whether a fault has occurred. Evaluating faults before reading from the adcs
+    // system allows us to test fault responses in ptest.
     wheel1_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC1].get() == false);
     wheel2_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC2].get() == false);
     wheel3_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC3].get() == false);
