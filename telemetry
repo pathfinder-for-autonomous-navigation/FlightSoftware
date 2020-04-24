@@ -1726,6 +1726,14 @@
             "type": "unsigned int",
             "writable": true
         },
+        "sys.memory_use": {
+            "bitsize": 19,
+            "flow_id": "undefined",
+            "max": 300000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "telem.dump": {
             "bitsize": 1,
             "flow_id": "undefined",
