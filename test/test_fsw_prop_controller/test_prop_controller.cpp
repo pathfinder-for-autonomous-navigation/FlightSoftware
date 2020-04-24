@@ -243,6 +243,22 @@ void test_firing_to_idle()
     check_state(prop_state_t::idle);
 }
 
+// Test that we use the backup valve when it is requested
+void test_use_backup()
+{
+    TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed());
+    tf.execute_until_state_change(); // idle -> pressurizing
+    tf.step(3);
+    TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
+    TEST_ASESRT_FALSE(Tank2.is_valve_open(1));
+    tf.pc->tank1_valve_f.set(1); // set the valve to the backup valve
+    tf.step();
+    TEST_ASSERT_TRUE(Tank1.is_valve_open(1));
+    TEST_ASESRT_FALSE(Tank2.is_valve_open(0));
+}
+
 // These two tests are manually checked, so the for loop is conditionally compiled
 // in order to not lag everything
 

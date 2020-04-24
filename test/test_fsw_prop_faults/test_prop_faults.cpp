@@ -16,6 +16,7 @@ void test_respect_disabled() {
     {
         tf.step();
         check_state(prop_state_t::disabled);
+        TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::none);
     }
 }
 
@@ -85,6 +86,7 @@ void run_fault_detection_tests(){
 void test_underpressured_response() {
     TestFixture tf;
     tf.simulate_underpressured();
+    // We should go into disabled mode
 }
 
 // Test that we detect overpressure event while pressurizing
@@ -102,8 +104,9 @@ void test_overpressured_response() {
     simulate_overpressured();
     tf.step(2); // it takes us two control cycles to realize that we overpressured
     check_state(prop_state_t::handling_fault);
-    TEST_ASSERT_FALSE(Tank1.is_valve_open(0)); // Valve should be closed immediately
-
+    TEST_ASSERT_FALSE(Tank1.is_valve_open(0)); // Tank1 valve should be closed immediately
+    // TODO
+    // Tank2 should open valves and vent until pressure is below max safe pressure
 }
 
 // Test that we can detect high temp event while firing and respond accordingly
@@ -122,7 +125,7 @@ void test_tank1_temp_high_response(){
     simulate_tank1_high();
     tf.step();
     check_state(prop_state_t::handling_fault);
-
+    // TODO: we should be venting?
  
 }
 
@@ -130,19 +133,29 @@ void test_tank1_temp_high_response(){
 void test_tank2_temp_high_response(){
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
+    tf.step(3);
     simulate_tank2_high();
     tf.step();
     check_state(prop_state_t::handling_fault);
+    // we should be opening the valves on tank2
 
 }
 
 void test_tank2temphigh_undepressured_response(){
     TestFixture tf;
-    // Test that when multiple fault events occur, we will always trust pressure over temperature
+    tf.set_state(prop_state_t::idle);
+    tf.step(4);
+    // Overpressured and High temp faults take precedence
     tf.simulate_underpressured();
     simulate_tank2_high();
     tf.step();
     check_state(prop_state_t::handling_fault);
+    assert_fault_state(true, prop_failed_pressurize_fault_f);
+    assert_fault_state(true, tank2_temp_high_fault_f);
+    tf.step();
+    // We should be about to open the valves on tank2
+    check_state(prop_state_t::await_firing);
+    check_schedule(1000, 1000, 1000, 1000, 2);
 }
 
 void run_fault_response_tests(){
