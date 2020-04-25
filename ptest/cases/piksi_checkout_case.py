@@ -59,7 +59,8 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.soft_assert(self.modes_dict["nsat_error"] > 0, f"NSAT ERRORS: {nsat_errors}")
 
         # no further checkouts apply
-        if self.most_common_mode == 'no_fix':
+        if self.most_common_mode == 'no_fix' or self.most_common_mode == 'no_data_error':
+            self.print_header("PIKSI LIKELY NO SIGNAL")
             return
 
         # TODO: DECIDE BOUNDS
@@ -67,9 +68,11 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.check_vectors("velocity", self.vels, 0, 1e8)
 
         if self.most_common_mode == 'spp':
+            self.print_header("PIKSI GPS SIGNAL BUT NO RTK")    
             return
 
         self.check_vectors("baseline", self.baselines, 0, 1e8)
+        self.print_header("PIKSI RTK")    
 
     def raise_fail(self):
         raise TestCaseFailure(f"{self.most_common_mode} was the most common mode. Not Nominal")
