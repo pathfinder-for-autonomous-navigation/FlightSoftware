@@ -110,8 +110,8 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.most_common_mode = mode_rank[0]
         self.second_most_common_mode = mode_rank[1]
 
-        first_num = self.modes_dict[self.piksi_modes.get_by_name[self.most_common_mode]]
-        second_num = self.modes_dict[self.piksi_modes.get_by_name[self.most_common_mode]]
+        first_num = self.modes_dict[self.most_common_mode]
+        second_num = self.modes_dict[self.second_most_common_mode]
 
         self.print_header(f"MOST COMMON MODE: {self.most_common_mode} @ {first_num} readings.")
         self.print_header(f"SECOND MOST COMMON: {self.second_most_common_mode} @ {second_num} readings.")
