@@ -46,6 +46,8 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.soft_assert(self.sum_of_differentials(vectors) > 0,
             f"Piksi {name} readings did not vary across readings.")
 
+        self.print_header(f"CHECK {name} VECTORS COMPLETE")
+
     def nominal_checkout(self):
         self.print_header("ENTERING NOMINAL CHECKOUT")
 
