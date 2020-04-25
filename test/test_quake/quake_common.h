@@ -30,11 +30,7 @@ const int MO_NO_UPDATE  = 2;    // transfer ok but no location update
 const int MO_NO_NETWORK = 32;
 
 extern Devices::QLocate q;
-void setUp(void) {
-}
 
-void tearDown(void) {
-}
 
 // length of a ctrl cycle in ms
 static const int DEFAULT_CTRL_CYCLE_LENGTH = 120; 

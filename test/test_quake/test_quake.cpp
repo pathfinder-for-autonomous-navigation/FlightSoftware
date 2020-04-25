@@ -22,18 +22,22 @@ void test_config(void) {
 void test_sbdwb(void) {
     std::string testString(66, '~');
     run_sbdwb(testString);
-
-    // Write a different message
-    std::string otherMsg("Test write other message");
-    run_sbdwb(otherMsg);
-
     // test that we can send the maximum number of bytes
     std::string maxLenMsg(340, 'a');
-    run_sbdwb(otherMsg);
-
+    run_sbdwb(maxLenMsg);
     // test that we can send the minimum number of bytes
     std::string minLenMsg(1, 'b');
     run_sbdwb(minLenMsg);
+}
+
+void test_bad_chars(void) {
+    // Write a different message with weird characters and random null bytes
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_1(38));
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_2("Test wr\tite \nothe\rr mess\0AA\aAAA\0ABBBBB", 38));
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);
+    TEST_ASSERT_EQUAL(Devices::OK, q.get_sbdwb());
 }
 
 void test_timeout(void) {
@@ -94,6 +98,7 @@ int main(void) {
     RUN_TEST(test_config);
     RUN_TEST(test_isFunctional);
     RUN_TEST(test_sbdwb);
+    RUN_TEST(test_bad_chars);
     RUN_TEST(test_timeout);
     RUN_TEST(test_bad_lengths);
     RUN_TEST(test_bad_checksum);

@@ -15,9 +15,7 @@
 #include <cstring>
 
 #ifndef DESKTOP
-
 #include <Arduino.h>
-
 #endif
 
 using namespace Devices;
@@ -90,12 +88,53 @@ int QLocate::query_sbdwb_1(int len) {
     return OK;
 }
 
+#ifdef DEBUG_ENABLED
+void dbg_print_buf(char const *buf, size_t len)
+{
+    for (size_t i = 0; i < len; i++)
+    {
+        switch( buf[i] ){
+            case '\r':
+                Serial.printf("\\r");
+                break;
+            case '\n':
+                Serial.printf("\\n");
+                break;
+            case '\0':
+                Serial.printf("\\0");
+                break;
+            case '\t':
+                Serial.printf("\\t");
+                break;
+            default:
+            Serial.printf("%c", buf[i]);
+        }
+
+    }
+    Serial.printf("]\n");
+    Serial.flush();
+}
+
+void dbg_print_hex(char const *buf, size_t len)
+{
+    Serial.printf("\thex[");
+    for (size_t i = 0; i < len; i++)
+        Serial.print(buf[i], HEX); 
+    Serial.printf("]\n\n");
+    Serial.flush();   
+}
+#endif
+
 int QLocate::query_sbdwb_2(char const *c, int len) {
 #ifndef DESKTOP
-    CHECK_PORT_AVAILABLE()
     int status = consume(F("READY\r\n"));
     if (status != OK)
         return status;
+#ifdef DEBUG_ENABLED
+    Serial.printf("Writing[");
+    dbg_print_buf(c, len);
+    dbg_print_hex(c, len);
+#endif
 
     // Write binary data to QLocate
     if ((size_t) len != port->write(c, len))
@@ -124,10 +163,8 @@ int QLocate::get_sbdwb() {
     int len = port->readBytes(buf, 5);
 
 #ifdef DEBUG_ENABLED
-    Serial.print("        > get_SBDWB=");
-    for (int i = 0; i < len; i++)
-        Serial.print(buf[i], HEX);
-    Serial.println("\n        > return=" + String(*buf));
+    Serial.printf("GET_SBDWB[");
+    dbg_print_buf(buf, len);
 #endif
     // SBDWB status is returned in buf[0]
     int status = buf[0] - '0';
@@ -190,20 +227,21 @@ int QLocate::query_sbdrb_1() {
 
 int QLocate::get_sbdrb() {
 #ifndef DESKTOP
-    CHECK_PORT_AVAILABLE()
-    if (should_wait())
+    // sbdix_r[4] is the length of the MT message + 2B checksum + 2B length
+    if (port->available() + 4 < sbdix_r[4])
         return PORT_UNAVAILABLE;
 
+    // get the message size
     size_t msg_size = 256 * port->read() + port->read();
     if (msg_size > MAX_MSG_SIZE)
         return WRONG_LENGTH;
-
-    // make sure port has our message + 2 byte checksum
-    if ((size_t) port->available() != msg_size + 2)
-        return UNEXPECTED_RESPONSE;
-
-    // we definitely have the correct number of bytes at port
+        
+    // read the message
     port->readBytes(mt_message, msg_size);
+#ifdef DEBUG_ENABLED
+    Serial.printf("MT_MSG[");
+    dbg_print_buf(mt_message, msg_size);
+#endif
 
     // get the checksum
     uint16_t msg_checksum = 256 * port->read() + port->read();
@@ -218,54 +256,34 @@ int QLocate::get_sbdrb() {
 #endif
 }
 
-// should_wait() should always be called AFTER CHECK_PORT_AVAILABLE()
-bool QLocate::should_wait() {
-#ifndef DESKTOP
-    if (port->available() == num_bytes_available_last_cycle) {
-        num_bytes_available_last_cycle = 0; // reset to 0
-        return true;
-    }
-    num_bytes_available_last_cycle = port->available();
-    // if we return true then that means we have not waited a cycle
-#endif
-    return false;
-}
-
 int QLocate::consume(const String &expected) {
 #ifdef DESKTOP
     return OK;
 #else
-    CHECK_PORT_AVAILABLE()
-    // If reached here then port->available() != 0
+    // Make sure there are at least as many bytes at port as in expected
     size_t expected_len = expected.length();
-
-    if (should_wait()) {
+    if ((size_t)port->available() < expected_len) {
         return PORT_UNAVAILABLE;
     }
-    // If we have reached here, then port->available() >= expected_len
-
     // Read the bytes at port into rx_buf
-    char rx_buf[expected_len + 1];
+    char rx_buf[expected_len + 1]{};
     port->readBytes(rx_buf, expected_len);
-    rx_buf[expected_len] = 0;
 
 #ifdef DEBUG_ENABLED
     Serial.printf("Consumed[");
-    for (size_t i = 0; i < expected_len; i++)
-    {
-        if (rx_buf[i] == '\r')
-            Serial.printf("\\r");
-        else if (rx_buf[i] == '\n')
-            Serial.printf("\\n");
-        else
-            Serial.printf("%c", rx_buf[i]);
-    }
-    Serial.printf("]\n");
-    Serial.flush();
+    dbg_print_buf(rx_buf, expected_len);
 #endif
+
     // Compare expected_len number of chars of rx_buf with expected
     if (!strncmp(rx_buf, expected.c_str(), expected_len))
         return OK;
+
+#ifdef DEBUG_ENABLED
+    Serial.printf("Expected[");
+    dbg_print_buf(expected.c_str(), expected_len);
+#endif   
+
+    // CONSUME_FAIL can only happen when data read != expected
     return CONSUME_FAIL;
 #endif
 }

@@ -24,8 +24,15 @@ void test_config(void) {
  **/
 void test_sbdix_with_network(void)
 {
-    std::string testString("hello from PAN!");
-    run_sbdwb(testString);
+    // Test sending a string with null bytes and weird characters
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_1(101));
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_2(
+        "hello from PAN!AAAAAAAA\tAAAAAAAA\rAAAAAAA\0AAAAAAAAAA\aAAAAAAABBBBBB\0BBBBBBBBBBBBBB\nBBBBBBBBBBBBBBBBBBDD", 
+        101));
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);
+    TEST_ASSERT_EQUAL(Devices::OK, q.get_sbdwb());
 
     // SBDIX session
     TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdix_1());
@@ -57,7 +64,7 @@ void test_sbdrb_with_network(void)
 
     // SBDRB session
     TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdrb_1());
-    count_cycles(q.get_sbdrb, "get_sbdrb", MT_MSG_RECV);
+    count_cycles(q.get_sbdrb, "get_sbdrb", Devices::OK);
     
     char *szMsg = q.mt_message;
 #ifdef DEBUG_ENABLED
