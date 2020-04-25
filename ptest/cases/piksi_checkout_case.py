@@ -50,6 +50,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.print_header("ENTERING NOMINAL CHECKOUT")
 
         deads = self.modes_dict["dead"]
+        self.looger.put(deads)
         self.soft_assert(self.modes_dict["dead"] > 0, f"Deads reported: {deads}")
 
         sync_errors = self.modes_dict["sync_error"]
