@@ -247,19 +247,19 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_rs("adcs_monitor.rwa_speed_rd")
 
         # perform 10 readings.
-        list_of_pot_rds = []
+        list_of_speed_rds = []
         for i in range(10):
             cn = self.rs("pan.cycle_no")
             reading = [self.rs("adcs_monitor.rwa_speed_rd")]
-            list_of_pot_rds += reading
+            list_of_speed_rds += reading
             self.logger.put(f"Cycle No: {cn}, Speed Vec: {reading}")
             
         # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_pot_rds) > 0,
+        self.soft_assert(sum_of_differentials(list_of_speed_rds) > 0,
             "Pot readings did not vary across readings.")        
 
         reading = self.rs("adcs_monitor.rwa_speed_rd")
-        self.assert_vec_within([10, 10, 10], reading, 10)
+        self.assert_vec_within([10, 10, 10], reading, 4)
 
         wheel_speed_tests = [
             [20,40,50],
@@ -273,7 +273,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         for cmd_array in wheel_speed_tests:
             self.print_rs("gomspace.vbatt")
-            self.ws("adcs_cmd.rwa_speed_cmd", cmd_array)
+            self.logger.put("ADCS_CMD TARGET SPEED: ")
+            self.print_ws("adcs_cmd.rwa_speed_cmd", cmd_array)
             time.sleep(5)
             reading = self.print_rs("adcs_monitor.rwa_speed_rd")
             self.assert_vec_within(cmd_array, reading, 1)
@@ -317,10 +318,11 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
             self.print_rs("gomspace.vbatt")
             self.print_rs("adcs_monitor.rwa_speed_rd")
+            self.logger.put("ADCS_CMD TARGET TORQUE: ")
             self.print_ws("adcs_cmd.rwa_torque_cmd", cmd_array)
-            time.sleep(5)
+            time.sleep(1)
             reading = self.print_rs("adcs_monitor.rwa_torque_rd")
-            self.print_rs("adcs_monitor.rwa_speed_rd")
+            self.print_rs("adcs_monitor.rwa_speed_rd")5
             self.assert_vec_within(cmd_array, reading, .1)
             self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
             self.logger.put("")
