@@ -18,7 +18,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
         self.print_header("Begin Piksi Checkout Case")
         
-        self.n = 20
+        self.n = 100
 
         self.vels = []
         self.positions = []
