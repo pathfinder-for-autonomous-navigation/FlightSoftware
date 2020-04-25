@@ -90,10 +90,15 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         for i in range(10):
             self.cycle()
 
-            self.print_rs("piksi.state")
-            self.print_rs("piksi.vel")
-            self.print_rs("piksi.pos")
-            self.print_rs("piksi.baseline_pos")
+            m = self.print_rs("piksi.state")
+            self.logger.put(f"Mode: {self.piksi_modes.get_by_num(m)}")
+            v = self.print_rs("piksi.vel")
+            self.logger.put(f"VEL MAG: {self.mag_of(v)}")
+            p = self.print_rs("piksi.pos")
+            self.logger.put(f"POS MAG: {self.mag_of(p)}")
+            b = self.print_rs("piksi.baseline_pos")
+            self.logger.put(f"BASELINE MAG: {self.mag_of(b)}")
+            self.logger.put("")
 
         # Take N readings for actual analysis
         self.print_header(f"TAKING {self.n} PIKSI READINGS FOR ANALYSIS")

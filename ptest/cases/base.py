@@ -255,8 +255,10 @@ class SingleSatOnlyCase(Case):
         '''
         Reads a statefield, and also prints it.
         '''
-        self.logger.put(f"{name} is {self.rs(name)}")
-    
+        ret = self.rs(name)
+        self.logger.put(f"{name} is {ret}")
+        return ret
+
     def ws(self, name, val):
         '''
         Writes a state, and also confirms that the read command matches the applied state.
