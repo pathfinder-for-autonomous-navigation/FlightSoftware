@@ -53,15 +53,19 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
 
         deads = self.modes_dict["dead"]
         self.logger.put(f"Deads reported: {deads}")
-        self.soft_assert(self.modes_dict["dead"] == 0, f"Deads reported: {deads}")
+        self.soft_assert(deads == 0, f"Deads reported: {deads}")
 
         sync_errors = self.modes_dict["sync_error"]
         self.logger.put(f"Sync errors: {sync_errors}")
-        self.soft_assert(self.modes_dict["sync_error"] < self.n/10, f"Exceed 10% sync error rate: {sync_errors}")
+        self.soft_assert(sync_errors < self.n/10, f"Exceed 10% sync error rate: {sync_errors}")
+
+        crc_errors = self.modes_dict["crc_error"]
+        self.logger.put(f"CRC errors: {crc_errors}")
+        self.soft_assert(crc_errors < self.n/10, f"Exceed 10% crc error rate: {crc_errors}")
 
         nsat_errors = self.modes_dict["nsat_error"]
         self.logger.put(f"Nsat errors: {nsat_errors}")
-        self.soft_assert(self.modes_dict["nsat_error"] == 0, f"NSAT ERRORS: {nsat_errors}")
+        self.soft_assert(nsat_errors == 0, f"NSAT ERRORS: {nsat_errors}")
 
         # no further checkouts apply
         if self.most_common_mode == 'no_fix' or self.most_common_mode == 'no_data_error':
@@ -69,7 +73,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             return
 
         self.check_vectors("position", self.positions, (6371-10)*1000, (6371+10)*1000) # +-10 km above the surface of earth in m
-        self.check_vectors("velocity", self.vels, 0, 4500) # simulator speed is 4500 millilmeters per second
+        self.check_vectors("velocity", self.vels, 0, 5000) # simulator speed is 4000 millilmeters per second
 
         if self.most_common_mode == 'spp':
             self.print_header("PIKSI GPS SIGNAL BUT NO RTK")    
@@ -116,6 +120,9 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
 
         self.print_header(f"MOST COMMON MODE: {self.most_common_mode} @ {first_num} readings.")
         self.print_header(f"SECOND MOST COMMON: {self.second_most_common_mode} @ {second_num} readings.")
+
+        self.logger.put("Readings Dictionary: ")
+        self.logger.put(str(self.modes_dict))
 
         nominal_list = ["spp","fixed_rtk","float_rtk", "no_fix"]
         raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "no_data_error", "dead"]
