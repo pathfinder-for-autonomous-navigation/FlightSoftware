@@ -98,7 +98,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.positions += [self.rs("piksi.pos")]
             self.baselines += [self.rs("piksi.baseline_pos")]
 
-        mode_rank = [x for x in range(11)] # 11 total piksi modes
+        mode_rank = [x for x in self.piksi_modes.arr] # 11 total piksi modes
         mode_rank = sorted(mode_rank, key = self.modes_dict.get, reverse = True)
 
         self.most_common_mode = mode_rank[0]
