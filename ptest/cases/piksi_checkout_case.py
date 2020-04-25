@@ -58,7 +58,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.soft_assert(self.modes_dict["sync_error"] < self.n/10, f"Exceed 10% sync error rate: {sync_errors}")
 
         nsat_errors = self.modes_dict["nsat_error"]
-        self.logger.put(f"Nsat errors: {nsat_errors}"))
+        self.logger.put(f"Nsat errors: {nsat_errors}")
         self.soft_assert(self.modes_dict["nsat_error"] == 0, f"NSAT ERRORS: {nsat_errors}")
 
         # no further checkouts apply
