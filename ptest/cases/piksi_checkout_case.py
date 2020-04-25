@@ -68,22 +68,19 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.print_header("PIKSI LIKELY NO SIGNAL")
             return
 
-        # TODO: DECIDE BOUNDS
-        self.check_vectors("position", self.positions, 0, 1e8)
-        self.check_vectors("velocity", self.vels, 0, 1e8)
+        self.check_vectors("position", self.positions, (6371-10)*1000, (6371+10)*1000) # +-10 km above the surface of earth in m
+        self.check_vectors("velocity", self.vels, 0, 4500) # simulator speed is 4500 millilmeters per second
 
         if self.most_common_mode == 'spp':
             self.print_header("PIKSI GPS SIGNAL BUT NO RTK")    
             return
 
-        self.check_vectors("baseline", self.baselines, 0, 1e8)
+        self.check_vectors("baseline", self.baselines, 0, 105*1000) # simulator max distance is 100 meters
         self.print_header("PIKSI RTK")    
-
-    def raise_fail(self):
-        raise TestCaseFailure(f"{self.most_common_mode} was the most common mode. Not Nominal")
 
     def run_case_singlesat(self):
 
+        # Take 10 readings just for observation
         self.print_header("10 Readings for observation: ")
 
         for i in range(10):
@@ -94,8 +91,10 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.print_rs("piksi.pos")
             self.print_rs("piksi.baseline_pos")
 
+        # Take N readings for actual analysis
         self.print_header(f"TAKING {self.n} PIKSI READINGS FOR ANALYSIS")
 
+        # Catalog readings
         for i in range(self.n):
             self.cycle()
 
@@ -119,14 +118,17 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.print_header(f"SECOND MOST COMMON: {self.second_most_common_mode} @ {second_num} readings.")
 
         nominal_list = ["spp","fixed_rtk","float_rtk", "no_fix"]
-        raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "dead"]
+        raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "no_data_error", "dead"]
 
+        # When in no fix, no_data_error is actually the most common mode
         if self.most_common_mode is 'no_data_error' and self.second_most_common_mode is 'no_fix':
             self.nominal_checkout()
         elif self.most_common_mode in nominal_list:
             self.nominal_checkout()
         elif self.most_common_mode in raise_fail_list:
-            self.raise_fail()
+            raise TestCaseFailure(f"{self.most_common_mode} was the most common mode. Not Nominal")
+
+        # Raise an error if got an unrecognized mode as most common
         else:
             raise TestCaseFailure("MISCONFIGURED PTEST CASE")
 
