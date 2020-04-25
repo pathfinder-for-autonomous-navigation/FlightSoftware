@@ -274,7 +274,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         for cmd_array in wheel_speed_tests:
             self.print_rs("gomspace.vbatt")
             self.ws("adcs_cmd.rwa_speed_cmd", cmd_array)
-            time.sleep(1)
+            time.sleep(5)
             reading = self.print_rs("adcs_monitor.rwa_speed_rd")
             self.assert_vec_within(cmd_array, reading, 1)
             time.sleep(1)
@@ -285,6 +285,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         torque_max = 0.00418
         x = 0.0001
         y = 0.002
+        z = torque_max
         torque_tests = [
             [x, 0, 0],
             [0, x, 0],
@@ -298,6 +299,14 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             [-y, 0, 0],
             [0, -y, 0],
             [0, 0, -y],
+            [z, 0, 0],
+            [0, z, 0],
+            [0, 0, z],
+            [-z, 0, 0],
+            [0, -z, 0],
+            [0, 0, -z],
+            [y, y, y],
+            [-y, -y, -y]
         ]
 
         self.print_header("TORQUE TESTS: ")
@@ -309,7 +318,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.print_rs("gomspace.vbatt")
             self.print_rs("adcs_monitor.rwa_speed_rd")
             self.print_ws("adcs_cmd.rwa_torque_cmd", cmd_array)
-            time.sleep(1)
+            time.sleep(5)
             reading = self.print_rs("adcs_monitor.rwa_torque_rd")
             self.print_rs("adcs_monitor.rwa_speed_rd")
             self.assert_vec_within(cmd_array, reading, .1)
@@ -322,23 +331,6 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
         self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
         time.sleep(1)
-
-        self.print_header("TIMING TESTS: ")
-
-        for i in range(10):
-            self.print_rs("pan.cycle_no")
-
-        self.logger.put("SECOND SET: ")
-
-        for i in range(10):
-            self.print_rs("pan.cycle_no")
-            self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
-
-        self.logger.put("THIRD SET: ")
-
-        for i in range(10):
-            self.print_rs("pan.cycle_no")
-            self.print_rs("adcs_monitor.gyr_vec")
 
         self.ws("cycle.auto", False)
 
