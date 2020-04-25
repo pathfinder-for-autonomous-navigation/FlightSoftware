@@ -99,14 +99,14 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.baselines += [self.rs("piksi.baseline_pos")]
 
         self.most_common_mode = max(self.modes_dict, key = self.modes_dict.get)
-        self.print_header(f"MOST COMMON MODE: {most_common_mode}")
+        self.print_header(f"MOST COMMON MODE: {self.most_common_mode}")
 
         nominal_list = ["spp","fixed_rtk","float_rtk", "no_fix"]
         raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "no_data_error", "dead"]
 
-        if most_common_mode in nominal_list:
+        if self.most_common_mode in nominal_list:
             self.nominal_checkout()
-        elif most_common_mode in raise_fail_list:
+        elif self.most_common_mode in raise_fail_list:
             self.raise_fail()
         else:
             raise TestCaseFailure("MISCONFIGURED PTEST CASE")
