@@ -283,8 +283,9 @@ bool Gomspace::set_pv_volt(unsigned short int voltage1, unsigned short int volta
     return _check_for_error(PORT_BYTE);
 }
 
-bool Gomspace::set_pv_auto(unsigned char mode) {
-    if (mode > 1) return false;  // Precondition check to avoid radiation bit flips
+bool Gomspace::set_ppt_mode(unsigned char mode) {
+    if (mode > 2) return false;  // Precondition check to avoid radiation bit flips, 
+    // acceptable modes are 0, 1, 2
 
     unsigned char PORT_BYTE = 0x0C;
     unsigned char command[2] = {PORT_BYTE, mode};
