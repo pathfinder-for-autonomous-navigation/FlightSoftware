@@ -50,14 +50,16 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.print_header("ENTERING NOMINAL CHECKOUT")
 
         deads = self.modes_dict["dead"]
-        self.logger.put(deads)
-        self.soft_assert(self.modes_dict["dead"] > 0, f"Deads reported: {deads}")
+        self.logger.put(f"Deads reported: {deads}")
+        self.soft_assert(self.modes_dict["dead"] == 0, f"Deads reported: {deads}")
 
         sync_errors = self.modes_dict["sync_error"]
-        self.soft_assert(self.modes_dict["sync_error"] > self.n/10, f"Exceed 10% sync error rate: {sync_errors}")
+        self.logger.put(f"Sync errors: {sync_errors}")
+        self.soft_assert(self.modes_dict["sync_error"] < self.n/10, f"Exceed 10% sync error rate: {sync_errors}")
 
         nsat_errors = self.modes_dict["nsat_error"]
-        self.soft_assert(self.modes_dict["nsat_error"] > 0, f"NSAT ERRORS: {nsat_errors}")
+        self.logger.put(f"Nsat errors: {nsat_errors}"))
+        self.soft_assert(self.modes_dict["nsat_error"] == 0, f"NSAT ERRORS: {nsat_errors}")
 
         # no further checkouts apply
         if self.most_common_mode == 'no_fix' or self.most_common_mode == 'no_data_error':
