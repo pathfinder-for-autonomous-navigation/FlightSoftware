@@ -98,13 +98,20 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.positions += [self.rs("piksi.pos")]
             self.baselines += [self.rs("piksi.baseline_pos")]
 
-        self.most_common_mode = max(self.modes_dict, key = self.modes_dict.get)
+        mode_rank = [x for x in range(11)] # 11 total piksi modes
+        mode_rank = sorted(mode_rank, key = self.modes_dict.get, reverse = true)
+
+        self.most_common_mode = mode_rank[0]
+        self.second_most_common_mode = mode_rank[1]
+
         self.print_header(f"MOST COMMON MODE: {self.most_common_mode}")
 
         nominal_list = ["spp","fixed_rtk","float_rtk", "no_fix"]
-        raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "no_data_error", "dead"]
+        raise_fail_list = ["sync_error", "nsat_error", "crc_error", "time_limit_error", "data_error", "dead"]
 
-        if self.most_common_mode in nominal_list:
+        if self.most_cmmon_mode is 'no_data_error' and self.second_most_common_mode is 'no_fix':
+            self.nominal_checkout()
+        elif self.most_common_mode in nominal_list:
             self.nominal_checkout()
         elif self.most_common_mode in raise_fail_list:
             self.raise_fail()
