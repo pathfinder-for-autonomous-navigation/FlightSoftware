@@ -98,7 +98,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.positions += [self.rs("piksi.pos")]
             self.baselines += [self.rs("piksi.baseline_pos")]
 
-        most_common_mode = max(self.modes_dict, key = self.modes_dict.get)
+        self.most_common_mode = max(self.modes_dict, key = self.modes_dict.get)
         self.print_header(f"MOST COMMON MODE: {most_common_mode}")
 
         nominal_list = ["spp","fixed_rtk","float_rtk", "no_fix"]
