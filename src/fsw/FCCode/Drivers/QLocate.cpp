@@ -17,7 +17,6 @@
 #ifndef DESKTOP
 #include <Arduino.h>
 #endif
-#define DEBUG_ENABLED
 using namespace Devices;
 
 #define CHECK_PORT_AVAILABLE() \
