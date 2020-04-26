@@ -3,7 +3,6 @@
 
 class TestFixtureSuperSimpleFH {
   protected:
-    unsigned int cc = 0; // Control cycle count
     StateFieldRegistryMock registry;
 
   public:
@@ -13,10 +12,13 @@ class TestFixtureSuperSimpleFH {
     const std::vector<mission_state_t> active_states {mission_state_t::follower};
 
     TestFixtureSuperSimpleFH(mission_state_t recommended_state) : registry() {
+        TimedControlTaskBase::control_cycle_count = 0;
+        Fault::cc = &TimedControlTaskBase::control_cycle_count;
+
         mission_state_fp = registry.create_writable_field<unsigned char>("pan.state", 12);
         SimpleFaultHandler::set_mission_state_ptr(mission_state_fp.get());
 
-        fault_fp = registry.create_fault("fault", 1, cc);
+        fault_fp = registry.create_fault("fault", 1);
 
         fault_handler = std::make_unique<SuperSimpleFaultHandler>(
             registry, fault_fp.get(), active_states, recommended_state);
@@ -33,7 +35,7 @@ class TestFixtureSuperSimpleFH {
         else fault_fp->unsignal();
 
         fault_response_t ret = fault_handler->execute();
-        cc++;
+        TimedControlTaskBase::control_cycle_count++;
         return ret;
     }
 };

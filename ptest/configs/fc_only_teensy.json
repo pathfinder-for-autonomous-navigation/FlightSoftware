@@ -15,5 +15,7 @@
             "imei": "",
             "connect": false
         }
-    ]
+    ],
+    "uplink_producer_filepath": "./.pio/build/gsw_uplink_producer/program",
+    "downlink_parser_filepath": ".pio/build/gsw_downlink_parser"
 }

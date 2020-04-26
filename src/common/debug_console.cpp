@@ -89,12 +89,8 @@ void debug_console::init() {
         Serial.begin(115200);
         pinMode(13, OUTPUT);
 
-        Serial.println("Waiting for serial console.");
-        while (!Serial)
-            ;
         _start_time = millis();
 #endif
-
         is_initialized = true;
     }
 }
@@ -259,6 +255,66 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
                 }
 
                 print_state_field(*field_ptr);
+
+            } break;
+            case 'u': {
+                // Get the internal fields that hold the mt message and its length
+                InternalStateField<char*>* radio_mt_packet_fp = static_cast<InternalStateField<char*>*>(registry.find_internal_field("uplink.ptr"));
+                InternalStateField<size_t>* radio_mt_packet_len_fp = static_cast<InternalStateField<size_t>*>(registry.find_internal_field("uplink.len"));
+                
+                // Get the uplink packet and packet length from the device
+                size_t uplink_packet_len = msgs[i]["length"];
+                JsonVariant packet = msgs[i]["val"]; 
+
+                // Get the uplink packet as a char pointer. 
+                // Add "\x" to the end to allow us to parse the uplink string
+                char* uplink_packet = (char *) malloc(1 + strlen(packet)+ strlen("\\x"));
+                strcpy(uplink_packet, packet);
+                strcat(uplink_packet, "\\x");
+
+                // The data array holds the decimal values of the hex string. For example,
+                // if the uplink contains "\x4c", the data array will hold 67. 
+                char data[uplink_packet_len];
+
+                // Parse the uplink packet; convert it from a hex string to an array of integers.
+                // Token holds a single hex value in uplink string; can't possibly be longer than the string length of the packet.
+                char token[strlen(packet)]; 
+                for (i=0; i<uplink_packet_len; i++) {
+                    // Get the hex string (i.e "4c") and put it in the token char array
+                    uplink_packet+=2;
+                    memset(token, 0, uplink_packet_len); // Clear the token array
+                    for (size_t idx = 0; uplink_packet[0] != '\\'; idx++, uplink_packet++) {
+                        token[idx] = uplink_packet[0];
+                    }
+
+                    // Get the decimal value of the token/hex string (i.e 67) and add it to data array
+                    data[i] = (char) strtol ((char*)token, NULL, 16);
+                }
+                
+                // Clear the MT buffer
+                size_t size = sizeof(radio_mt_packet_fp->get());
+                memset(radio_mt_packet_fp->get(), 0, size);
+
+                // Move the uplink data into the MT buffer so that it can be processed on
+                // the next cycle by Uplink Consumer.
+                memcpy(radio_mt_packet_fp->get(), data, uplink_packet_len);
+                radio_mt_packet_len_fp->set(uplink_packet_len);
+
+                #ifdef DESKTOP
+                    DynamicJsonDocument doc(500);
+                #else
+                    StaticJsonDocument<200> doc;
+                #endif
+                    doc["t"] = _get_elapsed_time();
+                    doc["uplink"] = packet;
+                    doc["len"] = uplink_packet_len;
+                #ifdef DESKTOP
+                    serializeJson(doc, std::cout);
+                    std::cout << std::endl << std::flush;
+                #else
+                    serializeJson(doc, Serial);
+                    Serial.println();
+                #endif
 
             } break;
             default: {

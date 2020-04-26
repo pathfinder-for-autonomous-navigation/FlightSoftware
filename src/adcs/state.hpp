@@ -75,14 +75,19 @@ struct SunSensorRegisters {
 };
 
 /** \struct IMURegisters
- *  State data structure for the IMU sensors. all reads are in the body frame of
+ *  State data structure for the IMU sensors. All reads are in the body frame of
  *  the spacecraft. */
 struct IMURegisters {
-  /** Specifies the current IMU mode - i.e. which magnetometer to talk to. */
-  unsigned char mode;
-  /** Current output for the magnetometer in units of Tesla in the body frame of
-   *  the spacecraft. */
-  float mag_rd[3];
+  /** Mode of the first magnetometer. */
+  unsigned char mag1_mode;
+  /** Current output for the first magnetometer in units of Tesla in the body
+   *  frame of the spacecraft. */
+  float mag1_rd[3];
+  /** Mode of the second magnetometer. */
+  unsigned char mag2_mode;
+  /** Current output for the second magnetometer in units of Tesla in the body
+   *  frame of the spacecraft. */
+  float mag2_rd[3];
   /** Current output for the gyroscope in units of rad/s in the body frame of
    *  the spacecraft. */
   float gyr_rd[3];
