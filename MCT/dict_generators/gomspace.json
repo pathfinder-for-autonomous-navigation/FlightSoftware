@@ -1,0 +1,243 @@
+{
+    "name" : "Battery",
+    "key" : "gomspace",
+    "filter" : "gomspace.",
+    "keys": {
+        "gomspace.vbatt": {
+            "name": "Battery Level",
+            "units": "millivolts"
+        },
+        "gomspace.batt_threshold": {
+            "name": "Safety Voltage Threshold",
+            "units": "millivolts"
+        },
+        "gomspace.cursun": {
+            "name": "Total Input Current",
+            "units": "milliamperes"
+        },
+        "gomspace.cursys": {
+            "name": "Total Output Current",
+            "units": "milliamperes"
+        },
+        "gomspace.bootcause": {
+            "name": "Cause of Current Boot"
+        },
+        "gomspace.curout.output1": {
+            "group": "gomspace.curout",
+            "units": "milliamperes"
+        },
+        "gomspace.output.output1": {
+            "group": "gomspace.output"
+        },
+        "gomspace.curout.output2": {
+            "group": "gomspace.curout",
+            "units": "milliamperes"
+        },
+        "gomspace.output.output2": {
+            "group": "gomspace.output"
+        },
+        "gomspace.curout.output3": {
+            "group": "gomspace.curout",
+            "units": "milliamperes"
+        },
+        "gomspace.output.output3": {
+            "group": "gomspace.output"
+        },
+        "gomspace.curout.output4": {
+            "group": "gomspace.curout",
+            "units": "milliamperes"
+        },
+        "gomspace.output.output4": {
+            "group": "gomspace.output"
+        },
+        "gomspace.curout.output5": {
+            "group": "gomspace.curout",
+            "units": "milliamperes"
+        },
+        "gomspace.output.output5": {
+            "group": "gomspace.output"
+        },
+        "gomspace.curout.output6": {
+            "group": "gomspace.curout",
+            "units": "milliamperes"
+        },
+        "gomspace.output.output6": {
+            "group": "gomspace.output"
+        },
+        "gomspace.vboost.output1": {
+            "group": "gomspace.vboost",
+            "units": "millivolts"
+        },
+        "gomspace.curin.output1": {
+            "group": "gomspace.curin",
+            "units": "milliamperes"
+        },
+        "gomspace.vboost.output2": {
+            "group": "gomspace.vboost",
+            "units": "millivolts"
+        },
+        "gomspace.curin.output2": {
+            "group": "gomspace.curin",
+            "units": "milliamperes"
+        },
+        "gomspace.vboost.output3": {
+            "group": "gomspace.vboost",
+            "units": "millivolts"
+        },
+        "gomspace.curin.output3": {
+            "group": "gomspace.curin",
+            "units": "milliamperes"
+        },
+        "gomspace.temp.output1": {
+            "group": "gomspace.temp",
+            "units": "degC"
+        },
+        "gomspace.temp.output2": {
+            "group": "gomspace.temp",
+            "units": "degC"
+        },
+        "gomspace.temp.output3": {
+            "group": "gomspace.temp",
+            "units": "degC"
+        },
+        "gomspace.temp.output4": {
+            "group": "gomspace.temp",
+            "units": "degC"
+        },
+        "gomspace.power_cycle_output1_cmd": {
+            "group": "gomspace.power_cycle_output"
+        },
+        "gomspace.power_cycle_output2_cmd": {
+            "group": "gomspace.power_cycle_output"
+        },
+        "gomspace.power_cycle_output3_cmd": {
+            "group": "gomspace.power_cycle_output"
+        },
+        "gomspace.power_cycle_output4_cmd": {
+            "group": "gomspace.power_cycle_output"
+        },
+        "gomspace.power_cycle_output5_cmd": {
+            "group": "gomspace.power_cycle_output"
+        },
+        "gomspace.power_cycle_output6_cmd": {
+            "group": "gomspace.power_cycle_output"
+        },
+        "gomspace.pv1_cmd": {
+            "group": "gomspace.pv",
+            "units": "milliamperes"
+        },
+        "gomspace.pv2_cmd": {
+            "group": "gomspace.pv",
+            "units": "milliamperes"
+        },
+        "gomspace.pv3_cmd": {
+            "group": "gomspace.pv",
+            "units": "milliamperes"
+        },
+        "gomspace.get_hk": {
+            "group": "gomspace.get_hk"
+        },
+        "gomspace.get_hk.override": {
+            "group": "gomspace.get_hk"
+        },
+        "gomspace.get_hk.suppress": {
+            "group": "gomspace.get_hk"
+        },
+        "gomspace.get_hk.unsignal": {
+            "group": "gomspace.get_hk"
+        },
+        "gomspace.get_hk.persistence": {
+            "group": "gomspace.get_hk"
+        },
+        "gomspace.low_batt": {
+            "group": "gomspace.low_batt"
+        },
+        "gomspace.low_batt.override": {
+            "group": "gomspace.low_batt"
+        },
+        "gomspace.low_batt.suppress": {
+            "group": "gomspace.low_batt"
+        },
+        "gomspace.low_batt.unsignal": {
+            "group": "gomspace.low_batt"
+        },
+        "gomspace.low_batt.persistence": {
+            "group": "gomspace.low_batt"
+        },
+        "gomspace.wdt_i2c_time_left": {
+            "group": "gomspace.counters",
+            "units": "seconds"
+        },
+        "gomspace.counter_boot": {
+            "group": "gomspace.counters"
+        },
+        "gomspace.counter_wdt_i2c": {
+            "group": "gomspace.counters"
+        },
+        "gomspace.battmode": {
+            "group": "gomspace.modes"
+        },
+        "gomspace.pptmode": {
+            "group": "gomspace.modes"
+        },
+        "gomspace.heater": {
+            "group": "gomspace.modes"
+        },
+        "gomspace.heater_cmd": {
+            "group": "gomspace.commands"
+        },
+        "gomspace.ppt_cmd": {
+            "group": "gomspace.commands"
+        },
+        "gomspace.pptmode_cmd": {
+            "group": "gomspace.commands"
+        },
+        "gomspace.gs_reset_cmd": {
+            "group": "gomspace.commands"
+        },
+        "gomspace.gs_reboot_cmd": {
+            "group": "gomspace.commands"
+        },
+        "gomspace.counter_reset_cmd": {
+            "group": "gomspace.commands"
+        }
+    },
+    "groups": {
+        "gomspace.power_cycle_output": {
+            "name": "Power Cycle Commands"
+        },
+        "gomspace.pv": {
+            "name": "Boost Converter Voltage Commands"
+        },
+        "gomspace.curout": {
+            "name": "Output Currents"
+        },
+        "gomspace.curin": {
+            "name": "Input currents"
+        },
+        "gomspace.temp": {
+            "name": "Battery Temperatures"
+        },
+        "gomspace.vboost": {
+            "name": "Boost converter voltages"
+        },
+        "gomspace.output": {
+            "name": "Output Statuses"
+        },
+        "gomspace.low_batt": {
+            "name": "Low Battery Fault Status Indicators"
+        },
+        "gomspace.get_hk": {
+            "name": "Communication Fault Status Indicators"
+        },
+        "gomspace.counters": {
+            "name": "Counters"
+        },
+        "gomspace.modes": {
+            "name": "Modes"
+        },
+        "gomspace.commands": {
+            "name": "Commands"
+        }
+    }
+}

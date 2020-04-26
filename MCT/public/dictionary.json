@@ -1,0 +1,70 @@
+{
+    "name": "Satellite",
+    "key": "sc",
+    "measurements": [
+        {
+            "name": "Battery Level",
+            "key": "batt.lvl",
+            "values": [
+                {
+                    "key": "output1",
+                    "name": "Value1",
+                    "units": "Watts",
+                    "format": "float",
+                    "min": 0,
+                    "max": 100,
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "output2",
+                    "name": "Value2",
+                    "units": "Watts",
+                    "format": "float",
+                    "min": 0,
+                    "max": 100,
+                    "hints": {
+                        "range": 1
+                    }
+                },
+
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Incoming Telemetry",
+            "key": "incoming",
+            "values": [
+                {
+                    "key": "value",
+                    "name": "Value",
+                    "units": "Meters",
+                    "format": "float",
+                    "min": 0,
+                    "max": 100,
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        }
+    ]
+}
