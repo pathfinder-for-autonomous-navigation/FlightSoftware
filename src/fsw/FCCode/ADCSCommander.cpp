@@ -1,8 +1,8 @@
 #include "ADCSCommander.hpp"
 #include "adcs_state_t.enum"
 #include <lin.hpp>
-#include <gnc_utilities.hpp>
-#include <gnc_constants.hpp>
+#include <gnc/utilities.hpp>
+#include <gnc/constants.hpp>
 #include <cmath>
 
 #include <adcs/constants.hpp>
