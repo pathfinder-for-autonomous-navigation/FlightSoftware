@@ -10,6 +10,9 @@ def abs_of(list_of_vals):
     return [abs(x) for x in list_of_vals]
 
 def list_of_avgs(lists_of_vals):
+    '''
+    Given a list of lists of vals, return a list of the average value of each list.
+    '''
     sum_of_each = [sum(x) for x in lists_of_vals]
     len_of_each = len(lists_of_vals[0])
     return [sum_of_each[i]/len_of_each for y in lists_of_vals]    
@@ -150,7 +153,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # earth's mag field is between 25 to 65 microteslas - Wikipedia
         self.logger.put(f"MAG{mag_num} readings: ")
         for i in range(10):
-            mag = self.self.mag_of(list_of_mag_rds[i])
+            mag = self.mag_of(list_of_mag_rds[i])
             self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
             self.soft_assert((25e-6 < mag and mag < 65e-6),
                 f"MAG{mag_num} reading out of expected (earth) bounds.")
