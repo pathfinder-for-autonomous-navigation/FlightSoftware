@@ -54,14 +54,14 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # Needed so that ADCSMonitor updates its values
         self.cycle()
 
-        self.ws("pan.state", self.mission_states.get_by_name("manual"))
+        self.ws("pan.state", self.mission_states["manual"])
         self.ws("dcdc.ADCSMotor_cmd", True)
 
         # Necessary so that motor commands are pre-empted by ADCS DCDC being on
         self.cycle()
 
-        self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
-        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
+        self.ws("adcs.state", self.adcs_states["point_manual"])
+        self.ws("adcs_cmd.rwa_mode", self.rwa_modes["RWA_SPEED_CTRL"])
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
     
         self.print_header("Finished Initialization")
@@ -78,7 +78,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         for x in range(self.havt_length):
             if not self.havt_read[x]:
-                self.logger.put(f"Device #{x}, {self.havt_devices.get_by_num(x)} is not functional")
+                self.logger.put(f"Device #{x}, {self.havt_devices[x]} is not functional")
 
         self.logger.put("Initial HAVT Table:")
         self.print_havt_read()
@@ -138,8 +138,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         
         self.print_rs(f"adcs_cmd.mag{mag_num}_mode")
         imu_mode = self.rs(f"adcs_cmd.mag{mag_num}_mode")
-        self.logger.put(f"MAG{mag_num} Mode: {self.imu_modes.get_by_num(imu_mode)}")
-        
+        self.logger.put(f"MAG{mag_num} Mode: {self.imu_modes[imu_mode]}")
+
         # perform 10 readings.
         list_of_mag_rds = []
         for i in range(10):
