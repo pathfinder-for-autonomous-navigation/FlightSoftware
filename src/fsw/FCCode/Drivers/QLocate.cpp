@@ -17,7 +17,7 @@
 #ifndef DESKTOP
 #include <Arduino.h>
 #endif
-
+#define DEBUG_ENABLED
 using namespace Devices;
 
 #define CHECK_PORT_AVAILABLE() \
@@ -241,6 +241,7 @@ int QLocate::get_sbdrb() {
 #ifdef DEBUG_ENABLED
     Serial.printf("MT_MSG[");
     dbg_print_buf(mt_message, msg_size);
+    dbg_print_hex(mt_message, msg_size);
 #endif
 
     // get the checksum

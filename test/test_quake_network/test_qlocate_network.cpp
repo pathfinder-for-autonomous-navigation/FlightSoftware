@@ -6,7 +6,6 @@
 #include <string>
 #include <vector>
 #include "../test_quake/quake_common.h"
-
 // name, port, pin number, timeout
 Devices::QLocate q("Test_Quake_With_Network", &Serial3,
     Devices::QLocate::DEFAULT_TIMEOUT);
@@ -43,20 +42,6 @@ void test_sbdix_with_network(void)
 
     // If MO_status is within [0, 4], then downlink was successful
     TEST_ASSERT_LESS_OR_EQUAL(4, pRes->MO_status);
-}
-
-/* Tests that we can read messages from MT queue */
-void test_sbdrb_with_network(void)
-{
-    // SBDIX session
-    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdix_1());
-    count_cycles(q.get_sbdix, "get_sbdix", Devices::OK);
-
-    const int *_pRes = q.sbdix_r;
-    sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
-
-    // If MO_status is within [0, 4], then downlink was successful
-    TEST_ASSERT_LESS_OR_EQUAL(4, pRes->MO_status);
 
     // Make sure that we have a message
     TEST_ASSERT_GREATER_OR_EQUAL(1, pRes->MT_length);
@@ -67,32 +52,24 @@ void test_sbdrb_with_network(void)
     count_cycles(q.get_sbdrb, "get_sbdrb", Devices::OK);
     
     char *szMsg = q.mt_message;
-#ifdef DEBUG_ENABLED
-    digitalWrite(13, HIGH);
-    Serial.printf("*** %s ***\n", szMsg);
-    for (int i = 0; i < pRes->MT_length; i++)
-    {
-        Serial.printf("[%c]", szMsg + 1);
-    }
-    digitalWrite(13, LOW);
-#endif
     Serial.printf("Message: %s\n", szMsg);
 }
 
 // TODO: need a way to get messages
 int main(void)
 {
-    delay(5000);
+    delay(10000);
     Serial.begin(9600);
     pinMode(13, OUTPUT);
-    while (!Serial)
-        ;
     q.setup();
     Serial.printf("Qlocate Network Test\n");
     UNITY_BEGIN();
-    RUN_TEST(test_config); // force a config
-    RUN_TEST(test_sbdix_with_network);
-    RUN_TEST(test_sbdrb_with_network);
+    while (1)
+    {
+        delay(15*1000); // delay 15 seconds so that iridium doesn't freak out
+        RUN_TEST(test_config); // force a config
+        RUN_TEST(test_sbdix_with_network);
+    }
     UNITY_END();
     return 0;
 }
