@@ -3,29 +3,6 @@ from .base import SingleSatOnlyCase, TestCaseFailure
 import math
 import time
 
-def mag_of(vals):
-    '''
-    Returns the magnitude of a list of vals 
-    by taking the square root of the sum of the square of the components.
-    '''
-    assert(type(vals) is list)
-    return math.sqrt(sum([x*x for x in vals]))
-
-def sum_of_differentials(lists_of_vals):
-    '''
-    Given a list of list of vals, return the sum of all the differentials from one list to the next.
-
-    Returns a val.
-
-    Ex: sum_of_differentials([[1,1,1],[1,2,3],[1,2,2]]) evaluates to 4
-    '''
-    total_diff = [0 for x in lists_of_vals[0]]
-    for i in range(len(lists_of_vals) - 1):
-        diff = [abs(lists_of_vals[i][j] - lists_of_vals[i+1][j]) for j in range(len(lists_of_vals[i]))]
-        total_diff = [diff[x] + total_diff[x] for x in range(len(total_diff))]
-
-    return sum(total_diff)
-
 def abs_of(list_of_vals):
     '''
     Given a list of values, take the absolute value of each value
@@ -173,13 +150,13 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # earth's mag field is between 25 to 65 microteslas - Wikipedia
         self.logger.put(f"MAG{mag_num} readings: ")
         for i in range(10):
-            mag = mag_of(list_of_mag_rds[i])
+            mag = self.self.mag_of(list_of_mag_rds[i])
             self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
             self.soft_assert((25e-6 < mag and mag < 65e-6),
                 f"MAG{mag_num} reading out of expected (earth) bounds.")
 
         # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
+        self.soft_assert(self.sum_of_differentials(list_of_mag_rds) > 0,
             f"MAG{mag_num} readings did not vary across readings.")
 
         self.print_header(f"MAG{mag_num} CHECKOUT COMPLETE")
@@ -227,7 +204,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # for each reading check, magnitude bounds
         self.logger.put("GYR readings: ")
         for i in range(10):
-            mag = mag_of(list_of_gyr_rds[i])
+            mag = self.mag_of(list_of_gyr_rds[i])
             self.logger.put(f"{list_of_gyr_rds[i]}, mag: {mag}")
             # 3.8 is approximately the maximum possible magnitude GYR reading.
             # 125 * 0.017 = max_rd_omega
@@ -236,7 +213,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
                 "Gyr reading out of expected bounds.")
 
         # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_gyr_rds) > 0,
+        self.soft_assert(self.sum_of_differentials(list_of_gyr_rds) > 0,
             "Gyr readings did not vary across readings.")
 
         self.print_header("GYR CHECKOUT COMPLETE")
@@ -266,7 +243,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.logger.put(f"Cycle No: {cn}, Speed Vec: {reading}")
             
         # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_speed_rds) > 0,
+        self.soft_assert(self.sum_of_differentials(list_of_speed_rds) > 0,
             "Pot readings did not vary across readings.")        
 
         reading = self.rs("adcs_monitor.rwa_speed_rd")
@@ -367,7 +344,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
                 voltages += [reading]
             list_of_voltages += [voltages]
         # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_voltages) > 0,
+        self.soft_assert(self.sum_of_differentials(list_of_voltages) > 0,
             "SSA voltage readings did not vary across readings.") 
 
     def run_case_singlesat(self):
