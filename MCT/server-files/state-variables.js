@@ -1,3 +1,5 @@
+//This file holds all of the variables to initialize every point on the gomspace battery and is called by other files that require variable access
+
 module.exports= {
   modes: {battmode: 0, heater: 2, pptmode: 1,},
   counters: {counter_boot: 24, counter_wdt_i2c: 1, wdt_i2c_time_left:3},
