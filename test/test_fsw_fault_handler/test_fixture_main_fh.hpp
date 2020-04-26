@@ -19,6 +19,11 @@ public:
     std::shared_ptr<InternalStateField<unsigned char>> radio_state_fp;
     std::shared_ptr<InternalStateField<unsigned int>> radio_last_comms_ccno_fp;
     std::shared_ptr<WritableStateField<bool>> quake_power_cycle_cmd_fp;
+
+    std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
+    std::shared_ptr<InternalStateField<unsigned int>> piksi_lastfix_ccno_fp;
+    std::shared_ptr<InternalStateField<unsigned int>> enter_close_approach_ccno_fp;
+
     std::shared_ptr<Fault> adcs_wheel1_adc_fault_fp;
     std::shared_ptr<Fault> adcs_wheel2_adc_fault_fp;
     std::shared_ptr<Fault> adcs_wheel3_adc_fault_fp;

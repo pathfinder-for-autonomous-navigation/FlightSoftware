@@ -3,7 +3,7 @@
 #include <fsw/FCCode/mission_state_t.enum>
 #include "test_fault_handlers.hpp"
 
-unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
+static unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
 
 class TestFixture {
   public:
@@ -70,7 +70,7 @@ void test_task_initialization() {
     TEST_ASSERT_EQUAL(0, cc_count);
 }
 
-void test_no_faults() {
+static void test_no_faults() {
     TestFixture tf;
     fault_response_t response = tf.pfh->execute();
     TEST_ASSERT_EQUAL(fault_response_t::none, response);

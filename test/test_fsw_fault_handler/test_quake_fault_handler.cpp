@@ -4,8 +4,8 @@
 #include <fsw/FCCode/radio_state_t.enum>
 #include "test_fault_handlers.hpp"
 
-unsigned int one_day_ccno = PAN::one_day_ccno;
-unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
+static unsigned int one_day_ccno = PAN::one_day_ccno;
+static unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
 
 class TestFixture {
   public:
@@ -43,8 +43,8 @@ class TestFixture {
         set(initial_state);
     }
 
-    void set(qfh_state_t state) { qfh->cur_state = state; }
-    void set(unsigned int state) { qfh->cur_state = static_cast<qfh_state_t>(state); }
+    void set(qfh_state_t state) { qfh->cur_state.set(static_cast<unsigned char>(state)); }
+    void set(unsigned int state) { qfh->cur_state.set(state); }
 
     // Below are getter and setter methods for the test harness, listed in order of
     // increasing invasiveness/complexity.
@@ -74,7 +74,7 @@ class TestFixture {
     void step_and_expect(fault_response_t expected_response, qfh_state_t expected_fault_state) {
         fault_response_t response = qfh->execute();
         TEST_ASSERT_EQUAL(response, expected_response);
-        TEST_ASSERT_EQUAL(expected_fault_state, qfh->cur_state);
+        TEST_ASSERT_EQUAL(static_cast<unsigned char>(expected_fault_state), qfh->cur_state.get());
         cc_count++;
     }
 
@@ -110,7 +110,7 @@ class TestFixture {
 
 void test_qfh_initialization() {
     TestFixture tf{qfh_state_t::unfaulted};
-    TEST_ASSERT_NOT_NULL(tf.qfh_state.get());
+    TEST_ASSERT_NOT_NULL(tf.qfh_state);
     TEST_ASSERT_EQUAL(static_cast<unsigned char>(qfh_state_t::unfaulted), tf.qfh_state->get());
 }
 

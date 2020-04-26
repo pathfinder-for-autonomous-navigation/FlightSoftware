@@ -1,7 +1,7 @@
 #include "test_fault_handlers.hpp"
 #include "test_fixture_main_fh.hpp"
 
-void test_no_faults() {
+static void test_no_faults() {
     TestFixtureMainFHEndToEnd tf;
     tf.set(mission_state_t::standby);
     fault_response_t response = tf.step();
