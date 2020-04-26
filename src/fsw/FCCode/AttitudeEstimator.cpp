@@ -62,8 +62,6 @@ void AttitudeEstimator::set_estimate(){
 
     w_body_f.set(estimate.w_body);
 
-    lin::Vector3f result;
-    if (adcs_paired_f.get()) result = gnc::constant::JB_docked_sats * estimate.w_body;
-    else result = gnc::constant::JB_single_sat * estimate.w_body;
+    lin::Vector3f result = gnc::constant::J_sat * estimate.w_body;
     h_body_f.set(result.eval());
 }
