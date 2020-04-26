@@ -32,7 +32,7 @@ ElasticSearch:
 
 Kibana:
 1. Install Java and Homebrew on your computer
-2. Install ElasticSearch
+2. Install Kibana
     - For Mac: `brew install kibana`
 3. To run Kibana, open a terminal and type `kibana`
 4. Type `http://localhost:5601` in your browser to view the Kibana interface
