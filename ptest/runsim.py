@@ -128,6 +128,9 @@ class PTest(object):
             time.sleep(1.0)
 
     def set_up_radios(self):
+        if not os.path.exists("ptest/send_uplink"):
+            os.system("go build -o ptest/send_uplink ptest/send_uplink.go")
+
         for radio in self.radios_config:
             radio_connected_device = radio["connected_device"]
             radio_name = radio["connected_device"] + "Radio"
@@ -204,10 +207,18 @@ class PTest(object):
 
         sys.exit(1 if is_error else 0)
 
-def main(args):
+def check_system_dependencies():
     if sys.version_info[0] != 3 or sys.version_info[1] < 6:
-        print("Running this script requires Python 3.6 or above.")
+        print("Running PTest requires Python 3.6 or above.")
         sys.exit(1)
+
+    from shutil import which
+    if which("go") is None:
+        print("PTest requires Golang to be installed.")
+        sys.exit(1)
+
+def main(args):
+    check_system_dependencies()
 
     parser = ArgumentParser(description='''
     Interactive console allows sending state commands to PAN Teensy devices, and parses console output 
