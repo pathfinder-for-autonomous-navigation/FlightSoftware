@@ -80,3 +80,5 @@ The listener field is notified every time telemetry data is generated.
 The generateTelemetry( ) function is the most important method of spacecraft.js as it interacts with each field inside the spacecraft.js file and creates data for the openMCT server to then catch and display.
 ![Telemetry function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/generate-telemetry.png)
 This function takes a measurement of spacecraft state, stores it in history{ }, and notifies listeners[ ] using the *Spacecraft.prototype.notify* function.
+
+**Battery.js** represents the gomspace battery object and creates battery telemetry that is sent to specific telemetry points as defined in telemetry reviews.

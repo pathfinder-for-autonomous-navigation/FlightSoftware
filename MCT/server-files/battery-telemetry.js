@@ -5,7 +5,7 @@ const variables = require('./state-variables.js')
 
 const axios = require('axios');
 function Battery() {
-
+    //This state function takes in initial values from the state-variables.js file
     this.state = {
         "gomspace.modes": variables.modes,
         "gomspace.counters": variables.counters,
@@ -38,30 +38,40 @@ function Battery() {
     console.log("Spacecraft Launched")
 
 };
-
+/**
+*   Tests the functionality of updateState by incrementing the counter boot time
+*   and setting the battery voltage to 24
+**/
 Battery.prototype.updateState = function () {
   this.state["gomspace.counters"].counter_boot = Math.min(4294967295,this.state["gomspace.counters"].counter_boot+1);
   this.state["gomspace.vbatt"].output1 = 24;
 };
 
 /**
- * Takes a measurement of spacecraft state, stores in history, and notifies
+ * Takes a measurement of battery state, determines its type, stores in history, and notifies
  * listeners.
+ *
+ *This method has two cases:
+ * - if the state is an object, meaning it has substates (output1, output2, etc.)
+ *   then generate telemetry for each substate
+ * - if the state is a primitive type, int,bool, or char then generate Telemetry
+ *   for the state value directly
  */
 Battery.prototype.generateTelemetry = function () {
     var timestamp = Date.now(), sent = 0;
     //make two cases one that updates objects and one that directly updates field
-    Object.keys(this.state).forEach(function (id) {//for each telemetry point in array this.state execute the following function
-      if(typeof(this.state[id]) == 'object'){
-        var state = { timestamp: timestamp, id: id};//for each field in the telemetry point
+    Object.keys(this.state).forEach(function (id) {
 
+      if(typeof(this.state[id]) == 'object'){//if state is an object
 
+        var state = { timestamp: timestamp, id: id};
         for (const output in this.state[id]){
           state[output] = this.state[id][output];
         }
         this.notify(state);
         this.history[id].push(state);
-      }else{
+
+      }else{// if state is a primitive type
         var state = { timestamp: timestamp, value: this.state[id], id: id};
         this.notify(state);
         this.history[id].push(state);

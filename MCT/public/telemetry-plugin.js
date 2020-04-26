@@ -1,3 +1,5 @@
+//This file contains all the plugins necessary for openMCT to handle our telemetry values
+
 function getDictionary() {
     return http.get('/dictionary.json')
         .then(function (result) {
