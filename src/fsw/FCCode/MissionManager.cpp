@@ -66,19 +66,19 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
     low_batt_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("gomspace.low_batt", __FILE__, __LINE__));
+            find_writable_field<bool>("gomspace.low_batt.base", __FILE__, __LINE__));
     adcs_functional_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.functional_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.functional_fault.base", __FILE__, __LINE__));
     wheel1_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel1_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__));
     wheel2_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel2_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__));
     wheel3_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel3_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__));
     wheel_pot_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__));
     failed_pressurize_fp = static_cast<Fault*>(
-            find_writable_field<bool>("prop.failed_pressurize", __FILE__, __LINE__));
+            find_writable_field<bool>("prop.failed_pressurize.base", __FILE__, __LINE__));
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);

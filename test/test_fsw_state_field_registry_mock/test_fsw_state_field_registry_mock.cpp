@@ -231,9 +231,9 @@ void test_create_fault() {
     StateFieldRegistryMock registry;
 
     registry.create_fault("foo", 1);
-    TEST_ASSERT_NOT_NULL(registry.find_fault("foo"));
-    TEST_ASSERT_NOT_NULL(registry.find_fault_t("foo"));
-    TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo"));
+    TEST_ASSERT_NOT_NULL(registry.find_fault("foo.base"));
+    TEST_ASSERT_NOT_NULL(registry.find_fault_t("foo.base"));
+    TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.base"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.suppress"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.override"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("foo.unsignal"));
@@ -256,7 +256,7 @@ void test_clear() {
     TEST_ASSERT_NOT_NULL(registry.find_internal_field("foo3"));
 
     registry.create_fault("foo4", 1);
-    TEST_ASSERT_NOT_NULL(registry.find_fault("foo4"));
+    TEST_ASSERT_NOT_NULL(registry.find_fault("foo4.base"));
 
     registry.create_readable_field<signed int>("field1", -1, 10, 4);
     registry.create_readable_field<signed int>("field2", -1, 10, 4);
@@ -271,7 +271,7 @@ void test_clear() {
     TEST_ASSERT_NULL(registry.find_readable_field("foo2"));
     TEST_ASSERT_NULL(registry.find_readable_field("foo3"));
     TEST_ASSERT_NULL(registry.find_writable_field("foo3"));
-    TEST_ASSERT_NULL(registry.find_fault("foo4"));
+    TEST_ASSERT_NULL(registry.find_fault("foo4.base"));
     TEST_ASSERT_NULL(registry.find_event("foo5"));
 }
 

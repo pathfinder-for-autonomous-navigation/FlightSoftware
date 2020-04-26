@@ -216,6 +216,8 @@ class SingleSatSimulation(Simulation):
     def setup_flight_controller(self):
         if "FlightController" in self.devices:
             self.flight_controller = self.devices['FlightController']
+        else:
+            self.flight_controller = None
 
     def interact_fc(self):
         self.interact_fc_onesat(self.flight_controller, self.sensor_readings_follower)

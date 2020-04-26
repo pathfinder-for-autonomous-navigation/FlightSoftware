@@ -198,7 +198,9 @@ class StateSession(object):
 
         Returns a float, int or bool
         '''
-        if '.' in field:
+        if 'nan' in field:
+            return float("NAN")
+        elif '.' in field:
             return float(field)
         elif field == 'true':
             return True
