@@ -25,7 +25,13 @@ def sum_of_differentials(lists_of_vals):
         total_diff = [diff[x] + total_diff[x] for x in range(len(total_diff))]
 
     return sum(total_diff)
-    
+
+def abs_of(list_of_vals):
+    '''
+    Given a list of values, take the absolute value of each value
+    '''
+    return [abs(x) for x in list_of_vals]
+
 def list_of_avgs(lists_of_vals):
     sum_of_each = [sum(x) for x in lists_of_vals]
     len_of_each = len(lists_of_vals[0])
@@ -333,7 +339,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             time.sleep(1)
             reading = self.print_rs("adcs_monitor.rwa_torque_rd")
             self.print_rs("adcs_monitor.rwa_speed_rd")
-            self.assert_vec_within(cmd_array, reading, .1)
+            self.assert_vec_within(abs_of(cmd_array), abs_of(reading), .1)
             self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
             self.logger.put("")
             time.sleep(1)
