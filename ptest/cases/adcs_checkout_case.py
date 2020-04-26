@@ -236,12 +236,17 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_header("GYR CHECKOUT COMPLETE")
 
     def wheel_checkout(self):
+        '''
+        Check that wheels respond to speed and torque tests as expected
+        '''
         self.print_header("BEGIN WHEEL CHECKOUT")
         
         self.logger.put("Checking RWA POT functionality:")
 
         self.ws("cycle.auto", True)
 
+        # The below section checks that wheel speed readings change over time 
+        # and are of expected magnitude
         self.ws("adcs_cmd.rwa_speed_cmd", [10, 10, 10])
         time.sleep(.2)
         self.print_rs("adcs_monitor.rwa_speed_rd")
@@ -260,6 +265,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         reading = self.rs("adcs_monitor.rwa_speed_rd")
         self.assert_vec_within([10, 10, 10], reading, 4)
+
+        # Begin Stress Testing Various Speeds
 
         wheel_speed_tests = [
             [20,40,50],
@@ -280,8 +287,11 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.assert_vec_within(cmd_array, reading, 1)
             time.sleep(1)
 
+        # "Stop" Wheels
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
         time.sleep(1)
+
+        # Begin Torque Stress Test
 
         torque_max = 0.00418
         x = 0.0001
@@ -328,6 +338,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.logger.put("")
             time.sleep(1)
 
+        # Shut down procedure
         self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
         time.sleep(1)
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
@@ -339,6 +350,9 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_header("WHEEL CHECKOUT COMPLETE")
 
     def ssa_checkout(self):
+        '''
+        Prints out all the voltages of each sun sensor, check that they change over time
+        '''
         list_of_voltages = []
         for i in range(10):
             voltages = []
@@ -379,10 +393,11 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # Run checks on GYR if GYR is up.
         if self.rs("adcs_monitor.havt_device0"):
             self.gyr_checkout()
-            
+        
+        # Run wheel checks if the RWAPOT is up.
         rwa_pot_num = self.havt_devices.get_by_name("RWA_POT")
-        # if self.rs(f"adcs_monitor.havt_device{rwa_pot_num}"):
-        self.wheel_checkout()
+        if self.rs(f"adcs_monitor.havt_device{rwa_pot_num}"):
+            self.wheel_checkout()
 
         self.ssa_checkout()
 
