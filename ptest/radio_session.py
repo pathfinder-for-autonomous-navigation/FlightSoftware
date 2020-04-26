@@ -1,5 +1,6 @@
 import time
 import datetime
+from datetime import datetime
 import serial
 import threading
 import json
@@ -10,6 +11,8 @@ import subprocess
 import glob
 import os
 import pty
+from elasticsearch import Elasticsearch
+
 
 from .data_consumers import Datastore, Logger
 
@@ -26,7 +29,7 @@ class RadioSession(object):
     '''
 
 
-    def __init__(self, device_name, port, imei, simulation_run_dir, tlm_config, downlink_parser_filepath):
+    def __init__(self, device_name, imei, simulation_run_dir, tlm_config, downlink_parser_filepath):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -36,8 +39,8 @@ class RadioSession(object):
         self.imei=imei
 
         #Flask server connection
-        self.flask_server=tlm_config["server"]
-        self.flask_port=tlm_config["port"]
+        self.flask_server=tlm_config["webservice"]["server"]
+        self.flask_port=tlm_config["webservice"]["port"]
 
         #email
         self.username=tlm_config["email_username"]
@@ -52,6 +55,9 @@ class RadioSession(object):
         self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
         self.telem_save_dir = simulation_run_dir
+
+        # Open a connection to elasticsearch
+        self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
 
     def read_state(self, field, timeout=None):
         '''
@@ -122,6 +128,23 @@ class RadioSession(object):
         if telem_json_data is not None:
                 telem_json_data = telem_json_data["data"]
         return telem_json_data
+    
+    def dbtelem(self):
+        jsonObj = self.parsetelem()
+        if not isinstance(jsonObj, dict):
+            print(jsonObj)
+            return False
+        failed = False
+        for field in jsonObj:
+            value = jsonObj[field]
+            data=json.dumps({
+            field: value,
+            "time": str(datetime.now().isoformat())
+            })
+            res = self.es.index(index='statefield_report_'+str(self.imei), doc_type='report', body=data)
+            if not res['result'] == 'created':
+                failed = True
+        return not failed 
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''

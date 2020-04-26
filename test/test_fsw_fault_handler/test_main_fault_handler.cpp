@@ -39,6 +39,7 @@ class TestFixtureMainFH {
         radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
         radio_last_comms_ccno_fp = registry.create_internal_field<unsigned int>("radio.last_comms_ccno");
         quake_power_cycle_cmd_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
+
         adcs_wheel1_adc_fault_fp = registry.create_fault("adcs_monitor.wheel1_fault", 1);
         adcs_wheel2_adc_fault_fp = registry.create_fault("adcs_monitor.wheel2_fault", 1);
         adcs_wheel3_adc_fault_fp = registry.create_fault("adcs_monitor.wheel3_fault", 1);
@@ -50,6 +51,7 @@ class TestFixtureMainFH {
         mission_state_fp = registry.create_writable_field<unsigned char>("pan.state");
         last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
         enter_close_appr_ccno_fp = registry.create_internal_field<unsigned int>("pan.enter_close_approach_ccno");
+
 
         // Construct main fault handler and capture its outputs
         fault_handler = std::make_unique<MainFaultHandler>(registry);

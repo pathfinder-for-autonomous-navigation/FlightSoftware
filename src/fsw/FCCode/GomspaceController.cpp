@@ -3,6 +3,7 @@
 GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
+
     get_hk_fault("gomspace.get_hk", 1),
     low_batt_fault("gomspace.low_batt", 1),
 

@@ -55,8 +55,8 @@ void test_faults() {
     TEST_ASSERT_TRUE(registry.add_fault(&f));
 
     // Check that the fault and its writable fields were added to the registry
-    TEST_ASSERT_NOT_NULL(registry.find_fault("fault"));
-    TEST_ASSERT_NOT_NULL(registry.find_writable_field("fault"));
+    TEST_ASSERT_NOT_NULL(registry.find_fault("fault.base"));
+    TEST_ASSERT_NOT_NULL(registry.find_writable_field("fault.base"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("fault.suppress"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("fault.override"));
     TEST_ASSERT_NOT_NULL(registry.find_writable_field("fault.unsignal"));

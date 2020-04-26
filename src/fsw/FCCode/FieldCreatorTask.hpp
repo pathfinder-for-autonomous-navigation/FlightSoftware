@@ -26,6 +26,7 @@ class FieldCreatorTask : public ControlTask<void> {
         pos_f("orbit.pos", Serializer<lin::Vector3d>(0,100000,100)),
         pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,100000,100)),
         prop_state_f("prop.state", Serializer<unsigned char>(1)),
+
         failed_pressurize_f("prop.failed_pressurize", 1),
         overpressured_f("prop.overpressured", 1)
       {

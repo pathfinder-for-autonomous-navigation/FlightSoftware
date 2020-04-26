@@ -21,8 +21,8 @@ void test_fault_normal_behavior() {
     // Test that adding the fault to the registry works 
     StateFieldRegistry r;
     TEST_ASSERT(r.add_fault(&fault)); 
-    TEST_ASSERT_NOT_NULL(r.find_fault("fault"));
-    TEST_ASSERT(r.find_writable_field("fault"));
+    TEST_ASSERT_NOT_NULL(r.find_fault("fault.base"));
+    TEST_ASSERT(r.find_writable_field("fault.base"));
     TEST_ASSERT(r.find_writable_field("fault.override"));
     TEST_ASSERT(r.find_writable_field("fault.suppress"));
     TEST_ASSERT(r.find_writable_field("fault.unsignal"));
@@ -30,9 +30,9 @@ void test_fault_normal_behavior() {
     // Registry shouldn't add a fault that already exists
     TEST_ASSERT_FALSE(r.add_fault(&fault));
     // Registry will return a null pointer if a fault doesn't exist in it
-    TEST_ASSERT_NULL(r.find_fault("fake_fault"));
+    TEST_ASSERT_NULL(r.find_fault("fake_fault.base"));
 
-    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field("fault"));
+    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field("fault.base"));
 
     TEST_ASSERT_FALSE(fault_fp->is_faulted());
 
@@ -72,7 +72,7 @@ void test_fault_overridden_behavior() {
     Fault fault("fault", 1);
     r.add_fault(&fault);
 
-    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
+    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault.base"));
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
     WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
 
@@ -110,7 +110,7 @@ void test_process_commands(){
     Fault fault("fault", 5);
     r.add_fault(&fault);
 
-    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
+    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault.base"));
     WritableStateField<bool>* override_fp = r.find_writable_field_t<bool>("fault.override");
     WritableStateField<bool>* suppress_fp = r.find_writable_field_t<bool>("fault.suppress");
     WritableStateField<bool>* unsignal_fp = r.find_writable_field_t<bool>("fault.unsignal");
@@ -190,7 +190,7 @@ void test_dynamic_persistence(){
     Fault fault("fault", 5);
     r.add_fault(&fault);
 
-    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault"));
+    Fault* fault_fp = static_cast<Fault*>(r.find_writable_field_t<bool>("fault.base"));
     WritableStateField<unsigned int>* persistence_fp = r.find_writable_field_t<unsigned int>("fault.persistence");
 
     // normal triggering of a fault
