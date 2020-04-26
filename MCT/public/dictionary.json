@@ -7,8 +7,8 @@
             "key": "batt.lvl",
             "values": [
                 {
-                    "key": "value",
-                    "name": "Value",
+                    "key": "output1",
+                    "name": "Value1",
                     "units": "Watts",
                     "format": "float",
                     "min": 0,
@@ -18,24 +18,9 @@
                     }
                 },
                 {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ]
-        },
-        {
-            "name": "Incoming Telemetry",
-            "key": "incoming",
-            "values": [
-                {
-                    "key": "value",
-                    "name": "Value",
-                    "units": "Meters",
+                    "key": "output2",
+                    "name": "Value2",
+                    "units": "Watts",
                     "format": "float",
                     "min": 0,
                     "max": 100,
@@ -43,6 +28,7 @@
                         "range": 1
                     }
                 },
+
                 {
                     "key": "utc",
                     "source": "timestamp",
