@@ -2,6 +2,7 @@
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/QuakeFaultHandler.hpp>
 #include <fsw/FCCode/radio_state_t.enum>
+#include "test_fault_handlers.hpp"
 
 unsigned int one_day_ccno = PAN::one_day_ccno;
 unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
@@ -15,6 +16,8 @@ class TestFixture {
     std::shared_ptr<WritableStateField<bool>> radio_power_cycle_fp;
 
     std::unique_ptr<QuakeFaultHandler> qfh;
+
+    WritableStateField<unsigned char>* qfh_state;
 
     void disable_radio() {
         radio_state_fp->set(static_cast<unsigned char>(radio_state_t::disabled));
@@ -35,6 +38,8 @@ class TestFixture {
         cc_count = 0;
 
         qfh = std::make_unique<QuakeFaultHandler>(registry);
+
+        qfh_state = registry.find_writable_field_t<unsigned char>("qfh.state");
         set(initial_state);
     }
 
@@ -102,6 +107,12 @@ class TestFixture {
         cc_count = 0;
     }
 };
+
+void test_qfh_initialization() {
+    TestFixture tf{qfh_state_t::unfaulted};
+    TEST_ASSERT_NOT_NULL(tf.qfh_state.get());
+    TEST_ASSERT_EQUAL(static_cast<unsigned char>(qfh_state_t::unfaulted), tf.qfh_state->get());
+}
 
 void test_qfh_transition() {
     // Open-box test.
@@ -307,8 +318,8 @@ void test_qfh_undefined_state() {
     tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
 }
 
-int test_mission_manager() {
-    UNITY_BEGIN();
+void test_quake_fault_handler() {
+    RUN_TEST(test_qfh_initialization);
     RUN_TEST(test_qfh_unfaulted);
     RUN_TEST(test_qfh_forced_standby);
     RUN_TEST(test_qfh_powercycle_1);
@@ -316,20 +327,4 @@ int test_mission_manager() {
     RUN_TEST(test_qfh_powercycle_3);
     RUN_TEST(test_qfh_safehold);
     RUN_TEST(test_qfh_undefined_state);
-    return UNITY_END();
 }
-
-#ifdef DESKTOP
-int main() {
-    return test_mission_manager();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_mission_manager();
-}
-
-void loop() {}
-#endif

@@ -49,7 +49,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
-    SimpleFaultHandler::set_mission_state_ptr(&mission_state_f);
 
     adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
     adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);

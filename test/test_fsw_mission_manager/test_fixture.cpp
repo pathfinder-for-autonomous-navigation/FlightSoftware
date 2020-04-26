@@ -1,5 +1,5 @@
 #include "test_fixture.hpp"
-#include "../FaultHandlerMachineMock.hpp"
+#include "../test_fsw_fault_handler/FaultHandlerMachineMock.hpp"
 #include <unity.h>
 #include <limits>
 

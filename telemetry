@@ -1702,6 +1702,14 @@
             "type": "unsigned char",
             "writable": false
         },
+        "qfh.state": {
+            "bitsize": 3,
+            "flow_id": "undefined",
+            "max": 5,
+            "min": 0,
+            "type": "unsigned char",
+            "writable": true
+        },
         "radio.err": {
             "bitsize": 7,
             "flow_id": 16,

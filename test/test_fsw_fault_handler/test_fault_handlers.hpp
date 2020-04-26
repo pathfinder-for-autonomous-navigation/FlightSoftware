@@ -10,8 +10,8 @@ void test_main_fault_handler();
 
 // TODO
 // void test_prop_overpressure_fault_handler();
-// void test_quake_fault_handler();
+void test_quake_fault_handler();
 // void test_piksi_fault_handler();
-// void test_fault_handling_end_to_end();
+void test_fault_handling_end_to_end();
 
 #endif

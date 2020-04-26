@@ -35,10 +35,10 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Number of control cycles to wait during the post-deployment
      * do-nothing period.
      */
-    #ifdef FLIGHT
-        TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
-    #else
+    #ifdef SPEEDUP
         TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 100);
+    #else
+        TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
     #endif
     /**
      * @brief Number of control cycles to wait before declaring "too long since comms".

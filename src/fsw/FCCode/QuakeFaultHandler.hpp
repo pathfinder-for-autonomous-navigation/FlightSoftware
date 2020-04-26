@@ -74,7 +74,7 @@ class QuakeFaultHandler : public FaultHandlerMachine {
 
     // Current state of fault checker DFA, and the control cycle
     // count at which it entered this state.
-    qfh_state_t cur_state = qfh_state_t::unfaulted;
+    WritableStateField<unsigned char> cur_state;
     unsigned int cur_state_entry_ccno = 0;
 
     /**
