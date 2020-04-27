@@ -1,5 +1,5 @@
 #pragma once
-
+#define DEBUG_ENABLED
 using callback_fnptr = int (Devices::QLocate::*)();
 
 // Sbdix response structure
@@ -30,11 +30,7 @@ const int MO_NO_UPDATE  = 2;    // transfer ok but no location update
 const int MO_NO_NETWORK = 32;
 
 extern Devices::QLocate q;
-void setUp(void) {
-}
 
-void tearDown(void) {
-}
 
 // length of a ctrl cycle in ms
 static const int DEFAULT_CTRL_CYCLE_LENGTH = 120; 
@@ -44,7 +40,7 @@ static const int DEFAULT_CTRL_CYCLE_LENGTH = 120;
  * PORT_UNAVAILABLE.
  * [fnName] is the name of the function that callback points to.
  */
-#define count_cycles(callback, fnName) do{\
+#define count_cycles(callback, fnName, expect) do{\
     int numCycles   = 0;\
     int retCode     = -1;\
     do\
@@ -55,8 +51,7 @@ static const int DEFAULT_CTRL_CYCLE_LENGTH = 120;
     }\
     while (retCode == Devices::PORT_UNAVAILABLE);\
     Serial.printf("Number of cycles before %s: %d\r\n", fnName, numCycles);\
-    TEST_ASSERT_LESS_OR_EQUAL(1, retCode);\
-    TEST_ASSERT_GREATER_OR_EQUAL(0, retCode);\
+    TEST_ASSERT_EQUAL(expect, retCode);\
 }while(0)
 
 /**
@@ -64,8 +59,7 @@ static const int DEFAULT_CTRL_CYCLE_LENGTH = 120;
  */
 #define run_sbdwb(msg)do{\
     delay(DEFAULT_CTRL_CYCLE_LENGTH);\
-    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_1(msg.length()));\
-    delay(DEFAULT_CTRL_CYCLE_LENGTH);\
-    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_2(msg.c_str(), msg.length()));\
-    count_cycles(q.get_sbdwb, "get_sbdwb");\
+    while(q.query_sbdwb_1(msg.length()) == Devices::PORT_UNAVAILABLE);\
+    while(q.query_sbdwb_2(msg.c_str(), msg.length()) == Devices::PORT_UNAVAILABLE);\
+    count_cycles(q.get_sbdwb, "get_sbdwb", Devices::OK);\
 }while(0)

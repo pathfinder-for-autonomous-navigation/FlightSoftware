@@ -7,4 +7,6 @@ from .prop_checkout_case import PropCheckoutCase
 from .prop_state_machine_case import PropStateMachineCase
 from .spin_motors_case import SpinMotorsCase
 from .adcs_checkout_case import ADCSCheckoutCase
+from .piksi_checkout_case import PiksiCheckoutCase
+from .deployment_to_init_hold_case import DeploymentToInitHoldCheckoutCase
 from .ci_case import CICase

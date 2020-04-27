@@ -141,12 +141,13 @@ void ADCSBoxMonitor::execute(){
     f_vector_t mag2_vec;
     f_vector_t gyr_vec;
     float gyr_temp = 0.0;
+    
+    // Determine whether a fault has occurred. Evaluating faults before reading from the adcs
+    // system allows us to test fault responses in ptest.
+    adcs_functional_fault.evaluate(!adcs_is_functional.get());
 
     //ask the driver to fill in values
     adcs_is_functional.set(adcs_system.i2c_ping());
-    
-    adcs_functional_fault.evaluate(!adcs_is_functional.get());
-    
 
     adcs_system.get_rwa(&rwa_speed_rd,&rwa_torque_rd);
     adcs_system.get_ssa_voltage(&ssa_voltages);
@@ -170,6 +171,13 @@ void ADCSBoxMonitor::execute(){
     for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
         ssa_voltages_f[i].set(ssa_voltages[i]);
     }
+    
+    // Determine whether a fault has occurred. Evaluating faults before reading from the adcs
+    // system allows us to test fault responses in ptest.
+    wheel1_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC1].get() == false);
+    wheel2_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC2].get() == false);
+    wheel3_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC3].get() == false);
+    wheel_pot_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_POT].get() == false);
 
     // set vector of device availability
     std::bitset<adcs::havt::max_devices> havt_read(0);
@@ -178,11 +186,6 @@ void ADCSBoxMonitor::execute(){
     {
         havt_read_vector[idx].set(havt_read.test(idx));
     }
-    
-    wheel1_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC1].get() == false);
-    wheel2_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC2].get() == false);
-    wheel3_adc_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_ADC3].get() == false);
-    wheel_pot_fault.evaluate(havt_read_vector[adcs::havt::Index::RWA_POT].get() == false);
 
     mag1_vec_f.set(to_linvector(mag1_vec));
     mag2_vec_f.set(to_linvector(mag2_vec));

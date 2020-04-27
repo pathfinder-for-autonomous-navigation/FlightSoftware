@@ -1,41 +1,43 @@
 #include <unity.h>
 #include <string>
 #include <vector>
-#include <QLocate.hpp>
+#include <fsw/FCCode/Drivers/QLocate.hpp>
 #include "core_pins.h"
 #include <Arduino.h>
 #include "quake_common.h"
 #include "usb_serial.h"
 
-// name, port, pin number, timeout
-Devices::QLocate q("Test_Quake", &Serial3, 
-    Devices::QLocate::DEFAULT_NR_PIN,
-    Devices::QLocate::DEFAULT_TIMEOUT);
+// name, port, timeout
+Devices::QLocate q("Test_Quake", &Serial3, Devices::QLocate::DEFAULT_TIMEOUT);
 
 /*! Tests the config function */
 void test_config(void) {
     TEST_ASSERT_EQUAL(Devices::OK, q.query_config_1());
-    count_cycles(q.query_config_2, "query_config_2");
-    count_cycles(q.query_config_3, "query_config_3");
-    count_cycles(q.get_config, "get_config");
+    count_cycles(q.query_config_2, "query_config_2", Devices::OK);
+    count_cycles(q.query_config_3, "query_config_3", Devices::OK);
+    count_cycles(q.get_config, "get_config", Devices::OK);
 }
 
 /*! Tests SBDWB (loading a message onto the MO queue of the Quake) */
 void test_sbdwb(void) {
     std::string testString(66, '~');
     run_sbdwb(testString);
-
-    // Write a different message
-    std::string otherMsg("Test write other message");
-    run_sbdwb(otherMsg);
-
     // test that we can send the maximum number of bytes
     std::string maxLenMsg(340, 'a');
-    run_sbdwb(otherMsg);
-
+    run_sbdwb(maxLenMsg);
     // test that we can send the minimum number of bytes
     std::string minLenMsg(1, 'b');
     run_sbdwb(minLenMsg);
+}
+
+void test_bad_chars(void) {
+    // Write a different message with weird characters and random null bytes
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_1(38));
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);
+    TEST_ASSERT_EQUAL(Devices::OK, q.query_sbdwb_2("Test wr\tite \nothe\rr mess\0AA\aAAA\0ABBBBB", 38));
+    delay(DEFAULT_CTRL_CYCLE_LENGTH);
+    TEST_ASSERT_EQUAL(Devices::OK, q.get_sbdwb());
 }
 
 void test_timeout(void) {
@@ -91,10 +93,12 @@ int main(void) {
     while (!Serial)
         ;
     q.setup();
+    Serial.printf("Qlocate Hardware Test\n");
     UNITY_BEGIN();
     RUN_TEST(test_config);
     RUN_TEST(test_isFunctional);
     RUN_TEST(test_sbdwb);
+    RUN_TEST(test_bad_chars);
     RUN_TEST(test_timeout);
     RUN_TEST(test_bad_lengths);
     RUN_TEST(test_bad_checksum);

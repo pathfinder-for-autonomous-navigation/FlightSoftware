@@ -1,5 +1,6 @@
 from ..data_consumers import Logger
 import time
+import math
 
 # Base classes for writing testcases.
 class TestCaseFailure(Exception):
@@ -141,6 +142,29 @@ class Case(object):
 
         self.logger = Logger("testcase", data_dir, print=True)
 
+    def mag_of(self, vals):
+        '''
+        Returns the magnitude of a list of vals 
+        by taking the square root of the sum of the square of the components.
+        '''
+        assert(type(vals) is list)
+        return math.sqrt(sum([x*x for x in vals]))
+
+    def sum_of_differentials(self, lists_of_vals):
+        '''
+        Given a list of list of vals, return the sum of all the differentials from one list to the next.
+
+        Returns a val.
+
+        Ex: sum_of_differentials([[1,1,1],[1,2,3],[1,2,2]]) evaluates to 4
+        '''
+        total_diff = [0 for x in lists_of_vals[0]]
+        for i in range(len(lists_of_vals) - 1):
+            diff = [abs(lists_of_vals[i][j] - lists_of_vals[i+1][j]) for j in range(len(lists_of_vals[i]))]
+            total_diff = [diff[x] + total_diff[x] for x in range(len(total_diff))]
+
+        return sum(total_diff)
+
     @property
     def sim_duration(self):
         return 0
@@ -238,8 +262,10 @@ class SingleSatOnlyCase(Case):
         '''
         Reads a statefield, and also prints it.
         '''
-        self.logger.put(f"{name} is {self.rs(name)}")
-    
+        ret = self.rs(name)
+        self.logger.put(f"{name} is {ret}")
+        return ret
+
     def ws(self, name, val):
         '''
         Writes a state, and also confirms that the read command matches the applied state.

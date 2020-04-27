@@ -65,9 +65,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     gomspace.setup();
     dcdc.setup();
 
-    #ifdef FUNCTIONAL_TEST
-        add_readable_field(memory_use_f);
-    #endif
+    add_readable_field(memory_use_f);
 
     eeprom_controller.init();
     // Since all telemetry fields have been added to the registry, initialize flows
@@ -94,7 +92,7 @@ void MainControlLoop::execute() {
     gomspace_controller.execute_on_time();
     adcs_monitor.execute_on_time();
 
-    #ifdef FUNCTIONAL_TEST
+    #ifndef FLIGHT
     debug_task.execute_on_time();
     #endif
 
