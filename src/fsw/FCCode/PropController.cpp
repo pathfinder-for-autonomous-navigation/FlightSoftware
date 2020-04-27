@@ -426,10 +426,6 @@ prop_state_t PropState_Pressurizing::handle_pressurize_failed()
 {
     DD("\tPressurize Failed!\n");
     controller->pressurize_fail_fault_f.signal();
-<<<<<<< HEAD
-=======
-
->>>>>>> prop_driver_case
     if ( controller->pressurize_fail_fault_f.is_faulted())
     {
         // Go to handling_fault
