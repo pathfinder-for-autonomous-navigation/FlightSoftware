@@ -24,10 +24,10 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.print_havt_read()
         self.print_non_functional_adcs_havt()
 
-        if not self.rs("adcs_monitor.havt_device18") # gyro heater
+        if not self.rs("adcs_monitor.havt_device18"): # gyro heater
             raise TestCaseFailure("GYRO HEATER not functional")
 
-        if not self.rs("adcs_monitor.havt_device0") # IMU GYR
+        if not self.rs("adcs_monitor.havt_device0"): # IMU GYR
             raise TestCaseFailure("GYRO not functional")
 
         self.print_header("ENTERING HEATING CONTROL")
@@ -40,7 +40,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         # 1000 cycle heater diagnostic test
 
         # User please watch screen, and observe temp
-        for(i in range(1000)):
+        for i in range(1000):
             self.logger.put(f"Reading #{i}")
             self.print_rs("pan.cycle_no")
             self.print_rs("gomspace.vbatt")
@@ -57,7 +57,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
         delta = 5 # 5 deg diff accepted?
         
-        if(target_temp - delta > final_temp or target_temp + delta < final_temp)
+        if target_temp - delta > final_temp or target_temp + delta < final_temp:
             self.logger.put("") 
             raise TestCaseFailure(f"Final Temp: {final_temp} NOT within {delta} of {target_temp}")
 
