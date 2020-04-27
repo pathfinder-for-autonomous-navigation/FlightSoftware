@@ -14,7 +14,7 @@
 #define SRC_ADCS_DEV_LSM6DSM_HPP_
 
 // TODO : make sure the driver resets setting upon failure
-// Checking data ready will be false until the gryo filter has settled
+// Checking data ready will be false until the gyro filter has settled
 // Implement reset and disable
 
 // Outputs unsigned in the range of +/- 16 gauss

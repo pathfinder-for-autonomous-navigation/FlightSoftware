@@ -23,16 +23,22 @@ void GyroHeaterTransistor::setup(unsigned int pin) {
 }
 
 bool GyroHeaterTransistor::reset() {
-  digitalWrite(pin, LOW);
+  analogWrite(this->pin, 0);  
+  this->Device::reset();
   return true;
 }
 
 void GyroHeaterTransistor::disable() {
-  digitalWrite(pin, LOW);
+  analogWrite(this->pin, 0);
+  this->Device::disable();
 }
 
-void GyroHeaterTransistor::actuate() {
-  digitalWrite(pin, HIGH);
+void GyroHeaterTransistor::actuate(unsigned char pwm, bool on) {
+  if(on)
+    analogWrite(this->pin, pwm);
+  else
+    analogWrite(this->pin, 0);
+  
 }
 
 }  // namespace dev

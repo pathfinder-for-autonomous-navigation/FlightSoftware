@@ -11,8 +11,8 @@
 // Cornell Univeristy
 //
 
-#ifndef ADCS_LIB_IMU_GYROHEATERTRANSISTPR_HPP_
-#define ADCS_LIB_IMU_GYROHEATERTRANSISTPR_HPP_
+#ifndef ADCS_LIB_IMU_GYROHEATERTRANSISTOR_HPP_
+#define ADCS_LIB_IMU_GYROHEATERTRANSISTOR_HPP_
 
 #include "Device.hpp"
 
@@ -24,13 +24,16 @@ class GyroHeaterTransistor : public Device {
  public:
   /** Sets the pin associated with this transistor. */
   void setup(unsigned int pin);
-  /** Turns off the heater.
+
+  /** Sets pwm to 0, and resets the heater.
    *  @return True. */
   virtual bool reset() override;
-  /** Turns off the heater. */
+
+  /** Sets pwm to 0 and disables the heater.*/
   virtual void disable() override;
-  /** Turns on the heater. */
-  void actuate();
+
+  /** Pwms the pin with the given pwm iff on is true. */
+  void actuate(unsigned char pwm, bool on);
 
  private:
   /** Connected pin. */

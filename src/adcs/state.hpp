@@ -100,12 +100,8 @@ struct IMURegisters {
   /** Specifies the exponential filter constant for the gyroscope temperature
    *  reads. */
   float gyr_temp_flt;
-  /** Specifies the gyroscope temperature controller K_p term. */
-  float gyr_temp_p;
-  /** Specifies the gyroscope temperature controller K_i term. */
-  float gyr_temp_i;
-  /** Specifies the gyroscope temperature controller K_d term. */
-  float gyr_temp_d;
+  /** Specifies the gyroscope temperature controller PWM. */
+  float gyr_temp_pwm;
   /** Specifies the desired temperature of the gyroscope. */
   float gyr_desired_temp;
 };

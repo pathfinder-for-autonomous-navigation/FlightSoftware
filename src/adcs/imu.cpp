@@ -110,12 +110,14 @@ static void update_mag2(unsigned char mag2_mode, float mag_flt) {
 
 dev::LSM6DSM gyr;
 
+dev::GyroHeaterTransistor gyr_heater;
+
 lin::Vector3f gyr_rd = lin::zeros<float, 3, 1>();
 
 float gyr_temp_rd = 0.0f;
 
-static void update_gyr(float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
-    float gry_temp_k_p, float gyr_temp_k_i, float gyr_temp_k_d) {
+static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
+    float gyr_temp_pwm) {
   lin::Vector3f data;
   float temp_data;
 
@@ -141,7 +143,27 @@ static void update_gyr(float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
   gyr_rd = gyr_rd + (data - gyr_rd) * gyr_flt;
 
   // Command the gyroscope heater
-  // TODO : Add gyroscope heater code
+  if(gyr_heater.is_functional()){
+    LOG_TRACE_header
+    LOG_TRACE_print("Heater Actual: " + String(gyr_temp_rd))
+    LOG_TRACE_print(" Target: " + String(gyr_temp_target))
+    LOG_TRACE_print(" PWM: " + String(gyr_temp_pwm))
+
+    if(gyr_temp_rd >= gyr_temp_target)
+      LOG_TRACE_printlnF(" Heater: OFF")
+      gyr_heater.actuate(gyr_temp_pwm, false); // if at target don't heat
+    else{
+      LOG_TRACE_printlnF(" Heater: ON")
+      gyr_heater.actuate(gyr_temp_pwm, true); // heat if we're below target
+    }
+  }
+  else
+  {
+    LOG_TRACE_header
+    LOG_TRACE_printlnF("Heater Not Functional. No Actuation.")
+  }
+  // End Gyro Heater Code
+
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated gyroscope reading " + String(data(0)) + " "
@@ -205,13 +227,12 @@ void setup() {
 }
 
 void update_sensors(unsigned char mag1_mode, unsigned char mag2_mode,
-    float mag_flt, float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
-    float gry_temp_k_p, float gyr_temp_k_i, float gyr_temp_k_d) {
+    float mag_flt, float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
+    unsigned char gyr_temp_pwm) {
   LOG_TRACE_header
   LOG_TRACE_printlnF("Updating IMU sensors")
 
-  update_gyr(gyr_flt, gyr_temp_eq, gyr_temp_flt, gry_temp_k_p, gyr_temp_k_i,
-      gyr_temp_k_d);
+  update_gyr(gyr_flt, gyr_temp_target, gyr_temp_flt, gyr_temp_pwm);
   update_mag1(mag1_mode, mag_flt);
   update_mag2(mag2_mode, mag_flt);
 

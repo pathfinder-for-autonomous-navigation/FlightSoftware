@@ -274,29 +274,13 @@ void on_i2c_recieve(unsigned int bytes) {
       break;
     }
 
-    case Register::IMU_GYR_TEMP_KP: {
-      if (umb::wire->available() < 4) break;
-      registers.imu.gyr_temp_p = endian_read<float>();
+    case Register::IMU_GYR_TEMP_PWM: {
+      if (umb::wire->available() < 1) break;
+      registers.imu.gyr_temp_pwm = endian_read<unsigned char>();
 
       LOG_INFO_header
-      LOG_INFO_println("IMU_GYR_TEMP_KP set to " + String(registers.imu.gyr_temp_p))
-    }
-
-    case Register::IMU_GYR_TEMP_KI: {
-      if (umb::wire->available() < 4) break;
-      registers.imu.gyr_temp_i = endian_read<float>();
-
-      LOG_INFO_header
-      LOG_INFO_println("IMU_GYR_TEMP_KI set to " + String(registers.imu.gyr_temp_i))
-    }
-
-    case Register::IMU_GYR_TEMP_KD: {
-      if (umb::wire->available() < 4) break;
-      registers.imu.gyr_temp_d = endian_read<float>();
-
-      LOG_INFO_header
-      LOG_INFO_println("IMU_GYR_TEMP_KD set to " + String(registers.imu.gyr_temp_d))
-      
+      LOG_INFO_println("IMU_GYR_TEMP_KP set to " + String(registers.imu.gyr_temp_pwm))
+    
       break;
     }
 
