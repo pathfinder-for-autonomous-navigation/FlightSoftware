@@ -222,6 +222,15 @@ void setup() {
   }
 #endif
 
+  gyr_heater.setup(gyr_heater_pin);
+
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+  if (!gyr_heater.is_functional()) {
+    LOG_ERROR_header
+    LOG_ERROR_printlnF("Gyro Heater initialization failed")
+  }
+#endif
+
   LOG_INFO_header
   LOG_INFO_printlnF("Complete")
 }
