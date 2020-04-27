@@ -1630,6 +1630,30 @@
             "type": "unsigned int",
             "writable": true
         },
+        "prop.ctrl_cycles_per_cooling": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.ctrl_cycles_per_filling": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.cycles_until_firing": {
+            "bitsize": 9,
+            "flow_id": "undefined",
+            "max": 256,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
         "prop.max_pressurizing_cycles": {
             "bitsize": 6,
             "flow_id": "undefined",
@@ -1638,7 +1662,7 @@
             "type": "unsigned int",
             "writable": true
         },
-        "prop.overpressured": {
+        "prop.overpressured.base": {
             "bitsize": 1,
             "flow_id": 5,
             "type": "bool",
@@ -1670,7 +1694,7 @@
             "type": "bool",
             "writable": true
         },
-        "prop.pressurize_fail": {
+        "prop.pressurize_fail.base": {
             "bitsize": 1,
             "flow_id": 5,
             "type": "bool",
@@ -1774,7 +1798,7 @@
             "type": "unsigned int",
             "writable": true
         },
-        "prop.tank1_temp_high": {
+        "prop.tank1_temp_high.base": {
             "bitsize": 1,
             "flow_id": "undefined",
             "type": "bool",
@@ -1822,7 +1846,7 @@
             "type": "float",
             "writable": false
         },
-        "prop.tank2_temp_high": {
+        "prop.tank2_temp_high.base": {
             "bitsize": 1,
             "flow_id": "undefined",
             "type": "bool",
@@ -2256,7 +2280,7 @@
                 "prop.overpressured.persistence",
                 "prop.overpressured.suppress",
                 "prop.overpressured.unsignal",
-                "prop.pressurize_fail",
+                "prop.pressurize_fail.base",
                 "prop.pressurize_fail.override",
                 "prop.pressurize_fail.persistence",
                 "prop.pressurize_fail.suppress",
