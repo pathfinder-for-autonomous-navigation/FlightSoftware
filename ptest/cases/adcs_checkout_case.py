@@ -85,16 +85,16 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         # Note IMUGYR on left
         # FC only
-        fc_only_hitl    = "000000000000" + "000000"
+        fc_only_hitl   = "000000000000" + "0000000"
 
         # Just FC and ADCSC
-        barebones_hitl = "000111011100" + "000000"
+        barebones_hitl = "000111011100" + "0000001"
 
         # FC + ADCSC + MAG1 + MAG2 + GYR
-        minimal_hitl   = "111111011100" + "000000"
+        minimal_hitl   = "111111011100" + "0000001"
             
         # ONLY MAG 2 IS DOWN ON EDU SAT as of 04/06/2020
-        edu_sat        = "1101111111111" + "11111"
+        edu_sat        = "1101111111111" + "111111"
 
         test_beds = {fc_only_hitl:"FC ONLY HITL",barebones_hitl:"BAREBONES HITL", minimal_hitl:"MINIMAL HITL", edu_sat:"EDU SAT"}
 

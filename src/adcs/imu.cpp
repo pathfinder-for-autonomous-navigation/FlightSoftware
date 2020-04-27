@@ -149,9 +149,10 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
     LOG_TRACE_print(" Target: " + String(gyr_temp_target))
     LOG_TRACE_print(" PWM: " + String(gyr_temp_pwm))
 
-    if(gyr_temp_rd >= gyr_temp_target)
+    if(gyr_temp_rd >= gyr_temp_target){
       LOG_TRACE_printlnF(" Heater: OFF")
       gyr_heater.actuate(gyr_temp_pwm, false); // if at target don't heat
+    }
     else{
       LOG_TRACE_printlnF(" Heater: ON")
       gyr_heater.actuate(gyr_temp_pwm, true); // heat if we're below target
@@ -223,6 +224,7 @@ void setup() {
 #endif
 
   gyr_heater.setup(gyr_heater_pin);
+  gyr_heater.reset();
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
   if (!gyr_heater.is_functional()) {

@@ -117,7 +117,6 @@ class Case(object):
             "MTR_ENABLED",
             "MTR_DISABLED"
         ])
-        self.havt_length = 18
         
         # copied from havt_devices.hpp
         self.havt_devices = FSWEnum([
@@ -138,7 +137,10 @@ class Case(object):
         "SSA_ADC2",
         "SSA_ADC3",
         "SSA_ADC4",
-        "SSA_ADC5"])
+        "SSA_ADC5",
+        "GYRO_HEATER"])
+
+        self.havt_length = len(self.havt_devices.arr)
 
         self.logger = Logger("testcase", data_dir, print=True)
 
