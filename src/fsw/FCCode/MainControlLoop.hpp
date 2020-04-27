@@ -78,9 +78,10 @@ class MainControlLoop : public ControlTask<void> {
     TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   ,  71800 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      ,  71900 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset ,  72000 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 102000 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 104400 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 104500 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, prop_controller_offset,       102000 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 107000 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 109400 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 109500 + test_offset);
 
     /**
      * @brief Total memory use, in bytes.

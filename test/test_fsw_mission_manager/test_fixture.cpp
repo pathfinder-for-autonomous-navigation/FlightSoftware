@@ -29,7 +29,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     wheel2_adc_fault_fp=registry.create_fault("adcs_monitor.wheel2_fault", 1);
     wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault", 1);
     wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
-    failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1);
+    pressurize_fail_fp=registry.create_fault("prop.pressurize_fail", 1);
     overpressured_fp=registry.create_fault("prop.overpressured", 1);
 
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");

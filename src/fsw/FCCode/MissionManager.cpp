@@ -77,7 +77,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
             find_writable_field<bool>("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__));
     wheel_pot_fault_fp = static_cast<Fault*>(
             find_writable_field<bool>("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__));
-    failed_pressurize_fp = static_cast<Fault*>(
+    pressurize_fail_fp = static_cast<Fault*>(
             find_writable_field<bool>("prop.pressurize_fail.base", __FILE__, __LINE__));
 
     // Initialize a bunch of variables

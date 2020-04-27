@@ -41,7 +41,7 @@ class TestFixture {
     std::shared_ptr<Fault> wheel2_adc_fault_fp;
     std::shared_ptr<Fault> wheel3_adc_fault_fp;
     std::shared_ptr<Fault> wheel_pot_fault_fp;
-    std::shared_ptr<Fault> failed_pressurize_fp;
+    std::shared_ptr<Fault> pressurize_fail_fp;
     std::shared_ptr<Fault> overpressured_fp;
 
     std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
