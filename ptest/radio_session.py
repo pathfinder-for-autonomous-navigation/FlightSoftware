@@ -1,16 +1,18 @@
 import time
 import datetime
+from datetime import datetime
 import serial
 import threading
 import json
 import traceback
 import queue
-import yagmail
 import requests
 import subprocess
 import glob
 import os
 import pty
+from elasticsearch import Elasticsearch
+
 
 from .data_consumers import Datastore, Logger
 
@@ -27,7 +29,7 @@ class RadioSession(object):
     '''
 
 
-    def __init__(self, device_name, port, imei, simulation_run_dir, tlm_config, downlink_parser_filepath):
+    def __init__(self, device_name, imei, simulation_run_dir, tlm_config, downlink_parser_filepath):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -37,18 +39,25 @@ class RadioSession(object):
         self.imei=imei
 
         #Flask server connection
-        self.flask_server=tlm_config["server"]
-        self.flask_port=tlm_config["port"]
+        self.flask_server=tlm_config["webservice"]["server"]
+        self.flask_port=tlm_config["webservice"]["port"]
 
         #email
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
 
-        #start downlink parser
+        #Start downlink parser. Compile it if it is not available.
+        if not os.path.exists(downlink_parser_filepath):
+            print("Compiling the downlink parser.")
+            os.system("pio run -e gsw_downlink_parser > /dev/null")
+
         master_fd, slave_fd = pty.openpty()
         self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
         self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
         self.telem_save_dir = simulation_run_dir
+
+        # Open a connection to elasticsearch
+        self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
 
     def read_state(self, field, timeout=None):
         '''
@@ -70,7 +79,8 @@ class RadioSession(object):
         Uplink multiple state variables. Return success of write.
         Reads from the most recent Iridium Report whether or
         not RadioSession is able to send uplinks
-        '''
+     	'''
+
         assert len(fields) == len(vals)
 
         headers = {
@@ -81,26 +91,25 @@ class RadioSession(object):
             "field" : "send-uplinks"
         }
 
-        response = requests.get('http://'+self.flask_server+':'+self.flask_port+'/search-es', params=payload, headers=headers)
+        tlm_service_active = self.flask_server != ""
+        if tlm_service_active:
+            response = requests.get(
+                'http://'+self.flask_server+':'+self.flask_port+'/search-es',
+                    params=payload, headers=headers)
 
-        if response.text=="True":
+        if not tlm_service_active or response.text=="True":
             #create dictionary object with new fields and vals
             updated_fields={}
             for i in range(len(fields)):
                 updated_fields[fields[i]]=vals[i]
 
-            #connect to PAN email account
-            yag = yagmail.SMTP(self.username, self.password)
-
             #create a JSON file with the updated statefields and send it to the iridium email
-            with open('uplink.json', 'w') as json_uplink:
+            with open('uplink.sbd', 'w') as json_uplink:
                 json.dump(updated_fields, json_uplink)
-            yag.send('sbdservice@sbd.iridium.com', self.imei, 'uplink.json')
-
+            os.system("./ptest/send_uplink uplink.sbd")
             return True
         else:
             return False
-
     def write_state(self, field, val, timeout=None):
         '''
         Uplink one state variable. Return success of write.
@@ -119,6 +128,23 @@ class RadioSession(object):
         if telem_json_data is not None:
                 telem_json_data = telem_json_data["data"]
         return telem_json_data
+    
+    def dbtelem(self):
+        jsonObj = self.parsetelem()
+        if not isinstance(jsonObj, dict):
+            print(jsonObj)
+            return False
+        failed = False
+        for field in jsonObj:
+            value = jsonObj[field]
+            data=json.dumps({
+            field: value,
+            "time": str(datetime.now().isoformat())
+            })
+            res = self.es.index(index='statefield_report_'+str(self.imei), doc_type='report', body=data)
+            if not res['result'] == 'created':
+                failed = True
+        return not failed 
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''

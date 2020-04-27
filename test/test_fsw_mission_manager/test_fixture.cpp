@@ -22,6 +22,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
+
     low_batt_fault_fp=registry.create_fault("gomspace.low_batt", 1);
     adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault", 1);
     wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault", 1);

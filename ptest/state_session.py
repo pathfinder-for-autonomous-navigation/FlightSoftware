@@ -40,7 +40,11 @@ class StateSession(object):
         # Simulation
         self.overriden_variables = set()
 
-        # Open a subprocess to Uplink Producer
+        # Open a subprocess to Uplink Producer. Compile it if it is not available.
+        if not os.path.exists(uplink_producer_filepath):
+            print("Compiling the uplink producer.")
+            os.system("pio run -e gsw_uplink_producer > /dev/null")
+
         master_fd, slave_fd = pty.openpty()
         self.uplink_producer = subprocess.Popen([uplink_producer_filepath], stdin=master_fd, stdout=master_fd)
         self.uplink_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
@@ -182,7 +186,9 @@ class StateSession(object):
 
         Returns a float, int or bool
         '''
-        if '.' in field:
+        if 'nan' in field:
+            return float("NAN")
+        elif '.' in field:
             return float(field)
         elif field == 'true':
             return True

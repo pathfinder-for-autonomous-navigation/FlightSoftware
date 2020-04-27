@@ -160,10 +160,10 @@ build.txt
 build.log
 
 # Clion temporary files
-.idea/
+.idea
 cmake*
 CMakeListsPrivate.txt
 CMakeLists.txt
-
 # Temporary EEPROM file created by HOOTL
 eeprom.json
+

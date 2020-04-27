@@ -96,11 +96,11 @@ class TestFixture {
             adcs_functional_p = registry.find_readable_field_t<bool>("adcs_monitor.functional");
 
             // find the faults fields
-            adcs_functional_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.functional_fault"));
-            wheel1_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel1_fault"));
-            wheel2_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel2_fault"));
-            wheel3_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel3_fault"));
-            wheel_pot_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel_pot_fault"));
+            adcs_functional_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.functional_fault.base"));
+            wheel1_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel1_fault.base"));
+            wheel2_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel2_fault.base"));
+            wheel3_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel3_fault.base"));
+            wheel_pot_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel_pot_fault.base"));
         }
 
         // set of mocking methods
@@ -316,7 +316,8 @@ void test_execute_havt_faults() {
     TEST_ASSERT_FALSE(tf.wheel3_adc_fault_p->is_faulted());
     TEST_ASSERT_FALSE(tf.wheel_pot_fault_p->is_faulted());
 
-    // execute one more time, all faults should now be tripped
+    // execute two more times, all faults should now be tripped
+    tf.adcs_box->execute();
     tf.adcs_box->execute();
     tf.get_havt_as_table(&havt_read);
     TEST_ASSERT_EQUAL_STRING(all_dev_down.to_string().c_str(), havt_read.to_string().c_str());
@@ -328,6 +329,7 @@ void test_execute_havt_faults() {
 
     // report all devices good, check faults are unsignaled
     tf.set_mock_havt_read(all_18_functional);
+    tf.adcs_box->execute();
     tf.adcs_box->execute();
     tf.get_havt_as_table(&havt_read);
     TEST_ASSERT_EQUAL_STRING(all_18_functional.to_string().c_str(), havt_read.to_string().c_str());
