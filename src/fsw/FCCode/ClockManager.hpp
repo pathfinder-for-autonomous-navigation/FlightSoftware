@@ -43,6 +43,22 @@ class ClockManager : public TimedControlTask<void> {
      * @brief Keeps track of the current control cycle count.
      */
     ReadableStateField<unsigned int> control_cycle_count_f;
+
+    /**
+     * @brief The time at which we started cycling.
+     */
+    sys_time_t initial_start_cycling_time;
+
+   public:
+    /**
+     * @brief Convert a control cycle number to the system time
+     */
+    sys_time_t cycle_to_systime(const unsigned int ccno);
+
+    /**
+     * @brief Convert a system time to the control cycle number
+     */
+    unsigned int systime_to_cycle(const sys_time_t time);
 };
 
 #endif

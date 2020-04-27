@@ -9,4 +9,4 @@
 	url = https://github.com/pathfinder-for-autonomous-navigation/psim.git
 [submodule "lib/common/lin"]
 	path = lib/common/lin
-	url = https://github.com/kkrol27/lin.git
+	url = https://github.com/pathfinder-for-autonomous-navigation/lin.git

@@ -813,6 +813,10 @@ class Serializer<lin::Vector<T, N>> : public SerializerBase<lin::Vector<T, N>> {
         for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
         return _arr_sr.print(src_cpy);
     }
+
+    unsigned int bitsize() const {
+        return _arr_sr.bitsize();
+    }
 };
 
 /**
