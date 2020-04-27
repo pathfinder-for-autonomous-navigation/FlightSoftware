@@ -112,6 +112,12 @@
             "type": "bool",
             "writable": true
         },
+        "adcs_cmd.havt_disable18": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "adcs_cmd.havt_disable2": {
             "bitsize": 1,
             "flow_id": 33,
@@ -220,6 +226,12 @@
             "type": "bool",
             "writable": true
         },
+        "adcs_cmd.havt_reset18": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "adcs_cmd.havt_reset2": {
             "bitsize": 1,
             "flow_id": 33,
@@ -293,27 +305,20 @@
             "writable": true
         },
         "adcs_cmd.imu_gyr_temp_kd": {
-            "bitsize": 16,
-            "flow_id": 23,
-            "max": 3.4028234663852886e+38,
-            "min": 1.1754943508222875e-38,
-            "type": "float",
-            "writable": true
+            "flow_id": 23
         },
         "adcs_cmd.imu_gyr_temp_ki": {
-            "bitsize": 16,
-            "flow_id": 23,
-            "max": 3.4028234663852886e+38,
-            "min": 1.1754943508222875e-38,
-            "type": "float",
-            "writable": true
+            "flow_id": 23
         },
         "adcs_cmd.imu_gyr_temp_kp": {
-            "bitsize": 16,
-            "flow_id": 23,
-            "max": 3.4028234663852886e+38,
-            "min": 1.1754943508222875e-38,
-            "type": "float",
+            "flow_id": 23
+        },
+        "adcs_cmd.imu_gyr_temp_pwm": {
+            "bitsize": 8,
+            "flow_id": "undefined",
+            "max": 255,
+            "min": 0,
+            "type": "unsigned char",
             "writable": true
         },
         "adcs_cmd.imu_mag_filter": {
@@ -535,6 +540,12 @@
         "adcs_monitor.havt_device17": {
             "bitsize": 1,
             "flow_id": 15,
+            "type": "bool",
+            "writable": false
+        },
+        "adcs_monitor.havt_device18": {
+            "bitsize": 1,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": false
         },

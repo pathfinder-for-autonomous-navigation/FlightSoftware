@@ -27,27 +27,6 @@ def sum_of_differentials(lists_of_vals):
     
 class ADCSCheckoutCase(SingleSatOnlyCase):
 
-    @property
-    def havt_read(self):
-        read_list = [False for x in range(self.havt_length)]
-        for x in range(self.havt_length):
-            read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
-        return read_list
-
-    def print_havt_read(self):
-        binary_list = [1 if x else 0 for x in self.havt_read]
-
-        string_of_binary_list = [str(x) for x in binary_list]
-        
-        # Reverse the list so it prints as it does in ADCSSoftware
-        string_of_binary_list.reverse()
-
-        list_of_list = [string_of_binary_list[4*i:(4*i)+4] for i in range((int)(self.havt_length/4)+1)]
-        final = [x + [" "] for x in list_of_list]
-
-        final_string = ''.join([''.join(x) for x in final])
-        self.logger.put("HAVT Read: "+str(final_string))
-
     def setup_case_singlesat(self):
         self.print_header("Begin ADCS Checkout Case")
 
@@ -76,10 +55,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.print_havt_read()
 
-        for x in range(self.havt_length):
-            if not self.havt_read[x]:
-                self.logger.put(f"Device #{x}, {self.havt_devices.get_by_num(x)} is not functional")
-
+        self.print_non_functional_adcs_havt()
+        
         self.logger.put("Initial HAVT Table:")
         self.print_havt_read()
 
