@@ -25,7 +25,7 @@ void test_dispatch_startup() {
     tf.check(mission_state_t::startup);
 
     // For 100 executions, the mission manager should remain in the startup state
-    for(int i = 0; i <= 100; i++) {
+    for(int i = 0; i < 100; i++) {
         tf.step();
         tf.check(mission_state_t::startup);
     }
