@@ -21,6 +21,8 @@ jobs:
 
     - name: Install dependencies
       run: |
+        g++ --version
+
         sudo apt-get install lcov
         sudo gem install coveralls-lcov
         python -m pip install --upgrade pip
