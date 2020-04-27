@@ -279,7 +279,7 @@ void on_i2c_recieve(unsigned int bytes) {
       registers.imu.gyr_temp_pwm = endian_read<unsigned char>();
 
       LOG_INFO_header
-      LOG_INFO_println("IMU_GYR_TEMP_KP set to " + String(registers.imu.gyr_temp_pwm))
+      LOG_INFO_println("IMU_GYR_TEMP_PWM set to " + String(registers.imu.gyr_temp_pwm))
     
       break;
     }

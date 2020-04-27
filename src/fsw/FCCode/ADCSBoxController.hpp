@@ -71,9 +71,7 @@ protected:
     const WritableStateField<float>* imu_mag_filter_fp;
     const WritableStateField<float>* imu_gyr_filter_fp;
     const WritableStateField<float>* imu_gyr_temp_filter_fp;
-    const WritableStateField<float>* imu_gyr_temp_kp_fp;
-    const WritableStateField<float>* imu_gyr_temp_ki_fp;
-    const WritableStateField<float>* imu_gyr_temp_kd_fp;
+    const WritableStateField<unsigned char>* imu_gyr_temp_pwm_fp;
     const WritableStateField<float>* imu_gyr_temp_desired_fp;
 
     /**
