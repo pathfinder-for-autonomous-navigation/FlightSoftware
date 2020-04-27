@@ -148,7 +148,7 @@ void TestFixture::step() {
 }
 
 void TestFixture::set_ccno(unsigned int ccno) {
-    mission_manager->control_cycle_count = ccno;
+    MissionManager::control_cycle_count = ccno;
 }
 
 // Set the distance between the two satellites.

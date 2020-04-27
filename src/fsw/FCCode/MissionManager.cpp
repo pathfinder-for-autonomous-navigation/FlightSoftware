@@ -264,11 +264,15 @@ void MissionManager::dispatch_leader_close_approach() {
     }
 }
 
+static bool have_set_docking_entry_ccno = false;
 void MissionManager::dispatch_docking() {
     docking_config_cmd_f.set(true);
-    if (enter_docking_cycle_f.get()==0) { enter_docking_cycle_f.set(control_cycle_count); }
+    if (!have_set_docking_entry_ccno) {
+        enter_docking_cycle_f.set(control_cycle_count);
+        have_set_docking_entry_ccno = true;
+    }
     if (docked_fp->get()){
-        enter_docking_cycle_f.set(0);
+        have_set_docking_entry_ccno = false;
         transition_to_state(mission_state_t::docked,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
@@ -277,7 +281,7 @@ void MissionManager::dispatch_docking() {
         set(sat_designation_t::undecided);
     }
     else if(too_long_in_docking() && !docked_fp->get()) {
-        enter_docking_cycle_f.set(0);
+        have_set_docking_entry_ccno = false;
         transition_to_state(mission_state_t::standby,
             adcs_state_t::startup,
             prop_state_t::disabled);
