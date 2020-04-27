@@ -27,7 +27,7 @@
 class QuakeFaultHandler : public FaultHandlerMachine {
   public:
     #ifdef UNIT_TEST
-    friend class TestFixture;
+    friend class TestFixtureQFH;
     #endif
 
     /**

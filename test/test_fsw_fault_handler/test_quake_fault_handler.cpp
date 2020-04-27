@@ -7,7 +7,7 @@
 static unsigned int one_day_ccno = PAN::one_day_ccno;
 static unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
 
-class TestFixture {
+class TestFixtureQFH {
   public:
     StateFieldRegistryMock registry;
 
@@ -26,7 +26,7 @@ class TestFixture {
         radio_state_fp->set(static_cast<unsigned char>(radio_state_t::config));
     }
 
-    TestFixture(qfh_state_t initial_state = qfh_state_t::unfaulted) {
+    TestFixtureQFH(qfh_state_t initial_state = qfh_state_t::unfaulted) {
         radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
         last_checkin_cycle_fp = registry.create_internal_field<unsigned int>("radio.last_comms_ccno");
         radio_power_cycle_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
@@ -109,7 +109,7 @@ class TestFixture {
 };
 
 void test_qfh_initialization() {
-    TestFixture tf{qfh_state_t::unfaulted};
+    TestFixtureQFH tf{qfh_state_t::unfaulted};
     TEST_ASSERT_NOT_NULL(tf.qfh_state);
     TEST_ASSERT_EQUAL(static_cast<unsigned char>(qfh_state_t::unfaulted), tf.qfh_state->get());
 }
@@ -120,7 +120,7 @@ void test_qfh_transition() {
     // The Quake fault handler should cleanly reset the time
     // at which the most recent state was entered into upon
     // a state transition.
-    TestFixture tf{qfh_state_t::unfaulted};
+    TestFixtureQFH tf{qfh_state_t::unfaulted};
     tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
     tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
     tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
@@ -135,7 +135,7 @@ void test_qfh_unfaulted() {
     // transition to a faulted state.
     {
         // Set initial conditions 
-        TestFixture tf{qfh_state_t::unfaulted};
+        TestFixtureQFH tf{qfh_state_t::unfaulted};
         cc_count = one_day_ccno;
         tf.set_cur_state_entry_ccno(one_day_ccno);
         
@@ -149,7 +149,7 @@ void test_qfh_unfaulted() {
     // If the radio is enabled, ensure that there's a transition
     // to the forced standby state after 24 hours.
     {
-        TestFixture tf{qfh_state_t::unfaulted};
+        TestFixtureQFH tf{qfh_state_t::unfaulted};
         tf.enable_radio();
         cc_count = one_day_ccno - 1;
         tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
@@ -165,7 +165,7 @@ void test_qfh_forced_standby() {
     // cause a transition, and then cycling one more time causes a transition
     // to powercycle_1.
     {
-        TestFixture tf{qfh_state_t::forced_standby};
+        TestFixtureQFH tf{qfh_state_t::forced_standby};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = 2 * one_day_ccno - 1;
         tf.step_and_expect(fault_response_t::standby, qfh_state_t::forced_standby);
@@ -175,14 +175,14 @@ void test_qfh_forced_standby() {
 
     // If the radio is disabled the state should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::forced_standby};
+        TestFixtureQFH tf{qfh_state_t::forced_standby};
         tf.check_state_returns_to_unfaulted_if_radio_disabled();
     }
 
     // If we've (recently) received comms within 24 hours since the state transition, the state
     // should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::forced_standby};
+        TestFixtureQFH tf{qfh_state_t::forced_standby};
         tf.check_state_returns_to_unfaulted_if_comms_recvd(one_day_ccno);
     }
 }
@@ -195,7 +195,7 @@ void test_qfh_powercycle_1() {
     // cause a transition, and then cycling one more time causes a transition
     // to powercycle_2.
     {
-        TestFixture tf{qfh_state_t::powercycle_1};
+        TestFixtureQFH tf{qfh_state_t::powercycle_1};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = one_day_ccno + one_day_ccno / 3 - 1;
         tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_1);
@@ -205,7 +205,7 @@ void test_qfh_powercycle_1() {
 
     // If the radio is disabled the state should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::forced_standby};
+        TestFixtureQFH tf{qfh_state_t::forced_standby};
         tf.check_state_returns_to_unfaulted_if_radio_disabled();
     }
 
@@ -213,7 +213,7 @@ void test_qfh_powercycle_1() {
     // If we've (recently) received comms within 8 hours since the state transition, the state
     // should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::powercycle_1};
+        TestFixtureQFH tf{qfh_state_t::powercycle_1};
         tf.check_state_returns_to_unfaulted_if_comms_recvd(one_day_ccno / 3);
     }
 }
@@ -226,7 +226,7 @@ void test_qfh_powercycle_2() {
     // cause a transition, and then cycling one more time causes a transition
     // to powercycle_3.
     {
-        TestFixture tf{qfh_state_t::powercycle_2};
+        TestFixtureQFH tf{qfh_state_t::powercycle_2};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = one_day_ccno + one_day_ccno / 3 - 1;
         tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_2);
@@ -236,14 +236,14 @@ void test_qfh_powercycle_2() {
 
     // If the radio is disabled the state should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::forced_standby};
+        TestFixtureQFH tf{qfh_state_t::forced_standby};
         tf.check_state_returns_to_unfaulted_if_radio_disabled();
     }
 
     // If we've (recently) received comms within 8 hours since the state transition, the state
     // should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::powercycle_2};
+        TestFixtureQFH tf{qfh_state_t::powercycle_2};
         tf.check_state_returns_to_unfaulted_if_comms_recvd(one_day_ccno / 3);
     }
 }
@@ -257,7 +257,7 @@ void test_qfh_powercycle_3() {
     // cause a transition, and then cycling one more time causes a transition
     // to safehold.
     {
-        TestFixture tf{qfh_state_t::powercycle_3};
+        TestFixtureQFH tf{qfh_state_t::powercycle_3};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = one_day_ccno + one_day_ccno / 3 - 1;
         tf.step_and_expect(fault_response_t::standby, qfh_state_t::powercycle_3);
@@ -267,14 +267,14 @@ void test_qfh_powercycle_3() {
 
     // If the radio is disabled the state should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::forced_standby};
+        TestFixtureQFH tf{qfh_state_t::forced_standby};
         tf.check_state_returns_to_unfaulted_if_radio_disabled();
     }
 
     // If we've (recently) received comms within 8 hours since the state transition, the state
     // should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::powercycle_3};
+        TestFixtureQFH tf{qfh_state_t::powercycle_3};
         tf.check_state_returns_to_unfaulted_if_comms_recvd(one_day_ccno / 3);
     }
 }
@@ -282,20 +282,20 @@ void test_qfh_powercycle_3() {
 void test_qfh_safehold() {
     // If the radio is disabled the state should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::safehold};
+        TestFixtureQFH tf{qfh_state_t::safehold};
         tf.check_state_returns_to_unfaulted_if_radio_disabled();
     }
 
     // If we've (recently) received comms within 24 hours since the state transition, the state
     // should return to unfaulted immediately.
     {
-        TestFixture tf{qfh_state_t::safehold};
+        TestFixtureQFH tf{qfh_state_t::safehold};
         tf.check_state_returns_to_unfaulted_if_comms_recvd(one_day_ccno);
     }
 
     // Otherwise, the machine should suggest safe hold as the recommended mission state.
     {
-        TestFixture tf{qfh_state_t::safehold};
+        TestFixtureQFH tf{qfh_state_t::safehold};
         tf.set_cur_state_entry_ccno(one_day_ccno);
         cc_count = one_day_ccno;
 
@@ -313,7 +313,7 @@ void test_qfh_safehold() {
 // If the state value gets set to something undefined, it gets kicked back
 // to unfaulted and the recommended mission state is "manual."
 void test_qfh_undefined_state() {
-    TestFixture tf;
+    TestFixtureQFH tf;
     tf.set(100);
     tf.step_and_expect(fault_response_t::none, qfh_state_t::unfaulted);
 }
