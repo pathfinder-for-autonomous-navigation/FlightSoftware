@@ -101,7 +101,6 @@ void test_dispatch_standby() {
         TestFixture tf(mission_state_t::standby);
         tf.set(sat_designation_t::follower);
         tf.step();
-        TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::follower);
         tf.check(sat_designation_t::follower);
         tf.check(adcs_state_t::point_standby);
@@ -112,7 +111,6 @@ void test_dispatch_standby() {
         TestFixture tf(mission_state_t::standby);
         tf.set(sat_designation_t::leader);
         tf.step();
-        TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::leader);
         tf.check(sat_designation_t::leader);
         tf.check(adcs_state_t::point_standby);
