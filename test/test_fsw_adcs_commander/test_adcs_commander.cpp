@@ -71,7 +71,7 @@ class TestFixture {
             imu_mag_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_mag_filter");
             imu_gyr_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_filter");
             imu_gyr_temp_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_filter");
-            imu_gyr_temp_pwm = registry.find_writable_field_t<unsigned char>("adcs_cmd.imu_gyr_temp_pwm");
+            imu_gyr_temp_pwm_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.imu_gyr_temp_pwm");
             imu_gyr_temp_desired_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_desired");
 
             havt_cmd_reset_vector_fp.reserve(adcs::havt::Index::_LENGTH);
