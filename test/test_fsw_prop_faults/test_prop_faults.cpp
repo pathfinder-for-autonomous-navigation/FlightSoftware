@@ -150,12 +150,12 @@ void test_tank2temphigh_undepressured_response(){
     simulate_tank2_high();
     tf.step();
     check_state(prop_state_t::handling_fault);
-    assert_fault_state(true, prop_failed_pressurize_fault_f);
+    assert_fault_state(true, pressurize_fail_fault_f);
     assert_fault_state(true, tank2_temp_high_fault_f);
     tf.step();
     // We should be about to open the valves on tank2
     check_state(prop_state_t::await_firing);
-    check_schedule(1000, 1000, 1000, 1000, 2);
+    tf.check_schedule(1000, 1000, 1000, 1000, 2);
 }
 
 void run_fault_response_tests(){

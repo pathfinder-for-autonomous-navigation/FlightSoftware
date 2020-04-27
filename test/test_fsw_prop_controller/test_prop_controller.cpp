@@ -252,11 +252,11 @@ void test_use_backup()
     tf.execute_until_state_change(); // idle -> pressurizing
     tf.step(3);
     TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
-    TEST_ASESRT_FALSE(Tank2.is_valve_open(1));
-    tf.pc->tank1_valve_f.set(1); // set the valve to the backup valve
+    TEST_ASSERT_TRUE(Tank2.is_valve_open(1));
+    tf.pc->tank1_valve.set(1); // set the valve to the backup valve
     tf.step();
     TEST_ASSERT_TRUE(Tank1.is_valve_open(1));
-    TEST_ASESRT_FALSE(Tank2.is_valve_open(0));
+    TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
 }
 
 // These two tests are manually checked, so the for loop is conditionally compiled
