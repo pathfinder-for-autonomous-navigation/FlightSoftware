@@ -125,7 +125,7 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_manual();
 
     // Fields required for control of prop subsystem.
-    ReadableStateField<unsigned char>* prop_state_fp;
+    WritableStateField<unsigned int>* prop_state_fp;
 
     // Fields required for control of ADCS subsystem.
     /**
@@ -162,7 +162,7 @@ class MissionManager : public TimedControlTask<void> {
     Fault* wheel3_adc_fault_fp;
     Fault* wheel_pot_fault_fp;
     // Flag for if propulsion failed to pressurize.
-    Fault* failed_pressurize_fp;
+    Fault* pressurize_fail_fp;
 
     /**
      * @brief Radio's mode.

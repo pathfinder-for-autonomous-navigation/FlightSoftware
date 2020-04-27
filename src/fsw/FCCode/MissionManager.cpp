@@ -57,7 +57,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
 
-    prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
+    prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
 
     propagated_baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
 
@@ -77,8 +77,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
             find_writable_field<bool>("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__));
     wheel_pot_fault_fp = static_cast<Fault*>(
             find_writable_field<bool>("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__));
-    failed_pressurize_fp = static_cast<Fault*>(
-            find_writable_field<bool>("prop.failed_pressurize.base", __FILE__, __LINE__));
+    pressurize_fail_fp = static_cast<Fault*>(
+            find_writable_field<bool>("prop.pressurize_fail.base", __FILE__, __LINE__));
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);

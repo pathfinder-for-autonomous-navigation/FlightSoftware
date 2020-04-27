@@ -135,17 +135,17 @@ void PropController::execute()
 
 void PropController::check_faults()
 {
-    if ( is_tank2_overpressured())
+    if ( is_tank2_overpressured() )
     {
         overpressure_fault_f.signal();
         DD("Overpressured detected\n");
     }
-    if ( is_tank2_temp_high())
+    if ( is_tank2_temp_high() )
     {
         tank2_temp_high_fault_f.signal();
         DD("Tank2 Temp High detected: %d\n", Tank2.get_temp());
     }
-    if ( is_tank1_temp_high())
+    if ( is_tank1_temp_high() )
     {
         tank1_temp_high_fault_f.signal();
         DD("Tank1 Temp High detected: %d\n", Tank1.get_temp());
@@ -426,6 +426,10 @@ prop_state_t PropState_Pressurizing::handle_pressurize_failed()
 {
     DD("\tPressurize Failed!\n");
     controller->pressurize_fail_fault_f.signal();
+<<<<<<< HEAD
+=======
+
+>>>>>>> prop_driver_case
     if ( controller->pressurize_fail_fault_f.is_faulted())
     {
         // Go to handling_fault
