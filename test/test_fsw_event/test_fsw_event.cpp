@@ -51,8 +51,8 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
     tf.data2_f.set(false);
     
     //save pointer before signaling
-    size_t event_ptr_prev;
-    size_t event_ptr_curr;
+    size_t event_ptr_prev = nullptr;
+    size_t event_ptr_curr = nullptr;
 
     // Verify that upon serialization, the values are written into the event's bitset in the way
     // that we would expect
