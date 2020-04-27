@@ -87,7 +87,7 @@ class LSM6DSM : public I2CDevice {
    *           gyroscope. */
   inline int16_t get_omega_z() const { return this->omega[2]; }
   /** @return Current gyroscope temperature reading. */
-  inline uint16_t get_temp() const { return this->temp; }
+  inline int16_t get_temp() const { return this->temp; }
 
  private:
   /** Gyroscope angular momentum vector. */
