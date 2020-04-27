@@ -180,9 +180,9 @@ class PropStateMachineCase(SingleSatOnlyCase):
     def fake_cycles_until_firing(self):
         if self.state == str(self.prop_states.get_by_name("await_firing")):
         # If we are in 5th cycle of await_firing, then tell prop that we gonna fire soon
-        if  i == 5:
-            self.cycles_until_firing(5)
-        self.tank2_pressure(26) # Keep writing 26 so that firing doesn't get confused
+            if  i == 5:
+                self.cycles_until_firing(5)
+            self.tank2_pressure(26) # Keep writing 26 so that firing doesn't get confused
 
     # Step the state machine (maximum of max_cycles) until prop.state changes
     # Return the number of cycles
