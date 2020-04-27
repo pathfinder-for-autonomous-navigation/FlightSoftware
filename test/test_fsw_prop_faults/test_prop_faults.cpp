@@ -4,10 +4,10 @@
 
 #include "../test_fsw_prop_controller/prop_shared.h"
 unsigned int one_day_ccno = PAN::one_day_ccno;
-unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
+unsigned int &cc_count = TimedControlTaskBase::control_cycle_count;
 
-
-void test_respect_disabled() {
+void test_respect_disabled()
+{
     // If faults are signalled, but we are in disable, then we should not be handling faults are detecting faults
     TestFixture tf;
     simulate_overpressured(); // we about to blow up...
@@ -21,7 +21,8 @@ void test_respect_disabled() {
 }
 
 // Test that underpressure event is detected and causes us to enter standby
-void test_underpressured_detect() {
+void test_underpressured_detect()
+{
     TestFixture tf;
     tf.simulate_underpressured();
     assert_fault_state(true, pressurize_fail_fault_f);
@@ -30,28 +31,32 @@ void test_underpressured_detect() {
     TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
 }
 
-void test_overpressured_detect() {
+void test_overpressured_detect()
+{
     TestFixture tf;
     simulate_overpressured();
     tf.step();
     TEST_ASSERT_TRUE(tf.pc->overpressure_fault_f.is_faulted());
 }
 
-void test_tank1_temp_high_detect(){
+void test_tank1_temp_high_detect()
+{
     TestFixture tf;
     simulate_tank1_high();
-    tf.step(); 
+    tf.step();
     TEST_ASSERT_TRUE(tf.pc->tank1_temp_high_fault_f.is_faulted());
 }
 
-void test_tank2_temp_high_detect(){
+void test_tank2_temp_high_detect()
+{
     TestFixture tf;
     simulate_tank2_high();
     tf.step();
     TEST_ASSERT_TRUE(tf.pc->tank2_temp_high_fault_f.is_faulted());
 }
 
-void test_both_tanks_high_detect() {
+void test_both_tanks_high_detect()
+{
     TestFixture tf;
     // Test that when multiple fault events occur, both faults are detected
     simulate_tank2_high();
@@ -62,7 +67,8 @@ void test_both_tanks_high_detect() {
 }
 
 // both tank temperatures high and overpressured
-void test_multiple_faults_detect() {
+void test_multiple_faults_detect()
+{
     TestFixture tf;
     // Test that when multiple fault events occur, both faults are detected
     simulate_overpressured();
@@ -73,8 +79,8 @@ void test_multiple_faults_detect() {
     TEST_ASSERT_FALSE(tf.pc->tank2_temp_high_fault_f.is_faulted());
 }
 
-
-void run_fault_detection_tests(){
+void run_fault_detection_tests()
+{
     RUN_TEST(test_underpressured_detect);
     RUN_TEST(test_overpressured_detect);
     RUN_TEST(test_tank1_temp_high_detect);
@@ -83,14 +89,16 @@ void run_fault_detection_tests(){
     RUN_TEST(test_multiple_faults_detect);
 }
 
-void test_underpressured_response() {
+void test_underpressured_response()
+{
     TestFixture tf;
     tf.simulate_underpressured();
     // We should go into disabled mode
 }
 
 // Test that we detect overpressure event while pressurizing
-void test_overpressured_response() {
+void test_overpressured_response()
+{
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
     // + 1 to guarantee that we enter await_pressurizing (sanity checking)
@@ -99,8 +107,8 @@ void test_overpressured_response() {
     check_state(prop_state_t::await_pressurizing);
     tf.execute_until_state_change();
     // tf.step for some random number of pressurizing cycles < 20
-    tf.step(2*tf.ctrl_cycles_per_pressurizing_cycle() + 1);
-    TEST_ASSERT_TRUE(Tank1.is_valve_open(0)); // valve is opened 
+    tf.step(2 * tf.ctrl_cycles_per_pressurizing_cycle() + 1);
+    TEST_ASSERT_TRUE(Tank1.is_valve_open(0)); // valve is opened
     simulate_overpressured();
     tf.step(2); // it takes us two control cycles to realize that we overpressured
     check_state(prop_state_t::handling_fault);
@@ -110,7 +118,8 @@ void test_overpressured_response() {
 }
 
 // Test that we can detect high temp event while firing and respond accordingly
-void test_tank1_temp_high_response(){
+void test_tank1_temp_high_response()
+{
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(200, 800, 900, 800, tf.pc->min_cycles_needed() + 1);
@@ -126,11 +135,11 @@ void test_tank1_temp_high_response(){
     tf.step();
     check_state(prop_state_t::handling_fault);
     // TODO: we should be venting?
- 
 }
 
 // Test that we can detect a high temp event while idle
-void test_tank2_temp_high_response(){
+void test_tank2_temp_high_response()
+{
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.step(3);
@@ -138,10 +147,10 @@ void test_tank2_temp_high_response(){
     tf.step();
     check_state(prop_state_t::handling_fault);
     // we should be opening the valves on tank2
-
 }
 
-void test_tank2temphigh_undepressured_response(){
+void test_tank2temphigh_undepressured_response()
+{
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.step(4);
@@ -158,7 +167,8 @@ void test_tank2temphigh_undepressured_response(){
     tf.check_schedule(1000, 1000, 1000, 1000, 2);
 }
 
-void run_fault_response_tests(){
+void run_fault_response_tests()
+{
     RUN_TEST(test_underpressured_response);
     RUN_TEST(test_overpressured_response);
     RUN_TEST(test_tank1_temp_high_response);
@@ -167,7 +177,8 @@ void run_fault_response_tests(){
 }
 
 // When we conflicting faults are signalled
-void run_conflicting_fault_response_tests(){
+void run_conflicting_fault_response_tests()
+{
     // underpressure and overpressure both signalled
 
     // underpressured and tank2 temp high
@@ -176,7 +187,8 @@ void run_conflicting_fault_response_tests(){
 }
 
 #ifdef DESKTOP
-int main() {
+int main()
+{
     UNITY_BEGIN();
     RUN_TEST(test_respect_disabled);
     run_fault_detection_tests();
@@ -185,10 +197,10 @@ int main() {
 }
 #else
 #include <Arduino.h>
-void setup() {
+void setup()
+{
     delay(2000);
     Serial.begin(9600);
-    test_prop_faults();
 }
 
 void loop() {}

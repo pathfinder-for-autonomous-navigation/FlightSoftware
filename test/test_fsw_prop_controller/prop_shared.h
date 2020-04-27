@@ -8,17 +8,18 @@
 
 #define check_state(expected) TEST_ASSERT_EQUAL(expected, tf.pc->prop_state_f.get())
 inline void do_nothing()
-    {}
+{
+}
 // See pressure_data.txt and temp_data.txt in test/test_fsw_prop_controller for
 //  the analogRead --> sensor conversions
 
 inline void simulate_ambient()
 {
     // This is the ambient readings
-    Tank2.fake_tank2_pressure_high_read = 305;  // 14.6 psi
-    Tank2.fake_tank2_pressure_low_read = 80;    // doesn't really matter
-    Tank1.fake_tank1_temp_sensor_read = 163;    // 20 C 
-    Tank2.fake_tank2_temp_sensor_read = 163;    // 20 C
+    Tank2.fake_tank2_pressure_high_read = 305; // 14.6 psi
+    Tank2.fake_tank2_pressure_low_read = 80;   // doesn't really matter
+    Tank1.fake_tank1_temp_sensor_read = 163;   // 20 C
+    Tank2.fake_tank2_temp_sensor_read = 163;   // 20 C
 }
 
 inline void simulate_at_threshold()
@@ -43,26 +44,30 @@ inline void simulate_overpressured()
 inline void simulate_tank1_high()
 {
     // Spoof a tank1 high event
-    Tank1.fake_tank1_temp_sensor_read = 35;  // 69 C 
+    Tank1.fake_tank1_temp_sensor_read = 35; // 69 C
 }
 
 // Expected response: Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
 inline void simulate_tank2_high()
 {
-    Tank2.fake_tank2_temp_sensor_read = 35;  // 69 C
+    Tank2.fake_tank2_temp_sensor_read = 35; // 69 C
 }
 
-class TestFixture {
+class TestFixture
+{
 public:
-
-    using FnVoid_t = void(*)(); // pointer to a void function
+    unsigned int &cc = TimedControlTaskBase::control_cycle_count;
+    using FnVoid_t = void (*)(); // pointer to a void function
 
     StateFieldRegistryMock registry;
 
     std::unique_ptr<PropController> pc;
     std::unique_ptr<PropFaultHandler> pfh;
 
-    TestFixture() {
+    TestFixture()
+    {
+        cc = 0;
+        Fault::cc = &cc;
         pc = std::make_unique<PropController>(registry, 0);
         pfh = std::make_unique<PropFaultHandler>(registry);
         simulate_ambient();
@@ -73,7 +78,8 @@ public:
         return pc->ctrl_cycles_per_filling_period.get() + pc->ctrl_cycles_per_cooling_period.get();
     }
 
-    inline void set_state(prop_state_t state) {
+    inline void set_state(prop_state_t state)
+    {
         pc->prop_state_f.set(static_cast<unsigned int>(state));
     }
 
@@ -87,7 +93,8 @@ public:
     }
 
     inline void check_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4,
-                               unsigned int ctrl_cycles_from_now) {
+                               unsigned int ctrl_cycles_from_now)
+    {
         TEST_ASSERT_EQUAL(v1, pc->sched_valve1_f.get());
         TEST_ASSERT_EQUAL(v2, pc->sched_valve2_f.get());
         TEST_ASSERT_EQUAL(v3, pc->sched_valve3_f.get());
@@ -96,7 +103,7 @@ public:
     }
 
     // Step forward the state machine by num control cycle.
-    inline void step(size_t num=1)
+    inline void step(size_t num = 1)
     {
         for (size_t i = 0; i < num; ++i)
         {
@@ -119,10 +126,12 @@ public:
 
     // Keep stepping until the state changes (or until we have step max_cycles steps)
     // Return the number of steps taken or return 6969696969 if there has been no state change after max_cycles steps
-    inline size_t execute_until_state_change(size_t max_cycles=2*2048) {
+    inline size_t execute_until_state_change(size_t max_cycles = 2 * 2048)
+    {
         size_t num_steps = 0;
         unsigned int current_state = pc->prop_state_f.get();
-        while (current_state == pc->prop_state_f.get() && num_steps < max_cycles) {
+        while (current_state == pc->prop_state_f.get() && num_steps < max_cycles)
+        {
             ++num_steps;
             step();
         }
@@ -132,7 +141,7 @@ public:
     // Execute fn1 for num_fn1_cycles cycles then execute fn2 and return
     inline void execute_step(FnVoid_t fn1, size_t num_fn1_cycles, FnVoid_t fn2)
     {
-        for (size_t i = 0; i < num_fn1_cycles-1; ++i)
+        for (size_t i = 0; i < num_fn1_cycles - 1; ++i)
         {
             fn1();
             step();
@@ -142,7 +151,8 @@ public:
         step();
     }
 
-    ~TestFixture(){
+    ~TestFixture()
+    {
         // Reset the prop between tests
         PropulsionSystem.reset();
     }
@@ -156,6 +166,4 @@ public:
         // Prop should fail to pressurize since pressure is still ambient
         step(pc->min_cycles_needed());
     }
-
 };
-
