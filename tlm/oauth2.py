@@ -12,7 +12,7 @@ from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
 import email
 
-SCOPES = 'https://mail.google.com' #'https://www.googleapis.com/auth/gmail.send'
+SCOPES = 'https://mail.google.com' 
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'TelemetryServer'
 
