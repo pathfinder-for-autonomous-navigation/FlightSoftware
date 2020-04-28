@@ -43,9 +43,9 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         # User please watch screen, and observe temp
         start_time = time.time()
 
-        while time.time() - start_time < 60*5 # 10 mins
+        while time.time() - start_time < 60*5: # 10 mins
             elapse = time.time() - start_time
-            self.logger.put(f"TIME ELAPSE (s): {elapse}"
+            self.logger.put(f"TIME ELAPSE (s): {elapse}")
             self.print_rs("pan.cycle_no")
             self.print_rs("gomspace.vbatt")
 
