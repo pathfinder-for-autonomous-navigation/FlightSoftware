@@ -20,7 +20,6 @@ namespace dev{
 
 void GyroHeaterTransistor::setup(unsigned int pin) {
   this->pin = pin;
-  pinMode(this->pin, OUTPUT);
 }
 
 bool GyroHeaterTransistor::reset() {

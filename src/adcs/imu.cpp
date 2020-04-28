@@ -224,6 +224,7 @@ void setup() {
 #endif
 
   gyr_heater.setup(gyr_heater_pin);
+  pinMode(gyr_heater_pin, OUTPUT);
   gyr_heater.reset();
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
