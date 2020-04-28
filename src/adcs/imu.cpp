@@ -225,7 +225,7 @@ void setup() {
 
   gyr_heater.setup(gyr_heater_pin);
   pinMode(gyr_heater_pin, OUTPUT);
-  gyr_heater.reset();
+  gyr_heater.disable(); // disable on boot
 
 #if LOG_LEVEL >= LOG_LEVEL_ERROR
   if (!gyr_heater.is_functional()) {

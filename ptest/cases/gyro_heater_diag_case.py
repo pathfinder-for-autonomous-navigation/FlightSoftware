@@ -25,6 +25,12 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.print_havt_read()
         self.print_non_functional_adcs_havt()
 
+        # turn on heater
+        self.ws("adcs_cmd.havt_reset18", True)
+
+        self.print_havt_read()
+        self.print_non_functional_adcs_havt()
+
         if not self.rs("adcs_monitor.havt_device18"): # gyro heater
             raise TestCaseFailure("GYRO HEATER not functional")
 
