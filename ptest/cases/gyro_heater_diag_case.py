@@ -35,6 +35,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
         # turn on heater
         self.ws("adcs_cmd.havt_reset18", True)
+        self.cycle()
 
         self.print_havt_read()
         self.print_non_functional_adcs_havt()
