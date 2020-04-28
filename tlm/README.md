@@ -13,6 +13,20 @@ The Flask server contains an endpoint for accessing information from either inde
 This endpoint is used in RadioSession to check whether or not it can send uplinks and for
 reading the most updated statefield variables.
 
+# Gmail Access
+
+Access to the PAN gmail account is authenticated by the `oauth2.py` file. This requires
+a JSON file holding the information of project requesting access to the email account. To get
+this file:
+
+1) Sign into the PAN email account. 
+2) Go to the Google Developers Console: https://console.developers.google.com/apis/
+3) In the top left of the screen, select the RemoteServer project.
+4) Go to the credentials page. This should be found in the navigation bar to the left.
+5) Underneath the section `OAuth 2.0 Client IDs`, there should be an entry called `TelemetryServer`.
+6) Download a JSON file holding the credentials for the Telemetry server (click the downward pointing arrow to the right of the entry).
+7) Move the JSON file into the `FlightSoftware/tlm` folder. Rename the file to `client_secret.json`.
+
 # Installing and Running
 
 Flask Server:
