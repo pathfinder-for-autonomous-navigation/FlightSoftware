@@ -345,17 +345,11 @@ void PropState_Pressurizing::enter()
 {
     DD("==> entered PropState_Pressurizing\n");
     // Set which Tank1 valve to use (default: valve_num = 0)
-    if (should_use_backup())
-        valve_num = 1;
+    valve_num = controller->tank1_valve.get();
     // Reset the pressurizing cycles count to 0
     pressurizing_cycle_count = 0;
     // Reset timer to 0 (just in case)
     countdown.reset_timer();
-}
-
-bool PropState_Pressurizing::should_use_backup()
-{
-    return controller->tank1_valve.get();
 }
 
 prop_state_t PropState_Pressurizing::evaluate()
@@ -535,7 +529,10 @@ bool PropState_HandlingFault::can_enter() const
         return false;
     // Return true if any of the faults are actually faulted. This allows us to ignore bad sensors if the ground
     // decides to suppress/override certain faults
-    return (controller->pressurize_fail_fault_f.is_faulted() || controller->overpressure_fault_f.is_faulted() || controller->tank2_temp_high_fault_f.is_faulted() || controller->tank1_temp_high_fault_f.is_faulted());
+    return (controller->pressurize_fail_fault_f.is_faulted() ||
+            controller->overpressure_fault_f.is_faulted() ||
+            controller->tank2_temp_high_fault_f.is_faulted() ||
+            controller->tank1_temp_high_fault_f.is_faulted());
 }
 
 void PropState_HandlingFault::enter()

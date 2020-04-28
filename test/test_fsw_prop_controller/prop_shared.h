@@ -7,6 +7,11 @@
 #define assert_fault_state(state, x) TEST_ASSERT_EQUAL(state, tf.pc->x.is_faulted())
 
 #define check_state(expected) TEST_ASSERT_EQUAL(expected, tf.pc->prop_state_f.get())
+
+#define suppress_fault(fault) tf.pc->fault.suppress_f.set(true)
+
+#define override_fault(fault) tf.pc->fault.override_f.set(true)
+
 inline void do_nothing()
 {
 }
@@ -165,5 +170,44 @@ public:
 
         // Prop should fail to pressurize since pressure is still ambient
         step(pc->min_cycles_needed());
+    }
+
+    // The following helper functions will set the state machine to the specified
+    // states
+    inline void simulate_await_pressurizing()
+    {
+        set_state(prop_state_t::idle);
+        set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
+        step(); // we should now be in await_pressurizing
+        TEST_ASSERT_EQUAL(prop_state_t::await_pressurizing, pc->prop_state_f.get());
+    }
+
+    inline void simulate_pressurizing()
+    {
+        set_state(prop_state_t::idle);
+        set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
+        step(2); // we should now be in pressurizing
+        TEST_ASSERT_EQUAL(prop_state_t::pressurizing, pc->prop_state_f.get());
+    }
+
+    inline void simulate_await_firing()
+    {
+        set_state(prop_state_t::idle);
+        set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
+        step(2);
+        simulate_at_threshold();
+        step();
+        TEST_ASSERT_EQUAL(prop_state_t::await_firing, pc->prop_state_f.get());
+    }
+
+    inline void simulate_firing()
+    {
+        set_state(prop_state_t::idle);
+        set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
+        step(8);
+        simulate_at_threshold();
+        execute_until_state_change();
+        execute_until_state_change();
+        TEST_ASSERT_EQUAL(prop_state_t::firing, pc->prop_state_f.get());
     }
 };

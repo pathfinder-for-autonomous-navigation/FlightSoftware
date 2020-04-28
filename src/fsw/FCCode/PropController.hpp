@@ -71,7 +71,7 @@ public:
     ReadableStateField<float> tank1_temp_f;
 
     Fault pressurize_fail_fault_f; // underpressurized
-    Fault overpressure_fault_f; // overpressurized
+    Fault overpressure_fault_f;    // overpressurized
     Fault tank2_temp_high_fault_f;
     Fault tank1_temp_high_fault_f;
 
@@ -133,13 +133,11 @@ public:
     // Return True if we are allowed to enter the desired_state
     bool can_enter_state(prop_state_t desired_state) const;
 
-
     // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B10E398A9-3D68-44F8-BE1B-E4FA5DBECBC8%7D&file=Recurring%20Constants%20Review.xlsx&action=default&mobileredirect=true&cid=912c7e7e-8046-4d9c-9ee9-13a59d46f5a6
     TRACKED_CONSTANT_SC(float, max_safe_pressure, 75); // 75 psi
-    TRACKED_CONSTANT_SC(float, max_safe_temp, 48); // 48 C
+    TRACKED_CONSTANT_SC(float, max_safe_temp, 48);     // 48 C
 
 private:
-
     // Return the PropState associated with the given prop_state_t
     PropState &get_state(prop_state_t) const;
 
@@ -155,7 +153,6 @@ private:
     // static PropState_Venting state_venting;
     static PropState_HandlingFault state_handling_fault;
     static PropState_Manual state_manual;
-
 };
 
 // ------------------------------------------------------------------------
@@ -190,10 +187,11 @@ class PropState
 {
 public:
     explicit PropState(prop_state_t my_state)
-            : this_state(my_state)
-    {}
+        : this_state(my_state)
+    {
+    }
 
-    // We call this function when we are about to enter this state. 
+    // We call this function when we are about to enter this state.
     // It checks the preconditions for entering the state
     virtual bool can_enter() const = 0;
 
@@ -204,7 +202,7 @@ public:
     //      we should transition to a different state. This function evaluates
     //      the current state of the PropulsionSystem and returns the next state
     //      If the returned state is the same as this current state (this_state)
-    //      that means we are not changing states this cycle. 
+    //      that means we are not changing states this cycle.
     virtual prop_state_t evaluate() = 0;
 
 protected:
@@ -243,7 +241,6 @@ public:
     void enter() override;
 
     prop_state_t evaluate() override;
-
 };
 
 // This is the state where we've received a (valid) request to fire.
@@ -258,7 +255,6 @@ public:
     void enter() override;
 
     prop_state_t evaluate() override;
-
 };
 
 // A pressurizing cycle consists of a "filling" period and a "cooling period".
@@ -293,9 +289,6 @@ private:
 
     // Starts another pressurization cycle
     void start_pressurize_cycle();
-
-    // Returns true if we should use the backup valve for pressurizing
-    bool should_use_backup();
 
     // 1 if we are using the backup valve and 0 otherwise
     bool valve_num = false;
@@ -353,9 +346,9 @@ public:
     prop_state_t evaluate() override;
 };
 
+// HandlingFault consists of autonomous responses to perceived hardware faults
 class PropState_HandlingFault : public PropState
 {
-    // TODO: not yet implemented nor use
 public:
     PropState_HandlingFault() : PropState(prop_state_t::handling_fault) {}
 

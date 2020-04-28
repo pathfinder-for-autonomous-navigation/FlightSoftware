@@ -10,8 +10,8 @@ void test_respect_disabled()
 {
     // If faults are signalled, but we are in disable, then we should not be handling faults are detecting faults
     TestFixture tf;
-    simulate_overpressured(); // we about to blow up...
-    // But we should not enter any fault handling state no matter what because we disabled
+    simulate_overpressured(); // we are about to blow up...
+    // But we should not enter any fault handling state because we disabled
     for (size_t i = 0; i < 20; ++i)
     {
         tf.step();
@@ -26,9 +26,6 @@ void test_underpressured_detect()
     TestFixture tf;
     tf.simulate_underpressured();
     assert_fault_state(true, pressurize_fail_fault_f);
-    check_state(prop_state_t::handling_fault);
-    // Further executions of PropFaultHandler should still suggest standby response
-    TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
 }
 
 void test_overpressured_detect()
@@ -36,7 +33,7 @@ void test_overpressured_detect()
     TestFixture tf;
     simulate_overpressured();
     tf.step();
-    TEST_ASSERT_TRUE(tf.pc->overpressure_fault_f.is_faulted());
+    assert_fault_state(true, overpressure_fault_f);
 }
 
 void test_tank1_temp_high_detect()
@@ -44,7 +41,7 @@ void test_tank1_temp_high_detect()
     TestFixture tf;
     simulate_tank1_high();
     tf.step();
-    TEST_ASSERT_TRUE(tf.pc->tank1_temp_high_fault_f.is_faulted());
+    assert_fault_state(true, tank1_temp_high_fault_f);
 }
 
 void test_tank2_temp_high_detect()
@@ -52,7 +49,7 @@ void test_tank2_temp_high_detect()
     TestFixture tf;
     simulate_tank2_high();
     tf.step();
-    TEST_ASSERT_TRUE(tf.pc->tank2_temp_high_fault_f.is_faulted());
+    assert_fault_state(true, tank2_temp_high_fault_f);
 }
 
 void test_both_tanks_high_detect()
@@ -62,11 +59,10 @@ void test_both_tanks_high_detect()
     simulate_tank2_high();
     simulate_tank1_high();
     tf.step();
-    TEST_ASSERT_TRUE(tf.pc->tank2_temp_high_fault_f.is_faulted());
-    TEST_ASSERT_TRUE(tf.pc->tank1_temp_high_fault_f.is_faulted());
+    assert_fault_state(true, tank2_temp_high_fault_f);
+    assert_fault_state(true, tank1_temp_high_fault_f);
 }
 
-// both tank temperatures high and overpressured
 void test_multiple_faults_detect()
 {
     TestFixture tf;
@@ -74,9 +70,9 @@ void test_multiple_faults_detect()
     simulate_overpressured();
     simulate_tank1_high();
     tf.step();
-    TEST_ASSERT_TRUE(tf.pc->overpressure_fault_f.is_faulted());
-    TEST_ASSERT_TRUE(tf.pc->tank1_temp_high_fault_f.is_faulted());
-    TEST_ASSERT_FALSE(tf.pc->tank2_temp_high_fault_f.is_faulted());
+    assert_fault_state(true, overpressure_fault_f);
+    assert_fault_state(true, tank1_temp_high_fault_f);
+    assert_fault_state(false, tank2_temp_high_fault_f);
 }
 
 void run_fault_detection_tests()
@@ -92,28 +88,50 @@ void run_fault_detection_tests()
 void test_underpressured_response()
 {
     TestFixture tf;
+    // In the event that Prop fails to pressurize
     tf.simulate_underpressured();
-    // We should go into disabled mode
+    // check that pressurize_fail_fault_f is faulted immediately and state enters handling_fault
+    assert_fault_state(true, pressurize_fail_fault_f);
+    check_state(prop_state_t::handling_fault);
+    // check that further executions of PropFaultHandler should still suggest standby response
+    for (size_t i = 0; i < 31; ++i)
+    {
+        tf.step();
+        assert_fault_state(true, pressurize_fail_fault_f);
+        check_state(prop_state_t::handling_fault);
+        TEST_ASSERT_EQUAL(tf.pfh->execute(), fault_response_t::standby);
+    }
+    // If the ground suppresses the fault
+    suppress_fault(pressurize_fail_fault_f);
+    tf.step();
+    // Check that the fault is no longer faulted
+    assert_fault_state(false, pressurize_fail_fault_f);
+    // Check that the state returns to idle
+    check_state(prop_state_t::idle);
+    // Check that the fault remains suppressed even though we continue to detect the fault event
+    tf.simulate_underpressured();
+    assert_fault_state(false, pressurize_fail_fault_f);
+    // We should now enter await_firing and depend on the temperature sensor instead
+    check_state(prop_state_t::await_firing);
 }
 
-// Test that we detect overpressure event while pressurizing
 void test_overpressured_response()
 {
     TestFixture tf;
-    tf.set_state(prop_state_t::idle);
-    // + 1 to guarantee that we enter await_pressurizing (sanity checking)
-    tf.set_schedule(200, 800, 900, 800, tf.pc->min_cycles_needed() + 1);
-    tf.step();
-    check_state(prop_state_t::await_pressurizing);
-    tf.execute_until_state_change();
-    // tf.step for some random number of pressurizing cycles < 20
+    tf.simulate_pressurizing();
+    // tf.step for some random number of pressurizing cycles so that we are in the middle of pressurizing
     tf.step(2 * tf.ctrl_cycles_per_pressurizing_cycle() + 1);
-    TEST_ASSERT_TRUE(Tank1.is_valve_open(0)); // valve is opened
+    // Check that the tank1 valve should be opened since we are pressurizing
+    TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
+
     simulate_overpressured();
-    tf.step(2); // it takes us two control cycles to realize that we overpressured
+    // it takes us two control cycles to realize that we overpressured because sensors checked at the end of the execution cycle
+    tf.step(2);
     check_state(prop_state_t::handling_fault);
     TEST_ASSERT_FALSE(Tank1.is_valve_open(0)); // Tank1 valve should be closed immediately
     // TODO
+    tf.step();
+    check_state(prop_state_t::venting); // Check that we have entered the venting state
     // Tank2 should open valves and vent until pressure is below max safe pressure
 }
 
@@ -121,23 +139,16 @@ void test_overpressured_response()
 void test_tank1_temp_high_response()
 {
     TestFixture tf;
-    tf.set_state(prop_state_t::idle);
-    tf.set_schedule(200, 800, 900, 800, tf.pc->min_cycles_needed() + 1);
-    tf.execute_until_state_change(); // idle->await_pressurizing
-    tf.execute_until_state_change(); // await_pressurizing->pressurizing
-    simulate_at_threshold();
-    tf.execute_until_state_change(); // pressurizing -> await_firing
-    check_state(prop_state_t::await_firing);
-    tf.execute_until_state_change(); // await_firing -> firing
-    check_state(prop_state_t::firing);
+    tf.simulate_firing();
     tf.step(2); // start firing a little bit
     simulate_tank1_high();
     tf.step();
     check_state(prop_state_t::handling_fault);
-    // TODO: we should be venting?
+    tf.step();
+    // TODO: what do?
+    check_state(prop_state_t::venting);
 }
 
-// Test that we can detect a high temp event while idle
 void test_tank2_temp_high_response()
 {
     TestFixture tf;
@@ -146,14 +157,14 @@ void test_tank2_temp_high_response()
     simulate_tank2_high();
     tf.step();
     check_state(prop_state_t::handling_fault);
+    tf.step();
+    check_state(prop_state_t::venting);
     // we should be opening the valves on tank2
 }
 
 void test_tank2temphigh_undepressured_response()
 {
     TestFixture tf;
-    tf.set_state(prop_state_t::idle);
-    tf.step(4);
     // Overpressured and High temp faults take precedence
     tf.simulate_underpressured();
     simulate_tank2_high();

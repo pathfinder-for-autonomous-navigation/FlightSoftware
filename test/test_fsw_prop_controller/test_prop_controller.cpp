@@ -1,7 +1,6 @@
 
 #include "prop_shared.h"
 
-
 void test_initialization()
 {
     TestFixture tf;
@@ -15,34 +14,34 @@ void test_initialization()
 // Test that PropController remains in the disabled state despite the existence of a valid schedule
 void test_disable()
 {
-  TestFixture tf;
-  // Prop should remain in disabled state until manually set to some other state
-  tf.set_schedule(200, 300, 400,500, tf.pc->min_cycles_needed());
-  // Firing time is set 5 control cycles from now but we should not fire since
-  // state is still disabled
-  check_state(prop_state_t::disabled);
-  for (size_t i = 0; i < tf.pc->min_cycles_needed() ; ++i)
-  {
-    tf.step();
+    TestFixture tf;
+    // Prop should remain in disabled state until manually set to some other state
+    tf.set_schedule(200, 300, 400, 500, tf.pc->min_cycles_needed());
+    // Firing time is set 5 control cycles from now but we should not fire since
+    // state is still disabled
     check_state(prop_state_t::disabled);
-  }
+    for (size_t i = 0; i < tf.pc->min_cycles_needed(); ++i)
+    {
+        tf.step();
+        check_state(prop_state_t::disabled);
+    }
 }
 
 // Test that Prop ignores a schedule with fewer than prop_controller->min_cycles_needed() cycles
 // Test that Prop ignores a schedule if a value exceeds 999
 void test_illegal_schedule()
 {
-  TestFixture tf;
-  tf.set_state(prop_state_t::idle);
-  // Prop should ignore if requested firing time is less than 20 pressurizing cycles + 1 control cycle into the future
-  tf.set_schedule(200, 400, 800, 100, tf.pc->min_cycles_needed() - 1);
-  tf.step();
-  // State should remain in idle because fire cycle too soon
-  check_state(prop_state_t::idle);
-  tf.set_schedule(200, 400, 800, 1000, tf.pc->min_cycles_needed());
-  tf.step();
-  // State should remain in idle because valve 4 is scheduled for 1000
-  check_state(prop_state_t::idle);
+    TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    // Prop should ignore if requested firing time is less than 20 pressurizing cycles + 1 control cycle into the future
+    tf.set_schedule(200, 400, 800, 100, tf.pc->min_cycles_needed() - 1);
+    tf.step();
+    // State should remain in idle because fire cycle too soon
+    check_state(prop_state_t::idle);
+    tf.set_schedule(200, 400, 800, 1000, tf.pc->min_cycles_needed());
+    tf.step();
+    // State should remain in idle because valve 4 is scheduled for 1000
+    check_state(prop_state_t::idle);
 }
 
 // Test that a schedule with fire_cycle set to prop_controller->min_cycles_needed() and all valve
@@ -94,7 +93,7 @@ void test_pressurize_to_await_firing()
     tf.step();
     check_state(prop_state_t::pressurizing);
 
-    tf.execute_step(do_nothing, 19*tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
+    tf.execute_step(do_nothing, 19 * tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
     TEST_ASSERT_TRUE(Tank2.get_pressure() > tf.pc->threshold_firing_pressure.get());
     tf.step();
     TEST_ASSERT_TRUE(tf.pc->is_at_threshold_pressure());
@@ -111,7 +110,7 @@ void test_pressurize_to_firing()
     tf.step();
     check_state(prop_state_t::pressurizing);
     // At threshold at the end of the 20 pressurizing cycles
-    tf.execute_step(do_nothing, 20*tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
+    tf.execute_step(do_nothing, 20 * tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
     tf.step();
     check_state(prop_state_t::await_firing);
     tf.execute_until_state_change();
@@ -128,7 +127,7 @@ void test_pressurizing()
     tf.set_schedule(700, 200, 200, 800, cycles_until_fire);
     tf.step(); // transitioned from idle -> pressurizing
     check_state(prop_state_t::pressurizing);
-    tf.step(); // first cycle of pressurizing
+    tf.step();                                // first cycle of pressurizing
     TEST_ASSERT_TRUE(Tank1.is_valve_open(0)); // Tank1 valve is opened
     simulate_at_threshold();
     tf.execute_until_state_change();
@@ -141,13 +140,13 @@ void test_pressurize_fail()
 {
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
-    tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed()*2);
-    tf.step(); // now in await_pressurizing
+    tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed() * 2);
+    tf.step();                       // now in await_pressurizing
     tf.execute_until_state_change(); // now in pressurizing
     check_state(prop_state_t::pressurizing);
 
     // Same command here used in test_test_pressurize_to_firing but added 1 to the number of cycles
-    tf.execute_step(do_nothing, 20*tf.ctrl_cycles_per_pressurizing_cycle()+1, simulate_at_threshold);
+    tf.execute_step(do_nothing, 20 * tf.ctrl_cycles_per_pressurizing_cycle() + 1, simulate_at_threshold);
     tf.step();
     check_state(prop_state_t::handling_fault);
     tf.step();
@@ -165,13 +164,13 @@ void test_suppress_underpressure_fault()
 {
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
-    tf.set_schedule(700, 200, 200, 800, 2* tf.pc->min_cycles_needed());
+    tf.set_schedule(700, 200, 200, 800, 2 * tf.pc->min_cycles_needed());
     tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
-    tf.step(); // enter await_pressurizing
+    tf.step();                       // enter await_pressurizing
     tf.execute_until_state_change(); // now in pressurizing
     check_state(prop_state_t::pressurizing);
     // Same setup as test_pressurize_fail
-    tf.execute_step(do_nothing, 20*tf.ctrl_cycles_per_pressurizing_cycle()+1, simulate_at_threshold);
+    tf.execute_step(do_nothing, 20 * tf.ctrl_cycles_per_pressurizing_cycle() + 1, simulate_at_threshold);
     tf.step();
     // But this time, we should not enter handling_fault
     assert_fault_state(false, pressurize_fail_fault_f); // assert not faulted
@@ -186,7 +185,7 @@ void test_await_firing()
     tf.set_state(prop_state_t::idle);
     unsigned int cycles_until_fire = tf.pc->min_cycles_needed() + 4;
     tf.set_schedule(700, 200, 200, 800, cycles_until_fire);
-    tf.execute_step(do_nothing, 20*tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
+    tf.execute_step(do_nothing, 20 * tf.ctrl_cycles_per_pressurizing_cycle(), simulate_at_threshold);
     tf.step();
     check_state(prop_state_t::await_firing);
     // valves should be closed
@@ -225,7 +224,7 @@ void test_firing_to_idle()
     tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed());
     simulate_at_threshold();
     // [cycles_until_fire] from now, this had better be firing.
-    tf.step(tf.pc->min_cycles_needed()-1);
+    tf.step(tf.pc->min_cycles_needed() - 1);
     check_state(prop_state_t::await_firing);
     tf.step();
     check_state(prop_state_t::firing);
@@ -233,7 +232,8 @@ void test_firing_to_idle()
     // Test that PropulsionSystem is firing while we are in the firing state
     // 800 is the biggest value
     unsigned int cycles_firing = (800 / PAN::control_cycle_time_ms) + 1; // round up
-    for (size_t i = 0; i < cycles_firing; ++i) {
+    for (size_t i = 0; i < cycles_firing; ++i)
+    {
         check_state(prop_state_t::firing);
         TEST_ASSERT_TRUE(PropulsionSystem.is_firing())
         tf.step();
@@ -247,16 +247,52 @@ void test_firing_to_idle()
 void test_use_backup()
 {
     TestFixture tf;
-    tf.set_state(prop_state_t::idle);
-    tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed());
-    tf.execute_until_state_change(); // idle -> pressurizing
+    tf.simulate_pressurizing();
     tf.step(3);
     TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
-    TEST_ASSERT_TRUE(Tank2.is_valve_open(1));
+    TEST_ASSERT_FALSE(Tank2.is_valve_open(1));
+    tf.set_state(prop_state_t::disabled);
+    tf.step();
+    // Set to disabled
+    check_state(prop_state_t::disabled);
+    //  Both valves should be closed
+    TEST_ASSERT_FALSE(Tank1.is_valve_open(1));
+    TEST_ASSERT_FALSE(Tank2.is_valve_open(0));
     tf.pc->tank1_valve.set(1); // set the valve to the backup valve
+                               // Go back to pressurizing
+    tf.simulate_pressurizing();
+    check_state(prop_state_t::pressurizing);
     tf.step();
     TEST_ASSERT_TRUE(Tank1.is_valve_open(1));
-    TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
+    TEST_ASSERT_FALSE(Tank2.is_valve_open(0));
+}
+
+// Test the tank2 venting response
+void test_vent_outer_tank()
+{
+    TestFixture tf;
+    tf.simulate_pressurizing();
+    tf.step(4);
+    simulate_overpressured();
+    tf.step(2);
+    check_state(prop_state_t::handling_fault);
+    tf.step();
+    check_state(prop_state_t::venting);
+    TEST_ASSERT_TRUE(0);
+}
+
+// Test the tank1 venting response
+void test_vent_inner_tank()
+{
+    TestFixture tf;
+    tf.simulate_firing();
+    tf.step(1);
+    simulate_tank1_high();
+    tf.step(2);
+    check_state(prop_state_t::handling_fault);
+    tf.step();
+    check_state(prop_state_t::venting);
+    TEST_ASSERT_TRUE(0);
 }
 
 // These two tests are manually checked, so the for loop is conditionally compiled
@@ -293,7 +329,8 @@ void test_pressure_sensor_logic()
                 Tank2.fake_tank2_pressure_low_read = low;
                 std::printf("Tank2 pressure: high ignored (>%d), low %u --> %f\n", thresh, low, Tank2.get_pressure());
             }
-        else {
+        else
+        {
             Tank2.fake_tank2_pressure_low_read = 0;
             std::printf("Tank2 pressure: high %u, low ignored --> %f\n", high, Tank2.get_pressure());
         }
@@ -319,18 +356,23 @@ int test_prop_controller()
     RUN_TEST(test_await_firing);
     RUN_TEST(test_firing);
     RUN_TEST(test_firing_to_idle);
+    RUN_TEST(test_use_backup);
+    RUN_TEST(test_vent_outer_tank);
+    RUN_TEST(test_vent_inner_tank);
     RUN_TEST(test_temp_sensor_logic);
     RUN_TEST(test_pressure_sensor_logic);
     return UNITY_END();
 }
 
 #ifdef DESKTOP
-int main() {
+int main()
+{
     return test_prop_controller();
 }
 #else
 #include <Arduino.h>
-void setup() {
+void setup()
+{
     delay(2000);
     Serial.begin(9600);
     test_prop_controller();
