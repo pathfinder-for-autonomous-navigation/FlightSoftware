@@ -82,3 +82,6 @@ The generateTelemetry( ) function is the most important method of spacecraft.js 
 This function takes a measurement of spacecraft state, stores it in history{ }, and notifies listeners[ ] using the *Spacecraft.prototype.notify* function.
 
 **Battery.js** represents the gomspace battery object and creates battery telemetry that is sent to specific telemetry points as defined in telemetry reviews.
+
+
+#Full Telemetry Diagram
