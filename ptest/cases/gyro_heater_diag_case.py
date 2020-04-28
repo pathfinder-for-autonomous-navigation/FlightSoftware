@@ -15,6 +15,14 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
         self.ws("cycle.auto", False) # turn off auto cycle in case it was on
         self.cycle()
+
+    def shutdown(self):
+
+        # Shutdown
+        self.ws("adcs_cmd.imu_gyr_temp_pwm", 88) # Arbitrary non default
+        self.ws("adcs_cmd.imu_gyr_temp_desired", 20) # Back to low temp
+        self.ws("adcs_cmd.havt_disable18", True) # disable heater
+
     def run_case_singlesat(self):
 
         self.print_rs("adcs_monitor.functional")
@@ -39,7 +47,12 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
         self.print_rs("adcs_cmd.imu_gyr_temp_pwm")
         self.print_rs("adcs_cmd.imu_gyr_temp_desired")
+        
         init_temp = self.print_rs("adcs_monitor.gyr_temp")
+        init_cursys = self.print_rs("gomspace.cursys")
+
+        curout_arr = [self.rs(f"gomspace.curout.output{x}") for x in range(1,7)]
+        self.logger.put("CUROUT ARR: "+str(curout_arr))
 
         self.logger.put("")
         self.cycle()
@@ -54,12 +67,28 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
             self.logger.put(f"TIME ELAPSE (s): {elapse}")
             self.print_rs("pan.cycle_no")
             self.print_rs("gomspace.vbatt")
+            self.print_rs("gomspace.cursys")
+            self.logger.put("CUROUT ARR: "+str(curout_arr))
 
             self.print_rs("adcs_cmd.imu_gyr_temp_pwm")
             self.print_rs("adcs_cmd.imu_gyr_temp_desired")
 
             self.logger.put(f"INITIAL TEMP: {init_temp}")
-            self.print_rs("adcs_monitor.gyr_temp")
+            self.logger.put(f"INIT CUR: {init_cursys}")
+            
+            heater = self.print_rs("adcs_monitor.havt_device18")
+            imu_gyr = self.print_rs("adcs_monitor.havt_device0")
+
+            temp_reading = self.print_rs("adcs_monitor.gyr_temp")
+
+            if not heater or not imu_gyr:
+                self.shutdown()
+                raise TestCaseFailure("DEVICE FAILED MID TEST")
+
+            if temp_reading < 18 or temp_reading > 38:
+                self.shuutdown()
+                raise TestCaseFailure("TEMP READING OUTTA BOUNDS")
+
             self.logger.put("")
             self.cycle()
 
@@ -70,9 +99,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         
         target_temp = self.print_rs("adcs_cmd.imu_gyr_temp_desired")
 
-        # Shutdown
-        self.ws("adcs_cmd.imu_gyr_temp_pwm", 88) # Arbitrary non default
-        self.ws("adcs_cmd.imu_gyr_temp_desired", 20) # Back to low temp
+        self.shutdown()
 
         delta = 5 # 5 deg diff accepted?
         
