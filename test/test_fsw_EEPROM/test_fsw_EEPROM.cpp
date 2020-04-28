@@ -73,16 +73,6 @@ class TestFixture {
     }
 
     /**
-     * Get JSON data stored in the EEPROM data file. Desktop-only.
-     */
-    #ifdef DESKTOP
-    nlohmann::json read_EEPROM() {
-        eeprom_controller->read_EEPROM();
-        return EEPROMController::data;
-    }
-    #endif
-
-    /**
      * @brief Reads data from EEPROM for the statefield at index idx.
      * 
      * @param idx 
@@ -177,13 +167,15 @@ void test_task_execute() {
     TestFixture tf2(false);
 
     // Check if the new eeprom controller set the statefield values to the values that 
-    // were previously stored in the EEPROM
-    TEST_ASSERT_EQUAL(5, tf2.get_ptr<unsigned char>(0)->get());
+    // were previously stored in the EEPROM. Since the previously-saved mission state
+    // was not a docking or docked state, though, it should not be saved.
+    TEST_ASSERT_EQUAL(1, tf2.get_ptr<unsigned char>(0)->get());
     TEST_ASSERT_TRUE(tf2.get_ptr<bool>(1)->get());
     TEST_ASSERT_EQUAL(7, tf2.get_ptr<unsigned char>(2)->get());
     TEST_ASSERT_EQUAL(8, tf2.get_ptr<unsigned int>(3)->get());
 
-    // Let the statefield values change over time.
+    // Let the statefield values change over time. We'll set the mission manager
+    // value to "docked" so that it actually gets saved by the EEPROM.
     tf2.mission_mode_fp->set(9);
     tf2.is_deployed_fp->set(false);
     tf2.sat_designation_fp->set(11);
