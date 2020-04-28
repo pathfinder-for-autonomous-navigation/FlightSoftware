@@ -55,6 +55,10 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         
         target_temp = self.print_rs("adcs_cmd.imu_gyr_temp_desired")
 
+        # Shutdown
+        self.ws("adcs_cmd.imu_gyr_temp_pwm", 88) # Arbitrary non default
+        self.ws("adcs_cmd.imu_gyr_temp_desired", 20) # Back to low temp
+
         delta = 5 # 5 deg diff accepted?
         
         if target_temp - delta > final_temp or target_temp + delta < final_temp:
