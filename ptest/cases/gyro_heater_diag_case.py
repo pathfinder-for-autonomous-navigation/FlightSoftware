@@ -1,6 +1,6 @@
 # GyroHeaterDiagCase - A manual diagonstic case to checkout the behavior of the gyro heater
 from .base import SingleSatOnlyCase, TestCaseFailure
-
+import time
     
 class GyroHeaterDiagCase(SingleSatOnlyCase):
 
@@ -10,7 +10,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.ws("pan.state", self.mission_states.get_by_name("manual"))
         self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
         
-        self.ws("adcs_cmd.imu_gyr_temp_pwm", 100) # Arbitrary non default
+        self.ws("adcs_cmd.imu_gyr_temp_pwm", 254) # Arbitrary non default
         self.ws("adcs_cmd.imu_gyr_temp_desired", 35) # High temp to let rise and fall
 
         self.ws("cycle.auto", False) # turn off auto cycle in case it was on
@@ -31,20 +31,28 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         if not self.rs("adcs_monitor.havt_device0"): # IMU GYR
             raise TestCaseFailure("GYRO not functional")
 
-        self.print_header("ENTERING HEATING CONTROL")
-
         self.print_rs("adcs_cmd.imu_gyr_temp_pwm")
         self.print_rs("adcs_cmd.imu_gyr_temp_desired")
+        init_temp = self.print_rs("adcs_monitor.gyr_temp")
+
         self.logger.put("")
         self.cycle()
 
-        # 1000 cycle heater diagnostic test
+        self.print_header("ENTERING HEATING CONTROL")
 
         # User please watch screen, and observe temp
-        for i in range(1000):
-            self.logger.put(f"Reading #{i}")
+        start_time = time.time()
+
+        while time.time() - start_time < 60*5 # 10 mins
+            elapse = time.time() - start_time
+            self.logger.put(f"TIME ELAPSE (s): {elapse}"
             self.print_rs("pan.cycle_no")
             self.print_rs("gomspace.vbatt")
+
+            self.print_rs("adcs_cmd.imu_gyr_temp_pwm")
+            self.print_rs("adcs_cmd.imu_gyr_temp_desired")
+
+            self.logger.put(f"INITIAL TEMP: {init_temp}")
             self.print_rs("adcs_monitor.gyr_temp")
             self.logger.put("")
             self.cycle()
