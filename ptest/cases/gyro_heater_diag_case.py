@@ -11,7 +11,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
         
         self.ws("adcs_cmd.imu_gyr_temp_pwm", 254) # Arbitrary non default
-        self.ws("adcs_cmd.imu_gyr_temp_desired", 35) # High temp to let rise and fall
+        self.ws("adcs_cmd.imu_gyr_temp_desired", 30) # High temp to let rise and fall
 
         self.ws("cycle.auto", False) # turn off auto cycle in case it was on
         self.cycle()
@@ -43,7 +43,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         # User please watch screen, and observe temp
         start_time = time.time()
 
-        while time.time() - start_time < 60*5: # 10 mins
+        while time.time() - start_time < 60*120: # 10 mins
             elapse = time.time() - start_time
             self.logger.put(f"TIME ELAPSE (s): {elapse}")
             self.print_rs("pan.cycle_no")
