@@ -13,6 +13,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.ws("adcs_cmd.imu_gyr_temp_pwm", 100) # Arbitrary non default
         self.ws("adcs_cmd.imu_gyr_temp_desired", 35) # High temp to let rise and fall
 
+        self.ws("cycle.auto", False) # turn off auto cycle in case it was on
         self.cycle()
     def run_case_singlesat(self):
 
