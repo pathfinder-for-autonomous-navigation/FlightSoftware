@@ -34,8 +34,9 @@ void GyroHeaterTransistor::disable() {
 }
 
 void GyroHeaterTransistor::actuate(unsigned char pwm, bool on) {
+  int int_pwm = pwm;
   if(on)
-    analogWrite(this->pin, pwm);
+    analogWrite(this->pin, int_pwm);
   else
     analogWrite(this->pin, 0);
   
