@@ -8,6 +8,7 @@ import time
 import subprocess
 import pty
 import serial
+from .oauth2 import *
 
 class IridiumEmailProcessor(object):
     def __init__(self, radio_keys_config, elasticsearch, downlink_parser_path):
@@ -31,6 +32,7 @@ class IridiumEmailProcessor(object):
         self.imei=-1
 
         #connect to email
+        self.authentication = mail()
         self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
         self.mail.login(self.username, self.password)
         self.mail.select('Inbox')

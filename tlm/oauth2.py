@@ -10,6 +10,7 @@ import mimetypes
 from email.mime.image import MIMEImage
 from email.mime.audio import MIMEAudio
 from email.mime.base import MIMEBase
+import email
 
 SCOPES = 'https://mail.google.com' #'https://www.googleapis.com/auth/gmail.send'
 CLIENT_SECRET_FILE = 'client_secret.json'
@@ -43,7 +44,7 @@ def query_inbox(service):
     '''
     Returns all unread emails from Iridium
     '''
-    results = (service.users().messages().list(userId='me',labelIds = ['INBOX'], q="from:sbdservice@sbd.iridium.com").execute()) # is:unread
+    results = (service.users().messages().list(userId='me',labelIds = ['INBOX'], q="from:sbdservice@sbd.iridium.com is:unread").execute()) # is:unread
     messages = results.get('messages', [])
     return messages
 
@@ -135,31 +136,18 @@ def createMessageWithAttachment(
 
     return {'raw': base64.urlsafe_b64encode(message.as_string().encode()).decode()}
 
-
 def main():
-    # to = "fy56@cornell.edu"
-    # sender = "pan.ssds.qlocate@gmail.com"
-    # subject = "What do aliens on the metric system say?"
-    # msgHtml = "Take me to your liter"
-    # msgPlain = "Take me to you liter"
-    # SendMessage(sender, to, subject, msgHtml, msgPlain)
+    to = "fy56@cornell.edu"
+    sender = "pan.ssds.qlocate@gmail.com"
+    subject = "What do aliens on the metric system say?"
+    msgHtml = "Take me to your liter"
+    msgPlain = "Take me to you liter"
+
+    # Send message without attachment
+    SendMessage(sender, to, subject, msgHtml, msgPlain)
 
     # Send message with attachment: 
     # SendMessage(sender, to, subject, msgHtml, msgPlain, '/path/to/file.pdf')
-
-    # service = mail()
-    # msg_ids = query_inbox(service)
-    # for message in msg_ids:
-    #     msg = service.users().messages().get(userId='me', id=message['id']).execute() # pylint: disable=no-member
-    #     print(msg['snippet'])
-    service = mail()
-    msg_ids = query_inbox(service)
-    message = msg_ids[0]
-    msg = service.users().messages().get(userId='me', id=message['id']).execute() # pylint: disable=no-member
-    payload = msg['payload']
-    #email_subject = msg['subject']
-    print(payload)
-    #print(msg)
 
 if __name__ == '__main__':
     main()
