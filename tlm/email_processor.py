@@ -32,7 +32,7 @@ class IridiumEmailProcessor(object):
         self.imei=-1
 
         #connect to email
-        self.authentication = mail()
+        self.authentication = authenticate()
         self.mail = imaplib.IMAP4_SSL("imap.gmail.com", 993)
         self.mail.login(self.username, self.password)
         self.mail.select('Inbox')

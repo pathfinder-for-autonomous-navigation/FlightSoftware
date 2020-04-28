@@ -31,22 +31,15 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
-def mail():
+def authenticate():
     '''
     Returns a connection to the PAN gmail
+    Allows the telemetry server access to the PAN gmail
     '''
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
     service = discovery.build('gmail', 'v1', http=http)
     return service
-
-def query_inbox(service):
-    '''
-    Returns all unread emails from Iridium
-    '''
-    results = (service.users().messages().list(userId='me',labelIds = ['INBOX'], q="from:sbdservice@sbd.iridium.com is:unread").execute()) # is:unread
-    messages = results.get('messages', [])
-    return messages
 
 def SendMessage(sender, to, subject, msgHtml, msgPlain, attachmentFile=None):
     credentials = get_credentials()
@@ -147,7 +140,7 @@ def main():
     SendMessage(sender, to, subject, msgHtml, msgPlain)
 
     # Send message with attachment: 
-    # SendMessage(sender, to, subject, msgHtml, msgPlain, '/path/to/file.pdf')
+    SendMessage(sender, to, subject, msgHtml, msgPlain, '/path/to/file.pdf')
 
 if __name__ == '__main__':
     main()
