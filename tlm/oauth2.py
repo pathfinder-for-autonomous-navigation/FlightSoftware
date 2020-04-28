@@ -134,7 +134,7 @@ def main():
     sender = "pan.ssds.qlocate@gmail.com"
     subject = "What do aliens on the metric system say?"
     msgHtml = "Take me to your liter"
-    msgPlain = "Take me to you liter"
+    msgPlain = "Take me to your liter"
 
     # Send message without attachment
     SendMessage(sender, to, subject, msgHtml, msgPlain)
