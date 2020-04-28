@@ -101,7 +101,7 @@ struct IMURegisters {
    *  reads. */
   float gyr_temp_flt;
   /** Specifies the gyroscope temperature controller PWM. */
-  float gyr_temp_pwm;
+  unsigned char gyr_temp_pwm;
   /** Specifies the desired temperature of the gyroscope. */
   float gyr_desired_temp;
 };

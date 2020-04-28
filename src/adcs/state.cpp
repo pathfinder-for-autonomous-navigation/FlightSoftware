@@ -57,8 +57,8 @@ struct Registers volatile registers = {
     1.0f,               // Magnetometer filter
     1.0f,               // Gyroscope filter
     1.0f,               // Gyroscoope temperature filter
-    128,                  // Gyroscope temperature PWM, default 50% duty cycle
-    0.0f,               // Gyroscope desired temperature
+    117,                  // Gyroscope temperature PWM, default 50% duty cycle
+    4.2f,               // Gyroscope desired temperature
   },
   // HAVT Registers
   {
