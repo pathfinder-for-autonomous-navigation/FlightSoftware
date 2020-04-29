@@ -100,7 +100,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_mag_filter_f.set(1);
     imu_gyr_filter_f.set(1);
     imu_gyr_temp_filter_f.set(1);
-    imu_gyr_temp_pwm_f.set(128); // default 50% pwm
+    imu_gyr_temp_pwm_f.set(255); // default 100% pwm
     imu_gyr_temp_desired_f.set(20); // 20 degrees C
 }
 
