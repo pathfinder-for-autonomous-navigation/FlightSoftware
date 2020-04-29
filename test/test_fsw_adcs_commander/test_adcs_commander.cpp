@@ -117,7 +117,7 @@ void test_task_initialization()
     TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_mag_filter_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_filter_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_filter_fp->get(), 0);
-    TEST_ASSERT_EQUAL(tf.imu_gyr_temp_pwm_fp->get(), 128);
+    TEST_ASSERT_EQUAL(tf.imu_gyr_temp_pwm_fp->get(), 255);
     TEST_ASSERT_FLOAT_WITHIN(20, tf.imu_gyr_temp_desired_fp->get(), 0);
 
     // verify all initialized to false
