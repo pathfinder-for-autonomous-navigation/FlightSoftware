@@ -27,7 +27,9 @@ sbp_msg_callbacks_node_t Piksi::_user_data_callback_node;
 Piksi::Piksi(const std::string &name, HardwareSerial &serial_port)
     : Device(name), _serial_port(serial_port) {}
 #else
-Piksi::Piksi(const std::string &name) {}
+Piksi::Piksi(const std::string &name) {
+    _read_return = 2; // this is the no fix return condition
+}
 #endif
 
 

@@ -22,6 +22,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
+
     low_batt_fault_fp=registry.create_fault("gomspace.low_batt", 1);
     adcs_functional_fault_fp=registry.create_fault("adcs_monitor.functional_fault", 1);
     wheel1_adc_fault_fp=registry.create_fault("adcs_monitor.wheel1_fault", 1);
@@ -30,6 +31,9 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
     failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1);
     overpressured_fp=registry.create_fault("prop.overpressured", 1);
+
+    piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
+    last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
