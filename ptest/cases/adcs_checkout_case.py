@@ -61,17 +61,18 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.print_havt_read()
 
         # Note IMUGYR on left
+        # GYR_HEATER on right, default off
         # FC only
         fc_only_hitl   = "000000000000" + "0000000"
 
         # Just FC and ADCSC
-        barebones_hitl = "000111011100" + "0000001"
+        barebones_hitl = "000111011100" + "0000000"
 
         # FC + ADCSC + MAG1 + MAG2 + GYR
-        minimal_hitl   = "111111011100" + "0000001"
+        minimal_hitl   = "111111011100" + "0000000"
             
         # ONLY MAG 2 IS DOWN ON EDU SAT as of 04/06/2020
-        edu_sat        = "1101111111111" + "111111"
+        edu_sat        = "110111111111" + "1111110"
 
         test_beds = {fc_only_hitl:"FC ONLY HITL",barebones_hitl:"BAREBONES HITL", minimal_hitl:"MINIMAL HITL", edu_sat:"EDU SAT"}
 
