@@ -21,9 +21,10 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
     def shutdown(self):
 
         # Shutdown
-        self.ws("adcs_cmd.imu_gyr_temp_pwm", 24) # Arbitrary non default
-        self.ws("adcs_cmd.imu_gyr_temp_desired", 20) # Back to low temp
-        self.ws("adcs_cmd.havt_disable18", True) # disable heater
+        self.print_ws("adcs_cmd.imu_gyr_temp_pwm", 24) # Arbitrary non default
+        self.print_ws("adcs_cmd.imu_gyr_temp_desired", 20) # Back to low temp
+        self.print_ws("adcs_cmd.havt_disable18", True) # disable heater
+        self.cycle()
 
     def run_case_singlesat(self):
 
