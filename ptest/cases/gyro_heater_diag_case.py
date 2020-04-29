@@ -10,8 +10,10 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.ws("pan.state", self.mission_states.get_by_name("manual"))
         self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
         
-        self.ws("adcs_cmd.imu_gyr_temp_pwm", 254) # Arbitrary non default
-        self.ws("adcs_cmd.imu_gyr_temp_desired", 30) # High temp to let rise and fall
+        self.target = 40
+
+        self.ws("adcs_cmd.imu_gyr_temp_pwm", 255) # Arbitrary non default
+        self.ws("adcs_cmd.imu_gyr_temp_desired", 40) # High temp to let rise and fall
 
         self.ws("cycle.auto", False) # turn off auto cycle in case it was on
         self.cycle()
@@ -19,7 +21,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
     def shutdown(self):
 
         # Shutdown
-        self.ws("adcs_cmd.imu_gyr_temp_pwm", 88) # Arbitrary non default
+        self.ws("adcs_cmd.imu_gyr_temp_pwm", 24) # Arbitrary non default
         self.ws("adcs_cmd.imu_gyr_temp_desired", 20) # Back to low temp
         self.ws("adcs_cmd.havt_disable18", True) # disable heater
 
@@ -63,7 +65,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         # User please watch screen, and observe temp
         start_time = time.time()
 
-        while time.time() - start_time < 60*5: # 5 mins
+        while time.time() - start_time < 60*2: # 5 mins
             elapse = time.time() - start_time
             self.logger.put(f"TIME ELAPSE (s): {elapse}")
             self.print_rs("pan.cycle_no")
@@ -86,7 +88,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
                 self.shutdown()
                 raise TestCaseFailure("DEVICE FAILED MID TEST")
 
-            if temp_reading < 18 or temp_reading > 38:
+            if temp_reading < 18 or temp_reading > self.target + 5:
                 self.shuutdown()
                 raise TestCaseFailure("TEMP READING OUTTA BOUNDS")
 
@@ -102,7 +104,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
         self.shutdown()
 
-        delta = 5 # 5 deg diff accepted?
+        delta = 3 # 5 deg diff accepted?
         
         if target_temp - delta > final_temp or target_temp + delta < final_temp:
             self.logger.put("") 
