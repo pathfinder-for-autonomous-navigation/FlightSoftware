@@ -117,7 +117,7 @@ lin::Vector3f gyr_rd = lin::zeros<float, 3, 1>();
 float gyr_temp_rd = 0.0f;
 
 static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
-    float gyr_temp_pwm) {
+    unsigned char gyr_temp_pwm) {
   lin::Vector3f data;
   float temp_data;
 
@@ -144,18 +144,22 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
 
   // Command the gyroscope heater
   if(gyr_heater.is_functional()){
+
+    // assuming analogWriteResolution is 15 bits:
+    int int_pwm = gyr_temp_pwm * 128; // maps 256 max to 32768
+
     LOG_TRACE_header
     LOG_TRACE_print("Heater Actual: " + String(gyr_temp_rd))
     LOG_TRACE_print(" Target: " + String(gyr_temp_target))
-    LOG_TRACE_print(" PWM: " + String(gyr_temp_pwm))
+    LOG_TRACE_print(" PWM: " + String(int_pwm))
 
     if(gyr_temp_rd >= gyr_temp_target){
       LOG_TRACE_printlnF(" Heater: OFF")
-      gyr_heater.actuate(gyr_temp_pwm, false); // if at target don't heat
+      gyr_heater.actuate(int_pwm, false); // if at target don't heat
     }
     else{
       LOG_TRACE_printlnF(" Heater: ON")
-      gyr_heater.actuate(gyr_temp_pwm, true); // heat if we're below target
+      gyr_heater.actuate(int_pwm, true); // heat if we're below target
     }
   }
   else
@@ -222,6 +226,9 @@ void setup() {
     LOG_ERROR_printlnF("Gyroscope initialization failed")
   }
 #endif
+
+  // needed so gyro_heater works with mtrs
+  analogWriteResolution(15);
 
   gyr_heater.setup(gyr_heater_pin);
   pinMode(gyr_heater_pin, OUTPUT);

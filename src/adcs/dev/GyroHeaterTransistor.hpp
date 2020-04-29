@@ -33,7 +33,7 @@ class GyroHeaterTransistor : public Device {
   virtual void disable() override;
 
   /** Pwms the pin with the given pwm iff on is true. */
-  void actuate(unsigned char pwm, bool on);
+  void actuate(const int pwm, bool on);
 
  private:
   /** Connected pin. */
