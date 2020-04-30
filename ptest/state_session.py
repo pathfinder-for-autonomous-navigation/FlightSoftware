@@ -8,6 +8,7 @@ import queue
 import os
 import pty
 import subprocess
+import glob
 
 from .data_consumers import Datastore, Logger
 
@@ -426,6 +427,36 @@ class StateSession(object):
         else: 
             if os.path.exists("telem.json"): os.remove("telem.json") 
             return False
+
+    def parsetelem(self):
+        #get newest file
+        telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
+        try:
+            newest_telem_file = max(telem_files, key=os.path.basename)
+        except ValueError:
+            return "No telemetry to parse."
+        self.console.write((newest_telem_file+"\n").encode())
+        telem_json_data = json.loads(self.console.readline().rstrip())
+        if telem_json_data is not None:
+                telem_json_data = telem_json_data["data"]
+        return telem_json_data
+    
+    def dbtelem(self):
+        jsonObj = self.parsetelem()
+        if not isinstance(jsonObj, dict):
+            print(jsonObj)
+            return False
+        failed = False
+        for field in jsonObj:
+            value = jsonObj[field]
+            data=json.dumps({
+            field: value,
+            "time": str(datetime.now().isoformat())
+            })
+            res = self.es.index(index='statefield_report_'+str(self.imei), doc_type='report', body=data)
+            if not res['result'] == 'created':
+                failed = True
+        return not failed
 
     def override_state(self, field, *args, **kwargs):
         '''

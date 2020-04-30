@@ -55,13 +55,6 @@ ptest_config_schema = {
                     "server": { "type": "string" },
                     "port": { "type": "string" }
                 }
-            },
-            "elasticsearch" : {
-                "type" : "dict",
-                "schema": {
-                    "server": { "type": "string" },
-                    "port": { "type": "string" }
-                }
             }
         }
     }
