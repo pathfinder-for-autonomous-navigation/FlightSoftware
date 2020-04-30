@@ -6,6 +6,7 @@ import time
 min_num_cycles = 1202
 class PropStateMachineCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
+        self.sim.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
         self.sim.flight_controller.write_state(
             "pan.state", self.mission_states.get_by_name("manual"))
         self.sim.flight_controller.write_state(
@@ -204,6 +205,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
             
     def test_disabled_to_idle(self):
         print("[TESTCASE] test_disabled_to_idle: manually setting prop to idle")
+        assert self.read_state("dcdc.SpikeDock_cmd") == "true"
         self.state = self.prop_states.get_by_name("idle")
         self.cycle()
         assert self.state == str(self.prop_states.get_by_name("idle")), "[TESTCASE] failed: state != idle"
