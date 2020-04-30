@@ -529,10 +529,11 @@ prop_state_t PropState_Firing::evaluate()
 
 bool PropState_Firing::is_schedule_empty() const
 {
-    sched_valve1_f.set(Tank2.get_schedule_at(0));
-    sched_valve2_f.set(Tank2.get_schedule_at(1));
-    sched_valve3_f.set(Tank2.get_schedule_at(2));
-    sched_valve4_f.set(Tank2.get_schedule_at(3));
+    // Technically this is not necessarily but is useful for testing
+    controller->sched_valve1_f.set(Tank2.get_schedule_at(0));
+    controller->sched_valve2_f.set(Tank2.get_schedule_at(1));
+    controller->sched_valve3_f.set(Tank2.get_schedule_at(2));
+    controller->sched_valve4_f.set(Tank2.get_schedule_at(3));
     unsigned int remain = 0;
     for (size_t i = 0; i < 4; ++i)
         remain += Tank2.get_schedule_at(i);
