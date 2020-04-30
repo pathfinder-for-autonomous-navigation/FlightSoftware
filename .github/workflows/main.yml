@@ -24,4 +24,4 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Setup TMate session
-      uses: mxschmitt/action-tmate@v2 
+      uses: mxschmitt/action-tmate@v2
