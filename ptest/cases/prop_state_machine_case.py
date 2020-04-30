@@ -170,7 +170,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
 
     @property
     def min_num_cycles(self):
-        return  (self.ctrl_cycles_per_filling + self.ctrl_cycles_per_cooling)*self.max_pressurizing_cycles
+        return  (int(self.ctrl_cycles_per_filling) + int(self.ctrl_cycles_per_cooling))*int(self.max_pressurizing_cycles)
 
     # Note: It takes 1202 cycles to pressurize 20 cycles
     def fake_pressure(self, i):
@@ -188,10 +188,12 @@ class PropStateMachineCase(SingleSatOnlyCase):
 
     # Step the state machine (maximum of max_cycles) until prop.state changes
     # Return the number of cycles
-    def cycle_until_change(self, verbose=False, max_cycles=min_num_cycles):
+    def cycle_until_change(self, verbose=False, max_cycles=0):
+        if max_cycles == 0:
+            max_cycles = self.min_num_cycles
         old_state = self.state
         self.print_object()
-        for i in range(max_cycles):
+        for i in range(int(max_cycles)):
 
             self.fake_pressure(i)
             self.fake_cycles_until_firing(i)
@@ -221,7 +223,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
         self.sched_valve2 = 700
         self.sched_valve3 = 800
         self.sched_valve4 = 400
-        self.cycles_until_firing = min_num_cycles + 2
+        self.cycles_until_firing = int(self.min_num_cycles) + 2
         self.cycle()
         assert self.state == str(self.prop_states.get_by_name("await_pressurizing")), "[TESTCASE] failed: state != await_pressurizing" 
         
