@@ -155,11 +155,11 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
 
     if(gyr_temp_rd >= gyr_temp_target){
       LOG_TRACE_printlnF(" Heater: OFF")
-      gyr_heater.actuate(int_pwm, false); // if at target don't heat
+      gyr_heater.actuate(0); // if at target don't heat
     }
     else{
       LOG_TRACE_printlnF(" Heater: ON")
-      gyr_heater.actuate(int_pwm, true); // heat if we're below target
+      gyr_heater.actuate(int_pwm); // heat if we're below target
     }
   }
   else
@@ -233,13 +233,6 @@ void setup() {
   gyr_heater.setup(gyr_heater_pin);
   pinMode(gyr_heater_pin, OUTPUT);
   gyr_heater.disable(); // disable on boot
-
-#if LOG_LEVEL >= LOG_LEVEL_ERROR
-  if (!gyr_heater.is_functional()) {
-    LOG_ERROR_header
-    LOG_ERROR_printlnF("Gyro Heater initialization failed")
-  }
-#endif
 
   LOG_INFO_header
   LOG_INFO_printlnF("Complete")

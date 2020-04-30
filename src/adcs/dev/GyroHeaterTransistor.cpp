@@ -33,13 +33,9 @@ void GyroHeaterTransistor::disable() {
   this->Device::disable();
 }
 
-void GyroHeaterTransistor::actuate(const int pwm, const bool on) {
+void GyroHeaterTransistor::actuate(const int pwm) {
   // assuming device is on
-  if(on)
-    analogWrite(this->pin, pwm);
-  else
-    analogWrite(this->pin, 0);
-  
+  analogWrite(this->pin, pwm);
 }
 
 }  // namespace dev

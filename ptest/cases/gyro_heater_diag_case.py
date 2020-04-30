@@ -66,7 +66,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         # User please watch screen, and observe temp
         start_time = time.time()
 
-        while time.time() - start_time < 60*2: # 5 mins
+        while time.time() - start_time < 60*2: # 2 mins
             elapse = time.time() - start_time
             self.logger.put(f"TIME ELAPSE (s): {elapse}")
             self.print_rs("pan.cycle_no")
@@ -105,7 +105,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
         self.shutdown()
 
-        delta = 3 # 5 deg diff accepted?
+        delta = 1 # 1 degree of delta accepted
         
         if target_temp - delta > final_temp or target_temp + delta < final_temp:
             self.logger.put("") 

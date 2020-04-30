@@ -4,6 +4,7 @@
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
+//   Shihao Cao sfc72@cornell.edu
 //
 // Pathfinder for Autonomous Navigation
 // Space Systems Design Studio

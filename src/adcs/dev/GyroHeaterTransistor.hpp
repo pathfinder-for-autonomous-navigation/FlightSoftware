@@ -32,8 +32,8 @@ class GyroHeaterTransistor : public Device {
   /** Sets pwm to 0 and disables the heater.*/
   virtual void disable() override;
 
-  /** Pwms the pin with the given pwm iff on is true. */
-  void actuate(const int pwm, bool on);
+  /** Pwms the pin with the given pwm. */
+  void actuate(const int pwm);
 
  private:
   /** Connected pin. */
