@@ -8,30 +8,19 @@
  * Implementation Info:
  * - millisecond to control cycle count conversions take the floor operator - change this by changing the constexprs
  * - There is no going from Pressurizing directly to Firing
- *
  */
 
 // Forward declaration of PropState classes
 class PropState;
-
 class PropState_Disabled;
-
 class PropState_Idle;
-
 class PropState_AwaitPressurizing;
-
 class PropState_Pressurizing;
-
 class PropState_AwaitFiring;
-
 class PropState_Firing;
-
 class PropState_Venting;
-
 class PropState_HandlingFault;
-
 class PropState_Manual;
-
 class PropController : public TimedControlTask<void>
 {
 public:
@@ -92,8 +81,7 @@ public:
 
     bool validate_schedule();
 
-    // Minimum of cycles needed to prepare for firing time - schedule cannot be set to any value lower than this
-    //  20 filling + 19 coolings (because of the fence rule) + 1
+    // Minimum of cycles needed to prepare for firing time
     unsigned int min_cycles_needed() const;
 
     // Return true if Tank2 is at threshold pressure
@@ -165,12 +153,9 @@ class CountdownTimer
 {
 public:
     bool is_timer_zero() const;
-
     // Sets the timer (does not check whether the timer is free)
     void set_timer_cc(size_t num_control_cycles);
-
     void reset_timer();
-
     void tick();
 
 private:
@@ -223,11 +208,8 @@ class PropState_Disabled : public PropState
 {
 public:
     PropState_Disabled() : PropState(prop_state_t::disabled) {}
-
     bool can_enter() const override;
-
     void enter() override;
-
     prop_state_t evaluate() override;
 };
 
@@ -235,11 +217,8 @@ class PropState_Idle : public PropState
 {
 public:
     PropState_Idle() : PropState(prop_state_t::idle) {}
-
     bool can_enter() const override;
-
     void enter() override;
-
     prop_state_t evaluate() override;
 };
 
@@ -249,12 +228,73 @@ class PropState_AwaitPressurizing : public PropState
 {
 public:
     PropState_AwaitPressurizing() : PropState(prop_state_t::await_pressurizing) {}
-
     bool can_enter() const override;
-
     void enter() override;
-
     prop_state_t evaluate() override;
+};
+
+// This class abstracts the pressurizing behavior, which consists of pressurizing cycles.
+// In pressurizing behavior, we have pressurizing cycle, which consists of a filling period
+//      followed by a cooling period.
+//
+// In this class, we have open-close cycles, which consists of an open period
+//      followed by a close period.
+// In the open period, one of the Tank's valves is opened
+// In the close period, all of the Tank's valves are closed
+class ActionCycleOpenClose : public PropState
+{
+public:
+    ActionCycleOpenClose(prop_state_t my_state, Devices::Tank &_tank, prop_state_t _success_state, prop_state_t _fail_state) : PropState(my_state),
+                                                                                                                               tank(_tank),
+                                                                                                                               success_state(_success_state),
+                                                                                                                               fail_state(_fail_state) {}
+    void enter() override;
+    prop_state_t evaluate() override;
+
+protected:
+    // Methods and Fields in this section define the parameters of the OpenCloseCycle behavior
+
+    // Defines a success condition for which we should enter the success_state
+    virtual bool has_succeeded() const = 0;
+    // Defines a fail condition for which we should enter the fail_state
+    virtual bool has_failed() const = 0;
+    // Returns index of the valve that we should use in the upcoming "open" cycle
+    virtual size_t select_valve_index() = 0;
+    // Returns the number of control cycles for which the valve should be opened
+    virtual size_t get_ctrl_cycles_per_open_period() const = 0;
+    // Returns the number of control cycles for which all valves should be closed
+    virtual size_t get_ctrl_cycles_per_close_period() const = 0;
+    // Return the maximum number of open-close cycles permitted
+    // If we exceed this number, then handle_out_of_cycles() will be called
+    virtual size_t get_max_cycles() const = 0;
+    // Defines what we should do if we have executed for more than get_max_cycles()
+    // number of open-close cycles
+    virtual prop_state_t handle_out_of_cycles() = 0;
+    // Number of open-closed cycles that we have executed since last entering this state
+    size_t cycle_count = 0;
+
+private:
+    // The tank whose valves we will be opening
+    Devices::Tank &tank;
+    // The state to enter if has_succeeded() returns True
+    prop_state_t success_state;
+    // The state to enter if has_failed() returns True
+    prop_state_t fail_state;
+
+    // Called when we are in the open period (one of the Tank's selected
+    //      valves is currently open)
+    prop_state_t handle_valve_is_open();
+    // Called when we are in the close period (all valves closed)
+    prop_state_t handle_valve_is_close();
+    // Starts an open-close cycle
+    void start_cycle();
+
+    // The valve index of the valve that we will use in the upcoming or current open cycle
+    size_t cur_valve_index;
+    // Timer helps keep track of the number of control cycles since entering
+    // an open or close period
+    CountdownTimer countdown;
+    friend class PropController;
 };
 
 // A pressurizing cycle consists of a "filling" period and a "cooling period".
@@ -264,52 +304,40 @@ public:
 //      threshold pressure, then this is a fault
 // [ cc1 ][ cc2 ][ cc3 ][ cc4 ][ cc5 ][ cc6 ][ cc7 ] <-- control cycles
 // [    pressurize cycle (1s) ][    cool off time (10s)                    ...]
-class PropState_Pressurizing : public PropState
+class PropState_Pressurizing : public ActionCycleOpenClose
 {
 public:
-    PropState_Pressurizing() : PropState(prop_state_t::pressurizing), pressurizing_cycle_count(0) {}
+    PropState_Pressurizing() : ActionCycleOpenClose(prop_state_t::pressurizing, Tank1, prop_state_t::await_firing, prop_state_t::idle) {}
 
+protected:
     bool can_enter() const override;
-
-    void enter() override;
-
-    prop_state_t evaluate() override;
-
-private:
-    // Called when Tank1 valve is currently open
-    prop_state_t handle_valve_is_open();
-
-    // Called when Tank1 valve is currently closed
-    prop_state_t handle_valve_is_close();
-
+    // True if we have reached threshold pressure
+    // If the pressurize_failed fault is suppressed, then this is true, when
+    // we have executed max_cycles
+    bool has_succeeded() const override;
+    // True if schedule is no longer valid
+    bool has_failed() const override;
+    // Whether to use the primary or backup valve
+    size_t select_valve_index() override;
+    // The number of control cycles per filling period
+    size_t get_ctrl_cycles_per_open_period() const override;
+    // The number of control cycles per cooling period
+    size_t get_ctrl_cycles_per_close_period() const override;
+    // Maximum number of pressurizing cycles. If we exceed this, the pressurize_fail fault
+    // will be signaled
+    size_t get_max_cycles() const override;
     // Called when we have failed to reach threshold_pressure after maximum consecutive pressurizing cycles
     // First, signal pressurize_fail_fault_f. Then evaluate whether this fault has been suppressed by the ground.
     // If it has been suppressed, then continue to pressurize. Otherwise, set Prop to handling_fault
-    prop_state_t handle_pressurize_failed();
-
-    // Starts another pressurization cycle
-    void start_pressurize_cycle();
-
-    // 1 if we are using the backup valve and 0 otherwise
-    bool valve_num = false;
-    // Timer to time the 1s firing period and the 10s cooling period
-    CountdownTimer countdown;
-    // Number of pressurizing cycles since we last entered this state
-    //  If this number is >= 20, then signal pressurize failure fault
-    unsigned int pressurizing_cycle_count;
-
-    friend class PropController;
+    prop_state_t handle_out_of_cycles() override;
 };
 
 class PropState_Firing : public PropState
 {
 public:
     PropState_Firing() : PropState(prop_state_t::firing) {}
-
     bool can_enter() const override;
-
     void enter() override;
-
     prop_state_t evaluate() override;
 
 private:
@@ -321,11 +349,8 @@ class PropState_AwaitFiring : public PropState
 {
 public:
     PropState_AwaitFiring() : PropState(prop_state_t::await_firing) {}
-
     bool can_enter() const override;
-
     void enter() override;
-
     prop_state_t evaluate() override;
 
 private:
@@ -348,29 +373,6 @@ public:
 
 private:
     Devices::Tank &determine_faulted_tank();
-
-    // Called when Tank valve is currently open
-    prop_state_t handle_valve_is_open();
-
-    // Called when Tank valve is currently closed
-    prop_state_t handle_valve_is_close();
-
-    prop_state_t handle_vent_fail();
-
-    // Start venting cycle
-    void start_pressurize_cycle();
-
-    // Valve number to vent on
-    size_t valve_num = 0;
-
-    // Timer to time the 1s valve open period and the 10s valve close period
-    CountdownTimer countdown;
-
-    // Number of pressurizing cycles since we last entered this state
-    //  If this number is >= 20, then signal pressurize failure fault
-    unsigned int venting_cycle_count;
-
-    friend class PropController;
 };
 
 // HandlingFault consists of autonomous responses to perceived hardware faults
@@ -378,11 +380,8 @@ class PropState_HandlingFault : public PropState
 {
 public:
     PropState_HandlingFault() : PropState(prop_state_t::handling_fault) {}
-
     bool can_enter() const override;
-
     void enter() override;
-
     prop_state_t evaluate() override;
 
     void handle_pressure_too_high();
@@ -396,10 +395,7 @@ class PropState_Manual : public PropState
 {
 public:
     PropState_Manual() : PropState(prop_state_t::manual) {}
-
     bool can_enter() const override;
-
     void enter() override;
-
     prop_state_t evaluate() override;
 };

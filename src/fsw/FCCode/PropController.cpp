@@ -89,8 +89,8 @@ PropState_AwaitPressurizing PropController::state_await_pressurizing;
 PropState_Pressurizing PropController::state_pressurizing;
 PropState_AwaitFiring PropController::state_await_firing;
 PropState_Firing PropController::state_firing;
-PropState_Venting PropController::state_venting = state_venting;
-PropState_HandlingFault PropController::state_handling_fault = PropState_HandlingFault();
+PropState_Venting PropController::state_venting;
+PropState_HandlingFault PropController::state_handling_fault;
 PropState_Manual PropController::state_manual;
 
 void PropController::execute()
@@ -177,8 +177,8 @@ PropState &PropController::get_state(prop_state_t state) const
         return state_await_firing;
     case prop_state_t::firing:
         return state_firing;
-        // case prop_state_t::venting:
-        //     return state_venting;
+    case prop_state_t::venting:
+        return state_venting;
     case prop_state_t::handling_fault:
         return state_handling_fault;
     case prop_state_t::manual:
@@ -324,6 +324,72 @@ prop_state_t PropState_AwaitPressurizing::evaluate()
 }
 
 // ------------------------------------------------------------------------
+// PropState ActionCycleOpenClose
+// ------------------------------------------------------------------------
+
+void ActionCycleOpenClose::enter()
+{
+    DD("==> entered ActionCycleOpenClose\n");
+    cur_valve_index = select_valve_index();
+    cycle_count = 0;
+    countdown.reset_timer();
+}
+
+prop_state_t ActionCycleOpenClose::evaluate()
+{
+    // Tick the clock
+    countdown.tick();
+    if (has_succeeded())
+    {
+        DD("\tTank has achieved goal\n");
+        PropulsionSystem.close_valve(tank, cur_valve_index);
+        return success_state;
+    }
+    if (has_failed())
+        return fail_state;
+
+    if (tank.is_valve_open(cur_valve_index))
+    {
+        return handle_valve_is_open();
+    }
+    else
+    {
+        return handle_valve_is_close();
+    }
+}
+
+prop_state_t ActionCycleOpenClose::handle_valve_is_open()
+{
+    // If 1 second has past since we opened the valve, then close the valve
+    if (countdown.is_timer_zero())
+    {
+        PropulsionSystem.close_valve(tank, cur_valve_index);
+        countdown.set_timer_cc(get_ctrl_cycles_per_close_period());
+    }
+    return this_state;
+}
+
+prop_state_t ActionCycleOpenClose::handle_valve_is_close()
+{
+    if (countdown.is_timer_zero())
+    {
+        if (cycle_count >= get_max_cycles())
+            return handle_out_of_cycles();
+
+        start_cycle();
+    }
+    return this_state;
+}
+
+void ActionCycleOpenClose::start_cycle()
+{
+    cycle_count++;
+    cur_valve_index = select_valve_index();
+    PropulsionSystem.open_valve(tank, cur_valve_index);
+    countdown.set_timer_cc(get_ctrl_cycles_per_open_period());
+}
+
+// ------------------------------------------------------------------------
 // PropState Pressurizing
 // ------------------------------------------------------------------------
 
@@ -341,87 +407,37 @@ bool PropState_Pressurizing::can_enter() const
            is_schedule_valid;
 }
 
-void PropState_Pressurizing::enter()
+bool PropState_Pressurizing::has_succeeded() const
 {
-    DD("==> entered PropState_Pressurizing\n");
-    // Set which Tank1 valve to use (default: valve_num = 0)
-    valve_num = controller->tank1_valve.get();
-    // Reset the pressurizing cycles count to 0
-    pressurizing_cycle_count = 0;
-    // Reset timer to 0 (just in case)
-    countdown.reset_timer();
+    return controller->is_at_threshold_pressure();
 }
 
-prop_state_t PropState_Pressurizing::evaluate()
+bool PropState_Pressurizing::has_failed() const
 {
-    // Tick the clock
-    countdown.tick();
-    // Case 1: Tank2 is at threshold pressure
-    if (controller->is_at_threshold_pressure())
-    {
-        DD("\tTank2 is at threshold pressure!\n");
-        PropulsionSystem.close_valve(Tank1, valve_num);
-        if (controller->can_enter_state(prop_state_t::await_firing))
-        {
-            return prop_state_t::await_firing;
-        }
-        else
-        {
-            // TODO: sure want to disable?
-            DD("\tproblem: entered disabled (%u cycles until firing)!\n", controller->cycles_until_firing.get());
-            return prop_state_t::disabled;
-        }
-    }
-    // Case 2: Tank2 is not at threshold pressure
-    if (Tank1.is_valve_open(valve_num))
-    {
-        return handle_valve_is_open();
-    }
-    else
-    {
-        return handle_valve_is_close();
-    }
+    return !controller->validate_schedule();
 }
 
-prop_state_t PropState_Pressurizing::handle_valve_is_open()
+size_t PropState_Pressurizing::select_valve_index()
 {
-    // If 1 second has past since we opened the valve, then close the valve
-    if (countdown.is_timer_zero())
-    {
-        PropulsionSystem.close_valve(Tank1, valve_num);
-        countdown.set_timer_cc(controller->ctrl_cycles_per_cooling_period.get());
-    }
-    return this_state;
+    return controller->tank1_valve.get();
 }
 
-prop_state_t PropState_Pressurizing::handle_valve_is_close()
+size_t PropState_Pressurizing::get_ctrl_cycles_per_open_period() const
 {
-    // If we are here, then we are not at threshold pressure.
-
-    if (!controller->validate_schedule())
-    {
-        DD("\t==> No more cycles left. Going to idle\n");
-        return prop_state_t::idle;
-    }
-    // If we have have pressurized for more than max_pressurizing_cycles
-    //      then signal fault
-    if (pressurizing_cycle_count >= controller->max_pressurizing_cycles.get())
-    {
-        // Pressurize_failed event happens at the end of the 20th cooling cycle
-        if (countdown.is_timer_zero())
-            return handle_pressurize_failed();
-    }
-    // If we are not on 10s cooldown, then start pressurizing again
-    else if (countdown.is_timer_zero())
-    {
-        start_pressurize_cycle();
-        return this_state;
-    }
-    // Else just chill
-    return this_state;
+    return controller->ctrl_cycles_per_filling_period.get();
 }
 
-prop_state_t PropState_Pressurizing::handle_pressurize_failed()
+size_t PropState_Pressurizing::get_ctrl_cycles_per_close_period() const
+{
+    return controller->ctrl_cycles_per_cooling_period.get();
+}
+
+size_t PropState_Pressurizing::get_max_cycles() const
+{
+    return controller->max_pressurizing_cycles.get();
+}
+
+prop_state_t PropState_Pressurizing::handle_out_of_cycles()
 {
     DD("\tPressurize Failed!\n");
     controller->pressurize_fail_fault_f.signal();
@@ -432,20 +448,108 @@ prop_state_t PropState_Pressurizing::handle_pressurize_failed()
     }
     // If the fault is suppressed,
     // then we remain in this state and continue trying to pressurize until we run out of time
-    pressurizing_cycle_count = 0;
+    cycle_count = 0;
     return this_state;
 }
 
-void PropState_Pressurizing::start_pressurize_cycle()
-{
-    pressurizing_cycle_count++;
-    DD("\tStarting pressurizing cycle: %d.\n\t\t%d cycles until firing!\n", pressurizing_cycle_count,
-       controller->cycles_until_firing.get());
-    // Open the valve and set the timer to 1 second
-    PropulsionSystem.open_valve(Tank1, valve_num);
-    // Round normal
-    countdown.set_timer_cc(controller->ctrl_cycles_per_filling_period.get());
-}
+// void PropState_Pressurizing::enter()
+// {
+//     DD("==> entered PropState_Pressurizing\n");
+//     // Set which Tank1 valve to use (default: valve_num = 0)
+//     valve_num = controller->tank1_valve.get();
+//     // Reset the pressurizing cycles count to 0
+//     pressurizing_cycle_count = 0;
+//     // Reset timer to 0 (just in case)
+//     countdown.reset_timer();
+// }
+
+// prop_state_t PropState_Pressurizing::evaluate()
+// {
+//     // Tick the clock
+//     countdown.tick();
+//     // Case 1: Tank2 is at threshold pressure
+//     if (controller->is_at_threshold_pressure())
+//     {
+//         DD("\tTank2 is at threshold pressure!\n");
+//         PropulsionSystem.close_valve(Tank1, valve_num);
+
+//         // Should always be able to enter await_firing
+//         return prop_state_t::await_firing;
+//     }
+//     // If we failed while in this state
+//     if (!controller->validate_schedule())
+//     {
+//         DD("\t==> No more cycles left. Going to idle\n");
+//         return prop_state_t::idle;
+//     }
+//     // Case 2: Tank2 is not at threshold pressure
+//     if (Tank1.is_valve_open(valve_num))
+//     {
+//         return handle_valve_is_open();
+//     }
+//     else
+//     {
+//         return handle_valve_is_close();
+//     }
+// }
+
+// prop_state_t PropState_Pressurizing::handle_valve_is_open()
+// {
+//     // If 1 second has past since we opened the valve, then close the valve
+//     if (countdown.is_timer_zero())
+//     {
+//         PropulsionSystem.close_valve(Tank1, valve_num);
+//         countdown.set_timer_cc(controller->ctrl_cycles_per_cooling_period.get());
+//     }
+//     return this_state;
+// }
+
+// prop_state_t PropState_Pressurizing::handle_valve_is_close()
+// {
+//     // If we are here, then we are not at threshold pressure.
+//     // If we have have pressurized for more than max_pressurizing_cycles
+//     //      then signal fault
+//     if (pressurizing_cycle_count >= controller->max_pressurizing_cycles.get())
+//     {
+//         // Pressurize_failed event happens at the end of the 20th cooling cycle
+//         if (countdown.is_timer_zero())
+//             return handle_pressurize_failed();
+//     }
+//     // If we are not on 10s cooldown, then start pressurizing again
+//     else if (countdown.is_timer_zero())
+//     {
+//         start_pressurize_cycle();
+//         return this_state;
+//     }
+//     // Else just chill
+//     return this_state;
+// }
+
+// prop_state_t PropState_Pressurizing::handle_pressurize_failed()
+// {
+//     DD("\tPressurize Failed!\n");
+//     controller->pressurize_fail_fault_f.signal();
+//     if (controller->pressurize_fail_fault_f.is_faulted())
+//     {
+//         // Go to handling_fault
+//         return prop_state_t::handling_fault;
+//     }
+//     // If the fault is suppressed,
+//     // then we remain in this state and continue trying to pressurize until we run out of time
+//     pressurizing_cycle_count = 0;
+//     return this_state;
+// }
+
+// void PropState_Pressurizing::start_pressurize_cycle()
+// {
+//     pressurizing_cycle_count++;
+//     DD("\tStarting pressurizing cycle: %d.\n\t\t%d cycles until firing!\n", pressurizing_cycle_count,
+//        controller->cycles_until_firing.get());
+//     // Open the valve and set the timer to 1 second
+//     PropulsionSystem.open_valve(Tank1, valve_num);
+//     // Round normal
+//     countdown.set_timer_cc(controller->ctrl_cycles_per_filling_period.get());
+// }
 
 // ------------------------------------------------------------------------
 // PropState Await Firing
@@ -453,8 +557,7 @@ void PropState_Pressurizing::start_pressurize_cycle()
 
 bool PropState_AwaitFiring::can_enter() const
 {
-    bool was_pressurizing = controller->check_current_state(prop_state_t::pressurizing);
-    return (was_pressurizing && controller->is_at_threshold_pressure() && controller->validate_schedule());
+    return controller->validate_schedule();
 }
 
 void PropState_AwaitFiring::enter()
@@ -575,45 +678,38 @@ void PropState_HandlingFault::handle_tank2_temp_too_high()
 // PropState Venting
 // ------------------------------------------------------------------------
 
-void PropState_Venting::can_enter() const
+bool PropState_Venting::can_enter() const
 {
-    return overpressure_fault_f.is_faulted() || tank1_temp_high_fault_f.is_faulted() || tank2_temp_high_fault_f.is_faulted();
+    return controller->overpressure_fault_f.is_faulted() || controller->tank1_temp_high_fault_f.is_faulted() || controller->tank2_temp_high_fault_f.is_faulted();
 }
 
 void PropState_Venting::enter()
 {
     DD("==> entered PropState_Venting\n");
-    venting_cycle_count = 0;
-    countdown.reset_timer();
+    // venting_cycle_count = 0;
+    // countdown.reset_timer();
     // Must decide which Tank to vent
 }
 
 prop_state_t PropState_Venting::evaluate()
 {
+    return this_state;
 }
 
-Devices::Tank &determine_faulted_tank()
+Devices::Tank &PropState_Venting::determine_faulted_tank()
 {
-    // Decision rules: if both Tank1 and Tank2 have high temperatures
-    // then first vent the Tank with the higher temperature
+    // Decision rules: Choose which Tank to vent first
+    // Tank1_temp | Tank2_temp | Tank2_pressure | Decision
+    //      1           1             1            return Tank2
+    //      1           1             0            return Tank1
+    //      1           0             1            return Tank2
 
-    if (tank1_temp_high_fault_f.is_faulted() && tank2_temp_high_fault_f.is_fault)
-    {
-        // TODO
-        // This assumes that temperature sensors do not break
-        return (tank1_temp_f.get() > tank2_temp_f.get()) ? Tank1 : Tank2;
-    }
-    else
-    {
-        if (tank1_temp_high_fault_f.is_faulted())
-        {
-            return Tank1;
-        }
-        else
-        {
-            return Tank2;
-        }
-    }
+    // If Tank1 temp is not faulted, then the problem must be with Tank2
+    // Also, if Tank2 pressure is faulted then vent Tank2 first
+    if (!controller->tank1_temp_high_fault_f.is_faulted() || controller->overpressure_fault_f.is_faulted())
+        return Tank2;
+
+    return Tank1;
 }
 
 // ------------------------------------------------------------------------
