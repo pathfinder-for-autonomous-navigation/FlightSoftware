@@ -11,8 +11,6 @@ import subprocess
 import glob
 import os
 import pty
-from elasticsearch import Elasticsearch
-
 
 from .data_consumers import Datastore, Logger
 
@@ -29,7 +27,7 @@ class RadioSession(object):
     '''
 
 
-    def __init__(self, device_name, imei, simulation_run_dir, tlm_config, downlink_parser_filepath):
+    def __init__(self, device_name, imei, simulation_run_dir, tlm_config):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -45,19 +43,6 @@ class RadioSession(object):
         #email
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
-
-        #Start downlink parser. Compile it if it is not available.
-        if not os.path.exists(downlink_parser_filepath):
-            print("Compiling the downlink parser.")
-            os.system("pio run -e gsw_downlink_parser > /dev/null")
-
-        master_fd, slave_fd = pty.openpty()
-        self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
-        self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
-        self.telem_save_dir = simulation_run_dir
-
-        # Open a connection to elasticsearch
-        self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
 
     def read_state(self, field, timeout=None):
         '''
