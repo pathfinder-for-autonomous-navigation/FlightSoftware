@@ -1,7 +1,7 @@
 #ifndef TEST_FAULT_HANDLERS_HPP_
 #define TEST_FAULT_HANDLERS_HPP_
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #undef isnan
 #undef isinf
 #include "../StateFieldRegistryMock.hpp"

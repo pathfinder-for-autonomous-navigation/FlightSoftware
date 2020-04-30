@@ -4,7 +4,7 @@
 #include <fsw/FCCode/AttitudeComputer.hpp>
 #include <fsw/FCCode/adcs_state_t.enum>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <gnc/constants.hpp>
 
 constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();

@@ -1,7 +1,7 @@
 
 #ifndef PROP_COMMON_H_
 #define PROP_COMMON_H_
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <Arduino.h>
 #include <fsw/FCCode/Drivers/PropulsionSystem.hpp>
 #define ASSERT_TRUE(x, msg){UNITY_TEST_ASSERT((x), __LINE__, msg);}

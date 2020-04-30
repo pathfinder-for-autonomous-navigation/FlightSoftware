@@ -1,4 +1,4 @@
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 #include <fsw/FCCode/Drivers/PropulsionSystem.hpp>
 #include <fsw/FCCode/PropController.hpp>

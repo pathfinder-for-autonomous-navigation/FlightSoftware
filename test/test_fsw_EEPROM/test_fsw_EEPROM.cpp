@@ -2,7 +2,7 @@
 
 #include <fsw/FCCode/EEPROMController.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 #ifdef DESKTOP
     #include <json.hpp>

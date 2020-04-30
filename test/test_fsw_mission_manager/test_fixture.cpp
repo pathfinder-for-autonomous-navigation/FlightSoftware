@@ -1,6 +1,6 @@
 #include "test_fixture.hpp"
 #include "../FaultHandlerMachineMock.hpp"
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <limits>
 
 TestFixture::TestFixture(mission_state_t initial_state) : registry() {

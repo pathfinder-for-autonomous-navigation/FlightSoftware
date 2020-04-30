@@ -4,7 +4,7 @@
 #include <fsw/FCCode/UplinkConsumer.h>
 
 #include <common/bitstream.h>
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <map>
 
 using namespace std;

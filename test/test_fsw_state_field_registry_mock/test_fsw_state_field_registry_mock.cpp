@@ -1,6 +1,6 @@
 #include "../StateFieldRegistryMock.hpp"
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 void test_valid_initialization() {
     StateFieldRegistryMock registry; 
