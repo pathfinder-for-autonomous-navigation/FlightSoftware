@@ -265,14 +265,16 @@ class SingleSatOnlyCase(Case):
         ret = self.rs(name)
         self.logger.put(f"{name} is {ret}")
         return ret
-
+    
     def ws(self, name, val):
         '''
-        Writes a state, and also confirms that the read command matches the applied state.
+        Writes a state
         '''
         self.sim.flight_controller.write_state(name, val)
-        read_val = self.rs(name)
-        assert(read_val == val), f"Write state not applied, expected: {val}, got {read_val} instead"
+
+    def print_ws(self, name, val):
+        self.logger.put(f"{name} set to: {val}")
+        self.ws(name, val)
 
     def print_header(self, title):
         self.logger.put("\n"+title+"\n")

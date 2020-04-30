@@ -498,7 +498,7 @@ void PropState_Firing::enter()
 prop_state_t PropState_Firing::evaluate()
 {
     DD("==> PropState_Firing is evaluating\n");
-    ∂ if (is_schedule_empty())
+    if (is_schedule_empty())
     {
         PropulsionSystem.disable();
         DD("==> schedule is now empty\n");
@@ -512,13 +512,12 @@ prop_state_t PropState_Firing::evaluate()
 
 bool PropState_Firing::is_schedule_empty() const
 {
+    controller->sched_valve1_f.set(Tank2.get_schedule_at(0));
+    controller->sched_valve2_f.set(Tank2.get_schedule_at(1));
+    controller->sched_valve3_f.set(Tank2.get_schedule_at(2));
+    controller->sched_valve4_f.set(Tank2.get_schedule_at(3));
     unsigned int remain = 0;
-    sched_valve1_f.set(Tank2.get_schedule_at(1));
-    sched_valve1_f.set(Tank2.get_schedule_at(2));
-    sched_valve1_f.set(Tank2.get_schedule_at(3));
-    sched_valve1_f.set(Tank2.get_schedule_at(4));
     for (size_t i = 0; i < 4; ++i)
-
         remain += Tank2.get_schedule_at(i);
     return remain == 0;
 }
