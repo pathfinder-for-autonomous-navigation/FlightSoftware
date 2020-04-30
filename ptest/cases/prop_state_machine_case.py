@@ -176,7 +176,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
         # If we are pressurizing and we've pressurized for 100 cycles, then pretend we made it
         if self.state == str(self.prop_states.get_by_name("pressurizing")):
             if i > 100: 
-                self.threshold_firing_pressure = 26
+                self.tank2_pressure = 26
     
     def fake_cycles_until_firing(self, i):
         if self.state == str(self.prop_states.get_by_name("await_firing")):
