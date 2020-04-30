@@ -98,13 +98,9 @@ PropState_Manual PropController::state_manual;
 
 void PropController::execute()
 {
-
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
         cycles_until_firing.set(cycles_until_firing.get() - 1);
-
-    // Check the sensors for faults and signal those faults (if any)
-    check_faults();
 
     // We can only enter Handling_Fault if at least one Fault is faulted.
     if (state_handling_fault.can_enter())
@@ -138,6 +134,9 @@ void PropController::execute()
     tank2_pressure_f.set(Tank2.get_pressure());
     tank2_temp_f.set(Tank2.get_temp());
     tank1_temp_f.set(Tank1.get_temp());
+
+    // Check the sensors for faults and signal those faults (if any)
+    check_faults();
 }
 
 void PropController::check_faults()
@@ -529,11 +528,10 @@ prop_state_t PropState_Firing::evaluate()
 
 bool PropState_Firing::is_schedule_empty() const
 {
-    // Technically this is not necessarily but is useful for testing
-    // controller->sched_valve1_f.set(Tank2.get_schedule_at(0));
-    // controller->sched_valve2_f.set(Tank2.get_schedule_at(1));
-    // controller->sched_valve3_f.set(Tank2.get_schedule_at(2));
-    // controller->sched_valve4_f.set(Tank2.get_schedule_at(3));
+    controller->sched_valve1_f.set(Tank2.get_schedule_at(0));
+    controller->sched_valve2_f.set(Tank2.get_schedule_at(1));
+    controller->sched_valve3_f.set(Tank2.get_schedule_at(2));
+    controller->sched_valve4_f.set(Tank2.get_schedule_at(3));
     unsigned int remain = 0;
     for (size_t i = 0; i < 4; ++i)
         remain += Tank2.get_schedule_at(i);
