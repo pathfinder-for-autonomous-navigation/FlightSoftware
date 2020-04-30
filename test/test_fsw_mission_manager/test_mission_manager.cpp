@@ -1,4 +1,6 @@
 #include <unity.h>
+#undef isnan
+#undef isinf
 #include "test_fixture.hpp"
 #include <fsw/FCCode/constants.hpp>
 #include <adcs/constants.hpp>
