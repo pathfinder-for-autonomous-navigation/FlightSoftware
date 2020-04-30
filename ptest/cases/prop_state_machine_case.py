@@ -171,18 +171,17 @@ class PropStateMachineCase(SingleSatOnlyCase):
 
     # Note: It takes 1202 cycles to pressurize 20 cycles
 
-    def fake_pressure(self):
+    def fake_pressure(self, i):
         # If we are pressurizing and we've pressurized for 100 cycles, then pretend we made it
         if self.state == str(self.prop_states.get_by_name("pressurizing")):
             if i > 100: 
-                self.tank2_pressure(26)
+                self.threshold_firing_pressure = 12
     
-    def fake_cycles_until_firing(self):
+    def fake_cycles_until_firing(self, i):
         if self.state == str(self.prop_states.get_by_name("await_firing")):
         # If we are in 5th cycle of await_firing, then tell prop that we gonna fire soon
             if  i == 5:
-                self.cycles_until_firing(5)
-            self.tank2_pressure(26) # Keep writing 26 so that firing doesn't get confused
+                self.cycles_until_firing = 5
 
     # Step the state machine (maximum of max_cycles) until prop.state changes
     # Return the number of cycles
@@ -191,8 +190,8 @@ class PropStateMachineCase(SingleSatOnlyCase):
         self.print_object()
         for i in range(max_cycles):
 
-            self.fake_pressure()
-            self.fake_cycles_until_firing()
+            self.fake_pressure(i)
+            self.fake_cycles_until_firing(i)
 
             if self.state != old_state:
                 return str(i)
