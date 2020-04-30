@@ -1,30 +1,22 @@
 # ADCSCheckoutCase. Verifies the functionality of the ADCS.
 from .base import SingleSatOnlyCase, TestCaseFailure
 import math
+import time
 
-def mag_of(vals):
+def abs_of(list_of_vals):
     '''
-    Returns the magnitude of a list of vals 
-    by taking the square root of the sum of the square of the components.
+    Given a list of values, take the absolute value of each value
     '''
-    assert(type(vals) is list)
-    return math.sqrt(sum([x*x for x in vals]))
+    return [abs(x) for x in list_of_vals]
 
-def sum_of_differentials(lists_of_vals):
+def list_of_avgs(lists_of_vals):
     '''
-    Given a list of list of vals, return the sum of all the differentials from one list to the next.
-
-    Returns a val.
-
-    Ex: sum_of_differentials([[1,1,1],[1,2,3],[1,2,2]]) evaluates to 4
+    Given a list of lists of vals, return a list of the average value of each list.
     '''
-    total_diff = [0 for x in lists_of_vals[0]]
-    for i in range(len(lists_of_vals) - 1):
-        diff = [abs(lists_of_vals[i][j] - lists_of_vals[i+1][j]) for j in range(len(lists_of_vals[i]))]
-        total_diff = [diff[x] + total_diff[x] for x in range(len(total_diff))]
+    sum_of_each = [sum(x) for x in lists_of_vals]
+    len_of_each = len(lists_of_vals[0])
+    return [sum_of_each[i]/len_of_each for y in lists_of_vals]    
 
-    return sum(total_diff)
-    
 class ADCSCheckoutCase(SingleSatOnlyCase):
 
     @property
@@ -33,6 +25,15 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         for x in range(self.havt_length):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
+
+    def assert_vec_within(self, expected, actual, delta):
+        assert(len(expected) == len(actual))
+        length = len(expected)
+
+        for i in range(length):
+            self.soft_assert(abs(expected[i]-actual[i]) < delta, 
+                f"Element #{i}, Expected {expected[i]}, got {actual[i]}. Diff exceed delta of {delta}.")
+
 
     def print_havt_read(self):
         binary_list = [1 if x else 0 for x in self.havt_read]
@@ -50,6 +51,8 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
     def setup_case_singlesat(self):
         self.print_header("Begin ADCS Checkout Case")
+
+        self.ws("cycle.auto", False)
 
         # Needed so that ADCSMonitor updates its values
         self.cycle()
@@ -150,13 +153,13 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # earth's mag field is between 25 to 65 microteslas - Wikipedia
         self.logger.put(f"MAG{mag_num} readings: ")
         for i in range(10):
-            mag = mag_of(list_of_mag_rds[i])
+            mag = self.mag_of(list_of_mag_rds[i])
             self.logger.put(f"{list_of_mag_rds[i]}, mag: {mag}")
             self.soft_assert((25e-6 < mag and mag < 65e-6),
                 f"MAG{mag_num} reading out of expected (earth) bounds.")
 
         # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_mag_rds) > 0,
+        self.soft_assert(self.sum_of_differentials(list_of_mag_rds) > 0,
             f"MAG{mag_num} readings did not vary across readings.")
 
         self.print_header(f"MAG{mag_num} CHECKOUT COMPLETE")
@@ -204,7 +207,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # for each reading check, magnitude bounds
         self.logger.put("GYR readings: ")
         for i in range(10):
-            mag = mag_of(list_of_gyr_rds[i])
+            mag = self.mag_of(list_of_gyr_rds[i])
             self.logger.put(f"{list_of_gyr_rds[i]}, mag: {mag}")
             # 3.8 is approximately the maximum possible magnitude GYR reading.
             # 125 * 0.017 = max_rd_omega
@@ -213,10 +216,139 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
                 "Gyr reading out of expected bounds.")
 
         # check readings changed over time
-        self.soft_assert(sum_of_differentials(list_of_gyr_rds) > 0,
+        self.soft_assert(self.sum_of_differentials(list_of_gyr_rds) > 0,
             "Gyr readings did not vary across readings.")
 
         self.print_header("GYR CHECKOUT COMPLETE")
+
+    def wheel_checkout(self):
+        '''
+        Check that wheels respond to speed and torque tests as expected
+        '''
+        self.print_header("BEGIN WHEEL CHECKOUT")
+        
+        self.logger.put("Checking RWA POT functionality:")
+
+        self.ws("cycle.auto", True)
+
+        # The below section checks that wheel speed readings change over time 
+        # and are of expected magnitude
+        self.ws("adcs_cmd.rwa_speed_cmd", [10, 10, 10])
+        time.sleep(.2)
+        self.print_rs("adcs_monitor.rwa_speed_rd")
+
+        # perform 10 readings.
+        list_of_speed_rds = []
+        for i in range(10):
+            cn = self.rs("pan.cycle_no")
+            reading = [self.rs("adcs_monitor.rwa_speed_rd")]
+            list_of_speed_rds += reading
+            self.logger.put(f"Cycle No: {cn}, Speed Vec: {reading}")
+            
+        # check readings changed over time
+        self.soft_assert(self.sum_of_differentials(list_of_speed_rds) > 0,
+            "Pot readings did not vary across readings.")        
+
+        reading = self.rs("adcs_monitor.rwa_speed_rd")
+        self.assert_vec_within([10, 10, 10], reading, 4)
+
+        # Begin Stress Testing Various Speeds
+
+        wheel_speed_tests = [
+            [20,40,50],
+            [100,200,300],
+            [-100,100,-40],
+            [100,50,10],
+            [500,500,500],
+            [680,680,680], 
+            [-680,-680,-680]
+        ]
+
+        for cmd_array in wheel_speed_tests:
+            self.print_rs("gomspace.vbatt")
+            self.logger.put("ADCS_CMD TARGET SPEED: ")
+            self.print_ws("adcs_cmd.rwa_speed_cmd", cmd_array)
+            time.sleep(5)
+            reading = self.print_rs("adcs_monitor.rwa_speed_rd")
+            self.assert_vec_within(cmd_array, reading, 1)
+            time.sleep(1)
+
+        # "Stop" Wheels
+        self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
+        time.sleep(1)
+
+        # Begin Torque Stress Test
+
+        torque_max = 0.00418
+        x = 0.0001
+        y = 0.002
+        z = torque_max
+        torque_tests = [
+            [x, 0, 0],
+            [0, x, 0],
+            [0, 0, x],
+            [-x, 0, 0],
+            [0, -x, 0],
+            [0, 0, -x],
+            [y, 0, 0],
+            [0, y, 0],
+            [0, 0, y],
+            [-y, 0, 0],
+            [0, -y, 0],
+            [0, 0, -y],
+            [z, 0, 0],
+            [0, z, 0],
+            [0, 0, z],
+            [-z, 0, 0],
+            [0, -z, 0],
+            [0, 0, -z],
+            [y, y, y],
+            [-y, -y, -y]
+        ]
+
+        self.print_header("TORQUE TESTS: ")
+
+        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
+
+        for cmd_array in torque_tests:
+
+            self.print_rs("gomspace.vbatt")
+            self.print_rs("adcs_monitor.rwa_speed_rd")
+            self.logger.put("ADCS_CMD TARGET TORQUE: ")
+            self.print_ws("adcs_cmd.rwa_torque_cmd", cmd_array)
+            time.sleep(1)
+            reading = self.print_rs("adcs_monitor.rwa_torque_rd")
+            self.print_rs("adcs_monitor.rwa_speed_rd")
+            self.assert_vec_within(abs_of(cmd_array), abs_of(reading), .1)
+            self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
+            self.logger.put("")
+            time.sleep(1)
+
+        # Shut down procedure
+        self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
+        time.sleep(1)
+        self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
+        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
+        time.sleep(1)
+
+        self.ws("cycle.auto", False)
+
+        self.print_header("WHEEL CHECKOUT COMPLETE")
+
+    def ssa_checkout(self):
+        '''
+        Prints out all the voltages of each sun sensor, check that they change over time
+        '''
+        list_of_voltages = []
+        for i in range(10):
+            voltages = []
+            for i in range(0, 20):
+                reading = self.print_rs(f"adcs_monitor.ssa_voltage{i}")
+                voltages += [reading]
+            list_of_voltages += [voltages]
+        # check readings changed over time
+        self.soft_assert(self.sum_of_differentials(list_of_voltages) > 0,
+            "SSA voltage readings did not vary across readings.") 
 
     def run_case_singlesat(self):
         
@@ -247,8 +379,15 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # Run checks on GYR if GYR is up.
         if self.rs("adcs_monitor.havt_device0"):
             self.gyr_checkout()
+        
+        # Run wheel checks if the RWAPOT is up.
+        rwa_pot_num = self.havt_devices.get_by_name("RWA_POT")
+        if self.rs(f"adcs_monitor.havt_device{rwa_pot_num}"):
+            self.wheel_checkout()
 
+        self.ssa_checkout()
 
+        self.print_rs("gomspace.vbatt")
         # TODO FURTHER CHECKOUTS
 
         self.print_header("ADCS CHECKOUT COMPLETE")
