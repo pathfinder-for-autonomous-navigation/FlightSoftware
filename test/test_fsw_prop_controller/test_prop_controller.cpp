@@ -275,9 +275,11 @@ void test_vent_outer_tank()
     tf.step(4);
     simulate_overpressured();
     tf.step(2);
+    tf.step(10);
     check_state(prop_state_t::handling_fault);
     tf.step();
     check_state(prop_state_t::venting);
+    TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
     TEST_ASSERT_TRUE(0);
 }
 
@@ -289,9 +291,11 @@ void test_vent_inner_tank()
     tf.step(1);
     simulate_tank1_high();
     tf.step(2);
+    tf.step(10);
     check_state(prop_state_t::handling_fault);
     tf.step();
     check_state(prop_state_t::venting);
+    TEST_ASSERT_TRUE(Tank1.is_valve_open(1));
     TEST_ASSERT_TRUE(0);
 }
 

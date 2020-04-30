@@ -150,7 +150,7 @@ private:
     static PropState_Pressurizing state_pressurizing;
     static PropState_AwaitFiring state_await_firing;
     static PropState_Firing state_firing;
-    // static PropState_Venting state_venting;
+    static PropState_Venting state_venting;
     static PropState_HandlingFault state_handling_fault;
     static PropState_Manual state_manual;
 };
@@ -333,9 +333,10 @@ private:
     bool is_time_to_fire() const;
 };
 
+// Two versions of venting: The venting response is basically just the
+// pessurizing response
 class PropState_Venting : public PropState
 {
-    // TODO: not yet implemented nor used
 public:
     PropState_Venting() : PropState(prop_state_t::venting) {}
 
@@ -344,6 +345,32 @@ public:
     void enter() override;
 
     prop_state_t evaluate() override;
+
+private:
+    Devices::Tank &determine_faulted_tank();
+
+    // Called when Tank valve is currently open
+    prop_state_t handle_valve_is_open();
+
+    // Called when Tank valve is currently closed
+    prop_state_t handle_valve_is_close();
+
+    prop_state_t handle_vent_fail();
+
+    // Start venting cycle
+    void start_pressurize_cycle();
+
+    // Valve number to vent on
+    size_t valve_num = 0;
+
+    // Timer to time the 1s valve open period and the 10s valve close period
+    CountdownTimer countdown;
+
+    // Number of pressurizing cycles since we last entered this state
+    //  If this number is >= 20, then signal pressurize failure fault
+    unsigned int venting_cycle_count;
+
+    friend class PropController;
 };
 
 // HandlingFault consists of autonomous responses to perceived hardware faults

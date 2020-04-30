@@ -32,10 +32,10 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
 
       // We must trust the pressure sensor.
       pressurize_fail_fault_f("prop.pressurize_fail", 0),
-      overpressure_fault_f("prop.overpressured", 0),
+      overpressure_fault_f("prop.overpressured", 10),
 
-      tank2_temp_high_fault_f("prop.tank2_temp_high", 0),
-      tank1_temp_high_fault_f("prop.tank1_temp_high", 0)
+      tank2_temp_high_fault_f("prop.tank2_temp_high", 10),
+      tank1_temp_high_fault_f("prop.tank1_temp_high", 10)
 {
 
     PropulsionSystem.setup();
@@ -89,7 +89,7 @@ PropState_AwaitPressurizing PropController::state_await_pressurizing;
 PropState_Pressurizing PropController::state_pressurizing;
 PropState_AwaitFiring PropController::state_await_firing;
 PropState_Firing PropController::state_firing;
-// PropState_Venting PropController::state_venting = PropState_Venting();
+PropState_Venting PropController::state_venting = state_venting;
 PropState_HandlingFault PropController::state_handling_fault = PropState_HandlingFault();
 PropState_Manual PropController::state_manual;
 
@@ -498,7 +498,7 @@ void PropState_Firing::enter()
 prop_state_t PropState_Firing::evaluate()
 {
     DD("==> PropState_Firing is evaluating\n");
-    if (is_schedule_empty())
+    ∂ if (is_schedule_empty())
     {
         PropulsionSystem.disable();
         DD("==> schedule is now empty\n");
@@ -513,7 +513,12 @@ prop_state_t PropState_Firing::evaluate()
 bool PropState_Firing::is_schedule_empty() const
 {
     unsigned int remain = 0;
+    sched_valve1_f.set(Tank2.get_schedule_at(1));
+    sched_valve1_f.set(Tank2.get_schedule_at(2));
+    sched_valve1_f.set(Tank2.get_schedule_at(3));
+    sched_valve1_f.set(Tank2.get_schedule_at(4));
     for (size_t i = 0; i < 4; ++i)
+
         remain += Tank2.get_schedule_at(i);
     return remain == 0;
 }
@@ -566,6 +571,50 @@ void PropState_HandlingFault::handle_tank1_temp_too_high()
 void PropState_HandlingFault::handle_tank2_temp_too_high()
 {
     DD("==> Handling Tank2 Temp Too High\n");
+}
+// ------------------------------------------------------------------------
+// PropState Venting
+// ------------------------------------------------------------------------
+
+void PropState_Venting::can_enter() const
+{
+    return overpressure_fault_f.is_faulted() || tank1_temp_high_fault_f.is_faulted() || tank2_temp_high_fault_f.is_faulted();
+}
+
+void PropState_Venting::enter()
+{
+    DD("==> entered PropState_Venting\n");
+    venting_cycle_count = 0;
+    countdown.reset_timer();
+    // Must decide which Tank to vent
+}
+
+prop_state_t PropState_Venting::evaluate()
+{
+}
+
+Devices::Tank &determine_faulted_tank()
+{
+    // Decision rules: if both Tank1 and Tank2 have high temperatures
+    // then first vent the Tank with the higher temperature
+
+    if (tank1_temp_high_fault_f.is_faulted() && tank2_temp_high_fault_f.is_fault)
+    {
+        // TODO
+        // This assumes that temperature sensors do not break
+        return (tank1_temp_f.get() > tank2_temp_f.get()) ? Tank1 : Tank2;
+    }
+    else
+    {
+        if (tank1_temp_high_fault_f.is_faulted())
+        {
+            return Tank1;
+        }
+        else
+        {
+            return Tank2;
+        }
+    }
 }
 
 // ------------------------------------------------------------------------
