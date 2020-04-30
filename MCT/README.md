@@ -5,18 +5,18 @@ This Mission control API uses the visual elements of the openMCT data visualizat
 The openMCT web server is run using the **"npm start"** command in terminal after navigating to the /MCT directory and installing the node.js modules with **"npm install"**.
 
 In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the openMCT display.
-![Object Tree](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/object-tree.png)
+![Object Tree](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/batteryinfo_mct/MCT/images/object-tree.png)
 
 # Setting up a new Taxonomy or Telemetry point
 In this implementation a Taxonomy point is defined as an object that containts a collection of telemetry points. (ex. a spacecraft object) A new Taxonomy point is created using the *openmct.objects.addRoot( )* function, which takes a javascript object as a parameter.
 
 This is modeled below with our satellite object with namespace 'sat.taxonomy' and a key 'spacecraft'.
-![addRoot function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/add-Root.png)
+![addRoot function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/batteryinfo_mct/MCT/images/add-Root.png)
 
 A new Telemetry point is added after a Taxonomy point is added and serves as the child object to the root (the satellite). This object is added using the openmct.objects.addType( ) function which also takes a JS object as a parameter.
 
 In the example below, we have a name and description field for the object and also a cssClass field which allows it to be displayed on the openmct visualization.
-![addType function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/add-Type.png)
+![addType function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/batteryinfo_mct/MCT/images/add-Type.png)
 
 
 
@@ -82,3 +82,6 @@ The generateTelemetry( ) function is the most important method of spacecraft.js 
 This function takes a measurement of spacecraft state, stores it in history{ }, and notifies listeners[ ] using the *Spacecraft.prototype.notify* function.
 
 **Battery.js** represents the gomspace battery object and creates battery telemetry that is sent to specific telemetry points as defined in telemetry reviews.
+
+#Full telemetry diagram
+![Telemetry diagram](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/batteryinfo_mct/MCT/images/telemetry-diagram.PNG)
