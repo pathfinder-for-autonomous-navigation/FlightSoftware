@@ -30,7 +30,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     mission_state_f("pan.state", Serializer<unsigned char>(12), 10),
     is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32), 500),
-    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100)
+    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100),
+    enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -44,6 +45,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     add_readable_field(is_deployed_f);
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
+    add_internal_field(enter_close_approach_ccno_f);
 
     main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
@@ -64,19 +66,19 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
     low_batt_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("gomspace.low_batt", __FILE__, __LINE__));
+            find_writable_field<bool>("gomspace.low_batt.base", __FILE__, __LINE__));
     adcs_functional_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.functional_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.functional_fault.base", __FILE__, __LINE__));
     wheel1_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel1_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__));
     wheel2_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel2_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__));
     wheel3_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel3_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__));
     wheel_pot_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel_pot_fault", __FILE__, __LINE__));
+            find_writable_field<bool>("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__));
     failed_pressurize_fp = static_cast<Fault*>(
-            find_writable_field<bool>("prop.failed_pressurize", __FILE__, __LINE__));
+            find_writable_field<bool>("prop.failed_pressurize.base", __FILE__, __LINE__));
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -316,6 +318,9 @@ bool MissionManager::too_long_in_docking() const {
 void MissionManager::set(mission_state_t state) {
     if (state == mission_state_t::safehold) {
         safehold_begin_ccno = control_cycle_count;
+    }
+    if (state == mission_state_t::leader_close_approach || state == mission_state_t::follower_close_approach) {
+        enter_close_approach_ccno_f.set(control_cycle_count);
     }
     mission_state_f.set(static_cast<unsigned char>(state));
 }

@@ -1,8 +1,3 @@
-# Confidential Information/Configs
-radio_keys.json
-server_keys.json
-flask_keys.json
-
 # PTest Temporary Files
 logs/
 geograv_wrapper.mexmaci64
@@ -165,10 +160,10 @@ build.txt
 build.log
 
 # Clion temporary files
-.idea/
+.idea
 cmake*
 CMakeListsPrivate.txt
 CMakeLists.txt
-
 # Temporary EEPROM file created by HOOTL
 eeprom.json
+

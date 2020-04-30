@@ -60,7 +60,7 @@ class ControlTask : protected debug_console {
                         field_name.c_str());
                 #endif
             #else
-                #ifdef FUNCTIONAL_TEST
+                #ifndef FLIGHT
                 printf(debug_severity::error, "Field \"%s\" is already in the registry.",
                     field_name.c_str());
                 #endif

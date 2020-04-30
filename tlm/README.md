@@ -1,6 +1,6 @@
-# GROUND SOFTWARE
+# Telemetry Software
 
-Ground Software will store/index all telemetry coming from the Iridium email account 
+Telemetry Software will store/index all telemetry coming from the Iridium email account 
 using a Flask server connected to ElasticSearch. Telemetry will be stored in two 
 different indexes in ElasticSearch
 
@@ -16,12 +16,12 @@ reading the most updated statefield variables.
 # Installing and Running
 
 Flask Server:
-1. Create and activate a virtualenv within this directory.
-    - For Mac and Linux: `python3 -m virtualenv venv; source venv/bin/activate`
-    - For Windows: `python -m virtualenv venv`, followed by `venv\Scripts\activate`.
-2. Install the requirements: `pip install -r requirements.txt`
-3. To run the server, type `python main.py` in the terminal
-4. To view the SwaggerUI API, type `http://127.0.0.1:5000/swagger/` in your browser
+Do all of the following from the root FlightSoftware directory.
+
+1. Install and activate the virtual environment.
+2. To run the server, type `python -m tlm` in the terminal. The call can be configured;
+   see the argument parser in `__main__.py` to see how.
+3. To view the SwaggerUI API, type `http://127.0.0.1:5000/swagger/` in your browser
 
 ElasticSearch:
 1. Install Java and Homebrew on your computer
@@ -32,7 +32,7 @@ ElasticSearch:
 
 Kibana:
 1. Install Java and Homebrew on your computer
-2. Install ElasticSearch
+2. Install Kibana
     - For Mac: `brew install kibana`
 3. To run Kibana, open a terminal and type `kibana`
 4. Type `http://localhost:5601` in your browser to view the Kibana interface

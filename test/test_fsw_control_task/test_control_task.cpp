@@ -53,7 +53,7 @@ void test_task_find() {
 
     // Finding a fault should work.
     registry.add_fault(&fault);
-    TEST_ASSERT_NOT_NULL(task.find_fault("fault", __FILE__, __LINE__));
+    TEST_ASSERT_NOT_NULL(task.find_fault("fault.base", __FILE__, __LINE__));
 
     // Finding an event should work.
     registry.add_event(&event);
@@ -81,7 +81,7 @@ void test_task_add() {
 
     // Adding a fault should work
     task.add_fault(fault);
-    TEST_ASSERT_NOT_NULL(registry.find_fault_t("fault"));
+    TEST_ASSERT_NOT_NULL(registry.find_fault_t("fault.base"));
 
     // Adding an event should work
     task.add_event(event);
