@@ -25,7 +25,7 @@ class StateSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, simulation_run_dir, uplink_producer_filepath, downlink_parser_filepath):
+    def __init__(self, device_name, simulation_run_dir):
         '''
         Initializes state session with a device.
         '''
@@ -40,6 +40,7 @@ class StateSession(object):
         self.telem_save_dir = simulation_run_dir
 
         #Start downlink parser. Compile it if it is not available.
+        downlink_parser_filepath = ".pio/build/gsw_downlink_parser/program" 
         if not os.path.exists(downlink_parser_filepath):
             print("Compiling the downlink parser.")
             os.system("pio run -e gsw_downlink_parser > /dev/null")
@@ -56,6 +57,7 @@ class StateSession(object):
         self.overriden_variables = set()
 
         # Open a subprocess to Uplink Producer. Compile it if it is not available.
+        uplink_producer_filepath = ".pio/build/gsw_uplink_producer/program" 
         if not os.path.exists(uplink_producer_filepath):
             print("Compiling the uplink producer.")
             os.system("pio run -e gsw_uplink_producer > /dev/null")
@@ -465,9 +467,9 @@ class StateSession(object):
             value = jsonObj[field]
             data=json.dumps({
             field: value,
-                "time": str(datetime.now().isoformat())
+                "time": str(datetime.datetime.now().isoformat())
             })
-            res = self.es.index(index='statefield_report_'+str(self.device_name), doc_type='report', body=data)
+            res = self.es.index(index='statefield_report_'+str(self.device_name.lower()), doc_type='report', body=data)
             if not res['result'] == 'created':
                 failed = True
         return not failed
@@ -501,6 +503,7 @@ class StateSession(object):
         self.check_msgs_thread.join()
         self.console.close()
         self.uplink_console.close()
+        self.dp_console.close()
 
         self.datastore.stop()
         self.logger.stop()

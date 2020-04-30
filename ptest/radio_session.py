@@ -108,6 +108,3 @@ class RadioSession(object):
         print(
             f' - Terminating console connection to and saving logging/telemetry data for radio connection to {self.device_name}.'
         )
-
-        # End threads if there was actually a connection to the radio
-        self.console.close()
