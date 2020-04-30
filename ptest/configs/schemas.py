@@ -1,7 +1,7 @@
 import sys
 from cerberus import Validator
 
-config_schema = {
+ptest_config_schema = {
     "seed" : {"type" : "integer"},
     "single_sat_sim" : {"type": "boolean"},
     "uplink_producer_filepath" : {"type": "string"},
@@ -28,6 +28,7 @@ config_schema = {
                     "dependencies" : {"run_mode" : ["teensy"]},
                     "excludes" : "binary_filepath"
                 },
+                "port" : {"type" : "string"}
             }
         }
     },
@@ -38,23 +39,31 @@ config_schema = {
             "schema" : {
                 "connected_device" : {"type" : "string"},
                 "imei" : {"type" : "string"},
-                "connect" : {"type" : "boolean"}
+                "connect" : {"type" : "boolean"},
+                "port" : {"type" : "string"}
+            }
+        },
+    },
+    "tlm" : {
+        "type" : "dict",
+        "schema" : {
+            "email_username" : {"type" : "string"},
+            "email_password" : {"type" : "string"},
+            "webservice" : {
+                "type" : "dict",
+                "schema": {
+                    "server": { "type": "string" },
+                    "port": { "type": "string" }
+                }
+            },
+            "elasticsearch" : {
+                "type" : "dict",
+                "schema": {
+                    "server": { "type": "string" },
+                    "port": { "type": "string" }
+                }
             }
         }
-    }
-}
-
-radio_keys_schema = {
-    "email_username" : {"type" : "string"},
-    "email_password" : {"type" : "string"}
-}
-
-flask_keys_schema = {
-    "server": {
-        "type": "string"
-    },
-    "port": {
-        "type": "string"
     }
 }
 

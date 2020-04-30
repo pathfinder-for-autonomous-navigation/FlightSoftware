@@ -188,6 +188,11 @@ class MissionManager : public TimedControlTask<void> {
      */
     WritableStateField<unsigned char> sat_designation_f;
 
+    /**
+     * @brief The cycle at which we enter the close approach state
+     */
+    InternalStateField<unsigned int> enter_close_approach_ccno_f;
+
    private:
     /**
      * @brief Computes magnitude of baseline position vector.
