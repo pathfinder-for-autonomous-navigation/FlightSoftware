@@ -2,6 +2,8 @@
 #define TEST_FAULT_HANDLERS_HPP_
 
 #include <unity.h>
+#undef isnan
+#undef isinf
 #include "../StateFieldRegistryMock.hpp"
 
 void test_fault_machine_mock();
