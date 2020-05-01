@@ -15,7 +15,8 @@ class AttitudeEstimator : public TimedControlTask<void> {
     /**
      * @brief Construct a new Attitude Estimator.
      * 
-     * @param registry 
+     * @param registry
+     * @param offset
      */
     AttitudeEstimator(StateFieldRegistry& registry, unsigned int offset);
 
@@ -49,13 +50,13 @@ class AttitudeEstimator : public TimedControlTask<void> {
     /** @brief Angular rate reading in the body frame (randians per second).
      *  
      *  Input taken rom the ADCSBoxMonitor. */
-    const ReadableStateField<lin::Vector3f> gyr_vec_fp;
+    ReadableStateField<lin::Vector3f> const *const gyr_vec_fp;
 
     /** @brief Selects which magnetometer to, by default, read from.
      *
      *  If the selected magnetometer doesn't present a reading on a given control
      *  cycle, the other magnetometer will be polled. */
-    WriteableStateField<bool> mag_flag_f;
+    WritableStateField<bool> mag_flag_f;
 
     /** @brief Estimated attitude quaternion.
      *

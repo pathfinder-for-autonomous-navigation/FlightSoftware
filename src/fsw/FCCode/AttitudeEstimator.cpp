@@ -16,18 +16,24 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     mag1_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag1_vec)),
     mag2_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag2_vec)),
     ssa_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.ssa_vec)),
+    gyr_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.gyr_vec)),
     mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>()),
     q_body_eci_est_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
-    w_body_est_f("attitude_estimator.w_body", Serializer<lin::Vector3f>(-55, 55, 32*3)),
-    fro_P_est_f("attitude_estimator.fro_P"),
-    data(),
-    state(),
-    estimate()
+    w_body_est_f("attitude_estimator.w_body", Serializer<lin::Vector3f>(-55, 55, 32*3)), // TODO : Fix this as well
+    fro_P_est_f("attitude_estimator.fro_P", Serializer<float>(0.0, 100.0, 16)) // TODO : Fix this
     {
+        //Writable fields
+        add_writable_field(mag_flag_f);
+
         //Add outputs
         add_readable_field(q_body_eci_est_f);
         add_readable_field(w_body_est_f);
-        add_internal_field(fro_P_est_f);
+        add_readable_field(fro_P_est_f);
+
+        // Default the gnc buffer
+        state = gnc::AttitudeEstimatorState();
+        data = gnc::AttitudeEstimatorData();
+        estimate = gnc::AttitudeEstimate();
     }
 
 void AttitudeEstimator::execute(){
@@ -53,12 +59,12 @@ void AttitudeEstimator::execute(){
         data.w_body = w_body;
 
         // Update the filter
-        gnc::attitude_estimate_update(state, data, estimate);
+        gnc::attitude_estimator_update(state, data, estimate);
 
         // Copy out the valid estimate
         if (estimate.is_valid) {
             q_body_eci_est_f.set(estimate.q_body_eci);
-            w_body_est_f.set((w_body - estimate.gyr_bias).eval());
+            w_body_est_f.set((w_body - estimate.gyro_bias).eval());
             fro_P_est_f.set(lin::fro(estimate.P));
         }
         // Handle an invalid estimate
@@ -78,5 +84,5 @@ void AttitudeEstimator::execute(){
 void AttitudeEstimator::_nan_estimate() {
     q_body_eci_est_f.set(lin::nans<lin::Vector4f>());
     w_body_est_f.set(lin::nans<lin::Vector3f>());
-    fro_P_est_f.set(gnc::nan_f);
+    fro_P_est_f.set(gnc::constant::nan_f);
 }
