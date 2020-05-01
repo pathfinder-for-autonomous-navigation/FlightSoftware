@@ -174,4 +174,4 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Passed")
 
     def get_mission_mode(self, mode):
-        return str(self.mission_states.get_by_name(mode))
+        return str(self.mission_states[mode])

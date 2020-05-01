@@ -4,7 +4,7 @@
 #include <fsw/FCCode/QuakeManager.h>
 #include <fsw/FCCode/radio_state_t.enum>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 // Check that radio state x matches the current radio state
 #define assert_radio_state(x) {\

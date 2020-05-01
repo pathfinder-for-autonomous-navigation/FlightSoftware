@@ -125,7 +125,7 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_manual();
 
     // Fields required for control of prop subsystem.
-    ReadableStateField<unsigned char>* prop_state_fp;
+    WritableStateField<unsigned int>* prop_state_fp;
 
     // Fields required for control of ADCS subsystem.
     /**
@@ -136,11 +136,6 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Current angular momentum of ADCS system in the body frame.
      **/
     InternalStateField<lin::Vector3f>* adcs_ang_momentum_fp;
-    /**
-     * @brief Field created by AttitudeEstimator that tracks if the satellites
-     * should be treated as paired when computing attitude-related variables.
-     */
-    WritableStateField<bool>* adcs_paired_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
     const ReadableStateField<lin::Vector3d>* propagated_baseline_pos_fp; // Propagated baseline position
@@ -162,7 +157,7 @@ class MissionManager : public TimedControlTask<void> {
     Fault* wheel3_adc_fault_fp;
     Fault* wheel_pot_fault_fp;
     // Flag for if propulsion failed to pressurize.
-    Fault* failed_pressurize_fp;
+    Fault* pressurize_fail_fp;
 
     /**
      * @brief Radio's mode.

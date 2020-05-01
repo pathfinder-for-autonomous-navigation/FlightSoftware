@@ -38,12 +38,6 @@
             "type": "lin float vector",
             "writable": true
         },
-        "adcs.paired": {
-            "bitsize": 1,
-            "flow_id": 13,
-            "type": "bool",
-            "writable": true
-        },
         "adcs.state": {
             "bitsize": 4,
             "flow_id": 13,
@@ -1630,36 +1624,36 @@
             "type": "unsigned int",
             "writable": true
         },
-        "prop.failed_pressurize.base": {
-            "bitsize": 1,
-            "flow_id": 5,
-            "type": "bool",
-            "writable": true
-        },
-        "prop.failed_pressurize.override": {
-            "bitsize": 1,
-            "flow_id": 5,
-            "type": "bool",
-            "writable": true
-        },
-        "prop.failed_pressurize.persistence": {
-            "bitsize": 16,
-            "flow_id": 5,
-            "max": 65535,
+        "prop.ctrl_cycles_per_cooling": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
             "min": 0,
             "type": "unsigned int",
             "writable": true
         },
-        "prop.failed_pressurize.suppress": {
-            "bitsize": 1,
-            "flow_id": 5,
-            "type": "bool",
+        "prop.ctrl_cycles_per_filling": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
             "writable": true
         },
-        "prop.failed_pressurize.unsignal": {
-            "bitsize": 1,
-            "flow_id": 5,
-            "type": "bool",
+        "prop.cycles_until_firing": {
+            "bitsize": 9,
+            "flow_id": "undefined",
+            "max": 256,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.max_pressurizing_cycles": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
             "writable": true
         },
         "prop.overpressured.base": {
@@ -1694,13 +1688,197 @@
             "type": "bool",
             "writable": true
         },
-        "prop.state": {
+        "prop.pressurize_fail.base": {
             "bitsize": 1,
             "flow_id": 5,
+            "type": "bool",
+            "writable": true
+        },
+        "prop.pressurize_fail.override": {
+            "bitsize": 1,
+            "flow_id": 5,
+            "type": "bool",
+            "writable": true
+        },
+        "prop.pressurize_fail.persistence": {
+            "bitsize": 16,
+            "flow_id": 5,
+            "max": 65535,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.pressurize_fail.suppress": {
+            "bitsize": 1,
+            "flow_id": 5,
+            "type": "bool",
+            "writable": true
+        },
+        "prop.pressurize_fail.unsignal": {
+            "bitsize": 1,
+            "flow_id": 5,
+            "type": "bool",
+            "writable": true
+        },
+        "prop.sched_intertank1": {
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 999000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_intertank2": {
+            "bitsize": 20,
+            "flow_id": "undefined",
+            "max": 999000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_valve1": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 999,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_valve2": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 999,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_valve3": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 999,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.sched_valve4": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 999,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.state": {
+            "bitsize": 3,
+            "flow_id": 5,
+            "max": 6,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.tank1.temp": {
+            "bitsize": 4,
+            "flow_id": "undefined",
+            "max": 200.0,
+            "min": -200.0,
+            "type": "float",
+            "writable": false
+        },
+        "prop.tank1.valve_choice": {
+            "bitsize": 1,
+            "flow_id": "undefined",
             "max": 1,
             "min": 0,
-            "type": "unsigned char",
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.tank1_temp_high.base": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "prop.tank1_temp_high.override": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "prop.tank1_temp_high.persistence": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 65535,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.tank1_temp_high.suppress": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "prop.tank1_temp_high.unsignal": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "prop.tank2.pressure": {
+            "bitsize": 4,
+            "flow_id": "undefined",
+            "max": 150.0,
+            "min": 0.0,
+            "type": "float",
             "writable": false
+        },
+        "prop.tank2.temp": {
+            "bitsize": 4,
+            "flow_id": "undefined",
+            "max": 200.0,
+            "min": -200.0,
+            "type": "float",
+            "writable": false
+        },
+        "prop.tank2_temp_high.base": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "prop.tank2_temp_high.override": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "prop.tank2_temp_high.persistence": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 65535,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.tank2_temp_high.suppress": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "prop.tank2_temp_high.unsignal": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
+        "prop.threshold_firing_pressure": {
+            "bitsize": 4,
+            "flow_id": "undefined",
+            "max": 50.0,
+            "min": 10.0,
+            "type": "float",
+            "writable": true
         },
         "radio.err": {
             "bitsize": 7,
@@ -1964,6 +2142,22 @@
             "type": "unsigned int",
             "writable": false
         },
+        "timing.prop.avg_wait": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 120000.0,
+            "min": 0.0,
+            "type": "float",
+            "writable": false
+        },
+        "timing.prop.num_lates": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "timing.quake.avg_wait": {
             "bitsize": 32,
             "flow_id": 32,
@@ -2080,11 +2274,11 @@
                 "prop.overpressured.persistence",
                 "prop.overpressured.suppress",
                 "prop.overpressured.unsignal",
-                "prop.failed_pressurize.base",
-                "prop.failed_pressurize.override",
-                "prop.failed_pressurize.persistence",
-                "prop.failed_pressurize.suppress",
-                "prop.failed_pressurize.unsignal"
+                "prop.pressurize_fail.base",
+                "prop.pressurize_fail.override",
+                "prop.pressurize_fail.persistence",
+                "prop.pressurize_fail.suppress",
+                "prop.pressurize_fail.unsignal"
             ],
             "id": 5,
             "priority": 4
@@ -2191,7 +2385,6 @@
             "active": true,
             "fields": [
                 "adcs.state",
-                "adcs.paired",
                 "adcs_monitor.functional",
                 "adcs_monitor.functional_fault.base",
                 "adcs_monitor.functional_fault.override",

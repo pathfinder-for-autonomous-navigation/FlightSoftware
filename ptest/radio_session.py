@@ -11,8 +11,6 @@ import subprocess
 import glob
 import os
 import pty
-from multiprocessing import Process
-from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_radio_session_endpoint
@@ -31,8 +29,7 @@ class RadioSession(object):
 
 
     def __init__(self, device_name, imei, port, send_queue_duration,
-                    send_lockout_duration, simulation_run_dir,
-                    tlm_config, downlink_parser_filepath):
+                    send_lockout_duration, simulation_run_dir, tlm_config):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -63,19 +60,6 @@ class RadioSession(object):
         #email
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
-
-        #Start downlink parser. Compile it if it is not available.
-        if not os.path.exists(downlink_parser_filepath):
-            print("Compiling the downlink parser.")
-            os.system("pio run -e gsw_downlink_parser > /dev/null")
-
-        master_fd, slave_fd = pty.openpty()
-        self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
-        self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
-        self.telem_save_dir = simulation_run_dir
-
-        # Open a connection to elasticsearch
-        self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
 
     def read_state(self, field, timeout=None):
         '''
@@ -128,41 +112,12 @@ class RadioSession(object):
             return True
         else:
             return False
+
     def write_state(self, field, val, timeout=None):
         '''
         Uplink one state variable. Return success of write.
         '''
-        return self.write_multiple_states([field], [val], timeout)
-
-    def parsetelem(self):
-        #get newest file
-        telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
-        try:
-            newest_telem_file = max(telem_files, key=os.path.basename)
-        except ValueError:
-            return "No telemetry to parse."
-        self.console.write((newest_telem_file+"\n").encode())
-        telem_json_data = json.loads(self.console.readline().rstrip())
-        if telem_json_data is not None:
-                telem_json_data = telem_json_data["data"]
-        return telem_json_data
-    
-    def dbtelem(self):
-        jsonObj = self.parsetelem()
-        if not isinstance(jsonObj, dict):
-            print(jsonObj)
-            return False
-        failed = False
-        for field in jsonObj:
-            value = jsonObj[field]
-            data=json.dumps({
-            field: value,
-            "time": str(datetime.now().isoformat())
-            })
-            res = self.es.index(index='statefield_report_'+str(self.imei), doc_type='report', body=data)
-            if not res['result'] == 'created':
-                failed = True
-        return not failed 
+        return self.write_multiple_states([field], [val], timeout) 
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''
@@ -171,7 +126,5 @@ class RadioSession(object):
             f' - Terminating console connection to and saving logging/telemetry data for radio connection to {self.device_name}.'
         )
 
-        # End threads if there was actually a connection to the radio
-        self.console.close()
         self.http_thread.terminate()
         self.http_thread.join()

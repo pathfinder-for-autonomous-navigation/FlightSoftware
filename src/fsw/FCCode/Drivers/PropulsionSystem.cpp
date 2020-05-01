@@ -105,12 +105,14 @@ int Tank::get_temp() const
 #else
     unsigned int raw = analogRead(temp_sensor_pin);
 #endif
+    // raw = voltage*1024.0/3.3
     double voltage = raw * 3.3 / 1024.0;
     if (std::abs(3.3 - voltage) < 1e-4)
         return tank_temp_min;
 
+    // voltage = (3.3*resist)/(6200+resist)
     double resist = (voltage * 6200.0) / (3.3 - voltage);
-
+    // raw = (3.3*resist)*1024.0 / (6200 + resist)*3.3
     // Get the value of the temperature using a linear regression
     if (std::abs(resist) <= 1)
         return tank_temp_max;

@@ -5,7 +5,7 @@
 #include <fsw/FCCode/ADCSCommander.hpp>
 #include <fsw/FCCode/Drivers/ADCS.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include "../custom_assertions.hpp"
 
 #include <fsw/FCCode/adcs_state_t.enum>

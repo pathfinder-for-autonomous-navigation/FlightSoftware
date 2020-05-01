@@ -3,7 +3,7 @@
 #include "fsw/FCCode/TimedControlTask.hpp"
 
 #include <common/Fault.hpp>
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 
 unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
