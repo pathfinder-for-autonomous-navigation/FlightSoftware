@@ -5,7 +5,7 @@
 #include <fsw/FCCode/ADCSBoxMonitor.hpp>
 #include <fsw/FCCode/Drivers/ADCS.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include "../custom_assertions.hpp"
 
 class TestFixture {

@@ -182,7 +182,7 @@ class Simulation(object):
         flight_controller.write_state("piksi.time", str(current_gps_time))
         flight_controller.write_state("piksi.pos", position_ecef)
         flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
-        flight_controller.write_state("adcs_monitor.mag_vec", magnetometer_body)
+        flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
 
     def read_adcs_estimator_outputs(self, flight_controller):
         """

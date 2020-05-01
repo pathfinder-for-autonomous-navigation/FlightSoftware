@@ -1,4 +1,4 @@
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <common/Serializer.hpp>
 #include <stdlib.h>
 #include <memory>

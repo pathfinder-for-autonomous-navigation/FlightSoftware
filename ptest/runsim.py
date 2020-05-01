@@ -59,6 +59,7 @@ class PTest(object):
                 self.sim.testcase.logger.put(tb)
                 time.sleep(1) # Allow time for the exception to be handled by the logger.
                 self.sim.testcase.logger.stop()
+                time.sleep(1.5) # Allow time for the logger to stop
                 self.stop_all("Exiting due to testcase failure.")
             self.stop_all("Exiting since user requested non-interactive execution.", is_error=False)
 
@@ -155,7 +156,7 @@ class PTest(object):
         if self.single_sat_sim:
             self.sim = SingleSatSimulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
         else:
-            self.sim = Simulation(self.is_interactive, self.devices, self.random_seed)
+            self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt

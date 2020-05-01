@@ -1,4 +1,4 @@
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <common/GPSTime.hpp>
 
 static constexpr unsigned long nanoseconds_in_week = 7 * 24 * 60 * 60 * (unsigned long) (1000000000);
