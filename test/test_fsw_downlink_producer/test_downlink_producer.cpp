@@ -18,6 +18,12 @@ struct TestFixture {
     WritableStateField<unsigned char>* shift_flows_id2_fp;
     WritableStateField<unsigned char>* toggle_flow_id_fp;
 
+    //random flows test
+    std::shared_ptr<ReadableStateField<unsigned int>>  foo_1373897539_fp;
+    std::shared_ptr<ReadableStateField<unsigned int>>  foo_1901783835_fp;
+    std::shared_ptr<ReadableStateField<unsigned int>>  foo_2584771623_fp;
+    std::shared_ptr<ReadableStateField<unsigned int>>  foo_4294468388_fp;
+
     TestFixture() : registry() {}
 
     void init(const std::vector<DownlinkProducer::FlowData>& flow_data) {
@@ -29,6 +35,17 @@ struct TestFixture {
         foo1_fp = registry.create_readable_field<unsigned int>("foo1");
         cycle_count_fp->set(20);
         foo1_fp->set(400);
+
+        //random flows test
+        foo_1373897539_fp = registry.create_readable_field<unsigned int>("foo_1373897539");
+        foo_1901783835_fp = registry.create_readable_field<unsigned int>("foo_1901783835");
+        foo_2584771623_fp = registry.create_readable_field<unsigned int>("foo_2584771623");
+        foo_4294468388_fp = registry.create_readable_field<unsigned int>("foo_4294468388");
+        foo_1373897539_fp->set(int(1373897539));
+        foo_1901783835_fp->set(int(1901783835));
+        foo_2584771623_fp->set(int(2584771623));
+        foo_4294468388_fp->set(int(4294468388));
+
 
         downlink_producer = std::make_unique<DownlinkProducer>(registry, 0);
         downlink_producer->init_flows(flow_data);
@@ -271,6 +288,48 @@ void test_multiple_flows() {
             '\x00', '\x00', '\x00', '\x13', '\x00', '\x00', '\x00', '\x13', '\x00', '\x00', '\x00'};
         TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 73);
     }
+
+
+    
+    //test randomly generated test case
+    {
+        TestFixture tf;
+        tf.cycle_count_fp->set(int(2430510208));
+
+        std::vector<DownlinkProducer::FlowData> flow_data = { 
+                {
+                        1,
+                        true,
+                        {
+                                "foo_1373897539",
+                        }
+                },
+                {
+                        2,
+                        true,
+                        {
+                                "foo_1901783835",
+                                "foo_2584771623",
+                        }
+                },
+                {
+                        3,
+                        true,
+                        {
+                                "foo_4294468388",
+                        }
+                }
+        };
+        tf.init(flow_data);
+
+        TEST_ASSERT_EQUAL(21, tf.snapshot_size_bytes_fp->get());
+        tf.downlink_producer->execute();
+        const char expected_outputs[73] = {'\xc8', '\x6f', '\x52', '\x40', '\x0a', '\x3c', '\x80', 
+        '\x68', '\x6b', '\x8a', '\xd7', '\x58', '\xdc', '\xd0', '\x83', '\xe1', '\x3d', 
+        '\xff', '\xf0', '\xc6', '\x48'};
+        TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 21);
+    }
+    
 }
 
 /**
