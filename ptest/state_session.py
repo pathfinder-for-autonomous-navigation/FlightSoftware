@@ -460,7 +460,7 @@ class StateSession(object):
     def dbtelem(self):
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
-            print("Telemetry in obtained downlink files is not of JSON format.")
+            print("Error parsing telemetry.")
             return False
         failed = False
         for field in jsonObj:
