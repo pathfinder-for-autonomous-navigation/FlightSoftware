@@ -25,7 +25,7 @@ class TestFixture {
     std::shared_ptr<InternalStateField<unsigned char>> radio_state_fp;
     std::shared_ptr<InternalStateField<unsigned int>> last_checkin_cycle_fp;
 
-    std::shared_ptr<ReadableStateField<unsigned char>> prop_state_fp;
+    std::shared_ptr<WritableStateField<unsigned int>> prop_state_fp;
 
     std::shared_ptr<ReadableStateField<lin::Vector3d>> propagated_baseline_pos_fp;
 
@@ -41,7 +41,7 @@ class TestFixture {
     std::shared_ptr<Fault> wheel2_adc_fault_fp;
     std::shared_ptr<Fault> wheel3_adc_fault_fp;
     std::shared_ptr<Fault> wheel_pot_fault_fp;
-    std::shared_ptr<Fault> failed_pressurize_fp;
+    std::shared_ptr<Fault> pressurize_fail_fp;
     std::shared_ptr<Fault> overpressured_fp;
 
     std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;

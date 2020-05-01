@@ -4,6 +4,7 @@
 #include <numeric>
 #include "cartesian_product.hpp"
 
+
 /**
  * @brief The main fault handler should initially be enabled and
  * produce a ground-controllable flag to enable/disable global fault

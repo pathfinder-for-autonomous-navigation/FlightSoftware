@@ -32,8 +32,8 @@ class DeploymentToStandby(SingleSatOnlyCase):
     def query_fc(self):
         """Query satellite state on every cycle for mission manager-specific data"""
 
-        satellite_state = self.mission_states.get_by_num( \
-            int(self.sim.flight_controller.read_state("pan.state")))
+        satellite_state = self.mission_states[ \
+            int(self.sim.flight_controller.read_state("pan.state"))]
         true_elapsed = self.sim.flight_controller.read_state("pan.deployment.elapsed")
 
         return satellite_state, true_elapsed

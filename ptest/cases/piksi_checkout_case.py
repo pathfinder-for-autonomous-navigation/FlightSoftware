@@ -13,7 +13,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
 
     def print_piksi_state(self):
         st = self.rs("piksi.state")
-        self.logger.put(f"Piksi state is: {self.piksi_modes.get_by_num(st)}")
+        self.logger.put(f"Piksi state is: {self.piksi_modes[st]}")
 
     def setup_case_singlesat(self):
         self.print_header("Begin Piksi Checkout Case")
@@ -25,9 +25,9 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.baselines = []
         self.modes_dict = {x:0 for x in self.piksi_modes.arr}
 
-        self.most_common_mode = self.piksi_modes.get_by_name("no_fix")
-
-        self.ws("pan.state", self.mission_states.get_by_name("manual"))
+        self.most_common_mode = self.piksi_modes["no_fix"]
+        
+        self.ws("pan.state", self.mission_states["manual"])
 
         # Needed so that PiksiControlTask updates its values
         for i in range(5):
@@ -91,7 +91,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.cycle()
 
             m = self.print_rs("piksi.state")
-            self.logger.put(f"Mode: {self.piksi_modes.get_by_num(m)}")
+            self.logger.put(f"Mode: {self.piksi_modes[m]}")
             v = self.print_rs("piksi.vel")
             self.logger.put(f"VEL MAG: {self.mag_of(v)}")
             p = self.print_rs("piksi.pos")
@@ -108,7 +108,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.cycle()
 
             mode = self.rs("piksi.state")
-            self.modes_dict[self.piksi_modes.get_by_num(mode)] += 1
+            self.modes_dict[self.piksi_modes[mode]] += 1
 
             self.vels += [self.rs("piksi.vel")]
             self.positions += [self.rs("piksi.pos")]
