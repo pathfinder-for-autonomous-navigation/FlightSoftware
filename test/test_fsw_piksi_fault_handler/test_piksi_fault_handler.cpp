@@ -1,4 +1,4 @@
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/PiksiFaultHandler.hpp>
 #include <fsw/FCCode/piksi_mode_t.enum>

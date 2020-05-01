@@ -1,6 +1,6 @@
 #include <common/StateField.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 // Test setter and getter for state field.
 void test_internal_state_field() {

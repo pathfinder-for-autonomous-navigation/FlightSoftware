@@ -1,7 +1,7 @@
 #ifndef ATTITUDE_ESTIMATOR_HPP_
 #define ATTITUDE_ESTIMATOR_HPP_
 
-#include <gnc_attitude_estimation.hpp>
+#include <gnc/attitude_estimator.hpp>
 #include <lin.hpp>
 #include "TimedControlTask.hpp"
 
@@ -65,9 +65,6 @@ class AttitudeEstimator : public TimedControlTask<void> {
     ReadableStateField<lin::Vector3f> w_body_f;
     // Angular momentum of spacecraft in body frame
     InternalStateField<lin::Vector3f> h_body_f;
-
-    // True if the "paired" ADCS gains are being used.
-    WritableStateField<bool> adcs_paired_f;
 };
 
 #endif

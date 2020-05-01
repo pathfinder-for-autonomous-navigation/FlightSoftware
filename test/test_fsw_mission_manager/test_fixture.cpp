@@ -1,18 +1,17 @@
 #include "test_fixture.hpp"
 #include "../FaultHandlerMachineMock.hpp"
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <limits>
 
 TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
                                 "attitude_estimator.h_body");
-    adcs_paired_fp = registry.create_writable_field<bool>("adcs.paired");
 
     radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
     last_checkin_cycle_fp = registry.create_internal_field<unsigned int>(
                                 "radio.last_comms_ccno");
 
-    prop_state_fp = registry.create_readable_field<unsigned char>("prop.state", 2);
+    prop_state_fp = registry.create_writable_field<unsigned int>("prop.state", 6);
 
     propagated_baseline_pos_fp = registry.create_readable_lin_vector_field<double>(
                                     "orbit.baseline_pos", 0, 100000, 100);
@@ -29,7 +28,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     wheel2_adc_fault_fp=registry.create_fault("adcs_monitor.wheel2_fault", 1);
     wheel3_adc_fault_fp=registry.create_fault("adcs_monitor.wheel3_fault", 1);
     wheel_pot_fault_fp=registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
-    failed_pressurize_fp=registry.create_fault("prop.failed_pressurize", 1);
+    pressurize_fail_fp=registry.create_fault("prop.pressurize_fail", 1);
     overpressured_fp=registry.create_fault("prop.overpressured", 1);
 
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
@@ -41,7 +40,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     adcs_ang_momentum_fp->set({nan_f,nan_f,nan_f});
     radio_state_fp->set(static_cast<unsigned char>(radio_state_t::disabled));
     last_checkin_cycle_fp->set(0);
-    prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));
+    prop_state_fp->set(static_cast<unsigned int>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     reboot_fp->set(false);
     power_cycle_radio_fp->set(false);
@@ -86,7 +85,7 @@ void TestFixture::set(adcs_state_t state) {
 }
 
 void TestFixture::set(prop_state_t state) {
-    prop_state_fp->set(static_cast<unsigned char>(state));
+    prop_state_fp->set(static_cast<unsigned int>(state));
 }
 
 void TestFixture::set(radio_state_t state) {
@@ -108,7 +107,7 @@ void TestFixture::check(adcs_state_t state) const {
 }
 
 void TestFixture::check(prop_state_t state) const {
-    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(state), prop_state_fp->get(),
+    TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned int>(state), prop_state_fp->get(),
         "For propulsion state.");
 }
 
@@ -137,7 +136,7 @@ void TestFixture::assert_ground_uncommandability(prop_state_t exception_state) {
         if (state_it == exception_state) continue;
         set(state_it);
         step();
-        TEST_ASSERT_NOT_EQUAL(static_cast<unsigned char>(state_it), prop_state_fp->get());
+        TEST_ASSERT_NOT_EQUAL(static_cast<unsigned int>(state_it), prop_state_fp->get());
     }
 }
 

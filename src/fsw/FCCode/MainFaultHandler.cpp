@@ -27,7 +27,7 @@ void MainFaultHandler::init() {
     };
 
     std::vector<Fault*> active_list_1_standby_super_simple_faults {
-        find_fault("prop.failed_pressurize.base", __FILE__, __LINE__),
+        find_fault("prop.pressurize_fail.base", __FILE__, __LINE__),
     };
 
     for(Fault* fault : active_list_0_safehold_super_simple_faults) {

@@ -1,5 +1,5 @@
 #include <common/bitstream.h>
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <cstring>
 using namespace std; 
 
