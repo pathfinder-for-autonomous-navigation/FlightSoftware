@@ -4,7 +4,7 @@ from .base import FlexibleCase
 class EmptyCase(FlexibleCase):
     def setup_case_singlesat(self):
         if self.sim.flight_controller is not None:
-            self.sim.flight_controller.write_state("pan.state", self.mission_states.get_by_name("manual"))
+            self.sim.flight_controller.write_state("pan.state", self.mission_states["manual"])
 
     def setup_case_fullmission(self):
         self.sim.flight_controller_follower.write_state("pan.state", self.mission_states["manual"])
