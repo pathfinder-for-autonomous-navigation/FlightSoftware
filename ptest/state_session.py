@@ -27,7 +27,7 @@ class StateSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, simulation_run_dir):
+    def __init__(self, device_name, port, simulation_run_dir):
         '''
         Initializes state session with a device.
         '''
