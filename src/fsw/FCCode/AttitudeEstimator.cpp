@@ -31,7 +31,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         add_readable_field(fro_P_est_f);
 
         // Default magnetometer
-        mag_flag_f->set(false);
+        mag_flag_f.set(false);
 
         // Default the gnc buffer
         state = gnc::AttitudeEstimatorState();
