@@ -13,13 +13,13 @@
 #include <fsw/FCCode/sat_designation_t.enum>
 
 #include "../custom_assertions.hpp"
-#include <lin.hpp>
+#include <lin/core.hpp>
 
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
     // Input state fields to mission manager
-    std::shared_ptr<InternalStateField<lin::Vector3f>> adcs_ang_momentum_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector3f>> adcs_w_body_est_fp;
     std::shared_ptr<WritableStateField<bool>> adcs_paired_fp;
 
     std::shared_ptr<InternalStateField<unsigned char>> radio_state_fp;
