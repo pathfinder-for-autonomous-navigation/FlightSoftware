@@ -65,11 +65,13 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
         # User please watch screen, and observe temp
         start_time = time.time()
+        start_cycle = self.print_rs("pan.cycle_no")
+        last_cycle = 0
 
         while time.time() - start_time < 60*2: # 2 mins
             elapse = time.time() - start_time
             self.logger.put(f"TIME ELAPSE (s): {elapse}")
-            self.print_rs("pan.cycle_no")
+            last_cycle = self.print_rs("pan.cycle_no")
             self.print_rs("gomspace.vbatt")
             self.print_rs("gomspace.cursys")
             self.logger.put("CUROUT ARR: "+str(curout_arr))
@@ -85,18 +87,22 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
             temp_reading = self.print_rs("adcs_monitor.gyr_temp")
 
-            if not heater or not imu_gyr:
+            if not heater:
                 self.shutdown()
-                raise TestCaseFailure("DEVICE FAILED MID TEST")
+                raise TestCaseFailure("HEATER DEVICE REPORTING AS NON FUNCTIONAL, SHUTTING DOWN.")
+
+            if not imu_gyr:
+                self.shutdown()
+                raise TestCaseFailure("HEATER DEVICE REPORTING AS NON FUNCTIONAL, SHUTTING DOWN.")
 
             if temp_reading < 18 or temp_reading > self.target + 5:
-                self.shuutdown()
+                self.shutdown()
                 raise TestCaseFailure("TEMP READING OUTTA BOUNDS")
 
             self.logger.put("")
             self.cycle()
 
-        self.print_header("DONE WITH N CYCLES")
+        self.print_header(f"DONE WITH {last_cycle-start_cycle} CYCLES")
 
         self.print_header("FINAL TEMP: ")
         final_temp = self.print_rs("adcs_monitor.gyr_temp")

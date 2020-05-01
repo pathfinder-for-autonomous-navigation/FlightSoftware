@@ -100,9 +100,9 @@ struct IMURegisters {
   /** Specifies the exponential filter constant for the gyroscope temperature
    *  reads. */
   float gyr_temp_flt;
-  /** Specifies the gyroscope temperature controller PWM. */
+  /** Specifies the gyroscope temperature controller PWM (255 is max heating, 0 is OFF). */
   unsigned char gyr_temp_pwm;
-  /** Specifies the desired temperature of the gyroscope. */
+  /** Specifies the desired temperature of the gyroscope in degrees C. */
   float gyr_desired_temp;
 };
 
