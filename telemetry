@@ -38,12 +38,6 @@
             "type": "lin float vector",
             "writable": true
         },
-        "adcs.paired": {
-            "bitsize": 1,
-            "flow_id": 13,
-            "type": "bool",
-            "writable": true
-        },
         "adcs.state": {
             "bitsize": 4,
             "flow_id": 13,
@@ -2191,7 +2185,6 @@
             "active": true,
             "fields": [
                 "adcs.state",
-                "adcs.paired",
                 "adcs_monitor.functional",
                 "adcs_monitor.functional_fault.base",
                 "adcs_monitor.functional_fault.override",
