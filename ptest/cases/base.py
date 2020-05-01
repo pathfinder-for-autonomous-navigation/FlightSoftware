@@ -20,11 +20,13 @@ class FSWEnum(object):
             self._indexed_by_name[arr[i]] = i
             self._indexed_by_num[i] = arr[i]
 
-    def get_by_name(self, name):
-        return self._indexed_by_name[name]
-
-    def get_by_num(self, num):
-        return self._indexed_by_num[num]
+    def __getitem__(self, item):
+        if type(item) is str:
+            return self._indexed_by_name[item]
+        elif type(item) is int:
+            return self._indexed_by_num[item]
+        else:
+            raise AttributeError(f"Cannot access FSWEnum with key: {item}")
 
 
 class Case(object):
