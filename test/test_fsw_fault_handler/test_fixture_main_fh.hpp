@@ -6,6 +6,11 @@
 #include <fsw/FCCode/MainFaultHandler.hpp>
 #include <fsw/FCCode/radio_state_t.enum>
 
+/**
+ * @brief This class is the base class for test fixtures
+ * for testing the MainFaultHandler. It initializes the inputs 
+ * required by the Handler and stores pointers to its outputs.
+ */
 class TestFixtureMainFHBase {
 protected:
     StateFieldRegistryMock registry;
@@ -49,14 +54,18 @@ public:
     void set_fault_handling(bool state);
 };
 
+/**
+ * @brief This test fixture replaces the submachines of the main fault
+ * handler with mocked fault handlers so that it's easy to control
+ * the submachine responses. This allows exhaustive testing of all fault
+ * combinations underneath the MainFaultHandler.
+ */
 class TestFixtureMainFHMocked : public TestFixtureMainFHBase {
   public:
     size_t num_fault_handler_machines = 0;
 
     /**
      * @brief Construct a new Test Fixture.
-     * 
-     * @param mock If true, replaces sub-fault handlers with mocks.
      */
     TestFixtureMainFHMocked();
 
@@ -90,6 +99,12 @@ class TestFixtureMainFHMocked : public TestFixtureMainFHBase {
     }
 };
 
+/**
+ * @brief This test fixture does not modify the submachine handlers
+ * of the MainFaultHandler in the way that TestFixtureMainFHMocked does.
+ * Therefore this fixture can be used in end-to-end testing of the
+ * MainFaultHandler.
+ */
 class TestFixtureMainFHEndToEnd : public TestFixtureMainFHBase {
 public:
     TestFixtureMainFHEndToEnd();

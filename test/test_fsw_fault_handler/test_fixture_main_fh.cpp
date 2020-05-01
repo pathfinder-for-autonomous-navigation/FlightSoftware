@@ -4,7 +4,7 @@
 TestFixtureMainFHBase::TestFixtureMainFHBase() {
     cc = 0;
 
-    // Prwepare inputs for main fault handler
+    // Prepare inputs for main fault handler
     mission_state_fp = registry.create_writable_field<unsigned char>("pan.state");
     radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
     radio_last_comms_ccno_fp = registry.create_internal_field<unsigned int>("radio.last_comms_ccno");
