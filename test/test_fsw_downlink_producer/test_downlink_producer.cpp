@@ -3,7 +3,7 @@
 #include <fsw/FCCode/DownlinkProducer.hpp>
 
 #include <common/StateFieldRegistry.hpp>
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <iostream>
 
 struct TestFixture {

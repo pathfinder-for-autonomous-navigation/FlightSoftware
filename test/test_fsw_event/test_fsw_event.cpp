@@ -3,7 +3,7 @@
 #include <common/Event.hpp>
 #include <common/EventStorage.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 struct TestFixtureEvent {
   public:

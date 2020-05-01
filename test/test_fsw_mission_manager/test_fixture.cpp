@@ -1,12 +1,10 @@
 #include "test_fixture.hpp"
 #include "../test_fsw_fault_handler/FaultHandlerMachineMock.hpp"
-#include <unity.h>
 #include <limits>
 
 TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
                                 "attitude_estimator.h_body");
-    adcs_paired_fp = registry.create_writable_field<bool>("adcs.paired");
 
     radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
     last_checkin_cycle_fp = registry.create_internal_field<unsigned int>(
