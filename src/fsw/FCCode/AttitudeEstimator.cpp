@@ -58,5 +58,5 @@ void AttitudeEstimator::set_estimate(){
     w_body_f.set(estimate.w_body);
 
     lin::Vector3f result = gnc::constant::J_sat * estimate.w_body;
-    h_body_f.set(result.eval());
+    h_body_f.set(result);
 }
