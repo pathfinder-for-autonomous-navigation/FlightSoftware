@@ -178,6 +178,20 @@ void test_suppress_underpressure_fault()
     check_state(prop_state_t::await_firing);
 }
 
+// Test that when we have ran out of cycles, that we enter await firing
+void test_suppress_underpressure_fault_max_cycles()
+{
+    TestFixture tf;
+    tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
+    tf.simulate_underpressured();
+    tf.step();
+    // But this time, we should not enter handling_fault
+    assert_fault_state(false, pressurize_fail_fault_f); // assert not faulted
+    tf.execute_until_state_change();
+    // We should reach await_firing
+    check_state(prop_state_t::await_firing);
+}
+
 // Test that when we are in await_firing, all valves are closed, the the schedule is valid
 void test_await_firing()
 {
@@ -357,6 +371,7 @@ int test_prop_controller()
     RUN_TEST(test_pressurizing);
     RUN_TEST(test_pressurize_fail);
     RUN_TEST(test_suppress_underpressure_fault);
+    RUN_TEST(test_suppress_underpressure_fault_max_cycles);
     RUN_TEST(test_await_firing);
     RUN_TEST(test_firing);
     RUN_TEST(test_firing_to_idle);

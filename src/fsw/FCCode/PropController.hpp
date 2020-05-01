@@ -257,7 +257,7 @@ protected:
     // Defines a success condition for which we should enter the success_state
     virtual bool has_succeeded() const = 0;
     // Defines a fail condition for which we should enter the fail_state
-    virtual bool has_failed() const = 0;
+    virtual bool has_failed() const; // Default return false
     // Returns index of the valve that we should use in the upcoming "open" cycle
     virtual size_t select_valve_index() = 0;
     // Returns the number of control cycles for which the valve should be opened
@@ -272,15 +272,16 @@ protected:
     virtual prop_state_t handle_out_of_cycles() = 0;
     // Number of open-closed cycles that we have executed since last entering this state
     size_t cycle_count = 0;
-
-private:
     // The tank whose valves we will be opening
     Devices::Tank &tank;
+    // The valve index of the valve that we will use in the upcoming or current open cycle
+    size_t cur_valve_index;
+
+private:
     // The state to enter if has_succeeded() returns True
     prop_state_t success_state;
     // The state to enter if has_failed() returns True
     prop_state_t fail_state;
-
     // Called when we are in the open period (one of the Tank's selected
     //      valves is currently open)
     prop_state_t handle_valve_is_open();
@@ -288,9 +289,6 @@ private:
     prop_state_t handle_valve_is_close();
     // Starts an open-close cycle
     void start_cycle();
-
-    // The valve index of the valve that we will use in the upcoming or current open cycle
-    size_t cur_valve_index;
     // Timer helps keep track of the number of control cycles since entering
     // an open or close period
     CountdownTimer countdown;
@@ -307,15 +305,16 @@ private:
 class PropState_Pressurizing : public ActionCycleOpenClose
 {
 public:
-    PropState_Pressurizing() : ActionCycleOpenClose(prop_state_t::pressurizing, Tank1, prop_state_t::await_firing, prop_state_t::idle) {}
+    PropState_Pressurizing() : ActionCycleOpenClose(prop_state_t::pressurizing, Tank1, prop_state_t::await_firing, prop_state_t::disabled) {}
 
 protected:
+    void enter() override;
     bool can_enter() const override;
     // True if we have reached threshold pressure
     // If the pressurize_failed fault is suppressed, then this is true, when
     // we have executed max_cycles
     bool has_succeeded() const override;
-    // True if schedule is no longer valid
+    // True if schedule is no longer valid. This will never occur, but is a good sanity check
     bool has_failed() const override;
     // Whether to use the primary or backup valve
     size_t select_valve_index() override;
@@ -360,18 +359,35 @@ private:
 
 // Two versions of venting: The venting response is basically just the
 // pessurizing response
-class PropState_Venting : public PropState
+class PropState_Venting : public ActionCycleOpenClose
 {
 public:
-    PropState_Venting() : PropState(prop_state_t::venting) {}
+    // Default to tank2 but enter() will determine the tank at runtime
+    PropState_Venting() : ActionCycleOpenClose(prop_state_t::venting, Tank2, prop_state_t::idle, prop_state_t::disabled) {}
 
-    bool can_enter() const override;
-
+protected:
     void enter() override;
-
-    prop_state_t evaluate() override;
+    bool can_enter() const override;
+    // True if we are no longer faulted
+    bool has_succeeded() const override;
+    // Determine which valves to open
+    size_t select_valve_index() override;
+    size_t get_ctrl_cycles_per_open_period() const override;
+    size_t get_ctrl_cycles_per_close_period() const override;
+    // Maximum number of venting cycles
+    size_t get_max_cycles() const override;
+    // Called if we have ran out of cycles and we are still faulted
+    prop_state_t handle_out_of_cycles() override;
 
 private:
+    // Decision rules: Choose which Tank to vent first
+    // Tank1_temp | Tank2_temp | Tank2_pressure | Decision
+    //      1           1             1            return Tank2
+    //      1           1             0            return Tank1
+    //      1           0             1            return Tank2
+
+    // If Tank1 temp is not faulted, then the problem must be with Tank2
+    // Also, if Tank2 pressure is faulted then vent Tank2 first
     Devices::Tank &determine_faulted_tank();
 };
 
@@ -383,12 +399,6 @@ public:
     bool can_enter() const override;
     void enter() override;
     prop_state_t evaluate() override;
-
-    void handle_pressure_too_high();
-
-    void handle_tank1_temp_too_high();
-
-    void handle_tank2_temp_too_high();
 };
 
 class PropState_Manual : public PropState
