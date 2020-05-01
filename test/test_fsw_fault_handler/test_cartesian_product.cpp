@@ -1,5 +1,7 @@
 #include "cartesian_product.hpp"
-#include <unity.h>
+#include "../custom_assertions.hpp"
+#undef isnan
+#undef isinf
 #include <iostream>
 
 void test_cartesian_product() {

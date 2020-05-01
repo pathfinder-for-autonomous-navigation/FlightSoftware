@@ -136,11 +136,6 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Current angular momentum of ADCS system in the body frame.
      **/
     InternalStateField<lin::Vector3f>* adcs_ang_momentum_fp;
-    /**
-     * @brief Field created by AttitudeEstimator that tracks if the satellites
-     * should be treated as paired when computing attitude-related variables.
-     */
-    WritableStateField<bool>* adcs_paired_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
     const ReadableStateField<lin::Vector3d>* propagated_baseline_pos_fp; // Propagated baseline position

@@ -12,7 +12,7 @@
 #include <fsw/FCCode/prop_state_t.enum>
 #include <fsw/FCCode/sat_designation_t.enum>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <lin.hpp>
 
 class TestFixture {

@@ -1,4 +1,4 @@
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/QuakeFaultHandler.hpp>
 #include <fsw/FCCode/radio_state_t.enum>

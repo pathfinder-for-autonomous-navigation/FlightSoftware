@@ -51,7 +51,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
     SimpleFaultHandler::set_mission_state_ptr(&mission_state_f);
 
-    adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
     adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);
 
     radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
@@ -190,13 +189,11 @@ void MissionManager::dispatch_standby() {
         static_cast<sat_designation_t>(sat_designation_f.get());
 
     if (sat_designation == sat_designation_t::follower) {
-        adcs_paired_fp->set(false);
         transition_to_state(mission_state_t::follower,
             adcs_state_t::point_standby,
             prop_state_t::idle);
     }
     else if (sat_designation == sat_designation_t::leader) {
-        adcs_paired_fp->set(false);
         transition_to_state(mission_state_t::leader,
             adcs_state_t::point_standby,
             prop_state_t::idle);

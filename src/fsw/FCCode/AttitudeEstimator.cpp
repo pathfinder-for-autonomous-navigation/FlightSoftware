@@ -1,5 +1,5 @@
 #include "AttitudeEstimator.hpp"
-#include <gnc_constants.hpp>
+#include <gnc/constants.hpp>
 
 const gps_time_t AttitudeEstimator::pan_epoch(gnc::constant::init_gps_week_number,
                                               gnc::constant::init_gps_time_of_week,
@@ -13,8 +13,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     estimate(),
     q_body_eci_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
     w_body_f("attitude_estimator.w_body", Serializer<lin::Vector3f>(-55, 55, 32*3)),
-    h_body_f("attitude_estimator.h_body"),
-    adcs_paired_f("adcs.paired", Serializer<bool>())
+    h_body_f("attitude_estimator.h_body")
     {
         piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
         pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
@@ -26,10 +25,6 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         add_readable_field(q_body_eci_f);
         add_readable_field(w_body_f);
         add_internal_field(h_body_f);
-        add_writable_field(adcs_paired_f);
-
-        // Initialize flags
-        adcs_paired_f.set(false);
     }
 
 void AttitudeEstimator::execute(){
@@ -62,8 +57,6 @@ void AttitudeEstimator::set_estimate(){
 
     w_body_f.set(estimate.w_body);
 
-    lin::Vector3f result;
-    if (adcs_paired_f.get()) result = gnc::constant::JB_docked_sats * estimate.w_body;
-    else result = gnc::constant::JB_single_sat * estimate.w_body;
-    h_body_f.set(result.eval());
+    lin::Vector3f result = gnc::constant::J_sat * estimate.w_body;
+    h_body_f.set(result);
 }
