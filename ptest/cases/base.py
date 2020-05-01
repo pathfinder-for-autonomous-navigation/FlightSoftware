@@ -232,6 +232,13 @@ class SingleSatOnlyCase(Case):
     def run_case_singlesat(self):
         raise NotImplementedError
 
+    def read_state(self, string_state):
+        return self.sim.flight_controller.read_state(string_state)
+
+    def write_state(self, string_state, state_value):
+        self.sim.flight_controller.write_state(string_state, state_value)
+        return self.read_state(string_state)
+
     def cycle(self):
         ''' 
         Steps the FC forward by one CC
@@ -307,37 +314,16 @@ class MissionCase(Case):
     def run_case_fullmission(self):
         raise NotImplementedError
 
+    def read_state_leader(self, string_state):
+        return self.sim.flight_controller_leader.read_state(string_state)
 
-class FlexibleCase(Case):
-    """
-    Base class for cases that should be able to work with either 1 or 2
-    satellites.
-    """
+    def write_state_leader(self, string_state, state_value):
+        self.sim.flight_controller_leader.write_state(string_state, state_value)
+        return self.read_state(string_state)
 
-    @property
-    def single_sat_compatible(self):
-        return True
+    def read_state_follower(self, string_state):
+        return self.sim.flight_controller_follower.read_state(string_state)
 
-    def _setup_case(self):
-        if self.sim.is_single_sat_sim:
-            self.setup_case_singlesat()
-        else:
-            self.setup_case_fullmission()
-
-    def setup_case_singlesat(self):
-        raise NotImplementedError
-
-    def setup_case_fullmission(self):
-        raise NotImplementedError
-
-    def run_case(self):
-        if self.sim.is_single_sat_sim:
-            self.run_case_singlesat()
-        else:
-            self.run_case_fullmission()
-
-    def run_case_singlesat(self):
-        raise NotImplementedError
-
-    def run_case_fullmission(self):
-        raise NotImplementedError
+    def write_state_follower(self, string_state, state_value):
+        self.sim.flight_controller_follower.write_state(string_state, state_value)
+        return self.read_state(string_state)
