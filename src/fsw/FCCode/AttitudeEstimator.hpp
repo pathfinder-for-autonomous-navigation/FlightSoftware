@@ -1,9 +1,10 @@
 #ifndef ATTITUDE_ESTIMATOR_HPP_
 #define ATTITUDE_ESTIMATOR_HPP_
 
-#include <gnc/attitude_estimator.hpp>
-#include <lin.hpp>
 #include "TimedControlTask.hpp"
+
+#include <gnc/attitude_estimator.hpp>
+#include <lin/core.hpp>
 
 /**
  * @brief Using raw sensor inputs, determine the attitude and angular state
@@ -25,46 +26,63 @@ class AttitudeEstimator : public TimedControlTask<void> {
     void execute() override;
 
    protected:
-
-    /**
-     * @brief Read data from field pointers and set the data object
+    /** @brief Time in seconds since the PAN epoch.
+     *
+     *  Input taken from the OrbitEstimator. */
+    ReadableStateField<double> const *const time_fp;
+    /** @brief Position of the satellite in the ECEF frame (meters).
      * 
-     */
-    void set_data();
+     *  Input taken from the OrbitEstimator. */
+    ReadableStateField<lin::Vector3d> const *const pos_fp;
 
-    /**
-     * @brief Set the estimate object from the outputs of the gnc estimate
+    /** @brief Magnetic field readings in the body frame (Tesla).
      * 
-     */
-    void set_estimate();
-    
-    static const gps_time_t pan_epoch;
+     *  Input taken from the ADCSBoxMonitor.
+     *  @{ */
+    ReadableStateField<lin::Vector3f> const *const mag1_vec_fp;
+    ReadableStateField<lin::Vector3f> const *const mag2_vec_fp;
+    /** @} */
+    /** @brief Sun vector reading in the body frame (unit vector).
+     *
+     *  Input taken from the ADCSBoxMonitor. */
+    ReadableStateField<lin::Vector3f> const *const ssa_vec_fp;
+    /** @brief Angular rate reading in the body frame (randians per second).
+     *  
+     *  Input taken rom the ADCSBoxMonitor. */
+    const ReadableStateField<lin::Vector3f> gyr_vec_fp;
 
-    /**
-     * @brief Inputs collected from Piksi and ADCSBoxMonitor.
-     */
-    //! Time from Piksi
-    const ReadableStateField<gps_time_t>* piksi_time_fp;
-    //! Position of this satellite, Vector of doubles
-    const ReadableStateField<d_vector_t>* pos_vec_ecef_fp;
-    //! Sun vector of this satellite, in the body frame.
-    const ReadableStateField<lin::Vector3f>* ssa_vec_rd_fp;
-    //! Magnetic field vectors of this satellite in the body frame.
-    const ReadableStateField<lin::Vector3f>* mag1_vec_fp;
-    const ReadableStateField<lin::Vector3f>* mag2_vec_fp;
+    /** @brief Selects which magnetometer to, by default, read from.
+     *
+     *  If the selected magnetometer doesn't present a reading on a given control
+     *  cycle, the other magnetometer will be polled. */
+    WriteableStateField<bool> mag_flag_f;
 
-    //kyle's gnc structs
+    /** @brief Estimated attitude quaternion.
+     *
+     *  Transforms from ECI to the body frame. If no attitude estimate exists, the
+     *  field will be set to NaN. */
+    ReadableStateField<lin::Vector4f> q_body_eci_est_f;
+    /** @brief Estimated angular rate of the spacecraft in the body frame
+     *         (radians per second).
+     *
+     *  If no angular rate estimate exists, the field will be set to NaN. */
+    ReadableStateField<lin::Vector3f> w_body_est_f;
+    /** @brief Frobenius norm of the estimated state covariance.
+     *
+     *  If no state covariance estimate exists, the field will be set to NaN. */
+    ReadableStateField<float> fro_P_est_f;
+
+    /** @internal Attitude estimator interface adaptars and calculation buffer.
+     *  @{ */
     gnc::AttitudeEstimatorData data;
     gnc::AttitudeEstimatorState state;
     gnc::AttitudeEstimate estimate;
+    /** @} */
 
-    //AttitudeEstimate
-    // Quaternion that converts from the ECI frame to the body frame
-    ReadableStateField<lin::Vector4f> q_body_eci_f;
-    // Angular velocity of spacecraft in body frame
-    ReadableStateField<lin::Vector3f> w_body_f;
-    // Angular momentum of spacecraft in body frame
-    InternalStateField<lin::Vector3f> h_body_f;
+    /** @internal Internal helper functions.
+     *  @{ */
+    void _nan_estimate();
+    /** @} */
 };
 
 #endif
