@@ -1,8 +1,9 @@
 #include "MissionManager.hpp"
-#include <lin.hpp>
+#include <lin/core.hpp>
 #include <cmath>
 #include <adcs/constants.hpp>
 #include <common/constant_tracker.hpp>
+#include <gnc/constants.hpp>
 #include "SimpleFaultHandler.hpp"
 
 // Declare static storage for constexpr variables
@@ -51,7 +52,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
     SimpleFaultHandler::set_mission_state_ptr(&mission_state_f);
 
-    adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);
+    adcs_w_body_est_fp = find_readable_field<lin::Vector3f>("attitude_estimator.w_body", __FILE__, __LINE__);
 
     radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
@@ -169,9 +170,9 @@ void MissionManager::dispatch_startup() {
 
 void MissionManager::dispatch_detumble() {
     // Detumble until satellite angular rate is below an allowable threshold
-    const float momentum = lin::norm(adcs_ang_momentum_fp->get());
+    const float momentum = lin::fro(gnc::constant::J_sat * adcs_w_body_est_fp->get());
     const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor_f.get();
-    if (momentum <= threshold)
+    if (momentum <= threshold * threshold) // Save a sqrt call
     {
         transition_to_state(mission_state_t::standby,
             adcs_state_t::point_standby,

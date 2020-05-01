@@ -4,8 +4,8 @@
 #include <limits>
 
 TestFixture::TestFixture(mission_state_t initial_state) : registry() {
-    adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
-                                "attitude_estimator.h_body");
+    adcs_w_body_est_fp = registry.create_internal_field<lin::Vector3f>(
+                                "attitude_estimator.w_body");
 
     radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
     last_checkin_cycle_fp = registry.create_internal_field<unsigned int>(
@@ -167,8 +167,8 @@ void TestFixture::set_comms_blackout_period(int ccno) {
 
 // Set the angular rate of the spacecraft.
 void TestFixture::set_ang_rate(float rate) {
-    adcs_ang_momentum_fp->set({rate, 0.0f, 0.0f}); // TODO will need to change this once the inertia tensor
-                                             // is added to GNC constants.
+    adcs_w_body_est_fp->set({rate, 0.0f, 0.0f}); // TODO will need to change this once the inertia tensor
+                                                  // is added to GNC constants.
 }
 
 adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t::limited,
