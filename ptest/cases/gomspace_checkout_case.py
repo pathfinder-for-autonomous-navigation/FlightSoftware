@@ -6,7 +6,7 @@ from .base import SingleSatOnlyCase
 class GomspaceCheckoutCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
         self.sim.flight_controller.write_state(
-            "pan.state", self.mission_states.get_by_name("manual"))
+            "pan.state", self.mission_states["manual"])
 
     def run_case_singlesat(self):
         self.sim.cycle_no = self.sim.flight_controller.read_state(

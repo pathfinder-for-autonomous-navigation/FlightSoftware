@@ -156,6 +156,10 @@ TRACKED_CONSTANT_SC(float, moment_of_inertia, 0.0000135f);
 TRACKED_CONSTANT_SC(float, max_torque, 310.1852f * moment_of_inertia);
 /** Minimum torque available from the reaction wheels. */
 TRACKED_CONSTANT_SC(float, min_torque, -max_torque);
+/** Maximum ramp reading possible. */
+TRACKED_CONSTANT_SC(float, max_ramp_rd, max_torque);
+/** Minimum ramp reading possible. */
+TRACKED_CONSTANT_SC(float, min_ramp_rd, 0);
 /** Maximum speed read from the reaction wheels. */
 TRACKED_CONSTANT_SC(float, max_speed_read, 1047.20f);
 /** Minimum speed read from the reaction wheels. */
