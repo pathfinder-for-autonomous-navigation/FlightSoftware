@@ -24,20 +24,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         platformio update
-        pio run -e fsw_native_leader
 
     - name: CI Checkout Case and Empty case
       run: |
-        # pio run -e gsw_uplink_producer
-        # python -m ptest runsim -c ptest/configs/ci.json -t CICase -ni
-        # python -m ptest runsim -c ptest/configs/ci.json -t EmptyCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t CICase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t EmptyCase -ni
 
     - name: Hardware Checkout Cases
       run: |
-        # pio run -e gsw_uplink_producer
-        # python -m ptest runsim -c ptest/configs/ci.json -t DCDCCheckoutCase -ni
-        # python -m ptest runsim -c ptest/configs/ci.json -t GomspaceCheckoutCase -ni
-        # python -m ptest runsim -c ptest/configs/ci.json -t SpinMotorsCase -ni
-        # python -m ptest runsim -c ptest/configs/ci.json -t ADCSCheckoutCase -ni
-        # python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni
-        # python -m ptest runsim -c ptest/configs/ci.json -t PiksiCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t DCDCCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t GomspaceCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t SpinMotorsCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t ADCSCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t PiksiCheckoutCase -ni
