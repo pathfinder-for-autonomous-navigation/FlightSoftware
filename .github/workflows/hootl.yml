@@ -36,5 +36,8 @@ jobs:
         python -m ptest runsim -c ptest/configs/ci.json -t GomspaceCheckoutCase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t SpinMotorsCase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t ADCSCheckoutCase -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t PiksiCheckoutCase -ni
+
+    - name: Mission Checkout Cases
+      run: |
+        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni
