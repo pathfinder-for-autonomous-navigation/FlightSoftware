@@ -163,7 +163,7 @@ void test_two_simple_faults_safehold_and_standby() {
     }
 
     /**
-     * Suppose the pressurization fault is currently signaled (so that the safehold 
+     * Suppose the pressurization fault is currently signaled (so that the standby 
      * response is caused.) If a wheel fault happens some control cycles later, 
      * it should force the fault response recommendation to safehold.
      **/
