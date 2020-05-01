@@ -19,7 +19,7 @@ TestFixtureMainFHBase::TestFixtureMainFHBase() {
     adcs_wheel3_adc_fault_fp = registry.create_fault("adcs_monitor.wheel3_fault", 1);
     adcs_wheel_pot_fault_fp = registry.create_fault("adcs_monitor.wheel_pot_fault", 1);
     low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
-    prop_failed_pressurize_fault_fp = registry.create_fault("prop.failed_pressurize", 1);
+    prop_failed_pressurize_fault_fp = registry.create_fault("prop.pressurize_fail", 1);
     prop_overpressure_fault_fp = registry.create_fault("prop.overpressured", 1);
 
     // Construct main fault handler and capture its outputs
