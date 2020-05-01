@@ -178,14 +178,18 @@ void test_suppress_underpressure_fault()
     check_state(prop_state_t::await_firing);
 }
 
-// Test that when we have ran out of cycles, that we enter await firing
+// Test that when we have ran out of cycles and we are suppressed, we enter await_firing
 void test_suppress_underpressure_fault_max_cycles()
 {
     TestFixture tf;
+    tf.set_state(prop_state_t::idle);
+    // Suppress it early
     tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
-    tf.simulate_underpressured();
-    tf.step();
-    // But this time, we should not enter handling_fault
+    tf.set_schedule(700, 200, 200, 800, 2 * tf.pc->min_cycles_needed());
+    tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
+    tf.step();                       // enter await_pressurizing
+    tf.execute_until_state_change(); // now in pressurizing
+    check_state(prop_state_t::pressurizing);
     assert_fault_state(false, pressurize_fail_fault_f); // assert not faulted
     tf.execute_until_state_change();
     // We should reach await_firing
@@ -288,13 +292,24 @@ void test_vent_outer_tank()
     tf.simulate_pressurizing();
     tf.step(4);
     simulate_overpressured();
-    tf.step(2);
-    tf.step(10);
+    tf.step(10 + 2);
     check_state(prop_state_t::handling_fault);
-    tf.step();
+    assert_fault_state(true, overpressure_fault_f);
+    tf.step(2);
+    // Make sure that this thing cycles
     check_state(prop_state_t::venting);
-    TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
-    TEST_ASSERT_TRUE(0);
+    assert_fault_state(true, overpressure_fault_f);
+    for (size_t i = 0; i < 4; ++i)
+    {
+        TEST_ASSERT_TRUE(Tank2.is_valve_open(i));
+        tf.step(tf.pc->ctrl_cycles_per_filling_period.get());
+        // All valves should be closed
+        TEST_ASSERT_FALSE(Tank2.is_valve_open(0));
+        TEST_ASSERT_FALSE(Tank2.is_valve_open(1));
+        TEST_ASSERT_FALSE(Tank2.is_valve_open(2));
+        TEST_ASSERT_FALSE(Tank2.is_valve_open(3));
+        tf.step(tf.pc->ctrl_cycles_per_cooling_period.get());
+    }
 }
 
 // Test the tank1 venting response
@@ -304,13 +319,13 @@ void test_vent_inner_tank()
     tf.simulate_firing();
     tf.step(1);
     simulate_tank1_high();
-    tf.step(2);
-    tf.step(10);
+    tf.step(10 + 2);
     check_state(prop_state_t::handling_fault);
-    tf.step();
+    assert_fault_state(true, tank1_temp_high_fault_f);
+    tf.step(2);
+    assert_fault_state(true, tank1_temp_high_fault_f);
     check_state(prop_state_t::venting);
-    TEST_ASSERT_TRUE(Tank1.is_valve_open(1));
-    TEST_ASSERT_TRUE(0);
+    TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
 }
 
 // These two tests are manually checked, so the for loop is conditionally compiled

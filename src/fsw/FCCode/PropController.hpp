@@ -310,6 +310,7 @@ public:
 protected:
     void enter() override;
     bool can_enter() const override;
+    prop_state_t evaluate() override;
     // True if we have reached threshold pressure
     // If the pressurize_failed fault is suppressed, then this is true, when
     // we have executed max_cycles
