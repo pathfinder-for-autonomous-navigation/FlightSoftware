@@ -4,22 +4,17 @@ from .base import SingleSatOnlyCase
 
 
 class GomspaceCheckoutCase(SingleSatOnlyCase):
-
     def setup_case_singlesat(self):
         self.sim.flight_controller.write_state(
             "pan.state", self.mission_states["manual"])
 
-    def str_to_bool(self, str):
-        if str == "true":
+    def str_to_bool(self, string):
+        if string == "true":
             return True
-        return False
-
-    def read_state(self, string_state):
-        return self.sim.flight_controller.read_state(string_state)
-
-    def write_state(self, string_state, state_value):
-        self.sim.flight_controller.write_state(string_state, state_value)
-        return self.read_state(string_state)
+        elif string == "false":
+            return False
+        else:
+            raise ValueError
 
     def run_case_singlesat(self):
         self.sim.cycle_no = self.sim.flight_controller.read_state(

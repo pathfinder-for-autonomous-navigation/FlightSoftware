@@ -781,6 +781,13 @@ class Serializer<lin::Vector<T, N>> : public SerializerBase<lin::Vector<T, N>> {
         static_assert(N == 4, "A default constructor can only be used for a quaternion.");
     }
 
+    Serializer<lin::Vector<T, N>>& 
+    operator=(const Serializer<lin::Vector<T, N>>& other) {
+        SerializerBase<lin::Vector<T, N>>::operator=(other);
+        _arr_sr = other._arr_sr;
+        return *this;
+    }
+
     void serialize(const lin::Vector<T, N>& src) override {
         std::array<T, N> src_cpy;
         for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
