@@ -8,6 +8,8 @@ import queue
 import os
 import pty
 import subprocess
+import glob
+from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
 
@@ -23,7 +25,7 @@ class StateSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, simulation_run_dir, uplink_producer_filepath):
+    def __init__(self, device_name, simulation_run_dir):
         '''
         Initializes state session with a device.
         '''
@@ -37,10 +39,25 @@ class StateSession(object):
         self.raw_logger = Logger(device_name + "_raw", simulation_run_dir)
         self.telem_save_dir = simulation_run_dir
 
+        #Start downlink parser. Compile it if it is not available.
+        downlink_parser_filepath = ".pio/build/gsw_downlink_parser/program" 
+        if not os.path.exists(downlink_parser_filepath):
+            print("Compiling the downlink parser.")
+            os.system("pio run -e gsw_downlink_parser > /dev/null")
+
+        master_fd, slave_fd = pty.openpty()
+        self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
+        self.dp_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
+        self.telem_save_dir = simulation_run_dir
+
+        # Open a connection to elasticsearch
+        self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
+
         # Simulation
         self.overriden_variables = set()
 
         # Open a subprocess to Uplink Producer. Compile it if it is not available.
+        uplink_producer_filepath = ".pio/build/gsw_uplink_producer/program" 
         if not os.path.exists(uplink_producer_filepath):
             print("Compiling the uplink producer.")
             os.system("pio run -e gsw_uplink_producer > /dev/null")
@@ -351,12 +368,12 @@ class StateSession(object):
                 logline += f"Error:    Unable to add {field}: {val} to uplink JSON file"
                 self.raw_logger.put(logline)
                 return False
-        with open('telem.json', 'w') as telem_file:
+        with open('uplink.json', 'w') as telem_file:
             json.dump(telem_json, telem_file)
 
         # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
         # holding the uplink packet.
-        self.uplink_console.write(("telem.json\n").encode())
+        self.uplink_console.write(("uplink.json\n").encode())
         self.uplink_console.write((str(filename)+"\n").encode())
         response = json.loads(self.uplink_console.readline().rstrip())
 
@@ -418,14 +435,44 @@ class StateSession(object):
         success = self.create_uplink(fields, vals, "uplink.sbd")
 
         # If the uplink packet exists, send it to the FlightSoftware console
-        if success and os.path.exists("uplink.sbd"): 
+        if success and os.path.exists("uplink.sbd"):
             success &= self.send_uplink("uplink.sbd")
             os.remove("uplink.sbd") 
-            os.remove("telem.json") 
+            os.remove("uplink.json") 
             return success
-        else: 
-            if os.path.exists("telem.json"): os.remove("telem.json") 
+        else:
+            if os.path.exists("uplink.json"): os.remove("uplink.json") 
             return False
+
+    def parsetelem(self):
+        #get newest file
+        telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
+        try:
+            newest_telem_file = max(telem_files, key=os.path.basename)
+        except ValueError:
+            return "No telemetry to parse."
+        self.dp_console.write((newest_telem_file+"\n").encode())
+        telem_json_data = json.loads(self.dp_console.readline().rstrip())
+        if telem_json_data is not None:
+                telem_json_data = telem_json_data["data"]
+        return telem_json_data
+
+    def dbtelem(self):
+        jsonObj = self.parsetelem()
+        if not isinstance(jsonObj, dict):
+            print("Error parsing telemetry.")
+            return False
+        failed = False
+        for field in jsonObj:
+            value = jsonObj[field]
+            data=json.dumps({
+            field: value,
+                "time": str(datetime.datetime.now().isoformat())
+            })
+            res = self.es.index(index='statefield_report_'+str(self.device_name.lower()), doc_type='report', body=data)
+            if not res['result'] == 'created':
+                failed = True
+        return not failed
 
     def override_state(self, field, *args, **kwargs):
         '''
@@ -456,6 +503,7 @@ class StateSession(object):
         self.check_msgs_thread.join()
         self.console.close()
         self.uplink_console.close()
+        self.dp_console.close()
 
         self.datastore.stop()
         self.logger.stop()

@@ -4,8 +4,6 @@ from cerberus import Validator
 ptest_config_schema = {
     "seed" : {"type" : "integer"},
     "single_sat_sim" : {"type": "boolean"},
-    "uplink_producer_filepath" : {"type": "string"},
-    "downlink_parser_filepath" : {"type": "string"},
     "devices" : {
         "type" : "list",
         "schema" : {
@@ -50,13 +48,6 @@ ptest_config_schema = {
             "email_username" : {"type" : "string"},
             "email_password" : {"type" : "string"},
             "webservice" : {
-                "type" : "dict",
-                "schema": {
-                    "server": { "type": "string" },
-                    "port": { "type": "string" }
-                }
-            },
-            "elasticsearch" : {
                 "type" : "dict",
                 "schema": {
                     "server": { "type": "string" },
