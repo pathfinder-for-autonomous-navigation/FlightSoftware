@@ -10,7 +10,6 @@ static void test_no_faults() {
 void test_single_simple_faults(std::vector<std::shared_ptr<Fault>>& faults,
     fault_response_t expected_response, TestFixtureMainFHEndToEnd& tf)
 {
-    fault_response_t response;
     for(auto& fault_ptr : faults) {
         fault_ptr->signal();
         TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
@@ -143,6 +142,8 @@ void test_two_simple_faults_safehold_and_standby() {
         // Suppose a wheel fault is currently signaled (so that the safehold
         // response is caused.) If the pressurization fault happens some control
         // cycles later, it should not affect the fault response recommendation.
+        // If the pressurization fault then disappears, the fault response recommendation
+        // is still safehold.
         TestFixtureMainFHEndToEnd tf;
         TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
         tf.adcs_wheel1_adc_fault_fp->signal();
@@ -150,15 +151,19 @@ void test_two_simple_faults_safehold_and_standby() {
 
         tf.cc += 5;
         tf.prop_failed_pressurize_fault_fp->signal();
-        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
+        TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
         tf.prop_failed_pressurize_fault_fp->signal();
+        TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
+        tf.prop_failed_pressurize_fault_fp->unsignal();
         TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
     }
 
     /**
      * Suppose the pressurization fault is currently signaled (so that the standby 
      * response is caused.) If a wheel fault happens some control cycles later, 
-     * it should force the fault response recommendation to safehold.
+     * it should force the fault response recommendation to safehold. If the wheel
+     * fault goes away, the fault response recommendation should become standby
+     * again.
      **/
     {
         TestFixtureMainFHEndToEnd tf;
@@ -169,9 +174,11 @@ void test_two_simple_faults_safehold_and_standby() {
 
         tf.cc += 5;
         tf.adcs_wheel1_adc_fault_fp->signal();
-        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
+        TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step());
         tf.adcs_wheel1_adc_fault_fp->signal();
         TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
+        tf.adcs_wheel1_adc_fault_fp->unsignal();
+        TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step());
     }
 }
 
