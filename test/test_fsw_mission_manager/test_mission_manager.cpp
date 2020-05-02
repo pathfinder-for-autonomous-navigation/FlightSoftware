@@ -4,6 +4,7 @@
 #include "test_fixture.hpp"
 #include <fsw/FCCode/constants.hpp>
 #include <adcs/constants.hpp>
+#include <gnc/constants.hpp>
 
 void test_valid_initialization() {
     TestFixture tf;
@@ -67,8 +68,11 @@ void test_dispatch_detumble() {
     TestFixture tf(mission_state_t::detumble);
     tf.set(adcs_state_t::detumble);
 
+    // Be aware, we assume here that J_sat is diagonal and that the set_ang_rate
+    // function sets omega = rate x_hat.
+    // This test may fail if gnc::constant::J_sat gets updated.
     const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia
-                                * tf.detumble_safety_factor_fp->get();
+                                * tf.detumble_safety_factor_fp->get() / gnc::constant::J_sat(0,0);
     const float delta = threshold * 0.01;
 
     // Stays in detumble mode if satellite is tumbling
