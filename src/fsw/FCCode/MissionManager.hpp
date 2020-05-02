@@ -133,9 +133,11 @@ class MissionManager : public TimedControlTask<void> {
      **/
     WritableStateField<unsigned char> adcs_state_f;
     /**
-     * @brief Current angular momentum of ADCS system in the body frame.
-     **/
-    InternalStateField<lin::Vector3f>* adcs_ang_momentum_fp;
+     * @brief Current, estimated angular rate in the body frame (radians per
+     *        second).
+     * 
+     * Inputs from the AttitudedEstimator. */
+    ReadableStateField<lin::Vector3f>* adcs_w_body_est_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
     const ReadableStateField<lin::Vector3d>* propagated_baseline_pos_fp; // Propagated baseline position
