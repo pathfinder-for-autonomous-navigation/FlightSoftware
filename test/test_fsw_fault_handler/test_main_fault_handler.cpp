@@ -27,7 +27,8 @@ void test_main_fh_no_fault() {
     fault_response_t response = tf.step<10>({
         fault_response_t::none, fault_response_t::none, fault_response_t::none,
         fault_response_t::none, fault_response_t::none, fault_response_t::none,
-        fault_response_t::none, fault_response_t::none, fault_response_t::none
+        fault_response_t::none, fault_response_t::none, fault_response_t::none,
+        fault_response_t::none
     });
     TEST_ASSERT_EQUAL(fault_response_t::none, response);
 }
