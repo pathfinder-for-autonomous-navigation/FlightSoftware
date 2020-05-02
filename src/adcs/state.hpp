@@ -91,7 +91,7 @@ struct IMURegisters {
   /** Current output for the gyroscope in units of rad/s in the body frame of
    *  the spacecraft. */
   float gyr_rd[3];
-  /** Current output for the gyroscope temperature in units of Kelvin. */
+  /** Current output for the gyroscope temperature in degrees C. */
   float gyr_temp_rd;
   /** Specifies the exponential filter constant for the magnetometer reads. */
   float mag_flt;
