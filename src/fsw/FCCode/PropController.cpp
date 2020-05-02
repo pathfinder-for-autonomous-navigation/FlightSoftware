@@ -627,18 +627,11 @@ size_t PropState_Venting::select_valve_index()
 
 prop_state_t PropState_Venting::handle_out_of_cycles()
 {
-    // Unsignal the fault temporarily so that if there are other faults,
-    // we will handle those
+    // When we run out of cycles, return to handling_fault
+    // Let PropFaultHandler deal with it
     DD("PropState_Venting is out of cycles\n");
-    if (p_tank == &Tank1)
-        controller->tank1_temp_high_fault_f.unsignal();
-    // If the venting comes from tank2, then unsignal one of the faults
-    else if (controller->tank2_temp_high_fault_f.is_faulted())
-        controller->tank2_temp_high_fault_f.unsignal();
-    else
-        controller->overpressure_fault_f.unsignal();
 
-    return prop_state_t::idle;
+    return prop_state_t::handling_fault;
 }
 
 // ------------------------------------------------------------------------

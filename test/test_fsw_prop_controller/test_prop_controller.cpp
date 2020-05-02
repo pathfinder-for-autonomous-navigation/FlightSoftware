@@ -186,10 +186,10 @@ void test_suppress_underpressure_fault_max_cycles()
     // Suppress it early
     tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
     tf.set_schedule(700, 200, 200, 800, 2 * tf.pc->min_cycles_needed());
-    tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
     tf.step();                       // enter await_pressurizing
     tf.execute_until_state_change(); // now in pressurizing
     check_state(prop_state_t::pressurizing);
+    tf.step(get_persistence(pressurize_fail_fault_f) + 1);
     assert_fault_state(false, pressurize_fail_fault_f); // assert not faulted
     tf.execute_until_state_change();
     // We should reach await_firing
@@ -292,13 +292,15 @@ void test_vent_outer_tank()
     tf.simulate_pressurizing();
     tf.step(4);
     simulate_overpressured();
-    tf.step(10 + 2);
-    check_state(prop_state_t::handling_fault);
+    tf.step(get_persistence(overpressure_fault_f) + 1);
     assert_fault_state(true, overpressure_fault_f);
-    tf.step(2);
+    tf.step();
+    check_state(prop_state_t::handling_fault);
+    tf.step();
     // Make sure that this thing cycles
     check_state(prop_state_t::venting);
     assert_fault_state(true, overpressure_fault_f);
+    tf.step();
     for (size_t i = 0; i < 4; ++i)
     {
         TEST_ASSERT_TRUE(Tank2.is_valve_open(i));
@@ -319,7 +321,9 @@ void test_vent_inner_tank()
     tf.simulate_firing();
     tf.step(1);
     simulate_tank1_high();
-    tf.step(10 + 2);
+    // +2 because the fault is faulted after persistence + 1
+    // And it takes 1 state to transition to handling_fault
+    tf.step(get_persistence(tank1_temp_high_fault_f) + 2);
     check_state(prop_state_t::handling_fault);
     assert_fault_state(true, tank1_temp_high_fault_f);
     tf.step(2);

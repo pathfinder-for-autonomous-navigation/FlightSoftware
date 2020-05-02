@@ -12,6 +12,8 @@
 
 #define override_fault(fault) tf.pc->fault.override_f.set(true)
 
+#define get_persistence(fault) tf.pc->fault.persistence_f.get()
+
 inline void do_nothing()
 {
 }
@@ -57,7 +59,7 @@ inline void simulate_tank1_high()
 inline void simulate_tank2_high()
 {
     std::printf("Spoofing Tank2 high\n");
-    Tank2.fake_tank2_temp_sensor_read = 50; // 69 C
+    Tank2.fake_tank2_temp_sensor_read = 50; // 47 C
 }
 
 class TestFixture
