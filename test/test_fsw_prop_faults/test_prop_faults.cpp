@@ -11,6 +11,8 @@ void test_respect_disabled()
     // If faults are signalled, but we are in disable, then we should not be handling faults are detecting faults
     TestFixture tf;
     simulate_overpressured(); // we are about to blow up...
+    tf.step(2);
+    assert_fault_state(true, overpressure_fault_f);
     // But we should not enter any fault handling state because we disabled
     for (size_t i = 0; i < 20; ++i)
     {

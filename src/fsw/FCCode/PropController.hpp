@@ -213,6 +213,7 @@ public:
     prop_state_t evaluate() override;
 };
 
+// In this state, PropulsionSystem is functional and ready to accept firing schedules
 class PropState_Idle : public PropState
 {
 public:
@@ -239,13 +240,13 @@ public:
 //
 // In this class, we have open-close cycles, which consists of an open period
 //      followed by a close period.
-// In the open period, one of the Tank's valves is opened
-// In the close period, all of the Tank's valves are closed
+// In the open (filling) period, one of the Tank's valves is opened
+// In the close (cooling) period, all of the Tank's valves are closed
 class ActionCycleOpenClose : public PropState
 {
 public:
-    ActionCycleOpenClose(prop_state_t my_state, Devices::Tank &_tank, prop_state_t _success_state, prop_state_t _fail_state) : PropState(my_state),
-                                                                                                                               tank(_tank),
+    ActionCycleOpenClose(prop_state_t my_state, Devices::Tank *_tank, prop_state_t _success_state, prop_state_t _fail_state) : PropState(my_state),
+                                                                                                                               p_tank(_tank),
                                                                                                                                success_state(_success_state),
                                                                                                                                fail_state(_fail_state) {}
     void enter() override;
@@ -260,20 +261,13 @@ protected:
     virtual bool has_failed() const; // Default return false
     // Returns index of the valve that we should use in the upcoming "open" cycle
     virtual size_t select_valve_index() = 0;
-    // Returns the number of control cycles for which the valve should be opened
-    virtual size_t get_ctrl_cycles_per_open_period() const = 0;
-    // Returns the number of control cycles for which all valves should be closed
-    virtual size_t get_ctrl_cycles_per_close_period() const = 0;
-    // Return the maximum number of open-close cycles permitted
-    // If we exceed this number, then handle_out_of_cycles() will be called
-    virtual size_t get_max_cycles() const = 0;
-    // Defines what we should do if we have executed for more than get_max_cycles()
+    // Defines what we should do if we have executed for more than max_cycles
     // number of open-close cycles
     virtual prop_state_t handle_out_of_cycles() = 0;
     // Number of open-closed cycles that we have executed since last entering this state
     size_t cycle_count = 0;
     // The tank whose valves we will be opening
-    Devices::Tank &tank;
+    Devices::Tank *p_tank;
     // The valve index of the valve that we will use in the upcoming or current open cycle
     size_t cur_valve_index;
 
@@ -305,7 +299,7 @@ private:
 class PropState_Pressurizing : public ActionCycleOpenClose
 {
 public:
-    PropState_Pressurizing() : ActionCycleOpenClose(prop_state_t::pressurizing, Tank1, prop_state_t::await_firing, prop_state_t::disabled) {}
+    PropState_Pressurizing() : ActionCycleOpenClose(prop_state_t::pressurizing, &Tank1, prop_state_t::await_firing, prop_state_t::disabled) {}
 
 protected:
     void enter() override;
@@ -319,13 +313,6 @@ protected:
     bool has_failed() const override;
     // Whether to use the primary or backup valve
     size_t select_valve_index() override;
-    // The number of control cycles per filling period
-    size_t get_ctrl_cycles_per_open_period() const override;
-    // The number of control cycles per cooling period
-    size_t get_ctrl_cycles_per_close_period() const override;
-    // Maximum number of pressurizing cycles. If we exceed this, the pressurize_fail fault
-    // will be signaled
-    size_t get_max_cycles() const override;
     // Called when we have failed to reach threshold_pressure after maximum consecutive pressurizing cycles
     // First, signal pressurize_fail_fault_f. Then evaluate whether this fault has been suppressed by the ground.
     // If it has been suppressed, then continue to pressurize. Otherwise, set Prop to handling_fault
@@ -364,7 +351,7 @@ class PropState_Venting : public ActionCycleOpenClose
 {
 public:
     // Default to tank2 but enter() will determine the tank at runtime
-    PropState_Venting() : ActionCycleOpenClose(prop_state_t::venting, Tank2, prop_state_t::idle, prop_state_t::disabled) {}
+    PropState_Venting() : ActionCycleOpenClose(prop_state_t::venting, &Tank2, prop_state_t::idle, prop_state_t::disabled) {}
 
 protected:
     void enter() override;
@@ -373,10 +360,6 @@ protected:
     bool has_succeeded() const override;
     // Determine which valves to open
     size_t select_valve_index() override;
-    size_t get_ctrl_cycles_per_open_period() const override;
-    size_t get_ctrl_cycles_per_close_period() const override;
-    // Maximum number of venting cycles
-    size_t get_max_cycles() const override;
     // Called if we have ran out of cycles and we are still faulted
     prop_state_t handle_out_of_cycles() override;
 
@@ -389,7 +372,7 @@ private:
 
     // If Tank1 temp is not faulted, then the problem must be with Tank2
     // Also, if Tank2 pressure is faulted then vent Tank2 first
-    Devices::Tank &determine_faulted_tank();
+    Devices::Tank *determine_faulted_tank();
 };
 
 // HandlingFault consists of autonomous responses to perceived hardware faults

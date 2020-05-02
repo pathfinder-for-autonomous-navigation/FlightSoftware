@@ -48,6 +48,7 @@ inline void simulate_overpressured()
 // Expected response: Open 2 tank-to-tank valves for 10 1-second bursts separated by 1 second
 inline void simulate_tank1_high()
 {
+    std::printf("Spoofing Tank1 high\n");
     // Spoof a tank1 high event
     Tank1.fake_tank1_temp_sensor_read = 35; // 69 C
 }
@@ -55,7 +56,8 @@ inline void simulate_tank1_high()
 // Expected response: Open all 4 thruster valves to vent Tank 2, 10 1-second bursts separated by 1 second
 inline void simulate_tank2_high()
 {
-    Tank2.fake_tank2_temp_sensor_read = 35; // 69 C
+    std::printf("Spoofing Tank2 high\n");
+    Tank2.fake_tank2_temp_sensor_read = 50; // 69 C
 }
 
 class TestFixture
