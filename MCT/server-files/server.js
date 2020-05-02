@@ -16,14 +16,16 @@ expressWs(app);
 
 if (process.argv[2] == "test") {
     var battery = new Battery();
-
+    var realtimeServer = new RealtimeServer(battery);
+    var historyServer = new HistoryServer(battery);
 }
 else {
     var spacecraft = new Spacecraft();
+    var realtimeServer = new RealtimeServer(spacecraft);
+    var historyServer = new HistoryServer(spacecraft);
 }
 
-var realtimeServer = new RealtimeServer(battery);
-var historyServer = new HistoryServer(battery);
+
 
 app.use('/realtime', realtimeServer);
 app.use('/history', historyServer);
