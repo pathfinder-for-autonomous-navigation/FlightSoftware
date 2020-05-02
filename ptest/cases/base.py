@@ -218,7 +218,7 @@ class Case(object):
         '''
         for x in range(self.havt_length):
             if not self.havt_read[x]:
-                self.logger.put(f"Device #{x}, {self.havt_devices.get_by_num(x)} is not functional")
+                self.logger.put(f"Device #{x}, {self.havt_devices[x]} is not functional")
 
     @finished.setter
     def finished(self, finished):

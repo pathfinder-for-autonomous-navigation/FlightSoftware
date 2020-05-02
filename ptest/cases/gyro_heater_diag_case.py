@@ -7,8 +7,8 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):
         self.print_header("Begin Gyro Heater Diagnostic Case")
 
-        self.ws("pan.state", self.mission_states.get_by_name("manual"))
-        self.ws("adcs.state", self.adcs_states.get_by_name("point_manual"))
+        self.ws("pan.state", self.mission_states["manual"])
+        self.ws("adcs.state", self.adcs_states["point_manual"])
         
         self.target = 40
 
