@@ -4,8 +4,7 @@
 static void test_no_faults() {
     TestFixtureMainFHEndToEnd tf;
     tf.set(mission_state_t::standby);
-    fault_response_t response = tf.step();
-    TEST_ASSERT_EQUAL(fault_response_t::none, response);
+    TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
 }
 
 void test_single_simple_faults(std::vector<std::shared_ptr<Fault>>& faults,
@@ -13,13 +12,12 @@ void test_single_simple_faults(std::vector<std::shared_ptr<Fault>>& faults,
 {
     fault_response_t response;
     for(auto& fault_ptr : faults) {
-        fault_ptr->signal(); tf.step();
         fault_ptr->signal();
-        response = tf.step();
-        TEST_ASSERT_EQUAL(expected_response, response);
+        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
+        fault_ptr->signal();
+        TEST_ASSERT_EQUAL(expected_response, tf.step());
         fault_ptr->unsignal();
-        response = tf.step();
-        TEST_ASSERT_EQUAL(fault_response_t::none, response);
+        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
     }
 }
 
@@ -78,19 +76,17 @@ void test_single_quake_fault() {
     tf.set(radio_state_t::wait);
 
     // Initial response should be standby
-    fault_response_t response = tf.step();
-    TEST_ASSERT_EQUAL(fault_response_t::standby, response);
+    TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step());
 
     // Continue stepping through the Quake fault state machine until we reach safehold.
     tf.cc = 2 * PAN::one_day_ccno + 1;
-    tf.step(); // Now in powercycle_1
+    TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step()); // Now in powercycle_1
     tf.cc = 7 * PAN::one_day_ccno / 3 + 1;
-    tf.step(); // Now in powercycle_2
+    TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step()); // Now in powercycle_2
     tf.cc = 8 * PAN::one_day_ccno / 3 + 1;
-    tf.step(); // Now in powercycle_3
+    TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step()); // Now in powercycle_3
     tf.cc = 3 * PAN::one_day_ccno / 3 + 1;
-    response = tf.step(); // Now in safehold
-    TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
+    TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step()); // Now in safehold
 }
 
 void test_single_piksi_fault() {
@@ -111,16 +107,15 @@ void test_two_simple_faults_safehold_and_standby() {
         // If both faults occur simultaneously, the stronger
         // response is recommended.
         tf.prop_failed_pressurize_fault_fp->signal(); 
-        tf.adcs_wheel1_adc_fault_fp->signal(); tf.step();
+        tf.adcs_wheel1_adc_fault_fp->signal();
+        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
         tf.prop_failed_pressurize_fault_fp->signal(); 
         tf.adcs_wheel1_adc_fault_fp->signal();
-        fault_response_t response = tf.step();
-        TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
+        TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
 
         // If the wheel fault goes away, the response is standby.
         tf.adcs_wheel1_adc_fault_fp->unsignal();
-        response = tf.step();
-        TEST_ASSERT_EQUAL(fault_response_t::standby, response);
+        TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step());
     }
 
     {
@@ -128,16 +123,15 @@ void test_two_simple_faults_safehold_and_standby() {
 
         // Set up both faults at the same time.
         tf.prop_failed_pressurize_fault_fp->signal(); 
-        tf.adcs_wheel1_adc_fault_fp->signal(); tf.step();
+        tf.adcs_wheel1_adc_fault_fp->signal();
+        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
         tf.prop_failed_pressurize_fault_fp->signal(); 
         tf.adcs_wheel1_adc_fault_fp->signal();
-        fault_response_t response = tf.step();
-        TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
+        TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
 
         // If the pressurization fault goes away, the response is still safehold.
         tf.prop_failed_pressurize_fault_fp->unsignal();
-        response = tf.step();
-        TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
+        TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
     }
 
     /**
@@ -150,16 +144,15 @@ void test_two_simple_faults_safehold_and_standby() {
         // response is caused.) If the pressurization fault happens some control
         // cycles later, it should not affect the fault response recommendation.
         TestFixtureMainFHEndToEnd tf;
-        tf.adcs_wheel1_adc_fault_fp->signal(); tf.step();
+        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
         tf.adcs_wheel1_adc_fault_fp->signal();
-        fault_response_t response = tf.step();
-        TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
+        TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
 
         tf.cc += 5;
-        tf.prop_failed_pressurize_fault_fp->signal(); tf.step();
         tf.prop_failed_pressurize_fault_fp->signal();
-        response = tf.step();
-        TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
+        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
+        tf.prop_failed_pressurize_fault_fp->signal();
+        TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
     }
 
     /**
@@ -169,16 +162,16 @@ void test_two_simple_faults_safehold_and_standby() {
      **/
     {
         TestFixtureMainFHEndToEnd tf;
-        tf.prop_failed_pressurize_fault_fp->signal(); tf.step();
         tf.prop_failed_pressurize_fault_fp->signal();
-        fault_response_t response = tf.step();
-        TEST_ASSERT_EQUAL(fault_response_t::standby, response);
+        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
+        tf.prop_failed_pressurize_fault_fp->signal();
+        TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step());
 
         tf.cc += 5;
-        tf.adcs_wheel1_adc_fault_fp->signal(); tf.step();
         tf.adcs_wheel1_adc_fault_fp->signal();
-        response = tf.step();
-        TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
+        TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
+        tf.adcs_wheel1_adc_fault_fp->signal();
+        TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
     }
 }
 
