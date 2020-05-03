@@ -276,6 +276,7 @@ void MissionManager::dispatch_docking() {
         enter_docking_cycle_f.set(control_cycle_count);
         have_set_docking_entry_ccno = true;
     }
+
     if (docked_fp->get()){
         have_set_docking_entry_ccno = false;
         transition_to_state(mission_state_t::docked,
@@ -285,7 +286,7 @@ void MissionManager::dispatch_docking() {
         // Mission has ended, so remove "follower" and "leader" designations.
         set(sat_designation_t::undecided);
     }
-    else if(too_long_in_docking() && !docked_fp->get()) {
+    else if(too_long_in_docking()) {
         have_set_docking_entry_ccno = false;
         transition_to_state(mission_state_t::standby,
             adcs_state_t::startup,
