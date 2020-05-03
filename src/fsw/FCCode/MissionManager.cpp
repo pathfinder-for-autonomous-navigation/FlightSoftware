@@ -345,9 +345,10 @@ void MissionManager::transition_to(mission_state_t mission_state,
         adcs_state_t adcs_state,
         prop_state_t prop_state)
 {
-    if (mission_state != mission_state_t::docking 
+    if (prop_state == prop_state_t::disabled
         && mission_state != mission_state_t::docked
-        && prop_state == prop_state_t::disabled)
+        && mission_state != mission_state_t::leader
+        && mission_state != mission_state_t::leader_close_approach)
     {
         sph_dcdc_fp->set(false);
     }

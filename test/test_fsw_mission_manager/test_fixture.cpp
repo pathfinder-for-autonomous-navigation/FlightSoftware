@@ -31,6 +31,8 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     pressurize_fail_fp=registry.create_fault("prop.pressurize_fail", 1);
     overpressured_fp=registry.create_fault("prop.overpressured", 1);
 
+    sph_dcdc_fp = registry.create_writable_field<bool>("dcdc.SpikeDock_cmd");
+
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
     last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
 
@@ -119,6 +121,10 @@ void TestFixture::check(radio_state_t state) const {
 void TestFixture::check(sat_designation_t designation) const {
     TEST_ASSERT_EQUAL_MESSAGE(static_cast<unsigned char>(designation), sat_designation_fp->get(),
         "For satellite designation.");
+}
+
+void TestFixture::check_sph_dcdc_on(bool on) const {
+    TEST_ASSERT(sph_dcdc_fp->get() == on);
 }
 
 // Ensures that no state except the given state can be achieved.

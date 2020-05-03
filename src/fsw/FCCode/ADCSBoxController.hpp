@@ -39,7 +39,7 @@ protected:
     /**
      * @brief DCDC control. Disables/enables wheels.
      */
-    const WritableStateField<bool>* adcs_dcdc_fp;
+    WritableStateField<bool>* adcs_dcdc_fp;
 
     /**
      * @brief RWA command fields

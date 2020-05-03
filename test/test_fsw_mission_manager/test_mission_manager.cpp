@@ -39,6 +39,7 @@ void test_dispatch_startup() {
     // should transition to the detumble state.
     tf.step();
     tf.check(mission_state_t::detumble);
+    tf.check_sph_dcdc_on(false);
 }
 
 void test_dispatch_empty_states() {
@@ -86,6 +87,7 @@ void test_dispatch_detumble() {
     tf.step();
     tf.check(adcs_state_t::point_standby);
     tf.check(mission_state_t::standby);
+    tf.check_sph_dcdc_on(true);
 }
 
 void test_dispatch_standby() {
@@ -134,6 +136,7 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         This transition should happen irrespective of the comms timeout situation. **/
     {
         TestFixture tf(mission_state);
+        tf.check_sph_dcdc_on(true);
         tf.set(prop_state_t::idle);
         tf.set_sat_distance(sat_distance);
         tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
@@ -194,6 +197,7 @@ void test_rendezvous_states() {
 void test_dispatch_docking() {
     TestFixture tf(mission_state_t::docking);
     tf.step();
+    tf.check_sph_dcdc_on(true);
 
     // Docking motor command should be applied.
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
@@ -240,12 +244,14 @@ void test_dispatch_docking() {
     tf3.step();
 
     tf3.check(mission_state_t::docked);
+    tf3.check_sph_dcdc_on(false);
 }
 
 void test_dispatch_safehold() {
     // Test that a satellite reboot is correctly triggered.
     {
         TestFixture tf(mission_state_t::safehold);
+        tf.check_sph_dcdc_on(false);
 
         // Below one day's worth of cycle counts, safe hold should
         // not trigger a satellite reboot.
