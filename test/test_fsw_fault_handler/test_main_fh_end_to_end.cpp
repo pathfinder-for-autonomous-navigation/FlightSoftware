@@ -3,7 +3,7 @@
 
 ////////////// Helper utilities ////////////////
 
-void signal_until_persistence(std::unique_ptr<Fault>& fault_ptr) {
+void signal_until_persistence(std::shared_ptr<Fault>& fault_ptr) {
     for(int i = 0; i < fault_ptr->persistence_f.get(); i++)
         fault_ptr->signal();
 }
