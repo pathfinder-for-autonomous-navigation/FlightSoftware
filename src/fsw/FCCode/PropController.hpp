@@ -6,7 +6,8 @@
 #include <common/Fault.hpp>
 /**
  * Implementation Info:
- * - millisecond to control cycle count conversions take the floor operator - change this by changing the constexprs
+ * - millisecond to control cycle count conversions take the floor operator - 
+ *      change this by changing the constexprs
  * - There is no going from Pressurizing directly to Firing
  */
 
@@ -44,7 +45,7 @@ public:
     // ------------------------------------------------------------------------
     // Ground-Modifiable Parameters
     // ------------------------------------------------------------------------
-
+    WritableStateField<unsigned int> max_venting_cycles;
     WritableStateField<unsigned int> max_pressurizing_cycles;
     WritableStateField<float> threshold_firing_pressure;
     WritableStateField<unsigned int> ctrl_cycles_per_filling_period;
@@ -72,7 +73,8 @@ public:
     // If there are hardware faults, signal those faults.
     // If any fault is faulted, then set our current state to handling_fault.
     // Evaluate the current state to get the next state
-    // If the next state differs from the current state, update our current state and then call the state's entry() method
+    // If the next state differs from the current state, update our current
+    //      state and then call the state's entry() method
     void execute() override;
 
     // Checks the sensor values of Tank1 and Tank2.
@@ -107,14 +109,19 @@ public:
         return expected == static_cast<prop_state_t>(prop_state_f.get());
     }
 
-    static bool is_valid_schedule(unsigned int v1, unsigned int v2, unsigned int v3, unsigned int v4,
+    static bool is_valid_schedule(unsigned int v1,
+                                  unsigned int v2,
+                                  unsigned int v3,
+                                  unsigned int v4,
                                   unsigned int ctrl_cycles_from_now);
 
     // Copies the schedule in the writable state fields into Tank2's schedule
     // Precond: schedule should be valid before calling this
     inline void write_tank2_schedule()
     {
-        PropulsionSystem.set_schedule(sched_valve1_f.get(), sched_valve2_f.get(), sched_valve3_f.get(),
+        PropulsionSystem.set_schedule(sched_valve1_f.get(),
+                                      sched_valve2_f.get(),
+                                      sched_valve3_f.get(),
                                       sched_valve4_f.get());
     }
 
@@ -202,8 +209,13 @@ protected:
     friend class PropController;
 };
 
+// ------------------------------------------------------------------------
+// PropState_Disabled
+// ------------------------------------------------------------------------
+
 // In this state, Prop ignores all firing requests and hardware faults
-// Prop will still read the PropulsionSystem sensors and update the state fields corresponding to those sensors
+// Prop will still read the PropulsionSystem sensors and update the state fields
+// corresponding to those sensors
 class PropState_Disabled : public PropState
 {
 public:
@@ -213,7 +225,11 @@ public:
     prop_state_t evaluate() override;
 };
 
-// In this state, PropulsionSystem is functional and ready to accept firing schedules
+// ------------------------------------------------------------------------
+// PropState_Idle
+// ------------------------------------------------------------------------
+
+// In this state, PropulsionSystem is functional and ready to accept firing
 class PropState_Idle : public PropState
 {
 public:
@@ -223,8 +239,13 @@ public:
     prop_state_t evaluate() override;
 };
 
+// ------------------------------------------------------------------------
+// PropState_AwaitPressurizing
+// ------------------------------------------------------------------------
+
 // This is the state where we've received a (valid) request to fire.
-// NO ONE may change firing parameters once this state is entered. However, this state can be cancelled to go back to Idle
+// NO ONE may change firing parameters once this state is entered. However,
+// his state can be cancelled to go back to Idle
 class PropState_AwaitPressurizing : public PropState
 {
 public:
@@ -233,6 +254,10 @@ public:
     void enter() override;
     prop_state_t evaluate() override;
 };
+
+// ------------------------------------------------------------------------
+// AwaitPActionCycleOpenCloseressurizing
+// ------------------------------------------------------------------------
 
 // This class abstracts the pressurizing behavior, which consists of pressurizing cycles.
 // In pressurizing behavior, we have pressurizing cycle, which consists of a filling period
@@ -245,10 +270,13 @@ public:
 class ActionCycleOpenClose : public PropState
 {
 public:
-    ActionCycleOpenClose(prop_state_t my_state, Devices::Tank *_tank, prop_state_t _success_state, prop_state_t _fail_state) : PropState(my_state),
-                                                                                                                               p_tank(_tank),
-                                                                                                                               success_state(_success_state),
-                                                                                                                               fail_state(_fail_state) {}
+    ActionCycleOpenClose(prop_state_t my_state,
+                         Devices::Tank *_tank,
+                         prop_state_t _success_state,
+                         prop_state_t _fail_state) : PropState(my_state),
+                                                     p_tank(_tank),
+                                                     success_state(_success_state),
+                                                     fail_state(_fail_state) {}
     void enter() override;
     prop_state_t evaluate() override;
 
@@ -258,7 +286,7 @@ protected:
     // Defines a success condition for which we should enter the success_state
     virtual bool has_succeeded() const = 0;
     // Defines a fail condition for which we should enter the fail_state
-    virtual bool has_failed() const; // Default return false
+    virtual bool has_failed() const = 0; // Default return false
     // Returns index of the valve that we should use in the upcoming "open" cycle
     virtual size_t select_valve_index() = 0;
     // Defines what we should do if we have executed for more than max_cycles
@@ -289,6 +317,10 @@ private:
     friend class PropController;
 };
 
+// ------------------------------------------------------------------------
+// PropState_Pressurizing
+// ------------------------------------------------------------------------
+
 // A pressurizing cycle consists of a "filling" period and a "cooling period".
 //      The firing period is a 1 second duration in which an intertank valve is opened
 //      The cooling period is a 10 second duration in which no valve may be opened
@@ -299,7 +331,10 @@ private:
 class PropState_Pressurizing : public ActionCycleOpenClose
 {
 public:
-    PropState_Pressurizing() : ActionCycleOpenClose(prop_state_t::pressurizing, &Tank1, prop_state_t::await_firing, prop_state_t::disabled) {}
+    PropState_Pressurizing() : ActionCycleOpenClose(prop_state_t::pressurizing,
+                                                    &Tank1,
+                                                    prop_state_t::await_firing,
+                                                    prop_state_t::disabled) {}
 
 protected:
     void enter() override;
@@ -313,11 +348,18 @@ protected:
     bool has_failed() const override;
     // Whether to use the primary or backup valve
     size_t select_valve_index() override;
-    // Called when we have failed to reach threshold_pressure after maximum consecutive pressurizing cycles
-    // First, signal pressurize_fail_fault_f. Then evaluate whether this fault has been suppressed by the ground.
-    // If it has been suppressed, then continue to pressurize. Otherwise, set Prop to handling_fault
+    // Called when we have failed to reach threshold_pressure after maximum
+    //      consecutive pressurizing cycles
+    // First, signal pressurize_fail_fault_f. Then evaluate whether this fault has
+    //      been suppressed by the ground.
+    // If it has been suppressed, then continue to pressurize.
+    //      Otherwise, set Prop to handling_fault
     prop_state_t handle_out_of_cycles() override;
 };
+
+// ------------------------------------------------------------------------
+// PropState_Firing
+// ------------------------------------------------------------------------
 
 class PropState_Firing : public PropState
 {
@@ -332,6 +374,10 @@ private:
     bool is_schedule_empty() const;
 };
 
+// ------------------------------------------------------------------------
+// PropState_AwaitFiring
+// ------------------------------------------------------------------------
+
 class PropState_AwaitFiring : public PropState
 {
 public:
@@ -345,19 +391,27 @@ private:
     bool is_time_to_fire() const;
 };
 
+// ------------------------------------------------------------------------
+// PropState_Venting
+// ------------------------------------------------------------------------
+
 // Two versions of venting: The venting response is basically just the
 // pessurizing response
 class PropState_Venting : public ActionCycleOpenClose
 {
 public:
     // Default to tank2 but enter() will determine the tank at runtime
-    PropState_Venting() : ActionCycleOpenClose(prop_state_t::venting, &Tank2, prop_state_t::idle, prop_state_t::disabled) {}
+    PropState_Venting() : ActionCycleOpenClose(prop_state_t::venting,
+                                               &Tank2,
+                                               prop_state_t::idle,
+                                               prop_state_t::disabled) {}
 
 protected:
     void enter() override;
     bool can_enter() const override;
     // True if we are no longer faulted
     bool has_succeeded() const override;
+    bool has_failed() const override;
     // Determine which valves to open
     size_t select_valve_index() override;
     // Called if we have ran out of cycles and we are still faulted
@@ -375,6 +429,10 @@ private:
     Devices::Tank *determine_faulted_tank();
 };
 
+// ------------------------------------------------------------------------
+// PropState_HandlingFault
+// ------------------------------------------------------------------------
+
 // HandlingFault consists of autonomous responses to perceived hardware faults
 class PropState_HandlingFault : public PropState
 {
@@ -385,6 +443,9 @@ public:
     prop_state_t evaluate() override;
 };
 
+// ------------------------------------------------------------------------
+// PropState_Manual
+// ------------------------------------------------------------------------
 class PropState_Manual : public PropState
 {
 public:

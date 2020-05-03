@@ -138,7 +138,8 @@ void test_overpressured_response()
 {
     TestFixture tf;
     tf.simulate_pressurizing();
-    // tf.step for some random number of pressurizing cycles so that we are in the middle of pressurizing
+    // tf.step for some random number of pressurizing cycles so that we
+    //  are in the middle of pressurizing
     tf.step(2 * tf.ctrl_cycles_per_pressurizing_cycle() + 1);
     // Check that the tank1 valve should be opened since we are pressurizing
     TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
@@ -152,6 +153,17 @@ void test_overpressured_response()
     tf.step();
     // Tank2 should open valves and vent until pressure is below max safe pressure
     TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
+    // Test that we go into disabled when we have failed too many times
+    tf.execute_until_state_change();
+    check_state(prop_state_t::disabled);
+    simulate_ambient();
+    tf.step();
+    assert_fault_state(false, overpressure_fault_f);
+    // Since we are in disabled, it does not matter that the fault is no longer
+    // a problem, we must remain in disabled
+    check_state(prop_state_t::disabled);
+    tf.step(50);
+    check_state(prop_state_t::disabled);
 }
 
 // Test that we can detect high temp event while firing and respond accordingly
@@ -170,8 +182,16 @@ void test_tank1_temp_high_response()
     TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
     // Just for fun, suppose we decide to change to the backup valve
     tf.pc->tank1_valve.set(1);
-    tf.step();
+    tf.step(tf.ctrl_cycles_per_pressurizing_cycle());
     TEST_ASSERT_TRUE(Tank1.is_valve_open(1));
+    assert_fault_state(true, tank1_temp_high_fault_f);
+    tf.step(3);
+    // Now pretend that venting did fix the issue, the fault should be unsignalled
+    simulate_ambient();
+    tf.step();
+    assert_fault_state(false, tank1_temp_high_fault_f);
+    tf.step();
+    check_state(prop_state_t::idle); // We should go into idle
 }
 
 void test_tank2_temp_high_response()
@@ -186,9 +206,16 @@ void test_tank2_temp_high_response()
     check_state(prop_state_t::venting);
     tf.step();
     TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
-    tf.step(tf.pc->ctrl_cycles_per_cooling_period.get() + tf.pc->ctrl_cycles_per_filling_period.get());
+    tf.step(tf.pc->ctrl_cycles_per_cooling_period.get() +
+            tf.pc->ctrl_cycles_per_filling_period.get());
+    assert_fault_state(true, tank2_temp_high_fault_f);
     // Make sure this thing opens the next valve
     TEST_ASSERT_TRUE(Tank2.is_valve_open(1));
+    simulate_ambient();
+    tf.step();
+    assert_fault_state(false, tank2_temp_high_fault_f);
+    tf.step();
+    check_state(prop_state_t::idle);
 }
 
 void test_tank2temphigh_undepressured_response()
@@ -200,12 +227,12 @@ void test_tank2temphigh_undepressured_response()
     tf.step();
     check_state(prop_state_t::handling_fault);
     assert_fault_state(true, pressurize_fail_fault_f);
+    tf.step(get_persistence(tank2_temp_high_fault_f) + 1);
     assert_fault_state(true, tank2_temp_high_fault_f);
     tf.step();
-
-    // We should be about to open the valves on tank2
-    check_state(prop_state_t::await_firing);
-    tf.check_schedule(1000, 1000, 1000, 1000, 2);
+    check_state(prop_state_t::venting);
+    tf.step();
+    TEST_ASSERT_TRUE(Tank2.is_valve_open(0));
 }
 
 // Tank1 is venting but Tank2 is suddenly faulted
@@ -219,7 +246,7 @@ void test_tank2_fault_while_tank1_vent()
     tf.simulate_await_firing();
     // Simulate Tank1 high fault and detect it
     simulate_tank1_high();
-    tf.step(get_persistence(tank1_temp_high_fault_f) + 1);
+    tf.step(get_persistence(tank1_temp_high_fault_f) + 2);
     check_state(prop_state_t::handling_fault);
     tf.step();
     check_state(prop_state_t::venting);
@@ -237,7 +264,8 @@ void test_tank2_fault_while_tank1_vent()
     // PropFaultHandler should shorten max cycles to 1
     TEST_ASSERT_EQUAL(1, tf.pc->max_pressurizing_cycles.get());
     // PropFaultHandler change cooling period := filling period
-    TEST_ASSERT_EQUAL(tf.pc->ctrl_cycles_per_filling_period.get(), tf.pc->ctrl_cycles_per_cooling_period.get());
+    TEST_ASSERT_EQUAL(tf.pc->ctrl_cycles_per_filling_period.get(),
+                      tf.pc->ctrl_cycles_per_cooling_period.get());
     tf.step();
     // Since the max_pressurizing_cycle is only 1, Prop should go into handling_fault
     check_state(prop_state_t::handling_fault);

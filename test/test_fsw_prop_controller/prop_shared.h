@@ -200,7 +200,7 @@ public:
         set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
         step(2);
         simulate_at_threshold();
-        step();
+        execute_until_state_change();
         TEST_ASSERT_EQUAL(prop_state_t::await_firing, pc->prop_state_f.get());
     }
 
