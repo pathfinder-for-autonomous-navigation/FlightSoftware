@@ -39,14 +39,26 @@ class Case(object):
 
     @property
     def sim_duration(self):
+        """
+        Returns the duration that the MATLAB simulation to run. If set to zero, the MATLAB
+        simulation will not start.
+
+        Usual values of this field are either 0 or float("inf").
+        """
         return 0
 
     @property
     def sim_initial_state(self):
+        """
+        Initial state that is fed into the MATLAB simulation.
+        """
         return 'startup'
 
     @property
     def finished(self):
+        """
+        Should be set to true if the testcase has completed.
+        """
         return self._finished
 
     @finished.setter
@@ -61,12 +73,23 @@ class Case(object):
         self._setup_case()
 
     def _setup_case(self):
+        """
+        Must be implemented by subclasses.
+        """
         raise NotImplementedError
 
     def run_case(self):
+        """
+        Must be implemented by subclasses.
+        """
         raise NotImplementedError
             
     def finish(self):
+        """
+        When called, this function indicates to PTest that
+        the testcase has finished its execution.
+        """
+
         if not self.finished:
             if not self.sim.is_interactive:
                 self.sim.running = False
@@ -83,10 +106,17 @@ class SingleSatOnlyCase(Case):
 
     @property
     def initial_state(self):
+        """
+        Sets the initial state for the boot utility.
+        """
         return "manual"
 
     @property
     def fast_boot(self):
+        """
+        If true, the boot utility will immediately jump to the initial_state
+        rather than stepping through the state machine.
+        """
         return True
 
     def _setup_case(self):
@@ -100,25 +130,55 @@ class SingleSatOnlyCase(Case):
         self.boot_util.setup_boot()
         self.setup_post_bootsetup()
 
-    def setup_pre_bootsetup(self): pass
-    def setup_post_bootsetup(self): pass
+    def setup_pre_bootsetup(self):
+        """
+        Setup that should run prior to the boot utility setup.
+
+        The boot utility sets up fault suppressions and timeouts so that it steps through
+        the state machine in the correct way. Therefore, all fault-suppression related
+        setup that overlaps with the boot utility should happen in the setup_post_bootsetup
+        function, not here.
+        """
+        pass
+
+    def setup_post_bootsetup(self):
+        """
+        Setup that should run after the boot utility has finished its setup. See
+        documentation for setup_pre_bootsetup for more details.
+        """
+        pass
 
     def run_case(self):
         if not self.boot_util.finished_boot(): return
         self.run_case_singlesat()
 
     def run_case_singlesat(self):
+        """
+        Interface method that will contain the body of the test, which must be implemented by testcases.
+        
+        This function is analogous to Arduino's loop() method. It will run repeatedly, in step with the
+        MATLAB simulation (if it is turned on.)
+        """
         raise NotImplementedError
 
     def read_state(self, string_state):
+        """
+        Wrapper function around flight controller's read_state.
+        """
         return self.sim.flight_controller.read_state(string_state)
 
     def write_state(self, string_state, state_value):
+        """
+        Wrapper function around flight controller's write_state.
+        """
         self.sim.flight_controller.write_state(string_state, state_value)
         return self.read_state(string_state)
 
     @property
     def mission_state(self):
+        """
+        Returns mission state as a string: "standby", "startup", etc.
+        """
         return Enums.mission_states[int(self.sim.flight_controller.read_state("pan.state"))]
 
     @mission_state.setter
@@ -161,6 +221,9 @@ class SingleSatOnlyCase(Case):
         self.sim.flight_controller.write_state(name, val)
 
     def print_ws(self, name, val):
+        """
+        Writes the state and prints the written value.
+        """
         self.logger.put(f"{name} set to: {val}")
         self.ws(name, val)
 
@@ -186,7 +249,12 @@ class MissionCase(Case):
     """
     Base testcase for writing testcases that only work with a full mission simulation
     with both satellites.
+
+    This function contains many functions that have exactly the same purpose as their
+    counterparts in SingleSatOnlyCase. Be sure to read the class documentation for that
+    case.
     """
+
     @property
     def initial_state_leader(self):
         raise NotImplementedError
