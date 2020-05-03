@@ -94,6 +94,8 @@ class RadioSession(object):
             created_uplink = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
             if not created_uplink: return False
             os.system("./ptest/send_uplink uplink.sbd")
+            os.remove("uplink.sbd") 
+            os.remove("uplink.json") 
             return True
         else:
             return False
