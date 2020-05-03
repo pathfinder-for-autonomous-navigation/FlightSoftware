@@ -25,13 +25,16 @@ class StateSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, simulation_run_dir):
+    def __init__(self, device_name, uplink_console, simulation_run_dir):
         '''
         Initializes state session with a device.
         '''
 
         # Device connection
         self.device_name = device_name
+
+        # Uplink console
+        self.uplink_console = uplink_console
 
         # Data logging
         self.datastore = Datastore(device_name, simulation_run_dir)
@@ -55,16 +58,6 @@ class StateSession(object):
 
         # Simulation
         self.overriden_variables = set()
-
-        # Open a subprocess to Uplink Producer. Compile it if it is not available.
-        uplink_producer_filepath = ".pio/build/gsw_uplink_producer/program" 
-        if not os.path.exists(uplink_producer_filepath):
-            print("Compiling the uplink producer.")
-            os.system("pio run -e gsw_uplink_producer > /dev/null")
-
-        master_fd, slave_fd = pty.openpty()
-        self.uplink_producer = subprocess.Popen([uplink_producer_filepath], stdin=master_fd, stdout=master_fd)
-        self.uplink_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
 
     def connect(self, console_port, baud_rate):
         '''
@@ -350,42 +343,6 @@ class StateSession(object):
             if val == "true": return True
             if val == "false": return False
         return None
-    
-    def create_uplink(self, fields, vals, filename):
-        '''
-        Puts fields and values in a JSON document and sends the JSON 
-        object to the uplink producer console. This results in the creation
-        of an SBD file with the given filename holding an uplink packet
-        '''
-        # Create a JSON file with all the fields and values
-        telem_json={}
-        for field, val in zip(fields, vals):
-            value = self.get_val(val)
-            if value is not None:
-                telem_json[field]=value
-            else:
-                logline = "Failed:   " + json.dumps(telem_json) + "\n"
-                logline += f"Error:    Unable to add {field}: {val} to uplink JSON file"
-                self.raw_logger.put(logline)
-                return False
-        with open('uplink.json', 'w') as telem_file:
-            json.dump(telem_json, telem_file)
-
-        # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
-        # holding the uplink packet.
-        self.uplink_console.write(("uplink.json\n").encode())
-        self.uplink_console.write((str(filename)+"\n").encode())
-        response = json.loads(self.uplink_console.readline().rstrip())
-
-        # Check that the uplink was successfully created
-        if 'error' in response:
-            logline = "Failed:   " + json.dumps(telem_json) + "\n"
-            logline += "Error:    "+response['error']
-            self.raw_logger.put(logline)
-            return False
-
-        self.raw_logger.put("Uplink:   " + json.dumps(telem_json))
-        return True
 
     def send_uplink(self, filename):
         '''
@@ -432,7 +389,7 @@ class StateSession(object):
         ]
         fields, vals = zip(*field_val_pairs)
 
-        success = self.create_uplink(fields, vals, "uplink.sbd")
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
 
         # If the uplink packet exists, send it to the FlightSoftware console
         if success and os.path.exists("uplink.sbd"):
@@ -502,7 +459,6 @@ class StateSession(object):
         self.running_logger = False
         self.check_msgs_thread.join()
         self.console.close()
-        self.uplink_console.close()
         self.dp_console.close()
 
         self.datastore.stop()
