@@ -33,9 +33,13 @@ public:
 protected:
     /**
      * @brief Command to get from mission_manager
-     * 
      */
     const WritableStateField<unsigned char>* adcs_state_fp;
+
+    /**
+     * @brief DCDC control. Disables/enables wheels.
+     */
+    const WritableStateField<bool>* adcs_dcdc_fp;
 
     /**
      * @brief RWA command fields
