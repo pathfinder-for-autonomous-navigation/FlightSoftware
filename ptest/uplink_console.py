@@ -20,6 +20,26 @@ class UplinkConsole(object):
 
         self.logger = Logger("UplinkConsole", data_dir)
 
+    def get_val(self, val):
+        '''
+        Recives string representation of a value and returns the value as a bool, int, or float
+        If the value can't be determined, returns None;
+        "true" --> true (bool)
+        "5" --> 5 (int)
+        "0.05" --> 0.05 (float)
+        "dchkjdda" --> None
+        '''
+        try:
+            f=float(val)
+            i=int(f)
+            if f!=i: 
+                return f
+            return i
+        except:
+            if val == "true": return True
+            if val == "false": return False
+        return None
+
     def create_uplink(self, fields, vals, filename):
         """
         Puts fields and values in a JSON document and sends the JSON 

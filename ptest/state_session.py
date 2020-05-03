@@ -324,26 +324,6 @@ class StateSession(object):
         '''
         return self.write_multiple_states([field], [self._val_to_str(args)], kwargs.get('timeout'))
 
-    def get_val(self, val):
-        '''
-        Recives string representation of a value and returns the value as a bool, int, or float
-        If the value can't be determined, returns None;
-        "true" --> true (bool)
-        "5" --> 5 (int)
-        "0.05" --> 0.05 (float)
-        "dchkjdda" --> None
-        '''
-        try:
-            f=float(val)
-            i=int(f)
-            if f!=i: 
-                return f
-            return i
-        except:
-            if val == "true": return True
-            if val == "false": return False
-        return None
-
     def send_uplink(self, filename):
         '''
         Gets the uplink packet from the given file. Sends the hex 
