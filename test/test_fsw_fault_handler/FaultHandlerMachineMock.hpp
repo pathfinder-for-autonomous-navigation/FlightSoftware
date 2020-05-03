@@ -4,16 +4,16 @@
 #include <fsw/FCCode/FaultHandlerMachine.hpp>
 
 class FaultHandlerMachineMock : public FaultHandlerMachine {
-  public:
+public:
     FaultHandlerMachineMock(StateFieldRegistry& r) : FaultHandlerMachine(r) {}
     fault_response_t execute() override {
-      return response;
+    return response;
     }
 
     void set(fault_response_t r) {
         response = r;
     }
-  private:
+private:
     fault_response_t response;
 };
 
