@@ -3,7 +3,6 @@ from cerberus import Validator
 
 ptest_config_schema = {
     "seed" : {"type" : "integer"},
-    "single_sat_sim" : {"type": "boolean"},
     "devices" : {
         "type" : "list",
         "schema" : {

@@ -1,33 +1,9 @@
 from ..data_consumers import Logger
 import time
 import math
+from .utils import BootUtil, TestCaseFailure, Enums
 
 # Base classes for writing testcases.
-class TestCaseFailure(Exception):
-    """Raise in case of test case failure."""
-
-class FSWEnum(object):
-    """
-    Class that encodes flight software enums into Python objects in
-    a way that makes them easy to access during testing.
-    """
-
-    def __init__(self, arr):
-        self.arr = arr
-        self._indexed_by_name = {}
-        self._indexed_by_num = {}
-        for i in range(len(arr)):
-            self._indexed_by_name[arr[i]] = i
-            self._indexed_by_num[i] = arr[i]
-
-    def __getitem__(self, item):
-        if type(item) is str:
-            return self._indexed_by_name[item]
-        elif type(item) is int:
-            return self._indexed_by_num[item]
-        else:
-            raise AttributeError(f"Cannot access FSWEnum with key: {item}")
-
 
 class Case(object):
     """
@@ -36,112 +12,6 @@ class Case(object):
 
     def __init__(self, data_dir):
         self._finished = False
-
-        self.mission_states = FSWEnum([
-            "startup",
-            "detumble",
-            "initialization_hold",
-            "standby",
-            "follower",
-            "leader",
-            "follower_close_approach",
-            "leader_close_approach",
-            "docking",
-            "docked",
-            "safehold",
-            "manual"
-        ])
-
-        self.prop_states = FSWEnum([
-            "disabled",
-            "idle",
-            "await_pressurizing",
-            "pressurizing",
-            "venting",
-            "firing",
-            "await_firing",
-            "handling_fault",
-            "manual"
-        ])
-
-        self.adcs_states = FSWEnum([
-            "startup",
-            "limited",
-            "zero_torque",
-            "zero_L",
-            "detumble",
-            "point_manual",
-            "point_standby",
-            "point_docking"
-        ])
-
-        self.radio_states = FSWEnum([
-            "disabled",
-            "wait",
-            "transceive",
-            "read",
-            "write",
-            "config"
-        ])
-
-        self.sat_designations = FSWEnum([
-            "undecided",
-            "leader",
-            "follower"
-        ])
-
-        self.piksi_modes = FSWEnum([
-            "spp",
-            "fixed_rtk",
-            "float_rtk",
-            "no_fix",
-            "sync_error",
-            "nsat_error",
-            "crc_error",
-            "time_limit_error",
-            "data_error",
-            "no_data_error",
-            "dead"
-        ])
-        
-        self.rwa_modes = FSWEnum([
-            "RWA_DISABLED",
-            "RWA_SPEED_CTRL",
-            "RWA_ACCEL_CTRL"
-        ])
-
-        self.imu_modes = FSWEnum([
-            "IMU_MAG_NORMAL",
-            "IMU_MAG_CALIBRATE"
-        ])
-
-        self.mtr_modes = FSWEnum([
-            "MTR_ENABLED",
-            "MTR_DISABLED"
-        ])
-        self.havt_length = 18
-        
-        # copied from havt_devices.hpp
-        self.havt_devices = FSWEnum([
-        "IMU_GYR",
-        "IMU_MAG1",
-        "IMU_MAG2",
-        "MTR1",
-        "MTR2",
-        "MTR3",
-        "RWA_POT",
-        "RWA_WHEEL1",
-        "RWA_WHEEL2",
-        "RWA_WHEEL3",
-        "RWA_ADC1",
-        "RWA_ADC2",
-        "RWA_ADC3",
-        "SSA_ADC1",
-        "SSA_ADC2",
-        "SSA_ADC3",
-        "SSA_ADC4",
-        "SSA_ADC5"])
-
         self.logger = Logger("testcase", data_dir, print=True)
 
     def mag_of(self, vals):
@@ -176,13 +46,9 @@ class Case(object):
         return 'startup'
 
     @property
-    def single_sat_compatible(self):
-        raise NotImplementedError
-
-    @property
     def finished(self):
         return self._finished
-    
+
     @finished.setter
     def finished(self, finished):
         assert type(finished) is bool
@@ -209,24 +75,36 @@ class Case(object):
             time.sleep(1)
             self.logger.stop()
 
+
 class SingleSatOnlyCase(Case):
     """
     Base testcase for writing testcases that only work with a single-satellite mission.
     """
 
     @property
-    def single_sat_compatible(self):
+    def initial_state(self):
+        return "manual"
+
+    @property
+    def fast_boot(self):
         return True
 
     def _setup_case(self):
-        if self.sim.is_single_sat_sim:
-            self.setup_case_singlesat()
-        else:
-            raise NotImplementedError
+        self.setup_pre_bootsetup()
+
+        # Prevent faults from mucking up the state machine.
+        self.sim.flight_controller.write_state("gomspace.low_batt.suppress", "true")
+        self.sim.flight_controller.write_state("fault_handler.enabled", "false")
+
+        self.boot_util = BootUtil(self.sim.flight_controller, self.logger, self.initial_state, self.fast_boot)
+        self.boot_util.setup_boot()
+        self.setup_post_bootsetup()
+
+    def setup_pre_bootsetup(self): pass
+    def setup_post_bootsetup(self): pass
 
     def run_case(self):
-        if not self.sim.is_single_sat_sim:
-            raise Exception(f"Testcase {__class__.__name__} only works for a single-satellite simulation.")
+        if not self.boot_util.finished_boot(): return
         self.run_case_singlesat()
 
     def run_case_singlesat(self):
@@ -238,6 +116,14 @@ class SingleSatOnlyCase(Case):
     def write_state(self, string_state, state_value):
         self.sim.flight_controller.write_state(string_state, state_value)
         return self.read_state(string_state)
+
+    @property
+    def mission_state(self):
+        return Enums.mission_states[int(self.sim.flight_controller.read_state("pan.state"))]
+
+    @mission_state.setter
+    def mission_state(self, state):
+        self.sim.flight_controller.write_state("pan.state", int(Enums.mission_states[state]))
 
     def cycle(self):
         ''' 
@@ -301,18 +187,56 @@ class MissionCase(Case):
     Base testcase for writing testcases that only work with a full mission simulation
     with both satellites.
     """
+    @property
+    def initial_state_leader(self):
+        raise NotImplementedError
+    @property
+    def initial_state_follower(self):
+        raise NotImplementedError
 
     @property
-    def single_sat_compatible(self):
-        return False
+    def fast_boot_leader(self):
+        raise NotImplementedError
+    @property
+    def fast_boot_follower(self):
+        raise NotImplementedError
+
+    def _setup_case(self):
+        self.setup_pre_bootsetup_leader()
+        self.setup_pre_bootsetup_follower()
+        self.boot_util_leader = BootUtil(self.sim.flight_controller_leader, self.logger, self.initial_state_leader, self.fast_boot_leader)
+        self.boot_util_follower = BootUtil(self.sim.flight_controller_follower, self.logger, self.initial_state_follower, self.fast_boot_follower)
+        self.boot_util_leader.setup_boot()
+        self.boot_util_follower.setup_boot()
+        self.setup_post_bootsetup_leader()
+        self.setup_post_bootsetup_follower()
+
+    def setup_pre_bootsetup_leader(self): pass
+    def setup_pre_bootsetup_follower(self): pass
+    def setup_post_bootsetup_leader(self): pass
+    def setup_post_bootsetup_follower(self): pass
 
     def run_case(self):
-        if self.sim.is_single_sat_sim:
-            raise Exception(f"Testcase {__class__.__name__} only works for a full-mission simulation.")
+        if not self.boot_util_follower.finished_boot(): return
+        if not self.boot_util_leader.finished_boot(): return
         self.run_case_fullmission()
 
     def run_case_fullmission(self):
         raise NotImplementedError
+
+    @property
+    def mission_state_leader(self):
+        return Enums.mission_states[int(self.sim.flight_controller_leader.read_state("pan.state"))]
+    @property
+    def mission_state_follower(self):
+        return Enums.mission_states[int(self.sim.flight_controller_follower.read_state("pan.state"))]
+
+    @mission_state_leader.setter
+    def mission_state_leader(self, state):
+        self.sim.flight_controller_leader.write_state("pan.state", int(Enums.mission_states[state]))
+    @mission_state_follower.setter
+    def mission_state_follower(self, state):
+        self.sim.flight_controller_follower.write_state("pan.state", int(Enums.mission_states[state]))
 
     def read_state_leader(self, string_state):
         return self.sim.flight_controller_leader.read_state(string_state)
