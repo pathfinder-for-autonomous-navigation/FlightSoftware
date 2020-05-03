@@ -262,7 +262,14 @@ void MissionManager::dispatch_leader_close_approach() {
     }
 }
 
+/**
+ * @brief This flag checks if we've set the state field called docking_entry_ccno,
+ * which indicates the control cycle # at which we entered the docking state.
+ * This state field is used by PiksiFaultHandler to know if we've been lacking
+ * CDGPS for too long.
+ */
 static bool have_set_docking_entry_ccno = false;
+
 void MissionManager::dispatch_docking() {
     docking_config_cmd_f.set(true);
     if (!have_set_docking_entry_ccno) {
