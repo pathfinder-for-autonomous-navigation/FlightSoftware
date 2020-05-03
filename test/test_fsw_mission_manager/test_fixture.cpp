@@ -1,6 +1,5 @@
 #include "test_fixture.hpp"
-#include "../FaultHandlerMachineMock.hpp"
-#include "../custom_assertions.hpp"
+#include "../test_fsw_fault_handler/FaultHandlerMachineMock.hpp"
 #include <limits>
 
 TestFixture::TestFixture(mission_state_t initial_state) : registry() {
@@ -153,7 +152,7 @@ void TestFixture::step() {
 }
 
 void TestFixture::set_ccno(unsigned int ccno) {
-    mission_manager->control_cycle_count = ccno;
+    MissionManager::control_cycle_count = ccno;
 }
 
 // Set the distance between the two satellites.

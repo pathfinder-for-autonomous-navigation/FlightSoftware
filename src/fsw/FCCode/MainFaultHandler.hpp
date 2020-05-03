@@ -6,7 +6,9 @@
 
 class MainFaultHandler : public FaultHandlerMachine {
   #ifdef UNIT_TEST
-    friend class TestFixtureMainFH;
+    friend class TestFixtureMainFHBase;
+    friend class TestFixtureMainFHMocked;
+    friend class TestFixtureMainFHEndToEnd;
   #endif
 
   public:
