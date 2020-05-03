@@ -41,8 +41,6 @@ public:
 
     /**
      * @brief Construct a new Test Fixture.
-     * 
-     * @param mock If true, replaces sub-fault handlers with mocks.
      */
     TestFixtureMainFHBase();
 
