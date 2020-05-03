@@ -49,7 +49,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         final_string = ''.join([''.join(x) for x in final])
         self.logger.put("HAVT Read: "+str(final_string))
 
-    def setup_postboot(self):
+    def setup_post_bootsetup(self):
         self.print_header("Begin ADCS Checkout Case")
 
         self.ws("cycle.auto", False)
