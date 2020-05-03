@@ -136,7 +136,6 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         This transition should happen irrespective of the comms timeout situation. **/
     {
         TestFixture tf(mission_state);
-        tf.check_sph_dcdc_on(true);
         tf.set(prop_state_t::idle);
         tf.set_sat_distance(sat_distance);
         tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
@@ -146,6 +145,7 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
             tf.check(mission_state_t::docking);
             tf.check(adcs_state_t::zero_torque);
             tf.check(prop_state_t::disabled);
+            tf.check_sph_dcdc_on(true);
         }
         else {
             if (mission_state == mission_state_t::follower) {
@@ -156,14 +156,12 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
                 tf.check(mission_state_t::leader_close_approach);
                 tf.check(prop_state_t::disabled);
             }
-
+            tf.check_sph_dcdc_on(false);
             tf.check(adcs_state_t::point_docking);
         }
-
         tf.check(static_cast<sat_designation_t>(tf.sat_designation_fp->get()));
 
         // Docking motor command should be applied if we're in close approach
-
         if (in_close_approach) {
             TEST_ASSERT(tf.docking_config_cmd_fp->get());
         }
@@ -176,6 +174,7 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
         tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
         tf.step();
+        tf.check_sph_dcdc_on(true);
         tf.check(prop_state_t::idle);
         tf.check(adcs_state_t::point_standby);
         tf.check(mission_state_t::standby);
@@ -197,7 +196,6 @@ void test_rendezvous_states() {
 void test_dispatch_docking() {
     TestFixture tf(mission_state_t::docking);
     tf.step();
-    tf.check_sph_dcdc_on(true);
 
     // Docking motor command should be applied.
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
