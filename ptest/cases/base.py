@@ -15,21 +15,23 @@ class Case(object):
         self.logger = Logger("testcase", data_dir, print=True)
 
     def mag_of(self, vals):
-        '''
+        """
         Returns the magnitude of a list of vals 
         by taking the square root of the sum of the square of the components.
-        '''
+        """
+
         assert(type(vals) is list)
         return math.sqrt(sum([x*x for x in vals]))
 
     def sum_of_differentials(self, lists_of_vals):
-        '''
+        """
         Given a list of list of vals, return the sum of all the differentials from one list to the next.
 
         Returns a val.
 
         Ex: sum_of_differentials([[1,1,1],[1,2,3],[1,2,2]]) evaluates to 4
-        '''
+        """
+
         total_diff = [0 for x in lists_of_vals[0]]
         for i in range(len(lists_of_vals) - 1):
             diff = [abs(lists_of_vals[i][j] - lists_of_vals[i+1][j]) for j in range(len(lists_of_vals[i]))]
@@ -186,44 +188,49 @@ class SingleSatOnlyCase(Case):
         self.sim.flight_controller.write_state("pan.state", int(Enums.mission_states[state]))
 
     def cycle(self):
-        ''' 
+        """
         Steps the FC forward by one CC
 
         Asserts the FC did indeed step forward by one CC
-        '''
+        """
+
         init = self.rs("pan.cycle_no")
         self.sim.flight_controller.write_state('cycle.start', 'true')
         if self.rs("pan.cycle_no") != init + 1:
             raise TestCaseFailure(f"FC did not step forward by one cycle")
 
     def rs(self, name):
-        '''
+        """
         Reads a state field (with type inference from smart_read()).
 
         Checks that the name is indeed a string.
-        '''
+        """
+
         assert(type(name) is str), "State field name was not a string."
         ret = self.sim.flight_controller.smart_read(name)
         return ret
 
     def print_rs(self, name):
-        '''
+        """
         Reads a statefield, and also prints it.
-        '''
+        """
+
         ret = self.rs(name)
         self.logger.put(f"{name} is {ret}")
         return ret
     
     def ws(self, name, val):
-        '''
+        """
         Writes a state
-        '''
+        """
+
         self.sim.flight_controller.write_state(name, val)
 
     def print_ws(self, name, val):
         """
         Writes the state and prints the written value.
         """
+
         self.logger.put(f"{name} set to: {val}")
         self.ws(name, val)
 
@@ -231,12 +238,13 @@ class SingleSatOnlyCase(Case):
         self.logger.put("\n"+title+"\n")
 
     def soft_assert(self, condition, *args):
-        '''
+        """
         Soft assert prints a fail message if the condition is False
         
         If specificied with a fail message, then a pass message, 
         it will also print a pass message if condition is True.
-        '''
+        """
+
         if condition: 
             if len(args) == 1:
                 pass
