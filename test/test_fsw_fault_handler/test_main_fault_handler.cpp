@@ -101,10 +101,10 @@ void test_main_fh_toggle_handling() {
     // recommendation to transition to safe hold.
     std::array<fault_response_t, 10> safehold_combo = {
         fault_response_t::safehold, fault_response_t::safehold, 
-        fault_response_t::none, fault_response_t::none,
-        fault_response_t::none, fault_response_t::none,
-        fault_response_t::standby, fault_response_t::safehold,
-        fault_response_t::none
+        fault_response_t::none,     fault_response_t::none,
+        fault_response_t::none,     fault_response_t::none,
+        fault_response_t::standby,  fault_response_t::safehold,
+        fault_response_t::none,     fault_response_t::standby
     };
 
     // If some fault machines recommend safehold, the main fault handler
