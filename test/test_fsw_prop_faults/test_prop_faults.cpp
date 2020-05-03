@@ -266,8 +266,11 @@ void test_tank2_fault_while_tank1_vent()
     // PropFaultHandler change cooling period := filling period
     TEST_ASSERT_EQUAL(tf.pc->ctrl_cycles_per_filling_period.get(),
                       tf.pc->ctrl_cycles_per_cooling_period.get());
-    tf.step();
+
     // Since the max_pressurizing_cycle is only 1, Prop should go into handling_fault
+    // However, we don't want to interrupt it when the valve is open, so we will wait
+    // until it is closed
+    tf.execute_until_state_change();
     check_state(prop_state_t::handling_fault);
     tf.step();
     check_state(prop_state_t::venting);
