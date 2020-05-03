@@ -1,6 +1,15 @@
 #include "test_fault_handlers.hpp"
 #include "test_fixture_main_fh.hpp"
 
+////////////// Helper utilities ////////////////
+
+void signal_until_persistence(std::unique_ptr<Fault>& fault_ptr) {
+    for(int i = 0; i < fault_ptr->persistence_f.get(); i++)
+        fault_ptr->signal();
+}
+
+//////////// End helper utilities //////////////
+
 static void test_no_faults() {
     TestFixtureMainFHEndToEnd tf;
     tf.set(mission_state_t::standby);
@@ -11,7 +20,7 @@ void test_single_simple_faults(std::vector<std::shared_ptr<Fault>>& faults,
     fault_response_t expected_response, TestFixtureMainFHEndToEnd& tf)
 {
     for(auto& fault_ptr : faults) {
-        fault_ptr->signal();
+        signal_until_persistence(fault_ptr);
         TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
         fault_ptr->signal();
         TEST_ASSERT_EQUAL(expected_response, tf.step());
@@ -105,8 +114,8 @@ void test_two_simple_faults_safehold_and_standby() {
 
         // If both faults occur simultaneously, the stronger
         // response is recommended.
-        tf.prop_failed_pressurize_fault_fp->signal(); 
-        tf.adcs_wheel1_adc_fault_fp->signal();
+        signal_until_persistence(tf.prop_failed_pressurize_fault_fp);
+        signal_until_persistence(tf.adcs_wheel1_adc_fault_fp);
         TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
         tf.prop_failed_pressurize_fault_fp->signal(); 
         tf.adcs_wheel1_adc_fault_fp->signal();
@@ -121,8 +130,8 @@ void test_two_simple_faults_safehold_and_standby() {
         TestFixtureMainFHEndToEnd tf;
 
         // Set up both faults at the same time.
-        tf.prop_failed_pressurize_fault_fp->signal(); 
-        tf.adcs_wheel1_adc_fault_fp->signal();
+        signal_until_persistence(tf.prop_failed_pressurize_fault_fp);
+        signal_until_persistence(tf.adcs_wheel1_adc_fault_fp);
         TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
         tf.prop_failed_pressurize_fault_fp->signal(); 
         tf.adcs_wheel1_adc_fault_fp->signal();
@@ -145,12 +154,13 @@ void test_two_simple_faults_safehold_and_standby() {
         // If the pressurization fault then disappears, the fault response recommendation
         // is still safehold.
         TestFixtureMainFHEndToEnd tf;
+        signal_until_persistence(tf.adcs_wheel1_adc_fault_fp);
         TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
         tf.adcs_wheel1_adc_fault_fp->signal();
         TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
 
         tf.cc += 5;
-        tf.prop_failed_pressurize_fault_fp->signal();
+        signal_until_persistence(tf.prop_failed_pressurize_fault_fp);
         TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
         tf.prop_failed_pressurize_fault_fp->signal();
         TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
@@ -167,13 +177,13 @@ void test_two_simple_faults_safehold_and_standby() {
      **/
     {
         TestFixtureMainFHEndToEnd tf;
-        tf.prop_failed_pressurize_fault_fp->signal();
+        signal_until_persistence(tf.prop_failed_pressurize_fault_fp);
         TEST_ASSERT_EQUAL(fault_response_t::none, tf.step());
         tf.prop_failed_pressurize_fault_fp->signal();
         TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step());
 
         tf.cc += 5;
-        tf.adcs_wheel1_adc_fault_fp->signal();
+        signal_until_persistence(tf.adcs_wheel1_adc_fault_fp);
         TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step());
         tf.adcs_wheel1_adc_fault_fp->signal();
         TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step());
