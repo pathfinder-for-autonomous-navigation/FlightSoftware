@@ -22,12 +22,12 @@ fault_response_t QuakeFaultHandler::execute() {
     qfh_state_t state = static_cast<qfh_state_t>(cur_state.get());
 
     switch(state) {
-        case qfh_state_t::unfaulted:      return dispatch_unfaulted(); break;
-        case qfh_state_t::forced_standby: return dispatch_forced_standby(); break;
-        case qfh_state_t::powercycle_1:   return dispatch_powercycle_1(); break;
-        case qfh_state_t::powercycle_2:   return dispatch_powercycle_2(); break;
-        case qfh_state_t::powercycle_3:   return dispatch_powercycle_3(); break;
-        case qfh_state_t::safehold:       return dispatch_safehold(); break;
+        case qfh_state_t::unfaulted:      return dispatch_unfaulted();
+        case qfh_state_t::forced_standby: return dispatch_forced_standby();
+        case qfh_state_t::powercycle_1:   return dispatch_powercycle_1();
+        case qfh_state_t::powercycle_2:   return dispatch_powercycle_2();
+        case qfh_state_t::powercycle_3:   return dispatch_powercycle_3();
+        case qfh_state_t::safehold:       return dispatch_safehold();
         default:
             transition_to(qfh_state_t::unfaulted);
             return fault_response_t::none;
