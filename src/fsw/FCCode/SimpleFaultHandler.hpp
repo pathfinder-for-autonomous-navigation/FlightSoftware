@@ -36,7 +36,6 @@ class SimpleFaultHandler : public FaultHandlerMachine {
     virtual fault_response_t execute() = 0;
 
     static const std::vector<std::vector<mission_state_t>> active_state_lists;
-    static void set_mission_state_ptr(WritableStateField<unsigned char>* ptr);
 
   protected:
     /**
@@ -47,7 +46,7 @@ class SimpleFaultHandler : public FaultHandlerMachine {
      */
     fault_response_t determine_recommended_state() const;
 
-    static const WritableStateField<unsigned char>* mission_state_fp;
+    const WritableStateField<unsigned char>* mission_state_fp;
     Fault* fault;
 
   private:

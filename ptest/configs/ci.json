@@ -5,14 +5,18 @@
         {
             "name": "FlightController",
             "run_mode": "native",
-            "binary_filepath": ".pio/build/fsw_native_leader/program"
+            "binary_filepath": ".pio/build/fsw_native_leader/program",
+            "http_port" : 8000
         }
     ],
     "radios" : [
         {
             "connected_device": "FlightController",
             "imei": "",
-            "connect": true
+            "connect": false,
+            "send_queue_duration" : 0,
+            "send_lockout_duration" : 0,
+            "http_port": 8001
         }
     ],
     "tlm": {
@@ -20,7 +24,7 @@
         "email_password" : "",
         "webservice": {
             "server": "",
-            "port": ""
+            "port": 0
         }
     }
 }

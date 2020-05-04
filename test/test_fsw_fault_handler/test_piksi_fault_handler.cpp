@@ -3,8 +3,9 @@
 #include <fsw/FCCode/PiksiFaultHandler.hpp>
 #include <fsw/FCCode/piksi_mode_t.enum>
 #include <fsw/FCCode/mission_state_t.enum>
+#include "test_fault_handlers.hpp"
 
-unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
+static unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;
 
 class TestFixture {
   public:
@@ -71,7 +72,7 @@ void test_task_initialization() {
     TEST_ASSERT_EQUAL(0, cc_count);
 }
 
-void test_no_faults() {
+static void test_no_faults() {
     TestFixture tf;
     fault_response_t response = tf.pfh->execute();
     TEST_ASSERT_EQUAL(fault_response_t::none, response);
@@ -224,8 +225,7 @@ void test_disable() {
     TEST_ASSERT_EQUAL(fault_response_t::none, response);
 }
 
-int test_fault_handler() {
-    UNITY_BEGIN();
+void test_piksi_fault_handler() {
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_no_faults);
     RUN_TEST(test_dead_piksi);
@@ -233,19 +233,4 @@ int test_fault_handler() {
     RUN_TEST(test_no_cdgps_2);
     RUN_TEST(test_cdgps_delay);
     RUN_TEST(test_disable);
-    return UNITY_END();
 }
-
-#ifdef DESKTOP
-int main() {
-    return test_fault_handler();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_fault_handler();
-}
-void loop() {}
-#endif
