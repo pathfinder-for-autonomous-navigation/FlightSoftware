@@ -940,6 +940,20 @@
             "type": "bool",
             "writable": true
         },
+        "attitude_estimator.fro_P": {
+            "bitsize": 16,
+            "flow_id": "undefined",
+            "max": 0.10000000149011612,
+            "min": 0.0,
+            "type": "float",
+            "writable": false
+        },
+        "attitude_estimator.mag_flag": {
+            "bitsize": 1,
+            "flow_id": "undefined",
+            "type": "bool",
+            "writable": true
+        },
         "attitude_estimator.q_body_eci": {
             "bitsize": 29,
             "flow_id": 3,
@@ -1518,6 +1532,14 @@
             "type": "lin double vector",
             "writable": false
         },
+        "orbit.time": {
+            "bitsize": 64,
+            "flow_id": "undefined",
+            "max": 1.8446744073709552e+19,
+            "min": 0.0,
+            "type": "double",
+            "writable": false
+        },
         "pan.cycle_no": {
             "bitsize": 32,
             "flow_id": "undefined",
@@ -1878,6 +1900,14 @@
             "max": 50.0,
             "min": 10.0,
             "type": "float",
+            "writable": true
+        },
+        "qfh.state": {
+            "bitsize": 3,
+            "flow_id": "undefined",
+            "max": 5,
+            "min": 0,
+            "type": "unsigned char",
             "writable": true
         },
         "radio.err": {
