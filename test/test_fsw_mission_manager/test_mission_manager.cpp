@@ -1,7 +1,10 @@
-#include <unity.h>
+#include "../custom_assertions.hpp"
+#undef isnan
+#undef isinf
 #include "test_fixture.hpp"
 #include <fsw/FCCode/constants.hpp>
 #include <adcs/constants.hpp>
+#include <gnc/constants.hpp>
 
 void test_valid_initialization() {
     TestFixture tf;
@@ -65,8 +68,11 @@ void test_dispatch_detumble() {
     TestFixture tf(mission_state_t::detumble);
     tf.set(adcs_state_t::detumble);
 
+    // Be aware, we assume here that J_sat is diagonal and that the set_ang_rate
+    // function sets omega = rate x_hat.
+    // This test may fail if gnc::constant::J_sat gets updated.
     const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia
-                                * tf.detumble_safety_factor_fp->get();
+                                * tf.detumble_safety_factor_fp->get() / gnc::constant::J_sat(0,0);
     const float delta = threshold * 0.01;
 
     // Stays in detumble mode if satellite is tumbling
@@ -101,7 +107,6 @@ void test_dispatch_standby() {
         TestFixture tf(mission_state_t::standby);
         tf.set(sat_designation_t::follower);
         tf.step();
-        TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::follower);
         tf.check(sat_designation_t::follower);
         tf.check(adcs_state_t::point_standby);
@@ -112,7 +117,6 @@ void test_dispatch_standby() {
         TestFixture tf(mission_state_t::standby);
         tf.set(sat_designation_t::leader);
         tf.step();
-        TEST_ASSERT_FALSE(tf.adcs_paired_fp->get());
         tf.check(mission_state_t::leader);
         tf.check(sat_designation_t::leader);
         tf.check(adcs_state_t::point_standby);
@@ -206,21 +210,21 @@ void test_dispatch_docking() {
     TEST_ASSERT_FALSE(tf2.docked_fp->get());
 
     // Let a half day pass
-    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno);
+    tf2.set_ccno(MissionManager::control_cycle_count+PAN::one_day_ccno/2 - 1);
     tf2.step();
 
     // Check that mission manager is still in a docking state
     tf2.check(mission_state_t::docking);
 
     // Let a nearly a full day pass
-    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno-1);
+    tf2.set_ccno(MissionManager::control_cycle_count+PAN::one_day_ccno/2 - 1);
     tf2.step();
 
     // Check that mission manager is still in a docking state
     tf2.check(mission_state_t::docking);
 
     // Let a full day pass
-    tf2.set_ccno(MissionManager::control_cycle_count+0.5*PAN::one_day_ccno);
+    tf2.set_ccno(MissionManager::control_cycle_count+PAN::one_day_ccno/2);
     tf2.step();
 
     // Check that mission manager moves to standby

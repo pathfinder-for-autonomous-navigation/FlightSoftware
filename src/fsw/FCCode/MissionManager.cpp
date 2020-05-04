@@ -1,8 +1,9 @@
 #include "MissionManager.hpp"
-#include <lin.hpp>
+#include <lin/core.hpp>
 #include <cmath>
 #include <adcs/constants.hpp>
 #include <common/constant_tracker.hpp>
+#include <gnc/constants.hpp>
 #include "SimpleFaultHandler.hpp"
 
 // Declare static storage for constexpr variables
@@ -49,15 +50,13 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
-    SimpleFaultHandler::set_mission_state_ptr(&mission_state_f);
 
-    adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
-    adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);
+    adcs_w_body_est_fp = find_readable_field<lin::Vector3f>("attitude_estimator.w_body", __FILE__, __LINE__);
 
     radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
 
-    prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
+    prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
 
     propagated_baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
 
@@ -77,8 +76,8 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
             find_writable_field<bool>("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__));
     wheel_pot_fault_fp = static_cast<Fault*>(
             find_writable_field<bool>("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__));
-    failed_pressurize_fp = static_cast<Fault*>(
-            find_writable_field<bool>("prop.failed_pressurize.base", __FILE__, __LINE__));
+    pressurize_fail_fp = static_cast<Fault*>(
+            find_writable_field<bool>("prop.pressurize_fail.base", __FILE__, __LINE__));
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -170,9 +169,9 @@ void MissionManager::dispatch_startup() {
 
 void MissionManager::dispatch_detumble() {
     // Detumble until satellite angular rate is below an allowable threshold
-    const float momentum = lin::norm(adcs_ang_momentum_fp->get());
+    const float momentum = lin::fro(gnc::constant::J_sat * adcs_w_body_est_fp->get());
     const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor_f.get();
-    if (momentum <= threshold)
+    if (momentum <= threshold * threshold) // Save a sqrt call and use fro norm
     {
         transition_to_state(mission_state_t::standby,
             adcs_state_t::point_standby,
@@ -190,13 +189,11 @@ void MissionManager::dispatch_standby() {
         static_cast<sat_designation_t>(sat_designation_f.get());
 
     if (sat_designation == sat_designation_t::follower) {
-        adcs_paired_fp->set(false);
         transition_to_state(mission_state_t::follower,
             adcs_state_t::point_standby,
             prop_state_t::idle);
     }
     else if (sat_designation == sat_designation_t::leader) {
-        adcs_paired_fp->set(false);
         transition_to_state(mission_state_t::leader,
             adcs_state_t::point_standby,
             prop_state_t::idle);
@@ -265,11 +262,23 @@ void MissionManager::dispatch_leader_close_approach() {
     }
 }
 
+/**
+ * @brief This flag checks if we've set the state field called docking_entry_ccno,
+ * which indicates the control cycle # at which we entered the docking state.
+ * This state field is used by PiksiFaultHandler to know if we've been lacking
+ * CDGPS for too long.
+ */
+static bool have_set_docking_entry_ccno = false;
+
 void MissionManager::dispatch_docking() {
     docking_config_cmd_f.set(true);
-    if (enter_docking_cycle_f.get()==0) { enter_docking_cycle_f.set(control_cycle_count); }
+    if (!have_set_docking_entry_ccno) {
+        enter_docking_cycle_f.set(control_cycle_count);
+        have_set_docking_entry_ccno = true;
+    }
+
     if (docked_fp->get()){
-        enter_docking_cycle_f.set(0);
+        have_set_docking_entry_ccno = false;
         transition_to_state(mission_state_t::docked,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
@@ -277,8 +286,8 @@ void MissionManager::dispatch_docking() {
         // Mission has ended, so remove "follower" and "leader" designations.
         set(sat_designation_t::undecided);
     }
-    else if(too_long_in_docking() && !docked_fp->get()) {
-        enter_docking_cycle_f.set(0);
+    else if(too_long_in_docking()) {
+        have_set_docking_entry_ccno = false;
         transition_to_state(mission_state_t::standby,
             adcs_state_t::startup,
             prop_state_t::disabled);

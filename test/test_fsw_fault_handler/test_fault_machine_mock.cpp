@@ -1,6 +1,6 @@
 #include "test_fault_handlers.hpp"
 #include "../StateFieldRegistryMock.hpp"
-#include "../FaultHandlerMachineMock.hpp"
+#include "FaultHandlerMachineMock.hpp"
 
 void test_fault_machine_mock() {
     StateFieldRegistryMock registry;

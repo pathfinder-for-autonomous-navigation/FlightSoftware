@@ -29,8 +29,6 @@ class PTest(object):
         self.device_config = config_data["devices"]
         self.radios_config = config_data["radios"]
         self.tlm_config = config_data["tlm"]
-        self.uplink_producer_filepath = config_data["uplink_producer_filepath"]
-        self.downlink_parser_filepath = config_data["downlink_parser_filepath"]
 
         self.is_interactive = is_interactive
 
@@ -61,6 +59,7 @@ class PTest(object):
                 self.sim.testcase.logger.put(tb)
                 time.sleep(1) # Allow time for the exception to be handled by the logger.
                 self.sim.testcase.logger.stop()
+                time.sleep(1.5) # Allow time for the logger to stop
                 self.stop_all("Exiting due to testcase failure.")
             self.stop_all("Exiting since user requested non-interactive execution.", is_error=False)
 
@@ -105,7 +104,7 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = StateSession(device_name, device["http_port"], self.simulation_run_dir, self.uplink_producer_filepath)
+            device_session = StateSession(device_name, device["http_port"], self.simulation_run_dir)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
@@ -144,8 +143,7 @@ class PTest(object):
                     radio["send_queue_duration"],
                     radio["send_lockout_duration"],
                     self.simulation_run_dir,
-                    self.tlm_config,
-                    self.downlink_parser_filepath)
+                    self.tlm_config)
                 self.radios[radio_name] = radio_session
 
     def set_up_sim(self):
@@ -164,7 +162,7 @@ class PTest(object):
         if self.single_sat_sim:
             self.sim = SingleSatSimulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
         else:
-            self.sim = Simulation(self.is_interactive, self.devices, self.random_seed)
+            self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt

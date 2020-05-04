@@ -2,10 +2,8 @@ import sys
 from cerberus import Validator
 
 ptest_config_schema = {
-    "seed" : {"type" : "integer", "required" : True},
-    "single_sat_sim" : {"type": "boolean", "required" : True},
-    "uplink_producer_filepath" : {"type": "string", "required" : True},
-    "downlink_parser_filepath" : {"type": "string", "required" : True},
+    "seed" : {"type" : "integer"},
+    "single_sat_sim" : {"type": "boolean"},
     "devices" : {
         "type" : "list",
         "schema" : {
@@ -59,14 +57,6 @@ ptest_config_schema = {
                     "server": { "type": "string" , "required" : True},
                     "port": { "type": "integer" , "required" : True}
                 }
-            },
-            "elasticsearch" : {
-                "type" : "dict",
-                "schema": {
-                    "server": { "type": "string" , "required" : True},
-                    "port": { "type": "integer" , "required" : True}
-                },
-                "required" : True
             }
         }
     }

@@ -2,7 +2,7 @@
 #include "core_pins.h"
 #include "usb_serial.h"
 #include <fsw/FCCode/Drivers/QLocate.hpp>
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <string>
 #include <vector>
 #include "../test_quake/quake_common.h"

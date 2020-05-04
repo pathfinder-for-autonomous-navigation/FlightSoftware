@@ -35,10 +35,10 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Number of control cycles to wait during the post-deployment
      * do-nothing period.
      */
-    #ifdef FLIGHT
-        TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
-    #else
+    #ifdef SPEEDUP
         TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 100);
+    #else
+        TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
     #endif
     /**
      * @brief Number of control cycles to wait before declaring "too long since comms".
@@ -125,7 +125,7 @@ class MissionManager : public TimedControlTask<void> {
     void dispatch_manual();
 
     // Fields required for control of prop subsystem.
-    ReadableStateField<unsigned char>* prop_state_fp;
+    WritableStateField<unsigned int>* prop_state_fp;
 
     // Fields required for control of ADCS subsystem.
     /**
@@ -133,14 +133,11 @@ class MissionManager : public TimedControlTask<void> {
      **/
     WritableStateField<unsigned char> adcs_state_f;
     /**
-     * @brief Current angular momentum of ADCS system in the body frame.
-     **/
-    InternalStateField<lin::Vector3f>* adcs_ang_momentum_fp;
-    /**
-     * @brief Field created by AttitudeEstimator that tracks if the satellites
-     * should be treated as paired when computing attitude-related variables.
-     */
-    WritableStateField<bool>* adcs_paired_fp;
+     * @brief Current, estimated angular rate in the body frame (radians per
+     *        second).
+     * 
+     * Inputs from the AttitudedEstimator. */
+    ReadableStateField<lin::Vector3f>* adcs_w_body_est_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
     const ReadableStateField<lin::Vector3d>* propagated_baseline_pos_fp; // Propagated baseline position
@@ -162,7 +159,7 @@ class MissionManager : public TimedControlTask<void> {
     Fault* wheel3_adc_fault_fp;
     Fault* wheel_pot_fault_fp;
     // Flag for if propulsion failed to pressurize.
-    Fault* failed_pressurize_fp;
+    Fault* pressurize_fail_fp;
 
     /**
      * @brief Radio's mode.
