@@ -122,7 +122,7 @@ unsigned long last_not_heat_time = 0;
 static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
     unsigned char gyr_temp_pwm) {
   lin::Vector3f data;
-  float temp_data;
+  float temp_data = 0.0f;
 
   bool took_gyro_reading = false;
   // Attempt a read if ready and ensure it was succesful
@@ -154,8 +154,11 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
   }
 
   // if heater has been on for more than [heater_max_time] millis, disable it
-  // to resume heating, gyro heater will need to be reset from FSW
+  // To resume heating, gyro heater will need to be reset from FSW
   if(millis() - last_not_heat_time > heater_max_time){
+    LOG_ERROR_header
+    LOG_ERROR_printlnF("millis() - last_not_head_time exceeded max_time.")
+    LOG_ERROR_printlnF("Gyro Heater is disabled. ")
     gyr_heater.disable();
   }
 
@@ -163,18 +166,18 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
   // We check that the gyro was updated incase of sticky gyro reading
   if(!gyr_heater.is_functional()){
     LOG_TRACE_header
-    LOG_TRACE_printlnF("Heater Disabled. Forced 0 PWM Acutation.")
+    LOG_TRACE_printlnF("Heater Not Functional. Heater 0 PWM Acutation.")
     gyr_heater.actuate(0); // Make surande voltage being written is 0
     last_not_heat_time = millis();
   }
-  else if(!took_gyro_reading){
+  else if(!gyr.is_functional()){
     LOG_TRACE_header
-    LOG_TRACE_printlnF("Gyro Did Not Take Reading. Forced 0 PWM Acutation.")
+    LOG_TRACE_printlnF("Gyro Not Functional. Heater 0 PWM Acutation.")
     gyr_heater.actuate(0); // Make sure voltage being written is 0
-    last_not_heat_time = millis();    
+    last_not_heat_time = millis();   
   }
   // by this point, gyro and gyro_heater must be functional 
-  else{
+  else if(took_gyro_reading){
 
     // assuming analogWriteResolution is 15 bits:
     int int_pwm = gyr_temp_pwm * 128; // maps 256 max to 32768
