@@ -233,8 +233,6 @@ void test_task_initialization() {
 void test_task_execute() {
     TestFixture tf;
 
-    // Set the control cycle count to 1 so that the control task will initialize the Gomspace output values
-    TimedControlTaskBase::control_cycle_count=1;
     tf.gs_controller->execute();
 
     // Check that the statefields are set to their respective value(s) in hk struct 
@@ -283,7 +281,7 @@ void test_task_execute() {
     
     TEST_ASSERT_EQUAL(64, tf.pptmode_fp->get());
 
-    // Verify that the command statefields were initialized on the first control cycle
+    // Verify that the command statefields were set to the correct default values
     TEST_ASSERT_EQUAL(false, tf.power_cycle_output1_cmd_fp->get());
     TEST_ASSERT_EQUAL(false, tf.power_cycle_output2_cmd_fp->get());
     TEST_ASSERT_EQUAL(false, tf.power_cycle_output3_cmd_fp->get());
@@ -291,13 +289,13 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(false, tf.power_cycle_output5_cmd_fp->get());
     TEST_ASSERT_EQUAL(false, tf.power_cycle_output6_cmd_fp->get());
 
-    TEST_ASSERT_EQUAL(1, tf.pv1_output_cmd_fp->get());
-    TEST_ASSERT_EQUAL(2, tf.pv2_output_cmd_fp->get());
-    TEST_ASSERT_EQUAL(3, tf.pv3_output_cmd_fp->get());
+    TEST_ASSERT_EQUAL(4000, tf.pv1_output_cmd_fp->get());
+    TEST_ASSERT_EQUAL(4000, tf.pv2_output_cmd_fp->get());
+    TEST_ASSERT_EQUAL(4000, tf.pv3_output_cmd_fp->get());
 
-    TEST_ASSERT_EQUAL(64, tf.ppt_mode_cmd_fp->get());
+    TEST_ASSERT_EQUAL(0, tf.ppt_mode_cmd_fp->get());
 
-    TEST_ASSERT_EQUAL(0, tf.heater_cmd_fp->get());
+    TEST_ASSERT_EQUAL(false, tf.heater_cmd_fp->get());
 
     TEST_ASSERT_EQUAL(false, tf.counter_reset_cmd_fp->get());
     TEST_ASSERT_EQUAL(false, tf.gs_reset_cmd_fp->get());

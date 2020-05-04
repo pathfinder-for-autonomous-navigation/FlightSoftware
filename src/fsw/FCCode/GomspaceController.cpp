@@ -1,4 +1,14 @@
 #include "GomspaceController.hpp"
+#include <iostream>
+
+// Declare static storage for constexpr variables
+const constexpr bool GomspaceController::default_power_cycle_cmd;
+const constexpr unsigned int GomspaceController::default_pv_cmd;
+const constexpr unsigned char GomspaceController::default_ppt_mode;
+const constexpr bool GomspaceController::default_heater_cmd;
+const constexpr bool GomspaceController::default_counter_reset_cmd;
+const constexpr bool GomspaceController::default_gs_reset_cmd;
+const constexpr bool GomspaceController::default_gs_reboot_cmd;
 
 GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
     Devices::Gomspace &_gs)
@@ -101,11 +111,12 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
 
     {
+        // Add fields and fault to registry 
+
         add_fault(get_hk_fault);
         add_fault(low_batt_fault);
 
         add_writable_field(batt_threshold_f);
-        batt_threshold_f.set(7300);
         
         add_readable_field(vboost1_f);
         add_readable_field(vboost2_f);
@@ -174,37 +185,37 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_writable_field(gs_reset_cmd_f);
 
         add_writable_field(gs_reboot_cmd_f);
+
+        // Set default values
+
+        batt_threshold_f.set(7300);
+
+        power_cycle_output1_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output2_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output3_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output4_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output5_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output6_cmd_f.set(default_power_cycle_cmd);
+
+        pv1_output_cmd_f.set(default_pv_cmd);
+        pv2_output_cmd_f.set(default_pv_cmd);
+        pv3_output_cmd_f.set(default_pv_cmd);
+
+        ppt_mode_cmd_f.set(default_ppt_mode);
+
+        heater_cmd_f.set(default_heater_cmd);
+
+        counter_reset_cmd_f.set(default_counter_reset_cmd);
+        gs_reset_cmd_f.set(default_gs_reset_cmd);
+        gs_reboot_cmd_f.set(default_gs_reboot_cmd);
      }
 
 void GomspaceController::execute() {
-    //Check that we can get hk data
+    // Check that we can get hk data
     get_hk_fault.evaluate(!gs.get_hk());
 
     // Check that the battery voltage is above the threshold
     low_batt_fault.evaluate(gs.hk->vbatt < batt_threshold_f.get());
-
-    // On the first control cycle, set the command statefields to the current values 
-    // in the hk struct to prevent unwanted writes.
-    if (control_cycle_count==1){
-        power_cycle_output1_cmd_f.set(false);
-        power_cycle_output2_cmd_f.set(false);
-        power_cycle_output3_cmd_f.set(false);
-        power_cycle_output4_cmd_f.set(false);
-        power_cycle_output5_cmd_f.set(false);
-        power_cycle_output6_cmd_f.set(false);
-
-        pv1_output_cmd_f.set(gs.hk->vboost[0]);
-        pv2_output_cmd_f.set(gs.hk->vboost[1]);
-        pv3_output_cmd_f.set(gs.hk->vboost[2]);
-
-        ppt_mode_cmd_f.set(gs.hk->pptmode);
-
-        heater_cmd_f.set(gs.get_heater());
-
-        counter_reset_cmd_f.set(false);
-        gs_reset_cmd_f.set(false);
-        gs_reboot_cmd_f.set(false);
-    }
 
     // Set the gomspace outputs to the values of the statefield commands around every 30 seconds
     if (control_cycle_count%period==0){
@@ -247,7 +258,7 @@ void GomspaceController::execute() {
         gs_reboot_cmd_f.set(false);
     }
 
-    //set data-in statefields to respective data from hk struct 
+    // Set data-in statefields to respective data from hk struct 
     vboost1_f.set(gs.hk->vboost[0]);
     vboost2_f.set(gs.hk->vboost[1]);
     vboost3_f.set(gs.hk->vboost[2]);

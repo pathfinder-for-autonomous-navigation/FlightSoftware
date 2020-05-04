@@ -8,7 +8,15 @@
 
 class GomspaceController : public TimedControlTask<void> {
    public:
-    
+
+    TRACKED_CONSTANT_SC(bool, default_power_cycle_cmd, false);
+    TRACKED_CONSTANT_SC(unsigned int, default_pv_cmd, 4000);
+    TRACKED_CONSTANT_SC(unsigned char, default_ppt_mode, 0);
+    TRACKED_CONSTANT_SC(bool, default_heater_cmd, false);
+    TRACKED_CONSTANT_SC(bool, default_counter_reset_cmd, false);
+    TRACKED_CONSTANT_SC(bool, default_gs_reset_cmd, false);
+    TRACKED_CONSTANT_SC(bool, default_gs_reboot_cmd, false);
+
     /**
      * @brief Construct a new Gomspace Controller object
      * 
