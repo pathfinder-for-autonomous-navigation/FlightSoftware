@@ -1,5 +1,4 @@
 #include "GomspaceController.hpp"
-#include <iostream>
 
 // Declare static storage for constexpr variables
 const constexpr bool GomspaceController::default_power_cycle_cmd;
