@@ -116,34 +116,65 @@ lin::Vector3f gyr_rd = lin::zeros<float, 3, 1>();
 
 float gyr_temp_rd = 0.0f;
 
+// this time is updated whenever an actuation of 0 PWM is requested.
+unsigned long last_not_heat_time = 0;
+
 static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
     unsigned char gyr_temp_pwm) {
   lin::Vector3f data;
   float temp_data;
 
+  bool took_gyro_reading = false;
   // Attempt a read if ready and ensure it was succesful
-  if (!gyr.is_functional()) return;
-  if (!gyr.is_ready()) return;
-  if (!gyr.read()) return;
+  if (gyr.is_functional() && gyr.is_ready() && gyr.read()){
 
-  // Read in angular rate data and transform to the body frame
-  data = {
-    utl::fp(gyr.get_omega_x(), min_rd_omega, max_rd_omega),
-    utl::fp(gyr.get_omega_y(), min_rd_omega, max_rd_omega),
-    utl::fp(gyr.get_omega_z(), min_rd_omega, max_rd_omega)
-  };
-  data = gyr_to_body * data;
+    // Read in angular rate data and transform to the body frame
+    data = {
+      utl::fp(gyr.get_omega_x(), min_rd_omega, max_rd_omega),
+      utl::fp(gyr.get_omega_y(), min_rd_omega, max_rd_omega),
+      utl::fp(gyr.get_omega_z(), min_rd_omega, max_rd_omega)
+    };
+    data = gyr_to_body * data;
 
-  // Read in temperature data and filter
-  temp_data = utl::fp(gyr.get_temp(), min_rd_temp, max_rd_temp);
-  gyr_temp_rd = gyr_temp_rd + (temp_data - gyr_temp_rd) * gyr_temp_flt;
+    // Read in temperature data and filter
+    temp_data = utl::fp(gyr.get_temp(), min_rd_temp, max_rd_temp);
+    gyr_temp_rd = gyr_temp_rd + (temp_data - gyr_temp_rd) * gyr_temp_flt;
 
-  // Calibrate the angular rate data based on the temperature
-  calibrate(data, gyr_temp_rd);
-  gyr_rd = gyr_rd + (data - gyr_rd) * gyr_flt;
+    // Calibrate the angular rate data based on the temperature
+    calibrate(data, gyr_temp_rd);
+    gyr_rd = gyr_rd + (data - gyr_rd) * gyr_flt;
+
+    // flag for gyro heater
+    took_gyro_reading = true;
+  }
+
+  // if millis() overflowed, reset last_not_heat_time
+  if(millis() - last_not_heat_time < 0){
+    last_not_heat_time = 0;
+  }
+
+  // if heater has been on for more than [heater_max_time] millis, disable it
+  // to resume heating, gyro heater will need to be reset from FSW
+  if(millis() - last_not_heat_time > heater_max_time){
+    gyr_heater.disable();
+  }
 
   // Command the gyroscope heater
-  if(gyr_heater.is_functional()){
+  // We check that the gyro was updated incase of sticky gyro reading
+  if(!gyr_heater.is_functional()){
+    LOG_TRACE_header
+    LOG_TRACE_printlnF("Heater Disabled. Forced 0 PWM Acutation.")
+    gyr_heater.actuate(0); // Make surande voltage being written is 0
+    last_not_heat_time = millis();
+  }
+  else if(!took_gyro_reading){
+    LOG_TRACE_header
+    LOG_TRACE_printlnF("Gyro Did Not Take Reading. Forced 0 PWM Acutation.")
+    gyr_heater.actuate(0); // Make sure voltage being written is 0
+    last_not_heat_time = millis();    
+  }
+  // by this point, gyro and gyro_heater must be functional 
+  else{
 
     // assuming analogWriteResolution is 15 bits:
     int int_pwm = gyr_temp_pwm * 128; // maps 256 max to 32768
@@ -156,16 +187,12 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
     if(gyr_temp_rd >= gyr_temp_target){
       LOG_TRACE_printlnF(" Heater: OFF")
       gyr_heater.actuate(0); // if at target don't heat
+      last_not_heat_time = millis();
     }
     else{
       LOG_TRACE_printlnF(" Heater: ON")
       gyr_heater.actuate(int_pwm); // heat if we're below target
     }
-  }
-  else
-  {
-    LOG_TRACE_header
-    LOG_TRACE_printlnF("Heater Not Functional. No Actuation.")
   }
   // End Gyro Heater Code
 
@@ -232,7 +259,14 @@ void setup() {
 
   gyr_heater.setup(gyr_heater_pin);
   pinMode(gyr_heater_pin, OUTPUT);
-  gyr_heater.disable(); // disable on boot
+  gyr_heater.reset(); // heater is on by default
+
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+  if (!gyr_heater.is_functional()) {
+    LOG_ERROR_header
+    LOG_ERROR_printlnF("Gyro heater initialization failed")
+  }
+#endif
 
   LOG_INFO_header
   LOG_INFO_printlnF("Complete")
