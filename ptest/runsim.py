@@ -104,13 +104,13 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = StateSession(device_name, self.simulation_run_dir)
+            device_session = StateSession(device_name, device["http_port"], self.simulation_run_dir)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
                 self.devices[device_name] = device_session
             else:
-                self.stop_all("A required device is disconnected.")
+                self.stop_all(f"Unable to set up StateSession for {device_name}.")
 
         self.binary_monitor_thread = threading.Thread(
             name="Binary Monitor", target=self.binary_monitor)
@@ -137,7 +137,13 @@ class PTest(object):
 
             if radio['connect']:
                 radio_data_name = radio_connected_device + "_radio"
-                radio_session = RadioSession(radio_name, imei, self.simulation_run_dir, self.tlm_config)
+                radio_session = RadioSession(radio_name,
+                    imei,
+                    radio["http_port"],
+                    radio["send_queue_duration"],
+                    radio["send_lockout_duration"],
+                    self.simulation_run_dir,
+                    self.tlm_config)
                 self.radios[radio_name] = radio_session
 
     def set_up_sim(self):
@@ -178,7 +184,8 @@ class PTest(object):
 
         print("Stopping binary monitor thread...")
         time.sleep(1.0)
-        self.binary_monitor_thread.join()
+        if hasattr(self, "binary_monitor_thread"):
+            self.binary_monitor_thread.join()
 
         print("Stopping simulation (please be patient)...")
         try:

@@ -17,3 +17,10 @@ class EmptySimCase(SingleSatOnlyCase):
     @property
     def sim_duration(self):
         return float("inf")
+
+class NothingCase(SingleSatOnlyCase):
+    def setup_case_singlesat(self):
+        pass
+
+    def run_case_singlesat(self):
+        self.finish()
