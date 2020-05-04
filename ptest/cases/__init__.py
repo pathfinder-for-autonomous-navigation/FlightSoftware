@@ -1,4 +1,4 @@
-from .empty_case import EmptyCase, EmptySimCase
+from .empty_case import EmptyCase, EmptySimCase, NothingCase
 from .mission import DeploymentToStandby
 from .gomspace_checkout_case import GomspaceCheckoutCase
 from .docking_checkout_case import DockingCheckoutCase
