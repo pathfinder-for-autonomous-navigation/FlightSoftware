@@ -206,7 +206,7 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
         JsonVariant field = msgs[i]["field"];
 
         // Check sanity of data
-        if (field.isNull()) continue;
+        if (msg_mode.as<unsigned char>()!='u' && field.isNull()) continue;
 
         const char* field_name = field.as<const char*>();
         if (msg_mode.isNull()) {
