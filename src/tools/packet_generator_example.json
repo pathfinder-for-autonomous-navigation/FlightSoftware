@@ -3,6 +3,16 @@
         "type" : "unsigned int",
         "min" : 0,
         "max" : 4924967295,
-        "value" : "2"
+        "value" : 20
+    },
+    {
+        "type": "unsigned int",
+        "min": 0,
+        "max": 1,
+        "value": 1
+    },
+    {
+        "type": "bool",
+        "value": true
     }
 ]

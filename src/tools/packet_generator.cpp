@@ -34,7 +34,9 @@ static bit_array& produce_bits(const std::string& value, Serializer<T>& sz)
 static const bit_array& produce_bits(nlohmann::json& item) {
     std::string type = item["type"];
 
-    item["value"] = std::string(item["value"]);
+    std::stringstream item_val;
+    item_val << item["value"];
+    item["value"] = item_val.str();
 
     if (type == "bool")
     {
