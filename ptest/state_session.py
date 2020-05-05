@@ -8,10 +8,12 @@ import queue
 import os
 import pty
 import subprocess
+from multiprocessing import Process
 import glob
 from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
+from .http_cmd import create_state_session_endpoint
 
 class StateSession(object):
     '''
@@ -25,13 +27,14 @@ class StateSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, uplink_console, simulation_run_dir):
+    def __init__(self, device_name, uplink_console, port, simulation_run_dir):
         '''
         Initializes state session with a device.
         '''
 
         # Device connection
         self.device_name = device_name
+        self.port = port
 
         # Uplink console
         self.uplink_console = uplink_console
@@ -87,9 +90,18 @@ class StateSession(object):
             self.check_msgs_thread.start()
 
             print(f"Opened connection to {self.device_name}.")
-            return True
         except serial.SerialException:
             print(f"Unable to open serial port for {self.device_name}.")
+            return False
+
+        try:
+            self.flask_app = create_state_session_endpoint(self)
+            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
+            self.http_thread.start()
+            print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
+            return True
+        except:
+            print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
             return False
 
     def check_console_msgs(self):
@@ -439,6 +451,9 @@ class StateSession(object):
         self.check_msgs_thread.join()
         self.console.close()
         self.dp_console.close()
+
+        self.http_thread.terminate()
+        self.http_thread.join()
 
         self.datastore.stop()
         self.logger.stop()
