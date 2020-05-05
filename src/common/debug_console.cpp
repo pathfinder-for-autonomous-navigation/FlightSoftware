@@ -268,7 +268,8 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
                 // Get the uplink packet as a char pointer. 
                 // Add "\x" to the end to allow us to parse the uplink string
-                char* uplink_packet = (char *) malloc(1 + strlen(packet)+ strlen("\\x"));
+                static char uplink_packet[300];
+                memset(uplink_packet, 0, 300);
                 strcpy(uplink_packet, packet);
                 strcat(uplink_packet, "\\x");
 
@@ -278,13 +279,14 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
 
                 // Parse the uplink packet; convert it from a hex string to an array of integers.
                 // Token holds a single hex value in uplink string; can't possibly be longer than the string length of the packet.
-                char token[strlen(packet)]; 
+                char token[strlen(packet)];
+                char* uplink_packet_ptr = uplink_packet;
                 for (i=0; i<uplink_packet_len; i++) {
                     // Get the hex string (i.e "4c") and put it in the token char array
-                    uplink_packet+=2;
+                    uplink_packet_ptr+=2;
                     memset(token, 0, uplink_packet_len); // Clear the token array
-                    for (size_t idx = 0; uplink_packet[0] != '\\'; idx++, uplink_packet++) {
-                        token[idx] = uplink_packet[0];
+                    for (size_t idx = 0; uplink_packet_ptr[0] != '\\'; idx++, uplink_packet_ptr++) {
+                        token[idx] = uplink_packet_ptr[0];
                     }
 
                     // Get the decimal value of the token/hex string (i.e 67) and add it to data array
