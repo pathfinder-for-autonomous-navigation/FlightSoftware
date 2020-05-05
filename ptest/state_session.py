@@ -346,7 +346,6 @@ class StateSession(object):
         # Send a command to the console to process the uplink packet
         json_cmd = {
             'mode': ord('u'),
-            'field': 'pan.state',
             'val': uplink_packet,
             'length': uplink_packet_length
         }
