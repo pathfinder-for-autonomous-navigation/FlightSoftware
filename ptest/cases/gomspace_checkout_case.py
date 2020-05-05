@@ -1,13 +1,10 @@
 # Gomspace test case. Gets cycle count purely for diagnostic purposes and logs
 # any other Gomspace state fields.
 from .base import SingleSatOnlyCase
+from .utils import Enums
 
 
 class GomspaceCheckoutCase(SingleSatOnlyCase):
-    def setup_case_singlesat(self):
-        self.sim.flight_controller.write_state(
-            "pan.state", self.mission_states["manual"])
-
     def str_to_bool(self, string):
         if string == "true":
             return True

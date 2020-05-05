@@ -1,5 +1,6 @@
 # ADCSCheckoutCase. Verifies the functionality of the ADCS.
-from .base import SingleSatOnlyCase, TestCaseFailure
+from .base import SingleSatOnlyCase
+from .utils import Enums
 import math
 import time
 
@@ -18,7 +19,6 @@ def list_of_avgs(lists_of_vals):
     return [sum_of_each[i]/len_of_each for y in lists_of_vals]    
 
 class ADCSCheckoutCase(SingleSatOnlyCase):
-
     def assert_vec_within(self, expected, actual, delta):
         assert(len(expected) == len(actual))
         length = len(expected)
@@ -27,29 +27,27 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.soft_assert(abs(expected[i]-actual[i]) < delta, 
                 f"Element #{i}, Expected {expected[i]}, got {actual[i]}. Diff exceed delta of {delta}.")
 
-    def setup_case_singlesat(self):
+    def setup_post_bootsetup(self):
         self.print_header("Begin ADCS Checkout Case")
 
         self.ws("cycle.auto", False)
 
         # Needed so that ADCSMonitor updates its values
         self.cycle()
-
-        self.ws("pan.state", self.mission_states["manual"])
         self.ws("dcdc.ADCSMotor_cmd", True)
 
         # Necessary so that motor commands are pre-empted by ADCS DCDC being on
         self.cycle()
 
-        self.ws("adcs.state", self.adcs_states["point_manual"])
-        self.ws("adcs_cmd.rwa_mode", self.rwa_modes["RWA_SPEED_CTRL"])
+        self.ws("adcs.state", Enums.adcs_states["point_manual"])
+        self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_SPEED_CTRL"])
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
     
         self.print_header("Finished Initialization")
 
     def havt_checkout(self):
         # reset all devices in case last ptest case left an "unclean state"
-        for x in range(self.havt_length):
+        for x in range(Enums.havt_length):
             self.ws(f"adcs_cmd.havt_reset{x}", True)
 
         # adcs_controller should have applied commands.
@@ -89,7 +87,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         initial_up_devices = self.havt_read
 
         # disable all devices
-        for x in range(self.havt_length):
+        for x in range(Enums.havt_length):
             self.ws(f"adcs_cmd.havt_disable{x}", True)
 
         self.cycle()
@@ -100,7 +98,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             "Disabling all devices failed")
 
         # reset all devices
-        for x in range(self.havt_length):
+        for x in range(Enums.havt_length):
             self.ws(f"adcs_cmd.havt_reset{x}", True)
         self.cycle()
         self.logger.put("Post resetting all devices:")
@@ -118,7 +116,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         
         self.print_rs(f"adcs_cmd.mag{mag_num}_mode")
         imu_mode = self.rs(f"adcs_cmd.mag{mag_num}_mode")
-        self.logger.put(f"MAG{mag_num} Mode: {self.imu_modes[imu_mode]}")
+        self.logger.put(f"MAG{mag_num} Mode: {Enums.imu_modes[imu_mode]}")
 
         # perform 10 readings.
         list_of_mag_rds = []
@@ -285,7 +283,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
 
         self.print_header("TORQUE TESTS: ")
 
-        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
+        self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes.get_by_name("RWA_ACCEL_CTRL"))
 
         for cmd_array in torque_tests:
 
@@ -305,7 +303,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         self.ws("adcs_cmd.rwa_torque_cmd", [0,0,0])
         time.sleep(1)
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
-        self.ws("adcs_cmd.rwa_mode", self.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
+        self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes.get_by_name("RWA_SPEED_CTRL"))
         time.sleep(1)
 
         self.ws("cycle.auto", False)
@@ -358,7 +356,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
             self.gyr_checkout()
         
         # Run wheel checks if the RWAPOT is up.
-        rwa_pot_num = self.havt_devices.get_by_name("RWA_POT")
+        rwa_pot_num = Enums.havt_devices["RWA_POT"]
         if self.rs(f"adcs_monitor.havt_device{rwa_pot_num}"):
             self.wheel_checkout()
 
