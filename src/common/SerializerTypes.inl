@@ -819,12 +819,11 @@ template <>
 class Serializer<gps_time_t> : public SerializerBase<gps_time_t> {
   public:
     TRACKED_CONSTANT_SC(size_t, gps_time_sz, 68);
-    static const gps_time_t dummy_gpstime;
 
     TRACKED_CONSTANT_SC(size_t, print_size, 25); // wn: 5, tow: 10, ns: 7, 2 commas, 1 NULL character. 
 
     Serializer()
-        : SerializerBase<gps_time_t>(dummy_gpstime, dummy_gpstime, gps_time_sz, print_size)
+        : SerializerBase<gps_time_t>(gps_time_t(), gps_time_t(), gps_time_sz, print_size)
     {}
 
     void serialize(const gps_time_t& src) override {

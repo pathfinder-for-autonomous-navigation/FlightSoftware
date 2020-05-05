@@ -1,0 +1,8 @@
+[
+    {
+        "type" : "unsigned int",
+        "min" : 0,
+        "max" : 4924967295,
+        "value" : "2"
+    }
+]
