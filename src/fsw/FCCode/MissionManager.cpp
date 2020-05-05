@@ -156,7 +156,8 @@ void MissionManager::dispatch_startup() {
             prop_state_t::disabled);
     }
     else {
-        transition_to(mission_state_t::detumble,
+        is_deployed_f.set(true);
+        transition_to_state(mission_state_t::detumble,
             adcs_state_t::detumble,
             prop_state_t::disabled);
     }

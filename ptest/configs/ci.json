@@ -1,6 +1,5 @@
 {
     "seed" : 2,
-    "single_sat_sim" : true,
     "devices" : [
         {
             "name": "FlightController",

@@ -40,6 +40,7 @@ void test_dispatch_startup() {
     tf.step();
     tf.check(mission_state_t::detumble);
     tf.check_sph_dcdc_on(false);
+    TEST_ASSERT(tf.is_deployed_fp->get());
 }
 
 void test_dispatch_empty_states() {

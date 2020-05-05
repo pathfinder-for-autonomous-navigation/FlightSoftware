@@ -181,7 +181,7 @@ void GomspaceController::execute() {
     get_hk_fault.evaluate(!gs.get_hk());
 
     // Check that the battery voltage is above the threshold
-    low_batt_fault.evaluate(gs.hk->vbatt < batt_threshold_f.get());
+    low_batt_fault.evaluate(vbatt_f.get() < batt_threshold_f.get());
 
     // On the first control cycle, set the command statefields to the current values 
     // in the hk struct to prevent unwanted writes.

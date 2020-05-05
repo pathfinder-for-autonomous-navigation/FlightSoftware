@@ -71,10 +71,12 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     // Since all telemetry fields have been added to the registry, initialize flows
     downlink_producer.init_flows(flow_data);
 
-    // Temporarily disable fault handling until it's better tested
-    WritableStateField<bool>* fault_handler_enabled_fp =
-        find_writable_field<bool>("fault_handler.enabled", __FILE__, __LINE__);
-    fault_handler_enabled_fp->set(false);
+    #ifndef FLIGHT
+    #ifndef DESKTOP
+        // Allow for PTest testing to occur in a controlled way.
+        while(!Serial) {}
+    #endif
+    #endif
 }
 
 void MainControlLoop::execute() {
