@@ -7,7 +7,7 @@ from .state_session import StateSession
 from .radio_session import RadioSession
 from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
-from .simulation import Simulation, SingleSatSimulation
+from .simulation import Simulation
 import json, sys, os, tempfile, time, threading, signal, traceback
 
 try:
@@ -21,7 +21,6 @@ class PTest(object):
         self.testcase_name = testcase_name
 
         self.random_seed = config_data["seed"]
-        self.single_sat_sim = config_data["single_sat_sim"]
 
         self.simulation_run_dir = os.path.join(data_dir, testcase_name + "_" + time.strftime("%Y%m%d-%H%M%S"))
         # Create directory for run data
@@ -51,19 +50,20 @@ class PTest(object):
         self.set_up_radios()
         self.set_up_sim()
 
-        if self.is_interactive:
+        try:
             self.sim.start()
-            self.set_up_cmd_prompt()
-        else:
-            try:
-                self.sim.start()
-            except TestCaseFailure as failure:
-                tb = traceback.format_exc()
-                self.sim.testcase.logger.put(tb)
+        except TestCaseFailure as failure:
+            tb = traceback.format_exc()
+            self.sim.testcase.logger.put(tb)
+            if not self.is_interactive:
                 time.sleep(1) # Allow time for the exception to be handled by the logger.
                 self.sim.testcase.logger.stop()
                 time.sleep(1.5) # Allow time for the logger to stop
                 self.stop_all("Exiting due to testcase failure.")
+        
+        if self.is_interactive:
+            self.set_up_cmd_prompt()
+        else:
             self.stop_all("Exiting since user requested non-interactive execution.", is_error=False)
 
     def set_up_devices(self):
@@ -164,10 +164,7 @@ class PTest(object):
             self.stop_all(f"Nonexistent test case: {self.testcase_name}")
         print(f"Running mission testcase {self.testcase_name}.")
 
-        if self.single_sat_sim:
-            self.sim = SingleSatSimulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
-        else:
-            self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
+        self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt
