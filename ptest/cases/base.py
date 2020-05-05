@@ -77,7 +77,7 @@ class Case(object):
         '''
         Prints the ADCS HAVT list in reverse (normal) order
         '''
-        binary_list = [1 if x else 0 for x in Enums.havt_read]
+        binary_list = [1 if x else 0 for x in self.havt_read]
 
         string_of_binary_list = [str(x) for x in binary_list]
         
@@ -95,7 +95,7 @@ class Case(object):
         Prints all non functional devices
         '''
         for x in range(Enums.havt_length):
-            if not Enums.havt_read[x]:
+            if not self.havt_read[x]:
                 self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
 
     @finished.setter
