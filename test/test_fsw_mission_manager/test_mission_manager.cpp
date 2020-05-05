@@ -39,6 +39,7 @@ void test_dispatch_startup() {
     // should transition to the detumble state.
     tf.step();
     tf.check(mission_state_t::detumble);
+    TEST_ASSERT(tf.is_deployed_fp->get());
 }
 
 void test_dispatch_empty_states() {
