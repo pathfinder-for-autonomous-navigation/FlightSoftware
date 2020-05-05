@@ -259,8 +259,10 @@ void QuakeManager::dispatch_transceive() {
             return handle_no_comms();
         }
 
-        // We have comms, so update the last_checkin time
-        last_checkin_cycle_f.set(control_cycle_count);
+        #if !(defined(DESKTOP)) || defined(UNIT_TEST)
+            // We have comms, so update the last_checkin time
+            last_checkin_cycle_f.set(control_cycle_count);
+        #endif
 
         // Case 2: We have comms and we have message --> read message
         if (qct.get_MT_status() == 1) // SBD message successfully retrieved

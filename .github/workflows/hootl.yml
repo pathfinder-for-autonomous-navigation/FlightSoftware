@@ -38,6 +38,11 @@ jobs:
         python -m ptest runsim -c ptest/configs/ci.json -t ADCSCheckoutCase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t PiksiCheckoutCase -ni
 
+    - name: Fault Handling Cases
+      run: |
+        python -m ptest runsim -c ptest/configs/ci.json -t ADCSWheelFaultHandler -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t LowBattFaultHandler -ni
+
     - name: Mission Checkout Cases
       run: |
         python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni

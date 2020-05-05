@@ -262,7 +262,6 @@ class MissionCase(Case):
     counterparts in SingleSatOnlyCase. Be sure to read the class documentation for that
     case.
     """
-
     @property
     def initial_state_leader(self):
         raise NotImplementedError
