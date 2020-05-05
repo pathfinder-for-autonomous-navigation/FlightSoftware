@@ -148,11 +148,6 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
     took_gyro_reading = true;
   }
 
-  // if millis() overflowed, reset last_not_heat_time
-  if(millis() - last_not_heat_time < 0){
-    last_not_heat_time = 0;
-  }
-
   // if heater has been on for more than [heater_max_time] millis, disable it
   // To resume heating, gyro heater will need to be reset from FSW
   if(millis() - last_not_heat_time > heater_max_time){
