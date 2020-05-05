@@ -5,6 +5,7 @@ from .cases.base import TestCaseFailure
 from .configs.schemas import *
 from .state_session import StateSession
 from .radio_session import RadioSession
+from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
 from .simulation import Simulation, SingleSatSimulation
 import json, sys, os, tempfile, time, threading, signal, traceback
@@ -42,6 +43,8 @@ class PTest(object):
         pan_logo_filepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'pan_logo.txt')
         with open(pan_logo_filepath, 'r') as pan_logo_file:
             print(pan_logo_file.read())
+
+        self.uplink_console = UplinkConsole(self.simulation_run_dir)
 
         self.is_running = True
         self.set_up_devices()
@@ -104,7 +107,7 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = StateSession(device_name, device["http_port"], self.simulation_run_dir)
+            device_session = StateSession(device_name, self.uplink_console, device["http_port"], self.simulation_run_dir)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
@@ -137,8 +140,10 @@ class PTest(object):
 
             if radio['connect']:
                 radio_data_name = radio_connected_device + "_radio"
+
                 radio_session = RadioSession(radio_name,
                     imei,
+                    self.uplink_console,
                     radio["http_port"],
                     radio["send_queue_duration"],
                     radio["send_lockout_duration"],
@@ -189,6 +194,9 @@ class PTest(object):
         time.sleep(1.0)
         if hasattr(self, "binary_monitor_thread"):
             self.binary_monitor_thread.join()
+
+        print("Stopping uplink console...")
+        self.uplink_console.close()
 
         print("Stopping simulation (please be patient)...")
         try:
