@@ -5,7 +5,7 @@
 #include <fsw/FCCode/ADCSBoxMonitor.hpp>
 #include <fsw/FCCode/Drivers/ADCS.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include "../custom_assertions.hpp"
 
 class TestFixture {
@@ -96,11 +96,11 @@ class TestFixture {
             adcs_functional_p = registry.find_readable_field_t<bool>("adcs_monitor.functional");
 
             // find the faults fields
-            adcs_functional_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.functional_fault.base"));
-            wheel1_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel1_fault.base"));
-            wheel2_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel2_fault.base"));
-            wheel3_adc_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel3_fault.base"));
-            wheel_pot_fault_p = static_cast<Fault*>(registry.find_writable_field_t<bool>("adcs_monitor.wheel_pot_fault.base"));
+            adcs_functional_fault_p = registry.find_fault("adcs_monitor.functional_fault.base");
+            wheel1_adc_fault_p = registry.find_fault("adcs_monitor.wheel1_fault.base");
+            wheel2_adc_fault_p = registry.find_fault("adcs_monitor.wheel2_fault.base");
+            wheel3_adc_fault_p = registry.find_fault("adcs_monitor.wheel3_fault.base");
+            wheel_pot_fault_p = registry.find_fault("adcs_monitor.wheel_pot_fault.base");
         }
 
         // set of mocking methods

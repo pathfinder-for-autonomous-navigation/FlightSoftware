@@ -6,35 +6,42 @@
 
 #include <adcs/havt_devices.hpp> // needed for ADCSCommander fill-in
 
+constexpr double nan_d = std::numeric_limits<double>::quiet_NaN();
+
 // This class does the unpleasant task of creating state fields that
 // controllers expect to see but for which we haven't defined any
 // behavior yet.
 //
 // As flight software develops, this list will grow longer and shorter, but
 // eventually become zero.
-class FieldCreatorTask : public ControlTask<void> {
-    public:
-      ReadableStateField<lin::Vector3d> pos_f;
-      ReadableStateField<lin::Vector3d> pos_baseline_f;
+class FieldCreatorTask : public ControlTask<void>
+{
+public:
+  ReadableStateField<double> time_f;
+  ReadableStateField<lin::Vector3d> pos_f;
+  ReadableStateField<lin::Vector3d> pos_baseline_f;
 
-      FieldCreatorTask(StateFieldRegistry& r) : 
-        ControlTask<void>(r),
-        pos_f("orbit.pos", Serializer<lin::Vector3d>(0,100000,100)),
-        pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,100000,100))
-      {
-          // Create the fields!
+  FieldCreatorTask(StateFieldRegistry &r) : ControlTask<void>(r),
+                                            time_f("orbit.time", Serializer<double>(0.0, 18'446'744'073'709'551'616.0, 64)),
+                                            pos_f("orbit.pos", Serializer<lin::Vector3d>(0, 100000, 100)),
+                                            pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0, 100000, 100))
+  {
+    // Create the fields!
 
-          // For AttitudeComputer
-          add_readable_field(pos_f);
-          add_readable_field(pos_baseline_f);
+    // For AttitudeComputer
+    add_readable_field(time_f); // Time since the PAN epoch in seconds
+    add_readable_field(pos_f);
+    add_readable_field(pos_baseline_f);
 
-      }
+    pos_baseline_f.set({nan_d, nan_d, nan_d});
+  }
 
-      void execute() {
-          // Do nada
-      }
+  void execute()
+  {
+    // Do nada
+  }
 
-      ~FieldCreatorTask() {}
+  ~FieldCreatorTask() {}
 };
 
 #endif

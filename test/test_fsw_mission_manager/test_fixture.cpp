@@ -1,12 +1,10 @@
 #include "test_fixture.hpp"
-#include "../FaultHandlerMachineMock.hpp"
-#include <unity.h>
+#include "../test_fsw_fault_handler/FaultHandlerMachineMock.hpp"
 #include <limits>
 
 TestFixture::TestFixture(mission_state_t initial_state) : registry() {
-    adcs_ang_momentum_fp = registry.create_internal_field<lin::Vector3f>(
-                                "attitude_estimator.h_body");
-    adcs_paired_fp = registry.create_writable_field<bool>("adcs.paired");
+    adcs_w_body_est_fp = registry.create_readable_lin_vector_field<float>(
+                                "attitude_estimator.w_body", -55, 55, 32);
 
     radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
     last_checkin_cycle_fp = registry.create_internal_field<unsigned int>(
@@ -32,13 +30,15 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     pressurize_fail_fp=registry.create_fault("prop.pressurize_fail", 1);
     overpressured_fp=registry.create_fault("prop.overpressured", 1);
 
+    sph_dcdc_fp = registry.create_writable_field<bool>("dcdc.SpikeDock_cmd");
+
     piksi_state_fp = registry.create_readable_field<unsigned char>("piksi.state");
     last_rtkfix_ccno_fp = registry.create_internal_field<unsigned int>("piksi.last_rtkfix_ccno");
 
     // Initialize these variables
     const float nan_f = std::numeric_limits<float>::quiet_NaN();
     const double nan_d = std::numeric_limits<double>::quiet_NaN();
-    adcs_ang_momentum_fp->set({nan_f,nan_f,nan_f});
+    adcs_w_body_est_fp->set({nan_f,nan_f,nan_f});
     radio_state_fp->set(static_cast<unsigned char>(radio_state_t::disabled));
     last_checkin_cycle_fp->set(0);
     prop_state_fp->set(static_cast<unsigned int>(prop_state_t::disabled));
@@ -122,6 +122,10 @@ void TestFixture::check(sat_designation_t designation) const {
         "For satellite designation.");
 }
 
+void TestFixture::check_sph_dcdc_on(bool on) const {
+    TEST_ASSERT(sph_dcdc_fp->get() == on);
+}
+
 // Ensures that no state except the given state can be achieved.
 void TestFixture::assert_ground_uncommandability(adcs_state_t exception_state) {
     for(adcs_state_t state_it : adcs_states) {
@@ -148,7 +152,7 @@ void TestFixture::step() {
 }
 
 void TestFixture::set_ccno(unsigned int ccno) {
-    mission_manager->control_cycle_count = ccno;
+    MissionManager::control_cycle_count = ccno;
 }
 
 // Set the distance between the two satellites.
@@ -168,8 +172,8 @@ void TestFixture::set_comms_blackout_period(int ccno) {
 
 // Set the angular rate of the spacecraft.
 void TestFixture::set_ang_rate(float rate) {
-    adcs_ang_momentum_fp->set({rate, 0.0f, 0.0f}); // TODO will need to change this once the inertia tensor
-                                             // is added to GNC constants.
+    adcs_w_body_est_fp->set({rate, 0.0f, 0.0f}); // TODO will need to change this once the inertia tensor
+                                                  // is added to GNC constants.
 }
 
 adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t::limited,

@@ -1,0 +1,22 @@
+summary: "Send telemetry data to the USB-connected satellite"
+tags: 
+  - "Send telemetry data to USB-connected satellite"
+description: "This endpoint can be used to send telemetry data to the USB-connected satellite. The send is done immediately, unlike RadioSession."
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+parameters:
+  - in: "body"
+    name: "data"
+    description: "Accepts a set of field-value pairs"
+    required: true
+    schema:
+      type: array
+      items:
+        type: "object"
+        properties:
+          field:
+            type: "string"
+          value:
+            type: "integer"

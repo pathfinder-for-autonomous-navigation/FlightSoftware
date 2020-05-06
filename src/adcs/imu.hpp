@@ -4,6 +4,7 @@
 //
 // Contributors:
 //   Kyle Krol  kpk63@cornell.edu
+//   Shihao Cao sfc72@cornell.edu
 //
 // Pathfinder for Autonomous Navigation
 // Space Systems Design Studio
@@ -16,6 +17,7 @@
 #include "dev/LIS2MDLTR.hpp"
 #include "dev/LSM6DSM.hpp"
 #include "dev/MMC34160PJ.hpp"
+#include "dev/GyroHeaterTransistor.hpp"
 
 #include <i2c_t3.h>
 #include <lin.hpp>
@@ -40,6 +42,9 @@ extern lin::Vector3f mag2_rd;
 /** Gyroscope device. */
 extern dev::LSM6DSM gyr;
 
+/** Gyro heater device */
+extern dev::GyroHeaterTransistor gyr_heater;
+
 /** Current gyroscope reading in radians per second in the body frame of the
  *  spacecraft. */
 extern lin::Vector3f gyr_rd;
@@ -58,7 +63,7 @@ void setup();
  *  behaves according to the mode value. */
 void update_sensors(unsigned char mag1_mode, unsigned char mag2_mode,
     float mag_flt, float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
-    float gry_temp_k_p, float gyr_temp_k_i, float gyr_temp_k_d);
+    unsigned char gyr_temp_pwm);
 
 }  // namespace imu
 }  // namespace adcs

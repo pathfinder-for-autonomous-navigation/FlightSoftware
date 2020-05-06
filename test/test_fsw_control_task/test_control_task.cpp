@@ -1,7 +1,7 @@
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/ControlTask.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 class DummyControlTask : public ControlTask<void> {
   public:

@@ -4,7 +4,7 @@
 #include <fsw/FCCode/piksi_mode_t.enum>
 
 #include <fsw/FCCode/Drivers/Piksi.hpp>
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 #define assert_piksi_mode(x) {\
     TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\

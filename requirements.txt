@@ -12,6 +12,7 @@ cycler==0.10.0
 docker==4.1.0
 elasticsearch==7.1.0
 entrypoints==0.3
+flake8==3.7.9
 flasgger==0.9.3
 Flask==1.1.1
 gnureadline==8.0.0
@@ -36,7 +37,9 @@ packaging==19.2
 platformio==4.3.1
 pluggy==0.13.0
 py==1.8.0
+pycodestyle==2.5.0
 pyelftools==0.25
+pyflakes==2.1.1
 pylint==2.4.1
 pyparsing==2.4.2
 pyserial==3.4

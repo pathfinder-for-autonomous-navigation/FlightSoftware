@@ -2,7 +2,7 @@
 #include <common/Event.hpp>
 #include <common/Fault.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 void test_foo() {
     StateFieldRegistry registry;

@@ -505,7 +505,10 @@ class PropState_Manual : public PropState
 {
 public:
     PropState_Manual() : PropState(prop_state_t::manual) {}
+
     bool can_enter() const override;
+
     void enter() override;
+
     prop_state_t evaluate() override;
 };

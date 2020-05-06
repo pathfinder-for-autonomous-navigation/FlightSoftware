@@ -12,14 +12,14 @@
 #include <fsw/FCCode/prop_state_t.enum>
 #include <fsw/FCCode/sat_designation_t.enum>
 
-#include <unity.h>
-#include <lin.hpp>
+#include "../custom_assertions.hpp"
+#include <lin/core.hpp>
 
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
     // Input state fields to mission manager
-    std::shared_ptr<InternalStateField<lin::Vector3f>> adcs_ang_momentum_fp;
+    std::shared_ptr<ReadableStateField<lin::Vector3f>> adcs_w_body_est_fp;
     std::shared_ptr<WritableStateField<bool>> adcs_paired_fp;
 
     std::shared_ptr<InternalStateField<unsigned char>> radio_state_fp;
@@ -33,7 +33,6 @@ class TestFixture {
     std::shared_ptr<WritableStateField<bool>> power_cycle_radio_fp;
 
     std::shared_ptr<ReadableStateField<bool>> docked_fp;
-    //std::shared_ptr<InternalStateField<unsigned int>> enter_docking_cycle_fp;
 
     std::shared_ptr<Fault> low_batt_fault_fp;
     std::shared_ptr<Fault> adcs_functional_fault_fp;
@@ -43,6 +42,8 @@ class TestFixture {
     std::shared_ptr<Fault> wheel_pot_fault_fp;
     std::shared_ptr<Fault> pressurize_fail_fp;
     std::shared_ptr<Fault> overpressured_fp;
+
+    std::shared_ptr<WritableStateField<bool>> sph_dcdc_fp;
 
     std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
     std::shared_ptr<InternalStateField<unsigned int>> last_rtkfix_ccno_fp;
@@ -76,6 +77,9 @@ class TestFixture {
     void check(prop_state_t state) const;
     void check(radio_state_t state) const;
     void check(sat_designation_t designation) const;
+
+    // Check if the SpikeDoc DCDC pin is on or off.
+    void check_sph_dcdc_on(bool on) const;
 
     // Containers for enum possibilities
     static adcs_state_t adcs_states[8];

@@ -2,7 +2,7 @@
 
 #include <fsw/FCCode/DCDCController.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 class TestFixture {
   public:

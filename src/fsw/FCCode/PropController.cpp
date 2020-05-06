@@ -81,13 +81,10 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     max_venting_cycles.set(max_venting_cycles_ic);
     ctrl_cycles_per_close_period.set(ctrl_cycles_per_close_period_ic);
 
-    max_pressurizing_cycles.set(max_pressurizing_cycles_ic);
     threshold_firing_pressure.set(threshold_firing_pressure_ic);
     ctrl_cycles_per_filling_period.set(ctrl_cycles_per_filling_period_ic);
     ctrl_cycles_per_cooling_period.set(ctrl_cycles_per_cooling_period_ic);
     tank1_valve.set(tank1_valve_choice_ic); // default use 0
-
-    tank2_pressure_f.set(Tank2.get_pressure());
     tank2_temp_f.set(Tank2.get_temp());
     tank1_temp_f.set(Tank1.get_temp());
 
@@ -110,6 +107,13 @@ void PropController::execute()
     // Decrement fire_cycle if it is not equal to 0
     if (cycles_until_firing.get() > 0)
         cycles_until_firing.set(cycles_until_firing.get() - 1);
+
+    // We can only enter Handling_Fault if at least one Fault is faulted.
+    if (state_handling_fault.can_enter())
+    {
+        DD("Setting current_state to handling_fault");
+        prop_state_f.set(static_cast<unsigned int>(prop_state_t::handling_fault));
+    }
 
     auto current_state = static_cast<prop_state_t>(prop_state_f.get());
 
@@ -273,8 +277,7 @@ prop_state_t PropState_Disabled::evaluate()
 
 bool PropState_Idle::can_enter() const
 {
-#ifndef DESKTOP
-    return PropulsionSystem.is_functional();
+#ifndef DESKTOP return PropulsionSystem.is_functional();
 #else
     return true;
 #endif
