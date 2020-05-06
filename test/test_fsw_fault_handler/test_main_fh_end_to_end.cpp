@@ -37,7 +37,6 @@ void test_single_simple_safehold_faults() {
         tf.adcs_wheel3_adc_fault_fp,
         tf.adcs_wheel_pot_fault_fp,
         tf.low_batt_fault_fp,
-        tf.prop_overpressure_fault_fp
     };
 
     /** 
