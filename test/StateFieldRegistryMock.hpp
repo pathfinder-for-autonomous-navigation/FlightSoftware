@@ -104,7 +104,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @brief Finds an fault of the given name.
      */
     Fault* find_fault_t(const std::string& name) {
-        auto ptr = static_cast<Fault*>(find_fault(name));
+        auto ptr = find_fault(name);
         check_field_exists(ptr, name);
         return ptr;
     }

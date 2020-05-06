@@ -39,6 +39,7 @@ void test_dispatch_startup() {
     // should transition to the detumble state.
     tf.step();
     tf.check(mission_state_t::detumble);
+    tf.check_sph_dcdc_on(false);
     TEST_ASSERT(tf.is_deployed_fp->get());
 }
 
@@ -87,6 +88,7 @@ void test_dispatch_detumble() {
     tf.step();
     tf.check(adcs_state_t::point_standby);
     tf.check(mission_state_t::standby);
+    tf.check_sph_dcdc_on(true);
 }
 
 void test_dispatch_standby() {
@@ -144,6 +146,7 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
             tf.check(mission_state_t::docking);
             tf.check(adcs_state_t::zero_torque);
             tf.check(prop_state_t::disabled);
+            tf.check_sph_dcdc_on(true);
         }
         else {
             if (mission_state == mission_state_t::follower) {
@@ -154,14 +157,12 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
                 tf.check(mission_state_t::leader_close_approach);
                 tf.check(prop_state_t::disabled);
             }
-
+            tf.check_sph_dcdc_on(false);
             tf.check(adcs_state_t::point_docking);
         }
-
         tf.check(static_cast<sat_designation_t>(tf.sat_designation_fp->get()));
 
         // Docking motor command should be applied if we're in close approach
-
         if (in_close_approach) {
             TEST_ASSERT(tf.docking_config_cmd_fp->get());
         }
@@ -174,6 +175,7 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
         tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
         tf.step();
+        tf.check_sph_dcdc_on(true);
         tf.check(prop_state_t::idle);
         tf.check(adcs_state_t::point_standby);
         tf.check(mission_state_t::standby);
@@ -241,12 +243,14 @@ void test_dispatch_docking() {
     tf3.step();
 
     tf3.check(mission_state_t::docked);
+    tf3.check_sph_dcdc_on(false);
 }
 
 void test_dispatch_safehold() {
     // Test that a satellite reboot is correctly triggered.
     {
         TestFixture tf(mission_state_t::safehold);
+        tf.check_sph_dcdc_on(false);
 
         // Below one day's worth of cycle counts, safe hold should
         // not trigger a satellite reboot.
