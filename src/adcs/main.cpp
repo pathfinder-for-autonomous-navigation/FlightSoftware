@@ -140,8 +140,7 @@ void update_imu() {
   imu::update_sensors(registers.imu.mag1_mode,
       registers.imu.mag2_mode, registers.imu.mag_flt, registers.imu.gyr_flt,
       registers.imu.gyr_desired_temp, registers.imu.gyr_temp_flt,
-      registers.imu.gyr_temp_p, registers.imu.gyr_temp_i,
-      registers.imu.gyr_temp_d);
+      registers.imu.gyr_temp_pwm);
 
   // Copy results into the global registers
   { InterruptSafe safe;

@@ -108,7 +108,6 @@ class Enums(object):
         "MTR_ENABLED",
         "MTR_DISABLED"
     ])
-    havt_length = 18
 
     # copied from havt_devices.hpp
     havt_devices = FSWEnum([
@@ -129,7 +128,9 @@ class Enums(object):
         "SSA_ADC2",
         "SSA_ADC3",
         "SSA_ADC4",
-        "SSA_ADC5"])
+        "SSA_ADC5",
+        "GYRO_HEATER"])
+    havt_length = len(havt_devices.arr)
 
 class TestCaseFailure(Exception):
     """Raise in case of test case failure."""

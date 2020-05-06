@@ -91,7 +91,7 @@ struct IMURegisters {
   /** Current output for the gyroscope in units of rad/s in the body frame of
    *  the spacecraft. */
   float gyr_rd[3];
-  /** Current output for the gyroscope temperature in units of Kelvin. */
+  /** Current output for the gyroscope temperature in degrees C. */
   float gyr_temp_rd;
   /** Specifies the exponential filter constant for the magnetometer reads. */
   float mag_flt;
@@ -100,13 +100,9 @@ struct IMURegisters {
   /** Specifies the exponential filter constant for the gyroscope temperature
    *  reads. */
   float gyr_temp_flt;
-  /** Specifies the gyroscope temperature controller K_p term. */
-  float gyr_temp_p;
-  /** Specifies the gyroscope temperature controller K_i term. */
-  float gyr_temp_i;
-  /** Specifies the gyroscope temperature controller K_d term. */
-  float gyr_temp_d;
-  /** Specifies the desired temperature of the gyroscope. */
+  /** Specifies the gyroscope temperature controller PWM (255 is max heating, 0 is OFF). */
+  unsigned char gyr_temp_pwm;
+  /** Specifies the desired temperature of the gyroscope in degrees C. */
   float gyr_desired_temp;
 };
 
