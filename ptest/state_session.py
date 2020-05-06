@@ -455,6 +455,9 @@ class StateSession(object):
         self.http_thread.terminate()
         self.http_thread.join()
 
+        self.http_thread.terminate()
+        self.http_thread.join()
+
         self.datastore.stop()
         self.logger.stop()
         self.raw_logger.stop()
