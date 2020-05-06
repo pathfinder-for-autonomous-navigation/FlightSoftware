@@ -100,17 +100,24 @@ void MissionManager::execute() {
 
     // Step 1. Change state if faults exist.
     const fault_response_t fault_response = main_fault_handler->execute();
-    if (fault_response == fault_response_t::safehold &&
-        state != mission_state_t::safehold)
+
+    if (!(state == mission_state_t::startup
+          || state == mission_state_t::manual))
     {
-        transition_to_state(mission_state_t::safehold, adcs_state_t::zero_torque, prop_state_t::disabled);
-        return;
-    }
-    else if (fault_response == fault_response_t::standby &&
-             state != mission_state_t::safehold && state != mission_state_t::standby) 
-    {
-        transition_to_state(mission_state_t::standby, adcs_state_t::point_standby, prop_state_t::idle);
-        return;
+        if (fault_response == fault_response_t::safehold)
+        {
+            transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
+            return;
+        }
+        else if (fault_response == fault_response_t::standby
+            && state != mission_state_t::safehold
+            && state != mission_state_t::initialization_hold
+            && state != mission_state_t::detumble
+            && state != mission_state_t::standby)
+        {
+            transition_to_state(mission_state_t::standby, adcs_state_t::point_standby, prop_state_t::idle);
+            return;
+        }
     }
 
     // Step 2. Handle state.
