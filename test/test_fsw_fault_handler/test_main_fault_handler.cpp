@@ -4,13 +4,13 @@
 #include <numeric>
 #include "cartesian_product.hpp"
 
+
 /**
  * @brief The main fault handler should initially be enabled and
  * produce a ground-controllable flag to enable/disable global fault
  * response.
  */
-void test_main_fh_initialization()
-{
+void test_main_fh_initialization() {
     TestFixtureMainFHMocked tf;
     TEST_ASSERT_NOT_NULL(tf.fault_handler_enabled_fp);
     TEST_ASSERT_TRUE(tf.fault_handler_enabled_fp->get());
@@ -20,42 +20,42 @@ void test_main_fh_initialization()
  * @brief Initially, set there to be no fault response from any sub-machine.
  * Verify that the global fault machine also recommends no response.
  */
-void test_main_fh_no_fault()
-{
+void test_main_fh_no_fault() {
     TestFixtureMainFHMocked tf;
     assert(tf.num_fault_handler_machines == 10);
 
-    fault_response_t response = tf.step<10>({fault_response_t::none, fault_response_t::none, fault_response_t::none,
-                                             fault_response_t::none, fault_response_t::none, fault_response_t::none,
-                                             fault_response_t::none, fault_response_t::none, fault_response_t::none,
-                                             fault_response_t::none});
+    fault_response_t response = tf.step<10>({
+        fault_response_t::none, fault_response_t::none, fault_response_t::none,
+        fault_response_t::none, fault_response_t::none, fault_response_t::none,
+        fault_response_t::none, fault_response_t::none, fault_response_t::none,
+        fault_response_t::none
+    });
     TEST_ASSERT_EQUAL(fault_response_t::none, response);
 }
 
 /**
  * @brief Test all combinations of faults that lead to a standby response.
  */
-void test_main_fh_standby_fault()
-{
+void test_main_fh_standby_fault() {
     TestFixtureMainFHMocked tf;
     assert(tf.num_fault_handler_machines == 10);
 
     // Produce all combinations of none/standby fault response recommendations.
-    static constexpr std::array<fault_response_t, 2> allowed_responses{fault_response_t::none, fault_response_t::standby};
-    const std::vector<std::array<fault_response_t, 10>> combos = NthCartesianProduct<10>::of(allowed_responses);
+    static constexpr std::array<fault_response_t, 2> allowed_responses 
+        {fault_response_t::none, fault_response_t::standby};
+    const std::vector<std::array<fault_response_t, 10>> combos
+        = NthCartesianProduct<10>::of(allowed_responses);
 
-    for (auto const &combo : combos)
-    {
+    for(auto const & combo : combos) {
         // Verify that there is at least one fault machine
         // that will produce a recommendation for standby. If there is
         // not, skip this combo.
         const bool combo_valid = std::accumulate(
-            combo.begin(), combo.end(), false,
+            combo.begin(), combo.end(), false, 
             [](bool valid, fault_response_t response) {
                 return valid || response == fault_response_t::standby;
             });
-        if (!combo_valid)
-            continue;
+        if (!combo_valid) continue;
 
         fault_response_t response = tf.step(combo);
         TEST_ASSERT_EQUAL(fault_response_t::standby, response);
@@ -63,27 +63,26 @@ void test_main_fh_standby_fault()
 }
 
 // Test all combinations of faults that lead to a safehold response.
-void test_main_fh_safehold_fault()
-{
+void test_main_fh_safehold_fault() {
     TestFixtureMainFHMocked tf;
     assert(tf.num_fault_handler_machines == 10);
 
     // Produce all combinations of none/standby/safehold fault response recommendations.
-    static constexpr std::array<fault_response_t, 3> allowed_responses{fault_response_t::none, fault_response_t::standby, fault_response_t::safehold};
-    const std::vector<std::array<fault_response_t, 10>> combos = NthCartesianProduct<10>::of(allowed_responses);
+    static constexpr std::array<fault_response_t, 3> allowed_responses
+        {fault_response_t::none, fault_response_t::standby, fault_response_t::safehold};
+    const std::vector<std::array<fault_response_t, 10>> combos 
+        = NthCartesianProduct<10>::of(allowed_responses);
 
-    for (auto const &combo : combos)
-    {
+    for(auto const & combo : combos) {
         // Verify that there is at least one fault machine in this combo
         // that will produce a recommendation for safehold. If there is not,
         // skip this combo.
         const bool combo_valid = std::accumulate(
-            combo.begin(), combo.end(), false,
+            combo.begin(), combo.end(), false, 
             [](bool valid, fault_response_t response) {
                 return valid || response == fault_response_t::safehold;
             });
-        if (!combo_valid)
-            continue;
+        if (!combo_valid) continue;
 
         fault_response_t response = tf.step(combo);
         TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
@@ -94,19 +93,19 @@ void test_main_fh_safehold_fault()
  * @brief Check that the state field that can enable or disable fault
  * responses works.
  */
-void test_main_fh_toggle_handling()
-{
+void test_main_fh_toggle_handling() {
     TestFixtureMainFHMocked tf;
     assert(tf.num_fault_handler_machines == 10);
 
     // This is a random combination that definitely causes a fault
     // recommendation to transition to safe hold.
     std::array<fault_response_t, 10> safehold_combo = {
-        fault_response_t::safehold, fault_response_t::safehold,
-        fault_response_t::none, fault_response_t::none,
-        fault_response_t::none, fault_response_t::none,
-        fault_response_t::standby, fault_response_t::safehold,
-        fault_response_t::none, fault_response_t::standby};
+        fault_response_t::safehold, fault_response_t::safehold, 
+        fault_response_t::none,     fault_response_t::none,
+        fault_response_t::none,     fault_response_t::none,
+        fault_response_t::standby,  fault_response_t::safehold,
+        fault_response_t::none,     fault_response_t::standby
+    };
 
     // If some fault machines recommend safehold, the main fault handler
     // definitely recommends safehold.
@@ -126,8 +125,7 @@ void test_main_fh_toggle_handling()
     TEST_ASSERT_EQUAL(fault_response_t::safehold, response);
 }
 
-void test_main_fault_handler()
-{
+void test_main_fault_handler() {
     RUN_TEST(test_main_fh_initialization);
     RUN_TEST(test_main_fh_no_fault);
     RUN_TEST(test_main_fh_standby_fault);
