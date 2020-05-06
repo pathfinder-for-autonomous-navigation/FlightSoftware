@@ -10,11 +10,6 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.ws("pan.state", Enums.mission_states["manual"])
         self.ws("adcs.state", Enums.adcs_states["point_manual"])
         
-        self.target = 40
-
-        self.ws("adcs_cmd.imu_gyr_temp_pwm", 255) # Arbitrary non default
-        self.ws("adcs_cmd.imu_gyr_temp_desired", 40) # High temp to let rise and fall
-
         self.ws("cycle.auto", False) # turn off auto cycle in case it was on
         self.cycle()
 
@@ -48,9 +43,6 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
         if not self.rs("adcs_monitor.havt_device0"): # IMU GYR
             raise TestCaseFailure("GYRO not functional")
-
-        self.print_rs("adcs_cmd.imu_gyr_temp_pwm")
-        self.print_rs("adcs_cmd.imu_gyr_temp_desired")
         
         init_temp = self.print_rs("adcs_monitor.gyr_temp")
         init_cursys = self.print_rs("gomspace.cursys")
@@ -58,6 +50,13 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         init_curout_arr = [self.rs(f"gomspace.curout.output{x}") for x in range(1,7)]
         self.logger.put("INIT_CUROUT ARR: "+str(init_curout_arr))
 
+        self.target = 40
+
+        self.ws("adcs_cmd.imu_gyr_temp_pwm", 255) # Arbitrary non default
+        self.ws("adcs_cmd.imu_gyr_temp_desired", 40) # High temp to let rise and fall
+        self.print_rs("adcs_cmd.imu_gyr_temp_pwm")
+        self.print_rs("adcs_cmd.imu_gyr_temp_desired")
+        
         self.logger.put("")
         self.cycle()
 
