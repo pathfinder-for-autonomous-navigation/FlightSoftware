@@ -5,8 +5,9 @@ from .cases.base import TestCaseFailure
 from .configs.schemas import *
 from .state_session import StateSession
 from .radio_session import RadioSession
+from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
-from .simulation import Simulation, SingleSatSimulation
+from .simulation import Simulation
 import json, sys, os, tempfile, time, threading, signal, traceback
 
 try:
@@ -20,7 +21,6 @@ class PTest(object):
         self.testcase_name = testcase_name
 
         self.random_seed = config_data["seed"]
-        self.single_sat_sim = config_data["single_sat_sim"]
 
         self.simulation_run_dir = os.path.join(data_dir, testcase_name + "_" + time.strftime("%Y%m%d-%H%M%S"))
         # Create directory for run data
@@ -43,24 +43,27 @@ class PTest(object):
         with open(pan_logo_filepath, 'r') as pan_logo_file:
             print(pan_logo_file.read())
 
+        self.uplink_console = UplinkConsole(self.simulation_run_dir)
+
         self.is_running = True
         self.set_up_devices()
         self.set_up_radios()
         self.set_up_sim()
 
-        if self.is_interactive:
+        try:
             self.sim.start()
-            self.set_up_cmd_prompt()
-        else:
-            try:
-                self.sim.start()
-            except TestCaseFailure as failure:
-                tb = traceback.format_exc()
-                self.sim.testcase.logger.put(tb)
+        except TestCaseFailure as failure:
+            tb = traceback.format_exc()
+            self.sim.testcase.logger.put(tb)
+            if not self.is_interactive:
                 time.sleep(1) # Allow time for the exception to be handled by the logger.
                 self.sim.testcase.logger.stop()
                 time.sleep(1.5) # Allow time for the logger to stop
                 self.stop_all("Exiting due to testcase failure.")
+        
+        if self.is_interactive:
+            self.set_up_cmd_prompt()
+        else:
             self.stop_all("Exiting since user requested non-interactive execution.", is_error=False)
 
     def set_up_devices(self):
@@ -104,13 +107,13 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = StateSession(device_name, self.simulation_run_dir)
+            device_session = StateSession(device_name, self.uplink_console, device["http_port"], self.simulation_run_dir)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
                 self.devices[device_name] = device_session
             else:
-                self.stop_all("A required device is disconnected.")
+                self.stop_all(f"Unable to set up StateSession for {device_name}.")
 
         self.binary_monitor_thread = threading.Thread(
             name="Binary Monitor", target=self.binary_monitor)
@@ -137,7 +140,15 @@ class PTest(object):
 
             if radio['connect']:
                 radio_data_name = radio_connected_device + "_radio"
-                radio_session = RadioSession(radio_name, imei, self.simulation_run_dir, self.tlm_config)
+
+                radio_session = RadioSession(radio_name,
+                    imei,
+                    self.uplink_console,
+                    radio["http_port"],
+                    radio["send_queue_duration"],
+                    radio["send_lockout_duration"],
+                    self.simulation_run_dir,
+                    self.tlm_config)
                 self.radios[radio_name] = radio_session
 
     def set_up_sim(self):
@@ -153,10 +164,7 @@ class PTest(object):
             self.stop_all(f"Nonexistent test case: {self.testcase_name}")
         print(f"Running mission testcase {self.testcase_name}.")
 
-        if self.single_sat_sim:
-            self.sim = SingleSatSimulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
-        else:
-            self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
+        self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt
@@ -181,7 +189,11 @@ class PTest(object):
 
         print("Stopping binary monitor thread...")
         time.sleep(1.0)
-        self.binary_monitor_thread.join()
+        if hasattr(self, "binary_monitor_thread"):
+            self.binary_monitor_thread.join()
+
+        print("Stopping uplink console...")
+        self.uplink_console.close()
 
         print("Stopping simulation (please be patient)...")
         try:

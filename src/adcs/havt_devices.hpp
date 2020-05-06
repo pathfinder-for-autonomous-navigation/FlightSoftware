@@ -39,7 +39,7 @@ enum Index : unsigned char {
   
   SSA_ADC4,
   SSA_ADC5,
-  //GYRO_HEATER, <- uncomment when device is added
+  GYRO_HEATER,
   _LENGTH
 };
 }  // namespace havt

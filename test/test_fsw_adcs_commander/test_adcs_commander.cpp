@@ -36,9 +36,7 @@ class TestFixture {
         WritableStateField<float>* imu_mag_filter_fp;
         WritableStateField<float>* imu_gyr_filter_fp;
         WritableStateField<float>* imu_gyr_temp_filter_fp;
-        WritableStateField<float>* imu_gyr_temp_kp_fp;
-        WritableStateField<float>* imu_gyr_temp_ki_fp;
-        WritableStateField<float>* imu_gyr_temp_kd_fp;
+        WritableStateField<unsigned char>* imu_gyr_temp_pwm_fp;
         WritableStateField<float>* imu_gyr_temp_desired_fp;
 
         std::vector<WritableStateField<bool>*> havt_cmd_reset_vector_fp;
@@ -73,9 +71,7 @@ class TestFixture {
             imu_mag_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_mag_filter");
             imu_gyr_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_filter");
             imu_gyr_temp_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_filter");
-            imu_gyr_temp_kp_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_kp");
-            imu_gyr_temp_ki_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_ki");
-            imu_gyr_temp_kd_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_kd");
+            imu_gyr_temp_pwm_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.imu_gyr_temp_pwm");
             imu_gyr_temp_desired_fp = registry.find_writable_field_t<float>("adcs_cmd.imu_gyr_temp_desired");
 
             havt_cmd_reset_vector_fp.reserve(adcs::havt::Index::_LENGTH);
@@ -121,9 +117,7 @@ void test_task_initialization()
     TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_mag_filter_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_filter_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_filter_fp->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_kp_fp->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_ki_fp->get(), 0);
-    TEST_ASSERT_FLOAT_WITHIN(1, tf.imu_gyr_temp_kd_fp->get(), 0);
+    TEST_ASSERT_EQUAL(tf.imu_gyr_temp_pwm_fp->get(), 255);
     TEST_ASSERT_FLOAT_WITHIN(20, tf.imu_gyr_temp_desired_fp->get(), 0);
 
     // verify all initialized to false
