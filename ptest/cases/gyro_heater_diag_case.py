@@ -55,8 +55,8 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         init_temp = self.print_rs("adcs_monitor.gyr_temp")
         init_cursys = self.print_rs("gomspace.cursys")
 
-        curout_arr = [self.rs(f"gomspace.curout.output{x}") for x in range(1,7)]
-        self.logger.put("CUROUT ARR: "+str(curout_arr))
+        init_curout_arr = [self.rs(f"gomspace.curout.output{x}") for x in range(1,7)]
+        self.logger.put("INIT_CUROUT ARR: "+str(init_curout_arr))
 
         self.logger.put("")
         self.cycle()
@@ -74,6 +74,9 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
             last_cycle = self.print_rs("pan.cycle_no")
             self.print_rs("gomspace.vbatt")
             self.print_rs("gomspace.cursys")
+            
+            self.logger.put("INIT_CUROUT ARR: "+str(init_curout_arr))
+            curout_arr = [self.rs(f"gomspace.curout.output{x}") for x in range(1,7)]
             self.logger.put("CUROUT ARR: "+str(curout_arr))
 
             self.print_rs("adcs_cmd.imu_gyr_temp_pwm")
