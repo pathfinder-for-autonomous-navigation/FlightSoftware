@@ -69,7 +69,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_fault(tank2_temp_high_fault_f);
     add_fault(tank1_temp_high_fault_f);
 
-    TRACKED_CONSTANT(unsigned int, max_venting_cycles_ic, 40);
+    TRACKED_CONSTANT(unsigned int, max_venting_cycles_ic, 20);
     TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
     TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
     TRACKED_CONSTANT(unsigned int,
@@ -124,7 +124,7 @@ void PropController::execute()
 
     if (next_state != current_state)
     {
-        DD("New state: %u\n", static_cast<unsigned int>(next_state));
+        DD("[*] Transitioning to New state: %u\n", static_cast<unsigned int>(next_state));
         // sanity check
         if (get_state(next_state).can_enter())
         {
@@ -134,51 +134,36 @@ void PropController::execute()
         else
         {
             // This could happen if next_state is idle but is_functional returns false
-            DD("Could not enter state!!\n\n\n");
+            DD("[-] Could not enter state!!\n\n\n");
             prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
         }
     }
 
-    // Read all the sensors -- we check sensors here instead of earlier in order
+    // Read all the sensors -- check sensors here instead of earlier in order
     // to spoof sensor readings during HITL tests.
     tank2_pressure_f.set(Tank2.get_pressure());
     tank2_temp_f.set(Tank2.get_temp());
     tank1_temp_f.set(Tank1.get_temp());
 
-    // Check the sensors for faults and signal those faults (if any)
     check_faults();
 }
 
 void PropController::check_faults()
 {
     if (is_tank2_overpressured())
-    {
         overpressure_fault_f.signal();
-        // DD("Overpressured detected\n");
-    }
     else
-    {
         overpressure_fault_f.unsignal();
-    }
 
     if (is_tank2_temp_high())
-    {
         tank2_temp_high_fault_f.signal();
-        // DD("Tank2 Temp High detected: %d\n", Tank2.get_temp());
-    }
     else
-    {
         tank2_temp_high_fault_f.unsignal();
-    }
+
     if (is_tank1_temp_high())
-    {
         tank1_temp_high_fault_f.signal();
-        // DD("Tank1 Temp High detected: %d\n", Tank1.get_temp());
-    }
     else
-    {
         tank1_temp_high_fault_f.unsignal();
-    }
 }
 
 bool PropController::can_enter_state(prop_state_t desired_state) const
@@ -213,15 +198,6 @@ PropState &PropController::get_state(prop_state_t state) const
     }
 }
 
-bool PropController::is_valid_schedule(unsigned int v1,
-                                       unsigned int v2,
-                                       unsigned int v3,
-                                       unsigned int v4,
-                                       unsigned int ctrl_cycles_from_now)
-{
-    return (v1 < 1000 && v2 < 1000 && v3 < 1000 && v4 < 1000 && ctrl_cycles_from_now > 1);
-}
-
 bool PropController::validate_schedule()
 {
     return is_valid_schedule(sched_valve1_f.get(),
@@ -231,9 +207,13 @@ bool PropController::validate_schedule()
                              cycles_until_firing.get());
 }
 
-bool PropController::is_at_threshold_pressure()
+bool PropController::is_valid_schedule(unsigned int v1,
+                                       unsigned int v2,
+                                       unsigned int v3,
+                                       unsigned int v4,
+                                       unsigned int ctrl_cycles_from_now)
 {
-    return tank2_pressure_f.get() >= threshold_firing_pressure.get();
+    return (v1 < 1000 && v2 < 1000 && v3 < 1000 && v4 < 1000 && ctrl_cycles_from_now > 1);
 }
 
 unsigned int PropController::min_cycles_needed() const
@@ -280,7 +260,7 @@ bool PropState_Disabled::can_enter() const
 
 void PropState_Disabled::enter()
 {
-    DD("==> entered PropState_Disabled\n");
+    DD("[*] ==> entered PropState_Disabled\n");
     // Stop Interval Timer, Turn off all valves, clear the schedule
     PropulsionSystem.reset();
 }
@@ -299,7 +279,6 @@ prop_state_t PropState_Disabled::evaluate()
 
 bool PropState_Idle::can_enter() const
 {
-    // can only enter idle if PropulsionSystem is functional
 #ifndef DESKTOP
     return PropulsionSystem.is_functional();
 #else
@@ -309,7 +288,7 @@ bool PropState_Idle::can_enter() const
 
 void PropState_Idle::enter()
 {
-    DD("==> entered PropState_Idle\n");
+    DD("[*] ==> entered PropState_Idle\n");
 }
 
 prop_state_t PropState_Idle::evaluate()
@@ -340,7 +319,7 @@ bool PropState_AwaitPressurizing::can_enter() const
 
 void PropState_AwaitPressurizing::enter()
 {
-    DD("==> entered PropState_AwaitPressurizing\n");
+    DD("[*] ==> entered PropState_AwaitPressurizing\n");
 }
 
 prop_state_t PropState_AwaitPressurizing::evaluate()
@@ -369,13 +348,13 @@ prop_state_t ActionCycleOpenClose::evaluate()
     countdown.tick();
     if (has_succeeded())
     {
-        DD("\t ActionCycleOpenClose has achieved goal\n");
+        DD("[+] ActionCycleOpenClose has achieved goal\n");
         PropulsionSystem.close_valve(*p_tank, cur_valve_index);
         return success_state;
     }
     if (has_failed())
     {
-        DD("\tActionCycleOpenClose has failed\n");
+        DD("[!] ActionCycleOpenClose has failed\n");
         return fail_state;
     }
 
@@ -403,7 +382,7 @@ prop_state_t ActionCycleOpenClose::handle_valve_is_close()
     if (countdown.is_timer_zero())
     {
         // Determine if we have ran out of cycles
-        if (cycle_count >= controller->max_pressurizing_cycles.get())
+        if (cycle_count >= get_max_cycles())
             return handle_out_of_cycles();
         // Otherwise, start another open-close cycle
         start_cycle();
@@ -415,7 +394,7 @@ void ActionCycleOpenClose::start_cycle()
 {
     cycle_count++;
     cur_valve_index = select_valve_index();
-    DD("\tStarting ActionCycleOpenClose cycle: %zu (opening valve %zu)\n",
+    DD("[*] Starting ActionCycleOpenClose cycle: %zu (opening valve %zu)\n",
        cycle_count, cur_valve_index);
     // Open the valve and start the timer for the open period
     PropulsionSystem.open_valve(*p_tank, cur_valve_index);
@@ -428,7 +407,7 @@ void ActionCycleOpenClose::start_cycle()
 
 void PropState_Pressurizing::enter()
 {
-    DD("==> entered PropState_Pressurizing\n");
+    DD("[*] ==> entered PropState_Pressurizing\n");
     ActionCycleOpenClose::enter();
 }
 
@@ -438,16 +417,12 @@ bool PropState_Pressurizing::can_enter() const
     bool is_schedule_valid = controller->validate_schedule();
     // Allow from idle because sometimes we can immediately pressurize
     bool was_idle = controller->check_current_state(prop_state_t::idle);
-    // It is time to pressurize when we have fewer than twice the min_cycles_needed
+
+    // It is time to pressurize when we have min_cycles_needed - 1 cycles left
     bool is_time_to_pressurize =
-        controller->cycles_until_firing.get() < 2 * controller->min_cycles_needed();
+        controller->cycles_until_firing.get() <= controller->min_cycles_needed();
 
-    bool must_immediately_pressurize =
-        controller->cycles_until_firing.get() == controller->min_cycles_needed() - 1;
-
-    return ((was_await_pressurizing && is_time_to_pressurize) ||
-            (was_idle && must_immediately_pressurize)) &&
-           is_schedule_valid;
+    return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid);
 }
 
 prop_state_t PropState_Pressurizing::evaluate()
@@ -456,46 +431,20 @@ prop_state_t PropState_Pressurizing::evaluate()
         return prop_state_t::handling_fault;
     return ActionCycleOpenClose::evaluate();
 }
-size_t PropState_Pressurizing::get_ctrl_cycles_per_close_period() const
-{
-    return controller->ctrl_cycles_per_cooling_period.get();
-}
-
-bool PropState_Pressurizing::has_succeeded() const
-{
-    return controller->is_at_threshold_pressure();
-}
-
-bool PropState_Pressurizing::has_failed() const
-{
-    return !controller->validate_schedule();
-}
-
-size_t PropState_Pressurizing::select_valve_index()
-{
-    return controller->tank1_valve.get();
-}
 
 prop_state_t PropState_Pressurizing::handle_out_of_cycles()
 {
-    DD("\tPressurize Failed -- Out Of Cycles!\n");
+    DD("[!] Pressurize Failed -- Out Of Cycles!\n");
     controller->pressurize_fail_fault_f.signal();
     // If the fault is not supressed, then go to handling_fault
     if (controller->pressurize_fail_fault_f.is_faulted())
     {
+        DD("[!] --> transitioning to handling_fault\n");
         return prop_state_t::handling_fault;
     }
     // Fault is suppressed
-    auto ctrl_cycles_per_pressurization = controller->ctrl_cycles_per_filling_period.get() +
-                                          controller->ctrl_cycles_per_cooling_period.get();
-    // If we do not have enough cycles to execute a full pressurizing cycle then go to await_firing
-    if (controller->cycles_until_firing.get() < ctrl_cycles_per_pressurization)
-        return prop_state_t::await_firing;
-    // otherwise remain in this state and continue trying to pressurize until we run out of time
-    DD("\t\t--> continue to attempt pressurizing\n");
-    cycle_count = 0;
-
-    return this_state;
+    DD("[+] Underpressured fault suppressed --> transitioning to await_firing\n");
+    return prop_state_t::await_firing;
 }
 
 // ------------------------------------------------------------------------
@@ -509,7 +458,7 @@ bool PropState_AwaitFiring::can_enter() const
 
 void PropState_AwaitFiring::enter()
 {
-    DD("==> entered PropState_AwaitFiring\n");
+    DD("[*] ==> entered PropState_AwaitFiring\n");
 }
 
 prop_state_t PropState_AwaitFiring::evaluate()
@@ -543,19 +492,23 @@ bool PropState_Firing::can_enter() const
 
 void PropState_Firing::enter()
 {
-    DD("==> entered PropState_Firing\n");
+    DD("[*] ==> entered PropState_Firing\n");
     PropulsionSystem.start_firing();
 }
 
 prop_state_t PropState_Firing::evaluate()
 {
     if (controller->can_enter_state(prop_state_t::handling_fault))
+    {
+        PropulsionSystem.reset(); // Hard reset everything then go into handling_fault
         return prop_state_t::handling_fault;
-    DD("==> PropState_Firing is evaluating\n");
+    }
+
+    DD("[-] ==> PropState_Firing is evaluating\n");
     if (is_schedule_empty())
     {
         PropulsionSystem.disable();
-        DD("==> schedule is now empty\n");
+        DD("[+] ==> schedule is now empty\n");
         return prop_state_t::idle;
     }
     else
@@ -596,7 +549,7 @@ bool PropState_HandlingFault::can_enter() const
 
 void PropState_HandlingFault::enter()
 {
-    DD("==> entered PropState_HandlingFault\n");
+    DD("[*] ==> entered PropState_HandlingFault\n");
 }
 
 prop_state_t PropState_HandlingFault::evaluate()
@@ -604,7 +557,7 @@ prop_state_t PropState_HandlingFault::evaluate()
     // If we can vent, then vent
     if (controller->can_enter_state(prop_state_t::venting))
     {
-        DD("\tGoing into venting\n");
+        DD("[*] Going into venting\n");
         return prop_state_t::venting;
     }
     // If faults are still signaled, then stay in HandlingFault
@@ -622,7 +575,7 @@ prop_state_t PropState_HandlingFault::evaluate()
 
 void PropState_Venting::enter()
 {
-    DD("==> entered PropState_Venting\n");
+    DD("[*] ==> entered PropState_Venting\n");
     if (determine_faulted_tank() == 2)
     {
         p_tank = &Tank2;
@@ -635,30 +588,31 @@ void PropState_Venting::enter()
     ActionCycleOpenClose::enter();
 }
 
+bool PropState_Venting::can_enter() const
+{
+    return controller->overpressure_fault_f.is_faulted() ||
+           controller->tank1_temp_high_fault_f.is_faulted() ||
+           controller->tank2_temp_high_fault_f.is_faulted();
+}
+
 unsigned int PropState_Venting::determine_faulted_tank()
 {
     if (both_tanks_want_to_vent())
     {
-        DD("Both tanks want to vent\n");
         if (tank_choice == 1)
         {
-            DD("chosen Tank2 to vent\n");
             return tank_choice = 2;
         }
         else
         {
-            DD("chosen Tank1 to vent\n");
             return tank_choice = 1;
         }
     }
-    if (!controller->tank1_temp_high_fault_f.is_faulted() ||
-        controller->overpressure_fault_f.is_faulted())
+    if (controller->tank1_temp_high_fault_f.is_faulted())
     {
-        DD("....chosen Tank2 to vent\n");
-        return tank_choice = 2;
+        return tank_choice = 1;
     }
-    DD("....chosen Tank1 to vent\n");
-    return tank_choice = 1;
+    return tank_choice = 2;
 }
 
 bool PropState_Venting::both_tanks_want_to_vent() const
@@ -667,23 +621,6 @@ bool PropState_Venting::both_tanks_want_to_vent() const
     bool tank2_wants_to_vent = (controller->tank2_temp_high_fault_f.is_faulted() ||
                                 controller->overpressure_fault_f.is_faulted());
     return tank1_wants_to_vent && tank2_wants_to_vent;
-}
-
-bool PropState_Venting::has_failed() const
-{
-    return false;
-}
-
-bool PropState_Venting::can_enter() const
-{
-    return controller->overpressure_fault_f.is_faulted() ||
-           controller->tank1_temp_high_fault_f.is_faulted() ||
-           controller->tank2_temp_high_fault_f.is_faulted();
-}
-
-size_t PropState_Venting::get_ctrl_cycles_per_close_period() const
-{
-    return controller->ctrl_cycles_per_close_period.get();
 }
 
 bool PropState_Venting::has_succeeded() const
@@ -702,26 +639,13 @@ size_t PropState_Venting::select_valve_index()
     // tank == Tank2
     // Want to cycle through the valves so that we don't
     return (saved_tank2_valve_choice++) % 4;
-    ;
 }
 
 prop_state_t PropState_Venting::handle_out_of_cycles()
 {
-    // Unsignal the fault temporarily so that if there are other faults,
-    // we will handle those
-    DD("PropState_Venting is out of cycles (but has not yet failed)\n");
-    if (tank_choice == 1)
-    {
-        if (controller->tank2_temp_high_fault_f.is_faulted() ||
-            controller->overpressure_fault_f.is_faulted())
-
-            return prop_state_t::handling_fault;
-    }
-    else
-    {
-        if (controller->tank1_temp_high_fault_f.is_faulted())
-            return prop_state_t::handling_fault;
-    }
+    DD("[-] PropState_Venting is out of cycles (but has not yet failed)\n");
+    if (both_tanks_want_to_vent())
+        return prop_state_t::handling_fault;
 
     return prop_state_t::disabled;
 }

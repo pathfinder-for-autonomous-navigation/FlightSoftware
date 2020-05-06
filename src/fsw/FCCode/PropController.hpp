@@ -45,6 +45,7 @@ public:
     // ------------------------------------------------------------------------
     // Ground-Modifiable Parameters
     // ------------------------------------------------------------------------
+
     WritableStateField<unsigned int> max_venting_cycles;
     // Same as ctrl_cycles_per_cooling_period but used for venting
     WritableStateField<unsigned int> ctrl_cycles_per_close_period;
@@ -72,25 +73,37 @@ public:
     // Public Interface
     // ------------------------------------------------------------------------
 
-    // Reads PropulsionSystem sensor values and saves them in state fields.
-    // If there are hardware faults, signal those faults.
-    // If any fault is faulted, then set our current state to handling_fault.
-    // Evaluate the current state to get the next state
+    // Evaluates the current state to get the next state
     // If the next state differs from the current state, update our current
-    //      state and then call the state's entry() method
+    //      state and then call the new state's entry() method
     void execute() override;
 
     // Checks the sensor values of Tank1 and Tank2.
     // Signals the fault and returns true if any hardware fault is detected
+    // Since faults are checked at the end of the control cycle, it takes
+    // two control cycles for PropFaultHandler to respond to faults.
     void check_faults();
 
+    // Convenience function that calls is_valid_schedule
     bool validate_schedule();
 
+    // A schedule is valid if no valve schedule exceeds 1000 ms and if
+    // ctrl_cycles_from_now > 1
+    static bool is_valid_schedule(unsigned int v1,
+                                  unsigned int v2,
+                                  unsigned int v3,
+                                  unsigned int v4,
+                                  unsigned int ctrl_cycles_from_now);
+
     // Minimum of cycles needed to prepare for firing time
+    // If cycles_until_firing is set to to this value when we are in Idle,
+    // then we will transition directly to Pressurizing
     unsigned int min_cycles_needed() const;
 
-    // Return true if Tank2 is at threshold pressure
-    bool is_at_threshold_pressure();
+    inline bool is_at_threshold_pressure() const
+    {
+        return tank2_pressure_f.get() >= threshold_firing_pressure.get();
+    }
 
     inline bool is_tank2_overpressured() const
     {
@@ -112,12 +125,7 @@ public:
         return expected == static_cast<prop_state_t>(prop_state_f.get());
     }
 
-    static bool is_valid_schedule(unsigned int v1,
-                                  unsigned int v2,
-                                  unsigned int v3,
-                                  unsigned int v4,
-                                  unsigned int ctrl_cycles_from_now);
-
+    // Used by PropState_AwaitFiring
     // Copies the schedule in the writable state fields into Tank2's schedule
     // Precond: schedule should be valid before calling this
     inline void write_tank2_schedule()
@@ -183,13 +191,10 @@ private:
 class PropState
 {
 public:
-    explicit PropState(prop_state_t my_state)
-        : this_state(my_state)
-    {
-    }
+    explicit PropState(prop_state_t my_state) : this_state(my_state) {}
 
-    // We call this function when we are about to enter this state.
-    // It checks the preconditions for entering the state
+    // Returns true if the current state of the PropController meets the
+    // preconditions for entering this state
     virtual bool can_enter() const = 0;
 
     // Actually enter the state and runs initialization routines for the state
@@ -239,8 +244,10 @@ class PropState_Idle : public PropState
 {
 public:
     PropState_Idle() : PropState(prop_state_t::idle) {}
+    // True if PropulsionSystem is functional
     bool can_enter() const override;
     void enter() override;
+    // May transition to handling_fault, pressurizing, or await_pressurizing
     prop_state_t evaluate() override;
 };
 
@@ -249,19 +256,19 @@ public:
 // ------------------------------------------------------------------------
 
 // This is the state where we've received a (valid) request to fire.
-// NO ONE may change firing parameters once this state is entered. However,
-// his state can be cancelled to go back to Idle
 class PropState_AwaitPressurizing : public PropState
 {
 public:
     PropState_AwaitPressurizing() : PropState(prop_state_t::await_pressurizing) {}
+    // True if the previous state was Idle and the schedule is valid and we have
+    // more than enough time to pressurize
     bool can_enter() const override;
     void enter() override;
     prop_state_t evaluate() override;
 };
 
 // ------------------------------------------------------------------------
-// AwaitPActionCycleOpenCloseressurizing
+// AwaitActionCycleOpenCloseressurizing
 // ------------------------------------------------------------------------
 
 // This class abstracts the pressurizing behavior, which consists of pressurizing cycles.
@@ -290,6 +297,7 @@ protected:
 
     // How long we wait in between opening valves
     virtual size_t get_ctrl_cycles_per_close_period() const = 0;
+    virtual size_t get_max_cycles() const = 0;
     // Defines a success condition for which we should enter the success_state
     virtual bool has_succeeded() const = 0;
     // Defines a fail condition for which we should enter the fail_state
@@ -348,39 +356,39 @@ protected:
     bool can_enter() const override;
     prop_state_t evaluate() override;
 
-    size_t get_ctrl_cycles_per_close_period() const override;
-    // True if we have reached threshold pressure
-    // If the pressurize_failed fault is suppressed, then this is true, when
-    // we have executed max_cycles
-    bool has_succeeded() const override;
+    inline size_t get_ctrl_cycles_per_close_period() const override
+    {
+        return controller->ctrl_cycles_per_cooling_period.get();
+    }
+
+    inline size_t get_max_cycles() const override
+    {
+        return controller->max_pressurizing_cycles.get();
+    }
+
+    inline bool has_succeeded() const override
+    {
+        return controller->is_at_threshold_pressure();
+    }
+
     // True if schedule is no longer valid. This will never occur, but is a good sanity check
-    bool has_failed() const override;
+    inline bool has_failed() const override
+    {
+        return !controller->validate_schedule();
+    }
+
     // Whether to use the primary or backup valve
-    size_t select_valve_index() override;
+    inline size_t select_valve_index() override
+    {
+        return controller->tank1_valve.get();
+    }
+
     // Called when we have failed to reach threshold_pressure after maximum
     //      consecutive pressurizing cycles
-    // First, signal pressurize_fail_fault_f. Then evaluate whether this fault has
-    //      been suppressed by the ground.
-    // If it has been suppressed, then continue to pressurize.
+    // First, signal pressurize_fail_fault_f.
+    // If the fault has been suppressed, then go to await_firing
     //      Otherwise, set Prop to handling_fault
     prop_state_t handle_out_of_cycles() override;
-};
-
-// ------------------------------------------------------------------------
-// PropState_Firing
-// ------------------------------------------------------------------------
-
-class PropState_Firing : public PropState
-{
-public:
-    PropState_Firing() : PropState(prop_state_t::firing) {}
-    bool can_enter() const override;
-    void enter() override;
-    prop_state_t evaluate() override;
-
-private:
-    // Returns true if the entire schedule is all zeros
-    bool is_schedule_empty() const;
 };
 
 // ------------------------------------------------------------------------
@@ -391,6 +399,7 @@ class PropState_AwaitFiring : public PropState
 {
 public:
     PropState_AwaitFiring() : PropState(prop_state_t::await_firing) {}
+    // Can enter if the schedule is valid
     bool can_enter() const override;
     void enter() override;
     prop_state_t evaluate() override;
@@ -401,51 +410,21 @@ private:
 };
 
 // ------------------------------------------------------------------------
-// PropState_Venting
+// PropState_Firing
 // ------------------------------------------------------------------------
 
-// Two versions of venting: The venting response is basically just the
-// pessurizing response
-class PropState_Venting : public ActionCycleOpenClose
+class PropState_Firing : public PropState
 {
 public:
-    // Default to tank2 but enter() will determine the tank at runtime
-    PropState_Venting() : ActionCycleOpenClose(prop_state_t::venting,
-                                               &Tank1,
-                                               prop_state_t::idle,
-                                               prop_state_t::disabled) {}
-
-protected:
-    void enter() override;
+    PropState_Firing() : PropState(prop_state_t::firing) {}
+    // True if the previous state was await_firing and it is time to fire
     bool can_enter() const override;
-    size_t get_ctrl_cycles_per_close_period() const override;
-    // True if we are no longer faulted
-    bool has_succeeded() const override;
-    bool has_failed() const override;
-    // Determine which valves to open
-    size_t select_valve_index() override;
-    // Called if we have ran out of cycles and we are still faulted
-    prop_state_t handle_out_of_cycles() override;
-
-    bool both_tanks_want_to_vent() const;
+    void enter() override;
+    prop_state_t evaluate() override;
 
 private:
-    // Decision rules: Choose which Tank to vent first
-    // Tank1_temp | Tank2_temp | Tank2_pressure | Decision
-    //      1           1             1            return Tank2
-    //      1           1             0            return Tank1
-    //      1           0             1            return Tank2
-
-    // If Tank1 temp is not faulted, then the problem must be with Tank2
-    // Also, if Tank2 pressure is faulted then vent Tank2 first
-    unsigned int determine_faulted_tank();
-    // The purpose of this is to let tank2 rotate valves so that it's not just
-    // going off in the same direction
-    size_t saved_tank2_valve_choice = 0;
-
-    // Our current tank choice
-    unsigned int tank_choice = 1;
-    friend class TestFixture;
+    // Returns true if the entire schedule is all zeros
+    bool is_schedule_empty() const;
 };
 
 // ------------------------------------------------------------------------
@@ -457,9 +436,66 @@ class PropState_HandlingFault : public PropState
 {
 public:
     PropState_HandlingFault() : PropState(prop_state_t::handling_fault) {}
+    // True if the current state is not disabled
+    //      and any of the four faults are faulted
     bool can_enter() const override;
     void enter() override;
     prop_state_t evaluate() override;
+};
+
+// ------------------------------------------------------------------------
+// PropState_Venting
+// ------------------------------------------------------------------------
+
+// Two versions of venting: The venting response is basically just the
+// pressurizing response
+class PropState_Venting : public ActionCycleOpenClose
+{
+public:
+    // Default to tank2 but enter() will determine the tank at runtime
+    PropState_Venting() : ActionCycleOpenClose(prop_state_t::venting,
+                                               &Tank1,
+                                               prop_state_t::idle,
+                                               prop_state_t::disabled) {}
+
+protected:
+    void enter() override;
+    // True if any of the faults are faulted EXCEPT for pressurize_failed_f
+    bool can_enter() const override;
+    inline size_t get_ctrl_cycles_per_close_period() const override
+    {
+        return controller->ctrl_cycles_per_close_period.get();
+    }
+
+    inline size_t get_max_cycles() const override
+    {
+        return controller->max_venting_cycles.get();
+    }
+    // True if we are no longer faulted
+    bool has_succeeded() const override;
+    // PropFaultHandler determines whether Venting has failed, so just return false
+    inline bool has_failed() const override
+    {
+        return false;
+    }
+    // Determine which valves to open
+    size_t select_valve_index() override;
+    // Called if we have ran out of cycles and we are still faulted
+    prop_state_t handle_out_of_cycles() override;
+
+    bool both_tanks_want_to_vent() const;
+
+private:
+    // If both Tanks want to vent, then we take turns venting for 1 open-close
+    // cycle
+    unsigned int determine_faulted_tank();
+    // The purpose of this is to let tank2 rotate valves so that it's not just
+    // opening the same valve
+    size_t saved_tank2_valve_choice = 0;
+
+    // tank_choice := 1 for Tank1, 2 for Tank2
+    unsigned int tank_choice = 1;
+    friend class TestFixture;
 };
 
 // ------------------------------------------------------------------------

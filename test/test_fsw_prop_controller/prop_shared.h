@@ -179,8 +179,7 @@ public:
         step(pc->min_cycles_needed());
     }
 
-    // The following helper functions will set the state machine to the specified
-    // states
+    // The following helper functions will set the sensor readings
     inline void simulate_await_pressurizing()
     {
         set_state(prop_state_t::idle);
@@ -193,15 +192,16 @@ public:
     {
         set_state(prop_state_t::idle);
         set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
-        step(2); // we should now be in pressurizing
+        step(); // we should now be in await_pressurizing
+        step(); // we should now be in pressurizing
         TEST_ASSERT_EQUAL(prop_state_t::pressurizing, pc->prop_state_f.get());
     }
 
     inline void simulate_await_firing()
     {
         set_state(prop_state_t::idle);
-        set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
-        step(2);
+        set_schedule(200, 800, 900, 800, pc->min_cycles_needed());
+        step();
         simulate_at_threshold();
         execute_until_state_change();
         TEST_ASSERT_EQUAL(prop_state_t::await_firing, pc->prop_state_f.get());
@@ -211,7 +211,8 @@ public:
     {
         set_state(prop_state_t::idle);
         set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
-        step(8);
+        step();
+        step();
         simulate_at_threshold();
         execute_until_state_change();
         execute_until_state_change();
