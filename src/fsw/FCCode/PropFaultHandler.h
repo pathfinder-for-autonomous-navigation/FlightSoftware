@@ -15,11 +15,6 @@ public:
     PropFaultHandler(StateFieldRegistry &r);
     fault_response_t execute() override;
 
-    // max_venting_cycles is used as an internal value whereas max_venting_cycles_permitted
-    // is the number open-close cycles that we will allow before giving up on
-    // venting
-    WritableStateField<unsigned int> max_venting_cycles_permitted;
-
 private:
     WritableStateField<unsigned int> *prop_state_fp;
     // To be used when handling the event where both Tanks want to vent

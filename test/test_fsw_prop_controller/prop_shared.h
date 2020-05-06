@@ -1,4 +1,4 @@
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <fsw/FCCode/PropController.hpp>
 #include <fsw/FCCode/PropFaultHandler.h>
 #include <fsw/FCCode/prop_state_t.enum>
@@ -14,7 +14,8 @@
 
 #define get_persistence(fault) tf.pc->fault.persistence_f.get()
 
-inline void do_nothing()
+inline void
+do_nothing()
 {
 }
 // See pressure_data.txt and temp_data.txt in test/test_fsw_prop_controller for

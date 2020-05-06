@@ -78,6 +78,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     TRACKED_CONSTANT(unsigned int, tank1_valve_choice_ic, 0);
     TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_close_period_ic, 1000 / PAN::control_cycle_time_ms);
 
+    max_pressurizing_cycles.set(max_pressurizing_cycles_ic);
     max_venting_cycles.set(max_venting_cycles_ic);
     ctrl_cycles_per_close_period.set(ctrl_cycles_per_close_period_ic);
 
@@ -277,7 +278,8 @@ prop_state_t PropState_Disabled::evaluate()
 
 bool PropState_Idle::can_enter() const
 {
-#ifndef DESKTOP return PropulsionSystem.is_functional();
+#ifndef DESKTOP
+    return PropulsionSystem.is_functional();
 #else
     return true;
 #endif
@@ -594,7 +596,7 @@ bool PropState_Venting::can_enter() const
 
 unsigned int PropState_Venting::determine_faulted_tank()
 {
-    if (both_tanks_want_to_vent())
+    if (tank1_wants_to_vent() && tank2_wants_to_vent())
     {
         if (tank_choice == 1)
         {
@@ -605,19 +607,11 @@ unsigned int PropState_Venting::determine_faulted_tank()
             return tank_choice = 1;
         }
     }
-    if (controller->tank1_temp_high_fault_f.is_faulted())
+    if (tank1_wants_to_vent())
     {
         return tank_choice = 1;
     }
     return tank_choice = 2;
-}
-
-bool PropState_Venting::both_tanks_want_to_vent() const
-{
-    bool tank1_wants_to_vent = controller->tank1_temp_high_fault_f.is_faulted();
-    bool tank2_wants_to_vent = (controller->tank2_temp_high_fault_f.is_faulted() ||
-                                controller->overpressure_fault_f.is_faulted());
-    return tank1_wants_to_vent && tank2_wants_to_vent;
 }
 
 bool PropState_Venting::has_succeeded() const
@@ -641,7 +635,18 @@ size_t PropState_Venting::select_valve_index()
 prop_state_t PropState_Venting::handle_out_of_cycles()
 {
     DD("[-] PropState_Venting is out of cycles (but has not yet failed)\n");
-    if (both_tanks_want_to_vent())
+    // Return disabled if the current tank is the only tank that wants to vent
+    // and it is still faulted
+
+    // max_venting_cycles == 1 means that we were just venting both tanks
+    // so we should return to handling_fault
+    if (controller->max_venting_cycles.get() == 1)
+        return prop_state_t::handling_fault;
+
+    //
+    bool tank1_vented_but_tank2_is_faulted = tank_choice == 1 && tank2_wants_to_vent();
+    bool tank2_vented_but_tank1_is_faulted = tank_choice == 2 && tank1_wants_to_vent();
+    if (tank1_vented_but_tank2_is_faulted || tank2_vented_but_tank1_is_faulted)
         return prop_state_t::handling_fault;
 
     return prop_state_t::disabled;

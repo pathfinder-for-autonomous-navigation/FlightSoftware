@@ -15,13 +15,8 @@
 #endif
 
 PropFaultHandler::PropFaultHandler(StateFieldRegistry &r)
-    : FaultHandlerMachine(r),
-      max_venting_cycles_permitted("prop.max_venting_cycles_permitted", Serializer<unsigned int>(50))
+    : FaultHandlerMachine(r)
 {
-    add_writable_field(max_venting_cycles_permitted);
-    TRACKED_CONSTANT(unsigned int, max_venting_cycles_permitted_ic, 32);
-    max_venting_cycles_permitted.set(max_venting_cycles_permitted_ic);
-
     // StateFields
     prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
     max_venting_cycles_fp = find_writable_field<unsigned int>("prop.max_venting_cycles", __FILE__, __LINE__);
@@ -81,8 +76,8 @@ void PropFaultHandler::handle_both_tanks_want_to_vent()
         ++num_cycles_both_venting;
         DD("Incrementing ++num_cycles_both_venting %zu\n", num_cycles_both_venting);
 
-        // If we have exceeded max_venting_cycles_permitted, then set us to disabled
-        if (num_cycles_both_venting > max_venting_cycles_permitted.get())
+        // If we have exceeded the original max_venting_cycles (20)
+        if (num_cycles_both_venting > saved_max_venting_cycles)
         {
             DD("Num_cycles_both_venting exceeded max_venting_cycles --> Going into disabled\n");
             prop_state_fp->set(static_cast<unsigned char>(prop_state_t::disabled));

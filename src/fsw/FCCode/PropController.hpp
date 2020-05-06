@@ -483,7 +483,16 @@ protected:
     // Called if we have ran out of cycles and we are still faulted
     prop_state_t handle_out_of_cycles() override;
 
-    bool both_tanks_want_to_vent() const;
+    inline bool tank1_wants_to_vent() const
+    {
+        return controller->tank1_temp_high_fault_f.is_faulted();
+    }
+
+    inline bool tank2_wants_to_vent() const
+    {
+        return (controller->tank2_temp_high_fault_f.is_faulted() ||
+                controller->overpressure_fault_f.is_faulted());
+    }
 
 private:
     // If both Tanks want to vent, then we take turns venting for 1 open-close

@@ -358,7 +358,7 @@ void test_all_faulted_sensors_broken_respect_disabled()
     // loop consits of 2 venting cycles
     tf.step();
 
-    for (size_t i = 0; i < tf.pfh->max_venting_cycles_permitted.get() / 2; ++i)
+    for (size_t i = 0; i < saved_max_cycles / 2; ++i)
     {
         // We always start with venting tank2 first
         TEST_ASSERT_TRUE(Tank2.is_valve_open(i % 4));
