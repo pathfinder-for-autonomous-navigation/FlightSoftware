@@ -57,7 +57,7 @@ class IntegerSerializer : public SerializerBase<T> {
                 std::is_same<T, signed char>::value,
                 "Must use integer or char type when constructing an integer serializer.");
 
-  protected:
+  public:
     static constexpr unsigned int log2i(unsigned int n) {
         unsigned int i = 0;
         while(n > 0) {
@@ -67,6 +67,7 @@ class IntegerSerializer : public SerializerBase<T> {
         return i;
     }
 
+  protected:
     IntegerSerializer(T min, T max, size_t compressed_size, size_t print_size)
         : SerializerBase<T>(min, max, std::min(compressed_size, 8*sizeof(T)), print_size)
     {

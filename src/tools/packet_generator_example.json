@@ -1,14 +1,19 @@
 [
     {
-        "type" : "unsigned int",
-        "min" : 0,
-        "max" : 4924967295,
-        "value" : 20
+        "type": "bool",
+        "value": true,
+        "description": "Packet header bit"
     },
     {
-        "type": "unsigned int",
+        "type" : "unsigned int",
+        "value" : 20,
+        "description" : "Control cycle count"
+    },
+    {
+        "type": "unsigned char",
         "min": 0,
         "max": 1,
-        "value": 1
+        "value": 1,
+        "description": "Flow 1 ID"
     }
 ]

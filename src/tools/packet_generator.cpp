@@ -13,7 +13,7 @@
 #include <sstream>
 
 template<typename T>
-static bit_array& produce_bits(const std::string& value, Serializer<T>& sz)
+static bit_array produce_bits(const std::string& value, Serializer<T>& sz)
 {
     T val;
     if (!sz.deserialize(value.c_str(), &val))
@@ -24,7 +24,7 @@ static bit_array& produce_bits(const std::string& value, Serializer<T>& sz)
     return sz.get_bit_array();
 }
 
-static const bit_array& produce_bits(nlohmann::json& item) {
+static bit_array produce_bits(nlohmann::json& item) {
     std::string type = item["type"];
 
     std::stringstream item_val;
@@ -40,7 +40,9 @@ static const bit_array& produce_bits(nlohmann::json& item) {
     {
         if (item.find("min") == item.end()) item["min"] = 0;
         if (item.find("max") == item.end()) item["max"] = 4294967295;
-        if (item.find("bitsize") == item.end()) item["bitsize"] = 32;
+        if (item.find("bitsize") == item.end())
+            item["bitsize"] = IntegerSerializer<unsigned char>::log2i(
+                item["max"].get<unsigned int>() - item["min"].get<unsigned int>());
         Serializer<unsigned int> sz(item["min"], item["max"], item["bitsize"]);
         return produce_bits(item["value"], sz);
     }
@@ -53,7 +55,9 @@ static const bit_array& produce_bits(nlohmann::json& item) {
     {
         if (item.find("min") == item.end()) item["min"] = 0;
         if (item.find("max") == item.end()) item["max"] = 255;
-        if (item.find("bitsize") == item.end()) item["bitsize"] = 8;
+        if (item.find("bitsize") == item.end())
+            item["bitsize"] = IntegerSerializer<unsigned char>::log2i(
+                item["max"].get<unsigned int>() - item["min"].get<unsigned int>());
         Serializer<unsigned char> sz(item["min"], item["max"], item["bitsize"]);
         return produce_bits(item["value"], sz);
     }
@@ -108,8 +112,7 @@ static const bit_array& produce_bits(nlohmann::json& item) {
         return produce_bits<gps_time_t>(item["value"], sz);
     }
     else {
-        static bit_array b;
-        return b;
+        return bit_array();
     }
 }
 
@@ -124,8 +127,8 @@ std::stringstream generate_packet(nlohmann::json& description)
     for(nlohmann::json& item : description)
     {
         // Write the bits in big-endian order to the bitstream.
-        std::string item_bitstring;
-        const bit_array& item_bits = produce_bits(item);
+        std::string item_bitstring = "";
+        const bit_array item_bits = produce_bits(item);
         for(bool bit : item_bits) {
             item_bitstring += (bit ? '1' : '0');
         }
