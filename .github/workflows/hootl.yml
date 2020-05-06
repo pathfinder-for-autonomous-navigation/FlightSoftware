@@ -3,10 +3,10 @@ name: Flight Software HOOTL Tests
 on:
   pull_request:
     branches: [ master ]
-  paths-ignore:
-    - 'tlm/**'
-    - 'tools/**'
-    - 'MCT/**'
+    paths-ignore:
+      - 'tlm/**'
+      - 'tools/**'
+      - 'MCT/**'
 
 env:
   CI: true

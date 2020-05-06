@@ -3,11 +3,11 @@ name: Flight Software Regression Unit Tests
 on:
   pull_request:
     branches: [ master ]
-  paths-ignore:
-    - 'src/**'
-    - 'tlm/**'
-    - 'tools/**'
-    - 'MCT/**'
+    paths-ignore:
+      - 'src/**'
+      - 'tlm/**'
+      - 'tools/**'
+      - 'MCT/**'
 
 env:
   CI: true
