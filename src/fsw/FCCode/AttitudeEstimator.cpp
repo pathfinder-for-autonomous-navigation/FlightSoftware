@@ -80,7 +80,10 @@ void AttitudeEstimator::execute(){
         // All we can give is a NaN estimate and hope the reset works on the next
         // control cycle
         _nan_estimate();
-        gnc::attitude_estimator_reset(state, t, r_ecef, b_body, s_body);
+
+        // TODO: UNCOMMENT BELOW WHEN GNC CODE FIXED, SEE FSW ISSUE #459
+        // HITL MUST STEP PAST ATTITUDE ESTIMATOR
+        // gnc::attitude_estimator_reset(state, t, r_ecef, b_body, s_body);
     }
 }
 
