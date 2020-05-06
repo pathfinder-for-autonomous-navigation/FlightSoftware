@@ -167,13 +167,9 @@ float _Tank2::get_pressure() const
 
     // convert to pressure [psia]
     if (high_gain_read < amp_threshold)
-    {
         pressure = high_gain_slope * high_gain_read + high_gain_offset;
-    }
     else
-    {
         pressure = low_gain_slope * low_gain_read + low_gain_offset;
-    }
 
     return pressure;
 }

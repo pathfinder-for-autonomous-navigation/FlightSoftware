@@ -23,6 +23,7 @@
 namespace Devices
 {
     class Tank;
+
     /**
  * PropulsionSystem class defines the interface for the propulsion system, which 
  * consists of an inner tank, Tank1, and the (outer) thrust tank, Tank2. 
@@ -100,51 +101,51 @@ namespace Devices
             return Instance;
         }
         /**
-     * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
-     * @return True if successfully setup both tank1 and tank2 and all pins
-     */
+         * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
+         * @return True if successfully setup both tank1 and tank2 and all pins
+         */
         bool setup() override;
         /**
-     * @brief Resets all runtime (transient) values to their default values
-     * 
-     * EFFECTS:
-     *  - Shuts off all valves in both tank1 and tank2 immediately 
-     *  - Clears tank2 schedule 
-     *  - Disables tank2 IntervalTimer
-     */
+         * @brief Resets all runtime (transient) values to their default values
+         * 
+         * EFFECTS:
+         *  - Shuts off all valves in both tank1 and tank2 immediately 
+         *  - Clears tank2 schedule 
+         *  - Disables tank2 IntervalTimer
+         */
         void reset() override;
 
         /**
-     * @brief Turns on IntervalTimer thrust_value_loop_timer, causes an interrupt
-     * every 3 ms
-     * @return True if tank2 will start firing right now.
-     * 
-     */
+         * @brief Turns on IntervalTimer thrust_value_loop_timer, causes an interrupt
+         * every 3 ms
+         * @return True if tank2 will start firing right now.
+         * 
+         */
         bool start_firing();
 
         /**
-     * @brief Turns off IntervalTimer (disables thrust_valve_loop_timer interrupts)
-     * 
-     * EFFECTS:
-     *  - Ends tank2 IntervalTimer
-     *  - Closes all tank2 valves
-     */
+         * @brief Turns off IntervalTimer (disables thrust_valve_loop_timer interrupts)
+         * 
+         * EFFECTS:
+         *  - Ends tank2 IntervalTimer
+         *  - Closes all tank2 valves
+         */
         void disable() override;
 
         /**
-     * @brief 
-     */
+         * @brief 
+         */
         bool is_functional() override;
 
         /**
-     * @brief Sets the firing schedule for tank 2. Does not enable tank2 to
-     * fire. To do that, call start_firing
-     * 
-     * Requires:
-     *  - IntervalTimer is currently disabled
-     *  - All valve1, ..., valve4 values less than 1000 (1 s)
-     * @return True if the requested schedule was successfully set
-     */
+         * @brief Sets the firing schedule for tank 2. Does not enable tank2 to
+         * fire. To do that, call start_firing
+         * 
+         * Requires:
+         *  - IntervalTimer is currently disabled
+         *  - All valve1, ..., valve4 values less than 1000 (1 s)
+         * @return True if the requested schedule was successfully set
+         */
         static bool set_schedule(
             uint32_t valve1,
             uint32_t valve2,
@@ -152,18 +153,18 @@ namespace Devices
             uint32_t valve4);
 
         /**
-     * @brief clears the Tank2 schedule only if IntervalTimer is off
-     */
+         * @brief clears the Tank2 schedule only if IntervalTimer is off
+         */
         static bool clear_schedule();
 
         /**
-     * @brief opens the valve specified by valve_idx in the specified tank
-     * */
+         * @brief opens the valve specified by valve_idx in the specified tank
+         * */
         static bool open_valve(Tank &tank, size_t valve_idx);
 
         /**
-     * @brief closes the valve specified by valve_idx in the specified tank
-     */
+         * @brief closes the valve specified by valve_idx in the specified tank
+         */
         static void close_valve(Tank &tank, size_t valve_idx);
 
         inline static bool is_firing()
@@ -172,52 +173,52 @@ namespace Devices
         }
 
         /**
-     * @brief the function that is ran at each interrupt when the IntervalTimer
-     * is enabled
-     * Valves may be closed at most 3 ms early. 
-     * When all valves have fired, all entries of tank2 schedule will be 0
-     */
+         * @brief the function that is ran at each interrupt when the IntervalTimer
+         * is enabled
+         * Valves may be closed at most 3 ms early. 
+         * When all valves have fired, all entries of tank2 schedule will be 0
+         */
         static void thrust_valve_loop();
 
         /**
-     * @brief true if tank2's IntervalTimer is on (tank2 is scheduled to fire)
-     */
+         * @brief true if tank2's IntervalTimer is on (tank2 is scheduled to fire)
+         */
         static bool is_interval_enabled;
         friend class PropController;
     };
 
     /**
- * Tank represents a tank in the PropulsionSystem. Public methods of this class
- * may not change its own internal state (side-effects)
- * 
- */
+     * Tank represents a tank in the PropulsionSystem. Public methods of this class
+     * may not change its own internal state (side-effects)
+     * 
+     */
     class Tank
     {
     public:
         Tank();
 
         /**
-     * @brief (Analog) reads the temperature sensor for this tank and 
-     * returns its value.
-     */
+         * @brief (Analog) reads the temperature sensor for this tank and 
+         * returns its value.
+         */
         int get_temp() const;
 
         /**
-     * @brief Returns true if the valve is open
-     * 
-     * (Digital) reads the pin for the specified valve and returns true
-     * if that pin is HIGH
-     */
+         * @brief Returns true if the valve is open
+         * 
+         * (Digital) reads the pin for the specified valve and returns true
+         * if that pin is HIGH
+         */
         bool is_valve_open(size_t valve_idx) const;
 
         /**
-     * @brief Enables valve INPUT/OUTPUT on valve and sensor pins
-     */
+         * @brief Enables valve INPUT/OUTPUT on valve and sensor pins
+         */
         void setup();
 
         /**
-     * @brief Closes all valves immediately
-     */
+         * @brief Closes all valves immediately
+         */
         void close_all_valves();
 
         size_t num_valves;
@@ -248,10 +249,10 @@ namespace Devices
 
 #define Tank1 Devices::_Tank1::Instance()
     /**
- * Tank1 represents the inner tank in the Propulsion System
- * valve 0 - main intertank valve
- * Valve 1 - backup intertank valve
- */
+     * Tank1 represents the inner tank in the Propulsion System
+     * valve 0 - main intertank valve
+     * Valve 1 - backup intertank valve
+     */
     class _Tank1 : public Tank
     {
         _Tank1();
@@ -274,9 +275,9 @@ namespace Devices
 
 #define Tank2 Devices::_Tank2::Instance()
     /**
- * Tank2 reprsents the outer tank in the Propulsion System
- * Valve 0, 1, 2, 3 - four thrust valves
- */
+     * Tank2 represents the outer tank in the Propulsion System
+     * Valve 0, 1, 2, 3 - four thrust valves
+     */
     class _Tank2 : public Tank
     {
         _Tank2();
