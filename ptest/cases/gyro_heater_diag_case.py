@@ -1,5 +1,5 @@
 # GyroHeaterDiagCase - A manual diagonstic case to checkout the behavior of the gyro heater
-from .base import SingleSatOnlyCase, TestCaseFailure
+from .base import SingleSatOnlyCase, TestCaseFailure, Enums
 import time
     
 class GyroHeaterDiagCase(SingleSatOnlyCase):
@@ -7,8 +7,8 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
     def setup_post_bootsetup(self):
         self.print_header("Begin Gyro Heater Diagnostic Case")
 
-        self.ws("pan.state", self.mission_states["manual"])
-        self.ws("adcs.state", self.adcs_states["point_manual"])
+        self.ws("pan.state", Enums.mission_states["manual"])
+        self.ws("adcs.state", Enums.adcs_states["point_manual"])
         
         self.target = 40
 
