@@ -1630,6 +1630,14 @@
             "type": "unsigned int",
             "writable": true
         },
+        "prop.ctrl_cycles_per_closing": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
         "prop.ctrl_cycles_per_cooling": {
             "bitsize": 6,
             "flow_id": "undefined",
@@ -1655,6 +1663,22 @@
             "writable": true
         },
         "prop.max_pressurizing_cycles": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.max_venting_cycles": {
+            "bitsize": 6,
+            "flow_id": "undefined",
+            "max": 50,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "prop.max_venting_cycles_permitted": {
             "bitsize": 6,
             "flow_id": "undefined",
             "max": 50,
