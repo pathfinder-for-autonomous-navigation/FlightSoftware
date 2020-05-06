@@ -80,7 +80,7 @@ void AttitudeEstimator::execute(){
         // All we can give is a NaN estimate and hope the reset works on the next
         // control cycle
         _nan_estimate();
-        gnc::attitude_estimator_reset(state, t, r_ecef, b_body, s_body);
+        // TODO UNCOMMENT *********** gnc::attitude_estimator_reset(state, t, r_ecef, b_body, s_body);
     }
 }
 
