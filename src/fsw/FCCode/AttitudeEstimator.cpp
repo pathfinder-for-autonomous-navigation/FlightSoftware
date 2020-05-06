@@ -82,6 +82,7 @@ void AttitudeEstimator::execute(){
         _nan_estimate();
 
         // TODO: UNCOMMENT BELOW WHEN GNC CODE FIXED
+        // HITL MUST STEP PAST ATTITUDE ESTIMATOR
         // gnc::attitude_estimator_reset(state, t, r_ecef, b_body, s_body);
     }
 }
