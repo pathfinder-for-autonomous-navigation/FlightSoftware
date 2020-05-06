@@ -73,7 +73,7 @@ class TestFixtureQFH {
      */
     void step_and_expect(fault_response_t expected_response, qfh_state_t expected_fault_state) {
         fault_response_t response = qfh->execute();
-        TEST_ASSERT_EQUAL(response, expected_response);
+        TEST_ASSERT_EQUAL(expected_response, response);
         TEST_ASSERT_EQUAL(static_cast<unsigned char>(expected_fault_state), qfh->cur_state.get());
         cc_count++;
     }

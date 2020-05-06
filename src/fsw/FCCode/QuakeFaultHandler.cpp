@@ -69,7 +69,10 @@ fault_response_t QuakeFaultHandler::dispatch_powercycle(qfh_state_t next) {
         if (next != qfh_state_t::safehold)
             power_cycle_radio_fp->set(true);
         transition_to(next);
-        return fault_response_t::standby;
+        if (next == qfh_state_t::safehold)
+            return fault_response_t::safehold;
+        else
+            return fault_response_t::standby;
     }
     else if (less_than_one_day_since_successful_comms()) {
         transition_to(qfh_state_t::unfaulted);
