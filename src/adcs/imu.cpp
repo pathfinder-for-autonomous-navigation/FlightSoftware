@@ -122,29 +122,34 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
   float temp_data = 0.0f;
 
   bool took_gyro_reading = false;
+  
   // Attempt a read if ready and ensure it was succesful
-  if (gyr.is_functional() && gyr.is_ready() && gyr.read()){
+  // if any of these fail, go directly to heater block
+  if(!gyr.is_functional()) goto HEATER;
+  if(!gyr.is_ready()) goto HEATER;
+  if(!gyr.read()) goto HEATER;
 
-    // Read in angular rate data and transform to the body frame
-    data = {
-      utl::fp(gyr.get_omega_x(), min_rd_omega, max_rd_omega),
-      utl::fp(gyr.get_omega_y(), min_rd_omega, max_rd_omega),
-      utl::fp(gyr.get_omega_z(), min_rd_omega, max_rd_omega)
-    };
-    data = gyr_to_body * data;
+  // Read in angular rate data and transform to the body frame
+  data = {
+    utl::fp(gyr.get_omega_x(), min_rd_omega, max_rd_omega),
+    utl::fp(gyr.get_omega_y(), min_rd_omega, max_rd_omega),
+    utl::fp(gyr.get_omega_z(), min_rd_omega, max_rd_omega)
+  };
+  data = gyr_to_body * data;
 
-    // Read in temperature data and filter
-    temp_data = utl::fp(gyr.get_temp(), min_rd_temp, max_rd_temp);
-    gyr_temp_rd = gyr_temp_rd + (temp_data - gyr_temp_rd) * gyr_temp_flt;
+  // Read in temperature data and filter
+  temp_data = utl::fp(gyr.get_temp(), min_rd_temp, max_rd_temp);
+  gyr_temp_rd = gyr_temp_rd + (temp_data - gyr_temp_rd) * gyr_temp_flt;
 
-    // Calibrate the angular rate data based on the temperature
-    calibrate(data, gyr_temp_rd);
-    gyr_rd = gyr_rd + (data - gyr_rd) * gyr_flt;
+  // Calibrate the angular rate data based on the temperature
+  calibrate(data, gyr_temp_rd);
+  gyr_rd = gyr_rd + (data - gyr_rd) * gyr_flt;
 
-    // flag for gyro heater
-    took_gyro_reading = true;
-  }
+  // flag for gyro heater
+  took_gyro_reading = true;
+  
 
+  HEATER:
   // Command the gyroscope heater
   // We check that the gyro was updated incase of sticky gyro reading
   if(!gyr_heater.is_functional()){
