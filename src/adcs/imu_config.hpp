@@ -33,9 +33,6 @@ static unsigned long const gyr_timeout = 10000;
 /** Teensy pin number for the gyro heater */
 static unsigned int const gyr_heater_pin = 30;
 
-/** Maximum number of real world milliseconds the gyro_heater can be on for */
-static unsigned int const heater_max_time = 60000;
-
 /** i2c bus the first magnetometer communicate on. */
 static i2c_t3 *const mag1_wire = &Wire1;
 /** i2c timeout in microseconds used by the first magnetometer. */

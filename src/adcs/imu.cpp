@@ -116,9 +116,6 @@ lin::Vector3f gyr_rd = lin::zeros<float, 3, 1>();
 
 float gyr_temp_rd = 0.0f;
 
-// this time is updated whenever an actuation of 0 PWM is requested.
-unsigned long last_not_heat_time = 0;
-
 static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
     unsigned char gyr_temp_pwm) {
   lin::Vector3f data;
@@ -148,28 +145,17 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
     took_gyro_reading = true;
   }
 
-  // if heater has been on for more than [heater_max_time] millis, disable it
-  // To resume heating, gyro heater will need to be reset from FSW
-  if(millis() - last_not_heat_time > heater_max_time){
-    LOG_ERROR_header
-    LOG_ERROR_printlnF("millis() - last_not_head_time exceeded max_time.")
-    LOG_ERROR_printlnF("Gyro Heater is disabled. ")
-    gyr_heater.disable();
-  }
-
   // Command the gyroscope heater
   // We check that the gyro was updated incase of sticky gyro reading
   if(!gyr_heater.is_functional()){
     LOG_TRACE_header
     LOG_TRACE_printlnF("Heater Not Functional. Heater 0 PWM Acutation.")
-    gyr_heater.actuate(0); // Make surande voltage being written is 0
-    last_not_heat_time = millis();
+    gyr_heater.actuate(0); // Make sure voltage being written is 0
   }
   else if(!gyr.is_functional()){
     LOG_TRACE_header
     LOG_TRACE_printlnF("Gyro Not Functional. Heater 0 PWM Acutation.")
     gyr_heater.actuate(0); // Make sure voltage being written is 0
-    last_not_heat_time = millis();   
   }
   // by this point, gyro and gyro_heater must be functional 
   else if(took_gyro_reading){
@@ -185,7 +171,6 @@ static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
     if(gyr_temp_rd >= gyr_temp_target){
       LOG_TRACE_printlnF(" Heater: OFF")
       gyr_heater.actuate(0); // if at target don't heat
-      last_not_heat_time = millis();
     }
     else{
       LOG_TRACE_printlnF(" Heater: ON")
