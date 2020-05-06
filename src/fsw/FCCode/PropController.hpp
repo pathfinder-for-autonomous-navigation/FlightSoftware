@@ -46,6 +46,9 @@ public:
     // Ground-Modifiable Parameters
     // ------------------------------------------------------------------------
     WritableStateField<unsigned int> max_venting_cycles;
+    // Same as ctrl_cycles_per_cooling_period but used for venting
+    WritableStateField<unsigned int> ctrl_cycles_per_close_period;
+
     WritableStateField<unsigned int> max_pressurizing_cycles;
     WritableStateField<float> threshold_firing_pressure;
     WritableStateField<unsigned int> ctrl_cycles_per_filling_period;
@@ -148,6 +151,8 @@ private:
     static PropState_Venting state_venting;
     static PropState_HandlingFault state_handling_fault;
     static PropState_Manual state_manual;
+
+    friend class TestFixture;
 };
 
 // ------------------------------------------------------------------------
@@ -283,6 +288,8 @@ public:
 protected:
     // Methods and Fields in this section define the parameters of the OpenCloseCycle behavior
 
+    // How long we wait in between opening valves
+    virtual size_t get_ctrl_cycles_per_close_period() const = 0;
     // Defines a success condition for which we should enter the success_state
     virtual bool has_succeeded() const = 0;
     // Defines a fail condition for which we should enter the fail_state
@@ -340,6 +347,8 @@ protected:
     void enter() override;
     bool can_enter() const override;
     prop_state_t evaluate() override;
+
+    size_t get_ctrl_cycles_per_close_period() const override;
     // True if we have reached threshold pressure
     // If the pressurize_failed fault is suppressed, then this is true, when
     // we have executed max_cycles
@@ -402,13 +411,14 @@ class PropState_Venting : public ActionCycleOpenClose
 public:
     // Default to tank2 but enter() will determine the tank at runtime
     PropState_Venting() : ActionCycleOpenClose(prop_state_t::venting,
-                                               &Tank2,
+                                               &Tank1,
                                                prop_state_t::idle,
                                                prop_state_t::disabled) {}
 
 protected:
     void enter() override;
     bool can_enter() const override;
+    size_t get_ctrl_cycles_per_close_period() const override;
     // True if we are no longer faulted
     bool has_succeeded() const override;
     bool has_failed() const override;
@@ -416,6 +426,8 @@ protected:
     size_t select_valve_index() override;
     // Called if we have ran out of cycles and we are still faulted
     prop_state_t handle_out_of_cycles() override;
+
+    bool both_tanks_want_to_vent() const;
 
 private:
     // Decision rules: Choose which Tank to vent first
@@ -426,7 +438,14 @@ private:
 
     // If Tank1 temp is not faulted, then the problem must be with Tank2
     // Also, if Tank2 pressure is faulted then vent Tank2 first
-    Devices::Tank *determine_faulted_tank();
+    unsigned int determine_faulted_tank();
+    // The purpose of this is to let tank2 rotate valves so that it's not just
+    // going off in the same direction
+    size_t saved_tank2_valve_choice = 0;
+
+    // Our current tank choice
+    unsigned int tank_choice = 1;
+    friend class TestFixture;
 };
 
 // ------------------------------------------------------------------------

@@ -21,8 +21,6 @@ private:
     WritableStateField<unsigned int> *max_venting_cycles_fp;
 
     WritableStateField<unsigned int> *max_pressurizing_cycles;
-    WritableStateField<unsigned int> *ctrl_cycles_per_filling_period;
-    WritableStateField<unsigned int> *ctrl_cycles_per_cooling_period;
 
     // ReadableStateField<float>* tank2_pressure_fp;
     // ReadableStateField<float>* tank2_temp_fp;
@@ -40,7 +38,6 @@ private:
     bool both_tanks_want_to_vent() const;
 
     size_t saved_max_pressurizing_cycles = 0;
-    size_t saved_cooling_cycles = 0;
     // The number of open-close cycles for which we have been venting both
     // tanks
     size_t num_cycles_both_venting = 0;

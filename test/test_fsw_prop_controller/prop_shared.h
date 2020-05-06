@@ -164,6 +164,9 @@ public:
     {
         // Reset the prop between tests
         PropulsionSystem.reset();
+        // Reset all state variables
+        PropController::state_venting.tank_choice = 1;
+        PropController::state_venting.saved_tank2_valve_choice = 0;
     }
 
     inline void simulate_underpressured()
