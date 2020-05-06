@@ -90,9 +90,7 @@ bool test_set_imu_filters(){
     adcs_d.set_imu_gyr_filter(0.4f);
     adcs_d.set_imu_gyr_temp_filter(0.41f);
 
-    adcs_d.set_imu_gyr_temp_kp(88.0f);
-    adcs_d.set_imu_gyr_temp_ki(98.0f);
-    adcs_d.set_imu_gyr_temp_kd(108.0f);
+    adcs_d.set_imu_gyr_temp_pwm(88.0f);
     adcs_d.set_imu_gyr_temp_desired(18.0f);
     return true;
     

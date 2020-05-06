@@ -14,7 +14,7 @@
 #define SRC_ADCS_DEV_LSM6DSM_HPP_
 
 // TODO : make sure the driver resets setting upon failure
-// Checking data ready will be false until the gryo filter has settled
+// Checking data ready will be false until the gyro filter has settled
 // Implement reset and disable
 
 // Outputs unsigned in the range of +/- 16 gauss
@@ -87,7 +87,7 @@ class LSM6DSM : public I2CDevice {
    *           gyroscope. */
   inline int16_t get_omega_z() const { return this->omega[2]; }
   /** @return Current gyroscope temperature reading. */
-  inline uint16_t get_temp() const { return this->temp; }
+  inline int16_t get_temp() const { return this->temp; }
 
  private:
   /** Gyroscope angular momentum vector. */
