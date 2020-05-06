@@ -4,7 +4,7 @@ import time
     
 class GyroHeaterDiagCase(SingleSatOnlyCase):
 
-    def setup_case_singlesat(self):
+    def setup_post_bootsetup(self):
         self.print_header("Begin Gyro Heater Diagnostic Case")
 
         self.ws("pan.state", self.mission_states["manual"])
