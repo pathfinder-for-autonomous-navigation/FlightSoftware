@@ -10,9 +10,5 @@
         "min": 0,
         "max": 1,
         "value": 1
-    },
-    {
-        "type": "bool",
-        "value": true
     }
 ]

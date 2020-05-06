@@ -13,13 +13,6 @@
 #include <sstream>
 
 template<typename T>
-static bit_array& produce_bits(const std::string& value)
-{
-    Serializer<T> sz;
-    return produce_bits(value, sz);
-}
-
-template<typename T>
 static bit_array& produce_bits(const std::string& value, Serializer<T>& sz)
 {
     T val;
@@ -67,35 +60,52 @@ static const bit_array& produce_bits(nlohmann::json& item) {
     else if (type == "signed char")
     {
         Serializer<signed char> sz(item["min"], item["max"], item["bitsize"]);
-        return produce_bits<signed char>(item["value"], sz);
+        return produce_bits(item["value"], sz);
     }
     else if (type == "f_vector_t")
     {
         Serializer<f_vector_t> sz(item["min"], item["max"], item["bitsize"]);
-        f_vector_t val;
-        sz.deserialize(std::string(item["value"]).c_str(), &val);
-        sz.serialize(val);
-        return sz.get_bit_array();
+        return produce_bits(item["value"], sz);
     }
     else if (type == "d_vector_t")
     {
         Serializer<d_vector_t> sz(item["min"], item["max"], item["bitsize"]);
-        d_vector_t val;
-        sz.deserialize(std::string(item["value"]).c_str(), &val);
-        sz.serialize(val);
-        return sz.get_bit_array();
+        return produce_bits(item["value"], sz);
     }
     else if (type == "f_quat_t")
     {
-        return produce_bits<f_quat_t>(item["value"]);
+        Serializer<f_quat_t> sz;
+        return produce_bits(item["value"], sz);
     }
     else if (type == "d_quat_t")
     {
-        return produce_bits<d_quat_t>(item["value"]);
+        Serializer<d_quat_t> sz;
+        return produce_bits(item["value"], sz);
+    }
+    else if (type == "lin::Vector3f")
+    {
+        Serializer<lin::Vector3f> sz(item["min"], item["max"], item["bitsize"]);
+        return produce_bits(item["value"], sz);
+    }
+    else if (type == "lin::Vector3d")
+    {
+        Serializer<lin::Vector3d> sz(item["min"], item["max"], item["bitsize"]);
+        return produce_bits(item["value"], sz);
+    }
+    else if (type == "lin::Vector4f")
+    {
+        Serializer<lin::Vector4f> sz;
+        return produce_bits(item["value"], sz);
+    }
+    else if (type == "lin::Vector4d")
+    {
+        Serializer<lin::Vector4d> sz;
+        return produce_bits(item["value"], sz);
     }
     else if (type == "gps_time_t")
     {
-        return produce_bits<gps_time_t>(item["value"]);
+        Serializer<gps_time_t> sz;
+        return produce_bits<gps_time_t>(item["value"], sz);
     }
     else {
         static bit_array b;
@@ -114,13 +124,13 @@ std::stringstream generate_packet(nlohmann::json& description)
     for(nlohmann::json& item : description)
     {
         // Write the bits in big-endian order to the bitstream.
+        std::string item_bitstring;
         const bit_array& item_bits = produce_bits(item);
-        size_t bitsize = item_bits.size();
-        for(int i = 0; i < bitsize; i++)
-        {
-            bool bit = item_bits[bitsize - 1 - i];
-            bitstring << (bit ? '1' : '0');
+        for(bool bit : item_bits) {
+            item_bitstring += (bit ? '1' : '0');
         }
+        std::reverse(item_bitstring.begin(), item_bitstring.end());
+        bitstring << item_bitstring;
     }
     std::stringstream ret;
 
