@@ -1,14 +1,5 @@
 Keep this file in version control so that changes to constants are well-known.
 
-src/fsw/FCCode/PropController.cpp:75: error: regex could not process tracked constant declaration
-        TRACKED_CONSTANT(unsigned int,
-    ^
-src/fsw/FCCode/PropController.cpp:78: error: regex could not process tracked constant declaration
-        TRACKED_CONSTANT(unsigned int,
-    ^
-src/fsw/FCCode/PropController.cpp:83: error: regex could not process tracked constant declaration
-        TRACKED_CONSTANT(unsigned int,
-    ^
 
 Found Constants
 ---------------
@@ -109,7 +100,10 @@ src/fsw/FCCode/PiksiFaultHandler.hpp:11: "default_cdgps_delay_max_wait" = "PAN::
 src/fsw/FCCode/PropController.cpp:72: "max_venting_cycles_ic" = "20"
 src/fsw/FCCode/PropController.cpp:73: "max_pressurizing_cycles_ic" = "20"
 src/fsw/FCCode/PropController.cpp:74: "threshold_firing_pressure_ic" = "25.0f"
-src/fsw/FCCode/PropController.cpp:82: "tank1_valve_choice_ic" = "0"
+src/fsw/FCCode/PropController.cpp:75: "ctrl_cycles_per_filling_period_ic" = "1000 / PAN::control_cycle_time_ms"
+src/fsw/FCCode/PropController.cpp:76: "ctrl_cycles_per_cooling_period_ic" = "10 * 1000 / PAN::control_cycle_time_ms"
+src/fsw/FCCode/PropController.cpp:78: "tank1_valve_choice_ic" = "0"
+src/fsw/FCCode/PropController.cpp:79: "ctrl_cycles_per_close_period_ic" = "1000 / PAN::control_cycle_time_ms"
 src/fsw/FCCode/PropController.hpp:143: "max_safe_pressure" = "75"
 src/fsw/FCCode/PropController.hpp:144: "max_safe_temp" = "48"
 src/fsw/FCCode/PropFaultHandler.cpp:22: "max_venting_cycles_permitted_ic" = "32"
