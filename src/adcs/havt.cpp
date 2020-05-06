@@ -55,7 +55,7 @@ dev::Device* dev_ptrs[havt::max_devices] = {
   &ssa::adcs[2],
   &ssa::adcs[3],
   &ssa::adcs[4],
-  // TODO: add gyro heater addr
+  &imu::gyr_heater
 };
 
 void update_read_table(){

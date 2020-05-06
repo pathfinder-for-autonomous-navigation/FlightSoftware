@@ -54,11 +54,7 @@ class ADCSCommander : public TimedControlTask<void> {
     WritableStateField<float> imu_gyr_filter_f;
     WritableStateField<float> imu_gyr_temp_filter_f;
 
-    const Serializer<float> k_sr;
-
-    WritableStateField<float> imu_gyr_temp_kp_f;
-    WritableStateField<float> imu_gyr_temp_ki_f;
-    WritableStateField<float> imu_gyr_temp_kd_f;
+    WritableStateField<unsigned char> imu_gyr_temp_pwm_f;
     WritableStateField<float> imu_gyr_temp_desired_f;
 
     Serializer<bool> bool_sr;

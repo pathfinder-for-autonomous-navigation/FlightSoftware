@@ -30,9 +30,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
         imu_mag_filter_fp = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
         imu_gyr_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
         imu_gyr_temp_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
-        imu_gyr_temp_kp_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_kp", __FILE__, __LINE__);
-        imu_gyr_temp_ki_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_ki", __FILE__, __LINE__);
-        imu_gyr_temp_kd_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_kd", __FILE__, __LINE__);
+        imu_gyr_temp_pwm_fp = find_writable_field<unsigned char>("adcs_cmd.imu_gyr_temp_pwm", __FILE__, __LINE__);
         imu_gyr_temp_desired_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
     
         
@@ -90,9 +88,7 @@ void ADCSBoxController::execute(){
     adcs_system.set_imu_mag_filter(imu_mag_filter_fp->get());
     adcs_system.set_imu_gyr_filter(imu_gyr_filter_fp->get());
     adcs_system.set_imu_gyr_temp_filter(imu_gyr_temp_filter_fp->get());
-    adcs_system.set_imu_gyr_temp_kp(imu_gyr_temp_kp_fp->get());
-    adcs_system.set_imu_gyr_temp_ki(imu_gyr_temp_ki_fp->get());
-    adcs_system.set_imu_gyr_temp_kd(imu_gyr_temp_kd_fp->get());
+    adcs_system.set_imu_gyr_temp_pwm(imu_gyr_temp_pwm_fp->get());
     adcs_system.set_imu_gyr_temp_desired(imu_gyr_temp_desired_fp->get());
 
     std::bitset<adcs::havt::max_devices> temp_cmd_table(0);

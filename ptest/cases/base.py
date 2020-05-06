@@ -63,6 +63,41 @@ class Case(object):
         """
         return self._finished
 
+    @property
+    def havt_read(self):
+        '''
+        Returns the ADCS HAVT table as a list of booleans
+        '''
+        read_list = [False for x in range(Enums.havt_length)]
+        for x in range(Enums.havt_length):
+            read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
+        return read_list
+
+    def print_havt_read(self):
+        '''
+        Prints the ADCS HAVT list in reverse (normal) order
+        '''
+        binary_list = [1 if x else 0 for x in self.havt_read]
+
+        string_of_binary_list = [str(x) for x in binary_list]
+        
+        # Reverse the list so it prints as it does in ADCSSoftware
+        string_of_binary_list.reverse()
+
+        list_of_list = [string_of_binary_list[4*i:(4*i)+4] for i in range((int)(Enums.havt_length/4)+1)]
+        final = [x + [" "] for x in list_of_list]
+
+        final_string = ''.join([''.join(x) for x in final])
+        self.logger.put("HAVT Read: "+str(final_string))
+
+    def print_non_functional_adcs_havt(self):
+        '''
+        Prints all non functional devices
+        '''
+        for x in range(Enums.havt_length):
+            if not self.havt_read[x]:
+                self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
+
     @finished.setter
     def finished(self, finished):
         assert type(finished) is bool
