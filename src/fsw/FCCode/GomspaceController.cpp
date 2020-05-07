@@ -189,27 +189,11 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
         batt_threshold_f.set(7300);
 
-        power_cycle_output1_cmd_f.set(default_power_cycle_cmd);
-        power_cycle_output2_cmd_f.set(default_power_cycle_cmd);
-        power_cycle_output3_cmd_f.set(default_power_cycle_cmd);
-        power_cycle_output4_cmd_f.set(default_power_cycle_cmd);
-        power_cycle_output5_cmd_f.set(default_power_cycle_cmd);
-        power_cycle_output6_cmd_f.set(default_power_cycle_cmd);
-
-        pv1_output_cmd_f.set(default_pv_cmd);
-        pv2_output_cmd_f.set(default_pv_cmd);
-        pv3_output_cmd_f.set(default_pv_cmd);
-
-        ppt_mode_cmd_f.set(default_ppt_mode);
-
-        heater_cmd_f.set(default_heater_cmd);
-
-        counter_reset_cmd_f.set(default_counter_reset_cmd);
-        gs_reset_cmd_f.set(default_gs_reset_cmd);
-        gs_reboot_cmd_f.set(default_gs_reboot_cmd);
+        
      }
 
 void GomspaceController::execute() {
+    
     // Check that we can get hk data
     get_hk_fault.evaluate(!gs.get_hk());
 
@@ -301,11 +285,30 @@ void GomspaceController::execute() {
 
     battmode_f.set(gs.hk->battmode);
 
-    if (control_cycle_count==1) {
-        pptmode_f.set(gs.hk->pptmode);
-    }
+    pptmode_f.set(gs.hk->pptmode);
 
     heater_f.set(gs.get_heater()==1);
+
+    if (control_cycle_count==1) {
+        power_cycle_output1_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output2_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output3_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output4_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output5_cmd_f.set(default_power_cycle_cmd);
+        power_cycle_output6_cmd_f.set(default_power_cycle_cmd);
+
+        pv1_output_cmd_f.set(default_pv_cmd);
+        pv2_output_cmd_f.set(default_pv_cmd);
+        pv3_output_cmd_f.set(default_pv_cmd);
+
+        ppt_mode_cmd_f.set(default_ppt_mode);
+
+        heater_cmd_f.set(default_heater_cmd);
+
+        counter_reset_cmd_f.set(default_counter_reset_cmd);
+        gs_reset_cmd_f.set(default_gs_reset_cmd);
+        gs_reboot_cmd_f.set(default_gs_reboot_cmd);
+    }
 }
 
 void GomspaceController::power_cycle_outputs(){
