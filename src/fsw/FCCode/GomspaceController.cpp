@@ -213,10 +213,10 @@ void GomspaceController::execute() {
     // Check that we can get hk data
     get_hk_fault.evaluate(!gs.get_hk());
 
-    if (!gs.config2_get()){
-        batt_threshold_f.set(100);
-    }
-    batt_threshold_f.set(gs.gspace_config->ppt_mode);
+    // if (!gs.config2_get()){
+    //     batt_threshold_f.set(100);
+    // }
+    // batt_threshold_f.set(gs.gspace_config->ppt_mode);
 
     // Check that the battery voltage is above the threshold
     low_batt_fault.evaluate(vbatt_f.get() < batt_threshold_f.get());
