@@ -310,7 +310,7 @@ void test_vent_outer_tank()
         TEST_ASSERT_FALSE(Tank2.is_valve_open(1));
         TEST_ASSERT_FALSE(Tank2.is_valve_open(2));
         TEST_ASSERT_FALSE(Tank2.is_valve_open(3));
-        tf.step(tf.pc->ctrl_cycles_per_cooling_period.get());
+        tf.step(tf.pc->ctrl_cycles_per_close_period.get());
     }
 }
 

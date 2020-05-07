@@ -109,13 +109,6 @@ void PropController::execute()
     if (cycles_until_firing.get() > 0)
         cycles_until_firing.set(cycles_until_firing.get() - 1);
 
-    // We can only enter Handling_Fault if at least one Fault is faulted.
-    if (state_handling_fault.can_enter())
-    {
-        DD("Setting current_state to handling_fault");
-        prop_state_f.set(static_cast<unsigned int>(prop_state_t::handling_fault));
-    }
-
     auto current_state = static_cast<prop_state_t>(prop_state_f.get());
 
     // Evaluate the current state in order to get the next state
@@ -419,7 +412,7 @@ bool PropState_Pressurizing::can_enter() const
 
     // It is time to pressurize when we have min_cycles_needed - 1 cycles left
     bool is_time_to_pressurize =
-        controller->cycles_until_firing.get() <= controller->min_cycles_needed();
+        controller->cycles_until_firing.get() == controller->min_cycles_needed() - 1;
 
     return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid);
 }

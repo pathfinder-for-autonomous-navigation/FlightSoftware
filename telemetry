@@ -1696,14 +1696,6 @@
             "type": "unsigned int",
             "writable": true
         },
-        "prop.max_venting_cycles_permitted": {
-            "bitsize": 6,
-            "flow_id": "undefined",
-            "max": 50,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
         "prop.overpressured.base": {
             "bitsize": 1,
             "flow_id": 5,
