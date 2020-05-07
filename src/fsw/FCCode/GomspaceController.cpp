@@ -110,7 +110,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr),
 
     read_ppt_sr(1,2),
-    gs_reboot_cmd_f("gomspace.read_ppt", read_ppt_sr)
+    read_ppt_f("gomspace.read_ppt", read_ppt_sr)
 
     {
         // Add fields and fault to registry 
