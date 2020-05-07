@@ -96,7 +96,9 @@ class StateSession(object):
 
         try:
             self.flask_app = create_state_session_endpoint(self)
-            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
+            #self.flask_app.config["uplink_console"] = self.uplink_console
+            #self.flask_app.config["console"] = self.console
+            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"debug":True,"port": self.port})
             self.http_thread.start()
             print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
             return True
