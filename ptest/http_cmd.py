@@ -42,25 +42,10 @@ def create_radio_session_endpoint(radio_session):
     app.config["SWAGGER"]={"title": "PAN Radio Session Command Endpoint", "uiversion": 2}
     swagger=Swagger(app, config=swagger_config)
 
-    @app.route("/request", methods=["GET", "POST"])
+    @app.route("/request", methods=["POST"])
     @swag_from("endpoint_configs/radio_session/request.yml")
     def send_telem():
-        uplink=request.get_json()
-
-        fields, vals=list(), list()
-        for field_val in uplink:
-            fields.append(field_val["field"])
-            vals.append(field_val["value"])
-
-        uplink_console = app.config["uplink_console"]
-        success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
-
-        # Send the uplink to FlightSoftware
-
-
-        if success:
-            return "Successfully sent telemetry to State Session"
-        return "Unable to send telemetry"
+        return "Hello!"
 
     return app
 
