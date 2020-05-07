@@ -4,6 +4,7 @@
 
 #include "prop_state_t.enum"
 #include "PropFaultHandler.h"
+#include "PropController.hpp"
 
 #if (defined(UNIT_TEST) && defined(DESKTOP))
 #define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
@@ -16,6 +17,10 @@
 
 PropFaultHandler::PropFaultHandler(StateFieldRegistry &r)
     : FaultHandlerMachine(r)
+{
+}
+
+void PropFaultHandler::init()
 {
     // StateFields
     prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
@@ -33,6 +38,16 @@ PropFaultHandler::PropFaultHandler(StateFieldRegistry &r)
 
 fault_response_t PropFaultHandler::execute()
 {
+    if (PropState::controller == nullptr)
+    {
+        return fault_response_t::none;
+    }
+
+    if (has_not_init)
+    {
+        init();
+        has_not_init = true;
+    }
 
     auto prop_state = static_cast<prop_state_t>(prop_state_fp->get());
     // Only care about prop when it is venting or in handling_fault

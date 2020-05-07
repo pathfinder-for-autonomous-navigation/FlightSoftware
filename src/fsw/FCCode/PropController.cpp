@@ -69,7 +69,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_fault(tank2_temp_high_fault_f);
     add_fault(tank1_temp_high_fault_f);
 
-    TRACKED_CONSTANT(uint, max_venting_cycles_ic, 20);
+    TRACKED_CONSTANT(unsigned int, max_venting_cycles_ic, 20);
     TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
     TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
     TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_filling_period_ic, 1000 / PAN::control_cycle_time_ms);

@@ -217,6 +217,7 @@ protected:
     // The only purpose of declaring PropController a friend class is to allow it
     //      to set controller to itself
     friend class PropController;
+    friend class PropFaultHandler;
 };
 
 // ------------------------------------------------------------------------

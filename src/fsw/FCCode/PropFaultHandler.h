@@ -14,6 +14,7 @@ class PropFaultHandler : public FaultHandlerMachine
 public:
     PropFaultHandler(StateFieldRegistry &r);
     fault_response_t execute() override;
+    void init();
 
 private:
     WritableStateField<unsigned int> *prop_state_fp;
@@ -33,6 +34,9 @@ private:
     size_t saved_max_venting_cycles = 0;
     // The number of open-close cycles for which we have been venting both tanks
     size_t num_cycles_both_venting = 0;
+
+    bool has_not_init = true;
+
 #ifdef UNIT_TEST
     friend class TestFixture;
 #endif
