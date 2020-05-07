@@ -416,12 +416,12 @@ bool Gomspace::config_get() {
                 __bswap_16(gspace_config->output_initial_on_delay[i]);
             gspace_config->output_initial_off_delay[i] =
                 __bswap_16(gspace_config->output_initial_off_delay[i]);
-            gspace_config->ppt_mode[i] =
-                __bswap_16(gspace_config->ppt_mode[i]);
         }
         for (unsigned char i = 0; i < 3; i++) {
             gspace_config->vboost[i] = __bswap_16(gspace_config->vboost[i]);
         }
+        gspace_config->ppt_mode =
+                __bswap_16(gspace_config->ppt_mode);
         return true;
     }
     #else
