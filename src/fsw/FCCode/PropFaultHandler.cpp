@@ -39,14 +39,12 @@ void PropFaultHandler::init()
 fault_response_t PropFaultHandler::execute()
 {
     if (PropState::controller == nullptr)
-    {
         return fault_response_t::none;
-    }
 
     if (has_not_init)
     {
         init();
-        has_not_init = true;
+        has_not_init = false;
     }
 
     auto prop_state = static_cast<prop_state_t>(prop_state_fp->get());
