@@ -107,7 +107,10 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reset_cmd_f("gomspace.gs_reset_cmd", gs_reset_cmd_sr),
 
     gs_reboot_cmd_sr(),
-    gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
+    gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr),
+
+    read_ppt_sr(1,2),
+    gs_reboot_cmd_f("gomspace.read_ppt", read_ppt_sr)
 
     {
         // Add fields and fault to registry 
@@ -185,6 +188,8 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
         add_writable_field(gs_reboot_cmd_f);
 
+        add_writable_field(read_ppt_f);
+
         // Set default values
 
         batt_threshold_f.set(7300);
@@ -213,10 +218,7 @@ void GomspaceController::execute() {
     // Check that we can get hk data
     get_hk_fault.evaluate(!gs.get_hk());
 
-    // if (!gs.config2_get()){
-    //     batt_threshold_f.set(100);
-    // }
-    // batt_threshold_f.set(gs.gspace_config->ppt_mode);
+    read_ppt_f.set(gs.gspace_config->ppt_mode);
 
     // Check that the battery voltage is above the threshold
     low_batt_fault.evaluate(vbatt_f.get() < batt_threshold_f.get());
