@@ -142,7 +142,7 @@ class GomspaceController : public TimedControlTask<void> {
     WritableStateField<bool> gs_reboot_cmd_f;
 
     Serializer<unsigned int> read_ppt_sr;
-    WritableStateField<bool> read_ppt_f;
+    WritableStateField<unsigned int> read_ppt_f;
 
 };
 
