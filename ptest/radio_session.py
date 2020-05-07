@@ -64,6 +64,37 @@ class RadioSession(object):
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
 
+        # Up;ink timer
+        timer = threading.Timer(self.send_queue_duration, send_uplink)
+
+    def uplink_queued(self):
+        '''
+        Check if an uplink is currently queued to be sent by Iridium
+        (i.e. if the most recently sent uplink was confirmed to be 
+        received by the spacecraft). Can be used by ptest to determine
+        whether or not to send an uplink autonomously.
+        '''
+        headers = {
+            'Accept': 'text/html',
+        }
+        payload = {
+            "index" : "iridium_report_"+str(self.imei),
+            "field" : "send-uplinks"
+        }
+
+        tlm_service_active = self.flask_server != ""
+        if tlm_service_active:
+            response = requests.get(
+                'http://'+self.flask_server+':'+self.flask_port+'/search-es',
+                    params=payload, headers=headers)
+
+        if not tlm_service_active or response.text=="True": 
+            return False
+        return True
+
+    def send_uplink(self):
+        return True
+
     def read_state(self, field, timeout=None):
         '''
         Read state by posting a request for data to the Flask server
