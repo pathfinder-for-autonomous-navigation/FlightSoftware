@@ -38,7 +38,7 @@ class RadioSession(object):
         self.imei=imei
         self.port=port
         self.flask_app=create_radio_session_endpoint(self)
-        #self.flask_app.config["uplink_console"] = uplink_console
+        self.flask_app.config["uplink_console"] = uplink_console
 
         try:
             self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
