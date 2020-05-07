@@ -446,7 +446,8 @@ prop_state_t PropState_Pressurizing::handle_out_of_cycles()
 
 bool PropState_AwaitFiring::can_enter() const
 {
-    return controller->validate_schedule();
+    bool was_pressurizing = controller->check_current_state(prop_state_t::was_pressurizing);
+    return controller->validate_schedule() && was_pressurizing;
 }
 
 void PropState_AwaitFiring::enter()
