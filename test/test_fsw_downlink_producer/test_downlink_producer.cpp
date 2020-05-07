@@ -279,46 +279,36 @@ void test_multiple_flows() {
     {
         TestFixture tf;
 
-        auto foo_3430679580_fp = tf.registry.create_readable_field<unsigned int>("foo_3430679580");
-        auto foo_2742763548_fp = tf.registry.create_readable_field<unsigned int>("foo_2742763548");
-        auto foo_1375806809_fp = tf.registry.create_readable_field<unsigned int>("foo_1375806809");
-        auto foo_2804731287_fp = tf.registry.create_readable_field<unsigned int>("foo_2804731287");
-        auto foo_1571669404_fp = tf.registry.create_readable_field<unsigned int>("foo_1571669404");
-        foo_3430679580_fp->set(int(3430679580));
-        foo_2742763548_fp->set(int(2742763548));
-        foo_1375806809_fp->set(int(1375806809));
-        foo_2804731287_fp->set(int(2804731287));
-        foo_1571669404_fp->set(int(1571669404));
+        auto foo_2925695068_fp = tf.registry.create_readable_field<unsigned int>("foo_3945895095");
+        auto foo_3319510867_fp = tf.registry.create_readable_field<unsigned int>("foo_3319510867");
+        foo_2925695068_fp->set(int(3945895095));
+        foo_3319510867_fp->set(int(3319510867));
 
         std::vector<DownlinkProducer::FlowData> flow_data = { 
+            {
+                1,
+                true,
                 {
-                    1,
-                    true,
-                    {
-                            "foo_3430679580",
-                            "foo_2742763548",
-                            "foo_1375806809",
-                    }
-                 },
-                {
-                    2,
-                    true,
-                    {
-                            "foo_2804731287",
-                            "foo_1571669404",
-                    }
+                        "foo_3945895095",
                 }
+            },
+            {
+                2,
+                true,
+                {
+                        "foo_3319510867",
+                }
+            }
         };
         tf.init(flow_data);
-        tf.cycle_count_fp->set(313403403);
+        tf.cycle_count_fp->set(3039219769);
 
 
-        TEST_ASSERT_EQUAL(25, tf.snapshot_size_bytes_fp->get());
+        TEST_ASSERT_EQUAL(13, tf.snapshot_size_bytes_fp->get());
         tf.downlink_producer->execute();
-        const char expected_outputs[25] = {'\x89', '\x57', '\x14', '\x05', '\xb9', 
-        '\x8f', '\x80', '\x83', '\x94', '\x6f', '\x68', '\x03', '\x8a', '\x40',
-         '\x24', '\xab', '\x35', '\x39', '\x66', '\x6c', '\xba', '\xed', '\x6e', '\x2c', '\xe0'};
-        TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 25);
+        const char expected_outputs[13] = {'\xce', '\x05', '\xb2', '\x56', '\xdd', '\xa5',
+         '\x31', '\x9a', '\xee', '\x57', '\x6e', '\xdd', '\x18'};
+        TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 13);
     }
     
 }

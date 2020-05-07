@@ -13,7 +13,7 @@ def convert_to_bytes(packet):
 def packet_header(cc_count):
 	return "1" + cc_count
 def flow(flow_id, flow_items):
-	return flow_id[::-1] + "".join(flow_items)
+	return flow_id + "".join(flow_items)
 
 
 '''
@@ -23,7 +23,7 @@ big endian and the decimal value of the integer.
 def rand_int_string(bits):
     i = random.getrandbits(bits)
     bitstr_i = '{:0{bits}b}'.format(i, bits=bits)[::-1]
-    return (bitstr_i[::-1], i)
+    return (bitstr_i, i)
 
 
 '''
@@ -44,33 +44,7 @@ def pretty_print_flow_data(cycle_count_d, flows_d):
     s = s[:-2] + '\n}'
     print(s)
 
-
-'''
-Randomly make a test case with optional number of flows and 
-range for number of fields per flow. 
-'''
-def test_rand_flows(num_flows=1, range_num_flow_fields=(1, 1)):
-    flows_d = []
-    cycle_count_b, cycle_count_d = rand_int_string(32)
-    #cycle_count_b, cycle_count_d = "00000000000000000000000000010100"[::-1], 20
-    flow_id_bits = num_flows.bit_length()
-    packet = packet_header(cycle_count_b)
-
-    for flow_num in range(1, num_flows+1):
-        num_flow_fields = random.randint(range_num_flow_fields[0], range_num_flow_fields[1]+1)
-        flow_id = '{:0{bits}b}'.format(flow_num, bits=flow_id_bits)[::-1]
-        flow_data = ""
-        flow_data_d = []
-
-        for _ in range(0, num_flow_fields):
-            state_field_value_b, state_field_value_d = rand_int_string(32)
-            #state_field_value_b, state_field_value_d = "00000000000000000000000110010000"[::-1], 400
-            flow_data += state_field_value_b
-            flow_data_d.append(state_field_value_d)
-        
-        packet += flow(flow_id, [flow_data])
-        flows_d.append(flow_data_d)
-
+def print_output(packet, cycle_count_d, flows_d):
     print('\nDecimal valued flow data for test case')
     print("-----------------------------------")
     pretty_print_flow_data(cycle_count_d, flows_d)
@@ -92,6 +66,32 @@ def test_rand_flows(num_flows=1, range_num_flow_fields=(1, 1)):
     print("Length: " + str(packet_h.count("\\x")))
     print("-----------------------------------")
 
+'''
+Randomly make a test case with optional number of flows and 
+range for number of fields per flow. 
+'''
+def test_rand_flows(num_flows=1, range_num_flow_fields=(1, 1)):
+    flows_d = []
+    cycle_count_b, cycle_count_d = rand_int_string(32)
+    print(cycle_count_b + " " + str(cycle_count_d))
+    flow_id_bits = num_flows.bit_length()
+    packet = packet_header(cycle_count_b)
+
+    for flow_num in range(1, num_flows+1):
+        num_flow_fields = random.randint(range_num_flow_fields[0], range_num_flow_fields[1])
+        flow_id = '{:0{bits}b}'.format(flow_num, bits=flow_id_bits)[::-1]
+        flow_data = ""
+        flow_data_d = []
+
+        for _ in range(0, num_flow_fields):
+            state_field_value_b, state_field_value_d = rand_int_string(32)
+            flow_data += state_field_value_b
+            flow_data_d.append(state_field_value_d)
+        
+        packet += flow(flow_id, [flow_data])
+        flows_d.append(flow_data_d)
+    print_output(packet, cycle_count_d, flows_d)
+
 
 def test_manual_int_flows(cycle=20, flows=[[]]):
     packet = packet_header('{:0{bits}b}'.format(cycle, bits=32)[::-1])
@@ -102,30 +102,16 @@ def test_manual_int_flows(cycle=20, flows=[[]]):
             field_b = '{:0{bits}b}'.format(flows[flow_id-1][field], bits=32)[::-1]
             flow_data += field_b
         packet += flow('{:0{bits}b}'.format(flow_id, bits=flow_id_bits)[::-1], [flow_data])
-    
-    print('\nBinary Packet')
-    print("-----------------------------------")
-    print(packet)
-    print("-----------------------------------\n\n")
-
-
-    packet_h = convert_to_bytes(packet)
-    print('\nHexadecimal Packet')
-    print("-----------------------------------")
-    print(packet_h)
-    print("-----------------------------------\n\n")
-    
-    print("Length: " + str(packet_h.count("\\x")))
-    print("-----------------------------------")
+    print_output(packet, cycle, flows)
 
 
 
+#Example test generations
 
-test_rand_flows(1)
+test_rand_flows(2)
 
-#test_manual_int_flows(flows = [[400, 400, 400 ],
- #                               [400, 400, 400, 400, 400, 400, 400], 
-  #                              [400, 400, 400, 400, 400, 400, 400]])
-
-
-#TODO make manual case
+'''
+test_manual_int_flows(flows = [[400, 400, 400 ],
+                                [400, 400, 400, 400, 400, 400, 400], 
+                                [400, 400, 400, 400, 400, 400, 400]])
+'''
