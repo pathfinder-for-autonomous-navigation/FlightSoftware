@@ -301,7 +301,9 @@ void GomspaceController::execute() {
 
     battmode_f.set(gs.hk->battmode);
 
-    pptmode_f.set(gs.hk->pptmode);
+    if (control_cycle_count==1) {
+        pptmode_f.set(gs.hk->pptmode);
+    }
 
     heater_f.set(gs.get_heater()==1);
 }
