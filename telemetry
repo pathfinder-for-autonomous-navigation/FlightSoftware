@@ -106,6 +106,12 @@
             "type": "bool",
             "writable": true
         },
+        "adcs_cmd.havt_disable18": {
+            "bitsize": 1,
+            "flow_id": 33,
+            "type": "bool",
+            "writable": true
+        },
         "adcs_cmd.havt_disable2": {
             "bitsize": 1,
             "flow_id": 33,
@@ -214,6 +220,12 @@
             "type": "bool",
             "writable": true
         },
+        "adcs_cmd.havt_reset18": {
+            "bitsize": 1,
+            "flow_id": 33,
+            "type": "bool",
+            "writable": true
+        },
         "adcs_cmd.havt_reset2": {
             "bitsize": 1,
             "flow_id": 33,
@@ -286,28 +298,12 @@
             "type": "float",
             "writable": true
         },
-        "adcs_cmd.imu_gyr_temp_kd": {
-            "bitsize": 16,
+        "adcs_cmd.imu_gyr_temp_pwm": {
+            "bitsize": 8,
             "flow_id": 23,
-            "max": 3.4028234663852886e+38,
-            "min": 1.1754943508222875e-38,
-            "type": "float",
-            "writable": true
-        },
-        "adcs_cmd.imu_gyr_temp_ki": {
-            "bitsize": 16,
-            "flow_id": 23,
-            "max": 3.4028234663852886e+38,
-            "min": 1.1754943508222875e-38,
-            "type": "float",
-            "writable": true
-        },
-        "adcs_cmd.imu_gyr_temp_kp": {
-            "bitsize": 16,
-            "flow_id": 23,
-            "max": 3.4028234663852886e+38,
-            "min": 1.1754943508222875e-38,
-            "type": "float",
+            "max": 255,
+            "min": 0,
+            "type": "unsigned char",
             "writable": true
         },
         "adcs_cmd.imu_mag_filter": {
@@ -529,6 +525,12 @@
         "adcs_monitor.havt_device17": {
             "bitsize": 1,
             "flow_id": 15,
+            "type": "bool",
+            "writable": false
+        },
+        "adcs_monitor.havt_device18": {
+            "bitsize": 1,
+            "flow_id": "undefined",
             "type": "bool",
             "writable": false
         },
@@ -2556,9 +2558,7 @@
                 "adcs_cmd.imu_gyr_filter",
                 "adcs_cmd.imu_gyr_temp_desired",
                 "adcs_cmd.imu_gyr_temp_filter",
-                "adcs_cmd.imu_gyr_temp_kd",
-                "adcs_cmd.imu_gyr_temp_ki",
-                "adcs_cmd.imu_gyr_temp_kp",
+                "adcs_cmd.imu_gyr_temp_pwm",
                 "adcs_cmd.imu_mag_filter",
                 "adcs_cmd.mag1_mode",
                 "adcs_cmd.mag2_mode",
@@ -2735,6 +2735,7 @@
                 "adcs_cmd.havt_disable15",
                 "adcs_cmd.havt_disable16",
                 "adcs_cmd.havt_disable17",
+                "adcs_cmd.havt_disable18",
                 "adcs_cmd.havt_reset0",
                 "adcs_cmd.havt_reset1",
                 "adcs_cmd.havt_reset2",
@@ -2752,7 +2753,8 @@
                 "adcs_cmd.havt_reset14",
                 "adcs_cmd.havt_reset15",
                 "adcs_cmd.havt_reset16",
-                "adcs_cmd.havt_reset17"
+                "adcs_cmd.havt_reset17",
+                "adcs_cmd.havt_reset18"
             ],
             "id": 33,
             "priority": 32

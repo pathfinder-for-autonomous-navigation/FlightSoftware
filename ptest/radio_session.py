@@ -13,6 +13,7 @@ import os
 import pty
 
 from .data_consumers import Datastore, Logger
+from .http_cmd import create_radio_session_endpoint
 
 class RadioSession(object):
     '''
@@ -26,8 +27,8 @@ class RadioSession(object):
     between the check_for_downlink and the read_state functions.
     '''
 
-
-    def __init__(self, device_name, imei, simulation_run_dir, tlm_config):
+    def __init__(self, device_name, imei, uplink_console, port, send_queue_duration,
+                    send_lockout_duration, simulation_run_dir, tlm_config):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -35,6 +36,24 @@ class RadioSession(object):
         # Device connection
         self.device_name = device_name
         self.imei=imei
+        self.port=port
+        self.flask_app=create_radio_session_endpoint(self)
+
+        try:
+            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
+            self.http_thread.start()
+            print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
+        except:
+            print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
+
+        self.send_queue_duration = send_queue_duration
+        self.send_lockout_duration = send_lockout_duration
+        if send_lockout_duration > send_queue_duration:
+            # TODO shift this logic down into write_state.
+            print("Error: send_lockout_duration is greater than send_queue_duration.")
+
+        # Uplink console
+        self.uplink_console = uplink_console
 
         #Flask server connection
         self.flask_server=tlm_config["webservice"]["server"]
@@ -88,10 +107,11 @@ class RadioSession(object):
             for i in range(len(fields)):
                 updated_fields[fields[i]]=vals[i]
 
-            #create a JSON file with the updated statefields and send it to the iridium email
-            with open('uplink.sbd', 'w') as json_uplink:
-                json.dump(updated_fields, json_uplink)
+            created_uplink = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
+            if not created_uplink: return False
             os.system("./ptest/send_uplink uplink.sbd")
+            os.remove("uplink.sbd") 
+            os.remove("uplink.json") 
             return True
         else:
             return False
@@ -108,3 +128,6 @@ class RadioSession(object):
         print(
             f' - Terminating console connection to and saving logging/telemetry data for radio connection to {self.device_name}.'
         )
+
+        self.http_thread.terminate()
+        self.http_thread.join()

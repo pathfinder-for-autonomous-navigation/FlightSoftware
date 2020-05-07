@@ -32,3 +32,4 @@ diff constants uploaded_constants
 # Cleanup Directory
 rm expected_telemetry
 rm uploaded_constants
+rm src/uploaded_flow_data.cpp

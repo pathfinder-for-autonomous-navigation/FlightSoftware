@@ -192,25 +192,11 @@ class ADCS : public I2CDevice {
     void set_imu_gyr_temp_filter(const float temp_filter);
 
     /**
-     * @brief Sets the proportional gain on the gyroscope temperature controller.
+     * @brief Sets the pwm bang bang strength on the gyro heater.
      * 
-     * @param kp proportional gain, full float is passed to ADCS over i2c
+     * @param pwm value when temp < target.
      */
-    void set_imu_gyr_temp_kp(const float kp);
-
-    /**
-     * @brief Sets the integral gain on the gyroscope temperature controller
-     * 
-     * @param ki integral gain, full float is passed to ADCS over i2c
-     */
-    void set_imu_gyr_temp_ki(const float ki);
-
-    /**
-     * @brief Sets the derivative gain on the gyroscope temperature controller
-     * 
-     * @param kd derivative gain, full float is passed to ADCS over i2c
-     */
-    void set_imu_gyr_temp_kd(const float kd);
+    void set_imu_gyr_temp_pwm(const unsigned char pwm);
 
     /**
      * @brief Sets the desired gyroscope equilibrium temperature. 

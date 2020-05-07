@@ -110,19 +110,24 @@ static void update_mag2(unsigned char mag2_mode, float mag_flt) {
 
 dev::LSM6DSM gyr;
 
+dev::GyroHeaterTransistor gyr_heater;
+
 lin::Vector3f gyr_rd = lin::zeros<float, 3, 1>();
 
 float gyr_temp_rd = 0.0f;
 
-static void update_gyr(float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
-    float gry_temp_k_p, float gyr_temp_k_i, float gyr_temp_k_d) {
+static void update_gyr(float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
+    unsigned char gyr_temp_pwm) {
   lin::Vector3f data;
-  float temp_data;
+  float temp_data = 0.0f;
 
+  bool took_gyro_reading = false;
+  
   // Attempt a read if ready and ensure it was succesful
-  if (!gyr.is_functional()) return;
-  if (!gyr.is_ready()) return;
-  if (!gyr.read()) return;
+  // if any of these fail, go directly to heater block
+  if(!gyr.is_functional()) goto HEATER;
+  if(!gyr.is_ready()) goto HEATER;
+  if(!gyr.read()) goto HEATER;
 
   // Read in angular rate data and transform to the body frame
   data = {
@@ -140,8 +145,45 @@ static void update_gyr(float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
   calibrate(data, gyr_temp_rd);
   gyr_rd = gyr_rd + (data - gyr_rd) * gyr_flt;
 
+  // flag for gyro heater
+  took_gyro_reading = true;
+  
+
+  HEATER:
   // Command the gyroscope heater
-  // TODO : Add gyroscope heater code
+  // We check that the gyro was updated incase of sticky gyro reading
+  if(!gyr_heater.is_functional()){
+    LOG_TRACE_header
+    LOG_TRACE_printlnF("Heater Not Functional. Heater 0 PWM Acutation.")
+    gyr_heater.actuate(0); // Make sure voltage being written is 0
+  }
+  else if(!gyr.is_functional()){
+    LOG_TRACE_header
+    LOG_TRACE_printlnF("Gyro Not Functional. Heater 0 PWM Acutation.")
+    gyr_heater.actuate(0); // Make sure voltage being written is 0
+  }
+  // by this point, gyro and gyro_heater must be functional 
+  else if(took_gyro_reading){
+
+    // assuming analogWriteResolution is 15 bits:
+    int int_pwm = gyr_temp_pwm * 128; // maps 256 max to 32768
+
+    LOG_TRACE_header
+    LOG_TRACE_print("Heater Actual: " + String(gyr_temp_rd))
+    LOG_TRACE_print(" Target: " + String(gyr_temp_target))
+    LOG_TRACE_print(" PWM: " + String(int_pwm))
+
+    if(gyr_temp_rd >= gyr_temp_target){
+      LOG_TRACE_printlnF(" Heater: OFF")
+      gyr_heater.actuate(0); // if at target don't heat
+    }
+    else{
+      LOG_TRACE_printlnF(" Heater: ON")
+      gyr_heater.actuate(int_pwm); // heat if we're below target
+    }
+  }
+  // End Gyro Heater Code
+
 
   LOG_TRACE_header
   LOG_TRACE_println("Updated gyroscope reading " + String(data(0)) + " "
@@ -200,18 +242,31 @@ void setup() {
   }
 #endif
 
+  // needed so gyro_heater works with mtrs
+  analogWriteResolution(15);
+
+  gyr_heater.setup(gyr_heater_pin);
+  pinMode(gyr_heater_pin, OUTPUT);
+  gyr_heater.reset(); // heater is on by default
+
+#if LOG_LEVEL >= LOG_LEVEL_ERROR
+  if (!gyr_heater.is_functional()) {
+    LOG_ERROR_header
+    LOG_ERROR_printlnF("Gyro heater initialization failed")
+  }
+#endif
+
   LOG_INFO_header
   LOG_INFO_printlnF("Complete")
 }
 
 void update_sensors(unsigned char mag1_mode, unsigned char mag2_mode,
-    float mag_flt, float gyr_flt, float gyr_temp_eq, float gyr_temp_flt,
-    float gry_temp_k_p, float gyr_temp_k_i, float gyr_temp_k_d) {
+    float mag_flt, float gyr_flt, float gyr_temp_target, float gyr_temp_flt,
+    unsigned char gyr_temp_pwm) {
   LOG_TRACE_header
   LOG_TRACE_printlnF("Updating IMU sensors")
 
-  update_gyr(gyr_flt, gyr_temp_eq, gyr_temp_flt, gry_temp_k_p, gyr_temp_k_i,
-      gyr_temp_k_d);
+  update_gyr(gyr_flt, gyr_temp_target, gyr_temp_flt, gyr_temp_pwm);
   update_mag1(mag1_mode, mag_flt);
   update_mag2(mag2_mode, mag_flt);
 

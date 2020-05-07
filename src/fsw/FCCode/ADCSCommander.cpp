@@ -29,10 +29,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_mag_filter_f("adcs_cmd.imu_mag_filter", filter_sr),
     imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", filter_sr),
     imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", filter_sr),
-    k_sr(std::numeric_limits<float>::min(), std::numeric_limits<float>::max(),16),
-    imu_gyr_temp_kp_f("adcs_cmd.imu_gyr_temp_kp", k_sr),
-    imu_gyr_temp_ki_f("adcs_cmd.imu_gyr_temp_ki", k_sr),
-    imu_gyr_temp_kd_f("adcs_cmd.imu_gyr_temp_kd", k_sr),
+    imu_gyr_temp_pwm_f("adcs_cmd.imu_gyr_temp_pwm", Serializer<unsigned char>()),
     imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", 
         Serializer<float>(adcs::imu::min_eq_temp, adcs::imu::max_eq_temp, 8))
 {
@@ -51,9 +48,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     add_writable_field(imu_mag_filter_f);
     add_writable_field(imu_gyr_filter_f);
     add_writable_field(imu_gyr_temp_filter_f);
-    add_writable_field(imu_gyr_temp_kp_f);
-    add_writable_field(imu_gyr_temp_ki_f);
-    add_writable_field(imu_gyr_temp_kd_f);
+    add_writable_field(imu_gyr_temp_pwm_f);
     add_writable_field(imu_gyr_temp_desired_f);
 
     // reserve memory
@@ -105,9 +100,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     imu_mag_filter_f.set(1);
     imu_gyr_filter_f.set(1);
     imu_gyr_temp_filter_f.set(1);
-    imu_gyr_temp_kp_f.set(1);
-    imu_gyr_temp_ki_f.set(1);
-    imu_gyr_temp_kd_f.set(1);
+    imu_gyr_temp_pwm_f.set(255); // default 100% pwm
     imu_gyr_temp_desired_f.set(20); // 20 degrees C
 }
 

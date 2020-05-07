@@ -1,11 +1,11 @@
-from .base import SingleSatOnlyCase, TestCaseFailure
+from .base import SingleSatOnlyCase
+from .utils import Enums, TestCaseFailure
 
-class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
-
+class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):    
     @property
-    def mission_mode(self):
-        return self.sim.flight_controller.read_state("pan.state")
-    
+    def initial_state(self):
+        return "startup"
+
     @property
     def adcs_is_functional(self): 
         return self.sim.flight_controller.read_state("adcs_monitor.functional")
@@ -25,10 +25,6 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
     @property
     def wheelpot_is_functional(self):
         return self.sim.flight_controller.read_state("adcs_monitor.havt_device6")
-
-    @mission_mode.setter
-    def mission_mode(self, value):
-        self.sim.flight_controller.write_state("pan.state", value)
 
     @adcs_is_functional.setter 
     def adcs_is_functional(self, value): 
@@ -55,12 +51,14 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         assert(value == "true" or value == "false")
         self.sim.flight_controller.write_state("adcs_monitor.havt_device6", value)
 
-    def setup_case_singlesat(self):
+    def setup_post_bootsetup(self):
         # Move to startup and wait the full deployment length
-        self.mission_mode = self.get_mission_mode("startup")
+        self.mission_state = "startup"
+        self.logger.put("Now in startup. Cycling through deployment wait...")
         for _ in range(100):
             self.cycle()
-        
+        self.logger.put("Completed deployment wait.")
+
     def run_case_singlesat(self):
         self.run_case_all_functional()
         self.run_case_adcs_failure()
@@ -73,13 +71,13 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
 
     def run_case_all_functional(self):
         self.unsignal_faults()
-        self.mission_mode = self.get_mission_mode("startup")
+        self.mission_state = "startup"
 
         # Should transition to detumble if ADCS motors are functional
         self.logger.put("Case 1: ADCS motors are all functional")
         self.cycle()
-        if (self.mission_mode != self.get_mission_mode("detumble")):
-            raise TestCaseFailure(f"Failed: Satellite did not move to detumble. \n Mission mode: {self.mission_mode}")
+        if (self.mission_state != "detumble"):
+            raise TestCaseFailure(f"Failed: Satellite did not move to detumble. \n Mission mode: {self.mission_state}")
         else:
             self.logger.put("Passed")
 
@@ -91,7 +89,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = self.get_mission_mode("startup")
+        self.mission_state = "startup"
 
         # Satellite should move to initialization hold
         self.logger.put("Case 2: ADCS is not functional")
@@ -106,7 +104,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = self.get_mission_mode("startup")
+        self.mission_state = "startup"
 
         # Satellite should move to initialization hold
         self.logger.put("Case 3: Wheel 1 is not functional")
@@ -121,7 +119,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = self.get_mission_mode("startup")
+        self.mission_state = "startup"
 
         # Satellite should move to initialization hold
         self.logger.put("Case 4: Wheel 2 is not functional")
@@ -136,7 +134,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = self.get_mission_mode("startup")
+        self.mission_state = "startup"
 
         # Satellite should move to initialization hold
         self.logger.put("Case 5: Wheel 3 is not functional")
@@ -151,7 +149,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
         self.cycle()
 
-        self.mission_mode = self.get_mission_mode("startup")
+        self.mission_state = "startup"
 
         # Satellite should move to initialization hold
         self.logger.put("Case 6: POT is not functional")
@@ -168,10 +166,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.cycle()
 
     def check_moved_to_init_hold(self):
-        if (self.mission_mode != self.get_mission_mode("initialization_hold")):
-            raise TestCaseFailure(f"Failed: Satellite did not move to initialization hold. \n Mission mode: {self.mission_mode}")
+        if (self.mission_state != "initialization_hold"):
+            raise TestCaseFailure(f"Failed: Satellite did not move to initialization hold. \n Mission mode: {self.mission_state}")
         else:
             self.logger.put("Passed")
-
-    def get_mission_mode(self, mode):
-        return str(self.mission_states[mode])

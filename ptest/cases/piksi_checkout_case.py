@@ -1,33 +1,31 @@
 # PiksiCheckoutCase. Checks the functionality of the Piksi
-from .base import SingleSatOnlyCase, TestCaseFailure
+from .base import SingleSatOnlyCase
+from .utils import Enums, TestCaseFailure
 import math
     
 class PiksiCheckoutCase(SingleSatOnlyCase):
-
     @property
     def havt_read(self):
-        read_list = [False for x in range(self.havt_length)]
-        for x in range(self.havt_length):
+        read_list = [False for x in range(Enums.havt_length)]
+        for x in range(Enums.havt_length):
             read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
         return read_list
 
     def print_piksi_state(self):
         st = self.rs("piksi.state")
-        self.logger.put(f"Piksi state is: {self.piksi_modes[st]}")
+        self.logger.put(f"Piksi state is: {Enums.piksi_modes[st]}")
 
-    def setup_case_singlesat(self):
+    def setup_post_bootsetup(self):
         self.print_header("Begin Piksi Checkout Case")
-        
+
         self.n = 100
 
         self.vels = []
         self.positions = []
         self.baselines = []
-        self.modes_dict = {x:0 for x in self.piksi_modes.arr}
+        self.modes_dict = {x:0 for x in Enums.piksi_modes.arr}
 
-        self.most_common_mode = self.piksi_modes["no_fix"]
-        
-        self.ws("pan.state", self.mission_states["manual"])
+        self.most_common_mode = Enums.piksi_modes["no_fix"]
 
         # Needed so that PiksiControlTask updates its values
         for i in range(5):
@@ -91,7 +89,7 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.cycle()
 
             m = self.print_rs("piksi.state")
-            self.logger.put(f"Mode: {self.piksi_modes[m]}")
+            self.logger.put(f"Mode: {Enums.piksi_modes[m]}")
             v = self.print_rs("piksi.vel")
             self.logger.put(f"VEL MAG: {self.mag_of(v)}")
             p = self.print_rs("piksi.pos")
@@ -108,13 +106,13 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.cycle()
 
             mode = self.rs("piksi.state")
-            self.modes_dict[self.piksi_modes[mode]] += 1
+            self.modes_dict[Enums.piksi_modes[mode]] += 1
 
             self.vels += [self.rs("piksi.vel")]
             self.positions += [self.rs("piksi.pos")]
             self.baselines += [self.rs("piksi.baseline_pos")]
 
-        mode_rank = [x for x in self.piksi_modes.arr] # 11 total piksi modes
+        mode_rank = [x for x in Enums.piksi_modes.arr] # 11 total piksi modes
         mode_rank = sorted(mode_rank, key = self.modes_dict.get, reverse = True)
 
         self.most_common_mode = mode_rank[0]
