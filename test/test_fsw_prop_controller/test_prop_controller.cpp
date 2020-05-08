@@ -33,12 +33,12 @@ void test_illegal_schedule()
 {
     TestFixture tf;
     tf.set_state(prop_state_t::idle);
-    // Prop should ignore if requested firing time is less than 20 pressurizing cycles + 1 control cycle into the future
+    // Prop should ignore because fewer than min_cycles_needed()
     tf.set_schedule(200, 400, 800, 100, tf.pc->min_cycles_needed() - 1);
     tf.step();
-    // State should remain in idle because fire cycle too soon
+    // State should remain in idle because 10001
     check_state(prop_state_t::idle);
-    tf.set_schedule(200, 400, 800, 1000, tf.pc->min_cycles_needed());
+    tf.set_schedule(200, 400, 800, 1001, tf.pc->min_cycles_needed());
     tf.step();
     // State should remain in idle because valve 4 is scheduled for 1000
     check_state(prop_state_t::idle);
