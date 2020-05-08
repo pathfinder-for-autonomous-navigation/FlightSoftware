@@ -51,6 +51,8 @@ class RadioSession(object):
         self.flask_app.config["imei"] = imei
         self.flask_app.config["queued_uplink"] = None
         self.flask_app.config["timer"] = self.timer
+        self.flask_app.config["send_queue_duration"] = send_queue_duration
+        self.flask_app.config["send_lockout_duration"] = send_lockout_duration
 
         try:
             self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})

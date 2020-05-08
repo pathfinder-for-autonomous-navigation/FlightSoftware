@@ -5,6 +5,7 @@ from datetime import datetime
 from argparse import ArgumentParser
 import json, sys, logging
 import os, threading
+from .uplinkTimer import UplinkTimer
 from tlm.oauth2 import *
 
 """
@@ -43,11 +44,35 @@ def create_radio_session_endpoint(radio_session):
     app.config["SWAGGER"]={"title": "PAN Radio Session Command Endpoint", "uiversion": 2}
     swagger=Swagger(app, config=swagger_config)
 
+    @app.route("/time", methods=["GET"])
+    @swag_from("endpoint_configs/radio_session/time.yml")
+    def get_time_left():
+        timer = radio_session.timer
+        if timer.is_alive():
+            return "timer running"
+            # return str(timer.time_left())
+        return "Timer not running"
+
     @app.route("/pause", methods=["GET"])
     def pause_timer():
-        timer = app.config["timer"]
+        timer = radio_session.timer
+        send_queue_duration = app.config["send_queue_duration"]
+        send_lockout_duration = app.config["send_lockout_duration"]
         if timer.is_alive():
-            timer.cancel()
+            if timer.run_time()<send_queue_duration-send_lockout_duration:
+                timer.pause()
+                return "Paused"
+            return "Unable to pause timer"
+        return "No timer"
+
+    @app.route("/resume", methods=["GET"])
+    def resume_timer():
+        timer = radio_session.timer
+        if timer.is_alive():
+            if timer.resume():
+                return "Resumed"
+            return "Unable to resume timer"
+        return "No timer"
 
 
     @app.route("/send-telem", methods=["POST"])
@@ -57,7 +82,6 @@ def create_radio_session_endpoint(radio_session):
 
         uplink_console = app.config["uplink_console"]
         imei = app.config["imei"]
-        timer = app.config["timer"]
         queued_uplink = app.config["queued_uplink"]
 
         if queued_uplink is None:
