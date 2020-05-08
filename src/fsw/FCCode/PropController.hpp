@@ -64,13 +64,13 @@ public:
     ReadableStateField<float> tank2_temp_f;
     ReadableStateField<float> tank1_temp_f;
 
+    // The number of prop firings that have been executed
+    ReadableStateField<unsigned int> num_prop_firings_f;
+
     Fault pressurize_fail_fault_f; // underpressurized
     Fault overpressure_fault_f;    // overpressurized
     Fault tank2_temp_high_fault_f;
     Fault tank1_temp_high_fault_f;
-
-    // The number of prop firings that have been executed
-    ReadableStateField<unsigned int> num_prop_firings_f;
 
     // ------------------------------------------------------------------------
     // Public Interface
