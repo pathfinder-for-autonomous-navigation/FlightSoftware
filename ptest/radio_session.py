@@ -17,6 +17,7 @@ from elasticsearch import Elasticsearch
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_radio_session_endpoint
 from tlm.oauth2 import *
+from .uplinkTimer import UplinkTimer
 
 class RadioSession(object):
     '''
@@ -40,9 +41,16 @@ class RadioSession(object):
         self.device_name = device_name
         self.imei=imei
         self.port=port
+
+        # Uplink timer
+        self.timer = UplinkTimer(send_queue_duration, self.send_uplink)
+
+        # HTTP Endpoints
         self.flask_app=create_radio_session_endpoint(self)
         self.flask_app.config["uplink_console"] = uplink_console
         self.flask_app.config["imei"] = imei
+        self.flask_app.config["queued_uplink"] = None
+        self.flask_app.config["timer"] = self.timer
 
         try:
             self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
@@ -67,9 +75,6 @@ class RadioSession(object):
         #email
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
-
-        # Uplink timer
-        self.timer = threading.Timer(self.send_queue_duration, self.send_uplink)
 
     def uplink_queued(self):
         '''
@@ -97,20 +102,39 @@ class RadioSession(object):
         return True
 
     def send_uplink(self):
-        # Send the uplink to Iridium
-        to = "data@sbd.iridium.com"
-        sender = "pan.ssds.qlocate@gmail.com"
-        subject = self.imei
-        msgHtml = ""
-        msgPlain = ""
-        SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink.sbd')
+        if not os.path.exists("uplink.json"):
+            return False
 
-        # Remove uplink files/cleanup
-        os.system("./ptest/send_uplink uplink.sbd")
-        os.remove("uplink.sbd") 
-        os.remove("uplink.json")
+        # Stop allowing edits over http
+        self.flask_app.config["queued_uplink"] = None
 
-        return True
+        # Extract the json telemetry data from the uplink json file
+        with open("uplink.json", 'r') as uplink:
+            queued_uplink = json.load(uplink)
+
+        # Get an updated list of the field and values 
+        fields, vals=queued_uplink.keys(), queued_uplink.values()
+        
+        # Create an uplink packet
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+
+        if success:
+            # Send the uplink to Iridium
+            to = "fy56@cornell.edu" # data@sbd.iridium.com
+            sender = "pan.ssds.qlocate@gmail.com"
+            subject = self.imei
+            msgHtml = ""
+            msgPlain = ""
+            SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink.sbd')
+
+            # Remove uplink files/cleanup
+            os.remove("uplink.sbd") 
+            # os.remove("uplink.json")
+
+            return True
+        else:
+            # os.remove("uplink.json")
+            return False
 
     def read_state(self, field, timeout=None):
         '''
@@ -136,16 +160,19 @@ class RadioSession(object):
 
         assert len(fields) == len(vals)
 
-        if self.uplink_queued():
-            return False
+        # if self.uplink_queued():
+        #     return False
 
         # Create dictionary object with new fields and vals
         updated_fields={}
         for i in range(len(fields)):
             updated_fields[fields[i]]=vals[i]
 
-        created_uplink = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
-        if not created_uplink: return False
+        self.flask_app.config["queued_uplink"] = updated_fields
+
+        # Create a JSON file to hold the uplink
+        with open('uplink.json', 'w') as telem_file:
+            json.dump(updated_fields, telem_file)
 
         # Start the timer. Timer will send uplink once timeout is completed
         self.timer.start()

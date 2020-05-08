@@ -43,35 +43,55 @@ def create_radio_session_endpoint(radio_session):
     app.config["SWAGGER"]={"title": "PAN Radio Session Command Endpoint", "uiversion": 2}
     swagger=Swagger(app, config=swagger_config)
 
+    @app.route("/pause", methods=["GET"])
+    def pause_timer():
+        timer = app.config["timer"]
+        if timer.is_alive():
+            timer.cancel()
+
+
     @app.route("/send-telem", methods=["POST"])
     @swag_from("endpoint_configs/radio_session/request.yml")
     def send_telem():
         uplink=request.get_json()
 
-        # Create an uplink packet
-        fields, vals=list(), list()
-        for field_val in uplink:
-            fields.append(field_val["field"])
-            vals.append(field_val["value"])
-
         uplink_console = app.config["uplink_console"]
         imei = app.config["imei"]
-        success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+        timer = app.config["timer"]
+        queued_uplink = app.config["queued_uplink"]
 
-        if not success:
-            return "Unable to send telemetry"
+        if queued_uplink is None:
+            # Get a list of the field and values 
+            fields, vals=list(), list()
+            for field_val in uplink:
+                fields.append(field_val["field"])
+                vals.append(field_val["value"])
 
-        # Send the uplink to Iridium
-        to = "data@sbd.iridium.com"
-        sender = "pan.ssds.qlocate@gmail.com"
-        subject = imei
-        SendMessage(sender, to, subject, "", "", 'uplink.sbd')
+            # Create a new uplink packet if there are no autonomous uplinks queued
+            success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
 
-        # Remove uplink files/cleanup
-        os.remove("uplink.sbd") 
-        os.remove("uplink.json")
-        
-        return "Successfully sent telemetry to Iridium"
+            if not success:
+                return "Unable to send telemetry"
+
+            # Send the uplink immediately to Iridium
+            to = "fy56@cornell.edu" # data@sbd.iridium.com
+            sender = "pan.ssds.qlocate@gmail.com"
+            subject = imei
+            SendMessage(sender, to, subject, "", "", 'uplink.sbd')
+
+            # Remove uplink files/cleanup
+            os.remove("uplink.sbd") 
+            #os.remove("uplink.json")
+
+            return "Successfully sent telemetry to Iridium"
+
+        else:
+            # Edit the queued uplink.
+            queued_uplink.update(uplink)
+            with open('uplink.json', 'w') as telem_file:
+                json.dump(queued_uplink, telem_file)
+
+            return "Successfully sent telemetry to radio session"
 
     return app
 
