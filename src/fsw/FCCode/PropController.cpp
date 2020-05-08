@@ -32,6 +32,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       tank2_pressure_f("prop.tank2.pressure", Serializer<float>(0, 150, 4)),
       tank2_temp_f("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
       tank1_temp_f("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
+      num_prop_firings_f("prop.num_prop_firings", Serializer<unsigned int>(1 << 31)),
 
       // We must trust the pressure sensor.
       pressurize_fail_fault_f("prop.pressurize_fail", 0),
@@ -63,6 +64,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_readable_field(tank2_pressure_f);
     add_readable_field(tank2_temp_f);
     add_readable_field(tank1_temp_f);
+    add_readable_field(num_prop_firings_f);
 
     add_fault(pressurize_fail_fault_f);
     add_fault(overpressure_fault_f);
@@ -89,6 +91,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     tank2_pressure_f.set(Tank2.get_pressure());
     tank2_temp_f.set(Tank2.get_temp());
     tank1_temp_f.set(Tank1.get_temp());
+    num_prop_firings_f.set(0);
 
     PropState::controller = this;
 }
@@ -488,6 +491,7 @@ void PropState_Firing::enter()
 {
     DD("[*] ==> entered PropState_Firing\n");
     PropulsionSystem.start_firing();
+    controller->num_prop_firings_f.set(controller->num_prop_firings_f.get() + 1);
 }
 
 prop_state_t PropState_Firing::evaluate()
