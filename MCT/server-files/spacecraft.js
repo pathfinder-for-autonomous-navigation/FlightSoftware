@@ -48,6 +48,7 @@ Spacecraft.prototype.updateState = function () {
  */
 /**NOTE: if console is printing out error code that means gsw server has not been
 started correctly **/
+
   const myurl = url.parse('http://localhost:5000/search-es');
   var propertiesObject = { index:'statefield_report_123', field:'telemetry' };
   request({url:myurl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
