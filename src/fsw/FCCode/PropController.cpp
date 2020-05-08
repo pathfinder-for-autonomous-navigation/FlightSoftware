@@ -206,7 +206,7 @@ bool PropController::is_valid_schedule(unsigned int v1,
                                        unsigned int v4,
                                        unsigned int ctrl_cycles_from_now)
 {
-    return (v1 < 1000 && v2 < 1000 && v3 < 1000 && v4 < 1000 && ctrl_cycles_from_now > 1);
+    return (v1 <= 1000 && v2 <= 1000 && v3 <= 1000 && v4 <= 1000 && ctrl_cycles_from_now > 1);
 }
 
 unsigned int PropController::min_cycles_needed() const
