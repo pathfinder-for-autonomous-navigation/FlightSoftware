@@ -24,6 +24,10 @@ static bit_array produce_bits(const std::string& value, Serializer<T>& sz)
     return sz.get_bit_array();
 }
 
+static nlohmann::json string_to_json(std::string input) {
+    return nlohmann::json::parse(input);
+}
+
 static bit_array produce_bits(nlohmann::json& item) {
     std::string type = item["type"];
 
@@ -170,15 +174,29 @@ void generate_packet(const std::string& json_input_filename, const std::string& 
 }
 
 int main(int argc, char** argv) {
-    if(argc < 2) {
-        std::cout << "Need to specify input JSON file." << std::endl;
-        return 1;
-    }
-    if(argc < 3) {
-        std::cout << "Need to specify output filename." << std::endl;
-        return 1;
-    }
+    // if(argc < 2) {
+    //     std::cout << "Need to specify input JSON file." << std::endl;
+    //     return 1;
+    // }
+    // if(argc < 3) {
+    //     std::cout << "Need to specify output filename." << std::endl;
+    //     return 1;
+    // }
 
-    generate_packet(argv[1], argv[2]);
+    //generate_packet(argv[1], argv[2]);
+
+    //given json string for one type, output the serialized bits
+    nlohmann::json item = string_to_json(argv[1]);
+    bit_array serialized = produce_bits(item);
+
+    // Write the bits in big-endian order to the bitstream.
+        std::stringstream bitstring;
+        std::string item_bitstring = "";
+        for(bool bit : serialized) {
+            item_bitstring += (bit ? '1' : '0');
+        }
+        bitstring << item_bitstring;
+        std::cout << bitstring.str() << std::endl;
+    
     return 0;
 }
