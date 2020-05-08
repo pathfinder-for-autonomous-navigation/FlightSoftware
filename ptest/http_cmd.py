@@ -45,19 +45,19 @@ def create_radio_session_endpoint(radio_session):
     @app.route("/request", methods=["POST"])
     @swag_from("endpoint_configs/radio_session/request.yml")
     def send_telem():
-        uplink=request.get_json()
+        # uplink=request.get_json()
 
-        # Create an uplink packet
-        fields, vals=list(), list()
-        for field_val in uplink:
-            fields.append(field_val["field"])
-            vals.append(field_val["value"])
+        # # Create an uplink packet
+        # fields, vals=list(), list()
+        # for field_val in uplink:
+        #     fields.append(field_val["field"])
+        #     vals.append(field_val["value"])
 
-        uplink_console = app.config["uplink_console"]
-        success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+        # uplink_console = app.config["uplink_console"]
+        # success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
 
-        if not success:
-            return "Unable to send telemetry"
+        # if not success:
+        #     return "Unable to send telemetry"
         
         return "Successfully sent telemetry to FlightSoftware"
 

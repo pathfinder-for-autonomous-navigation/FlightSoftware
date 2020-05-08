@@ -14,6 +14,7 @@ import pty
 
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_radio_session_endpoint
+from tlm.oauth2 import *
 
 class RadioSession(object):
     '''
@@ -65,7 +66,7 @@ class RadioSession(object):
         self.password=tlm_config["email_password"]
 
         # Up;ink timer
-        timer = threading.Timer(self.send_queue_duration, send_uplink)
+        self.timer = threading.Timer(self.send_queue_duration, self.send_uplink)
 
     def uplink_queued(self):
         '''
@@ -85,7 +86,7 @@ class RadioSession(object):
         tlm_service_active = self.flask_server != ""
         if tlm_service_active:
             response = requests.get(
-                'http://'+self.flask_server+':'+self.flask_port+'/search-es',
+                'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
         if not tlm_service_active or response.text=="True": 
@@ -93,6 +94,22 @@ class RadioSession(object):
         return True
 
     def send_uplink(self):
+        # Gain access to the PAN gmail account
+        authenticate()
+
+        # Send the uplink to Iridium
+        to = "fy56@cornell.edu"
+        sender = "pan.ssds.qlocate@gmail.com"
+        subject = self.imei
+        msgHtml = ""
+        msgPlain = ""
+        SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink.sbd')
+
+        # Remove uplink files/cleanup
+        os.system("./ptest/send_uplink uplink.sbd")
+        os.remove("uplink.sbd") 
+        os.remove("uplink.json")
+
         return True
 
     def read_state(self, field, timeout=None):
@@ -107,7 +124,7 @@ class RadioSession(object):
             "field" : str(field)
         }
 
-        response = requests.get('http://'+self.flask_server+':'+self.flask_port+'/search-es', params=payload, headers=headers)
+        response = requests.get('http://'+self.flask_server+':'+str(self.flask_port)+'/search-es', params=payload, headers=headers)
         return response.text
 
     def write_multiple_states(self, fields, vals, timeout=None):
@@ -119,34 +136,21 @@ class RadioSession(object):
 
         assert len(fields) == len(vals)
 
-        headers = {
-            'Accept': 'text/html',
-        }
-        payload = {
-            "index" : "iridium_report_"+str(self.imei),
-            "field" : "send-uplinks"
-        }
-
-        tlm_service_active = self.flask_server != ""
-        if tlm_service_active:
-            response = requests.get(
-                'http://'+self.flask_server+':'+self.flask_port+'/search-es',
-                    params=payload, headers=headers)
-
-        if not tlm_service_active or response.text=="True":
-            #create dictionary object with new fields and vals
-            updated_fields={}
-            for i in range(len(fields)):
-                updated_fields[fields[i]]=vals[i]
-
-            created_uplink = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
-            if not created_uplink: return False
-            os.system("./ptest/send_uplink uplink.sbd")
-            os.remove("uplink.sbd") 
-            os.remove("uplink.json") 
-            return True
-        else:
+        if self.uplink_queued():
             return False
+
+        # Create dictionary object with new fields and vals
+        updated_fields={}
+        for i in range(len(fields)):
+            updated_fields[fields[i]]=vals[i]
+
+        created_uplink = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
+        if not created_uplink: return False
+
+        # Start the timer. Timer will send uplink once timeout is completed
+        self.timer.start()
+
+        return True
 
     def write_state(self, field, val, timeout=None):
         '''
