@@ -141,8 +141,8 @@ class GomspaceController : public TimedControlTask<void> {
     Serializer<bool> gs_reboot_cmd_sr;
     WritableStateField<bool> gs_reboot_cmd_f;
 
-    Serializer<unsigned char> read_ppt_sr;
-    WritableStateField<unsigned char> read_ppt_f;
+    Serializer<signed char> read_ppt_sr;
+    WritableStateField<signed char> read_ppt_f;
 
 };
 
