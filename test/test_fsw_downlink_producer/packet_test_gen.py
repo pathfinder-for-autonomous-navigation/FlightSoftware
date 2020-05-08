@@ -30,7 +30,7 @@ def serialize(data_type, value, min_val, max_val, bitsize):
         \"bitsize\": {}
     }}
     '''.format(data_type, value, min_val, max_val, bitsize)
-    args = ("/Users/andreeafoarce/Desktop/PAN/FlightSoftware/.pio/build/tools_packet_generator/program", json_str) #all strings
+    args = ("/Users/andreeafoarce/Desktop/PAN/FlightSoftware/.pio/build/tools_packet_generator/program", json_str)
     gen = subprocess.Popen(args, stdout=subprocess.PIPE)
     gen.wait()
     output = gen.stdout.read()
@@ -44,7 +44,7 @@ def initializer(val_str, val, str_type):
     global field_id
     state_field_id = val_str + '_' + str(field_id)
     initializer = '''
-    auto foo_{id}_fp = tf.registry.create_readable_field<{type}>("{id}");
+    auto foo_{id}_fp = tf.registry.create_readable_field<{type}>("foo_{id}");
     foo_{id}_fp->set({val});
     '''.format(val=val, id=state_field_id, type=str_type)
     field_id += 1

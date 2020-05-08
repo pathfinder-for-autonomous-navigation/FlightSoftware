@@ -340,48 +340,22 @@ void test_multiple_flows() {
     {
     TestFixture tf;
     
-    auto foo_56_92908166570396_86_92366762402997_n81_74820283375337_92_01202756976119_1_fp = tf.registry.create_readable_field<bool>("56_92908166570396_86_92366762402997_n81_74820283375337_92_01202756976119_1");
-    foo_56_92908166570396_86_92366762402997_n81_74820283375337_92_01202756976119_1_fp->set({"56.92908166570396, 86.92366762402997, -81.74820283375337, 92.01202756976119"});
-    
-    std::vector<DownlinkProducer::FlowData> flow_data = {
-        {
-                1,
-                true,
-                {
-                        "foo_56_92908166570396_86_92366762402997_n81_74820283375337_92_01202756976119_1",
-                }
-        }
-
-    };
-    tf.init(flow_data);
-    tf.cycle_count_fp->set(3062845131);
-
-    TEST_ASSERT_EQUAL(5, tf.snapshot_size_bytes_fp->get());
-    tf.downlink_producer->execute();
-    const char expected_outputs[5] = { '\xe9', '\xb9', '\x78', '\xb6', '\xc0' };
-    TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 5);
-
-    }
-
-    {
-    TestFixture tf;
-    
-    auto foo_true_1_fp = tf.registry.create_readable_field<bool>("true_1");
+    auto foo_true_1_fp = tf.registry.create_readable_field<bool>("foo_true_1");
     foo_true_1_fp->set(true);
     
-    auto foo_n80_05384425360643_n31_212659617428812_15_265676017016645_49_9092334592404_2_fp = tf.registry.create_readable_field<lin::Vector4d>("n80_05384425360643_n31_212659617428812_15_265676017016645_49_9092334592404_2");
+    auto foo_n80_05384425360643_n31_212659617428812_15_265676017016645_49_9092334592404_2_fp = tf.registry.create_readable_field<lin::Vector4d>("foo_n80_05384425360643_n31_212659617428812_15_265676017016645_49_9092334592404_2");
     foo_n80_05384425360643_n31_212659617428812_15_265676017016645_49_9092334592404_2_fp->set({-80.05384425360643, -31.212659617428812, 15.265676017016645, 49.9092334592404});
     
-    auto foo_13_3_fp = tf.registry.create_readable_field<unsigned char>("13_3");
+    auto foo_13_3_fp = tf.registry.create_readable_field<unsigned char>("foo_13_3");
     foo_13_3_fp->set(13);
     
-    auto foo_2231446999_4_fp = tf.registry.create_readable_field<unsigned int>("2231446999_4");
+    auto foo_2231446999_4_fp = tf.registry.create_readable_field<unsigned int>("foo_2231446999_4");
     foo_2231446999_4_fp->set(2231446999);
     
-    auto foo_false_5_fp = tf.registry.create_readable_field<bool>("false_5");
+    auto foo_false_5_fp = tf.registry.create_readable_field<bool>("foo_false_5");
     foo_false_5_fp->set(false);
     
-    auto foo_73_6_fp = tf.registry.create_readable_field<unsigned char>("73_6");
+    auto foo_73_6_fp = tf.registry.create_readable_field<unsigned char>("foo_73_6");
     foo_73_6_fp->set(73);
     
     std::vector<DownlinkProducer::FlowData> flow_data = {
@@ -418,6 +392,56 @@ void test_multiple_flows() {
     tf.downlink_producer->execute();
     const char expected_outputs[12] = { '\xd3', '\xe0', '\xbc', '\xdb', '\xd6', '\xc3', '\xae', '\xd2', '\x02', '\x87', '\x49', '\x00' };
     TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 12);
+
+    }
+
+    {
+    TestFixture tf;
+    
+    auto foo_false_1_fp = tf.registry.create_readable_field<bool>("foo_false_1");
+    foo_false_1_fp->set(false);
+    
+    auto foo_n52_99680967822091_14_133310747726654_n35_80552424962772_n74_11536707116599_2_fp = tf.registry.create_readable_field<lin::Vector4d>("foo_n52_99680967822091_14_133310747726654_n35_80552424962772_n74_11536707116599_2");
+    foo_n52_99680967822091_14_133310747726654_n35_80552424962772_n74_11536707116599_2_fp->set({-52.99680967822091, 14.133310747726654, -35.80552424962772, -74.11536707116599});
+    
+    auto foo_102_3_fp = tf.registry.create_readable_field<unsigned char>("foo_102_3");
+    foo_102_3_fp->set(102);
+    
+    auto foo_237_4_fp = tf.registry.create_readable_field<unsigned char>("foo_237_4");
+    foo_237_4_fp->set(237);
+    
+    std::vector<DownlinkProducer::FlowData> flow_data = {
+        {
+                1,
+                true,
+                {
+                        "foo_false_1",
+                        "foo_n52_99680967822091_14_133310747726654_n35_80552424962772_n74_11536707116599_2",
+                }
+        },
+        {
+                2,
+                true,
+                {
+                        "foo_102_3",
+                }
+        },
+        {
+                3,
+                true,
+                {
+                        "foo_237_4",
+                }
+        }
+
+    };
+    tf.init(flow_data);
+    tf.cycle_count_fp->set(3422311149);
+
+    //TEST_ASSERT_EQUAL(8, tf.snapshot_size_bytes_fp->get());
+    tf.downlink_producer->execute();
+    const char expected_outputs[8] = { '\xdb', '\xa5', '\x1f', '\xe9', '\xc5', '\x9b', '\xb7', '\x00' };
+    TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 8);
 
     }
     
