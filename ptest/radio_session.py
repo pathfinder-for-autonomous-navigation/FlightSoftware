@@ -11,6 +11,8 @@ import subprocess
 import glob
 import os
 import pty
+from multiprocessing import Process
+from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_radio_session_endpoint
@@ -40,6 +42,7 @@ class RadioSession(object):
         self.port=port
         self.flask_app=create_radio_session_endpoint(self)
         self.flask_app.config["uplink_console"] = uplink_console
+        self.flask_app.config["imei"] = imei
 
         try:
             self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
@@ -65,7 +68,7 @@ class RadioSession(object):
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
 
-        # Up;ink timer
+        # Uplink timer
         self.timer = threading.Timer(self.send_queue_duration, self.send_uplink)
 
     def uplink_queued(self):
@@ -89,16 +92,13 @@ class RadioSession(object):
                 'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
-        if not tlm_service_active or response.text=="True": 
+        if tlm_service_active and response.text.lower()=="true": 
             return False
         return True
 
     def send_uplink(self):
-        # Gain access to the PAN gmail account
-        authenticate()
-
         # Send the uplink to Iridium
-        to = "fy56@cornell.edu"
+        to = "data@sbd.iridium.com"
         sender = "pan.ssds.qlocate@gmail.com"
         subject = self.imei
         msgHtml = ""

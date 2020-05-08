@@ -19,5 +19,7 @@ parameters:
         properties:
           field:
             type: "string"
+            example: "pan.state"
           value:
             type: "integer"
+            example: 8

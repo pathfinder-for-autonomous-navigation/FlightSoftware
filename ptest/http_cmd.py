@@ -5,6 +5,7 @@ from datetime import datetime
 from argparse import ArgumentParser
 import json, sys, logging
 import os, threading
+from tlm.oauth2 import *
 
 """
 This file contains HTTP endpoint factories for StateSession and RadioSession.
@@ -42,24 +43,35 @@ def create_radio_session_endpoint(radio_session):
     app.config["SWAGGER"]={"title": "PAN Radio Session Command Endpoint", "uiversion": 2}
     swagger=Swagger(app, config=swagger_config)
 
-    @app.route("/request", methods=["POST"])
+    @app.route("/send-telem", methods=["POST"])
     @swag_from("endpoint_configs/radio_session/request.yml")
     def send_telem():
-        # uplink=request.get_json()
+        uplink=request.get_json()
 
-        # # Create an uplink packet
-        # fields, vals=list(), list()
-        # for field_val in uplink:
-        #     fields.append(field_val["field"])
-        #     vals.append(field_val["value"])
+        # Create an uplink packet
+        fields, vals=list(), list()
+        for field_val in uplink:
+            fields.append(field_val["field"])
+            vals.append(field_val["value"])
 
-        # uplink_console = app.config["uplink_console"]
-        # success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+        uplink_console = app.config["uplink_console"]
+        imei = app.config["imei"]
+        success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
 
-        # if not success:
-        #     return "Unable to send telemetry"
+        if not success:
+            return "Unable to send telemetry"
+
+        # Send the uplink to Iridium
+        to = "data@sbd.iridium.com"
+        sender = "pan.ssds.qlocate@gmail.com"
+        subject = imei
+        SendMessage(sender, to, subject, "", "", 'uplink.sbd')
+
+        # Remove uplink files/cleanup
+        os.remove("uplink.sbd") 
+        os.remove("uplink.json")
         
-        return "Successfully sent telemetry to FlightSoftware"
+        return "Successfully sent telemetry to Iridium"
 
     return app
 
@@ -71,7 +83,7 @@ def create_state_session_endpoint(state_session):
     app.config["SWAGGER"]={"title": "PAN State Session Command Endpoint", "uiversion": 2}
     swagger=Swagger(app, config=swagger_config)
 
-    @app.route("/request", methods=["POST"])
+    @app.route("/send-telem", methods=["POST"])
     @swag_from("endpoint_configs/state_session/request.yml")
     def send_telem():
         uplink=request.get_json()
