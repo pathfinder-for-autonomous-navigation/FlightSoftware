@@ -46,9 +46,11 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
       adcs_commander(registry, adcs_commander_offset), // needs inputs from attitude computer
-      adcs_box_controller(registry, adcs_box_controller_offset, adcs)
+      adcs_box_controller(registry, adcs_box_controller_offset, adcs),
+      orbit_controller(registry, orbit_controller_offset)
 {
     docking_controller.init();
+    orbit_controller.init();
 
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP
@@ -105,6 +107,7 @@ void MainControlLoop::execute() {
     attitude_computer.execute_on_time();
     adcs_commander.execute_on_time();
     adcs_box_controller.execute_on_time();
+    orbit_controller.execute_on_time();
     prop_controller.execute_on_time();
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
