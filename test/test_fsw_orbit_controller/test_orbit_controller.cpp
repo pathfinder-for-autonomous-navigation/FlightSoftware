@@ -26,10 +26,10 @@ class TestFixture {
         // Create a TestFixture instance of PiksiController with pointers to statefields
         TestFixture() : registry() {
                 time_fp = registry.create_readable_field<double>("orbit.time", 0, 0, 1);
-                pos_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 0, 1);
-                vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 0, 1);
-                baseline_pos_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 0, 1);
-                baseline_vel_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_vel", 0, 0, 1);
+                pos_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 0, 100);
+                vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 0, 100);
+                baseline_pos_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 0, 100);
+                baseline_vel_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_vel", 0, 0, 100);
                 prop_planner_state_fp = registry.create_readable_field<unsigned char>("prop.planner.state", 0);
 
                 orbit_controller = std::make_unique<OrbitController>(registry, 0);  
