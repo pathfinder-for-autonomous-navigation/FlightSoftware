@@ -1526,6 +1526,46 @@
             "type": "lin double vector",
             "writable": false
         },
+        "orbit.baseline_vel": {
+            "bitsize": 100,
+            "flow_id": "undefined",
+            "max": 100000.0,
+            "min": 0.0,
+            "type": "lin double vector",
+            "writable": false
+        },
+        "orbit.control.valve1": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 1000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "orbit.control.valve2": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 1000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "orbit.control.valve3": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 1000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
+        "orbit.control.valve4": {
+            "bitsize": 10,
+            "flow_id": "undefined",
+            "max": 1000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
         "orbit.pos": {
             "bitsize": 100,
             "flow_id": 2,
@@ -1540,6 +1580,14 @@
             "max": 1.8446744073709552e+19,
             "min": 0.0,
             "type": "double",
+            "writable": false
+        },
+        "orbit.vel": {
+            "bitsize": 100,
+            "flow_id": "undefined",
+            "max": 100000.0,
+            "min": 0.0,
+            "type": "lin double vector",
             "writable": false
         },
         "pan.cycle_no": {
@@ -1711,6 +1759,14 @@
             "flow_id": 5,
             "type": "bool",
             "writable": true
+        },
+        "prop.planner.state": {
+            "bitsize": 2,
+            "flow_id": "undefined",
+            "max": 2,
+            "min": 0,
+            "type": "unsigned char",
+            "writable": false
         },
         "prop.pressurize_fail.base": {
             "bitsize": 1,
@@ -2153,6 +2209,22 @@
         "timing.mission_ct.num_lates": {
             "bitsize": 32,
             "flow_id": 32,
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
+        "timing.orbit_control_ct.avg_wait": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 120000.0,
+            "min": 0.0,
+            "type": "float",
+            "writable": false
+        },
+        "timing.orbit_control_ct.num_lates": {
+            "bitsize": 32,
+            "flow_id": "undefined",
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
