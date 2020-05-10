@@ -35,7 +35,7 @@ Gomspace::Gomspace(Gomspace::eps_hk_t *hk_data, Gomspace::eps_config_t *config_d
 #undef I2C_INITIALIZATION
 
 bool Gomspace::setup() {
-     gspace_config[0] =1;
+    gspace_config->ppt_mode=1;
     return I2CDevice::setup(); 
 }
 
