@@ -47,27 +47,39 @@ def create_radio_session_endpoint(radio_session):
     @app.route("/time", methods=["GET"])
     @swag_from("endpoint_configs/radio_session/time.yml")
     def get_time_left():
-        timer = radio_session.timer
-        if timer.is_alive():
-            return "timer running"
-            # return str(timer.time_left())
+        # This endpoint isn't working. It thinks that the timer.t is None.
+        # I don't understand threads :(
+        # Should I make the timer a global field???
+        timer = app.config["timer"]
+
+        alive = []
+        t = threading.Thread(target=timer.is_alive2, args=(alive,))
+        t.start()
+        print(alive) # Prints an empty list
+
+        if alive != [] and alive[0]==True:
+            return "Timer running"
         return "Timer not running"
 
     @app.route("/pause", methods=["GET"])
+    @swag_from("endpoint_configs/radio_session/pause.yml")
     def pause_timer():
-        timer = radio_session.timer
-        send_queue_duration = app.config["send_queue_duration"]
-        send_lockout_duration = app.config["send_lockout_duration"]
+        timer = app.config["timer"]
+        queue_duration = app.config["send_queue_duration"]
+        lockout_duration = app.config["send_lockout_duration"]
+
         if timer.is_alive():
-            if timer.run_time()<send_queue_duration-send_lockout_duration:
+            if timer.run_time()<queue_duration-lockout_duration:
                 timer.pause()
                 return "Paused"
             return "Unable to pause timer"
         return "No timer"
 
     @app.route("/resume", methods=["GET"])
+    @swag_from("endpoint_configs/radio_session/resume.yml")
     def resume_timer():
-        timer = radio_session.timer
+        timer = app.config["timer"]
+
         if timer.is_alive():
             if timer.resume():
                 return "Resumed"
@@ -82,40 +94,49 @@ def create_radio_session_endpoint(radio_session):
 
         uplink_console = app.config["uplink_console"]
         imei = app.config["imei"]
-        queued_uplink = app.config["queued_uplink"]
 
-        if queued_uplink is None:
-            # Get a list of the field and values 
-            fields, vals=list(), list()
+        # Check if an uplink is queued
+        if os.path.exists("uplink.json"):
+            # Organize the requested telemetry into a json object
+            requested_telem = {}
             for field_val in uplink:
-                fields.append(field_val["field"])
-                vals.append(field_val["value"])
+                requested_telem[field_val["field"]] = field_val["value"]
 
-            # Create a new uplink packet if there are no autonomous uplinks queued
-            success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+            # Get the queued uplink
+            with open('uplink.json', 'r') as telem_file:
+                queued_uplink = json.load(telem_file)
 
-            if not success:
-                return "Unable to send telemetry"
-
-            # Send the uplink immediately to Iridium
-            to = "fy56@cornell.edu" # data@sbd.iridium.com
-            sender = "pan.ssds.qlocate@gmail.com"
-            subject = imei
-            SendMessage(sender, to, subject, "", "", 'uplink.sbd')
-
-            # Remove uplink files/cleanup
-            os.remove("uplink.sbd") 
-            #os.remove("uplink.json")
-
-            return "Successfully sent telemetry to Iridium"
-
-        else:
-            # Edit the queued uplink.
-            queued_uplink.update(uplink)
+            # Add the requested telemetry to the queued uplink
             with open('uplink.json', 'w') as telem_file:
+                queued_uplink.update(requested_telem)
                 json.dump(queued_uplink, telem_file)
 
-            return "Successfully sent telemetry to radio session"
+            return "Added telemetry"
+        
+        # If there is no uplink queued, send the requested telemetry to Iridium immediately
+
+        fields, vals=list(), list()
+        for field_val in uplink:
+            fields.append(field_val["field"])
+            vals.append(field_val["value"])
+
+        # Create a new uplink packet if there are no autonomous uplinks queued
+        success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+
+        if not success:
+            return "Unable to send telemetry"
+
+        # Send the uplink immediately to Iridium
+        to = "fy56@cornell.edu" # data@sbd.iridium.com
+        sender = "pan.ssds.qlocate@gmail.com"
+        subject = imei
+        SendMessage(sender, to, subject, "", "", 'uplink.sbd')
+
+        # Remove uplink files/cleanup
+        os.remove("uplink.sbd") 
+        os.remove("uplink.json")
+
+        return "Successfully sent telemetry to Iridium"
 
     return app
 
