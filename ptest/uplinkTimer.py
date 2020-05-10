@@ -48,9 +48,7 @@ class UplinkTimer(object):
 
     def is_alive(self):
         '''
-        Check if the timer is running. Will set given 
-        alive variable to whether or not the timer
-        is running.
+        Check if the timer is running.
         '''
         self.timer_lock.acquire()
         if self.t is None:
