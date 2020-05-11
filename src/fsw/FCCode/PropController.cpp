@@ -584,6 +584,8 @@ bool PropState_Venting::can_enter() const
 
 unsigned int PropState_Venting::determine_faulted_tank()
 {
+    // If both tanks want to vent, then we determine who to vent by choosing
+    // the tank that we did not vent the last time that we vented.
     if (tank1_wants_to_vent() && tank2_wants_to_vent())
     {
         if (tank_choice == 1)
@@ -595,6 +597,7 @@ unsigned int PropState_Venting::determine_faulted_tank()
             return tank_choice = 1;
         }
     }
+    // Otherwise, only one of the tanks want to vent, so determine who that is.
     if (tank1_wants_to_vent())
     {
         return tank_choice = 1;
