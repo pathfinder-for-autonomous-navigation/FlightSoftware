@@ -283,9 +283,6 @@ void test_tank2_fault_while_tank1_vent()
     tf.step();
     // PropFaultHandler should shorten max cycles to 1
     TEST_ASSERT_EQUAL(1, tf.pc->max_venting_cycles.get());
-    // PropFaultHandler change cooling period := filling period
-    TEST_ASSERT_EQUAL(tf.pc->ctrl_cycles_per_filling_period.get(),
-                      tf.pc->ctrl_cycles_per_close_period.get());
 
     // Since the max_venting_cycles is only 1, Prop should go into handling_fault
     // However, we don't want to interrupt it when the valve is open, so we will wait
@@ -396,7 +393,9 @@ void test_all_faulted_sensors_broken_respect_disabled()
     assert_fault_state(true, tank2_temp_high_fault_f);
     assert_fault_state(false, overpressure_fault_f);
     tf.step();
-    // PropFaultHandler should order Prop to enter disabled
+    // PropFaultHandler should order Prop to enter disabled because after 20
+    // venting cycles, both the temperature faults on the tanks are still reporting
+    // high temperatures.
     check_state(prop_state_t::disabled);
     // Make sure that when PropFaultHandler does this, it also restores the old
     // max_venting_cycles

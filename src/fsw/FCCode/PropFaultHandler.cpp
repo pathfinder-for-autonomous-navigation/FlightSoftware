@@ -3,7 +3,6 @@
 //
 
 #include "prop_state_t.enum"
-#include "PropFaultHandler.h"
 #include "PropController.hpp"
 
 #if (defined(UNIT_TEST) && defined(DESKTOP))

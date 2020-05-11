@@ -32,7 +32,7 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       tank2_pressure_f("prop.tank2.pressure", Serializer<float>(0, 150, 4)),
       tank2_temp_f("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
       tank1_temp_f("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
-      num_prop_firings_f("prop.num_prop_firings", Serializer<unsigned int>(1 << 31)),
+      num_prop_firings_f("prop.num_prop_firings", Serializer<unsigned int>()),
 
       // We must trust the pressure sensor.
       pressurize_fail_fault_f("prop.pressurize_fail", 0),
@@ -146,20 +146,9 @@ void PropController::execute()
 
 void PropController::check_faults()
 {
-    if (is_tank2_overpressured())
-        overpressure_fault_f.signal();
-    else
-        overpressure_fault_f.unsignal();
-
-    if (is_tank2_temp_high())
-        tank2_temp_high_fault_f.signal();
-    else
-        tank2_temp_high_fault_f.unsignal();
-
-    if (is_tank1_temp_high())
-        tank1_temp_high_fault_f.signal();
-    else
-        tank1_temp_high_fault_f.unsignal();
+    overpressure_fault_f.evaluate(is_tank2_overpressured());
+    tank2_temp_high_fault_f.evaluate(is_tank2_temp_high());
+    tank1_temp_high_fault_f.evaluate(is_tank1_temp_high());
 }
 
 bool PropController::can_enter_state(prop_state_t desired_state) const
@@ -633,21 +622,22 @@ size_t PropState_Venting::select_valve_index()
 
 prop_state_t PropState_Venting::handle_out_of_cycles()
 {
-    DD("[-] PropState_Venting is out of cycles (but has not yet failed)\n");
-    // Return disabled if the current tank is the only tank that wants to vent
-    // and it is still faulted
-
-    // max_venting_cycles == 1 means that we were just venting both tanks
-    // so we should return to handling_fault
+    DD("[-] PropState_Venting has finished venting\n");
+    // If max_venting_cycles == 1, that means the PropFaultHandler has determined
+    // previously that both tanks want to vent. We automatically transition to
+    // handling_fault because we only vented for one cycle as oppose to 20.
     if (controller->max_venting_cycles.get() == 1)
         return prop_state_t::handling_fault;
 
-    //
+    // Return disabled if the current tank is the only tank that wants to vent
+    // and it is still faulted
     bool tank1_vented_but_tank2_is_faulted = tank_choice == 1 && tank2_wants_to_vent();
     bool tank2_vented_but_tank1_is_faulted = tank_choice == 2 && tank1_wants_to_vent();
     if (tank1_vented_but_tank2_is_faulted || tank2_vented_but_tank1_is_faulted)
         return prop_state_t::handling_fault;
 
+    // Go into disabled if we believe that the we have failed (vented for 20
+    // venting cycles and faults are still signaled)
     return prop_state_t::disabled;
 }
 
