@@ -30,6 +30,10 @@ function Battery() {
     Object.keys(this.state).forEach(function (k) {
         this.history[k] = [];
     }, this);
+    /*function addtoHistory(key){
+      console.log(this.state.key)
+
+    }*/
 
     setInterval(function () {
         this.updateState();
@@ -64,18 +68,21 @@ Battery.prototype.generateTelemetry = function () {
 
       if(typeof(this.state[id]) == 'object'){//if state is an object
 
-        var state = { timestamp: timestamp, id: id};
+        var telempoint = { timestamp: timestamp, id: id};
         for (const output in this.state[id]){
-          state[output] = this.state[id][output];
+          telempoint[output] = this.state[id][output];
         }
-        this.notify(state);
-        this.history[id].push(state);
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
 
       }else{// if state is a primitive type
-        var state = { timestamp: timestamp, value: this.state[id], id: id};
-        this.notify(state);
-        this.history[id].push(state);
+
+        var telempoint = { timestamp: timestamp, value: this.state[id], id: id};
+
+        this.notify(telempoint);
+        this.history[id].push(telempoint);
       }
+
     }, this);
 
 };

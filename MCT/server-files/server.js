@@ -1,12 +1,12 @@
 /**
  * Basic implementation of a history and realtime server.
  */
-
-
+var Battery = require('./battery-telemetry');
+//var DummySpacecraft = require('./dummy_spacecraft');
 var Spacecraft = require('./spacecraft');
 var RealtimeServer = require('./realtime-server');
 var HistoryServer = require('./history-server');
-var Battery = require('./battery-telemetry');
+
 
 var expressWs = require('express-ws');
 var express = require('express');
@@ -15,17 +15,13 @@ var app = require('express')();
 expressWs(app);
 
 if (process.argv[2] == "test") {
-    var battery = new Battery();
-    var realtimeServer = new RealtimeServer(battery);
-    var historyServer = new HistoryServer(battery);
+    var spacecraft = new Battery();
 }
 else {
     var spacecraft = new Spacecraft();
-    var realtimeServer = new RealtimeServer(spacecraft);
-    var historyServer = new HistoryServer(spacecraft);
 }
-
-
+var realtimeServer = new RealtimeServer(spacecraft);
+var historyServer = new HistoryServer(spacecraft);
 
 app.use('/realtime', realtimeServer);
 app.use('/history', historyServer);

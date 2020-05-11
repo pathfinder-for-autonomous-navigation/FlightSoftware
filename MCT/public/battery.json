@@ -1,3 +1,4 @@
+
 {
     "name": "Battery",
     "key": "gomspace",
@@ -14,6 +15,7 @@
                     "type": "unsigned char",
                     "writable": false,
                     "name": " Battery Mode",
+                    "key": "battmode",
                     "hints": {
                         "range": "1"
                     }
@@ -24,6 +26,7 @@
                     "type": "bool",
                     "writable": false,
                     "name": "Heater Mode",
+                    "key": "heater",
                     "hints": {
                         "range": "1"
                     }
@@ -36,6 +39,7 @@
                     "type": "unsigned char",
                     "writable": false,
                     "name": "PPT Mode",
+                    "key": "pptmode",
                     "hints": {
                         "range": "1"
                     }
@@ -63,6 +67,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Boot Time",
+                    "key": "counter_boot",
                     "hints": {
                         "range": "1"
                     }
@@ -75,6 +80,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Wdt i2c",
+                    "key": "counter_wdt_i2c",
                     "hints": {
                         "range": "1"
                     }
@@ -87,6 +93,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Wdt i2c Time Left",
+                    "key": "wdt_i2c_time_left",
                     "hints": {
                         "range": "1"
                     },
@@ -113,6 +120,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Reset command",
+                    "key": "counter_reset_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -123,6 +131,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Reboot",
+                    "key": "gs_reboot_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -133,6 +142,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Reset",
+                    "key": "gs_reset_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -143,6 +153,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Heater",
+                    "key": "heater_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -155,6 +166,7 @@
                     "type": "unsigned char",
                     "writable": true,
                     "name": "PPT Mode",
+                    "key": "pptmode_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -182,6 +194,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 1",
+                    "key": "output1",
                     "hints": {
                         "range": "1"
                     },
@@ -195,6 +208,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 2",
+                    "key": "output2",
                     "hints": {
                         "range": "1"
                     },
@@ -208,6 +222,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 3",
+                    "key": "output3",
                     "hints": {
                         "range": "1"
                     },
@@ -236,6 +251,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 1",
+                    "key": "output1",
                     "hints": {
                         "range": "1"
                     },
@@ -249,6 +265,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 2",
+                    "key": "output2",
                     "hints": {
                         "range": "1"
                     },
@@ -262,6 +279,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 3",
+                    "key": "output3",
                     "hints": {
                         "range": "1"
                     },
@@ -275,6 +293,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 4",
+                    "key": "output4",
                     "hints": {
                         "range": "1"
                     },
@@ -288,6 +307,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 5",
+                    "key": "output5",
                     "hints": {
                         "range": "1"
                     },
@@ -301,6 +321,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 6",
+                    "key": "output6",
                     "hints": {
                         "range": "1"
                     },
@@ -327,6 +348,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Get hk",
+                    "key": "get_hk",
                     "hints": {
                         "range": "1"
                     }
@@ -337,6 +359,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "override",
+                    "key": "override",
                     "hints": {
                         "range": "1"
                     }
@@ -349,6 +372,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "persistence",
+                    "key": "persistence",
                     "hints": {
                         "range": "1"
                     }
@@ -359,6 +383,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "suppress",
+                    "key": "suppress",
                     "hints": {
                         "range": "1"
                     }
@@ -369,6 +394,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "unsignal",
+                    "key": "unsignal",
                     "hints": {
                         "range": "1"
                     }
@@ -394,6 +420,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Low Battery",
+                    "key": "low_batt",
                     "hints": {
                         "range": "1"
                     }
@@ -404,6 +431,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
+                    "key": "override",
                     "hints": {
                         "range": "1"
                     }
@@ -416,6 +444,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Persistence",
+                    "key": "persistence",
                     "hints": {
                         "range": "1"
                     }
@@ -426,6 +455,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
+                    "key": "suppress",
                     "hints": {
                         "range": "1"
                     }
@@ -436,6 +466,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
+                    "key": "unsignal",
                     "hints": {
                         "range": "1"
                     }
@@ -461,6 +492,7 @@
                     "type": "bool",
                     "writable": false,
                     "name": "Output 1",
+                    "key": "output1",
                     "hints": {
                         "range": "1"
                     }
@@ -471,6 +503,7 @@
                     "type": "bool",
                     "writable": false,
                     "name": "Output 2",
+                    "key": "output2",
                     "hints": {
                         "range": "1"
                     }
@@ -481,6 +514,7 @@
                     "type": "bool",
                     "writable": false,
                     "name": "Output 3",
+                    "key": "output3",
                     "hints": {
                         "range": "1"
                     }
@@ -491,6 +525,7 @@
                     "type": "bool",
                     "writable": false,
                     "name": "Output 4",
+                    "key": "output4",
                     "hints": {
                         "range": "1"
                     }
@@ -501,6 +536,7 @@
                     "type": "bool",
                     "writable": false,
                     "name": "Output 5",
+                    "key": "output5",
                     "hints": {
                         "range": "1"
                     }
@@ -511,6 +547,7 @@
                     "type": "bool",
                     "writable": false,
                     "name": "Output 6",
+                    "key": "output6",
                     "hints": {
                         "range": "1"
                     }
@@ -536,6 +573,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Output 1",
+                    "key": "power_cycle_output1_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -546,6 +584,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Output 2",
+                    "key": "power_cycle_output2_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -556,6 +595,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Output 3",
+                    "key": "power_cycle_output3_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -566,6 +606,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Output 3",
+                    "key": "power_cycle_output4_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -576,6 +617,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Output 5",
+                    "key": "power_cycle_output5_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -586,6 +628,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Output 6",
+                    "key": "power_cycle_output6_cmd",
                     "hints": {
                         "range": "1"
                     }
@@ -613,6 +656,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Voltage 1",
+                    "key": "pv1_cmd",
                     "hints": {
                         "range": "1"
                     },
@@ -626,6 +670,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Voltage 2",
+                    "key": "pv2_cmd",
                     "hints": {
                         "range": "1"
                     },
@@ -639,6 +684,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Voltage 3",
+                    "key": "pv3_cmd",
                     "hints": {
                         "range": "1"
                     },
@@ -667,6 +713,7 @@
                     "type": "signed int",
                     "writable": false,
                     "name": "Output 1",
+                    "key": "output1",
                     "hints": {
                         "range": "1"
                     },
@@ -680,6 +727,7 @@
                     "type": "signed int",
                     "writable": false,
                     "name": "Output 2",
+                    "key": "output2",
                     "hints": {
                         "range": "1"
                     },
@@ -693,6 +741,7 @@
                     "type": "signed int",
                     "writable": false,
                     "name": "Output 3",
+                    "key": "output3",
                     "hints": {
                         "range": "1"
                     },
@@ -706,6 +755,7 @@
                     "type": "signed int",
                     "writable": false,
                     "name": "Output 4",
+                    "key": "output4",
                     "hints": {
                         "range": "1"
                     },
@@ -734,6 +784,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 1",
+                    "key": "output1",
                     "hints": {
                         "range": "1"
                     },
@@ -747,6 +798,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 2",
+                    "key": "output2",
                     "hints": {
                         "range": "1"
                     },
@@ -760,6 +812,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Output 3",
+                    "key": "output3",
                     "hints": {
                         "range": "1"
                     },
@@ -787,6 +840,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Level",
+                    "key": "value",
                     "hints": {
                         "range": "1"
                     },
@@ -815,6 +869,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Threshold",
+                    "key": "value",
                     "hints": {
                         "range": "1"
                     },
@@ -843,6 +898,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Current",
+                    "key": "value",
                     "hints": {
                         "range": "1"
                     },
@@ -871,6 +927,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Current",
+                    "key": "value",
                     "hints": {
                         "range": "1"
                     },
@@ -899,6 +956,7 @@
                     "type": "unsigned char",
                     "writable": false,
                     "name": "Cause",
+                    "key": "value",
                     "hints": {
                         "range": "1"
                     }

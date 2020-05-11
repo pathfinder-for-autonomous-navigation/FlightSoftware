@@ -15,7 +15,11 @@ function RealtimeTelemetryPlugin() {
 
         var provider = {
             supportsSubscribe: function (domainObject) {
-                return true;
+              if(domainObject.type === 'bat.telemetry'){
+                return domainObject.type === 'bat.telemetry';
+              }else{
+                return domainObject.type == 'sat.telemetry';
+              }
             },
             subscribe: function (domainObject, callback) {
                 listener[domainObject.identifier.key] = callback;

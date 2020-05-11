@@ -3,7 +3,9 @@
 */
 const url = require('url');
 var request = require('request');
-const axios = require('axios');
+const axios = require('axios')
+
+
 
 function Spacecraft() {
     this.state = {
@@ -15,6 +17,7 @@ function Spacecraft() {
     Object.keys(this.state).forEach(function (k) {
         this.history[k] = [];
     }, this);
+    console.log(this.history);
 
     setInterval(function () {
         this.updateState();
@@ -38,7 +41,7 @@ axios.post('http://localhost:5000/telemetry', {
   value: 15
 })
 .catch((error) => {
-  console.error("error in http POST")
+
 })
 //initializes global variable value to hold the numerical value of gsw telemetry
 var value = "0";
@@ -48,14 +51,18 @@ Spacecraft.prototype.updateState = function () {
  */
 /**NOTE: if console is printing out error code that means gsw server has not been
 started correctly **/
-
-  const myurl = url.parse('http://localhost:5000/search-es');
-  var propertiesObject = { index:'statefield_report_123', field:'telemetry' };
-  request({url:myurl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
-    if(err) { console.log("error in http GET"); return; }
-    value = body;
-  });
-
+axios.get('http://localhost:5000/search-es',{
+  params:{
+    index:'statefield_report_123',
+    field: 'telemetry'
+    }
+})
+.then( function (response) {
+  value = response.data;
+})
+.catch( function (error){
+  console.log("error in http GET");
+})
   this.state["incoming"] = parseInt(value,10);
   this.state["batt.lvl"] = Math.max(0,this.state["batt.lvl"] - 1);
 };
