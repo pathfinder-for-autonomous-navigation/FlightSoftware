@@ -8,7 +8,7 @@
             "values": [
                 {
                     "key": "value",
-                    "name": "Battery Level",
+                    "name": "Value",
                     "units": "Watts",
                     "format": "float",
                     "min": 0,
