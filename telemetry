@@ -1747,7 +1747,7 @@
         "prop.num_prop_firings": {
             "bitsize": 32,
             "flow_id": "undefined",
-            "max": 2147483648,
+            "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
             "writable": false
