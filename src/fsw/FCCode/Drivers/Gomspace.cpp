@@ -424,8 +424,6 @@ bool Gomspace::config_get() {
         for (unsigned char i = 0; i < 3; i++) {
             gspace_config->vboost[i] = __bswap_16(gspace_config->vboost[i]);
         }
-        gspace_config->ppt_mode =
-                __bswap_16(gspace_config->ppt_mode);
         return true;
     }
     #else
