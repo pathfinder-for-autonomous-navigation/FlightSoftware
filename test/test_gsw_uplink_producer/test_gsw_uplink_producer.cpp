@@ -3,7 +3,7 @@
 #define DEBUG
 #include <gsw/parsers/src/UplinkProducer.h>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <fstream>
 #include <json.hpp>
 

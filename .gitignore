@@ -5,6 +5,8 @@ geomag_wrapper.mexmaci64
 geograv_wrapper.mexa64
 geomag_wrapper.mexa64
 
+src/uploaded_flow_data.cpp
+
 test/output_export.cpp
 tmp
 # OS Generated .DS_store files

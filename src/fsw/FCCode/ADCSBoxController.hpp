@@ -33,9 +33,13 @@ public:
 protected:
     /**
      * @brief Command to get from mission_manager
-     * 
      */
     const WritableStateField<unsigned char>* adcs_state_fp;
+
+    /**
+     * @brief DCDC control. Disables/enables wheels.
+     */
+    WritableStateField<bool>* adcs_dcdc_fp;
 
     /**
      * @brief RWA command fields
@@ -71,9 +75,7 @@ protected:
     const WritableStateField<float>* imu_mag_filter_fp;
     const WritableStateField<float>* imu_gyr_filter_fp;
     const WritableStateField<float>* imu_gyr_temp_filter_fp;
-    const WritableStateField<float>* imu_gyr_temp_kp_fp;
-    const WritableStateField<float>* imu_gyr_temp_ki_fp;
-    const WritableStateField<float>* imu_gyr_temp_kd_fp;
+    const WritableStateField<unsigned char>* imu_gyr_temp_pwm_fp;
     const WritableStateField<float>* imu_gyr_temp_desired_fp;
 
     /**

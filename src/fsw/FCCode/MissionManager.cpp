@@ -1,8 +1,9 @@
 #include "MissionManager.hpp"
-#include <lin.hpp>
+#include <lin/core.hpp>
 #include <cmath>
 #include <adcs/constants.hpp>
 #include <common/constant_tracker.hpp>
+#include <gnc/constants.hpp>
 #include "SimpleFaultHandler.hpp"
 
 // Declare static storage for constexpr variables
@@ -49,15 +50,13 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
-    SimpleFaultHandler::set_mission_state_ptr(&mission_state_f);
 
-    adcs_paired_fp = find_writable_field<bool>("adcs.paired", __FILE__, __LINE__);
-    adcs_ang_momentum_fp = find_internal_field<lin::Vector3f>("attitude_estimator.h_body", __FILE__, __LINE__);
+    adcs_w_body_est_fp = find_readable_field<lin::Vector3f>("attitude_estimator.w_body", __FILE__, __LINE__);
 
     radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
 
-    prop_state_fp = find_readable_field<unsigned char>("prop.state", __FILE__, __LINE__);
+    prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
 
     propagated_baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
 
@@ -65,20 +64,15 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
-    low_batt_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("gomspace.low_batt.base", __FILE__, __LINE__));
-    adcs_functional_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.functional_fault.base", __FILE__, __LINE__));
-    wheel1_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__));
-    wheel2_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__));
-    wheel3_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__));
-    wheel_pot_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__));
-    failed_pressurize_fp = static_cast<Fault*>(
-            find_writable_field<bool>("prop.failed_pressurize.base", __FILE__, __LINE__));
+    low_batt_fault_fp = find_fault("gomspace.low_batt.base", __FILE__, __LINE__);
+    adcs_functional_fault_fp = find_fault("adcs_monitor.functional_fault.base", __FILE__, __LINE__);
+    wheel1_adc_fault_fp = find_fault("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__);
+    wheel2_adc_fault_fp = find_fault("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__);
+    wheel3_adc_fault_fp = find_fault("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__);
+    wheel_pot_fault_fp = find_fault("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__);
+    pressurize_fail_fp = find_fault("prop.pressurize_fail.base", __FILE__, __LINE__);
+
+    sph_dcdc_fp = find_writable_field<bool>("dcdc.SpikeDock_cmd", __FILE__, __LINE__);
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);
@@ -86,7 +80,7 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     docking_trigger_dist_f.set(initial_docking_trigger_dist);
     max_radio_silence_duration_f.set(initial_max_radio_silence_duration);
     docking_timeout_limit_f.set(initial_docking_timeout_limit);
-    transition_to_state(mission_state_t::startup,
+    transition_to(mission_state_t::startup,
         adcs_state_t::startup,
         prop_state_t::disabled); // "Starting" transition
     docking_config_cmd_f.set(true);
@@ -104,13 +98,13 @@ void MissionManager::execute() {
     if (fault_response == fault_response_t::safehold &&
         state != mission_state_t::safehold)
     {
-        transition_to_state(mission_state_t::safehold, adcs_state_t::zero_torque, prop_state_t::disabled);
+        transition_to(mission_state_t::safehold, adcs_state_t::zero_torque, prop_state_t::disabled);
         return;
     }
     else if (fault_response == fault_response_t::standby &&
              state != mission_state_t::safehold && state != mission_state_t::standby) 
     {
-        transition_to_state(mission_state_t::standby, adcs_state_t::point_standby, prop_state_t::idle);
+        transition_to(mission_state_t::standby, adcs_state_t::point_standby, prop_state_t::idle);
         return;
     }
 
@@ -130,7 +124,7 @@ void MissionManager::execute() {
         case mission_state_t::manual:                     dispatch_manual();                     break;
         default:
             printf(debug_severity::error, "Master state not defined: %d\n", static_cast<unsigned char>(state));
-            transition_to_state(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
+            transition_to(mission_state_t::safehold, adcs_state_t::startup, prop_state_t::disabled);
             break;
     }
 }
@@ -157,12 +151,13 @@ void MissionManager::dispatch_startup() {
     // initialization hold, otherwise detumble.
     set(radio_state_t::config);
     if (check_adcs_hardware_faults()) {
-        transition_to_state(mission_state_t::initialization_hold,
+        transition_to(mission_state_t::initialization_hold,
             adcs_state_t::detumble,
             prop_state_t::disabled);
     }
     else {
-        transition_to_state(mission_state_t::detumble,
+        is_deployed_f.set(true);
+        transition_to(mission_state_t::detumble,
             adcs_state_t::detumble,
             prop_state_t::disabled);
     }
@@ -170,11 +165,11 @@ void MissionManager::dispatch_startup() {
 
 void MissionManager::dispatch_detumble() {
     // Detumble until satellite angular rate is below an allowable threshold
-    const float momentum = lin::norm(adcs_ang_momentum_fp->get());
+    const float momentum = lin::fro(gnc::constant::J_sat * adcs_w_body_est_fp->get());
     const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor_f.get();
-    if (momentum <= threshold)
+    if (momentum <= threshold * threshold) // Save a sqrt call and use fro norm
     {
-        transition_to_state(mission_state_t::standby,
+        transition_to(mission_state_t::standby,
             adcs_state_t::point_standby,
             prop_state_t::idle);
     }
@@ -190,14 +185,12 @@ void MissionManager::dispatch_standby() {
         static_cast<sat_designation_t>(sat_designation_f.get());
 
     if (sat_designation == sat_designation_t::follower) {
-        adcs_paired_fp->set(false);
-        transition_to_state(mission_state_t::follower,
+        transition_to(mission_state_t::follower,
             adcs_state_t::point_standby,
             prop_state_t::idle);
     }
     else if (sat_designation == sat_designation_t::leader) {
-        adcs_paired_fp->set(false);
-        transition_to_state(mission_state_t::leader,
+        transition_to(mission_state_t::leader,
             adcs_state_t::point_standby,
             prop_state_t::idle);
     }
@@ -208,12 +201,12 @@ void MissionManager::dispatch_standby() {
 
 void MissionManager::dispatch_follower() {
     if (distance_to_other_sat() < close_approach_trigger_dist_f.get()) {
-        transition_to_state(mission_state_t::follower_close_approach,
+        transition_to(mission_state_t::follower_close_approach,
             adcs_state_t::point_docking);
     }
     else if (too_long_since_last_comms()) {
         set(sat_designation_t::undecided);
-        transition_to_state(mission_state_t::standby,
+        transition_to(mission_state_t::standby,
             adcs_state_t::point_standby,
             prop_state_t::idle);
     }
@@ -221,13 +214,13 @@ void MissionManager::dispatch_follower() {
 
 void MissionManager::dispatch_leader() {
     if (distance_to_other_sat() < close_approach_trigger_dist_f.get()) {
-        transition_to_state(mission_state_t::leader_close_approach,
+        transition_to(mission_state_t::leader_close_approach,
             adcs_state_t::point_docking,
             prop_state_t::disabled);
     }
     else if (too_long_since_last_comms()) {
         set(sat_designation_t::undecided);
-        transition_to_state(mission_state_t::standby,
+        transition_to(mission_state_t::standby,
             adcs_state_t::point_standby,
             prop_state_t::idle);
     }
@@ -237,13 +230,13 @@ void MissionManager::dispatch_follower_close_approach() {
     docking_config_cmd_f.set(true);
 
     if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
-        transition_to_state(mission_state_t::docking,
+        transition_to(mission_state_t::docking,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
     }
     else if (too_long_since_last_comms()) {
         set(sat_designation_t::undecided);
-        transition_to_state(mission_state_t::standby,
+        transition_to(mission_state_t::standby,
             adcs_state_t::point_standby,
             prop_state_t::idle);
     }
@@ -253,33 +246,45 @@ void MissionManager::dispatch_leader_close_approach() {
     docking_config_cmd_f.set(true);
 
     if (distance_to_other_sat() < docking_trigger_dist_f.get()) {
-        transition_to_state(mission_state_t::docking,
+        transition_to(mission_state_t::docking,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
     }
     else if (too_long_since_last_comms()) {
         set(sat_designation_t::undecided);
-        transition_to_state(mission_state_t::standby,
+        transition_to(mission_state_t::standby,
             adcs_state_t::point_standby,
             prop_state_t::idle);
     }
 }
 
+/**
+ * @brief This flag checks if we've set the state field called docking_entry_ccno,
+ * which indicates the control cycle # at which we entered the docking state.
+ * This state field is used by PiksiFaultHandler to know if we've been lacking
+ * CDGPS for too long.
+ */
+static bool have_set_docking_entry_ccno = false;
+
 void MissionManager::dispatch_docking() {
     docking_config_cmd_f.set(true);
-    if (enter_docking_cycle_f.get()==0) { enter_docking_cycle_f.set(control_cycle_count); }
+    if (!have_set_docking_entry_ccno) {
+        enter_docking_cycle_f.set(control_cycle_count);
+        have_set_docking_entry_ccno = true;
+    }
+
     if (docked_fp->get()){
-        enter_docking_cycle_f.set(0);
-        transition_to_state(mission_state_t::docked,
+        have_set_docking_entry_ccno = false;
+        transition_to(mission_state_t::docked,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
 
         // Mission has ended, so remove "follower" and "leader" designations.
         set(sat_designation_t::undecided);
     }
-    else if(too_long_in_docking() && !docked_fp->get()) {
-        enter_docking_cycle_f.set(0);
-        transition_to_state(mission_state_t::standby,
+    else if(too_long_in_docking()) {
+        have_set_docking_entry_ccno = false;
+        transition_to(mission_state_t::standby,
             adcs_state_t::startup,
             prop_state_t::disabled);
     }
@@ -341,17 +346,26 @@ void MissionManager::set(sat_designation_t designation) {
     sat_designation_f.set(static_cast<unsigned char>(designation));
 }
 
-void MissionManager::transition_to_state(mission_state_t mission_state,
+void MissionManager::transition_to(mission_state_t mission_state,
         adcs_state_t adcs_state)
 {
     set(mission_state);
     set(adcs_state);
 }
 
-void MissionManager::transition_to_state(mission_state_t mission_state,
+void MissionManager::transition_to(mission_state_t mission_state,
         adcs_state_t adcs_state,
         prop_state_t prop_state)
 {
+    if (prop_state == prop_state_t::disabled
+        && mission_state != mission_state_t::docking)
+    {
+        sph_dcdc_fp->set(false);
+    }
+    else {
+        sph_dcdc_fp->set(true);
+    }
+
     set(mission_state);
     set(adcs_state);
     set(prop_state);

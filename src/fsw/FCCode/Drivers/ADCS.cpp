@@ -161,22 +161,8 @@ void float_decomp(const float input, unsigned char* temp){
     *(float*)(temp) = input;
 }
 
-void ADCS::set_imu_gyr_temp_kp(const float kp){
-    unsigned char cmd[4];
-    float_decomp(kp, cmd);
-    i2c_write_to_subaddr(adcs::IMU_GYR_TEMP_KP,cmd,4);
-}
-
-void ADCS::set_imu_gyr_temp_ki(const float ki){
-    unsigned char cmd[4];
-    float_decomp(ki, cmd);
-    i2c_write_to_subaddr(adcs::IMU_GYR_TEMP_KI,cmd,4);
-}
-
-void ADCS::set_imu_gyr_temp_kd(const float kd){
-    unsigned char cmd[4];
-    float_decomp(kd, cmd);
-    i2c_write_to_subaddr(adcs::IMU_GYR_TEMP_KD,cmd,4);
+void ADCS::set_imu_gyr_temp_pwm(const unsigned char pwm){
+    i2c_write_to_subaddr(adcs::IMU_GYR_TEMP_PWM, pwm);
 }
 
 void ADCS::set_imu_gyr_temp_desired(const float desired){
@@ -240,7 +226,7 @@ void ADCS::get_rwa(std::array<float, 3>* rwa_speed_rd, std::array<float, 3>* rwa
         unsigned short a = readin[2*i+1+6] << 8;
         unsigned short b = 0xFF & readin[2*i+6];
         unsigned short c = a | b;
-        (*rwa_ramp_rd)[i] = fp(c,adcs::rwa::min_torque,adcs::rwa::max_torque);
+        (*rwa_ramp_rd)[i] = fp(c,adcs::rwa::min_ramp_rd, adcs::rwa::max_ramp_rd);
     }
 }
 

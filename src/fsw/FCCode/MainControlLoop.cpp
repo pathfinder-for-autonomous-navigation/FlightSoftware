@@ -42,12 +42,15 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       dcdc_controller(registry, dcdc_controller_offset, dcdc),
       eeprom_controller(registry, eeprom_controller_offset),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
+      prop_controller(registry, prop_controller_offset),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
       adcs_commander(registry, adcs_commander_offset), // needs inputs from attitude computer
-      adcs_box_controller(registry, adcs_box_controller_offset, adcs)
+      adcs_box_controller(registry, adcs_box_controller_offset, adcs),
+      orbit_controller(registry, orbit_controller_offset)
 {
     docking_controller.init();
+    orbit_controller.init();
 
     //setup I2C bus for Flight Controller
     #ifndef DESKTOP
@@ -70,10 +73,12 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     // Since all telemetry fields have been added to the registry, initialize flows
     downlink_producer.init_flows(flow_data);
 
-    // Temporarily disable fault handling until it's better tested
-    WritableStateField<bool>* fault_handler_enabled_fp =
-        find_writable_field<bool>("fault_handler.enabled", __FILE__, __LINE__);
-    fault_handler_enabled_fp->set(false);
+    #ifndef FLIGHT
+    #ifndef DESKTOP
+        // Allow for PTest testing to occur in a controlled way.
+        while(!Serial) {}
+    #endif
+    #endif
 }
 
 void MainControlLoop::execute() {
@@ -102,6 +107,8 @@ void MainControlLoop::execute() {
     attitude_computer.execute_on_time();
     adcs_commander.execute_on_time();
     adcs_box_controller.execute_on_time();
+    orbit_controller.execute_on_time();
+    prop_controller.execute_on_time();
     downlink_producer.execute_on_time();
     quake_manager.execute_on_time();
     docking_controller.execute_on_time();

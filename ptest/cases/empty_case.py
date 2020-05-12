@@ -1,15 +1,8 @@
 # Empty test case. Gets cycle count purely for diagnostic purposes
-from .base import FlexibleCase
+from .base import SingleSatOnlyCase
+from .utils import Enums
 
-class EmptyCase(FlexibleCase):
-    def setup_case_singlesat(self):
-        if(self.sim.flight_controller is not None):
-            self.sim.flight_controller.write_state("pan.state", self.mission_states.get_by_name("manual"))
-
-    def setup_case_fullmission(self):
-        self.sim.flight_controller_follower.write_state("pan.state", self.mission_states.get_by_name("manual"))
-        self.sim.flight_controller_leader.write_state("pan.state", self.mission_states.get_by_name("manual"))
-
+class EmptyCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
         self.sim.cycle_no = self.sim.flight_controller.read_state("pan.cycle_no")
         self.finish()
@@ -20,7 +13,14 @@ class EmptyCase(FlexibleCase):
         self.sim.cycle_no_leader = self.sim.flight_controller_leader.read_state("pan.cycle_no")
         self.finish()
 
-class EmptySimCase(EmptyCase):
+class EmptySimCase(SingleSatOnlyCase):
     @property
     def sim_duration(self):
         return float("inf")
+
+class NothingCase(SingleSatOnlyCase):
+    def setup_case_singlesat(self):
+        pass
+
+    def run_case_singlesat(self):
+        self.finish()

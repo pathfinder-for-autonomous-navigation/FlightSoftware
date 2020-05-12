@@ -1,7 +1,6 @@
 from .base import SingleSatOnlyCase
 
 class DCDCCheckoutCase(SingleSatOnlyCase):
-
     @property
     def adcs_cmd(self): 
         return self.sim.flight_controller.read_state("dcdc.ADCSMotor_cmd")
@@ -45,12 +44,6 @@ class DCDCCheckoutCase(SingleSatOnlyCase):
     def reset_cmd(self, value): 
         assert(value == "true" or value == "false")
         self.sim.flight_controller.write_state("dcdc.reset_cmd", value)
-
-    def setup_case_singlesat(self):
-        self.sim.flight_controller.write_state(
-            "pan.state", 11)  # Manual state
-        self.run_case_singlesat()
-        self.logger.put("DCDC cases finished.")
 
     def run_case_singlesat(self):
         self.sim.cycle_no = self.sim.flight_controller.read_state("pan.cycle_no")

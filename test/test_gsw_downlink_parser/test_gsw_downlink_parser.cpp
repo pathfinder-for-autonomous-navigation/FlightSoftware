@@ -1,5 +1,5 @@
 #include "DownlinkParserMock.hpp"
-#include <unity.h>
+#include "../custom_assertions.hpp"
 #include <fstream>
 #include "../StateFieldRegistryMock.hpp"
 

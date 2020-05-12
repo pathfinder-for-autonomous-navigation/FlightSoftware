@@ -3,13 +3,9 @@
 # constants and with changes to the fields from ground.
 
 from .base import SingleSatOnlyCase
+from .utils import Enums
 
 class DockingCheckoutCase(SingleSatOnlyCase):
-
-    def setup_case_singlesat(self):
-        self.sim.flight_controller.write_state(
-            "pan.state", self.mission_states.get_by_name("manual"))
-
     def str_to_bool(self, str):
         if str == "true":
             return True

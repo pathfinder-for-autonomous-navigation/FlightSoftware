@@ -25,7 +25,7 @@
 Devices::ADCS adcs_d(Wire, Devices::ADCS::ADDRESS);
 
 #include <string>
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 // tests have passed where this is 10, try increment higher if not passing
 constexpr static unsigned int wait_for_ADCSC = 10;

@@ -20,9 +20,11 @@
 #ifndef DESKTOP
 #include <Arduino.h>
 #endif
-namespace Devices {
-class Tank;
-/**
+namespace Devices
+{
+    class Tank;
+
+    /**
  * PropulsionSystem class defines the interface for the propulsion system, which 
  * consists of an inner tank, Tank1, and the (outer) thrust tank, Tank2. 
  * This driver provides functionality for opening and closing valves on both tanks,
@@ -88,250 +90,263 @@ class Tank;
  **/
 
 #define PropulsionSystem Devices::_PropulsionSystem::Instance()
-class _PropulsionSystem : public Device {
-    _PropulsionSystem();
-public:
-    inline static _PropulsionSystem& Instance()
+    class _PropulsionSystem : public Device
     {
-        static _PropulsionSystem Instance;
-        return Instance;
-    }
+        _PropulsionSystem();
+
+    public:
+        inline static _PropulsionSystem &Instance()
+        {
+            static _PropulsionSystem Instance;
+            return Instance;
+        }
+        /**
+         * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
+         * @return True if successfully setup both tank1 and tank2 and all pins
+         */
+        bool setup() override;
+        /**
+         * @brief Resets all runtime (transient) values to their default values
+         * 
+         * EFFECTS:
+         *  - Shuts off all valves in both tank1 and tank2 immediately 
+         *  - Clears tank2 schedule 
+         *  - Disables tank2 IntervalTimer
+         */
+        void reset() override;
+
+        /**
+         * @brief Turns on IntervalTimer thrust_value_loop_timer, causes an interrupt
+         * every 3 ms
+         * @return True if tank2 will start firing right now.
+         * 
+         */
+        bool start_firing();
+
+        /**
+         * @brief Turns off IntervalTimer (disables thrust_valve_loop_timer interrupts)
+         * 
+         * EFFECTS:
+         *  - Ends tank2 IntervalTimer
+         *  - Closes all tank2 valves
+         */
+        void disable() override;
+
+        /**
+         * @brief 
+         */
+        bool is_functional() override;
+
+        /**
+         * @brief Sets the firing schedule for tank 2. Does not enable tank2 to
+         * fire. To do that, call start_firing
+         * 
+         * Requires:
+         *  - IntervalTimer is currently disabled
+         *  - All valve1, ..., valve4 values less than 1000 (1 s)
+         * @return True if the requested schedule was successfully set
+         */
+        static bool set_schedule(
+            uint32_t valve1,
+            uint32_t valve2,
+            uint32_t valve3,
+            uint32_t valve4);
+
+        /**
+         * @brief clears the Tank2 schedule only if IntervalTimer is off
+         */
+        static bool clear_schedule();
+
+        /**
+         * @brief opens the valve specified by valve_idx in the specified tank
+         * */
+        static bool open_valve(Tank &tank, size_t valve_idx);
+
+        /**
+         * @brief closes the valve specified by valve_idx in the specified tank
+         */
+        static void close_valve(Tank &tank, size_t valve_idx);
+
+        inline static bool is_firing()
+        {
+            return is_interval_enabled;
+        }
+
+        /**
+         * @brief the function that is ran at each interrupt when the IntervalTimer
+         * is enabled
+         * Valves may be closed at most 3 ms early. 
+         * When all valves have fired, all entries of tank2 schedule will be 0
+         */
+        static void thrust_valve_loop();
+
+        /**
+         * @brief true if tank2's IntervalTimer is on (tank2 is scheduled to fire)
+         */
+        static bool is_interval_enabled;
+        friend class PropController;
+    };
+
     /**
-     * @brief Enables INPUT/OUTPUT on the valve pins and sensor pins of tank1 and tank2
-     * @return True if successfully setup both tank1 and tank2 and all pins
-     */
-    bool setup() override;
-    /**
-     * @brief Resets all runtime (transient) values to their default values
+     * Tank represents a tank in the PropulsionSystem. Public methods of this class
+     * may not change its own internal state (side-effects)
      * 
-     * EFFECTS:
-     *  - Shuts off all valves in both tank1 and tank2 immediately 
-     *  - Clears tank2 schedule 
-     *  - Disables tank2 IntervalTimer
      */
-    void reset() override;
-
-    /**
-     * @brief Turns on IntervalTimer thrust_value_loop_timer, causes an interrupt
-     * every 3 ms
-     * @return True if tank2 will start firing right now.
-     * 
-     */
-    bool start_firing();
-
-    /**
-     * @brief Turns off IntervalTimer (disables thrust_valve_loop_timer interrupts)
-     * 
-     * EFFECTS:
-     *  - Ends tank2 IntervalTimer
-     *  - Closes all tank2 valves
-     */
-    void disable() override;
-
-    /**
-     * @brief 
-     */
-    bool is_functional() override;
-
-    /**
-     * @brief Sets the firing schedule for tank 2. Does not enable tank2 to
-     * fire. To do that, call start_firing
-     * 
-     * Requires:
-     *  - IntervalTimer is currently disabled
-     *  - All valve1, ..., valve4 values less than 1000 (1 s)
-     * @return True if the requested schedule was successfully set
-     */
-    static bool set_schedule(
-        uint32_t valve1, 
-        uint32_t valve2, 
-        uint32_t valve3, 
-        uint32_t valve4);
-
-    /**
-     * @brief clears the Tank2 schedule only if IntervalTimer is off
-     */
-    static bool clear_schedule();
-
-    /**
-     * @brief opens the valve specified by valve_idx in the specified tank
-     * */
-    static bool open_valve( Tank& tank, size_t valve_idx);
-
-    /**
-     * @brief closes the valve specified by valve_idx in the specified tank
-     */
-    static void close_valve( Tank& tank, size_t valve_idx);
-
-    inline static bool is_firing()
+    class Tank
     {
-        return is_interval_enabled;
-    }
-    
-    /**
-     * @brief the function that is ran at each interrupt when the IntervalTimer
-     * is enabled
-     * Valves may be closed at most 3 ms early. 
-     * When all valves have fired, all entries of tank2 schedule will be 0
-     */
-    static void thrust_valve_loop();
+    public:
+        Tank();
 
-    /**
-     * @brief true if tank2's IntervalTimer is on (tank2 is scheduled to fire)
-     */
-    static bool is_interval_enabled;
-    friend class PropController;
-};
+        /**
+         * @brief (Analog) reads the temperature sensor for this tank and 
+         * returns its value.
+         */
+        int get_temp() const;
 
-/**
- * Tank represents a tank in the PropulsionSystem. Public methods of this class
- * may not change its own internal state (side-effects)
- * 
- */
-class Tank {
-public:
-    Tank();
+        /**
+         * @brief Returns true if the valve is open
+         * 
+         * (Digital) reads the pin for the specified valve and returns true
+         * if that pin is HIGH
+         */
+        bool is_valve_open(size_t valve_idx) const;
 
-    /**
-     * @brief (Analog) reads the temperature sensor for this tank and 
-     * returns its value.
-     */
-    int get_temp() const;
+        /**
+         * @brief Enables valve INPUT/OUTPUT on valve and sensor pins
+         */
+        void setup();
 
-    /**
-     * @brief Returns true if the valve is open
-     * 
-     * (Digital) reads the pin for the specified valve and returns true
-     * if that pin is HIGH
-     */
-    bool is_valve_open(size_t valve_idx) const;
+        /**
+         * @brief Closes all valves immediately
+         */
+        void close_all_valves();
 
-    /**
-     * @brief Enables valve INPUT/OUTPUT on valve and sensor pins
-     */
-    void setup();
+        size_t num_valves;
+        // pin number of the temperature sensor
+        uint8_t temp_sensor_pin;
+        // mapping of physical GPIO pin #s (values) to logical pin #s
+        uint8_t valve_pins[4];
+        // true if the valve is opened
+        bool is_valve_opened[4];
 
-    /**
-     * @brief Closes all valves immediately
-     */
-    void close_all_valves();
+        // These constants are from the nonlinear regression for computing tank temperature
+        // T = A * ln(R)^EXP + B
+        // T is temperature, R is resistance
+        TRACKED_CONSTANT_SC(double, temp_a, -35126.92396);
+        TRACKED_CONSTANT_SC(double, temp_exp, 0.005);
+        TRACKED_CONSTANT_SC(double, temp_b, 35493.23411);
 
-    size_t num_valves;
-    // pin number of the temperature sensor
-    uint8_t temp_sensor_pin;
-    // mapping of physical GPIO pin #s (values) to logical pin #s
-    uint8_t valve_pins[4];
-    // true if the valve is opened
-    bool is_valve_opened[4];
-
-    // These constants are from the nonlinear regression for computing tank temperature
-    // T = A * ln(R)^EXP + B
-    // T is temperature, R is resistance
-    TRACKED_CONSTANT_SC(double, temp_a, -35126.92396);
-    TRACKED_CONSTANT_SC(double, temp_exp, 0.005);
-    TRACKED_CONSTANT_SC(double, temp_b, 35493.23411);
-
-    // Minimum and maximum temperature constants permitted by the regression
-    // These values are used to clamp voltage readings close to 0 and 3.3 V
-    TRACKED_CONSTANT_SC(int, tank_temp_min, -55);
-    TRACKED_CONSTANT_SC(int, tank_temp_max, 150);
+        // Minimum and maximum temperature constants permitted by the regression
+        // These values are used to clamp voltage readings close to 0 and 3.3 V
+        TRACKED_CONSTANT_SC(int, tank_temp_min, -55);
+        TRACKED_CONSTANT_SC(int, tank_temp_max, 150);
 
 #ifdef DESKTOP
-    unsigned int* p_fake_temp_read;
+        virtual int get_fake_temp_analog() const = 0;
 #endif
-
-
-    friend class _PropulsionSystem;
-};
+        friend class _PropulsionSystem;
+    };
 
 #define Tank1 Devices::_Tank1::Instance()
-/**
- * Tank1 represents the inner tank in the Propulsion System
- * valve 0 - main intertank valve
- * Valve 1 - backup intertank valve
- */
-class _Tank1 : public Tank {
-    _Tank1();
-public:
-    inline static _Tank1& Instance()
+    /**
+     * Tank1 represents the inner tank in the Propulsion System
+     * valve 0 - main intertank valve
+     * Valve 1 - backup intertank valve
+     */
+    class _Tank1 : public Tank
     {
-        static _Tank1 Instance;
-        return  Instance;
-    }
-    TRACKED_CONSTANT_SC(uint8_t, valve_primary_pin, 27);
-    TRACKED_CONSTANT_SC(uint8_t, valve_backup_pin, 28);
-    TRACKED_CONSTANT_SC(uint8_t, tank1_temp_sensor_pin, 21);
+        _Tank1();
+
+    public:
+        inline static _Tank1 &Instance()
+        {
+            static _Tank1 Instance;
+            return Instance;
+        }
+        TRACKED_CONSTANT_SC(uint8_t, valve_primary_pin, 27);
+        TRACKED_CONSTANT_SC(uint8_t, valve_backup_pin, 28);
+        TRACKED_CONSTANT_SC(uint8_t, tank1_temp_sensor_pin, 21);
 #ifdef DESKTOP
-    // for mocking readings
-    unsigned int fake_tank1_temp_sensor_read = 0;
+        // for mocking readings
+        unsigned int fake_tank1_temp_sensor_read = 160;
+        int get_fake_temp_analog() const override;
 #endif
-};
+    };
 
 #define Tank2 Devices::_Tank2::Instance()
-/**
- * Tank2 reprsents the outer tank in the Propulsion System
- * Valve 0, 1, 2, 3 - four thrust valves
- */
-class _Tank2 : public Tank {
-    _Tank2();
-public:
-
-    inline static _Tank2& Instance()
-    {
-        static _Tank2 Instance;
-        return Instance;
-    }
-
-    float get_pressure() const;
-
     /**
+     * Tank2 represents the outer tank in the Propulsion System
+     * Valve 0, 1, 2, 3 - four thrust valves
+     */
+    class _Tank2 : public Tank
+    {
+        _Tank2();
+
+    public:
+        inline static _Tank2 &Instance()
+        {
+            static _Tank2 Instance;
+            return Instance;
+        }
+
+        float get_pressure() const;
+
+        /**
      * @brief Returns the current value of the schedule for the specified valve
      */
-    unsigned int get_schedule_at(size_t valve_num) const;
+        unsigned int get_schedule_at(size_t valve_num) const;
 
-    TRACKED_CONSTANT_SC(uint8_t, valve1_pin, 3);
-    TRACKED_CONSTANT_SC(uint8_t, valve2_pin, 4);
-    TRACKED_CONSTANT_SC(uint8_t, valve3_pin, 5);
-    TRACKED_CONSTANT_SC(uint8_t, valve4_pin, 6);
+        TRACKED_CONSTANT_SC(uint8_t, valve1_pin, 3);
+        TRACKED_CONSTANT_SC(uint8_t, valve2_pin, 4);
+        TRACKED_CONSTANT_SC(uint8_t, valve3_pin, 5);
+        TRACKED_CONSTANT_SC(uint8_t, valve4_pin, 6);
 
-    TRACKED_CONSTANT_SC(uint8_t, tank2_temp_sensor_pin, 22);
+        TRACKED_CONSTANT_SC(uint8_t, tank2_temp_sensor_pin, 22);
 
 #ifdef DESKTOP
-    // for mocking readings
-    unsigned int fake_tank2_temp_sensor_read = 0;
-    unsigned int fake_tank2_pressure_low_read = 0;
-    unsigned int fake_tank2_pressure_high_read = 0 ;
+        // for mocking readings
+        unsigned int fake_tank2_temp_sensor_read = 160;   // 165 --> 20 C
+        unsigned int fake_tank2_pressure_low_read = 0;    // should not matter
+        unsigned int fake_tank2_pressure_high_read = 312; // 14.7 psi
+        int get_fake_temp_analog() const override;
 #endif
 
-    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 20);
-    TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 23);
+        TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_low_pin, 23);
+        TRACKED_CONSTANT_SC(unsigned char, pressure_sensor_high_pin, 20);
 
-    void setup();
-    // The minimum duration to assign to a schedule
-    // Any value below this value will be ignored by tank2
-    TRACKED_CONSTANT_SC(unsigned int, min_firing_duration_ms, 10);
+        void setup();
+        // The minimum duration to assign to a schedule
+        // Any value below this value will be ignored by tank2
+        TRACKED_CONSTANT_SC(unsigned int, min_firing_duration_ms, 10);
 
-    // Pressure sensor offsets and slopes from PAN-TPS-002 test data
-    // (https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware%2Fpressure_sensor_data%2Em&parent=%2Fpersonal%2Fsaa243_cornell_edu%2FDocuments%2FOAAN%20Team%20Folder%2FSubsystems%2FSoftware)
-    TRACKED_CONSTANT_SC(double, high_gain_offset, -0.119001938553720);
-    TRACKED_CONSTANT_SC(double, high_gain_slope, 0.048713211537332);
-    TRACKED_CONSTANT_SC(double, low_gain_offset, 0.154615074342874);
-    TRACKED_CONSTANT_SC(double, low_gain_slope, 0.099017990785657);
-    // Corresponds to 50 mV - the voltage at which we switch from low to high gain amplifiers
-    TRACKED_CONSTANT_SC(unsigned int, amp_threshold, 1000);
+#ifdef PAN_LEADER
+        // https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B67BC3ED8-E9A4-4420-A1ED-238485319A72%7D&file=Propulsion%20Sensor%20Regressions.xlsx&action=default&mobileredirect=true&cid=c133fab7-df6e-49ad-9d42-3670b7f5fb09
+        TRACKED_CONSTANT_SC(double, high_gain_offset, -0.184718912018209);
+        TRACKED_CONSTANT_SC(double, high_gain_slope, 0.048515346351665);
+        TRACKED_CONSTANT_SC(double, low_gain_offset, 0.008416069224410);
+        TRACKED_CONSTANT_SC(double, low_gain_slope, 0.099084652547468);
+#else
+        // https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B67BC3ED8-E9A4-4420-A1ED-238485319A72%7D&file=Propulsion%20Sensor%20Regressions.xlsx&action=default&mobileredirect=true&cid=c133fab7-df6e-49ad-9d42-3670b7f5fb09
+        TRACKED_CONSTANT_SC(double, high_gain_offset, -0.117344667889011);
+        TRACKED_CONSTANT_SC(double, high_gain_slope, 0.048704545372229);
+        TRACKED_CONSTANT_SC(double, low_gain_offset, 0.154615074342871);
+        TRACKED_CONSTANT_SC(double, low_gain_slope, 0.099017990785657);
+#endif
+        // Corresponds to ~45.5 mV - the voltage at which we switch from high to low gain amplifiers
+        // Use high gain for values below amp_threshold, low gain for values above
+        TRACKED_CONSTANT_SC(unsigned int, amp_threshold, 950);
 
-    //! Loop interval in milliseconds.
-    TRACKED_CONSTANT_SC(unsigned int, thrust_valve_loop_interval_ms, 3);
-
+        //! Loop interval in milliseconds.
+        TRACKED_CONSTANT_SC(unsigned int, thrust_valve_loop_interval_ms, 3);
 
 #ifndef DESKTOP
     private:
         //! When enabled, runs thrust_valve_loop every 3 ms
-    static IntervalTimer thrust_valve_loop_timer;
+        static IntervalTimer thrust_valve_loop_timer;
 #endif
-    static volatile unsigned int schedule[4];
+        static volatile unsigned int schedule[4];
 
-    friend class _PropulsionSystem;
-};
-}  // namespace Devices
+        friend class _PropulsionSystem;
+    };
+} // namespace Devices
 #endif
