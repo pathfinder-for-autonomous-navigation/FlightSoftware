@@ -4,6 +4,7 @@
 
 #include "prop_state_t.enum"
 #include "PropController.hpp"
+#include "PropFaultHandler.h"
 
 #if (defined(UNIT_TEST) && defined(DESKTOP))
 #define DD(f_, ...) std::printf((f_), ##__VA_ARGS__)
