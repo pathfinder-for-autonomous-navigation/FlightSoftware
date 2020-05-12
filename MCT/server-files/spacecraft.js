@@ -7,7 +7,7 @@ const axios = require('axios')
 
 
 
-function Spacecraft() {
+function Spacecraft() extends DomainObject{
     this.state = {
         "batt.lvl": 77,
         "incoming": 0
@@ -80,11 +80,8 @@ Spacecraft.prototype.generateTelemetry = function () {
     }, this);
 };
 
-Spacecraft.prototype.notify = function (point) {
-    this.listeners.forEach(function (l) {
-        l(point);
-    });
-};
+Spacecraft.prototype.notify = super.notify(point,this.listeners);
+
 
 Spacecraft.prototype.listen = function (listener) {
     this.listeners.push(listener);
