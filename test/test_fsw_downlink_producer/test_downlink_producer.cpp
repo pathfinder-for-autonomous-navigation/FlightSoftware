@@ -314,7 +314,7 @@ void test_multiple_flows() {
     {
     TestFixture tf;
     
-    auto foo_false_1_fp = tf.registry.create_readable_field<bool>("false_1");
+    auto foo_false_1_fp = tf.registry.create_readable_field<bool>("foo_false_1");
     foo_false_1_fp->set(false);
     
     std::vector<DownlinkProducer::FlowData> flow_data = {
@@ -438,7 +438,7 @@ void test_multiple_flows() {
     tf.init(flow_data);
     tf.cycle_count_fp->set(3422311149);
 
-    //TEST_ASSERT_EQUAL(8, tf.snapshot_size_bytes_fp->get());
+    TEST_ASSERT_EQUAL(8, tf.snapshot_size_bytes_fp->get());
     tf.downlink_producer->execute();
     const char expected_outputs[8] = { '\xdb', '\xa5', '\x1f', '\xe9', '\xc5', '\x9b', '\xb7', '\x00' };
     TEST_ASSERT_EQUAL_MEMORY(expected_outputs, tf.snapshot_ptr_fp->get(), 8);
