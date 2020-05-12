@@ -36,7 +36,7 @@ Gomspace::Gomspace(Gomspace::eps_hk_t *hk_data, Gomspace::eps_config_t *config_d
 
 bool Gomspace::setup() {
     //gspace_config->ppt_mode=1;
-    config_get();
+    //config_get();
     return I2CDevice::setup(); 
 }
 
@@ -406,6 +406,7 @@ bool Gomspace::config_get() {
     #endif
     i2c_request_from((struct_size + 2), I2C_STOP);
     #ifndef DESKTOP
+
     i2c_read(buffer, struct_size + 2);
     #endif
 
@@ -413,7 +414,7 @@ bool Gomspace::config_get() {
     if (buffer[1] != 0)
         return false;
     else {
-        memcpy((unsigned char *)&gspace_config, buffer + 2, struct_size);
+        memcpy((unsigned char *)gspace_config, buffer + 2, struct_size);
         // Flip endianness
         for (unsigned char i = 0; i < 8; i++) {
             gspace_config->output_initial_on_delay[i] =
