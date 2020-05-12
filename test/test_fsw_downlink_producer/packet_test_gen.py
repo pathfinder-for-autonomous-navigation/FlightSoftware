@@ -8,7 +8,8 @@ field_id = 0
 
 # Helper functions for creating packets
 def convert_to_bytes(packet):
-    packet += "0"*(8 - len(packet) % 8)
+    if len(packet) % 8 != 0:
+        packet += "0"*(8 - len(packet) % 8)
     packet_str = int(packet,2).to_bytes(len(packet) // 8, byteorder='big')
     hex_str = "'\\x" + "', '\\x".join('{:02x}'.format(x) for x in packet_str) + "'"
     return hex_str
@@ -30,7 +31,7 @@ def serialize(data_type, value, min_val, max_val, bitsize):
         \"bitsize\": {}
     }}
     '''.format(data_type, value, min_val, max_val, bitsize)
-    args = ("/Users/andreeafoarce/Desktop/PAN/FlightSoftware/.pio/build/tools_packet_generator/program", json_str)
+    args = (".pio/build/tools_packet_generator/program", json_str)
     gen = subprocess.Popen(args, stdout=subprocess.PIPE)
     gen.wait()
     output = gen.stdout.read()
@@ -70,12 +71,12 @@ def unsigned_char_ser():
     bitstr = serialize("unsigned char", str(i), 0, 255, 8)
     return (bitstr, i, initializer(str(i), str(i), "unsigned char"))
 
-def lin_Vector4d_ser(min=-100,max=100,bitsize=64): #TODO find good min/max vals, randomize
+def lin_Vector4d_ser(_min=-100,_max=100,bitsize=64): #TODO find good min/max vals, randomize
     v4 = []
     for _ in range(0, 4):
-        v4.append(random.uniform(min, max)) 
+        v4.append(random.uniform(_min, _max))
     val_str = str(v4).replace('[', '\"').replace(']', '\"')
-    bit_str = serialize("lin::Vector4d", val_str, min, max, bitsize)
+    bit_str = serialize("lin::Vector4d", val_str, _min, _max, bitsize)
     id_str = str(v4).replace(', ', '_').replace('-', 'n').replace('[', '').replace(']', '').replace('.', '_')
     return (bit_str, id_str, initializer(id_str, '{'+ val_str.replace('\"', '') + '}', "lin::Vector4d"))
 
