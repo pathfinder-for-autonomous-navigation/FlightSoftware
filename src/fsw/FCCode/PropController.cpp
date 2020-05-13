@@ -17,8 +17,8 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       sched_valve2_f("prop.sched_valve2", Serializer<unsigned int>(999)),
       sched_valve3_f("prop.sched_valve3", Serializer<unsigned int>(999)),
       sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999)),
-      sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(999 * 1000)),
-      sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(999 * 1000)),
+      sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(1)),
+      sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(1)),
 
       max_venting_cycles("prop.max_venting_cycles", Serializer<unsigned int>(50)),
       ctrl_cycles_per_close_period("prop.ctrl_cycles_per_closing", Serializer<unsigned int>(50)),
@@ -29,9 +29,9 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
       ctrl_cycles_per_cooling_period("prop.ctrl_cycles_per_cooling", Serializer<unsigned int>(50)),
       tank1_valve("prop.tank1.valve_choice", Serializer<unsigned int>(1)),
 
-      tank2_pressure_f("prop.tank2.pressure", Serializer<float>(0, 150, 4)),
-      tank2_temp_f("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
-      tank1_temp_f("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
+      tank2_pressure_f("prop.tank2.pressure", Serializer<float>(0, 150, 8)),
+      tank2_temp_f("prop.tank2.temp", Serializer<float>(-200, 200, 10)),
+      tank1_temp_f("prop.tank1.temp", Serializer<float>(-200, 200, 10)),
       num_prop_firings_f("prop.num_prop_firings", Serializer<unsigned int>()),
 
       // We must trust the pressure sensor.

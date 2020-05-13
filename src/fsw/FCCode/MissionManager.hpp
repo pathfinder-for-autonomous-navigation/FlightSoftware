@@ -170,7 +170,6 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Radio's mode.
      **/
     InternalStateField<unsigned char>* radio_state_fp;
-    InternalStateField<unsigned int>* last_checkin_cycle_fp;
 
     // Fields that control overall mission state.
     /**
@@ -200,7 +199,6 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Computes magnitude of baseline position vector.
      */
     double distance_to_other_sat() const;
-    bool too_long_since_last_comms() const;
     bool too_long_in_docking() const;
 
     void set(adcs_state_t state);

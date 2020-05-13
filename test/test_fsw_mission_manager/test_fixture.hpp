@@ -23,7 +23,6 @@ class TestFixture {
     std::shared_ptr<WritableStateField<bool>> adcs_paired_fp;
 
     std::shared_ptr<InternalStateField<unsigned char>> radio_state_fp;
-    std::shared_ptr<InternalStateField<unsigned int>> last_checkin_cycle_fp;
 
     std::shared_ptr<WritableStateField<unsigned int>> prop_state_fp;
 
@@ -97,9 +96,6 @@ class TestFixture {
     void set_ccno(unsigned int ccno);
     // Set the distance between the two satellites.
     void set_sat_distance(double dist);
-    // Set the # of control cycles that comms has not been established
-    // with the ground.
-    void set_comms_blackout_period(int ccno);
     // Set the angular rate of the spacecraft.
     void set_ang_rate(float rate);
 };

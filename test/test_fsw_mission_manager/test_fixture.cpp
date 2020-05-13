@@ -7,8 +7,6 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
                                 "attitude_estimator.w_body", -55, 55, 32);
 
     radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
-    last_checkin_cycle_fp = registry.create_internal_field<unsigned int>(
-                                "radio.last_comms_ccno");
 
     prop_state_fp = registry.create_writable_field<unsigned int>("prop.state", 6);
 
@@ -40,7 +38,6 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry() {
     const double nan_d = std::numeric_limits<double>::quiet_NaN();
     adcs_w_body_est_fp->set({nan_f,nan_f,nan_f});
     radio_state_fp->set(static_cast<unsigned char>(radio_state_t::disabled));
-    last_checkin_cycle_fp->set(0);
     prop_state_fp->set(static_cast<unsigned int>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d,nan_d,nan_d});
     reboot_fp->set(false);
@@ -160,14 +157,6 @@ void TestFixture::set_sat_distance(double dist) {
     lin::Vector3d temp;
     temp(0) = dist; temp(1) = 0; temp(2) = 0;
     propagated_baseline_pos_fp->set(temp);
-}
-
-// Set the # of control cycles that comms has not been established
-// with the ground.
-void TestFixture::set_comms_blackout_period(int ccno) {
-    const unsigned int control_cycle_count = mission_manager->control_cycle_count;
-    TEST_ASSERT_GREATER_OR_EQUAL(control_cycle_count, ccno);
-    last_checkin_cycle_fp->set(control_cycle_count - ccno);
 }
 
 // Set the angular rate of the spacecraft.

@@ -19,7 +19,7 @@ const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsi
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
     detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 10)),
-    close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
+    close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 100000, 20)),
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
     max_radio_silence_duration_f("max_radio_silence",
         Serializer<unsigned int>(2 * PAN::one_day_ccno)),
@@ -54,7 +54,6 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     adcs_w_body_est_fp = find_readable_field<lin::Vector3f>("attitude_estimator.w_body", __FILE__, __LINE__);
 
     radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
-    last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
 
     prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
 
@@ -204,12 +203,6 @@ void MissionManager::dispatch_follower() {
         transition_to(mission_state_t::follower_close_approach,
             adcs_state_t::point_docking);
     }
-    else if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        transition_to(mission_state_t::standby,
-            adcs_state_t::point_standby,
-            prop_state_t::idle);
-    }
 }
 
 void MissionManager::dispatch_leader() {
@@ -217,12 +210,6 @@ void MissionManager::dispatch_leader() {
         transition_to(mission_state_t::leader_close_approach,
             adcs_state_t::point_docking,
             prop_state_t::disabled);
-    }
-    else if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        transition_to(mission_state_t::standby,
-            adcs_state_t::point_standby,
-            prop_state_t::idle);
     }
 }
 
@@ -234,12 +221,6 @@ void MissionManager::dispatch_follower_close_approach() {
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
     }
-    else if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        transition_to(mission_state_t::standby,
-            adcs_state_t::point_standby,
-            prop_state_t::idle);
-    }
 }
 
 void MissionManager::dispatch_leader_close_approach() {
@@ -249,12 +230,6 @@ void MissionManager::dispatch_leader_close_approach() {
         transition_to(mission_state_t::docking,
             adcs_state_t::zero_torque,
             prop_state_t::disabled);
-    }
-    else if (too_long_since_last_comms()) {
-        set(sat_designation_t::undecided);
-        transition_to(mission_state_t::standby,
-            adcs_state_t::point_standby,
-            prop_state_t::idle);
     }
 }
 
@@ -308,11 +283,6 @@ double MissionManager::distance_to_other_sat() const {
     const lin::Vector3d dr = propagated_baseline_pos_fp->get();
     if (std::isnan(dr(0))) return dr(0);
     else return lin::norm(dr);
-}
-
-bool MissionManager::too_long_since_last_comms() const {
-    const unsigned int cycles_since_last_comms = control_cycle_count - last_checkin_cycle_fp->get();
-    return cycles_since_last_comms > max_radio_silence_duration_f.get();
 }
 
 bool MissionManager::too_long_in_docking() const {
