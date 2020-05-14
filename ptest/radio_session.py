@@ -11,7 +11,7 @@ import subprocess
 import glob
 import os
 import pty
-from multiprocessing import Process
+from multiprocessing import Process, Queue, Pool, Manager
 from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
@@ -45,8 +45,15 @@ class RadioSession(object):
         # Uplink timer
         self.timer = UplinkTimer(send_queue_duration, self.send_uplink)
 
+        # Radio session and the http endpoints communicate information about the state of the timer
+        # by passing messages over the queue.
+        q = Queue()
+        self.check_queue_msgs = True
+        self.check_queue_thread = threading.Thread(target=self.check_queue, args=(q,))
+        self.check_queue_thread.start()
+
         # HTTP Endpoints
-        self.flask_app=create_radio_session_endpoint(self)
+        self.flask_app=create_radio_session_endpoint(self, q)
         self.flask_app.config["uplink_console"] = uplink_console
         self.flask_app.config["imei"] = imei
         self.flask_app.config["timer"] = self.timer
@@ -76,6 +83,37 @@ class RadioSession(object):
         #email
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
+
+    def check_queue(self, queue):
+        '''
+        Continuously reads and carries out requests
+        from the HTTP endpoints.
+        '''
+        while self.check_queue_msgs == True:
+            msg = queue.get()
+            queue_duration = self.send_queue_duration
+            lockout_duration = self.send_lockout_duration
+
+            if msg == "time":
+                time_left = self.timer.time_left()
+                queue.put(str(time_left))
+
+            elif msg == "pause":
+                if not self.timer.is_alive():
+                    queue.put("Timer not running")
+                elif self.timer.run_time() < queue_duration-lockout_duration:
+                    if self.timer.pause():
+                        queue.put("Paused timer")
+                    else:
+                        queue.put("Unable to pause timer")
+
+            elif msg == "resume":
+                if self.timer.is_alive():
+                    queue.put("Timer already running")
+                elif self.timer.resume():
+                    queue.put("Resumed timer")
+                else:
+                    queue.put("Unable to resume timer")
 
     def uplink_queued(self):
         '''
@@ -175,13 +213,6 @@ class RadioSession(object):
         t = threading.Thread(target=self.timer.start)
         t.start()
 
-        # I can read whether or not the timer is alive here, but I can't
-        # read it from the http endpoint?
-        alive = []
-        s = threading.Thread(target=self.timer.is_alive2, args=(alive,))
-        s.start()
-        print(alive) # prints [True]
-
         return True
 
     def write_state(self, field, val, timeout=None):
@@ -197,5 +228,7 @@ class RadioSession(object):
             f' - Terminating console connection to and saving logging/telemetry data for radio connection to {self.device_name}.'
         )
 
+        self.check_queue_msgs = False
+        self.check_queue_thread.join()
         self.http_thread.terminate()
         self.http_thread.join()

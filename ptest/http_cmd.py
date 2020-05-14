@@ -7,6 +7,7 @@ import json, sys, logging
 import os, threading
 from .uplinkTimer import UplinkTimer
 from tlm.oauth2 import *
+from time import time
 
 """
 This file contains HTTP endpoint factories for StateSession and RadioSession.
@@ -36,7 +37,7 @@ swagger_config={
     "specs_route":"/swagger/"
 }
 
-def create_radio_session_endpoint(radio_session):
+def create_radio_session_endpoint(radio_session, queue):
     app = Flask(__name__)
     app.logger.disabled = True
     app.config["radio_session"] = radio_session
@@ -47,45 +48,25 @@ def create_radio_session_endpoint(radio_session):
     @app.route("/time", methods=["GET"])
     @swag_from("endpoint_configs/radio_session/time.yml")
     def get_time_left():
-        # This endpoint isn't working. It thinks that the timer.t is None.
-        # I don't understand threads :(
-        # Should I make the timer a global field???
-        timer = app.config["timer"]
-
-        alive = []
-        t = threading.Thread(target=timer.is_alive2, args=(alive,))
-        t.start()
-        print(alive) # Prints an empty list
-
-        if alive != [] and alive[0]==True:
-            return "Timer running"
-        return "Timer not running"
+        queue.put("time")
+        time = queue.get()
+        return time
 
     @app.route("/pause", methods=["GET"])
     @swag_from("endpoint_configs/radio_session/pause.yml")
     def pause_timer():
-        timer = app.config["timer"]
-        queue_duration = app.config["send_queue_duration"]
-        lockout_duration = app.config["send_lockout_duration"]
-
-        if timer.is_alive():
-            if timer.run_time()<queue_duration-lockout_duration:
-                timer.pause()
-                return "Paused"
-            return "Unable to pause timer"
-        return "No timer"
+        #queue_duration = app.config["send_queue_duration"]
+        #lockout_duration = app.config["send_lockout_duration"]
+        queue.put("pause")
+        result = queue.get()
+        return result
 
     @app.route("/resume", methods=["GET"])
     @swag_from("endpoint_configs/radio_session/resume.yml")
     def resume_timer():
-        timer = app.config["timer"]
-
-        if timer.is_alive():
-            if timer.resume():
-                return "Resumed"
-            return "Unable to resume timer"
-        return "No timer"
-
+        queue.put("resume")
+        result = queue.get()
+        return result
 
     @app.route("/send-telem", methods=["POST"])
     @swag_from("endpoint_configs/radio_session/request.yml")

@@ -130,8 +130,8 @@ class PTest(object):
             time.sleep(1.0)
 
     def set_up_radios(self):
-        if not os.path.exists("ptest/send_uplink"):
-            os.system("go build -o ptest/send_uplink ptest/send_uplink.go")
+        # if not os.path.exists("ptest/send_uplink"):
+        #     os.system("go build -o ptest/send_uplink ptest/send_uplink.go")
 
         for radio in self.radios_config:
             radio_connected_device = radio["connected_device"]

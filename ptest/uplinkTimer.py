@@ -12,7 +12,6 @@ class UplinkTimer(object):
         self.function = function
         self._args = args
         self._kwargs = kwargs
-        self.timer_lock = threading.Lock()
 
         # Holds the timer object from the python threading library
         self.t = None
@@ -38,67 +37,40 @@ class UplinkTimer(object):
         Stop the timer. Only works if the timer had 
         already been started.
         '''
-        self.timer_lock.acquire()
         if self.is_alive():
             self.t.cancel()
             self.t = None
             self.start_time = None
             self.time_remaining = None
-        self.timer_lock.release()
 
     def is_alive(self):
         '''
         Check if the timer is running.
         '''
-        self.timer_lock.acquire()
         if self.t is None:
             alive = False
         else:
             alive=self.t.is_alive()
-        self.timer_lock.release()
-        return alive
-
-    # It looks like boolean values are passed by value into 
-    # Python functions while lists are passed by reference. 
-    # So I'm using a list as a parameter in this method for 
-    # now, but I'll try to  think of a better way to do this 
-    # in the near future.
-    def is_alive2(self, alive):
-        '''
-        Check if the timer is running. Will set given 
-        alive variable to whether or not the timer
-        is running.
-        '''
-        self.timer_lock.acquire()
-        if self.t is None:
-            pass
-        else:
-            alive.append(self.t.is_alive())
-        self.timer_lock.release()
         return alive
 
     def run_time(self):
         '''
         Return how long the timer has been running.
         '''
-        self.timer_lock.acquire()
         if not self.is_alive():
             run_time = 0
         else:
-            run_time = time.time()-self.start_time
-        self.timer_lock.release()
+            run_time = int(time.time()-self.start_time)
         return run_time
 
     def time_left(self):
         '''
         Return the time remaining on the timer.
         '''
-        self.timer_lock.acquire()
         if self.is_alive():
             time_left = self.interval-self.run_time()
         else:
-            time_left = None
-        self.timer_lock.release()
+            time_left = "44"
         return time_left
 
     def pause(self):
@@ -107,15 +79,15 @@ class UplinkTimer(object):
         we have already paused the timer and haven't resumed 
         since, then this does nothing.
         '''
-        self.timer_lock.acquire()
         can_pause = self.is_alive()
         can_pause &= self.time_remaining is None
         if can_pause:
             # Get time remaining on timer
-            self.time_remaining = self.interval - self.run_time()
+            time_remaining = int(self.interval - self.run_time())
             # Stop the timer
             self.cancel()
-        self.timer_lock.release()
+            self.time_remaining=time_remaining
+        return can_pause
 
     def resume(self):
         '''
@@ -123,16 +95,14 @@ class UplinkTimer(object):
         or if we have not previously paused a timer, then 
         this does nothing.
         '''
-        self.timer_lock.acquire()
         can_resume = not self.is_alive()
         can_resume &= self.time_remaining is not None
         if can_resume:
-            # Get the original time interval set when constructing the timer
+            # Get the original time interval set from when the timer was constructed
             original_interval = self.interval
             # Start the timer to run only for the remaining time on the paused timer
             self.interval = self.time_remaining
             self.start()
             # Reset the interval to the original value
             self.interval = original_interval
-            self.time_remaining = None
-        self.timer_lock.release()
+        return can_resume
