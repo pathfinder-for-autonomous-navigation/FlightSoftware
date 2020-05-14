@@ -5,9 +5,7 @@ from datetime import datetime
 from argparse import ArgumentParser
 import json, sys, logging
 import os, threading
-from .uplinkTimer import UplinkTimer
-from tlm.oauth2 import *
-from time import time
+from tlm.oauth2 import SendMessage
 
 """
 This file contains HTTP endpoint factories for StateSession and RadioSession.

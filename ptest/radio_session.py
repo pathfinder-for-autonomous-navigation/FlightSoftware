@@ -11,7 +11,7 @@ import subprocess
 import glob
 import os
 import pty
-from multiprocessing import Process, Queue, Pool, Manager
+from multiprocessing import Process, Queue
 from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
