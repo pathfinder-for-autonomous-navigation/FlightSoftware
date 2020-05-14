@@ -56,9 +56,6 @@ class RadioSession(object):
         self.flask_app=create_radio_session_endpoint(self, q)
         self.flask_app.config["uplink_console"] = uplink_console
         self.flask_app.config["imei"] = imei
-        self.flask_app.config["timer"] = self.timer
-        self.flask_app.config["send_queue_duration"] = send_queue_duration
-        self.flask_app.config["send_lockout_duration"] = send_lockout_duration
 
         try:
             self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
@@ -106,6 +103,8 @@ class RadioSession(object):
                         queue.put("Paused timer")
                     else:
                         queue.put("Unable to pause timer")
+                else:
+                    queue.put("Unable to pause timer")
 
             elif msg == "resume":
                 if self.timer.is_alive():
@@ -114,63 +113,6 @@ class RadioSession(object):
                     queue.put("Resumed timer")
                 else:
                     queue.put("Unable to resume timer")
-
-    def uplink_queued(self):
-        '''
-        Check if an uplink is currently queued to be sent by Iridium
-        (i.e. if the most recently sent uplink was confirmed to be 
-        received by the spacecraft). Can be used by ptest to determine
-        whether or not to send an uplink autonomously.
-        '''
-        headers = {
-            'Accept': 'text/html',
-        }
-        payload = {
-            "index" : "iridium_report_"+str(self.imei),
-            "field" : "send-uplinks"
-        }
-
-        tlm_service_active = self.flask_server != ""
-        if tlm_service_active:
-            response = requests.get(
-                'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
-                    params=payload, headers=headers)
-
-        if tlm_service_active and response.text.lower()=="true": 
-            return False
-        return True
-
-    def send_uplink(self):
-        if not os.path.exists("uplink.json"):
-            return False
-
-        # Extract the json telemetry data from the uplink json file
-        with open("uplink.json", 'r') as uplink:
-            queued_uplink = json.load(uplink)
-
-        # Get an updated list of the field and values 
-        fields, vals=queued_uplink.keys(), queued_uplink.values()
-        
-        # Create an uplink packet
-        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
-
-        if success:
-            # Send the uplink to Iridium
-            to = "fy56@cornell.edu" # data@sbd.iridium.com
-            sender = "pan.ssds.qlocate@gmail.com"
-            subject = self.imei
-            msgHtml = ""
-            msgPlain = ""
-            SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink.sbd')
-
-            # Remove uplink files/cleanup
-            os.remove("uplink.sbd") 
-            os.remove("uplink.json")
-
-            return True
-        else:
-            os.remove("uplink.json")
-            return False
 
     def read_state(self, field, timeout=None):
         '''
@@ -209,7 +151,7 @@ class RadioSession(object):
             json.dump(updated_fields, telem_file)
 
         # Start the timer. Timer will send uplink once after waiting for the
-        # given send queue duration.
+        # configured send queue duration.
         t = threading.Thread(target=self.timer.start)
         t.start()
 
@@ -220,6 +162,63 @@ class RadioSession(object):
         Uplink one state variable. Return success of write.
         '''
         return self.write_multiple_states([field], [val], timeout) 
+
+        def uplink_queued(self):
+            '''
+        Check if an uplink is currently queued to be sent by Iridium
+        (i.e. if the most recently sent uplink was confirmed to be 
+        received by the spacecraft). Can be used by ptest to determine
+        whether or not to send an uplink autonomously.
+        '''
+        headers = {
+            'Accept': 'text/html',
+        }
+        payload = {
+            "index" : "iridium_report_"+str(self.imei),
+            "field" : "send-uplinks"
+        }
+
+        tlm_service_active = self.flask_server != ""
+        if tlm_service_active:
+            response = requests.get(
+                'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
+                    params=payload, headers=headers)
+
+        if tlm_service_active and response.text.lower()=="true": 
+            return False
+        return True
+
+    def send_uplink(self):
+        if not os.path.exists("uplink.json"):
+            return False
+
+        # Extract the json telemetry data from the queued uplink json file
+        with open("uplink.json", 'r') as uplink:
+            queued_uplink = json.load(uplink)
+
+        # Get an updated list of the field and values 
+        fields, vals=queued_uplink.keys(), queued_uplink.values()
+        
+        # Create an uplink packet
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+
+        if success:
+            # Send the uplink to Iridium
+            to = "fy56@cornell.edu" # data@sbd.iridium.com
+            sender = "pan.ssds.qlocate@gmail.com"
+            subject = self.imei
+            msgHtml = ""
+            msgPlain = ""
+            SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink.sbd')
+
+            # Remove uplink files/cleanup
+            os.remove("uplink.sbd") 
+            os.remove("uplink.json")
+
+            return True
+        else:
+            os.remove("uplink.json")
+            return False
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''

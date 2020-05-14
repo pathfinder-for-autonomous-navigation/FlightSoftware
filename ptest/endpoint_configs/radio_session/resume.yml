@@ -1,6 +1,6 @@
-summary: "Resume the uplink timer"
+summary: "Resumes the uplink timer"
 tags: 
-  - "Resumes the uplink timer"
+  - "Resume the uplink timer"
 description: "This endpoint can be is used to the resume the uplink timer. It should be 
 used after pausing editing a queued uplink to allow the queued uplink to be sent to Iridium."
 consumes:

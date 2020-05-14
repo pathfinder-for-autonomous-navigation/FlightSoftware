@@ -48,30 +48,24 @@ class UplinkTimer(object):
         Check if the timer is running.
         '''
         if self.t is None:
-            alive = False
-        else:
-            alive=self.t.is_alive()
-        return alive
+            return False
+        return self.t.is_alive()
 
     def run_time(self):
         '''
         Return how long the timer has been running.
         '''
         if not self.is_alive():
-            run_time = 0
-        else:
-            run_time = int(time.time()-self.start_time)
-        return run_time
+            return 0
+        return int(time.time()-self.start_time)
 
     def time_left(self):
         '''
         Return the time remaining on the timer.
         '''
         if self.is_alive():
-            time_left = self.interval-self.run_time()
-        else:
-            time_left = "44"
-        return time_left
+            return self.interval-self.run_time()
+        return 0
 
     def pause(self):
         '''

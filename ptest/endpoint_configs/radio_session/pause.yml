@@ -1,6 +1,6 @@
-summary: "Pause the uplink timer"
+summary: "Pauses the uplink timer"
 tags: 
-  - "Pauses the uplink timer"
+  - "Pause the uplink timer"
 description: "This endpoint can be is used to the pause the uplink timer. It should be 
 used after to edit a queued uplink."
 consumes:

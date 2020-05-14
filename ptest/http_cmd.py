@@ -49,24 +49,19 @@ def create_radio_session_endpoint(radio_session, queue):
     @swag_from("endpoint_configs/radio_session/time.yml")
     def get_time_left():
         queue.put("time")
-        time = queue.get()
-        return time
+        return queue.get()
 
     @app.route("/pause", methods=["GET"])
     @swag_from("endpoint_configs/radio_session/pause.yml")
     def pause_timer():
-        #queue_duration = app.config["send_queue_duration"]
-        #lockout_duration = app.config["send_lockout_duration"]
         queue.put("pause")
-        result = queue.get()
-        return result
+        return queue.get()
 
     @app.route("/resume", methods=["GET"])
     @swag_from("endpoint_configs/radio_session/resume.yml")
     def resume_timer():
         queue.put("resume")
-        result = queue.get()
-        return result
+        return queue.get()
 
     @app.route("/send-telem", methods=["POST"])
     @swag_from("endpoint_configs/radio_session/request.yml")
@@ -95,15 +90,13 @@ def create_radio_session_endpoint(radio_session, queue):
             return "Added telemetry"
         
         # If there is no uplink queued, send the requested telemetry to Iridium immediately
-
         fields, vals=list(), list()
         for field_val in uplink:
             fields.append(field_val["field"])
             vals.append(field_val["value"])
 
-        # Create a new uplink packet if there are no autonomous uplinks queued
+        # Create a new uplink packet
         success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
-
         if not success:
             return "Unable to send telemetry"
 
