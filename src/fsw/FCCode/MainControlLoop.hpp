@@ -25,6 +25,7 @@
 #include "EEPROMController.hpp"
 #include "UplinkConsumer.h"
 #include "PropController.hpp"
+#include "OrbitController.hpp"
 
 class MainControlLoop : public ControlTask<void> {
    protected:
@@ -59,6 +60,20 @@ class MainControlLoop : public ControlTask<void> {
 
     EEPROMController eeprom_controller;
 
+    /**
+     * @brief Total memory use, in bytes.
+     */
+    ReadableStateField<unsigned int> memory_use_f;
+
+    PropController prop_controller;
+    MissionManager mission_manager;
+
+    AttitudeComputer attitude_computer; // needs adcs.state from MissionManager
+    ADCSCommander adcs_commander; // will need inputs from computer
+    ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
+
+    OrbitController orbit_controller;
+
     // Control cycle time offsets, in microseconds
     #ifdef FLIGHT
         TRACKED_CONSTANT_SC(unsigned int, test_offset, 0);
@@ -78,22 +93,11 @@ class MainControlLoop : public ControlTask<void> {
     TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   ,  71800 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      ,  71900 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset ,  72000 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, prop_controller_offset,       102000 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, orbit_controller_offset    ,  73000 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, prop_controller_offset     , 102000 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 107000 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 109400 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 109500 + test_offset);
-
-    /**
-     * @brief Total memory use, in bytes.
-     */
-    ReadableStateField<unsigned int> memory_use_f;
-
-    PropController prop_controller;
-    MissionManager mission_manager;
-
-    AttitudeComputer attitude_computer; // needs adcs.state from MissionManager
-    ADCSCommander adcs_commander; // will need inputs from computer
-    ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
 
    public:
     /*
