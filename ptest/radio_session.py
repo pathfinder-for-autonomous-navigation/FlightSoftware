@@ -138,8 +138,8 @@ class RadioSession(object):
 
         assert len(fields) == len(vals)
 
-        # if self.uplink_queued():
-        #     return False
+        if self.uplink_queued():
+            return False
 
         # Create dictionary object with new fields and vals
         updated_fields={}
@@ -163,7 +163,7 @@ class RadioSession(object):
         '''
         return self.write_multiple_states([field], [val], timeout) 
 
-        def uplink_queued(self):
+    def uplink_queued(self):
             '''
         Check if an uplink is currently queued to be sent by Iridium
         (i.e. if the most recently sent uplink was confirmed to be 
@@ -204,7 +204,7 @@ class RadioSession(object):
 
         if success:
             # Send the uplink to Iridium
-            to = "fy56@cornell.edu" # data@sbd.iridium.com
+            to = "data@sbd.iridium.com"
             sender = "pan.ssds.qlocate@gmail.com"
             subject = self.imei
             msgHtml = ""

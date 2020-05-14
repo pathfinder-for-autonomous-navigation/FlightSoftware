@@ -99,7 +99,7 @@ def create_radio_session_endpoint(radio_session, queue):
             return "Unable to send telemetry"
 
         # Send the uplink immediately to Iridium
-        to = "fy56@cornell.edu" # data@sbd.iridium.com
+        to = "data@sbd.iridium.com"
         sender = "pan.ssds.qlocate@gmail.com"
         subject = imei
         SendMessage(sender, to, subject, "", "", 'uplink.sbd')
