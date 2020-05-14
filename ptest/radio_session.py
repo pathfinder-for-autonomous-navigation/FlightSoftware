@@ -164,7 +164,7 @@ class RadioSession(object):
         return self.write_multiple_states([field], [val], timeout) 
 
     def uplink_queued(self):
-            '''
+        '''
         Check if an uplink is currently queued to be sent by Iridium
         (i.e. if the most recently sent uplink was confirmed to be 
         received by the spacecraft). Can be used by ptest to determine
