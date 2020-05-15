@@ -67,6 +67,27 @@ def create_radio_session_endpoint(radio_session, queue):
         queue.put("view")
         return queue.get()
 
+    @app.route("/remove", methods=["POST"])
+    @swag_from("endpoint_configs/radio_session/remove.yml")
+    def remove_queued_uplink():
+        requested_changes = request.get_json()
+
+        # Get the queued uplink
+        with open('uplink.json', 'r') as telem_file:
+            queued_uplink = json.load(telem_file)
+
+        # Remove listed fields from the queued uplink
+        for field_val in requested_changes:
+            field = field_val["field"]
+            queued_uplink.pop(field)
+
+        # Add the edited telemetry to the queued uplink
+        with open('uplink.json', 'w') as telem_file:
+            json.dump(queued_uplink, telem_file)
+        
+        return queued_uplink
+
+
     @app.route("/send-telem", methods=["POST"])
     @swag_from("endpoint_configs/radio_session/send-telem.yml")
     def send_telem():
