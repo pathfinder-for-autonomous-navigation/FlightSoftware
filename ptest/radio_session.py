@@ -111,6 +111,13 @@ class RadioSession(object):
                     queue.put("Resumed timer")
                 else:
                     queue.put("Unable to resume timer")
+            
+            elif msg == "view":
+                if not os.path.exists("uplink.json"):
+                    return "No queued uplink"
+                with open('uplink.json', 'r') as telem_file:
+                    queued_uplink = json.load(telem_file)
+                queue.put(queued_uplink)
 
     def read_state(self, field, timeout=None):
         '''

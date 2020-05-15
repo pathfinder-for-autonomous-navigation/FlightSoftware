@@ -61,6 +61,12 @@ def create_radio_session_endpoint(radio_session, queue):
         queue.put("resume")
         return queue.get()
 
+    @app.route("/view", methods=["GET"])
+    @swag_from("endpoint_configs/radio_session/view.yml")
+    def view_queued_uplink():
+        queue.put("view")
+        return queue.get()
+
     @app.route("/send-telem", methods=["POST"])
     @swag_from("endpoint_configs/radio_session/send-telem.yml")
     def send_telem():
@@ -99,7 +105,7 @@ def create_radio_session_endpoint(radio_session, queue):
             return "Unable to send telemetry"
 
         # Send the uplink immediately to Iridium
-        to = "data@sbd.iridium.com"
+        to = "fy56@cornell.edu" #"data@sbd.iridium.com"
         sender = "pan.ssds.qlocate@gmail.com"
         subject = imei
         SendMessage(sender, to, subject, "", "", 'uplink.sbd')
@@ -132,40 +138,18 @@ def create_state_session_endpoint(state_session):
             vals.append(field_val["value"])
 
         uplink_console = app.config["uplink_console"]
-        console = app.config["console"]
         success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
 
-        if not success:
-            return "Unable to send telemetry"
-        
-        # Extract uplink data from created sbd file
-        try:
-            file = open("uplink.sbd", "rb")
-        except:
-            return "Unable to send telemetry"
-
-        uplink_packet = file.read()
-        uplink_packet_length = len(uplink_packet)
-        file.close() 
-        uplink_packet = str(''.join(r'\x'+hex(byte)[2:] for byte in uplink_packet)) #get the hex representation of the packet bytes
-
-        # Send a command to the Flight Software console to process the uplink packet
-        json_cmd = {
-            'mode': ord('u'),
-            'val': uplink_packet,
-            'length': uplink_packet_length
-        }
-        json_cmd = json.dumps(json_cmd) + "\n"
-
-        device_write_lock = threading.Lock()
-        device_write_lock.acquire()
-        console.write(json_cmd.encode())
-        device_write_lock.release()
+        # If the uplink packet is successfully created, then send it to the Flight Computer
+        if not success: return "Unable to send telemetry"
+        success = state_session.send_uplink("uplink.sbd")
 
         # Get rid of uplink files/cleanup
         os.remove("uplink.sbd") 
         os.remove("uplink.json") 
 
-        return "Successfully sent telemetry to State Session"
+        if success:
+            return "Successfully sent telemetry to State Session"
+        return "Unable to send telemetry"
 
     return app

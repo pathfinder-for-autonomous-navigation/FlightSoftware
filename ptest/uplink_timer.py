@@ -65,6 +65,8 @@ class UplinkTimer(object):
         '''
         if self.is_alive():
             return self.interval-self.run_time()
+        elif self.time_remaining is not None:
+            return self.time_remaining
         return 0
 
     def pause(self):
