@@ -93,15 +93,13 @@ def create_radio_session_endpoint(radio_session, queue):
     def send_telem():
         uplink=request.get_json()
 
-        uplink_console = app.config["uplink_console"]
-        imei = app.config["imei"]
+        # Organize the requested telemetry into a json object
+        requested_telem = {}
+        for field_val in uplink:
+            requested_telem[field_val["field"]] = field_val["value"]
 
         # Check if an uplink is queued
         if os.path.exists("uplink.json"):
-            # Organize the requested telemetry into a json object
-            requested_telem = {}
-            for field_val in uplink:
-                requested_telem[field_val["field"]] = field_val["value"]
 
             # Get the queued uplink
             with open('uplink.json', 'r') as telem_file:
@@ -115,27 +113,12 @@ def create_radio_session_endpoint(radio_session, queue):
             return "Added telemetry"
         
         # If there is no uplink queued, send the requested telemetry to Iridium immediately
-        fields, vals=list(), list()
-        for field_val in uplink:
-            fields.append(field_val["field"])
-            vals.append(field_val["value"])
+        with open('uplink.json', 'w') as telem_file:
+            json.dump(requested_telem, telem_file)
+        success = radio_session.send_uplink()
 
-        # Create a new uplink packet
-        success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
-        if not success:
-            return "Unable to send telemetry"
-
-        # Send the uplink immediately to Iridium
-        to = "fy56@cornell.edu" #"data@sbd.iridium.com"
-        sender = "pan.ssds.qlocate@gmail.com"
-        subject = imei
-        SendMessage(sender, to, subject, "", "", 'uplink.sbd')
-
-        # Remove uplink files/cleanup
-        os.remove("uplink.sbd") 
-        os.remove("uplink.json")
-
-        return "Successfully sent telemetry to Iridium"
+        if success: return "Successfully sent telemetry to Iridium"
+        return "Unable to send telemetry"
 
     return app
 
