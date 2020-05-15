@@ -11,7 +11,7 @@ import subprocess
 import glob
 import os
 import pty
-
+from multiprocessing import Process
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_radio_session_endpoint
 
@@ -40,11 +40,12 @@ class RadioSession(object):
         self.flask_app=create_radio_session_endpoint(self)
 
         try:
-            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
+            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": str(self.port)})
             self.http_thread.start()
             print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
         except:
             print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
+            traceback.print_exc()
 
         self.send_queue_duration = send_queue_duration
         self.send_lockout_duration = send_lockout_duration
@@ -75,7 +76,7 @@ class RadioSession(object):
             "field" : str(field)
         }
 
-        response = requests.get('http://'+self.flask_server+':'+self.flask_port+'/search-es', params=payload, headers=headers)
+        response = requests.get('http://'+self.flask_server+':'+str(self.flask_port)+'/search-es', params=payload, headers=headers)
         return response.text
 
     def write_multiple_states(self, fields, vals, timeout=None):
@@ -98,23 +99,21 @@ class RadioSession(object):
         tlm_service_active = self.flask_server != ""
         if tlm_service_active:
             response = requests.get(
-                'http://'+self.flask_server+':'+self.flask_port+'/search-es',
+                'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
-        if not tlm_service_active or response.text=="True":
-            #create dictionary object with new fields and vals
-            updated_fields={}
-            for i in range(len(fields)):
-                updated_fields[fields[i]]=vals[i]
+        #create dictionary object with new fields and vals
+        updated_fields={}
+        for i in range(len(fields)):
+            updated_fields[fields[i]]=vals[i]
 
-            created_uplink = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
-            if not created_uplink: return False
-            os.system("./ptest/send_uplink uplink.sbd")
-            os.remove("uplink.sbd") 
-            os.remove("uplink.json") 
-            return True
-        else:
-            return False
+        created_uplink = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
+        if not created_uplink: return False
+        os.system(f"./ptest/send_uplink uplink.sbd {self.imei}")
+        os.remove("uplink.sbd") 
+        os.remove("uplink.json") 
+        return True
+
 
     def write_state(self, field, val, timeout=None):
         '''

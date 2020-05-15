@@ -196,13 +196,13 @@ func main() {
 	ctx := context.Background()
 
 	// Get email username
-	radioKeyJson, err := ioutil.ReadFile("configs/radio_keys.json")
+	radioKeyJson, err := ioutil.ReadFile("ptest/configs/radio_keys.json")
 	var radioKeys RadioKeys
 	json.Unmarshal([]byte(radioKeyJson), &radioKeys)
 	user := radioKeys.Email_username
 
 	// process the credential file
-	credential, err := ioutil.ReadFile("configs/credentials.json")
+	credential, err := ioutil.ReadFile("ptest/configs/credentials.json")
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
