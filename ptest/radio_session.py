@@ -17,7 +17,7 @@ from elasticsearch import Elasticsearch
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_radio_session_endpoint
 from tlm.oauth2 import *
-from .uplinkTimer import UplinkTimer
+from .uplink_timer import UplinkTimer
 
 class RadioSession(object):
     '''
@@ -86,10 +86,8 @@ class RadioSession(object):
         Continuously reads and carries out requests
         from the HTTP endpoints.
         '''
-        while self.check_queue_msgs == True:
+        while self.check_queue_msgs:
             msg = queue.get()
-            queue_duration = self.send_queue_duration
-            lockout_duration = self.send_lockout_duration
 
             if msg == "time":
                 time_left = self.timer.time_left()
@@ -98,7 +96,7 @@ class RadioSession(object):
             elif msg == "pause":
                 if not self.timer.is_alive():
                     queue.put("Timer not running")
-                elif self.timer.run_time() < queue_duration-lockout_duration:
+                elif self.timer.run_time() < self.send_queue_duration-self.send_lockout_duration:
                     if self.timer.pause():
                         queue.put("Paused timer")
                     else:

@@ -62,7 +62,7 @@ def create_radio_session_endpoint(radio_session, queue):
         return queue.get()
 
     @app.route("/send-telem", methods=["POST"])
-    @swag_from("endpoint_configs/radio_session/request.yml")
+    @swag_from("endpoint_configs/radio_session/send-telem.yml")
     def send_telem():
         uplink=request.get_json()
 
@@ -121,7 +121,7 @@ def create_state_session_endpoint(state_session):
     swagger=Swagger(app, config=swagger_config)
 
     @app.route("/send-telem", methods=["POST"])
-    @swag_from("endpoint_configs/state_session/request.yml")
+    @swag_from("endpoint_configs/state_session/send-telem.yml")
     def send_telem():
         uplink=request.get_json()
 
