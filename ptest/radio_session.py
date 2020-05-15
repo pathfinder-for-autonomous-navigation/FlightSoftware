@@ -114,10 +114,11 @@ class RadioSession(object):
             
             elif msg == "view":
                 if not os.path.exists("uplink.json"):
-                    return "No queued uplink"
-                with open('uplink.json', 'r') as telem_file:
-                    queued_uplink = json.load(telem_file)
-                queue.put(queued_uplink)
+                    queue.put("No queued uplink")
+                else:
+                    with open('uplink.json', 'r') as telem_file:
+                        queued_uplink = json.load(telem_file)
+                    queue.put(queued_uplink)
 
     def read_state(self, field, timeout=None):
         '''
@@ -202,8 +203,8 @@ class RadioSession(object):
             queued_uplink = json.load(uplink)
 
         # Get an updated list of the field and values 
-        fields, vals=queued_uplink.keys(), queued_uplink.values()
-        
+        fields, vals = queued_uplink.keys(), queued_uplink.values()
+
         # Create an uplink packet
         success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
 
