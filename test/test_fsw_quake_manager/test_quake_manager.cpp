@@ -68,8 +68,8 @@ public:
         radio_mt_packet_fp = registry.find_internal_field_t<char *>("uplink.ptr");
         radio_mt_len_fp = registry.find_internal_field_t<size_t>("uplink.len");
         radio_err_fp = registry.find_readable_field_t<int>("radio.err");
-        radio_state_fp = registry.find_readable_field<unsigned char>("radio.state");
-        last_checkin_cycle_fp = registry.find_readable_field<unsigned int>("radio.last_comms_ccno");
+        radio_state_fp = registry.find_readable_field_t<unsigned char>("radio.state");
+        last_checkin_cycle_fp = registry.find_readable_field_t<unsigned int>("radio.last_comms_ccno");
 
         // Initialize internal fields
 
