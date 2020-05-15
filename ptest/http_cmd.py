@@ -92,6 +92,8 @@ def create_radio_session_endpoint(radio_session, queue):
     @swag_from("endpoint_configs/radio_session/send-telem.yml")
     def send_telem():
         uplink=request.get_json()
+        uplink_console = app.config["uplink_console"]
+        imei = app.config["imei"]
 
         # Organize the requested telemetry into a json object
         requested_telem = {}
@@ -113,12 +115,27 @@ def create_radio_session_endpoint(radio_session, queue):
             return "Added telemetry"
         
         # If there is no uplink queued, send the requested telemetry to Iridium immediately
-        with open('uplink.json', 'w') as telem_file:
-            json.dump(requested_telem, telem_file)
-        success = radio_session.send_uplink()
+        fields, vals=list(), list()
+        for field_val in uplink:
+            fields.append(field_val["field"])
+            vals.append(field_val["value"])
 
-        if success: return "Successfully sent telemetry to Iridium"
-        return "Unable to send telemetry"
+         # Create a new uplink packet
+        success = uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+        if not success:
+            return "Unable to send telemetry"
+
+         # Send the uplink immediately to Iridium
+        to = "fy56@cornell.edu"
+        sender = "pan.ssds.qlocate@gmail.com"
+        subject = imei
+        SendMessage(sender, to, subject, "", "", 'uplink.sbd')
+
+         # Remove uplink files/cleanup
+        os.remove("uplink.sbd") 
+        os.remove("uplink.json")
+
+        return "Successfully sent telemetry to Iridium"
 
     return app
 

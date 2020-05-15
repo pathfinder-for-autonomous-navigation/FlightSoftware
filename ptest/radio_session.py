@@ -149,7 +149,7 @@ class RadioSession(object):
         # Create dictionary object with new fields and vals
         updated_fields={}
         for i in range(len(fields)):
-            updated_fields[fields[i]]=vals[i]
+            updated_fields[fields[i]]=self.uplink_console.get_val(vals[i])
 
         # Create a JSON file to hold the uplink
         with open('uplink.json', 'w') as telem_file:
