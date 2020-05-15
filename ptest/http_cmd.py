@@ -95,13 +95,12 @@ def create_radio_session_endpoint(radio_session, queue):
         uplink_console = app.config["uplink_console"]
         imei = app.config["imei"]
 
-        # Organize the requested telemetry into a json object
-        requested_telem = {}
-        for field_val in uplink:
-            requested_telem[field_val["field"]] = field_val["value"]
-
         # Check if an uplink is queued
         if os.path.exists("uplink.json"):
+            # Organize the requested telemetry into a json object
+            requested_telem = {}
+            for field_val in uplink:
+                requested_telem[field_val["field"]] = field_val["value"]
 
             # Get the queued uplink
             with open('uplink.json', 'r') as telem_file:
