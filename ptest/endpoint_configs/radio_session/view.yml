@@ -1,0 +1,8 @@
+summary: "View the queued uplink"
+tags: 
+  - "View the queued uplinks"
+description: "This endpoint can be used to get the autonomous uplink queued to be sent to Iridium."
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
