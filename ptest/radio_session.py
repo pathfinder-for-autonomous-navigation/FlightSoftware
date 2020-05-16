@@ -144,8 +144,8 @@ class RadioSession(object):
 
         assert len(fields) == len(vals)
 
-        # if self.uplink_queued():
-        #     return False
+        if self.uplink_queued():
+            return False
 
         # Create dictionary object with new fields and vals
         updated_fields={}
@@ -210,7 +210,7 @@ class RadioSession(object):
 
         if success:
             # Send the uplink to Iridium
-            to = "fy56@cornell.edu" #"data@sbd.iridium.com"
+            to = "data@sbd.iridium.com"
             sender = "pan.ssds.qlocate@gmail.com"
             subject = self.imei
             msgHtml = ""
