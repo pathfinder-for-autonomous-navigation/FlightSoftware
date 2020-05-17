@@ -6,6 +6,8 @@
 
 #include <adcs/havt_devices.hpp> // needed for ADCSCommander fill-in
 
+constexpr double nan_d = std::numeric_limits<double>::quiet_NaN();
+
 // This class does the unpleasant task of creating state fields that
 // controllers expect to see but for which we haven't defined any
 // behavior yet.
@@ -31,6 +33,7 @@ class FieldCreatorTask : public ControlTask<void> {
           add_readable_field(pos_f);
           add_readable_field(pos_baseline_f);
 
+          pos_baseline_f.set({nan_d, nan_d, nan_d});
       }
 
       void execute() {

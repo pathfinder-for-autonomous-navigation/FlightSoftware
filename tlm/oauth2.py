@@ -55,7 +55,6 @@ def SendMessage(sender, to, subject, msgHtml, msgPlain, attachmentFile=None):
 def SendMessageInternal(service, user_id, message):
     try:
         message = (service.users().messages().send(userId=user_id, body=message).execute())
-        print('Message Id: %s' % message['id'])
         return message
     except errors.HttpError as error:
         print('An error occurred: %s' % error)
@@ -100,7 +99,6 @@ def createMessageWithAttachment(
 
     message.attach(messageA)
 
-    print("create_message_with_attachment: file: %s" % attachmentFile)
     content_type, encoding = mimetypes.guess_type(attachmentFile)
 
     if content_type is None or encoding is not None:

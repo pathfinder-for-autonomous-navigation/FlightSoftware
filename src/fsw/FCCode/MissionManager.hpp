@@ -107,10 +107,10 @@ class MissionManager : public TimedControlTask<void> {
     /**
      * @brief Handles state transitions that happen upon subsystem assertions.
      */
-    void transition_to_state(mission_state_t mission_state,
+    void transition_to(mission_state_t mission_state,
         adcs_state_t adcs_state,
         prop_state_t prop_state);
-    void transition_to_state(mission_state_t mission_state,
+    void transition_to(mission_state_t mission_state,
         adcs_state_t adcs_state);
 
     /**
@@ -160,6 +160,11 @@ class MissionManager : public TimedControlTask<void> {
     Fault* wheel_pot_fault_fp;
     // Flag for if propulsion failed to pressurize.
     Fault* pressurize_fail_fp;
+
+    /**
+     * @brief DCDC control flag for Spike and Hold and docking system.
+     */
+    WritableStateField<bool>* sph_dcdc_fp;
 
     /**
      * @brief Radio's mode.
