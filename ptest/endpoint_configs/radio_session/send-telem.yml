@@ -1,7 +1,8 @@
 summary: "Send telemetry data to the USB-connected satellite"
 tags: 
   - "Send telemetry data to USB-connected satellite"
-description: "This endpoint can be used to send telemetry data to the USB-connected satellite. The send is done immediately, unlike RadioSession."
+description: "This endpoint can be used to send telemetry data to the satellite over Iridium.
+              There is up to a 5-minute delay before the command may be sent."
 consumes:
   - "application/json"
 produces:
@@ -18,5 +19,7 @@ parameters:
         properties:
           field:
             type: "string"
+            example: "adcs.state"
           value:
             type: "integer"
+            example: 3

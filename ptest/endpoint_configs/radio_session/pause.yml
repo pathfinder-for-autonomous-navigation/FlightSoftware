@@ -1,0 +1,10 @@
+summary: "Pauses the uplink timer"
+tags: 
+  - "Pause the uplink timer"
+description: "This endpoint can be is used to the pause the uplink timer. It should be 
+used after to edit a queued uplink."
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
