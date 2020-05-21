@@ -2000,6 +2000,14 @@
             "type": "signed int",
             "writable": false
         },
+        "radio.last_comms_ccno": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "radio.max_transceive": {
             "bitsize": 20,
             "flow_id": 34,
@@ -2015,6 +2023,14 @@
             "min": 0,
             "type": "unsigned int",
             "writable": true
+        },
+        "radio.state": {
+            "bitsize": 8,
+            "flow_id": "undefined",
+            "max": 255,
+            "min": 0,
+            "type": "unsigned char",
+            "writable": false
         },
         "sys.memory_use": {
             "bitsize": 19,

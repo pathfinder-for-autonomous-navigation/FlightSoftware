@@ -11,18 +11,19 @@
  * for testing the MainFaultHandler. It initializes the inputs 
  * required by the Handler and stores pointers to its outputs.
  */
-class TestFixtureMainFHBase {
+class TestFixtureMainFHBase
+{
 protected:
     StateFieldRegistryMock registry;
     std::unique_ptr<MainFaultHandler> fault_handler;
 
 public:
-    unsigned int& cc = TimedControlTaskBase::control_cycle_count; // Control cycle count
+    unsigned int &cc = TimedControlTaskBase::control_cycle_count; // Control cycle count
 
     // Input state fields to fault handler
     std::shared_ptr<WritableStateField<unsigned char>> mission_state_fp;
-    std::shared_ptr<InternalStateField<unsigned char>> radio_state_fp;
-    std::shared_ptr<InternalStateField<unsigned int>> radio_last_comms_ccno_fp;
+    std::shared_ptr<ReadableStateField<unsigned char>> radio_state_fp;
+    std::shared_ptr<ReadableStateField<unsigned int>> radio_last_comms_ccno_fp;
     std::shared_ptr<WritableStateField<bool>> quake_power_cycle_cmd_fp;
 
     std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
@@ -37,7 +38,7 @@ public:
     std::shared_ptr<Fault> prop_failed_pressurize_fault_fp;
     std::shared_ptr<Fault> prop_overpressure_fault_fp;
 
-    WritableStateField<bool>* fault_handler_enabled_fp = nullptr;
+    WritableStateField<bool> *fault_handler_enabled_fp = nullptr;
 
     /**
      * @brief Construct a new Test Fixture.
@@ -58,8 +59,9 @@ public:
  * the submachine responses. This allows exhaustive testing of all fault
  * combinations underneath the MainFaultHandler.
  */
-class TestFixtureMainFHMocked : public TestFixtureMainFHBase {
-  public:
+class TestFixtureMainFHMocked : public TestFixtureMainFHBase
+{
+public:
     size_t num_fault_handler_machines = 0;
 
     /**
@@ -83,11 +85,12 @@ class TestFixtureMainFHMocked : public TestFixtureMainFHBase {
      * @param responses Desired response for the underlying fault machines
      * @return fault_response_t
      */
-    template<size_t N>
-    fault_response_t step(const std::array<fault_response_t, N>& responses)
+    template <size_t N>
+    fault_response_t step(const std::array<fault_response_t, N> &responses)
     {
         assert(responses.size() == num_fault_handler_machines);
-        for(size_t i = 0; i < num_fault_handler_machines; i++) {
+        for (size_t i = 0; i < num_fault_handler_machines; i++)
+        {
             set_fault_machine_response(i, responses[i]);
         }
 
@@ -103,7 +106,8 @@ class TestFixtureMainFHMocked : public TestFixtureMainFHBase {
  * Therefore this fixture can be used in end-to-end testing of the
  * MainFaultHandler.
  */
-class TestFixtureMainFHEndToEnd : public TestFixtureMainFHBase {
+class TestFixtureMainFHEndToEnd : public TestFixtureMainFHBase
+{
 public:
     TestFixtureMainFHEndToEnd();
     fault_response_t step();
