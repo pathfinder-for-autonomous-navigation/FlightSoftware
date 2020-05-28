@@ -2,6 +2,7 @@ from argparse import ArgumentParser
 import json
 from cmd import Cmd
 import sys
+import requests
 from cerberus import Validator
 
 class CmdClient(Cmd):
@@ -13,6 +14,10 @@ class CmdClient(Cmd):
         self.prompt = '> '
 
         self.cmded_device = list(config.keys())[0]
+
+
+        self.url = "http://localhost:"+str(config[self.cmded_device]["port"]) #creates an http url to access the device
+
         Cmd.__init__(self)
 
     def do_lc(self, args):
@@ -56,7 +61,10 @@ class CmdClient(Cmd):
         the packet size after adding the state fields would exceed the maximum allowable uplink
         size (currently 70 bytes.)
         """
-        raise NotImplementedError
+        endpoint = self.url+"/send-telem"
+        r = requests.get(url = endpoint)
+        data = r.json
+        print(data)
 
     def do_remove(self, args):
         """
@@ -68,13 +76,20 @@ class CmdClient(Cmd):
         """
         Attempts to pause the uplink queue timer, if one is running.
         """
-        raise NotImplementedError
+        endpoint = self.url+"/time"
+        r = requests.get(url = endpoint)
+        data = r.json
+        print(data)
 
     def do_resume(self, args):
         """
         Attempts to resume the uplink queue timer, if one was running.
         """
-        raise NotImplementedError
+        endpoint = self.url+"/resume"
+        r = requests.get(url = endpoint)
+        data = r.json
+        print(data)
+
 
     def do_exit(self, args):
         """Exits the client."""
@@ -93,7 +108,7 @@ def main():
         "port" : {"type" : "integer", "required" : True},
         "type" : {"type" : "string", "allowed" : ["StateSession", "RadioSession"], "required" : True},
     }
-    
+
     v = Validator(config_schema)
     for key in config:
         config_item = config[key]
