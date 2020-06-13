@@ -1,0 +1,10 @@
+summary: "Resumes the uplink timer"
+tags: 
+  - "Resume the uplink timer"
+description: "This endpoint can be is used to the resume the uplink timer. It should be 
+used after pausing editing a queued uplink to allow the queued uplink to be sent to Iridium."
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+
