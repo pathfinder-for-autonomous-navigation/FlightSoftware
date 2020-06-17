@@ -4,6 +4,7 @@
 int test_fsw_all_1() {
     UNITY_BEGIN();
     RUN_TEST(fsw_test::test_adcs_commander);
+    RUN_TEST(fsw_test::test_adcs_box_monitor);
     return UNITY_END();
 }
 

@@ -8,6 +8,7 @@
 #include "../custom_assertions.hpp"
 #include "../custom_assertions.hpp"
 
+namespace adcs_box_monitor_test {
 class TestFixture {
     public:
         StateFieldRegistryMock registry;
@@ -338,21 +339,25 @@ void test_execute_havt_faults() {
     TEST_ASSERT_FALSE(tf.wheel3_adc_fault_p->is_faulted());
     TEST_ASSERT_FALSE(tf.wheel_pot_fault_p->is_faulted());
 }
-
-int test_control_task()
-{
-    UNITY_BEGIN();
-    RUN_TEST(test_task_initialization);
-    RUN_TEST(test_execute_ssa);
-    RUN_TEST(test_execute_havt);
-    RUN_TEST(test_execute_havt_faults);
-    return UNITY_END();
 }
 
+namespace fsw_test {
+void test_adcs_box_monitor()
+{
+    UNITY_BEGIN();
+    RUN_TEST(adcs_box_monitor_test::test_task_initialization);
+    RUN_TEST(adcs_box_monitor_test::test_execute_ssa);
+    RUN_TEST(adcs_box_monitor_test::test_execute_havt);
+    RUN_TEST(adcs_box_monitor_test::test_execute_havt_faults);
+    UNITY_END();
+}
+}
+
+#ifndef COMBINE_TESTS
 #ifdef DESKTOP
 int main()
 {
-    return test_control_task();
+    test_control_task();
 }
 #else
 #include <Arduino.h>
@@ -364,4 +369,5 @@ void setup()
 }
 
 void loop() {}
+#endif
 #endif
