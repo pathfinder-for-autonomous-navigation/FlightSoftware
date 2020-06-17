@@ -5,10 +5,12 @@
 
 #include <common/bitstream.h>
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 #include <map>
 
 using namespace std;
 
+namespace uplink_consumer_test {
 // convert n to bits
 void from_ull(WritableStateFieldBase* w, uint64_t n)
 {
@@ -402,37 +404,26 @@ void test_mixed_validity_updates()
     TEST_ASSERT_EQUAL(old3, field3->get_bit_array().to_ullong());
     TEST_ASSERT_EQUAL(0,  tf.radio_mt_packet_len_fp->get());
 }
+}
 
-
-
-int test_uplink_consumer() {
+namespace fsw_test {
+void test_uplink_consumer() {
     UNITY_BEGIN();
-    RUN_TEST(test_create_uplink);
-    RUN_TEST(test_create_uplink_other);
-    RUN_TEST(test_valid_initialization);
-    RUN_TEST(test_get_field_length);
-    RUN_TEST(test_update_field);
-    RUN_TEST(test_clear_mt_packet_len);
-    RUN_TEST(test_perisist_mt_packet_len);
-    RUN_TEST(test_update_writable_field);
-    RUN_TEST(test_mixed_validity_updates);
-    return UNITY_END();
+    RUN_TEST(uplink_consumer_test::test_create_uplink);
+    RUN_TEST(uplink_consumer_test::test_create_uplink_other);
+    RUN_TEST(uplink_consumer_test::test_valid_initialization);
+    RUN_TEST(uplink_consumer_test::test_get_field_length);
+    RUN_TEST(uplink_consumer_test::test_update_field);
+    RUN_TEST(uplink_consumer_test::test_clear_mt_packet_len);
+    RUN_TEST(uplink_consumer_test::test_perisist_mt_packet_len);
+    RUN_TEST(uplink_consumer_test::test_update_writable_field);
+    RUN_TEST(uplink_consumer_test::test_mixed_validity_updates);
+    UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main() {
-    //test_bitstream();
-    return test_uplink_consumer();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_uplink_consumer();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_uplink_consumer);
 #endif
 
 //cat test/test_uplink_consumer//test_uplink_consumer.cpp | grep "void test_" | sed 's/^void \(.*\)$/\1/' | sed 's/()/);/g'| sed -e 's/^/RUN_TEST(/'

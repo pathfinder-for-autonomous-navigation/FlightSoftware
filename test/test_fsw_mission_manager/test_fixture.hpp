@@ -13,6 +13,7 @@
 #include <fsw/FCCode/sat_designation_t.enum>
 
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 #include <lin/core.hpp>
 
 class TestFixture

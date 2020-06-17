@@ -200,17 +200,6 @@ int test_gps_time() {
     return UNITY_END();
 }
 
-#ifdef DESKTOP
-int main(int argc, char *argv[]) {
-    return test_gps_time();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(10000);
-    Serial.begin(9600);
-    test_gps_time();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(test_gps_time);
 #endif

@@ -6,6 +6,7 @@
 #include <adcs/constants.hpp>
 #include <gnc/constants.hpp>
 
+namespace mission_manager_test {
 void test_valid_initialization() {
     TestFixture tf;
 
@@ -294,33 +295,25 @@ void test_dispatch_undefined() {
     tf.step();
     tf.check(mission_state_t::safehold);
 }
+}
 
-int test_mission_manager() {
+namespace fsw_test {
+void test_mission_manager() {
     UNITY_BEGIN();
-    RUN_TEST(test_valid_initialization);
-    RUN_TEST(test_dispatch_startup);
-    RUN_TEST(test_dispatch_detumble);
-    RUN_TEST(test_dispatch_empty_states);
-    RUN_TEST(test_dispatch_standby);
-    RUN_TEST(test_rendezvous_states);
-    RUN_TEST(test_dispatch_docking);
-    RUN_TEST(test_dispatch_safehold);
-    RUN_TEST(test_dispatch_undefined);
+    RUN_TEST(mission_manager_test::test_valid_initialization);
+    RUN_TEST(mission_manager_test::test_dispatch_startup);
+    RUN_TEST(mission_manager_test::test_dispatch_detumble);
+    RUN_TEST(mission_manager_test::test_dispatch_empty_states);
+    RUN_TEST(mission_manager_test::test_dispatch_standby);
+    RUN_TEST(mission_manager_test::test_rendezvous_states);
+    RUN_TEST(mission_manager_test::test_dispatch_docking);
+    RUN_TEST(mission_manager_test::test_dispatch_safehold);
+    RUN_TEST(mission_manager_test::test_dispatch_undefined);
     // TODO add fault handling tests
-    return UNITY_END();
+    UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main() {
-    return test_mission_manager();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_mission_manager();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_mission_manager);
 #endif

@@ -6,7 +6,7 @@
 #include <fsw/FCCode/Drivers/ADCS.hpp>
 
 #include "../custom_assertions.hpp"
-#include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 
 namespace adcs_box_monitor_test {
 class TestFixture {
@@ -354,20 +354,5 @@ void test_adcs_box_monitor()
 }
 
 #ifndef COMBINE_TESTS
-#ifdef DESKTOP
-int main()
-{
-    test_control_task();
-}
-#else
-#include <Arduino.h>
-void setup()
-{
-    delay(2000);
-    Serial.begin(9600);
-    test_control_task();
-}
-
-void loop() {}
-#endif
+UNIT_TEST_RUNNER(fsw_test::test_adcs_box_monitor);
 #endif

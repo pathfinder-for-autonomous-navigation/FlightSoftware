@@ -4,8 +4,9 @@
 
 #include <common/Fault.hpp>
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 
-
+namespace fault_tests {
 unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;
 
 /**
@@ -267,31 +268,21 @@ void test_testfunctions() {
     fault.unsuppress();
     TEST_ASSERT_FALSE(suppress_fp->get());
 }
-
-void test_control_task(){
-    RUN_TEST(test_fault_normal_behavior);
-    RUN_TEST(test_fault_overridden_behavior);
-    RUN_TEST(test_process_commands);
-    RUN_TEST(test_dynamic_persistence);
-    RUN_TEST(test_evaluate);
-    RUN_TEST(test_testfunctions);
 }
 
-#ifdef DESKTOP
-int main() {
+namespace fsw_test {
+void test_fault(){
     UNITY_BEGIN();
-    test_control_task();
-    return UNITY_END();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    UNITY_BEGIN();
-    test_control_task();
+    RUN_TEST(fault_tests::test_fault_normal_behavior);
+    RUN_TEST(fault_tests::test_fault_overridden_behavior);
+    RUN_TEST(fault_tests::test_process_commands);
+    RUN_TEST(fault_tests::test_dynamic_persistence);
+    RUN_TEST(fault_tests::test_evaluate);
+    RUN_TEST(fault_tests::test_testfunctions);
     UNITY_END();
 }
+}
 
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_fault);
 #endif

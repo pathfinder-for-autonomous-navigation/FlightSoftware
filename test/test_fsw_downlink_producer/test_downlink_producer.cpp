@@ -4,8 +4,10 @@
 
 #include <common/StateFieldRegistry.hpp>
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 #include <iostream>
 
+namespace downlink_producer_test {
 struct TestFixture {
     StateFieldRegistryMock registry;
     std::unique_ptr<DownlinkProducer> downlink_producer;
@@ -501,32 +503,24 @@ void test_toggle() {
     TEST_ASSERT_TRUE(flows[0].is_active);
     TEST_ASSERT_EQUAL(0, tf.toggle_flow_id_fp->get()); 
 }
+}
 
-int test_downlink_producer_task() {
+namespace fsw_test {
+void test_downlink_producer() {
     UNITY_BEGIN();
-    RUN_TEST(test_task_initialization);
-    RUN_TEST(test_one_flow);
-    RUN_TEST(test_one_flow_multityped);
-    RUN_TEST(test_multiple_flows);
-    RUN_TEST(test_some_flows_inactive);
-    RUN_TEST(test_downlink_changes);
-    RUN_TEST(test_shift_priorities);
-    RUN_TEST(test_shift_statefield_cmd);
-    RUN_TEST(test_toggle);
-    return UNITY_END();
+    RUN_TEST(downlink_producer_test::test_task_initialization);
+    RUN_TEST(downlink_producer_test::test_one_flow);
+    RUN_TEST(downlink_producer_test::test_one_flow_multityped);
+    RUN_TEST(downlink_producer_test::test_multiple_flows);
+    RUN_TEST(downlink_producer_test::test_some_flows_inactive);
+    RUN_TEST(downlink_producer_test::test_downlink_changes);
+    RUN_TEST(downlink_producer_test::test_shift_priorities);
+    RUN_TEST(downlink_producer_test::test_shift_statefield_cmd);
+    RUN_TEST(downlink_producer_test::test_toggle);
+    UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main() {
-    return test_downlink_producer_task();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_downlink_producer_task();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_downlink_producer);
 #endif

@@ -4,6 +4,7 @@
 #include <fsw/FCCode/ClockManager.hpp>
 
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 
 #ifdef DESKTOP
     #include <iostream>
@@ -11,6 +12,7 @@
     #include <Arduino.h>
 #endif
 
+namespace timed_control_task_test {
 /**
  * @brief Dummy control task that just increments a member variable.
  */
@@ -149,27 +151,26 @@ void test_task_execute() {
     TEST_ASSERT_LESS_OR_EQUAL(4000, t_delta - expected_duration);
 }
 
-int test_timed_control_task() {
-    UNITY_BEGIN();
-    RUN_TEST(test_task_initialization);
-    RUN_TEST(test_task_execute);
-    return UNITY_END();
-}
-
 const char* warning = "PLEASE BE PATIENT. This unit test takes a while "
                       "because it runs through 1000 control cycles.";
-#ifdef DESKTOP
-int main() {
-    std::cout << warning << std::endl;
-    return test_timed_control_task();
-}
-#else
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    Serial.println(warning);
-    test_timed_control_task();
 }
 
-void loop() {}
+namespace fsw_test {
+void test_timed_control_task() {
+
+#ifdef DESKTOP
+std::cout << timed_control_task_test::warning << std::endl;
+#else
+Serial.println(timed_control_task_test::warning);
+#endif
+
+    UNITY_BEGIN();
+    RUN_TEST(timed_control_task_test::test_task_initialization);
+    RUN_TEST(timed_control_task_test::test_task_execute);
+    UNITY_END();
+}
+}
+
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::timed_control_task);
 #endif

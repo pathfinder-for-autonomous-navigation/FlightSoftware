@@ -3,6 +3,8 @@
 //
 
 #include "../test_fsw_prop_controller/prop_shared.h"
+
+namespace prop_fault_test {
 unsigned int one_day_ccno = PAN::one_day_ccno;
 unsigned int &cc_count = TimedControlTaskBase::control_cycle_count;
 
@@ -401,35 +403,22 @@ void test_all_faulted_sensors_broken_respect_disabled()
     // max_venting_cycles
     TEST_ASSERT_EQUAL(saved_max_cycles, tf.pc->max_venting_cycles.get());
 }
-
-void run_fault_response_tests()
-{
-    RUN_TEST(test_underpressured_response);
-    RUN_TEST(test_overpressured_response);
-    RUN_TEST(test_tank1_temp_high_response);
-    RUN_TEST(test_tank2_temp_high_response);
-    RUN_TEST(test_tank2temphigh_undepressured_response);
-    RUN_TEST(test_tank2_fault_while_tank1_vent);
-    RUN_TEST(test_interrupt_firing);
-    RUN_TEST(test_all_faulted_sensors_broken_respect_disabled);
 }
 
-#ifdef DESKTOP
-int main()
+namespace fsw_test {
+void test_prop_fault_response()
 {
-    UNITY_BEGIN();
-    RUN_TEST(test_respect_disabled);
-    run_fault_detection_tests();
-    run_fault_response_tests();
-    return UNITY_END();
+    RUN_TEST(prop_fault_test::test_underpressured_response);
+    RUN_TEST(prop_fault_test::test_overpressured_response);
+    RUN_TEST(prop_fault_test::test_tank1_temp_high_response);
+    RUN_TEST(prop_fault_test::test_tank2_temp_high_response);
+    RUN_TEST(prop_fault_test::test_tank2temphigh_undepressured_response);
+    RUN_TEST(prop_fault_test::test_tank2_fault_while_tank1_vent);
+    RUN_TEST(prop_fault_test::test_interrupt_firing);
+    RUN_TEST(prop_fault_test::test_all_faulted_sensors_broken_respect_disabled);
 }
-#else
-#include <Arduino.h>
-void setup()
-{
-    delay(2000);
-    Serial.begin(9600);
 }
 
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_prop_fault_response);
 #endif

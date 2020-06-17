@@ -130,18 +130,6 @@ void test_bit_array() {
     UNITY_END();
 }
 
-#ifdef DESKTOP
-int main(int argc, char *argv[]) {
-    test_bit_array();
-    return 0;
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(10000);
-    Serial.begin(9600);
-    test_bit_array();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(test_bit_array);
 #endif

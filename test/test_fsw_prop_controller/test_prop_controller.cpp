@@ -1,6 +1,7 @@
 
 #include "prop_shared.h"
 
+namespace prop_controller_test {
 void test_initialization()
 {
     TestFixture tf;
@@ -374,47 +375,38 @@ void test_pressure_sensor_logic()
     }
 #endif
 }
-int test_prop_controller()
+}
+
+namespace fsw_test {
+void test_prop_controller()
 {
     // generated the following with:
     // cat test/test_fsw_prop_controller//test_prop_controller.cpp | grep "void test_" | sed 's/^void \(.*\)$/\1/' | sed 's/()/);/g'| sed -e 's/^/RUN_TEST(/'
     UNITY_BEGIN();
-    RUN_TEST(test_initialization);
-    RUN_TEST(test_disable);
-    RUN_TEST(test_illegal_schedule);
-    RUN_TEST(test_idle_to_pressurizing);
-    RUN_TEST(test_idle_to_await_pressurize);
-    RUN_TEST(test_await_pressurize_to_pressurize);
-    RUN_TEST(test_pressurize_to_await_firing);
-    RUN_TEST(test_pressurize_to_firing);
-    RUN_TEST(test_pressurizing);
-    RUN_TEST(test_pressurize_fail);
-    RUN_TEST(test_suppress_underpressure_fault);
-    RUN_TEST(test_suppress_underpressure_fault_max_cycles);
-    RUN_TEST(test_await_firing);
-    RUN_TEST(test_firing);
-    RUN_TEST(test_firing_to_idle);
-    RUN_TEST(test_use_backup);
-    RUN_TEST(test_vent_outer_tank);
-    RUN_TEST(test_vent_inner_tank);
-    RUN_TEST(test_temp_sensor_logic);
-    RUN_TEST(test_pressure_sensor_logic);
-    return UNITY_END();
+    RUN_TEST(prop_controller_test::test_initialization);
+    RUN_TEST(prop_controller_test::test_disable);
+    RUN_TEST(prop_controller_test::test_illegal_schedule);
+    RUN_TEST(prop_controller_test::test_idle_to_pressurizing);
+    RUN_TEST(prop_controller_test::test_idle_to_await_pressurize);
+    RUN_TEST(prop_controller_test::test_await_pressurize_to_pressurize);
+    RUN_TEST(prop_controller_test::test_pressurize_to_await_firing);
+    RUN_TEST(prop_controller_test::test_pressurize_to_firing);
+    RUN_TEST(prop_controller_test::test_pressurizing);
+    RUN_TEST(prop_controller_test::test_pressurize_fail);
+    RUN_TEST(prop_controller_test::test_suppress_underpressure_fault);
+    RUN_TEST(prop_controller_test::test_suppress_underpressure_fault_max_cycles);
+    RUN_TEST(prop_controller_test::test_await_firing);
+    RUN_TEST(prop_controller_test::test_firing);
+    RUN_TEST(prop_controller_test::test_firing_to_idle);
+    RUN_TEST(prop_controller_test::test_use_backup);
+    RUN_TEST(prop_controller_test::test_vent_outer_tank);
+    RUN_TEST(prop_controller_test::test_vent_inner_tank);
+    RUN_TEST(prop_controller_test::test_temp_sensor_logic);
+    RUN_TEST(prop_controller_test::test_pressure_sensor_logic);
+    UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main()
-{
-    return test_prop_controller();
-}
-#else
-#include <Arduino.h>
-void setup()
-{
-    delay(2000);
-    Serial.begin(9600);
-    test_prop_controller();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_prop_controller);
 #endif

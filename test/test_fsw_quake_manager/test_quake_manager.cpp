@@ -5,7 +5,9 @@
 #include <fsw/FCCode/radio_state_t.enum>
 
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 
+namespace quake_manager_test {
 // Check that radio state x matches the current radio state
 #define assert_radio_state(x)                                                                   \
     {                                                                                           \
@@ -561,51 +563,46 @@ void test_sbdrb()
     // make sure that the 16th byte is null
     TEST_ASSERT_EQUAL('\0', tf.quake_manager->radio_mt_packet_f.get()[15]);
 }
-int test_quake_manager()
+
+#undef assert_radio_state
+#undef assert_fn_num
+}
+
+namespace fsw_test {
+void test_quake_manager()
 {
     UNITY_BEGIN();
-    RUN_TEST(test_wait_unexpected);
-    RUN_TEST(test_wait_no_more_cycles);
-    RUN_TEST(test_config_no_more_cycles);
-    RUN_TEST(test_read_no_more_cycles);
-    RUN_TEST(test_write_no_more_cycles);
-    RUN_TEST(test_trans_no_more_cycles);
-    RUN_TEST(test_config_ok);
-    RUN_TEST(test_read_ok);
-    RUN_TEST(test_write_ok);
-    RUN_TEST(test_transceive_ok_no_network);
-    RUN_TEST(test_transceive_ok_no_network_timed_out);
-    RUN_TEST(test_transceive_ok_with_mt);
-    RUN_TEST(test_transceive_ok_no_mt);
-    RUN_TEST(test_oldcycles_do_not_change);
-    RUN_TEST(test_transition_radio_state);
-    RUN_TEST(test_no_more_cycles);
-    RUN_TEST(test_write_load_message);
-    RUN_TEST(test_update_mo_same_snap);
-    RUN_TEST(test_same_snap_after_sbdix_recovers);
-    RUN_TEST(test_update_mo_load_new_snap);
-    RUN_TEST(test_new_snap_after_sbdix_fail);
-    RUN_TEST(test_valid_initialization);
-    RUN_TEST(test_sbdrb);
-    return UNITY_END();
+    RUN_TEST(quake_manager_test::test_wait_unexpected);
+    RUN_TEST(quake_manager_test::test_wait_no_more_cycles);
+    RUN_TEST(quake_manager_test::test_config_no_more_cycles);
+    RUN_TEST(quake_manager_test::test_read_no_more_cycles);
+    RUN_TEST(quake_manager_test::test_write_no_more_cycles);
+    RUN_TEST(quake_manager_test::test_trans_no_more_cycles);
+    RUN_TEST(quake_manager_test::test_config_ok);
+    RUN_TEST(quake_manager_test::test_read_ok);
+    RUN_TEST(quake_manager_test::test_write_ok);
+    RUN_TEST(quake_manager_test::test_transceive_ok_no_network);
+    RUN_TEST(quake_manager_test::test_transceive_ok_no_network_timed_out);
+    RUN_TEST(quake_manager_test::test_transceive_ok_with_mt);
+    RUN_TEST(quake_manager_test::test_transceive_ok_no_mt);
+    RUN_TEST(quake_manager_test::test_oldcycles_do_not_change);
+    RUN_TEST(quake_manager_test::test_transition_radio_state);
+    RUN_TEST(quake_manager_test::test_no_more_cycles);
+    RUN_TEST(quake_manager_test::test_write_load_message);
+    RUN_TEST(quake_manager_test::test_update_mo_same_snap);
+    RUN_TEST(quake_manager_test::test_same_snap_after_sbdix_recovers);
+    RUN_TEST(quake_manager_test::test_update_mo_load_new_snap);
+    RUN_TEST(quake_manager_test::test_new_snap_after_sbdix_fail);
+    RUN_TEST(quake_manager_test::test_valid_initialization);
+    RUN_TEST(quake_manager_test::test_sbdrb);
+    UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main()
-{
-    return test_quake_manager();
-}
-#else
-#include <Arduino.h>
-void setup()
-{
-    delay(2000);
-    Serial.begin(9600);
-    test_quake_manager();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_quake_manager);
 #endif
+
 /*
 parse to test
 cat test/test_quake_manager//test_quake_manager.cpp | grep "void test_" | sed 's/^void \(.*\)$/\1/' | sed 's/()/);/g'| sed -e 's/^/RUN_TEST(/'

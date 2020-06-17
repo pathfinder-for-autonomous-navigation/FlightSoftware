@@ -3,7 +3,9 @@
 #include <fsw/FCCode/DCDCController.hpp>
 
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 
+namespace dcdc_test {
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
@@ -147,27 +149,17 @@ void test_task_execute() {
     TEST_ASSERT_EQUAL(false, tf.reset_cmd_fp->get());
 
 }
+}
 
-int test_control_task() {
+namespace fsw_test {
+void test_dcdc() {
     UNITY_BEGIN();
-    RUN_TEST(test_task_initialization);
-    RUN_TEST(test_task_execute);
-    return UNITY_END();
+    RUN_TEST(dcdc_test::test_task_initialization);
+    RUN_TEST(dcdc_test::test_task_execute);
+    UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main() {
-    return test_control_task();
-}
-
-#else
-
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_control_task();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_dcdc);
 #endif

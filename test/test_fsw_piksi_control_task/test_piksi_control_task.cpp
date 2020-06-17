@@ -5,11 +5,13 @@
 
 #include <fsw/FCCode/Drivers/Piksi.hpp>
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
+
+namespace piksi_control_task_test {
 
 #define assert_piksi_mode(x) {\
     TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\
 }
-
 class TestFixture {
     public:
         StateFieldRegistryMock registry;
@@ -268,30 +270,22 @@ void test_dead(){
         assert_piksi_mode(piksi_mode_t::dead);
 }
 
-int test_control_task()
+#undef assert_piksi_mode
+}
+
+namespace fsw_test {
+void test_piksi_control_task()
 {
         UNITY_BEGIN();
-        RUN_TEST(test_task_initialization);
-        RUN_TEST(test_read_errors);
-        RUN_TEST(test_normal_errors);
-        RUN_TEST(test_task_execute);
-        RUN_TEST(test_dead);
-        return UNITY_END();
+        RUN_TEST(piksi_control_task_test::test_task_initialization);
+        RUN_TEST(piksi_control_task_test::test_read_errors);
+        RUN_TEST(piksi_control_task_test::test_normal_errors);
+        RUN_TEST(piksi_control_task_test::test_task_execute);
+        RUN_TEST(piksi_control_task_test::test_dead);
+        UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main()
-{
-        return test_control_task();
-}
-#else
-#include <Arduino.h>
-void setup()
-{
-        delay(2000);
-        Serial.begin(9600);
-        test_control_task();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_piksi_control_task);
 #endif

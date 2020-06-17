@@ -275,7 +275,7 @@ void test_clear() {
     TEST_ASSERT_NULL(registry.find_event("foo5"));
 }
 
-int test_state_field_registry_mock() {
+void test_state_field_registry_mock() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
     RUN_TEST(test_create_internal_field);
@@ -290,20 +290,9 @@ int test_state_field_registry_mock() {
     RUN_TEST(test_create_event);
     RUN_TEST(test_create_fault);
     RUN_TEST(test_clear);
-    return UNITY_END();
+    UNITY_END();
 }
 
-#ifdef DESKTOP
-int main() {
-    return test_state_field_registry_mock();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_state_field_registry_mock();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(test_state_field_registry_mock);
 #endif

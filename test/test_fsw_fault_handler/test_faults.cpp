@@ -1,7 +1,10 @@
 #include "test_fault_handlers.hpp"
 #include "cartesian_product.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 
-void test_faults() {
+namespace fsw_test {
+void test_fault_handlers() {
+    UNITY_BEGIN();
     RUN_TEST(test_cartesian_product);
     RUN_TEST(test_fault_machine_mock);
     RUN_TEST(test_super_simple_fault_handlers);
@@ -12,23 +15,10 @@ void test_faults() {
     RUN_TEST(test_quake_fault_handler);
     RUN_TEST(test_piksi_fault_handler);
     RUN_TEST(test_fault_handling_end_to_end);
-}
-
-#ifdef DESKTOP
-int main() {
-    UNITY_BEGIN();
-    test_faults();
-    return UNITY_END();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    UNITY_BEGIN();
-    test_faults();
     UNITY_END();
 }
+}
 
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_tests::test_fault_handlers);
 #endif

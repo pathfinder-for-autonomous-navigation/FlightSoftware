@@ -172,18 +172,6 @@ void test_state_field() {
     UNITY_END();
 }
 
-#ifdef DESKTOP
-int main(int argc, char *argv[]) {
-    test_state_field();
-    return 0;
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(10000);
-    Serial.begin(9600);
-    test_state_field();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(test_state_field);
 #endif

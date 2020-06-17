@@ -1,8 +1,10 @@
 #include <common/bitstream.h>
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 #include <cstring>
 using namespace std; 
 
+namespace bitstream_test {
 /**
  * Check that we can consume 4 bits at a time (nibble)
  */
@@ -496,6 +498,7 @@ void test17()
   bs_dst >> u16;
   TEST_ASSERT_EQUAL(0x9893, u16);
 }
+}
 
 /**
  * Recursive helper function to print bits into little endian in order to
@@ -509,40 +512,32 @@ void test17()
 //   return dumbrecursive(bs, --stop, bad + ms);
 // }
 
-int test_bitstream()
+namespace fsw_test
+{
+void test_bitstream()
 {
     UNITY_BEGIN();
-    RUN_TEST(test1);
-    RUN_TEST(test2);
-    RUN_TEST(test3);
-    RUN_TEST(test4);
-    RUN_TEST(test5);
-    RUN_TEST(test6);
-    RUN_TEST(test7);
-    RUN_TEST(test8);
-    RUN_TEST(test9);
-    RUN_TEST(test10);
-    RUN_TEST(test11);
-    RUN_TEST(test12);
-    RUN_TEST(test13);
-    RUN_TEST(test14);
-    RUN_TEST(test15);
-    RUN_TEST(test16);
-    RUN_TEST(test17);
-    return UNITY_END();
+    RUN_TEST(bitstream_test::test1);
+    RUN_TEST(bitstream_test::test2);
+    RUN_TEST(bitstream_test::test3);
+    RUN_TEST(bitstream_test::test4);
+    RUN_TEST(bitstream_test::test5);
+    RUN_TEST(bitstream_test::test6);
+    RUN_TEST(bitstream_test::test7);
+    RUN_TEST(bitstream_test::test8);
+    RUN_TEST(bitstream_test::test9);
+    RUN_TEST(bitstream_test::test10);
+    RUN_TEST(bitstream_test::test11);
+    RUN_TEST(bitstream_test::test12);
+    RUN_TEST(bitstream_test::test13);
+    RUN_TEST(bitstream_test::test14);
+    RUN_TEST(bitstream_test::test15);
+    RUN_TEST(bitstream_test::test16);
+    RUN_TEST(bitstream_test::test17);
+    UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main() {
-    return test_bitstream();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_bitstream();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_bitstream);
 #endif

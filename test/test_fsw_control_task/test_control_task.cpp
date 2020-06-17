@@ -2,7 +2,9 @@
 #include <fsw/FCCode/ControlTask.hpp>
 
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 
+namespace control_task_test {
 class DummyControlTask : public ControlTask<void> {
   public:
     DummyControlTask(StateFieldRegistry& registry) : ControlTask<void>(registry) {}
@@ -87,27 +89,19 @@ void test_task_add() {
     task.add_event(event);
     TEST_ASSERT_NOT_NULL(registry.find_event_t("event"));
 }
+}
 
-int test_control_task() {
+namespace fsw_test {
+void test_control_task() {
     UNITY_BEGIN();
-    RUN_TEST(test_task_initialization);
-    RUN_TEST(test_task_execute);
-    RUN_TEST(test_task_find);
-    RUN_TEST(test_task_add);
-    return UNITY_END();
+    RUN_TEST(control_task_test::test_task_initialization);
+    RUN_TEST(control_task_test::test_task_execute);
+    RUN_TEST(control_task_test::test_task_find);
+    RUN_TEST(control_task_test::test_task_add);
+    UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main() {
-    return test_control_task();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_control_task();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_control_task);
 #endif

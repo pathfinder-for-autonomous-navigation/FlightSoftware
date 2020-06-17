@@ -10,10 +10,6 @@
 #endif
 
 class EEPROMController : public TimedControlTask<void> {
-   #ifdef UNIT_TEST
-    friend class TestFixture;
-   #endif
-
    public:
     /**
      * @brief Construct a new EEPROM Controller object
@@ -58,10 +54,6 @@ class EEPROMController : public TimedControlTask<void> {
     // Number of addresses available in EEPROM.
     TRACKED_CONSTANT_SC(unsigned int, eeprom_size, 4096);
 
-  protected:
-    //the locations in the EEPROM in which the field values will be stored
-    std::vector<int> addresses;
-
     #ifdef DESKTOP
         // Store EEPROM data in JSON so that it can be written to a file.
         static nlohmann::json data;
@@ -70,6 +62,10 @@ class EEPROMController : public TimedControlTask<void> {
         // Get EEPROM data in file and store it in "data".
         static void get_file_data();
     #endif
+
+  protected:
+    //the locations in the EEPROM in which the field values will be stored
+    std::vector<int> addresses;
 };
 
 #endif

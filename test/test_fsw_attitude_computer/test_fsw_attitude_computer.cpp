@@ -6,10 +6,12 @@
 
 #include "../custom_assertions.hpp"
 #include <gnc/constants.hpp>
+#include "../test_fsw_all_1/fsw_tests.hpp"
 
 constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
 const lin::Vector3f nan_vector = lin::Vector3f({nan_f, nan_f, nan_f});
 
+namespace attitude_computer_test {
 class TestFixture {
   public:
     StateFieldRegistryMock registry;
@@ -172,29 +174,21 @@ void test_parallel_objectives() {
             tf.adcs_vec2_desired_fp->get(), 1e-10);
     }
 }
+}
 
-int test_attitude_computer() {
+namespace fsw_test {
+void test_attitude_computer() {
     UNITY_BEGIN();
-    RUN_TEST(test_valid_initialization);
-    RUN_TEST(test_point_standby);
-    RUN_TEST(test_point_docking);
-    RUN_TEST(test_point_limited);
+    RUN_TEST(attitude_computer_test::test_valid_initialization);
+    RUN_TEST(attitude_computer_test::test_point_standby);
+    RUN_TEST(attitude_computer_test::test_point_docking);
+    RUN_TEST(attitude_computer_test::test_point_limited);
     // We cannot test point_manual since there's nothing happening inside that state.
-    RUN_TEST(test_parallel_objectives);
-    return UNITY_END();
+    RUN_TEST(attitude_computer_test::test_parallel_objectives);
+    UNITY_END();
+}
 }
 
-#ifdef DESKTOP
-int main() {
-    return test_attitude_computer();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_attitude_computer();
-}
-
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_attitude_computer);
 #endif

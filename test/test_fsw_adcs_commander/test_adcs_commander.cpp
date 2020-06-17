@@ -188,20 +188,5 @@ void test_adcs_commander()
 }
 
 #ifndef COMBINE_TESTS
-#ifdef DESKTOP
-int main()
-{
-    test_adcs_commander();
-}
-#else
-#include <Arduino.h>
-void setup()
-{
-    delay(2000);
-    Serial.begin(9600);
-    test_adcs_commander();
-}
-
-void loop() {}
-#endif
+UNIT_TEST_RUNNER(fsw_test::test_adcs_commander);
 #endif

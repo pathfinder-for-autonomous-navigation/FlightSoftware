@@ -4,7 +4,9 @@
 #include <common/EventStorage.hpp>
 
 #include "../custom_assertions.hpp"
+#include "../test_fsw_all_1/fsw_tests.hpp"
 
+namespace events_test {
 struct TestFixtureEvent {
   public:
     StateFieldRegistryMock registry;
@@ -160,24 +162,17 @@ void test_event_storage()
         test_single_event(tf, tf.event_storage, i);
     }
 }
-
-#ifdef DESKTOP
-int main() {
-    UNITY_BEGIN();
-    RUN_TEST(test_event);
-    RUN_TEST(test_event_storage);
-    return UNITY_END();
 }
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
+
+namespace fsw_test {
+void test_events() {
     UNITY_BEGIN();
-    RUN_TEST(test_event);
-    RUN_TEST(test_event_storage);
+    RUN_TEST(events_test::test_event);
+    RUN_TEST(events_test::test_event_storage);
     UNITY_END();
 }
+}
 
-void loop() {}
+#ifndef COMBINE_TESTS
+UNIT_TEST_RUNNER(fsw_test::test_events);
 #endif

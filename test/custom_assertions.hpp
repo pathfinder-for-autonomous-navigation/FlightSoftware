@@ -2,8 +2,13 @@
 #define CUSTOM_ASSERTIONS_HPP_
 
 #include <unity.h>
+
 #undef isnan
 #undef isinf
+
+#ifndef DESKTOP
+#include <Arduino.h>
+#endif
 
 #define PAN_TEST_ASSERT_EQUAL_FLOAT_ARR(expected, actual, delta, n) { \
     char err_str[25]; \
@@ -41,5 +46,20 @@
         TEST_ASSERT_DOUBLE_WITHIN_MESSAGE(delta, expected(i), actual(i), err_str); \
     } \
 }
+
+#ifdef DESKTOP
+    #define UNIT_TEST_RUNNER(test_name) \
+        int main() { \
+            test_name(); \
+        }
+#else
+    #define UNIT_TEST_RUNNER(test_name) \
+        void setup() { \
+            delay(2000); \
+            Serial.begin(9600); \
+            test_name(); \
+        } \
+        void loop() {}
+#endif
 
 #endif
