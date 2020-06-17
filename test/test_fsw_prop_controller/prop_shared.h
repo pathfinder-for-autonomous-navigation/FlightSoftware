@@ -3,7 +3,7 @@
 #include <fsw/FCCode/PropFaultHandler.h>
 #include <fsw/FCCode/prop_state_t.enum>
 #include "../StateFieldRegistryMock.hpp"
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 
 namespace prop_test {
 #define assert_fault_state(state, x) TEST_ASSERT_EQUAL(state, tf.pc->x.is_faulted())

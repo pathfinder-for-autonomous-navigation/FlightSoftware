@@ -5,7 +5,7 @@
 
 #include <common/bitstream.h>
 #include "../custom_assertions.hpp"
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 #include <map>
 
 using namespace std;

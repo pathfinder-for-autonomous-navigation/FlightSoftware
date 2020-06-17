@@ -4,9 +4,8 @@
 #include <fsw/FCCode/AttitudeComputer.hpp>
 #include <fsw/FCCode/adcs_state_t.enum>
 
-#include "../custom_assertions.hpp"
 #include <gnc/constants.hpp>
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 
 constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
 const lin::Vector3f nan_vector = lin::Vector3f({nan_f, nan_f, nan_f});

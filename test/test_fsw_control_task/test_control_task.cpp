@@ -2,7 +2,7 @@
 #include <fsw/FCCode/ControlTask.hpp>
 
 #include "../custom_assertions.hpp"
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 
 namespace control_task_test {
 class DummyControlTask : public ControlTask<void> {

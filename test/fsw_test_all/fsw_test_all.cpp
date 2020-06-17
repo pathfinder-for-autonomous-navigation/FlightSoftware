@@ -2,7 +2,7 @@
 #include "../custom_assertions.hpp"
 
 namespace fsw_test {
-int test_fsw_all_1() {
+int test_fsw_all() {
     UNITY_BEGIN();
     RUN_TEST(fsw_test::test_adcs_commander);
     RUN_TEST(fsw_test::test_adcs_box_monitor);
@@ -30,5 +30,5 @@ int test_fsw_all_1() {
 }
 
 #ifdef COMBINE_TESTS
-UNIT_TEST_RUNNER(fsw_test::test_fsw_all_1);
+UNIT_TEST_RUNNER(fsw_test::test_fsw_all);
 #endif

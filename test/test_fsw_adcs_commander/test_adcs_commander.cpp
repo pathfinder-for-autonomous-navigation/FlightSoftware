@@ -9,7 +9,7 @@
 #include "../custom_assertions.hpp"
 
 #include <fsw/FCCode/adcs_state_t.enum>
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 
 namespace adcs_commander_test {
 class TestFixture {

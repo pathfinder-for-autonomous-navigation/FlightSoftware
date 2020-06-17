@@ -4,7 +4,7 @@
 
 #include <common/Fault.hpp>
 #include "../custom_assertions.hpp"
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 
 namespace fault_tests {
 unsigned int& control_cycle_count = TimedControlTaskBase::control_cycle_count;

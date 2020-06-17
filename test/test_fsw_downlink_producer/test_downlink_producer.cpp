@@ -4,7 +4,7 @@
 
 #include <common/StateFieldRegistry.hpp>
 #include "../custom_assertions.hpp"
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 #include <iostream>
 
 namespace downlink_producer_test {

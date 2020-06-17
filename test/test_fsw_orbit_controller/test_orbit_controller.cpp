@@ -2,7 +2,7 @@
 #include <fsw/FCCode/OrbitController.hpp>
 #include <fsw/FCCode/prop_planner_state_t.enum>
 #include "../custom_assertions.hpp"
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 
 namespace orbit_control_task_test {
 class TestFixture {

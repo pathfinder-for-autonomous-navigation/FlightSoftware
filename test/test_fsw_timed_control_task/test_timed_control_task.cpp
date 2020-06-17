@@ -4,7 +4,7 @@
 #include <fsw/FCCode/ClockManager.hpp>
 
 #include "../custom_assertions.hpp"
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 
 #ifdef DESKTOP
     #include <iostream>
@@ -172,5 +172,5 @@ Serial.println(timed_control_task_test::warning);
 }
 
 #ifndef COMBINE_TESTS
-UNIT_TEST_RUNNER(fsw_test::timed_control_task);
+UNIT_TEST_RUNNER(fsw_test::test_timed_control_task);
 #endif

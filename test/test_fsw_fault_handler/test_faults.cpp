@@ -1,6 +1,6 @@
 #include "test_fault_handlers.hpp"
 #include "cartesian_product.hpp"
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 
 namespace fsw_test {
 void test_fault_handlers() {
@@ -20,5 +20,5 @@ void test_fault_handlers() {
 }
 
 #ifndef COMBINE_TESTS
-UNIT_TEST_RUNNER(fsw_tests::test_fault_handlers);
+UNIT_TEST_RUNNER(fsw_test::test_fault_handlers);
 #endif

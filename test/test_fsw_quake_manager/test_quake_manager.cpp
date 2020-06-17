@@ -5,7 +5,7 @@
 #include <fsw/FCCode/radio_state_t.enum>
 
 #include "../custom_assertions.hpp"
-#include "../test_fsw_all_1/fsw_tests.hpp"
+#include "../fsw_test_all/fsw_tests.hpp"
 
 namespace quake_manager_test {
 // Check that radio state x matches the current radio state
