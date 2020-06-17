@@ -1,4 +1,5 @@
 #include "fsw_tests.hpp"
+#include <unity.h>
 
 int test_fsw_all_1() {
     UNITY_BEGIN();
@@ -6,6 +7,7 @@ int test_fsw_all_1() {
     return UNITY_END();
 }
 
+#ifdef COMBINE_TESTS
 #ifdef DESKTOP
 int main()
 {
@@ -21,4 +23,5 @@ void setup()
 }
 
 void loop() {}
+#endif
 #endif

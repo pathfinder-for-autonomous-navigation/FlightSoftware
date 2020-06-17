@@ -178,12 +178,12 @@ void test_execute(){
 }
 
 namespace fsw_test {
-int test_control_task()
+void test_adcs_commander()
 {
     UNITY_BEGIN();
     RUN_TEST(adcs_commander_test::test_task_initialization);
     RUN_TEST(adcs_commander_test::test_execute);
-    return UNITY_END();
+    UNITY_END();
 }
 }
 
@@ -191,7 +191,7 @@ int test_control_task()
 #ifdef DESKTOP
 int main()
 {
-    return test_control_task();
+    test_adcs_commander();
 }
 #else
 #include <Arduino.h>
@@ -199,7 +199,7 @@ void setup()
 {
     delay(2000);
     Serial.begin(9600);
-    test_control_task();
+    test_adcs_commander();
 }
 
 void loop() {}
