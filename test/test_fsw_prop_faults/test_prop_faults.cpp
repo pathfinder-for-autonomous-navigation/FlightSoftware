@@ -4,14 +4,14 @@
 
 #include "../test_fsw_prop_controller/prop_shared.h"
 
-namespace prop_fault_test {
+namespace prop_test {
 unsigned int one_day_ccno = PAN::one_day_ccno;
 unsigned int &cc_count = TimedControlTaskBase::control_cycle_count;
 
 void test_respect_disabled()
 {
     // If faults are signalled, but we are in disable, then we should not be handling faults are detecting faults
-    TestFixture tf;
+    PropTestFixture tf;
     simulate_overpressured(); // we are about to blow up...
     // signal the fault to persistence times then detect it on the 11th
     tf.step(get_persistence(overpressure_fault_f) + 1);
@@ -28,7 +28,7 @@ void test_respect_disabled()
 // Test that underpressure event is detected and causes us to enter standby
 void test_underpressured_detect()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.simulate_underpressured();
     tf.step(get_persistence(pressurize_fail_fault_f) + 1);
     assert_fault_state(true, pressurize_fail_fault_f);
@@ -36,7 +36,7 @@ void test_underpressured_detect()
 
 void test_overpressured_detect()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     simulate_overpressured();
     tf.step(get_persistence(overpressure_fault_f) + 1);
     assert_fault_state(true, overpressure_fault_f);
@@ -44,7 +44,7 @@ void test_overpressured_detect()
 
 void test_tank1_temp_high_detect()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     simulate_tank1_high();
     tf.step(get_persistence(tank1_temp_high_fault_f) + 1);
     assert_fault_state(true, tank1_temp_high_fault_f);
@@ -52,7 +52,7 @@ void test_tank1_temp_high_detect()
 
 void test_tank2_temp_high_detect()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     simulate_tank2_high();
     tf.step(get_persistence(tank2_temp_high_fault_f) + 1);
     assert_fault_state(true, tank2_temp_high_fault_f);
@@ -60,7 +60,7 @@ void test_tank2_temp_high_detect()
 
 void test_both_tanks_high_detect()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     // Test that when multiple fault events occur, both faults are detected
     simulate_tank2_high();
     tf.step(get_persistence(tank2_temp_high_fault_f) + 1);
@@ -74,7 +74,7 @@ void test_both_tanks_high_detect()
 
 void test_multiple_faults_detect()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     // Test that when multiple fault events occur, both faults are detected
     simulate_overpressured();
     tf.step(get_persistence(overpressure_fault_f));
@@ -107,7 +107,7 @@ void run_fault_detection_tests()
 
 void test_underpressured_response()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     // In the event that Prop fails to pressurize
     tf.simulate_underpressured();
     // check that pressurize_fail_fault_f is faulted immediately and state enters handling_fault
@@ -138,7 +138,7 @@ void test_underpressured_response()
 
 void test_overpressured_response()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.simulate_pressurizing();
     // tf.step for some random number of pressurizing cycles so that we
     //  are in the middle of pressurizing
@@ -171,7 +171,7 @@ void test_overpressured_response()
 // Test that we can detect high temp event while firing and respond accordingly
 void test_tank1_temp_high_response()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.simulate_firing();
     tf.step(2); // start firing a little bit
     simulate_tank1_high();
@@ -198,7 +198,7 @@ void test_tank1_temp_high_response()
 
 void test_tank2_temp_high_response()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.step(3);
     simulate_tank2_high();
@@ -222,7 +222,7 @@ void test_tank2_temp_high_response()
 
 void test_tank2temphigh_undepressured_response()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     // Overpressured and High temp faults take precedence
     tf.simulate_underpressured();
     simulate_tank2_high();
@@ -240,7 +240,7 @@ void test_tank2temphigh_undepressured_response()
 // Make sure that even when we are firing, prop will go into handling fault if it detects a fault
 void test_interrupt_firing()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     // Test that prop does not ignore faults when it is firing
     tf.simulate_pressurizing();
     tf.step(tf.pc->min_cycles_needed() - get_persistence(tank1_temp_high_fault_f));
@@ -262,7 +262,7 @@ void test_interrupt_firing()
 // Tank1 is venting but Tank2 is suddenly faulted
 void test_tank2_fault_while_tank1_vent()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     auto saved_max_cycles = tf.pc->max_venting_cycles.get();
 
     tf.simulate_await_firing();
@@ -340,7 +340,7 @@ void test_tank2_fault_while_tank1_vent()
 // All the sensors are broken and report fault
 void test_all_faulted_sensors_broken_respect_disabled()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     auto saved_max_cycles = tf.pc->max_venting_cycles.get();
     TEST_ASSERT_EQUAL(20, saved_max_cycles);
     tf.simulate_pressurizing();
@@ -408,14 +408,14 @@ void test_all_faulted_sensors_broken_respect_disabled()
 namespace fsw_test {
 void test_prop_fault_response()
 {
-    RUN_TEST(prop_fault_test::test_underpressured_response);
-    RUN_TEST(prop_fault_test::test_overpressured_response);
-    RUN_TEST(prop_fault_test::test_tank1_temp_high_response);
-    RUN_TEST(prop_fault_test::test_tank2_temp_high_response);
-    RUN_TEST(prop_fault_test::test_tank2temphigh_undepressured_response);
-    RUN_TEST(prop_fault_test::test_tank2_fault_while_tank1_vent);
-    RUN_TEST(prop_fault_test::test_interrupt_firing);
-    RUN_TEST(prop_fault_test::test_all_faulted_sensors_broken_respect_disabled);
+    RUN_TEST(prop_test::test_underpressured_response);
+    RUN_TEST(prop_test::test_overpressured_response);
+    RUN_TEST(prop_test::test_tank1_temp_high_response);
+    RUN_TEST(prop_test::test_tank2_temp_high_response);
+    RUN_TEST(prop_test::test_tank2temphigh_undepressured_response);
+    RUN_TEST(prop_test::test_tank2_fault_while_tank1_vent);
+    RUN_TEST(prop_test::test_interrupt_firing);
+    RUN_TEST(prop_test::test_all_faulted_sensors_broken_respect_disabled);
 }
 }
 

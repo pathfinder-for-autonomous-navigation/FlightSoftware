@@ -163,7 +163,7 @@ private:
     static PropState_HandlingFault state_handling_fault;
     static PropState_Manual state_manual;
 
-    friend class TestFixture;
+    friend class PropTestFixture;
 };
 
 // ------------------------------------------------------------------------
@@ -508,7 +508,8 @@ private:
 
     // tank_choice := 1 for Tank1, 2 for Tank2
     unsigned int tank_choice = 1;
-    friend class TestFixture;
+
+    friend class PropTestFixture;
 };
 
 // ------------------------------------------------------------------------

@@ -5,6 +5,7 @@
 #include "../StateFieldRegistryMock.hpp"
 #include "../test_fsw_all_1/fsw_tests.hpp"
 
+namespace prop_test {
 #define assert_fault_state(state, x) TEST_ASSERT_EQUAL(state, tf.pc->x.is_faulted())
 
 #define check_state(expected) TEST_ASSERT_EQUAL(expected, tf.pc->prop_state_f.get())
@@ -63,8 +64,9 @@ inline void simulate_tank2_high()
     std::printf("Spoofing Tank2 high\n");
     Tank2.fake_tank2_temp_sensor_read = 50; // 47 C
 }
+}
 
-class TestFixture
+class PropTestFixture
 {
 public:
     unsigned int &cc = TimedControlTaskBase::control_cycle_count;
@@ -75,13 +77,13 @@ public:
     std::unique_ptr<PropController> pc;
     std::unique_ptr<PropFaultHandler> pfh;
 
-    TestFixture()
+    PropTestFixture()
     {
         cc = 0;
         Fault::cc = &cc;
         pc = std::make_unique<PropController>(registry, 0);
         pfh = std::make_unique<PropFaultHandler>(registry);
-        simulate_ambient();
+        prop_test::simulate_ambient();
     }
 
     inline int ctrl_cycles_per_pressurizing_cycle()
@@ -162,7 +164,7 @@ public:
         step();
     }
 
-    ~TestFixture()
+    ~PropTestFixture()
     {
         // Reset the prop between tests
         PropulsionSystem.reset();
@@ -204,7 +206,7 @@ public:
         set_state(prop_state_t::idle);
         set_schedule(200, 800, 900, 800, pc->min_cycles_needed());
         step();
-        simulate_at_threshold();
+        prop_test::simulate_at_threshold();
         execute_until_state_change();
         TEST_ASSERT_EQUAL(prop_state_t::await_firing, pc->prop_state_f.get());
     }
@@ -215,7 +217,7 @@ public:
         set_schedule(200, 800, 900, 800, pc->min_cycles_needed() + 1);
         step();
         step();
-        simulate_at_threshold();
+        prop_test::simulate_at_threshold();
         execute_until_state_change();
         execute_until_state_change();
         TEST_ASSERT_EQUAL(prop_state_t::firing, pc->prop_state_f.get());

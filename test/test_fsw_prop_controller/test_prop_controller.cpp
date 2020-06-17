@@ -1,10 +1,10 @@
 
 #include "prop_shared.h"
 
-namespace prop_controller_test {
+namespace prop_test {
 void test_initialization()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     check_state(prop_state_t::disabled);
     TEST_ASSERT_FALSE(tf.pc->pressurize_fail_fault_f.is_faulted());
     TEST_ASSERT_FALSE(tf.pc->overpressure_fault_f.is_faulted());
@@ -15,7 +15,7 @@ void test_initialization()
 // Test that PropController remains in the disabled state despite the existence of a valid schedule
 void test_disable()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     // Prop should remain in disabled state until manually set to some other state
     tf.set_schedule(200, 300, 400, 500, tf.pc->min_cycles_needed());
     // Firing time is set 5 control cycles from now but we should not fire since
@@ -32,7 +32,7 @@ void test_disable()
 // Test that Prop ignores a schedule if a value exceeds 999
 void test_illegal_schedule()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     // Prop should ignore because fewer than min_cycles_needed()
     tf.set_schedule(200, 400, 800, 100, tf.pc->min_cycles_needed() - 1);
@@ -50,7 +50,7 @@ void test_illegal_schedule()
 // Test that we should go directly into pressurizing (as oppose to await_pressurizing)
 void test_idle_to_pressurizing()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(200, 400, 800, 999, tf.pc->min_cycles_needed());
     tf.step();
@@ -62,7 +62,7 @@ void test_idle_to_pressurizing()
 // Prop to enter await_pressurizing for 1 cycle before entering pressurizing
 void test_idle_to_await_pressurize()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(200, 400, 800, 100, tf.pc->min_cycles_needed() + 1);
     tf.step();
@@ -76,7 +76,7 @@ void test_idle_to_await_pressurize()
 // tf.pc->min_cycles_needed()
 void test_await_pressurize_to_pressurize()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(200, 400, 12, 800, tf.pc->min_cycles_needed() + 10);
     tf.step();
@@ -88,7 +88,7 @@ void test_await_pressurize_to_pressurize()
 // Test that we pressurize for 19 cycles before transitioning to await_firing
 void test_pressurize_to_await_firing()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(200, 200, 200, 200, tf.pc->min_cycles_needed());
     tf.step();
@@ -105,7 +105,7 @@ void test_pressurize_to_await_firing()
 void test_pressurize_to_firing()
 {
     // There is no going from pressurizing into firing
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(200, 400, 12, 800, tf.pc->min_cycles_needed());
     tf.step();
@@ -122,7 +122,7 @@ void test_pressurize_to_firing()
 // enter await_firing
 void test_pressurizing()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     unsigned int cycles_until_fire = tf.pc->min_cycles_needed();
     tf.set_schedule(700, 200, 200, 800, cycles_until_fire);
@@ -139,7 +139,7 @@ void test_pressurizing()
 // Test the failure case where we are unable to reach threshold pressurize  in 20 cycles
 void test_pressurize_fail()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed() * 2);
     tf.step();                       // now in await_pressurizing
@@ -163,7 +163,7 @@ void test_pressurize_fail()
 
 void test_suppress_underpressure_fault()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(700, 200, 200, 800, 2 * tf.pc->min_cycles_needed());
     tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
@@ -182,7 +182,7 @@ void test_suppress_underpressure_fault()
 // Test that when we have ran out of cycles and we are suppressed, we enter await_firing
 void test_suppress_underpressure_fault_max_cycles()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     // Suppress it early
     tf.pc->pressurize_fail_fault_f.suppress_f.set(true);
@@ -200,7 +200,7 @@ void test_suppress_underpressure_fault_max_cycles()
 // Test that when we are in await_firing, all valves are closed, the the schedule is valid
 void test_await_firing()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     unsigned int cycles_until_fire = tf.pc->min_cycles_needed() + 4;
     tf.set_schedule(700, 200, 200, 800, cycles_until_fire);
@@ -220,7 +220,7 @@ void test_await_firing()
 // Test that PropulsionSystem is_firing() returns True iff we are in the firing state
 void test_firing()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
     tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed());
@@ -238,7 +238,7 @@ void test_firing()
 // then Prop is definitely firing after this amount of cycles
 void test_firing_to_idle()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.set_state(prop_state_t::idle);
     tf.set_schedule(700, 200, 200, 800, tf.pc->min_cycles_needed());
     simulate_at_threshold();
@@ -265,7 +265,7 @@ void test_firing_to_idle()
 // Test that we use the backup valve when it is requested
 void test_use_backup()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.simulate_pressurizing();
     tf.step(3);
     TEST_ASSERT_TRUE(Tank1.is_valve_open(0));
@@ -289,7 +289,7 @@ void test_use_backup()
 // Test the tank2 venting response
 void test_vent_outer_tank()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.simulate_pressurizing();
     tf.step(4);
     simulate_overpressured();
@@ -318,7 +318,7 @@ void test_vent_outer_tank()
 // Test the tank1 venting response
 void test_vent_inner_tank()
 {
-    TestFixture tf;
+    PropTestFixture tf;
     tf.simulate_firing();
     tf.step(1);
     simulate_tank1_high();
@@ -383,26 +383,26 @@ void test_prop_controller()
     // generated the following with:
     // cat test/test_fsw_prop_controller//test_prop_controller.cpp | grep "void test_" | sed 's/^void \(.*\)$/\1/' | sed 's/()/);/g'| sed -e 's/^/RUN_TEST(/'
     UNITY_BEGIN();
-    RUN_TEST(prop_controller_test::test_initialization);
-    RUN_TEST(prop_controller_test::test_disable);
-    RUN_TEST(prop_controller_test::test_illegal_schedule);
-    RUN_TEST(prop_controller_test::test_idle_to_pressurizing);
-    RUN_TEST(prop_controller_test::test_idle_to_await_pressurize);
-    RUN_TEST(prop_controller_test::test_await_pressurize_to_pressurize);
-    RUN_TEST(prop_controller_test::test_pressurize_to_await_firing);
-    RUN_TEST(prop_controller_test::test_pressurize_to_firing);
-    RUN_TEST(prop_controller_test::test_pressurizing);
-    RUN_TEST(prop_controller_test::test_pressurize_fail);
-    RUN_TEST(prop_controller_test::test_suppress_underpressure_fault);
-    RUN_TEST(prop_controller_test::test_suppress_underpressure_fault_max_cycles);
-    RUN_TEST(prop_controller_test::test_await_firing);
-    RUN_TEST(prop_controller_test::test_firing);
-    RUN_TEST(prop_controller_test::test_firing_to_idle);
-    RUN_TEST(prop_controller_test::test_use_backup);
-    RUN_TEST(prop_controller_test::test_vent_outer_tank);
-    RUN_TEST(prop_controller_test::test_vent_inner_tank);
-    RUN_TEST(prop_controller_test::test_temp_sensor_logic);
-    RUN_TEST(prop_controller_test::test_pressure_sensor_logic);
+    RUN_TEST(prop_test::test_initialization);
+    RUN_TEST(prop_test::test_disable);
+    RUN_TEST(prop_test::test_illegal_schedule);
+    RUN_TEST(prop_test::test_idle_to_pressurizing);
+    RUN_TEST(prop_test::test_idle_to_await_pressurize);
+    RUN_TEST(prop_test::test_await_pressurize_to_pressurize);
+    RUN_TEST(prop_test::test_pressurize_to_await_firing);
+    RUN_TEST(prop_test::test_pressurize_to_firing);
+    RUN_TEST(prop_test::test_pressurizing);
+    RUN_TEST(prop_test::test_pressurize_fail);
+    RUN_TEST(prop_test::test_suppress_underpressure_fault);
+    RUN_TEST(prop_test::test_suppress_underpressure_fault_max_cycles);
+    RUN_TEST(prop_test::test_await_firing);
+    RUN_TEST(prop_test::test_firing);
+    RUN_TEST(prop_test::test_firing_to_idle);
+    RUN_TEST(prop_test::test_use_backup);
+    RUN_TEST(prop_test::test_vent_outer_tank);
+    RUN_TEST(prop_test::test_vent_inner_tank);
+    RUN_TEST(prop_test::test_temp_sensor_logic);
+    RUN_TEST(prop_test::test_pressure_sensor_logic);
     UNITY_END();
 }
 }
