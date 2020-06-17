@@ -9,6 +9,9 @@
 #include "../custom_assertions.hpp"
 
 #include <fsw/FCCode/adcs_state_t.enum>
+#include "../test_fsw_all_1/fsw_tests.hpp"
+
+namespace adcs_commander_test {
 class TestFixture {
     public:
         StateFieldRegistryMock registry;
@@ -172,15 +175,19 @@ void test_execute(){
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
     TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
 }
+}
 
+namespace fsw_test {
 int test_control_task()
 {
     UNITY_BEGIN();
-    RUN_TEST(test_task_initialization);
-    RUN_TEST(test_execute);
+    RUN_TEST(adcs_commander_test::test_task_initialization);
+    RUN_TEST(adcs_commander_test::test_execute);
     return UNITY_END();
 }
+}
 
+#ifndef COMBINE_TESTS
 #ifdef DESKTOP
 int main()
 {
@@ -196,4 +203,5 @@ void setup()
 }
 
 void loop() {}
+#endif
 #endif
