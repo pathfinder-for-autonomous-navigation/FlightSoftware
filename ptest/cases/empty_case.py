@@ -13,7 +13,7 @@ class EmptyCase(SingleSatOnlyCase):
         self.sim.cycle_no_leader = self.sim.flight_controller_leader.read_state("pan.cycle_no")
         self.finish()
 
-class EmptySimCase(SingleSatOnlyCase):
+class EmptySimCase(EmptyCase):
     @property
     def sim_duration(self):
         return float("inf")

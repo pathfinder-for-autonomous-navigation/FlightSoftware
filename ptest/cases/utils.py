@@ -218,8 +218,6 @@ class BootUtil(object):
             self.logger.put("[TESTCASE] Waiting for the deployment period to be over.")
 
         elif self.boot_stage == 'deployment_hold':
-            self.elapsed_deployment += 1
-
             if self.elapsed_deployment == self.deployment_hold_length:
                 if satellite_state == "detumble":
                     self.logger.put("[TESTCASE] Deployment period is over. Entering detumble state.")
@@ -229,7 +227,9 @@ class BootUtil(object):
                     raise TestCaseFailure("Satellite went to initialization hold instead of detumble.")
                 else:
                     raise TestCaseFailure(f"Satellite failed to exit deployment wait period. \
-                        Elapsed deployment period was {true_elapsed}.")
+                        Satellite state is {satellite_state}. Elapsed deployment period was {true_elapsed}.")
+            else:
+                self.elapsed_deployment += 1
 
         elif self.boot_stage == 'detumble_wait':
             self.num_detumble_cycles += 1

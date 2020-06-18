@@ -295,6 +295,68 @@ void test_dispatch_undefined() {
     tf.check(mission_state_t::safehold);
 }
 
+void test_fault_responses() {
+    // No fault response recommendation shall be respected in startup
+    // or manual.
+    for(mission_state_t initial_state : {mission_state_t::startup,
+                                         mission_state_t::manual})
+    {
+        TestFixture tf{initial_state};
+        tf.set(fault_response_t::standby);
+        tf.step();
+        tf.check(initial_state);
+        tf.set(fault_response_t::safehold);
+        tf.step();
+        tf.check(initial_state);
+    }
+
+    // Fault response recommendations are redundant in safehold.
+    {
+        TestFixture tf{mission_state_t::safehold};
+        tf.set(fault_response_t::standby);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+        tf.set(fault_response_t::safehold);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+
+    // Only safehold fault recommendations shake the mission
+    // manager out of initialization hold or detumble.
+    for(mission_state_t initial_state : {mission_state_t::initialization_hold,
+                                         mission_state_t::detumble})
+    {
+        TestFixture tf{initial_state};
+        tf.set(fault_response_t::standby);
+        tf.step();
+        tf.check(initial_state);
+        tf.set(fault_response_t::safehold);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+
+    // All other states can experience transitions to safehold or standby
+    // due to a fault response recommendation. 
+    for(mission_state_t initial_state : {mission_state_t::standby,
+                                         mission_state_t::follower,
+                                         mission_state_t::leader,
+                                         mission_state_t::follower_close_approach,
+                                         mission_state_t::leader_close_approach,
+                                         mission_state_t::docking,
+                                         mission_state_t::docked})
+    {
+        TestFixture tf{initial_state};
+        tf.set(fault_response_t::standby);
+        tf.step();
+        tf.check(mission_state_t::standby);
+
+        TestFixture tf2{initial_state};
+        tf2.set(fault_response_t::safehold);
+        tf2.step();
+        tf2.check(mission_state_t::safehold);
+    }
+}
+
 int test_mission_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
@@ -306,7 +368,7 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_docking);
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
-    // TODO add fault handling tests
+    RUN_TEST(test_fault_responses);
     return UNITY_END();
 }
 

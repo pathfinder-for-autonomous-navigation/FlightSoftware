@@ -4,6 +4,7 @@
 #include <numeric>
 #include "cartesian_product.hpp"
 
+static constexpr unsigned int num_fault_machines = 8;
 
 /**
  * @brief The main fault handler should initially be enabled and
@@ -22,14 +23,16 @@ void test_main_fh_initialization() {
  */
 void test_main_fh_no_fault() {
     TestFixtureMainFHMocked tf;
-    assert(tf.num_fault_handler_machines == 10);
+    assert(tf.num_fault_handler_machines == num_fault_machines);
 
-    fault_response_t response = tf.step<10>({
+    std::array<fault_response_t, num_fault_machines> null_fault_responses = 
+    {
         fault_response_t::none, fault_response_t::none, fault_response_t::none,
         fault_response_t::none, fault_response_t::none, fault_response_t::none,
-        fault_response_t::none, fault_response_t::none, fault_response_t::none,
-        fault_response_t::none
-    });
+        fault_response_t::none, fault_response_t::none
+    };
+
+    fault_response_t response = tf.step<num_fault_machines>(null_fault_responses);
     TEST_ASSERT_EQUAL(fault_response_t::none, response);
 }
 
@@ -38,13 +41,13 @@ void test_main_fh_no_fault() {
  */
 void test_main_fh_standby_fault() {
     TestFixtureMainFHMocked tf;
-    assert(tf.num_fault_handler_machines == 10);
+    assert(tf.num_fault_handler_machines == num_fault_machines);
 
     // Produce all combinations of none/standby fault response recommendations.
     static constexpr std::array<fault_response_t, 2> allowed_responses 
         {fault_response_t::none, fault_response_t::standby};
-    const std::vector<std::array<fault_response_t, 10>> combos
-        = NthCartesianProduct<10>::of(allowed_responses);
+    const std::vector<std::array<fault_response_t, num_fault_machines>> combos
+        = NthCartesianProduct<num_fault_machines>::of(allowed_responses);
 
     for(auto const & combo : combos) {
         // Verify that there is at least one fault machine
@@ -65,13 +68,13 @@ void test_main_fh_standby_fault() {
 // Test all combinations of faults that lead to a safehold response.
 void test_main_fh_safehold_fault() {
     TestFixtureMainFHMocked tf;
-    assert(tf.num_fault_handler_machines == 10);
+    assert(tf.num_fault_handler_machines == num_fault_machines);
 
     // Produce all combinations of none/standby/safehold fault response recommendations.
     static constexpr std::array<fault_response_t, 3> allowed_responses
         {fault_response_t::none, fault_response_t::standby, fault_response_t::safehold};
-    const std::vector<std::array<fault_response_t, 10>> combos 
-        = NthCartesianProduct<10>::of(allowed_responses);
+    const std::vector<std::array<fault_response_t, num_fault_machines>> combos 
+        = NthCartesianProduct<num_fault_machines>::of(allowed_responses);
 
     for(auto const & combo : combos) {
         // Verify that there is at least one fault machine in this combo
@@ -95,16 +98,15 @@ void test_main_fh_safehold_fault() {
  */
 void test_main_fh_toggle_handling() {
     TestFixtureMainFHMocked tf;
-    assert(tf.num_fault_handler_machines == 10);
+    assert(tf.num_fault_handler_machines == num_fault_machines);
 
     // This is a random combination that definitely causes a fault
     // recommendation to transition to safe hold.
-    std::array<fault_response_t, 10> safehold_combo = {
+    std::array<fault_response_t, num_fault_machines> safehold_combo = {
         fault_response_t::safehold, fault_response_t::safehold, 
         fault_response_t::none,     fault_response_t::none,
         fault_response_t::none,     fault_response_t::none,
         fault_response_t::standby,  fault_response_t::safehold,
-        fault_response_t::none,     fault_response_t::standby
     };
 
     // If some fault machines recommend safehold, the main fault handler
