@@ -36,23 +36,23 @@ jobs:
 
     - name: CI Checkout Case and Empty case
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t CICase -ni --clean
-        python -m ptest runsim -c ptest/configs/ci.json -t EmptyCase -ni --clean
+        python -m ptest runsim -c ptest/configs/ci.json -t CICase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t EmptyCase -ni
 
     - name: Hardware Checkout Cases
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t DCDCCheckoutCase -ni --clean
-        python -m ptest runsim -c ptest/configs/ci.json -t GomspaceCheckoutCase -ni --clean
-        python -m ptest runsim -c ptest/configs/ci.json -t SpinMotorsCase -ni --clean
-        python -m ptest runsim -c ptest/configs/ci.json -t ADCSCheckoutCase -ni --clean
-        python -m ptest runsim -c ptest/configs/ci.json -t PiksiCheckoutCase -ni --clean
-        python -m ptest runsim -c ptest/configs/ci.json -t PropStateMachineCase -ni --clean
+        python -m ptest runsim -c ptest/configs/ci.json -t DCDCCheckoutCase -ni 
+        python -m ptest runsim -c ptest/configs/ci.json -t GomspaceCheckoutCase -ni 
+        python -m ptest runsim -c ptest/configs/ci.json -t SpinMotorsCase -ni 
+        python -m ptest runsim -c ptest/configs/ci.json -t ADCSCheckoutCase -ni 
+        python -m ptest runsim -c ptest/configs/ci.json -t PiksiCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t PropStateMachineCase -ni
 
     - name: Fault Handling Cases
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t ADCSWheelFaultHandler -ni --clean
-        python -m ptest runsim -c ptest/configs/ci.json -t LowBattFaultHandler -ni --clean
+        python -m ptest runsim -c ptest/configs/ci.json -t ADCSWheelFaultHandler -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t LowBattFaultHandler -ni
 
     - name: Mission Checkout Cases
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni --clean
+        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni
