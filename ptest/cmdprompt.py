@@ -6,6 +6,7 @@ except ImportError:
 from cmd import Cmd
 import timeit
 import tinydb
+from .cases.utils import Enums
 from .plotter import PlotterClient
 from . state_session import StateSession
 
@@ -116,7 +117,22 @@ class StateCmdPrompt(Cmd):
         start_time = timeit.default_timer()
         read_result = self.cmded_device.read_state(args[0])
         elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
-        print(f"{read_result} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+
+        if args[0] == "pan.state":
+            human_readable_result = Enums.mission_states[int(read_result)]
+        elif args[0] == "prop.state":
+            human_readable_result = Enums.prop_states[int(read_result)]
+        elif args[0] == "adcs.state":
+            human_readable_result = Enums.adcs_states[int(read_result)]
+        elif args[0] == "radio.state":
+            human_readable_result = Enums.radio_states[int(read_result)]
+        elif args[0] == "sat.designation":
+            human_readable_result = Enums.sat_designations[int(read_result)]
+        elif args[0] == "piksi.mode":
+            human_readable_result = Enums.piksi_modes[int(read_result)]
+        else:
+            human_readable_result = ""
+        print(f"{read_result} ({human_readable_result}) \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
     def do_ws(self, args):
         '''

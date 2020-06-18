@@ -95,6 +95,15 @@ void debug_console::init() {
     }
 }
 
+void debug_console::printf(const char* format, ...) {
+    if (!is_initialized) return;
+    char buf[100];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(buf, sizeof(buf), format, args);
+    _print_json_msg(debug_severity::info, buf);
+    va_end(args);
+}
 void debug_console::printf(severity s, const char* format, ...) {
     if (!is_initialized) return;
     char buf[100];
@@ -108,6 +117,9 @@ void debug_console::printf(severity s, const char* format, ...) {
 void debug_console::println(severity s, const char* str) {
     if (!is_initialized) return;
     _print_json_msg(s, str);
+}
+void debug_console::println(const char* str) {
+    println(debug_severity::info, str);
 }
 
 void debug_console::blink_led() {

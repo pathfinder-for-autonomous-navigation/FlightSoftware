@@ -29,7 +29,7 @@ class DataConsumer(object):
 
     def start(self):
         """ Start data consumer thread. """
-        self.consumer_thread = threading.Thread(target=self.consume_queue)
+        self.consumer_thread = threading.Thread(target=self.consume_queue, name=f"Data consumer thread for {self.device_name}")
         self.running = True
         self.consumer_thread.start()
 
@@ -40,10 +40,8 @@ class DataConsumer(object):
     def stop(self):
         """ Stop data consumer thread. """
         self.running = False
-        try:
+        if hasattr(self, "consumer_thread"):
             self.consumer_thread.join()
-        except AttributeError:
-            pass
         self.save()
 
     def put(self, item):
