@@ -27,7 +27,7 @@ class StateSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, uplink_console, port, simulation_run_dir):
+    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir):
         '''
         Initializes state session with a device.
         '''
@@ -35,6 +35,7 @@ class StateSession(object):
         # Device connection
         self.device_name = device_name
         self.port = port
+        self.is_teensy = is_teensy
 
         # Uplink console
         self.uplink_console = uplink_console
