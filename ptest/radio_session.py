@@ -49,7 +49,7 @@ class RadioSession(object):
         # by passing messages over the queue.
         q = Queue()
         self.check_queue_msgs = True
-        self.check_queue_thread = threading.Thread(target=self.check_queue, args=(q,))
+        self.check_queue_thread = threading.Thread(target=self.check_queue, args=(q,), name="Uplink queue check thread")
         self.check_queue_thread.start()
 
         # HTTP Endpoints
@@ -159,7 +159,7 @@ class RadioSession(object):
 
         # Start the timer. Timer will send uplink once after waiting for the
         # configured send queue duration.
-        t = threading.Thread(target=self.timer.start)
+        t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
         t.start()
 
         return True
