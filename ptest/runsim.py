@@ -253,7 +253,7 @@ def main(args):
         try: 
             os.remove("eeprom.json")
         except OSError:
-            continue
+            pass
 
     try:
         with open(args.conf, 'r') as config_file:
