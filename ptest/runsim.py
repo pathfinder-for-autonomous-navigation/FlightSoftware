@@ -250,7 +250,10 @@ def main(args):
 
     if args.clean:
         print("Removing EEPROM file due to user request.")
-        os.system("rm -f eeprom.json")
+        try: 
+            os.remove("eeprom.json")
+        except OSError:
+            continue
 
     try:
         with open(args.conf, 'r') as config_file:
