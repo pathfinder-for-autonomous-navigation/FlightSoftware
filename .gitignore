@@ -169,3 +169,8 @@ CMakeLists.txt
 # Temporary EEPROM file created by HOOTL
 eeprom.json
 
+# Bazel
+bazel-bin
+bazel-out
+bazel-FlightSoftware
+bazel-testlogs
