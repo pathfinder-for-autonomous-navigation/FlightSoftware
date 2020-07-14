@@ -7,7 +7,7 @@
 
 #include "TimedControlTask.hpp"
 
-#include "piksi_mode_t.enum"
+#include "piksi_mode_t.enum.h"
 
 class PiksiControlTask : public TimedControlTask<void>
 {

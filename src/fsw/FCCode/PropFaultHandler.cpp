@@ -2,7 +2,7 @@
 // Created by athena on 4/21/20.
 //
 
-#include "prop_state_t.enum"
+#include "prop_state_t.enum.h"
 #include "PropController.hpp"
 #include "PropFaultHandler.h"
 

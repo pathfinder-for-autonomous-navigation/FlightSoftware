@@ -2,7 +2,7 @@
 
 #include <fsw/FCCode/TimedControlTask.hpp>
 #include <fsw/FCCode/Drivers/PropulsionSystem.hpp>
-#include <fsw/FCCode/prop_state_t.enum>
+#include <fsw/FCCode/prop_state_t.enum.h>
 #include <common/Fault.hpp>
 /**
  * Implementation Info:

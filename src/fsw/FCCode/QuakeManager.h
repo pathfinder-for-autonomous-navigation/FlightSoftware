@@ -2,7 +2,7 @@
 
 #include "TimedControlTask.hpp"
 #include "QuakeControlTask.h"
-#include "radio_state_t.enum"
+#include "radio_state_t.enum.h"
 #include <common/constant_tracker.hpp>
 
 /**

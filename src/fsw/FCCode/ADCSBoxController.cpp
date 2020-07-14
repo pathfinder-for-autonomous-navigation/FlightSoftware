@@ -1,5 +1,5 @@
 #include "ADCSBoxController.hpp"
-#include "adcs_state_t.enum"
+#include "adcs_state_t.enum.h"
 
 #include <adcs/constants.hpp>
 #include <adcs/havt_devices.hpp>

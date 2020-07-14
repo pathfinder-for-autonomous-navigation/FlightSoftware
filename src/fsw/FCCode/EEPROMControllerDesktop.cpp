@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <csignal>
-#include "mission_state_t.enum"
+#include "mission_state_t.enum.h"
 
 nlohmann::json EEPROMController::data;
 

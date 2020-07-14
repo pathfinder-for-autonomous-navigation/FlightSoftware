@@ -2,7 +2,7 @@
 #define quake_fault_handler_HPP_
 
 #include "FaultHandlerMachine.hpp"
-#include "qfh_state_t.enum"
+#include "qfh_state_t.enum.h"
 
 /**
  * @brief This state machine class implements a tiered fault system

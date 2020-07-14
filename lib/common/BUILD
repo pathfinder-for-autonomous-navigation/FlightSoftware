@@ -21,3 +21,15 @@ cc_library(
     linkstatic = True,
     visibility = ["//visibility:public"],
 )
+
+cc_library(
+    name = "psim",
+    srcs = glob(["psim/src/**/*.cpp", "psim/src/**/*.inl", "psim/src/**/*.hpp", "psim/include/**/*.inl"]),
+    hdrs = glob(["psim/include/**/*.hpp", "psim/include/**/*.h"]),
+    copts = ["-Ilib/common/psim/include -Ilib/common/psim/src"],
+    linkstatic = True,
+    visibility = ["//visibility:public"],
+    deps = [
+        "@lin//:lin",
+    ]
+)

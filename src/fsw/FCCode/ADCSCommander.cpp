@@ -1,5 +1,5 @@
 #include "ADCSCommander.hpp"
-#include "adcs_state_t.enum"
+#include "adcs_state_t.enum.h"
 #include <lin.hpp>
 #include <gnc/utilities.hpp>
 #include <gnc/constants.hpp>

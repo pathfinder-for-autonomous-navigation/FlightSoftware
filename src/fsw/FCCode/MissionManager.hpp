@@ -8,11 +8,11 @@
 
 #include <common/Fault.hpp>
 #include "MainFaultHandler.hpp"
-#include "prop_state_t.enum"
-#include "mission_state_t.enum"
-#include "adcs_state_t.enum"
-#include "radio_state_t.enum"
-#include "sat_designation_t.enum"
+#include "prop_state_t.enum.h"
+#include "mission_state_t.enum.h"
+#include "adcs_state_t.enum.h"
+#include "radio_state_t.enum.h"
+#include "sat_designation_t.enum.h"
 
 class MissionManager : public TimedControlTask<void>
 {

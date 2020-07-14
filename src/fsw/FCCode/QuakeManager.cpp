@@ -1,7 +1,7 @@
 #include "QuakeManager.h"
 #include "Drivers/QLocate.hpp"
 
-#include "radio_state_t.enum"
+#include "radio_state_t.enum.h"
 
 // Include I/O functions for telemetry dumping during functional testing.
 #ifndef FLIGHT

@@ -2,7 +2,7 @@
 #define PIKSI_FAULT_HANDLER_HPP_
 
 #include "FaultHandlerMachine.hpp"
-#include "piksi_mode_t.enum"
+#include "piksi_mode_t.enum.h"
 
 class PiksiFaultHandler : public FaultHandlerMachine {
   public:

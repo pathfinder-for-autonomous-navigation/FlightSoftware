@@ -1,6 +1,6 @@
 #pragma once
 #include "Drivers/QLocate.hpp"
-#include "radio_state_t.enum"
+#include "radio_state_t.enum.h"
 
 /**
  * QLocate driver states

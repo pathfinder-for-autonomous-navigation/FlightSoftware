@@ -2,7 +2,7 @@
 
 #include "EEPROMController.hpp"
 #include <EEPROM.h>
-#include "mission_state_t.enum"
+#include "mission_state_t.enum.h"
 
 EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "eeprom_ct", offset)

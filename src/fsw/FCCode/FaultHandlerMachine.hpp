@@ -2,8 +2,8 @@
 #define FAULT_HANDLER_MACHINE_HPP_
 
 #include "TimedControlTask.hpp"
-#include "mission_state_t.enum"
-#include "fault_response_t.enum"
+#include "mission_state_t.enum.h"
+#include "fault_response_t.enum.h"
 #include <common/Fault.hpp>
 
 /**

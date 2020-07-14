@@ -1,6 +1,6 @@
 #include "QuakeFaultHandler.hpp"
 #include "constants.hpp"
-#include "radio_state_t.enum"
+#include "radio_state_t.enum.h"
 
 const unsigned int &cccount = TimedControlTaskBase::control_cycle_count;
 
