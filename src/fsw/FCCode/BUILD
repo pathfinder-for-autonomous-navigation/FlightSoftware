@@ -11,6 +11,7 @@ cc_library(
         "//src/adcs:fsw_exports",
         "//lib/fsw:json",
         "//lib/fsw:memuse",
+        "//src:flow_data"
     ],
     local_defines = ["DESKTOP", "PAN_LEADER"]
 )

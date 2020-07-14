@@ -8,7 +8,9 @@ preamble = \
 
 #include "flow_data.hpp"
 
-const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
+namespace PAN
+{
+const std::vector<FlowData> flow_data = {
 """
 preamble = preamble[1:]
 
@@ -34,6 +36,8 @@ class FlowListParser(object):
 end = \
 """
 };
+} // namespace PAN
+
 """
 
 with open("src/flow_data.cpp", "w") as output_f:

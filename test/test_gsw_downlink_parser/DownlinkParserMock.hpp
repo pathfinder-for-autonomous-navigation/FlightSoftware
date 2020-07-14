@@ -13,7 +13,7 @@ using json = nlohmann::json;
 class DownlinkParserMock : public DownlinkParser {
   public:
     DownlinkParserMock(StateFieldRegistry& r,
-        const std::vector<DownlinkProducer::FlowData>& flow_data) :
+        const std::vector<PAN::FlowData>& flow_data) :
             DownlinkParser(r, flow_data) {}
 
     DownlinkProducer* get_downlink_producer() {

@@ -107,7 +107,7 @@ class MainControlLoop : public ControlTask<void> {
      * @param flow_data Metadata for telemetry flows.
      */
     MainControlLoop(StateFieldRegistry& registry,
-        const std::vector<DownlinkProducer::FlowData>& flow_data);
+        const std::vector<PAN::FlowData>& flow_data);
 
     /**
      * @brief Processes state field commands present in the serial buffer.

@@ -4,7 +4,9 @@
 
 #include "flow_data.hpp"
 
-const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
+namespace PAN
+{
+const std::vector<FlowData> flow_data = {
 {1, true, {"pan.state", "pan.deployed", "pan.sat_designation"}},
 {2, true, {"orbit.baseline_pos", "orbit.pos", "piksi.time"}},
 {3, true, {"attitude_estimator.q_body_eci", "attitude_estimator.w_body", "adcs_monitor.ssa_mode"}},
@@ -42,3 +44,5 @@ const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
 {35, false, {"docksys.is_turning", "docksys.config_cmd"}},
 {36, false, {"piksi_fh.no_cdpgs_max_wait", "piksi_fh.cdpgs_delay_max_wait", "piksi_fh.enabled"}}
 };
+} // namespace PAN
+

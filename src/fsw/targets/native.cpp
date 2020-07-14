@@ -1,5 +1,4 @@
 #include <fsw/FCCode/MainControlLoop.hpp>
-#include <common/StateFieldRegistry.hpp>
 #include "flow_data.hpp"
 
 #ifndef UNIT_TEST

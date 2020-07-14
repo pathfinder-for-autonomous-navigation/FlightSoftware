@@ -16,7 +16,7 @@ class TelemetryInfoGenerator {
     /**
      * @brief Construct a new telemetry info generator
      */
-    TelemetryInfoGenerator(const std::vector<DownlinkProducer::FlowData>& _flow_data);
+    TelemetryInfoGenerator(const std::vector<PAN::FlowData>& _flow_data);
 
     /**
      * @brief Generates telemetry data in JSON format.
@@ -46,7 +46,7 @@ class TelemetryInfoGenerator {
   private:
     StateFieldRegistry r;
     MainControlLoop fcp;
-    const std::vector<DownlinkProducer::FlowData>& flow_data;
+    const std::vector<PAN::FlowData>& flow_data;
 };
 
 #endif

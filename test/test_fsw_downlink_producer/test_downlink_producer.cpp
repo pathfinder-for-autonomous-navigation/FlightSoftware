@@ -20,7 +20,7 @@ struct TestFixture {
 
     TestFixture() : registry() {}
 
-    void init(const std::vector<DownlinkProducer::FlowData>& flow_data) {
+    void init(const std::vector<PAN::FlowData>& flow_data) {
         // Create required field(s)
         cycle_count_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
 
@@ -49,7 +49,7 @@ void test_task_initialization() {
         TestFixture tf;
 
         // Empty flow data
-        std::vector<DownlinkProducer::FlowData> flow_data = {};
+        std::vector<PAN::FlowData> flow_data = {};
 
         tf.init(flow_data);
         TEST_ASSERT_NOT_NULL(tf.snapshot_ptr_fp);
@@ -66,7 +66,7 @@ void test_task_initialization() {
         TestFixture tf;
 
         // Empty flow data
-        std::vector<DownlinkProducer::FlowData> flow_data = {
+        std::vector<PAN::FlowData> flow_data = {
             {
                 1,
                 true,
@@ -96,7 +96,7 @@ void test_one_flow() {
     {
         TestFixture tf;
 
-        std::vector<DownlinkProducer::FlowData> flow_data = {
+        std::vector<PAN::FlowData> flow_data = {
             {
                 1,
                 true,
@@ -116,7 +116,7 @@ void test_one_flow() {
 
     {
         TestFixture tf;
-        std::vector<DownlinkProducer::FlowData> flow_data = {
+        std::vector<PAN::FlowData> flow_data = {
             {
                 1,
                 true,
@@ -157,7 +157,7 @@ void test_one_flow_multityped() {
     auto foo6_fp = tf.registry.create_readable_field<unsigned char>("foo6", 25);
     auto foo7_fp = tf.registry.create_readable_field<bool>("foo7");
     auto foo8_fp = tf.registry.create_readable_field<signed int>("foo8", -2, 8);
-    std::vector<DownlinkProducer::FlowData> flow_data = {
+    std::vector<PAN::FlowData> flow_data = {
         {
             1,
             true,
@@ -189,7 +189,7 @@ void test_multiple_flows() {
     // Test with multiple flows that fit within a downlink packet.
     {
         TestFixture tf;
-        std::vector<DownlinkProducer::FlowData> flow_data = {
+        std::vector<PAN::FlowData> flow_data = {
             {
                 1,
                 true,
@@ -220,7 +220,7 @@ void test_multiple_flows() {
     {
         TestFixture tf;
 
-        std::vector<DownlinkProducer::FlowData> flow_data = {
+        std::vector<PAN::FlowData> flow_data = {
             {
                 1,
                 true,
@@ -281,7 +281,7 @@ void test_multiple_flows() {
 void test_some_flows_inactive() {
     TestFixture tf;
 
-    std::vector<DownlinkProducer::FlowData> flow_data = {
+    std::vector<PAN::FlowData> flow_data = {
         {
             1,
             true,
@@ -324,7 +324,7 @@ void test_some_flows_inactive() {
 void test_downlink_changes() {
     TestFixture tf;
 
-    std::vector<DownlinkProducer::FlowData> flow_data = {
+    std::vector<PAN::FlowData> flow_data = {
         {
             1,
             true,
@@ -350,7 +350,7 @@ void test_downlink_changes() {
 void test_shift_priorities() {
     TestFixture tf;
 
-    std::vector<DownlinkProducer::FlowData> flow_data = {
+    std::vector<PAN::FlowData> flow_data = {
         {
             1, true, {"foo1"} 
         },
@@ -409,7 +409,7 @@ void test_shift_priorities() {
 void test_shift_statefield_cmd() {
     TestFixture tf;
 
-    std::vector<DownlinkProducer::FlowData> flow_data = {
+    std::vector<PAN::FlowData> flow_data = {
         {
             1, true, {"foo1"} 
         },
@@ -472,7 +472,7 @@ void test_shift_statefield_cmd() {
 void test_toggle() {
     TestFixture tf;
 
-    std::vector<DownlinkProducer::FlowData> flow_data = {
+    std::vector<PAN::FlowData> flow_data = {
         {
             1, true, {"foo1"} 
         }

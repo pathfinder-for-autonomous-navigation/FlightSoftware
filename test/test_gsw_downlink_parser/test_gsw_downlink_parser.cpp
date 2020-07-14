@@ -20,7 +20,7 @@ class TestFixture {
     StateFieldRegistryMock reg;
     std::unique_ptr<DownlinkParserMock> parser;
     ReadableStateField<unsigned int>* cycle_count_fp;
-    static const std::vector<DownlinkProducer::FlowData> flow_data;
+    static const std::vector<PAN::FlowData> flow_data;
     DownlinkProducer* producer;
 
     // Flow field inputs
@@ -65,7 +65,7 @@ class TestFixture {
     }
 };
 
-const std::vector<DownlinkProducer::FlowData> TestFixture::flow_data = {
+const std::vector<PAN::FlowData> TestFixture::flow_data = {
     {
         1,
         true,

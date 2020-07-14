@@ -3,28 +3,11 @@
 
 #include "TimedControlTask.hpp"
 #include <common/constant_tracker.hpp>
+#include <flow_data.hpp>
 
 class DownlinkProducer : public TimedControlTask<void> {
    public:
     TRACKED_CONSTANT_SC(unsigned int, num_bits_in_packet, 560);
-
-    /**
-     * @brief Flow data object, used in order to specify the
-     * - The flow ID. Note: flow IDs must be greater than zero; a
-     *   flow ID of zero is used to determine if a packet contains
-     *   no more data.
-     * - If this is initially an active flow.
-     * - The fields going into a flow.
-     * 
-     * We can create a static list of these and use it to initialize the
-     * actual Flow object, which creates pointers to state fields and 
-     * contains a function to automatically generate a flow packet.
-     */
-    struct FlowData {
-        unsigned char id;
-        bool is_active;
-        std::vector<std::string> field_list;
-    };
 
     /**
      * @brief Construct a new Downlink Producer.
@@ -45,7 +28,7 @@ class DownlinkProducer : public TimedControlTask<void> {
      * 
      * @param flow_data 
      */
-    void init_flows(const std::vector<FlowData>& flow_data);
+    void init_flows(const std::vector<PAN::FlowData>& flow_data);
 
     /**
      * @brief Compute the size of the downlink snapshot.
@@ -90,7 +73,7 @@ class DownlinkProducer : public TimedControlTask<void> {
          *                   create the flow ID # serializer
          */
         Flow(const StateFieldRegistry& r,
-             const FlowData& flow_data,
+             const PAN::FlowData& flow_data,
              const size_t num_flows);
 
         //! Flow ID #

@@ -17,7 +17,7 @@ class DownlinkParser {
      * 
      */
     DownlinkParser(StateFieldRegistry& r,
-        const std::vector<DownlinkProducer::FlowData>& flow_data);
+        const std::vector<PAN::FlowData>& flow_data);
 
     /**
      * @brief Process a file containing a downlink, and return a JSON

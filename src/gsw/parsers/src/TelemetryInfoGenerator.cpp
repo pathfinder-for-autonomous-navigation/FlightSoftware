@@ -4,7 +4,7 @@
 #include <array>
 
 TelemetryInfoGenerator::TelemetryInfoGenerator(
-    const std::vector<DownlinkProducer::FlowData>& _flow_data) :
+    const std::vector<PAN::FlowData>& _flow_data) :
         r(), fcp(r, _flow_data), flow_data(_flow_data) {}
 
 /************** Helper functions for telemetry info generation. ***********/
@@ -163,7 +163,7 @@ json TelemetryInfoGenerator::generate_telemetry_info() {
     // Get flow data
     ret["flows"] = json::array();
     for(size_t i = 0; i < flow_data.size(); i++) {
-        const DownlinkProducer::FlowData& f = flow_data[i];
+        const PAN::FlowData& f = flow_data[i];
         ret["flows"].push_back({
             {"id", f.id},
             {"priority", i},

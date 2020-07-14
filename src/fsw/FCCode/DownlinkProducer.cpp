@@ -27,13 +27,13 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     toggle_flow_id_f.set(0);
 }
 
-void DownlinkProducer::init_flows(const std::vector<FlowData>& flow_data) {
+void DownlinkProducer::init_flows(const std::vector<PAN::FlowData>& flow_data) {
     // Create flow objects out of the flow data. Ensure that
     // no two flows have the same ID.
     std::set<unsigned char> ids;
     const size_t num_flows = flow_data.size();
     flows.reserve(num_flows);
-    for (const FlowData& flow : flow_data) {
+    for (const PAN::FlowData& flow : flow_data) {
         if (ids.find(flow.id) != ids.end()) {
             printf(debug_severity::error, "Two flows share the same ID: %d", flow.id);
             assert(false);
@@ -194,7 +194,7 @@ const std::vector<DownlinkProducer::Flow>& DownlinkProducer::get_flows() const {
 #endif
 
 DownlinkProducer::Flow::Flow(const StateFieldRegistry& r,
-                        const FlowData& flow_data,
+                        const PAN::FlowData& flow_data,
                         const size_t num_flows) : id_sr(num_flows),
                                                   is_active(flow_data.is_active)
 {

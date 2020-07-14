@@ -5,7 +5,7 @@
 #include <json.hpp>
 
 DownlinkParser::DownlinkParser(StateFieldRegistry& r,
-                               const std::vector<DownlinkProducer::FlowData>& flow_data) :
+                               const std::vector<PAN::FlowData>& flow_data) :
     fcp(r, flow_data),
     registry(r),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
