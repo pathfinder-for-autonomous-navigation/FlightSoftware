@@ -1,4 +1,4 @@
-import os, csv
+import os, csv, sys
 
 preamble = \
 """
@@ -40,10 +40,18 @@ end = \
 
 """
 
-with open("src/flow_data.cpp", "w") as output_f:
+# If running with Bazel, it supplies the input and output paths
+if len(sys.argv) > 2:
+    flow_data_input = sys.argv[1]
+    flow_data_output = sys.argv[2]
+else:
+    flow_data_input = "src/flow_data.csv"
+    flow_data_output = "src/flow_data.cpp"
+
+with open(flow_data_output, "w+") as output_f:
     output_f.write(preamble)
 
-    parsed_flow_list = FlowListParser("src/flow_data.csv").parse()
+    parsed_flow_list = FlowListParser(flow_data_input).parse()
     output_f.write(parsed_flow_list)
 
     output_f.write(end)
