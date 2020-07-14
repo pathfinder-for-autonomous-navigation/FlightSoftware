@@ -1,7 +1,7 @@
 import re, sys, json, os
 from argparse import ArgumentParser
 
-if __name__ == "__main__":
+def get_arguments():
     parser = ArgumentParser(description='''
     Used to generate large telemetry dictionaries for the MCT software, based on simpler descriptions and the FSW-generated telemetry file.
     ''', prog="src/gsw/MCT/dict_generators/generator.py")
@@ -13,8 +13,12 @@ if __name__ == "__main__":
 
     parser.add_argument('-o', '--output', action='store', help='Location of where to store output.', required = True)
 
-    args = parser.parse_args()
+    return parser.parse_args()
 
+if __name__ == "__main__":
+    args = get_arguments()
+
+    # Read in input JSON file.
     dictfile = open(args.dict, 'r')
     subsystem_data = json.load(dictfile)
     dictfile.close()
