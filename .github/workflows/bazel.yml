@@ -25,4 +25,8 @@ jobs:
 
     - name: Build Software
       run: |
-        bazel build //src/fsw:native
+        bazel build //src/fsw:hootl_leader
+        bazel build //src/fsw:hootl_follower
+        bazel build //src/fsw:hootl_realtime_leader
+        bazel build //src/fsw:hootl_realtime_follower
+        bazel test //test:desktop

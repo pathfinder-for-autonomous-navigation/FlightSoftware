@@ -5,10 +5,10 @@ cc_library(
     name = "utils",
     hdrs = ["custom_assertions.hpp", "StateFieldRegistryMock.hpp"],
     deps = [
-        "@unity//:core"
+        "@unity//:core",
     ],
     linkstatic = True,
-    local_defines = ["BAZEL"]
+    local_defines = ["BAZEL"],
 )
 
 test_suite(
@@ -28,6 +28,10 @@ test_suite(
     ]
 )
 
+#################################################
+# Common Software Tests
+#################################################
+
 common_desktop_deps = ["//src/common:common_desktop_fsw_ut"]
 common_teensy_deps = ["//src/common:common_teensy_ut"]
 test_suite(name = "common_desktop", tags = ["common", "desktop"])
@@ -37,6 +41,10 @@ testitem(name = "gpstime", folder = "test_common_gpstime", desktop_deps = common
 testitem(name = "serializers", folder = "test_common_serializers", desktop_deps = common_desktop_deps, teensy_deps = common_teensy_deps, tags = ["common"])
 testitem(name = "state_field", folder = "test_common_state_field", desktop_deps = common_desktop_deps, teensy_deps = common_teensy_deps, tags = ["common"])
 testitem(name = "state_field_registry", folder = "test_common_state_field_registry", desktop_deps = common_desktop_deps, teensy_deps = common_teensy_deps, tags = ["common"])
+
+#################################################
+# Flight Software Tests
+#################################################
 
 fsw_desktop_deps = ["//src/fsw/FCCode:fswbase_desktop_ut"]
 fsw_teensy_deps = ["//src/fsw/FCCode:fswbase_teensy_ut"]
@@ -66,7 +74,27 @@ testitem(name = "state_field_registry_mock", folder = "test_fsw_state_field_regi
 testitem(name = "timed_control_task", folder = "test_fsw_timed_control_task", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
 testitem(name = "uplink_consumer", folder = "test_fsw_uplink_consumer", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
 
+#################################################
+# Ground Software Tests
+#################################################
+
 gsw_deps = ["//src/fsw/FCCode:gswbase_ut", "//src/gsw:ut_lib", "//src:flow_data"]
 test_suite(name = "gsw", tags = ["gsw", "desktop"])
 testitem_desktop(name = "downlink_parser", folder = "test_gsw_downlink_parser", deps = gsw_deps, tags = ["gsw"])
-testitem_desktop(name = "uplink_producer", folder = "test_gsw_uplink_producer", deps = gsw_deps, tags = ["gsw"])
+cc_test(
+    name = "uplink_producer",
+    srcs = glob([
+        "test_gsw_uplink_producer/**/*.cpp",
+        "test_gsw_uplink_producer/**/*.h",
+        "test_gsw_uplink_producer/**/*.hpp", 
+        "test_gsw_uplink_producer/**/*.inl",
+        "shared/**/*.*"
+    ]),
+    data = glob([
+        "test_gsw_uplink_producer/*.sbd",
+        "test_gsw_uplink_producer/*.json",
+    ]),
+    copts = ["-Iexternal/unity/src/ -Isrc/ -Ilib/common/psim/include -Ilib/common/libsbp/include -Ilib/common/concurrentqueue -Ilib/fsw/json"],
+    deps = [":utils"] + gsw_deps,
+    tags = ["gsw", "desktop"],
+)

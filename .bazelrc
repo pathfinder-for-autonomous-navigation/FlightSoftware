@@ -1,1 +1,1 @@
-build --cxxopt=-std=c++14 --cxxopt=-Werror --cxxopt=-DGNC_NO_CASSERT --cxxopt=-DUNITY_INCLUDE_DOUBLE 
+build --cxxopt=-std=c++14 --cxxopt=-Werror --cxxopt=-DGNC_NO_CASSERT

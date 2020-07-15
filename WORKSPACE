@@ -26,7 +26,8 @@ cc_library(
     srcs = ["src/unity.c", "src/unity_internals.h"],
     hdrs = ["src/unity.h"],
     linkstatic = True,
-    visibility = ["//visibility:public"]
+    visibility = ["//visibility:public"],
+    defines = ["UNITY_INCLUDE_DOUBLE"]
 )
 """
 

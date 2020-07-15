@@ -50,8 +50,6 @@ void test_events() {
 void test_faults() {
     StateFieldRegistry registry;
 
-    TEST_ASSERT(false);
-
     // Add fault to registr
     Fault f("fault", 1);
     TEST_ASSERT_TRUE(registry.add_fault(&f));
