@@ -1,4 +1,4 @@
-def common_library(name, defines):
+def common_library(name, defines, linkopts):
     native.cc_library(
         name = name,
         srcs = native.glob(["*.cpp", "*.inl"]),
@@ -14,5 +14,12 @@ def common_library(name, defines):
             "//lib/common:ArduinoJson",
             "@lin//:lin",
         ],
+        linkopts = linkopts,
         defines = ["LIN_RANDOM_SEED=6828031"] + defines
     )
+
+def common_library_desktop(name, defines):
+    common_library(name, defines, ["-pthread"])
+    
+def common_library_teensy(name, defines):
+    common_library(name, defines, [])
