@@ -71,7 +71,7 @@ testitem(name = "prop_controller", folder = "test_fsw_prop_controller", desktop_
 testitem(name = "prop_faults", folder = "test_fsw_prop_faults", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
 testitem(name = "quake_manager", folder = "test_fsw_quake_manager", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
 testitem(name = "state_field_registry_mock", folder = "test_fsw_state_field_registry_mock", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "timed_control_task", folder = "test_fsw_timed_control_task", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
+testitem(name = "timed_control_task", folder = "test_fsw_timed_control_task", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"], defines = ["CI"])
 testitem(name = "uplink_consumer", folder = "test_fsw_uplink_consumer", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
 
 #################################################
