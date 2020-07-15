@@ -1,8 +1,10 @@
 cc_library(
     name = "common",
-    srcs = glob(["*.cpp", "*.inl"], exclude=["targets/"]),
+    srcs = glob(["*.cpp", "*.inl"]),
     hdrs = glob(["*.hpp", "*.h"]),
-    copts = ["-Isrc/common -Isrc/ -Ilib/common/libsbp/include/ -Ilib/common/concurrentqueue/  -Ilib/common/ArduinoJson/src/"],
+    copts = [
+        "-Isrc/common -Isrc/ -Ilib/common/libsbp/include/ -Ilib/common/concurrentqueue/  -Ilib/common/ArduinoJson/src/",
+    ],
     linkstatic = True,
     visibility = ["//visibility:public"],
     deps = [
