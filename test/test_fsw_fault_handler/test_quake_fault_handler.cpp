@@ -1,7 +1,7 @@
 #include "../custom_assertions.hpp"
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/QuakeFaultHandler.hpp>
-#include <fsw/FCCode/radio_state_t.enum>
+#include <fsw/FCCode/radio_state_t.enum.h>
 #include "test_fault_handlers.hpp"
 
 static unsigned int one_day_ccno = PAN::one_day_ccno;

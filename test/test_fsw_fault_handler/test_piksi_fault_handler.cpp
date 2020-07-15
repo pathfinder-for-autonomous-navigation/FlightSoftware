@@ -1,8 +1,8 @@
 #include "../custom_assertions.hpp"
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/PiksiFaultHandler.hpp>
-#include <fsw/FCCode/piksi_mode_t.enum>
-#include <fsw/FCCode/mission_state_t.enum>
+#include <fsw/FCCode/piksi_mode_t.enum.h>
+#include <fsw/FCCode/mission_state_t.enum.h>
 #include "test_fault_handlers.hpp"
 
 static unsigned int& cc_count = TimedControlTaskBase::control_cycle_count;

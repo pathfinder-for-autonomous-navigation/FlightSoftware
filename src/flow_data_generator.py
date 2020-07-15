@@ -41,7 +41,7 @@ end = \
 """
 
 # If running with Bazel, it supplies the input and output paths
-if len(sys.argv) > 2:
+if __name__ == "__main__" and len(sys.argv) > 2:
     flow_data_input = sys.argv[1]
     flow_data_output = sys.argv[2]
 else:

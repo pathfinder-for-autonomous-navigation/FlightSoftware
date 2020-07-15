@@ -753,18 +753,4 @@ void test_serializers() {
     UNITY_END();
 }
 
-#ifdef DESKTOP
-int main(int argc, char* argv[]) {
-    test_serializers();
-    return 0;
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(10000);
-    Serial.begin(9600);
-    test_serializers();
-}
-
-void loop() {}
-#endif
+PAN_TEST(test_serializers)

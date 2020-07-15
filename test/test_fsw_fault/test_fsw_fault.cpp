@@ -277,21 +277,4 @@ void test_control_task(){
     RUN_TEST(test_testfunctions);
 }
 
-#ifdef DESKTOP
-int main() {
-    UNITY_BEGIN();
-    test_control_task();
-    return UNITY_END();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    UNITY_BEGIN();
-    test_control_task();
-    UNITY_END();
-}
-
-void loop() {}
-#endif
+PAN_TEST(test_control_task)

@@ -15,9 +15,27 @@ cc_library(
 new_git_repository(
     name = "lin",
     init_submodules = True,
-    remote = "https://github.com/pathfinder-for-autonomous-navigation/lin",
+    remote = "git@github.com:pathfinder-for-autonomous-navigation/lin",
     commit = "f8fafaa5a29190663bc313a0b835201749b876b8",
     build_file_content = lin_build
+)
+
+unity_build = """
+cc_library(
+    name = "core",
+    srcs = ["src/unity.c", "src/unity_internals.h"],
+    hdrs = ["src/unity.h"],
+    linkstatic = True,
+    visibility = ["//visibility:public"]
+)
+"""
+
+new_git_repository(
+    name = "unity",
+    init_submodules = True,
+    remote = "git@github.com:ThrowTheSwitch/Unity.git",
+    commit = "0126e4804cf5edf87412044f841d7d7023a7c0c3",
+    build_file_content = unity_build
 )
 
 git_repository(

@@ -402,19 +402,4 @@ int test_prop_controller()
     return UNITY_END();
 }
 
-#ifdef DESKTOP
-int main()
-{
-    return test_prop_controller();
-}
-#else
-#include <Arduino.h>
-void setup()
-{
-    delay(2000);
-    Serial.begin(9600);
-    test_prop_controller();
-}
-
-void loop() {}
-#endif
+PAN_TEST(test_prop_controller)

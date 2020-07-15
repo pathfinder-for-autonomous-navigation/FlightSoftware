@@ -77,18 +77,4 @@ void test_state_field_registry() {
     UNITY_END();
 }
 
-#ifdef DESKTOP
-int main(int argc, char *argv[]) {
-    test_state_field_registry();
-    return 0;
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(10000);
-    Serial.begin(9600);
-    test_state_field_registry();
-}
-
-void loop() {}
-#endif
+PAN_TEST(test_state_field_registry)

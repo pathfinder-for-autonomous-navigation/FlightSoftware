@@ -419,20 +419,6 @@ int test_uplink_consumer() {
     return UNITY_END();
 }
 
-#ifdef DESKTOP
-int main() {
-    //test_bitstream();
-    return test_uplink_consumer();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_uplink_consumer();
-}
-
-void loop() {}
-#endif
+PAN_TEST(test_uplink_consumer)
 
 //cat test/test_uplink_consumer//test_uplink_consumer.cpp | grep "void test_" | sed 's/^void \(.*\)$/\1/' | sed 's/()/);/g'| sed -e 's/^/RUN_TEST(/'

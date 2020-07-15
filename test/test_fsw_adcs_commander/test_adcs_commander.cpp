@@ -8,7 +8,7 @@
 #include "../custom_assertions.hpp"
 #include "../custom_assertions.hpp"
 
-#include <fsw/FCCode/adcs_state_t.enum>
+#include <fsw/FCCode/adcs_state_t.enum.h>
 class TestFixture {
     public:
         StateFieldRegistryMock registry;
@@ -181,19 +181,4 @@ int test_control_task()
     return UNITY_END();
 }
 
-#ifdef DESKTOP
-int main()
-{
-    return test_control_task();
-}
-#else
-#include <Arduino.h>
-void setup()
-{
-    delay(2000);
-    Serial.begin(9600);
-    test_control_task();
-}
-
-void loop() {}
-#endif
+PAN_TEST(test_control_task)

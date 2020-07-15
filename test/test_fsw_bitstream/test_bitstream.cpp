@@ -532,17 +532,4 @@ int test_bitstream()
     return UNITY_END();
 }
 
-#ifdef DESKTOP
-int main() {
-    return test_bitstream();
-}
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    test_bitstream();
-}
-
-void loop() {}
-#endif
+PAN_TEST(test_bitstream)

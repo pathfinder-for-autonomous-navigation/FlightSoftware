@@ -2,7 +2,7 @@
 #include "../StateFieldRegistryMock.hpp"
 
 #include <fsw/FCCode/QuakeManager.h>
-#include <fsw/FCCode/radio_state_t.enum>
+#include <fsw/FCCode/radio_state_t.enum.h>
 
 #include "../custom_assertions.hpp"
 
@@ -590,22 +590,8 @@ int test_quake_manager()
     return UNITY_END();
 }
 
-#ifdef DESKTOP
-int main()
-{
-    return test_quake_manager();
-}
-#else
-#include <Arduino.h>
-void setup()
-{
-    delay(2000);
-    Serial.begin(9600);
-    test_quake_manager();
-}
+PAN_TEST(test_quake_manager)
 
-void loop() {}
-#endif
 /*
 parse to test
 cat test/test_quake_manager//test_quake_manager.cpp | grep "void test_" | sed 's/^void \(.*\)$/\1/' | sed 's/()/);/g'| sed -e 's/^/RUN_TEST(/'

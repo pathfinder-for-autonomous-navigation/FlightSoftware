@@ -102,7 +102,7 @@ void test_invalid_values()
     TEST_ASSERT_THROW(tf.uplink_producer->create_from_json(bs, "test/test_gsw_uplink_producer/test_3.json"));
 }
 
-int main() {
+int test_uplink_producer() {
     UNITY_BEGIN();
     RUN_TEST(test_task_initialization);
     RUN_TEST(test_create_from_json);
@@ -112,3 +112,5 @@ int main() {
     RUN_TEST(test_invalid_values);
     return UNITY_END();
 }
+
+PAN_TEST(test_uplink_producer)

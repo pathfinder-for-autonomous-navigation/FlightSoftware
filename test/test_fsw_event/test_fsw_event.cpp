@@ -161,23 +161,11 @@ void test_event_storage()
     }
 }
 
-#ifdef DESKTOP
-int main() {
+int test_fsw_event() {
     UNITY_BEGIN();
     RUN_TEST(test_event);
     RUN_TEST(test_event_storage);
     return UNITY_END();
 }
-#else
-#include <Arduino.h>
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    UNITY_BEGIN();
-    RUN_TEST(test_event);
-    RUN_TEST(test_event_storage);
-    UNITY_END();
-}
 
-void loop() {}
-#endif
+PAN_TEST(test_fsw_event)

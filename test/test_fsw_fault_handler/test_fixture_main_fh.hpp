@@ -2,9 +2,9 @@
 #define TEST_FIXTURE_MAIN_FH_HPP_
 
 #include "../StateFieldRegistryMock.hpp"
-#include <fsw/FCCode/fault_response_t.enum>
+#include <fsw/FCCode/fault_response_t.enum.h>
 #include <fsw/FCCode/MainFaultHandler.hpp>
-#include <fsw/FCCode/radio_state_t.enum>
+#include <fsw/FCCode/radio_state_t.enum.h>
 
 /**
  * @brief This class is the base class for test fixtures

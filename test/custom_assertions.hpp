@@ -42,4 +42,23 @@
     } \
 }
 
+#ifdef DESKTOP
+    #define PAN_TEST(fn) \
+        void setUp(void) {} \
+        void tearDown(void) {} \
+        int main(int argc, char *argv[]) { \
+            fn(); \
+            return 0; \
+        }
+#else
+    #include <Arduino.h>
+    #define PAN_TEST(fn) \
+        void setup() { \
+            delay(10000); \
+            Serial.begin(9600); \
+            fn(); \
+        } \
+        void loop() {}
+#endif
+
 #endif

@@ -414,22 +414,12 @@ void run_fault_response_tests()
     RUN_TEST(test_all_faulted_sensors_broken_respect_disabled);
 }
 
-#ifdef DESKTOP
-int main()
-{
+int run_tests() {
     UNITY_BEGIN();
     RUN_TEST(test_respect_disabled);
     run_fault_detection_tests();
     run_fault_response_tests();
     return UNITY_END();
 }
-#else
-#include <Arduino.h>
-void setup()
-{
-    delay(2000);
-    Serial.begin(9600);
-}
 
-void loop() {}
-#endif
+PAN_TEST(run_tests)

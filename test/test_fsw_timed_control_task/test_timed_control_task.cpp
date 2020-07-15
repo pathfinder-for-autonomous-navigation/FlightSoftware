@@ -158,18 +158,5 @@ int test_timed_control_task() {
 
 const char* warning = "PLEASE BE PATIENT. This unit test takes a while "
                       "because it runs through 1000 control cycles.";
-#ifdef DESKTOP
-int main() {
-    std::cout << warning << std::endl;
-    return test_timed_control_task();
-}
-#else
-void setup() {
-    delay(2000);
-    Serial.begin(9600);
-    Serial.println(warning);
-    test_timed_control_task();
-}
 
-void loop() {}
-#endif
+PAN_TEST(test_timed_control_task)

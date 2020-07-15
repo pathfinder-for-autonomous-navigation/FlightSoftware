@@ -6,11 +6,11 @@
 #include <fsw/FCCode/FaultHandlerMachine.hpp>
 #include <fsw/FCCode/MissionManager.hpp>
 #include <common/Fault.hpp>
-#include <fsw/FCCode/mission_state_t.enum>
-#include <fsw/FCCode/adcs_state_t.enum>
-#include <fsw/FCCode/radio_state_t.enum>
-#include <fsw/FCCode/prop_state_t.enum>
-#include <fsw/FCCode/sat_designation_t.enum>
+#include <fsw/FCCode/mission_state_t.enum.h>
+#include <fsw/FCCode/adcs_state_t.enum.h>
+#include <fsw/FCCode/radio_state_t.enum.h>
+#include <fsw/FCCode/prop_state_t.enum.h>
+#include <fsw/FCCode/sat_designation_t.enum.h>
 
 #include "../custom_assertions.hpp"
 #include <lin/core.hpp>
