@@ -12,7 +12,7 @@ fswbase_desktop(name = "fswbase_hootl_leader", defines = ["DESKTOP", "SPEEDUP", 
 fswbase_desktop(name = "fswbase_hootl_follower", defines = ["DESKTOP", "SPEEDUP", "PAN_FOLLOWER"])
 fswbase_desktop(name = "fswbase_realtime_hootl_leader", defines = ["DESKTOP", "PAN_LEADER"])
 fswbase_desktop(name = "fswbase_realtime_hootl_follower", defines = ["DESKTOP", "PAN_FOLLOWER"])
-fswbase_desktop_ut(name = "fswbase_desktop_ut", defines = ["DESKTOP", "PAN_LEADER", "UNIT_TEST"])
+fswbase_desktop_ut(name = "fswbase_desktop_ut", defines = ["DESKTOP", "PAN_LEADER", "UNIT_TEST", "SPEEDUP"])
 
 fswbase_teensy(name = "fswbase_hitl_leader", defines = ["SPEEDUP", "PAN_LEADER"])
 fswbase_teensy(name = "fswbase_hitl_follower", defines = ["SPEEDUP", "PAN_FOLLOWER"])
