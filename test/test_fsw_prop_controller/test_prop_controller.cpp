@@ -1,5 +1,5 @@
 
-#include "prop_shared.h"
+#include "../shared/prop_shared.h"
 
 void test_initialization()
 {
@@ -226,7 +226,7 @@ void test_firing()
     simulate_at_threshold();
     tf.step(tf.pc->min_cycles_needed());
     check_state(prop_state_t::firing);
-    TEST_ASSERT_TRUE(PropulsionSystem.is_firing())
+    TEST_ASSERT_TRUE(PropulsionSystem.is_firing());
     unsigned int expected_firing_cycles = (800 / PAN::control_cycle_time_ms) + 1; // roundup
     TEST_ASSERT_EQUAL(expected_firing_cycles, tf.execute_until_state_change());
     TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
@@ -253,11 +253,11 @@ void test_firing_to_idle()
     for (size_t i = 0; i < cycles_firing; ++i)
     {
         check_state(prop_state_t::firing);
-        TEST_ASSERT_TRUE(PropulsionSystem.is_firing())
+        TEST_ASSERT_TRUE(PropulsionSystem.is_firing());
         tf.step();
     }
     // On the next control cycle, we should be back to idle
-    TEST_ASSERT_FALSE(PropulsionSystem.is_firing())
+    TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
     check_state(prop_state_t::idle);
 }
 

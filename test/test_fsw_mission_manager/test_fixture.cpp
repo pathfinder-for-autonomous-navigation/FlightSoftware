@@ -1,5 +1,5 @@
 #include "test_fixture.hpp"
-#include "../test_fsw_fault_handler/FaultHandlerMachineMock.hpp"
+#include "../shared/FaultHandlerMachineMock.hpp"
 #include <limits>
 
 TestFixture::TestFixture(mission_state_t initial_state) : registry()

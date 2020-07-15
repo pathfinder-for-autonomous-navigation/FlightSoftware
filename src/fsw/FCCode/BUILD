@@ -1,17 +1,21 @@
-cc_library(
-    name = "fswbase",
-    srcs = glob(["**/*.cpp", "**/*.inl"]),
-    hdrs = glob(["**/*.hpp", "**/*.h"]),
-    linkstatic = True,
-    visibility = ["//visibility:public"],
-    copts = ["-Isrc/ -Isrc/fsw/ -Isrc/fsw/Devices -Ilib/common/libsbp/include -Ilib/common/concurrentqueue -Ilib/common/psim/include -Ilib/fsw/json  -Ilib/fsw/memuse"],
-    deps = [
-        "//src/common:common",
-        "//lib/common:psim",
-        "//src/adcs:fsw_exports",
-        "//lib/fsw:json",
-        "//lib/fsw:memuse",
-        "//src:flow_data"
-    ],
-    local_defines = ["DESKTOP", "PAN_LEADER", "GSW"]
-)
+load(":fswbase.bzl", "fswbase_desktop")
+load(":fswbase.bzl", "fswbase_teensy")
+
+fswbase_desktop(name = "fswbase_gsw", defines = ["GSW", "DESKTOP", "FLIGHT", "PAN_LEADER"])
+fswbase_desktop(name = "fswbase_gsw_ut", defines = ["GSW", "DESKTOP", "FLIGHT", "PAN_LEADER", "UNIT_TEST"])
+
+fswbase_desktop(name = "fswbase_hootl_leader", defines = ["DESKTOP", "SPEEDUP", "PAN_LEADER"])
+fswbase_desktop(name = "fswbase_hootl_follower", defines = ["DESKTOP", "SPEEDUP", "PAN_FOLLOWER"])
+fswbase_desktop(name = "fswbase_realtime_hootl_leader", defines = ["DESKTOP", "PAN_LEADER"])
+fswbase_desktop(name = "fswbase_realtime_hootl_follower", defines = ["DESKTOP", "PAN_FOLLOWER"])
+fswbase_desktop(name = "fswbase_desktop_ut", defines = ["DESKTOP", "PAN_LEADER", "UNIT_TEST"])
+
+fswbase_teensy(name = "fswbase_hitl_leader", defines = ["SPEEDUP", "PAN_LEADER"])
+fswbase_teensy(name = "fswbase_hitl_follower", defines = ["SPEEDUP", "PAN_FOLLOWER"])
+fswbase_teensy(name = "fswbase_realtime_hitl_leader", defines = ["PAN_LEADER"])
+fswbase_teensy(name = "fswbase_realtime_hitl_follower", defines = ["PAN_FOLLOWER"])
+fswbase_teensy(name = "fswbase_teensy_ut", defines = ["PAN_LEADER", "UNIT_TEST"])
+
+fswbase_teensy(name = "fswbase_flight_leader", defines = ["FLIGHT", "PAN_LEADER"])
+fswbase_teensy(name = "fswbase_flight_follower", defines = ["FLIGHT", "PAN_FOLLOWER"])
+fswbase_teensy(name = "fswbase_flight_ut", defines = ["FLIGHT", "PAN_LEADER", "UNIT_TEST"])

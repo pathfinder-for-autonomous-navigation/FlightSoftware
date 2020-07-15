@@ -1,5 +1,5 @@
 #include "test_fixture_main_fh.hpp"
-#include "FaultHandlerMachineMock.hpp"
+#include "../shared/FaultHandlerMachineMock.hpp"
 
 TestFixtureMainFHBase::TestFixtureMainFHBase()
 {

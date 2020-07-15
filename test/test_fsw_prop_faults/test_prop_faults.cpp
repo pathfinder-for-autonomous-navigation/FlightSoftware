@@ -2,7 +2,7 @@
 // Created by athena on 4/21/20.
 //
 
-#include "../test_fsw_prop_controller/prop_shared.h"
+#include "../shared/prop_shared.h"
 unsigned int one_day_ccno = PAN::one_day_ccno;
 unsigned int &cc_count = TimedControlTaskBase::control_cycle_count;
 

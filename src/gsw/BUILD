@@ -1,5 +1,5 @@
 gsw_copts = ["-Isrc -Ilib/common/libsbp/include -Ilib/common/concurrentqueue -Ilib/common/psim/include -Ilib/fsw/json"]
-gsw_deps = ["//src/fsw:base"]
+gsw_deps = ["//src/fsw/FCCode:fswbase_gsw"]
 gsw_defines = ["DESKTOP", "PAN_LEADER", "GSW"]
 
 cc_binary(
@@ -24,4 +24,14 @@ cc_binary(
     copts = gsw_copts,
     deps = gsw_deps,
     local_defines = gsw_defines
+)
+
+cc_library(
+    name = "ut_lib",
+    srcs = glob(["parsers/src/*.cpp"]),
+    hdrs = glob(["parsers/src/*.hpp", "parsers/src/*.h"]),
+    copts = gsw_copts,
+    deps = gsw_deps,
+    local_defines = gsw_defines,
+    visibility = ["//visibility:public"]
 )

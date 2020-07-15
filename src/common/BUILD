@@ -1,17 +1,7 @@
-cc_library(
-    name = "common",
-    srcs = glob(["*.cpp", "*.inl"]),
-    hdrs = glob(["*.hpp", "*.h"]),
-    copts = [
-        "-Isrc/common -Isrc/ -Ilib/common/libsbp/include/ -Ilib/common/concurrentqueue/  -Ilib/common/ArduinoJson/src/",
-    ],
-    linkstatic = True,
-    visibility = ["//visibility:public"],
-    deps = [
-        "//lib/common:libsbp",
-        "//lib/common:concurrentqueue",
-        "//lib/common:ArduinoJson",
-        "@lin//:lin",
-    ],
-    local_defines = ["DESKTOP"]
-)
+load(":common.bzl", "common_library")
+
+common_library(name = "common_desktop_ut", defines = ["DESKTOP", "UNIT_TEST"])
+
+common_library(name = "common_desktop", defines = ["DESKTOP"])
+common_library(name = "common_teensy", defines = [])
+common_library(name = "common_teensy_ut", defines = ["UNIT_TEST"])
