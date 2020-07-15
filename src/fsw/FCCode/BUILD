@@ -1,5 +1,5 @@
 cc_library(
-    name = "FCCode",
+    name = "fswbase",
     srcs = glob(["**/*.cpp", "**/*.inl"]),
     hdrs = glob(["**/*.hpp", "**/*.h"]),
     linkstatic = True,
@@ -13,5 +13,5 @@ cc_library(
         "//lib/fsw:memuse",
         "//src:flow_data"
     ],
-    local_defines = ["DESKTOP", "PAN_LEADER"]
+    local_defines = ["DESKTOP", "PAN_LEADER", "GSW"]
 )
