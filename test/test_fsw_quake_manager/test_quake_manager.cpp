@@ -1,4 +1,7 @@
+#ifndef DEBUG
 #define DEBUG
+#endif
+
 #include "../StateFieldRegistryMock.hpp"
 
 #include <fsw/FCCode/QuakeManager.h>

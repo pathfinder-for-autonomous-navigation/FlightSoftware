@@ -50,6 +50,8 @@ void test_events() {
 void test_faults() {
     StateFieldRegistry registry;
 
+    TEST_ASSERT(false);
+
     // Add fault to registr
     Fault f("fault", 1);
     TEST_ASSERT_TRUE(registry.add_fault(&f));
@@ -69,12 +71,12 @@ void test_faults() {
     TEST_ASSERT_FALSE(registry.find_fault("fake_fault"));
 }
 
-void test_state_field_registry() {
+int test_state_field_registry() {
     UNITY_BEGIN();
     RUN_TEST(test_foo);
     RUN_TEST(test_events);
     RUN_TEST(test_faults);
-    UNITY_END();
+    return UNITY_END();
 }
 
 PAN_TEST(test_state_field_registry)

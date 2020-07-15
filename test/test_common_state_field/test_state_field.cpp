@@ -162,14 +162,14 @@ void test_get_set_eeprom() {
     TEST_ASSERT_EQUAL(4294967295, uint_sf.get());
 }
 
-void test_state_field() {
+int test_state_field() {
     UNITY_BEGIN();
     RUN_TEST(test_internal_state_field);
     RUN_TEST(test_readable_state_field);
     RUN_TEST(test_writable_state_field);
     RUN_TEST(test_eeprom_save_period);
     RUN_TEST(test_get_set_eeprom);
-    UNITY_END();
+    return UNITY_END();
 }
 
 PAN_TEST(test_state_field)

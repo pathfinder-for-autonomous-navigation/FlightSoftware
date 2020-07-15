@@ -1,6 +1,9 @@
 #include "../StateFieldRegistryMock.hpp"
 
+#ifndef DEBUG
 #define DEBUG
+#endif
+
 #include <gsw/parsers/src/UplinkProducer.h>
 
 #include "../custom_assertions.hpp"

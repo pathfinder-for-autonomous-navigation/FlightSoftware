@@ -121,13 +121,13 @@ void test_bitarray_write_to_string() {
     delete[] buf;
 }
 
-void test_bit_array() {
+int test_bit_array() {
     UNITY_BEGIN();
     RUN_TEST(test_bitarray_constructors);
     RUN_TEST(test_bitarray_set_int);
     RUN_TEST(test_bitarray_convert_to_integer);
     RUN_TEST(test_bitarray_write_to_string);
-    UNITY_END();
+    return UNITY_END();
 }
 
 PAN_TEST(test_bit_array)

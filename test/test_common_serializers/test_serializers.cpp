@@ -736,7 +736,7 @@ void test_gpstime_serializer() {
     TEST_ASSERT_EQUAL_STRING("4,4,4", gpstime_serializer->print(input4));
 }
 
-void test_serializers() {
+int test_serializers() {
     UNITY_BEGIN();
     RUN_TEST(test_bool_serializer);
     RUN_TEST(test_unsigned_int_serializer);
@@ -750,7 +750,7 @@ void test_serializers() {
     RUN_TEST(test_f_quat_serializer);
     RUN_TEST(test_d_quat_serializer);
     RUN_TEST(test_gpstime_serializer);
-    UNITY_END();
+    return UNITY_END();
 }
 
 PAN_TEST(test_serializers)

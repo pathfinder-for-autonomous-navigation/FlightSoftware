@@ -268,13 +268,15 @@ void test_testfunctions() {
     TEST_ASSERT_FALSE(suppress_fp->get());
 }
 
-void test_control_task(){
+int test_control_task() {
+    UNITY_BEGIN();
     RUN_TEST(test_fault_normal_behavior);
     RUN_TEST(test_fault_overridden_behavior);
     RUN_TEST(test_process_commands);
     RUN_TEST(test_dynamic_persistence);
     RUN_TEST(test_evaluate);
     RUN_TEST(test_testfunctions);
+    return UNITY_END();
 }
 
 PAN_TEST(test_control_task)

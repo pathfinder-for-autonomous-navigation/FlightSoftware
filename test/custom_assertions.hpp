@@ -47,8 +47,7 @@
         void setUp(void) {} \
         void tearDown(void) {} \
         int main(int argc, char *argv[]) { \
-            fn(); \
-            return 0; \
+            return fn(); \
         }
 #else
     #include <Arduino.h>

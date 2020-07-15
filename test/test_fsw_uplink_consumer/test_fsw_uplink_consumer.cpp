@@ -1,6 +1,9 @@
 #include "../StateFieldRegistryMock.hpp"
 
+#ifndef DEBUG
 #define DEBUG
+#endif
+
 #include <fsw/FCCode/UplinkConsumer.h>
 
 #include <common/bitstream.h>
