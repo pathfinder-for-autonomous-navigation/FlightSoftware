@@ -28,7 +28,7 @@ test_suite(
     ]
 )
 
-common_desktop_deps = ["//src/common:common_desktop_ut"]
+common_desktop_deps = ["//src/common:common_desktop_fsw_ut"]
 common_teensy_deps = ["//src/common:common_teensy_ut"]
 test_suite(name = "common_desktop", tags = ["common", "desktop"])
 test_suite(name = "common_teensy", tags = ["common", "teensy"])
@@ -66,7 +66,7 @@ testitem(name = "state_field_registry_mock", folder = "test_fsw_state_field_regi
 testitem(name = "timed_control_task", folder = "test_fsw_timed_control_task", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
 testitem(name = "uplink_consumer", folder = "test_fsw_uplink_consumer", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
 
-gsw_deps = ["//src/fsw/FCCode:fswbase_gsw_ut", "//src/gsw:ut_lib", "//src:flow_data"]
+gsw_deps = ["//src/fsw/FCCode:gswbase_ut", "//src/gsw:ut_lib", "//src:flow_data"]
 test_suite(name = "gsw", tags = ["gsw", "desktop"])
 testitem_desktop(name = "downlink_parser", folder = "test_gsw_downlink_parser", deps = gsw_deps, tags = ["gsw"])
 testitem_desktop(name = "uplink_producer", folder = "test_gsw_uplink_producer", deps = gsw_deps, tags = ["gsw"])
