@@ -1,5 +1,4 @@
-load(":test.bzl", "testitem")
-load(":test.bzl", "testitem_desktop")
+load("//bazel:pan.bzl", "pan_cc_test")
 
 cc_library(
     name = "utils",
@@ -13,88 +12,83 @@ cc_library(
 
 test_suite(
     name = "desktop",
-    tests = [
-        ":common_desktop",
-        ":fsw_desktop",
-        ":gsw",
-    ]
+    tests = [":common", ":fsw", ":gsw"],
 )
 
 test_suite(
     name = "teensy",
-    tests = [
-        ":common_teensy",
-        ":fsw_teensy",
-    ]
+    tests = [":common", ":fsw"],
 )
 
-#################################################
-# Common Software Tests
-#################################################
+test_suite(
+    name = "fsw",
+    tags = ["fsw"],
+)
 
-common_desktop_deps = ["//src/common:common_desktop_fsw_ut"]
-common_teensy_deps = ["//src/common:common_teensy_ut"]
-test_suite(name = "common_desktop", tags = ["common", "desktop"])
-test_suite(name = "common_teensy", tags = ["common", "teensy"])
-testitem(name = "bit_array", folder = "test_common_bit_array", desktop_deps = common_desktop_deps, teensy_deps = common_teensy_deps, tags = ["common"])
-testitem(name = "gpstime", folder = "test_common_gpstime", desktop_deps = common_desktop_deps, teensy_deps = common_teensy_deps, tags = ["common"])
-testitem(name = "serializers", folder = "test_common_serializers", desktop_deps = common_desktop_deps, teensy_deps = common_teensy_deps, tags = ["common"])
-testitem(name = "state_field", folder = "test_common_state_field", desktop_deps = common_desktop_deps, teensy_deps = common_teensy_deps, tags = ["common"])
-testitem(name = "state_field_registry", folder = "test_common_state_field_registry", desktop_deps = common_desktop_deps, teensy_deps = common_teensy_deps, tags = ["common"])
+test_suite(
+    name = "common",
+    tags = ["common"]
+)
 
-#################################################
-# Flight Software Tests
-#################################################
+common_tags = ["common"]
+common_deps = ["//src/common:common"]
+pan_cc_test(name = "bit_array", srcs = ["test_common_bit_array/test_bit_array.cpp"], tags = common_tags, deps = common_deps)
+pan_cc_test(name = "gpstime", srcs = ["test_common_gpstime/test_gps_time.cpp"], tags = common_tags, deps = common_deps)
+pan_cc_test(name = "serializers", srcs = ["test_common_serializers/test_serializers.cpp"], tags = common_tags, deps = common_deps)
+pan_cc_test(name = "state_field", srcs = ["test_common_state_field/test_state_field.cpp"], tags = common_tags, deps = common_deps)
+pan_cc_test(name = "state_field_registry", srcs = ["test_common_state_field_registry/test_state_field_registry.cpp"], tags = common_tags, deps = common_deps)
 
-fsw_desktop_deps = ["//src/fsw/FCCode:fswbase_desktop_ut"]
-fsw_teensy_deps = ["//src/fsw/FCCode:fswbase_teensy_ut"]
-test_suite(name = "fsw_desktop", tags = ["fsw", "desktop"])
-test_suite(name = "fsw_teensy", tags = ["fsw", "teensy"])
-testitem(name = "adcs_box_monitor", folder = "test_fsw_adcs_box_monitor", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "adcs_commander", folder = "test_fsw_adcs_commander", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "attitude_computer", folder = "test_fsw_attitude_computer", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "attitude_estimator", folder = "test_fsw_attitude_estimator", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "bitstream", folder = "test_fsw_bitstream", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "control_task", folder = "test_fsw_control_task", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "dcdc", folder = "test_fsw_dcdc", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "docking", folder = "test_fsw_docking", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "downlink_producer", folder = "test_fsw_downlink_producer", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "EEPROM", folder = "test_fsw_EEPROM", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "event", folder = "test_fsw_event", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "fault", folder = "test_fsw_fault", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "fault_handler", folder = "test_fsw_fault_handler", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "gomspace", folder = "test_fsw_gomspace", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "mission_manager", folder = "test_fsw_mission_manager", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "orbit_controller", folder = "test_fsw_orbit_controller", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "piksi_control_task", folder = "test_fsw_piksi_control_task", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "prop_controller", folder = "test_fsw_prop_controller", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "prop_faults", folder = "test_fsw_prop_faults", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "quake_manager", folder = "test_fsw_quake_manager", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "state_field_registry_mock", folder = "test_fsw_state_field_registry_mock", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
-testitem(name = "timed_control_task", folder = "test_fsw_timed_control_task", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"], defines = ["CI"])
-testitem(name = "uplink_consumer", folder = "test_fsw_uplink_consumer", desktop_deps = fsw_desktop_deps, teensy_deps = fsw_teensy_deps, tags = ["fsw"])
+fsw_tags = ["fsw"]
+fsw_deps = ["//src/fsw/FCCode:fswbase"]
+pan_cc_test(name = "adcs_box_monitor", srcs = ["test_fsw_adcs_box_monitor/test_adcs_box_monitor.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "adcs_commander", srcs = ["test_fsw_adcs_commander/test_adcs_commander.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "attitude_computer", srcs = ["test_fsw_attitude_computer/test_fsw_attitude_computer.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "attitude_estimator", srcs = ["test_fsw_attitude_estimator/test_attitude_estimator.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "bitstream", srcs = ["test_fsw_bitstream/test_bitstream.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "control_task", srcs = ["test_fsw_control_task/test_control_task.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "dcdc", srcs = ["test_fsw_dcdc/test_fsw_dcdc.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "docking", srcs = ["test_fsw_docking/test_fsw_docking.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "downlink_producer", srcs = ["test_fsw_downlink_producer/test_downlink_producer.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "EEPROM", srcs = ["test_fsw_EEPROM/test_fsw_EEPROM.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "event", srcs = ["test_fsw_event/test_fsw_event.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "fault", srcs = ["test_fsw_fault/test_fsw_fault.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "fault_handler", srcs = glob(["test_fsw_fault_handler/*.cpp", "test_fsw_fault_handler/*.hpp"]), tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "gomspace", srcs = ["test_fsw_gomspace/test_fsw_gomspace.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "mission_manager", srcs = glob(["test_fsw_mission_manager/*.cpp", "test_fsw_mission_manager/*.hpp"]), tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "orbit_controller", srcs = ["test_fsw_orbit_controller/test_orbit_controller.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "piksi_control_task", srcs = ["test_fsw_piksi_control_task/test_piksi_control_task.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "prop_controller", srcs = ["test_fsw_prop_controller/test_prop_controller.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "prop_faults", srcs = ["test_fsw_prop_faults/test_prop_faults.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "quake_manager", srcs = ["test_fsw_quake_manager/test_quake_manager.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "state_field_registry_mock", srcs = ["test_fsw_state_field_registry_mock/test_fsw_state_field_registry_mock.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "timed_control_task", srcs = ["test_fsw_timed_control_task/test_timed_control_task.cpp"], tags = fsw_tags, deps = fsw_deps)
+pan_cc_test(name = "uplink_consumer", srcs = ["test_fsw_uplink_consumer/test_fsw_uplink_consumer.cpp"], tags = fsw_tags, deps = fsw_deps)
 
 #################################################
 # Ground Software Tests
 #################################################
 
-gsw_deps = ["//src/fsw/FCCode:gswbase_ut", "//src/gsw:ut_lib", "//src:flow_data"]
-test_suite(name = "gsw", tags = ["gsw", "desktop"])
-testitem_desktop(name = "downlink_parser", folder = "test_gsw_downlink_parser", deps = gsw_deps, tags = ["gsw"])
-cc_test(
+gsw_deps = ["//src/gsw:ut_lib"]
+gsw_copts = ["-Ilib/fsw/json"]
+gsw_tags = ["gsw"]
+test_suite(name = "gsw", tags = ["gsw"])
+
+pan_cc_test(
+    name = "downlink_parser",
+    srcs = ["test_gsw_downlink_parser/test_gsw_downlink_parser.cpp", "test_gsw_downlink_parser/DownlinkParserMock.hpp"],
+    copts = gsw_copts,
+    deps = gsw_deps,
+    tags = gsw_tags,
+)
+
+pan_cc_test(
     name = "uplink_producer",
-    srcs = glob([
-        "test_gsw_uplink_producer/**/*.cpp",
-        "test_gsw_uplink_producer/**/*.h",
-        "test_gsw_uplink_producer/**/*.hpp", 
-        "test_gsw_uplink_producer/**/*.inl",
-        "shared/**/*.*"
-    ]),
+    srcs = ["test_gsw_uplink_producer/test_gsw_uplink_producer.cpp"],
     data = glob([
         "test_gsw_uplink_producer/*.sbd",
         "test_gsw_uplink_producer/*.json",
     ]),
-    copts = ["-Iexternal/unity/src/ -Isrc/ -Ilib/common/psim/include -Ilib/common/libsbp/include -Ilib/common/concurrentqueue -Ilib/fsw/json"],
-    deps = [":utils"] + gsw_deps,
-    tags = ["gsw", "desktop"],
+    copts = gsw_copts,
+    deps = gsw_deps,
+    tags = gsw_tags,
 )

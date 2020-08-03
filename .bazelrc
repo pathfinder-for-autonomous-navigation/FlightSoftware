@@ -1,1 +1,2 @@
 build --cxxopt=-std=c++14 --cxxopt=-Werror --cxxopt=-DGNC_NO_CASSERT
+build --incompatible_enable_cc_toolchain_resolution

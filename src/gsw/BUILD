@@ -1,6 +1,6 @@
 gsw_copts = ["-Isrc -Ilib/common/libsbp/include -Ilib/common/concurrentqueue -Ilib/common/psim/include -Ilib/fsw/json"]
 gsw_deps = ["//src/fsw/FCCode:gswbase"]
-gsw_defines = ["DESKTOP", "PAN_LEADER", "GSW"]
+gsw_defines = ["DESKTOP", "PAN_LEADER", "GSW", "FLIGHT"]
 
 cc_binary(
     name = "downlink_parser",
@@ -26,12 +26,13 @@ cc_binary(
     local_defines = gsw_defines
 )
 
+# Sources and headers required for unit testing ground software parsers.
 cc_library(
     name = "ut_lib",
     srcs = glob(["parsers/src/*.cpp"]),
     hdrs = glob(["parsers/src/*.hpp", "parsers/src/*.h"]),
     copts = gsw_copts,
-    deps = ["//src/fsw/FCCode:gswbase_ut"],
+    deps = ["//src/fsw/FCCode:gswbase", "//src:flow_data"],
     linkstatic = True,
     local_defines = gsw_defines,
     visibility = ["//visibility:public"]

@@ -57,3 +57,13 @@ git_repository(
     remote = "http://github.com/bazelbuild/platforms.git",
     shallow_since = "1591199593 -0700"
 )
+
+http_archive(
+    name = "arm_none_eabi",
+    url = "https://github.com/d-asnaghi/bazel-arm-none-eabi/archive/v1.1.tar.gz",
+    sha256 = "3d3728cbe88b08c12cd2cb89afcff9294bd77be958c78188db77fdc8ab7e7a5d",
+    strip_prefix = "bazel-arm-none-eabi-1.1"
+)
+
+load("@arm_none_eabi//:deps.bzl", "arm_none_eabi_deps")
+arm_none_eabi_deps()

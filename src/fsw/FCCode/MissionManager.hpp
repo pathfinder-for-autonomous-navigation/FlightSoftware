@@ -36,7 +36,7 @@ public:
      * @brief Number of control cycles to wait during the post-deployment
      * do-nothing period.
      */
-#ifdef SPEEDUP
+#if defined(SPEEDUP) || defined(UNIT_TEST)
     TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 100);
 #else
     TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
