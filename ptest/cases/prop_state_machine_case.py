@@ -215,7 +215,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
 
     def test_disabled_to_idle(self):
         print("[TESTCASE] test_disabled_to_idle: manually setting prop to idle")
-        if not self.read_state("dcdc.SpikeDock") == "true":
+        if not self.read_state("dcdc.SpikeDock_cmd") == "true":
             raise TestCaseFailure("Spike and Hold DCDC is not enabled.")
         self.state = Enums.prop_states["idle"]
         self.cycle()
