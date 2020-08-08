@@ -16,7 +16,11 @@ def pan_cc_library(name, srcs, hdrs,
             select({
                 "//bazel/configs:gsw" : ["//lib/fsw:memuse", "//lib/fsw:json"],
                 "//bazel/configs:hootl" : ["//lib/fsw:memuse", "//lib/fsw:json"],
-                "//conditions:default" : [],
+                "//bazel/configs:hitl32" : ["//lib/teensyduino:teensy32"],
+                "//bazel/configs:hitl35" : ["//lib/teensyduino:teensy35"],
+                "//bazel/configs:hitl36" : ["//lib/teensyduino:teensy36"],
+                "//bazel/configs:flight" : ["//lib/teensyduino:teensy36"],
+                "//bazel/configs:adcs" : ["//lib/teensyduino:teensy35"]
             }),
         linkopts = linkopts + 
             select({
@@ -31,7 +35,8 @@ def pan_cc_library(name, srcs, hdrs,
                 "//bazel/configs:hitl32" : [],
                 "//bazel/configs:hitl35" : [],
                 "//bazel/configs:hitl36" : [],
-                "//bazel/configs:flight" : ["FLIGHT"]
+                "//bazel/configs:flight" : ["FLIGHT"],
+                "//bazel/configs:adcs" : [],
             }) + 
             select({
                 "//bazel/configs:leader" : ["PAN_LEADER"],

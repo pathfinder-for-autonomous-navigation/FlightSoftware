@@ -5,7 +5,7 @@ pan_cc_library(
     srcs = glob(["*.cpp", "*.inl"]),
     hdrs = glob(["*.hpp", "*.h"]),
     copts = [
-        "-Isrc/common -Isrc/ -Ilib/common/libsbp/include/ -Ilib/common/concurrentqueue/  -Ilib/common/ArduinoJson/src/",
+        "-Isrc/common -Isrc/ -Ilib/teensyduino/ -Ilib/common/libsbp/include/ -Ilib/common/concurrentqueue/  -Ilib/common/ArduinoJson/src/",
     ],
     deps = [
         "//lib/common:libsbp",

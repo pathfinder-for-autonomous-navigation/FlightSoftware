@@ -10,6 +10,8 @@ config_setting(name = "hootl", define_values = {"flight" : "0", "target" : "desk
 config_setting(name = "gsw", define_values = {"flight" : "1", "target" : "desktop", "gsw" : "1", "timing" : "realtime"})
 config_setting(name = "flight", define_values = {"flight" : "1", "target" : "teensy36", "gsw" : "0", "timing" : "realtime"})
 
+config_setting(name = "adcs", define_values = {"flight" : "1", "target" : "teensy35", "gsw" : "0", "timing" : "realtime"})
+
 config_setting(name = "leader", define_values = {"satellite" : "leader"})
 config_setting(name = "follower", define_values = {"satellite" : "follower"})
 
