@@ -132,6 +132,17 @@ class Enums(object):
         "GYRO_HEATER"])
     havt_length = len(havt_devices.arr)
 
+    def __getitem__(self, key):
+        key_associations = {
+            "pan.state" : self.mission_states,
+            "prop.state" : self.prop_states,
+            "adcs.state" : self.adcs_states,
+            "radio.state" : self.radio_states,
+            "sat.designation" : self.sat_designations,
+            "piksi.mode" : self.piksi_modes,
+        }
+        return key_associations[key]
+
 class TestCaseFailure(Exception):
     """Raise in case of test case failure."""
 
