@@ -38,8 +38,9 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
 
     def check_quake_powercycled(self):
         if not self.powercycle_happening:
-            print("Quake radio was not powercycled.")
-        self.logger.put("Comms blackout caused a powercycle of Quake.")
+            self.logger.put("Quake radio was not powercycled.")
+        else:
+            self.logger.put("Comms blackout caused a powercycle of Quake.")
 
     def collect_diagnostic_data(self):
         self.qfh_state = self.rs("qfh.state")
@@ -123,4 +124,4 @@ class QuakeFaultHandler_Realtime(QuakeFaultHandler_Fast):
 
     @property
     def one_day_ccno(self):
-        return 24 * 60 * 1000 // 170
+        return 24 * 60 * 60 * 1000 // 170

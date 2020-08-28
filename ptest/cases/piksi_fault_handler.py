@@ -54,4 +54,4 @@ class PiksiFaultHandler_Realtime(PiksiFaultHandler_Fast):
 
     @property
     def one_day_ccno(self):
-        return 24 * 60 * 1000 // 170
+        return 24 * 60 * 60 * 1000 // 170
