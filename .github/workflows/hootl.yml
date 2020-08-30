@@ -33,6 +33,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         platformio update
+        pio run -e fsw_native_leader
 
     - name: CI Checkout Case and Empty case
       run: |
