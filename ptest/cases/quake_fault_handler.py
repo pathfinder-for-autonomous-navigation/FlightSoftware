@@ -110,6 +110,7 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
             else:
                 self.logger.put(f"The 48-hour total comms blackout caused a mission state transition to safehold on control cycle {self.rs('pan.cycle_no')}")
                 self.logger.put("Testcase finished.")
+                self.test_stage = "finished"
                 self.finish()
 
 class QuakeFaultHandler_Realtime(QuakeFaultHandler_Fast):

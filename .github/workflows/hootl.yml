@@ -52,6 +52,7 @@ jobs:
       run: |
         python -m ptest runsim -c ptest/configs/ci.json -t ADCSWheelFaultHandler -ni
         python -m ptest runsim -c ptest/configs/ci.json -t LowBattFaultHandler -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t QuakeFaultHandler_Fast -ni
 
     - name: Mission Checkout Cases
       run: |
