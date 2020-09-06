@@ -63,7 +63,6 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
             self.logger.put(f"Creating a comms blackout of 24 hours (measured from control cycle #1.) Current control cycle: {self.rs('pan.cycle_no')}")
 
         if self.test_stage == "first_no_comms":
-            self.cycles_since_blackout_start += 1
             if self.cycles_since_blackout_start > self.one_day_ccno:
                 if not self.mission_state == "standby":
                     raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into standby after 24 hours of no comms. State was: {self.mission_state}. Current control cycle: {self.rs('pan.cycle_no')}")
@@ -74,35 +73,27 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
                     self.test_stage = "second_no_comms"
 
         elif self.test_stage == "second_no_comms":
-            self.cycles_since_blackout_start += 1
             if not self.mission_state == "standby":
                 raise TestCaseFailure(f"State of spacecraft was not `standby` during QuakeFaultHandler's `forced standby` state. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
             if self.cycles_since_blackout_start > self.one_day_ccno:
                 self.test_stage = "powercycles"
-                self.logger.put("Comms blackout forced a transition into Quake Fault Handler's powercycling states.")
-                self.check_quake_powercycled()
-
-                self.cycles_since_blackout_start = 0
-                self.logger.put(f"Creating a comms blackout of 8 additional hours, starting on control cycle {self.rs('pan.cycle_no')}")
 
         elif self.test_stage == "powercycles":
             if not hasattr(self, "powercycles_count"):
+                self.logger.put("Comms blackout forced a transition into Quake Fault Handler's powercycling states.")
+                self.check_quake_powercycled()
                 self.powercycles_count = 0
-
-            self.cycles_since_blackout_start += 1
+                self.cycles_since_blackout_start = 0
+                self.logger.put(f"Creating a comms blackout of 8 additional hours, starting on control cycle {self.rs('pan.cycle_no')}")
 
             if self.cycles_since_blackout_start > self.one_day_ccno // 3:
                 self.check_quake_powercycled()
                 self.powercycles_count += 1
                 self.cycles_since_blackout_start = 0
-                if self.powercycles_count >= 3:
+                if self.powercycles_count == 3:
                     self.test_stage = "safehold"
-                    return
-                else:
-                    self.logger.put(f"Creating a comms blackout of 8 additional hours, starting on control cycle {self.rs('pan.cycle_no')}")
-
-            if not self.mission_state == "standby":
-                print(f"State of spacecraft was not `standby` during Quake Fault Handler's powercycling states. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
+                elif not self.mission_state == "standby":
+                    raise TestCaseFailure(f"State of spacecraft was not `standby` during Quake Fault Handler's powercycling states. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
 
         elif self.test_stage == "safehold":
             if not self.mission_state == "safehold":
@@ -112,6 +103,8 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
                 self.logger.put("Testcase finished.")
                 self.test_stage = "finished"
                 self.finish()
+
+        self.cycles_since_blackout_start += 1
 
 class QuakeFaultHandler_Realtime(QuakeFaultHandler_Fast):
     @property
