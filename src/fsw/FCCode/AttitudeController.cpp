@@ -12,8 +12,6 @@
 #include <lin/queries.hpp>
 #include <lin/references.hpp>
 
-using namespace gnc;
-
 AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned int offset) :
         TimedControlTask<void>(registery, offset),
         b_body_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag_vec)),
@@ -50,20 +48,35 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
 void AttitudeController::execute() {
     default_actuator_commands();
 
-    switch (static_cast<adcs_state_t>(adcs_state_fp->get())) {
-        /* */
+    adcs_state_t state = static_cast<adcs_state_t>(adcs_state_fp->get());
+    switch (state) {
+        /*
+         * While detumbling and in limited attitude control we want to drive our
+         * angular rate to zero.
+         */
         case adcs_state_t::detumble:
         case adcs_state_t::limited:
             calculate_detumble_controller();
             break;
-        /* */
+        /*
+         * We'll autonomously calculate a pointing objective and then control to
+         * it when in standby or docking.
+         */
         case adcs_state_t::point_standby:
         case adcs_state_t::point_docking:
             calculate_pointing_objectives();
+        /*
+         * When in manual, the pointing objectives are set from the ground.
+         */
         case adcs_state_t::point_manual:
             calculate_pointing_controller();
             break;
-        /* */
+        /*
+         * Currently, there is no actuation for the startup, zero torque, or zero 
+         * angular momentum states.
+         *
+         * TODO : Implement control for zero torque and zero L.
+         */
         case adcs_state_t::startup:
         case adcs_state_t::zero_torque:
         case adcs_state_t::zero_L:
@@ -73,8 +86,12 @@ void AttitudeController::execute() {
 }
 
 void AttitudeController::default_actuator_commands() {
-    t_body_cmd_f.set(lin::nans<lin::Vector3f>());
-    m_body_cmd_t.set(lin::nans<lin::Vector3f>());
+    /*
+     * We set these state fields to zeros as opposed to NaNs by default so we
+     * command zero torque on the spacecraft if something fails.
+     */
+    t_body_cmd_f.set(lin::zeros<lin::Vector3f>());
+    m_body_cmd_t.set(lin::zeros<lin::Vector3f>());
 }
 
 void AttitudeController::default_pointing_objectives() {
@@ -93,7 +110,7 @@ void AttitudeController::calculate_detumble_controller() {
     m_body_cmd_f.set(lin::zeros<lin::Vector3f>());
 
     // Default all inputs to NaNs and set appropriate fields
-    detumbler_data = DetumbleControllerData();
+    detumbler_data = gnc::DetumbleControllerData();
     detumbler_data.b_body = b_body_rd_fp->get();
 
     // Call the controller and write results to appropriate state fields
@@ -118,31 +135,33 @@ void AttitudeController::calculate_pointing_objectives() {
         double time = static_cast<double>(time_ns_fp->get()) * 1.0e-9;
 
         lin::Vector4f q_body_ecef;
-        env::earth_attitude(time, q_body_ecef); // q_body_ecef = q_ecef_eci
-        utl::quat_conj(q_body_ecef);            // q_body_ecef = q_eci_ecef
-        utl::quat_cross_mult(q_body_eci_est_fp->get(), q_body_ecef);
+        gnc::env::earth_attitude(time, q_body_ecef); // q_body_ecef = q_ecef_eci
+        gnc::utl::quat_conj(q_body_ecef);            // q_body_ecef = q_eci_ecef
+        gnc::utl::quat_cross_mult(q_body_eci_est_fp->get(), q_body_ecef);
 
         lin::Vector3f w_earth_ecef;
-        env::earth_angular_rate(t, w_earth_ecef_eci);  // rate of ecef frame in eci
-        v = v - lin::cross(w_earth_ecef, r);           // v_ecef but intertial
+        gnc::env::earth_angular_rate(t, w_earth_ecef_eci);  // rate of ecef frame in eci
+        v = v - lin::cross(w_earth_ecef, r);                // v_ecef but intertial
 
-        utl::rotate_frame(q_body_ecef, r); // Throw the vectors into the body frame
-        utl::rotate_frame(q_body_ecef, v);
-        utl::dcm(DCM_hill_body, r, v);     // Calculate our dcm
+        gnc::utl::rotate_frame(q_body_ecef, r); // Throw the vectors into the body frame
+        gnc::utl::rotate_frame(q_body_ecef, v);
+        gnc::utl::dcm(DCM_hill_body, r, v);     // Calculate our dcm
 
         lin::Vector3f dr = pos_baseline_ecef_fp->get(); // dr = dr_ecef
 
         // Ensure we have a valid relative position
         if (lin::all(lin::isfinite(dr_body))) {
             dr_body = dr;                            // dr_body = dr_ecef
-            utl::rotate_frame(q_body_ecef, dr_body);
+            gnc::utl::rotate_frame(q_body_ecef, dr_body);
         }
     }
 
-    switch (static_cast<adcs_state_t>(adcs_state_fp->get())) {
+    adcs_state_t state = static_cast<adcs_state_t>(adcs_state_fp->get());
+    switch (state) {
         /* The general idea for standby pointing is to have the antenna face
          * along the velocity vector (we're assuming a near circular orbt here)
-         * and have the docking face pointing normal to our orbit. */
+         * and have the docking face pointing normal to our orbit.
+         */
         case adcs_state_t::point_standy:
             // Ensure we have a DCM and time
             if (lin::any(!lin::isfinite(DCM_hill_body)))
@@ -153,7 +172,8 @@ void AttitudeController::calculate_pointing_objectives() {
             pointer_vec2_desired_f.set(lin::ref_col(DCM_hill_body, 2)); // n_hat
             break;
         /* Here we simply want to point the docking face towards the other
-         * satellte and then try to keep GPS for RTK purposes. */
+         * satellte and then try to keep GPS for RTK purposes.
+         */
         case adcs_state_t::point_docking: {
             if (lin::any(!lin::isfinite(DCM_hill_body)) || lin::any(!lin::isfinite(dr_body)))
                 return;
@@ -163,7 +183,8 @@ void AttitudeController::calculate_pointing_objectives() {
             pointer_vec2_desired_f.set(lin::ref_col(DCM_hill_body, 2)); // n_hat
             break;
         }
-        /* In other adcs states, we won't specify a pointing strategy. */
+        /* In other adcs states, we won't specify a pointing strategy.
+         */
         default:
             break;
     }
@@ -171,7 +192,7 @@ void AttitudeController::calculate_pointing_objectives() {
 
 void AttitudeController::calculate_pointing_controller() {
     // Default all inputs to NaNs and set appropriate fields
-    pointer_data = PointingControllerData();
+    pointer_data = gnc::PointingControllerData();
     pointer_data.primary_desired   = pointer_vec1_desired_f.get();
     pointer_data.primary_current   = pointer_vec1_current_f.get();
     pointer_data.secondary_desired = pointer_vec2_desired_f.get();
