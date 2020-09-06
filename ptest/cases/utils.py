@@ -132,6 +132,17 @@ class Enums(object):
         "GYRO_HEATER"])
     havt_length = len(havt_devices.arr)
 
+    def __getitem__(self, key):
+        key_associations = {
+            "pan.state" : self.mission_states,
+            "prop.state" : self.prop_states,
+            "adcs.state" : self.adcs_states,
+            "radio.state" : self.radio_states,
+            "sat.designation" : self.sat_designations,
+            "piksi.mode" : self.piksi_modes,
+        }
+        return key_associations[key]
+
 class TestCaseFailure(Exception):
     """Raise in case of test case failure."""
 
@@ -218,33 +229,34 @@ class BootUtil(object):
             self.logger.put("[TESTCASE] Waiting for the deployment period to be over.")
 
         elif self.boot_stage == 'deployment_hold':
-            self.elapsed_deployment += 1
-
             if self.elapsed_deployment == self.deployment_hold_length:
                 if satellite_state == "detumble":
                     self.logger.put("[TESTCASE] Deployment period is over. Entering detumble state.")
-                    self.num_detumble_cycles = 0
                     self.boot_stage = 'detumble_wait'
+                    self.num_detumble_cycles = 0
                 elif satellite_state == "initialization_hold" and self.desired_boot_state != "initalization_hold":
                     raise TestCaseFailure("Satellite went to initialization hold instead of detumble.")
                 else:
                     raise TestCaseFailure(f"Satellite failed to exit deployment wait period. \
-                        Elapsed deployment period was {true_elapsed}.")
+                        Satellite state is {satellite_state}. Elapsed deployment period was {true_elapsed}.")
+            else:
+                self.elapsed_deployment += 1
 
         elif self.boot_stage == 'detumble_wait':
-            self.num_detumble_cycles += 1
             if self.num_detumble_cycles >= self.max_detumble_cycles or satellite_state == "standby":
                 # For now, force the satellite into standby since the attitude control stuff isn't working.
                 self.flight_controller.write_state("pan.state", Enums.mission_states["standby"])
                 self.boot_stage = 'standby'
                 self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
 
-                # TODO add the following code back after merging of #287 and #348
+                # TODO add the following code back after merging of #287
                 # if satellite_state == "standby":
                 #     self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
                 #     self.boot_stage = 'standby'
                 # else:
                 #     raise TestCaseFailure("Satellite failed to exit detumble.")
+            else:
+                self.num_detumble_cycles += 1
 
         elif self.boot_stage == "standby" and not self.finished:
             if self.desired_boot_state == "standby":

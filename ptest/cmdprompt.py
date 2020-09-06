@@ -118,21 +118,12 @@ class StateCmdPrompt(Cmd):
         read_result = self.cmded_device.read_state(args[0])
         elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
 
-        if args[0] == "pan.state":
-            human_readable_result = Enums.mission_states[int(read_result)]
-        elif args[0] == "prop.state":
-            human_readable_result = Enums.prop_states[int(read_result)]
-        elif args[0] == "adcs.state":
-            human_readable_result = Enums.adcs_states[int(read_result)]
-        elif args[0] == "radio.state":
-            human_readable_result = Enums.radio_states[int(read_result)]
-        elif args[0] == "sat.designation":
-            human_readable_result = Enums.sat_designations[int(read_result)]
-        elif args[0] == "piksi.mode":
-            human_readable_result = Enums.piksi_modes[int(read_result)]
-        else:
-            human_readable_result = ""
-        print(f"{read_result} ({human_readable_result}) \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+        try:
+            human_readable_result = Enums()[args[0]]
+            print(f"{read_result} ({human_readable_result}) \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+        except KeyError:
+            # args[0] is not an enum field.
+            print(f"{read_result} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
     def do_ws(self, args):
         '''

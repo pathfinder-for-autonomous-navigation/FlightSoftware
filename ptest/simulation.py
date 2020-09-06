@@ -135,10 +135,17 @@ class Simulation(object):
             self.computer_state_leader, self.actuator_commands_leader = \
                 self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
 
-            # Step 3.2. Send inputs, read outputs from Flight Computer
+            # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
             # Step 3.3. Allow test case to do its own meddling with the flight computer.
             self.testcase.run_case()
+
+            # Step 3.4. Step the flight computer forward.
+            if self.is_single_sat_sim:
+                self.flight_controller.write_state("cycle.start", "true")
+            else:
+                self.flight_controller_follower.write_state("cycle.start", "true")
+                self.flight_controller_leader.write_state("cycle.start", "true")
 
             # Step 5. Command actuators in simulation
             self.main_state = main_state_promise.result()
@@ -160,12 +167,9 @@ class Simulation(object):
     def interact_fc(self):
         if self.is_single_sat_sim:
             self.interact_fc_onesat(self.flight_controller, self.sensor_readings_follower)
-            self.flight_controller.write_state("cycle.start", "true")
         else:
             self.interact_fc_onesat(self.flight_controller_follower, self.sensor_readings_follower)
             self.interact_fc_onesat(self.flight_controller_leader, self.sensor_readings_leader)
-            self.flight_controller_follower.write_state("cycle.start", "true")
-            self.flight_controller_leader.write_state("cycle.start", "true")
 
     def interact_fc_onesat(self, fc, sensor_readings):
         """
