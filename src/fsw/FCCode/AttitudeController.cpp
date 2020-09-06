@@ -158,7 +158,8 @@ void AttitudeController::calculate_pointing_objectives() {
 
     adcs_state_t state = static_cast<adcs_state_t>(adcs_state_fp->get());
     switch (state) {
-        /* The general idea for standby pointing is to have the antenna face
+        /*
+         * The general idea for standby pointing is to have the antenna face
          * along the velocity vector (we're assuming a near circular orbt here)
          * and have the docking face pointing normal to our orbit.
          */
@@ -171,7 +172,8 @@ void AttitudeController::calculate_pointing_objectives() {
             pointer_vec1_desired_f.set(lin::ref_col(DCM_hill_body, 1)); // v_hat
             pointer_vec2_desired_f.set(lin::ref_col(DCM_hill_body, 2)); // n_hat
             break;
-        /* Here we simply want to point the docking face towards the other
+        /*
+         * Here we simply want to point the docking face towards the other
          * satellte and then try to keep GPS for RTK purposes.
          */
         case adcs_state_t::point_docking: {
