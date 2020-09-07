@@ -163,7 +163,7 @@ void AttitudeController::calculate_pointing_objectives() {
          * along the velocity vector (we're assuming a near circular orbt here)
          * and have the docking face pointing normal to our orbit.
          */
-        case adcs_state_t::point_standy:
+        case adcs_state_t::point_standby:
             // Ensure we have a DCM and time
             if (lin::any(!lin::isfinite(DCM_hill_body)))
                 return;
