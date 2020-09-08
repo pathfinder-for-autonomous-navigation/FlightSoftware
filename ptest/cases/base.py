@@ -156,22 +156,13 @@ class SingleSatOnlyCase(Case):
         """
         return True
 
-    @property
-    def one_day_ccno(self):
-        """
-        This property is set to the number of control cycles in 24 hours, by default.
-        It can be changed to "speed up" the execution on the testcase by reducing the
-        delay on certain timers in Flight Software. However, this requires the appropriate
-        version of flight software to be compiled and deployed on the flight controller.
-        """
-        return 24 * 60 * 60 * 1000 // 170
-
     def _setup_case(self):
         self.setup_pre_bootsetup()
 
         # Prevent faults from mucking up the state machine.
         self.sim.flight_controller.write_state("gomspace.low_batt.suppress", "true")
         self.sim.flight_controller.write_state("fault_handler.enabled", "false")
+        self.one_day_ccno = self.sim.flight_controller.smart_read("pan.one_day_ccno")
 
         self.boot_util = BootUtil(self.sim.flight_controller, self.logger, self.initial_state, self.fast_boot, self.one_day_ccno)
         self.boot_util.setup_boot()

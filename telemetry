@@ -1398,6 +1398,14 @@
             "type": "bool",
             "writable": true
         },
+        "gomspace.power_cycle_period": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "gomspace.pptmode": {
             "bitsize": 1,
             "flow_id": 11,
@@ -1582,6 +1590,14 @@
             "type": "lin double vector",
             "writable": false
         },
+        "pan.cc_ms": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "pan.cycle_no": {
             "bitsize": 32,
             "flow_id": "undefined",
@@ -1600,6 +1616,14 @@
             "bitsize": 32,
             "flow_id": "undefined",
             "max": 15000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
+        "pan.one_day_ccno": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
             "writable": false

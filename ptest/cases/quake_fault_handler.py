@@ -1,7 +1,7 @@
 from .base import SingleSatOnlyCase
 from .utils import FSWEnum, Enums, TestCaseFailure, BootUtil
 
-class QuakeFaultHandler_Fast(SingleSatOnlyCase):
+class QuakeFaultHandler(SingleSatOnlyCase):
     @property
     def sim_duration(self):
         return float("inf")
@@ -14,26 +14,7 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
     def fast_boot(self):
         return False
 
-    @property
-    def one_day_ccno(self):
-        """
-        This testcase depends on the version of flight software compiled with
-        -D SPEEDUP.
-        """
-        return 10 * 1000 // 170
-
-    @property
-    def compilation_notice(self):
-        return \
-        """
-        NOTE: This test requires Flight Software to be compiled with the
-        \"SPEEDUP\" flag so that the timeouts for the Quake Fault
-        Handler only take minutes, not hours.\n
-        """
-
     def setup_pre_bootsetup(self):
-        self.logger.put(self.compilation_notice)
-
         self.qfh_state = None
         self.powercycle_happening = None
 
@@ -112,13 +93,3 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
                 self.finish()
 
         self.cycles_since_blackout_start += 1
-
-class QuakeFaultHandler_Realtime(QuakeFaultHandler_Fast):
-    @property
-    def compilation_notice(self):
-        return \
-        """
-        NOTE: This test requires Flight Software to be compiled without the
-        \"SPEEDUP\" flag so that the timeouts for the Quake Fault
-        Handler are realistic.\n
-        """

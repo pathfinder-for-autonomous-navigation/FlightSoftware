@@ -102,8 +102,8 @@ class Simulation(object):
         self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.testcase.sim_initial_state, nargout=2)
         self.main_state_trajectory = []
 
-        self.eng.workspace['const']['dt'] = 170e6  # Control cycle time in HOOTL/HITL = 170 ms = 170e6 ns
-        self.dt = self.eng.workspace['const']['dt'] * 1e-9  # 120 ms
+        self.eng.workspace['const']['dt'] = self.flight_controller.smart_read("pan.cc_ms") * 1e6  # Control cycle time in nanoseconds.
+        self.dt = self.eng.workspace['const']['dt'] * 1e-9 # In seconds.
 
     def run(self):
         """
