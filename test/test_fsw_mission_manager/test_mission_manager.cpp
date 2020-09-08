@@ -288,6 +288,11 @@ void test_fault_responses() {
         tf.set(fault_response_t::standby);
         tf.step();
         tf.check(initial_state);
+    }
+    for(mission_state_t initial_state : {mission_state_t::startup,
+                                         mission_state_t::manual})
+    {
+        TestFixture tf{initial_state};
         tf.set(fault_response_t::safehold);
         tf.step();
         tf.check(initial_state);
