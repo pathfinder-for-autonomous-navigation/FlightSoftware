@@ -1510,14 +1510,6 @@
             "type": "unsigned int",
             "writable": false
         },
-        "max_radio_silence": {
-            "bitsize": 21,
-            "flow_id": 26,
-            "max": 1440000,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
         "orbit.baseline_pos": {
             "bitsize": 100,
             "flow_id": 2,
@@ -2730,7 +2722,6 @@
                 "detumble_safety_factor",
                 "docking_timeout_limit",
                 "fault_handler.enabled",
-                "max_radio_silence",
                 "trigger_dist.close_approach",
                 "trigger_dist.docking"
             ],

@@ -32,15 +32,12 @@ public:
     TRACKED_CONSTANT_SC(double, initial_close_approach_trigger_dist, 100); // Meters
     TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4);        // Meters
 
-/**
+    /**
      * @brief Number of control cycles to wait during the post-deployment
-     * do-nothing period.
+     * do-nothing period. Should be equivalent to 30 minutes.
      */
-#ifdef SPEEDUP
-    TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 100);
-#else
-    TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
-#endif
+    TRACKED_CONSTANT_SC(unsigned int, deployment_wait, PAN::one_day_ccno / (24 * 2));
+
     /**
      * @brief Number of control cycles to wait while in docking state before moving to standby
      */

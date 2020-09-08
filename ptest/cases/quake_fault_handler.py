@@ -16,7 +16,11 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
 
     @property
     def one_day_ccno(self):
-        return 60 * 1000 // 170
+        """
+        This testcase depends on the version of flight software compiled with
+        -D SPEEDUP.
+        """
+        return 10 * 1000 // 170
 
     @property
     def compilation_notice(self):
@@ -94,6 +98,8 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
                     self.test_stage = "safehold"
                 elif not self.mission_state == "standby":
                     raise TestCaseFailure(f"State of spacecraft was not `standby` during Quake Fault Handler's powercycling states. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
+                else:
+                    self.logger.put(f"Creating a comms blackout of 8 additional hours, starting on control cycle {self.rs('pan.cycle_no')}")
 
         elif self.test_stage == "safehold":
             if not self.mission_state == "safehold":
@@ -115,7 +121,3 @@ class QuakeFaultHandler_Realtime(QuakeFaultHandler_Fast):
         \"SPEEDUP\" flag so that the timeouts for the Quake Fault
         Handler are realistic.\n
         """
-
-    @property
-    def one_day_ccno(self):
-        return 24 * 60 * 60 * 1000 // 170

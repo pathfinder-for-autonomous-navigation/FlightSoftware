@@ -100,8 +100,8 @@ class GomspaceController : public TimedControlTask<void> {
     Serializer<bool> heater_sr;
     ReadableStateField<bool> heater_f;
 
-    // The controller will set the outputs of the gomspace once a period (number of control cycles)
-    unsigned int period = 300;
+    // The controller will set the outputs of the gomspace once a period (number of control cycles).
+    unsigned int period;
 
     // Command statefields to control the Gomspace outputs. Will
     // be set by various individual subsystems and the ground.

@@ -101,6 +101,12 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
 
     {
+        // Note: setting the period this way may cause issues in HITL if 
+        // flight software is compiled with the -D SPEEDUP flag, since a
+        // 1-control cycle powercycle is not possible.
+        unsigned int thirty_seconds_ccno = PAN::one_day_ccno / (24 * 60 * 2);
+        period = thirty_seconds_ccno > 0 ? thirty_seconds_ccno : 1;
+
         add_fault(get_hk_fault);
         add_fault(low_batt_fault);
 
@@ -296,65 +302,29 @@ void GomspaceController::execute() {
     heater_f.set(gs.get_heater()==1);
 }
 
-void GomspaceController::power_cycle_outputs(){
+void GomspaceController::power_cycle_outputs() {
+    auto powercycle_logic = [&]
+        (WritableStateField<bool>& cmd_f,
+         ReadableStateField<bool>& output_f,
+         int idx)
+    {
+        if (cmd_f.get()) {
+            // TODO add powercycling event
+            if (output_f.get()) {
+                gs.set_single_output(idx,0);
+            }
+            else {
+                gs.set_single_output(idx,1);
+                cmd_f.set(false);
+            }
+        }
+    };
+
     // Power cycle output channels
-    if (power_cycle_output1_cmd_f.get()){
-        if (output1_f.get()){
-            gs.set_single_output(0,0);
-        }
-        if (!output1_f.get()){
-            gs.set_single_output(0,1);
-            power_cycle_output1_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output2_cmd_f.get()){
-        if (output2_f.get()){
-            gs.set_single_output(1,0);
-        }
-        if (!output2_f.get()){
-            gs.set_single_output(1,1);
-            power_cycle_output2_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output3_cmd_f.get()){
-        if (output3_f.get()){
-            gs.set_single_output(2,0);
-        }
-        if (!output3_f.get()){
-            gs.set_single_output(2,1);
-            power_cycle_output3_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output4_cmd_f.get()){
-        if (output4_f.get()){
-            gs.set_single_output(3,0);
-        }
-        if (!output4_f.get()){
-            gs.set_single_output(3,1);
-            power_cycle_output4_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output5_cmd_f.get()){
-        if (output5_f.get()){
-            gs.set_single_output(4,0);
-        }
-        if (!output5_f.get()){
-            gs.set_single_output(4,1);
-            power_cycle_output5_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output6_cmd_f.get()){
-        if (output6_f.get()){
-            gs.set_single_output(5,0);
-        }
-        if (!output6_f.get()){
-            gs.set_single_output(5,1);
-            power_cycle_output6_cmd_f.set(false);
-        }
-    }
+    powercycle_logic(power_cycle_output1_cmd_f, output1_f, 0);
+    powercycle_logic(power_cycle_output2_cmd_f, output2_f, 1);
+    powercycle_logic(power_cycle_output3_cmd_f, output3_f, 2);
+    powercycle_logic(power_cycle_output4_cmd_f, output4_f, 3);
+    powercycle_logic(power_cycle_output5_cmd_f, output5_f, 4);
+    powercycle_logic(power_cycle_output6_cmd_f, output6_f, 5);
 }

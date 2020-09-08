@@ -3,7 +3,7 @@
 # simulation.py
 # Class to run a simulation and communicate with the flight computers.
 
-import time, timeit
+import time, timeit, traceback
 import math
 import platform
 import threading
@@ -138,9 +138,13 @@ class Simulation(object):
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
             # Step 3.3. Allow test case to do its own meddling with the flight computer.
-            self.testcase.run_case()
+            try:
+                self.testcase.run_case()
+            except Exception as e:
+                traceback.print_exc()
+                self.running = False
 
-            # Step 3.4. Step the flight computer forward.
+        # Step 3.4. Step the flight computer forward.
             if self.is_single_sat_sim:
                 self.flight_controller.write_state("cycle.start", "true")
             else:
