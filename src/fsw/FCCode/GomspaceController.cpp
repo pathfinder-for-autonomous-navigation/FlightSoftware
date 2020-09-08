@@ -101,12 +101,6 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
 
     {
-        // Note: setting the period this way may cause issues in HITL if 
-        // flight software is compiled with the -D SPEEDUP flag, since a
-        // 1-control cycle powercycle is not possible.
-        unsigned int thirty_seconds_ccno = PAN::one_day_ccno / (24 * 60 * 2);
-        period = thirty_seconds_ccno > 0 ? thirty_seconds_ccno : 1;
-
         add_fault(get_hk_fault);
         add_fault(low_batt_fault);
 
