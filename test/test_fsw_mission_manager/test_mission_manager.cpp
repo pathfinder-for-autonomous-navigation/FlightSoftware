@@ -28,7 +28,7 @@ void test_dispatch_startup() {
 
     // For the duration of the deployment hold, the mission manager should
     // remain in the startup state
-    for(int i = 0; i < PAN::one_day_ccno / (24 * 2); i++) {
+    for(size_t i = 0; i < PAN::one_day_ccno / (24 * 2); i++) {
         tf.step();
         tf.check(mission_state_t::startup);
     }
