@@ -42,12 +42,6 @@ public:
     TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
 #endif
     /**
-     * @brief Number of control cycles to wait before declaring "too long since comms".
-     */
-    WritableStateField<unsigned int> max_radio_silence_duration_f;
-    TRACKED_CONSTANT_SC(unsigned int, initial_max_radio_silence_duration, PAN::one_day_ccno);
-
-    /**
      * @brief Number of control cycles to wait while in docking state before moving to standby
      */
     WritableStateField<unsigned int> docking_timeout_limit_f;
@@ -199,7 +193,6 @@ private:
      * @brief Computes magnitude of baseline position vector.
      */
     double distance_to_other_sat() const;
-    bool too_long_since_last_comms() const;
     bool too_long_in_docking() const;
 
     void set(adcs_state_t state);
