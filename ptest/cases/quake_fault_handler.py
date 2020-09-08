@@ -53,7 +53,8 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
         self.rs("pan.cycle_no")
 
     def run_case_singlesat(self):
-        self.collect_diagnostic_data()
+        if not self.finished:
+            self.collect_diagnostic_data()
 
         if not hasattr(self, "test_stage"):
             # The satellite has been in a blackout since startup.
