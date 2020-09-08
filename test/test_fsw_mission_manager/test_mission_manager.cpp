@@ -26,8 +26,9 @@ void test_dispatch_startup() {
     // Startup should be the default initial state of the mission manager
     tf.check(mission_state_t::startup);
 
-    // For 100 executions, the mission manager should remain in the startup state
-    for(int i = 0; i < 100; i++) {
+    // For the duration of the deployment hold, the mission manager should
+    // remain in the startup state
+    for(int i = 0; i < PAN::one_day_ccno / (24 * 2); i++) {
         tf.step();
         tf.check(mission_state_t::startup);
     }
