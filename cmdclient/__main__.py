@@ -91,7 +91,7 @@ def main():
     config_schema = {
         "server" : {"type" : "string", "required" : True},
         "port" : {"type" : "integer", "required" : True},
-        "type" : {"type" : "string", "allowed" : ["StateSession", "RadioSession"], "required" : True},
+        "type" : {"type" : "string", "allowed" : ["USBSession", "RadioSession"], "required" : True},
     }
     
     v = Validator(config_schema)

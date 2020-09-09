@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 from .cases.base import TestCaseFailure
 from .configs.schemas import *
-from .state_session import StateSession
+from .usb_session import USBSession
 from .radio_session import RadioSession
 from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
@@ -108,13 +108,13 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = StateSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir)
+            device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
                 self.devices[device_name] = device_session
             else:
-                self.stop_all(f"Unable to set up StateSession for {device_name}.")
+                self.stop_all(f"Unable to set up USBSession for {device_name}.")
 
         self.binary_monitor_thread = threading.Thread(
             name="Binary Monitor", target=self.binary_monitor)

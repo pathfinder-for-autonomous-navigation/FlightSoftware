@@ -11,7 +11,7 @@ class DataConsumer(object):
 
     def consume_queue_item(self, item):
         """
-        Takes an item put into the queue by a StateSession, and consumes it.
+        Takes an item put into the queue by a USBSession, and consumes it.
         """
         raise NotImplementedError
 
