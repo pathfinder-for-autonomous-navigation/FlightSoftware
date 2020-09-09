@@ -13,9 +13,9 @@ import glob
 from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
-from .http_cmd import create_state_session_endpoint
+from .http_cmd import create_usb_session_endpoint
 
-class StateSession(object):
+class USBSession(object):
     '''
     Represents a connection session with a Flight Computer's state system.
 
@@ -96,7 +96,7 @@ class StateSession(object):
             return False
 
         try:
-            self.flask_app = create_state_session_endpoint(self)
+            self.flask_app = create_usb_session_endpoint(self)
             self.flask_app.config["uplink_console"] = self.uplink_console
             self.flask_app.config["console"] = self.console
             self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
@@ -152,7 +152,7 @@ class StateSession(object):
                 else:
                     if 'err' in data:
                         # The log line represents an error in retrieving or writing state data that
-                        # was caused by a StateSession client improperly setting/retrieving a value.
+                        # was caused by a USBSession client improperly setting/retrieving a value.
                         # Report this failure to the logger.
 
                         logline = f"[{data['time']}] (ERROR) Tried to {data['mode']} state value named \"{data['field']}\" but encountered an error: {data['err']}"
