@@ -427,7 +427,7 @@ class USBSession(object):
 
     def dbtelem(self):
         '''
-        Runs parsetelem(), and dump the results into the Elasticsearch database.
+        Run parsetelem(), and dump the results into the Elasticsearch database.
 
         This function is useful because it allows database-connected technologies,
         such as the telemetry webserver and OpenMCT, to consume downlink data.
