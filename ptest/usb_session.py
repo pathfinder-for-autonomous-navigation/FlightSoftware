@@ -374,6 +374,17 @@ class USBSession(object):
         return True
     
     def uplink(self, fields, vals, timeout=None):
+        '''
+        Create an uplink packet from the provided data and save it
+        locally to disk.
+
+        The send_uplink function can be used to send this uplink to
+        the flight controller.
+
+        Returns: false if the uplink could not be created, true otherwise.
+        The uplink might not be possible to create if it uses unrecognized
+        state fields or if its size exceeds 70 bytes.
+        '''
         if not self.running_logger: return
 
         # Filter out fields that are being overridden by the user
@@ -396,6 +407,12 @@ class USBSession(object):
             return False
 
     def parsetelem(self):
+        '''
+        Provide the latest downlink telemetry file that was received from the
+        spacecraft to the downlink producer, and then return the parsed value
+        of the latest completed downlink frame as a JSON object.
+        '''
+
         #get newest file
         telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
         try:
@@ -409,6 +426,13 @@ class USBSession(object):
         return telem_json_data
 
     def dbtelem(self):
+        '''
+        Runs parsetelem(), and dump the results into the Elasticsearch database.
+
+        This function is useful because it allows database-connected technologies,
+        such as the telemetry webserver and OpenMCT, to consume downlink data.
+        '''
+
         jsonObj = self.parsetelem()
         if not isinstance(jsonObj, dict):
             print("Error parsing telemetry.")
