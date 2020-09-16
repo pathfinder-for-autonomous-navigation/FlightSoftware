@@ -38,7 +38,7 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
 
     def check_quake_powercycled(self):
         if not self.powercycle_happening:
-            self.logger.put("Quake radio was not powercycled.")
+            raise TestCaseFailure("Quake radio was not powercycled.")
         else:
             self.logger.put("Comms blackout caused a powercycle of Quake.")
 
