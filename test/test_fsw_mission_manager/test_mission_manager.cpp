@@ -13,7 +13,6 @@ void test_valid_initialization() {
     TEST_ASSERT_EQUAL(0.2, tf.detumble_safety_factor_fp->get());
     TEST_ASSERT_EQUAL(100, tf.close_approach_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(0.4, tf.docking_trigger_dist_fp->get());
-    TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.max_radio_silence_duration_fp->get());
     TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.docking_timeout_limit_fp->get());
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
     TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
@@ -27,8 +26,9 @@ void test_dispatch_startup() {
     // Startup should be the default initial state of the mission manager
     tf.check(mission_state_t::startup);
 
-    // For 100 executions, the mission manager should remain in the startup state
-    for(int i = 0; i < 100; i++) {
+    // For the duration of the deployment hold, the mission manager should
+    // remain in the startup state
+    for(size_t i = 0; i < PAN::one_day_ccno / (24 * 2); i++) {
         tf.step();
         tf.check(mission_state_t::startup);
     }
@@ -133,14 +133,11 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         (mission_state == mission_state_t::leader_close_approach);
 
     /** If distance is less than the trigger distance,
-        there should be a state transition to the next mission state.
-        This transition should happen irrespective of the comms timeout situation. **/
+        there should be a state transition to the next mission state. **/
     {
         TestFixture tf(mission_state);
         tf.set(prop_state_t::idle);
         tf.set_sat_distance(sat_distance);
-        tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
-        tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
         tf.step();
         if (in_close_approach) {
             tf.check(mission_state_t::docking);
@@ -166,20 +163,6 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         if (in_close_approach) {
             TEST_ASSERT(tf.docking_config_cmd_fp->get());
         }
-    }
-
-    /** If comms hasn't been available for too long, there should be a state
-     *  transition to standby.  **/
-    {
-        TestFixture tf(mission_state);
-        tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
-        tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
-        tf.step();
-        tf.check_sph_dcdc_on(true);
-        tf.check(prop_state_t::idle);
-        tf.check(adcs_state_t::point_standby);
-        tf.check(mission_state_t::standby);
-        tf.check(sat_designation_t::undecided);
     }
 }
 
@@ -305,6 +288,11 @@ void test_fault_responses() {
         tf.set(fault_response_t::standby);
         tf.step();
         tf.check(initial_state);
+    }
+    for(mission_state_t initial_state : {mission_state_t::startup,
+                                         mission_state_t::manual})
+    {
+        TestFixture tf{initial_state};
         tf.set(fault_response_t::safehold);
         tf.step();
         tf.check(initial_state);

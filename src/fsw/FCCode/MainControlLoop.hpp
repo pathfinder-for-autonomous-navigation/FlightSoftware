@@ -65,6 +65,24 @@ class MainControlLoop : public ControlTask<void> {
      */
     ReadableStateField<unsigned int> memory_use_f;
 
+    /**
+     * @brief Contains the number of control cycles in a 24-hour period.
+     * 
+     * This field is only used informationally by PTest to correctly time
+     * its testcases.
+     */
+    ReadableStateField<unsigned int> one_day_ccno_f;
+
+    /**
+     * @brief Contains the length of a control cycle in milliseconds.
+     * 
+     * This field is only used informationally by PTest to correctly time
+     * its testcases, and potentially by pre-flight check software to
+     * verify we've loaded the correct version of flight software to the
+     * spacecraft.
+     */
+    ReadableStateField<unsigned int> control_cycle_ms_f;
+
     PropController prop_controller;
     MissionManager mission_manager;
 

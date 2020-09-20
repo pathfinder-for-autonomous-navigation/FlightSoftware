@@ -1510,14 +1510,6 @@
             "type": "unsigned int",
             "writable": false
         },
-        "max_radio_silence": {
-            "bitsize": 21,
-            "flow_id": 26,
-            "max": 1440000,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
         "orbit.baseline_pos": {
             "bitsize": 100,
             "flow_id": 2,
@@ -1590,6 +1582,14 @@
             "type": "lin double vector",
             "writable": false
         },
+        "pan.cc_ms": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "pan.cycle_no": {
             "bitsize": 32,
             "flow_id": "undefined",
@@ -1608,6 +1608,14 @@
             "bitsize": 32,
             "flow_id": "undefined",
             "max": 15000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
+        "pan.one_day_ccno": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
             "writable": false
@@ -2730,7 +2738,6 @@
                 "detumble_safety_factor",
                 "docking_timeout_limit",
                 "fault_handler.enabled",
-                "max_radio_silence",
                 "trigger_dist.close_approach",
                 "trigger_dist.docking"
             ],
