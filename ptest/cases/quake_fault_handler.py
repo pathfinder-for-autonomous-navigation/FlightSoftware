@@ -45,7 +45,7 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
     def collect_diagnostic_data(self):
         self.qfh_state = self.rs("qfh.state")
         self.rs("pan.state")
-        self.powercycle_happening = self.rs("gomspace.power_cycle_output1_cmd")
+        self.powercycle_happening = self.rs("gomspace.power_cycle_output3_cmd")
         self.rs("pan.cycle_no")
 
     def run_case_singlesat(self):
