@@ -31,7 +31,6 @@ public:
   std::shared_ptr<ReadableStateField<lin::Vector3d>> propagated_baseline_pos_fp;
 
   std::shared_ptr<WritableStateField<bool>> reboot_fp;
-  std::shared_ptr<WritableStateField<bool>> power_cycle_radio_fp;
 
   std::shared_ptr<ReadableStateField<bool>> docked_fp;
 
