@@ -10,7 +10,7 @@ QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry &r) : FaultHandlerMachin
     radio_state_fp = find_readable_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_readable_field<unsigned int>("radio.last_comms_ccno", __FILE__,
                                                               __LINE__);
-    power_cycle_radio_fp = find_writable_field<bool>("gomspace.power_cycle_output1_cmd", __FILE__,
+    power_cycle_radio_fp = find_writable_field<bool>("gomspace.power_cycle_output3_cmd", __FILE__,
                                                      __LINE__);
 
     cur_state.set(static_cast<unsigned char>(qfh_state_t::unfaulted));
