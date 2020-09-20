@@ -38,14 +38,14 @@ class QuakeFaultHandler_Fast(SingleSatOnlyCase):
 
     def check_quake_powercycled(self):
         if not self.powercycle_happening:
-            self.logger.put("Quake radio was not powercycled.")
+            raise TestCaseFailure("Quake radio was not powercycled.")
         else:
             self.logger.put("Comms blackout caused a powercycle of Quake.")
 
     def collect_diagnostic_data(self):
         self.qfh_state = self.rs("qfh.state")
         self.rs("pan.state")
-        self.powercycle_happening = self.rs("gomspace.power_cycle_output1_cmd")
+        self.powercycle_happening = self.rs("gomspace.power_cycle_output3_cmd")
         self.rs("pan.cycle_no")
 
     def run_case_singlesat(self):
