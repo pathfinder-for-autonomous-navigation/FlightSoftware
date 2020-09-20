@@ -53,6 +53,8 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset)
     // Retrieve fields from registry
     snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);
     radio_mo_packet_fp = find_internal_field<char *>("downlink.ptr", __FILE__, __LINE__);
+    gomspace_output_1_fp = find_readable_field<bool>("gomspace.output.output1", __FILE__, __LINE__);
+
 
     cycle_of_entry = control_cycle_count;
 
@@ -119,7 +121,10 @@ void QuakeManager::execute()
         dispatch_wait();
         break;
     case radio_state_t::transceive:
-        dispatch_transceive();
+        //check that the gomspace is powered prior to comms
+        bool powered = gomspace_output_1_fp->get();
+        if(powered)
+            dispatch_transceive();
         break;
     case radio_state_t::read:
         dispatch_read();

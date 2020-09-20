@@ -72,6 +72,11 @@ public:
     Fault tank2_temp_high_fault_f;
     Fault tank1_temp_high_fault_f;
 
+    /**
+    * @brief Pointers to gomspace output, to check for power loss.
+    */
+    const ReadableStateField<bool> *gomspace_output_2_fp; //TODO: check actual output number
+
     // ------------------------------------------------------------------------
     // Public Interface
     // ------------------------------------------------------------------------

@@ -71,6 +71,8 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_fault(tank2_temp_high_fault_f);
     add_fault(tank1_temp_high_fault_f);
 
+    gomspace_output_2_fp = find_readable_field<bool>("gomspace.output.output2", __FILE__, __LINE__);
+
     TRACKED_CONSTANT(unsigned int, max_venting_cycles_ic, 20);
     TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
     TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
@@ -130,6 +132,7 @@ void PropController::execute()
         else
         {
             // This could happen if next_state is idle but is_functional returns false
+            // or if powercycling is happening 
             DD("[-] Could not enter state!!\n\n\n");
             prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
         }
@@ -402,12 +405,13 @@ bool PropState_Pressurizing::can_enter() const
     bool is_schedule_valid = controller->validate_schedule();
     // Allow from idle because sometimes we can immediately pressurize
     bool was_idle = controller->check_current_state(prop_state_t::idle);
+    bool powered = controller->gomspace_output_2_fp->get();
 
     // It is time to pressurize when we have min_cycles_needed - 1 cycles left
     bool is_time_to_pressurize =
         controller->cycles_until_firing.get() == controller->min_cycles_needed() - 1;
 
-    return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid);
+    return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid && powered);
 }
 
 prop_state_t PropState_Pressurizing::evaluate()
@@ -473,7 +477,8 @@ bool PropState_Firing::can_enter() const
 {
     bool was_await_firing = controller->check_current_state(prop_state_t::await_firing);
     bool is_time_to_fire = controller->cycles_until_firing.get() == 0;
-    return was_await_firing && is_time_to_fire;
+    bool powered = controller->gomspace_output_2_fp->get();
+    return was_await_firing && is_time_to_fire && powered;
 }
 
 void PropState_Firing::enter()
