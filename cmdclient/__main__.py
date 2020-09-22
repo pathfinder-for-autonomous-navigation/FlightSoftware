@@ -53,7 +53,11 @@ class CmdClient(Cmd):
         Lists the elements in the queued uplink for the current device, or, returns None if
         no uplink is currently queued or can be queued.
         """
-        raise NotImplementedError
+
+        endpoint = self.url+"/view"
+        r = requests.get(url = endpoint)
+        data = r.json
+        print(data)
 
     def do_add(self, args):
         """
@@ -61,22 +65,39 @@ class CmdClient(Cmd):
         the packet size after adding the state fields would exceed the maximum allowable uplink
         size (currently 70 bytes.)
         """
-        endpoint = self.url+"/send-telem"
-        r = requests.get(url = endpoint)
-        data = r.json
-        print(data)
+        #args = args.split()
+        if len(args) > 3:
+            print('You have specified too many arguments'+ args[1]+str(len(args)))
+        elif len(args)< 3:
+            print("You have not specified enough arguments use 2 arguments: <field> <value>")
+
+        else:
+            args = args.split()
+            endpoint = self.url+"/send-telem"
+            r = requests.post(url = endpoint, data = {args[0]:args[2]})
+            data = r.json
+            print(data)
 
     def do_remove(self, args):
         """
         Removes a set of state fields from the currently queued uplink.
         """
-        raise NotImplementedError
+        if len(args) > 3:
+            print('You have specified too many arguments'+ args[1]+str(len(args)))
+        elif len(args)< 3:
+            print("You have not specified enough arguments use 2 arguments: <field> <value>")
+        else:
+            args = args.split()
+            endpoint = self.url+"/remove"
+            r = requests.post(url = endpoint, data = {args[0]:args[2]})
+            data = r.json
+            print(data)
 
     def do_pause(self, args):
         """
         Attempts to pause the uplink queue timer, if one is running.
         """
-        endpoint = self.url+"/time"
+        endpoint = self.url+"/pause"
         r = requests.get(url = endpoint)
         data = r.json
         print(data)
