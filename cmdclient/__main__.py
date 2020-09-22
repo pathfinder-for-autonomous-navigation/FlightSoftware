@@ -57,7 +57,7 @@ class CmdClient(Cmd):
         endpoint = self.url+"/view"
         r = requests.get(url = endpoint)
         data = r.json
-        print(data)
+        print(r.content)
 
     def do_add(self, args):
         """
@@ -65,33 +65,31 @@ class CmdClient(Cmd):
         the packet size after adding the state fields would exceed the maximum allowable uplink
         size (currently 70 bytes.)
         """
-        #args = args.split()
-        if len(args) > 3:
-            print('You have specified too many arguments'+ args[1]+str(len(args)))
-        elif len(args)< 3:
+        args = str(args).split()
+        if len(args) > 2:
+            print('You have specified too many arguments')
+        elif len(args)< 2:
             print("You have not specified enough arguments use 2 arguments: <field> <value>")
 
         else:
-            args = args.split()
             endpoint = self.url+"/send-telem"
-            r = requests.post(url = endpoint, data = {args[0]:args[2]})
-            data = r.json
-            print(data)
+            r = requests.post(url = endpoint, data = {args[0]:args[1]})
+
+            print(r.content)
 
     def do_remove(self, args):
         """
         Removes a set of state fields from the currently queued uplink.
         """
-        if len(args) > 3:
-            print('You have specified too many arguments'+ args[1]+str(len(args)))
-        elif len(args)< 3:
+        args = str(args).split()
+        if len(args) > 2:
+            print('You have specified too many arguments')
+        elif len(args)< 2:
             print("You have not specified enough arguments use 2 arguments: <field> <value>")
         else:
-            args = args.split()
             endpoint = self.url+"/remove"
-            r = requests.post(url = endpoint, data = {args[0]:args[2]})
-            data = r.json
-            print(data)
+            r = requests.post(url = endpoint, data = {args[0]:args[1]})
+            print(r.content)
 
     def do_pause(self, args):
         """
@@ -99,8 +97,7 @@ class CmdClient(Cmd):
         """
         endpoint = self.url+"/pause"
         r = requests.get(url = endpoint)
-        data = r.json
-        print(data)
+        print(r.content)
 
     def do_resume(self, args):
         """
@@ -108,8 +105,7 @@ class CmdClient(Cmd):
         """
         endpoint = self.url+"/resume"
         r = requests.get(url = endpoint)
-        data = r.json
-        print(data)
+        print(r.content)
 
 
     def do_exit(self, args):
