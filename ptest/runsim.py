@@ -3,7 +3,7 @@
 from argparse import ArgumentParser
 from .cases.base import TestCaseFailure
 from .configs.schemas import *
-from .state_session import StateSession
+from .usb_session import USBSession
 from .radio_session import RadioSession
 from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
@@ -85,7 +85,8 @@ class PTest(object):
 
             # If we want to use the native desktop binary for a device, instead of
             # a connected Teensy, we can do that by wrapping a serial port around it.
-            if device['run_mode'] == 'native':
+            is_teensy = device['run_mode'] != 'native'
+            if not is_teensy:
                 try:
                     master_fd, slave_fd = pty.openpty()
                     binary_filepath = device['binary_filepath']
@@ -93,6 +94,7 @@ class PTest(object):
                     if not os.path.exists(binary_filepath):
                         print("Compiling flight software binaries.")
                         os.system("pio run -e fsw_native_leader > /dev/null")
+                        os.system("pio run -e fsw_native_leader_realtime > /dev/null")
 
                     binary_process = subprocess.Popen(binary_filepath, stdout=master_fd, stderr=master_fd, stdin=master_fd)
                     self.binaries.append({
@@ -107,13 +109,13 @@ class PTest(object):
                     # pty isn't defined because we're on Windows
                     self.stop_all(f"Cannot connect to a native binary for device {device_name}, since the current OS is Windows.")
 
-            device_session = StateSession(device_name, self.uplink_console, device["http_port"], self.simulation_run_dir)
+            device_session = USBSession(device_name, self.uplink_console, device["http_port"], is_teensy, self.simulation_run_dir)
 
             # Connect to device, failing gracefully if device connection fails
             if device_session.connect(device["port"], device["baud_rate"]):
                 self.devices[device_name] = device_session
             else:
-                self.stop_all(f"Unable to set up StateSession for {device_name}.")
+                self.stop_all(f"Unable to set up USBSession for {device_name}.")
 
         self.binary_monitor_thread = threading.Thread(
             name="Binary Monitor", target=self.binary_monitor)
@@ -185,7 +187,6 @@ class PTest(object):
         print(stop_str)
 
         print("Stopping binary monitor thread...")
-        time.sleep(1.0)
         if hasattr(self, "binary_monitor_thread"):
             self.binary_monitor_thread.join()
 
@@ -239,6 +240,7 @@ def main(args):
 
     parser.add_argument('-ni', '--no-interactive', dest='interactive', action='store_false', help='If provided, disables the interactive console.')
     parser.add_argument('-i', '--interactive', dest='interactive', action='store_true', help='If provided, enables the interactive console.')
+    parser.add_argument('--clean', dest='clean', action='store_true', help='Starts a fresh run if in HOOTL (deletes the EEPROM file.)')
     parser.set_defaults(interactive=True)
 
     log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
@@ -246,6 +248,13 @@ def main(args):
         help='''Directory for storing run data. Must be an absolute path. Default is logs/ relative to this script's location on disk.
                 For the current run, a subdirectory of DATA_DIR is created in which the actual data is stored.''', default=log_dir)
     args = parser.parse_args(args)
+
+    if args.clean:
+        print("Removing EEPROM file due to user request.")
+        try: 
+            os.remove("eeprom.json")
+        except OSError:
+            pass
 
     try:
         with open(args.conf, 'r') as config_file:

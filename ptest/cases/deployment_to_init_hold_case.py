@@ -55,7 +55,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         # Move to startup and wait the full deployment length
         self.mission_state = "startup"
         self.logger.put("Now in startup. Cycling through deployment wait...")
-        for _ in range(100):
+        for _ in range(self.one_day_ccno // (24 * 2)):
             self.cycle()
         self.logger.put("Completed deployment wait.")
 

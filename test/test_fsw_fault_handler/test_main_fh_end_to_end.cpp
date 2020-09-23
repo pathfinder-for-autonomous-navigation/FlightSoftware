@@ -37,7 +37,6 @@ void test_single_simple_safehold_faults() {
         tf.adcs_wheel3_adc_fault_fp,
         tf.adcs_wheel_pot_fault_fp,
         tf.low_batt_fault_fp,
-        tf.prop_overpressure_fault_fp
     };
 
     /** 
@@ -94,6 +93,7 @@ void test_single_quake_fault() {
     tf.cc = 8 * PAN::one_day_ccno / 3 + 1;
     TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step()); // Now in powercycle_3
     tf.cc = 3 * PAN::one_day_ccno / 3 + 1;
+    TEST_ASSERT_EQUAL(fault_response_t::standby, tf.step());
     TEST_ASSERT_EQUAL(fault_response_t::safehold, tf.step()); // Now in safehold
 }
 

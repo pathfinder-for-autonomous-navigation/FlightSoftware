@@ -6,16 +6,17 @@ except ImportError:
 from cmd import Cmd
 import timeit
 import tinydb
+from .cases.utils import Enums
 from .plotter import PlotterClient
-from . state_session import StateSession
+from .usb_session import USBSession
 
-def StateSessionOnly(fn):
+def USBSessionOnly(fn):
         """
         Ensures that the function is only called for a State Session device.
         """
 
         def inner(self, args):
-            if isinstance(self.cmded_device, StateSession):
+            if isinstance(self.cmded_device, USBSession):
                 fn(self, args)
             else:
                 print("Cannot use this function since currently commanded device is not a state session.")
@@ -105,7 +106,7 @@ class StateCmdPrompt(Cmd):
 
     def do_rs(self, args):
         '''
-        Read state. See state_session.py for documentation.
+        Read state. See usb_session.py for documentation.
         '''
         args = args.split()
 
@@ -116,11 +117,17 @@ class StateCmdPrompt(Cmd):
         start_time = timeit.default_timer()
         read_result = self.cmded_device.read_state(args[0])
         elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
-        print(f"{read_result} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+
+        try:
+            human_readable_result = Enums()[args[0]]
+            print(f"{read_result} ({human_readable_result}) \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+        except KeyError:
+            # args[0] is not an enum field.
+            print(f"{read_result} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
     def do_ws(self, args):
         '''
-        Write state. See state_session.py for documentation.
+        Write state. See usb_session.py for documentation.
         '''
         args = args.split()
 
@@ -138,21 +145,21 @@ class StateCmdPrompt(Cmd):
         write_succeeded = "Succeeded" if write_succeeded else "Failed"
         print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_cycle(self, args):
         '''
         Start a control cycle.
         '''
         self.do_ws("cycle.start true")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_cyclecount(self, args):
         '''
         Get the number of control cycles that have executed.
         '''
         self.do_rs("pan.cycle_no")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_telem(self, args):
         '''
         Dump telemetry.
@@ -165,7 +172,7 @@ class StateCmdPrompt(Cmd):
         write_succeeded = "Succeeded" if write_succeeded else "Failed"
         print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
     
-    @StateSessionOnly
+    @USBSessionOnly
     def do_parsetelem(self, args):
         '''
         Parse a telelmetry file using DowlinkParser.
@@ -181,7 +188,7 @@ class StateCmdPrompt(Cmd):
 
             print(f"\t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_dbtelem(self, args):
         '''
         Store Telemetry in Database
@@ -200,7 +207,7 @@ class StateCmdPrompt(Cmd):
 
     def do_wms(self, args):
         '''
-        Write multiple states. See state_session.py for documentation.
+        Write multiple states. See usb_session.py for documentation.
         '''
         args = args.split()
 
@@ -221,10 +228,10 @@ class StateCmdPrompt(Cmd):
         write_succeeded = "Succeeded" if write_succeeded else "Failed"
         print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_os(self, args):
         '''
-        Override simulation state. See state_session.py for documentation.
+        Override simulation state. See usb_session.py for documentation.
         '''
         args = args.split()
         start_time = timeit.default_timer()
@@ -234,22 +241,22 @@ class StateCmdPrompt(Cmd):
         override_succeeded = "Succeeded" if override_succeeded else "Failed"
         print(f"{override_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_ro(self, args):
         '''
-        Release override of simulation state. See state_session.py for documentation.
+        Release override of simulation state. See usb_session.py for documentation.
         '''
         args = args.split()
         self.cmded_device.release_override(args[0])
 
     def do_plot(self, args):
         '''
-        Plot the given state fields. See state_session.py for documentation.
+        Plot the given state fields. See usb_session.py for documentation.
         '''
         plotter = PlotterClient(self.cmded_device.datastore.db)
         plotter.do_plot(args)
     
-    @StateSessionOnly
+    @USBSessionOnly
     def do_uplink(self, args):
         '''
         Uplink fields

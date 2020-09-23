@@ -8,7 +8,7 @@ import os, threading
 from tlm.oauth2 import SendMessage
 
 """
-This file contains HTTP endpoint factories for StateSession and RadioSession.
+This file contains HTTP endpoint factories for USBSession and RadioSession.
 The endpoints can be used by a command client to send uplinks to the satellites.
 """
 
@@ -138,16 +138,16 @@ def create_radio_session_endpoint(radio_session, queue):
 
     return app
 
-def create_state_session_endpoint(state_session):
+def create_usb_session_endpoint(usb_session):
     app = Flask(__name__)
     app.logger.disabled = True
-    app.config["state_session"] = state_session
+    app.config["usb_session"] = usb_session
 
     app.config["SWAGGER"]={"title": "PAN State Session Command Endpoint", "uiversion": 2}
     swagger=Swagger(app, config=swagger_config)
 
     @app.route("/send-telem", methods=["POST"])
-    @swag_from("endpoint_configs/state_session/send-telem.yml")
+    @swag_from("endpoint_configs/usb_session/send-telem.yml")
     def send_telem():
         uplink=request.get_json()
 
@@ -162,7 +162,7 @@ def create_state_session_endpoint(state_session):
 
         # If the uplink packet is successfully created, then send it to the Flight Computer
         if not success: return "Unable to send telemetry"
-        success = state_session.send_uplink("uplink.sbd")
+        success = usb_session.send_uplink("uplink.sbd")
 
         # Get rid of uplink files/cleanup
         os.remove("uplink.sbd")

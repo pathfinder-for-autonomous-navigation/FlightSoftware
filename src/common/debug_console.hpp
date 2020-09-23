@@ -55,6 +55,7 @@ class debug_console {
      * @param format The format string specifying how data should be represented.
      * @param ... One or more arguments containing the data to be printed.
      */
+    static void printf(const char *format, ...);
     static void printf(severity s, const char *format, ...);
 
     /**
@@ -63,6 +64,7 @@ class debug_console {
      * @param str The string to be printed.
      */
     void println(severity s, const char *str);
+    void println(const char *str);
 
     /**
      * @brief Blinks an LED at a rate of 1 Hz.

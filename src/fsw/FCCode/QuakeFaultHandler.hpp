@@ -56,12 +56,13 @@ protected:
      * 
      * @return mission_state_t 
      */
-  fault_response_t dispatch_unfaulted();
-  fault_response_t dispatch_forced_standby();
-  fault_response_t dispatch_powercycle_1();
-  fault_response_t dispatch_powercycle_2();
-  fault_response_t dispatch_powercycle_3();
-  fault_response_t dispatch_safehold();
+    fault_response_t dispatch_unfaulted();
+    fault_response_t dispatch_forced_standby();
+    fault_response_t dispatch_powercycle(qfh_state_t next);
+    fault_response_t dispatch_powercycle_1();
+    fault_response_t dispatch_powercycle_2();
+    fault_response_t dispatch_powercycle_3();
+    fault_response_t dispatch_safehold();
 
   /**
      * @brief Executes a clean transition between fault states.

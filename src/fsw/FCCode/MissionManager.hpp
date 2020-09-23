@@ -32,20 +32,11 @@ public:
     TRACKED_CONSTANT_SC(double, initial_close_approach_trigger_dist, 100); // Meters
     TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4);        // Meters
 
-/**
-     * @brief Number of control cycles to wait during the post-deployment
-     * do-nothing period.
-     */
-#ifdef SPEEDUP
-    TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 100);
-#else
-    TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
-#endif
     /**
-     * @brief Number of control cycles to wait before declaring "too long since comms".
+     * @brief Number of control cycles to wait during the post-deployment
+     * do-nothing period. Should be equivalent to 30 minutes.
      */
-    WritableStateField<unsigned int> max_radio_silence_duration_f;
-    TRACKED_CONSTANT_SC(unsigned int, initial_max_radio_silence_duration, PAN::one_day_ccno);
+    TRACKED_CONSTANT_SC(unsigned int, deployment_wait, PAN::one_day_ccno / (24 * 2));
 
     /**
      * @brief Number of control cycles to wait while in docking state before moving to standby
@@ -199,7 +190,6 @@ private:
      * @brief Computes magnitude of baseline position vector.
      */
     double distance_to_other_sat() const;
-    bool too_long_since_last_comms() const;
     bool too_long_in_docking() const;
 
     void set(adcs_state_t state);
