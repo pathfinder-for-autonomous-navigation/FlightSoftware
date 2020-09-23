@@ -1,110 +1,95 @@
-# Runs mission from startup state to standby state.
-from .base import SingleSatOnlyCase, TestCaseFailure
-from .mission import MissionStateMachineUtilities
+from .base import SingleSatOnlyCase
+from .utils import FSWEnum, Enums, TestCaseFailure, BootUtil
 
-class QuakeFaultHandler_Fast(SingleSatOnlyCase, MissionStateMachineUtilities):
+class QuakeFaultHandler(SingleSatOnlyCase):
     @property
     def sim_duration(self):
         return float("inf")
 
     @property
-    def sim_initial_state(self):
-        # Start the spacecraft with zero angular rate in the body frame, 
-        # so that we exit detumble almost immediately.
-        return "startup"
+    def initial_state(self):
+        return "leader"
 
     @property
-    def mission_state(self):
-        return self.mission_states[int(self.sim.flight_controller.read_state("pan.state"))]
+    def fast_boot(self):
+        return False
 
-    @property
-    def qfh_state(self):
-        return self.sim.flight_controller.read_state("qfh.state")
+    def setup_pre_bootsetup(self):
+        self.qfh_state = None
+        self.powercycle_happening = None
 
-    def setup_case_singlesat(self):
-        self.setup_initial_conditions()
-        self.setup_boot_to_standby()
-
-        self.one_day_ccno = 60 * 1000 / 170
-        self.comms_blackout_timer = 0
-        self.logger.put("""
-NOTE: This test requires Flight Software to be compiled with the
-\"SHORTEN_DAYS\" flag so that the timeouts for the Quake Fault
-Handler only take minutes, not hours.\n""")
-        self.logger.put("[TESTCASE] Waiting for the satellite to boot to the leader state.")
-
+    def setup_post_bootsetup(self):
         self.ws("fault_handler.enabled", True)
 
-        self.test_stage = "waiting_for_boot"
+    def check_quake_powercycled(self):
+        if not self.powercycle_happening:
+            raise TestCaseFailure("Quake radio was not powercycled.")
+        else:
+            self.logger.put("Comms blackout caused a powercycle of Quake.")
+
+    def collect_diagnostic_data(self):
+        self.qfh_state = self.rs("qfh.state")
+        self.rs("pan.state")
+        self.powercycle_happening = self.rs("gomspace.power_cycle_output3_cmd")
+        self.rs("pan.cycle_no")
 
     def run_case_singlesat(self):
-        # Collect quake fault handler state on every control cycle so that
-        # we have a record of the data.
-        _ = self.qfh_state
+        if not self.finished:
+            self.collect_diagnostic_data()
 
-        if self.test_stage == "waiting_for_boot" and self.run_boot_to_leader():
-            self.logger.put("[TESTCASE] Satellite has booted to leader. Starting a 24-hours comms blackout (in satellite time; real duration of blackout is 1 min).")
-            self.test_stage = "first_no_comms" 
+        if not hasattr(self, "test_stage"):
+            # The satellite has been in a blackout since startup.
+            #
+            # Note: we subtract 1 because the control cycle count starts at 1.
+            # So if the current ccno is 1, that implies there have been zero
+            # cycles since the blackout started.
+            self.cycles_since_blackout_start = self.rs("pan.cycle_no") - 1
 
-        elif self.test_stage == "first_no_comms":
-            if self.comms_blackout_timer > self.one_day_ccno:
+            self.test_stage = "first_no_comms"
+            self.logger.put(f"Creating a comms blackout of 24 hours (measured from control cycle #1.) Current control cycle: {self.rs('pan.cycle_no')}")
+
+        if self.test_stage == "first_no_comms":
+            if self.cycles_since_blackout_start > self.one_day_ccno:
                 if not self.mission_state == "standby":
-                    raise TestCaseFailure("QuakeFaultHandler did not force satellite into standby after 24 hours of no comms.")
+                    raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into standby after 24 hours of no comms. State was: {self.mission_state}. Current control cycle: {self.rs('pan.cycle_no')}")
                 else:
-                    self.logger.put("[TESTCASE] Transitioning to the powercycling states of the Quake fault handler.")
-                    self.test_stage = "powercycles"
-                    self.comms_blackout_timer = 0
+                    self.cycles_since_blackout_start = 0
+                    self.logger.put("QuakeFaultHandler forced spacecraft into the standby state.")
+                    self.logger.put(f"Creating another comms blackout of 24 hours, starting on control cycle {self.rs('pan.cycle_no')}")
+                    self.test_stage = "second_no_comms"
+
+        elif self.test_stage == "second_no_comms":
+            if not self.mission_state == "standby":
+                raise TestCaseFailure(f"State of spacecraft was not `standby` during QuakeFaultHandler's `forced standby` state. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
+            if self.cycles_since_blackout_start > self.one_day_ccno:
+                self.test_stage = "powercycles"
 
         elif self.test_stage == "powercycles":
             if not hasattr(self, "powercycles_count"):
+                self.logger.put("Comms blackout forced a transition into Quake Fault Handler's powercycling states.")
+                self.check_quake_powercycled()
                 self.powercycles_count = 0
+                self.cycles_since_blackout_start = 0
+                self.logger.put(f"Creating a comms blackout of 8 additional hours, starting on control cycle {self.rs('pan.cycle_no')}")
 
-            if not self.mission_state == "standby":
-                raise TestCaseFailure("QuakeFaultHandler did not force satellite into standby after 24 hours of no comms.")
-
-            if self.comms_blackout_timer > self.one_day_ccno / 3:
-                # TODO check if Quake radio has been powercycled.
-
+            if self.cycles_since_blackout_start > self.one_day_ccno // 3:
+                self.check_quake_powercycled()
                 self.powercycles_count += 1
-                self.logger.put(f"[TESTCASE] Powercycled {self.powercycles_count} time(s).")
-                self.comms_blackout_timer = 0
+                self.cycles_since_blackout_start = 0
                 if self.powercycles_count == 3:
-                    self.logger.put("[TESTCASE] Transitioning to safehold.")
                     self.test_stage = "safehold"
+                elif not self.mission_state == "standby":
+                    raise TestCaseFailure(f"State of spacecraft was not `standby` during Quake Fault Handler's powercycling states. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
+                else:
+                    self.logger.put(f"Creating a comms blackout of 8 additional hours, starting on control cycle {self.rs('pan.cycle_no')}")
 
         elif self.test_stage == "safehold":
-            if self.comms_blackout_timer > self.one_day_ccno / 3:
-                if not self.mission_state == "safehold":
-                    raise TestCaseFailure("QuakeFaultHandler did not force satellite into safehold after 48 hours of no comms.")
-                else:
-                    self.logger.put("[TESTCASE] Testcase finished.")
-                    self.finish()
+            if not self.mission_state == "safehold":
+                raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into safehold after 48 hours of no comms. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
+            else:
+                self.logger.put(f"The 48-hour total comms blackout caused a mission state transition to safehold on control cycle {self.rs('pan.cycle_no')}")
+                self.logger.put("Testcase finished.")
+                self.test_stage = "finished"
+                self.finish()
 
-        self.comms_blackout_timer += 1
-
-class QuakeFaultHandler_Real(QuakeFaultHandler_Fast):
-    """
-    This testcase is the same as the Fast testcase, just with realistic timeouts for comms.
-    """
-
-    @property
-    def sim_duration(self):
-        return float("inf")
-
-    @property
-    def sim_initial_state(self):
-        # Start the spacecraft with zero angular rate in the body frame, 
-        # so that we exit detumble almost immediately.
-        return "startup"
-
-    def setup_case_singlesat(self):
-        self.setup_initial_conditions()
-        self.setup_boot_to_standby()
-
-        self.one_day_ccno = 24 * 60 * 60 * 1000 / 170
-        self.logger.put("""[TESTCASE] 
-NOTE: This test requires Flight Software to be compiled with the
-\"SHORTEN_DAYS\" flag so that the timeouts for the Quake Fault
-Handler only take minutes, not hours.""")
-        self.logger.put("[TESTCASE] Waiting for the satellite to boot to standby.")
-
+        self.cycles_since_blackout_start += 1

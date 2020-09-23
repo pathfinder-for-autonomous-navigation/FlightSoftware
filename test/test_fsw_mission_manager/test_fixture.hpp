@@ -55,7 +55,6 @@ public:
   WritableStateField<double> *detumble_safety_factor_fp;
   WritableStateField<double> *close_approach_trigger_dist_fp;
   WritableStateField<double> *docking_trigger_dist_fp;
-  WritableStateField<unsigned int> *max_radio_silence_duration_fp;
   WritableStateField<unsigned int> *docking_timeout_limit_fp;
   WritableStateField<unsigned char> *adcs_state_fp;
   WritableStateField<bool> *docking_config_cmd_fp;
