@@ -22,8 +22,8 @@
         "email_username" : "",
         "email_password" : "",
         "webservice": {
-            "server": "0.0.0.0",
-            "port": 5000
+            "server": "",
+            "port": 0
         }
     }
 }
