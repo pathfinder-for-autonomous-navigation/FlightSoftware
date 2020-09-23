@@ -53,10 +53,8 @@ class CmdClient(Cmd):
         Lists the elements in the queued uplink for the current device, or, returns None if
         no uplink is currently queued or can be queued.
         """
-
         endpoint = self.url+"/view"
         r = requests.get(url = endpoint)
-        data = r.json
         print(r.content)
 
     def do_add(self, args):
@@ -65,16 +63,16 @@ class CmdClient(Cmd):
         the packet size after adding the state fields would exceed the maximum allowable uplink
         size (currently 70 bytes.)
         """
-        args = str(args).split()
+        args = str(args).split() #splits the string args into an array of elements
         if len(args) > 2:
             print('You have specified too many arguments')
         elif len(args)< 2:
             print("You have not specified enough arguments use 2 arguments: <field> <value>")
+            #checks that the proper formatting has been followed, add <field> <value>
 
         else:
             endpoint = self.url+"/send-telem"
-            r = requests.post(url = endpoint, data = {args[0]:args[1]})
-
+            r = requests.post(url = endpoint, data = {"field":args[0],"value":args[1]})
             print(r.content)
 
     def do_remove(self, args):
@@ -88,7 +86,7 @@ class CmdClient(Cmd):
             print("You have not specified enough arguments use 2 arguments: <field> <value>")
         else:
             endpoint = self.url+"/remove"
-            r = requests.post(url = endpoint, data = {args[0]:args[1]})
+            r = requests.post(url = endpoint, data = {"field":args[0],"value":args[1]})
             print(r.content)
 
     def do_pause(self, args):
