@@ -169,7 +169,7 @@ class CheckBatteryLevel(SingleSatOnlyCase):
         self.logger.put("                                 ")
         self.logger.put("=================================")
         self.logger.put("=================================")
-        self.logger.put(f"Satellite battery level: {voltage/1000}")
+        self.logger.put(f"Satellite battery level: {voltage/1000} volts")
         self.logger.put("=================================")
         self.logger.put("=================================")
         self.logger.put("                                 ")
