@@ -129,7 +129,6 @@ def create_radio_session_endpoint(radio_session, queue):
         sender = "pan.ssds.qlocate@gmail.com"
         subject = imei
         SendMessage(sender, to, subject, "", "", 'uplink.sbd')
-        print("sent uplink")
          # Remove uplink files/cleanup
         os.remove("uplink.sbd")
         os.remove("uplink.json")
