@@ -4,6 +4,14 @@ from cmd import Cmd
 import sys
 import requests
 from cerberus import Validator
+def parseStateFields(fieldList):
+    """
+    Takes in a list of string arguments and assigns each pair of strings to each other
+    """
+    returnList = {}
+    for x in range(0,(len(fieldList)-1),2):
+        returnList[fieldList[x]] = fieldList[x+1]
+    return returnList
 
 class CmdClient(Cmd):
     def __init__(self, config):
@@ -57,6 +65,7 @@ class CmdClient(Cmd):
         r = requests.get(url = endpoint)
         print(r.content)
 
+
     def do_add(self, args):
         """
         Adds a set of state fields to the currently queued uplink. The command may fail if
@@ -64,29 +73,27 @@ class CmdClient(Cmd):
         size (currently 70 bytes.)
         """
         args = str(args).split() #splits the string args into an array of elements
-        if len(args) > 2:
-            print('You have specified too many arguments')
-        elif len(args)< 2:
-            print("You have not specified enough arguments use 2 arguments: <field> <value>")
-            #checks that the proper formatting has been followed, add <field> <value>
+        if len(args) % 2 != 0 :
+            print('You specified too many/not enough arguments')
+        #checks that the proper formatting has been followed, add <field> <value>
 
         else:
             endpoint = self.url+"/send-telem"
-            r = requests.post(url = endpoint, data = {"field":args[0],"value":args[1]})
+            r = requests.post(url = endpoint, data = parseStateFields(args))
             print(r.content)
+
+
 
     def do_remove(self, args):
         """
         Removes a set of state fields from the currently queued uplink.
         """
         args = str(args).split()
-        if len(args) > 2:
-            print('You have specified too many arguments')
-        elif len(args)< 2:
-            print("You have not specified enough arguments use 2 arguments: <field> <value>")
+        if len(args) % 2 != 0 :
+            print('You specified too many/not enough arguments')
         else:
             endpoint = self.url+"/remove"
-            r = requests.post(url = endpoint, data = {"field":args[0],"value":args[1]})
+            r = requests.post(url = endpoint, data = parseStateFields(args))
             print(r.content)
 
     def do_pause(self, args):
