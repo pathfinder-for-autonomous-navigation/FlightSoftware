@@ -145,8 +145,8 @@ class RadioSession(object):
 
         assert len(fields) == len(vals)
 
-        #if self.uplink_queued():
-        #    return False
+        if self.uplink_queued():
+            return False
 
         # Create dictionary object with new fields and vals
         updated_fields={}
