@@ -46,6 +46,7 @@ void QuakeFaultHandler::transition_to(qfh_state_t next_state)
 {
     cur_state.set(static_cast<unsigned char>(next_state));
     cur_state_entry_ccno = cccount;
+    last_power_cycling_ccno = 0;
 }
 
 fault_response_t QuakeFaultHandler::dispatch_unfaulted()
@@ -65,6 +66,7 @@ fault_response_t QuakeFaultHandler::dispatch_forced_standby()
 {
     if (in_state_for_more_than_time(PAN::one_day_ccno))
     {
+        last_power_cycling_ccno = cccount;
         power_cycle_radio_fp->set(true);
         transition_to(qfh_state_t::powercycle_1);
         return fault_response_t::standby;
@@ -80,8 +82,10 @@ fault_response_t QuakeFaultHandler::dispatch_forced_standby()
 
 fault_response_t QuakeFaultHandler::dispatch_powercycle(qfh_state_t next) {
     if (in_state_for_more_than_time(PAN::one_day_ccno / 3)) {
-        if (next != qfh_state_t::safehold)
+        if (next != qfh_state_t::safehold){
+            last_power_cycling_ccno = cccount;
             power_cycle_radio_fp->set(true);
+        }
         transition_to(next);
         return fault_response_t::standby;
     }
@@ -107,13 +111,18 @@ fault_response_t QuakeFaultHandler::dispatch_powercycle_3() {
 }
 
 fault_response_t QuakeFaultHandler::dispatch_safehold() {
-     if (radio_is_disabled() || less_than_one_day_since_successful_comms()) {
+     if (radio_is_disabled() || (less_than_one_day_since_successful_comms() && enough_cycles_since_power_cycling())) {
          transition_to(qfh_state_t::unfaulted);
          return fault_response_t::none;
      }
      else {
          return fault_response_t::safehold;
      }
+}
+
+bool QuakeFaultHandler::enough_cycles_since_power_cycling() const
+{
+    return cccount - last_power_cycling_ccno >= 30 || last_power_cycling_ccno == 0;
 }
 
 bool QuakeFaultHandler::less_than_one_day_since_successful_comms() const
