@@ -8,9 +8,10 @@ def parseStateFields(fieldList):
     """
     Takes in a list of string arguments and assigns each pair of strings to each other
     """
-    returnList = {}
+    returnList = []
     for x in range(0,(len(fieldList)-1),2):
-        returnList[fieldList[x]] = fieldList[x+1]
+        pair = {"field" : fieldList[x], "value" : fieldList[x+1]}
+        returnList.append(pair)
     return returnList
 
 class CmdClient(Cmd):
