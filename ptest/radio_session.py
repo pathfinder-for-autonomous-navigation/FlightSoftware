@@ -112,7 +112,7 @@ class RadioSession(object):
                     queue.put("Resumed timer")
                 else:
                     queue.put("Unable to resume timer")
-            
+
             elif msg == "view":
                 if not os.path.exists("uplink.json"):
                     queue.put("No queued uplink")
@@ -168,12 +168,12 @@ class RadioSession(object):
         '''
         Uplink one state variable. Return success of write.
         '''
-        return self.write_multiple_states([field], [val], timeout) 
+        return self.write_multiple_states([field], [val], timeout)
 
     def uplink_queued(self):
         '''
         Check if an uplink is currently queued to be sent by Iridium
-        (i.e. if the most recently sent uplink was confirmed to be 
+        (i.e. if the most recently sent uplink was confirmed to be
         received by the spacecraft). Can be used by ptest to determine
         whether or not to send an uplink autonomously.
         '''
@@ -191,7 +191,7 @@ class RadioSession(object):
                 'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
-        if tlm_service_active and response.text.lower()=="true": 
+        if tlm_service_active and response.text.lower()=="true":
             return False
         return True
 
@@ -203,7 +203,7 @@ class RadioSession(object):
         with open("uplink.json", 'r') as uplink:
             queued_uplink = json.load(uplink)
 
-        # Get an updated list of the field and values 
+        # Get an updated list of the field and values
         fields, vals = queued_uplink.keys(), queued_uplink.values()
 
         # Create an uplink packet
@@ -219,7 +219,7 @@ class RadioSession(object):
             SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink.sbd')
 
             # Remove uplink files/cleanup
-            os.remove("uplink.sbd") 
+            os.remove("uplink.sbd")
             os.remove("uplink.json")
 
             return True
