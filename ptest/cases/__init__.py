@@ -4,7 +4,7 @@
 
 from .empty_case import EmptyCase, EmptySimCase, NothingCase
 from .mission import DeploymentToStandby
-from .gomspace_checkout_case import GomspaceCheckoutCase
+from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel
 from .docking_checkout_case import DockingCheckoutCase
 from .dcdc_checkout_case import DCDCCheckoutCase
 from .prop_state_machine_case import PropStateMachineCase
