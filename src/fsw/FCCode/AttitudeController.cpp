@@ -20,10 +20,10 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
         q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
         w_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.w_body)),
         adcs_state_fp(FIND_WRITABLE_FIELD(unsigned char, adcs.state)),
+        time_ns_fp(FIND_READABLE_FIELD(unsigned long, orbit.time)),
         pos_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_ecef)),
         vel_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel_ecef)),
         pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_baseline_ecef)),
-        pan_time_fp(FIND_READABLE_FIELD(double, pan.time)),
         pointer_vec1_current_f("attitude.pointer_vec1_current", Serializer<lin::Vector3f>(0, 1, 100)),
         pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
         pointer_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
@@ -205,4 +205,8 @@ void AttitudeController::calculate_pointing_controller() {
 
     // Call the controller and write results to appropriate state fields
     control_pointing(pointer_state, pointer_data, pointer_actuation);
+    if (lin::all(lin::isfinite(pointer_actuation.mtr_body_cmd) && lin::isfinite(pointer_actuation.rwa_body_cmd))) {
+        m_body_cmd_f.set(pointer_actuation.mtr_body_cmd);
+        t_body_cmd_f.set(pointer_actuation.rwa_body_cmd);
+    }
 }
