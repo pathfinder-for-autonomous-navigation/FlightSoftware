@@ -162,3 +162,15 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             #raise TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
 
         self.finish()
+
+class CheckBatteryLevel(SingleSatOnlyCase):
+    def run_case_singlesat(self):
+        voltage = float(self.read_state("gomspace.vbatt"))
+        self.logger.put("                                 ")
+        self.logger.put("=================================")
+        self.logger.put("=================================")
+        self.logger.put(f"Satellite battery level: {voltage/1000} volts")
+        self.logger.put("=================================")
+        self.logger.put("=================================")
+        self.logger.put("                                 ")
+        self.finish()
