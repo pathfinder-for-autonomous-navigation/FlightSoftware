@@ -61,12 +61,18 @@ class LowBattFaultHandler(SingleSatOnlyCase):
     def fast_boot(self):
         return True
 
+    @property
+    def batt_voltage(self):
+        return int(self.read("gomspace.vbatt"))
+
     def setup_post_bootsetup(self):
         self.ws("fault_handler.enabled", True)
 
     def run_case_singlesat(self):
         self.logger.put("Deliberately reducing the Gomspace battery voltage to below the safehold minimum.")
         self.ws("gomspace.low_batt.suppress", False)
+
+        min_voltage_threshold = 7300
 
         # The Gomspace battery voltage is zero in HOOTL, so after
         # two cycles the fault should be signaled.
@@ -75,6 +81,6 @@ class LowBattFaultHandler(SingleSatOnlyCase):
 
         if not self.mission_state == "safehold":
             raise TestCaseFailure("Satellite failed to go to safehold after a low-battery fault.")
-
-        self.logger.put("Satellite went to safehold.")
+        elif not self.batt_voltage > min_voltage_threshold:
+            self.logger.put("Satellite went to safehold.")
         self.finish()

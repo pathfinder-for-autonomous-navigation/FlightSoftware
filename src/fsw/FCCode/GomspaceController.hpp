@@ -102,14 +102,14 @@ class GomspaceController : public TimedControlTask<void> {
 
     // The controller will set the outputs of the gomspace once a "period", defined as a number of
     // control cycles.
-    #ifndef DESKTOP
-        // In HITL, the Gomspace takes around 30 seconds to powercycle things.
-        static constexpr unsigned int thirty_seconds_ccno = 30 * 1000 / PAN::control_cycle_time_ms ;
-    #else
+    #ifdef DESKTOP
         // When SPEEDUP is defined, use the value of PAN::one_day_ccno to determine
         // how long to take to powercycle a device. But only do so when DESKTOP is defined,
         // so that the powercycling logic doesn't keep toggling an output on and off.
         static constexpr unsigned int thirty_seconds_ccno = PAN::one_day_ccno / (24 * 60 * 2);
+    #else
+        // In HITL, the Gomspace takes around 30 seconds to powercycle things.
+        static constexpr unsigned int thirty_seconds_ccno = 30 * 1000 / PAN::control_cycle_time_ms ;
     #endif
     // If PAN::one_day_ccno is very short due to the SPEEDUP flag, ensure the period is positive
     // to prevent a divide-by-zero error.
