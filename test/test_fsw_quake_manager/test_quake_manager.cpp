@@ -6,6 +6,8 @@
 
 #include "../custom_assertions.hpp"
 
+#include <fsw/FCCode/GomspaceController.hpp>
+
 // Check that radio state x matches the current radio state
 #define assert_radio_state(x)                                                                   \
     {                                                                                           \
@@ -47,6 +49,9 @@ public:
     ReadableStateField<unsigned char> *radio_state_fp;
     ReadableStateField<unsigned int> *last_checkin_cycle_fp;
 
+    //gomspace flag for power cycling power check
+    std::shared_ptr<WritableStateField<bool>> gomspace_power_cmd_fp;
+
     // Quake manager object
     std::unique_ptr<QuakeManager> quake_manager;
 
@@ -61,6 +66,9 @@ public:
         radio_mo_packet_fp->set((char *)snap1);
         TimedControlTaskBase::control_cycle_count = initCycles;
 
+        //create gomspace power cycling field
+        gomspace_power_cmd_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output3_cmd");
+
         // Create Quake Manager instance
         quake_manager = std::make_unique<QuakeManager>(registry, 0);
         max_wait_cycles_fp = registry.find_writable_field_t<unsigned int>("radio.max_wait");
@@ -72,7 +80,6 @@ public:
         last_checkin_cycle_fp = registry.find_readable_field_t<unsigned int>("radio.last_comms_ccno");
 
         // Initialize internal fields
-
         radio_state_fp->set(radio_state);
     }
     // step is called when we want to see the effect of time on the state of the machine

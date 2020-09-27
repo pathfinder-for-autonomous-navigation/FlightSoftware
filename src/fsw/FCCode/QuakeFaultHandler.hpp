@@ -78,8 +78,6 @@ protected:
   WritableStateField<unsigned char> cur_state;
   unsigned int cur_state_entry_ccno = 0;
 
-   //when the Quake last power cycled
-  unsigned int last_power_cycling_ccno = 0;
 
   /**
      * @brief Indicator fields used by the fault handler.
@@ -91,10 +89,10 @@ protected:
   /**
      * @brief Helper functions for if-statements, to make them look cleaner.
      */
-  bool QuakeFaultHandler::enough_cycles_since_power_cycling() const;  
   bool less_than_one_day_since_successful_comms() const;
   bool in_state_for_more_than_time(const unsigned int time) const;
   bool radio_is_disabled() const;
+  bool radio_is_wait() const;
 };
 
 #endif
