@@ -6,16 +6,18 @@
 Repository for all flight software, ground software, and test infastructure for Pathfinder for Autonomous Navigation.
 PAN's simulation software lives in [psim](https://github.com/pathfinder-for-autonomous-navigation/psim).
 
-## Running tests with Docker (FlightSoftware)
-    docker build -t fsw .
-    docker run fsw ./tools/run_desktop_flight_tests.sh
-    docker run fsw ./tools/run_common_software_tests.sh
-    docker run fsw ./tools/run_ground_tests.sh
-    docker run fsw ./tools/verify_adcs_builds.sh
-    docker run fsw ./tools/verify_teensy_builds.sh
+## Building and compiling this repo
 
-See the "Tools" directory to see how to run tests locally without Docker, and for many
-other useful items.
+1. Create a virtual environment and install platformio
+    python -m venv venv
+    source venv/bin/activate
+    pip install platformio
+    
+2. Clone this repo
+    git clone git@github.com:pathfinder-for-autonomous-navigation/FlightSoftware.git
+    cd FlightSoftware
+    git submodule update --init --recursive
+
 
 ## Locally running flight software unit tests (quickly)
     pio test -e fsw_native_leader

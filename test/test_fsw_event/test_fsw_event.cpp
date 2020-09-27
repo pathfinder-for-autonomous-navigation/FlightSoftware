@@ -3,7 +3,7 @@
 #include <common/Event.hpp>
 #include <common/EventStorage.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 struct TestFixtureEvent {
   public:
@@ -51,8 +51,8 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
     tf.data2_f.set(false);
     
     //save pointer before signaling
-    size_t event_ptr_prev;
-    size_t event_ptr_curr;
+    size_t event_ptr_prev = 0;
+    size_t event_ptr_curr = 0;
 
     // Verify that upon serialization, the values are written into the event's bitset in the way
     // that we would expect

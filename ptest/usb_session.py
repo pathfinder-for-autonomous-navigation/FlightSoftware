@@ -8,10 +8,14 @@ import queue
 import os
 import pty
 import subprocess
+from multiprocessing import Process
+import glob
+from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
+from .http_cmd import create_usb_session_endpoint
 
-class StateSession(object):
+class USBSession(object):
     '''
     Represents a connection session with a Flight Computer's state system.
 
@@ -23,13 +27,18 @@ class StateSession(object):
     they won't trip over each other in setting/receiving variables from the connected flight computer.
     '''
 
-    def __init__(self, device_name, simulation_run_dir, uplink_producer_filepath):
+    def __init__(self, device_name, uplink_console, port, is_teensy, simulation_run_dir):
         '''
         Initializes state session with a device.
         '''
 
         # Device connection
         self.device_name = device_name
+        self.port = port
+        self.is_teensy = is_teensy
+
+        # Uplink console
+        self.uplink_console = uplink_console
 
         # Data logging
         self.datastore = Datastore(device_name, simulation_run_dir)
@@ -37,17 +46,22 @@ class StateSession(object):
         self.raw_logger = Logger(device_name + "_raw", simulation_run_dir)
         self.telem_save_dir = simulation_run_dir
 
-        # Simulation
-        self.overriden_variables = set()
-
-        # Open a subprocess to Uplink Producer. Compile it if it is not available.
-        if not os.path.exists(uplink_producer_filepath):
-            print("Compiling the uplink producer.")
-            os.system("pio run -e gsw_uplink_producer > /dev/null")
+        #Start downlink parser. Compile it if it is not available.
+        downlink_parser_filepath = ".pio/build/gsw_downlink_parser/program" 
+        if not os.path.exists(downlink_parser_filepath):
+            print("Compiling the downlink parser.")
+            os.system("pio run -e gsw_downlink_parser > /dev/null")
 
         master_fd, slave_fd = pty.openpty()
-        self.uplink_producer = subprocess.Popen([uplink_producer_filepath], stdin=master_fd, stdout=master_fd)
-        self.uplink_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
+        self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
+        self.dp_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
+        self.telem_save_dir = simulation_run_dir
+
+        # Open a connection to elasticsearch
+        self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
+
+        # Simulation
+        self.overriden_variables = set()
 
     def connect(self, console_port, baud_rate):
         '''
@@ -77,9 +91,20 @@ class StateSession(object):
             self.check_msgs_thread.start()
 
             print(f"Opened connection to {self.device_name}.")
-            return True
         except serial.SerialException:
             print(f"Unable to open serial port for {self.device_name}.")
+            return False
+
+        try:
+            self.flask_app = create_usb_session_endpoint(self)
+            self.flask_app.config["uplink_console"] = self.uplink_console
+            self.flask_app.config["console"] = self.console
+            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
+            self.http_thread.start()
+            print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
+            return True
+        except:
+            print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
             return False
 
     def check_console_msgs(self):
@@ -127,7 +152,7 @@ class StateSession(object):
                 else:
                     if 'err' in data:
                         # The log line represents an error in retrieving or writing state data that
-                        # was caused by a StateSession client improperly setting/retrieving a value.
+                        # was caused by a USBSession client improperly setting/retrieving a value.
                         # Report this failure to the logger.
 
                         logline = f"[{data['time']}] (ERROR) Tried to {data['mode']} state value named \"{data['field']}\" but encountered an error: {data['err']}"
@@ -314,62 +339,6 @@ class StateSession(object):
         '''
         return self.write_multiple_states([field], [self._val_to_str(args)], kwargs.get('timeout'))
 
-    def get_val(self, val):
-        '''
-        Recives string representation of a value and returns the value as a bool, int, or float
-        If the value can't be determined, returns None;
-        "true" --> true (bool)
-        "5" --> 5 (int)
-        "0.05" --> 0.05 (float)
-        "dchkjdda" --> None
-        '''
-        try:
-            f=float(val)
-            i=int(f)
-            if f!=i: 
-                return f
-            return i
-        except:
-            if val == "true": return True
-            if val == "false": return False
-        return None
-    
-    def create_uplink(self, fields, vals, filename):
-        '''
-        Puts fields and values in a JSON document and sends the JSON 
-        object to the uplink producer console. This results in the creation
-        of an SBD file with the given filename holding an uplink packet
-        '''
-        # Create a JSON file with all the fields and values
-        telem_json={}
-        for field, val in zip(fields, vals):
-            value = self.get_val(val)
-            if value is not None:
-                telem_json[field]=value
-            else:
-                logline = "Failed:   " + json.dumps(telem_json) + "\n"
-                logline += f"Error:    Unable to add {field}: {val} to uplink JSON file"
-                self.raw_logger.put(logline)
-                return False
-        with open('telem.json', 'w') as telem_file:
-            json.dump(telem_json, telem_file)
-
-        # Write the JSON file into Uplink Producer - should result in the creation of an sbd file
-        # holding the uplink packet.
-        self.uplink_console.write(("telem.json\n").encode())
-        self.uplink_console.write((str(filename)+"\n").encode())
-        response = json.loads(self.uplink_console.readline().rstrip())
-
-        # Check that the uplink was successfully created
-        if 'error' in response:
-            logline = "Failed:   " + json.dumps(telem_json) + "\n"
-            logline += "Error:    "+response['error']
-            self.raw_logger.put(logline)
-            return False
-
-        self.raw_logger.put("Uplink:   " + json.dumps(telem_json))
-        return True
-
     def send_uplink(self, filename):
         '''
         Gets the uplink packet from the given file. Sends the hex 
@@ -392,7 +361,6 @@ class StateSession(object):
         # Send a command to the console to process the uplink packet
         json_cmd = {
             'mode': ord('u'),
-            'field': 'pan.state',
             'val': uplink_packet,
             'length': uplink_packet_length
         }
@@ -406,6 +374,17 @@ class StateSession(object):
         return True
     
     def uplink(self, fields, vals, timeout=None):
+        '''
+        Create an uplink packet from the provided data and save it
+        locally to disk.
+
+        The send_uplink function can be used to send this uplink to
+        the flight controller.
+
+        Returns: false if the uplink could not be created, true otherwise.
+        The uplink might not be possible to create if it uses unrecognized
+        state fields or if its size exceeds 70 bytes.
+        '''
         if not self.running_logger: return
 
         # Filter out fields that are being overridden by the user
@@ -415,17 +394,60 @@ class StateSession(object):
         ]
         fields, vals = zip(*field_val_pairs)
 
-        success = self.create_uplink(fields, vals, "uplink.sbd")
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd")
 
         # If the uplink packet exists, send it to the FlightSoftware console
-        if success and os.path.exists("uplink.sbd"): 
+        if success and os.path.exists("uplink.sbd"):
             success &= self.send_uplink("uplink.sbd")
             os.remove("uplink.sbd") 
-            os.remove("telem.json") 
+            os.remove("uplink.json") 
             return success
-        else: 
-            if os.path.exists("telem.json"): os.remove("telem.json") 
+        else:
+            if os.path.exists("uplink.json"): os.remove("uplink.json") 
             return False
+
+    def parsetelem(self):
+        '''
+        Provide the latest downlink telemetry file that was received from the
+        spacecraft to the downlink producer, and then return the parsed value
+        of the latest completed downlink frame as a JSON object.
+        '''
+
+        #get newest file
+        telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
+        try:
+            newest_telem_file = max(telem_files, key=os.path.basename)
+        except ValueError:
+            return "No telemetry to parse."
+        self.dp_console.write((newest_telem_file+"\n").encode())
+        telem_json_data = json.loads(self.dp_console.readline().rstrip())
+        if telem_json_data is not None:
+                telem_json_data = telem_json_data["data"]
+        return telem_json_data
+
+    def dbtelem(self):
+        '''
+        Run parsetelem(), and dump the results into the Elasticsearch database.
+
+        This function is useful because it allows database-connected technologies,
+        such as the telemetry webserver and OpenMCT, to consume downlink data.
+        '''
+
+        jsonObj = self.parsetelem()
+        if not isinstance(jsonObj, dict):
+            print("Error parsing telemetry.")
+            return False
+        failed = False
+        for field in jsonObj:
+            value = jsonObj[field]
+            data=json.dumps({
+            field: value,
+                "time": str(datetime.datetime.now().isoformat())
+            })
+            res = self.es.index(index='statefield_report_'+str(self.device_name.lower()), doc_type='report', body=data)
+            if not res['result'] == 'created':
+                failed = True
+        return not failed
 
     def override_state(self, field, *args, **kwargs):
         '''
@@ -455,7 +477,13 @@ class StateSession(object):
         self.running_logger = False
         self.check_msgs_thread.join()
         self.console.close()
-        self.uplink_console.close()
+        self.dp_console.close()
+
+        self.http_thread.terminate()
+        self.http_thread.join()
+
+        self.http_thread.terminate()
+        self.http_thread.join()
 
         self.datastore.stop()
         self.logger.stop()

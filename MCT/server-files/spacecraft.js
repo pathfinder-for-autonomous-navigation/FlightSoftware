@@ -7,7 +7,7 @@ const axios = require('axios')
 
 
 
-function Spacecraft() extends DomainObject{
+function Spacecraft(){
     this.state = {
         "batt.lvl": 77,
         "incoming": 0
@@ -66,7 +66,10 @@ axios.get('http://localhost:5000/search-es',{
   this.state["incoming"] = parseInt(value,10);
   this.state["batt.lvl"] = Math.max(0,this.state["batt.lvl"] - 1);
 };
-
+function notify (point,listener){
+    listener.forEach(function (l) {
+        l(point);
+  });
 /**
  * Takes a measurement of spacecraft state, stores in history, and notifies
  * listeners.
@@ -80,7 +83,7 @@ Spacecraft.prototype.generateTelemetry = function () {
     }, this);
 };
 
-Spacecraft.prototype.notify = super.notify(point,this.listeners);
+Spacecraft.prototype.notify = notify(point,this.listeners);
 
 
 Spacecraft.prototype.listen = function (listener) {
@@ -94,4 +97,4 @@ Spacecraft.prototype.listen = function (listener) {
 
 module.exports = function () {
     return new Spacecraft()
-};
+};}

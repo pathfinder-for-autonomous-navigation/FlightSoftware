@@ -11,10 +11,13 @@ import subprocess
 import glob
 import os
 import pty
+from multiprocessing import Process, Queue
 from elasticsearch import Elasticsearch
 
-
 from .data_consumers import Datastore, Logger
+from .http_cmd import create_radio_session_endpoint
+from tlm.oauth2 import *
+from .uplink_timer import UplinkTimer
 
 class RadioSession(object):
     '''
@@ -28,8 +31,8 @@ class RadioSession(object):
     between the check_for_downlink and the read_state functions.
     '''
 
-
-    def __init__(self, device_name, imei, simulation_run_dir, tlm_config, downlink_parser_filepath):
+    def __init__(self, device_name, imei, uplink_console, port, send_queue_duration,
+                    send_lockout_duration, simulation_run_dir, tlm_config):
         '''
         Initializes state session with the Quake radio.
         '''
@@ -37,6 +40,39 @@ class RadioSession(object):
         # Device connection
         self.device_name = device_name
         self.imei=imei
+        self.port=port
+
+        # Uplink timer
+        self.timer = UplinkTimer(send_queue_duration, self.send_uplink)
+
+        # Radio session and the http endpoints communicate information about the state of the timer
+        # by passing messages over the queue.
+        q = Queue()
+        self.check_queue_msgs = True
+        self.check_queue_thread = threading.Thread(target=self.check_queue, args=(q,), name="Uplink queue check thread")
+        self.check_queue_thread.start()
+
+        # HTTP Endpoints
+        self.flask_app=create_radio_session_endpoint(self, q)
+        self.flask_app.config["uplink_console"] = uplink_console
+        self.flask_app.config["imei"] = imei
+
+        try:
+            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": str(self.port)})
+            self.http_thread.start()
+            print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
+        except:
+            print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
+            traceback.print_exc()
+
+        self.send_queue_duration = send_queue_duration
+        self.send_lockout_duration = send_lockout_duration
+        if send_lockout_duration > send_queue_duration:
+            # TODO shift this logic down into write_state.
+            print("Error: send_lockout_duration is greater than send_queue_duration.")
+
+        # Uplink console
+        self.uplink_console = uplink_console
 
         #Flask server connection
         self.flask_server=tlm_config["webservice"]["server"]
@@ -46,18 +82,44 @@ class RadioSession(object):
         self.username=tlm_config["email_username"]
         self.password=tlm_config["email_password"]
 
-        #Start downlink parser. Compile it if it is not available.
-        if not os.path.exists(downlink_parser_filepath):
-            print("Compiling the downlink parser.")
-            os.system("pio run -e gsw_downlink_parser > /dev/null")
+    def check_queue(self, queue):
+        '''
+        Continuously reads and carries out requests
+        from the HTTP endpoints.
+        '''
+        while self.check_queue_msgs:
+            msg = queue.get()
 
-        master_fd, slave_fd = pty.openpty()
-        self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
-        self.console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
-        self.telem_save_dir = simulation_run_dir
+            if msg == "time":
+                time_left = self.timer.time_left()
+                queue.put(str(time_left))
 
-        # Open a connection to elasticsearch
-        self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
+            elif msg == "pause":
+                if not self.timer.is_alive():
+                    queue.put("Timer not running")
+                elif self.timer.run_time() < self.send_queue_duration-self.send_lockout_duration:
+                    if self.timer.pause():
+                        queue.put("Paused timer")
+                    else:
+                        queue.put("Unable to pause timer")
+                else:
+                    queue.put("Unable to pause timer")
+
+            elif msg == "resume":
+                if self.timer.is_alive():
+                    queue.put("Timer already running")
+                elif self.timer.resume():
+                    queue.put("Resumed timer")
+                else:
+                    queue.put("Unable to resume timer")
+
+            elif msg == "view":
+                if not os.path.exists("uplink.json"):
+                    queue.put("No queued uplink")
+                else:
+                    with open('uplink.json', 'r') as telem_file:
+                        queued_uplink = json.load(telem_file)
+                    queue.put(queued_uplink)
 
     def read_state(self, field, timeout=None):
         '''
@@ -71,7 +133,7 @@ class RadioSession(object):
             "field" : str(field)
         }
 
-        response = requests.get('http://'+self.flask_server+':'+self.flask_port+'/search-es', params=payload, headers=headers)
+        response = requests.get('http://'+self.flask_server+':'+str(self.flask_port)+'/search-es', params=payload, headers=headers)
         return response.text
 
     def write_multiple_states(self, fields, vals, timeout=None):
@@ -83,6 +145,38 @@ class RadioSession(object):
 
         assert len(fields) == len(vals)
 
+        if self.uplink_queued():
+            return False
+
+        # Create dictionary object with new fields and vals
+        updated_fields={}
+        for i in range(len(fields)):
+            updated_fields[fields[i]]=self.uplink_console.get_val(vals[i])
+
+        # Create a JSON file to hold the uplink
+        with open('uplink.json', 'w') as telem_file:
+            json.dump(updated_fields, telem_file)
+
+        # Start the timer. Timer will send uplink once after waiting for the
+        # configured send queue duration.
+        t = threading.Thread(target=self.timer.start, name="Uplink timer thread")
+        t.start()
+
+        return True
+
+    def write_state(self, field, val, timeout=None):
+        '''
+        Uplink one state variable. Return success of write.
+        '''
+        return self.write_multiple_states([field], [val], timeout)
+
+    def uplink_queued(self):
+        '''
+        Check if an uplink is currently queued to be sent by Iridium
+        (i.e. if the most recently sent uplink was confirmed to be
+        received by the spacecraft). Can be used by ptest to determine
+        whether or not to send an uplink autonomously.
+        '''
         headers = {
             'Accept': 'text/html',
         }
@@ -94,57 +188,44 @@ class RadioSession(object):
         tlm_service_active = self.flask_server != ""
         if tlm_service_active:
             response = requests.get(
-                'http://'+self.flask_server+':'+self.flask_port+'/search-es',
+                'http://'+self.flask_server+':'+str(self.flask_port)+'/search-es',
                     params=payload, headers=headers)
 
-        if not tlm_service_active or response.text=="True":
-            #create dictionary object with new fields and vals
-            updated_fields={}
-            for i in range(len(fields)):
-                updated_fields[fields[i]]=vals[i]
+        if tlm_service_active and response.text.lower()=="true":
+            return False
+        return True
 
-            #create a JSON file with the updated statefields and send it to the iridium email
-            with open('uplink.sbd', 'w') as json_uplink:
-                json.dump(updated_fields, json_uplink)
-            os.system("./ptest/send_uplink uplink.sbd")
+    def send_uplink(self):
+        if not os.path.exists("uplink.json"):
+            return False
+
+        # Extract the json telemetry data from the queued uplink json file
+        with open("uplink.json", 'r') as uplink:
+            queued_uplink = json.load(uplink)
+
+        # Get an updated list of the field and values
+        fields, vals = queued_uplink.keys(), queued_uplink.values()
+
+        # Create an uplink packet
+        success = self.uplink_console.create_uplink(fields, vals, "uplink.sbd") and os.path.exists("uplink.sbd")
+
+        if success:
+            # Send the uplink to Iridium
+            to = "data@sbd.iridium.com"
+            sender = "pan.ssds.qlocate@gmail.com"
+            subject = self.imei
+            msgHtml = ""
+            msgPlain = ""
+            SendMessage(sender, to, subject, msgHtml, msgPlain, 'uplink.sbd')
+
+            # Remove uplink files/cleanup
+            os.remove("uplink.sbd")
+            os.remove("uplink.json")
+
             return True
         else:
+            os.remove("uplink.json")
             return False
-    def write_state(self, field, val, timeout=None):
-        '''
-        Uplink one state variable. Return success of write.
-        '''
-        return self.write_multiple_states([field], [val], timeout)
-
-    def parsetelem(self):
-        #get newest file
-        telem_files = glob.iglob(os.path.join(self.telem_save_dir, 'telem*'))
-        try:
-            newest_telem_file = max(telem_files, key=os.path.basename)
-        except ValueError:
-            return "No telemetry to parse."
-        self.console.write((newest_telem_file+"\n").encode())
-        telem_json_data = json.loads(self.console.readline().rstrip())
-        if telem_json_data is not None:
-                telem_json_data = telem_json_data["data"]
-        return telem_json_data
-    
-    def dbtelem(self):
-        jsonObj = self.parsetelem()
-        if not isinstance(jsonObj, dict):
-            print(jsonObj)
-            return False
-        failed = False
-        for field in jsonObj:
-            value = jsonObj[field]
-            data=json.dumps({
-            field: value,
-            "time": str(datetime.now().isoformat())
-            })
-            res = self.es.index(index='statefield_report_'+str(self.imei), doc_type='report', body=data)
-            if not res['result'] == 'created':
-                failed = True
-        return not failed 
 
     def disconnect(self):
         '''Quits the Quake connection, and stores message log and field telemetry to file.'''
@@ -153,5 +234,7 @@ class RadioSession(object):
             f' - Terminating console connection to and saving logging/telemetry data for radio connection to {self.device_name}.'
         )
 
-        # End threads if there was actually a connection to the radio
-        self.console.close()
+        self.check_queue_msgs = False
+        self.check_queue_thread.join()
+        self.http_thread.terminate()
+        self.http_thread.join()

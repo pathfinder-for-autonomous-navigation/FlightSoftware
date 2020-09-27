@@ -2,6 +2,8 @@
 #define CUSTOM_ASSERTIONS_HPP_
 
 #include <unity.h>
+#undef isnan
+#undef isinf
 
 #define PAN_TEST_ASSERT_EQUAL_FLOAT_ARR(expected, actual, delta, n) { \
     char err_str[25]; \

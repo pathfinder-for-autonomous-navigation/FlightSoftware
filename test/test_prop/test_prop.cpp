@@ -1,4 +1,3 @@
-
 #include "prop_common.h"
 
 /**
@@ -6,16 +5,16 @@
  * Hardware test for the Propulsion System
  * - Tests are split into Teensy only tests and the With Sensors tests
  * These are the Teensy only tests
- */ 
+ */
 
 using namespace Devices;
 
-#define TO_MICRO(x) x*1000
+#define TO_MICRO(x) x * 1000
 
 // Forward declaration of helper functions
 bool is_output(uint8_t pin);
 bool is_low(uint8_t pin);
-bool is_high (uint8_t pin);
+bool is_high(uint8_t pin);
 
 /* PropulsionSystem Tests */
 
@@ -26,7 +25,7 @@ uint8_t const p1 = 3;
 uint8_t const p2 = 4;
 uint8_t const p3 = 5;
 uint8_t const p4 = 6;
-uint8_t const p5 = 27; 
+uint8_t const p5 = 27;
 uint8_t const p6 = 28;
 
 // DCDC enable
@@ -71,7 +70,7 @@ bool is_low(uint8_t pin)
     return digitalRead(pin) == LOW;
 }
 
-bool is_high (uint8_t pin)
+bool is_high(uint8_t pin)
 {
     return digitalRead(pin) == HIGH;
 }
@@ -86,7 +85,6 @@ void test_is_functional()
     TEST_ASSERT_TRUE(PropulsionSystem.is_functional());
 }
 
-
 void test_initialization()
 {
     // schedule should be initialized to 0
@@ -96,7 +94,6 @@ void test_initialization()
     // there should be no interrupts at startup
     TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
 }
-
 
 /* Tank2 scheduling Tests */
 
@@ -122,7 +119,7 @@ void scheduling_tests()
 /* Tank2 enable tests */
 void test_enable_success()
 {
-    ASSERT_FALSE(PropulsionSystem.is_firing(), "sanity check");  
+    ASSERT_FALSE(PropulsionSystem.is_firing(), "sanity check");
     TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(2, 3, 999, 5));
 
     ASSERT_TRUE(PropulsionSystem.start_firing(), "enable should be ok");
@@ -221,7 +218,9 @@ void test_open_both_valves()
     PropulsionSystem.reset();
     TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(12, 999, 40, 200));
     TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
-    while (!Tank2.is_valve_open(0)){}
+    while (!Tank2.is_valve_open(0))
+    {
+    }
     check_tank2_valve_status(1, 0, 0, 0);
     ASSERT_TRUE(PropulsionSystem.open_valve(Tank1, 0), "We should be able to open tank1 valves when firing tank2, without messing up the schedule");
     delayMicroseconds(TO_MICRO(3)); // Checking that opening valve from tank1 does not mess up schedule
@@ -239,9 +238,11 @@ void test_ignore_short_schedules()
     PropulsionSystem.reset();
     TEST_ASSERT_TRUE(PropulsionSystem.set_schedule(12, 9, 40, 200));
     TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
-    while (!Tank2.is_valve_open(0)){}
-    check_tank2_valve_status(1, 0, 0, 0);  
-    delayMicroseconds(TO_MICRO(3)); 
+    while (!Tank2.is_valve_open(0))
+    {
+    }
+    check_tank2_valve_status(1, 0, 0, 0);
+    delayMicroseconds(TO_MICRO(3));
     // valve 2 is flipped one cycle early since we don't flip valve 1
     check_tank2_valve_status(1, 0, 1, 0);
     delayMicroseconds(TO_MICRO(3));
@@ -268,13 +269,14 @@ void test_reset()
         "Should be allowed to set tank2 schedule");
     TEST_ASSERT_TRUE(PropulsionSystem.start_firing());
     // Wait for tank2 schedule to start
-    while (!Tank2.is_valve_open(0)){}
+    while (!Tank2.is_valve_open(0))
+    {
+    }
     PropulsionSystem.reset();
     check_all_valves_closed();
     ASSERT_FALSE(PropulsionSystem.is_firing(), "tank2 should not be firing");
     check_tank2_schedule(zero_schedule);
 }
-
 
 // Testing tank2 schedule
 // Verified with oscilliscope
@@ -284,13 +286,14 @@ void test_tank2_firing_schedule()
     TEST_ASSERT_FALSE(PropulsionSystem.is_firing());
 
     TEST_ASSERT_TRUE(
-        PropulsionSystem.set_schedule(300, 400, 500, 600)
-    );
+        PropulsionSystem.set_schedule(300, 400, 500, 600));
     // fire when its 3 seconds into the future
     PropulsionSystem.start_firing();
     TEST_ASSERT_TRUE(PropulsionSystem.is_firing());
     // Not sure how fast instructions run, so just wait for the first one
-    while (!Tank2.is_valve_open(0)){}
+    while (!Tank2.is_valve_open(0))
+    {
+    }
     check_tank2_valve_status(1, 0, 0, 0);
     delayMicroseconds(TO_MICRO(3));
     check_tank2_valve_status(1, 1, 0, 0);
@@ -308,8 +311,8 @@ void test_tank2_firing_schedule()
     check_all_valves_closed();
 }
 
-
-void setup() {
+void setup()
+{
     Serial.begin(9600);
     pinMode(13, OUTPUT);
     while (!Serial)
@@ -336,5 +339,4 @@ void setup() {
 
 void loop()
 {
-
 }

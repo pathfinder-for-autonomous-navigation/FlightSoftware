@@ -3,7 +3,7 @@
 #include <fsw/FCCode/TimedControlTask.hpp>
 #include <fsw/FCCode/ClockManager.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 #ifdef DESKTOP
     #include <iostream>
