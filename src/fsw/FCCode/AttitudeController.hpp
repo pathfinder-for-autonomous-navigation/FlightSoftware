@@ -4,7 +4,7 @@
 #include "TimedControlTask.hpp"
 
 #include <gnc/attitude_controller.hpp>
-#include <lin/core/vector/vector.hpp>
+#include <lin/core.hpp>
 
 /**
  * @brief Determines adcs actuations given the current adcs mode and estimated
@@ -18,8 +18,8 @@ class AttitudeController : public TimedControlTask<void> {
      * @param registry
      * @param offset
      */
-    AttitudeEstimator(StateFieldRegistry &registry, unsigned int offset);
-    ~AttitudeEstimator() = default;
+    AttitudeController(StateFieldRegistry &registry, unsigned int offset);
+    ~AttitudeController() = default; //is this needed?
 
     /**
      * @brief Update the attitude controllers suggestion for ADCS actuations.
@@ -59,12 +59,12 @@ class AttitudeController : public TimedControlTask<void> {
     // Structs for the psim attitude controller adapters
     gnc::DetumbleControllerState detumbler_state;
     gnc::PointingControllerState pointer_state;
-    union {
-      struct {
+    union U{
+      struct D{
         gnc::DetumbleControllerData detumbler_data;
         gnc::DetumbleActuation detumbler_actuation;
       };
-      struct {
+      struct P{
         gnc::PointingControllerData pointer_data;
         gnc::PointingActuation pointer_actuation;
       };
@@ -77,3 +77,4 @@ class AttitudeController : public TimedControlTask<void> {
     void calculate_pointing_objectives();
     void calculate_pointing_controller();
 };
+#endif

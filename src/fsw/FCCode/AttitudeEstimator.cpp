@@ -1,5 +1,5 @@
 #include "AttitudeEstimator.hpp"
-#include <gnc_constants.hpp>
+#include <gnc/constants.hpp>
 
 const gps_time_t AttitudeEstimator::pan_epoch(gnc::constant::init_gps_week_number,
                                               gnc::constant::init_gps_time_of_week,

@@ -13,8 +13,9 @@
 #include <lin/references.hpp>
 
 AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned int offset) :
-        TimedControlTask<void>(registery, offset),
+        TimedControlTask<void>(registry, offset),
         b_body_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag_vec)),
+        w_wheels_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.rwa_speed_rd)),
         b_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.b_body)),
         s_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.s_body)),
         q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
@@ -31,7 +32,8 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
         t_body_cmd_f("attitude.t_body_cmd", Serializer<lin::Vector3f>()),
         m_body_cmd_f("attitude.m_body_cmd", Serializer<lin::Vector3f>()),
         detumbler_state(),
-        pointer_state() {
+        pointer_state()
+        {
     // Add all new readable state fields
     add_readable_field(pointer_vec1_current_f);
     add_readable_field(pointer_vec1_desired_f);
@@ -91,7 +93,7 @@ void AttitudeController::default_actuator_commands() {
      * command zero torque on the spacecraft if something fails.
      */
     t_body_cmd_f.set(lin::zeros<lin::Vector3f>());
-    m_body_cmd_t.set(lin::zeros<lin::Vector3f>());
+    m_body_cmd_f.set(lin::zeros<lin::Vector3f>());
 }
 
 void AttitudeController::default_pointing_objectives() {

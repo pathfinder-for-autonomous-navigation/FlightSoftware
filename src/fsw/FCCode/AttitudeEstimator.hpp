@@ -1,7 +1,7 @@
 #ifndef ATTITUDE_ESTIMATOR_HPP_
 #define ATTITUDE_ESTIMATOR_HPP_
 
-#include <gnc_attitude_estimation.hpp>
+#include <gnc/attitude_estimator.hpp>
 #include <lin.hpp>
 #include "TimedControlTask.hpp"
 
