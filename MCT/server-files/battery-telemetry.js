@@ -3,7 +3,7 @@
 */
 const variables = require('./state-variables.js')
 
-const axios = require('axios');
+
 function Battery() {
     //This state function takes in initial values from the state-variables.js file
     this.state = {
