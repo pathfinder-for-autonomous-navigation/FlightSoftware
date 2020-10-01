@@ -95,7 +95,7 @@ public:
    /**
     * @brief Pointer to gomspace output, to check for power loss.
     */
-    const WritableStateField<bool> *gomspace_power_cmd_fp;
+    const WritableStateField<bool> *radio_power_cycle_fp;
 
    /**
      * @brief State machine constants that control how long the machine may

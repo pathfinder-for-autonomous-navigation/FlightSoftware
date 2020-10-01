@@ -84,7 +84,7 @@ protected:
      */
   const ReadableStateField<unsigned char> *radio_state_fp;
   const ReadableStateField<unsigned int> *last_checkin_cycle_fp;
-  WritableStateField<bool> *power_cycle_radio_fp;
+  WritableStateField<bool> *radio_power_cycle_fp;
 
   /**
      * @brief Helper functions for if-statements, to make them look cleaner.

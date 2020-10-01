@@ -53,7 +53,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset)
     // Retrieve fields from registry
     snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);
     radio_mo_packet_fp = find_internal_field<char *>("downlink.ptr", __FILE__, __LINE__);
-    gomspace_power_cmd_fp = find_writable_field<bool>("gomspace.power_cycle_output3_cmd", __FILE__, __LINE__);
+    radio_power_cycle_fp = find_writable_field<bool>("gomspace.power_cycle_output3_cmd", __FILE__, __LINE__);
 
     cycle_of_entry = control_cycle_count;
 
@@ -173,7 +173,7 @@ bool QuakeManager::has_finished() const
 
 void QuakeManager::dispatch_wait()
 {
-    bool powered = !gomspace_power_cmd_fp->get();
+    bool powered = !radio_power_cycle_fp->get();
 
     // If we still have cycles or we are powercycling, then just return
     if (!no_more_cycles(max_wait_cycles_f.get()) || !powered)
