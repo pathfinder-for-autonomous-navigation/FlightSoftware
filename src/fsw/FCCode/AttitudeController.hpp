@@ -48,31 +48,37 @@ class AttitudeController : public TimedControlTask<void> {
 
     // Inputs/intermediate pointing objective states
     ReadableStateField<lin::Vector3f> pointer_vec1_current_f;
-    WritableStateField<lin::Vector3f> pointer_vec1_desired_f;
     ReadableStateField<lin::Vector3f> pointer_vec2_current_f;
+    // writable to allow ground override
+    WritableStateField<lin::Vector3f> pointer_vec1_desired_f;
     WritableStateField<lin::Vector3f> pointer_vec2_desired_f;
 
-    // Output actuator suggestions
-    ReadableStateField<lin::Vector3f> t_body_cmd_f;  // TODO : Figure out bounds for this
-    ReadableStateField<lin::Vector3f> m_body_cmd_f;  // TODO : Figure out bounds for this
+    // Output actuator suggestions, set to writable to allow ground override
+    WritableStateField<lin::Vector3f> t_body_cmd_f;  // TODO : Figure out bounds for this
+    WritableStateField<lin::Vector3f> m_body_cmd_f;  // TODO : Figure out bounds for this
 
     // Structs for the psim attitude controller adapters
     gnc::DetumbleControllerState detumbler_state;
     gnc::PointingControllerState pointer_state;
-    union U{
-      struct D{
-        gnc::DetumbleControllerData detumbler_data;
-        gnc::DetumbleActuation detumbler_actuation;
-      };
-      struct P{
-        gnc::PointingControllerData pointer_data;
-        gnc::PointingActuation pointer_actuation;
-      };
-    };
 
+    gnc::DetumbleControllerData detumbler_data;
+    gnc::DetumbleActuation detumbler_actuation;
+
+    gnc::PointingControllerData pointer_data;
+    gnc::PointingActuation pointer_actuation;
+
+    /**
+     * @brief Default acutator commands to zeros
+     * 
+     */
     void default_actuator_commands();
+
+    /**
+     * @brief Default pointing objectives to nans
+     * 
+     */
     void default_pointing_objectives();
-    void default_all();
+    
     void calculate_detumble_controller();
     void calculate_pointing_objectives();
     void calculate_pointing_controller();

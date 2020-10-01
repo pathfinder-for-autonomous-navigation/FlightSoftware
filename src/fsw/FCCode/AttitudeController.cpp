@@ -13,38 +13,41 @@
 #include <lin/references.hpp>
 
 AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned int offset) :
-        TimedControlTask<void>(registry, offset),
-        b_body_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag_vec)),
-        w_wheels_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.rwa_speed_rd)),
-        b_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.b_body)),
-        s_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.s_body)),
-        q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
-        w_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.w_body)),
-        adcs_state_fp(FIND_WRITABLE_FIELD(unsigned char, adcs.state)),
-        time_ns_fp(FIND_READABLE_FIELD(unsigned long, orbit.time)),
-        pos_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_ecef)),
-        vel_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel_ecef)),
-        pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_baseline_ecef)),
-        pointer_vec1_current_f("attitude.pointer_vec1_current", Serializer<lin::Vector3f>(0, 1, 100)),
-        pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
-        pointer_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
-        pointer_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 100)),
-        t_body_cmd_f("attitude.t_body_cmd", Serializer<lin::Vector3f>()),
-        m_body_cmd_f("attitude.m_body_cmd", Serializer<lin::Vector3f>()),
-        detumbler_state(),
-        pointer_state()
-        {
-    // Add all new readable state fields
-    add_readable_field(pointer_vec1_current_f);
-    add_readable_field(pointer_vec1_desired_f);
-    add_readable_field(t_body_cmd_f);
-    add_readable_field(m_body_cmd_f);
+    TimedControlTask<void>(registry, "attitude_controller", offset),
+    b_body_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag_vec)),
+    w_wheels_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.rwa_speed_rd)),
+    b_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.b_body)),
+    s_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.s_body)),
+    q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
+    w_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.w_body)),
+    adcs_state_fp(FIND_WRITABLE_FIELD(unsigned char, adcs.state)),
+    time_ns_fp(FIND_READABLE_FIELD(unsigned long, orbit.time)),
+    pos_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_ecef)),
+    vel_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel_ecef)),
+    pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_baseline_ecef)),
+    pointer_vec1_current_f("attitude.pointer_vec1_current", Serializer<lin::Vector3f>(0, 1, 100)),
+    pointer_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
+    pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
+    pointer_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 100)),
+    t_body_cmd_f("attitude.t_body_cmd", Serializer<lin::Vector3f>()),
+    m_body_cmd_f("attitude.m_body_cmd", Serializer<lin::Vector3f>()),
+    detumbler_state(),
+    pointer_state()
+    {
 
-    // Add all new writable state fields
+    // Add readable current pointing vectors
+    add_readable_field(pointer_vec1_current_f);
+    add_readable_field(pointer_vec2_current_f);
+
+    // Add writable desired pointing vectors
     add_writable_field(pointer_vec1_desired_f);
     add_writable_field(pointer_vec2_desired_f);
 
-    default_all();
+    add_writable_field(t_body_cmd_f);
+    add_writable_field(m_body_cmd_f);
+
+    default_actuator_commands();
+    default_pointing_objectives();
 }
 
 void AttitudeController::execute() {
@@ -103,11 +106,6 @@ void AttitudeController::default_pointing_objectives() {
     pointer_vec2_desired_f.set(lin::nans<lin::Vector3f>());
 }
 
-void AttitudeController::default_all() {
-    default_actuator_commands();
-    default_pointing_objectives();
-}
-
 void AttitudeController::calculate_detumble_controller() {
     m_body_cmd_f.set(lin::zeros<lin::Vector3f>());
 
@@ -134,20 +132,21 @@ void AttitudeController::calculate_pointing_objectives() {
         if (lin::any(!(lin::isfinite(r) && lin::isfinite(v)))) return;
 
         // Current time since the PAN epoch in seconds
-        double time = static_cast<double>(time_ns_fp->get()) * 1.0e-9;
+        double time_s = static_cast<double>(time_ns_fp->get()) * 1.0e-9;
 
         lin::Vector4f q_body_ecef;
-        gnc::env::earth_attitude(time, q_body_ecef); // q_body_ecef = q_ecef_eci
-        gnc::utl::quat_conj(q_body_ecef);            // q_body_ecef = q_eci_ecef
-        gnc::utl::quat_cross_mult(q_body_eci_est_fp->get(), q_body_ecef);
+        gnc::env::earth_attitude(time_s, q_body_ecef);                    // q_body_ecef = q_ecef_eci
+        gnc::utl::quat_conj(q_body_ecef);                                 // q_body_ecef = q_eci_ecef
+        gnc::utl::quat_cross_mult(q_body_eci_est_fp->get(), q_body_ecef); // q_body_ecef = q_body_ecef
 
-        lin::Vector3f w_earth_ecef;
-        gnc::env::earth_angular_rate(t, w_earth_ecef_eci);  // rate of ecef frame in eci
-        v = v - lin::cross(w_earth_ecef, r);                // v_ecef but intertial
+        lin::Vector3f w_earth; // w_earth
+        gnc::env::earth_angular_rate(time_s, w_earth);  // rate of ecef frame in eci
 
-        gnc::utl::rotate_frame(q_body_ecef, r); // Throw the vectors into the body frame
-        gnc::utl::rotate_frame(q_body_ecef, v);
-        gnc::utl::dcm(DCM_hill_body, r, v);     // Calculate our dcm
+        v = v + lin::cross(w_earth, r);                // v = v_ecef_0, instanteous intertial
+
+        gnc::utl::rotate_frame(q_body_ecef, r); // r = r_body_0
+        gnc::utl::rotate_frame(q_body_ecef, v); // v = v_body_0
+        gnc::utl::dcm(DCM_hill_body, r, v);     // Calculate our DCM
 
         lin::Vector3f dr = pos_baseline_ecef_fp->get(); // dr = dr_ecef
 
@@ -171,8 +170,8 @@ void AttitudeController::calculate_pointing_objectives() {
                 return;
             pointer_vec1_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
             pointer_vec2_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
-            pointer_vec1_desired_f.set(lin::ref_col(DCM_hill_body, 1)); // v_hat
-            pointer_vec2_desired_f.set(lin::ref_col(DCM_hill_body, 2)); // n_hat
+            pointer_vec1_desired_f.set(lin::transpose(lin::ref_row(DCM_hill_body, 1))); // v_hat_body
+            pointer_vec2_desired_f.set(lin::transpose(lin::ref_row(DCM_hill_body, 2))); // n_hat_body
             break;
         /*
          * Here we simply want to point the docking face towards the other
@@ -184,7 +183,7 @@ void AttitudeController::calculate_pointing_objectives() {
             pointer_vec1_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
             pointer_vec2_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
             pointer_vec1_desired_f.set(dr_body / lin::norm(dr_body));   // dr_hat
-            pointer_vec2_desired_f.set(lin::ref_col(DCM_hill_body, 2)); // n_hat
+            pointer_vec2_desired_f.set(lin::transpose(lin::ref_row(DCM_hill_body, 2))); // n_hat_body
             break;
         }
         /* In other adcs states, we won't specify a pointing strategy.

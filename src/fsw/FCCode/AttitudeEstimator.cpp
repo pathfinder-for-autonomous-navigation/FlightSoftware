@@ -33,7 +33,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
 
 void AttitudeEstimator::execute(){
     set_data();
-    gnc::estimate_attitude(state, data, estimate);
+    gnc::attitude_estimator_update(state, data, estimate);
     set_estimate();
 }
 
