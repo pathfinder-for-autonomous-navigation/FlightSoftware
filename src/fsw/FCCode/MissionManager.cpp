@@ -55,7 +55,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
 
     propagated_baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
 
-    reboot_fp = find_writable_field<bool>("gomspace.gs_reboot_cmd", __FILE__, __LINE__);
+    reset_fp = find_writable_field<bool>("gomspace.gs_reset_cmd", __FILE__, __LINE__);
 
     docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
@@ -319,7 +319,7 @@ void MissionManager::dispatch_docked()
 void MissionManager::dispatch_safehold()
 {
     if (control_cycle_count - safehold_begin_ccno >= PAN::one_day_ccno)
-        reboot_fp->set(true);
+        reset_fp->set(true);
 }
 
 void MissionManager::dispatch_manual()

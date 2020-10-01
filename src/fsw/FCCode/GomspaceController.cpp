@@ -164,8 +164,12 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_writable_field(pv1_output_cmd_f);
         add_writable_field(pv2_output_cmd_f);
         add_writable_field(pv3_output_cmd_f);
+        pv1_output_cmd_f.set(default_pv_cmd);
+        pv2_output_cmd_f.set(default_pv_cmd);
+        pv3_output_cmd_f.set(default_pv_cmd);
 
         add_writable_field(ppt_mode_cmd_f);
+        ppt_mode_cmd_f.set(default_ppt_mode);
 
         add_writable_field(heater_cmd_f);
 

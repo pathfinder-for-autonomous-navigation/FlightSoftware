@@ -239,12 +239,12 @@ void test_dispatch_safehold() {
         // not trigger a satellite reboot.
         tf.set_ccno(PAN::one_day_ccno - 1);
         tf.step();
-        TEST_ASSERT_FALSE(tf.reboot_fp->get());
+        TEST_ASSERT_FALSE(tf.reset_fp->get());
 
         // Above a day's worth of cycle counts, safe hold should
         // trigger a satellite reboot.
         tf.step();
-        TEST_ASSERT_TRUE(tf.reboot_fp->get());
+        TEST_ASSERT_TRUE(tf.reset_fp->get());
     }
 
     // Test that moving in and out of safehold resets the 
@@ -255,19 +255,19 @@ void test_dispatch_safehold() {
         TestFixture tf(mission_state_t::safehold);
         tf.set_ccno(PAN::one_day_ccno - 1);
         tf.step();
-        TEST_ASSERT_FALSE(tf.reboot_fp->get());
+        TEST_ASSERT_FALSE(tf.reset_fp->get());
 
         tf.set(mission_state_t::standby);
         tf.step();
         tf.set(mission_state_t::safehold);
         tf.step();
-        TEST_ASSERT_FALSE(tf.reboot_fp->get());
+        TEST_ASSERT_FALSE(tf.reset_fp->get());
 
         tf.set_ccno(2*PAN::one_day_ccno);
         tf.step();
-        TEST_ASSERT_FALSE(tf.reboot_fp->get());
+        TEST_ASSERT_FALSE(tf.reset_fp->get());
         tf.step();
-        TEST_ASSERT_TRUE(tf.reboot_fp->get());
+        TEST_ASSERT_TRUE(tf.reset_fp->get());
     }
 }
 
