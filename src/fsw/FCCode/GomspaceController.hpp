@@ -8,6 +8,9 @@
 
 class GomspaceController : public TimedControlTask<void> {
    public:
+
+    TRACKED_CONSTANT_SC(unsigned int, default_pv_cmd, 4000);
+    TRACKED_CONSTANT_SC(unsigned char, default_ppt_mode, 2);
     
     /**
      * @brief Construct a new Gomspace Controller object
