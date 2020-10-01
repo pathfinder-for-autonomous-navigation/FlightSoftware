@@ -59,7 +59,7 @@ int _Tank2::get_fake_temp_analog() const
 
 _PropulsionSystem::_PropulsionSystem() : Device("propulsion") {
     #ifdef UNIT_TEST
-    test_val = true;
+    fake_is_functional = true;
     #endif
 }
 bool _PropulsionSystem::is_interval_enabled = 0;
@@ -227,7 +227,7 @@ void _PropulsionSystem::disable()
 bool _PropulsionSystem::is_functional()
 {
 #ifdef UNIT_TEST
-    return test_val;
+    return fake_is_functional;
 #elif defined DESKTOP
     return true;
 #else
@@ -238,7 +238,7 @@ bool _PropulsionSystem::is_functional()
 #ifdef UNIT_TEST
 void _PropulsionSystem::set_is_functional(bool test_val_input)
 {
-    test_val = test_val_input;
+    fake_is_functional = test_val_input;
 }
 #endif
 

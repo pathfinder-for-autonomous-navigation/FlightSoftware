@@ -96,7 +96,7 @@ namespace Devices
 
     public:
         #ifdef UNIT_TEST
-        bool test_val;
+        bool fake_is_functional;
         #endif
 
         inline static _PropulsionSystem &Instance()
