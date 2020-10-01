@@ -5,6 +5,7 @@
 
 #include "TimedControlTask.hpp"
 #include "Drivers/Gomspace.hpp"
+#include <common/constant_tracker.hpp>
 
 class GomspaceController : public TimedControlTask<void> {
    public:
