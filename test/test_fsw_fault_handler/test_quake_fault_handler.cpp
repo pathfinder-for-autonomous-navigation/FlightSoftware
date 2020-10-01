@@ -33,7 +33,7 @@ public:
     {
         radio_state_fp = registry.create_readable_field<unsigned char>("radio.state");
         last_checkin_cycle_fp = registry.create_readable_field<unsigned int>("radio.last_comms_ccno");
-        radio_power_cycle_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
+        radio_power_cycle_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output3_cmd");
 
         // Set initial conditions
         enable_radio();

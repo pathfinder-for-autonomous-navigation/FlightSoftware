@@ -12,9 +12,9 @@ nlohmann::json EEPROMController::data;
 EEPROMController::EEPROMController(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "eeprom_ct", offset)
 {
-    std::ifstream file("eeprom.json");
-    if (!file.fail()) file >> data;
-    file.close();
+    std::ifstream in("eeprom.json");
+    if (!in.fail()) in >> data;
+    in.close();
 
     std::signal(SIGTERM, EEPROMController::save_data);
     std::signal(SIGINT, EEPROMController::save_data);
@@ -46,9 +46,9 @@ bool EEPROMController::check_empty() {
 }
 
 void EEPROMController::save_data(int signal) {
-  std::ofstream o("eeprom.json", std::ios::out | std::ios::trunc);
-  o << data;
-  o.close();
+  std::ofstream out("eeprom.json");
+  out << data;
+  out.close();
 
   #ifndef UNIT_TEST
     std::exit(0);

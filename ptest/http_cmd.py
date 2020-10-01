@@ -84,7 +84,7 @@ def create_radio_session_endpoint(radio_session, queue):
         # Add the edited telemetry to the queued uplink
         with open('uplink.json', 'w') as telem_file:
             json.dump(queued_uplink, telem_file)
-        
+
         return queued_uplink
 
 
@@ -112,7 +112,7 @@ def create_radio_session_endpoint(radio_session, queue):
                 json.dump(queued_uplink, telem_file)
 
             return "Added telemetry"
-        
+
         # If there is no uplink queued, send the requested telemetry to Iridium immediately
         fields, vals=list(), list()
         for field_val in uplink:
@@ -129,9 +129,8 @@ def create_radio_session_endpoint(radio_session, queue):
         sender = "pan.ssds.qlocate@gmail.com"
         subject = imei
         SendMessage(sender, to, subject, "", "", 'uplink.sbd')
-
          # Remove uplink files/cleanup
-        os.remove("uplink.sbd") 
+        os.remove("uplink.sbd")
         os.remove("uplink.json")
 
         return "Successfully sent telemetry to Iridium"
@@ -165,8 +164,8 @@ def create_usb_session_endpoint(usb_session):
         success = usb_session.send_uplink("uplink.sbd")
 
         # Get rid of uplink files/cleanup
-        os.remove("uplink.sbd") 
-        os.remove("uplink.json") 
+        os.remove("uplink.sbd")
+        os.remove("uplink.json")
 
         if success:
             return "Successfully sent telemetry to State Session"

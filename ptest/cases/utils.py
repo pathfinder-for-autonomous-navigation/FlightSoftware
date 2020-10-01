@@ -151,7 +151,7 @@ class BootUtil(object):
     Utility for bootin satellite to a desired state.
     """
 
-    def __init__(self, flight_controller, logger, state, fast_boot, skip_startup=False):
+    def __init__(self, flight_controller, logger, state, fast_boot, one_day_ccno, skip_startup=False):
         """
         Initializes the booter.
 
@@ -173,6 +173,7 @@ class BootUtil(object):
         self.logger = logger
         self.desired_boot_state = state
         self.fast_boot = fast_boot
+        self.one_day_ccno = one_day_ccno
         self.skip_startup = skip_startup
         self.finished = False
 
@@ -182,6 +183,8 @@ class BootUtil(object):
         """
 
         mission_state_names = list(Enums.mission_states.names())
+
+        # Booting to the nominal states requires detumbling.
         nominal_states = mission_state_names
         nominal_states.remove('manual')
         nominal_states.remove('startup')
@@ -189,12 +192,19 @@ class BootUtil(object):
         nominal_states.remove('initialization_hold')
 
         if self.desired_boot_state in nominal_states:
-            self.deployment_hold_length = 100 # Number of cycles for which the satellite will be in a deployment hold. This
-                                          # is an item that is configured on Flight Software.
+            # Number of cycles for which the satellite will be in a deployment hold. This
+            # is an item that is configured on Flight Software.
+            self.deployment_hold_length = self.one_day_ccno // (24 * 2)
             self.elapsed_deployment = int(self.flight_controller.read_state("pan.deployment.elapsed"))
-            self.max_detumble_cycles = 100 # Number of cycles for which we expect the satellite to be in detumble
 
-            # Let's be generous with what angular rate is allowable as "detumbled."
+            # Number of cycles for which we expect the satellite to be in detumble
+            # For now, set this to 1 since the value doesn't matter (we force the satellite
+            # into standby inside this boot controller).
+            # Implementing #287 will give us a more realistic estimate.
+            self.max_detumble_cycles = 1
+
+            # Let's be generous with what angular rate is allowable as "detumbled", until the
+            # attitude controller is implemented in #287.
             self.flight_controller.write_state("detumble_safety_factor", 10)
 
             # Prevent ADCS faults from causing transition to initialization hold
@@ -249,7 +259,7 @@ class BootUtil(object):
                 self.boot_stage = 'standby'
                 self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
 
-                # TODO add the following code back after merging of #287
+                # Delete the above lines and use the following ones once #287 is implemented.
                 # if satellite_state == "standby":
                 #     self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
                 #     self.boot_stage = 'standby'
@@ -274,5 +284,5 @@ class BootUtil(object):
         if self.fast_boot or self.desired_boot_state == "startup":
             self.flight_controller.write_state("pan.state", Enums.mission_states[self.desired_boot_state])
             return True
-        else:
-            return self.run_boot_sequence() == self.desired_boot_state
+        elif self.finished: return True
+        else: return self.run_boot_sequence() == self.desired_boot_state

@@ -94,6 +94,7 @@ class PTest(object):
                     if not os.path.exists(binary_filepath):
                         print("Compiling flight software binaries.")
                         os.system("pio run -e fsw_native_leader > /dev/null")
+                        os.system("pio run -e fsw_native_leader_realtime > /dev/null")
 
                     binary_process = subprocess.Popen(binary_filepath, stdout=master_fd, stderr=master_fd, stdin=master_fd)
                     self.binaries.append({

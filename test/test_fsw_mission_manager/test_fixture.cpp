@@ -16,8 +16,8 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     propagated_baseline_pos_fp = registry.create_readable_lin_vector_field<double>(
         "orbit.baseline_pos", 0, 100000, 100);
 
-    reboot_fp = registry.create_writable_field<bool>("gomspace.gs_reboot_cmd");
-    power_cycle_radio_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
+    reset_fp = registry.create_writable_field<bool>("gomspace.gs_reset_cmd");
+    power_cycle_radio_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output3_cmd");
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
@@ -43,7 +43,7 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     last_checkin_cycle_fp->set(0);
     prop_state_fp->set(static_cast<unsigned int>(prop_state_t::disabled));
     propagated_baseline_pos_fp->set({nan_d, nan_d, nan_d});
-    reboot_fp->set(false);
+    reset_fp->set(false);
     power_cycle_radio_fp->set(false);
     docked_fp->set(false);
 
@@ -53,7 +53,6 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     detumble_safety_factor_fp = registry.find_writable_field_t<double>("detumble_safety_factor");
     close_approach_trigger_dist_fp = registry.find_writable_field_t<double>("trigger_dist.close_approach");
     docking_trigger_dist_fp = registry.find_writable_field_t<double>("trigger_dist.docking");
-    max_radio_silence_duration_fp = registry.find_writable_field_t<unsigned int>("max_radio_silence");
     docking_timeout_limit_fp = registry.find_writable_field_t<unsigned int>("docking_timeout_limit");
     adcs_state_fp = registry.find_writable_field_t<unsigned char>("adcs.state");
     docking_config_cmd_fp = registry.find_writable_field_t<bool>("docksys.config_cmd");
