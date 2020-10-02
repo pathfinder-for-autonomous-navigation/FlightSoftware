@@ -1,17 +1,63 @@
 from .base import SingleSatOnlyCase, TestCaseFailure
 from .utils import Enums
+import math
+import time
 
 class MTorquerCase(SingleSatOnlyCase):
 
-    def read_state(self, string_state):
-        return self.sim.flight_controller.read_state(string_state)
+    def average_vectors(self, vectorList):
+        """
+        averages the readings of the white noise list for 
+        mag1 and mag2
+        """
+        sum1 = 0
+        sum2 = 0
+        for point in vectorList:
+            sum1 += point[0]
+            sum2 += point[1]
+        sum1 = sum1 / len(vectorList)
+        sum2 = sum2 / len(vectorList)
+        result = {"mag1avg" : sum1, "mag2avg" : sum2} 
+        return result
     
-    def write_state(self, string_state, state_value):
-        self.sim.flight_controller.write_state(string_state, state_value)
-        return self.read_state(string_state)
+    def stdev_vectors(self, vectorList):
+        """
+        calculates the standard deviation of the vector list
+        for mag1 and mag2
+        """
+        average = self.average_vectors(vectorList)
+        sum1 = 0
+        sum2 = 0
+        for  point in vectorList:
+            sum1 += pow((point - average[0]),2)
+            sum2 += pow((point - average[1]),2)
+        std1 = math.sqrt(sum1 / len(vectorList))
+        std2 = math.sqrt(sum2 / len(vectorList))
+        result = {"mag1stdev": std1, "mag2stdev": std2}
+        return result
 
-    def log_states(self):
-        self.logger.put("<add every state that needs logging here>")
+
+    def log_white_noise(self):
+        """
+            Logs field vector readings of magnetometer 
+            with autocycling, but no torquer active for 5 seconds.
+            Values are entered into a list in pairs with (mag1,mag2)
+        """
+        self.ws("cycle.auto", True)
+        readings = []
+
+        #record values for 5 seconds
+        while time.time() < time.time() + 5: 
+            pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
+            readings.append(pair)
+            time.sleep(0.1)
+        
+        #log matrix and finish procedure
+        self.logger.put(readings)
+        self.logger.put(self.average_vectors(readings))
+        self.logger.put(self.stdev_vectors(readings))
+        self.ws("cycle.auto", False)
+        self.print_header("Whitespace vector matrix created")
 
     def prepare_mag(self):
         """
@@ -20,19 +66,71 @@ class MTorquerCase(SingleSatOnlyCase):
         """
         #enables MTorquers
         self.cycle()
-        self.ws("adcs_cmd.mtr_mode", MTR_ENABLED)
+        self.ws("adcs_cmd.mtr_mode", 1)#MTR_ENABLED)#how to import this constant
 
-        # reads in base values for both magnetometers
-        time.sleep(2)
-        self.print_rs("")
+        self.log_white_noise()
+    
+    def mtr_test(self):
+        """
+            Turns the mtr at three different torques 
+            uses a matrix with different vectors and a 
+            certain magnitude in the positive and negative 
+            x, y, and z direction then reads in state fields
+        """
+        x = 0.1
+        y = 0.2
+        z = 0.3
+        test_matrix = [# get some specifics as to what to test
+            [x, 0, 0],
+            [0, x, 0],
+            [0, 0, x],
+            [-x, 0, 0],
+            [0, -x, 0],
+            [0, 0, -x],
+            [y, 0, 0],
+            [0, y, 0],
+            [0, 0, y],
+            [-y, 0, 0],
+            [0, -y, 0],
+            [0, 0, -y],
+            [z, 0, 0],
+            [0, z, 0],
+            [0, 0, z],
+            [-z, 0, 0],
+            [0, -z, 0],
+            [0, 0, -z],
+            [y, y, y],
+            [-y, -y, -y],
+            [x, x, x],
+            [-x, -x, -x],
+            [z, z, z],
+            [-z, -z, -z]
+        ]
+        self.print_header("TORQUE TESTS: ")
+
+        for cmd_array in test_matrix:
+            self.ws("adcs_cmd.mtr_cmd", cmd_array)
+            time.sleep(0.2)#change to hold for 10 sec
+            pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
+            self.logger.put(pair)
+            self.ws("adcs_cmd.mtr_cmd", [0,0,0])
+            time.sleep(0.2)#turn off for 10 sec 
+            pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
+            self.logger.put(pair)
+    
 
     def finish(self):
         """
-            exits test case gracefully
+        exits test case gracefully
         """   
-
+        #take final measurements
+        pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
+        self.logger.put(pair)
+        
         self.cycle()
-        self.ws("adcs_cmd.mtr_mode", MTR_DISABLED)
+        self.ws("adcs_cmd.mtr_mode", 0)#,MTR_DISABLED)
+        self.ws("adcs_cmd.mtr_cmd", [0,0,0])
+        super.finish()
         
 
     def run_case_singlesat(self):
