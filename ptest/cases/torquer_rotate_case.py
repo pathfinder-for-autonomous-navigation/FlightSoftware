@@ -158,6 +158,12 @@ class MTorquerCase(SingleSatOnlyCase):
             self.logger.put("ADCS is NOT functional, Exiting Test Case")
             self.finish()
             return 
+
+        #run main testing
+        self.mtr_test()
+
+        self.print_header("MAGNETORQUER TEST COMPLETE")
+        self.finish()
         
 
 
