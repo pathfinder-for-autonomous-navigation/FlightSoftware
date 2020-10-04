@@ -1,5 +1,6 @@
 {
     "eeprom_saved_fields": {
+        "pan.bootcount": 1000,
         "pan.deployed": 1000,
         "pan.deployment.elapsed": 500,
         "pan.sat_designation": 100,
@@ -1588,6 +1589,14 @@
             "max": 100000.0,
             "min": 0.0,
             "type": "lin double vector",
+            "writable": false
+        },
+        "pan.bootcount": {
+            "bitsize": 7,
+            "flow_id": "undefined",
+            "max": 64,
+            "min": 0,
+            "type": "unsigned int",
             "writable": false
         },
         "pan.cycle_no": {

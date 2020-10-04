@@ -194,6 +194,11 @@ protected:
      */
     InternalStateField<unsigned int> enter_close_approach_ccno_f;
 
+    /**
+     * @brief Number of times the satellite has booted
+     */
+    ReadableStateField<unsigned int> *bootcount_fp; 
+
 private:
     /**
      * @brief Computes magnitude of baseline position vector.

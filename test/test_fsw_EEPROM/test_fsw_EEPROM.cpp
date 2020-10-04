@@ -19,9 +19,10 @@ class TestFixture {
     std::shared_ptr<ReadableStateField<unsigned char>> mission_mode_fp;
     std::shared_ptr<ReadableStateField<bool>> is_deployed_fp;
     std::shared_ptr<ReadableStateField<unsigned char>> sat_designation_fp;
-    std::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
+    td::shared_ptr<ReadableStateField<unsigned int>> control_cycle_count_fp;
 
     std::unique_ptr<EEPROMController> eeprom_controller;
+
 
     /**
      * @brief Construct a new Test Fixture.
