@@ -88,11 +88,9 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     // defaults, TODO: DECIDE DEFAULTS
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
     rwa_speed_cmd_f.set({0,0,0});
-    rwa_torque_cmd_f.set({0,0,0});
     rwa_speed_filter_f.set(1);
     rwa_ramp_filter_f.set(1);
     mtr_mode_f.set(adcs::MTRMode::MTR_DISABLED);
-    mtr_cmd_f.set({0,0,0});
     mtr_limit_f.set(adcs::mtr::max_moment);
     ssa_voltage_filter_f.set(1);
     imu_mode_f.set(adcs::IMUMode::MAG1);
