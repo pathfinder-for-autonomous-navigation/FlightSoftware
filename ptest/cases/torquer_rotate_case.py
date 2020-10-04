@@ -35,6 +35,19 @@ class MTorquerCase(SingleSatOnlyCase):
         std2 = math.sqrt(sum2 / len(vectorList))
         result = {"mag1stdev": std1, "mag2stdev": std2}
         return result
+        
+    def take_mag_measurements(self, duration):
+        """
+            Repeatedly take magnetometer measurements for a certain 
+            amount of time 
+            @param duration: time in seconds of measurement duration
+        """
+        readings = []
+        while time.time() < time.time() + duration:
+            pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
+            readings.append(pair)
+            time.sleep(0.1)
+        return readings
 
 
     def log_white_noise(self):
@@ -44,13 +57,10 @@ class MTorquerCase(SingleSatOnlyCase):
             Values are entered into a list in pairs with (mag1,mag2)
         """
         self.ws("cycle.auto", True)
-        readings = []
+        
 
         #record values for 5 seconds
-        while time.time() < time.time() + 5: 
-            pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
-            readings.append(pair)
-            time.sleep(0.1)
+        readings = self.take_mag_measurements(5)
         
         #log matrix and finish procedure
         self.logger.put(readings)
@@ -69,54 +79,49 @@ class MTorquerCase(SingleSatOnlyCase):
         self.ws("adcs_cmd.mtr_mode", 1)#MTR_ENABLED)#how to import this constant
 
         self.log_white_noise()
+
+
     
     def mtr_test(self):
         """
-            Turns the mtr at three different torques 
-            uses a matrix with different vectors and a 
-            certain magnitude in the positive and negative 
-            x, y, and z direction then reads in state fields
+            Tests the magnetorquer with a matrix of 
+            values by turning it for each cmd vector 
+            At each vector, 
+            1. read in the magnetometer values while magnetorquer is
+            active for 10 seconds
+            2. turn off the magnetorquer and read in magnetometer 
+            values for 10 seconds
+
         """
-        x = 0.1
+        x = 0.05
         y = 0.2
-        z = 0.3
         test_matrix = [# get some specifics as to what to test
             [x, 0, 0],
             [0, x, 0],
             [0, 0, x],
-            [-x, 0, 0],
-            [0, -x, 0],
-            [0, 0, -x],
+            [x, x, 0],
+            [0, x, x],
+            [x, 0, x],
+            [x, x, x],
             [y, 0, 0],
             [0, y, 0],
             [0, 0, y],
-            [-y, 0, 0],
-            [0, -y, 0],
-            [0, 0, -y],
-            [z, 0, 0],
-            [0, z, 0],
-            [0, 0, z],
-            [-z, 0, 0],
-            [0, -z, 0],
-            [0, 0, -z],
+            [y, y, 0],
+            [0, y, y],
+            [y, 0, y],
             [y, y, y],
-            [-y, -y, -y],
-            [x, x, x],
-            [-x, -x, -x],
-            [z, z, z],
-            [-z, -z, -z]
+           
         ]
         self.print_header("TORQUE TESTS: ")
 
         for cmd_array in test_matrix:
             self.ws("adcs_cmd.mtr_cmd", cmd_array)
-            time.sleep(0.2)#change to hold for 10 sec
-            pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
-            self.logger.put(pair)
+            results = self.take_mag_measurements(10)
+            self.logger.put(results)
+
             self.ws("adcs_cmd.mtr_cmd", [0,0,0])
-            time.sleep(0.2)#turn off for 10 sec 
-            pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
-            self.logger.put(pair)
+            results = self.take_mag_measurements(10)
+            self.logger.put(results)
     
 
     def finish(self):
@@ -124,8 +129,8 @@ class MTorquerCase(SingleSatOnlyCase):
         exits test case gracefully
         """   
         #take final measurements
-        pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
-        self.logger.put(pair)
+        results = self.take_mag_measurements(5)
+        self.logger.put(results)
         
         self.cycle()
         self.ws("adcs_cmd.mtr_mode", 0)#,MTR_DISABLED)
