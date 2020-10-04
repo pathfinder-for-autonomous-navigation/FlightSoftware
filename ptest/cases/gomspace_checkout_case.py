@@ -14,7 +14,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             raise ValueError
 
     def run_case_singlesat(self):
-        self.sim.cycle_no = self.sim.flight_controller.read_state("pan.cycle_no")
+        self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
 
         # readable fields
         vboost = [int(self.read_state("gomspace.vboost.output" + str(i)))

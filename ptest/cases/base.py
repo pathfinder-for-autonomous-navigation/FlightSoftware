@@ -10,8 +10,9 @@ class Case(object):
     Base class for all HITL/HOOTL testcases.
     """
 
-    def __init__(self, data_dir):
+    def __init__(self, is_interactive, data_dir):
         self._finished = False
+        self.is_interactive = is_interactive
         self.logger = Logger("testcase", data_dir, print=True)
 
     def mag_of(self, vals):
@@ -103,11 +104,18 @@ class Case(object):
         assert type(finished) is bool
         self._finished = finished
 
-    def setup_case(self, simulation):
-        self.sim = simulation
+    def setup_case(self, devices):
+        self.populate_devices(devices)
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()
+
+    def populate_devices(self, devices):
+        """
+        Read the list of PTest-connected devices and
+        pull in the ones that we care about.
+        """
+        raise NotImplementedError
 
     def _setup_case(self):
         """
@@ -128,13 +136,12 @@ class Case(object):
         """
 
         if not self.finished:
-            if not self.sim.is_interactive:
+            if not self.is_interactive and hasattr(self, "sim"):
                 self.sim.running = False
             self.logger.put("[TESTCASE] Finished testcase.")
             self.finished = True
             time.sleep(1)
             self.logger.stop()
-
 
 class SingleSatOnlyCase(Case):
     """
@@ -148,6 +155,9 @@ class SingleSatOnlyCase(Case):
         """
         return "manual"
 
+    def populate_devices(self, devices):
+        self.flight_controller = devices["FlightController"]
+
     @property
     def fast_boot(self):
         """
@@ -160,11 +170,11 @@ class SingleSatOnlyCase(Case):
         self.setup_pre_bootsetup()
 
         # Prevent faults from mucking up the state machine.
-        self.sim.flight_controller.write_state("gomspace.low_batt.suppress", "true")
-        self.sim.flight_controller.write_state("fault_handler.enabled", "false")
-        self.one_day_ccno = self.sim.flight_controller.smart_read("pan.one_day_ccno")
+        self.flight_controller.write_state("gomspace.low_batt.suppress", "true")
+        self.flight_controller.write_state("fault_handler.enabled", "false")
+        self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
 
-        self.boot_util = BootUtil(self.sim.flight_controller, self.logger, self.initial_state, self.fast_boot, self.one_day_ccno)
+        self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, self.fast_boot, self.one_day_ccno)
         self.boot_util.setup_boot()
         self.setup_post_bootsetup()
 
@@ -203,13 +213,13 @@ class SingleSatOnlyCase(Case):
         """
         Wrapper function around flight controller's read_state.
         """
-        return self.sim.flight_controller.read_state(string_state)
+        return self.flight_controller.read_state(string_state)
 
     def write_state(self, string_state, state_value):
         """
         Wrapper function around flight controller's write_state.
         """
-        self.sim.flight_controller.write_state(string_state, state_value)
+        self.flight_controller.write_state(string_state, state_value)
         return self.read_state(string_state)
 
     @property
@@ -217,11 +227,11 @@ class SingleSatOnlyCase(Case):
         """
         Returns mission state as a string: "standby", "startup", etc.
         """
-        return Enums.mission_states[int(self.sim.flight_controller.read_state("pan.state"))]
+        return Enums.mission_states[int(self.flight_controller.read_state("pan.state"))]
 
     @mission_state.setter
     def mission_state(self, state):
-        self.sim.flight_controller.write_state("pan.state", int(Enums.mission_states[state]))
+        self.flight_controller.write_state("pan.state", int(Enums.mission_states[state]))
 
     def cycle(self):
         """
@@ -231,7 +241,7 @@ class SingleSatOnlyCase(Case):
         """
 
         init = self.rs("pan.cycle_no")
-        self.sim.flight_controller.write_state('cycle.start', 'true')
+        self.flight_controller.write_state('cycle.start', 'true')
         if self.rs("pan.cycle_no") != init + 1:
             raise TestCaseFailure(f"FC did not step forward by one cycle")
 
@@ -243,7 +253,7 @@ class SingleSatOnlyCase(Case):
         """
 
         assert(type(name) is str), "State field name was not a string."
-        ret = self.sim.flight_controller.smart_read(name)
+        ret = self.flight_controller.smart_read(name)
         return ret
 
     def print_rs(self, name):
@@ -260,7 +270,7 @@ class SingleSatOnlyCase(Case):
         Writes a state
         """
 
-        self.sim.flight_controller.write_state(name, val)
+        self.flight_controller.write_state(name, val)
 
     def print_ws(self, name, val):
         """
@@ -299,6 +309,10 @@ class MissionCase(Case):
     case.
     """
 
+    def populate_devices(self, devices):
+        self.flight_controller_leader = devices["FlightControllerLeader"]
+        self.flight_controller_follower = devices["FlightControllerFollower"]
+
     @property
     def initial_state_leader(self):
         raise NotImplementedError
@@ -316,8 +330,8 @@ class MissionCase(Case):
     def _setup_case(self):
         self.setup_pre_bootsetup_leader()
         self.setup_pre_bootsetup_follower()
-        self.boot_util_leader = BootUtil(self.sim.flight_controller_leader, self.logger, self.initial_state_leader, self.fast_boot_leader)
-        self.boot_util_follower = BootUtil(self.sim.flight_controller_follower, self.logger, self.initial_state_follower, self.fast_boot_follower)
+        self.boot_util_leader = BootUtil(self.flight_controller_leader, self.logger, self.initial_state_leader, self.fast_boot_leader)
+        self.boot_util_follower = BootUtil(self.flight_controller_follower, self.logger, self.initial_state_follower, self.fast_boot_follower)
         self.boot_util_leader.setup_boot()
         self.boot_util_follower.setup_boot()
         self.setup_post_bootsetup_leader()
@@ -338,28 +352,28 @@ class MissionCase(Case):
 
     @property
     def mission_state_leader(self):
-        return Enums.mission_states[int(self.sim.flight_controller_leader.read_state("pan.state"))]
+        return Enums.mission_states[int(self.flight_controller_leader.read_state("pan.state"))]
     @property
     def mission_state_follower(self):
-        return Enums.mission_states[int(self.sim.flight_controller_follower.read_state("pan.state"))]
+        return Enums.mission_states[int(self.flight_controller_follower.read_state("pan.state"))]
 
     @mission_state_leader.setter
     def mission_state_leader(self, state):
-        self.sim.flight_controller_leader.write_state("pan.state", int(Enums.mission_states[state]))
+        self.flight_controller_leader.write_state("pan.state", int(Enums.mission_states[state]))
     @mission_state_follower.setter
     def mission_state_follower(self, state):
-        self.sim.flight_controller_follower.write_state("pan.state", int(Enums.mission_states[state]))
+        self.flight_controller_follower.write_state("pan.state", int(Enums.mission_states[state]))
 
     def read_state_leader(self, string_state):
-        return self.sim.flight_controller_leader.read_state(string_state)
+        return self.flight_controller_leader.read_state(string_state)
 
     def write_state_leader(self, string_state, state_value):
-        self.sim.flight_controller_leader.write_state(string_state, state_value)
+        self.flight_controller_leader.write_state(string_state, state_value)
         return self.read_state(string_state)
 
     def read_state_follower(self, string_state):
-        return self.sim.flight_controller_follower.read_state(string_state)
+        return self.flight_controller_follower.read_state(string_state)
 
     def write_state_follower(self, string_state, state_value):
-        self.sim.flight_controller_follower.write_state(string_state, state_value)
+        self.flight_controller_follower.write_state(string_state, state_value)
         return self.read_state(string_state)
