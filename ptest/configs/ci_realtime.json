@@ -4,7 +4,7 @@
         {
             "name": "FlightController",
             "run_mode": "native",
-            "binary_filepath": ".pio/build/fsw_native_leader_realtime/program",
+            "pio_target": "fsw_native_leader_realtime",
             "http_port": 8000
         }
     ],
