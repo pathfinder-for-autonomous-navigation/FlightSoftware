@@ -68,8 +68,8 @@ Run the main script:
 
 This only works for Mac and Linux for now.
 
-Edit `ptest/configs/fc_only.json` so that the `binary_filepath` for the Flight Controller points to a binary built
-for the Flight Software. You can find these binaries [here](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/releases).
+Edit `ptest/configs/fc_only.json` so that the `pio_target` for the Flight Controller points to the desired flight
+software binary.
 
 # Running simulation
 1. Activate the virtualenv as done in step 2 of the Installation above. You do not need to reinstall the venv.

@@ -7,7 +7,7 @@ I recommend copy-pasting a template from this folder to somewhere else on your d
 - `devices`: A list of device configuration objects, each with the following data:
   - `name` of device.
   - `run_mode`: Either set to `teensy` or `native`, depending on whether the device is connected via a Teensy or if the device should be emulated with a desktop binary.
-  - `binary_filepath`: If the `run_mode` was specified as `native`, this filepath describes where to find the desktop binary. The filepath must be absolute.
+  - `pio_target`: If the `run_mode` was specified as `native`, this describes the PIO target to use for the Flight Software. The target is compiled if not present.
   - `http_port`: HTTP port on which to create the command endpoint for this object.
 - `radios`: A list of radio configuration objects, each with the following data:
   - `name` of device that the radio is connected to. It should correspond to one of the devices above.
