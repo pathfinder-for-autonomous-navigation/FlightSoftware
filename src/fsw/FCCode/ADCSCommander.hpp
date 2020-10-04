@@ -26,23 +26,23 @@ class ADCSCommander : public TimedControlTask<void> {
     // input fields, given by a casted adcs_state_t enum
     const WritableStateField<unsigned char>* adcs_state_fp;
 
-    // outputs from AttitudeComputer as inputs
-    const WritableStateField<lin::Vector3f>* adcs_vec1_current_fp;
-    const WritableStateField<lin::Vector3f>* adcs_vec1_desired_fp;
-    const WritableStateField<lin::Vector3f>* adcs_vec2_current_fp;
-    const WritableStateField<lin::Vector3f>* adcs_vec2_desired_fp;
+    // outputs from AttitudeController as inputs
+    const WritableStateField<lin::Vector3f>* const adcs_vec1_current_fp;
+    const WritableStateField<lin::Vector3f>* const adcs_vec1_desired_fp;
+    const WritableStateField<lin::Vector3f>* const adcs_vec2_current_fp;
+    const WritableStateField<lin::Vector3f>* const adcs_vec2_desired_fp;
+    const WritableStateField<f_vector_t>* const rwa_torque_cmd_f;
+    const WritableStateField<f_vector_t>* const mtr_cmd_f;
 
     // begin output fields necessary for adcs_box controller
     const Serializer<float> filter_sr;
 
     WritableStateField<unsigned char> rwa_mode_f;
     WritableStateField<f_vector_t> rwa_speed_cmd_f;
-    WritableStateField<f_vector_t> rwa_torque_cmd_f;
     WritableStateField<float> rwa_speed_filter_f;
     WritableStateField<float> rwa_ramp_filter_f;
 
     WritableStateField<unsigned char> mtr_mode_f;
-    WritableStateField<f_vector_t> mtr_cmd_f;
     WritableStateField<float> mtr_limit_f;
 
     WritableStateField<float> ssa_voltage_filter_f;

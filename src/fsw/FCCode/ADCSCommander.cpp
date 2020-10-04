@@ -10,17 +10,19 @@
 
 ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "adcs_commander", offset),
+    adcs_vec1_current_fp(find_writable_field<lin::Vector3f>("attitude_control.vec1_current", __FILE__, __LINE__)),
+    adcs_vec1_desired_fp(find_writable_field<lin::Vector3f>("attitude_control.vec1_desired", __FILE__, __LINE__)),
+    adcs_vec2_current_fp(find_writable_field<lin::Vector3f>("attitude_control.vec2_current", __FILE__, __LINE__)),
+    adcs_vec2_desired_fp(find_writable_field<lin::Vector3f>("attitude_control.vec2_desired", __FILE__, __LINE__)),
+    rwa_torque_cmd_f(find_writable_field<lin::Vector3f>("attitude_control.vec2_desired", __FILE__, __LINE__)),
+    mtr_cmd_f(find_writable_field<lin::Vector3f>("attitude_control.vec2_desired", __FILE__, __LINE__)),
     filter_sr(0,1,8),
     rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
     rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(
         adcs::rwa::min_speed_command, adcs::rwa::max_speed_command, 16*3)),
-    rwa_torque_cmd_f("adcs_cmd.rwa_torque_cmd", Serializer<f_vector_t>(
-        adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
     rwa_speed_filter_f("adcs_cmd.rwa_speed_filter", filter_sr),
     rwa_ramp_filter_f("adcs_cmd.rwa_ramp_filter", filter_sr),
     mtr_mode_f("adcs_cmd.mtr_mode", Serializer<unsigned char>(2)),
-    mtr_cmd_f("adcs_cmd.mtr_cmd", Serializer<f_vector_t>(
-        adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
     mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(
         adcs::mtr::min_moment, adcs::mtr::max_moment, 16)),
     ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", filter_sr),
@@ -38,11 +40,9 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     // For ADCS Controller
     add_writable_field(rwa_mode_f);
     add_writable_field(rwa_speed_cmd_f);
-    add_writable_field(rwa_torque_cmd_f);
     add_writable_field(rwa_speed_filter_f);
     add_writable_field(rwa_ramp_filter_f);
     add_writable_field(mtr_mode_f);
-    add_writable_field(mtr_cmd_f);
     add_writable_field(mtr_limit_f);
     add_writable_field(ssa_voltage_filter_f);
     add_writable_field(imu_mode_f);
@@ -83,10 +83,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
     // find outputs from AttitudeComputer
-    adcs_vec1_current_fp = find_writable_field<lin::Vector3f>("adcs.compute.vec1.current", __FILE__, __LINE__);
-    adcs_vec1_desired_fp = find_writable_field<lin::Vector3f>("adcs.compute.vec1.desired", __FILE__, __LINE__);
-    adcs_vec2_current_fp = find_writable_field<lin::Vector3f>("adcs.compute.vec2.current", __FILE__, __LINE__);
-    adcs_vec2_desired_fp = find_writable_field<lin::Vector3f>("adcs.compute.vec2.desired", __FILE__, __LINE__);
+
 
     // defaults, TODO: DECIDE DEFAULTS
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);

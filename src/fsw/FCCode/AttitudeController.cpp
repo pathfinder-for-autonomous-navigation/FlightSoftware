@@ -12,6 +12,8 @@
 #include <lin/queries.hpp>
 #include <lin/references.hpp>
 
+#include <adcs/constants.hpp>
+
 AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_controller", offset),
     b_body_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag_vec)),
@@ -25,12 +27,12 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
     pos_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_ecef)),
     vel_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel_ecef)),
     pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_baseline_ecef)),
-    pointer_vec1_current_f("attitude.pointer_vec1_current", Serializer<lin::Vector3f>(0, 1, 100)),
-    pointer_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
-    pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
-    pointer_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 100)),
-    t_body_cmd_f("attitude.t_body_cmd", Serializer<lin::Vector3f>(0, 1, 100)),
-    m_body_cmd_f("attitude.m_body_cmd", Serializer<lin::Vector3f>(0, 1, 100)),
+    pointer_vec1_current_f("attitude_control.vec1_current", Serializer<lin::Vector3f>(0, 1, 100)),
+    pointer_vec2_current_f("attitude_control.vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
+    pointer_vec1_desired_f("attitude_control.vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
+    pointer_vec2_desired_f("attitude_control.vec2_desired", Serializer<lin::Vector3f>(0, 1, 100)),
+    t_body_cmd_f("attitude_control.t_body_cmd", Serializer<lin::Vector3f>(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
+    m_body_cmd_f("attitude_control.m_body_cmd", Serializer<lin::Vector3f>(adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
     detumbler_state(),
     pointer_state()
     {
