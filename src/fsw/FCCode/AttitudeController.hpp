@@ -57,19 +57,21 @@ class AttitudeController : public TimedControlTask<void> {
     WritableStateField<lin::Vector3f> t_body_cmd_f;  // TODO : Figure out bounds for this
     WritableStateField<lin::Vector3f> m_body_cmd_f;  // TODO : Figure out bounds for this
 
-    // Structs for the psim attitude controller adapters
+    // Structs for GNC detumbler controller
     gnc::DetumbleControllerState detumbler_state;
-    gnc::PointingControllerState pointer_state;
-
     gnc::DetumbleControllerData detumbler_data;
     gnc::DetumbleActuation detumbler_actuation;
 
+    // Structs for GNC pointing controller
+    gnc::PointingControllerState pointer_state;
     gnc::PointingControllerData pointer_data;
     gnc::PointingActuation pointer_actuation;
 
     /**
      * @brief Default acutator commands to zeros
      * 
+     * We set these state fields to zeros as opposed to NaNs by default so we
+     * command zero torque on the spacecraft if something fails.
      */
     void default_actuator_commands();
 
@@ -79,8 +81,29 @@ class AttitudeController : public TimedControlTask<void> {
      */
     void default_pointing_objectives();
     
+    /**
+     * @brief Makes a call to gnc::detumble_controller.
+     * 
+     * Uses all 3 gnc::Detumble structs
+     */
     void calculate_detumble_controller();
+
+    /**
+     * @brief Calculates a DCM and dr_body if it can.
+     * Then based on our mode we calculate the pointing vector current states and objectives.
+     * 
+     * If we are not in either standby or docking, 
+     * no pointing strategy is defined.
+     * 
+     */
     void calculate_pointing_objectives();
+
+    /**
+     * @brief Given the pointing vector current states and objectives,
+     * calculate the desired wheel commands and magnetorquer commands
+     * 
+     * Uses all 3 gnc::Pointing structs
+     */
     void calculate_pointing_controller();
 };
 #endif

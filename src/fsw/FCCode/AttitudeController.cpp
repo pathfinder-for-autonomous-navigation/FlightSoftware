@@ -91,10 +91,6 @@ void AttitudeController::execute() {
 }
 
 void AttitudeController::default_actuator_commands() {
-    /*
-     * We set these state fields to zeros as opposed to NaNs by default so we
-     * command zero torque on the spacecraft if something fails.
-     */
     t_body_cmd_f.set(lin::zeros<lin::Vector3f>());
     m_body_cmd_f.set(lin::zeros<lin::Vector3f>());
 }
@@ -151,9 +147,9 @@ void AttitudeController::calculate_pointing_objectives() {
         lin::Vector3f dr = pos_baseline_ecef_fp->get(); // dr = dr_ecef
 
         // Ensure we have a valid relative position
-        if (lin::all(lin::isfinite(dr_body))) {
+        if (lin::all(lin::isfinite(dr))) {
             dr_body = dr;                            // dr_body = dr_ecef
-            gnc::utl::rotate_frame(q_body_ecef, dr_body);
+            gnc::utl::rotate_frame(q_body_ecef, dr_body); // dr_body = dr_body
         }
     }
 
