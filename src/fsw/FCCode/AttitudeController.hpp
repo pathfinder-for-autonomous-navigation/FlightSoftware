@@ -41,7 +41,7 @@ class AttitudeController : public TimedControlTask<void> {
     WritableStateField<unsigned char> const *const adcs_state_fp;
 
     // Inputs from the orbit estimator
-    ReadableStateField<unsigned long> const *const time_ns_fp;
+    ReadableStateField<unsigned int> const *const time_ns_fp;
     ReadableStateField<lin::Vector3d> const *const pos_ecef_fp;
     ReadableStateField<lin::Vector3d> const *const vel_ecef_fp;
     ReadableStateField<lin::Vector3d> const *const pos_baseline_ecef_fp;

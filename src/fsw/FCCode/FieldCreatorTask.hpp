@@ -14,7 +14,7 @@
 // eventually become zero.
 class FieldCreatorTask : public ControlTask<void> {
     public:
-      ReadableStateField<unsigned long> time;
+      ReadableStateField<unsigned int> time; // changed from long to int
       ReadableStateField<lin::Vector3d> pos_f;
       ReadableStateField<lin::Vector3d> vel_f;
       ReadableStateField<lin::Vector3d> pos_baseline_f;
@@ -26,7 +26,7 @@ class FieldCreatorTask : public ControlTask<void> {
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
-        time("orbit.time", Serializer<unsigned long>()), // TODO : What are the serializer arguments
+        time("orbit.time", Serializer<unsigned int>(100000)), // TODO : What are the serializer arguments
         pos_f("orbit.pos", Serializer<lin::Vector3d>(0,100000,100)),
         vel_f("orbit.pos", Serializer<lin::Vector3d>(0,100000,100)), // TODO : What are the serializer arguments
         pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,100000,100)),
@@ -42,7 +42,7 @@ class FieldCreatorTask : public ControlTask<void> {
           add_readable_field(pos_f);
           add_readable_field(vel_f);
           add_readable_field(pos_baseline_f);
-          add_readable_filed(vel_baseline_f);
+          add_readable_field(vel_baseline_f);
 
           // For propulsion controller
           add_readable_field(prop_state_f);

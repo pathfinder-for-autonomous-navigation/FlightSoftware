@@ -21,7 +21,7 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
     q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
     w_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.w_body)),
     adcs_state_fp(FIND_WRITABLE_FIELD(unsigned char, adcs.state)),
-    time_ns_fp(FIND_READABLE_FIELD(unsigned long, orbit.time)),
+    time_ns_fp(FIND_READABLE_FIELD(unsigned int, orbit.time)),
     pos_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_ecef)),
     vel_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel_ecef)),
     pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_baseline_ecef)),
@@ -29,8 +29,8 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
     pointer_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
     pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
     pointer_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 100)),
-    t_body_cmd_f("attitude.t_body_cmd", Serializer<lin::Vector3f>()),
-    m_body_cmd_f("attitude.m_body_cmd", Serializer<lin::Vector3f>()),
+    t_body_cmd_f("attitude.t_body_cmd", Serializer<lin::Vector3f>(0, 1, 100)),
+    m_body_cmd_f("attitude.m_body_cmd", Serializer<lin::Vector3f>(0, 1, 100)),
     detumbler_state(),
     pointer_state()
     {
