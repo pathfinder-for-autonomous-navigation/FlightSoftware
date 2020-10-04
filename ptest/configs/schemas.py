@@ -10,7 +10,7 @@ ptest_config_schema = {
             "schema" : {
                 "name" : {"type" : "string", "required" : True},
                 "run_mode" : {"type" : "string", "allowed" : ["native", "teensy"], "required" : True},
-                "binary_filepath" : {
+                "pio_target" : {
                     "type" : "string", 
                     "dependencies" : {"run_mode" : ["native"]}, 
                     "excludes" : ["port", "baud_rate"]
@@ -18,12 +18,12 @@ ptest_config_schema = {
                 "port" : {
                     "type" : "string",
                     "dependencies" : {"run_mode" : ["teensy"]},
-                    "excludes" : "binary_filepath"
+                    "excludes" : "pio_target"
                 },
                 "baud_rate" : {
                     "type" : "integer",
                     "dependencies" : {"run_mode" : ["teensy"]},
-                    "excludes" : "binary_filepath"
+                    "excludes" : "pio_target"
                 },
                 "http_port" : {"type" : "integer", "required" : True}
             }
