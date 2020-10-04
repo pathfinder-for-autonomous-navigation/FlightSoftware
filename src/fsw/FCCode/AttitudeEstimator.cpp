@@ -57,7 +57,7 @@ void AttitudeEstimator::set_estimate(){
         estimate.q_body_eci(3)
     });
 
-    w_body_f.set(w_body_f - estimate.gyro_bias.eval());
+    w_body_f.set(w_body_f.get() - estimate.gyro_bias);
 
     lin::Vector3f result;
     if (adcs_paired_f.get()) result = gnc::constant::J_sat * w_body_f.get(); // should be docked sats...
