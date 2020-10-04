@@ -4,7 +4,7 @@
 #include <fsw/FCCode/piksi_mode_t.enum>
 
 #include <fsw/FCCode/Drivers/Piksi.hpp>
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 #define assert_piksi_mode(x) {\
     TEST_ASSERT_EQUAL(x, static_cast<piksi_mode_t>(tf.currentState_fp->get()));\
@@ -15,7 +15,7 @@ class TestFixture {
         StateFieldRegistryMock registry;
 
         // pointers to statefields for easy access
-        ReadableStateField<int>* currentState_fp;
+        ReadableStateField<unsigned char>* currentState_fp;
         ReadableStateField<d_vector_t>* pos_fp;
         ReadableStateField<d_vector_t>* vel_fp;
         ReadableStateField<d_vector_t>* baseline_fp;
@@ -38,7 +38,7 @@ class TestFixture {
                 piksi_task = std::make_unique<PiksiControlTask>(registry, 0, piksi);  
 
                 // initialize pointers to statefields      
-                currentState_fp = registry.find_readable_field_t<int>("piksi.state");
+                currentState_fp = registry.find_readable_field_t<unsigned char>("piksi.state");
                 pos_fp = registry.find_readable_field_t<d_vector_t>("piksi.pos");
                 vel_fp = registry.find_readable_field_t<d_vector_t>("piksi.vel");
                 baseline_fp = registry.find_readable_field_t<d_vector_t>("piksi.baseline_pos");

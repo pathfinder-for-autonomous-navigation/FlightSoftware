@@ -104,7 +104,7 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @brief Finds an fault of the given name.
      */
     Fault* find_fault_t(const std::string& name) {
-        auto ptr = static_cast<Fault*>(find_fault(name));
+        auto ptr = find_fault(name);
         check_field_exists(ptr, name);
         return ptr;
     }
@@ -401,9 +401,9 @@ class StateFieldRegistryMock : public StateFieldRegistry {
      * @param name Name of fault to create.
      * @return Pointer to fault that was created.
      */
-    std::shared_ptr<Fault> create_fault(const std::string& name, const size_t _persistence, const unsigned int& control_cycle_count)
+    std::shared_ptr<Fault> create_fault(const std::string& name, const size_t _persistence)
     {
-        auto fault_ptr = std::make_shared<Fault>(name, _persistence, control_cycle_count);
+        auto fault_ptr = std::make_shared<Fault>(name, _persistence);
         add_fault(fault_ptr.get());
         created_faults.push_back(fault_ptr);
         return fault_ptr;

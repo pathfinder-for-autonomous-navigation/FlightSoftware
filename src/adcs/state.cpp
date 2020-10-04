@@ -39,7 +39,7 @@ struct Registers volatile registers = {
   // Sun Sensor Registers
   {
     0,                             // Mode
-    {0.69f, 0.42f, -.88f},            // Sun vector read
+    {0.69f, 0.42f, -.88f},         // Sun vector read
     1.0f,                          // Voltage filter
     {1.0f, 2.0f, 3.0f, 0.0f, 0.0f, // Voltage read
      1.0f, 2.0f, 3.0f, 0.0f, 0.0f,
@@ -48,17 +48,17 @@ struct Registers volatile registers = {
   },
   // IMU Registers
   {
-    0,                  // Mode
-    {0.001f, 0.0008f, -0.0006f}, // Magnetometer read
+    0,                  // Magnetometer one mode
+    {0.001f, 0.0008f, -0.0006f}, // Magnetometer one read
+    0,                  // Magnetometer two mode
+    {0.001f, 0.0008f, -0.0006f}, // Magnetometer two read
     {3.0f, 1.5f, -1.2f}, // Gyroscope read
     42.0f,               // Gyroscope temperature read
     1.0f,               // Magnetometer filter
     1.0f,               // Gyroscope filter
     1.0f,               // Gyroscoope temperature filter
-    0.0f,               // TODO : Gyroscope temperature K_p
-    0.0f,               // TODO : Gyroscope temperature K_i
-    0.0f,               // TODO : Gyroscope temperature K_d
-    0.0f,               // TODO : Gyroscope desired temperature
+    117,                  // Gyroscope temperature PWM, default 50% duty cycle
+    -102.0f,               // Gyroscope desired temperature
   },
   // HAVT Registers
   {

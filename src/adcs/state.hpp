@@ -75,18 +75,23 @@ struct SunSensorRegisters {
 };
 
 /** \struct IMURegisters
- *  State data structure for the IMU sensors. all reads are in the body frame of
+ *  State data structure for the IMU sensors. All reads are in the body frame of
  *  the spacecraft. */
 struct IMURegisters {
-  /** Specifies the current IMU mode - i.e. which magnetometer to talk to. */
-  unsigned char mode;
-  /** Current output for the magnetometer in units of Tesla in the body frame of
-   *  the spacecraft. */
-  float mag_rd[3];
+  /** Mode of the first magnetometer. */
+  unsigned char mag1_mode;
+  /** Current output for the first magnetometer in units of Tesla in the body
+   *  frame of the spacecraft. */
+  float mag1_rd[3];
+  /** Mode of the second magnetometer. */
+  unsigned char mag2_mode;
+  /** Current output for the second magnetometer in units of Tesla in the body
+   *  frame of the spacecraft. */
+  float mag2_rd[3];
   /** Current output for the gyroscope in units of rad/s in the body frame of
    *  the spacecraft. */
   float gyr_rd[3];
-  /** Current output for the gyroscope temperature in units of Kelvin. */
+  /** Current output for the gyroscope temperature in degrees C. */
   float gyr_temp_rd;
   /** Specifies the exponential filter constant for the magnetometer reads. */
   float mag_flt;
@@ -95,13 +100,9 @@ struct IMURegisters {
   /** Specifies the exponential filter constant for the gyroscope temperature
    *  reads. */
   float gyr_temp_flt;
-  /** Specifies the gyroscope temperature controller K_p term. */
-  float gyr_temp_p;
-  /** Specifies the gyroscope temperature controller K_i term. */
-  float gyr_temp_i;
-  /** Specifies the gyroscope temperature controller K_d term. */
-  float gyr_temp_d;
-  /** Specifies the desired temperature of the gyroscope. */
+  /** Specifies the gyroscope temperature controller PWM (255 is max heating, 0 is OFF). */
+  unsigned char gyr_temp_pwm;
+  /** Specifies the desired temperature of the gyroscope in degrees C. */
   float gyr_desired_temp;
 };
 

@@ -1,17 +1,14 @@
-#include "../test_quake/quake_common.h"
+
 #include "core_pins.h"
 #include "usb_serial.h"
-
-#include <unity.h>
+#include <fsw/FCCode/Drivers/QLocate.hpp>
+#include "../custom_assertions.hpp"
 #include <string>
 #include <vector>
-#include <QLocate.hpp>
-
+#include "../test_quake/quake_common.h"
 // name, port, pin number, timeout
-Devices::QLocate q("Test_Quake_No_Network", &Serial3, 
-    Devices::QLocate::DEFAULT_NR_PIN,
+Devices::QLocate q("Test_Quake_No_Network", &Serial3,
     Devices::QLocate::DEFAULT_TIMEOUT);
-
 
 // Test initializing SBD session with Quake
 // Expecting no network connection
@@ -21,7 +18,7 @@ void test_sbdix_no_network(void)
     TEST_ASSERT_EQUAL(0, q.query_sbdix_1()); // Expect 0
 
     // Port should be unavailable at this point
-    count_cycles(q.get_sbdix, "get_sbdix");
+    count_cycles(q.get_sbdix, "get_sbdix", Devices::OK);
 
     const int *_pRes = q.sbdix_r;
     sbdix_r_t *pRes = (sbdix_r_t *)(_pRes);
@@ -39,7 +36,10 @@ int main(void)
     delay(5000);
     Serial.begin(9600);
     pinMode(13, OUTPUT);
+    while (!Serial)
+        ;
     q.setup();
+    Serial.printf("Qlocate No Network Test\n");
     UNITY_BEGIN();
     RUN_TEST(test_sbdix_no_network);
     UNITY_END();

@@ -1,29 +1,20 @@
 # Gomspace test case. Gets cycle count purely for diagnostic purposes and logs
 # any other Gomspace state fields.
-from .base import SingleSatOnlyCase
+from .base import SingleSatOnlyCase, TestCaseFailure
+from .utils import Enums
 
 
 class GomspaceCheckoutCase(SingleSatOnlyCase):
-
-    def setup_case_singlesat(self):
-        self.sim.flight_controller.write_state(
-            "pan.state", self.mission_states.get_by_name("manual"))
-
-    def str_to_bool(self, str):
-        if str == "true":
+    def str_to_bool(self, string):
+        if string == "true":
             return True
-        return False
-
-    def read_state(self, string_state):
-        return self.sim.flight_controller.read_state(string_state)
-
-    def write_state(self, string_state, state_value):
-        self.sim.flight_controller.write_state(string_state, state_value)
-        return self.read_state(string_state)
+        elif string == "false":
+            return False
+        else:
+            raise ValueError
 
     def run_case_singlesat(self):
-        self.sim.cycle_no = self.sim.flight_controller.read_state(
-            "pan.cycle_no")
+        self.sim.cycle_no = self.sim.flight_controller.read_state("pan.cycle_no")
 
         # readable fields
         vboost = [int(self.read_state("gomspace.vboost.output" + str(i)))
@@ -96,6 +87,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
         power_cycle_output_cmd = [self.str_to_bool(self.write_state("gomspace.power_cycle_output"
                                                                + str(i) + "_cmd", "true"))
                                   for i in range(1, 7)]
+        self.cycle()
         # wait for outputs to be off
         while (not all(out == False for out in output)) and cycle_no - cycle_no_init < 600:
             output = [self.str_to_bool(self.read_state("gomspace.output.output" + str(i)))
@@ -105,6 +97,8 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             if cycle_no - cycle_no_init == 600:
                 self.logger.put(
                     "Power cycled outputs could not turn off after 600 cycles (1 minute)")
+                self.failed = True
+
         # wait for outputs to turn on again
         while (not all(out == True for out in output)) and cycle_no - cycle_no_init < 600:
             output = [self.str_to_bool(self.read_state("gomspace.output.output" + str(i)))
@@ -114,6 +108,8 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             if cycle_no - cycle_no_init == 600:
                 self.logger.put(
                     "Power cycled outputs could not turn on after 600 cycles (1 minute)")
+                self.failed = True
+
         # check if finished power cycling
         power_cycle_output_cmd = [self.str_to_bool(self.read_state("gomspace.power_cycle_output"
                                                               + str(i) + "_cmd"))
@@ -121,18 +117,21 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
         for n in range(0, len(power_cycle_output_cmd)):
             if power_cycle_output_cmd[n] == True:
                 self.logger.put("Could not update power_cycle_output" + str(n))
+                self.failed = True
 
         ppt_mode_cmd = int(self.read_state("gomspace.pptmode_cmd"))
         ppt_mode_updated = int(self.write_state(
             "gomspace.pptmode_cmd", (int(ppt_mode_cmd) + 1) % 2))
         if ppt_mode_cmd == ppt_mode_updated:
             self.logger.put("Could not update pptmode")
+            self.failed = True
 
         heater_cmd = self.str_to_bool(self.read_state("gomspace.heater_cmd"))
         heater_cmd_updated = self.str_to_bool(self.write_state(
             "gomspace.heater_cmd", not heater_cmd))
         if heater_cmd == heater_cmd_updated:
             self.logger.put("Could not update heater")
+            self.failed = True
 
         counter_reset_cmd = self.str_to_bool(self.read_state(
             "gomspace.counter_reset_cmd"))
@@ -140,6 +139,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             "gomspace.counter_reset_cmd", not counter_reset_cmd))
         if counter_reset_cmd == counter_reset_cmd_updated:
             self.logger.put("Could not update counter_reset")
+            self.failed = True
 
         gs_reset_cmd = self.str_to_bool(
             self.read_state("gomspace.gs_reset_cmd"))
@@ -147,6 +147,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             "gomspace.gs_reset_cmd", not gs_reset_cmd))
         if gs_reset_cmd == gs_reset_cmd_updated:
             self.logger.put("Could not update gs_reset")
+            self.failed = True
 
         gs_reboot_cmd = self.str_to_bool(
             self.read_state("gomspace.gs_reboot_cmd"))
@@ -154,5 +155,22 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             "gomspace.gs_reboot_cmd", not gs_reboot_cmd))
         if gs_reboot_cmd == gs_reboot_cmd_updated:
             self.logger.put("Could not update gs_reboot")
+            self.failed = True
 
+        # TODO: add this back after fixing #491
+        # if self.failed: 
+            #raise TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
+
+        self.finish()
+
+class CheckBatteryLevel(SingleSatOnlyCase):
+    def run_case_singlesat(self):
+        voltage = float(self.read_state("gomspace.vbatt"))
+        self.logger.put("                                 ")
+        self.logger.put("=================================")
+        self.logger.put("=================================")
+        self.logger.put(f"Satellite battery level: {voltage/1000} volts")
+        self.logger.put("=================================")
+        self.logger.put("=================================")
+        self.logger.put("                                 ")
         self.finish()

@@ -81,7 +81,7 @@ class StateFieldPlotter(object):
         else:
             if field_data[0][1] in ["true", "false"]:
                 # It's a boolean
-                data_vals = [(1 if datapoint == "true" else 0)
+                data_vals = [(1 if datapoint[1] == "true" else 0)
                              for datapoint in field_data]
             else:
                 try:

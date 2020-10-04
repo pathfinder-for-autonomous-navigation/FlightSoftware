@@ -24,10 +24,8 @@
 #include "DownlinkProducer.hpp"
 #include "EEPROMController.hpp"
 #include "UplinkConsumer.h"
-
-#if (!defined(FUNCTIONAL_TEST) && !defined(FLIGHT))
-static_assert(false, "Need to define either the FUNCTIONAL_TEST or FLIGHT flags.");
-#endif
+#include "PropController.hpp"
+#include "OrbitController.hpp"
 
 class MainControlLoop : public ControlTask<void> {
    protected:
@@ -62,54 +60,62 @@ class MainControlLoop : public ControlTask<void> {
 
     EEPROMController eeprom_controller;
 
-    // Control cycle time offsets, in microseconds
-    // Defined in https://cornellprod-my.sharepoint.com/:x:/r/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B04C55BBB-7AED-410B-AC43-67352393D6D5%7D&file=Flight%20Software%20Cycle.xlsx&action=default&mobileredirect=true&cid=e2b9bd89-7037-47bf-ad2a-fd8b25808939
-    #ifdef FUNCTIONAL_TEST
-        TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  , 5500);
-        TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        , 7500);
-        TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          , 35500);
-        TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  , 85500);
-        TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset , 106500);
-        TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     , 111500);
-        TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     , 111600);
-        TRACKED_CONSTANT_SC(unsigned int, dcdc_controller_offset     , 111700); // fix this later
-        TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   , 111800);
-        TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      , 147400);
-        TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset , 147900);
-        TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 152400);
-        TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 153400); // excel says 152900
-        TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 153500);
-        TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   , 153500); // fix this later
-    #else
-        TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  ,   5500);
-        TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        ,   7500);
-        TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          ,  35000);
-        TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  ,  35500);
-        TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset ,  56500);
-        TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     ,  61500);
-        TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     ,  61600);
-        TRACKED_CONSTANT_SC(unsigned int, dcdc_controller_offset     ,  61700); // fix this later
-        TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   ,  61800);
-        TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      ,  97400);
-        TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset ,  97900);
-        TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 103400); // excel says 102400
-        TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 104400); // excel says 102900
-        TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 104500);
-        TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   , 153500); // too high?
-    #endif
-
     /**
      * @brief Total memory use, in bytes.
      */
     ReadableStateField<unsigned int> memory_use_f;
 
+    /**
+     * @brief Contains the number of control cycles in a 24-hour period.
+     * 
+     * This field is only used informationally by PTest to correctly time
+     * its testcases.
+     */
+    ReadableStateField<unsigned int> one_day_ccno_f;
+
+    /**
+     * @brief Contains the length of a control cycle in milliseconds.
+     * 
+     * This field is only used informationally by PTest to correctly time
+     * its testcases, and potentially by pre-flight check software to
+     * verify we've loaded the correct version of flight software to the
+     * spacecraft.
+     */
+    ReadableStateField<unsigned int> control_cycle_ms_f;
+
+    PropController prop_controller;
     MissionManager mission_manager;
 
     AttitudeComputer attitude_computer; // needs adcs.state from MissionManager
-
     ADCSCommander adcs_commander; // will need inputs from computer
-
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
+
+    OrbitController orbit_controller;
+
+    // Control cycle time offsets, in microseconds
+    #ifdef FLIGHT
+        TRACKED_CONSTANT_SC(unsigned int, test_offset, 0);
+    #else
+        TRACKED_CONSTANT_SC(unsigned int, test_offset, 50000);
+    #endif
+
+    TRACKED_CONSTANT_SC(unsigned int, eeprom_controller_offset   ,   1000);
+    TRACKED_CONSTANT_SC(unsigned int, piksi_control_task_offset  ,   5500);
+    TRACKED_CONSTANT_SC(unsigned int, adcs_monitor_offset        ,   7500);
+    TRACKED_CONSTANT_SC(unsigned int, debug_task_offset          ,  35000);
+    TRACKED_CONSTANT_SC(unsigned int, attitude_estimator_offset  ,  35500 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, gomspace_controller_offset ,  56500 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     ,  71500 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     ,  71600 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, dcdc_controller_offset     ,  71700 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   ,  71800 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      ,  71900 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset ,  72000 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, orbit_controller_offset    ,  73000 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, prop_controller_offset     , 102000 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, docking_controller_offset  , 107000 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, downlink_producer_offset   , 109400 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, quake_manager_offset       , 109500 + test_offset);
 
    public:
     /*

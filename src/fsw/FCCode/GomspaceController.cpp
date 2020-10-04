@@ -3,8 +3,9 @@
 GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
-    get_hk_fault("gomspace.get_hk", 1, control_cycle_count),
-    low_batt_fault("gomspace.low_batt", 1, control_cycle_count),
+
+    get_hk_fault("gomspace.get_hk", 1),
+    low_batt_fault("gomspace.low_batt", 1),
 
     batt_threshold_sr(5000,9000,10),
     batt_threshold_f("gomspace.batt_threshold", batt_threshold_sr),
@@ -163,8 +164,12 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_writable_field(pv1_output_cmd_f);
         add_writable_field(pv2_output_cmd_f);
         add_writable_field(pv3_output_cmd_f);
+        pv1_output_cmd_f.set(default_pv_cmd);
+        pv2_output_cmd_f.set(default_pv_cmd);
+        pv3_output_cmd_f.set(default_pv_cmd);
 
         add_writable_field(ppt_mode_cmd_f);
+        ppt_mode_cmd_f.set(default_ppt_mode);
 
         add_writable_field(heater_cmd_f);
 
@@ -177,20 +182,10 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
 void GomspaceController::execute() {
     //Check that we can get hk data
-    if (!gs.get_hk()){
-        get_hk_fault.signal();
-    }
-    else{
-        get_hk_fault.unsignal();
-    }
+    get_hk_fault.evaluate(!gs.get_hk());
 
     // Check that the battery voltage is above the threshold
-    if (gs.hk->vbatt<batt_threshold_f.get()){
-        low_batt_fault.signal();
-    }
-    else{
-        low_batt_fault.unsignal();
-    }
+    low_batt_fault.evaluate(vbatt_f.get() < batt_threshold_f.get());
 
     // On the first control cycle, set the command statefields to the current values 
     // in the hk struct to prevent unwanted writes.
@@ -220,14 +215,16 @@ void GomspaceController::execute() {
         power_cycle_outputs();
     }
 
-    // Set power voltage command
-    if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
-        gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
+    if(pptmode_f.get() == 2){ // 2 is fixed ppt
+        // Set power voltage command
+        if (vboost1_f.get()!=pv1_output_cmd_f.get() || vboost2_f.get()!=pv2_output_cmd_f.get() || vboost3_f.get()!=pv3_output_cmd_f.get()) {
+            gs.set_pv_volt(pv1_output_cmd_f.get(), pv2_output_cmd_f.get(), pv3_output_cmd_f.get());
+        }
     }
 
     // Set PPT mode command
     if (pptmode_f.get()!=ppt_mode_cmd_f.get()){
-        gs.set_pv_auto(ppt_mode_cmd_f.get());
+        gs.set_ppt_mode(ppt_mode_cmd_f.get());
     }
 
     // Turn on/off the heater command
@@ -254,7 +251,7 @@ void GomspaceController::execute() {
         gs_reboot_cmd_f.set(false);
     }
 
-    //set statefields to respective data from hk struct 
+    //set data-in statefields to respective data from hk struct 
     vboost1_f.set(gs.hk->vboost[0]);
     vboost2_f.set(gs.hk->vboost[1]);
     vboost3_f.set(gs.hk->vboost[2]);
@@ -303,65 +300,29 @@ void GomspaceController::execute() {
     heater_f.set(gs.get_heater()==1);
 }
 
-void GomspaceController::power_cycle_outputs(){
+void GomspaceController::power_cycle_outputs() {
+    auto powercycle_logic = [&]
+        (WritableStateField<bool>& cmd_f,
+         ReadableStateField<bool>& output_f,
+         int idx)
+    {
+        if (cmd_f.get()) {
+            // TODO add powercycling event
+            if (output_f.get()) {
+                gs.set_single_output(idx,0);
+            }
+            else {
+                gs.set_single_output(idx,1);
+                cmd_f.set(false);
+            }
+        }
+    };
+
     // Power cycle output channels
-    if (power_cycle_output1_cmd_f.get()){
-        if (output1_f.get()){
-            gs.set_single_output(0,0);
-        }
-        if (!output1_f.get()){
-            gs.set_single_output(0,1);
-            power_cycle_output1_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output2_cmd_f.get()){
-        if (output2_f.get()){
-            gs.set_single_output(1,0);
-        }
-        if (!output2_f.get()){
-            gs.set_single_output(1,1);
-            power_cycle_output2_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output3_cmd_f.get()){
-        if (output3_f.get()){
-            gs.set_single_output(2,0);
-        }
-        if (!output3_f.get()){
-            gs.set_single_output(2,1);
-            power_cycle_output3_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output4_cmd_f.get()){
-        if (output4_f.get()){
-            gs.set_single_output(3,0);
-        }
-        if (!output4_f.get()){
-            gs.set_single_output(3,1);
-            power_cycle_output4_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output5_cmd_f.get()){
-        if (output5_f.get()){
-            gs.set_single_output(4,0);
-        }
-        if (!output5_f.get()){
-            gs.set_single_output(4,1);
-            power_cycle_output5_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output6_cmd_f.get()){
-        if (output6_f.get()){
-            gs.set_single_output(5,0);
-        }
-        if (!output6_f.get()){
-            gs.set_single_output(5,1);
-            power_cycle_output6_cmd_f.set(false);
-        }
-    }
+    powercycle_logic(power_cycle_output1_cmd_f, output1_f, 0);
+    powercycle_logic(power_cycle_output2_cmd_f, output2_f, 1);
+    powercycle_logic(power_cycle_output3_cmd_f, output3_f, 2);
+    powercycle_logic(power_cycle_output4_cmd_f, output4_f, 3);
+    powercycle_logic(power_cycle_output5_cmd_f, output5_f, 4);
+    powercycle_logic(power_cycle_output6_cmd_f, output6_f, 5);
 }

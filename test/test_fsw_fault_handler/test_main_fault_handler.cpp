@@ -1,98 +1,10 @@
 #include "test_fault_handlers.hpp"
-#include "../FaultHandlerMachineMock.hpp"
-#include <fsw/FCCode/MainFaultHandler.hpp>
+#include "test_fixture_main_fh.hpp"
 #include <algorithm>
 #include <numeric>
 #include "cartesian_product.hpp"
 
-class TestFixtureMainFH {
-  protected:
-    unsigned int cc = 0; // Control cycle count
-    StateFieldRegistryMock registry;
-    std::unique_ptr<MainFaultHandler> fault_handler;
-
-  public:
-    // Input state fields to fault handler
-    std::shared_ptr<InternalStateField<unsigned char>> radio_state_fp;
-    std::shared_ptr<InternalStateField<unsigned int>> radio_last_comms_ccno_fp;
-    std::shared_ptr<WritableStateField<bool>> quake_power_cycle_cmd_fp;
-    std::shared_ptr<Fault> adcs_wheel1_adc_fault_fp;
-    std::shared_ptr<Fault> adcs_wheel2_adc_fault_fp;
-    std::shared_ptr<Fault> adcs_wheel3_adc_fault_fp;
-    std::shared_ptr<Fault> adcs_wheel_pot_fault_fp;
-    std::shared_ptr<Fault> low_batt_fault_fp;
-    std::shared_ptr<Fault> prop_failed_pressurize_fault_fp;
-    std::shared_ptr<Fault> prop_overpressure_fault_fp;
-
-    WritableStateField<bool>* fault_handler_enabled_fp = nullptr;
-    size_t num_fault_handler_machines = 0;
-
-    TestFixtureMainFH() {
-        // Prepare inputs for main fault handler
-        radio_state_fp = registry.create_internal_field<unsigned char>("radio.state");
-        radio_last_comms_ccno_fp = registry.create_internal_field<unsigned int>("radio.last_comms_ccno");
-        quake_power_cycle_cmd_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output1_cmd");
-        adcs_wheel1_adc_fault_fp = registry.create_fault("adcs_monitor.wheel1_fault", 1, cc);
-        adcs_wheel2_adc_fault_fp = registry.create_fault("adcs_monitor.wheel2_fault", 1, cc);
-        adcs_wheel3_adc_fault_fp = registry.create_fault("adcs_monitor.wheel3_fault", 1, cc);
-        adcs_wheel_pot_fault_fp = registry.create_fault("adcs_monitor.wheel_pot_fault", 1, cc);
-        low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1, cc);
-        prop_failed_pressurize_fault_fp = registry.create_fault("prop.failed_pressurize", 1, cc);
-        prop_overpressure_fault_fp = registry.create_fault("prop.overpressured", 1, cc);
-
-        // Construct main fault handler and capture its outputs
-        fault_handler = std::make_unique<MainFaultHandler>(registry);
-        fault_handler->init();
-        fault_handler_enabled_fp = registry.find_writable_field_t<bool>("fault_handler.enabled");
-        num_fault_handler_machines = fault_handler->fault_handler_machines.size();
-
-        // Replace all fault handler submachines with mocks
-        for(size_t i = 0; i < num_fault_handler_machines; i++) {
-            fault_handler->fault_handler_machines[i] = std::make_unique<FaultHandlerMachineMock>(registry);
-        }
-    }
-
-    /**
-     * @brief Set the output of a particular fault machine to a recommended state.
-     * 
-     * @param idx
-     * @param response
-     */
-    void set_fault_machine_response(size_t idx, fault_response_t response) {
-        static_cast<FaultHandlerMachineMock*>(
-            fault_handler->fault_handler_machines[idx].get())->set(response);
-    }
-
-    /**
-     * @brief Enables or disables global fault handling.
-     * 
-     * @param state If true/false, enable/disable global fault handling.
-     */
-    void set_fault_handling(bool state) {
-        fault_handler_enabled_fp->set(state);
-    }
-
-    /**
-     * @brief Function to step the main fault handler one control cycle forward.
-     * This function also accepts a directive for the outputs of the main
-     * fault handler's underlying fault state machines.
-     * 
-     * @param responses Desired response for the underlying fault machines
-     * @return fault_response_t 
-     */
-    template<size_t N>
-    fault_response_t step(const std::array<fault_response_t, N>& responses) 
-    {
-        assert(responses.size() == num_fault_handler_machines);
-        for(size_t i = 0; i < num_fault_handler_machines; i++) {
-            set_fault_machine_response(i, responses[i]);
-        }
-
-        fault_response_t ret = fault_handler->execute();
-        cc++;
-        return ret;
-    }
-};
+static constexpr unsigned int num_fault_machines = 8;
 
 /**
  * @brief The main fault handler should initially be enabled and
@@ -100,7 +12,7 @@ class TestFixtureMainFH {
  * response.
  */
 void test_main_fh_initialization() {
-    TestFixtureMainFH tf;
+    TestFixtureMainFHMocked tf;
     TEST_ASSERT_NOT_NULL(tf.fault_handler_enabled_fp);
     TEST_ASSERT_TRUE(tf.fault_handler_enabled_fp->get());
 }
@@ -110,14 +22,17 @@ void test_main_fh_initialization() {
  * Verify that the global fault machine also recommends no response.
  */
 void test_main_fh_no_fault() {
-    TestFixtureMainFH tf;
-    assert(tf.num_fault_handler_machines == 10);
+    TestFixtureMainFHMocked tf;
+    assert(tf.num_fault_handler_machines == num_fault_machines);
 
-    fault_response_t response = tf.step<10>({
+    std::array<fault_response_t, num_fault_machines> null_fault_responses = 
+    {
         fault_response_t::none, fault_response_t::none, fault_response_t::none,
         fault_response_t::none, fault_response_t::none, fault_response_t::none,
-        fault_response_t::none, fault_response_t::none, fault_response_t::none
-    });
+        fault_response_t::none, fault_response_t::none
+    };
+
+    fault_response_t response = tf.step<num_fault_machines>(null_fault_responses);
     TEST_ASSERT_EQUAL(fault_response_t::none, response);
 }
 
@@ -125,14 +40,14 @@ void test_main_fh_no_fault() {
  * @brief Test all combinations of faults that lead to a standby response.
  */
 void test_main_fh_standby_fault() {
-    TestFixtureMainFH tf;
-    assert(tf.num_fault_handler_machines == 10);
+    TestFixtureMainFHMocked tf;
+    assert(tf.num_fault_handler_machines == num_fault_machines);
 
     // Produce all combinations of none/standby fault response recommendations.
     static constexpr std::array<fault_response_t, 2> allowed_responses 
         {fault_response_t::none, fault_response_t::standby};
-    const std::vector<std::array<fault_response_t, 10>> combos
-        = NthCartesianProduct<10>::of(allowed_responses);
+    const std::vector<std::array<fault_response_t, num_fault_machines>> combos
+        = NthCartesianProduct<num_fault_machines>::of(allowed_responses);
 
     for(auto const & combo : combos) {
         // Verify that there is at least one fault machine
@@ -152,14 +67,14 @@ void test_main_fh_standby_fault() {
 
 // Test all combinations of faults that lead to a safehold response.
 void test_main_fh_safehold_fault() {
-    TestFixtureMainFH tf;
-    assert(tf.num_fault_handler_machines == 10);
+    TestFixtureMainFHMocked tf;
+    assert(tf.num_fault_handler_machines == num_fault_machines);
 
     // Produce all combinations of none/standby/safehold fault response recommendations.
     static constexpr std::array<fault_response_t, 3> allowed_responses
         {fault_response_t::none, fault_response_t::standby, fault_response_t::safehold};
-    const std::vector<std::array<fault_response_t, 10>> combos 
-        = NthCartesianProduct<10>::of(allowed_responses);
+    const std::vector<std::array<fault_response_t, num_fault_machines>> combos 
+        = NthCartesianProduct<num_fault_machines>::of(allowed_responses);
 
     for(auto const & combo : combos) {
         // Verify that there is at least one fault machine in this combo
@@ -182,17 +97,16 @@ void test_main_fh_safehold_fault() {
  * responses works.
  */
 void test_main_fh_toggle_handling() {
-    TestFixtureMainFH tf;
-    assert(tf.num_fault_handler_machines == 10);
+    TestFixtureMainFHMocked tf;
+    assert(tf.num_fault_handler_machines == num_fault_machines);
 
     // This is a random combination that definitely causes a fault
     // recommendation to transition to safe hold.
-    std::array<fault_response_t, 10> safehold_combo = {
+    std::array<fault_response_t, num_fault_machines> safehold_combo = {
         fault_response_t::safehold, fault_response_t::safehold, 
-        fault_response_t::none, fault_response_t::none,
-        fault_response_t::none, fault_response_t::none,
-        fault_response_t::standby, fault_response_t::safehold,
-        fault_response_t::none
+        fault_response_t::none,     fault_response_t::none,
+        fault_response_t::none,     fault_response_t::none,
+        fault_response_t::standby,  fault_response_t::safehold,
     };
 
     // If some fault machines recommend safehold, the main fault handler

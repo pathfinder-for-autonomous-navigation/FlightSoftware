@@ -5,7 +5,7 @@
 #include <gnc/constants.hpp>
 #include <cmath>
 
-constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
+constexpr float nan_f = gnc::constant::nan_f;
 
 AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_computer", offset),

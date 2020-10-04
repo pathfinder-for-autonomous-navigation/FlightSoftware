@@ -3,7 +3,7 @@
 #include <common/Event.hpp>
 #include <common/EventStorage.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 struct TestFixtureEvent {
   public:
@@ -51,8 +51,8 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
     tf.data2_f.set(false);
     
     //save pointer before signaling
-    size_t event_ptr_prev;
-    size_t event_ptr_curr;
+    size_t event_ptr_prev = 0;
+    size_t event_ptr_curr = 0;
 
     // Verify that upon serialization, the values are written into the event's bitset in the way
     // that we would expect
@@ -66,7 +66,7 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
         event_ptr_curr = *tf.event_ptr;
         *tf.event_ptr = event_ptr_prev;
     }
-    bit_array &ba = const_cast<bit_array &>(event.get_bit_array());
+    const bit_array &ba = event.get_bit_array();
     TEST_ASSERT_EQUAL(ccno, ba.to_uint());
     TEST_ASSERT_EQUAL(true, ba[32]);
     TEST_ASSERT_EQUAL(false, ba[33]);
@@ -103,9 +103,9 @@ void test_single_event(TestFixtureEvent &tf, EventBase &event, unsigned int ccno
         event_ptr_curr = *tf.event_ptr;
         *tf.event_ptr = event_ptr_prev;
     }
-    ba = const_cast<bit_array &>(event.get_bit_array());
-    TEST_ASSERT_EQUAL(false, ba[32]);
-    TEST_ASSERT_EQUAL(true, ba[33]);
+    const bit_array& ba2 = event.get_bit_array();
+    TEST_ASSERT_EQUAL(false, ba2[32]);
+    TEST_ASSERT_EQUAL(true, ba2[33]);
     if (tf.event_ptr != nullptr)
     {
         *tf.event_ptr = event_ptr_curr;

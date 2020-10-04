@@ -122,7 +122,10 @@ class IntegerSerializer : public SerializerBase<T> {
     }
 
     const char* print(const T& src) const override {
-        sprintf(this->printed_val, "%d", src);
+        if (std::is_same<T, unsigned int>::value || std::is_same<T, unsigned char>::value)
+            sprintf(this->printed_val, "%u", src);
+        else
+            sprintf(this->printed_val, "%d", src);
         return this->printed_val;
     }
 };
@@ -579,8 +582,8 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
         }
         
         // if there's a magnitude serializer, save data into the member variable
-        if(N == 3){
-            bit_array& local_arr_ref = const_cast <bit_array&>(magnitude_serializer->get_bit_array());
+        if(N == 3) {
+            bit_array& local_arr_ref = magnitude_serializer->get_bit_array();
             for(size_t i = 0; i < magnitude_serializer->bitsize(); i++){
                 local_arr_ref[i] = this->serialized_val[idx_pointer];
                 idx_pointer++;
@@ -590,7 +593,7 @@ class VectorSerializer : public SerializerBase<std::array<T, N>> {
 
         // loop through each serializer
         for(unsigned int i = 0; i<(N-1); i++){
-            bit_array& local_arr_ref = const_cast <bit_array&>(vector_element_serializers[i]->get_bit_array());
+            bit_array& local_arr_ref = vector_element_serializers[i]->get_bit_array();
             // loop through each bit belonging to the serializer
             for(size_t j = 0; j < vector_element_serializers[i]->bitsize(); j++){       
                 local_arr_ref[j] = this->serialized_val[idx_pointer];
@@ -781,6 +784,13 @@ class Serializer<lin::Vector<T, N>> : public SerializerBase<lin::Vector<T, N>> {
         static_assert(N == 4, "A default constructor can only be used for a quaternion.");
     }
 
+    Serializer<lin::Vector<T, N>>& 
+    operator=(const Serializer<lin::Vector<T, N>>& other) {
+        SerializerBase<lin::Vector<T, N>>::operator=(other);
+        _arr_sr = other._arr_sr;
+        return *this;
+    }
+
     void serialize(const lin::Vector<T, N>& src) override {
         std::array<T, N> src_cpy;
         for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
@@ -805,6 +815,10 @@ class Serializer<lin::Vector<T, N>> : public SerializerBase<lin::Vector<T, N>> {
         std::array<T, N> src_cpy;
         for(unsigned int i = 0; i < N; i++) src_cpy[i] = src(i);
         return _arr_sr.print(src_cpy);
+    }
+
+    unsigned int bitsize() const {
+        return _arr_sr.bitsize();
     }
 };
 

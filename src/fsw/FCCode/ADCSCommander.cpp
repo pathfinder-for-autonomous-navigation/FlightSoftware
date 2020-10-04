@@ -26,14 +26,12 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(
         adcs::mtr::min_moment, adcs::mtr::max_moment, 16)),
     ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", filter_sr),
-    imu_mode_f("adcs_cmd.imu_mode", Serializer<unsigned char>(4)),
+    mag1_mode_f("adcs_cmd.mag1_mode", Serializer<unsigned char>(1)),
+    mag2_mode_f("adcs_cmd.mag2_mode", Serializer<unsigned char>(1)),
     imu_mag_filter_f("adcs_cmd.imu_mag_filter", filter_sr),
     imu_gyr_filter_f("adcs_cmd.imu_gyr_filter", filter_sr),
     imu_gyr_temp_filter_f("adcs_cmd.imu_gyr_temp_filter", filter_sr),
-    k_sr(std::numeric_limits<float>::min(), std::numeric_limits<float>::max(),16),
-    imu_gyr_temp_kp_f("adcs_cmd.imu_gyr_temp_kp", k_sr),
-    imu_gyr_temp_ki_f("adcs_cmd.imu_gyr_temp_ki", k_sr),
-    imu_gyr_temp_kd_f("adcs_cmd.imu_gyr_temp_kd", k_sr),
+    imu_gyr_temp_pwm_f("adcs_cmd.imu_gyr_temp_pwm", Serializer<unsigned char>()),
     imu_gyr_temp_desired_f("adcs_cmd.imu_gyr_temp_desired", 
         Serializer<float>(adcs::imu::min_eq_temp, adcs::imu::max_eq_temp, 8))
 {
@@ -45,13 +43,12 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     add_writable_field(mtr_mode_f);
     add_writable_field(mtr_limit_f);
     add_writable_field(ssa_voltage_filter_f);
-    add_writable_field(imu_mode_f);
+    add_writable_field(mag1_mode_f);
+    add_writable_field(mag2_mode_f);
     add_writable_field(imu_mag_filter_f);
     add_writable_field(imu_gyr_filter_f);
     add_writable_field(imu_gyr_temp_filter_f);
-    add_writable_field(imu_gyr_temp_kp_f);
-    add_writable_field(imu_gyr_temp_ki_f);
-    add_writable_field(imu_gyr_temp_kd_f);
+    add_writable_field(imu_gyr_temp_pwm_f);
     add_writable_field(imu_gyr_temp_desired_f);
 
     // reserve memory
@@ -93,13 +90,12 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     mtr_mode_f.set(adcs::MTRMode::MTR_DISABLED);
     mtr_limit_f.set(adcs::mtr::max_moment);
     ssa_voltage_filter_f.set(1);
-    imu_mode_f.set(adcs::IMUMode::MAG1);
+    mag1_mode_f.set(adcs::IMU_MAG_NORMAL);
+    mag2_mode_f.set(adcs::IMU_MAG_NORMAL);
     imu_mag_filter_f.set(1);
     imu_gyr_filter_f.set(1);
     imu_gyr_temp_filter_f.set(1);
-    imu_gyr_temp_kp_f.set(1);
-    imu_gyr_temp_ki_f.set(1);
-    imu_gyr_temp_kd_f.set(1);
+    imu_gyr_temp_pwm_f.set(255); // default 100% pwm
     imu_gyr_temp_desired_f.set(20); // 20 degrees C
 }
 

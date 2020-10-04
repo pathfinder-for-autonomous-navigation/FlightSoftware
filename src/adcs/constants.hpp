@@ -38,17 +38,13 @@ enum ADCSMode : unsigned char {
   ADCS_ACTIVE = 1
 };
 
-/** \enum IMUMode
- *  Outlines all modes of the IMU assembly. */
-enum IMUMode : unsigned char {
-  /** ADCS attempts to read the first magnetometer. */
-  MAG1 = 0,
-  /** ADCS attempts to read the second magnetometer. */
-  MAG2 = 1,
-  /** ADCS calibrates the first magnetometer and then reads in from then on. */
-  MAG1_CALIBRATE = 2,
-  /** ADCS calibrates the second magnetometer and then reads in from then on. */
-  MAG2_CALIBRATE = 3
+/** \enum IMUMAGMode
+ *  Outlines all modes of the IMU magnetometers. */
+enum IMUMAGMode : unsigned char {
+  /** Continue normal operation - i.e. no calibration. */
+  IMU_MAG_NORMAL = 0,
+  /** Calibrate the magnetometer. */
+  IMU_MAG_CALIBRATE = 1
 };
 
 /** \enum MTRMode
@@ -138,11 +134,6 @@ TRACKED_CONSTANT_SC(float, max_mag2_rd_mag, 0.0032f); // TODO : Check this
  *  magnetometer. */
 TRACKED_CONSTANT_SC(float, min_mag2_rd_mag, -max_mag2_rd_mag);
 
-/** Maximum magnetic field reading in Tesla that can be read per component. */
-TRACKED_CONSTANT_SC(float, max_rd_mag, (max_mag1_rd_mag > max_mag2_rd_mag ? max_mag1_rd_mag : max_mag2_rd_mag));
-/** Minimum magnetic field reading in Tesla that can be read per component. */
-TRACKED_CONSTANT_SC(float, min_rd_mag, -max_rd_mag);
-
 }  // namespace imu
 
 namespace mtr {
@@ -165,6 +156,10 @@ TRACKED_CONSTANT_SC(float, moment_of_inertia, 0.0000135f);
 TRACKED_CONSTANT_SC(float, max_torque, 310.1852f * moment_of_inertia);
 /** Minimum torque available from the reaction wheels. */
 TRACKED_CONSTANT_SC(float, min_torque, -max_torque);
+/** Maximum ramp reading possible. */
+TRACKED_CONSTANT_SC(float, max_ramp_rd, max_torque);
+/** Minimum ramp reading possible. */
+TRACKED_CONSTANT_SC(float, min_ramp_rd, 0);
 /** Maximum speed read from the reaction wheels. */
 TRACKED_CONSTANT_SC(float, max_speed_read, 1047.20f);
 /** Minimum speed read from the reaction wheels. */

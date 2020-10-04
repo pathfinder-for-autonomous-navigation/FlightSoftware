@@ -3,7 +3,7 @@
 # simulation.py
 # Class to run a simulation and communicate with the flight computers.
 
-import time, timeit
+import time, timeit, traceback
 import math
 import platform
 import threading
@@ -14,6 +14,7 @@ import datetime
 import os
 import json
 from .gpstime import GPSTime
+from .cases.base import SingleSatOnlyCase
 
 class Simulation(object):
     """
@@ -35,12 +36,10 @@ class Simulation(object):
         self.testcase = testcase
         self.log = ""
         self.print_log = print_log
-        self.setup_flight_controller()
-        self.is_single_sat_sim = False
 
-    def setup_flight_controller(self):
-        self.flight_controller_leader = self.devices['FlightControllerLeader']
-        self.flight_controller_follower = self.devices['FlightControllerFollower']
+    @property
+    def is_single_sat_sim(self):
+        return isinstance(self.testcase, SingleSatOnlyCase)
 
     def start(self):
         '''
@@ -49,6 +48,12 @@ class Simulation(object):
 
         self.sim_duration = self.testcase.sim_duration
         self.sim_time = 0
+
+        if self.is_single_sat_sim:
+            self.flight_controller = self.devices['FlightController']
+        else:
+            self.flight_controller_leader = self.devices['FlightControllerLeader']
+            self.flight_controller_follower = self.devices['FlightControllerFollower']
 
         self.add_to_log("Running testcase initialization...")
         self.testcase.setup_case(self)
@@ -97,8 +102,8 @@ class Simulation(object):
         self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.testcase.sim_initial_state, nargout=2)
         self.main_state_trajectory = []
 
-        self.eng.workspace['const']['dt'] = 170e6  # Control cycle time in HOOTL/HITL = 170 ms = 170e6 ns
-        self.dt = self.eng.workspace['const']['dt'] * 1e-9  # 120 ms
+        self.eng.workspace['const']['dt'] = self.flight_controller.smart_read("pan.cc_ms") * 1e6  # Control cycle time in nanoseconds.
+        self.dt = self.eng.workspace['const']['dt'] * 1e-9 # In seconds.
 
     def run(self):
         """
@@ -130,10 +135,21 @@ class Simulation(object):
             self.computer_state_leader, self.actuator_commands_leader = \
                 self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
 
-            # Step 3.2. Send inputs, read outputs from Flight Computer
+            # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
             # Step 3.3. Allow test case to do its own meddling with the flight computer.
-            self.testcase.run_case()
+            try:
+                self.testcase.run_case()
+            except Exception as e:
+                traceback.print_exc()
+                self.running = False
+
+        # Step 3.4. Step the flight computer forward.
+            if self.is_single_sat_sim:
+                self.flight_controller.write_state("cycle.start", "true")
+            else:
+                self.flight_controller_follower.write_state("cycle.start", "true")
+                self.flight_controller_leader.write_state("cycle.start", "true")
 
             # Step 5. Command actuators in simulation
             self.main_state = main_state_promise.result()
@@ -153,10 +169,11 @@ class Simulation(object):
         self.eng.quit()
 
     def interact_fc(self):
-        self.interact_fc_onesat(self.flight_controller_follower, self.sensor_readings_follower)
-        self.interact_fc_onesat(self.flight_controller_leader, self.sensor_readings_leader)
-        self.flight_controller_follower.write_state("cycle.start", "true")
-        self.flight_controller_leader.write_state("cycle.start", "true")
+        if self.is_single_sat_sim:
+            self.interact_fc_onesat(self.flight_controller, self.sensor_readings_follower)
+        else:
+            self.interact_fc_onesat(self.flight_controller_follower, self.sensor_readings_follower)
+            self.interact_fc_onesat(self.flight_controller_leader, self.sensor_readings_leader)
 
     def interact_fc_onesat(self, fc, sensor_readings):
         """
@@ -182,7 +199,7 @@ class Simulation(object):
         flight_controller.write_state("piksi.time", str(current_gps_time))
         flight_controller.write_state("piksi.pos", position_ecef)
         flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
-        flight_controller.write_state("adcs_monitor.mag_vec", magnetometer_body)
+        flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
 
     def read_adcs_estimator_outputs(self, flight_controller):
         """
@@ -204,18 +221,3 @@ class Simulation(object):
 
         with open(data_dir + "/simulation_log.txt", "w") as fp:
             fp.write(self.log)
-
-class SingleSatSimulation(Simulation):
-    """
-    Mission simulation with only a single spacecraft.
-    """
-    def __init__(self, is_interactive, devices, seed, testcase, print_log=True):
-        super().__init__(is_interactive, devices, seed, testcase, print_log)
-        self.is_single_sat_sim = True
-
-    def setup_flight_controller(self):
-        self.flight_controller = self.devices['FlightController']
-
-    def interact_fc(self):
-        self.interact_fc_onesat(self.flight_controller, self.sensor_readings_follower)
-        self.flight_controller.write_state("cycle.start", "true")

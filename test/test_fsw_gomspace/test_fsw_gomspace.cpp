@@ -2,7 +2,7 @@
 
 #include <fsw/FCCode/GomspaceController.hpp>
 
-#include <unity.h>
+#include "../custom_assertions.hpp"
 
 class TestFixture {
   public:
@@ -108,6 +108,8 @@ class TestFixture {
     WritableStateField<bool>* gs_reboot_cmd_fp;
 
     TestFixture() : registry(), gs(&hk, &config, &config2) {
+        Fault::cc = &TimedControlTaskBase::control_cycle_count;
+
         gs_controller = std::make_unique<GomspaceController>(registry, 0, gs);
 
         batt_threshold_fp = registry.find_writable_field_t<unsigned int>("gomspace.batt_threshold");
@@ -306,7 +308,7 @@ void test_task_execute() {
     tf.pv2_output_cmd_fp->set(2000);
     tf.pv3_output_cmd_fp->set(3000);
 
-    tf.ppt_mode_cmd_fp->set(0); // 1 is MPPT, the hardware default
+    tf.ppt_mode_cmd_fp->set(0); // 1 is MPPT, 0 is the hardware default
 
     tf.heater_cmd_fp->set(true);
 
@@ -322,12 +324,33 @@ void test_task_execute() {
     // The controller will set the gomspace outputs and
     // write the new values to their respective statefields
 
+    TEST_ASSERT_EQUAL(0, tf.pptmode_fp->get());
+
+    // vboost voltages, and pv outputs are never applied since ppt mode was in default PPT
+    // vboost voltages are set in unit tests from DESKTOP only hidden variables
+    TEST_ASSERT_EQUAL(1, tf.vboost1_fp->get());
+    TEST_ASSERT_EQUAL(2, tf.vboost2_fp->get());
+    TEST_ASSERT_EQUAL(3, tf.vboost3_fp->get());
+
+    TEST_ASSERT_EQUAL(1, tf.gs.get_heater());
+
+    tf.ppt_mode_cmd_fp->set(1); // 1 is MPPT
+    tf.gs_controller->execute();
+    TEST_ASSERT_EQUAL(1, tf.pptmode_fp->get());
+    TEST_ASSERT_EQUAL(1, tf.vboost1_fp->get());
+    TEST_ASSERT_EQUAL(2, tf.vboost2_fp->get());
+    TEST_ASSERT_EQUAL(3, tf.vboost3_fp->get());
+
+    tf.ppt_mode_cmd_fp->set(2); // 2 is Fixed PPT
+    tf.gs_controller->execute();
+    
+    tf.gs_controller->execute(); // a second execute is required to 
+    //load new voltages into the next hk struct
+    
+    TEST_ASSERT_EQUAL(2, tf.pptmode_fp->get());
     TEST_ASSERT_EQUAL(1000, tf.vboost1_fp->get());
     TEST_ASSERT_EQUAL(2000, tf.vboost2_fp->get());
-    TEST_ASSERT_EQUAL(3000, tf.vboost3_fp->get());
-
-    TEST_ASSERT_EQUAL(0, tf.pptmode_fp->get());
-    TEST_ASSERT_EQUAL(1, tf.gs.get_heater());
+    TEST_ASSERT_EQUAL(3000, tf.vboost3_fp->get());    
 
     // Test the reset commands one by one, starting with the power cycle outputs command
 

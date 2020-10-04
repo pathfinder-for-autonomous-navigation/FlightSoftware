@@ -33,9 +33,13 @@ public:
 protected:
     /**
      * @brief Command to get from mission_manager
-     * 
      */
     const WritableStateField<unsigned char>* adcs_state_fp;
+
+    /**
+     * @brief DCDC control. Disables/enables wheels.
+     */
+    WritableStateField<bool>* adcs_dcdc_fp;
 
     /**
      * @brief RWA command fields
@@ -66,21 +70,20 @@ protected:
      * @brief IMU command fields
      * 
      */
-    const WritableStateField<unsigned char>* imu_mode_fp;
+    const WritableStateField<unsigned char>* mag1_mode_fp;
+    const WritableStateField<unsigned char>* mag2_mode_fp;
     const WritableStateField<float>* imu_mag_filter_fp;
     const WritableStateField<float>* imu_gyr_filter_fp;
     const WritableStateField<float>* imu_gyr_temp_filter_fp;
-    const WritableStateField<float>* imu_gyr_temp_kp_fp;
-    const WritableStateField<float>* imu_gyr_temp_ki_fp;
-    const WritableStateField<float>* imu_gyr_temp_kd_fp;
+    const WritableStateField<unsigned char>* imu_gyr_temp_pwm_fp;
     const WritableStateField<float>* imu_gyr_temp_desired_fp;
 
     /**
      * @brief HAVT command tables, a vector of pointers to bool state fields
      * 
      */
-    std::vector<const WritableStateField<bool>*> havt_cmd_reset_vector_fp;
-    std::vector<const WritableStateField<bool>*> havt_cmd_disable_vector_fp;
+    std::vector<WritableStateField<bool>*> havt_cmd_reset_vector_fp;
+    std::vector<WritableStateField<bool>*> havt_cmd_disable_vector_fp;
 
 };
 

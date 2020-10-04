@@ -1,37 +1,46 @@
 #include "AttitudeEstimator.hpp"
+
+#include <gnc/attitude_estimator.hpp>
 #include <gnc/constants.hpp>
 
-const gps_time_t AttitudeEstimator::pan_epoch(gnc::constant::init_gps_week_number,
-                                              gnc::constant::init_gps_time_of_week,
-                                              gnc::constant::init_gps_nanoseconds);
+#include <lin/core.hpp>
+#include <lin/generators/constants.hpp>
+#include <lin/math.hpp>
+#include <lin/queries.hpp>
 
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
     : TimedControlTask<void>(registry, "adcs_estimator", offset),
-    data(),
-    state(),
-    estimate(),
-    q_body_eci_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
-    w_body_f("attitude_estimator.w_body", Serializer<lin::Vector3f>(-55, 55, 32*3)),
-    h_body_f("attitude_estimator.h_body"),
-    adcs_paired_f("adcs.paired", Serializer<bool>())
+    time_fp(FIND_READABLE_FIELD(double, orbit.time)),
+    pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos)),
+    mag1_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag1_vec)),
+    mag2_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag2_vec)),
+    ssa_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.ssa_vec)),
+    gyr_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.gyr_vec)),
+    mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>()),
+    q_body_eci_est_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
+    w_body_est_f("attitude_estimator.w_body", Serializer<lin::Vector3f>(-55, 55, 32*3)),
+    fro_P_est_f("attitude_estimator.fro_P", Serializer<float>(0.0, 0.1, 16))
     {
-        piksi_time_fp = find_readable_field<gps_time_t>("piksi.time", __FILE__, __LINE__),
-        pos_vec_ecef_fp = find_readable_field<d_vector_t>("piksi.pos", __FILE__, __LINE__),
-        ssa_vec_rd_fp = find_readable_field<lin::Vector3f>("adcs_monitor.ssa_vec", __FILE__, __LINE__),
-        mag_vec_fp = find_readable_field<f_vector_t>("adcs_monitor.mag_vec", __FILE__, __LINE__),
+        //Writable fields
+        add_writable_field(mag_flag_f);
 
         //Add outputs
-        add_readable_field(q_body_eci_f);
-        add_readable_field(w_body_f);
-        add_internal_field(h_body_f);
-        add_writable_field(adcs_paired_f);
+        add_readable_field(q_body_eci_est_f);
+        add_readable_field(w_body_est_f);
+        add_readable_field(fro_P_est_f);
 
-        // Initialize flags
-        adcs_paired_f.set(false);
+        // Default magnetometer
+        mag_flag_f.set(false);
+
+        // Default the gnc buffer
+        state = gnc::AttitudeEstimatorState();
+        data = gnc::AttitudeEstimatorData();
+        estimate = gnc::AttitudeEstimate();
     }
 
 void AttitudeEstimator::execute(){
+<<<<<<< HEAD
     set_data();
     gnc::attitude_estimator_update(state, data, estimate);
     set_estimate();
@@ -39,27 +48,63 @@ void AttitudeEstimator::execute(){
 
 void AttitudeEstimator::set_data(){
     data.t = ((unsigned long)(piksi_time_fp->get() - pan_epoch)) / 1.0e9;
+=======
+    // Copy in all of our inputs
+    double t             = time_fp->get();
+    lin::Vector3d r_ecef = pos_fp->get();
+    lin::Vector3f s_body = ssa_vec_fp->get();
+    lin::Vector3f w_body = gyr_vec_fp->get();
+>>>>>>> master
 
-    const d_vector_t r_ecef = pos_vec_ecef_fp->get();
-    data.r_ecef = {r_ecef[0], r_ecef[1], r_ecef[2]};
+    // Handle the special magnetometer case
+    lin::Vector3f b_body = mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get(); // TODO : Choose default mag
+    if (!lin::all(lin::isfinite(b_body)))
+        b_body = !mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get();
 
-    const f_vector_t mag_vec = mag_vec_fp->get();
-    data.b_body = {mag_vec[0], mag_vec[1], mag_vec[2]};
+    // The filter is already up and running
+    if (state.is_valid) {
+        // Populate the input struct
+        data = gnc::AttitudeEstimatorData();
+        data.t = t;
+        data.r_ecef = r_ecef;
+        data.b_body = b_body;
+        data.s_body = s_body;
+        data.w_body = w_body;
 
-    data.s_body = ssa_vec_rd_fp->get();
-}
+        // Update the filter
+        gnc::attitude_estimator_update(state, data, estimate);
 
-void AttitudeEstimator::set_estimate(){
-    q_body_eci_f.set({
-        estimate.q_body_eci(0),
-        estimate.q_body_eci(1),
-        estimate.q_body_eci(2),
-        estimate.q_body_eci(3)
-    });
+        // Copy out the valid estimate
+        if (estimate.is_valid) {
+            q_body_eci_est_f.set(estimate.q_body_eci);
+            w_body_est_f.set((w_body - estimate.gyro_bias).eval());
+            fro_P_est_f.set(lin::fro(estimate.P));
+        }
+        // Handle an invalid estimate
+        else {
+            _nan_estimate();
+        }
+    }
+    // The filter needs to be initialized
+    else {
+        // All we can give is a NaN estimate and hope the reset works on the next
+        // control cycle
+        _nan_estimate();
 
+<<<<<<< HEAD
     w_body_f.set(w_body_f.get() - estimate.gyro_bias);
 
     lin::Vector3f result;
     result = gnc::constant::J_sat * w_body_f.get();
     h_body_f.set(result);
+=======
+        gnc::attitude_estimator_reset(state, t, r_ecef, b_body, s_body);
+    }
+}
+
+void AttitudeEstimator::_nan_estimate() {
+    q_body_eci_est_f.set(lin::nans<lin::Vector4f>());
+    w_body_est_f.set(lin::nans<lin::Vector3f>());
+    fro_P_est_f.set(gnc::constant::nan_f);
+>>>>>>> master
 }

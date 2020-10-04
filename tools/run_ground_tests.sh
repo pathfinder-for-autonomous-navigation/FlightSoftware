@@ -28,3 +28,8 @@ diff src/flow_data.cpp src/uploaded_flow_data.cpp
 mv constants uploaded_constants
 python tools/constant_reporter.py
 diff constants uploaded_constants
+
+# Cleanup Directory
+rm expected_telemetry
+rm uploaded_constants
+rm src/uploaded_flow_data.cpp
