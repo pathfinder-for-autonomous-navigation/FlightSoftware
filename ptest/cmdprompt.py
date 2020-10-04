@@ -19,7 +19,7 @@ def USBSessionOnly(fn):
             if isinstance(self.cmded_device, USBSession):
                 fn(self, args)
             else:
-                print("Cannot use this function since currently commanded device is not a state session.")
+                print("Cannot use this function since currently commanded device is not a USB session.")
 
         return inner
 
