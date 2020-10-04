@@ -136,8 +136,6 @@ class Case(object):
         """
 
         if not self.finished:
-            if not self.is_interactive and hasattr(self, "sim"):
-                self.sim.running = False
             self.logger.put("[TESTCASE] Finished testcase.")
             self.finished = True
             time.sleep(1)

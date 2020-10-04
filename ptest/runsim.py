@@ -1,7 +1,7 @@
 #!/usr/local/bin/python3
 
 from argparse import ArgumentParser
-from .cases.base import TestCaseFailure
+from .cases.base import TestCaseFailure, SingleSatOnlyCase
 from .configs.schemas import *
 from .usb_session import USBSession
 from .radio_session import RadioSession
@@ -48,10 +48,14 @@ class PTest(object):
         self.is_running = True
         self.set_up_devices()
         self.set_up_radios()
-        self.set_up_sim()
+        self.set_up_testcase()
 
         try:
-            self.sim.start()
+            if hasattr(self, "sim"):
+                self.sim.start()
+            else:
+                while not self.testcase.finished:
+                    self.testcase.run_case()
         except TestCaseFailure as failure:
             tb = traceback.format_exc()
             self.sim.testcase.logger.put(tb)
@@ -150,7 +154,7 @@ class PTest(object):
                     self.tlm_config)
                 self.radios[radio_name] = radio_session
 
-    def set_up_sim(self):
+    def set_up_testcase(self):
         """
         Starts up the test case and the MATLAB simulation if it is required by the testcase.
         """
@@ -163,11 +167,14 @@ class PTest(object):
             self.stop_all(f"Nonexistent test case: {self.testcase_name}")
         print(f"Running mission testcase {self.testcase_name}.")
 
-        self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
+        self.testcase = testcase(self.is_interactive, self.simulation_run_dir)
+        self.testcase.setup_case(self.devices)
+        if self.testcase.sim_duration > 0:
+            self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, self.testcase, self.testcase.sim_duration, self.testcase.sim_initial_state, isinstance(self.testcase, SingleSatOnlyCase))
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt
-        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.sim, self.stop_all)
+        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.stop_all)
         try:
             self.cmd_prompt.cmdloop()
         except (KeyboardInterrupt, SystemExit):

@@ -20,7 +20,7 @@ class Simulation(object):
     """
     Full mission simulation, including both spacecraft.
     """
-    def __init__(self, is_interactive, devices, seed, testcase, print_log=True):
+    def __init__(self, is_interactive, devices, seed, testcase, sim_duration, sim_initial_state, is_single_sat_sim):
         """
         Initializes self
 
@@ -34,19 +34,16 @@ class Simulation(object):
         self.devices = devices
         self.seed = seed
         self.testcase = testcase
-        self.log = ""
-        self.print_log = print_log
+        self.sim_duration = sim_duration
+        self.sim_initial_state = sim_initial_state
+        self.is_single_sat_sim = is_single_sat_sim
 
-    @property
-    def is_single_sat_sim(self):
-        return isinstance(self.testcase, SingleSatOnlyCase)
+        self.log = ""
 
     def start(self):
         '''
         Start the MATLAB simulation. This function is blocking until the simulation begins.
         '''
-
-        self.sim_duration = self.testcase.sim_duration
         self.sim_time = 0
 
         if self.is_single_sat_sim:
@@ -55,32 +52,23 @@ class Simulation(object):
             self.flight_controller_leader = self.devices['FlightControllerLeader']
             self.flight_controller_follower = self.devices['FlightControllerFollower']
 
-        self.add_to_log("Running testcase initialization...")
-        self.testcase.setup_case(self)
+        self.add_to_log("Configuring simulation (please be patient)...")
+        start_time = timeit.default_timer()
+        self.running = True
+        self.configure_sim()
+        elapsed_time = timeit.default_timer() - start_time
+        self.add_to_log("Configuring simulation took %0.2fs." % elapsed_time)
 
-        if self.testcase.sim_duration > 0:
-            self.add_to_log("Configuring simulation (please be patient)...")
-            start_time = timeit.default_timer()
-            self.running = True
-            self.configure_sim()
-            elapsed_time = timeit.default_timer() - start_time
-            self.add_to_log("Configuring simulation took %0.2fs." % elapsed_time)
-
-            self.add_to_log("Starting simulation loop...")
-            if self.is_interactive:
-                self.sim_thread = threading.Thread(name="Python-MATLAB Simulation Interface",
-                                            target=self.run)
-                self.sim_thread.start()
-            else:
-                self.run()
+        self.add_to_log("Starting simulation loop...")
+        if self.is_interactive:
+            self.sim_thread = threading.Thread(name="Python-MATLAB Simulation Interface",
+                                        target=self.run)
+            self.sim_thread.start()
         else:
-            self.add_to_log("Not running simulation since the testcase doesn't require it.")
-            self.running = False
-            self.testcase.run_case()
+            self.run()
 
     def add_to_log(self, msg):
-        if self.print_log:
-            print(msg)
+        print(msg)
         self.log += f"[{datetime.datetime.now()}] {msg}\n"
 
     def configure_sim(self):
@@ -98,8 +86,8 @@ class Simulation(object):
         self.eng.generate_mex_code(nargout=0)
         self.eng.eval("global const", nargout=0)
 
-        self.main_state = self.eng.initialize_main_state(self.seed, self.testcase.sim_initial_state, nargout=1)
-        self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.testcase.sim_initial_state, nargout=2)
+        self.main_state = self.eng.initialize_main_state(self.seed, self.sim_initial_state, nargout=1)
+        self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.sim_initial_state, nargout=2)
         self.main_state_trajectory = []
 
         self.eng.workspace['const']['dt'] = self.flight_controller.smart_read("pan.cc_ms") * 1e6  # Control cycle time in nanoseconds.
@@ -118,7 +106,7 @@ class Simulation(object):
         step = 0
 
         start_time = time.time()
-        while step < num_steps and self.running:
+        while step < num_steps and self.running and not self.testcase.finished:
             self.sim_time = self.main_state['follower']['dynamics']['time']
 
             # Step 1. Get sensor readings from simulation
