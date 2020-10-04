@@ -50,10 +50,10 @@ class TestFixture {
         TestFixture() : registry(){
             adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
 
-            adcs_vec1_current_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec1.current", 0, 1, 100);
-            adcs_vec1_desired_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec1.desired", 0, 1, 100);
-            adcs_vec2_current_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec2.current", 0, 1, 100);
-            adcs_vec2_desired_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec2.desired", 0, 1, 100);
+            adcs_vec1_current_fp = registry.create_writable_lin_vector_field<float>("attitude_control.vec1_current", 0, 1, 100);
+            adcs_vec1_desired_fp = registry.create_writable_lin_vector_field<float>("attitude_control.vec1_desired", 0, 1, 100);
+            adcs_vec2_current_fp = registry.create_writable_lin_vector_field<float>("attitude_control.vec2_current", 0, 1, 100);
+            adcs_vec2_desired_fp = registry.create_writable_lin_vector_field<float>("attitude_control.vec2_desired", 0, 1, 100);
 
             adcs_cmder = std::make_unique<ADCSCommander>(registry, 0);  
 

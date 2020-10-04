@@ -14,7 +14,7 @@
             "type": "lin float vector",
             "writable": true
         },
-        "adcs.compute.vec1.desired": {
+        "attitude_control.vec1_desired": {
             "bitsize": 0,
             "flow_id": 14,
             "max": 1.0,
@@ -30,7 +30,7 @@
             "type": "lin float vector",
             "writable": true
         },
-        "adcs.compute.vec2.desired": {
+        "attitude_control.vec2_desired": {
             "bitsize": 0,
             "flow_id": 14,
             "max": 1.0,
@@ -2155,9 +2155,9 @@
             "active": true,
             "fields": [
                 "adcs.compute.vec1.current",
-                "adcs.compute.vec1.desired",
+                "attitude_control.vec1_desired",
                 "adcs.compute.vec2.current",
-                "adcs.compute.vec2.desired"
+                "attitude_control.vec2_desired"
             ],
             "id": 14,
             "priority": 13

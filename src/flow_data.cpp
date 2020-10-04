@@ -18,7 +18,7 @@ const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
 {11, true, {"gomspace.counter_boot", "gomspace.temp.output1", "gomspace.temp.output2", "gomspace.temp.output3", "gomspace.temp.output4", "gomspace.bootcause", "gomspace.battmode", "gomspace.pptmode"}},
 {12, true, {"gomspace.power_cycle_output1_cmd", "gomspace.power_cycle_output2_cmd", "gomspace.power_cycle_output3_cmd", "gomspace.power_cycle_output4_cmd", "gomspace.power_cycle_output5_cmd", "gomspace.power_cycle_output6_cmd"}},
 {13, true, {"adcs.state", "adcs.paired", "adcs_monitor.functional", "adcs_monitor.functional_fault", "adcs_monitor.functional_fault.override", "adcs_monitor.functional_fault.persistence", "adcs_monitor.functional_fault.suppress", "adcs_monitor.functional_fault.unsignal", "adcs_cmd.mtr_cmd"}},
-{14, true, {"adcs.compute.vec1.current", "adcs.compute.vec1.desired", "adcs.compute.vec2.current", "adcs.compute.vec2.desired"}},
+{14, true, {"adcs.compute.vec1.current", "attitude_control.vec1_desired", "adcs.compute.vec2.current", "attitude_control.vec2_desired"}},
 {15, true, {"adcs_monitor.havt_device0", "adcs_monitor.havt_device1", "adcs_monitor.havt_device2", "adcs_monitor.havt_device3", "adcs_monitor.havt_device4", "adcs_monitor.havt_device5", "adcs_monitor.havt_device6", "adcs_monitor.havt_device7", "adcs_monitor.havt_device8", "adcs_monitor.havt_device9", "adcs_monitor.havt_device10", "adcs_monitor.havt_device11", "adcs_monitor.havt_device12", "adcs_monitor.havt_device13", "adcs_monitor.havt_device14", "adcs_monitor.havt_device15", "adcs_monitor.havt_device16", "adcs_monitor.havt_device17"}},
 {16, true, {"radio.err"}},
 {17, true, {"docksys.docked", "docksys.dock_config"}},

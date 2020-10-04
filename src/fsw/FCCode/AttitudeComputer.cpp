@@ -9,10 +9,10 @@ constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
 
 AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_computer", offset),
-    adcs_vec1_current_f("adcs.compute.vec1.current", Serializer<lin::Vector3f>(0, 1, 100)),
-    adcs_vec1_desired_f("adcs.compute.vec1.desired", Serializer<lin::Vector3f>(0, 1, 100)),
-    adcs_vec2_current_f("adcs.compute.vec2.current", Serializer<lin::Vector3f>(0, 1, 100)),
-    adcs_vec2_desired_f("adcs.compute.vec2.desired", Serializer<lin::Vector3f>(0, 1, 100))
+    adcs_vec1_current_f("attitude_control.vec1_current", Serializer<lin::Vector3f>(0, 1, 100)),
+    adcs_vec1_desired_f("attitude_control.vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
+    adcs_vec2_current_f("attitude_control.vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
+    adcs_vec2_desired_f("attitude_control.vec2_desired", Serializer<lin::Vector3f>(0, 1, 100))
 {
     add_writable_field(adcs_vec1_current_f);
     add_writable_field(adcs_vec1_desired_f);

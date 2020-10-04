@@ -31,8 +31,8 @@ class ADCSCommander : public TimedControlTask<void> {
     const WritableStateField<lin::Vector3f>* const adcs_vec1_desired_fp;
     const WritableStateField<lin::Vector3f>* const adcs_vec2_current_fp;
     const WritableStateField<lin::Vector3f>* const adcs_vec2_desired_fp;
-    const WritableStateField<f_vector_t>* const rwa_torque_cmd_f;
-    const WritableStateField<f_vector_t>* const mtr_cmd_f;
+    const WritableStateField<lin::Vector3f>* const rwa_torque_cmd_f;
+    const WritableStateField<lin::Vector3f>* const mtr_cmd_f;
 
     // begin output fields necessary for adcs_box controller
     const Serializer<float> filter_sr;

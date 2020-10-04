@@ -14,8 +14,8 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     adcs_vec1_desired_fp(find_writable_field<lin::Vector3f>("attitude_control.vec1_desired", __FILE__, __LINE__)),
     adcs_vec2_current_fp(find_writable_field<lin::Vector3f>("attitude_control.vec2_current", __FILE__, __LINE__)),
     adcs_vec2_desired_fp(find_writable_field<lin::Vector3f>("attitude_control.vec2_desired", __FILE__, __LINE__)),
-    rwa_torque_cmd_f(find_writable_field<lin::Vector3f>("attitude_control.vec2_desired", __FILE__, __LINE__)),
-    mtr_cmd_f(find_writable_field<lin::Vector3f>("attitude_control.vec2_desired", __FILE__, __LINE__)),
+    rwa_torque_cmd_f(find_writable_field<lin::Vector3f>("attitude_control.t_body_cmd", __FILE__, __LINE__)),
+    mtr_cmd_f(find_writable_field<lin::Vector3f>("attitude_control.m_body_cmd", __FILE__, __LINE__)),
     filter_sr(0,1,8),
     rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
     rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(
