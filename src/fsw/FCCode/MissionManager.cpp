@@ -89,7 +89,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
                   prop_state_t::disabled); // "Starting" transition
     docking_config_cmd_f.set(true);
     enter_docking_cycle_f.set(0);
-    is_deployed_f.set(false); // not necessarily true
+    is_deployed_f.set(bootcount_fp->get() > 1);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
 }
@@ -175,7 +175,7 @@ void MissionManager::dispatch_startup()
     set(radio_state_t::disabled);
 
     // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
-    if (bootcount_fp->get() == 1) { //Can a serialized unsigned int be compared in this way?
+    if (bootcount_fp->get() == 1) { 
         if (deployment_wait_elapsed_f.get() < deployment_wait)
         {
             deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);

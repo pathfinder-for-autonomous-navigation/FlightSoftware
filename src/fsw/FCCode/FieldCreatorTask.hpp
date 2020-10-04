@@ -32,7 +32,7 @@ class FieldCreatorTask : public ControlTask<void> {
         pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,100000,100)),
         vel_baseline_f("orbit.baseline_vel", Serializer<lin::Vector3d>(0,100000,100)),
         prop_planner_state_f("prop.planner.state", Serializer<unsigned char>(2)),
-        bootcount_f("pan.bootcount",Serializer<unsigned int>(64), 1000)
+        bootcount_f("pan.bootcount",Serializer<unsigned int>(4294967295), 1000)
       {
           // For OrbitController
           add_readable_field(time_f); // Time since the PAN epoch in seconds
