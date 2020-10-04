@@ -132,8 +132,8 @@ protected:
     // Fields provided by Piksi and orbital estimation subsystems
     const ReadableStateField<lin::Vector3d> *propagated_baseline_pos_fp; // Propagated baseline position
 
-    // Field exposed by Gomspace for rebooting entire spacecraft.
-    WritableStateField<bool> *reboot_fp;
+    // Field exposed by Gomspace for resetting entire spacecraft.
+    WritableStateField<bool> *reset_fp;
 
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
