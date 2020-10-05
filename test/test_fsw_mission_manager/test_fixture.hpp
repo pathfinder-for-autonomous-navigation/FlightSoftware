@@ -49,11 +49,9 @@ public:
   std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
   std::shared_ptr<InternalStateField<unsigned int>> last_rtkfix_ccno_fp;
 
-  std::shared_ptr<ReadableStateField<unsigned int>> bootcount_shr_fp;
+  std::shared_ptr<ReadableStateField<unsigned int>> bootcount_fp;
 
   std::unique_ptr<MissionManager> mission_manager;
-
-  ReadableStateField<unsigned int> *bootcount_fp;
 
   // Output state fields from mission manager
   WritableStateField<double> *detumble_safety_factor_fp;

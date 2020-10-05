@@ -21,8 +21,8 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
 
-    bootcount_shr_fp = registry.create_readable_field<unsigned int, 1000>("pan.bootcount"); 
-    bootcount_shr_fp->set(bootcount);
+    bootcount_fp = registry.create_readable_field<unsigned int, 1000>("pan.bootcount"); 
+    bootcount_fp->set(bootcount);
 
 
     low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
@@ -66,7 +66,6 @@ TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) 
     deployment_wait_elapsed_fp = registry.find_readable_field_t<unsigned int>(
         "pan.deployment.elapsed");
     sat_designation_fp = registry.find_writable_field_t<unsigned char>("pan.sat_designation");
-    bootcount_fp = registry.find_readable_field_t<unsigned int>("pan.bootcount");
 
     // Replace fault handler with a mock.
     mission_manager->main_fault_handler = std::make_unique<FaultHandlerMachineMock>(registry);
