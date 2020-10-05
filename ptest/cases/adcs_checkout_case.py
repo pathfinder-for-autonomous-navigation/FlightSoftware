@@ -16,7 +16,7 @@ def list_of_avgs(lists_of_vals):
     '''
     sum_of_each = [sum(x) for x in lists_of_vals]
     len_of_each = len(lists_of_vals[0])
-    return [sum_of_each[i]/len_of_each for y in lists_of_vals]    
+    return [sum_of_each[i]/len_of_each for i in lists_of_vals]    
 
 class ADCSCheckoutCase(SingleSatOnlyCase):
     def assert_vec_within(self, expected, actual, delta):
