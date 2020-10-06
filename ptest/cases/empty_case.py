@@ -5,7 +5,7 @@ from .utils import Enums
 class EmptyCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
         self.sim.cycle_no = self.sim.flight_controller.read_state("pan.cycle_no")
-        for x in range(0,1000):
+        for x in range(0,50000):
             self.cycle()
             
         self.finish()

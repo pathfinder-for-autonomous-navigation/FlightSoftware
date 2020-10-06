@@ -66,7 +66,7 @@ class Datastore(DataConsumer):
         Adds a single data point to the telemetry log.
         """
         self.dataList.append(datapoint)
-        print("point added")
+        
 
     def save(self):
         """ Save telemetry log to a file. """
