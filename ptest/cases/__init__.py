@@ -14,7 +14,8 @@ from .piksi_checkout_case import PiksiCheckoutCase
 from .deployment_to_init_hold_case import DeploymentToInitHoldCheckoutCase
 from .gyro_heater_diag_case import GyroHeaterDiagCase
 from .ci_case import CICase
-from .quake_fault_handler import QuakeFaultHandler
+#from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
 from .simple_fault_handlers import ADCSWheelFaultHandler, LowBattFaultHandler
 from .safehold_reboot import SafeholdReboot
+from .torquer_rotate_case import MTorquerCase
