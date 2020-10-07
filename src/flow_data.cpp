@@ -30,7 +30,7 @@ const std::vector<DownlinkProducer::FlowData> PAN::flow_data = {
 {23, false, {"adcs_cmd.imu_gyr_filter", "adcs_cmd.imu_gyr_temp_desired", "adcs_cmd.imu_gyr_temp_filter", "adcs_cmd.imu_gyr_temp_pwm", "adcs_cmd.imu_mag_filter", "adcs_cmd.mag1_mode", "adcs_cmd.mag2_mode", "adcs_cmd.mtr_limit", "adcs_cmd.mtr_mode", "adcs_cmd.rwa_mode", "adcs_cmd.rwa_ramp_filter", "adcs_cmd.rwa_speed_filter", "adcs_cmd.ssa_voltage_filter"}},
 {24, false, {"adcs_monitor.gyr_temp", "adcs_monitor.gyr_vec", "adcs_monitor.mag1_vec", "adcs_monitor.mag2_vec", "adcs_monitor.ssa_vec", "adcs_monitor.gyr_temp_flag"}},
 {25, false, {"adcs_monitor.ssa_voltage0", "adcs_monitor.ssa_voltage1", "adcs_monitor.ssa_voltage2", "adcs_monitor.ssa_voltage3", "adcs_monitor.ssa_voltage4", "adcs_monitor.ssa_voltage5", "adcs_monitor.ssa_voltage6", "adcs_monitor.ssa_voltage7", "adcs_monitor.ssa_voltage8", "adcs_monitor.ssa_voltage9", "adcs_monitor.ssa_voltage10", "adcs_monitor.ssa_voltage11", "adcs_monitor.ssa_voltage12", "adcs_monitor.ssa_voltage13", "adcs_monitor.ssa_voltage14", "adcs_monitor.ssa_voltage15", "adcs_monitor.ssa_voltage16", "adcs_monitor.ssa_voltage17", "adcs_monitor.ssa_voltage18", "adcs_monitor.ssa_voltage19"}},
-{26, false, {"detumble_safety_factor", "docking_timeout_limit", "fault_handler.enabled", "max_radio_silence", "trigger_dist.close_approach", "trigger_dist.docking"}},
+{26, false, {"detumble_safety_factor", "docking_timeout_limit", "fault_handler.enabled", "trigger_dist.close_approach", "trigger_dist.docking"}},
 {27, false, {"downlink.shift_id1", "downlink.shift_id2", "downlink.toggle_id"}},
 {28, false, {"gomspace.heater", "gomspace.heater_cmd"}},
 {29, false, {"gomspace.wdt_i2c_time_left", "gomspace.counter_wdt_i2c"}},

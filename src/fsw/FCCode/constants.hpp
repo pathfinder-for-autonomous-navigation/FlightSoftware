@@ -22,7 +22,7 @@ namespace PAN {
     #endif
 
     #ifdef SPEEDUP
-        TRACKED_CONSTANT_C(unsigned int, one_day_ccno, 60 * 1000 / control_cycle_time_ms);
+        TRACKED_CONSTANT_C(unsigned int, one_day_ccno, 10 * 1000 / control_cycle_time_ms);
     #else
         TRACKED_CONSTANT_C(unsigned int, one_day_ccno, 24 * 60 * 60 * 1000 / control_cycle_time_ms);
     #endif

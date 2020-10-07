@@ -6,6 +6,8 @@
 
 #include "../custom_assertions.hpp"
 
+#include <fsw/FCCode/GomspaceController.hpp>
+
 // Check that radio state x matches the current radio state
 #define assert_radio_state(x)                                                                   \
     {                                                                                           \
@@ -47,6 +49,9 @@ public:
     ReadableStateField<unsigned char> *radio_state_fp;
     ReadableStateField<unsigned int> *last_checkin_cycle_fp;
 
+    //gomspace flag for power cycling power check
+    std::shared_ptr<WritableStateField<bool>> radio_power_cycle_fp;
+
     // Quake manager object
     std::unique_ptr<QuakeManager> quake_manager;
 
@@ -61,6 +66,9 @@ public:
         radio_mo_packet_fp->set((char *)snap1);
         TimedControlTaskBase::control_cycle_count = initCycles;
 
+        //create gomspace power cycling field
+        radio_power_cycle_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output3_cmd");
+
         // Create Quake Manager instance
         quake_manager = std::make_unique<QuakeManager>(registry, 0);
         max_wait_cycles_fp = registry.find_writable_field_t<unsigned int>("radio.max_wait");
@@ -72,7 +80,6 @@ public:
         last_checkin_cycle_fp = registry.find_readable_field_t<unsigned int>("radio.last_comms_ccno");
 
         // Initialize internal fields
-
         radio_state_fp->set(radio_state);
     }
     // step is called when we want to see the effect of time on the state of the machine
@@ -114,6 +121,7 @@ void test_wait_unexpected()
     // setup
     TestFixture tf(static_cast<unsigned int>(radio_state_t::wait));
     TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->dbg_get_cycle_of_entry());
+    tf.radio_power_cycle_fp->set(false); //not power cycling
     // If in WAIT and unexpected Flag is set
     tf.quake_manager->dbg_get_unexpected_flag() = true;
     // then expect execute all the wait cycles
@@ -130,6 +138,8 @@ void test_wait_no_more_cycles()
 {
     // If in WAIT and there are no more cycles
     TestFixture tf(static_cast<unsigned int>(radio_state_t::wait));
+    TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->dbg_get_cycle_of_entry());
+    tf.radio_power_cycle_fp->set(false); //not power cycling
     tf.realSteps(tf.max_wait_cycles_fp->get());
     assert_radio_state(radio_state_t::wait);
     tf.realSteps();
@@ -138,6 +148,28 @@ void test_wait_no_more_cycles()
     TEST_ASSERT_EQUAL(tf.quake_manager->dbg_get_cycle_of_entry(), TimedControlTaskBase::control_cycle_count);
     assert_fn_num(0);
     assert_radio_state(static_cast<unsigned int>(radio_state_t::write));
+}
+
+void test_wait_power_cycling()
+{
+    //if in WAIT and currently power cycling ensure we return
+    TestFixture tf(static_cast<unsigned int>(radio_state_t::wait));
+    TEST_ASSERT_EQUAL(initCycles, tf.quake_manager->dbg_get_cycle_of_entry());
+    tf.radio_power_cycle_fp->set(true);
+    tf.realSteps();
+    assert_radio_state(radio_state_t::wait);
+
+    //repeat but with an unexpected flag, expect same behavior and flag should not clear
+    tf.quake_manager->dbg_get_unexpected_flag() = true; 
+    tf.realSteps(tf.max_wait_cycles_fp->get() + 1);
+    assert_radio_state(radio_state_t::wait);
+    TEST_ASSERT_TRUE(tf.quake_manager->dbg_get_unexpected_flag());
+
+    //repeat with no more cycles
+    tf.realSteps(tf.max_wait_cycles_fp->get());
+    assert_radio_state(radio_state_t::wait);
+    tf.realSteps();
+    assert_radio_state(radio_state_t::wait);
 }
 
 // Helper test Function
@@ -566,6 +598,7 @@ int test_quake_manager()
     UNITY_BEGIN();
     RUN_TEST(test_wait_unexpected);
     RUN_TEST(test_wait_no_more_cycles);
+    RUN_TEST(test_wait_power_cycling);
     RUN_TEST(test_config_no_more_cycles);
     RUN_TEST(test_read_no_more_cycles);
     RUN_TEST(test_write_no_more_cycles);

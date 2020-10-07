@@ -5,6 +5,10 @@
 
 #include "TimedControlTask.hpp"
 #include "Drivers/Gomspace.hpp"
+#include <common/constant_tracker.hpp>
+
+TRACKED_CONSTANT_SC(unsigned int, default_pv_cmd, 4000);
+TRACKED_CONSTANT_SC(unsigned char, default_ppt_mode, 2);
 
 class GomspaceController : public TimedControlTask<void> {
    public:
@@ -100,16 +104,28 @@ class GomspaceController : public TimedControlTask<void> {
     Serializer<bool> heater_sr;
     ReadableStateField<bool> heater_f;
 
-    // The controller will set the outputs of the gomspace once a period (number of control cycles)
-    unsigned int period = 300;
+    // The controller will set the outputs of the gomspace once a "period", defined as a number of
+    // control cycles.
+    #ifndef DESKTOP
+        // In HITL, the Gomspace takes around 30 seconds to powercycle things.
+        static constexpr unsigned int thirty_seconds_ccno = 30 * 1000 / PAN::control_cycle_time_ms ;
+    #else
+        // When SPEEDUP is defined, use the value of PAN::one_day_ccno to determine
+        // how long to take to powercycle a device. But only do so when DESKTOP is defined,
+        // so that the powercycling logic doesn't keep toggling an output on and off.
+        static constexpr unsigned int thirty_seconds_ccno = PAN::one_day_ccno / (24 * 60 * 2);
+    #endif
+    // If PAN::one_day_ccno is very short due to the SPEEDUP flag, ensure the period is positive
+    // to prevent a divide-by-zero error.
+    TRACKED_CONSTANT_SC(unsigned int, period, thirty_seconds_ccno > 0 ? thirty_seconds_ccno : 1);
 
     // Command statefields to control the Gomspace outputs. Will
     // be set by various individual subsystems and the ground.
     Serializer<bool> power_cycle_outputs_cmd_sr;
-    WritableStateField<bool> power_cycle_output1_cmd_f;
+    WritableStateField<bool> power_cycle_output1_cmd_f; // Piksi
     WritableStateField<bool> power_cycle_output2_cmd_f;
-    WritableStateField<bool> power_cycle_output3_cmd_f;
-    WritableStateField<bool> power_cycle_output4_cmd_f;
+    WritableStateField<bool> power_cycle_output3_cmd_f; // Quake
+    WritableStateField<bool> power_cycle_output4_cmd_f; // ADCS Teensy
     WritableStateField<bool> power_cycle_output5_cmd_f;
     WritableStateField<bool> power_cycle_output6_cmd_f;
 

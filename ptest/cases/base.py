@@ -162,8 +162,9 @@ class SingleSatOnlyCase(Case):
         # Prevent faults from mucking up the state machine.
         self.sim.flight_controller.write_state("gomspace.low_batt.suppress", "true")
         self.sim.flight_controller.write_state("fault_handler.enabled", "false")
+        self.one_day_ccno = self.sim.flight_controller.smart_read("pan.one_day_ccno")
 
-        self.boot_util = BootUtil(self.sim.flight_controller, self.logger, self.initial_state, self.fast_boot)
+        self.boot_util = BootUtil(self.sim.flight_controller, self.logger, self.initial_state, self.fast_boot, self.one_day_ccno)
         self.boot_util.setup_boot()
         self.setup_post_bootsetup()
 

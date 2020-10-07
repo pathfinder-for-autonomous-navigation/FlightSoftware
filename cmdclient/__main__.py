@@ -2,7 +2,17 @@ from argparse import ArgumentParser
 import json
 from cmd import Cmd
 import sys
+import requests
 from cerberus import Validator
+def parseStateFields(fieldList):
+    """
+    Takes in a list of string arguments and assigns each pair of strings to each other
+    """
+    returnList = []
+    for x in range(0,(len(fieldList)-1),2):
+        pair = {"field" : fieldList[x], "value" : fieldList[x+1]}
+        returnList.append(pair)
+    return returnList
 
 class CmdClient(Cmd):
     def __init__(self, config):
@@ -13,6 +23,10 @@ class CmdClient(Cmd):
         self.prompt = '> '
 
         self.cmded_device = list(config.keys())[0]
+
+
+        self.url = "http://localhost:"+str(config[self.cmded_device]["port"]) #creates an http url to access the device
+
         Cmd.__init__(self)
 
     def do_lc(self, args):
@@ -48,7 +62,10 @@ class CmdClient(Cmd):
         Lists the elements in the queued uplink for the current device, or, returns None if
         no uplink is currently queued or can be queued.
         """
-        raise NotImplementedError
+        endpoint = self.url+"/view"
+        r = requests.get(url = endpoint)
+        print(r.content)
+
 
     def do_add(self, args):
         """
@@ -56,25 +73,46 @@ class CmdClient(Cmd):
         the packet size after adding the state fields would exceed the maximum allowable uplink
         size (currently 70 bytes.)
         """
-        raise NotImplementedError
+        args = str(args).split() #splits the string args into an array of elements
+        if len(args) % 2 != 0 :
+            print('You specified too many/not enough arguments')
+        #checks that the proper formatting has been followed, add <field> <value>
+
+        else:
+            endpoint = self.url+"/send-telem"
+            r = requests.post(url = endpoint, data = parseStateFields(args))
+            print(r.content)
+
+
 
     def do_remove(self, args):
         """
         Removes a set of state fields from the currently queued uplink.
         """
-        raise NotImplementedError
+        args = str(args).split()
+        if len(args) % 2 != 0 :
+            print('You specified too many/not enough arguments')
+        else:
+            endpoint = self.url+"/remove"
+            r = requests.post(url = endpoint, data = parseStateFields(args))
+            print(r.content)
 
     def do_pause(self, args):
         """
         Attempts to pause the uplink queue timer, if one is running.
         """
-        raise NotImplementedError
+        endpoint = self.url+"/pause"
+        r = requests.get(url = endpoint)
+        print(r.content)
 
     def do_resume(self, args):
         """
         Attempts to resume the uplink queue timer, if one was running.
         """
-        raise NotImplementedError
+        endpoint = self.url+"/resume"
+        r = requests.get(url = endpoint)
+        print(r.content)
+
 
     def do_exit(self, args):
         """Exits the client."""
@@ -93,7 +131,7 @@ def main():
         "port" : {"type" : "integer", "required" : True},
         "type" : {"type" : "string", "allowed" : ["USBSession", "RadioSession"], "required" : True},
     }
-    
+
     v = Validator(config_schema)
     for key in config:
         config_item = config[key]

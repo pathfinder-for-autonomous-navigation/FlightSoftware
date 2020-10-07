@@ -42,6 +42,8 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       dcdc_controller(registry, dcdc_controller_offset, dcdc),
       eeprom_controller(registry, eeprom_controller_offset),
       memory_use_f("sys.memory_use", Serializer<unsigned int>(300000)),
+      one_day_ccno_f("pan.one_day_ccno", Serializer<unsigned int>()),
+      control_cycle_ms_f("pan.cc_ms", Serializer<unsigned int>()),
       prop_controller(registry, prop_controller_offset),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
       attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
@@ -69,6 +71,10 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     dcdc.setup();
 
     add_readable_field(memory_use_f);
+    add_readable_field(one_day_ccno_f);
+    add_readable_field(control_cycle_ms_f);
+    one_day_ccno_f.set(PAN::one_day_ccno);
+    control_cycle_ms_f.set(PAN::control_cycle_time_ms);
 
     eeprom_controller.init();
     // Since all telemetry fields have been added to the registry, initialize flows
