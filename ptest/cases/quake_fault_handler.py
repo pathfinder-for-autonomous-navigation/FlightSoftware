@@ -1,5 +1,5 @@
 from .base import SingleSatOnlyCase
-from .utils import FSWEnum, Enums, TestCaseFailure, BootUtil
+from .utils import FSWEnum, Enums, BootUtil
 
 class QuakeFaultHandler(SingleSatOnlyCase):
     @property
@@ -23,7 +23,7 @@ class QuakeFaultHandler(SingleSatOnlyCase):
 
     def check_quake_powercycled(self):
         if not self.powercycle_happening:
-            raise TestCaseFailure("Quake radio was not powercycled.")
+            raise self.TestCaseFailure("Quake radio was not powercycled.")
         else:
             self.logger.put("Comms blackout caused a powercycle of Quake.")
 
@@ -51,7 +51,7 @@ class QuakeFaultHandler(SingleSatOnlyCase):
         if self.test_stage == "first_no_comms":
             if self.cycles_since_blackout_start > self.one_day_ccno:
                 if not self.mission_state == "standby":
-                    raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into standby after 24 hours of no comms. State was: {self.mission_state}. Current control cycle: {self.rs('pan.cycle_no')}")
+                    raise self.TestCaseFailure(f"QuakeFaultHandler did not force satellite into standby after 24 hours of no comms. State was: {self.mission_state}. Current control cycle: {self.rs('pan.cycle_no')}")
                 else:
                     self.cycles_since_blackout_start = 0
                     self.logger.put("QuakeFaultHandler forced spacecraft into the standby state.")
@@ -60,7 +60,7 @@ class QuakeFaultHandler(SingleSatOnlyCase):
 
         elif self.test_stage == "second_no_comms":
             if not self.mission_state == "standby":
-                raise TestCaseFailure(f"State of spacecraft was not `standby` during QuakeFaultHandler's `forced standby` state. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
+                raise self.TestCaseFailure(f"State of spacecraft was not `standby` during QuakeFaultHandler's `forced standby` state. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
             if self.cycles_since_blackout_start > self.one_day_ccno:
                 self.test_stage = "powercycles"
 
@@ -79,13 +79,13 @@ class QuakeFaultHandler(SingleSatOnlyCase):
                 if self.powercycles_count == 3:
                     self.test_stage = "safehold"
                 elif not self.mission_state == "standby":
-                    raise TestCaseFailure(f"State of spacecraft was not `standby` during Quake Fault Handler's powercycling states. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
+                    raise self.TestCaseFailure(f"State of spacecraft was not `standby` during Quake Fault Handler's powercycling states. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
                 else:
                     self.logger.put(f"Creating a comms blackout of 8 additional hours, starting on control cycle {self.rs('pan.cycle_no')}")
 
         elif self.test_stage == "safehold":
             if not self.mission_state == "safehold":
-                raise TestCaseFailure(f"QuakeFaultHandler did not force satellite into safehold after 48 hours of no comms. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
+                raise self.TestCaseFailure(f"QuakeFaultHandler did not force satellite into safehold after 48 hours of no comms. State was: {self.mission_state}.  Current control cycle: {self.rs('pan.cycle_no')}")
             else:
                 self.logger.put(f"The 48-hour total comms blackout caused a mission state transition to safehold on control cycle {self.rs('pan.cycle_no')}")
                 self.logger.put("Testcase finished.")

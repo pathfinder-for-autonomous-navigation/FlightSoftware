@@ -13,8 +13,7 @@ if "CI" not in os.environ:
 import datetime
 import os
 import json
-from .gpstime import GPSTime
-from .cases.base import SingleSatOnlyCase
+from ..gpstime import GPSTime
 
 class Simulation(object):
     """
@@ -40,10 +39,6 @@ class Simulation(object):
 
         self.log = ""
 
-    def start(self):
-        '''
-        Start the MATLAB simulation. This function is blocking until the simulation begins.
-        '''
         self.sim_time = 0
 
         if self.is_single_sat_sim:
@@ -55,13 +50,17 @@ class Simulation(object):
         self.add_to_log("Configuring simulation (please be patient)...")
         start_time = timeit.default_timer()
         self.running = True
-        self.configure_sim()
+        self.configure()
         elapsed_time = timeit.default_timer() - start_time
         self.add_to_log("Configuring simulation took %0.2fs." % elapsed_time)
 
+    def start(self):
+        '''
+        Start the MATLAB simulation. This function is blocking until the simulation begins.
+        '''
         self.add_to_log("Starting simulation loop...")
         if self.is_interactive:
-            self.sim_thread = threading.Thread(name="Python-MATLAB Simulation Interface",
+            self.sim_thread = threading.Thread(name="Simulation Interface",
                                         target=self.run)
             self.sim_thread.start()
         else:
@@ -71,27 +70,26 @@ class Simulation(object):
         print(msg)
         self.log += f"[{datetime.datetime.now()}] {msg}\n"
 
-    def configure_sim(self):
-        self.eng = matlab.engine.start_matlab()
-        path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../lib/common/psim/MATLAB")
-        self.eng.addpath(path, nargout=0)
+    def configure(self):
+        raise NotImplementedError
 
-        if ((platform.system() == 'Darwin' and not os.path.exists("geograv_wrapper.mexmaci64"))
-            or (platform.system() == 'Linux' and not os.path.exists("geograv_wrapper.mexa64"))
-            or (platform.system() == 'Windows' and not os.path.exists("geograv_wrapper.mexw64"))
-        ):
-            self.eng.install(nargout=0)
-        self.eng.config(nargout=0)
-        self.eng.generate_mex_code(nargout=0)
-        self.eng.eval("global const", nargout=0)
+    def update_sim_time(self):
+        raise NotImplementedError
 
-        self.main_state = self.eng.initialize_main_state(self.seed, self.sim_initial_state, nargout=1)
-        self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.sim_initial_state, nargout=2)
-        self.main_state_trajectory = []
+    def update_sensors(self):
+        raise NotImplementedError
 
-        self.eng.workspace['const']['dt'] = self.flight_controller.smart_read("pan.cc_ms") * 1e6  # Control cycle time in nanoseconds.
-        self.dt = self.eng.workspace['const']['dt'] * 1e-9 # In seconds.
+    def update_dynamics(self):
+        raise NotImplementedError
+
+    def simulate_flight_computers(self):
+        raise NotImplementedError
+
+    def send_actuations_to_simmed_satellites(self):
+        raise NotImplementedError
+
+    def save_sim_data(self):
+        raise NotImplementedError
 
     def run(self):
         """
@@ -107,47 +105,27 @@ class Simulation(object):
 
         start_time = time.time()
         while step < num_steps and self.running and not self.testcase.finished:
-            self.sim_time = self.main_state['follower']['dynamics']['time']
-
-            # Step 1. Get sensor readings from simulation
-            self.sensor_readings_follower = self.eng.sensor_reading(self.main_state['follower'],self.main_state['leader'], nargout=1)
-            self.sensor_readings_leader = self.eng.sensor_reading(self.main_state['leader'],self.main_state['follower'], nargout=1)
-
-            # Step 2. Update dynamics
-            main_state_promise = self.eng.main_state_update(self.main_state, nargout=1, background=True)
-
-            # Step 3. Simulate flight computers
-            # Step 3.1. Use MATLAB simulation as a base
-            self.computer_state_follower, self.actuator_commands_follower = \
-                self.eng.update_FC_state(self.computer_state_follower,self.sensor_readings_follower, nargout=2)
-            self.computer_state_leader, self.actuator_commands_leader = \
-                self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
+            self.update_sim_time()
+            self.update_sensors()
+            self.update_dynamics()
+            self.simulate_flight_computers()
 
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
             # Step 3.3. Allow test case to do its own meddling with the flight computer.
-            try:
-                self.testcase.run_case()
-            except Exception as e:
-                traceback.print_exc()
-                self.running = False
+            self.testcase.run_case()
 
-        # Step 3.4. Step the flight computer forward.
+            # Step 3.4. Step the flight computer forward.
             if self.is_single_sat_sim:
                 self.flight_controller.write_state("cycle.start", "true")
             else:
                 self.flight_controller_follower.write_state("cycle.start", "true")
                 self.flight_controller_leader.write_state("cycle.start", "true")
 
-            # Step 5. Command actuators in simulation
-            self.main_state = main_state_promise.result()
-            self.main_state['follower'] = self.eng.actuator_command(self.actuator_commands_follower,self.main_state['follower'], nargout=1)
-            self.main_state['leader'] = self.eng.actuator_command(self.actuator_commands_leader,self.main_state['leader'], nargout=1)
-
-            # Step 6. Store trajectory
+            self.send_actuations_to_simmed_satellites()
+            
             if step % sample_rate == 0:
-                self.main_state_trajectory.append(
-                    json.loads(self.eng.jsonencode(self.main_state, nargout=1)))
+                self.save_sim_data()
 
             step += 1
             time.sleep(self.dt - ((time.time() - start_time) % self.dt))
@@ -204,8 +182,65 @@ class Simulation(object):
         """
         Stops a run of the simulation and saves run data to disk.
         """
+        self.add_to_log("Stopping simulation...")
+
+        if hasattr(self, "sim_thread"):
+            self.sim_thread.join()
+
         with open(data_dir + "/simulation_data_main.txt", "w") as fp:
             json.dump(self.main_state_trajectory, fp)
 
         with open(data_dir + "/simulation_log.txt", "w") as fp:
             fp.write(self.log)
+
+class MatlabSimulation(Simulation):
+    def configure(self):
+        self.eng = matlab.engine.start_matlab()
+        path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "../../lib/common/psim/MATLAB")
+        self.eng.addpath(path, nargout=0)
+
+        if ((platform.system() == 'Darwin' and not os.path.exists("geograv_wrapper.mexmaci64"))
+            or (platform.system() == 'Linux' and not os.path.exists("geograv_wrapper.mexa64"))
+            or (platform.system() == 'Windows' and not os.path.exists("geograv_wrapper.mexw64"))
+        ):
+            self.eng.install(nargout=0)
+        self.eng.config(nargout=0)
+        self.eng.generate_mex_code(nargout=0)
+        self.eng.eval("global const", nargout=0)
+
+        self.main_state = self.eng.initialize_main_state(self.seed, self.sim_initial_state, nargout=1)
+        self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.sim_initial_state, nargout=2)
+        self.main_state_trajectory = []
+
+        self.eng.workspace['const']['dt'] = self.flight_controller.smart_read("pan.cc_ms") * 1e6  # Control cycle time in nanoseconds.
+        self.dt = self.eng.workspace['const']['dt'] * 1e-9 # In seconds.
+    
+    def update_sim_time(self):
+        self.sim_time = self.main_state['follower']['dynamics']['time']
+
+    def update_sensors(self):
+        self.sensor_readings_follower = self.eng.sensor_reading(self.main_state['follower'],self.main_state['leader'], nargout=1)
+        self.sensor_readings_leader = self.eng.sensor_reading(self.main_state['leader'],self.main_state['follower'], nargout=1)
+
+    def update_dynamics(self):
+        self.main_state_promise = self.eng.main_state_update(self.main_state, nargout=1, background=True)
+
+    def simulate_flight_computers(self):
+        self.computer_state_follower, self.actuator_commands_follower = \
+            self.eng.update_FC_state(self.computer_state_follower,self.sensor_readings_follower, nargout=2)
+        self.computer_state_leader, self.actuator_commands_leader = \
+            self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
+
+    def send_actuations_to_simmed_satellites(self):
+        self.main_state = self.main_state_promise.result()
+        self.main_state['follower'] = self.eng.actuator_command(self.actuator_commands_follower,self.main_state['follower'], nargout=1)
+        self.main_state['leader'] = self.eng.actuator_command(self.actuator_commands_leader,self.main_state['leader'], nargout=1)
+
+    def save_sim_data(self):
+        self.main_state_trajectory.append(
+            json.loads(self.eng.jsonencode(self.main_state, nargout=1)))
+
+class CppSimulation(Simulation):
+    # TODO implement
+    pass

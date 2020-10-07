@@ -1,19 +1,35 @@
 from ..data_consumers import Logger
 import time
 import math
-from .utils import BootUtil, TestCaseFailure, Enums
+import threading
+import traceback
+from .utils import BootUtil, Enums
+from ..psim import MatlabSimulation
 
 # Base classes for writing testcases.
 
-class Case(object):
+class PTestCase(object):
     """
     Base class for all HITL/HOOTL testcases.
     """
 
-    def __init__(self, is_interactive, data_dir):
+    def __init__(self, is_interactive, random_seed, data_dir):
         self._finished = False
         self.is_interactive = is_interactive
+        self.random_seed = random_seed
+        self.data_dir = data_dir
         self.logger = Logger("testcase", data_dir, print=True)
+
+    class TestCaseFailure(Exception):
+        """Raise in case of test case failure."""
+
+    def sim_implementation(self, *args, **kwargs):
+        """
+        Choice of sim implementation for this testcase.
+        
+        The current default is the matlab simulation.
+        """
+        return MatlabSimulation(*args, **kwargs)
 
     def mag_of(self, vals):
         """
@@ -106,9 +122,33 @@ class Case(object):
 
     def setup_case(self, devices):
         self.populate_devices(devices)
+        if self.sim_duration > 0:
+            self.sim = self.sim_implementation(self.is_interactive, devices, self.random_seed, self, self.sim_duration, self.sim_initial_state, isinstance(self, SingleSatOnlyCase))
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()
+
+    def start(self):
+        if hasattr(self, "sim"):
+            self.sim.start()
+        elif self.is_interactive:
+            self.testcase_thread = threading.Thread(name="Testcase execution",
+                                        target=self.run)
+            self.testcase_thread.start()
+        else:
+            self.run()
+
+    def run(self):
+        while True:
+            if not self.finished:
+                try:
+                    self.run_case()
+                except self.TestCaseFailure:
+                    tb = traceback.format_exc()
+                    self.logger.put(tb)
+                    self.finish(error=True)
+                    return
+            else: return
 
     def populate_devices(self, devices):
         """
@@ -129,19 +169,24 @@ class Case(object):
         """
         raise NotImplementedError
             
-    def finish(self):
+    def finish(self, error = False):
         """
         When called, this function indicates to PTest that
         the testcase has finished its execution.
         """
 
+        self.errored = error
+
         if not self.finished:
             self.logger.put("[TESTCASE] Finished testcase.")
             self.finished = True
-            time.sleep(1)
+            if hasattr(self, "sim"):
+                time.sleep(1) # Allow time for sim and testcase threads to be notified of finish
+                self.sim.stop(self.data_dir)
             self.logger.stop()
+            time.sleep(1) # Allow time for logger to stop
 
-class SingleSatOnlyCase(Case):
+class SingleSatOnlyCase(PTestCase):
     """
     Base testcase for writing testcases that only work with a single-satellite mission.
     """
@@ -241,7 +286,7 @@ class SingleSatOnlyCase(Case):
         init = self.rs("pan.cycle_no")
         self.flight_controller.write_state('cycle.start', 'true')
         if self.rs("pan.cycle_no") != init + 1:
-            raise TestCaseFailure(f"FC did not step forward by one cycle")
+            raise self.TestCaseFailure(f"FC did not step forward by one cycle")
 
     def rs(self, name):
         """
@@ -297,7 +342,7 @@ class SingleSatOnlyCase(Case):
         else: 
             self.logger.put(f"\n$ SOFT ASSERTION ERROR: {args[0]}\n")
 
-class MissionCase(Case):
+class MissionCase(PTestCase):
     """
     Base testcase for writing testcases that only work with a full mission simulation
     with both satellites.

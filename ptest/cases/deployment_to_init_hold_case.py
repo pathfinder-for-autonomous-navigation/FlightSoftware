@@ -1,5 +1,5 @@
 from .base import SingleSatOnlyCase
-from .utils import Enums, TestCaseFailure
+from .utils import Enums
 
 class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):    
     @property
@@ -77,7 +77,7 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
         self.logger.put("Case 1: ADCS motors are all functional")
         self.cycle()
         if (self.mission_state != "detumble"):
-            raise TestCaseFailure(f"Failed: Satellite did not move to detumble. \n Mission mode: {self.mission_state}")
+            raise self.TestCaseFailure(f"Failed: Satellite did not move to detumble. \n Mission mode: {self.mission_state}")
         else:
             self.logger.put("Passed")
 
@@ -167,6 +167,6 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
 
     def check_moved_to_init_hold(self):
         if (self.mission_state != "initialization_hold"):
-            raise TestCaseFailure(f"Failed: Satellite did not move to initialization hold. \n Mission mode: {self.mission_state}")
+            raise self.TestCaseFailure(f"Failed: Satellite did not move to initialization hold. \n Mission mode: {self.mission_state}")
         else:
             self.logger.put("Passed")

@@ -1,6 +1,6 @@
 # Gomspace test case. Gets cycle count purely for diagnostic purposes and logs
 # any other Gomspace state fields.
-from .base import SingleSatOnlyCase, TestCaseFailure
+from .base import SingleSatOnlyCase
 from .utils import Enums
 
 
@@ -159,7 +159,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
 
         # TODO: add this back after fixing #491
         # if self.failed: 
-            #raise TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
+            #raise self.TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
 
         self.finish()
 

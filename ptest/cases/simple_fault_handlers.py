@@ -1,5 +1,5 @@
 from .base import SingleSatOnlyCase
-from .utils import FSWEnum, Enums, TestCaseFailure, BootUtil
+from .utils import FSWEnum, Enums, BootUtil
 
 class ADCSWheelFaultHandler(SingleSatOnlyCase):
     @property
@@ -21,7 +21,7 @@ class ADCSWheelFaultHandler(SingleSatOnlyCase):
 
     def assert_safehold(self):
         if not self.mission_state == "safehold":
-            raise TestCaseFailure("Satellite failed to go to safehold after a wheel ADC failure.")
+            raise self.TestCaseFailure("Satellite failed to go to safehold after a wheel ADC failure.")
         self.logger.put("Satellite went to safehold.")
 
     def fail_wheel(self, wheel_no):
@@ -74,7 +74,7 @@ class LowBattFaultHandler(SingleSatOnlyCase):
         self.cycle()
 
         if not self.mission_state == "safehold":
-            raise TestCaseFailure("Satellite failed to go to safehold after a low-battery fault.")
+            raise self.TestCaseFailure("Satellite failed to go to safehold after a low-battery fault.")
 
         self.logger.put("Satellite went to safehold.")
         self.finish()

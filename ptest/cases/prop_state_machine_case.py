@@ -1,5 +1,5 @@
 from .base import SingleSatOnlyCase
-from .utils import Enums, TestCaseFailure
+from .utils import Enums
 import time
 
 # pio run -e fsw_native_leader
@@ -217,18 +217,18 @@ class PropStateMachineCase(SingleSatOnlyCase):
     def test_disabled_to_idle(self):
         print("[TESTCASE] test_disabled_to_idle: manually setting prop to idle")
         if not self.read_state("dcdc.SpikeDock") == "true":
-            raise TestCaseFailure("Spike and Hold DCDC is not enabled.")
+            raise self.TestCaseFailure("Spike and Hold DCDC is not enabled.")
         self.state = Enums.prop_states["idle"]
         self.cycle()
         if not self.state == str(Enums.prop_states["idle"]):
-            raise TestCaseFailure("state != idle")
+            raise self.TestCaseFailure("state != idle")
 
     # We should immediately transition to await_pressurizing (within 1 cycle)
     def test_idle_to_await_pressurizing(self):
         print("[TESTCASE] test_idle_to_await_pressurizing")
         print("[TESTCASE] state should automatically transition to await pressurizing upon receiving a good schedule")
         if not self.state == str(Enums.prop_states["idle"]):
-            raise TestCaseFailure("state != idle")
+            raise self.TestCaseFailure("state != idle")
         self.sched_valve1 = 100
         self.sched_valve2 = 700
         self.sched_valve3 = 800
@@ -236,35 +236,35 @@ class PropStateMachineCase(SingleSatOnlyCase):
         self.cycles_until_firing = int(self.min_num_cycles) + 2
         self.cycle()
         if not self.state == str(Enums.prop_states["await_pressurizing"]):
-            raise TestCaseFailure("state != await_pressurizing")
+            raise self.TestCaseFailure("state != await_pressurizing")
 
     def test_await_pressurizing_to_pressurize(self):
         print("[TESTCASE] test_await_pressurizing_to_pressurize")
         if not self.state == str(Enums.prop_states["await_pressurizing"]):
-            raise TestCaseFailure("state != await_pressurizing")
+            raise self.TestCaseFailure("state != await_pressurizing")
         print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change()}")
         if not self.state == str(Enums.prop_states["pressurizing"]):
-            raise TestCaseFailure("state != pressurizing")
+            raise self.TestCaseFailure("state != pressurizing")
         return
 
     def test_pressurize_to_await_firing(self):
         print("[TESTCASE] test_pressurize_to_await_firing")
         if not self.state == str(Enums.prop_states["pressurizing"]):
-            raise TestCaseFailure("state != pressurizing")
+            raise self.TestCaseFailure("state != pressurizing")
         # Verbose is True since we probably want to watch the pressure rise
         print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change()}")
         if not self.state == str(Enums.prop_states["await_firing"]):
-            raise TestCaseFailure("state != await_firing")
+            raise self.TestCaseFailure("state != await_firing")
         return
     
     def test_await_firing_to_firing(self):
         print("[TESTCASE] test_await_firing_to_firing")
         if not self.state == str(Enums.prop_states["await_firing"]):
-            raise TestCaseFailure("state != await_firing")
+            raise self.TestCaseFailure("state != await_firing")
         # Expect to be here for a long time
         print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change()}")
         if not self.state == str(Enums.prop_states["firing"]):
-            raise TestCaseFailure("state != firing")
+            raise self.TestCaseFailure("state != firing")
         return
 
     def test_firing_to_idle(self):
@@ -275,10 +275,10 @@ class PropStateMachineCase(SingleSatOnlyCase):
             return
 
         if not self.state == str(Enums.prop_states["firing"]):
-            raise TestCaseFailure("state != firing")
+            raise self.TestCaseFailure("state != firing")
         print(f"[TESTCASE] cycles_until_change: {self.cycle_until_change()}")
         if not self.state == str(Enums.prop_states["idle"]):
-            raise TestCaseFailure("state != idle")
+            raise self.TestCaseFailure("state != idle")
         return
 
     def run_case_singlesat(self):
