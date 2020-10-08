@@ -12,7 +12,6 @@ on:
       - 'docs/**'
       - 'README.md'
       - 'LICENSE'
-      - 'ptest/README.md'
       - '.github/workflows/hootl.yml'
 
 env:
