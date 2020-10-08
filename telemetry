@@ -1584,9 +1584,9 @@
             "writable": false
         },
         "pan.bootcount": {
-            "bitsize": 32,
+            "bitsize": 28,
             "flow_id": 1,
-            "max": 4294967295,
+            "max": 268435455,
             "min": 0,
             "type": "unsigned int",
             "writable": false
