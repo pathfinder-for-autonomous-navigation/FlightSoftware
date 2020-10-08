@@ -7,6 +7,7 @@ from .usb_session import USBSession
 from .radio_session import RadioSession
 from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
+from . import get_pio_asset
 import json, sys, os, tempfile, time, threading, signal, traceback
 
 try:
@@ -71,8 +72,8 @@ class PTest(object):
             if device['run_mode'] == "teensy":
                 if not device.get("baud_rate"):
                     self.stop_all(f"device configuration for {device_name} does not specify baud rate.")
-            elif "binary_filepath" not in device.keys():
-                self.stop_all(f"Binary firmware location not specified for {device_name}")
+            elif "pio_target" not in device.keys():
+                self.stop_all(f"PIO target not specified for {device_name}")
 
             # If we want to use the native desktop binary for a device, instead of
             # a connected Teensy, we can do that by wrapping a serial port around it.
@@ -80,13 +81,7 @@ class PTest(object):
             if not is_teensy:
                 try:
                     master_fd, slave_fd = pty.openpty()
-                    binary_filepath = device['binary_filepath']
-
-                    if not os.path.exists(binary_filepath):
-                        print("Compiling flight software binaries.")
-                        os.system("pio run -e fsw_native_leader > /dev/null")
-                        os.system("pio run -e fsw_native_leader_realtime > /dev/null")
-
+                    binary_filepath = get_pio_asset(device['pio_target'])
                     binary_process = subprocess.Popen(binary_filepath, stdout=master_fd, stderr=master_fd, stdin=master_fd)
                     self.binaries.append({
                         "device_name" : device["name"],

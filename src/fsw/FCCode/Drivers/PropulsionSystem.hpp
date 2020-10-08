@@ -95,6 +95,10 @@ namespace Devices
         _PropulsionSystem();
 
     public:
+        #ifdef UNIT_TEST
+        bool fake_is_functional;
+        #endif
+
         inline static _PropulsionSystem &Instance()
         {
             static _PropulsionSystem Instance;
@@ -136,6 +140,10 @@ namespace Devices
          * @brief 
          */
         bool is_functional() override;
+
+        #ifdef UNIT_TEST
+        void set_is_functional(bool val);
+        #endif
 
         /**
          * @brief Sets the firing schedule for tank 2. Does not enable tank2 to

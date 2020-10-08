@@ -78,12 +78,13 @@ protected:
   WritableStateField<unsigned char> cur_state;
   unsigned int cur_state_entry_ccno = 0;
 
+
   /**
      * @brief Indicator fields used by the fault handler.
      */
   const ReadableStateField<unsigned char> *radio_state_fp;
   const ReadableStateField<unsigned int> *last_checkin_cycle_fp;
-  WritableStateField<bool> *power_cycle_radio_fp;
+  WritableStateField<bool> *radio_power_cycle_fp;
 
   /**
      * @brief Helper functions for if-statements, to make them look cleaner.
@@ -91,6 +92,7 @@ protected:
   bool less_than_one_day_since_successful_comms() const;
   bool in_state_for_more_than_time(const unsigned int time) const;
   bool radio_is_disabled() const;
+  bool radio_is_wait() const;
 };
 
 #endif

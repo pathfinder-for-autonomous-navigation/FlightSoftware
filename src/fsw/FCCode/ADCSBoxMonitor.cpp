@@ -2,6 +2,7 @@
 
 #include <adcs/constants.hpp>
 #include <adcs/havt_devices.hpp>
+#include <gnc/constants.hpp>
 
 ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
@@ -124,10 +125,6 @@ static lin::Vector<float, N> to_linvector(const std::array<float, N>& src) {
 }
 
 void ADCSBoxMonitor::execute(){
-
-    //define nan
-    const float nan = std::numeric_limits<float>::quiet_NaN();
-
     //create internal containers to read data
     f_vector_t rwa_speed_rd;
     f_vector_t rwa_torque_rd;
@@ -160,6 +157,7 @@ void ADCSBoxMonitor::execute(){
         ssa_vec_f.set(to_linvector(ssa_vec));
     }
     else{
+        const float nan = gnc::constant::nan_f;
         ssa_vec_f.set({nan,nan,nan});
     }
     

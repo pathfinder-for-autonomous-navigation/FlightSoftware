@@ -14,6 +14,7 @@ from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_usb_session_endpoint
+from . import get_pio_asset
 
 class USBSession(object):
     '''
@@ -46,12 +47,7 @@ class USBSession(object):
         self.raw_logger = Logger(device_name + "_raw", simulation_run_dir)
         self.telem_save_dir = simulation_run_dir
 
-        #Start downlink parser. Compile it if it is not available.
-        downlink_parser_filepath = ".pio/build/gsw_downlink_parser/program" 
-        if not os.path.exists(downlink_parser_filepath):
-            print("Compiling the downlink parser.")
-            os.system("pio run -e gsw_downlink_parser > /dev/null")
-
+        downlink_parser_filepath = get_pio_asset("gsw_downlink_parser")
         master_fd, slave_fd = pty.openpty()
         self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
         self.dp_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
