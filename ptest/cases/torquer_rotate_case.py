@@ -169,7 +169,7 @@ class MTorquerCase(SingleSatOnlyCase):
             return 
 
         #generate white space data
-        self.log_white_noise()
+        #self.log_white_noise()
 
         #run main testing
         self.mtr_test()
