@@ -142,15 +142,6 @@ class MTorquerCase(SingleSatOnlyCase):
         #Test for max value = 0.11
         self.torque_test(0.11)
 
-    def finish(self):
-        """
-        exits test case gracefully
-        """   
-        self.cycle()
-        self.ws("adcs_cmd.mtr_mode", 0)#,MTR_DISABLED)
-        self.ws("adcs_cmd.mtr_cmd", [0,0,0])
-        super.finish()
-        
 
     def run_case_singlesat(self):
         self.print_header("Begin ADCS Magnetorquers Case")
