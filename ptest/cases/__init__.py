@@ -18,3 +18,4 @@ from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
 from .simple_fault_handlers import ADCSWheelFaultHandler, LowBattFaultHandler
 from .safehold_reboot import SafeholdReboot
+from .torquer_rotate_case import MTorquerCase
