@@ -20,6 +20,8 @@ class PTestCase(object):
         self.data_dir = data_dir
         self.logger = Logger("testcase", data_dir, print=True)
 
+        self.errored = False
+
     class TestCaseFailure(Exception):
         """Raise in case of test case failure."""
 
@@ -139,16 +141,8 @@ class PTestCase(object):
             self.run()
 
     def run(self):
-        while True:
-            if not self.finished:
-                try:
-                    self.run_case()
-                except self.TestCaseFailure:
-                    tb = traceback.format_exc()
-                    self.logger.put(tb)
-                    self.finish(error=True)
-                    return
-            else: return
+        while not self.finished:
+            self.run_case()
 
     def populate_devices(self, devices):
         """
@@ -164,11 +158,20 @@ class PTestCase(object):
         raise NotImplementedError
 
     def run_case(self):
+        try:
+            self._run_case()
+        except self.TestCaseFailure:
+            tb = traceback.format_exc()
+            self.logger.put(tb)
+            self.finish(error=True)
+            return
+
+    def _run_case(self):
         """
         Must be implemented by subclasses.
         """
         raise NotImplementedError
-            
+
     def finish(self, error = False):
         """
         When called, this function indicates to PTest that
@@ -239,7 +242,7 @@ class SingleSatOnlyCase(PTestCase):
         """
         pass
 
-    def run_case(self):
+    def _run_case(self):
         if not self.boot_util.finished_boot(): return
         self.run_case_singlesat()
 
@@ -385,7 +388,7 @@ class MissionCase(PTestCase):
     def setup_post_bootsetup_leader(self): pass
     def setup_post_bootsetup_follower(self): pass
 
-    def run_case(self):
+    def _run_case(self):
         if not self.boot_util_follower.finished_boot(): return
         if not self.boot_util_leader.finished_boot(): return
         self.run_case_fullmission()

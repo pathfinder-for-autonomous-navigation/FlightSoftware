@@ -184,9 +184,6 @@ class Simulation(object):
         """
         self.add_to_log("Stopping simulation...")
 
-        if hasattr(self, "sim_thread"):
-            self.sim_thread.join()
-
         with open(data_dir + "/simulation_data_main.txt", "w") as fp:
             json.dump(self.main_state_trajectory, fp)
 
