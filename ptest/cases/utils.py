@@ -1,6 +1,9 @@
 # Contains random utilities used for writing testcases.
 import math
 
+class TestCaseFailure(Exception):
+    """Raise in case of test case failure."""
+
 def mag_of(vals):
         """
         Returns the magnitude of a list of vals 
@@ -257,7 +260,7 @@ class BootUtil(object):
             self.logger.put("[TESTCASE] Entering startup state.")
 
             if not satellite_state == "startup":
-                raise self.TestCaseFailure(f"Satellite was not in state {self.boot_stage}.")
+                raise TestCaseFailure(f"Satellite was not in state {self.boot_stage}.")
             self.boot_stage = 'deployment_hold'
             self.logger.put("[TESTCASE] Waiting for the deployment period to be over.")
 
@@ -268,9 +271,9 @@ class BootUtil(object):
                     self.boot_stage = 'detumble_wait'
                     self.num_detumble_cycles = 0
                 elif satellite_state == "initialization_hold" and self.desired_boot_state != "initalization_hold":
-                    raise self.TestCaseFailure("Satellite went to initialization hold instead of detumble.")
+                    raise TestCaseFailure("Satellite went to initialization hold instead of detumble.")
                 else:
-                    raise self.TestCaseFailure(f"Satellite failed to exit deployment wait period. \
+                    raise TestCaseFailure(f"Satellite failed to exit deployment wait period. \
                         Satellite state is {satellite_state}. Elapsed deployment period was {true_elapsed}.")
             else:
                 self.elapsed_deployment += 1
@@ -287,7 +290,7 @@ class BootUtil(object):
                 #     self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
                 #     self.boot_stage = 'standby'
                 # else:
-                #     raise self.TestCaseFailure("Satellite failed to exit detumble.")
+                #     raise TestCaseFailure("Satellite failed to exit detumble.")
             else:
                 self.num_detumble_cycles += 1
 

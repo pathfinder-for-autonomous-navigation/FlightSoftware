@@ -1,6 +1,6 @@
 # Empty test case. Gets cycle count purely for diagnostic purposes
 from .base import SingleSatOnlyCase
-from .utils import Enums
+from .utils import Enums, TestCaseFailure
 
 class EmptyCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
@@ -9,10 +9,10 @@ class EmptyCase(SingleSatOnlyCase):
 
 class FailingEmptyCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
-        raise self.TestCaseFailure("Deliberate failure intended to test failure in CI.")
+        raise TestCaseFailure("Deliberate failure intended to test failure in CI.")
 
     def run_case_fullmission(self):
-        raise self.TestCaseFailure("Deliberate failure intended to test failure in CI.")
+        raise TestCaseFailure("Deliberate failure intended to test failure in CI.")
 
 class EmptySimCase(EmptyCase):
     @property
@@ -25,7 +25,7 @@ class FailingEmptySimCase(EmptyCase):
         return float("inf")
 
     def run_case_singlesat(self):
-        raise self.TestCaseFailure("Deliberate failure intended to test failure in CI.")
+        raise TestCaseFailure("Deliberate failure intended to test failure in CI.")
 
 class NothingCase(SingleSatOnlyCase):
     def setup_case_singlesat(self):

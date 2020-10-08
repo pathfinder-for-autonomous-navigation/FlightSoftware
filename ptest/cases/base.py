@@ -3,7 +3,7 @@ import time
 import math
 import threading
 import traceback
-from .utils import BootUtil, Enums
+from .utils import BootUtil, Enums, TestCaseFailure
 from ..psim import MatlabSimulation
 
 # Base classes for writing testcases.
@@ -22,9 +22,6 @@ class PTestCase(object):
 
         self.errored = False
         self.finished = False
-
-    class TestCaseFailure(Exception):
-        """Raise in case of test case failure."""
 
     def sim_implementation(self, *args, **kwargs):
         """
@@ -123,7 +120,7 @@ class PTestCase(object):
     def run_case(self):
         try:
             self._run_case()
-        except self.TestCaseFailure:
+        except TestCaseFailure:
             tb = traceback.format_exc()
             self.logger.put(tb)
             self.finish(error=True)
@@ -251,7 +248,7 @@ class SingleSatOnlyCase(PTestCase):
         init = self.rs("pan.cycle_no")
         self.flight_controller.write_state('cycle.start', 'true')
         if self.rs("pan.cycle_no") != init + 1:
-            raise self.TestCaseFailure(f"FC did not step forward by one cycle")
+            raise TestCaseFailure(f"FC did not step forward by one cycle")
 
     def rs(self, name):
         """

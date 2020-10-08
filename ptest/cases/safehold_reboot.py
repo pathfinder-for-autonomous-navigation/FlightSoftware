@@ -1,5 +1,5 @@
 from .base import SingleSatOnlyCase
-from .utils import FSWEnum, Enums, BootUtil
+from .utils import FSWEnum, Enums, BootUtil, TestCaseFailure
 
 class SafeholdReboot(SingleSatOnlyCase):
     @property
@@ -26,7 +26,7 @@ class SafeholdReboot(SingleSatOnlyCase):
 
         elif self.test_stage == "safehold":
             if self.mission_state != "safehold":
-                raise self.TestCaseFailure("Satellite did not go to safehold after Gomspace low-battery fault was forced.")
+                raise TestCaseFailure("Satellite did not go to safehold after Gomspace low-battery fault was forced.")
             else:
                 self.logger.put("Satellite now in in safehold state.")
                 self.test_stage = "reboot"

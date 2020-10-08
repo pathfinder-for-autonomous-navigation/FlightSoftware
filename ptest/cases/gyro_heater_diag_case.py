@@ -1,5 +1,5 @@
 # GyroHeaterDiagCase - A manual diagonstic case to checkout the behavior of the gyro heater
-from .base import SingleSatOnlyCase, Enums
+from .base import SingleSatOnlyCase, Enums, TestCaseFailure
 import time
     
 class GyroHeaterDiagCase(SingleSatOnlyCase):
@@ -26,7 +26,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.print_rs("adcs_monitor.functional")
 
         if not self.rs("adcs_monitor.functional"):
-            raise self.TestCaseFailure("ADCS Not Functional")
+            raise TestCaseFailure("ADCS Not Functional")
 
         self.print_havt_read()
         self.print_non_functional_adcs_havt()
@@ -39,10 +39,10 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.print_non_functional_adcs_havt()
 
         if not self.rs("adcs_monitor.havt_device18"): # gyro heater
-            raise self.TestCaseFailure("GYRO HEATER not functional")
+            raise TestCaseFailure("GYRO HEATER not functional")
 
         if not self.rs("adcs_monitor.havt_device0"): # IMU GYR
-            raise self.TestCaseFailure("GYRO not functional")
+            raise TestCaseFailure("GYRO not functional")
         
         init_temp = self.print_rs("adcs_monitor.gyr_temp")
         init_cursys = self.print_rs("gomspace.cursys")
@@ -91,15 +91,15 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
 
             if not heater:
                 self.shutdown()
-                raise self.TestCaseFailure("HEATER DEVICE REPORTING AS NON FUNCTIONAL, SHUTTING DOWN.")
+                raise TestCaseFailure("HEATER DEVICE REPORTING AS NON FUNCTIONAL, SHUTTING DOWN.")
 
             if not imu_gyr:
                 self.shutdown()
-                raise self.TestCaseFailure("HEATER DEVICE REPORTING AS NON FUNCTIONAL, SHUTTING DOWN.")
+                raise TestCaseFailure("HEATER DEVICE REPORTING AS NON FUNCTIONAL, SHUTTING DOWN.")
 
             if temp_reading < 18 or temp_reading > self.target + 5:
                 self.shutdown()
-                raise self.TestCaseFailure("TEMP READING OUTTA BOUNDS")
+                raise TestCaseFailure("TEMP READING OUTTA BOUNDS")
 
             self.logger.put("")
             self.cycle()
@@ -117,7 +117,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         
         if target_temp - delta > final_temp or target_temp + delta < final_temp:
             self.logger.put("") 
-            raise self.TestCaseFailure(f"Final Temp: {final_temp} NOT within {delta} of {target_temp}")
+            raise TestCaseFailure(f"Final Temp: {final_temp} NOT within {delta} of {target_temp}")
 
         self.print_header(f"Temp within delta of {delta}")
         self.print_header("TEST PASSED")

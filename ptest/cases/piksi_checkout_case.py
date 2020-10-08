@@ -1,6 +1,6 @@
 # PiksiCheckoutCase. Checks the functionality of the Piksi
 from .base import SingleSatOnlyCase
-from .utils import Enums, mag_of, sum_of_differentials
+from .utils import Enums, mag_of, sum_of_differentials, TestCaseFailure
 import math
     
 class PiksiCheckoutCase(SingleSatOnlyCase):
@@ -129,11 +129,11 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         elif self.most_common_mode in nominal_list:
             self.nominal_checkout()
         elif self.most_common_mode in raise_fail_list:
-            raise self.TestCaseFailure(f"{self.most_common_mode} was the most common mode. Not Nominal")
+            raise TestCaseFailure(f"{self.most_common_mode} was the most common mode. Not Nominal")
 
         # Raise an error if got an unrecognized mode as most common
         else:
-            raise self.TestCaseFailure("MISCONFIGURED PTEST CASE")
+            raise TestCaseFailure("MISCONFIGURED PTEST CASE")
 
         self.print_header("PIKSI CHECKOUT COMPLETE")
         self.finish()
