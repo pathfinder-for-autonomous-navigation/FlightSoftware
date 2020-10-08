@@ -30,9 +30,10 @@ class HardwareStressCheckoutCase(SingleSatOnlyCase):
         self.ws("adcs_cmd.rwa_speed_cmd", [speed, speed, speed])
 
     def fire_valves(self):
-        #TODO set schedule
-        #TODO cycle, repeat
-        pass
+        self.ws("prop.sched_valve1", "800")
+        self.ws("prop.sched_valve2", "800")
+        self.ws("prop.sched_valve3", "800")
+        self.ws("prop.sched_valve4", "800")
 
     def turn_motors(self):
         if self.rs("docksys.dock_config") == "true" and self.rs("docksys.config_cmd" == "true"):
@@ -46,7 +47,7 @@ class HardwareStressCheckoutCase(SingleSatOnlyCase):
         self.fire_valves()
         for _ in range(600):
             self.turn_motors()
+            self.fire_valves()  #I'm not sure how the scheduling works
             self.cycle()
-
 
         self.finish()
