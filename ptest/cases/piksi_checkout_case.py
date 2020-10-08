@@ -1,16 +1,9 @@
 # PiksiCheckoutCase. Checks the functionality of the Piksi
 from .base import SingleSatOnlyCase
-from .utils import Enums
+from .utils import Enums, mag_of, sum_of_differentials
 import math
     
 class PiksiCheckoutCase(SingleSatOnlyCase):
-    @property
-    def havt_read(self):
-        read_list = [False for x in range(Enums.havt_length)]
-        for x in range(Enums.havt_length):
-            read_list[x] = self.rs("adcs_monitor.havt_device"+str(x))
-        return read_list
-
     def print_piksi_state(self):
         st = self.rs("piksi.state")
         self.logger.put(f"Piksi state is: {Enums.piksi_modes[st]}")
@@ -36,12 +29,12 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
         self.print_header(f"CHECKING {name} VECTORS")
 
         for vec in vectors:
-            mag = self.mag_of(vec)
+            mag = mag_of(vec)
             self.soft_assert((mag_min < mag and mag < mag_max),
                 f"Piksi {name} reading out of expected bounds, Mag: {mag}")
 
         # check readings changed over time
-        self.soft_assert(self.sum_of_differentials(vectors) > 0,
+        self.soft_assert(sum_of_differentials(vectors) > 0,
             f"Piksi {name} readings did not vary across readings.")
 
         self.print_header(f"CHECK {name} VECTORS COMPLETE")
@@ -91,11 +84,11 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             m = self.print_rs("piksi.state")
             self.logger.put(f"Mode: {Enums.piksi_modes[m]}")
             v = self.print_rs("piksi.vel")
-            self.logger.put(f"VEL MAG: {self.mag_of(v)}")
+            self.logger.put(f"VEL MAG: {mag_of(v)}")
             p = self.print_rs("piksi.pos")
-            self.logger.put(f"POS MAG: {self.mag_of(p)}")
+            self.logger.put(f"POS MAG: {mag_of(p)}")
             b = self.print_rs("piksi.baseline_pos")
-            self.logger.put(f"BASELINE MAG: {self.mag_of(b)}")
+            self.logger.put(f"BASELINE MAG: {mag_of(b)}")
             self.logger.put("")
 
         # Take N readings for actual analysis

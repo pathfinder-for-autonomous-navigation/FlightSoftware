@@ -28,35 +28,9 @@ class PTestCase(object):
     def sim_implementation(self, *args, **kwargs):
         """
         Choice of sim implementation for this testcase.
-        
-        The current default is the matlab simulation.
+        The default is the matlab simulation.
         """
         return MatlabSimulation(*args, **kwargs)
-
-    def mag_of(self, vals):
-        """
-        Returns the magnitude of a list of vals 
-        by taking the square root of the sum of the square of the components.
-        """
-
-        assert(type(vals) is list)
-        return math.sqrt(sum([x*x for x in vals]))
-
-    def sum_of_differentials(self, lists_of_vals):
-        """
-        Given a list of list of vals, return the sum of all the differentials from one list to the next.
-
-        Returns a val.
-
-        Ex: sum_of_differentials([[1,1,1],[1,2,3],[1,2,2]]) evaluates to 4
-        """
-
-        total_diff = [0 for x in lists_of_vals[0]]
-        for i in range(len(lists_of_vals) - 1):
-            diff = [abs(lists_of_vals[i][j] - lists_of_vals[i+1][j]) for j in range(len(lists_of_vals[i]))]
-            total_diff = [diff[x] + total_diff[x] for x in range(len(total_diff))]
-
-        return sum(total_diff)
 
     @property
     def sim_duration(self):
@@ -74,13 +48,6 @@ class PTestCase(object):
         Initial state that is fed into the MATLAB simulation.
         """
         return 'startup'
-
-    @property
-    def finished(self):
-        """
-        Should be set to true if the testcase has completed.
-        """
-        return self._finished
 
     @property
     def havt_read(self):
@@ -116,11 +83,6 @@ class PTestCase(object):
         for x in range(Enums.havt_length):
             if not self.havt_read[x]:
                 self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
-
-    @finished.setter
-    def finished(self, finished):
-        assert type(finished) is bool
-        self._finished = finished
 
     def setup_case(self, devices):
         self.populate_devices(devices)
