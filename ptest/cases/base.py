@@ -21,6 +21,7 @@ class PTestCase(object):
         self.logger = Logger("testcase", data_dir, print=True)
 
         self.errored = False
+        self.finished = False
 
     class TestCaseFailure(Exception):
         """Raise in case of test case failure."""
