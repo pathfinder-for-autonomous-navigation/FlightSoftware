@@ -73,15 +73,15 @@ class MTorquerCase(SingleSatOnlyCase):
             Values are entered into a list in pairs with (mag1,mag2)
         """
         self.ws("cycle.auto", True)
-        
+        self.print_header("Testing white noise")
 
         #record values for 5 seconds
         readings = self.take_mag_measurements(5)
         
         #log matrix and finish procedure
-        self.logger.put(str(readings))
-        self.logger.put(str(self.average_vectors(readings)))
-        self.logger.put(str(self.stdev_vectors(readings)))
+        self.logger.put(self.avg_list(readings))
+        #self.logger.put(str(self.average_vectors(readings)))
+        #self.logger.put(str(self.stdev_vectors(readings)))
         self.ws("cycle.auto", False)
         self.print_header("Whitespace vector matrix created")
 
@@ -129,17 +129,17 @@ class MTorquerCase(SingleSatOnlyCase):
     def mtr_test(self):
         """
             Tests the magnetorquer with a matrix of 
-            values by turning it for values from 0.05 to 0.2 
-            and also for 0.22
+            values by turning it for values from 0.025 to 0.1 
+            and also for 0.11
         """
         self.print_header("TORQUE TESTS: ")
 
-        for val in range(5, 20, 5): #start at 0.05 and ramp up by 0.05 until at 0.2
-            val = val / 100
+        for val in range(25, 100, 25): #start at 0.025 and ramp up by 0.025 until at 0.1
+            val = val / 1000
             self.torque_test(val)
 
-        #Test for max value = 0.22
-        self.torque_test(0.22)
+        #Test for max value = 0.11
+        self.torque_test(0.11)
 
     def finish(self):
         """
@@ -169,7 +169,7 @@ class MTorquerCase(SingleSatOnlyCase):
             return 
 
         #generate white space data
-        #self.log_white_noise()
+        self.log_white_noise()
 
         #run main testing
         self.mtr_test()
