@@ -184,7 +184,6 @@ class PTestCase(object):
             self.logger.put("[TESTCASE] Finished testcase.")
             self.finished = True
             if hasattr(self, "sim"):
-                time.sleep(1) # Allow time for sim and testcase threads to be notified of finish
                 self.sim.stop(self.data_dir)
             self.logger.stop()
             time.sleep(1) # Allow time for logger to stop
