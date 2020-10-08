@@ -37,12 +37,10 @@ class ADCSCommander : public TimedControlTask<void> {
 
     WritableStateField<unsigned char> rwa_mode_f;
     WritableStateField<f_vector_t> rwa_speed_cmd_f;
-    WritableStateField<f_vector_t> rwa_torque_cmd_f;
     WritableStateField<float> rwa_speed_filter_f;
     WritableStateField<float> rwa_ramp_filter_f;
 
     WritableStateField<unsigned char> mtr_mode_f;
-    WritableStateField<f_vector_t> mtr_cmd_f;
     WritableStateField<float> mtr_limit_f;
 
     WritableStateField<float> ssa_voltage_filter_f;

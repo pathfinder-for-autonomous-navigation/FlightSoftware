@@ -11,6 +11,7 @@
 #include "ADCSBoxMonitor.hpp"
 #include "ADCSBoxController.hpp"
 #include "AttitudeEstimator.hpp"
+#include "AttitudeController.hpp"
 #include "AttitudeComputer.hpp"
 #include "ADCSCommander.hpp"
 #include "GomspaceController.hpp"
@@ -85,7 +86,7 @@ class MainControlLoop : public ControlTask<void> {
 
     PropController prop_controller;
     MissionManager mission_manager;
-
+    AttitudeController attitude_controller;
     AttitudeComputer attitude_computer; // needs adcs.state from MissionManager
     ADCSCommander adcs_commander; // will need inputs from computer
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager

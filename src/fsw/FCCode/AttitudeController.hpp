@@ -53,9 +53,13 @@ class AttitudeController : public TimedControlTask<void> {
     WritableStateField<lin::Vector3f> pointer_vec1_desired_f;
     WritableStateField<lin::Vector3f> pointer_vec2_desired_f;
 
+    lin::Vector3f t_body_cmd;
+    lin::Vector3f m_body_cmd;
+
     // Output actuator suggestions, set to writable to allow ground override
-    WritableStateField<lin::Vector3f> t_body_cmd_f;  // TODO : Figure out bounds for this
-    WritableStateField<lin::Vector3f> m_body_cmd_f;  // TODO : Figure out bounds for this
+    // f_vector_t since box controller uses f_vector_t
+    WritableStateField<f_vector_t> t_body_cmd_f;  // TODO : Figure out bounds for this
+    WritableStateField<f_vector_t> m_body_cmd_f;  // TODO : Figure out bounds for this
 
     // Structs for GNC detumbler controller
     gnc::DetumbleControllerState detumbler_state;
@@ -105,5 +109,13 @@ class AttitudeController : public TimedControlTask<void> {
      * Uses all 3 gnc::Pointing structs
      */
     void calculate_pointing_controller();
+
+    /**
+     * @brief Transfers the internal vectors to output statefields
+     * 
+     * m_body_cmd_f = m_body_cmd
+     * t_body_cmd_f = t_body_cmd
+     */
+    void transfer_internal_to_output_vectors();
 };
 #endif

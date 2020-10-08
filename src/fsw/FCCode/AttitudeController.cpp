@@ -12,6 +12,8 @@
 #include <lin/queries.hpp>
 #include <lin/references.hpp>
 
+#include <adcs/constants.hpp>
+
 AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_controller", offset),
     b_body_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag_vec)),
@@ -25,12 +27,14 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
     pos_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_ecef)),
     vel_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel_ecef)),
     pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_baseline_ecef)),
-    pointer_vec1_current_f("attitude.pointer_vec1_current", Serializer<lin::Vector3f>(0, 1, 100)),
-    pointer_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
-    pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
-    pointer_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 100)),
-    t_body_cmd_f("attitude.t_body_cmd", Serializer<lin::Vector3f>(0, 1, 100)),
-    m_body_cmd_f("attitude.m_body_cmd", Serializer<lin::Vector3f>(0, 1, 100)),
+    pointer_vec1_current_f("attitude.pointer_vec1_current", Serializer<lin::Vector3f>(0, 1, 32*3)),
+    pointer_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 32*3)),
+    pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 32*3)),
+    pointer_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 32*3)),
+    t_body_cmd_f("adcs_cmd.rwa_torque_cmd", 
+        Serializer<f_vector_t>(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
+    m_body_cmd_f("adcs_cmd.mtr_cmd", 
+        Serializer<f_vector_t>(adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
     detumbler_state(),
     pointer_state()
     {
@@ -88,11 +92,13 @@ void AttitudeController::execute() {
         default:
             break;
     }
+
+    transfer_internal_to_output_vectors();
 }
 
 void AttitudeController::default_actuator_commands() {
-    t_body_cmd_f.set(lin::zeros<lin::Vector3f>());
-    m_body_cmd_f.set(lin::zeros<lin::Vector3f>());
+    t_body_cmd = lin::zeros<lin::Vector3f>();
+    m_body_cmd = lin::zeros<lin::Vector3f>();
 }
 
 void AttitudeController::default_pointing_objectives() {
@@ -103,8 +109,6 @@ void AttitudeController::default_pointing_objectives() {
 }
 
 void AttitudeController::calculate_detumble_controller() {
-    m_body_cmd_f.set(lin::zeros<lin::Vector3f>());
-
     // Default all inputs to NaNs and set appropriate fields
     detumbler_data = gnc::DetumbleControllerData();
     detumbler_data.b_body = b_body_rd_fp->get();
@@ -112,7 +116,7 @@ void AttitudeController::calculate_detumble_controller() {
     // Call the controller and write results to appropriate state fields
     control_detumble(detumbler_state, detumbler_data, detumbler_actuation);
     if (lin::all(lin::isfinite(detumbler_actuation.mtr_body_cmd)))
-        m_body_cmd_f.set(detumbler_actuation.mtr_body_cmd);
+        m_body_cmd = detumbler_actuation.mtr_body_cmd;
 }
 
 void AttitudeController::calculate_pointing_objectives() {
@@ -203,7 +207,14 @@ void AttitudeController::calculate_pointing_controller() {
     // Call the controller and write results to appropriate state fields
     control_pointing(pointer_state, pointer_data, pointer_actuation);
     if (lin::all(lin::isfinite(pointer_actuation.mtr_body_cmd) && lin::isfinite(pointer_actuation.rwa_body_cmd))) {
-        m_body_cmd_f.set(pointer_actuation.mtr_body_cmd);
-        t_body_cmd_f.set(pointer_actuation.rwa_body_cmd);
+        m_body_cmd = pointer_actuation.mtr_body_cmd;
+        t_body_cmd = pointer_actuation.rwa_body_cmd;
     }
+}
+
+void AttitudeController::transfer_internal_to_output_vectors(){
+    f_vector_t m_temp = {m_body_cmd(0),m_body_cmd(1),m_body_cmd(2)};
+    f_vector_t t_temp  = {t_body_cmd(0),t_body_cmd(1),t_body_cmd(2)};
+    m_body_cmd_f.set(m_temp);
+    t_body_cmd_f.set(t_temp);
 }

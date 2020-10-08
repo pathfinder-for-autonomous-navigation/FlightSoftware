@@ -14,13 +14,9 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
     rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(
         adcs::rwa::min_speed_command, adcs::rwa::max_speed_command, 16*3)),
-    rwa_torque_cmd_f("adcs_cmd.rwa_torque_cmd", Serializer<f_vector_t>(
-        adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
     rwa_speed_filter_f("adcs_cmd.rwa_speed_filter", filter_sr),
     rwa_ramp_filter_f("adcs_cmd.rwa_ramp_filter", filter_sr),
     mtr_mode_f("adcs_cmd.mtr_mode", Serializer<unsigned char>(2)),
-    mtr_cmd_f("adcs_cmd.mtr_cmd", Serializer<f_vector_t>(
-        adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
     mtr_limit_f("adcs_cmd.mtr_limit", Serializer<float>(
         adcs::mtr::min_moment, adcs::mtr::max_moment, 16)),
     ssa_voltage_filter_f("adcs_cmd.ssa_voltage_filter", filter_sr),
@@ -36,11 +32,9 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     // For ADCS Controller
     add_writable_field(rwa_mode_f);
     add_writable_field(rwa_speed_cmd_f);
-    add_writable_field(rwa_torque_cmd_f);
     add_writable_field(rwa_speed_filter_f);
     add_writable_field(rwa_ramp_filter_f);
     add_writable_field(mtr_mode_f);
-    add_writable_field(mtr_cmd_f);
     add_writable_field(mtr_limit_f);
     add_writable_field(ssa_voltage_filter_f);
     add_writable_field(mag1_mode_f);
@@ -88,11 +82,9 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     // defaults, TODO: DECIDE DEFAULTS
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);
     rwa_speed_cmd_f.set({0,0,0});
-    rwa_torque_cmd_f.set({0,0,0});
     rwa_speed_filter_f.set(1);
     rwa_ramp_filter_f.set(1);
     mtr_mode_f.set(adcs::MTRMode::MTR_DISABLED);
-    mtr_cmd_f.set({0,0,0});
     mtr_limit_f.set(adcs::mtr::max_moment);
     ssa_voltage_filter_f.set(1);
     mag1_mode_f.set(adcs::IMU_MAG_NORMAL);
