@@ -93,13 +93,17 @@ class Simulation(object):
         """
         For any flight computer simulations within the simulation,
         update their data.
+
+        This is useful if the flight computer has not yet implemented
+        certain controllers, but this function should eventually be
+        removable from the simulation interface.
         """
         raise NotImplementedError
 
     def send_actuations_to_simmed_satellites(self):
         """
         Send actuator commands from the real flight computer to the
-        simulated flight computers.
+        simulation so that it can update dynamics.
         """
         raise NotImplementedError
 
