@@ -9,6 +9,9 @@ on:
       - 'MCT/**'
       - 'cmdclient/**'
       - 'docs/**'
+      - 'README.md'
+      - 'LICENSE'
+      - 'ptest/README.md'
 
 env:
   CI: true

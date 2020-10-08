@@ -10,6 +10,10 @@ on:
       - 'MCT/**'
       - 'cmdclient/**'
       - 'docs/**'
+      - 'README.md'
+      - 'LICENSE'
+      - 'ptest/README.md'
+      - '.github/workflows/hootl.yml'
 
 env:
   CI: true
