@@ -23,6 +23,7 @@ class TestFixture {
 
     std::unique_ptr<EEPROMController> eeprom_controller;
 
+
     /**
      * @brief Construct a new Test Fixture.
      * 
