@@ -61,6 +61,7 @@ class MTorquerCase(SingleSatOnlyCase):
         t_end = time.time() + duration
         while time.time() < t_end:
             pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
+            self.cycle()
             readings.append(pair)
             
         return readings
@@ -72,7 +73,7 @@ class MTorquerCase(SingleSatOnlyCase):
             with autocycling, but no torquer active for 5 seconds.
             Values are entered into a list in pairs with (mag1,mag2)
         """
-        self.ws("cycle.auto", True)
+        
         self.print_header("Testing white noise")
 
         #record values for 5 seconds
@@ -82,7 +83,7 @@ class MTorquerCase(SingleSatOnlyCase):
         self.logger.put(self.avg_list(readings))
         #self.logger.put(str(self.average_vectors(readings)))
         #self.logger.put(str(self.stdev_vectors(readings)))
-        self.ws("cycle.auto", False)
+        
         self.print_header("Whitespace vector matrix created")
 
     def prepare_mag(self):
