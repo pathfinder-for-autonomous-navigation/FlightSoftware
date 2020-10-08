@@ -71,24 +71,36 @@ class Simulation(object):
         self.log += f"[{datetime.datetime.now()}] {msg}\n"
 
     def configure(self):
-        raise NotImplementedError
-
-    def update_sim_time(self):
+        """
+        Initialize anything required for the sim.
+        """
         raise NotImplementedError
 
     def update_sensors(self):
+        """
+        Read sensors from simulation.
+        """
         raise NotImplementedError
 
     def update_dynamics(self):
+        """
+        Allow simulation to step forward in time and update its
+        truth.
+        """
         raise NotImplementedError
 
     def simulate_flight_computers(self):
+        """
+        For any flight computer simulations within the simulation,
+        update their data.
+        """
         raise NotImplementedError
 
     def send_actuations_to_simmed_satellites(self):
-        raise NotImplementedError
-
-    def save_sim_data(self):
+        """
+        Send actuator commands from the real flight computer to the
+        simulated flight computers.
+        """
         raise NotImplementedError
 
     def run(self):
@@ -100,12 +112,10 @@ class Simulation(object):
             num_steps = int(self.sim_duration / self.dt) 
         else:
             num_steps = float("inf")
-        sample_rate = int(10.0 / self.dt) # Sample once every ten seconds
         step = 0
 
         start_time = time.time()
         while step < num_steps and self.running and not self.testcase.finished:
-            self.update_sim_time()
             self.update_sensors()
             self.update_dynamics()
             self.simulate_flight_computers()
@@ -123,9 +133,6 @@ class Simulation(object):
                 self.flight_controller_leader.write_state("cycle.start", "true")
 
             self.send_actuations_to_simmed_satellites()
-            
-            if step % sample_rate == 0:
-                self.save_sim_data()
 
             step += 1
             time.sleep(self.dt - ((time.time() - start_time) % self.dt))
@@ -154,7 +161,7 @@ class Simulation(object):
         """Write the inputs required for ADCS state estimation."""
 
         # Convert mission time to GPS time
-        current_gps_time = GPSTime(self.sim_time)
+        current_gps_time = GPSTime(self.main_state['follower']['dynamics']['time'])
 
         # Clean up sensor readings to be in a format usable by Flight Software
         position_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["position_ecef"]])
@@ -184,9 +191,6 @@ class Simulation(object):
         """
         self.add_to_log("Stopping simulation...")
 
-        with open(data_dir + "/simulation_data_main.txt", "w") as fp:
-            json.dump(self.main_state_trajectory, fp)
-
         with open(data_dir + "/simulation_log.txt", "w") as fp:
             fp.write(self.log)
 
@@ -208,13 +212,9 @@ class MatlabSimulation(Simulation):
 
         self.main_state = self.eng.initialize_main_state(self.seed, self.sim_initial_state, nargout=1)
         self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.sim_initial_state, nargout=2)
-        self.main_state_trajectory = []
 
         self.eng.workspace['const']['dt'] = self.flight_controller.smart_read("pan.cc_ms") * 1e6  # Control cycle time in nanoseconds.
-        self.dt = self.eng.workspace['const']['dt'] * 1e-9 # In seconds.
-    
-    def update_sim_time(self):
-        self.sim_time = self.main_state['follower']['dynamics']['time']
+        self.dt = self.eng.workspace['const']['dt'] * 1e-9 # In seconds
 
     def update_sensors(self):
         self.sensor_readings_follower = self.eng.sensor_reading(self.main_state['follower'],self.main_state['leader'], nargout=1)
@@ -233,10 +233,6 @@ class MatlabSimulation(Simulation):
         self.main_state = self.main_state_promise.result()
         self.main_state['follower'] = self.eng.actuator_command(self.actuator_commands_follower,self.main_state['follower'], nargout=1)
         self.main_state['leader'] = self.eng.actuator_command(self.actuator_commands_leader,self.main_state['leader'], nargout=1)
-
-    def save_sim_data(self):
-        self.main_state_trajectory.append(
-            json.loads(self.eng.jsonencode(self.main_state, nargout=1)))
 
 class CppSimulation(Simulation):
     # TODO implement
