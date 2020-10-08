@@ -253,7 +253,7 @@ class StateCmdPrompt(Cmd):
         '''
         Plot the given state fields. See usb_session.py for documentation.
         '''
-        plotter = PlotterClient(self.cmded_device.datastore.db)
+        plotter = PlotterClient(self.cmded_device.datastore.dataList)
         plotter.do_plot(args)
     
     @USBSessionOnly
