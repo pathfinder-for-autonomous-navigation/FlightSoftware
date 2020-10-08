@@ -23,17 +23,20 @@ class HardwareStressCheckoutCase(SingleSatOnlyCase):
             "prop.state", Enums.prop_states["disabled"])
 
     def docking_spin_motor_setup(self):
-        self.write_state("dcdc.SpikeDock_cmd", "true") #should this be "true" or True ?
+        self.ws("dcdc.SpikeDock_cmd", "true") #should this be "true" or True ?
 
     def spin_motors(self, speed):
         assert(speed in range(-680, 681))
         self.ws("adcs_cmd.rwa_speed_cmd", [speed, speed, speed])
 
     def fire_valves(self):
-        self.ws("prop.sched_valve1", "800")
-        self.ws("prop.sched_valve2", "800")
-        self.ws("prop.sched_valve3", "800")
-        self.ws("prop.sched_valve4", "800")
+        val = "0"
+        if self.rs("pan.cycle_no")%2 == 0:
+            val = "1"
+        self.ws("prop.sched_valve1", val)
+        self.ws("prop.sched_valve2", val)
+        self.ws("prop.sched_valve3", val)
+        self.ws("prop.sched_valve4", val)
 
     def turn_motors(self):
         if self.rs("docksys.dock_config") == "true" and self.rs("docksys.config_cmd" == "true"):
@@ -47,7 +50,7 @@ class HardwareStressCheckoutCase(SingleSatOnlyCase):
         self.fire_valves()
         for _ in range(600):
             self.turn_motors()
-            self.fire_valves()  #I'm not sure how the scheduling works
+            self.fire_valves() 
             self.cycle()
 
         self.finish()
