@@ -60,7 +60,7 @@ class MTorquerCase(SingleSatOnlyCase):
         readings = []
         t_end = time.time() + duration
         while time.time() < t_end:
-            pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag1_vec")]
+            pair = [self.rs("adcs_monitor.mag1_vec"),self.rs("adcs_monitor.mag2_vec")]
             self.cycle()
             readings.append(pair)
             
