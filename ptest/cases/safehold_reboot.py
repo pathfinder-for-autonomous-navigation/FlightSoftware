@@ -1,5 +1,5 @@
 from .base import SingleSatOnlyCase
-from .utils import FSWEnum, Enums, BootUtil, TestCaseFailure
+from .utils import FSWEnum, Enums, TestCaseFailure
 
 class SafeholdReboot(SingleSatOnlyCase):
     @property

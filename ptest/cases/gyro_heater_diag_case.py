@@ -1,5 +1,5 @@
 # GyroHeaterDiagCase - A manual diagonstic case to checkout the behavior of the gyro heater
-from .base import SingleSatOnlyCase, Enums, TestCaseFailure
+from .base import SingleSatOnlyCase, TestCaseFailure, Enums
 import time
     
 class GyroHeaterDiagCase(SingleSatOnlyCase):
