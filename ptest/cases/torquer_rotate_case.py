@@ -167,6 +167,7 @@ class MTorquerCase(SingleSatOnlyCase):
         self.mtr_test()
 
         self.print_header("MAGNETORQUER TEST COMPLETE")
+        self.ws("adcs_cmd.mtr_cmd", [0,0,0])
         self.finish()
         
 
