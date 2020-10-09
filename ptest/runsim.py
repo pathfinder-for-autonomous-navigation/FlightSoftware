@@ -201,11 +201,6 @@ def check_system_dependencies():
         print("Running PTest requires Python 3.6 or above.")
         sys.exit(1)
 
-    from shutil import which
-    if which("go") is None:
-        print("PTest requires Golang to be installed.")
-        sys.exit(1)
-
 def main(args):
     check_system_dependencies()
 
