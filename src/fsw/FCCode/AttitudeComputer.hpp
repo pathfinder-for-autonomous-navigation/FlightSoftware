@@ -54,13 +54,6 @@ class AttitudeComputer : public TimedControlTask<void> {
      * standby pointing with GPS data is ignored.
      */
     TRACKED_CONSTANT_SC(float, alignment_threshold, 0.01);
-
-    void dispatch_standby();
-    void dispatch_docking();
-    void dispatch_limited();
-    void dispatch_manual();
-
-
 };
 
 #endif
