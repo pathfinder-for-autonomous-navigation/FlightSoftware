@@ -96,17 +96,49 @@ class PropFaultHandler(SingleSatOnlyCase):
 # Test Case
 # --------------------------------------------------------------------------------------
 
-    def run_case_singlesat(self):
-        if not self.finished:
-            self.collect_diagnostic_data()
-        if not hasattr(self, "test_stage"):
-            self.test_stage = "force_fault"
-            self.state = "idle"
+    def test_pressurize_fail(self):
+        self.test_fault()
+        if self.test_stage == "reset":
+            self.fault_name = "prop.overpressured"
 
-        if self.test_stage == "force_fault":
+    def test_overpressured(self):
+        self.test_fault()
+        if self.test_stage == "reset":
+            self.fault_name = "prop.tank2_temp_high"
+    
+    def test_tank2_temp_high(self):
+        self.test_fault()
+        if self.test_stage == "reset":
+            self.fault_name = "prop.tank1_temp_high"
+
+    def test_tank1_temp_high(self):
+        self.test_fault()
+        if self.test_stage == "reset":
+            self.fault_name = "finished"
+
+    def dispatch_test(self):
+        if self.fault_name == "prop.pressurize_fail":
+            self.test_pressurize_fail()
+        elif self.fault_name == "prop.overpressured":
+            self.test_overpressured()
+        elif self.fault_name == "prop.tank2_temp_high":
+            self.test_tank2_temp_high()
+        elif self.fault_name == "prop.tank1_temp_high":
+            self.test_tank1_temp_high()
+        elif self.fault_name == "finished":
+            self.finish()
+
+    def test_fault(self):
+        if self.test_stage == "init":
+            self.logger.put("[TESTCASE] Starting test for {}".format(self.fault_name))
+            self.state = "idle"
+            self.test_stage = "force_fault"
+
+        elif self.test_stage == "force_fault":
             self.check_prop_state("idle")
-            self.logger.put("Overriding the prop.overpressured fault.")
-            self.force_fault("prop.overpressured")
+            self.check_mission_state("leader", "mission state should be in leader")
+            self.logger.put("Overriding the {} fault.".format(self.fault_name))
+            self.force_fault(self.fault_name)
             self.test_stage = "handling_fault"
 
         elif self.test_stage == "handling_fault":
@@ -115,11 +147,26 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.test_stage = "venting"
 
         elif self.test_stage == "venting":
-            self.check_prop_state("venting", "prop state should be in venting since prop.overpressured is forced")
+            self.check_prop_state("venting", "prop state should be in venting since fault is forced")
             self.logger.put("Prop now in venting.")
             self.check_mission_state("standby", "mission state should be in standby when prop is venting")
             self.logger.put("Satellite now in in standby state.")
-            self.test_stage = "finished"
+            self.reset_fault(self.fault_name)
+            self.test_stage = "reset"
 
-        elif self.test_stage == "finished":
-            self.finish()
+        elif self.test_stage == "reset":
+            self.logger.put("Resetting satellite state")
+            self.check_prop_state("idle", "prop state should be in idle")
+            # not sure why but mission state does not return from standby
+            self.mission_state = "leader"
+            self.test_stage = "init"
+
+    def run_case_singlesat(self):
+        if not self.finished:
+            self.collect_diagnostic_data()
+        if not hasattr(self, "fault_name"):
+            # pressurize_fail has different behavior, so it does not go into handling_fault/venting
+            self.fault_name = "prop.overpressured"
+            self.test_stage = "init"
+
+        self.dispatch_test()
