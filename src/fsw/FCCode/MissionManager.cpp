@@ -29,6 +29,8 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
                                                                                     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32), 500),
                                                                                     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100),
                                                                                     enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
+                                                                                    
+                                                                        
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);
@@ -42,6 +44,9 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
     add_readable_field(deployment_wait_elapsed_f);
     add_writable_field(sat_designation_f);
     add_internal_field(enter_close_approach_ccno_f);
+
+    bootcount_fp = find_readable_field<unsigned int>("pan.bootcount", __FILE__, __LINE__);
+    bootcount_fp->set(bootcount_fp->get()+1);
 
     main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler *>(main_fault_handler.get())->init();
@@ -79,7 +84,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
                   prop_state_t::disabled); // "Starting" transition
     docking_config_cmd_f.set(true);
     enter_docking_cycle_f.set(0);
-    is_deployed_f.set(false);
+    is_deployed_f.set(bootcount_fp->get() > 1);
     deployment_wait_elapsed_f.set(0);
     set(sat_designation_t::undecided);
 }
@@ -164,11 +169,13 @@ void MissionManager::dispatch_startup()
 {
     set(radio_state_t::disabled);
 
-    // Step 1. Wait for the deployment timer length.
-    if (deployment_wait_elapsed_f.get() < deployment_wait)
-    {
-        deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
-        return;
+    // Step 1. Wait for the deployment timer length. Skip if bootcount > 1
+    if (bootcount_fp->get() == 1) { 
+        if (deployment_wait_elapsed_f.get() < deployment_wait)
+        {
+            deployment_wait_elapsed_f.set(deployment_wait_elapsed_f.get() + 1);
+            return;
+        }
     }
 
     // Step 2. Turn radio on, and check for hardware faults that would necessitate
