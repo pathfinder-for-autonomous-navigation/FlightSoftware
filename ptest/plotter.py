@@ -2,7 +2,7 @@ import pylab as plt
 import matplotlib.dates as mdates
 import mplcursors
 from .gpstime import GPSTime
-from tinydb import TinyDB, Query
+import json
 from argparse import ArgumentParser
 import cmd, sys
 
@@ -159,14 +159,16 @@ def main(args):
 
     args = parser.parse_args(args)
 
+    
     try:
         fp = open(args.data, "r")
+        dataList = json.load(fp)
+        fp.close()
     except FileNotFoundError:
         print("Could not find data file. Exiting.")
         sys.exit(1)
 
-    db = TinyDB(args.data)
-    plotter = PlotterClient(db)
+    plotter = PlotterClient(dataList)
 
     try:
         plotter.cmdloop()
