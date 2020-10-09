@@ -108,28 +108,29 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.test_stage = "handling_fault"
 
         elif self.test_stage == "handling_fault":
-            self.check_prop_state("handling_fault", "prop state should be in handling fault since prop.overpressured is forced")
+            self.check_prop_state("handling_fault", "prop state should be in handling fault since the fault is forced")
             self.logger.put("Prop now in handling_fault.")
-            # pressurize_fail has different behavior. It stays in handling_fault until suppressed
+            # pressurize_fail has different behavior than the other faults. It stays in handling_fault until suppressed by the ground
             if self.fault_name == "prop.pressurize_fail":
                 self.test_stage = "handle_pressurize_fail"
             else:
                 self.test_stage = "venting"
         
         elif self.test_stage == "handle_pressurize_fail":
-            self.check_prop_state("handling_fault", "prop should remain in handling fault if pressurize fail is not suppressed")
+            self.check_prop_state("handling_fault", "prop should remain in handling fault if pressurize_fail is not suppressed")
             self.check_mission_state("standby", "satellite should be in standby when handling fault")
+            # Need to reset completely since override takes precedence
             self.reset_fault("prop.pressurize_fail")
             self.logger.put("Suppressing pressurize_fail")
             self.test_stage = "recover_pressurize_fail"
 
         elif self.test_stage == "recover_pressurize_fail":
-            self.check_prop_state("idle", "prop should be in idle now")
+            self.check_prop_state("idle", "prop should be in idle when pressurize_fail is suppressed")
             self.test_stage = "reset"
 
 
         elif self.test_stage == "venting":
-            self.check_prop_state("venting", "prop state should be in venting since fault is forced")
+            self.check_prop_state("venting", "prop state should be in venting since the fault is forced")
             self.logger.put("Prop now in venting.")
             self.check_mission_state("standby", "mission state should be in standby when prop is venting")
             self.logger.put("Satellite now in in standby state.")
@@ -138,7 +139,7 @@ class PropFaultHandler(SingleSatOnlyCase):
 
         elif self.test_stage == "reset":
             self.logger.put("Resetting satellite state")
-            self.check_prop_state("idle", "prop state should be in idle")
+            self.check_prop_state("idle", "prop state should be in idle when fault is suppressed")
             self.mission_state = "leader"
             self.test_stage = "init"
 
