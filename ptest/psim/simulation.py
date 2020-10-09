@@ -115,7 +115,7 @@ class Simulation(object):
         step = 0
 
         start_time = time.time()
-        while step < num_steps and self.running and not self.testcase.finished:
+        while step < num_steps and self.running:
             self.update_sensors()
             self.update_dynamics()
             self.simulate_flight_computers()
@@ -190,6 +190,8 @@ class Simulation(object):
         Stops a run of the simulation and saves run data to disk.
         """
         self.add_to_log("Stopping simulation...")
+        self.running = False
+        time.sleep(1) # Wait for logs to finish for the current timestep.
 
         with open(data_dir + "/simulation_log.txt", "w") as fp:
             fp.write(self.log)
