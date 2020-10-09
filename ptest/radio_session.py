@@ -1,20 +1,12 @@
-import time
-import datetime
-from datetime import datetime
-import serial
 import threading
 import json
 import traceback
 import queue
 import requests
-import subprocess
-import glob
 import os
-import pty
 from multiprocessing import Process, Queue
 from elasticsearch import Elasticsearch
 
-from .data_consumers import Datastore, Logger
 from .http_cmd import create_radio_session_endpoint
 from tlm.oauth2 import *
 from .uplink_timer import UplinkTimer

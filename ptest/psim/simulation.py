@@ -3,16 +3,12 @@
 # simulation.py
 # Class to run a simulation and communicate with the flight computers.
 
-import time, timeit, traceback
-import math
+import time, timeit
 import platform
 import threading
 import os
-if "CI" not in os.environ:
-    import matlab.engine
 import datetime
 import os
-import json
 from ..gpstime import GPSTime
 
 class Simulation(object):
@@ -200,6 +196,8 @@ class Simulation(object):
 
 class MatlabSimulation(Simulation):
     def configure(self):
+        import matlab.engine
+
         self.eng = matlab.engine.start_matlab()
         path = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "../../lib/common/psim/MATLAB")

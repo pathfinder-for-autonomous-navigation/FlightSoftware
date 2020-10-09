@@ -5,23 +5,22 @@ except ImportError:
     pass
 from cmd import Cmd
 import timeit
-import tinydb
 from .cases.utils import Enums
 from .plotter import PlotterClient
 from .usb_session import USBSession
 
 def USBSessionOnly(fn):
-        """
-        Ensures that the function is only called for a State Session device.
-        """
+    """
+    Ensures that the function is only called for a State Session device.
+    """
 
-        def inner(self, args):
-            if isinstance(self.cmded_device, USBSession):
-                fn(self, args)
-            else:
-                print("Cannot use this function since currently commanded device is not a USB session.")
+    def inner(self, args):
+        if isinstance(self.cmded_device, USBSession):
+            fn(self, args)
+        else:
+            print("Cannot use this function since currently commanded device is not a USB session.")
 
-        return inner
+    return inner
 
 class StateCmdPrompt(Cmd):
     '''

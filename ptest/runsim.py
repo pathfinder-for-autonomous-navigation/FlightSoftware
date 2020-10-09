@@ -8,7 +8,7 @@ from .radio_session import RadioSession
 from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
 from . import get_pio_asset
-import json, sys, os, tempfile, time, threading, signal, traceback
+import json, sys, os, time, threading
 
 try:
     import pty, subprocess
