@@ -57,40 +57,6 @@ class PropFaultHandler(SingleSatOnlyCase):
     @state.setter
     def state(self, val):
         self.ws("prop.state", str(Enums.prop_states[val]))
-  
-# --------------------------------------------------------------------------------------
-# Helper methods for the prop state machine
-# --------------------------------------------------------------------------------------
-
-    def goto_idle(self):
-        self.state = "idle"
-        self.cycle()
-        self.check_prop_state("idle")
-    
-    def goto_await_pressurizing(self):
-        self.goto_idle()
-        self.sched_valve1 = 100
-        self.sched_valve2 = 700
-        self.sched_valve3 = 800
-        self.sched_valve4 = 400
-        self.cycles_until_firing = int(self.min_num_cycles) + 2
-        self.cycle()
-        self.check_prop_state("await_pressurizing")
-
-    def goto_pressurize(self):
-        self.goto_await_pressurizing()
-        self.cycle_until_change()
-        self.check_prop_state("pressurizing")
-
-    def goto_await_firing(self):
-        self.goto_pressurize()
-        self.cycle_until_change()
-        self.check_prop_state("await_firing")
-
-    def goto_firing(self):
-        self.goto_await_firing()
-        self.cycle_until_change()
-        self.check_prop_state("firing")
 
 # --------------------------------------------------------------------------------------
 # Test Case
@@ -144,7 +110,23 @@ class PropFaultHandler(SingleSatOnlyCase):
         elif self.test_stage == "handling_fault":
             self.check_prop_state("handling_fault", "prop state should be in handling fault since prop.overpressured is forced")
             self.logger.put("Prop now in handling_fault.")
-            self.test_stage = "venting"
+            # pressurize_fail has different behavior. It stays in handling_fault until suppressed
+            if self.fault_name == "prop.pressurize_fail":
+                self.test_stage = "handle_pressurize_fail"
+            else:
+                self.test_stage = "venting"
+        
+        elif self.test_stage == "handle_pressurize_fail":
+            self.check_prop_state("handling_fault", "prop should remain in handling fault if pressurize fail is not suppressed")
+            self.check_mission_state("standby", "satellite should be in standby when handling fault")
+            self.reset_fault("prop.pressurize_fail")
+            self.logger.put("Suppressing pressurize_fail")
+            self.test_stage = "recover_pressurize_fail"
+
+        elif self.test_stage == "recover_pressurize_fail":
+            self.check_prop_state("idle", "prop should be in idle now")
+            self.test_stage = "reset"
+
 
         elif self.test_stage == "venting":
             self.check_prop_state("venting", "prop state should be in venting since fault is forced")
@@ -157,7 +139,6 @@ class PropFaultHandler(SingleSatOnlyCase):
         elif self.test_stage == "reset":
             self.logger.put("Resetting satellite state")
             self.check_prop_state("idle", "prop state should be in idle")
-            # not sure why but mission state does not return from standby
             self.mission_state = "leader"
             self.test_stage = "init"
 
@@ -165,8 +146,7 @@ class PropFaultHandler(SingleSatOnlyCase):
         if not self.finished:
             self.collect_diagnostic_data()
         if not hasattr(self, "fault_name"):
-            # pressurize_fail has different behavior, so it does not go into handling_fault/venting
-            self.fault_name = "prop.overpressured"
+            self.fault_name = "prop.pressurize_fail"
             self.test_stage = "init"
 
         self.dispatch_test()
