@@ -84,8 +84,19 @@ void load_good_data(TestFixture& tf){
     tf.w_body_est_fp->set(lin::Vector3f({10,-1,0}));
     tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
     tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
+    tf.q_body_eci_est_fp->set(lin::Vector4f({0,0,0,1}));
     tf.time_ns_fp->set(0);
     tf.pos_baseline_ecef_fp->set(lin::Vector3f({500,1,0}));
+}
+
+void nan_sensors(TestFixture& tf){
+    tf.b_body_est_fp->set(lin::nans<lin::Vector3f>());
+    tf.w_body_est_fp->set(lin::nans<lin::Vector3f>());
+    tf.pos_ecef_fp->set(lin::nans<lin::Vector3f>());
+    tf.vel_ecef_fp->set(lin::nans<lin::Vector3f>());
+    tf.q_body_eci_est_fp->set(lin::nans<lin::Vector4f>());
+    tf.time_ns_fp->set(0);
+    tf.pos_baseline_ecef_fp->set(lin::nans<lin::Vector3f>());
 }
 
 void test_valid_initialization() {
@@ -136,6 +147,13 @@ void test_detumble(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t(
         {adcs::mtr::max_moment,-adcs::mtr::max_moment,0}),
         tf.m_body_cmd_fp->get(), 1e-10);
+
+    // check that if we dont have mag readings actuators go to 0
+    tf.b_body_rd_fp->set(lin::nans<lin::Vector3f>());
+    tf.step();
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.t_body_cmd_fp->get(), 1e-10);    
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.m_body_cmd_fp->get(), 1e-10);
+
 }
 
 void test_standby(){
@@ -175,6 +193,16 @@ void test_standby(){
     // check these doomed to pass actuator outputs
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-adcs::mtr::max_moment}),tf.m_body_cmd_fp->get(), 1e-7);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-0.0225f,0.00224974f,-0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
+
+    // go back to standby
+    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_standby));
+    tf.step();
+
+    // lose every signal needed for standby and show that it goes to 0 actuators
+    nan_sensors(tf);
+    tf.step();
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.t_body_cmd_fp->get(), 1e-10);    
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.m_body_cmd_fp->get(), 1e-10);
 }
 
 void test_point_docking() {
@@ -199,6 +227,12 @@ void test_point_docking() {
 
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-adcs::mtr::max_moment}),tf.m_body_cmd_fp->get(), 1e-7);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-0.0226458f,0.000844621,-0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
+
+    // lose every signal needed for docking and show that it goes to 0 actuators
+    nan_sensors(tf);
+    tf.step();
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.t_body_cmd_fp->get(), 1e-10);    
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.m_body_cmd_fp->get(), 1e-10);
 }
 
 // the objective of this test is to observe that we can set the pointing objectives to nan
