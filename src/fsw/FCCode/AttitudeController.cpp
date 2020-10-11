@@ -14,6 +14,8 @@
 
 #include <adcs/constants.hpp>
 
+#include <iostream>
+
 AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_controller", offset),
     b_body_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag_vec)),
@@ -56,6 +58,7 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
 
 void AttitudeController::execute() {
     default_actuator_commands();
+    default_pointing_objectives();
 
     adcs_state_t state = static_cast<adcs_state_t>(adcs_state_fp->get());
     switch (state) {
@@ -117,10 +120,13 @@ void AttitudeController::calculate_detumble_controller() {
     control_detumble(detumbler_state, detumbler_data, detumbler_actuation);
     if (lin::all(lin::isfinite(detumbler_actuation.mtr_body_cmd)))
         m_body_cmd = detumbler_actuation.mtr_body_cmd;
+    lin::Vector3f local_m = m_body_cmd;
+    // std::cout << sprintf("%f,%f,%f", local_m(0),local_m(1),local_m(2));
+    std::cout << local_m(0) << local_m(1) << local_m(2);
+    std::cout << "\n";
 }
 
 void AttitudeController::calculate_pointing_objectives() {
-    default_pointing_objectives();
 
     lin::Vector3f dr_body = lin::nans<lin::Vector3f>();
     lin::Matrix3x3f DCM_hill_body = lin::nans<lin::Matrix3x3f>();
