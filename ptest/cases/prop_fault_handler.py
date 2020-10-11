@@ -115,6 +115,7 @@ class PropFaultHandler(SingleSatOnlyCase):
                 self.test_stage = "handle_pressurize_fail"
             else:
                 self.test_stage = "venting"
+                self.cycle()
         
         elif self.test_stage == "handle_pressurize_fail":
             self.check_prop_state("handling_fault", "prop should remain in handling fault if pressurize_fail is not suppressed")
@@ -144,10 +145,10 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.test_stage = "init"
 
     def run_case_singlesat(self):
-        if not self.finished:
-            self.collect_diagnostic_data()
         if not hasattr(self, "fault_name"):
             self.fault_name = "prop.pressurize_fail"
             self.test_stage = "init"
 
-        self.dispatch_test()
+        if not self.finished:
+            self.collect_diagnostic_data()
+            self.dispatch_test()
