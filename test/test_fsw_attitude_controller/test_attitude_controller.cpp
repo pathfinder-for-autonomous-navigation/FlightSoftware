@@ -1,3 +1,5 @@
+#define LIN_DESKTOP
+
 #include "../StateFieldRegistryMock.hpp"
 #include "../custom_assertions.hpp"
 
@@ -40,7 +42,7 @@ class TestFixture {
     WritableStateField<f_vector_t>*    m_body_cmd_fp;
 
     TestFixture() : registry() {
-        b_body_rd_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.mag_vec", 0, 1, 100);
+        b_body_rd_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.mag_vec", -1, 1, 100);
         w_wheels_rd_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.rwa_speed_rd", 0, 1, 100);
         b_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.b_body", 0, 1, 100);
         s_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.s_body", 0, 1, 100);
@@ -93,10 +95,10 @@ void test_detumble(){
     TestFixture tf;
 
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::detumble));
-    tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
-    
+    tf.b_body_rd_fp->set(lin::Vector3f({1,-1,0}));
     tf.step();
     
+    // all things related to the pointing objectives should be NaN
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec1_current_fp->get(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec2_current_fp->get(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec1_desired_fp->get(), 1e-10);
@@ -107,143 +109,134 @@ void test_detumble(){
 
     // dump in 8 data points to almost fill the buffer
     for(int i = 0; i<8; i++){
-        tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
+        tf.b_body_rd_fp->set(lin::Vector3f({1,-1,0}));
         tf.step();
     }
 
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.m_body_cmd_fp->get(), 1e-10);
 
     // last data point, now size = 10 and we should have a non zero mtr actuation
-    tf.b_body_est_fp->set(lin::Vector3f({-1,1,0}));
+    tf.b_body_rd_fp->set(lin::Vector3f({-1,1,0}));
     tf.step();
 
-    f_vector_t local_m = tf.m_body_cmd_fp->get();
-
-    printf("%f,%f,%f", local_m[0],local_m[1],local_m[2]);
-
+    // check that we are able to dump into the mtr output command
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t(
-        {adcs::mtr::max_moment,-adcs::mtr::max_moment,0}), tf.m_body_cmd_fp->get(), 1e-10);
+        {adcs::mtr::max_moment,-adcs::mtr::max_moment,0}),
+        tf.m_body_cmd_fp->get(), 1e-10);
 
 }
 
 void test_standby(){
     TestFixture tf;
-
-}
-
-void test_point_standby_old() {
-    TestFixture tf;
-    
-    // Test pointing without GPS
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_standby));
-    tf.pos_ecef_fp->set(lin::Vector3f({nan_f, nan_f, nan_f}));
-    tf.s_body_est_fp->set(lin::Vector3f({std::sqrt(2.0f)/2.0f,std::sqrt(2.0f)/2.0f,0.0f}));
-    tf.attitude_controller->execute();
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({std::sqrt(2.0f)/2.0f,std::sqrt(2.0f)/2.0f,0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({std::sqrt(2.0f)/2.0f,std::sqrt(2.0f)/2.0f,0.0f}), tf.pointer_vec1_desired_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({nan_f,nan_f,nan_f}), tf.pointer_vec2_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({nan_f,nan_f,nan_f}), tf.pointer_vec2_desired_fp->get(), 1e-10);
+    tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
+    tf.w_body_est_fp->set(lin::Vector3f({10,-1,0}));
+    tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
+    tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
+    tf.time_ns_fp->set(0);
+    tf.pos_baseline_ecef_fp->set(lin::nans<lin::Vector3f>());
 
-    // Test long edge choice calculation for several choices of long edge
-    // Choice 1
-    tf.s_body_est_fp->set(lin::Vector3f({std::sqrt(2.0f)/2.0f,-std::sqrt(2.0f)/2.0f,0.0f}));
-    tf.attitude_controller->execute();
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({std::sqrt(2.0f)/2.0f,-std::sqrt(2.0f)/2.0f,0.0f}), tf.pointer_vec1_desired_fp->get(), 1e-10);
-    // Choice 2
-    tf.s_body_est_fp->set(lin::Vector3f({-std::sqrt(2.0f)/2.0f,std::sqrt(2.0f)/2.0f,0.0f}));
-    tf.attitude_controller->execute();
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-std::sqrt(2.0f)/2.0f,std::sqrt(2.0f)/2.0f,0.0f}), tf.pointer_vec1_desired_fp->get(), 1e-10);
-    // Choice 3
-    tf.s_body_est_fp->set(lin::Vector3f({-std::sqrt(2.0f)/2.0f,-std::sqrt(2.0f)/2.0f,0.0f}));
-    tf.attitude_controller->execute();
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-std::sqrt(2.0f)/2.0f,-std::sqrt(2.0f)/2.0f,0.0f}), tf.pointer_vec1_desired_fp->get(), 1e-10);
+    tf.step();
 
-    // Test pointing with GPS data: with and without a secondary pointing objective
-    // With secondary pointing objective
-    tf.s_body_est_fp->set(lin::Vector3f({1.0f,0.0f,0.0f}));
-    tf.pos_ecef_fp->set(lin::Vector3f({0.0f,2.0f,0.0f}));
-    tf.attitude_controller->execute();
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0,1,0}), tf.pointer_vec1_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1,0,0}), tf.pointer_vec1_desired_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0,0,-1}), tf.pointer_vec2_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0,0,1}), tf.pointer_vec2_desired_fp->get(), 1e-10);
-    // Without secondary pointing objective
-    tf.pos_ecef_fp->set(lin::Vector3f({0.0f,2.0f,0.0f}));
-    tf.s_body_est_fp->set(lin::Vector3f({0.0f,1.99999f,0.0f}));
-    tf.attitude_controller->execute();
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0,0,1}), tf.pointer_vec2_current_fp->get(), 1e-10);
+    std::cout << tf.pointer_vec1_desired_fp->get();
+    std::cout << tf.pointer_vec2_desired_fp->get();
+
+    // all things related to the pointing objectives should be NaN
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, 1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
+    
+    // this test is doomed to pass, but the important part is that it is not nan
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.105f, -0.994f, 0.00017f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0018f, 0.0f, 0.999f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
+
+    std::cout << tf.m_body_cmd_fp->get()[0] << " " << tf.m_body_cmd_fp->get()[1] << " " << tf.m_body_cmd_fp->get()[2];
+    std::cout << tf.t_body_cmd_fp->get()[0] << " " << tf.t_body_cmd_fp->get()[1] << " " << tf.t_body_cmd_fp->get()[2];
+
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-adcs::mtr::max_moment}),tf.m_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-0.0225f,0.00224974f,-0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
+
+    // now change state to manual, and check that the pointing information persisted
+    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_manual));
+    tf.step();
+
+    // check that these values have persisted
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, 1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.105f, -0.994f, 0.00017f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0018f, 0.0f, 0.999f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
+
+    // check these doomed to pass actuator outputs
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-adcs::mtr::max_moment}),tf.m_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-0.0225f,0.00224974f,-0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
 }
 
 void test_point_docking() {
     TestFixture tf;
-
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_docking));
-    tf.pos_ecef_fp->set(lin::Vector3f({0.0f,2.0f,0.0f}));
-    tf.pos_baseline_ecef_fp->set(lin::Vector3f({0.0f,0.0f,3.0f}));
-    tf.attitude_controller->execute();
+    tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
+    tf.w_body_est_fp->set(lin::Vector3f({10,-1,0}));
+    tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
+    tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
+    tf.time_ns_fp->set(0);
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f,1.0f,0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f,0.0f,0.0f}), tf.pointer_vec1_desired_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f,0.0f,1.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f,0.0f,1.0f}), tf.pointer_vec2_desired_fp->get(), 1e-10);
+    // note baseline not nan
+    tf.pos_baseline_ecef_fp->set(lin::Vector3f({500,1,0}));
+
+    tf.step();
+
+    std::cout << tf.pointer_vec1_desired_fp->get();
+    std::cout << tf.pointer_vec2_desired_fp->get();
+
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, 1.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
+    
+    // this test is doomed to pass, but the important part is that it is not nan
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.994661f, .103185f, 0.00182815f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.00183598f, 0.000019023f, 0.999998f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
+
+    std::cout << tf.m_body_cmd_fp->get()[0] << " " << tf.m_body_cmd_fp->get()[1] << " " << tf.m_body_cmd_fp->get()[2];
+    std::cout << tf.t_body_cmd_fp->get()[0] << " " << tf.t_body_cmd_fp->get()[1] << " " << tf.t_body_cmd_fp->get()[2];
+
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-adcs::mtr::max_moment}),tf.m_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-0.0226458f,0.000844621,-0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
+}
+
+// the objective of this test is to observe that we can set the pointing objectives to nan
+// in order to allow custom actuator commands
+void test_point_manual_nan_pointing(){
+    TestFixture tf;
+    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_manual));
+    tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
+    tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
+    tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
+    tf.time_ns_fp->set(0);
+    tf.pos_baseline_ecef_fp->set(lin::Vector3f({500,1,0}));
+
+    f_vector_t rand_act{0.01,0.02,-0.03};
+    tf.m_body_cmd_fp->set(rand_act);
+    tf.t_body_cmd_fp->set(rand_act);
+
+    tf.pointer_vec1_current_fp->set(lin::nans<lin::Vector3f>()); 
+    tf.pointer_vec2_current_fp->set(lin::nans<lin::Vector3f>());
+    tf.pointer_vec1_desired_fp->set(lin::nans<lin::Vector3f>());
+    tf.pointer_vec2_desired_fp->set(lin::nans<lin::Vector3f>());
+
+    tf.step();
+
+    // check these doomed to pass actuator outputs
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(rand_act,tf.m_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(rand_act,tf.t_body_cmd_fp->get(), 1e-7);   
+
+    // step again to check persistence
+    tf.step();
+
+    // check these doomed to pass actuator outputs
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(rand_act,tf.m_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(rand_act,tf.t_body_cmd_fp->get(), 1e-7);  
 }
 
 void test_point_limited() {
     // TODO implement
-}
-
-// If the two desired vectors end up being within 10 degrees of each other, the
-// attitude controller should cancel the secondary pointing objective.
-void test_parallel_objectives() {
-    // Secondary pointing objective should be canceled if the second current vector is NaN
-    {
-        TestFixture tf;
-        tf.pos_ecef_fp->set(lin::Vector3f({0.0f,0.0f,0.0f})); // Set pos to be non-NaN so that vec2_desired cannot be NaN autonomously
-        tf.pointer_vec2_current_fp->set(lin::Vector3f({nan_f, nan_f, nan_f})); // 8 degrees away
-        tf.attitude_controller->execute();
-        PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector,
-            tf.pointer_vec2_desired_fp->get(), 1e-10);
-    }
-
-    // Secondary pointing objective should be canceled if the second desired vector is NaN
-    {
-        TestFixture tf;
-        tf.pos_ecef_fp->set(lin::Vector3f({0.0f,0.0f,0.0f}));
-        tf.pointer_vec2_desired_fp->set(lin::Vector3f({nan_f, nan_f, nan_f})); // 8 degrees away
-        tf.attitude_controller->execute();
-        PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector,
-            tf.pointer_vec2_desired_fp->get(), 1e-10);
-    }
-
-    // Secondary pointing objective should be canceled if the "current" vectors are within 10
-    // degrees of each other
-    {
-        TestFixture tf;
-        tf.pos_ecef_fp->set(lin::Vector3f({0.0f,0.0f,0.0f}));
-        tf.pointer_vec1_current_fp->set(lin::Vector3f({1.0f,0.0f,0.0f}));
-        tf.pointer_vec2_current_fp->set(lin::Vector3f({
-            std::cos(8.0f * gnc::constant::pi_f / 180.0f),
-            std::sin(8.0f * gnc::constant::pi_f / 180.0f),
-            0.0f})); // 8 degrees away
-        tf.attitude_controller->execute();
-        PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector,
-            tf.pointer_vec2_desired_fp->get(), 1e-10);
-    }
-
-    // Secondary pointing objective should be canceled if the desired vectors are within 10
-    // degrees of each other
-    {
-        TestFixture tf;
-        tf.pos_ecef_fp->set(lin::Vector3f({0.0f,0.0f,0.0f}));
-        tf.pointer_vec1_desired_fp->set(lin::Vector3f({1.0f,0.0f,0.0f}));
-        tf.pointer_vec2_desired_fp->set(lin::Vector3f({
-            std::cos(8.0f * gnc::constant::pi_f / 180.0f),
-            std::sin(8.0f * gnc::constant::pi_f / 180.0f),
-            0.0f})); // 8 degrees away
-        tf.attitude_controller->execute();
-        PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector,
-            tf.pointer_vec2_desired_fp->get(), 1e-10);
-    }
 }
 
 int test_attitude_controller() {
@@ -251,10 +244,9 @@ int test_attitude_controller() {
     RUN_TEST(test_valid_initialization);
     RUN_TEST(test_detumble);
     RUN_TEST(test_standby);
-    // RUN_TEST(test_point_docking);
-    // RUN_TEST(test_point_limited);
-    // We cannot test point_manual since there's nothing happening inside that state.
-    // RUN_TEST(test_parallel_objectives);
+    RUN_TEST(test_point_docking);
+    RUN_TEST(test_point_manual_nan_pointing);
+
     return UNITY_END();
 }
 

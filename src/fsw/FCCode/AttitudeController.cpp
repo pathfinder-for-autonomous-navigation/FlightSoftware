@@ -57,9 +57,6 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
 }
 
 void AttitudeController::execute() {
-    default_actuator_commands();
-    default_pointing_objectives();
-
     adcs_state_t state = static_cast<adcs_state_t>(adcs_state_fp->get());
     switch (state) {
         /*
@@ -68,6 +65,7 @@ void AttitudeController::execute() {
          */
         case adcs_state_t::detumble:
         case adcs_state_t::limited:
+            default_actuator_commands();
             calculate_detumble_controller();
             break;
         /*
@@ -76,6 +74,7 @@ void AttitudeController::execute() {
          */
         case adcs_state_t::point_standby:
         case adcs_state_t::point_docking:
+            default_actuator_commands();
             calculate_pointing_objectives();
         /*
          * When in manual, the pointing objectives are set from the ground.
@@ -120,30 +119,34 @@ void AttitudeController::calculate_detumble_controller() {
     control_detumble(detumbler_state, detumbler_data, detumbler_actuation);
     if (lin::all(lin::isfinite(detumbler_actuation.mtr_body_cmd)))
         m_body_cmd = detumbler_actuation.mtr_body_cmd;
-    lin::Vector3f local_m = m_body_cmd;
-    // std::cout << sprintf("%f,%f,%f", local_m(0),local_m(1),local_m(2));
-    std::cout << local_m(0) << local_m(1) << local_m(2);
-    std::cout << "\n";
 }
 
 void AttitudeController::calculate_pointing_objectives() {
+    default_pointing_objectives();
 
     lin::Vector3f dr_body = lin::nans<lin::Vector3f>();
     lin::Matrix3x3f DCM_hill_body = lin::nans<lin::Matrix3x3f>();
     {
         lin::Vector3f r = pos_ecef_fp->get(); // r = r_ecef
         lin::Vector3f v = vel_ecef_fp->get(); // v = v_ecef
+        lin::Vector4f q_body_eci_est = q_body_eci_est_fp->get();
 
-        // Position and velocity must be finite
-        if (lin::any(!(lin::isfinite(r) && lin::isfinite(v)))) return;
-
+        // Position, velocity, and attitude estimate, must be finite
+        if (lin::any(!(lin::isfinite(r) && lin::isfinite(v))))
+            return;
+        if (lin::any(!(lin::isfinite(q_body_eci_est))))
+            return;
         // Current time since the PAN epoch in seconds
         double time_s = static_cast<double>(time_ns_fp->get()) * 1.0e-9;
+        
+        // time must be finite
+        if(std::isnan(time_s))
+            return;
 
         lin::Vector4f q_body_ecef;
         gnc::env::earth_attitude(time_s, q_body_ecef);                    // q_body_ecef = q_ecef_eci
         gnc::utl::quat_conj(q_body_ecef);                                 // q_body_ecef = q_eci_ecef
-        gnc::utl::quat_cross_mult(q_body_eci_est_fp->get(), q_body_ecef); // q_body_ecef = q_body_ecef
+        gnc::utl::quat_cross_mult(q_body_eci_est, q_body_ecef); // q_body_ecef = q_body_ecef
 
         lin::Vector3f w_earth; // w_earth
         gnc::env::earth_angular_rate(time_s, w_earth);  // rate of ecef frame in eci
