@@ -67,6 +67,7 @@ void AttitudeController::execute() {
         case adcs_state_t::limited:
             default_actuator_commands();
             calculate_detumble_controller();
+            transfer_internal_to_output_vectors();
             break;
         /*
          * We'll autonomously calculate a pointing objective and then control to
@@ -75,6 +76,7 @@ void AttitudeController::execute() {
         case adcs_state_t::point_standby:
         case adcs_state_t::point_docking:
             default_actuator_commands();
+            transfer_internal_to_output_vectors();
             calculate_pointing_objectives();
         /*
          * When in manual, the pointing objectives are set from the ground.
@@ -94,8 +96,6 @@ void AttitudeController::execute() {
         default:
             break;
     }
-
-    transfer_internal_to_output_vectors();
 }
 
 void AttitudeController::default_actuator_commands() {
@@ -213,12 +213,19 @@ void AttitudeController::calculate_pointing_controller() {
     pointer_data.w_sat             = w_body_est_fp->get();
     pointer_data.b                 = b_body_est_fp->get();
 
+    if (lin::any(!(lin::isfinite(pointer_data.primary_desired) && lin::isfinite(pointer_data.primary_current))))
+        return;
+
+    if (lin::any(!(lin::isfinite(pointer_data.secondary_desired) && lin::isfinite(pointer_data.secondary_current))))
+        return;
+
     // Call the controller and write results to appropriate state fields
     control_pointing(pointer_state, pointer_data, pointer_actuation);
     if (lin::all(lin::isfinite(pointer_actuation.mtr_body_cmd) && lin::isfinite(pointer_actuation.rwa_body_cmd))) {
         m_body_cmd = pointer_actuation.mtr_body_cmd;
         t_body_cmd = pointer_actuation.rwa_body_cmd;
     }
+    transfer_internal_to_output_vectors();
 }
 
 void AttitudeController::transfer_internal_to_output_vectors(){
