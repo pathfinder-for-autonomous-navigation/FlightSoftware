@@ -105,6 +105,7 @@ void test_detumble(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.t_body_cmd_fp->get(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.m_body_cmd_fp->get(), 1e-10);
 
+    // dump in 8 data points to almost fill the buffer
     for(int i = 0; i<8; i++){
         tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
         tf.step();
@@ -112,6 +113,7 @@ void test_detumble(){
 
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.m_body_cmd_fp->get(), 1e-10);
 
+    // last data point, now size = 10 and we should have a non zero mtr actuation
     tf.b_body_est_fp->set(lin::Vector3f({-1,1,0}));
     tf.step();
 
