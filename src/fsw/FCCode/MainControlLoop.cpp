@@ -52,6 +52,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       adcs_box_controller(registry, adcs_box_controller_offset, adcs),
       orbit_controller(registry, orbit_controller_offset)
 {
+    
     docking_controller.init();
     orbit_controller.init();
 
