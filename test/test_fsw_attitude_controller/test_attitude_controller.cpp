@@ -79,6 +79,15 @@ class TestFixture {
     }
 };
 
+void load_good_data(TestFixture& tf){
+    tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
+    tf.w_body_est_fp->set(lin::Vector3f({10,-1,0}));
+    tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
+    tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
+    tf.time_ns_fp->set(0);
+    tf.pos_baseline_ecef_fp->set(lin::Vector3f({500,1,0}));
+}
+
 void test_valid_initialization() {
     TestFixture tf;
 
@@ -91,18 +100,22 @@ void test_valid_initialization() {
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.m_body_cmd_fp->get(), 1e-10);
 }
 
+void assert_pointing_vectors_nan(TestFixture& tf){
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec2_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec1_desired_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec2_desired_fp->get(), 1e-10);
+}
+
 void test_detumble(){
     TestFixture tf;
-
+    
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::detumble));
     tf.b_body_rd_fp->set(lin::Vector3f({1,-1,0}));
     tf.step();
     
     // all things related to the pointing objectives should be NaN
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec1_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec2_current_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec1_desired_fp->get(), 1e-10);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(nan_vector, tf.pointer_vec2_desired_fp->get(), 1e-10);
+    assert_pointing_vectors_nan(tf);
 
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.t_body_cmd_fp->get(), 1e-10);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.m_body_cmd_fp->get(), 1e-10);
@@ -123,18 +136,12 @@ void test_detumble(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t(
         {adcs::mtr::max_moment,-adcs::mtr::max_moment,0}),
         tf.m_body_cmd_fp->get(), 1e-10);
-
 }
 
 void test_standby(){
     TestFixture tf;
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_standby));
-    tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
-    tf.w_body_est_fp->set(lin::Vector3f({10,-1,0}));
-    tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
-    tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
-    tf.time_ns_fp->set(0);
-    tf.pos_baseline_ecef_fp->set(lin::nans<lin::Vector3f>());
+    load_good_data(tf);
 
     tf.step();
 
@@ -173,14 +180,7 @@ void test_standby(){
 void test_point_docking() {
     TestFixture tf;
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_docking));
-    tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
-    tf.w_body_est_fp->set(lin::Vector3f({10,-1,0}));
-    tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
-    tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
-    tf.time_ns_fp->set(0);
-
-    // note baseline not nan
-    tf.pos_baseline_ecef_fp->set(lin::Vector3f({500,1,0}));
+    load_good_data(tf);
 
     tf.step();
 
@@ -206,11 +206,7 @@ void test_point_docking() {
 void test_point_manual_nan_pointing(){
     TestFixture tf;
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_manual));
-    tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
-    tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
-    tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
-    tf.time_ns_fp->set(0);
-    tf.pos_baseline_ecef_fp->set(lin::Vector3f({500,1,0}));
+    load_good_data(tf);
 
     f_vector_t rand_act{0.01,0.02,-0.03};
     tf.m_body_cmd_fp->set(rand_act);
