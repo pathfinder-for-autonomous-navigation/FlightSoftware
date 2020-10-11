@@ -80,7 +80,7 @@ class GomspaceLongDurationCheckoutCase(SingleSatOnlyCase):
                 self.spin_motors(0)
                 self.turn_motors_on()
             else:
-                self.logger.put("Stopping docking motor, turning firing valves.")
+                self.logger.put("Stopping docking motor, firing valves.")
                 self.fire_valves() 
                 self.turn_motors_off()
 
