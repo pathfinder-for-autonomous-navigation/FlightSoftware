@@ -5,9 +5,7 @@
     <script src="/openmct/openmct.js"></script>
     <script src="http.js"></script>
     <script src="generic-plugin.js"></script>
-    <script src="plugin-configuration.js"></script>
-    <script src="historical-telemetry-plugin.js"></script>
-    <script src="realtime-telemetry-plugin.js"></script>
+
 
 </head>
 <body>
@@ -19,10 +17,10 @@
         openmct.time.clock('local', {start: -15 * 60 * 1000, end: 0});
         openmct.time.timeSystem('utc');
         openmct.install(openmct.plugins.Espresso());
-        openmct.install(GenericPlugin(Configs().battery));
-        openmct.install(GenericPlugin(Configs().dictionary));
-        openmct.install(HistoricalTelemetryPlugin(Configs()));
-        openmct.install(RealtimeTelemetryPlugin(Configs()));
+        openmct.install(GenericPlugin("dictionary"));
+        openmct.install(GenericPlugin("battery"));
+        openmct.install(GenericPlugin("historical"));
+        openmct.install(GenericPlugin("realtime"));
         openmct.start();
     </script>
 </body>
