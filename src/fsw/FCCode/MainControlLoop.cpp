@@ -46,8 +46,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
       control_cycle_ms_f("pan.cc_ms", Serializer<unsigned int>()),
       prop_controller(registry, prop_controller_offset),
       mission_manager(registry, mission_manager_offset), // This item is initialized near-last so it has access to all state fields
-      attitude_controller(registry, attitude_computer_offset), // todo give own offset?
-      attitude_computer(registry, attitude_computer_offset), // This item needs "adcs.state" from mission manager.
+      attitude_controller(registry, attitude_controller_offset), // todo give own offset?
       adcs_commander(registry, adcs_commander_offset), // needs inputs from attitude computer
       adcs_box_controller(registry, adcs_box_controller_offset, adcs),
       orbit_controller(registry, orbit_controller_offset)
@@ -113,7 +112,6 @@ void MainControlLoop::execute() {
     mission_manager.execute_on_time();
     dcdc_controller.execute_on_time();
     attitude_controller.execute_on_time();
-    attitude_computer.execute_on_time();
     adcs_commander.execute_on_time();
     adcs_box_controller.execute_on_time();
     orbit_controller.execute_on_time();

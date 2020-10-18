@@ -25,7 +25,7 @@ class TestFixture {
     std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_est_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3f>> w_body_est_fp;
     std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
-    std::shared_ptr<ReadableStateField<unsigned int>>  time_ns_fp;
+    std::shared_ptr<ReadableStateField<double>>  time_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_ecef_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> vel_ecef_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3d>> pos_baseline_ecef_fp;
@@ -49,17 +49,11 @@ class TestFixture {
         q_body_eci_est_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
         w_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.w_body", 0, 1, 100);
         adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state");
-        time_ns_fp = registry.create_readable_field<unsigned int>("orbit.time");
+        time_fp = registry.create_readable_field<double>("orbit.time");
         pos_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.pos_ecef", 0, 1, 100);
         vel_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.vel_ecef", 0, 1, 100);
         pos_baseline_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.pos_baseline_ecef", 0, 1, 100);
         
-        // adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
-        // q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
-        // s_body_est_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.ssa_vec", 0, 1, 100);
-        // pos_fp = registry.create_readable_lin_vector_field<double>("orbit.pos", 0, 100000, 100);
-        // pos_baseline_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 100000, 100);
-
         attitude_controller = std::make_unique<AttitudeController>(registry, 0);
 
         // Check that attitude controller creates its expected fields
@@ -85,7 +79,7 @@ void load_good_data(TestFixture& tf){
     tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
     tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
     tf.q_body_eci_est_fp->set(lin::Vector4f({0,0,0,1}));
-    tf.time_ns_fp->set(0);
+    tf.time_fp->set(0);
     tf.pos_baseline_ecef_fp->set(lin::Vector3f({500,1,0}));
 }
 
@@ -95,7 +89,7 @@ void nan_sensors(TestFixture& tf){
     tf.pos_ecef_fp->set(lin::nans<lin::Vector3f>());
     tf.vel_ecef_fp->set(lin::nans<lin::Vector3f>());
     tf.q_body_eci_est_fp->set(lin::nans<lin::Vector4f>());
-    tf.time_ns_fp->set(0);
+    tf.time_fp->set(std::nan(""));
     tf.pos_baseline_ecef_fp->set(lin::nans<lin::Vector3f>());
 }
 

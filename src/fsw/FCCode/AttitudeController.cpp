@@ -25,7 +25,7 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
     q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
     w_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.w_body)),
     adcs_state_fp(FIND_WRITABLE_FIELD(unsigned char, adcs.state)),
-    time_ns_fp(FIND_READABLE_FIELD(unsigned int, orbit.time)),
+    time_fp(FIND_READABLE_FIELD(double, orbit.time)),
     pos_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_ecef)),
     vel_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel_ecef)),
     pos_baseline_ecef_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos_baseline_ecef)),
@@ -137,7 +137,7 @@ void AttitudeController::calculate_pointing_objectives() {
         if (lin::any(!(lin::isfinite(q_body_eci_est))))
             return;
         // Current time since the PAN epoch in seconds
-        double time_s = static_cast<double>(time_ns_fp->get()) * 1.0e-9;
+        double time_s = static_cast<double>(time_fp->get());
         
         // time must be finite
         if(std::isnan(time_s))
