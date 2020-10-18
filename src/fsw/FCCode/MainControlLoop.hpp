@@ -12,7 +12,6 @@
 #include "ADCSBoxController.hpp"
 #include "AttitudeEstimator.hpp"
 #include "AttitudeController.hpp"
-#include "AttitudeComputer.hpp"
 #include "ADCSCommander.hpp"
 #include "GomspaceController.hpp"
 #include "DebugTask.hpp"

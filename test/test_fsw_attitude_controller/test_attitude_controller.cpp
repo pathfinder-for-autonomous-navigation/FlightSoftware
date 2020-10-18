@@ -49,7 +49,7 @@ class TestFixture {
         q_body_eci_est_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
         w_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.w_body", 0, 1, 100);
         adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state");
-        time_fp = registry.create_readable_field<double>("orbit.time");
+        time_fp = registry.create_readable_field<double>("orbit.time", 0.0, 18'446'744'073'709'551'616.0, 64);
         pos_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.pos_ecef", 0, 1, 100);
         vel_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.vel_ecef", 0, 1, 100);
         pos_baseline_ecef_fp = registry.create_readable_lin_vector_field<double>("orbit.pos_baseline_ecef", 0, 1, 100);
