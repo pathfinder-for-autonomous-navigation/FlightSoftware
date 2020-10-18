@@ -89,6 +89,14 @@ class AttitudeEstimator : public TimedControlTask<void> {
      *  The default values is `false`. */
     WritableStateField<bool> mag_flag_f;
 
+    /**
+     * @brief Whichever selected magnetometer value will be written to this field.
+     * 
+     * Internal because the information needed will 
+     * already be downlinked from the BoxMonitor fields.
+     */
+    InternalStateField<lin::Vector3f> b_body_f;
+
     /** @brief Estimated attitude quaternion.
      *
      *  Transforms from ECI to the body frame. If no attitude estimate exists, the
