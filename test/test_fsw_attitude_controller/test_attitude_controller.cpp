@@ -251,6 +251,7 @@ void test_point_manual_nan_pointing(){
     tf.pointer_vec2_desired_fp->set(lin::nans<lin::Vector3f>());
 
     tf.step();
+    assert_pointing_vectors_nan(tf);
 
     // check these doomed to pass actuator outputs
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(rand_act,tf.m_body_cmd_fp->get(), 1e-7);
@@ -258,6 +259,7 @@ void test_point_manual_nan_pointing(){
 
     // step again to check persistence
     tf.step();
+    assert_pointing_vectors_nan(tf);
 
     // check these doomed to pass actuator outputs
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(rand_act,tf.m_body_cmd_fp->get(), 1e-7);
