@@ -255,16 +255,16 @@ class BootUtil(object):
         elif self.boot_stage == 'detumble_wait':
             if self.num_detumble_cycles >= self.max_detumble_cycles or satellite_state == "standby":
                 # For now, force the satellite into standby since the attitude control stuff isn't working.
-                self.flight_controller.write_state("pan.state", Enums.mission_states["standby"])
-                self.boot_stage = 'standby'
-                self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
+                # self.flight_controller.write_state("pan.state", Enums.mission_states["standby"])
+                # self.boot_stage = 'standby'
+                # self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
 
                 # Delete the above lines and use the following ones once #287 is implemented.
-                # if satellite_state == "standby":
-                #     self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
-                #     self.boot_stage = 'standby'
-                # else:
-                #     raise TestCaseFailure("Satellite failed to exit detumble.")
+                if satellite_state == "standby":
+                    self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
+                    self.boot_stage = 'standby'
+                else:
+                    raise TestCaseFailure("Satellite failed to exit detumble.")
             else:
                 self.num_detumble_cycles += 1
 
