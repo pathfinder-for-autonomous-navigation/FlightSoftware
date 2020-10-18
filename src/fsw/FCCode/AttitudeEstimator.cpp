@@ -8,6 +8,8 @@
 #include <lin/math.hpp>
 #include <lin/queries.hpp>
 
+#include <iostream>
+
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
     : TimedControlTask<void>(registry, "adcs_estimator", offset),

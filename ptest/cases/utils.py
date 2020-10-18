@@ -201,7 +201,7 @@ class BootUtil(object):
             # For now, set this to 1 since the value doesn't matter (we force the satellite
             # into standby inside this boot controller).
             # Implementing #287 will give us a more realistic estimate.
-            self.max_detumble_cycles = 1
+            self.max_detumble_cycles = 1000
 
             # Let's be generous with what angular rate is allowable as "detumbled", until the
             # attitude controller is implemented in #287.
