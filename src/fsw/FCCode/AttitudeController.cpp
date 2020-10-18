@@ -114,6 +114,7 @@ void AttitudeController::default_pointing_objectives() {
 void AttitudeController::calculate_detumble_controller() {
     // Default all inputs to NaNs and set appropriate fields
     detumbler_data = gnc::DetumbleControllerData();
+    detumbler_actuation = gnc::DetumbleActuation();
     detumbler_data.b_body = b_body_rd_fp->get();
 
     // Call the controller and write results to appropriate state fields

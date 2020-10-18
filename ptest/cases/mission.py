@@ -21,4 +21,6 @@ class DeploymentToStandby(SingleSatOnlyCase):
         return "startup"
 
     def run_case_singlesat(self):
-        self.finish()
+        self.print("RUNCASEASDF")
+        self.print_rs("adcs.state")
+        self.print_rs("adcs_cmd.mtr_cmd")

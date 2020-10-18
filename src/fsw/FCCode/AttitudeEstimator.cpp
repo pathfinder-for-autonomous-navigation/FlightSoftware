@@ -57,7 +57,8 @@ void AttitudeEstimator::execute(){
         b_body = !mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get();
 
     b_body_f.set(b_body);
-
+    std::cout << "valid state: " << state.is_valid << "\n";
+    
     // The filter is already up and running
     if (state.is_valid) {
         // Populate the input struct
@@ -70,7 +71,7 @@ void AttitudeEstimator::execute(){
 
         // Update the filter
         gnc::attitude_estimator_update(state, data, estimate);
-
+        std::cout << "valid est: " << estimate.is_valid << "\n";
         // Copy out the valid estimate
         if (estimate.is_valid) {
             q_body_eci_est_f.set(estimate.q_body_eci);
@@ -87,7 +88,7 @@ void AttitudeEstimator::execute(){
         // All we can give is a NaN estimate and hope the reset works on the next
         // control cycle
         _nan_estimate();
-
+        std::cout << "triad reset\n";
         gnc::attitude_estimator_reset(state, t, r_ecef, b_body, s_body);
     }
 }

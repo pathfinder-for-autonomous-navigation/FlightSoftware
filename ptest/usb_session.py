@@ -118,6 +118,8 @@ class USBSession(object):
                 else:
                     continue
 
+                print(line)
+
                 data = json.loads(line)
                 data['time'] = str(self.start_time + datetime.timedelta(milliseconds=data['t']))
 

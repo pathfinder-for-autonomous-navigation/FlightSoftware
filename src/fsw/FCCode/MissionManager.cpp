@@ -203,6 +203,7 @@ void MissionManager::dispatch_detumble()
 {
     // Detumble until satellite angular rate is below an allowable threshold
     const float momentum = lin::fro(gnc::constant::J_sat * adcs_w_body_est_fp->get());
+    detumble_safety_factor_f.set(0.05);
     const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor_f.get();
     
     std::cout << "mom: " << momentum << "\n";

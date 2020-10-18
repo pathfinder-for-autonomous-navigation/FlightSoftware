@@ -95,7 +95,7 @@ class Simulation(object):
         ):
             self.eng.install(nargout=0)
         self.eng.config(nargout=0)
-        self.eng.generate_mex_code(nargout=0)
+        # self.eng.generate_mex_code(nargout=0)
         self.eng.eval("global const", nargout=0)
 
         self.main_state = self.eng.initialize_main_state(self.seed, self.testcase.sim_initial_state, nargout=1)
@@ -116,14 +116,16 @@ class Simulation(object):
             num_steps = float("inf")
         sample_rate = int(10.0 / self.dt) # Sample once every ten seconds
         step = 0
-
+        
         start_time = time.time()
         while step < num_steps and self.running:
             self.sim_time = self.main_state['follower']['dynamics']['time']
-
+            # print(f"Time: {self.main_state['leader']['dynamics']['time']}")
             # Step 1. Get sensor readings from simulation
             self.sensor_readings_follower = self.eng.sensor_reading(self.main_state['follower'],self.main_state['leader'], nargout=1)
             self.sensor_readings_leader = self.eng.sensor_reading(self.main_state['leader'],self.main_state['follower'], nargout=1)
+
+            print(f"Time to gps lock: {self.main_state['leader']['sensors']['gps_time_till_lock']}")
 
             # Step 2. Update dynamics
             main_state_promise = self.eng.main_state_update(self.main_state, nargout=1, background=True)
@@ -134,6 +136,9 @@ class Simulation(object):
                 self.eng.update_FC_state(self.computer_state_follower,self.sensor_readings_follower, nargout=2)
             self.computer_state_leader, self.actuator_commands_leader = \
                 self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
+
+            print("leader commands: ")
+            print(self.actuator_commands_leader)
 
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
@@ -183,6 +188,9 @@ class Simulation(object):
         self.write_adcs_estimator_inputs(fc, sensor_readings)
         # Step 3.2.3 Read outputs from previous control cycle
         self.read_adcs_estimator_outputs(fc)
+        
+        fc.read_state("adcs.state")
+        fc.read_state("adcs_cmd.mtr_cmd")
 
     def write_adcs_estimator_inputs(self, flight_controller, sensor_readings):
         """Write the inputs required for ADCS state estimation."""
@@ -197,7 +205,7 @@ class Simulation(object):
 
         # Send values to flight software
         flight_controller.write_state("piksi.time", str(current_gps_time))
-        flight_controller.write_state("piksi.pos", position_ecef)
+        flight_controller.write_state("orbit.pos", position_ecef)
         flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
         flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
 
