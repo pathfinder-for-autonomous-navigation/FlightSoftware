@@ -111,7 +111,7 @@ void MainControlLoop::execute() {
     attitude_estimator.execute_on_time();
     mission_manager.execute_on_time();
     dcdc_controller.execute_on_time();
-    attitude_controller.execute_on_time();
+    // attitude_controller.execute_on_time();
     adcs_commander.execute_on_time();
     adcs_box_controller.execute_on_time();
     orbit_controller.execute_on_time();
