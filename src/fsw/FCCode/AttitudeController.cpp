@@ -93,6 +93,7 @@ void AttitudeController::execute() {
         case adcs_state_t::zero_torque:
         case adcs_state_t::zero_L:
             default_actuator_commands();
+            transfer_internal_to_output_vectors();
         default:
             break;
     }
