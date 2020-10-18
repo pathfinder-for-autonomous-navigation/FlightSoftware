@@ -74,6 +74,7 @@ void AttitudeController::execute() {
         case adcs_state_t::point_standby:
         case adcs_state_t::point_docking:
             default_actuator_commands();
+            default_pointing_objectives();
             transfer_internal_to_output_vectors();
             calculate_pointing_objectives();
         /*
@@ -91,6 +92,7 @@ void AttitudeController::execute() {
         case adcs_state_t::startup:
         case adcs_state_t::zero_torque:
         case adcs_state_t::zero_L:
+            default_actuator_commands();
         default:
             break;
     }
