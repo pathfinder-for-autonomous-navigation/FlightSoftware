@@ -18,9 +18,8 @@ class TestFixture {
     StateFieldRegistryMock registry;
     
     // Input state fields to attitude controller
-    std::shared_ptr<ReadableStateField<lin::Vector3f>> b_body_rd_fp;
+    std::shared_ptr<InternalStateField<lin::Vector3f>> b_body_rd_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3f>> w_wheels_rd_fp;
-    std::shared_ptr<ReadableStateField<lin::Vector3f>> b_body_est_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3f>> s_body_est_fp;
     std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_est_fp;
     std::shared_ptr<ReadableStateField<lin::Vector3f>> w_body_est_fp;
@@ -42,10 +41,8 @@ class TestFixture {
     WritableStateField<f_vector_t>*    m_body_cmd_fp;
 
     TestFixture() : registry() {
-        b_body_rd_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.mag_vec", -1, 1, 100);
+        b_body_rd_fp = registry.create_internal_field<lin::Vector3f>("attitude_estimator.b_body");
         w_wheels_rd_fp = registry.create_readable_lin_vector_field<float>("adcs_monitor.rwa_speed_rd", 0, 1, 100);
-        b_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.b_body", 0, 1, 100);
-        s_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.s_body", 0, 1, 100);
         q_body_eci_est_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
         w_body_est_fp = registry.create_readable_lin_vector_field<float>("attitude_estimator.w_body", 0, 1, 100);
         adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state");
@@ -74,22 +71,24 @@ class TestFixture {
 };
 
 void load_good_data(TestFixture& tf){
-    tf.b_body_est_fp->set(lin::Vector3f({1,-1,0}));
+    tf.b_body_rd_fp->set(lin::Vector3f({1,-1,0}));
     tf.w_body_est_fp->set(lin::Vector3f({10,-1,0}));
-    tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
-    tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));
+    tf.w_wheels_rd_fp->set(lin::Vector3f({100,200,-300}));
     tf.q_body_eci_est_fp->set(lin::Vector4f({0,0,0,1}));
     tf.time_fp->set(0);
+    tf.pos_ecef_fp->set(lin::Vector3f({(6371+400)*1000,0,0}));
+    tf.vel_ecef_fp->set(lin::Vector3f({0,7650,0}));    
     tf.pos_baseline_ecef_fp->set(lin::Vector3f({500,1,0}));
 }
 
 void nan_sensors(TestFixture& tf){
-    tf.b_body_est_fp->set(lin::nans<lin::Vector3f>());
+    tf.b_body_rd_fp->set(lin::nans<lin::Vector3f>());
     tf.w_body_est_fp->set(lin::nans<lin::Vector3f>());
-    tf.pos_ecef_fp->set(lin::nans<lin::Vector3f>());
-    tf.vel_ecef_fp->set(lin::nans<lin::Vector3f>());
+    tf.w_wheels_rd_fp->set(lin::nans<lin::Vector3f>());
     tf.q_body_eci_est_fp->set(lin::nans<lin::Vector4f>());
     tf.time_fp->set(std::nan(""));
+    tf.pos_ecef_fp->set(lin::nans<lin::Vector3f>());
+    tf.vel_ecef_fp->set(lin::nans<lin::Vector3f>());
     tf.pos_baseline_ecef_fp->set(lin::nans<lin::Vector3f>());
 }
 
@@ -157,8 +156,8 @@ void test_standby(){
 
     tf.step();
 
-    std::cout << tf.pointer_vec1_desired_fp->get();
-    std::cout << tf.pointer_vec2_desired_fp->get();
+    std::cout << lin::transpose(tf.pointer_vec1_desired_fp->get());
+    std::cout << lin::transpose(tf.pointer_vec2_desired_fp->get());
 
     // all things related to the pointing objectives should be NaN
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
@@ -168,10 +167,12 @@ void test_standby(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.105f, -0.994f, 0.00017f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0018f, 0.0f, 0.999f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
 
-    std::cout << tf.m_body_cmd_fp->get()[0] << " " << tf.m_body_cmd_fp->get()[1] << " " << tf.m_body_cmd_fp->get()[2];
-    std::cout << tf.t_body_cmd_fp->get()[0] << " " << tf.t_body_cmd_fp->get()[1] << " " << tf.t_body_cmd_fp->get()[2];
+    std::cout << tf.m_body_cmd_fp->get()[0] << " " << tf.m_body_cmd_fp->get()[1] << " " << tf.m_body_cmd_fp->get()[2] << "\n";
+    std::cout << tf.t_body_cmd_fp->get()[0] << " " << tf.t_body_cmd_fp->get()[1] << " " << tf.t_body_cmd_fp->get()[2] << "\n";
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-adcs::mtr::max_moment}),tf.m_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t(
+        {-adcs::mtr::max_moment,-adcs::mtr::max_moment,-adcs::mtr::max_moment}),
+        tf.m_body_cmd_fp->get(), 1e-7);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-0.0225f,0.00224974f,-0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
 
     // now change state to manual, and check that the pointing information persisted
@@ -185,7 +186,9 @@ void test_standby(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0018f, 0.0f, 0.999f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
 
     // check these doomed to pass actuator outputs
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-adcs::mtr::max_moment}),tf.m_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t(
+        {-adcs::mtr::max_moment,-adcs::mtr::max_moment,-adcs::mtr::max_moment}),
+        tf.m_body_cmd_fp->get(), 1e-7);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-0.0225f,0.00224974f,-0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
 
     // go back to standby
@@ -216,10 +219,12 @@ void test_point_docking() {
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.994661f, .103185f, 0.00182815f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.00183598f, 0.000019023f, 0.999998f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
 
-    std::cout << tf.m_body_cmd_fp->get()[0] << " " << tf.m_body_cmd_fp->get()[1] << " " << tf.m_body_cmd_fp->get()[2];
-    std::cout << tf.t_body_cmd_fp->get()[0] << " " << tf.t_body_cmd_fp->get()[1] << " " << tf.t_body_cmd_fp->get()[2];
+    std::cout << tf.m_body_cmd_fp->get()[0] << " " << tf.m_body_cmd_fp->get()[1] << " " << tf.m_body_cmd_fp->get()[2] << "\n";
+    std::cout << tf.t_body_cmd_fp->get()[0] << " " << tf.t_body_cmd_fp->get()[1] << " " << tf.t_body_cmd_fp->get()[2] << "\n";
 
-    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,-adcs::mtr::max_moment}),tf.m_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t(
+        {-adcs::mtr::max_moment,-adcs::mtr::max_moment,-adcs::mtr::max_moment}),
+        tf.m_body_cmd_fp->get(), 1e-7);
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({-0.0226458f,0.000844621,-0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
 
     // lose every signal needed for docking and show that it goes to 0 actuators

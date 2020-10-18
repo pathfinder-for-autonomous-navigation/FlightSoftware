@@ -18,10 +18,8 @@
 
 AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_controller", offset),
-    b_body_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag_vec)),
     w_wheels_rd_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.rwa_speed_rd)),
-    b_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.b_body)),
-    s_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.s_body)),
+    b_body_rd_fp(FIND_INTERNAL_FIELD(lin::Vector3f, attitude_estimator.b_body)),
     q_body_eci_est_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
     w_body_est_fp(FIND_READABLE_FIELD(lin::Vector3f, attitude_estimator.w_body)),
     adcs_state_fp(FIND_WRITABLE_FIELD(unsigned char, adcs.state)),
@@ -211,7 +209,7 @@ void AttitudeController::calculate_pointing_controller() {
     pointer_data.secondary_current = pointer_vec2_current_f.get();
     pointer_data.w_wheels          = w_wheels_rd_fp->get();
     pointer_data.w_sat             = w_body_est_fp->get();
-    pointer_data.b                 = b_body_est_fp->get();
+    pointer_data.b                 = b_body_rd_fp->get();
 
     if (lin::any(!(lin::isfinite(pointer_data.primary_desired) && lin::isfinite(pointer_data.primary_current))))
         return;
