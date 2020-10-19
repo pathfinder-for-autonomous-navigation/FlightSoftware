@@ -1,5 +1,5 @@
 from .base import SingleSatOnlyCase
-from .utils import FSWEnum, Enums, TestCaseFailure, BootUtil
+from .utils import FSWEnum, Enums, TestCaseFailure
 
 class PiksiFaultHandler(SingleSatOnlyCase):
     @property

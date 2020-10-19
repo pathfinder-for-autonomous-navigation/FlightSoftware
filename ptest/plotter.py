@@ -3,7 +3,7 @@ import json
 import matplotlib.dates as mdates
 import mplcursors
 from .gpstime import GPSTime
-from tinydb import TinyDB, Query
+import json
 from argparse import ArgumentParser
 import cmd, sys
 import csv
@@ -197,6 +197,7 @@ def main(args):
 
     args = parser.parse_args(args)
 
+    
     try:
         fp = open(args.data, "r")
         dataList = json.load(fp)
