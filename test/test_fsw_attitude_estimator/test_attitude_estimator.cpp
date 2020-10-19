@@ -20,6 +20,7 @@ class TestFixture {
         std::shared_ptr<ReadableStateField<lin::Vector3f>> gyr_vec_fp;
 
         // pointers to output statefields for easy access
+        InternalStateField<lin::Vector3f>* b_body_fp;
         ReadableStateField<lin::Vector4f>* q_body_eci_fp;
         ReadableStateField<lin::Vector3f>* w_body_fp;
         ReadableStateField<float>* fro_P_fp;
@@ -39,6 +40,7 @@ class TestFixture {
                 attitude_estimator = std::make_unique<AttitudeEstimator>(registry, 0);  
 
                 // initialize pointers to statefields
+                b_body_fp = registry.find_internal_field_t<lin::Vector3f>("attitude_estimator.b_body");
                 q_body_eci_fp = registry.find_readable_field_t<lin::Vector4f>("attitude_estimator.q_body_eci");
                 w_body_fp = registry.find_readable_field_t<lin::Vector3f>("attitude_estimator.w_body");
                 fro_P_fp = registry.find_readable_field_t<float>("attitude_estimator.fro_P");
@@ -48,6 +50,8 @@ class TestFixture {
 void test_task_initialization()
 {
         TestFixture tf;
+
+        PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::nans<lin::Vector3f>(), tf.b_body_fp->get(), 1e-10);
 }
 
 int test_control_task()
