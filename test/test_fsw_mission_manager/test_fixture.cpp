@@ -2,7 +2,7 @@
 #include "../test_fsw_fault_handler/FaultHandlerMachineMock.hpp"
 #include <limits>
 
-TestFixture::TestFixture(mission_state_t initial_state) : registry()
+TestFixture::TestFixture(mission_state_t initial_state, unsigned int bootcount) : registry()
 {
     adcs_w_body_est_fp = registry.create_readable_lin_vector_field<float>(
         "attitude_estimator.w_body", -55, 55, 32);
@@ -20,6 +20,10 @@ TestFixture::TestFixture(mission_state_t initial_state) : registry()
     power_cycle_radio_fp = registry.create_writable_field<bool>("gomspace.power_cycle_output3_cmd");
 
     docked_fp = registry.create_readable_field<bool>("docksys.docked");
+
+    bootcount_fp = registry.create_readable_field<unsigned int, 1000>("pan.bootcount"); 
+    bootcount_fp->set(bootcount);
+
 
     low_batt_fault_fp = registry.create_fault("gomspace.low_batt", 1);
     adcs_functional_fault_fp = registry.create_fault("adcs_monitor.functional_fault", 1);
@@ -200,6 +204,13 @@ void TestFixture::set_ang_rate(float rate)
     adcs_w_body_est_fp->set({rate, 0.0f, 0.0f}); // TODO will need to change this once the inertia tensor
                                                  // is added to GNC constants.
 }
+
+// Get the bootcount
+unsigned int TestFixture::get_bootcount()
+{
+    return mission_manager->bootcount_fp->get();
+}
+
 
 adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t::limited,
                                             adcs_state_t::point_docking, adcs_state_t::point_manual, adcs_state_t::point_standby,

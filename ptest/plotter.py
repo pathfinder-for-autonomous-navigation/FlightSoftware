@@ -3,9 +3,10 @@ import json
 import matplotlib.dates as mdates
 import mplcursors
 from .gpstime import GPSTime
-from tinydb import TinyDB, Query
+import json
 from argparse import ArgumentParser
 import cmd, sys
+import csv
 
 class StateFieldPlotter(object):
     """
@@ -160,6 +161,17 @@ class PlotterClient(cmd.Cmd):
             if not field_plotted:
                 return
         plotter.display()
+    
+    def do_csv(self, filepath):
+        #add measurements to a csv file
+        filepath = filepath.split()
+        if len(filepath) == 0:
+            print("Need to specify a file path to put csv file (from FlightSoftware), Format: PATH/TO/FILE/")
+            return
+
+        with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
+            mtrwriter = csv.writer(csvfile)
+            mtrwriter.writerows(self.dataList)
 
     def do_exit(self, args):
         """Exits the plotter."""
@@ -185,6 +197,7 @@ def main(args):
 
     args = parser.parse_args(args)
 
+    
     try:
         fp = open(args.data, "r")
         dataList = json.load(fp)

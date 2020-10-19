@@ -216,7 +216,7 @@ void test_dispatch_docking() {
     // Check that mission manager moves to standby
     tf2.check(mission_state_t::standby);
 
-    // Even if a significant amount of time passes, mission managaer should still move to 
+    // Even if a significant amount of time passes, mission manager should still move to 
     // docked when the switch is pressed
     TestFixture tf3(mission_state_t::docking);
     tf3.step();
@@ -345,6 +345,33 @@ void test_fault_responses() {
     }
 }
 
+void test_bootcount(){
+    // Test that the bootcount correctly updates and deployment is 
+    // not delayed when bootcount >1
+
+    TestFixture tf;
+
+    // Test if the bootcount field exists in EEPROM
+    // Can be found in telemetry file
+    TEST_ASSERT_TRUE(tf.registry.find_eeprom_saved_field("pan.bootcount") != nullptr); 
+        
+    // When satellite is first booted, bootcount == 1
+    // Should initialize at 0, then increase when MissionManager is created
+    TEST_ASSERT_EQUAL(1, tf.get_bootcount());  
+
+    // EEPROM is represented as a local var
+    unsigned int pseudoboot = tf.get_bootcount();
+    TEST_ASSERT_EQUAL(1, pseudoboot);
+
+    // Reboot the satellite with the bootcount value stored in EEPROM
+    TestFixture tf2(mission_state_t::startup, pseudoboot);
+
+    // Test that deployment does not wait when bootcount >1
+    TEST_ASSERT_EQUAL(0, tf2.deployment_wait_elapsed_fp->get());
+    TEST_ASSERT_EQUAL(2, tf2.get_bootcount());
+        
+}
+
 int test_mission_manager() {
     UNITY_BEGIN();
     RUN_TEST(test_valid_initialization);
@@ -357,6 +384,7 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
     RUN_TEST(test_fault_responses);
+    RUN_TEST(test_bootcount);
     return UNITY_END();
 }
 
