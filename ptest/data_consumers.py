@@ -1,7 +1,4 @@
-import queue, os, json, threading, time, datetime
-from tinydb import TinyDB
-from tinydb.middlewares import CachingMiddleware
-from tinydb.storages import JSONStorage
+import queue, os, threading, time, datetime
 
 class DataConsumer(object):
     def __init__(self, device_name, data_dir):
