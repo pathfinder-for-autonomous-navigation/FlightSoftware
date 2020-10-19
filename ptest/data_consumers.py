@@ -1,7 +1,4 @@
-import queue, os, json, threading, time, datetime
-from tinydb import TinyDB
-from tinydb.middlewares import CachingMiddleware
-from tinydb.storages import JSONStorage
+import queue, os, threading, time, datetime
 
 class DataConsumer(object):
     def __init__(self, device_name, data_dir):
@@ -58,18 +55,21 @@ class Datastore(DataConsumer):
     def __init__(self, device_name, data_dir):
         super().__init__(device_name, data_dir)
         filename = f"{self.device_name}-telemetry.txt"
-        self.db = TinyDB(f"/{data_dir}/{filename}", storage=CachingMiddleware(JSONStorage))
+        self.dataList = []
+        self.dataLog = open(f"/{data_dir}/{filename}", "w")
 
     def consume_queue_item(self, datapoint):
         """
         Adds a single data point to the telemetry log.
         """
-        self.db.insert(datapoint)
+        self.dataList.append(datapoint)
+        
 
     def save(self):
         """ Save telemetry log to a file. """
-        self.db.storage.flush()
-        self.db.close()
+        for point in self.dataList:
+            self.dataLog.write(str(point))
+        
 
 class Logger(DataConsumer):
     def __init__(self, device_name, data_dir, print=False):

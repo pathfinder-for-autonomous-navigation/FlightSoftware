@@ -10,7 +10,9 @@ QuakeFaultHandler::QuakeFaultHandler(StateFieldRegistry &r) : FaultHandlerMachin
     radio_state_fp = find_readable_field<unsigned char>("radio.state", __FILE__, __LINE__);
     last_checkin_cycle_fp = find_readable_field<unsigned int>("radio.last_comms_ccno", __FILE__,
                                                               __LINE__);
-    power_cycle_radio_fp = find_writable_field<bool>("gomspace.power_cycle_output3_cmd", __FILE__,
+
+    radio_power_cycle_fp = find_writable_field<bool>("gomspace.power_cycle_output3_cmd", __FILE__,
+
                                                      __LINE__);
 
     cur_state.set(static_cast<unsigned char>(qfh_state_t::unfaulted));
@@ -63,9 +65,9 @@ fault_response_t QuakeFaultHandler::dispatch_unfaulted()
 
 fault_response_t QuakeFaultHandler::dispatch_forced_standby()
 {
-    if (in_state_for_more_than_time(PAN::one_day_ccno))
+    if (in_state_for_more_than_time(PAN::one_day_ccno) && radio_is_wait())
     {
-        power_cycle_radio_fp->set(true);
+        radio_power_cycle_fp->set(true);
         transition_to(qfh_state_t::powercycle_1);
         return fault_response_t::standby;
     }
@@ -79,9 +81,10 @@ fault_response_t QuakeFaultHandler::dispatch_forced_standby()
 }
 
 fault_response_t QuakeFaultHandler::dispatch_powercycle(qfh_state_t next) {
-    if (in_state_for_more_than_time(PAN::one_day_ccno / 3)) {
-        if (next != qfh_state_t::safehold)
-            power_cycle_radio_fp->set(true);
+    if (in_state_for_more_than_time(PAN::one_day_ccno / 3) && radio_is_wait()) {
+        if (next != qfh_state_t::safehold){
+            radio_power_cycle_fp->set(true);
+        }
         transition_to(next);
         return fault_response_t::standby;
     }
@@ -107,7 +110,7 @@ fault_response_t QuakeFaultHandler::dispatch_powercycle_3() {
 }
 
 fault_response_t QuakeFaultHandler::dispatch_safehold() {
-     if (radio_is_disabled() || less_than_one_day_since_successful_comms()) {
+     if (radio_is_disabled() || less_than_one_day_since_successful_comms() ) {
          transition_to(qfh_state_t::unfaulted);
          return fault_response_t::none;
      }
@@ -115,6 +118,7 @@ fault_response_t QuakeFaultHandler::dispatch_safehold() {
          return fault_response_t::safehold;
      }
 }
+
 
 bool QuakeFaultHandler::less_than_one_day_since_successful_comms() const
 {
@@ -129,4 +133,9 @@ bool QuakeFaultHandler::in_state_for_more_than_time(const unsigned int time) con
 bool QuakeFaultHandler::radio_is_disabled() const
 {
     return radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::disabled);
+}
+
+bool QuakeFaultHandler::radio_is_wait() const
+{
+    return radio_state_fp->get() == static_cast<unsigned char>(radio_state_t::wait);
 }

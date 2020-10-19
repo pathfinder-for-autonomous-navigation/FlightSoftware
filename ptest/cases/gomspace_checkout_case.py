@@ -1,7 +1,7 @@
 # Gomspace test case. Gets cycle count purely for diagnostic purposes and logs
 # any other Gomspace state fields.
-from .base import SingleSatOnlyCase, TestCaseFailure
-from .utils import Enums
+from .base import SingleSatOnlyCase
+from .utils import Enums, TestCaseFailure
 
 
 class GomspaceCheckoutCase(SingleSatOnlyCase):
@@ -14,7 +14,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             raise ValueError
 
     def run_case_singlesat(self):
-        self.sim.cycle_no = self.sim.flight_controller.read_state("pan.cycle_no")
+        self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
 
         # readable fields
         vboost = [int(self.read_state("gomspace.vboost.output" + str(i)))
@@ -161,4 +161,16 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
         # if self.failed: 
             #raise TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
 
+        self.finish()
+
+class CheckBatteryLevel(SingleSatOnlyCase):
+    def run_case_singlesat(self):
+        voltage = float(self.read_state("gomspace.vbatt"))
+        self.logger.put("                                 ")
+        self.logger.put("=================================")
+        self.logger.put("=================================")
+        self.logger.put(f"Satellite battery level: {voltage/1000} volts")
+        self.logger.put("=================================")
+        self.logger.put("=================================")
+        self.logger.put("                                 ")
         self.finish()

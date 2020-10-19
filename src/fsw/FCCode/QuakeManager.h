@@ -93,6 +93,11 @@ public:
    const InternalStateField<char *> *radio_mo_packet_fp;
 
    /**
+    * @brief Pointer to gomspace output, to check for power loss.
+    */
+    const WritableStateField<bool> *radio_power_cycle_fp;
+
+   /**
      * @brief State machine constants that control how long the machine may
      * be in the WAIT and TRANSCEIVE states.
      */
