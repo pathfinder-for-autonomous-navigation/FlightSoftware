@@ -6,7 +6,6 @@ from .gpstime import GPSTime
 import json
 from argparse import ArgumentParser
 import cmd, sys
-import csv
 
 class StateFieldPlotter(object):
     """
@@ -162,17 +161,6 @@ class PlotterClient(cmd.Cmd):
                 return
         plotter.display()
     
-    def do_csv(self, filepath):
-        #add measurements to a csv file
-        filepath = filepath.split()
-        if len(filepath) == 0:
-            print("Need to specify a file path to put csv file (from FlightSoftware), Format: PATH/TO/FILE/")
-            return
-
-        with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
-            mtrwriter = csv.writer(csvfile)
-            mtrwriter.writerows(self.dataList)
-
     def do_exit(self, args):
         """Exits the plotter."""
         sys.exit(0)

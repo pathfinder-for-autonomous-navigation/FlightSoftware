@@ -142,7 +142,7 @@ class MTorquerCase(SingleSatOnlyCase):
         self.log_white_noise()
 
         #run main testing with matrix of command vectors
-        self.mtr_test()
+        #self.mtr_test()
 
         #finish and turn off magnetorquers
         self.print_header( "MAGNETORQUER TEST COMPLETE" )
