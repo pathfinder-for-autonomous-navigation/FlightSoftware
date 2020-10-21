@@ -1,4 +1,4 @@
-import queue, os, threading, time, datetime
+import queue, os, json, threading, time, datetime
 
 class DataConsumer(object):
     def __init__(self, device_name, data_dir):
@@ -67,9 +67,8 @@ class Datastore(DataConsumer):
 
     def save(self):
         """ Save telemetry log to a file. """
-        for point in self.dataList:
-            self.dataLog.write(str(point))
-        
+        json.dump(self.dataList, self.dataLog)
+        self.dataLog.close()
 
 class Logger(DataConsumer):
     def __init__(self, device_name, data_dir, print=False):

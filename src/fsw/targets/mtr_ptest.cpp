@@ -144,6 +144,7 @@ class MTRTestControlLoop : public ControlTask<void> {
     }
 
     void execute() {
+        gomspace.get_hk();
         clock_manager.execute();
         dcdc_controller.execute_on_time();
         adcs_monitor.execute_on_time();

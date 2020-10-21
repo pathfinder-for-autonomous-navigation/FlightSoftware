@@ -8,6 +8,7 @@ import timeit
 from .cases.utils import Enums
 from .plotter import PlotterClient
 from .usb_session import USBSession
+import csv
 
 def USBSessionOnly(fn):
     """
@@ -218,6 +219,25 @@ class StateCmdPrompt(Cmd):
         plotter = PlotterClient(self.cmded_device.datastore.dataList)
         plotter.do_plot(args)
     
+    def do_csv(self, filepath):
+        '''
+            add measurements from a run (key,value pairs) to rows of a csv file 
+            and open file at given filepath
+            @param filepath: the location of the csv file to open
+        '''
+        
+        if len(filepath) == 0:
+            print("Need to specify a file path to put csv file (from FlightSoftware), Format: PATH/TO/FILE/")
+            return
+        
+        with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
+            mtrwriter = csv.writer(csvfile)
+            for data in self.cmded_device.datastore.dataList:
+                for key, value in data.items():
+                    mtrwriter.writerow([key, value])
+        print("csv file \'mtr_logs\'written to " + str(filepath))
+            
+
     @USBSessionOnly
     def do_uplink(self, args):
         '''
