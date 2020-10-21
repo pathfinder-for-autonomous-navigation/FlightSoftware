@@ -119,16 +119,20 @@ class Simulation(object):
         
         start_time = time.time()
         while step < num_steps and self.running:
+            # Step 2. Update dynamics
+            main_state_promise = self.eng.main_state_update(self.main_state, nargout=1, background=True)
+            
             self.sim_time = self.main_state['follower']['dynamics']['time']
             # print(f"Time: {self.main_state['leader']['dynamics']['time']}")
             # Step 1. Get sensor readings from simulation
             self.sensor_readings_follower = self.eng.sensor_reading(self.main_state['follower'],self.main_state['leader'], nargout=1)
             self.sensor_readings_leader = self.eng.sensor_reading(self.main_state['leader'],self.main_state['follower'], nargout=1)
 
-            print(f"Time to gps lock: {self.main_state['leader']['sensors']['gps_time_till_lock']}")
+            print(f"mag_body: {self.sensor_readings_follower['magnetometer_body']}")
+            print(f"gyro_body: {self.sensor_readings_follower['gyro_body']}")
+            print(f"Time to gps lock: {self.main_state['follower']['sensors']['gps_time_till_lock']}")
 
-            # Step 2. Update dynamics
-            main_state_promise = self.eng.main_state_update(self.main_state, nargout=1, background=True)
+            
 
             # Step 3. Simulate flight computers
             # Step 3.1. Use MATLAB simulation as a base
@@ -137,9 +141,9 @@ class Simulation(object):
             self.computer_state_leader, self.actuator_commands_leader = \
                 self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
 
-            print("leader commands: ")
-            print(self.actuator_commands_leader)
-
+            print("follower commands: ")
+            print(self.actuator_commands_follower)
+            print("end commands")
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
             # Step 3.3. Allow test case to do its own meddling with the flight computer.
@@ -156,11 +160,26 @@ class Simulation(object):
                 self.flight_controller_follower.write_state("cycle.start", "true")
                 self.flight_controller_leader.write_state("cycle.start", "true")
 
+            
             # Step 5. Command actuators in simulation
             self.main_state = main_state_promise.result()
             self.main_state['follower'] = self.eng.actuator_command(self.actuator_commands_follower,self.main_state['follower'], nargout=1)
             self.main_state['leader'] = self.eng.actuator_command(self.actuator_commands_leader,self.main_state['leader'], nargout=1)
 
+            # 4 comes after 5 to overwrite lmao
+            # Step 4??? Read the actuators from the FC lmao
+            print("old guy: ")
+            print(self.main_state['follower']["actuators"]["magrod_real_moment_body"])
+            print(type(self.main_state['follower']["actuators"]["magrod_real_moment_body"]))
+
+            mag_cmd = self.flight_controller.smart_read("adcs_cmd.mtr_cmd")
+            yf = 10 # yeet factor
+            mag_cmd = [[x*yf] for x in mag_cmd] #take transpose
+            mag_cmd = matlab.double(mag_cmd) #mutate into matlab
+            print(f"mag_cmd: {mag_cmd}")
+            self.main_state['follower']["actuators"]["magrod_real_moment_body"] = mag_cmd
+            print("new guy: ")
+            print(self.main_state['follower']["actuators"]["magrod_real_moment_body"])
             # Step 6. Store trajectory
             if step % sample_rate == 0:
                 self.main_state_trajectory.append(
@@ -180,6 +199,11 @@ class Simulation(object):
             self.interact_fc_onesat(self.flight_controller_follower, self.sensor_readings_follower)
             self.interact_fc_onesat(self.flight_controller_leader, self.sensor_readings_leader)
 
+    def read_act_fc(self, fc):
+        # im just gonna assume one sat sorry lol
+        fc.read_state("adcs_cmd.mtr_cmd")
+
+
     def interact_fc_onesat(self, fc, sensor_readings):
         """
         Exchange simulation state variables with the one of the flight controllers.
@@ -190,7 +214,7 @@ class Simulation(object):
         self.read_adcs_estimator_outputs(fc)
         
         fc.read_state("adcs.state")
-        fc.read_state("adcs_cmd.mtr_cmd")
+        # fc.read_state("adcs_cmd.mtr_cmd")
 
     def write_adcs_estimator_inputs(self, flight_controller, sensor_readings):
         """Write the inputs required for ADCS state estimation."""
@@ -202,12 +226,14 @@ class Simulation(object):
         position_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["position_ecef"]])
         sat2sun_body = ",".join(["%.9f" % x[0] for x in sensor_readings["sat2sun_body"]])
         magnetometer_body = ",".join(["%.9f" % x[0] for x in sensor_readings["magnetometer_body"]])
+        w_body = ",".join(["%.9f" % x[0] for x in sensor_readings["gyro_body"]])
 
         # Send values to flight software
         flight_controller.write_state("piksi.time", str(current_gps_time))
         flight_controller.write_state("orbit.pos", position_ecef)
         flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
         flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
+        flight_controller.write_state("adcs_monitor.gyr_vec", w_body)
 
     def read_adcs_estimator_outputs(self, flight_controller):
         """

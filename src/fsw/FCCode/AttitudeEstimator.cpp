@@ -1,3 +1,5 @@
+#define LIN_DESKTOP
+
 #include "AttitudeEstimator.hpp"
 
 #include <gnc/attitude_estimator.hpp>
@@ -50,15 +52,18 @@ void AttitudeEstimator::execute(){
     lin::Vector3d r_ecef = pos_fp->get();
     lin::Vector3f s_body = ssa_vec_fp->get();
     lin::Vector3f w_body = gyr_vec_fp->get();
+    
+    std::cout << "wbody: " << lin::transpose(w_body);
 
     // Handle the special magnetometer case
     lin::Vector3f b_body = mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get(); // TODO : Choose default mag
     if (!lin::all(lin::isfinite(b_body)))
         b_body = !mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get();
+    std::cout << "bbody: " << lin::transpose(b_body);
 
     b_body_f.set(b_body);
     std::cout << "valid state: " << state.is_valid << "\n";
-    
+
     // The filter is already up and running
     if (state.is_valid) {
         // Populate the input struct
