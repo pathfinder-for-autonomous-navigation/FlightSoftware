@@ -2,6 +2,8 @@
 
 #include <common/GPSTime.hpp>
 #include <common/constant_tracker.hpp>
+#include <environment.hpp>
+#include <gnc/orbit_controller.hpp>
 
 #include "TimedControlTask.hpp"
 
@@ -19,6 +21,8 @@ public:
     * Compute firing and set prop planner's desired state. 
     */
     void execute() override;
+
+    constexpr double pi() { return std::atan(1)*4; }
 
     // Input statefields for time, position, velocity, and baseline
     // position/velocity. In ECEF
