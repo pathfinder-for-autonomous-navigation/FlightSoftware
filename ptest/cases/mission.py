@@ -21,6 +21,12 @@ class DeploymentToStandby(SingleSatOnlyCase):
         return "startup"
 
     def run_case_singlesat(self):
-        self.print("RUNCASEASDF")
+
+        self.print_rs("pan.state")
         self.print_rs("adcs.state")
         self.print_rs("adcs_cmd.mtr_cmd")
+        self.print_rs("adcs_cmd.rwa_torque_cmd")
+        self.print_rs("attitude.pointer_vec1_desired")
+        self.print_rs("attitude.pointer_vec2_desired")
+        self.print_rs("attitude.pointer_vec1_current")
+        self.print_rs("attitude.pointer_vec2_current")

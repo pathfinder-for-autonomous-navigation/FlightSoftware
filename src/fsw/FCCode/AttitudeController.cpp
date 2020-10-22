@@ -1,3 +1,5 @@
+#define LIN_DESKTOP
+
 #include "AttitudeController.hpp"
 
 #include "adcs_state_t.enum"
@@ -73,10 +75,12 @@ void AttitudeController::execute() {
          */
         case adcs_state_t::point_standby:
         case adcs_state_t::point_docking:
+            std::cout << "POINT STANDBY\n";
             default_actuator_commands();
             default_pointing_objectives();
             transfer_internal_to_output_vectors();
             calculate_pointing_objectives();
+
         /*
          * When in manual, the pointing objectives are set from the ground.
          */
@@ -157,8 +161,12 @@ void AttitudeController::calculate_pointing_objectives() {
 
         gnc::utl::rotate_frame(q_body_ecef, r); // r = r_body_0
         gnc::utl::rotate_frame(q_body_ecef, v); // v = v_body_0
+        std::cout << "r: \n";
+        std::cout << lin::transpose(r);
+        std::cout << "v: \n";
+        std::cout << lin::transpose(v);
         gnc::utl::dcm(DCM_hill_body, r, v);     // Calculate our DCM
-
+        std::cout << "DCM calc\n";
         lin::Vector3f dr = pos_baseline_ecef_fp->get(); // dr = dr_ecef
 
         // Ensure we have a valid relative position
@@ -177,12 +185,16 @@ void AttitudeController::calculate_pointing_objectives() {
          */
         case adcs_state_t::point_standby:
             // Ensure we have a DCM and time
+            std::cout << "DCM: \n";
+            std::cout << DCM_hill_body;
+
             if (lin::any(!lin::isfinite(DCM_hill_body)))
                 return;
             pointer_vec1_current_f.set({1.0f, 0.0f, 0.0f}); // Antenna face
             pointer_vec2_current_f.set({0.0f, 0.0f, 1.0f}); // Docking face
             pointer_vec1_desired_f.set(lin::transpose(lin::ref_row(DCM_hill_body, 1))); // v_hat_body
             pointer_vec2_desired_f.set(lin::transpose(lin::ref_row(DCM_hill_body, 2))); // n_hat_body
+            std::cout << "pointingset\n";
             break;
         /*
          * Here we simply want to point the docking face towards the other
@@ -227,6 +239,7 @@ void AttitudeController::calculate_pointing_controller() {
         m_body_cmd = pointer_actuation.mtr_body_cmd;
         t_body_cmd = pointer_actuation.rwa_body_cmd;
     }
+    std::cout << "made it to the end\n";
     transfer_internal_to_output_vectors();
 }
 

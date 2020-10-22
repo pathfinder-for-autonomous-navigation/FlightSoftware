@@ -70,7 +70,7 @@ class AttitudeEstimator : public TimedControlTask<void> {
      *  Input taken from the ADCSBoxMonitor.
      *  @{ */
     ReadableStateField<lin::Vector3f> const *const mag1_vec_fp;
-    ReadableStateField<lin::Vector3f> const *const mag2_vec_fp;
+    ReadableStateField<lin::Vector3f> * mag2_vec_fp;
     /** @} */
     /** @brief Sun vector reading in the body frame (unit vector).
      *

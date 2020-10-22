@@ -53,6 +53,7 @@ void AttitudeEstimator::execute(){
     lin::Vector3f s_body = ssa_vec_fp->get();
     lin::Vector3f w_body = gyr_vec_fp->get();
     
+    std::cout << "t: " << t;
     std::cout << "wbody: " << lin::transpose(w_body);
 
     // Handle the special magnetometer case
@@ -81,6 +82,7 @@ void AttitudeEstimator::execute(){
         if (estimate.is_valid) {
             q_body_eci_est_f.set(estimate.q_body_eci);
             w_body_est_f.set((w_body - estimate.gyro_bias).eval());
+            mag2_vec_fp->set({lin::fro(gnc::constant::J_sat * w_body_est_f.get()),0.0f,48.0f});
             fro_P_est_f.set(lin::fro(estimate.P));
         }
         // Handle an invalid estimate

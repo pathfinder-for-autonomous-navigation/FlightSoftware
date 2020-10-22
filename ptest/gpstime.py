@@ -24,4 +24,7 @@ class GPSTime(object):
         return f"{self.wn},{self.tow},{self.ns}"
 
     def to_ns(self):
-        return self.wn * SECONDS_IN_WEEK * 1e9 + self.tow * 1e6 + self.ns
+        return self.wn * self.SECONDS_IN_WEEK * 1e9 + self.tow * 1e6 + self.ns
+
+    def to_s(self):
+        return self.to_ns()*1e-9

@@ -120,9 +120,14 @@ class Simulation(object):
         start_time = time.time()
         while step < num_steps and self.running:
             # Step 2. Update dynamics
+            print("MAINSTATE: ")
+            print(self.main_state['follower']["actuators"]["magrod_real_moment_body"])
+            print(self.main_state['follower']["actuators"]["wheel_commanded_ramp"])
+
             main_state_promise = self.eng.main_state_update(self.main_state, nargout=1, background=True)
             
             self.sim_time = self.main_state['follower']['dynamics']['time']
+            print(f"simtime: {self.sim_time}")
             # print(f"Time: {self.main_state['leader']['dynamics']['time']}")
             # Step 1. Get sensor readings from simulation
             self.sensor_readings_follower = self.eng.sensor_reading(self.main_state['follower'],self.main_state['leader'], nargout=1)
@@ -142,7 +147,7 @@ class Simulation(object):
                 self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
 
             print("follower commands: ")
-            print(self.actuator_commands_follower)
+            # print(self.actuator_commands_follower)
             print("end commands")
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
@@ -168,18 +173,27 @@ class Simulation(object):
 
             # 4 comes after 5 to overwrite lmao
             # Step 4??? Read the actuators from the FC lmao
-            print("old guy: ")
-            print(self.main_state['follower']["actuators"]["magrod_real_moment_body"])
-            print(type(self.main_state['follower']["actuators"]["magrod_real_moment_body"]))
+            # print("old guy: ")
+            # print(self.main_state['follower']["actuators"]["magrod_real_moment_body"])
+            # print(type(self.main_state['follower']["actuators"]["magrod_real_moment_body"]))
 
             mag_cmd = self.flight_controller.smart_read("adcs_cmd.mtr_cmd")
-            yf = 10 # yeet factor
+            yf = 10000 # yeet factor
+            # mag_cmd = [1000,1000,1000]
             mag_cmd = [[x*yf] for x in mag_cmd] #take transpose
             mag_cmd = matlab.double(mag_cmd) #mutate into matlab
             print(f"mag_cmd: {mag_cmd}")
             self.main_state['follower']["actuators"]["magrod_real_moment_body"] = mag_cmd
-            print("new guy: ")
-            print(self.main_state['follower']["actuators"]["magrod_real_moment_body"])
+            # print("new guy: ")
+            # print(self.main_state['follower']["actuators"]["magrod_real_moment_body"])
+            
+            torq_cmd = self.flight_controller.smart_read("adcs_cmd.rwa_torque_cmd")
+            tf = 0
+            torq_cmd = [[tf*x] for x in torq_cmd]
+            torq_cmd = matlab.double(torq_cmd)
+            # self.main_state['follower']['actuators']['wheel_enable'] = 
+            self.main_state['follower']["actuators"]["wheel_commanded_ramp"] = torq_cmd
+
             # Step 6. Store trajectory
             if step % sample_rate == 0:
                 self.main_state_trajectory.append(
@@ -221,16 +235,18 @@ class Simulation(object):
 
         # Convert mission time to GPS time
         current_gps_time = GPSTime(self.sim_time)
-
+        print(f"gpstim: {current_gps_time}")
         # Clean up sensor readings to be in a format usable by Flight Software
         position_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["position_ecef"]])
+        velocity_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["velocity_ecef"]])
         sat2sun_body = ",".join(["%.9f" % x[0] for x in sensor_readings["sat2sun_body"]])
         magnetometer_body = ",".join(["%.9f" % x[0] for x in sensor_readings["magnetometer_body"]])
         w_body = ",".join(["%.9f" % x[0] for x in sensor_readings["gyro_body"]])
 
         # Send values to flight software
-        flight_controller.write_state("piksi.time", str(current_gps_time))
+        flight_controller.write_state("orbit.time", current_gps_time.to_s())
         flight_controller.write_state("orbit.pos", position_ecef)
+        flight_controller.write_state("orbit.vel", velocity_ecef)
         flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
         flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
         flight_controller.write_state("adcs_monitor.gyr_vec", w_body)
@@ -243,8 +259,10 @@ class Simulation(object):
         by calling read_state.
         """
 
+        flight_controller.read_state("adcs_monitor.mag2_vec")
         flight_controller.read_state("attitude_estimator.q_body_eci")
         flight_controller.read_state("attitude_estimator.w_body")
+        flight_controller.read_state("attitude_estimator.fro_P")
 
     def stop(self, data_dir):
         """
