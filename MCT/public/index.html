@@ -17,10 +17,11 @@
         openmct.time.clock('local', {start: -15 * 60 * 1000, end: 0});
         openmct.time.timeSystem('utc');
         openmct.install(openmct.plugins.Espresso());
-        openmct.install(GenericPlugin("dictionary"));
+
         openmct.install(GenericPlugin("battery"));
-        openmct.install(GenericPlugin("historical"));
+        openmct.install(GenericPlugin("dictionary"));
         openmct.install(GenericPlugin("realtime"));
+        openmct.install(GenericPlugin("historical"));
         openmct.start();
     </script>
 </body>

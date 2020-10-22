@@ -43,7 +43,6 @@ axios.post('http://localhost:5000/telemetry', {
 .catch((error) => {
 
 })
-
 //initializes global variable value to hold the numerical value of gsw telemetry
 var value = "0";
 Spacecraft.prototype.updateState = function () {
@@ -64,11 +63,9 @@ axios.get('http://localhost:5000/search-es',{
 .catch( function (error){
   console.log("error in http GET");
 })
-
   this.state["incoming"] = parseInt(value,10);
   this.state["batt.lvl"] = Math.max(0,this.state["batt.lvl"] - 1);
 };
-
 function notify (point,listener){
     listener.forEach(function (l) {
         l(point);

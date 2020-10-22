@@ -32,16 +32,8 @@ function getGeneric(j) {
 function GenericPlugin(config) {
     return  function install(openmct) {
 
-
-        
-        console.log(config);
-        console.log(configs);
-
-
         if(config === "realtime"){
             
-            console.log(configs);
-
             var socket = new WebSocket(location.origin.replace(/^http/, 'ws') + '/realtime/');
             var listener = {};
     
@@ -76,8 +68,6 @@ function GenericPlugin(config) {
     
             
         }else if(config === "historical"){
-            
-        console.log(configs);
 
         var provider = {
             supportsRequest: function (domainObject) {
@@ -108,79 +98,70 @@ function GenericPlugin(config) {
         
         }else{
 
-
-            var configData;
+            var generalConfigData;
             var i = 0;
             for (const key of Object.keys(configs)) {
-                console.log("entered for loop" + i+1 + "times");
-	            console.log(key);
 	            if(config === key){
-                    console.log(Object.values(configs)[i]);
-   		            configData = Object.values(configs)[i];
+   		            generalConfigData = Object.values(configs)[i];
                 }
   	            i++
             }
 
-                console.log(configData);
-                console.log(configData.namespace);
-
-                openmct.objects.addRoot({
-                    namespace: configData.namespace,
-                    key: configData.key
-                });
+            openmct.objects.addRoot({
+                namespace: generalConfigData.namespace,
+                key: generalConfigData.key
+            });
+            openmct.objects.addProvider(generalConfigData.namespace, {
+                get: function (identifier) {
+                    return getGeneric(generalConfigData.jsonFile).then(function (generic) {
+                        if (identifier.key === generalConfigData.key) {
+                            return {
+                                identifier: identifier,
+                                name: generic.name,
+                                type: 'folder',
+                                location: 'ROOT'
+                            };
+                        } else {
+                            var measurement = generic.measurements.filter(function (m) {
+                                return m.key === identifier.key;
+                            })[0];
+                            return {
+                                identifier: identifier,
+                                name: measurement.name,
+                                type: generalConfigData.type,
+                                telemetry: {
+                                    values: measurement.values
+                                },
+                                location: generalConfigData.namespace + ':' + generalConfigData.key
+                            };
+                        }
+                    });
+                }
+            });
     
-                openmct.objects.addProvider(configData.namespace, {
-                    get: function (identifier) {
-                        return getGeneric(configData.jsonFile).then(function (general) {
-                            if (identifier.key ===  configData.key) {
+            openmct.composition.addProvider({
+                appliesTo: function (domainObject) {
+                    return domainObject.identifier.namespace === generalConfigData.namespace &&
+                           domainObject.type === 'folder';
+                },
+                load: function (domainObject) {
+                    return getGeneric(generalConfigData.jsonFile)
+                        .then(function (generic) {
+                            return generic.measurements.map(function (m) {
                                 return {
-                                    identifier: identifier,
-                                    name: general.name,
-                                    type: 'folder',
-                                    location: 'ROOT'
+                                    namespace: generalConfigData.namespace,
+                                    key: m.key
                                 };
-                            } else {
-                                var measurement = general.measurements.filter(function (m) {
-                                    return m.key === identifier.key;
-                                })[0];
-                                return {
-                                    identifier: identifier,
-                                    name: measurement.name,
-                                    type: configData.type,
-                                    telemetry: {
-                                        values: measurement.values
-                                    },
-                                    location: configData.namespace + ':' + configData.key
-                                };
-                            }
-                        });
-                    }
-                });
-        
-                openmct.composition.addProvider({
-                    appliesTo: async function (domainObject) {
-                        return domainObject.identifier.namespace === configData.namespace &&
-                               domainObject.type === 'folder';
-                    },
-                    load: function (domainObject) {
-                        return getGeneric(configData.jsonFile)
-                            .then(function (general) {
-                                return general.measurements.map(function (m) {
-                                    return {
-                                        namespace: configData.namespace,
-                                        key: m.key
-                                    };
-                                });
                             });
-                    }
-                });
-        
-                openmct.types.addType(configData.type, {
-                    name: configData.typeName,
-                    description: configData.typeDescription,
-                    cssClass: configData.typeCssClass
-                });
-
+                        });
+                }
+            });
+    
+            openmct.types.addType(generalConfigData.type, {
+                name: generalConfigData.typeName,
+                description: generalConfigData.typeDescription,
+                cssClass: generalConfigData.typeCssClass
+            });
 
 
         }
