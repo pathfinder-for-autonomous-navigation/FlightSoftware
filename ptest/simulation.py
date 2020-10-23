@@ -178,7 +178,7 @@ class Simulation(object):
             # print(type(self.main_state['follower']["actuators"]["magrod_real_moment_body"]))
 
             mag_cmd = self.flight_controller.smart_read("adcs_cmd.mtr_cmd")
-            yf = 10000 # yeet factor
+            yf = 1 # yeet factor
             # mag_cmd = [1000,1000,1000]
             mag_cmd = [[x*yf] for x in mag_cmd] #take transpose
             mag_cmd = matlab.double(mag_cmd) #mutate into matlab

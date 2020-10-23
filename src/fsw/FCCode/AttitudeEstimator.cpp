@@ -82,8 +82,10 @@ void AttitudeEstimator::execute(){
         if (estimate.is_valid) {
             q_body_eci_est_f.set(estimate.q_body_eci);
             w_body_est_f.set((w_body - estimate.gyro_bias).eval());
+            float debugvar = lin::fro(gnc::constant::J_sat * w_body_est_f.get());
+            std::cout << "debug: " << debugvar;
             mag2_vec_fp->set({lin::fro(gnc::constant::J_sat * w_body_est_f.get()),0.0f,48.0f});
-            fro_P_est_f.set(lin::fro(estimate.P));
+            fro_P_est_f.set(debugvar);
         }
         // Handle an invalid estimate
         else {

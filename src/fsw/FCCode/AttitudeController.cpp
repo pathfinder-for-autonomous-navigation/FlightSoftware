@@ -65,9 +65,11 @@ void AttitudeController::execute() {
          */
         case adcs_state_t::detumble:
         case adcs_state_t::limited:
+            std::cout << "pre detubmle\n";
             default_actuator_commands();
             calculate_detumble_controller();
             transfer_internal_to_output_vectors();
+                    std::cout << "pre detubmle\n";    
             break;
         /*
          * We'll autonomously calculate a pointing objective and then control to
