@@ -4,7 +4,7 @@ from flasgger.utils import swag_from
 from datetime import datetime
 from argparse import ArgumentParser
 import json, sys, logging
-import os, threading
+import os
 from tlm.oauth2 import SendMessage
 
 """

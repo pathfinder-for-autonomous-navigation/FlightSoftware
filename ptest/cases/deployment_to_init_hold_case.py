@@ -8,48 +8,48 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
 
     @property
     def adcs_is_functional(self): 
-        return self.sim.flight_controller.read_state("adcs_monitor.functional")
+        return self.flight_controller.read_state("adcs_monitor.functional")
 
     @property
     def wheel1_is_functional(self):
-        return self.sim.flight_controller.read_state("adcs_monitor.havt_device10")
+        return self.flight_controller.read_state("adcs_monitor.havt_device10")
 
     @property
     def wheel2_is_functional(self):
-        return self.sim.flight_controller.read_state("adcs_monitor.havt_device11")
+        return self.flight_controller.read_state("adcs_monitor.havt_device11")
 
     @property
     def wheel3_is_functional(self):
-        return self.sim.flight_controller.read_state("adcs_monitor.havt_device12")
+        return self.flight_controller.read_state("adcs_monitor.havt_device12")
 
     @property
     def wheelpot_is_functional(self):
-        return self.sim.flight_controller.read_state("adcs_monitor.havt_device6")
+        return self.flight_controller.read_state("adcs_monitor.havt_device6")
 
     @adcs_is_functional.setter 
     def adcs_is_functional(self, value): 
         assert(value == "true" or value == "false")
-        self.sim.flight_controller.write_state("adcs_monitor.functional", value)
+        self.flight_controller.write_state("adcs_monitor.functional", value)
 
     @wheel1_is_functional.setter
     def wheel1_is_functional(self, value):
         assert(value == "true" or value == "false")
-        self.sim.flight_controller.write_state("adcs_monitor.havt_device10", value)
+        self.flight_controller.write_state("adcs_monitor.havt_device10", value)
 
     @wheel2_is_functional.setter
     def wheel2_is_functional(self, value):
         assert(value == "true" or value == "false")
-        self.sim.flight_controller.write_state("adcs_monitor.havt_device11", value)
+        self.flight_controller.write_state("adcs_monitor.havt_device11", value)
 
     @wheel3_is_functional.setter
     def wheel3_is_functional(self, value):
         assert(value == "true" or value == "false")
-        self.sim.flight_controller.write_state("adcs_monitor.havt_device12", value)
+        self.flight_controller.write_state("adcs_monitor.havt_device12", value)
 
     @wheelpot_is_functional.setter
     def wheelpot_is_functional(self, value):
         assert(value == "true" or value == "false")
-        self.sim.flight_controller.write_state("adcs_monitor.havt_device6", value)
+        self.flight_controller.write_state("adcs_monitor.havt_device6", value)
 
     def setup_post_bootsetup(self):
         # Move to startup and wait the full deployment length

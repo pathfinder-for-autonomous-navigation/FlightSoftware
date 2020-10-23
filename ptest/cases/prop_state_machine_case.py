@@ -14,8 +14,8 @@ class PropStateMachineCase(SingleSatOnlyCase):
         return True
 
     def setup_post_bootsetup(self):
-        self.sim.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
-        self.sim.flight_controller.write_state(
+        self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
+        self.flight_controller.write_state(
             "prop.state", Enums.prop_states["disabled"])
         self.cycle()
 
@@ -270,7 +270,7 @@ class PropStateMachineCase(SingleSatOnlyCase):
     def test_firing_to_idle(self):
         print("[TESTCASE] test_firing_to_idle")
 
-        if not self.sim.flight_controller.is_teensy:
+        if not self.flight_controller.is_teensy:
             print("[TESTCASE] Test skipped since we are on a native platform.")
             return
 

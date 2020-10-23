@@ -1,15 +1,14 @@
 #!/usr/local/bin/python3
 
 from argparse import ArgumentParser
-from .cases.base import TestCaseFailure
+from .cases.base import PTestCase
 from .configs.schemas import *
 from .usb_session import USBSession
 from .radio_session import RadioSession
 from .uplink_console import UplinkConsole
 from .cmdprompt import StateCmdPrompt
-from .simulation import Simulation
 from . import get_pio_asset
-import json, sys, os, tempfile, time, threading, signal, traceback
+import json, sys, os, time, threading
 
 try:
     import pty, subprocess
@@ -49,19 +48,11 @@ class PTest(object):
         self.is_running = True
         self.set_up_devices()
         self.set_up_radios()
-        self.set_up_sim()
+        self.set_up_testcase()
 
-        try:
-            self.sim.start()
-        except TestCaseFailure as failure:
-            tb = traceback.format_exc()
-            self.sim.testcase.logger.put(tb)
-            if not self.is_interactive:
-                time.sleep(1) # Allow time for the exception to be handled by the logger.
-                self.sim.testcase.logger.stop()
-                time.sleep(1.5) # Allow time for the logger to stop
-                self.stop_all("Exiting due to testcase failure.")
-        
+        testcase_error = False
+        self.testcase.start()
+
         if self.is_interactive:
             self.set_up_cmd_prompt()
         else:
@@ -145,7 +136,7 @@ class PTest(object):
                     self.tlm_config)
                 self.radios[radio_name] = radio_session
 
-    def set_up_sim(self):
+    def set_up_testcase(self):
         """
         Starts up the test case and the MATLAB simulation if it is required by the testcase.
         """
@@ -158,11 +149,12 @@ class PTest(object):
             self.stop_all(f"Nonexistent test case: {self.testcase_name}")
         print(f"Running mission testcase {self.testcase_name}.")
 
-        self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
+        self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir)
+        self.testcase.setup_case(self.devices)
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt
-        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.sim, self.stop_all)
+        self.cmd_prompt = StateCmdPrompt(self.devices, self.radios, self.stop_all)
         try:
             self.cmd_prompt.cmdloop()
         except (KeyboardInterrupt, SystemExit):
@@ -170,7 +162,7 @@ class PTest(object):
             self.cmd_prompt.do_quit(None)
             self.stop_all("Exiting due to keyboard interrupt.", is_error=False)
 
-    def stop_all(self, reason_for_stop, is_error = True):
+    def stop_all(self, reason_for_stop, is_error=True):
         """Gracefully ends simulation run."""
 
         # Prevent multiple threads from trying to stop the simulation at the same time.
@@ -188,13 +180,6 @@ class PTest(object):
         print("Stopping uplink console...")
         self.uplink_console.close()
 
-        print("Stopping simulation (please be patient)...")
-        try:
-            self.sim.stop(self.simulation_run_dir)
-        except:
-            # Simulation was never created
-            pass
-
         num_radios = len(self.radios.values())
         print(f"Terminating {num_radios} radio connection(s)...")
         for radio in self.radios.values():
@@ -209,16 +194,11 @@ class PTest(object):
             os.close(binary['pty_master_fd'])
             os.close(binary['pty_slave_fd'])
 
-        sys.exit(1 if is_error else 0)
+        sys.exit(1 if (is_error or self.testcase.errored) else 0)
 
 def check_system_dependencies():
     if sys.version_info[0] != 3 or sys.version_info[1] < 6:
         print("Running PTest requires Python 3.6 or above.")
-        sys.exit(1)
-
-    from shutil import which
-    if which("go") is None:
-        print("PTest requires Golang to be installed.")
         sys.exit(1)
 
 def main(args):
