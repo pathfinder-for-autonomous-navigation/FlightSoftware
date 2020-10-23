@@ -6,7 +6,7 @@ import time
 # python -m ptest runsim -c ptest/configs/fc_only_native.json -t PropStateMachineCase
 class PropStateMachineCase(SingleSatOnlyCase):
     @property
-    def initial_state(self):
+    def desired_initial_state(self):
         return "manual"
 
     @property

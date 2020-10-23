@@ -3,7 +3,7 @@ from .utils import Enums, TestCaseFailure
 
 class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):    
     @property
-    def initial_state(self):
+    def desired_initial_state(self):
         return "startup"
 
     @property

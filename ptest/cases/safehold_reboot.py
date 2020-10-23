@@ -7,7 +7,7 @@ class SafeholdReboot(SingleSatOnlyCase):
         return float("inf")
 
     @property
-    def initial_state(self):
+    def desired_initial_state(self):
         return "standby"
 
     @property

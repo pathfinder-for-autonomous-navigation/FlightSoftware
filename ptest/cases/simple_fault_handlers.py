@@ -3,7 +3,7 @@ from .utils import FSWEnum, Enums, TestCaseFailure
 
 class ADCSWheelFaultHandler(SingleSatOnlyCase):
     @property
-    def initial_state(self):
+    def desired_initial_state(self):
         return "standby"
 
     @property
@@ -54,7 +54,7 @@ class LowBattFaultHandler(SingleSatOnlyCase):
         return 0
 
     @property
-    def initial_state(self):
+    def desired_initial_state(self):
         return "standby"
 
     @property

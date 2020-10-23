@@ -154,9 +154,9 @@ class SingleSatOnlyCase(PTestCase):
     """
 
     @property
-    def initial_state(self):
+    def desired_initial_state(self):
         """
-        Sets the initial state for the boot utility.
+        Sets the initial state for the boot utility to progress toward.
         """
         return "manual"
 
@@ -166,7 +166,7 @@ class SingleSatOnlyCase(PTestCase):
     @property
     def fast_boot(self):
         """
-        If true, the boot utility will immediately jump to the initial_state
+        If true, the boot utility will immediately jump to the desired_initial_state
         rather than stepping through the state machine.
         """
         return True
@@ -179,7 +179,7 @@ class SingleSatOnlyCase(PTestCase):
         self.flight_controller.write_state("fault_handler.enabled", "false")
         self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
 
-        self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, self.fast_boot, self.one_day_ccno)
+        self.boot_util = BootUtil(self.flight_controller, self.logger, self.desired_initial_state, self.fast_boot, self.one_day_ccno)
         self.boot_util.setup_boot()
         self.setup_post_bootsetup()
 
@@ -319,10 +319,10 @@ class MissionCase(PTestCase):
         self.flight_controller_follower = devices["FlightControllerFollower"]
 
     @property
-    def initial_state_leader(self):
+    def desired_initial_state_leader(self):
         raise NotImplementedError
     @property
-    def initial_state_follower(self):
+    def desired_initial_state_follower(self):
         raise NotImplementedError
 
     @property
@@ -335,8 +335,8 @@ class MissionCase(PTestCase):
     def _setup_case(self):
         self.setup_pre_bootsetup_leader()
         self.setup_pre_bootsetup_follower()
-        self.boot_util_leader = BootUtil(self.flight_controller_leader, self.logger, self.initial_state_leader, self.fast_boot_leader)
-        self.boot_util_follower = BootUtil(self.flight_controller_follower, self.logger, self.initial_state_follower, self.fast_boot_follower)
+        self.boot_util_leader = BootUtil(self.flight_controller_leader, self.logger, self.desired_initial_state_leader, self.fast_boot_leader)
+        self.boot_util_follower = BootUtil(self.flight_controller_follower, self.logger, self.desired_initial_state_follower, self.fast_boot_follower)
         self.boot_util_leader.setup_boot()
         self.boot_util_follower.setup_boot()
         self.setup_post_bootsetup_leader()
