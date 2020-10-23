@@ -9,7 +9,7 @@ class PowerLossCheckoutCase(SingleSatOnlyCase):
         return float("inf")
 
     def setup_post_bootsetup(self):
-          self.ws("fault_handler.enabled", True)
+        self.ws("fault_handler.enabled", True)
 
     # is str_to_bool necessary?
     def str_to_bool(self, string):
@@ -44,14 +44,19 @@ class PowerLossCheckoutCase(SingleSatOnlyCase):
     # radio states? Might have to run this having set QM at various different
     # starting states?
 
+    def diagnostics(self):
+        self.read_state('radio.state')
+        self.read_state('qfh.state')
+        self.read_state('radio.last_comms_ccno')
+
     def run_case_singlesat(self):
         self.failed = False
 
+        self.write_state("radio.state", Enums.radio_states["wait"])
+
         # Check that if QM is a non-wait state and QFH wants to powercycle the 
         # radio, QFH is unable to until QM returns to a wait state
-        
-        # Set radio to transceive (state = 1) / is this necessary?
-        # self.write_state("radio.state",1)
+
 
         # QFH States 2,3,4,5 represent powercycling has occurred 
 
@@ -65,6 +70,7 @@ class PowerLossCheckoutCase(SingleSatOnlyCase):
         # Simulate one day of no comms (is this necessary idk)
         while self.cycles_since_blackout_start <= self.one_day_ccno:
             self.cycle()
+            self.diagnostics()
             self.cycles_since_blackout_start += 1
         
         # Reset cycles
@@ -73,6 +79,7 @@ class PowerLossCheckoutCase(SingleSatOnlyCase):
         # Simulate second day of no comms
         while self.cycles_since_blackout_start <= self.one_day_ccno:
             self.cycle()
+            self.diagnostics()
             self.cycles_since_blackout_start += 1
 
         self.check_faulty_powercycle()
@@ -87,12 +94,13 @@ class PowerLossCheckoutCase(SingleSatOnlyCase):
             # Cycle a whole buncha times
             while self.cycles_since_blackout_start <= self.one_day_ccno // 3:
                 self.cycle()
+                self.diagnostics()
                 self.cycles_since_blackout_start += 1
 
             # Debugging
-            # self.logger.put(f"Power cycle round  {x+1}:")
-            # self.logger.put(f"Radio state is {self.read_state('radio.state')}")
-            # self.logger.put(f"QFH state is {self.read_state('qfh.state')}")
+            self.logger.put(f"Power cycle round  {x+1}:")
+            self.logger.put(f"Radio state is {self.read_state('radio.state')}")
+            self.logger.put(f"QFH state is {self.read_state('qfh.state')}")
 
             self.check_faulty_powercycle()
             
