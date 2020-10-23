@@ -32,9 +32,9 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
     pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 32*3)),
     pointer_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 32*3)),
     t_body_cmd_f("pointer.rwa_torque_cmd", 
-        Serializer<f_vector_t>(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
+        Serializer<lin::Vector3f>(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
     m_body_cmd_f("pointer.mtr_cmd", 
-        Serializer<f_vector_t>(adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
+        Serializer<lin::Vector3f>(adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
     detumbler_state(),
     pointer_state()
     {
@@ -65,7 +65,6 @@ void AttitudeController::execute() {
         case adcs_state_t::limited:
             default_actuator_commands();
             calculate_detumble_controller();
-            transfer_internal_to_output_vectors();
             break;
         /*
          * We'll autonomously calculate a pointing objective and then control to
@@ -75,7 +74,6 @@ void AttitudeController::execute() {
         case adcs_state_t::point_docking:
             default_actuator_commands();
             default_pointing_objectives();
-            transfer_internal_to_output_vectors();
             calculate_pointing_objectives();
         /*
          * When in manual, the pointing objectives are set from the ground.
@@ -93,15 +91,14 @@ void AttitudeController::execute() {
         case adcs_state_t::zero_torque:
         case adcs_state_t::zero_L:
             default_actuator_commands();
-            transfer_internal_to_output_vectors();
         default:
             break;
     }
 }
 
 void AttitudeController::default_actuator_commands() {
-    t_body_cmd = lin::zeros<lin::Vector3f>();
-    m_body_cmd = lin::zeros<lin::Vector3f>();
+    t_body_cmd_f.set(lin::zeros<lin::Vector3f>());
+    m_body_cmd_f.set(lin::zeros<lin::Vector3f>());
 }
 
 void AttitudeController::default_pointing_objectives() {
@@ -119,7 +116,7 @@ void AttitudeController::calculate_detumble_controller() {
     // Call the controller and write results to appropriate state fields
     control_detumble(detumbler_state, detumbler_data, detumbler_actuation);
     if (lin::all(lin::isfinite(detumbler_actuation.mtr_body_cmd)))
-        m_body_cmd = detumbler_actuation.mtr_body_cmd;
+        m_body_cmd_f.set(detumbler_actuation.mtr_body_cmd);
 }
 
 void AttitudeController::calculate_pointing_objectives() {
@@ -225,15 +222,7 @@ void AttitudeController::calculate_pointing_controller() {
     // Call the controller and write results to appropriate state fields
     control_pointing(pointer_state, pointer_data, pointer_actuation);
     if (lin::all(lin::isfinite(pointer_actuation.mtr_body_cmd) && lin::isfinite(pointer_actuation.rwa_body_cmd))) {
-        m_body_cmd = pointer_actuation.mtr_body_cmd;
-        t_body_cmd = pointer_actuation.rwa_body_cmd;
+        m_body_cmd_f.set(pointer_actuation.mtr_body_cmd);
+        t_body_cmd_f.set(pointer_actuation.rwa_body_cmd);
     }
-    transfer_internal_to_output_vectors();
-}
-
-void AttitudeController::transfer_internal_to_output_vectors(){
-    f_vector_t m_temp = {m_body_cmd(0),m_body_cmd(1),m_body_cmd(2)};
-    f_vector_t t_temp  = {t_body_cmd(0),t_body_cmd(1),t_body_cmd(2)};
-    m_body_cmd_f.set(m_temp);
-    t_body_cmd_f.set(t_temp);
 }
