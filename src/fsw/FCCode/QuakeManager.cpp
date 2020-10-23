@@ -59,7 +59,9 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset)
 
     // Initialize Quake Manager variables
     max_wait_cycles_f.set(1);
-    max_transceive_cycles_f.set(500);
+
+    TRACKED_CONSTANT_SC(unsigned int, max_transceive_cycles, PAN::one_day_ccno / (24 * 60) > 1 ? PAN::one_day_ccno / (24 * 60) : 1);
+    max_transceive_cycles_f.set(max_transceive_cycles);
     last_checkin_cycle_f.set(control_cycle_count);
     radio_mt_packet_f.set(qct.get_MT_msg());
     radio_mt_len_f.set(0);

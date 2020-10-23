@@ -67,7 +67,7 @@ class Datastore(DataConsumer):
 
     def save(self):
         """ Save telemetry log to a file. """
-        json.dump(self.dataList, self.dataLog)
+        self.dataLog.write(json.dumps(self.dataList))
         self.dataLog.close()
 
 class Logger(DataConsumer):
