@@ -157,6 +157,7 @@ void test_execute(){
 
     tf.step();
 
+
     std::cout << lin::transpose(tf.pointer_vec1_desired_fp->get());
     std::cout << lin::transpose(tf.pointer_vec2_desired_fp->get());
 
