@@ -27,10 +27,6 @@ class ADCSCommander : public TimedControlTask<void> {
     const WritableStateField<unsigned char>* adcs_state_fp;
 
     // outputs from AttitudeController as inputs
-    const WritableStateField<lin::Vector3f>* adcs_vec1_current_fp;
-    const WritableStateField<lin::Vector3f>* adcs_vec1_desired_fp;
-    const WritableStateField<lin::Vector3f>* adcs_vec2_current_fp;
-    const WritableStateField<lin::Vector3f>* adcs_vec2_desired_fp;
     const WritableStateField<lin::Vector3f>* pointer_rwa_torque_cmd;
     const WritableStateField<lin::Vector3f>* pointer_mtr_cmd;
 
@@ -66,7 +62,7 @@ class ADCSCommander : public TimedControlTask<void> {
     template<typename T, size_t N>
     std::array<T, N> lin_to_std(lin::Vector<T,N> v){
         std::array<T,N> ret;
-        for(int i = 0; i<N; i++){
+        for(unsigned char i = 0; i<N; i++){
             ret[i] = v(i);
         }
         return ret;

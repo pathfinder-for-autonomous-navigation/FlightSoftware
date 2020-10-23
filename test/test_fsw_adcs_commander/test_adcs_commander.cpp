@@ -15,11 +15,8 @@ class TestFixture {
 
         // Pointers to input statefields
         std::shared_ptr<WritableStateField<unsigned char>> adcs_state_fp;
-        // std::vector<std::shared_ptr<WritableStateField<bool>>> havt_read_table_vector_fp;
-        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec1_current_fp;
-        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec1_desired_fp;
-        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec2_current_fp;
-        std::shared_ptr<WritableStateField<lin::Vector3f>> adcs_vec2_desired_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> pointer_rwa_torque_cmd_fp;
+        std::shared_ptr<WritableStateField<lin::Vector3f>> pointer_mtr_cmd_fp;
 
         // Pointers to output statefields
         WritableStateField<unsigned char>* rwa_mode_fp;
@@ -49,10 +46,10 @@ class TestFixture {
         TestFixture() : registry(){
             adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
 
-            adcs_vec1_current_fp = registry.create_writable_lin_vector_field<float>("attitude.pointer_vec1_current", 0, 1, 100);
-            adcs_vec1_desired_fp = registry.create_writable_lin_vector_field<float>("attitude.pointer_vec1_desired", 0, 1, 100);
-            adcs_vec2_current_fp = registry.create_writable_lin_vector_field<float>("attitude.pointer_vec2_current", 0, 1, 100);
-            adcs_vec2_desired_fp = registry.create_writable_lin_vector_field<float>("attitude.pointer_vec2_desired", 0, 1, 100);
+            pointer_rwa_torque_cmd_fp = registry.create_writable_lin_vector_field<float>(
+                "pointer.rwa_torque_cmd", adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3);
+            pointer_mtr_cmd_fp        = registry.create_writable_lin_vector_field<float>(
+                "pointer.mtr_cmd", adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3);
 
             adcs_cmder = std::make_unique<ADCSCommander>(registry, 0);  
 
@@ -134,43 +131,82 @@ void test_execute(){
 
     // Expand the sections once each dispatch block does specific things
 
-    tf.set_adcs_state(adcs_state_t::startup);
-    tf.adcs_cmder->execute();
     // in startup, execute() does nothing
+    tf.set_adcs_state(adcs_state_t::startup);
+    
+    // set a hypothetical command that comes form the attitude controller
+    tf.pointer_rwa_torque_cmd_fp->set({1,2,-3});
+    tf.pointer_mtr_cmd_fp->set({4,5,-6});
+    tf.adcs_cmder->execute();
+
+    // verify that they are not translated to the output
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.rwa_torque_cmd_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.mtr_cmd_fp->get(), 1e-10);
+
+    // manual should also do nothing
+    // in startup, execute() does nothing
+    tf.set_adcs_state(adcs_state_t::point_manual);
+    tf.adcs_cmder->execute();
+
+    // verify that they are not translated to the output
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.rwa_torque_cmd_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.mtr_cmd_fp->get(), 1e-10);
+
+
+    // now directly set outputs as if it was a ptest case
+    tf.set_adcs_state(adcs_state_t::point_manual);
+    tf.rwa_mode_fp->set(adcs::RWAMode::RWA_ACCEL_CTRL);
+    tf.mtr_mode_fp->set(adcs::MTRMode::MTR_ENABLED);
+    tf.rwa_torque_cmd_fp->set({1,2,-3});
+    tf.mtr_cmd_fp->set({4,5,-6});
+    tf.adcs_cmder->execute();
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({1,2,-3}), tf.rwa_torque_cmd_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({4,5,-6}), tf.mtr_cmd_fp->get(), 1e-10);
 
     tf.set_adcs_state(adcs_state_t::limited);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_DISABLED, tf.rwa_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.rwa_torque_cmd_fp->get(), 1e-10);
     TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
-
-    tf.set_adcs_state(adcs_state_t::zero_torque);
-    tf.adcs_cmder->execute();
-    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_DISABLED, tf.mtr_mode_fp->get());
-
-    tf.set_adcs_state(adcs_state_t::zero_L);
-    tf.adcs_cmder->execute();
-    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_SPEED_CTRL, tf.rwa_mode_fp->get());
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());    
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({4,5,-6}), tf.mtr_cmd_fp->get(), 1e-10);
 
     tf.set_adcs_state(adcs_state_t::detumble);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_DISABLED, tf.rwa_mode_fp->get());
-    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());     
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.rwa_torque_cmd_fp->get(), 1e-10);
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({4,5,-6}), tf.mtr_cmd_fp->get(), 1e-10);
 
-    tf.set_adcs_state(adcs_state_t::point_manual);
+    tf.set_adcs_state(adcs_state_t::zero_torque);
     tf.adcs_cmder->execute();
-    // nothing to check, state machine is free
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.rwa_torque_cmd_fp->get(), 1e-10);
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_DISABLED, tf.mtr_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.mtr_cmd_fp->get(), 1e-10);
+
+    tf.set_adcs_state(adcs_state_t::zero_L);
+    tf.adcs_cmder->execute();
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_DISABLED, tf.rwa_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({0,0,0}), tf.rwa_speed_cmd_fp->get(), 1e-10);    
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());    
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({4,5,-6}), tf.mtr_cmd_fp->get(), 1e-10);
 
     tf.set_adcs_state(adcs_state_t::point_standby);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
     TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({1,2,-3}), tf.rwa_torque_cmd_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({4,5,-6}), tf.mtr_cmd_fp->get(), 1e-10);
 
     tf.set_adcs_state(adcs_state_t::point_docking);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
     TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({1,2,-3}), tf.rwa_torque_cmd_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({4,5,-6}), tf.mtr_cmd_fp->get(), 1e-10);
+
 }
 
 int test_control_task()

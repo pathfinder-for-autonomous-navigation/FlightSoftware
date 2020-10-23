@@ -80,10 +80,6 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
     adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
     // find outputs from AttitudeComputer
-    adcs_vec1_current_fp   = find_writable_field<lin::Vector3f>("attitude.pointer_vec1_current", __FILE__, __LINE__);
-    adcs_vec1_desired_fp   = find_writable_field<lin::Vector3f>("attitude.pointer_vec1_desired", __FILE__, __LINE__);
-    adcs_vec2_current_fp   = find_writable_field<lin::Vector3f>("attitude.pointer_vec2_current", __FILE__, __LINE__);
-    adcs_vec2_desired_fp   = find_writable_field<lin::Vector3f>("attitude.pointer_vec2_desired", __FILE__, __LINE__);
     pointer_rwa_torque_cmd = find_writable_field<lin::Vector3f>("pointer.rwa_torque_cmd", __FILE__, __LINE__);
     pointer_mtr_cmd        = find_writable_field<lin::Vector3f>("pointer.mtr_cmd", __FILE__, __LINE__);
 
