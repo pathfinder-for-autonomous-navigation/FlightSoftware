@@ -24,9 +24,11 @@ class TestFixture {
         // Pointers to output statefields
         WritableStateField<unsigned char>* rwa_mode_fp;
         WritableStateField<f_vector_t>* rwa_speed_cmd_fp;
+        WritableStateField<f_vector_t>* rwa_torque_cmd_fp;
         WritableStateField<float>* rwa_speed_filter_fp;
         WritableStateField<float>* rwa_ramp_filter_fp;
         WritableStateField<unsigned char>* mtr_mode_fp;
+        WritableStateField<f_vector_t>* mtr_cmd_fp;
         WritableStateField<float>* mtr_limit_fp;
         WritableStateField<float>* ssa_voltage_filter_fp;
         WritableStateField<unsigned char>* mag1_mode_fp;
@@ -47,19 +49,21 @@ class TestFixture {
         TestFixture() : registry(){
             adcs_state_fp = registry.create_writable_field<unsigned char>("adcs.state", 8);
 
-            adcs_vec1_current_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec1.current", 0, 1, 100);
-            adcs_vec1_desired_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec1.desired", 0, 1, 100);
-            adcs_vec2_current_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec2.current", 0, 1, 100);
-            adcs_vec2_desired_fp = registry.create_writable_lin_vector_field<float>("adcs.compute.vec2.desired", 0, 1, 100);
+            adcs_vec1_current_fp = registry.create_writable_lin_vector_field<float>("attitude.pointer_vec1_current", 0, 1, 100);
+            adcs_vec1_desired_fp = registry.create_writable_lin_vector_field<float>("attitude.pointer_vec1_desired", 0, 1, 100);
+            adcs_vec2_current_fp = registry.create_writable_lin_vector_field<float>("attitude.pointer_vec2_current", 0, 1, 100);
+            adcs_vec2_desired_fp = registry.create_writable_lin_vector_field<float>("attitude.pointer_vec2_desired", 0, 1, 100);
 
             adcs_cmder = std::make_unique<ADCSCommander>(registry, 0);  
 
             // initialize pointers to output statefields
             rwa_mode_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.rwa_mode");
             rwa_speed_cmd_fp = registry.find_writable_field_t<f_vector_t>("adcs_cmd.rwa_speed_cmd");
+            rwa_torque_cmd_fp = registry.find_writable_field_t<f_vector_t>("adcs_cmd.rwa_torque_cmd");
             rwa_speed_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.rwa_speed_filter");
             rwa_ramp_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.rwa_ramp_filter");
             mtr_mode_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.mtr_mode");
+            mtr_cmd_fp = registry.find_writable_field_t<f_vector_t>("adcs_cmd.mtr_cmd");
             mtr_limit_fp = registry.find_writable_field_t<float>("adcs_cmd.mtr_limit");
             ssa_voltage_filter_fp = registry.find_writable_field_t<float>("adcs_cmd.ssa_voltage_filter");
             mag1_mode_fp = registry.find_writable_field_t<unsigned char>("adcs_cmd.mag1_mode");
@@ -101,9 +105,11 @@ void test_task_initialization()
 
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_DISABLED, tf.rwa_mode_fp->get());
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(zeros, tf.rwa_speed_cmd_fp->get(), 0);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(zeros, tf.rwa_torque_cmd_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.rwa_speed_filter_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.rwa_ramp_filter_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_DISABLED, tf.mtr_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(zeros, tf.mtr_cmd_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.mtr_limit_fp->get(), 0);
     TEST_ASSERT_FLOAT_WITHIN(1, tf.ssa_voltage_filter_fp->get(), 0);
     TEST_ASSERT_EQUAL(adcs::IMU_MAG_NORMAL, tf.mag1_mode_fp->get());

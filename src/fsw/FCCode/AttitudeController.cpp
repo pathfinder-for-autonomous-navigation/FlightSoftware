@@ -31,9 +31,9 @@ AttitudeController::AttitudeController(StateFieldRegistry &registry, unsigned in
     pointer_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 32*3)),
     pointer_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 32*3)),
     pointer_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 32*3)),
-    t_body_cmd_f("adcs_cmd.rwa_torque_cmd", 
+    t_body_cmd_f("pointer.rwa_torque_cmd", 
         Serializer<f_vector_t>(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3)),
-    m_body_cmd_f("adcs_cmd.mtr_cmd", 
+    m_body_cmd_f("pointer.mtr_cmd", 
         Serializer<f_vector_t>(adcs::mtr::min_moment, adcs::mtr::max_moment, 16*3)),
     detumbler_state(),
     pointer_state()
@@ -221,7 +221,7 @@ void AttitudeController::calculate_pointing_controller() {
     if ( !lin::all(lin::isfinite(pointer_data.secondary_desired)) 
     || !lin::all(lin::isfinite(pointer_data.secondary_current)))
         return;
-        
+
     // Call the controller and write results to appropriate state fields
     control_pointing(pointer_state, pointer_data, pointer_actuation);
     if (lin::all(lin::isfinite(pointer_actuation.mtr_body_cmd) && lin::isfinite(pointer_actuation.rwa_body_cmd))) {

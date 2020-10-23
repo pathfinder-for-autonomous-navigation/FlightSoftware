@@ -58,8 +58,8 @@ class TestFixture {
         pointer_vec2_current_fp = registry.find_readable_field_t<lin::Vector3f>("attitude.pointer_vec2_current");
         pointer_vec1_desired_fp = registry.find_writable_field_t<lin::Vector3f>("attitude.pointer_vec1_desired");
         pointer_vec2_desired_fp = registry.find_writable_field_t<lin::Vector3f>("attitude.pointer_vec2_desired");
-        t_body_cmd_fp = registry.find_writable_field_t<f_vector_t>("adcs_cmd.rwa_torque_cmd");
-        m_body_cmd_fp = registry.find_writable_field_t<f_vector_t>("adcs_cmd.mtr_cmd");
+        t_body_cmd_fp = registry.find_writable_field_t<f_vector_t>("pointer.rwa_torque_cmd");
+        m_body_cmd_fp = registry.find_writable_field_t<f_vector_t>("pointer_cmd.mtr_cmd");
 
         // Set quaternion to non-rotating value
         q_body_eci_est_fp->set(lin::Vector4f({0,0,0,1}));
