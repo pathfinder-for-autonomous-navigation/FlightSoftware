@@ -214,12 +214,14 @@ void AttitudeController::calculate_pointing_controller() {
     pointer_data.w_sat             = w_body_est_fp->get();
     pointer_data.b                 = b_body_rd_fp->get();
 
-    if (lin::any(!(lin::isfinite(pointer_data.primary_desired) && lin::isfinite(pointer_data.primary_current))))
+    if ( !lin::all(lin::isfinite(pointer_data.primary_desired)) 
+    || !lin::all(lin::isfinite(pointer_data.primary_current)))
         return;
 
-    if (lin::any(!(lin::isfinite(pointer_data.secondary_desired) && lin::isfinite(pointer_data.secondary_current))))
+    if ( !lin::all(lin::isfinite(pointer_data.secondary_desired)) 
+    || !lin::all(lin::isfinite(pointer_data.secondary_current)))
         return;
-
+        
     // Call the controller and write results to appropriate state fields
     control_pointing(pointer_state, pointer_data, pointer_actuation);
     if (lin::all(lin::isfinite(pointer_actuation.mtr_body_cmd) && lin::isfinite(pointer_actuation.rwa_body_cmd))) {

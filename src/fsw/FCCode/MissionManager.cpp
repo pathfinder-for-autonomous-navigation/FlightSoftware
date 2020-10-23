@@ -6,8 +6,6 @@
 #include <gnc/constants.hpp>
 #include "SimpleFaultHandler.hpp"
 
-#include <iostream>
-
 // Declare static storage for constexpr variables
 const constexpr double MissionManager::initial_detumble_safety_factor;
 const constexpr double MissionManager::initial_close_approach_trigger_dist;
@@ -204,8 +202,6 @@ void MissionManager::dispatch_detumble()
     // Detumble until satellite angular rate is below an allowable threshold
     const float momentum = lin::fro(gnc::constant::J_sat * adcs_w_body_est_fp->get());
     const float threshold = adcs::rwa::max_speed_read * adcs::rwa::moment_of_inertia * detumble_safety_factor_f.get();
-    
-    std::cout << "mom: " << momentum << "\n";
 
     if (momentum <= threshold * threshold) // Save a sqrt call and use fro norm
     {

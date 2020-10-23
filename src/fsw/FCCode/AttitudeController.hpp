@@ -19,7 +19,6 @@ class AttitudeController : public TimedControlTask<void> {
      * @param offset
      */
     AttitudeController(StateFieldRegistry &registry, unsigned int offset);
-    ~AttitudeController() = default; //is this needed?
 
     /**
      * @brief Update the attitude controllers suggestion for ADCS actuations.
@@ -51,7 +50,7 @@ class AttitudeController : public TimedControlTask<void> {
     WritableStateField<lin::Vector3f> pointer_vec1_desired_f;
     WritableStateField<lin::Vector3f> pointer_vec2_desired_f;
 
-    // Internal to this statefield, data containers
+    // Internal to this control task, data containers
     lin::Vector3f t_body_cmd;
     lin::Vector3f m_body_cmd;
 
