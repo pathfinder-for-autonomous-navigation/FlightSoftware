@@ -1,0 +1,4 @@
+[2020-10-24 17:07:52.426983] (ERROR) Tried to write state value named "gomspace.low_batt.suppress" but encountered an error: invalid field name
+[2020-10-24 17:07:52.436983] (ERROR) Tried to write state value named "fault_handler.enabled" but encountered an error: invalid field name
+[2020-10-24 17:07:52.463983] (ERROR) Tried to write state value named "pan.state" but encountered an error: invalid field name
+[2020-10-24 17:08:58.172983] (ERROR) Tried to write state value named "adcs_cmd.mtr_cmd" but encountered an error: missing value of field to be written
