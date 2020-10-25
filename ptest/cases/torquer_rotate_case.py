@@ -69,7 +69,7 @@ class MTorquerCase(SingleSatOnlyCase):
             waiting and then checking for white noise
         """
         #set ADCS to manual
-        self.ws("adcs.state", Enums.adcs_states["point_manual"])
+        self.ws("adcs.state", Enums.adcs_states["manual"])
         self.print_rs("adcs.state")
         #enables MTorquers
         self.cycle()
