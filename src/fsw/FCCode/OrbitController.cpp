@@ -55,6 +55,7 @@ void OrbitController::execute() {
 
     if (time_till_node(theta, r, v) <= delta_time) {
         // Somehow tell the prop system to get ready - talk to Athena
+        
     }
 
     // Check if the staellite is at a firing point
@@ -64,8 +65,8 @@ void OrbitController::execute() {
         data.t = t;
         data.r_ecef = r;
         data.v_ecef = v;
-        data.dr_ecef = baseline_pos_fp->get(); // Need to check if this is right...
-        data.dv_ecef = baseline_vel_fp->get();
+        data.dr_ecef = r + baseline_pos_fp->get();
+        data.dv_ecef = v + baseline_vel_fp->get();
 
         // Default the state struct (a calculation buffer) and actuation struct (output)
         gnc::OrbitControllerState state;
@@ -76,7 +77,8 @@ void OrbitController::execute() {
         // Collect the output of the PD controller
         lin::Vector3d J_ecef = actuation.J_ecef;
 
-        // Communicate desired impulse to the prop controller - talk to athena
+        // Communicate desired impulse to the prop controller - talk to athena 
+        // Look at onbaording docs for prop system stuff
     }
 
 }
