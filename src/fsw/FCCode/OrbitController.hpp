@@ -7,6 +7,8 @@
 #include <environment.hpp>
 #include <gnc/constants.hpp>
 #include <gnc/orbit_controller.hpp>
+#include "ClockManager.hpp"
+#include "PropController.hpp"
 
 #include "TimedControlTask.hpp"
 
@@ -26,13 +28,23 @@ public:
     void execute() override;
 
     /**
-     * Returns the angle between the current position and the next firing point
+     * Returns the time in seconds when the satellitee reaches its next firing point
+     * This is just an estimation for the sake of prop planning. It's not a very accurate
+     * number.
      */
     double time_till_node(double theta, lin::Vector3d pos, lin::Vector3d vel);
 
+    /**
+     * Calculate impulse
+     */
+    lin::Vector3d calculate_impulse(double t, lin::Vector3d r, lin::Vector3d v, lin::Vector3d dr, lin::Vector3d dv);
+
     // Firing nodes
     double pi = gnc::constant::pi;
-    double firing_nodes[3] = {pi/3, pi/2, -pi/3};
+    double firing_nodes[3] = {pi/3, pi, -pi/3};
+
+    // Prop Controller
+    PropController prop_controller;
 
     // Input statefields for time, position, velocity, and baseline
     // position/velocity. In ECEF
@@ -44,6 +56,7 @@ public:
 
     // Outputs
     ReadableStateField<unsigned char>* prop_planner_state_fp;
+    WritableStateField<unsigned int>* prop_cycles_until_firing_fp;
     WritableStateField<unsigned int> sched_valve1_f;
     WritableStateField<unsigned int> sched_valve2_f;
     WritableStateField<unsigned int> sched_valve3_f;

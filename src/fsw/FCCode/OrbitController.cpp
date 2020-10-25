@@ -23,14 +23,11 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
 }
 
 void OrbitController::init() {
-    prop_planner_state_fp = FIND_READABLE_FIELD(unsigned char, prop.planner.state);
+    prop_planner_state_fp = FIND_READABLE_FIELD(unsigned char, prop.planner.state); // isn't used by prop controller... might have to delete
+    prop_cycles_until_firing_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
 }
 
 void OrbitController::execute() {
-    sched_valve1_f.set(0);
-    sched_valve2_f.set(0);
-    sched_valve3_f.set(0);
-    sched_valve4_f.set(0);
 
     // Collect time, position, velocity, and sun vector data
     double t = time_fp->get();
@@ -49,36 +46,33 @@ void OrbitController::execute() {
     // Calculate the angle between the satellite's position and the projected sun vector
     double theta = lin::atan2( lin::cross(proj_sun, r), lin::dot(proj_sun, r) );
 
-    // If the satellite is within a certain time from the next firing point, then the 
+    // If the satellite is within a certain delta time/cc from the next firing point, then the 
     // propulsion system should get ready to fire soon.
-    double delta_time = 5 * 60; // 5 minutes for now. Need to talk to Athena.
+    double delta_time = prop_controller.min_cycles_needed() + 10;
 
-    if (time_till_node(theta, r, v) <= delta_time) {
-        // Somehow tell the prop system to get ready - talk to Athena
-        
+    // Get the time until the satellite reaches the next firing node in control cycles
+    double time_till_firing = time_till_node(theta, r, v);
+    double time_till_firing_cc = time_till_firing / ClockManager::control_cycle_size;
+
+    // If the satellite is about to approach a firing point and the prop state is idle, 
+    // then schedule the valves for firing
+    // How do I access prop state? What I did here prob isn't right
+    if (time_till_firing_cc <= delta_time && prop_controller.check_current_state(prop_state_t::idle)) {
+        prop_cycles_until_firing_fp->set(time_till_firing_cc);
     }
 
-    // Check if the staellite is at a firing point
+    // Check if the satellite is at a firing point
     if ( std::find(firing_nodes.begin(), firing_nodes.end(), theta) != firing_nodes.end() ) {
-        // Assemble the input Orbit Controller data struct
-        gnc::OrbitControllerData data;
-        data.t = t;
-        data.r_ecef = r;
-        data.v_ecef = v;
-        data.dr_ecef = r + baseline_pos_fp->get();
-        data.dv_ecef = v + baseline_vel_fp->get();
-
-        // Default the state struct (a calculation buffer) and actuation struct (output)
-        gnc::OrbitControllerState state;
-        gnc::OrbitActuation actuation;
-
-        gnc::control_orbit(&state, &data, &actuation);
 
         // Collect the output of the PD controller
-        lin::Vector3d J_ecef = actuation.J_ecef;
+        lin::Vector3d J_ecef = calculate_impulse(t, r, v, baseline_pos_fp->get(), baseline_vel_fp->get());
 
-        // Communicate desired impulse to the prop controller - talk to athena 
-        // Look at onbaording docs for prop system stuff
+        // Communicate desired impulse to the prop controller. Need to talk to kyle and/or tanishq about this and replace the 0s
+        sched_valve1_f.set(0);
+        sched_valve2_f.set(0);
+        sched_valve3_f.set(0);
+        sched_valve4_f.set(0);
+
     }
 
 }
@@ -88,19 +82,33 @@ double OrbitController::time_till_node(double theta, lin::Vector3d pos, lin::Vec
     lin::Vector3d ang_vel = lin::norm(vel)/lin::norm(pos);
 
     // Calculate the times until each node (theta_node = theta_now + w*t)
-    double t1 = ( pi()/3 - theta) / ang_vel;
-    double t2 = ( pi()/2 - theta) / ang_vel;
-    double t3 = ( -pi()/3 - theta) / ang_vel;
-    double times[3] = {t1, t2, t3};
-
-    // Return the shortest positive time
-    double min_time = 100*pi();
-    for (int i=0; i<times.size(); i++){
-        double time = times[i];
-        if (time > 0 && time < min_time){
-            min_time = time;
+    double min_time = std::numeric_limits<double>::max()
+    for (int i=0; i < firing_nodes.size(); i++) {
+        double time_til_node = (firing_nodes[i] - theta) / ang_vel;
+        if (time_til_node > 0 && time_til_node < min_time) {
+            min_time = time_til_node;
         }
     }
 
+    // Return the smallest positive time
     return min_time;
+}
+
+lin::Vector3d OrbitController::calculate_impulse(double t, lin::Vector3d r, lin::Vector3d v, lin::Vector3d dr, lin::Vector3d dv) {
+    // Assemble the input Orbit Controller data struct
+    gnc::OrbitControllerData data;
+    data.t = time_fp->get();
+    data.r_ecef = pos_fp->get();
+    data.v_ecef = vel_fp->get();
+    data.dr_ecef = baseline_pos_fp->get();
+    data.dv_ecef = baseline_vel_fp->get();
+
+    // Default the state struct (a calculation buffer) and actuation struct (output)
+    gnc::OrbitControllerState state;
+    gnc::OrbitActuation actuation;
+
+    gnc::control_orbit(&state, &data, &actuation);
+
+    // Collect the output of the PD controller
+    return actuation.J_ecef;
 }
