@@ -25,7 +25,7 @@ class CmdClient(Cmd):
         self.cmded_device = list(config.keys())[0]
 
 
-        self.url = "http://" + str(config[self.cmded_device]["server"]) + str(config[self.cmded_device]["port"]) #creates an http url to access the device
+        self.url = "http://" + str(config[self.cmded_device]["server"]) + ":" + str(config[self.cmded_device]["port"]) #creates an http url to access the device
 
         Cmd.__init__(self)
 
