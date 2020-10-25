@@ -1,8 +1,11 @@
 #pragma once
 
+#include <algorithm>
+
 #include <common/GPSTime.hpp>
 #include <common/constant_tracker.hpp>
 #include <environment.hpp>
+#include <gnc/constants.hpp>
 #include <gnc/orbit_controller.hpp>
 
 #include "TimedControlTask.hpp"
@@ -22,7 +25,14 @@ public:
     */
     void execute() override;
 
-    constexpr double pi() { return std::atan(1)*4; }
+    /**
+     * Returns the angle between the current position and the next firing point
+     */
+    double time_till_node(double theta, lin::Vector3d pos, lin::Vector3d vel);
+
+    // Firing nodes
+    double pi = gnc::constant::pi;
+    double firing_nodes[3] = {pi/3, pi/2, -pi/3};
 
     // Input statefields for time, position, velocity, and baseline
     // position/velocity. In ECEF

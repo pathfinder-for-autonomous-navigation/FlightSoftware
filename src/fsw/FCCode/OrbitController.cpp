@@ -47,12 +47,25 @@ void OrbitController::execute() {
     lin::Vector3d proj_sun = sun - ( lin::dot(sun, orb_plane) * orb_plane );
 
     // Calculate the angle between the satellite's position and the projected sun vector
-    double theta = lin::acos( lin::dot(r, proj_sun) / (lin::norm(r) * lin::norm(proj_sun)) );
+    double theta = lin::atan2( lin::cross(proj_sun, r), lin::dot(proj_sun, r) );
 
-    // The propulsion system should fire at 60, -60 and 180 degrees
-    if ( std::abs(theta) == pi()/3 || theta == pi() ) {
+    // If the satellite is within a certain time from the next firing point, then the 
+    // propulsion system should get ready to fire soon.
+    double delta_time = 5 * 60; // 5 minutes for now. Need to talk to Athena.
+
+    if (time_till_node(theta, r, v) <= delta_time) {
+        // Somehow tell the prop system to get ready - talk to Athena
+    }
+
+    // Check if the staellite is at a firing point
+    if ( std::find(firing_nodes.begin(), firing_nodes.end(), theta) != firing_nodes.end() ) {
         // Assemble the input Orbit Controller data struct
         gnc::OrbitControllerData data;
+        data.t = t;
+        data.r_ecef = r;
+        data.v_ecef = v;
+        data.dr_ecef = baseline_pos_fp->get(); // Need to check if this is right...
+        data.dv_ecef = baseline_vel_fp->get();
 
         // Default the state struct (a calculation buffer) and actuation struct (output)
         gnc::OrbitControllerState state;
@@ -62,6 +75,30 @@ void OrbitController::execute() {
 
         // Collect the output of the PD controller
         lin::Vector3d J_ecef = actuation.J_ecef;
+
+        // Communicate desired impulse to the prop controller - talk to athena
     }
 
+}
+
+double OrbitController::time_till_node(double theta, lin::Vector3d pos, lin::Vector3d vel) {
+    // Calculate angular velocity (w = v/r)
+    lin::Vector3d ang_vel = lin::norm(vel)/lin::norm(pos);
+
+    // Calculate the times until each node (theta_node = theta_now + w*t)
+    double t1 = ( pi()/3 - theta) / ang_vel;
+    double t2 = ( pi()/2 - theta) / ang_vel;
+    double t3 = ( -pi()/3 - theta) / ang_vel;
+    double times[3] = {t1, t2, t3};
+
+    // Return the shortest positive time
+    double min_time = 100*pi();
+    for (int i=0; i<times.size(); i++){
+        double time = times[i];
+        if (time > 0 && time < min_time){
+            min_time = time;
+        }
+    }
+
+    return min_time;
 }
