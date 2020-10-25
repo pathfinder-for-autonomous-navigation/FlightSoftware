@@ -23,7 +23,6 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
 }
 
 void OrbitController::init() {
-    prop_planner_state_fp = FIND_READABLE_FIELD(unsigned char, prop.planner.state); // isn't used by prop controller... might have to delete
     prop_cycles_until_firing_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
 }
 
@@ -33,6 +32,8 @@ void OrbitController::execute() {
     double t = time_fp->get();
     lin::Vector3d r = pos_fp->get();
     lin::Vector3d v = vel_fp->get();
+    lin::Vector3d dr = baseline_pos_fp->get();
+    lin::Vector3d dv = baseline_vel_fp->get();
     lin::Vector3d sun; // Points from the Earth to the sun
     sun_vector(t, sun);
 
@@ -56,8 +57,7 @@ void OrbitController::execute() {
 
     // If the satellite is about to approach a firing point and the prop state is idle, 
     // then schedule the valves for firing
-    // How do I access prop state? What I did here prob isn't right
-    if (time_till_firing_cc <= delta_time && prop_controller.check_current_state(prop_state_t::idle)) {
+    if (time_till_firing_cc <= delta_time) {
         prop_cycles_until_firing_fp->set(time_till_firing_cc);
     }
 
@@ -65,7 +65,7 @@ void OrbitController::execute() {
     if ( std::find(firing_nodes.begin(), firing_nodes.end(), theta) != firing_nodes.end() ) {
 
         // Collect the output of the PD controller
-        lin::Vector3d J_ecef = calculate_impulse(t, r, v, baseline_pos_fp->get(), baseline_vel_fp->get());
+        lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);
 
         // Communicate desired impulse to the prop controller. Need to talk to kyle and/or tanishq about this and replace the 0s
         sched_valve1_f.set(0);
