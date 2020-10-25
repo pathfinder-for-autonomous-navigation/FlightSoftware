@@ -738,18 +738,18 @@ void test_gpstime_serializer() {
 
 void test_serializers() {
     UNITY_BEGIN();
-    RUN_TEST(test_bool_serializer);
-    RUN_TEST(test_unsigned_int_serializer);
-    RUN_TEST(test_signed_int_serializer);
-    RUN_TEST(test_unsigned_char_serializer);
-    RUN_TEST(test_signed_char_serializer);
-    RUN_TEST(test_float_serializer);
-    RUN_TEST(test_double_serializer);
-    RUN_TEST(test_f_vec_serializer);
+    // RUN_TEST(test_bool_serializer);
+    // RUN_TEST(test_unsigned_int_serializer);
+    // RUN_TEST(test_signed_int_serializer);
+    // RUN_TEST(test_unsigned_char_serializer);
+    // RUN_TEST(test_signed_char_serializer);
+    // RUN_TEST(test_float_serializer);
+    // RUN_TEST(test_double_serializer);
+    // RUN_TEST(test_f_vec_serializer);
     RUN_TEST(test_d_vec_serializer);
-    RUN_TEST(test_f_quat_serializer);
+    // RUN_TEST(test_f_quat_serializer);
     RUN_TEST(test_d_quat_serializer);
-    RUN_TEST(test_gpstime_serializer);
+    // RUN_TEST(test_gpstime_serializer);
     UNITY_END();
 }
 
