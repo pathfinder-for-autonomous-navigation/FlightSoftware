@@ -2,8 +2,11 @@
  battery-telemetry.js simulates the gomspace generating telemetry.
 */
 const variables = require('./state-variables.js')
-
-
+const url = require('url');
+const request = require('request');
+const axios = require('axios')
+var searchURl = 'http://localhost:5000/search-es';
+var searchIndex = 'statefield_report_123';
 function Battery() {
     //This state function takes in initial values from the state-variables.js file
     this.state = {
@@ -47,9 +50,39 @@ function Battery() {
 *   and setting the battery voltage to 24
 **/
 Battery.prototype.updateState = function () {
-  this.state["gomspace.counters"].counter_boot = Math.min(4294967295,this.state["gomspace.counters"].counter_boot+1);
-  this.state["gomspace.vbatt"].output1 = 24;
+  
+  Object.keys(this.state).forEach(function (id) {
+
+    if(typeof(this.state[id]) == 'object'){//if state is an object
+      
+      Object.keys(this.state.id).forEach(function (subId){
+        this.state.id.subId = getValue(searchURl, searchIndex, subId);
+      })
+
+
+
+    }else{// if state is a primitive type
+      this.state.id = getValue(searchURl, searchIndex, id);
+    }
+
+  }, this);
+
 };
+
+Battery.prototype.getValue = function(url, i, f){
+  request(url, {
+    params: {
+      index: i, 
+      field: f
+    }
+  }, (error, response, body) =>{
+    if(error){console.log("error in http GET");}
+    if(response.statusCode == 200){
+      return body;
+    }
+  });
+};
+
 
 /**
  * Takes a measurement of battery state, determines its type, stores in history, and notifies
