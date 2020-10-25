@@ -154,6 +154,7 @@ void ADCSCommander::execute() {
         /** In these cases we are in acceleration wheel control, and mag rods on 
          * We use the commands dictated by the attitude_controller/pointer
         */
+        case adcs_state_t::point_manual:
         case adcs_state_t::point_standby:
         case adcs_state_t::point_docking:
             rwa_mode_f.set(adcs::RWAMode::RWA_ACCEL_CTRL);

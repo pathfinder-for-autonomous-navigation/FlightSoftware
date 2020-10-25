@@ -174,7 +174,7 @@ void test_execute(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.0225f,0.00224974f,-0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
 
     // now change state to manual, and check that the pointing information persisted
-    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::manual));
+    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_manual));
     tf.step();
 
     // check that these values have persisted
@@ -231,7 +231,7 @@ void test_execute(){
     // the objective of this test is to observe that we can set the pointing objectives to nan
     // in order to allow custom actuator commands
 
-    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_manual));
+    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::manual));
     load_good_data(tf);
 
     lin::Vector3f rand_act{0.01,0.02,-0.03};
@@ -257,6 +257,32 @@ void test_execute(){
     // check these doomed to pass actuator outputs
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(rand_act,tf.m_body_cmd_fp->get(), 1e-7);
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(rand_act,tf.t_body_cmd_fp->get(), 1e-7);  
+
+    /*** POINT MANUAL TESTING ***/
+    // the objective of this test is to observe that we can set the pointing objectives
+    // to something concrete, and show that we still derive suggeested commands.
+
+    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_manual));
+    load_good_data(tf);
+
+    tf.pointer_vec1_current_fp->set(lin::Vector3f({0.0f, 0.0f, 1.0f})); 
+    tf.pointer_vec2_current_fp->set(lin::Vector3f({1.0f, 0.0f, 0.0f}));
+    tf.pointer_vec1_desired_fp->set(lin::Vector3f({-0.994661f, .103185f, 0.00182815f}));
+    tf.pointer_vec2_desired_fp->set(lin::Vector3f({0.00183598f, 0.000019023f, 0.999998f}));
+
+    tf.step();
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0f, 0.0f, 1.0f}), tf.pointer_vec1_current_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({1.0f, 0.0f, 0.0f}), tf.pointer_vec2_current_fp->get(), 1e-10);
+    
+    // this test is doomed to pass, but the important part is that it is not nan, and is custom
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.994661f, .103185f, 0.00182815f}), tf.pointer_vec1_desired_fp->get(), 1e-3);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.00183598f, 0.000019023f, 0.999998f}), tf.pointer_vec2_desired_fp->get(), 1e-3);
+
+    // these should be the derived actuators from the custom pointing vecs,
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f(
+        {-adcs::mtr::max_moment,-adcs::mtr::max_moment,-adcs::mtr::max_moment}),
+        tf.m_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.0226458f,0.000844621f,-0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
 }
 
 void test_point_limited() {

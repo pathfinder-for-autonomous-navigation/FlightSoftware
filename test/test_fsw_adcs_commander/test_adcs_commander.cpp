@@ -179,6 +179,14 @@ void test_execute(){
     TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
     PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({4,5,-6}), tf.mtr_cmd_fp->get(), 1e-10);
 
+    // point manual is a fully controlled state from the commander's perspective just like standby
+    tf.set_adcs_state(adcs_state_t::point_manual);
+    tf.adcs_cmder->execute();
+    TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
+    TEST_ASSERT_EQUAL(adcs::MTRMode::MTR_ENABLED, tf.mtr_mode_fp->get());
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({1,2,-3}), tf.rwa_torque_cmd_fp->get(), 1e-10);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_VEC(f_vector_t({4,5,-6}), tf.mtr_cmd_fp->get(), 1e-10);
+
     tf.set_adcs_state(adcs_state_t::zero_torque);
     tf.adcs_cmder->execute();
     TEST_ASSERT_EQUAL(adcs::RWAMode::RWA_ACCEL_CTRL, tf.rwa_mode_fp->get());
