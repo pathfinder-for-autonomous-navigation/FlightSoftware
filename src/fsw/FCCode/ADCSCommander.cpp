@@ -115,7 +115,7 @@ void ADCSCommander::execute() {
 
         /** We do nothing here since ptest/ground will write into the adcs_cmd fields
          */
-        case adcs_state_t::point_manual:
+        case adcs_state_t::manual:
             break;        
 
         /** Detumble is mag rods only 

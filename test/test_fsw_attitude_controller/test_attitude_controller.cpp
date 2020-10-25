@@ -174,7 +174,7 @@ void test_execute(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.0225f,0.00224974f,-0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
 
     // now change state to manual, and check that the pointing information persisted
-    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_manual));
+    tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::manual));
     tf.step();
 
     // check that these values have persisted

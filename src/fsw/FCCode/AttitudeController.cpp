@@ -76,9 +76,11 @@ void AttitudeController::execute() {
             default_pointing_objectives();
             calculate_pointing_objectives();
         /*
-         * When in manual, the pointing objectives are set from the ground.
+         * When in point_manual, the pointing objectives are set from the ground.
+         * When in manual, we recalculating the pointing_controller is fine too
          */
         case adcs_state_t::point_manual:
+        case adcs_state_t::manual:
             calculate_pointing_controller();
             break;
         /*

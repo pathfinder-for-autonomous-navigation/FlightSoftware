@@ -145,7 +145,7 @@ void test_execute(){
 
     // manual should also do nothing
     // in startup, execute() does nothing
-    tf.set_adcs_state(adcs_state_t::point_manual);
+    tf.set_adcs_state(adcs_state_t::manual);
     tf.adcs_cmder->execute();
 
     // verify that they are not translated to the output
@@ -154,7 +154,7 @@ void test_execute(){
 
 
     // now directly set outputs as if it was a ptest case
-    tf.set_adcs_state(adcs_state_t::point_manual);
+    tf.set_adcs_state(adcs_state_t::manual);
     tf.rwa_mode_fp->set(adcs::RWAMode::RWA_ACCEL_CTRL);
     tf.mtr_mode_fp->set(adcs::MTRMode::MTR_ENABLED);
     tf.rwa_torque_cmd_fp->set({1,2,-3});
