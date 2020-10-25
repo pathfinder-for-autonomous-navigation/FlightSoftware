@@ -1,4 +1,3 @@
-import time
 import datetime
 import serial
 import threading
@@ -14,6 +13,7 @@ from elasticsearch import Elasticsearch
 
 from .data_consumers import Datastore, Logger
 from .http_cmd import create_usb_session_endpoint
+from . import get_pio_asset
 
 class USBSession(object):
     '''
@@ -46,12 +46,7 @@ class USBSession(object):
         self.raw_logger = Logger(device_name + "_raw", simulation_run_dir)
         self.telem_save_dir = simulation_run_dir
 
-        #Start downlink parser. Compile it if it is not available.
-        downlink_parser_filepath = ".pio/build/gsw_downlink_parser/program" 
-        if not os.path.exists(downlink_parser_filepath):
-            print("Compiling the downlink parser.")
-            os.system("pio run -e gsw_downlink_parser > /dev/null")
-
+        downlink_parser_filepath = get_pio_asset("gsw_downlink_parser")
         master_fd, slave_fd = pty.openpty()
         self.downlink_parser = subprocess.Popen([downlink_parser_filepath], stdin=master_fd, stdout=master_fd)
         self.dp_console = serial.Serial(os.ttyname(slave_fd), 9600, timeout=1)
@@ -59,9 +54,6 @@ class USBSession(object):
 
         # Open a connection to elasticsearch
         self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
-
-        # Simulation
-        self.overriden_variables = set()
 
     def connect(self, console_port, baud_rate):
         '''
@@ -298,13 +290,11 @@ class USBSession(object):
         Write multiple states and check the write operation with feedback.
 
         Overwrite the value of the state field with the given state field name on the flight computer, and
-        then verify that the state was actually set. Do not write the state if the variable is being overriden
-        by the user. (This is the function that sim should exclusively use.)
+        then verify that the state was actually set.
         '''
         # Filter out fields that are being overridden by the user
         field_val_pairs = [
             field_val_pair for field_val_pair in zip(fields, vals)
-            if field_val_pair[0] not in self.overriden_variables
         ]
         fields, vals = zip(*field_val_pairs)
 
@@ -334,8 +324,7 @@ class USBSession(object):
         Write state and check write operation with feedback.
 
         Overwrite the value of the state field with the given state field name on the flight computer, and
-        then verify that the state was actually set. Do not write the state if the variable is being overriden
-        by the user. (This is a function that sim should exclusively use.)
+        then verify that the state was actually set.
         '''
         return self.write_multiple_states([field], [self._val_to_str(args)], kwargs.get('timeout'))
 
@@ -390,7 +379,6 @@ class USBSession(object):
         # Filter out fields that are being overridden by the user
         field_val_pairs = [
             field_val_pair for field_val_pair in zip(fields, vals)
-            if field_val_pair[0] not in self.overriden_variables
         ]
         fields, vals = zip(*field_val_pairs)
 
@@ -448,25 +436,6 @@ class USBSession(object):
             if not res['result'] == 'created':
                 failed = True
         return not failed
-
-    def override_state(self, field, *args, **kwargs):
-        '''
-        Override state and check write operation with feedback.
-
-        Behaves the same way as write_state(), but is strictly written for a state variable that is overriden
-        by the user, i.e. is no longer set by the simulation.
-        '''
-        self.overriden_variables.add(field)
-        return self._write_state_basic([field], [self._val_to_str(args)], kwargs.get('timeout'))
-
-    def release_override(self, field):
-        '''
-        Release override of simulation state.
-
-        If the state wasn't currently being overriden, then this functions just
-        acts as a no-op.
-        '''
-        self.overriden_variables.discard(field)
 
     def disconnect(self):
         '''Quits the program and stores message log and field telemetry to file.'''

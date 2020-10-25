@@ -6,15 +6,16 @@
 #include <common/StateFieldRegistry.hpp>
 #include "TimedControlTask.hpp"
 #ifdef DESKTOP
-    #include <json.hpp>
+#include <json.hpp>
 #endif
 
-class EEPROMController : public TimedControlTask<void> {
-   #ifdef UNIT_TEST
+class EEPROMController : public TimedControlTask<void>
+{
+#ifdef UNIT_TEST
     friend class TestFixture;
-   #endif
+#endif
 
-   public:
+public:
     /**
      * @brief Construct a new EEPROM Controller object
      * 
@@ -22,7 +23,7 @@ class EEPROMController : public TimedControlTask<void> {
      * @param offset
      * @param statefields
      */
-    EEPROMController(StateFieldRegistry& registry, unsigned int offset);
+    EEPROMController(StateFieldRegistry &registry, unsigned int offset);
 
     /**
      * @brief Sets up addresses for the set of EEPROM-saved fields.
@@ -36,7 +37,8 @@ class EEPROMController : public TimedControlTask<void> {
     void execute() override;
 
     /**
-     * @brief Sets the statefields to the values stored in the EEPROM 
+     * @brief Sets the statefields to the values stored in the EEPROM. Rejects
+     * saved EEPROM mission state value if it is not "docking" or "docked."
      */
     void read_EEPROM();
 
@@ -58,18 +60,20 @@ class EEPROMController : public TimedControlTask<void> {
     // Number of addresses available in EEPROM.
     TRACKED_CONSTANT_SC(unsigned int, eeprom_size, 4096);
 
-  protected:
+protected:
     //the locations in the EEPROM in which the field values will be stored
     std::vector<int> addresses;
 
-    #ifdef DESKTOP
-        // Store EEPROM data in JSON so that it can be written to a file.
-        static nlohmann::json data;
-        // Saves EEPROM data to file if FSW program quits.
-        static void save_data(int signal);
-        // Get EEPROM data in file and store it in "data".
-        static void get_file_data();
-    #endif
+#ifdef DESKTOP
+    // Store EEPROM data in JSON so that it can be written to a file.
+    static nlohmann::json data;
+    // Saves EEPROM data to file if FSW program quits.
+    // Validity of saved state value in json does not matter as invalid
+    // state values will be rejected at reboot.
+    static void save_data(int signal);
+    // Get EEPROM data in file and store it in "data".
+    static void get_file_data();
+#endif
 };
 
 #endif

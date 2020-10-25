@@ -10,6 +10,9 @@ on:
       - 'MCT/**'
       - 'cmdclient/**'
       - 'docs/**'
+      - 'README.md'
+      - 'LICENSE'
+      - '.github/workflows/hootl.yml'
 
 env:
   CI: true
@@ -35,10 +38,12 @@ jobs:
         platformio update
 
     - name: Desktop flight software tests
-      run: ./tools/run_desktop_flight_tests.sh
+      run: platformio test -e fsw_native_ci -v
 
     - name: Common software tests
-      run: ./tools/run_common_software_tests.sh
+      run: |
+        platformio test -e native_common -v
+        platformio test -e native_common_ci -v
 
     - name: Ground software tests
       run: ./tools/run_ground_tests.sh

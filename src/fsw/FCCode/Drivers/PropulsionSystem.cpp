@@ -57,7 +57,11 @@ int _Tank2::get_fake_temp_analog() const
 
 /** Initialize static variables */
 
-_PropulsionSystem::_PropulsionSystem() : Device("propulsion") {}
+_PropulsionSystem::_PropulsionSystem() : Device("propulsion") {
+    #ifdef UNIT_TEST
+    fake_is_functional = true;
+    #endif
+}
 bool _PropulsionSystem::is_interval_enabled = 0;
 
 volatile unsigned int _Tank2::schedule[4] = {0, 0, 0, 0};
@@ -222,12 +226,21 @@ void _PropulsionSystem::disable()
 
 bool _PropulsionSystem::is_functional()
 {
-#ifdef DESKTOP
+#ifdef UNIT_TEST
+    return fake_is_functional;
+#elif defined DESKTOP
     return true;
 #else
     return digitalRead(DCDC::SpikeDockDCDC_EN) == HIGH;
 #endif
 }
+
+#ifdef UNIT_TEST
+void _PropulsionSystem::set_is_functional(bool test_val_input)
+{
+    fake_is_functional = test_val_input;
+}
+#endif
 
 bool _PropulsionSystem::set_schedule(uint32_t a, uint32_t b, uint32_t c, uint32_t d)
 {

@@ -1,8 +1,9 @@
 import pylab as plt
+import json
 import matplotlib.dates as mdates
 import mplcursors
 from .gpstime import GPSTime
-from tinydb import TinyDB, Query
+import json
 from argparse import ArgumentParser
 import cmd, sys
 
@@ -12,8 +13,9 @@ class StateFieldPlotter(object):
     post-processing.
     """
 
-    def __init__(self, db = None):
-        self.db = db
+    def __init__(self, dataList = None):
+        self.dataList = dataList
+        
 
         # Clear plot and set plotting ticker parameters
         date_locator = mdates.AutoDateLocator()
@@ -22,17 +24,43 @@ class StateFieldPlotter(object):
             mdates.AutoDateFormatter(date_locator))
         plt.gca().xaxis.set_major_locator(date_locator)
 
-    def find_timeseries(self, field, db = None):
-        if not db:
-            db = self.db
-        if not db:
+    def find_timeseries(self, field, dataList = None):
+        if not dataList:
+            dataList = self.dataList
+        if not dataList:
             print("Database is not available for searching.")
             return None
 
+        suffix = None
+        if any(field.endswith(x) for x in ['w', 'x', 'y', 'z']):
+            suffix = field[-1]
+            field = field[0:-2]
+
         field_data = []
-        query = db.search(Query().field == field)
-        for row in query:
-            field_data.append((row["time"], row["val"]))
+        
+        for datapoint in self.dataList:
+            if datapoint["field"] == field:
+                if suffix is not None:
+                    val = datapoint["val"].split(",")[:-1]
+                    is_vector = len(val) == 3
+                    is_quat = len(val) == 4
+                    if not (is_vector or is_quat):
+                        print(f"Field {field} does not have any sub-indices.")
+                        return None
+
+                    if   suffix == 'w' and is_quat  : idx = 0
+                    elif suffix == 'x' and is_quat  : idx = 1
+                    elif suffix == 'y' and is_quat  : idx = 2
+                    elif suffix == 'z' and is_quat  : idx = 3
+                    elif suffix == 'x' and is_vector: idx = 0
+                    elif suffix == 'y' and is_vector: idx = 1
+                    elif suffix == 'z' and is_vector: idx = 2
+                    else:
+                        print(f"Invalid index '{suffix}' specified for field {field}.")
+                        return None
+                    field_data.append((datapoint["time"], val[idx]))
+                else:
+                    field_data.append((datapoint["time"], datapoint["val"]))
 
         if len(field_data) == 0:
             print(
@@ -108,8 +136,8 @@ class StateFieldPlotter(object):
         plt.show()
 
 class PlotterClient(cmd.Cmd):
-    def __init__(self, db):
-        self.db = db
+    def __init__(self, dataList):
+        self.dataList = dataList
 
         self.intro = "Type \"plot x\" to plot state field \"x\". You can also plot multiple state fields. \n"
         self.prompt = "> "
@@ -123,16 +151,16 @@ class PlotterClient(cmd.Cmd):
             print("Need to specify at least one state field to plot.")
             return
 
-        plotter = StateFieldPlotter(self.db)
+        plotter = StateFieldPlotter(self.dataList)
         for field in fields:
-            field_data = plotter.find_timeseries(field, self.db)
+            field_data = plotter.find_timeseries(field, self.dataList)
             if not field_data:
                 return
             field_plotted = plotter.add_timeseries(field, field_data)
             if not field_plotted:
                 return
         plotter.display()
-
+    
     def do_exit(self, args):
         """Exits the plotter."""
         sys.exit(0)
@@ -157,14 +185,16 @@ def main(args):
 
     args = parser.parse_args(args)
 
+    
     try:
         fp = open(args.data, "r")
+        dataList = json.load(fp)
+        fp.close()
     except FileNotFoundError:
         print("Could not find data file. Exiting.")
         sys.exit(1)
 
-    db = TinyDB(args.data)
-    plotter = PlotterClient(db)
+    plotter = PlotterClient(dataList)
 
     try:
         plotter.cmdloop()

@@ -30,7 +30,7 @@ public:
 
   std::shared_ptr<ReadableStateField<lin::Vector3d>> propagated_baseline_pos_fp;
 
-  std::shared_ptr<WritableStateField<bool>> reboot_fp;
+  std::shared_ptr<WritableStateField<bool>> reset_fp;
   std::shared_ptr<WritableStateField<bool>> power_cycle_radio_fp;
 
   std::shared_ptr<ReadableStateField<bool>> docked_fp;
@@ -49,6 +49,8 @@ public:
   std::shared_ptr<ReadableStateField<unsigned char>> piksi_state_fp;
   std::shared_ptr<InternalStateField<unsigned int>> last_rtkfix_ccno_fp;
 
+  std::shared_ptr<ReadableStateField<unsigned int>> bootcount_fp;
+
   std::unique_ptr<MissionManager> mission_manager;
 
   // Output state fields from mission manager
@@ -63,7 +65,7 @@ public:
   ReadableStateField<unsigned int> *deployment_wait_elapsed_fp;
   WritableStateField<unsigned char> *sat_designation_fp;
 
-  TestFixture(mission_state_t initial_state = mission_state_t::startup);
+  TestFixture(mission_state_t initial_state = mission_state_t::startup, unsigned int bootcount = 0);
 
   // Set and assert functions for various mission states.
   void set(fault_response_t response);
@@ -102,6 +104,8 @@ public:
   void set_comms_blackout_period(int ccno);
   // Set the angular rate of the spacecraft.
   void set_ang_rate(float rate);
+  // Get the bootcount
+  unsigned int get_bootcount();
 };
 
 #endif
