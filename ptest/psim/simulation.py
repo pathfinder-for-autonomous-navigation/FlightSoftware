@@ -10,6 +10,7 @@ import os
 import datetime
 import os
 from ..gpstime import GPSTime
+import psim # woo!
 
 class Simulation(object):
     """
@@ -116,8 +117,8 @@ class Simulation(object):
 
         start_time = time.time()
         while step < num_steps and self.running:
-            self.update_sensors()
-            self.update_dynamics()
+            self.update_dynamics() # what is the order?
+            self.update_sensors() # what is the order?
             self.simulate_flight_computers()
 
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
@@ -156,24 +157,31 @@ class Simulation(object):
         self.write_adcs_estimator_inputs(fc, sensor_readings)
         # Step 3.2.3 Read outputs from previous control cycle
         self.read_adcs_estimator_outputs(fc)
+        
+        # Step 3.2.4
+        self.read_actuators(fc)
 
     def write_adcs_estimator_inputs(self, flight_controller, sensor_readings):
         """Write the inputs required for ADCS state estimation."""
 
         # Convert mission time to GPS time
-        current_gps_time = GPSTime(self.main_state['follower']['dynamics']['time'])
+        current_gps_time = GPSTime(self.sim_time)
 
         # Clean up sensor readings to be in a format usable by Flight Software
         position_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["position_ecef"]])
+        velocity_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["velocity_ecef"]])
         sat2sun_body = ",".join(["%.9f" % x[0] for x in sensor_readings["sat2sun_body"]])
         magnetometer_body = ",".join(["%.9f" % x[0] for x in sensor_readings["magnetometer_body"]])
+        w_body = ",".join(["%.9f" % x[0] for x in sensor_readings["gyro_body"]])
 
         # Send values to flight software
-        flight_controller.write_state("piksi.time", str(current_gps_time))
-        flight_controller.write_state("piksi.pos", position_ecef)
+        flight_controller.write_state("orbit.time", current_gps_time.to_seconds())
+        flight_controller.write_state("orbit.pos", position_ecef)
+        flight_controller.write_state("orbit.vel", velocity_ecef)
         flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
         flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
-
+        flight_controller.write_state("adcs_monitor.gyr_vec", w_body)
+    
     def read_adcs_estimator_outputs(self, flight_controller):
         """
         Read and store estimates from the ADCS estimator onboard flight software.
@@ -182,8 +190,19 @@ class Simulation(object):
         by calling read_state.
         """
 
+        flight_Controller.read_state("pan.state")
+        flight_Controller.read_state("pan.ccno")
+        flight_Controller.read_state("adcs.state")        
+        flight_controller.read_state("adcs_monitor.mag1_vec")
+        flight_controller.read_state("adcs_monitor.mag2_vec")
         flight_controller.read_state("attitude_estimator.q_body_eci")
         flight_controller.read_state("attitude_estimator.w_body")
+        flight_controller.read_state("attitude_estimator.fro_P")
+
+    def read_actuators(self, fc):
+        # "no" i dont care about matlab
+        self.actuator_commands_follower["mtr_cmd"] = fc.rs("adcs_cmd.mtr_cmd")
+        self.actuator_commands_follower["rwa_torque_cmd"] = fc.rs("adcs_cmd.rwa_torque_cmd")
 
     def stop(self, data_dir):
         """
@@ -195,6 +214,38 @@ class Simulation(object):
 
         with open(data_dir + "/simulation_log.txt", "w") as fp:
             fp.write(self.log)
+
+
+class CppSimulation(Simulation):
+    # good god i hate matlab
+
+    def configure(self):
+        self.actuator_commands_follower = {}
+        # self.actuator_commands_follower["mtr_cmd"] = None
+        self.mysim = psim.SimulationRunner 
+
+    def update_sensors(self):
+        psimsim.get()
+        raise NotImplementedError
+
+    def update_dynamics(self):
+        """
+        Allow simulation to step forward in time and update its
+        truth.
+        """
+        raise NotImplementedError
+
+    def simulate_flight_computers(self):
+        # we're all grown up now, don't need this
+        pass 
+
+    def send_actuations_to_simmed_satellites(self):
+        # send the outputs of the FC to psim
+        self.mysim["adcs_cmd.mtr_cmd"] = self.flight
+        raise NotImplementedError
+
+    pass
+
 
 class MatlabSimulation(Simulation):
     def configure(self):
@@ -237,7 +288,3 @@ class MatlabSimulation(Simulation):
         self.main_state = self.main_state_promise.result()
         self.main_state['follower'] = self.eng.actuator_command(self.actuator_commands_follower,self.main_state['follower'], nargout=1)
         self.main_state['leader'] = self.eng.actuator_command(self.actuator_commands_leader,self.main_state['leader'], nargout=1)
-
-class CppSimulation(Simulation):
-    # TODO implement
-    pass

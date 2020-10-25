@@ -28,7 +28,8 @@ class PTestCase(object):
         Choice of sim implementation for this testcase.
         The default is the matlab simulation.
         """
-        return MatlabSimulation(*args, **kwargs)
+        # return MatlabSimulation(*args, **kwargs)
+        return CppSimulation(*args, **kwargs)
 
     @property
     def sim_duration(self):

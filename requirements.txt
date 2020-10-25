@@ -75,3 +75,16 @@ websocket-client==0.56.0
 Werkzeug==0.16.0
 wrapt==1.11.2
 zipp==0.6.0
+
+# matplotlib
+# numpy
+# platformio
+# pylint
+# pytest
+# pyyaml
+./lib/common/lin
+cppimport
+h5py
+dulwich
+ipykernel
+notebook
