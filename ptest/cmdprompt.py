@@ -5,23 +5,23 @@ except ImportError:
     pass
 from cmd import Cmd
 import timeit
-import tinydb
 from .cases.utils import Enums
 from .plotter import PlotterClient
 from .usb_session import USBSession
+import csv
 
 def USBSessionOnly(fn):
-        """
-        Ensures that the function is only called for a State Session device.
-        """
+    """
+    Ensures that the function is only called for a State Session device.
+    """
 
-        def inner(self, args):
-            if isinstance(self.cmded_device, USBSession):
-                fn(self, args)
-            else:
-                print("Cannot use this function since currently commanded device is not a state session.")
+    def inner(self, args):
+        if isinstance(self.cmded_device, USBSession):
+            fn(self, args)
+        else:
+            print("Cannot use this function since currently commanded device is not a USB session.")
 
-        return inner
+    return inner
 
 class StateCmdPrompt(Cmd):
     '''
@@ -29,9 +29,8 @@ class StateCmdPrompt(Cmd):
     Teensies and simulation devices.
     '''
 
-    def __init__(self, devices, radios, sim, exit_fn):
+    def __init__(self, devices, radios, exit_fn):
         self.devices = {**devices, **radios}
-        self.sim = sim
         self.exit_fn = exit_fn
 
         if not self.devices:
@@ -88,21 +87,6 @@ class StateCmdPrompt(Cmd):
             return
 
         print(f"Switched to {self.cmded_device.device_name}")
-
-    def do_checksim(self, args):
-        '''
-        Check the running status of the simulation.
-        '''
-        if self.sim.running:
-            print("Running ({} of {}s)".format(format(self.sim.sim_time,"0.2f"), self.sim.sim_duration))
-        else:
-            print("Not running")
-
-    def do_endsim(self, args):
-        '''
-        End the simulation, if it's running.
-        '''
-        self.sim.running = False
 
     def do_rs(self, args):
         '''
@@ -228,34 +212,32 @@ class StateCmdPrompt(Cmd):
         write_succeeded = "Succeeded" if write_succeeded else "Failed"
         print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
-    @USBSessionOnly
-    def do_os(self, args):
-        '''
-        Override simulation state. See usb_session.py for documentation.
-        '''
-        args = args.split()
-        start_time = timeit.default_timer()
-        override_succeeded = self.cmded_device.override_state(args[0], args[1])
-        elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
-
-        override_succeeded = "Succeeded" if override_succeeded else "Failed"
-        print(f"{override_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
-
-    @USBSessionOnly
-    def do_ro(self, args):
-        '''
-        Release override of simulation state. See usb_session.py for documentation.
-        '''
-        args = args.split()
-        self.cmded_device.release_override(args[0])
-
     def do_plot(self, args):
         '''
         Plot the given state fields. See usb_session.py for documentation.
         '''
-        plotter = PlotterClient(self.cmded_device.datastore.db)
+        plotter = PlotterClient(self.cmded_device.datastore.dataList)
         plotter.do_plot(args)
     
+    def do_csv(self, filepath):
+        '''
+            add measurements from a run (key,value pairs) to rows of a csv file 
+            and open file at given filepath
+            @param filepath: the location of the csv file to open
+        '''
+        
+        if len(filepath) == 0:
+            print("Need to specify a file path to put csv file (from FlightSoftware), Format: PATH/TO/FILE/")
+            return
+        
+        with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
+            mtrwriter = csv.writer(csvfile)
+            for data in self.cmded_device.datastore.dataList:
+                for key, value in data.items():
+                    mtrwriter.writerow([key, value])
+        print("csv file \'mtr_logs\'written to " + str(filepath))
+            
+
     @USBSessionOnly
     def do_uplink(self, args):
         '''

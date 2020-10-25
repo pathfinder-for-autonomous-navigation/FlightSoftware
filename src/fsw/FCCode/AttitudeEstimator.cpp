@@ -18,6 +18,7 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     ssa_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.ssa_vec)),
     gyr_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.gyr_vec)),
     mag_flag_f("attitude_estimator.mag_flag", Serializer<bool>()),
+    b_body_f("attitude_estimator.b_body"),
     q_body_eci_est_f("attitude_estimator.q_body_eci", Serializer<lin::Vector4f>()),
     w_body_est_f("attitude_estimator.w_body", Serializer<lin::Vector3f>(-55, 55, 32*3)),
     fro_P_est_f("attitude_estimator.fro_P", Serializer<float>(0.0, 0.1, 16))
@@ -26,12 +27,14 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
         add_writable_field(mag_flag_f);
 
         //Add outputs
+        add_internal_field(b_body_f);
         add_readable_field(q_body_eci_est_f);
         add_readable_field(w_body_est_f);
         add_readable_field(fro_P_est_f);
 
         // Default magnetometer
         mag_flag_f.set(false);
+        b_body_f.set(lin::nans<lin::Vector3f>());
 
         // Default the gnc buffer
         state = gnc::AttitudeEstimatorState();
@@ -50,6 +53,8 @@ void AttitudeEstimator::execute(){
     lin::Vector3f b_body = mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get(); // TODO : Choose default mag
     if (!lin::all(lin::isfinite(b_body)))
         b_body = !mag_flag_f.get() ? mag2_vec_fp->get() : mag1_vec_fp->get();
+
+    b_body_f.set(b_body);
 
     // The filter is already up and running
     if (state.is_valid) {

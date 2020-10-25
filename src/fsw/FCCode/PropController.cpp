@@ -130,6 +130,7 @@ void PropController::execute()
         else
         {
             // This could happen if next_state is idle but is_functional returns false
+            // or if powercycling is happening 
             DD("[-] Could not enter state!!\n\n\n");
             prop_state_f.set(static_cast<unsigned int>(prop_state_t::disabled));
         }
@@ -298,8 +299,9 @@ bool PropState_AwaitPressurizing::can_enter() const
     // Enter Await Pressurizing rather than Pressurizing if we have MORE than enough time
     bool more_than_enough_time =
         controller->cycles_until_firing.get() >= controller->min_cycles_needed();
+    bool is_functional = PropulsionSystem.is_functional();
 
-    return (was_idle && is_schedule_valid && more_than_enough_time);
+    return (was_idle && is_schedule_valid && more_than_enough_time && is_functional);
 }
 
 void PropState_AwaitPressurizing::enter()
@@ -402,12 +404,13 @@ bool PropState_Pressurizing::can_enter() const
     bool is_schedule_valid = controller->validate_schedule();
     // Allow from idle because sometimes we can immediately pressurize
     bool was_idle = controller->check_current_state(prop_state_t::idle);
+    bool is_functional = PropulsionSystem.is_functional();
 
     // It is time to pressurize when we have min_cycles_needed - 1 cycles left
     bool is_time_to_pressurize =
         controller->cycles_until_firing.get() == controller->min_cycles_needed() - 1;
 
-    return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid);
+    return ((was_await_pressurizing || was_idle) && is_time_to_pressurize && is_schedule_valid && is_functional);
 }
 
 prop_state_t PropState_Pressurizing::evaluate()
@@ -439,7 +442,8 @@ prop_state_t PropState_Pressurizing::handle_out_of_cycles()
 bool PropState_AwaitFiring::can_enter() const
 {
     bool was_pressurizing = controller->check_current_state(prop_state_t::pressurizing);
-    return controller->validate_schedule() && was_pressurizing;
+    bool is_functional = PropulsionSystem.is_functional();
+    return controller->validate_schedule() && was_pressurizing && is_functional;
 }
 
 void PropState_AwaitFiring::enter()
@@ -473,7 +477,8 @@ bool PropState_Firing::can_enter() const
 {
     bool was_await_firing = controller->check_current_state(prop_state_t::await_firing);
     bool is_time_to_fire = controller->cycles_until_firing.get() == 0;
-    return was_await_firing && is_time_to_fire;
+    bool is_functional = PropulsionSystem.is_functional();
+    return was_await_firing && is_time_to_fire && is_functional;
 }
 
 void PropState_Firing::enter()
@@ -524,7 +529,8 @@ bool PropState_HandlingFault::can_enter() const
     // Return true if any of the faults are actually faulted.
     //  This allows us to ignore bad sensors if the ground
     // decides to suppress/override certain faults
-    return (controller->pressurize_fail_fault_f.is_faulted() ||
+    return PropulsionSystem.is_functional() &&
+            (controller->pressurize_fail_fault_f.is_faulted() ||
             controller->overpressure_fault_f.is_faulted() ||
             controller->tank2_temp_high_fault_f.is_faulted() ||
             controller->tank1_temp_high_fault_f.is_faulted());
@@ -573,9 +579,10 @@ void PropState_Venting::enter()
 
 bool PropState_Venting::can_enter() const
 {
-    return controller->overpressure_fault_f.is_faulted() ||
+    return PropulsionSystem.is_functional() &&
+           (controller->overpressure_fault_f.is_faulted() ||
            controller->tank1_temp_high_fault_f.is_faulted() ||
-           controller->tank2_temp_high_fault_f.is_faulted();
+           controller->tank2_temp_high_fault_f.is_faulted());
 }
 
 unsigned int PropState_Venting::determine_faulted_tank()
