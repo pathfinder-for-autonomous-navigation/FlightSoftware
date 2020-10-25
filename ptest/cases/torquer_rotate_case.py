@@ -53,7 +53,7 @@ class MTorquerCase(SingleSatOnlyCase):
             Values are entered into a list in pairs with (mag1,mag2)
         """
         
-        self.print_header( "Testing white noise" )
+        self.print_header( " TESTING WHITE NOISE " )
 
         #record values for 5 seconds
         readings = self.take_mag_measurements( 5 )
@@ -68,11 +68,14 @@ class MTorquerCase(SingleSatOnlyCase):
             prepares the magnetorquers for testing by enabling them, 
             waiting and then checking for white noise
         """
+        #set ADCS to manual
+        self.ws("adcs.state", Enums.adcs_states["point_manual"])
+        self.print_rs("adcs.state")
         #enables MTorquers
         self.cycle()
         self.ws( "adcs_cmd.mtr_mode", 1 )# 1 == MTR_ENABLED
-
-        self.log_white_noise()
+        self.print_header(" TEST PREP COMPLETE ")
+        
 
     def torque_test(self, value):
         """
@@ -125,24 +128,13 @@ class MTorquerCase(SingleSatOnlyCase):
         self.print_header( "Begin ADCS Magnetorquers Case" )
         self.ws( "cycle.auto", False )
 
-        # Needed so that ADCSMonitor updates its values
-        self.cycle()
-        self.ws( "dcdc.ADCSMotor_cmd", True )
-    
-        self.print_header( "Finished Initialization" )
-        #checking that adcs is functional
-        self.print_rs( "adcs_monitor.functional" )
-
-        if not self.read_state( "adcs_monitor.functional" ):
-            self.logger.put( "ADCS is NOT functional, Exiting Test Case" )
-            self.finish()
-            return 
+        self.prepare_mag()
 
         #generate white space data
         self.log_white_noise()
 
         #run main testing with matrix of command vectors
-        #self.mtr_test()
+        self.mtr_test()
 
         #finish and turn off magnetorquers
         self.print_header( "MAGNETORQUER TEST COMPLETE" )
