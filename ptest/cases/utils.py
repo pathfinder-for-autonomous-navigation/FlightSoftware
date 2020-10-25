@@ -83,6 +83,7 @@ class Enums(object):
     ])
 
     adcs_states = FSWEnum([
+        "manual",
         "startup",
         "limited",
         "zero_torque",

@@ -53,7 +53,7 @@ class MTorquerCase(SingleSatOnlyCase):
             Values are entered into a list in pairs with (mag1,mag2)
         """
         
-        self.print_header( " TESTING WHITE NOISE " )
+        self.print_header( "Testing white noise" )
 
         #record values for 5 seconds
         readings = self.take_mag_measurements( 5 )

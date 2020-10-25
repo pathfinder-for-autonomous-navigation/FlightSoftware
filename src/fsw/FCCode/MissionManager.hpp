@@ -110,7 +110,9 @@ protected:
      * The only additional control it provides beyond the standby mode is
      * the ability to control attitude, which is a dangerous capability.
      * If this capability is desired, a better way to use it would be via
-     * the Attitude Computer's point_manual mode.
+     * the AttitudeController's point_manual mode.
+     * 
+     * Manual mission mode is to be used whenever the adcs_state is point_manual or manual
      */
     void dispatch_manual();
 

@@ -8,7 +8,7 @@ class SpinMotorsCase(SingleSatOnlyCase):
         self.ws("dcdc.ADCSMotor_cmd", True)
         self.cycle()
 
-        self.ws("adcs.state", Enums.adcs_states["point_manual"])
+        self.ws("adcs.state", Enums.adcs_states["manual"])
         self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_SPEED_CTRL"])
         self.ws("adcs_cmd.rwa_speed_cmd", [10,10,10])
         self.cycle()

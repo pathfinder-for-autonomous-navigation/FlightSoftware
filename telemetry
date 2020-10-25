@@ -7,38 +7,6 @@
         "pan.state": 10
     },
     "fields": {
-        "adcs.compute.vec1.current": {
-            "bitsize": 100,
-            "flow_id": 14,
-            "max": 1.0,
-            "min": 0.0,
-            "type": "lin float vector",
-            "writable": true
-        },
-        "adcs.compute.vec1.desired": {
-            "bitsize": 100,
-            "flow_id": 14,
-            "max": 1.0,
-            "min": 0.0,
-            "type": "lin float vector",
-            "writable": true
-        },
-        "adcs.compute.vec2.current": {
-            "bitsize": 100,
-            "flow_id": 14,
-            "max": 1.0,
-            "min": 0.0,
-            "type": "lin float vector",
-            "writable": true
-        },
-        "adcs.compute.vec2.desired": {
-            "bitsize": 100,
-            "flow_id": 14,
-            "max": 1.0,
-            "min": 0.0,
-            "type": "lin float vector",
-            "writable": true
-        },
         "adcs.state": {
             "bitsize": 4,
             "flow_id": 13,
@@ -943,6 +911,38 @@
             "type": "bool",
             "writable": true
         },
+        "attitude.pointer_vec1_current": {
+            "bitsize": 96,
+            "flow_id": 14,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": false
+        },
+        "attitude.pointer_vec1_desired": {
+            "bitsize": 96,
+            "flow_id": 14,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": true
+        },
+        "attitude.pointer_vec2_current": {
+            "bitsize": 96,
+            "flow_id": 14,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": false
+        },
+        "attitude.pointer_vec2_desired": {
+            "bitsize": 96,
+            "flow_id": 14,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": true
+        },
         "attitude_estimator.fro_P": {
             "bitsize": 16,
             "flow_id": "undefined",
@@ -1713,6 +1713,22 @@
             "type": "unsigned int",
             "writable": true
         },
+        "pointer.mtr_cmd": {
+            "bitsize": 48,
+            "flow_id": "undefined",
+            "max": 0.05666850134730339,
+            "min": -0.05666850134730339,
+            "type": "lin float vector",
+            "writable": true
+        },
+        "pointer.rwa_torque_cmd": {
+            "bitsize": 48,
+            "flow_id": "undefined",
+            "max": 0.004187500569969416,
+            "min": -0.004187500569969416,
+            "type": "lin float vector",
+            "writable": true
+        },
         "prop.ctrl_cycles_per_closing": {
             "bitsize": 6,
             "flow_id": "undefined",
@@ -2127,7 +2143,7 @@
             "type": "unsigned int",
             "writable": false
         },
-        "timing.attitude_computer.avg_wait": {
+        "timing.attitude_controller.avg_wait": {
             "bitsize": 32,
             "flow_id": 31,
             "max": 120000.0,
@@ -2135,7 +2151,7 @@
             "type": "float",
             "writable": false
         },
-        "timing.attitude_computer.num_lates": {
+        "timing.attitude_controller.num_lates": {
             "bitsize": 32,
             "flow_id": 31,
             "max": 4294967295,
@@ -2469,7 +2485,8 @@
                 "adcs_monitor.rwa_speed_rd",
                 "adcs_monitor.rwa_torque_rd",
                 "adcs_cmd.rwa_speed_cmd",
-                "adcs_cmd.rwa_torque_cmd"
+                "adcs_cmd.rwa_torque_cmd",
+                "adcs_cmd.mtr_cmd"
             ],
             "id": 7,
             "priority": 6
@@ -2561,10 +2578,10 @@
         {
             "active": true,
             "fields": [
-                "adcs.compute.vec1.current",
-                "adcs.compute.vec1.desired",
-                "adcs.compute.vec2.current",
-                "adcs.compute.vec2.desired"
+                "attitude.pointer_vec1_current",
+                "attitude.pointer_vec1_desired",
+                "attitude.pointer_vec2_current",
+                "attitude.pointer_vec2_desired"
             ],
             "id": 14,
             "priority": 13
@@ -2808,8 +2825,8 @@
                 "timing.adcs_estimator.num_lates",
                 "timing.adcs_monitor.avg_wait",
                 "timing.adcs_monitor.num_lates",
-                "timing.attitude_computer.avg_wait",
-                "timing.attitude_computer.num_lates",
+                "timing.attitude_controller.avg_wait",
+                "timing.attitude_controller.num_lates",
                 "timing.clock_ct.avg_wait",
                 "timing.clock_ct.num_lates",
                 "timing.dcdc_ct.avg_wait",
