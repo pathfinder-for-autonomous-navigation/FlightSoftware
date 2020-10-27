@@ -11,6 +11,7 @@ import datetime
 import os
 from ..gpstime import GPSTime
 import psim # woo!
+import lin 
 
 class Simulation(object):
     """
@@ -161,44 +162,7 @@ class Simulation(object):
         # Step 3.2.4
         self.read_actuators(fc)
 
-    def write_adcs_estimator_inputs(self, flight_controller, sensor_readings):
-        """Write the inputs required for ADCS state estimation."""
-
-        # Convert mission time to GPS time
-        current_gps_time = GPSTime(self.sim_time)
-
-        # Clean up sensor readings to be in a format usable by Flight Software
-        position_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["position_ecef"]])
-        velocity_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["velocity_ecef"]])
-        sat2sun_body = ",".join(["%.9f" % x[0] for x in sensor_readings["sat2sun_body"]])
-        magnetometer_body = ",".join(["%.9f" % x[0] for x in sensor_readings["magnetometer_body"]])
-        w_body = ",".join(["%.9f" % x[0] for x in sensor_readings["gyro_body"]])
-
-        # Send values to flight software
-        flight_controller.write_state("orbit.time", current_gps_time.to_seconds())
-        flight_controller.write_state("orbit.pos", position_ecef)
-        flight_controller.write_state("orbit.vel", velocity_ecef)
-        flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
-        flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
-        flight_controller.write_state("adcs_monitor.gyr_vec", w_body)
     
-    def read_adcs_estimator_outputs(self, flight_controller):
-        """
-        Read and store estimates from the ADCS estimator onboard flight software.
-
-        The estimates are automatically stored in the Flight Controller telemetry log
-        by calling read_state.
-        """
-
-        flight_Controller.read_state("pan.state")
-        flight_Controller.read_state("pan.ccno")
-        flight_Controller.read_state("adcs.state")        
-        flight_controller.read_state("adcs_monitor.mag1_vec")
-        flight_controller.read_state("adcs_monitor.mag2_vec")
-        flight_controller.read_state("attitude_estimator.q_body_eci")
-        flight_controller.read_state("attitude_estimator.w_body")
-        flight_controller.read_state("attitude_estimator.fro_P")
-
     def read_actuators(self, fc):
         # "no" i dont care about matlab
         self.actuator_commands_follower["mtr_cmd"] = fc.rs("adcs_cmd.mtr_cmd")
@@ -222,18 +186,50 @@ class CppSimulation(Simulation):
     def configure(self):
         self.actuator_commands_follower = {}
         # self.actuator_commands_follower["mtr_cmd"] = None
-        self.mysim = psim.SimulationRunner 
+        prefix = "lib/common/psim/config/parameters/"
+        postfix = ".txt"
+        configs = ["single_orbit"]
+        configs = [prefix + x + postfix for x in configs]
+        self.mysim = psim.Simulation(psim.SingleOrbitGnc, configs)
 
     def update_sensors(self):
-        psimsim.get()
-        raise NotImplementedError
+        self.sensor_readings_follower = []
+        f_readings = {}
+        person = "leader"
+        self.sim_time = self.mysim["truth.t.ns"]
+        f_readings["position_ecef"] = self.mysim["truth.leader.orbit.r"]
+
+        self.sensor_readings_follower = f_readings
+
+    def write_adcs_estimator_inputs(self, fc, sensor_readings):
+        """Write the inputs required for ADCS state estimation."""
+
+        sensor_readings['orbit.time'] = 
+    
+    def read_adcs_estimator_outputs(self, flight_controller):
+        """
+        Read and store estimates from the ADCS estimator onboard flight software.
+
+        The estimates are automatically stored in the Flight Controller telemetry log
+        by calling read_state.
+        """
+
+        flight_Controller.read_state("pan.state")
+        flight_Controller.read_state("pan.ccno")
+        flight_Controller.read_state("adcs.state")        
+        flight_controller.read_state("adcs_monitor.mag1_vec")
+        flight_controller.read_state("adcs_monitor.mag2_vec")
+        flight_controller.read_state("attitude_estimator.q_body_eci")
+        flight_controller.read_state("attitude_estimator.w_body")
+        flight_controller.read_state("attitude_estimator.fro_P")
+
 
     def update_dynamics(self):
         """
         Allow simulation to step forward in time and update its
         truth.
         """
-        raise NotImplementedError
+        self.mysim.step()
 
     def simulate_flight_computers(self):
         # we're all grown up now, don't need this
@@ -242,7 +238,6 @@ class CppSimulation(Simulation):
     def send_actuations_to_simmed_satellites(self):
         # send the outputs of the FC to psim
         self.mysim["adcs_cmd.mtr_cmd"] = self.flight
-        raise NotImplementedError
 
     pass
 
@@ -288,3 +283,41 @@ class MatlabSimulation(Simulation):
         self.main_state = self.main_state_promise.result()
         self.main_state['follower'] = self.eng.actuator_command(self.actuator_commands_follower,self.main_state['follower'], nargout=1)
         self.main_state['leader'] = self.eng.actuator_command(self.actuator_commands_leader,self.main_state['leader'], nargout=1)
+
+    def write_adcs_estimator_inputs(self, flight_controller, sensor_readings):
+        """Write the inputs required for ADCS state estimation."""
+
+        # Convert mission time to GPS time
+        current_gps_time = GPSTime(self.sim_time)
+
+        # Clean up sensor readings to be in a format usable by Flight Software
+        position_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["position_ecef"]])
+        velocity_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["velocity_ecef"]])
+        sat2sun_body = ",".join(["%.9f" % x[0] for x in sensor_readings["sat2sun_body"]])
+        magnetometer_body = ",".join(["%.9f" % x[0] for x in sensor_readings["magnetometer_body"]])
+        w_body = ",".join(["%.9f" % x[0] for x in sensor_readings["gyro_body"]])
+
+        # Send values to flight software
+        flight_controller.write_state("orbit.time", current_gps_time.to_seconds())
+        flight_controller.write_state("orbit.pos", position_ecef)
+        flight_controller.write_state("orbit.vel", velocity_ecef)
+        flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
+        flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
+        flight_controller.write_state("adcs_monitor.gyr_vec", w_body)
+    
+    def read_adcs_estimator_outputs(self, flight_controller):
+        """
+        Read and store estimates from the ADCS estimator onboard flight software.
+
+        The estimates are automatically stored in the Flight Controller telemetry log
+        by calling read_state.
+        """
+
+        flight_Controller.read_state("pan.state")
+        flight_Controller.read_state("pan.ccno")
+        flight_Controller.read_state("adcs.state")        
+        flight_controller.read_state("adcs_monitor.mag1_vec")
+        flight_controller.read_state("adcs_monitor.mag2_vec")
+        flight_controller.read_state("attitude_estimator.q_body_eci")
+        flight_controller.read_state("attitude_estimator.w_body")
+        flight_controller.read_state("attitude_estimator.fro_P")

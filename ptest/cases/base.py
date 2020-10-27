@@ -4,7 +4,7 @@ import math
 import threading
 import traceback
 from .utils import BootUtil, Enums, TestCaseFailure
-from ..psim import MatlabSimulation
+from ..psim import MatlabSimulation, CppSimulation
 
 # Base classes for writing testcases.
 
