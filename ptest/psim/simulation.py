@@ -12,6 +12,7 @@ import os
 from ..gpstime import GPSTime
 import psim # woo!
 import lin 
+import json
 
 class Simulation(object):
     """
@@ -105,6 +106,12 @@ class Simulation(object):
         """
         raise NotImplementedError
 
+    def quit(self):
+        """
+        Quit the sim
+        """
+        raise NotImplementedError
+
     def run(self):
         """
         Runs the simulation for the time interval specified in start().
@@ -141,7 +148,7 @@ class Simulation(object):
 
         self.running = False
         self.add_to_log("Simulation ended.")
-        self.eng.quit()
+        self.quit()
 
     def interact_fc(self):
         if self.is_single_sat_sim:
@@ -161,12 +168,13 @@ class Simulation(object):
         
         # Step 3.2.4
         self.read_actuators(fc)
-
     
     def read_actuators(self, fc):
         # "no" i dont care about matlab
-        self.actuator_commands_follower["mtr_cmd"] = fc.rs("adcs_cmd.mtr_cmd")
-        self.actuator_commands_follower["rwa_torque_cmd"] = fc.rs("adcs_cmd.rwa_torque_cmd")
+        self.actuator_commands_follower["adcs_cmd.mtr_cmd"] = fc.smart_read("adcs_cmd.mtr_cmd")
+        self.actuator_commands_follower["adcs_cmd.rwa_torque_cmd"] = fc.smart_read("adcs_cmd.rwa_torque_cmd")
+
+        self.actuator_commands_follower = {k:lin.Vector3(v) for k,v in self.actuator_commands_follower.items()}
 
     def stop(self, data_dir):
         """
@@ -192,6 +200,8 @@ class CppSimulation(Simulation):
         configs = [prefix + x + postfix for x in configs]
         self.mysim = psim.Simulation(psim.SingleOrbitGnc, configs)
 
+        self.dt = 1e-9
+
     def update_sensors(self):
         self.sensor_readings_follower = []
         f_readings = {}
@@ -204,7 +214,7 @@ class CppSimulation(Simulation):
     def write_adcs_estimator_inputs(self, fc, sensor_readings):
         """Write the inputs required for ADCS state estimation."""
 
-        sensor_readings['orbit.time'] = 
+        fc.write_state('orbit.time', self.sim_time)
     
     def read_adcs_estimator_outputs(self, flight_controller):
         """
@@ -214,9 +224,9 @@ class CppSimulation(Simulation):
         by calling read_state.
         """
 
-        flight_Controller.read_state("pan.state")
-        flight_Controller.read_state("pan.ccno")
-        flight_Controller.read_state("adcs.state")        
+        flight_controller.read_state("pan.state")
+        flight_controller.read_state("pan.ccno")
+        flight_controller.read_state("adcs.state")        
         flight_controller.read_state("adcs_monitor.mag1_vec")
         flight_controller.read_state("adcs_monitor.mag2_vec")
         flight_controller.read_state("attitude_estimator.q_body_eci")
@@ -237,10 +247,11 @@ class CppSimulation(Simulation):
 
     def send_actuations_to_simmed_satellites(self):
         # send the outputs of the FC to psim
-        self.mysim["adcs_cmd.mtr_cmd"] = self.flight
+        # self.mysim["adcs_cmd.mtr_cmd"] = self.actuator_commands_follower["adcs_cmd.mtr_cmd"]
+        pass
 
-    pass
-
+    def quit(self):
+        pass
 
 class MatlabSimulation(Simulation):
     def configure(self):
@@ -321,3 +332,6 @@ class MatlabSimulation(Simulation):
         flight_controller.read_state("attitude_estimator.q_body_eci")
         flight_controller.read_state("attitude_estimator.w_body")
         flight_controller.read_state("attitude_estimator.fro_P")
+
+    def quit(self):
+        self.eng.quit()
