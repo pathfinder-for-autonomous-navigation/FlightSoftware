@@ -380,6 +380,5 @@ class MatlabSimulation(Simulation):
 
         self.actuator_commands_follower = {k:lin.Vector3(v) for k,v in self.actuator_commands_follower.items()}
 
-
     def quit(self):
         self.eng.quit()
