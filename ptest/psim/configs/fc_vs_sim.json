@@ -1,8 +1,7 @@
 {
     "fc_vs_sim_s":{
-        "truth.sat.attitude.w": "adcs_monitor.gyr_vec",
-        "truth.sat.orbit.r": "orbit.pos_ecef",
-        "truth.sat.orbit.v": "orbit.vel_ecef"
+        "truth.sat.orbit.r": "truth.sat.orbit.r",
+        "truth.sat.orbit.v": "truth.sat.orbit.v"
     },
     "fc_vs_sim_a":{
         "truth.sat.attitude.mtr_cmd": "adcs_cmd.mtr_cmd"

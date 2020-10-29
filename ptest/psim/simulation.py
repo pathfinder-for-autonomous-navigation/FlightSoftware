@@ -40,6 +40,8 @@ class Simulation(object):
 
         self.sim_time = 0
 
+        print(self.devices)
+
         if self.is_single_sat_sim:
             self.flight_controller = self.devices['FlightController']
         else:
@@ -199,22 +201,56 @@ class CppSimulation(Simulation):
         configs = ["single_orbit"]
         configs = [prefix + x + postfix for x in configs]
         self.mysim = psim.Simulation(psim.SingleOrbitGnc, configs)
-
         self.dt = 1e-9
+
+        self.sat_names = ['leader','follower']
+        if self.is_single_sat_sim:
+            sat_names = ['leader']
+
+        ### JSON ###
+        with open('ptest/psim/configs/fc_vs_sim.json') as json_file:
+            self.fc_vs_sim = json.load(json_file)
+        
+        self.fc_vs_sim_s = self.fc_vs_sim['fc_vs_sim_s']
+        self.fc_vs_sim_a = self.fc_vs_sim['fc_vs_sim_a']
+
+        self.sensors_map = {k:self.fc_vs_sim_s for k in sat_names}
+        self.actuators_map = {k:self.fc_vs_sim_a for k in sat_names}
+        # replace sat with the satellite name in all the mappings
+        self.sensors_map = {k:{f_name:p_name.replace('sat',k) for f_name,p_name in v.items()} for k,v in self.sensors_map.items()}
+
+        self.sensor_readings = {k:{} for k in sat_names}
+        self.actuator_cmds = {k:{} for k in sat_names}
 
     def update_sensors(self):
         self.sensor_readings_follower = []
-        f_readings = {}
-        person = "leader"
-        self.sim_time = self.mysim["truth.t.ns"]
-        f_readings["position_ecef"] = self.mysim["truth.leader.orbit.r"]
 
-        self.sensor_readings_follower = f_readings
+        self.sim_time = self.mysim["truth.t.ns"]
+
+        # iterate across each satellite's mappings
+        for role,mappings in self.sensors_map.items():
+            # iterate across each fc_sf vs psim_sf pair
+            for fc_sf,psim_sf in mappings.items():
+                self.sensor_readings[role][fc_sf] = self.mysim[psim_sf]
 
     def write_adcs_estimator_inputs(self, fc, sensor_readings):
         """Write the inputs required for ADCS state estimation."""
 
+        role = None
+        if 'leader' in fc.device_name.lower():
+            role = 'leader'
+        elif 'follower' in fc.device_name.lower():
+            role = 'follower'
+        else:
+            role = self.sat_names[0]
+
         fc.write_state('orbit.time', self.sim_time)
+
+        mappings = self.sensors_map[role]
+        # iterate across each fc_sf vs psim_sf pair
+        for fc_sf,psim_sf in mappings.items():
+            fc.write_state(fc_sf, self.sensor_readings[role][fc_sf])
+
     
     def read_adcs_estimator_outputs(self, flight_controller):
         """
