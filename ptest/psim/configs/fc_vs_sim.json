@@ -1,9 +1,9 @@
 {
     "fc_vs_sim_s":{
-        "truth.sat.orbit.r": "truth.sat.orbit.r",
-        "truth.sat.orbit.v": "truth.sat.orbit.v"
+        "orbit.pos": "truth.sat.orbit.r",
+        "orbit.vel": "truth.sat.orbit.v"
     },
     "fc_vs_sim_a":{
-        "truth.sat.attitude.mtr_cmd": "adcs_cmd.mtr_cmd"
+        "adcs_cmd.mtr_cmd": "truth.sat.attitude.mtr_cmd"
     }
 }

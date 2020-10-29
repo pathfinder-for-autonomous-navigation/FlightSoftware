@@ -172,11 +172,7 @@ class Simulation(object):
         self.read_actuators(fc)
     
     def read_actuators(self, fc):
-        # "no" i dont care about matlab
-        self.actuator_commands_follower["adcs_cmd.mtr_cmd"] = fc.smart_read("adcs_cmd.mtr_cmd")
-        self.actuator_commands_follower["adcs_cmd.rwa_torque_cmd"] = fc.smart_read("adcs_cmd.rwa_torque_cmd")
-
-        self.actuator_commands_follower = {k:lin.Vector3(v) for k,v in self.actuator_commands_follower.items()}
+        raise NotImplementedError
 
     def stop(self, data_dir):
         """
@@ -217,10 +213,14 @@ class CppSimulation(Simulation):
         self.sensors_map = {k:self.fc_vs_sim_s for k in sat_names}
         self.actuators_map = {k:self.fc_vs_sim_a for k in sat_names}
         # replace sat with the satellite name in all the mappings
-        self.sensors_map = {k:{f_name:p_name.replace('sat',k) for f_name,p_name in v.items()} for k,v in self.sensors_map.items()}
+        self.sensors_map =   {k:{f_name:p_name.replace('sat',k) for f_name,p_name in v.items()} for k,v in self.sensors_map.items()}
+        self.actuators_map = {k:{f_name:p_name.replace('sat',k) for f_name,p_name in v.items()} for k,v in self.actuators_map.items()}
 
         self.sensor_readings = {k:{} for k in sat_names}
         self.actuator_cmds = {k:{} for k in sat_names}
+
+        self.fc_to_role_map = {'FlightController':'leader', 'FlightControllerLeader':'leader', 
+                               'FlightControllerFolloewr':'follower'}
 
     def update_sensors(self):
         self.sensor_readings_follower = []
@@ -236,22 +236,15 @@ class CppSimulation(Simulation):
     def write_adcs_estimator_inputs(self, fc, sensor_readings):
         """Write the inputs required for ADCS state estimation."""
 
-        role = None
-        if 'leader' in fc.device_name.lower():
-            role = 'leader'
-        elif 'follower' in fc.device_name.lower():
-            role = 'follower'
-        else:
-            role = self.sat_names[0]
-
         fc.write_state('orbit.time', self.sim_time)
+
+        role = self.fc_to_role_map[fc.device_name]
 
         mappings = self.sensors_map[role]
         # iterate across each fc_sf vs psim_sf pair
         for fc_sf,psim_sf in mappings.items():
             fc.write_state(fc_sf, self.sensor_readings[role][fc_sf])
 
-    
     def read_adcs_estimator_outputs(self, flight_controller):
         """
         Read and store estimates from the ADCS estimator onboard flight software.
@@ -269,7 +262,6 @@ class CppSimulation(Simulation):
         flight_controller.read_state("attitude_estimator.w_body")
         flight_controller.read_state("attitude_estimator.fro_P")
 
-
     def update_dynamics(self):
         """
         Allow simulation to step forward in time and update its
@@ -281,10 +273,22 @@ class CppSimulation(Simulation):
         # we're all grown up now, don't need this
         pass 
 
+    def read_actuators(self, fc):
+        role = self.fc_to_role_map[fc.device_name]
+        for fc_sf in self.actuators_map[role]
+            self.actuator_cmds[role][fc_sf] = fc.smart_read(fc_sf)
+        
     def send_actuations_to_simmed_satellites(self):
-        # send the outputs of the FC to psim
-        # self.mysim["adcs_cmd.mtr_cmd"] = self.actuator_commands_follower["adcs_cmd.mtr_cmd"]
-        pass
+        # send the outputs of the FC to psim        
+        # iterate across each satellite's mappings
+        for role,mappings in self.actuators_map.items():
+            # iterate across each fc_sf vs psim_sf pair
+            for fc_sf,psim_sf in mappings.items():
+                local = self.actuator_cmds[role][fc_sf]
+                if type(local) == list
+                    local = lin:Vector(local)
+
+                self.mysim[psim_sf] = local
 
     def quit(self):
         pass
@@ -360,14 +364,22 @@ class MatlabSimulation(Simulation):
         by calling read_state.
         """
 
-        flight_Controller.read_state("pan.state")
-        flight_Controller.read_state("pan.ccno")
-        flight_Controller.read_state("adcs.state")        
+        flight_controller.read_state("pan.state")
+        flight_controller.read_state("pan.ccno")
+        flight_controller.read_state("adcs.state")        
         flight_controller.read_state("adcs_monitor.mag1_vec")
         flight_controller.read_state("adcs_monitor.mag2_vec")
         flight_controller.read_state("attitude_estimator.q_body_eci")
         flight_controller.read_state("attitude_estimator.w_body")
         flight_controller.read_state("attitude_estimator.fro_P")
+
+    def read_actuators(self, fc):
+        # "no" i dont care about matlab
+        self.actuator_commands_follower["adcs_cmd.mtr_cmd"] = fc.smart_read("adcs_cmd.mtr_cmd")
+        self.actuator_commands_follower["adcs_cmd.rwa_torque_cmd"] = fc.smart_read("adcs_cmd.rwa_torque_cmd")
+
+        self.actuator_commands_follower = {k:lin.Vector3(v) for k,v in self.actuator_commands_follower.items()}
+
 
     def quit(self):
         self.eng.quit()
