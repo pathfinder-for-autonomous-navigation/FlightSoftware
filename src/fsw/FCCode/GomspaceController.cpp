@@ -164,8 +164,12 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_writable_field(pv1_output_cmd_f);
         add_writable_field(pv2_output_cmd_f);
         add_writable_field(pv3_output_cmd_f);
+        pv1_output_cmd_f.set(default_pv_cmd);
+        pv2_output_cmd_f.set(default_pv_cmd);
+        pv3_output_cmd_f.set(default_pv_cmd);
 
         add_writable_field(ppt_mode_cmd_f);
+        ppt_mode_cmd_f.set(default_ppt_mode);
 
         add_writable_field(heater_cmd_f);
 
@@ -296,65 +300,29 @@ void GomspaceController::execute() {
     heater_f.set(gs.get_heater()==1);
 }
 
-void GomspaceController::power_cycle_outputs(){
+void GomspaceController::power_cycle_outputs() {
+    auto powercycle_logic = [&]
+        (WritableStateField<bool>& cmd_f,
+         ReadableStateField<bool>& output_f,
+         int idx)
+    {
+        if (cmd_f.get()) {
+            // TODO add powercycling event
+            if (output_f.get()) {
+                gs.set_single_output(idx,0);
+            }
+            else {
+                gs.set_single_output(idx,1);
+                cmd_f.set(false);
+            }
+        }
+    };
+
     // Power cycle output channels
-    if (power_cycle_output1_cmd_f.get()){
-        if (output1_f.get()){
-            gs.set_single_output(0,0);
-        }
-        if (!output1_f.get()){
-            gs.set_single_output(0,1);
-            power_cycle_output1_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output2_cmd_f.get()){
-        if (output2_f.get()){
-            gs.set_single_output(1,0);
-        }
-        if (!output2_f.get()){
-            gs.set_single_output(1,1);
-            power_cycle_output2_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output3_cmd_f.get()){
-        if (output3_f.get()){
-            gs.set_single_output(2,0);
-        }
-        if (!output3_f.get()){
-            gs.set_single_output(2,1);
-            power_cycle_output3_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output4_cmd_f.get()){
-        if (output4_f.get()){
-            gs.set_single_output(3,0);
-        }
-        if (!output4_f.get()){
-            gs.set_single_output(3,1);
-            power_cycle_output4_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output5_cmd_f.get()){
-        if (output5_f.get()){
-            gs.set_single_output(4,0);
-        }
-        if (!output5_f.get()){
-            gs.set_single_output(4,1);
-            power_cycle_output5_cmd_f.set(false);
-        }
-    }
-
-    if (power_cycle_output6_cmd_f.get()){
-        if (output6_f.get()){
-            gs.set_single_output(5,0);
-        }
-        if (!output6_f.get()){
-            gs.set_single_output(5,1);
-            power_cycle_output6_cmd_f.set(false);
-        }
-    }
+    powercycle_logic(power_cycle_output1_cmd_f, output1_f, 0);
+    powercycle_logic(power_cycle_output2_cmd_f, output2_f, 1);
+    powercycle_logic(power_cycle_output3_cmd_f, output3_f, 2);
+    powercycle_logic(power_cycle_output4_cmd_f, output4_f, 3);
+    powercycle_logic(power_cycle_output5_cmd_f, output5_f, 4);
+    powercycle_logic(power_cycle_output6_cmd_f, output6_f, 5);
 }

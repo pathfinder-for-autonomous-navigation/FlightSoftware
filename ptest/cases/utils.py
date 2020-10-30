@@ -1,4 +1,33 @@
 # Contains random utilities used for writing testcases.
+import math
+
+class TestCaseFailure(Exception):
+    """Raise in case of test case failure."""
+
+def mag_of(vals):
+        """
+        Returns the magnitude of a list of vals 
+        by taking the square root of the sum of the square of the components.
+        """
+
+        assert(type(vals) is list)
+        return math.sqrt(sum([x*x for x in vals]))
+
+def sum_of_differentials(lists_of_vals):
+    """
+    Given a list of list of vals, return the sum of all the differentials from one list to the next.
+
+    Returns a val.
+
+    Ex: sum_of_differentials([[1,1,1],[1,2,3],[1,2,2]]) evaluates to 4
+    """
+
+    total_diff = [0 for x in lists_of_vals[0]]
+    for i in range(len(lists_of_vals) - 1):
+        diff = [abs(lists_of_vals[i][j] - lists_of_vals[i+1][j]) for j in range(len(lists_of_vals[i]))]
+        total_diff = [diff[x] + total_diff[x] for x in range(len(total_diff))]
+
+    return sum(total_diff)
 
 class FSWEnum(object):
     """
@@ -54,6 +83,7 @@ class Enums(object):
     ])
 
     adcs_states = FSWEnum([
+        "manual",
         "startup",
         "limited",
         "zero_torque",
@@ -132,15 +162,23 @@ class Enums(object):
         "GYRO_HEATER"])
     havt_length = len(havt_devices.arr)
 
-class TestCaseFailure(Exception):
-    """Raise in case of test case failure."""
+    def __getitem__(self, key):
+        key_associations = {
+            "pan.state" : self.mission_states,
+            "prop.state" : self.prop_states,
+            "adcs.state" : self.adcs_states,
+            "radio.state" : self.radio_states,
+            "sat.designation" : self.sat_designations,
+            "piksi.mode" : self.piksi_modes,
+        }
+        return key_associations[key]
 
 class BootUtil(object):
     """
     Utility for bootin satellite to a desired state.
     """
 
-    def __init__(self, flight_controller, logger, state, fast_boot, skip_startup=False):
+    def __init__(self, flight_controller, logger, state, fast_boot, one_day_ccno, skip_startup=False):
         """
         Initializes the booter.
 
@@ -162,6 +200,7 @@ class BootUtil(object):
         self.logger = logger
         self.desired_boot_state = state
         self.fast_boot = fast_boot
+        self.one_day_ccno = one_day_ccno
         self.skip_startup = skip_startup
         self.finished = False
 
@@ -171,6 +210,8 @@ class BootUtil(object):
         """
 
         mission_state_names = list(Enums.mission_states.names())
+
+        # Booting to the nominal states requires detumbling.
         nominal_states = mission_state_names
         nominal_states.remove('manual')
         nominal_states.remove('startup')
@@ -178,12 +219,19 @@ class BootUtil(object):
         nominal_states.remove('initialization_hold')
 
         if self.desired_boot_state in nominal_states:
-            self.deployment_hold_length = 100 # Number of cycles for which the satellite will be in a deployment hold. This
-                                          # is an item that is configured on Flight Software.
+            # Number of cycles for which the satellite will be in a deployment hold. This
+            # is an item that is configured on Flight Software.
+            self.deployment_hold_length = self.one_day_ccno // (24 * 2)
             self.elapsed_deployment = int(self.flight_controller.read_state("pan.deployment.elapsed"))
-            self.max_detumble_cycles = 100 # Number of cycles for which we expect the satellite to be in detumble
 
-            # Let's be generous with what angular rate is allowable as "detumbled."
+            # Number of cycles for which we expect the satellite to be in detumble
+            # For now, set this to 1 since the value doesn't matter (we force the satellite
+            # into standby inside this boot controller).
+            # Implementing #287 will give us a more realistic estimate.
+            self.max_detumble_cycles = 1
+
+            # Let's be generous with what angular rate is allowable as "detumbled", until the
+            # attitude controller is implemented in #287.
             self.flight_controller.write_state("detumble_safety_factor", 10)
 
             # Prevent ADCS faults from causing transition to initialization hold
@@ -218,33 +266,34 @@ class BootUtil(object):
             self.logger.put("[TESTCASE] Waiting for the deployment period to be over.")
 
         elif self.boot_stage == 'deployment_hold':
-            self.elapsed_deployment += 1
-
             if self.elapsed_deployment == self.deployment_hold_length:
                 if satellite_state == "detumble":
                     self.logger.put("[TESTCASE] Deployment period is over. Entering detumble state.")
-                    self.num_detumble_cycles = 0
                     self.boot_stage = 'detumble_wait'
+                    self.num_detumble_cycles = 0
                 elif satellite_state == "initialization_hold" and self.desired_boot_state != "initalization_hold":
                     raise TestCaseFailure("Satellite went to initialization hold instead of detumble.")
                 else:
                     raise TestCaseFailure(f"Satellite failed to exit deployment wait period. \
-                        Elapsed deployment period was {true_elapsed}.")
+                        Satellite state is {satellite_state}. Elapsed deployment period was {true_elapsed}.")
+            else:
+                self.elapsed_deployment += 1
 
         elif self.boot_stage == 'detumble_wait':
-            self.num_detumble_cycles += 1
             if self.num_detumble_cycles >= self.max_detumble_cycles or satellite_state == "standby":
                 # For now, force the satellite into standby since the attitude control stuff isn't working.
                 self.flight_controller.write_state("pan.state", Enums.mission_states["standby"])
                 self.boot_stage = 'standby'
                 self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
 
-                # TODO add the following code back after merging of #287 and #348
+                # Delete the above lines and use the following ones once #287 is implemented.
                 # if satellite_state == "standby":
                 #     self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
                 #     self.boot_stage = 'standby'
                 # else:
                 #     raise TestCaseFailure("Satellite failed to exit detumble.")
+            else:
+                self.num_detumble_cycles += 1
 
         elif self.boot_stage == "standby" and not self.finished:
             if self.desired_boot_state == "standby":
@@ -262,5 +311,5 @@ class BootUtil(object):
         if self.fast_boot or self.desired_boot_state == "startup":
             self.flight_controller.write_state("pan.state", Enums.mission_states[self.desired_boot_state])
             return True
-        else:
-            return self.run_boot_sequence() == self.desired_boot_state
+        elif self.finished: return True
+        else: return self.run_boot_sequence() == self.desired_boot_state

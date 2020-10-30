@@ -5,14 +5,14 @@
 #include <gnc/constants.hpp>
 #include <cmath>
 
-constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
+constexpr float nan_f = gnc::constant::nan_f;
 
 AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_computer", offset),
-    adcs_vec1_current_f("adcs.compute.vec1.current", Serializer<lin::Vector3f>(0, 1, 100)),
-    adcs_vec1_desired_f("adcs.compute.vec1.desired", Serializer<lin::Vector3f>(0, 1, 100)),
-    adcs_vec2_current_f("adcs.compute.vec2.current", Serializer<lin::Vector3f>(0, 1, 100)),
-    adcs_vec2_desired_f("adcs.compute.vec2.desired", Serializer<lin::Vector3f>(0, 1, 100))
+    adcs_vec1_current_f("attitude.pointer_vec1_current", Serializer<lin::Vector3f>(0, 1, 100)),
+    adcs_vec1_desired_f("attitude.pointer_vec1_desired", Serializer<lin::Vector3f>(0, 1, 100)),
+    adcs_vec2_current_f("attitude.pointer_vec2_current", Serializer<lin::Vector3f>(0, 1, 100)),
+    adcs_vec2_desired_f("attitude.pointer_vec2_desired", Serializer<lin::Vector3f>(0, 1, 100))
 {
     add_writable_field(adcs_vec1_current_f);
     add_writable_field(adcs_vec1_desired_f);

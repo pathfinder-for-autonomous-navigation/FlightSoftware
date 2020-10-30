@@ -14,37 +14,29 @@
 #include "radio_state_t.enum"
 #include "sat_designation_t.enum"
 
-class MissionManager : public TimedControlTask<void> {
-   #ifdef UNIT_TEST
-     friend class TestFixture;
-   #endif
+class MissionManager : public TimedControlTask<void>
+{
+#ifdef UNIT_TEST
+    friend class TestFixture;
+#endif
 
-   public:
-    MissionManager(StateFieldRegistry& registry, unsigned int offset);
+public:
+    MissionManager(StateFieldRegistry &registry, unsigned int offset);
     void execute() override;
 
     // Constants that drive state transitions.
     WritableStateField<double> detumble_safety_factor_f;
     WritableStateField<double> close_approach_trigger_dist_f; // Meters
-    WritableStateField<double> docking_trigger_dist_f; // Meters
+    WritableStateField<double> docking_trigger_dist_f;        // Meters
     TRACKED_CONSTANT_SC(double, initial_detumble_safety_factor, 0.2);
     TRACKED_CONSTANT_SC(double, initial_close_approach_trigger_dist, 100); // Meters
-    TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4); // Meters
+    TRACKED_CONSTANT_SC(double, initial_docking_trigger_dist, 0.4);        // Meters
 
     /**
      * @brief Number of control cycles to wait during the post-deployment
-     * do-nothing period.
+     * do-nothing period. Should be equivalent to 30 minutes.
      */
-    #ifdef SPEEDUP
-        TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 100);
-    #else
-        TRACKED_CONSTANT_SC(unsigned int, deployment_wait, 15000); // ~30 mins
-    #endif
-    /**
-     * @brief Number of control cycles to wait before declaring "too long since comms".
-     */
-    WritableStateField<unsigned int> max_radio_silence_duration_f;
-    TRACKED_CONSTANT_SC(unsigned int, initial_max_radio_silence_duration, PAN::one_day_ccno);
+    TRACKED_CONSTANT_SC(unsigned int, deployment_wait, PAN::one_day_ccno / (24 * 2));
 
     /**
      * @brief Number of control cycles to wait while in docking state before moving to standby
@@ -58,8 +50,7 @@ class MissionManager : public TimedControlTask<void> {
         mission_state_t::leader,
         mission_state_t::follower_close_approach,
         mission_state_t::leader_close_approach,
-        mission_state_t::standby
-    };
+        mission_state_t::standby};
     // These states do not respond to fault conditions.
     static constexpr std::array<mission_state_t, 7> fault_nonresponsive_states = {
         mission_state_t::detumble,
@@ -68,12 +59,11 @@ class MissionManager : public TimedControlTask<void> {
         mission_state_t::manual,
         mission_state_t::docking,
         mission_state_t::docked,
-        mission_state_t::initialization_hold
-    };
+        mission_state_t::initialization_hold};
 
     void set(mission_state_t state);
 
-   protected:
+protected:
     /**
      * @brief Returns true if there are hardware faults on the spacecraft.
      * 
@@ -108,10 +98,10 @@ class MissionManager : public TimedControlTask<void> {
      * @brief Handles state transitions that happen upon subsystem assertions.
      */
     void transition_to(mission_state_t mission_state,
-        adcs_state_t adcs_state,
-        prop_state_t prop_state);
+                       adcs_state_t adcs_state,
+                       prop_state_t prop_state);
     void transition_to(mission_state_t mission_state,
-        adcs_state_t adcs_state);
+                       adcs_state_t adcs_state);
 
     /**
      * @brief Allow spacecraft to be commandeered completely by test software or
@@ -120,12 +110,14 @@ class MissionManager : public TimedControlTask<void> {
      * The only additional control it provides beyond the standby mode is
      * the ability to control attitude, which is a dangerous capability.
      * If this capability is desired, a better way to use it would be via
-     * the Attitude Computer's point_manual mode.
+     * the AttitudeController's point_manual mode.
+     * 
+     * Manual mission mode is to be used whenever the adcs_state is point_manual or manual
      */
     void dispatch_manual();
 
     // Fields required for control of prop subsystem.
-    WritableStateField<unsigned int>* prop_state_fp;
+    WritableStateField<unsigned int> *prop_state_fp;
 
     // Fields required for control of ADCS subsystem.
     /**
@@ -137,40 +129,40 @@ class MissionManager : public TimedControlTask<void> {
      *        second).
      * 
      * Inputs from the AttitudedEstimator. */
-    ReadableStateField<lin::Vector3f>* adcs_w_body_est_fp;
+    ReadableStateField<lin::Vector3f> *adcs_w_body_est_fp;
 
     // Fields provided by Piksi and orbital estimation subsystems
-    const ReadableStateField<lin::Vector3d>* propagated_baseline_pos_fp; // Propagated baseline position
+    const ReadableStateField<lin::Vector3d> *propagated_baseline_pos_fp; // Propagated baseline position
 
-    // Field exposed by Gomspace for rebooting entire spacecraft.
-    WritableStateField<bool>* reboot_fp;
+    // Field exposed by Gomspace for resetting entire spacecraft.
+    WritableStateField<bool> *reset_fp;
 
     // Information from docking subsystem
     WritableStateField<bool> docking_config_cmd_f;
-    const ReadableStateField<bool>* docked_fp;
+    const ReadableStateField<bool> *docked_fp;
     InternalStateField<unsigned int> enter_docking_cycle_f;
 
     // True if the battery is below the threshold for safehold.
-    Fault* low_batt_fault_fp;
+    Fault *low_batt_fault_fp;
     // Fault flags for ADCS motor ADCs and potentiometer.
-    Fault* adcs_functional_fault_fp;
-    Fault* wheel1_adc_fault_fp;
-    Fault* wheel2_adc_fault_fp;
-    Fault* wheel3_adc_fault_fp;
-    Fault* wheel_pot_fault_fp;
+    Fault *adcs_functional_fault_fp;
+    Fault *wheel1_adc_fault_fp;
+    Fault *wheel2_adc_fault_fp;
+    Fault *wheel3_adc_fault_fp;
+    Fault *wheel_pot_fault_fp;
     // Flag for if propulsion failed to pressurize.
-    Fault* pressurize_fail_fp;
+    Fault *pressurize_fail_fp;
 
     /**
      * @brief DCDC control flag for Spike and Hold and docking system.
      */
-    WritableStateField<bool>* sph_dcdc_fp;
+    WritableStateField<bool> *sph_dcdc_fp;
 
     /**
      * @brief Radio's mode.
      **/
-    InternalStateField<unsigned char>* radio_state_fp;
-    InternalStateField<unsigned int>* last_checkin_cycle_fp;
+    ReadableStateField<unsigned char> *radio_state_fp;
+    ReadableStateField<unsigned int> *last_checkin_cycle_fp;
 
     // Fields that control overall mission state.
     /**
@@ -195,12 +187,16 @@ class MissionManager : public TimedControlTask<void> {
      */
     InternalStateField<unsigned int> enter_close_approach_ccno_f;
 
-   private:
+    /**
+     * @brief Number of times the satellite has booted
+     */
+    ReadableStateField<unsigned int> *bootcount_fp; 
+
+private:
     /**
      * @brief Computes magnitude of baseline position vector.
      */
     double distance_to_other_sat() const;
-    bool too_long_since_last_comms() const;
     bool too_long_in_docking() const;
 
     void set(adcs_state_t state);

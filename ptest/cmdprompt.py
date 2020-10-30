@@ -5,22 +5,23 @@ except ImportError:
     pass
 from cmd import Cmd
 import timeit
-import tinydb
+from .cases.utils import Enums
 from .plotter import PlotterClient
-from . state_session import StateSession
+from .usb_session import USBSession
+import csv
 
-def StateSessionOnly(fn):
-        """
-        Ensures that the function is only called for a State Session device.
-        """
+def USBSessionOnly(fn):
+    """
+    Ensures that the function is only called for a State Session device.
+    """
 
-        def inner(self, args):
-            if isinstance(self.cmded_device, StateSession):
-                fn(self, args)
-            else:
-                print("Cannot use this function since currently commanded device is not a state session.")
+    def inner(self, args):
+        if isinstance(self.cmded_device, USBSession):
+            fn(self, args)
+        else:
+            print("Cannot use this function since currently commanded device is not a USB session.")
 
-        return inner
+    return inner
 
 class StateCmdPrompt(Cmd):
     '''
@@ -28,9 +29,8 @@ class StateCmdPrompt(Cmd):
     Teensies and simulation devices.
     '''
 
-    def __init__(self, devices, radios, sim, exit_fn):
+    def __init__(self, devices, radios, exit_fn):
         self.devices = {**devices, **radios}
-        self.sim = sim
         self.exit_fn = exit_fn
 
         if not self.devices:
@@ -88,24 +88,9 @@ class StateCmdPrompt(Cmd):
 
         print(f"Switched to {self.cmded_device.device_name}")
 
-    def do_checksim(self, args):
-        '''
-        Check the running status of the simulation.
-        '''
-        if self.sim.running:
-            print("Running ({} of {}s)".format(format(self.sim.sim_time,"0.2f"), self.sim.sim_duration))
-        else:
-            print("Not running")
-
-    def do_endsim(self, args):
-        '''
-        End the simulation, if it's running.
-        '''
-        self.sim.running = False
-
     def do_rs(self, args):
         '''
-        Read state. See state_session.py for documentation.
+        Read state. See usb_session.py for documentation.
         '''
         args = args.split()
 
@@ -116,11 +101,17 @@ class StateCmdPrompt(Cmd):
         start_time = timeit.default_timer()
         read_result = self.cmded_device.read_state(args[0])
         elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
-        print(f"{read_result} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+
+        try:
+            human_readable_result = Enums()[args[0]]
+            print(f"{read_result} ({human_readable_result}) \t\t\t\t\t\t(Completed in {elapsed_time} us)")
+        except KeyError:
+            # args[0] is not an enum field.
+            print(f"{read_result} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
     def do_ws(self, args):
         '''
-        Write state. See state_session.py for documentation.
+        Write state. See usb_session.py for documentation.
         '''
         args = args.split()
 
@@ -138,21 +129,21 @@ class StateCmdPrompt(Cmd):
         write_succeeded = "Succeeded" if write_succeeded else "Failed"
         print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_cycle(self, args):
         '''
         Start a control cycle.
         '''
         self.do_ws("cycle.start true")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_cyclecount(self, args):
         '''
         Get the number of control cycles that have executed.
         '''
         self.do_rs("pan.cycle_no")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_telem(self, args):
         '''
         Dump telemetry.
@@ -165,7 +156,7 @@ class StateCmdPrompt(Cmd):
         write_succeeded = "Succeeded" if write_succeeded else "Failed"
         print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
     
-    @StateSessionOnly
+    @USBSessionOnly
     def do_parsetelem(self, args):
         '''
         Parse a telelmetry file using DowlinkParser.
@@ -181,7 +172,7 @@ class StateCmdPrompt(Cmd):
 
             print(f"\t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
-    @StateSessionOnly
+    @USBSessionOnly
     def do_dbtelem(self, args):
         '''
         Store Telemetry in Database
@@ -200,7 +191,7 @@ class StateCmdPrompt(Cmd):
 
     def do_wms(self, args):
         '''
-        Write multiple states. See state_session.py for documentation.
+        Write multiple states. See usb_session.py for documentation.
         '''
         args = args.split()
 
@@ -221,35 +212,33 @@ class StateCmdPrompt(Cmd):
         write_succeeded = "Succeeded" if write_succeeded else "Failed"
         print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
 
-    @StateSessionOnly
-    def do_os(self, args):
-        '''
-        Override simulation state. See state_session.py for documentation.
-        '''
-        args = args.split()
-        start_time = timeit.default_timer()
-        override_succeeded = self.cmded_device.override_state(args[0], args[1])
-        elapsed_time = int((timeit.default_timer() - start_time) * 1E6)
-
-        override_succeeded = "Succeeded" if override_succeeded else "Failed"
-        print(f"{override_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
-
-    @StateSessionOnly
-    def do_ro(self, args):
-        '''
-        Release override of simulation state. See state_session.py for documentation.
-        '''
-        args = args.split()
-        self.cmded_device.release_override(args[0])
-
     def do_plot(self, args):
         '''
-        Plot the given state fields. See state_session.py for documentation.
+        Plot the given state fields. See usb_session.py for documentation.
         '''
-        plotter = PlotterClient(self.cmded_device.datastore.db)
+        plotter = PlotterClient(self.cmded_device.datastore.dataList)
         plotter.do_plot(args)
     
-    @StateSessionOnly
+    def do_csv(self, filepath):
+        '''
+            add measurements from a run (key,value pairs) to rows of a csv file 
+            and open file at given filepath
+            @param filepath: the location of the csv file to open
+        '''
+        
+        if len(filepath) == 0:
+            print("Need to specify a file path to put csv file (from FlightSoftware), Format: PATH/TO/FILE/")
+            return
+        
+        with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
+            mtrwriter = csv.writer(csvfile)
+            for data in self.cmded_device.datastore.dataList:
+                for key, value in data.items():
+                    mtrwriter.writerow([key, value])
+        print("csv file \'mtr_logs\'written to " + str(filepath))
+            
+
+    @USBSessionOnly
     def do_uplink(self, args):
         '''
         Uplink fields

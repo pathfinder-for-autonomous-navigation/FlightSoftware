@@ -87,6 +87,8 @@ void setup() {
   rwa::setup();
   ssa::setup();
 
+  loop();
+
   LOG_INFO_header
   LOG_INFO_printlnF("Module initialization complete")
 

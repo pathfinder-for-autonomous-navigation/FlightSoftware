@@ -1,0 +1,9 @@
+summary: "Get the time remaining on uplink timer"
+tags: 
+  - "Get the time remaining on uplink timer"
+description: "This endpoint can be used to get the time remaining to edit an autonomous uplink queued to be sent to Iridium."
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+

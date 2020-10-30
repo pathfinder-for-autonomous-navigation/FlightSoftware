@@ -1,5 +1,6 @@
 {
     "eeprom_saved_fields": {
+        "pan.bootcount": 1000,
         "pan.deployed": 1000,
         "pan.deployment.elapsed": 500,
         "pan.sat_designation": 100,
@@ -1023,6 +1024,38 @@
             "type": "bool",
             "writable": true
         },
+        "attitude.pointer_vec1_current": {
+            "bitsize": 96,
+            "flow_id": 14,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": false
+        },
+        "attitude.pointer_vec1_desired": {
+            "bitsize": 96,
+            "flow_id": 14,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": true
+        },
+        "attitude.pointer_vec2_current": {
+            "bitsize": 96,
+            "flow_id": 14,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": false
+        },
+        "attitude.pointer_vec2_desired": {
+            "bitsize": 96,
+            "flow_id": 14,
+            "max": 1.0,
+            "min": 0.0,
+            "type": "lin float vector",
+            "writable": true
+        },
         "attitude_estimator.fro_P": {
             "bitsize": 16,
             "flow_id": "undefined",
@@ -1631,15 +1664,6 @@
             "type": "unsigned int",
             "writable": false
         },
-        "max_radio_silence": {
-            "bitsize": 21,
-            "flow_id": 26,
-            "index": 79,
-            "max": 1440000,
-            "min": 0,
-            "type": "unsigned int",
-            "writable": true
-        },
         "orbit.baseline_pos": {
             "bitsize": 100,
             "flow_id": 2,
@@ -1712,6 +1736,22 @@
             "type": "lin double vector",
             "writable": false
         },
+        "pan.bootcount": {
+            "bitsize": 28,
+            "flow_id": 1,
+            "max": 268435455,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
+        "pan.cc_ms": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "pan.cycle_no": {
             "bitsize": 32,
             "flow_id": "undefined",
@@ -1730,6 +1770,14 @@
             "bitsize": 32,
             "flow_id": "undefined",
             "max": 15000,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
+        "pan.one_day_ccno": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
             "writable": false
@@ -1818,6 +1866,22 @@
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
+            "writable": true
+        },
+        "pointer.mtr_cmd": {
+            "bitsize": 48,
+            "flow_id": "undefined",
+            "max": 0.05666850134730339,
+            "min": -0.05666850134730339,
+            "type": "lin float vector",
+            "writable": true
+        },
+        "pointer.rwa_torque_cmd": {
+            "bitsize": 48,
+            "flow_id": "undefined",
+            "max": 0.004187500569969416,
+            "min": -0.004187500569969416,
+            "type": "lin float vector",
             "writable": true
         },
         "prop.ctrl_cycles_per_closing": {
@@ -2134,6 +2198,14 @@
             "type": "signed int",
             "writable": false
         },
+        "radio.last_comms_ccno": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": false
+        },
         "radio.max_transceive": {
             "bitsize": 20,
             "flow_id": 34,
@@ -2151,6 +2223,14 @@
             "min": 0,
             "type": "unsigned int",
             "writable": true
+        },
+        "radio.state": {
+            "bitsize": 8,
+            "flow_id": "undefined",
+            "max": 255,
+            "min": 0,
+            "type": "unsigned char",
+            "writable": false
         },
         "sys.memory_use": {
             "bitsize": 19,
@@ -2231,7 +2311,7 @@
             "type": "unsigned int",
             "writable": false
         },
-        "timing.attitude_computer.avg_wait": {
+        "timing.attitude_controller.avg_wait": {
             "bitsize": 32,
             "flow_id": 31,
             "max": 120000.0,
@@ -2239,7 +2319,7 @@
             "type": "float",
             "writable": false
         },
-        "timing.attitude_computer.num_lates": {
+        "timing.attitude_controller.num_lates": {
             "bitsize": 32,
             "flow_id": 31,
             "max": 4294967295,
@@ -2480,7 +2560,8 @@
             "fields": [
                 "pan.state",
                 "pan.deployed",
-                "pan.sat_designation"
+                "pan.sat_designation",
+                "pan.bootcount"
             ],
             "id": 1,
             "priority": 0
@@ -2574,7 +2655,8 @@
                 "adcs_monitor.rwa_speed_rd",
                 "adcs_monitor.rwa_torque_rd",
                 "adcs_cmd.rwa_speed_cmd",
-                "adcs_cmd.rwa_torque_cmd"
+                "adcs_cmd.rwa_torque_cmd",
+                "adcs_cmd.mtr_cmd"
             ],
             "id": 7,
             "priority": 6
@@ -2666,10 +2748,10 @@
         {
             "active": true,
             "fields": [
-                "adcs.compute.vec1.current",
-                "adcs.compute.vec1.desired",
-                "adcs.compute.vec2.current",
-                "adcs.compute.vec2.desired"
+                "attitude.pointer_vec1_current",
+                "attitude.pointer_vec1_desired",
+                "attitude.pointer_vec2_current",
+                "attitude.pointer_vec2_desired"
             ],
             "id": 14,
             "priority": 13
@@ -2853,7 +2935,6 @@
                 "detumble_safety_factor",
                 "docking_timeout_limit",
                 "fault_handler.enabled",
-                "max_radio_silence",
                 "trigger_dist.close_approach",
                 "trigger_dist.docking"
             ],
@@ -2914,8 +2995,8 @@
                 "timing.adcs_estimator.num_lates",
                 "timing.adcs_monitor.avg_wait",
                 "timing.adcs_monitor.num_lates",
-                "timing.attitude_computer.avg_wait",
-                "timing.attitude_computer.num_lates",
+                "timing.attitude_controller.avg_wait",
+                "timing.attitude_controller.num_lates",
                 "timing.clock_ct.avg_wait",
                 "timing.clock_ct.num_lates",
                 "timing.dcdc_ct.avg_wait",

@@ -123,7 +123,10 @@ class IntegerSerializer : public SerializerBase<T> {
     }
 
     const char* print(const T& src) const override {
-        sprintf(this->printed_val, "%d", src);
+        if (std::is_same<T, unsigned int>::value || std::is_same<T, unsigned char>::value)
+            sprintf(this->printed_val, "%u", src);
+        else
+            sprintf(this->printed_val, "%d", src);
         return this->printed_val;
     }
 };

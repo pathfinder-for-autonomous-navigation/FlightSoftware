@@ -1,0 +1,21 @@
+summary: "Remove fields from the queued uplink"
+tags: 
+  - "Remove fields from the queued uplink"
+description: "This endpoint can be used to remove fields from the queued uplink. Returns the edited queued telemetry."
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+parameters:
+  - in: "body"
+    name: "data"
+    description: "Accepts a list of fields"
+    required: true
+    schema:
+      type: array
+      items:
+        type: "object"
+        properties:
+          field:
+            type: "string"
+            example: "pan.state"

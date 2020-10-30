@@ -1,7 +1,4 @@
 import queue, os, json, threading, time, datetime
-from tinydb import TinyDB
-from tinydb.middlewares import CachingMiddleware
-from tinydb.storages import JSONStorage
 
 class DataConsumer(object):
     def __init__(self, device_name, data_dir):
@@ -11,7 +8,7 @@ class DataConsumer(object):
 
     def consume_queue_item(self, item):
         """
-        Takes an item put into the queue by a StateSession, and consumes it.
+        Takes an item put into the queue by a USBSession, and consumes it.
         """
         raise NotImplementedError
 
@@ -29,7 +26,7 @@ class DataConsumer(object):
 
     def start(self):
         """ Start data consumer thread. """
-        self.consumer_thread = threading.Thread(target=self.consume_queue)
+        self.consumer_thread = threading.Thread(target=self.consume_queue, name=f"Data consumer thread for {self.device_name}")
         self.running = True
         self.consumer_thread.start()
 
@@ -40,10 +37,8 @@ class DataConsumer(object):
     def stop(self):
         """ Stop data consumer thread. """
         self.running = False
-        try:
+        if hasattr(self, "consumer_thread"):
             self.consumer_thread.join()
-        except AttributeError:
-            pass
         self.save()
 
     def put(self, item):
@@ -60,18 +55,20 @@ class Datastore(DataConsumer):
     def __init__(self, device_name, data_dir):
         super().__init__(device_name, data_dir)
         filename = f"{self.device_name}-telemetry.txt"
-        self.db = TinyDB(f"/{data_dir}/{filename}", storage=CachingMiddleware(JSONStorage))
+        self.dataList = []
+        self.dataLog = open(f"/{data_dir}/{filename}", "w")
 
     def consume_queue_item(self, datapoint):
         """
         Adds a single data point to the telemetry log.
         """
-        self.db.insert(datapoint)
+        self.dataList.append(datapoint)
+        
 
     def save(self):
         """ Save telemetry log to a file. """
-        self.db.storage.flush()
-        self.db.close()
+        json.dump(self.dataList, self.dataLog)
+        self.dataLog.close()
 
 class Logger(DataConsumer):
     def __init__(self, device_name, data_dir, print=False):

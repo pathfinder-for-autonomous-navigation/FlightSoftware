@@ -12,10 +12,10 @@ class DockingCheckoutCase(SingleSatOnlyCase):
         return False
 
     def read_state(self, string_state):
-        return self.sim.flight_controller.read_state(string_state)
+        return self.flight_controller.read_state(string_state)
 
     def write_state(self, string_state, state_value):
-        self.sim.flight_controller.write_state(string_state, state_value)
+        self.flight_controller.write_state(string_state, state_value)
         return self.read_state(string_state)
 
     def log_docking_states(self):
@@ -60,7 +60,7 @@ class DockingCheckoutCase(SingleSatOnlyCase):
       self.logger.put("Successfully finished docking config command in " + str(cycles_taken) + " cycles\n")
 
     def run_case_singlesat(self):
-        self.sim.cycle_no = self.read_state("pan.cycle_no")
+        self.cycle_no = self.read_state("pan.cycle_no")
         self.write_state("dcdc.SpikeDock_cmd", "true")
         assert(self.read_state("dcdc.SpikeDock_cmd") =="true")
 

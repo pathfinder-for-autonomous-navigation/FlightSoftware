@@ -13,7 +13,6 @@ void test_valid_initialization() {
     TEST_ASSERT_EQUAL(0.2, tf.detumble_safety_factor_fp->get());
     TEST_ASSERT_EQUAL(100, tf.close_approach_trigger_dist_fp->get());
     TEST_ASSERT_EQUAL(0.4, tf.docking_trigger_dist_fp->get());
-    TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.max_radio_silence_duration_fp->get());
     TEST_ASSERT_EQUAL(PAN::one_day_ccno, tf.docking_timeout_limit_fp->get());
     TEST_ASSERT(tf.docking_config_cmd_fp->get());
     TEST_ASSERT_FALSE(tf.is_deployed_fp->get());
@@ -27,8 +26,9 @@ void test_dispatch_startup() {
     // Startup should be the default initial state of the mission manager
     tf.check(mission_state_t::startup);
 
-    // For 100 executions, the mission manager should remain in the startup state
-    for(int i = 0; i < 100; i++) {
+    // For the duration of the deployment hold, the mission manager should
+    // remain in the startup state
+    for(size_t i = 0; i < PAN::one_day_ccno / (24 * 2); i++) {
         tf.step();
         tf.check(mission_state_t::startup);
     }
@@ -102,6 +102,7 @@ void test_dispatch_standby() {
 
         tf.set(adcs_state_t::point_standby); tf.step(); tf.check(adcs_state_t::point_standby);
         tf.set(adcs_state_t::point_manual);  tf.step(); tf.check(adcs_state_t::point_manual);
+        tf.set(adcs_state_t::manual);  tf.step(); tf.check(adcs_state_t::manual);
         tf.set(adcs_state_t::detumble);      tf.step(); tf.check(adcs_state_t::detumble);
     }
 
@@ -133,14 +134,11 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         (mission_state == mission_state_t::leader_close_approach);
 
     /** If distance is less than the trigger distance,
-        there should be a state transition to the next mission state.
-        This transition should happen irrespective of the comms timeout situation. **/
+        there should be a state transition to the next mission state. **/
     {
         TestFixture tf(mission_state);
         tf.set(prop_state_t::idle);
         tf.set_sat_distance(sat_distance);
-        tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
-        tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
         tf.step();
         if (in_close_approach) {
             tf.check(mission_state_t::docking);
@@ -166,20 +164,6 @@ void test_dispatch_rendezvous_state(mission_state_t mission_state, double sat_di
         if (in_close_approach) {
             TEST_ASSERT(tf.docking_config_cmd_fp->get());
         }
-    }
-
-    /** If comms hasn't been available for too long, there should be a state
-     *  transition to standby.  **/
-    {
-        TestFixture tf(mission_state);
-        tf.set_ccno(tf.max_radio_silence_duration_fp->get() + 1);
-        tf.set_comms_blackout_period(tf.max_radio_silence_duration_fp->get() + 1);
-        tf.step();
-        tf.check_sph_dcdc_on(true);
-        tf.check(prop_state_t::idle);
-        tf.check(adcs_state_t::point_standby);
-        tf.check(mission_state_t::standby);
-        tf.check(sat_designation_t::undecided);
     }
 }
 
@@ -233,7 +217,7 @@ void test_dispatch_docking() {
     // Check that mission manager moves to standby
     tf2.check(mission_state_t::standby);
 
-    // Even if a significant amount of time passes, mission managaer should still move to 
+    // Even if a significant amount of time passes, mission manager should still move to 
     // docked when the switch is pressed
     TestFixture tf3(mission_state_t::docking);
     tf3.step();
@@ -256,12 +240,12 @@ void test_dispatch_safehold() {
         // not trigger a satellite reboot.
         tf.set_ccno(PAN::one_day_ccno - 1);
         tf.step();
-        TEST_ASSERT_FALSE(tf.reboot_fp->get());
+        TEST_ASSERT_FALSE(tf.reset_fp->get());
 
         // Above a day's worth of cycle counts, safe hold should
         // trigger a satellite reboot.
         tf.step();
-        TEST_ASSERT_TRUE(tf.reboot_fp->get());
+        TEST_ASSERT_TRUE(tf.reset_fp->get());
     }
 
     // Test that moving in and out of safehold resets the 
@@ -272,19 +256,19 @@ void test_dispatch_safehold() {
         TestFixture tf(mission_state_t::safehold);
         tf.set_ccno(PAN::one_day_ccno - 1);
         tf.step();
-        TEST_ASSERT_FALSE(tf.reboot_fp->get());
+        TEST_ASSERT_FALSE(tf.reset_fp->get());
 
         tf.set(mission_state_t::standby);
         tf.step();
         tf.set(mission_state_t::safehold);
         tf.step();
-        TEST_ASSERT_FALSE(tf.reboot_fp->get());
+        TEST_ASSERT_FALSE(tf.reset_fp->get());
 
         tf.set_ccno(2*PAN::one_day_ccno);
         tf.step();
-        TEST_ASSERT_FALSE(tf.reboot_fp->get());
+        TEST_ASSERT_FALSE(tf.reset_fp->get());
         tf.step();
-        TEST_ASSERT_TRUE(tf.reboot_fp->get());
+        TEST_ASSERT_TRUE(tf.reset_fp->get());
     }
 }
 
@@ -293,6 +277,100 @@ void test_dispatch_undefined() {
     tf.mission_state_fp->set(100); // Undefined
     tf.step();
     tf.check(mission_state_t::safehold);
+}
+
+void test_fault_responses() {
+    // No fault response recommendation shall be respected in startup
+    // or manual.
+    for(mission_state_t initial_state : {mission_state_t::startup,
+                                         mission_state_t::manual})
+    {
+        TestFixture tf{initial_state};
+        tf.set(fault_response_t::standby);
+        tf.step();
+        tf.check(initial_state);
+    }
+    for(mission_state_t initial_state : {mission_state_t::startup,
+                                         mission_state_t::manual})
+    {
+        TestFixture tf{initial_state};
+        tf.set(fault_response_t::safehold);
+        tf.step();
+        tf.check(initial_state);
+    }
+
+    // Fault response recommendations are redundant in safehold.
+    {
+        TestFixture tf{mission_state_t::safehold};
+        tf.set(fault_response_t::standby);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+        tf.set(fault_response_t::safehold);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+
+    // Only safehold fault recommendations shake the mission
+    // manager out of initialization hold or detumble.
+    for(mission_state_t initial_state : {mission_state_t::initialization_hold,
+                                         mission_state_t::detumble})
+    {
+        TestFixture tf{initial_state};
+        tf.set(fault_response_t::standby);
+        tf.step();
+        tf.check(initial_state);
+        tf.set(fault_response_t::safehold);
+        tf.step();
+        tf.check(mission_state_t::safehold);
+    }
+
+    // All other states can experience transitions to safehold or standby
+    // due to a fault response recommendation. 
+    for(mission_state_t initial_state : {mission_state_t::standby,
+                                         mission_state_t::follower,
+                                         mission_state_t::leader,
+                                         mission_state_t::follower_close_approach,
+                                         mission_state_t::leader_close_approach,
+                                         mission_state_t::docking,
+                                         mission_state_t::docked})
+    {
+        TestFixture tf{initial_state};
+        tf.set(fault_response_t::standby);
+        tf.step();
+        tf.check(mission_state_t::standby);
+
+        TestFixture tf2{initial_state};
+        tf2.set(fault_response_t::safehold);
+        tf2.step();
+        tf2.check(mission_state_t::safehold);
+    }
+}
+
+void test_bootcount(){
+    // Test that the bootcount correctly updates and deployment is 
+    // not delayed when bootcount >1
+
+    TestFixture tf;
+
+    // Test if the bootcount field exists in EEPROM
+    // Can be found in telemetry file
+    TEST_ASSERT_TRUE(tf.registry.find_eeprom_saved_field("pan.bootcount") != nullptr); 
+        
+    // When satellite is first booted, bootcount == 1
+    // Should initialize at 0, then increase when MissionManager is created
+    TEST_ASSERT_EQUAL(1, tf.get_bootcount());  
+
+    // EEPROM is represented as a local var
+    unsigned int pseudoboot = tf.get_bootcount();
+    TEST_ASSERT_EQUAL(1, pseudoboot);
+
+    // Reboot the satellite with the bootcount value stored in EEPROM
+    TestFixture tf2(mission_state_t::startup, pseudoboot);
+
+    // Test that deployment does not wait when bootcount >1
+    TEST_ASSERT_EQUAL(0, tf2.deployment_wait_elapsed_fp->get());
+    TEST_ASSERT_EQUAL(2, tf2.get_bootcount());
+        
 }
 
 int test_mission_manager() {
@@ -306,7 +384,8 @@ int test_mission_manager() {
     RUN_TEST(test_dispatch_docking);
     RUN_TEST(test_dispatch_safehold);
     RUN_TEST(test_dispatch_undefined);
-    // TODO add fault handling tests
+    RUN_TEST(test_fault_responses);
+    RUN_TEST(test_bootcount);
     return UNITY_END();
 }
 

@@ -23,10 +23,10 @@ void MainFaultHandler::init()
         find_fault("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__),
         find_fault("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__),
         find_fault("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__),
-        find_fault("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__),
-        find_fault("prop.overpressured.base", __FILE__, __LINE__)};
+        find_fault("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__)
+    };
 
-    std::vector<Fault *> active_list_1_standby_super_simple_faults{
+    std::vector<Fault*> active_list_2_standby_super_simple_faults {
         find_fault("prop.pressurize_fail.base", __FILE__, __LINE__),
     };
 
@@ -44,14 +44,12 @@ void MainFaultHandler::init()
                                                       SimpleFaultHandler::active_state_lists[1], mission_state_t::safehold));
     }
 
-    for (Fault *fault : active_list_1_standby_super_simple_faults)
-    {
+    for(Fault* fault : active_list_2_standby_super_simple_faults) {
         fault_handler_machines.push_back(
             std::make_unique<SuperSimpleFaultHandler>(_registry, fault,
-                                                      SimpleFaultHandler::active_state_lists[1], mission_state_t::standby));
+                SimpleFaultHandler::active_state_lists[2], mission_state_t::standby)
+        );
     }
-
-    fault_handler_machines.push_back(std::make_unique<PropFaultHandler>(_registry));
 
     fault_handler_machines.push_back(std::make_unique<QuakeFaultHandler>(_registry));
     fault_handler_machines.push_back(std::make_unique<PiksiFaultHandler>(_registry));
