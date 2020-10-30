@@ -134,6 +134,17 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
         add_readable_field(output4_f);
         add_readable_field(output5_f);
         add_readable_field(output6_f);
+        #ifdef DESKTOP
+            // To make HOOTL more flight-like, 
+            // turn on all devices by default.
+
+            gs.hk->output[0] = true;
+            gs.hk->output[1] = true;
+            gs.hk->output[2] = true;
+            gs.hk->output[3] = true;
+            gs.hk->output[4] = true;
+            gs.hk->output[5] = true;
+        #endif
 
         add_readable_field(wdt_i2c_time_left_f);
 

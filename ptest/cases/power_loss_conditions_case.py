@@ -12,6 +12,10 @@ class PowerLossCheckoutCase(SingleSatOnlyCase):
     def desired_initial_state(self):
         return "standby"
 
+    @property
+    def fast_boot(self):
+        return False
+
     def setup_post_bootsetup(self):
         self.ws("fault_handler.enabled", True)
 
@@ -57,7 +61,7 @@ class PowerLossCheckoutCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
         self.failed = False
 
-        self.write_state("radio.state", Enums.radio_states["wait"])
+        #self.write_state("radio.state", Enums.radio_states["wait"])
 
         # Check that if QM is a non-wait state and QFH wants to powercycle the 
         # radio, QFH is unable to until QM returns to a wait state
@@ -153,9 +157,6 @@ class PowerLossCheckoutCase(SingleSatOnlyCase):
             # Qfh should want to powercycle
             self.check_faulty_powercycle()
 
-        
-            
-            
         if not self.failed:
             self.logger.put("QuakeFaultHandler did not inappropriately power cycle when QuakeManager was in a non-wait state.")
         else:
@@ -163,5 +164,3 @@ class PowerLossCheckoutCase(SingleSatOnlyCase):
         self.logger.put("Testcase finished.")
 
         self.finish()
-
-
