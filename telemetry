@@ -7,46 +7,10 @@
         "pan.state": 10
     },
     "fields": {
-        "adcs.compute.vec1.current": {
-            "bitsize": 100,
-            "flow_id": 14,
-            "index": 86,
-            "max": 1.0,
-            "min": 0.0,
-            "type": "lin float vector",
-            "writable": true
-        },
-        "adcs.compute.vec1.desired": {
-            "bitsize": 100,
-            "flow_id": 14,
-            "index": 87,
-            "max": 1.0,
-            "min": 0.0,
-            "type": "lin float vector",
-            "writable": true
-        },
-        "adcs.compute.vec2.current": {
-            "bitsize": 100,
-            "flow_id": 14,
-            "index": 88,
-            "max": 1.0,
-            "min": 0.0,
-            "type": "lin float vector",
-            "writable": true
-        },
-        "adcs.compute.vec2.desired": {
-            "bitsize": 100,
-            "flow_id": 14,
-            "index": 89,
-            "max": 1.0,
-            "min": 0.0,
-            "type": "lin float vector",
-            "writable": true
-        },
         "adcs.state": {
             "bitsize": 4,
             "flow_id": 13,
-            "index": 81,
+            "index": 105,
             "max": 10,
             "min": 0,
             "type": "unsigned char",
@@ -55,271 +19,273 @@
         "adcs_cmd.havt_disable0": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 126,
+            "index": 153,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable1": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 127,
+            "index": 154,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable10": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 136,
+            "index": 163,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable11": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 137,
+            "index": 164,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable12": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 138,
+            "index": 165,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable13": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 139,
+            "index": 166,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable14": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 140,
+            "index": 167,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable15": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 141,
+            "index": 168,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable16": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 142,
+            "index": 169,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable17": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 143,
+            "index": 170,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable18": {
             "bitsize": 1,
             "flow_id": 33,
+            "index": 171,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable2": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 128,
+            "index": 155,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable3": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 129,
+            "index": 156,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable4": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 130,
+            "index": 157,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable5": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 131,
+            "index": 158,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable6": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 132,
+            "index": 159,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable7": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 133,
+            "index": 160,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable8": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 134,
+            "index": 161,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_disable9": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 135,
+            "index": 162,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset0": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 108,
+            "index": 134,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset1": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 109,
+            "index": 135,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset10": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 118,
+            "index": 144,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset11": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 119,
+            "index": 145,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset12": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 120,
+            "index": 146,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset13": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 121,
+            "index": 147,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset14": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 122,
+            "index": 148,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset15": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 123,
+            "index": 149,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset16": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 124,
+            "index": 150,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset17": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 125,
+            "index": 151,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset18": {
             "bitsize": 1,
             "flow_id": 33,
+            "index": 152,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset2": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 110,
+            "index": 136,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset3": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 111,
+            "index": 137,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset4": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 112,
+            "index": 138,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset5": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 113,
+            "index": 139,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset6": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 114,
+            "index": 140,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset7": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 115,
+            "index": 141,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset8": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 116,
+            "index": 142,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.havt_reset9": {
             "bitsize": 1,
             "flow_id": 33,
-            "index": 117,
+            "index": 143,
             "type": "bool",
             "writable": true
         },
         "adcs_cmd.imu_gyr_filter": {
             "bitsize": 8,
             "flow_id": 23,
-            "index": 102,
+            "index": 130,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -328,7 +294,7 @@
         "adcs_cmd.imu_gyr_temp_desired": {
             "bitsize": 8,
             "flow_id": 23,
-            "index": 107,
+            "index": 133,
             "max": 85.0,
             "min": -40.0,
             "type": "float",
@@ -337,7 +303,7 @@
         "adcs_cmd.imu_gyr_temp_filter": {
             "bitsize": 8,
             "flow_id": 23,
-            "index": 103,
+            "index": 131,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -346,6 +312,7 @@
         "adcs_cmd.imu_gyr_temp_pwm": {
             "bitsize": 8,
             "flow_id": 23,
+            "index": 132,
             "max": 255,
             "min": 0,
             "type": "unsigned char",
@@ -354,7 +321,7 @@
         "adcs_cmd.imu_mag_filter": {
             "bitsize": 8,
             "flow_id": 23,
-            "index": 101,
+            "index": 129,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -363,7 +330,7 @@
         "adcs_cmd.mag1_mode": {
             "bitsize": 1,
             "flow_id": 23,
-            "index": 99,
+            "index": 127,
             "max": 1,
             "min": 0,
             "type": "unsigned char",
@@ -372,7 +339,7 @@
         "adcs_cmd.mag2_mode": {
             "bitsize": 1,
             "flow_id": 23,
-            "index": 100,
+            "index": 128,
             "max": 1,
             "min": 0,
             "type": "unsigned char",
@@ -381,7 +348,7 @@
         "adcs_cmd.mtr_cmd": {
             "bitsize": 48,
             "flow_id": 13,
-            "index": 96,
+            "index": 124,
             "max": 0.05666850134730339,
             "min": -0.05666850134730339,
             "type": "std float vector",
@@ -390,7 +357,7 @@
         "adcs_cmd.mtr_limit": {
             "bitsize": 16,
             "flow_id": 23,
-            "index": 97,
+            "index": 125,
             "max": 0.05666850134730339,
             "min": -0.05666850134730339,
             "type": "float",
@@ -399,7 +366,7 @@
         "adcs_cmd.mtr_mode": {
             "bitsize": 2,
             "flow_id": 23,
-            "index": 95,
+            "index": 123,
             "max": 2,
             "min": 0,
             "type": "unsigned char",
@@ -408,7 +375,7 @@
         "adcs_cmd.rwa_mode": {
             "bitsize": 2,
             "flow_id": 23,
-            "index": 90,
+            "index": 118,
             "max": 2,
             "min": 0,
             "type": "unsigned char",
@@ -417,7 +384,7 @@
         "adcs_cmd.rwa_ramp_filter": {
             "bitsize": 8,
             "flow_id": 23,
-            "index": 94,
+            "index": 122,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -426,7 +393,7 @@
         "adcs_cmd.rwa_speed_cmd": {
             "bitsize": 48,
             "flow_id": 7,
-            "index": 91,
+            "index": 119,
             "max": 680.677978515625,
             "min": -680.677978515625,
             "type": "std float vector",
@@ -435,7 +402,7 @@
         "adcs_cmd.rwa_speed_filter": {
             "bitsize": 8,
             "flow_id": 23,
-            "index": 93,
+            "index": 121,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -444,7 +411,7 @@
         "adcs_cmd.rwa_torque_cmd": {
             "bitsize": 48,
             "flow_id": 7,
-            "index": 92,
+            "index": 120,
             "max": 0.004187500569969416,
             "min": -0.004187500569969416,
             "type": "std float vector",
@@ -453,7 +420,7 @@
         "adcs_cmd.ssa_voltage_filter": {
             "bitsize": 8,
             "flow_id": 23,
-            "index": 98,
+            "index": 126,
             "max": 1.0,
             "min": 0.0,
             "type": "float",
@@ -468,21 +435,21 @@
         "adcs_monitor.functional_fault.base": {
             "bitsize": 1,
             "flow_id": 13,
-            "index": 11,
+            "index": 1,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.functional_fault.override": {
             "bitsize": 1,
             "flow_id": 13,
-            "index": 13,
+            "index": 3,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.functional_fault.persistence": {
             "bitsize": 16,
             "flow_id": 13,
-            "index": 15,
+            "index": 5,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -491,14 +458,14 @@
         "adcs_monitor.functional_fault.suppress": {
             "bitsize": 1,
             "flow_id": 13,
-            "index": 12,
+            "index": 2,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.functional_fault.unsignal": {
             "bitsize": 1,
             "flow_id": 13,
-            "index": 14,
+            "index": 4,
             "type": "bool",
             "writable": true
         },
@@ -879,21 +846,21 @@
         "adcs_monitor.wheel1_fault.base": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 16,
+            "index": 6,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel1_fault.override": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 18,
+            "index": 8,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel1_fault.persistence": {
             "bitsize": 16,
             "flow_id": 4,
-            "index": 20,
+            "index": 10,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -902,35 +869,35 @@
         "adcs_monitor.wheel1_fault.suppress": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 17,
+            "index": 7,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel1_fault.unsignal": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 19,
+            "index": 9,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel2_fault.base": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 21,
+            "index": 11,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel2_fault.override": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 23,
+            "index": 13,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel2_fault.persistence": {
             "bitsize": 16,
             "flow_id": 4,
-            "index": 25,
+            "index": 15,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -939,35 +906,35 @@
         "adcs_monitor.wheel2_fault.suppress": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 22,
+            "index": 12,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel2_fault.unsignal": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 24,
+            "index": 14,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel3_fault.base": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 26,
+            "index": 16,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel3_fault.override": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 28,
+            "index": 18,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel3_fault.persistence": {
             "bitsize": 16,
             "flow_id": 4,
-            "index": 30,
+            "index": 20,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -976,35 +943,35 @@
         "adcs_monitor.wheel3_fault.suppress": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 27,
+            "index": 17,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel3_fault.unsignal": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 29,
+            "index": 19,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.base": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 31,
+            "index": 21,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.override": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 33,
+            "index": 23,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.persistence": {
             "bitsize": 16,
             "flow_id": 4,
-            "index": 35,
+            "index": 25,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -1013,14 +980,14 @@
         "adcs_monitor.wheel_pot_fault.suppress": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 32,
+            "index": 22,
             "type": "bool",
             "writable": true
         },
         "adcs_monitor.wheel_pot_fault.unsignal": {
             "bitsize": 1,
             "flow_id": 4,
-            "index": 34,
+            "index": 24,
             "type": "bool",
             "writable": true
         },
@@ -1035,6 +1002,7 @@
         "attitude.pointer_vec1_desired": {
             "bitsize": 96,
             "flow_id": 14,
+            "index": 114,
             "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
@@ -1051,6 +1019,7 @@
         "attitude.pointer_vec2_desired": {
             "bitsize": 96,
             "flow_id": 14,
+            "index": 115,
             "max": 1.0,
             "min": 0.0,
             "type": "lin float vector",
@@ -1067,6 +1036,7 @@
         "attitude_estimator.mag_flag": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 28,
             "type": "bool",
             "writable": true
         },
@@ -1087,14 +1057,14 @@
         "cycle.auto": {
             "bitsize": 1,
             "flow_id": "undefined",
-            "index": 37,
+            "index": 27,
             "type": "bool",
             "writable": true
         },
         "cycle.start": {
             "bitsize": 1,
             "flow_id": "undefined",
-            "index": 36,
+            "index": 26,
             "type": "bool",
             "writable": true
         },
@@ -1107,7 +1077,7 @@
         "dcdc.ADCSMotor_cmd": {
             "bitsize": 1,
             "flow_id": 22,
-            "index": 72,
+            "index": 62,
             "type": "bool",
             "writable": true
         },
@@ -1120,28 +1090,28 @@
         "dcdc.SpikeDock_cmd": {
             "bitsize": 1,
             "flow_id": 22,
-            "index": 73,
+            "index": 63,
             "type": "bool",
             "writable": true
         },
         "dcdc.disable_cmd": {
             "bitsize": 1,
             "flow_id": 22,
-            "index": 74,
+            "index": 64,
             "type": "bool",
             "writable": true
         },
         "dcdc.reset_cmd": {
             "bitsize": 1,
             "flow_id": 22,
-            "index": 75,
+            "index": 65,
             "type": "bool",
             "writable": true
         },
         "detumble_safety_factor": {
             "bitsize": 10,
             "flow_id": 26,
-            "index": 76,
+            "index": 101,
             "max": 1.0,
             "min": 0.0,
             "type": "double",
@@ -1150,7 +1120,7 @@
         "docking_timeout_limit": {
             "bitsize": 21,
             "flow_id": 26,
-            "index": 80,
+            "index": 104,
             "max": 1440000,
             "min": 0,
             "type": "unsigned int",
@@ -1159,7 +1129,7 @@
         "docksys.config_cmd": {
             "bitsize": 1,
             "flow_id": 35,
-            "index": 82,
+            "index": 106,
             "type": "bool",
             "writable": true
         },
@@ -1184,7 +1154,7 @@
         "docksys.step_angle": {
             "bitsize": 16,
             "flow_id": "undefined",
-            "index": 64,
+            "index": 54,
             "max": 180.0,
             "min": 0.0,
             "type": "float",
@@ -1193,7 +1163,7 @@
         "docksys.step_delay": {
             "bitsize": 32,
             "flow_id": "undefined",
-            "index": 65,
+            "index": 55,
             "max": 4294967295,
             "min": 0,
             "type": "unsigned int",
@@ -1202,7 +1172,7 @@
         "downlink.shift_id1": {
             "bitsize": 1,
             "flow_id": 27,
-            "index": 66,
+            "index": 56,
             "max": 10,
             "min": 0,
             "type": "unsigned char",
@@ -1211,7 +1181,7 @@
         "downlink.shift_id2": {
             "bitsize": 1,
             "flow_id": 27,
-            "index": 67,
+            "index": 57,
             "max": 10,
             "min": 0,
             "type": "unsigned char",
@@ -1220,7 +1190,7 @@
         "downlink.toggle_id": {
             "bitsize": 1,
             "flow_id": 27,
-            "index": 68,
+            "index": 58,
             "max": 10,
             "min": 0,
             "type": "unsigned char",
@@ -1229,14 +1199,14 @@
         "fault_handler.enabled": {
             "bitsize": 1,
             "flow_id": 26,
-            "index": 85,
+            "index": 109,
             "type": "bool",
             "writable": true
         },
         "gomspace.batt_threshold": {
             "bitsize": 10,
             "flow_id": 6,
-            "index": 49,
+            "index": 39,
             "max": 9000,
             "min": 5000,
             "type": "unsigned int",
@@ -1269,7 +1239,7 @@
         "gomspace.counter_reset_cmd": {
             "bitsize": 1,
             "flow_id": 30,
-            "index": 61,
+            "index": 51,
             "type": "bool",
             "writable": true
         },
@@ -1372,21 +1342,21 @@
         "gomspace.get_hk.base": {
             "bitsize": 1,
             "flow_id": 6,
-            "index": 39,
+            "index": 29,
             "type": "bool",
             "writable": true
         },
         "gomspace.get_hk.override": {
             "bitsize": 1,
             "flow_id": 6,
-            "index": 41,
+            "index": 31,
             "type": "bool",
             "writable": true
         },
         "gomspace.get_hk.persistence": {
             "bitsize": 16,
             "flow_id": 6,
-            "index": 43,
+            "index": 33,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -1395,28 +1365,28 @@
         "gomspace.get_hk.suppress": {
             "bitsize": 1,
             "flow_id": 6,
-            "index": 40,
+            "index": 30,
             "type": "bool",
             "writable": true
         },
         "gomspace.get_hk.unsignal": {
             "bitsize": 1,
             "flow_id": 6,
-            "index": 42,
+            "index": 32,
             "type": "bool",
             "writable": true
         },
         "gomspace.gs_reboot_cmd": {
             "bitsize": 1,
             "flow_id": 30,
-            "index": 63,
+            "index": 53,
             "type": "bool",
             "writable": true
         },
         "gomspace.gs_reset_cmd": {
             "bitsize": 1,
             "flow_id": 30,
-            "index": 62,
+            "index": 52,
             "type": "bool",
             "writable": true
         },
@@ -1429,28 +1399,28 @@
         "gomspace.heater_cmd": {
             "bitsize": 1,
             "flow_id": 30,
-            "index": 60,
+            "index": 50,
             "type": "bool",
             "writable": true
         },
         "gomspace.low_batt.base": {
             "bitsize": 1,
             "flow_id": 6,
-            "index": 44,
+            "index": 34,
             "type": "bool",
             "writable": true
         },
         "gomspace.low_batt.override": {
             "bitsize": 1,
             "flow_id": 6,
-            "index": 46,
+            "index": 36,
             "type": "bool",
             "writable": true
         },
         "gomspace.low_batt.persistence": {
             "bitsize": 16,
             "flow_id": 6,
-            "index": 48,
+            "index": 38,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -1459,14 +1429,14 @@
         "gomspace.low_batt.suppress": {
             "bitsize": 1,
             "flow_id": 6,
-            "index": 45,
+            "index": 35,
             "type": "bool",
             "writable": true
         },
         "gomspace.low_batt.unsignal": {
             "bitsize": 1,
             "flow_id": 6,
-            "index": 47,
+            "index": 37,
             "type": "bool",
             "writable": true
         },
@@ -1509,42 +1479,42 @@
         "gomspace.power_cycle_output1_cmd": {
             "bitsize": 1,
             "flow_id": 12,
-            "index": 50,
+            "index": 40,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output2_cmd": {
             "bitsize": 1,
             "flow_id": 12,
-            "index": 51,
+            "index": 41,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output3_cmd": {
             "bitsize": 1,
             "flow_id": 12,
-            "index": 52,
+            "index": 42,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output4_cmd": {
             "bitsize": 1,
             "flow_id": 12,
-            "index": 53,
+            "index": 43,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output5_cmd": {
             "bitsize": 1,
             "flow_id": 12,
-            "index": 54,
+            "index": 44,
             "type": "bool",
             "writable": true
         },
         "gomspace.power_cycle_output6_cmd": {
             "bitsize": 1,
             "flow_id": 12,
-            "index": 55,
+            "index": 45,
             "type": "bool",
             "writable": true
         },
@@ -1559,7 +1529,7 @@
         "gomspace.pptmode_cmd": {
             "bitsize": 1,
             "flow_id": 30,
-            "index": 59,
+            "index": 49,
             "max": 2,
             "min": 1,
             "type": "unsigned char",
@@ -1568,7 +1538,7 @@
         "gomspace.pv1_cmd": {
             "bitsize": 9,
             "flow_id": 30,
-            "index": 56,
+            "index": 46,
             "max": 4000,
             "min": 0,
             "type": "unsigned int",
@@ -1577,7 +1547,7 @@
         "gomspace.pv2_cmd": {
             "bitsize": 9,
             "flow_id": 30,
-            "index": 57,
+            "index": 47,
             "max": 4000,
             "min": 0,
             "type": "unsigned int",
@@ -1586,7 +1556,7 @@
         "gomspace.pv3_cmd": {
             "bitsize": 9,
             "flow_id": 30,
-            "index": 58,
+            "index": 48,
             "max": 4000,
             "min": 0,
             "type": "unsigned int",
@@ -1683,6 +1653,7 @@
         "orbit.control.valve1": {
             "bitsize": 10,
             "flow_id": "undefined",
+            "index": 172,
             "max": 1000,
             "min": 0,
             "type": "unsigned int",
@@ -1691,6 +1662,7 @@
         "orbit.control.valve2": {
             "bitsize": 10,
             "flow_id": "undefined",
+            "index": 173,
             "max": 1000,
             "min": 0,
             "type": "unsigned int",
@@ -1699,6 +1671,7 @@
         "orbit.control.valve3": {
             "bitsize": 10,
             "flow_id": "undefined",
+            "index": 174,
             "max": 1000,
             "min": 0,
             "type": "unsigned int",
@@ -1707,6 +1680,7 @@
         "orbit.control.valve4": {
             "bitsize": 10,
             "flow_id": "undefined",
+            "index": 175,
             "max": 1000,
             "min": 0,
             "type": "unsigned int",
@@ -1785,7 +1759,7 @@
         "pan.sat_designation": {
             "bitsize": 2,
             "flow_id": 1,
-            "index": 84,
+            "index": 108,
             "max": 2,
             "min": 0,
             "type": "unsigned char",
@@ -1794,7 +1768,7 @@
         "pan.state": {
             "bitsize": 4,
             "flow_id": 1,
-            "index": 83,
+            "index": 107,
             "max": 12,
             "min": 0,
             "type": "unsigned char",
@@ -1849,6 +1823,7 @@
         "piksi_fh.cdpgs_delay_max_wait": {
             "bitsize": 20,
             "flow_id": 36,
+            "index": 112,
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
@@ -1857,12 +1832,14 @@
         "piksi_fh.enabled": {
             "bitsize": 1,
             "flow_id": 36,
+            "index": 113,
             "type": "bool",
             "writable": true
         },
         "piksi_fh.no_cdpgs_max_wait": {
             "bitsize": 20,
             "flow_id": 36,
+            "index": 111,
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
@@ -1871,6 +1848,7 @@
         "pointer.mtr_cmd": {
             "bitsize": 48,
             "flow_id": "undefined",
+            "index": 117,
             "max": 0.05666850134730339,
             "min": -0.05666850134730339,
             "type": "lin float vector",
@@ -1879,6 +1857,7 @@
         "pointer.rwa_torque_cmd": {
             "bitsize": 48,
             "flow_id": "undefined",
+            "index": 116,
             "max": 0.004187500569969416,
             "min": -0.004187500569969416,
             "type": "lin float vector",
@@ -1887,6 +1866,7 @@
         "prop.ctrl_cycles_per_closing": {
             "bitsize": 6,
             "flow_id": "undefined",
+            "index": 75,
             "max": 50,
             "min": 0,
             "type": "unsigned int",
@@ -1895,6 +1875,7 @@
         "prop.ctrl_cycles_per_cooling": {
             "bitsize": 6,
             "flow_id": "undefined",
+            "index": 79,
             "max": 50,
             "min": 0,
             "type": "unsigned int",
@@ -1903,6 +1884,7 @@
         "prop.ctrl_cycles_per_filling": {
             "bitsize": 6,
             "flow_id": "undefined",
+            "index": 78,
             "max": 50,
             "min": 0,
             "type": "unsigned int",
@@ -1911,6 +1893,7 @@
         "prop.cycles_until_firing": {
             "bitsize": 9,
             "flow_id": "undefined",
+            "index": 67,
             "max": 256,
             "min": 0,
             "type": "unsigned int",
@@ -1919,6 +1902,7 @@
         "prop.max_pressurizing_cycles": {
             "bitsize": 6,
             "flow_id": "undefined",
+            "index": 76,
             "max": 50,
             "min": 0,
             "type": "unsigned int",
@@ -1927,6 +1911,7 @@
         "prop.max_venting_cycles": {
             "bitsize": 6,
             "flow_id": "undefined",
+            "index": 74,
             "max": 50,
             "min": 0,
             "type": "unsigned int",
@@ -1943,21 +1928,21 @@
         "prop.overpressured.base": {
             "bitsize": 1,
             "flow_id": 5,
-            "index": 1,
+            "index": 86,
             "type": "bool",
             "writable": true
         },
         "prop.overpressured.override": {
             "bitsize": 1,
             "flow_id": 5,
-            "index": 3,
+            "index": 88,
             "type": "bool",
             "writable": true
         },
         "prop.overpressured.persistence": {
             "bitsize": 16,
             "flow_id": 5,
-            "index": 5,
+            "index": 90,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -1966,14 +1951,14 @@
         "prop.overpressured.suppress": {
             "bitsize": 1,
             "flow_id": 5,
-            "index": 2,
+            "index": 87,
             "type": "bool",
             "writable": true
         },
         "prop.overpressured.unsignal": {
             "bitsize": 1,
             "flow_id": 5,
-            "index": 4,
+            "index": 89,
             "type": "bool",
             "writable": true
         },
@@ -1988,21 +1973,21 @@
         "prop.pressurize_fail.base": {
             "bitsize": 1,
             "flow_id": 5,
-            "index": 6,
+            "index": 81,
             "type": "bool",
             "writable": true
         },
         "prop.pressurize_fail.override": {
             "bitsize": 1,
             "flow_id": 5,
-            "index": 8,
+            "index": 83,
             "type": "bool",
             "writable": true
         },
         "prop.pressurize_fail.persistence": {
             "bitsize": 16,
             "flow_id": 5,
-            "index": 10,
+            "index": 85,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -2011,20 +1996,21 @@
         "prop.pressurize_fail.suppress": {
             "bitsize": 1,
             "flow_id": 5,
-            "index": 7,
+            "index": 82,
             "type": "bool",
             "writable": true
         },
         "prop.pressurize_fail.unsignal": {
             "bitsize": 1,
             "flow_id": 5,
-            "index": 9,
+            "index": 84,
             "type": "bool",
             "writable": true
         },
         "prop.sched_intertank1": {
             "bitsize": 20,
             "flow_id": "undefined",
+            "index": 72,
             "max": 999000,
             "min": 0,
             "type": "unsigned int",
@@ -2033,6 +2019,7 @@
         "prop.sched_intertank2": {
             "bitsize": 20,
             "flow_id": "undefined",
+            "index": 73,
             "max": 999000,
             "min": 0,
             "type": "unsigned int",
@@ -2041,6 +2028,7 @@
         "prop.sched_valve1": {
             "bitsize": 10,
             "flow_id": "undefined",
+            "index": 68,
             "max": 999,
             "min": 0,
             "type": "unsigned int",
@@ -2049,6 +2037,7 @@
         "prop.sched_valve2": {
             "bitsize": 10,
             "flow_id": "undefined",
+            "index": 69,
             "max": 999,
             "min": 0,
             "type": "unsigned int",
@@ -2057,6 +2046,7 @@
         "prop.sched_valve3": {
             "bitsize": 10,
             "flow_id": "undefined",
+            "index": 70,
             "max": 999,
             "min": 0,
             "type": "unsigned int",
@@ -2065,6 +2055,7 @@
         "prop.sched_valve4": {
             "bitsize": 10,
             "flow_id": "undefined",
+            "index": 71,
             "max": 999,
             "min": 0,
             "type": "unsigned int",
@@ -2073,6 +2064,7 @@
         "prop.state": {
             "bitsize": 3,
             "flow_id": 5,
+            "index": 66,
             "max": 6,
             "min": 0,
             "type": "unsigned int",
@@ -2089,6 +2081,7 @@
         "prop.tank1.valve_choice": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 80,
             "max": 1,
             "min": 0,
             "type": "unsigned int",
@@ -2097,18 +2090,21 @@
         "prop.tank1_temp_high.base": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 96,
             "type": "bool",
             "writable": true
         },
         "prop.tank1_temp_high.override": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 98,
             "type": "bool",
             "writable": true
         },
         "prop.tank1_temp_high.persistence": {
             "bitsize": 16,
             "flow_id": "undefined",
+            "index": 100,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -2117,12 +2113,14 @@
         "prop.tank1_temp_high.suppress": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 97,
             "type": "bool",
             "writable": true
         },
         "prop.tank1_temp_high.unsignal": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 99,
             "type": "bool",
             "writable": true
         },
@@ -2145,18 +2143,21 @@
         "prop.tank2_temp_high.base": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 91,
             "type": "bool",
             "writable": true
         },
         "prop.tank2_temp_high.override": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 93,
             "type": "bool",
             "writable": true
         },
         "prop.tank2_temp_high.persistence": {
             "bitsize": 16,
             "flow_id": "undefined",
+            "index": 95,
             "max": 65535,
             "min": 0,
             "type": "unsigned int",
@@ -2165,18 +2166,21 @@
         "prop.tank2_temp_high.suppress": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 92,
             "type": "bool",
             "writable": true
         },
         "prop.tank2_temp_high.unsignal": {
             "bitsize": 1,
             "flow_id": "undefined",
+            "index": 94,
             "type": "bool",
             "writable": true
         },
         "prop.threshold_firing_pressure": {
             "bitsize": 4,
             "flow_id": "undefined",
+            "index": 77,
             "max": 50.0,
             "min": 10.0,
             "type": "float",
@@ -2185,6 +2189,7 @@
         "qfh.state": {
             "bitsize": 3,
             "flow_id": "undefined",
+            "index": 110,
             "max": 5,
             "min": 0,
             "type": "unsigned char",
@@ -2209,7 +2214,7 @@
         "radio.max_transceive": {
             "bitsize": 20,
             "flow_id": 34,
-            "index": 70,
+            "index": 60,
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
@@ -2218,7 +2223,7 @@
         "radio.max_wait": {
             "bitsize": 20,
             "flow_id": 34,
-            "index": 69,
+            "index": 59,
             "max": 720000,
             "min": 0,
             "type": "unsigned int",
@@ -2243,7 +2248,7 @@
         "telem.dump": {
             "bitsize": 1,
             "flow_id": "undefined",
-            "index": 71,
+            "index": 61,
             "type": "bool",
             "writable": true
         },
@@ -2538,7 +2543,7 @@
         "trigger_dist.close_approach": {
             "bitsize": 14,
             "flow_id": 26,
-            "index": 77,
+            "index": 102,
             "max": 10000.0,
             "min": 0.0,
             "type": "double",
@@ -2547,7 +2552,7 @@
         "trigger_dist.docking": {
             "bitsize": 10,
             "flow_id": 26,
-            "index": 78,
+            "index": 103,
             "max": 100.0,
             "min": 0.0,
             "type": "double",
