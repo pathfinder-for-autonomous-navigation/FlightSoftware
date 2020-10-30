@@ -29,23 +29,23 @@ class MTRDiag(SingleSatOnlyCase):
         self.print_ws("adcs_cmd.mtr_mode", Enums.mtr_modes["MTR_ENABLED"])
 
         self.cycle()
-
         self.print_header("Finished Initialization")
-
     
     def run_case_singlesat(self):
         # write the command and read the command and verify a correct relaying.
         self.print_header("Verify Command Write and Command Read")
 
         mtr_max = 0.05666
-        command1 = [mtr_max, mtr_max, -mtr_max]
-        self.print_ws("adcs_cmd.mtr_cmd", command1)
-        self.cycle()
-        read_cmd = self.print_rs("adcs_cmd.mtr_cmd")
-        self.assert_vec_within(command1, read_cmd, 1e-6)
-
-        while(True):
-            time.sleep(1)
+        command1 = [mtr_max, mtr_max, mtr_max]
+        command2 = [-x for x in command1]
+        for i in range(10):
+            self.print_ws("adcs_cmd.mtr_cmd", command1)
+            self.cycle()
+            time.sleep(5)
+            self.print_ws("adcs_cmd.mtr_cmd", command2)
+            self.cycle()
+            time.sleep(5)
+        self.print_ws("cycle.auto", True)
 
         self.finish()
         pass
