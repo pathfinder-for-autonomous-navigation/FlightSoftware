@@ -4,6 +4,12 @@ geograv_wrapper.mexmaci64
 geomag_wrapper.mexmaci64
 geograv_wrapper.mexa64
 geomag_wrapper.mexa64
+estimator_reset.mexmaci64
+estimator_triad_reset.mexmaci64
+estimator_update.mexmaci64
+estimator_reset.mexa64
+estimator_triad_reset.mexa64
+estimator_update.mexa64
 
 src/uploaded_flow_data.cpp
 
