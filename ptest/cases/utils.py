@@ -135,8 +135,8 @@ class Enums(object):
     ])
 
     mtr_modes = FSWEnum([
-        "MTR_ENABLED",
-        "MTR_DISABLED"
+        "MTR_DISABLED",
+        "MTR_ENABLED"
     ])
 
     # copied from havt_devices.hpp
