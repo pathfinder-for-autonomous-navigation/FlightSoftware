@@ -243,6 +243,8 @@ class CppSimulation(Simulation):
         mappings = self.sensors_map[role]
         # iterate across each fc_sf vs psim_sf pair
         for fc_sf,psim_sf in mappings.items():
+            local = self.sensor_readings[role][fc_sf]
+            local = 
             fc.write_state(fc_sf, self.sensor_readings[role][fc_sf])
 
     def read_adcs_estimator_outputs(self, flight_controller):
@@ -275,7 +277,7 @@ class CppSimulation(Simulation):
 
     def read_actuators(self, fc):
         role = self.fc_to_role_map[fc.device_name]
-        for fc_sf in self.actuators_map[role]
+        for fc_sf in self.actuators_map[role]:
             self.actuator_cmds[role][fc_sf] = fc.smart_read(fc_sf)
         
     def send_actuations_to_simmed_satellites(self):
@@ -285,8 +287,8 @@ class CppSimulation(Simulation):
             # iterate across each fc_sf vs psim_sf pair
             for fc_sf,psim_sf in mappings.items():
                 local = self.actuator_cmds[role][fc_sf]
-                if type(local) == list
-                    local = lin:Vector(local)
+                if type(local) == list:
+                    local = lin.Vector3(local)
 
                 self.mysim[psim_sf] = local
 

@@ -4,6 +4,5 @@
         "orbit.vel": "truth.sat.orbit.v"
     },
     "fc_vs_sim_a":{
-        "adcs_cmd.mtr_cmd": "truth.sat.attitude.mtr_cmd"
     }
 }
