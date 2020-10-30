@@ -48,9 +48,9 @@ void setup() {
   pinMode(mtr2_r_pin, OUTPUT);
 
   // Setup the magnetorquers on the above pins
-  mtrs[0].setup(mtr0_f_pin, mtr0_r_pin);
-  mtrs[1].setup(mtr1_f_pin, mtr1_r_pin);
-  mtrs[2].setup(mtr2_f_pin, mtr2_r_pin);
+  mtrs[0].setup(mtr0_f_pin, mtr0_r_pin); // 7 8
+  mtrs[1].setup(mtr1_f_pin, mtr1_r_pin); // 35 36 
+  mtrs[2].setup(mtr2_f_pin, mtr2_r_pin); // 2 14
 
   // Reset the magnetorquers
   for (auto &mtr : mtrs) mtr.reset();
