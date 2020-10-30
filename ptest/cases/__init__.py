@@ -23,5 +23,3 @@ from .ci_case import CICase
 from .simple_fault_handlers import ADCSWheelFaultHandler, LowBattFaultHandler
 from .safehold_reboot import SafeholdReboot
 from .torquer_rotate_case import MTorquerCase
-
-from .mtr_diag import MTRDiag
