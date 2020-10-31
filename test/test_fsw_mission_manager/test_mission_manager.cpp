@@ -102,6 +102,7 @@ void test_dispatch_standby() {
 
         tf.set(adcs_state_t::point_standby); tf.step(); tf.check(adcs_state_t::point_standby);
         tf.set(adcs_state_t::point_manual);  tf.step(); tf.check(adcs_state_t::point_manual);
+        tf.set(adcs_state_t::manual);  tf.step(); tf.check(adcs_state_t::manual);
         tf.set(adcs_state_t::detumble);      tf.step(); tf.check(adcs_state_t::detumble);
     }
 
