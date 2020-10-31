@@ -42,11 +42,38 @@ class TelemetryInfoGenerator {
      * }
      * 
      */
+    TelemetryInfo generate_telemetry_info();
     nlohmann::json generate_telemetry_info();
+
+    struct FieldData
+    {
+      std::string name;
+      std::string type;
+      unsigned char flow_id = 0;
+      bool writable = false;
+      double min = 0;
+      double max = 0;
+      unsigned int bitsize = 0;
+    };
+
+    struct TelemetryInfo
+    {
+      std::map<std::string, unsigned int> eeprom_saved_fields;
+      std::map<std::string, FieldData> field_data;
+      std::vector<DownlinkProducer::FlowData> flow_data;
+    };
+
   private:
     StateFieldRegistry r;
     MainControlLoop fcp;
     const std::vector<DownlinkProducer::FlowData>& flow_data;
 };
+
+void to_json(nlohmann::json& j, const TelemetryInfoGenerator::FieldData& d);
+void from_json(const nlohmann::json& j, TelemetryInfoGenerator::FieldData& d);
+void to_json(nlohmann::json& j, const DownlinkProducer::FlowData& d);
+void from_json(const nlohmann::json& j, DownlinkProducer::FlowData& d);
+void to_json(nlohmann::json& j, const TelemetryInfoGenerator::TelemetryInfo& d);
+void from_json(const nlohmann::json& j, TelemetryInfoGenerator::TelemetryInfo& d);
 
 #endif
