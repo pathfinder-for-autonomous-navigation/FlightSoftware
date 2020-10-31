@@ -20,8 +20,7 @@ class GomspaceLongDurationCheckoutCase(SingleSatOnlyCase):
     def prop_valves_setup(self):
         self.logger.put("Begin Valve Setup")
         self.ws("dcdc.SpikeDock_cmd", True) 
-        self.sim.flight_controller.write_state(
-            "prop.state", Enums.prop_states["disabled"])
+        self.flight_controller.write_state("prop.state", Enums.prop_states["manual"])
 
     def docking_spin_motor_setup(self):
         self.logger.put("Begin Docking Motor Setup")
