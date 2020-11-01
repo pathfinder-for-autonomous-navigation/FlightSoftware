@@ -71,33 +71,18 @@ Battery.prototype.updateState = function () {
 
 };
 
-Battery.prototype.getValue = function(url, i, f){
-  
-  request(url, {
-    params: {
-      index: i, 
-      field: f
-    }
-  }, (error, response, body) =>{
-    console.log("ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ")
-    console.log("ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ")
-    console.log("ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ")
-    console.log(error)
-    console.log("RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE ")
-    console.log("RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE ")
-    console.log("RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE ")
-    console.log(response)
-    console.log("BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY ")
-    console.log("BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY ")
-    console.log("BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY ")
-    console.log(body)
-    if(error){console.log("error in http GET");}
-    if(response.statusCode == 200){
-      console.log("got response")
-      return body;
-    }
+Battery.prototype.getValue = function(myUrl, i, f){
+  var value;
+  var propertiesObject = { index: i, field:f };
+  request({url: myUrl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
+    if(err) { console.log(err); return; }
+    console.log("Get response: " + response.statusCode);
+    if(err) { console.log("error in http GET"); return; }
+    value = body;
   });
-};
+  return value;
+  }
+
 
 
 /**
