@@ -82,7 +82,7 @@ Battery.prototype.getValue = function(myUrl, i, f){
   });
   console.log(myUrl)
   console.log(value)
-  r
+  return value;
   }
 
 
