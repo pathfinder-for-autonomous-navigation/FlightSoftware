@@ -1,7 +1,10 @@
 {
     "fc_vs_sim_s":{
         "orbit.pos": "truth.sat.orbit.r",
-        "orbit.vel": "truth.sat.orbit.v"
+        "orbit.vel": "truth.sat.orbit.v",
+        "adcs_monitor.ssa_vec":  "truth.sat.environment.s.body",
+        "adcs_monitor.mag1_vec": "truth.sat.environment.b.body",
+        "adcs_monitor.gyr_vec": "truth.sat.attitude.w"
     },
     "fc_vs_sim_a":{
     }

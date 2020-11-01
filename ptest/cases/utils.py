@@ -193,7 +193,7 @@ class BootUtil(object):
           This option is redundant if fast=True.
         """
 
-        if state not in ["manual", "startup", "initialization_hold", "standby", "leader", "follower"]:
+        if state not in ["manual", "startup", "initialization_hold", "standby", "leader", "follower", "detumble"]:
             raise ValueError("Invalid boot state specified.")
 
         self.flight_controller = flight_controller

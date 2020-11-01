@@ -196,7 +196,7 @@ class CppSimulation(Simulation):
         postfix = ".txt"
         configs = ["deployment"]
         configs = [prefix + x + postfix for x in configs]
-        self.mysim = psim.Simulation(psim.sims.SingleOrbitGnc, configs)
+        self.mysim = psim.Simulation(psim.sims.SingleAttitudeOrbitGnc, configs)
         self.dt = 1e-9
 
         self.sat_names = ['leader','follower']
@@ -225,7 +225,7 @@ class CppSimulation(Simulation):
     def update_sensors(self):
         self.sensor_readings_follower = []
 
-        self.sim_time = self.mysim["truth.t.ns"]
+        self.sim_time = self.mysim["truth.t.s"]
 
         # iterate across each satellite's mappings
         for role,mappings in self.sensors_map.items():
@@ -287,6 +287,7 @@ class CppSimulation(Simulation):
             for fc_sf,psim_sf in mappings.items():
                 local = self.actuator_cmds[role][fc_sf]
                 if type(local) == list:
+                    # lol should generalize this
                     local = lin.Vector3(local)
 
                 self.mysim[psim_sf] = local

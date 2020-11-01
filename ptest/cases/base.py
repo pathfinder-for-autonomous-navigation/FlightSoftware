@@ -271,6 +271,10 @@ class SingleSatOnlyCase(PTestCase):
         self.logger.put(f"{name} is {ret}")
         return ret
     
+    def print_rs_psim(self, name):
+        ret = self.sim.mysim[name]
+        self.logger.put(f"{name} is {ret}")
+
     def ws(self, name, val):
         """
         Writes a state
