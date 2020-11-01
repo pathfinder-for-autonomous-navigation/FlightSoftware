@@ -18,7 +18,7 @@ class ActuateHardwareCase(SingleSatOnlyCase):
 
     def docking_spin_motor_setup(self):
         self.logger.put("Begin Docking Motor Setup")
-        self.ws("dcdc.SpikeDock_cmd", "true") #should this be "true" or True ?
+        self.ws("dcdc.SpikeDock_cmd", True)
 
     def spin_motors(self, speed):
         assert(speed in range(-680, 681))
