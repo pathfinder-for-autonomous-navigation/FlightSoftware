@@ -53,12 +53,13 @@ function Battery() {
 **/
 Battery.prototype.updateState = function () {
   
-  Object.keys(this.state).forEach(async function (id) {
+  Object.keys(this.state).forEach(function (id) {
 
     if(typeof(this.state[id]) == 'object'){//if state is an object
       
       Object.keys(this.state[id]).forEach(function (subId){
         let res = this.getValue(searchURl, searchIndex, id + '.' + subId);
+        console.log(res);
         (this.state[id])[subId] = res;
       },this)
 
@@ -73,20 +74,22 @@ Battery.prototype.updateState = function () {
 
 };
 
-Battery.prototype.getValue = function(myUrl, i, f){
+Battery.prototype.getValue = async function(myUrl, i, f){
   
   var propertiesObject = { index: i, field:f };
 
-  return new Promise(function(resolve, reject){
+  let p = new Promise(function(resolve, reject){
     request({url: myUrl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
       console.log("Get response: " + response.statusCode);
       console.log(myUrl)
       console.log(f)
-      console.log(body)
       if(!err && response.statusCode == 200) { resolve(body);}
       else{ reject(error); }
     });
   });
+
+  return await p;
+
   }
 
 
