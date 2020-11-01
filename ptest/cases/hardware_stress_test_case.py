@@ -34,22 +34,22 @@ class ActuateHardwareCase(SingleSatOnlyCase):
         self.ws("prop.sched_valve4", val)
 
     def turn_motor(self):
-        if self.rs("docksys.dock_config") == "true" and self.rs("docksys.config_cmd") == "true":
-            self.ws("docksys.config_cmd", "false")
-        elif self.rs("docksys.dock_config") == "false" and self.rs("docksys.config_cmd") == "false":
-            self.ws("docksts.config_cmd", "true")
+        if self.rs("docksys.dock_config") == True and self.rs("docksys.config_cmd") == True:
+            self.ws("docksys.config_cmd", False)
+        elif self.rs("docksys.dock_config") == False and self.rs("docksys.config_cmd") == False:
+            self.ws("docksts.config_cmd", True)
     
     def turn_motor_on(self):
-        if self.rs("docksys.dock_config") == "true" and self.rs("docksys.config_cmd") == "true":
-            self.ws("docksys.config_cmd", "false")
-        elif self.rs("docksys.dock_config") == "false" and self.rs("docksys.config_cmd") == "false":
-            self.ws("docksts.config_cmd", "true")
+        if self.rs("docksys.dock_config") == True and self.rs("docksys.config_cmd") == True:
+            self.ws("docksys.config_cmd", False)
+        elif self.rs("docksys.dock_config") == False and self.rs("docksys.config_cmd") == False:
+            self.ws("docksts.config_cmd", True)
     
     def turn_motor_off(self):
-        if self.rs("docksys.dock_config") == "false" and self.rs("docksys.config_cmd") == "true":
-            self.ws("docksys.config_cmd", "true")
-        elif self.rs("docksys.dock_config") == "true" and self.rs("docksys.config_cmd") == "false":
-            self.ws("docksts.config_cmd", "false")
+        if self.rs("docksys.dock_config") == False and self.rs("docksys.config_cmd") == True:
+            self.ws("docksys.config_cmd", True)
+        elif self.rs("docksys.dock_config") == True and self.rs("docksys.config_cmd") == False:
+            self.ws("docksts.config_cmd", False)
 
 class HardwareStressCheckoutCase(ActuateHardwareCase):
     def setup_post_bootsetup(self):
