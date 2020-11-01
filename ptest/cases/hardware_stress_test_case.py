@@ -47,9 +47,9 @@ class ActuateHardwareCase(SingleSatOnlyCase):
     
     def turn_motor_off(self):
         if self.rs("docksys.dock_config") == False and self.rs("docksys.config_cmd") == True:
-            self.ws("docksys.config_cmd", True)
-        elif self.rs("docksys.dock_config") == True and self.rs("docksys.config_cmd") == False:
             self.ws("docksys.config_cmd", False)
+        elif self.rs("docksys.dock_config") == True and self.rs("docksys.config_cmd") == False:
+            self.ws("docksys.config_cmd", True)
 
 class HardwareStressCheckoutCase(ActuateHardwareCase):
     def setup_post_bootsetup(self):
