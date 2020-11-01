@@ -81,6 +81,7 @@ Battery.prototype.getValue = function(myUrl, i, f){
     request({url: myUrl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
       console.log("Get response: " + response.statusCode);
       console.log(myUrl)
+      console.log(f)
       console.log(body)
       if(!err && response.statusCode == 200) { resolve(body);}
       else{ reject(error); }
