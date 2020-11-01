@@ -53,18 +53,20 @@ function Battery() {
 **/
 Battery.prototype.updateState = function () {
   
-  Object.keys(this.state).forEach(function (id) {
+  Object.keys(this.state).forEach(async function (id) {
 
     if(typeof(this.state[id]) == 'object'){//if state is an object
       
       Object.keys(this.state[id]).forEach(function (subId){
-        (this.state[id])[subId] = this.getValue(searchURl, searchIndex, 'gomspace.' + subId);
+        let res = this.getValue(searchURl, searchIndex, 'gomspace.' + id + '.' + subId);
+        (this.state[id])[subId] = res;
       },this)
 
 
 
     }else{// if state is a primitive type
-      this.state[id] = this.getValue(searchURl, searchIndex, 'gomspace.' + id);
+      let res = this.getValue(searchURl, searchIndex, 'gomspace.' + id);
+      this.state[id] = res;
     }
 
   }, this);
@@ -72,19 +74,18 @@ Battery.prototype.updateState = function () {
 };
 
 Battery.prototype.getValue = function(myUrl, i, f){
-  var value;
+  
   var propertiesObject = { index: i, field:f };
-  request({url: myUrl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
-    if(err) { console.log(err); return; }
-    console.log("Get response: " + response.statusCode);
-    if(err) { console.log("error in http GET"); return; }
-    value = body;
-    console.log("Recieved value")
-    console.log(value)
+
+  return new Promise(function(resolve, reject){
+    request({url: myUrl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
+      console.log("Get response: " + response.statusCode);
+      console.log(myUrl)
+      console.log(body)
+      if(!err && response.statusCode == 200) { resolve(body);}
+      else{ reject(error); }
+    });
   });
-  console.log(myUrl)
-  console.log(value)
-  return value;
   }
 
 
