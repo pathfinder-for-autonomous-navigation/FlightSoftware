@@ -59,6 +59,7 @@ Battery.prototype.updateState = function () {
       
       Object.keys(this.state[id]).forEach(function (subId){
         let res = this.getValue(searchURl, searchIndex, id + '.' + subId);
+        console.log("test");
         console.log(res);
         (this.state[id])[subId] = res;
       },this)
@@ -67,6 +68,8 @@ Battery.prototype.updateState = function () {
 
     }else{// if state is a primitive type
       let res = this.getValue(searchURl, searchIndex, id);
+      console.log("test non object");
+      console.log(res);
       this.state[id] = res;
     }
 
