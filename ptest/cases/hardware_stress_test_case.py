@@ -1,14 +1,7 @@
 from .base import SingleSatOnlyCase, TestCaseFailure
 from .utils import Enums
 
-class HardwareStressCheckoutCase(SingleSatOnlyCase):
-    def setup_post_bootsetup(self):
-        self.print_header("Begin Hardware Stress Test Checkout Case")
-        self.docking_spin_motor_setup()
-        self.prop_valves_setup()
-        self.adcs_spin_wheels_setup()
-        self.cycle()
-
+class ActuateHardwareCase(SingleSatOnlyCase):
     def adcs_spin_wheels_setup(self):
         self.logger.put("Begin ADCS Motor Setup")
         self.ws("dcdc.ADCSMotor_cmd", True)
@@ -40,21 +33,49 @@ class HardwareStressCheckoutCase(SingleSatOnlyCase):
         self.ws("prop.sched_valve3", val)
         self.ws("prop.sched_valve4", val)
 
-    def turn_motors(self):
+    def turn_motor(self):
         if self.rs("docksys.dock_config") == "true" and self.rs("docksys.config_cmd" == "true"):
             self.ws("docksys.config_cmd", "false")
         elif self.rs("docksys.dock_config") == "false" and self.rs("docksys.config_cmd" == "false"):
             self.ws("docksts.config_cmd", "true")
+    
+    def turn_motor_on(self):
+        if self.rs("docksys.dock_config") == "true" and self.rs("docksys.config_cmd" == "true"):
+            self.ws("docksys.config_cmd", "false")
+        elif self.rs("docksys.dock_config") == "false" and self.rs("docksys.config_cmd" == "false"):
+            self.ws("docksts.config_cmd", "true")
+    
+    def turn_motor_off(self):
+        if self.rs("docksys.dock_config") == "false" and self.rs("docksys.config_cmd" == "true"):
+            self.ws("docksys.config_cmd", "true")
+        elif self.rs("docksys.dock_config") == "true" and self.rs("docksys.config_cmd" == "false"):
+            self.ws("docksts.config_cmd", "false")
+
+class HardwareStressCheckoutCase(ActuateHardwareCase):
+    def setup_post_bootsetup(self):
+        self.print_header("Begin Hardware Stress Test Checkout Case")
+        self.docking_spin_motor_setup()
+        self.prop_valves_setup()
+        self.adcs_spin_wheels_setup()
+        self.cycle()
 
     def run_case_singlesat(self):
         self.cycle_no = self.rs("pan.cycle_no")
         self.logger.put("Turning on wheels at speed 680.")
         self.spin_motors(680)
         self.fire_valves()
-        self.logger.put("Turning on the docking motor and begin firing valves.")
-        for _ in range(600):
-            self.turn_motors()
-            self.fire_valves() 
+        self.logger.put("Turning on the docking motor.")
+        for _ in range(300):
+            self.turn_motor()
+            self.cycle()
+            self.cycle_no = self.rs("pan.cycle_no")
+            if self.cycle_no % 20 == 0:
+                self.logger.put("Current cycle: " + str(self.cycle_no))
+        
+        self.logger.put("Turning off the docking motor and beginning firing valves.")
+        self.turn_motor_off()
+        for _ in range(300):
+            self.fire_valves()
             self.cycle()
             self.cycle_no = self.rs("pan.cycle_no")
             if self.cycle_no % 20 == 0:
