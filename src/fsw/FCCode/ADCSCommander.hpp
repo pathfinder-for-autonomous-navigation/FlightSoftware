@@ -26,11 +26,9 @@ class ADCSCommander : public TimedControlTask<void> {
     // input fields, given by a casted adcs_state_t enum
     const WritableStateField<unsigned char>* adcs_state_fp;
 
-    // outputs from AttitudeComputer as inputs
-    const WritableStateField<lin::Vector3f>* adcs_vec1_current_fp;
-    const WritableStateField<lin::Vector3f>* adcs_vec1_desired_fp;
-    const WritableStateField<lin::Vector3f>* adcs_vec2_current_fp;
-    const WritableStateField<lin::Vector3f>* adcs_vec2_desired_fp;
+    // outputs from AttitudeController as inputs
+    const WritableStateField<lin::Vector3f>* pointer_rwa_torque_cmd;
+    const WritableStateField<lin::Vector3f>* pointer_mtr_cmd;
 
     // begin output fields necessary for adcs_box controller
     const Serializer<float> filter_sr;
@@ -61,15 +59,14 @@ class ADCSCommander : public TimedControlTask<void> {
     std::vector<WritableStateField<bool>> havt_cmd_reset_vector_f;
     std::vector<WritableStateField<bool>> havt_cmd_disable_vector_f;
 
-    /** Internal specific dispatch call to calculate commands */
-    void dispatch_startup();    
-    void dispatch_limited();    
-    void dispatch_zero_torque();
-    void dispatch_zero_L();     
-    void dispatch_detumble();   
-    void dispatch_manual();     
-    void dispatch_standby();    
-    void dispatch_docking();    
+    template<typename T, size_t N>
+    std::array<T, N> lin_to_std(lin::Vector<T,N> v){
+        std::array<T,N> ret;
+        for(unsigned char i = 0; i<N; i++){
+            ret[i] = v(i);
+        }
+        return ret;
+    }   
 };
 
 #endif

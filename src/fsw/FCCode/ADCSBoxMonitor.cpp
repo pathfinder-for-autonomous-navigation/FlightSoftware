@@ -157,8 +157,7 @@ void ADCSBoxMonitor::execute(){
         ssa_vec_f.set(to_linvector(ssa_vec));
     }
     else{
-        const float nan = gnc::constant::nan_f;
-        ssa_vec_f.set({nan,nan,nan});
+        ssa_vec_f.set(lin::nans<lin::Vector3f>());
     }
     
     //set statefields from internal containers
