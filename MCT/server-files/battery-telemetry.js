@@ -79,6 +79,8 @@ Battery.prototype.getValue = function(myUrl, i, f){
     console.log("Get response: " + response.statusCode);
     if(err) { console.log("error in http GET"); return; }
     value = body;
+    console.log("Recieved value")
+    console.log(value)
   });
   console.log(myUrl)
   console.log(value)
