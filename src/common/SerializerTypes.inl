@@ -711,7 +711,7 @@ namespace SerializerConstants {
     /**
      * @brief Specialization of Serializer for double vectors and quaternions.
      */
-    TRACKED_CONSTANT_SC(size_t, dqsz, 30); // Compressed size for a double-based quaternion
+    TRACKED_CONSTANT_SC(size_t, dqsz, 40); // Compressed size for a double-based quaternion
     TRACKED_CONSTANT_SC(size_t, dvcsz, 10); // Compressed size for a normalized component of a double-based vector
     TRACKED_CONSTANT_SC(size_t, dqcsz, 10); // Compressed size for a normalized component of a double-based quaternion
 

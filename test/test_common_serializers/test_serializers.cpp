@@ -574,9 +574,9 @@ void test_vec_serializer() {
         TEST_ASSERT_EQUAL_FLOAT(0.5, result_arr[2]);
     }
     else {
-        TEST_ASSERT_EQUAL_DOUBLE(3.141592654, result_arr[0]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.3, result_arr[1]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.5, result_arr[2]);
+        TEST_ASSERT_EQUAL_DOUBLE(3.141592654L, result_arr[0]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.3L, result_arr[1]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.5L, result_arr[2]);
     }
 
     // Test printing
@@ -622,8 +622,8 @@ void test_quat_serializer() {
         quat_t result;
 
         // Generate random quaternion.
-        const T t = rand() / T(RAND_MAX) * (2 * 3.14159265);
-        const T tt = rand() / T(RAND_MAX) * (2 * 3.14159265);
+        const T t = rand() / T(RAND_MAX) * (2 * 3.14159265L);
+        const T tt = rand() / T(RAND_MAX) * (2 * 3.14159265L);
         const T ux = rand() / T(RAND_MAX) * sin(tt/2);
         const T uy = std::cos(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
         const T uz = std::sin(t) * std::sqrt(1 - ux*ux) * std::sin(tt/2);
@@ -677,10 +677,10 @@ void test_quat_serializer() {
         TEST_ASSERT_EQUAL_FLOAT(0.5, result_arr[3]);
     }
     else {
-        TEST_ASSERT_EQUAL_DOUBLE(0.2, result_arr[0]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.1, result_arr[1]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.3, result_arr[2]);
-        TEST_ASSERT_EQUAL_DOUBLE(0.5, result_arr[3]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.2L, result_arr[0]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.1L, result_arr[1]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.3L, result_arr[2]);
+        TEST_ASSERT_EQUAL_DOUBLE(0.5L, result_arr[3]);
     }
 
     // Test printing
@@ -738,18 +738,18 @@ void test_gpstime_serializer() {
 
 void test_serializers() {
     UNITY_BEGIN();
-    // RUN_TEST(test_bool_serializer);
-    // RUN_TEST(test_unsigned_int_serializer);
-    // RUN_TEST(test_signed_int_serializer);
-    // RUN_TEST(test_unsigned_char_serializer);
-    // RUN_TEST(test_signed_char_serializer);
-    // RUN_TEST(test_float_serializer);
-    // RUN_TEST(test_double_serializer);
-    // RUN_TEST(test_f_vec_serializer);
+    RUN_TEST(test_bool_serializer);
+    RUN_TEST(test_unsigned_int_serializer);
+    RUN_TEST(test_signed_int_serializer);
+    RUN_TEST(test_unsigned_char_serializer);
+    RUN_TEST(test_signed_char_serializer);
+    RUN_TEST(test_float_serializer);
+    RUN_TEST(test_double_serializer);
+    RUN_TEST(test_f_vec_serializer);
     RUN_TEST(test_d_vec_serializer);
-    // RUN_TEST(test_f_quat_serializer);
+    RUN_TEST(test_f_quat_serializer);
     RUN_TEST(test_d_quat_serializer);
-    // RUN_TEST(test_gpstime_serializer);
+    RUN_TEST(test_gpstime_serializer);
     UNITY_END();
 }
 
