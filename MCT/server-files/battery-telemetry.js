@@ -51,14 +51,14 @@ function Battery() {
 *   Tests the functionality of updateState by incrementing the counter boot time
 *   and setting the battery voltage to 24
 **/
-Battery.prototype.updateState = function () {
+Battery.prototype.updateState = async function () {
   
-  Object.keys(this.state).forEach(function (id) {
+  Object.keys(this.state).forEach(async function (id) {
 
     if(typeof(this.state[id]) == 'object'){//if state is an object
       
-      Object.keys(this.state[id]).forEach(function (subId){
-        let res = this.getValue(searchURl, searchIndex, id + '.' + subId);
+      Object.keys(this.state[id]).forEach(async function (subId){
+        let res = await this.getValue(searchURl, searchIndex, id + '.' + subId);
         console.log("test");
         console.log(res);
         (this.state[id])[subId] = res;
@@ -67,7 +67,7 @@ Battery.prototype.updateState = function () {
 
 
     }else{// if state is a primitive type
-      let res = this.getValue(searchURl, searchIndex, id);
+      let res = await this.getValue(searchURl, searchIndex, id);
       console.log("test non object");
       console.log(res);
       this.state[id] = res;
