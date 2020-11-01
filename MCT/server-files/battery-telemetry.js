@@ -80,6 +80,8 @@ Battery.prototype.getValue = function(myUrl, i, f){
     if(err) { console.log("error in http GET"); return; }
     value = body;
   });
+  console.log(myUrl)
+  console.log(value)
   return value;
   }
 
