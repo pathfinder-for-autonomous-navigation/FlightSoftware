@@ -53,12 +53,12 @@ function Battery() {
 **/
 Battery.prototype.updateState = function () {
   
-  Object.keys(this.state).forEach(function (id) {
+  Object.keys(this.state).forEach(async function (id) {
 
     if(typeof(this.state[id]) == 'object'){//if state is an object
       
       Object.keys(this.state[id]).forEach(function (subId){
-        let res = this.getValue(searchURl, searchIndex, id + '.' + subId);
+        let res = await this.getValue(searchURl, searchIndex, id + '.' + subId);
         console.log(res);
         (this.state[id])[subId] = res;
       },this)
@@ -66,7 +66,7 @@ Battery.prototype.updateState = function () {
 
 
     }else{// if state is a primitive type
-      let res = this.getValue(searchURl, searchIndex, id);
+      let res = await this.getValue(searchURl, searchIndex, id);
       this.state[id] = res;
     }
 
@@ -78,7 +78,7 @@ Battery.prototype.getValue = async function(myUrl, i, f){
   
   var propertiesObject = { index: i, field:f };
 
-  let p = new Promise(function(resolve, reject){
+  return new Promise(function(resolve, reject){
     request({url: myUrl, qs:propertiesObject}, function(err, response, body) {//make anonymous function part of the class
       console.log("Get response: " + response.statusCode);
       console.log(myUrl)
@@ -87,8 +87,6 @@ Battery.prototype.getValue = async function(myUrl, i, f){
       else{ reject(error); }
     });
   });
-
-  return await p;
 
   }
 
