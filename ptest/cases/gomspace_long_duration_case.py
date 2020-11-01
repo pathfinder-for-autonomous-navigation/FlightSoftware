@@ -29,7 +29,7 @@ class GomspaceLongDurationCheckoutCase(ActuateHardwareCase):
                 self.logger.put("Vbatt: " + str(vbatt) + " mV")
 
             #perform either a wheel, docking, or valve commands every minute 
-            cycle_quantum  = 600*3 
+            cycle_quantum  = 20*3 
             if self.cycle_no % cycle_quantum in range(0, cycle_quantum//3):
                 self.logger.put("Spinning ADCS wheels at speed 100.")
                 self.spin_motors(100)
