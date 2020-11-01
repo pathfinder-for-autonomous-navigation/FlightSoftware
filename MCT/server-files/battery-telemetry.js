@@ -4,7 +4,8 @@
 const variables = require('./state-variables.js')
 const url = require('url');
 const request = require('request');
-const axios = require('axios')
+const axios = require('axios');
+const { isObject } = require('util');
 var searchURl = 'http://localhost:5000/search-es';
 var searchIndex = 'statefield_report_123';
 function Battery() {
@@ -45,6 +46,7 @@ function Battery() {
     console.log("Spacecraft Launched")
 
 };
+
 /**
 *   Tests the functionality of updateState by incrementing the counter boot time
 *   and setting the battery voltage to 24
@@ -55,14 +57,14 @@ Battery.prototype.updateState = function () {
 
     if(typeof(this.state[id]) == 'object'){//if state is an object
       
-      Object.keys(this.state.id).forEach(function (subId){
-        this.state.id.subId = getValue(searchURl, searchIndex, subId);
-      })
+      Object.keys(this.state[id]).forEach(function (subId){
+        (this.state[id])[subId] = this.getValue(searchURl, searchIndex, subId);
+      },this)
 
 
 
     }else{// if state is a primitive type
-      this.state.id = getValue(searchURl, searchIndex, id);
+      this.state[id] = this.getValue(searchURl, searchIndex, id);
     }
 
   }, this);
@@ -70,14 +72,28 @@ Battery.prototype.updateState = function () {
 };
 
 Battery.prototype.getValue = function(url, i, f){
+  
   request(url, {
     params: {
       index: i, 
       field: f
     }
   }, (error, response, body) =>{
+    console.log("ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ")
+    console.log("ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ")
+    console.log("ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ERROR ")
+    console.log(error)
+    console.log("RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE ")
+    console.log("RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE ")
+    console.log("RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE RESPONSE ")
+    console.log(response)
+    console.log("BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY ")
+    console.log("BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY ")
+    console.log("BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY BODY ")
+    console.log(body)
     if(error){console.log("error in http GET");}
     if(response.statusCode == 200){
+      console.log("got response")
       return body;
     }
   });
