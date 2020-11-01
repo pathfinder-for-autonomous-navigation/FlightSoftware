@@ -58,13 +58,13 @@ Battery.prototype.updateState = function () {
     if(typeof(this.state[id]) == 'object'){//if state is an object
       
       Object.keys(this.state[id]).forEach(function (subId){
-        (this.state[id])[subId] = this.getValue(searchURl, searchIndex, subId);
+        (this.state[id])[subId] = this.getValue(searchURl, searchIndex, 'gomspace.' + subId);
       },this)
 
 
 
     }else{// if state is a primitive type
-      this.state[id] = this.getValue(searchURl, searchIndex, id);
+      this.state[id] = this.getValue(searchURl, searchIndex, 'gomspace.' + id);
     }
 
   }, this);
@@ -82,7 +82,7 @@ Battery.prototype.getValue = function(myUrl, i, f){
   });
   console.log(myUrl)
   console.log(value)
-  return value;
+  r
   }
 
 
