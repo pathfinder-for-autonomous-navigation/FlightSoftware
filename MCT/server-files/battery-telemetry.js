@@ -7,7 +7,7 @@ const request = require('request');
 const axios = require('axios');
 const { isObject } = require('util');
 var searchURl = 'http://localhost:5000/search-es';
-var searchIndex = 'statefield_report_123';
+var searchIndex = 'statefield_report_flightcontroller';
 function Battery() {
     //This state function takes in initial values from the state-variables.js file
     this.state = {
