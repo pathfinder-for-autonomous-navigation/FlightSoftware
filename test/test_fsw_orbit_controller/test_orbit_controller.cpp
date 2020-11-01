@@ -17,7 +17,7 @@ class TestFixture {
         std::unique_ptr<OrbitController> orbit_controller;
 
         // Outputs of orbit controller
-        std::shared_ptr<ReadableStateField<unsigned char>> prop_planner_state_fp;
+        std::shared_ptr<ReadableStateField<unsigned char>> prop_cycles_until_firing_fp;
         WritableStateField<unsigned int>* sched_valve1_fp;
         WritableStateField<unsigned int>* sched_valve2_fp;
         WritableStateField<unsigned int>* sched_valve3_fp;
@@ -30,7 +30,7 @@ class TestFixture {
                 vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 0, 100);
                 baseline_pos_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 0, 100);
                 baseline_vel_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_vel", 0, 0, 100);
-                prop_planner_state_fp = registry.create_readable_field<unsigned char>("prop.planner.state", 0);
+                prop_cycles_until_firing_fp = registry.create_readable_field<unsigned char>("prop.cycles_until_firing", 0);
 
                 orbit_controller = std::make_unique<OrbitController>(registry, 0);  
 
@@ -50,10 +50,31 @@ void test_task_initialization()
         TEST_ASSERT_NOT_NULL(tf.sched_valve4_fp);
 }
 
+int test_task_time_till_node(){
+        TestFixture tf;
+
+        // Set parameters
+        double theta = 0;
+        lin::Vector3d r = {1,0,0};
+        lin::Vector3d v = {0,1,0};
+        double omega = 1;
+
+        // Calculate expected time (next firing node is pi/3)
+        double firing_node = gnc::constant::pi/3;
+        double time = firing_node;
+
+        TEST_ASSERT_EQUAL(time, tf.orbit_controller.time_till_node(theta, r, v));
+}
+
+int test_calculate_impulse(){
+        
+}
+
 int test_control_task()
 {
         UNITY_BEGIN();
         RUN_TEST(test_task_initialization);
+        RUN_TEST(test_task_time_till_node);
         return UNITY_END();
 }
 

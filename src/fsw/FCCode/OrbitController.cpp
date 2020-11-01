@@ -55,9 +55,8 @@ void OrbitController::execute() {
     double time_till_firing = time_till_node(theta, r, v);
     double time_till_firing_cc = time_till_firing / ClockManager::control_cycle_size;
 
-    // If the satellite is about to approach a firing point and the prop state is idle, 
-    // then schedule the valves for firing
-    if (time_till_firing_cc <= delta_time) {
+    // Schedule the valves for firing soon
+    if (time_till_firing_cc <= delta_time && prop_cycles_until_firing_fp->get() == 0) {
         prop_cycles_until_firing_fp->set(time_till_firing_cc);
     }
 
