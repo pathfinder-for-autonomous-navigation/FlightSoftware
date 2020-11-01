@@ -42,8 +42,8 @@ bool try_collect_field_info(const StateFieldBaseType* field, TelemetryInfoGenera
     if (!ptr) return false;
 
     field_info.type = type_name<UnderlyingType>();
-    field_info.min = ptr->get_serializer_min();
-    field_info.max = ptr->get_serializer_max();
+    field_info.min = std::to_string(ptr->get_serializer_min());
+    field_info.max = std::to_string(ptr->get_serializer_max());
     return true;
 }
 
@@ -63,13 +63,13 @@ bool try_collect_vector_field_info(const StateFieldBaseType* field, TelemetryInf
         dynamic_cast<const StateFieldType<UnderlyingLinVectorType>*>(field);
     if (ptr1) {
         field_info.type = type_name<UnderlyingArrayVectorType>();
-        field_info.min = ptr1->get_serializer_min()[0];
-        field_info.max = ptr1->get_serializer_max()[0];
+        field_info.min = std::to_string(ptr1->get_serializer_min()[0]);
+        field_info.max = std::to_string(ptr1->get_serializer_max()[0]);
     }
     else if (ptr2) {
         field_info.type = type_name<UnderlyingLinVectorType>();
-        field_info.min = ptr2->get_serializer_min()(0);
-        field_info.max = ptr2->get_serializer_max()(0);
+        field_info.min = std::to_string(ptr2->get_serializer_min()(0));
+        field_info.max = std::to_string(ptr2->get_serializer_max()(0));
     }
     else return false;
 
@@ -172,7 +172,7 @@ TelemetryInfoGenerator::generate_telemetry_info()
     return ret;
 }
 
-nlohmann::json generate_telemetry_info()
+nlohmann::json TelemetryInfoGenerator::generate_telemetry_info_json()
 {
     json j;
     to_json(j, generate_telemetry_info());
@@ -181,53 +181,33 @@ nlohmann::json generate_telemetry_info()
 
 void to_json(json& j, const TelemetryInfoGenerator::FieldData& d)
 {
-    if (d.type == "gps_time_t" || d.type == "bool")
-        j = json{
-            {"name", d.name},
-            {"type", d.type},
-            {"flow_id", d.flow_id},
-            {"writable", d.writable},
-            {"bitsize", d.bitsize}};
-    else
-        j = json{
-            {"name", d.name},
-            {"type", d.type},
-            {"flow_id", d.flow_id},
-            {"writable", d.writable},
-            {"min", d.min},
-            {"max", d.max},
-            {"bitsize", d.bitsize}};
+    j = json{
+        {"type", d.type},
+        {"flow_id", d.flow_id},
+        {"writable", d.writable},
+        {"bitsize", d.bitsize}};
 }
 void from_json(const json& j, TelemetryInfoGenerator::FieldData& d)
 {
-    d.name = j["name"].get<std::string>();
     d.type = j["type"].get<std::string>();
     d.flow_id = j["flow_id"].get<unsigned char>();
     d.writable = j["writable"].get<bool>();
     d.writable = j["bitsize"].get<bool>();
-
-    if (d.type == "gps_time_t" || d.type == "bool")
-    {
-        d.min = 0; d.max = 0;
-    }
-    else
-    {
-        d.min = j["min"].get<double>();
-        d.max = j["max"].get<double>();
-    }
+    d.min = j["min"].get<std::string>();
+    d.max = j["max"].get<std::string>();
 }
 
 void to_json(json& j, const DownlinkProducer::FlowData& d)
 {
-    j = json({{"active", d.active}, {"fields", d.fields}, {"id", d.flow_id}});
+    j = json({{"active", d.is_active}, {"fields", d.field_list}, {"id", d.id}});
 }
 
 void from_json(const json& j, DownlinkProducer::FlowData& d)
 {
-    d.active = j["active"].get<bool>();
+    d.is_active = j["active"].get<bool>();
     for(auto const& field : j["fields"])
-        d.fields.push_back(field);
-    d.flow_id = j["id"].get<unsigned char>();
+        d.field_list.push_back(field);
+    d.id = j["id"].get<unsigned char>();
 }
 
 void to_json(json& j, const TelemetryInfoGenerator::TelemetryInfo& d)
@@ -237,20 +217,20 @@ void to_json(json& j, const TelemetryInfoGenerator::TelemetryInfo& d)
 
 void from_json(const json& j, TelemetryInfoGenerator::TelemetryInfo& d)
 {
-    for(auto const& field : j["eeprom_saved_fields"])
+    for(auto const& field : j["eeprom_saved_fields"].items())
     {
         d.eeprom_saved_fields.insert({field.key(), field.value().get<unsigned int>()});
     }
-    for(auto const& field : j["field_data"])
+    for(auto const& field : j["field_data"].items())
     {
         TelemetryInfoGenerator::FieldData fd;
         from_json(field.value(), fd);
         d.field_data.insert({field.key(), fd});
     }
-    for(auto const& field : j["flow_data"])
+    for(auto const& field : j["flow_data"].items())
     {
         DownlinkProducer::FlowData fd;
         from_json(field.value(), fd);
-        d.field_data.insert({field.key(), fd});
+        d.flow_data.push_back(fd);
     }
 }
