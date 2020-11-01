@@ -192,11 +192,11 @@ class CppSimulation(Simulation):
     def configure(self):
         self.actuator_commands_follower = {}
         # self.actuator_commands_follower["mtr_cmd"] = None
-        prefix = "lib/common/psim/config/parameters/"
+        prefix = "lib/common/psim/config/parameters/truth/"
         postfix = ".txt"
-        configs = ["single_orbit"]
+        configs = ["deployment"]
         configs = [prefix + x + postfix for x in configs]
-        self.mysim = psim.Simulation(psim.SingleOrbitGnc, configs)
+        self.mysim = psim.Simulation(psim.sims.SingleOrbitGnc, configs)
         self.dt = 1e-9
 
         self.sat_names = ['leader','follower']
@@ -244,8 +244,7 @@ class CppSimulation(Simulation):
         # iterate across each fc_sf vs psim_sf pair
         for fc_sf,psim_sf in mappings.items():
             local = self.sensor_readings[role][fc_sf]
-            local = 
-            fc.write_state(fc_sf, self.sensor_readings[role][fc_sf])
+            fc.write_state(fc_sf, list(local))
 
     def read_adcs_estimator_outputs(self, flight_controller):
         """
