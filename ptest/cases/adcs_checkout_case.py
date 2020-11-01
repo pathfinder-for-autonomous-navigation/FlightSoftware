@@ -16,7 +16,7 @@ def list_of_avgs(lists_of_vals):
     '''
     sum_of_each = [sum(x) for x in lists_of_vals]
     len_of_each = len(lists_of_vals[0])
-    return [sum_of_each[i]/len_of_each for y in lists_of_vals]
+    return [sum_of_each[y]/len_of_each for y in lists_of_vals]
 
 class ADCSCheckoutCase(SingleSatOnlyCase):
     def assert_vec_within(self, expected, actual, delta):
@@ -39,7 +39,7 @@ class ADCSCheckoutCase(SingleSatOnlyCase):
         # Necessary so that motor commands are pre-empted by ADCS DCDC being on
         self.cycle()
 
-        self.ws("adcs.state", Enums.adcs_states["point_manual"])
+        self.ws("adcs.state", Enums.adcs_states["manual"])
         self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_SPEED_CTRL"])
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
     
