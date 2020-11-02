@@ -24,6 +24,7 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
 
 void OrbitController::init() {
     prop_cycles_until_firing_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
+    q_body_eci_fp = FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci);
 }
 
 void OrbitController::execute() {
@@ -67,10 +68,7 @@ void OrbitController::execute() {
         lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);
 
         // Communicate desired impulse to the prop controller. Need to talk to kyle and/or tanishq about this and replace the 0s
-        sched_valve1_f.set(0);
-        sched_valve2_f.set(0);
-        sched_valve3_f.set(0);
-        sched_valve4_f.set(0);
+        schedule_valves(J_ecef, t);
 
     }
 
@@ -110,4 +108,61 @@ lin::Vector3d OrbitController::calculate_impulse(double t, lin::Vector3d r, lin:
 
     // Collect the output of the PD controller
     return actuation.J_ecef;
+}
+
+void schedule_valves(lin::Vector3d J_ecef, double t) {
+    // Transform the impulse from ecef frame to the eci frame
+    lin::Vector4d q_ecef_eci;
+    gnc::env::earth_attitude(t, q_ecef_eci);
+    lin::Vector4d q_eci_ecef;
+    gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
+
+    lin::Vector3d J_eci;
+    gnc::utl::rotate_frame(q_eci_ecef, J_ecef, J_eci);
+
+    // Transform the impulse from eci frame to the body frame of the spacecraft
+    lin::Vector4f q_body_eci = q_body_eci_fp->get();
+    lin::Vector4f q_eci_body;
+    gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
+
+    lin::Vector3d J_body;
+    gnc::utl::rotate_frame(q_eci_body, J_eci, J_body);
+
+    // Define the unit vectors that give the directions the prop system would fire in. 
+    // I need to talk to athena/sruti about which direction each of the valves in the prop controller point in. I just labelled them randomly for now.
+    lin::Vector3d thruster1 = {-1, -1, -1};
+    lin::Vector3d thruster2 = {-1,  1, -1};
+    lin::Vector3d thruster3 = {-1,  0,  1};
+    lin::Vector3d thruster4 = { 1,  0,  0};
+    thruster1 = thruster1 / lin::norm(thruster1);
+    thruster2 = thruster2 / lin::norm(thruster2);
+    thruster3 = thruster3 / lin::norm(thruster3);
+    thruster4 = thruster4 / lin::norm(thruster4);
+
+    // Calculate a linear combination of these direction vectors to get the impulse on each thruster
+    lin::Matrix3x4d thrust_matrix = {
+        thruster1(0), thruster2(0), thruster3(0), thruster4(0),
+        thruster1(1), thruster2(1), thruster3(1), thruster4(1),
+        thruster1(2), thruster2(2), thruster3(2), thruster4(2),
+    }
+
+    // Solve the linear system (thrust_matrix)*x=(impulse vector). The general solution will have one degree of freedom,
+    // so we must also minimimize the norm of x.
+    // See top of page 4: https://faculty.math.illinois.edu/~mlavrov/docs/484-spring-2019/ch4lec4.pdf
+    
+    // Solve A * A^T * w = Y
+    lin::Matrix3x3d AAT = thrust_matrix * lin::transpose(thrust_matrix);
+    lin::Matrix3x3d Q, R;
+    lin::Matrix4x1d W;
+    lin::Matrix3x1d Y = {J_body(0), J_body(1), J_body(2)};
+    lin::qr(AAT, Q, R);
+    lin::backward_sub(R, W, (lin::transpose(Q) * Y).eval());
+
+    // Solve x = A^T * w
+    lin::Matrix4x3d AT = lin::transpose(thrust_matrix);
+
+    // Translate that info into time somehow... sruti will get back to me
+
+    // Set valves
+    
 }

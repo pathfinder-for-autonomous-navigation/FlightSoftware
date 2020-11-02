@@ -9,6 +9,7 @@
 #include <gnc/orbit_controller.hpp>
 #include "ClockManager.hpp"
 #include "PropController.hpp"
+#include "psim/truth/transform_direction.hpp"
 
 #include "TimedControlTask.hpp"
 
@@ -39,6 +40,11 @@ public:
      */
     lin::Vector3d calculate_impulse(double t, lin::Vector3d r, lin::Vector3d v, lin::Vector3d dr, lin::Vector3d dv);
 
+    /**
+     * Schedule valves
+     */
+    void schedule_valves(lin::Vector3d J_ecef);
+
     // Firing nodes
     double pi = gnc::constant::pi;
     double firing_nodes[3] = {pi/3, pi, -pi/3};
@@ -53,6 +59,9 @@ public:
     const ReadableStateField<lin::Vector3d>* const vel_fp;
     const ReadableStateField<lin::Vector3d>* const baseline_pos_fp;
     const ReadableStateField<lin::Vector3d>* const baseline_vel_fp;
+
+    // Converts from ECI to body frame
+    ReadableStateField<lin::Vector4f>* q_body_eci_fp;
 
     // Outputs
     ReadableStateField<unsigned char>* prop_planner_state_fp;
