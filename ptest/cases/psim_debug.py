@@ -12,7 +12,7 @@ class PsimDebug(SingleSatOnlyCase):
 
     @property
     def fast_boot(self):
-        return True
+        return False
 
     @property
     def sim_initial_state(self):
@@ -20,10 +20,14 @@ class PsimDebug(SingleSatOnlyCase):
         # so that we exit detumble almost immediately.
         return "startup"
 
+    def setup_post_bootsetup(self):
+        self.print_ws("detumble_safety_factor",0.0)
+
     def run_case_singlesat(self):
-        self.print_rs_psim("truth.leader.environment.s.body")
+        # self.print_rs_psim("truth.leader.environment.s.body")
 
         self.print_rs("pan.state")
+        self.print_rs("adcs.state")
         self.print_rs("pan.cycle_no")
         self.print_rs("orbit.time")
         self.print_rs("orbit.pos")
@@ -34,3 +38,5 @@ class PsimDebug(SingleSatOnlyCase):
         self.print_rs("attitude_estimator.w_body")
         self.print_rs("adcs_cmd.mtr_cmd")
         self.print_rs("adcs_cmd.rwa_torque_cmd")
+
+        pass

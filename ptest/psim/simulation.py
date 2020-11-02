@@ -194,7 +194,7 @@ class CppSimulation(Simulation):
         # self.actuator_commands_follower["mtr_cmd"] = None
         prefix = "lib/common/psim/config/parameters/truth/"
         postfix = ".txt"
-        configs = ["deployment"]
+        configs = ["deployment","base"]
         configs = [prefix + x + postfix for x in configs]
         self.mysim = psim.Simulation(psim.sims.SingleAttitudeOrbitGnc, configs)
         self.dt = 1e-9
@@ -255,7 +255,6 @@ class CppSimulation(Simulation):
         """
 
         flight_controller.read_state("pan.state")
-        flight_controller.read_state("pan.ccno")
         flight_controller.read_state("adcs.state")        
         flight_controller.read_state("adcs_monitor.mag1_vec")
         flight_controller.read_state("adcs_monitor.mag2_vec")
@@ -278,6 +277,9 @@ class CppSimulation(Simulation):
         role = self.fc_to_role_map[fc.device_name]
         for fc_sf in self.actuators_map[role]:
             self.actuator_cmds[role][fc_sf] = fc.smart_read(fc_sf)
+
+        # yf = 1
+        # self.actuator_cmds[role]["adcs_cmd.mtr_cmd"] = [x*yf for x in self.actuator_cmds[role]["adcs_cmd.mtr_cmd"]]
         
     def send_actuations_to_simmed_satellites(self):
         # send the outputs of the FC to psim        
