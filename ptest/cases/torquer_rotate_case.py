@@ -124,11 +124,16 @@ class MTorquerCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
         self.print_header( "Begin ADCS Magnetorquers Case" )
         self.ws( "cycle.auto", False )
+        self.cycle()
+
+        self.ws("pan.state", "manual")
+        self.ws("adcs.state", "manual")
+        self.cycle()
 
         # Needed so that ADCSMonitor updates its values
-        self.cycle()
         self.ws( "dcdc.ADCSMotor_cmd", True )
-    
+        self.cycle()
+
         self.print_header( "Finished Initialization" )
         #checking that adcs is functional
         self.print_rs( "adcs_monitor.functional" )
