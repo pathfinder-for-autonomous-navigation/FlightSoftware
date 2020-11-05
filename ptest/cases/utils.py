@@ -307,7 +307,6 @@ class BootUtil(object):
                 self.boot_stage = self.desired_boot_state
             self.finished = True
 
-        print(self.boot_stage)
         return self.boot_stage
 
     def finished_boot(self):
