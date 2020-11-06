@@ -127,8 +127,13 @@ class MTorquerCase(SingleSatOnlyCase):
 
         # Needed so that ADCSMonitor updates its values
         self.cycle()
-        self.ws( "dcdc.ADCSMotor_cmd", True )
-    
+        self.print_ws( "dcdc.ADCSMotor_cmd", True )
+
+        self.print_ws("pan.state", Enums.mission_states["manual"])
+        self.print_ws("adcs.state", Enums.adcs_states["manual"])	
+        self.print_ws("adcs_cmd.mtr_mode", Enums.mtr_modes["MTR_ENABLED"])	
+        
+        self.cycle()
         self.print_header( "Finished Initialization" )
         #checking that adcs is functional
         self.print_rs( "adcs_monitor.functional" )
