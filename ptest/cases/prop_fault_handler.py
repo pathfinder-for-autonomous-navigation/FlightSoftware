@@ -21,7 +21,7 @@ class PropFaultHandler(SingleSatOnlyCase):
 
     def setup_post_bootsetup(self):
         self.ws("fault_handler.enabled", True)
-        self.sim.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
+        self.flight_controller.write_state("dcdc.SpikeDock_cmd", True)
 
 # --------------------------------------------------------------------------------------
 # Helper methods for tests
