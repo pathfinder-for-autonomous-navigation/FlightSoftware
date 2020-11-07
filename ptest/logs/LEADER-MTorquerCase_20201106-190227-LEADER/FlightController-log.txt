@@ -1,0 +1,6 @@
+[2020-11-06 19:02:49.268595] (ERROR) Tried to write state value named "gomspace.low_batt.suppress" but encountered an error: invalid field name
+[2020-11-06 19:02:49.274595] (ERROR) Tried to write state value named "fault_handler.enabled" but encountered an error: invalid field name
+[2020-11-06 19:02:49.284595] (ERROR) Tried to write state value named "pan.state" but encountered an error: invalid field name
+[2020-11-06 19:02:49.332595] (ERROR) Tried to write state value named "pan.state" but encountered an error: invalid field name
+[2020-11-06 19:10:03.318595] (ERROR) Tried to read state value named "gomspace.vbatt" but encountered an error: invalid field name
+[2020-11-06 19:10:46.821595] (ERROR) Tried to read state value named "pan.ccno" but encountered an error: invalid field name
