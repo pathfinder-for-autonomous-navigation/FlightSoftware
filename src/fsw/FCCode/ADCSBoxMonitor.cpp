@@ -8,23 +8,23 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     unsigned int offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry, "adcs_monitor", offset),
     adcs_system(_adcs),
-    rwa_speed_rd_sr(adcs::rwa::min_speed_read, adcs::rwa::max_speed_read, 16*3), //referenced from I2C_Interface.doc
+    rwa_speed_rd_sr(adcs::rwa::min_speed_read, adcs::rwa::max_speed_read, 8*3), //full res is 16*3
     rwa_speed_rd_f("adcs_monitor.rwa_speed_rd", rwa_speed_rd_sr),
-    rwa_torque_rd_sr(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3), //referenced from I2C_Interface.doc
+    rwa_torque_rd_sr(adcs::rwa::min_torque, adcs::rwa::max_torque, 8*3), //full res is 16*3
     rwa_torque_rd_f("adcs_monitor.rwa_torque_rd", rwa_torque_rd_sr),
-    ssa_mode_rd(0,2,2), //referenced from Interface.doc
+    ssa_mode_rd(0,2,2), //3 modes
     ssa_mode_f("adcs_monitor.ssa_mode", ssa_mode_rd),
-    ssa_vec_sr(-1,1,16*3), //referenced from I2C_Interface.doc
+    ssa_vec_sr(0,1,1 + SerializerConstants::min_fvsz), //full res is 16*3
     ssa_vec_f("adcs_monitor.ssa_vec", ssa_vec_sr),
-    ssa_voltage_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8),
+    ssa_voltage_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8), //per voltage, full is 8
     ssa_voltages_f(),
-    mag1_vec_sr(adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, 16*3), //referenced from I2C_Interface.doc
+    mag1_vec_sr(adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, 8*3), //full res is 16*3
     mag1_vec_f("adcs_monitor.mag1_vec", mag1_vec_sr),
-    mag2_vec_sr(adcs::imu::min_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, 16*3), //referenced from I2C_Interface.doc
+    mag2_vec_sr(adcs::imu::min_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, 8*3), //full res is 16*3
     mag2_vec_f("adcs_monitor.mag2_vec", mag2_vec_sr),
-    gyr_vec_sr(adcs::imu::min_rd_omega, adcs::imu::max_rd_omega, 16*3), //referenced from I2C_Interface.doc
+    gyr_vec_sr(adcs::imu::min_rd_omega, adcs::imu::max_rd_omega, 16*3), //full res is 16*3
     gyr_vec_f("adcs_monitor.gyr_vec", gyr_vec_sr),
-    gyr_temp_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 16), //referenced from I2C_Interface.doc
+    gyr_temp_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8), //full res is 16
     gyr_temp_f("adcs_monitor.gyr_temp", gyr_temp_sr),
     flag_sr(),
     rwa_speed_rd_flag("adcs_monitor.speed_rd_flag", flag_sr),
