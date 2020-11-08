@@ -14,10 +14,9 @@ class GomspaceLongDurationCheckoutCase(ActuateHardwareCase):
         self.cycle_no = self.rs("pan.cycle_no")
         self.fire_valves()
         edu_vbatt_threshold = 7000
-        num_test_cycles = 6000
+        num_test_cycles = 1000
 
         for _ in range(num_test_cycles):
-
             #check if vbatt is within desired range (terminate if not), log data every 10 seconds
             self.cycle_no = self.rs("pan.cycle_no")
             vbatt = int(self.rs("gomspace.vbatt"))
@@ -32,15 +31,15 @@ class GomspaceLongDurationCheckoutCase(ActuateHardwareCase):
             cycle_quantum  = 20*3 
             if self.cycle_no % cycle_quantum in range(0, cycle_quantum//3):
                 self.logger.put("Spinning ADCS wheels at speed 100.")
-                self.spin_motors(100)
+                self.spin_motors(200)
             elif self.cycle_no % cycle_quantum in range(cycle_quantum//3, cycle_quantum*2//3):
                 self.logger.put("Stopping ADCS wheels, turning docking motor.")
                 self.spin_motors(0)
-                self.turn_motor_on()
+                # self.turn_motor_on()
             else:
                 self.logger.put("Stopping docking motor, firing valves.")
-                self.fire_valves() 
-                self.turn_motor_off()
+                #self.fire_valves() 
+                #self.turn_motor_off()
 
             self.cycle()
 
