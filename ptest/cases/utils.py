@@ -94,12 +94,21 @@ class Enums(object):
     ])
 
     radio_states = FSWEnum([
-        "disabled",
         "wait",
         "transceive",
         "read",
         "write",
-        "config"
+        "config",
+        "disabled"
+    ])
+
+    qfh_states = FSWEnum([
+        "unfaulted",
+        "forced_standby",
+        "powercycle_1",
+        "powercycle_2",
+        "powercycle_3",
+        "safehold"
     ])
 
     sat_designations = FSWEnum([

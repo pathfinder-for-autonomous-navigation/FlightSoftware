@@ -60,7 +60,7 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset)
     // Initialize Quake Manager variables
     max_wait_cycles_f.set(1);
 
-    TRACKED_CONSTANT_SC(unsigned int, max_transceive_cycles, PAN::one_day_ccno / (24 * 60) > 1 ? PAN::one_day_ccno / (24 * 60) : 1);
+    TRACKED_CONSTANT_SC(unsigned int, max_transceive_cycles, PAN::one_day_ccno / (24 * 60) > 5 ? PAN::one_day_ccno / (24 * 60) : 5);
     max_transceive_cycles_f.set(max_transceive_cycles);
     last_checkin_cycle_f.set(control_cycle_count);
     radio_mt_packet_f.set(qct.get_MT_msg());
@@ -272,10 +272,10 @@ void QuakeManager::dispatch_transceive()
             return handle_no_comms();
         }
 
-        #if !(defined(DESKTOP)) || defined(UNIT_TEST)
-            // We have comms, so update the last_checkin time
-            last_checkin_cycle_f.set(control_cycle_count);
-        #endif
+#if !(defined(DESKTOP)) || defined(UNIT_TEST)
+        // We have comms, so update the last_checkin time
+        last_checkin_cycle_f.set(control_cycle_count);
+#endif
 
         // Case 2: We have comms and we have message --> read message
         if (qct.get_MT_status() == 1) // SBD message successfully retrieved
