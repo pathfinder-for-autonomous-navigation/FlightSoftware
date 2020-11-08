@@ -4,7 +4,6 @@
 const variables = require('./state-variables.js')
 const url = require('url');
 const request = require('request');
-const axios = require('axios');
 const { isObject } = require('util');
 var searchURl = 'http://localhost:5000/search-es';
 var searchIndex = 'statefield_report_flightcontroller';
@@ -117,7 +116,7 @@ Battery.prototype.getValue = async function(myUrl, i, f){
       console.log(myUrl)
       console.log(f)
       if(!err && response.statusCode == 200) { resolve(body);}
-      else{ reject(error); }
+      else{ reject(err); }
     });
   });
   return await p;
