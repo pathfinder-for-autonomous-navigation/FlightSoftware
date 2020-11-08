@@ -18,7 +18,8 @@ class Simulation(object):
     """
     Full mission simulation, including both spacecraft.
     """
-    def __init__(self, is_interactive, devices, seed, testcase, sim_duration, sim_initial_state, is_single_sat_sim):
+    def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
+    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model):
         """
         Initializes self
 
@@ -35,6 +36,8 @@ class Simulation(object):
         self.sim_duration = sim_duration
         self.sim_initial_state = sim_initial_state
         self.is_single_sat_sim = is_single_sat_sim
+        self.sim_configs = _sim_configs
+        self.sim_model = _sim_model
 
         self.log = ""
 
@@ -191,12 +194,17 @@ class CppSimulation(Simulation):
 
     def configure(self):
         self.actuator_commands_follower = {}
-        # self.actuator_commands_follower["mtr_cmd"] = None
-        prefix = "lib/common/psim/config/parameters/truth/"
+        prefix = "lib/common/psim/config/parameters/"
         postfix = ".txt"
-        configs = ["deployment","base"]
-        configs = [prefix + x + postfix for x in configs]
-        self.mysim = psim.Simulation(psim.sims.SingleAttitudeOrbitGnc, configs)
+
+        # configs = ["truth/deployment","truth/base","sensors/base"]
+        if self.sim_configs == []:
+            raise RuntimeError("No simulation configs were provided! Please set the sim_configs property")
+        if self.sim_model == None:
+            raise RuntimeError("No simulation models were provided! Please set the sim_model property")
+
+        configs = [prefix + x + postfix for x in self.sim_configs]
+        self.mysim = psim.Simulation(self.sim_model, configs)
         self.dt = 1e-9
 
         self.sat_names = ['leader','follower']

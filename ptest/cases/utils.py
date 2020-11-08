@@ -228,7 +228,7 @@ class BootUtil(object):
             # For now, set this to 1 since the value doesn't matter (we force the satellite
             # into standby inside this boot controller).
             # Implementing #287 will give us a more realistic estimate.
-            self.max_detumble_cycles = 1
+            self.max_detumble_cycles = 1000
 
             # Let's be generous with what angular rate is allowable as "detumbled", until the
             # attitude controller is implemented in #287.
@@ -284,16 +284,16 @@ class BootUtil(object):
         elif self.boot_stage == 'detumble' and not self.finished:
             if self.num_detumble_cycles >= self.max_detumble_cycles or satellite_state == "standby":
                 # For now, force the satellite into standby since the attitude control stuff isn't working.
-                self.flight_controller.write_state("pan.state", Enums.mission_states["standby"])
-                self.boot_stage = 'standby'
-                self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
+                # self.flight_controller.write_state("pan.state", Enums.mission_states["standby"])
+                # self.boot_stage = 'standby'
+                # self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
 
                 # Delete the above lines and use the following ones once #287 is implemented.
-                # if satellite_state == "standby":
-                #     self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
-                #     self.boot_stage = 'standby'
-                # else:
-                #     raise TestCaseFailure("Satellite failed to exit detumble.")
+                if satellite_state == "standby":
+                    self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
+                    self.boot_stage = 'standby'
+                else:
+                    raise TestCaseFailure("Satellite failed to exit detumble.")
             else:
                 self.num_detumble_cycles += 1
 

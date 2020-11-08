@@ -5,8 +5,7 @@ import threading
 import traceback
 from .utils import BootUtil, Enums, TestCaseFailure
 from ..psim import MatlabSimulation, CppSimulation
-
-# Base classes for writing testcases.
+import psim # the actual python psim repo
 
 class PTestCase(object):
     """
@@ -23,13 +22,27 @@ class PTestCase(object):
         self.errored = False
         self.finished = False
 
+    @property
+    def sim_configs(self):
+        '''
+        The parameter files from psim
+        '''
+        return [""]
+
+    @property
+    def sim_model(self):
+        '''
+        The psim simulation model
+        '''
+        return None
+
     def sim_implementation(self, *args, **kwargs):
         """
         Choice of sim implementation for this testcase.
         The default is the matlab simulation.
         """
         # return MatlabSimulation(*args, **kwargs)
-        return CppSimulation(*args, **kwargs)
+        return CppSimulation(*args, **kwargs)        
 
     @property
     def sim_duration(self):
@@ -86,7 +99,9 @@ class PTestCase(object):
     def setup_case(self, devices):
         self.populate_devices(devices)
         if self.sim_duration > 0:
-            self.sim = self.sim_implementation(self.is_interactive, devices, self.random_seed, self, self.sim_duration, self.sim_initial_state, isinstance(self, SingleSatOnlyCase))
+            self.sim = self.sim_implementation(self.is_interactive, devices, 
+            self.random_seed, self, self.sim_duration, self.sim_initial_state, 
+            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model)
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()

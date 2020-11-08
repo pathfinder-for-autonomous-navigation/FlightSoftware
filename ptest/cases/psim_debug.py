@@ -1,7 +1,18 @@
 # Runs mission from startup state to standby state.
 from .base import SingleSatOnlyCase
+from psim.sims import SingleAttitudeOrbitGnc
 
 class PsimDebug(SingleSatOnlyCase):
+    @property
+    def sim_configs(self):
+        configs = ["truth/deployment", "truth/base"]
+        configs += ["sensors/base"]
+        return configs
+
+    @property
+    def sim_model(self):
+        return SingleAttitudeOrbitGnc
+
     @property
     def sim_duration(self):
         return float("inf")
