@@ -150,7 +150,7 @@ class PTest(object):
         print(f"Running mission testcase {self.testcase_name}.")
 
         self.testcase = testcase(self.is_interactive, self.random_seed, self.simulation_run_dir)
-        self.testcase.setup_case(self.devices)
+        self.testcase.setup_case(self.devices, self.radios)
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt

@@ -46,27 +46,33 @@ class AutonomousMissionManagerCase(MissionCase):
         self.follower_time_last_comms = time.time()
         self.comms_time_threshold = 60*5 #currently 5 minutes for testing
 
-        while(self.mission_conditions_met()):
-            pass 
+        while(self.mission_conditions_met()): 
 
             #TODO pass telemetry between spacecraft 
-            #need some radio sessions to send up Iridium data
+            #use radio sessions to send up Iridium data
             #and send down piksi data
-                #I dont know how to use the radios
-                #I'm digging through usb session and radio session since they have uplinks and such
-            
-            #TODO propograte orbits from the data -> how to verify precision?
+            piksi_data_fields = ["piksi.state",
+                "piksi.pos",
+                "piksi.vel",
+                "piksi.baseline_pos",
+                "piksi.fix_error_count"]
+            piksi_data_vals_leader = [self.flight_controller_leader.rs(field) for field in piksi_data_fields]
+            piksi_data_vals_follower = [self.flight_controller_follower.rs(field) for field in piksi_data_fields]
 
-            
+            self.flight_controller_leader.uplink(piksi_data_fields, piksi_data_vals_leader)
+            if(self.radio_leader.uplink_queued()):
+                leader_comms_successful = self.radio_leader.send_uplink()
+                if(leader_comms_successful):
+                    self.leader_time_last_comms = time.time()
 
-            #check the comms
-            if(leader_comms_successful):
-                self.leader_time_last_comms = time.time()
-            if(follower_comms_successful):
-                self.follower_time_last_comms = time.time()
+            self.flight_controller_follower.uplink(piksi_data_fields, piksi_data_vals_follower)
+            if(self.radio_follower.uplink_queued()):
+                follower_comms_successful = self.radio_follower.send_uplink()
+                if(follower_comms_successful):
+                    self.follower_time_last_comms = time.time()
             
-
-        
+            
+            #TODO propograte orbits from the data -> how to verify precision?        
 
 
 

@@ -82,8 +82,8 @@ class PTestCase(object):
             if not self.havt_read[x]:
                 self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
 
-    def setup_case(self, devices):
-        self.populate_devices(devices)
+    def setup_case(self, devices, radios):
+        self.populate_devices(devices, radios)
         if self.sim_duration > 0:
             self.sim = self.sim_implementation(self.is_interactive, devices, self.random_seed, self, self.sim_duration, self.sim_initial_state, isinstance(self, SingleSatOnlyCase))
         self.logger.start()
@@ -104,7 +104,7 @@ class PTestCase(object):
         while not self.finished:
             self.run_case()
 
-    def populate_devices(self, devices):
+    def populate_devices(self, devices, radios):
         """
         Read the list of PTest-connected devices and
         pull in the ones that we care about.
@@ -160,7 +160,7 @@ class SingleSatOnlyCase(PTestCase):
         """
         return "manual"
 
-    def populate_devices(self, devices):
+    def populate_devices(self, devices, radios):
         self.flight_controller = devices["FlightController"]
 
     @property
@@ -314,9 +314,11 @@ class MissionCase(PTestCase):
     case.
     """
 
-    def populate_devices(self, devices):
+    def populate_devices(self, devices, radios):
         self.flight_controller_leader = devices["FlightControllerLeader"]
         self.flight_controller_follower = devices["FlightControllerFollower"]
+        self.radio_leader = radios["FlightControllerLeader"]
+        self.radio_follower = devices["FlightControllerFollower"]
 
     @property
     def initial_state_leader(self):
