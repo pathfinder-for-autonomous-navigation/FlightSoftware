@@ -64,10 +64,10 @@ void OrbitController::execute() {
     // Check if the satellite is at a firing point
     if ( std::find(firing_nodes.begin(), firing_nodes.end(), theta) != firing_nodes.end() ) {
 
-        // Collect the output of the PD controller
+        // Collect the output of the PD controller and get the needed impulse
         lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);
 
-        // Communicate desired impulse to the prop controller. Need to talk to kyle and/or tanishq about this and replace the 0s
+        // Communicate desired impulse to the prop controller.
         schedule_valves(J_ecef, t);
 
     }
@@ -110,6 +110,11 @@ lin::Vector3d OrbitController::calculate_impulse(double t, lin::Vector3d r, lin:
     return actuation.J_ecef;
 }
 
+unsigned int impulse_to_time(double impulse) {
+    double time = 024119 * impulse + 7.0092e-05;
+    return static_cast<unsigned int>(time);
+}
+
 void schedule_valves(lin::Vector3d J_ecef, double t) {
     // Transform the impulse from ecef frame to the eci frame
     lin::Vector4d q_ecef_eci;
@@ -130,21 +135,17 @@ void schedule_valves(lin::Vector3d J_ecef, double t) {
 
     // Define the unit vectors that give the directions the prop system would fire in. 
     // I need to talk to athena/sruti about which direction each of the valves in the prop controller point in. I just labelled them randomly for now.
-    lin::Vector3d thruster1 = {-1, -1, -1};
-    lin::Vector3d thruster2 = {-1,  1, -1};
-    lin::Vector3d thruster3 = {-1,  0,  1};
-    lin::Vector3d thruster4 = { 1,  0,  0};
-    thruster1 = thruster1 / lin::norm(thruster1);
-    thruster2 = thruster2 / lin::norm(thruster2);
-    thruster3 = thruster3 / lin::norm(thruster3);
-    thruster4 = thruster4 / lin::norm(thruster4);
+    lin::Vector3d thruster1 = { 0.6534, -0.3822, -0.6534};
+    lin::Vector3d thruster2 = { 0.5391,  0.6472,  0.5391};
+    lin::Vector3d thruster3 = {-0.6534, -0.3822,  0.6534};
+    lin::Vector3d thruster4 = {-0.5391,  0.6472, -0.5391};
 
     // Calculate a linear combination of these direction vectors to get the impulse on each thruster
     lin::Matrix3x4d thrust_matrix = {
         thruster1(0), thruster2(0), thruster3(0), thruster4(0),
         thruster1(1), thruster2(1), thruster3(1), thruster4(1),
         thruster1(2), thruster2(2), thruster3(2), thruster4(2),
-    }
+    };
 
     // Solve the linear system (thrust_matrix)*x=(impulse vector). The general solution will have one degree of freedom,
     // so we must also minimimize the norm of x.
@@ -158,14 +159,17 @@ void schedule_valves(lin::Vector3d J_ecef, double t) {
     lin::backward_sub(R, W, (lin::transpose(Q) * J_body).eval());
 
     // Solve x = A^T * w
-    lin::Vector3d x = lin::transpose(thrust_matrix) * W;
+    lin::Vector4d x = lin::transpose(thrust_matrix) * W;
 
-    // Translate that info into time somehow... sruti will get back to me
-    double impulse1 = x(0);
-    double impulse2 = x(1);
-    double impulse3 = x(2);
-    double impulse4 = x(3);
+    // Translate the impulse values into the times the valves must stay open
+    unsigned int time1 = impulse_to_time(x(0));
+    unsigned int time2 = impulse_to_time(x(1));
+    unsigned int time3 = impulse_to_time(x(2));
+    unsigned int time4 = impulse_to_time(x(3));
 
     // Set valves
-    
+    sched_valve1_f(time1);
+    sched_valve2_f(time2);
+    sched_valve3_f(time3);
+    sched_valve4_f(time4);
 }
