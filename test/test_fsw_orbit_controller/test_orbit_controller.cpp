@@ -1,6 +1,5 @@
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/OrbitController.hpp>
-#include <fsw/FCCode/prop_planner_state_t.enum>
 #include "../custom_assertions.hpp"
 
 class TestFixture {
