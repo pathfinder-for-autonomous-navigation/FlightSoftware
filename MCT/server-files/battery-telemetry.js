@@ -115,6 +115,7 @@ Battery.prototype.getValue = async function(myUrl, i, f){
       console.log("Get response: " + response.statusCode);
       console.log(myUrl)
       console.log(f)
+      console.log(body);
       if(!err && response.statusCode == 200) { resolve(body);}
       else{ reject(err); }
     });
