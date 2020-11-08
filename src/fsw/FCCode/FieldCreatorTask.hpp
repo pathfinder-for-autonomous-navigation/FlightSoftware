@@ -28,7 +28,7 @@ class FieldCreatorTask : public ControlTask<void> {
         pos_f("orbit.pos", Serializer<lin::Vector3d>(6771000,6971000, 28 + SerializerConstants::min_dvsz)),
         vel_f("orbit.vel", Serializer<lin::Vector3d>(7500, 7700, 18 + SerializerConstants::min_dvsz)),
         pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,2000, 21 + SerializerConstants::min_dvsz)),
-        vel_baseline_f("orbit.baseline_vel", Serializer<lin::Vector3d>(0,100000,100)),
+        vel_baseline_f("orbit.baseline_vel", Serializer<lin::Vector3d>(0,11,11 + SerializerConstants::min_dvsz)),
         bootcount_f("pan.bootcount",Serializer<unsigned int>(0xfffffff), 1000)
       {
           // For OrbitController
