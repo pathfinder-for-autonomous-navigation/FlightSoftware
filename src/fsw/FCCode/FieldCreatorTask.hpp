@@ -20,17 +20,15 @@ class FieldCreatorTask : public ControlTask<void> {
       ReadableStateField<lin::Vector3d> vel_f;
       ReadableStateField<lin::Vector3d> pos_baseline_f;
       ReadableStateField<lin::Vector3d> vel_baseline_f;
-      ReadableStateField<unsigned char> prop_planner_state_f;
       ReadableStateField<unsigned int> bootcount_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
         ControlTask<void>(r),
         time_f("orbit.time", Serializer<double>(0.0, 18'446'744'073'709'551'616.0, 64)),
-        pos_f("orbit.pos", Serializer<lin::Vector3d>(0,100000,100)),
-        vel_f("orbit.vel", Serializer<lin::Vector3d>(0,100000,100)),
-        pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,100000,100)),
+        pos_f("orbit.pos", Serializer<lin::Vector3d>(6771000,6971000, 28 + SerializerConstants::min_dvsz)),
+        vel_f("orbit.vel", Serializer<lin::Vector3d>(7500, 7700, 18 + SerializerConstants::min_dvsz)),
+        pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,2000, 21 + SerializerConstants::min_dvsz)),
         vel_baseline_f("orbit.baseline_vel", Serializer<lin::Vector3d>(0,100000,100)),
-        prop_planner_state_f("prop.planner.state", Serializer<unsigned char>(2)),
         bootcount_f("pan.bootcount",Serializer<unsigned int>(0xfffffff), 1000)
       {
           // For OrbitController
@@ -45,9 +43,6 @@ class FieldCreatorTask : public ControlTask<void> {
           vel_f.set({nan_d, nan_d, nan_d});
           pos_baseline_f.set({nan_d, nan_d, nan_d});
           vel_baseline_f.set({nan_d, nan_d, nan_d});
-
-          add_readable_field(prop_planner_state_f);
-          prop_planner_state_f.set(0);
 
           add_readable_field(bootcount_f);
       }
