@@ -153,15 +153,18 @@ void schedule_valves(lin::Vector3d J_ecef, double t) {
     // Solve A * A^T * w = Y
     lin::Matrix3x3d AAT = thrust_matrix * lin::transpose(thrust_matrix);
     lin::Matrix3x3d Q, R;
-    lin::Matrix4x1d W;
-    lin::Matrix3x1d Y = {J_body(0), J_body(1), J_body(2)};
     lin::qr(AAT, Q, R);
-    lin::backward_sub(R, W, (lin::transpose(Q) * Y).eval());
+    lin::Vector3d W;
+    lin::backward_sub(R, W, (lin::transpose(Q) * J_body).eval());
 
     // Solve x = A^T * w
-    lin::Matrix4x3d AT = lin::transpose(thrust_matrix);
+    lin::Vector3d x = lin::transpose(thrust_matrix) * W;
 
     // Translate that info into time somehow... sruti will get back to me
+    double impulse1 = x(0);
+    double impulse2 = x(1);
+    double impulse3 = x(2);
+    double impulse4 = x(3);
 
     // Set valves
     
