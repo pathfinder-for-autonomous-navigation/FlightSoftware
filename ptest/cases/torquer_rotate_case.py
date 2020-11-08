@@ -112,11 +112,11 @@ class MTorquerCase(SingleSatOnlyCase):
             and also for 0.11
         """
         self.print_header( "TORQUE TESTS: " )
-        for val in range( 125, 501, 125 ): #start at 0.025 and ramp up by 0.025 until at 0.1
+        for val in range( 125, 501, 125 ): #start at 0.0125 and ramp up by 0.0125 to 0.05 inclusive
             val = val / 10000
             self.torque_test( val )
 
-        #Test for max value: from adcs constants
+        #Test for max value: from src/adcs/constants.hpp (truncated)
         self.torque_test( 0.056668)
 
 
