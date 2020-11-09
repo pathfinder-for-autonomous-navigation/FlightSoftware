@@ -286,7 +286,7 @@ class CppSimulation(Simulation):
         for fc_sf in self.actuators_map[role]:
             self.actuator_cmds[role][fc_sf] = fc.smart_read(fc_sf)
 
-        yf = 10
+        yf = 100
         self.actuator_cmds[role]["adcs_cmd.mtr_cmd"] = [x*yf for x in self.actuator_cmds[role]["adcs_cmd.mtr_cmd"]]
         
     def send_actuations_to_simmed_satellites(self):
