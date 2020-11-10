@@ -4,12 +4,12 @@
 
 #include <common/GPSTime.hpp>
 #include <common/constant_tracker.hpp>
-#include <environment.hpp>
+#include <gnc/environment.hpp>
 #include <gnc/constants.hpp>
 #include <gnc/orbit_controller.hpp>
 #include "ClockManager.hpp"
 #include "PropController.hpp"
-#include "psim/truth/transform_direction.hpp"
+#include <lib/common/psim/include/psim/truth/transform_direction.yml.hpp>
 
 #include "TimedControlTask.hpp"
 

@@ -111,7 +111,7 @@ lin::Vector3d OrbitController::calculate_impulse(double t, lin::Vector3d r, lin:
 }
 
 unsigned int impulse_to_time(double impulse) {
-    double time = 024119 * impulse + 7.0092e-05;
+    double time = 0.024119 * impulse + 7.0092e-05;
     return static_cast<unsigned int>(time);
 }
 
@@ -134,7 +134,6 @@ void schedule_valves(lin::Vector3d J_ecef, double t) {
     gnc::utl::rotate_frame(q_eci_body, J_eci, J_body);
 
     // Define the unit vectors that give the directions the prop system would fire in. 
-    // I need to talk to athena/sruti about which direction each of the valves in the prop controller point in. I just labelled them randomly for now.
     lin::Vector3d thruster1 = { 0.6534, -0.3822, -0.6534};
     lin::Vector3d thruster2 = { 0.5391,  0.6472,  0.5391};
     lin::Vector3d thruster3 = {-0.6534, -0.3822,  0.6534};
