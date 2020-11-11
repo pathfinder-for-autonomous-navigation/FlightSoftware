@@ -286,10 +286,22 @@ class CppSimulation(Simulation):
         for fc_sf in self.actuators_map[role]:
             self.actuator_cmds[role][fc_sf] = fc.smart_read(fc_sf)
 
-        yf = 100
-        self.actuator_cmds[role]["adcs_cmd.mtr_cmd"] = [x*yf for x in self.actuator_cmds[role]["adcs_cmd.mtr_cmd"]]
+        '''
+        Uncomment these sections if you want to mutate the actuators coming out of the flight computer
+        for debugging purposes.
+
+        Adjusting the yeet factor (yf) is a direct multiplier to make actuators stronger than they actually are
+        Setting it to 0 mutes the actuator.
+        '''
+
+        # mtr_yf = 10
+        # self.actuator_cmds[role]["adcs_cmd.mtr_cmd"] = [x*mtr_yf for x in self.actuator_cmds[role]["adcs_cmd.mtr_cmd"]]
         
+        # rwa_t_yf = 10
+        # self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"] = [x*rwa_t_yf for x in self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"]]
+
     def send_actuations_to_simmed_satellites(self):
+        
         # send the outputs of the FC to psim        
         # iterate across each satellite's mappings
         for role,mappings in self.actuators_map.items():
