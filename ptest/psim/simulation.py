@@ -104,7 +104,7 @@ class Simulation(object):
         """
         raise NotImplementedError
 
-    def send_actuations_to_simmed_satellites(self):
+    def read_actuators_send_to_sim(self):
         """
         Send actuator commands from the real flight computer to the
         simulation so that it can update dynamics.
@@ -130,12 +130,18 @@ class Simulation(object):
 
         start_time = time.time()
         while step < num_steps and self.running:
-            self.update_dynamics() # what is the order?
-            self.update_sensors() # what is the order?
-            self.simulate_flight_computers()
+            # Step 1. Generate dynamics
+            self.update_dynamics()
 
+            # Step 2. Load sensor data into ptest
+            self.update_sensors()
+            
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
+
+            # Step 3 Simulate Flight Computers if need be
+            self.simulate_flight_computers()
+
             # Step 3.3. Allow test case to do its own meddling with the flight computer.
             self.testcase.run_case()
 
@@ -146,9 +152,12 @@ class Simulation(object):
                 self.flight_controller_follower.write_state("cycle.start", "true")
                 self.flight_controller_leader.write_state("cycle.start", "true")
 
-            self.send_actuations_to_simmed_satellites()
+            # Step 4. Read the actuators from the flight computer(s) and send to psim
+            self.read_actuators_send_to_sim()
 
+            # Infrastructure
             step += 1
+
             time.sleep(self.dt - ((time.time() - start_time) % self.dt))
 
         self.running = False
@@ -300,7 +309,7 @@ class CppSimulation(Simulation):
         # rwa_t_yf = 10
         # self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"] = [x*rwa_t_yf for x in self.actuator_cmds[role]["adcs_cmd.rwa_torque_cmd"]]
 
-    def send_actuations_to_simmed_satellites(self):
+    def read_actuators_send_to_sim(self):
         
         # send the outputs of the FC to psim        
         # iterate across each satellite's mappings
@@ -354,7 +363,7 @@ class MatlabSimulation(Simulation):
         self.computer_state_leader, self.actuator_commands_leader = \
             self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
 
-    def send_actuations_to_simmed_satellites(self):
+    def read_actuators_send_to_sim(self):
         self.main_state = self.main_state_promise.result()
         self.main_state['follower'] = self.eng.actuator_command(self.actuator_commands_follower,self.main_state['follower'], nargout=1)
         self.main_state['leader'] = self.eng.actuator_command(self.actuator_commands_leader,self.main_state['leader'], nargout=1)
