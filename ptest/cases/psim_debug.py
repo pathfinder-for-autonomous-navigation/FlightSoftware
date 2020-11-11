@@ -14,6 +14,10 @@ class PsimDebug(SingleSatOnlyCase):
         return SingleAttitudeOrbitGnc
 
     @property
+    def sim_mapping(self):
+        return "fc_vs_sim.json"
+
+    @property
     def sim_duration(self):
         return float("inf")
 
@@ -32,7 +36,7 @@ class PsimDebug(SingleSatOnlyCase):
         return "startup"
 
     def setup_post_bootsetup(self):
-        self.print_ws("detumble_safety_factor",0.4)
+        self.print_ws("detumble_safety_factor",0.05)
 
     def run_case_singlesat(self):
         # self.print_rs_psim("truth.leader.environment.s.body")
@@ -48,7 +52,9 @@ class PsimDebug(SingleSatOnlyCase):
             self.print_rs('adcs_monitor.ssa_vec')
             self.print_rs('adcs_monitor.mag1_vec')
             self.print_rs('adcs_monitor.gyr_vec')
+            self.print_rs("attitude_estimator.q_body_eci")
             self.print_rs("attitude_estimator.w_body")
+            self.print_rs("attitude_estimator.fro_P")
             self.print_rs("adcs_cmd.mtr_cmd")
             self.print_rs("adcs_cmd.rwa_torque_cmd")
 

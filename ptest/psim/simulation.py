@@ -19,7 +19,7 @@ class Simulation(object):
     Full mission simulation, including both spacecraft.
     """
     def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
-    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model):
+    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mappings_file_name):
         """
         Initializes self
 
@@ -28,6 +28,9 @@ class Simulation(object):
             seed(int or None) random number generator seed or None
             print_log: If true, prints logging messages to the console rather than
                        just to a file.
+            _sim_configs = List of psim configs
+            _sim_modle = The desired psim model
+            _mappings_file_name = The json file containing the mappings of fc to psim statefields
         """
         self.is_interactive = is_interactive
         self.devices = devices
@@ -38,7 +41,7 @@ class Simulation(object):
         self.is_single_sat_sim = is_single_sat_sim
         self.sim_configs = _sim_configs
         self.sim_model = _sim_model
-
+        self.mappings_file_name = _mappings_file_name
         self.log = ""
 
         self.sim_time = 0
@@ -135,7 +138,7 @@ class Simulation(object):
 
             # Step 2. Load sensor data into ptest
             self.update_sensors()
-            
+                        
             # Step 3.2. Send sim inputs, read sim outputs from Flight Computer
             self.interact_fc()
 
@@ -157,7 +160,6 @@ class Simulation(object):
 
             # Infrastructure
             step += 1
-
             time.sleep(self.dt - ((time.time() - start_time) % self.dt))
 
         self.running = False
@@ -175,12 +177,13 @@ class Simulation(object):
         """
         Exchange simulation state variables with the one of the flight controllers.
         """
-        # Step 3.2.2 Send inputs to Flight Controller
+        # Step 3.2.1 Send inputs to Flight Controller
         self.write_adcs_estimator_inputs(fc, sensor_readings)
-        # Step 3.2.3 Read outputs from previous control cycle
+
+        # Step 3.2.2 Read outputs from previous control cycle
         self.read_adcs_estimator_outputs(fc)
         
-        # Step 3.2.4
+        # Step 3.2.3
         self.read_actuators(fc)
     
     def read_actuators(self, fc):
@@ -211,6 +214,8 @@ class CppSimulation(Simulation):
             raise RuntimeError("No simulation configs were provided! Please set the sim_configs property")
         if self.sim_model == None:
             raise RuntimeError("No simulation models were provided! Please set the sim_model property")
+        if self.mappings_file_name == "":
+            raise RuntimeError("Error. Please set the json mapping file name property")
 
         configs = [prefix + x + postfix for x in self.sim_configs]
         self.mysim = psim.Simulation(self.sim_model, configs)
@@ -218,42 +223,57 @@ class CppSimulation(Simulation):
 
         self.sat_names = ['leader','follower']
         if self.is_single_sat_sim:
-            sat_names = ['leader']
+            self.sat_names = ['leader']
 
-        ### JSON ###
-        with open('ptest/psim/configs/fc_vs_sim.json') as json_file:
+        # Open the correct mappings config file. self.mappings_file_name is a property of the ptest case
+        self.mappings_file_name
+        fn = 'ptest/psim/configs/' + self.mappings_file_name
+        with open(fn) as json_file:
             self.fc_vs_sim = json.load(json_file)
         
+        # Create sub dictionaries for sensors and actuators
         self.fc_vs_sim_s = self.fc_vs_sim['fc_vs_sim_s']
         self.fc_vs_sim_a = self.fc_vs_sim['fc_vs_sim_a']
 
-        self.sensors_map = {k:self.fc_vs_sim_s for k in sat_names}
-        self.actuators_map = {k:self.fc_vs_sim_a for k in sat_names}
-        # replace sat with the satellite name in all the mappings
+        # Create a dictionary of satellite names to dictionaries
+        self.sensors_map = {k:self.fc_vs_sim_s for k in self.sat_names}
+        self.actuators_map = {k:self.fc_vs_sim_a for k in self.sat_names}
+
+        # replace sat with the real satellite name in all the mappings
         self.sensors_map =   {k:{f_name:p_name.replace('sat',k) for f_name,p_name in v.items()} for k,v in self.sensors_map.items()}
         self.actuators_map = {k:{f_name:p_name.replace('sat',k) for f_name,p_name in v.items()} for k,v in self.actuators_map.items()}
+        
+        # Now the above is a dictionary as follows:
+        # sensors_map['leader']['fsw_sensor_sf_name'] = 'psim_leader_sensor_sf_name'
+        # actuators_map['leader']['fsw_act_sf_name'] = 'psim_leader_act_sf_name'
 
-        self.sensor_readings = {k:{} for k in sat_names}
-        self.actuator_cmds = {k:{} for k in sat_names}
+        # Initialize sensor reading and actuator reading containers
+        self.sensor_readings = {k:{} for k in self.sat_names}
+        self.actuator_cmds = {k:{} for k in self.sat_names}
 
         self.fc_to_role_map = {'FlightController':'leader', 'FlightControllerLeader':'leader', 
                                'FlightControllerFolloewr':'follower'}
 
+        # required to implement per old architecture, these fulfill no purpose in Cpp
+        self.sensor_readings_follower = None
+        self.sensor_readings_leader = None
+
     def update_sensors(self):
-        self.sensor_readings_follower = []
-
-        self.sim_time = self.mysim["truth.t.s"]
-
+        '''
+        For each active satelite in the sensors_map, get all the psim values from psim
+        '''
+        
         # iterate across each satellite's mappings
         for role,mappings in self.sensors_map.items():
             # iterate across each fc_sf vs psim_sf pair
             for fc_sf,psim_sf in mappings.items():
-                self.sensor_readings[role][fc_sf] = self.mysim[psim_sf]
+                psim_val = self.mysim[psim_sf]
+                if(type(psim_val) == lin.Vector3):
+                    psim_val = list(psim_val)
+                self.sensor_readings[role][fc_sf] = psim_val
 
     def write_adcs_estimator_inputs(self, fc, sensor_readings):
-        """Write the inputs required for ADCS state estimation."""
-
-        fc.write_state('orbit.time', self.sim_time)
+        """Write the inputs required for ADCS state estimation. Per satellite"""
 
         role = self.fc_to_role_map[fc.device_name]
 
@@ -261,7 +281,7 @@ class CppSimulation(Simulation):
         # iterate across each fc_sf vs psim_sf pair
         for fc_sf,psim_sf in mappings.items():
             local = self.sensor_readings[role][fc_sf]
-            fc.write_state(fc_sf, list(local))
+            fc.write_state(fc_sf, local)
 
     def read_adcs_estimator_outputs(self, flight_controller):
         """
@@ -296,7 +316,7 @@ class CppSimulation(Simulation):
             self.actuator_cmds[role][fc_sf] = fc.smart_read(fc_sf)
 
         '''
-        Uncomment these sections if you want to mutate the actuators coming out of the flight computer
+        Uncomment the below sections if you want to mutate the actuators coming out of the flight computer
         for debugging purposes.
 
         Adjusting the yeet factor (yf) is a direct multiplier to make actuators stronger than they actually are
@@ -319,7 +339,12 @@ class CppSimulation(Simulation):
                 local = self.actuator_cmds[role][fc_sf]
                 if type(local) == list:
                     # lol should generalize this
-                    local = lin.Vector3(local)
+                    if len(local) == 3:
+                        local = lin.Vector3(local)
+                    elif len(local) == 4:
+                        local = lin.Vector4(local)
+                    else:
+                        raise RuntimeError("Unexpected List Length, can't change into lin Vector")
 
                 self.mysim[psim_sf] = local
 

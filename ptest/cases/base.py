@@ -36,6 +36,13 @@ class PTestCase(object):
         '''
         return None
 
+    @property
+    def sim_mapping(self):
+        '''
+        Json file name that contains the mappings desired
+        '''
+        return None
+
     def sim_implementation(self, *args, **kwargs):
         """
         Choice of sim implementation for this testcase.
@@ -97,11 +104,14 @@ class PTestCase(object):
                 self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
 
     def setup_case(self, devices):
+        '''
+        Entry point for simulation creation
+        '''
         self.populate_devices(devices)
         if self.sim_duration > 0:
             self.sim = self.sim_implementation(self.is_interactive, devices, 
             self.random_seed, self, self.sim_duration, self.sim_initial_state, 
-            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model)
+            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, self.sim_mapping)
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()
