@@ -4,6 +4,113 @@
     "key": "gomspace",
     "measurements": [
         {
+            "key": "gomspace.modes",
+            "name": "Modes",
+            "values": [
+                {
+                    "bitsize": 3,
+                    "flow_id": 11,
+                    "max": 4,
+                    "min": 0,
+                    "type": "unsigned char",
+                    "writable": false,
+                    "name": " Battery Mode",
+                    "key": "battmode",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 28,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Heater Mode",
+                    "key": "heater",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 11,
+                    "max": 2,
+                    "min": 1,
+                    "type": "unsigned char",
+                    "writable": false,
+                    "name": "PPT Mode",
+                    "key": "pptmode",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "key": "gomspace.counters",
+            "name": "Counters",
+            "values": [
+                {
+                    "bitsize": 32,
+                    "flow_id": 11,
+                    "max": 4294967295,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Boot Time",
+                    "key": "counter_boot",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "bitsize": 32,
+                    "flow_id": 29,
+                    "max": 4294967295,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Wdt i2c",
+                    "key": "counter_wdt_i2c",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "bitsize": 10,
+                    "flow_id": 29,
+                    "max": 1000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Wdt i2c Time Left",
+                    "key": "wdt_i2c_time_left",
+                    "hints": {
+                        "range": "1"
+                    },
+                    "units": "seconds"
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
             "key": "gomspace.commands",
             "name": "Commands",
             "values": [
@@ -241,7 +348,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Get hk",
-                    "key": "base",
+                    "key": "get_hk",
                     "hints": {
                         "range": "1"
                     }
@@ -313,7 +420,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Low Battery",
-                    "key": "base",
+                    "key": "low_batt",
                     "hints": {
                         "range": "1"
                     }
@@ -444,6 +551,144 @@
                     "hints": {
                         "range": "1"
                     }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "key": "gomspace.power_cycle_output",
+            "name": "Power Cycle Commands",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Output 1",
+                    "key": "power_cycle_output1_cmd",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Output 2",
+                    "key": "power_cycle_output2_cmd",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Output 3",
+                    "key": "power_cycle_output3_cmd",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Output 3",
+                    "key": "power_cycle_output4_cmd",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Output 5",
+                    "key": "power_cycle_output5_cmd",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Output 6",
+                    "key": "power_cycle_output6_cmd",
+                    "hints": {
+                        "range": "1"
+                    }
+                },
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+            ]
+        },
+        {
+            "key": "gomspace.pv",
+            "name": "Boost Converter Voltage Commands",
+            "values": [
+                {
+                    "bitsize": 9,
+                    "flow_id": 30,
+                    "max": 4000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Voltage 1",
+                    "key": "pv1_cmd",
+                    "hints": {
+                        "range": "1"
+                    },
+                    "units": "milliamperes"
+                },
+                {
+                    "bitsize": 9,
+                    "flow_id": 30,
+                    "max": 4000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Voltage 2",
+                    "key": "pv2_cmd",
+                    "hints": {
+                        "range": "1"
+                    },
+                    "units": "milliamperes"
+                },
+                {
+                    "bitsize": 9,
+                    "flow_id": 30,
+                    "max": 4000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Voltage 3",
+                    "key": "pv3_cmd",
+                    "hints": {
+                        "range": "1"
+                    },
+                    "units": "milliamperes"
                 },
                 {
                     "key": "utc",
@@ -727,246 +972,6 @@
                 }
             ],
             "key": "gomspace.bootcause"
-        },
-        {
-            "name": "Power Cycle Output 1",
-            "values": [
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "Output 1",
-                    "key": "value",
-                    "hints": {
-                        "range": "1"
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ],
-            "key": "gomspace.power_cycle_output1_cmd"
-        },
-        {
-            "name": "Power Cycle Output 2",
-            "values": [
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "Output 2",
-                    "key": "value",
-                    "hints": {
-                        "range": "1"
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ],
-            "key": "gomspace.power_cycle_output2_cmd"
-        },
-        {
-            "name": "Power Cycle Output 3",
-            "values": [
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "Output 3",
-                    "key": "value",
-                    "hints": {
-                        "range": "1"
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ],
-            "key": "gomspace.power_cycle_output3_cmd"
-        },
-        {
-            "name": "Power Cycle Output 4",
-            "values": [
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "Output 4",
-                    "key": "value",
-                    "hints": {
-                        "range": "1"
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ],
-            "key": "gomspace.power_cycle_output4_cmd"
-        },
-        {
-            "name": "Power Cycle Output 5",
-            "values": [
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "Output 5",
-                    "key": "value",
-                    "hints": {
-                        "range": "1"
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ],
-            "key": "gomspace.power_cycle_output5_cmd"
-        },
-        {
-            "name": "Power Cycle Output 6",
-            "values": [
-                {
-                    "bitsize": 1,
-                    "flow_id": 12,
-                    "type": "bool",
-                    "writable": true,
-                    "name": "Output 6",
-                    "key": "value",
-                    "hints": {
-                        "range": "1"
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ],
-            "key": "gomspace.power_cycle_output6_cmd"
-        },
-        {
-            "name": "Battery Mode",
-            "values": [
-                {
-                    "bitsize": 3,
-                    "flow_id": 11,
-                    "max": 4,
-                    "min": 0,
-                    "type": "unsigned char",
-                    "writable": false,
-                    "name": " BattMode",
-                    "key": "value",
-                    "hints": {
-                        "range": "1"
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ],
-            "key": "gomspace.battmode"
-        },
-        {
-            "name": "PPT Mode",
-            "values": [
-                {
-                    "bitsize": 1,
-                    "flow_id": 11,
-                    "max": 2,
-                    "min": 1,
-                    "type": "unsigned char",
-                    "writable": false,
-                    "name": "PPTMode",
-                    "key": "value",
-                    "hints": {
-                        "range": "1"
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ],
-            "key": "gomspace.pptmode"
-        },
-        {
-            "name": "Boot Time",
-            "values": [
-                {
-                    "bitsize": 32,
-                    "flow_id": 11,
-                    "max": 4294967295,
-                    "min": 0,
-                    "type": "unsigned int",
-                    "writable": false,
-                    "name": "Counter_Boot",
-                    "key": "value",
-                    "hints": {
-                        "range": "1"
-                    }
-                },
-                {
-                    "key": "utc",
-                    "source": "timestamp",
-                    "name": "Timestamp",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1
-                    }
-                }
-            ],
-            "key": "gomspace.counter_boot"
         }
     ]
 }
