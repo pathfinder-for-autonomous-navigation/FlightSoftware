@@ -5,13 +5,17 @@ from psim.sims import SingleAttitudeOrbitGnc
 class DeploymentToStandby(SingleSatOnlyCase):
     @property
     def sim_configs(self):
-        configs = ["truth/deployment", "truth/base"]
+        configs = ["truth/ci", "truth/base"]
         configs += ["sensors/base"]
         return configs
 
     @property
     def sim_model(self):
         return SingleAttitudeOrbitGnc
+
+    @property
+    def sim_mapping(self):
+        return "ci_mapping.json"
 
     @property
     def sim_duration(self):
@@ -27,13 +31,10 @@ class DeploymentToStandby(SingleSatOnlyCase):
 
     @property
     def sim_initial_state(self):
-        # Start the spacecraft with zero angular rate in the body frame, 
-        # so that we exit detumble almost immediately.
         return "startup"
 
     def setup_post_bootsetup(self):
         return
-        # self.print_ws("detumble_safety_factor",0.0)
 
     def run_case_singlesat(self):
         self.finish()

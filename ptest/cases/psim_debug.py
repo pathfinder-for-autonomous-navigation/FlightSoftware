@@ -15,7 +15,7 @@ class PsimDebug(SingleSatOnlyCase):
 
     @property
     def sim_mapping(self):
-        return "fc_vs_sim.json"
+        return "ci_mapping.json"
 
     @property
     def sim_duration(self):
