@@ -19,7 +19,7 @@ class Simulation(object):
     Full mission simulation, including both spacecraft.
     """
     def __init__(self, is_interactive, devices, seed, testcase, sim_duration, 
-    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mappings_file_name):
+    sim_initial_state, is_single_sat_sim, _sim_configs, _sim_model, _mapping_file_name):
         """
         Initializes self
 
@@ -41,7 +41,7 @@ class Simulation(object):
         self.is_single_sat_sim = is_single_sat_sim
         self.sim_configs = _sim_configs
         self.sim_model = _sim_model
-        self.mappings_file_name = _mappings_file_name
+        self.mapping_file_name = _mapping_file_name
         self.log = ""
 
         self.sim_time = 0
@@ -223,9 +223,9 @@ class CppSimulation(Simulation):
         if self.is_single_sat_sim:
             self.sat_names = ['leader']
 
-        # Open the correct mappings config file. self.mappings_file_name is a property of the ptest case
-        self.mappings_file_name
-        fn = 'ptest/psim/configs/' + self.mappings_file_name
+        # Open the correct mapping config file. self.mappings_file_name is a property of the ptest case
+        self.mapping_file_name
+        fn = 'ptest/psim/mapping_configs/' + self.mapping_file_name
         with open(fn) as json_file:
             self.fc_vs_sim = json.load(json_file)
         
