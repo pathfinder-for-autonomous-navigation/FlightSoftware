@@ -54,6 +54,22 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.rs("pan.state")
         self.rs("pan.cycle_no")
 
+        self.rs("prop.tank2.pressure")
+        self.rs("prop.tank2.temp")
+        self.rs("prop.tank1.temp")
+        
+        self.rs("prop.pressurize_fail.suppress")
+        self.rs("prop.pressurize_fail.override")
+
+        self.rs("prop.overpressured.suppress")
+        self.rs("prop.overpressured.override")
+        
+        self.rs("prop.tank1_temp_high.suppress")
+        self.rs("prop.tank1_temp_high.override")
+
+        self.rs("prop.tank2_temp_high.suppress")
+        self.rs("prop.tank2_temp_high.override")
+
     @property
     def state(self):
         return str(self.read_state("prop.state"))
