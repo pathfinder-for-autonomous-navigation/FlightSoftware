@@ -6,9 +6,15 @@ class ActuateHardwareCase(SingleSatOnlyCase):
         self.logger.put("Begin ADCS Motor Setup")
         self.ws("dcdc.ADCSMotor_cmd", True)
         self.cycle()
+        
         self.ws("adcs.state", Enums.adcs_states["manual"])
+        self.cycle()
+
         self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_SPEED_CTRL"])
+        self.cycle()
+
         self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
+        self.cycle()
 
     def prop_valves_setup(self):
         self.logger.put("Begin Valve Setup")

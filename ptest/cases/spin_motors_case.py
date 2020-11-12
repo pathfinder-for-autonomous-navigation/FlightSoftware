@@ -15,4 +15,12 @@ class SpinMotorsCase(SingleSatOnlyCase):
 
     def run_case_singlesat(self):
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
+        st_time = time.time()
+        while time.time() - st_time < 5:
+            self.print_rs("adcs_monitor.rwa_speed_rd")
+            self.print_rs("gomspace.vbatt")
+        self.cleanup()
+
+    def cleanup(self):
+        self.ws("adcs_cmd.rwa_speed_cmd", [0,0,0])
         self.finish()
