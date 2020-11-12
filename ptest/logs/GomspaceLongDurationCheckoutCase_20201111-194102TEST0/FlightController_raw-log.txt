@@ -1,0 +1,1700 @@
+[2020-11-11 19:41:02.575930] Sent:     {"mode": 119, "field": "gomspace.low_batt.suppress", "val": "true"}
+[2020-11-11 19:41:02.707482] Received: {"t":83529,"field":"gomspace.low_batt.suppress","val":"true"}
+[2020-11-11 19:41:02.707776] Sent:     {"mode": 119, "field": "fault_handler.enabled", "val": "false"}
+[2020-11-11 19:41:02.712420] Received: {"t":83534,"field":"fault_handler.enabled","val":"false"}
+[2020-11-11 19:41:02.716323] Sent:     {"mode": 114, "field": "pan.one_day_ccno"}
+[2020-11-11 19:41:02.717404] Received: {"t":83539,"field":"pan.one_day_ccno","val":"508235"}
+[2020-11-11 19:41:02.743542] Sent:     {"mode": 119, "field": "dcdc.SpikeDock_cmd", "val": "true"}
+[2020-11-11 19:41:02.748412] Received: {"t":83570,"field":"dcdc.SpikeDock_cmd","val":"true"}
+[2020-11-11 19:41:02.748684] Sent:     {"mode": 119, "field": "dcdc.SpikeDock_cmd", "val": "true"}
+[2020-11-11 19:41:02.753401] Received: {"t":83575,"field":"dcdc.SpikeDock_cmd","val":"true"}
+[2020-11-11 19:41:02.753571] Sent:     {"mode": 119, "field": "prop.state", "val": "8"}
+[2020-11-11 19:41:02.758350] Received: {"t":83580,"field":"prop.state","val":"8"}
+[2020-11-11 19:41:02.774433] Sent:     {"mode": 119, "field": "dcdc.ADCSMotor_cmd", "val": "true"}
+[2020-11-11 19:41:02.779410] Received: {"t":83601,"field":"dcdc.ADCSMotor_cmd","val":"true"}
+[2020-11-11 19:41:02.779616] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:02.784351] Received: {"t":83606,"field":"pan.cycle_no","val":"1"}
+[2020-11-11 19:41:02.784583] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:02.789345] Received: {"t":83611,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:02.800266] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:02.935396] Received: {"t":83757,"field":"pan.cycle_no","val":"2"}
+[2020-11-11 19:41:02.935654] Sent:     {"mode": 119, "field": "adcs.state", "val": "0"}
+[2020-11-11 19:41:02.940368] Received: {"t":83762,"field":"adcs.state","val":"0"}
+[2020-11-11 19:41:02.940590] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_mode", "val": "1"}
+[2020-11-11 19:41:02.945390] Received: {"t":83767,"field":"adcs_cmd.rwa_mode","val":"1"}
+[2020-11-11 19:41:02.945585] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:02.951449] Received: {"t":83773,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:02.973261] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:02.973401] Received: {"t":83795,"field":"pan.cycle_no","val":"2"}
+[2020-11-11 19:41:02.973613] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:02.978382] Received: {"t":83800,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:02.978573] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.124384] Received: {"t":83946,"field":"pan.cycle_no","val":"3"}
+[2020-11-11 19:41:03.124878] Sent:     {"mode": 119, "field": "pan.state", "val": "11"}
+[2020-11-11 19:41:03.129385] Received: {"t":83951,"field":"pan.state","val":"11"}
+[2020-11-11 19:41:03.129589] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.134381] Received: {"t":83956,"field":"pan.cycle_no","val":"3"}
+[2020-11-11 19:41:03.135109] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.139396] Received: {"t":83961,"field":"pan.cycle_no","val":"3"}
+[2020-11-11 19:41:03.139655] Sent:     {"mode": 119, "field": "prop.sched_valve1", "val": "0"}
+[2020-11-11 19:41:03.144399] Received: {"t":83966,"field":"prop.sched_valve1","val":"0"}
+[2020-11-11 19:41:03.144626] Sent:     {"mode": 119, "field": "prop.sched_valve2", "val": "0"}
+[2020-11-11 19:41:03.149390] Received: {"t":83971,"field":"prop.sched_valve2","val":"0"}
+[2020-11-11 19:41:03.149600] Sent:     {"mode": 119, "field": "prop.sched_valve3", "val": "0"}
+[2020-11-11 19:41:03.154393] Received: {"t":83976,"field":"prop.sched_valve3","val":"0"}
+[2020-11-11 19:41:03.154613] Sent:     {"mode": 119, "field": "prop.sched_valve4", "val": "0"}
+[2020-11-11 19:41:03.159395] Received: {"t":83981,"field":"prop.sched_valve4","val":"0"}
+[2020-11-11 19:41:03.159601] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.164376] Received: {"t":83986,"field":"pan.cycle_no","val":"3"}
+[2020-11-11 19:41:03.164572] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:03.169390] Received: {"t":83991,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:03.169650] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:03.175470] Received: {"t":83997,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:03.175657] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.180376] Received: {"t":84002,"field":"pan.cycle_no","val":"3"}
+[2020-11-11 19:41:03.180577] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:03.185394] Received: {"t":84007,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:03.185627] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.332404] Received: {"t":84154,"field":"pan.cycle_no","val":"4"}
+[2020-11-11 19:41:03.332645] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.337380] Received: {"t":84159,"field":"pan.cycle_no","val":"4"}
+[2020-11-11 19:41:03.337568] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:03.342391] Received: {"t":84164,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:03.342646] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:03.348477] Received: {"t":84170,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:03.348666] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.353354] Received: {"t":84175,"field":"pan.cycle_no","val":"4"}
+[2020-11-11 19:41:03.353586] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:03.358399] Received: {"t":84180,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:03.358579] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.511403] Received: {"t":84333,"field":"pan.cycle_no","val":"5"}
+[2020-11-11 19:41:03.511629] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.516381] Received: {"t":84338,"field":"pan.cycle_no","val":"5"}
+[2020-11-11 19:41:03.521259] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:03.521416] Received: {"t":84343,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:03.527247] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:03.527497] Received: {"t":84349,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:03.527680] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.532389] Received: {"t":84354,"field":"pan.cycle_no","val":"5"}
+[2020-11-11 19:41:03.532614] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:03.537387] Received: {"t":84359,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:03.537545] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.690400] Received: {"t":84512,"field":"pan.cycle_no","val":"6"}
+[2020-11-11 19:41:03.690632] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.695388] Received: {"t":84517,"field":"pan.cycle_no","val":"6"}
+[2020-11-11 19:41:03.695583] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:03.700402] Received: {"t":84522,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:03.700657] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:03.706487] Received: {"t":84528,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:03.706690] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.711386] Received: {"t":84533,"field":"pan.cycle_no","val":"6"}
+[2020-11-11 19:41:03.711608] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:03.716373] Received: {"t":84538,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:03.716573] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.869395] Received: {"t":84691,"field":"pan.cycle_no","val":"7"}
+[2020-11-11 19:41:03.869626] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.874383] Received: {"t":84696,"field":"pan.cycle_no","val":"7"}
+[2020-11-11 19:41:03.874577] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:03.879399] Received: {"t":84701,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:03.879648] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:03.885481] Received: {"t":84707,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:03.885670] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:03.890359] Received: {"t":84712,"field":"pan.cycle_no","val":"7"}
+[2020-11-11 19:41:03.890539] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:03.895393] Received: {"t":84717,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:03.895576] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.048399] Received: {"t":84870,"field":"pan.cycle_no","val":"8"}
+[2020-11-11 19:41:04.048623] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.053381] Received: {"t":84875,"field":"pan.cycle_no","val":"8"}
+[2020-11-11 19:41:04.053572] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:04.058400] Received: {"t":84880,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:04.064251] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:04.064515] Received: {"t":84886,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:04.064673] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.069355] Received: {"t":84891,"field":"pan.cycle_no","val":"8"}
+[2020-11-11 19:41:04.069531] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:04.074364] Received: {"t":84896,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:04.074556] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.226390] Received: {"t":85048,"field":"pan.cycle_no","val":"9"}
+[2020-11-11 19:41:04.226638] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.231353] Received: {"t":85053,"field":"pan.cycle_no","val":"9"}
+[2020-11-11 19:41:04.231552] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:04.236370] Received: {"t":85058,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:04.236608] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:04.242449] Received: {"t":85064,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:04.242641] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.247354] Received: {"t":85069,"field":"pan.cycle_no","val":"9"}
+[2020-11-11 19:41:04.247566] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:04.252399] Received: {"t":85074,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:04.252594] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.405421] Received: {"t":85227,"field":"pan.cycle_no","val":"10"}
+[2020-11-11 19:41:04.410266] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.410416] Received: {"t":85232,"field":"pan.cycle_no","val":"10"}
+[2020-11-11 19:41:04.410567] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:04.415402] Received: {"t":85237,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:04.415646] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:04.421483] Received: {"t":85243,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:04.421677] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.426389] Received: {"t":85248,"field":"pan.cycle_no","val":"10"}
+[2020-11-11 19:41:04.426595] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:04.431389] Received: {"t":85253,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:04.431545] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.584409] Received: {"t":85406,"field":"pan.cycle_no","val":"11"}
+[2020-11-11 19:41:04.584650] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.589389] Received: {"t":85411,"field":"pan.cycle_no","val":"11"}
+[2020-11-11 19:41:04.600384] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:04.605402] Received: {"t":85427,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:04.605660] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:04.611485] Received: {"t":85433,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:04.611694] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.616393] Received: {"t":85438,"field":"pan.cycle_no","val":"11"}
+[2020-11-11 19:41:04.620302] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:04.621399] Received: {"t":85443,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:04.621595] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.768418] Received: {"t":85590,"field":"pan.cycle_no","val":"12"}
+[2020-11-11 19:41:04.768662] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.773390] Received: {"t":85595,"field":"pan.cycle_no","val":"12"}
+[2020-11-11 19:41:04.773574] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:04.778402] Received: {"t":85600,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:04.778685] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:04.784483] Received: {"t":85606,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:04.784648] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.789362] Received: {"t":85611,"field":"pan.cycle_no","val":"12"}
+[2020-11-11 19:41:04.789542] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:04.794389] Received: {"t":85616,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:04.794596] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.947406] Received: {"t":85769,"field":"pan.cycle_no","val":"13"}
+[2020-11-11 19:41:04.947626] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.952391] Received: {"t":85774,"field":"pan.cycle_no","val":"13"}
+[2020-11-11 19:41:04.952587] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:04.957403] Received: {"t":85779,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:04.957688] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:04.963483] Received: {"t":85785,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:04.963643] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:04.968367] Received: {"t":85790,"field":"pan.cycle_no","val":"13"}
+[2020-11-11 19:41:04.968558] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:04.973393] Received: {"t":85795,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:04.973582] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.126379] Received: {"t":85948,"field":"pan.cycle_no","val":"14"}
+[2020-11-11 19:41:05.126610] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.131364] Received: {"t":85953,"field":"pan.cycle_no","val":"14"}
+[2020-11-11 19:41:05.131528] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:05.136377] Received: {"t":85958,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:05.136641] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:05.142455] Received: {"t":85964,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:05.142580] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.147363] Received: {"t":85969,"field":"pan.cycle_no","val":"14"}
+[2020-11-11 19:41:05.147580] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:05.152375] Received: {"t":85974,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:05.152533] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.305421] Received: {"t":86127,"field":"pan.cycle_no","val":"15"}
+[2020-11-11 19:41:05.305662] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.310393] Received: {"t":86132,"field":"pan.cycle_no","val":"15"}
+[2020-11-11 19:41:05.310578] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:05.315403] Received: {"t":86137,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:05.315664] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:05.321485] Received: {"t":86143,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:05.321671] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.326365] Received: {"t":86148,"field":"pan.cycle_no","val":"15"}
+[2020-11-11 19:41:05.326564] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:05.331400] Received: {"t":86153,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:05.342531] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.484400] Received: {"t":86306,"field":"pan.cycle_no","val":"16"}
+[2020-11-11 19:41:05.492328] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.493367] Received: {"t":86315,"field":"pan.cycle_no","val":"16"}
+[2020-11-11 19:41:05.493564] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:05.498383] Received: {"t":86320,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:05.498650] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:05.504461] Received: {"t":86326,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:05.504651] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.509366] Received: {"t":86331,"field":"pan.cycle_no","val":"16"}
+[2020-11-11 19:41:05.509542] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:05.514368] Received: {"t":86336,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:05.514558] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.663420] Received: {"t":86485,"field":"pan.cycle_no","val":"17"}
+[2020-11-11 19:41:05.663651] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.668396] Received: {"t":86490,"field":"pan.cycle_no","val":"17"}
+[2020-11-11 19:41:05.668591] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:05.673407] Received: {"t":86495,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:05.679258] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:05.679514] Received: {"t":86501,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:05.679671] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.684399] Received: {"t":86506,"field":"pan.cycle_no","val":"17"}
+[2020-11-11 19:41:05.684610] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:05.689374] Received: {"t":86511,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:05.689542] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.841410] Received: {"t":86663,"field":"pan.cycle_no","val":"18"}
+[2020-11-11 19:41:05.841635] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.846395] Received: {"t":86668,"field":"pan.cycle_no","val":"18"}
+[2020-11-11 19:41:05.846559] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:05.851410] Received: {"t":86673,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:05.851583] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:05.857491] Received: {"t":86679,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:05.862361] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:05.865408] Received: {"t":86687,"field":"pan.cycle_no","val":"18"}
+[2020-11-11 19:41:05.865612] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:05.870400] Received: {"t":86692,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:05.870585] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.020411] Received: {"t":86842,"field":"pan.cycle_no","val":"19"}
+[2020-11-11 19:41:06.020645] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.025398] Received: {"t":86847,"field":"pan.cycle_no","val":"19"}
+[2020-11-11 19:41:06.025542] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:06.030408] Received: {"t":86852,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:06.030659] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:06.036491] Received: {"t":86858,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:06.036695] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.041401] Received: {"t":86863,"field":"pan.cycle_no","val":"19"}
+[2020-11-11 19:41:06.041601] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:06.046399] Received: {"t":86868,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:06.046554] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.199391] Received: {"t":87021,"field":"pan.cycle_no","val":"20"}
+[2020-11-11 19:41:06.199619] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.204371] Received: {"t":87026,"field":"pan.cycle_no","val":"20"}
+[2020-11-11 19:41:06.204564] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:06.209381] Received: {"t":87031,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:06.209654] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:06.215441] Received: {"t":87037,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:06.215632] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.220378] Received: {"t":87042,"field":"pan.cycle_no","val":"20"}
+[2020-11-11 19:41:06.220573] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:06.225406] Received: {"t":87047,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:06.235005] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.377383] Received: {"t":87199,"field":"pan.cycle_no","val":"21"}
+[2020-11-11 19:41:06.377596] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.382370] Received: {"t":87204,"field":"pan.cycle_no","val":"21"}
+[2020-11-11 19:41:06.382553] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:06.387382] Received: {"t":87209,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:06.387619] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:06.393444] Received: {"t":87215,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:06.393628] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.398367] Received: {"t":87220,"field":"pan.cycle_no","val":"21"}
+[2020-11-11 19:41:06.398572] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:06.403371] Received: {"t":87225,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:06.403562] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.556390] Received: {"t":87378,"field":"pan.cycle_no","val":"22"}
+[2020-11-11 19:41:06.561261] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.561405] Received: {"t":87383,"field":"pan.cycle_no","val":"22"}
+[2020-11-11 19:41:06.561557] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:06.566381] Received: {"t":87388,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:06.572227] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:06.572468] Received: {"t":87394,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:06.572661] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.577370] Received: {"t":87399,"field":"pan.cycle_no","val":"22"}
+[2020-11-11 19:41:06.577597] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:06.582404] Received: {"t":87404,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:06.582609] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.734417] Received: {"t":87556,"field":"pan.cycle_no","val":"23"}
+[2020-11-11 19:41:06.739279] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.739425] Received: {"t":87561,"field":"pan.cycle_no","val":"23"}
+[2020-11-11 19:41:06.744279] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:06.744432] Received: {"t":87566,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:06.744694] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:06.750474] Received: {"t":87572,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:06.750679] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.755405] Received: {"t":87577,"field":"pan.cycle_no","val":"23"}
+[2020-11-11 19:41:06.755575] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:06.760402] Received: {"t":87582,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:06.760588] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.913415] Received: {"t":87735,"field":"pan.cycle_no","val":"24"}
+[2020-11-11 19:41:06.913635] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.918400] Received: {"t":87740,"field":"pan.cycle_no","val":"24"}
+[2020-11-11 19:41:06.918587] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:06.923415] Received: {"t":87745,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:06.923682] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:06.929484] Received: {"t":87751,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:06.929685] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:06.934402] Received: {"t":87756,"field":"pan.cycle_no","val":"24"}
+[2020-11-11 19:41:06.934602] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:06.939406] Received: {"t":87761,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:06.939599] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.091392] Received: {"t":87913,"field":"pan.cycle_no","val":"25"}
+[2020-11-11 19:41:07.091639] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.096376] Received: {"t":87918,"field":"pan.cycle_no","val":"25"}
+[2020-11-11 19:41:07.096528] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:07.101413] Received: {"t":87923,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:07.101676] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:07.107477] Received: {"t":87929,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:07.107662] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.112373] Received: {"t":87934,"field":"pan.cycle_no","val":"25"}
+[2020-11-11 19:41:07.112546] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:07.117432] Received: {"t":87939,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:07.135832] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.269391] Received: {"t":88092,"field":"pan.cycle_no","val":"26"}
+[2020-11-11 19:41:07.269630] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.274374] Received: {"t":88096,"field":"pan.cycle_no","val":"26"}
+[2020-11-11 19:41:07.274534] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:07.279387] Received: {"t":88101,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:07.306275] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:07.306514] Received: {"t":88128,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:07.311255] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.311398] Received: {"t":88133,"field":"pan.cycle_no","val":"26"}
+[2020-11-11 19:41:07.311563] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:07.316411] Received: {"t":88138,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:07.316582] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.463377] Received: {"t":88285,"field":"pan.cycle_no","val":"27"}
+[2020-11-11 19:41:07.463575] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.468382] Received: {"t":88290,"field":"pan.cycle_no","val":"27"}
+[2020-11-11 19:41:07.468553] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:07.473389] Received: {"t":88295,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:07.486242] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:07.486476] Received: {"t":88308,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:07.486657] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.491378] Received: {"t":88313,"field":"pan.cycle_no","val":"27"}
+[2020-11-11 19:41:07.491588] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:07.496408] Received: {"t":88318,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:07.496612] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.643392] Received: {"t":88465,"field":"pan.cycle_no","val":"28"}
+[2020-11-11 19:41:07.643604] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.648386] Received: {"t":88470,"field":"pan.cycle_no","val":"28"}
+[2020-11-11 19:41:07.648578] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:07.653388] Received: {"t":88475,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:07.653617] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:07.659451] Received: {"t":88481,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:07.659641] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.664380] Received: {"t":88486,"field":"pan.cycle_no","val":"28"}
+[2020-11-11 19:41:07.664562] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:07.669408] Received: {"t":88491,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:07.669598] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.821421] Received: {"t":88643,"field":"pan.cycle_no","val":"29"}
+[2020-11-11 19:41:07.821652] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.826409] Received: {"t":88648,"field":"pan.cycle_no","val":"29"}
+[2020-11-11 19:41:07.826606] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:07.831421] Received: {"t":88653,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:07.831683] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:07.837489] Received: {"t":88659,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:07.837708] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:07.842385] Received: {"t":88664,"field":"pan.cycle_no","val":"29"}
+[2020-11-11 19:41:07.842564] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:07.847536] Received: {"t":88669,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:07.847789] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.000436] Received: {"t":88822,"field":"pan.cycle_no","val":"30"}
+[2020-11-11 19:41:08.000699] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.005413] Received: {"t":88827,"field":"pan.cycle_no","val":"30"}
+[2020-11-11 19:41:08.005642] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:08.010422] Received: {"t":88832,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:08.010709] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:08.016483] Received: {"t":88838,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:08.016712] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.021412] Received: {"t":88843,"field":"pan.cycle_no","val":"30"}
+[2020-11-11 19:41:08.021643] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:08.026412] Received: {"t":88848,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:08.026633] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.178428] Received: {"t":89000,"field":"pan.cycle_no","val":"31"}
+[2020-11-11 19:41:08.178680] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.183416] Received: {"t":89005,"field":"pan.cycle_no","val":"31"}
+[2020-11-11 19:41:08.183634] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:08.188425] Received: {"t":89010,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:08.188716] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:08.194486] Received: {"t":89016,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:08.194711] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.199414] Received: {"t":89021,"field":"pan.cycle_no","val":"31"}
+[2020-11-11 19:41:08.199660] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:08.204418] Received: {"t":89026,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:08.204639] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.357438] Received: {"t":89179,"field":"pan.cycle_no","val":"32"}
+[2020-11-11 19:41:08.357712] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.362416] Received: {"t":89184,"field":"pan.cycle_no","val":"32"}
+[2020-11-11 19:41:08.362643] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:08.367424] Received: {"t":89189,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:08.367706] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:08.373489] Received: {"t":89195,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:08.373717] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.378415] Received: {"t":89200,"field":"pan.cycle_no","val":"32"}
+[2020-11-11 19:41:08.378667] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:08.383451] Received: {"t":89205,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:08.383670] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.535432] Received: {"t":89357,"field":"pan.cycle_no","val":"33"}
+[2020-11-11 19:41:08.535682] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.540417] Received: {"t":89362,"field":"pan.cycle_no","val":"33"}
+[2020-11-11 19:41:08.540648] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:08.545428] Received: {"t":89367,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:08.545717] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:08.551486] Received: {"t":89373,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:08.551715] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.556412] Received: {"t":89378,"field":"pan.cycle_no","val":"33"}
+[2020-11-11 19:41:08.556657] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:08.561418] Received: {"t":89383,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:08.561644] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.714437] Received: {"t":89536,"field":"pan.cycle_no","val":"34"}
+[2020-11-11 19:41:08.714706] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.719414] Received: {"t":89541,"field":"pan.cycle_no","val":"34"}
+[2020-11-11 19:41:08.719613] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:08.724426] Received: {"t":89546,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:08.728486] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:08.734485] Received: {"t":89556,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:08.734712] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.739443] Received: {"t":89561,"field":"pan.cycle_no","val":"34"}
+[2020-11-11 19:41:08.739674] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:08.744447] Received: {"t":89566,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:08.744682] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.892435] Received: {"t":89714,"field":"pan.cycle_no","val":"35"}
+[2020-11-11 19:41:08.892695] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.897417] Received: {"t":89719,"field":"pan.cycle_no","val":"35"}
+[2020-11-11 19:41:08.897621] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:08.902456] Received: {"t":89724,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:08.902738] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:08.908487] Received: {"t":89730,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:08.908713] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:08.913413] Received: {"t":89735,"field":"pan.cycle_no","val":"35"}
+[2020-11-11 19:41:08.913643] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:08.918446] Received: {"t":89740,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:08.918679] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.070464] Received: {"t":89892,"field":"pan.cycle_no","val":"36"}
+[2020-11-11 19:41:09.070725] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.075449] Received: {"t":89897,"field":"pan.cycle_no","val":"36"}
+[2020-11-11 19:41:09.075668] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:09.080452] Received: {"t":89902,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:09.080721] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:09.086490] Received: {"t":89908,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:09.086718] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.091418] Received: {"t":89913,"field":"pan.cycle_no","val":"36"}
+[2020-11-11 19:41:09.091636] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:09.096531] Received: {"t":89918,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:09.096762] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.249461] Received: {"t":90071,"field":"pan.cycle_no","val":"37"}
+[2020-11-11 19:41:09.249713] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.254447] Received: {"t":90076,"field":"pan.cycle_no","val":"37"}
+[2020-11-11 19:41:09.259307] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:09.259462] Received: {"t":90081,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:09.259713] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:09.265499] Received: {"t":90087,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:09.265753] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.270418] Received: {"t":90092,"field":"pan.cycle_no","val":"37"}
+[2020-11-11 19:41:09.270574] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:09.275452] Received: {"t":90097,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:09.275688] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.428432] Received: {"t":90250,"field":"pan.cycle_no","val":"38"}
+[2020-11-11 19:41:09.428672] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.433421] Received: {"t":90255,"field":"pan.cycle_no","val":"38"}
+[2020-11-11 19:41:09.433645] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:09.438436] Received: {"t":90260,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:09.438725] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:09.444491] Received: {"t":90266,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:09.444705] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.449422] Received: {"t":90271,"field":"pan.cycle_no","val":"38"}
+[2020-11-11 19:41:09.449618] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:09.454457] Received: {"t":90276,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:09.454685] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.606464] Received: {"t":90428,"field":"pan.cycle_no","val":"39"}
+[2020-11-11 19:41:09.606717] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.611449] Received: {"t":90433,"field":"pan.cycle_no","val":"39"}
+[2020-11-11 19:41:09.611671] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:09.616434] Received: {"t":90438,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:09.616681] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:09.622494] Received: {"t":90444,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:09.622710] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.627423] Received: {"t":90449,"field":"pan.cycle_no","val":"39"}
+[2020-11-11 19:41:09.627660] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:09.632428] Received: {"t":90454,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:09.632643] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.784466] Received: {"t":90607,"field":"pan.cycle_no","val":"40"}
+[2020-11-11 19:41:09.784726] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.789448] Received: {"t":90611,"field":"pan.cycle_no","val":"40"}
+[2020-11-11 19:41:09.789669] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:09.794470] Received: {"t":90616,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:09.794715] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.799423] Received: {"t":90621,"field":"pan.cycle_no","val":"40"}
+[2020-11-11 19:41:09.799659] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:09.804422] Received: {"t":90626,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:09.804638] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.963443] Received: {"t":90785,"field":"pan.cycle_no","val":"41"}
+[2020-11-11 19:41:09.963704] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.968426] Received: {"t":90790,"field":"pan.cycle_no","val":"41"}
+[2020-11-11 19:41:09.968648] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:09.973436] Received: {"t":90795,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:09.973687] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:09.978421] Received: {"t":90800,"field":"pan.cycle_no","val":"41"}
+[2020-11-11 19:41:09.978675] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:09.983427] Received: {"t":90805,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:09.983667] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.141478] Received: {"t":90963,"field":"pan.cycle_no","val":"42"}
+[2020-11-11 19:41:10.157343] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.157492] Received: {"t":90979,"field":"pan.cycle_no","val":"42"}
+[2020-11-11 19:41:10.160269] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:10.162467] Received: {"t":90984,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:10.162693] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.167455] Received: {"t":90989,"field":"pan.cycle_no","val":"42"}
+[2020-11-11 19:41:10.167696] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:10.172459] Received: {"t":90994,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:10.172696] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.320481] Received: {"t":91142,"field":"pan.cycle_no","val":"43"}
+[2020-11-11 19:41:10.320748] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.325461] Received: {"t":91147,"field":"pan.cycle_no","val":"43"}
+[2020-11-11 19:41:10.325691] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:10.330473] Received: {"t":91152,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:10.330700] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.335451] Received: {"t":91157,"field":"pan.cycle_no","val":"43"}
+[2020-11-11 19:41:10.335676] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:10.340467] Received: {"t":91162,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:10.340695] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.498472] Received: {"t":91320,"field":"pan.cycle_no","val":"44"}
+[2020-11-11 19:41:10.498746] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.503461] Received: {"t":91325,"field":"pan.cycle_no","val":"44"}
+[2020-11-11 19:41:10.503683] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:10.508466] Received: {"t":91330,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:10.508680] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.513455] Received: {"t":91335,"field":"pan.cycle_no","val":"44"}
+[2020-11-11 19:41:10.513692] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:10.518462] Received: {"t":91340,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:10.518685] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.677477] Received: {"t":91499,"field":"pan.cycle_no","val":"45"}
+[2020-11-11 19:41:10.682348] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.682493] Received: {"t":91504,"field":"pan.cycle_no","val":"45"}
+[2020-11-11 19:41:10.682679] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:10.687468] Received: {"t":91509,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:10.692488] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.697458] Received: {"t":91519,"field":"pan.cycle_no","val":"45"}
+[2020-11-11 19:41:10.697694] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:10.702466] Received: {"t":91524,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:10.702696] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.855449] Received: {"t":91677,"field":"pan.cycle_no","val":"46"}
+[2020-11-11 19:41:10.855705] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.860429] Received: {"t":91682,"field":"pan.cycle_no","val":"46"}
+[2020-11-11 19:41:10.860651] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:10.865447] Received: {"t":91687,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:10.865693] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:10.870427] Received: {"t":91692,"field":"pan.cycle_no","val":"46"}
+[2020-11-11 19:41:10.870678] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:10.875433] Received: {"t":91697,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:10.875653] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.034444] Received: {"t":91856,"field":"pan.cycle_no","val":"47"}
+[2020-11-11 19:41:11.034729] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.039427] Received: {"t":91861,"field":"pan.cycle_no","val":"47"}
+[2020-11-11 19:41:11.039615] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:11.044453] Received: {"t":91866,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:11.044719] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.049435] Received: {"t":91871,"field":"pan.cycle_no","val":"47"}
+[2020-11-11 19:41:11.049602] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:11.054430] Received: {"t":91876,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:11.054652] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.212456] Received: {"t":92034,"field":"pan.cycle_no","val":"48"}
+[2020-11-11 19:41:11.212707] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.217438] Received: {"t":92039,"field":"pan.cycle_no","val":"48"}
+[2020-11-11 19:41:11.217661] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:11.222444] Received: {"t":92044,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:11.222710] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.227428] Received: {"t":92049,"field":"pan.cycle_no","val":"48"}
+[2020-11-11 19:41:11.227660] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:11.232444] Received: {"t":92054,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:11.232657] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.391482] Received: {"t":92213,"field":"pan.cycle_no","val":"49"}
+[2020-11-11 19:41:11.391742] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.396460] Received: {"t":92218,"field":"pan.cycle_no","val":"49"}
+[2020-11-11 19:41:11.396723] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:11.401476] Received: {"t":92223,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:11.401706] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.406462] Received: {"t":92228,"field":"pan.cycle_no","val":"49"}
+[2020-11-11 19:41:11.406665] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:11.411461] Received: {"t":92233,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:11.412461] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.570479] Received: {"t":92392,"field":"pan.cycle_no","val":"50"}
+[2020-11-11 19:41:11.570745] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.575466] Received: {"t":92397,"field":"pan.cycle_no","val":"50"}
+[2020-11-11 19:41:11.575659] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:11.580488] Received: {"t":92402,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:11.580706] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.585461] Received: {"t":92407,"field":"pan.cycle_no","val":"50"}
+[2020-11-11 19:41:11.585697] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:11.590463] Received: {"t":92412,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:11.590680] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.748481] Received: {"t":92570,"field":"pan.cycle_no","val":"51"}
+[2020-11-11 19:41:11.748730] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.753463] Received: {"t":92575,"field":"pan.cycle_no","val":"51"}
+[2020-11-11 19:41:11.753706] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:11.758485] Received: {"t":92580,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:11.758696] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.763459] Received: {"t":92585,"field":"pan.cycle_no","val":"51"}
+[2020-11-11 19:41:11.763693] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:11.768464] Received: {"t":92590,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:11.768692] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.927492] Received: {"t":92749,"field":"pan.cycle_no","val":"52"}
+[2020-11-11 19:41:11.927754] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.932482] Received: {"t":92754,"field":"pan.cycle_no","val":"52"}
+[2020-11-11 19:41:11.932704] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:11.937452] Received: {"t":92759,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:11.937702] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:11.942463] Received: {"t":92764,"field":"pan.cycle_no","val":"52"}
+[2020-11-11 19:41:11.942700] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:11.947476] Received: {"t":92769,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:11.947697] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.105544] Received: {"t":92927,"field":"pan.cycle_no","val":"53"}
+[2020-11-11 19:41:12.105802] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.110467] Received: {"t":92932,"field":"pan.cycle_no","val":"53"}
+[2020-11-11 19:41:12.110686] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:12.115479] Received: {"t":92937,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:12.115692] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.120474] Received: {"t":92942,"field":"pan.cycle_no","val":"53"}
+[2020-11-11 19:41:12.120728] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:12.125466] Received: {"t":92947,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:12.125690] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.283498] Received: {"t":93105,"field":"pan.cycle_no","val":"54"}
+[2020-11-11 19:41:12.288274] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.288479] Received: {"t":93110,"field":"pan.cycle_no","val":"54"}
+[2020-11-11 19:41:12.288668] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:12.293485] Received: {"t":93115,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:12.305344] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.305486] Received: {"t":93127,"field":"pan.cycle_no","val":"54"}
+[2020-11-11 19:41:12.305680] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:12.310470] Received: {"t":93132,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:12.310661] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.462486] Received: {"t":93284,"field":"pan.cycle_no","val":"55"}
+[2020-11-11 19:41:12.484354] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.484502] Received: {"t":93306,"field":"pan.cycle_no","val":"55"}
+[2020-11-11 19:41:12.484691] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:12.489486] Received: {"t":93311,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:12.489718] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.494469] Received: {"t":93316,"field":"pan.cycle_no","val":"55"}
+[2020-11-11 19:41:12.494716] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:12.499474] Received: {"t":93321,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:12.499705] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.646453] Received: {"t":93468,"field":"pan.cycle_no","val":"56"}
+[2020-11-11 19:41:12.646715] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.651442] Received: {"t":93473,"field":"pan.cycle_no","val":"56"}
+[2020-11-11 19:41:12.651662] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:12.656456] Received: {"t":93478,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:12.656726] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.661441] Received: {"t":93483,"field":"pan.cycle_no","val":"56"}
+[2020-11-11 19:41:12.662366] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:12.667452] Received: {"t":93489,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:12.667641] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.824453] Received: {"t":93646,"field":"pan.cycle_no","val":"57"}
+[2020-11-11 19:41:12.836440] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.841441] Received: {"t":93663,"field":"pan.cycle_no","val":"57"}
+[2020-11-11 19:41:12.841667] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:12.846454] Received: {"t":93668,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:12.846711] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:12.851439] Received: {"t":93673,"field":"pan.cycle_no","val":"57"}
+[2020-11-11 19:41:12.851671] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:12.856448] Received: {"t":93678,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:12.856661] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.003458] Received: {"t":93825,"field":"pan.cycle_no","val":"58"}
+[2020-11-11 19:41:13.003734] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.008442] Received: {"t":93830,"field":"pan.cycle_no","val":"58"}
+[2020-11-11 19:41:13.008664] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:13.013453] Received: {"t":93835,"field":"gomspace.vbatt","val":"7605"}
+[2020-11-11 19:41:13.013715] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.018438] Received: {"t":93840,"field":"pan.cycle_no","val":"58"}
+[2020-11-11 19:41:13.018673] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:13.023441] Received: {"t":93845,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:13.023660] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.181459] Received: {"t":94003,"field":"pan.cycle_no","val":"59"}
+[2020-11-11 19:41:13.181712] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.186443] Received: {"t":94008,"field":"pan.cycle_no","val":"59"}
+[2020-11-11 19:41:13.186680] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:13.191457] Received: {"t":94013,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:13.191680] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.196444] Received: {"t":94018,"field":"pan.cycle_no","val":"59"}
+[2020-11-11 19:41:13.196680] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:13.201444] Received: {"t":94023,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:13.201669] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.360476] Received: {"t":94182,"field":"pan.cycle_no","val":"60"}
+[2020-11-11 19:41:13.360728] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.365447] Received: {"t":94187,"field":"pan.cycle_no","val":"60"}
+[2020-11-11 19:41:13.365640] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:13.370455] Received: {"t":94192,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:13.370742] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:13.376542] Received: {"t":94198,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:13.376772] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.381446] Received: {"t":94203,"field":"pan.cycle_no","val":"60"}
+[2020-11-11 19:41:13.381688] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:13.386623] Received: {"t":94208,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:13.386868] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.539490] Received: {"t":94361,"field":"pan.cycle_no","val":"61"}
+[2020-11-11 19:41:13.539772] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.544472] Received: {"t":94366,"field":"pan.cycle_no","val":"61"}
+[2020-11-11 19:41:13.544661] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:13.549485] Received: {"t":94371,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:13.549770] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:13.555566] Received: {"t":94377,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:13.555799] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.560475] Received: {"t":94382,"field":"pan.cycle_no","val":"61"}
+[2020-11-11 19:41:13.560683] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:13.565541] Received: {"t":94387,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:13.565768] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.717496] Received: {"t":94539,"field":"pan.cycle_no","val":"62"}
+[2020-11-11 19:41:13.717730] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.722476] Received: {"t":94544,"field":"pan.cycle_no","val":"62"}
+[2020-11-11 19:41:13.722672] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:13.727494] Received: {"t":94549,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:13.727739] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:13.733570] Received: {"t":94555,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:13.733761] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.738549] Received: {"t":94560,"field":"pan.cycle_no","val":"62"}
+[2020-11-11 19:41:13.738772] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:13.743480] Received: {"t":94565,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:13.743689] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.896489] Received: {"t":94718,"field":"pan.cycle_no","val":"63"}
+[2020-11-11 19:41:13.896706] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.901479] Received: {"t":94723,"field":"pan.cycle_no","val":"63"}
+[2020-11-11 19:41:13.901647] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:13.906458] Received: {"t":94728,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:13.925178] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:13.931550] Received: {"t":94753,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:13.937322] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:13.937469] Received: {"t":94759,"field":"pan.cycle_no","val":"63"}
+[2020-11-11 19:41:13.940269] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:13.942494] Received: {"t":94764,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:13.942704] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.089512] Received: {"t":94911,"field":"pan.cycle_no","val":"64"}
+[2020-11-11 19:41:14.089760] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.094480] Received: {"t":94916,"field":"pan.cycle_no","val":"64"}
+[2020-11-11 19:41:14.094679] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:14.099488] Received: {"t":94921,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:14.099750] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:14.105567] Received: {"t":94927,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:14.105728] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.110493] Received: {"t":94932,"field":"pan.cycle_no","val":"64"}
+[2020-11-11 19:41:14.111506] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:14.115451] Received: {"t":94937,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:14.115575] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.268499] Received: {"t":95090,"field":"pan.cycle_no","val":"65"}
+[2020-11-11 19:41:14.268741] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.273447] Received: {"t":95095,"field":"pan.cycle_no","val":"65"}
+[2020-11-11 19:41:14.305335] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:14.305486] Received: {"t":95127,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:14.305709] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:14.311570] Received: {"t":95133,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:14.311767] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.316559] Received: {"t":95138,"field":"pan.cycle_no","val":"65"}
+[2020-11-11 19:41:14.316731] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:14.321485] Received: {"t":95143,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:14.321681] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.468492] Received: {"t":95290,"field":"pan.cycle_no","val":"66"}
+[2020-11-11 19:41:14.468726] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.473480] Received: {"t":95295,"field":"pan.cycle_no","val":"66"}
+[2020-11-11 19:41:14.473664] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:14.478458] Received: {"t":95300,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:14.494315] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:14.494574] Received: {"t":95316,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:14.494738] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.499488] Received: {"t":95321,"field":"pan.cycle_no","val":"66"}
+[2020-11-11 19:41:14.499699] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:14.504502] Received: {"t":95326,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:14.504694] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.651495] Received: {"t":95473,"field":"pan.cycle_no","val":"67"}
+[2020-11-11 19:41:14.651668] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.656462] Received: {"t":95478,"field":"pan.cycle_no","val":"67"}
+[2020-11-11 19:41:14.692395] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:14.697497] Received: {"t":95519,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:14.711311] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:14.711565] Received: {"t":95532,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:14.711758] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.716491] Received: {"t":95538,"field":"pan.cycle_no","val":"67"}
+[2020-11-11 19:41:14.716712] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:14.721483] Received: {"t":95543,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:14.721685] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.868502] Received: {"t":95690,"field":"pan.cycle_no","val":"68"}
+[2020-11-11 19:41:14.868728] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.873484] Received: {"t":95695,"field":"pan.cycle_no","val":"68"}
+[2020-11-11 19:41:14.873640] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:14.878463] Received: {"t":95700,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:14.878640] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:14.884568] Received: {"t":95706,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:14.884781] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:14.889504] Received: {"t":95711,"field":"pan.cycle_no","val":"68"}
+[2020-11-11 19:41:14.903334] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:14.903488] Received: {"t":95725,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:14.903649] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.051504] Received: {"t":95873,"field":"pan.cycle_no","val":"69"}
+[2020-11-11 19:41:15.051737] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.056466] Received: {"t":95878,"field":"pan.cycle_no","val":"69"}
+[2020-11-11 19:41:15.056665] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:15.061499] Received: {"t":95883,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:15.061764] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:15.067577] Received: {"t":95889,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:15.067774] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.072572] Received: {"t":95894,"field":"pan.cycle_no","val":"69"}
+[2020-11-11 19:41:15.072794] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:15.077489] Received: {"t":95899,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:15.077682] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.230511] Received: {"t":96052,"field":"pan.cycle_no","val":"70"}
+[2020-11-11 19:41:15.230760] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.235486] Received: {"t":96057,"field":"pan.cycle_no","val":"70"}
+[2020-11-11 19:41:15.235655] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:15.240498] Received: {"t":96062,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:15.240759] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:15.246577] Received: {"t":96068,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:15.248358] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.253492] Received: {"t":96075,"field":"pan.cycle_no","val":"70"}
+[2020-11-11 19:41:15.253707] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:15.258499] Received: {"t":96080,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:15.258961] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.409506] Received: {"t":96231,"field":"pan.cycle_no","val":"71"}
+[2020-11-11 19:41:15.409737] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.414486] Received: {"t":96236,"field":"pan.cycle_no","val":"71"}
+[2020-11-11 19:41:15.414668] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:15.419510] Received: {"t":96241,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:15.419770] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:15.425586] Received: {"t":96247,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:15.425789] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.430556] Received: {"t":96252,"field":"pan.cycle_no","val":"71"}
+[2020-11-11 19:41:15.430773] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:15.435493] Received: {"t":96257,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:15.435693] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.588506] Received: {"t":96410,"field":"pan.cycle_no","val":"72"}
+[2020-11-11 19:41:15.589136] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.594459] Received: {"t":96416,"field":"pan.cycle_no","val":"72"}
+[2020-11-11 19:41:15.594625] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:15.599467] Received: {"t":96421,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:15.609732] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:15.610581] Received: {"t":96432,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:15.610776] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.615472] Received: {"t":96437,"field":"pan.cycle_no","val":"72"}
+[2020-11-11 19:41:15.615647] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:15.620523] Received: {"t":96442,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:15.620746] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.767510] Received: {"t":96589,"field":"pan.cycle_no","val":"73"}
+[2020-11-11 19:41:15.767742] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.772489] Received: {"t":96594,"field":"pan.cycle_no","val":"73"}
+[2020-11-11 19:41:15.772674] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:15.777498] Received: {"t":96599,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:15.777740] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:15.783580] Received: {"t":96605,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:15.783768] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.788563] Received: {"t":96610,"field":"pan.cycle_no","val":"73"}
+[2020-11-11 19:41:15.788753] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:15.793464] Received: {"t":96615,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:15.804150] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.946504] Received: {"t":96768,"field":"pan.cycle_no","val":"74"}
+[2020-11-11 19:41:15.951340] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.951490] Received: {"t":96773,"field":"pan.cycle_no","val":"74"}
+[2020-11-11 19:41:15.951669] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:15.956474] Received: {"t":96778,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:15.956736] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:15.962558] Received: {"t":96784,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:15.962794] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:15.967529] Received: {"t":96789,"field":"pan.cycle_no","val":"74"}
+[2020-11-11 19:41:15.967741] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:15.972466] Received: {"t":96794,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:15.972680] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.125526] Received: {"t":96947,"field":"pan.cycle_no","val":"75"}
+[2020-11-11 19:41:16.125796] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.130465] Received: {"t":96952,"field":"pan.cycle_no","val":"75"}
+[2020-11-11 19:41:16.130651] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:16.135505] Received: {"t":96957,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:16.135802] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:16.141583] Received: {"t":96963,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:16.147200] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.151518] Received: {"t":96973,"field":"pan.cycle_no","val":"75"}
+[2020-11-11 19:41:16.151771] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:16.156458] Received: {"t":96978,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:16.156667] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.304523] Received: {"t":97126,"field":"pan.cycle_no","val":"76"}
+[2020-11-11 19:41:16.304779] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.309495] Received: {"t":97131,"field":"pan.cycle_no","val":"76"}
+[2020-11-11 19:41:16.309716] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:16.314503] Received: {"t":97136,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:16.314793] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:16.320584] Received: {"t":97142,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:16.320813] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.325559] Received: {"t":97147,"field":"pan.cycle_no","val":"76"}
+[2020-11-11 19:41:16.325756] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:16.330503] Received: {"t":97152,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:16.330729] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.483479] Received: {"t":97305,"field":"pan.cycle_no","val":"77"}
+[2020-11-11 19:41:16.483702] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.488465] Received: {"t":97310,"field":"pan.cycle_no","val":"77"}
+[2020-11-11 19:41:16.488715] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:16.493475] Received: {"t":97315,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:16.528475] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:16.534557] Received: {"t":97356,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:16.534786] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.539495] Received: {"t":97361,"field":"pan.cycle_no","val":"77"}
+[2020-11-11 19:41:16.539758] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:16.544476] Received: {"t":97366,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:16.544707] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.691490] Received: {"t":97513,"field":"pan.cycle_no","val":"78"}
+[2020-11-11 19:41:16.691761] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.696465] Received: {"t":97518,"field":"pan.cycle_no","val":"78"}
+[2020-11-11 19:41:16.696686] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:16.701477] Received: {"t":97523,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:16.701776] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:16.707559] Received: {"t":97529,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:16.707787] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.712546] Received: {"t":97534,"field":"pan.cycle_no","val":"78"}
+[2020-11-11 19:41:16.724441] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:16.729512] Received: {"t":97551,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:16.729754] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.876484] Received: {"t":97698,"field":"pan.cycle_no","val":"79"}
+[2020-11-11 19:41:16.876727] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.881495] Received: {"t":97703,"field":"pan.cycle_no","val":"79"}
+[2020-11-11 19:41:16.881725] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:16.886506] Received: {"t":97708,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:16.886816] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:16.892572] Received: {"t":97714,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:16.892809] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:16.897562] Received: {"t":97719,"field":"pan.cycle_no","val":"79"}
+[2020-11-11 19:41:16.897811] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:16.902499] Received: {"t":97724,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:16.902730] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.055508] Received: {"t":97877,"field":"pan.cycle_no","val":"80"}
+[2020-11-11 19:41:17.089383] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.089529] Received: {"t":97911,"field":"pan.cycle_no","val":"80"}
+[2020-11-11 19:41:17.089721] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:17.094524] Received: {"t":97916,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:17.094820] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:17.100570] Received: {"t":97922,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:17.100795] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.105569] Received: {"t":97927,"field":"pan.cycle_no","val":"80"}
+[2020-11-11 19:41:17.105788] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:17.110505] Received: {"t":97932,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:17.110705] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.257486] Received: {"t":98079,"field":"pan.cycle_no","val":"81"}
+[2020-11-11 19:41:17.257731] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.262469] Received: {"t":98084,"field":"pan.cycle_no","val":"81"}
+[2020-11-11 19:41:17.262685] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:17.267480] Received: {"t":98089,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:17.267859] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:17.273542] Received: {"t":98095,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:17.278356] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.278573] Received: {"t":98100,"field":"pan.cycle_no","val":"81"}
+[2020-11-11 19:41:17.278761] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:17.283471] Received: {"t":98105,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:17.283688] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.436461] Received: {"t":98258,"field":"pan.cycle_no","val":"82"}
+[2020-11-11 19:41:17.436728] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.441474] Received: {"t":98263,"field":"pan.cycle_no","val":"82"}
+[2020-11-11 19:41:17.441695] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:17.446484] Received: {"t":98268,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:17.446790] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:17.452527] Received: {"t":98274,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:17.452758] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.457539] Received: {"t":98279,"field":"pan.cycle_no","val":"82"}
+[2020-11-11 19:41:17.457772] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:17.462474] Received: {"t":98284,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:17.462684] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.614485] Received: {"t":98436,"field":"pan.cycle_no","val":"83"}
+[2020-11-11 19:41:17.614747] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.619475] Received: {"t":98441,"field":"pan.cycle_no","val":"83"}
+[2020-11-11 19:41:17.619698] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:17.624486] Received: {"t":98446,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:17.624771] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:17.630545] Received: {"t":98452,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:17.630775] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.635540] Received: {"t":98457,"field":"pan.cycle_no","val":"83"}
+[2020-11-11 19:41:17.635796] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:17.640475] Received: {"t":98462,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:17.640692] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.792497] Received: {"t":98614,"field":"pan.cycle_no","val":"84"}
+[2020-11-11 19:41:17.792751] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.797477] Received: {"t":98619,"field":"pan.cycle_no","val":"84"}
+[2020-11-11 19:41:17.797704] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:17.802486] Received: {"t":98624,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:17.808333] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:17.808575] Received: {"t":98630,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:17.808762] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.813540] Received: {"t":98635,"field":"pan.cycle_no","val":"84"}
+[2020-11-11 19:41:17.813789] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:17.818514] Received: {"t":98640,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:17.818747] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.971527] Received: {"t":98793,"field":"pan.cycle_no","val":"85"}
+[2020-11-11 19:41:17.971796] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.976507] Received: {"t":98798,"field":"pan.cycle_no","val":"85"}
+[2020-11-11 19:41:17.976732] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:17.981515] Received: {"t":98803,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:17.981803] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:17.987575] Received: {"t":98809,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:17.987814] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:17.992538] Received: {"t":98814,"field":"pan.cycle_no","val":"85"}
+[2020-11-11 19:41:17.992796] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:17.997503] Received: {"t":98819,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:17.997732] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.149523] Received: {"t":98971,"field":"pan.cycle_no","val":"86"}
+[2020-11-11 19:41:18.149780] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.154504] Received: {"t":98976,"field":"pan.cycle_no","val":"86"}
+[2020-11-11 19:41:18.154726] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:18.159523] Received: {"t":98981,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:18.159805] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:18.165574] Received: {"t":98987,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:18.165778] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.170576] Received: {"t":98992,"field":"pan.cycle_no","val":"86"}
+[2020-11-11 19:41:18.170851] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:18.175507] Received: {"t":98997,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:18.176268] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.328530] Received: {"t":99150,"field":"pan.cycle_no","val":"87"}
+[2020-11-11 19:41:18.328826] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.333506] Received: {"t":99155,"field":"pan.cycle_no","val":"87"}
+[2020-11-11 19:41:18.333698] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:18.338517] Received: {"t":99160,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:18.348955] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:18.354586] Received: {"t":99176,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:18.354845] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.359478] Received: {"t":99181,"field":"pan.cycle_no","val":"87"}
+[2020-11-11 19:41:18.359709] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:18.364508] Received: {"t":99186,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:18.364697] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.511495] Received: {"t":99333,"field":"pan.cycle_no","val":"88"}
+[2020-11-11 19:41:18.511746] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.516477] Received: {"t":99338,"field":"pan.cycle_no","val":"88"}
+[2020-11-11 19:41:18.516702] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:18.521490] Received: {"t":99343,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:18.521765] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:18.527554] Received: {"t":99349,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:18.527796] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.532471] Received: {"t":99354,"field":"pan.cycle_no","val":"88"}
+[2020-11-11 19:41:18.532704] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:18.537534] Received: {"t":99359,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:18.537806] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.689493] Received: {"t":99511,"field":"pan.cycle_no","val":"89"}
+[2020-11-11 19:41:18.689753] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.694479] Received: {"t":99516,"field":"pan.cycle_no","val":"89"}
+[2020-11-11 19:41:18.694709] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:18.699492] Received: {"t":99521,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:18.699784] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:18.705555] Received: {"t":99527,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:18.705774] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.710554] Received: {"t":99532,"field":"pan.cycle_no","val":"89"}
+[2020-11-11 19:41:18.710757] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:18.715480] Received: {"t":99537,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:18.715706] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.868497] Received: {"t":99690,"field":"pan.cycle_no","val":"90"}
+[2020-11-11 19:41:18.873370] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.873519] Received: {"t":99695,"field":"pan.cycle_no","val":"90"}
+[2020-11-11 19:41:18.873698] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:18.878493] Received: {"t":99700,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:18.878791] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:18.884527] Received: {"t":99706,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:18.884715] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:18.889548] Received: {"t":99711,"field":"pan.cycle_no","val":"90"}
+[2020-11-11 19:41:18.889809] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:18.894480] Received: {"t":99716,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:18.894700] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.046525] Received: {"t":99868,"field":"pan.cycle_no","val":"91"}
+[2020-11-11 19:41:19.046772] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.051506] Received: {"t":99873,"field":"pan.cycle_no","val":"91"}
+[2020-11-11 19:41:19.051736] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:19.056528] Received: {"t":99878,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:19.056828] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:19.062589] Received: {"t":99884,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:19.062823] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.067583] Received: {"t":99889,"field":"pan.cycle_no","val":"91"}
+[2020-11-11 19:41:19.067827] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:19.072461] Received: {"t":99894,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:19.072684] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.225504] Received: {"t":100047,"field":"pan.cycle_no","val":"92"}
+[2020-11-11 19:41:19.225755] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.230485] Received: {"t":100052,"field":"pan.cycle_no","val":"92"}
+[2020-11-11 19:41:19.230677] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:19.235496] Received: {"t":100057,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:19.235793] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:19.241561] Received: {"t":100063,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:19.245892] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.250490] Received: {"t":100072,"field":"pan.cycle_no","val":"92"}
+[2020-11-11 19:41:19.250738] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:19.255493] Received: {"t":100077,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:19.255719] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.403511] Received: {"t":100225,"field":"pan.cycle_no","val":"93"}
+[2020-11-11 19:41:19.403772] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.408488] Received: {"t":100230,"field":"pan.cycle_no","val":"93"}
+[2020-11-11 19:41:19.408715] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:19.413500] Received: {"t":100235,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:19.413791] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:19.419560] Received: {"t":100241,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:19.419791] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.424556] Received: {"t":100246,"field":"pan.cycle_no","val":"93"}
+[2020-11-11 19:41:19.424795] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:19.429525] Received: {"t":100251,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:19.430196] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.582536] Received: {"t":100404,"field":"pan.cycle_no","val":"94"}
+[2020-11-11 19:41:19.582801] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.587510] Received: {"t":100409,"field":"pan.cycle_no","val":"94"}
+[2020-11-11 19:41:19.587734] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:19.592541] Received: {"t":100414,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:19.592829] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:19.598590] Received: {"t":100420,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:19.598827] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.603591] Received: {"t":100425,"field":"pan.cycle_no","val":"94"}
+[2020-11-11 19:41:19.603861] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:19.608518] Received: {"t":100430,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:19.608740] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.761551] Received: {"t":100583,"field":"pan.cycle_no","val":"95"}
+[2020-11-11 19:41:19.761827] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.766520] Received: {"t":100588,"field":"pan.cycle_no","val":"95"}
+[2020-11-11 19:41:19.766738] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:19.771531] Received: {"t":100593,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:19.771836] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:19.777602] Received: {"t":100599,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:19.777822] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.782586] Received: {"t":100604,"field":"pan.cycle_no","val":"95"}
+[2020-11-11 19:41:19.782861] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:19.787523] Received: {"t":100609,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:19.787741] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.939541] Received: {"t":100761,"field":"pan.cycle_no","val":"96"}
+[2020-11-11 19:41:19.939790] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.944515] Received: {"t":100766,"field":"pan.cycle_no","val":"96"}
+[2020-11-11 19:41:19.944739] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:19.949528] Received: {"t":100771,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:19.949810] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:19.955592] Received: {"t":100777,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:19.955822] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:19.960580] Received: {"t":100782,"field":"pan.cycle_no","val":"96"}
+[2020-11-11 19:41:19.960796] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:19.965527] Received: {"t":100787,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:19.965758] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.118511] Received: {"t":100940,"field":"pan.cycle_no","val":"97"}
+[2020-11-11 19:41:20.118764] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.123491] Received: {"t":100945,"field":"pan.cycle_no","val":"97"}
+[2020-11-11 19:41:20.123707] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:20.128511] Received: {"t":100950,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:20.128838] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:20.134535] Received: {"t":100956,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:20.134742] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.139566] Received: {"t":100961,"field":"pan.cycle_no","val":"97"}
+[2020-11-11 19:41:20.139817] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:20.144463] Received: {"t":100966,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:20.144663] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.297551] Received: {"t":101119,"field":"pan.cycle_no","val":"98"}
+[2020-11-11 19:41:20.297820] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.302523] Received: {"t":101124,"field":"pan.cycle_no","val":"98"}
+[2020-11-11 19:41:20.302756] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:20.307537] Received: {"t":101129,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:20.307823] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:20.313600] Received: {"t":101135,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:20.313836] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.318595] Received: {"t":101140,"field":"pan.cycle_no","val":"98"}
+[2020-11-11 19:41:20.318783] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:20.323534] Received: {"t":101145,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:20.323762] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.475542] Received: {"t":101297,"field":"pan.cycle_no","val":"99"}
+[2020-11-11 19:41:20.475798] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.480462] Received: {"t":101302,"field":"pan.cycle_no","val":"99"}
+[2020-11-11 19:41:20.485410] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:20.485566] Received: {"t":101307,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:20.485812] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:20.491596] Received: {"t":101313,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:20.495792] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.496602] Received: {"t":101318,"field":"pan.cycle_no","val":"99"}
+[2020-11-11 19:41:20.496870] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:20.501525] Received: {"t":101323,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:20.501745] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.653542] Received: {"t":101475,"field":"pan.cycle_no","val":"100"}
+[2020-11-11 19:41:20.653811] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.658530] Received: {"t":101480,"field":"pan.cycle_no","val":"100"}
+[2020-11-11 19:41:20.684432] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:20.689539] Received: {"t":101511,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:20.689813] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.694527] Received: {"t":101516,"field":"pan.cycle_no","val":"100"}
+[2020-11-11 19:41:20.694764] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:20.699529] Received: {"t":101521,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:20.699725] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.846519] Received: {"t":101668,"field":"pan.cycle_no","val":"101"}
+[2020-11-11 19:41:20.846788] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.851494] Received: {"t":101673,"field":"pan.cycle_no","val":"101"}
+[2020-11-11 19:41:20.851713] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:20.856505] Received: {"t":101678,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:20.856747] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:20.861494] Received: {"t":101683,"field":"pan.cycle_no","val":"101"}
+[2020-11-11 19:41:20.861730] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:20.866496] Received: {"t":101688,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:20.866718] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.024558] Received: {"t":101846,"field":"pan.cycle_no","val":"102"}
+[2020-11-11 19:41:21.024819] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.029530] Received: {"t":101851,"field":"pan.cycle_no","val":"102"}
+[2020-11-11 19:41:21.029762] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:21.034536] Received: {"t":101856,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:21.034783] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.039526] Received: {"t":101861,"field":"pan.cycle_no","val":"102"}
+[2020-11-11 19:41:21.039761] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:21.044527] Received: {"t":101866,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:21.044747] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.203550] Received: {"t":102025,"field":"pan.cycle_no","val":"103"}
+[2020-11-11 19:41:21.203793] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.208531] Received: {"t":102030,"field":"pan.cycle_no","val":"103"}
+[2020-11-11 19:41:21.208757] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:21.213539] Received: {"t":102035,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:21.213772] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.218527] Received: {"t":102040,"field":"pan.cycle_no","val":"103"}
+[2020-11-11 19:41:21.218769] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:21.223530] Received: {"t":102045,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:21.223753] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.381553] Received: {"t":102203,"field":"pan.cycle_no","val":"104"}
+[2020-11-11 19:41:21.381832] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.386531] Received: {"t":102208,"field":"pan.cycle_no","val":"104"}
+[2020-11-11 19:41:21.401413] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:21.401568] Received: {"t":102223,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:21.401732] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.406533] Received: {"t":102228,"field":"pan.cycle_no","val":"104"}
+[2020-11-11 19:41:21.406739] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:21.411527] Received: {"t":102233,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:21.411740] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.560522] Received: {"t":102382,"field":"pan.cycle_no","val":"105"}
+[2020-11-11 19:41:21.560789] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.565506] Received: {"t":102387,"field":"pan.cycle_no","val":"105"}
+[2020-11-11 19:41:21.565740] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:21.570514] Received: {"t":102392,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:21.570757] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.575505] Received: {"t":102397,"field":"pan.cycle_no","val":"105"}
+[2020-11-11 19:41:21.575749] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:21.580501] Received: {"t":102402,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:21.580711] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.738524] Received: {"t":102560,"field":"pan.cycle_no","val":"106"}
+[2020-11-11 19:41:21.738789] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.743507] Received: {"t":102565,"field":"pan.cycle_no","val":"106"}
+[2020-11-11 19:41:21.743736] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:21.748511] Received: {"t":102570,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:21.761386] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.761537] Received: {"t":102583,"field":"pan.cycle_no","val":"106"}
+[2020-11-11 19:41:21.763299] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:21.766533] Received: {"t":102588,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:21.766756] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.917520] Received: {"t":102739,"field":"pan.cycle_no","val":"107"}
+[2020-11-11 19:41:21.917767] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.922505] Received: {"t":102744,"field":"pan.cycle_no","val":"107"}
+[2020-11-11 19:41:21.927377] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:21.927534] Received: {"t":102749,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:21.927753] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:21.932501] Received: {"t":102754,"field":"pan.cycle_no","val":"107"}
+[2020-11-11 19:41:21.932744] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:21.937501] Received: {"t":102759,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:21.937716] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.095560] Received: {"t":102917,"field":"pan.cycle_no","val":"108"}
+[2020-11-11 19:41:22.095826] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.100533] Received: {"t":102922,"field":"pan.cycle_no","val":"108"}
+[2020-11-11 19:41:22.100758] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:22.105549] Received: {"t":102927,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:22.105763] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.110565] Received: {"t":102932,"field":"pan.cycle_no","val":"108"}
+[2020-11-11 19:41:22.110808] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:22.115539] Received: {"t":102937,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:22.115768] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.274528] Received: {"t":103096,"field":"pan.cycle_no","val":"109"}
+[2020-11-11 19:41:22.274797] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.279506] Received: {"t":103101,"field":"pan.cycle_no","val":"109"}
+[2020-11-11 19:41:22.312437] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:22.317519] Received: {"t":103139,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:22.317780] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.322507] Received: {"t":103144,"field":"pan.cycle_no","val":"109"}
+[2020-11-11 19:41:22.322742] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:22.327511] Received: {"t":103149,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:22.327733] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.474525] Received: {"t":103296,"field":"pan.cycle_no","val":"110"}
+[2020-11-11 19:41:22.474792] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.479505] Received: {"t":103301,"field":"pan.cycle_no","val":"110"}
+[2020-11-11 19:41:22.479730] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:22.484515] Received: {"t":103306,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:22.484771] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.489510] Received: {"t":103311,"field":"pan.cycle_no","val":"110"}
+[2020-11-11 19:41:22.489745] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:22.494507] Received: {"t":103316,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:22.494728] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.652529] Received: {"t":103474,"field":"pan.cycle_no","val":"111"}
+[2020-11-11 19:41:22.661138] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.665512] Received: {"t":103487,"field":"pan.cycle_no","val":"111"}
+[2020-11-11 19:41:22.665741] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:22.670523] Received: {"t":103492,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:22.670773] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.675507] Received: {"t":103497,"field":"pan.cycle_no","val":"111"}
+[2020-11-11 19:41:22.675757] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:22.680506] Received: {"t":103502,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:22.680719] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.831559] Received: {"t":103653,"field":"pan.cycle_no","val":"112"}
+[2020-11-11 19:41:22.831835] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.836540] Received: {"t":103658,"field":"pan.cycle_no","val":"112"}
+[2020-11-11 19:41:22.836772] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:22.841549] Received: {"t":103663,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:22.841765] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:22.846541] Received: {"t":103668,"field":"pan.cycle_no","val":"112"}
+[2020-11-11 19:41:22.846774] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:22.851539] Received: {"t":103673,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:22.851760] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.009533] Received: {"t":103831,"field":"pan.cycle_no","val":"113"}
+[2020-11-11 19:41:23.009793] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.014512] Received: {"t":103836,"field":"pan.cycle_no","val":"113"}
+[2020-11-11 19:41:23.014736] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:23.019520] Received: {"t":103841,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:23.019775] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.024512] Received: {"t":103846,"field":"pan.cycle_no","val":"113"}
+[2020-11-11 19:41:23.024740] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:23.029510] Received: {"t":103851,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:23.029724] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.188531] Received: {"t":104010,"field":"pan.cycle_no","val":"114"}
+[2020-11-11 19:41:23.188756] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.193511] Received: {"t":104015,"field":"pan.cycle_no","val":"114"}
+[2020-11-11 19:41:23.193729] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:23.198521] Received: {"t":104020,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:23.203384] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.203532] Received: {"t":104025,"field":"pan.cycle_no","val":"114"}
+[2020-11-11 19:41:23.203721] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:23.208509] Received: {"t":104030,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:23.208731] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.366570] Received: {"t":104188,"field":"pan.cycle_no","val":"115"}
+[2020-11-11 19:41:23.366848] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.371546] Received: {"t":104193,"field":"pan.cycle_no","val":"115"}
+[2020-11-11 19:41:23.371770] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:23.376557] Received: {"t":104198,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:23.376768] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.381544] Received: {"t":104203,"field":"pan.cycle_no","val":"115"}
+[2020-11-11 19:41:23.381774] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:23.386541] Received: {"t":104208,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:23.386768] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.545574] Received: {"t":104367,"field":"pan.cycle_no","val":"116"}
+[2020-11-11 19:41:23.545827] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.550548] Received: {"t":104372,"field":"pan.cycle_no","val":"116"}
+[2020-11-11 19:41:23.550767] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:23.555558] Received: {"t":104377,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:23.555776] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.560542] Received: {"t":104382,"field":"pan.cycle_no","val":"116"}
+[2020-11-11 19:41:23.560792] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:23.565541] Received: {"t":104387,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:23.565759] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.723563] Received: {"t":104545,"field":"pan.cycle_no","val":"117"}
+[2020-11-11 19:41:23.723824] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.728513] Received: {"t":104550,"field":"pan.cycle_no","val":"117"}
+[2020-11-11 19:41:23.728702] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:23.733554] Received: {"t":104555,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:23.733730] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.738543] Received: {"t":104560,"field":"pan.cycle_no","val":"117"}
+[2020-11-11 19:41:23.738775] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:23.743541] Received: {"t":104565,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:23.743762] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.902543] Received: {"t":104724,"field":"pan.cycle_no","val":"118"}
+[2020-11-11 19:41:23.902807] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.907516] Received: {"t":104729,"field":"pan.cycle_no","val":"118"}
+[2020-11-11 19:41:23.907717] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:23.912525] Received: {"t":104734,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:23.912770] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:23.917514] Received: {"t":104739,"field":"pan.cycle_no","val":"118"}
+[2020-11-11 19:41:23.917746] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:23.922516] Received: {"t":104744,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:23.922744] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.080574] Received: {"t":104902,"field":"pan.cycle_no","val":"119"}
+[2020-11-11 19:41:24.080826] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.085550] Received: {"t":104907,"field":"pan.cycle_no","val":"119"}
+[2020-11-11 19:41:24.085774] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:24.090556] Received: {"t":104912,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:24.090767] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.095545] Received: {"t":104917,"field":"pan.cycle_no","val":"119"}
+[2020-11-11 19:41:24.095781] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:24.100544] Received: {"t":104922,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:24.101454] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.259562] Received: {"t":105081,"field":"pan.cycle_no","val":"120"}
+[2020-11-11 19:41:24.259827] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.264545] Received: {"t":105086,"field":"pan.cycle_no","val":"120"}
+[2020-11-11 19:41:24.264731] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:24.269560] Received: {"t":105091,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:24.269845] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:24.275639] Received: {"t":105097,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:24.275860] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.280625] Received: {"t":105102,"field":"pan.cycle_no","val":"120"}
+[2020-11-11 19:41:24.280896] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:24.285551] Received: {"t":105107,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:24.294038] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.438533] Received: {"t":105260,"field":"pan.cycle_no","val":"121"}
+[2020-11-11 19:41:24.438803] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.443522] Received: {"t":105265,"field":"pan.cycle_no","val":"121"}
+[2020-11-11 19:41:24.443723] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:24.448533] Received: {"t":105270,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:24.448832] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:24.454615] Received: {"t":105276,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:24.456348] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.459586] Received: {"t":105281,"field":"pan.cycle_no","val":"121"}
+[2020-11-11 19:41:24.459836] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:24.464519] Received: {"t":105286,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:24.464737] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.617574] Received: {"t":105439,"field":"pan.cycle_no","val":"122"}
+[2020-11-11 19:41:24.617841] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.622551] Received: {"t":105444,"field":"pan.cycle_no","val":"122"}
+[2020-11-11 19:41:24.622736] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:24.627558] Received: {"t":105449,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:24.628475] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:24.634646] Received: {"t":105456,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:24.634871] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.639555] Received: {"t":105461,"field":"pan.cycle_no","val":"122"}
+[2020-11-11 19:41:24.639806] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:24.644563] Received: {"t":105466,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:24.644804] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.796546] Received: {"t":105617,"field":"pan.cycle_no","val":"123"}
+[2020-11-11 19:41:24.796824] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.801528] Received: {"t":105623,"field":"pan.cycle_no","val":"123"}
+[2020-11-11 19:41:24.801763] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:24.806531] Received: {"t":105628,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:24.806813] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:24.812614] Received: {"t":105634,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:24.812847] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.817606] Received: {"t":105639,"field":"pan.cycle_no","val":"123"}
+[2020-11-11 19:41:24.822395] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:24.822548] Received: {"t":105644,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:24.822732] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.974553] Received: {"t":105796,"field":"pan.cycle_no","val":"124"}
+[2020-11-11 19:41:24.974816] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.979528] Received: {"t":105801,"field":"pan.cycle_no","val":"124"}
+[2020-11-11 19:41:24.979749] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:24.984534] Received: {"t":105806,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:24.984815] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:24.990615] Received: {"t":105812,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:24.990846] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:24.995599] Received: {"t":105817,"field":"pan.cycle_no","val":"124"}
+[2020-11-11 19:41:24.995863] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:25.000523] Received: {"t":105822,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:25.000741] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.153538] Received: {"t":105975,"field":"pan.cycle_no","val":"125"}
+[2020-11-11 19:41:25.153801] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.158524] Received: {"t":105980,"field":"pan.cycle_no","val":"125"}
+[2020-11-11 19:41:25.158750] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:25.163534] Received: {"t":105985,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:25.163827] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:25.169612] Received: {"t":105991,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:25.169838] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.174590] Received: {"t":105996,"field":"pan.cycle_no","val":"125"}
+[2020-11-11 19:41:25.174839] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:25.179523] Received: {"t":106001,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:25.179748] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.332549] Received: {"t":106154,"field":"pan.cycle_no","val":"126"}
+[2020-11-11 19:41:25.332820] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.337529] Received: {"t":106159,"field":"pan.cycle_no","val":"126"}
+[2020-11-11 19:41:25.337748] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:25.342537] Received: {"t":106164,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:25.342805] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:25.348621] Received: {"t":106170,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:25.348845] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.353602] Received: {"t":106175,"field":"pan.cycle_no","val":"126"}
+[2020-11-11 19:41:25.353829] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:25.358529] Received: {"t":106180,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:25.370658] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.511547] Received: {"t":106333,"field":"pan.cycle_no","val":"127"}
+[2020-11-11 19:41:25.511811] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.516528] Received: {"t":106338,"field":"pan.cycle_no","val":"127"}
+[2020-11-11 19:41:25.516750] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:25.521535] Received: {"t":106343,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:25.521826] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:25.527619] Received: {"t":106349,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:25.527842] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.532593] Received: {"t":106354,"field":"pan.cycle_no","val":"127"}
+[2020-11-11 19:41:25.532839] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:25.537559] Received: {"t":106359,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:25.537797] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.690575] Received: {"t":106512,"field":"pan.cycle_no","val":"128"}
+[2020-11-11 19:41:25.690820] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.695563] Received: {"t":106517,"field":"pan.cycle_no","val":"128"}
+[2020-11-11 19:41:25.695784] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:25.700574] Received: {"t":106522,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:25.700865] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:25.706656] Received: {"t":106528,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:25.706889] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.711636] Received: {"t":106533,"field":"pan.cycle_no","val":"128"}
+[2020-11-11 19:41:25.716437] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:25.716590] Received: {"t":106538,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:25.730947] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.869582] Received: {"t":106691,"field":"pan.cycle_no","val":"129"}
+[2020-11-11 19:41:25.869845] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.874565] Received: {"t":106696,"field":"pan.cycle_no","val":"129"}
+[2020-11-11 19:41:25.874789] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:25.879569] Received: {"t":106701,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:25.879865] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:25.885655] Received: {"t":106707,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:25.885893] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:25.890626] Received: {"t":106712,"field":"pan.cycle_no","val":"129"}
+[2020-11-11 19:41:25.890837] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:25.895561] Received: {"t":106717,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:25.895795] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.048579] Received: {"t":106870,"field":"pan.cycle_no","val":"130"}
+[2020-11-11 19:41:26.048824] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.053562] Received: {"t":106875,"field":"pan.cycle_no","val":"130"}
+[2020-11-11 19:41:26.053779] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:26.058570] Received: {"t":106880,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:26.072478] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:26.078657] Received: {"t":106900,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:26.078899] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.083560] Received: {"t":106905,"field":"pan.cycle_no","val":"130"}
+[2020-11-11 19:41:26.083799] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:26.088571] Received: {"t":106910,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:26.092267] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.235543] Received: {"t":107057,"field":"pan.cycle_no","val":"131"}
+[2020-11-11 19:41:26.235797] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.240534] Received: {"t":107062,"field":"pan.cycle_no","val":"131"}
+[2020-11-11 19:41:26.240754] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:26.245539] Received: {"t":107067,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:26.245838] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:26.251623] Received: {"t":107073,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:26.251851] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.256625] Received: {"t":107078,"field":"pan.cycle_no","val":"131"}
+[2020-11-11 19:41:26.256824] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:26.261540] Received: {"t":107083,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:26.261771] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.415548] Received: {"t":107237,"field":"pan.cycle_no","val":"132"}
+[2020-11-11 19:41:26.415823] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.420532] Received: {"t":107242,"field":"pan.cycle_no","val":"132"}
+[2020-11-11 19:41:26.420760] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:26.425543] Received: {"t":107247,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:26.425839] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:26.431623] Received: {"t":107253,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:26.431811] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.436586] Received: {"t":107258,"field":"pan.cycle_no","val":"132"}
+[2020-11-11 19:41:26.436839] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:26.441541] Received: {"t":107263,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:26.441773] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.593549] Received: {"t":107415,"field":"pan.cycle_no","val":"133"}
+[2020-11-11 19:41:26.593813] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.598531] Received: {"t":107420,"field":"pan.cycle_no","val":"133"}
+[2020-11-11 19:41:26.598757] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:26.603544] Received: {"t":107425,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:26.603834] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:26.609626] Received: {"t":107431,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:26.609858] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.614597] Received: {"t":107436,"field":"pan.cycle_no","val":"133"}
+[2020-11-11 19:41:26.614810] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:26.619533] Received: {"t":107441,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:26.619761] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.772550] Received: {"t":107594,"field":"pan.cycle_no","val":"134"}
+[2020-11-11 19:41:26.772800] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.777536] Received: {"t":107599,"field":"pan.cycle_no","val":"134"}
+[2020-11-11 19:41:26.777736] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:26.782545] Received: {"t":107604,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:26.828407] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:26.828675] Received: {"t":107650,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:26.828908] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.833534] Received: {"t":107655,"field":"pan.cycle_no","val":"134"}
+[2020-11-11 19:41:26.849409] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:26.849561] Received: {"t":107671,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:26.888264] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:26.996550] Received: {"t":107818,"field":"pan.cycle_no","val":"135"}
+[2020-11-11 19:41:26.996797] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.001541] Received: {"t":107823,"field":"pan.cycle_no","val":"135"}
+[2020-11-11 19:41:27.001808] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:27.006581] Received: {"t":107828,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:27.006873] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:27.012655] Received: {"t":107834,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:27.012881] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.017636] Received: {"t":107839,"field":"pan.cycle_no","val":"135"}
+[2020-11-11 19:41:27.028445] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:27.033548] Received: {"t":107855,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:27.033776] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.180581] Received: {"t":108002,"field":"pan.cycle_no","val":"136"}
+[2020-11-11 19:41:27.180821] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.185567] Received: {"t":108007,"field":"pan.cycle_no","val":"136"}
+[2020-11-11 19:41:27.185790] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:27.190574] Received: {"t":108012,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:27.190860] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:27.196658] Received: {"t":108018,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:27.196887] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.201636] Received: {"t":108023,"field":"pan.cycle_no","val":"136"}
+[2020-11-11 19:41:27.206412] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:27.206569] Received: {"t":108028,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:27.206762] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.359553] Received: {"t":108181,"field":"pan.cycle_no","val":"137"}
+[2020-11-11 19:41:27.359814] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.364537] Received: {"t":108186,"field":"pan.cycle_no","val":"137"}
+[2020-11-11 19:41:27.364764] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:27.369549] Received: {"t":108191,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:27.369845] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:27.375629] Received: {"t":108197,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:27.375869] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.380609] Received: {"t":108202,"field":"pan.cycle_no","val":"137"}
+[2020-11-11 19:41:27.380857] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:27.385543] Received: {"t":108207,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:27.385767] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.538561] Received: {"t":108360,"field":"pan.cycle_no","val":"138"}
+[2020-11-11 19:41:27.538819] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.543540] Received: {"t":108365,"field":"pan.cycle_no","val":"138"}
+[2020-11-11 19:41:27.543727] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:27.548546] Received: {"t":108370,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:27.548845] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:27.554629] Received: {"t":108376,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:27.554850] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.559610] Received: {"t":108381,"field":"pan.cycle_no","val":"138"}
+[2020-11-11 19:41:27.559862] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:27.564545] Received: {"t":108386,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:27.564768] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.717591] Received: {"t":108539,"field":"pan.cycle_no","val":"139"}
+[2020-11-11 19:41:27.733455] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.733608] Received: {"t":108555,"field":"pan.cycle_no","val":"139"}
+[2020-11-11 19:41:27.733790] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:27.738579] Received: {"t":108560,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:27.738898] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "200, 200, 200"}
+[2020-11-11 19:41:27.744670] Received: {"t":108566,"field":"adcs_cmd.rwa_speed_cmd","val":"200.000000,200.000000,200.000000,"}
+[2020-11-11 19:41:27.744894] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.749636] Received: {"t":108571,"field":"pan.cycle_no","val":"139"}
+[2020-11-11 19:41:27.749879] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:27.754576] Received: {"t":108576,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:27.754796] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.901590] Received: {"t":108723,"field":"pan.cycle_no","val":"140"}
+[2020-11-11 19:41:27.901854] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.906575] Received: {"t":108728,"field":"pan.cycle_no","val":"140"}
+[2020-11-11 19:41:27.906796] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:27.911580] Received: {"t":108733,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:27.911881] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:27.917641] Received: {"t":108739,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:27.917864] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:27.922655] Received: {"t":108744,"field":"pan.cycle_no","val":"140"}
+[2020-11-11 19:41:27.922873] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:27.927575] Received: {"t":108749,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:27.927799] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.080597] Received: {"t":108902,"field":"pan.cycle_no","val":"141"}
+[2020-11-11 19:41:28.080851] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.085577] Received: {"t":108907,"field":"pan.cycle_no","val":"141"}
+[2020-11-11 19:41:28.085812] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:28.090583] Received: {"t":108912,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:28.090882] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:28.096644] Received: {"t":108918,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:28.096886] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.101641] Received: {"t":108923,"field":"pan.cycle_no","val":"141"}
+[2020-11-11 19:41:28.101897] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:28.106583] Received: {"t":108928,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:28.106807] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.259594] Received: {"t":109080,"field":"pan.cycle_no","val":"142"}
+[2020-11-11 19:41:28.259875] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.264577] Received: {"t":109086,"field":"pan.cycle_no","val":"142"}
+[2020-11-11 19:41:28.264797] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:28.269580] Received: {"t":109091,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:28.269859] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:28.275641] Received: {"t":109097,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:28.275873] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.280654] Received: {"t":109102,"field":"pan.cycle_no","val":"142"}
+[2020-11-11 19:41:28.280896] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:28.285573] Received: {"t":109107,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:28.285806] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.437590] Received: {"t":109259,"field":"pan.cycle_no","val":"143"}
+[2020-11-11 19:41:28.437841] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.442573] Received: {"t":109264,"field":"pan.cycle_no","val":"143"}
+[2020-11-11 19:41:28.442790] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:28.447589] Received: {"t":109269,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:28.447845] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:28.453652] Received: {"t":109275,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:28.453879] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.458644] Received: {"t":109280,"field":"pan.cycle_no","val":"143"}
+[2020-11-11 19:41:28.458887] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:28.463578] Received: {"t":109285,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:28.463815] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.616591] Received: {"t":109438,"field":"pan.cycle_no","val":"144"}
+[2020-11-11 19:41:28.616845] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.621574] Received: {"t":109443,"field":"pan.cycle_no","val":"144"}
+[2020-11-11 19:41:28.621801] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:28.626584] Received: {"t":109448,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:28.626868] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:28.632650] Received: {"t":109454,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:28.632881] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.637642] Received: {"t":109459,"field":"pan.cycle_no","val":"144"}
+[2020-11-11 19:41:28.637900] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:28.642552] Received: {"t":109464,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:28.642784] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.794594] Received: {"t":109616,"field":"pan.cycle_no","val":"145"}
+[2020-11-11 19:41:28.794854] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.799588] Received: {"t":109621,"field":"pan.cycle_no","val":"145"}
+[2020-11-11 19:41:28.804433] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:28.804594] Received: {"t":109626,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:28.804864] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:28.810625] Received: {"t":109632,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:28.810882] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.815559] Received: {"t":109637,"field":"pan.cycle_no","val":"145"}
+[2020-11-11 19:41:28.815831] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:28.820554] Received: {"t":109642,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:28.820786] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.973569] Received: {"t":109794,"field":"pan.cycle_no","val":"146"}
+[2020-11-11 19:41:28.973828] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:28.978548] Received: {"t":109800,"field":"pan.cycle_no","val":"146"}
+[2020-11-11 19:41:28.978785] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:28.983555] Received: {"t":109805,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:28.992482] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:28.998619] Received: {"t":109819,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}
+[2020-11-11 19:41:28.998849] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:29.003578] Received: {"t":109825,"field":"pan.cycle_no","val":"146"}
+[2020-11-11 19:41:29.003785] Sent:     {"mode": 119, "field": "cycle.start", "val": "true"}
+[2020-11-11 19:41:29.008578] Received: {"t":109830,"field":"cycle.start","val":"true"}
+[2020-11-11 19:41:29.008826] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:29.155591] Received: {"t":109977,"field":"pan.cycle_no","val":"147"}
+[2020-11-11 19:41:29.160458] Sent:     {"mode": 114, "field": "pan.cycle_no"}
+[2020-11-11 19:41:29.160607] Received: {"t":109982,"field":"pan.cycle_no","val":"147"}
+[2020-11-11 19:41:29.160793] Sent:     {"mode": 114, "field": "gomspace.vbatt"}
+[2020-11-11 19:41:29.165586] Received: {"t":109987,"field":"gomspace.vbatt","val":"7596"}
+[2020-11-11 19:41:29.165849] Sent:     {"mode": 119, "field": "adcs_cmd.rwa_speed_cmd", "val": "0, 0, 0"}
+[2020-11-11 19:41:29.171630] Received: {"t":109993,"field":"adcs_cmd.rwa_speed_cmd","val":"0.000000,0.000000,0.000000,"}

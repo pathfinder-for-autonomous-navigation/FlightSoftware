@@ -1,0 +1,1017 @@
+[2020-11-11 19:44:07.216415] [TESTCASE] Starting testcase.
+[2020-11-11 19:44:07.302772] Waiting for the satellite to boot to manual.
+[2020-11-11 19:44:07.302826] 
+Begin Gomspace Long Duration Checkout Case
+[2020-11-11 19:44:07.302865] Begin Docking Motor Setup
+[2020-11-11 19:44:07.307716] Begin Valve Setup
+[2020-11-11 19:44:07.317657] Begin ADCS Motor Setup
+[2020-11-11 19:44:08.243735] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:08.416680] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:08.595660] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:08.774683] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:08.953705] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:09.132671] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:09.311679] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:09.490688] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:09.670671] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:09.848674] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:10.027700] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:10.206696] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:10.386684] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:10.565671] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:10.744714] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:10.922676] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:11.101683] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:11.279725] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:11.458686] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:11.637714] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:11.815677] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:11.994689] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:12.172689] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:12.351723] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:12.529687] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:12.708675] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:12.886687] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:13.065728] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:13.243712] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:13.422696] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:13.601726] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:13.779734] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:13.958727] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:14.136705] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:14.315703] Stopping docking motor, firing valves.
+[2020-11-11 19:44:14.493728] Stopping docking motor, firing valves.
+[2020-11-11 19:44:14.672698] Stopping docking motor, firing valves.
+[2020-11-11 19:44:14.850698] Stopping docking motor, firing valves.
+[2020-11-11 19:44:15.029697] Stopping docking motor, firing valves.
+[2020-11-11 19:44:15.207704] Stopping docking motor, firing valves.
+[2020-11-11 19:44:15.386707] Stopping docking motor, firing valves.
+[2020-11-11 19:44:15.565714] Stopping docking motor, firing valves.
+[2020-11-11 19:44:15.743747] Stopping docking motor, firing valves.
+[2020-11-11 19:44:15.922737] Stopping docking motor, firing valves.
+[2020-11-11 19:44:16.101757] Stopping docking motor, firing valves.
+[2020-11-11 19:44:16.279711] Stopping docking motor, firing valves.
+[2020-11-11 19:44:16.458720] Stopping docking motor, firing valves.
+[2020-11-11 19:44:16.636750] Stopping docking motor, firing valves.
+[2020-11-11 19:44:16.815748] Stopping docking motor, firing valves.
+[2020-11-11 19:44:16.994745] Stopping docking motor, firing valves.
+[2020-11-11 19:44:17.172745] Stopping docking motor, firing valves.
+[2020-11-11 19:44:17.351754] Stopping docking motor, firing valves.
+[2020-11-11 19:44:17.529754] Stopping docking motor, firing valves.
+[2020-11-11 19:44:17.708765] Stopping docking motor, firing valves.
+[2020-11-11 19:44:17.886755] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:18.066726] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:18.244765] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:18.424733] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:18.602703] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:18.782731] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:18.961731] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:19.140759] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:19.319693] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:19.516280] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:19.689748] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:19.869739] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:20.117906] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:20.291737] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:20.470763] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:20.650754] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:20.829746] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:21.008741] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:21.204263] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:21.379747] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:21.586725] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:21.759757] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:21.938745] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:22.116752] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:22.295692] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:22.474726] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:22.653760] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:22.831766] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:23.014765] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:23.208261] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:23.380755] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:23.559762] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:23.737744] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:23.916726] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:24.094754] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:24.273739] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:24.451746] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:24.630753] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:24.823782] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:24.996769] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:25.189782] Vbatt: 7514 mV
+[2020-11-11 19:44:25.189927] Stopping docking motor, firing valves.
+[2020-11-11 19:44:25.356759] Stopping docking motor, firing valves.
+[2020-11-11 19:44:25.534780] Stopping docking motor, firing valves.
+[2020-11-11 19:44:25.713773] Stopping docking motor, firing valves.
+[2020-11-11 19:44:25.892755] Stopping docking motor, firing valves.
+[2020-11-11 19:44:26.070757] Stopping docking motor, firing valves.
+[2020-11-11 19:44:26.249773] Stopping docking motor, firing valves.
+[2020-11-11 19:44:26.428775] Stopping docking motor, firing valves.
+[2020-11-11 19:44:26.672288] Stopping docking motor, firing valves.
+[2020-11-11 19:44:26.839759] Stopping docking motor, firing valves.
+[2020-11-11 19:44:27.018762] Stopping docking motor, firing valves.
+[2020-11-11 19:44:27.196806] Stopping docking motor, firing valves.
+[2020-11-11 19:44:27.375742] Stopping docking motor, firing valves.
+[2020-11-11 19:44:27.553770] Stopping docking motor, firing valves.
+[2020-11-11 19:44:27.732782] Stopping docking motor, firing valves.
+[2020-11-11 19:44:27.910756] Stopping docking motor, firing valves.
+[2020-11-11 19:44:28.089769] Stopping docking motor, firing valves.
+[2020-11-11 19:44:28.267776] Stopping docking motor, firing valves.
+[2020-11-11 19:44:28.446766] Stopping docking motor, firing valves.
+[2020-11-11 19:44:28.624779] Stopping docking motor, firing valves.
+[2020-11-11 19:44:28.803764] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:28.984288] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:29.161728] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:29.341737] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:29.519778] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:29.698762] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:29.891302] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:30.072264] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:30.245800] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:30.425811] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:30.603780] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:30.783794] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:30.962784] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:31.152266] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:31.325813] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:31.505804] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:31.693816] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:31.884282] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:32.058818] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:32.237828] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:32.416822] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:32.594830] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:32.776981] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:32.952822] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:33.131818] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:33.309834] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:33.488781] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:33.684816] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:33.857769] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:34.045772] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:34.224790] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:34.409826] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:34.586828] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:34.764834] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:34.943833] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:35.122798] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:35.300848] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:35.479848] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:35.657844] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:35.840291] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:36.014837] Stopping docking motor, firing valves.
+[2020-11-11 19:44:36.193833] Stopping docking motor, firing valves.
+[2020-11-11 19:44:36.371847] Stopping docking motor, firing valves.
+[2020-11-11 19:44:36.550842] Stopping docking motor, firing valves.
+[2020-11-11 19:44:36.728843] Stopping docking motor, firing valves.
+[2020-11-11 19:44:36.907851] Stopping docking motor, firing valves.
+[2020-11-11 19:44:37.085846] Stopping docking motor, firing valves.
+[2020-11-11 19:44:37.264851] Stopping docking motor, firing valves.
+[2020-11-11 19:44:37.442821] Stopping docking motor, firing valves.
+[2020-11-11 19:44:37.625845] Stopping docking motor, firing valves.
+[2020-11-11 19:44:37.803857] Stopping docking motor, firing valves.
+[2020-11-11 19:44:37.982851] Stopping docking motor, firing valves.
+[2020-11-11 19:44:38.161872] Stopping docking motor, firing valves.
+[2020-11-11 19:44:38.339856] Stopping docking motor, firing valves.
+[2020-11-11 19:44:38.518858] Stopping docking motor, firing valves.
+[2020-11-11 19:44:38.697867] Stopping docking motor, firing valves.
+[2020-11-11 19:44:38.875865] Stopping docking motor, firing valves.
+[2020-11-11 19:44:39.054877] Stopping docking motor, firing valves.
+[2020-11-11 19:44:39.232847] Stopping docking motor, firing valves.
+[2020-11-11 19:44:39.411863] Stopping docking motor, firing valves.
+[2020-11-11 19:44:39.589874] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:39.768866] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:39.950866] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:40.130869] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:40.309878] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:40.488889] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:40.667877] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:40.846871] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:41.025874] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:41.204864] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:41.383868] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:41.584261] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:41.758888] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:41.936874] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:42.116887] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:42.295866] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:42.474847] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:42.653884] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:42.832887] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:43.011888] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:43.190883] Vbatt: 7395 mV
+[2020-11-11 19:44:43.190906] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:43.369903] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:43.548892] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:43.728280] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:43.905913] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:44.084899] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:44.262896] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:44.441894] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:44.622898] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:44.801906] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:44.979907] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:45.167903] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:45.346923] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:45.524899] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:45.703920] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:45.883090] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:46.060903] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:46.249846] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:46.433742] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:46.606879] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:46.785910] Stopping docking motor, firing valves.
+[2020-11-11 19:44:46.963908] Stopping docking motor, firing valves.
+[2020-11-11 19:44:47.156928] Stopping docking motor, firing valves.
+[2020-11-11 19:44:47.323920] Stopping docking motor, firing valves.
+[2020-11-11 19:44:47.502929] Stopping docking motor, firing valves.
+[2020-11-11 19:44:47.680916] Stopping docking motor, firing valves.
+[2020-11-11 19:44:47.859919] Stopping docking motor, firing valves.
+[2020-11-11 19:44:48.085231] Stopping docking motor, firing valves.
+[2020-11-11 19:44:48.251918] Stopping docking motor, firing valves.
+[2020-11-11 19:44:48.440261] Stopping docking motor, firing valves.
+[2020-11-11 19:44:48.608921] Stopping docking motor, firing valves.
+[2020-11-11 19:44:48.787929] Stopping docking motor, firing valves.
+[2020-11-11 19:44:48.988262] Stopping docking motor, firing valves.
+[2020-11-11 19:44:49.154946] Stopping docking motor, firing valves.
+[2020-11-11 19:44:49.333932] Stopping docking motor, firing valves.
+[2020-11-11 19:44:49.511935] Stopping docking motor, firing valves.
+[2020-11-11 19:44:49.720272] Stopping docking motor, firing valves.
+[2020-11-11 19:44:49.886932] Stopping docking motor, firing valves.
+[2020-11-11 19:44:50.065931] Stopping docking motor, firing valves.
+[2020-11-11 19:44:50.243941] Stopping docking motor, firing valves.
+[2020-11-11 19:44:50.444267] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:50.629563] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:50.803952] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:50.984264] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:51.168262] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:51.341940] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:51.543183] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:51.717941] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:51.896934] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:52.075946] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:52.268283] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:52.442964] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:52.620950] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:52.806955] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:52.986959] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:53.165959] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:53.344967] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:53.545420] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:53.763713] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:53.937914] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:44:54.116958] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:54.294961] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:54.473970] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:54.652962] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:54.831974] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:55.009967] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:55.192960] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:55.367927] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:55.550970] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:55.729930] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:55.907971] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:56.086975] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:56.268285] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:56.443952] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:56.622974] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:56.801980] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:56.979974] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:57.158981] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:57.336977] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:57.515984] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:44:57.721941] Stopping docking motor, firing valves.
+[2020-11-11 19:44:57.888994] Stopping docking motor, firing valves.
+[2020-11-11 19:44:58.068263] Stopping docking motor, firing valves.
+[2020-11-11 19:44:58.255184] Stopping docking motor, firing valves.
+[2020-11-11 19:44:58.424950] Stopping docking motor, firing valves.
+[2020-11-11 19:44:58.603977] Stopping docking motor, firing valves.
+[2020-11-11 19:44:58.782003] Stopping docking motor, firing valves.
+[2020-11-11 19:44:58.960987] Stopping docking motor, firing valves.
+[2020-11-11 19:44:59.149819] Stopping docking motor, firing valves.
+[2020-11-11 19:44:59.318010] Stopping docking motor, firing valves.
+[2020-11-11 19:44:59.496995] Stopping docking motor, firing valves.
+[2020-11-11 19:44:59.675991] Stopping docking motor, firing valves.
+[2020-11-11 19:44:59.858006] Stopping docking motor, firing valves.
+[2020-11-11 19:45:00.032970] Stopping docking motor, firing valves.
+[2020-11-11 19:45:00.211010] Stopping docking motor, firing valves.
+[2020-11-11 19:45:00.390005] Stopping docking motor, firing valves.
+[2020-11-11 19:45:00.568003] Stopping docking motor, firing valves.
+[2020-11-11 19:45:00.766011] Stopping docking motor, firing valves.
+[2020-11-11 19:45:00.933026] Stopping docking motor, firing valves.
+[2020-11-11 19:45:01.112002] Stopping docking motor, firing valves.
+[2020-11-11 19:45:01.297001] Vbatt: 7495 mV
+[2020-11-11 19:45:01.297026] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:01.470017] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:01.649013] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:01.829005] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:02.008011] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:02.186956] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:02.368018] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:02.547018] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:02.726016] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:02.905030] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:03.088262] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:03.272034] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:03.451060] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:03.630056] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:03.809032] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:03.988030] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:04.167031] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:04.346061] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:04.525060] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:04.704063] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:04.884036] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:05.062997] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:05.243462] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:05.420075] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:05.599048] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:05.777041] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:05.970896] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:06.144072] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:06.322073] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:06.501047] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:06.680089] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:06.859082] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:07.041868] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:07.217056] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:07.396050] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:07.574047] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:07.753121] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:07.989051] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:08.162096] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:08.340094] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:08.540263] Stopping docking motor, firing valves.
+[2020-11-11 19:45:08.708264] Stopping docking motor, firing valves.
+[2020-11-11 19:45:08.897106] Stopping docking motor, firing valves.
+[2020-11-11 19:45:09.064087] Stopping docking motor, firing valves.
+[2020-11-11 19:45:09.243092] Stopping docking motor, firing valves.
+[2020-11-11 19:45:09.424265] Stopping docking motor, firing valves.
+[2020-11-11 19:45:09.600091] Stopping docking motor, firing valves.
+[2020-11-11 19:45:09.779092] Stopping docking motor, firing valves.
+[2020-11-11 19:45:09.972293] Stopping docking motor, firing valves.
+[2020-11-11 19:45:10.139083] Stopping docking motor, firing valves.
+[2020-11-11 19:45:10.318067] Stopping docking motor, firing valves.
+[2020-11-11 19:45:10.496072] Stopping docking motor, firing valves.
+[2020-11-11 19:45:10.675070] Stopping docking motor, firing valves.
+[2020-11-11 19:45:10.853074] Stopping docking motor, firing valves.
+[2020-11-11 19:45:11.032070] Stopping docking motor, firing valves.
+[2020-11-11 19:45:11.210148] Stopping docking motor, firing valves.
+[2020-11-11 19:45:11.396262] Stopping docking motor, firing valves.
+[2020-11-11 19:45:11.567105] Stopping docking motor, firing valves.
+[2020-11-11 19:45:11.746123] Stopping docking motor, firing valves.
+[2020-11-11 19:45:11.925127] Stopping docking motor, firing valves.
+[2020-11-11 19:45:12.103111] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:12.282112] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:12.466108] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:12.649054] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:12.844264] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:13.019082] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:13.198100] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:13.381104] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:13.556097] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:13.765420] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:13.940101] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:14.140130] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:14.314136] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:14.493130] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:14.672088] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:14.851102] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:15.030100] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:15.209133] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:15.388110] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:15.567145] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:15.767709] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:15.952266] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:16.126111] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:16.305123] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:16.483138] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:16.662111] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:16.841131] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:17.021121] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:17.200151] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:17.389143] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:17.562135] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:17.741122] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:17.994123] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:18.167125] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:18.348350] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:18.532262] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:18.705140] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:18.884162] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:19.062157] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:19.241160] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:19.419158] Vbatt: 7495 mV
+[2020-11-11 19:45:19.419175] Stopping docking motor, firing valves.
+[2020-11-11 19:45:19.598166] Stopping docking motor, firing valves.
+[2020-11-11 19:45:19.776169] Stopping docking motor, firing valves.
+[2020-11-11 19:45:19.966171] Stopping docking motor, firing valves.
+[2020-11-11 19:45:20.134173] Stopping docking motor, firing valves.
+[2020-11-11 19:45:20.312170] Stopping docking motor, firing valves.
+[2020-11-11 19:45:20.491164] Stopping docking motor, firing valves.
+[2020-11-11 19:45:20.669163] Stopping docking motor, firing valves.
+[2020-11-11 19:45:20.848145] Stopping docking motor, firing valves.
+[2020-11-11 19:45:21.027148] Stopping docking motor, firing valves.
+[2020-11-11 19:45:21.205149] Stopping docking motor, firing valves.
+[2020-11-11 19:45:21.384168] Stopping docking motor, firing valves.
+[2020-11-11 19:45:21.563171] Stopping docking motor, firing valves.
+[2020-11-11 19:45:21.741173] Stopping docking motor, firing valves.
+[2020-11-11 19:45:21.920181] Stopping docking motor, firing valves.
+[2020-11-11 19:45:22.098172] Stopping docking motor, firing valves.
+[2020-11-11 19:45:22.277168] Stopping docking motor, firing valves.
+[2020-11-11 19:45:22.456165] Stopping docking motor, firing valves.
+[2020-11-11 19:45:22.634162] Stopping docking motor, firing valves.
+[2020-11-11 19:45:22.824084] Stopping docking motor, firing valves.
+[2020-11-11 19:45:22.992162] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:23.170177] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:23.350152] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:23.529162] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:23.708170] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:23.887166] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:24.066198] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:24.245163] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:24.425162] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:24.603165] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:24.783207] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:24.962202] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:25.141186] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:25.320175] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:25.499184] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:25.678180] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:25.857206] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:26.037169] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:26.229177] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:26.403181] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:26.582200] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:26.761214] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:26.939207] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:27.118179] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:27.320268] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:27.493191] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:27.692283] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:27.865221] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:28.046184] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:28.225218] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:28.403192] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:28.582245] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:28.761224] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:28.950223] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:29.123253] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:29.301222] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:29.480229] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:29.659235] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:29.837198] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:30.016209] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:30.195254] Stopping docking motor, firing valves.
+[2020-11-11 19:45:30.385207] Stopping docking motor, firing valves.
+[2020-11-11 19:45:30.569261] Stopping docking motor, firing valves.
+[2020-11-11 19:45:30.736241] Stopping docking motor, firing valves.
+[2020-11-11 19:45:30.915201] Stopping docking motor, firing valves.
+[2020-11-11 19:45:31.094221] Stopping docking motor, firing valves.
+[2020-11-11 19:45:31.272235] Stopping docking motor, firing valves.
+[2020-11-11 19:45:31.451281] Stopping docking motor, firing valves.
+[2020-11-11 19:45:31.630217] Stopping docking motor, firing valves.
+[2020-11-11 19:45:31.830236] Stopping docking motor, firing valves.
+[2020-11-11 19:45:31.997241] Stopping docking motor, firing valves.
+[2020-11-11 19:45:32.192090] Stopping docking motor, firing valves.
+[2020-11-11 19:45:32.362318] Stopping docking motor, firing valves.
+[2020-11-11 19:45:32.540242] Stopping docking motor, firing valves.
+[2020-11-11 19:45:32.719227] Stopping docking motor, firing valves.
+[2020-11-11 19:45:32.898273] Stopping docking motor, firing valves.
+[2020-11-11 19:45:33.077272] Stopping docking motor, firing valves.
+[2020-11-11 19:45:33.259156] Stopping docking motor, firing valves.
+[2020-11-11 19:45:33.447260] Stopping docking motor, firing valves.
+[2020-11-11 19:45:33.614269] Stopping docking motor, firing valves.
+[2020-11-11 19:45:33.793323] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:33.971229] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:34.165856] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:34.340267] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:34.536266] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:34.710261] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:34.892264] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:35.082238] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:35.256289] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:35.435242] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:35.624232] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:35.803300] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:35.991115] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:36.165248] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:36.344253] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:36.523251] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:36.740262] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:36.914278] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:37.100263] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:37.273292] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:37.457321] Vbatt: 7414 mV
+[2020-11-11 19:45:37.472266] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:37.675328] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:37.858088] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:38.034234] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:38.210314] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:38.394411] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:38.568265] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:38.768282] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:38.941290] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:39.119252] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:39.298228] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:39.477248] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:39.660264] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:39.834447] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:40.013294] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:40.192351] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:40.370427] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:40.549307] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:40.727253] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:40.906323] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:41.085300] Stopping docking motor, firing valves.
+[2020-11-11 19:45:41.263305] Stopping docking motor, firing valves.
+[2020-11-11 19:45:41.442450] Stopping docking motor, firing valves.
+[2020-11-11 19:45:41.621279] Stopping docking motor, firing valves.
+[2020-11-11 19:45:41.799311] Stopping docking motor, firing valves.
+[2020-11-11 19:45:41.978283] Stopping docking motor, firing valves.
+[2020-11-11 19:45:42.157323] Stopping docking motor, firing valves.
+[2020-11-11 19:45:42.336297] Stopping docking motor, firing valves.
+[2020-11-11 19:45:42.568289] Stopping docking motor, firing valves.
+[2020-11-11 19:45:42.742329] Stopping docking motor, firing valves.
+[2020-11-11 19:45:42.925310] Stopping docking motor, firing valves.
+[2020-11-11 19:45:43.099321] Stopping docking motor, firing valves.
+[2020-11-11 19:45:43.280268] Stopping docking motor, firing valves.
+[2020-11-11 19:45:43.457334] Stopping docking motor, firing valves.
+[2020-11-11 19:45:43.636285] Stopping docking motor, firing valves.
+[2020-11-11 19:45:43.816292] Stopping docking motor, firing valves.
+[2020-11-11 19:45:43.997331] Stopping docking motor, firing valves.
+[2020-11-11 19:45:44.171332] Stopping docking motor, firing valves.
+[2020-11-11 19:45:44.349319] Stopping docking motor, firing valves.
+[2020-11-11 19:45:44.528312] Stopping docking motor, firing valves.
+[2020-11-11 19:45:44.707330] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:44.886328] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:45.065334] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:45.244351] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:45.432301] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:45.628263] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:45.801302] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:45.981301] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:46.169973] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:46.347356] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:46.527343] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:46.706370] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:46.885316] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:47.064374] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:47.243316] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:47.422319] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:47.602321] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:47.781318] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:47.960401] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:48.139337] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:48.318330] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:48.497361] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:48.679347] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:48.854356] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:49.040292] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:49.213338] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:49.392327] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:49.570388] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:49.750340] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:49.928334] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:50.112264] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:50.298362] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:50.471374] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:50.706396] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:50.889348] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:51.071515] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:51.250272] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:51.425349] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:51.608286] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:51.782372] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:51.997381] Stopping docking motor, firing valves.
+[2020-11-11 19:45:52.176379] Stopping docking motor, firing valves.
+[2020-11-11 19:45:52.369553] Stopping docking motor, firing valves.
+[2020-11-11 19:45:52.546366] Stopping docking motor, firing valves.
+[2020-11-11 19:45:52.724382] Stopping docking motor, firing valves.
+[2020-11-11 19:45:52.903380] Stopping docking motor, firing valves.
+[2020-11-11 19:45:53.082403] Stopping docking motor, firing valves.
+[2020-11-11 19:45:53.270354] Stopping docking motor, firing valves.
+[2020-11-11 19:45:53.439357] Stopping docking motor, firing valves.
+[2020-11-11 19:45:53.618369] Stopping docking motor, firing valves.
+[2020-11-11 19:45:53.796422] Stopping docking motor, firing valves.
+[2020-11-11 19:45:53.975358] Stopping docking motor, firing valves.
+[2020-11-11 19:45:54.154359] Stopping docking motor, firing valves.
+[2020-11-11 19:45:54.333371] Stopping docking motor, firing valves.
+[2020-11-11 19:45:54.511351] Stopping docking motor, firing valves.
+[2020-11-11 19:45:54.690357] Stopping docking motor, firing valves.
+[2020-11-11 19:45:54.868378] Stopping docking motor, firing valves.
+[2020-11-11 19:45:55.047358] Stopping docking motor, firing valves.
+[2020-11-11 19:45:55.226352] Stopping docking motor, firing valves.
+[2020-11-11 19:45:55.404345] Stopping docking motor, firing valves.
+[2020-11-11 19:45:55.583352] Vbatt: 7486 mV
+[2020-11-11 19:45:55.588262] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:55.776263] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:55.953339] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:56.136381] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:56.313368] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:56.493421] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:56.691243] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:56.865404] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:57.053381] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:57.227386] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:57.406394] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:57.586392] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:57.764391] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:57.943363] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:58.149379] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:58.323422] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:58.502378] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:58.681394] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:58.860438] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:59.039404] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:45:59.218426] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:59.397448] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:59.576426] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:59.760381] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:45:59.933401] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:00.112406] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:00.295514] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:00.469411] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:00.648426] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:00.827499] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:01.005420] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:01.188451] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:01.363442] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:01.541408] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:01.720415] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:01.911416] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:02.090291] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:02.263458] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:02.442426] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:02.620434] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:02.799448] Stopping docking motor, firing valves.
+[2020-11-11 19:46:02.978455] Stopping docking motor, firing valves.
+[2020-11-11 19:46:03.156474] Stopping docking motor, firing valves.
+[2020-11-11 19:46:03.335418] Stopping docking motor, firing valves.
+[2020-11-11 19:46:03.514466] Stopping docking motor, firing valves.
+[2020-11-11 19:46:03.692473] Stopping docking motor, firing valves.
+[2020-11-11 19:46:03.871423] Stopping docking motor, firing valves.
+[2020-11-11 19:46:04.050477] Stopping docking motor, firing valves.
+[2020-11-11 19:46:04.228470] Stopping docking motor, firing valves.
+[2020-11-11 19:46:04.407432] Stopping docking motor, firing valves.
+[2020-11-11 19:46:04.586438] Stopping docking motor, firing valves.
+[2020-11-11 19:46:04.764441] Stopping docking motor, firing valves.
+[2020-11-11 19:46:04.943478] Stopping docking motor, firing valves.
+[2020-11-11 19:46:05.122481] Stopping docking motor, firing valves.
+[2020-11-11 19:46:05.300463] Stopping docking motor, firing valves.
+[2020-11-11 19:46:05.479500] Stopping docking motor, firing valves.
+[2020-11-11 19:46:05.658489] Stopping docking motor, firing valves.
+[2020-11-11 19:46:05.836497] Stopping docking motor, firing valves.
+[2020-11-11 19:46:06.029263] Stopping docking motor, firing valves.
+[2020-11-11 19:46:06.196483] Stopping docking motor, firing valves.
+[2020-11-11 19:46:06.375449] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:06.554489] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:06.733513] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:06.912517] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:07.091472] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:07.270493] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:07.450484] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:07.629480] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:07.808511] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:07.987495] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:08.166476] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:08.345483] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:08.525510] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:08.704486] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:08.883506] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:09.062512] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:09.242492] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:09.420477] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:09.607360] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:09.784569] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:09.964540] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:10.156271] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:10.333510] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:10.508504] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:10.687514] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:10.866502] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:11.044508] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:11.223515] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:11.401550] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:11.580491] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:11.759492] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:11.938527] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:12.116517] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:12.298513] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:12.473543] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:12.675275] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:12.856264] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:13.099416] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:13.272517] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:13.460264] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:13.645510] Vbatt: 7476 mV
+[2020-11-11 19:46:13.645528] Stopping docking motor, firing valves.
+[2020-11-11 19:46:13.812526] Stopping docking motor, firing valves.
+[2020-11-11 19:46:13.993358] Stopping docking motor, firing valves.
+[2020-11-11 19:46:14.185527] Stopping docking motor, firing valves.
+[2020-11-11 19:46:14.352504] Stopping docking motor, firing valves.
+[2020-11-11 19:46:14.531501] Stopping docking motor, firing valves.
+[2020-11-11 19:46:14.709538] Stopping docking motor, firing valves.
+[2020-11-11 19:46:14.891532] Stopping docking motor, firing valves.
+[2020-11-11 19:46:15.072264] Stopping docking motor, firing valves.
+[2020-11-11 19:46:15.258045] Stopping docking motor, firing valves.
+[2020-11-11 19:46:15.425536] Stopping docking motor, firing valves.
+[2020-11-11 19:46:15.604551] Stopping docking motor, firing valves.
+[2020-11-11 19:46:15.791537] Stopping docking motor, firing valves.
+[2020-11-11 19:46:15.961508] Stopping docking motor, firing valves.
+[2020-11-11 19:46:16.140493] Stopping docking motor, firing valves.
+[2020-11-11 19:46:16.318563] Stopping docking motor, firing valves.
+[2020-11-11 19:46:16.497543] Stopping docking motor, firing valves.
+[2020-11-11 19:46:16.676538] Stopping docking motor, firing valves.
+[2020-11-11 19:46:16.854558] Stopping docking motor, firing valves.
+[2020-11-11 19:46:17.033551] Stopping docking motor, firing valves.
+[2020-11-11 19:46:17.212546] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:17.391520] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:17.570520] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:17.749512] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:17.928515] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:18.109586] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:18.287537] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:18.466578] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:18.645525] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:18.824530] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:19.003563] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:19.210554] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:19.389526] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:19.569560] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:19.748530] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:19.927554] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:20.106570] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:20.285558] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:20.464568] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:20.644568] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:20.825541] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:21.003585] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:21.193601] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:21.366564] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:21.545589] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:21.740584] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:21.919563] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:22.098576] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:22.276552] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:22.455566] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:22.633599] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:22.813590] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:22.991567] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:23.176303] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:23.349562] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:23.528587] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:23.707591] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:23.920847] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:24.098566] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:24.274558] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:24.471243] Stopping docking motor, firing valves.
+[2020-11-11 19:46:24.638589] Stopping docking motor, firing valves.
+[2020-11-11 19:46:24.865615] Stopping docking motor, firing valves.
+[2020-11-11 19:46:25.032564] Stopping docking motor, firing valves.
+[2020-11-11 19:46:25.211576] Stopping docking motor, firing valves.
+[2020-11-11 19:46:25.390488] Stopping docking motor, firing valves.
+[2020-11-11 19:46:25.568580] Stopping docking motor, firing valves.
+[2020-11-11 19:46:25.747578] Stopping docking motor, firing valves.
+[2020-11-11 19:46:25.925581] Stopping docking motor, firing valves.
+[2020-11-11 19:46:26.104603] Stopping docking motor, firing valves.
+[2020-11-11 19:46:26.283653] Stopping docking motor, firing valves.
+[2020-11-11 19:46:26.462605] Stopping docking motor, firing valves.
+[2020-11-11 19:46:26.640560] Stopping docking motor, firing valves.
+[2020-11-11 19:46:26.830419] Stopping docking motor, firing valves.
+[2020-11-11 19:46:26.998552] Stopping docking motor, firing valves.
+[2020-11-11 19:46:27.176547] Stopping docking motor, firing valves.
+[2020-11-11 19:46:27.355599] Stopping docking motor, firing valves.
+[2020-11-11 19:46:27.545568] Stopping docking motor, firing valves.
+[2020-11-11 19:46:27.713583] Stopping docking motor, firing valves.
+[2020-11-11 19:46:27.891565] Stopping docking motor, firing valves.
+[2020-11-11 19:46:28.070614] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:28.261582] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:28.435590] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:28.624261] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:28.884266] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:29.058591] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:29.246594] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:29.425593] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:29.605622] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:29.784606] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:29.963643] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:30.142587] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:30.321604] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:30.500575] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:30.680632] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:30.860656] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:31.038642] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:31.228618] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:31.406629] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:31.589614] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:31.780166] Vbatt: 7376 mV
+[2020-11-11 19:46:31.794007] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:31.972629] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:32.160262] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:32.333636] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:32.512607] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:32.691625] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:32.870637] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:33.052266] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:33.227643] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:33.424426] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:33.597650] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:33.776643] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:33.956476] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:34.144635] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:34.323627] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:34.522619] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:34.714657] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:34.893645] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:35.071655] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:35.250658] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:35.429652] Stopping docking motor, firing valves.
+[2020-11-11 19:46:35.607657] Stopping docking motor, firing valves.
+[2020-11-11 19:46:35.796265] Stopping docking motor, firing valves.
+[2020-11-11 19:46:35.965656] Stopping docking motor, firing valves.
+[2020-11-11 19:46:36.144649] Stopping docking motor, firing valves.
+[2020-11-11 19:46:36.322672] Stopping docking motor, firing valves.
+[2020-11-11 19:46:36.501643] Stopping docking motor, firing valves.
+[2020-11-11 19:46:36.680661] Stopping docking motor, firing valves.
+[2020-11-11 19:46:36.864320] Stopping docking motor, firing valves.
+[2020-11-11 19:46:37.037661] Stopping docking motor, firing valves.
+[2020-11-11 19:46:37.216668] Stopping docking motor, firing valves.
+[2020-11-11 19:46:37.394652] Stopping docking motor, firing valves.
+[2020-11-11 19:46:37.573627] Stopping docking motor, firing valves.
+[2020-11-11 19:46:37.774879] Stopping docking motor, firing valves.
+[2020-11-11 19:46:37.941627] Stopping docking motor, firing valves.
+[2020-11-11 19:46:38.120641] Stopping docking motor, firing valves.
+[2020-11-11 19:46:38.318017] Stopping docking motor, firing valves.
+[2020-11-11 19:46:38.484677] Stopping docking motor, firing valves.
+[2020-11-11 19:46:38.663675] Stopping docking motor, firing valves.
+[2020-11-11 19:46:38.841662] Stopping docking motor, firing valves.
+[2020-11-11 19:46:39.020687] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:39.199662] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:39.378676] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:39.572262] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:39.748662] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:39.940262] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:40.114658] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:40.296262] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:40.485650] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:40.662704] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:40.857671] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:41.031673] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:41.210704] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:41.389688] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:41.572286] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:41.760284] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:41.934687] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:42.113695] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:42.292701] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:42.471669] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:42.650678] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:42.840665] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:43.013705] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:43.192698] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:43.371682] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:43.549686] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:43.728727] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:43.907663] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:44.086715] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:44.264713] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:44.446707] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:44.637717] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:44.810705] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:44.991723] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:45.168692] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:45.347688] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:45.525701] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:45.722752] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:45.895706] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:46.074686] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:46.290712] Stopping docking motor, firing valves.
+[2020-11-11 19:46:46.463689] Stopping docking motor, firing valves.
+[2020-11-11 19:46:46.681695] Stopping docking motor, firing valves.
+[2020-11-11 19:46:46.848723] Stopping docking motor, firing valves.
+[2020-11-11 19:46:47.027719] Stopping docking motor, firing valves.
+[2020-11-11 19:46:47.206727] Stopping docking motor, firing valves.
+[2020-11-11 19:46:47.386705] Stopping docking motor, firing valves.
+[2020-11-11 19:46:47.563739] Stopping docking motor, firing valves.
+[2020-11-11 19:46:47.742702] Stopping docking motor, firing valves.
+[2020-11-11 19:46:47.920705] Stopping docking motor, firing valves.
+[2020-11-11 19:46:48.104708] Stopping docking motor, firing valves.
+[2020-11-11 19:46:48.278728] Stopping docking motor, firing valves.
+[2020-11-11 19:46:48.456730] Stopping docking motor, firing valves.
+[2020-11-11 19:46:48.635721] Stopping docking motor, firing valves.
+[2020-11-11 19:46:48.814728] Stopping docking motor, firing valves.
+[2020-11-11 19:46:48.992749] Stopping docking motor, firing valves.
+[2020-11-11 19:46:49.171733] Stopping docking motor, firing valves.
+[2020-11-11 19:46:49.368263] Stopping docking motor, firing valves.
+[2020-11-11 19:46:49.537742] Stopping docking motor, firing valves.
+[2020-11-11 19:46:49.724264] Stopping docking motor, firing valves.
+[2020-11-11 19:46:49.892718] Vbatt: 7467 mV
+[2020-11-11 19:46:49.892753] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:50.071719] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:50.250732] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:50.448266] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:50.621719] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:50.801739] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:50.980746] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:51.159735] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:51.338744] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:51.517749] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:51.700744] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:51.879773] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:52.058751] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:52.237694] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:52.416771] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:52.595757] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:52.775761] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:52.954737] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:53.149795] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:53.327780] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:46:53.506773] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:53.694720] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:53.867765] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:54.056775] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:54.235754] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:54.414796] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:54.592856] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:54.782127] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:54.961002] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:55.140083] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:55.317791] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:55.496799] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:55.675808] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:55.854759] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:56.032775] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:56.211779] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:56.392266] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:56.568765] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:56.747791] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:56.926781] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:46:57.105815] Stopping docking motor, firing valves.
+[2020-11-11 19:46:57.283782] Stopping docking motor, firing valves.
+[2020-11-11 19:46:57.462769] Stopping docking motor, firing valves.
+[2020-11-11 19:46:57.640747] Stopping docking motor, firing valves.
+[2020-11-11 19:46:57.819811] Stopping docking motor, firing valves.
+[2020-11-11 19:46:57.998785] Stopping docking motor, firing valves.
+[2020-11-11 19:46:58.176794] Stopping docking motor, firing valves.
+[2020-11-11 19:46:58.355783] Stopping docking motor, firing valves.
+[2020-11-11 19:46:58.534809] Stopping docking motor, firing valves.
+[2020-11-11 19:46:58.730792] Stopping docking motor, firing valves.
+[2020-11-11 19:46:58.897841] Stopping docking motor, firing valves.
+[2020-11-11 19:46:59.076803] Stopping docking motor, firing valves.
+[2020-11-11 19:46:59.261770] Stopping docking motor, firing valves.
+[2020-11-11 19:46:59.434796] Stopping docking motor, firing valves.
+[2020-11-11 19:46:59.629033] Stopping docking motor, firing valves.
+[2020-11-11 19:46:59.795825] Stopping docking motor, firing valves.
+[2020-11-11 19:46:59.974810] Stopping docking motor, firing valves.
+[2020-11-11 19:47:00.153842] Stopping docking motor, firing valves.
+[2020-11-11 19:47:00.340285] Stopping docking motor, firing valves.
+[2020-11-11 19:47:00.510820] Stopping docking motor, firing valves.
+[2020-11-11 19:47:00.688825] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:00.870847] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:01.049818] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:01.228803] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:01.407797] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:01.587832] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:01.766816] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:01.945823] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:02.124837] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:02.314819] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:02.493833] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:02.711617] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:02.884805] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:03.072263] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:03.266853] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:03.444818] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:03.624796] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:03.803846] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:03.982829] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:04.163338] Spinning ADCS wheels at speed 100.
+[2020-11-11 19:47:04.340836] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:04.519841] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:04.698832] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:04.877816] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:05.056816] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:05.234840] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:05.413861] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:05.598848] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:05.776841] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:05.989838] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:06.165857] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:06.341833] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:06.519831] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:06.714059] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:06.889880] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:07.068841] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:07.247862] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:07.425877] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:07.604852] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:07.783847] Stopping ADCS wheels, turning docking motor.
+[2020-11-11 19:47:07.961871] Vbatt: 7458 mV
+[2020-11-11 19:47:07.961888] Stopping docking motor, firing valves.
+[2020-11-11 19:47:08.140848] Stopping docking motor, firing valves.
+[2020-11-11 19:47:08.319875] Stopping docking motor, firing valves.
+[2020-11-11 19:47:08.497855] Stopping docking motor, firing valves.
+[2020-11-11 19:47:08.676866] Stopping docking motor, firing valves.
+[2020-11-11 19:47:08.866197] Stopping docking motor, firing valves.
