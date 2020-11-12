@@ -43,6 +43,13 @@ class PTestCase(object):
         '''
         return None
 
+    @property
+    def debug_to_console(self):
+        '''
+        Default false, set to true if you want debug output from flight computer piped to console
+        '''
+        return False
+
     def sim_implementation(self, *args, **kwargs):
         """
         Choice of sim implementation for this testcase.
@@ -108,6 +115,11 @@ class PTestCase(object):
         Entry point for simulation creation
         '''
         self.populate_devices(devices)
+
+        for dev_name,device in devices.items():
+            print(device)
+            device.case_interaction_setup(self.debug_to_console)
+
         if self.sim_duration > 0:
             self.sim = self.sim_implementation(self.is_interactive, devices, 
             self.random_seed, self, self.sim_duration, self.sim_initial_state, 

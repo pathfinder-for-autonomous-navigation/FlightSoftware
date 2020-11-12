@@ -158,7 +158,7 @@ class Simulation(object):
 
             # Infrastructure
             step += 1
-            time.sleep(self.dt - ((time.time() - start_time) % self.dt))
+            # time.sleep(self.dt - ((time.time() - start_time) % self.dt))
 
         self.running = False
         self.add_to_log("Simulation ended.")

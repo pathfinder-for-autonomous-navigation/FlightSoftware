@@ -9,6 +9,9 @@
     #include <Arduino.h>
 #endif
 
+#include <iostream>
+#include <string>
+
 std::map<debug_severity, const char*> debug_console::severity_strs{
     {debug_severity::debug, "DEBUG"},   {debug_severity::info, "INFO"},
     {debug_severity::notice, "NOTICE"}, {debug_severity::warning, "WARNING"},
@@ -182,14 +185,21 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     input.copy(buf, sizeof(buf));
 #else
     char lastchar = '\n';
+    bool was_message = false;
     for (size_t i = 0; 
     // looping condition is once there are bytes available, 
     // keep looping while there are bytes available or the terminating char \n hasn't appeared yet
     i < SERIAL_BUF_SIZE && (Serial.available() || lastchar != '\n'); i++) {
         lastchar = Serial.read();
         buf[i] = lastchar; 
+        was_message = true;
     }
 #endif
+
+    // 
+    std::string a = std::string(buf,512);
+    if(was_message)
+        printf(debug_severity::info, buf);
 
     TRACKED_CONSTANT_C(size_t, MAX_NUM_JSON_MSGS, 5);
 

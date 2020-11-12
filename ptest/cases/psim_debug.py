@@ -18,6 +18,10 @@ class PsimDebug(SingleSatOnlyCase):
         return "ci_mapping.json"
 
     @property
+    def debug_to_console(self):
+        return True
+
+    @property
     def sim_duration(self):
         return float("inf")
 
