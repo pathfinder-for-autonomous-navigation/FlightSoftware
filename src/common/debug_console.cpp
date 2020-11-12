@@ -181,8 +181,13 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     if (!found_input) return;
     input.copy(buf, sizeof(buf));
 #else
-    for (size_t i = 0; i < SERIAL_BUF_SIZE && Serial.available(); i++) {
-        buf[i] = Serial.read();
+    char lastchar = '\n';
+    for (size_t i = 0; 
+    // looping condition is once there are bytes available, 
+    // keep looping while there are bytes available or the terminating char \n hasn't appeared yet
+    i < SERIAL_BUF_SIZE && (Serial.available() || lastchar != '\n'); i++) {
+        lastchar = Serial.read();
+        buf[i] = lastchar; 
     }
 #endif
 
