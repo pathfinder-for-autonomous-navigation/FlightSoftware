@@ -33,6 +33,8 @@ class PropFaultHandler(SingleSatOnlyCase):
         self.ws("{}.override".format(fault_name), True)
 
     def reset_fault(self, fault_name):
+        if FAKE_PRESSURE:
+            self.ws("prop.tank2.pressure", 12)
         self.ws("{}.suppress".format(fault_name), True)
         self.ws("{}.override".format(fault_name), False)   
 
@@ -116,6 +118,8 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.check_prop_state("handling_fault", "prop state should be in handling fault since the fault is forced")
             self.logger.put("Prop now in handling_fault.")
             # pressurize_fail has different behavior than the other faults. It stays in handling_fault until suppressed by the ground
+            if FAKE_PRESSURE:
+                self.ws("prop.tank2.pressure", 12)
             if self.fault_name == "prop.pressurize_fail":
                 self.test_stage = "handle_pressurize_fail"
                 self.cycle()
