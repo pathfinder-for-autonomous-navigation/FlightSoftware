@@ -123,14 +123,11 @@ class PropFaultHandler(SingleSatOnlyCase):
                 self.ws("prop.tank2.pressure", 12)
             if self.fault_name == "prop.pressurize_fail":
                 self.test_stage = "handle_pressurize_fail"
-                self.cycle()
-                if FAKE_PRESSURE:
-                    self.ws("prop.tank2.pressure", 12)
             else:
                 self.test_stage = "venting"
-                self.cycle()
-                if FAKE_PRESSURE:
-                    self.ws("prop.tank2.pressure", 12)
+            self.cycle()
+            if FAKE_PRESSURE:
+                self.ws("prop.tank2.pressure", 12)
         
         elif self.test_stage == "handle_pressurize_fail":
             self.check_prop_state("handling_fault", "prop should remain in handling fault if pressurize_fail is not suppressed")
