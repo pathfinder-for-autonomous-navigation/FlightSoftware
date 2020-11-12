@@ -35,8 +35,24 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install -e lib/common/psim
         platformio update
+
+    - name: Install Bazel
+      run: |
+        sudo apt install curl gnupg
+        curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+        sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+        echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+        sudo apt install bazel
+
+    - name: Install Psim
+      run: |
+        cd lib/common/psim
+        python -m venv venv
+        . venv/bin/activate
+        pip install pyyaml
+        cd ../../..
+        pip install -e lib/common/psim
 
     - name: CI Checkout Case and Empty case
       run: |

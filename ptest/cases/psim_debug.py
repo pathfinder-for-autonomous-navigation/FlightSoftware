@@ -41,7 +41,7 @@ class PsimDebug(SingleSatOnlyCase):
     def run_case_singlesat(self):
         # self.print_rs_psim("truth.leader.environment.s.body")
 
-        if False:
+        if True:
 
             self.print_rs("pan.state")
             self.print_rs("adcs.state")

@@ -225,9 +225,6 @@ class BootUtil(object):
             self.elapsed_deployment = int(self.flight_controller.read_state("pan.deployment.elapsed"))
 
             # Number of cycles for which we expect the satellite to be in detumble
-            # For now, set this to 1 since the value doesn't matter (we force the satellite
-            # into standby inside this boot controller).
-            # Implementing #287 will give us a more realistic estimate.
             self.max_detumble_cycles = 1000
 
             # Prevent ADCS faults from causing transition to initialization hold

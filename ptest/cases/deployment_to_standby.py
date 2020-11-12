@@ -1,6 +1,7 @@
 # Runs mission from startup state to standby state.
 from .base import SingleSatOnlyCase
 from psim.sims import SingleAttitudeOrbitGnc
+from .utils import Enums, TestCaseFailure
 
 class DeploymentToStandby(SingleSatOnlyCase):
     @property
@@ -37,4 +38,6 @@ class DeploymentToStandby(SingleSatOnlyCase):
         return
 
     def run_case_singlesat(self):
+        if self.rs("pan.cycle_no") > 300:
+            raise TestCaseFailure("Nominal detumbling for ci should take < 300 cycles")
         self.finish()
