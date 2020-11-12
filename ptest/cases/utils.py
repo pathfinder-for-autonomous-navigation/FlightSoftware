@@ -272,6 +272,7 @@ class BootUtil(object):
                     self.boot_stage = 'detumble'
                     self.num_detumble_cycles = 0
                     if self.desired_boot_state == "detumble":
+                        self.logger.put("[TESTCASE] Successfully entered deployment. Now in detumble state.")
                         self.finished = True
                 elif satellite_state == "initialization_hold" and self.desired_boot_state != "initalization_hold":
                     raise TestCaseFailure("Satellite went to initialization hold instead of detumble.")

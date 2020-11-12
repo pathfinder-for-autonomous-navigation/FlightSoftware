@@ -46,8 +46,6 @@ class Simulation(object):
 
         self.sim_time = 0
 
-        print(self.devices)
-
         if self.is_single_sat_sim:
             self.flight_controller = self.devices['FlightController']
         else:
