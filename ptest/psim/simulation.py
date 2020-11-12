@@ -212,7 +212,7 @@ class CppSimulation(Simulation):
             raise RuntimeError("No simulation configs were provided! Please set the sim_configs property")
         if self.sim_model == None:
             raise RuntimeError("No simulation models were provided! Please set the sim_model property")
-        if self.mappings_file_name == "":
+        if self.mapping_file_name == "":
             raise RuntimeError("Error. Please set the json mapping file name property")
 
         configs = [prefix + x + postfix for x in self.sim_configs]
@@ -223,7 +223,7 @@ class CppSimulation(Simulation):
         if self.is_single_sat_sim:
             self.sat_names = ['leader']
 
-        # Open the correct mapping config file. self.mappings_file_name is a property of the ptest case
+        # Open the correct mapping config file. self.mapping_file_name is a property of the ptest case
         self.mapping_file_name
         fn = 'ptest/psim/mapping_configs/' + self.mapping_file_name
         with open(fn) as json_file:
