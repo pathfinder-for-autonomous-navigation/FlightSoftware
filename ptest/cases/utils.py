@@ -230,10 +230,6 @@ class BootUtil(object):
             # Implementing #287 will give us a more realistic estimate.
             self.max_detumble_cycles = 1000
 
-            # Let's be generous with what angular rate is allowable as "detumbled", until the
-            # attitude controller is implemented in #287.
-            self.flight_controller.write_state("detumble_safety_factor", 10)
-
             # Prevent ADCS faults from causing transition to initialization hold
             self.flight_controller.write_state("adcs_monitor.functional_fault.suppress", "true")
             self.flight_controller.write_state("adcs_monitor.wheel1_fault.suppress", "true")

@@ -5,7 +5,7 @@ from psim.sims import SingleAttitudeOrbitGnc
 class PsimDebug(SingleSatOnlyCase):
     @property
     def sim_configs(self):
-        configs = ["truth/deployment", "truth/base"]
+        configs = ["truth/ci", "truth/base"]
         configs += ["sensors/base"]
         return configs
 
@@ -36,7 +36,7 @@ class PsimDebug(SingleSatOnlyCase):
         return "startup"
 
     def setup_post_bootsetup(self):
-        self.print_ws("detumble_safety_factor",0.2)
+        return
 
     def run_case_singlesat(self):
         # self.print_rs_psim("truth.leader.environment.s.body")
