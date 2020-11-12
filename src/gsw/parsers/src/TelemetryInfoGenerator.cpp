@@ -2,6 +2,8 @@
 #include <type_traits>
 #include <typeinfo>
 #include <array>
+#include <sstream>
+#include <iomanip>
 
 TelemetryInfoGenerator::TelemetryInfoGenerator(
     const std::vector<DownlinkProducer::FlowData>& _flow_data) :
@@ -9,6 +11,15 @@ TelemetryInfoGenerator::TelemetryInfoGenerator(
 
 /************** Helper functions for telemetry info generation. ***********/
 using nlohmann::json;
+
+std::string get_double_string(double x)
+{
+    std::ostringstream stream;
+    stream << std::fixed;
+    stream << std::setprecision(15);
+    stream << x;
+    return stream.str();
+}
 
 template<typename T>
 std::string type_name() {
@@ -42,8 +53,8 @@ bool try_collect_field_info(const StateFieldBaseType* field, TelemetryInfoGenera
     if (!ptr) return false;
 
     field_info.type = type_name<UnderlyingType>();
-    field_info.min = std::to_string(ptr->get_serializer_min());
-    field_info.max = std::to_string(ptr->get_serializer_max());
+    field_info.min = get_double_string(ptr->get_serializer_min());
+    field_info.max = get_double_string(ptr->get_serializer_max());
     return true;
 }
 
@@ -63,13 +74,13 @@ bool try_collect_vector_field_info(const StateFieldBaseType* field, TelemetryInf
         dynamic_cast<const StateFieldType<UnderlyingLinVectorType>*>(field);
     if (ptr1) {
         field_info.type = type_name<UnderlyingArrayVectorType>();
-        field_info.min = std::to_string(ptr1->get_serializer_min()[0]);
-        field_info.max = std::to_string(ptr1->get_serializer_max()[0]);
+        field_info.min = get_double_string(ptr1->get_serializer_min()[0]);
+        field_info.max = get_double_string(ptr1->get_serializer_max()[0]);
     }
     else if (ptr2) {
         field_info.type = type_name<UnderlyingLinVectorType>();
-        field_info.min = std::to_string(ptr2->get_serializer_min()(0));
-        field_info.max = std::to_string(ptr2->get_serializer_max()(0));
+        field_info.min = get_double_string(ptr2->get_serializer_min()(0));
+        field_info.max = get_double_string(ptr2->get_serializer_max()(0));
     }
     else return false;
 
