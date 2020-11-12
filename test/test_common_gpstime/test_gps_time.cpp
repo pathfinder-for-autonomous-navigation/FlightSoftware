@@ -1,7 +1,7 @@
 #include "../custom_assertions.hpp"
 #include <common/GPSTime.hpp>
 
-static constexpr unsigned long nanoseconds_in_week = 7 * 24 * 60 * 60 * (unsigned long) (1000000000);
+static constexpr unsigned long long nanoseconds_in_week = 7 * 24 * 60 * 60 * (unsigned long long) (1000000000);
 
 void test_basic_constructors() {
     gps_time_t t;
@@ -55,17 +55,17 @@ void test_copy_constructors_and_assignment_operators() {
 
 void test_cast() {
     gps_time_t t;
-    TEST_ASSERT_EQUAL(0, static_cast<unsigned long>(t)); 
+    TEST_ASSERT_EQUAL(0, static_cast<unsigned long long>(t)); 
 
     gps_time_t t2(2, 2, 2);
-    const unsigned long e2 = t2.wn * nanoseconds_in_week + t2.tow * 1000000
+    const unsigned long long e2 = t2.wn * nanoseconds_in_week + t2.tow * 1000000
                              + t2.ns;
-    TEST_ASSERT_EQUAL(e2, static_cast<unsigned long>(t2)); 
+    TEST_ASSERT_EQUAL(e2, static_cast<unsigned long long>(t2)); 
 
     gps_time_t t3(2075, 572522, 2000);
-    const unsigned long e3 = t3.wn * nanoseconds_in_week + t3.tow * 1000000
+    const unsigned long long e3 = t3.wn * nanoseconds_in_week + t3.tow * 1000000
                              + t3.ns;
-    TEST_ASSERT_EQUAL(e3, static_cast<unsigned long>(t3)); 
+    TEST_ASSERT_EQUAL(e3, static_cast<unsigned long long>(t3)); 
 }
 
 // Helper function for test_bool_operators.
@@ -100,7 +100,7 @@ void test_bool_operator_reflexive(gps_time_t t1, gps_time_t t2) {
     TEST_ASSERT(t1 >= t2);
 }
 
-// Test boolean assertions between two GPS times. Requires x > y.
+// Test boolean assertions between two GPS times. Requires x < y.
 void test_bool_operator_comparison(gps_time_t x, gps_time_t y) {
     TEST_ASSERT_FALSE(x == y);
     TEST_ASSERT(x != y);
@@ -124,7 +124,7 @@ void test_bool_operator_comparison(gps_time_t x, gps_time_t y) {
 }
 
 // Test boolean assertions between a GPS time and an integer. Requires x < y.
-void test_bool_operator_comparison(gps_time_t x, const unsigned long y) {
+void test_bool_operator_comparison(gps_time_t x, const unsigned long long y) {
     TEST_ASSERT_FALSE(x == y);
     TEST_ASSERT(x != y);
     x.is_set = false;
@@ -145,21 +145,22 @@ void test_bool_operators() {
     test_bool_operator_reflexive(t1);
     test_bool_operator_reflexive(t1, t1);
     test_bool_operator_comparison(t, t1);
-    test_bool_operator_comparison(t1, static_cast<unsigned long>(t1) + 2);
+    test_bool_operator_comparison(t1, static_cast<unsigned long long>(t1) + 2);
 
     gps_time_t t2(2075, 572522, 2000);
-    test_bool_operator_reflexive(t2);
+    test_bool_operator_reflexive(t2);   
     test_bool_operator_reflexive(t2, t2);
     test_bool_operator_comparison(t, t2);
+    TEST_ASSERT(static_cast<unsigned long long>(t1) < static_cast<unsigned long long>(t2));
     test_bool_operator_comparison(t1, t2);
-    test_bool_operator_comparison(t1, static_cast<unsigned long>(t2) + 2);
+    test_bool_operator_comparison(t1, static_cast<unsigned long long>(t2) + 2);
 }
 
 void test_addition_operators() {
     gps_time_t t;
     gps_time_t t1(2,2,2);
     gps_time_t t2(4,4,4);
-    unsigned long dt = 2 * nanoseconds_in_week + 2 * 1000000 + 2;
+    unsigned long long dt = 2 * nanoseconds_in_week + 2 * 1000000 + 2;
 
     TEST_ASSERT(t1 == t + t1);
     TEST_ASSERT(t1 == t1 + t);
@@ -174,7 +175,7 @@ void test_subtraction_operators() {
     t.is_set = true;
     gps_time_t t1(2,2,2);
     gps_time_t t2(4,4,4);
-    unsigned long dt = 2 * nanoseconds_in_week + 2 * 1000000 + 2;
+    unsigned long long dt = 2 * nanoseconds_in_week + 2 * 1000000 + 2;
 
     TEST_ASSERT(t1 == t1 - t);
     TEST_ASSERT(t1 == t2 - t1);
