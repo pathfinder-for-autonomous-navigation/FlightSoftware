@@ -229,7 +229,7 @@ void from_json(const json& j, TelemetryInfoGenerator::FieldData& d)
 
 void to_json(json& j, const DownlinkProducer::FlowData& d)
 {
-    j = json({{"active", d.is_active}, {"fields", d.field_list}, {"id", d.id}});
+    j = json({{"active", d.is_active}, {"fields", d.field_list}, {"id", d.id}, {"priority", d.id-1}});
 }
 
 void from_json(const json& j, DownlinkProducer::FlowData& d)

@@ -2393,7 +2393,8 @@
                 "pan.sat_designation",
                 "pan.bootcount"
             ],
-            "id": 1
+            "id": 1,
+            "priority": 0
         },
         {
             "active": true,
@@ -2402,7 +2403,8 @@
                 "orbit.pos",
                 "piksi.time"
             ],
-            "id": 2
+            "id": 2,
+            "priority": 1
         },
         {
             "active": true,
@@ -2411,7 +2413,8 @@
                 "attitude_estimator.w_body",
                 "adcs_monitor.ssa_mode"
             ],
-            "id": 3
+            "id": 3,
+            "priority": 2
         },
         {
             "active": true,
@@ -2437,7 +2440,8 @@
                 "adcs_monitor.wheel_pot_fault.suppress",
                 "adcs_monitor.wheel_pot_fault.unsignal"
             ],
-            "id": 4
+            "id": 4,
+            "priority": 3
         },
         {
             "active": true,
@@ -2454,7 +2458,8 @@
                 "prop.pressurize_fail.suppress",
                 "prop.pressurize_fail.unsignal"
             ],
-            "id": 5
+            "id": 5,
+            "priority": 4
         },
         {
             "active": true,
@@ -2471,7 +2476,8 @@
                 "gomspace.get_hk.suppress",
                 "gomspace.get_hk.unsignal"
             ],
-            "id": 6
+            "id": 6,
+            "priority": 5
         },
         {
             "active": true,
@@ -2482,12 +2488,14 @@
                 "adcs_cmd.rwa_torque_cmd",
                 "adcs_cmd.mtr_cmd"
             ],
-            "id": 7
+            "id": 7,
+            "priority": 6
         },
         {
             "active": true,
             "fields": [],
-            "id": 8
+            "id": 8,
+            "priority": 7
         },
         {
             "active": true,
@@ -2502,7 +2510,8 @@
                 "gomspace.curin.output2",
                 "gomspace.curin.output3"
             ],
-            "id": 9
+            "id": 9,
+            "priority": 8
         },
         {
             "active": true,
@@ -2520,7 +2529,8 @@
                 "gomspace.output.output5",
                 "gomspace.output.output6"
             ],
-            "id": 10
+            "id": 10,
+            "priority": 9
         },
         {
             "active": true,
@@ -2534,7 +2544,8 @@
                 "gomspace.battmode",
                 "gomspace.pptmode"
             ],
-            "id": 11
+            "id": 11,
+            "priority": 10
         },
         {
             "active": true,
@@ -2546,7 +2557,8 @@
                 "gomspace.power_cycle_output5_cmd",
                 "gomspace.power_cycle_output6_cmd"
             ],
-            "id": 12
+            "id": 12,
+            "priority": 11
         },
         {
             "active": true,
@@ -2560,7 +2572,8 @@
                 "adcs_monitor.functional_fault.unsignal",
                 "adcs_cmd.mtr_cmd"
             ],
-            "id": 13
+            "id": 13,
+            "priority": 12
         },
         {
             "active": true,
@@ -2570,7 +2583,8 @@
                 "attitude.pointer_vec2_current",
                 "attitude.pointer_vec2_desired"
             ],
-            "id": 14
+            "id": 14,
+            "priority": 13
         },
         {
             "active": true,
@@ -2594,14 +2608,16 @@
                 "adcs_monitor.havt_device16",
                 "adcs_monitor.havt_device17"
             ],
-            "id": 15
+            "id": 15,
+            "priority": 14
         },
         {
             "active": true,
             "fields": [
                 "radio.err"
             ],
-            "id": 16
+            "id": 16,
+            "priority": 15
         },
         {
             "active": true,
@@ -2609,7 +2625,8 @@
                 "docksys.docked",
                 "docksys.dock_config"
             ],
-            "id": 17
+            "id": 17,
+            "priority": 16
         },
         {
             "active": true,
@@ -2620,7 +2637,8 @@
                 "adcs_monitor.speed_rd_flag",
                 "adcs_monitor.torque_rd_flag"
             ],
-            "id": 18
+            "id": 18,
+            "priority": 17
         },
         {
             "active": true,
@@ -2631,7 +2649,8 @@
                 "piksi.baseline_pos",
                 "piksi.fix_error_count"
             ],
-            "id": 19
+            "id": 19,
+            "priority": 18
         },
         {
             "active": true,
@@ -2639,7 +2658,8 @@
                 "dcdc.SpikeDock",
                 "dcdc.ADCSMotor"
             ],
-            "id": 20
+            "id": 20,
+            "priority": 19
         },
         {
             "active": true,
@@ -2665,7 +2685,8 @@
                 "adcs_monitor.ssa_voltage18",
                 "adcs_monitor.ssa_voltage19"
             ],
-            "id": 21
+            "id": 21,
+            "priority": 20
         },
         {
             "active": false,
@@ -2675,7 +2696,8 @@
                 "dcdc.disable_cmd",
                 "dcdc.reset_cmd"
             ],
-            "id": 22
+            "id": 22,
+            "priority": 21
         },
         {
             "active": false,
@@ -2694,7 +2716,8 @@
                 "adcs_cmd.rwa_speed_filter",
                 "adcs_cmd.ssa_voltage_filter"
             ],
-            "id": 23
+            "id": 23,
+            "priority": 22
         },
         {
             "active": false,
@@ -2706,7 +2729,8 @@
                 "adcs_monitor.ssa_vec",
                 "adcs_monitor.gyr_temp_flag"
             ],
-            "id": 24
+            "id": 24,
+            "priority": 23
         },
         {
             "active": false,
@@ -2732,7 +2756,8 @@
                 "adcs_monitor.ssa_voltage18",
                 "adcs_monitor.ssa_voltage19"
             ],
-            "id": 25
+            "id": 25,
+            "priority": 24
         },
         {
             "active": false,
@@ -2743,7 +2768,8 @@
                 "trigger_dist.close_approach",
                 "trigger_dist.docking"
             ],
-            "id": 26
+            "id": 26,
+            "priority": 25
         },
         {
             "active": false,
@@ -2752,7 +2778,8 @@
                 "downlink.shift_id2",
                 "downlink.toggle_id"
             ],
-            "id": 27
+            "id": 27,
+            "priority": 26
         },
         {
             "active": false,
@@ -2760,7 +2787,8 @@
                 "gomspace.heater",
                 "gomspace.heater_cmd"
             ],
-            "id": 28
+            "id": 28,
+            "priority": 27
         },
         {
             "active": false,
@@ -2768,7 +2796,8 @@
                 "gomspace.wdt_i2c_time_left",
                 "gomspace.counter_wdt_i2c"
             ],
-            "id": 29
+            "id": 29,
+            "priority": 28
         },
         {
             "active": false,
@@ -2782,7 +2811,8 @@
                 "gomspace.pptmode_cmd",
                 "gomspace.counter_reset_cmd"
             ],
-            "id": 30
+            "id": 30,
+            "priority": 29
         },
         {
             "active": false,
@@ -2804,7 +2834,8 @@
                 "timing.debug.avg_wait",
                 "timing.debug.num_lates"
             ],
-            "id": 31
+            "id": 31,
+            "priority": 30
         },
         {
             "active": false,
@@ -2826,7 +2857,8 @@
                 "timing.uplink_ct.avg_wait",
                 "timing.uplink_ct.num_lates"
             ],
-            "id": 32
+            "id": 32,
+            "priority": 31
         },
         {
             "active": false,
@@ -2870,7 +2902,8 @@
                 "adcs_cmd.havt_reset17",
                 "adcs_cmd.havt_reset18"
             ],
-            "id": 33
+            "id": 33,
+            "priority": 32
         },
         {
             "active": false,
@@ -2878,7 +2911,8 @@
                 "radio.max_transceive",
                 "radio.max_wait"
             ],
-            "id": 34
+            "id": 34,
+            "priority": 33
         },
         {
             "active": false,
@@ -2886,7 +2920,8 @@
                 "docksys.is_turning",
                 "docksys.config_cmd"
             ],
-            "id": 35
+            "id": 35,
+            "priority": 34
         },
         {
             "active": false,
@@ -2895,7 +2930,8 @@
                 "piksi_fh.cdpgs_delay_max_wait",
                 "piksi_fh.enabled"
             ],
-            "id": 36
+            "id": 36,
+            "priority": 35
         }
     ]
 }
