@@ -183,9 +183,12 @@ void to_json(json& j, const TelemetryInfoGenerator::FieldData& d)
 {
     j = json{
         {"type", d.type},
-        {"flow_id", d.flow_id},
         {"writable", d.writable},
         {"bitsize", d.bitsize}};
+
+    if (d.flow_id > 0) j["flow_id"] = d.flow_id;
+    else j["flow_id"] = "undefined";
+    
     if (d.type == "unsigned int" || d.type == "unsigned char")
     {
         j["min"] = std::stoul(d.min);
