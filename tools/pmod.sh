@@ -1,1 +1,0 @@
-pio run -e fsw_native_leader && env PYTHONPATH="$PYTHONPATH:lib/common/psim/bazel-bin/python:lib/common/psim/python" python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToStandby

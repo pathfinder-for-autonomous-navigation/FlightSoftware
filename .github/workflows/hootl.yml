@@ -51,7 +51,9 @@ jobs:
         python -m venv venv
         . venv/bin/activate
         pip install pyyaml
+        deactivate
         cd ../../..
+        . venv/bin/activate
         pip install -e lib/common/psim
 
     - name: CI Checkout Case and Empty case
