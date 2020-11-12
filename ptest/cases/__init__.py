@@ -23,3 +23,4 @@ from .ci_case import CICase
 from .simple_fault_handlers import ADCSWheelFaultHandler, LowBattFaultHandler
 from .safehold_reboot import SafeholdReboot
 from .prop_fault_handler import PropFaultHandler
+from .torquer_rotate_case import MTorquerCase
