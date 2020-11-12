@@ -37,7 +37,7 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.ws("prop.tank2.pressure", 12)
         self.ws("{}.suppress".format(fault_name), True)
         self.ws("{}.override".format(fault_name), False)   
-        self.cycle()
+        assert ( self.rs("{}.suppress".format(fault_name)) == True )
 
     def check_mission_state(self, expected, reason=""):
         if self.mission_state != expected:
@@ -147,10 +147,7 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.logger.put("Prop now in venting.")
             self.check_mission_state("standby", "mission state should be in standby when prop is venting")
             self.logger.put("Satellite now in in standby state.")
-            if self.fault_name == "prop.overpressured":
-                self.reset_fault("prop.overpressured")
-            else:
-                self.reset_fault(self.fault_name)
+            self.reset_fault(self.fault_name)
             self.test_stage = "reset"
 
         elif self.test_stage == "reset":
