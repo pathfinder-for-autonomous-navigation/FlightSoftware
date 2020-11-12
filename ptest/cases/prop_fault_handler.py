@@ -37,6 +37,7 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.ws("prop.tank2.pressure", 12)
         self.ws("{}.suppress".format(fault_name), True)
         self.ws("{}.override".format(fault_name), False)   
+        self.cycle()
 
     def check_mission_state(self, expected, reason=""):
         if self.mission_state != expected:
@@ -135,7 +136,7 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.check_prop_state("handling_fault", "prop should remain in handling fault if pressurize_fail is not suppressed")
             self.check_mission_state("standby", "satellite should be in standby when handling fault")
             # Need to reset completely since override takes precedence
-            self.reset_fault("prop.pressurize_fail")
+            self.reset_fault(self.fault_name)
             self.logger.put("Suppressing pressurize_fail")
             self.test_stage = "recover_pressurize_fail"
 
