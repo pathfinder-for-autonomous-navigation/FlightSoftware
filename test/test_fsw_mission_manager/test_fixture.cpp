@@ -212,7 +212,7 @@ unsigned int TestFixture::get_bootcount()
 }
 
 
-adcs_state_t TestFixture::adcs_states[8] = {adcs_state_t::detumble, adcs_state_t::limited,
+adcs_state_t TestFixture::adcs_states[9] = {adcs_state_t::detumble, adcs_state_t::limited, adcs_state_t::manual,
                                             adcs_state_t::point_docking, adcs_state_t::point_manual, adcs_state_t::point_standby,
                                             adcs_state_t::startup, adcs_state_t::zero_L, adcs_state_t::zero_torque};
 

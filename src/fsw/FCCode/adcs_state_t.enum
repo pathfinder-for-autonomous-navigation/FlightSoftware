@@ -3,6 +3,7 @@
 
 // adcs.state
 enum class adcs_state_t {
+    manual,
     startup,
     limited,
     zero_torque,
