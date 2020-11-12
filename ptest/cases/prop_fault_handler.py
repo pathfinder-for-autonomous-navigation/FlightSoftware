@@ -3,6 +3,7 @@ from .utils import FSWEnum, Enums, TestCaseFailure, BootUtil
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler
+FAKE_PRESSURE = True
 class PropFaultHandler(SingleSatOnlyCase):
     @property
     def sim_duration(self):
@@ -83,6 +84,8 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.fault_name = "finished"
 
     def dispatch_test(self):
+        if FAKE_PRESSURE:
+            self.ws("prop.tank2.pressure", 12)
         if self.fault_name == "prop.pressurize_fail":
             self.test_pressurize_fail()
         elif self.fault_name == "prop.overpressured":
@@ -95,6 +98,8 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.finish()
 
     def test_fault(self):
+        if FAKE_PRESSURE:
+            self.ws("prop.tank2.pressure", 12)
         if self.test_stage == "init":
             self.logger.put("[TESTCASE] Starting test for {}".format(self.fault_name))
             self.state = "idle"
@@ -113,9 +118,14 @@ class PropFaultHandler(SingleSatOnlyCase):
             # pressurize_fail has different behavior than the other faults. It stays in handling_fault until suppressed by the ground
             if self.fault_name == "prop.pressurize_fail":
                 self.test_stage = "handle_pressurize_fail"
+                self.cycle()
+                if FAKE_PRESSURE:
+                    self.ws("prop.tank2.pressure", 12)
             else:
                 self.test_stage = "venting"
                 self.cycle()
+                if FAKE_PRESSURE:
+                    self.ws("prop.tank2.pressure", 12)
         
         elif self.test_stage == "handle_pressurize_fail":
             self.check_prop_state("handling_fault", "prop should remain in handling fault if pressurize_fail is not suppressed")
@@ -145,6 +155,8 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.test_stage = "init"
 
     def run_case_singlesat(self):
+        if FAKE_PRESSURE:
+            self.ws("prop.tank2.pressure", 12)
         if not hasattr(self, "fault_name"):
             self.fault_name = "prop.pressurize_fail"
             self.test_stage = "init"
