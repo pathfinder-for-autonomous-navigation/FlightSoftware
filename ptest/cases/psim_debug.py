@@ -36,7 +36,7 @@ class PsimDebug(SingleSatOnlyCase):
         return "startup"
 
     def setup_post_bootsetup(self):
-        self.print_ws("detumble_safety_factor",0.05)
+        self.print_ws("detumble_safety_factor",0.2)
 
     def run_case_singlesat(self):
         # self.print_rs_psim("truth.leader.environment.s.body")
