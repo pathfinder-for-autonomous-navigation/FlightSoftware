@@ -133,7 +133,7 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.check_prop_state("handling_fault", "prop should remain in handling fault if pressurize_fail is not suppressed")
             self.check_mission_state("standby", "satellite should be in standby when handling fault")
             # Need to reset completely since override takes precedence
-            self.reset_fault(self.fault_name)
+            self.reset_fault("prop.pressurize_fail")
             self.logger.put("Suppressing pressurize_fail")
             self.test_stage = "recover_pressurize_fail"
 
@@ -147,7 +147,10 @@ class PropFaultHandler(SingleSatOnlyCase):
             self.logger.put("Prop now in venting.")
             self.check_mission_state("standby", "mission state should be in standby when prop is venting")
             self.logger.put("Satellite now in in standby state.")
-            self.reset_fault(self.fault_name)
+            if self.fault_name == "prop.overpressured":
+                self.reset_fault("prop.overpressured")
+            else:
+                self.reset_fault(self.fault_name)
             self.test_stage = "reset"
 
         elif self.test_stage == "reset":
