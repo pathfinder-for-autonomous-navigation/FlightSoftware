@@ -186,6 +186,33 @@ void to_json(json& j, const TelemetryInfoGenerator::FieldData& d)
         {"flow_id", d.flow_id},
         {"writable", d.writable},
         {"bitsize", d.bitsize}};
+    if (d.type == "unsigned int" || d.type == "unsigned char")
+    {
+        j["min"] = std::stoul(d.min);
+        j["max"] = std::stoul(d.max);
+    }
+    else if (d.type == "signed int" || d.type == "signed char")
+    {
+        j["min"] = std::stoi(d.min);
+        j["max"] = std::stoi(d.max);
+    }
+    else if (d.type == "float"
+             || d.type == "double"
+             || d.type == "std float vector"
+             || d.type == "std double vector"
+             || d.type == "lin float vector"
+             || d.type == "lin double vector"
+             || d.type == "std float quaternion"
+             || d.type == "std double quaternion"
+             || d.type == "lin float quaternion"
+             || d.type == "lin double quaternion")
+    {
+        try {
+            j["min"] = std::stod(d.min);
+            j["max"] = std::stod(d.max);
+        }
+        catch(const std::exception& e) {}
+    }
 }
 void from_json(const json& j, TelemetryInfoGenerator::FieldData& d)
 {
