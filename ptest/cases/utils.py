@@ -178,7 +178,7 @@ class BootUtil(object):
     Utility for bootin satellite to a desired state.
     """
 
-    def __init__(self, flight_controller, logger, state, fast_boot, one_day_ccno, skip_startup=False):
+    def __init__(self, flight_controller, logger, state, fast_boot, one_day_ccno, skip_startup=False, _suppress_faults):
         """
         Initializes the booter.
 
@@ -203,6 +203,7 @@ class BootUtil(object):
         self.one_day_ccno = one_day_ccno
         self.skip_startup = skip_startup
         self.finished = False
+        self.suppress_faults = _suppress_faults
 
     def setup_boot(self):
         """
@@ -211,7 +212,7 @@ class BootUtil(object):
 
         mission_state_names = list(Enums.mission_states.names())
 
-        # Booting to the nominal states requires detumbling.??
+        # Booting to the nominal states requires detumbling.
         nominal_states = mission_state_names
         nominal_states.remove('manual')
         nominal_states.remove('safehold')
@@ -226,6 +227,9 @@ class BootUtil(object):
             # Number of cycles for which we expect the satellite to be in detumble
             self.max_detumble_cycles = 1000
 
+        if self.suppress_faults:
+            self.logger.put("[TESTCASE] Suppressing Faults!")
+            
             # Prevent ADCS faults from causing transition to initialization hold
             self.flight_controller.write_state("adcs_monitor.functional_fault.suppress", "true")
             self.flight_controller.write_state("adcs_monitor.wheel1_fault.suppress", "true")

@@ -50,6 +50,13 @@ class PTestCase(object):
         '''
         return False
 
+    @property 
+    def suppress_faults(self):
+        '''
+        If true, faults will be suppressed on boot. Default True.
+        '''
+        return True
+
     def sim_implementation(self, *args, **kwargs):
         """
         Choice of sim implementation for this testcase.
@@ -217,7 +224,9 @@ class SingleSatOnlyCase(PTestCase):
         self.flight_controller.write_state("fault_handler.enabled", "false")
         self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
 
-        self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, self.fast_boot, self.one_day_ccno)
+        self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, 
+            self.fast_boot, self.one_day_ccno, self.suppress_faults)
+            
         self.boot_util.setup_boot()
         self.setup_post_bootsetup()
 
