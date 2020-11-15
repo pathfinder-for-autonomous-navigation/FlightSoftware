@@ -47,12 +47,6 @@ jobs:
 
     - name: Install Psim
       run: |
-        cd lib/common/psim
-        python -m venv venv
-        . venv/bin/activate
-        pip install pyyaml
-        deactivate
-        cd ../../..
         pip install -e lib/common/psim
 
     - name: CI Checkout Case and Empty case
