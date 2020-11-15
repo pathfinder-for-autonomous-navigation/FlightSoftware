@@ -9,9 +9,6 @@
     #include <Arduino.h>
 #endif
 
-#include <iostream>
-#include <string>
-
 std::map<debug_severity, const char*> debug_console::severity_strs{
     {debug_severity::debug, "DEBUG"},   {debug_severity::info, "INFO"},
     {debug_severity::notice, "NOTICE"}, {debug_severity::warning, "WARNING"},
@@ -184,25 +181,17 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     if (!found_input) return;
     input.copy(buf, sizeof(buf));
 #else
-    char lastchar = '\n';
-    for (size_t i = 0; 
-    // looping condition is once there are bytes available, 
-    // keep looping while there are bytes available or the terminating char \n hasn't appeared yet
-    i < SERIAL_BUF_SIZE && (Serial.available() || lastchar != '\n'); i++) {
-        lastchar = Serial.read();
-        buf[i] = lastchar; 
+    char lastchar = '?';
+    size_t i = 0;
+    if(Serial.available()){ // if there are bytes to be processed
+        while(i < SERIAL_BUF_SIZE && lastchar != '\n'){ // loop while we are under buffer limit and we haven't seen end line
+            if(Serial.available()){ // only log to buffer if there are bytes available
+                lastchar = Serial.read();
+                buf[i] = lastchar;
+                i++;
+            }
+        }
     }
-
-    std::string s(buf);
-    
-    if(s != ""){
-        printf(debug_severity::notice, buf);
-    }
-    
-    // for (size_t i = 0; i < SERIAL_BUF_SIZE; i++){
-    //     std::cout << buf[i];
-    // }
-    // std::cout << "\n";
 #endif
 
     TRACKED_CONSTANT_C(size_t, MAX_NUM_JSON_MSGS, 5);
