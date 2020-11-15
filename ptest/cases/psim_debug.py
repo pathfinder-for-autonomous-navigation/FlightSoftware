@@ -27,7 +27,7 @@ class PsimDebug(SingleSatOnlyCase):
 
     @property
     def initial_state(self):
-        return "detumble"
+        return "startup"
 
     @property
     def fast_boot(self):
@@ -46,10 +46,12 @@ class PsimDebug(SingleSatOnlyCase):
         # self.print_rs_psim("truth.leader.environment.s.body")
 
         if True:
-
+            self.print_rs("pan.deployment.elapsed")
             self.print_rs("pan.state")
-            self.print_rs("adcs.state")
             self.print_rs("pan.cycle_no")
+            self.print_rs("pan.bootcount")
+            
+            self.print_rs("adcs.state")
             self.print_rs("orbit.time")
             self.print_rs("orbit.pos")
             self.print_rs("orbit.vel")

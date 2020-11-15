@@ -211,10 +211,9 @@ class BootUtil(object):
 
         mission_state_names = list(Enums.mission_states.names())
 
-        # Booting to the nominal states requires detumbling.
+        # Booting to the nominal states requires detumbling.??
         nominal_states = mission_state_names
         nominal_states.remove('manual')
-        nominal_states.remove('startup')
         nominal_states.remove('safehold')
         nominal_states.remove('initialization_hold')
 
@@ -257,6 +256,9 @@ class BootUtil(object):
                 raise TestCaseFailure(f"Satellite was not in state {self.boot_stage}.")
             self.boot_stage = 'deployment_hold'
             self.logger.put("[TESTCASE] Waiting for the deployment period to be over.")
+            if self.desired_boot_state == "startup":
+                self.finished = True
+                self.logger.put("[TESTCASE] Successfully entered startup. Now in startup state.")
 
         elif self.boot_stage == 'deployment_hold' and not self.finished:
             if self.elapsed_deployment == self.deployment_hold_length:
@@ -304,7 +306,7 @@ class BootUtil(object):
         return self.boot_stage
 
     def finished_boot(self):
-        if self.fast_boot or self.desired_boot_state == "startup":
+        if self.fast_boot:
             self.flight_controller.write_state("pan.state", Enums.mission_states[self.desired_boot_state])
             return True
         elif self.finished:
