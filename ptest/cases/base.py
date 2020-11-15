@@ -225,8 +225,8 @@ class SingleSatOnlyCase(PTestCase):
         self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
 
         self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, 
-            self.fast_boot, self.one_day_ccno, self.suppress_faults)
-            
+            self.fast_boot, self.suppress_faults, self.one_day_ccno)
+
         self.boot_util.setup_boot()
         self.setup_post_bootsetup()
 

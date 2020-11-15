@@ -178,7 +178,7 @@ class BootUtil(object):
     Utility for bootin satellite to a desired state.
     """
 
-    def __init__(self, flight_controller, logger, state, fast_boot, one_day_ccno, skip_startup=False, _suppress_faults):
+    def __init__(self, flight_controller, logger, state, fast_boot, one_day_ccno, _suppress_faults, skip_startup=False):
         """
         Initializes the booter.
 
@@ -229,7 +229,7 @@ class BootUtil(object):
 
         if self.suppress_faults:
             self.logger.put("[TESTCASE] Suppressing Faults!")
-            
+
             # Prevent ADCS faults from causing transition to initialization hold
             self.flight_controller.write_state("adcs_monitor.functional_fault.suppress", "true")
             self.flight_controller.write_state("adcs_monitor.wheel1_fault.suppress", "true")
