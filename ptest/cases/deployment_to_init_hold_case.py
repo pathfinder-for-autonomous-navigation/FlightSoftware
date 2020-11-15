@@ -26,6 +26,10 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
     def wheelpot_is_functional(self):
         return self.flight_controller.read_state("adcs_monitor.havt_device6")
 
+    @property
+    def suppress_faults(self):
+        return False
+
     @adcs_is_functional.setter 
     def adcs_is_functional(self, value): 
         assert(value == "true" or value == "false")
