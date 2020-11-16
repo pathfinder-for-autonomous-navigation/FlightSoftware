@@ -225,7 +225,7 @@ class SingleSatOnlyCase(PTestCase):
         self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
 
         self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, 
-            self.fast_boot, self.suppress_faults, self.one_day_ccno)
+            self.fast_boot, self.one_day_ccno, self.suppress_faults)
 
         self.boot_util.setup_boot()
         self.setup_post_bootsetup()
@@ -386,8 +386,15 @@ class MissionCase(PTestCase):
     def _setup_case(self):
         self.setup_pre_bootsetup_leader()
         self.setup_pre_bootsetup_follower()
-        self.boot_util_leader = BootUtil(self.flight_controller_leader, self.logger, self.initial_state_leader, self.fast_boot_leader)
-        self.boot_util_follower = BootUtil(self.flight_controller_follower, self.logger, self.initial_state_follower, self.fast_boot_follower)
+        self.one_day_ccno_leader = self.flight_controller_leader.smart_read("pan.one_day_ccno")
+        self.one_day_ccno_follower = self.flight_controller_follower.smart_read("pan.one_day_ccno")
+
+        self.boot_util_leader = BootUtil(
+            self.flight_controller_leader, self.logger, self.initial_state_leader, 
+            self.fast_boot_leader, self.one_day_ccno_leader, self.suppress_faults)
+        self.boot_util_follower = BootUtil(
+            self.flight_controller_follower, self.logger, self.initial_state_follower, 
+            self.fast_boot_follower, self.one_day_ccno_follower, self.suppress_faults)
         self.boot_util_leader.setup_boot()
         self.boot_util_follower.setup_boot()
         self.setup_post_bootsetup_leader()

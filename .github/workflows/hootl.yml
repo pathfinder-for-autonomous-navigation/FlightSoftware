@@ -71,5 +71,5 @@ jobs:
 
     - name: Mission Checkout Cases
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHold -ni
         python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToStandby -ni

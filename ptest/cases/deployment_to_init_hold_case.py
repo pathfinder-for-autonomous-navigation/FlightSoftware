@@ -1,7 +1,7 @@
 from .base import SingleSatOnlyCase
 from .utils import Enums, TestCaseFailure
 
-class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):    
+class DeploymentToInitHold(SingleSatOnlyCase):    
     @property
     def initial_state(self):
         return "startup"

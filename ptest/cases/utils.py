@@ -204,7 +204,7 @@ class BootUtil(object):
         self.skip_startup = skip_startup
         self.finished = False
         self.suppress_faults = _suppress_faults
-
+        
     def setup_boot(self):
         """
         Sets up initial conditions for the boot based on the desired boot stage.
