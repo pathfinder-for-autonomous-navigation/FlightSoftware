@@ -8,9 +8,6 @@
 #include <gnc/utilities.hpp>
 #include <gnc/constants.hpp>
 #include <gnc/orbit_controller.hpp>
-#include "ClockManager.hpp"
-#include "PropController.hpp"
-
 #include "TimedControlTask.hpp"
 
 class OrbitController : public TimedControlTask<void>

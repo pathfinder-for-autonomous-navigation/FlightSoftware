@@ -1,9 +1,7 @@
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/OrbitController.hpp>
 #include <fsw/FCCode/AttitudeEstimator.hpp>
-#include <fsw/FCCode/prop_planner_state_t.enum>
 #include "../custom_assertions.hpp"
-#include <iostream>
 
 class TestFixture {
     public:
@@ -131,7 +129,7 @@ void test_task_schedule_valves(){
         test_task_schedule_valves_helper({187,8,-50});
         test_task_schedule_valves_helper({29,83,-50});
         test_task_schedule_valves_helper({-27,-8,-50});
-        
+
 }
 
 int test_control_task()
