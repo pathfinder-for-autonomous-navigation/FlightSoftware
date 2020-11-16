@@ -19,6 +19,21 @@ class DownlinkParser {
     DownlinkParser(StateFieldRegistry& r,
         const std::vector<DownlinkProducer::FlowData>& flow_data);
 
+    struct EventData {
+      unsigned int ccno = 0;
+      std::map<std::string, std::string> fields;
+    };
+    struct DownlinkData
+    {
+      std::map<std::string, std::string> field_data;
+      std::map<std::string, EventData> event_data;
+
+      std::string error_msg;
+
+      std::vector<unsigned char> flow_ids;
+      unsigned int cycle_no = 0;
+    };
+
     /**
      * @brief Process a file containing a downlink, and return a JSON
      * string containing data from the most recently completed downlink
@@ -27,7 +42,8 @@ class DownlinkParser {
      * @param filename The filepath of the file containing a downlink
      * packet.
      */
-    nlohmann::json process_downlink_file(const std::string& filename);
+    DownlinkData process_downlink_file(const std::string& filename);
+    nlohmann::json process_downlink_file_json(const std::string& filename);
 
   protected:
     /**
@@ -55,15 +71,9 @@ class DownlinkParser {
      * string is returned.
      * 
      * @param packet Character buffer containing the downlink packet.
-     * 
-     * @return JSON-encoded downlink data, containing two high-level keys:
-     * - data: is a key-value dictionary of state field names and values.
-     * - metadata: contains the
-     *   - cycle count, 
-     *   - an array of flow IDs in the order in which they were processed.
-     *   - whether or not there were any processing errors.
+     * @return Downlink data object.
      */
-    nlohmann::json process_downlink_packet(const std::vector<char>& packet);
+    DownlinkData process_downlink_packet(const std::vector<char>& packet);
 
     /**
      * @brief The most recent downlink frame that is yet incomplete and/or

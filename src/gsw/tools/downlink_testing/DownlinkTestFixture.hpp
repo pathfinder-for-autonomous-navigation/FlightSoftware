@@ -32,12 +32,7 @@ class DownlinkTestFixture {
       const test_result_t& errors,
       const std::string& path) const;
 
-
-    struct test_input_t {
-      std::map<std::string, std::string> field_name;
-      std::map<std::string, std::string> field_type;
-      std::map<std::string, std::string> field_value;
-    }
+    using test_input_t = std::map<std::string, DownlinkParser::FieldData>;
     using test_output_t = test_input_t;
     struct test_error_t {
       std::string expected;
@@ -62,6 +57,9 @@ class DownlinkTestFixture {
      */
     void apply_input(const test_input_t& input);
 
+    /**
+     * Create state fields for each telemetry field specified in the input.
+     */
     void create_state_fields();
 
   private:

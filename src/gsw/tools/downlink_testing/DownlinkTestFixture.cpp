@@ -24,8 +24,8 @@ void DownlinkTestFixture::parse(const DownlinkTestFixture::test_input_t& input,
 }
 
 void DownlinkTestFixture::save_test_data(
-      const std::map<std::string, std::string>& input,
-      const std::map<std::string, std::string>& output,
+      const test_input_t& input,
+      const test_output_t& output,
       const test_result_t& errors,
       const std::string& path)
 {
@@ -50,7 +50,6 @@ void DownlinkTestFixture::apply_input(const DownlinkTestFixture::test_input_t& i
 
 void DownlinkTestFixture::create_state_fields()
 {
-    // Create state fields for each telemetry field specified in the input
 }
 
 void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input,

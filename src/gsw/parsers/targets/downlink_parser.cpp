@@ -11,7 +11,7 @@ int main() {
     std::string filename;
     while(true) {
         std::getline(std::cin, filename);
-        std::cout << dp.process_downlink_file(filename).dump() << std::endl;
+        std::cout << dp.process_downlink_file_json(filename).dump() << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }

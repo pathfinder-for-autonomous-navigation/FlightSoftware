@@ -10,19 +10,25 @@ DownlinkParser::DownlinkParser(StateFieldRegistry& r,
     registry(r),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
-nlohmann::json DownlinkParser::process_downlink_file(const std::string& filename) {
+DownlinkParser::DownlinkData DownlinkParser::process_downlink_file(const std::string& filename) {
     std::ifstream downlink_file(filename, std::ios::in | std::ios::binary);
-    if (!downlink_file.is_open()) return "Error: file not found.";
+    if (!downlink_file.is_open()) return DownlinkData();
 
     std::vector<char> packet((std::istreambuf_iterator<char>(downlink_file)),
         std::istreambuf_iterator<char>());
     return process_downlink_packet(packet);
 }
 
-nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& packet) {
-    // The returned JSON object.
-    using json = nlohmann::json;
-    json ret;
+nlohmann::json DownlinkParser::process_downlink_file_json(const std::string& filename) {
+    nlohmann::json ret;
+    DownlinkData d = process_downlink_file(filename);
+    if (d.flow_ids.size() != 0) to_json(ret, d);
+    return ret;
+}
+
+DownlinkParser::DownlinkData DownlinkParser::process_downlink_packet(const std::vector<char>& packet) {
+    // The returned value.
+    DownlinkData ret;
 
     // If the first bit of the packet is a 1, it's the start of a new frame.
     // Otherwise the packet belongs to a previous frame.
@@ -38,8 +44,6 @@ nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& 
         // Process the most recently collected frame.
         const std::vector<char> frame_to_process = most_recent_frame;
         most_recent_frame = packet;
-        ret["metadata"]["error"] = false;
-        ret["metadata"]["flow_ids"] = json::array();
 
         // Process the downlink frame in four steps.
 
@@ -63,8 +67,8 @@ nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& 
         const std::vector<bool> cycle_count_bits(frame_bits.begin(), frame_bits.begin() + 32);
         cycle_count_sr.set_bit_array(cycle_count_bits);
         cycle_count_sr.deserialize(&cycle_count);
-        ret["data"]["pan.cycle_no"] = std::to_string(cycle_count);
-        ret["metadata"]["cycle_no"] = cycle_count;
+        ret.field_data.insert({"pan.cycle_no", std::to_string(cycle_count)});
+        ret.cycle_no = cycle_count;
         frame_bits.erase(frame_bits.begin(), frame_bits.begin() + 32);
 
         // Step 4: Process flows by ID. If, at any point, the expected
@@ -79,8 +83,8 @@ nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& 
             Serializer<unsigned char> flow_id_sr(flow_data.size());
             if (flow_id_sr.bitsize() > frame_bits.size()) {
                 // The frame doesn't contain the full flow ID. Stop processing.
-                ret["metadata"]["error"] = "flow ID incomplete";
-                return ret.dump();
+                ret.error_msg = "flow ID incomplete";
+                return ret;
             }
             const std::vector<bool> flow_id_bits(frame_bits.begin(),
                 frame_bits.begin() + flow_id_sr.bitsize());
@@ -90,20 +94,19 @@ nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& 
             if (flow_id == 0) {
                 // We've reached the end of the downlink packet, since no flow
                 // with ID 0 can exist.
-                return ret.dump();
+                return ret;
             }
 
             // Check if flow has been repeated. This shouldn't be possible.
-            const std::vector<unsigned char> found_flow_ids = ret["metadata"]["flow_ids"];
-            if (std::find(found_flow_ids.begin(), found_flow_ids.end(), flow_id)
-                    != found_flow_ids.end())
+            if (std::find(ret.flow_ids.begin(), ret.flow_ids.end(), flow_id)
+                    != ret.flow_ids.end())
             {
-                ret["metadata"]["error"] = "multiple flows of same ID found: " + std::to_string(flow_id);
-                return ret.dump();
+                ret.error_msg = "multiple flows of same ID found: " + std::to_string(flow_id);
+                return ret;
             }
 
             // Continue processing the flow.
-            ret["metadata"]["flow_ids"].push_back(flow_id);
+            ret.flow_ids.push_back(flow_id);
             frame_bits.erase(frame_bits.begin(), frame_bits.begin() + flow_id_bits.size());
 
             // Step 4.1.1. Find flow in Downlink Producer flows list and check if
@@ -120,8 +123,8 @@ nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& 
             if (!flow) {
                 // Flow ID wasn't found in the list of flows. Stop processing this downlink frame.
                 // If the flow ID is a zero, then the packet is over, so an error didn't occur.
-                if (flow_id != 0) ret["metadata"]["error"] = "flow ID invalid: " + std::to_string(flow_id);
-                return ret.dump();
+                if (flow_id != 0) ret.error_msg = "flow ID invalid: " + std::to_string(flow_id);
+                return ret;
             }
 
             /**
@@ -160,10 +163,12 @@ nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& 
                     event->deserialize();
                     unsigned int event_ccno = event->ccno->get();
 
-                    ret["data"][event->name()]["control_cycle_number"] = event_ccno;
+                    EventData event_data_processed;
+                    event_data_processed.ccno = event_ccno;
                     for (ReadableStateFieldBase* data_field: event->_data_fields()) {
-                        ret["data"][event->name()]["field_data"][data_field->name()] = std::string(data_field->print());
+                        event_data_processed.fields.insert({data_field->name(), std::string(data_field->print())});
                     }
+                    ret.event_data.insert({event->name(), event_data_processed});
 
                     // Reapply the original values to the control cycle count and data fields
                     event->ccno->set(current_ccno);
@@ -182,7 +187,7 @@ nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& 
                     field->set_bit_array(field_bits);
                     field->deserialize();
 
-                    ret["data"][field->name()] = std::string(field->print());
+                    ret.field_data.insert({field->name(), std::string(field->print())});
                     frame_bits.erase(frame_bits.begin(), field_end_it);
                 }
             }
@@ -190,4 +195,34 @@ nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& 
     }
 
     return ret;
+}
+
+/**
+ * JSON-encoded downlink data, containing two high-level keys: 
+ * - data: is a key-value dictionary of state field/event names and values.
+ * - metadata: contains the
+ *   - cycle count, 
+ *   - an array of flow IDs in the order in which they were processed.
+ *   - whether or not there were any processing errors.
+ */
+void to_json(nlohmann::json& j, const DownlinkParser::DownlinkData& d)
+{
+    for(auto const& event : d.event_data)
+    {
+        auto const& event_name = event.first;
+        auto const& event_data = event.second;
+
+        j["data"][event_name]["control_cycle_number"] = event_data.ccno;
+        for(auto const& field : event_data.fields)
+        {
+            j["data"][event_name]["field_data"][field.first] = field.second;
+        }
+    }
+
+    for(auto const& field : d.field_data) j["data"][field.first] = field.second;
+
+    j["metadata"]["error"] = d.error_msg;
+    j["metadata"]["flow_ids"] = d.flow_ids;
+    j["metadata"]["cycle_no"] = d.cycle_no;
+    j["data"]["pan.cycle_no"] = d.cycle_no;
 }
