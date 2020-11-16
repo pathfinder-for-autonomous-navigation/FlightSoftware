@@ -124,7 +124,6 @@ class PTestCase(object):
         self.populate_devices(devices)
 
         for dev_name,device in devices.items():
-            print(device)
             device.case_interaction_setup(self.debug_to_console)
 
         if self.sim_duration > 0:
