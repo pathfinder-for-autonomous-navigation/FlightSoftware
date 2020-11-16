@@ -112,13 +112,12 @@ class MTorquerCase(SingleSatOnlyCase):
             and also for 0.11
         """
         self.print_header( "TORQUE TESTS: " )
-
-        for val in range( 25, 100, 25 ): #start at 0.025 and ramp up by 0.025 until at 0.1
-            val = val / 1000
+        for val in range( 125, 501, 125 ): #start at 0.0125 and ramp up by 0.0125 to 0.05 inclusive
+            val = val / 10000
             self.torque_test( val )
 
-        #Test for max value = 0.11
-        self.torque_test( 0.11 )
+        #Test for max value: from src/adcs/constants.hpp (truncated)
+        self.torque_test( 0.056668)
 
 
     def run_case_singlesat(self):
@@ -127,13 +126,17 @@ class MTorquerCase(SingleSatOnlyCase):
 
         # Needed so that ADCSMonitor updates its values
         self.cycle()
-        self.ws( "dcdc.ADCSMotor_cmd", True )
-    
+        self.print_ws( "dcdc.ADCSMotor_cmd", True )
+
+        self.print_ws("pan.state", Enums.mission_states["manual"])
+        self.print_ws("adcs.state", Enums.adcs_states["manual"])	
+        self.print_ws("adcs_cmd.mtr_mode", Enums.mtr_modes["MTR_ENABLED"])	
+        
+        self.cycle()
         self.print_header( "Finished Initialization" )
         #checking that adcs is functional
-        self.print_rs( "adcs_monitor.functional" )
 
-        if not self.read_state( "adcs_monitor.functional" ):
+        if not self.print_rs( "adcs_monitor.functional" ):
             self.logger.put( "ADCS is NOT functional, Exiting Test Case" )
             self.finish()
             return 
@@ -142,7 +145,7 @@ class MTorquerCase(SingleSatOnlyCase):
         self.log_white_noise()
 
         #run main testing with matrix of command vectors
-        #self.mtr_test()
+        self.mtr_test()
 
         #finish and turn off magnetorquers
         self.print_header( "MAGNETORQUER TEST COMPLETE" )

@@ -145,7 +145,7 @@ public:
 
     // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B10E398A9-3D68-44F8-BE1B-E4FA5DBECBC8%7D&file=Recurring%20Constants%20Review.xlsx&action=default&mobileredirect=true&cid=912c7e7e-8046-4d9c-9ee9-13a59d46f5a6
     TRACKED_CONSTANT_SC(float, max_safe_pressure, 75); // 75 psi
-    TRACKED_CONSTANT_SC(float, max_safe_temp, 48);     // 48 C
+    TRACKED_CONSTANT_SC(float, max_safe_temp, 49);     // 49 C
 
 private:
     // Return the PropState associated with the given prop_state_t
