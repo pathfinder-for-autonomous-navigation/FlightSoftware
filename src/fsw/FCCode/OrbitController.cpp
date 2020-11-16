@@ -25,6 +25,9 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
 void OrbitController::init() {
     prop_cycles_until_firing_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
     q_body_eci_fp = FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci);
+    max_pressurizing_cycles_fp = FIND_WRITABLE_FIELD(unsigned int, prop.max_pressurizing_cycles);
+    ctrl_cycles_per_filling_period_fp = FIND_WRITABLE_FIELD(unsigned int, prop.ctrl_cycles_per_filling);
+    ctrl_cycles_per_cooling_period_fp = FIND_WRITABLE_FIELD(unsigned int, prop.ctrl_cycles_per_cooling);
 }
 
 void OrbitController::execute() {
@@ -36,7 +39,7 @@ void OrbitController::execute() {
     lin::Vector3d dr = baseline_pos_fp->get();
     lin::Vector3d dv = baseline_vel_fp->get();
     lin::Vector3d sun; // Points from the Earth to the sun
-    sun_vector(t, sun);
+    gnc::env::sun_vector(t, sun);
 
     // Calculate the normal vector of the satellite's orbital plane
     lin::Vector3d orb_plane = lin::cross(r, v);
@@ -46,15 +49,15 @@ void OrbitController::execute() {
     lin::Vector3d proj_sun = sun - ( lin::dot(sun, orb_plane) * orb_plane );
 
     // Calculate the angle between the satellite's position and the projected sun vector
-    double theta = lin::atan2( lin::cross(proj_sun, r), lin::dot(proj_sun, r) );
+    double theta = lin::atan2( lin::norm(lin::cross(proj_sun, r)), lin::dot(proj_sun, r) );
 
     // If the satellite is within a certain delta time/cc from the next firing point, then the 
     // propulsion system should get ready to fire soon.
-    double delta_time = prop_controller.min_cycles_needed() + 10;
+    double delta_time = prop_min_cycles_needed() + 10;
 
     // Get the time until the satellite reaches the next firing node in control cycles
     double time_till_firing = time_till_node(theta, r, v);
-    double time_till_firing_cc = time_till_firing / ClockManager::control_cycle_size;
+    double time_till_firing_cc = time_till_firing / PAN::control_cycle_time;
 
     // Schedule the valves for firing soon
     if (time_till_firing_cc <= delta_time && prop_cycles_until_firing_fp->get() == 0) {
@@ -62,13 +65,30 @@ void OrbitController::execute() {
     }
 
     // Check if the satellite is at a firing point
-    if ( std::find(firing_nodes.begin(), firing_nodes.end(), theta) != firing_nodes.end() ) {
+    if ( std::find(std::begin(firing_nodes), std::end(firing_nodes), theta) != std::end(firing_nodes) ) {
 
         // Collect the output of the PD controller and get the needed impulse
         lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);
 
+        // Transform the impulse from ecef frame to the eci frame
+        lin::Vector4d q_ecef_eci;
+        gnc::env::earth_attitude(t, q_ecef_eci);
+        lin::Vector4d q_eci_ecef;
+        gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
+
+        lin::Vector3d J_eci;
+        gnc::utl::rotate_frame(q_eci_ecef, J_ecef, J_eci);
+
+        // Transform the impulse from eci frame to the body frame of the spacecraft
+        lin::Vector4f q_body_eci = q_body_eci_fp->get();
+        lin::Vector4d q_body_eci_d = { (double)q_body_eci(0), (double)q_body_eci(1), 
+            (double)q_body_eci(2), (double)q_body_eci(3) }; // cast to double
+
+        lin::Vector3d J_body;
+        gnc::utl::rotate_frame(q_body_eci_d, J_eci, J_body);
+
         // Communicate desired impulse to the prop controller.
-        schedule_valves(J_ecef, t);
+        schedule_valves(J_body);
 
     }
 
@@ -76,11 +96,11 @@ void OrbitController::execute() {
 
 double OrbitController::time_till_node(double theta, lin::Vector3d pos, lin::Vector3d vel) {
     // Calculate angular velocity (w = v/r)
-    lin::Vector3d ang_vel = lin::norm(vel)/lin::norm(pos);
+    double ang_vel = lin::norm(vel)/lin::norm(pos);
 
     // Calculate the times until each node (theta_node = theta_now + w*t)
-    double min_time = std::numeric_limits<double>::max()
-    for (int i=0; i < firing_nodes.size(); i++) {
+    double min_time = std::numeric_limits<double>::max();
+    for (size_t i=0; i < sizeof(firing_nodes); i++) {
         double time_til_node = (firing_nodes[i] - theta) / ang_vel;
         if (time_til_node > 0 && time_til_node < min_time) {
             min_time = time_til_node;
@@ -93,72 +113,58 @@ double OrbitController::time_till_node(double theta, lin::Vector3d pos, lin::Vec
 
 lin::Vector3d OrbitController::calculate_impulse(double t, lin::Vector3d r, lin::Vector3d v, lin::Vector3d dr, lin::Vector3d dv) {
     // Assemble the input Orbit Controller data struct
-    gnc::OrbitControllerData data;
-    data.t = time_fp->get();
-    data.r_ecef = pos_fp->get();
-    data.v_ecef = vel_fp->get();
-    data.dr_ecef = baseline_pos_fp->get();
-    data.dv_ecef = baseline_vel_fp->get();
+    data.t = t;
+    data.r_ecef = r;
+    data.v_ecef = v;
+    data.dr_ecef = dr;
+    data.dv_ecef = dv;
 
-    // Default the state struct (a calculation buffer) and actuation struct (output)
-    gnc::OrbitControllerState state;
-    gnc::OrbitActuation actuation;
-
-    gnc::control_orbit(&state, &data, &actuation);
+    gnc::control_orbit(state, data, actuation);
 
     // Collect the output of the PD controller
     return actuation.J_ecef;
 }
 
-unsigned int impulse_to_time(double impulse) {
+unsigned int OrbitController::impulse_to_time(double impulse) {
     double time = 0.024119 * impulse + 7.0092e-05;
-    return static_cast<unsigned int>(time);
+    int time_ms = time * 1000;
+    return time_ms;
 }
 
-void schedule_valves(lin::Vector3d J_ecef, double t) {
-    // Transform the impulse from ecef frame to the eci frame
-    lin::Vector4d q_ecef_eci;
-    gnc::env::earth_attitude(t, q_ecef_eci);
-    lin::Vector4d q_eci_ecef;
-    gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
+void OrbitController::schedule_valves(lin::Vector3d J_body) {
 
-    lin::Vector3d J_eci;
-    gnc::utl::rotate_frame(q_eci_ecef, J_ecef, J_eci);
+    double a = J_body(0);
+    double b = J_body(1);
+    double c = J_body(2);
 
-    // Transform the impulse from eci frame to the body frame of the spacecraft
-    lin::Vector4f q_body_eci = q_body_eci_fp->get();
-    lin::Vector4f q_eci_body;
-    gnc::utl::quat_conj(q_ecef_eci, q_eci_ecef);
+    double x4 = (70618085000 * c)-(87226380000 * b)+(70618085000 * a);
+    x4 = -1 * (1/152280838494) * x4;
+    if (x4 < 0) {
+        x4 = 0;
+    }
+    double x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4); // is negative
+    if (x1<0) {
+        x4 = -1 * ((0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b));
+        x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4);
+    }
+    double x2 = (0.92747171211*c) + (0.92747171211*a) + x4;
+    if (x2<0) {
+        x4 = -1 * ((0.92747171211*c) + (0.92747171211*a));
+        x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4);
+        x2 = (0.92747171211*c) + (0.92747171211*a) + x4;
+    }
+    double x3 = (1.16788310856*c) + (0.4026550706*a) - (1.30821559393*b) + (1.69335426478*x4);
+    if (x2<0) {
+        x4 = -1 * ((1.16788310856*c) + (0.4026550706*a) - (1.30821559393*b) + (1.69335426478*x4));
+        x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4);
+        x2 = (0.92747171211*c) + (0.92747171211*a) + x4;
+        x3 = (1.16788310856*c) + (0.4026550706*a) - (1.30821559393*b) + (1.69335426478*x4);
+    }
 
-    lin::Vector3d J_body;
-    gnc::utl::rotate_frame(q_eci_body, J_eci, J_body);
+    // std::cout<<"impulse on each thruster: \n";
+    // std::cout<<"<"<<x1<<", "<<x2<<", "<<x3<<", "<<x4<<">";
 
-    // Define the unit vectors that give the directions the prop system would fire in. 
-    lin::Vector3d thruster1 = { 0.6534, -0.3822, -0.6534};
-    lin::Vector3d thruster2 = { 0.5391,  0.6472,  0.5391};
-    lin::Vector3d thruster3 = {-0.6534, -0.3822,  0.6534};
-    lin::Vector3d thruster4 = {-0.5391,  0.6472, -0.5391};
-
-    // Calculate a linear combination of these direction vectors to get the impulse on each thruster
-    lin::Matrix3x4d thrust_matrix = {
-        thruster1(0), thruster2(0), thruster3(0), thruster4(0),
-        thruster1(1), thruster2(1), thruster3(1), thruster4(1),
-        thruster1(2), thruster2(2), thruster3(2), thruster4(2),
-    };
-
-    // Solve the linear system (thrust_matrix)*x=(impulse vector). The general solution will have one degree of freedom,
-    // so we must also minimimize the norm of x.
-    // See top of page 4: https://faculty.math.illinois.edu/~mlavrov/docs/484-spring-2019/ch4lec4.pdf
-    
-    // Solve A * A^T * w = Y
-    lin::Matrix3x3d AAT = thrust_matrix * lin::transpose(thrust_matrix);
-    lin::Matrix3x3d Q, R;
-    lin::qr(AAT, Q, R);
-    lin::Vector3d W;
-    lin::backward_sub(R, W, (lin::transpose(Q) * J_body).eval());
-
-    // Solve x = A^T * w
-    lin::Vector4d x = lin::transpose(thrust_matrix) * W;
+    lin::Vector4d x = {x1,x2,x3,x4};
 
     // Translate the impulse values into the times the valves must stay open
     unsigned int time1 = impulse_to_time(x(0));
@@ -167,8 +173,15 @@ void schedule_valves(lin::Vector3d J_ecef, double t) {
     unsigned int time4 = impulse_to_time(x(3));
 
     // Set valves
-    sched_valve1_f(time1);
-    sched_valve2_f(time2);
-    sched_valve3_f(time3);
-    sched_valve4_f(time4);
+    sched_valve1_f.set(time1);
+    sched_valve2_f.set(time2);
+    sched_valve3_f.set(time3);
+    sched_valve4_f.set(time4);
+}
+
+unsigned int OrbitController::prop_min_cycles_needed() {
+    return max_pressurizing_cycles_fp->get() *
+               (ctrl_cycles_per_filling_period_fp->get() +
+                ctrl_cycles_per_cooling_period_fp->get()) +
+           4;
 }

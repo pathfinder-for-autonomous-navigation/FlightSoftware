@@ -5,11 +5,11 @@
 #include <common/GPSTime.hpp>
 #include <common/constant_tracker.hpp>
 #include <gnc/environment.hpp>
+#include <gnc/utilities.hpp>
 #include <gnc/constants.hpp>
 #include <gnc/orbit_controller.hpp>
 #include "ClockManager.hpp"
 #include "PropController.hpp"
-#include <lib/common/psim/include/psim/truth/transform_direction.yml.hpp>
 
 #include "TimedControlTask.hpp"
 
@@ -40,17 +40,30 @@ public:
      */
     lin::Vector3d calculate_impulse(double t, lin::Vector3d r, lin::Vector3d v, lin::Vector3d dr, lin::Vector3d dv);
 
+    /*
+     * Convert the impulse of a thruster to the time the valve should be open in ms
+     */
+    unsigned int impulse_to_time(double impulse);
+
     /**
      * Schedule valves
      */
-    void schedule_valves(lin::Vector3d J_ecef);
+    void schedule_valves(lin::Vector3d J_body);
 
     // Firing nodes
     double pi = gnc::constant::pi;
     double firing_nodes[3] = {pi/3, pi, -pi/3};
 
-    // Prop Controller
-    PropController prop_controller;
+    // Orbit Controller
+    gnc::OrbitControllerData data;
+    gnc::OrbitControllerState state;
+    gnc::OrbitActuation actuation;
+
+    // Prop system 
+    unsigned int prop_min_cycles_needed();
+    WritableStateField<unsigned int>* max_pressurizing_cycles_fp;
+    WritableStateField<unsigned int>* ctrl_cycles_per_filling_period_fp;
+    WritableStateField<unsigned int>* ctrl_cycles_per_cooling_period_fp;
 
     // Input statefields for time, position, velocity, and baseline
     // position/velocity. In ECEF
