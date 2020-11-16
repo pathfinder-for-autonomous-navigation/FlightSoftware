@@ -129,6 +129,8 @@ void test_task_schedule_valves(){
         test_task_schedule_valves_helper({7,88,-7});
         test_task_schedule_valves_helper({7,8,-100});
         test_task_schedule_valves_helper({187,8,-50});
+        test_task_schedule_valves_helper({29,83,-50});
+        test_task_schedule_valves_helper({-27,-8,-50});
         
 }
 

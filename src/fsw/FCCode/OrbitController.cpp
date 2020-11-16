@@ -137,40 +137,35 @@ void OrbitController::schedule_valves(lin::Vector3d J_body) {
     double b = J_body(1);
     double c = J_body(2);
 
-    double x4 = (70618085000 * c)-(87226380000 * b)+(70618085000 * a);
-    x4 = -1 * (1/152280838494) * x4;
-    if (x4 < 0) {
-        x4 = 0;
-    }
-    double x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4); // is negative
-    if (x1<0) {
-        x4 = -1 * ((0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b));
-        x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4);
-    }
+    // Minimum norm solution of x4, not necessarily positive
+    double x4 = -1 * (1/152280838494) * ((70618085000 * c)-(87226380000 * b)+(70618085000 * a)); 
+
+    // Calculate the impulses on each of the other thrusters
+    double x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4);
     double x2 = (0.92747171211*c) + (0.92747171211*a) + x4;
-    if (x2<0) {
-        x4 = -1 * ((0.92747171211*c) + (0.92747171211*a));
-        x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4);
-        x2 = (0.92747171211*c) + (0.92747171211*a) + x4;
-    }
     double x3 = (1.16788310856*c) + (0.4026550706*a) - (1.30821559393*b) + (1.69335426478*x4);
-    if (x2<0) {
-        x4 = -1 * ((1.16788310856*c) + (0.4026550706*a) - (1.30821559393*b) + (1.69335426478*x4));
+
+    // Check that none of the impulses are negative
+    if (x1<0 || x2<0 || x3<0 || x4<0) {
+        // Get the values of the particular solution
+        double x1_p = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b);
+        double x2_p = (0.92747171211*c) + (0.92747171211*a);
+        double x3_p = (1.16788310856*c) + (0.4026550706*a) - (1.30821559393*b); 
+        
+        // Find the next minimum value of x4 that would make x1,x2,x3>0
+        x4 = -1 * std::min(x1_p, std::min(x2_p, x3_p));
+
+        // Recalculate  x1,x2,x3
         x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4);
         x2 = (0.92747171211*c) + (0.92747171211*a) + x4;
         x3 = (1.16788310856*c) + (0.4026550706*a) - (1.30821559393*b) + (1.69335426478*x4);
     }
 
-    // std::cout<<"impulse on each thruster: \n";
-    // std::cout<<"<"<<x1<<", "<<x2<<", "<<x3<<", "<<x4<<">";
-
-    lin::Vector4d x = {x1,x2,x3,x4};
-
     // Translate the impulse values into the times the valves must stay open
-    unsigned int time1 = impulse_to_time(x(0));
-    unsigned int time2 = impulse_to_time(x(1));
-    unsigned int time3 = impulse_to_time(x(2));
-    unsigned int time4 = impulse_to_time(x(3));
+    unsigned int time1 = impulse_to_time(x1);
+    unsigned int time2 = impulse_to_time(x2);
+    unsigned int time3 = impulse_to_time(x3);
+    unsigned int time4 = impulse_to_time(x4);
 
     // Set valves
     sched_valve1_f.set(time1);
