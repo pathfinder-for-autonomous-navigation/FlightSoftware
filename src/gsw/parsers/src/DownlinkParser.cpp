@@ -197,6 +197,13 @@ DownlinkParser::DownlinkData DownlinkParser::process_downlink_packet(const std::
     return ret;
 }
 
+nlohmann::json DownlinkParser::process_downlink_packet_json(const std::vector<char>& packet) {
+    nlohmann::json ret;
+    DownlinkData d = process_downlink_packet(packet);
+    if (d.flow_ids.size() != 0) to_json(ret, d);
+    return ret;
+}
+
 /**
  * JSON-encoded downlink data, containing two high-level keys: 
  * - data: is a key-value dictionary of state field/event names and values.
@@ -221,8 +228,9 @@ void to_json(nlohmann::json& j, const DownlinkParser::DownlinkData& d)
 
     for(auto const& field : d.field_data) j["data"][field.first] = field.second;
 
-    j["metadata"]["error"] = d.error_msg;
+    if (d.error_msg == "") j["metadata"]["error"] = false;
+    else j["metadata"]["error"] = d.error_msg;
     j["metadata"]["flow_ids"] = d.flow_ids;
     j["metadata"]["cycle_no"] = d.cycle_no;
-    j["data"]["pan.cycle_no"] = d.cycle_no;
+    j["data"]["pan.cycle_no"] = std::to_string(d.cycle_no);
 }

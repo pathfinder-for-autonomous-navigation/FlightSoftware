@@ -74,6 +74,7 @@ class DownlinkParser {
      * @return Downlink data object.
      */
     DownlinkData process_downlink_packet(const std::vector<char>& packet);
+    nlohmann::json process_downlink_packet_json(const std::vector<char>& packet);
 
     /**
      * @brief The most recent downlink frame that is yet incomplete and/or
@@ -81,5 +82,7 @@ class DownlinkParser {
      */
     std::vector<char> most_recent_frame;
 };
+
+void to_json(nlohmann::json& j, const DownlinkParser::DownlinkData& d);
 
 #endif

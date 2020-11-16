@@ -30,8 +30,7 @@ class DownlinkParserMock : public DownlinkParser {
             process_downlink_packet(p);
             len_cpy -= 70;
         }
-        const std::string result = process_downlink_packet(std::vector<char>({'\x80'}));
-        return json::parse(result);
+        return process_downlink_packet_json(std::vector<char>({'\x80'}));
     }
 };
 
