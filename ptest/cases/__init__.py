@@ -22,3 +22,4 @@ from .gyro_heater_diag_case import GyroHeaterDiagCase
 from .ci_case import CICase
 from .simple_fault_handlers import ADCSWheelFaultHandler, LowBattFaultHandler
 from .safehold_reboot import SafeholdReboot
+from .torquer_rotate_case import MTorquerCase

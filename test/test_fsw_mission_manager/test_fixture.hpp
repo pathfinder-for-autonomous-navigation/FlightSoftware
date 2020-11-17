@@ -84,7 +84,7 @@ public:
   void check_sph_dcdc_on(bool on) const;
 
   // Containers for enum possibilities
-  static adcs_state_t adcs_states[8];
+  static adcs_state_t adcs_states[9];
   static prop_state_t prop_states[6];
 
   // Ensures that no state except the given state can be achieved.
