@@ -2,6 +2,7 @@
 #include <fsw/FCCode/OrbitController.hpp>
 #include <fsw/FCCode/AttitudeEstimator.hpp>
 #include "../custom_assertions.hpp"
+#include <common/constant_tracker.hpp>
 
 class TestFixture {
     public:

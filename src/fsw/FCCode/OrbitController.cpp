@@ -57,7 +57,7 @@ void OrbitController::execute() {
 
     // Get the time until the satellite reaches the next firing node in control cycles
     double time_till_firing = time_till_node(theta, r, v);
-    double time_till_firing_cc = time_till_firing / PAN::control_cycle_time;
+    double time_till_firing_cc = time_till_firing * 1000 / PAN::control_cycle_time;
 
     // Schedule the valves for firing soon
     if (time_till_firing_cc <= delta_time && prop_cycles_until_firing_fp->get() == 0) {
@@ -126,7 +126,7 @@ lin::Vector3d OrbitController::calculate_impulse(double t, lin::Vector3d r, lin:
 }
 
 unsigned int OrbitController::impulse_to_time(double impulse) {
-    double time = 0.024119 * impulse + 7.0092e-05;
+    double time = valve_time_lin_reg_slope * impulse + valve_time_lin_reg_intercept;
     int time_ms = time * 1000;
     return time_ms;
 }

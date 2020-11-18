@@ -9,6 +9,11 @@
 #include <gnc/constants.hpp>
 #include <gnc/orbit_controller.hpp>
 #include "TimedControlTask.hpp"
+#include <common/constant_tracker.hpp>
+
+// Linear regression on dataset from empirical test: ThrustVectorTest_2018_Nov_11_15h37m36s_300Firings_293K_refVac
+TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope, 0.024119);
+TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept, 7.0092e-05);
 
 class OrbitController : public TimedControlTask<void>
 {
@@ -26,14 +31,16 @@ public:
     void execute() override;
 
     /**
-     * Returns the time in seconds when the satellitee reaches its next firing point
+     * Returns the time in seconds when the satellite reaches its next firing point
      * This is just an estimation for the sake of prop planning. It's not a very accurate
-     * number.
+     * number. It calculates the angular velocity w and uses the eqn firing_node = wt+theta
+     * to find the time until each firing node. It then returns the smallest positive time.
      */
     double time_till_node(double theta, lin::Vector3d pos, lin::Vector3d vel);
 
     /**
-     * Calculate impulse
+     * Calculate impulse needs to rendezvous with leader. Uses a PD controller to return
+     * impulse in ECEF reference frame.
      */
     lin::Vector3d calculate_impulse(double t, lin::Vector3d r, lin::Vector3d v, lin::Vector3d dr, lin::Vector3d dv);
 
