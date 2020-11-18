@@ -10,7 +10,7 @@ import os
 import datetime
 import os
 from ..gpstime import GPSTime
-import psim # woo!
+import psim
 import lin 
 import json
 
@@ -156,9 +156,7 @@ class Simulation(object):
             # Step 4. Read the actuators from the flight computer(s) and send to psim
             self.read_actuators_send_to_sim()
 
-            # Infrastructure
             step += 1
-            # time.sleep(self.dt - ((time.time() - start_time) % self.dt)) TODO investigate if this is even necessary
 
         self.running = False
         self.add_to_log("Simulation ended.")
@@ -233,7 +231,7 @@ class CppSimulation(Simulation):
         self.fc_vs_sim_s = self.fc_vs_sim['fc_vs_sim_s']
         self.fc_vs_sim_a = self.fc_vs_sim['fc_vs_sim_a']
 
-        # Create a dictionary of satellite names to dictionaries
+        # Create a dictionary of satellite names to FC-to-psim state field mappings
         self.sensors_map = {k:self.fc_vs_sim_s for k in self.sat_names}
         self.actuators_map = {k:self.fc_vs_sim_a for k in self.sat_names}
 
@@ -250,7 +248,7 @@ class CppSimulation(Simulation):
         self.actuator_cmds = {k:{} for k in self.sat_names}
 
         self.fc_to_role_map = {'FlightController':'leader', 'FlightControllerLeader':'leader', 
-                               'FlightControllerFolloewr':'follower'}
+                               'FlightControllerFollower':'follower'}
 
         # required to implement per old architecture, these fulfill no purpose in Cpp
         self.sensor_readings_follower = None
