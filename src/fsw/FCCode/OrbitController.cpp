@@ -100,7 +100,7 @@ double OrbitController::time_till_node(double theta, lin::Vector3d pos, lin::Vec
 
     // Calculate the times until each node (theta_node = theta_now + w*t)
     double min_time = std::numeric_limits<double>::max();
-    for (size_t i=0; i < sizeof(firing_nodes); i++) {
+    for (size_t i=0; i < 3; i++) {
         double time_til_node = (firing_nodes[i] - theta) / ang_vel;
         if (time_til_node > 0 && time_til_node < min_time) {
             min_time = time_til_node;
@@ -139,6 +139,9 @@ void OrbitController::schedule_valves(lin::Vector3d J_body) {
 
     // Minimum norm solution of x4, not necessarily positive
     double x4 = -1 * (1/152280838494) * ((70618085000 * c)-(87226380000 * b)+(70618085000 * a)); 
+    if (x4<0){
+        x4=0;
+    }
 
     // Calculate the impulses on each of the other thrusters
     double x1 = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b) + (1.69335426478*x4);
@@ -146,7 +149,7 @@ void OrbitController::schedule_valves(lin::Vector3d J_body) {
     double x3 = (1.16788310856*c) + (0.4026550706*a) - (1.30821559393*b) + (1.69335426478*x4);
 
     // Check that none of the impulses are negative
-    if (x1<0 || x2<0 || x3<0 || x4<0) {
+    if (x1<0 || x2<0 || x3<0) {
         // Get the values of the particular solution
         double x1_p = (0.4026550706*c) + (1.16788310856*a) - (1.30821559393*b);
         double x2_p = (0.92747171211*c) + (0.92747171211*a);
