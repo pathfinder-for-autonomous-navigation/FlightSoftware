@@ -57,6 +57,17 @@ class Simulation(object):
         elapsed_time = timeit.default_timer() - start_time
         self.add_to_log("Configuring simulation took %0.2fs." % elapsed_time)
 
+    def start(self):
+        '''
+        Start the MATLAB simulation. This function is blocking until the simulation begins.
+        '''
+        self.add_to_log("Starting simulation loop...")
+        if self.is_interactive:
+            self.sim_thread = threading.Thread(name="Simulation Interface",
+                                        target=self.run)
+            self.sim_thread.start()
+        else:
+            self.run()
 
     def add_to_log(self, msg):
         print(msg)
@@ -182,6 +193,7 @@ class Simulation(object):
 
         with open(data_dir + "/simulation_log.txt", "w") as fp:
             fp.write(self.log)
+
 
 class CppSimulation(Simulation):
     # good god i hate matlab
