@@ -244,10 +244,13 @@ class BootUtil(object):
             int(self.flight_controller.read_state("pan.state"))]
         true_elapsed = self.flight_controller.read_state("pan.deployment.elapsed")
 
+        if self.finished:
+            return
+
         if not hasattr(self, "boot_stage"):
             self.boot_stage = "startup"
 
-        if self.skip_startup and self.desired_boot_state == "standby"  and not self.finished:
+        if self.skip_startup and self.desired_boot_state == "standby":
             self.logger.put("[TESTCASE] Skipping deployment hold as it is requested by user.")
             self.flight_controller.write_state("pan.deployed", "true")
             self.boot_stage = "detumble"
@@ -264,7 +267,7 @@ class BootUtil(object):
                 self.finished = True
                 self.logger.put("[TESTCASE] Successfully entered startup. Now in startup state.")
 
-        elif self.boot_stage == 'deployment_hold' and not self.finished:
+        elif self.boot_stage == 'deployment_hold':
             if self.elapsed_deployment == self.deployment_hold_length:
                 if satellite_state == "detumble":
                     self.logger.put("[TESTCASE] Deployment period is over. Entering detumble state.")
@@ -281,7 +284,7 @@ class BootUtil(object):
             else:
                 self.elapsed_deployment += 1
 
-        elif self.boot_stage == 'detumble' and not self.finished:
+        elif self.boot_stage == 'detumble':
             if self.num_detumble_cycles >= self.max_detumble_cycles or satellite_state == "standby":
                 if satellite_state == "standby":
                     self.logger.put("[TESTCASE] Successfully detumbled. Now in standby state.")
@@ -291,7 +294,7 @@ class BootUtil(object):
             else:
                 self.num_detumble_cycles += 1
 
-        elif self.boot_stage == "standby" and not self.finished:
+        elif self.boot_stage == "standby":
             if self.desired_boot_state == "standby":
                 self.logger.put("[TESTCASE] Finished boot to standby state.")
             else:
