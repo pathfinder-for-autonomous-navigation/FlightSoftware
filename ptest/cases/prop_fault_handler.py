@@ -1,5 +1,5 @@
 from .base import SingleSatOnlyCase
-from .utils import FSWEnum, Enums, TestCaseFailure, BootUtil
+from .utils import Enums, TestCaseFailure
 
 # pio run -e fsw_native_leader
 # python -m ptest runsim -c ptest/configs/ci.json -t PropFaultHandler

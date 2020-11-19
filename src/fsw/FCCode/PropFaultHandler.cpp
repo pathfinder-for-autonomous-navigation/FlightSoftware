@@ -28,7 +28,6 @@ void PropFaultHandler::init()
 
     // Faults
     overpressure_fault_fp = find_fault("prop.overpressured.base", __FILE__, __LINE__);
-    pressurize_fail_fault_fp = find_fault("prop.pressurize_fail.base", __FILE__, __LINE__);
     tank2_temp_high_fault_fp = find_fault("prop.tank2_temp_high.base", __FILE__, __LINE__);
     tank1_temp_high_fault_fp = find_fault("prop.tank1_temp_high.base", __FILE__, __LINE__);
 
