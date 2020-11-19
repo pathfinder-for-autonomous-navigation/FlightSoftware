@@ -27,7 +27,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
                                                                                     mission_state_f("pan.state", Serializer<unsigned char>(12), 10),
                                                                                     is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
                                                                                     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
-                                                                                    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(3), 100),
+                                                                                    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100),
                                                                                     enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
 {
     add_writable_field(detumble_safety_factor_f);
