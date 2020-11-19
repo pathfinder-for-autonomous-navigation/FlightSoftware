@@ -41,8 +41,11 @@ jobs:
       run: |
         python -m ptest runsim -c ptest/configs/ci.json -t CICase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t EmptyCase -ni
-        python -m ptest runsim -c ptest/configs/ci.json -t PrepForCharging -ni
         !(python -m ptest runsim -c ptest/configs/ci.json -t FailingEmptyCase -ni)
+
+    - name: Pre-Integration Cases
+      run: |
+        python -m ptest runsim -c ptest/configs/ci.json -t PrepForCharging -ni
 
     - name: Hardware Checkout Cases
       run: |
