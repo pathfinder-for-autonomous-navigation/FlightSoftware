@@ -27,7 +27,7 @@ class DownlinkParser {
      * @param filename The filepath of the file containing a downlink
      * packet.
      */
-    std::string process_downlink_file(const std::string& filename);
+    nlohmann::json process_downlink_file(const std::string& filename);
 
   protected:
     /**
@@ -63,7 +63,7 @@ class DownlinkParser {
      *   - an array of flow IDs in the order in which they were processed.
      *   - whether or not there were any processing errors.
      */
-    std::string process_downlink_packet(const std::vector<char>& packet);
+    nlohmann::json process_downlink_packet(const std::vector<char>& packet);
 
     /**
      * @brief The most recent downlink frame that is yet incomplete and/or
