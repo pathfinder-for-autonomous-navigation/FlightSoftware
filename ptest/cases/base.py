@@ -4,7 +4,7 @@ import math
 import threading
 import traceback
 from .utils import BootUtil, Enums, TestCaseFailure
-from ..psim import MatlabSimulation, CppSimulation
+from ..psim import CppSimulation
 import psim # the actual python psim repo
 
 class PTestCase(object):
@@ -56,14 +56,6 @@ class PTestCase(object):
         If true, faults will be suppressed on boot. Default True.
         '''
         return True
-
-    def sim_implementation(self, *args, **kwargs):
-        """
-        Choice of sim implementation for this testcase.
-        The default is the matlab simulation.
-        """
-        # return MatlabSimulation(*args, **kwargs)
-        return CppSimulation(*args, **kwargs)        
 
     @property
     def sim_duration(self):
@@ -127,7 +119,7 @@ class PTestCase(object):
             device.case_interaction_setup(self.debug_to_console)
 
         if self.sim_duration > 0:
-            self.sim = self.sim_implementation(self.is_interactive, devices, 
+            self.sim = CppSimulation(self.is_interactive, devices, 
             self.random_seed, self, self.sim_duration, self.sim_initial_state, 
             isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, self.sim_mapping)
         self.logger.start()
