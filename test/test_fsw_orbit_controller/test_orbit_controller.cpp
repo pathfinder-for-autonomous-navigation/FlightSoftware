@@ -123,8 +123,7 @@ void test_task_schedule_valves_helper(lin::Vector3d J_body){
         };
 
         // Find the calculated impulse for each thruster
-        unsigned int t1 = tf.sched_valve1_fp->get();
-        
+        unsigned int t1 = tf.sched_valve1_fp->get();   
         double j1 = (t1-7.0092e-05) / (0.024119*1000);
         unsigned int t2 = tf.orbit_controller->sched_valve2_f.get();
         double j2 = (t2-7.0092e-05) / (0.024119*1000);
