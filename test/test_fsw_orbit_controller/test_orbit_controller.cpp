@@ -1,6 +1,7 @@
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/OrbitController.hpp>
 #include <fsw/FCCode/AttitudeEstimator.hpp>
+#include <fsw/FCCode/PropController.hpp>
 #include "../custom_assertions.hpp"
 #include <common/constant_tracker.hpp>
 
@@ -14,9 +15,10 @@ class TestFixture {
         std::shared_ptr<ReadableStateField<lin::Vector3d>> vel_fp;
         std::shared_ptr<ReadableStateField<lin::Vector3d>> baseline_pos_fp;
         std::shared_ptr<ReadableStateField<lin::Vector3d>> baseline_vel_fp;
+        std::shared_ptr<ReadableStateField<lin::Vector4f>> q_body_eci_fp;
 
         std::unique_ptr<OrbitController> orbit_controller;
-        std::unique_ptr<AttitudeEstimator> attitude_controller;
+        std::unique_ptr<PropController> prop_controller;
 
         // Outputs of orbit controller
         std::shared_ptr<ReadableStateField<unsigned char>> prop_cycles_until_firing_fp;
@@ -32,9 +34,10 @@ class TestFixture {
                 vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 0, 100);
                 baseline_pos_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 0, 100);
                 baseline_vel_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_vel", 0, 0, 100);
-                prop_cycles_until_firing_fp = registry.create_readable_field<unsigned char>("prop.cycles_until_firing", 0);
+                q_body_eci_fp = registry.create_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci");
 
                 orbit_controller = std::make_unique<OrbitController>(registry, 0);  
+                prop_controller = std::make_unique<PropController>(registry, 0);
 
                 sched_valve1_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve1");
                 sched_valve2_fp = registry.find_writable_field_t<unsigned int>("orbit.control.valve2");
@@ -46,6 +49,23 @@ class TestFixture {
 void test_task_initialization()
 {
         TestFixture tf;
+        tf.orbit_controller->init();
+
+        // Orbit Controller inputs
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->time_fp);
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->pos_fp);
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->vel_fp);
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->baseline_pos_fp);
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->baseline_vel_fp);
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->q_body_eci_fp);
+
+        // Fields from the prop controller
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->prop_cycles_until_firing_fp);
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->max_pressurizing_cycles_fp);
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->ctrl_cycles_per_filling_period_fp);
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->ctrl_cycles_per_cooling_period_fp);
+
+        // Orbit controller outputs
         TEST_ASSERT_NOT_NULL(tf.sched_valve1_fp);
         TEST_ASSERT_NOT_NULL(tf.sched_valve2_fp);
         TEST_ASSERT_NOT_NULL(tf.sched_valve3_fp);
@@ -104,6 +124,7 @@ void test_task_schedule_valves_helper(lin::Vector3d J_body){
 
         // Find the calculated impulse for each thruster
         unsigned int t1 = tf.sched_valve1_fp->get();
+        
         double j1 = (t1-7.0092e-05) / (0.024119*1000);
         unsigned int t2 = tf.orbit_controller->sched_valve2_f.get();
         double j2 = (t2-7.0092e-05) / (0.024119*1000);

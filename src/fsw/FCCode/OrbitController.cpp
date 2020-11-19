@@ -1,5 +1,8 @@
 #include "OrbitController.hpp"
 
+const constexpr double OrbitController::valve_time_lin_reg_slope;
+const constexpr double OrbitController::valve_time_lin_reg_intercept;
+
 OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) : 
     TimedControlTask<void>(r, "orbit_control_ct", offset),
     time_fp(FIND_READABLE_FIELD(double, orbit.time)),
@@ -7,6 +10,7 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
     vel_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.vel)),
     baseline_pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.baseline_pos)),
     baseline_vel_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.baseline_vel)),
+    q_body_eci_fp(FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci)),
     sched_valve1_f("orbit.control.valve1", Serializer<unsigned int>(1000)),
     sched_valve2_f("orbit.control.valve2", Serializer<unsigned int>(1000)),
     sched_valve3_f("orbit.control.valve3", Serializer<unsigned int>(1000)),
@@ -24,7 +28,6 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
 
 void OrbitController::init() {
     prop_cycles_until_firing_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
-    q_body_eci_fp = FIND_READABLE_FIELD(lin::Vector4f, attitude_estimator.q_body_eci);
     max_pressurizing_cycles_fp = FIND_WRITABLE_FIELD(unsigned int, prop.max_pressurizing_cycles);
     ctrl_cycles_per_filling_period_fp = FIND_WRITABLE_FIELD(unsigned int, prop.ctrl_cycles_per_filling);
     ctrl_cycles_per_cooling_period_fp = FIND_WRITABLE_FIELD(unsigned int, prop.ctrl_cycles_per_cooling);

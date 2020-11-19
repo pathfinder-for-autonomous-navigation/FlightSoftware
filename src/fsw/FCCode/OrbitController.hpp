@@ -11,13 +11,13 @@
 #include "TimedControlTask.hpp"
 #include <common/constant_tracker.hpp>
 
-// Linear regression on dataset from empirical test: ThrustVectorTest_2018_Nov_11_15h37m36s_300Firings_293K_refVac
-TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope, 0.024119);
-TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept, 7.0092e-05);
-
 class OrbitController : public TimedControlTask<void>
 {
 public:
+    // Linear regression on dataset from empirical test: ThrustVectorTest_2018_Nov_11_15h37m36s_300Firings_293K_refVac
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_slope, 0.024119);
+    TRACKED_CONSTANT_SC(double, valve_time_lin_reg_intercept, 7.0092e-05);
+
     OrbitController(StateFieldRegistry &registry, unsigned int offset);
 
     /**
@@ -50,7 +50,8 @@ public:
     unsigned int impulse_to_time(double impulse);
 
     /**
-     * Schedule valves
+     * Calculates the time each valve should open to deliver a given impulse. 
+     * The impulse must be in the body frame of the satellite
      */
     void schedule_valves(lin::Vector3d J_body);
 
@@ -70,7 +71,7 @@ public:
     WritableStateField<unsigned int>* ctrl_cycles_per_cooling_period_fp;
 
     // Input statefields for time, position, velocity, and baseline
-    // position/velocity. In ECEF
+    // position/velocity in ECEF
     const ReadableStateField<double>* const time_fp;
     const ReadableStateField<lin::Vector3d>* const pos_fp;
     const ReadableStateField<lin::Vector3d>* const vel_fp;
@@ -81,13 +82,10 @@ public:
     ReadableStateField<lin::Vector4f>* q_body_eci_fp;
 
     // Outputs
-    ReadableStateField<unsigned char>* prop_planner_state_fp;
     WritableStateField<unsigned int>* prop_cycles_until_firing_fp;
     WritableStateField<unsigned int> sched_valve1_f;
     WritableStateField<unsigned int> sched_valve2_f;
     WritableStateField<unsigned int> sched_valve3_f;
     WritableStateField<unsigned int> sched_valve4_f;
 
-protected:
-    // TODO: Add GNC components.
 };
