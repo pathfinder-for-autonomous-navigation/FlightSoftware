@@ -44,8 +44,6 @@ class Simulation(object):
         self.mapping_file_name = _mapping_file_name
         self.log = ""
 
-        self.sim_time = 0
-
         if self.is_single_sat_sim:
             self.flight_controller = self.devices['FlightController']
         else:
@@ -59,17 +57,6 @@ class Simulation(object):
         elapsed_time = timeit.default_timer() - start_time
         self.add_to_log("Configuring simulation took %0.2fs." % elapsed_time)
 
-    def start(self):
-        '''
-        Start the MATLAB simulation. This function is blocking until the simulation begins.
-        '''
-        self.add_to_log("Starting simulation loop...")
-        if self.is_interactive:
-            self.sim_thread = threading.Thread(name="Simulation Interface",
-                                        target=self.run)
-            self.sim_thread.start()
-        else:
-            self.run()
 
     def add_to_log(self, msg):
         print(msg)
@@ -164,17 +151,17 @@ class Simulation(object):
 
     def interact_fc(self):
         if self.is_single_sat_sim:
-            self.interact_fc_onesat(self.flight_controller, self.sensor_readings_follower)
+            self.interact_fc_onesat(self.flight_controller)
         else:
-            self.interact_fc_onesat(self.flight_controller_follower, self.sensor_readings_follower)
-            self.interact_fc_onesat(self.flight_controller_leader, self.sensor_readings_leader)
+            self.interact_fc_onesat(self.flight_controller_follower)
+            self.interact_fc_onesat(self.flight_controller_leader)
 
-    def interact_fc_onesat(self, fc, sensor_readings):
+    def interact_fc_onesat(self, fc):
         """
         Exchange simulation state variables with the one of the flight controllers.
         """
         # Step 3.2.1 Send inputs to Flight Controller
-        self.write_adcs_estimator_inputs(fc, sensor_readings)
+        self.write_adcs_estimator_inputs(fc)
 
         # Step 3.2.2 Read outputs from previous control cycle
         self.read_adcs_estimator_outputs(fc)
@@ -195,7 +182,6 @@ class Simulation(object):
 
         with open(data_dir + "/simulation_log.txt", "w") as fp:
             fp.write(self.log)
-
 
 class CppSimulation(Simulation):
     # good god i hate matlab
@@ -250,10 +236,6 @@ class CppSimulation(Simulation):
         self.fc_to_role_map = {'FlightController':'leader', 'FlightControllerLeader':'leader', 
                                'FlightControllerFollower':'follower'}
 
-        # required to implement per old architecture, these fulfill no purpose in Cpp
-        self.sensor_readings_follower = None
-        self.sensor_readings_leader = None
-
     def update_sensors(self):
         '''
         For each active satelite in the sensors_map, get all the psim values from psim
@@ -268,7 +250,7 @@ class CppSimulation(Simulation):
                     psim_val = list(psim_val)
                 self.sensor_readings[role][fc_sf] = psim_val
 
-    def write_adcs_estimator_inputs(self, fc, sensor_readings):
+    def write_adcs_estimator_inputs(self, fc):
         """Write the inputs required for ADCS state estimation. Per satellite"""
 
         role = self.fc_to_role_map[fc.device_name]
@@ -346,93 +328,3 @@ class CppSimulation(Simulation):
 
     def quit(self):
         pass
-
-class MatlabSimulation(Simulation):
-    def configure(self):
-        import matlab.engine
-
-        self.eng = matlab.engine.start_matlab()
-        path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), "../../lib/common/psim/MATLAB")
-        self.eng.addpath(path, nargout=0)
-
-        if ((platform.system() == 'Darwin' and not os.path.exists("geograv_wrapper.mexmaci64"))
-            or (platform.system() == 'Linux' and not os.path.exists("geograv_wrapper.mexa64"))
-            or (platform.system() == 'Windows' and not os.path.exists("geograv_wrapper.mexw64"))
-        ):
-            self.eng.install(nargout=0)
-        self.eng.config(nargout=0)
-        self.eng.generate_mex_code(nargout=0)
-        self.eng.eval("global const", nargout=0)
-
-        self.main_state = self.eng.initialize_main_state(self.seed, self.sim_initial_state, nargout=1)
-        self.computer_state_follower, self.computer_state_leader = self.eng.initialize_computer_states(self.sim_initial_state, nargout=2)
-
-        self.eng.workspace['const']['dt'] = self.flight_controller.smart_read("pan.cc_ms") * 1e6  # Control cycle time in nanoseconds.
-        self.dt = self.eng.workspace['const']['dt'] * 1e-9 # In seconds
-
-    def update_sensors(self):
-        self.sensor_readings_follower = self.eng.sensor_reading(self.main_state['follower'],self.main_state['leader'], nargout=1)
-        self.sensor_readings_leader = self.eng.sensor_reading(self.main_state['leader'],self.main_state['follower'], nargout=1)
-
-    def update_dynamics(self):
-        self.main_state_promise = self.eng.main_state_update(self.main_state, nargout=1, background=True)
-
-    def simulate_flight_computers(self):
-        self.computer_state_follower, self.actuator_commands_follower = \
-            self.eng.update_FC_state(self.computer_state_follower,self.sensor_readings_follower, nargout=2)
-        self.computer_state_leader, self.actuator_commands_leader = \
-            self.eng.update_FC_state(self.computer_state_leader,self.sensor_readings_leader, nargout=2)
-
-    def read_actuators_send_to_sim(self):
-        self.main_state = self.main_state_promise.result()
-        self.main_state['follower'] = self.eng.actuator_command(self.actuator_commands_follower,self.main_state['follower'], nargout=1)
-        self.main_state['leader'] = self.eng.actuator_command(self.actuator_commands_leader,self.main_state['leader'], nargout=1)
-
-    def write_adcs_estimator_inputs(self, flight_controller, sensor_readings):
-        """Write the inputs required for ADCS state estimation."""
-
-        # Convert mission time to GPS time
-        current_gps_time = GPSTime(self.sim_time)
-
-        # Clean up sensor readings to be in a format usable by Flight Software
-        position_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["position_ecef"]])
-        velocity_ecef = ",".join(["%.9f" % x[0] for x in sensor_readings["velocity_ecef"]])
-        sat2sun_body = ",".join(["%.9f" % x[0] for x in sensor_readings["sat2sun_body"]])
-        magnetometer_body = ",".join(["%.9f" % x[0] for x in sensor_readings["magnetometer_body"]])
-        w_body = ",".join(["%.9f" % x[0] for x in sensor_readings["gyro_body"]])
-
-        # Send values to flight software
-        flight_controller.write_state("orbit.time", current_gps_time.to_seconds())
-        flight_controller.write_state("orbit.pos", position_ecef)
-        flight_controller.write_state("orbit.vel", velocity_ecef)
-        flight_controller.write_state("adcs_monitor.ssa_vec", sat2sun_body)
-        flight_controller.write_state("adcs_monitor.mag1_vec", magnetometer_body)
-        flight_controller.write_state("adcs_monitor.gyr_vec", w_body)
-    
-    def read_adcs_estimator_outputs(self, flight_controller):
-        """
-        Read and store estimates from the ADCS estimator onboard flight software.
-
-        The estimates are automatically stored in the Flight Controller telemetry log
-        by calling read_state.
-        """
-
-        flight_controller.read_state("pan.state")
-        flight_controller.read_state("pan.ccno")
-        flight_controller.read_state("adcs.state")        
-        flight_controller.read_state("adcs_monitor.mag1_vec")
-        flight_controller.read_state("adcs_monitor.mag2_vec")
-        flight_controller.read_state("attitude_estimator.q_body_eci")
-        flight_controller.read_state("attitude_estimator.w_body")
-        flight_controller.read_state("attitude_estimator.fro_P")
-
-    def read_actuators(self, fc):
-        # "no" i dont care about matlab
-        self.actuator_commands_follower["adcs_cmd.mtr_cmd"] = fc.smart_read("adcs_cmd.mtr_cmd")
-        self.actuator_commands_follower["adcs_cmd.rwa_torque_cmd"] = fc.smart_read("adcs_cmd.rwa_torque_cmd")
-
-        self.actuator_commands_follower = {k:lin.Vector3(v) for k,v in self.actuator_commands_follower.items()}
-
-    def quit(self):
-        self.eng.quit()
