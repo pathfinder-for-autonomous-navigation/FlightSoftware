@@ -127,22 +127,6 @@ DownlinkParser::DownlinkData DownlinkParser::process_downlink_packet(const std::
                 return ret;
             }
 
-            /**
-             * Step 4.2. Process the items in the flow, and add the items
-             * to the downlink data.
-             * Field information will be stored like so: 
-             * "data": {
-             *      "event_name": {
-             *          "control_cycle_number": event control cycle number,
-             *          "field_data": {
-             *              "field1_name": field1 value,
-             *              "field2_name": field2 value,
-             *              "field3_name": field3 value
-             *          }
-             *      },
-             *      "readable_field_name": readable field value
-             * }
-             */
             for(ReadableStateFieldBase* field : flow->field_list) {
                 Event* event = registry.find_event(field->name());
                 if (event) {
