@@ -6,7 +6,7 @@ class AutonomousMissionManagerCase(MissionCase):
     def mission_conditions_met(self):
         #check leader state
         leader_state = self.leader.read_state("pan.state")
-        if(leader_state == "3"): # is it 3 or "3"
+        if(leader_state == "3"): 
             self.logger.put("Leader is in standby. Ending mission." )
             return False
         elif(leader_state == "10"):
@@ -25,7 +25,7 @@ class AutonomousMissionManagerCase(MissionCase):
 
         #check faulting for follower state -> should this also end mission?
         follower_state = self.follower.read_state("pan.state")
-        if(follower_state == "3"): # is it 3 or "3"
+        if(follower_state == "3"):
             self.logger.put("Alert: Follower is in standby.")
             return True
         elif(follower_state == "10"):
@@ -39,8 +39,9 @@ class AutonomousMissionManagerCase(MissionCase):
 
     def run_case_fullmission(self):
 
-        self.leader = self.sim.flight_controller_leader
-        self.follower = self.sim.flight_controller_follower
+        self.using_radios = self.radio_follower != None
+        self.leader = self.radio_leader if self.using_radios else self.flight_controller_leader
+        self.follower = self.radio_follower if self.using_radios else self.flight_controller_follower
 
         self.leader_time_last_comms = time.time()
         self.follower_time_last_comms = time.time()
@@ -48,28 +49,20 @@ class AutonomousMissionManagerCase(MissionCase):
 
         while(self.mission_conditions_met()): 
 
-            #TODO pass telemetry between spacecraft 
-            #use radio sessions to send up Iridium data
-            #and send down piksi data
-            piksi_data_fields = ["piksi.state",
-                "piksi.pos",
-                "piksi.vel",
-                "piksi.baseline_pos",
-                "piksi.fix_error_count"]
-            piksi_data_vals_leader = [self.flight_controller_leader.rs(field) for field in piksi_data_fields]
-            piksi_data_vals_follower = [self.flight_controller_follower.rs(field) for field in piksi_data_fields]
+            #Pass telemetry between spacecraft 
 
-            self.flight_controller_leader.uplink(piksi_data_fields, piksi_data_vals_leader)
-            if(self.radio_leader.uplink_queued()):
-                leader_comms_successful = self.radio_leader.send_uplink()
-                if(leader_comms_successful):
-                    self.leader_time_last_comms = time.time()
+            #wait for leader's data to come down from Iridium (automatically sent)
+            orbit_data_fields = ["orbit.pos", "orbit.vel", "orbit.time"]
+            while(self.leader.read_state("orbit.time") == None): #what does es actually respond with?
+                pass
 
-            self.flight_controller_follower.uplink(piksi_data_fields, piksi_data_vals_follower)
-            if(self.radio_follower.uplink_queued()):
-                follower_comms_successful = self.radio_follower.send_uplink()
-                if(follower_comms_successful):
-                    self.follower_time_last_comms = time.time()
+            downlinked_data_vals_leader = [self.leader.read_state(field) for field in orbit_data_fields]
+
+            #uplink the leader's data to the follower
+            self.follower.write_multiple_states(orbit_data_fields, downlinked_data_vals_leader)
+
+            self.leader_time_last_comms = int(self.leader.read_state("orbit.time"))
+            self.follower_time_last_comms = int(self.follower.read_state("orbit.time"))
             
             
             #TODO propograte orbits from the data -> how to verify precision?        

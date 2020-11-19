@@ -317,8 +317,12 @@ class MissionCase(PTestCase):
     def populate_devices(self, devices, radios):
         self.flight_controller_leader = devices["FlightControllerLeader"]
         self.flight_controller_follower = devices["FlightControllerFollower"]
-        self.radio_leader = radios["FlightControllerLeader"]
-        self.radio_follower = devices["FlightControllerFollower"]
+        if "FlightControllerLeader" in radios:
+            self.radio_leader = radios["FlightControllerLeader"]
+            self.radio_follower = radios["FlightControllerFollower"]
+        else:
+            self.radio_leader = None
+            self.radio_follower = None
 
     @property
     def initial_state_leader(self):
