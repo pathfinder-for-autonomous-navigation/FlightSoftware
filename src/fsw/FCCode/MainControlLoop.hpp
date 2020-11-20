@@ -11,7 +11,7 @@
 #include "ADCSBoxMonitor.hpp"
 #include "ADCSBoxController.hpp"
 #include "AttitudeEstimator.hpp"
-#include "AttitudeComputer.hpp"
+#include "AttitudeController.hpp"
 #include "ADCSCommander.hpp"
 #include "GomspaceController.hpp"
 #include "DebugTask.hpp"
@@ -85,8 +85,7 @@ class MainControlLoop : public ControlTask<void> {
 
     PropController prop_controller;
     MissionManager mission_manager;
-
-    AttitudeComputer attitude_computer; // needs adcs.state from MissionManager
+    AttitudeController attitude_controller; // needs adcs.state from MissionManager
     ADCSCommander adcs_commander; // will need inputs from computer
     ADCSBoxController adcs_box_controller; // needs adcs.state from MissionManager
 
@@ -108,7 +107,7 @@ class MainControlLoop : public ControlTask<void> {
     TRACKED_CONSTANT_SC(unsigned int, uplink_consumer_offset     ,  71500 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, mission_manager_offset     ,  71600 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, dcdc_controller_offset     ,  71700 + test_offset);
-    TRACKED_CONSTANT_SC(unsigned int, attitude_computer_offset   ,  71800 + test_offset);
+    TRACKED_CONSTANT_SC(unsigned int, attitude_controller_offset ,  71800 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, adcs_commander_offset      ,  71900 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, adcs_box_controller_offset ,  72000 + test_offset);
     TRACKED_CONSTANT_SC(unsigned int, orbit_controller_offset    ,  73000 + test_offset);

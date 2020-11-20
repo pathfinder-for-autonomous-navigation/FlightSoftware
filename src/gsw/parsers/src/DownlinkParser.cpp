@@ -10,7 +10,7 @@ DownlinkParser::DownlinkParser(StateFieldRegistry& r,
     registry(r),
     flow_data(fcp.get_downlink_producer()->get_flows()) {}
 
-std::string DownlinkParser::process_downlink_file(const std::string& filename) {
+nlohmann::json DownlinkParser::process_downlink_file(const std::string& filename) {
     std::ifstream downlink_file(filename, std::ios::in | std::ios::binary);
     if (!downlink_file.is_open()) return "Error: file not found.";
 
@@ -19,7 +19,7 @@ std::string DownlinkParser::process_downlink_file(const std::string& filename) {
     return process_downlink_packet(packet);
 }
 
-std::string DownlinkParser::process_downlink_packet(const std::vector<char>& packet) {
+nlohmann::json DownlinkParser::process_downlink_packet(const std::vector<char>& packet) {
     // The returned JSON object.
     using json = nlohmann::json;
     json ret;
@@ -189,5 +189,5 @@ std::string DownlinkParser::process_downlink_packet(const std::vector<char>& pac
         }
     }
 
-    return ret.dump();
+    return ret;
 }

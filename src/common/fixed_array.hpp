@@ -205,7 +205,7 @@ class fixed_array<bool> : public fixed_array_base<bool> {
      *
      * @return unsigned long
      */
-    unsigned long to_ulong() const { return static_cast<unsigned long>(to_ullong()); }
+    unsigned long long to_ulong() const { return static_cast<unsigned long long>(to_ullong()); }
 
     /**
      * @brief Converts bitset to integer.
