@@ -4,7 +4,6 @@ import math
 import threading
 import traceback
 from .utils import BootUtil, Enums, TestCaseFailure
-from ..psim import CppSimulation
 import psim # the actual python psim repo
 
 class PTestCase(object):
@@ -27,7 +26,7 @@ class PTestCase(object):
         '''
         The parameter files from psim
         '''
-        return [""]
+        return []
 
     @property
     def sim_model(self):
@@ -60,8 +59,8 @@ class PTestCase(object):
     @property
     def sim_duration(self):
         """
-        Returns the duration that the MATLAB simulation to run. If set to zero, the MATLAB
-        simulation will not start.
+        Returns the duration of the simulation to run. If set to zero, the
+        simulation will not start. sim_duration is measured in seconds.
 
         Usual values of this field are either 0 or float("inf").
         """
@@ -119,6 +118,7 @@ class PTestCase(object):
             device.case_interaction_setup(self.debug_to_console)
 
         if self.sim_duration > 0:
+            from ..psim import CppSimulation # Lazy import
             self.sim = CppSimulation(self.is_interactive, devices, 
             self.random_seed, self, self.sim_duration, self.sim_initial_state, 
             isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, self.sim_mapping)

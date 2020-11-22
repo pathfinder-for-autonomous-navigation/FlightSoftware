@@ -110,12 +110,6 @@ class Simulation(object):
         """
         raise NotImplementedError
 
-    def quit(self):
-        """
-        Quit the sim
-        """
-        raise NotImplementedError
-
     def run(self):
         """
         Runs the simulation for the time interval specified in start().
@@ -125,6 +119,7 @@ class Simulation(object):
             num_steps = int(self.sim_duration / self.dt) 
         else:
             num_steps = float("inf")
+            
         step = 0
 
         start_time = time.time()
@@ -158,7 +153,6 @@ class Simulation(object):
 
         self.running = False
         self.add_to_log("Simulation ended.")
-        self.quit()
 
     def interact_fc(self):
         if self.is_single_sat_sim:
@@ -203,7 +197,6 @@ class CppSimulation(Simulation):
         prefix = "lib/common/psim/config/parameters/"
         postfix = ".txt"
 
-        # configs = ["truth/deployment","truth/base","sensors/base"]
         if self.sim_configs == []:
             raise RuntimeError("No simulation configs were provided! Please set the sim_configs property")
         if self.sim_model == None:
@@ -213,7 +206,7 @@ class CppSimulation(Simulation):
 
         configs = [prefix + x + postfix for x in self.sim_configs]
         self.mysim = psim.Simulation(self.sim_model, configs)
-        self.dt = 1e-9
+        self.dt = self.mysim["truth.dt.ns"]/1e9
 
         self.sat_names = ['leader','follower']
         if self.is_single_sat_sim:
@@ -258,7 +251,7 @@ class CppSimulation(Simulation):
             # iterate across each fc_sf vs psim_sf pair
             for fc_sf,psim_sf in mappings.items():
                 psim_val = self.mysim[psim_sf]
-                if(type(psim_val) == lin.Vector3):
+                if(type(psim_val) in {lin.Vector2, lin.Vector3, lin.Vector4}):
                     psim_val = list(psim_val)
                 self.sensor_readings[role][fc_sf] = psim_val
 
@@ -328,15 +321,14 @@ class CppSimulation(Simulation):
             for fc_sf,psim_sf in mappings.items():
                 local = self.actuator_cmds[role][fc_sf]
                 if type(local) == list:
-                    # lol should generalize this
-                    if len(local) == 3:
+                    _len = len(local)
+                    if _len == 2:
+                        local = lin.Vector2(local)
+                    elif _len == 3:
                         local = lin.Vector3(local)
-                    elif len(local) == 4:
+                    elif _len == 4:
                         local = lin.Vector4(local)
                     else:
                         raise RuntimeError("Unexpected List Length, can't change into lin Vector")
 
                 self.mysim[psim_sf] = local
-
-    def quit(self):
-        pass
