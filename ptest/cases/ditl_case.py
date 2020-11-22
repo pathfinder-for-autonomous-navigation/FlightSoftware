@@ -49,7 +49,9 @@ class DitlCase(SingleSatOnlyCase):
             ccno = self.rs("pan.cycle_no")
             omega = self.rs("adcs_monitor.rwa_speed_rd")
             vbatt = self.rs("gomspace.vbatt")
-            self.logger.put(time.time())
+            self.rs("adcs_monitor.mag1_vec")
+            self.rs("adcs_monitor.mag2_vec")
+            #self.logger.put(str(time.time()))
 
             # We run until the batter drop below 7150 mV
             if vbatt < 7150:
