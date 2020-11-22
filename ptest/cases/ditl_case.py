@@ -40,7 +40,11 @@ class DitlCase(SingleSatOnlyCase):
 
         # Set the ADCS motors into manual acceleration control
         self.ws("adcs.state", Enums.adcs_states["manual"])
+        self.cycle()
+
         self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_ACCEL_CTRL"])
+        self.cycle()
+        
         self.ws("adcs_cmd.rwa_torque_cmd", [0.0, 0.0, 0.0])
         self.cycle()
 
