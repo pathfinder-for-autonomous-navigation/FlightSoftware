@@ -10,6 +10,7 @@ from .piksi_fault_handler import PiksiFaultHandler
 
 # Testcases that don't require simulation
 from .empty_case import EmptyCase, NothingCase, FailingEmptyCase
+from .ditl_case import DitlCase
 from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel
 from .docking_checkout_case import DockingCheckoutCase
 from .dcdc_checkout_case import DCDCCheckoutCase
