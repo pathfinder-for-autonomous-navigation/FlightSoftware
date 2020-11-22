@@ -92,6 +92,11 @@ class DitlCase(SingleSatOnlyCase):
                 tau[1] + omega_e[2] / (I * 5.0 * 0.170),
                 tau[2] + omega_e[3] / (I * 5.0 * 0.170),
             ]
+            for i in range(3):
+                if tau[i] > 0.00418:
+                    tau[i] = 0.00418
+                if tau[i] < -0.00418:
+                    tau[i] = -0.00418
 
             self.ws("adcs_cmd.rwa_torque_cmd", tau)
             self.cycle()
