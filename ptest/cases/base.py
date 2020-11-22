@@ -316,6 +316,7 @@ class SingleSatOnlyCase(PTestCase):
         
         # prep json like
         packet = {}
+        # {"t": 304, "field": "adcs_monitor.mag1_vec", "val": "0.000001,0.000005,0.000026,", "time": "2020-11-22 16:14:42.165940"}
 
         # log to datastore
         for d in self._devices:
