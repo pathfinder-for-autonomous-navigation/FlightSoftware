@@ -20,6 +20,7 @@ class PTestCase(object):
 
         self.errored = False
         self.finished = False
+        self._devices = None
 
     @property
     def sim_configs(self):
@@ -198,6 +199,7 @@ class SingleSatOnlyCase(PTestCase):
 
     def populate_devices(self, devices):
         self.flight_controller = devices["FlightController"]
+        self._devices = [self.flight_controller]
 
     @property
     def fast_boot(self):
@@ -311,6 +313,13 @@ class SingleSatOnlyCase(PTestCase):
     def print_rs_psim(self, name):
         ret = self.sim.mysim[name]
         self.logger.put(f"{name} is {ret}")
+        
+        # prep json like
+        packet = {}
+
+        # log to datastore
+        for d in self._devices:
+            d.datastore.put("FUCK")
 
     def ws(self, name, val):
         """
@@ -359,6 +368,7 @@ class MissionCase(PTestCase):
     def populate_devices(self, devices):
         self.flight_controller_leader = devices["FlightControllerLeader"]
         self.flight_controller_follower = devices["FlightControllerFollower"]
+        self._devices = [self.flight_controller_leader, self.flight_controller_follower]
 
     @property
     def initial_state_leader(self):

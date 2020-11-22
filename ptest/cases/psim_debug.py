@@ -40,8 +40,8 @@ class PsimDebug(SingleSatOnlyCase):
     def setup_post_bootsetup(self):
         return
 
-    def run_case_singlesat(self):
-        # self.print_rs_psim("truth.leader.environment.s.body")
+    def data_logs(self):
+        self.print_rs_psim("truth.leader.attitude.w")
 
         self.print_rs("pan.deployment.elapsed")
         self.print_rs("pan.state")
@@ -60,5 +60,10 @@ class PsimDebug(SingleSatOnlyCase):
         self.print_rs("attitude_estimator.fro_P")
         self.print_rs("adcs_cmd.mtr_cmd")
         self.print_rs("adcs_cmd.rwa_torque_cmd")
+
+    def run_case_singlesat(self):
+        # self.print_rs_psim("truth.leader.environment.s.body")
+
+        # self.data_logs()
 
         pass
