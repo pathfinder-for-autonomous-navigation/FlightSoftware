@@ -72,6 +72,9 @@ jobs:
       run: |
         python -m ptest runsim -c ptest/configs/ci.json -t ADCSWheelFaultHandler -ni
         python -m ptest runsim -c ptest/configs/ci.json -t LowBattFaultHandler -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t PiksiFaultHandler -ni
+
+    # Add quake fault handler to the above once completed.
 
     - name: Mission Checkout Cases
       run: |

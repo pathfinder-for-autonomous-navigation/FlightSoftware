@@ -303,7 +303,9 @@ class CppSimulation(Simulation):
         for debugging purposes.
 
         Adjusting the yeet factor (yf) is a direct multiplier to make actuators stronger than they actually are
-        Setting it to 0 mutes the actuator.
+        Setting it to 0 mutes the actuator. It is useful to temporarily disable actuators for debugging purposes
+        to isolate parts of the controller. Largely increasing the strength of actuators is also great to check
+        that an actuator really is causing an effect on dynamics (on a much shorter time scale).
         '''
 
         # mtr_yf = 10
