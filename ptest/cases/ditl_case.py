@@ -56,8 +56,8 @@ class DitlCase(SingleSatOnlyCase):
             # We run until the batter drop below 7150 mV
             if vbatt < 7150:
                 # Shut down ADCS motors
-                self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_SPEED_CTRL"])
                 self.ws("adcs_cmd.rwa_speed_cmd", [0.0, 0.0, 0.0])
+                self.ws("adcs_cmd.rwa_mode", Enums.rwa_modes["RWA_SPEED_CTRL"])
                 self.cycle()
 
                 # Disable the ADCS motor DCDC
