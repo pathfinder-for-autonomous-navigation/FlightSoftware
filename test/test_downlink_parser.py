@@ -47,6 +47,8 @@ class TestDownlinkParser(unittest.TestCase):
         self.console.write((self.getFilepath("downlink1") + "\n").encode())
         response = json.loads(self.console.readline().rstrip())
         expectedResponse = json.load(open(self.getFilepath("expected_output.json")))
+        print(response)
+        print(expectedResponse)
         self.assertDictEqual(response, expectedResponse)
 
     def tearDown(self):
