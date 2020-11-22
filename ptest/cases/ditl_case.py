@@ -93,8 +93,8 @@ class DitlCase(SingleSatOnlyCase):
             # Control torque
             tau = [
                 tau[0] + omega_e[0] / (I * 5.0 * 0.170),
-                tau[1] + omega_e[2] / (I * 5.0 * 0.170),
-                tau[2] + omega_e[3] / (I * 5.0 * 0.170),
+                tau[1] + omega_e[1] / (I * 5.0 * 0.170),
+                tau[2] + omega_e[2] / (I * 5.0 * 0.170),
             ]
             for i in range(3):
                 if tau[i] > 0.00418:
