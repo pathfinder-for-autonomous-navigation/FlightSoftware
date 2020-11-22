@@ -1,6 +1,7 @@
 # Empty test case. Gets cycle count purely for diagnostic purposes
 from .base import SingleSatOnlyCase
 from .utils import Enums, TestCaseFailure
+from psim.sims import SingleAttitudeOrbitGnc
 
 class EmptyCase(SingleSatOnlyCase):
     def run_case_singlesat(self):
@@ -16,13 +17,25 @@ class FailingEmptyCase(SingleSatOnlyCase):
 
 class EmptySimCase(EmptyCase):
     @property
+    def sim_configs(self):
+        configs = ["truth/ci", "truth/base"]
+        configs += ["sensors/base"]
+        return configs
+
+    @property
+    def sim_model(self):
+        return SingleAttitudeOrbitGnc
+
+    @property
+    def sim_mapping(self):
+        return "ci_mapping.json"
+
+    @property
     def sim_duration(self):
         return float("inf")
 
 class FailingEmptySimCase(EmptyCase):
-    @property
-    def sim_duration(self):
-        return float("inf")
+
 
     def run_case_singlesat(self):
         raise TestCaseFailure("Deliberate failure intended to test failure in CI.")
