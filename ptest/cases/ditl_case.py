@@ -3,14 +3,16 @@
 The intention here is to run the satellites actuators using realistic actuator
 commands to gain a sense of how healthy the batteries on the flight units are.
 The actuators of primary concern are the reaction wheels and quake radio.
+
+This is currently a work in progress and is simply running the wheels at speeds
+expected of them based on mechanical team's analysis.
 """
 
 from .base import SingleSatOnlyCase
 from .utils import Enums
 
-import time
+class DitlCase(SingleSatOnlyCase):
 
-class SpinMotorsCase(SingleSatOnlyCase):
     def setup_post_bootsetup(self):
         self.ws("dcdc.ADCSMotor_cmd", True); self.cycle()
         self.ws("adcs.state", Enums.adcs_states["manual"]); self.cycle()
