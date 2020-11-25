@@ -59,17 +59,19 @@ class AutonomousMissionManagerCase(MissionCase):
     def sim_duration(self):
         return float("inf")
 
-    def run_case_fullmission(self):
-
+    def setup_post_bootsetup_follower(self):
         self.using_radios = self.radio_follower != None
-        self.leader = self.radio_leader if self.using_radios else self.flight_controller_leader
+        #self.leader = self.radio_leader if self.using_radios else self.flight_controller_leader
+        self.leader = self.flight_controller_leader
         self.follower = self.radio_follower if self.using_radios else self.flight_controller_follower
 
         self.leader_time_last_comms = time.time()
         self.follower_time_last_comms = time.time()
         self.comms_time_threshold = 60*5*1000000000 #currently 5 minutes for testing
 
-        while(self.mission_conditions_met()): 
+    def run_case_fullmission(self):
+
+        if(self.mission_conditions_met()): 
 
             #Pass telemetry between spacecraft 
 
@@ -100,8 +102,7 @@ class AutonomousMissionManagerCase(MissionCase):
             
             
             #TODO propograte orbits from the data -> how to verify precision?      
-
-        self.finish()  
+ 
 
 
 
