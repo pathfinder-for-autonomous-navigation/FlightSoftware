@@ -1,5 +1,8 @@
 from .base import MissionCase
 import time
+from psim.sims import DualAttitudeOrbitGnc
+import lin
+from .utils import str_to_val
 
 class AutonomousMissionManagerCase(MissionCase):
 
@@ -37,6 +40,21 @@ class AutonomousMissionManagerCase(MissionCase):
 
         return True
 
+
+    @property
+    def sim_configs(self):
+        configs = ["truth/ci", "truth/base"]
+        configs += ["sensors/base"]
+        return configs
+
+    @property
+    def sim_model(self):
+        return DualAttitudeOrbitGnc
+
+    @property
+    def sim_mapping(self):
+        return "ci_mapping.json"
+        
     @property
     def sim_duration(self):
         return float("inf")
@@ -56,14 +74,24 @@ class AutonomousMissionManagerCase(MissionCase):
             #Pass telemetry between spacecraft 
 
             #wait for leader's data to come down from Iridium (automatically sent)
-            orbit_data_fields = ["orbit.pos", "orbit.vel", "orbit.time"]
+            orbit_data_fields = ["orbit.pos", "orbit.vel"]
             while(self.leader.read_state("orbit.time") == None): #what does es actually respond with?
                 pass
 
-            downlinked_data_vals_leader = [self.leader.read_state(field) for field in orbit_data_fields]
+            downlinked_data_vals_leader = [lin.Vector3(str_to_val(self.leader.read_state(field))) for field in orbit_data_fields]
+            downlinked_data_vals_follower = [lin.Vector3(str_to_val(self.follower.read_state(field))) for field in orbit_data_fields]
 
-            #uplink the leader's data to the follower
-            self.follower.write_multiple_states(orbit_data_fields, downlinked_data_vals_leader)
+            #uplink the leader's data to the follower and vice versa
+            baseline_orbit_data_fields = ["orbit.baseline_pos", "orbit.baseline_vel"]
+            baseline_orbit_data_vals_follower = [downlinked_data_vals_leader[i] - downlinked_data_vals_follower[i]
+                                                                             for i in range(len(baseline_orbit_data_fields))]
+            baseline_orbit_data_vals_leader = [-1*val for val in baseline_orbit_data_vals_follower]
+
+            baseline_orbit_data_vals_follower = [str(val) for val in baseline_orbit_data_vals_follower]
+            baseline_orbit_data_vals_leader = [str(val) for val in baseline_orbit_data_vals_leader]
+
+            self.follower.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_follower)
+            self.leader.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_leader)
 
             self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
             self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))

@@ -29,6 +29,29 @@ def sum_of_differentials(lists_of_vals):
 
     return sum(total_diff)
 
+def str_to_val(field):
+        '''
+        Automatically detects floats, ints and bools
+
+        Returns a float, int or bool
+        '''
+        if ',' in field:
+            # ret is a list
+            list_of_strings = field.split(',')
+            list_of_strings = [x for x in list_of_strings if x is not '']
+            list_of_vals = [str_to_val(x) for x in list_of_strings]
+            return list_of_vals
+        elif 'nan' in field:
+            return float("NAN")
+        elif '.' in field:
+            return float(field)
+        elif field == 'true':
+            return True
+        elif field == 'false':
+            return False
+        else:
+            return int(field)
+
 class FSWEnum(object):
     """
     Class that encodes flight software enums into Python objects in
