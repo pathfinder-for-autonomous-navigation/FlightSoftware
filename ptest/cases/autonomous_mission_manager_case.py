@@ -16,7 +16,7 @@ class AutonomousMissionManagerCase(MissionCase):
         #check time since last comms
         leader_time_since_comms = time.time() - self.leader_time_last_comms 
         if(leader_time_since_comms > self.comms_time_threshold):
-            self.logger.put("Leader is experiencing comms blackout. Ending mission.")
+            self.logger.put("Leader is experiencing comms blackout. Ending mission." + str(leader_time_since_comms))
             return False
         follower_time_since_comms = time.time() - self.follower_time_last_comms 
         if(follower_time_since_comms > self.comms_time_threshold):
@@ -45,7 +45,7 @@ class AutonomousMissionManagerCase(MissionCase):
 
         self.leader_time_last_comms = time.time()
         self.follower_time_last_comms = time.time()
-        self.comms_time_threshold = 60*5 #currently 5 minutes for testing
+        self.comms_time_threshold = 60*5*1000000000 #currently 5 minutes for testing
 
         while(self.mission_conditions_met()): 
 
@@ -61,11 +61,15 @@ class AutonomousMissionManagerCase(MissionCase):
             #uplink the leader's data to the follower
             self.follower.write_multiple_states(orbit_data_fields, downlinked_data_vals_leader)
 
-            self.leader_time_last_comms = int(self.leader.read_state("orbit.time"))
-            self.follower_time_last_comms = int(self.follower.read_state("orbit.time"))
+            self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
+            self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))
+
             
             
-            #TODO propograte orbits from the data -> how to verify precision?        
+            
+            #TODO propograte orbits from the data -> how to verify precision?      
+
+        self.finish()  
 
 
 

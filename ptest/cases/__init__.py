@@ -7,6 +7,7 @@ from .empty_case import EmptySimCase, FailingEmptySimCase
 from .mission import DeploymentToStandby
 from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
+from .autonomous_mission_manager_case import AutonomousMissionManagerCase
 
 # Testcases that don't require simulation
 from .empty_case import EmptyCase, NothingCase, FailingEmptyCase

@@ -326,23 +326,24 @@ class MissionCase(PTestCase):
 
     @property
     def initial_state_leader(self):
-        raise NotImplementedError
+        return "leader"
     @property
     def initial_state_follower(self):
-        raise NotImplementedError
+        return "follower"
 
     @property
     def fast_boot_leader(self):
-        raise NotImplementedError
+        return True
     @property
     def fast_boot_follower(self):
-        raise NotImplementedError
+        return True
 
     def _setup_case(self):
         self.setup_pre_bootsetup_leader()
         self.setup_pre_bootsetup_follower()
-        self.boot_util_leader = BootUtil(self.flight_controller_leader, self.logger, self.initial_state_leader, self.fast_boot_leader)
-        self.boot_util_follower = BootUtil(self.flight_controller_follower, self.logger, self.initial_state_follower, self.fast_boot_follower)
+        self.one_day_ccno = self.flight_controller_leader.smart_read("pan.one_day_ccno")
+        self.boot_util_leader = BootUtil(self.flight_controller_leader, self.logger, self.initial_state_leader, self.fast_boot_leader, self.one_day_ccno)
+        self.boot_util_follower = BootUtil(self.flight_controller_follower, self.logger, self.initial_state_follower, self.fast_boot_follower, self.one_day_ccno)
         self.boot_util_leader.setup_boot()
         self.boot_util_follower.setup_boot()
         self.setup_post_bootsetup_leader()
