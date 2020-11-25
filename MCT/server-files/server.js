@@ -1,7 +1,7 @@
 /**
  * Basic implementation of a history and realtime server.
  */
-var Battery = require('./battery-telemetry');
+var Telemetry= require('./telemetry');
 var Spacecraft = require('./spacecraft');
 var RealtimeServer = require('./realtime-server');
 var HistoryServer = require('./history-server');
@@ -22,7 +22,7 @@ if (process.argv[2] == "test") {
 }
 else {
     
-    var spacecraft = new Battery();
+    var spacecraft = new Telemetry();
 }
 var realtimeServer = new RealtimeServer(spacecraft);
 var historyServer = new HistoryServer(spacecraft);

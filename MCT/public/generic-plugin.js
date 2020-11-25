@@ -20,7 +20,7 @@ var configs = {
     }
 
 }
-
+//var configs = require('./plugin-configuration.js')
 function getGeneric(j) {
     return http.get(j)
         .then(function (result) {
