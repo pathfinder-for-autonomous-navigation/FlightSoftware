@@ -1,7 +1,7 @@
 from .base import SingleSatOnlyCase
 from .utils import Enums, TestCaseFailure
 
-class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):    
+class DeploymentToInitHold(SingleSatOnlyCase):    
     @property
     def initial_state(self):
         return "startup"
@@ -25,6 +25,10 @@ class DeploymentToInitHoldCheckoutCase(SingleSatOnlyCase):
     @property
     def wheelpot_is_functional(self):
         return self.flight_controller.read_state("adcs_monitor.havt_device6")
+
+    @property
+    def suppress_faults(self):
+        return False
 
     @adcs_is_functional.setter 
     def adcs_is_functional(self, value): 
