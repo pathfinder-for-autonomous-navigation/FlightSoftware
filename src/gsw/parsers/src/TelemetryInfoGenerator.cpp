@@ -2,6 +2,8 @@
 #include <type_traits>
 #include <typeinfo>
 #include <array>
+#include <sstream>
+#include <iomanip>
 
 TelemetryInfoGenerator::TelemetryInfoGenerator(
     const std::vector<DownlinkProducer::FlowData>& _flow_data) :
@@ -9,6 +11,15 @@ TelemetryInfoGenerator::TelemetryInfoGenerator(
 
 /************** Helper functions for telemetry info generation. ***********/
 using nlohmann::json;
+
+std::string get_double_string(double x)
+{
+    std::ostringstream stream;
+    stream << std::fixed;
+    stream << std::setprecision(15);
+    stream << x;
+    return stream.str();
+}
 
 template<typename T>
 std::string type_name() {
@@ -37,20 +48,20 @@ std::string type_name() {
 template<template<typename> class StateFieldType,
          typename UnderlyingType,
          class StateFieldBaseType>
-bool try_collect_field_info(const StateFieldBaseType* field, json& field_info) {
+bool try_collect_field_info(const StateFieldBaseType* field, TelemetryInfoGenerator::FieldData& field_info) {
     const StateFieldType<UnderlyingType>* ptr = dynamic_cast<const StateFieldType<UnderlyingType>*>(field);
     if (!ptr) return false;
 
-    field_info["type"] = type_name<UnderlyingType>();
-    field_info["min"] = ptr->get_serializer_min();
-    field_info["max"] = ptr->get_serializer_max();
+    field_info.type = type_name<UnderlyingType>();
+    field_info.min = get_double_string(ptr->get_serializer_min());
+    field_info.max = get_double_string(ptr->get_serializer_max());
     return true;
 }
 
 template<template<typename> class StateFieldType,
          typename UnderlyingType,
          class StateFieldBaseType>
-bool try_collect_vector_field_info(const StateFieldBaseType* field, json& field_info) {
+bool try_collect_vector_field_info(const StateFieldBaseType* field, TelemetryInfoGenerator::FieldData& field_info) {
     static_assert(std::is_floating_point<UnderlyingType>::value,
         "Can't collect vector field info for a vector of non-float or non-double type.");
     
@@ -62,14 +73,14 @@ bool try_collect_vector_field_info(const StateFieldBaseType* field, json& field_
     const StateFieldType<UnderlyingLinVectorType>* ptr2 =
         dynamic_cast<const StateFieldType<UnderlyingLinVectorType>*>(field);
     if (ptr1) {
-        field_info["type"] = type_name<UnderlyingArrayVectorType>();
-        field_info["min"] = ptr1->get_serializer_min()[0];
-        field_info["max"] = ptr1->get_serializer_max()[0];
+        field_info.type = type_name<UnderlyingArrayVectorType>();
+        field_info.min = get_double_string(ptr1->get_serializer_min()[0]);
+        field_info.max = get_double_string(ptr1->get_serializer_max()[0]);
     }
     else if (ptr2) {
-        field_info["type"] = type_name<UnderlyingLinVectorType>();
-        field_info["min"] = ptr2->get_serializer_min()(0);
-        field_info["max"] = ptr2->get_serializer_max()(0);
+        field_info.type = type_name<UnderlyingLinVectorType>();
+        field_info.min = get_double_string(ptr2->get_serializer_min()(0));
+        field_info.max = get_double_string(ptr2->get_serializer_max()(0));
     }
     else return false;
 
@@ -79,7 +90,7 @@ bool try_collect_vector_field_info(const StateFieldBaseType* field, json& field_
 template<template<typename> class StateFieldType,
          typename UnderlyingType,
          class StateFieldBaseType>
-bool try_collect_unbounded_field_info(const StateFieldBaseType* field, json& field_info) {
+bool try_collect_unbounded_field_info(const StateFieldBaseType* field, TelemetryInfoGenerator::FieldData& field_info) {
     static_assert(std::is_same<UnderlyingType, gps_time_t>::value
                   || std::is_same<UnderlyingType, bool>::value
                   || std::is_same<UnderlyingType, d_quat_t>::value
@@ -91,14 +102,14 @@ bool try_collect_unbounded_field_info(const StateFieldBaseType* field, json& fie
     const StateFieldType<UnderlyingType>* ptr = dynamic_cast<const StateFieldType<UnderlyingType>*>(field);
     if (!ptr) return false;
 
-    field_info["type"] = type_name<UnderlyingType>();
+    field_info.type = type_name<UnderlyingType>();
     return true;
 }
 
 template<template<typename> class StateFieldType, class StateFieldBaseType>
-json get_field_info(const StateFieldBaseType* field) {
-    json field_info;
-    field_info["bitsize"] = field->bitsize();
+TelemetryInfoGenerator::FieldData get_field_info(const StateFieldBaseType* field) {
+    TelemetryInfoGenerator::FieldData field_info;
+    field_info.bitsize = field->bitsize();
 
     bool found_field_type = false;
     found_field_type |= try_collect_field_info<StateFieldType, unsigned int, StateFieldBaseType>(field, field_info);
@@ -124,60 +135,143 @@ json get_field_info(const StateFieldBaseType* field) {
     return field_info;
 }
 
-json get_writable_field_info(const WritableStateFieldBase* field) {
-    json field_info = get_field_info<WritableStateField, WritableStateFieldBase>(field);
-    field_info["writable"] = true;
+TelemetryInfoGenerator::FieldData get_writable_field_info(const WritableStateFieldBase* field) {
+    TelemetryInfoGenerator::FieldData field_info = get_field_info<WritableStateField, WritableStateFieldBase>(field);
+    field_info.writable = true;
     return field_info;
 }
 
-json get_readable_field_info(const ReadableStateFieldBase* field) {
-    json field_info = get_field_info<ReadableStateField, ReadableStateFieldBase>(field);
-    field_info["writable"] = false;
+TelemetryInfoGenerator::FieldData get_readable_field_info(const ReadableStateFieldBase* field) {
+    TelemetryInfoGenerator::FieldData field_info = get_field_info<ReadableStateField, ReadableStateFieldBase>(field);
+    field_info.writable = false;
     return field_info;
 }
 /************** End helper functions. ***********/
 
-json TelemetryInfoGenerator::generate_telemetry_info() {
-    json ret;
+TelemetryInfoGenerator::TelemetryInfo
+TelemetryInfoGenerator::generate_telemetry_info()
+{
+    TelemetryInfo ret;
 
     // Get field data
-    ret["fields"] = json::object();
     for(const WritableStateFieldBase* wf : r.writable_fields) {
         const std::string& field_name = wf->name();
-        if (ret["fields"].find(field_name) != ret["fields"].end()) continue;
-        ret["fields"][field_name] = get_writable_field_info(wf);
+        ret.field_data.insert({field_name, get_writable_field_info(wf)});
 
         if (wf->eeprom_save_period() > 0)
-            ret["eeprom_saved_fields"][field_name] = wf->eeprom_save_period();
+            ret.eeprom_saved_fields[field_name] = wf->eeprom_save_period();
     }
 
     for(const ReadableStateFieldBase* rf : r.readable_fields) {
         const std::string& field_name = rf->name();
-        if (ret["fields"].find(field_name) != ret["fields"].end()) continue;
-        ret["fields"][field_name] = get_readable_field_info(rf);
+        if (ret.field_data.find(field_name) != ret.field_data.end()) continue;
+        ret.field_data.insert({field_name, get_readable_field_info(rf)});
         
         if (rf->eeprom_save_period() > 0)
-            ret["eeprom_saved_fields"][field_name] = rf->eeprom_save_period();
+            ret.eeprom_saved_fields[field_name] = rf->eeprom_save_period();
     }
 
     // Get flow data
-    ret["flows"] = json::array();
+    ret.flow_data = flow_data;
     for(size_t i = 0; i < flow_data.size(); i++) {
         const DownlinkProducer::FlowData& f = flow_data[i];
-        ret["flows"].push_back({
-            {"id", f.id},
-            {"priority", i},
-            {"fields", f.field_list},
-            {"active", f.is_active}
-        });
         for (const std::string& field_name : f.field_list) {
-            ret["fields"][field_name]["flow_id"] = f.id;
+            ret.field_data[field_name].flow_id = f.id;
         }
-    }
-    for(auto& field : ret["fields"]) {
-        if (field.find("flow_id") == field.end())
-            field["flow_id"] = "undefined";
     }
 
     return ret;
+}
+
+nlohmann::json TelemetryInfoGenerator::generate_telemetry_info_json()
+{
+    json j;
+    to_json(j, generate_telemetry_info());
+    return j;
+}
+
+void to_json(json& j, const TelemetryInfoGenerator::FieldData& d)
+{
+    j = json{
+        {"type", d.type},
+        {"writable", d.writable},
+        {"bitsize", d.bitsize}};
+
+    if (d.flow_id > 0) j["flow_id"] = d.flow_id;
+    else j["flow_id"] = "undefined";
+    
+    if (d.type == "unsigned int" || d.type == "unsigned char")
+    {
+        j["min"] = std::stoul(d.min);
+        j["max"] = std::stoul(d.max);
+    }
+    else if (d.type == "signed int" || d.type == "signed char")
+    {
+        j["min"] = std::stoi(d.min);
+        j["max"] = std::stoi(d.max);
+    }
+    else if (d.type == "float"
+             || d.type == "double"
+             || d.type == "std float vector"
+             || d.type == "std double vector"
+             || d.type == "lin float vector"
+             || d.type == "lin double vector"
+             || d.type == "std float quaternion"
+             || d.type == "std double quaternion"
+             || d.type == "lin float quaternion"
+             || d.type == "lin double quaternion")
+    {
+        try {
+            j["min"] = std::stod(d.min);
+            j["max"] = std::stod(d.max);
+        }
+        catch(const std::exception& e) {}
+    }
+}
+void from_json(const json& j, TelemetryInfoGenerator::FieldData& d)
+{
+    d.type = j["type"].get<std::string>();
+    d.flow_id = j["flow_id"].get<unsigned char>();
+    d.writable = j["writable"].get<bool>();
+    d.writable = j["bitsize"].get<bool>();
+    d.min = j["min"].get<std::string>();
+    d.max = j["max"].get<std::string>();
+}
+
+void to_json(json& j, const DownlinkProducer::FlowData& d)
+{
+    j = json({{"active", d.is_active}, {"fields", d.field_list}, {"id", d.id}, {"priority", d.id-1}});
+}
+
+void from_json(const json& j, DownlinkProducer::FlowData& d)
+{
+    d.is_active = j["active"].get<bool>();
+    for(auto const& field : j["fields"])
+        d.field_list.push_back(field);
+    d.id = j["id"].get<unsigned char>();
+}
+
+void to_json(json& j, const TelemetryInfoGenerator::TelemetryInfo& d)
+{
+    j = json({{"eeprom_saved_fields", d.eeprom_saved_fields}, {"fields", d.field_data}, {"flow_data", d.flow_data}});
+}
+
+void from_json(const json& j, TelemetryInfoGenerator::TelemetryInfo& d)
+{
+    for(auto const& field : j["eeprom_saved_fields"].items())
+    {
+        d.eeprom_saved_fields.insert({field.key(), field.value().get<unsigned int>()});
+    }
+    for(auto const& field : j["field_data"].items())
+    {
+        TelemetryInfoGenerator::FieldData fd;
+        from_json(field.value(), fd);
+        d.field_data.insert({field.key(), fd});
+    }
+    for(auto const& field : j["flow_data"].items())
+    {
+        DownlinkProducer::FlowData fd;
+        from_json(field.value(), fd);
+        d.flow_data.push_back(fd);
+    }
 }

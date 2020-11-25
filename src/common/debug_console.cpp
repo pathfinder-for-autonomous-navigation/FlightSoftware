@@ -181,8 +181,16 @@ void debug_console::process_commands(const StateFieldRegistry& registry) {
     if (!found_input) return;
     input.copy(buf, sizeof(buf));
 #else
-    for (size_t i = 0; i < SERIAL_BUF_SIZE && Serial.available(); i++) {
-        buf[i] = Serial.read();
+    char lastchar = '?';
+    size_t i = 0;
+    if(Serial.available()){ // if there are bytes to be processed
+        while(i < SERIAL_BUF_SIZE && lastchar != '\n'){ // loop while we are under buffer limit and we haven't seen end line
+            if(Serial.available()){ // only log to buffer if there are bytes available
+                lastchar = Serial.read();
+                buf[i] = lastchar;
+                i++;
+            }
+        }
     }
 #endif
 

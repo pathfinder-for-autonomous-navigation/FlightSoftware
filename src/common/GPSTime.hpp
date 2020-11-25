@@ -4,7 +4,7 @@
 #include <libsbp/navigation.h>
 #include "constant_tracker.hpp"
 
-TRACKED_CONSTANT_SC(unsigned long, NANOSECONDS_IN_WEEK, 7 * 24 * 60 * 60 * static_cast<unsigned long>(1000000000));
+TRACKED_CONSTANT_SC(unsigned long long, NANOSECONDS_IN_WEEK, 7 * 24 * 60 * 60 * static_cast<unsigned long long>(1000000000));
 
 struct gps_time_t {
     unsigned short wn;
@@ -21,7 +21,7 @@ struct gps_time_t {
     }
 
     /** Argumented constructor **/
-    gps_time_t(unsigned short wn, unsigned int tow, unsigned long ns) {
+    gps_time_t(unsigned short wn, unsigned int tow, int ns) {
         is_set = true;
         this->wn = wn;
         this->tow = tow;
@@ -29,7 +29,7 @@ struct gps_time_t {
     }
 
     /** Copy constructor **/
-    explicit gps_time_t(const unsigned long t) {
+    explicit gps_time_t(const unsigned long long t) {
         is_set = true;
         wn = t / NANOSECONDS_IN_WEEK;
         tow = (t - (wn * NANOSECONDS_IN_WEEK)) / 1000000;
@@ -44,66 +44,66 @@ struct gps_time_t {
     }
 
     /** Cast to integer operator **/
-    explicit operator unsigned long() const {
+    explicit operator unsigned long long() const {
         return wn * NANOSECONDS_IN_WEEK + tow * 1000000 + ns;
     }
 
     /** A bunch of equality and comparison operators. **/
-    bool operator==(const unsigned long t) const {
+    bool operator==(const unsigned long long t) const {
         if (!is_set) return false;
-        return static_cast<unsigned long>(*this) == t;
+        return static_cast<unsigned long long>(*this) == t;
     }
     bool operator==(const gps_time_t &t)   const {
         if (!t.is_set) return false;
-        const unsigned long t_ns = static_cast<unsigned long>(t);
+        const unsigned long long t_ns = static_cast<unsigned long long>(t);
         return *this == t_ns;
     }
-    bool operator<(const unsigned long t)  const {
+    bool operator<(const unsigned long long t)  const {
         if (!is_set) return false;
-        return static_cast<unsigned long>(*this) < t;
+        return static_cast<unsigned long long>(*this) < t;
     }
     bool operator<(const gps_time_t &t)    const {
         if (!t.is_set) return false;
-        const unsigned long t_ns = static_cast<unsigned long>(t);
+        const unsigned long long t_ns = static_cast<unsigned long long>(t);
         return *this < t_ns;
     }
-    bool operator!=(const unsigned long t) const { return !(*this == t); }
+    bool operator!=(const unsigned long long t) const { return !(*this == t); }
     bool operator!=(const gps_time_t &t)   const { return !(*this == t); }
-    bool operator>(const unsigned long t)  const { return !(*this < t || *this == t ); }
+    bool operator>(const unsigned long long t)  const { return !(*this < t || *this == t ); }
     bool operator>(const gps_time_t &t)    const { return !(*this < t || *this == t ); }
-    bool operator<=(const unsigned long t) const { return !(*this > t); }
+    bool operator<=(const unsigned long long t) const { return !(*this > t); }
     bool operator<=(const gps_time_t &t)   const { return !(*this > t); }
-    bool operator>=(const unsigned long t) const { return !(*this < t); }
+    bool operator>=(const unsigned long long t) const { return !(*this < t); }
     bool operator>=(const gps_time_t &t)   const { return !(*this < t); }
 
     /** Addition operators **/
-    gps_time_t& operator+=(const unsigned long t) {
+    gps_time_t& operator+=(const unsigned long long t) {
         is_set = true;
-        *this = static_cast<gps_time_t>(static_cast<unsigned long>(*this) + t);
+        *this = static_cast<gps_time_t>(static_cast<unsigned long long>(*this) + t);
         return *this;
     }
     gps_time_t& operator+=(const gps_time_t &t) {
-        *this += static_cast<unsigned long>(t);
+        *this += static_cast<unsigned long long>(t);
         return *this;
     }
 
     /** Subtraction operator. Unsets the current object if the number of nanoseconds
      * is greater than the current time. **/
-    gps_time_t& operator-=(const unsigned long t) {
+    gps_time_t& operator-=(const unsigned long long t) {
         if (*this < t) {
             is_set = false;
             return *this;
         }
 
         is_set = true;
-        *this = static_cast<gps_time_t>(static_cast<unsigned long>(*this) - t);
+        *this = static_cast<gps_time_t>(static_cast<unsigned long long>(*this) - t);
         return *this;
     }
 
     /** Subtraction operator. Requires t1 is less than "this" or else
      *  the current object becomes unset. **/
     gps_time_t& operator-=(const gps_time_t &t) {
-        *this -= static_cast<unsigned long>(t);
+        *this -= static_cast<unsigned long long>(t);
         return *this;
     }
 };
@@ -112,7 +112,7 @@ inline gps_time_t operator+(gps_time_t lhs, const gps_time_t& rhs) {
     lhs += rhs;
     return lhs;
 }
-inline gps_time_t operator+(gps_time_t lhs, const unsigned long rhs) {
+inline gps_time_t operator+(gps_time_t lhs, const unsigned long long rhs) {
     lhs += rhs;
     return lhs;
 }
@@ -120,7 +120,7 @@ inline gps_time_t operator-(gps_time_t lhs, const gps_time_t& rhs) {
     lhs -= rhs;
     return lhs;
 }
-inline gps_time_t operator-(gps_time_t lhs, const unsigned long rhs) {
+inline gps_time_t operator-(gps_time_t lhs, const unsigned long long rhs) {
     lhs -= rhs;
     return lhs;
 }
