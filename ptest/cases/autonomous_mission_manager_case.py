@@ -87,8 +87,8 @@ class AutonomousMissionManagerCase(MissionCase):
                                                                              for i in range(len(baseline_orbit_data_fields))]
             baseline_orbit_data_vals_leader = [-1*val for val in baseline_orbit_data_vals_follower]
 
-            baseline_orbit_data_vals_follower = [str(val) for val in baseline_orbit_data_vals_follower]
-            baseline_orbit_data_vals_leader = [str(val) for val in baseline_orbit_data_vals_leader]
+            baseline_orbit_data_vals_follower = [val for val in baseline_orbit_data_vals_follower]
+            baseline_orbit_data_vals_leader = [val for val in baseline_orbit_data_vals_leader]
 
             self.follower.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_follower)
             self.leader.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_leader)
