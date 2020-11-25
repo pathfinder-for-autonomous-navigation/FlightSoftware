@@ -37,6 +37,10 @@ class AutonomousMissionManagerCase(MissionCase):
 
         return True
 
+    @property
+    def sim_duration(self):
+        return float("inf")
+
     def run_case_fullmission(self):
 
         self.using_radios = self.radio_follower != None
