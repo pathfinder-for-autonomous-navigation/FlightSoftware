@@ -23,7 +23,6 @@ class PTestCase(object):
         self.errored = False
         self.finished = False
         self._devices = None
-        self._last_ccno = -1
 
     @property
     def sim_configs(self):
@@ -325,7 +324,7 @@ class SingleSatOnlyCase(PTestCase):
         
         # prep json like
         packet = {}
-        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/0.170) # sorry this is hard coded
+        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/self.sim.dt)
         packet["field"] = name
         packet["val"] = stripped
         packet["time"] = str(datetime.datetime.now())
