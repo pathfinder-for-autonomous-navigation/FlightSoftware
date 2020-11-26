@@ -41,7 +41,6 @@ class PsimDebug(SingleSatOnlyCase):
         return
 
     def data_logs(self):
-        self.print_rs_psim("truth.leader.attitude.w")
 
         self.print_rs("pan.deployment.elapsed")
         self.print_rs("pan.state")
@@ -63,7 +62,9 @@ class PsimDebug(SingleSatOnlyCase):
 
     def run_case_singlesat(self):
         # self.print_rs_psim("truth.leader.environment.s.body")
-
+        self.rs_psim("truth.leader.attitude.w")
+        self.data_logs()
+        self.data_logs()
         # self.data_logs()
 
         pass

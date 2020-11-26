@@ -5,6 +5,8 @@ import threading
 import traceback
 from .utils import BootUtil, Enums, TestCaseFailure
 import psim # the actual python psim repo
+import lin
+import datetime
 
 class PTestCase(object):
     """
@@ -21,6 +23,7 @@ class PTestCase(object):
         self.errored = False
         self.finished = False
         self._devices = None
+        self._last_ccno = -1
 
     @property
     def sim_configs(self):
@@ -310,17 +313,32 @@ class SingleSatOnlyCase(PTestCase):
         self.logger.put(f"{name} is {ret}")
         return ret
     
-    def print_rs_psim(self, name):
+    def lin_val_to_normal_val(self, psim_val):
+        if(type(psim_val) in {lin.Vector2, lin.Vector3, lin.Vector4}):
+            psim_val = list(psim_val)
+        return psim_val    
+
+    def rs_psim(self, name):
         ret = self.sim.mysim[name]
-        self.logger.put(f"{name} is {ret}")
+        ret = self.lin_val_to_normal_val(ret)
+        stripped = str(ret).strip("[]").replace(" ","")+"," # bruh this is so hacky
         
         # prep json like
         packet = {}
-        # {"t": 304, "field": "adcs_monitor.mag1_vec", "val": "0.000001,0.000005,0.000026,", "time": "2020-11-22 16:14:42.165940"}
+        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/0.170) # sorry this is hard coded
+        packet["field"] = name
+        packet["val"] = stripped
+        packet["time"] = str(datetime.datetime.now())
 
         # log to datastore
         for d in self._devices:
-            d.datastore.put("FUCK")
+            d.datastore.put(packet)
+
+        return ret
+
+    def print_rs_psim(self, name):
+        ret = self.rs_psim(name)
+        self.logger.put(f"{name} is {ret}")
 
     def ws(self, name, val):
         """

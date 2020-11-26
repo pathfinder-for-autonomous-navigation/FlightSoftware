@@ -32,12 +32,11 @@ class StateFieldPlotter(object):
             return None
 
         suffix = None
-        if any(field.endswith(x) for x in ['.w', '.x', '.y', '.z']):
-            suffix = field[-1]
-            field = field[0:-3]
+        # if any(field.endswith(x) for x in ['.w', '.x', '.y', '.z']):
+        #     suffix = field[-1]
+        #     field = field[0:-3]
 
         field_data = []
-        
         for datapoint in self.dataList:
             if datapoint["field"] == field:
                 if suffix is not None:
