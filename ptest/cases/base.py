@@ -312,15 +312,20 @@ class SingleSatOnlyCase(PTestCase):
         self.logger.put(f"{name} is {ret}")
         return ret
     
-    def lin_val_to_normal_val(self, psim_val):
+    def lin_vec_to_list(self, psim_val):
         if(type(psim_val) in {lin.Vector2, lin.Vector3, lin.Vector4}):
             psim_val = list(psim_val)
+        else:
+            raise TypeError("Expected a lin vector! Did not get a lin vector!")
         return psim_val    
 
     def rs_psim(self, name):
+        '''
+        Read a psim state field with <name>
+        '''
         ret = self.sim.mysim[name]
-        ret = self.lin_val_to_normal_val(ret)
-        stripped = str(ret).strip("[]").replace(" ","")+"," # bruh this is so hacky
+        ret = self.lin_vec_to_list(ret)
+        stripped = str(ret).strip("[]").replace(" ","")+","
         
         # prep json like
         packet = {}
@@ -336,6 +341,9 @@ class SingleSatOnlyCase(PTestCase):
         return ret
 
     def print_rs_psim(self, name):
+        '''
+        Read a psim state field with <name> and print it to the console
+        '''
         ret = self.rs_psim(name)
         self.logger.put(f"{name} is {ret}")
 
