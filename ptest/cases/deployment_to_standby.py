@@ -1,8 +1,9 @@
+# Runs mission from startup state to standby state.
 from .base import SingleSatOnlyCase
-from .utils import FSWEnum, Enums, TestCaseFailure
 from psim.sims import SingleAttitudeOrbitGnc
+from .utils import Enums, TestCaseFailure
 
-class PiksiFaultHandler(SingleSatOnlyCase):
+class DeploymentToStandby(SingleSatOnlyCase):
     @property
     def sim_configs(self):
         configs = ["truth/ci", "truth/base"]
@@ -23,20 +24,20 @@ class PiksiFaultHandler(SingleSatOnlyCase):
 
     @property
     def initial_state(self):
-        return "leader"
+        return "standby"
 
     @property
     def fast_boot(self):
-        return True
+        return False
 
-    def collect_diagnostic_data(self):
-        self.rs("piksi.state")
-        self.rs("pan.state")
-        self.rs("pan.cycle_no")
+    @property
+    def sim_initial_state(self):
+        return "startup"
+
+    def setup_post_bootsetup(self):
+        return
 
     def run_case_singlesat(self):
-        self.collect_diagnostic_data()
-
-        # TODO implement testcase here.
-
+        if self.rs("pan.cycle_no") > 300:
+            raise TestCaseFailure("Nominal detumbling for ci should take < 300 cycles")
         self.finish()
