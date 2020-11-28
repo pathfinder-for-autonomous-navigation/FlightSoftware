@@ -70,13 +70,13 @@ void OrbitController::execute() {
     double time_till_firing = time_till_node(theta, t, r, v);
     double time_till_firing_cc = time_till_firing * 1000 / PAN::control_cycle_time;
 
-    // Schedule the valves for firing soon
-    if (time_till_firing_cc <= (prop_min_cycles_needed() + 10) && prop_cycles_until_firing_fp->get() == 0) {
+    // Schedule the valves for firing soon if the prop system is idle
+    if (time_till_firing_cc <= (prop_min_cycles_needed() + 10) && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::idle) {
         prop_cycles_until_firing_fp->set(time_till_firing_cc);
     }
 
     // Check if the satellite is around a firing point and the prop system is ready to fire
-    if ( time_till_firing_cc < 200 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing) { // and prop state is awaiting fire
+    if ( time_till_firing_cc < 20 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing) {
 
         // Collect the output of the PD controller and get the needed impulse
         lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);
