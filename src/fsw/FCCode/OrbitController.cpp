@@ -89,9 +89,6 @@ void OrbitController::execute() {
 
         // Transform the impulse from eci frame to the body frame of the spacecraft
         lin::Vector4f q_body_eci = q_body_eci_fp->get();
-        lin::Vector4d q_body_eci_d = { (double)q_body_eci(0), (double)q_body_eci(1), 
-            (double)q_body_eci(2), (double)q_body_eci(3) }; // cast to double
-
         lin::Vector3d J_body;
         gnc::utl::rotate_frame(lin::cast<double>(q_body_eci).eval(), J_eci, J_body);
 
