@@ -84,7 +84,7 @@ void test_task_time_till_node(){
         double firing_node = gnc::constant::pi/3;
         double time = firing_node;
 
-        TEST_ASSERT_EQUAL(time, tf.orbit_controller->time_till_node(theta, r, v));
+        TEST_ASSERT_EQUAL(time, tf.orbit_controller->time_till_node(theta, 0, r, v));
 }
 
 void test_task_calculate_impulse(){

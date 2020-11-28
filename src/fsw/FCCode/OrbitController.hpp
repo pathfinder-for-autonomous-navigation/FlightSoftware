@@ -36,13 +36,14 @@ public:
      * number. It calculates the angular velocity w and uses the eqn firing_node = wt+theta
      * to find the time until each firing node. It then returns the smallest positive time.
      */
-    double time_till_node(double theta, lin::Vector3d pos, lin::Vector3d vel);
+    double time_till_node(double theta, double t, const lin::Vector3d &pos, const lin::Vector3d &vel);
 
     /**
      * Calculate impulse needs to rendezvous with leader. Uses a PD controller to return
      * impulse in ECEF reference frame.
      */
-    lin::Vector3d calculate_impulse(double t, lin::Vector3d r, lin::Vector3d v, lin::Vector3d dr, lin::Vector3d dv);
+    lin::Vector3d calculate_impulse(double t, const lin::Vector3d &r, const lin::Vector3d &v, 
+        const lin::Vector3d &dr, const lin::Vector3d &dv);
 
     /*
      * Convert the impulse of a thruster to the time the valve should be open in ms
