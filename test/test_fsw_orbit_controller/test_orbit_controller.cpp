@@ -60,6 +60,7 @@ void test_task_initialization()
         TEST_ASSERT_NOT_NULL(tf.orbit_controller->q_body_eci_fp);
 
         // Fields from the prop controller
+        TEST_ASSERT_NOT_NULL(tf.orbit_controller->prop_state_fp);
         TEST_ASSERT_NOT_NULL(tf.orbit_controller->prop_cycles_until_firing_fp);
         TEST_ASSERT_NOT_NULL(tf.orbit_controller->max_pressurizing_cycles_fp);
         TEST_ASSERT_NOT_NULL(tf.orbit_controller->ctrl_cycles_per_filling_period_fp);

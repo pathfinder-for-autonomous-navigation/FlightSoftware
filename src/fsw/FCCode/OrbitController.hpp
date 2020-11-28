@@ -9,6 +9,7 @@
 #include <gnc/constants.hpp>
 #include <gnc/orbit_controller.hpp>
 #include "TimedControlTask.hpp"
+#include <fsw/FCCode/prop_state_t.enum>
 #include <common/constant_tracker.hpp>
 
 class OrbitController : public TimedControlTask<void>
@@ -67,6 +68,7 @@ public:
 
     // Prop system 
     unsigned int prop_min_cycles_needed();
+    WritableStateField<unsigned int>* prop_state_fp;
     WritableStateField<unsigned int>* max_pressurizing_cycles_fp;
     WritableStateField<unsigned int>* ctrl_cycles_per_filling_period_fp;
     WritableStateField<unsigned int>* ctrl_cycles_per_cooling_period_fp;

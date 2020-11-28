@@ -27,6 +27,7 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
 }
 
 void OrbitController::init() {
+    prop_state_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
     prop_cycles_until_firing_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
     max_pressurizing_cycles_fp = FIND_WRITABLE_FIELD(unsigned int, prop.max_pressurizing_cycles);
     ctrl_cycles_per_filling_period_fp = FIND_WRITABLE_FIELD(unsigned int, prop.ctrl_cycles_per_filling);
@@ -48,7 +49,7 @@ void OrbitController::execute() {
 
     lin::Vector4d q_ecef_eci;
     gnc::env::earth_attitude(t, q_ecef_eci);
-    
+
     lin::Vector3d sun_ecef;
     gnc::utl::rotate_frame(q_ecef_eci, sun_eci, sun_ecef);
 
@@ -64,19 +65,18 @@ void OrbitController::execute() {
 
     // If the satellite is within a certain delta time/cc from the next firing point, then the 
     // propulsion system should get ready to fire soon.
-    double delta_time = prop_min_cycles_needed() + 10;
 
     // Get the time until the satellite reaches the next firing node in control cycles
     double time_till_firing = time_till_node(theta, t, r, v);
     double time_till_firing_cc = time_till_firing * 1000 / PAN::control_cycle_time;
 
     // Schedule the valves for firing soon
-    if (time_till_firing_cc <= delta_time && prop_cycles_until_firing_fp->get() == 0) {
+    if (time_till_firing_cc <= (prop_min_cycles_needed() + 10) && prop_cycles_until_firing_fp->get() == 0) {
         prop_cycles_until_firing_fp->set(time_till_firing_cc);
     }
 
-    // Check if the satellite is at a firing point
-    if ( std::find(std::begin(firing_nodes), std::end(firing_nodes), theta) != std::end(firing_nodes) ) {
+    // Check if the satellite is around a firing point and the prop system is ready to fire
+    if ( time_till_firing_cc < 200 && static_cast<prop_state_t>(prop_state_fp->get()) == prop_state_t::await_firing) { // and prop state is awaiting fire
 
         // Collect the output of the PD controller and get the needed impulse
         lin::Vector3d J_ecef = calculate_impulse(t, r, v, dr, dv);
