@@ -32,7 +32,7 @@ class StateFieldPlotter(object):
             return None
 
         suffix = None
-        if any(field.endswith(x) for x in ['.w', '.x', '.y', '.z']):
+        if any(field.endswith(x) for x in ['.u', '.x', '.y', '.z']):
             suffix = field[-1]
             field = field[0:-3]
 
@@ -101,7 +101,7 @@ class StateFieldPlotter(object):
             data_vals_x = [float(dataval[1]) for dataval in data_vals]
             data_vals_y = [float(dataval[2]) for dataval in data_vals]
             data_vals_z = [float(dataval[3]) for dataval in data_vals]
-            plt.plot(data_t, data_vals_w, label=field + ".w", marker='o', markersize=2)
+            plt.plot(data_t, data_vals_w, label=field + ".u", marker='o', markersize=2)
             plt.plot(data_t, data_vals_x, label=field + ".x", marker='o', markersize=2)
             plt.plot(data_t, data_vals_y, label=field + ".y", marker='o', markersize=2)
             plt.plot(data_t, data_vals_z, label=field + ".z", marker='o', markersize=2)
