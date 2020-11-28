@@ -66,7 +66,7 @@ void test_task_initialization()
         TEST_ASSERT_NOT_NULL(tf.orbit_controller->ctrl_cycles_per_filling_period_fp);
         TEST_ASSERT_NOT_NULL(tf.orbit_controller->ctrl_cycles_per_cooling_period_fp);
 
-        // Orbit controller outputs
+        // Orbit controller outputs 
         TEST_ASSERT_NOT_NULL(tf.sched_valve1_fp);
         TEST_ASSERT_NOT_NULL(tf.sched_valve2_fp);
         TEST_ASSERT_NOT_NULL(tf.sched_valve3_fp);
