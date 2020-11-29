@@ -318,7 +318,7 @@ class SingleSatOnlyCase(PTestCase):
         '''
         ret = self.sim.mysim[name]
         
-        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}):
+        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
             ret = list(ret)
         
         stripped = str(ret).strip("[]").replace(" ","")+","
