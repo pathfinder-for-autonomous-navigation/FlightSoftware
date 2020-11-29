@@ -311,25 +311,22 @@ class SingleSatOnlyCase(PTestCase):
         ret = self.rs(name)
         self.logger.put(f"{name} is {ret}")
         return ret
-    
-    def lin_vec_to_list(self, psim_val):
-        if(type(psim_val) in {lin.Vector2, lin.Vector3, lin.Vector4}):
-            psim_val = list(psim_val)
-        else:
-            raise TypeError("Expected a lin vector! Did not get a lin vector!")
-        return psim_val    
 
     def rs_psim(self, name):
         '''
-        Read a psim state field with <name>
+        Read a psim state field with <name>, log to logger, and return the python value
         '''
         ret = self.sim.mysim[name]
-        ret = self.lin_vec_to_list(ret)
+        
+        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}):
+            ret = list(ret)
+        
         stripped = str(ret).strip("[]").replace(" ","")+","
         
-        # prep json like
         packet = {}
-        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/self.sim.dt)
+        
+        # packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/self.sim.dt) # t: number of cycles since sim start
+        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
         packet["field"] = name
         packet["val"] = stripped
         packet["time"] = str(datetime.datetime.now())
@@ -342,7 +339,7 @@ class SingleSatOnlyCase(PTestCase):
 
     def print_rs_psim(self, name):
         '''
-        Read a psim state field with <name> and print it to the console
+        Read a psim state field with <name>, log to logger, print to console and return the python value
         '''
         ret = self.rs_psim(name)
         self.logger.put(f"{name} is {ret}")
