@@ -27,7 +27,7 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
 }
 
 void OrbitController::init() {
-    prop_state_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
+    prop_state_fp = FIND_WRITABLE_FIELD(unsigned int, prop.state);
     prop_cycles_until_firing_fp = FIND_WRITABLE_FIELD(unsigned int, prop.cycles_until_firing);
     max_pressurizing_cycles_fp = FIND_WRITABLE_FIELD(unsigned int, prop.max_pressurizing_cycles);
     ctrl_cycles_per_filling_period_fp = FIND_WRITABLE_FIELD(unsigned int, prop.ctrl_cycles_per_filling);
@@ -43,7 +43,12 @@ void OrbitController::execute() {
     lin::Vector3d dr = baseline_pos_fp->get();
     lin::Vector3d dv = baseline_vel_fp->get();
 
-    // Get the sun vector in ECEF
+    // Convert the velocity to ECEF0 coordinates
+    lin::Vector3f w_earth;
+    gnc::env::earth_angular_rate(t, w_earth);
+    v = v - lin::cross(w_earth, r);
+
+    // Get the sun vector in ECI and convert it to ECEF coordinate
     lin::Vector3d sun_eci;
     gnc::env::sun_vector(t, sun_eci);
 
@@ -67,7 +72,7 @@ void OrbitController::execute() {
     // propulsion system should get ready to fire soon.
 
     // Get the time until the satellite reaches the next firing node in control cycles
-    double time_till_firing = time_till_node(theta, t, r, v);
+    double time_till_firing = time_till_node(theta, r, v);
     double time_till_firing_cc = time_till_firing * 1000 / PAN::control_cycle_time;
 
     // Schedule the valves for firing soon if the prop system is idle
@@ -99,11 +104,9 @@ void OrbitController::execute() {
 
 }
 
-double OrbitController::time_till_node(double theta, double t, const lin::Vector3d &pos, const lin::Vector3d &vel) {
+double OrbitController::time_till_node(double theta, const lin::Vector3d &pos, const lin::Vector3d &vel) {
     // Calculate angular velocity (w = v/r)
-    lin::Vector3f w_earth;
-    gnc::env::earth_angular_rate(t, w_earth);
-    double ang_vel = lin::norm( vel - lin::cross(w_earth, pos) )/lin::norm(pos);
+    double ang_vel = lin::norm(vel)/lin::norm(pos);
 
     // Calculate the times until each node (theta_node = theta_now + w*t)
     double min_time = std::numeric_limits<double>::max();

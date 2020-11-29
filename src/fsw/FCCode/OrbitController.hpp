@@ -1,7 +1,5 @@
 #pragma once
 
-#include <algorithm>
-
 #include <common/GPSTime.hpp>
 #include <common/constant_tracker.hpp>
 #include <gnc/environment.hpp>
@@ -37,7 +35,7 @@ public:
      * number. It calculates the angular velocity w and uses the eqn firing_node = wt+theta
      * to find the time until each firing node. It then returns the smallest positive time.
      */
-    double time_till_node(double theta, double t, const lin::Vector3d &pos, const lin::Vector3d &vel);
+    double time_till_node(double theta, const lin::Vector3d &pos, const lin::Vector3d &vel);
 
     /**
      * Calculate impulse needs to rendezvous with leader. Uses a PD controller to return
