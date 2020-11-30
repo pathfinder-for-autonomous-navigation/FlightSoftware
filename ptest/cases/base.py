@@ -325,7 +325,6 @@ class SingleSatOnlyCase(PTestCase):
         
         packet = {}
         
-        # packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/self.sim.dt) # t: number of cycles since sim start
         packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
         packet["field"] = name
         packet["val"] = stripped
