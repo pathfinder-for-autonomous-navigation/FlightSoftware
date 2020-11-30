@@ -338,7 +338,7 @@ class SingleSatOnlyCase(PTestCase):
 
     def print_rs_psim(self, name):
         '''
-        Read a psim state field with <name>, log to logger, print to console and return the python value
+        Read a psim state field with <name>, log to datastore, print to console and return the python value
         '''
         ret = self.rs_psim(name)
         self.logger.put(f"{name} is {ret}")
