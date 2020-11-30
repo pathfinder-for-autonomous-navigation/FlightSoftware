@@ -314,7 +314,7 @@ class SingleSatOnlyCase(PTestCase):
 
     def rs_psim(self, name):
         '''
-        Read a psim state field with <name>, log to logger, and return the python value
+        Read a psim state field with <name>, log to datastore, and return the python value
         '''
         ret = self.sim.mysim[name]
         

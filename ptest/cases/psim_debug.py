@@ -63,7 +63,3 @@ class PsimDebug(SingleSatOnlyCase):
         # self.print_rs_psim("truth.leader.environment.s.body")
         self.rs_psim("truth.leader.attitude.w")
         self.data_logs()
-        self.data_logs()
-        # self.data_logs()
-
-        pass
