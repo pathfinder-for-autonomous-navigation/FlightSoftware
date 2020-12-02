@@ -1,0 +1,1833 @@
+{
+	"name": "Adcs_monitor",
+	"key": "adcs_monitor",
+	"measurements": [
+		{
+			"name": "Adcs_monitor Ssa_mode",
+			"key": "adcs_monitor.ssa_mode",
+			"values": [
+				{
+					"bitsize": 2,
+					"flow_id": 3,
+					"max": 2,
+					"min": 0,
+					"type": "unsigned char",
+					"writable": false,
+					"name": "Ssa_mode",
+					"key": "ssa_mode",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Wheel1_fault",
+			"key": "adcs_monitor.wheel1_fault",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Base",
+					"key": "base",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Override",
+					"key": "override",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 16,
+					"flow_id": 4,
+					"max": 65535,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": true,
+					"name": "Persistence",
+					"key": "persistence",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Suppress",
+					"key": "suppress",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Unsignal",
+					"key": "unsignal",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Wheel2_fault",
+			"key": "adcs_monitor.wheel2_fault",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Base",
+					"key": "base",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Override",
+					"key": "override",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 16,
+					"flow_id": 4,
+					"max": 65535,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": true,
+					"name": "Persistence",
+					"key": "persistence",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Suppress",
+					"key": "suppress",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Unsignal",
+					"key": "unsignal",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Wheel3_fault",
+			"key": "adcs_monitor.wheel3_fault",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Base",
+					"key": "base",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Override",
+					"key": "override",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 16,
+					"flow_id": 4,
+					"max": 65535,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": true,
+					"name": "Persistence",
+					"key": "persistence",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Suppress",
+					"key": "suppress",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Unsignal",
+					"key": "unsignal",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Wheel_pot_fault",
+			"key": "adcs_monitor.wheel_pot_fault",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Base",
+					"key": "base",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Override",
+					"key": "override",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 16,
+					"flow_id": 4,
+					"max": 65535,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": true,
+					"name": "Persistence",
+					"key": "persistence",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Suppress",
+					"key": "suppress",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 4,
+					"type": "bool",
+					"writable": true,
+					"name": "Unsignal",
+					"key": "unsignal",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Rwa_speed_rd",
+			"key": "adcs_monitor.rwa_speed_rd",
+			"values": [
+				{
+					"bitsize": 48,
+					"flow_id": 7,
+					"max": 1047.199951171875,
+					"min": -1047.199951171875,
+					"type": "lin float vector",
+					"writable": false,
+					"name": "Rwa_speed_rd",
+					"key": "rwa_speed_rd",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Rwa_torque_rd",
+			"key": "adcs_monitor.rwa_torque_rd",
+			"values": [
+				{
+					"bitsize": 48,
+					"flow_id": 7,
+					"max": 0.004187500569969416,
+					"min": -0.004187500569969416,
+					"type": "lin float vector",
+					"writable": false,
+					"name": "Rwa_torque_rd",
+					"key": "rwa_torque_rd",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Functional",
+			"key": "adcs_monitor.functional",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 13,
+					"type": "bool",
+					"writable": false,
+					"name": "Functional",
+					"key": "functional",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Functional_fault",
+			"key": "adcs_monitor.functional_fault",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 13,
+					"type": "bool",
+					"writable": true,
+					"name": "Base",
+					"key": "base",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 13,
+					"type": "bool",
+					"writable": true,
+					"name": "Override",
+					"key": "override",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 16,
+					"flow_id": 13,
+					"max": 65535,
+					"min": 0,
+					"type": "unsigned int",
+					"writable": true,
+					"name": "Persistence",
+					"key": "persistence",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 13,
+					"type": "bool",
+					"writable": true,
+					"name": "Suppress",
+					"key": "suppress",
+					"hints": {
+						"range": "1"
+					}
+				},
+				{
+					"bitsize": 1,
+					"flow_id": 13,
+					"type": "bool",
+					"writable": true,
+					"name": "Unsignal",
+					"key": "unsignal",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device0",
+			"key": "adcs_monitor.havt_device0",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device0",
+					"key": "havt_device0",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device1",
+			"key": "adcs_monitor.havt_device1",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device1",
+					"key": "havt_device1",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device2",
+			"key": "adcs_monitor.havt_device2",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device2",
+					"key": "havt_device2",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device3",
+			"key": "adcs_monitor.havt_device3",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device3",
+					"key": "havt_device3",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device4",
+			"key": "adcs_monitor.havt_device4",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device4",
+					"key": "havt_device4",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device5",
+			"key": "adcs_monitor.havt_device5",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device5",
+					"key": "havt_device5",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device6",
+			"key": "adcs_monitor.havt_device6",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device6",
+					"key": "havt_device6",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device7",
+			"key": "adcs_monitor.havt_device7",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device7",
+					"key": "havt_device7",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device8",
+			"key": "adcs_monitor.havt_device8",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device8",
+					"key": "havt_device8",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device9",
+			"key": "adcs_monitor.havt_device9",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device9",
+					"key": "havt_device9",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device10",
+			"key": "adcs_monitor.havt_device10",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device10",
+					"key": "havt_device10",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device11",
+			"key": "adcs_monitor.havt_device11",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device11",
+					"key": "havt_device11",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device12",
+			"key": "adcs_monitor.havt_device12",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device12",
+					"key": "havt_device12",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device13",
+			"key": "adcs_monitor.havt_device13",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device13",
+					"key": "havt_device13",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device14",
+			"key": "adcs_monitor.havt_device14",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device14",
+					"key": "havt_device14",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device15",
+			"key": "adcs_monitor.havt_device15",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device15",
+					"key": "havt_device15",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device16",
+			"key": "adcs_monitor.havt_device16",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device16",
+					"key": "havt_device16",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Havt_device17",
+			"key": "adcs_monitor.havt_device17",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 15,
+					"type": "bool",
+					"writable": false,
+					"name": "Havt_device17",
+					"key": "havt_device17",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Gyr_vec_flag",
+			"key": "adcs_monitor.gyr_vec_flag",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 18,
+					"type": "bool",
+					"writable": false,
+					"name": "Gyr_vec_flag",
+					"key": "gyr_vec_flag",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Mag1_vec_flag",
+			"key": "adcs_monitor.mag1_vec_flag",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 18,
+					"type": "bool",
+					"writable": false,
+					"name": "Mag1_vec_flag",
+					"key": "mag1_vec_flag",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Mag2_vec_flag",
+			"key": "adcs_monitor.mag2_vec_flag",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 18,
+					"type": "bool",
+					"writable": false,
+					"name": "Mag2_vec_flag",
+					"key": "mag2_vec_flag",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Speed_rd_flag",
+			"key": "adcs_monitor.speed_rd_flag",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 18,
+					"type": "bool",
+					"writable": false,
+					"name": "Speed_rd_flag",
+					"key": "speed_rd_flag",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Torque_rd_flag",
+			"key": "adcs_monitor.torque_rd_flag",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 18,
+					"type": "bool",
+					"writable": false,
+					"name": "Torque_rd_flag",
+					"key": "torque_rd_flag",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage0",
+			"key": "adcs_monitor.ssa_voltage0",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage0",
+					"key": "ssa_voltage0",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage1",
+			"key": "adcs_monitor.ssa_voltage1",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage1",
+					"key": "ssa_voltage1",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage2",
+			"key": "adcs_monitor.ssa_voltage2",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage2",
+					"key": "ssa_voltage2",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage3",
+			"key": "adcs_monitor.ssa_voltage3",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage3",
+					"key": "ssa_voltage3",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage4",
+			"key": "adcs_monitor.ssa_voltage4",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage4",
+					"key": "ssa_voltage4",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage5",
+			"key": "adcs_monitor.ssa_voltage5",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage5",
+					"key": "ssa_voltage5",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage6",
+			"key": "adcs_monitor.ssa_voltage6",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage6",
+					"key": "ssa_voltage6",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage7",
+			"key": "adcs_monitor.ssa_voltage7",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage7",
+					"key": "ssa_voltage7",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage8",
+			"key": "adcs_monitor.ssa_voltage8",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage8",
+					"key": "ssa_voltage8",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage9",
+			"key": "adcs_monitor.ssa_voltage9",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage9",
+					"key": "ssa_voltage9",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage10",
+			"key": "adcs_monitor.ssa_voltage10",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage10",
+					"key": "ssa_voltage10",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage11",
+			"key": "adcs_monitor.ssa_voltage11",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage11",
+					"key": "ssa_voltage11",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage12",
+			"key": "adcs_monitor.ssa_voltage12",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage12",
+					"key": "ssa_voltage12",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage13",
+			"key": "adcs_monitor.ssa_voltage13",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage13",
+					"key": "ssa_voltage13",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage14",
+			"key": "adcs_monitor.ssa_voltage14",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage14",
+					"key": "ssa_voltage14",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage15",
+			"key": "adcs_monitor.ssa_voltage15",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage15",
+					"key": "ssa_voltage15",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage16",
+			"key": "adcs_monitor.ssa_voltage16",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage16",
+					"key": "ssa_voltage16",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage17",
+			"key": "adcs_monitor.ssa_voltage17",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage17",
+					"key": "ssa_voltage17",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage18",
+			"key": "adcs_monitor.ssa_voltage18",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage18",
+					"key": "ssa_voltage18",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_voltage19",
+			"key": "adcs_monitor.ssa_voltage19",
+			"values": [
+				{
+					"bitsize": 8,
+					"flow_id": 25,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Ssa_voltage19",
+					"key": "ssa_voltage19",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Gyr_temp",
+			"key": "adcs_monitor.gyr_temp",
+			"values": [
+				{
+					"bitsize": 16,
+					"flow_id": 24,
+					"max": 3.299999952316284,
+					"min": 0.0,
+					"type": "float",
+					"writable": false,
+					"name": "Gyr_temp",
+					"key": "gyr_temp",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Gyr_vec",
+			"key": "adcs_monitor.gyr_vec",
+			"values": [
+				{
+					"bitsize": 48,
+					"flow_id": 24,
+					"max": 2.181661605834961,
+					"min": -2.181661605834961,
+					"type": "lin float vector",
+					"writable": false,
+					"name": "Gyr_vec",
+					"key": "gyr_vec",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Mag1_vec",
+			"key": "adcs_monitor.mag1_vec",
+			"values": [
+				{
+					"bitsize": 48,
+					"flow_id": 24,
+					"max": 0.004999999888241291,
+					"min": -0.004999999888241291,
+					"type": "lin float vector",
+					"writable": false,
+					"name": "Mag1_vec",
+					"key": "mag1_vec",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Mag2_vec",
+			"key": "adcs_monitor.mag2_vec",
+			"values": [
+				{
+					"bitsize": 48,
+					"flow_id": 24,
+					"max": 0.0031999999191612005,
+					"min": -0.0031999999191612005,
+					"type": "lin float vector",
+					"writable": false,
+					"name": "Mag2_vec",
+					"key": "mag2_vec",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Ssa_vec",
+			"key": "adcs_monitor.ssa_vec",
+			"values": [
+				{
+					"bitsize": 48,
+					"flow_id": 24,
+					"max": 1.0,
+					"min": -1.0,
+					"type": "lin float vector",
+					"writable": false,
+					"name": "Ssa_vec",
+					"key": "ssa_vec",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Adcs_monitor Gyr_temp_flag",
+			"key": "adcs_monitor.gyr_temp_flag",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 24,
+					"type": "bool",
+					"writable": false,
+					"name": "Gyr_temp_flag",
+					"key": "gyr_temp_flag",
+					"hints": {
+						"range": "1"
+					}
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		}
+	]
+}

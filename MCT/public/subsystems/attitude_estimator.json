@@ -1,0 +1,62 @@
+{
+	"name": "Attitude_estimator",
+	"key": "attitude_estimator",
+	"measurements": [
+		{
+			"name": "Attitude_estimator Q_body_eci",
+			"key": "attitude_estimator.q_body_eci",
+			"values": [
+				{
+					"bitsize": 29,
+					"flow_id": 3,
+					"type": "lin float quaternion",
+					"writable": false,
+					"name": "Q_body_eci",
+					"key": "q_body_eci",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Attitude_estimator W_body",
+			"key": "attitude_estimator.w_body",
+			"values": [
+				{
+					"bitsize": 96,
+					"flow_id": 3,
+					"max": 55.0,
+					"min": -55.0,
+					"type": "lin float vector",
+					"writable": false,
+					"name": "W_body",
+					"key": "w_body",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		}
+	]
+}

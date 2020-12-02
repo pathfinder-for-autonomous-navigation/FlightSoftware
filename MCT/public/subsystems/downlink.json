@@ -1,0 +1,93 @@
+{
+	"name": "Downlink",
+	"key": "downlink",
+	"measurements": [
+		{
+			"name": "Downlink Shift_id1",
+			"key": "downlink.shift_id1",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 27,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned char",
+					"writable": true,
+					"name": "Shift_id1",
+					"key": "shift_id1",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Downlink Shift_id2",
+			"key": "downlink.shift_id2",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 27,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned char",
+					"writable": true,
+					"name": "Shift_id2",
+					"key": "shift_id2",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Downlink Toggle_id",
+			"key": "downlink.toggle_id",
+			"values": [
+				{
+					"bitsize": 1,
+					"flow_id": 27,
+					"max": 10,
+					"min": 0,
+					"type": "unsigned char",
+					"writable": true,
+					"name": "Toggle_id",
+					"key": "toggle_id",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		}
+	]
+}

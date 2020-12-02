@@ -1,0 +1,64 @@
+{
+	"name": "Orbit",
+	"key": "orbit",
+	"measurements": [
+		{
+			"name": "Orbit Baseline_pos",
+			"key": "orbit.baseline_pos",
+			"values": [
+				{
+					"bitsize": 100,
+					"flow_id": 2,
+					"max": 100000.0,
+					"min": 0.0,
+					"type": "lin double vector",
+					"writable": false,
+					"name": "Baseline_pos",
+					"key": "baseline_pos",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		},
+		{
+			"name": "Orbit Pos",
+			"key": "orbit.pos",
+			"values": [
+				{
+					"bitsize": 100,
+					"flow_id": 2,
+					"max": 100000.0,
+					"min": 0.0,
+					"type": "lin double vector",
+					"writable": false,
+					"name": "Pos",
+					"key": "pos",
+					"hints": {
+						"range": "1"
+					},
+					"units": "_________"
+				},
+                {
+                    "key": "utc",
+                    "source": "timestamp",
+                    "name": "Timestamp",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 1
+                    }
+                }
+			]
+		}
+	]
+}
