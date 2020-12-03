@@ -24,7 +24,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     mag2_vec_f("adcs_monitor.mag2_vec", mag2_vec_sr),
     gyr_vec_sr(adcs::imu::min_rd_omega, adcs::imu::max_rd_omega, 16*3), //full res is 16*3
     gyr_vec_f("adcs_monitor.gyr_vec", gyr_vec_sr),
-    gyr_temp_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8), //full res is 16
+    gyr_temp_sr(adcs::imu::min_rd_temp, adcs::imu::max_rd_temp, 8), //full res is 16
     gyr_temp_f("adcs_monitor.gyr_temp", gyr_temp_sr),
     flag_sr(),
     rwa_speed_rd_flag("adcs_monitor.speed_rd_flag", flag_sr),
