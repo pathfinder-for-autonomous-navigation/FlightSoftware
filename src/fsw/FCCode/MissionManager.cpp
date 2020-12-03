@@ -21,7 +21,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
                                                                                     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),
                                                                                     docking_timeout_limit_f("docking_timeout_limit",
                                                                                                             Serializer<unsigned int>(0, 2 * PAN::one_day_ccno, 6)),
-                                                                                    adcs_state_f("adcs.state", Serializer<unsigned char>(9)),
+                                                                                    adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
                                                                                     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
                                                                                     enter_docking_cycle_f("docksys.enter_docking"),
                                                                                     mission_state_f("pan.state", Serializer<unsigned char>(12), 10),
