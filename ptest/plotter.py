@@ -174,7 +174,11 @@ class PlotterClient(cmd.Cmd):
     
     with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
         mtrwriter = csv.writer(csvfile)
+<<<<<<< HEAD
         for data in self.dataList:
+=======
+        for data in self.cmded_device.datastore.dataList:
+>>>>>>> 962f0461a9849b9fd5c0c2fb44ccc4ad1905414b
             for key, value in data.items():
                 mtrwriter.writerow([key, value])
     print("csv file \'mtr_logs\'written to " + str(filepath))
