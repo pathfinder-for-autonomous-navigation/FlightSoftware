@@ -316,7 +316,9 @@ class SingleSatOnlyCase(PTestCase):
         '''
         Read a psim state field with <name>, log to datastore, and return the python value
         '''
-        ret = self.sim.mysim[name]
+        ret = self.sim.mysim.get(name)
+        if(ret is None):
+            raise NameError(f"ptest read failed: psim state field {name} does not exist!")
         
         if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
             ret = list(ret)
