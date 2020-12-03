@@ -14,9 +14,9 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     rwa_torque_rd_f("adcs_monitor.rwa_torque_rd", rwa_torque_rd_sr),
     ssa_mode_rd(2),
     ssa_mode_f("adcs_monitor.ssa_mode", ssa_mode_rd),
-    ssa_vec_sr(0,1,1 + SerializerConstants::min_fvsz), //full res is 16*3
+    ssa_vec_sr(0,1,1 + SerializerConstants::min_fvsz),
     ssa_vec_f("adcs_monitor.ssa_vec", ssa_vec_sr),
-    ssa_voltage_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8), //per voltage, full is 8
+    ssa_voltage_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 12), // Full resolution to enable scientific analysis of the sun sensing algorithm
     ssa_voltages_f(),
     mag1_vec_sr(adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, 8*3), //full res is 16*3
     mag1_vec_f("adcs_monitor.mag1_vec", mag1_vec_sr),
