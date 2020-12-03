@@ -1,5 +1,5 @@
 var configs = {
-    gomspace: {
+    battery: {
         namespace: 'bat.taxonomy',
         key: 'spacecraft',
         type: 'bat.telemetry',
@@ -17,189 +17,7 @@ var configs = {
         typeDescription: 'Telemetry point on the satellite to send data',
         typeCssClass: 'icon-telemetry',
         jsonFile: '/dictionary.json'
-    },
-
-/*    pan:{
-        namespace: 'pan.taxonomy',
-        key: 'spacecraft',
-        type: 'pan.telemetry',
-        typeName: 'PAN Telemetry Point',
-        typeDescription: 'Telemetry point for PAN namespace',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/pan.json'
-    },
-*/
-    orbit:{
-        namespace: 'orb.taxonomy',
-        key: 'spacecraft',
-        type: 'orb.telemetry',
-        typeName: 'Orbit Telemetry Point',
-        typeDescription: 'Telemetry point for the Orbit',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/orbit.json'
-    },
-
-    piksi:{
-        namespace: 'piksi.taxonomy',
-        key: 'spacecraft',
-        type: 'piksi.telemetry',
-        typeName: 'Pikis Telemetry Point',
-        typeDescription: 'Telemetry point on the piksi',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/piksi.json'
-    },
-
-    attitude_estimator:{
-        namespace: 'att.taxonomy',
-        key: 'spacecraft',
-        type: 'att.telemetry',
-        typeName: 'Attitude Estimator Telemetry Point',
-        typeDescription: 'Telemetry point for the Attitude Estimator',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/attitude_estimator.json' 
-    },
-
-    adcs_monitor:{
-        namespace: 'adcsmon.taxonomy',
-        key: 'spacecraft',
-        type: 'adcsmon.telemetry',
-        typeName: 'ADCS Monitor Telemetry Point',
-        typeDescription: 'Telemetry point for the ADCS Monitor',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/adcs_monitor.json'
-    },
-
-    prop:{
-        namespace: 'prop.taxonomy',
-        key: 'spacecraft',
-        type: 'prop.telemetry',
-        typeName: 'Prop Telemetry Point',
-        typeDescription: 'Telemetry point for Prop',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/prop.json'
-    },
-
-    adcs_command:{
-        namespace: 'adcscomm.taxonomy',
-        key: 'spacecraft',
-        type: 'adcscomm.telemetry',
-        typeName: 'ADCS Command Telemetry Point',
-        typeDescription: 'Telemetry point for the ADCS Command',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/adcs_cmd.json'
-    },
-
-    adcs: {
-        namespace: 'adcs.taxonomy',
-        key: 'spacecraft',
-        type: 'adcs.telemetry',
-        typeName: 'ADCS Telemetry Point',
-        typeDescription: 'Telemetry point for the ADCS',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/adcs.json'
-    },
-
-    radio: {
-        namespace: 'radio.taxonomy',
-        key: 'spacecraft',
-        type: 'radio.telemetry',
-        typeName: 'Radio Telemetry Point',
-        typeDescription: 'Telemetry point for the Radio',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/radio.json'
-    },
-
-    docksys: {
-        namespace: 'dock.taxonomy',
-        key: 'spacecraft',
-        type: 'dock.telemetry',
-        typeName: 'Docksys Telemetry Point',
-        typeDescription: 'Telemetry point for Docksys',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/docksys.json'
-    },
-
-    dcdc: {
-        namespace: 'dcdc.taxonomy',
-        key: 'spacecraft',
-        type: 'dcdc.telemetry',
-        typeName: 'DCDC Telemetry Point',
-        typeDescription: 'Telemetry point for DCDC',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/dcdc.json'
-    },
-/*
-    detumble_safety_factor: {
-        namespace: 'detumble.taxonomy',
-        key: 'spacecraft',
-        type: 'detumble.telemetry',
-        typeName: 'Detumbler Telemetry Point',
-        typeDescription: 'Telemetry point for the Detumbler',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/detumble.json'
-    },
-
-    docking_timeout_limit:{
-        namespace: 'docktimeout.taxonomy',
-        key: 'spacecraft',
-        type: 'docktimeout.telemetry',
-        typeName: 'Dock Timeout Telemetry Point',
-        typeDescription: 'Telemetry point for a Dock Timeout',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/docktimeout.json'
-    },
-*/
-    fault_handler:{
-        namespace: 'fault.taxonomy',
-        key: 'spacecraft',
-        type: 'fault.telemetry',
-        typeName: 'Fault Handler Telemetry Point',
-        typeDescription: 'Telemetry point for the Fault Handler',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/fault_handler.json'
-    },
-
-    trigger_dist:{
-        namespace: 'trigger.taxonomy',
-        key: 'spacecraft',
-        type: 'trigger.telemetry',
-        typeName: 'Trigger Distance Telemetry Point',
-        typeDescription: 'Telemetry point for the Trigger Distance',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/trigger_dist.json'
-    },
-
-    downlink:{
-        namespace: 'down.taxonomy',
-        key: 'spacecraft',
-        type: 'down.telemetry',
-        typeName: 'Downlink Telemetry Point',
-        typeDescription: 'Telemetry point for Downlink',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/downlink.json'
-    },
-
-    timing: {
-        namespace: 'time.taxonomy',
-        key: 'spacecraft',
-        type: 'time.telemetry',
-        typeName: 'Timing Telemetry Point',
-        typeDescription: 'Telemetry point for timing',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/timing.json'
-    },
-
-    piksi_fh: {
-        namespace: 'piksifh.taxonomy',
-        key: 'spacecraft',
-        type: 'piksifh.telemetry',
-        typeName: 'Piksi_fh Telemetry Point',
-        typeDescription: 'Telemetry point for the Piksi_fh',
-        typeCssClass: 'icon-telemetry',
-        jsonFile: '/piksi_fh.json'
     }
-
-
 
 }
 //var configs = require('./plugin-configuration.js')
@@ -295,7 +113,7 @@ function GenericPlugin(config) {
             });
             openmct.objects.addProvider(generalConfigData.namespace, {
                 get: function (identifier) {
-                    return getGeneric('subsystems/'+generalConfigData.jsonFile).then(function (generic) {
+                    return getGeneric(generalConfigData.jsonFile).then(function (generic) {
                         if (identifier.key === generalConfigData.key) {
                             return {
                                 identifier: identifier,
@@ -327,7 +145,7 @@ function GenericPlugin(config) {
                            domainObject.type === 'folder';
                 },
                 load: function (domainObject) {
-                    return getGeneric('subsystems/'+generalConfigData.jsonFile)
+                    return getGeneric(generalConfigData.jsonFile)
                         .then(function (generic) {
                             return generic.measurements.map(function (m) {
                                 return {
