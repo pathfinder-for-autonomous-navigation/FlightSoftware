@@ -8,7 +8,7 @@ import timeit
 from .cases.utils import Enums
 from .plotter import PlotterClient
 from .usb_session import USBSession
-import csv
+
 
 def USBSessionOnly(fn):
     """

@@ -5,7 +5,7 @@ import mplcursors
 from .gpstime import GPSTime
 import json
 from argparse import ArgumentParser
-import cmd, sys
+import cmd, sys, csv
 
 class StateFieldPlotter(object):
     """
@@ -174,7 +174,7 @@ class PlotterClient(cmd.Cmd):
     
     with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
         mtrwriter = csv.writer(csvfile)
-        for data in self.cmded_device.datastore.dataList:
+        for data in self.dataList:
             for key, value in data.items():
                 mtrwriter.writerow([key, value])
     print("csv file \'mtr_logs\'written to " + str(filepath))
