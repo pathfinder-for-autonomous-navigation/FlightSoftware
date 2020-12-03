@@ -12,7 +12,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     rwa_speed_rd_f("adcs_monitor.rwa_speed_rd", rwa_speed_rd_sr),
     rwa_torque_rd_sr(adcs::rwa::min_torque, adcs::rwa::max_torque, 8*3), //full res is 16*3
     rwa_torque_rd_f("adcs_monitor.rwa_torque_rd", rwa_torque_rd_sr),
-    ssa_mode_rd(0,2,2), //3 modes
+    ssa_mode_rd(2),
     ssa_mode_f("adcs_monitor.ssa_mode", ssa_mode_rd),
     ssa_vec_sr(0,1,1 + SerializerConstants::min_fvsz), //full res is 16*3
     ssa_vec_f("adcs_monitor.ssa_vec", ssa_vec_sr),
