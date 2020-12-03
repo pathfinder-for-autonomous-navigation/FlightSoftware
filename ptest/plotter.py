@@ -160,29 +160,24 @@ class PlotterClient(cmd.Cmd):
             if not field_plotted:
                 return
         plotter.display()
-    
     def do_csv(self, filepath):
-    '''
-        add measurements from a run (key,value pairs) to rows of a csv file 
-        and open file at given filepath
-        @param filepath: the location of the csv file to open
-    '''
-    
-    if len(filepath) == 0:
-        print("Need to specify a file path to put csv file (from FlightSoftware), Format: PATH/TO/FILE/")
-        return
-    
-    with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
-        mtrwriter = csv.writer(csvfile)
-<<<<<<< HEAD
-        for data in self.dataList:
-=======
-        for data in self.cmded_device.datastore.dataList:
->>>>>>> 962f0461a9849b9fd5c0c2fb44ccc4ad1905414b
-            for key, value in data.items():
-                mtrwriter.writerow([key, value])
-    print("csv file \'mtr_logs\'written to " + str(filepath))
-         
+        '''
+            add measurements from a run (key,value pairs) to rows of a csv file 
+            and open file at given filepath
+            @param filepath: the location of the csv file to open
+        '''
+        
+        #if len(filepath) == 0:
+         #   print("Need to specify a file path to put csv file (from FlightSoftware), Format: PATH/TO/FILE/")
+          #  return
+        
+        with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
+            mtrwriter = csv.writer(csvfile)
+            for data in self.dataList:
+                for key, value in data.items():
+                    mtrwriter.writerow([key, value])
+        print("csv file \'mtr_logs\'written to " + str(filepath))
+                
     
     def do_exit(self, args):
         """Exits the plotter."""

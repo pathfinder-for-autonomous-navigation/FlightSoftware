@@ -128,7 +128,7 @@ class StateCmdPrompt(Cmd):
 
         write_succeeded = "Succeeded" if write_succeeded else "Failed"
         print(f"{write_succeeded} \t\t\t\t\t\t(Completed in {elapsed_time} us)")
-
+        
     @USBSessionOnly
     def do_cycle(self, args):
         '''
