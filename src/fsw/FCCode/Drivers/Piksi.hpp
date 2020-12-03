@@ -336,6 +336,12 @@ class Piksi {
      */
     void clear_bytes();
 
+    /**
+     * @brief Called when bytes become available and records timestamp
+     *
+     */
+    void serialEvent();
+
    protected:
    #ifndef DESKTOP
     HardwareSerial &_serial_port;  // This is protected instead of private so that FakePiksi
