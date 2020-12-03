@@ -1,1 +1,1 @@
-from .simulation import MatlabSimulation, CppSimulation
+from .simulation import CppSimulation

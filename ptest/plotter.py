@@ -32,9 +32,9 @@ class StateFieldPlotter(object):
             return None
 
         suffix = None
-        if any(field.endswith(x) for x in ['w', 'x', 'y', 'z']):
+        if any(field.endswith(x) for x in ['.w', '.x', '.y', '.z']):
             suffix = field[-1]
-            field = field[0:-2]
+            field = field[0:-3]
 
         field_data = []
         
