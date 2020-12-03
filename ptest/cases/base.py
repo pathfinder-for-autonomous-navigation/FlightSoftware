@@ -22,7 +22,7 @@ class PTestCase(object):
 
         self.errored = False
         self.finished = False
-        self._devices = None
+        self.devices = None
 
     @property
     def sim_configs(self):
@@ -201,7 +201,7 @@ class SingleSatOnlyCase(PTestCase):
 
     def populate_devices(self, devices):
         self.flight_controller = devices["FlightController"]
-        self._devices = [self.flight_controller]
+        self.devices = [self.flight_controller]
 
     @property
     def fast_boot(self):
@@ -333,7 +333,7 @@ class SingleSatOnlyCase(PTestCase):
         packet["time"] = str(datetime.datetime.now())
 
         # log to datastore
-        for d in self._devices:
+        for d in self.devices:
             d.datastore.put(packet)
 
         return ret
@@ -392,7 +392,7 @@ class MissionCase(PTestCase):
     def populate_devices(self, devices):
         self.flight_controller_leader = devices["FlightControllerLeader"]
         self.flight_controller_follower = devices["FlightControllerFollower"]
-        self._devices = [self.flight_controller_leader, self.flight_controller_follower]
+        self.devices = [self.flight_controller_leader, self.flight_controller_follower]
 
     @property
     def initial_state_leader(self):
