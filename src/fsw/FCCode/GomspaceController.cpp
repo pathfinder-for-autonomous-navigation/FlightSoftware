@@ -20,18 +20,18 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     vbatt_sr(5000,9500,10), // see pg 9
     vbatt_f("gomspace.vbatt", vbatt_sr),
 
-    curin_sr(0,10,16), 
+    curin_sr(0,6,10), 
     curin1_f("gomspace.curin.output1", curin_sr),
     curin2_f("gomspace.curin.output2", curin_sr),
     curin3_f("gomspace.curin.output3", curin_sr),
 
-    cursun_sr(0,10,16), 
+    cursun_sr(0,3,10), 
     cursun_f("gomspace.cursun", cursun_sr),
 
-    cursys_sr(0,10,16), 
+    cursys_sr(0,12,10), 
     cursys_f("gomspace.cursys", cursys_sr),
 
-    curout_sr(0,10,16), 
+    curout_sr(0,12,10), 
     curout1_f("gomspace.curout.output1", curout_sr),
     curout2_f("gomspace.curout.output2", curout_sr),
     curout3_f("gomspace.curout.output3", curout_sr),
