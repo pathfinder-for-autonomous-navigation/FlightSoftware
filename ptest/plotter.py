@@ -164,20 +164,32 @@ class PlotterClient(cmd.Cmd):
         '''
             add measurements from a run (key,value pairs) to rows of a csv file 
             and open file at given filepath
+            @param args: a list of telemetry fields to record values for
+            (usage: csv pan.state cycle.auto creates a csv file with occurences of pan.state and cycle.auto)
         '''
-        
+        if len(args) == 0:
+            print("Need to specify at least one state field to plot.")
+            return
+
+        targetFields = args.split(" ")
+
         with open('mtr_logs.csv', 'a', newline='') as csvfile:
             mtrwriter = csv.writer(csvfile)
             for data in self.dataList:
-                if(
-                    data["field"] == "adcs_monitor.mag1_vec"
-                    or data["field"] == "adcs_monitor.mag2_vec"
-                    or data["field"] == "adcs_cmd.mtr_cmd"
-                ):
+                #if the field is one of our target fields, then record its data
+                if( data["field"] in targetFields):
                     valueList = data["val"].split(",")
-                    timeList = data["time"].split(" ")
-                    timeHours = timeList[1].split(":")
-                    timeSeconds = str(timeHours[2])
+
+                #Time Guide (put in first argument of writerow() )
+                # Full date + time: use data["time"]
+                # Just the time in hr/min/sec: use timeList
+                # Just the time in minutes: use timeMin
+                # Just the time in seconds: use timeSeconds
+                # Just the time in milliseconds: use timeMS
+                    timeList = data["time"].split(" ")[1]
+                    timeMin = str(timeList.split(":")[1] + ":" + timeList.split(":")[2])
+                    timeSeconds = str(timeList.split(":")[2])
+                    timeMS = timeSeconds.split(".")[1]
                     mtrwriter.writerow([timeSeconds,data["field"],valueList[0],valueList[1],valueList[2] ] )
         print("csv file \'mtr_logs\'written to root")
                 
