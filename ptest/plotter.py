@@ -160,23 +160,23 @@ class PlotterClient(cmd.Cmd):
             if not field_plotted:
                 return
         plotter.display()
-    def do_csv(self, filepath):
+    def do_csv(self):
         '''
             add measurements from a run (key,value pairs) to rows of a csv file 
             and open file at given filepath
-            @param filepath: the location of the csv file to open
         '''
-        
-        #if len(filepath) == 0:
-         #   print("Need to specify a file path to put csv file (from FlightSoftware), Format: PATH/TO/FILE/")
-          #  return
         
         with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
             mtrwriter = csv.writer(csvfile)
             for data in self.dataList:
-                for key, value in data.items():
-                    mtrwriter.writerow([key, value])
-        print("csv file \'mtr_logs\'written to " + str(filepath))
+                if(
+                    data["field"] == "adcs_monitor.mag1_vec"
+                    or data["field"] == "adcs_monitor.mag2_vec"
+                    or data["field"] == "adcs_cmd.mtr_cmd"
+                ):
+                    valueList = data["val"].split(",")
+                    mtrwriter.writerow([data["time"],data["field"],valueList[0],valueList[1],valueList[2] ] )
+        print("csv file \'mtr_logs\'written to root" + str(filepath))
                 
     
     def do_exit(self, args):
