@@ -166,7 +166,7 @@ class PlotterClient(cmd.Cmd):
             and open file at given filepath
         '''
         
-        with open(str(filepath) + 'mtr_logs.csv', 'a', newline='') as csvfile:
+        with open('mtr_logs.csv', 'a', newline='') as csvfile:
             mtrwriter = csv.writer(csvfile)
             for data in self.dataList:
                 if(
@@ -176,7 +176,7 @@ class PlotterClient(cmd.Cmd):
                 ):
                     valueList = data["val"].split(",")
                     mtrwriter.writerow([data["time"],data["field"],valueList[0],valueList[1],valueList[2] ] )
-        print("csv file \'mtr_logs\'written to root" + str(filepath))
+        print("csv file \'mtr_logs\'written to root")
                 
     
     def do_exit(self, args):
