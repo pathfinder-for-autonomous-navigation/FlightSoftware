@@ -160,7 +160,7 @@ class PlotterClient(cmd.Cmd):
             if not field_plotted:
                 return
         plotter.display()
-    def do_csv(self):
+    def do_csv(self, args):
         '''
             add measurements from a run (key,value pairs) to rows of a csv file 
             and open file at given filepath
@@ -175,7 +175,10 @@ class PlotterClient(cmd.Cmd):
                     or data["field"] == "adcs_cmd.mtr_cmd"
                 ):
                     valueList = data["val"].split(",")
-                    mtrwriter.writerow([data["time"],data["field"],valueList[0],valueList[1],valueList[2] ] )
+                    timeList = data["time"].split(" ")
+                    timeHours = timeList[1].split(":")
+                    timeSeconds = str(timeHours[2])
+                    mtrwriter.writerow([timeSeconds,data["field"],valueList[0],valueList[1],valueList[2] ] )
         print("csv file \'mtr_logs\'written to root")
                 
     
