@@ -10,7 +10,9 @@
 // Cornell Univeristy
 //
 
-// TODO : Determine imu read transformations
+/* See pull request #563 on pathfinder-for-autonomous-navigation/FlightSoftware
+ * for notes/documentation on how the sensor frames were determined.
+ */
 
 #ifndef SRC_ADCS_IMU_CONFIG_HPP_
 #define SRC_ADCS_IMU_CONFIG_HPP_
