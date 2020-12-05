@@ -46,57 +46,27 @@ static unsigned long const mag2_timeout = mag1_timeout;
 /** Transformation matrix from the gyroscope's coordinate system to the body
  *  frame of the spacecraft. */
 static lin::Matrix3x3f const gyr_to_body(
-#if defined(PAN_LEADER)
   {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
+    1.0, 0.0,  0.0,
+    0.0, 0.0, -1.0,
+    0.0, 1.0,  0.0
   }
-#elif defined(PAN_FOLLOWER)
-  {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
-  }
-#else
-static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
-#endif
 );
 
 static lin::Matrix3x3f const mag1_to_body(
-#if defined(PAN_LEADER)
   {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
+    1.0,  0.0,  0.0,
+    0.0,  0.0, -1.0,
+    0.0, -1.0,  0.0
   }
-#elif defined(PAN_FOLLOWER)
-  {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
-  }
-#else
-static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
-#endif
 );
 
 static lin::Matrix3x3f const mag2_to_body(
-#if defined(PAN_LEADER)
   {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
+     0.0, 1.0, 0.0,
+     0.0, 0.0, 1.0,
+    -1.0, 0.0, 0.0
   }
-#elif defined(PAN_FOLLOWER)
-  {
-    1.0f, 0.0f, 0.0f,
-    0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 1.0f
-  }
-#else
-static_assert(false, "Must define PAN_LEADER or PAN_FOLLOWER");
-#endif
 );
 }  // namespace imu
 }  // namespace adcs
