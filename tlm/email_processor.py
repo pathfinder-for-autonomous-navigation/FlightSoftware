@@ -143,14 +143,7 @@ class IridiumEmailProcessor(object):
                                     if line.find("MTMSN")!=-1:
                                         self.mtmsn=int(line[line.find("MTMSN")+9:line.find("MTMSN")+11])
 
-                            #Set whether or not RadioSession can send uplinks
-                            if self.confirmation_mtmsn != self.mtmsn and not self.first_uplink:
-                                #stop radio session from sending any more uplinks
-                                self.send_uplinks=False
-                            else:
-                                #allow radio session to send more uplinks
-                                self.first_uplink = False
-                                self.send_uplinks=True
+                            self.set_send_uplinks()
 
                         # Record that we just recieved an uplink confirmation
                         self.recieved_uplink_confirmation=True
@@ -182,13 +175,7 @@ class IridiumEmailProcessor(object):
                                     if line.find("MTMSN")!=-1:
                                         self.confirmation_mtmsn=int(line[7:])
                             
-                            #Set whether or not radioSession can send uplinks
-                            if self.confirmation_mtmsn != self.mtmsn:
-                                #stop radio session from sending any more uplinks
-                                self.send_uplinks=False
-                            else:
-                                #allow radio session to send more uplinks
-                                self.send_uplinks=True
+                            self.set_send_uplinks()
 
                             # Check if there is an email attachment
                             if part.get_filename() is not None:
@@ -198,6 +185,17 @@ class IridiumEmailProcessor(object):
                         
                     #if we have not recieved a downlink, return None
                     return None
+
+    def set_send_uplinks(self):
+        #Set whether or not radioSession can send uplinks
+
+        if self.confirmation_mtmsn != self.mtmsn and not self.first_uplink:
+            #stop radio session from sending any more uplinks
+            self.send_uplinks=False
+        else:
+            #allow radio session to send more uplinks
+            self.first_uplink=True
+            self.send_uplinks=True
 
     def create_iridium_report(self):
         '''
