@@ -209,13 +209,13 @@ void ADCSBoxMonitor::execute(){
     ssa_mode_f.set(ssa_mode);
 
     //populate components
-    rwa_speed_rd_x_f.set(rwa_speed[0]);
-    rwa_speed_rd_y_f.set(rwa_speed[1]);
-    rwa_speed_rd_z_f.set(rwa_speed[2]);
+    rwa_speed_rd_x_f.set(rwa_speed_rd[0]);
+    rwa_speed_rd_y_f.set(rwa_speed_rd[1]);
+    rwa_speed_rd_z_f.set(rwa_speed_rd[2]);
 
-    rwa_torque_rd_x_f.set(rwa_torque[0]);
-    rwa_torque_rd_y_f.set(rwa_torque[1]);
-    rwa_torque_rd_z_f.set(rwa_torque[2]);
+    rwa_torque_rd_x_f.set(rwa_torque_rd[0]);
+    rwa_torque_rd_y_f.set(rwa_torque_rd[1]);
+    rwa_torque_rd_z_f.set(rwa_torque_rd[2]);
 
     mag1_vec_x_f.set(mag1_vec[0]);
     mag1_vec_y_f.set(mag1_vec[1]);
