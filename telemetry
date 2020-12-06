@@ -5,14 +5,14 @@
         "pan.bootcount": 1000,
         "pan.deployed": 1000,
         "pan.deployment.elapsed": 500,
-        "pan.sat_designation": 100,
-        "pan.state": 10
+        "pan.sat_designation": 1,
+        "pan.state": 1
     },
     "fields": {
         "adcs.state": {
             "bitsize": 4,
             "flow_id": 13,
-            "max": 9,
+            "max": 10,
             "min": 0,
             "type": "unsigned char",
             "writable": true
@@ -414,8 +414,8 @@
         "adcs_monitor.gyr_temp": {
             "bitsize": 8,
             "flow_id": 24,
-            "max": 3.299999952316284,
-            "min": 0.0,
+            "max": 153.0,
+            "min": -103.0,
             "type": "float",
             "writable": false
         },
@@ -620,7 +620,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage0": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -628,7 +628,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage1": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -636,7 +636,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage10": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -644,7 +644,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage11": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -652,7 +652,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage12": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -660,7 +660,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage13": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -668,7 +668,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage14": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -676,7 +676,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage15": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -684,7 +684,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage16": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -692,7 +692,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage17": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -700,7 +700,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage18": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -708,7 +708,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage19": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -716,7 +716,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage2": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -724,7 +724,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage3": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -732,7 +732,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage4": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -740,7 +740,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage5": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -748,7 +748,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage6": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -756,7 +756,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage7": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -764,7 +764,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage8": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -772,7 +772,7 @@
             "writable": false
         },
         "adcs_monitor.ssa_voltage9": {
-            "bitsize": 8,
+            "bitsize": 12,
             "flow_id": 25,
             "max": 3.299999952316284,
             "min": 0.0,
@@ -1154,89 +1154,89 @@
             "writable": false
         },
         "gomspace.curin.output1": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 9,
-            "max": 10,
+            "max": 6000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.curin.output2": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 9,
-            "max": 10,
+            "max": 6000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.curin.output3": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 9,
-            "max": 10,
+            "max": 6000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.curout.output1": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 10,
-            "max": 10,
+            "max": 12000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.curout.output2": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 10,
-            "max": 10,
+            "max": 12000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.curout.output3": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 10,
-            "max": 10,
+            "max": 12000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.curout.output4": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 10,
-            "max": 10,
+            "max": 12000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.curout.output5": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 10,
-            "max": 10,
+            "max": 12000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.curout.output6": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 10,
-            "max": 10,
+            "max": 12000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.cursun": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 9,
-            "max": 10,
+            "max": 3000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
         },
         "gomspace.cursys": {
-            "bitsize": 16,
+            "bitsize": 10,
             "flow_id": 9,
-            "max": 10,
+            "max": 12000,
             "min": 0,
             "type": "unsigned int",
             "writable": false
