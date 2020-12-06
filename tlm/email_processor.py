@@ -51,6 +51,7 @@ class IridiumEmailProcessor(object):
         check the PAN email and post reports to 
         elasticsearch 
         '''
+        self.create_iridium_report()
         self.check_email_thread = threading.Thread(target=self.post_to_es)
         self.run_email_thread = True
         self.check_email_thread.start()
@@ -108,7 +109,7 @@ class IridiumEmailProcessor(object):
         mail_ids = data[0]
         id_list = mail_ids.split()
 
-        print(self.confirmation_mtmsn, self.mtmsn, self.first_uplink, self.send_uplinks)
+        print(self.confirmation_mtmsn, self.mtmsn, self.send_uplinks)
 
         for num in id_list:
             #.fetch() fetches the mail for given id where 'RFC822' is an Internet 
