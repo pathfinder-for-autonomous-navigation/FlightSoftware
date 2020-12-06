@@ -1,7 +1,12 @@
-from .base import SingleSatOnlyCase, TestCaseFailure
+from .base import SingleSatOnlyCase
 from .utils import Enums
 
 class ActuateHardwareCase(SingleSatOnlyCase):
+    def setup_hardware(self):
+        self.docking_spin_motor_setup()
+        self.prop_valves_setup()
+        self.adcs_spin_wheels_setup()
+
     def adcs_spin_wheels_setup(self):
         self.logger.put("Begin ADCS Motor Setup")
         self.ws("dcdc.ADCSMotor_cmd", True)
@@ -54,9 +59,7 @@ class ActuateHardwareCase(SingleSatOnlyCase):
 class HardwareStressCheckoutCase(ActuateHardwareCase):
     def setup_post_bootsetup(self):
         self.print_header("Begin Hardware Stress Test Checkout Case")
-        self.docking_spin_motor_setup()
-        self.prop_valves_setup()
-        self.adcs_spin_wheels_setup()
+        self.setup_hardware()
         self.cycle()
 
     def run_case_singlesat(self):

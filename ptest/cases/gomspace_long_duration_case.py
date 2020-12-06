@@ -1,13 +1,11 @@
-from .base import SingleSatOnlyCase, TestCaseFailure
+from .base import SingleSatOnlyCase
 from .utils import Enums
 from .hardware_stress_test_case import ActuateHardwareCase
 
 class GomspaceLongDurationCheckoutCase(ActuateHardwareCase):
     def setup_post_bootsetup(self):
         self.print_header("Begin Gomspace Long Duration Checkout Case")
-        self.docking_spin_motor_setup()
-        self.prop_valves_setup()
-        self.adcs_spin_wheels_setup()
+        self.setup_hardware()
         self.cycle()
 
     def run_case_singlesat(self):
