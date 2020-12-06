@@ -22,11 +22,10 @@ class IridiumEmailProcessor(object):
         #updates MOMSN and MTMSN numbers sent/recieved
         self.momsn=-1
         self.mtmsn=-1
-        self.first_uplink=True
         self.confirmation_mtmsn=-1
 
         #send_uplinks, keeps track of if the ground can send more uplinks. This allows us to make sure we are only sending one uplink at a time.
-        self.send_uplinks=False
+        self.send_uplinks=True
         self.recieved_uplink_confirmation=False
 
         #imei number of the radio that sent the most recent email
@@ -189,12 +188,11 @@ class IridiumEmailProcessor(object):
     def set_send_uplinks(self):
         #Set whether or not radioSession can send uplinks
 
-        if self.confirmation_mtmsn != self.mtmsn and not self.first_uplink:
+        if self.confirmation_mtmsn != self.mtmsn:
             #stop radio session from sending any more uplinks
             self.send_uplinks=False
         else:
             #allow radio session to send more uplinks
-            self.first_uplink=True
             self.send_uplinks=True
 
     def create_iridium_report(self):
