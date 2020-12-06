@@ -13,8 +13,10 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
     current_state_f("piksi.state", Serializer<unsigned char>(10)),
     fix_error_count_f("piksi.fix_error_count", Serializer<unsigned int>(1001)),
     time_f("piksi.time", Serializer<gps_time_t>()),
+    sendtime_f("piksi.time", Serializer<gps_time_t>()),
     last_fix_time_f("piksi.last_fix_time"),
-    last_rtkfix_ccno_f("piksi.last_rtkfix_ccno")
+    last_rtkfix_ccno_f("piksi.last_rtkfix_ccno"),
+    no_bytes_available_f("piksi.bytes_available")
     {
         add_readable_field(pos_f);
         add_readable_field(vel_f);
@@ -22,8 +24,10 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         add_readable_field(current_state_f);
         add_readable_field(fix_error_count_f);
         add_readable_field(time_f);
+        add_readable_field(sendtime_f);
         add_internal_field(last_fix_time_f);
         add_internal_field(last_rtkfix_ccno_f);
+        add_internal_field(no_bytes_available_f);
 
         //register callbacks and begin the serial port
         piksi.setup();
@@ -35,10 +39,13 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
         vel_f.set({nan, nan, nan});
         baseline_pos_f.set({nan, nan, nan});
         last_rtkfix_ccno_f.set(0);
+        no_bytes_available_f.set(true);
     }
 
 void PiksiControlTask::execute()
 {
+    serialEvent();
+
     int read_out = piksi.read_all();
 
     //4 means no bytes
@@ -98,7 +105,7 @@ void PiksiControlTask::execute()
 
         if(!check_time){
             //error caused by times not matching up
-            //indicitave of getting only part of the next scream
+            //indicative of getting only part of the next scream
 
             current_state_f.set(static_cast<unsigned int>(piksi_mode_t::sync_error));
             return;
@@ -112,7 +119,7 @@ void PiksiControlTask::execute()
 
         if(read_out == 0) {
             current_state_f.set(static_cast<unsigned int>(piksi_mode_t::spp));
-            last_fix_time_f.set(get_system_time());
+            last_fix_time_f.set(get_system_time()); //Time is not now, but this was in the past.
         }
         if(read_out == 1){
             int baseline_flag = piksi.get_baseline_ecef_flags();
@@ -146,4 +153,22 @@ void PiksiControlTask::execute()
         current_state_f.set(static_cast<unsigned int>(piksi_mode_t::data_error));
         return;
     }
+}
+
+void PiksiControlTask::serialEvent()
+{
+    //currently no bytes available
+    bool not_available_temp = piksi.bytes_available() == 0;
+
+    // bytes have just started becoming available
+    if (!not_available_temp && no_bytes_available_f) 
+    {
+        piksi.get_gps_time(&msg_time);
+        time = gps_time_t(msg_time);
+
+        // sendtime = time that bytes start become available
+        sendtime_f.set(time);
+    }
+
+    no_bytes_available_f = not_available_temp;
 }

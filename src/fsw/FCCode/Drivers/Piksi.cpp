@@ -331,11 +331,6 @@ void Piksi::clear_bytes() {
     #endif
     }
 
-void Piksi::serialEvent() {
-
-}
-
-
 u32 Piksi::_uart_read(u8 *buff, u32 n, void *context) {
     #ifndef DESKTOP
     Piksi *piksi = (Piksi *)context;
