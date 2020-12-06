@@ -24,7 +24,7 @@ MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset
                                                                                     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
                                                                                     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
                                                                                     enter_docking_cycle_f("docksys.enter_docking"),
-                                                                                    mission_state_f("pan.state", Serializer<unsigned char>(12), 10),
+                                                                                    mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
                                                                                     is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
                                                                                     deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
                                                                                     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100),
