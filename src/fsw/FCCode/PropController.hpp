@@ -27,6 +27,18 @@ class PropController : public TimedControlTask<void>
 public:
     PropController(StateFieldRegistry &registry, unsigned int offset);
 
+    TRACKED_CONSTANT(unsigned int, orbit_ccno, PAN::one_day_ccno*(96)/(24*60));
+
+    TRACKED_CONSTANT(unsigned int, max_venting_cycles_ic, 20);
+    TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
+    TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_filling_period_ic, 1000 / PAN::control_cycle_time_ms);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_cooling_period_ic, 10 * 1000 / PAN::control_cycle_time_ms);
+
+    TRACKED_CONSTANT(unsigned int, tank1_valve_choice_ic, 0);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_close_period_ic, 1000 / PAN::control_cycle_time_ms);
+
+
     // ------------------------------------------------------------------------
     // Input Fields
     // ------------------------------------------------------------------------
