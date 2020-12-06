@@ -189,7 +189,7 @@ class IridiumEmailProcessor(object):
     def set_send_uplinks(self):
         #Set whether or not radioSession can send uplinks
 
-        if self.confirmation_mtmsn != self.mtmsn:
+        if self.confirmation_mtmsn < self.mtmsn:
             #stop radio session from sending any more uplinks
             self.send_uplinks=False
         else:
