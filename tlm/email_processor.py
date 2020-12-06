@@ -173,8 +173,10 @@ class IridiumEmailProcessor(object):
                                     if line.find("MOMSN")!=-1:
                                         self.momsn=int(line[7:])
                                     if line.find("MTMSN")!=-1:
-                                        self.confirmation_mtmsn=int(line[7:])
-                            
+                                        mtmsn = int(line[7:])
+                                        if mtmsn != 0:
+                                            self.confirmation_mtmsn = mtmsn
+
                             self.set_send_uplinks()
 
                             # Check if there is an email attachment
