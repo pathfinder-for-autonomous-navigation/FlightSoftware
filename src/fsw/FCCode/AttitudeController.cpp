@@ -223,8 +223,13 @@ void AttitudeController::calculate_pointing_controller() {
 
     // Call the controller and write results to appropriate state fields
     control_pointing(pointer_state, pointer_data, pointer_actuation);
+
+    // the output of GNC is a desired torque to the spacecraft, so we invert the command
+    // to obtain a torque to the wheels to effect the original command
+    pointer_actuation.rwa_body_cmd = -1*pointer_actuation.rwa_body_cmd;
+
     if (lin::all(lin::isfinite(pointer_actuation.mtr_body_cmd) && lin::isfinite(pointer_actuation.rwa_body_cmd))) {
         m_body_cmd_f.set(pointer_actuation.mtr_body_cmd);
-        t_body_cmd_f.set(-1*pointer_actuation.rwa_body_cmd);
+        t_body_cmd_f.set(pointer_actuation.rwa_body_cmd);
     }
 }
