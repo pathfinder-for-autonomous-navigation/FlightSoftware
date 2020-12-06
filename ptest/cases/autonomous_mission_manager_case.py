@@ -60,8 +60,7 @@ class AutonomousMissionManagerCase(MissionCase):
         return float("inf")
 
     def setup_post_bootsetup_follower(self):
-        self.using_radios = self.radio_follower != None
-        #self.leader = self.radio_leader if self.using_radios else self.flight_controller_leader
+        self.using_radios = self.radio_follower != None #assumes only using one physical radio
         self.leader = self.flight_controller_leader
         self.follower = self.radio_follower if self.using_radios else self.flight_controller_follower
 
@@ -101,7 +100,7 @@ class AutonomousMissionManagerCase(MissionCase):
             
             
             
-            #TODO propograte orbits from the data -> how to verify precision?      
+            #TODO propagate orbits from the data -> how to verify precision?      
  
 
 
