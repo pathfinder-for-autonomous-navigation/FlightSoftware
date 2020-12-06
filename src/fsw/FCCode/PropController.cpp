@@ -11,27 +11,27 @@
 
 PropController::PropController(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "prop", offset),
-      prop_state_f("prop.state", Serializer<unsigned int>(6)),
-      cycles_until_firing("prop.cycles_until_firing", Serializer<unsigned int>(256)),
+      prop_state_f("prop.state", Serializer<unsigned int>(9)),
+      cycles_until_firing("prop.cycles_until_firing", Serializer<unsigned int>(orbit_ccno)),
       sched_valve1_f("prop.sched_valve1", Serializer<unsigned int>(999)),
       sched_valve2_f("prop.sched_valve2", Serializer<unsigned int>(999)),
       sched_valve3_f("prop.sched_valve3", Serializer<unsigned int>(999)),
       sched_valve4_f("prop.sched_valve4", Serializer<unsigned int>(999)),
-      sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(999 * 1000)),
-      sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(999 * 1000)),
+      sched_intertank1_f("prop.sched_intertank1", Serializer<unsigned int>(2000)),
+      sched_intertank2_f("prop.sched_intertank2", Serializer<unsigned int>(2000)),
 
       max_venting_cycles("prop.max_venting_cycles", Serializer<unsigned int>(50)),
       ctrl_cycles_per_close_period("prop.ctrl_cycles_per_closing", Serializer<unsigned int>(50)),
 
       max_pressurizing_cycles("prop.max_pressurizing_cycles", Serializer<unsigned int>(50)),
-      threshold_firing_pressure("prop.threshold_firing_pressure", Serializer<float>(10, 50, 4)),
-      ctrl_cycles_per_filling_period("prop.ctrl_cycles_per_filling", Serializer<unsigned int>(50)),
-      ctrl_cycles_per_cooling_period("prop.ctrl_cycles_per_cooling", Serializer<unsigned int>(50)),
+      threshold_firing_pressure("prop.threshold_firing_pressure", Serializer<float>(10, 50, 6)),
+      ctrl_cycles_per_filling_period("prop.ctrl_cycles_per_filling", Serializer<unsigned int>(25)),
+      ctrl_cycles_per_cooling_period("prop.ctrl_cycles_per_cooling", Serializer<unsigned int>(100)),
       tank1_valve("prop.tank1.valve_choice", Serializer<unsigned int>(1)),
-
-      tank2_pressure_f("prop.tank2.pressure", Serializer<float>(0, 150, 4)),
-      tank2_temp_f("prop.tank2.temp", Serializer<float>(-200, 200, 4)),
-      tank1_temp_f("prop.tank1.temp", Serializer<float>(-200, 200, 4)),
+      tank2_pressure_f("prop.tank2.pressure", Serializer<float>(0, 150, 8)),
+      // https://docs.google.com/spreadsheets/d/11-WSDgYckQGl1wP8uMO4zKPSDAdWwGQj/edit#gid=422064948
+      tank2_temp_f("prop.tank2.temp", Serializer<float>(-60, 155, 8)),
+      tank1_temp_f("prop.tank1.temp", Serializer<float>(-60, 155, 8)),
       num_prop_firings_f("prop.num_prop_firings", Serializer<unsigned int>()),
 
       // We must trust the pressure sensor.
@@ -70,15 +70,6 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
     add_fault(overpressure_fault_f);
     add_fault(tank2_temp_high_fault_f);
     add_fault(tank1_temp_high_fault_f);
-
-    TRACKED_CONSTANT(unsigned int, max_venting_cycles_ic, 20);
-    TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
-    TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
-    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_filling_period_ic, 1000 / PAN::control_cycle_time_ms);
-    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_cooling_period_ic, 10 * 1000 / PAN::control_cycle_time_ms);
-
-    TRACKED_CONSTANT(unsigned int, tank1_valve_choice_ic, 0);
-    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_close_period_ic, 1000 / PAN::control_cycle_time_ms);
 
     max_pressurizing_cycles.set(max_pressurizing_cycles_ic);
     max_venting_cycles.set(max_venting_cycles_ic);

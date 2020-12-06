@@ -1,6 +1,5 @@
 #include "../StateFieldRegistryMock.hpp"
 #include <fsw/FCCode/OrbitController.hpp>
-#include <fsw/FCCode/prop_planner_state_t.enum>
 #include "../custom_assertions.hpp"
 
 class TestFixture {
@@ -17,7 +16,6 @@ class TestFixture {
         std::unique_ptr<OrbitController> orbit_controller;
 
         // Outputs of orbit controller
-        std::shared_ptr<ReadableStateField<unsigned char>> prop_planner_state_fp;
         WritableStateField<unsigned int>* sched_valve1_fp;
         WritableStateField<unsigned int>* sched_valve2_fp;
         WritableStateField<unsigned int>* sched_valve3_fp;
@@ -30,7 +28,6 @@ class TestFixture {
                 vel_fp = registry.create_readable_lin_vector_field<double>("orbit.vel", 0, 0, 100);
                 baseline_pos_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_pos", 0, 0, 100);
                 baseline_vel_fp = registry.create_readable_lin_vector_field<double>("orbit.baseline_vel", 0, 0, 100);
-                prop_planner_state_fp = registry.create_readable_field<unsigned char>("prop.planner.state", 0);
 
                 orbit_controller = std::make_unique<OrbitController>(registry, 0);  
 
