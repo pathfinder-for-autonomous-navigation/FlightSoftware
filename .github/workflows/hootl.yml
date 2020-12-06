@@ -37,11 +37,29 @@ jobs:
         pip install -r requirements.txt
         platformio update
 
+    - name: Install Bazel
+      run: |
+        sudo apt install curl gnupg
+        curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel.gpg
+        sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
+        echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
+        sudo apt install bazel
+
+    - name: Install Psim
+      run: |
+        pip install -e lib/common/psim
+
     - name: CI Checkout Case and Empty case
       run: |
         python -m ptest runsim -c ptest/configs/ci.json -t CICase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t EmptyCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t EmptySimCase -ni
         !(python -m ptest runsim -c ptest/configs/ci.json -t FailingEmptyCase -ni)
+        !(python -m ptest runsim -c ptest/configs/ci.json -t FailingEmptySimCase -ni)
+
+    - name: Pre-Integration Cases
+      run: |
+        python -m ptest runsim -c ptest/configs/ci.json -t PrepForCharging -ni
 
     - name: Hardware Checkout Cases
       run: |
@@ -57,6 +75,9 @@ jobs:
         python -m ptest runsim -c ptest/configs/ci.json -t ADCSWheelFaultHandler -ni
         python -m ptest runsim -c ptest/configs/ci.json -t LowBattFaultHandler -ni
 
+    # Add quake and piksi fault handler to the above once completed.
+
     - name: Mission Checkout Cases
       run: |
-        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToInitHold -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t DeploymentToStandby -ni

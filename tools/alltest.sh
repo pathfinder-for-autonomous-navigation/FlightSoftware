@@ -11,7 +11,7 @@ time python -m ptest runsim --clean -c ptest/configs/ci.json -t PropStateMachine
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t SpinMotorsCase -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t ADCSCheckoutCase -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t PiksiCheckoutCase -ni
-time python -m ptest runsim --clean -c ptest/configs/ci.json -t DeploymentToInitHoldCheckoutCase -ni
+time python -m ptest runsim --clean -c ptest/configs/ci.json -t DeploymentToInitHold -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t CICase -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t QuakeFaultHandler_Fast -ni
 time python -m ptest runsim --clean -c ptest/configs/ci.json -t PiksiFaultHandler_Fast -ni

@@ -4,9 +4,9 @@ import math
 import threading
 import traceback
 from .utils import BootUtil, Enums, TestCaseFailure
-from ..psim import MatlabSimulation
-
-# Base classes for writing testcases.
+import psim # the actual python psim repo
+import lin
+import datetime
 
 class PTestCase(object):
     """
@@ -22,19 +22,48 @@ class PTestCase(object):
 
         self.errored = False
         self.finished = False
+        self.devices = None
 
-    def sim_implementation(self, *args, **kwargs):
-        """
-        Choice of sim implementation for this testcase.
-        The default is the matlab simulation.
-        """
-        return MatlabSimulation(*args, **kwargs)
+    @property
+    def sim_configs(self):
+        '''
+        The parameter files from psim
+        '''
+        return []
+
+    @property
+    def sim_model(self):
+        '''
+        The psim simulation model
+        '''
+        return None
+
+    @property
+    def sim_mapping(self):
+        '''
+        Json file name that contains the mappings desired
+        '''
+        return None
+
+    @property
+    def debug_to_console(self):
+        '''
+        Default false, set to true if you want debug output from flight computer piped to console
+        '''
+        return False
+
+    @property 
+    def suppress_faults(self):
+        '''
+        If true, faults will be suppressed on boot. Default True.
+        '''
+        return True
 
     @property
     def sim_duration(self):
         """
-        Returns the duration that the MATLAB simulation to run. If set to zero, the MATLAB
-        simulation will not start.
+        Returns the duration of the simulation to run. If set to zero, the
+        simulation will not start. sim_duration is measured in seconds.
 
         Usual values of this field are either 0 or float("inf").
         """
@@ -83,9 +112,19 @@ class PTestCase(object):
                 self.logger.put(f"Device #{x}, {Enums.havt_devices[x]} is not functional")
 
     def setup_case(self, devices):
+        '''
+        Entry point for simulation creation
+        '''
         self.populate_devices(devices)
+
+        for dev_name,device in devices.items():
+            device.case_interaction_setup(self.debug_to_console)
+
         if self.sim_duration > 0:
-            self.sim = self.sim_implementation(self.is_interactive, devices, self.random_seed, self, self.sim_duration, self.sim_initial_state, isinstance(self, SingleSatOnlyCase))
+            from ..psim import CppSimulation # Lazy import
+            self.sim = CppSimulation(self.is_interactive, devices, 
+            self.random_seed, self, self.sim_duration, self.sim_initial_state, 
+            isinstance(self, SingleSatOnlyCase), self.sim_configs, self.sim_model, self.sim_mapping)
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()
@@ -162,6 +201,7 @@ class SingleSatOnlyCase(PTestCase):
 
     def populate_devices(self, devices):
         self.flight_controller = devices["FlightController"]
+        self.devices = [self.flight_controller]
 
     @property
     def fast_boot(self):
@@ -179,7 +219,9 @@ class SingleSatOnlyCase(PTestCase):
         self.flight_controller.write_state("fault_handler.enabled", "false")
         self.one_day_ccno = self.flight_controller.smart_read("pan.one_day_ccno")
 
-        self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, self.fast_boot, self.one_day_ccno)
+        self.boot_util = BootUtil(self.flight_controller, self.logger, self.initial_state, 
+            self.fast_boot, self.one_day_ccno, self.suppress_faults)
+
         self.boot_util.setup_boot()
         self.setup_post_bootsetup()
 
@@ -269,7 +311,40 @@ class SingleSatOnlyCase(PTestCase):
         ret = self.rs(name)
         self.logger.put(f"{name} is {ret}")
         return ret
-    
+
+    def rs_psim(self, name):
+        '''
+        Read a psim state field with <name>, log to datastore, and return the python value
+        '''
+        ret = self.sim.mysim.get(name)
+        if(ret is None):
+            raise NameError(f"ptest read failed: psim state field {name} does not exist!")
+        
+        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
+            ret = list(ret)
+        
+        stripped = str(ret).strip("[]").replace(" ","")+","
+        
+        packet = {}
+        
+        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
+        packet["field"] = name
+        packet["val"] = stripped
+        packet["time"] = str(datetime.datetime.now())
+
+        # log to datastore
+        for d in self.devices:
+            d.datastore.put(packet)
+
+        return ret
+
+    def print_rs_psim(self, name):
+        '''
+        Read a psim state field with <name>, log to datastore, print to console and return the python value
+        '''
+        ret = self.rs_psim(name)
+        self.logger.put(f"{name} is {ret}")
+
     def ws(self, name, val):
         """
         Writes a state
@@ -317,6 +392,7 @@ class MissionCase(PTestCase):
     def populate_devices(self, devices):
         self.flight_controller_leader = devices["FlightControllerLeader"]
         self.flight_controller_follower = devices["FlightControllerFollower"]
+        self.devices = [self.flight_controller_leader, self.flight_controller_follower]
 
     @property
     def initial_state_leader(self):
@@ -335,8 +411,15 @@ class MissionCase(PTestCase):
     def _setup_case(self):
         self.setup_pre_bootsetup_leader()
         self.setup_pre_bootsetup_follower()
-        self.boot_util_leader = BootUtil(self.flight_controller_leader, self.logger, self.initial_state_leader, self.fast_boot_leader)
-        self.boot_util_follower = BootUtil(self.flight_controller_follower, self.logger, self.initial_state_follower, self.fast_boot_follower)
+        self.one_day_ccno_leader = self.flight_controller_leader.smart_read("pan.one_day_ccno")
+        self.one_day_ccno_follower = self.flight_controller_follower.smart_read("pan.one_day_ccno")
+
+        self.boot_util_leader = BootUtil(
+            self.flight_controller_leader, self.logger, self.initial_state_leader, 
+            self.fast_boot_leader, self.one_day_ccno_leader, self.suppress_faults)
+        self.boot_util_follower = BootUtil(
+            self.flight_controller_follower, self.logger, self.initial_state_follower, 
+            self.fast_boot_follower, self.one_day_ccno_follower, self.suppress_faults)
         self.boot_util_leader.setup_boot()
         self.boot_util_follower.setup_boot()
         self.setup_post_bootsetup_leader()
