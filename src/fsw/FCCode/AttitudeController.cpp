@@ -225,6 +225,6 @@ void AttitudeController::calculate_pointing_controller() {
     control_pointing(pointer_state, pointer_data, pointer_actuation);
     if (lin::all(lin::isfinite(pointer_actuation.mtr_body_cmd) && lin::isfinite(pointer_actuation.rwa_body_cmd))) {
         m_body_cmd_f.set(pointer_actuation.mtr_body_cmd);
-        t_body_cmd_f.set(pointer_actuation.rwa_body_cmd);
+        t_body_cmd_f.set(-1*pointer_actuation.rwa_body_cmd);
     }
 }

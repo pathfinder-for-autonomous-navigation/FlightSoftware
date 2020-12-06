@@ -304,10 +304,15 @@ class BootUtil(object):
         return self.boot_stage
 
     def finished_boot(self):
-        if self.fast_boot:
-            self.flight_controller.write_state("pan.state", Enums.mission_states[self.desired_boot_state])
+        if self.finished:
             return True
-        elif self.finished:
+        elif self.fast_boot:
+            self.flight_controller.write_state("pan.state", Enums.mission_states[self.desired_boot_state])
+            if(self.desired_boot_state == "standby"):
+                mode = "point_standby"
+                self.logger.put(f"[TESTCASE] Fast Boot: Setting ADCS to {mode} state.")
+                self.flight_controller.write_state("adcs.state", Enums.adcs_states[mode])
+            self.finished = True
             return True
         else: 
             return self.run_boot_sequence() == self.desired_boot_state
