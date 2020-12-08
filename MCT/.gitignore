@@ -1,4 +1,5 @@
+# node modules
 node_modules
 
-cert.pem
-key.pem
+# certificates
+*.pem

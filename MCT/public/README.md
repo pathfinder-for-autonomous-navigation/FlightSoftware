@@ -3,7 +3,16 @@
 Telemetry is stored as a JSON object with three basic fields:
 1. name - name of the telemetry object (satellite, battery, etc.)
 2. key - the accessible key value for the telemetry object that is used by the plugins to access its data
-3. measurements - all of the telemetry points on the given telemetry object. (Look to dict_generators/README.md for the fields on each telemetry point)
+3. measurements - all of the telemetry points on the given telemetry object. 
+
+There are five parameters:
+- `key`: Key of top-level dict
+- `name`: Name of top-level dict
+- `filter`: Filter for searching the `telemetry` file for relevant data
+- `keys` : Unit, name, and group data for each key
+- `groups`: Names for each group of data
+
+Keys that don't have groups must have names. Names are optional for keys that are contained inside a group, but the key must be 'value'. Units are always optional for keys.
 
 **Plugins**
 The purpose of plugins is to allow openMCT to process our own types of telemetry and display telemetry points and objects in the object tree.
@@ -21,4 +30,6 @@ There are 4 main functions and variables in each plugin:
 
 4. The plugin function uses the **composition provider variable** to assign each defined telemetry point in the JSON object file to the main telemetry object. (ex. setting the key from battery_voltage to sat.battery_voltage)
 
-**more info on plugins and the object tree in the main MCT README**
+**more info on plugins and specifically the generic-plugin in the main MCT README**
+
+**look at the main MCT README for new Domain Object/Subsystem instillation**

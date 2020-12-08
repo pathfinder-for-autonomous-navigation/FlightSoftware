@@ -1,3 +1,4 @@
+//boilerplate OpenMCT module used in plugins such as './generic-plugin.js' to retrieve json data
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     define(factory);

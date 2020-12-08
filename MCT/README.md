@@ -5,83 +5,149 @@ This Mission control API uses the visual elements of the openMCT data visualizat
 The openMCT web server is run using the **"npm start"** command in terminal after navigating to the /MCT directory and installing the node.js modules with **"npm install"**.
 
 In Open MCT everything is represented as a Domain Object, this includes sources of telemetry, telemetry points, and views for visualizing telemetry. Domain Objects are accessible from the object tree shown on the left side of the openMCT display.
-![Object Tree](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/batteryinfo_mct/MCT/images/object-tree.png)
 
-# Setting up a new Taxonomy or Telemetry point
-In this implementation a Taxonomy point is defined as an object that containts a collection of telemetry points. (ex. a spacecraft object) A new Taxonomy point is created using the *openmct.objects.addRoot( )* function, which takes a javascript object as a parameter.
+# Setting up a new Subsystem or Domain Object
 
-This is modeled below with our satellite object with namespace 'sat.taxonomy' and a key 'spacecraft'.
-![addRoot function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/batteryinfo_mct/MCT/images/add-Root.png)
+#### There are four main steps to install a new subsystem's domain object
 
-A new Telemetry point is added after a Taxonomy point is added and serves as the child object to the root (the satellite). This object is added using the openmct.objects.addType( ) function which also takes a JS object as a parameter.
+1. Add the subsystem's json file to the public/subsystems folder
+2. Add an entry to the instillation configuration object literal at the top of generic-plugin.js
+3. Add a line to index.html to install the plugin
+4. Add an entry to the state-variables.js file containing the initial values of the telemetry states contained within the subsystem/domain object
 
-In the example below, we have a name and description field for the object and also a cssClass field which allows it to be displayed on the openmct visualization.
-![addType function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/batteryinfo_mct/MCT/images/add-Type.png)
+### 1. Adding the json file
+
+After generating the json file, Place it in the public/subsystems folder
+
+### 2. Adding to the Instillation Configuration Object
+
+Add an entry to the instillation configuration object called configs at the top of the './public/generic-plugin.js' file
+
+The key of the entry is a name representing the domain object you wish to install such as battery
+
+the value of the entry is an object literal. 
+
+#### The keys and values needed in this object are as follows:
+
+ * **namespace** - where the value is the name of the namespace/taxonomy of the domain object. 
+ Ex.) namespace: 'bat.taxonomy'
+ * **key** - where the value is the key of the domain object within the namespace. 
+ Ex.) key: 'spacecraft'
+ * **type** - this contains the type of the telemetry you want to be related to the domain object. 
+ Ex.) type: 'bat.telemetry'
+ * **typeName** - where the value is the name of the type you want to be related to the domain object. 
+ Ex.) typeName: 'Battery Telemetry Point'
+ * **typeDescription** - where the value is the description of the type you want to be related to the domain object. 
+ Ex.) typeDescription: 'Telemetry point on the Gomspace battery'
+ * **typeCssClass** - where the value is the css class used by the type related to the domain object. 
+ Ex.) typeCssClass: 'icon-telemetry'
+ * **jsonFile** - where the value is the path of the jsonFile for the domain object within the '/public/subsystems' folder. 
+ Ex.) jsonFile: '/gomspace.json'
+
+### 3. Installing the plugin in index.html
+
+Next you must include the instillation line for the domain object.
+
+To install the domain object you must use the GenericPlugin(config) function.
+the input for config is the key of the entry in the instilation configuration variable in '/public/generic-plugin.js'
+
+Example:
+
+openmct.install(GenericPlugin("battery"));
+
+### 4. Adding entry to state-variables.js to initialize the the variables
+
+In order for '/server-files/telemetry.js' to properly pull data down from Elastic Search, the fields you want to update must be initialized in '/server-files/state-variables.js'.
+
+the keys of the entry must correspond with the sections of the Elastic Search entry:
+
+Ex.:
+
+if a.b, a.c.d, a.c.e, a.f, and a.g are fields in Elastic Search this initialization would look like:
+```
+a: {
+    b:___,
+    c{
+        d:___,
+        e:___
+    },
+    f:___,
+    g:___
+}
+```
+where each ___ represents the initial value of the field.
+
+# The Generic Plugin
+(./public/generic-plugin.js)
+
+There is the one plugin for the input of telemetry into OpenMCT which takes in config data to specifiy the desired domain object you wish to install
+
+This script containts 3 main cases:
+    1. A Realtime Telemetry Plugin option
+    2. A Historical Telemetry Plugin option
+    3. A Genericized Plugin option to install a telemetry plugin for a new Domain Object
 
 
 
-There are three main plugins that allow the program to analyze realtime and historical telemetry, as well as identify where to display each datum.
+## The Realtime Telemetry Plugin option
 
-# The Realtime Telemetry plugin
-(realtime-telemetry-plugin.js)
-This script containts two main functions:  RealtimeTelemetryPlugin( ) and subscribe( )
-It also instantiates a new WebSocket object ws.
+    The Realtime Telemetry Plugin containts two main functions:  RealtimeTelemetryPlugin( ) and subscribe( ). It also instantiates a new WebSocket object ws.
 
 **The supportsSubscribe function maintains the precondition that any input is truly a telemetry object**
 
-RealtimeTelemetryPlugin( ) defines a new WebSocket object and then casts the incoming data into a JSON type that the openmct web service is able to analyze and graph visually.
+    RealtimeTelemetryPlugin( ) defines a new WebSocket object and then casts the incoming data into a JSON type that the openmct web service is able to analyze and graph visually.
 
-subscribe( ) pings the server for data and adds any callback into the listener[ ] list for the WebSocket to analyze. It also includes an unsubscribe function that is used to remove data from the listener[ ] list
+    subscribe( ) pings the server for data and adds any callback into the listener[ ] list for the WebSocket to analyze. It also includes an unsubscribe function that is used to remove data from the listener[ ] list
 
-# The Historical Telemetry plugin
-(historical-telemetry-plugin.js)
-This script only has one main function (install) that nests two other functions supportsRequest( ) and request( )
+## The Historical Telemetry Plugin option
+    (historical-telemetry-plugin.js)
+    This script only has one main function (install) that nests two other functions supportsRequest( ) and request( )
 **Like supportsSubscribe( ) in the realtime plugin, the supportsRequest( ) acts as a precondition check that the object passed into the plugin is truly a telemetry object**
 
-The request( ) function makes an HTTP request to a historical database and then creates a telemetry point using the addProvider( ) function given by the openmct.telemetry class.
+    The request( ) function makes an HTTP request to a historical database and then creates a telemetry point using the addProvider( ) function given by the openmct.telemetry class.
 
-# The Dictionary Plugin
+## The Generic Plugin option
 (dictionary-plugin.js)
 This script analyzes the json file that holds the domain object for the satellite and the subobjects that describe each telemetry point of the satellite.
+It contains a configuration object literal containing all the information for the different possible domain object instillations.
 There are three main functions in this file, get( ), load( ), and  DictionaryPlugin( ).
 
-get( ) takes the dictionary.json file as input and gets each identifier inside of the satellite domain object and constructs a new child object for each attribute of the original parent object (the satellite).
+get( ) takes the json file specified in the config data as input and gets each identifier inside of the domain object and constructs a new child object for each attribute of the original parent object.
 
 load( ) is part of the composition provider which accepts a domain object and then provides identifiers for the children of that domain object. This creates the inheritance within the object tree and its individual telemetry points.
 
-The DictionaryPlugin( ) function defines the type "sat-telemetry" and the root case, "sat-taxonomy" which represents the satellite. The "sat-telemetry" objects represent the specific telemetry points on the satellite.
+The GenericPlugin(config) function defines the type and the root case, specified in the config data, which represents the domain object. The objects represent the specific telemetry points on the domain object. It takes in a config variable which matches the key of one of the entries in the 'configs' object literal defined at the top of the file.
 
 # The HTML Index File
 (index.html)
 This file combines all of the plugins together and runs them as scripts and is written in HTML.
-It also calls the openmct.install( ) function to instantiate the visual aspect of openMCT (ex. the clock, the three plugins mentioned above, and the node.js library)
+It also calls the openmct.install( ) function to instantiate the visual aspect of openMCT (ex. the clock, the Generic plugin mentioned above, and the node.js library)
 
 # Main method and Server-files
 
-The main method that is called when openMCT is started is **server.js** which is located in the server-files folder which also contains three server files that provide realtime and historical data collection. These are the history-server.js, realtime-server.js, and static-server.js files.
+The main method that is called when openMCT is started is **server.js** which is located in the server-files folder which also contains a boilerplate-mct-servers folder containing two server files that provide realtime and historical data collection. These are the history-server.js and realtime-server.js files.
 
-The main script, server.js, instantiates these files and calls them to start each respective server and subscribe to updates from the historical and realtime telemetry plugins.
+**server.js** 
+This script runs when calling main from the terminal. It creates a new realtime server and a new historical server from (realtime-server.js) and (history-server.js) files. It also creates the telemetry generator from (telemetry.js). Finally it starts up the server on port 8080.
+
+The main script, server.js, instantiates the files and calls them to start each respective server and subscribe to updates from the historical and realtime telemetry plugins.
 
 **realtime-server.js** contains two main functions, RealtimeServer( ) which takes the spacecraft as a parameter and notifySubscribers( ) which takes one point as a parameter and sends it to the WebSocket.
 notifySubscribers( ) is defined inside the RealtimeServer( ) function and converts the javascript object of a single telemetry point into a JSON string.
 
 **history-server.js** initiates a new router object and a response object. It uses the node.js module express to create a new Router( ) function. This router then pulls data from the spacecraft.js list history[ ] using the response function.
 
-**static-server.js** This script uses the Router( ) module's router.use( ) function to allow our application to handle static requests for data. This helps handle image data, for example, the CSS image data that is sent in with each telemetry point.
-
-
-
-**Spacecraft.js** represents a spacecraft object that is run when the main script is evoked in terminal.
-The spacecraft function contains 3 main fields, state, history, and listeners.
-The state field contains all of the telemetry objects contained by the spacecraft and is checked periodically for changes to generate telemetry.
+**telemetry.js** represents all the telemetry from all of the domain objects.
+The telemetry function contains 3 main fields, state, history, and listeners.
+The state field contains all of the telemetry objects contained by the domain objects defined in (state-variables.js) and is checked periodically for changes to generate telemetry.
 The history field contains telemetry data that is input from the generateTelemetry( ) function.
 The listener field is notified every time telemetry data is generated.
 
-The generateTelemetry( ) function is the most important method of spacecraft.js as it interacts with each field inside the spacecraft.js file and creates data for the openMCT server to then catch and display.
-![Telemetry function](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/addmct/src/gsw/MCT/images/generate-telemetry.png)
-This function takes a measurement of spacecraft state, stores it in history{ }, and notifies listeners[ ] using the *Spacecraft.prototype.notify* function.
+The generateTelemetry( ) function is the most important method of telemetry.js as it interacts with each field inside the spacecraft.js file and creates data for the openMCT server to then catch and display.
 
-**Battery.js** represents the gomspace battery object and creates battery telemetry that is sent to specific telemetry points as defined in telemetry reviews.
+This function takes a measurement of all the domains' states, pulling from elasticsearch, stores it in history{ }, and notifies listeners[ ] using the *Spacecraft.prototype.notify* function.
 
-#Full telemetry diagram
-![Telemetry diagram](https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/batteryinfo_mct/MCT/images/telemetry-diagram.PNG)
+**state-variables.js** 
+This file contains the intial values of all the state fields that (telemetry.js) will repeatedly update
+
+
