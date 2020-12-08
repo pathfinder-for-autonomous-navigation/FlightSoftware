@@ -4,9 +4,7 @@ It then generates it into a form that can be understood by OpenMCT
 Then it adds it to the hisorical and realtime servers through the history and listener fields.
 */
 const variables = require('./state-variables.js')
-const url = require('url');
 const request = require('request');
-const { isObject } = require('util');
 var searchURl = 'http://localhost:5000/search-es';
 var searchIndex = 'statefield_report_flightcontroller';
 function Telemetry() {
