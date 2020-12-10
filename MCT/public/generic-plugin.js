@@ -110,7 +110,7 @@ function GenericPlugin(config) {
                     '?start=' + options.start +
                     '&end=' + options.end;
 
-                return http.get(url)
+                return getGeneric(url);
                     .then(function (resp) {
                         return resp.data;
                     });
