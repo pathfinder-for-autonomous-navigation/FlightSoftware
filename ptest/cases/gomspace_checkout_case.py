@@ -5,6 +5,7 @@ from .utils import Enums, TestCaseFailure
 
 
 class GomspaceCheckoutCase(SingleSatOnlyCase):
+
     def str_to_bool(self, string):
         if string == "true":
             return True
@@ -14,6 +15,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             raise ValueError
 
     def run_case_singlesat(self):
+        self.failed = False
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
 
         # readable fields
@@ -88,6 +90,8 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
                                                                + str(i) + "_cmd", "true"))
                                   for i in range(1, 7)]
         self.cycle()
+        while int(self.read_state("pan.cycle_no")) % int(self.read_state("gomspace.powercycle_period")) != 0:
+            self.cycle()
         # wait for outputs to be off
         while (not all(out == False for out in output)) and cycle_no - cycle_no_init < 600:
             output = [self.str_to_bool(self.read_state("gomspace.output.output" + str(i)))
@@ -157,9 +161,8 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Could not update gs_reboot")
             self.failed = True
 
-        # TODO: add this back after fixing #491
-        # if self.failed: 
-            #raise TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
+        if self.failed: 
+            raise TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
 
         self.finish()
 
