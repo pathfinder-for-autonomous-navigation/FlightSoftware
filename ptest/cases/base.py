@@ -5,6 +5,8 @@ import threading
 import traceback
 from .utils import BootUtil, Enums, TestCaseFailure
 import psim # the actual python psim repo
+import lin
+import datetime
 
 class PTestCase(object):
     """
@@ -20,6 +22,7 @@ class PTestCase(object):
 
         self.errored = False
         self.finished = False
+        self.devices = None
 
     @property
     def sim_configs(self):
@@ -199,6 +202,7 @@ class SingleSatOnlyCase(PTestCase):
 
     def populate_devices(self, devices, radios):
         self.flight_controller = devices["FlightController"]
+        self.devices = [self.flight_controller]
 
     @property
     def fast_boot(self):
@@ -308,9 +312,38 @@ class SingleSatOnlyCase(PTestCase):
         ret = self.rs(name)
         self.logger.put(f"{name} is {ret}")
         return ret
-    
+
+    def rs_psim(self, name):
+        '''
+        Read a psim state field with <name>, log to datastore, and return the python value
+        '''
+        ret = self.sim.mysim.get(name)
+        if(ret is None):
+            raise NameError(f"ptest read failed: psim state field {name} does not exist!")
+        
+        if type(ret) in {lin.Vector2, lin.Vector3, lin.Vector4}:
+            ret = list(ret)
+        
+        stripped = str(ret).strip("[]").replace(" ","")+","
+        
+        packet = {}
+        
+        packet["t"] = int(self.sim.mysim["truth.t.ns"]/1e9/1e3) # t: number of ms since sim start
+        packet["field"] = name
+        packet["val"] = stripped
+        packet["time"] = str(datetime.datetime.now())
+
+        # log to datastore
+        for d in self.devices:
+            d.datastore.put(packet)
+
+        return ret
+
     def print_rs_psim(self, name):
-        ret = self.sim.mysim[name]
+        '''
+        Read a psim state field with <name>, log to datastore, print to console and return the python value
+        '''
+        ret = self.rs_psim(name)
         self.logger.put(f"{name} is {ret}")
 
     def ws(self, name, val):
@@ -366,6 +399,7 @@ class MissionCase(PTestCase):
         else:
             self.radio_leader = None
             self.radio_follower = None
+        self.devices = [self.flight_controller_leader, self.flight_controller_follower]
 
     @property
     def initial_state_leader(self):

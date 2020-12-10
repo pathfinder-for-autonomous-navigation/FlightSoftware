@@ -13,6 +13,7 @@ from .psim_debug import PsimDebug
 
 # Testcases that don't require simulation
 from .empty_case import EmptyCase, NothingCase, FailingEmptyCase
+from .ditl_case import DitlCase
 from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel
 from .docking_checkout_case import DockingCheckoutCase
 from .dcdc_checkout_case import DCDCCheckoutCase
@@ -25,5 +26,8 @@ from .gyro_heater_diag_case import GyroHeaterDiagCase
 from .ci_case import CICase
 from .simple_fault_handlers import ADCSWheelFaultHandler, LowBattFaultHandler
 from .safehold_reboot import SafeholdReboot
+from .gomspace_long_duration_case import GomspaceLongDurationCheckoutCase
+from .hardware_stress_test_case import HardwareStressCheckoutCase
 from .torquer_rotate_case import MTorquerCase
+from  .reset_for_flight import ResetforFlight
 from .prep_for_charging_case import PrepForCharging
