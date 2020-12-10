@@ -29,7 +29,6 @@ public:
     const ReadableStateField<lin::Vector3d>* const baseline_vel_fp;
 
     // Outputs
-    ReadableStateField<unsigned char>* prop_planner_state_fp;
     WritableStateField<unsigned int> sched_valve1_f;
     WritableStateField<unsigned int> sched_valve2_f;
     WritableStateField<unsigned int> sched_valve3_f;
