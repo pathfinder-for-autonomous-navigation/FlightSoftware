@@ -239,6 +239,11 @@ class BootUtil(object):
 
         self.logger.put(f"Waiting for the satellite to boot to {self.desired_boot_state}.")
 
+        if self.fast_boot:
+            self.flight_controller.write_state("pan.state", Enums.mission_states[self.desired_boot_state])
+            self.logger.put(f"[TESTCASE] Fast Boot: Setting MissionMode to {self.desired_boot_state} state.")
+            self.finished = True
+
     def run_boot_sequence(self):
         satellite_state = Enums.mission_states[\
             int(self.flight_controller.read_state("pan.state"))]
@@ -304,10 +309,7 @@ class BootUtil(object):
         return self.boot_stage
 
     def finished_boot(self):
-        if self.fast_boot:
-            self.flight_controller.write_state("pan.state", Enums.mission_states[self.desired_boot_state])
-            return True
-        elif self.finished:
+        if self.finished:
             return True
         else: 
             return self.run_boot_sequence() == self.desired_boot_state

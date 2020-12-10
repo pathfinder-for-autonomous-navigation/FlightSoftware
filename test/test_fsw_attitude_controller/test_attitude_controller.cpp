@@ -171,7 +171,7 @@ void test_execute(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f(
         {-adcs::mtr::max_moment,-adcs::mtr::max_moment,-adcs::mtr::max_moment}),
         tf.m_body_cmd_fp->get(), 1e-7);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.0225f,0.00224974f,-0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0225f,-0.00224974f,0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
 
     // now change state to manual, and check that the pointing information persisted
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_manual));
@@ -187,7 +187,7 @@ void test_execute(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f(
         {-adcs::mtr::max_moment,-adcs::mtr::max_moment,-adcs::mtr::max_moment}),
         tf.m_body_cmd_fp->get(), 1e-7);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.0225f,0.00224974f,-0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0225f,-0.00224974f,0.00148672f}),tf.t_body_cmd_fp->get(), 1e-7);
 
     // go back to standby
     tf.adcs_state_fp->set(static_cast<unsigned char>(adcs_state_t::point_standby));
@@ -219,7 +219,7 @@ void test_execute(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f(
         {-adcs::mtr::max_moment,-adcs::mtr::max_moment,-adcs::mtr::max_moment}),
         tf.m_body_cmd_fp->get(), 1e-7);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.0226458f,0.000844621f,-0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0226458f,-0.000844621f,0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
 
     // lose every signal needed for docking and show that it goes to 0 actuators
     nan_sensors(tf);
@@ -282,7 +282,7 @@ void test_execute(){
     PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f(
         {-adcs::mtr::max_moment,-adcs::mtr::max_moment,-adcs::mtr::max_moment}),
         tf.m_body_cmd_fp->get(), 1e-7);
-    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({-0.0226458f,0.000844621f,-0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
+    PAN_TEST_ASSERT_EQUAL_FLOAT_LIN_VEC(lin::Vector3f({0.0226458f,-0.000844621f,0.0f}),tf.t_body_cmd_fp->get(), 1e-7);
 }
 
 void test_point_limited() {
