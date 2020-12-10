@@ -1401,6 +1401,14 @@
             "type": "bool",
             "writable": true
         },
+        "gomspace.powercycle_period": {
+            "bitsize": 32,
+            "flow_id": "undefined",
+            "max": 4294967295,
+            "min": 0,
+            "type": "unsigned int",
+            "writable": true
+        },
         "gomspace.pptmode": {
             "bitsize": 1,
             "flow_id": 11,
