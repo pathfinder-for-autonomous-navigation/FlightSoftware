@@ -89,6 +89,8 @@ class PiksiCheckoutCase(SingleSatOnlyCase):
             self.logger.put(f"POS MAG: {mag_of(p)}")
             b = self.print_rs("piksi.baseline_pos")
             self.logger.put(f"BASELINE MAG: {mag_of(b)}")
+            s = self.print_rs("piksi.sendtime")
+            self.logger.put(f"SEND TIME: {s}")
             self.logger.put("")
 
         # Take N readings for actual analysis
