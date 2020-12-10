@@ -19,8 +19,8 @@ int main(int argc, char* argv[]) {
     const std::string filename = std::string(argv[1]);
     
     TelemetryInfoGenerator gen(PAN::flow_data);
-    const nlohmann::json info = gen.generate_telemetry_info_json();
-
+    const nlohmann::json info = gen.generate_telemetry_info();
+    
     std::ofstream output_file(filename);
     output_file << info.dump(4);
     output_file.close();
