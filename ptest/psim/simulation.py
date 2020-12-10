@@ -204,8 +204,9 @@ class CppSimulation(Simulation):
         if self.mapping_file_name == "":
             raise RuntimeError("Error. Please set the json mapping file name property")
 
-        configs = [prefix + x + postfix for x in self.sim_configs]
-        self.mysim = psim.Simulation(self.sim_model, configs)
+        configs_list = [prefix + x + postfix for x in self.sim_configs]
+        config = psim.Configuration(configs_list)
+        self.mysim = psim.Simulation(self.sim_model, config)
         self.dt = self.mysim["truth.dt.ns"]/1e9
 
         self.sat_names = ['leader','follower']
