@@ -35,7 +35,7 @@ class PsimDebug(SingleSatOnlyCase):
 
     @property
     def sim_initial_state(self):
-        return "urmombadasdfasdf"
+        return "startup"
 
     def setup_post_bootsetup(self):
         return
