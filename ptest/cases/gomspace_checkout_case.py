@@ -5,6 +5,7 @@ from .utils import Enums, TestCaseFailure
 
 
 class GomspaceCheckoutCase(SingleSatOnlyCase):
+
     def str_to_bool(self, string):
         if string == "true":
             return True
@@ -14,6 +15,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             raise ValueError
 
     def run_case_singlesat(self):
+        self.failed = False
         self.cycle_no = self.flight_controller.read_state("pan.cycle_no")
 
         # readable fields
