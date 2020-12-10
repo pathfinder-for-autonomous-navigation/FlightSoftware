@@ -15,8 +15,7 @@ function Telemetry() {
     this.state = {};
 
     //creates an entry in state for every variable in './state-variables'
-    Object.entries(this.initialState).forEach(function ([k,v]) {
-      let statesSubsystem= k;
+    Object.entries(this.initialState).forEach(function ([statesSubsystem,v]) {
       Object.entries(v).forEach(function ([k,v]) {
         let key = statesSubsystem + '.' + k;
         this.state[key] = v;
