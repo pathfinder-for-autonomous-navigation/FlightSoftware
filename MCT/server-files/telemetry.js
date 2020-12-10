@@ -40,7 +40,7 @@ function Telemetry() {
         this.generateTelemetry();
     }.bind(this), 1000);
 
-    console.log("Spacecraft Launched")
+    console.log("Now reading spacecraft telemetry")
 
 };
 
