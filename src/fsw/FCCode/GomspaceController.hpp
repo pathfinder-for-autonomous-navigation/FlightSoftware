@@ -115,9 +115,9 @@ class GomspaceController : public TimedControlTask<void> {
         // so that the powercycling logic doesn't keep toggling an output on and off.
         static constexpr unsigned int thirty_seconds_ccno = PAN::one_day_ccno / (24 * 60 * 2);
     #endif
-    // If PAN::one_day_ccno is very short due to the SPEEDUP flag, ensure the period is positive
-    // to prevent a divide-by-zero error.
-    TRACKED_CONSTANT_SC(unsigned int, period, thirty_seconds_ccno > 0 ? thirty_seconds_ccno : 1);
+    
+    Serializer<unsigned int> period_sr;
+    WritableStateField<unsigned int> period_f;
 
     // Command statefields to control the Gomspace outputs. Will
     // be set by various individual subsystems and the ground.
