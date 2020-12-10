@@ -75,7 +75,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     heater_f("gomspace.heater", heater_sr),
 
     period_sr(),
-    period_f("gomspace.period", period_sr),
+    period_f("gomspace.powercycle_period", period_sr),
 
     power_cycle_outputs_cmd_sr(),
     power_cycle_output1_cmd_f("gomspace.power_cycle_output1_cmd", power_cycle_outputs_cmd_sr),
@@ -159,8 +159,11 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
         add_readable_field(heater_f);
 
+        // If PAN::one_day_ccno is very short due to the SPEEDUP flag, ensure the period is positive
+        // to prevent a divide-by-zero error.
         add_writable_field(period_f);
         period_f.set(thirty_seconds_ccno > 0 ? thirty_seconds_ccno : 1);
+        
         add_writable_field(power_cycle_output1_cmd_f);
         add_writable_field(power_cycle_output2_cmd_f);
         add_writable_field(power_cycle_output3_cmd_f);

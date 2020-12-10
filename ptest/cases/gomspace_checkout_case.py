@@ -88,7 +88,7 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
                                                                + str(i) + "_cmd", "true"))
                                   for i in range(1, 7)]
         self.cycle()
-        while int(self.read_state("pan.cycle_no")) % int(self.read_state("gomspace.period")) != 0:
+        while int(self.read_state("pan.cycle_no")) % int(self.read_state("gomspace.powercycle_period")) != 0:
             self.cycle()
         # wait for outputs to be off
         while (not all(out == False for out in output)) and cycle_no - cycle_no_init < 600:
@@ -159,9 +159,8 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
             self.logger.put("Could not update gs_reboot")
             self.failed = True
 
-        # TODO: add this back after fixing #491
-        # if self.failed: 
-            #raise TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
+        if self.failed: 
+            raise TestCaseFailure("Failed a step in Gomspace checkout: see log above.")
 
         self.finish()
 
