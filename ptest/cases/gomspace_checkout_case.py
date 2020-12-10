@@ -87,7 +87,8 @@ class GomspaceCheckoutCase(SingleSatOnlyCase):
         power_cycle_output_cmd = [self.str_to_bool(self.write_state("gomspace.power_cycle_output"
                                                                + str(i) + "_cmd", "true"))
                                   for i in range(1, 7)]
-        self.cycle()
+        while int(self.read_state("pan.cycle_no")) % int(self.read_state("gomspace.period")) != 0:
+            self.cycle()
         # wait for outputs to be off
         while (not all(out == False for out in output)) and cycle_no - cycle_no_init < 600:
             output = [self.str_to_bool(self.read_state("gomspace.output.output" + str(i)))
