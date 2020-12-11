@@ -60,11 +60,12 @@ class IntegerSerializer : public SerializerBase<T> {
   protected:
     static constexpr unsigned int log2i(unsigned int n) {
         unsigned int i = 0;
-        while(n > 0) {
+        unsigned int notpower2 = n & (n - 1);
+        while(n > 1) {
             n = n >> 1;
             i++;
         }
-        return i;
+        return (notpower2 ? i + 1 : i);
     }
 
     IntegerSerializer(T min, T max, size_t compressed_size, size_t print_size)
