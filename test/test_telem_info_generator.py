@@ -49,10 +49,10 @@ class TestTelemInfoGenerator(unittest.TestCase):
             self.assertEqual(telem_info["fields"]["pan.cycle_no"]["bitsize"], 32)
 
             # Test that flow information (for one flow) is correct.
-            self.assertEqual(telem_info["flows"][0]["id"], 1)
-            self.assertEqual(telem_info["flows"][0]["priority"], 0)
-            self.assertEqual(telem_info["flows"][0]["active"], True)
-            self.assertEqual(telem_info["flows"][0]["fields"][0], "pan.state")
+            self.assertEqual(telem_info["flow_data"][0]["id"], 1)
+            self.assertEqual(telem_info["flow_data"][0]["priority"], 0)
+            self.assertEqual(telem_info["flow_data"][0]["active"], True)
+            self.assertEqual(telem_info["flow_data"][0]["fields"][0], "pan.state")
 
             self.assertIn("pan.state", telem_info["eeprom_saved_fields"])
         # Clean up
