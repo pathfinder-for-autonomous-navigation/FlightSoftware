@@ -7,7 +7,7 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
     unsigned int offset, Devices::Piksi &_piksi) 
     : TimedControlTask<void>(registry, "piksi", offset),
     piksi(_piksi),
-    pos_f("piksi.pos", Serializer<d_vector_t>(6771000,6971000, 28 + SerializerConstants::min_dvsz)),
+    pos_f("piksi.pos", Serializer<d_vector_t>(6771000,6971000, 122)),
     vel_f("piksi.vel", Serializer<d_vector_t>(7500, 7700, 18 + SerializerConstants::min_dvsz)),
     baseline_pos_f("piksi.baseline_pos", Serializer<d_vector_t>(0,2000, 21 + SerializerConstants::min_dvsz)),
     current_state_f("piksi.state", Serializer<unsigned char>(11)),
