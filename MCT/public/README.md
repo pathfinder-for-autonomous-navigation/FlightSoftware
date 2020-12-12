@@ -18,4 +18,4 @@ Keys that don't have groups must have names. Names are optional for keys that ar
 
 **More info on plugin usage and for new Domain Object/Subsystem instillation in the [main MCT README]**
 
-[main MCT README]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/README.md)
+[main MCT README]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/README.md
