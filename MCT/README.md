@@ -107,7 +107,7 @@ where each ```___``` represents the initial value of the field.
 <hr style="border:2px solid gray"> </hr>
 
 ## The Generic Plugin
----
+
 
 
 There is the one plugin for the input of telemetry into OpenMCT which takes in config data to specifiy the desired domain object you wish to install
@@ -156,7 +156,7 @@ The ```GenericPlugin(config)``` function defines the type and the root case, spe
 It also calls the ```openmct.install( )``` function to instantiate the visual aspect of openMCT (ex. the clock, the Generic plugin mentioned above, and the node.js library)
 
 ## Main method and Server-files
----
+
 
 The main method that is called when openMCT is started is **[server.js]** which is located in the server-files folder which also contains a [boilerplate-mct-servers] folder containing two server files that provide realtime and historical data collection. These are the [history-server.js] and [realtime-server.js] files.
 
@@ -191,36 +191,36 @@ The ```generateTelemetry( )``` function is the most important method of telemetr
 This file contains the intial values of all the state fields that [telemetry.js] will repeatedly update
 
 
-[Usage Guide]: (#usage-guide)
-[Installing Requirements and Running Mission Control]: (#installing-requirements-and-running-mission-control)
-[Setting up a new Subsystem or Domain Object]: (#setting-up-a-new-subsystem-or-domain-object)
-[Adding the json file]: (#adding-the-json-file)
-[Adding to the Instillation Configuration Object]: (#adding-to-the-instillation-configuration-object)
-[Installing the plugin in index.html]: (#installing-the-plugin-in-indexhtml)
-[Adding entry to state-variables.js to initialize the the variables]: (#adding-entry-to-state-variablesjs-to-initialize-the-variables)
-[Code Description]: (#code-description)
-[The Generic Plugin]: (#the-generic-plugin)
-[The Realtime Telemetry Plugin option]: (#the-realtime-telemetry-plugin-option)
-[The Historical Telemetry Plugin option]: (#the-historical-telemetry-plugin-option)
-[The HTML Index File]: (#the-html-index-file)
-[Main method and Server-files]: (#main-method-and-server-files)
+[Usage Guide]: #usage-guide
+[Installing Requirements and Running Mission Control]: #installing-requirements-and-running-mission-control
+[Setting up a new Subsystem or Domain Object]: #setting-up-a-new-subsystem-or-domain-object
+[Adding the json file]: #adding-the-json-file
+[Adding to the Instillation Configuration Object]: #adding-to-the-instillation-configuration-object
+[Installing the plugin in index.html]: #installing-the-plugin-in-indexhtml
+[Adding entry to state-variables.js to initialize the the variables]: #adding-entry-to-state-variablesjs-to-initialize-the-variables
+[Code Description]: #code-description
+[The Generic Plugin]: #the-generic-plugin
+[The Realtime Telemetry Plugin option]: #the-realtime-telemetry-plugin-option
+[The Historical Telemetry Plugin option]: #the-historical-telemetry-plugin-option
+[The HTML Index File]: #the-html-index-file
+[Main method and Server-files]: #main-method-and-server-files
 
-[history-server.js]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/boilerplate-mct-servers/history-server.js)
+[history-server.js]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/boilerplate-mct-servers/history-server.js
 
-[telemetry.js]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/telemetry.js)
+[telemetry.js]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/telemetry.js
 
-[state-variables.js]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/state-variables.js)
+[state-variables.js]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/state-variables.js
 
-[realtime-server.js]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/boilerplate-mct-servers/realtime-server.js)
+[realtime-server.js]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/boilerplate-mct-servers/realtime-server.js
 
-[server.js]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/server.js)
+[server.js]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/server-files/server.js
 
-[generic-plugin.js]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/public/generic-plugin.js)
+[generic-plugin.js]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/public/generic-plugin.js
 
-[index.html]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/public/index.html)
+[index.html]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/public/index.html
 
-[boilerplate-mct-servers]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/tree/master/MCT/server-files/boilerplate-mct-servers)
+[boilerplate-mct-servers]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/tree/master/MCT/server-files/boilerplate-mct-servers
 
-[MCT/Public Readme File]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/public/README.md)
+[MCT/Public Readme File]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/blob/master/MCT/public/README.md
 
-[subsystems]: (https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/tree/master/MCT/public/subsystems)
+[subsystems]: https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/tree/master/MCT/public/subsystems
