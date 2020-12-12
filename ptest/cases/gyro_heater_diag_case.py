@@ -8,7 +8,7 @@ class GyroHeaterDiagCase(SingleSatOnlyCase):
         self.print_header("Begin Gyro Heater Diagnostic Case")
 
         self.ws("pan.state", Enums.mission_states["manual"])
-        self.ws("adcs.state", Enums.adcs_states["point_manual"])
+        self.ws("adcs.state", Enums.adcs_states["manual"])
         
         self.ws("cycle.auto", False) # turn off auto cycle in case it was on
         self.cycle()

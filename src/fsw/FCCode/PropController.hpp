@@ -27,6 +27,18 @@ class PropController : public TimedControlTask<void>
 public:
     PropController(StateFieldRegistry &registry, unsigned int offset);
 
+    TRACKED_CONSTANT(unsigned int, orbit_ccno, PAN::one_day_ccno*(96)/(24*60));
+
+    TRACKED_CONSTANT(unsigned int, max_venting_cycles_ic, 20);
+    TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
+    TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_filling_period_ic, 1000 / PAN::control_cycle_time_ms);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_cooling_period_ic, 10 * 1000 / PAN::control_cycle_time_ms);
+
+    TRACKED_CONSTANT(unsigned int, tank1_valve_choice_ic, 0);
+    TRACKED_CONSTANT(unsigned int, ctrl_cycles_per_close_period_ic, 1000 / PAN::control_cycle_time_ms);
+
+
     // ------------------------------------------------------------------------
     // Input Fields
     // ------------------------------------------------------------------------
@@ -145,7 +157,7 @@ public:
 
     // https://cornellprod-my.sharepoint.com/personal/saa243_cornell_edu/_layouts/15/Doc.aspx?sourcedoc=%7B10E398A9-3D68-44F8-BE1B-E4FA5DBECBC8%7D&file=Recurring%20Constants%20Review.xlsx&action=default&mobileredirect=true&cid=912c7e7e-8046-4d9c-9ee9-13a59d46f5a6
     TRACKED_CONSTANT_SC(float, max_safe_pressure, 75); // 75 psi
-    TRACKED_CONSTANT_SC(float, max_safe_temp, 48);     // 48 C
+    TRACKED_CONSTANT_SC(float, max_safe_temp, 49);     // 49 C
 
 private:
     // Return the PropState associated with the given prop_state_t

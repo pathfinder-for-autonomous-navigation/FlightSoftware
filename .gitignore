@@ -1,9 +1,5 @@
 # PTest Temporary Files
 logs/
-geograv_wrapper.mexmaci64
-geomag_wrapper.mexmaci64
-geograv_wrapper.mexa64
-geomag_wrapper.mexa64
 
 src/uploaded_flow_data.cpp
 
@@ -169,3 +165,6 @@ CMakeLists.txt
 # Temporary EEPROM file created by HOOTL
 eeprom.json
 
+# Matlab MEX binaries
+*.mexa64
+*.mexmaci64

@@ -49,6 +49,11 @@ To install the Python MATLAB engine, you must:
          cd C:\Program Files\MATLAB\R2019b\extern\engines\python
          python setup.py install --prefix="PATH_TO_FLIGHT_SOFTWARE/venv"
 
+# Installing C++ Psim
+
+Everytime there is a new change with psim, the local library must be rebuilt as follows:
+
+   pip install -e lib/common/psim
 
 # Configuring Simulation
 

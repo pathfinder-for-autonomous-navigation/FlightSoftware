@@ -23,7 +23,6 @@ OrbitController::OrbitController(StateFieldRegistry &r, unsigned int offset) :
 }
 
 void OrbitController::init() {
-    prop_planner_state_fp = FIND_READABLE_FIELD(unsigned char, prop.planner.state);
 }
 
 void OrbitController::execute() {
