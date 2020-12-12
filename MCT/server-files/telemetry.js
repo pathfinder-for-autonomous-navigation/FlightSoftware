@@ -3,10 +3,25 @@ telemetry.js pulls data for every field initialized in './state-variables.js'
 It then generates it into a form that can be understood by OpenMCT
 Then it adds it to the hisorical and realtime servers through the history and listener fields.
 */
+
+/**
+ * This object, imported from './state-variables.js', holds all of the inital values of telemetry points for every subsystem/domain object
+ */
 const variables = require('./state-variables.js')
 const request = require('request');
+
+/**
+ * The URL of the Elastic Search database
+ */
 var searchURl = 'http://localhost:5000/search-es';
+/**
+ * The index of the Elastic Search database
+ */
 var searchIndex = 'statefield_report_flightcontroller';
+
+/**
+ *  constructor initializing and then calling for the generation and updating of all telemetry points from all subsytems and domains
+ */
 function Telemetry() {
     //This state function takes in initial values from the state-variables.js file
     this.initialState = variables;

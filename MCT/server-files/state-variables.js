@@ -1,5 +1,6 @@
-//This file holds all of the variables to initialize every point on the gomspace battery and is called by other files that require variable access
-
+/**
+ * This exported object holds all of the inital values of telemetry points for every subsystem/domain object
+ */
 module.exports= {
     gomspace: {
 		batt_threshold: 8934,

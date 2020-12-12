@@ -19,7 +19,7 @@ var configs = {
  * 
  * @param {*} j the path to the json file
  */
-function getGeneric(j) {
+function requestJSON(j) {
     return http.get(j)
         .then(function (result) {
             return result.data;
@@ -57,14 +57,15 @@ function GenericPlugin(config) {
 
                 //returns whether or not a realtime telem subscription for this domain object is supported
                 supportsSubscribe: function (domainObject) {
-                    //cycles through each of the configs to see if there is a installed plugin with matching telemetry type
-                    var a = false;
-                    for (const value of Object.values(configs)) {
-                        if(domainObject.type === Object.values(value)[2]){
-                            a = true;
+                    //cycles through each of the configs to see if there is an allowed domain object plugin with matching telemetry type
+                    var allowed = false;
+                    for (const allowedDomainObject of Object.values(configs)) {
+                        if(domainObject.type === allowedDomainObject.type){//set allowed to true if the domain object type is allowed
+                            allowed = true;
                         }
                     }
-                    return a;
+
+                    return allowed;
                 },
                 //subscribes to the domain object adding it to listener and setting up the websocket subscription
                 subscribe: function (domainObject, callback) {
@@ -92,15 +93,15 @@ function GenericPlugin(config) {
             //returns whether or not a historical telem request for this domain object is supported
             supportsRequest: function (domainObject) {
 
-                //cycles through each of the configs to see if there is a installed plugin with matching telemetry type
-                var a = false;
-                for (const value of Object.values(configs)) {
-                    if(domainObject.type === Object.values(value)[2]){
-                        a = true;
+                //cycles through each of the configs to see if there is an allowed domain object plugin with matching telemetry type
+                var allowed = false;
+                for (const allowedDomainObject of Object.values(configs)) {
+                    if(domainObject.type === allowedDomainObject.type){//set allowed to true if the domain object type is allowed
+                        allowed = true;
                     }
                 }
 
-                return a;
+                return allowed;
 
             },
             //sets up the method of requesting historical telemetry
@@ -110,10 +111,7 @@ function GenericPlugin(config) {
                     '?start=' + options.start +
                     '&end=' + options.end;
 
-                return getGeneric(url);
-                    .then(function (resp) {
-                        return resp.data;
-                    });
+                return requestJSON(url);
             }
         };
         
@@ -146,7 +144,7 @@ function GenericPlugin(config) {
             //creates the object provider from the json file coorisponding with the domain object
             openmct.objects.addProvider(generalConfigData.namespace, {
                 get: function (identifier) {
-                    return getGeneric('/subsystems' + generalConfigData.jsonFile).then(function (generic) {
+                    return requestJSON('/subsystems' + generalConfigData.jsonFile).then(function (generic) {
                         //Sets up the folder path for the domain object and the Root
                         if (identifier.key === generalConfigData.key) {
                             return {
@@ -186,7 +184,7 @@ function GenericPlugin(config) {
                 },
                 //loads in the data from the coorisponding json file for the measurements to load in the composition provider
                 load: function (domainObject) {
-                    return getGeneric('/subsystems' + generalConfigData.jsonFile)
+                    return requestJSON('/subsystems' + generalConfigData.jsonFile)
                         .then(function (generic) {
                             return generic.measurements.map(function (m) {
                                 return {
