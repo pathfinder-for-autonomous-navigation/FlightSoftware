@@ -1,25 +1,25 @@
 {
-	"name": "Gomspace",
-	"key": "gomspace",
-	"measurements": [
-		{
-			"name": "Batt_threshold",
-			"key": "gomspace.batt_threshold",
-			"values": [
-				{
-					"bitsize": 10,
-					"flow_id": 6,
-					"max": 9000,
-					"min": 5000,
-					"type": "unsigned int",
-					"writable": true,
-					"name": "Batt_threshold",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+    "name": "Gomspace",
+    "key": "gomspace",
+    "measurements": [
+        {
+            "name": "Batt_threshold",
+            "key": "gomspace.batt_threshold",
+            "values": [
+                {
+                    "bitsize": 10,
+                    "flow_id": 6,
+                    "max": 9000,
+                    "min": 5000,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Batt_threshold",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -29,70 +29,70 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Low_batt",
-			"key": "gomspace.low_batt",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 6,
-					"type": "bool",
-					"writable": true,
-					"name": "Base",
-					"key": "base",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 6,
-					"type": "bool",
-					"writable": true,
-					"name": "Override",
-					"key": "override",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 16,
-					"flow_id": 6,
-					"max": 65535,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": true,
-					"name": "Persistence",
-					"key": "persistence",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 6,
-					"type": "bool",
-					"writable": true,
-					"name": "Suppress",
-					"key": "suppress",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 6,
-					"type": "bool",
-					"writable": true,
-					"name": "Unsignal",
-					"key": "unsignal",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Low_batt",
+            "key": "gomspace.low_batt",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Base",
+                    "key": "gomspace.low_batt.base",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Override",
+                    "key": "gomspace.low_batt.override",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 16,
+                    "flow_id": 6,
+                    "max": 65535,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Persistence",
+                    "key": "gomspace.low_batt.persistence",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Suppress",
+                    "key": "gomspace.low_batt.suppress",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Unsignal",
+                    "key": "gomspace.low_batt.unsignal",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -102,70 +102,70 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Get_hk",
-			"key": "gomspace.get_hk",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 6,
-					"type": "bool",
-					"writable": true,
-					"name": "Base",
-					"key": "base",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 6,
-					"type": "bool",
-					"writable": true,
-					"name": "Override",
-					"key": "override",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 16,
-					"flow_id": 6,
-					"max": 65535,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": true,
-					"name": "Persistence",
-					"key": "persistence",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 6,
-					"type": "bool",
-					"writable": true,
-					"name": "Suppress",
-					"key": "suppress",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 6,
-					"type": "bool",
-					"writable": true,
-					"name": "Unsignal",
-					"key": "unsignal",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Get_hk",
+            "key": "gomspace.get_hk",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Base",
+                    "key": "gomspace.get_hk.base",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Override",
+                    "key": "gomspace.get_hk.override",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 16,
+                    "flow_id": 6,
+                    "max": 65535,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Persistence",
+                    "key": "gomspace.get_hk.persistence",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Suppress",
+                    "key": "gomspace.get_hk.suppress",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 6,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Unsignal",
+                    "key": "gomspace.get_hk.unsignal",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -175,26 +175,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Vbatt",
-			"key": "gomspace.vbatt",
-			"values": [
-				{
-					"bitsize": 10,
-					"flow_id": 9,
-					"max": 9000,
-					"min": 5000,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Vbatt",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Vbatt",
+            "key": "gomspace.vbatt",
+            "values": [
+                {
+                    "bitsize": 10,
+                    "flow_id": 9,
+                    "max": 9500,
+                    "min": 5000,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Vbatt",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -204,26 +204,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Cursun",
-			"key": "gomspace.cursun",
-			"values": [
-				{
-					"bitsize": 10,
-					"flow_id": 9,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Cursun",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Cursun",
+            "key": "gomspace.cursun",
+            "values": [
+                {
+                    "bitsize": 10,
+                    "flow_id": 9,
+                    "max": 3000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Cursun",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -233,26 +233,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Cursys",
-			"key": "gomspace.cursys",
-			"values": [
-				{
-					"bitsize": 10,
-					"flow_id": 9,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Cursys",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Cursys",
+            "key": "gomspace.cursys",
+            "values": [
+                {
+                    "bitsize": 10,
+                    "flow_id": 9,
+                    "max": 12000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Cursys",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -262,54 +262,54 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Vboost",
-			"key": "gomspace.vboost",
-			"values": [
-				{
-					"bitsize": 9,
-					"flow_id": 9,
-					"max": 4000,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output1",
-					"key": "output1",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 9,
-					"flow_id": 9,
-					"max": 4000,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output2",
-					"key": "output2",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 9,
-					"flow_id": 9,
-					"max": 4000,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output3",
-					"key": "output3",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Vboost",
+            "key": "gomspace.vboost",
+            "values": [
+                {
+                    "bitsize": 9,
+                    "flow_id": 9,
+                    "max": 8500,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output1",
+                    "key": "gomspace.vboost.output1",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 9,
+                    "flow_id": 9,
+                    "max": 8500,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output2",
+                    "key": "gomspace.vboost.output2",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 9,
+                    "flow_id": 9,
+                    "max": 8500,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output3",
+                    "key": "gomspace.vboost.output3",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -319,54 +319,54 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Curin",
-			"key": "gomspace.curin",
-			"values": [
-				{
-					"bitsize": 10,
-					"flow_id": 9,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output1",
-					"key": "output1",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 10,
-					"flow_id": 9,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output2",
-					"key": "output2",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 10,
-					"flow_id": 9,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output3",
-					"key": "output3",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Curin",
+            "key": "gomspace.curin",
+            "values": [
+                {
+                    "bitsize": 10,
+                    "flow_id": 9,
+                    "max": 6000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output1",
+                    "key": "gomspace.curin.output1",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 10,
+                    "flow_id": 9,
+                    "max": 6000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output2",
+                    "key": "gomspace.curin.output2",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 10,
+                    "flow_id": 9,
+                    "max": 6000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output3",
+                    "key": "gomspace.curin.output3",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -376,96 +376,96 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Curout",
-			"key": "gomspace.curout",
-			"values": [
-				{
-					"bitsize": 10,
-					"flow_id": 10,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output1",
-					"key": "output1",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 10,
-					"flow_id": 10,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output2",
-					"key": "output2",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 10,
-					"flow_id": 10,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output3",
-					"key": "output3",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 10,
-					"flow_id": 10,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output4",
-					"key": "output4",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 10,
-					"flow_id": 10,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output5",
-					"key": "output5",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 10,
-					"flow_id": 10,
-					"max": 10,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Output6",
-					"key": "output6",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Curout",
+            "key": "gomspace.curout",
+            "values": [
+                {
+                    "bitsize": 10,
+                    "flow_id": 10,
+                    "max": 12000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output1",
+                    "key": "gomspace.curout.output1",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 10,
+                    "flow_id": 10,
+                    "max": 12000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output2",
+                    "key": "gomspace.curout.output2",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 10,
+                    "flow_id": 10,
+                    "max": 12000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output3",
+                    "key": "gomspace.curout.output3",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 10,
+                    "flow_id": 10,
+                    "max": 12000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output4",
+                    "key": "gomspace.curout.output4",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 10,
+                    "flow_id": 10,
+                    "max": 12000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output5",
+                    "key": "gomspace.curout.output5",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 10,
+                    "flow_id": 10,
+                    "max": 12000,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Output6",
+                    "key": "gomspace.curout.output6",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -475,78 +475,78 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Output",
-			"key": "gomspace.output",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 10,
-					"type": "bool",
-					"writable": false,
-					"name": "Output1",
-					"key": "output1",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 10,
-					"type": "bool",
-					"writable": false,
-					"name": "Output2",
-					"key": "output2",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 10,
-					"type": "bool",
-					"writable": false,
-					"name": "Output3",
-					"key": "output3",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 10,
-					"type": "bool",
-					"writable": false,
-					"name": "Output4",
-					"key": "output4",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 10,
-					"type": "bool",
-					"writable": false,
-					"name": "Output5",
-					"key": "output5",
-					"hints": {
-						"range": "1"
-					}
-				},
-				{
-					"bitsize": 1,
-					"flow_id": 10,
-					"type": "bool",
-					"writable": false,
-					"name": "Output6",
-					"key": "output6",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Output",
+            "key": "gomspace.output",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 10,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Output1",
+                    "key": "gomspace.output.output1",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 10,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Output2",
+                    "key": "gomspace.output.output2",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 10,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Output3",
+                    "key": "gomspace.output.output3",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 10,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Output4",
+                    "key": "gomspace.output.output4",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 10,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Output5",
+                    "key": "gomspace.output.output5",
+                    "hints": {
+                        "range": 1
+                    }
+                },
+                {
+                    "bitsize": 1,
+                    "flow_id": 10,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Output6",
+                    "key": "gomspace.output.output6",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -556,26 +556,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Counter_boot",
-			"key": "gomspace.counter_boot",
-			"values": [
-				{
-					"bitsize": 32,
-					"flow_id": 11,
-					"max": 4294967295,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Counter_boot",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Counter_boot",
+            "key": "gomspace.counter_boot",
+            "values": [
+                {
+                    "bitsize": 32,
+                    "flow_id": 11,
+                    "max": 4294967295,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Counter_boot",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -585,68 +585,68 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Temp",
-			"key": "gomspace.temp",
-			"values": [
-				{
-					"bitsize": 8,
-					"flow_id": 11,
-					"max": 125,
-					"min": -40,
-					"type": "signed int",
-					"writable": false,
-					"name": "Output1",
-					"key": "output1",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 8,
-					"flow_id": 11,
-					"max": 125,
-					"min": -40,
-					"type": "signed int",
-					"writable": false,
-					"name": "Output2",
-					"key": "output2",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 8,
-					"flow_id": 11,
-					"max": 125,
-					"min": -40,
-					"type": "signed int",
-					"writable": false,
-					"name": "Output3",
-					"key": "output3",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
-				{
-					"bitsize": 8,
-					"flow_id": 11,
-					"max": 125,
-					"min": -40,
-					"type": "signed int",
-					"writable": false,
-					"name": "Output4",
-					"key": "output4",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Temp",
+            "key": "gomspace.temp",
+            "values": [
+                {
+                    "bitsize": 8,
+                    "flow_id": 11,
+                    "max": 125,
+                    "min": -40,
+                    "type": "signed int",
+                    "writable": false,
+                    "name": "Output1",
+                    "key": "gomspace.temp.output1",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 8,
+                    "flow_id": 11,
+                    "max": 125,
+                    "min": -40,
+                    "type": "signed int",
+                    "writable": false,
+                    "name": "Output2",
+                    "key": "gomspace.temp.output2",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 8,
+                    "flow_id": 11,
+                    "max": 125,
+                    "min": -40,
+                    "type": "signed int",
+                    "writable": false,
+                    "name": "Output3",
+                    "key": "gomspace.temp.output3",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
+                {
+                    "bitsize": 8,
+                    "flow_id": 11,
+                    "max": 125,
+                    "min": -40,
+                    "type": "signed int",
+                    "writable": false,
+                    "name": "Output4",
+                    "key": "gomspace.temp.output4",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -656,26 +656,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Bootcause",
-			"key": "gomspace.bootcause",
-			"values": [
-				{
-					"bitsize": 4,
-					"flow_id": 11,
-					"max": 8,
-					"min": 0,
-					"type": "unsigned char",
-					"writable": false,
-					"name": "Bootcause",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Bootcause",
+            "key": "gomspace.bootcause",
+            "values": [
+                {
+                    "bitsize": 4,
+                    "flow_id": 11,
+                    "max": 8,
+                    "min": 0,
+                    "type": "unsigned char",
+                    "writable": false,
+                    "name": "Bootcause",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -685,26 +685,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Battmode",
-			"key": "gomspace.battmode",
-			"values": [
-				{
-					"bitsize": 3,
-					"flow_id": 11,
-					"max": 4,
-					"min": 0,
-					"type": "unsigned char",
-					"writable": false,
-					"name": "Battmode",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Battmode",
+            "key": "gomspace.battmode",
+            "values": [
+                {
+                    "bitsize": 3,
+                    "flow_id": 11,
+                    "max": 4,
+                    "min": 0,
+                    "type": "unsigned char",
+                    "writable": false,
+                    "name": "Battmode",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -714,26 +714,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Pptmode",
-			"key": "gomspace.pptmode",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 11,
-					"max": 2,
-					"min": 1,
-					"type": "unsigned char",
-					"writable": false,
-					"name": "Pptmode",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Pptmode",
+            "key": "gomspace.pptmode",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 11,
+                    "max": 2,
+                    "min": 1,
+                    "type": "unsigned char",
+                    "writable": false,
+                    "name": "Pptmode",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -743,23 +743,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Power_cycle_output1_cmd",
-			"key": "gomspace.power_cycle_output1_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 12,
-					"type": "bool",
-					"writable": true,
-					"name": "Power_cycle_output1_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Power_cycle_output1_cmd",
+            "key": "gomspace.power_cycle_output1_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Power_cycle_output1_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -769,23 +769,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Power_cycle_output2_cmd",
-			"key": "gomspace.power_cycle_output2_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 12,
-					"type": "bool",
-					"writable": true,
-					"name": "Power_cycle_output2_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Power_cycle_output2_cmd",
+            "key": "gomspace.power_cycle_output2_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Power_cycle_output2_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -795,23 +795,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Power_cycle_output3_cmd",
-			"key": "gomspace.power_cycle_output3_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 12,
-					"type": "bool",
-					"writable": true,
-					"name": "Power_cycle_output3_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Power_cycle_output3_cmd",
+            "key": "gomspace.power_cycle_output3_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Power_cycle_output3_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -821,23 +821,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Power_cycle_output4_cmd",
-			"key": "gomspace.power_cycle_output4_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 12,
-					"type": "bool",
-					"writable": true,
-					"name": "Power_cycle_output4_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Power_cycle_output4_cmd",
+            "key": "gomspace.power_cycle_output4_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Power_cycle_output4_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -847,23 +847,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Power_cycle_output5_cmd",
-			"key": "gomspace.power_cycle_output5_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 12,
-					"type": "bool",
-					"writable": true,
-					"name": "Power_cycle_output5_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Power_cycle_output5_cmd",
+            "key": "gomspace.power_cycle_output5_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Power_cycle_output5_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -873,23 +873,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Power_cycle_output6_cmd",
-			"key": "gomspace.power_cycle_output6_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 12,
-					"type": "bool",
-					"writable": true,
-					"name": "Power_cycle_output6_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Power_cycle_output6_cmd",
+            "key": "gomspace.power_cycle_output6_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 12,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Power_cycle_output6_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -899,23 +899,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Heater",
-			"key": "gomspace.heater",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 28,
-					"type": "bool",
-					"writable": false,
-					"name": "Heater",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Heater",
+            "key": "gomspace.heater",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 28,
+                    "type": "bool",
+                    "writable": false,
+                    "name": "Heater",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -925,23 +925,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Heater_cmd",
-			"key": "gomspace.heater_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 30,
-					"type": "bool",
-					"writable": true,
-					"name": "Heater_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Heater_cmd",
+            "key": "gomspace.heater_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 30,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Heater_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -951,26 +951,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Wdt_i2c_time_left",
-			"key": "gomspace.wdt_i2c_time_left",
-			"values": [
-				{
-					"bitsize": 10,
-					"flow_id": 29,
-					"max": 1000,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Wdt_i2c_time_left",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Wdt_i2c_time_left",
+            "key": "gomspace.wdt_i2c_time_left",
+            "values": [
+                {
+                    "bitsize": 7,
+                    "flow_id": 29,
+                    "max": 99,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Wdt_i2c_time_left",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -980,26 +980,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Counter_wdt_i2c",
-			"key": "gomspace.counter_wdt_i2c",
-			"values": [
-				{
-					"bitsize": 32,
-					"flow_id": 29,
-					"max": 4294967295,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": false,
-					"name": "Counter_wdt_i2c",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Counter_wdt_i2c",
+            "key": "gomspace.counter_wdt_i2c",
+            "values": [
+                {
+                    "bitsize": 32,
+                    "flow_id": 29,
+                    "max": 4294967295,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": false,
+                    "name": "Counter_wdt_i2c",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -1009,23 +1009,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Gs_reboot_cmd",
-			"key": "gomspace.gs_reboot_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 30,
-					"type": "bool",
-					"writable": true,
-					"name": "Gs_reboot_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Gs_reboot_cmd",
+            "key": "gomspace.gs_reboot_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 30,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Gs_reboot_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -1035,23 +1035,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Gs_reset_cmd",
-			"key": "gomspace.gs_reset_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 30,
-					"type": "bool",
-					"writable": true,
-					"name": "Gs_reset_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Gs_reset_cmd",
+            "key": "gomspace.gs_reset_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 30,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Gs_reset_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -1061,26 +1061,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Pv1_cmd",
-			"key": "gomspace.pv1_cmd",
-			"values": [
-				{
-					"bitsize": 9,
-					"flow_id": 30,
-					"max": 4000,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": true,
-					"name": "Pv1_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Pv1_cmd",
+            "key": "gomspace.pv1_cmd",
+            "values": [
+                {
+                    "bitsize": 9,
+                    "flow_id": 30,
+                    "max": 8500,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Pv1_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -1090,26 +1090,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Pv2_cmd",
-			"key": "gomspace.pv2_cmd",
-			"values": [
-				{
-					"bitsize": 9,
-					"flow_id": 30,
-					"max": 4000,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": true,
-					"name": "Pv2_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Pv2_cmd",
+            "key": "gomspace.pv2_cmd",
+            "values": [
+                {
+                    "bitsize": 9,
+                    "flow_id": 30,
+                    "max": 8500,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Pv2_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -1119,26 +1119,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Pv3_cmd",
-			"key": "gomspace.pv3_cmd",
-			"values": [
-				{
-					"bitsize": 9,
-					"flow_id": 30,
-					"max": 4000,
-					"min": 0,
-					"type": "unsigned int",
-					"writable": true,
-					"name": "Pv3_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Pv3_cmd",
+            "key": "gomspace.pv3_cmd",
+            "values": [
+                {
+                    "bitsize": 9,
+                    "flow_id": 30,
+                    "max": 8500,
+                    "min": 0,
+                    "type": "unsigned int",
+                    "writable": true,
+                    "name": "Pv3_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -1148,26 +1148,26 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Pptmode_cmd",
-			"key": "gomspace.pptmode_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 30,
-					"max": 2,
-					"min": 1,
-					"type": "unsigned char",
-					"writable": true,
-					"name": "Pptmode_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					},
-					"units": "_________"
-				},
+            ]
+        },
+        {
+            "name": "Pptmode_cmd",
+            "key": "gomspace.pptmode_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 30,
+                    "max": 2,
+                    "min": 1,
+                    "type": "unsigned char",
+                    "writable": true,
+                    "name": "Pptmode_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    },
+                    "units": "_____"
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -1177,23 +1177,23 @@
                         "domain": 1
                     }
                 }
-			]
-		},
-		{
-			"name": "Counter_reset_cmd",
-			"key": "gomspace.counter_reset_cmd",
-			"values": [
-				{
-					"bitsize": 1,
-					"flow_id": 30,
-					"type": "bool",
-					"writable": true,
-					"name": "Counter_reset_cmd",
-					"key": "value",
-					"hints": {
-						"range": "1"
-					}
-				},
+            ]
+        },
+        {
+            "name": "Counter_reset_cmd",
+            "key": "gomspace.counter_reset_cmd",
+            "values": [
+                {
+                    "bitsize": 1,
+                    "flow_id": 30,
+                    "type": "bool",
+                    "writable": true,
+                    "name": "Counter_reset_cmd",
+                    "key": "value",
+                    "hints": {
+                        "range": 1
+                    }
+                },
                 {
                     "key": "utc",
                     "source": "timestamp",
@@ -1203,7 +1203,7 @@
                         "domain": 1
                     }
                 }
-			]
-		}
-	]
+            ]
+        }
+    ]
 }
