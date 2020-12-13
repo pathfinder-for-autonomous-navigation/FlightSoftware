@@ -189,7 +189,7 @@ var configs = {
         typeName: 'Miscellaneous Telemetry Point',
         typeDescription: 'A miscellaneous telemetry point on the satellite',
         typeCssClass: 'icon-telemetry',
-        jsonFile: '/miscellaneous'
+        jsonFile: '/miscellaneous.json'
     }
 }
 
@@ -304,14 +304,12 @@ function GenericPlugin(config) {
         else{
 
             var generalConfigData;
-            var i = 0;
 
             //retrieves the config data with the matching key
             for (const key of Object.keys(configs)) {
 	            if(config === key){
-   		            generalConfigData = Object.values(configs)[i];
+   		            generalConfigData = configs[key];
                 }
-  	            i++
             }
 
             //Adds the taxonomy namespace and key to MCT using the configData
