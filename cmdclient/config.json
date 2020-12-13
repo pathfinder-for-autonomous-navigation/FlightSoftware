@@ -1,7 +1,7 @@
 {
     "FlightControllerFollower" : {
-        "type" : "RadioSession",
-        "server" : "",
-        "port" : 
+        "type" : "USBSession",
+        "server" : "localhost",
+        "port" : 8000
     }
 }

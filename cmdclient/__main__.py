@@ -80,7 +80,9 @@ class CmdClient(Cmd):
 
         else:
             endpoint = self.url+"/send-telem"
-            r = requests.post(url = endpoint, data = parseStateFields(args))
+            print(endpoint)
+            r = requests.post(url = endpoint, json = parseStateFields(args))
+            print(parseStateFields(args))
             print(r.content)
 
 
