@@ -14,7 +14,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.adcs_commander.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -28,7 +28,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.adcs_commander.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -57,7 +57,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.adcs_controller.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -71,7 +71,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.adcs_controller.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -100,7 +100,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.adcs_estimator.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -114,7 +114,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.adcs_estimator.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -143,7 +143,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.adcs_monitor.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -157,7 +157,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.adcs_monitor.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -186,7 +186,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.attitude_controller.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -200,7 +200,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.attitude_controller.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -229,7 +229,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.clock_ct.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -243,7 +243,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.clock_ct.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -272,7 +272,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.dcdc_ct.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -286,7 +286,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.dcdc_ct.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -315,7 +315,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.debug.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -329,7 +329,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.debug.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -358,7 +358,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.docking_ct.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -372,7 +372,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.docking_ct.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -401,7 +401,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.downlink_ct.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -415,7 +415,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.downlink_ct.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -444,7 +444,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.eeprom_ct.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -458,7 +458,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.eeprom_ct.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -487,7 +487,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.gomspace_rd.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -501,7 +501,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.gomspace_rd.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -530,7 +530,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.mission_ct.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -544,7 +544,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.mission_ct.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -573,7 +573,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.piksi.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -587,7 +587,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.piksi.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -616,7 +616,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.quake.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -630,7 +630,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.quake.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },
@@ -659,7 +659,7 @@
                     "type": "float",
                     "writable": false,
                     "name": "Avg_wait",
-                    "key": "timing.uplink_ct.avg_wait",
+                    "key": "avg_wait",
                     "hints": {
                         "range": 1
                     },
@@ -673,7 +673,7 @@
                     "type": "unsigned int",
                     "writable": false,
                     "name": "Num_lates",
-                    "key": "timing.uplink_ct.num_lates",
+                    "key": "num_lates",
                     "hints": {
                         "range": 1
                     },

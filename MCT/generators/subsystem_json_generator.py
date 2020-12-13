@@ -218,7 +218,7 @@ def createJSON():
 
                         # set key, name, and hints
                         stateObject['name'] = capFirst(state);
-                        stateObject['key'] = k;
+                        stateObject['key'] = state;
                         stateObject['hints'] = {};
                         stateObject['hints']['range'] = 1;
 

@@ -41,7 +41,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
-                    "key": "adcs_monitor.wheel1_fault.base",
+                    "key": "base",
                     "hints": {
                         "range": 1
                     }
@@ -52,7 +52,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
-                    "key": "adcs_monitor.wheel1_fault.override",
+                    "key": "override",
                     "hints": {
                         "range": 1
                     }
@@ -65,7 +65,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Persistence",
-                    "key": "adcs_monitor.wheel1_fault.persistence",
+                    "key": "persistence",
                     "hints": {
                         "range": 1
                     },
@@ -77,7 +77,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
-                    "key": "adcs_monitor.wheel1_fault.suppress",
+                    "key": "suppress",
                     "hints": {
                         "range": 1
                     }
@@ -88,7 +88,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
-                    "key": "adcs_monitor.wheel1_fault.unsignal",
+                    "key": "unsignal",
                     "hints": {
                         "range": 1
                     }
@@ -114,7 +114,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
-                    "key": "adcs_monitor.wheel2_fault.base",
+                    "key": "base",
                     "hints": {
                         "range": 1
                     }
@@ -125,7 +125,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
-                    "key": "adcs_monitor.wheel2_fault.override",
+                    "key": "override",
                     "hints": {
                         "range": 1
                     }
@@ -138,7 +138,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Persistence",
-                    "key": "adcs_monitor.wheel2_fault.persistence",
+                    "key": "persistence",
                     "hints": {
                         "range": 1
                     },
@@ -150,7 +150,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
-                    "key": "adcs_monitor.wheel2_fault.suppress",
+                    "key": "suppress",
                     "hints": {
                         "range": 1
                     }
@@ -161,7 +161,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
-                    "key": "adcs_monitor.wheel2_fault.unsignal",
+                    "key": "unsignal",
                     "hints": {
                         "range": 1
                     }
@@ -187,7 +187,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
-                    "key": "adcs_monitor.wheel3_fault.base",
+                    "key": "base",
                     "hints": {
                         "range": 1
                     }
@@ -198,7 +198,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
-                    "key": "adcs_monitor.wheel3_fault.override",
+                    "key": "override",
                     "hints": {
                         "range": 1
                     }
@@ -211,7 +211,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Persistence",
-                    "key": "adcs_monitor.wheel3_fault.persistence",
+                    "key": "persistence",
                     "hints": {
                         "range": 1
                     },
@@ -223,7 +223,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
-                    "key": "adcs_monitor.wheel3_fault.suppress",
+                    "key": "suppress",
                     "hints": {
                         "range": 1
                     }
@@ -234,7 +234,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
-                    "key": "adcs_monitor.wheel3_fault.unsignal",
+                    "key": "unsignal",
                     "hints": {
                         "range": 1
                     }
@@ -260,7 +260,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
-                    "key": "adcs_monitor.wheel_pot_fault.base",
+                    "key": "base",
                     "hints": {
                         "range": 1
                     }
@@ -271,7 +271,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
-                    "key": "adcs_monitor.wheel_pot_fault.override",
+                    "key": "override",
                     "hints": {
                         "range": 1
                     }
@@ -284,7 +284,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Persistence",
-                    "key": "adcs_monitor.wheel_pot_fault.persistence",
+                    "key": "persistence",
                     "hints": {
                         "range": 1
                     },
@@ -296,7 +296,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
-                    "key": "adcs_monitor.wheel_pot_fault.suppress",
+                    "key": "suppress",
                     "hints": {
                         "range": 1
                     }
@@ -307,7 +307,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
-                    "key": "adcs_monitor.wheel_pot_fault.unsignal",
+                    "key": "unsignal",
                     "hints": {
                         "range": 1
                     }
@@ -417,7 +417,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Base",
-                    "key": "adcs_monitor.functional_fault.base",
+                    "key": "base",
                     "hints": {
                         "range": 1
                     }
@@ -428,7 +428,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Override",
-                    "key": "adcs_monitor.functional_fault.override",
+                    "key": "override",
                     "hints": {
                         "range": 1
                     }
@@ -441,7 +441,7 @@
                     "type": "unsigned int",
                     "writable": true,
                     "name": "Persistence",
-                    "key": "adcs_monitor.functional_fault.persistence",
+                    "key": "persistence",
                     "hints": {
                         "range": 1
                     },
@@ -453,7 +453,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Suppress",
-                    "key": "adcs_monitor.functional_fault.suppress",
+                    "key": "suppress",
                     "hints": {
                         "range": 1
                     }
@@ -464,7 +464,7 @@
                     "type": "bool",
                     "writable": true,
                     "name": "Unsignal",
-                    "key": "adcs_monitor.functional_fault.unsignal",
+                    "key": "unsignal",
                     "hints": {
                         "range": 1
                     }
