@@ -253,6 +253,9 @@ class BootUtil(object):
         if self.suppress_faults:
             self.logger.put("[TESTCASE] Suppressing Faults!")
 
+            self.flight_controller.write_state("gomspace.low_batt.suppress", "true")
+            self.flight_controller.write_state("fault_handler.enabled", "false")
+
             # Prevent ADCS faults from causing transition to initialization hold
             self.flight_controller.write_state("adcs_monitor.functional_fault.suppress", "true")
             self.flight_controller.write_state("adcs_monitor.wheel1_fault.suppress", "true")
