@@ -1,7 +1,7 @@
 {
   "name": "PAN-MissionControl",
-  "version": "0.0.5",
-  "description": "Mission Control API using openMCT",
+  "version": "1.0.0",
+  "description": "Mission Control API using OpenMCT",
   "main": "server-files/server.js",
   "scripts": {
     "start": "node server-files/server.js",
@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/pathfinder-for-autonomous-navigation/FlightSoftware/tree/master/src/gsw"
   },
-  "author": "Kirin Kambon and Tanishq Aggarwal",
+  "author": "Kirin Kambon, Tanishq Aggarwal, and Duncan McDonald",
   "dependencies": {
     "axios": "^0.19.2",
     "express": "^4.14.1",
