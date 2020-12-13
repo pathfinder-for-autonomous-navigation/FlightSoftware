@@ -173,7 +173,7 @@ def initialTelemValue(state):
     # a data structure holding all the coorisponding initial values for each type
     initialValues = {
         'unsigned char': 0, 
-        'bool': False, 
+        'bool': false, 
         'float': 0.0, 
         'std float vector': 0.0, 
         'unsigned int': 0, 
