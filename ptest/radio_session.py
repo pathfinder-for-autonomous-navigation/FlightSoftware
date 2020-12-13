@@ -184,7 +184,7 @@ class RadioSession(object):
                     params=payload, headers=headers)
 
         print(tlm_service_active, response.text)
-        if tlm_service_active and response.text.lower()=="true":
+        if tlm_service_active and response.text.lower()=="true" and not os.path.exists("uplink.json"):
             return False
         return True
 
