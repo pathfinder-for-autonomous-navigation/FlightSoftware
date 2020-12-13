@@ -190,7 +190,11 @@ class PlotterClient(cmd.Cmd):
                     timeMin = str(timeList.split(":")[1] + ":" + timeList.split(":")[2])
                     timeSeconds = str(timeList.split(":")[2])
                     timeMS = timeSeconds.split(".")[1]
-                    mtrwriter.writerow([timeSeconds,data["field"],valueList[0],valueList[1],valueList[2] ] )
+                    try:
+                        mtrwriter.writerow([timeSeconds,data["field"],valueList[0],valueList[1],valueList[2] ] )
+                    except IndexError:
+                        mtrwriter.writerow([timeSeconds,data["field"],valueList[0]] )
+                        
         print("csv file \'mtr_logs\'written to root")
                 
     
