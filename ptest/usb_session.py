@@ -104,7 +104,7 @@ class USBSession(object):
             return True
         except:
             print(f"Unable to start {self.device_name} HTTP command endpoint at http://localhost:{self.port}")
-            return False
+            return True
 
     def check_console_msgs(self):
         '''
