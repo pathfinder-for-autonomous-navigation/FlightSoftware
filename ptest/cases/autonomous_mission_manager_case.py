@@ -57,7 +57,7 @@ class AutonomousMissionManagerCase(MissionCase):
         
     @property
     def sim_duration(self):
-        return 0
+        return float("inf")
 
     def setup_post_bootsetup_follower(self):
         self.using_radios = self.radio_follower != None #assumes only using one physical radio
