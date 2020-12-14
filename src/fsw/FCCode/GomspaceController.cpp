@@ -4,32 +4,34 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     Devices::Gomspace &_gs)
     : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
 
+    // Serializer values taken from datasheet: https://drive.google.com/drive/u/0/folders/1IKB0q4r82Rd-L4oDUTEDPsAWOrWoveDo
+
     get_hk_fault("gomspace.get_hk", 1),
     low_batt_fault("gomspace.low_batt", 1),
 
     batt_threshold_sr(5000,9000,10),
     batt_threshold_f("gomspace.batt_threshold", batt_threshold_sr),
 
-    vboost_sr(0,4000,9), 
+    vboost_sr(0,8500,9), // see pg 11
     vboost1_f("gomspace.vboost.output1", vboost_sr),
     vboost2_f("gomspace.vboost.output2", vboost_sr),
     vboost3_f("gomspace.vboost.output3", vboost_sr),
 
-    vbatt_sr(5000,9000,10),
+    vbatt_sr(5000,9500,10), // see pg 9
     vbatt_f("gomspace.vbatt", vbatt_sr),
 
-    curin_sr(0,10,10), 
+    curin_sr(0,6000,10), 
     curin1_f("gomspace.curin.output1", curin_sr),
     curin2_f("gomspace.curin.output2", curin_sr),
     curin3_f("gomspace.curin.output3", curin_sr),
 
-    cursun_sr(0,10,10), 
+    cursun_sr(0,3000,10), 
     cursun_f("gomspace.cursun", cursun_sr),
 
-    cursys_sr(0,10,10), 
+    cursys_sr(0,12000,10), 
     cursys_f("gomspace.cursys", cursys_sr),
 
-    curout_sr(0,10,10), 
+    curout_sr(0,12000,10), 
     curout1_f("gomspace.curout.output1", curout_sr),
     curout2_f("gomspace.curout.output2", curout_sr),
     curout3_f("gomspace.curout.output3", curout_sr),
@@ -45,7 +47,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     output5_f("gomspace.output.output5", output_sr),
     output6_f("gomspace.output.output6", output_sr),
 
-    wdt_i2c_time_left_sr(0,1000,10), 
+    wdt_i2c_time_left_sr(99), 
     wdt_i2c_time_left_f("gomspace.wdt_i2c_time_left", wdt_i2c_time_left_sr),
 
     counter_wdt_i2c_sr(), 
@@ -72,6 +74,9 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     heater_sr(),
     heater_f("gomspace.heater", heater_sr),
 
+    period_sr(),
+    period_f("gomspace.powercycle_period", period_sr),
+
     power_cycle_outputs_cmd_sr(),
     power_cycle_output1_cmd_f("gomspace.power_cycle_output1_cmd", power_cycle_outputs_cmd_sr),
     power_cycle_output2_cmd_f("gomspace.power_cycle_output2_cmd", power_cycle_outputs_cmd_sr),
@@ -80,7 +85,7 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     power_cycle_output5_cmd_f("gomspace.power_cycle_output5_cmd", power_cycle_outputs_cmd_sr),
     power_cycle_output6_cmd_f("gomspace.power_cycle_output6_cmd", power_cycle_outputs_cmd_sr),
 
-    pv_output_cmd_sr(0,4000,9),
+    pv_output_cmd_sr(0,8500,9), // see pg 11
     pv1_output_cmd_f("gomspace.pv1_cmd", pv_output_cmd_sr),
     pv2_output_cmd_f("gomspace.pv2_cmd", pv_output_cmd_sr),
     pv3_output_cmd_f("gomspace.pv3_cmd", pv_output_cmd_sr),
@@ -154,6 +159,11 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
 
         add_readable_field(heater_f);
 
+        // If PAN::one_day_ccno is very short due to the SPEEDUP flag, ensure the period is positive
+        // to prevent a divide-by-zero error.
+        add_writable_field(period_f);
+        period_f.set(thirty_seconds_ccno > 0 ? thirty_seconds_ccno : 1);
+        
         add_writable_field(power_cycle_output1_cmd_f);
         add_writable_field(power_cycle_output2_cmd_f);
         add_writable_field(power_cycle_output3_cmd_f);
@@ -211,7 +221,7 @@ void GomspaceController::execute() {
     }
 
     // Set the gomspace outputs to the values of the statefield commands around every 30 seconds
-    if (control_cycle_count%period==0){
+    if (control_cycle_count%period_f.get()==0){
         power_cycle_outputs();
     }
 
