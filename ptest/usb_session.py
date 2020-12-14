@@ -418,10 +418,15 @@ class USBSession(object):
         except ValueError:
             return "No telemetry to parse."
         self.dp_console.write((newest_telem_file+"\n").encode())
-        telem_json_data = json.loads(self.dp_console.readline().rstrip())
-        if telem_json_data is not None:
-                telem_json_data = telem_json_data["data"]
-        return telem_json_data
+        parsed_output = self.dp_console.readline().rstrip().decode()
+
+        try:
+            telem_json_data = json.loads(parsed_output)
+            if telem_json_data is not None:
+                    telem_json_data = telem_json_data["data"]
+            return telem_json_data
+        except json.JSONDecodeError:
+            return "Not enough telemetry to parse."
 
     def dbtelem(self):
         '''

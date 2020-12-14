@@ -85,13 +85,17 @@ class IridiumEmailProcessor(object):
             f.close()
 
             self.console.write(("data.sbd\n").encode())
-            data = json.loads(self.console.readline().rstrip())
-            if data is not None:
-                data=data["data"]
-                data["time"]=str(datetime.now().isoformat())
-            os.remove("data.sbd")
+            try:
+                data = json.loads(self.console.readline().rstrip().decode())
+                if data is not None:
+                    data=data["data"]
+                    data["time"]=str(datetime.now().isoformat())
+                os.remove("data.sbd")
 
-        return data
+                return data
+            except:
+                # Not enough telemetry to read
+                pass
 
     def check_for_email(self):
         '''
