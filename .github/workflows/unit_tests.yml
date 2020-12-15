@@ -6,7 +6,6 @@ on:
     paths-ignore:
       - 'ptest/**'
       - 'tlm/**'
-      - 'tools/**'
       - 'MCT/**'
       - 'cmdclient/**'
       - 'docs/**'

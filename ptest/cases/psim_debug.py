@@ -1,6 +1,7 @@
 # Runs mission from startup state to standby state.
 from .base import SingleSatOnlyCase
 from psim.sims import SingleAttitudeOrbitGnc
+from .utils import Enums, mag_of, sum_of_differentials
 
 class PsimDebug(SingleSatOnlyCase):
     @property
@@ -31,13 +32,15 @@ class PsimDebug(SingleSatOnlyCase):
 
     @property
     def fast_boot(self):
-        return False
+        return True
 
     @property
     def sim_initial_state(self):
         return "startup"
 
     def setup_post_bootsetup(self):
+        self.print_ws("pan.state", Enums.mission_states['standby'])
+        self.print_ws("adcs.state", Enums.adcs_states['point_standby'])
         return
 
     def data_logs(self):
