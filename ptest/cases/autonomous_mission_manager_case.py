@@ -84,8 +84,7 @@ class AutonomousMissionManagerCase(MissionCase):
 
             #uplink the leader's data to the follower and vice versa
             baseline_orbit_data_fields = ["orbit.baseline_pos", "orbit.baseline_vel"]
-            baseline_orbit_data_vals_follower = [downlinked_data_vals_leader[i] - downlinked_data_vals_follower[i]
-                                                                             for i in range(len(baseline_orbit_data_fields))]
+            baseline_orbit_data_vals_follower = [downlinked_data_vals_leader[i] - downlinked_data_vals_follower[i] for i in range(len(baseline_orbit_data_fields))]
             baseline_orbit_data_vals_leader = [-1*val for val in baseline_orbit_data_vals_follower]
 
             baseline_orbit_data_vals_follower = [val for val in baseline_orbit_data_vals_follower]
