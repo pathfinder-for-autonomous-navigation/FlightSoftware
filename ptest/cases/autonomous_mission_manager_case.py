@@ -6,14 +6,30 @@ from .utils import str_to_val
 
 class AutonomousMissionManagerCase(MissionCase):
 
-    def mission_conditions_met(self):
-        #check leader state
-        leader_state = self.leader.read_state("pan.state")
-        if(leader_state == "3"): 
-            self.logger.put("Leader is in standby. Ending mission." )
+    def state_check(self, satellite, designaton):
+        satellite_state = satellite.read_state("pan.state")
+        if(satellite_state == "3"):
+            self.logger.put(designaton + " is in standby. Ending mission." )
             return False
-        elif(leader_state == "10"):
-            self.logger.put("Leader is in state safehold. Ending mission.")
+        elif(satellite_state == "10"):
+            self.logger.put(designaton + " is in state safehold. Ending mission.")
+            return False
+        return True
+    
+    def mission_conditions_met(self):
+        #check for operating leader state
+        leader_state_functional = self.state_check(self.leader, "Leader")
+        follower_state_functional = self.state_check(self.follower, "Follower")
+        if not leader_state_functional:
+            if follower_state_functional:
+                self.follower.write_state("pan.state", 3)
+            else:
+                self.follower.write_state("pan_state", 10)
+            return False
+
+        #check faulting state for follower state
+        if not follower_state_functional:
+            self.leader.write_state("pan.state", 3)
             return False
 
         #check time since last comms
@@ -23,22 +39,17 @@ class AutonomousMissionManagerCase(MissionCase):
             return False
         follower_time_since_comms = time.time() - self.follower_time_last_comms 
         if(follower_time_since_comms > self.comms_time_threshold):
-            self.logger.put("Follower is experiencing comms blackout. Ending mission.")
+            self.logger.put("Follower is experiencing comms blackout. Ending mission." + str(follower_time_since_comms))
             return False
 
-        #check faulting for follower state -> should this also end mission?
-        follower_state = self.follower.read_state("pan.state")
-        if(follower_state == "3"):
-            self.logger.put("Alert: Follower is in standby.")
-            return True
-        elif(follower_state == "10"):
-            self.logger.put("Alert: Follower is in state safehold.")
-            return True
 
         #TODO notify if close to docking
         #TODO exit gracefully if mission ended
 
         return True
+    
+    def propagate_orbits(self, vals):
+        return vals
 
 
     @property
@@ -74,17 +85,20 @@ class AutonomousMissionManagerCase(MissionCase):
 
             #Pass telemetry between spacecraft 
 
-            #wait for leader's data to come down from Iridium (automatically sent)
+            #wait for follower and leader's data to come down from Iridium (automatically sent)
             orbit_data_fields = ["orbit.pos", "orbit.vel"]
-            while(self.leader.read_state("orbit.time") == None): #what does es actually respond with?
+            while("Unable to find field" in self.leader.read_state("orbit.time") or 
+                    "Unable to find field" in self.follower.read_state("orbit.time")): 
                 pass
 
             downlinked_data_vals_leader = [lin.Vector3(str_to_val(self.leader.read_state(field))) for field in orbit_data_fields]
             downlinked_data_vals_follower = [lin.Vector3(str_to_val(self.follower.read_state(field))) for field in orbit_data_fields]
+            propagated_data_vals_leader = self.propagate_orbits(downlinked_data_vals_leader)
+            propagated_data_vals_follower = self.propagate_orbits(downlinked_data_vals_follower)
 
             #uplink the leader's data to the follower and vice versa
             baseline_orbit_data_fields = ["orbit.baseline_pos", "orbit.baseline_vel"]
-            baseline_orbit_data_vals_follower = [downlinked_data_vals_leader[i] - downlinked_data_vals_follower[i]
+            baseline_orbit_data_vals_follower = [propagated_data_vals_leader[i] - propagated_data_vals_follower[i]
                                                                              for i in range(len(baseline_orbit_data_fields))]
             baseline_orbit_data_vals_leader = [-1*val for val in baseline_orbit_data_vals_follower]
 
@@ -95,15 +109,5 @@ class AutonomousMissionManagerCase(MissionCase):
             self.leader.write_multiple_states(baseline_orbit_data_fields, baseline_orbit_data_vals_leader)
 
             self.leader_time_last_comms = float(self.leader.read_state("orbit.time"))
-            self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))
-
-            
-            
-            
-            #TODO propagate orbits from the data -> how to verify precision?      
- 
-
-
-
-        
+            self.follower_time_last_comms = float(self.follower.read_state("orbit.time"))    
 
