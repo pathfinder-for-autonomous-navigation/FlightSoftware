@@ -74,7 +74,7 @@ class AutonomousMissionManagerCase(MissionCase):
 
             #Pass telemetry between spacecraft 
 
-            #wait for leader's data to come down from Iridium (automatically sent)
+            #wait for data from both spacecrafts to come down from Iridium
             orbit_data_fields = ["orbit.pos", "orbit.vel"]
             while(self.leader.read_state("orbit.time") == None): #what does es actually respond with?
                 pass
@@ -106,4 +106,3 @@ class AutonomousMissionManagerCase(MissionCase):
 
 
         
-
