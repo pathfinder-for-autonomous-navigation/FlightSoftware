@@ -51,7 +51,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     gyr_vec_y_f("adcs_monitor.gyr_vec.y", gyr_vec_component_sr),
     gyr_vec_z_f("adcs_monitor.gyr_vec.z", gyr_vec_component_sr),
 
-    gyr_temp_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 16), //referenced from I2C_Interface.doc
+    gyr_temp_sr(adcs::imu::min_rd_temp, adcs::imu::max_rd_temp, 16), //full res is 16    
     gyr_temp_f("adcs_monitor.gyr_temp", gyr_temp_sr),
 
     flag_sr(),
