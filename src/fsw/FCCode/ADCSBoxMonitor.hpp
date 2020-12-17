@@ -35,8 +35,13 @@ protected:
     * @brief Inputs to get from ADCS box.
     */
 
+    // Dummy vector serializer. This is used for values that still
+    // need to be read/written from psim, but will not be downlinked
+    // because their individual components are getting downlinked
+    // instead.
+    Serializer<lin::Vector3f> dummy_vec_sr;
+
     //! Speed reads off of the reaction wheels.
-    Serializer<lin::Vector3f> rwa_speed_rd_sr;
     Serializer<float> rwa_speed_rd_component_sr; // component serializer
     ReadableStateField<lin::Vector3f> rwa_speed_rd_f;
     ReadableStateField<float> rwa_speed_rd_x_f;
@@ -44,7 +49,6 @@ protected:
     ReadableStateField<float> rwa_speed_rd_z_f;
 
     //! Torque reads off of the reaction wheels.
-    Serializer<lin::Vector3f> rwa_torque_rd_sr;
     Serializer<float> rwa_torque_rd_component_sr;
     ReadableStateField<lin::Vector3f> rwa_torque_rd_f;
     ReadableStateField<float> rwa_torque_rd_x_f;
@@ -55,7 +59,6 @@ protected:
     ReadableStateField<unsigned char> ssa_mode_f;
 
     //! Vector to the sun in the body frame.
-    Serializer<lin::Vector3f> ssa_vec_sr;
     ReadableStateField<lin::Vector3f> ssa_vec_f;
 
     //! Raw voltages of the sun sensors.
@@ -63,7 +66,6 @@ protected:
     std::vector<ReadableStateField<float>> ssa_voltages_f;
 
     //! Magnetic field vector in the body frame of MAG1.
-    Serializer<lin::Vector3f> mag1_vec_sr;
     Serializer<float> mag1_vec_component_sr;
     ReadableStateField<lin::Vector3f> mag1_vec_f;
     ReadableStateField<float> mag1_vec_x_f;
@@ -71,7 +73,6 @@ protected:
     ReadableStateField<float> mag1_vec_z_f;
 
     //! Magnetic field vector in the body frame of MAG2.
-    Serializer<lin::Vector3f> mag2_vec_sr;
     Serializer<float> mag2_vec_component_sr;
     ReadableStateField<lin::Vector3f> mag2_vec_f;
     ReadableStateField<float> mag2_vec_x_f;
@@ -79,7 +80,6 @@ protected:
     ReadableStateField<float> mag2_vec_z_f;
 
     //! Angular rate vector in the body frame.
-    Serializer<lin::Vector3f> gyr_vec_sr;
     Serializer<float> gyr_vec_component_sr;
     ReadableStateField<lin::Vector3f> gyr_vec_f;
     ReadableStateField<float> gyr_vec_x_f;
