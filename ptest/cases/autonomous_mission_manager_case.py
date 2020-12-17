@@ -85,7 +85,7 @@ class AutonomousMissionManagerCase(MissionCase):
 
             #Pass telemetry between spacecraft 
 
-            #wait for follower and leader's data to come down from Iridium (automatically sent)
+            #wait for data from both spacecrafts to come down from Iridium
             orbit_data_fields = ["orbit.pos", "orbit.vel"]
             while("Unable to find field" in self.leader.read_state("orbit.time") or 
                     "Unable to find field" in self.follower.read_state("orbit.time")): 
@@ -98,8 +98,7 @@ class AutonomousMissionManagerCase(MissionCase):
 
             #uplink the leader's data to the follower and vice versa
             baseline_orbit_data_fields = ["orbit.baseline_pos", "orbit.baseline_vel"]
-            baseline_orbit_data_vals_follower = [propagated_data_vals_leader[i] - propagated_data_vals_follower[i]
-                                                                             for i in range(len(baseline_orbit_data_fields))]
+            baseline_orbit_data_vals_follower = [downlinked_data_vals_leader[i] - downlinked_data_vals_follower[i] for i in range(len(baseline_orbit_data_fields))]
             baseline_orbit_data_vals_leader = [-1*val for val in baseline_orbit_data_vals_follower]
 
             baseline_orbit_data_vals_follower = [val for val in baseline_orbit_data_vals_follower]
