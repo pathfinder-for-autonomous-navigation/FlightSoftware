@@ -16,21 +16,19 @@ const constexpr std::array<mission_state_t, 5> MissionManager::fault_responsive_
 const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsive_states;
 
 MissionManager::MissionManager(StateFieldRegistry &registry, unsigned int offset) : TimedControlTask<void>(registry, "mission_ct", offset),
-                                                                                    detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 10)),
-                                                                                    close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
-                                                                                    docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
+                                                                                    detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 7)),
+                                                                                    close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 5000, 13)),
+                                                                                    docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 14)),
                                                                                     docking_timeout_limit_f("docking_timeout_limit",
-                                                                                                            Serializer<unsigned int>(2 * PAN::one_day_ccno)),
+                                                                                                            Serializer<unsigned int>(0, 2 * PAN::one_day_ccno, 6)),
                                                                                     adcs_state_f("adcs.state", Serializer<unsigned char>(10)),
                                                                                     docking_config_cmd_f("docksys.config_cmd", Serializer<bool>()),
                                                                                     enter_docking_cycle_f("docksys.enter_docking"),
-                                                                                    mission_state_f("pan.state", Serializer<unsigned char>(12), 10),
+                                                                                    mission_state_f("pan.state", Serializer<unsigned char>(12), 1),
                                                                                     is_deployed_f("pan.deployed", Serializer<bool>(), 1000),
-                                                                                    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(0, 15000, 32), 500),
-                                                                                    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100),
+                                                                                    deployment_wait_elapsed_f("pan.deployment.elapsed", Serializer<unsigned int>(15000), 500),
+                                                                                    sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 1),
                                                                                     enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
-                                                                                    
-                                                                        
 {
     add_writable_field(detumble_safety_factor_f);
     add_writable_field(close_approach_trigger_dist_f);

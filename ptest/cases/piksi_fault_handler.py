@@ -1,7 +1,22 @@
 from .base import SingleSatOnlyCase
 from .utils import FSWEnum, Enums, TestCaseFailure
+from psim.sims import SingleAttitudeOrbitGnc
 
 class PiksiFaultHandler(SingleSatOnlyCase):
+    @property
+    def sim_configs(self):
+        configs = ["truth/ci", "truth/base"]
+        configs += ["sensors/base"]
+        return configs
+
+    @property
+    def sim_model(self):
+        return SingleAttitudeOrbitGnc
+
+    @property
+    def sim_mapping(self):
+        return "ci_mapping.json"
+
     @property
     def sim_duration(self):
         return float("inf")
@@ -12,7 +27,7 @@ class PiksiFaultHandler(SingleSatOnlyCase):
 
     @property
     def fast_boot(self):
-        return False
+        return True
 
     def collect_diagnostic_data(self):
         self.rs("piksi.state")

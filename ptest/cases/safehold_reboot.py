@@ -3,11 +3,7 @@ from .utils import FSWEnum, Enums, TestCaseFailure
 
 class SafeholdReboot(SingleSatOnlyCase):
     @property
-    def sim_duration(self):
-        return float("inf")
-
-    @property
-    def desired_initial_state(self):
+    def initial_state(self):
         return "standby"
 
     @property

@@ -1,5 +1,6 @@
 from .base import SingleSatOnlyCase
 from .utils import FSWEnum, Enums, TestCaseFailure
+from psim.sims import SingleAttitudeOrbitGnc
 
 class QuakeFaultHandler(SingleSatOnlyCase):
     @property

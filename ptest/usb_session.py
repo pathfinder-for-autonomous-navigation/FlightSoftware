@@ -54,6 +54,11 @@ class USBSession(object):
 
         # Open a connection to elasticsearch
         self.es = Elasticsearch([{'host':"127.0.0.1",'port':"9200"}])
+        
+        self.debug_to_console = None
+
+    def case_interaction_setup(self, _debug_to_console):
+        self.debug_to_console = _debug_to_console
 
     def connect(self, console_port, baud_rate):
         '''
@@ -91,7 +96,7 @@ class USBSession(object):
             self.flask_app = create_usb_session_endpoint(self)
             self.flask_app.config["uplink_console"] = self.uplink_console
             self.flask_app.config["console"] = self.console
-            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"port": self.port})
+            self.http_thread = Process(name=f"{self.device_name} HTTP Command Endpoint", target=self.flask_app.run, kwargs={"host":'0.0.0.0', "port": self.port})
             self.http_thread.start()
             print(f"{self.device_name} HTTP command endpoint is running at http://localhost:{self.port}")
             return True
@@ -121,6 +126,11 @@ class USBSession(object):
                     # The logline represents a debugging message created by Flight Software. Report the message to the logger.
                     logline = f"[{data['time']}] ({data['svrty']}) {data['msg']}"
                     self.logger.put(logline, add_time = False)
+
+                    # If we want debug to go to the console
+                    if self.debug_to_console:
+                        print(logline)
+
                 elif 'telem' in data:
                     logline = f"[{data['time']}] Received requested telemetry from spacecraft.\n"
                     logline += data['telem']
