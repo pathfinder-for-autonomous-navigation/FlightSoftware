@@ -9,14 +9,14 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     : TimedControlTask<void>(registry, "adcs_monitor", offset),
     adcs_system(_adcs),
     rwa_speed_rd_sr(adcs::rwa::min_speed_read, adcs::rwa::max_speed_read, 16*3), //referenced from I2C_Interface.doc
-    rwa_speed_rd_component_sr(adcs::rwa::min_speed_read,adcs::rwa::max_speed_read, 8),
+    rwa_speed_rd_component_sr(adcs::rwa::min_speed_read,adcs::rwa::max_speed_read, 12),
     rwa_speed_rd_f("adcs_monitor.rwa_speed_rd", rwa_speed_rd_sr),
     rwa_speed_rd_x_f("adcs_monitor.rwa_speed_rd.x",rwa_speed_rd_component_sr),
     rwa_speed_rd_y_f("adcs_monitor.rwa_speed_rd.y",rwa_speed_rd_component_sr),
     rwa_speed_rd_z_f("adcs_monitor.rwa_speed_rd.z",rwa_speed_rd_component_sr),
 
     rwa_torque_rd_sr(adcs::rwa::min_torque, adcs::rwa::max_torque, 16*3), //referenced from I2C_Interface.doc
-    rwa_torque_rd_component_sr(adcs::rwa::min_torque,adcs::rwa::max_torque, 8),
+    rwa_torque_rd_component_sr(adcs::rwa::min_torque,adcs::rwa::max_torque, 12),
     rwa_torque_rd_f("adcs_monitor.rwa_torque_rd", rwa_torque_rd_sr),
     rwa_torque_rd_x_f("adcs_monitor.rwa_torque_rd.x", rwa_torque_rd_component_sr),
     rwa_torque_rd_y_f("adcs_monitor.rwa_torque_rd.y", rwa_torque_rd_component_sr),
@@ -24,13 +24,13 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
 
     ssa_mode_rd(0,2,2), //referenced from Interface.doc
     ssa_mode_f("adcs_monitor.ssa_mode", ssa_mode_rd),
-    ssa_vec_sr(-1,1,16*3), //referenced from I2C_Interface.doc
+    ssa_vec_sr(0,1,1 + SerializerConstants::min_fvsz),
     ssa_vec_f("adcs_monitor.ssa_vec", ssa_vec_sr),
     ssa_voltage_sr(adcs::ssa::min_voltage_rd, adcs::ssa::max_voltage_rd, 8),
     ssa_voltages_f(),
 
     mag1_vec_sr(adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, 16*3), //referenced from I2C_Interface.doc
-    mag1_vec_component_sr(adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, 8),
+    mag1_vec_component_sr(adcs::imu::min_mag1_rd_mag, adcs::imu::max_mag1_rd_mag, 16),
     mag1_vec_f("adcs_monitor.mag1_vec", mag1_vec_sr),
     mag1_vec_x_f("adcs_monitor.mag1_vec.x", mag1_vec_component_sr),
     mag1_vec_y_f("adcs_monitor.mag1_vec.y", mag1_vec_component_sr),
@@ -38,7 +38,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
 
 
     mag2_vec_sr(adcs::imu::min_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, 16*3), //referenced from I2C_Interface.doc
-    mag2_vec_component_sr(adcs::imu::min_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, 8),
+    mag2_vec_component_sr(adcs::imu::min_mag2_rd_mag, adcs::imu::max_mag2_rd_mag, 16),
     mag2_vec_f("adcs_monitor.mag2_vec", mag2_vec_sr),
     mag2_vec_x_f("adcs_monitor.mag2_vec.x", mag2_vec_component_sr),
     mag2_vec_y_f("adcs_monitor.mag2_vec.y", mag2_vec_component_sr),
