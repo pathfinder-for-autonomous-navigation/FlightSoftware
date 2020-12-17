@@ -22,7 +22,7 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
     rwa_torque_rd_y_f("adcs_monitor.rwa_torque_rd.y", rwa_torque_rd_component_sr),
     rwa_torque_rd_z_f("adcs_monitor.rwa_torque_rd.z", rwa_torque_rd_component_sr),
 
-    ssa_mode_rd(0,2,2), //referenced from Interface.doc
+    ssa_mode_rd(2),
     ssa_mode_f("adcs_monitor.ssa_mode", ssa_mode_rd),
     ssa_vec_sr(0,1,1 + SerializerConstants::min_fvsz),
     ssa_vec_f("adcs_monitor.ssa_vec", ssa_vec_sr),
