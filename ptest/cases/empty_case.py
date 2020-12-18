@@ -34,6 +34,16 @@ class EmptySimCase(EmptyCase):
     def sim_duration(self):
         return float("inf")
 
+class EmptyTelemCase(SingleSatOnlyCase):
+    def run_case_singlesat(self):
+        self.ws("telem.dump", True)
+        self.cycle()
+        self.ws("telem.dump", True)
+        self.cycle()
+        self.flight_controller.parsetelem()
+        self.flight_controller.parsetelem()
+        self.finish()
+
 class FailingEmptySimCase(EmptyCase):
 
 

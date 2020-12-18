@@ -2,16 +2,11 @@
 # - tools/alltest.sh
 # - .github/workflows/hootl.yml
 
-# Testcases that require simulation
-from .empty_case import EmptySimCase, FailingEmptySimCase
+from .empty_case import EmptySimCase, EmptyTelemCase, FailingEmptySimCase, EmptyCase, NothingCase, FailingEmptyCase
 from .deployment_to_standby import DeploymentToStandby
 from .quake_fault_handler import QuakeFaultHandler
 from .piksi_fault_handler import PiksiFaultHandler
-
 from .psim_debug import PsimDebug
-
-# Testcases that don't require simulation
-from .empty_case import EmptyCase, NothingCase, FailingEmptyCase
 from .ditl_case import DitlCase
 from .gomspace_checkout_case import GomspaceCheckoutCase, CheckBatteryLevel
 from .docking_checkout_case import DockingCheckoutCase

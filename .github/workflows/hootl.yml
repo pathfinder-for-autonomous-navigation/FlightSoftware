@@ -53,6 +53,7 @@ jobs:
       run: |
         python -m ptest runsim -c ptest/configs/ci.json -t CICase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t EmptyCase -ni
+        python -m ptest runsim -c ptest/configs/ci.json -t EmptyTelemCase -ni
         python -m ptest runsim -c ptest/configs/ci.json -t EmptySimCase -ni
         !(python -m ptest runsim -c ptest/configs/ci.json -t FailingEmptyCase -ni)
         !(python -m ptest runsim -c ptest/configs/ci.json -t FailingEmptySimCase -ni)
