@@ -178,7 +178,7 @@ DownlinkParser::DownlinkData DownlinkParser::process_downlink_packet(const std::
         }
     }
 
-    return ret.dump();
+    return ret;
 }
 
 nlohmann::json DownlinkParser::process_downlink_packet_json(const std::vector<char>& packet) {

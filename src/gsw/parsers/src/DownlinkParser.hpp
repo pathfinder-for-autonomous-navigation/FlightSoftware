@@ -11,6 +11,8 @@
  * 
  */
 class DownlinkParser {
+  friend class DownlinkTestFixture;
+
   public:
     /**
      * @brief Construct a new Downlink Parser.

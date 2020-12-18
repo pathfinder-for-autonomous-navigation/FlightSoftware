@@ -36,30 +36,6 @@ class TelemetryInfoGenerator {
       std::vector<DownlinkProducer::FlowData> flow_data;
     };
 
-        /**
-     * @brief Generates telemetry data in JSON format.
-     * 
-     * @return json Formatted as follows:
-     * 
-     * {
-     *    "fields" : {
-     *      "fieldname1" : {
-     *        "flow_id" : 1,
-     *        "writable" : true,
-     *        "min" : 0,
-     *        "max" : 100,
-     *        "bitsize" : 10
-     *      }
-     *    }
-     *    "flows" : [{
-     *      "id" : 1,
-     *      "priority" : 0,
-     *      "active" : true,
-     *      "fields" : ["fieldname1"]
-     *    }]
-     * }
-     * 
-     */
     TelemetryInfo generate_telemetry_info();
     nlohmann::json generate_telemetry_info_json();
 
@@ -73,6 +49,31 @@ void to_json(nlohmann::json& j, const TelemetryInfoGenerator::FieldData& d);
 void from_json(const nlohmann::json& j, TelemetryInfoGenerator::FieldData& d);
 void to_json(nlohmann::json& j, const DownlinkProducer::FlowData& d);
 void from_json(const nlohmann::json& j, DownlinkProducer::FlowData& d);
+
+/**
+ * @brief Generates telemetry data in JSON format.
+ * 
+ * @return json Formatted as follows:
+ * 
+ * {
+ *    "fields" : {
+ *      "fieldname1" : {
+ *        "flow_id" : 1,
+ *        "writable" : true,
+ *        "min" : 0,
+ *        "max" : 100,
+ *        "bitsize" : 10
+ *      }
+ *    }
+ *    "flows" : [{
+ *      "id" : 1,
+ *      "priority" : 0,
+ *      "active" : true,
+ *      "fields" : ["fieldname1"]
+ *    }]
+ * }
+ * 
+ */
 void to_json(nlohmann::json& j, const TelemetryInfoGenerator::TelemetryInfo& d);
 void from_json(const nlohmann::json& j, TelemetryInfoGenerator::TelemetryInfo& d);
 

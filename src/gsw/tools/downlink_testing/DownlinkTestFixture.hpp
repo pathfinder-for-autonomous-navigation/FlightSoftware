@@ -1,9 +1,9 @@
 #ifndef DOWNLINK_TEST_FIXTURE_HPP_
 #define DOWNLINK_TEST_FIXTURE_HPP_
 
-#include <DownlinkProducer.hpp>
-#include <TelemetryInfoGenerator.hpp>
-#include <DownlinkParser.hpp>
+#include <gsw/parsers/src/DownlinkParser.hpp>
+#include <gsw/parsers/src/TelemetryInfoGenerator.hpp>
+#include "../test/StateFieldRegistryMock.hpp"
 
 class DownlinkTestFixture {
   public:
@@ -13,11 +13,23 @@ class DownlinkTestFixture {
      */
     DownlinkTestFixture(const TelemetryInfoGenerator::TelemetryInfo& data);
 
+    using test_input_t = std::map<std::string, std::string>;
+    using test_output_t = test_input_t;
+    struct test_error_t {
+      std::string expected;
+      std::string actual;
+      double tolerance;
+    };
+    struct test_result_t {
+      bool success;
+      std::map<std::string, test_error_t> errors;
+    };
+
     /**
      * Take in telemetry data, apply it to state fields and parse the
      * resultant downlink packets.
      */
-    void parse(const test_input_t& input, const test_output_t& output);
+    void parse(const test_input_t& input, test_output_t& output);
 
     /**
      * Generate a valid test input.
@@ -31,18 +43,6 @@ class DownlinkTestFixture {
       const test_output_t& output,
       const test_result_t& errors,
       const std::string& path) const;
-
-    using test_input_t = std::map<std::string, DownlinkParser::FieldData>;
-    using test_output_t = test_input_t;
-    struct test_error_t {
-      std::string expected;
-      std::string actual;
-      double tolerance;
-    }
-    struct test_result_t {
-      bool success;
-      std::map<std::string, test_error_t> errors;
-    };
 
     /**
      * Compare the input data to the DownlinkProducer to the output data
@@ -73,5 +73,8 @@ class DownlinkTestFixture {
     InternalStateField<char*>* snapshot_ptr_fp;
     InternalStateField<size_t>* snapshot_size_bytes_fp;
 };
+
+void to_json(nlohmann::json& j, const DownlinkTestFixture::test_error_t& e);
+void from_json(const nlohmann::json& j, DownlinkTestFixture::test_error_t& e);
 
 #endif
