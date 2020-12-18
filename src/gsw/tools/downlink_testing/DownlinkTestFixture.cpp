@@ -1,4 +1,5 @@
 #include "DownlinkTestFixture.hpp"
+#include <sstream>
 
 DownlinkTestFixture::DownlinkTestFixture(const TelemetryInfoGenerator::TelemetryInfo& data) : test_data(data)
 {
@@ -36,8 +37,11 @@ void DownlinkTestFixture::save_test_data(
     
 }
 
+/**
+ * Helper function that generates input telemetry values.
+ */
 template<typename T>
-std::string get_value(T min, T max)
+std::string generate_value(T min, T max)
 {    
     if (std::is_integral<T>::value)
         return std::to_string(min + ( std::rand() % ( max - min + 1 ) ));
@@ -54,14 +58,21 @@ void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t&
         const TelemetryInfoGenerator::FieldData& f = field.second;
 
         std::string val;
-        if (f.type == "unsigned int") val = get_value<unsigned int>(std::stoul(f.min), std::stoul(f.max));
-        if (f.type == "signed int") val = get_value<signed int>(std::stoi(f.min), std::stoi(f.max));
-        if (f.type == "unsigned char") val = get_value<unsigned char>(std::stoul(f.min), std::stoul(f.max));
-        if (f.type == "signed char") val = get_value<signed char>(std::stoi(f.min), std::stoi(f.max));
-        else if (f.type == "float") val = get_value<signed char>(std::stof(f.min), std::stof(f.max));
-        else if (f.type == "double") val = get_value<signed char>(std::stod(f.min), std::stod(f.max));
-        else if (f.type == "gps_time_t") val = "";
-        else if (f.type == "bool") val = get_value<bool>(false, false);
+        if (f.type == "unsigned int") val = generate_value<unsigned int>(std::stoul(f.min), std::stoul(f.max));
+        if (f.type == "signed int") val = generate_value<signed int>(std::stoi(f.min), std::stoi(f.max));
+        if (f.type == "unsigned char") val = generate_value<unsigned char>(std::stoul(f.min), std::stoul(f.max));
+        if (f.type == "signed char") val = generate_value<signed char>(std::stoi(f.min), std::stoi(f.max));
+        else if (f.type == "float") val = generate_value<signed char>(std::stof(f.min), std::stof(f.max));
+        else if (f.type == "double") val = generate_value<signed char>(std::stod(f.min), std::stod(f.max));
+        else if (f.type == "bool") val = generate_value<bool>(false, false);
+        else if (f.type == "gps_time_t") {
+            unsigned short int wn = 2000 + std::rand() % 1000;
+            unsigned int tow = std::rand();
+            unsigned int ns = std::rand();
+            std::stringstream gps_str;
+            gps_str << wn << "," << tow << "," << ns;
+            val = gps_str.str();
+        }
 
         // TODO implement vector and quaternion autogenerators
         else if (f.type == "lin float vector") continue;
@@ -73,6 +84,9 @@ void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t&
     }
 }
 
+/**
+ * Helper function to randomly generate bounds for telemetry metadata.
+ */
 template<typename T>
 void generate_random_bounds(std::function<T()>& randomfn, TelemetryInfoGenerator::FieldData& data)
 {
@@ -87,16 +101,31 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
 {
     static constexpr unsigned int field_limit = 200;
     static constexpr unsigned int flow_limit = 20;
+
+    /**
+     * Set maximum sizes for this particular telemetry information.
+     */
     unsigned int num_fields = std::rand() % field_limit + 1;
-    unsigned int num_flows = std::rand() % flow_limit + 1;
+    unsigned int num_flows;
+    do {num_flows = std::rand() % flow_limit + 1;} while(num_flows > num_fields);
 
+    /**
+     * Create the flows and randomly assign them an activity level.
+     */
     for(int i = 0; i < num_flows; i++)
-        info.flow_data.push_back({static_cast<unsigned char>(i+1), true, {}});
+    {
+        bool flow_active = std::rand() % 2 == 0;
+        info.flow_data.push_back({static_cast<unsigned char>(i+1), flow_active, {}});
+    }
 
+    // TODO add vector and quaternion types to this vector
     std::vector<std::string> datatypes = 
-        {"unsigned int", "signed int", "unsigned char", "signed char", "float", "double", "gps_time_t", "bool"};
-    // TODO add vector and quaternion types
+        {"unsigned int", "signed int", "unsigned char", "signed char", "float", "double", "gps_time_t", "bool"}; 
 
+    /**
+     * Generates a field, randomly choosing the field's datatypes,
+     * bounds, bitsizes, and flow.
+     */
     for(int i = 0; i < num_fields; i++)
     {
         TelemetryInfoGenerator::FieldData data;
@@ -238,20 +267,43 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
     const DownlinkTestFixture::test_output_t& output,
     DownlinkTestFixture::test_result_t& result) const
 {
+    /*
+     * Iterate over all fields in the input set and check:
+     * - Field is present in the output set if and only if the flow that the
+     *   field belongs to is active.
+     * - The input value of the field matches the output value of the field up
+     *   to a tolerance specified by the bounds and bitsize.
+     */
     for(auto const& input_field : input)
     {
-        std::string name = input_field.first;
-        std::string input_valstr = input_field.second;
+        const std::string& name = input_field.first;
+        const std::string& input_valstr = input_field.second;
         const TelemetryInfoGenerator::FieldData& data = test_data.field_data.at(name);
+        const DownlinkProducer::FlowData flow_data = test_data.flow_data[data.flow_id-1];
 
-        if (output.find(name) == output.end())
+        /*
+         * Check field is present in the output if and only if the flow
+         * that the field belongs to is active. Report an error otherwise.
+         */
+        if (output.find(name) == output.end() && !flow_data.is_active) continue;
+        if (output.find(name) == output.end() && flow_data.is_active)
         {
             result.errors.insert({name, {input_valstr,"",-1}});
             continue;
         }
+        if (output.find(name) != output.end() && !flow_data.is_active)
+        {
+            const std::string& output_valstr = output.at(name);
+            result.errors.insert({name, {"",output_valstr,-1}});
+            continue;
+        }
 
-        std::string output_valstr = output.at(name);
+        const std::string& output_valstr = output.at(name);
         
+        /*
+         * Check the input value of the field matches the output value of the
+         * field up to a tolerance specified by the bounds and bitsize.
+         */
         if (data.type == "unsigned int" || data.type == "signed int"
             || data.type == "unsigned char" || data.type == "signed char")
         {
@@ -294,10 +346,14 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
         }
     }
 
+    /*
+     * Ensure that there are no fields in the output telemetry set that
+     * were not in the input telemetry set.
+     */
     for(auto const& output_field : output)
     {
-        std::string name = output_field.first;
-        std::string output_valstr = output_field.second;
+        const std::string& name = output_field.first;
+        const std::string& output_valstr = output_field.second;
         if (input.find(name) == input.end())
             result.errors.insert({name, {"",output_valstr,-1}});
     }
