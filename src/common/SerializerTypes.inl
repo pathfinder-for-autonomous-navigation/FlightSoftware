@@ -80,9 +80,8 @@ class IntegerSerializer : public SerializerBase<T> {
     }
 
   public:
-    unsigned int _resolution() const {
-        unsigned int range = this->_max - this->_min;
-        const unsigned int num_bits = this->serialized_val.size();
+    static unsigned int resolution(long max, long min, unsigned int num_bits) {
+        unsigned int range = max - min;
         
         unsigned int num_intervals;
         if (num_bits < 32) num_intervals = (1 << num_bits) - 1;
@@ -92,6 +91,11 @@ class IntegerSerializer : public SerializerBase<T> {
         T interval_per_bit = range / num_intervals;
         if (interval_per_bit * num_intervals < range) interval_per_bit += 1;
         return interval_per_bit;
+    }
+
+    unsigned int _resolution() const {
+        const unsigned int num_bits = this->serialized_val.size();
+        return Serializer<T>::resolution(this->_max, this->_min, num_bits);
     }
 
     void serialize(const T& src) override {

@@ -151,6 +151,8 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
             generate_random_bounds<double>(randdouble, data);
             data.bitsize = std::rand() % 64;
         }
+        else if (data.type == "bool") data.bitsize = 1;
+        else if (data.type == "gps_time_t") data.bitsize = 68;
 
         data.flow_id = std::rand() % num_flows + 1;
 
@@ -199,7 +201,7 @@ void DownlinkTestFixture::create_state_fields()
         #define create_writable_field_boundless(strtype, fieldtype) \
             create_field_boundless(strtype, fieldtype, create_writable_field)
 
-        #define create_block(fieldtype) \
+        #define create(fieldtype) \
             create_##fieldtype##_field("unsigned int", unsigned int, unsigned int, std::stol); \
             create_##fieldtype##_field("unsigned char", unsigned char, unsigned char, std::stol); \
             create_##fieldtype##_field("signed int", signed int, signed int, std::stol); \
@@ -215,14 +217,14 @@ void DownlinkTestFixture::create_state_fields()
 
         if (f.writable)
         {
-            create_block(writable);
+            create(writable);
         }
         else
         {
-            create_block(readable);
+            create(readable);
         }
         
-        #undef create_block
+        #undef create
         #undef create_writable_field_boundless
         #undef create_readable_field_boundless
         #undef create_writable_field
@@ -236,7 +238,72 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
     const DownlinkTestFixture::test_output_t& output,
     DownlinkTestFixture::test_result_t& result) const
 {
+    for(auto const& input_field : input)
+    {
+        std::string name = input_field.first;
+        std::string input_valstr = input_field.second;
+        const TelemetryInfoGenerator::FieldData& data = test_data.field_data.at(name);
 
+        if (output.find(name) == output.end())
+        {
+            result.errors.insert({name, {input_valstr,"",-1}});
+            continue;
+        }
+
+        std::string output_valstr = output.at(name);
+        
+        if (data.type == "unsigned int" || data.type == "signed int"
+            || data.type == "unsigned char" || data.type == "signed char")
+        {
+            long min = std::stol(data.min);
+            long max = std::stol(data.max);
+            double tolerance = Serializer<unsigned int>::resolution(min, max, data.bitsize);
+
+            long input_val = std::stol(input_valstr);
+            long output_val = std::stol(output_valstr);
+            if (std::abs(output_val - input_val) > tolerance)
+                result.errors.insert({name, {input_valstr, output_valstr, tolerance}});
+        }
+        else if (data.type == "float" || data.type == "double")
+        {
+            double min = std::stod(data.min);
+            double max = std::stod(data.max);
+            unsigned int num_intervals = (0b1 << data.bitsize) - 1;
+            double tolerance = (max - min) / num_intervals;
+
+            long input_val = std::stod(input_valstr);
+            long output_val = std::stod(output_valstr);
+            if (std::abs(output_val - input_val) > tolerance)
+                result.errors.insert({name, {input_valstr, output_valstr, tolerance}});
+        }
+        else if (data.type == "bool" && input_valstr != output_valstr)
+            result.errors.insert({name, {input_valstr, output_valstr, 0}});
+        else if (data.type == "gps_time_t")
+        {
+            Serializer<gps_time_t> s;
+            gps_time_t input_time, output_time;
+            s.deserialize(input_valstr.c_str(), &input_time);
+            s.deserialize(output_valstr.c_str(), &output_time);
+
+            bool error = false;
+            // Check if there is greater than 1 ms error in the GPS time reporting.
+            error |= input_time > output_time && static_cast<unsigned long long>(input_time - output_time) > 1000;
+            error |= output_time > input_time && static_cast<unsigned long long>(output_time - input_time) > 1000;
+            if (error)
+                result.errors.insert({name, {input_valstr, output_valstr, 1e-6}});
+        }
+    }
+
+    for(auto const& output_field : output)
+    {
+        std::string name = output_field.first;
+        std::string output_valstr = output_field.second;
+        if (input.find(name) == input.end())
+            result.errors.insert({name, {"",output_valstr,-1}});
+    }
+
+    if (result.errors.size() != 0) result.success = false;
+    else result.success = true;
 }
 
 void to_json(nlohmann::json& j, const DownlinkTestFixture::test_error_t& e)
