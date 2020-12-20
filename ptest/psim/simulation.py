@@ -59,7 +59,7 @@ class Simulation(object):
 
     def start(self):
         '''
-        Start the MATLAB simulation. This function is blocking until the simulation begins.
+        Start the PSim C++ simulation. This function is blocking until the simulation begins.
         '''
         self.add_to_log("Starting simulation loop...")
         if self.is_interactive:
@@ -219,6 +219,11 @@ class CppSimulation(Simulation):
         with open(fn) as json_file:
             self.fc_vs_sim = json.load(json_file)
         
+        self.add_to_log("Overwriting Initial Sim Conditions...")
+        
+        initials = self.testcase.get_dictionary()
+        # given dictionary, write initials
+
         # Create sub dictionaries for sensors and actuators
         self.fc_vs_sim_s = self.fc_vs_sim['fc_vs_sim_s']
         self.fc_vs_sim_a = self.fc_vs_sim['fc_vs_sim_a']

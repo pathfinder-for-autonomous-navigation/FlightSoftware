@@ -39,8 +39,8 @@ class PsimDebug(SingleSatOnlyCase):
         return "startup"
 
     def setup_post_bootsetup(self):
-        self.print_ws("pan.state", Enums.mission_states['standby'])
-        self.print_ws("adcs.state", Enums.adcs_states['point_standby'])
+        # self.print_ws("pan.state", Enums.mission_states['standby'])
+        # self.print_ws("adcs.state", Enums.adcs_states['point_standby'])
         return
 
     def data_logs(self):
