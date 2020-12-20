@@ -77,6 +77,16 @@ class PTestCase(object):
         return 'startup'
 
     @property
+    def sim_ic_map(self):
+        """
+        A dictionary of strings representing sim key names to
+        values that should be overriding the sim initial conditions
+        
+        Defaults to empty dict
+        """
+        return {}
+
+    @property
     def havt_read(self):
         '''
         Returns the ADCS HAVT table as a list of booleans

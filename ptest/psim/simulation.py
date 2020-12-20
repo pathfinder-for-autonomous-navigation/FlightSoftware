@@ -13,6 +13,8 @@ from ..gpstime import GPSTime
 import psim
 import lin 
 import json
+from ..cases.utils import is_lin_vector
+from ..cases.utils import to_lin_vector
 
 class Simulation(object):
     """
@@ -206,6 +208,19 @@ class CppSimulation(Simulation):
 
         configs_list = [prefix + x + postfix for x in self.sim_configs]
         config = psim.Configuration(configs_list)
+        
+        self.add_to_log("[ sim ] Overwriting Initial Sim Conditions...")
+
+        # given dictionary, write initials
+        initials = self.testcase.sim_ic_map
+        
+        # mutate config
+        for k,v in initials.items():
+            self.add_to_log(f"[ sim ] Set {k} to {v}")            
+            if type(v) == list:
+                v = to_lin_vector(v)
+            config[k] = v
+
         self.mysim = psim.Simulation(self.sim_model, config)
         self.dt = self.mysim["truth.dt.ns"]/1e9
 
@@ -218,11 +233,6 @@ class CppSimulation(Simulation):
         fn = 'ptest/psim/mapping_configs/' + self.mapping_file_name
         with open(fn) as json_file:
             self.fc_vs_sim = json.load(json_file)
-        
-        self.add_to_log("Overwriting Initial Sim Conditions...")
-        
-        initials = self.testcase.get_dictionary()
-        # given dictionary, write initials
 
         # Create sub dictionaries for sensors and actuators
         self.fc_vs_sim_s = self.fc_vs_sim['fc_vs_sim_s']
