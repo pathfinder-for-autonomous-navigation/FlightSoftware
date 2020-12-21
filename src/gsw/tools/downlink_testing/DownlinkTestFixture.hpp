@@ -16,7 +16,6 @@ class DownlinkTestFixture {
     using test_input_t = std::map<std::string, std::string>;
     struct test_output_t {
       std::map<std::string, std::string> values;
-      std::vector<char> raw_packet;
     };
     struct test_error_t {
       std::string expected;

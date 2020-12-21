@@ -21,16 +21,21 @@ void DownlinkTestFixture::parse(const DownlinkTestFixture::test_input_t& input,
     cycle_start_fp->set(true);
     downlink_parser->fcp.execute();
 
-    char* snapshot = snapshot_ptr_fp->get();
-    std::string snapshot_str(snapshot);
-    output.raw_packet = std::vector<char>(snapshot_str.begin(), snapshot_str.end());
-
-    DownlinkParser::DownlinkData processing_output = downlink_parser->process_downlink_packet(output.raw_packet);
-    output.values = processing_output.field_data;
+    char* snapshot_chars = snapshot_ptr_fp->get();
+    size_t snapshot_size = snapshot_size_bytes_fp->get();
+    std::vector<char> snapshot(snapshot_size);
+    for(int i = 0; i < snapshot_size; i++) snapshot[i] = snapshot_chars[i];
+    
+    downlink_parser->process_downlink_packet(snapshot);
+    std::vector<char> empty_packet{char(0x80), char(0x00), char(0x00), char(0x00), char(0x00)};
+    DownlinkParser::DownlinkData parser_output = downlink_parser->process_downlink_packet(empty_packet);
+    output.values = parser_output.field_data;
 }
 
 void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t& input) const
 {
+    // TODO insert cycle number.
+
     for(auto const& field : test_data.field_data)
     {
         const TelemetryInfoGenerator::FieldData& f = field.second;
