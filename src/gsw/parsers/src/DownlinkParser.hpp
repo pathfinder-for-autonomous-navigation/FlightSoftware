@@ -16,7 +16,6 @@ class DownlinkParser {
   public:
     /**
      * @brief Construct a new Downlink Parser.
-     * 
      */
     DownlinkParser(StateFieldRegistry& r,
         const std::vector<DownlinkProducer::FlowData>& flow_data);
@@ -49,7 +48,8 @@ class DownlinkParser {
 
   protected:
     /**
-     * @brief Initialize flight software in order to get downlink flows.
+     * @brief Initialize flight software in order to initialize all of the
+     * state field serializers.
      */
     MainControlLoop fcp;
 

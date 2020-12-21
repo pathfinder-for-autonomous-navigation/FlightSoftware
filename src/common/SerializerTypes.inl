@@ -58,14 +58,6 @@ class IntegerSerializer : public SerializerBase<T> {
                 "Must use integer or char type when constructing an integer serializer.");
 
   protected:
-    static constexpr unsigned int log2i(unsigned int n) {
-        unsigned int i = 0;
-        while(n > 0) {
-            n = n >> 1;
-            i++;
-        }
-        return i;
-    }
 
     IntegerSerializer(T min, T max, size_t compressed_size, size_t print_size)
         : SerializerBase<T>(min, max, std::min(compressed_size, 8*sizeof(T)), print_size)
@@ -80,6 +72,15 @@ class IntegerSerializer : public SerializerBase<T> {
     }
 
   public:
+    static constexpr unsigned int log2i(unsigned int n) {
+        unsigned int i = 0;
+        while(n > 0) {
+            n = n >> 1;
+            i++;
+        }
+        return i;
+    }
+
     static unsigned int resolution(long max, long min, unsigned int num_bits) {
         unsigned int range = max - min;
         

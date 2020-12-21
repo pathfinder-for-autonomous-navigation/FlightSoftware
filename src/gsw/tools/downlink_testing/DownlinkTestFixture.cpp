@@ -1,54 +1,32 @@
 #include "DownlinkTestFixture.hpp"
 #include <sstream>
+#include <fstream>
+#include <algorithm>
+#include <random>
 
 DownlinkTestFixture::DownlinkTestFixture(const TelemetryInfoGenerator::TelemetryInfo& data) : test_data(data)
 {
-    // Create required field(s)
-    cycle_count_fp = registry.create_readable_field<unsigned int>("pan.cycle_no");
     create_state_fields();
-
-    downlink_producer = std::make_unique<DownlinkProducer>(registry, 0);
-    downlink_producer->init_flows(data.flow_data);
+    downlink_parser = std::make_unique<DownlinkParser>(registry, data.flow_data);
     snapshot_ptr_fp = registry.find_internal_field_t<char*>("downlink.ptr");
     snapshot_size_bytes_fp = registry.find_internal_field_t<size_t>(
                                 "downlink.snap_size");
-
-    downlink_parser = std::make_unique<DownlinkParser>(registry, data.flow_data);
 }
 
 void DownlinkTestFixture::parse(const DownlinkTestFixture::test_input_t& input,
     DownlinkTestFixture::test_output_t& output)
 {
     apply_input(input);
-    downlink_producer->execute();
+    auto cycle_start_fp = registry.find_writable_field_t<bool>("cycle.start");
+    cycle_start_fp->set(true);
+    downlink_parser->fcp.execute();
 
     char* snapshot = snapshot_ptr_fp->get();
     std::string snapshot_str(snapshot);
-    std::vector<char> packet(snapshot_str.begin(), snapshot_str.end());
-    DownlinkParser::DownlinkData processing_output = downlink_parser->process_downlink_packet(packet);
-}
+    output.raw_packet = std::vector<char>(snapshot_str.begin(), snapshot_str.end());
 
-void DownlinkTestFixture::save_test_data(
-      const test_input_t& input,
-      const test_output_t& output,
-      const test_result_t& errors,
-      const std::string& path) const
-{
-    
-}
-
-/**
- * Helper function that generates input telemetry values.
- */
-template<typename T>
-std::string generate_value(T min, T max)
-{    
-    if (std::is_integral<T>::value)
-        return std::to_string(min + ( std::rand() % ( max - min + 1 ) ));
-    else if (std::is_floating_point<T>::value)
-        return std::to_string(min + std::rand() * (max - min) / RAND_MAX);
-    else if (std::is_same<T, bool>::value)
-        return std::rand() % 2 == 0 ? "true" : "false";
+    DownlinkParser::DownlinkData processing_output = downlink_parser->process_downlink_packet(output.raw_packet);
+    output.values = processing_output.field_data;
 }
 
 void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t& input) const
@@ -58,13 +36,16 @@ void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t&
         const TelemetryInfoGenerator::FieldData& f = field.second;
 
         std::string val;
-        if (f.type == "unsigned int") val = generate_value<unsigned int>(std::stoul(f.min), std::stoul(f.max));
-        if (f.type == "signed int") val = generate_value<signed int>(std::stoi(f.min), std::stoi(f.max));
-        if (f.type == "unsigned char") val = generate_value<unsigned char>(std::stoul(f.min), std::stoul(f.max));
-        if (f.type == "signed char") val = generate_value<signed char>(std::stoi(f.min), std::stoi(f.max));
-        else if (f.type == "float") val = generate_value<signed char>(std::stof(f.min), std::stof(f.max));
-        else if (f.type == "double") val = generate_value<signed char>(std::stod(f.min), std::stod(f.max));
-        else if (f.type == "bool") val = generate_value<bool>(false, false);
+        if (f.type == "unsigned int" || f.type == "unsigned char")
+            val = std::to_string(std::stoul(f.min) + ( std::rand() % ( std::stoul(f.max) - std::stoul(f.min) + 1 ) ));
+        if (f.type == "signed int" || f.type == "signed char")
+            val = std::to_string(std::stoi(f.min) + ( std::rand() % ( std::stoi(f.max) - std::stoi(f.min) + 1 ) ));
+        else if (f.type == "float")
+            val = std::to_string(std::stof(f.min) + std::rand() * (std::stof(f.max) - std::stof(f.min)) / RAND_MAX);
+        else if (f.type == "double")
+            val = std::to_string(std::stod(f.min) + std::rand() * (std::stod(f.max) - std::stod(f.min)) / RAND_MAX);
+        else if (f.type == "bool")
+            val = std::rand() % 2 == 0 ? "true" : "false";
         else if (f.type == "gps_time_t") {
             unsigned short int wn = 2000 + std::rand() % 1000;
             unsigned int tow = std::rand();
@@ -90,9 +71,12 @@ void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t&
 template<typename T>
 void generate_random_bounds(std::function<T()>& randomfn, TelemetryInfoGenerator::FieldData& data)
 {
-    T min = randomfn();
-    T max;
-    do { max = randomfn(); } while(max <= min);
+    T min = 0;
+    T max = 0;
+    do {
+        min = randomfn();
+        max = randomfn();
+    } while(max <= min);
     data.min = std::to_string(min);
     data.max = std::to_string(max);
 }
@@ -105,9 +89,8 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
     /**
      * Set maximum sizes for this particular telemetry information.
      */
-    unsigned int num_fields = std::rand() % field_limit + 1;
-    unsigned int num_flows;
-    do {num_flows = std::rand() % flow_limit + 1;} while(num_flows > num_fields);
+    unsigned int num_fields = 1 + std::rand() % field_limit;
+    unsigned int num_flows = 1 + std::rand() % flow_limit;
 
     /**
      * Create the flows and randomly assign them an activity level.
@@ -131,13 +114,13 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
         TelemetryInfoGenerator::FieldData data;
 
         data.name = "field" + std::to_string(i);
-        data.type = datatypes[std::rand() & datatypes.size()];
+        data.type = datatypes[std::rand() % datatypes.size()];
 
         if (data.type == "unsigned int")
         {
             std::function<unsigned int()> randint = []() { return std::rand(); };
             generate_random_bounds<unsigned int>(randint, data);
-            data.bitsize = std::rand() % 32;
+            data.bitsize = 1 + std::rand() % 31;
         }
         else if (data.type == "signed int")
         {
@@ -146,19 +129,19 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
                 return x * ((y % 2 == 0) ? (-1) : 1);
             };
             generate_random_bounds<signed int>(randint, data);
-            data.bitsize = std::rand() % 32;
+            data.bitsize = 1 + std::rand() % 31;
         }
         else if (data.type == "unsigned char")
         {
             std::function<unsigned char()> randint = []() { return std::rand() % 256; };
             generate_random_bounds<unsigned char>(randint, data);
-            data.bitsize = std::rand() % 8;
+            data.bitsize = 1 + std::rand() % 7;
         }
         else if (data.type == "signed char")
         {
             std::function<signed char()> randint = []() { return -256 + std::rand() % 256; };
             generate_random_bounds<signed char>(randint, data);
-            data.bitsize = std::rand() % 8;
+            data.bitsize = 1 + std::rand() % 7;
         }
         else if (data.type == "float")
         {
@@ -168,7 +151,7 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
                 return float_min + static_cast<float>(rand()) /( static_cast<float>(RAND_MAX/(float_max-float_min)));
             };
             generate_random_bounds<float>(randfloat, data);
-            data.bitsize = std::rand() % 32;
+            data.bitsize = 1 + std::rand() % 31;
         }
         else if (data.type == "double")
         {
@@ -178,14 +161,28 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
                 return double_min + static_cast<double>(rand()) /( static_cast<double>(RAND_MAX/(double_max-double_min)));
             };
             generate_random_bounds<double>(randdouble, data);
-            data.bitsize = std::rand() % 64;
+            data.bitsize = 1 + std::rand() % 63;
         }
         else if (data.type == "bool") data.bitsize = 1;
         else if (data.type == "gps_time_t") data.bitsize = 68;
 
-        data.flow_id = std::rand() % num_flows + 1;
+        // Assign a flow.
+        std::vector<int> flow_ids; for(int i = 1; i <= num_flows; i++) flow_ids.push_back(i);
+        auto rng = std::default_random_engine{}; std::shuffle(flow_ids.begin(),flow_ids.end(), rng);
+        for(int flow_id : flow_ids)
+        {
+            size_t flow_size = Serializer<signed char>::log2i(num_flows);
+            for(const std::string& field : info.flow_data[flow_id - 1].field_list)
+                flow_size += info.field_data[field].bitsize;
 
-        info.flow_data[data.flow_id - 1].field_list.push_back(data.name);
+            if (flow_size + data.bitsize <= DownlinkProducer::num_bits_in_packet - 1 - 32)
+            {
+                data.flow_id = flow_id;
+                info.flow_data[flow_id - 1].field_list.push_back(data.name);
+                break;
+            }
+        }
+
         info.field_data.insert({data.name, data});
     }
 }
@@ -213,22 +210,16 @@ void DownlinkTestFixture::create_state_fields()
                 registry.create_field_fn<fieldtype>(f.name, min, max, f.bitsize); \
             }
         #define create_field_boundless(strtype, fieldtype, create_field_fn) \
-            if(f.type == #strtype) \
+            if(f.type == strtype) \
             { \
                 registry.create_field_fn<fieldtype>(f.name); \
             }
         #define create_readable_field(strtype, boundtype, fieldtype, stdfn) \
             create_field(strtype, boundtype, fieldtype, create_readable_field, stdfn)
-        #define create_writable_field(strtype, boundtype, fieldtype, stdfn) \
-            create_field(strtype, boundtype, fieldtype, create_writable_field, stdfn)
         #define create_readable_lin_vector_field(strtype, boundtype, stdfn) \
             create_field(strtype, boundtype, boundtype, create_readable_lin_vector_field, stdfn)
-        #define create_writable_lin_vector_field(strtype, boundtype, stdfn) \
-            create_field(strtype, boundtype, boundtype, create_writable_lin_vector_field, stdfn)
         #define create_readable_field_boundless(strtype, fieldtype) \
             create_field_boundless(strtype, fieldtype, create_readable_field)
-        #define create_writable_field_boundless(strtype, fieldtype) \
-            create_field_boundless(strtype, fieldtype, create_writable_field)
 
         #define create(fieldtype) \
             create_##fieldtype##_field("unsigned int", unsigned int, unsigned int, std::stol); \
@@ -244,19 +235,10 @@ void DownlinkTestFixture::create_state_fields()
             create_##fieldtype##_field_boundless("bool", bool); \
             create_##fieldtype##_field_boundless("gps_time_t", gps_time_t);
 
-        if (f.writable)
-        {
-            create(writable);
-        }
-        else
-        {
-            create(readable);
-        }
+        create(readable);
         
         #undef create
-        #undef create_writable_field_boundless
         #undef create_readable_field_boundless
-        #undef create_writable_field
         #undef create_readable_field
         #undef create_field_boundless
         #undef create_field
@@ -279,26 +261,27 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
         const std::string& name = input_field.first;
         const std::string& input_valstr = input_field.second;
         const TelemetryInfoGenerator::FieldData& data = test_data.field_data.at(name);
+        if (data.flow_id == 0) continue;
         const DownlinkProducer::FlowData flow_data = test_data.flow_data[data.flow_id-1];
 
         /*
          * Check field is present in the output if and only if the flow
          * that the field belongs to is active. Report an error otherwise.
          */
-        if (output.find(name) == output.end() && !flow_data.is_active) continue;
-        if (output.find(name) == output.end() && flow_data.is_active)
+        if (output.values.find(name) == output.values.end() && !flow_data.is_active) continue;
+        if (output.values.find(name) == output.values.end() && flow_data.is_active)
         {
             result.errors.insert({name, {input_valstr,"",-1}});
             continue;
         }
-        if (output.find(name) != output.end() && !flow_data.is_active)
+        if (output.values.find(name) != output.values.end() && !flow_data.is_active)
         {
-            const std::string& output_valstr = output.at(name);
+            const std::string& output_valstr = output.values.at(name);
             result.errors.insert({name, {"",output_valstr,-1}});
             continue;
         }
 
-        const std::string& output_valstr = output.at(name);
+        const std::string& output_valstr = output.values.at(name);
         
         /*
          * Check the input value of the field matches the output value of the
@@ -320,7 +303,7 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
         {
             double min = std::stod(data.min);
             double max = std::stod(data.max);
-            unsigned int num_intervals = (0b1 << data.bitsize) - 1;
+            unsigned long long num_intervals = std::pow(2, data.bitsize) - 1;
             double tolerance = (max - min) / num_intervals;
 
             long input_val = std::stod(input_valstr);
@@ -350,7 +333,7 @@ void DownlinkTestFixture::compare(const DownlinkTestFixture::test_input_t& input
      * Ensure that there are no fields in the output telemetry set that
      * were not in the input telemetry set.
      */
-    for(auto const& output_field : output)
+    for(auto const& output_field : output.values)
     {
         const std::string& name = output_field.first;
         const std::string& output_valstr = output_field.second;
@@ -373,4 +356,18 @@ void from_json(const nlohmann::json& j, DownlinkTestFixture::test_error_t& e)
     e.expected = j["expected"].get<std::string>();
     e.actual = j["actual"].get<std::string>();
     e.tolerance = j["tolerance"].get<double>();
+}
+
+void to_json(nlohmann::json& j, const DownlinkTestFixture::test_result_t& e)
+{
+    j["success"] = e.success;
+    j["errors"] = e.errors;
+}
+void from_json(const nlohmann::json& j, DownlinkTestFixture::test_result_t& e)
+{
+    e.success = j["success"].get<bool>();
+    for(auto const& err : j["errors"].items())
+    {
+        e.errors.insert({err.key(), err.value().get<DownlinkTestFixture::test_error_t>()});
+    }
 }

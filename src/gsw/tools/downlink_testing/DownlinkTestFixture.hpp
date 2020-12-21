@@ -14,7 +14,10 @@ class DownlinkTestFixture {
     DownlinkTestFixture(const TelemetryInfoGenerator::TelemetryInfo& data);
 
     using test_input_t = std::map<std::string, std::string>;
-    using test_output_t = test_input_t;
+    struct test_output_t {
+      std::map<std::string, std::string> values;
+      std::vector<char> raw_packet;
+    };
     struct test_error_t {
       std::string expected;
       std::string actual;
@@ -38,12 +41,6 @@ class DownlinkTestFixture {
 
     static void generate_telemetry_info(TelemetryInfoGenerator::TelemetryInfo& info);
 
-    void save_test_data(
-      const test_input_t& input,
-      const test_output_t& output,
-      const test_result_t& errors,
-      const std::string& path) const;
-
     /**
      * Compare the input data to the DownlinkProducer to the output data
      * from the downlink parser.
@@ -66,7 +63,6 @@ class DownlinkTestFixture {
     const TelemetryInfoGenerator::TelemetryInfo& test_data;
 
     StateFieldRegistryMock registry;
-    std::unique_ptr<DownlinkProducer> downlink_producer;
     std::unique_ptr<DownlinkParser> downlink_parser;
 
     std::shared_ptr<ReadableStateField<unsigned int>> cycle_count_fp;
@@ -76,5 +72,7 @@ class DownlinkTestFixture {
 
 void to_json(nlohmann::json& j, const DownlinkTestFixture::test_error_t& e);
 void from_json(const nlohmann::json& j, DownlinkTestFixture::test_error_t& e);
+void to_json(nlohmann::json& j, const DownlinkTestFixture::test_result_t& e);
+void from_json(const nlohmann::json& j, DownlinkTestFixture::test_result_t& e);
 
 #endif
