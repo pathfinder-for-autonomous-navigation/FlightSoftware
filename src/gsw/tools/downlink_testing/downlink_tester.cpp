@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
 
     size_t num_iterations = std::stoi(argv[2]);
 
-    for(int i = 0; i < num_iterations; i++)
+    for(size_t i = 0; i < num_iterations; i++)
     {
         // Generate test data and compute downlink
         TelemetryInfoGenerator::TelemetryInfo info;

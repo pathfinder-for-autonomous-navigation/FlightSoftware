@@ -24,7 +24,7 @@ void DownlinkTestFixture::parse(const DownlinkTestFixture::test_input_t& input,
     char* snapshot_chars = snapshot_ptr_fp->get();
     size_t snapshot_size = snapshot_size_bytes_fp->get();
     std::vector<char> snapshot(snapshot_size);
-    for(int i = 0; i < snapshot_size; i++) snapshot[i] = snapshot_chars[i];
+    for(size_t i = 0; i < snapshot_size; i++) snapshot[i] = snapshot_chars[i];
     
     downlink_parser->process_downlink_packet(snapshot);
     std::vector<char> empty_packet{char(0x80), char(0x00), char(0x00), char(0x00), char(0x00)};
@@ -100,7 +100,7 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
     /**
      * Create the flows and randomly assign them an activity level.
      */
-    for(int i = 0; i < num_flows; i++)
+    for(size_t i = 0; i < num_flows; i++)
     {
         bool flow_active = std::rand() % 2 == 0;
         info.flow_data.push_back({static_cast<unsigned char>(i+1), flow_active, {}});
@@ -114,7 +114,7 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
      * Generates a field, randomly choosing the field's datatypes,
      * bounds, bitsizes, and flow.
      */
-    for(int i = 0; i < num_fields; i++)
+    for(size_t i = 0; i < num_fields; i++)
     {
         TelemetryInfoGenerator::FieldData data;
 
@@ -172,7 +172,7 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
         else if (data.type == "gps_time_t") data.bitsize = 68;
 
         // Assign a flow.
-        std::vector<int> flow_ids; for(int i = 1; i <= num_flows; i++) flow_ids.push_back(i);
+        std::vector<int> flow_ids; for(size_t i = 1; i <= num_flows; i++) flow_ids.push_back(i);
         auto rng = std::default_random_engine{}; std::shuffle(flow_ids.begin(),flow_ids.end(), rng);
         for(int flow_id : flow_ids)
         {
