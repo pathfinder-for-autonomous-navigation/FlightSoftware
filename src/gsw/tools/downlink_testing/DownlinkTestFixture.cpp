@@ -34,8 +34,6 @@ void DownlinkTestFixture::parse(const DownlinkTestFixture::test_input_t& input,
 
 void DownlinkTestFixture::generate_test_input(DownlinkTestFixture::test_input_t& input) const
 {
-    // TODO insert cycle number.
-
     for(auto const& field : test_data.field_data)
     {
         const TelemetryInfoGenerator::FieldData& f = field.second;
@@ -109,6 +107,11 @@ void DownlinkTestFixture::generate_telemetry_info(TelemetryInfoGenerator::Teleme
     // TODO add vector and quaternion types to this vector
     std::vector<std::string> datatypes = 
         {"unsigned int", "signed int", "unsigned char", "signed char", "float", "double", "gps_time_t", "bool"}; 
+
+    info.field_data.insert({
+        "pan.cycle_no",
+        {"pan.cycle_no", "unsigned int", 0, false, "0", "4294967295", 32}
+    });
 
     /**
      * Generates a field, randomly choosing the field's datatypes,
@@ -205,6 +208,7 @@ void DownlinkTestFixture::create_state_fields()
 {
     for(auto const& field : test_data.field_data)
     {
+        if (field.first == "pan.cycle_no") continue;
         const TelemetryInfoGenerator::FieldData& f = field.second;
 
         #define create_field(strtype, boundtype, fieldtype, create_field_fn, stdfn) \
